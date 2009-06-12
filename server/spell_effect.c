@@ -70,7 +70,7 @@ void cast_magic_storm(object *op, object *tmp, int lvl) {
         tmp->duration = 40;
     tmp->stats.dam = lvl; /* nasty recoils! */
     tmp->stats.maxhp = tmp->count; /* tract single parent */
-    insert_ob_in_map(tmp, op->map, op, 0);
+    object_insert_in_map(tmp, op->map, op, 0);
 }
 
 /**
@@ -105,8 +105,8 @@ int recharge(object *op, object *caster, object *spell_ob) {
                              "The %s vibrates violently, then explodes!",
                              name);
         play_sound_map(SOUND_TYPE_ITEM, wand, 0, "explode");
-        remove_ob(wand);
-        free_object(wand);
+        object_remove(wand);
+        object_free(wand);
         tmp = create_archetype("fireball");
         tmp->stats.dam = (spell_ob->stats.dam+SP_level_dam_adjust(caster, spell_ob))/10;
         if (!tmp->stats.dam)
@@ -116,7 +116,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
             tmp->stats.hp = 2;
         tmp->x = op->x;
         tmp->y = op->y;
-        insert_ob_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map(tmp, op->map, NULL, 0);
         return 1;
     }
 
@@ -144,7 +144,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
     if (wand->arch && QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE)) {
         SET_FLAG(wand, FLAG_ANIMATE);
         wand->speed = wand->arch->clone.speed;
-        update_ob_speed(wand);
+        object_update_speed(wand);
     }
     return 1;
 }
@@ -187,23 +187,23 @@ static void polymorph_living(object *op, int level) {
     || (op->resist[ATNR_MAGIC] == 100))
         return;
 
-    remove_ob(op);
+    object_remove(op);
 
     /* First, count up the number of legal matches */
     for (at = first_archetype; at != NULL; at = at->next)
         if ((QUERY_FLAG((&at->clone), FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER))
-        && (find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
+        && (object_find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
             numat++;
         }
     if (!numat) {
-        insert_ob_in_map(op, map, NULL, 0);
+        object_insert_in_map(op, map, NULL, 0);
         return; /* no valid matches? if so, return */
     }
 
     /* Next make a choice, and loop through until we get to it */
     choice = rndm(0, numat-1);
     for (at = first_archetype; at != NULL; at = at->next)
-        if ((QUERY_FLAG((&at->clone), FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER)) && (find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
+        if ((QUERY_FLAG((&at->clone), FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER)) && (object_find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
             if (!choice)
                 break;
             else
@@ -219,20 +219,20 @@ static void polymorph_living(object *op, int level) {
         if (QUERY_FLAG(tmp, FLAG_APPLIED))
             manual_apply(op, tmp, 0);
         if (tmp->type == SPELL) {
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
         }
     }
 
     /* Preserve some values for the new object */
-    owner = get_owner(op);
+    owner = object_get_owner(op);
     friendly = QUERY_FLAG(op, FLAG_FRIENDLY);
     if (friendly)
         remove_friendly_object(op);
 
-    copy_object(&(at->clone), op);
+    object_copy(&(at->clone), op);
     if (owner != NULL)
-        set_owner(op, owner);
+        object_set_owner(op, owner);
     if (friendly) {
         SET_FLAG(op, FLAG_FRIENDLY);
         op->attack_movement = PETMOVE;
@@ -243,7 +243,7 @@ static void polymorph_living(object *op, int level) {
     /* Put the new creature on the map */
     op->x = x;
     op->y = y;
-    if ((op = insert_ob_in_map(op, map, owner, 0)) == NULL)
+    if ((op = object_insert_in_map(op, map, owner, 0)) == NULL)
         return;
 
     if (HAS_RANDOM_ITEMS(op))
@@ -282,8 +282,8 @@ static void polymorph_melt(object *who, object *op) {
                              "The %s glows red, melts and evaporates!",
                              name);
     play_sound_map(SOUND_TYPE_ITEM, op, 0, "evaporate");
-    remove_ob(op);
-    free_object(op);
+    object_remove(op);
+    object_free(op);
     return;
 }
 
@@ -326,7 +326,7 @@ static void polymorph_item(object *who, object *op, int level) {
     difficulty = op->magic*5;
     if (difficulty < 0)
         difficulty = 0;
-    new_ob = get_object();
+    new_ob = object_new();
     do {
         choice = rndm(0, numat-1);
         for (at = first_archetype; at != NULL; at = at->next) {
@@ -342,20 +342,20 @@ static void polymorph_item(object *who, object *op, int level) {
                     choice--;
             }
         }
-        copy_object(&(at->clone), new_ob);
+        object_copy(&(at->clone), new_ob);
         fix_generated_item(new_ob, op, difficulty, FABS(op->magic), GT_ENVIRONMENT);
         ++tries;
     } while (new_ob->value > max_value && tries < 10);
     if (new_ob->invisible) {
         LOG(llevError, "polymorph_item: fix_generated_object made %s invisible?!\n", new_ob->name);
-        free_object(new_ob);
+        object_free(new_ob);
         return;
     }
 
     /* Unable to generate an acceptable item?  Melt it */
     if (tries == 10) {
         polymorph_melt(who, op);
-        free_object(new_ob);
+        object_free(new_ob);
         return;
     }
 
@@ -374,13 +374,13 @@ static void polymorph_item(object *who, object *op, int level) {
 
     new_ob->x = op->x;
     new_ob->y = op->y;
-    remove_ob(op);
-    free_object(op);
+    object_remove(op);
+    object_free(op);
     /*
      * Don't want objects merged or re-arranged, as it then messes up the
      * order
      */
-    insert_ob_in_map(new_ob, who->map, new_ob, INS_NO_MERGE|INS_NO_WALK_ON);
+    object_insert_in_map(new_ob, who->map, new_ob, INS_NO_MERGE|INS_NO_WALK_ON);
 }
 
 /**
@@ -488,7 +488,7 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
         image->y = y;
         image->stats.food = 5;
         image->speed_left = 0.1;
-        insert_ob_in_map(image, m, op, 0);
+        object_insert_in_map(image, m, op, 0);
     }
     return 1;
 }
@@ -554,7 +554,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
                     break;
 
             if (!al) {
-                free_object(missile);
+                object_free(missile);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                      "No such object %ss of %s",
                                      "No such object %ss of %s",
@@ -562,7 +562,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
                 return 0;
             }
             if (al->item->slaying) {
-                free_object(missile);
+                object_free(missile);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                      "You are not allowed to create %ss of %s",
                                      "You are not allowed to create %ss of %s",
@@ -587,7 +587,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
 
     missile->nrof = spell->duration+SP_level_duration_adjust(caster, spell);
     if (missile->nrof <= 3*(missile_plus+bonus_plus)) {
-        free_object(missile);
+        object_free(missile);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                              "This item is too powerful for you to create!",
                              NULL);
@@ -606,7 +606,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
 
     if (!cast_create_obj(op, missile, dir)
     && op->type == PLAYER
-    && !was_destroyed(missile, tag)) {
+    && !object_was_destroyed(missile, tag)) {
         pick_up(op, missile);
     }
     return 1;
@@ -681,8 +681,8 @@ int cast_create_food(object *op, object *caster, object *spell_ob, int dir, cons
     }
 
     food_value /= at->clone.stats.food;
-    new_op = get_object();
-    copy_object(&at->clone, new_op);
+    new_op = object_new();
+    object_copy(&at->clone, new_op);
     new_op->nrof = food_value;
 
     new_op->value = 0;
@@ -851,7 +851,7 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                       "You feel more transparent!", NULL);
 
-    update_object(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);
 
     /* Only search the active objects - only these should actually do
      * harm to the player.
@@ -936,7 +936,7 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
     if (op->type != PLAYER)
         return 0;
 
-    if (find_obj_by_type_subtype(op, SPELL_EFFECT, SP_WORD_OF_RECALL)) {
+    if (object_find_by_type_subtype(op, SPELL_EFFECT, SP_WORD_OF_RECALL)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                       "You feel a force starting to build up inside you.", NULL);
         return 1;
@@ -958,7 +958,7 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
      * do anything really odd if it say a -1000 or something.
      */
     dummy->speed = 0.002;
-    update_ob_speed(dummy);
+    object_update_speed(dummy);
     dummy->speed_left = -dummy->speed*time;
     dummy->type = SPELL_EFFECT;
     dummy->subtype = SP_WORD_OF_RECALL;
@@ -970,7 +970,7 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
     EXIT_X(dummy) = op->contr->bed_x;
     EXIT_Y(dummy) = op->contr->bed_y;
 
-    (void)insert_ob_in_ob(dummy, op);
+    (void)object_insert_in_ob(dummy, op);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                   "You feel a force starting to build up inside you.", NULL);
     return 1;
@@ -1044,7 +1044,7 @@ int perceive_self(object *op) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
                       "You worship no god", NULL);
 
-    tmp = present_arch_in_ob(at, op);
+    tmp = arch_present_in_ob(at, op);
 
     if (*cp == '\0' && tmp == NULL)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
@@ -1150,7 +1150,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                       "Oops, program error!", NULL);
-        LOG(llevError, "get_object failed (force in cast_create_town_portal for %s!\n", op->name);
+        LOG(llevError, "object_new failed (force in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
     force = check_inv_recursive(op, dummy);
@@ -1166,14 +1166,14 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
         EXIT_X(dummy) = op->x;
         EXIT_Y(dummy) = op->y;
         dummy->weapontype = op->map->last_reset_time.tv_sec;
-        insert_ob_in_ob(dummy, op);
+        object_insert_in_ob(dummy, op);
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                       "You fix this place in your mind and feel that you"
                       "can come here from anywhere.",
                       NULL);
         return 1;
     }
-    free_object(dummy);
+    object_free(dummy);
 
     /* Here we know where the town portal should go to
      * We should kill any existing portal associated with the player.
@@ -1196,7 +1196,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                       "Oops, program error!", NULL);
-        LOG(llevError, "get_object failed (force) in cast_create_town_portal for %s!\n", op->name);
+        LOG(llevError, "object_new failed (force) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
     perm_portal = find_archetype(spell->slaying);
@@ -1219,22 +1219,22 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
             exitmap = ready_map_name(old_force->race, 0);
 
         if (exitmap) {
-            tmp = present_arch(perm_portal, exitmap, exitx, exity);
+            tmp = arch_present_in_map(perm_portal, exitmap, exitx, exity);
             while (tmp) {
                 if (tmp->name == old_force->name) {
-                    remove_ob(tmp);
-                    free_object(tmp);
+                    object_remove(tmp);
+                    object_free(tmp);
                     break;
                 } else {
                     tmp = tmp->above;
                 }
             }
         }
-        remove_ob(old_force);
-        free_object(old_force);
+        object_remove(old_force);
+        object_free(old_force);
         LOG(llevDebug, "\n");
     }
-    free_object(dummy);
+    object_free(dummy);
 
     /* Creating the portals.
      * The very first thing to do is to ensure
@@ -1257,14 +1257,14 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "Something strange happens. You can't remember where to go!?",
                       NULL);
-        remove_ob(force);
-        free_object(force);
+        object_remove(force);
+        object_free(force);
         return 1;
     } else if (exitmap->last_reset_time.tv_sec != force->weapontype) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "The spell effect has expired.", NULL);
-        remove_ob(force);
-        free_object(force);
+        object_remove(force);
+        object_free(force);
         return 1;
     }
 
@@ -1288,7 +1288,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                       "Oops, program error!", NULL);
-        LOG(llevError, "get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n", op->name);
+        LOG(llevError, "object_new failed (perm_magic_portal) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
     EXIT_PATH(dummy) = add_string(force->name);
@@ -1308,14 +1308,14 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                       "Oops, program error!", NULL);
-        LOG(llevError, "get_object failed (force) in cast_create_town_portal for %s!\n", op->name);
+        LOG(llevError, "object_new failed (force) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
     tmp->race = add_string(op->map->path);
     FREE_AND_COPY(tmp->name, portal_name);
     EXIT_X(tmp) = dummy->x;
     EXIT_Y(tmp) = dummy->y;
-    insert_ob_in_ob(tmp, op);
+    object_insert_in_ob(tmp, op);
 
     /* Create a portal in the destination map
      * dummy contain the portal and
@@ -1328,7 +1328,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                       "Oops, program error!", NULL);
-        LOG(llevError, "get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n", op->name);
+        LOG(llevError, "object_new failed (perm_magic_portal) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
     EXIT_PATH(dummy) = add_string(op->map->path);
@@ -1340,7 +1340,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     dummy->x = EXIT_X(force);
     dummy->y = EXIT_Y(force);
     dummy->race = add_string(op->name);   /*Save the owner of the portal*/
-    insert_ob_in_map(dummy, exitmap, op, 0);
+    object_insert_in_map(dummy, exitmap, op, 0);
 
     /* Now we create another town portal marker that
      * points back to the one we just made
@@ -1349,21 +1349,21 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                       "Oops, program error!", NULL);
-        LOG(llevError, "get_object failed (force) in cast_create_town_portal for %s!\n", op->name);
+        LOG(llevError, "object_new failed (force) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
     tmp->race = add_string(force->name);
     FREE_AND_COPY(tmp->name, portal_name);
     EXIT_X(tmp) = dummy->x;
     EXIT_Y(tmp) = dummy->y;
-    insert_ob_in_ob(tmp, op);
+    object_insert_in_ob(tmp, op);
 
     /* Describe the player what happened
      */
     draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                   "You see air moving and showing you the way home.", NULL);
-    remove_ob(force); /* Delete the force inside the player*/
-    free_object(force);
+    object_remove(force); /* Delete the force inside the player*/
+    object_free(force);
     return 1;
 }
 
@@ -1437,7 +1437,7 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
     } else if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
         tmp->stats.hp = spell_ob->duration+SP_level_duration_adjust(caster, spell_ob);
         tmp->stats.maxhp = tmp->stats.hp;
-        set_owner(tmp, op);
+        object_set_owner(tmp, op);
         set_spell_skill(op, caster, spell_ob, tmp);
     }
     if (QUERY_FLAG(spell_ob, FLAG_IS_USED_UP) || QUERY_FLAG(tmp, FLAG_IS_USED_UP)) {
@@ -1454,14 +1454,14 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
     /* This can't really hurt - if the object doesn't kill anything,
      * these fields just won't be used.
      */
-    set_owner(tmp, op);
+    object_set_owner(tmp, op);
     set_spell_skill(op, caster, spell_ob, tmp);
     tmp->x = x;
     tmp->y = y;
     tmp->level = caster_level(caster, spell_ob)/2;
 
     name = tmp->name;
-    if ((tmp = insert_ob_in_map(tmp, m, op, 0)) == NULL) {
+    if ((tmp = object_insert_in_map(tmp, m, op, 0)) == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "Something destroys your %s",
                              "Something destroys your %s",
@@ -1470,7 +1470,7 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
     }
     /* If this is a spellcasting wall, need to insert the spell object */
     if (tmp->other_arch && tmp->other_arch->clone.type == SPELL)
-        insert_ob_in_ob(arch_to_object(tmp->other_arch), tmp);
+        object_insert_in_ob(arch_to_object(tmp->other_arch), tmp);
 
     /*  This code causes the wall to extend some distance in
      * each direction, or until an obstruction is encountered.
@@ -1494,14 +1494,14 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
         if (!(get_map_flags(m, &m, x, y, &x, &y)&(P_OUT_OF_MAP|P_IS_ALIVE))
         && ((spell_ob->move_block&GET_MAP_MOVE_BLOCK(m, x, y)) != spell_ob->move_block)
         && !posblocked) {
-            tmp2 = get_object();
-            copy_object(tmp, tmp2);
+            tmp2 = object_new();
+            object_copy(tmp, tmp2);
             tmp2->x = x;
             tmp2->y = y;
-            insert_ob_in_map(tmp2, m, op, 0);
+            object_insert_in_map(tmp2, m, op, 0);
             /* If this is a spellcasting wall, need to insert the spell object */
             if (tmp2->other_arch && tmp2->other_arch->clone.type == SPELL)
-                insert_ob_in_ob(arch_to_object(tmp2->other_arch), tmp2);
+                object_insert_in_ob(arch_to_object(tmp2->other_arch), tmp2);
         } else
             posblocked = 1;
 
@@ -1512,13 +1512,13 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
         if (!(get_map_flags(m, &m, x, y, &x, &y)&(P_OUT_OF_MAP|P_IS_ALIVE))
         && ((spell_ob->move_block&GET_MAP_MOVE_BLOCK(m, x, y)) != spell_ob->move_block)
         && !negblocked) {
-            tmp2 = get_object();
-            copy_object(tmp, tmp2);
+            tmp2 = object_new();
+            object_copy(tmp, tmp2);
             tmp2->x = x;
             tmp2->y = y;
-            insert_ob_in_map(tmp2, m, op, 0);
+            object_insert_in_map(tmp2, m, op, 0);
             if (tmp2->other_arch && tmp2->other_arch->clone.type == SPELL)
-                insert_ob_in_ob(arch_to_object(tmp2->other_arch), tmp2);
+                object_insert_in_ob(arch_to_object(tmp2->other_arch), tmp2);
         } else
             negblocked = 1;
     }
@@ -1648,10 +1648,10 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
     }
 
     /* Actually move the player now */
-    remove_ob(op);
+    object_remove(op);
     op->x += freearr_x[dir]*dist;
     op->y += freearr_y[dir]*dist;
-    if ((op = insert_ob_in_map(op, op->map, op, 0)) == NULL)
+    if ((op = object_insert_in_map(op, op->map, op, 0)) == NULL)
         return 1;
 
     if (op->type == PLAYER)
@@ -1729,7 +1729,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
 
     if (spell->attacktype&AT_POISON) {
         at = find_archetype("poisoning");
-        poison = present_arch_in_ob(at, tmp);
+        poison = arch_present_in_ob(at, tmp);
         if (poison) {
             success = 1;
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
@@ -1738,7 +1738,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         }
     }
     if (spell->attacktype&AT_CONFUSION) {
-        poison = present_in_ob_by_name(FORCE, "confusion", tmp);
+        poison = object_present_in_ob_by_name(FORCE, "confusion", tmp);
         if (poison) {
             success = 1;
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
@@ -1748,7 +1748,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
     }
     if (spell->attacktype&AT_BLIND) {
         at = find_archetype("blindness");
-        poison = present_arch_in_ob(at, tmp);
+        poison = arch_present_in_ob(at, tmp);
         if (poison) {
             success = 1;
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
@@ -1935,8 +1935,8 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
     force->stats.ac = spell_ob->stats.ac;
     force->attacktype = spell_ob->attacktype;
 
-    SET_FLAG(tmp, FLAG_NO_FIX_PLAYER); /* we don't want insert_ob_in_ob to call fix_object. */
-    insert_ob_in_ob(force, tmp);
+    SET_FLAG(tmp, FLAG_NO_FIX_PLAYER); /* we don't want object_insert_in_ob() to call fix_object. */
+    object_insert_in_ob(force, tmp);
     CLEAR_FLAG(tmp, FLAG_NO_FIX_PLAYER);
     change_abil(tmp, force); /* Display any relevant messages, and call fix_object to update the player */
 
@@ -2051,7 +2051,7 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
     force->stats.ac = spell_ob->stats.ac;
 
     change_abil(tmp, force); /* Mostly to display any messages */
-    insert_ob_in_ob(force, tmp);
+    object_insert_in_ob(force, tmp);
     fix_object(tmp);
     return 1;
 }
@@ -2143,8 +2143,8 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
             (*small_nuggets)--;
     }
     weight += obj->weight;
-    remove_ob(obj);
-    free_object(obj);
+    object_remove(obj);
+    object_free(obj);
 }
 
 /**
@@ -2171,20 +2171,20 @@ static void place_alchemy_objects(object *op, mapstruct *m, int small_nuggets, i
         flag = INS_BELOW_ORIGINATOR;
 
     if (small_nuggets) {
-        tmp = get_object();
-        copy_object(small, tmp);
+        tmp = object_new();
+        object_copy(small, tmp);
         tmp-> nrof = small_nuggets;
         tmp->x = x;
         tmp->y = y;
-        insert_ob_in_map(tmp, m, op, flag);
+        object_insert_in_map(tmp, m, op, flag);
     }
     if (large_nuggets) {
-        tmp = get_object();
-        copy_object(large, tmp);
+        tmp = object_new();
+        object_copy(large, tmp);
         tmp-> nrof = large_nuggets;
         tmp->x = x;
         tmp->y = y;
-        insert_ob_in_map(tmp, m, op, flag);
+        object_insert_in_map(tmp, m, op, flag);
     }
 }
 
@@ -2273,8 +2273,8 @@ int alchemy(object *op, object *caster, object *spell_ob) {
 
                     if (weight > weight_max) {
                         place_alchemy_objects(op, mp, small_nuggets, large_nuggets, nx, ny);
-                        free_object(large);
-                        free_object(small);
+                        object_free(large);
+                        object_free(small);
                         return 1;
                     }
                 } /* is alchemable object */
@@ -2287,8 +2287,8 @@ int alchemy(object *op, object *caster, object *spell_ob) {
             place_alchemy_objects(op, mp, small_nuggets, large_nuggets, nx, ny);
         }
     }
-    free_object(large);
-    free_object(small);
+    object_free(large);
+    object_free(small);
     /* reset this so that if player standing on a big pile of stuff,
      * it is redrawn properly.
      */
@@ -2626,7 +2626,7 @@ int cast_detection(object *op, object *caster, object *spell) {
                     if (!QUERY_FLAG(detect, FLAG_ANIMATE))
                         CLEAR_FLAG(detect_ob, FLAG_ANIMATE);
                 }
-                insert_ob_in_map(detect_ob, m, op, 0);
+                object_insert_in_map(detect_ob, m, op, 0);
             }
         } /* for processing the surrounding spaces */
 
@@ -2685,7 +2685,7 @@ static void charge_mana_effect(object *victim, int caster_level) {
         tmp->stats.maxhp = random_roll(1, caster_level, victim, PREFER_LOW)/10+2;
         tmp->x = victim->x;
         tmp->y = victim->y;
-        insert_ob_in_map(tmp, victim->map, NULL, 0);
+        object_insert_in_map(tmp, victim->map, NULL, 0);
         victim->stats.sp = 2*victim->stats.maxsp;
     } else if (victim->stats.sp >= victim->stats.maxsp*1.88) {
         draw_ext_info(NDI_UNIQUE, NDI_ORANGE, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
@@ -2827,13 +2827,13 @@ void counterspell(object *op, int dir) {
         && !(head->attacktype&AT_COUNTERSPELL)
         && !QUERY_FLAG(head, FLAG_MONSTER)
         && (op->level > head->level)) {
-            remove_ob(head);
-            free_object(head);
+            object_remove(head);
+            object_free(head);
         } else switch (head->type) {
             case SPELL_EFFECT:
                 if ((op->level > head->level) && !op->stats.food && !op->speed_left) {
-                    remove_ob(head);
-                    free_object(head);
+                    object_remove(head);
+                    object_free(head);
                 }
                 break;
 
@@ -2844,8 +2844,8 @@ void counterspell(object *op, int dir) {
                 if (rndm(0, 149) == 0) {
                     head->stats.hp--;  /* weaken the rune */
                     if (!head->stats.hp) {
-                        remove_ob(head);
-                        free_object(head);
+                        object_remove(head);
+                        object_free(head);
                     }
                 }
                 break;
@@ -2910,8 +2910,8 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 new_altar->x = tmp->x;
                 new_altar->y = tmp->y;
                 new_altar->level = tmp->level;
-                insert_ob_in_map(new_altar, tmp->map, tmp, INS_BELOW_ORIGINATOR);
-                remove_ob(tmp);
+                object_insert_in_map(new_altar, tmp->map, tmp, INS_BELOW_ORIGINATOR);
+                object_remove(tmp);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                      "You consecrated the altar to %s!",
                                      "You consecrated the altar to %s!",
@@ -2975,7 +2975,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
 
     /* if no direction specified, pick one */
     if (!dir)
-        dir = find_free_spot(NULL, op->map, op->x, op->y, 1, 9);
+        dir = object_find_free_spot(NULL, op->map, op->x, op->y, 1, 9);
 
     m = op->map;
     x = op->x+freearr_x[dir];
@@ -3025,7 +3025,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
     }
 
     if (weapon->nrof > 1) {
-        tmp = get_split_ob(weapon, 1, NULL, 0);
+        tmp = object_split(weapon, 1, NULL, 0);
         esrv_update_item(UPD_NROF, op, weapon);
         weapon = tmp;
     }
@@ -3039,19 +3039,19 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
     tmp->stats.exp = 0;
     add_friendly_object(tmp);
     tmp->type = GOLEM;
-    set_owner(tmp, op);
+    object_set_owner(tmp, op);
     set_spell_skill(op, caster, spell, tmp);
     op->contr->ranges[range_golem] = tmp;
     op->contr->shoottype = range_golem;
     op->contr->golem_count = tmp->count;
 
     /* Give the weapon to the golem now.  A bit of a hack to check the
-     * removed flag - it should only be set if get_split_object was
+     * removed flag - it should only be set if object_split() was
      * used above.
      */
     if (!QUERY_FLAG(weapon, FLAG_REMOVED))
-        remove_ob(weapon);
-    insert_ob_in_ob(weapon, tmp);
+        object_remove(weapon);
+    object_insert_in_ob(weapon, tmp);
 
     /* To do everything necessary to let a golem use the weapon is a pain,
      * so instead, just set it as equipped (otherwise, we need to update
@@ -3149,7 +3149,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
         } else {
             CLEAR_FLAG(tmp, FLAG_ANIMATE);
         }
-        update_ob_speed(tmp);
+        object_update_speed(tmp);
     }
 
     /*  make experience increase in proportion to the strength of the summoned creature. */
@@ -3159,7 +3159,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
     tmp->x = x;
     tmp->y = y;
     tmp->direction = dir;
-    insert_ob_in_map(tmp, m, op, 0);
+    object_insert_in_map(tmp, m, op, 0);
     return 1;
 }
 
@@ -3213,7 +3213,7 @@ int create_aura(object *op, object *caster, object *spell) {
     int refresh = 0, i;
     object *new_aura;
 
-    new_aura = present_arch_in_ob(spell->other_arch, op);
+    new_aura = arch_present_in_ob(spell->other_arch, op);
     if (new_aura)
         refresh = 1;
     else
@@ -3225,7 +3225,7 @@ int create_aura(object *op, object *caster, object *spell) {
 
     new_aura->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
 
-    set_owner(new_aura, op);
+    object_set_owner(new_aura, op);
     set_spell_skill(op, caster, spell, new_aura);
     new_aura->attacktype = spell->attacktype;
 
@@ -3245,7 +3245,7 @@ int create_aura(object *op, object *caster, object *spell) {
             int refresh1=1;
             object *force;
 
-            force = present_in_ob_by_name(FORCE, spell->name, op);
+            force = object_present_in_ob_by_name(FORCE, spell->name, op);
             if (!force) {
                 force=create_archetype(FORCE_NAME);
                 force->subtype = FORCE_CHANGE_ABILITY;
@@ -3260,7 +3260,7 @@ int create_aura(object *op, object *caster, object *spell) {
             memcpy(&force->resist, spell->resist, sizeof(spell->resist));
             SET_FLAG(force, FLAG_APPLIED);
 
-            if (!refresh1) insert_ob_in_ob(force, op);
+            if (!refresh1) object_insert_in_ob(force, op);
             change_abil(op, new_aura);
             fix_object(op);
             break;
@@ -3271,7 +3271,7 @@ int create_aura(object *op, object *caster, object *spell) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                       "You recast the spell while in effect.", NULL);
     else
-        insert_ob_in_ob(new_aura, op);
+        object_insert_in_ob(new_aura, op);
     return 1;
 }
 
@@ -3317,6 +3317,6 @@ int write_mark(object *op, object *spell, const char *msg) {
     tmp->msg = add_string(rune);
     tmp->x = op->x;
     tmp->y = op->y;
-    insert_ob_in_map(tmp, op->map, op, INS_BELOW_ORIGINATOR);
+    object_insert_in_map(tmp, op->map, op, INS_BELOW_ORIGINATOR);
     return 1;
 }

@@ -241,7 +241,7 @@ static void init_archetable(void) {
  * buffer that will contain dumped information.
  */
 void dump_arch(archetype *at, StringBuffer *sb) {
-    dump_object(&at->clone, sb);
+    object_dump(&at->clone, sb);
 }
 
 /**
@@ -286,7 +286,7 @@ void free_arch(archetype *at) {
     if (at->clone.msg)
         free_string(at->clone.msg);
     free(at->clone.discrete_damage);
-    free_key_values(&at->clone);
+    object_free_key_values(&at->clone);
     free(at);
 }
 
@@ -334,8 +334,8 @@ archetype *get_archetype_struct(void) {
     new->clone.race = NULL;
     new->clone.slaying = NULL;
     new->clone.msg = NULL;
-    clear_object(&new->clone);  /* to initial state other also */
-    CLEAR_FLAG((&new->clone), FLAG_FREED); /* This shouldn't matter, since copy_object() */
+    object_clear(&new->clone);  /* to initial state other also */
+    CLEAR_FLAG((&new->clone), FLAG_FREED); /* This shouldn't matter, since object_copy() */
     SET_FLAG((&new->clone), FLAG_REMOVED); /* doesn't copy these flags... */
     new->head = NULL;
     new->more = NULL;
@@ -358,12 +358,12 @@ static void first_arch_pass(FILE *fp) {
     archetype *at, *head = NULL, *last_more = NULL;
     int i, first = 2;
 
-    op = get_object();
+    op = object_new();
     op->arch = first_archetype = at = get_archetype_struct();
 
     while ((i = load_object(fp, op, first, 0))) {
         first = 0;
-        copy_object(op, &at->clone);
+        object_copy(op, &at->clone);
         at->clone.speed_left = (float)(-0.1);
         /* copy the body_info to the body_used - this is only really
          * need for monsters, but doesn't hurt to do it for everything.
@@ -416,10 +416,10 @@ static void first_arch_pass(FILE *fp) {
         }
 
         at = get_archetype_struct();
-        clear_object(op);
+        object_clear(op);
         op->arch = at;
     }
-    free_object(op);
+    object_free(op);
     op->arch = NULL; /* arch is checked for temporary archetypes if not NULL. */
     free(at);
 }
@@ -471,11 +471,11 @@ static void second_arch_pass(FILE *fp) {
             inv = create_archetype(argument);
             load_object(fp, inv, LO_LINEMODE, 0);
             if (at) {
-                insert_ob_in_ob(inv, &at->clone);
+                object_insert_in_ob(inv, &at->clone);
                 /*LOG(llevDebug, "Put %s in %s\n", inv->name, at->clone.name);*/
             } else {
                 LOG(llevError, "Got an arch %s not inside an Object.\n", argument);
-                free_object(inv);
+                object_free(inv);
             }
         }
     }
@@ -569,7 +569,7 @@ static void load_archetypes(void) {
  * @return
  * object of specified type.
  * @note
- * get_object() will either allocate memory or call fatal(), so returned value
+ * object_new() will either allocate memory or call fatal(), so returned value
  * is never NULL.
  */
 object *arch_to_object(archetype *at) {
@@ -580,8 +580,8 @@ object *arch_to_object(archetype *at) {
             LOG(llevError, "Couldn't find archetype.\n");
         return NULL;
     }
-    op = get_object();
-    copy_object_with_inv(&at->clone, op);
+    op = object_new();
+    object_copy_with_inv(&at->clone, op);
     op->arch = at;
     return op;
 }
@@ -596,7 +596,7 @@ object *arch_to_object(archetype *at) {
  * @return
  * object of specified name. It fill have the ::FLAG_NO_PICK flag set.
  * @note
- * get_object() will either allocate memory or call fatal(), so returned value
+ * object_new() will either allocate memory or call fatal(), so returned value
  * is never NULL.
  */
 object *create_singularity(const char *name) {
@@ -604,7 +604,7 @@ object *create_singularity(const char *name) {
     char buf[MAX_BUF];
 
     snprintf(buf, sizeof(buf), "%s (%s)", ARCH_SINGULARITY, name);
-    op = get_object();
+    op = object_new();
     op->name = add_string(buf);
     op->name_pl = add_string(buf);
     SET_FLAG(op, FLAG_NO_PICK);

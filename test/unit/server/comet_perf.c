@@ -93,7 +93,7 @@ void setup(void) {
     mon->speed = 0.0;
     mon->speed_left = 0.0;
     SET_FLAG(mon, FLAG_STAND_STILL);
-    update_ob_speed(mon);
+    object_update_speed(mon);
 
     /* We now make copies of this custom monster and put it into the
      * map.  We make a diagonal from one corner to another,
@@ -103,20 +103,20 @@ void setup(void) {
      * value of creatures being hit.
      */
     for (x = 0; x < TEST_MAP_SIZE; x++) {
-        mon1 = get_object();
-        copy_object(mon, mon1);
+        mon1 = object_new();
+        object_copy(mon, mon1);
         mon1->x = x;
         mon1->y = TEST_MAP_SIZE/2;
         mon1->map = test_map;
-        insert_ob_in_map(mon1, mon1->map, NULL, 0);
+        object_insert_in_map(mon1, mon1->map, NULL, 0);
 
         if (x != TEST_MAP_SIZE/2) {
-            mon1 = get_object();
-            copy_object(mon, mon1);
+            mon1 = object_new();
+            object_copy(mon, mon1);
             mon1->x = x;
             mon1->y = x;
             mon1->map = test_map;
-            insert_ob_in_map(mon1, mon1->map, NULL, 0);
+            object_insert_in_map(mon1, mon1->map, NULL, 0);
         }
     }
 
@@ -203,13 +203,13 @@ START_TEST(cast_one_comet) {
     rod = create_archetype("rod_heavy");
     rod->level = 100;
     comet = create_archetype("spell_comet");
-    insert_ob_in_ob(comet, rod);
+    object_insert_in_ob(comet, rod);
 
     rod->map = test_map;
     rod->x = TEST_MAP_SIZE/2;
     rod->y = TEST_MAP_SIZE-1;
 
-    insert_ob_in_map(rod, rod->map, NULL, 0);
+    object_insert_in_map(rod, rod->map, NULL, 0);
 
     cast_spell(rod, rod, 1, rod->inv, NULL);
     for (tick = 0; tick < NUM_TICKS_TO_RUN; tick++) {
@@ -229,17 +229,17 @@ START_TEST(cast_random_comet) {
     rod = create_archetype("rod_heavy");
     rod->level = 100;
     comet = create_archetype("spell_comet");
-    insert_ob_in_ob(comet, rod);
+    object_insert_in_ob(comet, rod);
 
     rod->map = test_map;
     rod->x = TEST_MAP_SIZE/2;
     rod->y = TEST_MAP_SIZE-1;
 
-    insert_ob_in_map(rod, rod->map, NULL, 0);
+    object_insert_in_map(rod, rod->map, NULL, 0);
 
     for (tick = 0; tick < NUM_TICKS_TO_RUN; tick++) {
         if (num_cast < NUM_COMETS_TO_CAST && (tick%1) == 0) {
-            remove_ob(rod);
+            object_remove(rod);
 
             /* The idea here on the x is to shuffle the spaces around
              * a little, as a more typical case is comets
@@ -248,7 +248,7 @@ START_TEST(cast_random_comet) {
             rod->x = (tick*59)%37;
             rod->y = TEST_MAP_SIZE-1;
             rod->map = test_map;
-            insert_ob_in_map(rod, rod->map, NULL, 0);
+            object_insert_in_map(rod, rod->map, NULL, 0);
 
             cast_spell(rod, rod, 1, rod->inv, NULL);
             num_cast++;
@@ -269,13 +269,13 @@ START_TEST(cast_bunch_comet) {
     rod = create_archetype("rod_heavy");
     rod->level = 100;
     comet = create_archetype("spell_comet");
-    insert_ob_in_ob(comet, rod);
+    object_insert_in_ob(comet, rod);
 
     rod->map = test_map;
     rod->x = TEST_MAP_SIZE/2;
     rod->y = TEST_MAP_SIZE-1;
 
-    insert_ob_in_map(rod, rod->map, NULL, 0);
+    object_insert_in_map(rod, rod->map, NULL, 0);
 
     for (tick = 0; tick < NUM_TICKS_TO_RUN; tick++) {
         if (num_cast < NUM_COMETS_TO_CAST && (tick%1) == 0) {

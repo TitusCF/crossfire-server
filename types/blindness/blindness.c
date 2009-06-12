@@ -56,7 +56,7 @@ static method_ret blindness_type_process(ob_methods *context, object *op) {
         change_abil(op->env, op);
         fix_object(op->env);
     }
-    remove_ob(op);
-    free_object(op);
+    object_remove(op);
+    object_free(op);
     return METHOD_OK;
 }

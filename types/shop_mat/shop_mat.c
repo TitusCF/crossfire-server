@@ -65,14 +65,14 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
         for (tmp = victim->inv; tmp; tmp = next) {
             next = tmp->below;
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
-                int i = find_free_spot(tmp, victim->map, victim->x, victim->y, 1, 9);
-                remove_ob(tmp);
+                int i = object_find_free_spot(tmp, victim->map, victim->x, victim->y, 1, 9);
+                object_remove(tmp);
                 if (i == -1)
                     i = 0;
                 tmp->map = victim->map;
                 tmp->x = victim->x+freearr_x[i];
                 tmp->y = victim->y+freearr_y[i];
-                insert_ob_in_map(tmp, victim->map, victim, 0);
+                object_insert_in_map(tmp, victim->map, victim, 0);
             }
         }
 
@@ -85,7 +85,7 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
          */
         if (QUERY_FLAG(victim, FLAG_UNPAID) || !QUERY_FLAG(victim, FLAG_ALIVE)) {
             /* Somebody dropped an unpaid item, just move to an adjacent place. */
-            int i = find_free_spot(victim, victim->map, victim->x, victim->y, 1, 9);
+            int i = object_find_free_spot(victim, victim->map, victim->x, victim->y, 1, 9);
             if (i != -1) {
                 rv = transfer_ob(victim, victim->x+freearr_x[i], victim->y+freearr_y[i], 0, trap);
             }
@@ -124,14 +124,14 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
          * to afford the items he has.  We try to move the player so that
          * they are not on the mat anymore
          */
-        int i = find_free_spot(victim, victim->map, victim->x, victim->y, 1, 9);
+        int i = object_find_free_spot(victim, victim->map, victim->x, victim->y, 1, 9);
         if (i == -1)
             LOG(llevError, "Internal shop-mat problem.\n");
         else {
-            remove_ob(victim);
+            object_remove(victim);
             victim->x += freearr_x[i];
             victim->y += freearr_y[i];
-            rv = insert_ob_in_map(victim, victim->map, trap, 0) == NULL;
+            rv = object_insert_in_map(victim, victim->map, trap, 0) == NULL;
             esrv_map_scroll(&victim->contr->socket, freearr_x[i], freearr_y[i]);
             victim->contr->socket.update_look = 1;
             victim->contr->socket.look_position = 0;

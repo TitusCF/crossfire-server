@@ -202,7 +202,7 @@ void decay_objects(mapstruct *m) {
                 || IS_LIVE(op))
                     continue;
                 if (op->head)
-                    /* Don't try to remove a non head part of a multipart object, remove_ob() would abort(). */
+                    /* Don't try to remove a non head part of a multipart object, object_remove() would abort(). */
                     continue;
                 /* otherwise, we decay and destroy */
                 if (IS_WEAPON(op)) {
@@ -243,8 +243,8 @@ void decay_objects(mapstruct *m) {
                 }
                 /* adjust overall chance below */
                 if (destroy && rndm(0, 1)) {
-                    remove_ob(op);
-                    free_object(op);
+                    object_remove(op);
+                    object_free(op);
                 }
             }
 }

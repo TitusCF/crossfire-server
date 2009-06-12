@@ -496,8 +496,8 @@ static int monster_move_no_enemy(object *op) {
     assert(QUERY_FLAG(op, FLAG_MONSTER));
 
     if (QUERY_FLAG(op, FLAG_ONLY_ATTACK))  {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return 1;
     }
 
@@ -611,12 +611,12 @@ int move_monster(object *op) {
     } /* no enemy */
 
     /* We have an enemy.  Block immediately below is for pets */
-    if ((op->attack_movement&HI4) == PETMOVE && (owner = get_owner(op)) != NULL && !on_same_map(op, owner)) {
+    if ((op->attack_movement&HI4) == PETMOVE && (owner = object_get_owner(op)) != NULL && !on_same_map(op, owner)) {
         follow_owner(op, owner);
         /* If the pet was unable to follow the owner, free it */
         if (QUERY_FLAG(op, FLAG_REMOVED) && FABS(op->speed) > MIN_ACTIVE_SPEED) {
             remove_friendly_object(op);
-            free_object(op);
+            object_free(op);
             return 1;
         }
         return 0;
@@ -811,8 +811,8 @@ int move_monster(object *op) {
         return 1;
 
     if (QUERY_FLAG(op, FLAG_ONLY_ATTACK)) {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return 1;
     }
     return 0;
@@ -968,7 +968,7 @@ static int monster_cast_spell(object *head, object *part, object *pl, int dir, r
     if (!(dir = path_to_player(part, pl, 0)))
         return 0;
 
-    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = object_get_owner(head)) != NULL) {
         get_rangevector(head, owner, &rv1, 0x1);
         if (dirdiff(dir, rv1.direction) < 2) {
             return 0; /* Might hit owner with spell */
@@ -1051,7 +1051,7 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir, r
     if (!(dir = path_to_player(part, pl, 0)))
         return 0;
 
-    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = object_get_owner(head)) != NULL) {
         get_rangevector(head, owner, &rv1, 0x1);
         if (dirdiff(dir, rv1.direction) < 2) {
             return 0; /* Might hit owner with spell */
@@ -1118,7 +1118,7 @@ static int monster_use_skill(object *head, object *part, object *pl, int dir) {
     if (!(dir = path_to_player(part, pl, 0)))
         return 0;
 
-    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = object_get_owner(head)) != NULL) {
         int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
         if (dirdiff(dir, dir2) < 1)
             return 0; /* Might hit owner with skill -thrown rocks for example ?*/
@@ -1168,7 +1168,7 @@ static int monster_use_range(object *head, object *part, object *pl, int dir) {
     if (!(dir = path_to_player(part, pl, 0)))
         return 0;
 
-    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
+    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = object_get_owner(head)) != NULL) {
         int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
         if (dirdiff(dir, dir2) < 2)
             return 0; /* Might hit owner with spell */
@@ -1246,7 +1246,7 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
     dir = absdir(find_dir_2(rv.distance_x, rv.distance_y)+4);
 
     if (QUERY_FLAG(head, FLAG_FRIENDLY))
-        owner = get_owner(head);
+        owner = object_get_owner(head);
     else
         owner = NULL;
 
@@ -1398,14 +1398,14 @@ static void monster_check_pickup(object *monster) {
         next = tmp->below;
         next_tag = next ? next->count : 0;
         if (monster_can_pick(monster, tmp)) {
-            remove_ob(tmp);
-            tmp = insert_ob_in_ob(tmp, monster);
+            object_remove(tmp);
+            tmp = object_insert_in_ob(tmp, monster);
             (void)monster_check_apply(monster, tmp);
         }
         /* We could try to re-establish the cycling, of the space, but probably
          * not a big deal to just bail out.
          */
-        if (next && was_destroyed(next, next_tag))
+        if (next && object_was_destroyed(next, next_tag))
             return;
     }
 }
@@ -1421,7 +1421,7 @@ static int monster_can_pick(object *monster, object *item) {
     int flag = 0;
     int i;
 
-    if (!can_pick(monster, item))
+    if (!object_can_pick(monster, item))
         return 0;
 
     if (QUERY_FLAG(item, FLAG_UNPAID))

@@ -52,7 +52,7 @@ static method_ret spinner_type_move_on(ob_methods *context, object *trap, object
         return METHOD_OK;
     if (victim->direction) {
         victim->direction = absdir(victim->direction-trap->stats.sp);
-        update_turn_face(victim);
+        object_update_turn_face(victim);
     }
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;

@@ -233,11 +233,11 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
         if (newob != NULL) {
             newob->x = temp->x;
             newob->y = temp->y;
-            insert_ob_in_map(newob, temp->map, op, 0);
+            object_insert_in_map(newob, temp->map, op, 0);
         }
         leveldead = temp->level;
-        remove_ob(temp);
-        free_object(temp);
+        object_remove(temp);
+        object_free(temp);
     }
 
     if (resurrection_fails(clevel, leveldead)) {

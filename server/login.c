@@ -192,11 +192,11 @@ int check_name(player *me, const char *name) {
 }
 
 /**
- * Recursively free_object() op and its inventory.
+ * Recursively object_free() op and its inventory.
  *
  * @param op
- * object to totally free_object().
- * @todo doesn't free_object() handle inventory?
+ * object to totally object_free().
+ * @todo doesn't object_free() handle inventory?
  */
 void destroy_object(object *op) {
     object *tmp;
@@ -204,8 +204,8 @@ void destroy_object(object *op) {
         destroy_object(tmp);
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
-        remove_ob(op);
-    free_object(op);
+        object_remove(op);
+    object_free(op);
 }
 
 /**
@@ -505,7 +505,7 @@ void check_login(object *op) {
                      * will be different
                      */
                     terminate_all_pets(pltmp->ob);
-                    remove_ob(pltmp->ob);
+                    object_remove(pltmp->ob);
                 }
                 leave(pltmp, 1);
                 final_free_player(pltmp);
@@ -685,11 +685,11 @@ void check_login(object *op) {
             pl->language = value;
         }
     } /* End of loop loading the character file */
-    remove_ob(op);
+    object_remove(op);
     op->speed = 0;
-    update_ob_speed(op);
-    /*FIXME dangerous call, reset_object should be used to init freshly allocated obj struct!*/
-    reset_object(op);
+    object_update_speed(op);
+    /*FIXME dangerous call, object_reset() should be used to init freshly allocated obj struct!*/
+    object_reset(op);
     op->contr = pl;
     pl->ob = op;
     /* this loads the standard objects values. */
@@ -737,7 +737,7 @@ void check_login(object *op) {
 #ifdef AUTOSAVE
     pl->last_save_tick = pticks;
 #endif
-    op->carrying = sum_weight(op);
+    op->carrying = object_sum_weight(op);
 
     link_player_skills(op);
 

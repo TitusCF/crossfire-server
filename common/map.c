@@ -546,7 +546,7 @@ int ob_blocked(const object *ob, mapstruct *m, sint16 x, sint16 y) {
         if (flag&P_IS_ALIVE)
             return P_IS_ALIVE;
 
-        /* find_first_free_spot() calls this function.  However, often
+        /* object_find_first_free_spot() calls this function.  However, often
          * ob doesn't have any move type (when used to place exits)
          * so the AND operation in OB_TYPE_MOVE_BLOCK doesn't work.
          */
@@ -585,13 +585,13 @@ void fix_container(object *container) {
         next = tmp->below;
         if (tmp->inv)
             fix_container(tmp);
-        (void)insert_ob_in_ob(tmp, container);
+        (void)object_insert_in_ob(tmp, container);
         tmp = next;
     }
-    /* sum_weight will go through and calculate what all the containers are
+    /* object_sum_weight will go through and calculate what all the containers are
      * carrying.
      */
-    sum_weight(container);
+    object_sum_weight(container);
 }
 
 /**
@@ -616,7 +616,7 @@ static void fix_container_multipart(object *container) {
             fix_container_multipart(tmp);
         /* already multipart, or non-multipart arch - don't do anything more */
         for (at = tmp->arch->more, last = tmp; at != NULL; at = at->more, last = op) {
-            /* FIXME: We can't reuse fix_multipart_object() since that only
+            /* FIXME: We can't reuse object_fix_multipart() since that only
              * works for items directly on maps. Maybe factor out common code?
              */
             op = arch_to_object(at);
@@ -664,7 +664,7 @@ static void link_multipart_objects(mapstruct *m) {
                 if (tmp->head || tmp->more)
                     continue;
 
-                fix_multipart_object(tmp);
+                object_fix_multipart(tmp);
             } /* for objects on this space */
 }
 
@@ -684,7 +684,7 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
     int unique;
     object *op, *prev = NULL, *last_more = NULL, *otmp;
 
-    op = get_object();
+    op = object_new();
     op->map = m; /* To handle buttons correctly */
 
     while ((i = load_object(fp, op, bufstate, mapflags))) {
@@ -708,28 +708,28 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
             /* if we are loading an overlay, put the floors on the bottom */
             if ((QUERY_FLAG(op, FLAG_IS_FLOOR) || QUERY_FLAG(op, FLAG_OVERLAY_FLOOR))
             && mapflags&MAP_OVERLAY)
-                insert_ob_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ABOVE_FLOOR_ONLY|INS_MAP_LOAD);
+                object_insert_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ABOVE_FLOOR_ONLY|INS_MAP_LOAD);
             else
-                insert_ob_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ON_TOP|INS_MAP_LOAD);
+                object_insert_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ON_TOP|INS_MAP_LOAD);
 
             if (op->inv)
-                sum_weight(op);
+                object_sum_weight(op);
 
             prev = op,
             last_more = op;
             break;
 
         case LL_MORE:
-            insert_ob_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ABOVE_FLOOR_ONLY);
+            object_insert_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ABOVE_FLOOR_ONLY);
             op->head = prev,
             last_more->more = op,
             last_more = op;
             break;
         }
         if (mapflags&MAP_STYLE) {
-            remove_from_active_list(op);
+            object_remove_from_active_list(op);
         }
-        op = get_object();
+        op = object_new();
         op->map = m;
     }
     for (i = 0; i < m->width; i++) {
@@ -744,7 +744,7 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
             }
         }
     }
-    free_object(op);
+    object_free(op);
     link_multipart_objects(m);
 }
 
@@ -1391,8 +1391,8 @@ static void delete_unique_items(mapstruct *m) {
                     clean_object(op);
                     if (QUERY_FLAG(op, FLAG_IS_LINKED))
                         remove_button_link(op);
-                    remove_ob(op);
-                    free_object(op);
+                    object_remove(op);
+                    object_free(op);
                 }
             }
         }
@@ -1669,8 +1669,8 @@ void clean_object(object *op) {
         clean_object(tmp);
         if (QUERY_FLAG(tmp, FLAG_IS_LINKED))
             remove_button_link(tmp);
-        remove_ob(tmp);
-        free_object(tmp);
+        object_remove(tmp);
+        object_free(tmp);
     }
 }
 
@@ -1697,13 +1697,13 @@ static void free_all_objects(mapstruct *m) {
                 if (op->head != NULL)
                     op = op->head;
 
-                /* If the map isn't in memory, free_object will remove and
+                /* If the map isn't in memory, object_free() will remove and
                 * free objects in op's inventory.  So let it do the job.
                 */
                 if (m->in_memory == MAP_IN_MEMORY)
                     clean_object(op);
-                remove_ob(op);
-                free_object(op);
+                object_remove(op);
+                object_free(op);
             }
         }
 #ifdef MANY_CORES
@@ -1774,7 +1774,7 @@ void delete_map(mapstruct *m) {
         return;
     if (m->in_memory == MAP_IN_MEMORY) {
         /* change to MAP_SAVING, even though we are not,
-         * so that remove_ob doesn't do as much work.
+         * so that object_remove() doesn't do as much work.
          */
         m->in_memory = MAP_SAVING;
         free_map(m);

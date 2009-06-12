@@ -63,6 +63,6 @@ static method_ret poison_type_apply(ob_methods *context, object *op, object *app
     /* Reduce the applier's food to one quarter of what it was */
     applier->stats.food -= applier->stats.food/4;
     handle_apply_yield(op);
-    decrease_ob(op);
+    object_decrease_nrof_by_one(op);
     return METHOD_OK;
 }

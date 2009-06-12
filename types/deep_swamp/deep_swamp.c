@@ -58,7 +58,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
         && !(above->move_type&MOVE_FLYING)
         && above->stats.hp >= 0
         && !QUERY_FLAG(above, FLAG_WIZ)) {
-            object *woodsman = find_obj_by_type_subtype(above, SKILL, SK_WOODSMAN);
+            object *woodsman = object_find_by_type_subtype(above, SKILL, SK_WOODSMAN);
             got_player = 1;
             if (op->stats.food < 1) {
                 LOG(llevDebug, "move_deep_swamp(): player is here, but state is %d\n", op->stats.food);
@@ -99,7 +99,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
         && !(QUERY_FLAG(above, FLAG_OVERLAY_FLOOR))
         && !(QUERY_FLAG(above, FLAG_NO_PICK))) {
             if (rndm(0, 2) == 0)
-                decrease_ob(above);
+                object_decrease_nrof_by_one(above);
         }
         above = nabove;
     }

@@ -248,7 +248,7 @@ int command_news(object *op, char *params) {
  * player requesting the information.
  */
 void malloc_info(object *op) {
-    int ob_used = count_used(), ob_free = count_free(), players, nrofmaps;
+    int ob_used = object_count_used(), ob_free = object_count_free(), players, nrofmaps;
     int nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, tlnr, alnr;
     treasurelist *tl;
     player *pl;
@@ -296,7 +296,7 @@ void malloc_info(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_019),
                          i18n_translate(get_language(op), I18N_MSG_CMISC_020),
-                         count_active(), 0);
+                         object_count_active(), 0);
 
     sum_alloc += i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
@@ -988,7 +988,7 @@ int command_dumpbelow(object *op, char *params) {
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(op->below, sb);
+        object_dump(op->below, sb);
         diff = stringbuffer_finish(sb);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, diff, NULL);
         free(diff);
@@ -1076,7 +1076,7 @@ int command_wizcast(object *op, char *params) {
  * 0.
  */
 int command_dumpallobjects(object *op, char *params) {
-    dump_all_objects();
+    object_dump_all();
     return 0;
 }
 
@@ -1378,7 +1378,7 @@ int command_statistics(object *pl, char *params) {
  * 1.
  */
 int command_fix_me(object *op, char *params) {
-    sum_weight(op);
+    object_sum_weight(op);
     fix_object(op);
     return 1;
 }
@@ -1620,7 +1620,7 @@ int command_showpets(object *op, char *params) {
         object *ob = obl->ob;
 
         next = obl->next;
-        if (get_owner(ob) == op) {
+        if (object_get_owner(ob) == op) {
             if (target == 0) {
                 if (counter == 0)
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
@@ -2425,12 +2425,12 @@ int command_kill_pets(object *op, char *params) {
         for (obl = first_friendly_object; obl != NULL; obl = next) {
             object *ob = obl->ob;
             next = obl->next;
-            if (get_owner(ob) == op)
+            if (object_get_owner(ob) == op)
                 if (++counter == target || (target == 0 && !strcasecmp(ob->name, params)))  {
                     if (!QUERY_FLAG(ob, FLAG_REMOVED))
-                        remove_ob(ob);
+                        object_remove(ob);
                     remove_friendly_object(ob);
-                    free_object(ob);
+                    object_free(ob);
                     removecount++;
                 }
         }
@@ -2502,9 +2502,9 @@ int do_harvest(object *pl, int dir, object *skill) {
     if (!pl->chosen_skill || pl->chosen_skill->skill != skill->skill)
         return 0;
 
-    trace = get_ob_key_value(pl->chosen_skill, "harvest_race");
-    ttool = get_ob_key_value(pl->chosen_skill, "harvest_tool");
-    tspeed = get_ob_key_value(pl->chosen_skill, "harvest_speed");
+    trace = object_get_value(pl->chosen_skill, "harvest_race");
+    ttool = object_get_value(pl->chosen_skill, "harvest_tool");
+    tspeed = object_get_value(pl->chosen_skill, "harvest_speed");
     if (!trace || strcmp(trace, "") == 0 || !ttool || strcmp(ttool, "") == 0 || !tspeed || strcmp(tspeed, "") == 0) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
         LOG(llevError, "do_harvest: tool %s without harvest_[race|tool|speed]\n", pl->chosen_skill->name);
@@ -2514,12 +2514,12 @@ int do_harvest(object *pl, int dir, object *skill) {
     item = GET_MAP_OB(map, x, y);
     while (item && count < 10) {
         for (inv = item->inv; inv; inv = inv->below) {
-            if (get_ob_key_value(inv, "harvestable") == NULL)
+            if (object_get_value(inv, "harvestable") == NULL)
                 continue;
-            race = get_ob_key_value(inv, "harvest_race");
-            tool = get_ob_key_value(inv, "harvest_tool");
-            slevel = get_ob_key_value(inv, "harvest_level");
-            sexp = get_ob_key_value(inv, "harvest_exp");
+            race = object_get_value(inv, "harvest_race");
+            tool = object_get_value(inv, "harvest_tool");
+            slevel = object_get_value(inv, "harvest_level");
+            sexp = object_get_value(inv, "harvest_exp");
             if (race && (!slevel || !sexp)) {
                 LOG(llevError, "do_harvest: item %s without harvest_[level|exp]\n", inv->name);
                 continue;
@@ -2537,8 +2537,8 @@ int do_harvest(object *pl, int dir, object *skill) {
     inv = found[rndm(0, count-1)];
     assert(inv);
 
-    slevel = get_ob_key_value(inv, "harvest_level");
-    sexp = get_ob_key_value(inv, "harvest_exp");
+    slevel = object_get_value(inv, "harvest_level");
+    sexp = object_get_value(inv, "harvest_exp");
     level = atoi(slevel);
     exp = atoi(sexp);
 
@@ -2568,23 +2568,23 @@ int do_harvest(object *pl, int dir, object *skill) {
     }
 
     /* Ok, got it. */
-    item = get_object();
-    copy_object_with_inv(inv, item);
-    set_ob_key_value(item, "harvestable", NULL, 0);
+    item = object_new();
+    object_copy_with_inv(inv, item);
+    object_set_value(item, "harvestable", NULL, 0);
     if (QUERY_FLAG(item, FLAG_MONSTER)) {
-        int spot = find_free_spot(item, pl->map, pl->x, pl->y, 0, SIZEOFFREE);
+        int spot = object_find_free_spot(item, pl->map, pl->x, pl->y, 0, SIZEOFFREE);
         if (spot == -1) {
             /* Better luck next time...*/
-            remove_ob(item);
+            object_remove(item);
             draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", NULL, skill->slaying);
             return 0;
         }
         item->x = pl->x+freearr_x[spot];
         item->y = pl->y+freearr_y[spot];
-        insert_ob_in_map(item, pl->map, NULL, 0);
+        object_insert_in_map(item, pl->map, NULL, 0);
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s a %s!", NULL, skill->slaying, item->name);
     } else {
-        item = insert_ob_in_ob(item, pl);
+        item = object_insert_in_ob(item, pl);
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s some %s", NULL, skill->slaying, item->name);
     }
 

@@ -1211,8 +1211,8 @@ static void change_book(object *book, int msgtype) {
         if (tmpbook->msg)
             free_string(tmpbook->msg);
         tmpbook->msg = add_string(book->msg);
-        copy_object(tmpbook, book);
-        free_object(tmpbook);
+        object_copy(tmpbook, book);
+        object_free(tmpbook);
 
         book->title = add_string(t->authour);
         free_string(book->name);
@@ -1563,14 +1563,14 @@ static char *artifact_msg(int level, char *retbuf, size_t booksize) {
             snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "%s", art->item->msg);
 
         /* properties of the artifact */
-        tmp = get_object();
+        tmp = object_new();
         add_abilities(tmp, art->item);
         tmp->type = type;
         SET_FLAG(tmp, FLAG_IDENTIFIED);
         describe_item(tmp, NULL, sbuf, sizeof(sbuf));
         if (strlen(sbuf) > 1)
             snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " Properties of this artifact include:\n %s\n", sbuf);
-        free_object(tmp);
+        object_free(tmp);
         /* add the buf if it will fit */
         if (book_overflow(retbuf, buf, booksize))
             break;

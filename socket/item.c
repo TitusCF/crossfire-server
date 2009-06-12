@@ -634,9 +634,9 @@ void lock_item_cmd(uint8 *data, int len, player *pl) {
     else
         SET_FLAG(op, FLAG_INV_LOCKED);
 
-    tmp = merge_ob(op, NULL);
+    tmp = object_merge(op, NULL);
     if (tmp == NULL) {
-        /* object was not merged - if it was, merge_ob sent updates for us. */
+        /* object was not merged - if it was, object_merge() sent updates for us. */
         esrv_update_item(UPD_FLAGS, pl->ob, op);
     }
 }
@@ -814,7 +814,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof) {
     }
     /* If not dropped or picked up, we are putting it into a sack */
     if (pl->contr->transport) {
-        if (can_pick(pl, op)
+        if (object_can_pick(pl, op)
         && transport_can_hold(pl->contr->transport, op, nrof)) {
             put_object_in_sack(pl, pl->contr->transport, op, nrof);
         }
@@ -830,7 +830,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof) {
          * an make sure env is in fact a container for that matter.
          */
         if (env->type == CONTAINER
-        && can_pick(pl, op)
+        && object_can_pick(pl, op)
         && sack_can_hold(pl, env, op, nrof)) {
             put_object_in_sack(pl, env, op, nrof);
         }

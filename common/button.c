@@ -88,12 +88,12 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
         case HOLE:
             tmp->value = tmp->stats.maxsp ? !state : state;
             tmp->speed = 0.5;
-            update_ob_speed(tmp);
+            object_update_speed(tmp);
             break;
 
         case CF_HANDLE:
             SET_ANIMATION(tmp, (tmp->value = tmp->stats.maxsp ? !state : state));
-            update_object(tmp, UP_OBJ_FACE);
+            object_update(tmp, UP_OBJ_FACE);
             break;
 
         case SIGN:
@@ -109,19 +109,19 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
         case ALTAR:
             tmp->value = 1;
             SET_ANIMATION(tmp, tmp->value);
-            update_object(tmp, UP_OBJ_FACE);
+            object_update(tmp, UP_OBJ_FACE);
             break;
 
         case BUTTON:
         case PEDESTAL:
             tmp->value = state;
             SET_ANIMATION(tmp, tmp->value);
-            update_object(tmp, UP_OBJ_FACE);
+            object_update(tmp, UP_OBJ_FACE);
             break;
 
         case TIMED_GATE:
             tmp->speed = tmp->arch->clone.speed;
-            update_ob_speed(tmp);  /* original values */
+            object_update_speed(tmp);  /* original values */
             tmp->value = tmp->arch->clone.value;
             tmp->stats.sp = 1;
             tmp->stats.hp = tmp->stats.maxhp;
@@ -133,7 +133,7 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
                 tmp->value = tmp->head->value;
                 tmp->stats.sp = tmp->head->stats.sp;
                 tmp->stats.hp = tmp->head->stats.hp;
-                update_ob_speed(tmp);
+                object_update_speed(tmp);
             }
             break;
 
@@ -230,7 +230,7 @@ void update_button(object *op) {
     /* If this button hasn't changed, don't do anything */
     if (op->value != old_value) {
         SET_ANIMATION(op, op->value);
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
         push_button(op); /* Make all other buttons the same */
     }
 }
@@ -285,7 +285,7 @@ void animate_turning(object *op) {
     if (++op->state >= NUM_ANIMATIONS(op)/8)
         op->state = 0;
     SET_ANIMATION(op, (op->stats.sp-1)*NUM_ANIMATIONS(op)/8+op->state);
-    update_object(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);
 }
 
 #define ARCH_SACRIFICE(xyz) ((xyz)->slaying)
@@ -427,21 +427,21 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
         if (money) {
             wanted = tmp->nrof*tmp->value;
             if (rest > wanted) {
-                remove_ob(tmp);
+                object_remove(tmp);
                 rest -= wanted;
             } else {
                 wanted = rest/tmp->value;
                 if (rest%tmp->value)
                     wanted++;
-                decrease_ob_nr(tmp, wanted);
+                object_decrease_nrof(tmp, wanted);
                 return 1;
             }
         } else
             if (rest > (tmp->nrof ? tmp->nrof : 1)) {
                 rest -= (tmp->nrof ? tmp->nrof : 1);
-                remove_ob(tmp);
+                object_remove(tmp);
             } else {
-                decrease_ob_nr(tmp, rest);
+                object_decrease_nrof(tmp, rest);
                 return 1;
             }
     }
@@ -482,7 +482,7 @@ int operate_altar(object *altar, object **sacrifice) {
         return 0;
 
     /* check_altar_sacrifice fills in number for us. */
-    *sacrifice = decrease_ob_nr(*sacrifice, number);
+    *sacrifice = object_decrease_nrof(*sacrifice, number);
 
     if (altar->msg)
         ext_info_map(NDI_BLACK, altar->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_ALTAR, altar->msg, altar->msg);
@@ -500,12 +500,12 @@ static void trigger_move(object *op, int state) { /* 1 down and 0 up */
             op->speed = 1.0/op->stats.exp;
         else
             op->speed = 1.0;
-        update_ob_speed(op);
+        object_update_speed(op);
         op->speed_left = -1;
     } else {
         use_trigger(op);
         op->speed = 0;
-        update_ob_speed(op);
+        object_update_speed(op);
     }
 }
 
@@ -549,7 +549,7 @@ int check_trigger(object *op, object *cause) {
                 op->stats.ac = push;
                 if (NUM_ANIMATIONS(op) > 1) {
                     SET_ANIMATION(op, push);
-                    update_object(op, UP_OBJ_FACE);
+                    object_update(op, UP_OBJ_FACE);
                 }
                 if (in_movement || !push)
                     return 0;
@@ -575,7 +575,7 @@ int check_trigger(object *op, object *cause) {
             op->stats.ac = push;
             if (NUM_ANIMATIONS(op) > 1) {
                 SET_ANIMATION(op, push);
-                update_object(op, UP_OBJ_FACE);
+                object_update(op, UP_OBJ_FACE);
             }
             if (in_movement || !push)
                 return 0;
@@ -590,7 +590,7 @@ int check_trigger(object *op, object *cause) {
             if (operate_altar(op, &cause)) {
                 if (NUM_ANIMATIONS(op) > 1) {
                     SET_ANIMATION(op, 1);
-                    update_object(op, UP_OBJ_FACE);
+                    object_update(op, UP_OBJ_FACE);
                 }
 
                 if (op->last_sp >= 0) {
@@ -613,7 +613,7 @@ int check_trigger(object *op, object *cause) {
         } else {
             if (NUM_ANIMATIONS(op) > 1) {
                 SET_ANIMATION(op, 0);
-                update_object(op, UP_OBJ_FACE);
+                object_update(op, UP_OBJ_FACE);
             }
 
             /* If trigger_altar has "last_sp > 0" set on the map,
@@ -627,7 +627,7 @@ int check_trigger(object *op, object *cause) {
                 op->stats.wc = 0;
                 op->value = !op->value;
                 op->speed = 0;
-                update_ob_speed(op);
+                object_update_speed(op);
             }
         }
         return 0;
@@ -640,7 +640,7 @@ int check_trigger(object *op, object *cause) {
         }
         if (NUM_ANIMATIONS(op) > 1) {
             SET_ANIMATION(op, push);
-            update_object(op, UP_OBJ_FACE);
+            object_update(op, UP_OBJ_FACE);
         }
         trigger_move(op, push);
         return 1;
@@ -834,7 +834,7 @@ void check_inv(object *op, object *trig) {
     match = check_inv_recursive(op, trig);
     if (match && trig->last_sp) {
         if (trig->last_heal)
-            decrease_ob(match);
+            object_decrease_nrof_by_one(match);
         use_trigger(trig);
     } else if (!match && !trig->last_sp)
         use_trigger(trig);

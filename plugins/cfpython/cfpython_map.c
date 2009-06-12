@@ -235,7 +235,7 @@ static PyObject *Map_Check(Crossfire_Map *map, PyObject *args) {
         Py_INCREF(Py_None);
         return Py_None;
     }
-    foundob = cf_map_present_arch_by_name(what, map->map, nx, ny);
+    foundob = cf_map_arch_present_in_map_by_name(what, map->map, nx, ny);
     return Crossfire_Object_wrap(foundob);
 }
 

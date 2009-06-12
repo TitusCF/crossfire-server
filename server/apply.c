@@ -131,15 +131,15 @@ int should_director_abort(object *op, object *victim) {
 void handle_apply_yield(object *tmp) {
     const char *yield;
 
-    yield = get_ob_key_value(tmp, "on_use_yield");
+    yield = object_get_value(tmp, "on_use_yield");
     if (yield != NULL) {
         object *drop = create_archetype(yield);
         if (tmp->env) {
-            drop = insert_ob_in_ob(drop, tmp->env);
+            drop = object_insert_in_ob(drop, tmp->env);
         } else {
             drop->x = tmp->x;
             drop->y = tmp->y;
-            insert_ob_in_map(drop, tmp->map, tmp, INS_BELOW_ORIGINATOR);
+            object_insert_in_map(drop, tmp->map, tmp, INS_BELOW_ORIGINATOR);
         }
     }
 }
@@ -157,7 +157,7 @@ void handle_apply_yield(object *tmp) {
  */
 int set_object_face_main(object *op) {
     int newface = op->arch->clone.face->number;
-    sstring saved = get_ob_key_value(op, "face_closed");
+    sstring saved = object_get_value(op, "face_closed");
 
     if (saved) {
         newface = find_face(saved, newface);
@@ -189,10 +189,10 @@ static int set_object_face_other(object *op) {
 
     if (op->face != op->arch->clone.face) {
         /* object has a custom face, save it so it gets correctly restored later. */
-        set_ob_key_value(op, "face_closed", op->face->name, 1);
+        object_set_value(op, "face_closed", op->face->name, 1);
     }
 
-    custom = get_ob_key_value(op, "face_opened");
+    custom = object_get_value(op, "face_opened");
     if (custom) {
         newface = find_face(custom, newface);
     }
@@ -320,9 +320,9 @@ int apply_container(object *op, object *sack) {
         }
 
         if (sack->nrof > 1) {
-            object *left = get_split_ob(sack, sack->nrof-1, NULL, 0);
+            object *left = object_split(sack, sack->nrof-1, NULL, 0);
 
-            insert_ob_in_map_at(left, sack->map, NULL, INS_NO_MERGE, sack->x, sack->y);
+            object_insert_in_map_at(left, sack->map, NULL, INS_NO_MERGE, sack->x, sack->y);
             /* recompute the name so it's nice */
             query_name(sack, name_sack, MAX_BUF);
         }
@@ -362,7 +362,7 @@ int apply_container(object *op, object *sack) {
             object *left = NULL;
 
             if (sack->nrof > 1) {
-                left = get_split_ob(sack, sack->nrof-1, NULL, 1);
+                left = object_split(sack, sack->nrof-1, NULL, 1);
             }
 
             CLEAR_FLAG(sack, FLAG_APPLIED);
@@ -374,7 +374,7 @@ int apply_container(object *op, object *sack) {
             esrv_update_item(UPD_FLAGS, op, sack);
 
             if (left) {
-                insert_ob_in_ob(left, sack->env);
+                object_insert_in_ob(left, sack->env);
                 esrv_send_item(op, left);
             }
         }
@@ -411,9 +411,9 @@ void do_learn_spell(object *op, object *spell, int special_prayer) {
     }
 
     play_sound_player_only(op->contr, SOUND_TYPE_SPELL, spell, 0, "learn");
-    tmp = get_object();
-    copy_object(spell, tmp);
-    insert_ob_in_ob(tmp, op);
+    tmp = object_new();
+    object_copy(spell, tmp);
+    object_insert_in_ob(tmp, op);
 
     if (special_prayer) {
         SET_FLAG(tmp, FLAG_STARTEQUIP);
@@ -453,8 +453,8 @@ void do_forget_spell(object *op, const char *spell) {
                          spell);
     player_unready_range_ob(op->contr, spob);
     esrv_remove_spell(op->contr, spob);
-    remove_ob(spob);
-    free_object(spob);
+    object_remove(spob);
+    object_free(spob);
 }
 
 /**
@@ -474,7 +474,7 @@ static int check_race_restrictions(object *who, object *item) {
     if (who->type != PLAYER || QUERY_FLAG(who, FLAG_WIZ))
         return 1;
 
-    restriction = get_ob_key_value(item, "race_restriction");
+    restriction = object_get_value(item, "race_restriction");
     if (!restriction)
         return 1;
 
@@ -575,8 +575,8 @@ int player_apply(object *pl, object *op, int aflag, int quiet) {
                       "The object disappears in a puff of smoke!", NULL);
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                       "It must have been an illusion.", NULL);
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return 1;
     }
 
@@ -778,7 +778,7 @@ static int unapply_special(object *who, object *op, int aflags) {
     if (!(aflags&AP_NO_MERGE)) {
         object *tmp;
 
-        tmp = merge_ob(op, NULL);
+        tmp = object_merge(op, NULL);
         if (who->type == PLAYER) {
             if (tmp) {  /* it was merged */
                 op = tmp;
@@ -1240,9 +1240,9 @@ int apply_special(object *who, object *op, int aflags) {
      * amount of the wielder.
      */
     if (settings.personalized_blessings) {
-        const char *owner = get_ob_key_value(op, "item_owner");
+        const char *owner = object_get_value(op, "item_owner");
         if ((owner != NULL) && (strcmp(owner, who->name))) {
-            const char *will = get_ob_key_value(op, "item_willpower");
+            const char *will = object_get_value(op, "item_willpower");
             long item_will = 0;
             long margin = 0;
             const char *msg = NULL;
@@ -1300,7 +1300,7 @@ int apply_special(object *who, object *op, int aflags) {
      */
 
     if (op->nrof > 1)
-        tmp = get_split_ob(op, op->nrof-1, NULL, 0);
+        tmp = object_split(op, op->nrof-1, NULL, 0);
     else
         tmp = NULL;
 
@@ -1317,7 +1317,7 @@ int apply_special(object *who, object *op, int aflags) {
                                   NULL);
 
                 if (tmp != NULL)
-                    (void)insert_ob_in_ob(tmp, who);
+                    (void)object_insert_in_ob(tmp, who);
                 return 1;
             }
             /* BUG? It seems the value of quotepos is never used. */
@@ -1331,7 +1331,7 @@ int apply_special(object *who, object *op, int aflags) {
                         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                       "The weapon does not recognize you as its owner.", NULL);
                     if (tmp != NULL)
-                        (void)insert_ob_in_ob(tmp, who);
+                        (void)object_insert_in_ob(tmp, who);
                     return 1;
                 }
             }
@@ -1416,7 +1416,7 @@ int apply_special(object *who, object *op, int aflags) {
                               "It would consume your soul!.", NULL);
             }
             if (tmp != NULL)
-                (void)insert_ob_in_ob(tmp, who);
+                (void)object_insert_in_ob(tmp, who);
             return 1;
         }
         if (op->level && (strncmp(op->name, who->name, strlen(who->name)))) {
@@ -1425,7 +1425,7 @@ int apply_special(object *who, object *op, int aflags) {
                               "The weapon does not recognize you as its owner.", NULL);
             }
             if (tmp != NULL)
-                (void)insert_ob_in_ob(tmp, who);
+                (void)object_insert_in_ob(tmp, who);
             return 1;
         }
         /*FALLTHROUGH*/
@@ -1483,7 +1483,7 @@ int apply_special(object *who, object *op, int aflags) {
     SET_FLAG(op, FLAG_APPLIED);
 
     if (tmp != NULL)
-        tmp = insert_ob_in_ob(tmp, who);
+        tmp = object_insert_in_ob(tmp, who);
 
     fix_object(who);
 
@@ -1533,14 +1533,14 @@ int auto_apply(object *op) {
             if (tmp == NULL)
                 return 0;
             if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                free_object(tmp);
+                object_free(tmp);
                 tmp = NULL;
             }
         } while (!tmp);
         tmp->x = op->x;
         tmp->y = op->y;
         SET_FLAG(tmp, FLAG_UNPAID);
-        insert_ob_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map(tmp, op->map, NULL, 0);
         CLEAR_FLAG(op, FLAG_AUTO_APPLY);
         identify(tmp);
         break;
@@ -1558,14 +1558,14 @@ int auto_apply(object *op) {
          */
         for (tmp = op->inv; tmp; tmp = tmp2) {
             tmp2 = tmp->below;
-            remove_ob(tmp);
+            object_remove(tmp);
             if (op->env)
-                insert_ob_in_ob(tmp, op->env);
+                object_insert_in_ob(tmp, op->env);
             else
-                free_object(tmp);
+                object_free(tmp);
         }
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         break;
     }
     return tmp ? 1 : 0;
@@ -1652,7 +1652,7 @@ void fix_auto_apply(mapstruct *m) {
 
                     if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
                         tmp->speed = 0;
-                        update_ob_speed(tmp);
+                        object_update_speed(tmp);
                     }
                 }
                 /* This function can be called everytime a map is loaded,
@@ -1716,7 +1716,7 @@ void scroll_failure(object *op, int failure, int power) {
         if (op->stats.sp < 0)
             /* For some reason the sp can become negative here. */
             op->stats.sp = 0;
-        free_object(tmp);
+        object_free(tmp);
         return;
     }
 
@@ -1749,7 +1749,7 @@ void scroll_failure(object *op, int failure, int power) {
             cast_magic_storm(op, tmp, power);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "You unlease uncontrolled mana!", NULL);
-            free_object(tmp);
+            object_free(tmp);
             return;
         }
     }

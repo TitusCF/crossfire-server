@@ -141,15 +141,15 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     if (number == 0)
         number = 1;
 
-    if ((key = get_ob_key_value(tmp, "price_adjustment")) != NULL) {
+    if ((key = object_get_value(tmp, "price_adjustment")) != NULL) {
         ratio = atof(key);
         return tmp->value*number*ratio;
     }
-    if ((flag == F_BUY) && ((key = get_ob_key_value(tmp, "price_adjustment_buy")) != NULL)) {
+    if ((flag == F_BUY) && ((key = object_get_value(tmp, "price_adjustment_buy")) != NULL)) {
         ratio = atof(key);
         return tmp->value*number*ratio;
     }
-    if ((flag == F_SELL) && ((key = get_ob_key_value(tmp, "price_adjustment_sell")) != NULL)) {
+    if ((flag == F_SELL) && ((key = object_get_value(tmp, "price_adjustment_sell")) != NULL)) {
         ratio = atof(key);
         return tmp->value*number*ratio;
     }
@@ -767,10 +767,10 @@ static void insert_objects(object *pl, object *container, object *objects[], int
 
     for (i = 0; i < objects_len; i++) {
         if (objects[i]->nrof > 0) {
-            insert_ob_in_ob(objects[i], container);
+            object_insert_in_ob(objects[i], container);
             one = 1;
         } else {
-            free_object(objects[i]);
+            object_free(objects[i]);
         }
     }
     if (one)
@@ -822,11 +822,11 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                      */
                     if (coin_objs[i] != NULL) {
                         LOG(llevError, "%s has two money entries of (%s)\n", pouch->name, coins[NUM_COINS-1-i]);
-                        remove_ob(tmp);
+                        object_remove(tmp);
                         coin_objs[i]->nrof += tmp->nrof;
-                        free_object(tmp);
+                        object_free(tmp);
                     } else {
-                        remove_ob(tmp);
+                        object_remove(tmp);
                         coin_objs[i] = tmp;
                     }
                     break;
@@ -836,7 +836,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                 if (other_money_len >= sizeof(other_money)/sizeof(*other_money)) {
                     LOG(llevError, "pay_for_item: Cannot store non-standard money object %s\n", tmp->arch->name);
                 } else {
-                    remove_ob(tmp);
+                    object_remove(tmp);
                     other_money[other_money_len++] = tmp;
                 }
             }
@@ -850,8 +850,8 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
             at = find_archetype(coins[NUM_COINS-1-i]);
             if (at == NULL)
                 LOG(llevError, "Could not find %s archetype\n", coins[NUM_COINS-1-i]);
-            coin_objs[i] = get_object();
-            copy_object(&at->clone, coin_objs[i]);
+            coin_objs[i] = object_new();
+            object_copy(&at->clone, coin_objs[i]);
             coin_objs[i]->nrof = 0;
         }
 
@@ -1033,9 +1033,9 @@ int get_payment(object *pl, object *op) {
                                  "You paid %s for %s.",
                                  value, name_op);
             free(value);
-            tmp = merge_ob(op, NULL);
+            tmp = object_merge(op, NULL);
             if (pl->type == PLAYER && !tmp) {
-                /* If item wasn't merged we update it. If merged, merge_ob handled everything for us. */
+                /* If item wasn't merged we update it. If merged, object_merge() handled everything for us. */
                 esrv_update_item(UPD_FLAGS|UPD_NAME, pl, op);
             }
         }
@@ -1121,21 +1121,21 @@ void sell_item(object *op, object *pl) {
                         && (pouch->weight_limit-pouch->carrying)/w < n)
                             n = (pouch->weight_limit-pouch->carrying)/w;
 
-                        tmp = get_object();
-                        copy_object(&at->clone, tmp);
+                        tmp = object_new();
+                        object_copy(&at->clone, tmp);
                         tmp->nrof = n;
                         i -= (uint64)tmp->nrof*(uint64)tmp->value;
-                        tmp = insert_ob_in_ob(tmp, pouch);
+                        tmp = object_insert_in_ob(tmp, pouch);
                         esrv_update_item(UPD_WEIGHT, pl, pl);
                     }
                 }
             }
             if (i/at->clone.value > 0) {
-                tmp = get_object();
-                copy_object(&at->clone, tmp);
+                tmp = object_new();
+                object_copy(&at->clone, tmp);
                 tmp->nrof = i/tmp->value;
                 i -= (uint64)tmp->nrof*(uint64)tmp->value;
-                tmp = insert_ob_in_ob(tmp, pl);
+                tmp = object_insert_in_ob(tmp, pl);
                 esrv_update_item(UPD_WEIGHT, pl, pl);
             }
         }

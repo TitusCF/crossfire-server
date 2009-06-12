@@ -53,9 +53,9 @@ void remove_door(object *op) {
     object *tmp;
 
     for (i = 1; i < 9; i += 2)
-        if ((tmp = present(DOOR, op->map, op->x+freearr_x[i], op->y+freearr_y[i])) != NULL) {
+        if ((tmp = object_present_in_map(DOOR, op->map, op->x+freearr_x[i], op->y+freearr_y[i])) != NULL) {
             tmp->speed = 0.1;
-            update_ob_speed(tmp);
+            object_update_speed(tmp);
             tmp->speed_left = -0.2;
         }
 
@@ -65,10 +65,10 @@ void remove_door(object *op) {
         tmp->y = op->y;
         tmp->map = op->map;
         tmp->level = op->level;
-        insert_ob_in_map(tmp, op->map, op, 0);
+        object_insert_in_map(tmp, op->map, op, 0);
     }
-    remove_ob(op);
-    free_object(op);
+    object_remove(op);
+    object_free(op);
 }
 
 /**
@@ -82,10 +82,10 @@ void remove_locked_door(object *op) {
     object *tmp;
 
     for (i = 1; i < 9; i += 2) {
-        tmp = present(LOCKED_DOOR, op->map, op->x+freearr_x[i], op->y+freearr_y[i]);
+        tmp = object_present_in_map(LOCKED_DOOR, op->map, op->x+freearr_x[i], op->y+freearr_y[i]);
         if (tmp && tmp->slaying == op->slaying) {/* same key both doors */
             tmp->speed = 0.1;
-            update_ob_speed(tmp);
+            object_update_speed(tmp);
             tmp->speed_left = -0.2;
         }
     }
@@ -95,10 +95,10 @@ void remove_locked_door(object *op) {
         tmp->y = op->y;
         tmp->map = op->map;
         tmp->level = op->level;
-        insert_ob_in_map(tmp, op->map, op, 0);
+        object_insert_in_map(tmp, op->map, op, 0);
     }
-    remove_ob(op);
-    free_object(op);
+    object_remove(op);
+    object_free(op);
 }
 
 /**
@@ -139,22 +139,22 @@ static int generate_monster_inv(object *gen) {
     qty = rndm(0, qty-1);
     for (op = gen->inv; qty; qty--)
         op = op->below;
-    i = find_multi_free_spot_within_radius(op, gen, &nx, &ny);
+    i = object_find_multi_free_spot_within_radius(op, gen, &nx, &ny);
     if (i == -1)
         return FALSE;
     head = object_create_clone(op);
     CLEAR_FLAG(head, FLAG_IS_A_TEMPLATE);
-    unflag_inv(head, FLAG_IS_A_TEMPLATE);
+    object_unset_flag_inv(head, FLAG_IS_A_TEMPLATE);
     if (rndm(0, 9))
         generate_artifact(head, gen->map->difficulty);
-    code = get_ob_key_value(gen, "generator_code");
+    code = object_get_value(gen, "generator_code");
     if (code) {
-        set_ob_key_value(head, "generator_code", code, 1);
+        object_set_value(head, "generator_code", code, 1);
     }
-    insert_ob_in_map_at(head, gen->map, gen, 0, nx, ny);
+    object_insert_in_map_at(head, gen->map, gen, 0, nx, ny);
     if (QUERY_FLAG(head, FLAG_FREED))
             return TRUE;
-    fix_multipart_object(head);
+    object_fix_multipart(head);
     if (HAS_RANDOM_ITEMS(head))
         create_treasure(head->randomitems, head, GT_APPLY, gen->map->difficulty, 0);
     return TRUE;
@@ -189,7 +189,7 @@ static int generate_monster_arch(object *gen) {
         LOG(llevError, "Generator (%s) not on a map?\n", gen->name);
         return FALSE;
     }
-    i = find_multi_free_spot_within_radius(&at->clone, gen, &nx, &ny);
+    i = object_find_multi_free_spot_within_radius(&at->clone, gen, &nx, &ny);
     if (i == -1)
         return FALSE;
     while (at != NULL) {
@@ -204,11 +204,11 @@ static int generate_monster_arch(object *gen) {
         if (rndm(0, 9))
             generate_artifact(op, gen->map->difficulty);
 
-        code = get_ob_key_value(gen, "generator_code");
+        code = object_get_value(gen, "generator_code");
         if (code)
-            set_ob_key_value(head, "generator_code", code, 1);
+            object_set_value(head, "generator_code", code, 1);
 
-        insert_ob_in_map(op, gen->map, gen, 0);
+        object_insert_in_map(op, gen->map, gen, 0);
         /* Did generate a monster, just didn't live very long */
         if (QUERY_FLAG(op, FLAG_FREED))
             return TRUE;
@@ -238,12 +238,12 @@ static void generate_monster(object *gen) {
     if (GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
         return;
 
-    value = get_ob_key_value(gen, "generator_max_map");
+    value = object_get_value(gen, "generator_max_map");
     if (value) {
         max_children = (sint8)strtol(value, NULL, 10);
         if (max_children < 1)
             return;
-        code = get_ob_key_value(gen, "generator_code");
+        code = object_get_value(gen, "generator_code");
         if (code) {
             /* Generator has a limit and has created some,
              * so count how many already exist
@@ -252,7 +252,7 @@ static void generate_monster(object *gen) {
             for (x = 0; x < MAP_WIDTH(gen->map); x++) {
                 for (y = 0; y < MAP_HEIGHT(gen->map); y++) {
                     for (tmp = GET_MAP_OB(gen->map, x, y); tmp != NULL; tmp = tmp->above) {
-                        value = get_ob_key_value(tmp, "generator_code");
+                        value = object_get_value(tmp, "generator_code");
                         if (value && value == code) {
                             children++;
                         }
@@ -266,13 +266,13 @@ static void generate_monster(object *gen) {
             /* Generator has a limit, but hasn't created anything yet,
              * so no need to count, just set code and go
              */
-            value = get_ob_key_value(gen, "generator_name");
+            value = object_get_value(gen, "generator_name");
             if (value) {
-                set_ob_key_value(gen, "generator_code", value, 1);
+                object_set_value(gen, "generator_code", value, 1);
             } else if (gen->name) {
-                set_ob_key_value(gen, "generator_code", gen->name, 1);
+                object_set_value(gen, "generator_code", gen->name, 1);
             } else {
-                set_ob_key_value(gen, "generator_code", "generator", 1);
+                object_set_value(gen, "generator_code", "generator", 1);
             }
         }
     } /* If this has a max map generator limit */
@@ -283,7 +283,7 @@ static void generate_monster(object *gen) {
         did_gen = generate_monster_arch(gen);
 
     /* See if generator has a generator_limit limit set */
-    value = get_ob_key_value(gen, "generator_limit");
+    value = object_get_value(gen, "generator_limit");
 
     /* Only do this if we actually made a monster.  If the generator
      * was unable to create a monster (no space for example),
@@ -292,18 +292,18 @@ static void generate_monster(object *gen) {
     if (value && did_gen) {
         int limit = atoi(value), num_generated = 0;
 
-        value = get_ob_key_value(gen, "generator_generated");
+        value = object_get_value(gen, "generator_generated");
         if (value)
             num_generated = atoi(value);
 
         if (num_generated++ >= limit) {
-            remove_ob(gen);
-            free_object(gen);
+            object_remove(gen);
+            object_free(gen);
         } else {
             char buf[50];
 
             snprintf(buf, sizeof(buf), "%d", num_generated);
-            set_ob_key_value(gen, "generator_generated", buf, 1);
+            object_set_value(gen, "generator_generated", buf, 1);
         }
     }
 }
@@ -335,12 +335,12 @@ static void remove_force(object *op) {
         /* The force is into the item that was created */
         if (op->env != NULL && op->inv != NULL) {
             object *inv = op->inv;
-            object *pl = get_player_container(op);
+            object *pl = object_get_player_container(op);
 
-            remove_ob(inv);
+            object_remove(inv);
             inv->weight = (inv->nrof ? (sint32)(op->env->weight/inv->nrof) : op->env->weight);
             if (op->env->env) {
-                insert_ob_in_ob(inv, op->env->env);
+                object_insert_in_ob(inv, op->env->env);
                 if (pl) {
                     char name[HUGE_BUF];
 
@@ -354,12 +354,12 @@ static void remove_force(object *op) {
                 /* Object on map */
                 inv->x = op->env->x;
                 inv->y = op->env->y;
-                insert_ob_in_map(inv, op->env->map, NULL, 0);
+                object_insert_in_map(inv, op->env->map, NULL, 0);
             }
             inv = op->env;
-            remove_ob(op);
-            free_object(op);
-            remove_ob(inv);
+            object_remove(op);
+            object_free(op);
+            object_remove(inv);
         }
         return;
 
@@ -372,8 +372,8 @@ static void remove_force(object *op) {
         change_abil(op->env, op);
         fix_object(op->env);
     }
-    remove_ob(op);
-    free_object(op);
+    object_remove(op);
+    object_free(op);
 }
 
 /**
@@ -388,7 +388,7 @@ static void animate_trigger(object *op) {
         check_trigger(op, NULL);
     } else {
         SET_ANIMATION(op, op->stats.wc);
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
     }
 }
 
@@ -405,7 +405,7 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
         if (--op->stats.wc <= 0) { /* Opened, let's stop */
             op->stats.wc = 0;
             op->speed = 0;
-            update_ob_speed(op);
+            object_update_speed(op);
 
             /* Hard coding this makes sense for holes I suppose */
             op->move_on = MOVE_WALK;
@@ -417,7 +417,7 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
 
         op->state = op->stats.wc;
         animate_object(op, 0);
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
         return;
     }
     /* We're closing */
@@ -429,10 +429,10 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
 
     op->state = op->stats.wc;
     animate_object(op, 0);
-    update_object(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);
     if ((unsigned char)op->stats.wc == (NUM_ANIMATIONS(op)-1)) {
         op->speed = 0;
-        update_ob_speed(op); /* closed, let's stop */
+        object_update_speed(op); /* closed, let's stop */
         return;
     }
 }
@@ -470,9 +470,9 @@ object *stop_item(object *op) {
 
             if (payload == NULL)
                 return NULL;
-            remove_ob(payload);
-            remove_ob(op);
-            free_object(op);
+            object_remove(payload);
+            object_remove(op);
+            object_free(op);
             return payload;
         }
 
@@ -501,9 +501,9 @@ void fix_stopped_item(object *op, mapstruct *map, object *originator) {
     if (map == NULL)
         return;
     if (QUERY_FLAG(op, FLAG_REMOVED))
-        insert_ob_in_map(op, map, originator, 0);
+        object_insert_in_map(op, map, originator, 0);
     else if (op->type == ARROW)
-        merge_ob(op, NULL);    /* only some arrows actually need this */
+        object_merge(op, NULL);    /* only some arrows actually need this */
 }
 
 /**
@@ -520,8 +520,8 @@ object *fix_stopped_arrow(object *op) {
 
     if (rndm(0, 99) < op->stats.food) {
         /* Small chance of breaking */
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return NULL;
     }
 
@@ -529,7 +529,7 @@ object *fix_stopped_arrow(object *op) {
     op->move_on = 0;
     op->move_type = 0;
     op->speed = 0;
-    update_ob_speed(op);
+    object_update_speed(op);
     op->stats.wc = op->stats.sp;
     op->stats.dam = op->stats.hp;
     op->attacktype = op->stats.grace;
@@ -546,7 +546,7 @@ object *fix_stopped_arrow(object *op) {
     } else
         op->slaying = NULL;
 
-    /* Reset these to zero, so that can_merge will work properly */
+    /* Reset these to zero, so that object_can_merge will work properly */
     op->spellarg = NULL;
     op->stats.sp = 0;
     op->stats.hp = 0;
@@ -554,7 +554,7 @@ object *fix_stopped_arrow(object *op) {
     op->level = 0;
     op->face = op->arch->clone.face;
     op->owner = NULL; /* So that stopped arrows will be saved */
-    update_object(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);
     return op;
 }
 
@@ -573,10 +573,10 @@ int free_no_drop(object *op) {
     }
 
     if (!QUERY_FLAG(op, FLAG_REMOVED)) {
-        remove_ob(op);
+        object_remove(op);
     }
 
-    free_object2(op, 1);
+    object_free2(op, 1);
     return 1;
 }
 
@@ -607,7 +607,7 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
             op->stats.food = 1; /* so 1 other_arch is made */
     }
     env = op->env;
-    remove_ob(op);
+    object_remove(op);
     for (i = 0; i < NROFNEWOBJS(op); i++) {
         tmp = arch_to_object(op->other_arch);
         if (op->type == LAMP)
@@ -616,19 +616,19 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
         if (env) {
             tmp->x = env->x,
             tmp->y = env->y;
-            tmp = insert_ob_in_ob(tmp, env);
+            tmp = object_insert_in_ob(tmp, env);
         } else {
-            j = find_first_free_spot(tmp, op->map, op->x, op->y);
+            j = object_find_first_free_spot(tmp, op->map, op->x, op->y);
             if (j == -1)  /* No free spot */
-                free_object(tmp);
+                object_free(tmp);
             else {
                 tmp->x = op->x+freearr_x[j],
                 tmp->y = op->y+freearr_y[j];
-                insert_ob_in_map(tmp, op->map, op, 0);
+                object_insert_in_map(tmp, op->map, op, 0);
             }
         }
     }
-    free_object(op);
+    object_free(op);
 }
 
 /**
@@ -689,8 +689,8 @@ void move_player_mover(object *op) {
                 victim = victim->head;
 
             if (QUERY_FLAG(op, FLAG_LIFESAVE)&&op->stats.hp-- < 0) {
-                remove_ob(op);
-                free_object(op);
+                object_remove(op);
+                object_free(op);
                 return;
             }
             nx = op->x+freearr_x[dir];
@@ -789,10 +789,10 @@ int process_object(object *op) {
         if (QUERY_FLAG(op, FLAG_APPLIED))
             remove_force(op);
         else {
-            remove_ob(op);
+            object_remove(op);
             if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
                 make_sure_not_seen(op);
-            free_object(op);
+            object_free(op);
         }
         return 1;
     }

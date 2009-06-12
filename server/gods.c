@@ -216,7 +216,7 @@ static void follower_remove_given_items(object *pl, object *op, const object *go
     for (tmp = op->inv; tmp != NULL; tmp = next) {
         next = tmp->below;   /* backup in case we remove tmp */
 
-        given_by = get_ob_key_value(tmp, "divine_giver_name");
+        given_by = object_get_value(tmp, "divine_giver_name");
         if (given_by == god->name) {
             char name[HUGE_BUF];
 
@@ -233,8 +233,8 @@ static void follower_remove_given_items(object *pl, object *op, const object *go
                                      "The %s crumbles to dust!",
                                      name);
 
-            remove_ob(tmp);    /* remove obj from players inv. */
-            free_object(tmp);
+            object_remove(tmp);    /* remove obj from players inv. */
+            object_free(tmp);
         } else if (tmp->inv)
             follower_remove_given_items(pl, tmp, god);
     }
@@ -293,8 +293,8 @@ static int god_gives_present(object *op, const object *god, treasure *tr) {
     /**
      * Mark what god gave it, so it can be taken vengefully later!
      */
-    set_ob_key_value(tmp, "divine_giver_name", god->name, TRUE);
-    insert_ob_in_ob(tmp, op);
+    object_set_value(tmp, "divine_giver_name", god->name, TRUE);
+    object_insert_in_ob(tmp, op);
     return 1;
 }
 
@@ -467,8 +467,8 @@ static void check_special_prayers(object *op, const object *god) {
                                  "You lose knowledge of %s.",
                                  tmp->name);
             player_unready_range_ob(op->contr, tmp);
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
         }
 
     }
@@ -512,8 +512,8 @@ void become_follower(object *op, const object *new_god) {
                                      "You lose knowledge of %s.",
                                      item->name);
             player_unready_range_ob(op->contr, item);
-            remove_ob(item);
-            free_object(item);
+            object_remove(item);
+            object_free(item);
         }
     }
 
@@ -641,7 +641,7 @@ void become_follower(object *op, const object *new_god) {
      * This also can happen for monks which cannot use weapons. In this case
      * do not allow to use weapons even if the god otherwise would allow it.
      */
-    if (!present_in_ob_by_name(FORCE, "no weapon force", op)) {
+    if (!object_present_in_ob_by_name(FORCE, "no weapon force", op)) {
         if (worship_forbids_use(op, skop, FLAG_USE_WEAPON, "weapons"))
             stop_using_item(op, WEAPON, 2);
     }
@@ -943,8 +943,8 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
      * weapon - nasty things may happen to those who do not deserve to use it ! :)
      */
     if (settings.personalized_blessings) {
-        const char *divine_owner = get_ob_key_value(weapon, "divine_blessing_name");
-        const char *owner = get_ob_key_value(weapon, "item_owner");
+        const char *divine_owner = object_get_value(weapon, "divine_blessing_name");
+        const char *owner = object_get_value(weapon, "item_owner");
         object *skillop = NULL;
 
         if (divine_owner != NULL) {
@@ -978,9 +978,9 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
             snprintf(buf, sizeof(buf), "%d", 1);
         } else
             snprintf(buf, sizeof(buf), "%"FMT64, skillop->stats.exp);
-        set_ob_key_value(weapon, "divine_blessing_name", god->name, TRUE);
-        set_ob_key_value(weapon, "item_owner", op->name, TRUE);
-        set_ob_key_value(weapon, "item_willpower", buf, TRUE);
+        object_set_value(weapon, "divine_blessing_name", god->name, TRUE);
+        object_set_value(weapon, "item_owner", op->name, TRUE);
+        object_set_value(weapon, "item_willpower", buf, TRUE);
     }
 
     /* First give it a title, so other gods won't touch it */
@@ -1086,7 +1086,7 @@ static void god_intervention(object *op, const object *god, object *skill) {
 
                 tmp = create_archetype(HOLY_POSSESSION);
                 cast_change_ability(op, op, tmp, 0, 1);
-                free_object(tmp);
+                object_free(tmp);
                 return;
             }
             continue;
@@ -1137,7 +1137,7 @@ static void god_intervention(object *op, const object *god, object *skill) {
             tmp = create_archetype_by_object_name(item->slaying);
 
             success = cast_heal(op, op, tmp, 0);
-            free_object(tmp);
+            object_free(tmp);
             if (success)
                 return;
             else
@@ -1173,7 +1173,7 @@ static void god_intervention(object *op, const object *god, object *skill) {
                 LOG(llevError, "Could not find archetype depletion.\n");
                 continue;
             }
-            depl = present_arch_in_ob(at, op);
+            depl = arch_present_in_ob(at, op);
             if (depl == NULL)
                 continue;
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
@@ -1183,8 +1183,8 @@ static void god_intervention(object *op, const object *god, object *skill) {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE,
                                   MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                                   restore_msg[i], restore_msg[i]);
-            remove_ob(depl);
-            free_object(depl);
+            object_remove(depl);
+            object_free(depl);
             fix_object(op);
             return;
         }
@@ -1389,8 +1389,8 @@ int tailor_god_spell(object *spellop, object *caster) {
      * if this object is owned by someone, then the god that they worship
      * is relevant, so use that.
      */
-    if (!god && get_owner(caster))
-        god = find_god(determine_god(get_owner(caster)));
+    if (!god && object_get_owner(caster))
+        god = find_god(determine_god(object_get_owner(caster)));
 
     if (!god || (spellop->attacktype&AT_HOLYWORD && !god->race)) {
         if (!caster_is_spell)
@@ -1398,7 +1398,7 @@ int tailor_god_spell(object *spellop, object *caster) {
                           "This prayer is useless unless you worship an appropriate god", NULL);
         else
             LOG(llevError, "BUG: tailor_god_spell(): no god\n");
-        free_object(spellop);
+        object_free(spellop);
         return 0;
     }
 

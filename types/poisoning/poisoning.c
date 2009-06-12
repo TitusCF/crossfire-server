@@ -49,8 +49,8 @@ static method_ret poisoning_type_process(ob_methods *context, object *op) {
     if (op->env == NULL
     || !QUERY_FLAG(op->env, FLAG_ALIVE)
     || op->env->stats.hp < 0) {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         LOG(llevDebug, "Found POISONING with invalid env. Removing...\n");
         return METHOD_ERROR;
     }
@@ -65,8 +65,8 @@ static method_ret poisoning_type_process(ob_methods *context, object *op) {
             draw_ext_info(NDI_UNIQUE, 0, op->env, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                 "You feel much better now.", NULL);
         }
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return METHOD_OK;
     }
 

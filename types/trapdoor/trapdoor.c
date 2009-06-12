@@ -63,7 +63,7 @@ static method_ret trapdoor_type_move_on(ob_methods *context, object *trap, objec
             return METHOD_OK;
         }
         SET_ANIMATION(trap, trap->value);
-        update_object(trap, UP_OBJ_FACE);
+        object_update(trap, UP_OBJ_FACE);
     }
 
     for (ab = trap->above, max = 100, sound_was_played = 0; --max && ab; ab = ab_next) {

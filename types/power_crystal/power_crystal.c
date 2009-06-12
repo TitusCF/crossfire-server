@@ -66,7 +66,7 @@ static method_ret power_crystal_type_apply(ob_methods *context, object *op, obje
     applier->stats.sp -= power_grab;
     op->stats.sp += power_grab;
     op->speed = (float)op->stats.sp/(float)op->stats.maxsp;
-    update_ob_speed(op);
+    object_update_speed(op);
     if (applier->type == PLAYER)
         esrv_update_item(UPD_ANIMSPEED, applier, op);
     return METHOD_OK;

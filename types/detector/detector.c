@@ -66,7 +66,7 @@ static void move_detector(object *op) {
         else
             LOG(llevError, "Detector with no slaying nowhere?\n");
         op->speed = 0;
-        update_ob_speed(op);
+        object_update_speed(op);
         return;
     }
 

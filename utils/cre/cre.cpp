@@ -139,14 +139,14 @@ int auto_apply (object *op) {
                 if(tmp==NULL)
                     return 0;
                 if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                    free_object(tmp);
+                    object_free(tmp);
                     tmp = NULL;
                 }
             } while(!tmp);
             tmp->x=op->x;
             tmp->y=op->y;
             SET_FLAG(tmp,FLAG_UNPAID);
-            insert_ob_in_map(tmp,op->map,NULL,0);
+            object_insert_in_map(tmp,op->map,NULL,0);
             CLEAR_FLAG(op,FLAG_AUTO_APPLY);
             identify(tmp);
             break;
@@ -166,12 +166,12 @@ int auto_apply (object *op) {
         */
             for (tmp=op->inv; tmp; tmp=tmp2) {
                 tmp2 = tmp->below;
-                remove_ob(tmp);
-                if (op->env) insert_ob_in_ob(tmp, op->env);
-                else free_object(tmp);
+                object_remove(tmp);
+                if (op->env) object_insert_in_ob(tmp, op->env);
+                else object_free(tmp);
             }
-            remove_ob(op);
-            free_object(op);
+            object_remove(op);
+            object_free(op);
             break;
     }
     return tmp ? 1 : 0;

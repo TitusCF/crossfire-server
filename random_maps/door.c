@@ -108,10 +108,10 @@ void put_doors(mapstruct *the_map, char **maze, const char *doorstyle, RMParms *
                 else
                     this_door = pick_random_object(vdoors);
                 new_door = arch_to_object(this_door->arch);
-                copy_object(this_door, new_door);
+                object_copy(this_door, new_door);
                 new_door->x = i;
                 new_door->y = j;
-                insert_ob_in_map(new_door, the_map, NULL, 0);
+                object_insert_in_map(new_door, the_map, NULL, 0);
             }
         }
 }

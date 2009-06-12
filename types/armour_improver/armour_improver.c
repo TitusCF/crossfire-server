@@ -96,7 +96,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
     /* Split objects if needed.  Can't insert tmp until the
      * end of this function - otherwise it will just re-merge. */
     if (armour->nrof > 1)
-        tmp = get_split_ob(armour, armour->nrof-1, NULL, 0);
+        tmp = object_split(armour, armour->nrof-1, NULL, 0);
     else
         tmp = NULL;
 
@@ -141,9 +141,9 @@ static void improve_armour(object *op, object *improver, object *armour) {
         if (QUERY_FLAG(armour, FLAG_APPLIED))
             fix_object(op);
     }
-    decrease_ob(improver);
+    object_decrease_nrof_by_one(improver);
     if (tmp) {
-        insert_ob_in_ob(tmp, op);
+        object_insert_in_ob(tmp, op);
     }
     return;
 }

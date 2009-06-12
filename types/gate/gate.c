@@ -57,7 +57,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
 
         LOG(llevError, "Gate error: animation was %d, max=%d\n", op->stats.wc, NUM_ANIMATIONS(op));
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "%s\n", diff);
         free(diff);
@@ -72,7 +72,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
                 op->value = 0;
             else {
                 op->speed = 0;
-                update_ob_speed(op);
+                object_update_speed(op);
             }
         }
         if ((int)op->stats.wc < (NUM_ANIMATIONS(op)/2+1)) {
@@ -81,7 +81,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
             update_all_los(op->map, op->x, op->y);
         }
         SET_ANIMATION(op, op->stats.wc);
-        update_object(op, UP_OBJ_CHANGE);
+        object_update(op, UP_OBJ_CHANGE);
         return METHOD_OK;
     }
 
@@ -106,7 +106,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
                 op->value = 1;
             else {
                 op->speed = 0;
-                update_ob_speed(op); /* Reached top, let's stop */
+                object_update_speed(op); /* Reached top, let's stop */
             }
             return METHOD_OK;
         }
@@ -148,14 +148,14 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
                     if (!QUERY_FLAG(tmp, FLAG_ALIVE)
                     && (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))) {
                     /* If it has speed, it should move itself, otherwise: */
-                        int i = find_free_spot(tmp, op->map, op->x, op->y, 1, 9);
+                        int i = object_find_free_spot(tmp, op->map, op->x, op->y, 1, 9);
 
                         /* If there is a free spot, move the object someplace */
                         if (i != -1) {
-                            remove_ob(tmp);
+                            object_remove(tmp);
                             tmp->x += freearr_x[i],
                             tmp->y += freearr_y[i];
-                            insert_ob_in_map(tmp, op->map, op, 0);
+                            object_insert_in_map(tmp, op->map, op, 0);
                         }
                     }
             }
@@ -179,7 +179,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
         } /* gate is halfway up */
 
         SET_ANIMATION(op, op->stats.wc);
-        update_object(op, UP_OBJ_CHANGE);
+        object_update(op, UP_OBJ_CHANGE);
     } /* gate is going up */
 
     return METHOD_OK;
@@ -208,7 +208,7 @@ static method_ret timed_gate_type_process(ob_methods *context, object *op) {
         gate_type_process(context, op);
         if (op->value != v) {  /* ready ? */
             op->speed = 0;
-            update_ob_speed(op);
+            object_update_speed(op);
         }
     }
     return METHOD_OK;

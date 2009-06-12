@@ -107,7 +107,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
             if (settings.spell_failure_effects == TRUE)
                 failure = -rndm(35, 100);
             scroll_failure(applier, failure, MAX(20, (scroll->level-skapplier->level)*5));
-            decrease_ob(scroll);
+            object_decrease_nrof_by_one(scroll);
             return METHOD_OK;
         }
 
@@ -130,7 +130,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
             "The scroll of %s turns to dust.",
             name);
 
-        decrease_ob(scroll);
+        object_decrease_nrof_by_one(scroll);
     }
     return METHOD_OK;
 }

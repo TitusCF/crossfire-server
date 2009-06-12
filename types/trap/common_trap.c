@@ -77,6 +77,6 @@ method_ret common_trap_type_process(ob_methods *context, object *op) {
     } else
         op->invisible = 1;
     if (op->invisible != det)
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
     return METHOD_OK;
 }

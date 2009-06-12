@@ -55,10 +55,10 @@ START_TEST(test_hit_player) {
     map = get_empty_map(5, 5);
     floor = create_archetype("battleground");
     fail_unless(floor != NULL, "can't find archetype battleground");
-    insert_ob_in_map_at(floor, map, NULL, 0, 0, 0);
+    object_insert_in_map_at(floor, map, NULL, 0, 0, 0);
     floor = create_archetype("battleground");
     fail_unless(floor != NULL, "can't find archetype battleground");
-    insert_ob_in_map_at(floor, map, NULL, 0, 1, 0);
+    object_insert_in_map_at(floor, map, NULL, 0, 1, 0);
 
     deplete = find_archetype(ARCH_DEPLETION);
     fail_unless(deplete != NULL, "can't find archetype %s", ARCH_DEPLETION);
@@ -70,29 +70,29 @@ START_TEST(test_hit_player) {
     victim->stats.maxhp = 5000;
     victim->resist[ATNR_DEPLETE] = 100;
     victim->resist[ATNR_FIRE] = 100;
-    insert_ob_in_map_at(victim, map, NULL, 0, 0, 0);
+    object_insert_in_map_at(victim, map, NULL, 0, 0, 0);
     hitter = create_archetype("sword");
     fail_unless(hitter != NULL, "couldn't create sword");
     hitter->attacktype = AT_DEPLETE|AT_FIRE;
     hitter->stats.dam = 100;
     hitter->map = map;
-    insert_ob_in_map_at(hitter, map, NULL, 0, 1, 0);
+    object_insert_in_map_at(hitter, map, NULL, 0, 1, 0);
 
-    fail_unless(present_arch_in_ob(deplete, victim) == NULL, "victim shouldn't be depleted before being attacked");
+    fail_unless(arch_present_in_ob(deplete, victim) == NULL, "victim shouldn't be depleted before being attacked");
 
     for (test = 0; test < 100; test++) {
         hit_player(victim, hitter->stats.dam, hitter, hitter->attacktype, 0);
         fail_unless(victim->stats.hp == victim->stats.maxhp, "victim should have %d hp and not %d.", victim->stats.maxhp, victim->stats.hp);
     }
     fail_unless(victim->inv == NULL, "kobold shouldn't have an inventory after attacked");
-    fail_unless(present_arch_in_ob(deplete, victim) == NULL, "victim shouldn't be depleted when slaying not set");
+    fail_unless(arch_present_in_ob(deplete, victim) == NULL, "victim shouldn't be depleted when slaying not set");
 
     hitter->slaying = add_string(victim->race);
     victim->resist[ATNR_FIRE] = 95;
-    for (test = 0; test < 100 && present_arch_in_ob(deplete, victim) == NULL; test++) {
+    for (test = 0; test < 100 && arch_present_in_ob(deplete, victim) == NULL; test++) {
         hit_player(victim, hitter->stats.dam, hitter, hitter->attacktype, 0);
     }
-    fail_unless(present_arch_in_ob(deplete, victim) != NULL, "victim should be depleted when slaying is set");
+    fail_unless(arch_present_in_ob(deplete, victim) != NULL, "victim should be depleted when slaying is set");
     fail_unless(victim->stats.hp != victim->stats.maxhp, "victim shouldn't have %d hp", victim->stats.hp);
 }
 END_TEST

@@ -179,7 +179,7 @@ int command_orcknuckle(object *op, char *params) {
         /* Randomly lose dice */
         if (die_roll(1, 100, op, 1) < 5) {
             /* Lose one randomly. */
-            decrease_ob(dice[rndm(1, dice_count)-1]);
+            object_decrease_nrof_by_one(dice[rndm(1, dice_count)-1]);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
                           "Oops, you lost a die!", "Oops, you lost a die!");
         }

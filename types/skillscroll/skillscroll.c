@@ -77,7 +77,7 @@ static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, ob
                 "Type 'bind ready_skill %s to store the skill in a key.",
                 "Type 'bind ready_skill %s to store the skill in a key.",
                 scroll->skill);
-            decrease_ob(scroll);
+            object_decrease_nrof_by_one(scroll);
             return METHOD_OK;
 
         default:
@@ -86,7 +86,7 @@ static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, ob
                 "You fail to learn the knowledge of the %s.\n",
                 "You fail to learn the knowledge of the %s.\n",
                 name);
-            decrease_ob(scroll);
+            object_decrease_nrof_by_one(scroll);
             return METHOD_OK;
         }
     }

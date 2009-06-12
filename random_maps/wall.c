@@ -216,7 +216,7 @@ void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP) {
                     thiswall->y = j;
                     thiswall->move_block = MOVE_ALL;
                     thiswall->move_allow = 0;
-                    insert_ob_in_map(thiswall, map, thiswall, INS_NO_MERGE|INS_NO_WALK_ON);
+                    object_insert_in_map(thiswall, map, thiswall, INS_NO_MERGE|INS_NO_WALK_ON);
                 }
             }
     }
@@ -473,11 +473,11 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
         new_wall->x = i;
         new_wall->y = j;
         if (the_wall && the_wall->map) {
-            remove_ob(the_wall);
-            free_object(the_wall);
+            object_remove(the_wall);
+            object_free(the_wall);
         }
         the_wall->move_block = MOVE_ALL;
-        insert_ob_in_map(new_wall, the_map, new_wall, INS_NO_MERGE|INS_NO_WALK_ON);
+        object_insert_in_map(new_wall, the_map, new_wall, INS_NO_MERGE|INS_NO_WALK_ON);
     }
     return new_wall;
 }

@@ -53,7 +53,7 @@ void  insert_multisquare_ob_in_map(object *new_obj, mapstruct *map) {
     object *head;
 
     /* first insert the head */
-    insert_ob_in_map(new_obj, map, new_obj, INS_NO_MERGE|INS_NO_WALK_ON);
+    object_insert_in_map(new_obj, map, new_obj, INS_NO_MERGE|INS_NO_WALK_ON);
 
     x = new_obj->x;
     y = new_obj->y;
@@ -66,7 +66,7 @@ void  insert_multisquare_ob_in_map(object *new_obj, mapstruct *map) {
         new_seg->x = x+at->clone.x;
         new_seg->y = y+at->clone.y;
         new_seg->map = old_seg->map;
-        insert_ob_in_map(new_seg, new_seg->map, new_seg, INS_NO_MERGE|INS_NO_WALK_ON);
+        object_insert_in_map(new_seg, new_seg->map, new_seg, INS_NO_MERGE|INS_NO_WALK_ON);
         new_seg->head = head;
         old_seg->more = new_seg;
         old_seg = new_seg;
@@ -114,13 +114,13 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms 
             return; /* no monster?? */
         x = RANDOM()%RP->Xsize;
         y = RANDOM()%RP->Ysize;
-        freeindex = find_first_free_spot(this_monster, map, x, y);
+        freeindex = object_find_first_free_spot(this_monster, map, x, y);
         if (freeindex != -1) {
             object *new_monster = arch_to_object(this_monster->arch);
 
             x += freearr_x[freeindex];
             y += freearr_y[freeindex];
-            copy_object_with_inv(this_monster, new_monster);
+            object_copy_with_inv(this_monster, new_monster);
             new_monster->x = x;
             new_monster->y = y;
             insert_multisquare_ob_in_map(new_monster, map);

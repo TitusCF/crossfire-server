@@ -39,15 +39,15 @@ void stop_projectile(object *op) {
     if (op->inv) {
         object *payload = op->inv;
 
-        remove_ob(payload);
-        clear_owner(payload);
-        insert_ob_in_map(payload, op->map, payload, 0);
-        remove_ob(op);
-        free_object(op);
+        object_remove(payload);
+        object_clear_owner(payload);
+        object_insert_in_map(payload, op->map, payload, 0);
+        object_remove(op);
+        object_free(op);
     } else {
         op = fix_stopped_arrow(op);
         if (op)
-            merge_ob(op, NULL);
+            object_merge(op, NULL);
     }
 }
 
@@ -67,8 +67,8 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 
     if (op->map == NULL) {
         LOG(llevError, "BUG: Projectile had no map.\n");
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return METHOD_ERROR;
     }
 
@@ -196,7 +196,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
     } /* object ran into a wall */
 
     /* Move the arrow. */
-    remove_ob(op);
+    object_remove(op);
     op->x = new_x;
     op->y = new_y;
 
@@ -204,7 +204,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
      * about 17 squares. Tune as needed.
      */
     op->speed -= 0.05;
-    insert_ob_in_map(op, m, op, 0);
+    object_insert_in_map(op, m, op, 0);
     return METHOD_OK;
 }
 

@@ -69,7 +69,7 @@ static method_ret peacemaker_type_process(ob_methods *context, object *op) {
             if (rndm(0, atk_lev-1) > def_lev) {
                 /* make this sucker peaceful. */
 
-                change_exp(get_owner(op), victim->stats.exp, op->skill, 0);
+                change_exp(object_get_owner(op), victim->stats.exp, op->skill, 0);
                 victim->stats.exp = 0;
                 victim->attack_movement = RANDO2;
                 SET_FLAG(victim, FLAG_UNAGGRESSIVE);

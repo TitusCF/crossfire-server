@@ -279,7 +279,7 @@ static int numb_ob_inside(object *op) {
 
 /**
  * Essentially a wrapper for make_item_from_recipe() and
- * insert_ob_in_ob(). If the caster has some alchemy skill, then they might
+ * object_insert_in_ob(). If the caster has some alchemy skill, then they might
  * gain some exp from (successfull) fabrication of the product.
  * If nbatches==-1, don't give exp for this creation (random generation/
  * failed recipe)
@@ -346,7 +346,7 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, rec
         remove_contents(cauldron->inv, item);
         /* adj lvl, nrof on caster level */
         adjust_product(item, ability, rp->yield ? (rp->yield*batches) : batches);
-        if (!item->env && (item = insert_ob_in_ob(item, cauldron)) == NULL) {
+        if (!item->env && (item = object_insert_in_ob(item, cauldron)) == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                           "Nothing happened.", NULL);
         } else {
@@ -411,7 +411,7 @@ static object *make_item_from_recipe(object *cauldron, recipe *rp) {
 
     /* If item is already in container, we need to remove its weight, since it can change later on. */
     if (item->env != NULL)
-        sub_weight(cauldron, item->weight*(item->nrof != 0 ? item->nrof : 1));
+        object_sub_weight(cauldron, item->weight*(item->nrof != 0 ? item->nrof : 1));
 
     /* Find the appropriate artifact template...*/
     if (strcmp(rp->title, "NONE")) {
@@ -424,7 +424,7 @@ static object *make_item_from_recipe(object *cauldron, recipe *rp) {
         give_artifact_abilities(item, art->item);
     }
     if (item->env != NULL)
-        add_weight(cauldron, item->weight*(item->nrof != 0 ? item->nrof : 1));
+        object_add_weight(cauldron, item->weight*(item->nrof != 0 ? item->nrof : 1));
 
     if (QUERY_FLAG(cauldron, FLAG_CURSED))
         SET_FLAG(item, FLAG_CURSED);
@@ -537,7 +537,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
             if (tmp->name_pl)
                 free_string(tmp->name_pl);
             tmp->name_pl = add_string("slags");
-            item = insert_ob_in_ob(tmp, cauldron);
+            item = object_insert_in_ob(tmp, cauldron);
             CLEAR_FLAG(tmp, FLAG_CAN_ROLL);
             CLEAR_FLAG(tmp, FLAG_NO_PICK);
             tmp->move_block = 0;
@@ -624,7 +624,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         }
         tmp->x = cauldron->x,
         tmp->y = cauldron->y;
-        insert_ob_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map(tmp, op->map, NULL, 0);
         return;
     } else if (level < 60) {                 /* CREATE MONSTER */
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
@@ -636,7 +636,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
 
         remove_contents(cauldron->inv, NULL);
         fire_arch_from_position(cauldron, cauldron, cauldron->x, cauldron->y, 0, fb);
-        free_object(fb);
+        object_free(fb);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "The %s erupts in flame!",
                              "The %s erupts in flame!",
@@ -693,7 +693,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
             rp = get_random_recipe((recipelist *)NULL);
         if (rp && (tmp = create_archetype(rp->arch_name[RANDOM()%rp->arch_names]))) {
             generate_artifact(tmp, random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
-            if ((tmp = insert_ob_in_ob(tmp, cauldron))) {
+            if ((tmp = object_insert_in_ob(tmp, cauldron))) {
                 remove_contents(cauldron->inv, tmp);
                 draw_ext_info_format(NDI_UNIQUE, 0, op,
                                      MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
@@ -730,8 +730,8 @@ static void remove_contents(object *first_ob, object *save_item) {
         if (tmp != save_item) {
             if (tmp->inv)
                 remove_contents(tmp->inv, NULL);
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
         }
     }
 }

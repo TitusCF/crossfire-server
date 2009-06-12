@@ -202,8 +202,8 @@ int move_disease(object *disease) {
         if (disease->stats.maxhp > 0)
             disease->value--;
         if (disease->value == 0) {
-            remove_ob(disease);
-            free_object(disease);
+            object_remove(disease);
+            object_free(disease);
             return 1;
         }
     } else {
@@ -214,8 +214,8 @@ int move_disease(object *disease) {
             if (disease->stats.food == 0) {
                 remove_symptoms(disease);  /* remove the symptoms of this disease */
                 grant_immunity(disease);
-                remove_ob(disease);
-                free_object(disease);
+                object_remove(disease);
+                object_free(disease);
                 return 1;
             }
         }
@@ -249,8 +249,8 @@ static void remove_symptoms(object *disease) {
     while ((symptom = find_symptom(disease)) != NULL) {
         if (!victim)
             victim = symptom->env;
-        remove_ob(symptom);
-        free_object(symptom);
+        object_remove(symptom);
+        object_free(symptom);
     }
     if (victim)
         fix_object(victim);
@@ -380,18 +380,18 @@ int infect_object(object *victim, object *disease, int force) {
     }
 
     /*  If we've gotten this far, go ahead and infect the victim.  */
-    new_disease = get_object();
-    copy_object(disease, new_disease);
+    new_disease = object_new();
+    object_copy(disease, new_disease);
     new_disease->stats.food = disease->stats.maxgrace;
     new_disease->value = disease->stats.maxhp;
     new_disease->stats.wc -= disease->last_grace;  /* self-limiting factor */
 
-    /* Unfortunately, set_owner does the wrong thing to the skills pointers
+    /* Unfortunately, object_set_owner does the wrong thing to the skills pointers
      *  resulting in exp going into the owners *current *chosen skill.
      */
 
-    if (get_owner(disease)) {
-        set_owner(new_disease, disease->owner);
+    if (object_get_owner(disease)) {
+        object_set_owner(new_disease, disease->owner);
 
         /* Only need to update skill if different */
         if (new_disease->skill != disease->skill) {
@@ -404,14 +404,14 @@ int infect_object(object *victim, object *disease, int force) {
         if (disease->env && disease->env->type == PLAYER) {
             object *player = disease->env;
 
-            set_owner(new_disease, player);
+            object_set_owner(new_disease, player);
             /* the skill pointer for these diseases should already be set up -
              * hardcoding in 'praying' is not the right approach.
              */
         }
     }
 
-    insert_ob_in_ob(new_disease, victim);
+    object_insert_in_ob(new_disease, victim);
     /* This appears to be a horrible case of overloading 'NO_PASS'
      * for meaning in the diseases.
      */
@@ -531,7 +531,7 @@ static void do_symptoms(object *disease) {
         new_symptom->attacktype = disease->attacktype;
         new_symptom->other_arch = disease->other_arch;
 
-        set_owner(new_symptom, disease->owner);
+        object_set_owner(new_symptom, disease->owner);
         if (new_symptom->skill != disease->skill) {
             if (new_symptom->skill)
                 free_string(new_symptom->skill);
@@ -539,7 +539,7 @@ static void do_symptoms(object *disease) {
                 new_symptom->skill = add_refcount(disease->skill);
         }
         new_symptom->move_block = 0;
-        insert_ob_in_ob(new_symptom, victim);
+        object_insert_in_ob(new_symptom, victim);
         return;
     }
 
@@ -604,7 +604,7 @@ static void grant_immunity(object *disease) {
     immunity->name = add_string(disease->name);
     immunity->level = disease->level;
     immunity->move_block = 0;
-    insert_ob_in_ob(immunity, disease->env);
+    object_insert_in_ob(immunity, disease->env);
     return;
 }
 
@@ -621,8 +621,8 @@ void move_symptom(object *symptom) {
     tag_t tag = symptom->count;
 
     if (victim == NULL || victim->map == NULL) { /* outside a monster/player, die immediately */
-        remove_ob(symptom);
-        free_object(symptom);
+        object_remove(symptom);
+        object_free(symptom);
         return;
     }
 
@@ -635,9 +635,9 @@ void move_symptom(object *symptom) {
      * does that will also free the symptom, so check for that.
      */
     if (QUERY_FLAG(victim, FLAG_FREED)) {
-        if (!was_destroyed(symptom, tag)) {
-            remove_ob(symptom);
-            free_object(symptom);
+        if (!object_was_destroyed(symptom, tag)) {
+            object_remove(symptom);
+            object_free(symptom);
         }
         return;
     }
@@ -672,7 +672,7 @@ void move_symptom(object *symptom) {
             new_ob->x = tmp->x;
             new_ob->y = tmp->y;
             new_ob->map = victim->map;
-            insert_ob_in_map(new_ob, victim->map, victim, 0);
+            object_insert_in_map(new_ob, victim->map, victim, 0);
         }
     }
     if (!symptom->msg) {
@@ -737,11 +737,11 @@ int cure_disease(object *sufferer, object *caster) {
             if ((casting_level >= disease->level)
             || (!(random_roll(0, (disease->level-casting_level-1), caster, PREFER_LOW)))) {
                 remove_symptoms(disease);
-                remove_ob(disease);
+                object_remove(disease);
                 cure = 1;
                 if (caster)
                     change_exp(caster, disease->stats.exp, caster->chosen_skill ? caster->chosen_skill->skill : NULL, 0);
-                free_object(disease);
+                object_free(disease);
             }
         }
     }

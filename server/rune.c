@@ -97,7 +97,7 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
     } else {
         /* Player specified spell.  The player has to know the spell, so
          * lets just look through the players inventory see if they know it
-         * use the item_matched_string for our typical matching method.
+         * use the object_matches_string() for our typical matching method.
          */
         int bestmatch = 0, ms;
 
@@ -110,7 +110,7 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
         rune_spell = NULL;
         for (tmp = op->inv; tmp; tmp = tmp->below) {
             if (tmp->type == SPELL) {
-                ms = item_matched_string(op, tmp, runename);
+                ms = object_matches_string(op, tmp, runename);
                 if (ms > bestmatch) {
                     bestmatch = ms;
                     rune_spell = tmp;
@@ -167,9 +167,9 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
         rune = create_archetype(GENERIC_RUNE);
         snprintf(buf, sizeof(buf), "You set off a rune of %s\n", rune_spell->name);
         rune->msg = add_string(buf);
-        tmp = get_object();
-        copy_object(rune_spell, tmp);
-        insert_ob_in_ob(tmp, rune);
+        tmp = object_new();
+        object_copy(rune_spell, tmp);
+        object_insert_in_ob(tmp, rune);
         if (spell->face != blank_face)
             rune->face = spell->face;
     }
@@ -179,9 +179,9 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
     rune->y = ny;
     rune->map = m;
     rune->direction = dir;  /* where any spell will go upon detonation */
-    set_owner(rune, op); /* runes without need no owner */
+    object_set_owner(rune, op); /* runes without need no owner */
     set_spell_skill(op, caster, spell, rune);
-    insert_ob_in_map(rune, m, op, 0);
+    object_insert_in_map(rune, m, op, 0);
     return 1;
 }
 
@@ -198,7 +198,7 @@ static void rune_attack(object *op, object *victim) {
     if (victim) {
         tag_t tag = victim->count;
         hit_player(victim, op->stats.dam, op, op->attacktype, 1);
-        if (was_destroyed(victim, tag))
+        if (object_was_destroyed(victim, tag))
             return;
         /*  if there's a disease in the needle, put it in the player */
         if (HAS_RANDOM_ITEMS(op))
@@ -207,8 +207,8 @@ static void rune_attack(object *op, object *victim) {
             object *disease = op->inv;
 
             infect_object(victim, disease, 1);
-            remove_ob(disease);
-            free_object(disease);
+            object_remove(disease);
+            object_free(disease);
         }
     } else
         hit_map(op, 0, op->attacktype, 1);
@@ -272,12 +272,12 @@ void spring_trap(object *trap, object *victim) {
         object *spell;
 
         /* This is necessary if the trap is inside something else */
-        remove_ob(trap);
+        object_remove(trap);
         trap->x = victim->x;
         trap->y = victim->y;
-        insert_ob_in_map(trap, victim->map, trap, 0);
+        object_insert_in_map(trap, victim->map, trap, 0);
 
-        if (was_destroyed(trap, trap_tag))
+        if (object_was_destroyed(trap, trap_tag))
             return;
 
         for (i = 0; i < MAX(1, trap->stats.maxhp); i++) {
@@ -286,12 +286,12 @@ void spring_trap(object *trap, object *victim) {
             else {
                 spell = arch_to_object(trap->other_arch);
                 cast_spell(trap, trap, trap->direction, spell, NULL);
-                free_object(spell);
+                object_free(spell);
             }
         }
     } else {
         rune_attack(trap, victim);
-        if (was_destroyed(trap, trap_tag))
+        if (object_was_destroyed(trap, trap_tag))
             return;
     }
 
@@ -358,8 +358,8 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
          * comparison so low level players can't erase high level players runes.
          */
         if (tmp->type == SIGN && !strcmp(tmp->arch->name, "rune_mark")) {
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                           "You wipe out the rune of marking!", NULL);
             return 1;
@@ -438,7 +438,7 @@ int trap_show(object *trap, object *where) {
     tmp2->x = where->x;
     tmp2->y = where->y;
     tmp2->map = where->map;
-    insert_ob_in_map(tmp2, where->map, NULL, 0);
+    object_insert_in_map(tmp2, where->map, NULL, 0);
     return 1;
 }
 

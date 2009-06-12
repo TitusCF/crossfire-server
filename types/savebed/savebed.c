@@ -67,7 +67,7 @@ static void apply_savebed(object *pl) {
 
     /* Need to call terminate_all_pets()  before we remove the player ob */
     terminate_all_pets(pl);
-    remove_ob(pl);
+    object_remove(pl);
     pl->direction = 0;
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, pl, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
         "%s leaves the game.",
@@ -87,5 +87,5 @@ static void apply_savebed(object *pl) {
 #endif
     play_again(pl);
     pl->speed = 0;
-    update_ob_speed(pl);
+    object_update_speed(pl);
 }

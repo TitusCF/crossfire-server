@@ -95,7 +95,7 @@ static f_plug_api cfapiMap_set_property = NULL;
 static f_plug_api cfapiMap_get_map = NULL;
 static f_plug_api cfapiMap_message = NULL;
 static f_plug_api cfapiMap_get_object_at = NULL;
-static f_plug_api cfapiMap_present_arch_by_name = NULL;
+static f_plug_api cfapiMap_arch_present_in_map_by_name = NULL;
 static f_plug_api cfapiMap_create_path = NULL;
 static f_plug_api cfapiMap_has_been_loaded = NULL;
 static f_plug_api cfapiMap_change_light = NULL;
@@ -188,7 +188,7 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiMap_get_map, "cfapi_map_get_map", z);
     GET_HOOK(cfapiMap_message, "cfapi_map_message", z);
     GET_HOOK(cfapiMap_get_object_at, "cfapi_map_get_object_at", z);
-    GET_HOOK(cfapiMap_present_arch_by_name, "cfapi_map_present_arch_by_name", z);
+    GET_HOOK(cfapiMap_arch_present_in_map_by_name, "cfapi_map_arch_present_in_map_by_name", z);
     GET_HOOK(cfapiMap_change_light, "cfapi_map_change_light", z);
     GET_HOOK(cfapiMap_has_been_loaded, "cfapi_map_has_been_loaded", z);
     GET_HOOK(cfapiMap_trigger_connected, "cfapi_map_trigger_connected", z);
@@ -486,8 +486,8 @@ void cf_object_apply_below(object *pl) {
     cfapiObject_apply_below(&type, pl);
 }
 /**
- * Wrapper for remove_ob().
- * @copydoc remove_ob()
+ * Wrapper for object_remove().
+ * @copydoc object_remove()
  */
 void cf_object_remove(object *op) {
     int type;
@@ -495,8 +495,8 @@ void cf_object_remove(object *op) {
     cfapiObject_remove(&type, op);
 }
 /**
- * Wrapper for free_object().
- * @copydoc free_object()
+ * Wrapper for object_free().
+ * @copydoc object_free()
  */
 void cf_object_free(object *ob) {
     int type;
@@ -504,7 +504,7 @@ void cf_object_free(object *ob) {
     cfapiObject_delete(&type, ob);
 }
 /**
- * Kinda wrapper for present_arch_in_ob().
+ * Kinda wrapper for arch_present_in_ob().
  */
 object *cf_object_present_archname_inside(object *op, char *whatstr) {
     int type;
@@ -540,8 +540,8 @@ int cf_object_move_to(object *op, int x, int y) {
 }
 
 /**
- * Wrapper for insert_ob_in_map_at().
- * @copydoc insert_ob_in_map_at().
+ * Wrapper for object_insert_in_map_at().
+ * @copydoc object_insert_in_map_at().
  */
 object *cf_object_change_map(object *op, mapstruct *m, object *originator, int flag, int x, int y) {
     int type;
@@ -580,7 +580,7 @@ void cf_map_message(mapstruct *m, const char *msg, int color) {
  * what to clone.
  * @param clonetype
  * - 0 means to clone through object_create_clone().
- * - 1 means to clone through copy_object().
+ * - 1 means to clone through object_copy().
  * @return
  * clone.
  */
@@ -906,8 +906,8 @@ char *cf_get_maps_directory(const char *name, char *buf, int size) {
 }
 
 /**
- * Wrapper for get_object().
- * @copydoc get_object().
+ * Wrapper for object_new().
+ * @copydoc object_new().
  */
 object *cf_create_object(void) {
     int type;
@@ -1131,8 +1131,8 @@ void cf_object_set_flag(object *ob, int flag, int value) {
 }
 
 /**
- * Wrapper for insert_ob_in_ob().
- * @copydoc insert_ob_in_ob().
+ * Wrapper for object_insert_in_ob().
+ * @copydoc object_insert_in_ob().
  */
 object *cf_object_insert_in_ob(object *op, object *where) {
     int type;
@@ -1148,8 +1148,8 @@ object *cf_object_insert_in_ob(object *op, object *where) {
 }
 
 /**
- * Wrapper for insert_ob_in_map().
- * @copydoc insert_ob_in_map().
+ * Wrapper for object_insert_in_map().
+ * @copydoc object_insert_in_map().
  */
 object *cf_map_insert_object_there(object *op, mapstruct *m, object *originator, int flag) {
     int type;
@@ -1161,7 +1161,7 @@ object *cf_map_insert_object_there(object *op, mapstruct *m, object *originator,
 }
 
 /**
- * Wrapper for insert_ob_in_map_at().
+ * Wrapper for object_insert_in_map_at().
  * @todo
  * merge/replace with cf_object_change_map
  */
@@ -1183,13 +1183,13 @@ int cf_object_teleport(object *op, mapstruct *map, int x, int y) {
 }
 
 /**
- * Kinda wrapper for arch_present().
+ * Kinda wrapper for arch_present_in_map().
  */
-object *cf_map_present_arch_by_name(const char *str, mapstruct *map, int nx, int ny) {
+object *cf_map_arch_present_in_map_by_name(const char *str, mapstruct *map, int nx, int ny) {
     int type;
     object *value;
 
-    cfapiMap_present_arch_by_name(&type, str, map, nx, ny, &value);
+    cfapiMap_arch_present_in_map_by_name(&type, str, map, nx, ny, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
@@ -1443,7 +1443,7 @@ int cf_timer_destroy(int id) {
 }
 
 /**
- * Gets value for specified key, equivalent of get_ob_key_value().
+ * Gets value for specified key, equivalent of object_get_value().
  * @param op
  * ::object for which we search a key.
  * @param keyname
@@ -1461,7 +1461,7 @@ const char *cf_object_get_key(object *op, const char *keyname) {
 }
 
 /**
- * Sets a value for specified key, equivalent to set_ob_key_value().
+ * Sets a value for specified key, equivalent to object_set_value().
  * @param op
  * ::object which will contain the key/value
  * @param keyname

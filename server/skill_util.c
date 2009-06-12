@@ -1129,7 +1129,7 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
         op->contr->tmp_invis = 0;
         op->invisible = 0;
         op->hide = 0;
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
     }
 
     success = attack_ob(tmp, op);

@@ -189,7 +189,7 @@ void spell_effect(object *spob, int x, int y, mapstruct *map, object *originator
         effect->x = x;
         effect->y = y;
 
-        insert_ob_in_map(effect, map, originator, 0);
+        object_insert_in_map(effect, map, originator, 0);
     }
 }
 
@@ -530,9 +530,9 @@ int cast_create_obj(object *op, object *new_op, int dir) {
     new_op->x = op->x+freearr_x[dir];
     new_op->y = op->y+freearr_y[dir];
     if (dir == 0)
-        insert_ob_in_map(new_op, op->map, op, INS_BELOW_ORIGINATOR);
+        object_insert_in_map(new_op, op->map, op, INS_BELOW_ORIGINATOR);
     else
-        insert_ob_in_map(new_op, op->map, op, 0);
+        object_insert_in_map(new_op, op->map, op, 0);
     return dir;
 }
 
@@ -675,7 +675,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
             /* If caster is not player, it's for instance a swarm, so don't say there's an issue. */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                           "You can't cast the spell on top of a wall!", NULL);
-        free_object(tmp);
+        object_free(tmp);
         return 0;
     }
 
@@ -690,10 +690,10 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
     tmp->x = x;
     tmp->y = y;
     tmp->direction = dir;
-    if (get_owner(op) != NULL)
-        copy_owner(tmp, op);
+    if (object_get_owner(op) != NULL)
+        object_copy_owner(tmp, op);
     else
-        set_owner(tmp, op);
+        object_set_owner(tmp, op);
     tmp->level = caster_level(caster, spell);
     set_spell_skill(op, caster, spell, tmp);
 
@@ -705,7 +705,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
     if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
         SET_ANIMATION(tmp, dir);
 
-    if ((tmp = insert_ob_in_map(tmp, m, op, 0)) == NULL)
+    if ((tmp = object_insert_in_map(tmp, m, op, 0)) == NULL)
         return 1;
 
     ob_process(tmp);
@@ -761,9 +761,9 @@ void drain_wand_charge(object *wand) {
             CLEAR_FLAG(wand, FLAG_ANIMATE);
             wand->face = wand->arch->clone.face;
             wand->speed = 0;
-            update_ob_speed(wand);
+            object_update_speed(wand);
         }
-        if ((tmp = get_player_container(wand)))
+        if ((tmp = object_get_player_container(wand)))
             esrv_update_item(UPD_ANIM, tmp, wand);
     }
 }
@@ -789,7 +789,7 @@ object *find_target_for_friendly_spell(object *op, int dir) {
      * The owner could very well be no where near op.
      */
     if (op->type != PLAYER && op->type != RUNE) {
-        tmp = get_owner(op);
+        tmp = object_get_owner(op);
         /* If the owner does not exist, or is not a monster, than apply the spell
          * to the caster.
          */
@@ -914,7 +914,7 @@ static int put_a_monster(object *op, const char *monstername) {
      * first we check the closest square for free squares
      */
 
-    dir = find_first_free_spot(&at->clone, op->map, op->x, op->y);
+    dir = object_find_first_free_spot(&at->clone, op->map, op->x, op->y);
     if (dir != -1) {
         /* This is basically grabbed for generate monster.  Fixed 971225 to
          * insert multipart monsters properly
@@ -937,14 +937,14 @@ static int put_a_monster(object *op, const char *monstername) {
         if (head->randomitems)
             create_treasure(head->randomitems, head, GT_INVISIBLE, op->map->difficulty, 0);
 
-        insert_ob_in_map(head, op->map, op, 0);
+        object_insert_in_map(head, op->map, op, 0);
 
         /* thought it'd be cool to insert a burnout, too.*/
         tmp = create_archetype("burnout");
         tmp->map = op->map;
         tmp->x = op->x+freearr_x[dir];
         tmp->y = op->y+freearr_y[dir];
-        insert_ob_in_map(tmp, op->map, op, 0);
+        object_insert_in_map(tmp, op->map, op, 0);
         return 1;
     } else {
         return 0;
@@ -1038,7 +1038,7 @@ static void prayer_failure(object *op, int failure, int power) {
                              godname);
         tmp = create_archetype(SPELL_WONDER);
         cast_cone(op, op, 0, tmp);
-        free_object(tmp);
+        object_free(tmp);
     } else if (failure <= -40 && failure > -60) { /* confusion */
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "Your diety touches your mind!", NULL);
@@ -1088,7 +1088,7 @@ void spell_failure(object *op, int failure, int power, object *skill) {
                       "Your spell causes an unexpected effect.", NULL);
         tmp = create_archetype(SPELL_WONDER);
         cast_cone(op, op, 0, tmp);
-        free_object(tmp);
+        object_free(tmp);
     } else if (failure <= -40 && failure > -60) { /* confusion */
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "Your magic recoils on you, making you confused!", NULL);
@@ -1123,7 +1123,7 @@ void spell_failure(object *op, int failure, int power, object *skill) {
                 tmp->stats.dam = power; /* nasty recoils! */
 
             tmp->stats.maxhp = tmp->count;
-            insert_ob_in_map(tmp, op->map, NULL, 0);
+            object_insert_in_map(tmp, op->map, NULL, 0);
         }
     }
 }
@@ -1190,17 +1190,17 @@ static void transmute_item_to_flower(object *op) {
     force->duration = 100+rndm(0, 10)*100;
     force->subtype = FORCE_TRANSFORMED_ITEM;
     force->speed = 1;
-    update_ob_speed(force);
+    object_update_speed(force);
 
     flower = create_archetype("flowers_permanent");
 
     if (QUERY_FLAG(item, FLAG_APPLIED))
         manual_apply(op, item, AP_NOPRINT|AP_IGNORE_CURSE|AP_UNAPPLY);
-    remove_ob(item);
+    object_remove(item);
     flower->weight = item->nrof ? item->nrof*item->weight : item->weight;
     item->weight = 0;
     esrv_del_item(op->contr, item->count);
-    insert_ob_in_ob(item, force);
+    object_insert_in_ob(item, force);
 
     query_short_name(item, name, HUGE_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op,
@@ -1209,8 +1209,8 @@ static void transmute_item_to_flower(object *op) {
                          "Your %s turns to a flower!",
                          name);
 
-    insert_ob_in_ob(force, flower);
-    flower = insert_ob_in_ob(flower, op);
+    object_insert_in_ob(force, flower);
+    flower = object_insert_in_ob(flower, op);
     esrv_send_item(op, flower);
 }
 
@@ -1244,8 +1244,8 @@ static void swap_random_stats(object *op) {
     SET_FLAG(force, FLAG_APPLIED);
     set_attr_value(&force->stats, second, get_attr_value(&op->stats, first)-get_attr_value(&op->stats, second));
     set_attr_value(&force->stats, first, get_attr_value(&op->stats, second)-get_attr_value(&op->stats, first));
-    update_ob_speed(force);
-    insert_ob_in_ob(force, op);
+    object_update_speed(force);
+    object_insert_in_ob(force, op);
     change_abil(op, force);
     fix_object(op);
 }
@@ -1562,7 +1562,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
      * put some other spell into the rune (glyph, firetrap, magic rune, etc)
      */
     if (caster->type == RUNE) {
-        object *owner = get_owner(caster);
+        object *owner = object_get_owner(caster);
 
         if (owner)
             skill = find_skill_by_name(owner, caster->skill);
@@ -1839,11 +1839,11 @@ void store_spell_expiry(object *spell) {
     if (!i)
         i = 1;
     snprintf(dur, sizeof(dur), "%d", i);
-    set_ob_key_value(spell, "spell_expiry_warn_1", dur, 1);
+    object_set_value(spell, "spell_expiry_warn_1", dur, 1);
     i = i/5;
     if (i > 0) {
         snprintf(dur, sizeof(dur), "%d", i);
-        set_ob_key_value(spell, "spell_expiry_warn_2", dur, 1);
+        object_set_value(spell, "spell_expiry_warn_2", dur, 1);
     }
 }
 
@@ -1862,14 +1862,14 @@ void check_spell_expiry(object *spell) {
     if (!spell->env || !spell->env->type == PLAYER)
         return;
 
-    if ((key = get_ob_key_value(spell, "spell_expiry_warn_1")) != NULL) {
+    if ((key = object_get_value(spell, "spell_expiry_warn_1")) != NULL) {
         if (spell->duration == atoi(key)) {
             draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, spell->env, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
                                  "The effects of your %s are draining out.", NULL, spell->name);
             return;
         }
     }
-    if ((key = get_ob_key_value(spell, "spell_expiry_warn_2")) != NULL) {
+    if ((key = object_get_value(spell, "spell_expiry_warn_2")) != NULL) {
         if (spell->duration == atoi(key)) {
             draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, spell->env, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
                                  "The effects of your %s are about to expire.", NULL, spell->name);

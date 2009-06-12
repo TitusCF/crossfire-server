@@ -143,10 +143,10 @@ static void eat_item(object *op, const char *item, uint32 nrof) {
     while (op != NULL) {
         if (strcmp(op->arch->name, item) == 0) {
             if (op->nrof >= nrof) {
-                decrease_ob_nr(op, nrof);
+                object_decrease_nrof(op, nrof);
                 return;
             } else {
-                decrease_ob_nr(op, op->nrof);
+                object_decrease_nrof(op, op->nrof);
                 nrof -= op->nrof;
             }
             op = prev;
@@ -218,7 +218,7 @@ static int improve_weapon_stat(object *op, object *improver, object *weapon, sig
         "Weapon's bonus to %s improved by %d",
         statname, sacrifice_count);
 
-    decrease_ob(improver);
+    object_decrease_nrof_by_one(improver);
 
         /* So it updates the players stats and the window */
     fix_object(op);
@@ -286,15 +286,15 @@ static int prepare_weapon(object *op, object *improver, object *weapon) {
      * stack.  Only need to do this if weapon is part of a stack.
      * We set nrof of weapon to zero so it can not merge with other
      * items, so one can not do further improvements on a stack.
-     * side effect of doing it before the insert_ob_in_ob is that
+     * side effect of doing it before the object_insert_in_ob() is that
      * it won't merge back in.  We know from the code that marked
      * objects must be in the players inventory, so we know where
      * to put this.
      */
     if (weapon->nrof >1) {
-        weapon = get_split_ob(weapon,1, NULL, 0);
+        weapon = object_split(weapon,1, NULL, 0);
         weapon->nrof = 0;
-        insert_ob_in_ob(weapon, op);
+        object_insert_in_ob(weapon, op);
     } else {
         weapon->nrof = 0;
     }
@@ -315,7 +315,7 @@ static int prepare_weapon(object *op, object *improver, object *weapon) {
         "Your %s may be improved %d times.",
         weapon->name, weapon->level);
 
-    decrease_ob(improver);
+    object_decrease_nrof_by_one(improver);
     weapon->last_eat = 0;
     esrv_update_item(UPD_NAME | UPD_NROF, op, weapon);
     return 1;
@@ -396,7 +396,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
         weapon->last_eat++;
 
         weapon->item_power++;
-        decrease_ob(improver);
+        object_decrease_nrof_by_one(improver);
         return 1;
     }
 
@@ -411,7 +411,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
             (float)weapon->weight/1000.0);
         weapon->last_eat++;
         weapon->item_power++;
-        decrease_ob(improver);
+        object_decrease_nrof_by_one(improver);
         return 1;
     }
 
@@ -422,7 +422,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
             "Weapon magic increased to %d",
             "Weapon magic increased to %d",
             weapon->magic);
-        decrease_ob(improver);
+        object_decrease_nrof_by_one(improver);
         weapon->item_power++;
         return 1;
     }

@@ -81,9 +81,9 @@ static method_ret spell_effect_type_move_on(ob_methods *context, object *trap, o
             tag_t spell_tag = trap->count;
 
             hit_player(victim, trap->stats.dam, trap, trap->attacktype, 1);
-            if (!was_destroyed(trap, spell_tag)) {
-                remove_ob(trap);
-                free_object(trap);
+            if (!object_was_destroyed(trap, spell_tag)) {
+                object_remove(trap);
+                object_free(trap);
             }
         }
         break;
@@ -162,8 +162,8 @@ static void move_bolt(object *op) {
     mapstruct *m;
 
     if (--(op->duration) < 0) {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return;
     }
     hit_map(op, 0, op->attacktype, 1);
@@ -225,15 +225,15 @@ static void move_bolt(object *op) {
                 else if (right)
                     op->direction = absdir(op->direction-2);
             }
-            update_turn_face(op); /* A bolt *must *be IS_TURNABLE */
+            object_update_turn_face(op); /* A bolt *must *be IS_TURNABLE */
             return;
         } else { /* Create a copy of this object and put it ahead */
-            tmp = get_object();
-            copy_object(op, tmp);
+            tmp = object_new();
+            object_copy(op, tmp);
             tmp->speed_left = -0.1;
             tmp->x += DIRX(tmp),
             tmp->y += DIRY(tmp);
-            tmp = insert_ob_in_map(tmp, op->map, op, 0);
+            tmp = object_insert_in_map(tmp, op->map, op, 0);
             /* To make up for the decrease at the top of the function */
             tmp->duration++;
 
@@ -268,8 +268,8 @@ static void move_bullet(object *op) {
         if (op->other_arch) {
             explode_bullet(op);
         } else {
-            remove_ob(op);
-            free_object(op);
+            object_remove(op);
+            object_free(op);
         }
         return;
     }
@@ -280,8 +280,8 @@ static void move_bullet(object *op) {
     mflags = get_map_flags(m, &m, new_x, new_y, &new_x, &new_y);
 
     if (mflags&P_OUT_OF_MAP) {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return;
     }
 
@@ -289,21 +289,21 @@ static void move_bullet(object *op) {
         if (op->other_arch) {
             explode_bullet(op);
         } else {
-            remove_ob(op);
-            free_object(op);
+            object_remove(op);
+            object_free(op);
         }
         return;
     }
 
-    remove_ob(op);
+    object_remove(op);
     op->x = new_x;
     op->y = new_y;
-    if ((op = insert_ob_in_map(op, m, op, 0)) == NULL)
+    if ((op = object_insert_in_map(op, m, op, 0)) == NULL)
         return;
 
     if (reflwall(op->map, op->x, op->y, op)) {
         op->direction = absdir(op->direction+4);
-        update_turn_face(op);
+        object_update_turn_face(op);
     } else {
         check_bullet(op);
     }
@@ -320,8 +320,8 @@ static void explosion(object *op) {
     int i;
 
     if (--(op->duration) < 0) {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return;
     }
     hit_map(op, 0, op->attacktype, 0);
@@ -336,23 +336,23 @@ static void explosion(object *op) {
              * out of map, etc.
              */
             if (ok_to_put_more(op->map, dx, dy, op, op->attacktype)) {
-                tmp = get_object();
-                copy_object(op, tmp);
+                tmp = object_new();
+                object_copy(op, tmp);
                 tmp->state = 0;
                 tmp->speed_left = -0.21;
                 tmp->range--;
                 tmp->value = 0;
                 tmp->x = dx;
                 tmp->y = dy;
-                insert_ob_in_map(tmp, m, op, 0);
+                object_insert_in_map(tmp, m, op, 0);
             }
         }
         /* Reset range so we don't try to propogate anymore.
-         * Call merge_spell to see if we can merge with another
+         * Call object_merge_spell() to see if we can merge with another
          * spell on the space.
          */
         op->range = 0;
-        merge_spell(op, op->x, op->y);
+        object_merge_spell(op, op->x, op->y);
     }
 }
 
@@ -368,7 +368,7 @@ static void move_cone(object *op) {
     if (!op->map) {
         LOG(llevError, "Tried to move_cone object %s without a map.\n", op->name ? op->name : "unknown");
         op->speed = 0;
-        update_ob_speed(op);
+        object_update_speed(op);
         return;
     }
 
@@ -388,12 +388,12 @@ static void move_cone(object *op) {
     if (op->weight)
         check_spell_knockback(op);
 
-    if (was_destroyed(op, tag))
+    if (object_was_destroyed(op, tag))
         return;
 
     if ((op->duration--) < 0) {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return;
     }
     /* Object has hit maximum range, so don't have it move
@@ -410,9 +410,9 @@ static void move_cone(object *op) {
         sint16 y = op->y+freearr_y[absdir(op->stats.sp+i)];
 
         if (ok_to_put_more(op->map, x, y, op, op->attacktype)) {
-            object *tmp = get_object();
+            object *tmp = object_new();
 
-            copy_object(op, tmp);
+            object_copy(op, tmp);
             tmp->x = x;
             tmp->y = y;
 
@@ -420,7 +420,7 @@ static void move_cone(object *op) {
 
             /* Use for spell tracking - see ok_to_put_more() */
             tmp->stats.maxhp = op->stats.maxhp;
-            insert_ob_in_map(tmp, op->map, op, 0);
+            object_insert_in_map(tmp, op->map, op, 0);
             if (tmp->other_arch)
                 cone_drop(tmp);
         }
@@ -445,10 +445,10 @@ static void animate_bomb(object *op) {
         if (env->map == NULL)
             return;
 
-        remove_ob(op);
+        object_remove(op);
         op->x = env->x;
         op->y = env->y;
-        if ((op = insert_ob_in_map(op, env->map, op, 0)) == NULL)
+        if ((op = object_insert_in_map(op, env->map, op, 0)) == NULL)
             return;
     }
 
@@ -467,7 +467,7 @@ static void animate_bomb(object *op) {
             tmp->stats.dam = op->stats.dam;
             tmp->duration = op->duration;
             tmp->attacktype = op->attacktype;
-            copy_owner(tmp, op);
+            object_copy_owner(tmp, op);
             if (op->skill && op->skill != tmp->skill) {
                 if (tmp->skill)
                     free_string(tmp->skill);
@@ -477,7 +477,7 @@ static void animate_bomb(object *op) {
                 SET_ANIMATION(tmp, i);
             tmp->x = op->x+freearr_x[i];
             tmp->y = op->y+freearr_x[i];
-            insert_ob_in_map(tmp, op->map, op, 0);
+            object_insert_in_map(tmp, op->map, op, 0);
             ob_process(tmp);
         }
     }
@@ -496,12 +496,12 @@ static void move_missile(object *op) {
     mapstruct *m;
 
     if (op->range-- <= 0) {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return;
     }
 
-    owner = get_owner(op);
+    owner = object_get_owner(op);
 
     new_x = op->x+DIRX(op);
     new_y = op->y+DIRY(op);
@@ -516,27 +516,27 @@ static void move_missile(object *op) {
         /* Basically, missile only hits one thing then goes away.
          * we need to remove it if someone hasn't already done so.
          */
-        if (!was_destroyed(op, tag)) {
-            remove_ob(op);
-            free_object(op);
+        if (!object_was_destroyed(op, tag)) {
+            object_remove(op);
+            object_free(op);
         }
         return;
     }
 
-    remove_ob(op);
+    object_remove(op);
     if (!op->direction || (mflags&P_OUT_OF_MAP)) {
-        free_object(op);
+        object_free(op);
         return;
     }
     op->x = new_x;
     op->y = new_y;
     op->map = m;
-    i = spell_find_dir(op->map, op->x, op->y, get_owner(op));
+    i = spell_find_dir(op->map, op->x, op->y, object_get_owner(op));
     if (i > 0 && i != op->direction) {
         op->direction = i;
         SET_ANIMATION(op, op->direction);
     }
-    insert_ob_in_map(op, op->map, op, 0);
+    object_insert_in_map(op, op->map, op, 0);
 }
 
 /**
@@ -556,8 +556,8 @@ static void execute_word_of_recall(object *op) {
         else
             enter_exit(op, wor);
     }
-    remove_ob(wor);
-    free_object(wor);
+    object_remove(wor);
+    object_free(wor);
 }
 
 /**
@@ -571,7 +571,7 @@ static void move_ball_spell(object *op) {
     object *owner;
     mapstruct *m;
 
-    owner = get_owner(op);
+    owner = object_get_owner(op);
 
     /* the following logic makes sure that the ball doesn't move into a wall,
      * and makes sure that it will move along a wall to try and get at it's
@@ -608,10 +608,10 @@ static void move_ball_spell(object *op) {
         m = op->map;
     }
 
-    remove_ob(op);
+    object_remove(op);
     op->y = ny;
     op->x = nx;
-    insert_ob_in_map(op, m, op, 0);
+    object_insert_in_map(op, m, op, 0);
 
     dam_save = op->stats.dam;  /* save the original dam: we do halfdam on
                                 surrounding squares */
@@ -647,14 +647,14 @@ static void move_ball_spell(object *op) {
             new_ob = arch_to_object(op->other_arch);
             new_ob->x = hx;
             new_ob->y = hy;
-            insert_ob_in_map(new_ob, m, op, 0);
+            object_insert_in_map(new_ob, m, op, 0);
         }
     }
 
     /* restore to the center location and damage*/
     op->stats.dam = dam_save;
 
-    i = spell_find_dir(op->map, op->x, op->y, get_owner(op));
+    i = spell_find_dir(op->map, op->x, op->y, object_get_owner(op));
     if (i >= 0) { /* we have a preferred direction!  */
         /* pick another direction if the preferred dir is blocked. */
         if (get_map_flags(op->map, &m, nx+freearr_x[i], ny+freearr_y[i], &hx, &hy)&P_OUT_OF_MAP
@@ -681,10 +681,10 @@ static void move_swarm_spell(object *op) {
     mapstruct *m;
     object *owner;
 
-    owner = get_owner(op);
+    owner = object_get_owner(op);
     if (op->duration == 0 || owner == NULL || owner->x != op->x || owner->y != op->y) {
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return;
     }
     op->duration--;
@@ -754,17 +754,17 @@ static void move_aura(object *aura) {
     /* no matter what we've gotta remove the aura...
      * we'll put it back if its time isn't up.
      */
-    remove_ob(aura);
+    object_remove(aura);
 
     /* exit if we're out of gas */
     if (aura->duration-- < 0) {
-        free_object(aura);
+        object_free(aura);
         return;
     }
 
     /* auras only exist in inventories */
     if (env == NULL || env->map == NULL) {
-        free_object(aura);
+        object_free(aura);
         return;
     }
     aura->x = env->x;
@@ -773,7 +773,7 @@ static void move_aura(object *aura) {
     /* we need to jump out of the inventory for a bit
      * in order to hit the map conveniently.
      */
-    insert_ob_in_map(aura, env->map, aura, 0);
+    object_insert_in_map(aura, env->map, aura, 0);
 
     for (i = 1; i < 9; i++) {
         sint16 nx, ny;
@@ -795,14 +795,14 @@ static void move_aura(object *aura) {
                 new_ob = arch_to_object(aura->other_arch);
                 new_ob->x = nx;
                 new_ob->y = ny;
-                insert_ob_in_map(new_ob, m, aura, 0);
+                object_insert_in_map(new_ob, m, aura, 0);
             }
         }
     }
 
     /* put the aura back in the player's inventory */
-    remove_ob(aura);
-    insert_ob_in_ob(aura, env);
+    object_remove(aura);
+    object_insert_in_ob(aura, env);
     check_spell_expiry(aura);
 }
 
@@ -837,9 +837,9 @@ static void forklightning(object *op, object *tmp) {
         return;
 
     /* OK, we made a fork */
-    new_bolt = get_object();
+    new_bolt = object_new();
 
-    copy_object(tmp, new_bolt);
+    object_copy(tmp, new_bolt);
 
     /* reduce chances of subsequent forking */
     new_bolt->stats.Dex -= 10;
@@ -854,8 +854,8 @@ static void forklightning(object *op, object *tmp) {
     new_bolt->stats.dam++;
     tmp->stats.dam /= 2;  /* reduce father bolt damage */
     tmp->stats.dam++;
-    new_bolt = insert_ob_in_map(new_bolt, m, op, 0);
-    update_turn_face(new_bolt);
+    new_bolt = object_insert_in_map(new_bolt, m, op, 0);
+    object_update_turn_face(new_bolt);
 }
 
 /**

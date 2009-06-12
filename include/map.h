@@ -151,7 +151,7 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define MAP_IN_MEMORY   1   /**< Map is fully loaded. */
 #define MAP_SWAPPED     2   /**< Map spaces have been saved to disk. */
 #define MAP_LOADING     3   /**< This map is being loaded. */
-#define MAP_SAVING      4   /**< Map being saved. Will stop remove_ob() from some processing. */
+#define MAP_SAVING      4   /**< Map being saved. Will stop object_remove() from some processing. */
 /*@}*/
 
 /**

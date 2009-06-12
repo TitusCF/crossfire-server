@@ -136,7 +136,7 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
         }
     }
     handle_apply_yield(food);
-    decrease_ob(food);
+    object_decrease_nrof_by_one(food);
     return METHOD_OK;
 }
 
@@ -176,15 +176,15 @@ static void eat_special_food(object *who, object *food) {
     }
     if (did_one) {
         force->speed = 0.1;
-        update_ob_speed(force);
+        object_update_speed(force);
         /* bigger morsel of food = longer effect time */
         force->stats.food = food->stats.food/5;
         SET_FLAG(force, FLAG_IS_USED_UP);
         SET_FLAG(force, FLAG_APPLIED);
         change_abil(who, force);
-        insert_ob_in_ob(force, who);
+        object_insert_in_ob(force, who);
     } else {
-        free_object(force);
+        object_free(force);
     }
 
     /* check for hp, sp change */

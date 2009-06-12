@@ -725,7 +725,7 @@ static PyObject *Object_GetNoSave(Crossfire_Object *whoptr, void *closure) {
 }
 
 static PyObject *Object_GetExists(Crossfire_Object *whoptr, void *closure) {
-    if (!was_destroyed(whoptr->obj, whoptr->obj->count)) {
+    if (!object_was_destroyed(whoptr->obj, whoptr->obj->count)) {
         Py_INCREF(Py_True);
         return Py_True;
     } else {
@@ -2424,7 +2424,7 @@ PyObject *Crossfire_Object_wrap(object *what) {
     }
 
     pyobj = find_assoc_pyobject(what);
-    if ((!pyobj) || (was_destroyed(((Crossfire_Object *)pyobj)->obj, ((Crossfire_Object *)pyobj)->count))) {
+    if ((!pyobj) || (object_was_destroyed(((Crossfire_Object *)pyobj)->obj, ((Crossfire_Object *)pyobj)->count))) {
         if (what->type == PLAYER) {
             plwrap = PyObject_NEW(Crossfire_Player, &Crossfire_PlayerType);
             if (plwrap != NULL) {

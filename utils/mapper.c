@@ -2063,7 +2063,7 @@ static void process_map(struct_map_info *info) {
                         pics_allocated++;
                     }
                     if (item->head || item->more) {
-                        get_multi_size(item, &sx, &sy, &hx, &hy);
+                        object_get_multi_size(item, &sx, &sy, &hx, &hy);
                     } else {
                         hx = 0;
                         hy = 0;
@@ -3854,7 +3854,7 @@ void do_auto_apply(mapstruct *m) {
 
                     if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
                         tmp->speed = 0;
-                        update_ob_speed(tmp);
+                        object_update_speed(tmp);
                     }
                     /* This function can be called everytime a map is loaded, even when
                      * swapping back in.  As such, we don't want to create the treasure
@@ -3966,14 +3966,14 @@ int auto_apply(object *op) {
             if (tmp == NULL)
                 return 0;
             if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                free_object(tmp);
+                object_free(tmp);
                 tmp = NULL;
             }
         } while (!tmp);
         tmp->x = op->x;
         tmp->y = op->y;
         SET_FLAG(tmp, FLAG_UNPAID);
-        insert_ob_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map(tmp, op->map, NULL, 0);
         CLEAR_FLAG(op, FLAG_AUTO_APPLY);
         identify(tmp);
         break;
@@ -3992,14 +3992,14 @@ int auto_apply(object *op) {
          */
         for (tmp = op->inv; tmp; tmp = tmp2) {
             tmp2 = tmp->below;
-            remove_ob(tmp);
+            object_remove(tmp);
             if (op->env)
-                insert_ob_in_ob(tmp, op->env);
+                object_insert_in_ob(tmp, op->env);
             else
-                free_object(tmp);
+                object_free(tmp);
             }
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         break;
     }
     return tmp ? 1 : 0;

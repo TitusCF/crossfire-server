@@ -212,9 +212,9 @@ static object *find_object_both(char *params) {
     if (!params)
         return NULL;
     if (params[0] == '#')
-        return find_object(atol(params+1));
+        return object_find_by_tag(atol(params+1));
     else
-        return find_object_name(params);
+        return object_find_by_name(params);
 }
 
 /**
@@ -361,7 +361,7 @@ int command_kick(object *op, const char *params) {
             if (!QUERY_FLAG(op, FLAG_REMOVED)) {
                 /* Avion : Here we handle the KICK global event */
                 execute_global_event(EVENT_KICK, op, params);
-                remove_ob(op);
+                object_remove(op);
                 removed = 1;
             }
             op->direction = 0;
@@ -543,13 +543,13 @@ int command_goto(object *op, char *params) {
     }
 
     name = params;
-    dummy = get_object();
+    dummy = object_new();
     dummy->map = op->map;
     EXIT_PATH(dummy) = add_string(name);
     dummy->name = add_string(name);
 
     enter_exit(op, dummy);
-    free_object(dummy);
+    object_free(dummy);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "Difficulty: %d.",
                          "Difficulty: %d.",
@@ -638,7 +638,7 @@ int command_arrest(object *op, char *params) {
         return 0;
     }
     enter_exit(pl->ob, dummy);
-    free_object(dummy);
+    object_free(dummy);
     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                   "You have been arrested.", NULL);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
@@ -676,19 +676,19 @@ int command_summon(object *op, char *params) {
     if (!pl)
         return 1;
 
-    i = find_free_spot(op, op->map, op->x, op->y, 1, 9);
+    i = object_find_free_spot(op, op->map, op->x, op->y, 1, 9);
     if (i == -1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can not find a free spot to place summoned player.", NULL);
         return 1;
     }
 
-    dummy = get_object();
+    dummy = object_new();
     EXIT_PATH(dummy) = add_string(op->map->path);
     EXIT_X(dummy) = op->x+freearr_x[i];
     EXIT_Y(dummy) = op->y+freearr_y[i];
     enter_exit(pl->ob, dummy);
-    free_object(dummy);
+    object_free(dummy);
     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                   "You are summoned.", NULL);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
@@ -730,19 +730,19 @@ int command_teleport(object *op, char *params) {
         return 0;
     }
 
-    i = find_free_spot(pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 1, 9);
+    i = object_find_free_spot(pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 1, 9);
     if (i == -1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can not find a free spot to teleport to.", NULL);
         return 0;
     }
 
-    dummy = get_object();
+    dummy = object_new();
     EXIT_PATH(dummy) = add_string(pl->ob->map->path);
     EXIT_X(dummy) = pl->ob->x+freearr_x[i];
     EXIT_Y(dummy) = pl->ob->y+freearr_y[i];
     enter_exit(op, dummy);
-    free_object(dummy);
+    object_free(dummy);
     if (!op->contr->hidden)
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                       "You see a portal open.", NULL);
@@ -1001,7 +1001,7 @@ int command_create(object *op, char *params) {
 
     if (at->clone.nrof) {
         if (at_spell)
-            insert_ob_in_ob(arch_to_object(at_spell), tmp);
+            object_insert_in_ob(arch_to_object(at_spell), tmp);
 
         tmp->x = op->x;
         tmp->y = op->y;
@@ -1015,9 +1015,9 @@ int command_create(object *op, char *params) {
 
         /* Multipart objects can't be in inventory, put'em on floor. */
         if (!tmp->more) {
-            tmp = insert_ob_in_ob(tmp, op);
+            tmp = object_insert_in_ob(tmp, op);
         } else {
-            insert_ob_in_map_at(tmp, op->map, op, 0, op->x, op->y);
+            object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y);
         }
 
         /* Let's put this created item on stack so dm can access it easily. */
@@ -1033,7 +1033,7 @@ int command_create(object *op, char *params) {
                 dup = arch_to_object(atmp);
 
                 if (at_spell)
-                    insert_ob_in_ob(arch_to_object(at_spell), dup);
+                    object_insert_in_ob(arch_to_object(at_spell), dup);
 
                 /*
                  * The head is what contains all the important bits,
@@ -1041,7 +1041,7 @@ int command_create(object *op, char *params) {
                  */
                 if (head == NULL) {
                     head = dup;
-                    copy_object(tmp, dup);
+                    object_copy(tmp, dup);
                 }
                 if (settings.real_wiz == FALSE)
                     SET_FLAG(dup, FLAG_WAS_WIZ);
@@ -1070,10 +1070,10 @@ int command_create(object *op, char *params) {
                 if (out_of_map(op->map, head->x+size_x, head->y+size_y)) {
                     if (head->x < size_x || head->y < size_y) {
                         dm_stack_pop(op->contr);
-                        free_object(head);
+                        object_free(head);
                         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                       "Object too big to insert in map, or wrong position.", NULL);
-                        free_object(tmp);
+                        object_free(tmp);
                         return 1;
                     }
 
@@ -1085,9 +1085,9 @@ int command_create(object *op, char *params) {
                     }
                 }
 
-                insert_ob_in_map(head, op->map, op, 0);
+                object_insert_in_map(head, op->map, op, 0);
             } else
-                head = insert_ob_in_ob(head, op);
+                head = object_insert_in_ob(head, op);
 
             /* Let's put this created item on stack so dm can access it easily. */
             /* Wonder if we really want to push all of these, but since
@@ -1100,7 +1100,7 @@ int command_create(object *op, char *params) {
         }
 
         /* free the one we used to copy */
-        free_object(tmp);
+        object_free(tmp);
     }
 
     return 1;
@@ -1129,7 +1129,7 @@ int command_inventory(object *op, char *params) {
         return 0;
     }
 
-    if (!sscanf(params, "%d", &i) || (tmp = find_object(i)) == NULL) {
+    if (!sscanf(params, "%d", &i) || (tmp = object_find_by_tag(i)) == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Inventory of what object (nr)?", NULL);
         return 1;
@@ -1178,7 +1178,7 @@ int command_dump(object *op, char *params) {
         return 1;
 
     sb = stringbuffer_new();
-    dump_object(tmp, sb);
+    object_dump(tmp, sb);
     diff = stringbuffer_finish(sb);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, diff, diff);
     free(diff);
@@ -1238,9 +1238,9 @@ int command_possess(object *op, char *params) {
     victim = NULL;
     if (params != NULL) {
         if (sscanf(params, "%d", &i))
-            victim = find_object(i);
+            victim = object_find_by_tag(i);
         else if (sscanf(params, "%s", buf))
-            victim = find_object_name(buf);
+            victim = object_find_by_name(buf);
     }
     if (victim == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1376,9 +1376,9 @@ int command_remove(object *op, char *params) {
         tmp = tmp->head;
     if (tmp->speed != 0) {
         tmp->speed = 0;
-        update_ob_speed(tmp);
+        object_update_speed(tmp);
     }
-    remove_ob(tmp);
+    object_remove(tmp);
     return 1;
 }
 
@@ -1413,10 +1413,10 @@ int command_free(object *op, char *params) {
     if (!QUERY_FLAG(tmp, FLAG_REMOVED)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                       "Warning: item was not removed, will do so now.", NULL);
-        remove_ob(tmp);
+        object_remove(tmp);
     }
 
-    free_object(tmp);
+    object_free(tmp);
     return 1;
 }
 
@@ -1721,12 +1721,12 @@ int command_reset(object *op, char *params) {
                 return 1;
             }
 
-            dummy = get_object();
+            dummy = object_new();
             dummy->map = NULL;
             EXIT_X(dummy) = op->x;
             EXIT_Y(dummy) = op->y;
             EXIT_PATH(dummy) = add_string(op->map->path);
-            remove_ob(op);
+            object_remove(op);
             op->map = NULL;
             tmp = op;
         }
@@ -1739,8 +1739,8 @@ int command_reset(object *op, char *params) {
 
         /* Need to re-insert player if swap failed for some reason */
         if (tmp) {
-            insert_ob_in_map(op, m, NULL, 0);
-            free_object(dummy);
+            object_insert_in_map(op, m, NULL, 0);
+            object_free(dummy);
         }
 
         if (res < 0 && res != SAVE_ERROR_PLAYER)
@@ -1783,7 +1783,7 @@ int command_reset(object *op, char *params) {
 
     if (tmp) {
         enter_exit(tmp, dummy);
-        free_object(dummy);
+        object_free(dummy);
     }
 
     return 1;
@@ -1961,7 +1961,7 @@ int command_dm(object *op, char *params) {
 int command_invisible(object *op, char *params) {
     if (op) {
         op->invisible += 100;
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                       "You turn invisible.", NULL);
     }
@@ -2124,7 +2124,7 @@ static int command_learn_spell_or_prayer(object *op, char *params, int special_p
     }
 
     do_learn_spell(op, tmp, special_prayer);
-    free_object(tmp);
+    object_free(tmp);
     return 1;
 }
 
@@ -2342,7 +2342,7 @@ object *dm_stack_peek(player *pl) {
         return NULL;
     }
 
-    ob = find_object(pl->stack_items[pl->stack_position-1]);
+    ob = object_find_by_tag(pl->stack_items[pl->stack_position-1]);
     if (!ob) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                       "Stacked item was removed!", NULL);
@@ -2439,7 +2439,7 @@ object *get_dm_object(player *pl, char **params, int *from) {
             (*params)++;
 
         /* Get item */
-        ob = find_object(item_tag);
+        ob = object_find_by_tag(item_tag);
         if (!ob) {
             if (from)
                 *from = STACK_FROM_NONE;
@@ -2477,7 +2477,7 @@ object *get_dm_object(player *pl, char **params, int *from) {
             return NULL;
         }
 
-        ob = find_object(pl->stack_items[item_position]);
+        ob = object_find_by_tag(pl->stack_items[item_position]);
         if (!ob) {
             if (from)
                 *from = STACK_FROM_NONE;
@@ -2569,7 +2569,7 @@ int command_stack_list(object *op, char *params) {
                   "Item stack contents:", NULL);
 
     for (item = 0; item < pl->stack_position; item++) {
-        display = find_object(pl->stack_items[item]);
+        display = object_find_by_tag(pl->stack_items[item]);
         if (display)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                                  " %d : %s [%d]",
@@ -2662,7 +2662,7 @@ int command_diff(object *op, char *params) {
          * Besides, if we don't do anything, compare an item to itself, not really useful.
          */
         if (op->contr->stack_position > 1) {
-            left = find_object(op->contr->stack_items[op->contr->stack_position-2]);
+            left = object_find_by_tag(op->contr->stack_items[op->contr->stack_position-2]);
             if (left)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                               "(Note: first item taken from undertop)", NULL);
@@ -2725,7 +2725,7 @@ int command_insert_into(object *op, char *params) {
         * Besides, can't insert an item into itself.
         */
         if (op->contr->stack_position > 1) {
-            left = find_object(op->contr->stack_items[op->contr->stack_position-2]);
+            left = object_find_by_tag(op->contr->stack_items[op->contr->stack_position-2]);
             if (left)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                               "(Note: item to insert into taken from undertop)", NULL);
@@ -2748,8 +2748,8 @@ int command_insert_into(object *op, char *params) {
     }
 
     if (!QUERY_FLAG(right, FLAG_REMOVED))
-        remove_ob(right);
-    inserted = insert_ob_in_ob(right, left);
+        object_remove(right);
+    inserted = object_insert_in_ob(right, left);
     if (left->type == PLAYER) {
         if (inserted != right)
             /* item was merged, so updating name and such. */

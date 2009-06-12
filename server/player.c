@@ -710,8 +710,8 @@ void give_initial_items(object *pl, treasurelist *items) {
             if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR) && IS_ARMOR(op))
             || (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && IS_WEAPON(op))
             || (!QUERY_FLAG(pl, FLAG_USE_SHIELD) && IS_SHIELD(op))) {
-                remove_ob(op);
-                free_object(op);
+                object_remove(op);
+                object_free(op);
                 continue;
             }
         }
@@ -730,8 +730,8 @@ void give_initial_items(object *pl, treasurelist *items) {
                     break;
 
             if (tmp) {
-                remove_ob(op);
-                free_object(op);
+                object_remove(op);
+                object_free(op);
                 LOG(llevError, "give_initial_items: Removing duplicate object %s\n", tmp->name);
                 continue;
             }
@@ -819,7 +819,7 @@ void play_again(object *op) {
      * cases.
      */
     if (!QUERY_FLAG(op, FLAG_REMOVED))
-        remove_ob(op);
+        object_remove(op);
     /* Need to set this to null - otherwise, it could point to garbage,
      * and draw() doesn't check to see if the player is removed, only if
      * the map is null or not swapped out.
@@ -846,7 +846,7 @@ void receive_play_again(object *op, char key) {
 
         add_refcount(name);
         remove_friendly_object(op);
-        free_object(op);
+        object_free(op);
         pl = get_player(pl);
         op = pl->ob;
         add_friendly_object(op);
@@ -1156,7 +1156,7 @@ void key_change_class(object *op, char key) {
     int tmp_loop;
 
     if (key == 'q' || key == 'Q') {
-        remove_ob(op);
+        object_remove(op);
         play_again(op);
         return;
     }
@@ -1207,7 +1207,7 @@ void key_change_class(object *op, char key) {
 
             snprintf(mapname, MAX_BUF-1, "%s/%s", first_map_ext_path, op->arch->name);
             /*printf("%s\n", mapname);*/
-            tmp = get_object();
+            tmp = object_new();
             EXIT_PATH(tmp) = add_string(mapname);
             EXIT_X(tmp) = op->x;
             EXIT_Y(tmp) = op->y;
@@ -1220,7 +1220,7 @@ void key_change_class(object *op, char key) {
                 snprintf(op->contr->savebed_map, sizeof(op->contr->savebed_map), "%s", mapname);
             }
 
-            free_object(tmp);
+            object_free(tmp);
         } else {
             LOG(llevDebug, "first_map_ext_path not set\n");
         }
@@ -1237,9 +1237,9 @@ void key_change_class(object *op, char key) {
         int x = op->x, y = op->y;
 
         remove_statbonus(op);
-        remove_ob(op);
+        object_remove(op);
         op->arch = get_player_archetype(op->arch);
-        copy_object(&op->arch->clone, op);
+        object_copy(&op->arch->clone, op);
         op->stats = op->contr->orig_stats;
         free_string(op->name);
         op->name = name;
@@ -1248,13 +1248,13 @@ void key_change_class(object *op, char key) {
         op->x = x;
         op->y = y;
         SET_ANIMATION(op, 2);    /* So player faces south */
-        insert_ob_in_map(op, op->map, op, 0);
+        object_insert_in_map(op, op->map, op, 0);
         strncpy(op->contr->title, op->arch->clone.name, sizeof(op->contr->title)-1);
         op->contr->title[sizeof(op->contr->title)-1] = '\0';
         add_statbonus(op);
         tmp_loop = allowed_class(op);
     }
-    update_object(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);
     esrv_update_item(UPD_FACE, op, op);
     fix_object(op);
     op->stats.hp = op->stats.maxhp;
@@ -1287,7 +1287,7 @@ void key_confirm_quit(object *op, char key) {
     /* Lauwenmark : Here we handle the REMOVE global event */
     execute_global_event(EVENT_REMOVE, op);
     terminate_all_pets(op);
-    remove_ob(op);
+    object_remove(op);
     op->direction = 0;
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                          "%s quits the game.",
@@ -1399,20 +1399,20 @@ int check_pick(object *op) {
 
     /* loop while there are items on the floor that are not marked as
      * destroyed */
-    while (next && !was_destroyed(next, next_tag)) {
+    while (next && !object_was_destroyed(next, next_tag)) {
         tmp = next;
         next = tmp->below;
         if (next)
             next_tag = next->count;
 
-        if (was_destroyed(op, op_tag))
+        if (object_was_destroyed(op, op_tag))
             return 0;
 
-        if (!can_pick(op, tmp))
+        if (!object_can_pick(op, tmp))
             continue;
 
         if (op->contr->search_str[0] != '\0' && settings.search_items == TRUE) {
-            if (item_matched_string(op, tmp, op->contr->search_str))
+            if (object_matches_string(op, tmp, op->contr->search_str))
                 pick_up(op, tmp);
             continue;
         }
@@ -1985,15 +1985,15 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
 
     /* this should not happen, but sometimes does */
     if (arrow->nrof == 0) {
-        remove_ob(arrow);
-        free_object(arrow);
+        object_remove(arrow);
+        object_free(arrow);
         return 0;
     }
 
     left = arrow; /* these are arrows left to the player */
     /* BUG? The value in left_tag doesn't seem to be used. */
     left_tag = left->count;
-    arrow = get_split_ob(arrow, 1, NULL, 0);
+    arrow = object_split(arrow, 1, NULL, 0);
     if (arrow == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "You have no %s left.",
@@ -2001,7 +2001,7 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
                              bow->race);
         return 0;
     }
-    set_owner(arrow, op);
+    object_set_owner(arrow, op);
     if (arrow->skill)
         free_string(arrow->skill);
     arrow->skill = add_refcount(bow->skill);
@@ -2037,7 +2037,7 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
 
     if (arrow->speed < 1.0)
         arrow->speed = 1.0;
-    update_ob_speed(arrow);
+    object_update_speed(arrow);
     arrow->speed_left = 0;
 
     if (op->type == PLAYER) {
@@ -2077,9 +2077,9 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     arrow->move_on = MOVE_FLY_LOW|MOVE_WALK;
 
     tag = arrow->count;
-    insert_ob_in_map(arrow, m, op, 0);
+    object_insert_in_map(arrow, m, op, 0);
 
-    if (!was_destroyed(arrow, tag)) {
+    if (!object_was_destroyed(arrow, tag)) {
         play_sound_map(SOUND_TYPE_ITEM, arrow, arrow->direction, "fire");
         ob_process(arrow);
     }
@@ -2382,7 +2382,7 @@ static int player_attack_door(object *op, object *door) {
             remove_locked_door(door); /* remove door without violence ;-) */
         }
         /* Do this after we print the message */
-        decrease_ob(key); /* Use up one of the keys */
+        object_decrease_nrof_by_one(key); /* Use up one of the keys */
         /* Need to update the weight the container the key was in */
         if (container != op)
             esrv_update_item(UPD_WEIGHT, op, container);
@@ -2494,7 +2494,7 @@ void move_player_attack(object *op, int dir) {
          * peaceful.  Our assumption is the creature is a pet if the
          * player owns it and it is either friendly or unaggressive.
          */
-        mon_owner = get_owner(mon);
+        mon_owner = object_get_owner(mon);
         if ((op->type == PLAYER)
         && (mon_owner == op || (mon_owner != NULL && mon_owner->type == PLAYER && mon_owner->contr->party != NULL && mon_owner->contr->party == op->contr->party))
         && (QUERY_FLAG(mon, FLAG_UNAGGRESSIVE) || QUERY_FLAG(mon, FLAG_FRIENDLY))) {
@@ -2588,7 +2588,7 @@ static void update_transport_block(object *transport, int dir) {
     object *part;
     int sx, sy, x, y;
 
-    get_multi_size(transport, &sx, &sy, NULL, NULL);
+    object_get_multi_size(transport, &sx, &sy, NULL, NULL);
     assert(sx == sy);
 
     if (dir == 1 || dir == 5) {
@@ -2656,10 +2656,10 @@ static int turn_one_transport(object *transport, object *captain, int dir) {
     }
 
     update_transport_block(transport, dir);
-    remove_ob(transport);
+    object_remove(transport);
     if (ob_blocked(transport, transport->map, x, y)) {
         update_transport_block(transport, transport->direction);
-        insert_ob_in_map(transport, transport->map, NULL, 0);
+        object_insert_in_map(transport, transport->map, NULL, 0);
         return 2;
     }
 
@@ -2681,7 +2681,7 @@ static int turn_one_transport(object *transport, object *captain, int dir) {
         }
     }
 
-    insert_ob_in_map_at(transport, transport->map, NULL, 0, x, y);
+    object_insert_in_map_at(transport, transport->map, NULL, 0, x, y);
     transport->direction = dir;
     transport->facing = dir;
     animate_object(transport, dir);
@@ -2704,7 +2704,7 @@ static int turn_one_transport(object *transport, object *captain, int dir) {
 static int turn_transport(object *transport, object *captain, int dir) {
     assert(transport->type == TRANSPORT);
 
-    if (get_ob_key_value(transport, "turnable_transport") == NULL) {
+    if (object_get_value(transport, "turnable_transport") == NULL) {
         transport->direction = dir;
         transport->facing = dir;
         animate_object(transport, dir);
@@ -2905,8 +2905,8 @@ static int save_life(object *op) {
                                  "Your %s vibrates violently, then evaporates.",
                                  "Your %s vibrates violently, then evaporates.",
                                  name);
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
             CLEAR_FLAG(op, FLAG_LIFESAVE);
             if (op->stats.hp < 0)
                 op->stats.hp = op->stats.maxhp;
@@ -2941,13 +2941,13 @@ void remove_unpaid_objects(object *op, object *env, int free_items) {
                            * we remove object 'op'
                            */
         if (QUERY_FLAG(op, FLAG_UNPAID)) {
-            remove_ob(op);
+            object_remove(op);
             if (free_items)
-                free_object(op);
+                object_free(op);
             else {
                 op->x = env->x;
                 op->y = env->y;
-                insert_ob_in_map(op, env->map, NULL, 0);
+                object_insert_in_map(op, env->map, NULL, 0);
             }
         } else if (op->inv)
             remove_unpaid_objects(op->inv, env, free_items);
@@ -3196,7 +3196,7 @@ static void loot_object(object *op) {
         next = tmp->below;
         if (tmp->type == EXPERIENCE || tmp->invisible)
             continue;
-        remove_ob(tmp);
+        object_remove(tmp);
         tmp->x = op->x,
         tmp->y = op->y;
         if (tmp->type == CONTAINER) { /* empty container to ground */
@@ -3205,13 +3205,13 @@ static void loot_object(object *op) {
         if (!QUERY_FLAG(tmp, FLAG_UNIQUE)
         && (QUERY_FLAG(tmp, FLAG_STARTEQUIP) || QUERY_FLAG(tmp, FLAG_NO_DROP) || !(RANDOM()%3))) {
             if (tmp->nrof > 1) {
-                tmp2 = get_split_ob(tmp, 1+RANDOM()%(tmp->nrof-1), NULL, 0);
-                free_object(tmp2);
-                insert_ob_in_map(tmp, op->map, NULL, 0);
+                tmp2 = object_split(tmp, 1+RANDOM()%(tmp->nrof-1), NULL, 0);
+                object_free(tmp2);
+                object_insert_in_map(tmp, op->map, NULL, 0);
             } else
-                free_object(tmp);
+                object_free(tmp);
         } else
-            insert_ob_in_map(tmp, op->map, NULL, 0);
+            object_insert_in_map(tmp, op->map, NULL, 0);
     }
 }
 
@@ -3257,19 +3257,19 @@ void kill_player(object *op) {
 
         /* restore player */
         at = find_archetype("poisoning");
-        tmp = present_arch_in_ob(at, op);
+        tmp = arch_present_in_ob(at, op);
         if (tmp) {
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                           "Your body feels cleansed", NULL);
         }
 
         at = find_archetype("confusion");
-        tmp = present_arch_in_ob(at, op);
+        tmp = arch_present_in_ob(at, op);
         if (tmp) {
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                           "Your mind feels clearer", NULL);
         }
@@ -3303,7 +3303,7 @@ void kill_player(object *op) {
             tmp->materialname = NULL;
             tmp->x = op->x,
             tmp->y = op->y;
-            insert_ob_in_map(tmp, op->map, op, 0);
+            object_insert_in_map(tmp, op->map, op, 0);
         }
 
         /* teleport defeated player to new destination*/
@@ -3395,10 +3395,10 @@ void kill_player(object *op) {
                 object *dep;
 
                 i = RANDOM()%7;
-                dep = present_arch_in_ob(deparch, op);
+                dep = arch_present_in_ob(deparch, op);
                 if (!dep) {
                     dep = arch_to_object(deparch);
-                    insert_ob_in_ob(dep, op);
+                    object_insert_in_ob(dep, op);
                 }
                 lose_this_stat = 1;
                 if (settings.balanced_stat_loss) {
@@ -3478,24 +3478,24 @@ void kill_player(object *op) {
         tmp->msg = add_string(buf);
         tmp->x = op->x,
         tmp->y = op->y;
-        insert_ob_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map(tmp, op->map, NULL, 0);
 
         /* restore player: remove any poisoning, disease and confusion the
          * character may be suffering.*/
         at = find_archetype("poisoning");
-        tmp = present_arch_in_ob(at, op);
+        tmp = arch_present_in_ob(at, op);
         if (tmp) {
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                           "Your body feels cleansed", NULL);
         }
 
         at = find_archetype("confusion");
-        tmp = present_arch_in_ob(at, op);
+        tmp = arch_present_in_ob(at, op);
         if (tmp) {
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                           "Your mind feels clearer", NULL);
         }
@@ -3553,7 +3553,7 @@ void kill_player(object *op) {
                 if (will_kill_again&(1<<at))
                     force->resist[at] = 100;
             }
-            insert_ob_in_ob(force, op);
+            object_insert_in_ob(force, op);
             fix_object(op);
         }
 
@@ -3577,13 +3577,13 @@ void kill_player(object *op) {
         check_score(op, 0);
         if (op->contr->ranges[range_golem] != NULL) {
             remove_friendly_object(op->contr->ranges[range_golem]);
-            remove_ob(op->contr->ranges[range_golem]);
-            free_object(op->contr->ranges[range_golem]);
+            object_remove(op->contr->ranges[range_golem]);
+            object_free(op->contr->ranges[range_golem]);
             op->contr->ranges[range_golem] = NULL;
             op->contr->golem_count = 0;
         }
         loot_object(op); /* Remove some of the items for good */
-        remove_ob(op);
+        object_remove(op);
         op->direction = 0;
 
         if (!QUERY_FLAG(op, FLAG_WAS_WIZ) && op->stats.exp) {
@@ -3624,7 +3624,7 @@ void kill_player(object *op) {
             free_string(tmp->msg);
         tmp->msg = add_string(gravestone_text(op, buf, sizeof(buf)));
         SET_FLAG(tmp, FLAG_UNIQUE);
-        insert_ob_in_map(tmp, map, NULL, 0);
+        object_insert_in_map(tmp, map, NULL, 0);
     }
 }
 
@@ -3639,7 +3639,7 @@ void fix_weight(void) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next) {
-        int old = pl->ob->carrying, sum = sum_weight(pl->ob);
+        int old = pl->ob->carrying, sum = object_sum_weight(pl->ob);
 
         if (old == sum)
             continue;
@@ -3692,8 +3692,8 @@ void cast_dust(object *op, object *throw_ob, int dir) {
     cast_spell(op, throw_ob, dir, spob, NULL);
 
     if (!QUERY_FLAG(throw_ob, FLAG_REMOVED))
-        remove_ob(throw_ob);
-    free_object(throw_ob);
+        object_remove(throw_ob);
+    object_free(throw_ob);
 }
 
 /**
@@ -3710,7 +3710,7 @@ void make_visible(object *op) {
         if (op->contr->invis_race)
             FREE_AND_CLEAR_STR(op->contr->invis_race);
     }
-    update_object(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);
 }
 
 /**
@@ -3793,7 +3793,7 @@ void do_hidden_move(object *op) {
     if (!op || !op->map)
         return;
 
-    skop = find_obj_by_type_subtype(op, SKILL, SK_HIDING);
+    skop = object_find_by_type_subtype(op, SKILL, SK_HIDING);
 
     /* its *extremely *hard to run and sneak/hide at the same time! */
     if (op->type == PLAYER && op->contr->run_on) {
@@ -4196,7 +4196,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
                              "You gained %s",
                              "You gained %s",
                              name);
-        tmp = insert_ob_in_ob(tmp, who);
+        tmp = object_insert_in_ob(tmp, who);
         if (who->type == PLAYER)
             esrv_send_item(who, tmp);
     }

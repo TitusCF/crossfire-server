@@ -647,7 +647,7 @@ artifact *locate_recipe_artifact(const recipe *rp, size_t idx) {
             if (!strcmp(art->item->name, rp->title) && legal_artifact_combination(item, art))
                 break;
 
-    free_object(item);
+    object_free(item);
 
     return art;
 }

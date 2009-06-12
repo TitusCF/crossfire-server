@@ -79,10 +79,10 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
          * one charge from each would be used up.  --DAMN
          */
         if (lighter->nrof > 1) {
-            object *oneLighter = get_split_ob(lighter, 1, NULL, 0);
+            object *oneLighter = object_split(lighter, 1, NULL, 0);
 
             oneLighter->stats.food--;
-            oneLighter = insert_ob_in_ob(oneLighter, applier);
+            oneLighter = object_insert_in_ob(oneLighter, applier);
         } else {
             lighter->stats.food--;
         }
@@ -103,7 +103,7 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
      * name object, so make a copy so the message we print out makes
      * some sense. */
     strncpy(item_name, item->name, sizeof(item_name));
-    if (applier == get_player_container(item))
+    if (applier == object_get_player_container(item))
         is_player_env = 1;
 
     save_throw_object(item, AT_FIRE, applier);

@@ -51,7 +51,7 @@ static object *find_best_apply_object_match(object *start, object *pl, const cha
     for (tmp = start; tmp; tmp = tmp->below) {
         if (tmp->invisible)
             continue;
-        if ((tmpmatch = item_matched_string(pl, tmp, params)) > match_val) {
+        if ((tmpmatch = object_matches_string(pl, tmp, params)) > match_val) {
             if ((aflag == AP_APPLY) && (QUERY_FLAG(tmp, FLAG_APPLIED)))
                 continue;
             if ((aflag == AP_UNAPPLY) && (!QUERY_FLAG(tmp, FLAG_APPLIED)))
@@ -73,13 +73,13 @@ START_TEST(test_find_best_apply_object_match) {
     gorokh = create_archetype("cloak");
     gorokh->title = add_string("of Gorokh");
     CLEAR_FLAG(gorokh, FLAG_IDENTIFIED);
-    insert_ob_in_ob(gorokh, pl);
+    object_insert_in_ob(gorokh, pl);
 
     cloak = create_archetype("cloak");
-    insert_ob_in_ob(cloak, pl);
+    object_insert_in_ob(cloak, pl);
 
     other = create_archetype("gem");
-    insert_ob_in_ob(other, pl);
+    object_insert_in_ob(other, pl);
 
     found = find_best_apply_object_match(pl->inv, pl, "all", 0);
     fail_unless(found == other, "not found gem but %s", found ? found->name : "nothing");
@@ -102,24 +102,24 @@ START_TEST(test_put_object_in_sack) {
     fail_unless(test_map != NULL, "can't create test map");
 
     sack = create_archetype("gem");
-    insert_ob_in_map_at(sack, test_map, NULL, 0, 0, 0);
+    object_insert_in_map_at(sack, test_map, NULL, 0, 0, 0);
     fail_unless(GET_MAP_OB(test_map, 0, 0) == sack);
 
     obj = create_archetype("gem");
     obj->nrof = 1;
-    insert_ob_in_map_at(obj, test_map, NULL, 0, 1, 0);
+    object_insert_in_map_at(obj, test_map, NULL, 0, 1, 0);
     put_object_in_sack(dummy, sack, obj, 1);
     fail_unless(GET_MAP_OB(test_map, 1, 0) == obj, "object was removed from map?");
     fail_unless(sack->inv == NULL, "sack's inventory isn't null?");
 
-    remove_ob(sack);
-    free_object(sack);
+    object_remove(sack);
+    object_free(sack);
 
     /* basic insertion */
     sack = create_archetype("sack");
     sack->nrof = 1;
     fail_unless(sack->type == CONTAINER, "sack isn't a container?");
-    insert_ob_in_map_at(sack, test_map, NULL, 0, 0, 0);
+    object_insert_in_map_at(sack, test_map, NULL, 0, 0, 0);
     fail_unless(GET_MAP_OB(test_map, 0, 0) == sack, "sack not put on map?");
 
     SET_FLAG(sack, FLAG_APPLIED);
@@ -127,8 +127,8 @@ START_TEST(test_put_object_in_sack) {
     fail_unless(sack->inv == obj, "object not inserted into sack?");
     fail_unless(GET_MAP_OB(test_map, 1, 0) == NULL, "object wasn't removed from map?");
 
-    remove_ob(obj);
-    insert_ob_in_map_at(obj, test_map, NULL, 0, 1, 0);
+    object_remove(obj);
+    object_insert_in_map_at(obj, test_map, NULL, 0, 1, 0);
     sack->weight_limit = 1;
     obj->weight = 5;
 
@@ -156,8 +156,8 @@ START_TEST(test_put_object_in_sack) {
     fail_unless(sack->inv == obj, "obj wasn't transferred?");
 
     /* move between containers and split containers */
-    remove_ob(sack2);
-    insert_ob_in_map_at(sack2, test_map, NULL, 0, 2, 0);
+    object_remove(sack2);
+    object_insert_in_map_at(sack2, test_map, NULL, 0, 2, 0);
     SET_FLAG(sack2, FLAG_APPLIED);
     sack2->nrof = 2;
     dummy->container = sack2;

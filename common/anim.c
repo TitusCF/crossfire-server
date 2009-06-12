@@ -194,7 +194,7 @@ void animate_object(object *op, int dir) {
 
         LOG(llevError, "Object lacks animation.\n");
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "%s", diff);
         free(diff);
@@ -242,7 +242,7 @@ void animate_object(object *op, int dir) {
         if (op->temp_animation_id) {
             op->temp_animation_id = 0;
             /* op->last_anim = 0; */
-            /* update_object(op, UP_OBJ_FACE); */
+            /* object_update(op, UP_OBJ_FACE); */
             animate_object(op, dir);
             return;
         }
@@ -270,12 +270,12 @@ void animate_object(object *op, int dir) {
     if (op->more)
         animate_object(op->more, dir);
 
-    /* update_object will also recursively update all the pieces.
+    /* object_update() will also recursively update all the pieces.
      * as such, we call it last, and only call it for the head
      * piece, and not for the other tail pieces.
      */
     if (!op->head && (oldface != op->face->number))
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
 }
 
 /**

@@ -87,14 +87,14 @@ void move_marker(object *op) {
                     force->speed = 0.01;
                     force->speed_left = -op->stats.food;
                 }
-                update_ob_speed(force);
+                object_update_speed(force);
                 /* put in the lock code */
                 force->slaying = add_string(op->slaying);
 
                 if (op->lore)
                     force->lore = add_string(op->lore);
 
-                insert_ob_in_ob(force, tmp);
+                object_insert_in_ob(force, tmp);
                 if (op->msg)
                     draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, tmp, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
                         op->msg, op->msg);
@@ -103,8 +103,8 @@ void move_marker(object *op) {
                     op->stats.hp--;
                     if (op->stats.hp == 0) {
                         /* marker expires--granted mark number limit */
-                        remove_ob(op);
-                        free_object(op);
+                        object_remove(op);
+                        object_free(op);
                         return;
                     }
                 }

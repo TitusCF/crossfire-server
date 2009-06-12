@@ -174,7 +174,7 @@ START_TEST(test_describe_item) {
 
         fail_unless(strcmp(buf, arch_results[check]) == 0, "describe_item(%s) returned \"%s\" instead of \"%s\"", archs[check], buf, arch_results[check]);
 
-        free_object(test);
+        object_free(test);
     }
 
     /* we initialize the random generator to always be able to reproduce, and we use rand() in case RANDOM is something else. */
@@ -195,7 +195,7 @@ START_TEST(test_describe_item) {
 
         fail_unless(strcmp(buf, treasure_results[check]) == 0, "describe_item(treasure %s) returned \"%s\" instead of \"%s\"", treasures[check], buf, treasure_results[check]);
 
-        free_object(test);
+        object_free(test);
 
     }
 }

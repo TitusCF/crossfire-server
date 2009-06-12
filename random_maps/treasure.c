@@ -237,9 +237,9 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     the_chest = create_archetype("chest");  /* was "chest_2" */
 
     /* first, find a place to put the chest. */
-    i = find_first_free_spot(the_chest, map, x, y);
+    i = object_find_first_free_spot(the_chest, map, x, y);
     if (i == -1) {
-        free_object(the_chest);
+        object_free(the_chest);
         return NULL;
     }
     xl = x+freearr_x[i];
@@ -247,7 +247,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
 
     /* if the placement is blocked, return a fail. */
     if (wall_blocked(map, xl, yl)) {
-        free_object(the_chest);
+        object_free(the_chest);
         return NULL;
     }
 
@@ -268,10 +268,10 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
                 object *new_trap;
 
                 new_trap = arch_to_object(the_trap->arch);
-                copy_object(new_trap, the_trap);
+                object_copy(new_trap, the_trap);
                 new_trap->x = x;
                 new_trap->y = y;
-                insert_ob_in_ob(new_trap, the_chest);
+                object_insert_in_ob(new_trap, the_chest);
             }
         }
     }
@@ -290,7 +290,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     /* actually place the chest. */
     the_chest->x = xl;
     the_chest->y = yl;
-    insert_ob_in_map(the_chest, map, NULL, 0);
+    object_insert_in_map(the_chest, map, NULL, 0);
     return the_chest;
 }
 
@@ -390,7 +390,7 @@ int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, int n_k
             for (tries = 0; tries < 15 && freeindex == -1; tries++) {
                 kx = (RANDOM()%(RP->Xsize-2))+1;
                 ky = (RANDOM()%(RP->Ysize-2))+1;
-                freeindex = find_first_free_spot(the_key, map, kx, ky);
+                freeindex = object_find_first_free_spot(the_key, map, kx, ky);
             }
             if (freeindex != -1) {
                 kx += freearr_x[freeindex];
@@ -439,11 +439,11 @@ int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, int n_k
     if (the_keymaster == NULL) {
         the_key->x = kx;
         the_key->y = ky;
-        insert_ob_in_map(the_key, map, NULL, 0);
+        object_insert_in_map(the_key, map, NULL, 0);
         return 1;
     }
 
-    insert_ob_in_ob(the_key, the_keymaster);
+    object_insert_in_ob(the_key, the_keymaster);
     return 1;
 }
 
@@ -702,7 +702,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy, RMParms *RP) {
     }
 
     /* give up and return the closest free spot. */
-    i = find_first_free_spot(&find_archetype("chest")->clone, map, x, y);
+    i = object_find_first_free_spot(&find_archetype("chest")->clone, map, x, y);
     if (i != -1 && i <= SIZEOFFREE1) {
         *cx = x+freearr_x[i];
         *cy = y+freearr_y[i];
@@ -726,8 +726,8 @@ void remove_monsters(int x, int y, mapstruct *map) {
         if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
             if (tmp->head)
                 tmp = tmp->head;
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
             tmp = GET_MAP_OB(map, x, y);
             if (tmp == NULL)
                 break;
@@ -779,7 +779,7 @@ static object **surround_by_doors(mapstruct *map, char **layout, int x, int y, i
             new_door->x = x+freearr_x[i];
             new_door->y = y+freearr_y[i];
             remove_monsters(new_door->x, new_door->y, map);
-            insert_ob_in_map(new_door, map, NULL, 0);
+            object_insert_in_map(new_door, map, NULL, 0);
             doorlist[ndoors_made] = new_door;
             ndoors_made++;
         }
@@ -925,8 +925,8 @@ static void remove_adjacent_doors(object *door) {
         if (flags&P_IS_ALIVE) {
             for (tmp = GET_MAP_OB(m, x+freearr_x[i], y+freearr_y[i]); tmp; tmp = tmp->above) {
                 if (tmp->type == DOOR) {
-                    remove_ob(tmp);
-                    free_object(tmp);
+                    object_remove(tmp);
+                    object_free(tmp);
                     break;
                 }
             }
@@ -963,10 +963,10 @@ void lock_and_hide_doors(object **doorlist, mapstruct *map, int opts, RMParms *R
             new_door->face = door->face;
             new_door->x = door->x;
             new_door->y = door->y;
-            remove_ob(door);
-            free_object(door);
+            object_remove(door);
+            object_free(door);
             doorlist[i] = new_door;
-            insert_ob_in_map(new_door, map, NULL, 0);
+            object_insert_in_map(new_door, map, NULL, 0);
 
             snprintf(keybuf, 256, "%d", (int)RANDOM());
             if (keyplace(map, new_door->x, new_door->y, keybuf, NO_PASS_DOORS, 2, RP))
@@ -990,8 +990,8 @@ void lock_and_hide_doors(object **doorlist, mapstruct *map, int opts, RMParms *R
                 retrofit_joined_wall(map, door->x, door->y+1, 0, RP);
                 door->face = wallface->face;
                 if (!QUERY_FLAG(wallface, FLAG_REMOVED))
-                    remove_ob(wallface);
-                free_object(wallface);
+                    object_remove(wallface);
+                object_free(wallface);
             }
         }
     }

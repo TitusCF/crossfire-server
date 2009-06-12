@@ -75,7 +75,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
     attacker = pet->attacked_by; /*pointer to attacking enemy*/
     pet->attacked_by = NULL;     /*clear this, since we are dealing with it*/
 
-    if ((owner = get_owner(pet)) != NULL) {
+    if ((owner = object_get_owner(pet)) != NULL) {
         /* If the owner has turned on the pet, make the pet
          * unfriendly.
          */
@@ -253,11 +253,11 @@ void terminate_all_pets(object *owner) {
     for (obl = first_friendly_object; obl != NULL; obl = next) {
         object *ob = obl->ob;
         next = obl->next;
-        if (get_owner(ob) == owner) {
+        if (object_get_owner(ob) == owner) {
             if (!QUERY_FLAG(ob, FLAG_REMOVED))
-                remove_ob(ob);
+                object_remove(ob);
             remove_friendly_object(ob);
-            free_object(ob);
+            object_free(ob);
         }
     }
 }
@@ -278,7 +278,7 @@ void remove_all_pets(void) {
         next = obl->next;
         if (obl->ob->type != PLAYER
         && QUERY_FLAG(obl->ob, FLAG_FRIENDLY)
-        && (owner = get_owner(obl->ob)) != NULL
+        && (owner = object_get_owner(obl->ob)) != NULL
         && !on_same_map(owner, obl->ob)) {
             /* follow owner checks map status for us.  Note that pet can
              * die in follow_owner, so check for obl->ob existence
@@ -289,7 +289,7 @@ void remove_all_pets(void) {
 
                 LOG(llevMonster, "(pet failed to follow)\n");
                 remove_friendly_object(ob);
-                free_object(ob);
+                object_free(ob);
             }
         }
     }
@@ -299,7 +299,7 @@ void remove_all_pets(void) {
  * A pet is trying to follow its owner.
  *
  * @param ob
- * pet trying to follow. Will be remove_ob()'d if can't follow.
+ * pet trying to follow. Will be object_remove()'d if can't follow.
  * @param owner
  * owner of ob.
  */
@@ -308,7 +308,7 @@ void follow_owner(object *ob, object *owner) {
     int dir;
 
     if (!QUERY_FLAG(ob, FLAG_REMOVED))
-        remove_ob(ob);
+        object_remove(ob);
 
     if (owner->map == NULL) {
         LOG(llevError, "Can't follow owner: no map.\n");
@@ -318,7 +318,7 @@ void follow_owner(object *ob, object *owner) {
         LOG(llevError, "Owner of the pet not on a map in memory!?\n");
         return;
     }
-    dir = find_free_spot(ob, owner->map, owner->x, owner->y, 1, SIZEOFFREE);
+    dir = object_find_free_spot(ob, owner->map, owner->x, owner->y, 1, SIZEOFFREE);
 
     if (dir == -1) {
         LOG(llevMonster, "No space for pet to follow, freeing %s.\n", ob->name);
@@ -332,7 +332,7 @@ void follow_owner(object *ob, object *owner) {
             tmp->map = get_map_from_coord(tmp->map, &tmp->x, &tmp->y);
         }
     }
-    insert_ob_in_map(ob, ob->map, NULL, 0);
+    object_insert_in_map(ob, ob->map, NULL, 0);
     if (owner->type == PLAYER) /* Uh, I hope this is always true... */
         draw_ext_info(NDI_UNIQUE, 0, owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
                       "Your pet magically appears next to you", NULL);
@@ -353,10 +353,10 @@ void pet_move(object *ob) {
     mapstruct *m;
 
     /* Check to see if player pulled out */
-    if ((owner = get_owner(ob)) == NULL) {
-        remove_ob(ob); /* Will be freed when returning */
+    if ((owner = object_get_owner(ob)) == NULL) {
+        object_remove(ob); /* Will be freed when returning */
         remove_friendly_object(ob);
-        free_object(ob);
+        object_free(ob);
         LOG(llevMonster, "Pet: no owner, leaving.\n");
         return;
     }
@@ -394,7 +394,7 @@ void pet_move(object *ob) {
         object *part;
 
         /* the failed move_ob above may destroy the pet, so check here */
-        if (was_destroyed(ob, tag))
+        if (object_was_destroyed(ob, tag))
             return;
 
         for (part = ob; part != NULL; part = part->more) {
@@ -412,7 +412,7 @@ void pet_move(object *ob) {
                     break;
                 if (new_ob == ob->owner)
                     return;
-                if (get_owner(new_ob) == ob->owner)
+                if (object_get_owner(new_ob) == ob->owner)
                     break;
 
                 /* Hmm.  Did we try to move into an enemy monster?  If so,
@@ -470,7 +470,7 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
         if (atmp == at) {
             if (!is_golem)
                 SET_FLAG(tmp, FLAG_MONSTER);
-            set_owner(tmp, op);
+            object_set_owner(tmp, op);
             if (op->type == PLAYER) {
                 tmp->stats.exp = 0;
                 add_friendly_object(tmp);
@@ -478,10 +478,10 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
                 if (is_golem)
                     CLEAR_FLAG(tmp, FLAG_MONSTER);
             } else if (QUERY_FLAG(op, FLAG_FRIENDLY)) {
-                object *owner = get_owner(op);
+                object *owner = object_get_owner(op);
 
                 if (owner != NULL) {/* For now, we transfer ownership */
-                    set_owner(tmp, owner);
+                    object_set_owner(tmp, owner);
                     tmp->attack_movement = PETMOVE;
                     add_friendly_object(tmp);
                     SET_FLAG(tmp, FLAG_FRIENDLY);
@@ -546,10 +546,10 @@ void move_golem(object *op) {
     if (QUERY_FLAG(op, FLAG_MONSTER))
         return; /* Has already been moved */
 
-    if (get_owner(op) == NULL) {
+    if (object_get_owner(op) == NULL) {
         LOG(llevDebug, "Golem without owner destructed.\n");
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return;
     }
     /* It would be nice to have a cleaner way of what message to print
@@ -564,8 +564,8 @@ void move_golem(object *op) {
         op->owner->contr->ranges[range_golem] = NULL;
         op->owner->contr->golem_count = 0;
         remove_friendly_object(op);
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return;
     }
 
@@ -577,7 +577,7 @@ void move_golem(object *op) {
     tag = op->count;
     if (move_ob(op, op->direction, op))
         return;
-    if (was_destroyed(op, tag))
+    if (object_was_destroyed(op, tag))
         return;
 
     for (tmp = op; tmp; tmp = tmp->more) {
@@ -629,7 +629,7 @@ void move_golem(object *op) {
         } /* If victim */
     }
     if (made_attack)
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
 }
 
 /**
@@ -681,8 +681,8 @@ int summon_golem(object *op, object *caster, int dir, object *spob) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
                       "You dismiss your existing golem.", NULL);
-        remove_ob(op->contr->ranges[range_golem]);
-        free_object(op->contr->ranges[range_golem]);
+        object_remove(op->contr->ranges[range_golem]);
+        object_free(op->contr->ranges[range_golem]);
         op->contr->ranges[range_golem] = NULL;
         op->contr->golem_count = -1;
     }
@@ -715,7 +715,7 @@ int summon_golem(object *op, object *caster, int dir, object *spob) {
     }
 
     if (!dir)
-        dir = find_free_spot(NULL, op->map, op->x, op->y, 1, SIZEOFFREE1+1);
+        dir = object_find_free_spot(NULL, op->map, op->x, op->y, 1, SIZEOFFREE1+1);
 
     if ((dir == -1)
     || ob_blocked(&at->clone, op->map, op->x+freearr_x[dir], op->y+freearr_y[dir])) {
@@ -735,7 +735,7 @@ int summon_golem(object *op, object *caster, int dir, object *spob) {
 
     if (op->type == PLAYER) {
         tmp->type = GOLEM;
-        set_owner(tmp, op);
+        object_set_owner(tmp, op);
         set_spell_skill(op, caster, spob, tmp);
         op->contr->ranges[range_golem] = tmp;
         op->contr->golem_count = tmp->count;
@@ -743,10 +743,10 @@ int summon_golem(object *op, object *caster, int dir, object *spob) {
         op->contr->shoottype = range_golem;
     } else {
         if (QUERY_FLAG(op, FLAG_FRIENDLY)) {
-            object *owner = get_owner(op);
+            object *owner = object_get_owner(op);
 
             if (owner != NULL) { /* For now, we transfer ownership */
-                set_owner(tmp, owner);
+                object_set_owner(tmp, owner);
                 tmp->attack_movement = PETMOVE;
                 add_friendly_object(tmp);
                 SET_FLAG(tmp, FLAG_FRIENDLY);
@@ -810,7 +810,7 @@ int summon_golem(object *op, object *caster, int dir, object *spob) {
             tmp->attacktype |= AT_PHYSICAL;
     }
 
-    insert_ob_in_map(tmp, tmp->map, op, 0);
+    object_insert_in_map(tmp, tmp->map, op, 0);
     return 1;
 }
 
@@ -965,7 +965,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
         object *mon, *owner;
         int summon_level, tries;
 
-        if (!god && ((owner = get_owner(op)) != NULL)) {
+        if (!god && ((owner = object_get_owner(op)) != NULL)) {
             god = find_god(determine_god(owner));
         }
         /* If we can't find a god, can't get what monster to summon */
@@ -997,7 +997,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
             }
             ndir = dir;
             if (!ndir)
-                ndir = find_free_spot(mon, op->map, op->x, op->y, 1, SIZEOFFREE);
+                ndir = object_find_free_spot(mon, op->map, op->x, op->y, 1, SIZEOFFREE);
             if (ndir == -1
             || ob_blocked(mon, op->map, op->x+freearr_x[ndir], op->y+freearr_y[ndir])) {
                 ndir = -1;
@@ -1048,7 +1048,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
             ndir = absdir(dir+(i/2)*mult);
             mult = -mult;
         } else
-            ndir = find_free_spot(&summon_arch->clone, op->map, op->x, op->y, 1, SIZEOFFREE);
+            ndir = object_find_free_spot(&summon_arch->clone, op->map, op->x, op->y, 1, SIZEOFFREE);
 
         if (ndir > 0) {
             x = freearr_x[ndir];
@@ -1062,7 +1062,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
             tmp = arch_to_object(atmp);
             if (atmp == summon_arch) {
                 if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
-                    set_owner(tmp, op);
+                    object_set_owner(tmp, op);
                     set_spell_skill(op, caster, spell_ob, tmp);
                     tmp->enemy = op->enemy;
                     tmp->type = 0;
@@ -1075,8 +1075,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
                             tmp->stats.exp = 0;
                             if (spell_ob->attack_movement)
                                 tmp->attack_movement = spell_ob->attack_movement;
-                            if (get_owner(op))
-                                set_owner(tmp, get_owner(op));
+                            if (object_get_owner(op))
+                                object_set_owner(tmp, object_get_owner(op));
                         }
                     }
                 }
@@ -1096,7 +1096,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
         }
         head->direction = freedir[ndir];
         head->stats.exp = 0;
-        head = insert_ob_in_map(head, head->map, op, 0);
+        head = object_insert_in_map(head, head->map, op, 0);
         if (head && head->randomitems) {
             create_treasure(head->randomitems, head, GT_APPLY|GT_STARTEQUIP, 6, 0);
         }
@@ -1122,8 +1122,8 @@ static object *get_real_owner(object *ob) {
     if (realowner == NULL)
         return NULL;
 
-    while (get_owner(realowner) != NULL) {
-        realowner = get_owner(realowner);
+    while (object_get_owner(realowner) != NULL) {
+        realowner = object_get_owner(realowner);
     }
     return realowner;
 }

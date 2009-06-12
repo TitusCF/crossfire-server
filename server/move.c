@@ -112,7 +112,7 @@ int move_ob(object *op, int dir, object *originator) {
     if (op->will_apply&WILL_APPLY_DOOR)
         check_doors(op, m, newx, newy);
 
-    /* 0.94.1 - I got a stack trace that showed it crash with remove_ob trying
+    /* 0.94.1 - I got a stack trace that showed it crash with object_remove() trying
      * to remove a removed object, and this function was the culprit.  A possible
      * guess I have is that check_doors above ran into a trap, killing the
      * monster.
@@ -134,7 +134,7 @@ int move_ob(object *op, int dir, object *originator) {
     if (op->head)
         return 1;
 
-    remove_ob(op);
+    object_remove(op);
 
     /* we already have newx, newy, and m, so lets use them.
      * In addition, this fixes potential crashes, because multipart object was
@@ -146,8 +146,8 @@ int move_ob(object *op, int dir, object *originator) {
         tmp->map = get_map_from_coord(tmp->map, &tmp->x, &tmp->y);
     }
 
-    /* insert_ob_in_map will deal with any tiling issues */
-    insert_ob_in_map(op, m, originator, 0);
+    /* object_insert_in_map will deal with any tiling issues */
+    object_insert_in_map(op, m, originator, 0);
 
     /* Hmmm.  Should be possible for multispace players now */
     if (op->type == PLAYER) {
@@ -185,8 +185,8 @@ int move_ob(object *op, int dir, object *originator) {
  * @param y
  * new coordinates.
  * @param randomly
- * if true, use find_free_spot() to find the destination, otherwise
- * use find_first_free_spot().
+ * if true, use object_find_free_spot() to find the destination, otherwise
+ * use object_find_first_free_spot().
  * @param originator
  * what is causing op to move.
  * @retval 1
@@ -199,21 +199,21 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
     object *tmp;
 
     if (randomly)
-        i = find_free_spot(op, op->map, x, y, 0, SIZEOFFREE);
+        i = object_find_free_spot(op, op->map, x, y, 0, SIZEOFFREE);
     else
-        i = find_first_free_spot(op, op->map, x, y);
+        i = object_find_first_free_spot(op, op->map, x, y);
 
     if (i == -1)
         return 0; /* No free spot */
 
     if (op->head != NULL)
         op = op->head;
-    remove_ob(op);
+    object_remove(op);
     for (tmp = op; tmp != NULL; tmp = tmp->more)
         tmp->x = x+freearr_x[i]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x),
         tmp->y = y+freearr_y[i]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
 
-    tmp = insert_ob_in_map(op, op->map, originator, 0);
+    tmp = object_insert_in_map(op, op->map, originator, 0);
     if (op && op->type == PLAYER)
         map_newmap_cmd(&op->contr->socket);
     if (tmp)
@@ -281,7 +281,7 @@ int teleport(object *teleporter, uint8 tele_type, object *user) {
     }
 
     other_teleporter = altern[RANDOM()%nrofalt];
-    k = find_free_spot(user, other_teleporter->map, other_teleporter->x, other_teleporter->y, 1, 9);
+    k = object_find_free_spot(user, other_teleporter->map, other_teleporter->x, other_teleporter->y, 1, 9);
 
     /* if k==-1, unable to find a free spot.  If this is shop
      * mat that the player is using, find someplace to move
@@ -314,14 +314,14 @@ int teleport(object *teleporter, uint8 tele_type, object *user) {
             return 0;
     }
 
-    remove_ob(user);
+    object_remove(user);
 
     /* Update location for the object */
     for (tmp = user; tmp != NULL; tmp = tmp->more) {
         tmp->x = other_teleporter->x+freearr_x[k]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x);
         tmp->y = other_teleporter->y+freearr_y[k]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
     }
-    tmp = insert_ob_in_map(user, other_teleporter->map, NULL, 0);
+    tmp = object_insert_in_map(user, other_teleporter->map, NULL, 0);
     if (tmp && tmp->type == PLAYER)
         map_newmap_cmd(&tmp->contr->socket);
     return (tmp == NULL);
@@ -466,11 +466,11 @@ static int roll_ob(object *op, int dir, object *pusher) {
     if (try_fit(op, m, x, y))
         return 0;
 
-    remove_ob(op);
+    object_remove(op);
     for (tmp = op; tmp != NULL; tmp = tmp->more)
         tmp->x += freearr_x[dir],
         tmp->y += freearr_y[dir];
-    insert_ob_in_map(op, op->map, pusher, 0);
+    object_insert_in_map(op, op->map, pusher, 0);
     return 1;
 }
 
@@ -495,7 +495,7 @@ int push_ob(object *who, int dir, object *pusher) {
 
     if (who->head != NULL)
         who = who->head;
-    owner = get_owner(who);
+    owner = object_get_owner(who);
 
     /* Wake up sleeping monsters that may be pushed */
     CLEAR_FLAG(who, FLAG_SLEEP);
@@ -507,8 +507,8 @@ int push_ob(object *who, int dir, object *pusher) {
         int temp;
         mapstruct *m;
 
-        remove_ob(who);
-        remove_ob(pusher);
+        object_remove(who);
+        object_remove(pusher);
         temp = pusher->x;
         pusher->x = who->x;
         who->x = temp;
@@ -521,8 +521,8 @@ int push_ob(object *who, int dir, object *pusher) {
         pusher->map = who->map;
         who->map = m;
 
-        insert_ob_in_map(who, who->map, pusher, 0);
-        insert_ob_in_map(pusher, pusher->map, pusher, 0);
+        object_insert_in_map(who, who->map, pusher, 0);
+        object_insert_in_map(pusher, pusher->map, pusher, 0);
 
         /* we presume that if the player is pushing his put, he moved in
          * direction 'dir'.  I can' think of any case where this would not be

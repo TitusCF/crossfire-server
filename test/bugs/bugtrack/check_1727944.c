@@ -162,8 +162,8 @@ static void do_run() {
                         fail_unless(check->inv != NULL, "Horn has empty inventory!");
                         fail_unless(check->inv->below == NULL, "Horn has 2 items in inventory!");
                         if (check->title && strcmp(check->title, "of Plenty") == 0) {
-                            remove_ob(check);
-                            insert_ob_in_map_at(check, overlay, NULL, 0, 2, 3);
+                            object_remove(check);
+                            object_insert_in_map_at(check, overlay, NULL, 0, 2, 3);
                             found++;
                             break;
                         }
@@ -279,7 +279,7 @@ static void local_check_loaded_object(object *op) {
      * in that spell was stored in sp.
      */
         tmp = create_archetype(spell_mapping[op->type == FIREWALL ? op->stats.dam : op->stats.sp]);
-        insert_ob_in_ob(tmp, op);
+        object_insert_in_ob(tmp, op);
         op->randomitems = NULL; /* So another spell isn't created for this object */
     }
 
@@ -288,7 +288,7 @@ static void local_check_loaded_object(object *op) {
         object *tmp;
 
         tmp = create_archetype_by_object_name(op->slaying);
-        insert_ob_in_ob(tmp, op);
+        object_insert_in_ob(tmp, op);
         op->randomitems = NULL; /* So another spell isn't created for this object */
         /* without this, value is all screwed up */
         op->value = op->arch->clone.value*op->inv->value;
@@ -306,21 +306,21 @@ static void local_check_loaded_object(object *op) {
          * so it remains unevaluated concerning the randomitems and
          * the living (a demonlord shouldn't cast from inside generator!)
          */
-        flag_inv(op, FLAG_IS_A_TEMPLATE);
+        object_set_flag_inv(op, FLAG_IS_A_TEMPLATE);
     }
 
     /* Here we'll handle custom monsters. In order to handle them correctly, especially in the fix_object
      * method, we'll create a new temporary archetype containing defined values.
      * Of course this doesn't apply when loading archetypes or artifacts.
      */
-    if (arch_init == 0 && artifact_init == 0 && QUERY_FLAG(op, FLAG_MONSTER) && op->arch && !can_merge(op, &op->arch->clone)) {
+    if (arch_init == 0 && artifact_init == 0 && QUERY_FLAG(op, FLAG_MONSTER) && op->arch && !object_can_merge(op, &op->arch->clone)) {
         archetype *temp = get_archetype_struct();
 
         temp->reference_count++;
         temp->name = add_string(op->arch->name);
         temp->tail_x = op->arch->tail_x;
         temp->tail_y = op->arch->tail_y;
-        copy_object(op, &temp->clone);
+        object_copy(op, &temp->clone);
         temp->clone.inv = NULL;
         temp->clone.env = NULL;
         temp->clone.x = 0;
@@ -330,11 +330,11 @@ static void local_check_loaded_object(object *op) {
             /* Clone has a speed, so need to clear that because it isn't on a map.
              * But we need to keep the value, because otherwise the customized object
              * will have no speed (fix_player() will use the 0 value).  So set it
-             * to zero, call update_ob_speed() to remove it from active list, then
+             * to zero, call object_update_speed() to remove it from active list, then
              * set its speed back to the original.
              */
             temp->clone.speed = 0;
-            update_ob_speed(&temp->clone);
+            object_update_speed(&temp->clone);
             temp->clone.speed = op->speed;
         }
 
@@ -399,7 +399,7 @@ START_TEST(test_randommaps) {
             fail_unless(the_chest != NULL, "failed to get chest");
             the_chest->randomitems = tlist;
             the_chest->stats.hp = RANDOM()%100;
-            insert_ob_in_map_at(the_chest, map, NULL, 0, 0, 0);
+            object_insert_in_map_at(the_chest, map, NULL, 0, 0, 0);
             fix_auto_apply(map);
             the_chest = GET_MAP_OB(map, 0, 0);
             fail_unless(the_chest != NULL, "failed to recover chest?");

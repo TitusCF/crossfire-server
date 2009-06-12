@@ -176,7 +176,7 @@ void enter_player_savebed(object *op) {
     mapstruct *oldmap = op->map;
     object *tmp;
 
-    tmp = get_object();
+    tmp = object_new();
 
     EXIT_PATH(tmp) = add_string(op->contr->savebed_map);
     EXIT_X(tmp) = op->contr->bed_x;
@@ -198,7 +198,7 @@ void enter_player_savebed(object *op) {
         EXIT_Y(tmp) = op->contr->bed_y;
         enter_exit(op, tmp);
     }
-    free_object(tmp);
+    object_free(tmp);
 }
 
 /**
@@ -229,17 +229,17 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     /* try to find a spot for the player */
     if (ob_blocked(op, newmap, x, y)) {        /* First choice blocked */
         /* We try to find a spot for the player, starting closest in.
-         * We could use find_first_free_spot, but that doesn't randomize it at all,
+         * We could use object_find_first_free_spot(), but that doesn't randomize it at all,
          * So for example, if the north space is free, you would always end up there even
          * if other spaces around are available.
          * Note that for the second and third calls, we could start at a position other
          * than one, but then we could end up on the other side of walls and so forth.
          */
-        int i = find_free_spot(op, newmap, x, y, 1, SIZEOFFREE1+1);
+        int i = object_find_free_spot(op, newmap, x, y, 1, SIZEOFFREE1+1);
         if (i == -1) {
-            i = find_free_spot(op, newmap, x, y, 1, SIZEOFFREE2+1);
+            i = object_find_free_spot(op, newmap, x, y, 1, SIZEOFFREE2+1);
             if (i == -1)
-                i = find_free_spot(op, newmap, x, y, 1, SIZEOFFREE);
+                i = object_find_free_spot(op, newmap, x, y, 1, SIZEOFFREE);
         }
         if (i != -1) {
             x += freearr_x[i];
@@ -254,16 +254,16 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      * otherwise, we need to deal with removing the playe here.
      */
     if (!QUERY_FLAG(op, FLAG_REMOVED))
-        remove_ob(op);
+        object_remove(op);
     if (op->map != NULL) {
         /* Lauwenmark : Here we handle the MAPLEAVE global event */
         execute_global_event(EVENT_MAPLEAVE, op, op->map);
     }
-    /* remove_ob clears these so they must be reset after the remove_ob call */
+    /* object_remove clears these so they must be reset after the object_remove() call */
     op->x = x;
     op->y = y;
     op->map = newmap;
-    insert_ob_in_map(op, op->map, NULL, INS_NO_WALK_ON);
+    object_insert_in_map(op, op->map, NULL, INS_NO_WALK_ON);
 
     /* Lauwenmark : Here we handle the MAPENTER global event */
     execute_global_event(EVENT_MAPENTER, op, op->map);
@@ -282,11 +282,11 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 
     /* Update any golems */
     if (op->type == PLAYER && op->contr->ranges[range_golem] != NULL) {
-        int i = find_free_spot(op->contr->ranges[range_golem], newmap, x, y, 1, SIZEOFFREE);
-        remove_ob(op->contr->ranges[range_golem]);
+        int i = object_find_free_spot(op->contr->ranges[range_golem], newmap, x, y, 1, SIZEOFFREE);
+        object_remove(op->contr->ranges[range_golem]);
         if (i == -1) {
             remove_friendly_object(op->contr->ranges[range_golem]);
-            free_object(op->contr->ranges[range_golem]);
+            object_free(op->contr->ranges[range_golem]);
             op->contr->ranges[range_golem] = NULL;
             op->contr->golem_count = 0;
         } else {
@@ -297,7 +297,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
                 tmp->y = y+freearr_y[i]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
                 tmp->map = newmap;
             }
-            insert_ob_in_map(op->contr->ranges[range_golem], newmap, NULL, 0);
+            object_insert_in_map(op->contr->ranges[range_golem], newmap, NULL, 0);
             op->contr->ranges[range_golem]->direction = find_dir_2(op->x-op->contr->ranges[range_golem]->x, op->y-op->contr->ranges[range_golem]->y);
         }
     }
@@ -850,8 +850,8 @@ void enter_exit(object *op, object *exit_ob) {
                         break;
                 }
                 if (tmp) {
-                    remove_ob(tmp);
-                    free_object(tmp);
+                    object_remove(tmp);
+                    object_free(tmp);
                 }
 
                 path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob), op->contr->savebed_map, sizeof(op->contr->savebed_map));
@@ -926,12 +926,12 @@ static void process_players1(void) {
 
                     get_rangevector(pl->ob, followed->ob, &rv, 0);
                     if (rv.distance > 4) {
-                        int space = find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
+                        int space = object_find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
                         if (space == -1)
                             /** This is a DM, just teleport on the top of player. */
                             space = 0;
-                        remove_ob(pl->ob);
-                        insert_ob_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
+                        object_remove(pl->ob);
+                        object_insert_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
                         map_newmap_cmd(&pl->socket);
                     }
                 } else {
@@ -1075,15 +1075,15 @@ void process_events(void) {
         if (QUERY_FLAG(op, FLAG_FREED)) {
             LOG(llevError, "BUG: process_events(): Free object on list\n");
             op->speed = 0;
-            update_ob_speed(op);
+            object_update_speed(op);
             continue;
         }
 
         /* I've seen occasional crashes due to this - the object is removed,
          * and thus the map it points to (last map it was on) may be bogus
          * The real bug is to try to find out the cause of this - someone
-         * is probably calling remove_ob without either an insert_ob or
-         * free_object afterwards, leaving an object dangling.  But I'd
+         * is probably calling object_remove() without either an insert_ob or
+         * object_free() afterwards, leaving an object dangling.  But I'd
          * rather log this and continue on instead of crashing.
          * Don't remove players - when a player quits, the object is in
          * sort of a limbo, of removed, but something we want to keep
@@ -1098,17 +1098,17 @@ void process_events(void) {
 
             LOG(llevError, "BUG: process_events(): Removed object on list\n");
             sb = stringbuffer_new();
-            dump_object(op, sb);
+            object_dump(op, sb);
             diff = stringbuffer_finish(sb);
             LOG(llevError, "%s\n", diff);
             free(diff);
-            free_object(op);
+            object_free(op);
             continue;
         }
 
         if (!op->speed) {
             LOG(llevError, "BUG: process_events(): Object %s has no speed, but is on active list\n", op->arch->name);
-            update_ob_speed(op);
+            object_update_speed(op);
             continue;
         }
 
@@ -1118,7 +1118,7 @@ void process_events(void) {
         && op->type != MAP) {
             LOG(llevError, "BUG: process_events(): Object without map or inventory is on active list: %s (%d)\n", op->name, op->count);
             op->speed = 0;
-            update_ob_speed(op);
+            object_update_speed(op);
             continue;
         }
 
@@ -1151,7 +1151,7 @@ void process_events(void) {
         if (op->speed_left > 0) {
             --op->speed_left;
             process_object(op);
-            if (was_destroyed(op, tag))
+            if (object_was_destroyed(op, tag))
                 continue;
         }
         if (settings.casting_time == TRUE && op->casting_time > 0)
@@ -1228,7 +1228,7 @@ void cleanup(void) {
     free_loader();
     free_globals();
     free_server();
-    free_all_object_data();
+    object_free_all_data();
     /* See what the string data that is out there that hasn't been freed. */
     /*    LOG(llevDebug, "%s", ss_dump_table(0xff));*/
 #endif
@@ -1253,7 +1253,7 @@ void leave(player *pl, int draw_exit) {
         check_score(pl->ob, 1);
 
         /* If this player is the captain of the transport, need to do
-         * some extra work.  By the time we get here, remove_ob()
+         * some extra work.  By the time we get here, object_remove()
          * should have already been called.
          */
         if (pl->transport && pl->transport->contr == pl) {
@@ -1280,7 +1280,7 @@ void leave(player *pl, int draw_exit) {
         if (pl->ob->map) {
             if (pl->ob->map->in_memory == MAP_IN_MEMORY)
                 pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
-            /* we need to update player count, since remove_ob() isn't called */
+            /* we need to update player count, since object_remove() isn't called */
             if (!pl->hidden)
                 pl->ob->map->players--;
             pl->ob->map = NULL;

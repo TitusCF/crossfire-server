@@ -88,7 +88,7 @@ START_TEST(test_get_ob_diff) {
 }
 END_TEST
 
-START_TEST(test_dump_object) {
+START_TEST(test_object_dump) {
     /** we only test specific things like env/more/head/..., the rest is in test_get_ob_diff(). */
     StringBuffer *buf;
     object *empty;
@@ -101,9 +101,9 @@ START_TEST(test_dump_object) {
 
     snprintf(expect, sizeof(expect), "arch empty_archetype\nend\n");
     buf = stringbuffer_new();
-    dump_object(empty, buf);
+    object_dump(empty, buf);
     result = stringbuffer_finish(buf);
-    fail_unless(result && strcmp(result, expect) == 0, "dump_object was \"%s\" instead of \"%s\"!", result, expect);
+    fail_unless(result && strcmp(result, expect) == 0, "object_dump was \"%s\" instead of \"%s\"!", result, expect);
     free(result);
 
     /* With more things */
@@ -120,9 +120,9 @@ START_TEST(test_dump_object) {
 
     snprintf(expect, sizeof(expect), "arch empty_archetype\nmore %d\nhead %d\nenv %d\ninv %d\nowner %d\nend\n", empty->more->count, empty->head->count, empty->env->count, empty->inv->count, empty->owner->count);
     buf = stringbuffer_new();
-    dump_object(empty, buf);
+    object_dump(empty, buf);
     result = stringbuffer_finish(buf);
-    fail_unless(result && strcmp(result, expect) == 0, "dump_object was \"%s\" instead of \"%s\"!", result, expect);
+    fail_unless(result && strcmp(result, expect) == 0, "object_dump was \"%s\" instead of \"%s\"!", result, expect);
     free(result);
 }
 END_TEST
@@ -136,7 +136,7 @@ Suite *loader_suite(void) {
 
     suite_add_tcase(s, tc_core);
     tcase_add_test(tc_core, test_get_ob_diff);
-    tcase_add_test(tc_core, test_dump_object);
+    tcase_add_test(tc_core, test_object_dump);
 
     return s;
 }

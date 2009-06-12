@@ -93,7 +93,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
             "You disembark from %s.", "You disembark from %s.",
             name_old);
-        remove_ob(applier);
+        object_remove(applier);
         applier->map = old_transport->map;
         applier->x = old_transport->x;
         applier->y = old_transport->y;
@@ -101,8 +101,8 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             old_transport->contr = NULL;
 
         applier->contr->transport = NULL;
-        insert_ob_in_map(applier, applier->map, applier, 0);
-        sum_weight(old_transport);
+        object_insert_in_map(applier, applier->map, applier, 0);
+        object_sum_weight(old_transport);
 
         /* Possible for more than one player to be using a transport.
          * if that is the case, we don't want to reset the face, as the
@@ -168,7 +168,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             if (inv->type == PLAYER)
                 pc++;
 
-        kv = get_ob_key_value(op, "passenger_limit");
+        kv = object_get_value(op, "passenger_limit");
         if (!kv)
             p_limit = 1;
         else
@@ -197,12 +197,12 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             op->contr = applier->contr;
         }
 
-        remove_ob(applier);
-        /* insert_ob_in_ob clear applier->x and applier->y, so store them away */
+        object_remove(applier);
+        /* object_insert_in_ob clear applier->x and applier->y, so store them away */
         ox = applier->x;
         oy = applier->y;
-        insert_ob_in_ob(applier, op);
-        sum_weight(op);
+        object_insert_in_ob(applier, op);
+        object_sum_weight(op);
         applier->map = op->map;
         if (ox != op->x || oy != op->y) {
             esrv_map_scroll(&applier->contr->socket, (ox-op->x), (oy-op->y));
@@ -216,21 +216,21 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         if (!pc) {
             const char *str;
 
-            str = get_ob_key_value(op, "face_full");
+            str = object_get_value(op, "face_full");
             if (str)
                 op->face = &new_faces[find_face(str, op->face->number)];
-            str = get_ob_key_value(op, "anim_full");
+            str = object_get_value(op, "anim_full");
             if (str)
                 op->animation_id = find_animation(str);
         }
 
         /* Does speed of this object change based on weight? */
-        kv = get_ob_key_value(op, "weight_speed_ratio");
+        kv = object_get_value(op, "weight_speed_ratio");
         if (kv) {
             int wsr = atoi(kv);
             float base_speed;
 
-            kv = get_ob_key_value(op, "base_speed");
+            kv = object_get_value(op, "base_speed");
             if (kv)
                 base_speed = atof(kv);
             else

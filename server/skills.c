@@ -207,7 +207,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
              * abuses where the player can not carry the item, so just
              * keeps stealing it over and over.
              */
-            if (was_destroyed(tmp, tmp_count) || tmp->env != op) {
+            if (object_was_destroyed(tmp, tmp_count) || tmp->env != op) {
                 /* for players, play_sound: steals item */
                 success = tmp;
                 CLEAR_FLAG(tmp, FLAG_INV_LOCKED);
@@ -344,7 +344,7 @@ int steal(object *op, int dir, object *skill) {
 
             /* no xp for stealing from pets (of players) */
             if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && tmp->attack_movement == PETMOVE) {
-                object *owner = get_owner(tmp);
+                object *owner = object_get_owner(tmp);
                 if (owner != NULL && owner->type == PLAYER)
                     return 0;
             }
@@ -524,7 +524,7 @@ int hide(object *op, object *skill) {
     if (attempt_hide(op, skill)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                       "You hide in the shadows.", NULL);
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
         return calc_skill_exp(op, NULL, skill);
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
@@ -541,7 +541,7 @@ int hide(object *op, object *skill) {
  */
 static void stop_jump(object *pl) {
     fix_object(pl);
-    insert_ob_in_map(pl, pl->map, pl, 0);
+    object_insert_in_map(pl, pl->map, pl, 0);
 }
 
 /**
@@ -570,7 +570,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
      * while jumping over them.
      */
 
-    remove_ob(pl);
+    object_remove(pl);
 
     /*
      * I don't think this is actually needed - all the movement
@@ -707,7 +707,7 @@ static int do_skill_detect_curse(object *pl, object *skill) {
     /* Check ground, too, but only objects the player could pick up. Cauldrons are exceptions,
      * you definitely want to know if they are cursed */
     for (tmp = GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp = tmp->above)
-        if ((can_pick(pl, tmp) || QUERY_FLAG(tmp, FLAG_IS_CAULDRON))
+        if ((object_can_pick(pl, tmp) || QUERY_FLAG(tmp, FLAG_IS_CAULDRON))
         && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
         && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)
         && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
@@ -747,7 +747,7 @@ static int do_skill_detect_magic(object *pl, object *skill) {
 
     /* Check ground, too, but like above, only if the object can be picked up*/
     for (tmp = GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp = tmp->above)
-        if (can_pick(pl, tmp)
+        if (object_can_pick(pl, tmp)
         && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
         && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
         && (is_magical(tmp)) && tmp->item_power < skill->level) {
@@ -1044,7 +1044,7 @@ int use_oratory(object *pl, int dir, object *skill) {
 
     /* it's already allied! */
     if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && (tmp->attack_movement == PETMOVE)) {
-        if (get_owner(tmp) == pl) {
+        if (object_get_owner(tmp) == pl) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                           "Your follower loves your speech.", NULL);
             return 0;
@@ -1052,7 +1052,7 @@ int use_oratory(object *pl, int dir, object *skill) {
             /* you steal the follower.  Perhaps we should really look at the
              * level of the owner above?
              */
-            set_owner(tmp, pl);
+            object_set_owner(tmp, pl);
             query_name(tmp, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                                  "You convince the %s to follow you instead!",
@@ -1079,7 +1079,7 @@ int use_oratory(object *pl, int dir, object *skill) {
                              "You convince the %s to become your follower.",
                              name);
 
-        set_owner(tmp, pl);
+        object_set_owner(tmp, pl);
         tmp->stats.exp = 0;
         add_friendly_object(tmp);
         SET_FLAG(tmp, FLAG_FRIENDLY);
@@ -1485,14 +1485,14 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
             snprintf(buf, sizeof(buf), "%s\n", msg);
 
         if (item->nrof > 1) {
-            newBook = get_object();
-            copy_object(item, newBook);
-            decrease_ob(item);
+            newBook = object_new();
+            object_copy(item, newBook);
+            object_decrease_nrof_by_one(item);
             newBook->nrof = 1;
             if (newBook->msg)
                 free_string(newBook->msg);
             newBook->msg = add_string(buf);
-            newBook = insert_ob_in_ob(newBook, pl);
+            newBook = object_insert_in_ob(newBook, pl);
         } else {
             if (item->msg)
                 free_string(item->msg);
@@ -1606,9 +1606,9 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
 
     if (random_roll(0, chosen_spell->level*4-1, pl, PREFER_LOW) < skill->level) {
         if (scroll->nrof > 1) {
-            newscroll = get_object();
-            copy_object(scroll, newscroll);
-            decrease_ob(scroll);
+            newscroll = object_new();
+            object_copy(scroll, newscroll);
+            object_decrease_nrof_by_one(scroll);
             newscroll->nrof = 1;
         } else {
             newscroll = scroll;
@@ -1632,12 +1632,12 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
             object *ninv;
 
             ninv = newscroll->inv;
-            remove_ob(ninv);
-            free_object(ninv);
+            object_remove(ninv);
+            object_free(ninv);
         }
-        tmp = get_object();
-        copy_object(chosen_spell, tmp);
-        insert_ob_in_ob(tmp, newscroll);
+        tmp = object_new();
+        object_copy(chosen_spell, tmp);
+        object_insert_in_ob(tmp, newscroll);
         /* This is needed so casting from the scroll correctly works with moving_ball types, which
            check attunements. */
         newscroll->path_attuned = tmp->path_repelled;
@@ -1651,9 +1651,9 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
         /* wait until finished manipulating the scroll before inserting it */
         if (newscroll == scroll) {
             /* Remove to correctly merge with other items which may exist in inventory */
-            remove_ob(newscroll);
+            object_remove(newscroll);
         }
-        newscroll = insert_ob_in_ob(newscroll, pl);
+        newscroll = object_insert_in_ob(newscroll, pl);
         success = calc_skill_exp(pl, newscroll, skill);
         if (!confused)
             success *= 2;
@@ -1872,17 +1872,17 @@ static object *make_throw_ob(object *orig) {
     if (!orig)
         return NULL;
 
-    toss_item = get_object();
+    toss_item = object_new();
     if (QUERY_FLAG(orig, FLAG_APPLIED)) {
         LOG(llevError, "BUG: make_throw_ob(): ob is applied\n");
         /* insufficient workaround, but better than nothing */
         CLEAR_FLAG(orig, FLAG_APPLIED);
     }
-    copy_object(orig, toss_item);
+    object_copy(orig, toss_item);
     toss_item->type = THROWN_OBJ;
     CLEAR_FLAG(toss_item, FLAG_CHANGING);
     toss_item->stats.dam = 0; /* default damage */
-    insert_ob_in_ob(orig, toss_item);
+    object_insert_in_ob(orig, toss_item);
     return toss_item;
 }
 
@@ -1993,9 +1993,9 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     || (GET_MAP_MOVE_BLOCK(m, sx, sy)&MOVE_FLY_LOW)) {
 
         /* bounces off 'wall', and drops to feet */
-        remove_ob(throw_ob);
+        object_remove(throw_ob);
         throw_ob->x = part->x; throw_ob->y = part->y;
-        insert_ob_in_map(throw_ob, part->map, op, 0);
+        object_insert_in_map(throw_ob, part->map, op, 0);
         if (op->type == PLAYER) {
             if (eff_str <= 1) {
                 query_name(throw_ob, name, MAX_BUF);
@@ -2020,13 +2020,13 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     /* BUG? The value in left_tag doesn't seem to be used. */
     left_tag = left->count;
 
-    /* sometimes get_split_ob can't split an object (because op->nrof==0?)
+    /* sometimes object_split() can't split an object (because op->nrof==0?)
      * and returns NULL. We must use 'left' then
      */
 
-    if ((throw_ob = get_split_ob(throw_ob, 1, NULL, 0)) == NULL) {
+    if ((throw_ob = object_split(throw_ob, 1, NULL, 0)) == NULL) {
         throw_ob = left;
-        remove_ob(left);
+        object_remove(left);
     }
 
     /* special case: throwing powdery substances like dust, dirt */
@@ -2045,16 +2045,16 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
             free_string(throw_ob->skill);
         throw_ob->skill = add_string(skill->skill);
     } else {
-        insert_ob_in_ob(throw_ob, op);
+        object_insert_in_ob(throw_ob, op);
         return 0;
     }
 
-    set_owner(throw_ob, op);
+    object_set_owner(throw_ob, op);
     /* At some point in the attack code, the actual real object (op->inv)
      * becomes the hitter.  As such, we need to make sure that has a proper
      * owner value so exp goes to the right place.
      */
-    set_owner(throw_ob->inv, op);
+    object_set_owner(throw_ob->inv, op);
     throw_ob->direction = dir;
     throw_ob->x = part->x;
     throw_ob->y = part->y;
@@ -2148,7 +2148,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
      */
     op->speed_left -= 50/pause_f;
 
-    update_ob_speed(throw_ob);
+    object_update_speed(throw_ob);
     throw_ob->speed_left = 0;
     throw_ob->map = part->map;
 
@@ -2163,8 +2163,8 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     LOG(llevDebug, "inserting tossitem (%d) into map\n", throw_ob->count);
 #endif
     tag = throw_ob->count;
-    insert_ob_in_map(throw_ob, part->map, op, 0);
-    if (!was_destroyed(throw_ob, tag))
+    object_insert_in_map(throw_ob, part->map, op, 0);
+    if (!object_was_destroyed(throw_ob, tag))
         ob_process(throw_ob);
     return 1;
 }

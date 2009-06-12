@@ -32,7 +32,7 @@
  */
 
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
-   sub/add_weight will transcend the environment updating the carrying
+   object_sub/add_weight will transcend the environment updating the carrying
    variable. */
 
 #include <stdlib.h>
@@ -53,7 +53,7 @@ static int compare_ob_value_lists_one(const object *, const object *);
 static int compare_ob_value_lists(const object *, const object *);
 static void expand_objects(void);
 static void permute(int *, int, int);
-static int set_ob_key_value_s(object *, const char *, const char *, int);
+static int object_set_value_s(object *, const char *, const char *, int);
 static void increase_ob_nr(object *op, uint32 i);
 
 #ifdef MEMORY_DEBUG
@@ -108,7 +108,7 @@ int freedir[SIZEOFFREE] = {
 static int compare_ob_value_lists_one(const object *wants, const object *has) {
     key_value *wants_field;
 
-    /* n-squared behaviour (see get_ob_key_link()), but I'm hoping both
+    /* n-squared behaviour (see object_get_key_value()), but I'm hoping both
      * objects with lists are rare, and lists stay short. If not, use a
      * different structure or at least keep the lists sorted...
      */
@@ -118,7 +118,7 @@ static int compare_ob_value_lists_one(const object *wants, const object *has) {
         key_value *has_field;
 
         /* Look for a field in has with the same key. */
-        has_field = get_ob_key_link(has, wants_field->key);
+        has_field = object_get_key_value(has, wants_field->key);
 
         if (has_field == NULL) {
             /* No field with that name. */
@@ -161,7 +161,7 @@ static int compare_ob_value_lists(const object *ob1, const object *ob2) {
  * replaces - this is mostly for clarity - a decent compiler should hopefully
  * reduce this to the same efficiency.
  *
- * Check nrof variable *before *calling can_merge()
+ * Check nrof variable *before* calling object_can_merge()
  *
  * Improvements made with merge:  Better checking on potion, and also
  * check weight
@@ -175,7 +175,7 @@ static int compare_ob_value_lists(const object *ob1, const object *ob2) {
  * @todo
  * check the function at places marked.
  */
-int can_merge(object *ob1, object *ob2) {
+int object_can_merge(object *ob1, object *ob2) {
 
     /* A couple quicksanity checks */
     if ((ob1 == ob2) || (ob1->type != ob2->type))
@@ -208,7 +208,7 @@ int can_merge(object *ob1, object *ob2) {
             return 0;
 
         /* Now check to see if the two inventory objects could merge */
-        if (!can_merge(ob1->inv, ob2->inv))
+        if (!object_can_merge(ob1->inv, ob2->inv))
             return 0;
 
         /* inventory ok - still need to check rest of this object to see
@@ -299,7 +299,7 @@ int can_merge(object *ob1, object *ob2) {
 }
 
 /**
- * sum_weight() is a recursive function which calculates the weight
+ * object_sum_weight() is a recursive function which calculates the weight
  * an object is carrying.  It goes through in figures out how much
  * containers are carrying, and sums it up.
  *
@@ -314,13 +314,13 @@ int can_merge(object *ob1, object *ob2) {
  * The object's carrying field is updated.
  */
 /* TODO should check call this this are made a place where we really need reevaluaton of whole tree */
-signed long sum_weight(object *op) {
+signed long object_sum_weight(object *op) {
     signed long sum;
     object *inv;
 
     for (sum = 0, inv = op->inv; inv != NULL; inv = inv->below) {
         if (inv->inv)
-            sum_weight(inv);
+            object_sum_weight(inv);
         sum += inv->carrying+inv->weight*(inv->nrof ? inv->nrof : 1);
     }
     if (op->type == CONTAINER && op->stats.Str)
@@ -353,7 +353,7 @@ object *object_get_env_recursive(object *op) {
  * @todo
  * this function is badly named. Fix patching on the fly.
  */
-object *get_player_container(object *op) {
+object *object_get_player_container(object *op) {
     for (; op != NULL && op->type != PLAYER; op = op->env)
         /*TODO this is patching the structure on the flight as side effect. Shoudln't be needed in clean code */
         if (op->env == op)
@@ -369,7 +369,7 @@ object *get_player_container(object *op) {
  * @param sb
  * buffer that will contain object information. Must not be NULL.
  */
-void dump_object(object *op, StringBuffer *sb) {
+void object_dump(object *op, StringBuffer *sb) {
     if (op == NULL) {
         stringbuffer_append_string(sb, "[NULL pointer]");
         return;
@@ -413,7 +413,7 @@ void dump_object(object *op, StringBuffer *sb) {
  *
  * All objects are dumped to stderr (or alternate logfile, if in server-mode)
  */
-void dump_all_objects(void) {
+void object_dump_all(void) {
     object *op;
 
     for (op = objects; op != NULL; op = op->next) {
@@ -421,7 +421,7 @@ void dump_all_objects(void) {
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevDebug, "Object %u\n:%s\n", op->count, diff);
         free(diff);
@@ -436,7 +436,7 @@ void dump_all_objects(void) {
  * @return
  * matching object, NULL if not found.
  */
-object *find_object(tag_t i) {
+object *object_find_by_tag(tag_t i) {
     object *op;
 
     for (op = objects; op != NULL; op = op->next)
@@ -456,7 +456,7 @@ object *find_object(tag_t i) {
  * @return
  * the first object which has a name equal to the argument.
  */
-object *find_object_name(const char *str) {
+object *object_find_by_name(const char *str) {
     const char *name = add_string(str);
     object *op;
 
@@ -471,12 +471,12 @@ object *find_object_name(const char *str) {
  * Destroys all allocated objects.
  *
  * @note
- * free() is called instead of free_object() as the object's memory has already by cleaned.
+ * free() is called instead of object_free() as the object's memory has already by cleaned.
  *
  * @warning
  * this should be the last method called.
  */
-void free_all_object_data(void) {
+void object_free_all_data(void) {
 #ifdef MEMORY_DEBUG
     object *op, *next;
 
@@ -521,7 +521,7 @@ void free_all_object_data(void) {
  * a side effect of this function is to clean owner chain for not existing anymore owner.
  * This is not the place to do such a cleaning
  */
-object *get_owner(object *op) {
+object *object_get_owner(object *op) {
     if (op->owner == NULL)
         return NULL;
 
@@ -529,7 +529,7 @@ object *get_owner(object *op) {
     && !QUERY_FLAG(op->owner, FLAG_REMOVED)
     && op->owner->count == op->ownercount)
         return op->owner;
-    LOG(llevError, "I had to clean an owner when in get_owner, this isn't my job.\n");
+    LOG(llevError, "I had to clean an owner when in object_get_owner, this isn't my job.\n");
     op->owner = NULL;
     op->ownercount = 0;
     return NULL;
@@ -541,7 +541,7 @@ object *get_owner(object *op) {
  * @param op
  * object we want to clear the owner of. Can be NULL.
  */
-void clear_owner(object *op) {
+void object_clear_owner(object *op) {
     if (!op)
         return;
 
@@ -556,16 +556,16 @@ void clear_owner(object *op) {
  * @param op
  * object of which to set the owner
  * @param owner
- * new owner for object. Can be NULL, in which case it's equivalent of calling clear_owner(op)
+ * new owner for object. Can be NULL, in which case it's equivalent of calling object_clear_owner(op)
  *
  * @todo
- * replace owner serching loop with a call to get_owner()?
+ * replace owner serching loop with a call to object_get_owner()?
  */
-void set_owner(object *op, object *owner) {
+void object_set_owner(object *op, object *owner) {
     if (op == NULL)
         return;
     if (owner == NULL) {
-        clear_owner(op);
+        object_clear_owner(op);
         return;
     }
 
@@ -585,7 +585,7 @@ void set_owner(object *op, object *owner) {
      * so lets not add to that.
      */
     if (owner->owner) {
-        LOG(llevError, "owner id %u could not be resolved to a parent owner in set_owner(). This is bad!"
+        LOG(llevError, "owner id %u could not be resolved to a parent owner in object_set_owner(). This is bad!"
             "owner=%p owner->owner=%p owner->ownercount=%u owner->owner->count=%u\n",
             owner->count, owner, owner->owner, owner->ownercount, owner->owner->count);
         return;
@@ -611,8 +611,8 @@ void set_owner(object *op, object *owner) {
  * @param clone
  * object from which to get the owner.
  */
-void copy_owner(object *op, object *clone) {
-    object *owner = get_owner(clone);
+void object_copy_owner(object *op, object *clone) {
+    object *owner = object_get_owner(clone);
     if (owner == NULL) {
         /* players don't have owners - they own themselves.  Update
          * as appropriate.
@@ -622,7 +622,7 @@ void copy_owner(object *op, object *clone) {
             return;
         owner = clone;
     }
-    set_owner(op, owner);
+    object_set_owner(op, owner);
 
 }
 
@@ -635,7 +635,7 @@ void copy_owner(object *op, object *clone) {
  * @note
  * this doesn't free associated memory for object.
  */
-void reset_object(object *op) {
+void object_reset(object *op) {
     op->name = NULL;
     op->name_pl = NULL;
     op->title = NULL;
@@ -645,7 +645,7 @@ void reset_object(object *op) {
     op->msg = NULL;
     op->materialname = NULL;
     op->lore = NULL;
-    clear_object(op);
+    object_clear(op);
 }
 
 /**
@@ -655,7 +655,7 @@ void reset_object(object *op) {
  * @param op
  * object to clear.
  */
-void free_key_values(object *op) {
+void object_free_key_values(object *op) {
     key_value *i;
     key_value *next = NULL;
 
@@ -684,7 +684,7 @@ void free_key_values(object *op) {
  * @param op
  * object to clear
  */
-void clear_object(object *op) {
+void object_clear(object *op) {
 
     /*TODO this comment must be investigated*/
     /* redo this to be simpler/more efficient. Was also seeing
@@ -692,7 +692,7 @@ void clear_object(object *op) {
      * seeing periodic crashes in this code, and would like to have
      * as much info available as possible (eg, object name).
      */
-    free_key_values(op);
+    object_free_key_values(op);
     free_dialog_information(op);
 
     /* the memset will clear all these values for us, but we need
@@ -754,7 +754,7 @@ void clear_object(object *op) {
  * @param op
  * object that we copy to.
  */
-void copy_object(object *op2, object *op) {
+void object_copy(object *op2, object *op) {
     int is_freed = QUERY_FLAG(op, FLAG_FREED), is_removed = QUERY_FLAG(op, FLAG_REMOVED);
 
     /* Decrement the refcounts, but don't bother zeroing the fields;
@@ -773,9 +773,9 @@ void copy_object(object *op2, object *op) {
     if (op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
     if (op->spell_tags != NULL) FREE_AND_CLEAR(op->spell_tags);
 
-    /* Basically, same code as from clear_object() */
+    /* Basically, same code as from object_clear() */
 
-    free_key_values(op);
+    object_free_key_values(op);
     free_dialog_information(op);
 
     /* op is the destination, op2 is the source. */
@@ -807,7 +807,7 @@ void copy_object(object *op2, object *op) {
     }
 
     /* If archetype is a temporary one, we need to update reference count, because
-     * that archetype will be freed by free_object when the last object is removed.
+     * that archetype will be freed by object_free() when the last object is removed.
      */
     if (op->arch->reference_count > 0)
         op->arch->reference_count++;
@@ -846,7 +846,7 @@ void copy_object(object *op2, object *op) {
     /* This way, dialog information will be parsed again when/if needed. */
     CLEAR_FLAG(op, FLAG_DIALOG_PARSED);
 
-    update_ob_speed(op);
+    object_update_speed(op);
 }
 
 /**
@@ -858,21 +858,21 @@ void copy_object(object *op2, object *op) {
  * @todo
  * replace with a function in common library (there is certainly one).
  */
-void copy_object_with_inv(object *src_ob, object *dest_ob) {
+void object_copy_with_inv(object *src_ob, object *dest_ob) {
     object *walk, *tmp;
-    copy_object(src_ob, dest_ob);
+    object_copy(src_ob, dest_ob);
 
     for (walk = src_ob->inv; walk != NULL; walk = walk->below) {
-        tmp = get_object();
-        copy_object(walk, tmp);
-        insert_ob_in_ob(tmp, dest_ob);
+        tmp = object_new();
+        object_copy(walk, tmp);
+        object_insert_in_ob(tmp, dest_ob);
     }
 }
 
 /**
  * Allocates more objects for the list of unused objects.
  *
- * It is called from get_object() if the unused list is empty.
+ * It is called from object_new() if the unused list is empty.
  *
  * If there is not enough memory, fatal() is called.
  */
@@ -917,7 +917,7 @@ static void expand_objects(void) {
  * @note
  * will never fail, as expand_objects() will fatal() if memory allocation error.
  */
-object *get_object(void) {
+object *object_new(void) {
     object *op;
 
     if (free_objects == NULL) {
@@ -929,9 +929,9 @@ object *get_object(void) {
      * debugging program will now use the current stack trace to
      * report leaks.
      */
-    /* FIXME: However this doesn't work since free_object2() sometimes add
+    /* FIXME: However this doesn't work since object_free2() sometimes add
      * objects back to the free_objects linked list, and some functions mess
-     * with the object after return of free_object2(). This is bad and should be
+     * with the object after return of object_free2(). This is bad and should be
      * fixed. But it would need fairly extensive changes and a lot of debugging.
      * So until that is fixed, skip realloc() here unless MEMORY_DEBUG is set to
      * a value greater than 1. We do this in order at least make MEMORY_DEBUG
@@ -972,7 +972,7 @@ object *get_object(void) {
     if (objects != NULL)
         objects->prev = op;
     objects = op;
-    clear_object(op);
+    object_clear(op);
     SET_FLAG(op, FLAG_REMOVED);
     nroffreeobjects--;
     return op;
@@ -986,11 +986,11 @@ object *get_object(void) {
  * @param op
  * object to update.
  */
-void update_turn_face(object *op) {
+void object_update_turn_face(object *op) {
     if (!QUERY_FLAG(op, FLAG_IS_TURNABLE) || op->arch == NULL)
         return;
     SET_ANIMATION(op, op->direction);
-    update_object(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);
 }
 
 /**
@@ -1004,7 +1004,7 @@ void update_turn_face(object *op) {
  * @todo
  * check fixme & todo
  */
-void update_ob_speed(object *op) {
+void object_update_speed(object *op) {
     /* FIXME what the hell is this crappy hack?*/
     extern int arch_init;
 
@@ -1060,13 +1060,13 @@ void update_ob_speed(object *op) {
  * This should only be used for style maps or other such
  * reference maps where you don't want an object that isn't
  * in play chewing up cpu time getting processed.
- * The reverse of this is to call update_ob_speed, which
+ * The reverse of this is to call object_update_speed(), which
  * will do the right thing based on the speed of the object.
  *
  * @param op
  * object to remove.
  */
-void remove_from_active_list(object *op) {
+void object_remove_from_active_list(object *op) {
     /* If not on the active list, nothing needs to be done */
     if (!op->active_next && !op->active_prev && op != active_objects)
         return;
@@ -1085,7 +1085,7 @@ void remove_from_active_list(object *op) {
 }
 
 /**
- * update_object() updates the array which represents the map.
+ * object_update() updates the array which represents the map.
  *
  * It takes into account invisible objects (and represent squares covered
  * by invisible objects by whatever is below them (unless it's another
@@ -1093,7 +1093,7 @@ void remove_from_active_list(object *op) {
  *
  * If the object being updated is beneath a player, the look-window
  * of that player is updated (this might be a suboptimal way of
- * updating that window, though, since update_object() is called _often_)
+ * updating that window, though, since object_update() is called _often_)
  *
  * @param op
  * object to update
@@ -1105,17 +1105,17 @@ void remove_from_active_list(object *op) {
  * of walls or living creatures may need us to update the flags now.
  *
  * @todo
- * this function should be renamed to something like update_object_map, update_object is a too general term
+ * this function should be renamed to something like object_update_map, object_update is a too general term
  * Also it might be worth moving it to map.c
  */
-void update_object(object *op, int action) {
+void object_update(object *op, int action) {
     int update_now = 0, flags;
     MoveType move_on, move_off, move_block, move_slow;
     object *pl;
 
     if (op == NULL) {
         /* this should never happen */
-        LOG(llevDebug, "update_object() called for NULL object.\n");
+        LOG(llevDebug, "object_update() called for NULL object.\n");
         return;
     }
 
@@ -1135,7 +1135,7 @@ void update_object(object *op, int action) {
     /* make sure the object is within map boundaries */
     if (op->x < 0 || op->x >= MAP_WIDTH(op->map)
     || op->y < 0 || op->y >= MAP_HEIGHT(op->map)) {
-        LOG(llevError, "update_object() called for object out of map!\n");
+        LOG(llevError, "object_update() called for object out of map!\n");
 #ifdef MANY_CORES
         abort();
 #endif
@@ -1177,7 +1177,7 @@ void update_object(object *op, int action) {
         if (op->type == PLAYER)
             update_now = 1;
     /* if the object is being removed, we can't make intelligent
-     * decisions, because remove_ob can't really pass the object
+     * decisions, because object_remove() can't really pass the object
      * that is being removed.
      */
     } else if (action == UP_OBJ_REMOVE) {
@@ -1210,7 +1210,7 @@ void update_object(object *op, int action) {
             }
         }
     } else {
-        LOG(llevError, "update_object called with invalid action: %d\n", action);
+        LOG(llevError, "object_update called with invalid action: %d\n", action);
     }
 
     if (update_now) {
@@ -1219,14 +1219,14 @@ void update_object(object *op, int action) {
     }
 
     if (op->more != NULL)
-        update_object(op->more, action);
+        object_update(op->more, action);
 }
 
 /**
  * Frees everything allocated by an object, removes
  * it from the list of used objects, and puts it on the list of
  * free objects.  The IS_FREED() flag is set in the object.
- * The object must have been removed by remove_ob() first for
+ * The object must have been removed by object_remove() first for
  * this function to succeed.
  *
  * Inventory will be dropped on the ground if in a map, else freed too.
@@ -1234,8 +1234,8 @@ void update_object(object *op, int action) {
  * @param ob
  * object to free. Will become invalid when function returns.
  */
-void free_object(object *ob) {
-    free_object2(ob, 0);
+void object_free(object *ob) {
+    object_free2(ob, 0);
 }
 
 /**
@@ -1243,7 +1243,7 @@ void free_object(object *ob) {
  * it from the list of used objects, and puts it on the list of
  * free objects.  The IS_FREED() flag is set in the object.
  *
- * The object must have been removed by remove_ob() first for
+ * The object must have been removed by object_remove() first for
  * this function to succeed.
  *
  * @param ob
@@ -1254,7 +1254,7 @@ void free_object(object *ob) {
  * @warning
  * the object's archetype should be a valid pointer, or NULL.
  */
-void free_object2(object *ob, int free_inventory) {
+void object_free2(object *ob, int free_inventory) {
     object *tmp, *op;
 
     if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
@@ -1263,7 +1263,7 @@ void free_object2(object *ob, int free_inventory) {
 
         LOG(llevDebug, "Free object called with non removed object\n");
         sb = stringbuffer_new();
-        dump_object(ob, sb);
+        object_dump(ob, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "%s", diff);
         free(diff);
@@ -1280,7 +1280,7 @@ void free_object2(object *ob, int free_inventory) {
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(ob, sb);
+        object_dump(ob, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "Trying to free freed object.\n%s\n", diff);
         free(diff);
@@ -1302,20 +1302,20 @@ void free_object2(object *ob, int free_inventory) {
             op = ob->inv;
             while (op != NULL) {
                 tmp = op->below;
-                remove_ob(op);
-                free_object2(op, free_inventory);
+                object_remove(op);
+                object_free2(op, free_inventory);
                 op = tmp;
             }
         } else { /* Put objects in inventory onto this space */
             op = ob->inv;
             while (op != NULL) {
                 tmp = op->below;
-                remove_ob(op);
+                object_remove(op);
                 if (QUERY_FLAG(op, FLAG_STARTEQUIP)||QUERY_FLAG(op, FLAG_NO_DROP)
                 || op->type == RUNE
                 || op->type == TRAP
                 || QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
-                    free_object(op);
+                    object_free(op);
                 else {
                     object *part;
 
@@ -1338,18 +1338,18 @@ void free_object2(object *ob, int free_inventory) {
                     if (QUERY_FLAG(op, FLAG_ALIVE)) {
                         int pos;
 
-                        pos = find_free_spot(op, part->map, part->x, part->y, 0, SIZEOFFREE);
+                        pos = object_find_free_spot(op, part->map, part->x, part->y, 0, SIZEOFFREE);
                         if (pos == -1)
-                            free_object(op);
+                            object_free(op);
                         else {
                             op->x = part->x+freearr_x[pos];
                             op->y = part->y+freearr_y[pos];
-                            insert_ob_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
+                            object_insert_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
                         }
                     } else {
                         op->x = part->x;
                         op->y = part->y;
-                        insert_ob_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
+                        object_insert_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
                     }
                 }
                 op = tmp;
@@ -1358,13 +1358,13 @@ void free_object2(object *ob, int free_inventory) {
     }
 
     if (ob->more != NULL) {
-        free_object2(ob->more, free_inventory);
+        object_free2(ob->more, free_inventory);
         ob->more = NULL;
     }
 
     /* Remove object from the active list */
     ob->speed = 0;
-    update_ob_speed(ob);
+    object_update_speed(ob);
 
     SET_FLAG(ob, FLAG_FREED);
     ob->count = 0;
@@ -1393,7 +1393,7 @@ void free_object2(object *ob, int free_inventory) {
     if (ob->spell_tags) FREE_AND_CLEAR(ob->spell_tags);
 
     /* Why aren't events freed? */
-    free_key_values(ob);
+    object_free_key_values(ob);
 
     free_dialog_information(ob);
 
@@ -1429,7 +1429,7 @@ void free_object2(object *ob, int free_inventory) {
  * @return
  * number of objects on the list of free objects.
  */
-int count_free(void) {
+int object_count_free(void) {
     int i = 0;
     object *tmp = free_objects;
 
@@ -1445,7 +1445,7 @@ int count_free(void) {
  * @return
  * number of objects on the list of used objects.
  */
-int count_used(void) {
+int object_count_used(void) {
     int i = 0;
     object *tmp = objects;
 
@@ -1461,7 +1461,7 @@ int count_used(void) {
  * @return
  * number of objects on the list of active objects.
  */
-int count_active(void) {
+int object_count_active(void) {
     int i = 0;
     object *tmp = active_objects;
 
@@ -1483,9 +1483,9 @@ int count_active(void) {
  * weight to remove.
  *
  * @todo
- * check if not mergeable with add_weight().
+ * check if not mergeable with object_add_weight().
  */
-void sub_weight(object *op, signed long weight) {
+void object_sub_weight(object *op, signed long weight) {
     while (op != NULL) {
         if (op->type == CONTAINER) {
             weight = (signed long)(weight*(100-op->stats.Str)/100);
@@ -1511,7 +1511,7 @@ void sub_weight(object *op, signed long weight) {
  * this function is a piece of overbloated crap or at lest
  * look like need cleanup it does to much different things.
  */
-void remove_ob(object *op) {
+void object_remove(object *op) {
     object *tmp, *last = NULL;
     object *otmp;
     tag_t tag;
@@ -1524,14 +1524,14 @@ void remove_ob(object *op) {
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "Trying to remove removed object.\n%s\n", diff);
         free(diff);
         abort();
     }
     if (op->more != NULL)
-        remove_ob(op->more);
+        object_remove(op->more);
 
     SET_FLAG(op, FLAG_REMOVED);
 
@@ -1539,12 +1539,12 @@ void remove_ob(object *op) {
      * In this case, the object to be removed is in someones
      * inventory.
      */
-    /* TODO try to call a generic inventory weight adjusting function like sub_weight */
+    /* TODO try to call a generic inventory weight adjusting function like object_sub_weight */
     if (op->env != NULL) {
         if (op->nrof)
-            sub_weight(op->env, op->weight*op->nrof);
+            object_sub_weight(op->env, op->weight*op->nrof);
         else
-            sub_weight(op->env, op->weight+op->carrying);
+            object_sub_weight(op->env, op->weight+op->carrying);
 
         /* Update in two cases: item is in a player, or in a container the player is looking into. */
         if (op->env->contr != NULL && op->head == NULL) {
@@ -1573,7 +1573,7 @@ void remove_ob(object *op) {
          * made to players inventory.  If set, avoiding the call
          * to save cpu time.
          */
-        if ((otmp = get_player_container(op->env)) != NULL
+        if ((otmp = object_get_player_container(op->env)) != NULL
         && otmp->contr
         && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
             fix_object(otmp);
@@ -1613,11 +1613,11 @@ void remove_ob(object *op) {
     m = get_map_from_coord(op->map, &x, &y);
 
     if (!m) {
-        LOG(llevError, "remove_ob called when object was on map but appears to not be within valid coordinates? %s (%d,%d)\n", op->map->path, op->x, op->y);
+        LOG(llevError, "object_remove called when object was on map but appears to not be within valid coordinates? %s (%d,%d)\n", op->map->path, op->x, op->y);
         abort();
     }
     if (op->map != m) {
-        LOG(llevError, "remove_ob: Object not really on map it claimed to be on? %s != %s, %d,%d != %d,%d\n", op->map->path, m->path, op->x, op->y, x, y);
+        LOG(llevError, "object_remove: Object not really on map it claimed to be on? %s != %s, %d,%d != %d,%d\n", op->map->path, m->path, op->x, op->y, x, y);
     }
 
     /* link the object above us */
@@ -1640,13 +1640,13 @@ void remove_ob(object *op) {
             char *diff;
 
             sb = stringbuffer_new();
-            dump_object(op, sb);
+            object_dump(op, sb);
             diff = stringbuffer_finish(sb);
-            LOG(llevError, "remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", diff);
+            LOG(llevError, "object_remove: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", diff);
             free(diff);
 
             sb = stringbuffer_new();
-            dump_object(GET_MAP_OB(m, x, y), sb);
+            object_dump(GET_MAP_OB(m, x, y), sb);
             diff = stringbuffer_finish(sb);
             LOG(llevError, "%s\n", diff);
             free(diff);
@@ -1681,8 +1681,8 @@ void remove_ob(object *op) {
         if (check_walk_off
         && ((op->move_type&tmp->move_off) && (op->move_type&~tmp->move_off&~tmp->move_block) == 0)) {
             ob_move_on(tmp, op, NULL);
-            if (was_destroyed(op, tag)) {
-                LOG(llevError, "BUG: remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);
+            if (object_was_destroyed(op, tag)) {
+                LOG(llevError, "BUG: object_remove(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);
             }
         }
 
@@ -1701,7 +1701,7 @@ void remove_ob(object *op) {
         SET_MAP_FLAGS(op->map, op->x, op->y,  P_NEED_UPDATE);
         update_position(op->map, op->x, op->y);
     } else
-        update_object(last, UP_OBJ_REMOVE);
+        object_update(last, UP_OBJ_REMOVE);
 
     if (QUERY_FLAG(op, FLAG_BLOCKSVIEW)|| (op->glow_radius != 0))
         update_all_los(op->map, op->x, op->y);
@@ -1720,7 +1720,7 @@ void remove_ob(object *op) {
  * @return
  * pointer to object if it succeded in the merge, otherwise NULL
  */
-object *merge_ob(object *op, object *top) {
+object *object_merge(object *op, object *top) {
     if (!op->nrof)
         return NULL;
 
@@ -1730,11 +1730,11 @@ object *merge_ob(object *op, object *top) {
     for (; top != NULL; top = top->below) {
         if (top == op)
             continue;
-        if (can_merge(op, top)) {
+        if (object_can_merge(op, top)) {
             increase_ob_nr(top, op->nrof);
             op->weight = 0; /* Don't want any adjustements now */
-            remove_ob(op);
-            free_object(op);
+            object_remove(op);
+            object_free(op);
             return top;
         }
     }
@@ -1742,7 +1742,7 @@ object *merge_ob(object *op, object *top) {
 }
 
 /**
- * Same as insert_ob_in_map() except it handle separate coordinates and do a clean
+ * Same as object_insert_in_map() except it handle separate coordinates and do a clean
  * job preparing multi-part monsters.
  *
  * @param op
@@ -1757,7 +1757,7 @@ object *merge_ob(object *op, object *top) {
  * @param y
  * coordinates to insert at.
  */
-object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y) {
+object *object_insert_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y) {
     object *tmp;
 
     if (op->head)
@@ -1768,13 +1768,13 @@ object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int fl
         if (op != tmp && !tmp->map)
             tmp->map = op->map ? op->map : m;
     }
-    return insert_ob_in_map(op, m, originator, flag);
+    return object_insert_in_map(op, m, originator, flag);
 }
 
 /**
  * This sees if there are any objects on the space that can
  * merge with op.  Note that op does not need to actually
- * be inserted on the map (when called from insert_ob_in_map,
+ * be inserted on the map (when called from object_insert_in_map,
  * it won't be), but op->map should be set correctly.
  *
  * Note that even if we find a match on the space, we keep progressing
@@ -1788,7 +1788,7 @@ object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int fl
  * @param y
  * coordinates to look at for merging.
  */
-void merge_spell(object *op, sint16 x, sint16 y) {
+void object_merge_spell(object *op, sint16 x, sint16 y) {
     object *tmp, *above;
     int i;
 
@@ -1924,7 +1924,7 @@ void merge_spell(object *op, sint16 x, sint16 y) {
                 if (op->spell_tags
                 && OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0
                 && !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp)) {
-                    LOG(llevError, "insert_ob_in_map: Got non matching spell tags: %d != %d\n", OB_SPELL_TAG_HASH(op, tmp->stats.maxhp), tmp->stats.maxhp);
+                    LOG(llevError, "object_insert_in_map: Got non matching spell tags: %d != %d\n", OB_SPELL_TAG_HASH(op, tmp->stats.maxhp), tmp->stats.maxhp);
                 }
 #endif
                 if (!op->spell_tags)
@@ -1953,8 +1953,8 @@ void merge_spell(object *op, sint16 x, sint16 y) {
                 op->stats.dam += tmp->stats.dam;
             }
 
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
         }
     }
 }
@@ -1988,7 +1988,7 @@ void merge_spell(object *op, sint16 x, sint16 y) {
  * this function is a mess, and should be cleaned.
  */
 
-object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag) {
+object *object_insert_in_map(object *op, mapstruct *m, object *originator, int flag) {
     object *tmp, *top, *floor = NULL;
     sint16 x, y;
 
@@ -2001,7 +2001,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "Trying to insert in null-map!\n%s\n", diff);
         free(diff);
@@ -2012,7 +2012,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "Trying to insert object outside the map.\n%s\n", diff);
         free(diff);
@@ -2030,7 +2030,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "Trying to insert (map) inserted object.\n%s\n", diff);
         free(diff);
@@ -2058,9 +2058,9 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
             more->map = m;
         }
 
-        if (insert_ob_in_map(more, more->map, originator, flag) == NULL) {
+        if (object_insert_in_map(more, more->map, originator, flag) == NULL) {
             if (!op->head)
-                LOG(llevError, "BUG: insert_ob_in_map(): inserting op->more killed op\n");
+                LOG(llevError, "BUG: object_insert_in_map(): inserting op->more killed op\n");
             return NULL;
         }
     }
@@ -2078,21 +2078,21 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
     && !(flag&INS_NO_MERGE)
     && op->type != SPELL_EFFECT) {
         for (tmp = GET_MAP_OB(op->map, x, y); tmp != NULL; tmp = tmp->above) {
-            if (can_merge(op, tmp)) {
+            if (object_can_merge(op, tmp)) {
                 op->nrof += tmp->nrof;
-                remove_ob(tmp);
-                free_object(tmp);
+                object_remove(tmp);
+                object_free(tmp);
             }
         }
     } else if (op->type == SPELL_EFFECT
     && !op->range
     && !op->other_arch
     && (op->speed_left+op->speed) < 0.0) {
-        merge_spell(op, x, y);
+        object_merge_spell(op, x, y);
     }
 
     /* Ideally, the caller figures this out.  However, it complicates a lot
-     * of areas of callers (eg, anything that uses find_free_spot would now
+     * of areas of callers (eg, anything that uses object_find_free_spot() would now
      * need extra work
      */
     if (op->map != m) {
@@ -2121,7 +2121,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
         if (originator->map != op->map
         || originator->x != op->x
         || originator->y != op->y) {
-            LOG(llevError, "insert_ob_in_map called with INS_BELOW_ORIGINATOR when originator not on same space!\n");
+            LOG(llevError, "object_insert_in_map called with INS_BELOW_ORIGINATOR when originator not on same space!\n");
             abort();
         }
         op->above = originator;
@@ -2227,7 +2227,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
 
 
     /* updates flags (blocked, alive, no magic, etc) for this map space */
-    update_object(op, UP_OBJ_INSERT);
+    object_update(op, UP_OBJ_INSERT);
 
     if (op->contr && !op->contr->hidden)
         op->map->players++;
@@ -2235,23 +2235,23 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
     /* Don't know if moving this to the end will break anything.  However,
      * we want to have update_look set above before calling this.
      *
-     * check_move_on() must be after this because code called from
-     * check_move_on() depends on correct map flags (so functions like
+     * object_check_move_on() must be after this because code called from
+     * object_check_move_on() depends on correct map flags (so functions like
      * blocked() and wall() work properly), and these flags are updated by
-     * update_object().
+     * object_update().
      */
 
     /* if this is not the head or flag has been passed, don't check walk on status */
 
     if (!(flag&INS_NO_WALK_ON) && !op->head) {
-        if (check_move_on(op, originator))
+        if (object_check_move_on(op, originator))
             return NULL;
 
         /* If we are a multi part object, lets work our way through the check
          * walk on's.
          */
         for (tmp = op->more; tmp != NULL; tmp = tmp->more)
-            if (check_move_on(tmp, originator))
+            if (object_check_move_on(tmp, originator))
                 return NULL;
     }
     return op;
@@ -2266,7 +2266,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
  * @param op
  * object to insert it under:  supplies x and the map.
  */
-void replace_insert_ob_in_map(const char *arch_string, object *op) {
+void object_replace_insert_in_map(const char *arch_string, object *op) {
     object *tmp;
     object *tmp1;
 
@@ -2274,8 +2274,8 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
     for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp1) {
         tmp1 = tmp->above;
         if (!strcmp(tmp->arch->name, arch_string)) { /* same archetype */
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
         }
     }
 
@@ -2283,11 +2283,11 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
 
     tmp1->x = op->x;
     tmp1->y = op->y;
-    insert_ob_in_map(tmp1, op->map, op, INS_BELOW_ORIGINATOR);
+    object_insert_in_map(tmp1, op->map, op, INS_BELOW_ORIGINATOR);
 }
 
 /**
- * get_split_ob(ob,nr) splits up ob into two parts.  The part which
+ * object_split(ob,nr) splits up ob into two parts.  The part which
  * is returned contains nr objects, and the remaining parts contains
  * the rest (or is removed and freed if that number is 0).
  * On failure, NULL is returned, and the reason LOG()ed.
@@ -2306,7 +2306,7 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  * @return
  * split object, or NULL on failure.
  */
-object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size) {
+object *object_split(object *orig_ob, uint32 nr, char *err, size_t size) {
     object *newob;
 
     if (MAX(1, orig_ob->nrof) < nr) {
@@ -2320,12 +2320,12 @@ object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size) {
     newob = object_create_clone(orig_ob);
     if (orig_ob->nrof == 0) {
         if (!QUERY_FLAG(orig_ob, FLAG_REMOVED)) {
-            remove_ob(orig_ob);
+            object_remove(orig_ob);
         }
-        free_object(orig_ob);
+        object_free(orig_ob);
     } else {
         newob->nrof = nr;
-        decrease_ob_nr(orig_ob, nr);
+        object_decrease_nrof(orig_ob, nr);
     }
 
     return newob;
@@ -2345,7 +2345,7 @@ object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size) {
  * @return
  * 'op' if something is left, NULL if the amount reached 0.
  */
-object *decrease_ob_nr(object *op, uint32 i) {
+object *object_decrease_nrof(object *op, uint32 i) {
     object *tmp;
 
     if (i == 0)   /* objects with op->nrof require this check */
@@ -2362,7 +2362,7 @@ object *decrease_ob_nr(object *op, uint32 i) {
             /* is this object in the players inventory, or sub container
              * therein?
              */
-            tmp = get_player_container(op->env);
+            tmp = object_get_player_container(op->env);
             /* nope.  Is this a container the player has opened?
              * If so, set tmp to that player.
              * IMO, searching through all the players will mostly
@@ -2379,13 +2379,13 @@ object *decrease_ob_nr(object *op, uint32 i) {
                     tmp = NULL;
             }
 
-            sub_weight(op->env, op->weight*i);
+            object_sub_weight(op->env, op->weight*i);
             op->nrof -= i;
             if (tmp) {
                 esrv_update_item(UPD_NROF, tmp, op);
             }
         } else {
-            remove_ob(op);
+            object_remove(op);
             op->nrof = 0;
         }
     } else {
@@ -2400,7 +2400,7 @@ object *decrease_ob_nr(object *op, uint32 i) {
             if (pl && pl->contr)
                 pl->contr->socket.update_look = 1;
         } else {
-            remove_ob(op);
+            object_remove(op);
             op->nrof = 0;
         }
     }
@@ -2408,7 +2408,7 @@ object *decrease_ob_nr(object *op, uint32 i) {
     if (op->nrof) {
         return op;
     } else {
-        free_object(op);
+        object_free(op);
         return NULL;
     }
 }
@@ -2436,7 +2436,7 @@ static void increase_ob_nr(object *op, uint32 i) {
         /* is this object in the players inventory, or sub container
          * therein?
          */
-        tmp = get_player_container(op->env);
+        tmp = object_get_player_container(op->env);
         /* nope.  Is this a container the player has opened?
          * If so, set tmp to that player.
          * IMO, searching through all the players will mostly
@@ -2453,7 +2453,7 @@ static void increase_ob_nr(object *op, uint32 i) {
                 tmp = NULL;
         }
 
-        add_weight(op->env, op->weight*i);
+        object_add_weight(op->env, op->weight*i);
         op->nrof += i;
         if (tmp) {
             esrv_update_item(UPD_NROF, tmp, op);
@@ -2473,7 +2473,7 @@ static void increase_ob_nr(object *op, uint32 i) {
 }
 
 /**
- * add_weight(object, weight) adds the specified weight to an object,
+ * object_add_weight(object, weight) adds the specified weight to an object,
  * and also updates how much the environment(s) is/are carrying.
  *
  * Takes container weight reduction into account.
@@ -2484,9 +2484,9 @@ static void increase_ob_nr(object *op, uint32 i) {
  * weight to add.
  *
  * @todo
- * check if mergeable with sub_weight().
+ * check if mergeable with object_sub_weight().
  */
-void add_weight(object *op, signed long weight) {
+void object_add_weight(object *op, signed long weight) {
     while (op != NULL) {
         if (op->type == CONTAINER) {
             weight = (signed long)(weight*(100-op->stats.Str)/100);
@@ -2510,7 +2510,7 @@ void add_weight(object *op, signed long weight) {
  * @return
  * pointer to inserted item, which will be different than op if object was merged.
  */
-object *insert_ob_in_ob(object *op, object *where) {
+object *object_insert_in_ob(object *op, object *where) {
     object *tmp, *otmp;
 
     if (!QUERY_FLAG(op, FLAG_REMOVED)) {
@@ -2518,7 +2518,7 @@ object *insert_ob_in_ob(object *op, object *where) {
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "Trying to insert (ob) inserted object.\n%s\n", diff);
         free(diff);
@@ -2530,7 +2530,7 @@ object *insert_ob_in_ob(object *op, object *where) {
         char *diff;
 
         sb = stringbuffer_new();
-        dump_object(op, sb);
+        object_dump(op, sb);
         diff = stringbuffer_finish(sb);
         LOG(llevError, "Trying to put object in NULL.\n%s\n", diff);
         free(diff);
@@ -2548,19 +2548,19 @@ object *insert_ob_in_ob(object *op, object *where) {
     CLEAR_FLAG(op, FLAG_REMOVED);
     if (op->nrof) {
         for (tmp = where->inv; tmp != NULL; tmp = tmp->below)
-            if (can_merge(tmp, op)) {
+            if (object_can_merge(tmp, op)) {
                 /* return the original object and remove inserted object
                  * (client needs the original object) */
                 increase_ob_nr(tmp, op->nrof);
                 SET_FLAG(op, FLAG_REMOVED);
-                free_object(op); /* free the inserted object */
+                object_free(op); /* free the inserted object */
                 return tmp;
             }
 
         /* the item couldn't merge. */
-        add_weight(where, op->weight*op->nrof);
+        object_add_weight(where, op->weight*op->nrof);
     } else
-        add_weight(where, (op->weight+op->carrying));
+        object_add_weight(where, (op->weight+op->carrying));
 
     op->map = NULL;
     op->env = where;
@@ -2605,7 +2605,7 @@ object *insert_ob_in_ob(object *op, object *where) {
             esrv_send_item(pl, op);
     }
 
-    otmp = get_player_container(where);
+    otmp = object_get_player_container(where);
     if (otmp && otmp->contr != NULL) {
         if (!QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER)
         && (QUERY_FLAG(op, FLAG_APPLIED) || (op->type == SKILL) || (op->glow_radius != 0)))
@@ -2617,7 +2617,7 @@ object *insert_ob_in_ob(object *op, object *where) {
     /* reset the light list and los of the players on the map */
     if ((op->glow_radius != 0) && where->map) {
 #ifdef DEBUG_LIGHTS
-        LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n", op->name);
+        LOG(llevDebug, " object_insert_in_ob(): got %s to insert in map/op\n", op->name);
 #endif /* DEBUG_LIGHTS */
         if (MAP_DARKNESS(where->map)) {
             SET_MAP_FLAGS(where->map, where->x, where->y,  P_NEED_UPDATE);
@@ -2640,7 +2640,7 @@ object *insert_ob_in_ob(object *op, object *where) {
  * permit faster movement by the player through this terrain. -b.t.
  *
  * MSW 2001-07-08: Check all objects on space, not just those below
- * object being inserted.  insert_ob_in_map may not put new objects
+ * object being inserted.  object_insert_in_map may not put new objects
  * on top.
  *
  * @param op
@@ -2651,7 +2651,7 @@ object *insert_ob_in_ob(object *op, object *where) {
  * @return
  * 1 if 'op' was destroyed, 0 otherwise.
  */
-int check_move_on(object *op, object *originator) {
+int object_check_move_on(object *op, object *originator) {
     object *tmp;
     tag_t tag;
     mapstruct *m = op->map;
@@ -2729,7 +2729,7 @@ int check_move_on(object *op, object *originator) {
         || ((op->move_type&tmp->move_on) && (op->move_type&~tmp->move_on&~tmp->move_block) == 0)) {
 
             ob_move_on(tmp, op, originator);
-            if (was_destroyed(op, tag))
+            if (object_was_destroyed(op, tag))
                 return 1;
 
             /* what the person/creature stepped onto has moved the object
@@ -2755,7 +2755,7 @@ int check_move_on(object *op, object *originator) {
  * @return
  * first matching object, or NULL if none matches.
  */
-object *present_arch(const archetype *at, mapstruct *m, int x, int y) {
+object *arch_present_in_map(const archetype *at, mapstruct *m, int x, int y) {
     object *tmp;
 
     if (m == NULL || out_of_map(m, x, y)) {
@@ -2782,7 +2782,7 @@ object *present_arch(const archetype *at, mapstruct *m, int x, int y) {
  * @return
  * first matching object, or NULL if none matches.
  */
-object *present(uint8 type, mapstruct *m, int x, int y) {
+object *object_present_in_map(uint8 type, mapstruct *m, int x, int y) {
     object *tmp;
 
     if (out_of_map(m, x, y)) {
@@ -2806,7 +2806,7 @@ object *present(uint8 type, mapstruct *m, int x, int y) {
  * @return
  * first matching object, or NULL if none matches.
  */
-object *present_in_ob(uint8 type, const object *op) {
+object *object_present_in_ob(uint8 type, const object *op) {
     object *tmp;
 
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
@@ -2840,7 +2840,7 @@ object *present_in_ob(uint8 type, const object *op) {
  * @todo
  * use add_string() hack to avoid the strcmp?
  */
-object *present_in_ob_by_name(int type, const char *str, const object *op) {
+object *object_present_in_ob_by_name(int type, const char *str, const object *op) {
     object *tmp;
 
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
@@ -2859,7 +2859,7 @@ object *present_in_ob_by_name(int type, const char *str, const object *op) {
  * where to search.
  * @return first matching object, or NULL if none matches.
  */
-object *present_arch_in_ob(const archetype *at, const object *op)  {
+object *arch_present_in_ob(const archetype *at, const object *op)  {
     object *tmp;
 
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
@@ -2876,13 +2876,13 @@ object *present_arch_in_ob(const archetype *at, const object *op)  {
  * @param flag
  * flag to set.
  */
-void flag_inv(object*op, int flag) {
+void object_set_flag_inv(object*op, int flag) {
     object *tmp;
 
     if (op->inv)
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
             SET_FLAG(tmp, flag);
-            flag_inv(tmp, flag);
+            object_set_flag_inv(tmp, flag);
         }
 }
 
@@ -2894,28 +2894,28 @@ void flag_inv(object*op, int flag) {
  * @param flag
  * flag to unset.
  */
-void unflag_inv(object*op, int flag) {
+void object_unset_flag_inv(object*op, int flag) {
     object *tmp;
 
     if (op->inv)
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
             CLEAR_FLAG(tmp, flag);
-            unflag_inv(tmp, flag);
+            object_unset_flag_inv(tmp, flag);
         }
 }
 
 /**
- * set_cheat(object) sets the cheat flag (WAS_WIZ) in the object and in
+ * object_set_cheat(object) sets the cheat flag (WAS_WIZ) in the object and in
  * all it's inventory (recursively).
- * If checksums are used, a player will get set_cheat called for
+ * If checksums are used, a player will get object_set_cheat called for
  * him/her-self and all object carried by a call to this function.
  *
  * @param op
  * object for which to set the flag.
  */
-void set_cheat(object *op) {
+void object_set_cheat(object *op) {
     SET_FLAG(op, FLAG_WAS_WIZ);
-    flag_inv(op, FLAG_WAS_WIZ);
+    object_set_flag_inv(op, FLAG_WAS_WIZ);
 }
 
 /**
@@ -2935,15 +2935,15 @@ void set_cheat(object *op) {
  * @note
  * This function assumes that multi-tile objects are rectangular.
  */
-int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
+int object_find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
     int freecount = 0;
 
     if (ob->head)
         ob = ob->head;
 
-    get_multi_size(ob, &sx, &sy, &sx2, &sy2);
-    get_multi_size(gen, &genx, &geny, &genx2, &geny2);
+    object_get_multi_size(ob, &sx, &sy, &sx2, &sy2);
+    object_get_multi_size(gen, &genx, &geny, &genx2, &geny2);
     /*
      * sx and sy are now the coords of the bottom right corner of ob relative to the head.
      * genx and geny are now the coords of the bottom right corner of gen relative to the head.
@@ -3052,7 +3052,7 @@ int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
  * @note
  * This function assumes that multi-tile objects are rectangular.
  */
-int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy) {
+int object_find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
     sint8 x, y, radius;
     int freecount = 0, freecountstop = 0;
@@ -3061,7 +3061,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
     sint8 *y_array;
 
     /* If radius is not set, default to 1 */
-    value = get_ob_key_value(gen, "generator_radius");
+    value = object_get_value(gen, "generator_radius");
     if (value) {
         radius = (sint8)strtol((char *)value, NULL, 10);
         if (radius < 1) {
@@ -3074,8 +3074,8 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
     if (ob->head)
         ob = ob->head;
 
-    get_multi_size(ob, &sx, &sy, &sx2, &sy2);
-    get_multi_size(gen, &genx, &geny, &genx2, &geny2);
+    object_get_multi_size(ob, &sx, &sy, &sx2, &sy2);
+    object_get_multi_size(gen, &genx, &geny, &genx2, &geny2);
     /*
      * sx and sy are now the coords of the bottom right corner
      * of ob relative to the head.
@@ -3167,7 +3167,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
 }
 
 /**
- * find_free_spot(object, map, x, y, start, stop) will search for
+ * object_find_free_spot(object, map, x, y, start, stop) will search for
  * a spot at the given map and coordinates which will be able to contain
  * the given object.
  *
@@ -3191,7 +3191,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
  * pieces.
  * @note
  * This function does correctly handle tiled maps, but does not
- * inform the caller.  However, insert_ob_in_map will update as
+ * inform the caller.  However, object_insert_in_map will update as
  * necessary, so the caller shouldn't need to do any special work.
  * @note
  * Updated to take an object instead of archetype - this is necessary
@@ -3200,7 +3200,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
  * the archetype because that isn't correct if the monster has been
  * customized, changed states, etc.
  */
-int find_free_spot(const object *ob, mapstruct *m, int x, int y, int start, int stop) {
+int object_find_free_spot(const object *ob, mapstruct *m, int x, int y, int start, int stop) {
     int i, index = 0, flag;
     static int altern[SIZEOFFREE];
 
@@ -3226,8 +3226,8 @@ int find_free_spot(const object *ob, mapstruct *m, int x, int y, int start, int 
 }
 
 /**
- * find_first_free_spot(archetype, mapstruct, x, y) works like
- * find_free_spot(), but it will search max number of squares.
+ * object_find_first_free_spot(archetype, mapstruct, x, y) works like
+ * object_find_free_spot(), but it will search max number of squares.
  * It will return the first available spot, not a random choice.
  * Changed 0.93.2: Have it return -1 if there is no free spot available.
  *
@@ -3240,7 +3240,7 @@ int find_free_spot(const object *ob, mapstruct *m, int x, int y, int start, int 
  * @return
  * index into ::freearr_x and ::freearr_y, -1 if no spot available (dir 0 = x,y)
  */
-int find_first_free_spot(const object *ob, mapstruct *m, int x, int y) {
+int object_find_first_free_spot(const object *ob, mapstruct *m, int x, int y) {
     int i;
 
     for (i = 0; i < SIZEOFFREE; i++) {
@@ -3313,7 +3313,7 @@ void get_search_arr(int *search_arr) {
  * because we have to know what movement the thing looking to move
  * there is capable of.
  */
-int find_dir(mapstruct *m, int x, int y, object *exclude) {
+int map_find_dir(mapstruct *m, int x, int y, object *exclude) {
     int i, max = SIZEOFFREE, mflags;
     sint16 nx, ny;
     object *tmp;
@@ -3364,7 +3364,7 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
  * @param ob2
  * objects we want to compute the distance of.
  */
-int distance(const object *ob1, const object *ob2) {
+int object_distance(const object *ob1, const object *ob2) {
     int i;
 
     i = (ob1->x-ob2->x)*(ob1->x-ob2->x)+
@@ -3569,7 +3569,7 @@ int can_see_monsterP(mapstruct *m, int x, int y, int dir) {
  * @note
  * this introduces a weight limitation for monsters.
  */
-int can_pick(const object *who, const object *item) {
+int object_can_pick(const object *who, const object *item) {
     /* I re-wrote this as a series of if statements
      * instead of a nested return (foo & bar && yaz)
      * - I think this is much more readable,
@@ -3606,7 +3606,7 @@ int can_pick(const object *who, const object *item) {
  * clone of asrc, including inventory and 'more' body parts.
  *
  * @note
- * this function will return NULL only if asrc is NULL. If there is a memory allocation error, get_object() calls fatal().
+ * this function will return NULL only if asrc is NULL. If there is a memory allocation error, object_new() calls fatal().
  */
 object *object_create_clone(object *asrc) {
     object *dst = NULL, *tmp, *src, *part, *prev, *item;
@@ -3619,8 +3619,8 @@ object *object_create_clone(object *asrc) {
 
     prev = NULL;
     for (part = src; part; part = part->more) {
-        tmp = get_object();
-        copy_object(part, tmp);
+        tmp = object_new();
+        object_copy(part, tmp);
         tmp->x -= src->x;
         tmp->y -= src->y;
         if (!part->head) {
@@ -3636,7 +3636,7 @@ object *object_create_clone(object *asrc) {
     }
     /*** copy inventory ***/
     for (item = src->inv; item; item = item->below) {
-        (void)insert_ob_in_ob(object_create_clone(item), dst);
+        (void)object_insert_in_ob(object_create_clone(item), dst);
     }
 
     return dst;
@@ -3656,7 +3656,7 @@ object *object_create_clone(object *asrc) {
  * @note
  * will not search in inventory of items in inventory.
  */
-object *find_obj_by_type_subtype(const object *who, int type, int subtype) {
+object *object_find_by_type_subtype(const object *who, int type, int subtype) {
     object *tmp;
 
     for (tmp = who->inv; tmp; tmp = tmp->below)
@@ -3676,7 +3676,7 @@ object *find_obj_by_type_subtype(const object *who, int type, int subtype) {
  * @return
  * the link from the list if ob has a field named key, otherwise NULL.
  */
-key_value *get_ob_key_link(const object *ob, const char *key) {
+key_value *object_get_key_value(const object *ob, const char *key) {
     key_value *link;
 
     for (link = ob->key_values; link != NULL; link = link->next) {
@@ -3701,7 +3701,7 @@ key_value *get_ob_key_link(const object *ob, const char *key) {
  * @note
  * The returned string is shared.
  */
-const char *get_ob_key_value(const object *op, const char *const key) {
+const char *object_get_value(const object *op, const char *const key) {
     key_value *link;
     const char *canonical_key;
 
@@ -3716,7 +3716,7 @@ const char *get_ob_key_value(const object *op, const char *const key) {
         return NULL;
     }
 
-    /* This is copied from get_ob_key_link() above -
+    /* This is copied from object_get_key_value() above -
      * only 4 lines, and saves the function call overhead.
      */
     for (link = op->key_values; link != NULL; link = link->next) {
@@ -3741,7 +3741,7 @@ const char *get_ob_key_value(const object *op, const char *const key) {
  * @return
  * TRUE if key was updated or added, FALSE else.
  */
-static int set_ob_key_value_s(object *op, const char *canonical_key, const char *value, int add_key) {
+static int object_set_value_s(object *op, const char *canonical_key, const char *value, int add_key) {
     key_value *field = NULL, *last = NULL;
 
     LOG(llevDebug, "set_ob_value_s: '%s' '%s' %d\n", canonical_key, value ? value : "null", add_key);
@@ -3762,7 +3762,7 @@ static int set_ob_key_value_s(object *op, const char *canonical_key, const char 
              * it, we save the empty value so that when we load,
              * we get this value back again.
              */
-            if (get_ob_key_link(&op->arch->clone, canonical_key))
+            if (object_get_key_value(&op->arch->clone, canonical_key))
                 field->value = NULL;
             else {
                 /* Delete this link */
@@ -3821,18 +3821,18 @@ static int set_ob_key_value_s(object *op, const char *canonical_key, const char 
  * TRUE if key was updated or added, FALSE else.
  *
  * @note
- * This function is merely a wrapper to set_ob_key_value_s() to ensure the key is a shared string.
+ * This function is merely a wrapper to object_set_value_s() to ensure the key is a shared string.
  *
  * @note
  * In general, should be little reason FALSE is ever passed in for add_key
 */
-int set_ob_key_value(object *op, const char *key, const char *value, int add_key) {
+int object_set_value(object *op, const char *key, const char *value, int add_key) {
     const char *canonical_key = NULL;
     int floating_ref = FALSE;
     int ret;
 
     /* HACK This mess is to make sure set_ob_value() passes a shared string
-     * to get_ob_key_link(), without leaving a leaked refcount.
+     * to object_get_key_value(), without leaving a leaked refcount.
      */
 
     canonical_key = find_string(key);
@@ -3841,7 +3841,7 @@ int set_ob_key_value(object *op, const char *key, const char *value, int add_key
         floating_ref = TRUE;
     }
 
-    ret = set_ob_key_value_s(op, canonical_key, value, add_key);
+    ret = object_set_value_s(op, canonical_key, value, add_key);
 
     if (floating_ref) {
         free_string(canonical_key);
@@ -3901,7 +3901,7 @@ int set_ob_key_value(object *op, const char *key, const char *value, int add_key
  * @todo
  * is the player->contr->count hack used?? Try to reduce buffers/calls to query_ functions.
  */
-int item_matched_string(object *pl, object *op, const char *name) {
+int object_matches_string(object *pl, object *op, const char *name) {
     char *cp, local_name[MAX_BUF], name_op[MAX_BUF], name_short[HUGE_BUF], bname_s[MAX_BUF], bname_p[MAX_BUF];
     int count, retval = 0;
     strcpy(local_name, name);   /* strtok is destructive to name */
@@ -4007,12 +4007,12 @@ int item_matched_string(object *pl, object *op, const char *name) {
  * @param tmp
  * object we want to fix. Must be on a map.
  **/
-void fix_multipart_object(object *tmp) {
+void object_fix_multipart(object *tmp) {
     archetype *at;
     object *op, *last;
 
     if (!tmp->map) {
-        LOG(llevError, "fix_multipart_object: not on a map!\n");
+        LOG(llevError, "object_fix_multipart: not on a map!\n");
         return;
     }
 
@@ -4043,11 +4043,11 @@ void fix_multipart_object(object *tmp) {
             op->title = add_string(tmp->title);
         }
         /* we could link all the parts onto tmp, and then just
-         * call insert_ob_in_map once, but the effect is the same,
-         * as insert_ob_in_map will call itself with each part, and
+         * call object_insert_in_map once, but the effect is the same,
+         * as object_insert_in_map will call itself with each part, and
          * the coding is simpler to just to it here with each part.
          */
-        insert_ob_in_map(op, op->map, tmp, INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
+        object_insert_in_map(op, op->map, tmp, INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
     } /* for at = tmp->arch->more */
 }
 
@@ -4066,7 +4066,7 @@ void fix_multipart_object(object *tmp) {
  * @todo
  * either check for sx/sy everywhere or remove the check :)
  */
-void get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
+void object_get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
     archetype *part;
     int maxx = 0, maxy = 0, minx = 0, miny = 0;
 

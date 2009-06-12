@@ -65,13 +65,13 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
         if (treas == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "The chest was empty.", NULL);
-            decrease_ob(op);
+            object_decrease_nrof_by_one(op);
             return METHOD_OK;
         }
         while (op->inv) {
             treas = op->inv;
 
-            remove_ob(treas);
+            object_remove(treas);
             query_name(treas, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "You find %s in the chest.",
@@ -80,7 +80,7 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
 
             treas->x = applier->x;
             treas->y = applier->y;
-            treas = insert_ob_in_map(treas, applier->map, applier, INS_BELOW_ORIGINATOR);
+            treas = object_insert_in_map(treas, applier->map, applier, INS_BELOW_ORIGINATOR);
 
             if (treas
             && (treas->type == RUNE || treas->type == TRAP)
@@ -91,12 +91,12 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
                  * spring trap above, as I don't think there is otherwise
                  * any way for the treasure chest or player to get killed
                  */
-            if (was_destroyed(applier, applier_tag) || was_destroyed(op, op_tag))
+            if (object_was_destroyed(applier, applier_tag) || object_was_destroyed(op, op_tag))
                 break;
         }
 
-        if (!was_destroyed(op, op_tag) && op->inv == NULL)
-            decrease_ob(op);
+        if (!object_was_destroyed(op, op_tag) && op->inv == NULL)
+            object_decrease_nrof_by_one(op);
     }
     return METHOD_OK;
 }

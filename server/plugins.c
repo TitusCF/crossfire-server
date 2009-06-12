@@ -122,7 +122,7 @@ static const hook_entry plug_hooks[] = {
     { cfapi_map_message,             58, "cfapi_map_message" },
     { cfapi_map_get_object_at,       59, "cfapi_map_get_object_at" },
     { cfapi_map_change_light,        60, "cfapi_map_change_light" },
-    { cfapi_map_present_arch_by_name, 61, "cfapi_map_present_arch_by_name" },
+    { cfapi_map_arch_present_in_map_by_name, 61, "cfapi_map_arch_present_in_map_by_name" },
     { cfapi_player_find,             62, "cfapi_player_find" },
     { cfapi_player_message,          63, "cfapi_player_message" },
     { cfapi_object_change_exp,       64, "cfapi_object_change_exp" },
@@ -186,7 +186,7 @@ static void send_changed_object(object *op) {
     player *pl;
 
     if (op->env != NULL) {
-        tmp = get_player_container(op->env);
+        tmp = object_get_player_container(op->env);
         if (!tmp) {
             for (pl = first_player; pl; pl = pl->next)
                 if (pl->ob->container == op->env)
@@ -237,20 +237,20 @@ int execute_event(object *op, int eventcode, object *activator, object *third, c
             if (tmp->title == NULL) {
                 object *env = object_get_env_recursive(tmp);
                 LOG(llevError, "Event object without title at %d/%d in map %s\n", env->x, env->y, env->map->name);
-                remove_ob(tmp);
-                free_object(tmp);
+                object_remove(tmp);
+                object_free(tmp);
             } else if (tmp->slaying == NULL) {
                 object *env = object_get_env_recursive(tmp);
                 LOG(llevError, "Event object without slaying at %d/%d in map %s\n", env->x, env->y, env->map->name);
-                remove_ob(tmp);
-                free_object(tmp);
+                object_remove(tmp);
+                object_free(tmp);
             } else {
                 plugin = plugins_find_plugin(tmp->title);
                 if (plugin == NULL) {
                     object *env = object_get_env_recursive(tmp);
                     LOG(llevError, "The requested plugin doesn't exit: %s at %d/%d in map %s\n", tmp->title, env->x, env->y, env->map->name);
-                    remove_ob(tmp);
-                    free_object(tmp);
+                    object_remove(tmp);
+                    object_free(tmp);
                 } else {
                     int rvt = 0;
                     int *rv;
@@ -260,8 +260,8 @@ int execute_event(object *op, int eventcode, object *activator, object *third, c
 #ifdef PLUGIN_DEBUG
                         LOG(llevDebug, "Removing unique event %s\n", tmp->slaying);
 #endif
-                        remove_ob(tmp);
-                        free_object(tmp);
+                        object_remove(tmp);
+                        object_free(tmp);
                     }
                     return *rv;
                 }
@@ -1473,14 +1473,14 @@ void *cfapi_map_get_object_at(int *type, ...) {
 }
 
 /**
- * Kinda wrapper for present_arch() (but uses a string, not an archetype*).
+ * Kinda wrapper for arch_present_in_map() (but uses a string, not an archetype*).
  * @param type
  * will be CFAPI_POBJECT.
  * @return
  * NULL.
  * @todo fix archetype instead of string.
  */
-void *cfapi_map_present_arch_by_name(int *type, ...) {
+void *cfapi_map_arch_present_in_map_by_name(int *type, ...) {
     va_list args;
     int x, y;
     mapstruct *map;
@@ -1497,7 +1497,7 @@ void *cfapi_map_present_arch_by_name(int *type, ...) {
 
     va_end(args);
 
-    *robj = present_arch(try_find_archetype(msg), map, x, y);
+    *robj = arch_present_in_map(try_find_archetype(msg), map, x, y);
     *type = CFAPI_POBJECT;
     return NULL;
 }
@@ -1583,7 +1583,7 @@ void *cfapi_object_move(int *type, ...) {
  * will contain CFAPI_SSTRING.
  * @return
  * NULL.
- * @see get_ob_key_value().
+ * @see object_get_value().
  */
 void *cfapi_object_get_key(int *type, ...) {
     va_list args;
@@ -1597,7 +1597,7 @@ void *cfapi_object_get_key(int *type, ...) {
     value = va_arg(args, const char **);
     va_end(args);
 
-    *value = get_ob_key_value(op, keyname);
+    *value = object_get_value(op, keyname);
     *type = CFAPI_SSTRING;
     return NULL;
 }
@@ -1608,7 +1608,7 @@ void *cfapi_object_get_key(int *type, ...) {
  * will contain CFAPI_SSTRING.
  * @return
  * NULL.
- * @see set_ob_key_value().
+ * @see object_set_value().
  */
 void *cfapi_object_set_key(int *type, ...) {
     va_list args;
@@ -1626,7 +1626,7 @@ void *cfapi_object_set_key(int *type, ...) {
     ret = va_arg(args, int *);
     va_end(args);
 
-    *ret = set_ob_key_value(op, keyname, value, add_key);
+    *ret = object_set_value(op, keyname, value, add_key);
     *type = CFAPI_INT;
     return NULL;
 }
@@ -2097,7 +2097,7 @@ void *cfapi_object_get_property(int *type, ...) {
 
     case CFAPI_OBJECT_PROP_OWNER:
         robject = va_arg(args, object **);
-        *robject = get_owner(op);
+        *robject = object_get_owner(op);
         *type = CFAPI_POBJECT;
         break;
 
@@ -2113,20 +2113,20 @@ void *cfapi_object_get_property(int *type, ...) {
             case 0: /* present_in_ob */
                 ptype = (unsigned char)(va_arg(args, int));
                 robject = va_arg(args, object **);
-                *robject = present_in_ob(ptype, op);
+                *robject = object_present_in_ob(ptype, op);
                 break;
 
             case 1: /* present_in_ob_by_name */
                 ptype = (unsigned char)(va_arg(args, int));
                 buf = va_arg(args, char *);
                 robject = va_arg(args, object **);
-                *robject = present_in_ob_by_name(ptype, buf, op);
+                *robject = object_present_in_ob_by_name(ptype, buf, op);
                 break;
 
-            case 2: /* present_arch_in_ob */
+            case 2: /* arch_present_in_ob */
                 at = va_arg(args, archetype *);
                 robject = va_arg(args, object **);
-                *robject = present_arch_in_ob(at, op);
+                *robject = arch_present_in_ob(at, op);
                 break;
             }
         }
@@ -2144,7 +2144,7 @@ void *cfapi_object_get_property(int *type, ...) {
 
             op2 = va_arg(args, object *);
             rint = va_arg(args, int *);
-            *rint = can_merge(op, op2);
+            *rint = object_can_merge(op, op2);
         }
         *type = CFAPI_INT;
         break;
@@ -2154,7 +2154,7 @@ void *cfapi_object_get_property(int *type, ...) {
 
             op2 = va_arg(args, object *);
             rint = va_arg(args, int *);
-            *rint = can_pick(op2, op);
+            *rint = object_can_pick(op2, op);
         }
         *type = CFAPI_INT;
         break;
@@ -2531,7 +2531,7 @@ void *cfapi_object_set_property(int *type, ...) {
             *type = CFAPI_FLOAT;
             if (farg != op->speed) {
                 op->speed = farg;
-                update_ob_speed(op);
+                object_update_speed(op);
             }
             break;
 
@@ -2547,14 +2547,14 @@ void *cfapi_object_set_property(int *type, ...) {
             if (iarg < 0)
                 iarg = 0;
             if (op->nrof > (uint32)iarg)
-                decrease_ob_nr(op, op->nrof-iarg);
+                object_decrease_nrof(op, op->nrof-iarg);
             else if (op->nrof < (uint32)iarg) {
                 object *tmp;
                 player *pl;
 
                 op->nrof = iarg;
                 if (op->env != NULL) {
-                    tmp = get_player_container(op->env);
+                    tmp = object_get_player_container(op->env);
                     if (!tmp) {
                         for (pl = first_player; pl; pl = pl->next)
                             if (pl->ob->container == op->env)
@@ -2564,7 +2564,7 @@ void *cfapi_object_set_property(int *type, ...) {
                         else
                             tmp = NULL;
                     } else {
-                        sum_weight(tmp);
+                        object_sum_weight(tmp);
                         fix_object(tmp);
                     }
                     if (tmp)
@@ -2708,7 +2708,7 @@ void *cfapi_object_set_property(int *type, ...) {
 
                 op->weight = iarg;
                 if (op->env != NULL) {
-                    tmp = get_player_container(op->env);
+                    tmp = object_get_player_container(op->env);
                     if (!tmp) {
                         for (pl = first_player; pl; pl = pl->next)
                             if (pl->ob->container == op->env)
@@ -2718,7 +2718,7 @@ void *cfapi_object_set_property(int *type, ...) {
                         else
                             tmp = NULL;
                     } else {
-                        sum_weight(tmp);
+                        object_sum_weight(tmp);
                         fix_object(tmp);
                     }
                     if (tmp)
@@ -2846,11 +2846,11 @@ void *cfapi_object_set_property(int *type, ...) {
         case CFAPI_OBJECT_PROP_OWNER:
             oparg = va_arg(args, object *);
             *type = CFAPI_POBJECT;
-            set_owner(op, oparg);
+            object_set_owner(op, oparg);
             break;
 
         case CFAPI_OBJECT_PROP_CHEATER:
-            set_cheat(op);
+            object_set_cheat(op);
             *type = CFAPI_NONE;
             break;
 
@@ -2975,7 +2975,7 @@ void *cfapi_object_set_property(int *type, ...) {
             *type = CFAPI_INT;
             op->face = &new_faces[iarg];
             op->state = 0;
-            update_object(op, UP_OBJ_FACE);
+            object_update(op, UP_OBJ_FACE);
             break;
 
         case CFAPI_OBJECT_PROP_ANIMATION:
@@ -2983,7 +2983,7 @@ void *cfapi_object_set_property(int *type, ...) {
             *type = CFAPI_INT;
             op->animation_id = iarg;
             SET_ANIMATION(op, 0);
-            update_object(op, UP_OBJ_FACE);
+            object_update(op, UP_OBJ_FACE);
             break;
 
         case CFAPI_OBJECT_PROP_DURATION:
@@ -3237,7 +3237,7 @@ void *cfapi_object_remove(int *type, ...) {
 
     va_end(args);
 
-    remove_ob(op);
+    object_remove(op);
     *type = CFAPI_NONE;
     return NULL;
 }
@@ -3258,14 +3258,14 @@ void *cfapi_object_delete(int *type, ...) {
 
     va_end(args);
 
-    free_object(op);
+    object_free(op);
 
     *type = CFAPI_NONE;
     return NULL;
 }
 
 /**
- * Clone an object, either through object_create_clone() or copy_object().
+ * Clone an object, either through object_create_clone() or object_copy().
  * @param type
  * will be CFAPI_POBJECT.
  * @return
@@ -3290,8 +3290,8 @@ void *cfapi_object_clone(int *type, ...) {
         *robj = object_create_clone(op);
     } else {
         object *tmp;
-        tmp = get_object();
-        copy_object(op, tmp);
+        tmp = object_new();
+        object_copy(op, tmp);
         *type = CFAPI_POBJECT;
         *robj = tmp;
     }
@@ -3314,24 +3314,24 @@ void *cfapi_object_find(int *type, ...) {
     switch (ftype) {
     case 0:
         ival = va_arg(args, int);
-        rv = find_object(ival);
+        rv = object_find_by_tag(ival);
         break;
 
     case 1:
         sval = va_arg(args, char *);
-        rv = find_object_name(sval);
+        rv = object_find_by_name(sval);
         break;
 
     case 2:
         op = va_arg(args, object *);
         ival = va_arg(args, int);
         ival2 = va_arg(args, int);
-        rv = find_obj_by_type_subtype(op, ival, ival2);
+        rv = object_find_by_type_subtype(op, ival, ival2);
         break;
 
     case 3:
         op = va_arg(args, object *);
-        rv = get_player_container(op);
+        rv = object_get_player_container(op);
         break;
 
     default:
@@ -3346,7 +3346,7 @@ void *cfapi_object_find(int *type, ...) {
 }
 
 /**
- * Wrapper for get_object(), create_archetype() and create_archetype_by_object_name().
+ * Wrapper for object_new(), create_archetype() and create_archetype_by_object_name().
  * @param type
  * will be CFAPI_POBJECT, or CFAPI_NONE if invalid value asked for.
  * @return
@@ -3363,7 +3363,7 @@ void *cfapi_object_create(int *type, ...) {
     switch (ival) {
     case 0:
         robj = va_arg(args, object **);
-        *robj = get_object();
+        *robj = object_new();
         break;
 
     case 1: { /* Named object. Nearly the old plugin behavior, but we don't add artifact suffixes */
@@ -3415,7 +3415,7 @@ void *cfapi_object_insert(int *type, ...) {
     }
     if (!QUERY_FLAG(op, FLAG_REMOVED)) {
         LOG(llevError, "cfapi_object_insert: called with not removed object %s!\n", op->name);
-        remove_ob(op);
+        object_remove(op);
     }
     itype = va_arg(args, int);
 
@@ -3429,10 +3429,10 @@ void *cfapi_object_insert(int *type, ...) {
         robj = va_arg(args, object **);
         if (!map) {
             LOG(llevError, "cfapi_object_insert (0): called with NULL map, object %s!\n", op->name);
-            free_object(op);
+            object_free(op);
             *robj = NULL;
         } else
-            *robj = insert_ob_in_map_at(op, map, orig, flag, x, y);
+            *robj = object_insert_in_map_at(op, map, orig, flag, x, y);
         *type = CFAPI_POBJECT;
         break;
 
@@ -3443,10 +3443,10 @@ void *cfapi_object_insert(int *type, ...) {
         robj = va_arg(args, object **);
         if (!map) {
             LOG(llevError, "cfapi_object_insert (1): called with NULL map, object %s!\n", op->name);
-            free_object(op);
+            object_free(op);
             *robj = NULL;
         } else
-            *robj = insert_ob_in_map(op, map, orig, flag);
+            *robj = object_insert_in_map(op, map, orig, flag);
         *type = CFAPI_POBJECT;
         break;
 
@@ -3455,16 +3455,16 @@ void *cfapi_object_insert(int *type, ...) {
         robj = va_arg(args, object **);
         if (!orig) {
             LOG(llevError, "cfapi_object_insert (3): called with NULL orig, object %s!\n", op->name);
-            free_object(op);
+            object_free(op);
             *robj = NULL;
         } else
-            *robj = insert_ob_in_ob(op, orig);
+            *robj = object_insert_in_ob(op, orig);
         *type = CFAPI_POBJECT;
         break;
 
     default:
         LOG(llevError, "cfapi_object_insert (1): called with itype %d which is not valid, object %s!\n", itype, op->name);
-        free_object(op);
+        object_free(op);
         *type = CFAPI_NONE;
         break;
     }
@@ -3474,7 +3474,7 @@ void *cfapi_object_insert(int *type, ...) {
     return NULL;
 }
 /**
- * Wrapper for get_split_ob().
+ * Wrapper for object_split().
  * @param type
  * will be CFAPI_POBJECT.
  * @return
@@ -3498,12 +3498,12 @@ void *cfapi_object_split(int *type, ...) {
     va_end(args);
 
     *type = CFAPI_POBJECT;
-    *split = get_split_ob(op, nr, buf, size);
+    *split = object_split(op, nr, buf, size);
     return NULL;
 }
 
 /**
- * Wrapper for merge_ob().
+ * Wrapper for object_merge().
  * @param type
  * Will be CFAPI_POBJECT.
  * @return
@@ -3524,12 +3524,12 @@ void *cfapi_object_merge(int *type, ...) {
     va_end(args);
 
     *type = CFAPI_POBJECT;
-    *merge = merge_ob(op, op2);
+    *merge = object_merge(op, op2);
     return NULL;
 }
 
 /**
- * Wrapper for distance().
+ * Wrapper for object_distance().
  * @param type
  * will be CFAPI_INT.
  * @return
@@ -3549,11 +3549,11 @@ void *cfapi_object_distance(int *type, ...) {
     va_end(args);
 
     *type = CFAPI_INT;
-    *rint = distance(op, op2);
+    *rint = object_distance(op, op2);
     return NULL;
 }
 /**
- * Wrapper for update_object().
+ * Wrapper for object_update().
  * @param type
  * Will be CFAPI_NONE.
  * @return
@@ -3570,13 +3570,13 @@ void *cfapi_object_update(int *type, ...) {
 
     va_end(args);
 
-    update_object(op, action);
+    object_update(op, action);
     *type = CFAPI_NONE;
     return NULL;
 }
 
 /**
- * Wrapper for clear_object().
+ * Wrapper for object_clear().
  * @param type
  * Will be CFAPI_NONE.
  * @return
@@ -3591,7 +3591,7 @@ void *cfapi_object_clear(int *type, ...) {
 
     va_end(args);
 
-    clear_object(op);
+    object_clear(op);
     *type = CFAPI_NONE;
     return NULL;
 }
@@ -3613,7 +3613,7 @@ void *cfapi_object_reset(int *type, ...) {
 
     va_end(args);
 
-    reset_object(op);
+    object_reset(op);
     *type = CFAPI_NONE;
     return NULL;
 }
@@ -3933,7 +3933,7 @@ void *cfapi_object_pay_item(int *type, ...) {
  * Object transfer.
  * Parameters are object*, int meaning:
  * 0: call to transfer_ob()
- * 1: call to insert_ob_in_map_at()
+ * 1: call to object_insert_in_map_at()
  * 2: call to move_to()
  * @return
  * NULL.
@@ -3976,7 +3976,7 @@ void *cfapi_object_transfer(int *type, ...) {
             x = map->enter_x;
             y = map->enter_y;
         }
-        *robj = insert_ob_in_map_at(op, map, originator, flag, x, y);
+        *robj = object_insert_in_map_at(op, map, originator, flag, x, y);
         *type = CFAPI_POBJECT;
         return NULL;
         break;
@@ -3999,7 +3999,7 @@ void *cfapi_object_transfer(int *type, ...) {
 }
 
 /**
- * Kinda wrapper for present_arch_in_ob().
+ * Kinda wrapper for arch__present_in_ob().
  */
 void *cfapi_object_find_archetype_inside(int *type, ...) {
     object *op;
@@ -4013,7 +4013,7 @@ void *cfapi_object_find_archetype_inside(int *type, ...) {
 
     str = va_arg(args, char *);
     robj = va_arg(args, object **);
-    *robj = present_arch_in_ob(try_find_archetype(str), op);
+    *robj = arch_present_in_ob(try_find_archetype(str), op);
     if (*robj == NULL) {
         object *tmp;
         char name[MAX_BUF];
@@ -4224,17 +4224,17 @@ void *cfapi_object_teleport(int *type, ...) {
 
     if (!out_of_map(map, x, y)) {
         int k;
-        k = find_first_free_spot(who, map, x, y);
+        k = object_find_first_free_spot(who, map, x, y);
         if (k == -1) {
             *res = 1;
             return NULL;
         }
 
         if (!QUERY_FLAG(who, FLAG_REMOVED)) {
-            remove_ob(who);
+            object_remove(who);
         }
 
-        insert_ob_in_map_at(who, map, NULL, 0, x, y);
+        object_insert_in_map_at(who, map, NULL, 0, x, y);
         if (who->type == PLAYER)
             map_newmap_cmd(&who->contr->socket);
         *res = 0;

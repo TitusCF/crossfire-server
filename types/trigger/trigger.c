@@ -74,7 +74,7 @@ static method_ret trigger_type_process(ob_methods *context, object *op) {
         check_trigger(op, NULL);
     } else {
         SET_ANIMATION(op, op->stats.wc);
-        update_object(op, UP_OBJ_FACE);
+        object_update(op, UP_OBJ_FACE);
     }
     return METHOD_OK;
 }

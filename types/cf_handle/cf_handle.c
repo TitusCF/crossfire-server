@@ -53,7 +53,7 @@ static method_ret cf_handle_type_apply(ob_methods *context, object *op, object *
     play_sound_map(SOUND_TYPE_ITEM, op, 0, "turn handle");
     op->value = op->value ? 0 : 1;
     SET_ANIMATION(op, op->value);
-    update_object(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);
     push_button(op);
     return METHOD_OK;
 }

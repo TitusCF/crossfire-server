@@ -122,7 +122,7 @@ static void do_mood_floor(object *op, object *op2) {
                 break;
         if (tmp2->type != PLAYER)
             break;
-        set_owner(tmp, tmp2);
+        object_set_owner(tmp, tmp2);
         SET_FLAG(tmp, FLAG_MONSTER);
         tmp->stats.exp = 0;
         SET_FLAG(tmp, FLAG_FRIENDLY);

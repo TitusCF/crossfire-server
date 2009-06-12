@@ -49,8 +49,8 @@ void init_type_arrow(void) {
 static method_ret arrow_type_process(ob_methods *context, object *op) {
     if (op->map == NULL) {
         LOG(llevError, "BUG: Arrow had no map.\n");
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return METHOD_ERROR;
     }
 

@@ -716,7 +716,7 @@ int auto_apply(object *op) {
             if (tmp == NULL)
                 return 0;
             if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                free_object(tmp);
+                object_free(tmp);
                 tmp = NULL;
             }
         } while (!tmp);
@@ -724,7 +724,7 @@ int auto_apply(object *op) {
         tmp->x = op->x,
         tmp->y = op->y;
         SET_FLAG(tmp, FLAG_UNPAID);
-        insert_ob_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map(tmp, op->map, NULL, 0);
         CLEAR_FLAG(op, FLAG_AUTO_APPLY);
         identify(tmp);
         break;
@@ -733,8 +733,8 @@ int auto_apply(object *op) {
         if (HAS_RANDOM_ITEMS(op))
             while ((op->stats.hp--) > 0)
                 create_treasure(op->randomitems, op, GT_ENVIRONMENT, op->stats.exp ? op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         break;
     }
 

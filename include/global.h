@@ -273,7 +273,7 @@ extern socket_struct *init_sockets;
 #include "typesproto.h"
 #endif
 
-#define decrease_ob(xyz) decrease_ob_nr(xyz, 1)
+#define object_decrease_nrof_by_one(xyz) object_decrease_nrof(xyz, 1)
 
 /* FREE_AND_CLEAR frees the pointer and then sets it to NULL.
  * This is generally done as a safety, and having this macro

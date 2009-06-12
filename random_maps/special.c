@@ -77,8 +77,8 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
                 if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
                     if (tmp->head)
                         tmp = tmp->head;
-                    remove_ob(tmp);
-                    free_object(tmp);
+                    object_remove(tmp);
+                    object_free(tmp);
                     tmp = GET_MAP_OB(map, i, j);
                 }
                 if (tmp == NULL)
@@ -113,7 +113,7 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map, int x, int y) {
                 if (tmp->head != NULL)
                     continue;
                 new_ob = arch_to_object(tmp->arch);
-                copy_object_with_inv(tmp, new_ob);
+                object_copy_with_inv(tmp, new_ob);
                 if (QUERY_FLAG(tmp, FLAG_IS_LINKED))
                     add_button_link(new_ob, dest_map, tmp->path_attuned);
                 new_ob->x = i+x;
@@ -193,18 +193,18 @@ void place_fountain_with_specials(mapstruct *map) {
     int ix, iy, i = -1, tries = 0;
     mapstruct *fountain_style = find_style("/styles/misc", "fountains", -1);
     object *fountain = create_archetype("fountain");
-    object *potion = get_object();
+    object *potion = object_new();
 
-    copy_object(pick_random_object(fountain_style), potion);
+    object_copy(pick_random_object(fountain_style), potion);
     while (i < 0 && tries < 10) {
         ix = RANDOM()%(MAP_WIDTH(map)-2)+1;
         iy = RANDOM()%(MAP_HEIGHT(map)-2)+1;
-        i = find_first_free_spot(fountain, map, ix, iy);
+        i = object_find_first_free_spot(fountain, map, ix, iy);
         tries++;
     };
     if (i == -1) { /* can't place fountain */
-        free_object(fountain);
-        free_object(potion);
+        object_free(fountain);
+        object_free(potion);
         return;
     }
     ix += freearr_x[i];
@@ -219,8 +219,8 @@ void place_fountain_with_specials(mapstruct *map) {
     potion->material = M_ADAMANT;
     fountain->x = ix;
     fountain->y = iy;
-    insert_ob_in_map(fountain, map, NULL, 0);
-    insert_ob_in_map(potion, map, NULL, 0);
+    object_insert_in_map(fountain, map, NULL, 0);
+    object_insert_in_map(potion, map, NULL, 0);
 }
 
 /**
@@ -238,17 +238,17 @@ void place_special_exit(mapstruct *map, int hole_type, RMParms *RP) {
     const char *style, *decor, *mon;
     mapstruct *exit_style = find_style("/styles/misc", "obscure_exits", -1);
     int g_xsize, g_ysize;
-    object *the_exit = get_object();
+    object *the_exit = object_new();
 
     if (!exit_style)
         return;
 
-    copy_object(pick_random_object(exit_style), the_exit);
+    object_copy(pick_random_object(exit_style), the_exit);
 
     while (i < 0) {
         ix = RANDOM()%(MAP_WIDTH(map)-2)+1;
         iy = RANDOM()%(MAP_HEIGHT(map)-2)+1;
-        i = find_first_free_spot(the_exit, map, ix, iy);
+        i = object_find_first_free_spot(the_exit, map, ix, iy);
     }
 
     ix += freearr_x[i];
@@ -308,7 +308,7 @@ void place_special_exit(mapstruct *map, int hole_type, RMParms *RP) {
     the_exit->slaying = add_string("/!");
     the_exit->msg = add_string(buf);
 
-    insert_ob_in_map(the_exit, map, NULL, 0);
+    object_insert_in_map(the_exit, map, NULL, 0);
 }
 
 /**

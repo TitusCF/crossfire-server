@@ -281,7 +281,7 @@ object *get_jail_exit(object *op) {
     reg = get_region_by_map(op->map);
     while (reg != NULL) {
         if (reg->jailmap) {
-            exit = get_object();
+            exit = object_new();
             EXIT_PATH(exit) = add_string(reg->jailmap);
             /* damned exits reset savebed and remove teleports, so the prisoner can't escape */
             SET_FLAG(exit, FLAG_DAMNED);

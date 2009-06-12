@@ -81,7 +81,7 @@ static int convert_item(object *item, object *converter) {
         /* take into account rounding errors */
         if (nr*CONV_NEED(converter)%item->value)
             cost++;
-        decrease_ob_nr(item, cost);
+        object_decrease_nrof(item, cost);
 
         price_in = cost*item->value;
     } else {
@@ -92,22 +92,22 @@ static int convert_item(object *item, object *converter) {
 
         /* silently burn unpaid items (only if they match what we want) */
         if (QUERY_FLAG(item, FLAG_UNPAID)) {
-            remove_ob(item);
-            free_object(item);
+            object_remove(item);
+            object_free(item);
             item = create_archetype("burnout");
             if (item != NULL)
-                insert_ob_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
+                object_insert_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
             return 1;
         }
 
         if (CONV_NEED(converter)) {
             nr = item->nrof/CONV_NEED(converter);
-            decrease_ob_nr(item, nr*CONV_NEED(converter));
+            object_decrease_nrof(item, nr*CONV_NEED(converter));
             price_in = nr*CONV_NEED(converter)*item->value;
         } else {
             price_in = item->value;
-            remove_ob(item);
-            free_object(item);
+            object_remove(item);
+            object_free(item);
         }
     }
 
@@ -124,7 +124,7 @@ static int convert_item(object *item, object *converter) {
         }
         item = object_create_clone(ob_to_copy);
         CLEAR_FLAG(item, FLAG_IS_A_TEMPLATE);
-        unflag_inv(item, FLAG_IS_A_TEMPLATE);
+        object_unset_flag_inv(item, FLAG_IS_A_TEMPLATE);
     } else {
         if (converter->other_arch == NULL) {
             LOG(llevError, "move_creator: Converter doesn't have other arch set: %s (%s, %d, %d)\n", converter->name ? converter->name : "(null)", converter->map->path, converter->x, converter->y);
@@ -142,10 +142,10 @@ static int convert_item(object *item, object *converter) {
         SET_FLAG(item, FLAG_UNPAID);
     else if (price_in < item->nrof*item->value && settings.allow_broken_converters == FALSE) {
         LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d for %s\n", converter->name, converter->map->path, converter->x, converter->y, price_in, item->nrof*item->value, item->name);
-        free_object(item);
+        object_free(item);
         return -1;
     }
-    insert_ob_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
+    object_insert_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
     return 1;
 }
 
@@ -173,7 +173,7 @@ static method_ret converter_type_move_on(ob_methods *context, object *trap, obje
         if (op != NULL) {
             op->x = trap->x;
             op->y = trap->y;
-            insert_ob_in_map(op, trap->map, trap, 0);
+            object_insert_in_map(op, trap->map, trap, 0);
         }
     }
     common_post_ob_move_on(trap, victim, originator);

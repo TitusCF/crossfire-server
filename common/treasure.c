@@ -333,9 +333,9 @@ static void put_treasure(object *op, object *creator, int flags) {
         op->x = creator->x;
         op->y = creator->y;
         SET_FLAG(op, FLAG_OBJ_ORIGINAL);
-        insert_ob_in_map(op, creator->map, op, INS_NO_MERGE|INS_NO_WALK_ON);
+        object_insert_in_map(op, creator->map, op, INS_NO_MERGE|INS_NO_WALK_ON);
     } else {
-        op = insert_ob_in_ob(op, creator);
+        op = object_insert_in_ob(op, creator);
         if ((flags&GT_APPLY) && QUERY_FLAG(creator, FLAG_MONSTER))
             monster_check_apply(creator, op);
     }
@@ -522,18 +522,18 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
  * @ingroup page_treasure_list
  */
 object *generate_treasure(treasurelist *t, int difficulty) {
-    object *ob = get_object(), *tmp;
+    object *ob = object_new(), *tmp;
 
     create_treasure(t, ob, 0, difficulty, 0);
 
     /* Don't want to free the object we are about to return */
     tmp = ob->inv;
     if (tmp != NULL)
-        remove_ob(tmp);
+        object_remove(tmp);
     if (ob->inv) {
         LOG(llevError, "In generate treasure, created multiple objects.\n");
     }
-    free_object(ob);
+    object_free(ob);
     return tmp;
 }
 
@@ -1151,7 +1151,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                 object *tmp;
 
                 tmp = create_archetype(spell_mapping[op->stats.sp]);
-                insert_ob_in_ob(tmp, op);
+                object_insert_in_ob(tmp, op);
                 op->stats.sp = 0;
             }
     } else if (!op->title) { /* Only modify object if not special */
@@ -1181,7 +1181,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                     object *tmp;
 
                     tmp = create_archetype(spell_mapping[op->stats.sp]);
-                    insert_ob_in_ob(tmp, op);
+                    object_insert_in_ob(tmp, op);
                     op->stats.sp = 0;
                 }
 
@@ -1211,8 +1211,8 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                     op->value *= 5; /* Since it's not just decoration */
         case RING:
             if (op->arch == NULL) {
-                remove_ob(op);
-                free_object(op);
+                object_remove(op);
+                object_free(op);
                 op = NULL;
                 break;
             }
@@ -1593,7 +1593,7 @@ void init_artifacts(void) {
                 LOG(llevError, "init_artifacts: memory allocation failure.\n");
                 abort();
             }
-            reset_object(art->item);
+            object_reset(art->item);
             art->item->arch = &dummy_archetype;
             if (!load_object(fp, art->item, LO_LINEMODE, 0))
                 LOG(llevError, "Init_Artifacts: Could not load object.\n");
@@ -1691,7 +1691,7 @@ void add_abilities(object *op, object *change) {
         /* so artifacts will join */
         if (!QUERY_FLAG(op, FLAG_ALIVE))
             op->speed = 0.0;
-        update_ob_speed(op);
+        object_update_speed(op);
     }
     if (change->nrof)
         op->nrof = RANDOM()%((int)change->nrof)+1;
@@ -1710,11 +1710,11 @@ void add_abilities(object *op, object *change) {
             /* Remove any spells this object currently has in it */
             while (op->inv) {
                 tmp_obj = op->inv;
-                remove_ob(tmp_obj);
-                free_object(tmp_obj);
+                object_remove(tmp_obj);
+                object_free(tmp_obj);
             }
             tmp_obj = arch_to_object(change->other_arch);
-            insert_ob_in_ob(tmp_obj, op);
+            object_insert_in_ob(tmp_obj, op);
         }
         /* No harm setting this for potions/horns */
         op->other_arch = change->other_arch;
@@ -1821,9 +1821,9 @@ void add_abilities(object *op, object *change) {
         object *copy;
 
         while (inv) {
-            copy = get_object();
-            copy_object(inv, copy);
-            insert_ob_in_ob(copy, op);
+            copy = object_new();
+            object_copy(inv, copy);
+            object_insert_in_ob(copy, op);
             inv = inv->below;
         }
     }
@@ -2067,7 +2067,7 @@ static void free_charlinks(linked_char *lc) {
  * Objects at->item are malloc()ed by init_artifacts(), so can simply be free()d.
  *
  * But artifact inventory is a 'real' object, that may be created for 'old' objects. So should be
- * destroyed through free_object(). Note that it isn't on the usual item list, so some tweaking is required.
+ * destroyed through object_free(). Note that it isn't on the usual item list, so some tweaking is required.
  */
 static void free_artifact(artifact *at) {
     object *next;
@@ -2086,7 +2086,7 @@ static void free_artifact(artifact *at) {
             free_string(at->item->msg);
         if (at->item->title)
             free_string(at->item->title);
-        free_key_values(at->item);
+        object_free_key_values(at->item);
         free(at->item);
         at->item = next;
     }

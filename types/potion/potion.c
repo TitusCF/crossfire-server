@@ -67,7 +67,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
         if (QUERY_FLAG(potion, FLAG_CURSED) || QUERY_FLAG(potion, FLAG_DAMNED)) {
             drain_stat(applier);
             fix_object(applier);
-            decrease_ob(potion);
+            object_decrease_nrof_by_one(potion);
             return METHOD_OK;
         }
 
@@ -76,7 +76,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             return METHOD_ERROR;
         }
 
-        depl = present_arch_in_ob(at, applier);
+        depl = arch_present_in_ob(at, applier);
         if (depl != NULL
         && (potion->level != 0 && potion->level >= applier->level)) {
             for (i = 0; i < NUM_STATS; i++)
@@ -84,15 +84,15 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
                     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_GAIN,
                         restore_msg[i], NULL);
                 }
-            remove_ob(depl);
-            free_object(depl);
+            object_remove(depl);
+            object_free(depl);
             fix_object(applier);
         }
         else
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "You potion had no effect.", NULL);
 
-        decrease_ob(potion);
+        object_decrease_nrof_by_one(potion);
         return METHOD_OK;
     }
 
@@ -148,7 +148,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
                               "You are fortunate that you are so pathetic.", NULL);
         }
-        decrease_ob(potion);
+        object_decrease_nrof_by_one(potion);
         return METHOD_OK;
     }
 
@@ -170,11 +170,11 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             fball->stats.maxhp = random_roll(1, applier->level, applier, PREFER_LOW)/10+2;
             fball->x = applier->x;
             fball->y = applier->y;
-            insert_ob_in_map(fball, applier->map, NULL, 0);
+            object_insert_in_map(fball, applier->map, NULL, 0);
         } else
             cast_spell(applier, potion, applier->facing, potion->inv, NULL);
 
-        decrease_ob(potion);
+        object_decrease_nrof_by_one(potion);
         /* if youre dead, no point in doing this... */
         if (!QUERY_FLAG(applier, FLAG_REMOVED))
             fix_object(applier);
@@ -202,11 +202,11 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
                     force->resist[i] = -force->resist[i];  /* prot => vuln */
         }
         force->speed_left = -1;
-        force = insert_ob_in_ob(force, applier);
+        force = object_insert_in_ob(force, applier);
         CLEAR_FLAG(potion, FLAG_APPLIED);
         SET_FLAG(force, FLAG_APPLIED);
         change_abil(applier, force);
-        decrease_ob(potion);
+        object_decrease_nrof_by_one(potion);
         return METHOD_OK;
     }
 
@@ -229,6 +229,6 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
      */
     CLEAR_FLAG(potion, FLAG_APPLIED);
     fix_object(applier);
-    decrease_ob(potion);
+    object_decrease_nrof_by_one(potion);
     return METHOD_OK;
 }

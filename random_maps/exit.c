@@ -272,13 +272,13 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             snprintf(buf, sizeof(buf), "This is a random map.\nLevel: %d\n", (RP->dungeon_level)-1);
 
             random_sign->msg = add_string(buf);
-            insert_ob_in_map(random_sign, map, NULL, 0);
+            object_insert_in_map(random_sign, map, NULL, 0);
         }
     }
     /* Block the exit so things don't get dumped on top of it. */
     the_exit_up->move_block = MOVE_ALL;
 
-    insert_ob_in_map(the_exit_up, map, NULL, 0);
+    object_insert_in_map(the_exit_up, map, NULL, 0);
     maze[the_exit_up->x][the_exit_up->y] = '<';
 
     /* set the starting x,y for this map */
@@ -322,7 +322,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     if (the_exit_down) {
         char buf[2048];
 
-        i = find_first_free_spot(the_exit_down, map, downx, downy);
+        i = object_find_first_free_spot(the_exit_down, map, downx, downy);
         the_exit_down->x = downx+freearr_x[i];
         the_exit_down->y = downy+freearr_y[i];
         RP->origin_x = the_exit_down->x;
@@ -347,12 +347,12 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             for (tmp = GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp = tmp->above)
                 /* Remove exit back to previous random map.  There should only be one
                  * which is why we break out.  To try to process more than one
-                 * would require keeping a 'next' pointer, as free_object kills tmp, which
+                 * would require keeping a 'next' pointer, as object_free() kills tmp, which
                  * breaks the for loop.
                  */
                 if (tmp->type == EXIT && EXIT_PATH(tmp) && !strncmp(EXIT_PATH(tmp), "/random/", 8)) {
-                    remove_ob(tmp);
-                    free_object(tmp);
+                    object_remove(tmp);
+                    object_free(tmp);
                     break;
                 }
 
@@ -364,7 +364,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
                 the_exit_back->x = MAP_ENTER_X(new_map);
                 the_exit_back->y = MAP_ENTER_Y(new_map);
 
-                insert_ob_in_map(the_exit_back, new_map, NULL, 0);
+                object_insert_in_map(the_exit_back, new_map, NULL, 0);
             }
 
             set_map_timeout(new_map);   /* So it gets swapped out */
@@ -373,7 +373,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
 
         /* Block the exit so things don't get dumped on top of it. */
         the_exit_down->move_block = MOVE_ALL;
-        insert_ob_in_map(the_exit_down, map, NULL, 0);
+        object_insert_in_map(the_exit_down, map, NULL, 0);
         maze[the_exit_down->x][the_exit_down->y] = '>';
     }
 }
@@ -399,7 +399,7 @@ void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
                 for (walk = GET_MAP_OB(map, i, j); walk != NULL; walk = walk->above) {
                     if (walk->move_block == MOVE_ALL && walk->type != LOCKED_DOOR) {
                         walk->move_block = MOVE_BLOCK_DEFAULT;
-                        update_object(walk, UP_OBJ_CHANGE);
+                        object_update(walk, UP_OBJ_CHANGE);
                     }
                 }
             }

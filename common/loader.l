@@ -28,7 +28,7 @@
 */
 
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
-   sub/add_weight will transcend the environment updating the carrying
+   object_sub/add_weight will transcend the environment updating the carrying
    variable. */
 
 
@@ -403,7 +403,7 @@ static void check_loaded_object(object *op) {
         object *tmp;
 
         tmp = create_archetype_by_object_name(op->slaying);
-        insert_ob_in_ob(tmp, op);
+        object_insert_in_ob(tmp, op);
         op->randomitems = NULL; /* So another spell isn't created for this object */
         /* without this, value is all screwed up */
         op->value = op->arch->clone.value*op->inv->value;
@@ -421,7 +421,7 @@ static void check_loaded_object(object *op) {
          * so it remains unevaluated concerning the randomitems and
          * the living (a demonlord shouldn't cast from inside generator!)
          */
-        flag_inv(op, FLAG_IS_A_TEMPLATE);
+        object_set_flag_inv(op, FLAG_IS_A_TEMPLATE);
     }
 
     /* Here we'll handle custom monsters. In order to handle them correctly, especially in the fix_object
@@ -432,13 +432,13 @@ static void check_loaded_object(object *op) {
     && artifact_init == 0
     && QUERY_FLAG(op, FLAG_MONSTER)
     && op->arch
-    && !can_merge(op, &op->arch->clone)) {
+    && !object_can_merge(op, &op->arch->clone)) {
         archetype *temp = get_archetype_struct();
         temp->reference_count++;
         temp->name = add_string(op->arch->name);
         temp->tail_x = op->arch->tail_x;
         temp->tail_y = op->arch->tail_y;
-        copy_object(op, &temp->clone);
+        object_copy(op, &temp->clone);
         temp->clone.inv = NULL;
         temp->clone.env = NULL;
         temp->clone.x = 0;
@@ -448,11 +448,11 @@ static void check_loaded_object(object *op) {
             /* Clone has a speed, so need to clear that because it isn't on a map.
              * But we need to keep the value, because otherwise the customized object
              * will have no speed (fix_player() will use the 0 value).  So set it
-             * to zero, call update_ob_speed() to remove it from active list, then
+             * to zero, call object_update_speed() to remove it from active list, then
              * set its speed back to the original.
              */
             temp->clone.speed = 0;
-            update_ob_speed(&temp->clone);
+            object_update_speed(&temp->clone);
             temp->clone.speed = op->speed;
         }
 
@@ -464,7 +464,7 @@ static void check_loaded_object(object *op) {
 
 /**
  * This extracts the key/value from the yytext field -
- * calls set_ob_key_value() to actually set the value.
+ * calls object_set_value() to actually set the value.
  * Function basically has to find spaces, strip out extra,
  * etc.  strchr doesn't work as good because could also
  * be tabs.
@@ -489,13 +489,13 @@ static void add_key_value(object *op) {
     for (; !isspace(*cp); cp++) {
         if (*cp == '\0') {
             /* Oops, ran out of string! Set the key with an empty value. */
-            set_ob_key_value(op, key, NULL, TRUE);
+            object_set_value(op, key, NULL, TRUE);
             return;
         }
     }
 
     if (*cp == '\0') {
-        set_ob_key_value(op, key, NULL, TRUE);
+        object_set_value(op, key, NULL, TRUE);
         return;
     }
 
@@ -504,7 +504,7 @@ static void add_key_value(object *op) {
     cp++;
     if (*cp == '\0') {
         /* Was followed by one space? */
-        set_ob_key_value(op, key, NULL, TRUE);
+        object_set_value(op, key, NULL, TRUE);
         return;
     }
 
@@ -512,7 +512,7 @@ static void add_key_value(object *op) {
     for (; isspace(*cp); cp++) {
         if (*cp == '\0') {
             /* Guess not. */
-            set_ob_key_value(op, key, NULL, TRUE);
+            object_set_value(op, key, NULL, TRUE);
             return;
         }
     }
@@ -525,12 +525,12 @@ static void add_key_value(object *op) {
     for (end = value+(strlen(cp)-1); isspace(*end); end--) {
         if (end == value) {
             /* *blink blink* Still no value? */
-            set_ob_key_value(op, key, NULL, TRUE);
+            object_set_value(op, key, NULL, TRUE);
             return;
         }
         *end = '\0';
     }
-    set_ob_key_value(op, key, value, TRUE);
+    object_set_value(op, key, value, TRUE);
 }
 
 /**
@@ -713,10 +713,10 @@ A       .+
                             object *tmp;
                             char *yv = yval();
 
-                            tmp = get_object();
+                            tmp = object_new();
                             tmp->arch = find_archetype(yv);
                             if (tmp->arch != NULL)
-                                copy_object(&tmp->arch->clone, tmp);
+                                object_copy(&tmp->arch->clone, tmp);
                             else {
                                 if (tmp->name)
                                     free_string(tmp->name);
@@ -733,11 +733,11 @@ A       .+
                                 lex_load(depth, items, maxdepth, map_flags, linemode);
                                 (*depth)--;
                                 if (tmp->arch && (arch_init == 0)) {
-                                    insert_ob_in_ob(tmp, op);
+                                    object_insert_in_ob(tmp, op);
                                 } else {
                                     if (init_archetypes == 0)
                                         LOG(llevDebug, "Discarding object without arch: %s\n", tmp->name ? tmp->name : "(null)");
-                                    free_object(tmp);
+                                    object_free(tmp);
                                 }
                             }
                         } else {
@@ -746,7 +746,7 @@ A       .+
 
                             op->arch = find_archetype(yv);
                             if (op->arch != NULL)
-                                copy_object(&op->arch->clone, op);
+                                object_copy(&op->arch->clone, op);
                             else if (!arch_init) {
                                 if (op->name)
                                     free_string(op->name);
@@ -778,7 +778,7 @@ A       .+
                         if (linemode) {
                             /* Linemode is only set for artifact loading. */
                             if ((*depth) > 0) {
-                                insert_ob_in_ob(items[*depth], items[(*depth)-1]);
+                                object_insert_in_ob(items[*depth], items[(*depth)-1]);
                             }
                             return LL_NORMAL;
                         }
@@ -796,7 +796,7 @@ A       .+
                         if (!(map_flags&MAP_STYLE)) {
                             if (op->speed < 0)
                                 op->speed_left = op->speed_left-RANDOM()%100/100.0;
-                            update_ob_speed(op);
+                            object_update_speed(op);
                         }
                     }
 ^speed_left{S}      op->speed_left = FVAL;
@@ -1422,7 +1422,7 @@ void get_ob_diff(StringBuffer *sb, object *op, object *op2) {
     */
     for (my_field = op->key_values; my_field != NULL; my_field = my_field->next) {
         /* Find the field in the opposing member. */
-        arch_field = get_ob_key_link(op2, my_field->key);
+        arch_field = object_get_key_value(op2, my_field->key);
 
         /* If there's no partnering field, or it's got a different value, save our field. */
         if (arch_field == NULL || my_field->value != arch_field->value) {
@@ -1437,7 +1437,7 @@ void get_ob_diff(StringBuffer *sb, object *op, object *op2) {
         }
     }
     /* We don't need to worry about the arch's extra fields - they
-     * will get taken care of the copy_object function.
+     * will get taken care of the object_copy() function.
      */
 
     if (op->name && op->name != op2->name) {

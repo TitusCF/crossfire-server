@@ -52,7 +52,7 @@ static void set_pickup_mode(const object *op, int i);
 
 /**
  * Search from start and through below for what matches best with params.
- * we use item_matched_string above - this gives us consistent behaviour
+ * we use object_matches_string above - this gives us consistent behaviour
  * between many commands.  Return the best match, or NULL if no match.
  *
  * @param start
@@ -78,7 +78,7 @@ static object *find_best_apply_object_match(object *start, object *pl, const cha
             continue;
         if ((aflag == AP_UNAPPLY) && (!QUERY_FLAG(tmp, FLAG_APPLIED)))
             continue;
-        if ((tmpmatch = item_matched_string(pl, tmp, params)) > match_val) {
+        if ((tmpmatch = object_matches_string(pl, tmp, params)) > match_val) {
             match_val = tmpmatch;
             best = tmp;
         }
@@ -353,7 +353,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
      */
     if ((pl->move_type&MOVE_FLYING)
     && !QUERY_FLAG(pl, FLAG_WIZ)
-    && get_player_container(tmp) != pl) {
+    && object_get_player_container(tmp) != pl) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You are levitating, you can't reach the ground!", NULL);
         return;
@@ -366,8 +366,8 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
                       "The object disappears in a puff of smoke! It must have been an illusion.",
                       NULL);
         if (!QUERY_FLAG(tmp, FLAG_REMOVED))
-            remove_ob(tmp);
-        free_object(tmp);
+            object_remove(tmp);
+        object_free(tmp);
         return;
     }
 
@@ -396,7 +396,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     if (nrof != tmp_nrof) {
         char failure[MAX_BUF];
 
-        tmp = get_split_ob(tmp, nrof, failure, sizeof(failure));
+        tmp = object_split(tmp, nrof, failure, sizeof(failure));
         if (!tmp) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           failure, NULL);
@@ -408,7 +408,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
          * so it needs to be deleted.
          */
         if (!QUERY_FLAG(tmp, FLAG_REMOVED)) {
-            remove_ob(tmp); /* Unlink it */
+            object_remove(tmp); /* Unlink it */
         }
     }
     query_name(tmp, name, MAX_BUF);
@@ -427,7 +427,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                   buf, NULL);
 
-    tmp = insert_ob_in_ob(tmp, op);
+    tmp = object_insert_in_ob(tmp, op);
 
     /* All the stuff below deals with client/server code, and is only
      * usable by players
@@ -468,7 +468,7 @@ void pick_up(object *op, object *alt) {
 
     /* Decide which object to pick. */
     if (alt) {
-        if (!can_pick(op, alt)) {
+        if (!object_can_pick(op, alt)) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "You can't pick up the %s.",
                                  "You can't pick up the %s.",
@@ -477,7 +477,7 @@ void pick_up(object *op, object *alt) {
         }
         tmp = alt;
     } else {
-        if (op->below == NULL || !can_pick(op, op->below)) {
+        if (op->below == NULL || !object_can_pick(op, op->below)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "There is nothing to pick up here.", NULL);
             return;
@@ -506,13 +506,13 @@ void pick_up(object *op, object *alt) {
      * behaves more sanely.
      */
     if (tmp1 != tmp) {
-        tmp = insert_ob_in_map(tmp1, tmp_map, op, INS_NO_MERGE);
+        tmp = object_insert_in_map(tmp1, tmp_map, op, INS_NO_MERGE);
     }
 
     if (tmp == NULL)
         return;
 
-    if (!can_pick(op, tmp))
+    if (!object_can_pick(op, tmp))
         return;
 
     /* Establish how many of the object we are picking up */
@@ -641,13 +641,13 @@ int command_take(object *op, char *params) {
          * but that probably will make it more difficult to read, and
          * not make it any more efficient
          */
-        if (params && (ival = item_matched_string(op, tmp, params)) > 0) {
-            if ((ival <= 2) && (!can_pick(op, tmp))) {
+        if (params && (ival = object_matches_string(op, tmp, params)) > 0) {
+            if ((ival <= 2) && (!object_can_pick(op, tmp))) {
                 if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))/* don't count floor tiles */
                     missed++;
             } else
                 pick_up(op, tmp);
-        } else if (can_pick(op, tmp) && !params) {
+        } else if (object_can_pick(op, tmp) && !params) {
             pick_up(op, tmp);
             break;
         }
@@ -786,7 +786,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
         object *tmp2 = tmp;
 
         tmp2_tag = tmp2->count;
-        tmp = get_split_ob(tmp, nrof, failure, sizeof(failure));
+        tmp = object_split(tmp, nrof, failure, sizeof(failure));
 
         if (!tmp) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -794,16 +794,16 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
             return;
         }
     } else
-        remove_ob(tmp);
+        object_remove(tmp);
 
     if (sack->nrof > 1) {
-        orig = get_split_ob(sack, sack->nrof-1, NULL, 0);
+        orig = object_split(sack, sack->nrof-1, NULL, 0);
         set_object_face_main(orig);
         CLEAR_FLAG(orig, FLAG_APPLIED);
         if (sack->env) {
-            insert_ob_in_ob(orig, sack->env);
+            object_insert_in_ob(orig, sack->env);
         } else {
-            insert_ob_in_map_at(orig, sack->map, NULL, 0, sack->x, sack->y);
+            object_insert_in_map_at(orig, sack->map, NULL, 0, sack->x, sack->y);
             orig->move_off = 0;
         }
     }
@@ -814,7 +814,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
                          "You put the %s in %s.",
                          name_tmp, name_sack);
     tmp_tag = tmp->count;
-    tmp2 = insert_ob_in_ob(tmp, sack);
+    tmp2 = object_insert_in_ob(tmp, sack);
     if (!QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
         fix_object(op); /* This is overkill, fix_player() is called somewhere */
     /* in object.c */
@@ -846,7 +846,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
  * if is non zero, then nrof objects is tried to be dropped.
  * @return
  * object dropped, NULL if it was destroyed.
- * @todo shouldn't tmp be NULL if was_destroyed returns true?
+ * @todo shouldn't tmp be NULL if object_was_destroyed returns true?
  */
 object *drop_object(object *op, object *tmp, uint32 nrof) {
     tag_t tmp_tag;
@@ -870,14 +870,14 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
     if (nrof && tmp->nrof != nrof) {
         char failure[MAX_BUF];
 
-        tmp = get_split_ob(tmp, nrof, failure, sizeof(failure));
+        tmp = object_split(tmp, nrof, failure, sizeof(failure));
         if (!tmp) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           failure, NULL);
             return NULL;
         }
     } else
-        remove_ob(tmp);
+        object_remove(tmp);
 
     if (QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
         char name[MAX_BUF];
@@ -887,7 +887,7 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
                              "You drop the %s. The gods who lent it to you retrieves it.",
                              "You drop the %s. The gods who lent it to you retrieves it.",
                              name);
-        free_object(tmp);
+        object_free(tmp);
 
         if (!QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
             fix_object(op);
@@ -917,8 +917,8 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
     tmp->y = op->y;
 
     tmp_tag = tmp->count;
-    insert_ob_in_map(tmp, op->map, op, 0);
-    if (!was_destroyed(tmp, tmp_tag) && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY && is_in_shop(op)) {
+    object_insert_in_map(tmp, op->map, op, 0);
+    if (!object_was_destroyed(tmp, tmp_tag) && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY && is_in_shop(op)) {
         sell_item(tmp, op);
     }
 
@@ -956,8 +956,8 @@ void drop(object *op, object *tmp) {
             /* Just toss the object - probably shouldn't be hanging
              * around anyways
              */
-            remove_ob(tmp);
-            free_object(tmp);
+            object_remove(tmp);
+            object_free(tmp);
             return;
         } else {
             while (tmp != NULL && tmp->invisible)
@@ -1180,7 +1180,7 @@ int command_drop(object *op, char *params) {
             next = tmp->below;
             if (QUERY_FLAG(tmp, FLAG_NO_DROP) || tmp->invisible)
                 continue;
-            if ((ival = item_matched_string(op, tmp, params)) > 0) {
+            if ((ival = object_matches_string(op, tmp, params)) > 0) {
                 if ((QUERY_FLAG(tmp, FLAG_INV_LOCKED)) && ((ival == 1) || (ival == 2)))
                     missed++;
                 else
@@ -1460,7 +1460,7 @@ void examine_monster(object *op, object *tmp) {
                       "It is in excellent shape.", NULL);
         break;
     }
-    if (present_in_ob(POISONING, mon) != NULL)
+    if (object_present_in_ob(POISONING, mon) != NULL)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                       "It looks very ill.", NULL);
 }
@@ -2209,9 +2209,9 @@ int command_rename_item(object *op, char *params) {
     }
 
     tag = item->count;
-    tmp = merge_ob(item, NULL);
+    tmp = object_merge(item, NULL);
     if (tmp == NULL) {
-        /* object was not merged - if it was, merge_ob handles updating for us. */
+        /* object was not merged - if it was, object_merge() handles updating for us. */
         esrv_update_item(UPD_NAME, op, item);
     }
 
@@ -2257,9 +2257,9 @@ int command_lock_item(object *op, char *params) {
     }
 
     tag = item->count;
-    tmp = merge_ob(item, NULL);
+    tmp = object_merge(item, NULL);
     if (tmp == NULL) {
-        /* object was not merged, if it was merge_ob handles updates for us */
+        /* object was not merged, if it was object_merge() handles updates for us */
         esrv_update_item(UPD_FLAGS, op, item);
     }
     return 1;
@@ -2306,13 +2306,13 @@ int command_use(object *op, char *params) {
     }
 
     snprintf(copy, sizeof(copy), "on_use_with_%s", first->arch->name);
-    data = get_ob_key_value(second, copy);
+    data = object_get_value(second, copy);
     if (!data) {
         snprintf(copy, sizeof(copy), "on_use_with_%d_%d", first->type, first->subtype);
-        data = get_ob_key_value(second, copy);
+        data = object_get_value(second, copy);
         if (!data) {
             snprintf(copy, sizeof(copy), "on_use_with_%d", first->type);
-            data = get_ob_key_value(second, copy);
+            data = object_get_value(second, copy);
             if (!data) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Nothing happens.", NULL);
                 return 1;
@@ -2344,16 +2344,16 @@ int command_use(object *op, char *params) {
             }
             add = object_create_arch(arch);
             add->nrof = count;
-            insert_ob_in_ob(add, op);
+            object_insert_in_ob(add, op);
         } else if (strncmp(data, "remove $", 8) == 0) {
             data += 8;
             if (*data == '1') {
                 if (first)
-                    first = decrease_ob(first);
+                    first = object_decrease_nrof_by_one(first);
                 data += 2;
             } else if (*data == '2') {
                 if (second)
-                    second = decrease_ob(second);
+                    second = object_decrease_nrof_by_one(second);
                 data += 2;
             } else {
                 LOG(llevError, "Use: invalid use string %s in %s\n", data, second->name);

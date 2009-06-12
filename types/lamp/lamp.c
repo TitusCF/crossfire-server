@@ -68,10 +68,10 @@ static void do_turn(object *op, object *who, int aflags, const char *onoff) {
         SET_FLAG(tmp2, FLAG_APPLIED);
     if (QUERY_FLAG(op, FLAG_INV_LOCKED))
         SET_FLAG(tmp2, FLAG_INV_LOCKED);
-    insert_ob_in_ob(tmp2, who);
+    object_insert_in_ob(tmp2, who);
 
-    remove_ob(op);
-    free_object(op);
+    object_remove(op);
+    object_free(op);
 
     fix_object(who);
 
@@ -108,14 +108,14 @@ static void do_turn(object *op, object *who, int aflags, const char *onoff) {
 static method_ret lamp_type_apply(ob_methods *context, object *lamp, object *applier, int aflags) {
     object *tmp;
 
-    if (get_player_container(lamp) != applier) {
+    if (object_get_player_container(lamp) != applier) {
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You must get it first!\n", NULL);
         return METHOD_ERROR;
     }
 
     if (lamp->nrof > 1)
-        tmp = get_split_ob(lamp, lamp->nrof-1, NULL, 0);
+        tmp = object_split(lamp, lamp->nrof-1, NULL, 0);
     else
         tmp = NULL;
 
@@ -135,7 +135,7 @@ static method_ret lamp_type_apply(ob_methods *context, object *lamp, object *app
 
     /* insert the portion that was split off. */
     if (tmp != NULL) {
-        insert_ob_in_ob(tmp, applier);
+        object_insert_in_ob(tmp, applier);
     }
 
     return METHOD_OK;

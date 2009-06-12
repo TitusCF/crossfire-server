@@ -59,7 +59,7 @@ extern body_locations_struct body_locations[NUM_BODY_LOCATIONS];
  *
  * key and value are shared-strings.
  *
- * Please use get_ob_key_value(), set_ob_key_value() from object.c rather than
+ * Please use object_get_value(), object_set_value() from object.c rather than
  * accessing the list directly.
  * Exception is if you want to walk this list for some reason.
  */
@@ -91,7 +91,7 @@ typedef struct _key_value {
  * @return
  * true if the object was destroyed, 0 otherwise
  */
-#define was_destroyed(op, old_tag) \
+#define object_was_destroyed(op, old_tag) \
     (op->count != old_tag || QUERY_FLAG(op, FLAG_FREED))
 
 
@@ -112,7 +112,7 @@ typedef struct _key_value {
  * Main Crossfire structure, one ingame object.
  *
  * Note that the ordering of this structure is sort of relevent -
- * copy_object copies everything over beyond 'name' using memcpy.
+ * object_copy() copies everything over beyond 'name' using memcpy.
  * Thus, values that need to be copied need to be located beyond that
  * point.
  *
@@ -130,7 +130,7 @@ typedef struct _key_value {
  * See the @ref page_object "documentation page" for more details.
  */
 typedef struct obj {
-    /* These variables are not changed by copy_object() */
+    /* These variables are not changed by object_copy() */
     struct pl   *contr;         /**< Pointer to the player which control this object */
     struct obj  *next;          /**< Pointer to the next object in the free/used list */
     struct obj  *prev;          /**< Pointer to the previous object in the free/used list*/
@@ -161,8 +161,8 @@ typedef struct obj {
     /* These get an extra add_refcount(), after having been copied by memcpy().
      * All fields beow this point are automatically copied by memcpy.  If
      * adding something that needs a refcount updated, make sure you modify
-     * copy_object to do so.  Everything below here also gets cleared
-     * by clear_object()
+     * object_copy() to do so.  Everything below here also gets cleared
+     * by object_clear()
      */
     const char  *name;          /**< The name of the object, obviously... */
     const char  *name_pl;       /**< The plural name of the object */
@@ -229,7 +229,7 @@ typedef struct obj {
     /* Following mostly refers to fields only used for monsters */
     struct obj  *owner;         /**< Pointer to the object which controls this one.
                                  * Owner should not be referred to directly -
-                                 * get_owner should be used instead. */
+                                 * object_get_owner() should be used instead. */
     tag_t       ownercount;     /**< What count the owner had (in case owner has been freed) */
     struct obj  *enemy;         /**< Monster/player to follow even if not closest */
     struct obj  *attacked_by;   /**< This object start to attack us! only player & monster */
@@ -325,7 +325,7 @@ typedef struct archt {
     struct archt *next;     /**< Next archetype in a linked list */
     struct archt *head;     /**< The main part of a linked object */
     struct archt *more;     /**< Next part of a linked object */
-    object clone;           /**< An object from which to do copy_object() */
+    object clone;           /**< An object from which to do object_copy() */
     sint8 tail_x, tail_y;   /**< Where the lower right most portion of the object is
                              * in comparison to the head. */
     int reference_count;    /**< How many times this temporary archetype is used. If 0, "permanent" archetype. */
@@ -348,7 +348,7 @@ extern int nroffreeobjects;
 /**
  * @defgroup UP_OBJ_xxx Object update flags
  *
- * Used by update_object() to know if the object being passed is
+ * Used by object_update() to know if the object being passed is
  * being added or removed.
  */
 /*@{*/
@@ -363,8 +363,8 @@ extern int nroffreeobjects;
 /**
  * @defgroup INS_xxx Object insertion flags.
  *
- * These are flags passed to insert_ob_in_map() and
- * insert_ob_in_ob().  Note that all flags may not be meaningful
+ * These are flags passed to object_insert_in_map() and
+ * object_insert_in_ob().  Note that all flags may not be meaningful
  * for both functions.
  * Most are fairly explanatory:
  * - INS_NO_MERGE: don't try to merge inserted object with ones alrady

@@ -113,7 +113,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             && die_roll(1, 10, applier, 1) < 2)
                 /* Really unlucky player, better luck next time */
                 do_forget_spell(applier, spell->name);
-            book = decrease_ob(book);
+            book = object_decrease_nrof_by_one(book);
             if (book && (!QUERY_FLAG(book, FLAG_IDENTIFIED))) {
                 /* Well, not everything is lost, player now knows the
                  * book is cursed/damned. */
@@ -210,7 +210,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "You fail to learn the spell.\n", NULL);
         }
-        decrease_ob(book);
+        object_decrease_nrof_by_one(book);
     }
     return METHOD_OK;
 }

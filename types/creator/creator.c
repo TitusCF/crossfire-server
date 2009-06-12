@@ -83,7 +83,7 @@ static void move_creator(object *creator) {
         }
         new_ob = object_create_clone(ob_to_copy);
         CLEAR_FLAG(new_ob, FLAG_IS_A_TEMPLATE);
-        unflag_inv(new_ob, FLAG_IS_A_TEMPLATE);
+        object_unset_flag_inv(new_ob, FLAG_IS_A_TEMPLATE);
     } else {
         if (creator->other_arch == NULL) {
             LOG(llevError, "move_creator: Creator doesn't have other arch set: %s (%s, %d, %d)\n", creator->name ? creator->name : "(null)", creator->map->path, creator->x, creator->y);
@@ -96,14 +96,14 @@ static void move_creator(object *creator) {
 
     /* Make sure this multipart object fits */
     if (new_ob->arch->more && ob_blocked(new_ob, creator->map, creator->x, creator->y)) {
-        free_object(new_ob);
+        object_free(new_ob);
         return;
     }
 
     if (creator->level != 0)
         new_ob->level = creator->level;
 
-    insert_ob_in_map_at(new_ob, creator->map, creator, 0, creator->x, creator->y);
+    object_insert_in_map_at(new_ob, creator->map, creator, 0, creator->x, creator->y);
     if (QUERY_FLAG(new_ob, FLAG_FREED))
         return;
 

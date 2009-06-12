@@ -428,7 +428,7 @@ void do_server(void) {
             save_player(pl->ob, 0);
             if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
                 terminate_all_pets(pl->ob);
-                remove_ob(pl->ob);
+                object_remove(pl->ob);
             }
             leave(pl, 1);
             final_free_player(pl);
@@ -554,7 +554,7 @@ void do_server(void) {
             save_player(pl->ob, 0);
             if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
                 terminate_all_pets(pl->ob);
-                remove_ob(pl->ob);
+                object_remove(pl->ob);
             }
             leave(pl, 1);
             final_free_player(pl);
@@ -581,7 +581,7 @@ void do_server(void) {
                 save_player(pl->ob, 0);
                 if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
                     terminate_all_pets(pl->ob);
-                    remove_ob(pl->ob);
+                    object_remove(pl->ob);
                 }
                 leave(pl, 1);
                 final_free_player(pl);

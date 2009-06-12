@@ -49,8 +49,8 @@ void init_type_thrown_object(void) {
 static method_ret thrown_object_type_process(ob_methods *context, object *op) {
     if (op->map == NULL) {
         LOG(llevError, "BUG: Thrown object had no map.\n");
-        remove_ob(op);
-        free_object(op);
+        object_remove(op);
+        object_free(op);
         return METHOD_ERROR;
     }
 
@@ -65,8 +65,8 @@ static method_ret thrown_object_type_process(ob_methods *context, object *op) {
          * and it is easy enough to clean it up here.
          */
         if (op->inv == NULL) {
-            remove_ob(op);
-            free_object(op);
+            object_remove(op);
+            object_free(op);
             return METHOD_OK;
         }
         if (op->last_sp-- < 0) {

@@ -46,7 +46,7 @@ typedef struct {
 extern PyTypeObject Crossfire_PlayerType;
 
 #define EXISTCHECK(ob) { \
-    if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
+    if (!ob || !ob->obj || (object_was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
         return NULL; \
     } }
@@ -57,13 +57,13 @@ extern PyTypeObject Crossfire_PlayerType;
  * will always be a compatible type.
  */
 #define TYPEEXISTCHECK(ob) { \
-    if (!ob || !PyObject_TypeCheck((PyObject*)ob, &Crossfire_ObjectType) || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
+    if (!ob || !PyObject_TypeCheck((PyObject*)ob, &Crossfire_ObjectType) || !ob->obj || (object_was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Not a Crossfire object or Crossfire object no longer exists"); \
         return NULL; \
     } }
 
 #define EXISTCHECK_INT(ob) { \
-    if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
+    if (!ob || !ob->obj || (object_was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
         return -1; \
     } }

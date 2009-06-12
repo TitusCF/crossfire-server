@@ -679,7 +679,7 @@ int change_abil(object *op, object *tmp) {
                      "You no longer feel like swimming");
 
         /* Changing move status may mean you are affected by things you weren't before */
-        check_move_on(op, op);
+        object_check_move_on(op, op);
     }
 
     /* becoming UNDEAD... a special treatment for this flag. Only those not
@@ -868,10 +868,10 @@ void drain_specific_stat(object *op, int deplete_stats) {
         LOG(llevError, "Couldn't find archetype depletion.\n");
         return;
     } else {
-        tmp = present_arch_in_ob(at, op);
+        tmp = arch_present_in_ob(at, op);
         if (!tmp) {
             tmp = arch_to_object(at);
-            tmp = insert_ob_in_ob(tmp, op);
+            tmp = object_insert_in_ob(tmp, op);
             SET_FLAG(tmp, FLAG_APPLIED);
         }
     }
@@ -899,12 +899,12 @@ void change_luck(object *op, int value) {
     if (!at)
         LOG(llevError, "Couldn't find archetype luck.\n");
     else {
-        tmp = present_arch_in_ob(at, op);
+        tmp = arch_present_in_ob(at, op);
         if (!tmp) {
             if (!value)
                 return;
             tmp = arch_to_object(at);
-            tmp = insert_ob_in_ob(tmp, op);
+            tmp = object_insert_in_ob(tmp, op);
             SET_FLAG(tmp, FLAG_APPLIED);
         }
         if (value) {
@@ -1526,7 +1526,7 @@ void fix_object(object *op) {
          */
 
         if (op->type == PLAYER && wc_obj && wc_obj->level >= 1) {
-            const  char *wc_in = get_ob_key_value(wc_obj, "wc_increase_rate");
+            const  char *wc_in = object_get_value(wc_obj, "wc_increase_rate");
             int wc_increase_rate;
 
             wc_increase_rate = wc_in?atoi(wc_in):5;
@@ -1643,7 +1643,7 @@ void fix_object(object *op) {
     else if (op->move_type&(MOVE_FLY_LOW|MOVE_FLY_HIGH))
         op->move_type &= ~MOVE_WALK;
 
-    update_ob_speed(op);
+    object_update_speed(op);
 
     /* It is quite possible that a player's spell costing might have changed,
      * so we will check that now.
@@ -1832,7 +1832,7 @@ object *give_skill_by_name(object *op, const char *skill_name) {
     CLEAR_FLAG(skill_obj, FLAG_CAN_USE_SKILL);
     skill_obj->stats.exp = 0;
     skill_obj->level = 1;
-    insert_ob_in_ob(skill_obj, op);
+    object_insert_in_ob(skill_obj, op);
     if (op->contr) {
         op->contr->last_skill_ob[skill_obj->subtype] = skill_obj;
         op->contr->last_skill_exp[skill_obj->subtype] = -1;

@@ -78,7 +78,7 @@ void cftimer_process_timers(void) {
  * object tag to use.
  */
 static void cftimer_process_event(tag_t ob_tag) {
-    object *ob = find_object(ob_tag);
+    object *ob = object_find_by_tag(ob_tag);
 
     if (ob)
         execute_event(ob, EVENT_TIMER, NULL, NULL, NULL, SCRIPT_FIX_ALL);
@@ -114,7 +114,7 @@ int cftimer_create(int id, long delay, object *ob, int mode) {
         return TIMER_ERR_MODE;
     if (ob == NULL)
         return TIMER_ERR_OBJ;
-    if (find_obj_by_type_subtype(ob, EVENT_CONNECTOR, EVENT_TIMER) == NULL)
+    if (object_find_by_type_subtype(ob, EVENT_CONNECTOR, EVENT_TIMER) == NULL)
         return TIMER_ERR_OBJ;
     timers_table[id].mode = mode;
     timers_table[id].ob_tag = ob->count;
