@@ -251,7 +251,7 @@ int playername_ok(const char *cp) {
  * Caller is responsible for setting the correct map.
  *
  * Redo this to do both get_player_ob and get_player.
- * Hopefully this will be less bugfree and simpler.
+ * Hopefully this will be bugfree and simpler.
  *
  * @param p
  * if NULL, a new player structure is created, else p is recycled.
@@ -316,7 +316,7 @@ static player *get_player(player *p) {
     op->speed = 1.0;
     op->direction = 5;     /* So player faces south */
     op->stats.wc = 2;
-    op->run_away = 25; /* Then we panick... */
+    op->run_away = 25; /* Then we panic... */
     p->socket.monitor_spells = 0; /* this needs to be set before roll_stats() as it calls fix_object() that sends the spells. */
 
     roll_stats(op);
@@ -399,7 +399,7 @@ void add_player(socket_struct *ns) {
 
     /* Needed because the socket we just copied over needs to be cleared.
      * Note that this can result in a client reset if there is partial data
-     * on the uncoming socket.
+     * on the incoming socket.
      */
     SockList_ResetRead(&p->socket.inbuf);
     set_first_map(p->ob);
@@ -537,7 +537,7 @@ object *get_nearest_player(object *mon) {
  *
  * Modified by MSW 2001-08-06 to handle tiled maps. Various notes:
  * - With DETOUR_AMOUNT being 2, it should still go and find players hiding
- * down corriders.
+ * down corridors.
  * - I think the old code was broken if the first direction the monster
  * should move was blocked - the code would store the first direction without
  * verifying that the player can actually move in that direction.  The new
@@ -1511,7 +1511,7 @@ int check_pick(object *op) {
                 return 0;
 
             /* useful for going into stores and not losing your settings... */
-            /* and for battles wher you don't want to get loaded down while
+            /* and for battles where you don't want to get loaded down while
              * fighting */
             if (op->contr->mode&PU_INHIBIT)
                 return 1;
@@ -1796,7 +1796,7 @@ static object *find_better_arrow(object *op, object *target, const char *type, i
                 betterby = i;
             }
         } else if (arrow->type == ARROW && arrow->race == type) {
-            /* allways prefer assasination/slaying */
+            /* always prefer assassination/slaying */
             if (target->race != NULL
             && arrow->slaying != NULL
             && strstr(arrow->slaying, target->race)) {
@@ -2041,7 +2041,7 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     arrow->speed_left = 0;
 
     if (op->type == PLAYER) {
-        /* we don't want overflows of wc (sint), so cap the value - mod and pl should be substracted */
+        /* we don't want overflows of wc (sint), so cap the value - mod and pl should be subtracted */
         int mod = bow->magic
             +arrow->magic
             +get_dex_bonus(op->stats.Dex)
@@ -2443,7 +2443,7 @@ void move_player_attack(object *op, int dir) {
 
         tmp = GET_MAP_OB(m, nx, ny);
         if (tmp == NULL) {
-            /* LOG(llevError, "player_move_attack: GET_MAP_OB returns NULL, but player can not more there.\n");*/
+            /* LOG(llevError, "player_move_attack: GET_MAP_OB returns NULL, but player can not move there.\n");*/
             return;
         }
 
@@ -2483,7 +2483,7 @@ void move_player_attack(object *op, int dir) {
                 return;
 
         /* The following deals with possibly attacking peaceful
-         * or frienddly creatures.  Basically, all players are considered
+         * or friendly creatures.  Basically, all players are considered
          * unaggressive.  If the moving player has peaceful set, then the
          * object should be pushed instead of attacked.  It is assumed that
          * if you are braced, you will not attack friends accidently,
@@ -2492,7 +2492,7 @@ void move_player_attack(object *op, int dir) {
 
         /* If the creature is a pet, push it even if the player is not
          * peaceful.  Our assumption is the creature is a pet if the
-         * player owns it and it is either friendly or unagressive.
+         * player owns it and it is either friendly or unaggressive.
          */
         mon_owner = get_owner(mon);
         if ((op->type == PLAYER)
@@ -2819,7 +2819,7 @@ int move_player(object *op, int dir) {
 int handle_newcs_player(object *op) {
     if (op->contr->hidden) {
         op->invisible = 1000;
-        /* the socket code flasehs the player visible/invisible
+        /* the socket code flashes the player visible/invisible
          * depending on the value if invisible, so we need to
          * alternate it here for it to work correctly.
          */
@@ -2956,7 +2956,7 @@ void remove_unpaid_objects(object *op, object *env, int free_items) {
 }
 
 /**
- * Create a text for a player's gravestobe.
+ * Create a text for a player's gravestone.
  *
  * Moved from apply.c to player.c - player.c is what
  * actually uses this function.  player.c may not be quite the
@@ -3083,7 +3083,7 @@ void do_some_living(object *op) {
         }
 
         /* Regenerate Grace */
-        /* I altered this a little - maximum grace is ony achieved through prayer -b.t.*/
+        /* I altered this a little - maximum grace is only achieved through prayer -b.t.*/
         if (--op->last_grace < 0) {
             if (op->stats.grace < op->stats.maxgrace/2)
                 op->stats.grace++; /* no penalty in food for regaining grace */
@@ -3937,8 +3937,8 @@ int player_can_view(object *pl, object *op) {
 
 /**
  * We call this when there is a possibility for our action disturbing our hiding
- * place or invisiblity spell. Artefact invisiblity is not
- * effected by this. If we arent invisible to begin with, we
+ * place or invisibility spell. Artefact invisibility is not
+ * effected by this. If we aren't invisible to begin with, we
  * return 0.
  *
  * This routine works for both players and monsters.
@@ -3974,7 +3974,7 @@ static int action_makes_visible(object *op) {
  * Function returns TRUE/FALSE. If true x, y returns the battleground
  * -exit-coord. (and if x, y not NULL)
  *
- * 19 March 2005 - josh@woosworld.net modifed to check if the battleground also has slaying, maxhp, and maxsp set
+ * 19 March 2005 - josh@woosworld.net modified to check if the battleground also has slaying, maxhp, and maxsp set
  * and if those are all set and the player has a marker that matches the slaying send them to a different x, y
  * Default is to do the same as before, so only people wanting to have different points need worry about this
  *
