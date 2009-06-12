@@ -78,7 +78,7 @@ void cftimer_process_timers(void) {
  * object tag to use.
  */
 static void cftimer_process_event(tag_t ob_tag) {
-    object *ob = object_find_by_tag(ob_tag);
+    object *ob = object_find_by_tag_global(ob_tag);
 
     if (ob)
         execute_event(ob, EVENT_TIMER, NULL, NULL, NULL, SCRIPT_FIX_ALL);

@@ -234,16 +234,16 @@ START_TEST(test_object_dump_all) {
 END_TEST
 
 /** This is the test to check the behaviour of the method
- *  object *object_find_by_tag(tag_t i);
+ *  object *object_find_by_tag_global(tag_t i);
  */
-START_TEST(test_object_find_by_tag) {
+START_TEST(test_object_find_by_tag_global) {
     object *ob1;
     object *result;
 
     ob1 = cctk_create_game_object(NULL);
     ob1 = cctk_create_game_object(NULL);
     ob1 = cctk_create_game_object(NULL);
-    result = object_find_by_tag(ob1->count);
+    result = object_find_by_tag_global(ob1->count);
     fail_unless(result == ob1, "Should find ob1(%p) while search for item %d but got %p", ob1, ob1->count, result);
 }
 END_TEST
@@ -1204,7 +1204,7 @@ Suite *object_suite(void) {
     tcase_add_test(tc_core, test_object_get_player_container);
     tcase_add_test(tc_core, test_object_dump);
     tcase_add_test(tc_core, test_object_dump_all);
-    tcase_add_test(tc_core, test_object_find_by_tag);
+    tcase_add_test(tc_core, test_object_find_by_tag_global);
     tcase_add_test(tc_core, test_object_find_by_name_global);
     tcase_add_test(tc_core, test_object_free_all_data);
     tcase_add_test(tc_core, test_object_get_owner);

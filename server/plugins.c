@@ -3314,7 +3314,7 @@ void *cfapi_object_find(int *type, ...) {
     switch (ftype) {
     case 0:
         ival = va_arg(args, int);
-        rv = object_find_by_tag(ival);
+        rv = object_find_by_tag_global(ival);
         break;
 
     case 1:

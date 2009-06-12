@@ -212,7 +212,7 @@ static object *find_object_both(char *params) {
     if (!params)
         return NULL;
     if (params[0] == '#')
-        return object_find_by_tag(atol(params+1));
+        return object_find_by_tag_global(atol(params+1));
     else
         return object_find_by_name_global(params);
 }
@@ -1129,7 +1129,7 @@ int command_inventory(object *op, char *params) {
         return 0;
     }
 
-    if (!sscanf(params, "%d", &i) || (tmp = object_find_by_tag(i)) == NULL) {
+    if (!sscanf(params, "%d", &i) || (tmp = object_find_by_tag_global(i)) == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Inventory of what object (nr)?", NULL);
         return 1;
@@ -1238,7 +1238,7 @@ int command_possess(object *op, char *params) {
     victim = NULL;
     if (params != NULL) {
         if (sscanf(params, "%d", &i))
-            victim = object_find_by_tag(i);
+            victim = object_find_by_tag_global(i);
         else if (sscanf(params, "%s", buf))
             victim = object_find_by_name_global(buf);
     }
@@ -2342,7 +2342,7 @@ object *dm_stack_peek(player *pl) {
         return NULL;
     }
 
-    ob = object_find_by_tag(pl->stack_items[pl->stack_position-1]);
+    ob = object_find_by_tag_global(pl->stack_items[pl->stack_position-1]);
     if (!ob) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                       "Stacked item was removed!", NULL);
@@ -2439,7 +2439,7 @@ object *get_dm_object(player *pl, char **params, int *from) {
             (*params)++;
 
         /* Get item */
-        ob = object_find_by_tag(item_tag);
+        ob = object_find_by_tag_global(item_tag);
         if (!ob) {
             if (from)
                 *from = STACK_FROM_NONE;
@@ -2477,7 +2477,7 @@ object *get_dm_object(player *pl, char **params, int *from) {
             return NULL;
         }
 
-        ob = object_find_by_tag(pl->stack_items[item_position]);
+        ob = object_find_by_tag_global(pl->stack_items[item_position]);
         if (!ob) {
             if (from)
                 *from = STACK_FROM_NONE;
@@ -2569,7 +2569,7 @@ int command_stack_list(object *op, char *params) {
                   "Item stack contents:", NULL);
 
     for (item = 0; item < pl->stack_position; item++) {
-        display = object_find_by_tag(pl->stack_items[item]);
+        display = object_find_by_tag_global(pl->stack_items[item]);
         if (display)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                                  " %d : %s [%d]",
@@ -2662,7 +2662,7 @@ int command_diff(object *op, char *params) {
          * Besides, if we don't do anything, compare an item to itself, not really useful.
          */
         if (op->contr->stack_position > 1) {
-            left = object_find_by_tag(op->contr->stack_items[op->contr->stack_position-2]);
+            left = object_find_by_tag_global(op->contr->stack_items[op->contr->stack_position-2]);
             if (left)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                               "(Note: first item taken from undertop)", NULL);
@@ -2725,7 +2725,7 @@ int command_insert_into(object *op, char *params) {
         * Besides, can't insert an item into itself.
         */
         if (op->contr->stack_position > 1) {
-            left = object_find_by_tag(op->contr->stack_items[op->contr->stack_position-2]);
+            left = object_find_by_tag_global(op->contr->stack_items[op->contr->stack_position-2]);
             if (left)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                               "(Note: item to insert into taken from undertop)", NULL);

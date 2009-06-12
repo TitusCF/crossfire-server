@@ -198,7 +198,7 @@ extern object *object_get_env_recursive(object *op);
 extern object *object_get_player_container(object *op);
 extern void object_dump(object *op, StringBuffer *sb);
 extern void object_dump_all(void);
-extern object *object_find_by_tag(tag_t i);
+extern object *object_find_by_tag_global(tag_t i);
 extern object *object_find_by_name_global(const char *str);
 extern void object_free_all_data(void);
 extern object *object_get_owner(object *op);

@@ -436,7 +436,7 @@ void object_dump_all(void) {
  * @return
  * matching object, NULL if not found.
  */
-object *object_find_by_tag(tag_t i) {
+object *object_find_by_tag_global(tag_t i) {
     object *op;
 
     for (op = objects; op != NULL; op = op->next)
