@@ -117,7 +117,8 @@ void display_motd(const object *op) {
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.motd);
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
+    fp = open_and_uncompress(buf, 0, &comp);
+    if (fp == NULL) {
         return;
     }
     motd[0] = '\0';
@@ -147,7 +148,8 @@ void send_rules(const object *op) {
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.rules);
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
+    fp = open_and_uncompress(buf, 0, &comp);
+    if (fp == NULL) {
         return;
     }
     rules[0] = '\0';
@@ -182,7 +184,8 @@ void send_news(const object *op) {
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.news);
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL)
+    fp = open_and_uncompress(buf, 0, &comp);
+    if (fp == NULL)
         return;
     news[0] = '\0';
     subject[0] = '\0';
@@ -1958,7 +1961,8 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
         bowspeed = 1;
 
     if (arrow == NULL) {
-        if ((arrow = find_arrow(op, bow->race)) == NULL) {
+        arrow = find_arrow(op, bow->race);
+        if (arrow == NULL) {
             if (op->type == PLAYER)
                 draw_ext_info_format(NDI_UNIQUE, 0, op,
                                      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -2292,7 +2296,8 @@ object *find_key(object *pl, object *container, object *door) {
         for (tmp = container->inv; tmp != NULL; tmp = tmp->below) {
             /* No reason to search empty containers */
             if (tmp->type == CONTAINER && tmp->inv) {
-                if ((key = find_key(pl, tmp, door)) != NULL)
+                key = find_key(pl, tmp, door);
+                if (key != NULL)
                     return key;
             }
         }
@@ -2437,7 +2442,8 @@ void move_player_attack(object *op, int dir) {
         } else
             m = tpl->map;
 
-        if ((tmp = GET_MAP_OB(m, nx, ny)) == NULL) {
+        tmp = GET_MAP_OB(m, nx, ny);
+        if (tmp == NULL) {
             /* LOG(llevError, "player_move_attack: GET_MAP_OB returns NULL, but player can not more there.\n");*/
             return;
         }
