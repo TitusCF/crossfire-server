@@ -1358,7 +1358,7 @@ int pray(object *pl, object *skill) {
      */
     for (tmp = pl->below; tmp != NULL; tmp = tmp->below) {
         /* Only if the altar actually belongs to someone do you get special benefits */
-        if (tmp && tmp->type == HOLY_ALTAR && tmp->other_arch) {
+        if (tmp->type == HOLY_ALTAR && tmp->other_arch) {
             snprintf(buf, sizeof(buf), "You pray over the %s.", tmp->name);
             pray_at_altar(pl, tmp, skill);
             break;  /* Only pray at one altar */
