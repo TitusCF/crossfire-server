@@ -618,10 +618,9 @@ void copy_owner(object *op, object *clone) {
          * as appropriate.
          */
         /*TODO owner=self is dangerous and should be avoided*/
-        if (clone->type == PLAYER)
-            owner = clone;
-        else
+        if (clone->type != PLAYER)
             return;
+        owner = clone;
     }
     set_owner(op, owner);
 
