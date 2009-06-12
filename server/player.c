@@ -1825,7 +1825,7 @@ static object *find_better_arrow(object *op, object *target, const char *type, i
             }
         }
     }
-    if (tmp == NULL && arrow == NULL)
+    if (tmp == NULL)
         return find_arrow(op, type);
 
     if (better)
