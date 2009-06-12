@@ -959,11 +959,10 @@ int can_apply_object(object *who, object *op) {
      * in place and store that way.
      */
     if (op->type == WEAPON || op->type == SHIELD) {
-        for (tmp = who->inv; tmp && !ws; tmp = tmp->below) {
-            if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
-                retval = CAN_APPLY_UNAPPLY;
-                ws = tmp;
-            }
+        tmp = object_find_by_type_applied(who, op->type);
+        if (tmp != NULL) {
+            retval = CAN_APPLY_UNAPPLY;
+            ws = tmp;
         }
     }
 
@@ -1780,8 +1779,6 @@ void apply_changes_to_player(object *pl, object *change) {
     case CLASS: {
             living *stats = &(pl->contr->orig_stats);
             living *ns = &(change->stats);
-            object *walk;
-            int flag_change_face = 1;
 
             /* the following code assigns stats up to the stat max
              * for the race, and if the stat max is exceeded,
@@ -1826,11 +1823,7 @@ void apply_changes_to_player(object *pl, object *change) {
             /* first, look for the force object banning changing the
              * face.  Certain races never change face with class.
              */
-            for (walk = pl->inv; walk != NULL; walk = walk->below)
-                if (!strcmp(walk->name, "NOCLASSFACECHANGE"))
-                    flag_change_face = 0;
-
-            if (flag_change_face) {
+            if (object_find_by_name(pl, "NOCLASSFACECHANGE") == NULL) {
                 pl->animation_id = GET_ANIM_ID(change);
                 pl->face = change->face;
 

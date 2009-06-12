@@ -73,11 +73,7 @@ void move_marker(object *op) {
             /* cycle through his inventory to look for the MARK we want to
             * place
             */
-            for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below) {
-                if (tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying, op->slaying))
-                    break;
-            }
-
+            tmp2 = object_find_by_type_and_slaying(tmp, FORCE, op->slaying);
             /* if we didn't find our own MARK */
             if (tmp2 == NULL) {
                 object *force = create_archetype(FORCE_NAME);

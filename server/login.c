@@ -746,16 +746,10 @@ void check_login(object *op) {
 
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL) {
-        object *tmp, *abil = NULL, *skin = NULL;
+        object *abil, *skin;
 
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-            if (tmp->type == FORCE) {
-                if (strcmp(tmp->arch->name, "dragon_ability_force") == 0)
-                    abil = tmp;
-                else if (strcmp(tmp->arch->name, "dragon_skin_force") == 0)
-                    skin = tmp;
-            }
-        }
+        abil = object_find_by_type_and_arch_name(op, FORCE, "dragon_ability_force");
+        skin = object_find_by_type_and_arch_name(op, FORCE, "dragon_skin_force");
         set_dragon_name(op, abil, skin);
     }
 

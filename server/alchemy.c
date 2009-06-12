@@ -323,12 +323,7 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, rec
     if (rp->keycode) {
         object *tmp;
 
-        for (tmp = caster->inv; tmp != NULL; tmp = tmp->below) {
-            if (tmp->type == FORCE
-            && tmp->slaying
-            && !strcmp(rp->keycode, tmp->slaying))
-                break;
-        }
+        tmp = object_find_by_type_and_slaying(caster, FORCE, rp->keycode);
         if (tmp == NULL) { /* failure--no code found */
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                           "You know the ingredients, but not the technique.  Go learn how to do this recipe.",
@@ -979,7 +974,7 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients) {
  * check if no superflous message when 2 cauldrons on same spot, one unpaid? (shouldn't happen, but well).
  **/
 int use_alchemy(object *op) {
-    object *tmp, *item, *next;
+    object *tmp, *next;
     object *unpaid_cauldron = NULL;
     object *unpaid_item = NULL;
     int did_alchemy = 0;
@@ -992,13 +987,7 @@ int use_alchemy(object *op) {
                 unpaid_cauldron = tmp;
                 continue;
             }
-            unpaid_item = NULL;
-            for (item = tmp->inv; item; item = item->below) {
-                if (QUERY_FLAG(item, FLAG_UNPAID)) {
-                    unpaid_item = item;
-                    break;
-                }
-            }
+            unpaid_item = object_find_by_flag(tmp, FLAG_UNPAID);
             if (unpaid_item != NULL)
                 continue;
 

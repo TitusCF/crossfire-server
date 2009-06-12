@@ -1294,10 +1294,7 @@ static int check_good_weapon(object *who, object *item) {
     object *other_weap;
     int val = 0, i;
 
-    for (other_weap = who->inv; other_weap != NULL; other_weap = other_weap->below)
-        if (other_weap->type == item->type && QUERY_FLAG(other_weap, FLAG_APPLIED))
-            break;
-
+    other_weap = object_find_by_type_applied(who, item->type);
     if (other_weap == NULL) /* No other weapons */
         return 1;
 
@@ -1337,10 +1334,7 @@ static int check_good_armour(object *who, object *item) {
     object *other_armour;
     int val = 0, i;
 
-    for (other_armour = who->inv; other_armour != NULL; other_armour = other_armour->below)
-        if (other_armour->type == item->type && QUERY_FLAG(other_armour, FLAG_APPLIED))
-            break;
-
+    other_armour = object_find_by_type_applied(who, item->type);
     if (other_armour == NULL) /* No other armour, use the new */
         return 1;
 
@@ -1566,12 +1560,12 @@ void monster_check_apply(object *mon, object *item) {
         /* Check for the right kind of bow */
         object *bow;
 
-        for (bow = mon->inv; bow != NULL; bow = bow->below)
-            if (bow->type == BOW && bow->race == item->race) {
-                SET_FLAG(mon, FLAG_READY_BOW);
-                LOG(llevMonster, "Found correct bow for arrows.\n");
-                return;     /* nothing more to do for arrows */
-            }
+        bow = object_find_by_type_and_race(mon, BOW, item->race);
+        if (bow != NULL) {
+            SET_FLAG(mon, FLAG_READY_BOW);
+            LOG(llevMonster, "Found correct bow for arrows.\n");
+            return;     /* nothing more to do for arrows */
+        }
     }
 
     if (item->type == TREASURE && mon->will_apply&WILL_APPLY_TREASURE)

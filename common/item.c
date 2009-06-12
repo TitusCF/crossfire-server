@@ -950,10 +950,7 @@ void describe_monster(const object *op, char *retbuf, size_t size) {
          */
         object *tmp;
 
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-            if (tmp->type == SKILL && !strcmp(tmp->name, "clawing"))
-                break;
-
+        tmp = object_find_by_type_and_name(op, SKILL, "clawing");
         if (tmp && tmp->attacktype != 0) {
             DESCRIBE_ABILITY_SAFE(retbuf, tmp->attacktype, "Claws", &len, size);
         } else {

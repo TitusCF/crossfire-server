@@ -1932,13 +1932,10 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     if (op->type == PLAYER)
         bow = op->contr->ranges[range_bow];
     else {
-        for (bow = op->inv; bow; bow = bow->below)
-            /* Don't check for applied - monsters don't apply bows - in that way, they
-             * don't need to switch back and forth between bows and weapons.
-             */
-            if (bow->type == BOW)
-                break;
-
+        /* Don't check for applied - monsters don't apply bows - in that way, they
+         * don't need to switch back and forth between bows and weapons.
+         */
+        bow = object_find_by_type(op, BOW);
         if (!bow) {
             LOG(llevError, "Range: bow without activated bow (%s).\n", op->name);
             return 0;
@@ -2276,16 +2273,15 @@ object *find_key(object *pl, object *container, object *door) {
         return NULL;
 
     /* First, lets try to find a key in the top level inventory */
-    for (tmp = container->inv; tmp != NULL; tmp = tmp->below) {
-        if (door->type == DOOR && tmp->type == KEY)
-            break;
+    tmp = NULL;
+    if (door->type == DOOR) {
+        tmp = object_find_by_type(container, KEY);
+    }
+    if (!tmp) {
         /* For sanity, we should really check door type, but other stuff
          * (like containers) can be locked with special keys
          */
-        if (tmp->slaying
-        && tmp->type == SPECIAL_KEY
-        && tmp->slaying == door->slaying)
-            break;
+        tmp = object_find_by_type_and_slaying(container, SPECIAL_KEY, door->slaying);
     }
     /* No key found - lets search inventories now */
     /* If we find and use a key in an inventory, return at that time.
@@ -2895,26 +2891,26 @@ static int save_life(object *op) {
     if (!QUERY_FLAG(op, FLAG_LIFESAVE))
         return 0;
 
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        if (QUERY_FLAG(tmp, FLAG_APPLIED) && QUERY_FLAG(tmp, FLAG_LIFESAVE)) {
-            char name[MAX_BUF];
+    tmp = object_find_by_flag_applied(op, FLAG_LIFESAVE);
+    if (tmp != NULL) {
+        char name[MAX_BUF];
 
-            query_name(tmp, name, MAX_BUF);
-            play_sound_map(SOUND_TYPE_ITEM, tmp, 0, "evaporate");
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-                                 "Your %s vibrates violently, then evaporates.",
-                                 "Your %s vibrates violently, then evaporates.",
-                                 name);
-            object_remove(tmp);
-            object_free(tmp);
-            CLEAR_FLAG(op, FLAG_LIFESAVE);
-            if (op->stats.hp < 0)
-                op->stats.hp = op->stats.maxhp;
-            if (op->stats.food < 0)
-                op->stats.food = 999;
-            fix_object(op);
-            return 1;
-        }
+        query_name(tmp, name, MAX_BUF);
+        play_sound_map(SOUND_TYPE_ITEM, tmp, 0, "evaporate");
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+                             "Your %s vibrates violently, then evaporates.",
+                             "Your %s vibrates violently, then evaporates.",
+                             name);
+        object_remove(tmp);
+        object_free(tmp);
+        CLEAR_FLAG(op, FLAG_LIFESAVE);
+        if (op->stats.hp < 0)
+            op->stats.hp = op->stats.maxhp;
+        if (op->stats.food < 0)
+            op->stats.food = 999;
+        fix_object(op);
+        return 1;
+    }
     LOG(llevError, "Error: LIFESAVE set without applied object.\n");
     CLEAR_FLAG(op, FLAG_LIFESAVE);
     enter_player_savebed(op); /* bring him home. */
@@ -4012,15 +4008,12 @@ int op_on_battleground(object *op, int *x, int *y, archetype **trophy) {
                 if (EXIT_ALT_X(tmp) && EXIT_ALT_Y(tmp) && EXIT_PATH(tmp)) {
                     object *invtmp;
 
-                    for (invtmp = op->inv; invtmp != NULL; invtmp = invtmp->below) {
-                        if (invtmp->type == FORCE
-                        && invtmp->slaying
-                        && !strcmp(EXIT_PATH(tmp), invtmp->slaying)) {
-                            if (x != NULL && y != NULL)
-                                *x = EXIT_ALT_X(tmp),
+                    invtmp = object_find_by_type_and_slaying(op, FORCE, EXIT_PATH(tmp));
+                    if (invtmp != NULL) {
+                        if (x != NULL && y != NULL)
+                            *x = EXIT_ALT_X(tmp),
                                 *y = EXIT_ALT_Y(tmp);
-                            return 1;
-                        }
+                        return 1;
                     }
                 }
                 if (x != NULL && y != NULL)
@@ -4146,8 +4139,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
         object *skin;
 
         /* first get the dragon skin force */
-        for (skin = who->inv; skin != NULL && strcmp(skin->arch->name, "dragon_skin_force") != 0; skin = skin->below)
-            ;
+        skin = object_find_by_arch_name(who, "dragon_skin_force");
         if (skin == NULL)
             return;
 

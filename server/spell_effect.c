@@ -525,11 +525,8 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
     object *tmp, *missile;
     tag_t tag;
 
-    missile_name = "arrow";
-
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->type == BOW && QUERY_FLAG(tmp, FLAG_APPLIED))
-            missile_name = tmp->race;
+    tmp = object_find_by_type_applied(op, BOW);
+    missile_name = tmp != NULL ? tmp->race : "arrow";
 
     missile_plus = spell->stats.dam+SP_level_dam_adjust(caster, spell);
 
@@ -1071,17 +1068,15 @@ int perceive_self(object *op) {
 
     if (is_dragon_pl(op)) {
         /* now grab the 'dragon_ability'-force from the player's inventory */
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-            if (tmp->type == FORCE && !strcmp(tmp->arch->name, "dragon_ability_force")) {
-                if (tmp->stats.exp == 0) {
-                    snprintf(buf, sizeof(buf), "Your metabolism isn't focused on anything.");
-                } else {
-                    snprintf(buf, sizeof(buf), "Your metabolism is focused on %s.", change_resist_msg[tmp->stats.exp]);
-                }
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
-                              buf, buf);
-                break;
+        tmp = object_find_by_type_and_arch_name(op, FORCE, "dragon_ability_force");
+        if (tmp != NULL) {
+            if (tmp->stats.exp == 0) {
+                snprintf(buf, sizeof(buf), "Your metabolism isn't focused on anything.");
+            } else {
+                snprintf(buf, sizeof(buf), "Your metabolism is focused on %s.", change_resist_msg[tmp->stats.exp]);
             }
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
+                          buf, buf);
         }
     }
     return 1;

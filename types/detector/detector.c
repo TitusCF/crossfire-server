@@ -53,7 +53,7 @@ void init_type_detector(void) {
  * detector to move.
  */
 static void move_detector(object *op) {
-    object *tmp, *tmp2;
+    object *tmp;
     int last = op->value;
     int detected;
     detected = 0;
@@ -72,15 +72,10 @@ static void move_detector(object *op) {
 
     for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
         if (op->stats.hp) {
-            for (tmp2 = tmp->inv; tmp2; tmp2 = tmp2->below) {
-                if (op->slaying == tmp2->name) {
-                    detected = 1;
-                    break;
-                }
-                if (tmp2->type == FORCE && tmp2->slaying == op->slaying) {
-                    detected = 1;
-                    break;
-                }
+            if (object_find_by_name(tmp, op->slaying) != NULL
+            || object_find_by_type_and_slaying(tmp, FORCE, op->slaying)) {
+                detected = 1;
+                break;
             }
         }
         if (op->slaying == tmp->name) {

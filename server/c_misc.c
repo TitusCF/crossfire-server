@@ -1763,20 +1763,18 @@ int command_resistances(object *op, char *params) {
         int attack;
         object *tmp;
 
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-            if ((tmp->type == FORCE) && (strcmp(tmp->arch->name, "dragon_skin_force") == 0)) {
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                              i18n_translate(get_language(op), I18N_MSG_CMISC_170), NULL);
+        tmp = object_find_by_type_and_arch_name(op, FORCE, "dragon_skin_force");
+        if (tmp != NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_170), NULL);
 
-                for (attack = 0; attack < NROFATTACKS; attack++) {
-                    if (atnr_is_dragon_enabled(attack)) {
-                        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                                             i18n_translate(get_language(op), I18N_MSG_CMISC_171),
-                                             i18n_translate(get_language(op), I18N_MSG_CMISC_171),
-                                             change_resist_msg[attack], tmp->resist[attack]);
-                    }
+            for (attack = 0; attack < NROFATTACKS; attack++) {
+                if (atnr_is_dragon_enabled(attack)) {
+                    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                                         i18n_translate(get_language(op), I18N_MSG_CMISC_171),
+                                         i18n_translate(get_language(op), I18N_MSG_CMISC_171),
+                                         change_resist_msg[attack], tmp->resist[attack]);
                 }
-                break;
             }
         }
     }

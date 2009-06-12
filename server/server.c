@@ -845,10 +845,7 @@ void enter_exit(object *op, object *exit_ob) {
             /* mids 02/13/2002 if exit is damned, update players death & WoR home-position and delete town portal */
             if (QUERY_FLAG(exit_ob, FLAG_DAMNED)) {
                 /* remove an old force with a slaying field == PORTAL_DESTINATION_NAME */
-                for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-                    if (tmp->type == FORCE && tmp->slaying && !strcmp(tmp->slaying, PORTAL_DESTINATION_NAME))
-                        break;
-                }
+                tmp = object_find_by_type_and_slaying(op, FORCE, PORTAL_DESTINATION_NAME);
                 if (tmp) {
                     object_remove(tmp);
                     object_free(tmp);

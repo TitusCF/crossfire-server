@@ -167,12 +167,7 @@ sint64 new_exp(const object *ob) {
  * 1 if monster has any innate abilities, 0 else
  */
 int has_ability(const object *ob) {
-    object *tmp;
-
-    for (tmp = ob->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->type == SPELL || tmp->type == SPELLBOOK)
-            return TRUE;
-    return FALSE;
+    return object_find_by_type(ob, SPELL) != NULL || object_find_by_type(ob, SPELLBOOK) != NULL;
 }
 
 /**

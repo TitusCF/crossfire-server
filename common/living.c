@@ -1752,17 +1752,10 @@ void set_dragon_name(object *pl, const object *abil, const object *skin) {
 static void dragon_level_gain(object *who) {
     object *abil = NULL;    /* pointer to dragon ability force*/
     object *skin = NULL;    /* pointer to dragon skin force*/
-    object *tmp = NULL;     /* tmp. object */
 
     /* now grab the 'dragon_ability'-forces from the player's inventory */
-    for (tmp = who->inv; tmp != NULL; tmp = tmp->below) {
-        if (tmp->type == FORCE) {
-            if (strcmp(tmp->arch->name, "dragon_ability_force") == 0)
-                abil = tmp;
-            if (strcmp(tmp->arch->name, "dragon_skin_force") == 0)
-                skin = tmp;
-        }
-    }
+    abil = object_find_by_type_and_arch_name(who, FORCE, "dragon_ability_force");
+    skin = object_find_by_type_and_arch_name(who, FORCE, "dragon_skin_force");
     /* if the force is missing -> bail out */
     if (abil == NULL)
         return;

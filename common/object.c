@@ -3643,6 +3643,315 @@ object *object_create_clone(object *asrc) {
 }
 
 /**
+ * Finds an object in inventory by type and name name.
+ *
+ * @param who
+ * the object to search
+ * @param name
+ * name to search for
+ * @return
+ * the first object which has a type and name equal to the argument.
+ */
+object *object_find_by_name(const object *who, const char *name) {
+    const char *name_shared = add_string(name);
+    object *tmp;
+
+    for (tmp = who->inv; tmp; tmp = tmp->below)
+        if (tmp->name == name_shared)
+            break;
+    free_string(name_shared);
+    return tmp;
+}
+
+/**
+ * Find object in inventory.
+ *
+ * @param who
+ * where to search.
+ * @param type
+ * what to search.
+ * @return
+ * first object in who's inventory that has the same type match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_type(const object *who, int type) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp; tmp = tmp->below)
+        if (tmp->type == type)
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory.
+ *
+ * @param who
+ * where to search.
+ * @param type1
+ * what to search.
+ * @param type2
+ * what to search.
+ * @return
+ * first object in who's inventory that has either type match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_type2(const object *who, int type1, int type2) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp; tmp = tmp->below)
+        if (tmp->type == type1 || tmp->type == type2)
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory.
+ *
+ * @param who
+ * where to search.
+ * @param tag
+ * what to search.
+ * @return
+ * first object in who's inventory that has the given tag. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_tag(const object *who, tag_t tag) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp; tmp = tmp->below)
+        if (tmp->count == tag)
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find applied object in inventory.
+ *
+ * @param who
+ * where to search.
+ * @param type
+ * what to search.
+ * @return
+ * first object in who's inventory that has the same type match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_type_applied(const object *who, int type) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (tmp->type == type && QUERY_FLAG(tmp, FLAG_APPLIED))
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory by type and name.
+ *
+ * @param who
+ * where to search.
+ * @param type
+ * what to search.
+ * @param name
+ * what to search
+ * @return
+ * first object in who's inventory that has the same type and name match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_type_and_name(const object *who, int type, const char *name) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (tmp->type == type && strcmp(tmp->name, name) == 0)
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory by type and race.
+ *
+ * @param who
+ * where to search.
+ * @param type
+ * what to search.
+ * @param race
+ * what to search
+ * @return
+ * first object in who's inventory that has the same type and race match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_type_and_race(const object *who, int type, const char *race) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (tmp->type == type && strcmp(tmp->race, race) == 0)
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory by type and slaying.
+ *
+ * @param who
+ * where to search.
+ * @param type
+ * what to search.
+ * @param slaying
+ * what to search
+ * @return
+ * first object in who's inventory that has the same type and slaying match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_type_and_slaying(const object *who, int type, const char *slaying) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (tmp->type == type && tmp->slaying != NULL && strcmp(tmp->slaying, slaying) == 0)
+            break;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory by type and skill.
+ *
+ * @param who
+ * where to search.
+ * @param type
+ * what to search.
+ * @param skill
+ * what to search
+ * @return
+ * first object in who's inventory that has the same type and skill match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_type_and_skill(const object *who, int type, const char *skill) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (tmp->type == SKILL && tmp->skill != NULL && strcmp(tmp->skill, skill) == 0)
+            break;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory by flag.
+ *
+ * @param who
+ * where to search.
+ * @param flag
+ * what to search.
+ * @return
+ * first object in who's inventory that has the flag set. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_flag(const object *who, int flag) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (QUERY_FLAG(tmp, flag))
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find applied object in inventory by flag.
+ *
+ * @param who
+ * where to search.
+ * @param flag
+ * what to search.
+ * @return
+ * first object in who's inventory that has the flag set and is applied. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_flag_applied(const object *who, int flag) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (QUERY_FLAG(tmp, FLAG_APPLIED) && QUERY_FLAG(tmp, flag))
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory by archetype name.
+ *
+ * @param who
+ * where to search.
+ * @param name
+ * what to search.
+ * @return
+ * first object in who's inventory that has the archetype name match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_arch_name(const object *who, const char *name) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (strcmp(tmp->arch->name, name) == 0)
+            return tmp;
+
+    return NULL;
+}
+
+/**
+ * Find object in inventory by type and archetype name.
+ *
+ * @param who
+ * where to search.
+ * @param type
+ * what to search.
+ * @param name
+ * what to search.
+ * @return
+ * first object in who's inventory that has the type and archetype name match. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of items in inventory.
+ */
+object *object_find_by_type_and_arch_name(const object *who, int type, const char *name) {
+    object *tmp;
+
+    for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
+        if (tmp->type == type && strcmp(tmp->arch->name, name) == 0)
+            return tmp;
+
+    return NULL;
+}
+
+/**
  * Find object in inventory.
  *
  * @param who

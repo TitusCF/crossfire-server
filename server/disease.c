@@ -265,15 +265,10 @@ static void remove_symptoms(object *disease) {
  * matching symptom object, NULL if none found.
  */
 static object *find_symptom(object *disease) {
-    object *walk;
-
     assert(disease->env != NULL);
 
     /* check the inventory for symptoms */
-    for (walk = disease->env->inv; walk; walk = walk->below)
-        if (!strcmp(walk->name, disease->name) && walk->type == SYMPTOM)
-            return walk;
-    return NULL;
+    return object_find_by_type_and_name(disease->env, SYMPTOM, disease->name);
 }
 
 /**
@@ -359,10 +354,6 @@ int infect_object(object *victim, object *disease, int force) {
         return 0;
 
     /* do an immunity check */
-    if (victim->head)
-        tmp = victim->head->inv;
-    else
-        tmp = victim->inv;
 
     /* There used to (IMO) be a flaw in the below - it used to be the case
      * that if level check was done for both immunity and disease. This could
@@ -371,13 +362,12 @@ int infect_object(object *victim, object *disease, int force) {
      * they were cast in that same order.  Instead, change it so that
      * if you diseased, you can't get diseased more.
      */
-
-    for (/* tmp initialized in if, above */; tmp; tmp = tmp->below) {
-        if (tmp->type == SIGN && !strcmp(tmp->name, disease->name) && tmp->level >= disease->level)
-            return 0;  /*Immune! */
-        else if (tmp->type == DISEASE && !strcmp(tmp->name, disease->name))
-            return 0; /* already diseased */
-    }
+    tmp = object_find_by_type_and_name(victim->head != NULL ? victim->head : victim, SIGN, disease->name);
+    if (tmp != NULL && tmp->level >= disease->level)
+        return 0;  /*Immune! */
+    tmp = object_find_by_type_and_name(victim->head != NULL ? victim->head : victim, DISEASE, disease->name);
+    if (tmp != NULL)
+        return 0; /* already diseased; XXX: increase disease level? */
 
     /*  If we've gotten this far, go ahead and infect the victim.  */
     new_disease = object_new();
@@ -478,16 +468,9 @@ static void do_symptoms(object *disease) {
 
         /* check for an actual immunity */
         /* do an immunity check */
-        if (victim->head)
-            tmp = victim->head->inv;
-        else
-            tmp = victim->inv;
-
-        for (/* tmp initialized in if, above */; tmp; tmp = tmp->below) {
-            if (tmp->type == SIGN) /* possibly an immunity, or diseased*/
-                if (!strcmp(tmp->name, disease->name) && tmp->level >= disease->level)
-                    return;  /*Immune! */
-        }
+        tmp = object_find_by_type_and_name(victim->head != NULL ? victim->head : victim, SIGN, disease->name);
+        if (tmp != NULL && tmp->level >= disease->level)
+            return;  /*Immune! */
 
         new_symptom = create_archetype(ARCH_SYMPTOM);
 
@@ -585,7 +568,6 @@ static void do_symptoms(object *disease) {
  */
 static void grant_immunity(object *disease) {
     object *immunity;
-    object *walk;
 
     /* Don't give immunity to this disease if last_heal is set. */
     if (disease->last_heal)
@@ -594,11 +576,10 @@ static void grant_immunity(object *disease) {
     assert(disease->env != NULL);
 
     /*  first, search for an immunity of the same name */
-    for (walk = disease->env->inv; walk; walk = walk->below) {
-        if (walk->type == SIGN && !strcmp(disease->name, walk->name)) {
-            walk->level = disease->level;
-            return; /* just update the existing immunity. */
-        }
+    immunity = object_find_by_type_and_name(disease->env, SIGN, disease->name);
+    if (immunity != NULL) {
+        immunity->level = disease->level;
+        return; /* just update the existing immunity. */
     }
     immunity = create_archetype("immunity");
     immunity->name = add_string(disease->name);

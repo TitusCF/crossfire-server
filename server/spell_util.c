@@ -408,13 +408,7 @@ int SP_level_range_adjust(const object *caster, const object *spob) {
  * 1 if op knows the spell, 0 if it don't.
  */
 object *check_spell_known(object *op, const char *name) {
-    object *spop;
-
-    for (spop = op->inv; spop; spop = spop->below)
-        if (spop->type == SPELL && !strcmp(spop->name, name))
-            return spop;
-
-    return NULL;
+    return object_find_by_type_and_name(op, SPELL, name);
 }
 
 /**

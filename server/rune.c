@@ -322,7 +322,7 @@ void spring_trap(object *trap, object *victim) {
  */
 int dispel_rune(object *op, object *caster, object *spell, object *skill, int dir) {
     object *tmp, *tmp2;
-    int searchflag = 1, mflags;
+    int mflags;
     sint16 x, y;
     mapstruct *m;
 
@@ -368,15 +368,11 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
         /* now search tmp's inventory for traps
          * This is for chests, where the rune is in the chests inventory.
          */
-        for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below) {
-            if (tmp2->type == RUNE || tmp2->type == TRAP) {
-                tmp = tmp2;
-                searchflag = 0;
-                break;
-            }
-        }
-        if (!searchflag)
+        tmp2 = object_find_by_type2(tmp, RUNE, TRAP);
+        if (tmp2 != NULL) {
+            tmp = tmp2;
             break;
+        }
     }
 
     /* no rune there. */

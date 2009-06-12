@@ -161,13 +161,10 @@ const char *determine_god(object *op) {
     if (op->type == PLAYER) {
         object *tmp;
 
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-            if (tmp->type == SKILL && tmp->subtype == SK_PRAYING) {
-                if (tmp->title)
-                    return (tmp->title);
-                else
-                    return("none");
-            }
+        tmp = object_find_by_type_subtype(op, SKILL, SK_PRAYING);
+        if (tmp != NULL) {
+            return tmp->title != NULL ? tmp->title : "none";
+        }
     }
     return ("none");
 }
@@ -557,10 +554,7 @@ void become_follower(object *op, const object *new_god) {
                          "You become a follower of %s!",
                          new_god->name);
 
-    for (skop = op->inv; skop != NULL; skop = skop->below)
-        if (skop->type == SKILL && skop->subtype == SK_PRAYING)
-            break;
-
+    skop = object_find_by_type_subtype(op, SKILL, SK_PRAYING);
     /* Player has no skill - give them the skill */
     if (!skop) {
         /* The archetype should always be defined - if we crash here because it doesn't,
@@ -919,10 +913,9 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
     object *weapon;
     uint32 attacktype;
 
-    for (weapon = op->inv; weapon; weapon = weapon->below)
-        if ((weapon->type == WEAPON || weapon->type == BOW)
-        && QUERY_FLAG(weapon, FLAG_APPLIED))
-            break;
+    weapon = object_find_by_type_applied(op, WEAPON);
+    if (weapon == NULL)
+        weapon = object_find_by_type_applied(op, BOW);
     if (weapon == NULL || god_examines_item(god, weapon) <= 0)
         return 0;
 
@@ -1274,10 +1267,7 @@ static int god_examines_priest(object *op, const object *god) {
         int loss = 10000000;
         int angry = abs(reaction);
 
-        for (skop = op->inv; skop != NULL; skop = skop->below)
-            if (skop->type == SKILL && skop->subtype == SK_PRAYING)
-                break;
-
+        skop = object_find_by_type_subtype(op, SKILL, SK_PRAYING);
         if (skop)
             loss = 0.05*(float)skop->stats.exp;
         change_exp(op, -random_roll(0, loss*angry-1, op, PREFER_LOW), skop ? skop->skill : "none", SK_SUBTRACT_SKILL_EXP);

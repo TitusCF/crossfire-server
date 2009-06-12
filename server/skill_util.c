@@ -439,10 +439,7 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
      * the player doesn't have a bucket for that, create one.
      */
     if (skill->type != SKILL && op->type == PLAYER) {
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-            if (tmp->type == SKILL && tmp->skill == skill->skill)
-                break;
-        }
+        tmp = object_find_by_type_and_skill(op, SKILL, skill->skill);
         if (!tmp)
             tmp = give_skill_by_name(op, skill->skill);
         skill = tmp;
@@ -1100,10 +1097,7 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                 object *tmp;
 
                 LOG(llevError, "Player %s does not have current weapon set but flag_ready_weapon is set\n", op->name);
-                for (tmp = op->inv; tmp; tmp = tmp->below)
-                    if (tmp->type == WEAPON && QUERY_FLAG(tmp, FLAG_APPLIED))
-                        break;
-
+                tmp = object_find_by_type_applied(op, WEAPON);
                 if (!tmp) {
                     LOG(llevError, "Could not find applied weapon on %s\n", op->name);
                     op->current_weapon = NULL;
@@ -1266,26 +1260,25 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
 static int attack_hth(object *pl, int dir, const char *string, object *skill) {
     object *enemy = NULL, *weapon;
 
-    if (QUERY_FLAG(pl, FLAG_READY_WEAPON))
-        for (weapon = pl->inv; weapon; weapon = weapon->below) {
-            if (weapon->type == WEAPON && QUERY_FLAG(weapon, FLAG_APPLIED)) {
-                if (apply_special(pl, weapon, AP_UNAPPLY|AP_NOPRINT)) {
-                    char weaponname[MAX_BUF];
+    if (QUERY_FLAG(pl, FLAG_READY_WEAPON)) {
+        weapon = object_find_by_type_applied(pl, WEAPON);
+        if (weapon != NULL) {
+            if (apply_special(pl, weapon, AP_UNAPPLY|AP_NOPRINT)) {
+                char weaponname[MAX_BUF];
 
-                    query_name(weapon, weaponname, MAX_BUF);
-                    draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                         MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                                         "You are unable to unwield %s in order to attack with %s.",
-                                         "You are unable to unwield %s in order to attack with %s.",
-                                         weaponname, skill->name);
-                    return 0;
-                } else {
-                    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                                  "You unwield your weapon in order to attack.", NULL);
-                    break;
-                }
+                query_name(weapon, weaponname, MAX_BUF);
+                draw_ext_info_format(NDI_UNIQUE, 0, pl,
+                                     MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                                     "You are unable to unwield %s in order to attack with %s.",
+                                     "You are unable to unwield %s in order to attack with %s.",
+                                     weaponname, skill->name);
+                return 0;
+            } else {
+                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                              "You unwield your weapon in order to attack.", NULL);
             }
         }
+    }
     return skill_attack(enemy, pl, dir, string, skill);
 }
 

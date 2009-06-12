@@ -108,9 +108,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
          * if that is the case, we don't want to reset the face, as the
          * transport is still occupied.
          */
-        for (inv = old_transport->inv; inv; inv = inv->below)
-            if (inv->type == PLAYER)
-                break;
+        inv = object_find_by_type(old_transport, PLAYER);
         if (!inv) {
             old_transport->face = old_transport->arch->clone.face;
             old_transport->animation_id = old_transport->arch->clone.animation_id;

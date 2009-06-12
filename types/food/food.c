@@ -255,14 +255,8 @@ static int dragon_eat_flesh(object *op, object *meal) {
     /* now grab the 'dragon_skin'- and 'dragon_ability'-forces
      * from the player's inventory
      */
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-        if (tmp->type == FORCE) {
-            if (strcmp(tmp->arch->name, "dragon_skin_force") == 0)
-                skin = tmp;
-            else if (strcmp(tmp->arch->name, "dragon_ability_force") == 0)
-                abil = tmp;
-        }
-    }
+    skin = object_find_by_type_and_arch_name(op, FORCE, "dragon_skin_force");
+    abil = object_find_by_type_and_arch_name(op, FORCE, "dragon_ability_force");
 
     /* if either skin or ability are missing, this is an old player
      * which is not to be considered a dragon -> bail out

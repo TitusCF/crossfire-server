@@ -1907,15 +1907,14 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     if (!simple_attack && op->type == DOOR) {
         object *tmp;
 
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-            if (tmp->type == RUNE || tmp->type == TRAP) {
-                spring_trap(tmp, hitter);
-                if (object_was_destroyed(hitter, hitter_tag)
-                || object_was_destroyed(op, op_tag)
-                || abort_attack(op, hitter, simple_attack))
-                    return 0;
-                break;
-            }
+        tmp = object_find_by_type2(op, RUNE, TRAP);
+        if (tmp != NULL) {
+            spring_trap(tmp, hitter);
+            if (object_was_destroyed(hitter, hitter_tag)
+            || object_was_destroyed(op, op_tag)
+            || abort_attack(op, hitter, simple_attack))
+                return 0;
+        }
     }
 
     if (!QUERY_FLAG(op, FLAG_ALIVE) || op->stats.hp < 0) {
