@@ -214,7 +214,7 @@ static object *find_object_both(char *params) {
     if (params[0] == '#')
         return object_find_by_tag(atol(params+1));
     else
-        return object_find_by_name(params);
+        return object_find_by_name_global(params);
 }
 
 /**
@@ -1240,7 +1240,7 @@ int command_possess(object *op, char *params) {
         if (sscanf(params, "%d", &i))
             victim = object_find_by_tag(i);
         else if (sscanf(params, "%s", buf))
-            victim = object_find_by_name(buf);
+            victim = object_find_by_name_global(buf);
     }
     if (victim == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,

@@ -3319,7 +3319,7 @@ void *cfapi_object_find(int *type, ...) {
 
     case 1:
         sval = va_arg(args, char *);
-        rv = object_find_by_name(sval);
+        rv = object_find_by_name_global(sval);
         break;
 
     case 2:

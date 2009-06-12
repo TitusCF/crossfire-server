@@ -456,7 +456,7 @@ object *object_find_by_tag(tag_t i) {
  * @return
  * the first object which has a name equal to the argument.
  */
-object *object_find_by_name(const char *str) {
+object *object_find_by_name_global(const char *str) {
     const char *name = add_string(str);
     object *op;
 

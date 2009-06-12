@@ -249,9 +249,9 @@ START_TEST(test_object_find_by_tag) {
 END_TEST
 
 /** This is the test to check the behaviour of the method
- *  object *object_find_by_name(const char *str);
+ *  object *object_find_by_name_global(const char *str);
  */
-START_TEST(test_object_find_by_name) {
+START_TEST(test_object_find_by_name_global) {
     object *ob1;
     object *result;
 
@@ -261,7 +261,7 @@ START_TEST(test_object_find_by_name) {
     ob1->name = add_string("This is another name");
     ob1 = cctk_create_game_object(NULL);
     ob1->name = add_string("This is the key name");
-    result = object_find_by_name(add_string("This is the key name"));
+    result = object_find_by_name_global(add_string("This is the key name"));
     fail_unless(result == ob1, "Searching for object with name 'This is the key name' returned %p(%s) instead of ob1(%p)", result, result ? result->name : "null", ob1);
 }
 END_TEST
@@ -1205,7 +1205,7 @@ Suite *object_suite(void) {
     tcase_add_test(tc_core, test_object_dump);
     tcase_add_test(tc_core, test_object_dump_all);
     tcase_add_test(tc_core, test_object_find_by_tag);
-    tcase_add_test(tc_core, test_object_find_by_name);
+    tcase_add_test(tc_core, test_object_find_by_name_global);
     tcase_add_test(tc_core, test_object_free_all_data);
     tcase_add_test(tc_core, test_object_get_owner);
     tcase_add_test(tc_core, test_object_clear_owner);
