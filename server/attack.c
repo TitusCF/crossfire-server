@@ -983,26 +983,26 @@ object *hit_with_arrow(object *op, object *victim) {
 
     /* Disassemble missile */
     for (hitter = op->inv; hitter; hitter = hitter->below) {
-        if (hitter->type == EVENT_CONNECTOR)
-            continue;
-        container = op;
-        /* 11-2007, commented seems buggy
-        hitter = op->inv;*/
-        object_remove(hitter);
-        if (free_no_drop(hitter))
-            return NULL;
-        object_insert_in_map(hitter, container->map, hitter, INS_NO_MERGE|INS_NO_WALK_ON);
-        break;
-        /* Note that we now have an empty THROWN_OBJ on the map.  Code that
-         * might be called until this THROWN_OBJ is either reassembled or
-         * removed at the end of this function must be able to deal with empty
-         * THROWN_OBJs. */
+        if (hitter->type != EVENT_CONNECTOR) {
+            break;
+        }
     }
     if (!hitter) {
         container = NULL;
         hitter = op;
         if (free_no_drop(hitter))
             return NULL;
+    } else {
+        container = op;
+        object_remove(hitter);
+        if (free_no_drop(hitter))
+            return NULL;
+
+        object_insert_in_map(hitter, container->map, hitter, INS_NO_MERGE|INS_NO_WALK_ON);
+        /* Note that we now have an empty THROWN_OBJ on the map.  Code that
+         * might be called until this THROWN_OBJ is either reassembled or
+         * removed at the end of this function must be able to deal with empty
+         * THROWN_OBJs. */
     }
 
     /* Try to hit victim */
