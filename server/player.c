@@ -2301,8 +2301,7 @@ object *find_key(object *pl, object *container, object *door) {
                     return key;
             }
         }
-        if (!tmp)
-            return NULL;
+        return NULL;
     }
     /* We get down here if we have found a key.  Now if its in a container,
      * see if we actually want to use it
