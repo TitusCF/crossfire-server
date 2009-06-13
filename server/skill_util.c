@@ -1267,7 +1267,7 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
  * 0 if no attack was done, non zero else.
  */
 static int attack_hth(object *pl, int dir, const char *string, object *skill) {
-    object *enemy = NULL, *weapon;
+    object *weapon;
 
     if (QUERY_FLAG(pl, FLAG_READY_WEAPON)) {
         weapon = object_find_by_type_applied(pl, WEAPON);
@@ -1288,7 +1288,7 @@ static int attack_hth(object *pl, int dir, const char *string, object *skill) {
             }
         }
     }
-    return skill_attack(enemy, pl, dir, string, skill);
+    return skill_attack(NULL, pl, dir, string, skill);
 }
 
 /**
