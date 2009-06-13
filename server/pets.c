@@ -374,7 +374,10 @@ void pets_move(object *ob) {
                 break;
         }
     } else {
-        dir = find_dir_2(ob->x-ob->owner->x, ob->y-ob->owner->y);
+        rv_vector rv;
+
+        get_rangevector(ob, owner, &rv, 0);
+        dir = rv.direction;
     }
     ob->direction = dir;
 
