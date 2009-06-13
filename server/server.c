@@ -306,7 +306,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     /* since the players map is already loaded, we don't need to worry
      * about pending objects.
      */
-    remove_all_pets();
+    pets_remove_all();
 
     /* If the player is changing maps, we need to do some special things
      * Do this after the player is on the new map - otherwise the force swap of the

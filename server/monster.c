@@ -115,8 +115,8 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
             npc->enemy = NULL;
 
         else if (QUERY_FLAG(npc, FLAG_FRIENDLY) && (
-                (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !(should_arena_attack(npc, npc->owner, npc->enemy)))
-                || ((npc->enemy->type == PLAYER) && !(should_arena_attack(npc, npc->owner, npc->enemy)))
+                (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !(pets_should_arena_attack(npc, npc->owner, npc->enemy)))
+                || ((npc->enemy->type == PLAYER) && !(pets_should_arena_attack(npc, npc->owner, npc->enemy)))
                 || npc->enemy == npc->owner))
             npc->enemy = NULL;
         else if (!QUERY_FLAG(npc, FLAG_FRIENDLY)
@@ -242,7 +242,7 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
 
     /* pet move */
     if ((npc->attack_movement&HI4) == PETMOVE) {
-        tmp = get_pet_enemy(npc, rv);
+        tmp = pets_get_enemy(npc, rv);
         if (tmp)
             get_rangevector(npc, tmp, rv, 0);
         return tmp;
@@ -511,7 +511,7 @@ static int monster_move_no_enemy(object *op) {
         if (op->attack_movement&HI4) {
             switch (op->attack_movement&HI4) {
             case(PETMOVE):
-                pet_move(op);
+                pets_move(op);
                 break;
 
             case(CIRCLE1):
@@ -615,7 +615,7 @@ int monster_move(object *op) {
 
     /* We have an enemy.  Block immediately below is for pets */
     if ((op->attack_movement&HI4) == PETMOVE && (owner = object_get_owner(op)) != NULL && !on_same_map(op, owner)) {
-        follow_owner(op, owner);
+        pets_follow_owner(op, owner);
         /* If the pet was unable to follow the owner, free it */
         if (QUERY_FLAG(op, FLAG_REMOVED) && FABS(op->speed) > MIN_ACTIVE_SPEED) {
             remove_friendly_object(op);

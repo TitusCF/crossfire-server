@@ -427,7 +427,7 @@ void do_server(void) {
 
             save_player(pl->ob, 0);
             if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
-                terminate_all_pets(pl->ob);
+                pets_terminate_all(pl->ob);
                 object_remove(pl->ob);
             }
             leave(pl, 1);
@@ -553,7 +553,7 @@ void do_server(void) {
         if (FD_ISSET(pl->socket.fd, &tmp_exceptions)) {
             save_player(pl->ob, 0);
             if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
-                terminate_all_pets(pl->ob);
+                pets_terminate_all(pl->ob);
                 object_remove(pl->ob);
             }
             leave(pl, 1);
@@ -580,7 +580,7 @@ void do_server(void) {
             if (pl->socket.status == Ns_Dead) {
                 save_player(pl->ob, 0);
                 if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
-                    terminate_all_pets(pl->ob);
+                    pets_terminate_all(pl->ob);
                     object_remove(pl->ob);
                 }
                 leave(pl, 1);

@@ -56,7 +56,7 @@ method_ret legacy_ob_process(ob_methods *context, object *op) {
         return METHOD_OK;
 
     case GOLEM:
-        move_golem(op);
+        pets_move_golem(op);
         return METHOD_OK;
 
     case EARTHWALL:

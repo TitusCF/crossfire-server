@@ -2964,7 +2964,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
 
     /* if player already has a golem, abort */
     if (op->contr->ranges[range_golem] != NULL && op->contr->golem_count == op->contr->ranges[range_golem]->count) {
-        control_golem(op->contr->ranges[range_golem], dir);
+        pets_control_golem(op->contr->ranges[range_golem], dir);
         return 0;
     }
 

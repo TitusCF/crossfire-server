@@ -159,7 +159,7 @@ int swap_map(mapstruct *map) {
         LOG(llevDebug, "Wanted to swap out map with player.\n");
         return SAVE_ERROR_PLAYER;
     }
-    remove_all_pets(); /* Give them a chance to follow */
+    pets_remove_all(); /* Give them a chance to follow */
 
     /* Update the reset time.  Only do this is STAND_STILL is not set */
     if (!map->fixed_resettime)

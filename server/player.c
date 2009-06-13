@@ -1289,7 +1289,7 @@ void key_confirm_quit(object *op, char key) {
 
     /* Lauwenmark : Here we handle the REMOVE global event */
     execute_global_event(EVENT_REMOVE, op);
-    terminate_all_pets(op);
+    pets_terminate_all(op);
     object_remove(op);
     op->direction = 0;
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
@@ -2216,7 +2216,7 @@ void fire(object *op, int dir) {
             op->contr->shoottype = range_none;
             op->contr->golem_count = 0;
         } else
-            control_golem(op->contr->ranges[range_golem], dir);
+            pets_control_golem(op->contr->ranges[range_golem], dir);
         return;
 
     case range_skill:

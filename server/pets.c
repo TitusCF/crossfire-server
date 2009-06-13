@@ -62,7 +62,7 @@ static void mark_inventory_as_no_drop(object *ob) {
  * @return
  * enemy, or NULL if nothing suitable.
  */
-object *get_pet_enemy(object *pet, rv_vector *rv) {
+object *pets_get_enemy(object *pet, rv_vector *rv) {
     object *owner, *tmp, *attacker, *tmp3;
     int i;
     sint16 x, y;
@@ -143,7 +143,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
                 object *tmp2 = tmp->head == NULL ? tmp : tmp->head;
 
                 if (QUERY_FLAG(tmp2, FLAG_ALIVE)
-                && ((!QUERY_FLAG(tmp2, FLAG_FRIENDLY) && tmp2->type != PLAYER) || should_arena_attack(pet, owner, tmp2))
+                && ((!QUERY_FLAG(tmp2, FLAG_FRIENDLY) && tmp2->type != PLAYER) || pets_should_arena_attack(pet, owner, tmp2))
                 && !QUERY_FLAG(tmp2, FLAG_UNAGGRESSIVE)
                 && tmp2 != pet
                 && tmp2 != owner
@@ -206,7 +206,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
                 FOR_MAP_PREPARE(nm, x, y, tmp) {
                     object *tmp2 = tmp->head == NULL ? tmp : tmp->head;
                     if (QUERY_FLAG(tmp2, FLAG_ALIVE)
-                    && ((!QUERY_FLAG(tmp2, FLAG_FRIENDLY) && tmp2->type != PLAYER) || should_arena_attack(pet, owner, tmp2))
+                    && ((!QUERY_FLAG(tmp2, FLAG_FRIENDLY) && tmp2->type != PLAYER) || pets_should_arena_attack(pet, owner, tmp2))
                     && !QUERY_FLAG(tmp2, FLAG_UNAGGRESSIVE)
                     && tmp2 != pet
                     && tmp2 != owner
@@ -247,7 +247,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
  * @param owner
  * player we wish to remove all pets of.
  */
-void terminate_all_pets(object *owner) {
+void pets_terminate_all(object *owner) {
     objectlink *obl, *next;
 
     for (obl = first_friendly_object; obl != NULL; obl = next) {
@@ -270,7 +270,7 @@ void terminate_all_pets(object *owner) {
  * Thus the map isn't loaded yet, and we have to remove
  * the pet...
  */
-void remove_all_pets(void) {
+void pets_remove_all(void) {
     objectlink *obl, *next;
     object *owner;
 
@@ -281,9 +281,9 @@ void remove_all_pets(void) {
         && (owner = object_get_owner(obl->ob)) != NULL
         && !on_same_map(owner, obl->ob)) {
             /* follow owner checks map status for us.  Note that pet can
-             * die in follow_owner, so check for obl->ob existence
+             * die in pets_follow_owner(), so check for obl->ob existence
              */
-            follow_owner(obl->ob, owner);
+            pets_follow_owner(obl->ob, owner);
             if (obl->ob && QUERY_FLAG(obl->ob, FLAG_REMOVED) && FABS(obl->ob->speed) > MIN_ACTIVE_SPEED) {
                 object *ob = obl->ob;
 
@@ -303,7 +303,7 @@ void remove_all_pets(void) {
  * @param owner
  * owner of ob.
  */
-void follow_owner(object *ob, object *owner) {
+void pets_follow_owner(object *ob, object *owner) {
     object *tmp;
     int dir;
 
@@ -345,7 +345,7 @@ void follow_owner(object *ob, object *owner) {
  * @param ob
  * pet to move.
  */
-void pet_move(object *ob) {
+void pets_move(object *ob) {
     int dir, i;
     tag_t tag;
     sint16 dx, dy;
@@ -364,7 +364,7 @@ void pet_move(object *ob) {
 
     /* move monster into the owners map if not in the same map */
     if (!on_same_map(ob, owner)) {
-        follow_owner(ob, owner);
+        pets_follow_owner(ob, owner);
         return;
     }
     /* Calculate Direction */
@@ -539,7 +539,7 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
  * @param op
  * golem to be moved.
  */
-void move_golem(object *op) {
+void pets_move_golem(object *op) {
     int made_attack = 0;
     object *tmp;
     tag_t tag;
@@ -650,7 +650,7 @@ void move_golem(object *op) {
  * desired direction.
  * @todo trash.
  */
-void control_golem(object *op, int dir) {
+void pets_control_golem(object *op, int dir) {
     op->direction = dir;
 }
 
@@ -671,7 +671,7 @@ void control_golem(object *op, int dir) {
  * @retval 1
  * summoned correctly something.
  */
-int summon_golem(object *op, object *caster, int dir, object *spob) {
+int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
     object *tmp;
     const object *god = NULL;
     archetype *at;
@@ -932,7 +932,7 @@ static object *choose_cult_monster(object *pl, const object *god, int summon_lev
  * @retval 1
  * something was summoned.
  */
-int summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg) {
+int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg) {
     sint16 x, y, nrof = 1, i;
     archetype *summon_arch;
     int ndir, mult;
@@ -957,7 +957,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
                 break;
         }
         if (lasttr == NULL) {
-            LOG(llevError, "Treasurelist %s did not generate a valid entry in summon_object\n", spell_ob->randomitems->name);
+            LOG(llevError, "Treasurelist %s did not generate a valid entry in pets_summon_object\n", spell_ob->randomitems->name);
             draw_ext_info(NDI_UNIQUE, 0, op,
                           MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                           "The spell fails to summon any monsters.", NULL);
@@ -1152,7 +1152,7 @@ static object *get_real_owner(object *ob) {
  * @retval 1
  * target is a suitable victim for the pet.
  */
-int should_arena_attack(object *pet, object *owner, object *target) {
+int pets_should_arena_attack(object *pet, object *owner, object *target) {
     object *rowner, *towner;
 
     /* exit if the target, pet, or owner is null. */

@@ -255,7 +255,7 @@ int save_player(object *op, int flag) {
         return 0;
 
     if (flag == 0)
-        terminate_all_pets(op);
+        pets_terminate_all(op);
 
     snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name, op->name);
     make_path_to_file(filename);
@@ -504,7 +504,7 @@ void check_login(object *op) {
                     /* Need to terminate the pets, since the new object
                      * will be different
                      */
-                    terminate_all_pets(pltmp->ob);
+                    pets_terminate_all(pltmp->ob);
                     object_remove(pltmp->ob);
                 }
                 leave(pltmp, 1);

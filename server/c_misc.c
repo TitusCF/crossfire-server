@@ -2415,7 +2415,7 @@ int command_kill_pets(object *op, char *params) {
     int counter = 0, removecount = 0;
 
     if (params == NULL) {
-        terminate_all_pets(op);
+        pets_terminate_all(op);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_214), NULL);
     } else {

@@ -337,16 +337,16 @@ void init_ob_methods(void);
 /* ob_types.c */
 void register_all_ob_types(void);
 /* pets.c */
-object *get_pet_enemy(object *pet, rv_vector *rv);
-void terminate_all_pets(object *owner);
-void remove_all_pets(void);
-void follow_owner(object *ob, object *owner);
-void pet_move(object *ob);
-void move_golem(object *op);
-void control_golem(object *op, int dir);
-int summon_golem(object *op, object *caster, int dir, object *spob);
-int summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg);
-int should_arena_attack(object *pet, object *owner, object *target);
+object *pets_get_enemy(object *pet, rv_vector *rv);
+void pets_terminate_all(object *owner);
+void pets_remove_all(void);
+void pets_follow_owner(object *ob, object *owner);
+void pets_move(object *ob);
+void pets_move_golem(object *op);
+void pets_control_golem(object *op, int dir);
+int pets_summon_golem(object *op, object *caster, int dir, object *spob);
+int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg);
+int pets_should_arena_attack(object *pet, object *owner, object *target);
 /* player.c */
 player *find_player(const char *plname);
 player *find_player_partial_name(const char *plname);

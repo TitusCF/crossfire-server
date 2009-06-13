@@ -65,8 +65,8 @@ static void apply_savebed(object *pl) {
     /* Lauwenmark : Here we handle the LOGOUT global event */
     execute_global_event(EVENT_LOGOUT, pl->contr, pl->contr->socket.host);
 
-    /* Need to call terminate_all_pets()  before we remove the player ob */
-    terminate_all_pets(pl);
+    /* Need to call pets_terminate_all()  before we remove the player ob */
+    pets_terminate_all(pl);
     object_remove(pl);
     pl->direction = 0;
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, pl, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
