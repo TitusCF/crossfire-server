@@ -857,7 +857,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
     if (exclude && exclude->type)
         owner_type = exclude->type;
 
-    for (i = rndm(1, 8); i < max; i++) {
+    for (i = get_random_dir(); i < max; i++) {
         nx = x+freearr_x[i];
         ny = y+freearr_y[i];
         mp = m;

@@ -365,7 +365,7 @@ void pets_move(object *ob) {
     if (owner->type == PLAYER && owner->contr->petmode == pet_sad) {
         /* in S&D mode, if we have no enemy, run randomly about. */
         for (i = 0; i < 15; i++) {
-            dir = rndm(1, 8);
+            dir = get_random_dir();
             dx = ob->x+freearr_x[dir];
             dy = ob->y+freearr_y[dir];
             m = ob->map;

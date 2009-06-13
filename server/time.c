@@ -653,7 +653,7 @@ void move_firewall(object *op) {
         return;
     }
 
-    cast_spell(op, op, op->stats.sp ? op->stats.sp : rndm(1, 8), spell, NULL);
+    cast_spell(op, op, op->stats.sp ? op->stats.sp : get_random_dir(), spell, NULL);
 }
 
 
@@ -678,7 +678,7 @@ void move_player_mover(object *op) {
 
     /* Determine direction now for random movers so we do the right thing */
     if (!dir)
-        dir = rndm(1, 8);
+        dir = get_random_dir();
 
     for (victim = GET_MAP_OB(op->map, op->x, op->y); victim != NULL; victim = victim->above) {
         if (QUERY_FLAG(victim, FLAG_ALIVE)

@@ -692,7 +692,7 @@ static void move_swarm_spell(object *op) {
     basedir = op->direction;
     if (basedir == 0) {
         /* spray in all directions! 8) */
-        basedir = rndm(1, 8);
+        basedir = get_random_dir();
     }
 
     /* new offset calculation to make swarm element distribution

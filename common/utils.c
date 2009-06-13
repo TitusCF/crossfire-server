@@ -500,3 +500,13 @@ void make_list_like(char *input) {
         strcpy(input, tmp);
     return;
 }
+
+/**
+ * Returns a random direction (1..8).
+ *
+ * @return
+ * the random direction.
+ */
+int get_random_dir(void) {
+    return rndm(1, 8);
+}
