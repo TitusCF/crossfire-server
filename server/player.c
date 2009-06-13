@@ -2277,10 +2277,10 @@ object *find_key(object *pl, object *container, object *door) {
     if (door->type == DOOR) {
         tmp = object_find_by_type(container, KEY);
     }
-    if (!tmp) {
-        /* For sanity, we should really check door type, but other stuff
-         * (like containers) can be locked with special keys
-         */
+    /* For sanity, we should really check door type, but other stuff
+     * (like containers) can be locked with special keys
+     */
+    if (!tmp && door->slaying != NULL) {
         tmp = object_find_by_type_and_slaying(container, SPECIAL_KEY, door->slaying);
     }
     /* No key found - lets search inventories now */
