@@ -739,7 +739,6 @@ static void enter_unique_map(object *op, object *exit_ob) {
  */
 void enter_exit(object *op, object *exit_ob) {
 #define PORTAL_DESTINATION_NAME "Town portal destination" /* this one should really be in a header file */
-    object *tmp;
     /* It may be nice to support other creatures moving across
      * exits, but right now a lot of the code looks at op->contr,
      * so thta is an RFE.
@@ -844,6 +843,8 @@ void enter_exit(object *op, object *exit_ob) {
 
             /* mids 02/13/2002 if exit is damned, update players death & WoR home-position and delete town portal */
             if (QUERY_FLAG(exit_ob, FLAG_DAMNED)) {
+                object *tmp;
+
                 /* remove an old force with a slaying field == PORTAL_DESTINATION_NAME */
                 tmp = object_find_by_type_and_slaying(op, FORCE, PORTAL_DESTINATION_NAME);
                 if (tmp) {
