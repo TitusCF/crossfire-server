@@ -562,6 +562,9 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
     int lastx, lasty, dir, i, diff, firstdir = 0, lastdir, max = MAX_SPACES, mflags, blocked;
     mapstruct *m, *lastmap;
 
+    if (!on_same_map(mon, pl))
+        return 0;
+
     get_rangevector(mon, pl, &rv, 0);
 
     if (rv.distance < mindiff)
@@ -1355,6 +1358,11 @@ static void flee_player(object *op) {
     }
 
     if (!(random_roll(0, 4, op, PREFER_LOW)) && did_make_save(op, op->level, 0)) {
+        op->enemy = NULL;
+        CLEAR_FLAG(op, FLAG_SCARED);
+        return;
+    }
+    if (!on_same_map(op, op->enemy)) {
         op->enemy = NULL;
         CLEAR_FLAG(op, FLAG_SCARED);
         return;
@@ -3893,6 +3901,8 @@ int player_can_view(object *pl, object *op) {
     if (op->head) {
         op = op->head;
     }
+    if (!on_same_map(pl, op))
+        return 0;
     get_rangevector(pl, op, &rv, 0x1);
 
     /* starting with the 'head' part, lets loop
