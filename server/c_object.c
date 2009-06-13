@@ -548,8 +548,7 @@ void pick_up(object *op, object *alt) {
             && sack_can_hold(NULL, alt, tmp, count)) {
                 if (alt->race && alt->race == tmp->race) {
                     break;  /* perfect match */
-                }
-                else if (!container) {
+                } else if (!container) {
                     container = alt;
                 }
             }

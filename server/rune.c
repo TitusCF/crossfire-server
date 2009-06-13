@@ -542,5 +542,4 @@ void trap_adjust(object *trap, int difficulty) {
         if (trap->attacktype&AT_DEATH)
             trap->stats.dam = 127;
     }
-
 }

@@ -537,7 +537,7 @@ static void do_symptoms(object *disease) {
         symptom->value += disease->stats.ac;
         scale = 1.0+symptom->value/100.0;
         /* now rescale all the debilities */
-        for (i=0; i<NUM_STATS; i++) {
+        for (i = 0; i<NUM_STATS; i++) {
             cur_stat = get_attr_value(&disease->stats, i);
             cur_stat = (int)(scale * cur_stat);
             set_attr_value(&symptom->stats, i, cur_stat);

@@ -224,13 +224,13 @@ object *find_skill_by_name(object *who, const char *name) {
         skill_names[0] = name;
         skill_tools[0] = NULL;
         skills[0] = NULL;
-        num_names=1;
+        num_names = 1;
     } else {
         /* strtok_r is destructive, so we need our own copy */
         char *lasts;
         ourname = strdup(name);
 
-        if ((skill_names[0] = strtok_r(ourname, ",", &lasts))==NULL) {
+        if ((skill_names[0] = strtok_r(ourname, ",", &lasts)) == NULL) {
             /* This should really never happen */
             LOG(llevError, "find_skill_by_name: strtok_r returned null, but strchr did not?\n");
             return NULL;
@@ -243,7 +243,8 @@ object *find_skill_by_name(object *who, const char *name) {
                 /* Clean out any leading spacing.  typical string would be
                  * skill1, skill2, skill3, ...
                  */
-                while (isspace(*skill_names[num_names])) skill_names[num_names]++;
+                while (isspace(*skill_names[num_names]))
+                    skill_names[num_names]++;
                 skills[num_names] = NULL;
                 skill_tools[num_names] = NULL;
                 num_names++;
@@ -260,7 +261,7 @@ object *find_skill_by_name(object *who, const char *name) {
         * 'hi', we don't want to match if the user passed 'high'
         */
         if (tmp->type == SKILL || tmp->type == SKILL_TOOL) {
-            for (i=0; i<num_names; i++) {
+            for (i = 0; i<num_names; i++) {
                 if (!strncasecmp(skill_names[i], tmp->skill, strlen(skill_names[i])) &&
                     strlen(tmp->skill) >= strlen(skill_names[i])) {
                     if (tmp->type == SKILL) {

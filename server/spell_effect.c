@@ -3235,7 +3235,7 @@ int create_aura(object *op, object *caster, object *spell) {
      * to set up spell expiry on it - this second object is really
      * an internal mechanic that should be invisible to the player.
      */
-    for (i=0; i < NROFATTACKS; i++) {
+    for (i = 0; i < NROFATTACKS; i++) {
         if (spell->resist[i]) {
             int refresh1=1;
             object *force;
@@ -3255,7 +3255,8 @@ int create_aura(object *op, object *caster, object *spell) {
             memcpy(&force->resist, spell->resist, sizeof(spell->resist));
             SET_FLAG(force, FLAG_APPLIED);
 
-            if (!refresh1) object_insert_in_ob(force, op);
+            if (!refresh1)
+                object_insert_in_ob(force, op);
             change_abil(op, new_aura);
             fix_object(op);
             break;
