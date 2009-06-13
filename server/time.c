@@ -53,7 +53,7 @@ void remove_door(object *op) {
     object *tmp;
 
     for (i = 1; i < 9; i += 2)
-        if ((tmp = object_present_in_map(DOOR, op->map, op->x+freearr_x[i], op->y+freearr_y[i])) != NULL) {
+        if ((tmp = map_find_by_type(op->map, op->x+freearr_x[i], op->y+freearr_y[i], DOOR)) != NULL) {
             tmp->speed = 0.1;
             object_update_speed(tmp);
             tmp->speed_left = -0.2;
@@ -82,7 +82,7 @@ void remove_locked_door(object *op) {
     object *tmp;
 
     for (i = 1; i < 9; i += 2) {
-        tmp = object_present_in_map(LOCKED_DOOR, op->map, op->x+freearr_x[i], op->y+freearr_y[i]);
+        tmp = map_find_by_type(op->map, op->x+freearr_x[i], op->y+freearr_y[i], LOCKED_DOOR);
         if (tmp && tmp->slaying == op->slaying) {/* same key both doors */
             tmp->speed = 0.1;
             object_update_speed(tmp);

@@ -95,7 +95,7 @@ static f_plug_api cfapiMap_set_property = NULL;
 static f_plug_api cfapiMap_get_map = NULL;
 static f_plug_api cfapiMap_message = NULL;
 static f_plug_api cfapiMap_get_object_at = NULL;
-static f_plug_api cfapiMap_arch_present_in_map_by_name = NULL;
+static f_plug_api cfapiMap_find_by_archetype_name = NULL;
 static f_plug_api cfapiMap_create_path = NULL;
 static f_plug_api cfapiMap_has_been_loaded = NULL;
 static f_plug_api cfapiMap_change_light = NULL;
@@ -188,7 +188,7 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiMap_get_map, "cfapi_map_get_map", z);
     GET_HOOK(cfapiMap_message, "cfapi_map_message", z);
     GET_HOOK(cfapiMap_get_object_at, "cfapi_map_get_object_at", z);
-    GET_HOOK(cfapiMap_arch_present_in_map_by_name, "cfapi_map_arch_present_in_map_by_name", z);
+    GET_HOOK(cfapiMap_find_by_archetype_name, "cfapi_map_find_by_archetype_name", z);
     GET_HOOK(cfapiMap_change_light, "cfapi_map_change_light", z);
     GET_HOOK(cfapiMap_has_been_loaded, "cfapi_map_has_been_loaded", z);
     GET_HOOK(cfapiMap_trigger_connected, "cfapi_map_trigger_connected", z);
@@ -1189,7 +1189,7 @@ object *cf_map_arch_present_in_map_by_name(const char *str, mapstruct *map, int 
     int type;
     object *value;
 
-    cfapiMap_arch_present_in_map_by_name(&type, str, map, nx, ny, &value);
+    cfapiMap_find_by_archetype_name(&type, str, map, nx, ny, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }

@@ -2729,16 +2729,16 @@ int object_check_move_on(object *op, object *originator) {
 /**
  * Searches for any objects with a matching archetype at the given map and coordinates.
  *
- * @param at
- * archetype to search for.
  * @param m
  * @param x
  * @param y
  * where to search. Must be valid position.
+ * @param at
+ * archetype to search for.
  * @return
  * first matching object, or NULL if none matches.
  */
-object *arch_present_in_map(const archetype *at, mapstruct *m, int x, int y) {
+object *map_find_by_archetype(mapstruct *m, int x, int y, const archetype *at) {
     object *tmp;
 
     if (m == NULL || out_of_map(m, x, y)) {
@@ -2757,16 +2757,16 @@ object *arch_present_in_map(const archetype *at, mapstruct *m, int x, int y) {
  * Searches for any objects with
  * a matching type variable at the given map and coordinates.
  *
- * @param type
- * type to get.
  * @param m
  * @param x
  * @param y
  * where to search. Must be valid position.
+ * @param type
+ * type to get.
  * @return
  * first matching object, or NULL if none matches.
  */
-object *object_present_in_map(uint8 type, mapstruct *m, int x, int y) {
+object *map_find_by_type(mapstruct *m, int x, int y, uint8 type) {
     object *tmp;
 
     if (out_of_map(m, x, y)) {

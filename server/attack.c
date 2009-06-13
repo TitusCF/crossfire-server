@@ -253,7 +253,7 @@ void save_throw_object(object *op, uint32 type, object *originator) {
         op = stop_item(op);
         if (op == NULL)
             return;
-        if ((tmp = arch_present_in_map(at, op->map, op->x, op->y)) == NULL) {
+        if ((tmp = map_find_by_archetype(op->map, op->x, op->y, at)) == NULL) {
             tmp = arch_to_object(at);
             tmp->x = op->x,
             tmp->y = op->y;
@@ -2310,7 +2310,7 @@ void paralyze_living(object *op, object *hitter, int dam) {
     */
 
 /*
-    if ((tmp = object_present_in_map(PARAIMAGE, op->map, op->x, op->y)) == NULL) {
+    if ((tmp = map_find_by_type(op->map, op->x, op->y, PARAIMAGE)) == NULL) {
         tmp = clone_arch(PARAIMAGE);
         tmp->x = op->x,
         tmp->y = op->y;

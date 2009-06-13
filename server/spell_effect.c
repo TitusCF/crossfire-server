@@ -1214,7 +1214,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
             exitmap = ready_map_name(old_force->race, 0);
 
         if (exitmap) {
-            tmp = arch_present_in_map(perm_portal, exitmap, exitx, exity);
+            tmp = map_find_by_archetype(exitmap, exitx, exity, perm_portal);
             while (tmp) {
                 if (tmp->name == old_force->name) {
                     object_remove(tmp);

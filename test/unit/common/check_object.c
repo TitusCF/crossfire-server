@@ -70,8 +70,8 @@ void teardown(void) {
  * object_add_weight
  * object_insert_in_ob
  * object_check_move_on
- * arch_present_in_map
- * object_present_in_map
+ * map_find_by_archetype
+ * map_find_by_type
  * object_present_in_ob
  * object_present_in_ob_by_name
  * arch_present_in_ob
@@ -959,17 +959,17 @@ START_TEST(test_object_check_move_on) {
 END_TEST
 
 /** This is the test to check the behaviour of the method
- *  object *arch_present_in_map(const archetype *at, mapstruct *m, int x, int y);
+ *  object *map_find_by_archetype(mapstruct *m, int x, int y, const archetype *at);
  */
-START_TEST(test_arch_present_in_map) {
+START_TEST(test_map_find_by_archetype) {
     /*TESTME*/
 }
 END_TEST
 
 /** This is the test to check the behaviour of the method
- *  object *object_present_in_map(unsigned char type, mapstruct *m, int x, int y);
+ *  object *map_find_by_type(mapstruct *m, int x, int y, unsigned char type);
  */
-START_TEST(test_object_present_in_map) {
+START_TEST(test_map_find_by_type) {
     /*TESTME*/
 }
 END_TEST
@@ -1234,8 +1234,8 @@ Suite *object_suite(void) {
     tcase_add_test(tc_core, test_object_add_weight);
     tcase_add_test(tc_core, test_object_insert_in_ob);
     tcase_add_test(tc_core, test_object_check_move_on);
-    tcase_add_test(tc_core, test_arch_present_in_map);
-    tcase_add_test(tc_core, test_object_present_in_map);
+    tcase_add_test(tc_core, test_map_find_by_archetype);
+    tcase_add_test(tc_core, test_map_find_by_type);
     tcase_add_test(tc_core, test_object_present_in_ob);
     tcase_add_test(tc_core, test_object_present_in_ob_by_name);
     tcase_add_test(tc_core, test_arch_present_in_ob);

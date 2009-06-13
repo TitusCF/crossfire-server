@@ -122,7 +122,7 @@ static const hook_entry plug_hooks[] = {
     { cfapi_map_message,             58, "cfapi_map_message" },
     { cfapi_map_get_object_at,       59, "cfapi_map_get_object_at" },
     { cfapi_map_change_light,        60, "cfapi_map_change_light" },
-    { cfapi_map_arch_present_in_map_by_name, 61, "cfapi_map_arch_present_in_map_by_name" },
+    { cfapi_map_find_by_archetype_name, 61, "cfapi_map_find_by_archetype_name" },
     { cfapi_player_find,             62, "cfapi_player_find" },
     { cfapi_player_message,          63, "cfapi_player_message" },
     { cfapi_object_change_exp,       64, "cfapi_object_change_exp" },
@@ -1474,14 +1474,14 @@ void *cfapi_map_get_object_at(int *type, ...) {
 }
 
 /**
- * Kinda wrapper for arch_present_in_map() (but uses a string, not an archetype*).
+ * Kinda wrapper for map_find_by_archetype() (but uses a string, not an archetype*).
  * @param type
  * will be CFAPI_POBJECT.
  * @return
  * NULL.
  * @todo fix archetype instead of string.
  */
-void *cfapi_map_arch_present_in_map_by_name(int *type, ...) {
+void *cfapi_map_find_by_archetype_name(int *type, ...) {
     va_list args;
     int x, y;
     mapstruct *map;
@@ -1498,7 +1498,7 @@ void *cfapi_map_arch_present_in_map_by_name(int *type, ...) {
 
     va_end(args);
 
-    *robj = arch_present_in_map(try_find_archetype(msg), map, x, y);
+    *robj = map_find_by_archetype(map, x, y, try_find_archetype(msg));
     *type = CFAPI_POBJECT;
     return NULL;
 }

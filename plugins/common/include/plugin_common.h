@@ -150,7 +150,7 @@ extern mapstruct   *cf_map_has_been_loaded(const char *name);
 extern void         cf_map_message(mapstruct *m, const char *msg, int color);
 extern object      *cf_map_get_object_at(mapstruct *m, int x, int y);
 extern object      *cf_map_insert_object(mapstruct *where, object *op, int x, int y);
-extern object      *cf_map_arch_present_in_map_by_name(const char *str, mapstruct *map, int nx, int ny);
+extern object      *cf_map_find_by_archetype_name(const char *str, mapstruct *map, int nx, int ny);
 extern int          cf_map_get_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny);
 extern object      *cf_map_insert_object_there(object *op, mapstruct *m, object *originator, int flag);
 extern int          cf_map_get_difficulty(mapstruct *map);
