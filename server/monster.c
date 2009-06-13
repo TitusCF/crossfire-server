@@ -225,8 +225,10 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
     /* if we berserk, we don't care about others - we attack all we can find */
     if (QUERY_FLAG(npc, FLAG_BERSERK)) {
         tmp = monster_find_nearest_living_creature(npc);
-        if (tmp)
-            get_rangevector(npc, tmp, rv, 0);
+        if (tmp == NULL)
+            return NULL;
+        if (!get_rangevector(npc, tmp, rv, 0))
+            return NULL;
         return tmp;
     }
 
@@ -243,8 +245,10 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
     /* pet move */
     if ((npc->attack_movement&HI4) == PETMOVE) {
         tmp = pets_get_enemy(npc, rv);
-        if (tmp)
-            get_rangevector(npc, tmp, rv, 0);
+        if (tmp == NULL)
+            return NULL;
+        if (!get_rangevector(npc, tmp, rv, 0))
+            return NULL;
         return tmp;
     }
 
@@ -264,7 +268,8 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
                 else if (on_same_map(npc, attacker)) { /* thats the only thing we must know... */
                     CLEAR_FLAG(npc, FLAG_SLEEP); /* well, NOW we really should wake up! */
                     npc->enemy = attacker;
-                    get_rangevector(npc, attacker, rv, 0);
+                    if (!get_rangevector(npc, attacker, rv, 0))
+                        return NULL;
                     return attacker; /* yes, we face our attacker! */
                 }
             }
@@ -648,7 +653,8 @@ int monster_move(object *op) {
      * it comes to figuring it out - otherwise, giants throw boulders
      * into themselves.
      */
-    get_rangevector(op, enemy, &rv, 0);
+    if (!get_rangevector(op, enemy, &rv, 0))
+        return 0;
     if (op->direction != rv.direction) {
         op->direction = rv.direction;
         op->facing = op->direction;
@@ -665,7 +671,8 @@ int monster_move(object *op) {
 
         /* now we test every part of an object .... this is a real ugly piece of code */
         for (part = op; part != NULL; part = part->more) {
-            get_rangevector(part, enemy, &rv1, 0x1);
+            if (!get_rangevector(part, enemy, &rv1, 0x1))
+                return 0;
             dir = rv1.direction;
 
             /* hm, not sure about this part - in original was a scared flag here too
@@ -856,8 +863,8 @@ static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv) {
      * its head doesn't mean we don't want to pound its feet
      */
     for (more = ob2->more; more != NULL; more = more->more) {
-        get_rangevector(ob1, more, &rv1, 0);
-        if (abs(rv1.distance_x) < 2 && abs(rv1.distance_y) < 2)
+        if (get_rangevector(ob1, more, &rv1, 0)
+        && abs(rv1.distance_x) < 2 && abs(rv1.distance_y) < 2)
             return 1;
     }
     return 0;
@@ -982,8 +989,8 @@ static int monster_cast_spell(object *head, object *part, object *pl, int dir, r
     if (QUERY_FLAG(head, FLAG_FRIENDLY)) {
         owner = object_get_owner(head);
         if (owner != NULL) {
-            get_rangevector(head, owner, &rv1, 0x1);
-            if (dirdiff(dir, rv1.direction) < 2) {
+            if (get_rangevector(head, owner, &rv1, 0x1)
+            && dirdiff(dir, rv1.direction) < 2) {
                 return 0; /* Might hit owner with spell */
             }
         }
@@ -1070,8 +1077,8 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir, r
     if (QUERY_FLAG(head, FLAG_FRIENDLY)) {
         owner = object_get_owner(head);
         if (owner != NULL) {
-            get_rangevector(head, owner, &rv1, 0x1);
-            if (dirdiff(dir, rv1.direction) < 2) {
+            if (get_rangevector(head, owner, &rv1, 0x1)
+            && dirdiff(dir, rv1.direction) < 2) {
                 return 0; /* Might hit owner with spell */
             }
         }
@@ -1270,7 +1277,8 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
     sint16 x, y;
     mapstruct *map;
 
-    get_rangevector(part, pl, &rv, 1);
+    if (!get_rangevector(part, pl, &rv, 1))
+        return 0;
     if (rv.distance > 100)
         /* Too far */
         return 0;
@@ -2040,10 +2048,8 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
         return 0;
 
     /* If the monster (op) has no way to get to the enemy, do nothing */
-    if (!on_same_map(op, enemy))
+    if (!get_rangevector(op, enemy, rv, 0))
         return 0;
-
-    get_rangevector(op, enemy, rv, 0);
 
     /* Monsters always ignore the DM */
     if ((op->type != PLAYER) && QUERY_FLAG(enemy, FLAG_WIZ))

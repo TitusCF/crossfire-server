@@ -922,8 +922,7 @@ static void process_players1(void) {
                 if (followed && followed->ob && followed->ob->map) {
                     rv_vector rv;
 
-                    get_rangevector(pl->ob, followed->ob, &rv, 0);
-                    if (rv.distance > 4) {
+                    if (get_rangevector(pl->ob, followed->ob, &rv, 0) && rv.distance > 4) {
                         int space = object_find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
                         if (space == -1)
                             /** This is a DM, just teleport on the top of player. */

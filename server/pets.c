@@ -115,8 +115,8 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
         if (owner->contr->petmode == pet_sad) {
             tmp = monster_find_nearest_living_creature(pet);
             if (tmp != NULL) {
-                get_rangevector(pet, tmp, rv, 0);
-                if (monster_check_enemy(pet, rv) != NULL)
+                if (get_rangevector(pet, tmp, rv, 0)
+                && monster_check_enemy(pet, rv) != NULL)
                     return tmp;
                 pet->enemy = NULL;
             }
@@ -376,8 +376,10 @@ void pets_move(object *ob) {
     } else {
         rv_vector rv;
 
-        get_rangevector(ob, owner, &rv, 0);
-        dir = rv.direction;
+        if (get_rangevector(ob, owner, &rv, 0))
+            dir = rv.direction;
+        else
+            dir = get_random_dir();
     }
     ob->direction = dir;
 

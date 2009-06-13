@@ -2498,8 +2498,6 @@ static int adjacent_map(const mapstruct *map1, const mapstruct *map2, int *dx, i
  * We already trust that the caller has verified that the
  * two objects are at least on adjacent maps.  If not,
  * results are not likely to be what is desired.
- * if the objects are not on maps, results are also likely to
- * be unexpected
  *
  * @param op1
  * object which wants to go to op2's location.
@@ -2509,8 +2507,10 @@ static int adjacent_map(const mapstruct *map1, const mapstruct *map2, int *dx, i
  * vector for op1 to go to op2.
  * @param flags
  * if 1, don't translate for closest body part of 'op1'
+ * @return
+ * 1=ok; 0=the objects are not on the same map
  */
-void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flags) {
+int get_rangevector(object *op1, const object *op2, rv_vector *retval, int flags) {
     if (!adjacent_map(op1->map, op2->map, &retval->distance_x, &retval->distance_y)) {
         /* be conservative and fill in _some_ data */
         retval->distance = 100000;
@@ -2518,6 +2518,7 @@ void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flag
         retval->distance_y = 32767;
         retval->direction = 0;
         retval->part = NULL;
+        return 0;
     } else {
         object *best;
 
@@ -2553,6 +2554,7 @@ void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flag
         retval->part = best;
         retval->distance = isqrt(retval->distance_x*retval->distance_x+retval->distance_y*retval->distance_y);
         retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
+        return 1;
     }
 }
 
@@ -2578,8 +2580,10 @@ void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flag
  * vector to get to op2.
  * @param flags
  * unused.
+ * @return
+ * 1=ok; 0=the objects are not on the same map
  */
-void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const object *op2, rv_vector *retval, int flags) {
+int get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const object *op2, rv_vector *retval, int flags) {
     if (!adjacent_map(m, op2->map, &retval->distance_x, &retval->distance_y)) {
         /* be conservative and fill in _some_ data */
         retval->distance = 100000;
@@ -2587,6 +2591,7 @@ void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const objec
         retval->distance_y = 32767;
         retval->direction = 0;
         retval->part = NULL;
+        return 0;
     } else {
         retval->distance_x += op2->x-x;
         retval->distance_y += op2->y-y;
@@ -2594,6 +2599,7 @@ void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const objec
         retval->part = NULL;
         retval->distance = isqrt(retval->distance_x*retval->distance_x+retval->distance_y*retval->distance_y);
         retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
+        return 1;
     }
 }
 

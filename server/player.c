@@ -562,10 +562,8 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
     int lastx, lasty, dir, i, diff, firstdir = 0, lastdir, max = MAX_SPACES, mflags, blocked;
     mapstruct *m, *lastmap;
 
-    if (!on_same_map(mon, pl))
+    if (!get_rangevector(mon, pl, &rv, 0))
         return 0;
-
-    get_rangevector(mon, pl, &rv, 0);
 
     if (rv.distance < mindiff)
         return 0;
@@ -596,8 +594,7 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
             /* recalculate direction from last good location.  Possible
              * we were not traversing ideal location before.
              */
-            get_rangevector_from_mapcoord(lastmap, lastx, lasty, pl, &rv, 0);
-            if (rv.direction != dir) {
+            if (get_rangevector_from_mapcoord(lastmap, lastx, lasty, pl, &rv, 0) && rv.direction != dir) {
                 /* OK - says direction should be different - lets reset the
                  * the values so it will try again.
                  */
@@ -668,7 +665,8 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
             /* Recalculate diff (distance) because we may not have actually
              * headed toward player for entire distance.
              */
-            get_rangevector_from_mapcoord(m, x, y, pl, &rv, 0);
+            if (!get_rangevector_from_mapcoord(m, x, y, pl, &rv, 0))
+                return 0;
             diff = MAX(FABS(rv.distance_x), FABS(rv.distance_y));
         }
         if (diff > max)
@@ -1362,12 +1360,11 @@ static void flee_player(object *op) {
         CLEAR_FLAG(op, FLAG_SCARED);
         return;
     }
-    if (!on_same_map(op, op->enemy)) {
+    if (!get_rangevector(op, op->enemy, &rv, 0)) {
         op->enemy = NULL;
         CLEAR_FLAG(op, FLAG_SCARED);
         return;
     }
-    get_rangevector(op, op->enemy, &rv, 0);
 
     dir = absdir(4+rv.direction);
     for (diff = 0; diff < 3; diff++) {
@@ -3901,9 +3898,8 @@ int player_can_view(object *pl, object *op) {
     if (op->head) {
         op = op->head;
     }
-    if (!on_same_map(pl, op))
+    if (!get_rangevector(pl, op, &rv, 0x1))
         return 0;
-    get_rangevector(pl, op, &rv, 0x1);
 
     /* starting with the 'head' part, lets loop
      * through the object and find if it has any

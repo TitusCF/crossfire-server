@@ -245,8 +245,7 @@ void spring_trap(object *trap, object *victim) {
     /* If the victim is not next to this trap, and the trap doesn't cast
      * a spell, don't set it off.
      */
-    get_rangevector(env, victim, &rv, 0);
-    if (rv.distance > 1 && !has_spell)
+    if (!get_rangevector(env, victim, &rv, 0) || (rv.distance > 1 && !has_spell))
         return;
 
     /* Only living objects can trigger runes that don't cast spells, as
