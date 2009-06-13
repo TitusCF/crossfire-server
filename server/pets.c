@@ -369,7 +369,7 @@ void pets_move(object *ob) {
             dx = ob->x+freearr_x[dir];
             dy = ob->y+freearr_y[dir];
             m = ob->map;
-            if (!(get_map_flags(ob->map, &m, dx, dy, &dx, &dy)&P_OUT_OF_MAP))
+            if (!(get_map_flags(ob->map, &m, dx, dy, &dx, &dy)&P_OUT_OF_MAP)
             && !OB_TYPE_MOVE_BLOCK(ob, GET_MAP_MOVE_BLOCK(m, dx, dy)))
                 break;
         }
