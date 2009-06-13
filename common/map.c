@@ -371,7 +371,7 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sin
  * by the caller.
  */
 int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
-    object *tmp, *tmp_head;
+    object *tmp_head;
     int mflags, blocked;
 
     /* Make sure the coordinates are valid - they should be, as caller should
@@ -418,7 +418,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
      * true.  If we get through the entire stack, that must mean
      * ob is blocking it, so return 0.
      */
-    for (tmp = GET_MAP_OB(m, sx, sy); tmp != NULL; tmp = tmp->above) {
+    FOR_MAP_PREPARE(m, sx, sy, tmp) {
         /* Never block part of self. */
         if (tmp->head)
             tmp_head = tmp->head;
@@ -482,7 +482,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
                 return 1;
         }
 
-    }
+    } FOR_MAP_FINISH();
     return 0;
 }
 
@@ -578,16 +578,14 @@ int ob_blocked(const object *ob, mapstruct *m, sint16 x, sint16 y) {
  * This is unusued, should it be used somewhere?
  */
 void fix_container(object *container) {
-    object *tmp = container->inv, *next;
+    object *tmp = container->inv;
 
     container->inv = NULL;
-    while (tmp != NULL) {
-        next = tmp->below;
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp->inv)
             fix_container(tmp);
         (void)object_insert_in_ob(tmp, container);
-        tmp = next;
-    }
+    } FOR_OB_AND_BELOW_FINISH();
     /* object_sum_weight will go through and calculate what all the containers are
      * carrying.
      */
@@ -605,13 +603,10 @@ void fix_container(object *container) {
  * object that contains the inventory.
  */
 static void fix_container_multipart(object *container) {
-    object *tmp = container->inv, *next;
-
-    while (tmp != NULL) {
+    FOR_INV_PREPARE(container, tmp) {
         archetype *at;
         object *op, *last;
 
-        next = tmp->below;
         if (tmp->inv)
             fix_container_multipart(tmp);
         /* already multipart, or non-multipart arch - don't do anything more */
@@ -635,8 +630,7 @@ static void fix_container_multipart(object *container) {
             }
             CLEAR_FLAG(op, FLAG_REMOVED);
         }
-        tmp = next;
-    }
+    } FOR_INV_FINISH();
 }
 
 /**
@@ -651,12 +645,10 @@ static void fix_container_multipart(object *container) {
  */
 static void link_multipart_objects(mapstruct *m) {
     int x, y;
-    object *tmp, *above;
 
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = above) {
-                above = tmp->above;
+            FOR_MAP_PREPARE(m, x, y, tmp) {
                 if (tmp->inv)
                     fix_container_multipart(tmp);
 
@@ -665,7 +657,7 @@ static void link_multipart_objects(mapstruct *m) {
                     continue;
 
                 object_fix_multipart(tmp);
-            } /* for objects on this space */
+            } FOR_MAP_FINISH(); /* for objects on this space */
 }
 
 /**
@@ -682,7 +674,7 @@ static void link_multipart_objects(mapstruct *m) {
 static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
     int i, j, bufstate = LO_NEWFILE;
     int unique;
-    object *op, *prev = NULL, *last_more = NULL, *otmp;
+    object *op, *prev = NULL, *last_more = NULL;
 
     op = object_new();
     op->map = m; /* To handle buttons correctly */
@@ -736,12 +728,12 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
         for (j = 0; j < m->height; j++) {
             unique = 0;
             /* check for unique items, or unique squares */
-            for (otmp = GET_MAP_OB(m, i, j); otmp; otmp = otmp->above) {
+            FOR_MAP_PREPARE(m, i, j, otmp) {
                 if (QUERY_FLAG(otmp, FLAG_UNIQUE))
                     unique = 1;
                 if (!(mapflags&(MAP_OVERLAY|MAP_PLAYER_UNIQUE) || unique))
                     SET_FLAG(otmp, FLAG_OBJ_ORIGINAL);
-            }
+            } FOR_MAP_FINISH();
         }
     }
     object_free(op);
@@ -767,15 +759,12 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
  */
 static int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
     int i, j = 0, unique = 0, res = 0;
-    object *op,  *otmp;
 
     /* first pass - save one-part objects */
     for (i = 0; i < MAP_WIDTH(m); i++)
         for (j = 0; j < MAP_HEIGHT(m); j++) {
             unique = 0;
-            for (op = GET_MAP_OB(m, i, j); op; op = otmp) {
-                otmp = op->above;
-
+            FOR_MAP_PREPARE(m, i, j, op) {
                 if (QUERY_FLAG(op, FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
                     unique = 1;
 
@@ -796,7 +785,7 @@ static int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 
                 if (res != 0)
                     return res;
-            } /* for this space */
+            } FOR_MAP_FINISH(); /* for this space */
         } /* for this j */
 
     return 0;
@@ -1378,13 +1367,11 @@ static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
  */
 static void delete_unique_items(mapstruct *m) {
     int i, j, unique = 0;
-    object *op, *next;
 
     for (i = 0; i < MAP_WIDTH(m); i++)
         for (j = 0; j < MAP_HEIGHT(m); j++) {
             unique = 0;
-            for (op = GET_MAP_OB(m, i, j); op; op = next) {
-                next = op->above;
+            FOR_MAP_PREPARE(m, i, j, op) {
                 if (QUERY_FLAG(op, FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
                     unique = 1;
                 if (op->head == NULL && (QUERY_FLAG(op, FLAG_UNIQUE) || unique)) {
@@ -1394,7 +1381,7 @@ static void delete_unique_items(mapstruct *m) {
                     object_remove(op);
                     object_free(op);
                 }
-            }
+            } FOR_MAP_FINISH();
         }
 }
 
@@ -1662,16 +1649,13 @@ int save_map(mapstruct *m, int flag) {
  * move to common/object.c ?
  */
 void clean_object(object *op) {
-    object *tmp, *next;
-
-    for (tmp = op->inv; tmp; tmp = next) {
-        next = tmp->below;
+    FOR_INV_PREPARE(op, tmp) {
         clean_object(tmp);
         if (QUERY_FLAG(tmp, FLAG_IS_LINKED))
             remove_button_link(tmp);
         object_remove(tmp);
         object_free(tmp);
-    }
+    } FOR_INV_FINISH();
 }
 
 /**
@@ -1936,7 +1920,6 @@ mapstruct *ready_map_name(const char *name, int flags) {
  * difficulty of the map.
  */
 int calculate_difficulty(mapstruct *m) {
-    object *op;
     archetype *at;
     int x, y;
     int diff = 0;
@@ -1949,7 +1932,7 @@ int calculate_difficulty(mapstruct *m) {
 
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (op = GET_MAP_OB(m, x, y); op != NULL; op = op->above) {
+            FOR_MAP_PREPARE(m, x, y, op) {
                 if (QUERY_FLAG(op, FLAG_MONSTER))
                     total_exp += op->stats.exp;
                 if (QUERY_FLAG(op, FLAG_GENERATOR)) {
@@ -1958,7 +1941,7 @@ int calculate_difficulty(mapstruct *m) {
                     if (at != NULL)
                         total_exp += at->clone.stats.exp*8;
                 }
-            }
+            } FOR_MAP_FINISH();
 
     exp_pr_sq = ((double)1000*total_exp)/(MAP_WIDTH(m)*MAP_HEIGHT(m)+1);
     diff = 20;
@@ -2143,7 +2126,7 @@ static inline void add_face_layer(int low_layer, int high_layer, object *ob, obj
  * coordinates to update
  */
 void update_position(mapstruct *m, int x, int y) {
-    object *tmp, *player = NULL;
+    object *player = NULL;
     uint8 flags = 0, oldflags, light = 0;
     object *layers[MAP_LAYERS];
 
@@ -2157,8 +2140,7 @@ void update_position(mapstruct *m, int x, int y) {
 
     memset(layers, 0, MAP_LAYERS*sizeof(object *));
 
-    for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
-
+    FOR_MAP_PREPARE(m, x, y, tmp) {
         /* DMs just don't do anything when hidden, including no light. */
         if (QUERY_FLAG(tmp, FLAG_WIZ) && tmp->contr->hidden)
             continue;
@@ -2220,7 +2202,7 @@ void update_position(mapstruct *m, int x, int y) {
 
         if (QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
             flags |= P_BLOCKSVIEW;
-    } /* for stack of objects */
+    } FOR_MAP_FINISH(); /* for stack of objects */
 
     if (player)
         flags |= P_PLAYER;

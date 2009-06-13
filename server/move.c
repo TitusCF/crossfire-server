@@ -155,9 +155,7 @@ int move_ob(object *op, int dir, object *originator) {
         op->contr->socket.update_look = 1;
         op->contr->socket.look_position = 0;
     } else if (op->type == TRANSPORT) {
-        object *pl;
-
-        for (pl = op->inv; pl; pl = pl->below) {
+        FOR_INV_PREPARE(op, pl)
             if (pl->type == PLAYER) {
                 pl->contr->do_los = 1;
                 pl->map = op->map;
@@ -167,7 +165,7 @@ int move_ob(object *op, int dir, object *originator) {
                 pl->contr->socket.update_look = 1;
                 pl->contr->socket.look_position = 0;
             }
-        }
+        FOR_INV_FINISH();
     }
 
     return 1; /* this shouldn't be reached */
@@ -264,15 +262,12 @@ int teleport(object *teleporter, uint8 tele_type, object *user) {
             /* Perhaps this should be extended to support tiled maps */
             if (OUT_OF_REAL_MAP(teleporter->map, teleporter->x+i, teleporter->y+j))
                 continue;
-            other_teleporter = GET_MAP_OB(teleporter->map, teleporter->x+i, teleporter->y+j);
-
-            while (other_teleporter) {
-                if (other_teleporter->type == tele_type)
+            FOR_MAP_PREPARE(teleporter->map, teleporter->x+i, teleporter->y+j, tmp) {
+                if (tmp->type == tele_type) {
+                    altern[nrofalt++] = tmp;
                     break;
-                other_teleporter = other_teleporter->above;
-            }
-            if (other_teleporter)
-                altern[nrofalt++] = other_teleporter;
+                }
+            } FOR_MAP_FINISH();
         }
 
     if (!nrofalt) {
@@ -378,7 +373,7 @@ void recursive_roll(object *op, int dir, object *pusher) {
  */
 
 static int try_fit(object *op, mapstruct *m, int x, int y) {
-    object *tmp, *more;
+    object *more;
     sint16 tx, ty;
     int mflags;
     mapstruct *m2;
@@ -395,7 +390,7 @@ static int try_fit(object *op, mapstruct *m, int x, int y) {
         if (mflags&P_OUT_OF_MAP)
             return 1;
 
-        for (tmp = GET_MAP_OB(m2, tx, ty); tmp; tmp = tmp->above) {
+        FOR_MAP_PREPARE(m2, tx, ty, tmp) {
             if (tmp->head == op || tmp == op)
                 continue;
 
@@ -404,8 +399,7 @@ static int try_fit(object *op, mapstruct *m, int x, int y) {
 
             if (OB_MOVE_BLOCK(op, tmp))
                 return 1;
-
-        }
+        } FOR_MAP_FINISH();
     }
     return 0;
 }
@@ -456,12 +450,12 @@ static int roll_ob(object *op, int dir, object *pusher) {
 
     /* If the target space is not blocked, no need to look at the objects on it */
     if ((op->move_type&move_block) == op->move_type) {
-        for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above) {
+        FOR_MAP_PREPARE(m, x, y, tmp) {
             if (tmp->head == op)
                 continue;
             if (OB_MOVE_BLOCK(op, tmp) && !roll_ob(tmp, dir, pusher))
                 return 0;
-        }
+        } FOR_MAP_FINISH();
     }
     if (try_fit(op, m, x, y))
         return 0;

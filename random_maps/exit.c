@@ -333,7 +333,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
         if (RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0] != 0) {
             /* Next map is the final map, special case. */
             mapstruct *new_map;
-            object *the_exit_back = arch_to_object(the_exit_up->arch), *tmp;
+            object *the_exit_back = arch_to_object(the_exit_up->arch);
 
             /* load it */
             if ((new_map = ready_map_name(RP->final_map, 0)) == NULL)
@@ -344,7 +344,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             EXIT_Y(the_exit_down) = MAP_ENTER_Y(new_map);
             strncpy(new_map->path, RP->final_map, sizeof(new_map->path));
 
-            for (tmp = GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp = tmp->above)
+            FOR_MAP_PREPARE(new_map, MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map), tmp)
                 /* Remove exit back to previous random map.  There should only be one
                  * which is why we break out.  To try to process more than one
                  * would require keeping a 'next' pointer, as object_free() kills tmp, which
@@ -355,6 +355,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
                     object_free(tmp);
                     break;
                 }
+            FOR_MAP_FINISH();
 
             if (final_map_exit == 1) {
                 /* setup the exit back */
@@ -391,16 +392,15 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
  */
 void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
     int i = 0, j = 0;
-    object *walk;
 
     for (i = 0; i < RP->Xsize; i++)
         for (j = 0; j < RP->Ysize; j++)
             if (maze[i][j] == '>' || maze[i][j] == '<') {
-                for (walk = GET_MAP_OB(map, i, j); walk != NULL; walk = walk->above) {
+                FOR_MAP_PREPARE(map, i, j, walk) {
                     if (walk->move_block == MOVE_ALL && walk->type != LOCKED_DOOR) {
                         walk->move_block = MOVE_BLOCK_DEFAULT;
                         object_update(walk, UP_OBJ_CHANGE);
                     }
-                }
+                } FOR_MAP_FINISH();
             }
 }

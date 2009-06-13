@@ -110,9 +110,7 @@ void init_skills(void) {
  * player to link skills for. Must be a player.
  */
 void link_player_skills(object *op) {
-    object *tmp;
-
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == SKILL) {
             /* This is really a warning, hence no else below */
             if (op->contr->last_skill_ob[tmp->subtype] && op->contr->last_skill_ob[tmp->subtype] != tmp) {
@@ -125,7 +123,7 @@ void link_player_skills(object *op) {
                 op->contr->last_skill_exp[tmp->subtype] = -1;
             }
         }
-    }
+    } FOR_INV_FINISH();
 }
 
 /**
@@ -213,8 +211,7 @@ static object *adjust_skill_tool(object *who, object *skill, object *skill_tool)
  *
  */
 object *find_skill_by_name(object *who, const char *name) {
-    object *skill = NULL, *tmp,
-       *skills[NUM_SKILLS], *skill_tools[NUM_SKILLS];
+    object *skill = NULL, *skills[NUM_SKILLS], *skill_tools[NUM_SKILLS];
     const char *skill_names[NUM_SKILLS];
     char *ourname=NULL;
     int num_names, highest_level_skill=0, i;
@@ -257,7 +254,7 @@ object *find_skill_by_name(object *who, const char *name) {
          */
     }
 
-    for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
+    FOR_INV_PREPARE(who, tmp) {
        /* We make sure the length of the string in the object is greater
         * in length than the passed string. Eg, if we have a skill called
         * 'hi', we don't want to match if the user passed 'high'
@@ -287,7 +284,7 @@ object *find_skill_by_name(object *who, const char *name) {
                 }
             }
         }
-    }
+    } FOR_INV_FINISH();
     free(ourname);
     return adjust_skill_tool(who, skills[highest_level_skill], skill_tools[highest_level_skill]);
 }
@@ -311,12 +308,12 @@ object *find_skill_by_name(object *who, const char *name) {
  * skill object if player can use it, NULL else.
  */
 object *find_skill_by_number(object *who, int skillno) {
-    object *skill = NULL, *skill_tool = NULL, *tmp;
+    object *skill = NULL, *skill_tool = NULL;
 
     if (skillno < 1 || skillno >= NUM_SKILLS)
         return NULL;
 
-    for (tmp = who->inv; tmp != NULL; tmp = tmp->below) {
+    FOR_INV_PREPARE(who, tmp) {
         if (tmp->type == SKILL && tmp->subtype == skillno)
             skill = tmp;
 
@@ -329,7 +326,7 @@ object *find_skill_by_number(object *who, int skillno) {
             else if (!skill_tool || !QUERY_FLAG(skill_tool, FLAG_APPLIED))
                 skill_tool = tmp;
         }
-    }
+    } FOR_INV_FINISH();
 
     return adjust_skill_tool(who, skill, skill_tool);
 }
@@ -756,9 +753,13 @@ int learn_skill(object *pl, object *scroll) {
      * but can't use natively.
      */
 
-    for (tmp = pl->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->type == SKILL && !strncasecmp(scroll->skill, tmp->skill, strlen(scroll->skill)))
+    tmp = NULL;
+    FOR_INV_PREPARE(pl, inv)
+        if (inv->type == SKILL && !strncasecmp(scroll->skill, inv->skill, strlen(scroll->skill))) {
+            tmp = inv;
             break;
+        }
+    FOR_INV_FINISH();
 
     /* player already knows it */
     if (tmp && QUERY_FLAG(tmp, FLAG_CAN_USE_SKILL))
@@ -828,7 +829,6 @@ static int clipped_percent(sint64 a, sint64 b) {
  * optional string to restrict skills to show.
  */
 void show_skills(object *op, const char *search) {
-    object *tmp = NULL;
     char buf[MAX_BUF];
     const char *cp;
     int i, num_skills_found = 0;
@@ -836,7 +836,7 @@ void show_skills(object *op, const char *search) {
     /* Need to have a pointer and use strdup for qsort to work properly */
     char skills[NUM_SKILLS][MAX_BUF];
 
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == SKILL) {
             if (search && strstr(tmp->name, search) == NULL)
                 continue;
@@ -869,7 +869,7 @@ void show_skills(object *op, const char *search) {
                 break;
             }
         }
-    }
+    } FOR_INV_FINISH();
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
                   "Player skills:", NULL);
@@ -924,15 +924,19 @@ int use_skill(object *op, const char *string) {
     if (!string)
         return 0;
 
-    for (skop = op->inv; skop != NULL; skop = skop->below) {
-        if (skop->type == SKILL
-        && QUERY_FLAG(skop, FLAG_CAN_USE_SKILL)
-        && !strncasecmp(string, skop->skill, MIN(strlen(string), strlen(skop->skill))))
+    skop = NULL;
+    FOR_INV_PREPARE(op, tmp) {
+        if (tmp->type == SKILL
+        && QUERY_FLAG(tmp, FLAG_CAN_USE_SKILL)
+        && !strncasecmp(string, tmp->skill, MIN(strlen(string), strlen(tmp->skill)))) {
+            skop = tmp;
             break;
-        else if (skop->type == SKILL_TOOL
-        && !strncasecmp(string, skop->skill, MIN(strlen(string), strlen(skop->skill))))
+        } else if (tmp->type == SKILL_TOOL
+        && !strncasecmp(string, tmp->skill, MIN(strlen(string), strlen(tmp->skill)))) {
+            skop = tmp;
             break;
-    }
+        }
+    } FOR_INV_FINISH();
     if (!skop) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
                              "Unable to find skill %s",
@@ -992,17 +996,19 @@ int use_skill(object *op, const char *string) {
  * attack skill, NULL if no suitable found.
  */
 static object *find_best_player_hth_skill(object *op) {
-    object *tmp, *best_skill = NULL;
+    object *best_skill = NULL;
     int dragon = is_dragon_pl(op), last_skill = sizeof(unarmed_skills), i;
 
     /* Dragons are a special case - gros 25th July 2006 */
     if (dragon) {
+        object *tmp;
+
         tmp = find_skill_by_number(op, SK_CLAWING);
         if (tmp) /* I suppose it should always be true - but maybe there's
                   * draconic toothache ? :) */
             return tmp;
     }
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == SKILL) {
 
             /* The order in the array is preferred order.  So basically,
@@ -1022,7 +1028,7 @@ static object *find_best_player_hth_skill(object *op) {
                 }
             }
         }
-    }
+    } FOR_INV_FINISH();
     return best_skill;
 }
 
@@ -1216,16 +1222,18 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
             return 0;
         }
 
-        for (tmp = GET_MAP_OB(m, tx, ty); tmp; tmp = tmp->above)
-            if ((QUERY_FLAG(tmp, FLAG_ALIVE) && tmp->stats.hp >= 0)
-            || QUERY_FLAG(tmp, FLAG_CAN_ROLL)
-            || tmp->type == LOCKED_DOOR) {
+        FOR_MAP_PREPARE(m, tx, ty, tmp2)
+            if ((QUERY_FLAG(tmp2, FLAG_ALIVE) && tmp2->stats.hp >= 0)
+            || QUERY_FLAG(tmp2, FLAG_CAN_ROLL)
+            || tmp2->type == LOCKED_DOOR) {
                 /* Don't attack party members */
-                if ((pl->type == PLAYER && tmp->type == PLAYER)
-                && (pl->contr->party != NULL && pl->contr->party == tmp->contr->party))
+                if ((pl->type == PLAYER && tmp2->type == PLAYER)
+                && (pl->contr->party != NULL && pl->contr->party == tmp2->contr->party))
                     return 0;
+                tmp = tmp2;
                 break;
             }
+        FOR_MAP_FINISH();
     }
     if (!tmp) {
         if (pl->type == PLAYER)

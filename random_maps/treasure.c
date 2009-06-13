@@ -320,12 +320,10 @@ object *find_closest_monster(mapstruct *map, int x, int y, RMParms *RP) {
         if (lx >= 0 && ly >= 0 && lx < RP->Xsize && ly < RP->Ysize)
             /* don't bother searching this square unless the map says life exists.*/
             if (GET_MAP_FLAGS(map, lx, ly)&P_IS_ALIVE) {
-                object *the_monster = GET_MAP_OB(map, lx, ly);
-
-                for (; the_monster != NULL && (!QUERY_FLAG(the_monster, FLAG_MONSTER)); the_monster = the_monster->above)
-                    ;
-                if (the_monster && QUERY_FLAG(the_monster, FLAG_MONSTER))
-                    return the_monster;
+                FOR_MAP_PREPARE(map, lx, ly, the_monster)
+                    if (QUERY_FLAG(the_monster, FLAG_MONSTER))
+                        return the_monster;
+                FOR_MAP_FINISH();
             }
     }
     return NULL;
@@ -464,7 +462,6 @@ int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, int n_k
  */
 object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int y, RMParms *RP) {
     int i, j;
-    object *the_monster;
 
     /* bounds check x and y */
     if (!(x >= 0 && y >= 0 && x < RP->Xsize && y < RP->Ysize))
@@ -478,17 +475,16 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
        set theMonsterToFind and return it. */
     layout[x][y] = 1;
     if (GET_MAP_FLAGS(map, x, y)&P_IS_ALIVE) {
-        the_monster = GET_MAP_OB(map, x, y);
-        /* check off this point */
-        for (; the_monster != NULL && (!QUERY_FLAG(the_monster, FLAG_ALIVE)); the_monster = the_monster->above)
-            ;
-        if (the_monster && QUERY_FLAG(the_monster, FLAG_ALIVE)) {
-            return the_monster;
-        }
+        FOR_MAP_PREPARE(map, x, y, the_monster)
+            if (QUERY_FLAG(the_monster, FLAG_ALIVE))
+                return the_monster;
+        FOR_MAP_FINISH();
     }
 
     /* now search all the 8 squares around recursively for a monster, in random order */
     for (i = RANDOM()%8, j = 0; j < 8; i++, j++) {
+        object *the_monster;
+
         the_monster = find_monster_in_room_recursive(layout, map, x+freearr_x[i%8+1], y+freearr_y[i%8+1], RP);
         if (the_monster != NULL)
             return the_monster;
@@ -720,9 +716,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy, RMParms *RP) {
  * where to remove.
  */
 void remove_monsters(int x, int y, mapstruct *map) {
-    object *tmp;
-
-    for (tmp = GET_MAP_OB(map, x, y); tmp != NULL; tmp = tmp->above)
+    FOR_MAP_PREPARE(map, x, y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
             if (tmp->head)
                 tmp = tmp->head;
@@ -731,7 +725,8 @@ void remove_monsters(int x, int y, mapstruct *map) {
             tmp = GET_MAP_OB(map, x, y);
             if (tmp == NULL)
                 break;
-        };
+        }
+    } FOR_MAP_FINISH();
 }
 
 /**
@@ -799,11 +794,10 @@ static object **surround_by_doors(mapstruct *map, char **layout, int x, int y, i
  * isn't there a function for that in map.c?
  */
 static object *door_in_square(mapstruct *map, int x, int y) {
-    object *tmp;
-
-    for (tmp = GET_MAP_OB(map, x, y); tmp != NULL; tmp = tmp->above)
+    FOR_MAP_PREPARE(map, x, y, tmp)
         if (tmp->type == DOOR || tmp->type == LOCKED_DOOR)
             return tmp;
+    FOR_MAP_FINISH();
     return NULL;
 }
 
@@ -912,7 +906,6 @@ static void remove_adjacent_doors(object *door) {
     int x = door->x;
     int y = door->y;
     int i, flags;
-    object *tmp;
 
     for (i = 1; i <= 8; i++) {
         flags = get_map_flags(m, NULL, x+freearr_x[i], y+freearr_y[i], NULL, NULL);
@@ -923,13 +916,13 @@ static void remove_adjacent_doors(object *door) {
          * set, can not be a door on this space.
          */
         if (flags&P_IS_ALIVE) {
-            for (tmp = GET_MAP_OB(m, x+freearr_x[i], y+freearr_y[i]); tmp; tmp = tmp->above) {
+            FOR_MAP_PREPARE(m, x+freearr_x[i], y+freearr_y[i], tmp) {
                 if (tmp->type == DOOR) {
                     object_remove(tmp);
                     object_free(tmp);
                     break;
                 }
-            }
+            } FOR_MAP_FINISH();
         }
     }
 }

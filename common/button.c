@@ -176,7 +176,7 @@ void push_button(object *op) {
  * object to update.
  */
 void update_button(object *op) {
-    object *ab, *tmp, *head;
+    object *tmp, *head;
     int tot, any_down = 0, old_value = op->value;
     objectlink *ol;
 
@@ -189,7 +189,8 @@ void update_button(object *op) {
 
         tmp = ol->ob;
         if (tmp->type == BUTTON) {
-            for (ab = tmp->above, tot = 0; ab != NULL; ab = ab->above)
+            tot = 0;
+            FOR_ABOVE_PREPARE(tmp, ab)
                 /* Bug? The pedestal code below looks for the head of
                  * the object, this bit doesn't.  I'd think we should check
                  * for head here also.  Maybe it also makese sense to
@@ -205,13 +206,14 @@ void update_button(object *op) {
                  */
                 if ((ab->move_type&tmp->move_on) || ab->move_type == 0)
                     tot += ab->weight*(ab->nrof ? ab->nrof : 1)+ab->carrying;
+            FOR_ABOVE_FINISH();
 
             tmp->value = (tot >= tmp->weight) ? 1 : 0;
             if (tmp->value)
                 any_down = 1;
         } else if (tmp->type == PEDESTAL) {
             tmp->value = 0;
-            for (ab = tmp->above; ab != NULL; ab = ab->above) {
+            FOR_ABOVE_PREPARE(tmp, ab) {
                 head = ab->head ? ab->head : ab;
                 /* Same note regarding move_type for buttons above apply here. */
                 if (((head->move_type&tmp->move_on) || ab->move_type == 0)
@@ -219,7 +221,7 @@ void update_button(object *op) {
                     || ((head->type == SPECIAL_KEY) && (head->slaying == tmp->slaying))
                     || (!strcmp(tmp->slaying, "player") && head->type == PLAYER)))
                     tmp->value = 1;
-            }
+            } FOR_ABOVE_FINISH();
             if (tmp->value)
                 any_down = 1;
         }
@@ -354,7 +356,6 @@ static int matches_sacrifice(const object *altar, const object *sacrifice) {
  */
 int check_altar_sacrifice(const object *altar, const object *sacrifice, int remove_others, int *toremove) {
     int money;
-    object *tmp;
     int wanted, rest;
     object *above;
 
@@ -397,14 +398,16 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
     /* Ok, now we check if we got enough with other items.
      * We only check items above altar, and not checking again sacrifice.
      */
-    for (tmp = altar->above; tmp != NULL && wanted > 0; tmp = tmp->above) {
+    FOR_ABOVE_PREPARE(altar, tmp) {
+        if (wanted <= 0)
+            break;
         if (tmp == sacrifice || !matches_sacrifice(altar, tmp))
             continue;
         if (money)
             wanted -= tmp->nrof*tmp->value;
         else
             wanted -= (tmp->nrof ? tmp->nrof : 1);
-    }
+    } FOR_ABOVE_FINISH();
 
     if (wanted > 0)
         /* Not enough value, let's bail out. */
@@ -420,7 +423,9 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
         return 1;
 
     /* We loop again, this time to remove what we need. */
-    for (tmp = altar->above; tmp != NULL && rest > 0; tmp = above) {
+    FOR_ABOVE_PREPARE(altar, tmp) {
+        if (rest <= 0)
+            break;
         above = tmp->above;
         if (tmp == sacrifice || !matches_sacrifice(altar, tmp))
             continue;
@@ -444,7 +449,7 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
                 object_decrease_nrof(tmp, rest);
                 return 1;
             }
-    }
+    } FOR_ABOVE_FINISH();
 
     /* Something went wrong, we'll be nice and accept the sacrifice anyway. */
     LOG(llevError, "check_altar_sacrifice on %s: found objects to sacrifice, but couldn't remove them??\n", altar->map->path);
@@ -523,7 +528,6 @@ static void trigger_move(object *op, int state) { /* 1 down and 0 up */
  * TRIGGER_BUTTON, TRIGGER_PEDESTAL: Returns 0.
  */
 int check_trigger(object *op, object *cause) {
-    object *tmp;
     int push = 0, tot = 0;
     int in_movement = op->stats.wc || op->speed;
 
@@ -531,7 +535,7 @@ int check_trigger(object *op, object *cause) {
     case TRIGGER_BUTTON:
         if (op->weight > 0) {
             if (cause) {
-                for (tmp = op->above; tmp; tmp = tmp->above)
+                FOR_ABOVE_PREPARE(op, tmp)
                     /* Comment reproduced from update_buttons():
                      * Basically, if the move_type matches that on what the
                      * button wants, we count it.  The second check is so that
@@ -542,6 +546,7 @@ int check_trigger(object *op, object *cause) {
                     if ((tmp->move_type&op->move_on) || tmp->move_type == 0) {
                         tot += tmp->weight*(tmp->nrof ? tmp->nrof : 1)+tmp->carrying;
                     }
+                FOR_ABOVE_FINISH();
                 if (tot >= op->weight)
                     push = 1;
                 if (op->stats.ac == push)
@@ -560,7 +565,7 @@ int check_trigger(object *op, object *cause) {
 
     case TRIGGER_PEDESTAL:
         if (cause) {
-            for (tmp = op->above; tmp; tmp = tmp->above) {
+            FOR_ABOVE_PREPARE(op, tmp) {
                 object *head = tmp->head ? tmp->head : tmp;
 
                 /* See comment in TRIGGER_BUTTON about move_types */
@@ -569,7 +574,7 @@ int check_trigger(object *op, object *cause) {
                     push = 1;
                     break;
                 }
-            }
+            } FOR_ABOVE_FINISH();
             if (op->stats.ac == push)
                 return 0;
             op->stats.ac = push;
@@ -786,7 +791,7 @@ int get_button_value(const object *button) {
  * object that matches, or NULL if none matched.
  */
 object *check_inv_recursive(object *op, const object *trig) {
-    object *tmp, *ret = NULL;
+    object *ret = NULL;
 
     /* First check the object itself. */
     if ((!trig->stats.hp || (op->type == trig->stats.hp))
@@ -795,7 +800,7 @@ object *check_inv_recursive(object *op, const object *trig) {
     && (!trig->title || (op->title == trig->title)))
         return op;
 
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->inv) {
             ret = check_inv_recursive(tmp, trig);
             if (ret)
@@ -805,7 +810,7 @@ object *check_inv_recursive(object *op, const object *trig) {
         && (!trig->race || (tmp->arch->name == trig->race))
         && (!trig->title || (tmp->title == trig->title)))
             return tmp;
-    }
+    } FOR_INV_FINISH();
 
     return NULL;
 }

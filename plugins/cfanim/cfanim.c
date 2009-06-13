@@ -216,9 +216,11 @@ static anim_move_result runapplyobject(struct CFanimation_struct *animation, lon
 
     if (!parameters)
         return mr_finished;
-    for (current = animation->victim->below; current; current = current->below)
+    current = animation->victim->below;
+    FOR_OB_AND_BELOW_PREPARE(current)
         if (current->name == parameters)
             break;
+    FOR_OB_AND_BELOW_FINISH();
     if (!current)
         current = object_find_by_name(animation->victim, parameters);
     if (!current) {
@@ -264,15 +266,14 @@ static long int initpickupobject(const char *name, char *parameters, struct CFmo
 }
 
 static anim_move_result runpickupobject(struct CFanimation_struct *animation, long int id, void *parameters) {
-    object *current;
-
     if (!parameters)
         return mr_finished;
-    for (current = animation->victim->below; current; current = current->below)
-        if (current->name == parameters)
+    FOR_BELOW_PREPARE(animation->victim, current)
+        if (current->name == parameters) {
+            cf_object_pickup(animation->victim, current);
             break;
-    if (current)
-        cf_object_pickup(animation->victim, current);
+        }
+    FOR_BELOW_FINISH();
     cf_free_string(parameters);
     return mr_finished;
 }
@@ -715,7 +716,6 @@ static object *find_by_name(object *origin, const char *name) {
     int x, y, w, h;
     mapstruct *map;
     const char *sname;
-    object *ob;
 
     sname = cf_find_string(name);
     if (!sname)
@@ -734,10 +734,10 @@ static object *find_by_name(object *origin, const char *name) {
 
     for (x = 0; x < w; x++) {
         for (y = 0; y < h; y++) {
-            for (ob = GET_MAP_OB(map, x, y); ob; ob = ob->above) {
+            FOR_MAP_PREPARE(map, x, y, ob) {
                 if (/*cf_object_get_sstring_property(ob, CFAPI_OBJECT_PROP_NAME)*/ob->name == sname)
                     return ob;
-            }
+            } FOR_MAP_FINISH();
         }
     }
 

@@ -128,14 +128,11 @@ int auto_apply(object *op) {
  * treasures and stuff).  Calls auto_apply if appropriate.
  */
 void fix_auto_apply(mapstruct *m) {
-    object *tmp, *above = NULL;
     int x, y;
 
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = above) {
-                above = tmp->above;
-
+            FOR_MAP_PREPARE(m, x, y, tmp) {
                 if (QUERY_FLAG(tmp, FLAG_AUTO_APPLY))
                     auto_apply(tmp);
                 else if (tmp->type == TREASURE) {
@@ -154,13 +151,14 @@ void fix_auto_apply(mapstruct *m) {
                     } else if (HAS_RANDOM_ITEMS(tmp))
                         create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty, 0);
                 }
-            }
+            } FOR_MAP_FINISH();
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+            FOR_MAP_PREPARE(m, x, y, tmp) {
                 if (tmp->above
                 && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
                     check_trigger(tmp, tmp->above);
+            } FOR_MAP_FINISH();
 }
 
 /**

@@ -212,10 +212,14 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
         else {
             /*  First we need to find a corpse, if any.  */
             /* If no object, temp will be set to NULL */
-            for (temp = GET_MAP_OB(m, sx, sy); temp != NULL; temp = temp->above)
+            temp = NULL;
+            FOR_MAP_PREPARE(m, sx, sy, tmp)
                 /* If it is corpse, this must be what we want to raise */
-                if (temp->type == CORPSE)
+                if (tmp->type == CORPSE) {
+                    temp = tmp;
                     break;
+                }
+            FOR_MAP_FINISH();
         }
 
         if (temp == NULL) {

@@ -1815,7 +1815,7 @@ static const char *const no_gain_msgs[NUM_STATS] = {
  * @todo weird check on duration? since you'll never get there since a force would have been found?
  */
 int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, int silent) {
-    object *tmp, *tmp2 = NULL;
+    object *tmp;
     object *force = NULL;
     int i;
 
@@ -1830,7 +1830,7 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
         return 0;
 
     /* If we've already got a force of this type, don't add a new one. */
-    for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below) {
+    FOR_INV_PREPARE(tmp, tmp2)
         if (tmp2->type == FORCE && tmp2->subtype == FORCE_CHANGE_ABILITY)  {
             if (tmp2->name == spell_ob->name) {
                 force = tmp2;    /* the old effect will be "refreshed" */
@@ -1844,7 +1844,7 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
                 return 0;
             }
         }
-    }
+    FOR_INV_FINISH();
     if (force == NULL) {
         force = create_archetype(FORCE_NAME);
         force->subtype = FORCE_CHANGE_ABILITY;
@@ -1957,7 +1957,7 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
 int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
     int i;
     const object *god = find_god(determine_god(op));
-    object *tmp2, *force = NULL, *tmp;
+    object *force = NULL, *tmp;
 
     /* if dir = 99 op defaults to tmp, eat_special_food() requires this. */
     if (dir != 0) {
@@ -1967,7 +1967,7 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
     }
 
     /* If we've already got a force of this type, don't add a new one. */
-    for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below) {
+    FOR_INV_PREPARE(tmp, tmp2)
         if (tmp2->type == FORCE && tmp2->subtype == FORCE_CHANGE_ABILITY)  {
             if (tmp2->name == spell_ob->name) {
                 force = tmp2;    /* the old effect will be "refreshed" */
@@ -1980,7 +1980,7 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
                 return 0;
             }
         }
-    }
+    FOR_INV_FINISH();
     if (force == NULL) {
         force = create_archetype(FORCE_NAME);
         force->subtype = FORCE_CHANGE_ABILITY;
@@ -2307,10 +2307,9 @@ int alchemy(object *op, object *caster, object *spell_ob) {
  * @todo why is the value set to 0?
  */
 int remove_curse(object *op, object *caster, object *spell) {
-    object *tmp;
     int success = 0, was_one = 0;
 
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    FOR_INV_PREPARE(op, tmp)
         if (QUERY_FLAG(tmp, FLAG_APPLIED)
         && ((QUERY_FLAG(tmp, FLAG_CURSED) && QUERY_FLAG(spell, FLAG_CURSED))
             || (QUERY_FLAG(tmp, FLAG_DAMNED) && QUERY_FLAG(spell, FLAG_DAMNED)))) {
@@ -2327,6 +2326,7 @@ int remove_curse(object *op, object *caster, object *spell) {
                     esrv_update_item(UPD_FLAGS, op, tmp);
             }
         }
+    FOR_INV_FINISH();
 
     if (op->type == PLAYER) {
         if (success) {
@@ -2418,7 +2418,7 @@ int cast_identify(object *op, object *caster, object *spell) {
     if (num_ident < 1)
         num_ident = 1;
 
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp)
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !tmp->invisible &&  need_identify(tmp)) {
             identify(tmp);
             if (op->type == PLAYER) {
@@ -2438,7 +2438,7 @@ int cast_identify(object *op, object *caster, object *spell) {
             if (!num_ident)
                 break;
         }
-    }
+    FOR_INV_FINISH();
     /* If all the power of the spell has been used up, don't go and identify
      * stuff on the floor.  Only identify stuff on the floor if the spell
      * was not fully used.
@@ -2528,7 +2528,8 @@ int cast_detection(object *op, object *caster, object *spell) {
             done_one = 0;
             floor = 0;
             detect = NULL;
-            for (tmp = last; tmp; tmp = tmp->below) {
+            tmp = last;
+            FOR_OB_AND_BELOW_PREPARE(tmp) {
                 /* show invisible */
                 if (QUERY_FLAG(spell, FLAG_MAKE_INVIS)
                     /* Might there be other objects that we can make visibile? */
@@ -2601,7 +2602,7 @@ int cast_detection(object *op, object *caster, object *spell) {
                     SET_FLAG(tmp, FLAG_KNOWN_CURSED);
                     done_one = 1;
                 }
-            } /* for stack of objects on this space */
+            } FOR_OB_AND_BELOW_FINISH(); /* for stack of objects on this space */
 
             /* Code here puts an effect of the spell on the space, so you can see
              * where the magic is.
@@ -2629,7 +2630,7 @@ int cast_detection(object *op, object *caster, object *spell) {
     /* Now process objects in the players inventory if detect curse or magic */
     if (QUERY_FLAG(spell, FLAG_KNOWN_CURSED) || QUERY_FLAG(spell, FLAG_KNOWN_MAGICAL)) {
         done_one = 0;
-        for (tmp = op->inv; tmp; tmp = tmp->below) {
+        FOR_INV_PREPARE(op, tmp) {
             if (!tmp->invisible && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
                 if (QUERY_FLAG(spell, FLAG_KNOWN_MAGICAL)
                 && is_magical(tmp)
@@ -2646,7 +2647,7 @@ int cast_detection(object *op, object *caster, object *spell) {
                         esrv_send_item(op, tmp);
                 }
             } /* if item is not identified */
-        } /* for the players inventory */
+        } FOR_INV_FINISH(); /* for the players inventory */
     } /* if detect magic/curse and object is a player */
     return 1;
 }
@@ -2864,7 +2865,6 @@ void counterspell(object *op, int dir) {
  */
 int cast_consecrate(object *op, object *caster, object *spell) {
     char buf[MAX_BUF];
-    object *tmp;
     const object *god = find_god(determine_god(op));
 
     if (!god) {
@@ -2873,7 +2873,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
         return 0;
     }
 
-    for (tmp = op->below; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
             break;
         if (tmp->type == HOLY_ALTAR) {
@@ -2914,7 +2914,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 return 1;
             }
         }
-    }
+    } FOR_INV_FINISH();
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                   "You are not standing over an altar!", NULL);
     return 0;

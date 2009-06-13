@@ -1005,7 +1005,7 @@ void fix_object(object *op) {
     int weapon_weight = 0, weapon_speed = 0;
     int best_wc = 0, best_ac = 0, wc = 0, ac = 0;
     int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
-    object *grace_obj = NULL, *mana_obj = NULL, *wc_obj = NULL, *tmp;
+    object *grace_obj = NULL, *mana_obj = NULL, *wc_obj = NULL;
 
     /* First task is to clear all the values back to their original values */
     if (op->type == PLAYER) {
@@ -1098,7 +1098,7 @@ void fix_object(object *op) {
      * now go through and make adjustments for what the player has equipped.
      */
 
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         /* See note in map.c:update_position about making this additive
          * since light sources are never applied, need to put check here.
          */
@@ -1378,7 +1378,7 @@ void fix_object(object *op) {
                 break;
             } /* switch tmp->type */
         } /* item is equipped */
-    } /* for loop of items */
+    } FOR_INV_FINISH(); /* for loop of items */
 
     /* We've gone through all the objects the player has equipped.  For many things, we
      * have generated intermediate values which we now need to assign.
@@ -2094,10 +2094,9 @@ sint64 check_exp_adjust(const object *op, sint64 exp) {
  */
 static void subtract_player_exp(object *op, sint64 exp, const char *skill, int flag) {
     float fraction = (float)exp/(float)op->stats.exp;
-    object *tmp;
     sint64 del_exp;
 
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    FOR_INV_PREPARE(op, tmp)
         if (tmp->type == SKILL && tmp->stats.exp) {
             if (flag == SK_SUBTRACT_SKILL_EXP && skill && !strcmp(tmp->skill, skill)) {
                 del_exp = check_exp_loss(tmp, exp);
@@ -2112,6 +2111,7 @@ static void subtract_player_exp(object *op, sint64 exp, const char *skill, int f
                 player_lvl_adj(op, tmp);
             }
         }
+    FOR_INV_FINISH();
     if (flag != SK_SUBTRACT_SKILL_EXP) {
         del_exp = check_exp_loss(op, exp);
         op->stats.exp -= del_exp;
@@ -2202,12 +2202,11 @@ void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
  * victim of the penalty. Must not be NULL.
  */
 void apply_death_exp_penalty(object *op) {
-    object *tmp;
     sint64 loss;
     sint64 percentage_loss;  /* defined by the setting 'death_penalty_percent' */
     sint64 level_loss;   /* defined by the setting 'death_penalty_levels */
 
-    for (tmp = op->inv; tmp; tmp = tmp->below)
+    FOR_INV_PREPARE(op, tmp)
         if (tmp->type == SKILL && tmp->stats.exp) {
 
             percentage_loss = tmp->stats.exp*settings.death_penalty_ratio/100;
@@ -2226,6 +2225,7 @@ void apply_death_exp_penalty(object *op) {
             tmp->stats.exp -= loss;
             player_lvl_adj(op, tmp);
         }
+    FOR_INV_FINISH();
 
     percentage_loss = op->stats.exp*settings.death_penalty_ratio/100;
     level_loss = op->stats.exp-levels[MAX(0, op->level-settings.death_penalty_level)];

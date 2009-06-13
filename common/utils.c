@@ -182,16 +182,14 @@ int rndm(int min, int max) {
  */
 void decay_objects(mapstruct *m) {
     int x, y, destroy;
-    object *op, *otmp;
 
     if (m->unique)
         return;
 
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (op = GET_MAP_OB(m, x, y); op; op = otmp) {
+            FOR_MAP_PREPARE(m, x, y, op) {
                 destroy = 0;
-                otmp = op->above;
                 if (QUERY_FLAG(op, FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
                     break;
                 if (QUERY_FLAG(op, FLAG_IS_FLOOR)
@@ -246,7 +244,7 @@ void decay_objects(mapstruct *m) {
                     object_remove(op);
                     object_free(op);
                 }
-            }
+            } FOR_MAP_FINISH();
 }
 
 /**

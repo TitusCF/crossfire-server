@@ -206,13 +206,10 @@ static int same_string(const char *s1, const char *s2) {
  *
  */
 static void follower_remove_given_items(object *pl, object *op, const object *god) {
-    object *tmp, *next;
     const char *given_by;
 
     /* search the inventory */
-    for (tmp = op->inv; tmp != NULL; tmp = next) {
-        next = tmp->below;   /* backup in case we remove tmp */
-
+    FOR_INV_PREPARE(op, tmp) {
         given_by = object_get_value(tmp, "divine_giver_name");
         if (given_by == god->name) {
             char name[HUGE_BUF];
@@ -234,7 +231,7 @@ static void follower_remove_given_items(object *pl, object *op, const object *go
             object_free(tmp);
         } else if (tmp->inv)
             follower_remove_given_items(pl, tmp, god);
-    }
+    } FOR_INV_FINISH();
 }
 
 /**
@@ -247,9 +244,7 @@ static void follower_remove_given_items(object *pl, object *op, const object *go
  * 1 if found, else 0.
  */
 static int follower_has_similar_item(object *op, object *item) {
-    object *tmp;
-
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == item->type
         && same_string(tmp->name, item->name)
         && same_string(tmp->title, item->title)
@@ -258,7 +253,7 @@ static int follower_has_similar_item(object *op, object *item) {
             return 1;
         if (tmp->inv && follower_has_similar_item(tmp, item))
             return 1;
-    }
+    } FOR_INV_FINISH();
     return 0;
 }
 
@@ -417,13 +412,10 @@ static void check_special_prayers(object *op, const object *god) {
      * by 'god'.
      */
     treasure *tr;
-    object *tmp, *next_tmp;
     int remove = 0;
 
     /* Outer loop iterates over all special prayer marks */
-    for (tmp = op->inv; tmp; tmp = next_tmp) {
-        next_tmp = tmp->below;
-
+    FOR_INV_PREPARE(op, tmp) {
         /* we mark special prayers with the STARTEQUIP flag, so if it isn't
          * in that category, not something we need to worry about.
          */
@@ -467,8 +459,7 @@ static void check_special_prayers(object *op, const object *god) {
             object_remove(tmp);
             object_free(tmp);
         }
-
-    }
+    } FOR_INV_FINISH();
 }
 
 /**
@@ -486,15 +477,14 @@ static void check_special_prayers(object *op, const object *god) {
 void become_follower(object *op, const object *new_god) {
     const object *old_god = NULL;                      /* old god */
     treasure *tr;
-    object *item, *skop, *next;
+    object *skop;
     int i, sk_applied;
     int undeadified = 0; /* Turns to true if changing god can changes the undead
                           * status of the player.*/
     old_god = find_god(determine_god(op));
 
     /* take away any special god-characteristic items. */
-    for (item = op->inv; item != NULL; item = next) {
-        next = item->below;
+    FOR_INV_PREPARE(op, item) {
         /* remove all invisible startequip items which are
          *  not skill, exp or force
           */
@@ -512,7 +502,7 @@ void become_follower(object *op, const object *new_god) {
             object_remove(item);
             object_free(item);
         }
-    }
+    } FOR_INV_FINISH();
 
     /* remove any items given by the old god */
     if (old_god) {
@@ -704,16 +694,17 @@ static int worship_forbids_use(object *op, object *exp_obj, uint32 flag, const c
  * @param type
  * item type to remove.
  * @param number
- * maximum number of items to unapply.
+ * maximum number of items to unapply. Must be positive.
  */
 static void stop_using_item(object *op, int type, int number) {
-    object *tmp;
-
-    for (tmp = op->inv; tmp && number; tmp = tmp->below)
+    FOR_INV_PREPARE(op, tmp)
         if (tmp->type == type && QUERY_FLAG(tmp, FLAG_APPLIED)) {
             apply_special(op, tmp, AP_UNAPPLY|AP_IGNORE_CURSE);
             number--;
+            if (number <= 0)
+                break;
         }
+    FOR_INV_FINISH();
 }
 
 /**
@@ -811,10 +802,9 @@ archetype *determine_holy_arch(const object *god, const char *type) {
  * 1 if at least one item was uncursed, 0 else.
  */
 static int god_removes_curse(object *op, int remove_damnation) {
-    object *tmp;
     int success = 0;
 
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->invisible)
             continue;
         if (QUERY_FLAG(tmp, FLAG_DAMNED) && !remove_damnation)
@@ -827,7 +817,7 @@ static int god_removes_curse(object *op, int remove_damnation) {
             if (op->type == PLAYER)
                 esrv_update_item(UPD_FLAGS, op, tmp);
         }
-    }
+    } FOR_INV_FINISH();
 
     if (success)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
@@ -1254,13 +1244,13 @@ static void god_intervention(object *op, const object *god, object *skill) {
  */
 static int god_examines_priest(object *op, const object *god) {
     int reaction = 1;
-    object *item = NULL, *skop;
+    object *skop;
 
-    for (item = op->inv; item; item = item->below) {
+    FOR_INV_PREPARE(op, item)
         if (QUERY_FLAG(item, FLAG_APPLIED)) {
             reaction += god_examines_item(god, item)*(item->magic ? abs(item->magic) : 1);
         }
-    }
+    FOR_INV_FINISH();
 
     /* well, well. Looks like we screwed up. Time for god's revenge */
     if (reaction < 0) {

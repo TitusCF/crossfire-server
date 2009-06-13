@@ -2184,14 +2184,14 @@ static PyObject *Crossfire_Object_CheckInventory(Crossfire_Object *who, PyObject
     foundob = cf_object_present_archname_inside(who->obj, whatstr);
 
     return Crossfire_Object_wrap(foundob);
-/*  for (tmp = WHO->inv; tmp; tmp = tmp->below) {
+/*  FOR_INV_PREPARE(WHO, tmp) {
         if (!strncmp(PyQueryName(tmp), whatstr, strlen(whatstr))) {
             return Py_BuildValue("l", (long)(tmp));
         }
         if (!strncmp(tmp->name, whatstr, strlen(whatstr))) {
             return Py_BuildValue("l", (long)(tmp));
         }
-    }
+    } FOR_INV_FINISH();
 
     return Py_BuildValue("l", (long)0);*/
 }

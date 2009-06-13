@@ -615,7 +615,7 @@ int player_apply(object *pl, object *op, int aflag, int quiet) {
  * player.
  */
 void player_apply_below(object *pl) {
-    object *tmp, *next;
+    object *tmp;
     int floors;
 
     if (pl->contr->transport && pl->contr->transport->type == TRANSPORT) {
@@ -634,8 +634,8 @@ void player_apply_below(object *pl) {
      * problem if player_apply() has a bug in that it uses the object but
      * does not return a proper value.
      */
-    for (floors = 0; tmp != NULL; tmp = next) {
-        next = tmp->below;
+    floors = 0;
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
             floors++;
         else if (floors > 0)
@@ -652,7 +652,7 @@ void player_apply_below(object *pl) {
         }
         if (floors >= 2)
             return;   /* process at most two floor objects */
-    }
+    } FOR_OB_AND_BELOW_FINISH();
 }
 
 /**
@@ -814,12 +814,13 @@ static object *get_item_from_body_location(object *start, int loc) {
     if (!start)
         return NULL;
 
-    for (tmp = start; tmp; tmp = tmp->below)
+    tmp = start;
+    FOR_OB_AND_BELOW_PREPARE(tmp)
         if (QUERY_FLAG(tmp, FLAG_APPLIED)
         && tmp->body_info[loc]
         && (!tmp->invisible || tmp->type == SKILL))
             return tmp;
-
+    FOR_OB_AND_BELOW_FINISH();
     return NULL;
 }
 
@@ -853,7 +854,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
      * or weapons first - only allowed to use one weapon/shield at a time.
      */
     if (op->type == WEAPON || op->type == SHIELD) {
-        for (tmp = who->inv; tmp; tmp = tmp->below) {
+        FOR_INV_PREPARE(who, tmp) {
             if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
                 if ((aflags&AP_IGNORE_CURSE)
                 || (aflags&AP_PRINT)
@@ -881,7 +882,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
                 }
 
             }
-        }
+        } FOR_INV_FINISH();
     }
 
     for (i = 0; i < NUM_BODY_LOCATIONS; i++) {
@@ -1091,12 +1092,11 @@ int check_weapon_power(const object *who, int improvs) {
      * balance.
      */
     if (who->type == PLAYER) {
-        object *wc_obj = NULL;
-
-        for (wc_obj = who->inv; wc_obj; wc_obj = wc_obj->below)
+        FOR_INV_PREPARE(who, wc_obj)
             if (wc_obj->type == SKILL && IS_COMBAT_SKILL(wc_obj->subtype)
             && wc_obj->level > level)
                 level = wc_obj->level;
+        FOR_INV_FINISH();
 
         if (!level)  {
             LOG(llevError, "Error: Player: %s lacks wc experience object\n", who->name);
@@ -1517,7 +1517,7 @@ int apply_special(object *who, object *op, int aflags) {
  * 1 if object was initialized, 0 else.
  */
 int auto_apply(object *op) {
-    object *tmp = NULL, *tmp2;
+    object *tmp = NULL;
     int i;
 
     switch (op->type) {
@@ -1555,14 +1555,13 @@ int auto_apply(object *op) {
          * object is about to disappear.  An example of this item
          * is the random_ *stuff that is put inside other objects.
          */
-        for (tmp = op->inv; tmp; tmp = tmp2) {
-            tmp2 = tmp->below;
+        FOR_INV_PREPARE(op, tmp) {
             object_remove(tmp);
             if (op->env)
                 object_insert_in_ob(tmp, op->env);
             else
                 object_free(tmp);
-        }
+        } FOR_INV_FINISH();
         object_remove(op);
         object_free(op);
         break;
@@ -1581,7 +1580,6 @@ int auto_apply(object *op) {
  */
 
 void fix_auto_apply(mapstruct *m) {
-    object *tmp, *above = NULL;
     int x, y;
 
     if (m == NULL)
@@ -1589,15 +1587,9 @@ void fix_auto_apply(mapstruct *m) {
 
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = above) {
-                above = tmp->above;
-
+            FOR_MAP_PREPARE(m, x, y, tmp) {
                 if (tmp->inv) {
-                    object *invtmp, *invnext;
-
-                    for (invtmp = tmp->inv; invtmp != NULL; invtmp = invnext) {
-                        invnext = invtmp->below;
-
+                    FOR_INV_PREPARE(tmp, invtmp) {
                         if (QUERY_FLAG(invtmp, FLAG_AUTO_APPLY))
                             auto_apply(invtmp);
                         else if (invtmp->type == TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
@@ -1615,7 +1607,7 @@ void fix_auto_apply(mapstruct *m) {
                              */
                             invtmp->randomitems = NULL;
                         }
-                    }
+                    } FOR_INV_FINISH();
                     /* This is really temporary - the code at the
                      * bottom will also set randomitems to null.
                      * The problem is there are bunches of maps/players
@@ -1677,14 +1669,15 @@ void fix_auto_apply(mapstruct *m) {
                 if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
                     monster_check_apply_all(tmp);
                 }
-            }
+            } FOR_MAP_FINISH();
 
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+            FOR_MAP_PREPARE(m, x, y, tmp) {
                 if (tmp->above
                 && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
                     check_trigger(tmp, tmp->above);
+            } FOR_MAP_FINISH();
 }
 
 /**

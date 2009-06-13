@@ -161,7 +161,6 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
         if (rp != NULL) {
             uint64 value_ingredients;
             uint64 value_item;
-            object *tmp;
             int attempt_shadow_alchemy;
 
             ave_chance = fl->total_chance/(float)fl->number;
@@ -186,8 +185,9 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
 
             /* determine value of ingredients */
             value_ingredients = 0;
-            for (tmp = cauldron->inv; tmp != NULL; tmp = tmp->below)
+            FOR_INV_PREPARE(cauldron, tmp)
                 value_ingredients += query_cost(tmp, NULL, F_TRUE);
+            FOR_INV_FINISH();
 
             attempt_shadow_alchemy = !is_defined_recipe(rp, cauldron, caster);
 
@@ -235,10 +235,9 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
  */
 static int content_recipe_value(object *op) {
     char name[MAX_BUF];
-    object *tmp = op->inv;
     int tval = 0, formula = 0;
 
-    while (tmp) {
+    FOR_INV_PREPARE(op, tmp) {
         tval = 0;
         strcpy(name, tmp->name);
         if (tmp->title)
@@ -248,8 +247,7 @@ static int content_recipe_value(object *op) {
         LOG(llevDebug, "Got ingredient %d %s(%d)\n", tmp->nrof ? tmp->nrof : 1, name, tval);
 #endif
         formula += tval;
-        tmp = tmp->below;
-    }
+    } FOR_INV_FINISH();
 #ifdef ALCHEMY_DEBUG
     LOG(llevDebug, " Formula value=%d\n", formula);
 #endif
@@ -264,13 +262,11 @@ static int content_recipe_value(object *op) {
  * total item count.
  */
 static int numb_ob_inside(object *op) {
-    object *tmp = op->inv;
     int o_number = 0;
 
-    while (tmp) {
+    FOR_INV_PREPARE(op, tmp)
         o_number++;
-        tmp = tmp->below;
-    }
+    FOR_INV_FINISH();
 #ifdef ALCHEMY_DEBUG
     LOG(llevDebug, "numb_ob_inside(%s): found %d ingredients\n", op->name, o_number);
 #endif
@@ -447,8 +443,9 @@ static object *find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_
 
     *rp_arch_index = 0;
 
-    if (rp->transmute) /* look for matching ingredient/prod archs */
-        for (item = first_ingred; item; item = item->below) {
+    if (rp->transmute) { /* look for matching ingredient/prod archs */
+        item = first_ingred;
+        FOR_OB_AND_BELOW_PREPARE(item) {
             size_t i;
 
             for (i = 0; i < rp->arch_names; i++) {
@@ -459,7 +456,8 @@ static object *find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_
             }
             if (i < rp->arch_names)
                 break;
-        }
+        } FOR_OB_AND_BELOW_FINISH();
+    }
 
     /* failed, create a fresh object. Note no nrof>1 because that would
      * allow players to create massive amounts of artifacts easily */
@@ -512,16 +510,15 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         object *item = NULL;
 
         if (rndm(0, 2)) { /* slag created */
-            object *tmp = cauldron->inv;
+            object *tmp;
             int weight = 0;
             uint16 material = M_STONE;
 
-            while (tmp) { /* slag has coadded ingredient properties */
+            FOR_INV_PREPARE(cauldron, tmp) { /* slag has coadded ingredient properties */
                 weight += tmp->weight;
                 if (!(material&tmp->material))
                     material |= tmp->material;
-                tmp = tmp->below;
-            }
+            } FOR_INV_FINISH();
             tmp = create_archetype("rock");
             tmp->weight = weight;
             tmp->value = 0;
@@ -718,17 +715,17 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
  * what item to not remove. Can be NULL.
  */
 static void remove_contents(object *first_ob, object *save_item) {
-    object *next, *tmp;
+    object *tmp;
 
-    for (tmp = first_ob; tmp != NULL; tmp = next) {
-        next = tmp->below;
+    tmp = first_ob;
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp != save_item) {
             if (tmp->inv)
                 remove_contents(tmp->inv, NULL);
             object_remove(tmp);
             object_free(tmp);
         }
-    }
+    } FOR_OB_AND_BELOW_FINISH();
 }
 
 /**
@@ -751,7 +748,6 @@ static void remove_contents(object *first_ob, object *save_item) {
  * danger value.
  */
 static int calc_alch_danger(object *caster, object *cauldron, recipe *rp) {
-    object *item;
     char name[MAX_BUF];
     int danger = 0, nrofi = 0;
 
@@ -768,13 +764,13 @@ static int calc_alch_danger(object *caster, object *cauldron, recipe *rp) {
      * Thus the backfire is worse. Also, more ingredients
      * means we are attempting a more powerfull potion,
      * and thus the backfire will be worse.  */
-    for (item = cauldron->inv; item; item = item->below) {
+    FOR_INV_PREPARE(cauldron, item) {
         strcpy(name, item->name);
         if (item->title)
             snprintf(name, sizeof(name), "%s %s", item->name, item->title);
         danger += (strtoint(name)/1000)+3;
         nrofi++;
-    }
+    } FOR_INV_FINISH();
     if (rp == NULL)
         danger += 110;
     else
@@ -816,14 +812,14 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
     uint32 batches_in_cauldron;
     const linked_char *ingredient;
     int number;
-    const object *ob;
 
     /* check for matching number of ingredients */
     number = 0;
     for (ingredient = rp->ingred; ingredient != NULL; ingredient = ingredient->next)
         number++;
-    for (ob = cauldron->inv; ob != NULL; ob = ob->below)
+    FOR_INV_PREPARE(cauldron, ob)
         number--;
+    FOR_INV_FINISH();
     if (number != 0)
         return 0;
 
@@ -848,7 +844,7 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
 
         /* find the current ingredient in the cauldron */
         ok = 0;
-        for (ob = cauldron->inv; ob != NULL; ob = ob->below) {
+        FOR_INV_PREPARE(cauldron, ob) {
             char name_ob[MAX_BUF];
             const char *name2;
 
@@ -872,7 +868,7 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
                 }
                 break;
             }
-        }
+        } FOR_INV_FINISH();
         if (!ok)
             return(0);
     }
@@ -974,14 +970,12 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients) {
  * check if no superflous message when 2 cauldrons on same spot, one unpaid? (shouldn't happen, but well).
  **/
 int use_alchemy(object *op) {
-    object *tmp, *next;
     object *unpaid_cauldron = NULL;
     object *unpaid_item = NULL;
     int did_alchemy = 0;
     char name[MAX_BUF];
 
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = next) {
-        next = tmp->above;
+    FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
                 unpaid_cauldron = tmp;
@@ -996,7 +990,7 @@ int use_alchemy(object *op) {
                 esrv_send_inventory(op, tmp);
             did_alchemy = 1;
         }
-    }
+    } FOR_MAP_FINISH();
     if (unpaid_cauldron) {
         query_base_name(unpaid_cauldron, 0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,

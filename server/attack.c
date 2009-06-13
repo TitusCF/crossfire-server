@@ -68,9 +68,10 @@ static void cancellation(object *op) {
 
     if (QUERY_FLAG(op, FLAG_ALIVE) || op->type == CONTAINER  || op->type == THROWN_OBJ) {
         /* Recur through the inventory */
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+        FOR_INV_PREPARE(op, inv)
             if (!did_make_save_item(tmp, AT_CANCELLATION, op))
                 cancellation(tmp);
+        FOR_INV_FINISH();
     } else if (FABS(op->magic) <= (rndm(0, 5))) {
         /* Nullify this object. This code could probably be more complete */
         /* in what abilities it should cancel */
@@ -171,7 +172,6 @@ static int did_make_save_item(object *op, int type, object *originator) {
 void save_throw_object(object *op, uint32 type, object *originator) {
     if (!did_make_save_item(op, type, originator)) {
         object *env = op->env;
-        object *inv;
         int x = op->x, y = op->y;
         mapstruct *m = op->map;
 
@@ -180,12 +180,10 @@ void save_throw_object(object *op, uint32 type, object *originator) {
             return;
 
         /* Set off runes in the inventory of the object being destroyed. */
-        inv = op->inv;
-        while (inv != NULL) {
+        FOR_INV_PREPARE(op, inv)
             if (inv->type == RUNE)
                 spring_trap(inv, originator);
-            inv = inv->below;
-        }
+        FOR_INV_FINISH();
 
         /* Hacked the following so that type LIGHTER will work.
          * Also, objects which are potenital "lights" that are hit by
@@ -290,12 +288,10 @@ void save_throw_object(object *op, uint32 type, object *originator) {
  * 1 if it hits something, 0 otherwise.
  */
 int hit_map(object *op, int dir, uint32 type, int full_hit) {
-    object *tmp, *next;
     mapstruct *map;
     sint16 x, y;
     int retflag = 0;  /* added this flag..  will return 1 if it hits a monster */
-
-    tag_t op_tag, next_tag = 0;
+    tag_t op_tag;
 
     if (QUERY_FLAG(op, FLAG_FREED)) {
         LOG(llevError, "BUG: hit_map(): free object\n");
@@ -345,29 +341,7 @@ int hit_map(object *op, int dir, uint32 type, int full_hit) {
         type &= ~AT_CHAOS;
     }
 
-    next = GET_MAP_OB(map, x, y);
-    if (next)
-        next_tag = next->count;
-
-    while (next) {
-        if (object_was_destroyed(next, next_tag)) {
-            /* There may still be objects that were above 'next', but there is no
-             * simple way to find out short of copying all object references and
-             * tags into a temporary array before we start processing the first
-             * object.  That's why we just abort.
-             *
-             * This happens whenever attack spells (like fire) hit a pile
-             * of objects. This is not a bug - nor an error. The errormessage
-             * below was spamming the logs for absolutely no reason.
-             */
-            /* LOG (llevDebug, "hit_map(): next object destroyed\n"); */
-            break;
-        }
-        tmp = next;
-        next = tmp->above;
-        if (next)
-            next_tag = next->count;
-
+    FOR_MAP_PREPARE(map, x, y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_FREED)) {
             LOG(llevError, "BUG: hit_map(): found freed object\n");
             break;
@@ -385,12 +359,10 @@ int hit_map(object *op, int dir, uint32 type, int full_hit) {
 
         /* Need to hit everyone in the transport with this spell */
         if (tmp->type == TRANSPORT) {
-            object *pl;
-
-            for (pl = tmp->inv; pl; pl = pl->below) {
+            FOR_INV_PREPARE(tmp, pl)
                 if (pl->type == PLAYER)
                     hit_player(pl, op->stats.dam, op, type, full_hit);
-            }
+            FOR_INV_FINISH();
         }
 
         if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
@@ -411,7 +383,7 @@ int hit_map(object *op, int dir, uint32 type, int full_hit) {
             if (object_was_destroyed(op, op_tag))
                 break;
         }
-    }
+    } FOR_MAP_FINISH();
     return 0;
 }
 
@@ -434,7 +406,6 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     char buf[MAX_BUF], buf1[MAX_BUF], buf2[MAX_BUF];
     int i, found = 0;
     mapstruct *map;
-    object *next, *tmp;
 
     /* put in a few special messages for some of the common attacktypes
      *  a player might have.  For example, fire, electric, cold, etc
@@ -655,15 +626,11 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
             map = hitter->map;
             if (out_of_map(map, hitter->x, hitter->y))
                 return;
-            next = GET_MAP_OB(map, hitter->x, hitter->y);
-            if (next)
-                while (next) {
-                    if (next->type == SPELL_EFFECT
-                    && (next->subtype == SP_EXPLOSION || next->subtype == SP_BULLET || next->subtype == SP_CONE))
-                        i *= 3;
-                    tmp = next;
-                    next = tmp->above;
-                }
+            FOR_MAP_PREPARE(map, hitter->x, hitter->y, next)
+                if (next->type == SPELL_EFFECT
+                && (next->subtype == SP_EXPLOSION || next->subtype == SP_BULLET || next->subtype == SP_CONE))
+                    i *= 3;
+            FOR_MAP_FINISH();
             if (i < 0)
                 return;
             if (rndm(0, i) != 0)
@@ -982,11 +949,12 @@ object *hit_with_arrow(object *op, object *victim) {
     const char *old_skill = NULL;
 
     /* Disassemble missile */
-    for (hitter = op->inv; hitter; hitter = hitter->below) {
+    hitter = op->inv;
+    FOR_OB_AND_BELOW_PREPARE(hitter)
         if (hitter->type != EVENT_CONNECTOR) {
             break;
         }
-    }
+    FOR_OB_AND_BELOW_FINISH();
     if (!hitter) {
         container = NULL;
         hitter = op;
@@ -1299,9 +1267,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
              * if your acid resistance is below 50%. */
             if (!op_on_battleground(op, NULL, NULL, NULL)
             && (op->resist[ATNR_ACID] < 50)) {
-                object *tmp;
-
-                for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+                FOR_INV_PREPARE(op, tmp) {
                     if (tmp->invisible)
                         continue;
                     if (!QUERY_FLAG(tmp, FLAG_APPLIED)
@@ -1337,7 +1303,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                         if (op->type == PLAYER)
                             esrv_update_item(UPD_NAME, op, tmp);
                     }
-                }
+                } FOR_INV_FINISH();
                 if (flag)
                     fix_object(op); /* Something was corroded */
             }

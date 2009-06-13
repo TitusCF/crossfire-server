@@ -372,10 +372,12 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
     archetype *wall_arch = NULL;
 
     /* first find the wall */
-    for (the_wall = GET_MAP_OB(the_map, i, j); the_wall != NULL; the_wall = the_wall->above)
-        if ((the_wall->move_type&MOVE_WALK) && the_wall->type != EXIT && the_wall->type != TELEPORTER)
+    FOR_MAP_PREPARE(the_map, i, j, tmp)
+        if ((tmp->move_type&MOVE_WALK) && tmp->type != EXIT && tmp->type != TELEPORTER) {
+            the_wall = tmp;
             break;
-
+        }
+    FOR_MAP_FINISH();
 
     /* if what we found is a door, don't remove it, set the_wall to NULL to
      * signal that later.

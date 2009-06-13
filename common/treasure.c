@@ -1817,15 +1817,13 @@ void add_abilities(object *op, object *change) {
     }
 
     if (change->inv) {
-        object *inv = change->inv;
         object *copy;
 
-        while (inv) {
+        FOR_INV_PREPARE(change, inv) {
             copy = object_new();
             object_copy(inv, copy);
             object_insert_in_ob(copy, op);
-            inv = inv->below;
-        }
+        } FOR_INV_FINISH();
     }
 }
 

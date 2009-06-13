@@ -2779,15 +2779,15 @@ int command_style_map_info(object *op, char *params) {
     extern mapstruct *styles;
     mapstruct *mp;
     int maps_used = 0, mapmem = 0, objects_used = 0, x, y;
-    object *tmp;
 
     for (mp = styles; mp != NULL; mp = mp->next) {
         maps_used++;
         mapmem += MAP_WIDTH(mp)*MAP_HEIGHT(mp)*(sizeof(object *)+sizeof(MapSpace))+sizeof(mapstruct);
         for (x = 0; x < MAP_WIDTH(mp); x++) {
             for (y = 0; y < MAP_HEIGHT(mp); y++) {
-                for (tmp = GET_MAP_OB(mp, x, y); tmp != NULL; tmp = tmp->above)
+                FOR_MAP_PREPARE(mp, x, y, tmp)
                     objects_used++;
+                FOR_MAP_FINISH();
             }
         }
     }

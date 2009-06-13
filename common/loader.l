@@ -1757,7 +1757,6 @@ void get_ob_diff(StringBuffer *sb, object *op, object *op2) {
 int save_object(FILE *fp, object *op, int flag) {
     archetype *at;
     char *cp;
-    object *tmp;
     int res;
     StringBuffer *sb;
 
@@ -1818,9 +1817,10 @@ int save_object(FILE *fp, object *op, int flag) {
 
     /* Eneq(@csd.uu.se): Added this to allow containers being saved with contents*/
 
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+    FOR_INV_PREPARE(op, tmp)
         if ((res = save_object(fp, tmp, flag)) != 0)
             return res;
+    FOR_INV_FINISH();
 
     if (fprintf(fp, "end\n") < 0)
         return SAVE_ERROR_WRITE;

@@ -135,7 +135,6 @@ int command_orcknuckle(object *op, char *params) {
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
     object *dice[DICE];
-    object *ob;
     int i, j, k, l, dice_count, number_dice;
     const char *name;
 
@@ -147,12 +146,14 @@ int command_orcknuckle(object *op, char *params) {
         dice_count = 0;
         number_dice = 0;
 
-        for (ob = op->inv; ob && dice_count < DICE && number_dice < DICE; ob = ob->below) {
+        FOR_INV_PREPARE(op, ob) {
+            if (dice_count >= DICE || number_dice >= DICE)
+                break;
             if (ob->name == name) {
                 number_dice += ob->nrof;
                 dice[dice_count++] = ob;
             }
-        }
+        } FOR_INV_FINISH();
 
         if (number_dice < DICE) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,

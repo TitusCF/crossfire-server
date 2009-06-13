@@ -71,7 +71,8 @@ static object *find_best_apply_object_match(object *start, object *pl, const cha
     object *tmp, *best = NULL;
     int match_val = 0, tmpmatch;
 
-    for (tmp = start; tmp; tmp = tmp->below) {
+    tmp = start;
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp->invisible)
             continue;
         if ((aflag == AP_APPLY) && (QUERY_FLAG(tmp, FLAG_APPLIED)))
@@ -82,7 +83,7 @@ static object *find_best_apply_object_match(object *start, object *pl, const cha
             match_val = tmpmatch;
             best = tmp;
         }
-    }
+    } FOR_OB_AND_BELOW_FINISH();
     return best;
 }
 
@@ -540,7 +541,8 @@ void pick_up(object *op, object *alt) {
          * Moved this into a single loop - reduces redundant code, is
          * more efficient and easier to follow.  MSW 2009-04-06
          */
-        for (alt = op->inv; alt; alt = alt->below) {
+        alt = op->inv;
+        FOR_OB_AND_BELOW_PREPARE(alt) {
             if (alt->type == CONTAINER
             && QUERY_FLAG(alt, FLAG_APPLIED)
             && sack_can_hold(NULL, alt, tmp, count)) {
@@ -551,7 +553,7 @@ void pick_up(object *op, object *alt) {
                     container = alt;
                 }
             }
-        }
+        } FOR_OB_AND_BELOW_FINISH();
         /* Note container could be null, but no reason to check for it */
         if (!alt)
             alt = container;
@@ -630,9 +632,7 @@ int command_take(object *op, char *params) {
     if (params && *params == '\0')
         params = NULL;
 
-    while (tmp) {
-        next = tmp->below;
-
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp->invisible) {
             tmp = next;
             continue;
@@ -651,24 +651,20 @@ int command_take(object *op, char *params) {
             pick_up(op, tmp);
             break;
         }
-        tmp = next;
-        /* Might as well just skip over the player immediately -
-         * we know it can't be picked up
-         */
-        if (tmp == op)
-            tmp = tmp->below;
-    }
+    } FOR_OB_AND_BELOW_FINISH();
     if (!params && !tmp) {
-        for (tmp = op->below; tmp != NULL; tmp = tmp->next)
+        int found = 0;
+        FOR_BELOW_PREPARE(op, tmp)
             if (!tmp->invisible) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                      "You can't pick up a %s.",
                                      "You can't pick up a %s.",
                                      tmp->name ? tmp->name : "null");
-
+                found = 1;
                 break;
             }
-        if (!tmp)
+        FOR_BELOW_FINISH();
+        if (!found)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "There is nothing to pick up.", NULL);
     }
@@ -741,8 +737,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
                              "You move the items from %s into %s.",
                              name_tmp, name_sack);
 
-            for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
-                tmp = tmp2->below;
+            FOR_INV_PREPARE(tmp, tmp2) {
                 if ((sack->type == CONTAINER && sack_can_hold(op, op->container, tmp2, tmp2->nrof))
                    || (sack->type == TRANSPORT && transport_can_hold(sack, tmp2, tmp2->nrof))) {
                     put_object_in_sack(op, sack, tmp2, 0);
@@ -754,7 +749,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
                                      name_sack);
                     break;
                 }
-            }
+            } FOR_INV_FINISH();
             esrv_update_item(UPD_WEIGHT, op, sack2);
             return;
         } else {
@@ -823,10 +818,10 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
      * the view of what is in it.
      */
     if (sack->type == TRANSPORT) {
-        for (tmp = sack->inv; tmp; tmp = tmp->below) {
+        FOR_INV_PREPARE(sack, tmp)
             if (tmp->type == PLAYER)
                 tmp->contr->socket.update_look = 1;
-        }
+        FOR_INV_FINISH();
     } else {
         /* update the sacks weight */
         esrv_update_item(UPD_WEIGHT, op, sack);
@@ -960,8 +955,10 @@ void drop(object *op, object *tmp) {
             object_free(tmp);
             return;
         } else {
-            while (tmp != NULL && tmp->invisible)
-                tmp = tmp->below;
+            FOR_OB_AND_BELOW_PREPARE(tmp)
+                if (!tmp->invisible)
+                    break;
+            FOR_OB_AND_BELOW_FINISH();
         }
     }
 
@@ -1023,7 +1020,6 @@ void drop(object *op, object *tmp) {
  * 0.
  */
 int command_dropall(object *op, char *params) {
-    object *curinv, *nextinv;
     int count = 0;
 
     if (op->inv == NULL) {
@@ -1032,8 +1028,6 @@ int command_dropall(object *op, char *params) {
                       "Nothing to drop!", NULL);
         return 0;
     }
-
-    curinv = op->inv;
 
     if (op->contr)
         count = op->contr->count;
@@ -1051,8 +1045,7 @@ int command_dropall(object *op, char *params) {
      * in a shop. --Tero.Pelander@utu.fi
      */
     if (params == NULL) {
-        while (curinv != NULL) {
-            nextinv = curinv->below;
+        FOR_INV_PREPARE(op, curinv) {
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && curinv->type != MONEY
             && curinv->type != FOOD
@@ -1065,55 +1058,45 @@ int command_dropall(object *op, char *params) {
                 if (op->contr)
                     op->contr->count = count;
             }
-            curinv = nextinv;
-        }
+        } FOR_INV_FINISH();
     } else if (strcmp(params, "weapons") == 0) {
-        while (curinv != NULL) {
-            nextinv = curinv->below;
+        FOR_INV_PREPARE(op, curinv) {
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && (curinv->type == WEAPON || curinv->type == BOW || curinv->type == ARROW)) {
                 drop(op, curinv);
                 if (op->contr)
                     op->contr->count = count;
             }
-            curinv = nextinv;
-        }
+        } FOR_INV_FINISH();
     } else if (strcmp(params, "armor") == 0 || strcmp(params, "armour") == 0) {
-        while (curinv != NULL) {
-            nextinv = curinv->below;
+        FOR_INV_PREPARE(op, curinv) {
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && (curinv->type == ARMOUR || curinv->type == SHIELD || curinv->type == HELMET)) {
                 drop(op, curinv);
                 if (op->contr)
                     op->contr->count = count;
             }
-            curinv = nextinv;
-        }
+        } FOR_INV_FINISH();
     } else if (strcmp(params, "food") == 0) {
-        while (curinv != NULL) {
-            nextinv = curinv->below;
+        FOR_INV_PREPARE(op, curinv) {
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && (curinv->type == FOOD || curinv->type == DRINK)) {
                 drop(op, curinv);
                 if (op->contr)
                     op->contr->count = count;
             }
-            curinv = nextinv;
-        }
+        } FOR_INV_FINISH();
     } else if (strcmp(params, "flesh") == 0) {
-        while (curinv != NULL) {
-            nextinv = curinv->below;
+        FOR_INV_PREPARE(op, curinv) {
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && (curinv->type == FLESH)) {
                 drop(op, curinv);
                 if (op->contr)
                     op->contr->count = count;
             }
-            curinv = nextinv;
-        }
+        } FOR_INV_FINISH();
     } else if (strcmp(params, "misc") == 0) {
-        while (curinv != NULL) {
-            nextinv = curinv->below;
+        FOR_INV_PREPARE(op, curinv) {
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && !QUERY_FLAG(curinv, FLAG_APPLIED)) {
                 switch (curinv->type) {
@@ -1141,8 +1124,7 @@ int command_dropall(object *op, char *params) {
                     break;
                 }
             }
-            curinv = nextinv;
-        }
+        } FOR_INV_FINISH();
     }
     op->contr->socket.update_look = 1;
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
@@ -1166,7 +1148,6 @@ int command_dropall(object *op, char *params) {
  * 0.
  */
 int command_drop(object *op, char *params) {
-    object  *tmp, *next;
     int did_one = 0;
     int ival = 0;
     int missed = 0;
@@ -1176,8 +1157,7 @@ int command_drop(object *op, char *params) {
                       "Drop what?", NULL);
         return 0;
     } else {
-        for (tmp = op->inv; tmp; tmp = next) {
-            next = tmp->below;
+        FOR_INV_PREPARE(op, tmp) {
             if (QUERY_FLAG(tmp, FLAG_NO_DROP) || tmp->invisible)
                 continue;
             if ((ival = object_matches_string(op, tmp, params)) > 0) {
@@ -1187,7 +1167,7 @@ int command_drop(object *op, char *params) {
                     drop(op, tmp);
                 did_one = 1;
             }
-        }
+        } FOR_INV_FINISH();
         if (!did_one)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "Nothing to drop.", NULL);
@@ -1216,26 +1196,26 @@ int command_drop(object *op, char *params) {
  * player to drop for.
  */
 static void empty_container(object *container, object *pl) {
-    object *inv;
-    object *next;
     int left = 0;
     char name[MAX_BUF];
 
     if (!container->inv)
         return;
 
-    for (inv = container->inv; inv; inv = next) {
-        next = inv->below;
+    FOR_INV_PREPARE(container, inv) {
+        object *next;
+
         if (QUERY_FLAG(inv, FLAG_INV_LOCKED)) {
             /* you can have locked items in container. */
             left++;
             continue;
         }
+        next = inv->below;
         drop(pl, inv);
         if (inv->below == next)
             /* item couldn't be dropped for some reason. */
             left++;
-    }
+    } FOR_INV_FINISH();
     esrv_update_item(UPD_WEIGHT, pl, container);
 
     query_name(container, name, sizeof(name));
@@ -1256,7 +1236,6 @@ static void empty_container(object *container, object *pl) {
  * 0.
  */
 int command_empty(object *op, char *params) {
-    object *inv;
     object *container;
 
     if (!params) {
@@ -1266,9 +1245,10 @@ int command_empty(object *op, char *params) {
     }
 
     if (strcmp(params, "all") == 0) {
-        for (inv = op->inv; inv; inv = inv->below)
+        FOR_INV_PREPARE(op, inv)
             if (inv->type == CONTAINER)
                 empty_container(inv, op);
+        FOR_INV_FINISH();
         return 0;
     }
 
@@ -1300,12 +1280,12 @@ int command_empty(object *op, char *params) {
  */
 int command_examine(object *op, char *params) {
     if (!params) {
-        object *tmp = op->below;
-
-        while (tmp && !LOOK_OBJ(tmp))
-            tmp = tmp->below;
-        if (tmp)
-            examine(op, tmp);
+        FOR_BELOW_PREPARE(op, tmp)
+            if (LOOK_OBJ(tmp)) {
+                examine(op, tmp);
+                break;
+            }
+        FOR_BELOW_FINISH();
     } else {
         object *tmp = find_best_object_match(op, params);
 
@@ -1332,8 +1312,6 @@ int command_examine(object *op, char *params) {
  * marked object if still valid, NULL else.
  */
 object *find_marked_object(object *op) {
-    object *tmp;
-
     if (!op || !op->contr || !op->contr->mark)
         return NULL;
 
@@ -1341,7 +1319,7 @@ object *find_marked_object(object *op) {
      * player hasn't dropped the item.  We use count on the off chance that
      * an item got reincarnated at some point.
      */
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->invisible)
             continue;
         if (tmp == op->contr->mark) {
@@ -1353,7 +1331,7 @@ object *find_marked_object(object *op) {
                 return NULL;
             }
         }
-    }
+    } FOR_INV_FINISH();
     return NULL;
 }
 
@@ -1646,7 +1624,6 @@ void examine(object *op, object *tmp) {
  * if NULL then print op's inventory, else print the inventory of inv.
  */
 void inventory(object *op, object *inv) {
-    object *tmp;
     const char *in;
     int items = 0, length;
     char weight[MAX_BUF], name[MAX_BUF];
@@ -1656,14 +1633,11 @@ void inventory(object *op, object *inv) {
                       "Inventory of what object?", NULL);
         return;
     }
-    tmp = inv ? inv->inv : op->inv;
-
-    while (tmp) {
+    FOR_INV_PREPARE(inv ? inv : op, tmp)
         if ((!tmp->invisible && (inv == NULL || inv->type == CONTAINER || QUERY_FLAG(tmp, FLAG_APPLIED)))
         || (!op || QUERY_FLAG(op, FLAG_WIZ)))
             items++;
-        tmp = tmp->below;
-    }
+    FOR_INV_FINISH();
     if (inv == NULL) { /* player's inventory */
         if (items == 0) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1683,7 +1657,7 @@ void inventory(object *op, object *inv) {
             in = "  ";
         }
     }
-    for (tmp = inv ? inv->inv : op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(inv ? inv : op, tmp) {
         if ((!op || !QUERY_FLAG(op, FLAG_WIZ))
         && (tmp->invisible || (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
             continue;
@@ -1699,7 +1673,7 @@ void inventory(object *op, object *inv) {
                                  "[fixed]%s- %-*.*s %-8s",
                                  "%s- %-*.*s %-8s",
                                  in, length+8, length+8, name, weight);
-    }
+    } FOR_INV_FINISH();
     if (!inv && op) {
         query_weight(op, weight, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
@@ -2055,9 +2029,14 @@ int command_rename_item(object *op, char *params) {
 
         /* Checking the first part */
         if ((itemnumber = atoi(params)) != 0) {
-            for (item = op->inv; item && ((item->count != itemnumber) || item->invisible); item = item->below)
-                ;
-            if (!item) {
+            int found = 0;
+            FOR_INV_PREPARE(op, item)
+                if (item->count == itemnumber && !item->invisible) {
+                    found = 1;
+                    break;
+                }
+            FOR_INV_FINISH();
+            if (!found) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Tried to rename an invalid item.", NULL);
                 return 1;

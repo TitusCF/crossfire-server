@@ -55,9 +55,7 @@
  * 0 if tmp can't be built on the spot, 1 if it can be built.
  */
 static int can_build_over(struct mapdef *map, object *new_item, short x, short y) {
-    object *ob;
-
-    for (ob = GET_MAP_OB(map, x, y); ob; ob = ob->above) {
+    FOR_MAP_PREPARE(map, x, y, ob) {
         if (strcmp(ob->arch->name, "rune_mark") == 0)
             /* you can always build on marking runes, used for connected building things. */
             continue;
@@ -88,7 +86,7 @@ static int can_build_over(struct mapdef *map, object *new_item, short x, short y
         default:
             return 0;
         }
-    }
+    } FOR_MAP_FINISH();
 
     /* If item being built is multi-tile, need to check other parts too. */
     if (new_item->more)
@@ -109,12 +107,11 @@ static int can_build_over(struct mapdef *map, object *new_item, short x, short y
  * marking rune, NULL if none found.
  */
 static object *get_connection_rune(object *pl, short x, short y) {
-    object *rune;
-
-    rune = GET_MAP_OB(pl->map, x, y);
-    while (rune && ((rune->type != SIGN) || (strcmp(rune->arch->name, "rune_mark"))))
-        rune = rune->above;
-    return rune;
+    FOR_MAP_PREPARE(pl->map, x, y, rune)
+        if (rune->type == SIGN && strcmp(rune->arch->name, "rune_mark") == 0)
+            return rune;
+    FOR_MAP_FINISH();
+    return NULL;
 }
 
 /**
@@ -129,12 +126,11 @@ static object *get_connection_rune(object *pl, short x, short y) {
  * book, NULL if none found.
  */
 static object *get_msg_book(object *pl, short x, short y) {
-    object *book;
-
-    book = GET_MAP_OB(pl->map, x, y);
-    while (book && (book->type != BOOK))
-        book = book->above;
-    return book;
+    FOR_MAP_PREPARE(pl->map, x, y, book)
+        if (book->type == BOOK)
+            return book;
+    FOR_MAP_FINISH();
+    return NULL;
 }
 
 /**
@@ -150,13 +146,11 @@ static object *get_msg_book(object *pl, short x, short y) {
  * investigate possible merge with retrofit_joined_wall() used for random maps
  */
 static object *get_wall(struct mapdef *map, int x, int y) {
-    object *wall;
-
-    wall = GET_MAP_OB(map, x, y);
-    while (wall && (wall->type != WALL))
-        wall = wall->above;
-
-    return wall;
+    FOR_MAP_PREPARE(map, x, y, wall)
+        if (wall->type == WALL)
+            return wall;
+    FOR_MAP_FINISH();
+    return NULL;
 }
 
 /**
@@ -168,18 +162,12 @@ static object *get_wall(struct mapdef *map, int x, int y) {
  * coordinates to erase runes at.
  */
 static void remove_marking_runes(struct mapdef *map, short x, short y) {
-    object *rune;
-    object *next;
-
-    rune = GET_MAP_OB(map, x, y);
-    while (rune) {
-        next = rune->above;
+    FOR_MAP_PREPARE(map, x, y, rune) {
         if ((rune->type == SIGN) && (!strcmp(rune->arch->name, "rune_mark"))) {
             object_remove(rune);
             object_free(rune);
         }
-        rune = next;
-    }
+    } FOR_MAP_FINISH();
 }
 
 /**
@@ -301,9 +289,15 @@ static int find_or_create_connection_for_map(object *pl, short x, short y, objec
     }
 
     /* Now, find force in player's inventory */
-    force = pl->inv;
-    while (force && ((force->type != FORCE) || (!force->slaying) || (strcmp(force->slaying, pl->map->path)) || (!force->msg) || (strcmp(force->msg, rune->msg))))
-        force = force->below;
+    force = NULL;
+    FOR_INV_PREPARE(pl, tmp) {
+        if (tmp->type == FORCE
+        && tmp->slaying != NULL && strcmp(tmp->slaying, pl->map->path) == 0
+        && tmp->msg != NULL && strcmp(tmp->msg, rune->msg) == 0) {
+            force = tmp;
+            break;
+        }
+    } FOR_INV_FINISH();
 
     if (!force) {
         /* No force, need to create & insert one */
@@ -517,7 +511,6 @@ static void fix_walls(struct mapdef *map, int x, int y) {
  * 1 if the floor was built
  */
 static int apply_builder_floor(object *pl, object *new_floor, short x, short y) {
-    object *tmp;
     object *above_floor; /* Item above floor, if any */
     object *floor;       /* Floor which would be removed if required */
     struct archt *new_wall;
@@ -534,11 +527,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
     floor = NULL;
     new_wall = NULL;
     wall_removed = 0;
-    tmp = GET_MAP_OB(pl->map, x, y);
-    while (tmp) {
-        object *above;
-
-        above = tmp->above;
+    FOR_MAP_PREPARE(pl->map, x, y, tmp) {
         if (WALL == tmp->type) {
             /* There was a wall, remove it & keep its archetype to make new walls */
             new_wall = tmp->arch;
@@ -557,9 +546,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
             if (floor != NULL)
                 above_floor = tmp;
         }
-
-        tmp = above;
-    }
+    } FOR_MAP_FINISH();
 
     if (wall_removed == 0 && floor != NULL) {
         if (floor->arch == new_floor->arch) {
@@ -586,6 +573,8 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
      * Since building, you can have: blocking view / floor / wall / nothing
      */
     for (i = 1; i <= 8; i++) {
+        object *tmp;
+
         xt = x+freearr_x[i];
         yt = y+freearr_y[i];
         tmp = GET_MAP_OB(pl->map, xt, yt);
@@ -826,9 +815,10 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
         return 0;
     }
 
-    while (floor && (floor->type != FLOOR) && (!QUERY_FLAG(floor, FLAG_IS_FLOOR)))
-        floor = floor->above;
-
+    FOR_OB_AND_ABOVE_PREPARE(floor)
+        if (floor->type == FLOOR || QUERY_FLAG(floor, FLAG_IS_FLOOR))
+            break;
+    FOR_OB_AND_ABOVE_FINISH();
     if (!floor) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
                       "This square has no floor, you can't build here.", NULL);
@@ -1018,15 +1008,14 @@ void apply_map_builder(object *pl, int dir) {
     builder = pl->contr->ranges[range_builder];
 
     if (builder->subtype != ST_BD_BUILD) {
-        while (tmp) {
+        FOR_OB_AND_ABOVE_PREPARE(tmp)
             if (!QUERY_FLAG(tmp, FLAG_IS_BUILDABLE)
             && ((tmp->type != SIGN) || (strcmp(tmp->arch->name, "rune_mark")))) {
                 draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
                               "You can't build here.", NULL);
                 return;
             }
-            tmp = tmp->above;
-        }
+        FOR_OB_AND_ABOVE_FINISH();
     }
 
     /* Now we know the square is ok */

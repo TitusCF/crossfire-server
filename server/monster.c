@@ -163,7 +163,6 @@ object *find_nearest_living_creature(object *npc) {
     int i, mflags;
     sint16 nx, ny;
     mapstruct *m;
-    object *tmp;
     int search_arr[SIZEOFFREE];
 
     get_search_arr(search_arr);
@@ -180,18 +179,22 @@ object *find_nearest_living_creature(object *npc) {
             continue;
 
         if (mflags&P_IS_ALIVE) {
-            tmp = GET_MAP_OB(m, nx, ny);
-            while (tmp != NULL
-            && !QUERY_FLAG(tmp, FLAG_MONSTER)
-            && !QUERY_FLAG(tmp, FLAG_GENERATOR)
-            && tmp->type != PLAYER)
-                tmp = tmp->above;
+            object *creature;
 
-            if (!tmp) {
+            creature = NULL;
+            FOR_MAP_PREPARE(m, nx, ny, tmp)
+                if (QUERY_FLAG(tmp, FLAG_MONSTER)
+                || QUERY_FLAG(tmp, FLAG_GENERATOR)
+                || tmp->type == PLAYER) {
+                    creature = tmp;
+                    break;
+                }
+            FOR_MAP_FINISH();
+            if (!creature) {
                 LOG(llevDebug, "find_nearest_living_creature: map %s (%d,%d) has is_alive set but did not find a monster?\n", m->path, nx, ny);
             } else {
                 if (can_see_monsterP(m, nx, ny, i))
-                    return tmp;
+                    return creature;
             }
         } /* is something living on this space */
     }
@@ -916,10 +919,9 @@ static int monster_should_cast_spell(object *monster, object *spell_ob) {
  */
 static object *monster_choose_random_spell(object *monster) {
     object *altern[MAX_KNOWN_SPELLS];
-    object *tmp;
     int i = 0;
 
-    for (tmp = monster->inv; tmp != NULL; tmp = tmp->below)
+    FOR_INV_PREPARE(monster, tmp)
         if (tmp->type == SPELLBOOK || tmp->type == SPELL) {
             /* Check and see if it's actually a useful spell.
              * If its a spellbook, the spell is actually the inventory item.
@@ -931,6 +933,7 @@ static object *monster_choose_random_spell(object *monster) {
                     break;
             }
         }
+    FOR_INV_FINISH();
     if (!i)
         return NULL;
     return altern[RANDOM()%i];
@@ -1061,9 +1064,13 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir, r
     if (QUERY_FLAG(head, FLAG_CONFUSED))
         dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
 
-    for (scroll = head->inv; scroll; scroll = scroll->below)
-        if (scroll->type == SCROLL && monster_should_cast_spell(head, scroll->inv))
+    scroll = NULL;
+    FOR_INV_PREPARE(head, tmp)
+        if (tmp->type == SCROLL && monster_should_cast_spell(head, tmp->inv)) {
+            scroll = tmp;
             break;
+        }
+    FOR_INV_FINISH();
 
     /* Used up all his scrolls, so nothing do to */
     if (!scroll) {
@@ -1113,7 +1120,8 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir, r
  * improve skill logic? Fix comments.
  */
 static int monster_use_skill(object *head, object *part, object *pl, int dir) {
-    object *skill, *owner;
+    object *owner;
+    int found;
 
     if (!(dir = path_to_player(part, pl, 0)))
         return 0;
@@ -1131,14 +1139,16 @@ static int monster_use_skill(object *head, object *part, object *pl, int dir) {
      * toggle between 2 skills. One day it would be nice to make
      * more skills available to monsters.
      */
-
-    for (skill = head->inv; skill != NULL; skill = skill->below)
+    found = 0;
+    FOR_INV_PREPARE(head, skill)
         if (skill->type == SKILL && skill != head->chosen_skill) {
             head->chosen_skill = skill;
+            found = 1;
             break;
         }
+    FOR_INV_FINISH();
 
-    if (!skill && !head->chosen_skill) {
+    if (!found && !head->chosen_skill) {
         LOG(llevDebug, "Error: Monster %s (%d) has FLAG_READY_SKILL without skill.\n", head->name, head->count);
         CLEAR_FLAG(head, FLAG_READY_SKILL);
         return 0;
@@ -1162,7 +1172,7 @@ static int monster_use_skill(object *head, object *part, object *pl, int dir) {
  * 1 if monster casted a spell, 0 else.
  */
 static int monster_use_range(object *head, object *part, object *pl, int dir) {
-    object *wand, *owner;
+    object *owner;
     int at_least_one = 0;
 
     if (!(dir = path_to_player(part, pl, 0)))
@@ -1176,7 +1186,7 @@ static int monster_use_range(object *head, object *part, object *pl, int dir) {
     if (QUERY_FLAG(head, FLAG_CONFUSED))
         dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
 
-    for (wand = head->inv; wand != NULL; wand = wand->below) {
+    FOR_INV_PREPARE(head, wand) {
         if (wand->type == WAND) {
             /* Found a wand, let's see if it has charges left */
             at_least_one = 1;
@@ -1204,7 +1214,7 @@ static int monster_use_range(object *head, object *part, object *pl, int dir) {
             /* Success */
             return 1;
         }
-    }
+    } FOR_INV_FINISH();
 
     if (at_least_one)
         return 0;
@@ -1638,7 +1648,6 @@ void monster_check_apply(object *mon, object *item) {
 
 void npc_call_help(object *op) {
     int x, y, mflags;
-    object *npc;
     sint16 sx, sy;
     mapstruct *m;
 
@@ -1652,9 +1661,10 @@ void npc_call_help(object *op) {
             if ((mflags&P_OUT_OF_MAP) || !(mflags&P_IS_ALIVE))
                 continue;
 
-            for (npc = GET_MAP_OB(m, sx, sy); npc != NULL; npc = npc->above)
+            FOR_MAP_PREPARE(m, sx, sy, npc)
                 if (QUERY_FLAG(npc, FLAG_ALIVE) && QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
                     npc->enemy = op->enemy;
+            FOR_MAP_FINISH();
         }
 }
 
@@ -1796,25 +1806,21 @@ static void rand_move(object *ob) {
 }
 
 void check_earthwalls(object *op, mapstruct *m, int x, int y) {
-    object *tmp;
-
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above) {
+    FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->type == EARTHWALL) {
             hit_player(tmp, op->stats.dam, op, AT_PHYSICAL, 1);
             return;
         }
-    }
+    FOR_MAP_FINISH();
 }
 
 void check_doors(object *op, mapstruct *m, int x, int y) {
-    object *tmp;
-
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above) {
+    FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->type == DOOR) {
             hit_player(tmp, 1000, op, AT_PHYSICAL, 1);
             return;
         }
-    }
+    FOR_MAP_FINISH();
 }
 
 /**
@@ -1836,7 +1842,6 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
  * @param txt what is said.
  */
 void communicate(object *op, const char *txt) {
-    object *npc;
     int i, mflags, talked = 0;
     sint16 x, y;
     mapstruct *mp, *orig_map = op->map;
@@ -1862,13 +1867,13 @@ void communicate(object *op, const char *txt) {
         if (mflags&P_OUT_OF_MAP)
             continue;
 
-        for (npc = GET_MAP_OB(mp, x, y); npc != NULL; npc = npc->above) {
+        FOR_MAP_PREPARE(mp, x, y, npc) {
             talk_to_npc(op, npc, txt, &talked);
             if (orig_map != op->map) {
                 LOG(llevDebug, "Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
                 return;
             }
-        }
+        } FOR_MAP_FINISH();
     }
 
     /* if talked is set, then the talk_to_npc() wrote out this information, so
@@ -1957,8 +1962,6 @@ void npc_say(object *npc, const char *cp) {
  * @return 0 if text was handled by a plugin or not handled, 1 if handled internally by the server.
  */
 static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
-    object *cobj;
-
     /* Move this commone area up here - shouldn't cost much extra cpu
      * time, and makes the function more readable */
     /* Lauwenmark: Handle for plugin say event */
@@ -1966,10 +1969,10 @@ static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
         return 0;
     /* Lauwenmark - Here we let the objects inside inventories hear and answer, too. */
     /* This allows the existence of "intelligent" weapons you can discuss with */
-    for (cobj = npc->inv; cobj != NULL; cobj = cobj->below) {
+    FOR_INV_PREPARE(npc, cobj)
         if (execute_event(cobj, EVENT_SAY, npc, NULL, txt, SCRIPT_FIX_ALL) != 0)
             return 0;
-    }
+    FOR_INV_FINISH();
     if (op == npc)
         return 0;
     return do_talk_npc(op, npc, txt, talked);
@@ -1983,13 +1986,11 @@ static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
  * first, then throw any non equipped weapon.
  */
 object *find_mon_throw_ob(object *op) {
-    object *tmp;
-
     /* New throw code: look through the inventory. Grap the first legal is_thrown
      * marked item and throw it to the enemy.
      */
 
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         /* Can't throw invisible objects or items that are applied */
         if (!tmp->invisible && !QUERY_FLAG(tmp, FLAG_APPLIED) && QUERY_FLAG(tmp, FLAG_IS_THROWN)) {
 #ifdef DEBUG_THROW
@@ -2000,7 +2001,7 @@ object *find_mon_throw_ob(object *op) {
 #endif
             return tmp;
         }
-    }
+    } FOR_INV_FINISH();
 
 #ifdef DEBUG_THROW
     LOG(llevDebug, "%s chooses to throw nothing\n", op->name);

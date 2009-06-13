@@ -55,8 +55,6 @@
  * @todo rename roll to something more meaningful (check attempt_steal()).
  */
 static int adj_stealchance(object *op, object *victim, int roll) {
-    object *equip;
-
     if (!op || !victim || !roll)
         return -1;
 
@@ -87,7 +85,7 @@ static int adj_stealchance(object *op, object *victim, int roll) {
     /* check stealing 'encumberance'. Having this equipment applied makes
      * it quite a bit harder to steal.
      */
-    for (equip = op->inv; equip; equip = equip->below) {
+    FOR_INV_PREPARE(op, equip) {
         if (equip->type == WEAPON && QUERY_FLAG(equip, FLAG_APPLIED)) {
             roll -= equip->weight/10000;
         }
@@ -100,7 +98,7 @@ static int adj_stealchance(object *op, object *victim, int roll) {
             roll -= equip->weight/5000;
         if (equip->type == GLOVES && QUERY_FLAG(equip, FLAG_APPLIED))
             roll -= equip->weight/100;
-    }
+    } FOR_INV_FINISH();
     if (roll < 0)
         roll = 0;
     return roll;
@@ -125,7 +123,7 @@ static int adj_stealchance(object *op, object *victim, int roll) {
  * something was stolen.
  */
 static int attempt_steal(object *op, object *who, object *skill) {
-    object *success = NULL, *tmp = NULL, *next;
+    object *success = NULL, *tmp = NULL;
     int roll = 0, chance = 0, stats_value;
     rv_vector rv;
     char name[MAX_BUF];
@@ -167,9 +165,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
 
 
     /* Ok then, go thru their inventory, stealing */
-    for (tmp = op->inv; tmp != NULL; tmp = next) {
-        next = tmp->below;
-
+    FOR_INV_PREPARE(op, inv) {
         /* you can't steal worn items, starting items, wiz stuff,
          * innate abilities, or items w/o a type. Generally
          * speaking, the invisibility flag prevents experience or
@@ -180,14 +176,14 @@ static int attempt_steal(object *op, object *who, object *skill) {
          * already  -b.t.
          */
 
-        if (QUERY_FLAG(tmp, FLAG_WAS_WIZ)
-        || QUERY_FLAG(tmp, FLAG_APPLIED)
-        || !(tmp->type)
-        || tmp->type == EXPERIENCE
-        || tmp->type == SPELL
-        || QUERY_FLAG(tmp, FLAG_STARTEQUIP)
-        || QUERY_FLAG(tmp, FLAG_NO_STEAL)
-        || tmp->invisible)
+        if (QUERY_FLAG(inv, FLAG_WAS_WIZ)
+        || QUERY_FLAG(inv, FLAG_APPLIED)
+        || !(inv->type)
+        || inv->type == EXPERIENCE
+        || inv->type == SPELL
+        || QUERY_FLAG(inv, FLAG_STARTEQUIP)
+        || QUERY_FLAG(inv, FLAG_NO_STEAL)
+        || inv->invisible)
             continue;
 
         /* Okay, try stealing this item. Dependent on dexterity of thief,
@@ -199,22 +195,23 @@ static int attempt_steal(object *op, object *who, object *skill) {
         if ((chance = adj_stealchance(who, op, (stats_value+skill->level*10-op->level*3))) == -1)
             return 0;
         else if (roll < chance) {
-            tag_t tmp_count = tmp->count;
+            tag_t inv_count = inv->count;
 
-            pick_up(who, tmp);
+            pick_up(who, inv);
             /* need to see if the player actually stole this item -
              * if it is in the players inv, assume it is.  This prevents
              * abuses where the player can not carry the item, so just
              * keeps stealing it over and over.
              */
-            if (object_was_destroyed(tmp, tmp_count) || tmp->env != op) {
+            if (object_was_destroyed(inv, inv_count) || inv->env != op) {
                 /* for players, play_sound: steals item */
-                success = tmp;
-                CLEAR_FLAG(tmp, FLAG_INV_LOCKED);
+                success = inv;
+                CLEAR_FLAG(inv, FLAG_INV_LOCKED);
             }
+            tmp = inv;
             break;
         }
-    } /* for loop looking for an item */
+    } FOR_INV_FINISH(); /* for loop looking for an item */
 
     if (!tmp) {
         query_name(op, name, MAX_BUF);
@@ -294,7 +291,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
  * experience gained for stealing, 0 if nothing was stolen.
  */
 int steal(object *op, int dir, object *skill) {
-    object *tmp, *next;
+    object *tmp;
     sint16 x, y;
     mapstruct *m;
     int mflags;
@@ -320,12 +317,14 @@ int steal(object *op, int dir, object *skill) {
         return 0;
 
     /* Find the topmost object at this spot */
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL && tmp->above != NULL; tmp = tmp->above)
-        ;
+    tmp = GET_MAP_OB(m, x, y);
+    FOR_OB_AND_ABOVE_PREPARE(tmp)
+        if (tmp->above == NULL)
+            break;
+    FOR_OB_AND_ABOVE_FINISH();
 
     /* For all the stacked objects at this point, attempt a steal */
-    for (; tmp != NULL; tmp = next) {
-        next = tmp->below;
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         /* Minor hack--for multi square beings - make sure we get
          * the 'head' coz 'tail' objects have no inventory! - b.t.
          */
@@ -351,7 +350,7 @@ int steal(object *op, int dir, object *skill) {
 
             return (calc_skill_exp(op, tmp, skill));
         }
-    }
+    } FOR_OB_AND_BELOW_FINISH();
     return 0;
 }
 

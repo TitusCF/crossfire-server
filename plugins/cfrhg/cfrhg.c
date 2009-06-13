@@ -175,7 +175,6 @@ static void add_exit_to_item(object *exit, const house_zone_struct *zone, const 
  */
 static void add_exits_to_map(const mapstruct *map) {
     int x, y;
-    object *item;
     const house_zone_struct *zone = get_map_zone(map);
 
     if (!zone)
@@ -183,13 +182,10 @@ static void add_exits_to_map(const mapstruct *map) {
 
     for (x = 0; x < MAP_WIDTH(map); x++) {
         for (y = 0; y < MAP_HEIGHT(map); y++) {
-            item = GET_MAP_OB(map, x, y);
-            while (item) {
+            FOR_MAP_PREPARE(map, x, y, item) {
                 if (is_suitable_exit(item))
                     add_exit_to_item(item, zone, map);
-
-                item = item->above;
-            }
+            } FOR_MAP_FINISH();
         }
     }
 }

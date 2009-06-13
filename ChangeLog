@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Rewrite loops iterating over inv/env/below/above object lists with macros
+that are not affected by objects being modified/removed/freed within the
+loop.
+Andreas Kirschbaum 2009-06-13
+
 Apply patch by Dany Talbot fixing #1990214 (2.0 godenchant bug?).
 Andreas Kirschbaum 2009-06-10
 

@@ -280,7 +280,6 @@ static object *find_symptom(object *disease) {
 static void check_infection(object *disease) {
     int x, y, range, mflags;
     mapstruct *map, *map2;
-    object *tmp;
     sint16 i, j, i2, j2;
 
     range = abs(disease->magic);
@@ -300,9 +299,9 @@ static void check_infection(object *disease) {
         for (j = y-range; j <= y+range; j++) {
             mflags = get_map_flags(map, &map2, i, j, &i2, &j2);
             if (!(mflags&P_OUT_OF_MAP) && (mflags&P_IS_ALIVE)) {
-                for (tmp = GET_MAP_OB(map2, i2, j2); tmp; tmp = tmp->above) {
+                FOR_MAP_PREPARE(map2, i2, j2, tmp)
                     infect_object(tmp, disease, 0);
-                }
+                FOR_MAP_FINISH();
             }
         }
     }
@@ -673,14 +672,12 @@ void move_symptom(object *symptom) {
  * @param hitter
  * who is hitting.
  */
-
 void check_physically_infect(object *victim, object *hitter) {
-    object *walk;
-
     /* search for diseases, give every disease a chance to infect */
-    for (walk = hitter->inv; walk != NULL; walk = walk->below)
+    FOR_INV_PREPARE(hitter, walk)
         if (walk->type == DISEASE)
             infect_object(victim, walk, 0);
+    FOR_INV_FINISH();
 }
 
 /**
@@ -696,7 +693,6 @@ void check_physically_infect(object *victim, object *hitter) {
  * at least one disease was cured.
  */
 int cure_disease(object *sufferer, object *caster) {
-    object *disease, *next;
     int casting_level;
     int cure = 0;
 
@@ -705,9 +701,7 @@ int cure_disease(object *sufferer, object *caster) {
     else
         casting_level = 1000;  /* if null caster, CURE all.  */
 
-    for (disease = sufferer->inv; disease; disease = next) {
-        next = disease->below;
-
+    FOR_INV_PREPARE(sufferer, disease) {
         if (disease->type == DISEASE && !QUERY_FLAG(disease, FLAG_STARTEQUIP)) {
              /* attempt to cure this disease. God-given diseases are given by the god, so don't remove them */
             /* If caster lvel is higher than disease level, cure chance
@@ -725,7 +719,7 @@ int cure_disease(object *sufferer, object *caster) {
                 object_free(disease);
             }
         }
-    }
+    } FOR_INV_FINISH();
     if (cure) {
         /* Only draw these messages once */
         if (caster)

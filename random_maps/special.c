@@ -69,21 +69,17 @@
  */
 void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysize) {
     int i, j;
-    object *tmp;
 
     for (i = xstart; i < xstart+xsize; i++)
         for (j = ystart; j < ystart+ysize; j++) {
-            for (tmp = GET_MAP_OB(map, i, j); tmp != NULL; tmp = tmp->above) {
+            FOR_MAP_PREPARE(map, i, j, tmp) {
                 if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
                     if (tmp->head)
                         tmp = tmp->head;
                     object_remove(tmp);
                     object_free(tmp);
-                    tmp = GET_MAP_OB(map, i, j);
                 }
-                if (tmp == NULL)
-                    break;
-            }
+            } FOR_MAP_FINISH();
         }
 }
 
@@ -99,7 +95,6 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
  */
 void include_map_in_map(mapstruct *dest_map, mapstruct *in_map, int x, int y) {
     int i, j;
-    object *tmp;
     object *new_ob;
 
     /* First, splatter everything in the dest map at the location */
@@ -107,7 +102,7 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map, int x, int y) {
 
     for (i = 0; i < MAP_WIDTH(in_map); i++)
         for (j = 0; j < MAP_HEIGHT(in_map); j++) {
-            for (tmp = GET_MAP_OB(in_map, i, j); tmp != NULL; tmp = tmp->above) {
+            FOR_MAP_PREPARE(in_map, i, j, tmp) {
                 /* don't copy things with multiple squares:  must be dealt with
                    specially. */
                 if (tmp->head != NULL)
@@ -119,7 +114,7 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map, int x, int y) {
                 new_ob->x = i+x;
                 new_ob->y = j+y;
                 insert_multisquare_ob_in_map(new_ob, dest_map);
-            }
+            } FOR_MAP_FINISH();
         }
 }
 

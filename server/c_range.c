@@ -95,7 +95,6 @@ int command_prepare(object *op, char *params) {
  * if supplied, the spell name must match that.
  */
 static void show_matching_spells(object *op, char *params) {
-    object *spell;
     char spell_sort[NROFREALSPELLS][MAX_BUF], tmp[MAX_BUF], *cp;
     int num_found = 0, i;
 
@@ -104,7 +103,7 @@ static void show_matching_spells(object *op, char *params) {
      * we prefix the skill in the name so that the sorting
      * works better.
      */
-    for (spell = op->inv; spell != NULL; spell = spell->below) {
+    FOR_INV_PREPARE(op, spell) {
         /* If it is a spell, and no params are passed, or they
          * match the name, process this spell.
          */
@@ -121,7 +120,7 @@ static void show_matching_spells(object *op, char *params) {
                          SP_level_spellpoint_cost(op, spell, SPELL_HIGHEST));
             }
         }
-    }
+    } FOR_INV_FINISH();
     if (!num_found) {
         /* If a matching string was passed along, now try it without that
          * string.  It is odd to do something like 'cast trans',

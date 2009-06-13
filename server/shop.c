@@ -579,14 +579,13 @@ StringBuffer *query_cost_string(const object *tmp, object *who, int flag, String
  * total money the player is carrying.
  */
 uint64 query_money(const object *op) {
-    object *tmp;
     uint64 total = 0;
 
     if (op->type != PLAYER && op->type != CONTAINER) {
         LOG(llevError, "Query money called with non player/container\n");
         return 0;
     }
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == MONEY) {
             total += (uint64)tmp->nrof*(uint64)tmp->value;
         } else if (tmp->type == CONTAINER
@@ -594,7 +593,7 @@ uint64 query_money(const object *op) {
         && (tmp->race == NULL || strstr(tmp->race, "gold"))) {
             total += query_money(tmp);
         }
-    }
+    } FOR_INV_FINISH();
     return total;
 }
 
@@ -611,8 +610,6 @@ uint64 query_money(const object *op) {
  * @todo check if pl is a player, as query_money() expects that. Check if fix_object() call is required.
  */
 int pay_for_amount(uint64 to_pay, object *pl) {
-    object *pouch;
-
     if (to_pay == 0)
         return 1;
     if (to_pay > query_money(pl))
@@ -620,13 +617,15 @@ int pay_for_amount(uint64 to_pay, object *pl) {
 
     to_pay = pay_from_container(pl, pl, to_pay);
 
-    for (pouch = pl->inv; (pouch != NULL) && (to_pay > 0); pouch = pouch->below) {
+    FOR_INV_PREPARE(pl, pouch) {
+        if (to_pay <= 0)
+            break;
         if (pouch->type == CONTAINER
         && QUERY_FLAG(pouch, FLAG_APPLIED)
         && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
             to_pay = pay_from_container(pl, pouch, to_pay);
         }
-    }
+    } FOR_INV_FINISH();
     if (to_pay > 0) {
         LOG(llevError, "pay_for_amount: Cannot remove enough money -- %"FMT64U" remains\n", to_pay);
     }
@@ -651,7 +650,6 @@ int pay_for_amount(uint64 to_pay, object *pl) {
  */
 int pay_for_item(object *op, object *pl) {
     uint64 to_pay = query_cost(op, pl, F_BUY|F_SHOP);
-    object *pouch;
     uint64 saved_money;
 
     if (to_pay == 0)
@@ -670,13 +668,15 @@ int pay_for_item(object *op, object *pl) {
 
     to_pay = pay_from_container(pl, pl, to_pay);
 
-    for (pouch = pl->inv; (pouch != NULL) && (to_pay > 0); pouch = pouch->below) {
+    FOR_INV_PREPARE(pl, pouch) {
+        if (to_pay <= 0)
+            break;
         if (pouch->type == CONTAINER
         && QUERY_FLAG(pouch, FLAG_APPLIED)
         && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
             to_pay = pay_from_container(pl, pouch, to_pay);
         }
-    }
+    } FOR_INV_FINISH();
     if (to_pay > 0) {
         LOG(llevError, "pay_for_item: Cannot remove enough money -- %"FMT64U" remains\n", to_pay);
     }
@@ -796,7 +796,7 @@ static void insert_objects(object *pl, object *container, object *objects[], int
 static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
     int i;
     sint64 remain;
-    object *tmp, *coin_objs[NUM_COINS], *next;
+    object *coin_objs[NUM_COINS];
     object *other_money[16]; /* collects MONEY objects not matching coins[] */
     size_t other_money_len; /* number of allocated entries in other_money[] */
     archetype *at;
@@ -810,8 +810,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
 
     /* This hunk should remove all the money objects from the player/container */
     other_money_len = 0;
-    for (tmp = pouch->inv; tmp; tmp = next) {
-        next = tmp->below;
+    FOR_INV_PREPARE(pouch, tmp) {
         if (tmp->type == MONEY) {
             for (i = 0; i < NUM_COINS; i++) {
                 if (!strcmp(coins[NUM_COINS-1-i], tmp->arch->name)
@@ -841,7 +840,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                 }
             }
         }
-    }
+    } FOR_INV_FINISH();
 
     /* Fill in any gaps in the coin_objs array - needed to make change.      */
     /* Note that the coin_objs array goes from least value to greatest value */
@@ -904,7 +903,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
 static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64 *unpaid_price, uint32 *coincount) {
     int i;
 
-    for (; item; item = item->below) {
+    FOR_OB_AND_BELOW_PREPARE(item) {
         if QUERY_FLAG(item, FLAG_UNPAID) {
             (*unpaid_count)++;
             (*unpaid_price) += query_cost(item, pl, F_BUY|F_SHOP);
@@ -920,7 +919,7 @@ static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64 *un
             }
         if (item->inv)
             count_unpaid(pl, item->inv, unpaid_count, unpaid_price, coincount);
-    }
+    } FOR_OB_AND_BELOW_FINISH();
 }
 
 /**
@@ -1059,7 +1058,7 @@ int get_payment(object *pl, object *op) {
 void sell_item(object *op, object *pl) {
     uint64 i = query_cost(op, pl, F_SELL|F_SHOP), extra_gain;
     int count;
-    object *tmp, *pouch;
+    object *tmp;
     archetype *at;
     char name_op[MAX_BUF], *value;
 
@@ -1105,7 +1104,7 @@ void sell_item(object *op, object *pl) {
         if (at == NULL)
             LOG(llevError, "Could not find %s archetype\n", coins[count]);
         else if ((i/at->clone.value) > 0) {
-            for (pouch = pl->inv; pouch; pouch = pouch->below) {
+            FOR_INV_PREPARE(pl, pouch) {
                 if (pouch->type == CONTAINER
                 && QUERY_FLAG(pouch, FLAG_APPLIED)
                 && pouch->race
@@ -1129,7 +1128,7 @@ void sell_item(object *op, object *pl) {
                         esrv_update_item(UPD_WEIGHT, pl, pl);
                     }
                 }
-            }
+            } FOR_INV_FINISH();
             if (i/at->clone.value > 0) {
                 tmp = object_new();
                 object_copy(&at->clone, tmp);
@@ -1427,10 +1426,9 @@ int is_in_shop(object *ob) {
  * 1 if coordinates are a shop, 0 otherwise.
  */
 int coords_in_shop(mapstruct *map, int x, int y) {
-    object *floor;
-
-    for (floor = GET_MAP_OB(map, x, y); floor; floor = floor->above)
+    FOR_MAP_PREPARE(map, x, y, floor)
         if (floor->type == SHOP_FLOOR)
             return 1;
+    FOR_MAP_FINISH();
     return 0;
 }

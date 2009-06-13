@@ -723,16 +723,19 @@ void give_initial_items(object *pl, treasurelist *items) {
          * remove duplicate skills also
          */
         if (op->type == SPELLBOOK || op->type == SKILL) {
-            object *tmp;
+            int found;
 
-            for (tmp = op->below; tmp; tmp = tmp->below)
-                if (tmp->type == op->type && tmp->name == op->name)
+            found = 0;
+            FOR_BELOW_PREPARE(op, tmp)
+                if (tmp->type == op->type && tmp->name == op->name) {
+                    found = 1;
                     break;
-
-            if (tmp) {
+                }
+            FOR_BELOW_FINISH();
+            if (found) {
+                LOG(llevError, "give_initial_items: Removing duplicate object %s\n", op->name);
                 object_remove(op);
                 object_free(op);
-                LOG(llevError, "give_initial_items: Removing duplicate object %s\n", tmp->name);
                 continue;
             }
             if (op->nrof > 1)
@@ -1381,8 +1384,7 @@ static void flee_player(object *op) {
  * player should stop.
  */
 int check_pick(object *op) {
-    object *tmp, *next;
-    tag_t next_tag = 0, op_tag;
+    tag_t op_tag;
     int stop = 0;
     int j, k, wvratio;
     char putstring[128], tmpstr[16];
@@ -1393,18 +1395,7 @@ int check_pick(object *op) {
 
     op_tag = op->count;
 
-    next = op->below;
-    if (next)
-        next_tag = next->count;
-
-    /* loop while there are items on the floor that are not marked as
-     * destroyed */
-    while (next && !object_was_destroyed(next, next_tag)) {
-        tmp = next;
-        next = tmp->below;
-        if (next)
-            next_tag = next->count;
-
+    FOR_BELOW_PREPARE(op, tmp) {
         if (object_was_destroyed(op, op_tag))
             return 0;
 
@@ -1731,7 +1722,7 @@ int check_pick(object *op) {
                 }
             }
         } /* the new pickup model */
-    }
+    } FOR_BELOW_FINISH();
     return !stop;
 }
 
@@ -1750,14 +1741,15 @@ int check_pick(object *op) {
 static object *find_arrow(object *op, const char *type) {
     object *tmp = NULL;
 
-    for (op = op->inv; op; op = op->below)
+    FOR_INV_PREPARE(op, inv)
         if (!tmp
-        && op->type == CONTAINER
-        && op->race == type
-        && QUERY_FLAG(op, FLAG_APPLIED))
-            tmp = find_arrow(op, type);
-        else if (op->type == ARROW && op->race == type)
-            return op;
+        && inv->type == CONTAINER
+        && inv->race == type
+        && QUERY_FLAG(inv, FLAG_APPLIED))
+            tmp = find_arrow(inv, type);
+        else if (inv->type == ARROW && inv->race == type)
+            return inv;
+    FOR_INV_FINISH();
     return tmp;
 }
 
@@ -1779,13 +1771,13 @@ static object *find_arrow(object *op, const char *type) {
  * suitable arrow, NULL if none found.
  */
 static object *find_better_arrow(object *op, object *target, const char *type, int *better) {
-    object *tmp = NULL, *arrow, *ntmp;
+    object *tmp = NULL, *ntmp;
     int attacknum, attacktype, betterby = 0, i;
 
     if (!type)
         return NULL;
 
-    for (arrow = op->inv; arrow; arrow = arrow->below) {
+    FOR_INV_PREPARE(op, arrow) {
         if (arrow->type == CONTAINER
         && arrow->race == type
         && QUERY_FLAG(arrow, FLAG_APPLIED)) {
@@ -1827,7 +1819,7 @@ static object *find_better_arrow(object *op, object *target, const char *type, i
                 }
             }
         }
-    }
+    } FOR_INV_FINISH();
     if (tmp == NULL)
         return find_arrow(op, type);
 
@@ -1882,11 +1874,13 @@ static object *pick_arrow_target(object *op, const char *type, int dir) {
             break;
         }
         if (mflags&P_IS_ALIVE) {
-            for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above)
+            FOR_MAP_PREPARE(m, x, y, tmp2)
                 if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
+                    tmp = tmp2;
                     found++;
                     break;
                 }
+            FOR_MAP_FINISH();
             if (found)
                 break;
         }
@@ -2406,7 +2400,7 @@ static int player_attack_door(object *op, object *door) {
  * moving direction.
  */
 void move_player_attack(object *op, int dir) {
-    object *tmp, *mon, *tpl, *mon_owner;
+    object *mon, *tpl, *mon_owner;
     sint16 nx, ny;
     int on_battleground;
     mapstruct *m;
@@ -2437,8 +2431,7 @@ void move_player_attack(object *op, int dir) {
         } else
             m = tpl->map;
 
-        tmp = GET_MAP_OB(m, nx, ny);
-        if (tmp == NULL) {
+        if (GET_MAP_OB(m, nx, ny) == NULL) {
             /* LOG(llevError, "player_move_attack: GET_MAP_OB returns NULL, but player can not move there.\n");*/
             return;
         }
@@ -2449,9 +2442,8 @@ void move_player_attack(object *op, int dir) {
          * if its a door or barrel (can roll) see if there may be monsters
          * on the space
          */
-        while (tmp != NULL) {
+        FOR_MAP_PREPARE(m, nx, ny, tmp) {
             if (tmp == op) {
-                tmp = tmp->above;
                 continue;
             }
             if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
@@ -2465,8 +2457,7 @@ void move_player_attack(object *op, int dir) {
             }
             if (tmp->type == LOCKED_DOOR || QUERY_FLAG(tmp, FLAG_CAN_ROLL))
                 mon = tmp;
-            tmp = tmp->above;
-        }
+        } FOR_MAP_FINISH();
 
         if (mon == NULL)  /* This happens anytime the player tries to move */
             return;  /* into a wall */
@@ -2660,11 +2651,9 @@ static int turn_one_transport(object *transport, object *captain, int dir) {
     }
 
     if (x != transport->x || y != transport->y) {
-        object *pl;
-
 /*        assert(scroll_dir != 0);*/
 
-        for (pl = transport->inv; pl; pl = pl->below) {
+        FOR_INV_PREPARE(transport, pl) {
             if (pl->type == PLAYER) {
                 pl->contr->do_los = 1;
                 pl->map = transport->map;
@@ -2674,7 +2663,7 @@ static int turn_one_transport(object *transport, object *captain, int dir) {
                 pl->contr->socket.update_look = 1;
                 pl->contr->socket.look_position = 0;
             }
-        }
+        } FOR_INV_FINISH();
     }
 
     object_insert_in_map_at(transport, transport->map, NULL, 0, x, y);
@@ -3142,9 +3131,9 @@ void do_some_living(object *op) {
         if (is_wraith_pl(op))
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE, "You feel a hunger for living flesh.", NULL);
         else {
-            object *tmp, *flesh = NULL;
+            object *flesh = NULL;
 
-            for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+            FOR_INV_PREPARE(op, tmp) {
                 if (!QUERY_FLAG(tmp, FLAG_UNPAID)) {
                     if (tmp->type == FOOD || tmp->type == DRINK || tmp->type == POISON) {
                         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
@@ -3155,7 +3144,7 @@ void do_some_living(object *op) {
                     } else if (tmp->type == FLESH)
                         flesh = tmp;
                 } /* End if paid for object */
-            } /* end of for loop */
+            } FOR_INV_FINISH(); /* end of for loop */
             /* If player is still starving, it means they don't have any food, so
              * eat flesh instead.
              */
@@ -3532,10 +3521,10 @@ void kill_player(object *op) {
          * on the space that might harm the player.
          */
         will_kill_again = 0;
-        for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp = tmp->above) {
+        FOR_MAP_PREPARE(op->map, op->x, op->y, tmp)
             if (tmp->type == SPELL_EFFECT)
                 will_kill_again |= tmp->attacktype;
-        }
+        FOR_MAP_FINISH();
         if (will_kill_again) {
             object *force;
             int at;
@@ -3718,16 +3707,15 @@ void make_visible(object *op) {
  * 1 if undead, 0 else.
  */
 int is_true_undead(object *op) {
-    object *tmp = NULL;
-
     if (QUERY_FLAG(&op->arch->clone, FLAG_UNDEAD))
         return 1;
 
     if (op->type == PLAYER)
-        for (tmp = op->inv; tmp; tmp = tmp->below)
+        FOR_INV_PREPARE(op, tmp) {
             if (tmp->type == EXPERIENCE && tmp->stats.Wis)
                 if (QUERY_FLAG(tmp, FLAG_UNDEAD))
                     return 1;
+        } FOR_INV_FINISH();
     return 0;
 }
 
@@ -3824,7 +3812,6 @@ void do_hidden_move(object *op) {
  * 1 if near a monster, 0 else.
  */
 int stand_near_hostile(object *who) {
-    object *tmp = NULL;
     int i, friendly = 0, player = 0, mflags;
     mapstruct *m;
     sint16  x, y;
@@ -3851,7 +3838,7 @@ int stand_near_hostile(object *who) {
         if (OB_TYPE_MOVE_BLOCK(who, GET_MAP_MOVE_BLOCK(m, x, y)))
             continue;
 
-        for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+        FOR_MAP_PREPARE(m, x, y, tmp) {
             if ((player || friendly)
             && QUERY_FLAG(tmp, FLAG_MONSTER)
             && !QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
@@ -3861,7 +3848,7 @@ int stand_near_hostile(object *who) {
                 if (!QUERY_FLAG(tmp, FLAG_WIZ) || tmp->contr->hidden == 0)
                     return 1;
             }
-        }
+        } FOR_MAP_FINISH();
     }
     return 0;
 }
@@ -3989,15 +3976,13 @@ static int action_makes_visible(object *op) {
  * 1 if op is on battleground, 0 else.
  */
 int op_on_battleground(object *op, int *x, int *y, archetype **trophy) {
-    object *tmp;
-
     /* A battleground-tile needs the following attributes to be valid:
      * is_floor 1 (has to be the FIRST floor beneath the player's feet),
      * name="battleground", no_pick 1, type=58 (type BATTLEGROUND)
      * and the exit-coordinates sp/hp must both be > 0.
      * => The intention here is to prevent abuse of the battleground-
      * feature (like pickable or hidden battleground tiles). */
-    for (tmp = op->below; tmp != NULL; tmp = tmp->below) {
+    FOR_BELOW_PREPARE(op, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
             if (QUERY_FLAG(tmp, FLAG_NO_PICK)
             && strcmp(tmp->name, "battleground") == 0
@@ -4028,7 +4013,7 @@ int op_on_battleground(object *op, int *x, int *y, archetype **trophy) {
                 return 1;
             }
         }
-    }
+    } FOR_BELOW_FINISH();
     /* If we got here, did not find a battleground */
     return 0;
 }

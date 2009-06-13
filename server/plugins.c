@@ -200,9 +200,10 @@ static void send_changed_object(object *op) {
             /* We don't know what changed, so we send everything. */
             esrv_update_item(UPD_ALL, tmp, op);
     } else {
-        for (tmp = op->above; tmp != NULL; tmp = tmp->above)
+        FOR_ABOVE_PREPARE(op, tmp)
             if (tmp->type == PLAYER)
                 tmp->contr->socket.update_look = 1;
+        FOR_ABOVE_FINISH();
     }
 }
 
@@ -2570,11 +2571,10 @@ void *cfapi_object_set_property(int *type, ...) {
                     if (tmp)
                         esrv_update_item(UPD_NROF, tmp, op);
                 } else {
-                    object *above = op->above;
-
-                    for (tmp = above; tmp != NULL; tmp = tmp->above)
+                    FOR_ABOVE_PREPARE(op, tmp)
                         if (tmp->type == PLAYER)
                             tmp->contr->socket.update_look = 1;
+                    FOR_ABOVE_FINISH();
                 }
             }
             break;
@@ -2724,11 +2724,10 @@ void *cfapi_object_set_property(int *type, ...) {
                     if (tmp)
                         esrv_update_item(UPD_WEIGHT, tmp, op);
                 } else {
-                    object *above = op->above;
-
-                    for (tmp = above; tmp != NULL; tmp = tmp->above)
+                    FOR_ABOVE_PREPARE(op, tmp)
                         if (tmp->type == PLAYER)
                             esrv_update_item(UPD_WEIGHT, tmp, op);
+                    FOR_ABOVE_FINISH();
                 }
             }
             break;
@@ -4015,11 +4014,10 @@ void *cfapi_object_find_archetype_inside(int *type, ...) {
     robj = va_arg(args, object **);
     *robj = arch_present_in_ob(try_find_archetype(str), op);
     if (*robj == NULL) {
-        object *tmp;
         char name[MAX_BUF];
 
         /* Search by query_name instead */
-        for (tmp = op->inv; tmp; tmp = tmp->below) {
+        FOR_INV_PREPARE(op, tmp) {
             query_name(tmp, name, MAX_BUF);
             if (!strncmp(name, str, strlen(str)))
                 *robj = tmp;
@@ -4027,7 +4025,7 @@ void *cfapi_object_find_archetype_inside(int *type, ...) {
                 *robj = tmp;
             if (*robj != NULL)
                 break;
-        }
+        } FOR_INV_FINISH();
     }
     va_end(args);
 

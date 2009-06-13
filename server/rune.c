@@ -64,7 +64,7 @@
  * rune written.
  */
 int write_rune(object *op, object *caster, object *spell, int dir, const char *runename) {
-    object *tmp, *rune_spell, *rune;
+    object *rune_spell, *rune;
     char buf[MAX_BUF];
     mapstruct *m;
     sint16 nx, ny;
@@ -82,15 +82,13 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
                       "Can't make a rune there!", NULL);
         return 0;
     }
-    for (tmp = GET_MAP_OB(m, nx, ny); tmp != NULL; tmp = tmp->above)
-        if (tmp->type == RUNE)
-            break;
-
-    if (tmp) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "You can't write a rune there.", NULL);
-        return 0;
-    }
+    FOR_MAP_PREPARE(m, nx, ny, tmp)
+        if (tmp->type == RUNE) {
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                              "You can't write a rune there.", NULL);
+                return 0;
+        }
+    FOR_MAP_FINISH();
 
     if (spell->other_arch) {
         rune_spell = arch_to_object(spell->other_arch);
@@ -108,7 +106,7 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
         }
 
         rune_spell = NULL;
-        for (tmp = op->inv; tmp; tmp = tmp->below) {
+        FOR_INV_PREPARE(op, tmp) {
             if (tmp->type == SPELL) {
                 ms = object_matches_string(op, tmp, runename);
                 if (ms > bestmatch) {
@@ -116,7 +114,7 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
                     rune_spell = tmp;
                 }
             }
-        }
+        } FOR_INV_FINISH();
         if (!rune_spell) {
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
@@ -164,6 +162,8 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
     if (rune_spell->type == RUNE) {
         rune = rune_spell;
     } else {
+        object *tmp;
+
         rune = create_archetype(GENERIC_RUNE);
         snprintf(buf, sizeof(buf), "You set off a rune of %s\n", rune_spell->name);
         rune->msg = add_string(buf);
@@ -321,7 +321,7 @@ void spring_trap(object *trap, object *victim) {
  * a rune was disarmed.
  */
 int dispel_rune(object *op, object *caster, object *spell, object *skill, int dir) {
-    object *tmp, *tmp2;
+    object *rune;
     int mflags;
     sint16 x, y;
     mapstruct *m;
@@ -349,9 +349,14 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
     if (!skill)
         return 0;
 
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL;  tmp = tmp->above)  {
-        if (tmp->type == RUNE || tmp->type == TRAP)
+    rune = NULL;
+    FOR_MAP_PREPARE(m, x, y, tmp) {
+        object *tmp2;
+
+        if (tmp->type == RUNE || tmp->type == TRAP) {
+            rune = tmp;
             break;
+        }
 
         /* we could put a probability chance here, but since nothing happens
          * if you fail, no point on that.  I suppose we could do a level
@@ -370,18 +375,18 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
          */
         tmp2 = object_find_by_type2(tmp, RUNE, TRAP);
         if (tmp2 != NULL) {
-            tmp = tmp2;
+            rune = tmp2;
             break;
         }
-    }
+    } FOR_MAP_FINISH();
 
     /* no rune there. */
-    if (tmp == NULL) {
+    if (rune == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "There's nothing there!", NULL);
         return 0;
     }
-    trap_disarm(op, tmp, 0, skill);
+    trap_disarm(op, rune, 0, skill);
     return 1;
 }
 

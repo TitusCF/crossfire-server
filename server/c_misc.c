@@ -2511,7 +2511,7 @@ int do_harvest(object *pl, int dir, object *skill) {
 
     item = GET_MAP_OB(map, x, y);
     while (item && count < 10) {
-        for (inv = item->inv; inv; inv = inv->below) {
+        FOR_INV_PREPARE(item, inv) {
             if (object_get_value(inv, "harvestable") == NULL)
                 continue;
             race = object_get_value(inv, "harvest_race");
@@ -2524,7 +2524,7 @@ int do_harvest(object *pl, int dir, object *skill) {
             }
             if (race == trace && (!tool || tool == ttool))
                 found[count++] = inv;
-        }
+        } FOR_INV_FINISH();
         item = item->above;
     }
     if (count == 0) {

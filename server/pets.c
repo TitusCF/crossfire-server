@@ -43,11 +43,9 @@
  * the object to modify.
  */
 static void mark_inventory_as_no_drop(object *ob) {
-    object *tmp;
-
-    for (tmp = ob->inv; tmp != NULL; tmp = tmp->below) {
+    FOR_INV_PREPARE(ob, tmp)
         SET_FLAG(tmp, FLAG_NO_DROP);
-    }
+    FOR_INV_FINISH();
 }
 
 /**
@@ -139,7 +137,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
         /* Only look on the space if there is something alive there. */
         mflags = get_map_flags(nm, &nm, x, y, &x, &y);
         if (!(mflags&P_OUT_OF_MAP) && mflags&P_IS_ALIVE) {
-            for (tmp = GET_MAP_OB(nm, x, y); tmp != NULL; tmp = tmp->above) {
+            FOR_MAP_PREPARE(nm, x, y, tmp) {
                 object *tmp2 = tmp->head == NULL ? tmp : tmp->head;
 
                 if (QUERY_FLAG(tmp2, FLAG_ALIVE)
@@ -159,7 +157,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
                             pet->enemy = NULL;
                     }
                 }/* if this is a valid enemy */
-            }/* for objects on this space */
+            } FOR_MAP_FINISH();/* for objects on this space */
         }/* if there is something living on this space */
     } /* for loop of spaces around the owner */
 
@@ -203,7 +201,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
             /* Only look on the space if there is something alive there. */
             mflags = get_map_flags(nm, &nm, x, y, &x, &y);
             if (!(mflags&P_OUT_OF_MAP) && mflags&P_IS_ALIVE) {
-                for (tmp = GET_MAP_OB(nm, x, y); tmp != NULL; tmp = tmp->above) {
+                FOR_MAP_PREPARE(nm, x, y, tmp) {
                     object *tmp2 = tmp->head == NULL ? tmp : tmp->head;
                     if (QUERY_FLAG(tmp2, FLAG_ALIVE)
                     && ((!QUERY_FLAG(tmp2, FLAG_FRIENDLY) && tmp2->type != PLAYER) || should_arena_attack(pet, owner, tmp2))
@@ -222,7 +220,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
                                 pet->enemy = NULL;
                         }
                     } /* make sure we can get to the bugger */
-                }/* for objects on this space */
+                } FOR_MAP_FINISH();/* for objects on this space */
             } /* if there is something living on this space */
         } /* for loop of spaces around the pet */
     } /* pet in defence mode */
@@ -349,7 +347,7 @@ void pet_move(object *ob) {
     int dir, i;
     tag_t tag;
     sint16 dx, dy;
-    object *ob2, *owner;
+    object *owner;
     mapstruct *m;
 
     /* Check to see if player pulled out */
@@ -404,7 +402,7 @@ void pet_move(object *ob) {
             if (!m)
                 continue;
 
-            for (ob2 = GET_MAP_OB(m, dx, dy); ob2 != NULL; ob2 = ob2->above) {
+            FOR_MAP_PREPARE(m, dx, dy, ob2) {
                 object *new_ob;
 
                 new_ob = ob2->head ? ob2->head : ob2;
@@ -432,7 +430,7 @@ void pet_move(object *ob) {
                                   "You stand in the way of someones pet.", NULL);
                     return;
                 }
-            }
+            } FOR_MAP_FINISH();
         }
         /* Try a different course */
         dir = absdir(dir+4-(RANDOM()%5)-(RANDOM()%5));
@@ -592,9 +590,13 @@ void move_golem(object *op) {
         if (mflags&P_OUT_OF_MAP)
             continue;
 
-        for (victim = GET_MAP_OB(op->map, x, y); victim; victim = victim->above)
-            if (QUERY_FLAG(victim, FLAG_ALIVE))
+        victim = NULL;
+        FOR_MAP_PREPARE(op->map, x, y, tmp)
+            if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
+                victim = tmp;
                 break;
+            }
+        FOR_MAP_FINISH();
 
         /* We used to call will_hit_self to make sure we don't
          * hit ourselves, but that didn't work, and I don't really

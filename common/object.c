@@ -316,13 +316,13 @@ int object_can_merge(object *ob1, object *ob2) {
 /* TODO should check call this this are made a place where we really need reevaluaton of whole tree */
 signed long object_sum_weight(object *op) {
     signed long sum;
-    object *inv;
 
-    for (sum = 0, inv = op->inv; inv != NULL; inv = inv->below) {
+    sum = 0;
+    FOR_INV_PREPARE(op, inv) {
         if (inv->inv)
             object_sum_weight(inv);
         sum += inv->carrying+inv->weight*(inv->nrof ? inv->nrof : 1);
-    }
+    } FOR_INV_FINISH();
     if (op->type == CONTAINER && op->stats.Str)
         sum = (sum*(100-op->stats.Str))/100;
     op->carrying = sum;
@@ -859,14 +859,14 @@ void object_copy(object *op2, object *op) {
  * replace with a function in common library (there is certainly one).
  */
 void object_copy_with_inv(object *src_ob, object *dest_ob) {
-    object *walk, *tmp;
     object_copy(src_ob, dest_ob);
+    FOR_INV_PREPARE(src_ob, walk) {
+        object *tmp;
 
-    for (walk = src_ob->inv; walk != NULL; walk = walk->below) {
         tmp = object_new();
         object_copy(walk, tmp);
         object_insert_in_ob(tmp, dest_ob);
-    }
+    } FOR_INV_FINISH();
 }
 
 /**
@@ -1255,8 +1255,6 @@ void object_free(object *ob) {
  * the object's archetype should be a valid pointer, or NULL.
  */
 void object_free2(object *ob, int free_inventory) {
-    object *tmp, *op;
-
     if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
         StringBuffer *sb;
         char *diff;
@@ -1299,17 +1297,12 @@ void object_free2(object *ob, int free_inventory) {
         || ob->map == NULL
         || ob->map->in_memory != MAP_IN_MEMORY
         || (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) {
-            op = ob->inv;
-            while (op != NULL) {
-                tmp = op->below;
+            FOR_INV_PREPARE(ob, op) {
                 object_remove(op);
                 object_free2(op, free_inventory);
-                op = tmp;
-            }
+            } FOR_INV_FINISH();
         } else { /* Put objects in inventory onto this space */
-            op = ob->inv;
-            while (op != NULL) {
-                tmp = op->below;
+            FOR_INV_PREPARE(ob, op) {
                 object_remove(op);
                 if (QUERY_FLAG(op, FLAG_STARTEQUIP)||QUERY_FLAG(op, FLAG_NO_DROP)
                 || op->type == RUNE
@@ -1352,8 +1345,7 @@ void object_free2(object *ob, int free_inventory) {
                         object_insert_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
                     }
                 }
-                op = tmp;
-            }
+            } FOR_INV_FINISH();
         }
     }
 
@@ -1512,7 +1504,7 @@ void object_sub_weight(object *op, signed long weight) {
  * look like need cleanup it does to much different things.
  */
 void object_remove(object *op) {
-    object *tmp, *last = NULL;
+    object *last = NULL;
     object *otmp;
     tag_t tag;
     int check_walk_off;
@@ -1661,7 +1653,7 @@ void object_remove(object *op) {
 
     tag = op->count;
     check_walk_off = !QUERY_FLAG(op, FLAG_NO_APPLY);
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above) {
+    FOR_MAP_PREPARE(m, x, y, tmp) {
         /* No point updating the players look faces if he is the object
          * being removed.
          */
@@ -1690,7 +1682,7 @@ void object_remove(object *op) {
         if (tmp->above == tmp)
             tmp->above = NULL;
         last = tmp;
-    }
+    } FOR_MAP_FINISH();
     /* last == NULL or there are no objects on this space */
     if (last == NULL) {
         /* set P_NEED_UPDATE, otherwise update_position will complain.  In theory,
@@ -1727,7 +1719,7 @@ object *object_merge(object *op, object *top) {
     if (top == NULL)
         for (top = op; top != NULL && top->above != NULL; top = top->above)
             ;
-    for (; top != NULL; top = top->below) {
+    FOR_OB_AND_BELOW_PREPARE(top) {
         if (top == op)
             continue;
         if (object_can_merge(op, top)) {
@@ -1737,7 +1729,7 @@ object *object_merge(object *op, object *top) {
             object_free(op);
             return top;
         }
-    }
+    } FOR_OB_AND_BELOW_FINISH();
     return NULL;
 }
 
@@ -1789,7 +1781,6 @@ object *object_insert_in_map_at(object *op, mapstruct *m, object *originator, in
  * coordinates to look at for merging.
  */
 void object_merge_spell(object *op, sint16 x, sint16 y) {
-    object *tmp, *above;
     int i;
 
     /* We try to do some merging of spell objects - if something has same owner,
@@ -1806,9 +1797,7 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
      * of a case where tmp would normally get processed this tick, but
      * get merges with op, which does not get processed.
      */
-    for (tmp = GET_MAP_OB(op->map, x, y); tmp != NULL; tmp = above) {
-        above = tmp->above;
-
+    FOR_MAP_PREPARE(op->map, x, y, tmp) {
         if (op->type == tmp->type
         && op->subtype == tmp->subtype
         && op->direction == tmp->direction
@@ -1956,7 +1945,7 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
             object_remove(tmp);
             object_free(tmp);
         }
-    }
+    } FOR_MAP_FINISH();
 }
 
 /**
@@ -2077,13 +2066,13 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
     if (op->nrof
     && !(flag&INS_NO_MERGE)
     && op->type != SPELL_EFFECT) {
-        for (tmp = GET_MAP_OB(op->map, x, y); tmp != NULL; tmp = tmp->above) {
+        FOR_MAP_PREPARE(op->map, x, y, tmp) {
             if (object_can_merge(op, tmp)) {
                 op->nrof += tmp->nrof;
                 object_remove(tmp);
                 object_free(tmp);
             }
-        }
+        } FOR_MAP_FINISH();
     } else if (op->type == SPELL_EFFECT
     && !op->range
     && !op->other_arch
@@ -2137,45 +2126,36 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
         /* This test is incorrect i think, as ins_above_floor_only needs the floor variable
         if ((!(flag&INS_MAP_LOAD)) && ((top = GET_MAP_OB(op->map, op->x, op->y)) != NULL)) {
         */
-        if (((top = GET_MAP_OB(op->map, op->x, op->y)) != NULL)) {
-            object *last = NULL;
+        object *last;
 
-            /*
-             * If there are multiple objects on this space, we do some trickier handling.
-             * We've already dealt with merging if appropriate.
-             * Generally, we want to put the new object on top. But if
-             * flag contains INS_ABOVE_FLOOR_ONLY, once we find the last
-             * floor, we want to insert above that and no further.
-             * Also, if there are spell objects on this space, we stop processing
-             * once we get to them.  This reduces the need to traverse over all of
-             * them when adding another one - this saves quite a bit of cpu time
-             * when lots of spells are cast in one area.  Currently, it is presumed
-             * that flying non pickable objects are spell objects.
-             */
+        /*
+         * If there are multiple objects on this space, we do some trickier handling.
+         * We've already dealt with merging if appropriate.
+         * Generally, we want to put the new object on top. But if
+         * flag contains INS_ABOVE_FLOOR_ONLY, once we find the last
+         * floor, we want to insert above that and no further.
+         * Also, if there are spell objects on this space, we stop processing
+         * once we get to them.  This reduces the need to traverse over all of
+         * them when adding another one - this saves quite a bit of cpu time
+         * when lots of spells are cast in one area.  Currently, it is presumed
+         * that flying non pickable objects are spell objects.
+         */
+        last = NULL;
+        FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
+            if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)
+            || QUERY_FLAG(tmp, FLAG_OVERLAY_FLOOR))
+                floor = tmp;
 
-            while (top != NULL) {
-                if (QUERY_FLAG(top, FLAG_IS_FLOOR)
-                || QUERY_FLAG(top, FLAG_OVERLAY_FLOOR))
-                    floor = top;
-
-                if (QUERY_FLAG(top, FLAG_NO_PICK)
-                && (top->move_type&(MOVE_FLY_LOW|MOVE_FLY_HIGH))
-                && !QUERY_FLAG(top, FLAG_IS_FLOOR)) {
-                    /* We insert above top, so we want this object below this */
-                    break;
-                }
-                last = top;
-                top = top->above;
+            if (QUERY_FLAG(tmp, FLAG_NO_PICK)
+            && (tmp->move_type&(MOVE_FLY_LOW|MOVE_FLY_HIGH))
+            && !QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
+                /* We insert above tmp, so we want this object below this */
+                break;
             }
-            /* Don't want top to be NULL, so set it to the last valid object */
-            top = last;
+            last = tmp;
+        } FOR_MAP_FINISH();
+        top = last;
 
-            /* We let update_position deal with figuring out what the space
-             * looks like instead of lots of conditions here.
-             * makes things faster, and effectively the same result.
-             */
-
-        } /* If objects on this space */
         if (flag&INS_MAP_LOAD)
             top = GET_MAP_TOP(op->map, op->x, op->y);
         if (flag&INS_ABOVE_FLOOR_ONLY)
@@ -2207,11 +2187,13 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
     /* If we have a floor, we know the player, if any, will be above
      * it, so save a few ticks and start from there.
      */
-    if (!(flag&INS_MAP_LOAD))
-        for (tmp = floor ? floor : GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+    if (!(flag&INS_MAP_LOAD)) {
+        tmp = floor ? floor : GET_MAP_OB(op->map, op->x, op->y);
+        FOR_OB_AND_ABOVE_PREPARE(tmp)
             if (tmp->type == PLAYER)
                 tmp->contr->socket.update_look = 1;
-        }
+        FOR_OB_AND_ABOVE_FINISH();
+    }
 
     /* If this object glows, it may affect lighting conditions that are
      * visible to others on this map.  But update_all_los is really
@@ -2267,17 +2249,15 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
  * object to insert it under:  supplies x and the map.
  */
 void object_replace_insert_in_map(const char *arch_string, object *op) {
-    object *tmp;
     object *tmp1;
 
     /* first search for itself and remove any old instances */
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp1) {
-        tmp1 = tmp->above;
+    FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         if (!strcmp(tmp->arch->name, arch_string)) { /* same archetype */
             object_remove(tmp);
             object_free(tmp);
         }
-    }
+    } FOR_MAP_FINISH();
 
     tmp1 = arch_to_object(find_archetype(arch_string));
 
@@ -2391,14 +2371,14 @@ object *object_decrease_nrof(object *op, uint32 i) {
     } else {
         /* On a map. */
         if (i < op->nrof) {
-            object *pl;
             op->nrof -= i;
 
-            pl = GET_MAP_OB(op->map, op->x, op->y);
-            while (pl && !pl->contr)
-                pl = pl->above;
-            if (pl && pl->contr)
-                pl->contr->socket.update_look = 1;
+            FOR_MAP_PREPARE(op->map, op->x, op->y, pl)
+                if (pl->contr) {
+                    pl->contr->socket.update_look = 1;
+                    break;
+                }
+            FOR_MAP_FINISH();
         } else {
             object_remove(op);
             op->nrof = 0;
@@ -2460,15 +2440,14 @@ static void increase_ob_nr(object *op, uint32 i) {
         }
     } else {
         /* On a map. */
-        object *pl;
-
         op->nrof += i;
 
-        pl = GET_MAP_OB(op->map, op->x, op->y);
-        while (pl && !pl->contr)
-            pl = pl->above;
-        if (pl && pl->contr)
-            pl->contr->socket.update_look = 1;
+        FOR_MAP_PREPARE(op->map, op->x, op->y, pl)
+            if (pl->contr) {
+                pl->contr->socket.update_look = 1;
+                break;
+            }
+        FOR_MAP_FINISH();
     }
 }
 
@@ -2511,7 +2490,7 @@ void object_add_weight(object *op, signed long weight) {
  * pointer to inserted item, which will be different than op if object was merged.
  */
 object *object_insert_in_ob(object *op, object *where) {
-    object *tmp, *otmp;
+    object *otmp;
 
     if (!QUERY_FLAG(op, FLAG_REMOVED)) {
         StringBuffer *sb;
@@ -2547,7 +2526,7 @@ object *object_insert_in_ob(object *op, object *where) {
     CLEAR_FLAG(op, FLAG_OBJ_ORIGINAL);
     CLEAR_FLAG(op, FLAG_REMOVED);
     if (op->nrof) {
-        for (tmp = where->inv; tmp != NULL; tmp = tmp->below)
+        FOR_INV_PREPARE(where, tmp)
             if (object_can_merge(tmp, op)) {
                 /* return the original object and remove inserted object
                  * (client needs the original object) */
@@ -2556,6 +2535,7 @@ object *object_insert_in_ob(object *op, object *where) {
                 object_free(op); /* free the inserted object */
                 return tmp;
             }
+        FOR_INV_FINISH();
 
         /* the item couldn't merge. */
         object_add_weight(where, op->weight*op->nrof);
@@ -2594,12 +2574,12 @@ object *object_insert_in_ob(object *op, object *where) {
             pl = op->env->env;
         else if (op->env->map) {
             /* Container on map, look above for player. */
-            object *above = op->env->above;
-
-            while (above && !above->contr)
-                above = above->above;
-            if (above)
-                pl = above;
+            FOR_ABOVE_PREPARE(op->env, above)
+                if (above->contr) {
+                    pl = above;
+                    break;
+                }
+            FOR_ABOVE_FINISH();
         }
         if (pl)
             esrv_send_item(pl, op);
@@ -2690,15 +2670,18 @@ int object_check_move_on(object *op, object *originator) {
      * Hence, we first go to the top:
      */
 
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL && tmp->above != NULL; tmp = tmp->above) {
+    tmp = GET_MAP_OB(op->map, op->x, op->y);
+    FOR_OB_AND_ABOVE_PREPARE(tmp) {
+        if (tmp->above == NULL)
+            break;
         /* Trim the search when we find the first other spell effect
          * this helps performance so that if a space has 50 spell objects,
          * we don't need to check all of them.
          */
         if ((tmp->move_type&MOVE_FLY_LOW) && QUERY_FLAG(tmp, FLAG_NO_PICK))
             break;
-    }
-    for (; tmp != NULL; tmp = tmp->below) {
+    } FOR_OB_AND_ABOVE_FINISH();
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp == op)
             continue;    /* Can't apply yourself */
 
@@ -2739,7 +2722,7 @@ int object_check_move_on(object *op, object *originator) {
             if (op->map != m || op->x != x || op->y != y)
                 return 0;
         }
-    }
+    } FOR_OB_AND_BELOW_FINISH();
     return 0;
 }
 
@@ -2766,6 +2749,7 @@ object *arch_present_in_map(const archetype *at, mapstruct *m, int x, int y) {
     for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
         if (tmp->arch == at)
             return tmp;
+
     return NULL;
 }
 
@@ -2793,6 +2777,7 @@ object *object_present_in_map(uint8 type, mapstruct *m, int x, int y) {
     for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
         if (tmp->type == type)
             return tmp;
+
     return NULL;
 }
 
@@ -2812,6 +2797,7 @@ object *object_present_in_ob(uint8 type, const object *op) {
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
         if (tmp->type == type)
             return tmp;
+
     return NULL;
 }
 
@@ -2879,11 +2865,10 @@ object *arch_present_in_ob(const archetype *at, const object *op)  {
 void object_set_flag_inv(object*op, int flag) {
     object *tmp;
 
-    if (op->inv)
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-            SET_FLAG(tmp, flag);
-            object_set_flag_inv(tmp, flag);
-        }
+    for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+        SET_FLAG(tmp, flag);
+        object_set_flag_inv(tmp, flag);
+    }
 }
 
 /**
@@ -2897,11 +2882,10 @@ void object_set_flag_inv(object*op, int flag) {
 void object_unset_flag_inv(object*op, int flag) {
     object *tmp;
 
-    if (op->inv)
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-            CLEAR_FLAG(tmp, flag);
-            object_unset_flag_inv(tmp, flag);
-        }
+    for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+        CLEAR_FLAG(tmp, flag);
+        object_unset_flag_inv(tmp, flag);
+    }
 }
 
 /**
@@ -3316,7 +3300,6 @@ void get_search_arr(int *search_arr) {
 int map_find_dir(mapstruct *m, int x, int y, object *exclude) {
     int i, max = SIZEOFFREE, mflags;
     sint16 nx, ny;
-    object *tmp;
     mapstruct *mp;
     MoveType blocked, move_type;
 
@@ -3342,15 +3325,12 @@ int map_find_dir(mapstruct *m, int x, int y, object *exclude) {
             if ((move_type&blocked) == move_type) {
                 max = maxfree[i];
             } else if (mflags&P_IS_ALIVE) {
-                for (tmp = GET_MAP_OB(mp, nx, ny); tmp != NULL; tmp = tmp->above) {
+                FOR_MAP_PREPARE(mp, nx, ny, tmp) {
                     if ((QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER)
                     && (tmp != exclude ||(tmp->head && tmp->head != exclude))) {
-                        break;
+                        return freedir[i];
                     }
-                }
-                if (tmp) {
-                    return freedir[i];
-                }
+                } FOR_MAP_FINISH();
             }
         }
     }
@@ -3609,7 +3589,7 @@ int object_can_pick(const object *who, const object *item) {
  * this function will return NULL only if asrc is NULL. If there is a memory allocation error, object_new() calls fatal().
  */
 object *object_create_clone(object *asrc) {
-    object *dst = NULL, *tmp, *src, *part, *prev, *item;
+    object *dst = NULL, *tmp, *src, *part, *prev;
 
     if (!asrc)
         return NULL;
@@ -3635,9 +3615,9 @@ object *object_create_clone(object *asrc) {
         prev = tmp;
     }
     /*** copy inventory ***/
-    for (item = src->inv; item; item = item->below) {
+    FOR_INV_PREPARE(src, item)
         (void)object_insert_in_ob(object_create_clone(item), dst);
-    }
+    FOR_INV_FINISH();
 
     return dst;
 }
