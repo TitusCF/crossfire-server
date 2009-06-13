@@ -135,8 +135,8 @@ static int attempt_steal(object *op, object *who, object *skill) {
      * have much chance of success.
      */
     if (op->type != PLAYER && QUERY_FLAG(op, FLAG_NO_STEAL)) {
-        if (can_detect_enemy(op, who, &rv)) {
-            npc_call_help(op);
+        if (monster_can_detect_enemy(op, who, &rv)) {
+            monster_npc_call_help(op);
             CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                           "Your attempt is prevented!", NULL);
@@ -237,7 +237,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
         if (op->type != PLAYER) {
             /* The unaggressives look after themselves 8) */
             if (who->type == PLAYER) {
-                npc_call_help(op);
+                monster_npc_call_help(op);
                 query_name(op, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                                      "%s notices your attempted pilfering!",
@@ -2191,7 +2191,7 @@ int skill_throw(object *op, object *part, int dir, const char *params, object *s
     if (op->type == PLAYER)
         throw_ob = find_throw_ob(op, params);
     else
-        throw_ob = find_mon_throw_ob(op);
+        throw_ob = monster_find_throw_ob(op);
 
     return do_throw(op, part, throw_ob, dir, skill);
 }

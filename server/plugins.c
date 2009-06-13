@@ -4097,7 +4097,7 @@ void *cfapi_object_say(int *type, ...) {
     if (op->type == PLAYER) {
         *rint = command_say(op, msg);
     } else {
-        npc_say(op, msg);
+        monster_npc_say(op, msg);
         *rint = 0;
     }
     *type = CFAPI_INT;

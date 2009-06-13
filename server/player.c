@@ -478,9 +478,9 @@ object *get_nearest_player(object *mon) {
          * complicated method of state checking would be needed in any case -
          * as it was, a clever player could type quit, and the function would
          * skip them over while waiting for confirmation.  Remove
-         * on_same_map check, as can_detect_enemy also does this
+         * on_same_map check, as monster_can_detect_enemy() also does this
          */
-        if (!can_detect_enemy(mon, ol->ob, &rv))
+        if (!monster_can_detect_enemy(mon, ol->ob, &rv))
             continue;
 
         if (lastdist > rv.distance) {
@@ -489,7 +489,7 @@ object *get_nearest_player(object *mon) {
         }
     }
     for (pl = first_player; pl != NULL; pl = pl->next) {
-        if (can_detect_enemy(mon, pl->ob, &rv)) {
+        if (monster_can_detect_enemy(mon, pl->ob, &rv)) {
             if (lastdist > rv.distance) {
                 op = pl->ob;
                 lastdist = rv.distance;

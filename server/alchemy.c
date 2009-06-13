@@ -584,7 +584,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
     } else if (level < 45) {                 /* INFURIATE NPC's */
         /* this is kind of kludgy I know...*/
         cauldron->enemy = op;
-        npc_call_help(cauldron);
+        monster_npc_call_help(cauldron);
         cauldron->enemy = NULL;
 
         alchemy_failure_effect(op, cauldron, rp, level-5);

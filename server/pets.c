@@ -78,7 +78,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
         /* If the owner has turned on the pet, make the pet
          * unfriendly.
          */
-        if (check_enemy(owner, rv) == pet) {
+        if (monster_check_enemy(owner, rv) == pet) {
             CLEAR_FLAG(pet, FLAG_FRIENDLY);
             remove_friendly_object(pet);
             pet->attack_movement &= ~PETMOVE;
@@ -98,7 +98,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
         return NULL;
 
     /* See if the pet has an existing enemy. If so, don't start a new one*/
-    tmp = check_enemy(pet, rv);
+    tmp = monster_check_enemy(pet, rv);
     if (tmp != NULL) {
         if (tmp == owner && !QUERY_FLAG(pet, FLAG_CONFUSED)
             && QUERY_FLAG(pet, FLAG_FRIENDLY))
@@ -113,10 +113,10 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
 
     if (owner->type == PLAYER && owner->contr->petmode > pet_normal) {
         if (owner->contr->petmode == pet_sad) {
-            tmp = find_nearest_living_creature(pet);
+            tmp = monster_find_nearest_living_creature(pet);
             if (tmp != NULL) {
                 get_rangevector(pet, tmp, rv, 0);
-                if (check_enemy(pet, rv) != NULL)
+                if (monster_check_enemy(pet, rv) != NULL)
                     return tmp;
                 else
                     pet->enemy = NULL;
@@ -147,13 +147,13 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
                 && !QUERY_FLAG(tmp2, FLAG_UNAGGRESSIVE)
                 && tmp2 != pet
                 && tmp2 != owner
-                && can_detect_enemy(pet, tmp2, rv)) {
-                    if (!can_see_enemy(pet, tmp2)) {
+                && monster_can_detect_enemy(pet, tmp2, rv)) {
+                    if (!monster_can_see_enemy(pet, tmp2)) {
                         if (tmp3 != NULL)
                             tmp3 = tmp2;
                     } else {
                         pet->enemy = tmp2;
-                        if (check_enemy(pet, rv) != NULL)
+                        if (monster_check_enemy(pet, rv) != NULL)
                             return tmp2;
                         else
                             pet->enemy = NULL;
@@ -167,7 +167,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
        see, take what we have */
     if (tmp3 != NULL) {
         pet->enemy = tmp3;
-        if (check_enemy(pet, rv) != NULL)
+        if (monster_check_enemy(pet, rv) != NULL)
             return tmp3;
         else
             pet->enemy = NULL;
@@ -181,7 +181,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
             /* or otherwise non-hostile, and is an appropriate target */
             if (!QUERY_FLAG(attacker, FLAG_FRIENDLY) && on_same_map(pet, attacker)) {
                 pet->enemy = attacker;
-                if (check_enemy(pet, rv) != NULL)
+                if (monster_check_enemy(pet, rv) != NULL)
                     return attacker;
                 else
                     pet->enemy = NULL;
@@ -210,13 +210,13 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
                     && !QUERY_FLAG(tmp2, FLAG_UNAGGRESSIVE)
                     && tmp2 != pet
                     && tmp2 != owner
-                    && can_detect_enemy(pet, tmp2, rv)) {
-                        if (!can_see_enemy(pet, tmp2)) {
+                    && monster_can_detect_enemy(pet, tmp2, rv)) {
+                        if (!monster_can_see_enemy(pet, tmp2)) {
                             if (tmp3 != NULL)
                                 tmp3 = tmp2;
                         } else {
                             pet->enemy = tmp2;
-                            if (check_enemy(pet, rv) != NULL)
+                            if (monster_check_enemy(pet, rv) != NULL)
                                 return tmp2;
                             else
                                 pet->enemy = NULL;
@@ -231,14 +231,14 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
        see, take what we have */
     if (tmp3 != NULL) {
         pet->enemy = tmp3;
-        if (check_enemy(pet, rv) != NULL)
+        if (monster_check_enemy(pet, rv) != NULL)
             return tmp3;
         else
             pet->enemy = NULL;
     }
 
     /* Didn't find anything - return the owner's enemy or NULL */
-    return check_enemy(pet, rv);
+    return monster_check_enemy(pet, rv);
 }
 
 /**

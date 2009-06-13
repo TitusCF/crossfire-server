@@ -29,7 +29,7 @@
 /**
  * @file
  * This deals with monster moving, attacking, using items and such.
- * The core function is move_monster().
+ * The core function is monster_move().
  */
 
 #include <assert.h>
@@ -40,7 +40,7 @@
 #include <skills.h>
 #endif
 
-static int can_hit(object *ob1, object *ob2, rv_vector *rv);
+static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv);
 static int monster_cast_spell(object *head, object *part, object *pl, int dir, rv_vector *rv);
 static int monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv);
 static int monster_use_skill(object *head, object *part, object *pl, int dir);
@@ -49,20 +49,20 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir);
 static void monster_check_pickup(object *monster);
 static int monster_can_pick(object *monster, object *item);
 static void monster_apply_below(object *monster);
-static int dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-static int run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-static int hitrun_att(int dir, object *ob, object *enemy);
-static int wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-static int disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-static int wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-static void circ1_move(object *ob);
-static void circ2_move(object *ob);
-static void pace_movev(object *ob);
-static void pace_moveh(object *ob);
-static void pace2_movev(object *ob);
-static void pace2_moveh(object *ob);
-static void rand_move(object *ob);
-static int talk_to_npc(object *op, object *npc, const char *txt, int *talked);
+static int monster_dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int monster_hitrun_att(int dir, object *ob, object *enemy);
+static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int monster_disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int monster_wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static void monster_circ1_move(object *ob);
+static void monster_circ2_move(object *ob);
+static void monster_pace_movev(object *ob);
+static void monster_pace_moveh(object *ob);
+static void monster_pace2_movev(object *ob);
+static void monster_pace2_moveh(object *ob);
+static void monster_rand_move(object *ob);
+static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *talked);
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
 
@@ -80,7 +80,7 @@ static int talk_to_npc(object *op, object *npc, const char *txt, int *talked);
  * @return
  * valid enemy for npc.
  */
-object *check_enemy(object *npc, rv_vector *rv) {
+object *monster_check_enemy(object *npc, rv_vector *rv) {
     /* if this is pet, let him attack the same enemy as his owner
      * TODO: when there is no ower enemy, try to find a target,
      * which CAN attack the owner. */
@@ -136,7 +136,7 @@ object *check_enemy(object *npc, rv_vector *rv) {
             npc->enemy = NULL;
 
     }
-    return can_detect_enemy(npc, npc->enemy, rv) ? npc->enemy : NULL;
+    return monster_can_detect_enemy(npc, npc->enemy, rv) ? npc->enemy : NULL;
 }
 
 /**
@@ -159,7 +159,7 @@ object *check_enemy(object *npc, rv_vector *rv) {
  * @return
  * living creature, or NULL if none found.
  */
-object *find_nearest_living_creature(object *npc) {
+object *monster_find_nearest_living_creature(object *npc) {
     int i, mflags;
     sint16 nx, ny;
     mapstruct *m;
@@ -191,7 +191,7 @@ object *find_nearest_living_creature(object *npc) {
                 }
             FOR_MAP_FINISH();
             if (!creature) {
-                LOG(llevDebug, "find_nearest_living_creature: map %s (%d,%d) has is_alive set but did not find a monster?\n", m->path, nx, ny);
+                LOG(llevDebug, "monster_find_nearest_living_creature: map %s (%d,%d) has is_alive set but did not find a monster?\n", m->path, nx, ny);
             } else {
                 if (can_see_monsterP(m, nx, ny, i))
                     return creature;
@@ -204,7 +204,7 @@ object *find_nearest_living_creature(object *npc) {
 /**
  * Tries to find an enmy for npc.  We pass the range vector since
  * our caller will find the information useful.
- * Currently, only move_monster calls this function.
+ * Currently, only monster_move() calls this function.
  * Fix function so that we always make calls to get_rangevector
  * if we have a valid target - function as not doing so in
  * many cases.
@@ -216,7 +216,7 @@ object *find_nearest_living_creature(object *npc) {
  * @return
  * enemy npc wants to attack, or NULL if nont found.
  */
-static object *find_enemy(object *npc, rv_vector *rv) {
+static object *monster_find_enemy(object *npc, rv_vector *rv) {
     object *attacker, *tmp = NULL;
 
     attacker = npc->attacked_by; /* save this for later use. This can be a attacker. */
@@ -224,7 +224,7 @@ static object *find_enemy(object *npc, rv_vector *rv) {
 
     /* if we berserk, we don't care about others - we attack all we can find */
     if (QUERY_FLAG(npc, FLAG_BERSERK)) {
-        tmp = find_nearest_living_creature(npc);
+        tmp = monster_find_nearest_living_creature(npc);
         if (tmp)
             get_rangevector(npc, tmp, rv, 0);
         return tmp;
@@ -249,7 +249,7 @@ static object *find_enemy(object *npc, rv_vector *rv) {
     }
 
     /* we check our old enemy. */
-    if ((tmp = check_enemy(npc, rv)) == NULL) {
+    if ((tmp = monster_check_enemy(npc, rv)) == NULL) {
         if (attacker) { /* if we have an attacker, check him */
             /* we want be sure this is the right one! */
             if (attacker->count == npc->attacked_by_count) {
@@ -275,7 +275,7 @@ static object *find_enemy(object *npc, rv_vector *rv) {
         && !QUERY_FLAG(npc, FLAG_NEUTRAL)) {
             npc->enemy = get_nearest_player(npc);
             if (npc->enemy)
-                tmp = check_enemy(npc, rv);
+                tmp = monster_check_enemy(npc, rv);
         }
 
     }
@@ -285,7 +285,7 @@ static object *find_enemy(object *npc, rv_vector *rv) {
 
 /**
  * Sees if this monster should wake up.
- * Currently, this is only called from move_monster, and
+ * Currently, this is only called from monster_move(), and
  * if enemy is set, then so should be rv.
  * @param op
  * monster to check.
@@ -298,7 +298,7 @@ static object *find_enemy(object *npc, rv_vector *rv) {
  * @note
  * will return 0 if enemy is NULL.
  */
-static int check_wakeup(object *op, object *enemy, rv_vector *rv) {
+static int monster_check_wakeup(object *op, object *enemy, rv_vector *rv) {
     int radius = MAX(op->stats.Wis, MIN_MON_RADIUS);
 
     /* Trim work - if no enemy, no need to do anything below */
@@ -318,7 +318,7 @@ static int check_wakeup(object *op, object *enemy, rv_vector *rv) {
     && op->map->darkness > 0
     && enemy
     && !enemy->invisible
-    && !stand_in_light(enemy)
+    && !monster_stand_in_light(enemy)
     && (!QUERY_FLAG(op, FLAG_SEE_IN_DARK) || !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))) {
         int dark = radius/(op->map->darkness);
 
@@ -344,7 +344,7 @@ static int check_wakeup(object *op, object *enemy, rv_vector *rv) {
  * @return
  * 1 if moved, 0 else.
  */
-static int move_randomly(object *op) {
+static int monster_move_randomly(object *op) {
     int i;
 
     /* Give up to 15 chances for a monster to move randomly */
@@ -371,7 +371,7 @@ static int move_randomly(object *op) {
  * direction to go into. Will be default_dir if no path found.
  * @todo cache path, smart ajustment and such things to not compute all the time ; try directions randomly.
  */
-int compute_path(object *source, object *target, int default_dir) {
+int monster_compute_path(object *source, object *target, int default_dir) {
     char *path;
     int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE];
     int current = 0, dir, max = 1, size, x, y, check_dir;
@@ -379,7 +379,7 @@ int compute_path(object *source, object *target, int default_dir) {
     if (target->map != source->map)
         return default_dir;
 
-    /*    printf("compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
+    /*    printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
 
     size = source->map->width*source->map->height;
     path = calloc(size, sizeof(char));
@@ -396,7 +396,7 @@ int compute_path(object *source, object *target, int default_dir) {
             y = explore_y[current]+freearr_y[dir];
 
             if (x == source->x && y == source->y) {
-                /*          LOG(llevDebug, "compute_path => %d\n", absdir(dir+4));*/
+                /*          LOG(llevDebug, "monster_compute_path => %d\n", absdir(dir+4));*/
                 free(path);
                 return absdir(dir+4);
             }
@@ -515,40 +515,40 @@ static int monster_move_no_enemy(object *op) {
                 break;
 
             case(CIRCLE1):
-                circ1_move(op);
+                monster_circ1_move(op);
                 break;
 
             case(CIRCLE2):
-                circ2_move(op);
+                monster_circ2_move(op);
                 break;
 
             case(PACEV):
-                pace_movev(op);
+                monster_pace_movev(op);
                 break;
 
             case(PACEH):
-                pace_moveh(op);
+                monster_pace_moveh(op);
                 break;
 
             case(PACEV2):
-                pace2_movev(op);
+                monster_pace2_movev(op);
                 break;
 
             case(PACEH2):
-                pace2_moveh(op);
+                monster_pace2_moveh(op);
                 break;
 
             case(RANDO):
-                rand_move(op);
+                monster_rand_move(op);
                 break;
 
             case(RANDO2):
-                move_randomly(op);
+                monster_move_randomly(op);
                 break;
             }
             return 0;
         } else if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
-            move_randomly(op);
+            monster_move_randomly(op);
 
     } /* stand still */
 
@@ -566,7 +566,7 @@ static int monster_move_no_enemy(object *op) {
  * @return
  * 1 if the object has been freed, otherwise 0.
  */
-int move_monster(object *op) {
+int monster_move(object *op) {
     int dir, diff;
     object *owner, *enemy, *part, *oph = op;
     rv_vector rv;
@@ -583,7 +583,7 @@ int move_monster(object *op) {
 
     if (QUERY_FLAG(op, FLAG_NO_ATTACK))  /* we never ever attack */
         enemy = op->enemy = NULL;
-    else if ((enemy = find_enemy(op, &rv))) {
+    else if ((enemy = monster_find_enemy(op, &rv))) {
         /* we have an enemy, just tell him we want him dead */
         enemy->attacked_by = op;       /* our ptr */
         enemy->attacked_by_count = op->count; /* our tag */
@@ -592,7 +592,7 @@ int move_monster(object *op) {
     if (QUERY_FLAG(op, FLAG_SLEEP)
     || QUERY_FLAG(op, FLAG_BLIND)
     || ((op->map->darkness > 0) && !QUERY_FLAG(op, FLAG_SEE_IN_DARK) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))) {
-        if (!check_wakeup(op, enemy, &rv))
+        if (!monster_check_wakeup(op, enemy, &rv))
             return 0;
     }
 
@@ -703,8 +703,8 @@ int move_monster(object *op) {
 
     if (QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op, FLAG_RUN_AWAY))
         dir = absdir(dir+4);
-    else if (!can_hit(part, enemy, &rv))
-        dir = compute_path(op, enemy, rv.direction);
+    else if (!monster_can_hit(part, enemy, &rv))
+        dir = monster_compute_path(op, enemy, rv.direction);
 
     if (QUERY_FLAG(op, FLAG_CONFUSED))
         dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
@@ -712,19 +712,19 @@ int move_monster(object *op) {
     if ((op->attack_movement&LO4) && !QUERY_FLAG(op, FLAG_SCARED)) {
         switch (op->attack_movement&LO4) {
         case DISTATT:
-            dir = dist_att(dir, op, enemy, part, &rv);
+            dir = monster_dist_att(dir, op, enemy, part, &rv);
             break;
 
         case RUNATT:
-            dir = run_att(dir, op, enemy, part, &rv);
+            dir = monster_run_att(dir, op, enemy, part, &rv);
             break;
 
         case HITRUN:
-            dir = hitrun_att(dir, op, enemy);
+            dir = monster_hitrun_att(dir, op, enemy);
             break;
 
         case WAITATT:
-            dir = wait_att(dir, op, enemy, part, &rv);
+            dir = monster_wait_att(dir, op, enemy, part, &rv);
             break;
 
         case RUSH: /* default - monster normally moves towards player */
@@ -732,11 +732,11 @@ int move_monster(object *op) {
             break;
 
         case DISTHIT:
-            dir = disthit_att(dir, op, enemy, part, &rv);
+            dir = monster_disthit_att(dir, op, enemy, part, &rv);
             break;
 
         case WAIT2:
-            dir = wait_att2(dir, op, enemy, part, &rv);
+            dir = monster_wait_att2(dir, op, enemy, part, &rv);
             break;
 
         default:
@@ -752,7 +752,7 @@ int move_monster(object *op) {
             return 0;
 
         if (QUERY_FLAG(op, FLAG_SCARED)
-        || !can_hit(part, enemy, &rv)
+        || !monster_can_hit(part, enemy, &rv)
         || QUERY_FLAG(op, FLAG_RUN_AWAY)) {
             /* Try move around corners if !close */
             int maxdiff = (QUERY_FLAG(op, FLAG_ONLY_ATTACK) || RANDOM()&1) ? 1 : 2;
@@ -772,7 +772,7 @@ int move_monster(object *op) {
      */
     if (!QUERY_FLAG(op, FLAG_ONLY_ATTACK)
     && (QUERY_FLAG(op, FLAG_RUN_AWAY) || QUERY_FLAG(op, FLAG_SCARED)))
-        if (move_randomly(op))
+        if (monster_move_randomly(op))
             return 0;
 
     /*
@@ -789,13 +789,13 @@ int move_monster(object *op) {
     if (!QUERY_FLAG(op, FLAG_FRIENDLY) && enemy == op->enemy) {
         object *nearest_player = get_nearest_player(op);
 
-        if (nearest_player && nearest_player != enemy && !can_hit(part, enemy, &rv)) {
+        if (nearest_player && nearest_player != enemy && !monster_can_hit(part, enemy, &rv)) {
             op->enemy = NULL;
             enemy = nearest_player;
         }
     }
 
-    if (!QUERY_FLAG(op, FLAG_SCARED) && can_hit(part, enemy, &rv)) {
+    if (!QUERY_FLAG(op, FLAG_SCARED) && monster_can_hit(part, enemy, &rv)) {
         /* The adjustement to wc that was here before looked totally bogus -
          * since wc can in fact get negative, that would mean by adding
          * the current wc, the creature gets better?  Instead, just
@@ -835,7 +835,7 @@ int move_monster(object *op) {
  * @todo
  * rename to something more clear (is_adjacent?).
  */
-static int can_hit(object *ob1, object *ob2, rv_vector *rv) {
+static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv) {
     object *more;
     rv_vector rv1;
 
@@ -1300,7 +1300,7 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
  * @return
  * 1 if item is a better object, 0 else.
  */
-static int check_good_weapon(object *who, object *item) {
+static int monster_check_good_weapon(object *who, object *item) {
     object *other_weap;
     int val = 0, i;
 
@@ -1340,7 +1340,7 @@ static int check_good_weapon(object *who, object *item) {
  * @return
  * 1 if item is a better object, 0 else.
  */
-static int check_good_armour(object *who, object *item) {
+static int monster_check_good_armour(object *who, object *item) {
     object *other_armour;
     int val = 0, i;
 
@@ -1591,9 +1591,9 @@ void monster_check_apply(object *mon, object *item) {
         /* Don't use it right now */
         return;
     } else if (item->type == WEAPON)
-        flag = check_good_weapon(mon, item);
+        flag = monster_check_good_weapon(mon, item);
     else if (IS_ARMOR(item) || IS_SHIELD(item))
-        flag = check_good_armour(mon, item);
+        flag = monster_check_good_armour(mon, item);
     /* Should do something more, like make sure this is a better item */
     else if (item->type == RING)
         flag = 1;
@@ -1646,7 +1646,7 @@ void monster_check_apply(object *mon, object *item) {
     return;
 }
 
-void npc_call_help(object *op) {
+void monster_npc_call_help(object *op) {
     int x, y, mflags;
     sint16 sx, sy;
     mapstruct *m;
@@ -1668,8 +1668,8 @@ void npc_call_help(object *op) {
         }
 }
 
-static int dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
-    if (can_hit(part, enemy, rv))
+static int monster_dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
+    if (monster_can_hit(part, enemy, rv))
         return dir;
     if (rv->distance < 10)
         return absdir(dir+4);
@@ -1678,8 +1678,8 @@ static int dist_att(int dir, object *ob, object *enemy, object *part, rv_vector 
     return 0;
 }
 
-static int run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
-    if ((can_hit(part, enemy, rv) && ob->move_status < 20) || ob->move_status < 20) {
+static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
+    if ((monster_can_hit(part, enemy, rv) && ob->move_status < 20) || ob->move_status < 20) {
         ob->move_status++;
         return (dir);
     } else if (ob->move_status > 20)
@@ -1687,7 +1687,7 @@ static int run_att(int dir, object *ob, object *enemy, object *part, rv_vector *
     return absdir(dir+4);
 }
 
-static int hitrun_att(int dir, object *ob, object *enemy) {
+static int monster_hitrun_att(int dir, object *ob, object *enemy) {
     if (ob->move_status++ < 25)
         return dir;
     else if (ob->move_status < 50)
@@ -1697,8 +1697,8 @@ static int hitrun_att(int dir, object *ob, object *enemy) {
     return absdir(dir+4);
 }
 
-static int wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
-    int inrange = can_hit(part, enemy, rv);
+static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
+    int inrange = monster_can_hit(part, enemy, rv);
 
     if (ob->move_status || inrange)
         ob->move_status++;
@@ -1713,7 +1713,7 @@ static int wait_att(int dir, object *ob, object *enemy, object *part, rv_vector 
     return 0;
 }
 
-static int disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
+static int monster_disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     /* The logic below here looked plain wrong before.  Basically, what should
      * happen is that if the creatures hp percentage falls below run_away,
      * the creature should run away (dir+4)
@@ -1723,16 +1723,16 @@ static int disthit_att(int dir, object *ob, object *enemy, object *part, rv_vect
      */
     if (ob->stats.maxhp && (ob->stats.hp*100)/ob->stats.maxhp < ob->run_away)
         return absdir(dir+4);
-    return dist_att(dir, ob, enemy, part, rv);
+    return monster_dist_att(dir, ob, enemy, part, rv);
 }
 
-static int wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
+static int monster_wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     if (rv->distance < 9)
         return absdir(dir+4);
     return 0;
 }
 
-static void circ1_move(object *ob) {
+static void monster_circ1_move(object *ob) {
     static const int circle [12] = { 3, 3, 4, 5, 5, 6, 7, 7, 8, 1, 1, 2 };
 
     if (++ob->move_status > 11)
@@ -1741,7 +1741,7 @@ static void circ1_move(object *ob) {
         (void)move_object(ob, RANDOM()%8+1);
 }
 
-static void circ2_move(object *ob) {
+static void monster_circ2_move(object *ob) {
     static const int circle[20] = { 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 7, 7, 7, 8, 8, 1, 1, 1, 2, 2 };
 
     if (++ob->move_status > 19)
@@ -1750,7 +1750,7 @@ static void circ2_move(object *ob) {
         (void)move_object(ob, RANDOM()%8+1);
 }
 
-static void pace_movev(object *ob) {
+static void monster_pace_movev(object *ob) {
     if (ob->move_status++ > 6)
         ob->move_status = 0;
     if (ob->move_status < 4)
@@ -1759,7 +1759,7 @@ static void pace_movev(object *ob) {
         (void)move_object(ob, 1);
 }
 
-static void pace_moveh(object *ob) {
+static void monster_pace_moveh(object *ob) {
     if (ob->move_status++ > 6)
         ob->move_status = 0;
     if (ob->move_status < 4)
@@ -1768,7 +1768,7 @@ static void pace_moveh(object *ob) {
         (void)move_object(ob, 7);
 }
 
-static void pace2_movev(object *ob) {
+static void monster_pace2_movev(object *ob) {
     if (ob->move_status++ > 16)
         ob->move_status = 0;
     if (ob->move_status < 6)
@@ -1781,7 +1781,7 @@ static void pace2_movev(object *ob) {
         return;
 }
 
-static void pace2_moveh(object *ob) {
+static void monster_pace2_moveh(object *ob) {
     if (ob->move_status++ > 16)
         ob->move_status = 0;
     if (ob->move_status < 6)
@@ -1794,7 +1794,7 @@ static void pace2_moveh(object *ob) {
         return;
 }
 
-static void rand_move(object *ob) {
+static void monster_rand_move(object *ob) {
     int i;
 
     if (ob->move_status < 1
@@ -1805,7 +1805,7 @@ static void rand_move(object *ob) {
                 return;
 }
 
-void check_earthwalls(object *op, mapstruct *m, int x, int y) {
+void monster_check_earthwalls(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->type == EARTHWALL) {
             hit_player(tmp, op->stats.dam, op, AT_PHYSICAL, 1);
@@ -1814,7 +1814,7 @@ void check_earthwalls(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_FINISH();
 }
 
-void check_doors(object *op, mapstruct *m, int x, int y) {
+void monster_check_doors(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->type == DOOR) {
             hit_player(tmp, 1000, op, AT_PHYSICAL, 1);
@@ -1841,7 +1841,7 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
  * @param op who is saying something.
  * @param txt what is said.
  */
-void communicate(object *op, const char *txt) {
+void monster_communicate(object *op, const char *txt) {
     int i, mflags, talked = 0;
     sint16 x, y;
     mapstruct *mp, *orig_map = op->map;
@@ -1868,7 +1868,7 @@ void communicate(object *op, const char *txt) {
             continue;
 
         FOR_MAP_PREPARE(mp, x, y, npc) {
-            talk_to_npc(op, npc, txt, &talked);
+            monster_talk_to_npc(op, npc, txt, &talked);
             if (orig_map != op->map) {
                 LOG(llevDebug, "Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
                 return;
@@ -1876,7 +1876,7 @@ void communicate(object *op, const char *txt) {
         } FOR_MAP_FINISH();
     }
 
-    /* if talked is set, then the talk_to_npc() wrote out this information, so
+    /* if talked is set, then the monster_talk_to_npc() wrote out this information, so
      * don't do it again.
      */
     if (!talked) {
@@ -1885,14 +1885,14 @@ void communicate(object *op, const char *txt) {
 
 /**
  * Checks the messages of a NPC for a matching text. Will not call
- * plugin events. Called by talk_to_npc().
+ * plugin events. Called by monster_talk_to_npc().
  * @param op who is saying something
  * @param npc object that gets a chance to reply.
  * @param txt text being said.
  * @param talked did op already talk? Will be modified if this function makes op talk.
  * @return 1 if npc talked, 0 else.
  */
-static int do_talk_npc(object *op, object *npc, const char *txt, int *talked) {
+static int monster_do_talk_npc(object *op, object *npc, const char *txt, int *talked) {
     char buf[MAX_BUF];
     struct_dialog_reply *reply;
     struct_dialog_message *message;
@@ -1922,7 +1922,7 @@ static int do_talk_npc(object *op, object *npc, const char *txt, int *talked) {
         ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH, message->message, NULL);
         use_trigger(npc);
     } else {
-        npc_say(npc, message->message);
+        monster_npc_say(npc, message->message);
         reply = message->replies;
 
         if (reply) {
@@ -1942,7 +1942,7 @@ static int do_talk_npc(object *op, object *npc, const char *txt, int *talked) {
  * @param npc who should say something.
  * @param cp what is being said.
  */
-void npc_say(object *npc, const char *cp) {
+void monster_npc_say(object *npc, const char *cp) {
     char buf[HUGE_BUF], name[MAX_BUF];
 
     query_name(npc, name, sizeof(name));
@@ -1961,7 +1961,7 @@ void npc_say(object *npc, const char *cp) {
  * @param talked did op already talk? Can be modified by this function.
  * @return 0 if text was handled by a plugin or not handled, 1 if handled internally by the server.
  */
-static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
+static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
     /* Move this commone area up here - shouldn't cost much extra cpu
      * time, and makes the function more readable */
     /* Lauwenmark: Handle for plugin say event */
@@ -1975,17 +1975,17 @@ static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
     FOR_INV_FINISH();
     if (op == npc)
         return 0;
-    return do_talk_npc(op, npc, txt, talked);
+    return monster_do_talk_npc(op, npc, txt, talked);
 }
 
-/* find_mon_throw_ob() - modeled on find_throw_ob
+/* monster_find_throw_ob() - modeled on find_throw_ob
  * This is probably overly simplistic as it is now - We want
  * monsters to throw things like chairs and other pieces of
  * furniture, even if they are not good throwable objects.
  * Probably better to have the monster throw a throwable object
  * first, then throw any non equipped weapon.
  */
-object *find_mon_throw_ob(object *op) {
+object *monster_find_throw_ob(object *op) {
     /* New throw code: look through the inventory. Grap the first legal is_thrown
      * marked item and throw it to the enemy.
      */
@@ -2018,7 +2018,7 @@ object *find_mon_throw_ob(object *op) {
  * be within the valid range. MSW 2001-08-05
  * Returns 0 if enemy can not be detected, 1 if it is detected
  */
-int can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
+int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
     int radius = MIN_MON_RADIUS, hide_discovery;
 
     /* null detection for any of these condtions always */
@@ -2036,7 +2036,7 @@ int can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
         return 0;
 
     /* simple check.  Should probably put some range checks in here. */
-    if (can_see_enemy(op, enemy))
+    if (monster_can_see_enemy(op, enemy))
         return 1;
 
     /* The rest of this is for monsters. Players are on their own for
@@ -2065,7 +2065,7 @@ int can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
             if ((sk_hide = find_skill_by_number(enemy, SK_HIDING)))
                 bonus -= sk_hide->level;
             else {
-                LOG(llevError, "can_detect_enemy() got hidden player w/o hiding skill!\n");
+                LOG(llevError, "monster_can_detect_enemy() got hidden player w/o hiding skill!\n");
                 make_visible(enemy);
                 radius = MAX(radius, MIN_MON_RADIUS);
             }
@@ -2082,7 +2082,7 @@ int can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
         radius = radius/2, hide_discovery = hide_discovery/3;
 
     /* Radii adjustment for enemy standing in the dark */
-    if (op->map->darkness > 0 && !stand_in_light(enemy)) {
+    if (op->map->darkness > 0 && !monster_stand_in_light(enemy)) {
         /* on dark maps body heat can help indicate location with infravision
          * undead don't have body heat, so no benefit detecting them.
          */
@@ -2157,7 +2157,7 @@ int can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
  * is possible for a bright light to illuminate a player on the
  * other side of a wall (!).
  */
-int stand_in_light(object *op) {
+int monster_stand_in_light(object *op) {
     sint16 nx, ny;
     mapstruct *m;
 
@@ -2194,10 +2194,10 @@ int stand_in_light(object *op) {
 /*
  * assuming no walls/barriers, lets check to see if its *possible*
  * to see an enemy. Note, "detection" is different from "seeing".
- * See can_detect_enemy() for more details. -b.t.
+ * See monster_can_detect_enemy() for more details. -b.t.
  * return 0 if can't be seen, 1 if can be
  */
-int can_see_enemy(object *op, object *enemy) {
+int monster_can_see_enemy(object *op, object *enemy) {
     object *looker = op->head ? op->head : op;
 
     /* safety */
@@ -2249,7 +2249,7 @@ int can_see_enemy(object *op, object *enemy) {
      * case, the looker can still see the enemy
      */
     if (enemy->map->darkness > 0
-    && !stand_in_light(enemy)
+    && !monster_stand_in_light(enemy)
     && (!QUERY_FLAG(looker, FLAG_SEE_IN_DARK) || !is_true_undead(looker) || !QUERY_FLAG(looker, FLAG_XRAYS)))
         return 0;
 

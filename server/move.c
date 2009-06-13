@@ -108,13 +108,13 @@ int move_ob(object *op, int dir, object *originator) {
     op->direction = dir;
 
     if (op->will_apply&WILL_APPLY_EARTHWALL)
-        check_earthwalls(op, m, newx, newy);
+        monster_check_earthwalls(op, m, newx, newy);
     if (op->will_apply&WILL_APPLY_DOOR)
-        check_doors(op, m, newx, newy);
+        monster_check_doors(op, m, newx, newy);
 
     /* 0.94.1 - I got a stack trace that showed it crash with object_remove() trying
      * to remove a removed object, and this function was the culprit.  A possible
-     * guess I have is that check_doors above ran into a trap, killing the
+     * guess I have is that monster_check_doors() above ran into a trap, killing the
      * monster.
      *
      * Unfortunately, it doesn't appear that the calling functions of move_object
@@ -626,7 +626,7 @@ int move_to(object *op, int x, int y) {
     if (GET_MAP_FLAGS(op->map, x, y)&P_OUT_OF_MAP)
         return 2;
 
-    direction = compute_path(op, GET_MAP_OB(op->map, x, y), -1);
+    direction = monster_compute_path(op, GET_MAP_OB(op->map, x, y), -1);
     if (direction == -1)
         return 2;
 

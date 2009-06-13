@@ -761,7 +761,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam,
     if (!simple_attack && QUERY_FLAG(op, FLAG_MONSTER)
         && op->speed_left > -(FABS(op->speed))*0.3) {
         /* Decrease speed BEFORE calling process_object.  Otherwise, an
-         * infinite loop occurs, with process_object calling move_monster,
+         * infinite loop occurs, with process_object calling monster_move(),
          * which then gets here again.  By decreasing the speed before
          * we call process_object, the 'if' statement above will fail.
          */
@@ -812,9 +812,9 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam,
 
             /* If the victim can't see the attacker, it may alert others
              * for help. */
-            if (op->type != PLAYER && !can_see_enemy(op, hitter)
+            if (op->type != PLAYER && !monster_can_see_enemy(op, hitter)
                 && !object_get_owner(op) && rndm(0, op->stats.Int))
-                npc_call_help(op);
+                monster_npc_call_help(op);
 
             /* if you were hidden and hit by a creature, you are discovered*/
             if (op->hide && QUERY_FLAG(hitter, FLAG_ALIVE)) {
@@ -2015,7 +2015,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE) && op->type != PLAYER) {
         /* The unaggressives look after themselves 8) */
         CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
-        npc_call_help(op);
+        monster_npc_call_help(op);
     }
 
     if (magic && did_make_save(op, op->level, 0))
@@ -2473,12 +2473,12 @@ static int adj_attackroll(object *hitter, object *target) {
     /* determine the condtions under which we make an attack.
      * Add more cases, as the need occurs. */
 
-    if (!can_see_enemy(attacker, target)) {
+    if (!monster_can_see_enemy(attacker, target)) {
         /* target is unseen */
         if (target->invisible || QUERY_FLAG(attacker, FLAG_BLIND))
             adjust -= 10;
         /* dark map penalty for the hitter (lacks infravision if we got here). */
-        else if (target->map && target->map->darkness > 0 && !stand_in_light(target))
+        else if (target->map && target->map->darkness > 0 && !monster_stand_in_light(target))
             adjust -= target->map->darkness;
     }
 

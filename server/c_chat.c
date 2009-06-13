@@ -47,7 +47,7 @@
 int command_say(object *op, char *params) {
     if (!params)
         return 0;
-    communicate(op, params);
+    monster_communicate(op, params);
 
     return 0;
 }
