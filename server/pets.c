@@ -118,8 +118,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
                 get_rangevector(pet, tmp, rv, 0);
                 if (monster_check_enemy(pet, rv) != NULL)
                     return tmp;
-                else
-                    pet->enemy = NULL;
+                pet->enemy = NULL;
             }
             /* if we got here we have no enemy */
             /* we return NULL to avoid heading back to the owner */
@@ -155,8 +154,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
                         pet->enemy = tmp2;
                         if (monster_check_enemy(pet, rv) != NULL)
                             return tmp2;
-                        else
-                            pet->enemy = NULL;
+                        pet->enemy = NULL;
                     }
                 }/* if this is a valid enemy */
             } FOR_MAP_FINISH();/* for objects on this space */
@@ -169,8 +167,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
         pet->enemy = tmp3;
         if (monster_check_enemy(pet, rv) != NULL)
             return tmp3;
-        else
-            pet->enemy = NULL;
+        pet->enemy = NULL;
     }
 
     /* No threat to owner, check to see if the pet has an attacker*/
@@ -183,8 +180,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
                 pet->enemy = attacker;
                 if (monster_check_enemy(pet, rv) != NULL)
                     return attacker;
-                else
-                    pet->enemy = NULL;
+                pet->enemy = NULL;
             }
         }
     }
@@ -218,8 +214,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
                             pet->enemy = tmp2;
                             if (monster_check_enemy(pet, rv) != NULL)
                                 return tmp2;
-                            else
-                                pet->enemy = NULL;
+                            pet->enemy = NULL;
                         }
                     } /* make sure we can get to the bugger */
                 } FOR_MAP_FINISH();/* for objects on this space */
@@ -233,8 +228,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
         pet->enemy = tmp3;
         if (monster_check_enemy(pet, rv) != NULL)
             return tmp3;
-        else
-            pet->enemy = NULL;
+        pet->enemy = NULL;
     }
 
     /* Didn't find anything - return the owner's enemy or NULL */

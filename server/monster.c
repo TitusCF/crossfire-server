@@ -1322,10 +1322,7 @@ static int monster_check_good_weapon(object *who, object *item) {
     for (i = 0; i < NUM_STATS; i++)
         val += (get_attr_value(&item->stats, i)-get_attr_value(&other_weap->stats, i))*2;
 
-    if (val > 0)
-        return 1;
-    else
-        return 0;
+    return val > 0;
 }
 
 /**
@@ -1368,11 +1365,7 @@ static int monster_check_good_armour(object *who, object *item) {
 
     /* Very few armours have stats, so not much need to worry about those. */
 
-    if (val > 0)
-        return 1;
-    else
-        return 0;
-
+    return val > 0;
 }
 
 /**
@@ -1692,8 +1685,7 @@ static int monster_hitrun_att(int dir, object *ob, object *enemy) {
         return dir;
     else if (ob->move_status < 50)
         return absdir(dir+4);
-    else
-        ob->move_status = 0;
+    ob->move_status = 0;
     return absdir(dir+4);
 }
 
@@ -1777,8 +1769,6 @@ static void monster_pace2_movev(object *ob) {
         return;
     else if (ob->move_status < 13)
         (void)move_object(ob, 1);
-    else
-        return;
 }
 
 static void monster_pace2_moveh(object *ob) {
@@ -1790,8 +1780,6 @@ static void monster_pace2_moveh(object *ob) {
         return;
     else if (ob->move_status < 13)
         (void)move_object(ob, 7);
-    else
-        return;
 }
 
 static void monster_rand_move(object *ob) {
