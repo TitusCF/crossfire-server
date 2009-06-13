@@ -1286,7 +1286,7 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
     if (rv.distance_x != 0 && rv.distance_y != 0 && abs(rv.distance_x) != abs(rv.distance_y))
         /* Player must be on same horizontal, vertical or diagonal line. */
         return 0;
-    dir = absdir(find_dir_2(rv.distance_x, rv.distance_y)+4);
+    dir = rv.direction;
 
     if (QUERY_FLAG(head, FLAG_FRIENDLY))
         owner = object_get_owner(head);
