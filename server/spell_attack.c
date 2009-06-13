@@ -1041,8 +1041,6 @@ int mood_change(object *op, object *caster, object *spell) {
         for (y = op->y-range; y <= op->y+range; y++) {
             done_one = 0;
             m = op->map;
-            nx = x;
-            ny = y;
             mflags = get_map_flags(m, &m, x, y, &nx, &ny);
             if (mflags&P_OUT_OF_MAP)
                 continue;
