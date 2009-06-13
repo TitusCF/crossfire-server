@@ -77,7 +77,7 @@ object *get_pet_enemy(object *pet, rv_vector *rv) {
         /* If the owner has turned on the pet, make the pet
          * unfriendly.
          */
-        if ((check_enemy(owner, rv)) == pet) {
+        if (check_enemy(owner, rv) == pet) {
             CLEAR_FLAG(pet, FLAG_FRIENDLY);
             remove_friendly_object(pet);
             pet->attack_movement &= ~PETMOVE;
@@ -719,7 +719,7 @@ int summon_golem(object *op, object *caster, int dir, object *spob) {
     if (!dir)
         dir = object_find_free_spot(NULL, op->map, op->x, op->y, 1, SIZEOFFREE1+1);
 
-    if ((dir == -1)
+    if (dir == -1
     || ob_blocked(&at->clone, op->map, op->x+freearr_x[dir], op->y+freearr_y[dir])) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
@@ -1011,7 +1011,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
                 }
             }
         } while (ndir == -1);
-        if (mon->level > (summon_level/2))
+        if (mon->level > summon_level/2)
             nrof = random_roll(1, 2, op, PREFER_HIGH);
         else
             nrof = die_roll(2, 2, op, PREFER_HIGH);
@@ -1149,7 +1149,7 @@ int should_arena_attack(object *pet, object *owner, object *target) {
     object *rowner, *towner;
 
     /* exit if the target, pet, or owner is null. */
-    if ((target == NULL) || (pet == NULL) || (owner == NULL))
+    if (target == NULL || pet == NULL || owner == NULL)
         return 0;
 
     /* get the owners of itself and the target, this is to deal with pets of
