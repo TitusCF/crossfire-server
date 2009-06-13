@@ -1396,31 +1396,31 @@ int command_fix_me(object *op, char *params) {
 int command_players(object *op, char *params) {
     char buf[MAX_BUF];
     char *t;
-    DIR *Dir;
+    DIR *dir;
 
     snprintf(buf, sizeof(buf), "%s/%s/", settings.localdir, settings.playerdir);
     t = buf+strlen(buf);
-    if ((Dir = opendir(buf)) != NULL) {
-        const struct dirent *Entry;
+    if ((dir = opendir(buf)) != NULL) {
+        const struct dirent *entry;
 
-        while ((Entry = readdir(Dir)) != NULL) {
+        while ((entry = readdir(dir)) != NULL) {
             /* skip '.' , '..' */
-            if (!((Entry->d_name[0] == '.' && Entry->d_name[1] == '\0')
-                || (Entry->d_name[0] == '.' && Entry->d_name[1] == '.' && Entry->d_name[2] == '\0'))) {
-                struct stat Stat;
+            if (!((entry->d_name[0] == '.' && entry->d_name[1] == '\0')
+                || (entry->d_name[0] == '.' && entry->d_name[1] == '.' && entry->d_name[2] == '\0'))) {
+                struct stat st;
 
-                strcpy(t, Entry->d_name);
-                if (stat(buf, &Stat) == 0) {
+                strcpy(t, entry->d_name);
+                if (stat(buf, &st) == 0) {
                     /* This was not posix compatible
-                     * if ((Stat.st_mode & S_IFMT)==S_IFDIR) {
+                     * if ((st.st_mode & S_IFMT)==S_IFDIR) {
                      */
-                    if (S_ISDIR(Stat.st_mode)) {
-                        struct tm *tm = localtime(&Stat.st_mtime);
+                    if (S_ISDIR(st.st_mode)) {
+                        struct tm *tm = localtime(&st.st_mtime);
 
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                                              i18n_translate(get_language(op), I18N_MSG_CMISC_130),
                                              i18n_translate(get_language(op), I18N_MSG_CMISC_131),
-                                             Entry->d_name,
+                                             entry->d_name,
                                              1900+tm->tm_year,
                                              1+tm->tm_mon,
                                              tm->tm_mday,
@@ -1432,7 +1432,7 @@ int command_players(object *op, char *params) {
             }
         }
     }
-    closedir(Dir);
+    closedir(dir);
     return 0;
 }
 
