@@ -177,6 +177,7 @@ extern mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y);
 extern void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flags);
 extern void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const object *op2, rv_vector *retval, int flags);
 extern int on_same_map(const object *op1, const object *op2);
+extern object *map_find_by_flag(mapstruct *map, int x, int y, int flag);
 /* ob_methods.c */
 extern method_ret ob_apply(object *op, object *applier, int aflags);
 extern method_ret ob_process(object *op);

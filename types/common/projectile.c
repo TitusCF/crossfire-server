@@ -87,16 +87,11 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 
     /* only need to look for living creatures if this flag is set */
     if (mflags&P_IS_ALIVE) {
-        for (tmp = GET_MAP_OB(m, new_x, new_y); tmp != NULL; tmp = tmp->above)
-             if (QUERY_FLAG(tmp, FLAG_ALIVE))
-                 break;
-
-
+        tmp = map_find_by_flag(m, new_x, new_y, FLAG_ALIVE);
         /* Not really fair, but don't let monsters hit themselves with
          * their own arrow - this can be because they fire it then
          * move into it.
          */
-
         if (tmp != NULL && tmp != op->owner) {
             /* Found living object, but it is reflecting the missile.  Update
              * as below. (Note that for living creatures there is a small

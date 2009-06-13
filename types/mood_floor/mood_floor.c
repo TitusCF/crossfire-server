@@ -63,10 +63,7 @@ static void do_mood_floor(object *op, object *op2) {
     object *tmp;
     object *tmp2;
 
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp = tmp->above)
-        if (QUERY_FLAG(tmp, FLAG_MONSTER))
-            break;
-
+    tmp = map_find_by_flag(op->map, op->x, op->y, FLAG_MONSTER);
     /* doesn't effect players, and if there is a player on this space, won't also
     * be a monster here.
     */

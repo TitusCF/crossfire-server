@@ -2620,3 +2620,33 @@ int on_same_map(const object *op1, const object *op2) {
 
     return adjacent_map(op1->map, op2->map, &dx, &dy);
 }
+
+/**
+ * Finds an object in a map tile by flag number. Checks the objects' heads.
+ *
+ * @param map
+ * the map to search.
+ * @param x
+ * the x-coordiate to search.
+ * @param y
+ * the y-coordiate to search.
+ * @param flag
+ * the flag to seacrh for
+ * @return
+ * first object in the tile that has the flag set. NULL if no match.
+ *
+ * @note
+ * will not search in inventory of objects.
+ */
+object *map_find_by_flag(mapstruct *map, int x, int y, int flag) {
+    object *tmp;
+
+    for (tmp = GET_MAP_OB(map, x, y); tmp != NULL; tmp = tmp->above) {
+        object *head;
+
+        head = tmp->head != NULL ? tmp->head : tmp;
+        if (QUERY_FLAG(head, flag))
+            break;
+    }
+    return NULL;
+}

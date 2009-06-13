@@ -623,10 +623,9 @@ static object *get_pointed_target(object *op, int dir, int range, int type) {
             return NULL;
 
         if (mflags&P_IS_ALIVE) {
-            for (target = GET_MAP_OB(mp, x, y); target; target = target->above) {
-                if (QUERY_FLAG(target->head ? target->head : target, FLAG_MONSTER)) {
-                    return target;
-                }
+            target = map_find_by_flag(mp, x, y, FLAG_MONSTER);
+            if (target != NULL) {
+                return target;
             }
         }
     }
@@ -1049,10 +1048,7 @@ int mood_change(object *op, object *caster, object *spell) {
             if (!(mflags&P_IS_ALIVE))
                 continue;
 
-            for (tmp = GET_MAP_OB(m, nx, ny); tmp; tmp = tmp->above)
-                if (QUERY_FLAG(tmp, FLAG_MONSTER))
-                    break;
-
+            tmp = map_find_by_flag(m, nx, ny, FLAG_MONSTER);
             /* There can be living objects that are not monsters */
             if (!tmp || tmp->type == PLAYER)
                 continue;
@@ -1253,14 +1249,14 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
     }
 
     if (mflags&P_IS_ALIVE && spell->attacktype) {
-        for (target = GET_MAP_OB(m, x, y); target; target = target->above)
-            if (QUERY_FLAG(target, FLAG_MONSTER)) {
-                /* oky doky. got a target monster. Lets make a blinding attack */
-                if (target->head)
-                    target = target->head;
-                (void)hit_player(target, dam, op, spell->attacktype, 1);
-                return 1; /* one success only! */
-            }
+        target = map_find_by_flag(m, x, y, FLAG_MONSTER);
+        if (target != NULL) {
+            /* oky doky. got a target monster. Lets make a blinding attack */
+            if (target->head)
+                target = target->head;
+            (void)hit_player(target, dam, op, spell->attacktype, 1);
+            return 1; /* one success only! */
+        }
     }
 
     /* no live target, perhaps a wall is in the way? */
