@@ -329,7 +329,7 @@ static int monster_check_wakeup(object *op, object *enemy, rv_vector *rv) {
     /* enemy should already be on this map, so don't really need to check
      * for that.
      */
-    if (rv->distance < (QUERY_FLAG(enemy, FLAG_STEALTH) ? (radius/2)+1 : radius)) {
+    if (rv->distance < (QUERY_FLAG(enemy, FLAG_STEALTH) ? radius/2+1 : radius)) {
         CLEAR_FLAG(op, FLAG_SLEEP);
         return 1;
     }
@@ -510,39 +510,39 @@ static int monster_move_no_enemy(object *op) {
     if (!QUERY_FLAG(op, FLAG_STAND_STILL))  {
         if (op->attack_movement&HI4) {
             switch (op->attack_movement&HI4) {
-            case(PETMOVE):
+            case PETMOVE:
                 pets_move(op);
                 break;
 
-            case(CIRCLE1):
+            case CIRCLE1:
                 monster_circ1_move(op);
                 break;
 
-            case(CIRCLE2):
+            case CIRCLE2:
                 monster_circ2_move(op);
                 break;
 
-            case(PACEV):
+            case PACEV:
                 monster_pace_movev(op);
                 break;
 
-            case(PACEH):
+            case PACEH:
                 monster_pace_moveh(op);
                 break;
 
-            case(PACEV2):
+            case PACEV2:
                 monster_pace2_movev(op);
                 break;
 
-            case(PACEH2):
+            case PACEH2:
                 monster_pace2_moveh(op);
                 break;
 
-            case(RANDO):
+            case RANDO:
                 monster_rand_move(op);
                 break;
 
-            case(RANDO2):
+            case RANDO2:
                 monster_move_randomly(op);
                 break;
             }
@@ -629,7 +629,7 @@ int monster_move(object *op) {
      * player.  Hmm.  The code is here, but no monster in the current
      * arch set uses it.
      */
-    if ((op->race != NULL)&& strcmp(op->race, "doppleganger") == 0) {
+    if (op->race != NULL && strcmp(op->race, "doppleganger") == 0) {
         op->face = enemy->face;
         if (op->name)
             free_string(op->name);
@@ -927,7 +927,7 @@ static object *monster_choose_random_spell(object *monster) {
              * If its a spellbook, the spell is actually the inventory item.
              * if it is a spell, then it is just the object itself.
              */
-            if (monster_should_cast_spell(monster, (tmp->type == SPELLBOOK) ? tmp->inv : tmp)) {
+            if (monster_should_cast_spell(monster, tmp->type == SPELLBOOK ? tmp->inv : tmp)) {
                 altern[i++] = tmp;
                 if (i == MAX_KNOWN_SPELLS)
                     break;
@@ -2104,7 +2104,7 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
             return 1;
 
         /* hidden or low-quality invisible */
-        if (enemy->hide && (rv->distance <= 1) && (RANDOM()%100 <= hide_discovery)) {
+        if (enemy->hide && rv->distance <= 1 && RANDOM()%100 <= hide_discovery) {
             make_visible(enemy);
             /* inform players of new status */
             if (enemy->type == PLAYER && player_can_view(enemy, op))
@@ -2121,7 +2121,7 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
              * can then basically negate the spell.  The spell isn't negated -
              * they just know where you are!
              */
-            if ((RANDOM()%50) <= hide_discovery) {
+            if (RANDOM()%50 <= hide_discovery) {
                 if (enemy->type == PLAYER) {
                     char name[MAX_BUF];
 
