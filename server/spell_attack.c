@@ -30,7 +30,7 @@
 /**
  * @file
  * This file contains all the spell attack code.  Grouping this code
- * together should hopefully make it easier to find the relevent bits
+ * together should hopefully make it easier to find the relevant bits
  * of code.
  *
  * @todo
@@ -442,7 +442,7 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
          * In that case, we have to see - if dir is specified,
          * turn this into direction 8.  If dir is not specified (all
          * direction) skip - otherwise, one line would do more damage
-         * becase 0 direction will go through 9 directions - necessary
+         * because 0 direction will go through 9 directions - necessary
          * for the rune code.
          */
         if (caster->type != RUNE && d == 0) {
@@ -998,7 +998,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 
 /**
  * This covers the various spells that change the moods of monsters - makes
- * them angry, peacful, friendly, etc.
+ * them angry, peaceful, friendly, etc.
  *
  * @param op
  * who is casting.
@@ -1017,7 +1017,7 @@ int mood_change(object *op, object *caster, object *spell) {
     mapstruct *m;
     const char *race;
 
-    /* We precompute some values here so that we don't have to keep
+    /* We pre-compute some values here so that we don't have to keep
      * doing it over and over again.
      */
     god = find_god(determine_god(op));
@@ -1137,8 +1137,8 @@ int mood_change(object *op, object *caster, object *spell) {
             /* charm */
             if (QUERY_FLAG(spell, FLAG_NO_ATTACK) && !QUERY_FLAG(head, FLAG_FRIENDLY)) {
                 SET_FLAG(head, FLAG_FRIENDLY);
-                /* Prevent uncontolled outbreaks of self replicating monsters.
-                   Typical use case is charm, go somwhere, use aggravation to make hostile.
+                /* Prevent uncontrolled outbreaks of self replicating monsters.
+                   Typical use case is charm, go somewhere, use aggravation to make hostile.
                    This could lead to fun stuff like mice outbreak in bigworld and server crawl. */
                 CLEAR_FLAG(head, FLAG_GENERATOR);
                 object_set_owner(head, op);
@@ -1150,7 +1150,7 @@ int mood_change(object *op, object *caster, object *spell) {
                 head->stats.exp = 0;
             }
 
-            /* If a monster was effected, put an effect in */
+            /* If a monster was affected, put an effect in */
             if (done_one && spell->other_arch) {
                 tmp = arch_to_object(spell->other_arch);
                 tmp->x = nx;
