@@ -840,8 +840,7 @@ static int start_animation(object *who, object *activator, object *event, const 
                     if (!activator) {
                         errors_found = 1;
                         cf_log(llevDebug, "CFAnim: Warning: object \"activator\" doesn't exist and you're victimized it's owner\n");
-                    }
-                    else
+                    } else
                         victim = activator->env;
                 else if (victimtype == 3) {
                     victim = find_by_name(who, value);
@@ -970,8 +969,7 @@ static void animate_one(CFanimation *animation, long int milliseconds) {
     if (animation->time_representation == time_second) {
         animation->tick_left += milliseconds;
         mult = 1000;
-    }
-    else
+    } else
         animation->tick_left++;
 
     if (animation->verbose)
