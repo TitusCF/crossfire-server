@@ -237,7 +237,6 @@ static void eat_special_food(object *who, object *food) {
 static int dragon_eat_flesh(object *op, object *meal) {
     object *skin = NULL;    /* pointer to dragon skin force*/
     object *abil = NULL;    /* pointer to dragon ability force*/
-    object *tmp = NULL;     /* tmp. object */
 
     char buf[MAX_BUF];            /* tmp. string buffer */
     double chance;                /* improvement-chance of one resist type */
