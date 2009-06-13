@@ -3827,7 +3827,7 @@ object *object_find_by_type_and_slaying(const object *who, int type, const char 
 
     for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
         if (tmp->type == type && tmp->slaying != NULL && strcmp(tmp->slaying, slaying) == 0)
-            break;
+            return tmp;
 
     return NULL;
 }
@@ -3852,7 +3852,7 @@ object *object_find_by_type_and_skill(const object *who, int type, const char *s
 
     for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
         if (tmp->type == SKILL && tmp->skill != NULL && strcmp(tmp->skill, skill) == 0)
-            break;
+            return tmp;
 
     return NULL;
 }
