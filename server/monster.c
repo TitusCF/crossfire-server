@@ -249,7 +249,8 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
     }
 
     /* we check our old enemy. */
-    if ((tmp = monster_check_enemy(npc, rv)) == NULL) {
+    tmp = monster_check_enemy(npc, rv);
+    if (tmp == NULL) {
         if (attacker) { /* if we have an attacker, check him */
             /* we want be sure this is the right one! */
             if (attacker->count == npc->attacked_by_count) {
@@ -583,10 +584,13 @@ int monster_move(object *op) {
 
     if (QUERY_FLAG(op, FLAG_NO_ATTACK))  /* we never ever attack */
         enemy = op->enemy = NULL;
-    else if ((enemy = monster_find_enemy(op, &rv))) {
-        /* we have an enemy, just tell him we want him dead */
-        enemy->attacked_by = op;       /* our ptr */
-        enemy->attacked_by_count = op->count; /* our tag */
+    else {
+        enemy = monster_find_enemy(op, &rv);
+        if (enemy != NULL) {
+            /* we have an enemy, just tell him we want him dead */
+            enemy->attacked_by = op;       /* our ptr */
+            enemy->attacked_by_count = op->count; /* our tag */
+        }
     }
 
     if (QUERY_FLAG(op, FLAG_SLEEP)
@@ -614,15 +618,18 @@ int monster_move(object *op) {
     } /* no enemy */
 
     /* We have an enemy.  Block immediately below is for pets */
-    if ((op->attack_movement&HI4) == PETMOVE && (owner = object_get_owner(op)) != NULL && !on_same_map(op, owner)) {
-        pets_follow_owner(op, owner);
-        /* If the pet was unable to follow the owner, free it */
-        if (QUERY_FLAG(op, FLAG_REMOVED) && FABS(op->speed) > MIN_ACTIVE_SPEED) {
-            remove_friendly_object(op);
-            object_free(op);
-            return 1;
+    if ((op->attack_movement&HI4) == PETMOVE) {
+        owner = object_get_owner(op);
+        if (owner != NULL && !on_same_map(op, owner)) {
+            pets_follow_owner(op, owner);
+            /* If the pet was unable to follow the owner, free it */
+            if (QUERY_FLAG(op, FLAG_REMOVED) && FABS(op->speed) > MIN_ACTIVE_SPEED) {
+                remove_friendly_object(op);
+                object_free(op);
+                return 1;
+            }
+            return 0;
         }
-        return 0;
     }
 
     /* doppleganger code to change monster facing to that of the nearest
@@ -968,13 +975,17 @@ static int monster_cast_spell(object *head, object *part, object *pl, int dir, r
      * clear path to the player, the side aspects of the code will still hit
      * other monsters)
      */
-    if (!(dir = path_to_player(part, pl, 0)))
+    dir = path_to_player(part, pl, 0);
+    if (dir == 0)
         return 0;
 
-    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = object_get_owner(head)) != NULL) {
-        get_rangevector(head, owner, &rv1, 0x1);
-        if (dirdiff(dir, rv1.direction) < 2) {
-            return 0; /* Might hit owner with spell */
+    if (QUERY_FLAG(head, FLAG_FRIENDLY)) {
+        owner = object_get_owner(head);
+        if (owner != NULL) {
+            get_rangevector(head, owner, &rv1, 0x1);
+            if (dirdiff(dir, rv1.direction) < 2) {
+                return 0; /* Might hit owner with spell */
+            }
         }
     }
 
@@ -986,7 +997,8 @@ static int monster_cast_spell(object *head, object *part, object *pl, int dir, r
      * could be different by the time the monster goes again).
      */
     if (head->spellitem == NULL) {
-        if ((spell_item = monster_choose_random_spell(head)) == NULL) {
+        spell_item = monster_choose_random_spell(head);
+        if (spell_item == NULL) {
             LOG(llevMonster, "Turned off spells in %s\n", head->name);
             CLEAR_FLAG(head, FLAG_CAST_SPELL); /* Will be turned on when picking up book */
             return 0;
@@ -1051,13 +1063,17 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir, r
      * clear path to the player, the side aspects of the code will still hit
      * other monsters)
      */
-    if (!(dir = path_to_player(part, pl, 0)))
+    dir = path_to_player(part, pl, 0);
+    if (dir == 0)
         return 0;
 
-    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = object_get_owner(head)) != NULL) {
-        get_rangevector(head, owner, &rv1, 0x1);
-        if (dirdiff(dir, rv1.direction) < 2) {
-            return 0; /* Might hit owner with spell */
+    if (QUERY_FLAG(head, FLAG_FRIENDLY)) {
+        owner = object_get_owner(head);
+        if (owner != NULL) {
+            get_rangevector(head, owner, &rv1, 0x1);
+            if (dirdiff(dir, rv1.direction) < 2) {
+                return 0; /* Might hit owner with spell */
+            }
         }
     }
 
@@ -1123,13 +1139,17 @@ static int monster_use_skill(object *head, object *part, object *pl, int dir) {
     object *owner;
     int found;
 
-    if (!(dir = path_to_player(part, pl, 0)))
+    dir = path_to_player(part, pl, 0);
+    if (dir == 0)
         return 0;
 
-    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = object_get_owner(head)) != NULL) {
-        int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-        if (dirdiff(dir, dir2) < 1)
-            return 0; /* Might hit owner with skill -thrown rocks for example ?*/
+    if (QUERY_FLAG(head, FLAG_FRIENDLY)) {
+        owner = object_get_owner(head);
+        if (owner != NULL) {
+            int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
+            if (dirdiff(dir, dir2) < 1)
+                return 0; /* Might hit owner with skill -thrown rocks for example ?*/
+        }
     }
     if (QUERY_FLAG(head, FLAG_CONFUSED))
         dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
@@ -1175,13 +1195,17 @@ static int monster_use_range(object *head, object *part, object *pl, int dir) {
     object *owner;
     int at_least_one = 0;
 
-    if (!(dir = path_to_player(part, pl, 0)))
+    dir = path_to_player(part, pl, 0);
+    if (dir == 0)
         return 0;
 
-    if (QUERY_FLAG(head, FLAG_FRIENDLY) && (owner = object_get_owner(head)) != NULL) {
-        int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-        if (dirdiff(dir, dir2) < 2)
-            return 0; /* Might hit owner with spell */
+    if (QUERY_FLAG(head, FLAG_FRIENDLY)) {
+        owner = object_get_owner(head);
+        if (owner != NULL) {
+            int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
+            if (dirdiff(dir, dir2) < 2)
+                return 0; /* Might hit owner with spell */
+        }
     }
     if (QUERY_FLAG(head, FLAG_CONFUSED))
         dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
@@ -1788,9 +1812,11 @@ static void monster_rand_move(object *ob) {
     if (ob->move_status < 1
     || ob->move_status > 8
     || !(move_object(ob, ob->move_status || !(RANDOM()%9))))
-        for (i = 0; i < 5; i++)
-            if (move_object(ob, ob->move_status = RANDOM()%8+1))
+        for (i = 0; i < 5; i++) {
+            ob->move_status = RANDOM()%8+1;
+            if (move_object(ob, ob->move_status))
                 return;
+        }
 }
 
 void monster_check_earthwalls(object *op, mapstruct *m, int x, int y) {
@@ -2050,7 +2076,8 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
         int bonus = (op->level/2)+(op->stats.Int/5);
 
         if (enemy->type == PLAYER) {
-            if ((sk_hide = find_skill_by_number(enemy, SK_HIDING)))
+            sk_hide = find_skill_by_number(enemy, SK_HIDING);
+            if (sk_hide != NULL)
                 bonus -= sk_hide->level;
             else {
                 LOG(llevError, "monster_can_detect_enemy() got hidden player w/o hiding skill!\n");
