@@ -1153,8 +1153,9 @@ static int monster_use_skill(object *head, object *part, object *pl, int dir) {
     if (QUERY_FLAG(head, FLAG_FRIENDLY)) {
         owner = object_get_owner(head);
         if (owner != NULL) {
-            int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-            if (dirdiff(dir, dir2) < 1)
+            rv_vector rv;
+
+            if (get_rangevector(head, owner, &rv, 0) && dirdiff(dir, rv.direction) < 1)
                 return 0; /* Might hit owner with skill -thrown rocks for example ?*/
         }
     }

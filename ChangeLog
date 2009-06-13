@@ -14,6 +14,7 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Make pets using skills work correctly on tiled maps.
 Make pet movement work correctly on tiled maps.
 Andreas Kirschbaum 2009-06-14
 
