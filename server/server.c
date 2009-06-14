@@ -1390,7 +1390,7 @@ static void do_specials(void) {
         clean_friendly_list();
 
     if (!(pticks%5011))
-        obsolete_parties();
+        party_obsolete_parties();
 
     if (!(pticks%12503))
         fix_luck();

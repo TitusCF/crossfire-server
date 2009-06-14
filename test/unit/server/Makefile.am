@@ -13,6 +13,8 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 
 LDADD = $(top_builddir)/server/libserver.a \
         $(top_builddir)/common/libcross.a \
+        $(top_builddir)/server/libserver.a \
+        $(top_builddir)/common/libcross.a \
         $(top_builddir)/random_maps/librandom_map.a \
         $(top_builddir)/socket/libsocket.a \
         $(top_builddir)/types/libtypes.a \

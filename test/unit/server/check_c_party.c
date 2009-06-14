@@ -47,7 +47,7 @@ START_TEST(test_party) {
     partylist *p1, *p2, *p3;
     object *pl;
 
-    fail_unless(get_firstparty() == NULL, "firstparty should be NULL!");
+    fail_unless(party_get_first() == NULL, "firstparty should be NULL!");
 
     pl = calloc(1, sizeof(object));
     pl->name = "player";
@@ -57,28 +57,28 @@ START_TEST(test_party) {
     first_player = pl->contr; /* needed because obsolete parties uses this. */
     pl->contr->ob = pl;
 
-    p1 = form_party(pl, "test1");
-    fail_unless(p1 != NULL, "form_party failed.");
-    fail_unless(get_firstparty() == p1, "firstparty wasn't updated");
+    p1 = party_form(pl, "test1");
+    fail_unless(p1 != NULL, "party_form failed.");
+    fail_unless(party_get_first() == p1, "firstparty wasn't updated");
     fail_unless(strcmp(p1->partyname, "test1") == 0, "wrong party name");
     fail_unless(p1 == pl->contr->party, "player wasn't added to party");
-    fail_unless(strcmp(p1->partyleader, "player") == 0, "wrong party leader");
+    fail_unless(strcmp(party_get_leader(p1), "player") == 0, "wrong party leader");
 
-    p2 = form_party(pl, "test2");
-    fail_unless(p2 != NULL, "form_party failed.");
-    fail_unless(get_firstparty()->next == p2, "party incorrectly linked");
+    p2 = party_form(pl, "test2");
+    fail_unless(p2 != NULL, "party_form failed.");
+    fail_unless(party_get_next(party_get_first()) == p2, "party incorrectly linked");
 
-    remove_party(p1);
+    party_remove(p1);
 
-    fail_unless(get_firstparty() == p2, "party incorrectly removed");
+    fail_unless(party_get_first() == p2, "party incorrectly removed");
 
-    p3 = form_party(pl, "test3");
-    fail_unless(p3 != NULL, "form_party failed");
-    fail_unless(get_firstparty()->next == p3, "party p3 incorrectly linked");
+    p3 = party_form(pl, "test3");
+    fail_unless(p3 != NULL, "party_form failed");
+    fail_unless(party_get_next(party_get_first()) == p3, "party p3 incorrectly linked");
     fail_unless(pl->contr->party == p3, "p3 incorrectly assigned to pl");
 
-    obsolete_parties();
-    fail_unless(get_firstparty() == p3, "party p2 wasn't removed by obsolete_parties(), party %s still there", get_firstparty() ? get_firstparty()->partyname : "NULL party?");
+    party_obsolete_parties();
+    fail_unless(party_get_first() == p3, "party p2 wasn't removed by obsolete_parties(), party %s still there", party_get_first() ? party_get_first()->partyname : "NULL party?");
 }
 END_TEST
 

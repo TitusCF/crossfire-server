@@ -137,6 +137,8 @@ typedef signed long long        sint64;
 /* Pull in the socket structure - used in the player structure */
 #include "newserver.h"
 
+#include "party.h"
+
 /* Pull in the player structure */
 #include "player.h"
 

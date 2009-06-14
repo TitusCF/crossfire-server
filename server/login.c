@@ -325,7 +325,7 @@ int save_player(object *op, int flag) {
     fprintf(fp, "party_rejoin_mode %d\n", pl->rejoin_party);
     if (pl->party != NULL) {
         fprintf(fp, "party_rejoin_name %s\n", pl->party->partyname);
-        fprintf(fp, "party_rejoin_password %s\n", pl->party->passwd);
+        fprintf(fp, "party_rejoin_password %s\n", party_get_password(pl->party));
     }
     fprintf(fp, "language %d\n", pl->language);
     fprintf(fp, "endplst\n");
@@ -822,18 +822,16 @@ void check_login(object *op) {
     /* Rejoin party if needed. */
     if (pl->rejoin_party != party_rejoin_no && party_name != NULL) {
         partylist *party;
-        for (party = get_firstparty(); party; party = party->next) {
-            if (strcmp(party_name, party->partyname) == 0)
-                break;
-        }
+
+        party = party_find(party_name);
         if (!party && pl->rejoin_party == party_rejoin_always) {
-            party = form_party(op, party_name);
-            snprintf(party->passwd, sizeof(party->passwd), "%s", party_password);
+            party = party_form(op, party_name);
+            party_set_password(party, party_password);
         }
-        if (party && strcmp(party->passwd, party_password) == 0) {
+        if (party && party_confirm_password(party, party_password)) {
             pl->party = party;
             snprintf(buf, MAX_BUF, "%s joins party %s", op->name, party->partyname);
-            send_party_message(op, buf);
+            party_send_message(op, buf);
         }
 
         if (pl->party)

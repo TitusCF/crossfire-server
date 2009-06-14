@@ -890,16 +890,19 @@ void confirm_password(object *op) {
  * player.
  * @param party
  * party op wishes to join.
+ * @return
+ * whether a party password has been requested from the client
  */
-void get_party_password(object *op, partylist *party) {
-    if (party == NULL) {
-        LOG(llevError, "get_party_password(): tried to make player %s join a NULL party\n", op->name);
-        return;
+int get_party_password(object *op, partylist *party) {
+    if (party_get_password(party) == NULL) {
+	return 0;
     }
+
     op->contr->write_buf[0] = '\0';
     op->contr->state = ST_GET_PARTY_PASSWORD;
     op->contr->party_to_join = party;
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
+    return 1;
 }
 
 /**

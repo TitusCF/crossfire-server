@@ -1737,9 +1737,11 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
 #ifdef PARTY_KILL_LOG
         if (owner->type == PLAYER && owner->contr->party != NULL) {
             char name[MAX_BUF];
+            char op_name[MAX_BUF];
 
             query_name(owner, name, MAX_BUF);
-            add_kill_to_party(party, name, query_name(op), exp);
+            query_name(op, op_name, sizeof(op_name));
+            party_add_kill(owner->contr->party, name, op_name, exp);
         }
 #endif
         share_exp(owner, exp, skill, SK_EXP_TOTAL);

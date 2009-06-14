@@ -53,6 +53,7 @@ libserver_a_SOURCES = \
 	move.c\
         ob_methods.c\
         ob_types.c\
+	party.c\
 	pets.c\
 	player.c\
 	plugins.c\

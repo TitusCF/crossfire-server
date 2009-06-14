@@ -4336,13 +4336,13 @@ void *cfapi_party_get_property(int *type, ...) {
 
     case CFAPI_PARTY_PROP_NEXT:
         rparty = va_arg(args, partylist **);
-        *rparty = (party ? party->next : get_firstparty());
+        *rparty = (party ? party_get_next(party) : party_get_first());
         *type = CFAPI_PPARTY;
         break;
 
     case CFAPI_PARTY_PROP_PASSWORD:
         rsstring = va_arg(args, sstring *);
-        *rsstring = party->passwd;
+        *rsstring = party_get_password(party);
         *type = CFAPI_SSTRING;
         break;
 
