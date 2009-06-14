@@ -40,18 +40,18 @@ static partylist *lastparty = NULL;  /**< Keeps track of last party in list */
 
 
 /**
- * Forms the party struct for a party called 'params'. it is the responsibility
- * of the caller to ensure that the name is unique.
+ * Forms the party struct for a party called 'partyname'. it is the
+ * responsibility of the caller to ensure that the name is unique.
  * New item is placed on the party list.
  * @param op
  * party creator.
- * @param params
- * party name.
+ * @param partyname
+ * the party name.
  * @return
  * new party.
  */
-partylist *party_form(object *op, const char *params) {
-    partylist *newparty;
+partylist *party_form(object *op, const char *partyname) {
+    partylist *party;
 
     if (op->contr->party != NULL) {
         char buf[MAX_BUF];
@@ -59,28 +59,28 @@ partylist *party_form(object *op, const char *params) {
         snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
         party_send_message(op, buf);
     }
-    newparty = (partylist *)malloc(sizeof(partylist));
-    newparty->partyname = strdup_local(params);
-    newparty->total_exp = 0;
-    newparty->kills = 0;
-    newparty->passwd[0] = '\0';
-    newparty->next = NULL;
-    newparty->partyleader = strdup_local(op->name);
+    party = (partylist *)malloc(sizeof(partylist));
+    party->partyname = strdup_local(partyname);
+    party->total_exp = 0;
+    party->kills = 0;
+    party->passwd[0] = '\0';
+    party->next = NULL;
+    party->partyleader = strdup_local(op->name);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                          "You have formed party: %s",
                          "You have formed party: %s",
-                         newparty->partyname);
-    op->contr->party = newparty;
+                         party->partyname);
+    op->contr->party = party;
 
     if (lastparty) {
-        lastparty->next = newparty;
+        lastparty->next = party;
         lastparty = lastparty->next;
     } else {
-        firstparty = newparty;
+        firstparty = party;
         lastparty = firstparty;
     }
 
-    return newparty;
+    return party;
 }
 
 /**
@@ -246,19 +246,19 @@ int party_confirm_password(const partylist *party, const char *password) {
  *
  * @param op
  * player talking.
- * @param msg
+ * @param message
  * message to send.
  *
  * @todo
  * should be moved to player.c?
  */
-void party_send_message(object *op, char *msg) {
+void party_send_message(object *op, char *message) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
         if (pl->ob->contr->party == op->contr->party && pl->ob != op)
             draw_ext_info(NDI_WHITE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_PARTY,
-                          msg, NULL);
+                          message, NULL);
 }
 
 /**
