@@ -659,14 +659,14 @@ void leave(player *pl, int draw_exit);
 int forbid_play(void);
 int server_main(int argc, char **argv);
 /* party.c */
-partylist *party_form(object *op, const char *params);
+partylist *party_form(object *op, const char *partyname);
 partylist *party_find(const char *partyname);
 void party_remove(partylist *party);
 partylist *party_get_first(void);
 partylist *party_get_next(const partylist *party);
 void party_obsolete_parties(void);
 int party_confirm_password(const partylist *party, const char *password);
-void party_send_message(object *op, char *msg);
+void party_send_message(object *op, char *message);
 const char *party_get_password(const partylist *party);
 void party_set_password(partylist *party, const char *password);
 const char *party_get_leader(const partylist *party);
