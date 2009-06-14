@@ -1048,16 +1048,10 @@ int mood_change(object *op, object *caster, object *spell) {
             if (!(mflags&P_IS_ALIVE))
                 continue;
 
-            tmp = map_find_by_flag(m, nx, ny, FLAG_MONSTER);
+            head = map_find_by_flag(m, nx, ny, FLAG_MONSTER);
             /* There can be living objects that are not monsters */
-            if (!tmp || tmp->type == PLAYER)
+            if (!head || head->type == PLAYER)
                 continue;
-
-            /* Only the head has meaningful data, so resolve to that */
-            if (tmp->head)
-                head = tmp->head;
-            else
-                head = tmp;
 
             /* Make sure the race is OK.  Likewise, only effect undead if spell specifically allows it */
             if (race && head->race && !strstr(race, head->race))
@@ -1252,8 +1246,6 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
         target = map_find_by_flag(m, x, y, FLAG_MONSTER);
         if (target != NULL) {
             /* oky doky. got a target monster. Lets make a blinding attack */
-            if (target->head)
-                target = target->head;
             (void)hit_player(target, dam, op, spell->attacktype, 1);
             return 1; /* one success only! */
         }
