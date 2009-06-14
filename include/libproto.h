@@ -396,6 +396,7 @@ extern void strip_endline(char *buf);
 extern void replace(const char *src, const char *key, const char *replacement, char *result, size_t resultsize);
 extern void make_list_like(char *input);
 extern int get_random_dir(void);
+extern void replace_unprintable_chars(char *buf);
 /* loader.c */
 extern int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode);
 extern void yyrestart(FILE *input_file);

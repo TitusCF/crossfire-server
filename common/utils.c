@@ -510,3 +510,19 @@ void make_list_like(char *input) {
 int get_random_dir(void) {
     return rndm(1, 8);
 }
+
+/**
+ * Replaces any unprintable character in the given buffer with a space.
+ *
+ * @param buf
+ * the buffer to modify
+ */
+void replace_unprintable_chars(char *buf) {
+    char *p;
+
+    for (p = buf; *p != '\0'; p++) {
+        if (*p < ' ') {
+            *p = ' ';
+        }
+    }
+}

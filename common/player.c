@@ -270,4 +270,5 @@ const char *player_get_own_title(const struct pl *pl) {
  */
 void player_set_own_title(struct pl *pl, const char *title) {
     snprintf(pl->own_title, sizeof(pl->own_title), "%s", title);
+    replace_unprintable_chars(pl->own_title);
 }
