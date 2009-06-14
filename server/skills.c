@@ -1307,7 +1307,7 @@ int remove_trap(object *op, object *skill) {
                     if ((tmp2->type == RUNE || tmp2->type == TRAP) && tmp2->stats.Cha <= 1) {
                         trap_show(tmp2, tmp);
                         if (trap_disarm(op, tmp2, 1, skill) && (!tmp2->owner || tmp2->owner->type != PLAYER)) {
-                            tmp->stats.exp = tmp->stats.Cha*tmp->level;
+                            tmp2->stats.exp = tmp2->stats.Cha*tmp2->level;
                             success += calc_skill_exp(op, tmp2, skill);
                         } else {
                             /* Can't continue to disarm after failure */
