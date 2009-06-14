@@ -127,6 +127,26 @@ void party_leave(object *op) {
                          op->contr->party->partyname);
     snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
     party_send_message(op, buf);
+
+    /*
+     * The player might have previously been a member of a party, if so, he will be leaving
+     * it, so check if there are any other members and if not, delete the party
+     */
+    if (op->contr->party != NULL) {
+        int party_found;
+        player *pl;
+
+        party_found = 0;
+        for (pl = first_player; pl != NULL; pl = pl->next) {
+            if (pl != op->contr && pl->party == op->contr->party) {
+                party_found = 1;
+                break;
+            }
+        }
+        if (!party_found)
+            party_remove(op->contr->party);
+    }
+
     op->contr->party = NULL;
 }
 
@@ -167,9 +187,6 @@ void party_remove(partylist *party) {
             party->partyname);
         return;
     }
-    for (pl = first_player; pl != NULL; pl = pl->next)
-        if (pl->party == party)
-            party_leave(pl->ob);
 
     /* special case-ism for parties at the beginning and end of the list */
     if (party == firstparty) {

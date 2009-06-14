@@ -133,7 +133,6 @@ static void party_help(object *op) {
  */
 int command_party(object *op, char *params) {
     char buf[MAX_BUF];
-    partylist *tmpparty, *oldparty;  /* For iterating over linked list */
 
     if (params == NULL) {
         if (op->contr->party == NULL) {
@@ -234,11 +233,7 @@ int command_party(object *op, char *params) {
     }
 
     if (strncmp(params, "form ", 5) == 0) {
-        int player_count;
-        player *pl;
-
         params += 5;
-        oldparty = op->contr->party;
 
         if (party_form(op, params) == NULL) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -246,20 +241,6 @@ int command_party(object *op, char *params) {
                                  "The party %s already exists, pick another name",
                                  params);
             return 1;
-        }
-
-        /*
-         * The player might have previously been a member of a party, if so, he will be leaving
-         * it, so check if there are any other members and if not, delete the party
-         */
-        player_count = 0;
-        if (oldparty) {
-            for (pl = first_player; pl->next != NULL; pl = pl->next) {
-                if (pl->party == oldparty)
-                    player_count++;
-            }
-            if (player_count == 0)
-                party_remove(oldparty);
         }
         return 0;
     } /* form */

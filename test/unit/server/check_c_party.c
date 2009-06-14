@@ -45,26 +45,44 @@ void teardown(void) {
 
 START_TEST(test_party) {
     partylist *p1, *p2, *p3;
-    object *pl;
+    object *pl1;
+    object *pl2;
+    object *pl3;
 
     fail_unless(party_get_first() == NULL, "firstparty should be NULL!");
 
-    pl = calloc(1, sizeof(object));
-    pl->name = "player";
-    fail_unless(pl != NULL, "memory allocation failure");
-    pl->contr = calloc(1, sizeof(player));
-    fail_unless(pl->contr != NULL, "memory allocation failure");
-    first_player = pl->contr; /* needed because obsolete parties uses this. */
-    pl->contr->ob = pl;
+    pl1 = calloc(1, sizeof(object));
+    pl1->name = "player1";
+    fail_unless(pl1 != NULL, "memory allocation failure");
+    pl1->contr = calloc(1, sizeof(player));
+    fail_unless(pl1->contr != NULL, "memory allocation failure");
+    first_player = pl1->contr; /* needed because obsolete parties uses this. */
+    pl1->contr->ob = pl1;
 
-    p1 = party_form(pl, "test1");
+    pl2 = calloc(1, sizeof(object));
+    pl2->name = "player2";
+    fail_unless(pl2 != NULL, "memory allocation failure");
+    pl2->contr = calloc(1, sizeof(player));
+    fail_unless(pl2->contr != NULL, "memory allocation failure");
+    first_player = pl2->contr; /* needed because obsolete parties uses this. */
+    pl2->contr->ob = pl2;
+
+    pl3 = calloc(1, sizeof(object));
+    pl3->name = "player2";
+    fail_unless(pl3 != NULL, "memory allocation failure");
+    pl3->contr = calloc(1, sizeof(player));
+    fail_unless(pl3->contr != NULL, "memory allocation failure");
+    first_player = pl3->contr; /* needed because obsolete parties uses this. */
+    pl3->contr->ob = pl3;
+
+    p1 = party_form(pl1, "test1");
     fail_unless(p1 != NULL, "party_form failed.");
     fail_unless(party_get_first() == p1, "firstparty wasn't updated");
     fail_unless(strcmp(p1->partyname, "test1") == 0, "wrong party name");
-    fail_unless(p1 == pl->contr->party, "player wasn't added to party");
-    fail_unless(strcmp(party_get_leader(p1), "player") == 0, "wrong party leader");
+    fail_unless(p1 == pl1->contr->party, "player wasn't added to party");
+    fail_unless(strcmp(party_get_leader(p1), "player1") == 0, "wrong party leader");
 
-    p2 = party_form(pl, "test2");
+    p2 = party_form(pl2, "test2");
     fail_unless(p2 != NULL, "party_form failed.");
     fail_unless(party_get_next(party_get_first()) == p2, "party incorrectly linked");
 
@@ -72,10 +90,10 @@ START_TEST(test_party) {
 
     fail_unless(party_get_first() == p2, "party incorrectly removed");
 
-    p3 = party_form(pl, "test3");
+    p3 = party_form(pl3, "test3");
     fail_unless(p3 != NULL, "party_form failed");
     fail_unless(party_get_next(party_get_first()) == p3, "party p3 incorrectly linked");
-    fail_unless(pl->contr->party == p3, "p3 incorrectly assigned to pl");
+    fail_unless(pl3->contr->party == p3, "p3 incorrectly assigned to pl3");
 
     party_obsolete_parties();
     fail_unless(party_get_first() == p3, "party p2 wasn't removed by obsolete_parties(), party %s still there", party_get_first() ? party_get_first()->partyname : "NULL party?");
