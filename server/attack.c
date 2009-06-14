@@ -201,7 +201,8 @@ void save_throw_object(object *op, uint32 type, object *originator) {
             op = object_decrease_nrof(op, 1);
             if (op)
                 fix_stopped_item(op, m, originator);
-            if ((op = create_archetype(arch)) != NULL) {
+            op = create_archetype(arch);
+            if (op != NULL) {
                 if (env) {
                     op->x = env->x,
                     op->y = env->y;
@@ -253,7 +254,8 @@ void save_throw_object(object *op, uint32 type, object *originator) {
         op = stop_item(op);
         if (op == NULL)
             return;
-        if ((tmp = map_find_by_archetype(op->map, op->x, op->y, at)) == NULL) {
+        tmp = map_find_by_archetype(op->map, op->x, op->y, at);
+        if (tmp == NULL) {
             tmp = arch_to_object(at);
             tmp->x = op->x,
             tmp->y = op->y;
@@ -773,7 +775,8 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam,
             goto error;
     }
 
-    add_refcount(op_name = op->name);
+    op_name = op->name;
+    add_refcount(op_name);
 
     roll = random_roll(1, 20, hitter, PREFER_HIGH);
 
@@ -1519,14 +1522,17 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
     /* Lauwenmark: Handle for the global kill event */
     execute_global_event(EVENT_GKILL, op, hitter);
 
-    if (op->map && (death_animation = object_get_value(op, "death_animation")) != NULL) {
-        object *death = create_archetype(death_animation);
+    if (op->map) {
+        death_animation = object_get_value(op, "death_animation");
+        if (death_animation != NULL) {
+            object *death = create_archetype(death_animation);
 
-        if (death) {
-            death->map = op->map;
-            death->x = op->x;
-            death->y = op->y;
-            object_insert_in_map(death, op->map, op, 0);
+            if (death) {
+                death->map = op->map;
+                death->x = op->x;
+                death->y = op->y;
+                object_insert_in_map(death, op->map, op, 0);
+            }
         }
     }
 
@@ -1797,7 +1803,8 @@ int friendly_fire(object *op, object *hitter) {
         if (hitter->type == PLAYER && hitter->contr->peaceful == 1)
             return 1;
 
-        if ((owner = object_get_owner(hitter)) != NULL) {
+        owner = object_get_owner(hitter);
+        if (owner != NULL) {
             if (owner->type == PLAYER && owner->contr->peaceful == 1)
                 friendlyfire = 2;
         }
@@ -2120,7 +2127,8 @@ static void poison_living(object *op, object *hitter, int dam) {
     const char *skill;
 
     if (tmp == NULL) {
-        if ((tmp = arch_to_object(at)) == NULL)
+        tmp = arch_to_object(at);
+        if (tmp == NULL)
             LOG(llevError, "Failed to clone arch poisoning.\n");
         else {
             tmp = object_insert_in_ob(tmp, op);
@@ -2139,7 +2147,8 @@ static void poison_living(object *op, object *hitter, int dam) {
 
             object_copy_owner(tmp, hitter);   /*  so we get credit for poisoning kills */
             skill = hitter->skill;
-            if (!skill && hitter->chosen_skill) skill = hitter->chosen_skill->name;
+            if (!skill && hitter->chosen_skill)
+                skill = hitter->chosen_skill->name;
 
             if (skill && skill != tmp->skill) {
                 if (tmp->skill)
@@ -2196,7 +2205,8 @@ static void slow_living(object *op, object *hitter, int dam) {
     if (at == NULL) {
         LOG(llevError, "Can't find slowness archetype.\n");
     }
-    if ((tmp = arch_present_in_ob(at, op)) == NULL) {
+    tmp = arch_present_in_ob(at, op);
+    if (tmp == NULL) {
         tmp = arch_to_object(at);
         tmp = object_insert_in_ob(tmp, op);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
@@ -2314,7 +2324,8 @@ void paralyze_living(object *op, object *hitter, int dam) {
     */
 
 /*
-    if ((tmp = map_find_by_type(op->map, op->x, op->y, PARAIMAGE)) == NULL) {
+    tmp = map_find_by_type(op->map, op->x, op->y, PARAIMAGE);
+    if (tmp == NULL) {
         tmp = clone_arch(PARAIMAGE);
         tmp->x = op->x,
         tmp->y = op->y;
@@ -2464,7 +2475,8 @@ static int adj_attackroll(object *hitter, object *target) {
 
     /* aimed missiles use the owning object's sight */
     if (is_aimed_missile(hitter)) {
-        if ((attacker = object_get_owner(hitter)) == NULL)
+        attacker = object_get_owner(hitter);
+        if (attacker == NULL)
             attacker = hitter;
         /* A player who saves but hasn't quit still could have objects
          * owned by him - need to handle that case to avoid crashes.
