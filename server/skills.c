@@ -192,7 +192,8 @@ static int attempt_steal(object *op, object *who, object *skill) {
 
         roll = die_roll(2, 100, who, PREFER_LOW)/2; /* weighted 1-100 */
 
-        if ((chance = adj_stealchance(who, op, stats_value+skill->level*10-op->level*3)) == -1)
+        chance = adj_stealchance(who, op, stats_value+skill->level*10-op->level*3);
+        if (chance == -1)
             return 0;
         else if (roll < chance) {
             tag_t inv_count = inv->count;
@@ -1731,7 +1732,8 @@ int write_on_item(object *pl, const char *params, object *skill) {
     msgtype = (string[0] != '\0') ? BOOK : SCROLL;
 
     /* find an item of correct type to write on */
-    if (!(item = find_marked_object(pl))) {
+    item = find_marked_object(pl);
+    if (item == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "You don't have any marked item to write on.", NULL);
         return 0;
@@ -2023,8 +2025,8 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     /* sometimes object_split() can't split an object (because op->nrof==0?)
      * and returns NULL. We must use 'left' then
      */
-
-    if ((throw_ob = object_split(throw_ob, 1, NULL, 0)) == NULL) {
+    throw_ob = object_split(throw_ob, 1, NULL, 0);
+    if (throw_ob == NULL) {
         throw_ob = left;
         object_remove(left);
     }
@@ -2039,7 +2041,8 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
      * If unsuccessfull at making the "thrown_obj", we just reinsert
      * the original object back into inventory and exit
      */
-    if ((toss_item = make_throw_ob(throw_ob))) {
+    toss_item = make_throw_ob(throw_ob);
+    if (toss_item) {
         throw_ob = toss_item;
         if (throw_ob->skill)
             free_string(throw_ob->skill);
