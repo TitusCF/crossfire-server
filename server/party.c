@@ -48,14 +48,21 @@ static partylist *lastparty = NULL;  /**< Keeps track of last party in list */
  * @param partyname
  * the party name.
  * @return
- * new party.
+ * new party or NULL if the name is not unique.
  */
 partylist *party_form(object *op, const char *partyname) {
     partylist *party;
+    char buf[MAX_BUF];
+
+    snprintf(buf, sizeof(buf), "%s", partyname);
+    replace_unprintable_chars(buf);
+
+    if (party_find(buf) != NULL)
+        return NULL;
 
     party_leave(op);
     party = (partylist *)malloc(sizeof(partylist));
-    party->partyname = strdup_local(partyname);
+    party->partyname = strdup_local(buf);
     party->total_exp = 0;
     party->kills = 0;
     party->passwd[0] = '\0';
@@ -265,6 +272,7 @@ const char *party_get_password(const partylist *party) {
  */
 void party_set_password(partylist *party, const char *password) {
     snprintf(party->passwd, sizeof(party->passwd), "%s", password);
+    replace_unprintable_chars(party->passwd);
 }
 
 /**

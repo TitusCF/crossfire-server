@@ -826,7 +826,8 @@ void check_login(object *op) {
         party = party_find(party_name);
         if (!party && pl->rejoin_party == party_rejoin_always) {
             party = party_form(op, party_name);
-            party_set_password(party, party_password);
+            if (party)
+                party_set_password(party, party_password);
         }
         if (party && party_confirm_password(party, party_password)) {
             party_join(op, party);

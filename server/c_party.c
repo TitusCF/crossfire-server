@@ -240,15 +240,14 @@ int command_party(object *op, char *params) {
         params += 5;
         oldparty = op->contr->party;
 
-        tmpparty = party_find(params);
-        if (tmpparty != NULL) {
+        if (party_form(op, params) == NULL) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "The party %s already exists, pick another name",
                                  "The party %s already exists, pick another name",
                                  params);
             return 1;
         }
-        party_form(op, params);
+
         /*
          * The player might have previously been a member of a party, if so, he will be leaving
          * it, so check if there are any other members and if not, delete the party
