@@ -192,7 +192,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
 
         roll = die_roll(2, 100, who, PREFER_LOW)/2; /* weighted 1-100 */
 
-        if ((chance = adj_stealchance(who, op, (stats_value+skill->level*10-op->level*3))) == -1)
+        if ((chance = adj_stealchance(who, op, stats_value+skill->level*10-op->level*3)) == -1)
             return 0;
         else if (roll < chance) {
             tag_t inv_count = inv->count;
@@ -227,9 +227,9 @@ static int attempt_steal(object *op, object *who, object *skill) {
      * attempt to steal something heavy off them, they're bound to notice
      */
 
-    if ((roll >= skill->level)
+    if (roll >= skill->level
     || !chance
-    || (tmp && tmp->weight > (250*(random_roll(0, stats_value+skill->level*10-1, who, PREFER_LOW))))) {
+    || (tmp && tmp->weight > 250*random_roll(0, stats_value+skill->level*10-1, who, PREFER_LOW))) {
         /* victim figures out where the thief is! */
         if (who->hide)
             make_visible(who);
@@ -377,7 +377,7 @@ static int attempt_pick_lock(object *door, object *pl, object *skill) {
      * the map level difficulty.
      */
     number = (die_roll(2, 40, pl, PREFER_LOW)-2)/2;
-    if (number < (pl->stats.Dex+skill->level-difficulty)) {
+    if (number < pl->stats.Dex+skill->level-difficulty) {
         remove_door(door);
         success = 1;
     } else if (door->inv && (door->inv->type == RUNE || door->inv->type == TRAP)) {  /* set off any traps? */
@@ -481,7 +481,7 @@ static int attempt_hide(object *op, object *skill) {
      */
 
     number = (die_roll(2, 25, op, PREFER_LOW)-2)/2;
-    if (!stand_near_hostile(op) && (number < (op->stats.Dex+skill->level+terrain-difficulty))) {
+    if (!stand_near_hostile(op) && number < op->stats.Dex+skill->level+terrain-difficulty) {
         op->invisible += 100;  /* set the level of 'hiddeness' */
         if (op->type == PLAYER)
             op->contr->tmp_invis = 1;
@@ -514,7 +514,7 @@ int hide(object *op, object *skill) {
         make_visible(op);
     }
 
-    if (op->invisible > (50*skill->level)) {
+    if (op->invisible > 50*skill->level) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "You are as hidden as you can get.", NULL);
         return 0;
@@ -749,7 +749,8 @@ static int do_skill_detect_magic(object *pl, object *skill) {
         if (object_can_pick(pl, tmp)
         && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
         && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
-        && (is_magical(tmp)) && tmp->item_power < skill->level) {
+        && is_magical(tmp)
+        && tmp->item_power < skill->level) {
             SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
             esrv_update_item(UPD_FLAGS, pl, tmp);
             success += calc_skill_exp(pl, tmp, skill);
@@ -1042,7 +1043,7 @@ int use_oratory(object *pl, int dir, object *skill) {
     }
 
     /* it's already allied! */
-    if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && (tmp->attack_movement == PETMOVE)) {
+    if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && tmp->attack_movement == PETMOVE) {
         if (object_get_owner(tmp) == pl) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                           "Your follower loves your speech.", NULL);
@@ -1071,7 +1072,7 @@ int use_oratory(object *pl, int dir, object *skill) {
     chance = skill->level*2+(pl->stats.Cha-2*tmp->stats.Int)/2;
 
     /* Ok, got a 'sucker' lets try to make them a follower */
-    if (chance > 0 && tmp->level < (random_roll(0, chance-1, pl, PREFER_HIGH)-1)) {
+    if (chance > 0 && tmp->level < random_roll(0, chance-1, pl, PREFER_HIGH)-1) {
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                              "You convince the %s to become your follower.",
@@ -1086,7 +1087,7 @@ int use_oratory(object *pl, int dir, object *skill) {
         return calc_skill_exp(pl, tmp, skill);
     }
     /* Charm failed.  Creature may be angry now */
-    else if ((skill->level+((pl->stats.Cha-10)/2)) < random_roll(1, 2*tmp->level, pl, PREFER_LOW)) {
+    else if (skill->level+(pl->stats.Cha-10)/2 < random_roll(1, 2*tmp->level, pl, PREFER_LOW)) {
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "Your speech angers the %s!",
@@ -1397,7 +1398,7 @@ void meditate(object *pl, object *skill) {
         return; /* players only */
 
     /* check if pl has removed encumbering armour and weapons */
-    if (QUERY_FLAG(pl, FLAG_READY_WEAPON) && (skill->level < 6)) {
+    if (QUERY_FLAG(pl, FLAG_READY_WEAPON) && skill->level < 6) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "You can't concentrate while wielding a weapon!", NULL);
         return;
