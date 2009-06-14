@@ -43,7 +43,7 @@
  * modifications in the skills[] table. - b.t.
  */
 
-/* define the following for skills utility debuging */
+/* define the following for skills utility debugging */
 /* #define SKILL_UTIL_DEBUG */
 
 #define WANT_UNARMED_SKILLS
@@ -183,7 +183,7 @@ static object *adjust_skill_tool(object *who, object *skill, object *skill_tool)
 
 /**
  * This returns the skill pointer of the given name (the
- * one that accumlates exp, has the level, etc).
+ * one that accumulates exp, has the level, etc).
  *
  * It is presumed that the player will be needing to actually
  * use the skill, so a skill tool will be equipped if one if found
@@ -292,7 +292,7 @@ object *find_skill_by_name(object *who, const char *name) {
 
 /**
  * This returns the skill pointer of the given name (the
- * one that accumlates exp, has the level, etc).
+ * one that accumulates exp, has the level, etc).
  *
  * It is presumed that the player will be needing to actually
  * use the skill, so a skill tool will be equipped if one if found
@@ -608,7 +608,7 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
     if (op->type == PLAYER)
         op->speed_left -= 1.0;
 
-    /* this is a good place to add experience for successfull use of skills.
+    /* this is a good place to add experience for successful use of skills.
      * Note that add_exp() will figure out player/monster experience
      * gain problems.
      */
@@ -621,14 +621,14 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
 
 /**
  * Calculates amount of experience can be gained for
- * successfull use of a skill.
+ * successful use of a skill.
  *
  * Here we take the view that a player must 'overcome an opponent'
  * in order to gain experience. Examples include foes killed combat,
  * finding/disarming a trap, stealing from somebeing, etc.
  *
  * The gained experience is based primarily on the difference in levels,
- * exp point value of vanquished foe, the relevent stats of the skill being
+ * exp point value of vanquished foe, the relevant stats of the skill being
  * used and modifications in the skills[] table.
  *
  * For now, monsters and players will be treated differently. Below I give
@@ -692,7 +692,7 @@ sint64 calc_skill_exp(object *who, object *op, object *skill) {
     } else {                            /* for players */
         base = op_exp;
         /* if skill really is a skill, then we can look at the skill archetype for
-         * bse reward value (exp) and level multiplier factor.
+         * base reward value (exp) and level multiplier factor.
          */
         if (skill->type == SKILL) {
             base += skill->arch->clone.stats.exp;
@@ -715,7 +715,7 @@ sint64 calc_skill_exp(object *who, object *op, object *skill) {
 
     /* assemble the exp total, and return value */
 
-    value =  base*lvl_mult;
+    value = base*lvl_mult;
     if (value < 1)
         value = 1; /* Always give at least 1 exp point */
 
@@ -815,7 +815,7 @@ static int clipped_percent(sint64 a, sint64 b) {
 
 /**
  * Displays a player's skill list, and some other non skill related info (god,
- * max weapon improvments, item power).
+ * max weapon improvements, item power).
  *
  * This shows the amount of exp they have in the skills.
  *
@@ -858,7 +858,7 @@ void show_skills(object *op, const char *search) {
                          level_exp(tmp->level+1, op->expmul));
             }
             /* I don't know why some characters get a bunch of skills, but
-             * it sometimes happens (maybe a leftover from bugier earlier code
+             * it sometimes happens (maybe a leftover from buggier earlier code
              * and those character are still about).  In any case, lets handle
              * it so it doesn't crash the server - otherwise, one character may
              * crash the server numerous times.
@@ -950,7 +950,7 @@ int use_skill(object *op, const char *string) {
 
     /* All this logic goes and skips over the skill name to find any
      * options given to the skill.  Its pretty simple - if there
-     * are extra parameters (as deteremined by string length), we
+     * are extra parameters (as determined by string length), we
      * want to skip over any leading spaces.
      */
     if (len >= strlen(string)) {
@@ -1016,7 +1016,7 @@ static object *find_best_player_hth_skill(object *op) {
              * we just cut down the number to search - eg, if we find a skill
              * early on in flame touch, then we only need to look into the unarmed_array
              * to the entry before flame touch - don't care about the entries afterward,
-             * because they are infrerior skills.
+             * because they are inferior skills.
              * if we end up finding the best skill (i==0) might as well return
              * right away - can't get any better than that.
              */
@@ -1038,7 +1038,7 @@ static object *find_best_player_hth_skill(object *op) {
  * move_player_attack() or skill_attack(). In this part we get on with
  * attacking, take care of messages from the attack and changes in invisible.
  * @param tmp
- * targetted monster.
+ * targeted monster.
  * @param op
  * what is attacking.
  * @param string
@@ -1124,7 +1124,7 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
         }
     }
 
-    /* lose invisiblity/hiding status for running attacks */
+    /* lose invisibility/hiding status for running attacks */
 
     if (op->type == PLAYER && op->contr->tmp_invis) {
         op->contr->tmp_invis = 0;
@@ -1299,7 +1299,7 @@ static int attack_hth(object *pl, int dir, const char *string, object *skill) {
  * bears mentioning:
  * Since we are only calling this from do_skill() in the future
  * we may make this routine handle 'special' melee weapons attacks
- * (like disarming manuever with sai) based on player SK_level and
+ * (like disarming maneuver with sai) based on player SK_level and
  * weapon type.
  *
  * @param op
