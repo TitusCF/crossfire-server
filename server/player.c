@@ -1351,17 +1351,17 @@ static void flee_player(object *op) {
      */
     if (op->enemy->map == NULL) {
         CLEAR_FLAG(op, FLAG_SCARED);
-        op->enemy = NULL;
+        object_set_enemy(op, NULL);
         return;
     }
 
     if (!(random_roll(0, 4, op, PREFER_LOW)) && did_make_save(op, op->level, 0)) {
-        op->enemy = NULL;
+        object_set_enemy(op, NULL);
         CLEAR_FLAG(op, FLAG_SCARED);
         return;
     }
     if (!get_rangevector(op, op->enemy, &rv, 0)) {
-        op->enemy = NULL;
+        object_set_enemy(op, NULL);
         CLEAR_FLAG(op, FLAG_SCARED);
         return;
     }
@@ -1376,7 +1376,7 @@ static void flee_player(object *op) {
     }
     /* Cornered, get rid of scared */
     CLEAR_FLAG(op, FLAG_SCARED);
-    op->enemy = NULL;
+    object_set_enemy(op, NULL);
 }
 
 /**

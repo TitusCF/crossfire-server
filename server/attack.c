@@ -1126,7 +1126,7 @@ static void scare_creature(object *target, object *hitter) {
 
     SET_FLAG(target, FLAG_SCARED);
     if (!target->enemy)
-        target->enemy = owner;
+        object_set_enemy(target, owner);
 }
 
 /**
@@ -2008,9 +2008,9 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
 #endif
 
     if (object_get_owner(hitter))
-        op->enemy = hitter->owner;
+        object_set_enemy(op, hitter->owner);
     else if (QUERY_FLAG(hitter, FLAG_ALIVE))
-        op->enemy = hitter;
+        object_set_enemy(op, hitter);
 
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE) && op->type != PLAYER) {
         /* The unaggressives look after themselves 8) */

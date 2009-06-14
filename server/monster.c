@@ -86,9 +86,9 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
      * which CAN attack the owner. */
     if ((npc->attack_movement&HI4) == PETMOVE) {
         if (npc->owner == NULL)
-            npc->enemy = NULL;
+            object_set_enemy(npc, NULL);
         else if (npc->enemy == NULL)
-            npc->enemy = npc->owner->enemy;
+            object_set_enemy(npc, npc->owner->enemy);
     }
 
     /* periodically, a monster mayu change its target.  Also, if the object
@@ -112,16 +112,16 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
         || npc == npc->enemy
         || QUERY_FLAG(npc, FLAG_NEUTRAL)
         || QUERY_FLAG(npc->enemy, FLAG_NEUTRAL))
-            npc->enemy = NULL;
+            object_set_enemy(npc, NULL);
 
         else if (QUERY_FLAG(npc, FLAG_FRIENDLY) && (
                 (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !pets_should_arena_attack(npc, npc->owner, npc->enemy))
                 || (npc->enemy->type == PLAYER && !pets_should_arena_attack(npc, npc->owner, npc->enemy))
                 || npc->enemy == npc->owner))
-            npc->enemy = NULL;
+            object_set_enemy(npc, NULL);
         else if (!QUERY_FLAG(npc, FLAG_FRIENDLY)
         && (!QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && npc->enemy->type != PLAYER))
-            npc->enemy = NULL;
+            object_set_enemy(npc, NULL);
 
         /* I've noticed that pets could sometimes get an arrow as the
          * target enemy - this code below makes sure the enemy is something
@@ -133,8 +133,7 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
         && !QUERY_FLAG(npc->enemy, FLAG_GENERATOR)
         && npc->enemy->type != PLAYER
         && npc->enemy->type != GOLEM)
-            npc->enemy = NULL;
-
+            object_set_enemy(npc, NULL);
     }
     return monster_can_detect_enemy(npc, npc->enemy, rv) ? npc->enemy : NULL;
 }
@@ -267,7 +266,7 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
                     CLEAR_FLAG(npc, FLAG_SLEEP); /* skip it, but lets wakeup */
                 else if (on_same_map(npc, attacker)) { /* thats the only thing we must know... */
                     CLEAR_FLAG(npc, FLAG_SLEEP); /* well, NOW we really should wake up! */
-                    npc->enemy = attacker;
+                    object_set_enemy(npc, attacker);
                     if (!get_rangevector(npc, attacker, rv, 0))
                         return NULL;
                     return attacker; /* yes, we face our attacker! */
@@ -279,7 +278,7 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
         if (!QUERY_FLAG(npc, FLAG_UNAGGRESSIVE)
         && !QUERY_FLAG(npc, FLAG_FRIENDLY)
         && !QUERY_FLAG(npc, FLAG_NEUTRAL)) {
-            npc->enemy = get_nearest_player(npc);
+            object_set_enemy(npc, get_nearest_player(npc));
             if (npc->enemy)
                 tmp = monster_check_enemy(npc, rv);
         }
@@ -587,9 +586,10 @@ int monster_move(object *op) {
     if (oph->head)          /* force update the head - one arch one pic */
         oph = oph->head;
 
-    if (QUERY_FLAG(op, FLAG_NO_ATTACK))  /* we never ever attack */
-        enemy = op->enemy = NULL;
-    else {
+    if (QUERY_FLAG(op, FLAG_NO_ATTACK)) { /* we never ever attack */
+        object_set_enemy(op->enemy, NULL);
+        object_set_enemy(enemy, NULL);
+    } else {
         enemy = monster_find_enemy(op, &rv);
         if (enemy != NULL) {
             /* we have an enemy, just tell him we want him dead */
@@ -804,7 +804,7 @@ int monster_move(object *op) {
         object *nearest_player = get_nearest_player(op);
 
         if (nearest_player && nearest_player != enemy && !monster_can_hit(part, enemy, &rv)) {
-            op->enemy = NULL;
+            object_set_enemy(op, NULL);
             enemy = nearest_player;
         }
     }
@@ -1690,7 +1690,7 @@ void monster_npc_call_help(object *op) {
 
             FOR_MAP_PREPARE(m, sx, sy, npc)
                 if (QUERY_FLAG(npc, FLAG_ALIVE) && QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
-                    npc->enemy = op->enemy;
+                    object_set_enemy(npc, op->enemy);
             FOR_MAP_FINISH();
         }
 }

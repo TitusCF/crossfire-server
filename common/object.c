@@ -627,6 +627,27 @@ void object_copy_owner(object *op, object *clone) {
 }
 
 /**
+ * Sets the enemy of an object.
+ *
+ * @param op
+ * the object of which to set the enemy
+ * @param enemy
+ * the new enemy for op; can be NULL to clear the enemy
+ */
+void object_set_enemy(object *op, object *enemy) {
+    if (op->enemy == enemy) {
+        return;
+    }
+
+#if 0
+    if (op->type != PLAYER) {
+        LOG(llevDebug, "object_set_enemy: %s(%lu)->enemy=%s(%lu)\n", op->name, op->count, enemy == NULL ? "NONE" : enemy->name, enemy == NULL ? 0 : enemy->count);
+    }
+#endif
+    op->enemy = enemy;
+}
+
+/**
  * Sets to 0 vital variables in an object.
  *
  * @param op

@@ -106,7 +106,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
         /* without this check, you can actually get pets with
          * enemy set to owner!
          */
-        pet->enemy = NULL;
+        object_set_enemy(pet, NULL);
     }
     get_search_arr(search_arr);
 
@@ -116,7 +116,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
             return tmp;
         /* if we got here we have no enemy */
         /* we return NULL to avoid heading back to the owner */
-        pet->enemy = NULL;
+        object_set_enemy(pet, NULL);
         return NULL;
     }
 
@@ -144,10 +144,10 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
                         if (tmp3 != NULL)
                             tmp3 = tmp2;
                     } else {
-                        pet->enemy = tmp2;
+                        object_set_enemy(pet, tmp2);
                         if (monster_check_enemy(pet, rv) != NULL)
                             return tmp2;
-                        pet->enemy = NULL;
+                        object_set_enemy(pet, NULL);
                     }
                 }/* if this is a valid enemy */
             } FOR_MAP_FINISH();/* for objects on this space */
@@ -157,10 +157,10 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
     /* fine, we went through the whole loop and didn't find one we could
        see, take what we have */
     if (tmp3 != NULL) {
-        pet->enemy = tmp3;
+        object_set_enemy(pet, tmp3);
         if (monster_check_enemy(pet, rv) != NULL)
             return tmp3;
-        pet->enemy = NULL;
+        object_set_enemy(pet, NULL);
     }
 
     /* No threat to owner, check to see if the pet has an attacker*/
@@ -170,10 +170,10 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
             /* also need to check to make sure it is not freindly */
             /* or otherwise non-hostile, and is an appropriate target */
             if (!QUERY_FLAG(attacker, FLAG_FRIENDLY) && on_same_map(pet, attacker)) {
-                pet->enemy = attacker;
+                object_set_enemy(pet, attacker);
                 if (monster_check_enemy(pet, rv) != NULL)
                     return attacker;
-                pet->enemy = NULL;
+                object_set_enemy(pet, NULL);
             }
         }
     }
@@ -204,10 +204,10 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
                             if (tmp3 != NULL)
                                 tmp3 = tmp2;
                         } else {
-                            pet->enemy = tmp2;
+                            object_set_enemy(pet, tmp2);
                             if (monster_check_enemy(pet, rv) != NULL)
                                 return tmp2;
-                            pet->enemy = NULL;
+                            object_set_enemy(pet, NULL);
                         }
                     } /* make sure we can get to the bugger */
                 } FOR_MAP_FINISH();/* for objects on this space */
@@ -218,10 +218,10 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
     /* fine, we went through the whole loop and didn't find one we could
        see, take what we have */
     if (tmp3 != NULL) {
-        pet->enemy = tmp3;
+        object_set_enemy(pet, tmp3);
         if (monster_check_enemy(pet, rv) != NULL)
             return tmp3;
-        pet->enemy = NULL;
+        object_set_enemy(pet, NULL);
     }
 
     /* Didn't find anything - return the owner's enemy or NULL */
@@ -412,9 +412,9 @@ void pets_move(object *ob) {
                 && !QUERY_FLAG(ob, FLAG_UNAGGRESSIVE)
                 && !QUERY_FLAG(new_ob, FLAG_UNAGGRESSIVE)
                 && !QUERY_FLAG(new_ob, FLAG_FRIENDLY)) {
-                    ob->enemy = new_ob;
+                    object_set_enemy(ob, new_ob);
                     if (new_ob->enemy == NULL)
-                        new_ob->enemy = ob;
+                        object_set_enemy(new_ob, ob);
                     return;
                 } else if (new_ob->type == PLAYER) {
                     draw_ext_info(NDI_UNIQUE, 0, new_ob,
@@ -481,7 +481,7 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
                 tmp->attack_movement = PETMOVE;
                 tmp->speed_left = -1;
                 tmp->type = 0;
-                tmp->enemy = op->enemy;
+                object_set_enemy(tmp, op->enemy);
             } else
                 tmp->type = GOLEM;
         }
@@ -1062,7 +1062,7 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
                 if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
                     object_set_owner(tmp, op);
                     set_spell_skill(op, caster, spell_ob, tmp);
-                    tmp->enemy = op->enemy;
+                    object_set_enemy(tmp, op->enemy);
                     tmp->type = 0;
                     CLEAR_FLAG(tmp, FLAG_SLEEP);
                     if (op->type == PLAYER || QUERY_FLAG(op, FLAG_FRIENDLY)) {

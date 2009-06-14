@@ -1107,13 +1107,13 @@ int mood_change(object *op, object *caster, object *spell) {
                     remove_friendly_object(head);
 
                 done_one = 1;
-                head->enemy = op;
+                object_set_enemy(head, op);
             }
 
             /* calm monsters */
             if (QUERY_FLAG(spell, FLAG_UNAGGRESSIVE) && !QUERY_FLAG(head, FLAG_UNAGGRESSIVE)) {
                 SET_FLAG(head, FLAG_UNAGGRESSIVE);
-                head->enemy = NULL;
+                object_set_enemy(head, NULL);
                 done_one = 1;
             }
 

@@ -273,7 +273,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     }
 
     newmap->timeout = 0;
-    op->enemy = NULL;
+    object_set_enemy(op, NULL);
 
     if (op->contr) {
         strcpy(op->contr->maplevel, newmap->path);

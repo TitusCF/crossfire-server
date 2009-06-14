@@ -855,7 +855,7 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
      */
     for (tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
         if (tmp->enemy == op)
-            tmp->enemy = NULL;
+            object_set_enemy(tmp, NULL);
     return 1;
 }
 

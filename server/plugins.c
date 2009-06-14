@@ -2763,7 +2763,7 @@ void *cfapi_object_set_property(int *type, ...) {
         case CFAPI_OBJECT_PROP_ENEMY:
             oparg = va_arg(args, object *);
             *type = CFAPI_POBJECT;
-            op->enemy = oparg;
+            object_set_enemy(op, oparg);
             break;
 
         case CFAPI_OBJECT_PROP_RUN_AWAY:
