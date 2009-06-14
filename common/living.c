@@ -1719,26 +1719,8 @@ void set_dragon_name(object *pl, const object *abil, const object *skin) {
 
     /* now set the new title */
     if (pl->contr != NULL) {
-        if (level == 0)
-            snprintf(pl->contr->title, sizeof(pl->contr->title), "%s hatchling", attacks[atnr]);
-        else if (level == 1)
-            snprintf(pl->contr->title, sizeof(pl->contr->title), "%s wyrm", attacks[atnr]);
-        else if (level == 2)
-            snprintf(pl->contr->title, sizeof(pl->contr->title), "%s wyvern", attacks[atnr]);
-        else if (level == 3)
-            snprintf(pl->contr->title, sizeof(pl->contr->title), "%s dragon", attacks[atnr]);
-        else {
-            /* special titles for extra high resistance! */
-            if (skin->resist[atnr] > 80)
-                snprintf(pl->contr->title, sizeof(pl->contr->title), "legendary %s dragon", attacks[atnr]);
-            else if (skin->resist[atnr] > 50)
-                snprintf(pl->contr->title, sizeof(pl->contr->title), "ancient %s dragon", attacks[atnr]);
-            else
-                snprintf(pl->contr->title, sizeof(pl->contr->title), "big %s dragon", attacks[atnr]);
-        }
+        player_set_dragon_title(pl->contr, level, attacks[atnr], skin->resist[atnr]);
     }
-
-    pl->contr->own_title[0] = '\0';
 }
 
 /**

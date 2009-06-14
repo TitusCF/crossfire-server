@@ -184,3 +184,35 @@ int is_wraith_pl(object *op) {
 int is_old_wraith_pl(object *op) {
     return op != NULL && op->type == PLAYER && op->arch != NULL && object_find_by_name(op, "Wraith_Force") != NULL && !is_wraith_pl(op);
 }
+
+/**
+ * Updates the title of a dragon player to reflect the current level, attack
+ * type, and resistances.
+ *
+ * @param pl
+ * the player to update
+ * @param level
+ * the dragon's current level
+ * @param attack
+ * the dragon's current attack focus
+ * @param skin_resist
+ * the dragon's skin resistance for attack
+ */
+void player_set_dragon_title(struct pl *pl, int level, const char *attack, int skin_resist) {
+    if (level == 0)
+        snprintf(pl->title, sizeof(pl->title), "%s hatchling", attack);
+    else if (level == 1)
+        snprintf(pl->title, sizeof(pl->title), "%s wyrm", attack);
+    else if (level == 2)
+        snprintf(pl->title, sizeof(pl->title), "%s wyvern", attack);
+    else if (level == 3)
+        snprintf(pl->title, sizeof(pl->title), "%s dragon", attack);
+    /* special titles for extra high resistance! */
+    else if (skin_resist > 80)
+        snprintf(pl->title, sizeof(pl->title), "legendary %s dragon", attack);
+    else if (skin_resist > 50)
+        snprintf(pl->title, sizeof(pl->title), "ancient %s dragon", attack);
+    else
+        snprintf(pl->title, sizeof(pl->title), "big %s dragon", attack);
+    pl->own_title[0] = '\0';
+}

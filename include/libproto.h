@@ -298,6 +298,7 @@ extern int is_dragon_pl(const object *op);
 extern client_spell *get_client_spell_state(player *pl, object *spell);
 extern int is_wraith_pl(object *op);
 extern int is_old_wraith_pl(object *op);
+extern void player_set_dragon_title(struct pl *pl, int level, const char *attack, int skin_resist);
 /* re-cmp.c */
 extern const char *re_cmp(const char *str, const char *regexp);
 /* readable.c */
