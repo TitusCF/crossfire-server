@@ -100,13 +100,13 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
     /* See if the pet has an existing enemy. If so, don't start a new one*/
     tmp = monster_check_enemy(pet, rv);
     if (tmp != NULL) {
-        if (tmp == owner && !QUERY_FLAG(pet, FLAG_CONFUSED) && QUERY_FLAG(pet, FLAG_FRIENDLY))
-            /* without this check, you can actually get pets with
-             * enemy set to owner!
-             */
-            pet->enemy = NULL;
-        else
+        if (tmp != owner || QUERY_FLAG(pet, FLAG_CONFUSED) || !QUERY_FLAG(pet, FLAG_FRIENDLY))
             return tmp;
+
+        /* without this check, you can actually get pets with
+         * enemy set to owner!
+         */
+        pet->enemy = NULL;
     }
     get_search_arr(search_arr);
 
