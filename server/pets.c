@@ -110,20 +110,14 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
     }
     get_search_arr(search_arr);
 
-    if (owner->type == PLAYER && owner->contr->petmode > pet_normal) {
-        if (owner->contr->petmode == pet_sad) {
-            tmp = monster_find_nearest_living_creature(pet);
-            if (tmp != NULL) {
-                if (get_rangevector(pet, tmp, rv, 0)
-                && monster_check_enemy(pet, rv) != NULL)
-                    return tmp;
-                pet->enemy = NULL;
-            }
-            /* if we got here we have no enemy */
-            /* we return NULL to avoid heading back to the owner */
-            pet->enemy = NULL;
-            return NULL;
-        }
+    if (owner->type == PLAYER && owner->contr->petmode == pet_sad) {
+        tmp = monster_find_nearest_living_creature(pet);
+        if (tmp != NULL && get_rangevector(pet, tmp, rv, 0) && monster_check_enemy(pet, rv) != NULL)
+            return tmp;
+        /* if we got here we have no enemy */
+        /* we return NULL to avoid heading back to the owner */
+        pet->enemy = NULL;
+        return NULL;
     }
 
     /* Since the pet has no existing enemy, look for anything nasty
