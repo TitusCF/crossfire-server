@@ -894,7 +894,7 @@ void confirm_password(object *op) {
  * whether a party password has been requested from the client
  */
 int get_party_password(object *op, partylist *party) {
-    if (party_get_password(party) == NULL) {
+    if (*party_get_password(party) == '\0') {
         return 0;
     }
 
