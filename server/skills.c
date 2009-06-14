@@ -141,16 +141,16 @@ static int attempt_steal(object *op, object *who, object *skill) {
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                           "Your attempt is prevented!", NULL);
             return 0;
-        } else {
-            /* help npc to detect thief next time by raising its wisdom
-             * This probably isn't the right approach - we shouldn't be
-             * changing the stats of the monsters - better approach
-             * might be to use force objects for this - MSW 2009/02/24
-             */
-            op->stats.Wis += (op->stats.Int/5)+1;
-            if (op->stats.Wis > MAX_STAT)
-                op->stats.Wis = MAX_STAT;
         }
+
+        /* help npc to detect thief next time by raising its wisdom
+         * This probably isn't the right approach - we shouldn't be
+         * changing the stats of the monsters - better approach
+         * might be to use force objects for this - MSW 2009/02/24
+         */
+        op->stats.Wis += (op->stats.Int/5)+1;
+        if (op->stats.Wis > MAX_STAT)
+            op->stats.Wis = MAX_STAT;
     }
     if (op->type == PLAYER && QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
@@ -195,7 +195,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
         chance = adj_stealchance(who, op, stats_value+skill->level*10-op->level*3);
         if (chance == -1)
             return 0;
-        else if (roll < chance) {
+        if (roll < chance) {
             tag_t inv_count = inv->count;
 
             pick_up(who, inv);
@@ -439,15 +439,15 @@ int pick_lock(object *pl, int dir, object *skill) {
         return 0;
     }
 
-    if (attempt_pick_lock(tmp, pl, skill)) {
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                      "You pick the lock.", NULL);
-        return calc_skill_exp(pl, NULL, skill);
-    } else {
+    if (!attempt_pick_lock(tmp, pl, skill)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                       "You fail to pick the lock.", NULL);
         return 0;
     }
+
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                  "You pick the lock.", NULL);
+    return calc_skill_exp(pl, NULL, skill);
 }
 
 
@@ -509,7 +509,9 @@ int hide(object *op, object *skill) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "You don't need to hide while invisible!", NULL);
         return 0;
-    } else if (!op->hide && op->invisible > 0 && op->type == PLAYER) {
+    }
+
+    if (!op->hide && op->invisible > 0 && op->type == PLAYER) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
                       "Your attempt to hide breaks the invisibility spell!", NULL);
         make_visible(op);
@@ -1049,7 +1051,9 @@ int use_oratory(object *pl, int dir, object *skill) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                           "Your follower loves your speech.", NULL);
             return 0;
-        } else if (skill->level > tmp->level) {
+        }
+
+        if (skill->level > tmp->level) {
             /* you steal the follower.  Perhaps we should really look at the
              * level of the owner above?
              */
@@ -1064,10 +1068,10 @@ int use_oratory(object *pl, int dir, object *skill) {
              * be used by a couple players to gets lots of exp.
              */
             return 0;
-        } else {
-            /* In this case, you can't steal it from the other player */
-            return 0;
         }
+
+        /* In this case, you can't steal it from the other player */
+        return 0;
     } /* Creature was already a pet of someone */
 
     chance = skill->level*2+(pl->stats.Cha-2*tmp->stats.Int)/2;
@@ -1087,8 +1091,9 @@ int use_oratory(object *pl, int dir, object *skill) {
         tmp->attack_movement = PETMOVE;
         return calc_skill_exp(pl, tmp, skill);
     }
+
     /* Charm failed.  Creature may be angry now */
-    else if (skill->level+(pl->stats.Cha-10)/2 < random_roll(1, 2*tmp->level, pl, PREFER_LOW)) {
+    if (skill->level+(pl->stats.Cha-10)/2 < random_roll(1, 2*tmp->level, pl, PREFER_LOW)) {
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "Your speech angers the %s!",
@@ -1102,6 +1107,7 @@ int use_oratory(object *pl, int dir, object *skill) {
         }
         CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
     }
+
     return 0; /* Fall through - if we get here, we didn't charm anything */
 }
 
@@ -1403,19 +1409,19 @@ void meditate(object *pl, object *skill) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "You can't concentrate while wielding a weapon!", NULL);
         return;
-    } else {
-        for (tmp = pl->inv; tmp; tmp = tmp->below)
-            if (((tmp->type == ARMOUR && skill->level < 12)
-                 || (tmp->type == HELMET && skill->level < 10)
-                 || (tmp->type == SHIELD && skill->level < 6)
-                 || (tmp->type == BOOTS && skill->level < 4)
-                 || (tmp->type == GLOVES && skill->level < 2))
-            && QUERY_FLAG(tmp, FLAG_APPLIED)) {
-                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                              "You can't concentrate while wearing so much armour!", NULL);
-                return;
-            }
     }
+
+    for (tmp = pl->inv; tmp; tmp = tmp->below)
+if (((tmp->type == ARMOUR && skill->level < 12)
+            || (tmp->type == HELMET && skill->level < 10)
+            || (tmp->type == SHIELD && skill->level < 6)
+            || (tmp->type == BOOTS && skill->level < 4)
+            || (tmp->type == GLOVES && skill->level < 2))
+        && QUERY_FLAG(tmp, FLAG_APPLIED)) {
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                          "You can't concentrate while wearing so much armour!", NULL);
+            return;
+        }
 
     /* ok let's meditate!  Spell points are regained first, then once
      * they are maxed we get back hp. Actual incrementing of values
@@ -1509,13 +1515,13 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
                              "You write in the %s.",
                              buf);
         return strlen(msg);
-    } else {
-        query_short_name(item, buf, BOOK_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "Your message won't fit in the %s!",
-                             "Your message won't fit in the %s!",
-                             buf);
     }
+
+    query_short_name(item, buf, BOOK_BUF);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                         "Your message won't fit in the %s!",
+                         "Your message won't fit in the %s!",
+                         buf);
     return 0;
 }
 
@@ -1660,26 +1666,25 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
             success *= 2;
         success = success*skill->level;
         return success;
-
-    } else { /* Inscription has failed */
-
-        if (chosen_spell->level > skill->level || confused) { /*backfire!*/
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "Ouch! Your attempt to write a new scroll strains your mind!", NULL);
-            if (random_roll(0, 1, pl, PREFER_LOW) == 1)
-                drain_specific_stat(pl, 4);
-            else {
-                confuse_living(pl, pl, 99);
-                return (-30*chosen_spell->level);
-            }
-        } else if (random_roll(0, pl->stats.Int-1, pl, PREFER_HIGH) < 15) {
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "Your attempt to write a new scroll rattles your mind!", NULL);
-            confuse_living(pl, pl, 99);
-        } else
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "You fail to write a new scroll.", NULL);
     }
+
+    /* Inscription has failed */
+    if (chosen_spell->level > skill->level || confused) { /*backfire!*/
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                      "Ouch! Your attempt to write a new scroll strains your mind!", NULL);
+        if (random_roll(0, 1, pl, PREFER_LOW) == 1)
+            drain_specific_stat(pl, 4);
+        else {
+            confuse_living(pl, pl, 99);
+            return (-30*chosen_spell->level);
+        }
+    } else if (random_roll(0, pl->stats.Int-1, pl, PREFER_HIGH) < 15) {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                      "Your attempt to write a new scroll rattles your mind!", NULL);
+        confuse_living(pl, pl, 99);
+    } else
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                      "You fail to write a new scroll.", NULL);
     return 0;
 }
 
@@ -1755,7 +1760,8 @@ int write_on_item(object *pl, const char *params, object *skill) {
 
     if (msgtype == SCROLL) {
         return write_scroll(pl, item, skill);
-    } else if (msgtype == BOOK) {
+    }
+    if (msgtype == BOOK) {
         return write_note(pl, item, string, skill);
     }
     return 0;
