@@ -1770,36 +1770,33 @@ void apply_changes_to_player(object *pl, object *change) {
 
     switch (change->type) {
     case CLASS: {
-            living *stats = &(pl->contr->orig_stats);
-            living *ns = &(change->stats);
-
             /* the following code assigns stats up to the stat max
              * for the race, and if the stat max is exceeded,
              * tries to randomly reassign the excess stat
              */
             int i, j;
             for (i = 0; i < NUM_STATS; i++) {
-                sint8 stat = get_attr_value(stats, i);
+                sint8 stat = get_attr_value(&pl->contr->orig_stats, i);
                 int race_bonus = get_attr_value(&(pl->arch->clone.stats), i);
 
-                stat += get_attr_value(ns, i);
+                stat += get_attr_value(&change->stats, i);
                 if (stat > 20+race_bonus) {
                     excess_stat++;
                     stat = 20+race_bonus;
                 }
-                set_attr_value(stats, i, stat);
+                set_attr_value(&pl->contr->orig_stats, i, stat);
             }
 
             for (j = 0; excess_stat > 0 && j < 100; j++) {
                 /* try 100 times to assign excess stats */
                 int i = rndm(0, 6);
-                int stat = get_attr_value(stats, i);
+                int stat = get_attr_value(&pl->contr->orig_stats, i);
                 int race_bonus = get_attr_value(&(pl->arch->clone.stats), i);
 
                 if (i == CHA)
                     continue; /* exclude cha from this */
                 if (stat < 20+race_bonus) {
-                    change_attr_value(stats, i, 1);
+                    change_attr_value(&pl->contr->orig_stats, i, 1);
                     excess_stat--;
                 }
             }
