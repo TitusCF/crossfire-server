@@ -1284,6 +1284,7 @@ void leave(player *pl, int draw_exit) {
         }
         pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
     }
+    party_leave(pl->ob);
     /* If a hidden dm dropped connection do not create
     * inconsistencies by showing that they have left the game
     */

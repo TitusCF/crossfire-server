@@ -15,7 +15,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 Move party related code into party.c module. Fix PARTY_KILL_LOG compile-time
-option. Reliably print party join/leave messages.
+option. Reliably print party join/leave messages. Properly leave the party
+when the client connection breaks or when the character logs out.
 Andreas Kirschbaum 2009-06-14
 
 Add command parameter validation as reported by Alex Tokar.
