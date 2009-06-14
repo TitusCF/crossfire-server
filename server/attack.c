@@ -1842,6 +1842,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     tag_t op_tag, hitter_tag;
     int rtn_kill = 0;
     int friendlyfire;
+    object *owner;
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
         return 0;
@@ -2007,9 +2008,11 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     LOG(llevDebug, "Attacktype %d did %d damage\n", type, maxdam);
 #endif
 
-    if (object_get_owner(hitter))
-        object_set_enemy(op, hitter->owner);
-    else if (QUERY_FLAG(hitter, FLAG_ALIVE))
+    owner = object_get_owner(hitter);
+    if (owner != NULL) {
+        if (op->enemy != hitter)
+            object_set_enemy(op, owner);
+    } else if (QUERY_FLAG(hitter, FLAG_ALIVE))
         object_set_enemy(op, hitter);
 
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE) && op->type != PLAYER) {
