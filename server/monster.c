@@ -115,8 +115,8 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
             npc->enemy = NULL;
 
         else if (QUERY_FLAG(npc, FLAG_FRIENDLY) && (
-                (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !(pets_should_arena_attack(npc, npc->owner, npc->enemy)))
-                || ((npc->enemy->type == PLAYER) && !(pets_should_arena_attack(npc, npc->owner, npc->enemy)))
+                (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !pets_should_arena_attack(npc, npc->owner, npc->enemy))
+                || (npc->enemy->type == PLAYER && !pets_should_arena_attack(npc, npc->owner, npc->enemy))
                 || npc->enemy == npc->owner))
             npc->enemy = NULL;
         else if (!QUERY_FLAG(npc, FLAG_FRIENDLY)
@@ -600,7 +600,7 @@ int monster_move(object *op) {
 
     if (QUERY_FLAG(op, FLAG_SLEEP)
     || QUERY_FLAG(op, FLAG_BLIND)
-    || ((op->map->darkness > 0) && !QUERY_FLAG(op, FLAG_SEE_IN_DARK) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))) {
+    || (op->map->darkness > 0 && !QUERY_FLAG(op, FLAG_SEE_IN_DARK) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))) {
         if (!monster_check_wakeup(op, enemy, &rv))
             return 0;
     }
@@ -1492,7 +1492,7 @@ static int monster_can_pick(object *monster, object *item) {
                 break;
 
             case SPELLBOOK:
-                flag = (monster->arch != NULL && QUERY_FLAG((&monster->arch->clone), FLAG_CAST_SPELL));
+                flag = (monster->arch != NULL && QUERY_FLAG(&monster->arch->clone, FLAG_CAST_SPELL));
                 break;
 
             case SCROLL:
@@ -1580,7 +1580,7 @@ void monster_check_apply(object *mon, object *item) {
 
     if (item->type == SPELLBOOK
     && mon->arch != NULL
-    && (QUERY_FLAG((&mon->arch->clone), FLAG_CAST_SPELL))) {
+    && (QUERY_FLAG(&mon->arch->clone, FLAG_CAST_SPELL))) {
         SET_FLAG(mon, FLAG_CAST_SPELL);
         return;
     }
@@ -2054,7 +2054,7 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
         return 0;
 
     /* Monsters always ignore the DM */
-    if ((op->type != PLAYER) && QUERY_FLAG(enemy, FLAG_WIZ))
+    if (op->type != PLAYER && QUERY_FLAG(enemy, FLAG_WIZ))
         return 0;
 
     /* simple check.  Should probably put some range checks in here. */
@@ -2078,7 +2078,7 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
 
     /* Determine Detection radii */
     if (!enemy->hide) /* to detect non-hidden (eg dark/invis enemy) */
-        radius = MAX((op->stats.Wis/5)+1, MIN_MON_RADIUS);
+        radius = MAX(op->stats.Wis/5+1, MIN_MON_RADIUS);
     else { /* a level/INT/Dex adjustment for hiding */
         object *sk_hide;
         int bonus = (op->level/2)+(op->stats.Int/5);
