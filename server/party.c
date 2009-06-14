@@ -252,7 +252,7 @@ int party_confirm_password(const partylist *party, const char *password) {
  * @todo
  * should be moved to player.c?
  */
-void party_send_message(object *op, char *message) {
+void party_send_message(object *op, const char *message) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)

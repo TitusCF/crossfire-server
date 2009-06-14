@@ -666,7 +666,7 @@ partylist *party_get_first(void);
 partylist *party_get_next(const partylist *party);
 void party_obsolete_parties(void);
 int party_confirm_password(const partylist *party, const char *password);
-void party_send_message(object *op, char *message);
+void party_send_message(object *op, const char *message);
 const char *party_get_password(const partylist *party);
 void party_set_password(partylist *party, const char *password);
 const char *party_get_leader(const partylist *party);
