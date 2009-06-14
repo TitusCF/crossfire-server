@@ -413,11 +413,11 @@ void rangetostring(const object *pl, char *obuf, size_t len) {
  * Sets player title.
  */
 void set_title(const object *pl, char *buf, size_t len) {
-    /* Eneq(@csd.uu.se): Let players define their own titles. */
-    if (pl->contr->own_title[0] == '\0')
-        snprintf(buf, len, "Player: %s the %s", pl->name, pl->contr->title);
-    else
-        snprintf(buf, len, "Player: %s %s", pl->name, pl->contr->own_title);
+    char *p;
+
+    snprintf(buf, len, "Player: %s ", pl->name);
+    p = strchr(buf, '\0');
+    player_get_title(pl->contr, p, (buf+len)-p);
 }
 
 /**

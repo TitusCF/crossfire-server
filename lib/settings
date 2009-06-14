@@ -52,7 +52,6 @@ item_power_factor 1.0
 #
 # %N	Name of character
 # %t	title of character
-# %T    the optional "the " sequence value (appended only if player has no own_title)
 # %c	count of the player (for dumping/patching)
 # %n	newline
 # %h	[Hostile] if character is hostile, nothing otherwise
@@ -72,8 +71,8 @@ item_power_factor 1.0
 # if you prefer)
 # who_wiz_format is the same but for those with dm powers
 
-who_format %N %T%t%h%d%a%b%n<%m>
-who_wiz_format %N %T%t%h%d%a%b%nLevel %l <%m>(@%i)(%c)
+who_format %N %t%h%d%a%b%n<%m>
+who_wiz_format %N %t%h%d%a%b%nLevel %l <%m>(@%i)(%c)
 
 # See notes for most of these in include/config.h
 

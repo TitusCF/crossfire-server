@@ -687,7 +687,6 @@ void display_who_entry(object *op, player *pl, const char *format) {
  * Specifier values are:
  * - N  Name of character
  * - t  title of character
- * - T  the optional "the " sequence value (depend if player has own_title or not)
  * - c  count
  * - n  newline
  * - h  \<Hostile\> if character is hostile, nothing otherwise
@@ -720,14 +719,7 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
         break;
 
     case 't':
-        snprintf(return_val, size, "%s", (pl->own_title[0] == '\0' ? pl->title : pl->own_title));
-        break;
-
-    case 'T':
-        if (pl->own_title[0] == '\0')
-            snprintf(return_val, size, "the ");
-        else
-            *return_val = '\0';
+        player_get_title(pl, return_val, size);
         break;
 
     case 'c':
@@ -2268,21 +2260,21 @@ int command_title(object *op, char *params) {
     }
 
     if (params == NULL) {
-        if (op->contr->own_title[0] == '\0')
-            snprintf(buf, sizeof(buf), i18n_translate(get_language(op), I18N_MSG_CMISC_199), op->contr->title);
-        else
-            snprintf(buf, sizeof(buf), i18n_translate(get_language(op), I18N_MSG_CMISC_200), op->contr->own_title);
+        char tmp[MAX_BUF];
+
+        player_get_title(op->contr, tmp, sizeof(tmp));
+        snprintf(buf, sizeof(buf), i18n_translate(get_language(op), I18N_MSG_CMISC_199), tmp);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG, buf, NULL);
         return 1;
     }
     if (strcmp(params, "clear") == 0 || strcmp(params, "default") == 0) {
-        if (op->contr->own_title[0] == '\0')
+        if (!player_has_own_title(op->contr))
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                           i18n_translate(get_language(op), I18N_MSG_CMISC_201), NULL);
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                           i18n_translate(get_language(op), I18N_MSG_CMISC_202), NULL);
-        op->contr->own_title[0] = '\0';
+        player_set_own_title(op->contr, "");
         return 1;
     }
 
@@ -2291,7 +2283,7 @@ int command_title(object *op, char *params) {
                       i18n_translate(get_language(op), I18N_MSG_CMISC_203), NULL);
         return 1;
     }
-    strcpy(op->contr->own_title, params);
+    player_set_own_title(op->contr, params);
     return 1;
 }
 

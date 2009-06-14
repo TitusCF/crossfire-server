@@ -193,13 +193,13 @@ static score *get_score(char *bp) {
  */
 static char *draw_one_high_score(const score *sc, char *buf, int size) {
     if (!strncmp(sc->killer, "quit", MAX_NAME))
-        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s the %s quit the game on map %s <%d><%d><%d>.",
+        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s %s quit the game on map %s <%d><%d><%d>.",
                  sc->position, sc->exp, sc->name, sc->title, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
     else if (!strncmp(sc->killer, "left", MAX_NAME))
-        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s the %s left the game on map %s <%d><%d><%d>.",
+        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s %s left the game on map %s <%d><%d><%d>.",
                  sc->position, sc->exp, sc->name, sc->title, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
     else
-        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s the %s was killed by %s on map %s <%d><%d><%d>.",
+        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s %s was killed by %s on map %s <%d><%d><%d>.",
                  sc->position, sc->exp, sc->name, sc->title, sc->killer, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
     return buf;
 }
@@ -326,10 +326,7 @@ void check_score(object *op, int quiet) {
 
     strncpy(new_score.name, op->name, BIG_NAME);
     new_score.name[BIG_NAME-1] = '\0';
-    strncpy(new_score.title, op->contr->own_title, BIG_NAME);
-    if (new_score.title[0] == '\0')
-        strncpy(new_score.title, op->contr->title, BIG_NAME);
-    new_score.title[BIG_NAME-1] = '\0';
+    player_get_title(op->contr, new_score.title, sizeof(new_score.title));
     strncpy(new_score.killer, op->contr->killer, BIG_NAME);
     if (new_score.killer[0] == '\0')
         strcpy(new_score.killer, "a dungeon collapse");

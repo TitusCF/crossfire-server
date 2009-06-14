@@ -216,3 +216,58 @@ void player_set_dragon_title(struct pl *pl, int level, const char *attack, int s
         snprintf(pl->title, sizeof(pl->title), "big %s dragon", attack);
     pl->own_title[0] = '\0';
 }
+
+/**
+ * Returns the player's title. The returned title is never empty and includes a
+ * "the" prefix if necessary.
+ *
+ * @param pl
+ * the player to return the title of
+ * @param buf
+ * returns the title
+ * @param bufsize
+ * the size of buf in byte
+ */
+void player_get_title(const struct pl *pl, char *buf, size_t bufsize) {
+    if (pl->own_title[0] == '\0')
+        snprintf(buf, bufsize, "the %s", pl->title);
+    else
+        snprintf(buf, bufsize, "%s", pl->own_title);
+}
+
+/**
+ * Returns whether the player has a custom title.
+ *
+ * @param pl
+ * the player to check
+ * @return
+ * whether the player has a custom title
+ */
+int player_has_own_title(const struct pl *pl) {
+    return pl->own_title[0] != '\0';
+}
+
+/**
+ * Returns the player's own title. The returned value must not be modified and
+ * points into the player structure.
+ *
+ * @param pl
+ * the player
+ * @return
+ * the own title
+ */
+const char *player_get_own_title(const struct pl *pl) {
+    return pl->own_title;
+}
+
+/**
+ * Sets the custom title.
+ *
+ * @param pl
+ * the player to modify
+ * @param title
+ * the new title to set; empty string to unset
+ */
+void player_set_own_title(struct pl *pl, const char *title) {
+    snprintf(pl->own_title, sizeof(pl->own_title), "%s", title);
+}

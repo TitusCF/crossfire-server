@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Extract code accessing or manipulating the player's title into player.c
+module. Fixes #2017797 (Multiple 'the' displayed in hiscore output). Needs
+update to existing 'settings' files: remove all occurrences of "%T" from
+who_format and who_wiz_format.
+Andreas Kirschbaum 2009-06-14
+
 Do not switch a monster's enemy at each attack. This allows pets to
 concentrate on one enemy when being attacked by multiple enemies.
 Do not change monster's enemy from pet to player whenever the player's pet

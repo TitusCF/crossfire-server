@@ -1302,7 +1302,7 @@ void key_confirm_quit(object *op, char key) {
     check_score(op, 0);
     op->contr->party = NULL;
     if (settings.set_title == TRUE)
-        op->contr->own_title[0] = '\0';
+        player_set_own_title(op->contr, "");
 
     if (!QUERY_FLAG(op, FLAG_WAS_WIZ)) {
         mapstruct *mp, *next;
@@ -3559,7 +3559,7 @@ void kill_player(object *op) {
 
         op->contr->party = NULL;
         if (settings.set_title == TRUE)
-            op->contr->own_title[0] = '\0';
+            player_set_own_title(op->contr, "");
 
         /* buf should be the kill message */
         draw_ext_info(NDI_UNIQUE|NDI_ALL, 0, NULL, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_DIED,

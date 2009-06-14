@@ -165,7 +165,6 @@
 197|Vous ne pouvez pas choisir votre titre.
 198|Les Dragons ne peuvent changer leur titre.
 199|Votre titre est '%s'.
-200|Votre titre est '%s'.
 201|Votre titre est le titre par défaut.
 202|Titre par défaut.
 203|Titre trop long.
