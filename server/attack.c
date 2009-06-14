@@ -2013,7 +2013,8 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
         if (op->enemy != hitter)
             object_set_enemy(op, owner);
     } else if (QUERY_FLAG(hitter, FLAG_ALIVE))
-        object_set_enemy(op, hitter);
+        if (op->enemy == NULL || rndm(1, 20) == 0)
+            object_set_enemy(op, hitter);
 
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE) && op->type != PLAYER) {
         /* The unaggressives look after themselves 8) */
