@@ -72,7 +72,7 @@ static void cancellation(object *op) {
             if (!did_make_save_item(tmp, AT_CANCELLATION, op))
                 cancellation(tmp);
         FOR_INV_FINISH();
-    } else if (FABS(op->magic) <= (rndm(0, 5))) {
+    } else if (FABS(op->magic) <= rndm(0, 5)) {
         /* Nullify this object. This code could probably be more complete */
         /* in what abilities it should cancel */
         op->magic = 0;
@@ -152,7 +152,7 @@ static int did_make_save_item(object *op, int type, object *originator) {
 
     if (saves == attacks || attacks == 0)
         return TRUE;
-    if ((saves == 0) || (rndm(1, attacks) > saves))
+    if (saves == 0 || rndm(1, attacks) > saves)
         return FALSE;
     return TRUE;
 }
@@ -785,12 +785,12 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam,
     if (roll == 20 || op->stats.ac >= base_wc-roll) {
         int hitdam = base_dam;
         if (settings.casting_time == TRUE) {
-            if ((hitter->type == PLAYER)&&(hitter->casting_time > -1)) {
+            if (hitter->type == PLAYER && hitter->casting_time > -1) {
                 hitter->casting_time = -1;
                 draw_ext_info(NDI_UNIQUE, 0, hitter, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_FUMBLE,
                               "You attacked and lost your spell!", NULL);
             }
-            if ((op->casting_time > -1)&&(hitdam > 0)) {
+            if (op->casting_time > -1 && hitdam > 0) {
                 op->casting_time = -1;
                 if (op->type == PLAYER)  {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_FUMBLE,
@@ -1172,8 +1172,8 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
         return dam;
 
     if (hitter->slaying) {
-        if (((op->race != NULL) && strstr(hitter->slaying, op->race))
-        || (op->arch && (op->arch->name != NULL) && strstr(op->arch->name, hitter->slaying))) {
+        if ((op->race != NULL && strstr(hitter->slaying, op->race))
+        || (op->arch && op->arch->name != NULL && strstr(op->arch->name, hitter->slaying))) {
             doesnt_slay = 0;
             dam *= 3;
         }
@@ -1195,9 +1195,9 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
      * it can still damage your items.  Only include attacktypes if
      * special processing is needed */
 
-    if ((op->resist[attacknum] >= 100)
+    if (op->resist[attacknum] >= 100
     && doesnt_slay
-    && (attacknum != ATNR_ACID))
+    && attacknum != ATNR_ACID)
         return 0;
 
     /* Keep this in order - makes things easier to find */
@@ -1382,7 +1382,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                 || strstr(god->slaying, undead_name) == NULL)
                     div = 2;
                 /* Give a bonus if you resist turn undead */
-                if (op->level*div < (get_turn_bonus(owner->stats.Wis)+owner->level+(op->resist[ATNR_TURN_UNDEAD]/100)))
+                if (op->level*div < get_turn_bonus(owner->stats.Wis)+owner->level+(op->resist[ATNR_TURN_UNDEAD]/100))
                     scare_creature(op, owner);
             } else
                 dam = 0; /* don't damage non undead - should we damage undead? */
@@ -1418,7 +1418,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
             object *owner = object_get_owner(hitter) == NULL ? hitter : object_get_owner(hitter);
 
             /* As with turn undead above, give a bonus on the saving throw */
-            if ((op->level+(op->resist[ATNR_HOLYWORD]/100)) < owner->level+get_turn_bonus(owner->stats.Wis))
+            if (op->level+(op->resist[ATNR_HOLYWORD]/100) < owner->level+get_turn_bonus(owner->stats.Wis))
                 scare_creature(op, owner);
         }
         break;
@@ -1450,7 +1450,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
             else
                 dam = (dam*(100-op->resist[ATNR_LIFE_STEALING]))/dam_modifier;
             /* You die at -1 hp, not zero. */
-            if (dam > (op->stats.hp+1))
+            if (dam > op->stats.hp+1)
                 dam = op->stats.hp+1;
             new_hp = hitter->stats.hp+dam;
             if (new_hp > hitter->stats.maxhp)
@@ -1519,7 +1519,7 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
     /* Lauwenmark: Handle for the global kill event */
     execute_global_event(EVENT_GKILL, op, hitter);
 
-    if ((op->map) && (death_animation = object_get_value(op, "death_animation")) != NULL) {
+    if (op->map && (death_animation = object_get_value(op, "death_animation")) != NULL) {
         object *death = create_archetype(death_animation);
 
         if (death) {
@@ -1940,7 +1940,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
          * attack types.  As such, skip it over.  However, if magic is
          * the only attacktype in the group, then still attack with it
          */
-        if ((attacktype == AT_MAGIC) && (type&~AT_MAGIC))
+        if (attacktype == AT_MAGIC && (type&~AT_MAGIC))
             continue;
 
         /* Go through and hit the player with each attacktype, one by one.
@@ -2030,7 +2030,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     op->stats.hp -= maxdam;
 
     /* Eneq(@csd.uu.se): Check to see if monster runs away. */
-    if ((op->stats.hp >= 0)
+    if (op->stats.hp >= 0
     && (QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER)
     && op->stats.hp < (signed short)(((float)op->run_away/(float)100)*(float)op->stats.maxhp)) {
         if (QUERY_FLAG(op, FLAG_MONSTER))
