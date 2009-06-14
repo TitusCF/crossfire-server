@@ -387,7 +387,7 @@ void pets_move(object *ob) {
     /* move_ob returns 0 if the object couldn't move.  If that is the
      * case, lets do some other work.
      */
-    if (!(move_ob(ob, dir, ob))) {
+    if (!move_ob(ob, dir, ob)) {
         object *part;
 
         /* the failed move_ob above may destroy the pet, so check here */
