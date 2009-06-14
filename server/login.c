@@ -829,9 +829,7 @@ void check_login(object *op) {
             party_set_password(party, party_password);
         }
         if (party && party_confirm_password(party, party_password)) {
-            pl->party = party;
-            snprintf(buf, MAX_BUF, "%s joins party %s", op->name, party->partyname);
-            party_send_message(op, buf);
+            party_join(op, party);
         }
 
         if (pl->party)

@@ -895,7 +895,7 @@ void confirm_password(object *op) {
  */
 int get_party_password(object *op, partylist *party) {
     if (party_get_password(party) == NULL) {
-	return 0;
+        return 0;
     }
 
     op->contr->write_buf[0] = '\0';
@@ -1303,7 +1303,7 @@ void key_confirm_quit(object *op, char key) {
 
     strcpy(op->contr->killer, "quit");
     check_score(op, 0);
-    op->contr->party = NULL;
+    party_leave(op);
     if (settings.set_title == TRUE)
         player_set_own_title(op->contr, "");
 
@@ -3560,7 +3560,7 @@ void kill_player(object *op) {
          * should probably be embedded in an else statement.
          */
 
-        op->contr->party = NULL;
+        party_leave(op);
         if (settings.set_title == TRUE)
             player_set_own_title(op->contr, "");
 

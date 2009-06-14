@@ -61,23 +61,9 @@ int confirm_party_password(object *op) {
  * player.
  */
 void receive_party_password(object *op) {
-
     if (confirm_party_password(op) == 0) {
-        partylist *joined_party = op->contr->party_to_join;
-        char buf[MAX_BUF];
-
-        if (op->contr->party != NULL) {
-            snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
-            party_send_message(op, buf);
-        }
-        op->contr->party = op->contr->party_to_join;
+        party_join(op, op->contr->party_to_join);
         op->contr->party_to_join = NULL;
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                             "You have joined party: %s\n",
-                             "You have joined party: %s\n",
-                             joined_party->partyname);
-        snprintf(buf, MAX_BUF, "%s joins party %s", op->name, joined_party->partyname);
-        party_send_message(op, buf);
         op->contr->state = ST_PLAYING;
         return;
     } else {
@@ -148,7 +134,6 @@ static void party_help(object *op) {
 int command_party(object *op, char *params) {
     char buf[MAX_BUF];
     partylist *tmpparty, *oldparty;  /* For iterating over linked list */
-    char *currentparty;   /* For iterating over linked list */
 
     if (params == NULL) {
         if (op->contr->party == NULL) {
@@ -156,11 +141,10 @@ int command_party(object *op, char *params) {
                           "You are not a member of any party. "
                           "For help try: party help", NULL);
         } else {
-            currentparty = op->contr->party->partyname;
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                  "You are a member of party %s.",
                                  "You are a member of party %s.",
-                                 currentparty);
+                                 op->contr->party->partyname);
         }
         return 1;
     }
@@ -240,13 +224,12 @@ int command_party(object *op, char *params) {
             return 1;
         }
         params += 4;
-        currentparty = op->contr->party->partyname;
-        snprintf(buf, MAX_BUF-1, "<%s> %s says: %s", currentparty, op->name, params);
+        snprintf(buf, MAX_BUF-1, "<%s> %s says: %s", op->contr->party->partyname, op->name, params);
         party_send_message(op, buf);
         draw_ext_info_format(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_PARTY,
                              "<%s> You say: %s",
                              "<%s> You say: %s",
-                             currentparty, params);
+                             op->contr->party->partyname, params);
         return 1;
     }
 
@@ -255,10 +238,7 @@ int command_party(object *op, char *params) {
         player *pl;
 
         params += 5;
-        if (op->contr->party)
-            oldparty = op->contr->party;
-        else
-            oldparty = NULL;
+        oldparty = op->contr->party;
 
         tmpparty = party_find(params);
         if (tmpparty != NULL) {
@@ -291,14 +271,7 @@ int command_party(object *op, char *params) {
                           "You are not a member of any party.", NULL);
             return 1;
         }
-        currentparty = op->contr->party->partyname;
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                             "You leave party %s.",
-                             "You leave party %s.",
-                             currentparty);
-        snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, currentparty);
-        party_send_message(op, buf);
-        op->contr->party = NULL;
+        party_leave(op);
         return 1;
     }
     if (strcmp(params, "who") == 0) {
@@ -387,17 +360,7 @@ int command_party(object *op, char *params) {
             return 0;
         }
 
-        if (op->contr->party != NULL) {
-            snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
-            party_send_message(op, buf);
-        }
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                             "You have joined party: %s",
-                             "You have joined party: %s",
-                             party->partyname);
-        op->contr->party = party;
-        snprintf(buf, MAX_BUF, "%s joins party %s", op->name, party->partyname);
-        party_send_message(op, buf);
+        party_join(op, party);
         return 0;
     } /* join */
 

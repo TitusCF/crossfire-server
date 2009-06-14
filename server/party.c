@@ -53,12 +53,7 @@ static partylist *lastparty = NULL;  /**< Keeps track of last party in list */
 partylist *party_form(object *op, const char *partyname) {
     partylist *party;
 
-    if (op->contr->party != NULL) {
-        char buf[MAX_BUF];
-
-        snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
-        party_send_message(op, buf);
-    }
+    party_leave(op);
     party = (partylist *)malloc(sizeof(partylist));
     party->partyname = strdup_local(partyname);
     party->total_exp = 0;
@@ -81,6 +76,51 @@ partylist *party_form(object *op, const char *partyname) {
     }
 
     return party;
+}
+
+/**
+ * Makes a player join a party. Leaves the a former party if necessary.
+ *
+ * @param op
+ * the player
+ * @param party
+ * the party to join
+ */
+void party_join(object *op, partylist *party) {
+    char buf[MAX_BUF];
+
+    party_leave(op);
+
+    op->contr->party = party;
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                         "You have joined party: %s\n",
+                         "You have joined party: %s\n",
+                         party->partyname);
+    snprintf(buf, MAX_BUF, "%s joins party %s", op->name, party->partyname);
+    party_send_message(op, buf);
+}
+
+/**
+ * Makes a player leave his party. Does nothing if the player is not member of
+ * a party.
+ *
+ * @param op
+ * the player
+ */
+void party_leave(object *op) {
+    char buf[MAX_BUF];
+
+    if (op->contr->party == NULL) {
+        return;
+    }
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                         "You leave party %s.",
+                         "You leave party %s.",
+                         op->contr->party->partyname);
+    snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
+    party_send_message(op, buf);
+    op->contr->party = NULL;
 }
 
 /**
@@ -122,7 +162,7 @@ void party_remove(partylist *party) {
     }
     for (pl = first_player; pl != NULL; pl = pl->next)
         if (pl->party == party)
-            pl->party = NULL;
+            party_leave(pl->ob);
 
     /* special case-ism for parties at the beginning and end of the list */
     if (party == firstparty) {

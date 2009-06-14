@@ -660,6 +660,8 @@ int forbid_play(void);
 int server_main(int argc, char **argv);
 /* party.c */
 partylist *party_form(object *op, const char *partyname);
+void party_join(object *op, partylist *party);
+void party_leave(object *op);
 partylist *party_find(const char *partyname);
 void party_remove(partylist *party);
 partylist *party_get_first(void);

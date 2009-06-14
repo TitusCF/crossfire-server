@@ -3005,7 +3005,7 @@ void *cfapi_object_set_property(int *type, ...) {
             if (op->contr) {
                 partyarg = va_arg(args, partylist *);
                 *type = CFAPI_PPARTY;
-                op->contr->party = partyarg;
+                party_join(op, partyarg);
             }
             break;
 
