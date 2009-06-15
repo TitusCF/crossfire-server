@@ -83,21 +83,19 @@ int command_me(object *op, char *params) {
  */
 int command_cointoss(object *op, char *params) {
     char buf[MAX_BUF];
-    char buf2[MAX_BUF];
-    int i;
+    const char *result;
 
-    i = rndm(1, 2);
-    if (i == 1) {
-        snprintf(buf, sizeof(buf), "%s flips a coin.... Heads!", op->name);
-        snprintf(buf2, sizeof(buf2), "You flip a coin.... Heads!");
-    } else {
-        snprintf(buf, sizeof(buf), "%s flips a coin.... Tails!", op->name);
-        snprintf(buf2, sizeof(buf2), "You flip a coin.... Tails!");
-    }
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-                  buf2, NULL);
+    result = rndm(1, 2) == 1 ? "Heads" : "Tails";
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
+        "You flip a coin.... %s!",
+        "You flip a coin.... %s!",
+        result);
+
+    snprintf(buf, sizeof(buf), "%s flips a coin.... %s!", op->name, result);
     ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-                        buf, NULL);
+        buf, NULL);
+
     return 0;
 }
 
