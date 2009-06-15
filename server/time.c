@@ -235,7 +235,7 @@ static void generate_monster(object *gen) {
     const char *code, *value;
     int did_gen = 0;
 
-    if (GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
+    if (GENERATE_SPEED(gen) && rndm(0, GENERATE_SPEED(gen)-1))
         return;
 
     value = object_get_value(gen, "generator_max_map");
@@ -688,7 +688,7 @@ void move_player_mover(object *op) {
             if (victim->head)
                 victim = victim->head;
 
-            if (QUERY_FLAG(op, FLAG_LIFESAVE)&&op->stats.hp-- < 0) {
+            if (QUERY_FLAG(op, FLAG_LIFESAVE) && op->stats.hp-- < 0) {
                 object_remove(op);
                 object_free(op);
                 return;

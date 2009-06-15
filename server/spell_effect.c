@@ -732,7 +732,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
         }
         if (mflags&P_IS_ALIVE) {
             for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
-                if (QUERY_FLAG(tmp, FLAG_ALIVE)&&(tmp->type == PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
+                if (QUERY_FLAG(tmp, FLAG_ALIVE) && (tmp->type == PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                   "You detect something.", NULL);
                     if (tmp->head != NULL)

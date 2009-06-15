@@ -1611,7 +1611,7 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
          * killing a level 1 creature and your level 20, you
          * probably don't want to see that.
          */
-        if (owner->level < op->level*2|| op->stats.exp > 1000) {
+        if (owner->level < op->level*2 ||  op->stats.exp > 1000) {
             if (owner != hitter) {
                 char killed[MAX_BUF], with[MAX_BUF];
 

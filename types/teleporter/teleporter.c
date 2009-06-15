@@ -82,7 +82,7 @@ static void move_teleporter(object *op) {
         else
             /* Currently only players can transfer maps */
             return;
-    } else if (EXIT_X(head)||EXIT_Y(head)) {
+    } else if (EXIT_X(head) || EXIT_Y(head)) {
         if (out_of_map(head->map, EXIT_X(head), EXIT_Y(head))) {
             LOG(llevError, "Removed illegal teleporter.\n");
             object_remove(head);

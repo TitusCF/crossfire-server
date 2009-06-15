@@ -855,7 +855,7 @@ static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv) {
     object *more;
     rv_vector rv1;
 
-    if (QUERY_FLAG(ob1, FLAG_CONFUSED)&&!(RANDOM()%3))
+    if (QUERY_FLAG(ob1, FLAG_CONFUSED) && !(RANDOM()%3))
         return 0;
 
     if (abs(rv->distance_x) < 2 && abs(rv->distance_y) < 2)

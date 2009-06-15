@@ -139,7 +139,7 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
 
         case DIRECTOR:
         case FIREWALL:
-            if (!QUERY_FLAG(tmp, FLAG_ANIMATE)&&tmp->type == FIREWALL)
+            if (!QUERY_FLAG(tmp, FLAG_ANIMATE) && tmp->type == FIREWALL)
                 move_firewall(tmp);
             else {
                 if ((tmp->stats.sp += tmp->stats.maxsp) > 8) /* next direction */

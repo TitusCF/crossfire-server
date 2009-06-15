@@ -1325,7 +1325,8 @@ void object_free2(object *ob, int free_inventory) {
         } else { /* Put objects in inventory onto this space */
             FOR_INV_PREPARE(ob, op) {
                 object_remove(op);
-                if (QUERY_FLAG(op, FLAG_STARTEQUIP)||QUERY_FLAG(op, FLAG_NO_DROP)
+                if (QUERY_FLAG(op, FLAG_STARTEQUIP)
+                || QUERY_FLAG(op, FLAG_NO_DROP)
                 || op->type == RUNE
                 || op->type == TRAP
                 || QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
@@ -1716,7 +1717,7 @@ void object_remove(object *op) {
     } else
         object_update(last, UP_OBJ_REMOVE);
 
-    if (QUERY_FLAG(op, FLAG_BLOCKSVIEW)|| (op->glow_radius != 0))
+    if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) || (op->glow_radius != 0))
         update_all_los(op->map, op->x, op->y);
 }
 
@@ -3348,7 +3349,7 @@ int map_find_dir(mapstruct *m, int x, int y, object *exclude) {
             } else if (mflags&P_IS_ALIVE) {
                 FOR_MAP_PREPARE(mp, nx, ny, tmp) {
                     if ((QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER)
-                    && (tmp != exclude ||(tmp->head && tmp->head != exclude))) {
+                    && (tmp != exclude || (tmp->head && tmp->head != exclude))) {
                         return freedir[i];
                     }
                 } FOR_MAP_FINISH();

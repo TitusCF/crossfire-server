@@ -575,7 +575,7 @@ void query_short_name(const object *op, char *buf, size_t size) {
     case SCROLL:
     case WAND:
     case ROD:
-        if (QUERY_FLAG(op, FLAG_IDENTIFIED)||QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
+        if (QUERY_FLAG(op, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
             if (!op->title) {
                 safe_strcat(buf, " of ", &len, size);
                 if (op->inv)
@@ -777,7 +777,7 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
     case SCROLL:
     case WAND:
     case ROD:
-        if (QUERY_FLAG(op, FLAG_IDENTIFIED)||QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
+        if (QUERY_FLAG(op, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
             if (!op->title) {
                 safe_strcat(buf, " of ", &len, size);
                 if (op->inv)

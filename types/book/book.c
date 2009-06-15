@@ -55,7 +55,7 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
     if (applier->type != PLAYER)
         return METHOD_UNHANDLED;
 
-    if (QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier, FLAG_WIZ)) {
+    if (QUERY_FLAG(applier, FLAG_BLIND) && !QUERY_FLAG(applier, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You are unable to read while blind.", NULL);
         return METHOD_OK;

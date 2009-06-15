@@ -2116,7 +2116,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
             throw_ob->stats.dam -= 3;
             throw_ob->stats.food += 55;
         }
-        if (throw_ob->material&M_PAPER||throw_ob->material&M_CLOTH) {
+        if (throw_ob->material&M_PAPER || throw_ob->material&M_CLOTH) {
             throw_ob->stats.dam -= 5;
             throw_ob->speed *= 0.8;
             throw_ob->stats.wc += 3;

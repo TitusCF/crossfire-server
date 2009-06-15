@@ -1326,7 +1326,7 @@ void fix_object(object *op) {
 
             case WEAPON:
                 wc -= (tmp->stats.wc+tmp->magic);
-                if (tmp->stats.ac&&tmp->stats.ac+tmp->magic > 0)
+                if (tmp->stats.ac && tmp->stats.ac+tmp->magic > 0)
                     ac -= tmp->stats.ac+tmp->magic;
                 op->stats.dam += (tmp->stats.dam+tmp->magic);
                 weapon_weight = tmp->weight;

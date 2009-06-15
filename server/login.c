@@ -236,7 +236,7 @@ int save_player(object *op, int flag) {
 
     flag &= 1;
 
-    if (!pl->name_changed||(!flag&&!op->stats.exp)) {
+    if (!pl->name_changed || (!flag && !op->stats.exp)) {
         if (!flag) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
                           "Your game is not valid, game not saved.", NULL);

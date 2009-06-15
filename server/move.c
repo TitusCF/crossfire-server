@@ -537,7 +537,8 @@ int push_ob(object *who, int dir, object *pusher) {
     if (owner != pusher
     && pusher->type == PLAYER
     && who->type != PLAYER
-    && !QUERY_FLAG(who, FLAG_FRIENDLY)&& !QUERY_FLAG(who, FLAG_NEUTRAL)) {
+    && !QUERY_FLAG(who, FLAG_FRIENDLY)
+    && !QUERY_FLAG(who, FLAG_NEUTRAL)) {
         if (pusher->contr->run_on) { /* only when we run */
             draw_ext_info_format(NDI_UNIQUE, 0, pusher,
                                  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,

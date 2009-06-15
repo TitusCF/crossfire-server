@@ -574,7 +574,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         int numb = numb_ob_inside(cauldron);
 
         fl = get_formulalist(numb-1); /* take a lower recipe list */
-        if (fl &&(rp = get_random_recipe(fl)))
+        if (fl && (rp = get_random_recipe(fl)))
             /* even though random, don't grant user any EXP for it */
             (void)attempt_recipe(op, cauldron, 1, rp, -1, 0);
         else

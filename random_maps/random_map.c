@@ -256,7 +256,7 @@ char **layoutgen(RMParms *RP) {
     switch (RP->map_layout_style) {
     case ONION_LAYOUT:
         maze = map_gen_onion(RP->Xsize, RP->Ysize, RP->layoutoptions1, RP->layoutoptions2);
-        if (!(RANDOM()%3)&& !(RP->layoutoptions1&OPT_WALLS_ONLY))
+        if (!(RANDOM()%3) && !(RP->layoutoptions1&OPT_WALLS_ONLY))
             roomify_layout(maze, RP);
         break;
 
@@ -926,7 +926,7 @@ void write_parameters_to_string(char *buf,
         strcat(buf, small_buf);
     }
 
-    if (layoutstyle_n &&layoutstyle_n[0]) {
+    if (layoutstyle_n && layoutstyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "layoutstyle %s\n", layoutstyle_n);
         strcat(buf, small_buf);
     }

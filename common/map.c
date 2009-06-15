@@ -918,7 +918,7 @@ static shopitems *parse_shop_string(const char *input_string) {
         next_semicolon = strchr(p, ';');
         next_colon = strchr(p, ':');
         /* if there is a stregth specified, figure out what it is, we'll need it soon. */
-        if (next_colon &&(!next_semicolon || next_colon < next_semicolon))
+        if (next_colon && (!next_semicolon || next_colon < next_semicolon))
             items[i].strength = atoi(strchr(p, ':')+1);
 
         if (isdigit(*p) || *p == '*') {
