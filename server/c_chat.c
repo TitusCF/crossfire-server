@@ -211,21 +211,22 @@ static int command_tell_all(object *op, char *params, int pri, int color, int su
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You are no longer allowed to shout or chat.", NULL);
         return 1;
-    } else {
-        if (params == NULL) {
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Shout/Chat what?", NULL);
-            return 1;
-        }
-        draw_ext_info_format(NDI_UNIQUE|NDI_ALL|color, pri, NULL, MSG_TYPE_COMMUNICATION, subtype,
-                             "%s %s: %s",
-                             "%s %s: %s",
-                             op->name, desc, params);
+    }
 
-        /* Lauwenmark : Here we handle the SHOUT global event */
-        execute_global_event(EVENT_SHOUT, op, params, pri);
+    if (params == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Shout/Chat what?", NULL);
         return 1;
     }
+
+    draw_ext_info_format(NDI_UNIQUE|NDI_ALL|color, pri, NULL, MSG_TYPE_COMMUNICATION, subtype,
+                         "%s %s: %s",
+                         "%s %s: %s",
+                         op->name, desc, params);
+
+    /* Lauwenmark : Here we handle the SHOUT global event */
+    execute_global_event(EVENT_SHOUT, op, params, pri);
+    return 1;
 }
 
 /**
@@ -285,7 +286,9 @@ static int do_tell(object *op, char *params, int adjust_listen) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Tell whom what?", NULL);
         return 1;
-    } else if (msg == NULL) {
+    }
+
+    if (msg == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Tell %s what?",
                              "Tell %s what?",

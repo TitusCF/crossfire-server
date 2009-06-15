@@ -423,13 +423,13 @@ void display_high_score(object *op, int max, const char *match) {
         if ((sc = get_score(buf)) == NULL)
             break;
         sc->position = ++j;
-        if (match == NULL
-        || strcasestr_local(sc->name, match)
-        || strcasestr_local(sc->title, match)) {
-            draw_one_high_score(sc, scorebuf, sizeof(scorebuf));
-            i++;
-        } else
+        if (match != NULL
+        && !strcasestr_local(sc->name, match)
+        && !strcasestr_local(sc->title, match))
             continue;
+
+        draw_one_high_score(sc, scorebuf, sizeof(scorebuf));
+        i++;
 
         if (op == NULL)
             LOG(llevDebug, "%s\n", scorebuf);

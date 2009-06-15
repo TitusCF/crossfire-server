@@ -483,16 +483,16 @@ int command_toggle_shout(object *op, char *params) {
         execute_global_event(EVENT_MUZZLE, pl->ob, params);
 
         return 1;
-    } else {
-        pl->ob->contr->no_shout = 0;
-        draw_ext_info(NDI_UNIQUE|NDI_ORANGE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                      "You are allowed to shout and chat again.", NULL);
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                             "You remove %s's muzzle.",
-                             "You remove %s's muzzle.",
-                             pl->ob->name);
-        return 1;
     }
+
+    pl->ob->contr->no_shout = 0;
+    draw_ext_info(NDI_UNIQUE|NDI_ORANGE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
+                  "You are allowed to shout and chat again.", NULL);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                         "You remove %s's muzzle.",
+                         "You remove %s's muzzle.",
+                         pl->ob->name);
+    return 1;
 }
 
 /**
@@ -1024,84 +1024,84 @@ int command_create(object *op, char *params) {
         dm_stack_push(op->contr, tmp->count);
 
         return 1;
-    } else {
-        for (i = 0; i < (set_nrof ? nrof : 1); i++) {
-            archetype *atmp;
-            object *prev = NULL, *head = NULL, *dup;
+    }
 
-            for (atmp = at; atmp != NULL; atmp = atmp->more) {
-                dup = arch_to_object(atmp);
+    for (i = 0; i < (set_nrof ? nrof : 1); i++) {
+        archetype *atmp;
+        object *prev = NULL, *head = NULL, *dup;
 
-                if (at_spell)
-                    object_insert_in_ob(arch_to_object(at_spell), dup);
+        for (atmp = at; atmp != NULL; atmp = atmp->more) {
+            dup = arch_to_object(atmp);
 
-                /*
-                 * The head is what contains all the important bits,
-                 * so just copying it over should be fine.
-                 */
-                if (head == NULL) {
-                    head = dup;
-                    object_copy(tmp, dup);
-                }
-                if (settings.real_wiz == FALSE)
-                    SET_FLAG(dup, FLAG_WAS_WIZ);
-                dup->x = op->x+dup->arch->clone.x;
-                dup->y = op->y+dup->arch->clone.y;
-                dup->map = op->map;
+            if (at_spell)
+                object_insert_in_ob(arch_to_object(at_spell), dup);
 
-                if (head != dup) {
-                    dup->head = head;
-                    prev->more = dup;
-                }
-                prev = dup;
-            }
-
-            if (QUERY_FLAG(head, FLAG_ALIVE)) {
-                object *check = head;
-                int size_x = 0;
-                int size_y = 0;
-
-                while (check) {
-                    size_x = MAX(size_x, check->arch->clone.x);
-                    size_y = MAX(size_y, check->arch->clone.y);
-                    check = check->more;
-                }
-
-                if (out_of_map(op->map, head->x+size_x, head->y+size_y)) {
-                    if (head->x < size_x || head->y < size_y) {
-                        dm_stack_pop(op->contr);
-                        object_free(head);
-                        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                      "Object too big to insert in map, or wrong position.", NULL);
-                        object_free(tmp);
-                        return 1;
-                    }
-
-                    check = head;
-                    while (check) {
-                        check->x -= size_x;
-                        check->y -= size_y;
-                        check = check->more;
-                    }
-                }
-
-                object_insert_in_map(head, op->map, op, 0);
-            } else
-                head = object_insert_in_ob(head, op);
-
-            /* Let's put this created item on stack so dm can access it easily. */
-            /* Wonder if we really want to push all of these, but since
-             * things like rods have nrof 0, we want to cover those.
+            /*
+             * The head is what contains all the important bits,
+             * so just copying it over should be fine.
              */
-            dm_stack_push(op->contr, head->count);
+            if (head == NULL) {
+                head = dup;
+                object_copy(tmp, dup);
+            }
+            if (settings.real_wiz == FALSE)
+                SET_FLAG(dup, FLAG_WAS_WIZ);
+            dup->x = op->x+dup->arch->clone.x;
+            dup->y = op->y+dup->arch->clone.y;
+            dup->map = op->map;
 
-            if (at->clone.randomitems != NULL && !at_spell)
-                create_treasure(at->clone.randomitems, head, GT_APPLY, op->map->difficulty, 0);
+            if (head != dup) {
+                dup->head = head;
+                prev->more = dup;
+            }
+            prev = dup;
         }
 
-        /* free the one we used to copy */
-        object_free(tmp);
+        if (QUERY_FLAG(head, FLAG_ALIVE)) {
+            object *check = head;
+            int size_x = 0;
+            int size_y = 0;
+
+            while (check) {
+                size_x = MAX(size_x, check->arch->clone.x);
+                size_y = MAX(size_y, check->arch->clone.y);
+                check = check->more;
+            }
+
+            if (out_of_map(op->map, head->x+size_x, head->y+size_y)) {
+                if (head->x < size_x || head->y < size_y) {
+                    dm_stack_pop(op->contr);
+                    object_free(head);
+                    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                                  "Object too big to insert in map, or wrong position.", NULL);
+                    object_free(tmp);
+                    return 1;
+                }
+
+                check = head;
+                while (check) {
+                    check->x -= size_x;
+                    check->y -= size_y;
+                    check = check->more;
+                }
+            }
+
+            object_insert_in_map(head, op->map, op, 0);
+        } else
+            head = object_insert_in_ob(head, op);
+
+        /* Let's put this created item on stack so dm can access it easily. */
+        /* Wonder if we really want to push all of these, but since
+         * things like rods have nrof 0, we want to cover those.
+         */
+        dm_stack_push(op->contr, head->count);
+
+        if (at->clone.randomitems != NULL && !at_spell)
+            create_treasure(at->clone.randomitems, head, GT_APPLY, op->map->difficulty, 0);
     }
+
+    /* free the one we used to copy */
+    object_free(tmp);
 
     return 1;
 }
@@ -1924,12 +1924,12 @@ int do_wizard_dm(object *op, char *params, int silent) {
                           "The Dungeon Master has arrived!", NULL);
 
         return 1;
-    } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Sorry Pal, I don't think so.", NULL);
-        op->contr->write_buf[0] = '\0';
-        return 0;
     }
+
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                  "Sorry Pal, I don't think so.", NULL);
+    op->contr->write_buf[0] = '\0';
+    return 0;
 }
 
 /**

@@ -179,15 +179,9 @@ const char *determine_god(object *op) {
  */
 static int same_string(const char *s1, const char *s2) {
     if (s1 == NULL)
-        if (s2 == NULL)
-            return 1;
-        else
-            return 0;
+        return s2 == NULL;
     else
-        if (s2 == NULL)
-            return 0;
-        else
-            return strcmp(s1, s2) == 0;
+        return s2 != NULL && strcmp(s1, s2) == 0;
 }
 
 /**
@@ -316,8 +310,9 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
     if (!pl_god) { /*new convert */
         become_follower(pl, &altar->other_arch->clone);
         return;
+    }
 
-    } else if (!strcmp(pl_god->name, altar->other_arch->clone.name)) {
+    if (!strcmp(pl_god->name, altar->other_arch->clone.name)) {
         /* pray at your gods altar */
         int bonus = (pl->stats.Wis+skill->level)/10;
 
@@ -947,7 +942,9 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
                                  "Your %s already belongs to %s !",
                                  weapon->name, divine_owner);
             return 0;
-        } else if ((owner != NULL) && (!strcmp(owner, op->name))) {
+        }
+
+        if ((owner != NULL) && (!strcmp(owner, op->name))) {
             /* Maybe the weapon itself will not agree ? */
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                  "The %s is not yours, and is magically protected against such changes !",
@@ -1123,8 +1120,8 @@ static void god_intervention(object *op, const object *god, object *skill) {
             object_free(tmp);
             if (success)
                 return;
-            else
-                continue;
+
+            continue;
         }
 
         /* Remove curse */
@@ -1132,8 +1129,8 @@ static void god_intervention(object *op, const object *god, object *skill) {
             && strcmp(item->name, "remove curse") == 0) {
             if (god_removes_curse(op, 0))
                 return;
-            else
-                continue;
+
+            continue;
         }
 
         /* Remove damnation */
@@ -1141,8 +1138,8 @@ static void god_intervention(object *op, const object *god, object *skill) {
             && strcmp(item->name, "remove damnation") == 0) {
             if (god_removes_curse(op, 1))
                 return;
-            else
-                continue;
+
+            continue;
         }
 
         /* Heal depletion */
@@ -1196,8 +1193,8 @@ static void god_intervention(object *op, const object *god, object *skill) {
             && strcmp(item->name, "enchant weapon") == 0) {
             if (god_enchants_weapon(op, god, item, skill))
                 return;
-            else
-                continue;
+
+            continue;
         }
 
         /* Spellbooks - works correctly only for prayers */
@@ -1220,8 +1217,8 @@ static void god_intervention(object *op, const object *god, object *skill) {
         if (!item->invisible) {
             if (god_gives_present(op, god, tr))
                 return;
-            else
-                continue;
+
+            continue;
         }
         /* else ignore it */
     }

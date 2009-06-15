@@ -66,13 +66,12 @@ void receive_party_password(object *op) {
         op->contr->party_to_join = NULL;
         op->contr->state = ST_PLAYING;
         return;
-    } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You entered the wrong password", NULL);
-        op->contr->party_to_join = NULL;
-        op->contr->state = ST_PLAYING;
-        return;
     }
+
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                  "You entered the wrong password", NULL);
+    op->contr->party_to_join = NULL;
+    op->contr->state = ST_PLAYING;
 }
 
 /**

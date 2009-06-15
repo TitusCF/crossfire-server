@@ -147,10 +147,10 @@ int verify_player(const char *name, char *password) {
             if (check_password(password, buf+9)) {
                 close_and_delete(fp, comp);
                 return 0;
-            } else {
-                close_and_delete(fp, comp);
-                return 2;
             }
+
+            close_and_delete(fp, comp);
+            return 2;
         }
     }
     LOG(llevDebug, "Could not find a password line in player %s\n", name);
@@ -510,11 +510,11 @@ void check_login(object *op) {
                 leave(pltmp, 1);
                 final_free_player(pltmp);
                 break;
-            } else {
-                wrong_password(op);
-                return;
             }
-        }
+
+    wrong_password(op);
+	    return;
+	}
     }
 
     snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name, op->name);
@@ -582,7 +582,7 @@ void check_login(object *op) {
         sscanf(bufall, "%s %d\n", buf, &value);
         if (!strcmp(buf, "endplst"))
             break;
-        else if (!strcmp(buf, "title") && settings.set_title == TRUE) {
+        if (!strcmp(buf, "title") && settings.set_title == TRUE) {
             char *p;
 
             p = strchr(bufall, '\n');

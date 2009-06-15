@@ -552,7 +552,9 @@ static int monster_move_no_enemy(object *op) {
                 break;
             }
             return 0;
-        } else if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
+        }
+
+        if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
             monster_move_randomly(op);
 
     } /* stand still */
@@ -1231,7 +1233,9 @@ static int monster_use_range(object *head, object *part, object *pl, int dir) {
 
             /* Success */
             return 1;
-        } else if (wand->type == ROD) {
+        }
+
+        if (wand->type == ROD) {
             /* Found rod/horn, let's use it if possible */
             at_least_one = 1;
             if (wand->stats.hp < MAX(wand->inv->stats.sp, wand->inv->stats.grace))

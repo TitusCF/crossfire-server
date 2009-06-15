@@ -202,10 +202,9 @@ int command_throw(object *op, char *params) {
     skop = find_skill_by_name(op, skill_names[SK_THROWING]);
     if (skop)
         return do_skill(op, op, skop, op->facing, params);
-    else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                      "You have no knowledge of the skill throwing.", NULL);
-    }
+
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+                  "You have no knowledge of the skill throwing.", NULL);
     return 0;
 }
 
@@ -220,45 +219,45 @@ int command_throw(object *op, char *params) {
  * whether skill was used or not.
  */
 int command_apply(object *op, char *params) {
+    int aflag = 0;
+    object *inv = op->inv;
+
     if (!params) {
         player_apply_below(op);
         return 0;
-    } else {
-        int aflag = 0;
-        object *inv = op->inv;
-
-        while (*params == ' ')
-            params++;
-        if (!strncmp(params, "-a ", 3)) {
-            aflag = AP_APPLY;
-            params += 3;
-        }
-        if (!strncmp(params, "-u ", 3)) {
-            aflag = AP_UNAPPLY;
-            params += 3;
-        }
-        if (!strncmp(params, "-b ", 3)) {
-            params += 3;
-            if (op->container)
-                inv = op->container->inv;
-            else {
-                inv = op;
-                while (inv->above)
-                    inv = inv->above;
-            }
-        }
-        while (*params == ' ')
-            params++;
-
-        inv = find_best_apply_object_match(inv, op, params, aflag);
-        if (inv) {
-            player_apply(op, inv, aflag, 0);
-        } else
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "Could not find any match to the %s.",
-                                 "Could not find any match to the %s.",
-                                 params);
     }
+
+    while (*params == ' ')
+        params++;
+    if (!strncmp(params, "-a ", 3)) {
+        aflag = AP_APPLY;
+        params += 3;
+    }
+    if (!strncmp(params, "-u ", 3)) {
+        aflag = AP_UNAPPLY;
+        params += 3;
+    }
+    if (!strncmp(params, "-b ", 3)) {
+        params += 3;
+        if (op->container)
+            inv = op->container->inv;
+        else {
+            inv = op;
+            while (inv->above)
+                inv = inv->above;
+        }
+    }
+    while (*params == ' ')
+        params++;
+
+    inv = find_best_apply_object_match(inv, op, params, aflag);
+    if (inv) {
+        player_apply(op, inv, aflag, 0);
+    } else
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                             "Could not find any match to the %s.",
+                             "Could not find any match to the %s.",
+                             params);
     return 0;
 }
 

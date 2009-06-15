@@ -121,28 +121,28 @@ int command_language(object *op, char *params) {
                                  language_names[i]);
         }
         return 0;
-    } else {
-        for (i = 0; i < NUM_LANGUAGES; i++) {
-            if (!strcmp(language_codes[i], params)) {
-                language = i;
-                i = NUM_LANGUAGES;
-            }
-        }
-        /* Error out if unknown language. */
-        if (language == -1) {
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          "Unknown language", NULL);
-            return 0;
-        }
-        op->contr->language = language;
-        language_str = language_names[language];
-
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(language, I18N_MSG_CMISC_006),
-                             i18n_translate(language, I18N_MSG_CMISC_006),
-                             language_str);
-        return 0;
     }
+
+    for (i = 0; i < NUM_LANGUAGES; i++) {
+	if (!strcmp(language_codes[i], params)) {
+	    language = i;
+	    i = NUM_LANGUAGES;
+	}
+    }
+    /* Error out if unknown language. */
+    if (language == -1) {
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      "Unknown language", NULL);
+	return 0;
+    }
+    op->contr->language = language;
+    language_str = language_names[language];
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                         i18n_translate(language, I18N_MSG_CMISC_006),
+                         i18n_translate(language, I18N_MSG_CMISC_006),
+                         language_str);
+    return 0;
 }
 
 /**
@@ -2230,7 +2230,6 @@ void receive_player_password(object *op) {
     strcpy(op->contr->password, crypt_string(op->contr->write_buf+1, NULL));
     op->contr->state = ST_ROLL_STAT;
     check_login(op);
-    return;
 }
 
 /**

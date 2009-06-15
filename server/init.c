@@ -319,13 +319,13 @@ static void parse_args(int argc, char *argv[], int pass) {
                     if ((on_arg+options[i].num_args) >= argc) {
                         fprintf(stderr, "%s requires an argument.\n", options[i].cmd_option);
                         exit(1);
-                    } else {
-                        if (options[i].num_args == 1)
-                            ((cmdlinefunc_args1)options[i].func)(argv[on_arg+1]);
-                        if (options[i].num_args == 2)
-                            ((cmdlinefunc_args2)options[i].func)(argv[on_arg+1], argv[on_arg+2]);
-                        on_arg += options[i].num_args+1;
                     }
+
+                    if (options[i].num_args == 1)
+                        ((cmdlinefunc_args1)options[i].func)(argv[on_arg+1]);
+                    if (options[i].num_args == 2)
+                        ((cmdlinefunc_args2)options[i].func)(argv[on_arg+1], argv[on_arg+2]);
+                    on_arg += options[i].num_args+1;
                 } else { /* takes no args */
                     ((cmdlinefunc_args0)options[i].func)();
                     on_arg++;
