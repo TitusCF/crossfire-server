@@ -685,7 +685,7 @@ static int unapply_special(object *who, object *op, int aflags) {
     case SKILL:         /* allows objects to impart skills */
     case SKILL_TOOL:
         if (op != who->chosen_skill)
-            LOG(llevError, "BUG: apply_special(): applied skill is not a chosen skill\n");
+            LOG(llevError, "BUG: unapply_special(): applied skill is not a chosen skill\n");
         if (who->type == PLAYER) {
             if (who->contr->shoottype == range_skill)
                 who->contr->shoottype = range_none;
