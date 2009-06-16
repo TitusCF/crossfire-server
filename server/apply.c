@@ -1117,7 +1117,7 @@ int check_weapon_power(const object *who, int improves) {
  */
 int apply_special(object *who, object *op, int aflags) {
     int basic_flag = aflags&AP_BASIC_FLAGS;
-    object *tmp, *skop = NULL;
+    object *tmp, *skop;
     int i;
     char name_op[MAX_BUF];
 
@@ -1210,7 +1210,8 @@ int apply_special(object *who, object *op, int aflags) {
              */
             change_skill(who, skop, (aflags&AP_NOPRINT));
         }
-    }
+    } else
+        skop = NULL;
 
     if (who->type == PLAYER
     && op->item_power
@@ -1230,15 +1231,15 @@ int apply_special(object *who, object *op, int aflags) {
     if (settings.personalized_blessings) {
         const char *owner = object_get_value(op, "item_owner");
         if (owner != NULL && strcmp(owner, who->name)) {
-            const char *will = object_get_value(op, "item_willpower");
-            long item_will = 0;
-            long margin = 0;
-            const char *msg = NULL;
-            int random_effect = 0;
-            int damage_percentile = 0;
+            const char *will;
+            long item_will;
+            long margin;
+            const char *msg;
+            int random_effect;
+            int damage_percentile;
 
-            if (will != NULL)
-                item_will = atol(will);
+            will = object_get_value(op, "item_willpower");
+            item_will = will != NULL ? atol(will) : 0;
             if (item_will > who->stats.exp) {
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                      "This %s refuses to serve you - it keeps evading your hand !",
@@ -1265,6 +1266,9 @@ int apply_special(object *who, object *op, int aflags) {
                 damage_percentile = 15;
             } else if (random_effect > 0) {
                 msg = "You hear the %s sighing !";
+                damage_percentile = 0;
+            } else {
+                msg = NULL;
                 damage_percentile = 0;
             }
             if (msg != NULL)
@@ -1294,8 +1298,7 @@ int apply_special(object *who, object *op, int aflags) {
 
     switch (op->type) {
     case WEAPON: {
-            int ownerlen = 0;
-            char *quotepos = NULL;
+            char *quotepos;
 
             if (!check_weapon_power(who, op->last_eat)) {
                 if (!(aflags&AP_NOPRINT))
@@ -1308,20 +1311,18 @@ int apply_special(object *who, object *op, int aflags) {
                     (void)object_insert_in_ob(tmp, who);
                 return 1;
             }
+
             quotepos = strstr(op->name, "'");
-            if (quotepos != NULL) {
-                ownerlen = quotepos-op->name;
-                if (op->level && strncmp(op->name, who->name, ownerlen)) {
-                    /* if the weapon does not have the name as the
-                     * character, can't use it. (Ragnarok's sword
-                     * attempted to be used by Foo: won't work) */
-                    if (!(aflags&AP_NOPRINT))
-                        draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                      "The weapon does not recognize you as its owner.", NULL);
-                    if (tmp != NULL)
-                        (void)object_insert_in_ob(tmp, who);
-                    return 1;
-                }
+            if (quotepos != NULL && op->level && strncmp(op->name, who->name, quotepos-op->name)) {
+                /* if the weapon does not have the name as the
+                 * character, can't use it. (Ragnarok's sword
+                 * attempted to be used by Foo: won't work) */
+                if (!(aflags&AP_NOPRINT))
+                    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                        "The weapon does not recognize you as its owner.", NULL);
+                if (tmp != NULL)
+                    (void)object_insert_in_ob(tmp, who);
+                return 1;
             }
             SET_FLAG(op, FLAG_APPLIED);
 
@@ -1517,14 +1518,15 @@ int apply_special(object *who, object *op, int aflags) {
  * 1 if object was initialized, 0 else.
  */
 int auto_apply(object *op) {
-    object *tmp = NULL;
-    int i;
+    object *tmp;
 
     switch (op->type) {
     case SHOP_FLOOR:
         if (!HAS_RANDOM_ITEMS(op))
             return 0;
         do {
+            int i;
+
             i = 10; /* let's give it 10 tries */
             while ((tmp = generate_treasure(op->randomitems, op->stats.exp ? (int)op->stats.exp : MAX(op->map->difficulty, 5))) == NULL
             && --i)
@@ -1542,6 +1544,7 @@ int auto_apply(object *op) {
         object_insert_in_map(tmp, op->map, NULL, 0);
         CLEAR_FLAG(op, FLAG_AUTO_APPLY);
         identify(tmp);
+        return 1;
         break;
 
     case TREASURE:
@@ -1566,7 +1569,7 @@ int auto_apply(object *op) {
         object_free(op);
         break;
     }
-    return tmp ? 1 : 0;
+    return 0;
 }
 
 /**
@@ -1762,18 +1765,18 @@ void scroll_failure(object *op, int failure, int power) {
  * what kind of changes to apply. Should be of type CLASS.
  */
 void apply_changes_to_player(object *pl, object *change) {
-    int excess_stat = 0;  /* if the stat goes over the maximum
-                           * for the race, put the excess stat some
-                           * where else.
-                           */
-
     switch (change->type) {
     case CLASS: {
+            int i, j;
+            int excess_stat = 0;  /* if the stat goes over the maximum
+                                   * for the race, put the excess stat some
+                                   * where else.
+                                   */
+
             /* the following code assigns stats up to the stat max
              * for the race, and if the stat max is exceeded,
              * tries to randomly reassign the excess stat
              */
-            int i, j;
             for (i = 0; i < NUM_STATS; i++) {
                 sint8 stat = get_attr_value(&pl->contr->orig_stats, i);
                 int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
