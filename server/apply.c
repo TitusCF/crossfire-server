@@ -1116,6 +1116,7 @@ int apply_special(object *who, object *op, int aflags) {
     int basic_flag = aflags&AP_BASIC_FLAGS;
     object *tmp, *skop;
     char name_op[MAX_BUF];
+    char *quotepos;
 
     if (who == NULL) {
         LOG(llevError, "apply_special() from object without environment.\n");
@@ -1184,8 +1185,6 @@ int apply_special(object *who, object *op, int aflags) {
 
     switch (op->type) {
     case WEAPON: {
-            char *quotepos;
-
             if (!check_weapon_power(who, op->last_eat)) {
                 if (!(aflags&AP_NOPRINT))
                     draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY,
@@ -1299,7 +1298,9 @@ int apply_special(object *who, object *op, int aflags) {
                 (void)object_insert_in_ob(tmp, who);
             return 1;
         }
-        if (op->level && strncmp(op->name, who->name, strlen(who->name))) {
+
+        quotepos = strstr(op->name, "'");
+        if (quotepos != NULL && op->level && strncmp(op->name, who->name, quotepos-op->name)) {
             if (!(aflags&AP_NOPRINT)) {
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                               "The weapon does not recognize you as its owner.", NULL);
