@@ -1184,42 +1184,41 @@ int apply_special(object *who, object *op, int aflags) {
     tmp = op->nrof <= 1 ? NULL : object_split(op, op->nrof-1, NULL, 0);
 
     switch (op->type) {
-    case WEAPON: {
-            if (!check_weapon_power(who, op->last_eat)) {
-                if (!(aflags&AP_NOPRINT))
-                    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY,
-                                  MSG_TYPE_APPLY_ERROR,
-                                  "That weapon is too powerful for you to use.  It would consume your soul!",
-                                  NULL);
+    case WEAPON:
+        if (!check_weapon_power(who, op->last_eat)) {
+            if (!(aflags&AP_NOPRINT))
+                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY,
+                    MSG_TYPE_APPLY_ERROR,
+                    "That weapon is too powerful for you to use.  It would consume your soul!",
+                    NULL);
 
-                if (tmp != NULL)
-                    (void)object_insert_in_ob(tmp, who);
-                return 1;
-            }
-
-            if (!apply_check_owner(who, op, aflags)) {
-                if (tmp != NULL)
-                    (void)object_insert_in_ob(tmp, who);
-                return 1;
-            }
-
-            SET_FLAG(op, FLAG_APPLIED);
-
-            if (skop)
-                change_skill(who, skop, 1);
-            if (!QUERY_FLAG(who, FLAG_READY_WEAPON))
-                SET_FLAG(who, FLAG_READY_WEAPON);
-
-            if (!(aflags&AP_NOPRINT)) {
-                query_name(op, name_op, MAX_BUF);
-                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                     "You wield %s.", "You wield %s.",
-                                     name_op);
-            }
-
-            (void)change_abil(who, op);
-            break;
+            if (tmp != NULL)
+                (void)object_insert_in_ob(tmp, who);
+            return 1;
         }
+
+        if (!apply_check_owner(who, op, aflags)) {
+            if (tmp != NULL)
+                (void)object_insert_in_ob(tmp, who);
+            return 1;
+        }
+
+        SET_FLAG(op, FLAG_APPLIED);
+
+        if (skop)
+            change_skill(who, skop, 1);
+        if (!QUERY_FLAG(who, FLAG_READY_WEAPON))
+            SET_FLAG(who, FLAG_READY_WEAPON);
+
+        if (!(aflags&AP_NOPRINT)) {
+            query_name(op, name_op, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You wield %s.", "You wield %s.",
+                name_op);
+        }
+
+        (void)change_abil(who, op);
+        break;
 
     case ARMOUR:
     case HELMET:
