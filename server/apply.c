@@ -49,6 +49,7 @@
 static int apply_check_apply_restrictions(object *who, object *op, int aflags);
 static int apply_check_personalized_blessings(object *who, object *op);
 static int apply_check_item_power(object *who, object *op, int aflags);
+static int apply_check_owner(const object *who, const object *op, int aflags);
 
 /**
  * Can transport hold object op?
@@ -1116,7 +1117,6 @@ int apply_special(object *who, object *op, int aflags) {
     int basic_flag = aflags&AP_BASIC_FLAGS;
     object *tmp, *skop;
     char name_op[MAX_BUF];
-    char *quotepos;
 
     if (who == NULL) {
         LOG(llevError, "apply_special() from object without environment.\n");
@@ -1197,18 +1197,12 @@ int apply_special(object *who, object *op, int aflags) {
                 return 1;
             }
 
-            quotepos = strstr(op->name, "'");
-            if (quotepos != NULL && op->level && strncmp(op->name, who->name, quotepos-op->name)) {
-                /* if the weapon does not have the name as the
-                 * character, can't use it. (Ragnarok's sword
-                 * attempted to be used by Foo: won't work) */
-                if (!(aflags&AP_NOPRINT))
-                    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                        "The weapon does not recognize you as its owner.", NULL);
+            if (!apply_check_owner(who, op, aflags)) {
                 if (tmp != NULL)
                     (void)object_insert_in_ob(tmp, who);
                 return 1;
             }
+
             SET_FLAG(op, FLAG_APPLIED);
 
             if (skop)
@@ -1299,12 +1293,7 @@ int apply_special(object *who, object *op, int aflags) {
             return 1;
         }
 
-        quotepos = strstr(op->name, "'");
-        if (quotepos != NULL && op->level && strncmp(op->name, who->name, quotepos-op->name)) {
-            if (!(aflags&AP_NOPRINT)) {
-                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                              "The weapon does not recognize you as its owner.", NULL);
-            }
+        if (!apply_check_owner(who, op, aflags)) {
             if (tmp != NULL)
                 (void)object_insert_in_ob(tmp, who);
             return 1;
@@ -1910,4 +1899,34 @@ static int apply_check_personalized_blessings(object *who, object *op) {
     }
 
     return 1;
+}
+
+/**
+ * Checks that the item's owner matches the applier. If the weapon does not
+ * have the name as the character, can't use it. (Ragnarok's sword attempted to
+ * be used by Foo: won't work).
+ *
+ * @param who
+ * the object applying the item
+ * @param op
+ * the item being applied
+ * @param aflags
+ * combination of @ref AP_xxx "AP_xxx" flags
+ * @return
+ * whether applying is possible
+ */
+static int apply_check_owner(const object *who, const object *op, int aflags) {
+    const char *quotepos;
+
+    if (op->level == 0)
+        return 1;
+
+    quotepos = strstr(op->name, "'");
+    if (quotepos == NULL || strncmp(op->name, who->name, quotepos-op->name) == 0)
+        return 1;
+
+    if (!(aflags&AP_NOPRINT))
+        draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "The weapon does not recognize you as its owner.", NULL);
+    return 0;
 }
