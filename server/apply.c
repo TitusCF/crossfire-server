@@ -50,6 +50,7 @@ static int apply_check_apply_restrictions(object *who, object *op, int aflags);
 static int apply_check_personalized_blessings(object *who, const object *op);
 static int apply_check_item_power(const object *who, const object *op, int aflags);
 static int apply_check_owner(const object *who, const object *op, int aflags);
+static void apply_update_ranged_skill(const object *who, object *op, int aflags);
 
 /**
  * Can transport hold object op?
@@ -1248,29 +1249,7 @@ int apply_special(object *who, object *op, int aflags) {
             return 1;
         }
 
-        if (who->type == PLAYER) {
-            who->contr->shoottype = range_skill;
-            who->contr->ranges[range_skill] = op;
-            if (!op->invisible) {
-                if (!(aflags&AP_NOPRINT)) {
-                    query_name(op, name_op, MAX_BUF);
-                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                         "You ready %s.",
-                                         "You ready %s.",
-                                         name_op);
-                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                         "You can now use the skill: %s.",
-                                         "You can now use the skill: %s.",
-                                         op->skill);
-                }
-            } else {
-                if (!(aflags&AP_NOPRINT))
-                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                         "Readied skill: %s.",
-                                         "Readied skill: %s.",
-                                         op->skill ? op->skill : op->name);
-            }
-        }
+        apply_update_ranged_skill(who, op, aflags);
         SET_FLAG(op, FLAG_APPLIED);
         (void)change_abil(who, op);
         who->chosen_skill = op;
@@ -1927,4 +1906,44 @@ static int apply_check_owner(const object *who, const object *op, int aflags) {
         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "The weapon does not recognize you as its owner.", NULL);
     return 0;
+}
+
+/**
+ * Updates ranged skill information.
+ *
+ * @param who
+ * the object applying the item
+ * @param op
+ * the item being applied
+ * @param aflags
+ * combination of @ref AP_xxx "AP_xxx" flags
+ */
+static void apply_update_ranged_skill(const object *who, object *op, int aflags) {
+    if (who->type != PLAYER) {
+        return;
+    }
+
+    who->contr->shoottype = range_skill;
+    who->contr->ranges[range_skill] = op;
+    if (op->invisible) {
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "Readied skill: %s.",
+                "Readied skill: %s.",
+                op->skill ? op->skill : op->name);
+    } else {
+        if (!(aflags&AP_NOPRINT)) {
+            char name_op[MAX_BUF];
+
+            query_name(op, name_op, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You ready %s.",
+                "You ready %s.",
+                name_op);
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You can now use the skill: %s.",
+                "You can now use the skill: %s.",
+                op->skill);
+        }
+    }
 }
