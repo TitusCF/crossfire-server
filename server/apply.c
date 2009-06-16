@@ -1485,13 +1485,11 @@ int apply_special(object *who, object *op, int aflags) {
         break;
 
     default:
-        {
-            query_name(op, name_op, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "You apply %s.",
-                                 "You apply %s.",
-                                 name_op);
-        }
+        query_name(op, name_op, MAX_BUF);
+        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                             "You apply %s.",
+                             "You apply %s.",
+                             name_op);
         break;
     } /* end of switch op->type */
 
