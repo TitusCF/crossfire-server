@@ -1321,9 +1321,8 @@ int apply_special(object *who, object *op, int aflags) {
                     (void)object_insert_in_ob(tmp, who);
                 return 1;
             }
-            /* BUG? It seems the value of quotepos is never used. */
             if ((quotepos = strstr(op->name, "'")) != NULL) {
-                ownerlen = strstr(op->name, "'")-op->name;
+                ownerlen = quotepos-op->name;
                 if (op->level && strncmp(op->name, who->name, ownerlen)) {
                     /* if the weapon does not have the name as the
                      * character, can't use it. (Ragnarok's sword
