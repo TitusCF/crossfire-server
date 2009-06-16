@@ -1327,6 +1327,28 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
 }
 
 /**
+ * Returns the "quality" value of a weapon of a monster. Higher quality values
+ * are considered better.
+ *
+ * @param item
+ * the item to check
+ * @return the quality value
+ */
+static int monster_get_weapon_quality(const object *item) {
+    int val;
+    int i;
+
+    val = item->stats.dam;
+    val += item->magic*3;
+    /* Monsters don't really get benefits from things like regen rates
+     * from items.  But the bonus for their stats are very important.
+     */
+    for (i = 0; i < NUM_STATS; i++)
+        val += get_attr_value(&item->stats, i)*2;
+    return val;
+}
+
+/**
  * Checks if using weapon 'item' would be better for 'who'.
  * This is a very simplistic check - also checking things
  * like speed and ac are also relevant.
@@ -1340,7 +1362,7 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
  */
 static int monster_check_good_weapon(object *who, object *item) {
     object *other_weap;
-    int val = 0, i;
+    int val;
 
     other_weap = object_find_by_type_applied(who, item->type);
     if (other_weap == NULL) /* No other weapons */
@@ -1352,14 +1374,7 @@ static int monster_check_good_weapon(object *who, object *item) {
      * eg, magic affects both damage and wc, so it has more weight
      */
 
-    val = item->stats.dam-other_weap->stats.dam;
-    val += (item->magic-other_weap->magic)*3;
-    /* Monsters don't really get benefits from things like regen rates
-     * from items.  But the bonus for their stats are very important.
-     */
-    for (i = 0; i < NUM_STATS; i++)
-        val += (get_attr_value(&item->stats, i)-get_attr_value(&other_weap->stats, i))*2;
-
+    val = monster_get_weapon_quality(item)-monster_get_weapon_quality(other_weap);
     return val > 0;
 }
 
