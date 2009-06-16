@@ -61,16 +61,14 @@ static void poison_living(object *op, object *hitter, int dam);
  * item to cancel. Its inventory will also be cancelled.
  */
 static void cancellation(object *op) {
-    object *tmp;
-
     if (op->invisible)
         return;
 
     if (QUERY_FLAG(op, FLAG_ALIVE) || op->type == CONTAINER  || op->type == THROWN_OBJ) {
         /* Recur through the inventory */
         FOR_INV_PREPARE(op, inv)
-            if (!did_make_save_item(tmp, AT_CANCELLATION, op))
-                cancellation(tmp);
+            if (!did_make_save_item(inv, AT_CANCELLATION, op))
+                cancellation(inv);
         FOR_INV_FINISH();
     } else if (FABS(op->magic) <= rndm(0, 5)) {
         /* Nullify this object. This code could probably be more complete */
