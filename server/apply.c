@@ -47,8 +47,8 @@
 #include <math.h>
 
 static int apply_check_apply_restrictions(object *who, object *op, int aflags);
-static int apply_check_personalized_blessings(object *who, object *op);
-static int apply_check_item_power(object *who, object *op, int aflags);
+static int apply_check_personalized_blessings(object *who, const object *op);
+static int apply_check_item_power(const object *who, const object *op, int aflags);
 static int apply_check_owner(const object *who, const object *op, int aflags);
 
 /**
@@ -939,7 +939,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
  * See include/define.h for detailed description of the meaning of
  * these return values.
  */
-int can_apply_object(object *who, object *op) {
+int can_apply_object(const object *who, const object *op) {
     int i, retval = 0;
     object *tmp = NULL, *ws = NULL;
 
@@ -1808,7 +1808,7 @@ static int apply_check_apply_restrictions(object *who, object *op, int aflags) {
  * @return
  * whether applying is possible
  */
-static int apply_check_item_power(object *who, object *op, int aflags) {
+static int apply_check_item_power(const object *who, const object *op, int aflags) {
     if (who->type != PLAYER)
         return 1;
 
@@ -1836,7 +1836,7 @@ static int apply_check_item_power(object *who, object *op, int aflags) {
  * @return
  * whether applying is possible
  */
-static int apply_check_personalized_blessings(object *who, object *op) {
+static int apply_check_personalized_blessings(object *who, const object *op) {
     const char *owner;
     const char *will;
     long item_will;

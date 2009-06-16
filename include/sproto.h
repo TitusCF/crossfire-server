@@ -11,7 +11,7 @@ void do_forget_spell(object *op, const char *spell);
 int manual_apply(object *op, object *tmp, int aflag);
 int player_apply(object *pl, object *op, int aflag, int quiet);
 void player_apply_below(object *pl);
-int can_apply_object(object *who, object *op);
+int can_apply_object(const object *who, const object *op);
 int check_weapon_power(const object *who, int improvs);
 int apply_special(object *who, object *op, int aflags);
 int auto_apply(object *op);
