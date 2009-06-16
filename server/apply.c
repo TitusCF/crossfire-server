@@ -105,9 +105,8 @@ int should_director_abort(object *op, object *victim) {
     if (op->race
     && (!(victim->arch && arch_flag && victim->arch->name) || strcmp(op->race, victim->arch->name))
     && (!(victim->name && name_flag) || strcmp(op->race, victim->name))
-    && (!(victim->race && race_flag) || strcmp(op->race, victim->race))) {
+    && (!(victim->race && race_flag) || strcmp(op->race, victim->race)))
         return 1;
-    }
 
     /* If the director has slaying set, only affect objects where none
      * of arch, name, or race match.
@@ -115,9 +114,9 @@ int should_director_abort(object *op, object *victim) {
     if (op->slaying
     && ((victim->arch && arch_flag && victim->arch->name && !strcmp(op->slaying, victim->arch->name))
         || (victim->name && name_flag && !strcmp(op->slaying, victim->name))
-        || (victim->race && race_flag && !strcmp(op->slaying, victim->race)))) {
+        || (victim->race && race_flag && !strcmp(op->slaying, victim->race))))
         return 1;
-    }
+
     return 0;
 }
 
@@ -134,9 +133,9 @@ void handle_apply_yield(object *tmp) {
     yield = object_get_value(tmp, "on_use_yield");
     if (yield != NULL) {
         object *drop = create_archetype(yield);
-        if (tmp->env) {
+        if (tmp->env)
             drop = object_insert_in_ob(drop, tmp->env);
-        } else {
+        else {
             drop->x = tmp->x;
             drop->y = tmp->y;
             object_insert_in_map(drop, tmp->map, tmp, INS_BELOW_ORIGINATOR);
@@ -159,9 +158,8 @@ int set_object_face_main(object *op) {
     int newface = op->arch->clone.face->number;
     sstring saved = object_get_value(op, "face_closed");
 
-    if (saved) {
+    if (saved)
         newface = find_face(saved, newface);
-    }
     if (newface && op->face != &new_faces[newface]) {
         op->face = &new_faces[newface];
         return TRUE;
@@ -193,10 +191,8 @@ static int set_object_face_other(object *op) {
     }
 
     custom = object_get_value(op, "face_opened");
-    if (custom) {
+    if (custom)
         newface = find_face(custom, newface);
-    }
-
     if (newface && op->face->number != newface) {
         op->face = &new_faces[newface];
         return TRUE;
@@ -258,11 +254,10 @@ int apply_container(object *op, object *sack) {
                              name_tmp);
         CLEAR_FLAG(op->container, FLAG_APPLIED);
         op->container = NULL;
-        if (set_object_face_main(tmp)) {
+        if (set_object_face_main(tmp))
             esrv_update_item(UPD_FLAGS|UPD_FACE, op, tmp);
-        } else {
+        else
             esrv_update_item(UPD_FLAGS, op, tmp);
-        }
         if (tmp == sack)
             return 1;
     }
@@ -337,11 +332,10 @@ int apply_container(object *op, object *sack) {
                              name_sack);
         SET_FLAG(sack, FLAG_APPLIED);
         op->container = sack;
-        if (set_object_face_other(sack)) {
+        if (set_object_face_other(sack))
             esrv_update_item(UPD_FLAGS|UPD_FACE, op, sack);
-        } else {
+        else
             esrv_update_item(UPD_FLAGS, op, sack);
-        }
         esrv_send_inventory(op, sack);
     } else { /* sack is in players inventory */
         if (QUERY_FLAG(sack, FLAG_APPLIED)) {  /* readied sack becoming open */
@@ -352,18 +346,16 @@ int apply_container(object *op, object *sack) {
                                  name_sack);
             SET_FLAG(sack, FLAG_APPLIED);
             op->container = sack;
-            if (set_object_face_other(sack)) {
+            if (set_object_face_other(sack))
                 esrv_update_item(UPD_FLAGS|UPD_FACE, op, sack);
-            } else {
+            else
                 esrv_update_item(UPD_FLAGS, op, sack);
-            }
             esrv_send_inventory(op, sack);
         } else {
             object *left = NULL;
 
-            if (sack->nrof > 1) {
+            if (sack->nrof > 1)
                 left = object_split(sack, sack->nrof-1, NULL, 1);
-            }
 
             CLEAR_FLAG(sack, FLAG_APPLIED);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
@@ -415,9 +407,8 @@ void do_learn_spell(object *op, object *spell, int special_prayer) {
     object_copy(spell, tmp);
     object_insert_in_ob(tmp, op);
 
-    if (special_prayer) {
+    if (special_prayer)
         SET_FLAG(tmp, FLAG_STARTEQUIP);
-    }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                          "Type 'bind cast %s to store the spell in a key.",
@@ -691,9 +682,8 @@ static int unapply_special(object *who, object *op, int aflags) {
 
     case SKILL:         /* allows objects to impart skills */
     case SKILL_TOOL:
-        if (op != who->chosen_skill) {
+        if (op != who->chosen_skill)
             LOG(llevError, "BUG: apply_special(): applied skill is not a chosen skill\n");
-        }
         if (who->type == PLAYER) {
             if (who->contr->shoottype == range_skill)
                 who->contr->shoottype = range_none;
@@ -743,14 +733,12 @@ static int unapply_special(object *who, object *op, int aflags) {
                                  "You unready %s.",
                                  "You unready %s.",
                                  name);
-        if (who->type == PLAYER) {
+        if (who->type == PLAYER)
             who->contr->shoottype = range_none;
-        } else {
-            if (op->type == BOW)
-                CLEAR_FLAG(who, FLAG_READY_BOW);
-            else
-                CLEAR_FLAG(who, FLAG_READY_RANGE);
-        }
+        else if (op->type == BOW)
+            CLEAR_FLAG(who, FLAG_READY_BOW);
+        else
+            CLEAR_FLAG(who, FLAG_READY_RANGE);
         break;
 
     case BUILDER:
@@ -893,9 +881,8 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
              */
             while (who->body_used[i]+op->body_info[i] < 0) {
                 tmp = get_item_from_body_location(last, i);
-                if (!tmp) {
+                if (!tmp)
                     return 1;
-                }
 
                 /* If just printing, we don't care about cursed status */
                 if ((aflags&AP_IGNORE_CURSE)
@@ -996,9 +983,9 @@ int can_apply_object(object *who, object *op) {
                 }
 
                 tmp1 = get_item_from_body_location(who->inv, i);
-                if (!tmp1) {
+                if (!tmp1)
                     retval |= CAN_APPLY_NEVER;
-                } else {
+                else {
                     /* need to unapply something.  However, if this
                      * something is different than we had found before,
                      * it means they need to apply multiple objects
@@ -1006,9 +993,8 @@ int can_apply_object(object *who, object *op) {
                     retval |= CAN_APPLY_UNAPPLY;
                     if (!tmp)
                         tmp = tmp1;
-                    else if (tmp != tmp1) {
+                    else if (tmp != tmp1)
                         retval |= CAN_APPLY_UNAPPLY_MULT;
-                    }
                     /* This object isn't using up all the slots, so
                      * there must be another.  If so, and if the new
                      * item doesn't need all the slots, the player
@@ -1458,9 +1444,8 @@ int apply_special(object *who, object *op, int aflags) {
                                          name_op);
                 }
                 who->contr->shoottype = range_bow;
-            } else {
+            } else
                 who->contr->shoottype = range_misc;
-            }
         } else {
             if (op->type == BOW)
                 SET_FLAG(who, FLAG_READY_BOW);
@@ -1513,9 +1498,8 @@ int apply_special(object *who, object *op, int aflags) {
             SET_FLAG(op, FLAG_KNOWN_CURSED);
         }
     }
-    if (who->type == PLAYER) {
+    if (who->type == PLAYER)
         esrv_update_item(UPD_NROF|UPD_FLAGS|UPD_WEIGHT, who, op);
-    }
     return 0;
 }
 
@@ -1679,9 +1663,8 @@ void fix_auto_apply(mapstruct *m) {
                     tmp->randomitems = NULL;
                 }
 
-                if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
+                if (QUERY_FLAG(tmp, FLAG_MONSTER))
                     monster_check_apply_all(tmp);
-                }
             } FOR_MAP_FINISH();
 
     for (x = 0; x < MAP_WIDTH(m); x++)
