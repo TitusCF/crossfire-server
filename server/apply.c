@@ -62,10 +62,7 @@
  * 1 if can hold, 0 else.
  */
 int transport_can_hold(const object *transport, const object *op, int nrof) {
-    if (op->weight*nrof+transport->carrying > transport->weight_limit)
-        return 0;
-    else
-        return 1;
+    return op->weight*nrof+transport->carrying <= transport->weight_limit;
 }
 
 /**
@@ -1061,11 +1058,7 @@ int check_weapon_power(const object *who, int improves) {
      * so we just use overall level.
      */
 #if 1
-    if ((who->level/5)+5 >= improves)
-        return 1;
-    else
-        return 0;
-
+    return (who->level/5)+5 >= improves;
 #else
     int level = 0;
 
@@ -1165,7 +1158,9 @@ int apply_special(object *who, object *op, int aflags) {
                                      name_op);
             }
             return 1;
-        } else if (i&CAN_APPLY_RESTRICTION) {
+        }
+
+        if (i&CAN_APPLY_RESTRICTION) {
             if (!(aflags&AP_NOPRINT)) {
                 query_name(op, name_op, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION,
@@ -1187,7 +1182,9 @@ int apply_special(object *who, object *op, int aflags) {
                                   "You need to unapply some item(s):", NULL);
                 unapply_for_ob(who, op, AP_PRINT);
                 return 1;
-            } else if (who->contr->unapply == unapply_always
+            }
+
+            if (who->contr->unapply == unapply_always
             || !(i&CAN_APPLY_UNAPPLY_CHOICE)) {
                 i = unapply_for_ob(who, op, aflags);
                 if (i)
@@ -1204,12 +1201,12 @@ int apply_special(object *who, object *op, int aflags) {
                                      "You need the %s skill to use this item!",
                                      op->skill);
             return 1;
-        } else {
-            /* While experience will be credited properly, we want to
-             * change the skill so that the dam and wc get updated
-             */
-            change_skill(who, skop, (aflags&AP_NOPRINT));
         }
+
+        /* While experience will be credited properly, we want to
+         * change the skill so that the dam and wc get updated
+         */
+        change_skill(who, skop, (aflags&AP_NOPRINT));
     } else
         skop = NULL;
 
