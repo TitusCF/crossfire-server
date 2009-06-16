@@ -1180,10 +1180,7 @@ int apply_special(object *who, object *op, int aflags) {
      * below - that is already taken care of by can_apply_object.
      */
 
-    if (op->nrof > 1)
-        tmp = object_split(op, op->nrof-1, NULL, 0);
-    else
-        tmp = NULL;
+    tmp = op->nrof <= 1 ? NULL : object_split(op, op->nrof-1, NULL, 0);
 
     switch (op->type) {
     case WEAPON: {
