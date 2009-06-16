@@ -394,7 +394,8 @@ void do_learn_spell(object *op, object *spell, int special_prayer) {
     }
 
     /* Upgrade special prayers to normal prayers */
-    if ((tmp = check_spell_known(op, spell->name)) != NULL) {
+    tmp = check_spell_known(op, spell->name);
+    if (tmp != NULL) {
         if (special_prayer && !QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
             LOG(llevError, "BUG: do_learn_spell(): spell already known, but not marked as startequip\n");
             return;
@@ -433,7 +434,8 @@ void do_forget_spell(object *op, const char *spell) {
         LOG(llevError, "BUG: do_forget_spell(): not a player\n");
         return;
     }
-    if ((spob = check_spell_known(op, spell)) == NULL) {
+    spob = check_spell_known(op, spell);
+    if (spob == NULL) {
         LOG(llevError, "BUG: do_forget_spell(): spell not known\n");
         return;
     }
@@ -1306,7 +1308,8 @@ int apply_special(object *who, object *op, int aflags) {
                     (void)object_insert_in_ob(tmp, who);
                 return 1;
             }
-            if ((quotepos = strstr(op->name, "'")) != NULL) {
+            quotepos = strstr(op->name, "'");
+            if (quotepos != NULL) {
                 ownerlen = quotepos-op->name;
                 if (op->level && strncmp(op->name, who->name, ownerlen)) {
                     /* if the weapon does not have the name as the
