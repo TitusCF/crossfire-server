@@ -62,7 +62,7 @@
  * 1 if can hold, 0 else.
  */
 int transport_can_hold(const object *transport, const object *op, int nrof) {
-    if ((op->weight*nrof+transport->carrying) > transport->weight_limit)
+    if (op->weight*nrof+transport->carrying > transport->weight_limit)
         return 0;
     else
         return 1;
@@ -91,9 +91,9 @@ int should_director_abort(object *op, object *victim) {
      * subtype 7: all three
      */
     if (op->subtype) {
-        arch_flag = (op->subtype&1);
-        name_flag = (op->subtype&2);
-        race_flag = (op->subtype&4);
+        arch_flag = op->subtype&1;
+        name_flag = op->subtype&2;
+        race_flag = op->subtype&4;
     } else {
         arch_flag = 1;
         name_flag = 1;
@@ -102,20 +102,20 @@ int should_director_abort(object *op, object *victim) {
     /* If the director has race set, only affect objects with a arch,
      * name or race that matches.
      */
-    if ((op->race)
-    && ((!(victim->arch && arch_flag && victim->arch->name) || strcmp(op->race, victim->arch->name)))
-    && ((!(victim->name && name_flag) || strcmp(op->race, victim->name)))
-    && ((!(victim->race && race_flag) || strcmp(op->race, victim->race)))) {
+    if (op->race
+    && (!(victim->arch && arch_flag && victim->arch->name) || strcmp(op->race, victim->arch->name))
+    && (!(victim->name && name_flag) || strcmp(op->race, victim->name))
+    && (!(victim->race && race_flag) || strcmp(op->race, victim->race))) {
         return 1;
     }
 
     /* If the director has slaying set, only affect objects where none
      * of arch, name, or race match.
      */
-    if ((op->slaying)
-    && (((victim->arch && arch_flag && victim->arch->name && !strcmp(op->slaying, victim->arch->name)))
-        || ((victim->name && name_flag && !strcmp(op->slaying, victim->name)))
-        || ((victim->race && race_flag && !strcmp(op->slaying, victim->race))))) {
+    if (op->slaying
+    && ((victim->arch && arch_flag && victim->arch->name && !strcmp(op->slaying, victim->arch->name))
+        || (victim->name && name_flag && !strcmp(op->slaying, victim->name))
+        || (victim->race && race_flag && !strcmp(op->slaying, victim->race)))) {
         return 1;
     }
     return 0;
@@ -626,7 +626,7 @@ void player_apply_below(object *pl) {
     /* If using a container, set the starting item to be the top
      * item in the container.  Otherwise, use the map.
      */
-    tmp = (pl->container != NULL) ? pl->container->inv : pl->below;
+    tmp = pl->container != NULL ? pl->container->inv : pl->below;
 
     /* This is perhaps more complicated.  However, I want to make sure that
      * we don't use a corrupt pointer for the next object, so we get the
@@ -892,7 +892,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
             /* We do a while loop - may need to remove several items
              * in order to free up enough slots.
              */
-            while ((who->body_used[i]+op->body_info[i]) < 0) {
+            while (who->body_used[i]+op->body_info[i] < 0) {
                 tmp = get_item_from_body_location(last, i);
                 if (!tmp) {
                     return 1;
@@ -974,7 +974,7 @@ int can_apply_object(object *who, object *op) {
                  * below isn't really needed.
                  */
                 retval |= CAN_APPLY_NEVER;
-            } else if ((who->body_used[i]+op->body_info[i]) < 0) {
+            } else if (who->body_used[i]+op->body_info[i] < 0) {
                 /* in this case, equipping this would use more free
                  * spots than we have.
                  */
@@ -990,7 +990,7 @@ int can_apply_object(object *who, object *op) {
                  * is being applied may be two handed for example.
                  */
                 if (ws) {
-                    if ((who->body_used[i]-ws->body_info[i]+op->body_info[i]) >= 0) {
+                    if (who->body_used[i]-ws->body_info[i]+op->body_info[i] >= 0) {
                         retval |= CAN_APPLY_UNAPPLY;
                         continue;
                     }
@@ -1015,15 +1015,15 @@ int can_apply_object(object *who, object *op) {
                      * item doesn't need all the slots, the player
                      * then has a choice.
                      */
-                    if (((who->body_used[i]-tmp1->body_info[i]) != who->body_info[i])
-                    && (FABS(op->body_info[i]) < who->body_info[i]))
+                    if (who->body_used[i]-tmp1->body_info[i] != who->body_info[i]
+                    && FABS(op->body_info[i]) < who->body_info[i])
                         retval |= CAN_APPLY_UNAPPLY_CHOICE;
 
                     /* Does unequipping 'tmp1' free up enough slots
                      * for this to be equipped?  If not, there must
                      * be something else to unapply.
                      */
-                    if ((who->body_used[i]+op->body_info[i]-tmp1->body_info[i]) < 0)
+                    if (who->body_used[i]+op->body_info[i]-tmp1->body_info[i] < 0)
                         retval |= CAN_APPLY_UNAPPLY_MULT;
                 }
             } /* if not enough free slots */
@@ -1074,7 +1074,7 @@ int check_weapon_power(const object *who, int improves) {
      * so we just use overall level.
      */
 #if 1
-    if (((who->level/5)+5) >= improves)
+    if ((who->level/5)+5 >= improves)
         return 1;
     else
         return 0;
@@ -1092,8 +1092,7 @@ int check_weapon_power(const object *who, int improves) {
      */
     if (who->type == PLAYER) {
         FOR_INV_PREPARE(who, wc_obj)
-            if (wc_obj->type == SKILL && IS_COMBAT_SKILL(wc_obj->subtype)
-            && wc_obj->level > level)
+            if (wc_obj->type == SKILL && IS_COMBAT_SKILL(wc_obj->subtype) && wc_obj->level > level)
                 level = wc_obj->level;
         FOR_INV_FINISH();
 
@@ -1104,7 +1103,7 @@ int check_weapon_power(const object *who, int improves) {
     } else
         level = who->level;
 
-    return (improves <= ((level/5)+5));
+    return improves <= (level/5)+5;
 #endif
 }
 
@@ -1228,7 +1227,7 @@ int apply_special(object *who, object *op, int aflags) {
 
     if (who->type == PLAYER
     && op->item_power
-    && (op->item_power+who->contr->item_power) > (settings.item_power_factor*who->level)) {
+    && op->item_power+who->contr->item_power > settings.item_power_factor*who->level) {
         if (!(aflags&AP_NOPRINT))
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                           "Equipping that combined with other items would consume your soul!", NULL);
@@ -1243,7 +1242,7 @@ int apply_special(object *who, object *op, int aflags) {
      */
     if (settings.personalized_blessings) {
         const char *owner = object_get_value(op, "item_owner");
-        if ((owner != NULL) && (strcmp(owner, who->name))) {
+        if (owner != NULL && strcmp(owner, who->name)) {
             const char *will = object_get_value(op, "item_willpower");
             long item_will = 0;
             long margin = 0;
@@ -1264,7 +1263,7 @@ int apply_special(object *who, object *op, int aflags) {
                 margin = who->stats.exp/item_will;
             else
                 margin = who->stats.exp;
-            random_effect = (random_roll(0, 100, who, 1)-(margin*20));
+            random_effect = random_roll(0, 100, who, 1)-margin*20;
             if (random_effect > 80) {
                 msg = "You don't know why, but you have the feeling that the %s is angry at you !";
                 damage_percentile = 60;
@@ -1324,8 +1323,8 @@ int apply_special(object *who, object *op, int aflags) {
             }
             /* BUG? It seems the value of quotepos is never used. */
             if ((quotepos = strstr(op->name, "'")) != NULL) {
-                ownerlen = (strstr(op->name, "'")-op->name);
-                if (op->level && (strncmp(op->name, who->name, ownerlen))) {
+                ownerlen = strstr(op->name, "'")-op->name;
+                if (op->level && strncmp(op->name, who->name, ownerlen)) {
                     /* if the weapon does not have the name as the
                      * character, can't use it. (Ragnarok's sword
                      * attempted to be used by Foo: won't work) */
@@ -1426,7 +1425,7 @@ int apply_special(object *who, object *op, int aflags) {
                 (void)object_insert_in_ob(tmp, who);
             return 1;
         }
-        if (op->level && (strncmp(op->name, who->name, strlen(who->name)))) {
+        if (op->level && strncmp(op->name, who->name, strlen(who->name))) {
             if (!(aflags&AP_NOPRINT)) {
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                               "The weapon does not recognize you as its owner.", NULL);
@@ -1565,7 +1564,7 @@ int auto_apply(object *op) {
     case TREASURE:
         if (QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
             return 0;
-        while ((op->stats.hp--) > 0)
+        while (op->stats.hp-- > 0)
             create_treasure(op->randomitems, op, op->map ? GT_ENVIRONMENT : 0, op->stats.exp ? (int)op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
 
         /* If we generated an object and put it in this object's
@@ -1611,7 +1610,7 @@ void fix_auto_apply(mapstruct *m) {
                         if (QUERY_FLAG(invtmp, FLAG_AUTO_APPLY))
                             auto_apply(invtmp);
                         else if (invtmp->type == TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
-                            while ((invtmp->stats.hp--) > 0)
+                            while (invtmp->stats.hp-- > 0)
                                 create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty, 0);
                             invtmp->randomitems = NULL;
                         } else if (invtmp && invtmp->arch
@@ -1651,9 +1650,9 @@ void fix_auto_apply(mapstruct *m) {
 
                 if (QUERY_FLAG(tmp, FLAG_AUTO_APPLY))
                     auto_apply(tmp);
-                else if ((tmp->type == TREASURE || (tmp->type == CONTAINER))
+                else if ((tmp->type == TREASURE || tmp->type == CONTAINER)
                 && HAS_RANDOM_ITEMS(tmp)) {
-                    while ((tmp->stats.hp--) > 0)
+                    while (tmp->stats.hp-- > 0)
                         create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                     tmp->randomitems = NULL;
                 } else if (tmp->type == TIMED_GATE) {
@@ -1795,7 +1794,7 @@ void apply_changes_to_player(object *pl, object *change) {
             int i, j;
             for (i = 0; i < NUM_STATS; i++) {
                 sint8 stat = get_attr_value(&pl->contr->orig_stats, i);
-                int race_bonus = get_attr_value(&(pl->arch->clone.stats), i);
+                int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
 
                 stat += get_attr_value(&change->stats, i);
                 if (stat > 20+race_bonus) {
@@ -1809,7 +1808,7 @@ void apply_changes_to_player(object *pl, object *change) {
                 /* try 100 times to assign excess stats */
                 int i = rndm(0, 6);
                 int stat = get_attr_value(&pl->contr->orig_stats, i);
-                int race_bonus = get_attr_value(&(pl->arch->clone.stats), i);
+                int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
 
                 if (i == CHA)
                     continue; /* exclude cha from this */
