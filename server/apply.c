@@ -856,16 +856,9 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
     if (op->type == WEAPON || op->type == SHIELD) {
         FOR_INV_PREPARE(who, tmp) {
             if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
-                if ((aflags&AP_IGNORE_CURSE)
-                || (aflags&AP_PRINT)
-                || (!QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED))) {
-                    if (aflags&AP_PRINT) {
-                        query_name(tmp, name, MAX_BUF);
-                        draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                      name, NULL);
-                    } else
-                        unapply_special(who, tmp, aflags);
-                } else {
+                if (!(aflags&AP_IGNORE_CURSE)
+                && !(aflags&AP_PRINT)
+                && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))) {
                     /* In this case, we want to try and remove a
                      * cursed item. While we know it won't work, we
                      * want unapply_special to at least generate the
@@ -881,6 +874,12 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
                     return 1;
                 }
 
+                if (aflags&AP_PRINT) {
+                    query_name(tmp, name, MAX_BUF);
+                    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                  name, NULL);
+                } else
+                    unapply_special(who, tmp, aflags);
             }
         } FOR_INV_FINISH();
     }
