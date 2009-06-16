@@ -46,6 +46,7 @@
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
 
+static int apply_check_apply_restrictions(object *who, object *op, int aflags);
 static int apply_check_personalized_blessings(object *who, object *op);
 static int apply_check_item_power(object *who, object *op, int aflags);
 
@@ -1114,7 +1115,6 @@ int check_weapon_power(const object *who, int improves) {
 int apply_special(object *who, object *op, int aflags) {
     int basic_flag = aflags&AP_BASIC_FLAGS;
     object *tmp, *skop;
-    int i;
     char name_op[MAX_BUF];
 
     if (who == NULL) {
@@ -1148,53 +1148,9 @@ int apply_special(object *who, object *op, int aflags) {
     if (basic_flag == AP_UNAPPLY)
         return 0;
 
-    i = can_apply_object(who, op);
+    if (!apply_check_apply_restrictions(who, op, aflags))
+        return 1;
 
-    /* Can't just apply this object.  Lets see what not and what to do */
-    if (i) {
-        if (i&CAN_APPLY_NEVER) {
-            if (!(aflags&AP_NOPRINT)) {
-                query_name(op, name_op, MAX_BUF);
-                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BADBODY,
-                                     "You don't have the body to use a %s",
-                                     "You don't have the body to use a %s",
-                                     name_op);
-            }
-            return 1;
-        }
-
-        if (i&CAN_APPLY_RESTRICTION) {
-            if (!(aflags&AP_NOPRINT)) {
-                query_name(op, name_op, MAX_BUF);
-                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION,
-                                     "You have a prohibition against using a %s",
-                                     "You have a prohibition against using a %s",
-                                     name_op);
-            }
-            return 1;
-        }
-        if (who->type != PLAYER) {
-            /* Some error, so don't try to equip something more */
-            if (unapply_for_ob(who, op, aflags))
-                return 1;
-        } else {
-            if (who->contr->unapply == unapply_never
-            || (i&CAN_APPLY_UNAPPLY_CHOICE && who->contr->unapply == unapply_nochoice)) {
-                if (!(aflags&AP_NOPRINT))
-                    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                  "You need to unapply some item(s):", NULL);
-                unapply_for_ob(who, op, AP_PRINT);
-                return 1;
-            }
-
-            if (who->contr->unapply == unapply_always
-            || !(i&CAN_APPLY_UNAPPLY_CHOICE)) {
-                i = unapply_for_ob(who, op, aflags);
-                if (i)
-                    return 1;
-            }
-        }
-    }
     if (op->skill && op->type != SKILL && op->type != SKILL_TOOL) {
         skop = find_skill_by_name(who, op->skill);
         if (!skop) {
@@ -1786,6 +1742,74 @@ void apply_changes_to_player(object *pl, object *change) {
 
 void legacy_apply_container(object *op, object *sack) {
     apply_container(op, sack);
+}
+
+/**
+ * Checks for general apply restrictions (no body, prohibited by god, conflicts
+ * with other items, etc.)
+ *
+ * @param who
+ * the object applying the item
+ * @param op
+ * the item being applied
+ * @return
+ * whether applying is possible
+ */
+static int apply_check_apply_restrictions(object *who, object *op, int aflags) {
+    int i;
+
+    i = can_apply_object(who, op);
+    if (i == 0)
+        return 1;
+
+    /* Can't just apply this object.  Lets see why not and what to do */
+
+    if (i&CAN_APPLY_NEVER) {
+        if (!(aflags&AP_NOPRINT)) {
+            char name_op[MAX_BUF];
+
+            query_name(op, name_op, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BADBODY,
+                "You don't have the body to use a %s",
+                "You don't have the body to use a %s",
+                name_op);
+        }
+        return 0;
+    }
+
+    if (i&CAN_APPLY_RESTRICTION) {
+        if (!(aflags&AP_NOPRINT)) {
+            char name_op[MAX_BUF];
+
+            query_name(op, name_op, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION,
+                "You have a prohibition against using a %s",
+                "You have a prohibition against using a %s",
+                name_op);
+        }
+        return 0;
+    }
+
+    if (who->type != PLAYER) {
+        /* Some error, so don't try to equip something more */
+        return !unapply_for_ob(who, op, aflags);
+    }
+
+    if (who->contr->unapply == unapply_never
+    || (i&CAN_APPLY_UNAPPLY_CHOICE && who->contr->unapply == unapply_nochoice)) {
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                "You need to unapply some item(s):", NULL);
+        unapply_for_ob(who, op, AP_PRINT);
+        return 0;
+    }
+
+    if (who->contr->unapply == unapply_always
+    || !(i&CAN_APPLY_UNAPPLY_CHOICE)) {
+        return !unapply_for_ob(who, op, aflags);
+    }
+
+    return 1;
 }
 
 /**
