@@ -1207,8 +1207,7 @@ int apply_special(object *who, object *op, int aflags) {
 
         if (skop)
             change_skill(who, skop, 1);
-        if (!QUERY_FLAG(who, FLAG_READY_WEAPON))
-            SET_FLAG(who, FLAG_READY_WEAPON);
+        SET_FLAG(who, FLAG_READY_WEAPON);
 
         if (!(aflags&AP_NOPRINT)) {
             query_name(op, name_op, MAX_BUF);
