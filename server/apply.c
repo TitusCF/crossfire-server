@@ -1141,8 +1141,6 @@ int apply_special(object *who, object *op, int aflags) {
         return 1;
     }
 
-    query_name(op, name_op, MAX_BUF);
-
     if (op->env != who)
         return 1;   /* op is not in inventory */
 
@@ -1154,11 +1152,13 @@ int apply_special(object *who, object *op, int aflags) {
 
         if (!(aflags&AP_IGNORE_CURSE)
         && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))) {
-            if (!(aflags&AP_NOPRINT))
+            if (!(aflags&AP_NOPRINT)) {
+                query_name(op, name_op, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                      "No matter how hard you try, you just can't remove %s.",
                                      "No matter how hard you try, you just can't remove %s.",
                                      name_op);
+            }
             return 1;
         }
         return unapply_special(who, op, aflags);
@@ -1172,18 +1172,22 @@ int apply_special(object *who, object *op, int aflags) {
     /* Can't just apply this object.  Lets see what not and what to do */
     if (i) {
         if (i&CAN_APPLY_NEVER) {
-            if (!(aflags&AP_NOPRINT))
+            if (!(aflags&AP_NOPRINT)) {
+                query_name(op, name_op, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BADBODY,
                                      "You don't have the body to use a %s",
                                      "You don't have the body to use a %s",
                                      name_op);
+            }
             return 1;
         } else if (i&CAN_APPLY_RESTRICTION) {
-            if (!(aflags&AP_NOPRINT))
+            if (!(aflags&AP_NOPRINT)) {
+                query_name(op, name_op, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION,
                                      "You have a prohibition against using a %s",
                                      "You have a prohibition against using a %s",
                                      name_op);
+            }
             return 1;
         }
         if (who->type != PLAYER) {
@@ -1341,10 +1345,12 @@ int apply_special(object *who, object *op, int aflags) {
             if (!QUERY_FLAG(who, FLAG_READY_WEAPON))
                 SET_FLAG(who, FLAG_READY_WEAPON);
 
-            if (!(aflags&AP_NOPRINT))
+            if (!(aflags&AP_NOPRINT)) {
+                query_name(op, name_op, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                      "You wield %s.", "You wield %s.",
                                      name_op);
+            }
 
             (void)change_abil(who, op);
             break;
@@ -1361,11 +1367,13 @@ int apply_special(object *who, object *op, int aflags) {
     case RING:
     case AMULET:
         SET_FLAG(op, FLAG_APPLIED);
-        if (!(aflags&AP_NOPRINT))
+        if (!(aflags&AP_NOPRINT)) {
+            query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                  "You wear %s.",
                                  "You wear %s.",
                                  name_op);
+        }
         (void)change_abil(who, op);
         break;
 
@@ -1382,6 +1390,7 @@ int apply_special(object *who, object *op, int aflags) {
             who->contr->ranges[range_skill] = op;
             if (!op->invisible) {
                 if (!(aflags&AP_NOPRINT)) {
+                    query_name(op, name_op, MAX_BUF);
                     draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                          "You ready %s.",
                                          "You ready %s.",
@@ -1434,20 +1443,24 @@ int apply_special(object *who, object *op, int aflags) {
         SET_FLAG(op, FLAG_APPLIED);
         if (skop)
             change_skill(who, skop, 0);
-        if (!(aflags&AP_NOPRINT))
+        if (!(aflags&AP_NOPRINT)) {
+            query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                  "You ready %s.",
                                  "You ready %s.",
                                  name_op);
+        }
         if (who->type == PLAYER) {
             if (op->type == BOW) {
                 (void)change_abil(who, op);
-                if (!(aflags&AP_NOPRINT))
+                if (!(aflags&AP_NOPRINT)) {
+                    query_name(op, name_op, MAX_BUF);
                     draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                          "You will now fire %s with %s.",
                                          "You will now fire %s with %s.",
                                          op->race ? op->race : "nothing",
                                          name_op);
+                }
                 who->contr->shoottype = range_bow;
             } else {
                 who->contr->shoottype = range_misc;
@@ -1465,18 +1478,24 @@ int apply_special(object *who, object *op, int aflags) {
             unapply_special(who, who->contr->ranges[range_builder], 0);
         who->contr->shoottype = range_builder;
         who->contr->ranges[range_builder] = op;
-        if (!(aflags&AP_NOPRINT))
+        if (!(aflags&AP_NOPRINT)) {
+            query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                  "You ready your %s.",
                                  "You ready your %s.",
                                  name_op);
+        }
         break;
 
     default:
-        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "You apply %s.",
-                             "You apply %s.",
-                             name_op);
+        {
+            query_name(op, name_op, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                                 "You apply %s.",
+                                 "You apply %s.",
+                                 name_op);
+        }
+        break;
     } /* end of switch op->type */
 
     SET_FLAG(op, FLAG_APPLIED);
