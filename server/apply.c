@@ -207,7 +207,7 @@ static int set_object_face_other(object *op) {
 /**
  * Handle apply on containers.  This is for
  * containers that are applied by a player, whether in inventory or
- * on the ground: eg, sacks, luggages, etc.
+ * on the ground: eg, sacks, luggage, etc.
  *
  * Moved to own function and added many features [Tero.Haatanen(at)lut.fi]
  * This version is for client/server mode.
@@ -221,7 +221,7 @@ static int set_object_face_other(object *op) {
  * @param sack
  * container the player is opening or closing.
  * @return
- * 1 if an object is apllied somehow or another, 0 if error/no apply
+ * 1 if an object is applied somehow or another, 0 if error/no apply
  *
  * @author Eneq(at)(csd.uu.se)
  */
@@ -239,7 +239,7 @@ int apply_container(object *op, object *sack) {
 
     /* If we have a currently open container, then it needs
      * to be closed in all cases if we are opening this one up.
-     * We then fall through if appropriate for openening the new
+     * We then fall through if appropriate for opening the new
      * container.
      */
     if (op->container && QUERY_FLAG(sack, FLAG_APPLIED)) {
@@ -659,7 +659,7 @@ void player_apply_below(object *pl) {
  * Unapplies specified item.
  * No check done on cursed/damned.
  * Break this out of apply_special() - this is just done
- * to keep the size of apply_special() to a more managable size.
+ * to keep the size of apply_special() to a more manageable size.
  *
  * @param who
  * living that has op removed.
@@ -791,7 +791,7 @@ static int unapply_special(object *who, object *op, int aflags) {
 
 /**
  * Returns the object that is using body location 'loc'.
- * Note that 'start' is the first object to start examing - we
+ * Note that 'start' is the first object to start examine - we
  * then go through the below of this.  In this way, you can do
  * something like:
  * tmp = get_item_from_body_location(who->inv, 1);
@@ -832,7 +832,7 @@ static object *get_item_from_body_location(object *start, int loc) {
  * use of get_item_from_body_location().  It makes no intelligent choice
  * on objects - rather, the first that matched is used.
  *
- * if aflags has AP_PRINT set, we instead print out waht to unapply
+ * if aflags has AP_PRINT set, we instead print out what to unapply
  * instead of doing it.  This is a lot less code than having
  * another function that does just that.
  *
@@ -929,7 +929,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
              * kicked in.
              */
         } /* if op is using this body location */
-    } /* for body lcoations */
+    } /* for body locations */
     return 0;
 }
 
@@ -1052,29 +1052,29 @@ int can_apply_object(object *who, object *op) {
 
 /**
  * This checks to see of the player (who) is sufficient level to use a weapon
- * with improvs improvements (typically last_eat).  We take an int here
+ * with improves improvements (typically last_eat).  We take an int here
  * instead of the object so that the improvement code can pass along the
- * increased value to see if the object is usuable.
+ * increased value to see if the object is usable.
  * we return 1 (true) if the player can use the weapon.
  * See ../types/weapon_improver/weapon_improver.c
  *
  * @param who
  * living to check
- * @param improvs
+ * @param improves
  * improvement level.
  * @return
  * 1 if who can use the item, 0 else.
  * @todo
  * remove obsolete code.
  */
-int check_weapon_power(const object *who, int improvs) {
+int check_weapon_power(const object *who, int improves) {
     /* Old code is below (commented out).  Basically, since weapons
      * are the only object players really have any control to improve,
      * it's a bit harsh to require high level in some combat skill,
      * so we just use overall level.
      */
 #if 1
-    if (((who->level/5)+5) >= improvs)
+    if (((who->level/5)+5) >= improves)
         return 1;
     else
         return 0;
@@ -1104,7 +1104,7 @@ int check_weapon_power(const object *who, int improvs) {
     } else
         level = who->level;
 
-    return (improvs <= ((level/5)+5));
+    return (improves <= ((level/5)+5));
 #endif
 }
 
@@ -1525,7 +1525,7 @@ int apply_special(object *who, object *op, int aflags) {
 }
 
 /**
- * Map was just loaded, handle op's initialisation.
+ * Map was just loaded, handle op's initialization.
  *
  * Generates shop floor's item, and treasures.
  *
@@ -1664,9 +1664,9 @@ void fix_auto_apply(mapstruct *m) {
                         object_update_speed(tmp);
                     }
                 }
-                /* This function can be called everytime a map is loaded,
+                /* This function can be called every time a map is loaded,
                  * even when swapping back in.  As such, we don't want to
-                 * create the treasure over and ove again, so after we
+                 * create the treasure over and over again, so after we
                  * generate the treasure, blank out randomitems so if it
                  * is swapped in again, it won't make anything. This is a
                  * problem for the above objects, because they have
