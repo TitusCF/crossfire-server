@@ -2739,7 +2739,7 @@ int move_player(object *op, int dir) {
 
     /* peterm:  added following line */
     if (QUERY_FLAG(op, FLAG_CONFUSED) && dir)
-        dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
+        dir = get_randomized_dir(dir);
 
     op->facing = dir;
 

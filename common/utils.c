@@ -512,6 +512,18 @@ int get_random_dir(void) {
 }
 
 /**
+ * Returns a random direction (1..8) similar to a given direction.
+ *
+ * @param dir
+ * the exact direction
+ * @return
+ * the randomized direction
+ */
+int get_randomized_dir(int dir) {
+    return absdir(dir+RANDOM()%3+RANDOM()%3-2);
+}
+
+/**
  * Replaces any unprintable character in the given buffer with a space.
  *
  * @param buf

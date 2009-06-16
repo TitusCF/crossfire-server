@@ -683,7 +683,7 @@ int monster_move(object *op) {
             if (QUERY_FLAG(op, FLAG_RUN_AWAY))
                 dir = absdir(dir+4);
             if (QUERY_FLAG(op, FLAG_CONFUSED))
-                dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
+                dir = get_randomized_dir(dir);
 
             if (QUERY_FLAG(op, FLAG_CAST_SPELL) && !(RANDOM()%3)) {
                 if (monster_cast_spell(op, part, enemy, dir, &rv1))
@@ -723,7 +723,7 @@ int monster_move(object *op) {
         dir = monster_compute_path(op, enemy, rv.direction);
 
     if (QUERY_FLAG(op, FLAG_CONFUSED))
-        dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
+        dir = get_randomized_dir(dir);
 
     if ((op->attack_movement&LO4) && !QUERY_FLAG(op, FLAG_SCARED)) {
         switch (op->attack_movement&LO4) {
@@ -999,7 +999,7 @@ static int monster_cast_spell(object *head, object *part, object *pl, int dir, r
     }
 
     if (QUERY_FLAG(head, FLAG_CONFUSED))
-        dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
+        dir = get_randomized_dir(dir);
 
     /* If the monster hasn't already chosen a spell, choose one
      * I'm not sure if it really make sense to pre-select spells (events
@@ -1087,7 +1087,7 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir, r
     }
 
     if (QUERY_FLAG(head, FLAG_CONFUSED))
-        dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
+        dir = get_randomized_dir(dir);
 
     scroll = NULL;
     FOR_INV_PREPARE(head, tmp)
@@ -1162,7 +1162,7 @@ static int monster_use_skill(object *head, object *part, object *pl, int dir) {
         }
     }
     if (QUERY_FLAG(head, FLAG_CONFUSED))
-        dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
+        dir = get_randomized_dir(dir);
 
     /* skill selection - monster will use the next unused skill.
      * well...the following scenario will allow the monster to
@@ -1219,7 +1219,7 @@ static int monster_use_range(object *head, object *part, object *pl, int dir) {
         }
     }
     if (QUERY_FLAG(head, FLAG_CONFUSED))
-        dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
+        dir = get_randomized_dir(dir);
 
     FOR_INV_PREPARE(head, wand) {
         if (wand->type == WAND) {
@@ -1320,7 +1320,7 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
     /* Finally, path is clear, can fire. */
 
     if (QUERY_FLAG(head, FLAG_CONFUSED))
-        dir = absdir(dir+RANDOM()%3+RANDOM()%3-2);
+        dir = get_randomized_dir(dir);
 
     /* in server/player.c */
     return fire_bow(head, NULL, dir, 0, part->x, part->y);
