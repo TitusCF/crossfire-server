@@ -1214,7 +1214,7 @@ int apply_special(object *who, object *op, int aflags) {
         skop = NULL;
 
     if (!apply_check_item_power(who, op, aflags))
-	return 1;
+        return 1;
 
     if (!apply_check_personalized_blessings(who, op))
         return 1;
@@ -1800,15 +1800,15 @@ void legacy_apply_container(object *op, object *sack) {
  */
 static int apply_check_item_power(object *who, object *op, int aflags) {
     if (who->type != PLAYER)
-	return 1;
+        return 1;
 
     if (op->item_power == 0
     || op->item_power+who->contr->item_power <= settings.item_power_factor*who->level)
-	return 1;
+        return 1;
 
     if (!(aflags&AP_NOPRINT))
-	draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-	    "Equipping that combined with other items would consume your soul!", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "Equipping that combined with other items would consume your soul!", NULL);
     return 0;
 }
 
@@ -1818,6 +1818,13 @@ static int apply_check_item_power(object *who, object *op, int aflags) {
  * Chances of being hurt depend on the experience amount
  * ("willpower") the object has, compared to the experience
  * amount of the wielder.
+ *
+ * @param who
+ * the object applying the item
+ * @param op
+ * the item being applied
+ * @return
+ * whether applying is possible
  */
 static int apply_check_personalized_blessings(object *who, object *op) {
     const char *owner;
@@ -1879,4 +1886,6 @@ static int apply_check_personalized_blessings(object *who, object *op) {
             "You get a nasty bite in the hand !",
             "You get a nasty bite in the hand !");
     }
+
+    return 1;
 }
