@@ -6,7 +6,7 @@
 
 #include <global.h>
 
-void fix_auto_apply(mapstruct *m) {
+void apply_auto_fix(mapstruct *m) {
 }
 
 void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *message, const char *txt) {

@@ -57,7 +57,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             identify(potion);
     }
 
-    handle_apply_yield(potion);
+    apply_handle_yield(potion);
 
     /* Potion of restoration - only for players */
     if (applier->type == PLAYER && (potion->attacktype&AT_DEPLETE)) {

@@ -129,7 +129,7 @@ int should_director_abort(object *op, object *victim) {
  * @param tmp
  * item that was applied.
  */
-void handle_apply_yield(object *tmp) {
+void apply_handle_yield(object *tmp) {
     const char *yield;
 
     yield = object_get_value(tmp, "on_use_yield");
@@ -462,7 +462,7 @@ void do_forget_spell(object *op, const char *spell) {
  * @return
  * 0 if item can't be applied, 1 else.
  */
-static int check_race_restrictions(object *who, object *item) {
+static int apply_check_race_restrictions(object *who, object *item) {
     char buf[MAX_BUF];
     sstring restriction;
 
@@ -502,7 +502,7 @@ static int check_race_restrictions(object *who, object *item) {
  * - 1: has been applied, or there was an error applying the object
  * - 2: objects of that type can't be applied if not in inventory
  */
-int manual_apply(object *op, object *tmp, int aflag) {
+int apply_manual(object *op, object *tmp, int aflag) {
     if (tmp->head)
         tmp = tmp->head;
 
@@ -515,7 +515,7 @@ int manual_apply(object *op, object *tmp, int aflag) {
         return 0;   /* monsters just skip unpaid items */
     }
 
-    if (!check_race_restrictions(op, tmp))
+    if (!apply_check_race_restrictions(op, tmp))
         return METHOD_SILENT_ERROR;
 
     /* Lauwenmark: Handle for plugin apply event */
@@ -540,14 +540,14 @@ int manual_apply(object *op, object *tmp, int aflag) {
  * them in this function - they are passed to apply_special().
  * @param quiet
  * if 1, suppresses the "don't know how to apply" and "you must get it first"
- * messages as needed by player_apply_below().  There can still be
+ * messages as needed by apply_by_living_below().  There can still be
  * "but you are floating high above the ground" messages.
  * @return
  * - 0: player or monster can't apply objects of that type
  * - 1: has been applied, or there was an error applying the object
  * - 2: objects of that type can't be applied if not in inventory
  */
-int player_apply(object *pl, object *op, int aflag, int quiet) {
+int apply_by_living(object *pl, object *op, int aflag, int quiet) {
     int tmp;
 
     if (op->env == NULL && (pl->move_type&MOVE_FLYING)) {
@@ -578,7 +578,7 @@ int player_apply(object *pl, object *op, int aflag, int quiet) {
     pl->contr->last_used = op;
     pl->contr->last_used_id = op->count;
 
-    tmp = manual_apply(pl, op, aflag);
+    tmp = apply_manual(pl, op, aflag);
     if (!quiet) {
         if (tmp == METHOD_UNHANDLED) {
             char name[MAX_BUF];
@@ -609,7 +609,7 @@ int player_apply(object *pl, object *op, int aflag, int quiet) {
  * @param pl
  * player.
  */
-void player_apply_below(object *pl) {
+void apply_by_living_below(object *pl) {
     object *tmp;
     int floors;
 
@@ -626,7 +626,7 @@ void player_apply_below(object *pl) {
     /* This is perhaps more complicated.  However, I want to make sure that
      * we don't use a corrupt pointer for the next object, so we get the
      * next object in the stack before applying.  This is can only be a
-     * problem if player_apply() has a bug in that it uses the object but
+     * problem if apply_by_living() has a bug in that it uses the object but
      * does not return a proper value.
      */
     floors = 0;
@@ -642,7 +642,7 @@ void player_apply_below(object *pl) {
          * the item needs.
          */
         if (!tmp->invisible || (tmp->move_on&pl->move_type)) {
-            if (player_apply(pl, tmp, 0, 1) == METHOD_OK)
+            if (apply_by_living(pl, tmp, 0, 1) == METHOD_OK)
                 return;
         }
         if (floors >= 2)
@@ -939,7 +939,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
  * See include/define.h for detailed description of the meaning of
  * these return values.
  */
-int can_apply_object(const object *who, const object *op) {
+int apply_can_apply_object(const object *who, const object *op) {
     int i, retval = 0;
     object *tmp = NULL, *ws = NULL;
 
@@ -1056,7 +1056,7 @@ int can_apply_object(const object *who, const object *op) {
  * @todo
  * remove obsolete code.
  */
-int check_weapon_power(const object *who, int improves) {
+int apply_check_weapon_power(const object *who, int improves) {
     /* Old code is below (commented out).  Basically, since weapons
      * are the only object players really have any control to improve,
      * it's a bit harsh to require high level in some combat skill,
@@ -1178,14 +1178,14 @@ int apply_special(object *who, object *op, int aflags) {
 
     /* Ok.  We are now at the state where we can apply the new object.
      * Note that we don't have the checks for can_use_...
-     * below - that is already taken care of by can_apply_object.
+     * below - that is already taken care of by apply_can_apply_object().
      */
 
     tmp = op->nrof <= 1 ? NULL : object_split(op, op->nrof-1, NULL, 0);
 
     switch (op->type) {
     case WEAPON:
-        if (!check_weapon_power(who, op->last_eat)) {
+        if (!apply_check_weapon_power(who, op->last_eat)) {
             if (!(aflags&AP_NOPRINT))
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY,
                     MSG_TYPE_APPLY_ERROR,
@@ -1279,7 +1279,7 @@ int apply_special(object *who, object *op, int aflags) {
         break;
 
     case BOW:
-        if (!check_weapon_power(who, op->last_eat)) {
+        if (!apply_check_weapon_power(who, op->last_eat)) {
             if (!(aflags&AP_NOPRINT)) {
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                               "That item is too powerful for you to use.",
@@ -1392,7 +1392,7 @@ int apply_special(object *who, object *op, int aflags) {
  * @return
  * 1 if object was initialized, 0 else.
  */
-int auto_apply(object *op) {
+int apply_auto(object *op) {
     object *tmp;
 
     switch (op->type) {
@@ -1451,13 +1451,13 @@ int auto_apply(object *op) {
  * Go through the entire map (only the first time
  * when an original map is loaded) and performs special actions for
  * certain objects (most initialization of chests and creation of
- * treasures and stuff).  Calls auto_apply() if appropriate.
+ * treasures and stuff).  Calls apply_auto() if appropriate.
  *
  * @param m
 * map to fix.
  */
 
-void fix_auto_apply(mapstruct *m) {
+void apply_auto_fix(mapstruct *m) {
     int x, y;
 
     if (m == NULL)
@@ -1469,7 +1469,7 @@ void fix_auto_apply(mapstruct *m) {
                 if (tmp->inv) {
                     FOR_INV_PREPARE(tmp, invtmp) {
                         if (QUERY_FLAG(invtmp, FLAG_AUTO_APPLY))
-                            auto_apply(invtmp);
+                            apply_auto(invtmp);
                         else if (invtmp->type == TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
                             while (invtmp->stats.hp-- > 0)
                                 create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty, 0);
@@ -1510,7 +1510,7 @@ void fix_auto_apply(mapstruct *m) {
                 }
 
                 if (QUERY_FLAG(tmp, FLAG_AUTO_APPLY))
-                    auto_apply(tmp);
+                    apply_auto(tmp);
                 else if ((tmp->type == TREASURE || tmp->type == CONTAINER)
                 && HAS_RANDOM_ITEMS(tmp)) {
                     while (tmp->stats.hp-- > 0)
@@ -1744,7 +1744,7 @@ void legacy_apply_container(object *op, object *sack) {
 static int apply_check_apply_restrictions(object *who, object *op, int aflags) {
     int i;
 
-    i = can_apply_object(who, op);
+    i = apply_can_apply_object(who, op);
     if (i == 0)
         return 1;
 

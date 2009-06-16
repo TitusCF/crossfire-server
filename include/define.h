@@ -949,9 +949,9 @@ static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, siz
 /*@}*/
 
 /**
- * @defgroup CAN_APPLY_xxx Values returned by can_apply_object().
+ * @defgroup CAN_APPLY_xxx Values returned by apply_can_apply_object().
  *
- * Bitmask values for 'can_apply_object()' return values.
+ * Bitmask values for 'apply_can_apply_object()' return values.
  * the CAN_APPLY_ prefix is to just note what function the
  * are returned from.
  *
@@ -962,7 +962,7 @@ static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, siz
  *      use this.
  * - CAN_APPLY_NOT_MASK - this can be used to check the return value to see
  *      if this object can do anything to use this object.  If the value
- *      returned from can_apply_object() anded with the mask is non zero,
+ *      returned from apply_can_apply_object() anded with the mask is non zero,
  *      then it is out of the control of this creature to use the item.
  *      otherwise it means that by unequipping stuff, they could apply the object
  * - CAN_APPLY_UNAPPLY: Player needs to unapply something before applying

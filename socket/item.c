@@ -607,7 +607,7 @@ void apply_cmd(char *buf, int len, player *pl) {
         LOG(llevDebug, "Player '%s' tried to apply the unknown object (%d)\n", pl->ob->name, tag);
         return;
     }
-    player_apply(pl->ob, op, 0, 0);
+    apply_by_living(pl->ob, op, 0, 0);
 }
 
 /** Client wants to apply some object.  Lets do so. */

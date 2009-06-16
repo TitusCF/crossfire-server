@@ -3067,7 +3067,7 @@ void *cfapi_object_apply_below(int *type, ...) {
 
     va_end(args);
 
-    player_apply_below(applier);
+    apply_by_living_below(applier);
     *type = CFAPI_NONE;
     return NULL;
 }
@@ -3097,7 +3097,7 @@ void *cfapi_object_apply(int *type, ...) {
     va_end(args);
 
     *type = CFAPI_INT;
-    *ret = manual_apply(applier, applied, aflags);
+    *ret = apply_manual(applier, applied, aflags);
     return NULL;
 }
 

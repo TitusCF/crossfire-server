@@ -135,7 +135,7 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
                 eat_special_food(applier, food);
         }
     }
-    handle_apply_yield(food);
+    apply_handle_yield(food);
     object_decrease_nrof_by_one(food);
     return METHOD_OK;
 }

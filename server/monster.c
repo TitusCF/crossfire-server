@@ -1540,12 +1540,12 @@ static void monster_apply_below(object *monster) {
         case CF_HANDLE:
         case TRIGGER:
             if (monster->will_apply&WILL_APPLY_HANDLE)
-                manual_apply(monster, tmp, 0);
+                apply_manual(monster, tmp, 0);
             break;
 
         case TREASURE:
             if (monster->will_apply&WILL_APPLY_TREASURE)
-                manual_apply(monster, tmp, 0);
+                apply_manual(monster, tmp, 0);
             break;
         }
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
@@ -1632,7 +1632,7 @@ void monster_check_apply(object *mon, object *item) {
         /* We never really 'ready' the wand/rod/horn, because that would mean the
         * weapon would get undone.
         */
-        if (!(can_apply_object(mon, item)&CAN_APPLY_NOT_MASK)) {
+        if (!(apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK)) {
             SET_FLAG(mon, FLAG_READY_RANGE);
             SET_FLAG(item, FLAG_APPLIED);
         }
@@ -1641,7 +1641,7 @@ void monster_check_apply(object *mon, object *item) {
         /* We never really 'ready' the bow, because that would mean the
         * weapon would get undone.
         */
-        if (!(can_apply_object(mon, item)&CAN_APPLY_NOT_MASK))
+        if (!(apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK))
             SET_FLAG(mon, FLAG_READY_BOW);
         return;
     } else if (item->type == SKILL) {
@@ -1655,7 +1655,7 @@ void monster_check_apply(object *mon, object *item) {
     }
 
     /* if we don't match one of the above types, return now.
-     * can_apply_object will say that we can apply things like flesh,
+     * apply_can_apply_object() will say that we can apply things like flesh,
      * bolts, and whatever else, because it only checks against the
      * body_info locations.
      */
@@ -1663,17 +1663,17 @@ void monster_check_apply(object *mon, object *item) {
         return;
 
     /* Check to see if the monster can use this item.  If not, no need
-     * to do further processing.  Note that can_apply_object already checks
+     * to do further processing.  Note that apply_can_apply_object() already checks
      * for the CAN_USE flags.
      */
-    if (can_apply_object(mon, item)&CAN_APPLY_NOT_MASK)
+    if (apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK)
         return;
 
     /* should only be applying this item, not unapplying it.
      * also, ignore status of curse so they can take off old armour.
      * monsters have some advantages after all.
      */
-    manual_apply(mon, item, AP_APPLY|AP_IGNORE_CURSE);
+    apply_manual(mon, item, AP_APPLY|AP_IGNORE_CURSE);
     return;
 }
 

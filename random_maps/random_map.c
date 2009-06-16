@@ -169,7 +169,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_
         put_decor(theMap, layout, RP->decorstyle, RP->decoroptions, RP);
 
     /* generate treasures, etc. */
-    fix_auto_apply(theMap);
+    apply_auto_fix(theMap);
 
     unblock_exits(theMap, layout, RP);
 

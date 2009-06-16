@@ -776,7 +776,7 @@ void give_initial_items(object *pl, treasurelist *items) {
     for (op = pl->inv; op; op = next) {
         next = op->below;
         if ((IS_ARMOR(op) || IS_WEAPON(op) || IS_SHIELD(op)) && !QUERY_FLAG(op, FLAG_APPLIED))
-            manual_apply(pl, op, AP_NOPRINT);
+            apply_manual(pl, op, AP_NOPRINT);
     }
 }
 
@@ -3146,7 +3146,7 @@ void do_some_living(object *op) {
                     if (tmp->type == FOOD || tmp->type == DRINK || tmp->type == POISON) {
                         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
                                       "You blindly grab for a bite of food.", NULL);
-                        manual_apply(op, tmp, 0);
+                        apply_manual(op, tmp, 0);
                         if (op->stats.food >= 0 || op->stats.hp < 0)
                             break;
                     } else if (tmp->type == FLESH)
@@ -3159,7 +3159,7 @@ void do_some_living(object *op) {
             if (op->stats.food < 0 && op->stats.hp >= 0 && flesh) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
                               "You blindly grab for a bite of food.", NULL);
-                manual_apply(op, flesh, 0);
+                apply_manual(op, flesh, 0);
             }
         } /* end not wraith */
     } /* end if player is starving */

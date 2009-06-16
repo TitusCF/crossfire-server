@@ -466,8 +466,8 @@ int cf_object_move(object *op, int dir, object*originator) {
     return ret;
 }
 /**
- * Wrapper for manual_apply().
- * @copydoc manual_apply()
+ * Wrapper for apply_manual().
+ * @copydoc apply_manual()
  */
 int cf_object_apply(object *op, object *tmp, int aflag) {
     int type, ret;
@@ -477,8 +477,8 @@ int cf_object_apply(object *op, object *tmp, int aflag) {
 }
 
 /**
- * Wrapper for player_apply_below().
- * @copydoc player_apply_below()
+ * Wrapper for apply_by_living_below().
+ * @copydoc apply_by_living_below()
  */
 void cf_object_apply_below(object *pl) {
     int type;

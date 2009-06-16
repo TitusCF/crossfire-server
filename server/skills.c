@@ -1596,7 +1596,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
     && random_roll(0, scroll->level*2, pl, PREFER_LOW) > skill->level) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                       "Oops! You accidently read it while trying to write on it.", NULL);
-        manual_apply(pl, scroll, 0);
+        apply_manual(pl, scroll, 0);
         return 0;
     }
 

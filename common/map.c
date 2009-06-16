@@ -1286,7 +1286,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
         m = load_original_map(buf, 0);
         if (m == NULL)
             return NULL;
-        fix_auto_apply(m); /* Chests which open as default */
+        apply_auto_fix(m); /* Chests which open as default */
         return m;
     }
 
@@ -1297,7 +1297,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
         m = load_original_map(buf, 0);
         if (m == NULL)
             return NULL;
-        fix_auto_apply(m); /* Chests which open as default */
+        apply_auto_fix(m); /* Chests which open as default */
         return m;
     }
 
@@ -1855,7 +1855,7 @@ mapstruct *ready_map_name(const char *name, int flags) {
         if (!(m = load_original_map(name, (flags&MAP_PLAYER_UNIQUE))))
             return (NULL);
 
-        fix_auto_apply(m); /* Chests which open as default */
+        apply_auto_fix(m); /* Chests which open as default */
 
         /* If a player unique map, no extra unique object file to load.
          * if from the editor, likewise.

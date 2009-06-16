@@ -1189,7 +1189,7 @@ static void transmute_item_to_flower(object *op) {
     flower = create_archetype("flowers_permanent");
 
     if (QUERY_FLAG(item, FLAG_APPLIED))
-        manual_apply(op, item, AP_NOPRINT|AP_IGNORE_CURSE|AP_UNAPPLY);
+        apply_manual(op, item, AP_NOPRINT|AP_IGNORE_CURSE|AP_UNAPPLY);
     object_remove(item);
     flower->weight = item->nrof ? item->nrof*item->weight : item->weight;
     item->weight = 0;

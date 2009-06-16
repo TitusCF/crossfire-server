@@ -400,7 +400,7 @@ START_TEST(test_randommaps) {
             the_chest->randomitems = tlist;
             the_chest->stats.hp = RANDOM()%100;
             object_insert_in_map_at(the_chest, map, NULL, 0, 0, 0);
-            fix_auto_apply(map);
+            apply_auto_fix(map);
             the_chest = GET_MAP_OB(map, 0, 0);
             fail_unless(the_chest != NULL, "failed to recover chest?");
             for (check = the_chest->inv; check; check = check->below) {

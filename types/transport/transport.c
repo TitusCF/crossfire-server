@@ -45,7 +45,7 @@ void init_type_transport(void) {
 
 /**
  * Player is trying to use a transport.  This returns same values as
- * manual_apply() does.  This function basically checks to see if
+ * apply_manual() does.  This function basically checks to see if
  * the player can use the transport, and if so, sets up the appropriate
  * pointers.
  * @param context The method context

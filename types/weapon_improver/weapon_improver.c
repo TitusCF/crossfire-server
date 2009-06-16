@@ -360,7 +360,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
     }
 
     if (QUERY_FLAG(weapon, FLAG_APPLIED)
-    && !check_weapon_power(op, weapon->last_eat+1)) {
+    && !apply_check_weapon_power(op, weapon->last_eat+1)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "Improving the weapon will make it too powerful for you to use.  Unready it if you really want to improve it.", NULL);
         return 0;

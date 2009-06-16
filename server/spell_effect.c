@@ -217,7 +217,7 @@ static void polymorph_living(object *op, int level) {
     for (tmp = op->inv; tmp != NULL; tmp = next) {
         next = tmp->below;
         if (QUERY_FLAG(tmp, FLAG_APPLIED))
-            manual_apply(op, tmp, 0);
+            apply_manual(op, tmp, 0);
         if (tmp->type == SPELL) {
             object_remove(tmp);
             object_free(tmp);

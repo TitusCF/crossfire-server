@@ -105,7 +105,7 @@ int execute_global_event(int , ...) {
     return 0;
 }
 
-int auto_apply(object *op) {
+int apply_auto(object *op) {
     object *tmp = NULL, *tmp2;
     int i;
 
@@ -158,7 +158,7 @@ int auto_apply(object *op) {
     return tmp ? 1 : 0;
 }
 
-void fix_auto_apply(mapstruct*)
+void apply_auto_fix(mapstruct*)
 {
 }
 

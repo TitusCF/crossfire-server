@@ -3804,7 +3804,7 @@ void do_auto_apply(mapstruct *m) {
                         invnext = invtmp->below;
 
                         if (QUERY_FLAG(invtmp, FLAG_AUTO_APPLY))
-                            auto_apply(invtmp);
+                            apply_auto(invtmp);
                         else if (invtmp->type == TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
                             while ((invtmp->stats.hp--) > 0)
                                 create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty, 0);
@@ -3844,7 +3844,7 @@ void do_auto_apply(mapstruct *m) {
                 }
 
                 if (QUERY_FLAG(tmp, FLAG_AUTO_APPLY))
-                    auto_apply(tmp);
+                    apply_auto(tmp);
                 else if ((tmp->type == TREASURE || (tmp->type == CONTAINER)) && HAS_RANDOM_ITEMS(tmp)) {
                     while ((tmp->stats.hp--) > 0)
                         create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
@@ -3951,7 +3951,7 @@ int execute_global_event(int eventcode, ...) {
     return 0;
 }
 
-int auto_apply(object *op) {
+int apply_auto(object *op) {
     object *tmp = NULL, *tmp2;
     int i;
 
@@ -4005,7 +4005,7 @@ int auto_apply(object *op) {
     return tmp ? 1 : 0;
 }
 
-void fix_auto_apply(mapstruct *m) {
+void apply_auto_fix(mapstruct *m) {
 }
 
 #endif /* dummy DOXYGEN_SHOULD_SKIP_THIS */

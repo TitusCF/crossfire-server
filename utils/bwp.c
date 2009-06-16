@@ -701,7 +701,7 @@ void set_map_timeout(void) {
 
 /* some plagarized code from apply.c--I needed just these two functions
    without all the rest of the junk, so.... */
-int auto_apply(object *op) {
+int apply_auto(object *op) {
     object *tmp = NULL;
     int i;
 
@@ -741,12 +741,12 @@ int auto_apply(object *op) {
     return tmp ? 1 : 0;
 }
 
-/* fix_auto_apply goes through the entire map (only the first time
+/* apply_auto_fix goes through the entire map (only the first time
  * when an original map is loaded) and performs special actions for
  * certain objects (most initialization of chests and creation of
- * treasures and stuff).  Calls auto_apply if appropriate.
+ * treasures and stuff).  Calls apply_auto if appropriate.
  */
-void fix_auto_apply(mapstruct *m) {
+void apply_auto_fix(mapstruct *m) {
     object *tmp, *above = NULL;
     int x, y;
 
@@ -756,7 +756,7 @@ void fix_auto_apply(mapstruct *m) {
                 above = tmp->above;
 
                 if (QUERY_FLAG(tmp, FLAG_AUTO_APPLY))
-                    auto_apply(tmp);
+                    apply_auto(tmp);
                 else if (tmp->type == TREASURE) {
                     if (HAS_RANDOM_ITEMS(tmp))
                         while ((tmp->stats.hp--) > 0)

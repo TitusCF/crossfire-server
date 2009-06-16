@@ -223,7 +223,7 @@ int command_apply(object *op, char *params) {
     object *inv = op->inv;
 
     if (!params) {
-        player_apply_below(op);
+        apply_by_living_below(op);
         return 0;
     }
 
@@ -252,7 +252,7 @@ int command_apply(object *op, char *params) {
 
     inv = find_best_apply_object_match(inv, op, params, aflag);
     if (inv) {
-        player_apply(op, inv, aflag, 0);
+        apply_by_living(op, inv, aflag, 0);
     } else
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Could not find any match to the %s.",
