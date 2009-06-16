@@ -46,6 +46,8 @@
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
 
+static int apply_check_personalized_blessings(object *who, object *op);
+
 /**
  * Can transport hold object op?
  * This is a pretty trivial function,
@@ -1219,69 +1221,8 @@ int apply_special(object *who, object *op, int aflags) {
         return 1;
     }
 
-    /* If personalized blessings are activated, the weapon can bite
-     * the wielder if he/she is not the one who initially blessed it.
-     * Chances of being hurt depend on the experience amount
-     * ("willpower") the object has, compared to the experience
-     * amount of the wielder.
-     */
-    if (settings.personalized_blessings) {
-        const char *owner = object_get_value(op, "item_owner");
-        if (owner != NULL && strcmp(owner, who->name)) {
-            const char *will;
-            long item_will;
-            long margin;
-            const char *msg;
-            int random_effect;
-            int damage_percentile;
-
-            will = object_get_value(op, "item_willpower");
-            item_will = will != NULL ? atol(will) : 0;
-            if (item_will > who->stats.exp) {
-                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                     "This %s refuses to serve you - it keeps evading your hand !",
-                                     "This %s refuses to serve you - it keeps evading your hand !",
-                                     op->name);
-                return 1;
-            }
-            if (item_will != 0)
-                margin = who->stats.exp/item_will;
-            else
-                margin = who->stats.exp;
-            random_effect = random_roll(0, 100, who, 1)-margin*20;
-            if (random_effect > 80) {
-                msg = "You don't know why, but you have the feeling that the %s is angry at you !";
-                damage_percentile = 60;
-            } else if (random_effect > 60) {
-                msg = "The %s seems to look at you nastily !";
-                damage_percentile = 45;
-            } else if (random_effect > 40) {
-                msg = "You have the strange feeling that the %s is annoyed...";
-                damage_percentile = 30;
-            } else if (random_effect > 20) {
-                msg = "The %s seems tired, or bored, in a way. Very strange !";
-                damage_percentile = 15;
-            } else if (random_effect > 0) {
-                msg = "You hear the %s sighing !";
-                damage_percentile = 0;
-            } else {
-                msg = NULL;
-                damage_percentile = 0;
-            }
-            if (msg != NULL)
-                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                     msg, msg, op->name);
-            if (damage_percentile > 0) {
-                int weapon_bite = (who->stats.hp*damage_percentile)/100;
-                if (weapon_bite < 1)
-                    weapon_bite = 1;
-                who->stats.hp -= weapon_bite;
-                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
-                                     "You get a nasty bite in the hand !",
-                                     "You get a nasty bite in the hand !");
-            }
-        }
-    }
+    if (!apply_check_personalized_blessings(who, op))
+        return 1;
 
     /* Ok.  We are now at the state where we can apply the new object.
      * Note that we don't have the checks for can_use_...
@@ -1850,4 +1791,73 @@ void apply_changes_to_player(object *pl, object *change) {
 
 void legacy_apply_container(object *op, object *sack) {
     apply_container(op, sack);
+}
+
+/**
+ * If personalized blessings are activated, the weapon can bite
+ * the wielder if he/she is not the one who initially blessed it.
+ * Chances of being hurt depend on the experience amount
+ * ("willpower") the object has, compared to the experience
+ * amount of the wielder.
+ */
+static int apply_check_personalized_blessings(object *who, object *op) {
+    const char *owner;
+    const char *will;
+    long item_will;
+    long margin;
+    const char *msg;
+    int random_effect;
+    int damage_percentile;
+
+    if (!settings.personalized_blessings) {
+        return 1;
+    }
+
+    owner = object_get_value(op, "item_owner");
+    if (owner == NULL || strcmp(owner, who->name) == 0)
+        return 1;
+
+    will = object_get_value(op, "item_willpower");
+    item_will = will != NULL ? atol(will) : 0;
+    if (item_will > who->stats.exp) {
+        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "This %s refuses to serve you - it keeps evading your hand !",
+            "This %s refuses to serve you - it keeps evading your hand !",
+            op->name);
+        return 0;
+    }
+
+    margin = item_will != 0 ? who->stats.exp/item_will : who->stats.exp;
+    random_effect = random_roll(0, 100, who, 1)-margin*20;
+    if (random_effect > 80) {
+        msg = "You don't know why, but you have the feeling that the %s is angry at you !";
+        damage_percentile = 60;
+    } else if (random_effect > 60) {
+        msg = "The %s seems to look at you nastily !";
+        damage_percentile = 45;
+    } else if (random_effect > 40) {
+        msg = "You have the strange feeling that the %s is annoyed...";
+        damage_percentile = 30;
+    } else if (random_effect > 20) {
+        msg = "The %s seems tired, or bored, in a way. Very strange !";
+        damage_percentile = 15;
+    } else if (random_effect > 0) {
+        msg = "You hear the %s sighing !";
+        damage_percentile = 0;
+    } else {
+        msg = NULL;
+        damage_percentile = 0;
+    }
+    if (msg != NULL)
+        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            msg, msg, op->name);
+    if (damage_percentile > 0) {
+        int weapon_bite = (who->stats.hp*damage_percentile)/100;
+        if (weapon_bite < 1)
+            weapon_bite = 1;
+        who->stats.hp -= weapon_bite;
+        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
+            "You get a nasty bite in the hand !",
+            "You get a nasty bite in the hand !");
+    }
 }
