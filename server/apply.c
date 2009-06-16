@@ -684,8 +684,7 @@ static int unapply_special(object *who, object *op, int aflags) {
                                  "You unwield %s.",
                                  name);
         (void)change_abil(who, op);
-        if (QUERY_FLAG(who, FLAG_READY_WEAPON))
-            CLEAR_FLAG(who, FLAG_READY_WEAPON);
+        CLEAR_FLAG(who, FLAG_READY_WEAPON);
         who->current_weapon = NULL;
         clear_skill(who);
         break;
