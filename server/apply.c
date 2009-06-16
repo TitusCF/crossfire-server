@@ -1188,11 +1188,9 @@ int apply_special(object *who, object *op, int aflags) {
     case WEAPON:
         if (!apply_check_weapon_power(who, op->last_eat)) {
             if (!(aflags&AP_NOPRINT))
-                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY,
-                    MSG_TYPE_APPLY_ERROR,
+                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                     "That weapon is too powerful for you to use.  It would consume your soul!",
                     NULL);
-
             if (tmp != NULL)
                 (void)object_insert_in_ob(tmp, who);
             return 1;
@@ -1258,13 +1256,10 @@ int apply_special(object *who, object *op, int aflags) {
 
     case BOW:
         if (!apply_check_weapon_power(who, op->last_eat)) {
-            if (!(aflags&AP_NOPRINT)) {
+            if (!(aflags&AP_NOPRINT))
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                              "That item is too powerful for you to use.",
-                              NULL);
-                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                              "It would consume your soul!.", NULL);
-            }
+                    "That weapon is too powerful for you to use.  It would consume your soul!",
+                    NULL);
             if (tmp != NULL)
                 (void)object_insert_in_ob(tmp, who);
             return 1;
