@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Include "hostile" attribute in (pk) messages.
+Andreas Kirschbaum 2009-06-16
+
 Fix owner check ("The weapon does not recognize you as its owner.") for bows
 and character names which are a prefix of the owner's name.
 Andreas Kirschbaum 2009-06-16

@@ -1680,12 +1680,23 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
     /* Pet (or spell) killed something. */
     if (owner != hitter) {
         char name_op[MAX_BUF], name_hitter[MAX_BUF];
+        const char *owner_prefix;
+        const char *op_prefix;
+
+        owner_prefix = !battleg && pk && owner->contr != NULL && !owner->contr->peaceful ? "hostile " : "";
+        op_prefix = !battleg && pk && op->contr != NULL && !op->contr->peaceful ? "hostile " : "";
 
         query_name(op, name_op, MAX_BUF);
         query_name(hitter, name_hitter, MAX_BUF);
-        snprintf(buf, sizeof(buf), "%s killed %s with %s%s.", owner->name, name_op, name_hitter, battleg ? " (duel)" : (pk ? " (pk)" : ""));
+        snprintf(buf, sizeof(buf), "%s%s killed %s%s with %s%s.", owner_prefix, owner->name, op_prefix, name_op, name_hitter, battleg ? " (duel)" : (pk ? " (pk)" : ""));
     } else {
-        snprintf(buf, sizeof(buf), "%s killed %s%s%s.", hitter->name, op->name,
+        const char *hitter_prefix;
+        const char *op_prefix;
+
+        hitter_prefix = !battleg && pk && hitter->contr != NULL && !hitter->contr->peaceful ? "hostile " : "";
+        op_prefix = !battleg && pk && op->contr != NULL && !op->contr->peaceful ? "hostile " : "";
+
+        snprintf(buf, sizeof(buf), "%s%s killed %s%s%s%s.", hitter_prefix, hitter->name, op_prefix, op->name,
                       (QUERY_FLAG(hitter, FLAG_MONSTER)) || hitter->type == PLAYER ?
                       " in hand to hand combat" : "", battleg ? " (duel)" : (pk ? " (pk)" : ""));
     }
