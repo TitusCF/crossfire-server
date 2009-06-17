@@ -178,7 +178,7 @@ static int compare_ob_value_lists(const object *ob1, const object *ob2) {
 int object_can_merge(object *ob1, object *ob2) {
 
     /* A couple quicksanity checks */
-    if ((ob1 == ob2) || (ob1->type != ob2->type))
+    if (ob1 == ob2 || ob1->type != ob2->type)
         return 0;
 
     if (ob1->speed != ob2->speed)
@@ -908,19 +908,19 @@ static void expand_objects(void) {
     free_objects = new;
     new[0].prev = NULL;
     new[0].next = &new[1],
-    SET_FLAG(&(new[0]), FLAG_REMOVED);
-    SET_FLAG(&(new[0]), FLAG_FREED);
+    SET_FLAG(&new[0], FLAG_REMOVED);
+    SET_FLAG(&new[0], FLAG_FREED);
 
     for (i = 1; i < OBJ_EXPAND-1; i++) {
         new[i].next = &new[i+1],
         new[i].prev = &new[i-1],
-        SET_FLAG(&(new[i]), FLAG_REMOVED);
-        SET_FLAG(&(new[i]), FLAG_FREED);
+        SET_FLAG(&new[i], FLAG_REMOVED);
+        SET_FLAG(&new[i], FLAG_FREED);
     }
     new[OBJ_EXPAND-1].prev = &new[OBJ_EXPAND-2],
     new[OBJ_EXPAND-1].next = NULL,
-    SET_FLAG(&(new[OBJ_EXPAND-1]), FLAG_REMOVED);
-    SET_FLAG(&(new[OBJ_EXPAND-1]), FLAG_FREED);
+    SET_FLAG(&new[OBJ_EXPAND-1], FLAG_REMOVED);
+    SET_FLAG(&new[OBJ_EXPAND-1], FLAG_FREED);
 
     nrofallocobjects += OBJ_EXPAND;
     nroffreeobjects += OBJ_EXPAND;
@@ -1955,7 +1955,7 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
                               op->stats.dam*(op->duration+1);
 
                 op->duration = MAX(op->duration, tmp->duration);
-                tmp_dam /= (op->duration+1);
+                tmp_dam /= op->duration+1;
                 op->stats.dam = tmp_dam+1;
             } else {
                 /* in this case, duration is the same, so simply adding
@@ -2562,7 +2562,7 @@ object *object_insert_in_ob(object *op, object *where) {
         /* the item couldn't merge. */
         object_add_weight(where, op->weight*op->nrof);
     } else
-        object_add_weight(where, (op->weight+op->carrying));
+        object_add_weight(where, op->weight+op->carrying);
 
     op->map = NULL;
     op->env = where;
@@ -2610,14 +2610,14 @@ object *object_insert_in_ob(object *op, object *where) {
     otmp = object_get_player_container(where);
     if (otmp && otmp->contr != NULL) {
         if (!QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER)
-        && (QUERY_FLAG(op, FLAG_APPLIED) || (op->type == SKILL) || (op->glow_radius != 0)))
+        && (QUERY_FLAG(op, FLAG_APPLIED) || op->type == SKILL || op->glow_radius != 0))
             /* fix_object will only consider applied items, or skills, or items with a glow radius.
                thus no need to call it if our object hasn't that. */
             fix_object(otmp);
     }
 
     /* reset the light list and los of the players on the map */
-    if ((op->glow_radius != 0) && where->map) {
+    if (op->glow_radius != 0 && where->map) {
 #ifdef DEBUG_LIGHTS
         LOG(llevDebug, " object_insert_in_ob(): got %s to insert in map/op\n", op->name);
 #endif /* DEBUG_LIGHTS */
@@ -2852,7 +2852,7 @@ object *object_present_in_ob_by_name(int type, const char *str, const object *op
     object *tmp;
 
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-        if ((type == -1 || tmp->type == type) && (!strcmp(str, tmp->name)))
+        if ((type == -1 || tmp->type == type) && !strcmp(str, tmp->name))
             return tmp;
     }
     return NULL;
@@ -2983,10 +2983,10 @@ int object_find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy
         if (i <= sx) {
             nx = i+ix;
             ny = iy;
-        } else if (i <= (sx+sy)) {
+        } else if (i <= sx+sy) {
             nx = ix+sx;
             ny = iy+i-sx;
-        } else if (i <= (sx+sy+sx)) {
+        } else if (i <= sx+sy+sx) {
             nx = ix+sx-(i-(sx+sy));
             ny = iy+sy;
         } else {
@@ -3005,14 +3005,14 @@ int object_find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy
 
     /* Choose a random valid position */
     freecount = RANDOM()%freecount;
-    for (i = 0; i < (sx+sx+sy+sy); i++) {
+    for (i = 0; i < sx+sx+sy+sy; i++) {
         if (i <= sx) {
             nx = i+ix;
             ny = iy;
-        } else if (i <= (sx+sy)) {
+        } else if (i <= sx+sy) {
             nx = ix+sx;
             ny = iy+i-sx;
-        } else if (i <= (sx+sy+sx)) {
+        } else if (i <= sx+sy+sx) {
             nx = ix+sx-(i-(sx+sy));
             ny = iy+sy;
         } else {
@@ -3588,7 +3588,7 @@ int object_can_pick(const object *who, const object *item) {
         return 0;
 
     /* Weight limit for monsters */
-    if (who->type != PLAYER && item->weight > (who->weight/3))
+    if (who->type != PLAYER && item->weight > who->weight/3)
         return 0;
 
     /* Can not pick up multipart objects */
