@@ -75,9 +75,9 @@ static object *find_best_apply_object_match(object *start, object *pl, const cha
     FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp->invisible)
             continue;
-        if ((aflag == AP_APPLY) && (QUERY_FLAG(tmp, FLAG_APPLIED)))
+        if (aflag == AP_APPLY && QUERY_FLAG(tmp, FLAG_APPLIED))
             continue;
-        if ((aflag == AP_UNAPPLY) && (!QUERY_FLAG(tmp, FLAG_APPLIED)))
+        if (aflag == AP_UNAPPLY && !QUERY_FLAG(tmp, FLAG_APPLIED))
             continue;
         if ((tmpmatch = object_matches_string(pl, tmp, params)) > match_val) {
             match_val = tmpmatch;
@@ -313,8 +313,8 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
         return 0;
     }
     if (sack->weight_limit && sack->carrying+(nrof ? nrof : 1)
-        *(op->weight+(op->type == CONTAINER ? (op->carrying*op->stats.Str) : 0))
-        *(100-sack->stats.Str)/100  > sack->weight_limit) {
+        *(op->weight+(op->type == CONTAINER ? op->carrying*op->stats.Str : 0))
+        *(100-sack->stats.Str)/100 > sack->weight_limit) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "That won't fit in the %s!",
                              "That won't fit in the %s!",
@@ -381,7 +381,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
 
     effective_weight_limit = get_weight_limit(MIN(pl->stats.Str, MAX_STAT));
 
-    if ((pl->weight+pl->carrying+weight) > effective_weight_limit) {
+    if (pl->weight+pl->carrying+weight > effective_weight_limit) {
         draw_ext_info(0, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                       "That item is too heavy for you to pick up.", NULL);
         return;
@@ -637,7 +637,7 @@ int command_take(object *op, char *params) {
          * not make it any more efficient
          */
         if (params && (ival = object_matches_string(op, tmp, params)) > 0) {
-            if ((ival <= 2) && (!object_can_pick(op, tmp))) {
+            if (ival <= 2 && !object_can_pick(op, tmp)) {
                 if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))/* don't count floor tiles */
                     missed++;
             } else
@@ -762,7 +762,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
     /* Don't worry about this for containers - our caller should have
      * already checked this.
      */
-    if ((sack->type == CONTAINER) && !sack_can_hold(op, sack, tmp, (nrof ? nrof : tmp->nrof)))
+    if (sack->type == CONTAINER && !sack_can_hold(op, sack, tmp, nrof ? nrof : tmp->nrof))
         return;
 
     if (QUERY_FLAG(tmp, FLAG_APPLIED)) {
@@ -896,7 +896,7 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
     if (op->type == PLAYER
     && !QUERY_FLAG(tmp, FLAG_UNPAID)
     && (tmp->nrof ? tmp->value*tmp->nrof : tmp->value > 2000)
-    && (op->contr->last_save_time+SAVE_INTERVAL) <= time(NULL)) {
+    && op->contr->last_save_time+SAVE_INTERVAL <= time(NULL)) {
         save_player(op, 1);
         op->contr->last_save_time = time(NULL);
     }
@@ -1156,7 +1156,7 @@ int command_drop(object *op, char *params) {
             if (QUERY_FLAG(tmp, FLAG_NO_DROP) || tmp->invisible)
                 continue;
             if ((ival = object_matches_string(op, tmp, params)) > 0) {
-                if ((QUERY_FLAG(tmp, FLAG_INV_LOCKED)) && ((ival == 1) || (ival == 2)))
+                if (QUERY_FLAG(tmp, FLAG_INV_LOCKED) && (ival == 1 || ival == 2))
                     missed++;
                 else
                     drop(op, tmp);
@@ -1630,7 +1630,7 @@ void inventory(object *op, object *inv) {
     }
     FOR_INV_PREPARE(inv ? inv : op, tmp)
         if ((!tmp->invisible && (inv == NULL || inv->type == CONTAINER || QUERY_FLAG(tmp, FLAG_APPLIED)))
-        || (!op || QUERY_FLAG(op, FLAG_WIZ)))
+        || !op || QUERY_FLAG(op, FLAG_WIZ))
             items++;
     FOR_INV_FINISH();
     if (inv == NULL) { /* player's inventory */
@@ -1658,7 +1658,7 @@ void inventory(object *op, object *inv) {
             continue;
         query_weight(tmp, weight, MAX_BUF);
         query_name(tmp, name, MAX_BUF);
-        if ((!op || QUERY_FLAG(op, FLAG_WIZ)))
+        if (!op || QUERY_FLAG(op, FLAG_WIZ))
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
                                  "[fixed]%s- %-*.*s (%5d) %-8s",
                                  "%s- %-*.*s (%5d) %-8s",
@@ -1853,7 +1853,7 @@ int command_pickup(object *op, char *params) {
         }
         if (1)
             LOG(llevDebug, "command_pickup: !params\n");
-        set_pickup_mode(op, (op->contr->mode > 6) ? 0 : op->contr->mode+1);
+        set_pickup_mode(op, op->contr->mode > 6 ? 0 : op->contr->mode+1);
         return 0;
     }
 
@@ -2047,7 +2047,7 @@ int command_rename_item(object *op, char *params) {
                 return 1;
             }
             /* Sanity check for buffer overruns */
-            if ((closebrace-params) > 127) {
+            if (closebrace-params > 127) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Old name too long (up to 127 characters allowed)!", NULL);
                 return 1;
@@ -2095,7 +2095,7 @@ int command_rename_item(object *op, char *params) {
             }
 
             /* Sanity check for buffer overruns */
-            if ((closebrace-params) > 127) {
+            if (closebrace-params > 127) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "New name too long (up to 127 characters allowed)!", NULL);
                 return 1;
