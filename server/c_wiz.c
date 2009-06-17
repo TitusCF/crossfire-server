@@ -1009,9 +1009,12 @@ int command_create(object *op, char *params) {
             tmp->nrof = nrof;
         tmp->map = op->map;
 
-        if (at->clone.randomitems != NULL && !at_spell)
-            create_treasure(at->clone.randomitems, tmp, GT_APPLY,
-                            op->map->difficulty, 0);
+        if (at->clone.randomitems != NULL && !at_spell) {
+            create_treasure(at->clone.randomitems, tmp, 0, op->map->difficulty, 0);
+            if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
+                monster_check_apply_all(tmp);
+            }
+        }
 
         /* Multipart objects can't be in inventory, put'em on floor. */
         if (!tmp->more) {
@@ -1096,8 +1099,12 @@ int command_create(object *op, char *params) {
          */
         dm_stack_push(op->contr, head->count);
 
-        if (at->clone.randomitems != NULL && !at_spell)
-            create_treasure(at->clone.randomitems, head, GT_APPLY, op->map->difficulty, 0);
+        if (at->clone.randomitems != NULL && !at_spell) {
+            create_treasure(at->clone.randomitems, head, 0, op->map->difficulty, 0);
+            if (QUERY_FLAG(head, FLAG_MONSTER)) {
+                monster_check_apply_all(head);
+            }
+        }
     }
 
     /* free the one we used to copy */

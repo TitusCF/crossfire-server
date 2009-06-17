@@ -1513,7 +1513,7 @@ void apply_auto_fix(mapstruct *m) {
                 && tmp->type != PLAYER_CHANGER
                 && tmp->type != CLASS
                 && HAS_RANDOM_ITEMS(tmp)) {
-                    create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty, 0);
+                    create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                     tmp->randomitems = NULL;
                 }
 

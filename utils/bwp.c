@@ -771,8 +771,12 @@ void apply_auto_fix(mapstruct *m) {
                         if (HAS_RANDOM_ITEMS(tmp))
                             while ((tmp->stats.hp--) > 0)
                                 create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
-                    } else if (HAS_RANDOM_ITEMS(tmp))
-                        create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty, 0);
+                    } else if (HAS_RANDOM_ITEMS(tmp)) {
+                        create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
+                        if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
+                            monster_check_apply_all(tmp);
+                        }
+                    }
                 }
             }
     for (x = 0; x < MAP_WIDTH(m); x++)

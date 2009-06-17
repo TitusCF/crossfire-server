@@ -334,11 +334,8 @@ static void put_treasure(object *op, object *creator, int flags) {
         op->y = creator->y;
         SET_FLAG(op, FLAG_OBJ_ORIGINAL);
         object_insert_in_map(op, creator->map, op, INS_NO_MERGE|INS_NO_WALK_ON);
-    } else {
+    } else
         op = object_insert_in_ob(op, creator);
-        if ((flags&GT_APPLY) && QUERY_FLAG(creator, FLAG_MONSTER))
-            monster_check_apply(creator, op);
-    }
 }
 
 /**

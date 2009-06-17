@@ -3871,8 +3871,11 @@ void do_auto_apply(mapstruct *m) {
                 && tmp->type != PLAYER_CHANGER
                 && tmp->type != CLASS
                 && HAS_RANDOM_ITEMS(tmp)) {
-                    create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty, 0);
+                    create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                     tmp->randomitems = NULL;
+                    if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
+                        monster_check_apply_all(tmp);
+                    }
                 }
             }
 

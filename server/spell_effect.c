@@ -247,7 +247,6 @@ static void polymorph_living(object *op, int level) {
         return;
 
     if (HAS_RANDOM_ITEMS(op))
-        /* No GT_APPLY here because we'll do it manually. */
         create_treasure(op->randomitems, op, GT_INVISIBLE, map->difficulty, 0);
 
     /* Apply any objects. */

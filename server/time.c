@@ -155,8 +155,12 @@ static int generate_monster_inv(object *gen) {
     if (QUERY_FLAG(head, FLAG_FREED))
             return TRUE;
     object_fix_multipart(head);
-    if (HAS_RANDOM_ITEMS(head))
-        create_treasure(head->randomitems, head, GT_APPLY, gen->map->difficulty, 0);
+    if (HAS_RANDOM_ITEMS(head)) {
+        create_treasure(head->randomitems, head, 0, gen->map->difficulty, 0);
+        if (QUERY_FLAG(head, FLAG_MONSTER)) {
+            monster_check_apply_all(head);
+        }
+    }
     return TRUE;
 }
 
@@ -212,8 +216,12 @@ static int generate_monster_arch(object *gen) {
         /* Did generate a monster, just didn't live very long */
         if (QUERY_FLAG(op, FLAG_FREED))
             return TRUE;
-        if (HAS_RANDOM_ITEMS(op))
-            create_treasure(op->randomitems, op, GT_APPLY, gen->map->difficulty, 0);
+        if (HAS_RANDOM_ITEMS(op)) {
+            create_treasure(op->randomitems, op, 0, gen->map->difficulty, 0);
+            if (QUERY_FLAG(op, FLAG_MONSTER)) {
+                monster_check_apply_all(op);
+            }
+        }
         if (head == NULL)
             head = op;
         prev = op;

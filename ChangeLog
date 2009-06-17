@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix monsters applying items generated from treasure lists: do not apply items
+before all treasures have been created. Without this fix applying of weapons
+did sometimes fail because the needed skill was generated after the weapon.
+Andreas Kirschbaum 2009-06-17
+
 Include "hostile" attribute in (pk) messages.
 Andreas Kirschbaum 2009-06-16
 

@@ -149,7 +149,7 @@ void apply_auto_fix(mapstruct *m) {
                             while ((tmp->stats.hp--) > 0)
                                 create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                     } else if (HAS_RANDOM_ITEMS(tmp))
-                        create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty, 0);
+                        create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                 }
             } FOR_MAP_FINISH();
     for (x = 0; x < MAP_WIDTH(m); x++)
@@ -212,9 +212,6 @@ void esrv_del_item(player *pl, int tag) {
 }
 
 void esrv_update_spells(player *pl) {
-}
-
-void monster_check_apply(object *ob, object *obt) {
 }
 
 void trap_adjust(object *ob, int x) {

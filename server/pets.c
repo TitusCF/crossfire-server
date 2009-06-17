@@ -500,7 +500,10 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
     head->direction = dir;
 
     if (head->randomitems) {
-        create_treasure(head->randomitems, head, GT_APPLY|GT_STARTEQUIP, 6, 0);
+        create_treasure(head->randomitems, head, GT_STARTEQUIP, 6, 0);
+        if (QUERY_FLAG(head, FLAG_MONSTER)) {
+            monster_check_apply_all(head);
+        }
     }
     mark_inventory_as_no_drop(head);
 
@@ -1096,7 +1099,10 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
         head->stats.exp = 0;
         head = object_insert_in_map(head, head->map, op, 0);
         if (head != NULL && head->randomitems) {
-            create_treasure(head->randomitems, head, GT_APPLY|GT_STARTEQUIP, 6, 0);
+            create_treasure(head->randomitems, head, GT_STARTEQUIP, 6, 0);
+            if (QUERY_FLAG(head, FLAG_MONSTER)) {
+                monster_check_apply_all(head);
+            }
         }
         if (head != NULL) {
             mark_inventory_as_no_drop(head);

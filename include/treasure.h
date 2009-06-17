@@ -59,10 +59,9 @@ enum {
     GT_ENVIRONMENT = 0x0001,    /**< ? */
     GT_INVISIBLE = 0x0002,      /**< Unused? */
     GT_STARTEQUIP = 0x0004,     /**< Generated items have the ::FLAG_STARTEQUIP. */
-    GT_APPLY = 0x0008,          /**< Monsters should apply generated item. */
-    GT_ONLY_GOOD = 0x0010,      /**< Don't generate bad/cursed items. Used for new player's equipment. */
-    GT_UPDATE_INV = 0x0020,     /**< When object has been generated, send its information to player. */
-    GT_MINIMAL = 0x0040         /**< Do minimal adjustments, don't make artifacts, and so on. */
+    GT_ONLY_GOOD = 0x0008,      /**< Don't generate bad/cursed items. Used for new player's equipment. */
+    GT_UPDATE_INV = 0x0010,     /**< When object has been generated, send its information to player. */
+    GT_MINIMAL = 0x0020         /**< Do minimal adjustments, don't make artifacts, and so on. */
 };
 
 /**
