@@ -180,7 +180,6 @@ void party_remove(partylist *party) {
     partylist *tmpparty;
     partylist *previousparty;
     partylist *nextparty;
-    player *pl;
 
     if (firstparty == NULL) {
         LOG(llevError, "party_remove: I was asked to remove party %s, but no parties are defined\n",
