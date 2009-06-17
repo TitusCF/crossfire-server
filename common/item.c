@@ -107,6 +107,7 @@ static const char *const levelnumbers_10[] = {
  * define.h
  */
 static const typedata item_types[] = {
+    { 0, "none", "none", 0, 0 },
     { PLAYER, "player", "players", 0, 0 },
     { ROD, "rod", "rods", SK_THAUMATURGY, 0 },
     { TREASURE, "treasure", "treasure", 0, 0 },

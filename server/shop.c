@@ -1184,7 +1184,7 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
         LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s\n", map->path);
         return 0;
     }
-    if (!item->type) {
+    if (item->type == -1) {
         LOG(llevError, "shop_specialisation_ratio: passed an item with an invalid type\n");
         /*
          * I'm not really sure what the /right/ thing to do here is,
@@ -1195,7 +1195,7 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
     }
     if (map->shopitems) {
         for (i = 0; i < items[0].index; i++)
-            if (items[i].typenum == item->type || (!items[i].typenum && likedness == 0.001))
+            if (items[i].typenum == item->type || (items[i].typenum == -1 && likedness == 0.001))
                 likedness = items[i].strength/100.0;
     }
     if (likedness > 1.0) { /* someone has been rather silly with the map headers. */

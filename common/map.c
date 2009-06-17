@@ -922,7 +922,7 @@ static shopitems *parse_shop_string(const char *input_string) {
             items[i].strength = atoi(strchr(p, ':')+1);
 
         if (isdigit(*p) || *p == '*') {
-            items[i].typenum = atoi(p); /* atoi returns 0 when we have an asterisk */
+            items[i].typenum = *p == '*' ? -1 : atoi(p);
             current_type = get_typedata(items[i].typenum);
             if (current_type) {
                 items[i].name = current_type->name;
@@ -971,7 +971,7 @@ static void print_shop_string(mapstruct *m, char *output_string, int size) {
 
     output_string[0] = '\0';
     for (i = 0; i < m->shopitems[0].index; i++) {
-        if (m->shopitems[i].typenum) {
+        if (m->shopitems[i].typenum != -1) {
             if (m->shopitems[i].strength) {
                 snprintf(tmp, sizeof(tmp), "%s:%d;", m->shopitems[i].name, m->shopitems[i].strength);
             } else

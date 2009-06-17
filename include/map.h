@@ -324,7 +324,7 @@ typedef struct regiondef {
 typedef struct shopitem {
     const char *name;     /**< Name of the item in question, null if it is the default item. */
     const char *name_pl;  /**< Plural name. */
-    int typenum;    /**< Itemtype number we need to match, 0 if it is the default price. */
+    int typenum;    /**< Itemtype number we need to match, -1 if it is the default price. */
     sint8 strength; /**< The degree of specialisation the shop has in this item,
                      * as a percentage from -100 to 100. */
     int index;      /**< Being the size of the shopitems array.*/
