@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Change weight check for monsters in object_get_pick(): replace
+"item_weight <= picker_weight/3" with
+"total_picker_weight does not exceed get_weight_limit(picker)". This allows
+hill giants to pick up boulders and prevents vampires from carrying unlimited
+weight.
+Andreas Kirschbaum 2009-06-17
+
 Allow monsters to apply items even if they do not know the needed skill.
 Requiring the appropriate can_xxx flag is good enough.
 Andreas Kirschbaum 2009-06-17

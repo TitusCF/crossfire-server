@@ -3589,7 +3589,7 @@ int object_can_pick(const object *who, const object *item) {
         return 0;
 
     /* Weight limit for monsters */
-    if (who->type != PLAYER && item->weight > who->weight/3)
+    if (who->type != PLAYER && who->weight+who->carrying+item->weight > get_weight_limit(who->stats.Str))
         return 0;
 
     /* Can not pick up multipart objects */

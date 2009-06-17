@@ -1441,23 +1441,40 @@ static int monster_check_good_armour(object *who, object *item) {
  */
 
 static void monster_check_pickup(object *monster) {
-    object *tmp, *next;
+    object *tmp, *next, *part;
     int next_tag;
 
-    for (tmp = monster->below; tmp != NULL; tmp = next) {
-        next = tmp->below;
-        next_tag = next ? next->count : 0;
-        if (monster_can_pick(monster, tmp)) {
-            object_remove(tmp);
-            tmp = object_insert_in_ob(tmp, monster);
-            (void)monster_check_apply(monster, tmp);
+    for (part = monster; part != NULL; part = part->more)
+        for (tmp = part->below; tmp != NULL; tmp = next) {
+            next = tmp->below;
+            next_tag = next ? next->count : 0;
+            if (monster_can_pick(monster, tmp)) {
+                uint32 nrof;
+
+                if (tmp->weight > 0) {
+                    sint32 weight_limit;
+
+                    weight_limit = get_weight_limit(monster->stats.Str);
+                    if (weight_limit >= monster->weight-monster->carrying)
+                        nrof = (weight_limit-monster->weight-monster->carrying)/tmp->weight;
+                    else
+                        nrof = 0;
+                } else
+                    nrof = MAX(1, tmp->nrof);
+                if (nrof >= 1) {
+                    object *tmp2;
+
+                    tmp2 = object_split(tmp, MIN(nrof, MAX(1, tmp->nrof)), NULL, 0);
+                    tmp2 = object_insert_in_ob(tmp2, monster);
+                    (void)monster_check_apply(monster, tmp2);
+                }
+            }
+            /* We could try to re-establish the cycling, of the space, but probably
+             * not a big deal to just bail out.
+             */
+            if (next && object_was_destroyed(next, next_tag))
+                return;
         }
-        /* We could try to re-establish the cycling, of the space, but probably
-         * not a big deal to just bail out.
-         */
-        if (next && object_was_destroyed(next, next_tag))
-            return;
-    }
 }
 
 /*
