@@ -1587,7 +1587,8 @@ void object_remove(object *op) {
          * made to players inventory.  If set, avoiding the call
          * to save cpu time.
          */
-        if ((otmp = object_get_player_container(op->env)) != NULL
+        otmp = object_get_player_container(op->env);
+        if (otmp != NULL
         && otmp->contr
         && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
             fix_object(otmp);
@@ -4238,7 +4239,8 @@ int object_matches_string(object *pl, object *op, const char *name) {
             return 2;
 
         /* Allow for things like '100 arrows' */
-        if ((count = atoi(cp)) != 0) {
+        count = atoi(cp);
+        if (count != 0) {
             cp = strchr(cp, ' ');
             while (cp && cp[0] == ' ')
                 ++cp;  /* get rid of spaces */
