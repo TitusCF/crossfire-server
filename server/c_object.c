@@ -379,7 +379,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     if (tmp->inv)
         weight += tmp->carrying*(100-tmp->stats.Str)/100;
 
-    effective_weight_limit = MIN(get_weight_limit(pl->stats.Str, MAX_STAT);
+    effective_weight_limit = get_weight_limit(MIN(pl->stats.Str, MAX_STAT));
 
     if ((pl->weight+pl->carrying+weight) > effective_weight_limit) {
         draw_ext_info(0, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
