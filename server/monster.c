@@ -1442,7 +1442,7 @@ static int monster_check_good_armour(object *who, object *item) {
 
 static void monster_check_pickup(object *monster) {
     object *tmp, *next, *part;
-    int next_tag;
+    tag_t next_tag;
 
     for (part = monster; part != NULL; part = part->more)
         for (tmp = part->below; tmp != NULL; tmp = next) {
