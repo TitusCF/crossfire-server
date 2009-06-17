@@ -1161,13 +1161,15 @@ int apply_special(object *who, object *op, int aflags) {
                                      "You need the %s skill to use this item!",
                                      "You need the %s skill to use this item!",
                                      op->skill);
-            return 1;
-        }
+            if (who->type == PLAYER)
+                return 1;
 
-        /* While experience will be credited properly, we want to
-         * change the skill so that the dam and wc get updated
-         */
-        change_skill(who, skop, (aflags&AP_NOPRINT));
+            /* monsters do not care about missing skills */
+        } else
+            /* While experience will be credited properly, we want to
+             * change the skill so that the dam and wc get updated
+             */
+            change_skill(who, skop, (aflags&AP_NOPRINT));
     } else
         skop = NULL;
 
