@@ -1540,6 +1540,8 @@ static int monster_can_pick(object *monster, object *item) {
                 flag = QUERY_FLAG(monster, FLAG_USE_BOW);
                 break;
             }
+        if (!flag && QUERY_FLAG(item, FLAG_IS_THROWN) && object_find_by_type_subtype(monster, SKILL, SK_THROWING) != NULL)
+            flag = (monster->pick_up&8) || QUERY_FLAG(monster, FLAG_USE_WEAPON);
         /* Simplistic check - if the monster has a location to equip it, he will
          * pick it up.  Note that this doesn't handle cases where an item may
          * use several locations.
