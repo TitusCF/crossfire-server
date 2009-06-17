@@ -1688,7 +1688,7 @@ void monster_check_apply(object *mon, object *item) {
      * also, ignore status of curse so they can take off old armour.
      * monsters have some advantages after all.
      */
-    apply_manual(mon, item, AP_APPLY|AP_IGNORE_CURSE);
+    apply_manual(mon, item, AP_APPLY|AP_IGNORE_CURSE|AP_NOPRINT);
     return;
 }
 
