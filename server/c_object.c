@@ -79,7 +79,8 @@ static object *find_best_apply_object_match(object *start, object *pl, const cha
             continue;
         if (aflag == AP_UNAPPLY && !QUERY_FLAG(tmp, FLAG_APPLIED))
             continue;
-        if ((tmpmatch = object_matches_string(pl, tmp, params)) > match_val) {
+        tmpmatch = object_matches_string(pl, tmp, params);
+        if (tmpmatch > match_val) {
             match_val = tmpmatch;
             best = tmp;
         }
@@ -636,15 +637,20 @@ int command_take(object *op, char *params) {
          * but that probably will make it more difficult to read, and
          * not make it any more efficient
          */
-        if (params && (ival = object_matches_string(op, tmp, params)) > 0) {
-            if (ival <= 2 && !object_can_pick(op, tmp)) {
-                if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))/* don't count floor tiles */
-                    missed++;
-            } else
+        if (params) {
+            ival = object_matches_string(op, tmp, params);
+            if (ival > 0) {
+                if (ival <= 2 && !object_can_pick(op, tmp)) {
+                    if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))/* don't count floor tiles */
+                        missed++;
+                } else
+                    pick_up(op, tmp);
+            }
+        } else {
+            if (object_can_pick(op, tmp)) {
                 pick_up(op, tmp);
-        } else if (object_can_pick(op, tmp) && !params) {
-            pick_up(op, tmp);
-            break;
+                break;
+            }
         }
     } FOR_OB_AND_BELOW_FINISH();
     if (!params && !tmp) {
@@ -1155,7 +1161,8 @@ int command_drop(object *op, char *params) {
         FOR_INV_PREPARE(op, tmp) {
             if (QUERY_FLAG(tmp, FLAG_NO_DROP) || tmp->invisible)
                 continue;
-            if ((ival = object_matches_string(op, tmp, params)) > 0) {
+            ival = object_matches_string(op, tmp, params);
+            if (ival > 0) {
                 if (QUERY_FLAG(tmp, FLAG_INV_LOCKED) && (ival == 1 || ival == 2))
                     missed++;
                 else
@@ -1906,7 +1913,8 @@ int command_pickup(object *op, char *params) {
  * new pickup mode.
  */
 static void set_pickup_mode(const object *op, int i) {
-    switch (op->contr->mode = i) {
+    op->contr->mode = i;
+    switch (op->contr->mode) {
     case 0:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                       "Mode: Don't pick up.", NULL);
@@ -2023,7 +2031,8 @@ int command_rename_item(object *op, char *params) {
             params++;
 
         /* Checking the first part */
-        if ((itemnumber = atoi(params)) != 0) {
+        itemnumber = atoi(params);
+        if (itemnumber != 0) {
             int found = 0;
             FOR_INV_PREPARE(op, item)
                 if (item->count == itemnumber && !item->invisible) {
