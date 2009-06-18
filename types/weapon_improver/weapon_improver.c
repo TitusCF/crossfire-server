@@ -101,20 +101,19 @@ static int check_item(object *op, const char *item) {
 
     if (item == NULL)
         return 0;
-    op = op->below;
-    while (op != NULL) {
-        if (strcmp(op->arch->name, item) == 0) {
-            if (!QUERY_FLAG(op, FLAG_CURSED)
-            && !QUERY_FLAG(op, FLAG_DAMNED)
-            /* Loophole bug? -FD- */ && !QUERY_FLAG(op, FLAG_UNPAID)) {
-                if (op->nrof == 0)/* this is necessary for artifact sacrifices --FD-- */
+
+    FOR_BELOW_PREPARE(op, tmp) {
+        if (strcmp(tmp->arch->name, item) == 0) {
+            if (!QUERY_FLAG(tmp, FLAG_CURSED)
+            && !QUERY_FLAG(tmp, FLAG_DAMNED)
+            /* Loophole bug? -FD- */ && !QUERY_FLAG(tmp, FLAG_UNPAID)) {
+                if (tmp->nrof == 0)/* this is necessary for artifact sacrifices --FD-- */
                     count++;
                 else
-                    count += op->nrof;
+                    count += tmp->nrof;
             }
         }
-        op = op->below;
-    }
+    } FOR_BELOW_FINISH();
     return count;
 }
 

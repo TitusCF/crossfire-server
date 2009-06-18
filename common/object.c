@@ -2881,16 +2881,15 @@ int object_check_move_on(object *op, object *originator) {
  * present_arch() has been renamed to map_find_by_archetype()
  */
 object *map_find_by_archetype(mapstruct *m, int x, int y, const archetype *at) {
-    object *tmp;
-
     if (m == NULL || out_of_map(m, x, y)) {
         LOG(llevError, "Present_arch called outside map.\n");
         return NULL;
     }
 
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+    FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->arch == at)
             return tmp;
+    FOR_MAP_FINISH();
 
     return NULL;
 }
@@ -2912,16 +2911,15 @@ object *map_find_by_archetype(mapstruct *m, int x, int y, const archetype *at) {
  * present() has been renamed to map_find_by_type()
  */
 object *map_find_by_type(mapstruct *m, int x, int y, uint8 type) {
-    object *tmp;
-
     if (out_of_map(m, x, y)) {
         LOG(llevError, "Present called outside map.\n");
         return NULL;
     }
 
-    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+    FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->type == type)
             return tmp;
+    FOR_MAP_FINISH();
 
     return NULL;
 }

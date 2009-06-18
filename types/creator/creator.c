@@ -70,17 +70,18 @@ static void move_creator(object *creator) {
     }
 
     if (creator->inv != NULL) {
-        object *ob;
         int i;
         object *ob_to_copy;
 
         /* select random object from inventory to copy */
         ob_to_copy = creator->inv;
-        for (ob = creator->inv->below, i = 1; ob != NULL; ob = ob->below, i++) {
+        i = 1;
+        FOR_BELOW_PREPARE(creator->inv, ob) {
             if (rndm(0, i) == 0) {
                 ob_to_copy = ob;
             }
-        }
+            i++;
+        } FOR_BELOW_FINISH();
         new_ob = object_create_clone(ob_to_copy);
         CLEAR_FLAG(new_ob, FLAG_IS_A_TEMPLATE);
         object_unset_flag_inv(new_ob, FLAG_IS_A_TEMPLATE);

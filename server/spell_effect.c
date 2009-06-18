@@ -174,7 +174,7 @@ static void polymorph_living(object *op, int level) {
     archetype *at;
     int x = op->x, y = op->y, numat = 0, choice, friendly;
     mapstruct *map = op->map;
-    object *tmp, *next, *owner;
+    object *owner;
 
     if (op->head)
         op = op->head;
@@ -214,15 +214,14 @@ static void polymorph_living(object *op, int level) {
      * and remove any spells.  Note that if this is extended
      * to players, that would need to get fixed somehow.
      */
-    for (tmp = op->inv; tmp != NULL; tmp = next) {
-        next = tmp->below;
+    FOR_INV_PREPARE(op, tmp) {
         if (QUERY_FLAG(tmp, FLAG_APPLIED))
             apply_manual(op, tmp, 0);
         if (tmp->type == SPELL) {
             object_remove(tmp);
             object_free(tmp);
         }
-    }
+    } FOR_INV_FINISH();
 
     /* Preserve some values for the new object */
     owner = object_get_owner(op);
@@ -447,7 +446,7 @@ void polymorph(object *op, object *who, int level) {
  * Returns 0 on illegal cast, otherwise 1.
  */
 int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
-    object *tmp, *next;
+    object *tmp;
     int range, mflags, maxrange, level;
     mapstruct *m;
 
@@ -474,14 +473,12 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
             ;
 
         /* Now start polymorphing the objects, top down */
-        while (tmp != NULL) {
+        FOR_OB_AND_BELOW_PREPARE(tmp) {
             /* Once we find the floor, no need to go further */
             if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
                 break;
-            next = tmp->below;
             polymorph(tmp, op, level);
-            tmp = next;
-        }
+        } FOR_OB_AND_BELOW_FINISH();
         image = arch_to_object(spell_ob->other_arch);
         image->x = x;
         image->y = y;
@@ -707,7 +704,6 @@ int cast_create_food(object *op, object *caster, object *spell_ob, int dir, cons
  */
 int probe(object *op, object *caster, object *spell_ob, int dir) {
     int r, mflags, maxrange;
-    object *tmp;
     mapstruct *m;
 
     if (!dir) {
@@ -730,7 +726,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
             return 0;
         }
         if (mflags&P_IS_ALIVE) {
-            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+            FOR_MAP_PREPARE(m, x, y, tmp)
                 if (QUERY_FLAG(tmp, FLAG_ALIVE) && (tmp->type == PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                   "You detect something.", NULL);
@@ -739,6 +735,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
                     examine_monster(op, tmp);
                     return 1;
                 }
+            FOR_MAP_FINISH();
         }
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
@@ -873,7 +870,6 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
  * op is a player.
  */
 int cast_earth_to_dust(object *op, object *caster, object *spell_ob) {
-    object *tmp, *next;
     int range, i, j, mflags;
     sint16 sx, sy;
     mapstruct *m;
@@ -899,11 +895,10 @@ int cast_earth_to_dust(object *op, object *caster, object *spell_ob) {
              * type effects.
              */
             if (GET_MAP_MOVE_BLOCK(m, sx, sy)) {
-                for (tmp = GET_MAP_OB(m, sx, sy); tmp != NULL; tmp = next) {
-                    next = tmp->above;
+                FOR_MAP_PREPARE(m, sx, sy, tmp)
                     if (tmp && QUERY_FLAG(tmp, FLAG_TEAR_DOWN))
                         hit_player(tmp, 9998, op, AT_PHYSICAL, 0);
-                }
+                FOR_MAP_FINISH();
             }
         }
     return 1;
@@ -1214,15 +1209,13 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
 
         if (exitmap) {
             tmp = map_find_by_archetype(exitmap, exitx, exity, perm_portal);
-            while (tmp) {
+            FOR_OB_AND_ABOVE_PREPARE(tmp)
                 if (tmp->name == old_force->name) {
                     object_remove(tmp);
                     object_free(tmp);
                     break;
-                } else {
-                    tmp = tmp->above;
                 }
-            }
+            FOR_OB_AND_ABOVE_FINISH();
         }
         object_remove(old_force);
         object_free(old_force);
@@ -2200,7 +2193,6 @@ int alchemy(object *op, object *caster, object *spell_ob) {
     int x, y, weight = 0, weight_max, large_nuggets, small_nuggets, mflags;
     sint16 nx, ny;
     float value_adj;
-    object *next, *tmp;
     mapstruct *mp;
 
     if (op->type != PLAYER)
@@ -2248,20 +2240,17 @@ int alchemy(object *op, object *caster, object *spell_ob) {
             small_nuggets = 0;
             large_nuggets = 0;
 
-            for (tmp = GET_MAP_OB(mp, nx, ny); tmp != NULL; tmp = next) {
-                next = tmp->above;
+            FOR_MAP_PREPARE(mp, nx, ny, tmp) {
                 if (tmp->weight > 0 && !QUERY_FLAG(tmp, FLAG_NO_PICK)
                 && !QUERY_FLAG(tmp, FLAG_ALIVE)
                 && !QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
                     if (tmp->inv) {
-                        object *next1, *tmp1;
-                        for (tmp1 = tmp->inv; tmp1 != NULL; tmp1 = next1) {
-                            next1 = tmp1->below;
+                        FOR_INV_PREPARE(tmp, tmp1)
                             if (tmp1->weight > 0 && !QUERY_FLAG(tmp1, FLAG_NO_PICK)
                             && !QUERY_FLAG(tmp1, FLAG_ALIVE)
                             && !QUERY_FLAG(tmp1, FLAG_IS_CAULDRON))
                                 alchemy_object(value_adj, tmp1, &small_nuggets, &large_nuggets, &weight);
-                        }
+                        FOR_INV_FINISH();
                     }
                     alchemy_object(value_adj, tmp, &small_nuggets, &large_nuggets, &weight);
 
@@ -2272,7 +2261,7 @@ int alchemy(object *op, object *caster, object *spell_ob) {
                         return 1;
                     }
                 } /* is alchemable object */
-            } /* process all objects on this space */
+            } FOR_MAP_FINISH(); /* process all objects on this space */
 
             /* Insert all the nuggets at one time.  This probably saves time, but
              * it also prevents us from alcheming nuggets that were just created
@@ -2408,7 +2397,6 @@ int cast_item_curse_or_curse(object *op, object *caster, object *spell_ob) {
  * at least one object was identified.
  */
 int cast_identify(object *op, object *caster, object *spell) {
-    object *tmp;
     int success = 0, num_ident;
     char desc[MAX_BUF];
 
@@ -2443,7 +2431,7 @@ int cast_identify(object *op, object *caster, object *spell) {
      * was not fully used.
      */
     if (num_ident) {
-        for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+        FOR_MAP_PREPARE(op->map, op->x, op->y, tmp)
             if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)
             && !tmp->invisible
             && need_identify(tmp)) {
@@ -2466,6 +2454,7 @@ int cast_identify(object *op, object *caster, object *spell) {
                 if (!num_ident)
                     break;
             }
+        FOR_MAP_FINISH();
     }
     if (!success)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
@@ -2516,8 +2505,10 @@ int cast_detection(object *op, object *caster, object *spell) {
              * down - that is easier than working up.
              */
 
-            for (last = NULL, tmp = GET_MAP_OB(m, nx, ny); tmp; tmp = tmp->above)
+            last = NULL;
+            FOR_MAP_PREPARE(m, nx, ny, tmp)
                 last = tmp;
+            FOR_MAP_FINISH();
             /* Shouldn't happen, but if there are no objects on a space, this
              * would happen.
              */
@@ -2727,18 +2718,22 @@ int cast_transfer(object *op, object *caster, object *spell, int dir) {
 
     mflags = get_map_flags(m, &m, x, y, &x, &y);
     if (!(mflags&P_OUT_OF_MAP) && mflags&P_IS_ALIVE) {
-        for (plyr = GET_MAP_OB(m, x, y); plyr != NULL; plyr = plyr->above)
+        FOR_MAP_PREPARE(m, x, y, tmp)
+            plyr = tmp;
             if (plyr != op && QUERY_FLAG(plyr, FLAG_ALIVE))
                 break;
+        FOR_MAP_FINISH();
     }
 
     /* If we did not find a player in the specified direction, transfer
      * to anyone on top of us. This is used for the rune of transference mostly.
      */
     if (plyr == NULL)
-        for (plyr = GET_MAP_OB(op->map, op->x, op->y); plyr != NULL; plyr = plyr->above)
+        FOR_MAP_PREPARE(op->map, op->x, op->y, tmp)
+            plyr = tmp;
             if (plyr != op && QUERY_FLAG(plyr, FLAG_ALIVE))
                 break;
+        FOR_MAP_FINISH();
 
     if (!plyr) {
         draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
@@ -2785,7 +2780,7 @@ int cast_transfer(object *op, object *caster, object *spell, int dir) {
  * direction it was cast in.
  */
 void counterspell(object *op, int dir) {
-    object *tmp, *head, *next;
+    object *head;
     int mflags;
     mapstruct *m;
     sint16  sx, sy;
@@ -2797,9 +2792,7 @@ void counterspell(object *op, int dir) {
     if (mflags&P_OUT_OF_MAP)
         return;
 
-    for (tmp = GET_MAP_OB(m, sx, sy); tmp != NULL; tmp = next) {
-        next = tmp->above;
-
+    FOR_MAP_PREPARE(m, sx, sy, tmp) {
         /* Need to look at the head object - otherwise, if tmp
          * points to a monster, we don't have all the necessary
          * info for it.
@@ -2845,7 +2838,7 @@ void counterspell(object *op, int dir) {
                 }
                 break;
             }
-    }
+    } FOR_MAP_FINISH();
 }
 
 /**

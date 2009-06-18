@@ -560,7 +560,6 @@ static void stop_jump(object *pl) {
  * experience gained when jumping into another living thing.
  */
 static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
-    object *tmp;
     int i, exp = 0, dx = freearr_x[dir], dy = freearr_y[dir], mflags;
     sint16 x, y;
     mapstruct *m;
@@ -599,7 +598,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
             return 0;
         }
 
-        for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+        FOR_MAP_PREPARE(m, x, y, tmp) {
             /* Jump into creature */
             if (QUERY_FLAG(tmp, FLAG_MONSTER)
                 || (tmp->type == PLAYER && (!QUERY_FLAG(tmp, FLAG_WIZ) || !tmp->contr->hidden))) {
@@ -629,7 +628,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
                 stop_jump(pl);
                 return calc_skill_exp(pl, NULL, skill);
             }
-        }
+        } FOR_MAP_FINISH();
         pl->x = x;
         pl->y = y;
         pl->map = m;
@@ -692,10 +691,9 @@ int jump(object *pl, int dir, object *skill) {
  * amount of experience gained (on successful detecting).
  */
 static int do_skill_detect_curse(object *pl, object *skill) {
-    object *tmp;
     int success = 0;
 
-    for (tmp = pl->inv; tmp; tmp = tmp->below)
+    FOR_INV_PREPARE(pl, tmp)
         if (!tmp->invisible
         && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
         && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)
@@ -705,10 +703,11 @@ static int do_skill_detect_curse(object *pl, object *skill) {
             esrv_update_item(UPD_FLAGS, pl, tmp);
             success += calc_skill_exp(pl, tmp, skill);
         }
+    FOR_INV_FINISH();
 
     /* Check ground, too, but only objects the player could pick up. Cauldrons are exceptions,
      * you definitely want to know if they are cursed */
-    for (tmp = GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp = tmp->above)
+    FOR_MAP_PREPARE(pl->map, pl->x, pl->y, tmp)
         if ((object_can_pick(pl, tmp) || QUERY_FLAG(tmp, FLAG_IS_CAULDRON))
         && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
         && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)
@@ -718,6 +717,7 @@ static int do_skill_detect_curse(object *pl, object *skill) {
             esrv_update_item(UPD_FLAGS, pl, tmp);
             success += calc_skill_exp(pl, tmp, skill);
         }
+    FOR_MAP_FINISH();
 
     return success;
 }
@@ -733,10 +733,9 @@ static int do_skill_detect_curse(object *pl, object *skill) {
  * amount of experience gained (on successful detecting).
  */
 static int do_skill_detect_magic(object *pl, object *skill) {
-    object *tmp;
     int success = 0;
 
-    for (tmp = pl->inv; tmp; tmp = tmp->below)
+    FOR_INV_PREPARE(pl, tmp)
         if (!tmp->invisible
         && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
         && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
@@ -746,9 +745,10 @@ static int do_skill_detect_magic(object *pl, object *skill) {
             esrv_update_item(UPD_FLAGS, pl, tmp);
             success += calc_skill_exp(pl, tmp, skill);
         }
+    FOR_INV_FINISH();
 
     /* Check ground, too, but like above, only if the object can be picked up*/
-    for (tmp = GET_MAP_OB(pl->map, pl->x, pl->y); tmp; tmp = tmp->above)
+    FOR_MAP_PREPARE(pl->map, pl->x, pl->y, tmp)
         if (object_can_pick(pl, tmp)
         && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
         && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
@@ -758,6 +758,7 @@ static int do_skill_detect_magic(object *pl, object *skill) {
             esrv_update_item(UPD_FLAGS, pl, tmp);
             success += calc_skill_exp(pl, tmp, skill);
         }
+    FOR_MAP_FINISH();
 
     return success;
 }
@@ -828,12 +829,12 @@ static int do_skill_ident2(object *tmp, object *pl, int obj_class, object *skill
  * experience gained by identifying items.
  */
 static int do_skill_ident(object *pl, int obj_class, object *skill) {
-    object *tmp;
     int success = 0, area, i;
 
     /* check the player */
-    for (tmp = pl->inv; tmp; tmp = tmp->below)
+    FOR_INV_PREPARE(pl, tmp)
         success += do_skill_ident2(tmp, pl, obj_class, skill);
+    FOR_INV_FINISH();
 
     /*  check the ground */
     /* Altered to allow ident skills to increase in area with
@@ -861,9 +862,9 @@ static int do_skill_ident(object *pl, int obj_class, object *skill) {
             continue;
 
         if (can_see_monsterP(m, pl->x, pl->y, i)) {
-            for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+            FOR_MAP_PREPARE(m, x, y, tmp)
                 success += do_skill_ident2(tmp, pl, obj_class, skill);
-            }
+            FOR_MAP_FINISH();
         }
     }
     return success;
@@ -1216,7 +1217,6 @@ int singing(object *pl, int dir, object *skill) {
  * experience gained for finding traps.
  */
 int find_traps(object *pl, object *skill) {
-    object *tmp, *tmp2;
     int i, expsum = 0, mflags;
     sint16 x, y;
     mapstruct *m;
@@ -1235,14 +1235,14 @@ int find_traps(object *pl, object *skill) {
             continue;
 
         /*  Check everything in the square for trapness */
-        for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above) {
+        FOR_MAP_PREPARE(m, x, y, tmp) {
             /* And now we'd better do an inventory traversal of each
              * of these objects' inventory
              * We can narrow this down a bit - no reason to search through
              * the players inventory or monsters for that matter.
              */
             if (tmp->type != PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER)) {
-                for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
+                FOR_INV_PREPARE(tmp, tmp2)
                     if (tmp2->type == RUNE || tmp2->type == TRAP)
                         if (trap_see(pl, tmp2)) {
                             trap_show(tmp2, tmp);
@@ -1253,6 +1253,7 @@ int find_traps(object *pl, object *skill) {
                                 tmp2->stats.Cha = 1; /* unhide the trap */
                             }
                         }
+                FOR_INV_FINISH();
             }
             if ((tmp->type == RUNE || tmp->type == TRAP) && trap_see(pl, tmp)) {
                 trap_show(tmp, tmp);
@@ -1262,7 +1263,7 @@ int find_traps(object *pl, object *skill) {
                     tmp->stats.Cha = 1; /* unhide the trap */
                 }
             }
-        }
+        } FOR_MAP_FINISH();
     }
     draw_ext_info(NDI_BLACK, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                   "You search the area.", NULL);
@@ -1281,7 +1282,6 @@ int find_traps(object *pl, object *skill) {
  * experience gained to disarm.
  */
 int remove_trap(object *op, object *skill) {
-    object *tmp, *tmp2;
     int i, success = 0, mflags;
     mapstruct *m;
     sint16 x, y;
@@ -1296,14 +1296,14 @@ int remove_trap(object *op, object *skill) {
             continue;
 
         /* Check everything in the square for trapness */
-        for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above) {
+        FOR_MAP_PREPARE(m, x, y, tmp) {
             /* And now we'd better do an inventory traversal of each
              * of these objects inventory.  Like above, only
              * do this for interesting objects.
              */
 
             if (tmp->type != PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER)) {
-                for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
+                FOR_INV_PREPARE(tmp, tmp2)
                     if ((tmp2->type == RUNE || tmp2->type == TRAP) && tmp2->stats.Cha <= 1) {
                         trap_show(tmp2, tmp);
                         if (trap_disarm(op, tmp2, 1, skill) && (!tmp2->owner || tmp2->owner->type != PLAYER)) {
@@ -1314,6 +1314,7 @@ int remove_trap(object *op, object *skill) {
                             return success;
                         }
                     }
+                FOR_INV_FINISH();
             }
             if ((tmp->type == RUNE || tmp->type == TRAP) && tmp->stats.Cha <= 1) {
                 trap_show(tmp, tmp);
@@ -1325,7 +1326,7 @@ int remove_trap(object *op, object *skill) {
                     return success;
                 }
             }
-        }
+        } FOR_MAP_FINISH();
     }
     return success;
 }
@@ -1351,7 +1352,6 @@ int remove_trap(object *op, object *skill) {
  */
 int pray(object *pl, object *skill) {
     char buf[MAX_BUF];
-    object *tmp;
 
     if (pl->type != PLAYER)
         return 0;
@@ -1363,14 +1363,14 @@ int pray(object *pl, object *skill) {
      * going through all the objects, and it shouldn't be much slower
      * than extra checks on object attributes.
      */
-    for (tmp = pl->below; tmp != NULL; tmp = tmp->below) {
+    FOR_BELOW_PREPARE(pl, tmp)
         /* Only if the altar actually belongs to someone do you get special benefits */
         if (tmp->type == HOLY_ALTAR && tmp->other_arch) {
             snprintf(buf, sizeof(buf), "You pray over the %s.", tmp->name);
             pray_at_altar(pl, tmp, skill);
             break;  /* Only pray at one altar */
         }
-    }
+    FOR_BELOW_FINISH();
 
     draw_ext_info(NDI_BLACK, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                   buf, buf);
@@ -1399,8 +1399,6 @@ int pray(object *pl, object *skill) {
  * meditation skill.
  */
 void meditate(object *pl, object *skill) {
-    object *tmp;
-
     if (pl->type != PLAYER)
         return; /* players only */
 
@@ -1411,8 +1409,8 @@ void meditate(object *pl, object *skill) {
         return;
     }
 
-    for (tmp = pl->inv; tmp; tmp = tmp->below)
-if (((tmp->type == ARMOUR && skill->level < 12)
+    FOR_INV_PREPARE(pl, tmp)
+        if (((tmp->type == ARMOUR && skill->level < 12)
             || (tmp->type == HELMET && skill->level < 10)
             || (tmp->type == SHIELD && skill->level < 6)
             || (tmp->type == BOOTS && skill->level < 4)
@@ -1422,6 +1420,7 @@ if (((tmp->type == ARMOUR && skill->level < 12)
                           "You can't concentrate while wearing so much armour!", NULL);
             return;
         }
+    FOR_INV_FINISH();
 
     /* ok let's meditate!  Spell points are regained first, then once
      * they are maxed we get back hp. Actual incrementing of values
@@ -1806,7 +1805,8 @@ static object *find_throw_ob(object *op, const char *request) {
 
     /* look through the inventory */
     if (tmp == NULL) {
-        for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+        FOR_INV_PREPARE(op, tmp2) {
+            tmp = tmp2;
             /* can't toss invisible or inv-locked items */
             if (tmp->invisible || QUERY_FLAG(tmp, FLAG_INV_LOCKED))
                 continue;
@@ -1815,7 +1815,7 @@ static object *find_throw_ob(object *op, const char *request) {
                 || !strcmp(name, request)
                 || !strcmp(tmp->name, request))
                 break;
-        }
+        } FOR_INV_FINISH();
     }
 
     /* this should prevent us from throwing away

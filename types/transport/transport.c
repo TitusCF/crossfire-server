@@ -162,9 +162,10 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         }
 
         /* Does this transport have space for more players? */
-        for (inv = op->inv; inv; inv = inv->below)
+        FOR_INV_PREPARE(op, inv)
             if (inv->type == PLAYER)
                 pc++;
+        FOR_INV_FINISH();
 
         kv = object_get_value(op, "passenger_limit");
         if (!kv)

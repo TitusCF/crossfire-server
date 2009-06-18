@@ -48,7 +48,6 @@ void init_type_identify_altar(void) {
  * @return METHOD_OK
  */
 static method_ret identify_altar_type_move_on(ob_methods *context, object *altar, object *money, object *originator) {
-    object *id;
     object *marked;
     int success = 0;
     char desc[MAX_BUF];
@@ -92,7 +91,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
         }
     }
 
-    for (id = originator->inv; id; id = id->below) {
+    FOR_INV_PREPARE(originator, id) {
         if (!QUERY_FLAG(id, FLAG_IDENTIFIED)
         && !id->invisible
         && need_identify(id)) {
@@ -115,7 +114,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
                 break;
             }
         }
-    }
+    } FOR_INV_FINISH();
     if (!success)
         draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "You have nothing that needs identifying", NULL);

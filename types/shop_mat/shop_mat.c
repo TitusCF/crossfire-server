@@ -50,7 +50,6 @@ void init_type_shop_mat(void) {
 static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
     int rv = 0;
     double opinion;
-    object *tmp, *next;
 
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
@@ -62,8 +61,7 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
          * This could be pets or monsters that are somehow in
          * the shop.
          */
-        for (tmp = victim->inv; tmp; tmp = next) {
-            next = tmp->below;
+        FOR_INV_PREPARE(victim, tmp) {
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
                 int i = object_find_free_spot(tmp, victim->map, victim->x, victim->y, 1, 9);
                 object_remove(tmp);
@@ -74,7 +72,7 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
                 tmp->y = victim->y+freearr_y[i];
                 object_insert_in_map(tmp, victim->map, victim, 0);
             }
-        }
+        } FOR_INV_FINISH();
 
         /* Don't teleport things like spell effects */
         if (QUERY_FLAG(victim, FLAG_NO_PICK))

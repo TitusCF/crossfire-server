@@ -690,14 +690,10 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
  * treasure list containing the items.
  */
 void give_initial_items(object *pl, treasurelist *items) {
-    object *op, *next = NULL;
-
     if (pl->randomitems != NULL)
         create_treasure(items, pl, GT_STARTEQUIP|GT_ONLY_GOOD, 1, 0);
 
-    for (op = pl->inv; op; op = next) {
-        next = op->below;
-
+    FOR_INV_PREPARE(pl, op) {
         /* Forces get applied per default, unless they have the
          * flag "neutral" set. Sorry but I can't think of a better way
          */
@@ -764,7 +760,7 @@ void give_initial_items(object *pl, treasurelist *items) {
         /* lock all 'normal items by default */
         else
             SET_FLAG(op, FLAG_INV_LOCKED);
-    } /* for loop of objects in player inv */
+    } FOR_INV_FINISH(); /* for loop of objects in player inv */
 
     /* Need to set up the skill pointers */
     link_player_skills(pl);
@@ -773,11 +769,10 @@ void give_initial_items(object *pl, treasurelist *items) {
      * Now we do a second loop, to apply weapons/armors/...
      * This is because weapons require the skill, which can be given after the first loop.
      */
-    for (op = pl->inv; op; op = next) {
-        next = op->below;
+    FOR_INV_PREPARE(pl, op)
         if ((IS_ARMOR(op) || IS_WEAPON(op) || IS_SHIELD(op)) && !QUERY_FLAG(op, FLAG_APPLIED))
             apply_manual(pl, op, AP_NOPRINT);
-    }
+    FOR_INV_FINISH();
 }
 
 /**
@@ -2291,14 +2286,14 @@ object *find_key(object *pl, object *container, object *door) {
      * a key, return
      */
     if (!tmp) {
-        for (tmp = container->inv; tmp != NULL; tmp = tmp->below) {
+        FOR_INV_PREPARE(container, tmp) {
             /* No reason to search empty containers */
             if (tmp->type == CONTAINER && tmp->inv) {
                 key = find_key(pl, tmp, door);
                 if (key != NULL)
                     return key;
             }
-        }
+        } FOR_INV_FINISH();
         return NULL;
     }
     /* We get down here if we have found a key.  Now if its in a container,
@@ -2927,12 +2922,7 @@ static int save_life(object *op) {
  * if set, unpaid items are freed, else they are inserted in the same map as env.
  */
 void remove_unpaid_objects(object *op, object *env, int free_items) {
-    object *next;
-
-    while (op) {
-        next = op->below; /* Make sure we have a good value, in case
-                           * we remove object 'op'
-                           */
+    FOR_OB_AND_BELOW_PREPARE(op) {
         if (QUERY_FLAG(op, FLAG_UNPAID)) {
             object_remove(op);
             if (free_items)
@@ -2944,8 +2934,7 @@ void remove_unpaid_objects(object *op, object *env, int free_items) {
             }
         } else if (op->inv)
             remove_unpaid_objects(op->inv, env, free_items);
-        op = next;
-    }
+    } FOR_OB_AND_BELOW_FINISH();
 }
 
 /**
@@ -3179,14 +3168,13 @@ void do_some_living(object *op) {
  * object to loot.
  */
 static void loot_object(object *op) {
-    object *tmp, *tmp2, *next;
+    object *tmp2;
 
     if (op->container) { /* close open sack first */
         apply_container(op, op->container);
     }
 
-    for (tmp = op->inv; tmp != NULL; tmp = next) {
-        next = tmp->below;
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == EXPERIENCE || tmp->invisible)
             continue;
         object_remove(tmp);
@@ -3205,7 +3193,7 @@ static void loot_object(object *op) {
                 object_free(tmp);
         } else
             object_insert_in_map(tmp, op->map, NULL, 0);
-    }
+    } FOR_INV_FINISH();
 }
 
 /**

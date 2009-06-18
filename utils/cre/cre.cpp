@@ -106,7 +106,6 @@ int execute_global_event(int , ...) {
 }
 
 int apply_auto(object *op) {
-    object *tmp = NULL, *tmp2;
     int i;
 
     switch(op->type) {
@@ -143,14 +142,13 @@ int apply_auto(object *op) {
             * to disappear.  An example of this item is the random_ *stuff
             * that is put inside other objects.
         */
-            for (tmp = op->inv; tmp; tmp = tmp2) {
-                tmp2 = tmp->below;
+            FOR_INV_PREPARE(op, tmp) {
                 object_remove(tmp);
                 if (op->env)
                     object_insert_in_ob(tmp, op->env);
                 else
                     object_free(tmp);
-            }
+            } FOR_INV_FINISH();
             object_remove(op);
             object_free(op);
             break;

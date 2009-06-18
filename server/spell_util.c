@@ -61,25 +61,26 @@ extern const char *const spell_mapping[];
  */
 object *find_random_spell_in_ob(object *ob, const char *skill) {
     int k = 0, s;
-    object *tmp;
 
-    for (tmp = ob->inv; tmp; tmp = tmp->below)
+    FOR_INV_PREPARE(ob, tmp)
         if (tmp->type == SPELL && (!skill || tmp->skill == skill))
             k++;
+    FOR_INV_FINISH();
 
     /* No spells, no need to progess further */
     if (!k)
         return NULL;
 
     s = RANDOM()%k;
-
-    for (tmp = ob->inv; tmp; tmp = tmp->below)
+    FOR_INV_PREPARE(ob, tmp)
         if (tmp->type == SPELL && (!skill || tmp->skill == skill)) {
             if (!s)
                 return tmp;
             else
                 s--;
         }
+    FOR_INV_FINISH();
+
     /* Should never get here, but just in case */
     return NULL;
 }
@@ -424,7 +425,7 @@ object *check_spell_known(object *op, const char *name) {
  * matching spell object, or NULL. If we match multiple spells but don't get an exact match, we also return NULL.
  */
 object *lookup_spell_by_name(object *op, const char *spname) {
-    object *spob1 = NULL, *spob2 = NULL, *spob;
+    object *spob1 = NULL, *spob2 = NULL;
     int nummatch = 0;
 
     if (spname == NULL)
@@ -434,7 +435,7 @@ object *lookup_spell_by_name(object *op, const char *spname) {
      * and spob2 - spob1 is only taking the length of
      * the past spname, spob2 uses the length of the spell name.
      */
-    for (spob = op->inv; spob; spob = spob->below) {
+    FOR_INV_PREPARE(op, spob) {
         if (spob->type == SPELL) {
             if (!strncmp(spob->name, spname, strlen(spname))) {
                 if (strlen(spname) == strlen(spob->name))
@@ -453,7 +454,7 @@ object *lookup_spell_by_name(object *op, const char *spname) {
                 spob2 = spob;
             }
         }
-    }
+    } FOR_INV_FINISH();
     /* if we have best match, return it.  Otherwise, if we have one match
      * on the loser match, return that, otehrwise null
      */
@@ -484,15 +485,13 @@ object *lookup_spell_by_name(object *op, const char *spname) {
  * 1 if reflected, 0 else.
  */
 int reflwall(mapstruct *m, int x, int y, object *sp_op) {
-    object *op;
-
     if (OUT_OF_REAL_MAP(m, x, y))
         return 0;
-    for (op = GET_MAP_OB(m, x, y); op != NULL; op = op->above)
+    FOR_MAP_PREPARE(m, x, y, op)
         if (QUERY_FLAG(op, FLAG_REFL_SPELL)
         && (!QUERY_FLAG(op, FLAG_ALIVE) || (rndm(0, 99)) < 90-(sp_op->level/10)))
             return 1;
-
+    FOR_MAP_FINISH();
     return 0;
 }
 
@@ -549,7 +548,6 @@ int cast_create_obj(object *op, object *new_op, int dir) {
  * 1 if we can add op, 0 else.
  */
 int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, uint32 immune_stop) {
-    object *tmp;
     int mflags;
     mapstruct *mp;
 
@@ -562,7 +560,7 @@ int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, uint32 immune_s
     if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(mp, x, y)))
         return 0;
 
-    for (tmp = GET_MAP_OB(mp, x, y); tmp != NULL; tmp = tmp->above) {
+    FOR_MAP_PREPARE(mp, x, y, tmp) {
         /* If there is a counterspell on the space, and this
          * object is using magic, don't progess.  I believe we could
          * leave this out and let in progress, and other areas of the code
@@ -620,7 +618,7 @@ int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, uint32 immune_s
         /* Perhaps we should also put checks in for no magic and unholy
          * ground to prevent it from moving along?
          */
-    }
+    } FOR_MAP_FINISH();
     /* If it passes the above tests, it must be OK */
     return 1;
 }
@@ -807,9 +805,9 @@ object *find_target_for_friendly_spell(object *op, int dir) {
     }
     /* didn't find a player there, look in current square for a player */
     if (tmp == NULL)
-        for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+        FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
             if (tmp->type == PLAYER)
-                break;
+                return tmp;
             /* Don't forget to browse inside transports ! - gros 2006/07/25 */
             if (tmp->type == TRANSPORT) {
                 object *inv;
@@ -819,7 +817,7 @@ object *find_target_for_friendly_spell(object *op, int dir) {
                         return inv;
                 }
             }
-        }
+        } FOR_MAP_FINISH();
     return tmp;
 }
 
@@ -1160,13 +1158,13 @@ static void transmute_item_to_flower(object *op) {
     int count = 0;
     char name[HUGE_BUF];
 
-    for (item = op->inv; item; item = item->below) {
+    FOR_INV_PREPARE(op, item)
         if (can_be_transmuted_to_flower(item)) {
             if (!first)
                 first = item;
             count++;
         }
-    }
+    FOR_INV_FINISH();
 
     if (count == 0)
         return;

@@ -1485,13 +1485,10 @@ static int monster_check_good_armour(object *who, object *item) {
  */
 
 static void monster_check_pickup(object *monster) {
-    object *tmp, *next, *part;
-    tag_t next_tag;
+    object *part;
 
     for (part = monster; part != NULL; part = part->more)
-        for (tmp = part->below; tmp != NULL; tmp = next) {
-            next = tmp->below;
-            next_tag = next ? next->count : 0;
+        FOR_BELOW_PREPARE(part, tmp) {
             if (monster_can_pick(monster, tmp)) {
                 uint32 nrof;
 
@@ -1513,12 +1510,7 @@ static void monster_check_pickup(object *monster) {
                     (void)monster_check_apply(monster, tmp2);
                 }
             }
-            /* We could try to re-establish the cycling, of the space, but probably
-             * not a big deal to just bail out.
-             */
-            if (next && object_was_destroyed(next, next_tag))
-                return;
-        }
+        } FOR_BELOW_FINISH();
 }
 
 /*
@@ -1610,10 +1602,7 @@ static int monster_can_pick(object *monster, object *item) {
  * then make him apply it
  */
 static void monster_apply_below(object *monster) {
-    object *tmp, *next;
-
-    for (tmp = monster->below; tmp != NULL; tmp = next) {
-        next = tmp->below;
+    FOR_BELOW_PREPARE(monster, tmp) {
         switch (tmp->type) {
         case CF_HANDLE:
         case TRIGGER:
@@ -1628,7 +1617,7 @@ static void monster_apply_below(object *monster) {
         }
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
             break;
-    }
+    } FOR_BELOW_FINISH();
 }
 
 /**
@@ -1636,13 +1625,9 @@ static void monster_apply_below(object *monster) {
  * @param monster the monster to operate on
  */
 void monster_check_apply_all(object *monster) {
-    object *inv;
-    object *next;
-
-    for (inv = monster->inv; inv != NULL; inv = next) {
-        next = inv->below;
+    FOR_INV_PREPARE(monster, inv)
         monster_check_apply(monster, inv);
-    }
+    FOR_INV_FINISH();
 }
 
 /*

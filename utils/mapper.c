@@ -640,14 +640,12 @@ static void add_one_item(object *item, struct_map_info *map) {
  * map the item is on.
  */
 static void check_equipment(object *item, struct_map_info *map) {
-    object *inv;
-
     if (is_special_equipment(item))
         add_one_item(item, map);
 
-    for (inv = item->inv; inv; inv = inv->below) {
+    FOR_INV_PREPARE(item, inv)
         check_equipment(inv, map);
-    }
+    FOR_INV_FINISH();
 }
 
 /**
@@ -807,7 +805,7 @@ static int get_elevation_color(int elevation, gdImagePtr elevationmap) {
  */
 static void do_exit_map(mapstruct *map) {
     int tx, ty, x, y;
-    object *item, *test;
+    object *test;
 
     if (sscanf(map->path, "/world/world_%d_%d", &x, &y) != 2)
         return;
@@ -817,8 +815,7 @@ static void do_exit_map(mapstruct *map) {
 
     for (tx = 0; tx < MAP_WIDTH(map); tx++) {
         for (ty = 0; ty < MAP_HEIGHT(map); ty++) {
-            item = GET_MAP_OB(map, tx, ty);
-            while (item) {
+            FOR_MAP_PREPARE(map, tx, ty, item) {
                 test = item->head ? item->head : item;
 
                 if (test->type == EXIT || test->type == TELEPORTER) {
@@ -840,9 +837,7 @@ static void do_exit_map(mapstruct *map) {
                     elevation_max = MAX(elevation_max, item->elevation);
                     elevation_info[x*50+tx][y*50+ty] = item->elevation;
                 }
-
-                item = item->above;
-            }
+            } FOR_MAP_FINISH();
         }
     }
 }
@@ -1834,13 +1829,11 @@ static void add_slaying(struct_map_info *map, object *item) {
  * item to consider. Must not be NULL.
  */
 static void check_slaying_inventory(struct_map_info *map, object *item) {
-    object *inv;
-
-    for (inv = item->inv; inv; inv = inv->below) {
+    FOR_INV_PREPARE(item, inv) {
         if (is_slaying(inv))
             add_slaying(map, inv);
         check_slaying_inventory(map, inv);
-    }
+    } FOR_INV_FINISH();
 }
 
 /**
@@ -1854,7 +1847,6 @@ static void check_slaying_inventory(struct_map_info *map, object *item) {
 static void process_map(struct_map_info *info) {
     mapstruct *m;
     int x, y, isworld;
-    object *item;
     FILE *out;
     gdImagePtr pic;
     gdImagePtr small;
@@ -1978,7 +1970,7 @@ static void process_map(struct_map_info *info) {
 
     for (x = MAP_WIDTH(m)-1; x >= 0; x--)
         for (y = MAP_HEIGHT(m)-1; y >= 0; y--) {
-            for (item = GET_MAP_OB(m, x, y); item; item = item->above) {
+            FOR_MAP_PREPARE(m, x, y, item) {
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
                     char ep[500];
                     const char *start;
@@ -2072,7 +2064,7 @@ static void process_map(struct_map_info *info) {
                         gdImageCopy(pic, gdfaces[item->face->number], x*32, y*32, 0, 0, gdfaces[item->face->number]->sx, gdfaces[item->face->number]->sy);
                     }
                 }
-            }
+            } FOR_MAP_FINISH();
         }
 
     if (needpic) {
@@ -3786,7 +3778,6 @@ int main(int argc, char **argv) {
 }
 
 void do_auto_apply(mapstruct *m) {
-    object *tmp, *above = NULL;
     int x, y;
 
     if (m == NULL)
@@ -3794,15 +3785,9 @@ void do_auto_apply(mapstruct *m) {
 
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = above) {
-                above = tmp->above;
-
+            FOR_MAP_PREPARE(m, x, y, tmp) {
                 if (tmp->inv) {
-                    object *invtmp, *invnext;
-
-                    for (invtmp = tmp->inv; invtmp != NULL; invtmp = invnext) {
-                        invnext = invtmp->below;
-
+                    FOR_INV_PREPARE(tmp, invtmp) {
                         if (QUERY_FLAG(invtmp, FLAG_AUTO_APPLY))
                             apply_auto(invtmp);
                         else if (invtmp->type == TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
@@ -3821,7 +3806,7 @@ void do_auto_apply(mapstruct *m) {
                              */
                             invtmp->randomitems = NULL;
                         }
-                    }
+                    } FOR_INV_FINISH();
                     /* This is really temporary - the code at the bottom will
                      * also set randomitems to null.  The problem is there are bunches
                      * of maps/players already out there with items that have spells
@@ -3877,14 +3862,15 @@ void do_auto_apply(mapstruct *m) {
                         monster_check_apply_all(tmp);
                     }
                 }
-            }
+            } FOR_MAP_FINISH();
 
     for (x = 0; x < MAP_WIDTH(m); x++)
         for (y = 0; y < MAP_HEIGHT(m); y++)
-            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+            FOR_MAP_PREPARE(m, x, y, tmp) {
                 if (tmp->above
                 && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
                     check_trigger(tmp, tmp->above);
+            } FOR_MAP_FINISH();
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -3993,14 +3979,14 @@ int apply_auto(object *op) {
          * to disappear.  An example of this item is the random_ *stuff
          * that is put inside other objects.
          */
-        for (tmp = op->inv; tmp; tmp = tmp2) {
-            tmp2 = tmp->below;
+        FOR_INV_PREPARE(op, tmp) {
             object_remove(tmp);
             if (op->env)
                 object_insert_in_ob(tmp, op->env);
             else
                 object_free(tmp);
             }
+        FOR_INV_FINISH();
         object_remove(op);
         object_free(op);
         break;

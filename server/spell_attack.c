@@ -239,7 +239,6 @@ void explode_bullet(object *op) {
  */
 void check_bullet(object *op) {
     tag_t op_tag = op->count, tmp_tag;
-    object *tmp;
     int dam, mflags;
     mapstruct *m;
     sint16 sx, sy;
@@ -259,7 +258,7 @@ void check_bullet(object *op) {
     if (!(mflags&P_IS_ALIVE))
         return;
 
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+    FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
             tmp_tag = tmp->count;
             dam = hit_player(tmp, op->stats.dam, op, op->attacktype, 1);
@@ -271,7 +270,7 @@ void check_bullet(object *op) {
                 }
             }
         }
-    }
+    } FOR_MAP_FINISH();
 }
 
 
@@ -851,10 +850,12 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
             if (mflags&P_OUT_OF_MAP)
                 continue;
             if (mflags&P_IS_ALIVE) {
-                for (tmp = GET_MAP_OB(m, sx, sy); tmp; tmp = tmp->above) {
+                tmp = NULL;
+                FOR_MAP_PREPARE(m, sx, sy, inv) {
+                    tmp = inv;
                     if (QUERY_FLAG(tmp, FLAG_ALIVE) || tmp->type == PLAYER)
                         break;
-                }
+                } FOR_MAP_FINISH();
                 if (tmp) {
                     if (tmp->head)
                         tmp = tmp->head;
@@ -919,7 +920,9 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
     }
 
     /* If we've already got a force of this type, don't add a new one. */
-    for (force = tmp->inv; force != NULL; force = force->below) {
+    force = NULL;
+    FOR_INV_PREPARE(tmp, inv) {
+        force = tmp;
         if (force->type == FORCE && force->subtype == FORCE_CHANGE_ABILITY)  {
             if (force->name == spell_ob->name) {
                 break;
@@ -932,7 +935,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
                 return 0;
             }
         }
-    }
+    } FOR_INV_FINISH();
 
     if (force == NULL) {
         force = create_archetype(FORCE_NAME);
@@ -1294,7 +1297,7 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
 int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
     sint16 x, y;
     int i, mflags, range, dam_mod, dur_mod;
-    object *walk, *target_head;
+    object *target_head;
     mapstruct *m;
 
     x = op->x;
@@ -1331,7 +1334,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
         /* Only bother looking on this space if there is something living here */
         if (mflags&P_IS_ALIVE) {
             /* search this square for a victim */
-            for (walk = GET_MAP_OB(m, x, y); walk; walk = walk->above) {
+            FOR_MAP_PREPARE(m, x, y, walk) {
                 /* Flags for monster is set on head only, so get it now */
                 target_head = walk;
                 while (target_head->head)
@@ -1404,7 +1407,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
                     }
                     object_free(disease);
                 } /* Found a victim */
-            } /* Search squares for living creature */
+            } FOR_MAP_FINISH(); /* Search squares for living creature */
         } /* if living creature on square */
     } /* for range of spaces */
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE, "No one caught anything!", NULL);

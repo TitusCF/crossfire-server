@@ -212,12 +212,10 @@ int user_event(object *op, object *activator, object *third, const char *message
 }
 
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
-    object *tmp, *next;
     crossfire_plugin *plugin;
     int rv = 0;
 
-    for (tmp = op->inv; tmp != NULL; tmp = next) {
-        next = tmp->below;
+    FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == EVENT_CONNECTOR && tmp->subtype == eventcode) {
 #ifdef PLUGIN_DEBUG
             LOG(llevDebug, "********** EVENT HANDLER **********\n");
@@ -268,7 +266,7 @@ int execute_event(object *op, int eventcode, object *activator, object *third, c
                 }
             }
         }
-    }
+    } FOR_INV_FINISH();
     return rv;
 }
 

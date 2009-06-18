@@ -55,7 +55,6 @@ void init_type_player_changer(void) {
  */
 static method_ret player_changer_type_process(ob_methods *context, object *op) {
     object *player;
-    object *walk;
     char c;
 
     if (!op->above || !EXIT_PATH(op))
@@ -69,8 +68,9 @@ static method_ret player_changer_type_process(ob_methods *context, object *op) {
         if (execute_event(op, EVENT_TRIGGER, op->above, NULL, NULL, SCRIPT_FIX_NOTHING) != 0)
             return METHOD_OK;
         player = op->above;
-        for (walk = op->inv; walk != NULL; walk = walk->below)
+        FOR_INV_PREPARE(op, walk)
             apply_changes_to_player(player, walk);
+        FOR_INV_FINISH();
 
         fix_object(player);
         esrv_send_inventory(op->above, op->above);

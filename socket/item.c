@@ -247,7 +247,8 @@ void esrv_draw_look(object *pl) {
         got_one++;
     }
 
-    for (last = NULL; tmp != last; tmp = tmp->below) {
+    last = NULL;
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         object *head;
 
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !last) {
@@ -293,7 +294,7 @@ void esrv_draw_look(object *pl) {
                 got_one = 0;
             }
         } /* If LOOK_OBJ() */
-    }
+    } FOR_OB_AND_BELOW_FINISH();
     if (got_one)
         Send_With_Handling(&pl->contr->socket, &sl);
 
@@ -304,7 +305,6 @@ void esrv_draw_look(object *pl) {
  * Sends whole inventory.
  */
 void esrv_send_inventory(object *pl, object *op) {
-    object *tmp;
     int got_one = 0;
     SockList sl;
 
@@ -316,7 +316,7 @@ void esrv_send_inventory(object *pl, object *op) {
     SockList_AddString(&sl, "item2 ");
     SockList_AddInt(&sl, op->count);
 
-    for (tmp = op->inv; tmp; tmp = tmp->below) {
+    FOR_INV_PREPARE(op, tmp) {
         object *head;
 
         if (tmp->head)
@@ -341,7 +341,7 @@ void esrv_send_inventory(object *pl, object *op) {
                 got_one = 0;
             }
         } /* If LOOK_OBJ() */
-    }
+    } FOR_INV_FINISH();
     if (got_one)
         Send_With_Handling(&pl->contr->socket, &sl);
     SockList_Term(&sl);
@@ -526,33 +526,38 @@ void esrv_del_item(player *pl, int tag) {
  */
 
 static object *esrv_get_ob_from_count(object *pl, tag_t count) {
-    object *op, *tmp;
-
     if (pl->count == count)
         return pl;
 
-    for (op = pl->inv; op; op = op->below)
+    FOR_INV_PREPARE(pl, op)
         if (op->count == count)
             return op;
-        else if (op->type == CONTAINER && pl->container == op)
-            for (tmp = op->inv; tmp; tmp = tmp->below)
+        else if (op->type == CONTAINER && pl->container == op) {
+            FOR_INV_PREPARE(op, tmp)
                 if (tmp->count == count)
                     return tmp;
+            FOR_INV_FINISH();
+        }
+    FOR_INV_FINISH();
 
-    for (op = GET_MAP_OB(pl->map, pl->x, pl->y); op; op = op->above)
+    FOR_MAP_PREPARE(pl->map, pl->x, pl->y, op)
         if (op->head != NULL && op->head->count == count)
             return op;
         else if (op->count == count)
             return op;
-        else if (op->type == CONTAINER && pl->container == op)
-            for (tmp = op->inv; tmp; tmp = tmp->below)
+        else if (op->type == CONTAINER && pl->container == op) {
+            FOR_INV_PREPARE(op, tmp)
                 if (tmp->count == count)
                     return tmp;
+            FOR_INV_FINISH();
+        }
+    FOR_MAP_FINISH();
 
     if (pl->contr->transport) {
-        for (tmp = pl->contr->transport->inv; tmp; tmp = tmp->below)
+        FOR_INV_PREPARE(pl->contr->transport, tmp)
             if (tmp->count == count)
                 return tmp;
+        FOR_INV_FINISH();
     }
     return NULL;
 }
@@ -703,7 +708,7 @@ void look_at(object *op, int dx, int dy) {
     for (tmp = GET_MAP_OB(m, x, y); tmp != NULL && tmp->above != NULL; tmp = tmp->above)
         ;
 
-    for (; tmp != NULL; tmp = tmp->below) {
+    FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp->invisible && !QUERY_FLAG(op, FLAG_WIZ))
             continue;
 
@@ -737,7 +742,7 @@ void look_at(object *op, int dx, int dy) {
         /* don't continue under the floor */
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !QUERY_FLAG(op, FLAG_WIZ))
             break;
-    }
+    } FOR_OB_AND_BELOW_FINISH();
 
     if (!flag) {
         if (dx || dy)
@@ -792,12 +797,9 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof) {
          * in the container and not the container itself.
          */
         if (op->inv && QUERY_FLAG(op, FLAG_APPLIED)) {
-            object *current, *next;
-
-            for (current = op->inv; current != NULL; current = next) {
-                next = current->below;
+            FOR_INV_PREPARE(op, current)
                 drop_object(pl, current, 0);
-            }
+            FOR_INV_FINISH();
             esrv_update_item(UPD_WEIGHT, pl, op);
         } else {
             drop_object(pl, op, nrof);

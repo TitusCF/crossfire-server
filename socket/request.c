@@ -1686,7 +1686,7 @@ void esrv_update_spells(player *pl) {
     if (!pl->spell_state)
         return;
 
-    for (spell = pl->ob->inv; spell != NULL; spell = spell->below) {
+    FOR_INV_PREPARE(pl->ob, spell) {
         if (spell->type == SPELL) {
             spell_info = get_client_spell_state(pl, spell);
             /* check if we need to update it*/
@@ -1718,7 +1718,7 @@ void esrv_update_spells(player *pl) {
                 SockList_Term(&sl);
             }
         }
-    }
+    } FOR_INV_FINISH();
 }
 
 void esrv_remove_spell(player *pl, object *spell) {
@@ -1822,7 +1822,7 @@ void esrv_add_spells(player *pl, object *spell) {
     SockList_Init(&sl);
     SockList_AddString(&sl, "addspell ");
     if (!spell) {
-        for (spell = pl->ob->inv; spell != NULL; spell = spell->below) {
+        FOR_INV_PREPARE(pl->ob, spell) {
             if (spell->type != SPELL)
                 continue;
             /* Were we to simply keep appending data here, we could
@@ -1841,7 +1841,7 @@ void esrv_add_spells(player *pl, object *spell) {
                 SockList_AddString(&sl, "addspell ");
             }
             append_spell(pl, &sl, spell);
-        }
+        } FOR_INV_FINISH();
     } else if (spell->type != SPELL) {
         LOG(llevError, "Asked to send a non-spell object as a spell\n");
         return;

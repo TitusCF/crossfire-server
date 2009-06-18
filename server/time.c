@@ -130,15 +130,21 @@ static int generate_monster_inv(object *gen) {
     }
 
     /*First count number of objects in inv*/
-    for (op = gen->inv; op; op = op->below)
+    FOR_INV_PREPARE(gen, op)
         qty++;
+    FOR_INV_FINISH();
     if (!qty) {
         LOG(llevError, "Generator (%s) has no inventory in generate_monster_inv?\n", gen->name);
         return FALSE;/*No inventory*/
     }
     qty = rndm(0, qty-1);
-    for (op = gen->inv; qty; qty--)
-        op = op->below;
+    op = NULL;
+    FOR_INV_PREPARE(gen, tmp) {
+        op = tmp;
+        if (qty == 0)
+            break;
+        qty--;
+    } FOR_INV_FINISH();
     i = object_find_multi_free_spot_within_radius(op, gen, &nx, &ny);
     if (i == -1)
         return FALSE;
@@ -239,7 +245,6 @@ static int generate_monster_arch(object *gen) {
 static void generate_monster(object *gen) {
     sint8 children, max_children;
     sint8 x, y;
-    object *tmp;
     const char *code, *value;
     int did_gen = 0;
 
@@ -259,12 +264,12 @@ static void generate_monster(object *gen) {
             children = 0;
             for (x = 0; x < MAP_WIDTH(gen->map); x++) {
                 for (y = 0; y < MAP_HEIGHT(gen->map); y++) {
-                    for (tmp = GET_MAP_OB(gen->map, x, y); tmp != NULL; tmp = tmp->above) {
+                    FOR_MAP_PREPARE(gen->map, x, y, tmp) {
                         value = object_get_value(tmp, "generator_code");
                         if (value && value == code) {
                             children++;
                         }
-                    }
+                    } FOR_MAP_FINISH();
                 }
             }
             /* and return without generating if there are already enough */
@@ -407,8 +412,6 @@ static void animate_trigger(object *op) {
  * hole to move.
  */
 static void move_hole(object *op) { /* 1 = opening, 0 = closing */
-    object *next, *tmp;
-
     if (op->value) { /* We're opening */
         if (--op->stats.wc <= 0) { /* Opened, let's stop */
             op->stats.wc = 0;
@@ -417,10 +420,9 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
 
             /* Hard coding this makes sense for holes I suppose */
             op->move_on = MOVE_WALK;
-            for (tmp = op->above; tmp != NULL; tmp = next) {
-                next = tmp->above;
+            FOR_ABOVE_PREPARE(op, tmp)
                 ob_move_on(op, tmp, tmp);
-            }
+            FOR_ABOVE_FINISH();
         }
 
         op->state = op->stats.wc;
@@ -679,7 +681,6 @@ void move_firewall(object *op) {
  * mover.
  */
 void move_player_mover(object *op) {
-    object *victim, *nextmover;
     int dir = op->stats.sp;
     sint16 nx, ny;
     mapstruct *m;
@@ -688,7 +689,7 @@ void move_player_mover(object *op) {
     if (!dir)
         dir = get_random_dir();
 
-    for (victim = GET_MAP_OB(op->map, op->x, op->y); victim != NULL; victim = victim->above) {
+    FOR_MAP_PREPARE(op->map, op->x, op->y, victim) {
         if (QUERY_FLAG(victim, FLAG_ALIVE)
         && !QUERY_FLAG(victim, FLAG_WIZPASS)
         && (victim->move_type&op->move_type || !victim->move_type)) {
@@ -712,13 +713,13 @@ void move_player_mover(object *op) {
             if (should_director_abort(op, victim))
                 return;
 
-            for (nextmover = GET_MAP_OB(m, nx, ny); nextmover != NULL; nextmover = nextmover->above) {
+            FOR_MAP_PREPARE(m, nx, ny, nextmover) {
                 if (nextmover->type == PLAYERMOVER)
                     nextmover->speed_left = -.99;
                 if (QUERY_FLAG(nextmover, FLAG_ALIVE)) {
                     op->speed_left = -1.1;  /* wait until the next thing gets out of the way */
                 }
-            }
+            } FOR_MAP_FINISH();
 
             if (victim->type == PLAYER) {
                 /*  only level >= 1 movers move people */
@@ -751,7 +752,7 @@ void move_player_mover(object *op) {
                     victim->speed_left = -5.0;
             }
         }
-    }
+    } FOR_MAP_FINISH();
 }
 
 /**
