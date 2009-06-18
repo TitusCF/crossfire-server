@@ -913,7 +913,7 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
     tmp->y = op->y;
 
     tmp_tag = tmp->count;
-    object_insert_in_map(tmp, op->map, op, 0);
+    object_insert_in_map(tmp, op->map, op, INS_BELOW_ORIGINATOR);
     if (!object_was_destroyed(tmp, tmp_tag) && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY && is_in_shop(op)) {
         sell_item(tmp, op);
     }
