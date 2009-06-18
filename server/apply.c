@@ -129,6 +129,9 @@ int should_director_abort(object *op, object *victim) {
  *
  * @param tmp
  * item that was applied.
+ *
+ * @note
+ * handle_apply_yield() has been renamed to apply_handle_yield()
  */
 void apply_handle_yield(object *tmp) {
     const char *yield;
@@ -462,6 +465,9 @@ void do_forget_spell(object *op, const char *spell) {
  * item being applied.
  * @return
  * 0 if item can't be applied, 1 else.
+ *
+ * @note
+ * check_race_restrictions() has been renamed to apply_check_race_restrictions()
  */
 static int apply_check_race_restrictions(object *who, object *item) {
     char buf[MAX_BUF];
@@ -502,6 +508,9 @@ static int apply_check_race_restrictions(object *who, object *item) {
  * - 0: player or monster can't apply objects of that type
  * - 1: has been applied, or there was an error applying the object
  * - 2: objects of that type can't be applied if not in inventory
+ *
+ * @note
+ * manual_apply() has been renamed to apply_manual()
  */
 int apply_manual(object *op, object *tmp, int aflag) {
     if (tmp->head)
@@ -547,6 +556,9 @@ int apply_manual(object *op, object *tmp, int aflag) {
  * - 0: player or monster can't apply objects of that type
  * - 1: has been applied, or there was an error applying the object
  * - 2: objects of that type can't be applied if not in inventory
+ *
+ * @note
+ * player_apply() has been renamed to apply_by_living()
  */
 int apply_by_living(object *pl, object *op, int aflag, int quiet) {
     int tmp;
@@ -609,6 +621,9 @@ int apply_by_living(object *pl, object *op, int aflag, int quiet) {
  *
  * @param pl
  * player.
+ *
+ * @note
+ * player_apply_below() has been renamed to apply_by_living_below()
  */
 void apply_by_living_below(object *pl) {
     object *tmp;
@@ -939,6 +954,9 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
  * is set, do we really are what the other flags may be?)
  * See include/define.h for detailed description of the meaning of
  * these return values.
+ *
+ * @note
+ * can_apply_object() has been renamed to apply_can_apply_object()
  */
 int apply_can_apply_object(const object *who, const object *op) {
     int i, retval = 0;
@@ -1056,6 +1074,9 @@ int apply_can_apply_object(const object *who, const object *op) {
  * 1 if who can use the item, 0 else.
  * @todo
  * remove obsolete code.
+ *
+ * @note
+ * check_weapon_power() has been renamed to apply_check_weapon_power()
  */
 int apply_check_weapon_power(const object *who, int improves) {
     /* Old code is below (commented out).  Basically, since weapons
@@ -1366,6 +1387,9 @@ int apply_special(object *who, object *op, int aflags) {
  * object to initialize.
  * @return
  * 1 if object was initialized, 0 else.
+ *
+ * @note
+ * auto_apply() has been renamed to apply_auto()
  */
 int apply_auto(object *op) {
     object *tmp;
@@ -1429,7 +1453,10 @@ int apply_auto(object *op) {
  * treasures and stuff).  Calls apply_auto() if appropriate.
  *
  * @param m
-* map to fix.
+ * map to fix.
+ *
+ * @note
+ * fix_auto_apply() has been renamed to apply_auto_fix()
  */
 
 void apply_auto_fix(mapstruct *m) {

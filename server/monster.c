@@ -79,6 +79,9 @@ static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *ta
  * will contain vector to go to enemy if function returns not NULL.
  * @return
  * valid enemy for npc.
+ *
+ * @note
+ * check_enemy() has been renamed to monster_check_enemy()
  */
 object *monster_check_enemy(object *npc, rv_vector *rv) {
     /* if this is pet, let him attack the same enemy as his owner
@@ -157,6 +160,9 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
  * monster to consider
  * @return
  * living creature, or NULL if none found.
+ *
+ * @note
+ * find_nearest_living_creature() has been renamed to monster_find_nearest_living_creature()
  */
 object *monster_find_nearest_living_creature(object *npc) {
     int i, mflags;
@@ -214,6 +220,9 @@ object *monster_find_nearest_living_creature(object *npc) {
  * vector that will contain how to reach the target. Must not be NULL.
  * @return
  * enemy npc wants to attack, or NULL if nont found.
+ *
+ * @note
+ * find_enemy() has been renamed to monster_find_enemy()
  */
 static object *monster_find_enemy(object *npc, rv_vector *rv) {
     object *attacker, *tmp = NULL;
@@ -302,6 +311,9 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
  * 1 if the monster should wake up, 0 otherwise.
  * @note
  * will return 0 if enemy is NULL.
+ *
+ * @note
+ * check_wakeup() has been renamed to monster_check_wakeup()
  */
 static int monster_check_wakeup(object *op, object *enemy, rv_vector *rv) {
     int radius = MAX(op->stats.Wis, MIN_MON_RADIUS);
@@ -348,6 +360,9 @@ static int monster_check_wakeup(object *op, object *enemy, rv_vector *rv) {
  * object to move.
  * @return
  * 1 if moved, 0 else.
+ *
+ * @note
+ * move_randomly() has been renamed to monster_move_randomly()
  */
 static int monster_move_randomly(object *op) {
     int i;
@@ -375,6 +390,9 @@ static int monster_move_randomly(object *op) {
  * @return
  * direction to go into. Will be default_dir if no path found.
  * @todo cache path, smart ajustment and such things to not compute all the time ; try directions randomly.
+ *
+ * @note
+ * compute_path() has been renamed to monster_compute_path()
  */
 int monster_compute_path(object *source, object *target, int default_dir) {
     char *path;
@@ -572,6 +590,9 @@ static int monster_move_no_enemy(object *op) {
  * monster to process.
  * @return
  * 1 if the object has been freed, otherwise 0.
+ *
+ * @note
+ * move_monster() has been renamed to monster_move()
  */
 int monster_move(object *op) {
     int dir, diff;
@@ -850,6 +871,9 @@ int monster_move(object *op) {
  * 1 if ob1 is adjacent to ob2, 0 else.
  * @todo
  * rename to something more clear (is_adjacent?).
+ *
+ * @note
+ * can_hit() has been renamed to monster_can_hit()
  */
 static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv) {
     object *more;
@@ -1359,6 +1383,9 @@ static int monster_get_weapon_quality(const object *item) {
  * item to check.
  * @return
  * 1 if item is a better object, 0 else.
+ *
+ * @note
+ * check_good_weapon() has been renamed to monster_check_good_weapon()
  */
 static int monster_check_good_weapon(object *who, object *item) {
     object *other_weap;
@@ -1389,6 +1416,9 @@ static int monster_check_good_weapon(object *who, object *item) {
  * item to check.
  * @return
  * 1 if item is a better object, 0 else.
+ *
+ * @note
+ * check_good_armour() has been renamed to monster_check_good_armour()
  */
 static int monster_check_good_armour(object *who, object *item) {
     object *other_armour;
@@ -1711,6 +1741,10 @@ void monster_check_apply(object *mon, object *item) {
     return;
 }
 
+/**
+ * @note
+ * npc_call_help() has been renamed to monster_npc_call_help()
+ */
 void monster_npc_call_help(object *op) {
     int x, y, mflags;
     sint16 sx, sy;
@@ -1733,6 +1767,10 @@ void monster_npc_call_help(object *op) {
         }
 }
 
+/**
+ * @note
+ * dist_att() has been renamed to monster_dist_att()
+ */
 static int monster_dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     if (monster_can_hit(part, enemy, rv))
         return dir;
@@ -1743,6 +1781,10 @@ static int monster_dist_att(int dir, object *ob, object *enemy, object *part, rv
     return 0;
 }
 
+/**
+ * @note
+ * run_att() has been renamed to monster_run_att()
+ */
 static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     if ((monster_can_hit(part, enemy, rv) && ob->move_status < 20) || ob->move_status < 20) {
         ob->move_status++;
@@ -1752,6 +1794,10 @@ static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_
     return absdir(dir+4);
 }
 
+/**
+ * @note
+ * hitrun_att() has been renamed to monster_hitrun_att()
+ */
 static int monster_hitrun_att(int dir, object *ob, object *enemy) {
     if (ob->move_status++ < 25)
         return dir;
@@ -1761,6 +1807,10 @@ static int monster_hitrun_att(int dir, object *ob, object *enemy) {
     return absdir(dir+4);
 }
 
+/**
+ * @note
+ * wait_att() has been renamed to monster_wait_att()
+ */
 static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     int inrange = monster_can_hit(part, enemy, rv);
 
@@ -1777,6 +1827,10 @@ static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv
     return 0;
 }
 
+/**
+ * @note
+ * disthit_att() has been renamed to monster_disthit_att()
+ */
 static int monster_disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     /* The logic below here looked plain wrong before.  Basically, what should
      * happen is that if the creatures hp percentage falls below run_away,
@@ -1790,12 +1844,20 @@ static int monster_disthit_att(int dir, object *ob, object *enemy, object *part,
     return monster_dist_att(dir, ob, enemy, part, rv);
 }
 
+/**
+ * @note
+ * wait_att2() has been renamed to monster_wait_att2()
+ */
 static int monster_wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     if (rv->distance < 9)
         return absdir(dir+4);
     return 0;
 }
 
+/**
+ * @note
+ * circ1_move() has been renamed to monster_circ1_move()
+ */
 static void monster_circ1_move(object *ob) {
     static const int circle [12] = { 3, 3, 4, 5, 5, 6, 7, 7, 8, 1, 1, 2 };
 
@@ -1805,6 +1867,10 @@ static void monster_circ1_move(object *ob) {
         (void)move_object(ob, RANDOM()%8+1);
 }
 
+/**
+ * @note
+ * circ2_move() has been renamed to monster_circ2_move()
+ */
 static void monster_circ2_move(object *ob) {
     static const int circle[20] = { 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 7, 7, 7, 8, 8, 1, 1, 1, 2, 2 };
 
@@ -1814,6 +1880,10 @@ static void monster_circ2_move(object *ob) {
         (void)move_object(ob, RANDOM()%8+1);
 }
 
+/**
+ * @note
+ * pace_movev() has been renamed to monster_pace_movev()
+ */
 static void monster_pace_movev(object *ob) {
     if (ob->move_status++ > 6)
         ob->move_status = 0;
@@ -1823,6 +1893,10 @@ static void monster_pace_movev(object *ob) {
         (void)move_object(ob, 1);
 }
 
+/**
+ * @note
+ * pace_moveh() has been renamed to monster_pace_moveh()
+ */
 static void monster_pace_moveh(object *ob) {
     if (ob->move_status++ > 6)
         ob->move_status = 0;
@@ -1832,6 +1906,10 @@ static void monster_pace_moveh(object *ob) {
         (void)move_object(ob, 7);
 }
 
+/**
+ * @note
+ * pace2_movev() has been renamed to monster_pace2_movev()
+ */
 static void monster_pace2_movev(object *ob) {
     if (ob->move_status++ > 16)
         ob->move_status = 0;
@@ -1843,6 +1921,10 @@ static void monster_pace2_movev(object *ob) {
         (void)move_object(ob, 1);
 }
 
+/**
+ * @note
+ * pace2_moveh() has been renamed to monster_pace2_moveh()
+ */
 static void monster_pace2_moveh(object *ob) {
     if (ob->move_status++ > 16)
         ob->move_status = 0;
@@ -1854,6 +1936,10 @@ static void monster_pace2_moveh(object *ob) {
         (void)move_object(ob, 7);
 }
 
+/**
+ * @note
+ * rand_move() has been renamed to monster_rand_move()
+ */
 static void monster_rand_move(object *ob) {
     int i;
 
@@ -1867,6 +1953,10 @@ static void monster_rand_move(object *ob) {
         }
 }
 
+/**
+ * @note
+ * check_earthwalls() has been renamed to monster_check_earthwalls()
+ */
 void monster_check_earthwalls(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->type == EARTHWALL) {
@@ -1876,6 +1966,10 @@ void monster_check_earthwalls(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_FINISH();
 }
 
+/**
+ * @note
+ * check_doors() has been renamed to monster_check_doors()
+ */
 void monster_check_doors(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->type == DOOR) {
@@ -1902,6 +1996,9 @@ void monster_check_doors(object *op, mapstruct *m, int x, int y) {
  *
  * @param op who is saying something.
  * @param txt what is said.
+ *
+ * @note
+ * communicate() has been renamed to monster_communicate()
  */
 void monster_communicate(object *op, const char *txt) {
     int i, mflags, talked = 0;
@@ -1953,6 +2050,9 @@ void monster_communicate(object *op, const char *txt) {
  * @param txt text being said.
  * @param talked did op already talk? Will be modified if this function makes op talk.
  * @return 1 if npc talked, 0 else.
+ *
+ * @note
+ * do_talk_npc() has been renamed to monster_do_talk_npc()
  */
 static int monster_do_talk_npc(object *op, object *npc, const char *txt, int *talked) {
     char buf[MAX_BUF];
@@ -2003,6 +2103,9 @@ static int monster_do_talk_npc(object *op, object *npc, const char *txt, int *ta
  * Simple function to have some NPC say something.
  * @param npc who should say something.
  * @param cp what is being said.
+ *
+ * @note
+ * npc_say() has been renamed to monster_npc_say()
  */
 void monster_npc_say(object *npc, const char *cp) {
     char buf[HUGE_BUF], name[MAX_BUF];
@@ -2022,6 +2125,9 @@ void monster_npc_say(object *npc, const char *cp) {
  * @param txt what op is saying.
  * @param talked did op already talk? Can be modified by this function.
  * @return 0 if text was handled by a plugin or not handled, 1 if handled internally by the server.
+ *
+ * @note
+ * talk_to_npc() has been renamed to monster_talk_to_npc()
  */
 static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
     /* Move this commone area up here - shouldn't cost much extra cpu
@@ -2046,6 +2152,9 @@ static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *ta
  * furniture, even if they are not good throwable objects.
  * Probably better to have the monster throw a throwable object
  * first, then throw any non equipped weapon.
+ *
+ * @note
+ * find_throw_ob() has been renamed to monster_find_throw_ob()
  */
 object *monster_find_throw_ob(object *op) {
     /* New throw code: look through the inventory. Grap the first legal is_thrown
@@ -2079,6 +2188,9 @@ object *monster_find_throw_ob(object *op) {
  * OR y distance being within some range - that seemed wrong - both should
  * be within the valid range. MSW 2001-08-05
  * Returns 0 if enemy can not be detected, 1 if it is detected
+ *
+ * @note
+ * can_detect_enemy() has been renamed to monster_can_detect_enemy()
  */
 int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
     int radius = MIN_MON_RADIUS, hide_discovery;
@@ -2217,6 +2329,9 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
  * intellegent algorithm. For one thing, we ignore los here, SO it
  * is possible for a bright light to illuminate a player on the
  * other side of a wall (!).
+ *
+ * @note
+ * stand_in_light() has been renamed to monster_stand_in_light()
  */
 int monster_stand_in_light(object *op) {
     sint16 nx, ny;

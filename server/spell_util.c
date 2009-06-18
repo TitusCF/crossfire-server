@@ -1123,9 +1123,12 @@ void spell_failure(object *op, int failure, int power, object *skill) {
 }
 
 /**
-Determines if an item can be transmuted after a cast failure.
-@param op item to check.
-@return 1 if op can be transmuted, 0 else.
+ * Determines if an item can be transmuted after a cast failure.
+ * @param op item to check.
+ * @return 1 if op can be transmuted, 0 else.
+ *
+ * @note
+ * can_be_tansmuted() has been renamed to can_be_transmuted_to_flower()
 */
 static int can_be_transmuted_to_flower(object *op) {
     if (op->invisible)

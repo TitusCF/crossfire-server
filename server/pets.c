@@ -61,6 +61,9 @@ static void mark_inventory_as_no_drop(object *ob) {
  * will contain the path to the enemy.
  * @return
  * enemy, or NULL if nothing suitable.
+ *
+ * @note
+ * pet_get_enemy() has been renamed to pets_get_enemy()
  */
 object *pets_get_enemy(object *pet, rv_vector *rv) {
     object *owner, *tmp, *attacker, *tmp3;
@@ -233,6 +236,9 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
  *
  * @param owner
  * player we wish to remove all pets of.
+ *
+ * @note
+ * terminate_all_pets() has been renamed to pets_terminate_all()
  */
 void pets_terminate_all(object *owner) {
     objectlink *obl, *next;
@@ -256,6 +262,9 @@ void pets_terminate_all(object *owner) {
  * process of entering a new map when this is called.
  * Thus the map isn't loaded yet, and we have to remove
  * the pet...
+ *
+ * @note
+ * remove_all_pets() has been renamed to pets_remove_all()
  */
 void pets_remove_all(void) {
     objectlink *obl, *next;
@@ -289,6 +298,9 @@ void pets_remove_all(void) {
  * pet trying to follow. Will be object_remove()'d if can't follow.
  * @param owner
  * owner of ob.
+ *
+ * @note
+ * follow_owner() has been renamed to pets_follow_owner()
  */
 void pets_follow_owner(object *ob, object *owner) {
     object *tmp;
@@ -331,6 +343,9 @@ void pets_follow_owner(object *ob, object *owner) {
  *
  * @param ob
  * pet to move.
+ *
+ * @note
+ * pet_move() has been renamed to pets_move()
  */
 void pets_move(object *ob) {
     int dir, i;
@@ -530,6 +545,9 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
  * Updated this to allow more than the golem 'head' to attack.
  * @param op
  * golem to be moved.
+ *
+ * @note
+ * move_golem() has been renamed to pets_move_golem()
  */
 void pets_move_golem(object *op) {
     int made_attack = 0;
@@ -641,6 +659,9 @@ void pets_move_golem(object *op) {
  * @param dir
  * desired direction.
  * @todo trash.
+ *
+ * @note
+ * control_golem() has been renamed to pets_control_golem()
  */
 void pets_control_golem(object *op, int dir) {
     op->direction = dir;
@@ -662,6 +683,9 @@ void pets_control_golem(object *op, int dir) {
  * failed to summon something.
  * @retval 1
  * summoned correctly something.
+ *
+ * @note
+ * summon_golem() has been renamed to pets_summon_golem()
  */
 int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
     object *tmp;
@@ -923,6 +947,9 @@ static object *choose_cult_monster(object *pl, const object *god, int summon_lev
  * nothing was summoned.
  * @retval 1
  * something was summoned.
+ *
+ * @note
+ * summon_object() has been renamed to pets_summon_object()
  */
 int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg) {
     sint16 x, y, nrof = 1, i;
@@ -1146,6 +1173,9 @@ static object *get_real_owner(object *ob) {
  * pet shouldn't attack target.
  * @retval 1
  * target is a suitable victim for the pet.
+ *
+ * @note
+ * should_arena_attack() has been renamed to pets_should_arena_attack()
  */
 int pets_should_arena_attack(object *pet, object *owner, object *target) {
     object *rowner, *towner;

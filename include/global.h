@@ -275,6 +275,10 @@ extern socket_struct *init_sockets;
 #include "typesproto.h"
 #endif
 
+/**
+ * @note
+ * decrease_ob() has been renamed to object_decrease_nrof_by_one()
+ */
 #define object_decrease_nrof_by_one(xyz) object_decrease_nrof(xyz, 1)
 
 /* FREE_AND_CLEAR frees the pointer and then sets it to NULL.
