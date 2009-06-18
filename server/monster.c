@@ -1406,6 +1406,23 @@ static int monster_check_good_weapon(object *who, object *item) {
 }
 
 /**
+ * Returns the "quality" value of an armour of a monster. Higher quality values
+ * are considered better.
+ *
+ * @param item
+ * the item to check
+ * @return the quality value
+ */
+static int monster_get_armour_quality(const object *item) {
+    int val;
+
+    val = item->stats.ac;
+    val += item->resist[ATNR_PHYSICAL]/5;
+    val += item->magic*3;
+    return val;
+}
+
+/**
  * Checks if using armor 'item' would be better for 'who'.
  * This is a very simplistic check - also checking things
  * like speed and ac are also relevant.
@@ -1422,16 +1439,13 @@ static int monster_check_good_weapon(object *who, object *item) {
  */
 static int monster_check_good_armour(object *who, object *item) {
     object *other_armour;
-    int val = 0, i;
+    int val, i;
 
     other_armour = object_find_by_type_applied(who, item->type);
     if (other_armour == NULL) /* No other armour, use the new */
         return 1;
 
-    /* Like above function , see which is better */
-    val = item->stats.ac-other_armour->stats.ac;
-    val = (item->resist[ATNR_PHYSICAL]-other_armour->resist[ATNR_PHYSICAL])/5;
-    val += (item->magic-other_armour->magic)*3;
+    val = monster_get_armour_quality(item)-monster_get_armour_quality(other_armour);
 
     /* for the other protections, do weigh them very much in the equation -
      * it is the armor protection which is most important, because there is
