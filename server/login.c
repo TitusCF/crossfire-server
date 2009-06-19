@@ -513,8 +513,8 @@ void check_login(object *op) {
             }
 
     wrong_password(op);
-	    return;
-	}
+            return;
+        }
     }
 
     snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name, op->name);

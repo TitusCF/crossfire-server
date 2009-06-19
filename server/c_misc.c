@@ -124,16 +124,16 @@ int command_language(object *op, char *params) {
     }
 
     for (i = 0; i < NUM_LANGUAGES; i++) {
-	if (!strcmp(language_codes[i], params)) {
-	    language = i;
-	    i = NUM_LANGUAGES;
-	}
+        if (!strcmp(language_codes[i], params)) {
+            language = i;
+            i = NUM_LANGUAGES;
+        }
     }
     /* Error out if unknown language. */
     if (language == -1) {
-	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       "Unknown language", NULL);
-	return 0;
+        return 0;
     }
     op->contr->language = language;
     language_str = language_names[language];
