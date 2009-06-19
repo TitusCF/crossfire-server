@@ -632,6 +632,8 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
             if (j == -1)  /* No free spot */
                 object_free(tmp);
             else {
+                if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
+                    SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
                 tmp->x = op->x+freearr_x[j],
                 tmp->y = op->y+freearr_y[j];
                 object_insert_in_map(tmp, op->map, op, 0);
