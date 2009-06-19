@@ -628,7 +628,7 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
             tmp->y = env->y;
             tmp = object_insert_in_ob(tmp, env);
         } else {
-            j = object_find_first_free_spot(tmp, op->map, op->x, op->y);
+            j = object_find_free_spot(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1);
             if (j == -1)  /* No free spot */
                 object_free(tmp);
             else {

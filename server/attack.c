@@ -2103,7 +2103,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
             }
             if (unaggressive)
                 SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-            j = object_find_first_free_spot(tmp, op->map, op->x, op->y);
+            j = object_find_free_spot(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1);
             if (j == -1) /* No spot to put this monster */
                 object_free(tmp);
             else {
