@@ -1423,16 +1423,7 @@ void object_free2(object *ob, int free_inventory) {
                     }
 
                     if (QUERY_FLAG(op, FLAG_ALIVE)) {
-                        int pos;
-
-                        pos = object_find_free_spot(op, part->map, part->x, part->y, 0, SIZEOFFREE);
-                        if (pos == -1)
-                            object_free(op);
-                        else {
-                            op->x = part->x+freearr_x[pos];
-                            op->y = part->y+freearr_y[pos];
-                            object_insert_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
-                        }
+                        object_insert_to_free_spot_or_free(op, part->map, part->x, part->y, 0, SIZEOFFREE, NULL);
                     } else {
                         op->x = part->x;
                         op->y = part->y;
@@ -4589,4 +4580,38 @@ void object_get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
         *hx = -minx;
     if (hy)
         *hy = -miny;
+}
+
+/**
+ * Inserts an object into its map. The object is inserted into a free spot (as
+ * returned by #object_find_free_spot()). If no free spot can be found, the
+ * object is freed.
+ *
+ * @param op
+ * the object to insert or free
+ * @param map
+ * the map to insert into
+ * @param x
+ * the x-coordinate to insert into
+ * @param y
+ * the y-coordinate to insert into
+ * @param start
+ * first (inclusive) position in the freearr_ arrays to search
+ * @param stop
+ * last (exclusive) position in the freearr_ arrays to search
+ * @param originator
+ * what caused op to be inserted.
+ */
+void object_insert_to_free_spot_or_free(object *op, mapstruct *map, int x, int y, int start, int stop, object *originator) {
+    int pos;
+
+    pos = object_find_free_spot(op, map, x, y, start, stop);
+    if (pos == -1) {
+        object_free(op);
+        return;
+    }
+
+    op->x = x+freearr_x[pos];
+    op->y = y+freearr_y[pos];
+    object_insert_in_map(op, map, originator, 0);
 }

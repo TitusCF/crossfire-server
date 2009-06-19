@@ -2101,16 +2101,9 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
                 if (owner != NULL)
                     object_set_owner(tmp, owner);
             }
-            j = object_find_free_spot(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1);
-            if (j == -1) /* No spot to put this monster */
-                object_free(tmp);
-            else {
-                if (unaggressive)
-                    SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-                tmp->x = op->x+freearr_x[j],
-                tmp->y = op->y+freearr_y[j];
-                object_insert_in_map(tmp, op->map, NULL, 0);
-            }
+            if (unaggressive)
+                SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
+            object_insert_to_free_spot_or_free(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1, NULL);
         }
         if (friendly)
             remove_friendly_object(op);

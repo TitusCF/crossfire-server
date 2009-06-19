@@ -628,16 +628,9 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
             tmp->y = env->y;
             tmp = object_insert_in_ob(tmp, env);
         } else {
-            j = object_find_free_spot(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1);
-            if (j == -1)  /* No free spot */
-                object_free(tmp);
-            else {
-                if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
-                    SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-                tmp->x = op->x+freearr_x[j],
-                tmp->y = op->y+freearr_y[j];
-                object_insert_in_map(tmp, op->map, op, 0);
-            }
+            if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
+                SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
+            object_insert_to_free_spot_or_free(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1, op);
         }
     }
     object_free(op);

@@ -275,6 +275,7 @@ extern int object_set_value(object *op, const char *key, const char *value, int 
 extern int object_matches_string(object *pl, object *op, const char *name);
 extern void object_fix_multipart(object *tmp);
 extern void object_get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy);
+extern void object_insert_to_free_spot_or_free(object *op, mapstruct *map, int x, int y, int start, int stop, object *originator);
 /* path.c */
 extern char *path_combine(const char *src, const char *dst, char *path, size_t size);
 extern void path_normalize(char *path);
