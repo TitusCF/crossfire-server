@@ -1184,7 +1184,7 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
         LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s\n", map->path);
         return 0;
     }
-    if (item->type == -1) {
+    if (item->type == (uint8)-1) {
         LOG(llevError, "shop_specialisation_ratio: passed an item with an invalid type\n");
         /*
          * I'm not really sure what the /right/ thing to do here is,
