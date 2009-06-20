@@ -601,13 +601,11 @@ int free_no_drop(object *op) {
  * object to change. Will be removed and replaced.
  */
 static void change_object(object *op) { /* Doesn`t handle linked objs yet */
-    object *tmp, *env;
-    int i, j;
-
-    if (op->other_arch == NULL) {
-        LOG(llevError, "Change object (%s) without other_arch error.\n", op->name);
-        return;
-    }
+    object *env;
+    int i;
+    int friendly;
+    int unaggressive;
+    object *owner;
 
     /* In non-living items only change when food value is 0 */
     if (!QUERY_FLAG(op, FLAG_ALIVE)) {
@@ -616,23 +614,42 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
         else
             op->stats.food = 1; /* so 1 other_arch is made */
     }
+
+    if (op->other_arch == NULL) {
+        LOG(llevError, "Change object (%s) without other_arch error.\n", op->name);
+        return;
+    }
+
     env = op->env;
     object_remove(op);
-    for (i = 0; i < NROFNEWOBJS(op); i++) {
+    friendly = QUERY_FLAG(op, FLAG_FRIENDLY);
+    unaggressive = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
+    owner = object_get_owner(op);
+    for (i = 0; i < NROFNEWOBJS(op); i++) { /* This doesn't handle op->more yet */
+        object *tmp;
+
         tmp = arch_to_object(op->other_arch);
         if (op->type == LAMP)
             tmp->stats.food = op->stats.food-1;
-        tmp->stats.hp = op->stats.hp; /* The only variable it keeps. */
+        tmp->stats.hp = op->stats.hp;
+        if (friendly) {
+            SET_FLAG(tmp, FLAG_FRIENDLY);
+            add_friendly_object(tmp);
+            tmp->attack_movement = PETMOVE;
+            if (owner != NULL)
+                object_set_owner(tmp, owner);
+        }
+        if (unaggressive)
+            SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
         if (env) {
             tmp->x = env->x,
             tmp->y = env->y;
             tmp = object_insert_in_ob(tmp, env);
-        } else {
-            if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
-                SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
+        } else
             object_insert_to_free_spot_or_free(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1, op);
-        }
     }
+    if (friendly)
+	remove_friendly_object(op);
     object_free(op);
 }
 

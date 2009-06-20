@@ -1860,7 +1860,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     tag_t op_tag, hitter_tag;
     int rtn_kill = 0;
     int friendlyfire;
-    object *owner;
+    object *owner, *env;
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
         return 0;
@@ -2080,19 +2080,26 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     /* Lets handle creatures that are splitting now */
     } else if (type&AT_PHYSICAL && !QUERY_FLAG(op, FLAG_FREED) && QUERY_FLAG(op, FLAG_SPLITTING)) {
         int i;
-        int friendly = QUERY_FLAG(op, FLAG_FRIENDLY);
-        int unaggressive = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
-        object *owner = object_get_owner(op);
+        int friendly;
+        int unaggressive;
+        object *owner;
 
-        if (!op->other_arch) {
+        if (op->other_arch == NULL) {
             LOG(llevError, "SPLITTING without other_arch error.\n");
             return maxdam;
         }
-        object_remove(op);
-        for (i = 0; i < NROFNEWOBJS(op); i++) { /* This doesn't handle op->more yet */
-            object *tmp = arch_to_object(op->other_arch);
-            int j;
 
+        env = op->env;
+        object_remove(op);
+        friendly = QUERY_FLAG(op, FLAG_FRIENDLY);
+        unaggressive = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
+	owner = object_get_owner(op);
+        for (i = 0; i < NROFNEWOBJS(op); i++) { /* This doesn't handle op->more yet */
+            object *tmp;
+
+            tmp = arch_to_object(op->other_arch);
+            if (op->type == LAMP)
+                tmp->stats.food = op->stats.food-1;
             tmp->stats.hp = op->stats.hp;
             if (friendly) {
                 SET_FLAG(tmp, FLAG_FRIENDLY);
@@ -2103,7 +2110,12 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
             }
             if (unaggressive)
                 SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-            object_insert_to_free_spot_or_free(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1, NULL);
+            if (env) {
+                tmp->x = env->x,
+                    tmp->y = env->y;
+                tmp = object_insert_in_ob(tmp, env);
+            } else
+                object_insert_to_free_spot_or_free(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1, op);
         }
         if (friendly)
             remove_friendly_object(op);
