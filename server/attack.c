@@ -2079,7 +2079,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
         object_free(hitter);
     /* Lets handle creatures that are splitting now */
     } else if (type&AT_PHYSICAL && !QUERY_FLAG(op, FLAG_FREED) && QUERY_FLAG(op, FLAG_SPLITTING)) {
-	change_object(op);
+        change_object(op);
     } else if (type&AT_DRAIN && hitter->type == GRIMREAPER && hitter->value++ > 10) {
         object_remove(hitter);
         object_free(hitter);
