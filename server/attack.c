@@ -1860,7 +1860,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     tag_t op_tag, hitter_tag;
     int rtn_kill = 0;
     int friendlyfire;
-    object *owner, *env;
+    object *owner;
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
         return 0;
@@ -2079,47 +2079,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
         object_free(hitter);
     /* Lets handle creatures that are splitting now */
     } else if (type&AT_PHYSICAL && !QUERY_FLAG(op, FLAG_FREED) && QUERY_FLAG(op, FLAG_SPLITTING)) {
-        int i;
-        int friendly;
-        int unaggressive;
-        object *owner;
-
-        if (op->other_arch == NULL) {
-            LOG(llevError, "SPLITTING without other_arch error.\n");
-            return maxdam;
-        }
-
-        env = op->env;
-        object_remove(op);
-        friendly = QUERY_FLAG(op, FLAG_FRIENDLY);
-        unaggressive = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
-	owner = object_get_owner(op);
-        for (i = 0; i < NROFNEWOBJS(op); i++) { /* This doesn't handle op->more yet */
-            object *tmp;
-
-            tmp = arch_to_object(op->other_arch);
-            if (op->type == LAMP)
-                tmp->stats.food = op->stats.food-1;
-            tmp->stats.hp = op->stats.hp;
-            if (friendly) {
-                SET_FLAG(tmp, FLAG_FRIENDLY);
-                add_friendly_object(tmp);
-                tmp->attack_movement = PETMOVE;
-                if (owner != NULL)
-                    object_set_owner(tmp, owner);
-            }
-            if (unaggressive)
-                SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-            if (env) {
-                tmp->x = env->x,
-                    tmp->y = env->y;
-                tmp = object_insert_in_ob(tmp, env);
-            } else
-                object_insert_to_free_spot_or_free(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1, op);
-        }
-        if (friendly)
-            remove_friendly_object(op);
-        object_free(op);
+	change_object(op);
     } else if (type&AT_DRAIN && hitter->type == GRIMREAPER && hitter->value++ > 10) {
         object_remove(hitter);
         object_free(hitter);

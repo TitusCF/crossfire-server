@@ -600,12 +600,17 @@ int free_no_drop(object *op) {
  * @param op
  * object to change. Will be removed and replaced.
  */
-static void change_object(object *op) { /* Doesn`t handle linked objs yet */
+void change_object(object *op) { /* Doesn`t handle linked objs yet */
     object *env;
     int i;
     int friendly;
     int unaggressive;
     object *owner;
+
+    if (op->other_arch == NULL) {
+        LOG(llevError, "Change object (%s) without other_arch error.\n", op->name);
+        return;
+    }
 
     /* In non-living items only change when food value is 0 */
     if (!QUERY_FLAG(op, FLAG_ALIVE)) {
@@ -613,11 +618,6 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
             return;
         else
             op->stats.food = 1; /* so 1 other_arch is made */
-    }
-
-    if (op->other_arch == NULL) {
-        LOG(llevError, "Change object (%s) without other_arch error.\n", op->name);
-        return;
     }
 
     env = op->env;
@@ -649,7 +649,7 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
             object_insert_to_free_spot_or_free(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1, op);
     }
     if (friendly)
-	remove_friendly_object(op);
+        remove_friendly_object(op);
     object_free(op);
 }
 

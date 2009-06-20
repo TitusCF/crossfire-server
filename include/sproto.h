@@ -628,6 +628,7 @@ object *stop_item(object *op);
 void fix_stopped_item(object *op, mapstruct *map, object *originator);
 object *fix_stopped_arrow(object *op);
 int free_no_drop(object *op);
+void change_object(object *op);
 void move_firewall(object *op);
 void move_player_mover(object *op);
 int process_object(object *op);
