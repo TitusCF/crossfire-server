@@ -1006,14 +1006,9 @@ int use_oratory(object *pl, int dir, object *skill) {
 
     for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
         /* can't persuade players - return because there is nothing else
-         * on that space to charm.  Same for multi space monsters and
-         * special monsters - we don't allow them to be charmed, and there
-         * is no reason to do further processing since they should be the
-         * only monster on the space.
+         * on that space to charm.
          */
         if (tmp->type == PLAYER)
-            return 0;
-        if (tmp->more || tmp->head)
             return 0;
         if (tmp->msg)
             return 0;
@@ -1027,6 +1022,9 @@ int use_oratory(object *pl, int dir, object *skill) {
                       "There is nothing to orate to.", NULL);
         return 0;
     }
+
+    if (tmp->head != NULL)
+        tmp = tmp->head;
 
     query_name(tmp, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
@@ -1166,13 +1164,14 @@ int singing(object *pl, int dir, object *skill) {
         /* Whole bunch of checks to see if this is a type of monster that would
          * listen to singing.
          */
+        if (tmp->head != NULL)
+            tmp = tmp->head;
         if (tmp
         && QUERY_FLAG(tmp, FLAG_MONSTER)
         && !QUERY_FLAG(tmp, FLAG_NO_STEAL)      /* Been charmed or abused before */
         && !QUERY_FLAG(tmp, FLAG_SPLITTING)     /* no ears */
         && !QUERY_FLAG(tmp, FLAG_HITBACK)       /* was here before */
         && (tmp->level <= skill->level)
-        && (!tmp->head)
         && !QUERY_FLAG(tmp, FLAG_UNDEAD)
         && !QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)   /* already calm */
         && !QUERY_FLAG(tmp, FLAG_FRIENDLY)) {    /* already calm */
