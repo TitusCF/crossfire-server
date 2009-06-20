@@ -625,7 +625,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
     friendly = QUERY_FLAG(op, FLAG_FRIENDLY);
     unaggressive = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
     owner = object_get_owner(op);
-    for (i = 0; i < NROFNEWOBJS(op); i++) { /* This doesn't handle op->more yet */
+    for (i = 0; i < op->stats.food; i++) { /* This doesn't handle op->more yet */
         object *tmp;
 
         tmp = arch_to_object(op->other_arch);

@@ -635,8 +635,6 @@ typedef struct typedata {
 
 /*@}*/
 
-#define NROFNEWOBJS(xyz)        ((xyz)->stats.food)
-
 /**
  * @defgroup MOVE_xxx Movement types and related macros.
  *
