@@ -222,6 +222,7 @@ int command_throw(object *op, char *params) {
 int command_apply(object *op, char *params) {
     int aflag = 0;
     object *inv = op->inv;
+    object *item;
 
     if (!params) {
         apply_by_living_below(op);
@@ -251,9 +252,11 @@ int command_apply(object *op, char *params) {
     while (*params == ' ')
         params++;
 
-    inv = find_best_apply_object_match(inv, op, params, aflag);
-    if (inv) {
-        apply_by_living(op, inv, aflag, 0);
+    item = find_best_apply_object_match(inv, op, params, aflag);
+    if (item == NULL)
+        item = find_best_apply_object_match(inv, op, params, AP_NULL);
+    if (item) {
+        apply_by_living(op, item, aflag, 0);
     } else
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Could not find any match to the %s.",

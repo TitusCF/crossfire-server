@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Suppress error messages about non-existing items for "apply -a" on already
+applied items or "apply -u" un unapplied items.
+Andreas Kirschbaum 2009-06-20
+
 Make singing and oratory skills work against multi-tiled monsters.
 Andreas Kirschbaum 2009-06-20
 
