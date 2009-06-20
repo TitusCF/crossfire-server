@@ -395,7 +395,7 @@ static int monster_move_randomly(object *op) {
  * compute_path() has been renamed to monster_compute_path()
  */
 int monster_compute_path(object *source, object *target, int default_dir) {
-    char *path;
+    unsigned short *distance;
     int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE];
     int current = 0, dir, max = 1, size, x, y, check_dir;
 
@@ -405,8 +405,8 @@ int monster_compute_path(object *source, object *target, int default_dir) {
     /*    printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
 
     size = source->map->width*source->map->height;
-    path = calloc(size, sizeof(char));
-    if (path == NULL) {
+    distance = calloc(size, *distance);
+    if (distance == NULL) {
         fatal(OUT_OF_MEMORY);
     }
     explore_x[0] = target->x;
@@ -414,13 +414,17 @@ int monster_compute_path(object *source, object *target, int default_dir) {
 
     while (current < max) {
         for (check_dir = 0; check_dir < 8; check_dir++) {
-            dir = absdir(default_dir+check_dir);
+            int diagonal;
+            unsigned short new_distance;
+            unsigned short *this_distance;
+
+            dir = absdir(default_dir+4+check_dir);
             x = explore_x[current]+freearr_x[dir];
             y = explore_y[current]+freearr_y[dir];
 
             if (x == source->x && y == source->y) {
                 /*          LOG(llevDebug, "monster_compute_path => %d\n", absdir(dir+4));*/
-                free(path);
+                free(distance);
                 return absdir(dir+4);
             }
 
@@ -432,16 +436,19 @@ int monster_compute_path(object *source, object *target, int default_dir) {
             assert(source->map->height*x+y >= 0);
             assert(source->map->height*x+y < size);
 
-            if (path[source->map->height*x+y] == 0) {
+            this_distance = &distance[source->map->height*explore_x[current]+explore_y[current]];
+            diagonal = dir%2 == 0;
+            new_distance = *this_distance+(diagonal ? 3 : 2);
+            if (*this_distance == 0 || *this_distance > new_distance) {
                 assert(max < MAX_EXPLORE);
                 explore_x[max] = x;
                 explore_y[max] = y;
 
-                path[source->map->height*x+y] = absdir(dir+4);
-                /*                printf("explore[%d] => (%d, %d) %d\n", max, x, y, path[source->map->height*x+y]);*/
+                distance[source->map->height*x+y] = new_distance;
+                /*                printf("explore[%d] => (%d, %d) %u\n", max, x, y, new_distance);*/
                 max++;
                 if (max == MAX_EXPLORE) {
-                    free(path);
+                    free(distance);
                     return default_dir;
                 }
             }
@@ -449,7 +456,7 @@ int monster_compute_path(object *source, object *target, int default_dir) {
         current++;
     }
 
-    free(path);
+    free(distance);
     return default_dir;
 }
 
