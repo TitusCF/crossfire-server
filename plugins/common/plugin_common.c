@@ -1183,9 +1183,9 @@ int cf_object_teleport(object *op, mapstruct *map, int x, int y) {
 }
 
 /**
- * Kinda wrapper for arch_present_in_map().
+ * Kinda wrapper for map_find_by_archetype_name().
  */
-object *cf_map_arch_present_in_map_by_name(const char *str, mapstruct *map, int nx, int ny) {
+object *cf_map_find_by_archetype_name(const char *str, mapstruct *map, int nx, int ny) {
     int type;
     object *value;
 
