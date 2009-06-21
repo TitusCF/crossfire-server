@@ -512,7 +512,7 @@ void check_login(object *op) {
                 break;
             }
 
-    wrong_password(op);
+            wrong_password(op);
             return;
         }
     }
