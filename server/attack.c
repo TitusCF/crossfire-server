@@ -1855,7 +1855,7 @@ int friendly_fire(object *op, object *hitter) {
 int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     int maxdam = 0, ndam = 0, attacktype = 1, magic = (type&AT_MAGIC);
     int maxattacktype, attacknum;
-    int body_attack = op && op->head;   /* Did we hit op's head? */
+    int body_attack = op->head != NULL;   /* Did we hit op's head? */
     int simple_attack;
     tag_t op_tag, hitter_tag;
     int rtn_kill = 0;
