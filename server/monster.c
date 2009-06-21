@@ -405,7 +405,7 @@ int monster_compute_path(object *source, object *target, int default_dir) {
     /*    printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
 
     size = source->map->width*source->map->height;
-    distance = calloc(size, *distance);
+    distance = calloc(size, sizeof(*distance));
     if (distance == NULL) {
         fatal(OUT_OF_MEMORY);
     }
