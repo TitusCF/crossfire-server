@@ -133,7 +133,8 @@ int verify_player(const char *name, char *password) {
         return 1;
     }
 
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL)
+    fp = open_and_uncompress(buf, 0, &comp);
+    if (fp == NULL)
         return 1;
 
     /* Read in the file until we find the password line.  Our logic could
@@ -199,9 +200,8 @@ int check_name(player *me, const char *name) {
  * @todo doesn't object_free() handle inventory?
  */
 void destroy_object(object *op) {
-    object *tmp;
-    while ((tmp = op->inv))
-        destroy_object(tmp);
+    while (op->inv != NULL)
+        destroy_object(op->inv);
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
         object_remove(op);
@@ -223,7 +223,7 @@ void destroy_object(object *op) {
 int save_player(object *op, int flag) {
     FILE *fp;
     char filename[MAX_BUF], *tmpfilename, backupfile[MAX_BUF];
-    object *tmp, *container = NULL;
+    object *container = NULL;
     player *pl = op->contr;
     int i, wiz = QUERY_FLAG(op, FLAG_WIZ);
     long checksum;
@@ -366,8 +366,8 @@ int save_player(object *op, int flag) {
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     if (!flag) {
-        while ((tmp = op->inv))
-            destroy_object(tmp);
+        while (op->inv != NULL)
+            destroy_object(op->inv);
 
         /* destroying objects will most likely destroy the pointer
          * in op->contr->ranges[], so clear the range to a safe value.
@@ -421,7 +421,8 @@ static void copy_file(const char *filename, FILE *fpout) {
     FILE *fp;
     char buf[MAX_BUF];
 
-    if ((fp = fopen(filename, "r")) == NULL) {
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
         LOG(llevError, "copy_file failed to open \"%s\", player file(s) may be corrupt.\n", filename);
         return;
     }
@@ -523,7 +524,8 @@ void check_login(object *op) {
      * the password.  Return control to the higher level dispatch,
      * since the rest of this just deals with loading of the file.
      */
-    if ((fp = open_and_uncompress(filename, 1, &comp)) == NULL) {
+    fp = open_and_uncompress(filename, 1, &comp);
+    if (fp == NULL) {
         confirm_password(op);
         return;
     }
