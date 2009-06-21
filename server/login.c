@@ -714,14 +714,13 @@ void check_login(object *op) {
      * First, we check for partial path, then check to see if the full
      * path (for unique player maps)
      */
-    if (check_path(pl->maplevel, 1) == -1) {
-        if (check_path(pl->maplevel, 0) == -1) {
-            strcpy(pl->maplevel, pl->savebed_map);
-            op->x = pl->bed_x,
-            op->y = pl->bed_y;
-            /* if the map was a shop, the player can have unpaid items, remove them. */
-            remove_unpaid_objects(op, NULL, 1);
-        }
+    if (check_path(pl->maplevel, 1) == -1
+    && check_path(pl->maplevel, 0) == -1) {
+        strcpy(pl->maplevel, pl->savebed_map);
+        op->x = pl->bed_x,
+        op->y = pl->bed_y;
+        /* if the map was a shop, the player can have unpaid items, remove them. */
+        remove_unpaid_objects(op, NULL, 1);
     }
 
     /* If player saved beyond some time ago, and the feature is
