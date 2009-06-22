@@ -1623,7 +1623,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         break;
 
     case SP_MAGIC_MISSILE:
-        success = fire_arch_from_position(op, caster, op->x+freearr_x[dir], op->y+freearr_y[dir], dir, spell_ob);
+        success = fire_arch_from_position(op, caster, op->x, op->y, dir, spell_ob);
         break;
 
     case SP_SUMMON_GOLEM:
@@ -1746,7 +1746,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
                                  spell_ob->name);
             success = 0;
         } else
-            success = fire_arch_from_position(op, caster, op->x+freearr_x[dir], op->y+freearr_y[dir], dir, spell_ob);
+            success = fire_arch_from_position(op, caster, op->x, op->y, dir, spell_ob);
         break;
 
     case SP_SWARM:
