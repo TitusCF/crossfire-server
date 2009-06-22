@@ -697,7 +697,8 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
     if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
         SET_ANIMATION(tmp, dir);
 
-    if ((tmp = object_insert_in_map(tmp, m, op, 0)) == NULL)
+    tmp = object_insert_in_map(tmp, m, op, 0);
+    if (tmp == NULL)
         return 1;
 
     ob_process(tmp);
@@ -755,7 +756,8 @@ void drain_wand_charge(object *wand) {
             wand->speed = 0;
             object_update_speed(wand);
         }
-        if ((tmp = object_get_player_container(wand)))
+        tmp = object_get_player_container(wand);
+        if (tmp)
             esrv_update_item(UPD_ANIM, tmp, wand);
     }
 }
@@ -897,8 +899,8 @@ static int put_a_monster(object *op, const char *monstername) {
     int dir;
 
     /* Handle cases where we are passed a bogus mosntername */
-
-    if ((at = find_archetype(monstername)) == NULL)
+    at = find_archetype(monstername);
+    if (at == NULL)
         return 0;
 
     /* find a free square nearby
@@ -1019,7 +1021,8 @@ static void prayer_failure(object *op, int failure, int power) {
     const char *godname;
     object *tmp;
 
-    if (!strcmp((godname = determine_god(op)), "none"))
+    godname = determine_god(op);
+    if (!strcmp(godname, "none"))
         godname = "Your spirit";
 
     if (failure <= -20 && failure > -40) { /* wonder */
@@ -1314,7 +1317,8 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         LOG(llevError, "cast_spell: null spell object passed\n");
         return 0;
     }
-    if (!strcmp((godname = determine_god(op)), "none"))
+    godname = determine_god(op);
+    if (!strcmp(godname, "none"))
         godname = "A random spirit";
 
     /* the caller should set caster to op if appropriate */
@@ -1856,14 +1860,16 @@ void check_spell_expiry(object *spell) {
     if (!spell->env || !spell->env->type == PLAYER)
         return;
 
-    if ((key = object_get_value(spell, "spell_expiry_warn_1")) != NULL) {
+    key = object_get_value(spell, "spell_expiry_warn_1");
+    if (key != NULL) {
         if (spell->duration == atoi(key)) {
             draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, spell->env, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
                                  "The effects of your %s are draining out.", NULL, spell->name);
             return;
         }
     }
-    if ((key = object_get_value(spell, "spell_expiry_warn_2")) != NULL) {
+    key = object_get_value(spell, "spell_expiry_warn_2");
+    if (key != NULL) {
         if (spell->duration == atoi(key)) {
             draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, spell->env, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
                                  "The effects of your %s are about to expire.", NULL, spell->name);
