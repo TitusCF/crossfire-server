@@ -863,16 +863,15 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
         if (mflags&(P_OUT_OF_MAP|P_BLOCKSVIEW))
             continue;
 
-        tmp = GET_MAP_OB(mp, nx, ny);
-
-        while (tmp != NULL
-            && (((owner_type == PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER) && !QUERY_FLAG(tmp, FLAG_GENERATOR) && !(tmp->type == PLAYER && op_on_battleground(tmp, NULL, NULL, NULL)))
-                    || (owner_type != PLAYER && tmp->type != PLAYER))
-                || (tmp == exclude || (tmp->head && tmp->head == exclude))))
-            tmp = tmp->above;
-
-        if (tmp != NULL && can_see_monsterP(m, x, y, i))
-            return freedir[i];
+        for (tmp = GET_MAP_OB(mp, nx, ny); tmp != NULL; tmp = tmp->above) {
+            if ((owner_type != PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER) || QUERY_FLAG(tmp, FLAG_GENERATOR) || (tmp->type == PLAYER && op_on_battleground(tmp, NULL, NULL, NULL)))
+            && (owner_type == PLAYER || tmp->type == PLAYER)
+            && (tmp != exclude)
+            && (tmp->head == NULL || tmp->head != exclude)
+            && can_see_monsterP(m, x, y, i)) {
+                return freedir[i];
+            }
+        }
     }
     return -1;  /* flag for "keep going the way you were" */
 }
