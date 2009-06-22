@@ -581,12 +581,8 @@ static void move_ball_spell(object *op) {
      */
 
     dir = 0;
-    if (!(rndm(0, 3)))
-        j = rndm(0, 1);
-    else
-        j = 0;
-
-    for (i = 1; i < 9; i++) {
+    j = rndm(0, 1);
+    for (i = 1; i <= 9; i++) {
         /* i bit 0: alters sign of offset
          * other bits (i/2): absolute value of offset
          */
@@ -655,13 +651,12 @@ static void move_ball_spell(object *op) {
     op->stats.dam = dam_save;
 
     i = spell_find_dir(op->map, op->x, op->y, object_get_owner(op));
-    if (i >= 0) { /* we have a preferred direction!  */
-        /* pick another direction if the preferred dir is blocked. */
-        if (get_map_flags(op->map, &m, nx+freearr_x[i], ny+freearr_y[i], &hx, &hy)&P_OUT_OF_MAP
-        || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, hx, hy))) {
-            i = absdir(i+rndm(0, 2)-1);  /* -1, 0, +1 */
-        }
-        op->direction = i;
+    if (i >= 0) { /* we have a preferred direction! */
+        op->direction = adjust_dir(op->direction, i);
+        if (rndm(0, 3) != 0)
+            op->direction = adjust_dir(op->direction, i);
+        if (rndm(0, 3) == 0)
+            op->direction = adjust_dir(op->direction, i);
     }
 }
 
