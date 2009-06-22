@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix array out-of-bounds accesses for monsters having stats > 30. Makes
+trolls pick up boulders.
+Andreas Kirschbaum 2009-06-22
+
 Do not teleport character to savebed when re-logging in in a random map.
 Andreas Kirschbaum 2009-06-21
 

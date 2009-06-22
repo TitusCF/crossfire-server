@@ -2353,7 +2353,7 @@ static int get_grace_bonus(int stat) {
 /**
  * Limits a stat value to [0..<code>max_index</code>].
  * @param max_index
- * the maximum index (inclusive)
+ * the maximum index (exclusive)
  * @return the limited index
  */
 static size_t get_index(int stat, size_t max_index) {
@@ -2364,5 +2364,5 @@ static size_t get_index(int stat, size_t max_index) {
     }
 
     index = (size_t)stat;
-    return MIN(index, max_index);
+    return MIN(index, max_index-1);
 }
