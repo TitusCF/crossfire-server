@@ -1059,7 +1059,7 @@ static void prayer_failure(object *op, int failure, int power) {
          * character has -100 grace, this is cast as a level 130 spell.
          * Things start to break in those cases.
          */
-        cast_magic_storm(op, tmp, power>50?50:power);
+        cast_magic_storm(op, tmp, power > 50 ? 50 : power);
     }
 }
 
