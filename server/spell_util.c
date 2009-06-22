@@ -846,32 +846,36 @@ object *find_target_for_friendly_spell(object *op, int dir) {
  * direction toward the first/closest live object if it finds any, otherwise -1.
  */
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
-    int i, max = SIZEOFFREE;
+    int i;
     sint16 nx, ny;
     int owner_type = 0, mflags;
     object *tmp;
     mapstruct *mp;
+    int dirs[SIZEOFFREE];
 
     if (exclude && exclude->head)
         exclude = exclude->head;
     if (exclude && exclude->type)
         owner_type = exclude->type;
 
-    for (i = get_random_dir(); i < max; i++) {
-        nx = x+freearr_x[i];
-        ny = y+freearr_y[i];
+    get_search_arr(dirs);
+    for (i = 1; i < SIZEOFFREE; i++) {
+        nx = x+freearr_x[dirs[i]];
+        ny = y+freearr_y[dirs[i]];
         mp = m;
         mflags = get_map_flags(m, &mp, nx, ny, &nx, &ny);
         if (mflags&(P_OUT_OF_MAP|P_BLOCKSVIEW))
             continue;
 
         for (tmp = GET_MAP_OB(mp, nx, ny); tmp != NULL; tmp = tmp->above) {
-            if ((owner_type != PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER) || QUERY_FLAG(tmp, FLAG_GENERATOR) || (tmp->type == PLAYER && op_on_battleground(tmp, NULL, NULL, NULL)))
-            && (owner_type == PLAYER || tmp->type == PLAYER)
-            && (tmp != exclude)
-            && (tmp->head == NULL || tmp->head != exclude)
-            && can_see_monsterP(m, x, y, i)) {
-                return freedir[i];
+            object *head;
+
+            head = tmp->head != NULL ? tmp->head : tmp;
+            if ((owner_type != PLAYER || QUERY_FLAG(head, FLAG_MONSTER) || QUERY_FLAG(head, FLAG_GENERATOR) || (head->type == PLAYER && op_on_battleground(head, NULL, NULL, NULL)))
+            && (owner_type == PLAYER || head->type == PLAYER)
+            && head != exclude
+            && can_see_monsterP(m, x, y, dirs[i])) {
+                return freedir[dirs[i]];
             }
         }
     }
