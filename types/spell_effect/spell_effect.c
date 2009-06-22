@@ -533,15 +533,7 @@ static void move_missile(object *op) {
     op->map = m;
     i = spell_find_dir(op->map, op->x, op->y, object_get_owner(op));
     if (i > 0 && i != op->direction) {
-        int diff;
-
-        diff = (i-op->direction)&7;
-        if (1 <= diff && diff <= 3)
-            op->direction = absdir(op->direction+1);
-        else if (5 <= diff && diff <= 7)
-            op->direction = absdir(op->direction-1);
-        else
-            op->direction = absdir(op->direction+(rndm(0, 1) == 0 ? +1 : -1));
+        op->direction = adjust_dir(op->direction, i);
         SET_ANIMATION(op, op->direction);
     }
     object_insert_in_map(op, op->map, op, 0);

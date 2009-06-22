@@ -398,6 +398,7 @@ extern void replace(const char *src, const char *key, const char *replacement, c
 extern void make_list_like(char *input);
 extern int get_random_dir(void);
 extern int get_randomized_dir(int dir);
+extern int adjust_dir(int dir, int destination_dir);
 extern void replace_unprintable_chars(char *buf);
 /* loader.c */
 extern int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode);

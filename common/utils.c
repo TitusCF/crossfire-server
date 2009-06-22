@@ -524,6 +524,31 @@ int get_randomized_dir(int dir) {
 }
 
 /**
+ * Adjusts a given direction by +/-1 towards a destination direction.
+ *
+ * @param dir
+ * the direction to adjust
+ * @param destination_dir
+ * the destination direction to adjust towards
+ * @return
+ * the adjusted direction
+ */
+int adjust_dir(int dir, int destination_dir) {
+    int diff;
+
+    diff = (destination_dir-dir)&7;
+    if (1 <= diff && diff <= 3)
+        dir++;
+    else if (5 <= diff && diff <= 7)
+        dir--;
+    else if (rndm(0, 1) == 0)
+        dir++;
+    else
+        dir--;
+    return absdir(dir);
+}
+
+/**
  * Replaces any unprintable character in the given buffer with a space.
  *
  * @param buf
