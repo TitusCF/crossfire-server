@@ -1747,7 +1747,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
             success = 0;
         } else
             success = fire_arch_from_position(op, caster, op->x+freearr_x[dir], op->y+freearr_y[dir], dir, spell_ob);
-            break;
+        break;
 
     case SP_SWARM:
         success = fire_swarm(op, caster, spell_ob, dir);
