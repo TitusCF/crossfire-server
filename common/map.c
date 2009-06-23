@@ -481,7 +481,6 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
             && !(QUERY_FLAG(tmp, FLAG_WIZ) && tmp->contr->hidden))
                 return 1;
         }
-
     } FOR_MAP_FINISH();
     return 0;
 }
@@ -1835,7 +1834,6 @@ mapstruct *ready_map_name(const char *name, int flags) {
      * resets in any case - if they really care, they should use the 'maps command.
      */
     if ((flags&(MAP_FLUSH|MAP_PLAYER_UNIQUE)) || !m) {
-
         /* first visit or time to reset */
         if (m) {
             clean_tmp_map(m); /* Doesn't make much difference */
@@ -2367,7 +2365,6 @@ int out_of_map(mapstruct *m, int x, int y) {
  * map that is at specified location. Will be NULL if not on any map.
  */
 mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y) {
-
     /* m should never be null, but if a tiled map fails to load below, it could
      * happen.
      */
