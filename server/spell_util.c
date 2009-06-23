@@ -671,8 +671,6 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
         return 0;
     }
 
-
-
     tmp->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
     tmp->duration = spell->duration+SP_level_duration_adjust(caster, spell);
     /* code in time.c uses food for some things, duration for others */
