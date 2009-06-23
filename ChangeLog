@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix monster movement code. Now monsters opening door and/or destroying
+earthwalls works. Makes multi-tiled monsters more agile.
+Andreas Kirschbaum 2009-06-24
+
 Make monsters hit doors with attack damage rather than fixed 1000 damage.
 Andreas Kirschbaum 2009-06-24
 

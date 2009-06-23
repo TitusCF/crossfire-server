@@ -70,80 +70,51 @@ int move_object(object *op, int dir) {
  * op was moved.
   */
 int move_ob(object *op, int dir, object *originator) {
-    sint16 newx = op->x+freearr_x[dir];
-    sint16 newy = op->y+freearr_y[dir];
-    object *tmp;
+    object *part;
     mapstruct *m;
-    int mflags;
 
-    if (op == NULL) {
-        LOG(llevError, "Trying to move NULL.\n");
-        return 0;
-    }
-
-    m = op->map;
-    mflags = get_map_flags(m, &m, newx, newy, &newx, &newy);
-
-    /* If the space the player is trying to is out of the map,
-     * bail now - we know it can't work.
-     */
-    if (mflags&P_OUT_OF_MAP)
-        return 0;
-
-
-    /* Is this space blocked?  Players with wizpass are immune to
-     * this condition.
-     */
-    if (blocked_link(op, m, newx, newy)
-    && !QUERY_FLAG(op, FLAG_WIZPASS))
-        return 0;
-
-    if (op->more != NULL && !move_ob(op->more, dir, op->more->head))
-        return 0;
-
-    /* 0.94.2 - we need to set the direction for the new animation code.
-     * it uses it to figure out face to use - I can't see it
-     * breaking anything, but it might.
-     */
     op->direction = dir;
 
-    if (op->will_apply&WILL_APPLY_EARTHWALL)
-        monster_check_earthwalls(op, m, newx, newy);
-    if (op->will_apply&WILL_APPLY_DOOR)
-        monster_check_doors(op, m, newx, newy);
+    if (op->will_apply&(WILL_APPLY_EARTHWALL|WILL_APPLY_DOOR)) {
+        tag_t op_tag;
 
-    /* 0.94.1 - I got a stack trace that showed it crash with object_remove() trying
-     * to remove a removed object, and this function was the culprit.  A possible
-     * guess I have is that monster_check_doors() above ran into a trap, killing the
-     * monster.
-     *
-     * Unfortunately, it doesn't appear that the calling functions of move_object
-     * deal very well with op being killed, so all this might do is just
-     * migrate the problem someplace else.
-     */
+        op_tag = op->count;
+        for (part = op; part != NULL; part = part->more) {
+            sint16 x, y;
 
-    if (QUERY_FLAG(op, FLAG_REMOVED)) {
-        LOG(llevDebug, "move_object: monster has been removed - will not process further\n");
-        /* Was not successful, but don't want to try and move again */
-        return 1;
+            if (get_map_flags(part->map, &m, part->x+freearr_x[dir], part->y+freearr_y[dir], &x, &y)&P_OUT_OF_MAP)
+                continue;
+
+            if (op->will_apply&WILL_APPLY_EARTHWALL) {
+                monster_check_earthwalls(op, m, x, y);
+                if (object_was_destroyed(op, op_tag))
+                    return 1;
+            }
+
+            if (op->will_apply&WILL_APPLY_DOOR) {
+                monster_check_doors(op, m, x, y);
+                if (object_was_destroyed(op, op_tag))
+                    return 1;
+            }
+        }
     }
 
-    /* If this is a tail portion, just want to tell caller that move is
-     * ok - the caller will deal with actual object removal/insertion
-     */
-    if (op->head)
-        return 1;
+    for (part = op; part != NULL; part = part->more) {
+        sint16 x, y;
+
+        if (get_map_flags(part->map, &m, part->x+freearr_x[dir], part->y+freearr_y[dir], &x, &y)&P_OUT_OF_MAP)
+            return 0;
+
+        if (!QUERY_FLAG(op, FLAG_WIZPASS) && blocked_link(op, m, x, y))
+            return 0;
+    }
 
     object_remove(op);
 
-    /* we already have newx, newy, and m, so lets use them.
-     * In addition, this fixes potential crashes, because multipart object was
-     * on edge of map, +=x, +=y doesn't make correct coordinates.
-     */
-    for (tmp = op; tmp != NULL; tmp = tmp->more) {
-        tmp->x += freearr_x[dir];
-        tmp->y += freearr_y[dir];
-        tmp->map = get_map_from_coord(tmp->map, &tmp->x, &tmp->y);
+    for (part = op; part != NULL; part = part->more) {
+        part->x += freearr_x[dir];
+        part->y += freearr_y[dir];
+        part->map = get_map_from_coord(part->map, &part->x, &part->y);
     }
 
     /* object_insert_in_map will deal with any tiling issues */
