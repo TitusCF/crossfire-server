@@ -361,10 +361,10 @@ int infect_object(object *victim, object *disease, int force) {
      * they were cast in that same order.  Instead, change it so that
      * if you diseased, you can't get diseased more.
      */
-    tmp = object_find_by_type_and_name(victim->head != NULL ? victim->head : victim, SIGN, disease->name);
+    tmp = object_find_by_type_and_name(HEAD(victim), SIGN, disease->name);
     if (tmp != NULL && tmp->level >= disease->level)
         return 0;  /*Immune! */
-    tmp = object_find_by_type_and_name(victim->head != NULL ? victim->head : victim, DISEASE, disease->name);
+    tmp = object_find_by_type_and_name(HEAD(victim), DISEASE, disease->name);
     if (tmp != NULL)
         return 0; /* already diseased; XXX: increase disease level? */
 
@@ -467,7 +467,7 @@ static void do_symptoms(object *disease) {
 
         /* check for an actual immunity */
         /* do an immunity check */
-        tmp = object_find_by_type_and_name(victim->head != NULL ? victim->head : victim, SIGN, disease->name);
+        tmp = object_find_by_type_and_name(HEAD(victim), SIGN, disease->name);
         if (tmp != NULL && tmp->level >= disease->level)
             return;  /*Immune! */
 
@@ -636,10 +636,7 @@ void move_symptom(object *symptom) {
     if (symptom->other_arch) {
         object *tmp;
 
-        tmp = victim;
-        if (tmp->head != NULL)
-            tmp = tmp->head;
-        for (/*tmp initialized above */; tmp != NULL; tmp = tmp->more) {
+        for (tmp = HEAD(victim); tmp != NULL; tmp = tmp->more) {
             char name[MAX_BUF];
 
             new_ob = arch_to_object(symptom->other_arch);

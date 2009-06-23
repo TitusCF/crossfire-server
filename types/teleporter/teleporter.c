@@ -49,7 +49,7 @@ void init_type_teleporter(void) {
  * teleporter.
  */
 static void move_teleporter(object *op) {
-    object *tmp, *head = op;
+    object *tmp, *head;
 
     /* if this is a multipart teleporter, handle the other parts
     * The check for speed isn't strictly needed - basically, if
@@ -61,9 +61,7 @@ static void move_teleporter(object *op) {
     if (op->more && FABS(op->more->speed) < MIN_ACTIVE_SPEED)
         move_teleporter(op->more);
 
-    if (op->head)
-        head = op->head;
-
+    head = HEAD(op);
     for (tmp = op->above; tmp != NULL; tmp = tmp->above)
         if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))
             break;

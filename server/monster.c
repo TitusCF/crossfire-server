@@ -603,7 +603,7 @@ static int monster_move_no_enemy(object *op) {
  */
 int monster_move(object *op) {
     int dir, diff;
-    object *owner, *enemy, *part, *oph = op;
+    object *owner, *enemy, *part, *oph;
     rv_vector rv;
 
     /* Monsters not on maps don't do anything.  These monsters are things
@@ -613,8 +613,7 @@ int monster_move(object *op) {
         return 0;
 
     /* for target facing, we copy this value here for fast access */
-    if (oph->head)          /* force update the head - one arch one pic */
-        oph = oph->head;
+    oph = HEAD(op);                       /* force update the head - one arch one pic */
 
     if (QUERY_FLAG(op, FLAG_NO_ATTACK)) { /* we never ever attack */
         object_set_enemy(op->enemy, NULL);
@@ -2380,7 +2379,7 @@ int monster_stand_in_light(object *op) {
  * return 0 if can't be seen, 1 if can be
  */
 int monster_can_see_enemy(object *op, object *enemy) {
-    object *looker = op->head ? op->head : op;
+    object *looker = HEAD(op);
 
     /* safety */
     if (!looker || !enemy || !QUERY_FLAG(looker, FLAG_ALIVE))

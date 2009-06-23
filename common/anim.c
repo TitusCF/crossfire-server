@@ -298,10 +298,7 @@ void apply_anim_suffix(object *who, sstring suffix) {
         /* don't overlap animation, let the current one finish. */
         return;
 
-    if (who->head != NULL)
-        head = who->head;
-    else
-        head = who;
+    head = HEAD(who);
     orig = head;
     snprintf(buf, MAX_BUF, "%s_%s", animations[head->animation_id].name, suffix);
     anim = try_find_animation(buf);

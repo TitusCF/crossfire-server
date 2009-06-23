@@ -816,7 +816,7 @@ static void do_exit_map(mapstruct *map) {
     for (tx = 0; tx < MAP_WIDTH(map); tx++) {
         for (ty = 0; ty < MAP_HEIGHT(map); ty++) {
             FOR_MAP_PREPARE(map, tx, ty, item) {
-                test = item->head ? item->head : item;
+                test = HEAD(item);
 
                 if (test->type == EXIT || test->type == TELEPORTER) {
                     if (!test->slaying)
@@ -3834,7 +3834,7 @@ void do_auto_apply(mapstruct *m) {
                         create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                     tmp->randomitems = NULL;
                 } else if (tmp->type == TIMED_GATE) {
-                    object *head = tmp->head != NULL ? tmp->head : tmp;
+                    object *head = HEAD(tmp);
 
                     if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
                         tmp->speed = 0;

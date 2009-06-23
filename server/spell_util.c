@@ -851,10 +851,10 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
     mapstruct *mp;
     int dirs[SIZEOFFREE];
 
-    if (exclude && exclude->head)
-        exclude = exclude->head;
-    if (exclude && exclude->type)
+    if (exclude != NULL) {
+        exclude = HEAD(exclude);
         owner_type = exclude->type;
+    }
 
     get_search_arr(dirs);
     for (i = 1; i < SIZEOFFREE; i++) {
@@ -868,7 +868,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
         for (tmp = GET_MAP_OB(mp, nx, ny); tmp != NULL; tmp = tmp->above) {
             object *head;
 
-            head = tmp->head != NULL ? tmp->head : tmp;
+            head = HEAD(tmp);
             if ((owner_type != PLAYER || QUERY_FLAG(head, FLAG_MONSTER) || QUERY_FLAG(head, FLAG_GENERATOR) || (head->type == PLAYER && op_on_battleground(head, NULL, NULL, NULL)))
             && (owner_type == PLAYER || head->type == PLAYER)
             && head != exclude

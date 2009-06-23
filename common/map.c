@@ -410,8 +410,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
     if (!(mflags&P_IS_ALIVE) && !OB_TYPE_MOVE_BLOCK(ob, blocked))
         return 0;
 
-    if (ob->head != NULL)
-        ob = ob->head;
+    ob = HEAD(ob);
 
     /* We basically go through the stack of objects, and if there is
      * some other object that has NO_PASS or FLAG_ALIVE set, return
@@ -420,10 +419,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
      */
     FOR_MAP_PREPARE(m, sx, sy, tmp) {
         /* Never block part of self. */
-        if (tmp->head)
-            tmp_head = tmp->head;
-        else
-            tmp_head = tmp;
+        tmp_head = HEAD(tmp);
         if (tmp_head == ob)
             continue;
         /* This must be before the checks below.  Code for inventory checkers. */
@@ -1673,8 +1669,7 @@ static void free_all_objects(mapstruct *m) {
                     break;
                 }
                 previous_obj = op;
-                if (op->head != NULL)
-                    op = op->head;
+                op = HEAD(op);
 
                 /* If the map isn't in memory, object_free() will remove and
                 * free objects in op's inventory.  So let it do the job.
@@ -2643,7 +2638,7 @@ object *map_find_by_flag(mapstruct *map, int x, int y, int flag) {
     for (tmp = GET_MAP_OB(map, x, y); tmp != NULL; tmp = tmp->above) {
         object *head;
 
-        head = tmp->head != NULL ? tmp->head : tmp;
+        head = HEAD(tmp);
         if (QUERY_FLAG(head, flag))
             return head;
     }

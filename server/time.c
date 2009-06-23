@@ -705,9 +705,7 @@ void move_player_mover(object *op) {
         if (QUERY_FLAG(victim, FLAG_ALIVE)
         && !QUERY_FLAG(victim, FLAG_WIZPASS)
         && (victim->move_type&op->move_type || !victim->move_type)) {
-
-            if (victim->head)
-                victim = victim->head;
+            victim = HEAD(victim);
 
             if (QUERY_FLAG(op, FLAG_LIFESAVE) && op->stats.hp-- < 0) {
                 object_remove(op);

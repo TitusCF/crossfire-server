@@ -278,11 +278,7 @@ void esrv_draw_look(object *pl) {
                 SockList_AddShort(&sl, 0);
                 break;
             }
-            if (tmp->head)
-                head = tmp->head;
-            else
-                head = tmp;
-
+            head = HEAD(tmp);
             add_object_to_socklist(&pl->contr->socket, &sl, head);
             got_one++;
 
@@ -319,11 +315,7 @@ void esrv_send_inventory(object *pl, object *op) {
     FOR_INV_PREPARE(op, tmp) {
         object *head;
 
-        if (tmp->head)
-            head = tmp->head;
-        else
-            head = tmp;
-
+        head = HEAD(tmp);
         if (LOOK_OBJ(head)) {
             add_object_to_socklist(&pl->contr->socket, &sl, head);
 
@@ -382,9 +374,7 @@ void esrv_update_item(int flags, object *pl, object *op) {
     SockList_AddString(&sl, "upditem ");
     SockList_AddChar(&sl, (char)flags);
 
-    if (op->head)
-        op = op->head;
-
+    op = HEAD(op);
     SockList_AddInt(&sl, op->count);
 
     if (flags&UPD_LOCATION)
@@ -486,9 +476,7 @@ void esrv_send_item(object *pl, object*op) {
     SockList_Init(&sl);
     SockList_AddString(&sl, "item2 ");
 
-    if (op->head)
-        op = op->head;
-
+    op = HEAD(op);
     SockList_AddInt(&sl, op->env ? op->env->count : 0);
 
     add_object_to_socklist(&pl->contr->socket, &sl, op);
@@ -541,9 +529,7 @@ static object *esrv_get_ob_from_count(object *pl, tag_t count) {
     FOR_INV_FINISH();
 
     FOR_MAP_PREPARE(pl->map, pl->x, pl->y, op)
-        if (op->head != NULL && op->head->count == count)
-            return op;
-        else if (op->count == count)
+        if (HEAD(op)->count == count)
             return op;
         else if (op->type == CONTAINER && pl->container == op) {
             FOR_INV_PREPARE(op, tmp)
@@ -735,9 +721,9 @@ void look_at(object *op, int dx, int dy) {
                                  "- %s.",
                                  name);
 
-        if (((tmp->inv != NULL || (tmp->head && tmp->head->inv)) && (tmp->type != CONTAINER && tmp->type != FLESH))
+        if ((HEAD(tmp)->inv != NULL && (tmp->type != CONTAINER && tmp->type != FLESH))
         || QUERY_FLAG(op, FLAG_WIZ))
-            inventory(op, tmp->head == NULL ? tmp : tmp->head);
+            inventory(op, HEAD(tmp));
 
         /* don't continue under the floor */
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !QUERY_FLAG(op, FLAG_WIZ))

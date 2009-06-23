@@ -55,12 +55,15 @@
  * 0 if tmp can't be built on the spot, 1 if it can be built.
  */
 static int can_build_over(struct mapdef *map, object *new_item, short x, short y) {
-    FOR_MAP_PREPARE(map, x, y, ob) {
+    FOR_MAP_PREPARE(map, x, y, tmp) {
+        object *ob;
+
+        ob = HEAD(tmp);
         if (strcmp(ob->arch->name, "rune_mark") == 0)
             /* you can always build on marking runes, used for connected building things. */
             continue;
 
-        if ((ob->head && QUERY_FLAG(ob->head, FLAG_IS_BUILDABLE)) || (!ob->head && QUERY_FLAG(ob, FLAG_IS_BUILDABLE)))
+        if (QUERY_FLAG(ob, FLAG_IS_BUILDABLE))
             /* Check for the flag is required, as this function
              * can be called recursively on different spots.
              */

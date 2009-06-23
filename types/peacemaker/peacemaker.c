@@ -52,10 +52,9 @@ static method_ret peacemaker_type_process(ob_methods *context, object *op) {
 
         for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
             int atk_lev, def_lev;
-            object *victim = tmp;
+            object *victim;
 
-            if (tmp->head)
-                victim = tmp->head;
+            victim = HEAD(tmp);
             if (!QUERY_FLAG(victim, FLAG_MONSTER))
                 continue;
             if (QUERY_FLAG(victim, FLAG_UNAGGRESSIVE))

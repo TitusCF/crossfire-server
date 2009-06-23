@@ -308,9 +308,7 @@ int hit_map(object *op, int dir, uint32 type, int full_hit) {
         return 0;
     }
 
-    if (op->head)
-        op = op->head;
-
+    op = HEAD(op);
     op_tag = op->count;
 
     map = op->map;
@@ -354,8 +352,7 @@ int hit_map(object *op, int dir, uint32 type, int full_hit) {
         if (tmp->map != map || tmp->x != x || tmp->y != y)
             continue;
 
-        if (tmp->head)
-            tmp = tmp->head;
+        tmp = HEAD(tmp);
 
         /* Need to hit everyone in the transport with this spell */
         if (tmp->type == TRANSPORT) {
@@ -662,10 +659,8 @@ static int get_attack_mode(object **target, object **hitter,
         LOG(llevError, "BUG: get_attack_mode(): freed object\n");
         return 1;
     }
-    if ((*target)->head)
-        *target = (*target)->head;
-    if ((*hitter)->head)
-        *hitter = (*hitter)->head;
+    *target = HEAD(*target);
+    *hitter = HEAD(*hitter);
     if ((*hitter)->env != NULL || (*target)->env != NULL) {
         *simple_attack = 1;
         return 0;
@@ -896,9 +891,7 @@ leave:
  * dealt damage.
  */
 int attack_ob(object *op, object *hitter) {
-
-    if (hitter->head)
-        hitter = hitter->head;
+    hitter = HEAD(hitter);
     return attack_ob_simple(op, hitter, hitter->stats.dam, hitter->stats.wc);
 }
 
@@ -920,10 +913,8 @@ static int stick_arrow(object *op, object *tmp) {
      * stick around.
      */
     if (op->weight <= 5000 && tmp->stats.hp >= 0) {
-        if (tmp->head != NULL)
-            tmp = tmp->head;
         object_remove(op);
-        op = object_insert_in_ob(op, tmp);
+        op = object_insert_in_ob(op, HEAD(tmp));
         return 1;
     } else
         return 0;
@@ -1805,9 +1796,7 @@ int friendly_fire(object *op, object *hitter) {
     object *owner;
     int friendlyfire;
 
-    if (hitter->head)
-        hitter = hitter->head;
-
+    hitter = HEAD(hitter);
     friendlyfire = 0;
 
     if (op->type == PLAYER) {

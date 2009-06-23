@@ -977,7 +977,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl, sock
 
     assert(ob != NULL);
 
-    head = ob->head ? ob->head : ob;
+    head = HEAD(ob);
     face_num = ob->face->number;
 
     /* This is a multipart object, and we are not at the lower

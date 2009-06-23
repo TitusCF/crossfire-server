@@ -329,9 +329,7 @@ int steal(object *op, int dir, object *skill) {
         /* Minor hack--for multi square beings - make sure we get
          * the 'head' coz 'tail' objects have no inventory! - b.t.
          */
-        if (tmp->head)
-            tmp = tmp->head;
-
+        tmp = HEAD(tmp);
         if (tmp->type != PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER))
             continue;
 
@@ -1023,9 +1021,7 @@ int use_oratory(object *pl, int dir, object *skill) {
         return 0;
     }
 
-    if (tmp->head != NULL)
-        tmp = tmp->head;
-
+    tmp = HEAD(tmp);
     query_name(tmp, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                          "You orate to the %s.",
@@ -1164,8 +1160,7 @@ int singing(object *pl, int dir, object *skill) {
         /* Whole bunch of checks to see if this is a type of monster that would
          * listen to singing.
          */
-        if (tmp->head != NULL)
-            tmp = tmp->head;
+        tmp = HEAD(tmp);
         if (tmp
         && QUERY_FLAG(tmp, FLAG_MONSTER)
         && !QUERY_FLAG(tmp, FLAG_NO_STEAL)      /* Been charmed or abused before */

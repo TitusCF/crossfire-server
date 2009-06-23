@@ -74,8 +74,7 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
         for (j = ystart; j < ystart+ysize; j++) {
             FOR_MAP_PREPARE(map, i, j, tmp) {
                 if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
-                    if (tmp->head)
-                        tmp = tmp->head;
+                    tmp = HEAD(tmp);
                     object_remove(tmp);
                     object_free(tmp);
                 }

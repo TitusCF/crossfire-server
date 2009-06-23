@@ -176,8 +176,7 @@ static void polymorph_living(object *op, int level) {
     mapstruct *map = op->map;
     object *owner;
 
-    if (op->head)
-        op = op->head;
+    op = HEAD(op);
 
     /* High level creatures are immune, as are creatures immune to magic.  Otherwise,
      * give the creature a saving throw.
@@ -730,9 +729,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
                 if (QUERY_FLAG(tmp, FLAG_ALIVE) && (tmp->type == PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                   "You detect something.", NULL);
-                    if (tmp->head != NULL)
-                        tmp = tmp->head;
-                    examine_monster(op, tmp);
+                    examine_monster(op, HEAD(tmp));
                     return 1;
                 }
             FOR_MAP_FINISH();
@@ -2797,10 +2794,7 @@ void counterspell(object *op, int dir) {
          * points to a monster, we don't have all the necessary
          * info for it.
          */
-        if (tmp->head)
-            head = tmp->head;
-        else
-            head = tmp;
+        head = HEAD(tmp);
 
         /* don't attack our own spells */
         if (tmp->owner && tmp->owner == op->owner)

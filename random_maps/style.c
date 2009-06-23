@@ -291,10 +291,7 @@ object *pick_random_object(mapstruct *style) {
         y = RANDOM()%MAP_HEIGHT(style);
         new_obj = GET_MAP_OB(style, x, y);
     } while (new_obj == NULL && limit < 1000);
-    if (new_obj->head)
-        return new_obj->head;
-    else
-        return new_obj;
+    return HEAD(new_obj);
 }
 
 /**

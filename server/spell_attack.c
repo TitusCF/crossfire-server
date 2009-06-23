@@ -871,9 +871,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
                         break;
                 } FOR_MAP_FINISH();
                 if (tmp) {
-                    if (tmp->head)
-                        tmp = tmp->head;
-
+                    tmp = HEAD(tmp);
                     if ((friendly && !QUERY_FLAG(tmp, FLAG_FRIENDLY) && tmp->type != PLAYER)
                         || (!friendly && (QUERY_FLAG(tmp, FLAG_FRIENDLY) || tmp->type == PLAYER))) {
                         if (spell_ob->subtype == SP_DESTRUCTION) {
@@ -1350,9 +1348,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
             /* search this square for a victim */
             FOR_MAP_PREPARE(m, x, y, walk) {
                 /* Flags for monster is set on head only, so get it now */
-                target_head = walk;
-                while (target_head->head)
-                    target_head = target_head->head;
+                target_head = HEAD(walk);
                 if (QUERY_FLAG(target_head, FLAG_MONSTER) || (target_head->type == PLAYER)) {  /* found a victim */
                     object *disease = arch_to_object(spell->other_arch);
 

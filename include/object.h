@@ -405,4 +405,15 @@ extern int nroffreeobjects;
 #define ARCH_DEPLETION          "depletion"     /**< Archetype for depletion. */
 #define ARCH_SYMPTOM            "symptom"       /**< Archetype for disease symptom. */
 
+/**
+ * Returns the head part of an object. For single-tile objects returns the
+ * object itself.
+ *
+ * @param op
+ * the object
+ * @return
+ * the head object
+ */
+#define HEAD(op) ((op)->head != NULL ? (op)->head : (op))
+
 #endif /* OBJECT_H */

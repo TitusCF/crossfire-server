@@ -204,8 +204,7 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
     if (i == -1)
         return 0; /* No free spot */
 
-    if (op->head != NULL)
-        op = op->head;
+    op = HEAD(op);
     object_remove(op);
     for (tmp = op; tmp != NULL; tmp = tmp->more)
         tmp->x = x+freearr_x[i]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x),
@@ -248,8 +247,7 @@ int teleport(object *teleporter, uint8 tele_type, object *user) {
 
     if (user == NULL)
         return 0;
-    if (user->head != NULL)
-        user = user->head;
+    user = HEAD(user);
 
     /* Find all other teleporters within range.  This range
      * should really be setable by some object attribute instead of
@@ -378,9 +376,7 @@ static int try_fit(object *op, mapstruct *m, int x, int y) {
     int mflags;
     mapstruct *m2;
 
-    if (op->head)
-        op = op->head;
-
+    op = HEAD(op);
     for (more = op; more; more = more->more) {
         tx = x+more->x-op->x;
         ty = y+more->y-op->y;
@@ -430,9 +426,7 @@ static int roll_ob(object *op, int dir, object *pusher) {
     mapstruct *m;
     MoveType move_block;
 
-    if (op->head)
-        op = op->head;
-
+    op = HEAD(op);
     x = op->x+freearr_x[dir];
     y = op->y+freearr_y[dir];
 
@@ -487,8 +481,7 @@ int push_ob(object *who, int dir, object *pusher) {
     int str1, str2;
     object *owner;
 
-    if (who->head != NULL)
-        who = who->head;
+    who = HEAD(who);
     owner = object_get_owner(who);
 
     /* Wake up sleeping monsters that may be pushed */

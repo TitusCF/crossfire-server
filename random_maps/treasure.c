@@ -718,8 +718,7 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy, RMParms *RP) {
 void remove_monsters(int x, int y, mapstruct *map) {
     FOR_MAP_PREPARE(map, x, y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
-            if (tmp->head)
-                tmp = tmp->head;
+            tmp = HEAD(tmp);
             object_remove(tmp);
             object_free(tmp);
             tmp = GET_MAP_OB(map, x, y);

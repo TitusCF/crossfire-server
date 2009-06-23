@@ -60,10 +60,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
     object *head;
     sstring name;
 
-    if (applier->head)
-        head = applier->head;
-    else
-        head = applier;
+    head = HEAD(applier);
 
     if (QUERY_FLAG(applier, FLAG_BLIND) && !QUERY_FLAG(applier, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,

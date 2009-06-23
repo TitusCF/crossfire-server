@@ -1891,10 +1891,7 @@ static object *pick_arrow_target(object *op, const char *type, int dir) {
     if (tmp == NULL)
         return find_arrow(op, type);
 
-    if (tmp->head)
-        tmp = tmp->head;
-
-    return find_better_arrow(op, tmp, type, NULL);
+    return find_better_arrow(op, HEAD(tmp), type, NULL);
 }
 
 /**
@@ -2465,9 +2462,7 @@ void move_player_attack(object *op, int dir) {
         if (mon == NULL)  /* This happens anytime the player tries to move */
             return;  /* into a wall */
 
-        if (mon->head != NULL)
-            mon = mon->head;
-
+        mon = HEAD(mon);
         if ((mon->type == DOOR && mon->stats.hp >= 0) || (mon->type == LOCKED_DOOR))
             if (player_attack_door(op, mon))
                 return;
@@ -3886,9 +3881,7 @@ int player_can_view(object *pl, object *op) {
     if (!pl || !op)
         return 0;
 
-    if (op->head) {
-        op = op->head;
-    }
+    op = HEAD(op);
     if (!get_rangevector(pl, op, &rv, 0x1))
         return 0;
 

@@ -135,7 +135,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
         mflags = get_map_flags(nm, &nm, x, y, &x, &y);
         if (!(mflags&P_OUT_OF_MAP) && mflags&P_IS_ALIVE) {
             FOR_MAP_PREPARE(nm, x, y, tmp) {
-                object *tmp2 = tmp->head == NULL ? tmp : tmp->head;
+                object *tmp2 = HEAD(tmp);
 
                 if (QUERY_FLAG(tmp2, FLAG_ALIVE)
                 && ((!QUERY_FLAG(tmp2, FLAG_FRIENDLY) && tmp2->type != PLAYER) || pets_should_arena_attack(pet, owner, tmp2))
@@ -196,7 +196,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
             mflags = get_map_flags(nm, &nm, x, y, &x, &y);
             if (!(mflags&P_OUT_OF_MAP) && mflags&P_IS_ALIVE) {
                 FOR_MAP_PREPARE(nm, x, y, tmp) {
-                    object *tmp2 = tmp->head == NULL ? tmp : tmp->head;
+                    object *tmp2 = HEAD(tmp);
                     if (QUERY_FLAG(tmp2, FLAG_ALIVE)
                     && ((!QUERY_FLAG(tmp2, FLAG_FRIENDLY) && tmp2->type != PLAYER) || pets_should_arena_attack(pet, owner, tmp2))
                     && !QUERY_FLAG(tmp2, FLAG_UNAGGRESSIVE)
@@ -412,7 +412,7 @@ void pets_move(object *ob) {
             FOR_MAP_PREPARE(m, dx, dy, ob2) {
                 object *new_ob;
 
-                new_ob = ob2->head ? ob2->head : ob2;
+                new_ob = HEAD(ob2);
                 if (new_ob == ob)
                     break;
                 if (new_ob == ob->owner)

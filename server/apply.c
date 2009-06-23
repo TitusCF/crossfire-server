@@ -513,8 +513,7 @@ static int apply_check_race_restrictions(object *who, object *item) {
  * manual_apply() has been renamed to apply_manual()
  */
 int apply_manual(object *op, object *tmp, int aflag) {
-    if (tmp->head)
-        tmp = tmp->head;
+    tmp = HEAD(tmp);
 
     if (QUERY_FLAG(tmp, FLAG_UNPAID) && !QUERY_FLAG(tmp, FLAG_APPLIED)) {
         if (op->type == PLAYER) {
@@ -1519,7 +1518,7 @@ void apply_auto_fix(mapstruct *m) {
                         create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                     tmp->randomitems = NULL;
                 } else if (tmp->type == TIMED_GATE) {
-                    object *head = tmp->head != NULL ? tmp->head : tmp;
+                    object *head = HEAD(tmp);
 
                     if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
                         tmp->speed = 0;

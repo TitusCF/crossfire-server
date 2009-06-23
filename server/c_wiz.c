@@ -1379,8 +1379,7 @@ int command_remove(object *op, char *params) {
         dm_stack_pop(op->contr);
 
     /* Always work on the head - otherwise object will get in odd state */
-    if (tmp->head)
-        tmp = tmp->head;
+    tmp = HEAD(tmp);
     if (tmp->speed != 0) {
         tmp->speed = 0;
         object_update_speed(tmp);
@@ -1414,9 +1413,7 @@ int command_free(object *op, char *params) {
         /* Item is either stack top, or is a number thus is now stack top, let's remove it  */
         dm_stack_pop(op->contr);
 
-    if (tmp->head)
-        tmp = tmp->head;
-
+    tmp = HEAD(tmp);
     if (!QUERY_FLAG(tmp, FLAG_REMOVED)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                       "Warning: item was not removed, will do so now.", NULL);

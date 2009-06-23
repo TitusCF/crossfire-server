@@ -1400,7 +1400,7 @@ int command_mark(object *op, char *params) {
  * monster being examined.
  */
 void examine_monster(object *op, object *tmp) {
-    object *mon = tmp->head ? tmp->head : tmp;
+    object *mon = HEAD(tmp);
 
     if (QUERY_FLAG(mon, FLAG_UNDEAD))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,

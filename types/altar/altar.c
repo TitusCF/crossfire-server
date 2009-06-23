@@ -48,8 +48,7 @@ void init_type_altar(void) {
  * @return METHOD_OK
  */
 static method_ret altar_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
-    if (trap->head)
-        trap = trap->head;
+    trap = HEAD(trap);
 
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;

@@ -1859,8 +1859,7 @@ object *object_merge(object *op, object *top) {
 object *object_insert_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y) {
     object *tmp;
 
-    if (op->head)
-        op = op->head;
+    op = HEAD(op);
     for (tmp = op; tmp; tmp = tmp->more) {
         tmp->x = x+tmp->arch->clone.x;
         tmp->y = y+tmp->arch->clone.y;
@@ -2644,8 +2643,8 @@ object *object_insert_in_ob(object *op, object *where) {
     }
     if (where->head) {
         LOG(llevDebug, "Warning: Tried to insert object wrong part of multipart object.\n");
-        where = where->head;
     }
+    where = HEAD(where);
     if (op->more) {
         LOG(llevError, "Tried to insert multipart object %s (%u)\n", op->name, op->count);
         return op;
@@ -3078,8 +3077,7 @@ int object_find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
     int freecount = 0;
 
-    if (ob->head)
-        ob = ob->head;
+    ob = HEAD(ob);
 
     object_get_multi_size(ob, &sx, &sy, &sx2, &sy2);
     object_get_multi_size(gen, &genx, &geny, &genx2, &geny2);
@@ -3213,8 +3211,7 @@ int object_find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, 
         radius = 1;
     }
 
-    if (ob->head)
-        ob = ob->head;
+    ob = HEAD(ob);
 
     object_get_multi_size(ob, &sx, &sy, &sx2, &sy2);
     object_get_multi_size(gen, &genx, &geny, &genx2, &geny2);
@@ -3765,9 +3762,7 @@ object *object_create_clone(object *asrc) {
 
     if (!asrc)
         return NULL;
-    src = asrc;
-    if (src->head)
-        src = src->head;
+    src = HEAD(asrc);
 
     prev = NULL;
     for (part = src; part; part = part->more) {
@@ -4556,8 +4551,7 @@ void object_get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
     archetype *part;
     int maxx = 0, maxy = 0, minx = 0, miny = 0;
 
-    if (ob->head)
-        ob = ob->head;
+    ob = HEAD(ob);
     *sx = 1;
     *sy = 1;
     if (ob->arch->more) {
