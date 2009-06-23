@@ -98,13 +98,13 @@ int move_ob(object *op, int dir, object *originator) {
     && !QUERY_FLAG(op, FLAG_WIZPASS))
         return 0;
 
+    if (op->more != NULL && !move_ob(op->more, dir, op->more->head))
+        return 0;
+
     /* 0.94.2 - we need to set the direction for the new animation code.
      * it uses it to figure out face to use - I can't see it
      * breaking anything, but it might.
      */
-    if (op->more != NULL && !move_ob(op->more, dir, op->more->head))
-        return 0;
-
     op->direction = dir;
 
     if (op->will_apply&WILL_APPLY_EARTHWALL)
