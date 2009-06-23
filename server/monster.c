@@ -1978,7 +1978,7 @@ void monster_check_earthwalls(object *op, mapstruct *m, int x, int y) {
 void monster_check_doors(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_PREPARE(m, x, y, tmp)
         if (tmp->type == DOOR) {
-            hit_player(tmp, 1000, op, AT_PHYSICAL, 1);
+            hit_player(tmp, op->stats.dam, op, AT_PHYSICAL, 1);
             return;
         }
     FOR_MAP_FINISH();
