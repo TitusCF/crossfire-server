@@ -295,12 +295,19 @@ void check_bullet(object *op) {
  * @retval 1
  * bullet was fired (but may have been destroyed already).
  */
-int fire_bullet(object *op, object *caster, int dir, object *spob) {
-    object *tmp = NULL;
+int fire_bullet(object *op, object *caster, sint16 x, sint16 y, int dir, object *spob) {
+    object *tmp;
     int mflags;
+    mapstruct *m;
 
     if (!spob->other_arch)
         return 0;
+
+    m = op->map;
+    mflags = get_map_flags(m, &m, x, y, &x, &y);
+    if (mflags&P_OUT_OF_MAP) {
+        return 0;
+    }
 
     tmp = arch_to_object(spob->other_arch);
     if (tmp == NULL)
@@ -326,9 +333,9 @@ int fire_bullet(object *op, object *caster, int dir, object *spob) {
     object_set_owner(tmp, op);
     set_spell_skill(op, caster, spob, tmp);
 
-    tmp->x = op->x+freearr_x[dir];
-    tmp->y = op->y+freearr_y[dir];
-    tmp->map = op->map;
+    tmp->x = x;
+    tmp->y = y;
+    tmp->map = m;
 
     mflags = get_map_flags(tmp->map, &tmp->map, tmp->x, tmp->y, &tmp->x, &tmp->y);
     if (mflags&P_OUT_OF_MAP) {
@@ -340,10 +347,17 @@ int fire_bullet(object *op, object *caster, int dir, object *spob) {
             object_free(tmp);
             return 0;
         }
-        tmp->x = op->x;
-        tmp->y = op->y;
         tmp->direction = absdir(tmp->direction+4);
-        tmp->map = op->map;
+        x += freearr_x[tmp->direction];
+        y += freearr_y[tmp->direction];
+        mflags = get_map_flags(m, &m, x, y, &x, &y);
+        if (mflags&P_OUT_OF_MAP) {
+            object_free(tmp);
+            return 0;
+        }
+        tmp->x = x;
+        tmp->y = y;
+        tmp->map = m;
     }
     if ((tmp = object_insert_in_map(tmp, tmp->map, op, 0)) != NULL) {
         check_bullet(tmp);

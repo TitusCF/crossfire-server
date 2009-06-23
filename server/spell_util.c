@@ -1601,7 +1601,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         break;
 
     case SP_BULLET:
-        success = fire_bullet(op, caster, dir, spell_ob);
+        success = fire_bullet(op, caster, op->x+freearr_x[dir], op->y+freearr_y[dir], dir, spell_ob);
         break;
 
     case SP_CONE:
