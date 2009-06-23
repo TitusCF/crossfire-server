@@ -696,45 +696,35 @@ int monster_move(object *op) {
      * a few cpu cycles.
      */
     if (!QUERY_FLAG(op, FLAG_SCARED)) {
-        rv_vector rv1;
+        dir = rv.direction;
 
-        /* now we test every part of an object .... this is a real ugly piece of code */
-        for (part = op; part != NULL; part = part->more) {
-            if (!get_rangevector(part, enemy, &rv1, 0x1))
+        if (QUERY_FLAG(op, FLAG_RUN_AWAY))
+            dir = absdir(dir+4);
+        if (QUERY_FLAG(op, FLAG_CONFUSED))
+            dir = get_randomized_dir(dir);
+
+        if (QUERY_FLAG(op, FLAG_CAST_SPELL) && !(RANDOM()%3)) {
+            if (monster_cast_spell(op, rv.part, enemy, dir, &rv))
                 return 0;
-            dir = rv1.direction;
+        }
 
-            /* hm, not sure about this part - in original was a scared flag here too
-             * but that we test above... so can be old code here
-             */
-            if (QUERY_FLAG(op, FLAG_RUN_AWAY))
-                dir = absdir(dir+4);
-            if (QUERY_FLAG(op, FLAG_CONFUSED))
-                dir = get_randomized_dir(dir);
+        if (QUERY_FLAG(op, FLAG_READY_SCROLL) && !(RANDOM()%3)) {
+            if (monster_use_scroll(op, rv.part, enemy, dir, &rv))
+                return 0;
+        }
 
-            if (QUERY_FLAG(op, FLAG_CAST_SPELL) && !(RANDOM()%3)) {
-                if (monster_cast_spell(op, part, enemy, dir, &rv1))
-                    return 0;
-            }
-
-            if (QUERY_FLAG(op, FLAG_READY_SCROLL) && !(RANDOM()%3)) {
-                if (monster_use_scroll(op, part, enemy, dir, &rv1))
-                    return 0;
-            }
-
-            if (QUERY_FLAG(op, FLAG_READY_RANGE) && !(RANDOM()%3)) {
-                if (monster_use_range(op, part, enemy, dir))
-                    return 0;
-            }
-            if (QUERY_FLAG(op, FLAG_READY_SKILL) && !(RANDOM()%3)) {
-                if (monster_use_skill(op, rv.part, enemy, rv.direction))
-                    return 0;
-            }
-            if (QUERY_FLAG(op, FLAG_READY_BOW) && !(RANDOM()%2)) {
-                if (monster_use_bow(op, part, enemy, dir))
-                    return 0;
-            }
-        } /* for processing of all parts */
+        if (QUERY_FLAG(op, FLAG_READY_RANGE) && !(RANDOM()%3)) {
+            if (monster_use_range(op, rv.part, enemy, dir))
+                return 0;
+        }
+        if (QUERY_FLAG(op, FLAG_READY_SKILL) && !(RANDOM()%3)) {
+            if (monster_use_skill(op, rv.part, enemy, rv.direction))
+                return 0;
+        }
+        if (QUERY_FLAG(op, FLAG_READY_BOW) && !(RANDOM()%2)) {
+            if (monster_use_bow(op, rv.part, enemy, dir))
+                return 0;
+        }
     } /* If not scared */
 
 
