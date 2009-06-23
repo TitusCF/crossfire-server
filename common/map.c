@@ -424,10 +424,10 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
             tmp_head = tmp->head;
         else
             tmp_head = tmp;
-        if (tmp_head == ob) {
+        if (tmp_head == ob)
             continue;
         /* This must be before the checks below.  Code for inventory checkers. */
-        } else if (tmp->type == CHECK_INV && OB_MOVE_BLOCK(ob, tmp)) {
+        if (tmp->type == CHECK_INV && OB_MOVE_BLOCK(ob, tmp)) {
             /* If last_sp is set, the player/monster needs an object,
              * so we check for it.  If they don't have it, they can't
              * pass through this space.
@@ -447,8 +447,6 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
                     }
                     return 1;
                 }
-                else
-                    continue;
             } else {
                 /* In this case, the player must not have the object -
                  * if they do, they can't pass through.
@@ -461,8 +459,6 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
                     }
                     return 1;
                 }
-                else
-                    continue;
             }
         } /* if check_inv */
         else {
