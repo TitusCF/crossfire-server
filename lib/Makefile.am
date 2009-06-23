@@ -38,7 +38,7 @@ EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures treasures.bld
 helpdir=$(pkgdatadir)/help
 dist_help_DATA = help/apply.en help/applymode.en \
 	help/bind.en help/bowmode.en help/brace.en \
-	help/cast.en help/drop.en help/dropall.en \
+	help/cast.en help/chat.en help/drop.en help/dropall.en \
 	help/empty.en help/explore.en \
 	help/fire.en help/fire_stop.en \
 	help/golem.en help/invoke.en \
