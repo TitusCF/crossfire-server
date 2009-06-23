@@ -592,7 +592,7 @@ void pets_move_golem(object *op) {
         return;
 
     for (tmp = op; tmp; tmp = tmp->more) {
-        sint16 x = tmp->x+freearr_x[op->direction], y = tmp->y+freearr_y[op->direction];
+        sint16 x = tmp->x+DIRX(op), y = tmp->y+DIRY(op);
         object *victim;
         mapstruct *m;
         int mflags;

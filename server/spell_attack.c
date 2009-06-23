@@ -348,8 +348,8 @@ int fire_bullet(object *op, object *caster, sint16 x, sint16 y, int dir, object 
             return 0;
         }
         tmp->direction = absdir(tmp->direction+4);
-        x += freearr_x[tmp->direction];
-        y += freearr_y[tmp->direction];
+        x += DIRX(tmp);
+        y += DIRY(tmp);
         mflags = get_map_flags(m, &m, x, y, &x, &y);
         if (mflags&P_OUT_OF_MAP) {
             object_free(tmp);
