@@ -720,11 +720,10 @@ static void thrown_item_effect(object *, object *);
  * @todo
  * fix void return values. Try to remove gotos. Better document when it's called.
  */
-static int attack_ob_simple(object *op, object *hitter, int base_dam,
-                            int base_wc) {
-    int simple_attack, roll, dam = 0;
+static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_wc) {
+    int simple_attack, roll, dam;
     uint32 type;
-    const char *op_name = NULL;
+    const char *op_name;
     tag_t op_tag, hitter_tag;
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
@@ -863,8 +862,9 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam,
         || object_was_destroyed(hitter, hitter_tag)
         || abort_attack(op, hitter, simple_attack))
             goto leave;
-    } /* end of if hitter hit op */
-    /* if we missed, dam=0 */
+    } else {/* end of if hitter hit op */
+        dam = 0; /* if we missed, dam=0 */
+    }
 
     /*attack_message(dam, type, op, hitter);*/
 
