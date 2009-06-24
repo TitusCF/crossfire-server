@@ -1279,9 +1279,6 @@ void leave(player *pl, int draw_exit) {
     if (pl->ob->map) {
         if (pl->ob->map->in_memory == MAP_IN_MEMORY)
             pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
-        /* we need to update player count, since object_remove() isn't called */
-        if (!pl->hidden)
-            pl->ob->map->players--;
         pl->ob->map = NULL;
     }
     pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
