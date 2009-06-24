@@ -190,15 +190,20 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
         } /* object is reflected */
     } /* object ran into a wall */
 
+    /* decrease the speed as it flies. 0.05 means a standard bow will shoot
+     * about 17 squares. Tune as needed.
+     */
+    op->speed -= 0.05;
+    if (op->speed < 0.05) {
+        stop_projectile(op);
+        return METHOD_OK;
+    }
+
     /* Move the arrow. */
     object_remove(op);
     op->x = new_x;
     op->y = new_y;
 
-    /* decrease the speed as it flies. 0.05 means a standard bow will shoot
-     * about 17 squares. Tune as needed.
-     */
-    op->speed -= 0.05;
     object_insert_in_map(op, m, op, 0);
     return METHOD_OK;
 }

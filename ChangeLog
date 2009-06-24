@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix trajectory of thrown objects. Formerly some objects did speed up again
+after they should have fallen to the ground.
+Andreas Kirschbaum 2009-06-24
+
 Fix incorrect player counts in /maps command output for logged out players.
 Andreas Kirschbaum 2009-06-24
 
