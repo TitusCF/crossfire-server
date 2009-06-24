@@ -912,11 +912,8 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
 #endif /* SAVE_INTERVAL */
 
 
-    tmp->x = op->x;
-    tmp->y = op->y;
-
     tmp_tag = tmp->count;
-    object_insert_in_map(tmp, op->map, op, INS_BELOW_ORIGINATOR);
+    object_insert_in_map_at(tmp, op->map, op, INS_BELOW_ORIGINATOR, op->x, op->y);
     if (!object_was_destroyed(tmp, tmp_tag) && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY && is_in_shop(op)) {
         sell_item(tmp, op);
     }

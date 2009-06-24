@@ -1247,10 +1247,8 @@ void key_change_class(object *op, char key) {
         op->name = name;
         free_string(op->name_pl);
         op->name_pl = add_string(name);
-        op->x = x;
-        op->y = y;
         SET_ANIMATION(op, 2);    /* So player faces south */
-        object_insert_in_map(op, op->map, op, 0);
+        object_insert_in_map_at(op, op->map, op, 0, x, y);
         strncpy(op->contr->title, op->arch->clone.name, sizeof(op->contr->title)-1);
         op->contr->title[sizeof(op->contr->title)-1] = '\0';
         add_statbonus(op);
@@ -1998,8 +1996,6 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     arrow->skill = add_refcount(bow->skill);
 
     arrow->direction = dir;
-    arrow->x = sx;
-    arrow->y = sy;
 
     if (op->type == PLAYER) {
         op->speed_left = 0.01-(float)FABS(op->speed)*100/bowspeed;
@@ -2062,13 +2058,12 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     if (bow->slaying != NULL)
         arrow->slaying = add_string(bow->slaying);
 
-    arrow->map = m;
     /* If move_type is ever changed, monster.c:monster_use_bow() needs to be changed too. */
     arrow->move_type = MOVE_FLY_LOW;
     arrow->move_on = MOVE_FLY_LOW|MOVE_WALK;
 
     tag = arrow->count;
-    object_insert_in_map(arrow, m, op, 0);
+    object_insert_in_map_at(arrow, m, op, 0, sx, sy);
 
     if (!object_was_destroyed(arrow, tag)) {
         play_sound_map(SOUND_TYPE_ITEM, arrow, arrow->direction, "fire");
@@ -2644,7 +2639,7 @@ static int turn_one_transport(object *transport, object *captain, int dir) {
     object_remove(transport);
     if (ob_blocked(transport, transport->map, x, y)) {
         update_transport_block(transport, transport->direction);
-        object_insert_in_map(transport, transport->map, NULL, 0);
+        object_insert_in_map_at(transport, transport->map, NULL, 0, x, y);
         return 2;
     }
 
@@ -2922,11 +2917,8 @@ void remove_unpaid_objects(object *op, object *env, int free_items) {
             object_remove(op);
             if (free_items)
                 object_free(op);
-            else {
-                op->x = env->x;
-                op->y = env->y;
-                object_insert_in_map(op, env->map, NULL, 0);
-            }
+            else
+                object_insert_in_map_at(op, env->map, NULL, 0, env->x, env->y);
         } else if (op->inv)
             remove_unpaid_objects(op->inv, env, free_items);
     } FOR_OB_AND_BELOW_FINISH();
@@ -3183,11 +3175,11 @@ static void loot_object(object *op) {
             if (tmp->nrof > 1) {
                 tmp2 = object_split(tmp, 1+RANDOM()%(tmp->nrof-1), NULL, 0);
                 object_free(tmp2);
-                object_insert_in_map(tmp, op->map, NULL, 0);
+                object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
             } else
                 object_free(tmp);
         } else
-            object_insert_in_map(tmp, op->map, NULL, 0);
+            object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
     } FOR_INV_FINISH();
 }
 
@@ -3277,9 +3269,7 @@ void kill_player(object *op) {
             tmp->value = 0;
             tmp->material = 0;
             tmp->materialname = NULL;
-            tmp->x = op->x,
-            tmp->y = op->y;
-            object_insert_in_map(tmp, op->map, op, 0);
+            object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y);
         }
 
         /* teleport defeated player to new destination*/
@@ -3452,9 +3442,7 @@ void kill_player(object *op) {
                  op->name, op->contr->title,
                  op->contr->killer);
         tmp->msg = add_string(buf);
-        tmp->x = op->x,
-        tmp->y = op->y;
-        object_insert_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
 
         /* restore player: remove any poisoning, disease and confusion the
          * character may be suffering.*/
@@ -3594,13 +3582,11 @@ void kill_player(object *op) {
         FREE_AND_COPY(tmp->name, buf);
         FREE_AND_COPY(tmp->name_pl, buf);
         tmp->level = op->level;
-        tmp->x = x;
-        tmp->y = y;
         if (tmp->msg)
             free_string(tmp->msg);
         tmp->msg = add_string(gravestone_text(op, buf, sizeof(buf)));
         SET_FLAG(tmp, FLAG_UNIQUE);
-        object_insert_in_map(tmp, map, NULL, 0);
+        object_insert_in_map_at(tmp, map, NULL, 0, x, y);
     }
 }
 

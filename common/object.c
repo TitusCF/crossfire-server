@@ -1425,9 +1425,7 @@ void object_free2(object *ob, int free_inventory) {
                     if (QUERY_FLAG(op, FLAG_ALIVE)) {
                         object_insert_to_free_spot_or_free(op, part->map, part->x, part->y, 0, SIZEOFFREE, NULL);
                     } else {
-                        op->x = part->x;
-                        op->y = part->y;
-                        object_insert_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
+                        object_insert_in_map_at(op, part->map, NULL, 0, part->x, part->y); /* Insert in same map as the envir */
                     }
                 }
             } FOR_INV_FINISH();
@@ -2372,10 +2370,7 @@ void object_replace_insert_in_map(const char *arch_string, object *op) {
     } FOR_MAP_FINISH();
 
     tmp1 = arch_to_object(find_archetype(arch_string));
-
-    tmp1->x = op->x;
-    tmp1->y = op->y;
-    object_insert_in_map(tmp1, op->map, op, INS_BELOW_ORIGINATOR);
+    object_insert_in_map_at(tmp1, op->map, op, INS_BELOW_ORIGINATOR, op->x, op->y);
 }
 
 /**
@@ -4603,7 +4598,5 @@ void object_insert_to_free_spot_or_free(object *op, mapstruct *map, int x, int y
         return;
     }
 
-    op->x = x+freearr_x[pos];
-    op->y = y+freearr_y[pos];
-    object_insert_in_map(op, map, originator, 0);
+    object_insert_in_map_at(op, map, originator, 0, x+freearr_x[pos], y+freearr_y[pos]);
 }

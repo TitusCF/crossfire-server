@@ -646,10 +646,7 @@ void move_symptom(object *symptom) {
                 snprintf(name, sizeof(name), "%s's %s", victim->name, new_ob->name_pl);
                 FREE_AND_COPY(new_ob->name_pl, name);
             }
-            new_ob->x = tmp->x;
-            new_ob->y = tmp->y;
-            new_ob->map = victim->map;
-            object_insert_in_map(new_ob, victim->map, victim, 0);
+            object_insert_in_map_at(new_ob, tmp->map, victim, 0, tmp->x, tmp->y);
         }
     }
     if (!symptom->msg) {

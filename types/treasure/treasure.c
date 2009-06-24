@@ -78,9 +78,7 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
                 "You find %s in the chest.",
                 name);
 
-            treas->x = applier->x;
-            treas->y = applier->y;
-            treas = object_insert_in_map(treas, applier->map, applier, INS_BELOW_ORIGINATOR);
+            treas = object_insert_in_map_at(treas, applier->map, applier, INS_BELOW_ORIGINATOR, applier->x, applier->y);
 
             if (treas
             && (treas->type == RUNE || treas->type == TRAP)

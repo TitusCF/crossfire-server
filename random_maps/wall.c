@@ -212,11 +212,9 @@ void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP) {
                         thiswall = pick_joined_wall(the_wall, layout, i, j, RP);
                     else
                         thiswall = arch_to_object(the_wall->arch);
-                    thiswall->x = i;
-                    thiswall->y = j;
                     thiswall->move_block = MOVE_ALL;
                     thiswall->move_allow = 0;
-                    object_insert_in_map(thiswall, map, thiswall, INS_NO_MERGE|INS_NO_WALK_ON);
+                    object_insert_in_map_at(thiswall, map, thiswall, INS_NO_MERGE|INS_NO_WALK_ON, i, j);
                 }
             }
     }
@@ -472,14 +470,12 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
     wall_arch = try_find_archetype(RP->wall_name);
     if (wall_arch != NULL) {
         new_wall = arch_to_object(wall_arch);
-        new_wall->x = i;
-        new_wall->y = j;
         if (the_wall && the_wall->map) {
             object_remove(the_wall);
             object_free(the_wall);
         }
         the_wall->move_block = MOVE_ALL;
-        object_insert_in_map(new_wall, the_map, new_wall, INS_NO_MERGE|INS_NO_WALK_ON);
+        object_insert_in_map_at(new_wall, the_map, new_wall, INS_NO_MERGE|INS_NO_WALK_ON, i, j);
     }
     return new_wall;
 }

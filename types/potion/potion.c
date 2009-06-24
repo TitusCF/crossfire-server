@@ -168,9 +168,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             fball = create_archetype(EXPLODING_FIREBALL);
             fball->dam_modifier = random_roll(1, applier->level, applier, PREFER_LOW)/5+1;
             fball->stats.maxhp = random_roll(1, applier->level, applier, PREFER_LOW)/10+2;
-            fball->x = applier->x;
-            fball->y = applier->y;
-            object_insert_in_map(fball, applier->map, NULL, 0);
+            object_insert_in_map_at(fball, applier->map, NULL, 0, applier->x, applier->y);
         } else
             cast_spell(applier, potion, applier->facing, potion->inv, NULL);
 

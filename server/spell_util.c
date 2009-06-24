@@ -186,11 +186,7 @@ void spell_effect(object *spob, int x, int y, mapstruct *map, object *originator
 
     if (spob->other_arch !=  NULL) {
         object *effect = arch_to_object(spob->other_arch);
-
-        effect->x = x;
-        effect->y = y;
-
-        object_insert_in_map(effect, map, originator, 0);
+        object_insert_in_map_at(effect, map, originator, 0, x, y);
     }
 }
 
@@ -520,12 +516,10 @@ int cast_create_obj(object *op, object *new_op, int dir) {
                       "Something is in the way. You cast it at your feet.", NULL);
         dir = 0;
     }
-    new_op->x = op->x+freearr_x[dir];
-    new_op->y = op->y+freearr_y[dir];
     if (dir == 0)
-        object_insert_in_map(new_op, op->map, op, INS_BELOW_ORIGINATOR);
+        object_insert_in_map_at(new_op, op->map, op, INS_BELOW_ORIGINATOR, op->x+freearr_x[dir], op->y+freearr_y[dir]);
     else
-        object_insert_in_map(new_op, op->map, op, 0);
+        object_insert_in_map_at(new_op, op->map, op, 0, op->x+freearr_x[dir], op->y+freearr_y[dir]);
     return dir;
 }
 
@@ -739,7 +733,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
             tmp->map = m;
         }
 
-        tmp = object_insert_in_map(tmp, tmp->map, op, 0);
+        tmp = object_insert_in_map_at(tmp, tmp->map, op, 0, tmp->x, tmp->y);
         if (tmp != NULL)
             check_bullet(tmp);
     } else /*if (spell->subtype == SP_MAGIC_MISSILE || spell->subtype == SP_MOVING_BALL) */ {
@@ -751,7 +745,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
         if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
             SET_ANIMATION(tmp, dir);
 
-        tmp = object_insert_in_map(tmp, tmp->map, op, 0);
+        tmp = object_insert_in_map_at(tmp, tmp->map, op, 0, tmp->x, tmp->y);
         if (tmp != NULL)
             ob_process(tmp);
     }
@@ -985,14 +979,11 @@ static int put_a_monster(object *op, const char *monstername) {
         if (head->randomitems)
             create_treasure(head->randomitems, head, GT_INVISIBLE, op->map->difficulty, 0);
 
-        object_insert_in_map(head, op->map, op, 0);
+        object_insert_in_map_at(head, op->map, op, 0, op->x, op->y);
 
         /* thought it'd be cool to insert a burnout, too.*/
         tmp = create_archetype("burnout");
-        tmp->map = op->map;
-        tmp->x = op->x+freearr_x[dir];
-        tmp->y = op->y+freearr_y[dir];
-        object_insert_in_map(tmp, op->map, op, 0);
+        object_insert_in_map_at(tmp, op->map, op, 0, op->x+freearr_x[dir], op->y+freearr_y[dir]);
         return 1;
     } else {
         return 0;
@@ -1160,8 +1151,6 @@ void spell_failure(object *op, int failure, int power, object *skill) {
                           NULL);
             tmp = create_archetype(LOOSE_MANA);
             tmp->level = skill->level;
-            tmp->x = op->x;
-            tmp->y = op->y;
 
             /* increase the area of destruction a little for more powerful spells */
             tmp->range += isqrt(power);
@@ -1172,7 +1161,7 @@ void spell_failure(object *op, int failure, int power, object *skill) {
                 tmp->stats.dam = power; /* nasty recoils! */
 
             tmp->stats.maxhp = tmp->count;
-            object_insert_in_map(tmp, op->map, NULL, 0);
+            object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
         }
     }
 }

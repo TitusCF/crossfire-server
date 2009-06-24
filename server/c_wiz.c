@@ -1086,7 +1086,7 @@ int command_create(object *op, char *params) {
                 }
             }
 
-            object_insert_in_map(head, op->map, op, 0);
+            object_insert_in_map_at(head, op->map, op, 0, head->x, head->y);
         } else
             head = object_insert_in_ob(head, op);
 
@@ -1740,7 +1740,7 @@ int command_reset(object *op, char *params) {
 
         /* Need to re-insert player if swap failed for some reason */
         if (tmp) {
-            object_insert_in_map(op, m, NULL, 0);
+            object_insert_in_map_at(op, m, NULL, 0, op->x, op->y);
             object_free(dummy);
         }
 

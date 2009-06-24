@@ -691,9 +691,9 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
             /* if we are loading an overlay, put the floors on the bottom */
             if ((QUERY_FLAG(op, FLAG_IS_FLOOR) || QUERY_FLAG(op, FLAG_OVERLAY_FLOOR))
             && mapflags&MAP_OVERLAY)
-                object_insert_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ABOVE_FLOOR_ONLY|INS_MAP_LOAD);
+                object_insert_in_map_at(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ABOVE_FLOOR_ONLY|INS_MAP_LOAD, op->x, op->y);
             else
-                object_insert_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ON_TOP|INS_MAP_LOAD);
+                object_insert_in_map_at(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ON_TOP|INS_MAP_LOAD, op->x, op->y);
 
             if (op->inv)
                 object_sum_weight(op);
@@ -703,7 +703,7 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
             break;
 
         case LL_MORE:
-            object_insert_in_map(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ABOVE_FLOOR_ONLY);
+            object_insert_in_map_at(op, m, op, INS_NO_MERGE|INS_NO_WALK_ON|INS_ABOVE_FLOOR_ONLY, op->x, op->y);
             op->head = prev,
             last_more->more = op,
             last_more = op;

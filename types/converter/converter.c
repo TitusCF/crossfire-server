@@ -171,11 +171,8 @@ static method_ret converter_type_move_on(ob_methods *context, object *trap, obje
             name);
 
         op = create_archetype("burnout");
-        if (op != NULL) {
-            op->x = trap->x;
-            op->y = trap->y;
-            object_insert_in_map(op, trap->map, trap, 0);
-        }
+        if (op != NULL)
+            object_insert_in_map_at(op, trap->map, trap, 0, trap->x, trap->y);
     }
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;

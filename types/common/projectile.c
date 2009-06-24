@@ -41,7 +41,7 @@ void stop_projectile(object *op) {
 
         object_remove(payload);
         object_clear_owner(payload);
-        object_insert_in_map(payload, op->map, payload, 0);
+        object_insert_in_map_at(payload, op->map, payload, 0, op->x, op->y);
         object_remove(op);
         object_free(op);
     } else {
@@ -201,10 +201,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 
     /* Move the arrow. */
     object_remove(op);
-    op->x = new_x;
-    op->y = new_y;
-
-    object_insert_in_map(op, m, op, 0);
+    object_insert_in_map_at(op, m, op, 0, new_x, new_y);
     return METHOD_OK;
 }
 

@@ -2568,9 +2568,7 @@ int do_harvest(object *pl, int dir, object *skill) {
             draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", NULL, skill->slaying);
             return 0;
         }
-        item->x = pl->x+freearr_x[spot];
-        item->y = pl->y+freearr_y[spot];
-        object_insert_in_map(item, pl->map, NULL, 0);
+        object_insert_in_map_at(item, pl->map, NULL, 0, pl->x+freearr_x[spot], pl->y+freearr_y[spot]);
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s a %s!", NULL, skill->slaying, item->name);
     } else {
         item = object_insert_in_ob(item, pl);

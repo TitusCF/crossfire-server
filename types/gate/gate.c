@@ -153,9 +153,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
                         /* If there is a free spot, move the object someplace */
                         if (i != -1) {
                             object_remove(tmp);
-                            tmp->x += freearr_x[i],
-                            tmp->y += freearr_y[i];
-                            object_insert_in_map(tmp, op->map, op, 0);
+                            object_insert_in_map_at(tmp, op->map, op, 0, op->x+freearr_x[i], op->y+freearr_y[i]);
                         }
                     }
             }

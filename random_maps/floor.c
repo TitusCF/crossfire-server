@@ -63,9 +63,7 @@ static void put_floor(mapstruct *map, char **layout, int x, int y, object *floor
     object *floor;
 
     floor = arch_to_object(floor_arch->arch);
-    floor->x = x;
-    floor->y = y;
-    object_insert_in_map(floor, map, floor, INS_NO_MERGE|INS_NO_WALK_ON);
+    object_insert_in_map_at(floor, map, floor, INS_NO_MERGE|INS_NO_WALK_ON, x, y);
 
     for (dx = -1; dx < 2; dx++) {
         for (dy = -1; dy < 2; dy++) {
@@ -122,9 +120,7 @@ mapstruct *make_map_floor(char **layout, char *floorstyle, RMParms *RP) {
                 if (GET_MAP_OB(newMap, x, y) != NULL)
                     continue;
                 thisfloor = arch_to_object(the_floor->arch);
-                thisfloor->x = x;
-                thisfloor->y = y;
-                object_insert_in_map(thisfloor, newMap, thisfloor, INS_NO_MERGE|INS_NO_WALK_ON);
+                object_insert_in_map_at(thisfloor, newMap, thisfloor, INS_NO_MERGE|INS_NO_WALK_ON, x, y);
             }
     }
     return newMap;

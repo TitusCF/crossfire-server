@@ -260,10 +260,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
         execute_global_event(EVENT_MAPLEAVE, op, op->map);
     }
     /* object_remove clears these so they must be reset after the object_remove() call */
-    op->x = x;
-    op->y = y;
-    op->map = newmap;
-    object_insert_in_map(op, op->map, NULL, INS_NO_WALK_ON);
+    object_insert_in_map_at(op, newmap, NULL, INS_NO_WALK_ON, x, y);
 
     /* Lauwenmark : Here we handle the MAPENTER global event */
     execute_global_event(EVENT_MAPENTER, op, op->map);
@@ -290,14 +287,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
             op->contr->ranges[range_golem] = NULL;
             op->contr->golem_count = 0;
         } else {
-            object *tmp;
-
-            for (tmp = op->contr->ranges[range_golem]; tmp != NULL; tmp = tmp->more) {
-                tmp->x = x+freearr_x[i]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x);
-                tmp->y = y+freearr_y[i]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
-                tmp->map = newmap;
-            }
-            object_insert_in_map(op->contr->ranges[range_golem], newmap, NULL, 0);
+            object_insert_in_map_at(op->contr->ranges[range_golem], newmap, NULL, 0, x+freearr_x[i], y+freearr_y[i]);
             op->contr->ranges[range_golem]->direction = find_dir_2(op->x-op->contr->ranges[range_golem]->x, op->y-op->contr->ranges[range_golem]->y);
         }
     }

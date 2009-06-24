@@ -288,9 +288,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     }
 
     /* actually place the chest. */
-    the_chest->x = xl;
-    the_chest->y = yl;
-    object_insert_in_map(the_chest, map, NULL, 0);
+    object_insert_in_map_at(the_chest, map, NULL, 0, xl, yl);
     return the_chest;
 }
 
@@ -435,9 +433,7 @@ int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, int n_k
     }
 
     if (the_keymaster == NULL) {
-        the_key->x = kx;
-        the_key->y = ky;
-        object_insert_in_map(the_key, map, NULL, 0);
+        object_insert_in_map_at(the_key, map, NULL, 0, kx, ky);
         return 1;
     }
 
@@ -769,11 +765,12 @@ static object **surround_by_doors(mapstruct *map, char **layout, int x, int y, i
         if (!wall_blocked(map, x1, y1)
         || layout[x1][y1] == '>') {/* place a door */
             object *new_door = create_archetype((freearr_x[i] == 0) ? doors[1] : doors[0]);
+            sint16 nx, ny;
 
-            new_door->x = x+freearr_x[i];
-            new_door->y = y+freearr_y[i];
-            remove_monsters(new_door->x, new_door->y, map);
-            object_insert_in_map(new_door, map, NULL, 0);
+            nx = x+freearr_x[i];
+            ny = y+freearr_y[i];
+            remove_monsters(nx, ny, map);
+            object_insert_in_map_at(new_door, map, NULL, 0, nx, ny);
             doorlist[ndoors_made] = new_door;
             ndoors_made++;
         }
@@ -953,12 +950,10 @@ void lock_and_hide_doors(object **doorlist, mapstruct *map, int opts, RMParms *R
 
             door = doorlist[i];
             new_door->face = door->face;
-            new_door->x = door->x;
-            new_door->y = door->y;
             object_remove(door);
             object_free(door);
             doorlist[i] = new_door;
-            object_insert_in_map(new_door, map, NULL, 0);
+            object_insert_in_map_at(new_door, map, NULL, 0, door->x, door->y);
 
             snprintf(keybuf, 256, "%d", (int)RANDOM());
             if (keyplace(map, new_door->x, new_door->y, keybuf, NO_PASS_DOORS, 2, RP))

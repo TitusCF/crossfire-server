@@ -56,8 +56,6 @@ void cast_magic_storm(object *op, object *tmp, int lvl) {
     if (!tmp)
         return; /* error */
     tmp->level = op->level;
-    tmp->x = op->x;
-    tmp->y = op->y;
     tmp->range += lvl/5;  /* increase the area of destruction */
     tmp->duration += lvl/5;
 
@@ -70,7 +68,7 @@ void cast_magic_storm(object *op, object *tmp, int lvl) {
         tmp->duration = 40;
     tmp->stats.dam = lvl; /* nasty recoils! */
     tmp->stats.maxhp = tmp->count; /* tract single parent */
-    object_insert_in_map(tmp, op->map, op, 0);
+    object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y);
 }
 
 /**
@@ -114,9 +112,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
         tmp->stats.hp = tmp->stats.dam/2;
         if (tmp->stats.hp < 2)
             tmp->stats.hp = 2;
-        tmp->x = op->x;
-        tmp->y = op->y;
-        object_insert_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
         return 1;
     }
 
@@ -195,7 +191,7 @@ static void polymorph_living(object *op, int level) {
             numat++;
         }
     if (!numat) {
-        object_insert_in_map(op, map, NULL, 0);
+        object_insert_in_map_at(op, map, NULL, 0, x, y);
         return; /* no valid matches? if so, return */
     }
 
@@ -239,9 +235,7 @@ static void polymorph_living(object *op, int level) {
         CLEAR_FLAG(op, FLAG_FRIENDLY);
 
     /* Put the new creature on the map */
-    op->x = x;
-    op->y = y;
-    if ((op = object_insert_in_map(op, map, owner, 0)) == NULL)
+    if ((op = object_insert_in_map_at(op, map, owner, 0, x, y)) == NULL)
         return;
 
     if (HAS_RANDOM_ITEMS(op))
@@ -297,6 +291,8 @@ static void polymorph_item(object *who, object *op, int level) {
     archetype *at;
     int max_value, difficulty, tries = 0, choice, charges = op->stats.food, numat = 0;
     object *new_ob;
+    mapstruct *m;
+    sint16 x, y;
 
     /* We try and limit the maximum value of the changed object. */
     max_value = op->value*2;
@@ -369,15 +365,16 @@ static void polymorph_item(object *who, object *op, int level) {
     if (charges && op->type != RING && op->type != FOOD)
         op->stats.food = charges;
 
-    new_ob->x = op->x;
-    new_ob->y = op->y;
+    x = op->x;
+    y = op->y;
+    m = op->map;
     object_remove(op);
     object_free(op);
     /*
      * Don't want objects merged or re-arranged, as it then messes up the
      * order
      */
-    object_insert_in_map(new_ob, who->map, new_ob, INS_NO_MERGE|INS_NO_WALK_ON);
+    object_insert_in_map_at(new_ob, m, new_ob, INS_NO_MERGE|INS_NO_WALK_ON, x, y);
 }
 
 /**
@@ -479,11 +476,9 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
             polymorph(tmp, op, level);
         } FOR_OB_AND_BELOW_FINISH();
         image = arch_to_object(spell_ob->other_arch);
-        image->x = x;
-        image->y = y;
         image->stats.food = 5;
         image->speed_left = 0.1;
-        object_insert_in_map(image, m, op, 0);
+        object_insert_in_map_at(image, m, op, 0, x, y);
     }
     return 1;
 }
@@ -1321,10 +1316,8 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     FREE_AND_COPY(dummy->name, portal_name);
     FREE_AND_COPY(dummy->name_pl, portal_name);
     dummy->msg = add_string(portal_message);
-    dummy->x = EXIT_X(force);
-    dummy->y = EXIT_Y(force);
     dummy->race = add_string(op->name);   /*Save the owner of the portal*/
-    object_insert_in_map(dummy, exitmap, op, 0);
+    object_insert_in_map_at(dummy, exitmap, op, 0, EXIT_X(force), EXIT_Y(force));
 
     /* Now we create another town portal marker that
      * points back to the one we just made
@@ -1440,12 +1433,10 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
      */
     object_set_owner(tmp, op);
     set_spell_skill(op, caster, spell_ob, tmp);
-    tmp->x = x;
-    tmp->y = y;
     tmp->level = caster_level(caster, spell_ob)/2;
 
     name = tmp->name;
-    if ((tmp = object_insert_in_map(tmp, m, op, 0)) == NULL) {
+    if ((tmp = object_insert_in_map_at(tmp, m, op, 0, x, y)) == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "Something destroys your %s",
                              "Something destroys your %s",
@@ -1480,9 +1471,7 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
         && !posblocked) {
             tmp2 = object_new();
             object_copy(tmp, tmp2);
-            tmp2->x = x;
-            tmp2->y = y;
-            object_insert_in_map(tmp2, m, op, 0);
+            object_insert_in_map_at(tmp2, m, op, 0, x, y);
             /* If this is a spellcasting wall, need to insert the spell object */
             if (tmp2->other_arch && tmp2->other_arch->clone.type == SPELL)
                 object_insert_in_ob(arch_to_object(tmp2->other_arch), tmp2);
@@ -1498,9 +1487,7 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
         && !negblocked) {
             tmp2 = object_new();
             object_copy(tmp, tmp2);
-            tmp2->x = x;
-            tmp2->y = y;
-            object_insert_in_map(tmp2, m, op, 0);
+            object_insert_in_map_at(tmp2, m, op, 0, x, y);
             if (tmp2->other_arch && tmp2->other_arch->clone.type == SPELL)
                 object_insert_in_ob(arch_to_object(tmp2->other_arch), tmp2);
         } else
@@ -1633,9 +1620,7 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
 
     /* Actually move the player now */
     object_remove(op);
-    op->x += freearr_x[dir]*dist;
-    op->y += freearr_y[dir]*dist;
-    if ((op = object_insert_in_map(op, op->map, op, 0)) == NULL)
+    if ((op = object_insert_in_map_at(op, op->map, op, 0, op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist)) == NULL)
         return 1;
 
     if (op->type == PLAYER)
@@ -2158,17 +2143,13 @@ static void place_alchemy_objects(object *op, mapstruct *m, int small_nuggets, i
         tmp = object_new();
         object_copy(small, tmp);
         tmp-> nrof = small_nuggets;
-        tmp->x = x;
-        tmp->y = y;
-        object_insert_in_map(tmp, m, op, flag);
+        object_insert_in_map_at(tmp, m, op, flag, x, y);
     }
     if (large_nuggets) {
         tmp = object_new();
         object_copy(large, tmp);
         tmp-> nrof = large_nuggets;
-        tmp->x = x;
-        tmp->y = y;
-        object_insert_in_map(tmp, m, op, flag);
+        object_insert_in_map_at(tmp, m, op, flag, x, y);
     }
 }
 
@@ -2597,8 +2578,6 @@ int cast_detection(object *op, object *caster, object *spell) {
             if (done_one) {
                 object *detect_ob = arch_to_object(spell->other_arch);
 
-                detect_ob->x = nx;
-                detect_ob->y = ny;
                 /* if this is set, we want to copy the face */
                 if (done_one == 2 && detect) {
                     detect_ob->face = detect->face;
@@ -2609,7 +2588,7 @@ int cast_detection(object *op, object *caster, object *spell) {
                     if (!QUERY_FLAG(detect, FLAG_ANIMATE))
                         CLEAR_FLAG(detect_ob, FLAG_ANIMATE);
                 }
-                object_insert_in_map(detect_ob, m, op, 0);
+                object_insert_in_map_at(detect_ob, m, op, 0, nx, ny);
             }
         } /* for processing the surrounding spaces */
 
@@ -2666,9 +2645,7 @@ static void charge_mana_effect(object *victim, int caster_level) {
         tmp = create_archetype(EXPLODING_FIREBALL);
         tmp->dam_modifier = random_roll(1, caster_level, victim, PREFER_LOW)/5+1;
         tmp->stats.maxhp = random_roll(1, caster_level, victim, PREFER_LOW)/10+2;
-        tmp->x = victim->x;
-        tmp->y = victim->y;
-        object_insert_in_map(tmp, victim->map, NULL, 0);
+        object_insert_in_map_at(tmp, victim->map, NULL, 0, victim->x, victim->y);
         victim->stats.sp = 2*victim->stats.maxsp;
     } else if (victim->stats.sp >= victim->stats.maxsp*1.88) {
         draw_ext_info(NDI_UNIQUE, NDI_ORANGE, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
@@ -2888,10 +2865,8 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                     return 0;
                 }
                 new_altar = arch_to_object(altar_arch);
-                new_altar->x = tmp->x;
-                new_altar->y = tmp->y;
                 new_altar->level = tmp->level;
-                object_insert_in_map(new_altar, tmp->map, tmp, INS_BELOW_ORIGINATOR);
+                object_insert_in_map_at(new_altar, tmp->map, tmp, INS_BELOW_ORIGINATOR, tmp->x, tmp->y);
                 object_remove(tmp);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                      "You consecrated the altar to %s!",
@@ -3137,10 +3112,8 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
     tmp->stats.exp *= 1+(MAX(spell->stats.maxgrace, spell->stats.sp)/caster_level(caster, spell));
 
     tmp->speed_left = -1;
-    tmp->x = x;
-    tmp->y = y;
     tmp->direction = dir;
-    object_insert_in_map(tmp, m, op, 0);
+    object_insert_in_map_at(tmp, m, op, 0, x, y);
     return 1;
 }
 
@@ -3297,8 +3270,6 @@ int write_mark(object *op, object *spell, const char *msg) {
     strcat(rune, "\n");
     tmp->race = add_string(op->name);   /*Save the owner of the rune*/
     tmp->msg = add_string(rune);
-    tmp->x = op->x;
-    tmp->y = op->y;
-    object_insert_in_map(tmp, op->map, op, INS_BELOW_ORIGINATOR);
+    object_insert_in_map_at(tmp, op->map, op, INS_BELOW_ORIGINATOR, op->x, op->y);
     return 1;
 }

@@ -141,11 +141,8 @@ void apply_handle_yield(object *tmp) {
         object *drop = create_archetype(yield);
         if (tmp->env)
             drop = object_insert_in_ob(drop, tmp->env);
-        else {
-            drop->x = tmp->x;
-            drop->y = tmp->y;
-            object_insert_in_map(drop, tmp->map, tmp, INS_BELOW_ORIGINATOR);
-        }
+        else
+            object_insert_in_map_at(drop, tmp->map, tmp, INS_BELOW_ORIGINATOR, tmp->x, tmp->y);
     }
 }
 
@@ -1411,10 +1408,8 @@ int apply_auto(object *op) {
                 tmp = NULL;
             }
         } while (!tmp);
-        tmp->x = op->x;
-        tmp->y = op->y;
         SET_FLAG(tmp, FLAG_UNPAID);
-        object_insert_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
         CLEAR_FLAG(op, FLAG_AUTO_APPLY);
         identify(tmp);
         return 1;

@@ -175,13 +175,10 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
     }
     rune->level = caster_level(caster, spell);
     rune->stats.Cha = rune->level/2;  /* the invisibility parameter */
-    rune->x = nx;
-    rune->y = ny;
-    rune->map = m;
     rune->direction = dir;  /* where any spell will go upon detonation */
     object_set_owner(rune, op); /* runes without need no owner */
     set_spell_skill(op, caster, spell, rune);
-    object_insert_in_map(rune, m, op, 0);
+    object_insert_in_map_at(rune, m, op, 0, nx, ny);
     return 1;
 }
 
@@ -272,9 +269,7 @@ void spring_trap(object *trap, object *victim) {
 
         /* This is necessary if the trap is inside something else */
         object_remove(trap);
-        trap->x = victim->x;
-        trap->y = victim->y;
-        object_insert_in_map(trap, victim->map, trap, 0);
+        object_insert_in_map_at(trap, victim->map, trap, 0, victim->x, victim->y);
 
         if (object_was_destroyed(trap, trap_tag))
             return;
@@ -435,10 +430,7 @@ int trap_show(object *trap, object *where) {
         return 0;
     tmp2 = create_archetype("runedet");
     tmp2->face = &new_faces[GET_ANIMATION(trap, 0)];
-    tmp2->x = where->x;
-    tmp2->y = where->y;
-    tmp2->map = where->map;
-    object_insert_in_map(tmp2, where->map, NULL, 0);
+    object_insert_in_map_at(tmp2, where->map, NULL, 0, where->x, where->y);
     return 1;
 }
 

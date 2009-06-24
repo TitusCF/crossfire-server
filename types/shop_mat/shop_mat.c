@@ -67,10 +67,7 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
                 object_remove(tmp);
                 if (i == -1)
                     i = 0;
-                tmp->map = victim->map;
-                tmp->x = victim->x+freearr_x[i];
-                tmp->y = victim->y+freearr_y[i];
-                object_insert_in_map(tmp, victim->map, victim, 0);
+                object_insert_in_map_at(tmp, victim->map, victim, 0, victim->x+freearr_x[i], victim->y+freearr_y[i]);
             }
         } FOR_INV_FINISH();
 
@@ -127,9 +124,7 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
             LOG(llevError, "Internal shop-mat problem.\n");
         else {
             object_remove(victim);
-            victim->x += freearr_x[i];
-            victim->y += freearr_y[i];
-            rv = object_insert_in_map(victim, victim->map, trap, 0) == NULL;
+            rv = object_insert_in_map_at(victim, victim->map, trap, 0, victim->x+freearr_x[i], victim->y+freearr_y[i]) == NULL;
             esrv_map_scroll(&victim->contr->socket, freearr_x[i], freearr_y[i]);
             victim->contr->socket.update_look = 1;
             victim->contr->socket.look_position = 0;

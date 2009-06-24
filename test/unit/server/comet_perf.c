@@ -105,18 +105,12 @@ void setup(void) {
     for (x = 0; x < TEST_MAP_SIZE; x++) {
         mon1 = object_new();
         object_copy(mon, mon1);
-        mon1->x = x;
-        mon1->y = TEST_MAP_SIZE/2;
-        mon1->map = test_map;
-        object_insert_in_map(mon1, mon1->map, NULL, 0);
+        object_insert_in_map_at(mon1, test_map, NULL, 0, x, TEST_MAP_SIZE/2);
 
         if (x != TEST_MAP_SIZE/2) {
             mon1 = object_new();
             object_copy(mon, mon1);
-            mon1->x = x;
-            mon1->y = x;
-            mon1->map = test_map;
-            object_insert_in_map(mon1, mon1->map, NULL, 0);
+            object_insert_in_map_at(mon1, test_map, NULL, 0, x, x);
         }
     }
 
@@ -205,11 +199,7 @@ START_TEST(cast_one_comet) {
     comet = create_archetype("spell_comet");
     object_insert_in_ob(comet, rod);
 
-    rod->map = test_map;
-    rod->x = TEST_MAP_SIZE/2;
-    rod->y = TEST_MAP_SIZE-1;
-
-    object_insert_in_map(rod, rod->map, NULL, 0);
+    object_insert_in_map_at(rod, test_map, NULL, 0, TEST_MAP_SIZE/2, TEST_MAP_SIZE-1);
 
     cast_spell(rod, rod, 1, rod->inv, NULL);
     for (tick = 0; tick < NUM_TICKS_TO_RUN; tick++) {
@@ -231,11 +221,7 @@ START_TEST(cast_random_comet) {
     comet = create_archetype("spell_comet");
     object_insert_in_ob(comet, rod);
 
-    rod->map = test_map;
-    rod->x = TEST_MAP_SIZE/2;
-    rod->y = TEST_MAP_SIZE-1;
-
-    object_insert_in_map(rod, rod->map, NULL, 0);
+    object_insert_in_map_at(rod, test_map, NULL, 0, TEST_MAP_SIZE/2, TEST_MAP_SIZE-1);
 
     for (tick = 0; tick < NUM_TICKS_TO_RUN; tick++) {
         if (num_cast < NUM_COMETS_TO_CAST && (tick%1) == 0) {
@@ -245,10 +231,7 @@ START_TEST(cast_random_comet) {
              * a little, as a more typical case is comets
              * blowing up on different spaces.
              */
-            rod->x = (tick*59)%37;
-            rod->y = TEST_MAP_SIZE-1;
-            rod->map = test_map;
-            object_insert_in_map(rod, rod->map, NULL, 0);
+            object_insert_in_map_at(rod, test_map, NULL, 0, (tick*59)%37, TEST_MAP_SIZE-1);
 
             cast_spell(rod, rod, 1, rod->inv, NULL);
             num_cast++;
@@ -271,11 +254,7 @@ START_TEST(cast_bunch_comet) {
     comet = create_archetype("spell_comet");
     object_insert_in_ob(comet, rod);
 
-    rod->map = test_map;
-    rod->x = TEST_MAP_SIZE/2;
-    rod->y = TEST_MAP_SIZE-1;
-
-    object_insert_in_map(rod, rod->map, NULL, 0);
+    object_insert_in_map_at(rod, test_map, NULL, 0, TEST_MAP_SIZE/2, TEST_MAP_SIZE-1);
 
     for (tick = 0; tick < NUM_TICKS_TO_RUN; tick++) {
         if (num_cast < NUM_COMETS_TO_CAST && (tick%1) == 0) {

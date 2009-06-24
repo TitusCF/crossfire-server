@@ -3964,10 +3964,8 @@ int apply_auto(object *op) {
                 tmp = NULL;
             }
         } while (!tmp);
-        tmp->x = op->x;
-        tmp->y = op->y;
         SET_FLAG(tmp, FLAG_UNPAID);
-        object_insert_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
         CLEAR_FLAG(op, FLAG_AUTO_APPLY);
         identify(tmp);
         break;

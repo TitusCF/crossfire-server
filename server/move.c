@@ -110,15 +110,7 @@ int move_ob(object *op, int dir, object *originator) {
     }
 
     object_remove(op);
-
-    for (part = op; part != NULL; part = part->more) {
-        part->x += freearr_x[dir];
-        part->y += freearr_y[dir];
-        part->map = get_map_from_coord(part->map, &part->x, &part->y);
-    }
-
-    /* object_insert_in_map will deal with any tiling issues */
-    object_insert_in_map(op, m, originator, 0);
+    object_insert_in_map_at(op, op->map, originator, 0, op->x+freearr_x[dir], op->y+freearr_y[dir]);
 
     /* Hmmm.  Should be possible for multispace players now */
     if (op->type == PLAYER) {
@@ -177,11 +169,7 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
 
     op = HEAD(op);
     object_remove(op);
-    for (tmp = op; tmp != NULL; tmp = tmp->more)
-        tmp->x = x+freearr_x[i]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x),
-        tmp->y = y+freearr_y[i]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
-
-    tmp = object_insert_in_map(op, op->map, originator, 0);
+    tmp = object_insert_in_map_at(op, op->map, originator, 0, x+freearr_x[i], y+freearr_y[i]);
     if (op && op->type == PLAYER)
         map_newmap_cmd(&op->contr->socket);
     if (tmp)
@@ -280,12 +268,7 @@ int teleport(object *teleporter, uint8 tele_type, object *user) {
 
     object_remove(user);
 
-    /* Update location for the object */
-    for (tmp = user; tmp != NULL; tmp = tmp->more) {
-        tmp->x = other_teleporter->x+freearr_x[k]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x);
-        tmp->y = other_teleporter->y+freearr_y[k]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
-    }
-    tmp = object_insert_in_map(user, other_teleporter->map, NULL, 0);
+    tmp = object_insert_in_map_at(user, other_teleporter->map, NULL, 0, other_teleporter->x+freearr_x[k], other_teleporter->y+freearr_y[k]);
     if (tmp && tmp->type == PLAYER)
         map_newmap_cmd(&tmp->contr->socket);
     return (tmp == NULL);
@@ -391,7 +374,6 @@ static int try_fit(object *op, mapstruct *m, int x, int y) {
  */
 
 static int roll_ob(object *op, int dir, object *pusher) {
-    object *tmp;
     sint16 x, y;
     int flags;
     mapstruct *m;
@@ -426,10 +408,7 @@ static int roll_ob(object *op, int dir, object *pusher) {
         return 0;
 
     object_remove(op);
-    for (tmp = op; tmp != NULL; tmp = tmp->more)
-        tmp->x += freearr_x[dir],
-        tmp->y += freearr_y[dir];
-    object_insert_in_map(op, op->map, pusher, 0);
+    object_insert_in_map_at(op, op->map, pusher, 0, op->x+freearr_x[dir], op->y+freearr_y[dir]);
     return 1;
 }
 
@@ -479,8 +458,8 @@ int push_ob(object *who, int dir, object *pusher) {
         pusher->map = who->map;
         who->map = m;
 
-        object_insert_in_map(who, who->map, pusher, 0);
-        object_insert_in_map(pusher, pusher->map, pusher, 0);
+        object_insert_in_map_at(who, who->map, pusher, 0, who->x, who->y);
+        object_insert_in_map_at(pusher, pusher->map, pusher, 0, pusher->x, pusher->y);
 
         /* we presume that if the player is pushing his put, he moved in
          * direction 'dir'.  I can' think of any case where this would not be

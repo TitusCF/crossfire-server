@@ -107,11 +107,9 @@ void put_decor(mapstruct *map, char **maze, char *decorstyle, int decor_option, 
                     new_decor_object = pick_random_object(decor_map);
                     this_object = arch_to_object(new_decor_object->arch);
                     object_copy(new_decor_object, this_object);
-                    this_object->x = x;
-                    this_object->y = y;
                     /* it screws things up if decor can stop people */
                     this_object->move_block = MOVE_BLOCK_DEFAULT;
-                    object_insert_in_map(this_object, map, NULL, 0);
+                    object_insert_in_map_at(this_object, map, NULL, 0, x, y);
                     number_to_place--;
                 } else
                     failures++;
@@ -130,11 +128,9 @@ void put_decor(mapstruct *map, char **maze, char *decorstyle, int decor_option, 
                         new_decor_object = pick_random_object(decor_map);
                         this_object = arch_to_object(new_decor_object->arch);
                         object_copy(new_decor_object, this_object);
-                        this_object->x = i;
-                        this_object->y = j;
                         /* it screws things up if decor can stop people */
                         this_object->move_block = MOVE_BLOCK_DEFAULT;
-                        object_insert_in_map(this_object, map, NULL, 0);
+                        object_insert_in_map_at(this_object, map, NULL, 0, i, j);
                     }
                 }
             break;

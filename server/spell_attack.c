@@ -115,12 +115,9 @@ int fire_bolt(object *op, object *caster, int dir, object *spob) {
             object_free(tmp);
             return 0;
         }
-        tmp->x = op->x;
-        tmp->y = op->y;
         tmp->direction = absdir(tmp->direction+4);
-        tmp->map = op->map;
     }
-    if ((tmp = object_insert_in_map(tmp, tmp->map, op, 0)) != NULL)
+    if ((tmp = object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y)) != NULL)
         ob_process(tmp);
     return 1;
 }
@@ -161,9 +158,7 @@ void explode_bullet(object *op) {
             return;
         }
         object_remove(op);
-        op->x = env->x;
-        op->y = env->y;
-        object_insert_in_map(op, env->map, op, INS_NO_MERGE|INS_NO_WALK_ON);
+        object_insert_in_map_at(op, env->map, op, INS_NO_MERGE|INS_NO_WALK_ON, env->x, env->y);
     } else if (out_of_map(op->map, op->x, op->y)) {
         LOG(llevError, "BUG: explode_bullet(): op out of map\n");
         object_remove(op);
@@ -192,8 +187,6 @@ void explode_bullet(object *op) {
         object_free(op);
         return;
     }
-    tmp->x = op->x;
-    tmp->y = op->y;
 
     /* special for bombs - it actually has sane values for these */
     if (op->type == SPELL_EFFECT && op->subtype == SP_BOMB) {
@@ -222,7 +215,7 @@ void explode_bullet(object *op) {
     /* Prevent recursion */
     op->move_on = 0;
 
-    object_insert_in_map(tmp, op->map, op, 0);
+    object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y);
     /* remove the firebullet */
     if (!object_was_destroyed(op, op_tag)) {
         object_remove(op);
@@ -288,8 +281,6 @@ void check_bullet(object *op) {
 void cone_drop(object *op) {
     object *new_ob = arch_to_object(op->other_arch);
 
-    new_ob->x = op->x;
-    new_ob->y = op->y;
     new_ob->level = op->level;
     object_set_owner(new_ob, op->owner);
 
@@ -299,7 +290,7 @@ void cone_drop(object *op) {
             free_string(new_ob->skill);
         new_ob->skill = add_refcount(op->skill);
     }
-    object_insert_in_map(new_ob, op->map, op, 0);
+    object_insert_in_map_at(new_ob, op->map, op, 0, op->x, op->y);
 }
 
 /**
@@ -387,8 +378,6 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
         object_set_owner(tmp, op);
         set_spell_skill(op, caster, spell, tmp);
         tmp->level = caster_level(caster, spell);
-        tmp->x = sx;
-        tmp->y = sy;
         tmp->attacktype = spell->attacktype;
 
         /* holy word stuff */
@@ -433,7 +422,7 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
         if (!tmp->move_on && tmp->stats.dam) {
             LOG(llevDebug, "cast_cone(): arch %s doesn't have move_on set\n", spell->other_arch->name);
         }
-        object_insert_in_map(tmp, m, op, 0);
+        object_insert_in_map_at(tmp, m, op, 0, sx, sy);
 
         /* This is used for tracking spells so that one effect doesn't hit
          * a single space too many times.
@@ -489,9 +478,7 @@ int create_bomb(object *op, object *caster, int dir, object *spell) {
 
     object_set_owner(tmp, op);
     set_spell_skill(op, caster, spell, tmp);
-    tmp->x = dx;
-    tmp->y = dy;
-    object_insert_in_map(tmp, m, op, 0);
+    object_insert_in_map_at(tmp, m, op, 0, dx, dy);
     return 1;
 }
 
@@ -663,9 +650,7 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
     set_spell_skill(op, caster, spell, effect);
 
     /* ok, tell it where to be, and insert! */
-    effect->x = target->x;
-    effect->y = target->y;
-    object_insert_in_map(effect, target->map, op, 0);
+    object_insert_in_map_at(effect, target->map, op, 0, target->x, target->y);
 
     return 1;
 }
@@ -786,16 +771,12 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
                             hit_player(tmp, dam, op, spell_ob->attacktype, 0);
                             if (spell_ob->other_arch) {
                                 tmp = arch_to_object(spell_ob->other_arch);
-                                tmp->x = sx;
-                                tmp->y = sy;
-                                object_insert_in_map(tmp, m, op, 0);
+                                object_insert_in_map_at(tmp, m, op, 0, sx, sy);
                             }
                         } else if (spell_ob->subtype == SP_FAERY_FIRE && tmp->resist[ATNR_MAGIC] != 100) {
                             if (make_object_glow(tmp, 1, dur) && spell_ob->other_arch) {
                                 object *effect = arch_to_object(spell_ob->other_arch);
-                                effect->x = sx;
-                                effect->y = sy;
-                                object_insert_in_map(effect, m, op, 0);
+                                object_insert_in_map_at(effect, m, op, 0, sx, sy);
                             }
                         }
                     }
@@ -1064,9 +1045,7 @@ int mood_change(object *op, object *caster, object *spell) {
             /* If a monster was affected, put an effect in */
             if (done_one && spell->other_arch) {
                 tmp = arch_to_object(spell->other_arch);
-                tmp->x = nx;
-                tmp->y = ny;
-                object_insert_in_map(tmp, m, op, 0);
+                object_insert_in_map_at(tmp, m, op, 0, nx, ny);
             }
         } /* for y */
 
@@ -1099,8 +1078,6 @@ int fire_swarm(object *op, object *caster, object *spell, int dir) {
         return 0;
 
     tmp = create_archetype(SWARM_SPELL);
-    tmp->x = op->x;
-    tmp->y = op->y;
     object_set_owner(tmp, op);       /* needed so that if swarm elements kill, caster gets xp.*/
     set_spell_skill(op, caster, spell, tmp);
 
@@ -1119,7 +1096,7 @@ int fire_swarm(object *op, object *caster, object *spell, int dir) {
 
     tmp->direction = dir;
     tmp->invisible = 1;
-    object_insert_in_map(tmp, op->map, op, 0);
+    object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y);
     return 1;
 }
 
@@ -1192,9 +1169,7 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
         if (tmp->glow_radius > MAX_LIGHT_RADII)
             tmp->glow_radius = MAX_LIGHT_RADII;
     }
-    tmp->x = x;
-    tmp->y = y;
-    object_insert_in_map(tmp, m, op, 0);
+    object_insert_in_map_at(tmp, m, op, 0, x, y);
     return 1;
 }
 
@@ -1317,10 +1292,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
 
                         object_free(disease); /* don't need this one anymore */
                         flash = create_archetype(ARCH_DETECT_MAGIC);
-                        flash->x = x;
-                        flash->y = y;
-                        flash->map = walk->map;
-                        object_insert_in_map(flash, walk->map, op, 0);
+                        object_insert_in_map_at(flash, walk->map, op, 0, x, y);
                         return 1;
                     }
                     object_free(disease);

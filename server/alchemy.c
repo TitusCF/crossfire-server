@@ -614,9 +614,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
                                  cauldron->name);
             break;
         }
-        tmp->x = cauldron->x,
-        tmp->y = cauldron->y;
-        object_insert_in_map(tmp, op->map, NULL, 0);
+        object_insert_in_map_at(tmp, op->map, NULL, 0, cauldron->x, cauldron->y);
         return;
     } else if (level < 60) {                 /* CREATE MONSTER */
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,

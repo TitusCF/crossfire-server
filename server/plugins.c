@@ -3443,7 +3443,7 @@ void *cfapi_object_insert(int *type, ...) {
             object_free(op);
             *robj = NULL;
         } else
-            *robj = object_insert_in_map(op, map, orig, flag);
+            *robj = object_insert_in_map_at(op, map, orig, flag, op->x, op->y);
         *type = CFAPI_POBJECT;
         break;
 

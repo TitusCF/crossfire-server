@@ -541,7 +541,7 @@ int hide(object *op, object *skill) {
  */
 static void stop_jump(object *pl) {
     fix_object(pl);
-    object_insert_in_map(pl, pl->map, pl, 0);
+    object_insert_in_map_at(pl, pl->map, pl, 0, pl->x, pl->y);
 }
 
 /**
@@ -1996,8 +1996,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
 
         /* bounces off 'wall', and drops to feet */
         object_remove(throw_ob);
-        throw_ob->x = part->x; throw_ob->y = part->y;
-        object_insert_in_map(throw_ob, part->map, op, 0);
+        object_insert_in_map_at(throw_ob, part->map, op, 0, part->x, part->y);
         if (op->type == PLAYER) {
             if (eff_str <= 1) {
                 query_name(throw_ob, name, MAX_BUF);
@@ -2059,8 +2058,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
      */
     object_set_owner(throw_ob->inv, op);
     throw_ob->direction = dir;
-    throw_ob->x = part->x;
-    throw_ob->y = part->y;
 
     /* the damage bonus from the force of the throw */
     dam = str_factor*get_dam_bonus(eff_str);
@@ -2153,7 +2150,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
 
     object_update_speed(throw_ob);
     throw_ob->speed_left = 0;
-    throw_ob->map = part->map;
 
     throw_ob->move_type = MOVE_FLY_LOW;
     throw_ob->move_on = MOVE_FLY_LOW|MOVE_WALK;
@@ -2166,7 +2162,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     LOG(llevDebug, "inserting tossitem (%d) into map\n", throw_ob->count);
 #endif
     tag = throw_ob->count;
-    object_insert_in_map(throw_ob, part->map, op, 0);
+    object_insert_in_map_at(throw_ob, part->map, op, 0, part->x, part->y);
     if (!object_was_destroyed(throw_ob, tag))
         ob_process(throw_ob);
     return 1;

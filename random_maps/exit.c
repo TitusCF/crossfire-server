@@ -259,31 +259,26 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     if (upx == -1)
         find_in_layout(0, 0, &upx, &upy, maze, RP);
 
-    the_exit_up->x = upx;
-    the_exit_up->y = upy;
-
     /* surround the exits with notices that this is a random map. */
     for (j = 1; j < 9; j++) {
-        if (!wall_blocked(map, the_exit_up->x+freearr_x[j], the_exit_up->y+freearr_y[j])) {
+        if (!wall_blocked(map, upx+freearr_x[j], upy+freearr_y[j])) {
             random_sign = create_archetype("sign");
-            random_sign->x = the_exit_up->x+freearr_x[j];
-            random_sign->y = the_exit_up->y+freearr_y[j];
 
             snprintf(buf, sizeof(buf), "This is a random map.\nLevel: %d\n", (RP->dungeon_level)-1);
 
             random_sign->msg = add_string(buf);
-            object_insert_in_map(random_sign, map, NULL, 0);
+            object_insert_in_map_at(random_sign, map, NULL, 0, upx+freearr_x[j], upy+freearr_y[j]);
         }
     }
     /* Block the exit so things don't get dumped on top of it. */
     the_exit_up->move_block = MOVE_ALL;
 
-    object_insert_in_map(the_exit_up, map, NULL, 0);
-    maze[the_exit_up->x][the_exit_up->y] = '<';
+    object_insert_in_map_at(the_exit_up, map, NULL, 0, upx, upy);
+    maze[upx][upy] = '<';
 
     /* set the starting x,y for this map */
-    MAP_ENTER_X(map) = the_exit_up->x;
-    MAP_ENTER_Y(map) = the_exit_up->y;
+    MAP_ENTER_X(map) = upx;
+    MAP_ENTER_Y(map) = upy;
 
     /* first, look for a '>' character */
     find_in_layout(0, '>', &downx, &downy, maze, RP);
@@ -323,10 +318,8 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
         char buf[2048];
 
         i = object_find_first_free_spot(the_exit_down, map, downx, downy);
-        the_exit_down->x = downx+freearr_x[i];
-        the_exit_down->y = downy+freearr_y[i];
-        RP->origin_x = the_exit_down->x;
-        RP->origin_y = the_exit_down->y;
+        RP->origin_x = downx+freearr_x[i];
+        RP->origin_y = downy+freearr_y[i];
         write_map_parameters_to_string(RP, buf, sizeof(buf));
         the_exit_down->msg = add_string(buf);
         /* the identifier for making a random map. */
@@ -360,12 +353,9 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             if (final_map_exit == 1) {
                 /* setup the exit back */
                 the_exit_back->slaying = add_string(map->path);
-                the_exit_back->stats.hp = the_exit_down->x;
-                the_exit_back->stats.sp = the_exit_down->y;
-                the_exit_back->x = MAP_ENTER_X(new_map);
-                the_exit_back->y = MAP_ENTER_Y(new_map);
-
-                object_insert_in_map(the_exit_back, new_map, NULL, 0);
+                the_exit_back->stats.hp = downx+freearr_x[i];
+                the_exit_back->stats.sp = downy+freearr_y[i];
+                object_insert_in_map_at(the_exit_back, new_map, NULL, 0, MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map));
             }
 
             set_map_timeout(new_map);   /* So it gets swapped out */
@@ -374,7 +364,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
 
         /* Block the exit so things don't get dumped on top of it. */
         the_exit_down->move_block = MOVE_ALL;
-        object_insert_in_map(the_exit_down, map, NULL, 0);
+        object_insert_in_map_at(the_exit_down, map, NULL, 0, downx+freearr_x[i], downy+freearr_y[i]);
         maze[the_exit_down->x][the_exit_down->y] = '>';
     }
 }

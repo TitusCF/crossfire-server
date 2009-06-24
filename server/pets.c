@@ -323,15 +323,7 @@ void pets_follow_owner(object *ob, object *owner) {
         LOG(llevMonster, "No space for pet to follow, freeing %s.\n", ob->name);
         return; /* Will be freed since it's removed */
     }
-    for (tmp = ob; tmp != NULL; tmp = tmp->more) {
-        tmp->x = owner->x+freearr_x[dir]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x);
-        tmp->y = owner->y+freearr_y[dir]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
-        tmp->map = owner->map;
-        if (OUT_OF_REAL_MAP(tmp->map, tmp->x, tmp->y)) {
-            tmp->map = get_map_from_coord(tmp->map, &tmp->x, &tmp->y);
-        }
-    }
-    object_insert_in_map(ob, ob->map, NULL, 0);
+    object_insert_in_map_at(ob, owner->map, NULL, 0, owner->x+freearr_x[dir], owner->y+freearr_y[dir]);
     if (owner->type == PLAYER) /* Uh, I hope this is always true... */
         draw_ext_info(NDI_UNIQUE, 0, owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
                       "Your pet magically appears next to you", NULL);
@@ -831,7 +823,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
             tmp->attacktype |= AT_PHYSICAL;
     }
 
-    object_insert_in_map(tmp, tmp->map, op, 0);
+    object_insert_in_map_at(tmp, tmp->map, op, 0, tmp->x, tmp->y);
     return 1;
 }
 
@@ -1118,13 +1110,10 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
                 prev->more = tmp;
             }
             prev = tmp;
-            tmp->x = op->x+x+tmp->arch->clone.x;
-            tmp->y = op->y+y+tmp->arch->clone.y;
-            tmp->map = get_map_from_coord(op->map, &tmp->x, &tmp->y);
         }
         head->direction = freedir[ndir];
         head->stats.exp = 0;
-        head = object_insert_in_map(head, head->map, op, 0);
+        head = object_insert_in_map_at(head, op->map, op, 0, op->x+x, op->y+y);
         if (head != NULL && head->randomitems) {
             create_treasure(head->randomitems, head, GT_STARTEQUIP, 6, 0);
             if (QUERY_FLAG(head, FLAG_MONSTER)) {

@@ -208,13 +208,9 @@ void place_fountain_with_specials(mapstruct *map) {
     SET_FLAG(potion, FLAG_IDENTIFIED);
     potion->name = add_string("fountain");
     potion->name_pl = add_string("fountain");
-    potion->x = ix;
-    potion->y = iy;
     potion->material = M_ADAMANT;
-    fountain->x = ix;
-    fountain->y = iy;
-    object_insert_in_map(fountain, map, NULL, 0);
-    object_insert_in_map(potion, map, NULL, 0);
+    object_insert_in_map_at(fountain, map, NULL, 0, ix, iy);
+    object_insert_in_map_at(potion, map, NULL, 0, ix, iy);
 }
 
 /**
@@ -244,11 +240,6 @@ void place_special_exit(mapstruct *map, int hole_type, RMParms *RP) {
         iy = RANDOM()%(MAP_HEIGHT(map)-2)+1;
         i = object_find_first_free_spot(the_exit, map, ix, iy);
     }
-
-    ix += freearr_x[i];
-    iy += freearr_y[i];
-    the_exit->x = ix;
-    the_exit->y = iy;
 
     if (!hole_type)
         hole_type = RANDOM()%NR_OF_HOLE_TYPES+1;
@@ -302,7 +293,7 @@ void place_special_exit(mapstruct *map, int hole_type, RMParms *RP) {
     the_exit->slaying = add_string("/!");
     the_exit->msg = add_string(buf);
 
-    object_insert_in_map(the_exit, map, NULL, 0);
+    object_insert_in_map_at(the_exit, map, NULL, 0, ix+freearr_x[i], iy+freearr_y[i]);
 }
 
 /**

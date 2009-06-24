@@ -231,9 +231,7 @@ static void move_bolt(object *op) {
             tmp = object_new();
             object_copy(op, tmp);
             tmp->speed_left = -0.1;
-            tmp->x += DIRX(tmp),
-            tmp->y += DIRY(tmp);
-            tmp = object_insert_in_map(tmp, op->map, op, 0);
+            tmp = object_insert_in_map_at(tmp, op->map, op, 0, op->x+DIRX(op), op->y+DIRY(op));
             /* To make up for the decrease at the top of the function */
             tmp->duration++;
 
@@ -296,9 +294,7 @@ static void move_bullet(object *op) {
     }
 
     object_remove(op);
-    op->x = new_x;
-    op->y = new_y;
-    if ((op = object_insert_in_map(op, m, op, 0)) == NULL)
+    if ((op = object_insert_in_map_at(op, m, op, 0, new_x, new_y)) == NULL)
         return;
 
     if (reflwall(op->map, op->x, op->y, op)) {
@@ -342,9 +338,7 @@ static void explosion(object *op) {
                 tmp->speed_left = -0.21;
                 tmp->range--;
                 tmp->value = 0;
-                tmp->x = dx;
-                tmp->y = dy;
-                object_insert_in_map(tmp, m, op, 0);
+                object_insert_in_map_at(tmp, m, op, 0, dx, dy);
             }
         }
         /* Reset range so we don't try to propogate anymore.
@@ -413,14 +407,11 @@ static void move_cone(object *op) {
             object *tmp = object_new();
 
             object_copy(op, tmp);
-            tmp->x = x;
-            tmp->y = y;
-
             tmp->duration = op->duration+1;
 
             /* Use for spell tracking - see ok_to_put_more() */
             tmp->stats.maxhp = op->stats.maxhp;
-            object_insert_in_map(tmp, op->map, op, 0);
+            object_insert_in_map_at(tmp, op->map, op, 0, x, y);
             if (tmp->other_arch)
                 cone_drop(tmp);
         }
@@ -446,9 +437,7 @@ static void animate_bomb(object *op) {
             return;
 
         object_remove(op);
-        op->x = env->x;
-        op->y = env->y;
-        if ((op = object_insert_in_map(op, env->map, op, 0)) == NULL)
+        if ((op = object_insert_in_map_at(op, env->map, op, 0, env->x, env->y)) == NULL)
             return;
     }
 
@@ -475,9 +464,7 @@ static void animate_bomb(object *op) {
             }
             if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
                 SET_ANIMATION(tmp, i);
-            tmp->x = op->x+freearr_x[i];
-            tmp->y = op->y+freearr_x[i];
-            object_insert_in_map(tmp, op->map, op, 0);
+            object_insert_in_map_at(tmp, op->map, op, 0, op->x+freearr_x[i], op->y+freearr_x[i]);
             ob_process(tmp);
         }
     }
@@ -528,15 +515,12 @@ static void move_missile(object *op) {
         object_free(op);
         return;
     }
-    op->x = new_x;
-    op->y = new_y;
-    op->map = m;
-    i = spell_find_dir(op->map, op->x, op->y, object_get_owner(op));
+    i = spell_find_dir(m, new_x, new_y, object_get_owner(op));
     if (i > 0 && i != op->direction) {
         op->direction = adjust_dir(op->direction, i);
         SET_ANIMATION(op, op->direction);
     }
-    object_insert_in_map(op, op->map, op, 0);
+    object_insert_in_map_at(op, m, op, 0, new_x, new_y);
 }
 
 /**
@@ -605,9 +589,7 @@ static void move_ball_spell(object *op) {
     }
 
     object_remove(op);
-    op->y = ny;
-    op->x = nx;
-    object_insert_in_map(op, m, op, 0);
+    object_insert_in_map_at(op, m, op, 0, nx, ny);
 
     dam_save = op->stats.dam;  /* save the original dam: we do halfdam on
                                 surrounding squares */
@@ -641,9 +623,7 @@ static void move_ball_spell(object *op) {
         /* insert the other arch */
         if (op->other_arch && !(OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, hx, hy)))) {
             new_ob = arch_to_object(op->other_arch);
-            new_ob->x = hx;
-            new_ob->y = hy;
-            object_insert_in_map(new_ob, m, op, 0);
+            object_insert_in_map_at(new_ob, m, op, 0, hx, hy);
         }
     }
 
@@ -762,13 +742,11 @@ static void move_aura(object *aura) {
         object_free(aura);
         return;
     }
-    aura->x = env->x;
-    aura->y = env->y;
 
     /* we need to jump out of the inventory for a bit
      * in order to hit the map conveniently.
      */
-    object_insert_in_map(aura, env->map, aura, 0);
+    object_insert_in_map_at(aura, env->map, aura, 0, env->x, env->y);
 
     for (i = 1; i < 9; i++) {
         sint16 nx, ny;
@@ -788,9 +766,7 @@ static void move_aura(object *aura) {
                 object *new_ob;
 
                 new_ob = arch_to_object(aura->other_arch);
-                new_ob->x = nx;
-                new_ob->y = ny;
-                object_insert_in_map(new_ob, m, aura, 0);
+                object_insert_in_map_at(new_ob, m, aura, 0, nx, ny);
             }
         }
     }
@@ -843,13 +819,11 @@ static void forklightning(object *op, object *tmp) {
     new_bolt->speed_left = -0.1;
     new_bolt->direction = t_dir;
     new_bolt->duration++;
-    new_bolt->x = sx;
-    new_bolt->y = sy;
     new_bolt->stats.dam /= 2;  /* reduce daughter bolt damage */
     new_bolt->stats.dam++;
     tmp->stats.dam /= 2;  /* reduce father bolt damage */
     tmp->stats.dam++;
-    new_bolt = object_insert_in_map(new_bolt, m, op, 0);
+    new_bolt = object_insert_in_map_at(new_bolt, m, op, 0, sx, sy);
     object_update_turn_face(new_bolt);
 }
 

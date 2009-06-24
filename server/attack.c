@@ -205,11 +205,8 @@ void save_throw_object(object *op, uint32 type, object *originator) {
                     op->x = env->x,
                     op->y = env->y;
                     object_insert_in_ob(op, env);
-                } else {
-                    op->x = x,
-                    op->y = y;
-                    object_insert_in_map(op, m, originator, 0);
-                }
+                } else
+                    object_insert_in_map_at(op, m, originator, 0, x, y);
             }
             return;
         }
@@ -255,15 +252,13 @@ void save_throw_object(object *op, uint32 type, object *originator) {
         tmp = map_find_by_archetype(op->map, op->x, op->y, at);
         if (tmp == NULL) {
             tmp = arch_to_object(at);
-            tmp->x = op->x,
-            tmp->y = op->y;
             /* This was in the old (pre new movement code) -
              * icecubes have slow_move set to 1 - don't want
              * that for ones we create.
              */
             tmp->move_slow_penalty = 0;
             tmp->move_slow = 0;
-            object_insert_in_map(tmp, op->map, originator, 0);
+            object_insert_in_map_at(tmp, op->map, originator, 0, op->x, op->y);
         }
         if (!QUERY_FLAG(op, FLAG_REMOVED))
             object_remove(op);
@@ -958,7 +953,7 @@ object *hit_with_arrow(object *op, object *victim) {
         if (free_no_drop(hitter))
             return NULL;
 
-        object_insert_in_map(hitter, container->map, hitter, INS_NO_MERGE|INS_NO_WALK_ON);
+        object_insert_in_map_at(hitter, container->map, hitter, INS_NO_MERGE|INS_NO_WALK_ON, container->x, container->y);
         /* Note that we now have an empty THROWN_OBJ on the map.  Code that
          * might be called until this THROWN_OBJ is either reassembled or
          * removed at the end of this function must be able to deal with empty
@@ -1035,9 +1030,7 @@ object *hit_with_arrow(object *op, object *victim) {
         */
         if (victim_x != hitter->x || victim_y != hitter->y) {
             object_remove(hitter);
-            hitter->x = victim_x;
-            hitter->y = victim_y;
-            object_insert_in_map(hitter, victim_map, hitter, 0);
+            object_insert_in_map_at(hitter, victim_map, hitter, 0, victim_x, victim_y);
         } else {
             /* Else leave arrow where it is */
             object_merge(hitter, NULL);
@@ -1515,12 +1508,8 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
         if (death_animation != NULL) {
             object *death = create_archetype(death_animation);
 
-            if (death) {
-                death->map = op->map;
-                death->x = op->x;
-                death->y = op->y;
-                object_insert_in_map(death, op->map, op, 0);
-            }
+            if (death)
+                object_insert_in_map_at(death, op->map, op, 0, op->x, op->y);
         }
     }
 
@@ -2292,9 +2281,7 @@ void paralyze_living(object *op, object *hitter, int dam) {
     tmp = map_find_by_type(op->map, op->x, op->y, PARAIMAGE);
     if (tmp == NULL) {
         tmp = clone_arch(PARAIMAGE);
-        tmp->x = op->x,
-        tmp->y = op->y;
-        object_insert_in_map(tmp, op->map, tmp, INS_NO_MERGE|INS_NO_WALK_ON);
+        object_insert_in_map_at(tmp, op->map, tmp, INS_NO_MERGE|INS_NO_WALK_ON, op->x, op->y);
     }
 */
 

@@ -94,14 +94,11 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             "You disembark from %s.", "You disembark from %s.",
             name_old);
         object_remove(applier);
-        applier->map = old_transport->map;
-        applier->x = old_transport->x;
-        applier->y = old_transport->y;
         if (applier->contr == old_transport->contr)
             old_transport->contr = NULL;
 
         applier->contr->transport = NULL;
-        object_insert_in_map(applier, applier->map, applier, 0);
+        object_insert_in_map_at(applier, old_transport->map, applier, 0, old_transport->x, old_transport->y);
         object_sum_weight(old_transport);
 
         /* Possible for more than one player to be using a transport.
