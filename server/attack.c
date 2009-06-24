@@ -1918,10 +1918,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
      * called again.  Chaos should change on each attack.
      */
     if (type&AT_CHAOS) {
-        int i;
-
-        i = rndm(0, 21);
-        type = ATTACKS[i].attacktype|AT_MAGIC;
+        type = ATTACKS[RANDOM()%(sizeof(ATTACKS)/sizeof(*ATTACKS))].attacktype|AT_MAGIC;
     }
 
     /* Holyword is really an attacktype modifier (like magic is).  If
