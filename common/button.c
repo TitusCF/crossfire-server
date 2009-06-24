@@ -53,6 +53,8 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
     object *tmp;
 
     for (; ol; ol = ol->next) {
+        object *part;
+
         if (!ol->ob || ol->ob->count != ol->id) {
             LOG(llevError, "Internal error in trigger_connect. No object associated with link id (%u) (cause='%s'.\n", ol->id, (cause && cause->name) ? cause->name : "");
             continue;
@@ -120,20 +122,12 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
             break;
 
         case TIMED_GATE:
-            tmp->speed = tmp->arch->clone.speed;
-            object_update_speed(tmp);  /* original values */
-            tmp->value = tmp->arch->clone.value;
-            tmp->stats.sp = 1;
-            tmp->stats.hp = tmp->stats.maxhp;
-            /* Handle multipart gates.  We copy the value for the other parts
-             * from the head - this ensures that the data will consistent
-             */
-            for (tmp = tmp->more; tmp != NULL; tmp = tmp->more) {
-                tmp->speed = tmp->head->speed;
-                tmp->value = tmp->head->value;
-                tmp->stats.sp = tmp->head->stats.sp;
-                tmp->stats.hp = tmp->head->stats.hp;
-                object_update_speed(tmp);
+            for (part = tmp; tmp != NULL; tmp = tmp->more) {
+                part->speed = tmp->arch->clone.speed;
+                part->value = tmp->arch->clone.value;
+                part->stats.sp = 1;
+                part->stats.hp = tmp->stats.maxhp;
+                object_update_speed(part);
             }
             break;
 
