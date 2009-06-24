@@ -1003,11 +1003,8 @@ int command_create(object *op, char *params) {
         if (at_spell)
             object_insert_in_ob(arch_to_object(at_spell), tmp);
 
-        tmp->x = op->x;
-        tmp->y = op->y;
         if (set_nrof)
             tmp->nrof = nrof;
-        tmp->map = op->map;
 
         if (at->clone.randomitems != NULL && !at_spell) {
             create_treasure(at->clone.randomitems, tmp, 0, op->map->difficulty, 0);

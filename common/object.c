@@ -1863,8 +1863,7 @@ object *object_insert_in_map_at(object *op, mapstruct *m, object *originator, in
     for (tmp = op; tmp; tmp = tmp->more) {
         tmp->x = x+tmp->arch->clone.x;
         tmp->y = y+tmp->arch->clone.y;
-        if (op != tmp && !tmp->map)
-            tmp->map = op->map ? op->map : m;
+        tmp->map = m;
     }
     return object_insert_in_map(op, m, originator, flag);
 }
