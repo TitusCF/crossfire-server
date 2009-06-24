@@ -541,7 +541,6 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
 int fire_bolt(object *op, object *caster, int dir, object *spob);
 void explode_bullet(object *op);
 void check_bullet(object *op);
-int fire_bullet(object *op, object *caster, sint16 x, sint16 y, int dir, object *spob);
 void cone_drop(object *op);
 int cast_cone(object *op, object *caster, int dir, object *spell);
 int create_bomb(object *op, object *caster, int dir, object *spell);

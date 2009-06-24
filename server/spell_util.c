@@ -643,6 +643,8 @@ int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, uint32 immune_s
  * @return
  * 0 on failure, 1 on success.
  * @todo check the note?
+ * @note
+ * fire_bullet() has been merged into fire_arch_from_position()
  */
 int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int dir, object *spell) {
     object *tmp;
@@ -651,6 +653,9 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
 
     if (spell->other_arch == NULL)
         return 0;
+
+    if (spell->type != SPELL)
+        LOG(llevError, "Unexpected object type %d in fire_arch_from_position for %s\n", spell->type, spell->name);
 
     m = op->map;
     mflags = get_map_flags(m, &m, x, y, &x, &y);
@@ -662,49 +667,97 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
     if (tmp == NULL)
         return 0;
 
-    if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(m, x, y))) {
-        if (caster->type == PLAYER)
-            /* If caster is not player, it's for instance a swarm, so don't say there's an issue. */
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                          "You can't cast the spell on top of a wall!", NULL);
+    mflags = get_map_flags(m, &tmp->map, x, y, &tmp->x, &tmp->y);
+    if (mflags&P_OUT_OF_MAP) {
         object_free(tmp);
         return 0;
     }
 
-    tmp->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
-    tmp->duration = spell->duration+SP_level_duration_adjust(caster, spell);
-    /* code in time.c uses food for some things, duration for others */
-    tmp->stats.food = tmp->duration;
-    tmp->range = spell->range+SP_level_range_adjust(caster, spell);
-    tmp->attacktype = spell->attacktype;
-    tmp->x = x;
-    tmp->y = y;
-    tmp->direction = dir;
-    if (object_get_owner(op) != NULL)
-        object_copy_owner(tmp, op);
-    else
+    if (spell->subtype == SP_BULLET) {
+        /*  peterm:  level dependency for bolts  */
+        tmp->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
+        tmp->attacktype = spell->attacktype;
+        if (spell->slaying)
+            tmp->slaying = add_refcount(spell->slaying);
+
+        tmp->range = 50;
+
+        /* Need to store duration/range for the ball to use */
+        tmp->stats.hp = spell->duration+SP_level_duration_adjust(caster, spell);
+        tmp->stats.maxhp = spell->range+SP_level_range_adjust(caster, spell);
+        tmp->dam_modifier = spell->stats.food+SP_level_dam_adjust(caster, spell);
+
+        if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
+            SET_ANIMATION(tmp, dir);
+
         object_set_owner(tmp, op);
-    tmp->level = caster_level(caster, spell);
+    } else {
+        if (spell->subtype != SP_MAGIC_MISSILE && spell->subtype != SP_MOVING_BALL)
+            LOG(llevError, "Unexpected object subtype %d in fire_arch_from_position for %s\n", spell->subtype, spell->name);
+
+        if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
+            if (caster->type == PLAYER)
+                /* If caster is not player, it's for instance a swarm, so don't say there's an issue. */
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                              "You can't cast the spell on top of a wall!", NULL);
+            object_free(tmp);
+            return 0;
+        }
+
+        tmp->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
+        tmp->duration = spell->duration+SP_level_duration_adjust(caster, spell);
+        /* code in time.c uses food for some things, duration for others */
+        tmp->stats.food = tmp->duration;
+        tmp->range = spell->range+SP_level_range_adjust(caster, spell);
+        tmp->attacktype = spell->attacktype;
+        if (object_get_owner(op) != NULL)
+            object_copy_owner(tmp, op);
+        else
+            object_set_owner(tmp, op);
+        tmp->level = caster_level(caster, spell);
+    }
+
+    tmp->direction = dir;
     set_spell_skill(op, caster, spell, tmp);
 
-    /* needed for AT_HOLYWORD, AT_GODPOWER stuff */
-    if (tmp->attacktype&AT_HOLYWORD || tmp->attacktype&AT_GODPOWER) {
-        if (!tailor_god_spell(tmp, op))
-            return 0;
+    if (spell->subtype == SP_BULLET) {
+        if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
+            if (!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
+                object_free(tmp);
+                return 0;
+            }
+            tmp->direction = absdir(tmp->direction+4);
+            x += DIRX(tmp);
+            y += DIRY(tmp);
+            mflags = get_map_flags(m, &m, x, y, &x, &y);
+            if (mflags&P_OUT_OF_MAP) {
+                object_free(tmp);
+                return 0;
+            }
+            tmp->x = x;
+            tmp->y = y;
+            tmp->map = m;
+        }
+
+        tmp = object_insert_in_map(tmp, tmp->map, op, 0);
+        if (tmp != NULL)
+            check_bullet(tmp);
+    } else /*if (spell->subtype == SP_MAGIC_MISSILE || spell->subtype == SP_MOVING_BALL) */ {
+        /* needed for AT_HOLYWORD, AT_GODPOWER stuff */
+        if (tmp->attacktype&AT_HOLYWORD || tmp->attacktype&AT_GODPOWER) {
+            if (!tailor_god_spell(tmp, op))
+                return 0;
+        }
+        if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
+            SET_ANIMATION(tmp, dir);
+
+        tmp = object_insert_in_map(tmp, tmp->map, op, 0);
+        if (tmp != NULL)
+            ob_process(tmp);
     }
-    if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
-        SET_ANIMATION(tmp, dir);
-
-    tmp = object_insert_in_map(tmp, m, op, 0);
-    if (tmp == NULL)
-        return 1;
-
-    ob_process(tmp);
 
     return 1;
 }
-
-
 
 /*****************************************************************************
  *
@@ -1601,7 +1654,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         break;
 
     case SP_BULLET:
-        success = fire_bullet(op, caster, op->x+freearr_x[dir], op->y+freearr_y[dir], dir, spell_ob);
+        success = fire_arch_from_position(op, caster, op->x+freearr_x[dir], op->y+freearr_y[dir], dir, spell_ob);
         break;
 
     case SP_CONE:

@@ -627,7 +627,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         object *fb = create_archetype(SP_MED_FIREBALL);
 
         remove_contents(cauldron->inv, NULL);
-        fire_bullet(cauldron, cauldron, cauldron->x, cauldron->y, 0, fb);
+        fire_arch_from_position(cauldron, cauldron, cauldron->x, cauldron->y, 0, fb);
         object_free(fb);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "The %s erupts in flame!",
