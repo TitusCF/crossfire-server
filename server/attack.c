@@ -1132,13 +1132,12 @@ static void scare_creature(object *target, object *hitter) {
  * @param dam
  * maximum dealt damage.
  * @param attacknum
- * number of the attacktype of the attack. Must be a single value and not a combination.
- * See @ref Attacktypes "the ATNR_xxx" values.
+ * number of the attacktype of the attack. See @ref Attacktypes "the ATNR_xxx"
+ * values.
  * @return
  * damage to actually do.
  */
 static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 attacknum) {
-
     int doesnt_slay = 1;
     char name_hitter[MAX_BUF], name_op[MAX_BUF];
 
@@ -1951,7 +1950,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
             continue;
 
         /* Go through and hit the player with each attacktype, one by one.
-               * hit_with_one_attacktype only figures out the damage, doesn't inflict
+         * hit_with_one_attacktype only figures out the damage, doesn't inflict
          * it.  It will do the appropriate action for attacktypes with
          * effects (slow, paralization, etc.
                 */
