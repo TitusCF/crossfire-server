@@ -1239,50 +1239,47 @@ void cleanup(void) {
  * player.
  * @param draw_exit
  * if set, display leaving message to other players.
- * @todo check for pl != NULL should include the 'left the game', just in case (or remove it?)
  */
 void leave(player *pl, int draw_exit) {
-    if (pl != NULL) {
-        pl->socket.status = Ns_Dead;
-        LOG(llevInfo, "LOGOUT: Player named %s from ip %s\n", pl->ob->name, pl->socket.host);
+    pl->socket.status = Ns_Dead;
+    LOG(llevInfo, "LOGOUT: Player named %s from ip %s\n", pl->ob->name, pl->socket.host);
 
-        check_score(pl->ob, 1);
+    check_score(pl->ob, 1);
 
-        /* If this player is the captain of the transport, need to do
-         * some extra work.  By the time we get here, object_remove()
-         * should have already been called.
+    /* If this player is the captain of the transport, need to do
+     * some extra work.  By the time we get here, object_remove()
+     * should have already been called.
+     */
+    if (pl->transport && pl->transport->contr == pl) {
+        /* If inv is a non player, inv->contr will be NULL, but that
+         * is OK.
          */
-        if (pl->transport && pl->transport->contr == pl) {
-            /* If inv is a non player, inv->contr will be NULL, but that
-             * is OK.
-             */
-            if (pl->transport->inv)
-                pl->transport->contr = pl->transport->inv->contr;
-            else
-                pl->transport->contr = NULL;
+        if (pl->transport->inv)
+            pl->transport->contr = pl->transport->inv->contr;
+        else
+            pl->transport->contr = NULL;
 
-            if (pl->transport->contr) {
-                char name[MAX_BUF];
+        if (pl->transport->contr) {
+            char name[MAX_BUF];
 
-                query_name(pl->transport, name, MAX_BUF);
-                draw_ext_info_format(NDI_UNIQUE, 0, pl->transport->contr->ob,
-                                     MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                                     "%s has left.  You are now the captain of %s",
-                                     "%s has left.  You are now the captain of %s",
-                                     pl->ob->name, name);
-            }
+            query_name(pl->transport, name, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->transport->contr->ob,
+                                 MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+                                 "%s has left.  You are now the captain of %s",
+                                 "%s has left.  You are now the captain of %s",
+                                 pl->ob->name, name);
         }
-
-        if (pl->ob->map) {
-            if (pl->ob->map->in_memory == MAP_IN_MEMORY)
-                pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
-            /* we need to update player count, since object_remove() isn't called */
-            if (!pl->hidden)
-                pl->ob->map->players--;
-            pl->ob->map = NULL;
-        }
-        pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
     }
+
+    if (pl->ob->map) {
+        if (pl->ob->map->in_memory == MAP_IN_MEMORY)
+            pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
+        /* we need to update player count, since object_remove() isn't called */
+        if (!pl->hidden)
+            pl->ob->map->players--;
+        pl->ob->map = NULL;
+    }
+    pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
     party_leave(pl->ob);
     /* If a hidden dm dropped connection do not create
     * inconsistencies by showing that they have left the game
