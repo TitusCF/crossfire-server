@@ -353,7 +353,7 @@ object *find_skill_by_number(object *who, int skillno) {
  * success
  */
 int change_skill(object *who, object *new_skill, int flag) {
-    int old_range;
+    rangetype old_range;
 
     if (who->type != PLAYER)
         return 0;
