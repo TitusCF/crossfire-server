@@ -1841,7 +1841,7 @@ int friendly_fire(object *op, object *hitter) {
  * rename to something more meaningful.
  */
 int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
-    int maxdam = 0, ndam = 0, attacktype = 1, magic = (type&AT_MAGIC);
+    int maxdam = 0, ndam = 0, magic = (type&AT_MAGIC);
     int maxattacktype, attacknum;
     int body_attack = op->head != NULL;   /* Did we hit op's head? */
     int simple_attack;
@@ -1941,7 +1941,11 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     }
 
     maxattacktype = type; /* initialize this to something */
-    for (attacknum = 0; attacknum < NROFATTACKS; attacknum++, attacktype = 1<<attacknum) {
+    for (attacknum = 0; attacknum < NROFATTACKS; attacknum++) {
+        int attacktype;
+
+        attacktype = 1<<attacknum;
+
         /* Magic isn't really a true attack type - it gets combined with other
          * attack types.  As such, skip it over.  However, if magic is
          * the only attacktype in the group, then still attack with it
