@@ -362,7 +362,7 @@ int change_skill(object *who, object *new_skill, int flag) {
 
     if (who->chosen_skill && who->chosen_skill == new_skill) {
         /* optimization for changing skill to current skill */
-        if (who->type == PLAYER && !(flag&0x1))
+        if (!(flag&0x1))
             who->contr->shoottype = range_skill;
         return 1;
     }
