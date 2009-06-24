@@ -426,7 +426,6 @@ void clear_skill(object *who) {
  */
 int do_skill(object *op, object *part, object *skill, int dir, const char *string) {
     int success = 0, exp = 0;
-    object *tmp;
 
     if (!skill)
         return 0;
@@ -437,6 +436,8 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
      * the player doesn't have a bucket for that, create one.
      */
     if (skill->type != SKILL && op->type == PLAYER) {
+        object *tmp;
+
         tmp = object_find_by_type_and_skill(op, SKILL, skill->skill);
         if (!tmp)
             tmp = give_skill_by_name(op, skill->skill);
@@ -830,7 +831,6 @@ static int clipped_percent(sint64 a, sint64 b) {
  * optional string to restrict skills to show.
  */
 void show_skills(object *op, const char *search) {
-    char buf[MAX_BUF];
     const char *cp;
     int i, num_skills_found = 0;
     static const char *const periods = "........................................";
@@ -839,6 +839,8 @@ void show_skills(object *op, const char *search) {
 
     FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == SKILL) {
+            char buf[MAX_BUF];
+
             if (search && strstr(tmp->name, search) == NULL)
                 continue;
             /* Basically want to fill this out to 40 spaces with periods */
@@ -998,10 +1000,10 @@ int use_skill(object *op, const char *string) {
  */
 static object *find_best_player_hth_skill(object *op) {
     object *best_skill = NULL;
-    int dragon = is_dragon_pl(op), last_skill = sizeof(unarmed_skills), i;
+    int last_skill;
 
     /* Dragons are a special case - gros 25th July 2006 */
-    if (dragon) {
+    if (is_dragon_pl(op)) {
         object *tmp;
 
         tmp = find_skill_by_number(op, SK_CLAWING);
@@ -1009,8 +1011,11 @@ static object *find_best_player_hth_skill(object *op) {
                   * draconic toothache ? :) */
             return tmp;
     }
+
+    last_skill = sizeof(unarmed_skills);
     FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == SKILL) {
+            int i;
 
             /* The order in the array is preferred order.  So basically,
              * we just cut down the number to search - eg, if we find a skill
