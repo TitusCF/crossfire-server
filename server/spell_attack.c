@@ -288,19 +288,19 @@ void check_bullet(object *op) {
  * what object is really casting.
  * @param dir
  * casting direction.
- * @param spob
+ * @param spell
  * spell object for the bullet.
  * @retval 0
  * no bullet could be fired.
  * @retval 1
  * bullet was fired (but may have been destroyed already).
  */
-int fire_bullet(object *op, object *caster, sint16 x, sint16 y, int dir, object *spob) {
+int fire_bullet(object *op, object *caster, sint16 x, sint16 y, int dir, object *spell) {
     object *tmp;
     int mflags;
     mapstruct *m;
 
-    if (!spob->other_arch)
+    if (!spell->other_arch)
         return 0;
 
     m = op->map;
@@ -309,29 +309,29 @@ int fire_bullet(object *op, object *caster, sint16 x, sint16 y, int dir, object 
         return 0;
     }
 
-    tmp = arch_to_object(spob->other_arch);
+    tmp = arch_to_object(spell->other_arch);
     if (tmp == NULL)
         return 0;
 
     /*  peterm:  level dependency for bolts  */
-    tmp->stats.dam = spob->stats.dam+SP_level_dam_adjust(caster, spob);
-    tmp->attacktype = spob->attacktype;
-    if (spob->slaying)
-        tmp->slaying = add_refcount(spob->slaying);
+    tmp->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
+    tmp->attacktype = spell->attacktype;
+    if (spell->slaying)
+        tmp->slaying = add_refcount(spell->slaying);
 
     tmp->range = 50;
 
     /* Need to store duration/range for the ball to use */
-    tmp->stats.hp = spob->duration+SP_level_duration_adjust(caster, spob);
-    tmp->stats.maxhp = spob->range+SP_level_range_adjust(caster, spob);
-    tmp->dam_modifier = spob->stats.food+SP_level_dam_adjust(caster, spob);
+    tmp->stats.hp = spell->duration+SP_level_duration_adjust(caster, spell);
+    tmp->stats.maxhp = spell->range+SP_level_range_adjust(caster, spell);
+    tmp->dam_modifier = spell->stats.food+SP_level_dam_adjust(caster, spell);
 
     tmp->direction = dir;
     if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
         SET_ANIMATION(tmp, dir);
 
     object_set_owner(tmp, op);
-    set_spell_skill(op, caster, spob, tmp);
+    set_spell_skill(op, caster, spell, tmp);
 
     tmp->x = x;
     tmp->y = y;
