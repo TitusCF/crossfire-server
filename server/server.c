@@ -1241,6 +1241,11 @@ void cleanup(void) {
  * if set, display leaving message to other players.
  */
 void leave(player *pl, int draw_exit) {
+    if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
+        pets_terminate_all(pl->ob);
+        object_remove(pl->ob);
+    }
+
     pl->socket.status = Ns_Dead;
     LOG(llevInfo, "LOGOUT: Player named %s from ip %s\n", pl->ob->name, pl->socket.host);
 

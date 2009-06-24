@@ -501,13 +501,6 @@ void check_login(object *op) {
                 pltmp->socket.status = Ns_Dead;
 
                 save_player(pltmp->ob, 0);
-                if (!QUERY_FLAG(pltmp->ob, FLAG_REMOVED)) {
-                    /* Need to terminate the pets, since the new object
-                     * will be different
-                     */
-                    pets_terminate_all(pltmp->ob);
-                    object_remove(pltmp->ob);
-                }
                 leave(pltmp, 1);
                 final_free_player(pltmp);
                 break;

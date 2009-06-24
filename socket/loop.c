@@ -426,10 +426,6 @@ void do_server(void) {
             player *npl = pl->next;
 
             save_player(pl->ob, 0);
-            if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
-                pets_terminate_all(pl->ob);
-                object_remove(pl->ob);
-            }
             leave(pl, 1);
             final_free_player(pl);
             pl = npl;
@@ -552,10 +548,6 @@ void do_server(void) {
 
         if (FD_ISSET(pl->socket.fd, &tmp_exceptions)) {
             save_player(pl->ob, 0);
-            if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
-                pets_terminate_all(pl->ob);
-                object_remove(pl->ob);
-            }
             leave(pl, 1);
             final_free_player(pl);
         } else {
@@ -579,10 +571,6 @@ void do_server(void) {
              */
             if (pl->socket.status == Ns_Dead) {
                 save_player(pl->ob, 0);
-                if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) {
-                    pets_terminate_all(pl->ob);
-                    object_remove(pl->ob);
-                }
                 leave(pl, 1);
                 final_free_player(pl);
             } else {
