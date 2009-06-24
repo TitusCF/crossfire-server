@@ -2318,7 +2318,6 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
     if (MAP_DARKNESS(op->map) && (op->glow_radius != 0))
         update_all_los(op->map, op->x, op->y);
 
-
     /* updates flags (blocked, alive, no magic, etc) for this map space */
     object_update(op, UP_OBJ_INSERT);
 

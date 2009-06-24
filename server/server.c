@@ -1242,7 +1242,6 @@ void cleanup(void) {
  * @todo check for pl != NULL should include the 'left the game', just in case (or remove it?)
  */
 void leave(player *pl, int draw_exit) {
-
     if (pl != NULL) {
         pl->socket.status = Ns_Dead;
         LOG(llevInfo, "LOGOUT: Player named %s from ip %s\n", pl->ob->name, pl->socket.host);
