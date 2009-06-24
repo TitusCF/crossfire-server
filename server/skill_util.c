@@ -333,7 +333,7 @@ object *find_skill_by_number(object *who, int skillno) {
 }
 
 /**
- * This changes the objects skill to new_skill.
+ * This changes the object's skill to new_skill.
  * Note that this function doesn't always need to get used -
  * you can now add skill exp to the player without the chosen_skill being
  * set.  This function is of most interest to players to update
