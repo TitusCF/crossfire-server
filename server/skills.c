@@ -1241,7 +1241,10 @@ int find_traps(object *pl, object *skill) {
                         if (trap_see(pl, tmp2)) {
                             trap_show(tmp2, tmp);
                             if (tmp2->stats.Cha > 1) {
-                                if (!tmp2->owner || tmp2->owner->type != PLAYER)
+                                object *owner;
+
+                                owner = object_get_owner(tmp2);
+                                if (owner == NULL || owner->type != PLAYER)
                                     expsum += calc_skill_exp(pl, tmp2, skill);
 
                                 tmp2->stats.Cha = 1; /* unhide the trap */
@@ -1252,7 +1255,10 @@ int find_traps(object *pl, object *skill) {
             if ((tmp->type == RUNE || tmp->type == TRAP) && trap_see(pl, tmp)) {
                 trap_show(tmp, tmp);
                 if (tmp->stats.Cha > 1) {
-                    if (!tmp->owner || tmp->owner->type != PLAYER)
+                    object *owner;
+
+                    owner = object_get_owner(tmp);
+                    if (owner == NULL || owner->type != PLAYER)
                         expsum += calc_skill_exp(pl, tmp, skill);
                     tmp->stats.Cha = 1; /* unhide the trap */
                 }
@@ -1299,8 +1305,10 @@ int remove_trap(object *op, object *skill) {
             if (tmp->type != PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER)) {
                 FOR_INV_PREPARE(tmp, tmp2)
                     if ((tmp2->type == RUNE || tmp2->type == TRAP) && tmp2->stats.Cha <= 1) {
+                        object *owner;
+
                         trap_show(tmp2, tmp);
-                        if (trap_disarm(op, tmp2, 1, skill) && (!tmp2->owner || tmp2->owner->type != PLAYER)) {
+                        if (trap_disarm(op, tmp2, 1, skill) && ((owner = object_get_owner(tmp2)) == NULL || owner->type != PLAYER)) {
                             tmp2->stats.exp = tmp2->stats.Cha*tmp2->level;
                             success += calc_skill_exp(op, tmp2, skill);
                         } else {
@@ -1311,8 +1319,10 @@ int remove_trap(object *op, object *skill) {
                 FOR_INV_FINISH();
             }
             if ((tmp->type == RUNE || tmp->type == TRAP) && tmp->stats.Cha <= 1) {
+                object *owner;
+
                 trap_show(tmp, tmp);
-                if (trap_disarm(op, tmp, 1, skill) && (!tmp->owner || tmp->owner->type != PLAYER)) {
+                if (trap_disarm(op, tmp, 1, skill) && ((owner = object_get_owner(tmp)) == NULL || owner->type != PLAYER)) {
                     tmp->stats.exp = tmp->stats.Cha*tmp->level;
                     success += calc_skill_exp(op, tmp, skill);
                 } else {

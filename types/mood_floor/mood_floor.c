@@ -81,14 +81,18 @@ static void do_mood_floor(object *op, object *op2) {
             /* lots of checks here, but want to make sure we don't
              * dereference a null value
              */
-            if (tmp->type == GOLEM
-            && tmp->owner
-            && tmp->owner->type == PLAYER
-            && tmp->owner->contr->ranges[range_golem] == tmp) {
-                tmp->owner->contr->ranges[range_golem] = NULL;
-                tmp->owner->contr->golem_count = 0;
+            if (tmp->type == GOLEM) {
+                object *owner;
+
+                owner = object_get_owner(tmp);
+                if (owner != NULL
+                && owner->type == PLAYER
+                && owner->contr->ranges[range_golem] == tmp) {
+                    owner->contr->ranges[range_golem] = NULL;
+                    owner->contr->golem_count = 0;
+                }
             }
-            tmp->owner = NULL;
+            object_clear_owner(tmp);
         }
         break;
 

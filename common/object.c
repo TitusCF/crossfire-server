@@ -390,6 +390,8 @@ void object_dump(object *op, StringBuffer *sb) {
     /*  object *tmp;*/
 
     if (op->arch != NULL) {
+        object *owner;
+
         stringbuffer_append_string(sb, "arch ");
         stringbuffer_append_string(sb, op->arch->name ? op->arch->name : "(null)");
         stringbuffer_append_string(sb, "\n");
@@ -407,8 +409,9 @@ void object_dump(object *op, StringBuffer *sb) {
         if (op->inv) {
             stringbuffer_append_printf(sb, "inv %u\n", op->inv->count);
         }
-        if (op->owner) {
-            stringbuffer_append_printf(sb, "owner %u\n", op->owner->count);
+        owner = object_get_owner(op);
+        if (owner != NULL) {
+            stringbuffer_append_printf(sb, "owner %u\n", owner->count);
         }
         stringbuffer_append_string(sb, "end\n");
     } else {
@@ -556,9 +559,9 @@ object *object_get_owner(object *op) {
     && !QUERY_FLAG(op->owner, FLAG_REMOVED)
     && op->owner->count == op->ownercount)
         return op->owner;
+
     LOG(llevError, "I had to clean an owner when in object_get_owner, this isn't my job.\n");
-    op->owner = NULL;
-    op->ownercount = 0;
+    object_clear_owner(op);
     return NULL;
 }
 
@@ -609,19 +612,13 @@ void object_set_owner(object *op, object *owner) {
      * freed and then another object replacing it.  Since the ownercounts
      * didn't match, this check is valid and I believe that cause is valid.
      */
-    while (owner->owner
-    && owner != owner->owner
-    && owner->ownercount == owner->owner->count)
-        owner = owner->owner;
+    for (;;) {
+        object *tmp;
 
-    /* IF the owner still has an owner, we did not resolve to a final owner.
-     * so lets not add to that.
-     */
-    if (owner->owner) {
-        LOG(llevError, "owner id %u could not be resolved to a parent owner in object_set_owner(). This is bad!"
-            "owner=%p owner->owner=%p owner->ownercount=%u owner->owner->count=%u\n",
-            owner->count, owner, owner->owner, owner->ownercount, owner->owner->count);
-        return;
+        tmp = object_get_owner(owner);
+        if (tmp == NULL)
+            break;
+        owner = tmp;
     }
 
     op->owner = owner;

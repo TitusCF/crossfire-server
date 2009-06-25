@@ -764,7 +764,7 @@ static int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
                     continue;
                 }
 
-                if (op->head || op->owner)
+                if (op->head || object_get_owner(op) != NULL)
                     continue;
 
                 if (unique || QUERY_FLAG(op, FLAG_UNIQUE))

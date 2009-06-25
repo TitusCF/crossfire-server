@@ -398,6 +398,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     char buf[MAX_BUF], buf1[MAX_BUF], buf2[MAX_BUF];
     int i, found = 0;
     mapstruct *map;
+    object *owner;
 
     /* put in a few special messages for some of the common attacktypes
      *  a player might have.  For example, fire, electric, cold, etc
@@ -564,7 +565,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     }
 
     /* bail out if a monster is casting spells */
-    if (!(hitter->type == PLAYER || (object_get_owner(hitter) != NULL && hitter->owner->type == PLAYER)))
+    owner = object_get_owner(hitter);
+    if (hitter->type != PLAYER && (owner == NULL || owner->type != PLAYER))
         return;
 
     /* scale down magic considerably. */
@@ -575,9 +577,9 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     /* only show half the player->player combat messages */
     if (op->type == PLAYER
     && rndm(0, 1)
-    && (object_get_owner(hitter) == NULL ? hitter->type : hitter->owner->type) == PLAYER) {
-        if (object_get_owner(hitter) != NULL)
-            snprintf(buf, sizeof(buf), "%s's %s %s you.", hitter->owner->name, hitter->name, buf2);
+    && ((owner != NULL ? owner : hitter)->type) == PLAYER) {
+        if (owner != NULL)
+            snprintf(buf, sizeof(buf), "%s's %s %s you.", owner->name, hitter->name, buf2);
         else {
             snprintf(buf, sizeof(buf), "%s%s you.", hitter->name, buf2);
             if (dam != 0) {
@@ -610,7 +612,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         }
         draw_ext_info(NDI_BLACK, 0, hitter, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
                       buf, NULL);
-    } else if (object_get_owner(hitter) != NULL && hitter->owner->type == PLAYER) {
+    } else if (owner != NULL && owner->type == PLAYER) {
         /* look for stacked spells and start reducing the message chances */
         if (hitter->type == SPELL_EFFECT
         && (hitter->subtype == SP_EXPLOSION || hitter->subtype == SP_BULLET || hitter->subtype == SP_CONE)) {
@@ -629,8 +631,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
                 return;
         } else if (rndm(0, 5) != 0)
             return;
-        play_sound_map(SOUND_TYPE_HIT, hitter->owner, 0, "hit");
-        draw_ext_info_format(NDI_BLACK, 0, hitter->owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_HIT,
+        play_sound_map(SOUND_TYPE_HIT, owner, 0, "hit");
+        draw_ext_info_format(NDI_BLACK, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_HIT,
                              "Your %s%s %s.",
                              "Your %s%s %s.",
                              hitter->name, buf2, op->name);
@@ -1529,12 +1531,15 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
         return maxdam;
     }
     if (QUERY_FLAG(op, FLAG_FRIENDLY) && op->type != PLAYER) {
+        object *owner;
+
         remove_friendly_object(op);
-        if (object_get_owner(op) != NULL
-        && op->owner->type == PLAYER
-        && op->owner->contr->ranges[range_golem] == op) {
-            op->owner->contr->ranges[range_golem] = NULL;
-            op->owner->contr->golem_count = 0;
+        owner = object_get_owner(op);
+        if (owner != NULL
+        && owner->type == PLAYER
+        && owner->contr->ranges[range_golem] == op) {
+            owner->contr->ranges[range_golem] = NULL;
+            owner->contr->golem_count = 0;
         } else
             LOG(llevError, "BUG: hit_player(): Encountered golem without owner.\n");
 
@@ -2130,12 +2135,17 @@ static void poison_living(object *op, object *hitter, int dam) {
                                      "You poison %s.",
                                      "You poison %s.",
                                      op->name);
-            else if (object_get_owner(hitter) != NULL && hitter->owner->type == PLAYER)
-                draw_ext_info_format(NDI_UNIQUE, 0, hitter->owner,
-                                     MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_HIT,
-                                     "Your %s poisons %s.",
-                                     "Your %s poisons %s.",
-                                     hitter->name, op->name);
+            else {
+                object *owner;
+
+                owner = object_get_owner(hitter);
+                if (owner != NULL && owner->type == PLAYER)
+                    draw_ext_info_format(NDI_UNIQUE, 0, owner,
+                        MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_HIT,
+                        "Your %s poisons %s.",
+                        "Your %s poisons %s.",
+                        hitter->name, op->name);
+            }
         }
         tmp->speed_left = 0;
     } else
@@ -2243,9 +2253,8 @@ void blind_living(object *op, object *hitter, int dam) {
         change_abil(op, tmp);  /* Mostly to display any messages */
         fix_object(op);        /* This takes care of some other stuff */
 
-        if (hitter->owner)
-            owner = object_get_owner(hitter);
-        else
+        owner = object_get_owner(hitter);
+        if (owner == NULL)
             owner = hitter;
 
         query_name(op, victim, MAX_BUF);

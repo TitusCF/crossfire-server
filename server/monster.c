@@ -84,14 +84,17 @@ static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *ta
  * check_enemy() has been renamed to monster_check_enemy()
  */
 object *monster_check_enemy(object *npc, rv_vector *rv) {
+    object *owner;
+
     /* if this is pet, let him attack the same enemy as his owner
      * TODO: when there is no ower enemy, try to find a target,
      * which CAN attack the owner. */
+    owner = object_get_owner(npc);
     if ((npc->attack_movement&HI4) == PETMOVE) {
-        if (npc->owner == NULL)
+        if (owner == NULL)
             object_set_enemy(npc, NULL);
         else if (npc->enemy == NULL)
-            object_set_enemy(npc, npc->owner->enemy);
+            object_set_enemy(npc, owner->enemy);
     }
 
     /* periodically, a monster mayu change its target.  Also, if the object
@@ -118,9 +121,9 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
             object_set_enemy(npc, NULL);
 
         else if (QUERY_FLAG(npc, FLAG_FRIENDLY) && (
-                (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !pets_should_arena_attack(npc, npc->owner, npc->enemy))
-                || (npc->enemy->type == PLAYER && !pets_should_arena_attack(npc, npc->owner, npc->enemy))
-                || npc->enemy == npc->owner))
+                (QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !pets_should_arena_attack(npc, owner, npc->enemy))
+                || (npc->enemy->type == PLAYER && !pets_should_arena_attack(npc, owner, npc->enemy))
+                || npc->enemy == owner))
             object_set_enemy(npc, NULL);
         else if (!QUERY_FLAG(npc, FLAG_FRIENDLY)
         && (!QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && npc->enemy->type != PLAYER))

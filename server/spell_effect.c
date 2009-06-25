@@ -2767,6 +2767,8 @@ void counterspell(object *op, int dir) {
         return;
 
     FOR_MAP_PREPARE(m, sx, sy, tmp) {
+        object *owner;
+
         /* Need to look at the head object - otherwise, if tmp
          * points to a monster, we don't have all the necessary
          * info for it.
@@ -2774,7 +2776,8 @@ void counterspell(object *op, int dir) {
         head = HEAD(tmp);
 
         /* don't attack our own spells */
-        if (tmp->owner && tmp->owner == op->owner)
+        owner = object_get_owner(tmp);
+        if (owner != NULL && owner == object_get_owner(op))
             continue;
 
         /* Basically, if the object is magical and not counterspell,

@@ -92,7 +92,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
          * their own arrow - this can be because they fire it then
          * move into it.
          */
-        if (tmp != NULL && tmp != op->owner) {
+        if (tmp != NULL && tmp != object_get_owner(op)) {
             /* Found living object, but it is reflecting the missile.  Update
              * as below. (Note that for living creatures there is a small
              * chance that reflect_missile fails.)
@@ -228,7 +228,7 @@ method_ret common_projectile_move_on(ob_methods *context, object *trap, object *
      * action, we avoid hits here
      */
     if ((QUERY_FLAG(victim, FLAG_ALIVE) && trap->speed)
-    && trap->owner != victim)
+    && object_get_owner(trap) != victim)
         hit_with_arrow(trap, victim);
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;

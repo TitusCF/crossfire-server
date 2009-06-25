@@ -457,6 +457,8 @@ int trap_disarm(object *disarmer, object *trap, int risk, object *skill) {
                 sqr(MAX(trap->stats.dam, trap->inv ? trap->inv->level : 1))/skill->level;
 
     if (!(random_roll(0, (MAX(2, MIN(20, trap->level-skill->level+5-disarmer->stats.Dex/2))-1), disarmer, PREFER_LOW))) {
+        object *owner;
+
         draw_ext_info_format(NDI_UNIQUE, 0, disarmer,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "You successfully disarm the %s!",
@@ -466,7 +468,8 @@ int trap_disarm(object *disarmer, object *trap, int risk, object *skill) {
         /* If it is your own trap, (or any players trap), don't you don't
          * get exp for it.
          */
-        if (trap->owner && trap->owner->type != PLAYER && risk)
+        owner = object_get_owner(trap);
+        if (owner != NULL && owner->type != PLAYER && risk)
             return trapworth;
         else
             return 1; /* give minimal exp and say success */

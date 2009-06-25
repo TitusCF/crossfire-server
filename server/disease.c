@@ -330,6 +330,7 @@ static void check_infection(object *disease) {
 int infect_object(object *victim, object *disease, int force) {
     object *tmp;
     object *new_disease;
+    object *owner;
 
     /* don't infect inanimate objects */
     if (!QUERY_FLAG(victim, FLAG_MONSTER) && !(victim->type == PLAYER))
@@ -378,9 +379,9 @@ int infect_object(object *victim, object *disease, int force) {
     /* Unfortunately, object_set_owner does the wrong thing to the skills pointers
      *  resulting in exp going into the owners *current *chosen skill.
      */
-
-    if (object_get_owner(disease)) {
-        object_set_owner(new_disease, disease->owner);
+    owner = object_get_owner(disease);
+    if (owner) {
+        object_set_owner(new_disease, owner);
 
         /* Only need to update skill if different */
         if (new_disease->skill != disease->skill) {
@@ -405,7 +406,8 @@ int infect_object(object *victim, object *disease, int force) {
      * for meaning in the diseases.
      */
     new_disease->move_block = 0;
-    if (new_disease->owner && new_disease->owner->type == PLAYER) {
+    owner = object_get_owner(new_disease);
+    if (owner && owner->type == PLAYER) {
         char buf[128];
 
         /* if the disease has a title, it has a special infection message
@@ -417,10 +419,10 @@ int infect_object(object *victim, object *disease, int force) {
             snprintf(buf, sizeof(buf), "You infect %s with your disease, %s!", victim->name, new_disease->name);
 
         if (victim->type == PLAYER)
-            draw_ext_info(NDI_UNIQUE|NDI_RED, 0, new_disease->owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
+            draw_ext_info(NDI_UNIQUE|NDI_RED, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
                           buf, buf);
         else
-            draw_ext_info(0, 4, new_disease->owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
+            draw_ext_info(0, 4, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
                           buf, buf);
     }
     if (victim->type == PLAYER)
@@ -513,7 +515,7 @@ static void do_symptoms(object *disease) {
         new_symptom->attacktype = disease->attacktype;
         new_symptom->other_arch = disease->other_arch;
 
-        object_set_owner(new_symptom, disease->owner);
+        object_set_owner(new_symptom, object_get_owner(disease));
         if (new_symptom->skill != disease->skill) {
             if (new_symptom->skill)
                 free_string(new_symptom->skill);

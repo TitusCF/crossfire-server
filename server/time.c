@@ -555,7 +555,7 @@ object *fix_stopped_arrow(object *op) {
     op->stats.grace = 0;
     op->level = 0;
     op->face = op->arch->clone.face;
-    op->owner = NULL; /* So that stopped arrows will be saved */
+    object_clear_owner(op); /* So that stopped arrows will be saved */
     object_update(op, UP_OBJ_FACE);
     return op;
 }

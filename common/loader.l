@@ -1763,7 +1763,7 @@ int save_object(FILE *fp, object *op, int flag) {
     /* Even if the object does have an owner, it would seem that we should
      * still save it.
      */
-    if (op->owner != NULL || fp == NULL)
+    if (object_get_owner(op) != NULL || fp == NULL)
         return SAVE_ERROR_OK;
 
     /* If it is unpaid and we don't want to save those, just return. */

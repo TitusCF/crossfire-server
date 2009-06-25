@@ -303,7 +303,6 @@ void pets_remove_all(void) {
  * follow_owner() has been renamed to pets_follow_owner()
  */
 void pets_follow_owner(object *ob, object *owner) {
-    object *tmp;
     int dir;
 
     if (!QUERY_FLAG(ob, FLAG_REMOVED))
@@ -407,9 +406,9 @@ void pets_move(object *ob) {
                 new_ob = HEAD(ob2);
                 if (new_ob == ob)
                     break;
-                if (new_ob == ob->owner)
+                if (new_ob == owner)
                     return;
-                if (object_get_owner(new_ob) == ob->owner)
+                if (object_get_owner(new_ob) == owner)
                     break;
 
                 /* Hmm.  Did we try to move into an enemy monster?  If so,
@@ -545,11 +544,13 @@ void pets_move_golem(object *op) {
     int made_attack = 0;
     object *tmp;
     tag_t tag;
+    object *owner;
 
     if (QUERY_FLAG(op, FLAG_MONSTER))
         return; /* Has already been moved */
 
-    if (object_get_owner(op) == NULL) {
+    owner = object_get_owner(op);
+    if (owner == NULL) {
         LOG(llevDebug, "Golem without owner destructed.\n");
         object_remove(op);
         object_free(op);
@@ -562,10 +563,10 @@ void pets_move_golem(object *op) {
      */
     if (--op->stats.hp < 0) {
         if (op->msg != NULL)
-            draw_ext_info(NDI_UNIQUE, 0, op->owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
+            draw_ext_info(NDI_UNIQUE, 0, owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
                           op->msg, op->msg);
-        op->owner->contr->ranges[range_golem] = NULL;
-        op->owner->contr->golem_count = 0;
+        owner->contr->ranges[range_golem] = NULL;
+        owner->contr->golem_count = 0;
         remove_friendly_object(op);
         object_remove(op);
         object_free(op);
@@ -616,15 +617,15 @@ void pets_move_golem(object *op) {
              */
 
             if (victim->race != NULL && op->race != NULL && strstr(op->race, victim->race)) {
-                if (op->owner != NULL)
-                    draw_ext_info_format(NDI_UNIQUE, 0, op->owner,
+                if (owner != NULL)
+                    draw_ext_info_format(NDI_UNIQUE, 0, owner,
                                          MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
                                          "%s avoids damaging %s.",
                                          "%s avoids damaging %s.",
                                          op->name, victim->name);
-            } else if (victim == op->owner) {
-                if (op->owner != NULL)
-                    draw_ext_info_format(NDI_UNIQUE, 0, op->owner,
+            } else if (victim == owner) {
+                if (owner != NULL)
+                    draw_ext_info_format(NDI_UNIQUE, 0, owner,
                                          MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
                                          "%s avoids damaging you.",
                                          "%s avoids damaging you.",

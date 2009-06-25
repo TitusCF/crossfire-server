@@ -282,7 +282,7 @@ void cone_drop(object *op) {
     object *new_ob = arch_to_object(op->other_arch);
 
     new_ob->level = op->level;
-    object_set_owner(new_ob, op->owner);
+    object_set_owner(new_ob, object_get_owner(op));
 
     /* preserve skill ownership */
     if (op->skill && op->skill != new_ob->skill) {

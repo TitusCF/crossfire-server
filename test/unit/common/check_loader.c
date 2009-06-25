@@ -110,15 +110,13 @@ START_TEST(test_object_dump) {
     empty->head = arch_to_object(empty_archetype);
     empty->inv = arch_to_object(empty_archetype);
     empty->more = arch_to_object(empty_archetype);
-    empty->owner = arch_to_object(empty_archetype);
     empty->env = arch_to_object(empty_archetype);
     fail_unless(empty->head != NULL, "Couldn't create empty archetype as head!");
     fail_unless(empty->inv != NULL, "Couldn't create empty archetype as inv!");
     fail_unless(empty->more != NULL, "Couldn't create empty archetype as more!");
-    fail_unless(empty->owner != NULL, "Couldn't create empty archetype as owner!");
     fail_unless(empty->env != NULL, "Couldn't create empty archetype as env!");
 
-    snprintf(expect, sizeof(expect), "arch empty_archetype\nmore %d\nhead %d\nenv %d\ninv %d\nowner %d\nend\n", empty->more->count, empty->head->count, empty->env->count, empty->inv->count, empty->owner->count);
+    snprintf(expect, sizeof(expect), "arch empty_archetype\nmore %d\nhead %d\nenv %d\ninv %d\nend\n", empty->more->count, empty->head->count, empty->env->count, empty->inv->count);
     buf = stringbuffer_new();
     object_dump(empty, buf);
     result = stringbuffer_finish(buf);
