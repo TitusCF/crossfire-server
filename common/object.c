@@ -35,6 +35,7 @@
    object_sub/add_weight will transcend the environment updating the carrying
    variable. */
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <global.h>
@@ -618,6 +619,9 @@ void object_set_owner(object *op, object *owner) {
             break;
         owner = tmp;
     }
+
+    /* must not cause owner cycles */
+    assert(op != owner);
 
     op->owner = owner;
     op->ownercount = owner->count;
