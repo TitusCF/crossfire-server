@@ -617,8 +617,7 @@ int monster_move(object *op) {
     oph = HEAD(op);                       /* force update the head - one arch one pic */
 
     if (QUERY_FLAG(op, FLAG_NO_ATTACK)) { /* we never ever attack */
-        if (op->enemy != NULL)
-            object_set_enemy(op->enemy, NULL);
+        object_set_enemy(op, NULL);
         enemy = NULL;
     } else {
         enemy = monster_find_enemy(op, &rv);
