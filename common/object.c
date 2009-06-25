@@ -590,9 +590,6 @@ void object_clear_owner(object *op) {
  * @param owner
  * new owner for object. Can be NULL, in which case it's equivalent of calling object_clear_owner(op)
  *
- * @todo
- * replace owner serching loop with a call to object_get_owner()?
- *
  * @note
  * set_owner() has been renamed to object_set_owner()
  */
