@@ -48,9 +48,7 @@ void init_type_peacemaker(void) {
  * @return METHOD_OK
  */
 static method_ret peacemaker_type_process(ob_methods *context, object *op) {
-    object *tmp;
-
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+    FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         int atk_lev, def_lev;
         object *victim;
 
@@ -82,6 +80,6 @@ static method_ret peacemaker_type_process(ob_methods *context, object *op) {
                     victim->name);
             }
         }
-    }
+    } FOR_MAP_FINISH();
     return METHOD_OK;
 }
