@@ -50,38 +50,38 @@ void init_type_peacemaker(void) {
 static method_ret peacemaker_type_process(ob_methods *context, object *op) {
     object *tmp;
 
-        for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
-            int atk_lev, def_lev;
-            object *victim;
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+        int atk_lev, def_lev;
+        object *victim;
 
-            victim = HEAD(tmp);
-            if (!QUERY_FLAG(victim, FLAG_MONSTER))
-                continue;
-            if (QUERY_FLAG(victim, FLAG_UNAGGRESSIVE))
-                continue;
-            if (victim->stats.exp == 0)
-                continue;
+        victim = HEAD(tmp);
+        if (!QUERY_FLAG(victim, FLAG_MONSTER))
+            continue;
+        if (QUERY_FLAG(victim, FLAG_UNAGGRESSIVE))
+            continue;
+        if (victim->stats.exp == 0)
+            continue;
 
-            def_lev = MAX(1, victim->level);
-            atk_lev = MAX(1, op->level);
+        def_lev = MAX(1, victim->level);
+        atk_lev = MAX(1, op->level);
 
-            if (rndm(0, atk_lev-1) > def_lev) {
-                /* make this sucker peaceful. */
+        if (rndm(0, atk_lev-1) > def_lev) {
+            /* make this sucker peaceful. */
 
-                change_exp(object_get_owner(op), victim->stats.exp, op->skill, 0);
-                victim->stats.exp = 0;
-                victim->attack_movement = RANDO2;
-                SET_FLAG(victim, FLAG_UNAGGRESSIVE);
-                SET_FLAG(victim, FLAG_RUN_AWAY);
-                SET_FLAG(victim, FLAG_RANDOM_MOVE);
-                CLEAR_FLAG(victim, FLAG_MONSTER);
-                if (victim->name) {
-                    draw_ext_info_format(NDI_UNIQUE, 0, op->owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                        "%s no longer feels like fighting.",
-                        "%s no longer feels like fighting.",
-                        victim->name);
-                }
+            change_exp(object_get_owner(op), victim->stats.exp, op->skill, 0);
+            victim->stats.exp = 0;
+            victim->attack_movement = RANDO2;
+            SET_FLAG(victim, FLAG_UNAGGRESSIVE);
+            SET_FLAG(victim, FLAG_RUN_AWAY);
+            SET_FLAG(victim, FLAG_RANDOM_MOVE);
+            CLEAR_FLAG(victim, FLAG_MONSTER);
+            if (victim->name) {
+                draw_ext_info_format(NDI_UNIQUE, 0, op->owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+                    "%s no longer feels like fighting.",
+                    "%s no longer feels like fighting.",
+                    victim->name);
             }
         }
+    }
     return METHOD_OK;
 }
