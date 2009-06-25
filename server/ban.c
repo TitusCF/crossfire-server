@@ -51,7 +51,6 @@ int checkbanned(const char *login, const char *host) {
     int inverse_ban = 0;
 
     for (loop = 0; loop < 2; loop++) {  /* have to check both ban files now */
-
         /* First time through look for BANFILE */
 
         if (loop == 0) {
@@ -148,7 +147,6 @@ int checkbanned(const char *login, const char *host) {
         if (hits >= 2) {
             return(!inverse_ban);
         }
-
     }
 
     return(0);

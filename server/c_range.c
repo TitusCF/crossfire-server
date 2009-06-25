@@ -278,7 +278,6 @@ int command_cast_spell(object *op, char *params, char command) {
  */
 
 int legal_range(object *op, int r) {
-
     switch (r) {
     case range_none: /* "Nothing" is always legal */
         return 1;
@@ -317,7 +316,6 @@ int legal_range(object *op, int r) {
  * '+' selects next range, other values previous range.
  */
 void change_spell(object *op, char k) {
-
     char name[MAX_BUF];
 
     do {

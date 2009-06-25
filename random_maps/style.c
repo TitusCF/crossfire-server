@@ -106,7 +106,6 @@ int load_dir(const char *dir, char ***namelist, int skip_dirs) {
         }
         rn[entries] = strdup_local(d->d_name);
         entries++;
-
     }
     (void)closedir(dp);
 

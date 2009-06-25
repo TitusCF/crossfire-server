@@ -334,7 +334,6 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 
         if (((random_roll(0, 399, pl, PREFER_LOW))-bonus) < 0)
             god_intervention(pl, pl_god, skill);
-
     } else { /* praying to another god! */
         uint64 loss = 0;
         int angry = 1;
@@ -1210,7 +1209,6 @@ static void god_intervention(object *op, const object *god, object *skill) {
                                  god->name);
             do_learn_spell(op, item, 1);
             return;
-
         }
 
         /* Other gifts */

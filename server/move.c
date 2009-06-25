@@ -252,7 +252,6 @@ int teleport(object *teleporter, uint8 tele_type, object *user) {
 
                 if (!OB_TYPE_MOVE_BLOCK(user, GET_MAP_MOVE_BLOCK(m, sx, sy)))
                     break;
-
             }
             if (k == 9) {
                 LOG(llevError, "Shop mat %s (%d, %d) is in solid rock?\n", other_teleporter->name, other_teleporter->x, other_teleporter->y);

@@ -437,7 +437,6 @@ void write_socket_buffer(socket_struct *ns) {
 #endif
 
         if (amt < 0) { /* We got an error */
-
 #ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
             if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK) {
                 LOG(llevError, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
@@ -492,7 +491,6 @@ static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len
 #endif
     /* If we manage to write more than we wanted, take it as a bonus */
     while (len > 0) {
-
 #ifdef WIN32 /* ***win32 Write_To_Socket: change write() to send() */
         amt = send(ns->fd, pos, len, 0);
 #else

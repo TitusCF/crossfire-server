@@ -467,7 +467,6 @@ static void load_materials(void) {
     mt->next = NULL;
     LOG(llevDebug, "Done.\n");
     fclose(fp);
-
 }
 
 /**
@@ -793,7 +792,6 @@ static void load_settings(void) {
             } else {
                 LOG(llevError, "load_settings: unknown value for armor_weight_linear: %s\n", cp);
             }
-
         } else if (!strcasecmp(buf, "armor_speed_improvement")) {
             int wr = atoi(cp);
             if (wr < 0)
@@ -808,7 +806,6 @@ static void load_settings(void) {
             } else {
                 LOG(llevError, "load_settings: unknown value for armor_speed_linear: %s\n", cp);
             }
-
         } else if (!strcasecmp(buf, "no_player_stealing")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
                 settings.no_player_stealing = TRUE;
@@ -817,7 +814,6 @@ static void load_settings(void) {
             } else {
                 LOG(llevError, "load_settings: unknown value for no_player_stealing: %s\n", cp);
             }
-
         } else if (!strcasecmp(buf, "create_home_portals")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
                 settings.create_home_portals = TRUE;
@@ -898,7 +894,6 @@ static void load_settings(void) {
  * Called only once, when starting the program.
  */
 void init(int argc, char **argv) {
-
     init_done = 0;  /* Must be done before init_signal() */
     logfile = stderr;
     parse_args(argc, argv, 1); /* First arg pass - right now it does

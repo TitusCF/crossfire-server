@@ -938,7 +938,6 @@ int command_create(object *op, char *params) {
         gotquote = 0;
         /* find the first quote */
         for (bp3 = bp2; *bp3 && gotspace < 2 && gotquote < 2; bp3++) {
-
             /* Found a quote - now lets find the second one */
             if (*bp3 == '"') {
                 *bp3 = ' ';
@@ -2763,7 +2762,6 @@ int command_insert_into(object *op, char *params) {
                          "Inserted %s in %s",
                          what, where);
     return 0;
-
 }
 
 /**

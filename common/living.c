@@ -2123,7 +2123,6 @@ static void subtract_player_exp(object *op, sint64 exp, const char *skill, int f
  * @see share_exp() for a party-aware version.
  */
 void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
-
 #ifdef EXP_DEBUG
     char name[MAX_BUF];
     query_name(op, name, MAX_BUF);
@@ -2190,7 +2189,6 @@ void apply_death_exp_penalty(object *op) {
 
     FOR_INV_PREPARE(op, tmp)
         if (tmp->type == SKILL && tmp->stats.exp) {
-
             percentage_loss = tmp->stats.exp*settings.death_penalty_ratio/100;
             level_loss = tmp->stats.exp-levels[MAX(0, tmp->level-settings.death_penalty_level)];
 

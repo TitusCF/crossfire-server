@@ -591,7 +591,6 @@ void do_server(void) {
                     esrv_draw_look(pl->ob);
                 if (pl->socket.tick)
                     send_tick(pl);
-
             }
         }
     }

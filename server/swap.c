@@ -126,7 +126,6 @@ void read_map_log(void) {
         map->reset_time += sec;
         if (map->reset_time > (sec+MAP_MAXRESET))
             map->reset_time = 0;
-
     }
     fclose(fp);
 }

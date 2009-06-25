@@ -198,7 +198,6 @@ static void check_output_buffers(const object *pl, const char *buf) {
 void draw_ext_info(
     int flags, int pri, const object *pl, uint8 type,
     uint8 subtype, const char *message, const char *oldmessage) {
-
     if ((flags&NDI_ALL) || (flags&NDI_ALL_DMS)) {
         player *tmppl;
 

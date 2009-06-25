@@ -183,7 +183,6 @@ void dump_spells(void) {
  */
 
 void spell_effect(object *spob, int x, int y, mapstruct *map, object *originator) {
-
     if (spob->other_arch !=  NULL) {
         object *effect = arch_to_object(spob->other_arch);
         object_insert_in_map_at(effect, map, originator, 0, x, y);
@@ -1349,7 +1348,6 @@ static void handle_spell_confusion(object *op) {
  * @todo return a failure value?
  */
 int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stringarg) {
-
     const char *godname;
     int success = 0, mflags, cast_level = 0, old_shoottype;
     object *skill = NULL;
@@ -1493,7 +1491,6 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
     && (QUERY_FLAG(caster, FLAG_ALIVE) || QUERY_FLAG(op, FLAG_ALIVE))
     && !QUERY_FLAG(op, FLAG_MONSTER)
     && (((mflags&P_NO_MAGIC) && spell_ob->stats.sp) || ((mflags&P_NO_CLERIC) && spell_ob->stats.grace))) {
-
         if (op->type != PLAYER)
             return 0;
 

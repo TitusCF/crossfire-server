@@ -199,7 +199,6 @@ region *get_region_from_string(const char *name) {
  * @li 0 else
  */
 int region_is_child_of_region(const region *child, const region *r) {
-
     if (r == NULL)
         return -1;
     if (child == NULL)

@@ -652,7 +652,6 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
                                  "Your %s becomes darker.",
                                  cauldron->name);
         return;
-
     } else if (level < 110) {                /* SUMMON EVIL MONSTERS */
         object *tmp = get_random_mon(level/5);
 

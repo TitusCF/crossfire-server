@@ -804,7 +804,6 @@ static int do_skill_ident2(object *tmp, object *pl, int obj_class, object *skill
                                          "The item has a story:\n%s",
                                          "The item has a story:\n%s",
                                          tmp->msg);
-
                 }
             }
             success += calc_skill_exp(pl, tmp, skill);
@@ -1961,7 +1960,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     if (op->type == PLAYER
     && op->carrying > (get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT)
     && (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
-
         int extra_weight = op->carrying-get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT;
         load_factor = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
     }
@@ -2003,7 +2001,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     || (eff_str <= 1)
     || (mflags&P_OUT_OF_MAP)
     || (GET_MAP_MOVE_BLOCK(m, sx, sy)&MOVE_FLY_LOW)) {
-
         /* bounces off 'wall', and drops to feet */
         object_remove(throw_ob);
         object_insert_in_map_at(throw_ob, part->map, op, 0, part->x, part->y);
@@ -2128,7 +2125,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
             throw_ob->speed *= 0.8;
         if (throw_ob->weight > 50)
             throw_ob->speed *= 0.5;
-
     } /* else tailor thrown object */
 
     /* some limits, and safeties (needed?) */

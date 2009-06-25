@@ -977,7 +977,6 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
         }
         summon_arch = lasttr->item;
         nrof = lasttr->nrof;
-
     } else if (spell_ob->race != NULL && !strcmp(spell_ob->race, "GODCULTMON")) {
         const object *god = find_god(determine_god(op));
         object *mon, *owner;

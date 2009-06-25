@@ -2106,7 +2106,6 @@ static int player_fire_bow(object *op, int dir) {
         ret |= fire_bow(op, NULL, dir, 0, op->x, op->y);
         ret |= fire_bow(op, NULL, absdir(dir-1), -5, op->x, op->y);
         ret |= fire_bow(op, NULL, absdir(dir+1), -5, op->x, op->y);
-
     } else {
         /* Simple case */
         ret = fire_bow(op, NULL, dir, 0, op->x, op->y);
@@ -2337,7 +2336,6 @@ object *find_key(object *pl, object *container, object *door) {
  * nothing happened.
  */
 static int player_attack_door(object *op, object *door) {
-
     /* If its a door, try to find a use a key.  If we do destroy the door,
      * might as well return immediately as there is nothing more to do -
      * otherwise, we fall through to the rest of the code.

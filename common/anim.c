@@ -116,7 +116,6 @@ void init_anim(void) {
                     animations[num_animations].name, buf);
                 animations[num_animations].facings = 1;
             }
-
         } else {
             if (!(faces[num_frames++] = find_face(buf, 0)))
                 LOG(llevDebug, "Could not find face %s for animation %s\n",

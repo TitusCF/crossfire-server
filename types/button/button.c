@@ -38,6 +38,7 @@ static method_ret button_type_move_on(ob_methods *context, object *trap, object 
 void init_type_button(void) {
     register_move_on(BUTTON, button_type_move_on);
 }
+
 /**
  * Move on this Button object.
  * @param context The method context

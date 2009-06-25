@@ -1088,7 +1088,6 @@ static void tear_down_wall(object *op) {
 
             /* object_remove() should call update_position for us */
             /*update_position(m, x, y);*/
-
         } else { /* The last face was not blank, leave an image */
             CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
             update_all_los(op->map, op->x, op->y);
@@ -1738,7 +1737,6 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
         }
 #endif
         share_exp(owner, exp, skill, SK_EXP_TOTAL);
-
     } /* end if person didn't kill himself */
 
     if (op->type != PLAYER) {

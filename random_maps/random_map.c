@@ -144,7 +144,6 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_
         /* place doors unless doorstyle or wallstyle is "none"*/
         if (strcmp(RP->doorstyle, "none"))
             put_doors(theMap, layout, RP->doorstyle, RP);
-
     }
 
     /* create exits unless the exitstyle is "none" */

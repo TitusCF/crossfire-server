@@ -85,7 +85,6 @@ void version(object *op) {
                          FULL_VERSION);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
                   "The authors can be reached at crossfire@metalforge.org", NULL);
-
 }
 
 /**
@@ -658,7 +657,6 @@ static void enter_unique_map(object *op, object *exit_ob) {
         char reldir[HUGE_BUF], tmpc[HUGE_BUF], *cp;
 
         if (exit_ob->map->unique) {
-
             unclean_path(exit_ob->map->path, reldir, sizeof(reldir));
 
             /* Need to copy this over, as clean_path only has one static return buffer */
@@ -710,7 +708,6 @@ static void enter_unique_map(object *op, object *exit_ob) {
          */
         LOG(llevDebug, "enter_unique_map: Exit %s (%d,%d) on map %s is leads no where.\n", exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
     }
-
 }
 
 /**
@@ -1012,7 +1009,6 @@ static void process_players2(void) {
              * so execute_newserver_command() is never called
              */
             pl->has_hit = 0;
-
         } else if (pl->ob->speed_left > pl->ob->speed)
             pl->ob->speed_left = pl->ob->speed;
     }
@@ -1354,7 +1350,6 @@ extern unsigned long todtick;
  * doing the various things.
  */
 static void do_specials(void) {
-
 #ifdef WATCHDOG
     if (!(pticks%503))
         watchdog();

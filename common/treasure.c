@@ -790,7 +790,6 @@ static const int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] = {
     { 70, 2, 3, 6, 19  }, /*198*/
     { 70, 2, 3, 6, 19  }, /*199*/
     { 70, 2, 3, 6, 19  }, /*200*/
-
 };
 
 /** This is used when determining the magical bonus created on specific maps.

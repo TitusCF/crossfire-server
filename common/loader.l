@@ -355,7 +355,6 @@ static void set_body_info(object *op, char *params) {
  * object to check.
  */
 static void check_loaded_object(object *op) {
-
     if (artifact_init)
         /* Artifacts are special beasts, let's not check them. */
         return;

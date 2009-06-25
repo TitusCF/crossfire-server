@@ -435,7 +435,6 @@ void display_high_score(object *op, int max, const char *match) {
             LOG(llevDebug, "%s\n", scorebuf);
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf, NULL);
-
     }
     close_and_delete(fp, comp);
 }

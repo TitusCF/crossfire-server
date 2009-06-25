@@ -489,7 +489,6 @@ void check_login(object *op) {
     for (pltmp = first_player; pltmp != NULL; pltmp = pltmp->next) {
         if (pltmp != pl && pltmp->ob->name != NULL && !strcmp(pltmp->ob->name, op->name)) {
             if (check_password(pl->write_buf+1, pltmp->password)) {
-
                 /* We could try and be more clever and re-assign the existing
                  * object to the new player, etc.  However, I'm concerned that
                  * there may be a lot of other state that still needs to be sent

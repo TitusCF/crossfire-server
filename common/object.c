@@ -179,7 +179,6 @@ static int compare_ob_value_lists(const object *ob1, const object *ob2) {
  * check the function at places marked.
  */
 int object_can_merge(object *ob1, object *ob2) {
-
     /* A couple quicksanity checks */
     if (ob1 == ob2 || ob1->type != ob2->type)
         return 0;
@@ -290,7 +289,6 @@ int object_can_merge(object *ob1, object *ob2) {
         if (ob1->level != ob2->level)
             return 0;
         break;
-
     }
 
     /* Don't merge items with differing custom names. */
@@ -656,7 +654,6 @@ void object_copy_owner(object *op, object *clone) {
         owner = clone;
     }
     object_set_owner(op, owner);
-
 }
 
 /**
@@ -748,7 +745,6 @@ void object_free_key_values(object *op) {
  * clear_object() has been renamed to object_clear()
  */
 void object_clear(object *op) {
-
     /*TODO this comment must be investigated*/
     /* redo this to be simpler/more efficient. Was also seeing
      * crashes in the old code.  Move this to the top - am
@@ -2829,7 +2825,6 @@ int object_check_move_on(object *op, object *originator) {
         /* Basically same logic as above, except now for actual apply. */
         if ((!op->move_type && tmp->move_on&MOVE_WALK)
         || ((op->move_type&tmp->move_on) && (op->move_type&~tmp->move_on&~tmp->move_block) == 0)) {
-
             ob_move_on(tmp, op, originator);
             if (object_was_destroyed(op, tag))
                 return 1;

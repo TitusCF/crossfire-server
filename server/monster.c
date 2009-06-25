@@ -294,7 +294,6 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
             if (npc->enemy)
                 tmp = monster_check_enemy(npc, rv);
         }
-
     }
 
     return tmp;
@@ -584,7 +583,6 @@ static int monster_move_no_enemy(object *op) {
 
         if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
             monster_move_randomly(op);
-
     } /* stand still */
 
     return 0;

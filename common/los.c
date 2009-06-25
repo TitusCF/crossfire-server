@@ -285,7 +285,6 @@ static void expand_sight(object *op) {
                     op->x-op->contr->socket.mapx/2+x,
                     op->y-op->contr->socket.mapy/2+y,
                     NULL, NULL)&(P_BLOCKSVIEW|P_OUT_OF_MAP))) {
-
                 for (i = 1; i <= 8; i += 1) { /* mark all directions */
                     dx = x+freearr_x[i];
                     dy = y+freearr_y[i];
@@ -373,7 +372,6 @@ static void expand_lighted_sight(object *op) {
      */
     for (x = (op->x-op->contr->socket.mapx/2-MAX_LIGHT_RADII), basex = -MAX_LIGHT_RADII;
             x <= (op->x+op->contr->socket.mapx/2+MAX_LIGHT_RADII); x++, basex++) {
-
         for (y = (op->y-op->contr->socket.mapy/2-MAX_LIGHT_RADII), basey = -MAX_LIGHT_RADII;
                 y <= (op->y+op->contr->socket.mapy/2+MAX_LIGHT_RADII); y++, basey++) {
             m = op->map;

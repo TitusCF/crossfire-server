@@ -765,7 +765,6 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
                                  name_sack);
             return;
         }
-
     }
 
     /* Don't worry about this for containers - our caller should have

@@ -188,7 +188,6 @@ void centered_onion(char **maze, int xsize, int ysize, int option, int layers) {
             x_spaces_available -= xpitch-2;
             y_spaces_available -= ypitch-2;
         }
-
     }
     if (!(option&OPT_IRR_SPACE)) {
         /* evenly spaced */
@@ -266,7 +265,6 @@ void bottom_centered_onion(char **maze, int xsize, int ysize, int option, int la
             x_spaces_available -= xpitch-2;
             y_spaces_available -= ypitch-2;
         }
-
     }
 
     if (!(option&OPT_IRR_SPACE)) {
@@ -506,7 +504,6 @@ void bottom_right_centered_onion(char **maze, int xsize, int ysize, int option, 
             x_spaces_available -= xpitch-2;
             y_spaces_available -= ypitch-2;
         }
-
     }
 
     if (!(option&OPT_IRR_SPACE)) { /* evenly spaced */

@@ -443,7 +443,6 @@ void current_map_info(object *op) {
                              MAP_WIDTH(m), MAP_HEIGHT(m),
                              MAP_ENTER_X(m), MAP_ENTER_Y(m),
                              MAP_TIMEOUT(m));
-
     }
     if (m->msg)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, m->msg, NULL);
@@ -577,7 +576,6 @@ void list_players(object *op, region *reg, partylist *party) {
             continue;
 
         if (pl->state == ST_PLAYING || pl->state == ST_GET_PARTY_PASSWORD) {
-
             num_players++;
             chars = (chars_names *)realloc(chars, num_players*sizeof(chars_names));
             if (chars == NULL) {
@@ -712,7 +710,6 @@ void display_who_entry(object *op, player *pl, const char *format) {
  * player to get information for.
  */
 void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl) {
-
     switch (letter) {
     case 'N':
         snprintf(return_val, size, "%s", pl->ob->name);

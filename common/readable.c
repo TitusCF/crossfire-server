@@ -491,7 +491,6 @@ static const readable_message_type readable_message_types[] = {
                     { MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_1 },
                     { MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_2 },
                     { MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_3 },
-
                     /* Paper messages subtypes */
                     { MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_1 },
                     { MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_2 },
@@ -507,13 +506,11 @@ static const readable_message_type readable_message_types[] = {
                     { MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_NEW_1 },
                     { MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_NEW_2 },
                     { MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_MAGIC },
-
                     /* road signs messages subtypes */
                     { MSG_TYPE_SIGN, MSG_TYPE_SIGN_BASIC },
                     { MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_LEFT },
     /*subtype 40 */ { MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_RIGHT },
                     { MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_BOTH },
-
                     /* stones and monument messages */
                     { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_1 },
                     { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_2 },

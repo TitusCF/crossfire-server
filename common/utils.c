@@ -414,7 +414,6 @@ const char *strrstr(const char *haystack, const char *needle) {
         haystack++;
     }
     return lastneedle;
-
 }
 
 #define EOL_SIZE (sizeof("\n")-1)

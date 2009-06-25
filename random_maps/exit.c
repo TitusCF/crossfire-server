@@ -309,7 +309,6 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             find_in_layout(2, 0, &downx, &downy, maze, RP);
         else if (downx > 1 && downy > 1)
             find_in_layout(4, 0, &downx, &downy, maze, RP);
-
     }
     /* no indication of where to place the down exit, so just place it on an empty spot. */
     if (downx == -1)

@@ -388,7 +388,6 @@ static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize)
                 } else
                     if (maze[i][j] != 'D' && maze[i][j] != '.')
                         maze[i][j] = 0;
-
             }
         }
     }

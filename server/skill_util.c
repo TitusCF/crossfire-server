@@ -1169,7 +1169,6 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                              "You miss %s!",
                              "You miss %s!",
                              op_name);
-
     }
     return success;
 }

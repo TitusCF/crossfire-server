@@ -248,7 +248,6 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
             for (t = spell->randomitems->items; t; t = t->next) {
                 summon_hostile_monsters(op, t->nrof, t->item->name);
             }
-
         }
         return 1;
     } else {

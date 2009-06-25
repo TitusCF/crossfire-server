@@ -261,7 +261,6 @@ static void init_environ(void) {
  * Setups logfile, and such variables.
  */
 void init_globals(void) {
-
     memset(&statistics, 0, sizeof(struct Statistics));
     if (settings.logfilename[0] == 0) {
         logfile = stderr;

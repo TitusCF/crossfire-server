@@ -193,7 +193,6 @@ int command_party(object *op, char *params) {
                                  "%16s|%16s|%6.1f%c",
                                  tmpparty->party_kills[i].dead,
                                  tmpparty->party_kills[i].killer, exp, chr);
-
         }
         exp = tmpparty->total_exp;
         chr = ' ';

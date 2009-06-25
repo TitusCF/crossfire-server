@@ -205,7 +205,6 @@ static int check_sacrifice(object *op, const object *improver) {
  * 1.
  */
 static int improve_weapon_stat(object *op, object *improver, object *weapon, signed char *stat, int sacrifice_count, const char *statname) {
-
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "Your sacrifice was accepted.", NULL);
 

@@ -38,6 +38,7 @@ static method_ret trapdoor_type_move_on(ob_methods *context, object *trap, objec
 void init_type_trapdoor(void) {
     register_move_on(TRAPDOOR, trapdoor_type_move_on);
 }
+
 /**
  * Move on this Trapdoor object.
  * @param context The method context

@@ -1598,7 +1598,6 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
             if ((mflags&P_BLOCKSVIEW)
             && OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))
                 break;
-
         }
 
         /* If the destination is blocked, keep backing up until we
@@ -2348,7 +2347,6 @@ int cast_item_curse_or_curse(object *op, object *caster, object *spell_ob) {
         CLEAR_FLAG(marked, FLAG_IDENTIFIED);
         esrv_update_item(UPD_FLAGS, op, marked);
         return 1;
-
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
@@ -2471,7 +2469,6 @@ int cast_detection(object *op, object *caster, object *spell) {
 
     for (x = op->x-range; x <= op->x+range; x++)
         for (y = op->y-range; y <= op->y+range; y++) {
-
             m = op->map;
             mflags = get_map_flags(m, &m, x, y, &nx, &ny);
             if (mflags&P_OUT_OF_MAP)
