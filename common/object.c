@@ -623,6 +623,9 @@ void object_set_owner(object *op, object *owner) {
     /* must not cause owner cycles */
     assert(op != owner);
 
+    if (op->owner != NULL)
+        object_clear_owner(op);
+
     op->owner = owner;
     op->ownercount = owner->count;
 }
