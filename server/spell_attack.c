@@ -117,7 +117,8 @@ int fire_bolt(object *op, object *caster, int dir, object *spob) {
         }
         tmp->direction = absdir(tmp->direction+4);
     }
-    if ((tmp = object_insert_in_map_at(tmp, op->map, op, 0, tmp->x, tmp->y)) != NULL)
+    tmp = object_insert_in_map_at(tmp, op->map, op, 0, tmp->x, tmp->y);
+    if (tmp != NULL)
         ob_process(tmp);
     return 1;
 }
