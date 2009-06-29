@@ -101,11 +101,7 @@ int fire_bolt(object *op, object *caster, int dir, object *spob) {
     object_set_owner(tmp, op);
     set_spell_skill(op, caster, spob, tmp);
 
-    tmp->x = op->x+DIRX(tmp);
-    tmp->y = op->y+DIRY(tmp);
-    tmp->map = op->map;
-
-    mflags = get_map_flags(tmp->map, &tmp->map, tmp->x, tmp->y, &tmp->x, &tmp->y);
+    mflags = get_map_flags(op->map, &tmp->map, op->x+DIRX(tmp), op->y+DIRY(tmp), &tmp->x, &tmp->y);
     if (mflags&P_OUT_OF_MAP) {
         object_free(tmp);
         return 0;
