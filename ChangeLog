@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bolt spells: do not hit caster.
+Andreas Kirschbaum 2009-06-29
+
 Fix trajectory of thrown objects. Formerly some objects did speed up again
 after they should have fallen to the ground.
 Andreas Kirschbaum 2009-06-24
