@@ -3,7 +3,6 @@
  *   "$Id$";
  */
 
-
 /*
     CrossFire, A Multiplayer game for X-windows
 
@@ -121,8 +120,6 @@ int fire_bolt(object *op, object *caster, int dir, object *spob) {
         ob_process(tmp);
     return 1;
 }
-
-
 
 /***************************************************************************
  *
@@ -539,7 +536,6 @@ static object *get_pointed_target(object *op, int dir, int range, int type) {
     }
     return NULL;
 }
-
 
 /**
  * The priest points to a creature and causes a 'godly curse' to descend.
