@@ -112,6 +112,9 @@ int fire_bolt(object *op, object *caster, int dir, object *spob) {
             return 0;
         }
         tmp->direction = absdir(tmp->direction+4);
+        tmp->map = op->map;
+        tmp->x = op->x;
+        tmp->y = op->y;
     }
     tmp = object_insert_in_map_at(tmp, op->map, op, 0, tmp->x, tmp->y);
     if (tmp != NULL)
