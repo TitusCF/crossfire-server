@@ -7,12 +7,33 @@ need to recreate the code here.  If you change fixes a reported bug
 on the mailing list, please provide a brief description of the bug
 fixed.  But please do try to include a useful description of
 what changed.  Saying something like 'General cleanup - just whitespace
-changes' is much more useful than 'misc edits' or 'code cleanup'.
+changes' is much more useful than 'misc edits' or 'code cleanup.'
 3) Please include your name with the changes you make.
 4) Whenever making an update, please update this file, no matter how
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+
+Fix for bug 2.0 wraith feed auto-ready bug? - ID: 1989153 - unarmed skill
+selection is hardcoded.  Add a command - 'unarmed_skill' in which player
+can specify what unarmed skill to use by default instead of the server using
+its built in defaults.
+---
+common/player.c: clear unarmed_skill field in clear_player()
+include/sproto.h: Add definition for command_unarmed_skill()
+include/player.h: add unarmed_skill field to player structure.
+lib/Makefile.am,lib/help/unarmed_skill.en : Add help file for unarmed_skill
+server/c_misc.c: Add command_unarmed_skill() to set/get preferred unarmed
+     skill.
+server/commands.c: Add unarmed_skill to command listing.
+server/login.c: Add code to load/save unarmed_skill value.  Since there
+    are several saved/loaded string values, pull processing of that out
+    and make the string value available to all values.  Updated some of
+    the other users in the login function.
+server/player.c: Set unarmed_skill to NULL for new players.
+server/skill_util.c: Modify find_best_player_hth_skill() to look at
+    unarmed_skill if set.
+MSW 2009-07-02	
 
 Fix bolt spells: do not hit caster. Do not allow casting into walls.
 Andreas Kirschbaum 2009-06-29

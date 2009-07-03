@@ -1002,7 +1002,44 @@ static object *find_best_player_hth_skill(object *op) {
     object *best_skill = NULL;
     int last_skill;
 
+    if (op->contr->unarmed_skill) {
+        /* command_unarmed_skill() already does these checks, and right
+         * now I do not think there is any way to lose unarmed skills.
+         * But maybe in the future there will be (polymorph?) so handle
+         * it appropriately.  MSW 2009-07-03
+         *
+         * Note that the error messages should only print out once when
+         * the initial failure to switch skills happens, so the player
+         * should not get spammed with tons of messages unless they have
+         * no valid unarmed skill
+         */
+
+        best_skill = find_skill_by_name(op, op->contr->unarmed_skill);
+
+        if (!best_skill) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+                                 "Unable to find skill %s - using default unarmed skill",
+                                 "Unable to find skill %s - using default unarmed skill",
+                                 op->contr->unarmed_skill);
+        } else {
+            int i;
+
+            for (i=0; i < sizeof(unarmed_skills); i++)
+                if (best_skill->subtype == unarmed_skills[i]) break;
+
+            if (i < sizeof(unarmed_skills))
+                return(best_skill);
+        }
+        /* If for some reason the unarmed_skill is not valid, we fall
+         * through the processing below.
+         */
+    }
+
+
     /* Dragons are a special case - gros 25th July 2006 */
+    /* Perhaps this special case should be removed and unarmed_skill
+     * set to clawing for dragon characters?  MSW 2009-07-03
+     */
     if (is_dragon_pl(op)) {
         object *tmp;
 

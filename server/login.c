@@ -296,6 +296,7 @@ int save_player(object *op, int flag) {
     fprintf(fp, "usekeys %s\n", pl->usekeys == key_inventory ? "key_inventory" : (pl->usekeys == keyrings ? "keyrings" : "containers"));
     /* Match the enumerations but in string form */
     fprintf(fp, "unapply %s\n", pl->unapply == unapply_nochoice ? "unapply_nochoice" : (pl->unapply == unapply_never ? "unapply_never" : "unapply_always"));
+    if (pl->unarmed_skill) fprintf(fp, "unarmed_skill %s\n", pl->unarmed_skill);
 
 #ifdef BACKUP_SAVE_AT_HOME
     if (op->map != NULL && flag == 0)
@@ -573,17 +574,22 @@ void check_login(object *op) {
 
     /* Loop through the file, loading the rest of the values */
     while (fgets(bufall, MAX_BUF, fp) != NULL) {
+        char *val_string, *p;
+
         sscanf(bufall, "%s %d\n", buf, &value);
+
+        val_string = bufall + strlen(buf) +1;
+        p = strchr(val_string, '\n');
+        if (p != NULL)
+            *p = '\0';
+
         if (!strcmp(buf, "endplst"))
             break;
-        if (!strcmp(buf, "title") && settings.set_title == TRUE) {
-            char *p;
-
-            p = strchr(bufall, '\n');
-            if (p != NULL)
-                *p = '\0';
-            player_set_own_title(pl, bufall+6);
-        } else if (!strcmp(buf, "explore"))
+        if (!strcmp(buf, "title") && settings.set_title == TRUE)
+            player_set_own_title(pl, val_string);
+        else if (!strcmp(buf, "unarmed_skill"))
+            pl->unarmed_skill = add_string(val_string);
+        else if (!strcmp(buf, "explore"))
             pl->explore = value;
         else if (!strcmp(buf, "gen_hp"))
             pl->gen_hp = value;
@@ -662,22 +668,13 @@ void check_login(object *op) {
                 fscanf(fp, "%d\n", &j);
                 pl->levgrace[i] = j;
             }
-        } else if (!strcmp(buf, "party_rejoin_mode")) {
+        } else if (!strcmp(buf, "party_rejoin_mode"))
             pl->rejoin_party = value;
-        } else if (!strcmp(buf, "party_rejoin_name")) {
-            party_name = strdup_local(bufall+strlen("party_rejoin_name")+1);
-            if (party_name && strlen(party_name) > 0)
-                party_name[strlen(party_name)-1] = '\0';
-        } else if (!strcmp(buf, "party_rejoin_password")) {
-            size_t len;
-
-            snprintf(party_password, sizeof(party_password), "%s", bufall+strlen("party_rejoin_password")+1);
-            len = strlen(party_password);
-            /* Remove trailing \n if needed. If password is 8 chars long,
-             * snprintf would already have dropped the \n.
-             */
-            if (len > 0 && len < 8)
-                party_password[len-1] = '\0';
+        else if (!strcmp(buf, "party_rejoin_name"))
+            party_name = strdup_local(val_string);
+        else if (!strcmp(buf, "party_rejoin_password")) {
+            strncpy(party_password, val_string, sizeof(party_password));
+            party_password[sizeof(party_password) - 1] = 0;
         } else if (!strcmp(buf, "language")) {
             if (value < 0 || value >= NUM_LANGUAGES)
                 value = 0;

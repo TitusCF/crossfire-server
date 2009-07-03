@@ -112,6 +112,7 @@ command_array_struct Commands[] = {
     { "usekeys", command_usekeys,        0.0 },
     { "bowmode", command_bowmode,        0.0 },
     { "petmode", command_petmode,        0.0 },
+    { "unarmed_skill", command_unarmed_skill, 0.0 },
     { "version", command_version,        0.0 },
     { "wimpy", command_wimpy,            0.0 },
     { "who", command_who,                0.0 },

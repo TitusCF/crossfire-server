@@ -32,6 +32,8 @@
  * who, etc.
  */
 
+#define WANT_UNARMED_SKILLS
+
 #include <global.h>
 #include <loader.h>
 
@@ -1537,6 +1539,69 @@ int command_bowmode(object *op, char *params) {
                          types[op->contr->bowtype]);
     return 1;
 }
+
+/**
+ * Player wants to change prefered unarmed skill
+ *
+ * @param op
+ * player asking for change.
+ * @param params
+ * new mode.
+ * @return
+ * 1.
+ */
+int command_unarmed_skill(object *op, char *params) {
+    object *skill;
+    int i;
+
+    if (!params) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                             "unarmed skill is set to %s",
+                             "unarmed skill is set to %s",
+                             op->contr->unarmed_skill ? op->contr->unarmed_skill: "nothing");
+        return 1;
+    }
+
+    /* find_skill_by_name() will ready any skill tools - which
+     * is OK for us because no unarmed skills require skill tools,
+     * but this could be an issue if you reuse this code for other skills.
+     */
+    skill = find_skill_by_name(op, params);
+
+    if (!skill) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                             "You do not know any such skill called %s",
+                             "You do not know any such skill called %s",
+                             params);
+        return 1;
+    }
+    for (i=0; i < sizeof(unarmed_skills); i++)
+        if (skill->subtype == unarmed_skills[i]) break;
+
+    if (i == sizeof(unarmed_skills)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                             "%s is not an unarmed skill!",
+                             "%s is not an unarmed skill!",
+                             skill->name);
+        return 1;
+
+    }
+    
+    if (op->contr->unarmed_skill)
+        free_string(op->contr->unarmed_skill);
+
+    /* Taking actual skill name is better than taking params,
+     * as params could be something more than an exact skill name.
+     */
+    op->contr->unarmed_skill = add_string(skill->name);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                         "unarmed skill is now set to %s",
+                         "unarmed skill is now set to %s",
+                         op->contr->unarmed_skill);
+    return 1;
+}
+
 
 /**
  * Player wants to change how her pets behave.

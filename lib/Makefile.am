@@ -56,6 +56,7 @@ dist_help_DATA = help/apply.en help/applymode.en \
 	help/skills.en \
 	help/sort_inventory.en help/sound.en help/spells.en \
 	help/statistics.en help/take.en help/traps.en \
+	help/unarmed_skill.en \
 	help/unbind.en help/use.en help/usekeys.en \
 	help/whereabouts.en \
 	help/wimpy.en \

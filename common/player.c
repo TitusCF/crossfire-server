@@ -56,6 +56,7 @@ void clear_player(player *pl) {
         free(info);
         info = next;
     }
+    if (pl->unarmed_skill) FREE_AND_CLEAR_STR(pl->unarmed_skill);
 }
 
 /**

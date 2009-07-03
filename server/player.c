@@ -335,6 +335,7 @@ static player *get_player(player *p) {
     p->explore = 0;
     p->no_shout = 0;   /* default can shout */
     p->language = 0;
+    p->unarmed_skill = NULL;
 
     strncpy(p->title, op->arch->clone.name, sizeof(p->title)-1);
     p->title[sizeof(p->title)-1] = '\0';

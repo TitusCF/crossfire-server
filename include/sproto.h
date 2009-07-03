@@ -142,6 +142,7 @@ int command_fix_me(object *op, char *params);
 int command_players(object *op, char *params);
 int command_applymode(object *op, char *params);
 int command_bowmode(object *op, char *params);
+int command_unarmed_skill(object *op, char *params);
 int command_petmode(object *op, char *params);
 int command_showpets(object *op, char *params);
 int command_usekeys(object *op, char *params);
