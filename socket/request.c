@@ -1671,7 +1671,6 @@ void send_class_info(socket_struct *ns, char *params) {
 void esrv_update_spells(player *pl) {
     SockList sl;
     int flags = 0;
-    object *spell;
     client_spell *spell_info;
 
     if (!pl->socket.monitor_spells)
