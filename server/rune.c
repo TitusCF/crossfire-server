@@ -166,7 +166,7 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
 
         rune = create_archetype(GENERIC_RUNE);
         snprintf(buf, sizeof(buf), "You set off a rune of %s\n", rune_spell->name);
-        rune->msg = add_string(buf);
+        object_set_msg(rune, buf);
         tmp = object_new();
         object_copy(rune_spell, tmp);
         object_insert_in_ob(tmp, rune);

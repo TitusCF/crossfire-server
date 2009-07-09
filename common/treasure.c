@@ -1804,11 +1804,8 @@ void add_abilities(object *op, object *change) {
             free_string(op->race);
         op->race = add_refcount(change->race);
     }
-    if (change->msg) {
-        if (op->msg)
-            free_string(op->msg);
-        op->msg = add_refcount(change->msg);
-    }
+    if (change->msg)
+        object_set_msg(op, change->msg);
 
     if (change->inv) {
         object *copy;

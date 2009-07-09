@@ -1275,7 +1275,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     EXIT_Y(dummy) = EXIT_Y(force);
     FREE_AND_COPY(dummy->name, portal_name);
     FREE_AND_COPY(dummy->name_pl, portal_name);
-    dummy->msg = add_string(portal_message);
+    object_set_msg(dummy, portal_message);
     dummy->race = add_string(op->name);   /*Save the owner of the portal*/
     cast_create_obj(op, dummy, 0);
 
@@ -1315,7 +1315,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     EXIT_Y(dummy) = op->y;
     FREE_AND_COPY(dummy->name, portal_name);
     FREE_AND_COPY(dummy->name_pl, portal_name);
-    dummy->msg = add_string(portal_message);
+    object_set_msg(dummy, portal_message);
     dummy->race = add_string(op->name);   /*Save the owner of the portal*/
     object_insert_in_map_at(dummy, exitmap, op, 0, EXIT_X(force), EXIT_Y(force));
 
@@ -3269,7 +3269,7 @@ int write_mark(object *op, object *spell, const char *msg) {
     rune[HUGE_BUF-2] = 0;
     strcat(rune, "\n");
     tmp->race = add_string(op->name);   /*Save the owner of the rune*/
-    tmp->msg = add_string(rune);
+    object_set_msg(tmp, rune);
     object_insert_in_map_at(tmp, op->map, op, INS_BELOW_ORIGINATOR, op->x, op->y);
     return 1;
 }

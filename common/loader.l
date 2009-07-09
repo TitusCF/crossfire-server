@@ -616,7 +616,7 @@ A       .+
 
 ^msg{WS}$           {   BEGIN(MESSAGE); msgbuf[0] = '\0'; msglen = 0; total_msglen = 0;}
 <MESSAGE>^endmsg{WS}$ { BEGIN(INITIAL);
-                        op->msg = add_string(msgbuf);
+                        object_set_msg(op, msgbuf);
                         /* Just print a warning so we can be reasonably safe
                          * about not overflowing the buffer.
                          */

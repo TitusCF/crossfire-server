@@ -202,8 +202,7 @@ static int adjust_sign_msg(object *pl, short x, short y, object *tmp) {
         return -1;
     }
 
-    tmp->msg = book->msg;
-    add_refcount(tmp->msg);
+    object_set_msg(tmp, book->msg);
 
     if (tmp->invisible) {
         if (book->custom_name != NULL) {
@@ -316,7 +315,7 @@ static int find_or_create_connection_for_map(object *pl, short x, short y, objec
         force->speed = 0;
         object_update_speed(force);
         force->slaying = add_string(pl->map->path);
-        force->msg = add_string(rune->msg);
+        object_set_msg(force, rune->msg);
         force->path_attuned = connected;
         object_insert_in_ob(force, pl);
 

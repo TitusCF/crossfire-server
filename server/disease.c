@@ -511,7 +511,7 @@ static void do_symptoms(object *disease) {
         new_symptom->last_sp = disease->last_sp;
         new_symptom->stats.exp = 0;
         new_symptom->stats.hp = disease->stats.hp;
-        new_symptom->msg = add_string(disease->msg);
+        object_set_msg(new_symptom, disease->msg);
         new_symptom->attacktype = disease->attacktype;
         new_symptom->other_arch = disease->other_arch;
 
@@ -553,7 +553,7 @@ static void do_symptoms(object *disease) {
         symptom->last_sp = (int)(scale*disease->last_sp);
         symptom->stats.exp = 0;
         symptom->stats.hp = (int)(scale*disease->stats.hp);
-        symptom->msg = add_string(disease->msg);
+        object_set_msg(symptom, disease->msg);
         symptom->attacktype = disease->attacktype;
         symptom->other_arch = disease->other_arch;
     }

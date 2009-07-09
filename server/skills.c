@@ -1498,14 +1498,10 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
             object_copy(item, newBook);
             object_decrease_nrof_by_one(item);
             newBook->nrof = 1;
-            if (newBook->msg)
-                free_string(newBook->msg);
-            newBook->msg = add_string(buf);
+            object_set_msg(newBook, buf);
             newBook = object_insert_in_ob(newBook, pl);
         } else {
-            if (item->msg)
-                free_string(item->msg);
-            item->msg = add_string(buf);
+            object_set_msg(item, buf);
             /* This shouldn't be necessary - the object hasn't changed in any
              * visible way
              */

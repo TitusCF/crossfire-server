@@ -4596,3 +4596,17 @@ void object_insert_to_free_spot_or_free(object *op, mapstruct *map, int x, int y
 
     object_insert_in_map_at(op, map, originator, 0, x+freearr_x[pos], y+freearr_y[pos]);
 }
+
+/**
+ * Sets the object#msg field of an object.
+ *
+ * @param op
+ * the object to modify
+ * @param msg
+ * the new message to set or NULL to clear
+ */
+void object_set_msg(object *op, const char *msg) {
+    if (op->msg != NULL)
+        free_string(op->msg);
+    op->msg = msg == NULL ? NULL : add_string(msg);
+}

@@ -265,8 +265,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             random_sign = create_archetype("sign");
 
             snprintf(buf, sizeof(buf), "This is a random map.\nLevel: %d\n", (RP->dungeon_level)-1);
-
-            random_sign->msg = add_string(buf);
+            object_set_msg(random_sign, buf);
             object_insert_in_map_at(random_sign, map, NULL, 0, upx+freearr_x[j], upy+freearr_y[j]);
         }
     }
@@ -320,7 +319,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
         RP->origin_x = downx+freearr_x[i];
         RP->origin_y = downy+freearr_y[i];
         write_map_parameters_to_string(RP, buf, sizeof(buf));
-        the_exit_down->msg = add_string(buf);
+        object_set_msg(the_exit_down, buf);
         /* the identifier for making a random map. */
         if (RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0] != 0) {
             /* Next map is the final map, special case. */

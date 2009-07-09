@@ -2433,7 +2433,7 @@ static void copy_message(object *op, const char *msg) {
     size = strlen(msg);
 
     if (msg[0] != 0 && msg[size-1] == '\n') {
-        FREE_AND_COPY(op->msg, msg);
+        object_set_msg(op, msg);
         return;
     }
 
@@ -2441,7 +2441,7 @@ static void copy_message(object *op, const char *msg) {
     if (!temp)
         fatal(OUT_OF_MEMORY);
     snprintf(temp, size+2, "%s\n", msg);
-    FREE_AND_COPY(op->msg, temp);
+    object_set_msg(op, temp);
     free(temp);
 }
 

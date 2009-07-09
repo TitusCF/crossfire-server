@@ -1177,10 +1177,7 @@ void key_change_class(object *op, char key) {
         execute_global_event(EVENT_LOGIN, op->contr, op->contr->socket.host);
         op->contr->state = ST_PLAYING;
 
-        if (op->msg) {
-            free_string(op->msg);
-            op->msg = NULL;
-        }
+        object_set_msg(op, NULL);
 
         /* We create this now because some of the unique maps will need it
          * to save here.
@@ -3263,7 +3260,7 @@ void kill_player(object *op) {
                          "  level %d by %s.\n",
                          tmp->name, op->name, op->contr->title,
                          (int)(op->level), op->contr->killer);
-            tmp->msg = add_string(buf);
+            object_set_msg(tmp, buf);
             tmp->type = 0;
             tmp->value = 0;
             tmp->material = 0;
@@ -3440,7 +3437,7 @@ void kill_player(object *op) {
                  "by %s.\n",
                  op->name, op->contr->title,
                  op->contr->killer);
-        tmp->msg = add_string(buf);
+        object_set_msg(tmp, buf);
         object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
 
         /* restore player: remove any poisoning, disease and confusion the
@@ -3581,9 +3578,7 @@ void kill_player(object *op) {
         FREE_AND_COPY(tmp->name, buf);
         FREE_AND_COPY(tmp->name_pl, buf);
         tmp->level = op->level;
-        if (tmp->msg)
-            free_string(tmp->msg);
-        tmp->msg = add_string(gravestone_text(op, buf, sizeof(buf)));
+        object_set_msg(tmp, gravestone_text(op, buf, sizeof(buf)));
         SET_FLAG(tmp, FLAG_UNIQUE);
         object_insert_in_map_at(tmp, map, NULL, 0, x, y);
     }

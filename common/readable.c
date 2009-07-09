@@ -1205,9 +1205,7 @@ static void change_book(object *book, int msgtype) {
 
         /* alter book properties */
         tmpbook = create_archetype(t->archname);
-        if (tmpbook->msg)
-            free_string(tmpbook->msg);
-        tmpbook->msg = add_string(book->msg);
+        object_set_msg(tmpbook, book->msg);
         object_copy(tmpbook, book);
         object_free(tmpbook);
 
@@ -1666,7 +1664,7 @@ static void make_formula_book(object *book, int level) {
         fl = get_formulalist(1);  /* safety */
 
     if (fl->total_chance == 0) {
-        book->msg = add_string(" <indecipherable text>\n");
+        object_set_msg(book, " <indecipherable text>\n");
         new_text_name(book, MSGTYPE_ALCHEMY);
         add_author(book, MSGTYPE_ALCHEMY);
         return;
@@ -1681,7 +1679,7 @@ static void make_formula_book(object *book, int level) {
     }
 
     if (!formula || formula->arch_names <= 0) {
-        book->msg = add_string(" <indecipherable text>\n");
+        object_set_msg(book, " <indecipherable text>\n");
         new_text_name(book, MSGTYPE_ALCHEMY);
         add_author(book, MSGTYPE_ALCHEMY);
         return;
@@ -1698,7 +1696,7 @@ static void make_formula_book(object *book, int level) {
     at = find_archetype(op_name);
     if (at == (archetype *)NULL) {
         LOG(llevError, "formula_msg() can't find arch %s for formula.\n", op_name);
-        book->msg = add_string(" <indecipherable text>\n");
+        object_set_msg(book, " <indecipherable text>\n");
         new_text_name(book, MSGTYPE_ALCHEMY);
         add_author(book, MSGTYPE_ALCHEMY);
         return;
@@ -1753,9 +1751,7 @@ static void make_formula_book(object *book, int level) {
         LOG(llevError, "formula_msg() no ingredient list for object %s of %s\n", op_name, formula->title);
     if (retbuf[strlen(retbuf)-1] != '\n')
         snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf), "\n");
-    if (book->msg)
-        free_string(book->msg);
-    book->msg = add_string(retbuf);
+    object_set_msg(book, retbuf);
 }
 
 /**
@@ -2064,9 +2060,7 @@ void tailor_readable_ob(object *book, int msg_type) {
 
     strcat(msgbuf, "\n");  /* safety -- we get ugly map saves/crashes w/o this */
     if (strlen(msgbuf) > strlen("\n")) {
-        if (book->msg)
-            free_string(book->msg);
-        book->msg = add_string(msgbuf);
+        object_set_msg(book, msgbuf);
         /* lets give the "book" a new name, which may be a compound word */
         change_book(book, msg_type);
     }
