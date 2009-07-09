@@ -33,7 +33,7 @@ server/login.c: Add code to load/save unarmed_skill value.  Since there
 server/player.c: Set unarmed_skill to NULL for new players.
 server/skill_util.c: Modify find_best_player_hth_skill() to look at
     unarmed_skill if set.
-MSW 2009-07-02	
+MSW 2009-07-02
 
 Fix bolt spells: do not hit caster. Do not allow casting into walls.
 Andreas Kirschbaum 2009-06-29
