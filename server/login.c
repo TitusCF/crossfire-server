@@ -618,9 +618,9 @@ void check_login(object *op) {
         else if (!strcmp(buf, "outputs_count"))
             pl->outputs_count = value;
         else if (!strcmp(buf, "map"))
-            sscanf(bufall, "map %s", pl->maplevel);
+            snprintf(pl->maplevel, sizeof(pl->maplevel), "%s", val_string);
         else if (!strcmp(buf, "savebed_map"))
-            sscanf(bufall, "savebed_map %s", pl->savebed_map);
+            snprintf(pl->savebed_map, sizeof(pl->savebed_map), "%s", val_string);
         else if (!strcmp(buf, "bed_x"))
             pl->bed_x = value;
         else if (!strcmp(buf, "bed_y"))
@@ -640,23 +640,23 @@ void check_login(object *op) {
         else if (!strcmp(buf, "Cha"))
             pl->orig_stats.Cha = value;
         else if (!strcmp(buf, "usekeys")) {
-            if (!strcmp(bufall+8, "key_inventory\n"))
+            if (!strcmp(val_string, "key_inventory"))
                 pl->usekeys = key_inventory;
-            else if (!strcmp(bufall+8, "keyrings\n"))
+            else if (!strcmp(val_string, "keyrings"))
                 pl->usekeys = keyrings;
-            else if (!strcmp(bufall+8, "containers\n"))
+            else if (!strcmp(val_string, "containers"))
                 pl->usekeys = containers;
             else
-                LOG(llevDebug, "load_player: got unknown usekeys type: %s\n", bufall+8);
+                LOG(llevDebug, "load_player: got unknown usekeys type: %s\n", val_string);
         } else if (!strcmp(buf, "unapply")) {
-            if (!strcmp(bufall+8, "unapply_nochoice\n"))
+            if (!strcmp(val_string, "unapply_nochoice"))
                 pl->unapply = unapply_nochoice;
-            else if (!strcmp(bufall+8, "unapply_never\n"))
+            else if (!strcmp(val_string, "unapply_never"))
                 pl->unapply = unapply_never;
-            else if (!strcmp(bufall+8, "unapply_always\n"))
+            else if (!strcmp(val_string, "unapply_always"))
                 pl->unapply = unapply_always;
             else
-                LOG(llevDebug, "load_player: got unknown unapply type: %s\n", bufall+8);
+                LOG(llevDebug, "load_player: got unknown unapply type: %s\n", val_string);
         } else if (!strcmp(buf, "lev_array")) {
             for (i = 1; i <= value; i++) {
                 int j;
