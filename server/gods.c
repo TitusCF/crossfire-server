@@ -242,7 +242,7 @@ static int follower_has_similar_item(object *op, object *item) {
         if (tmp->type == item->type
         && same_string(tmp->name, item->name)
         && same_string(tmp->title, item->title)
-        && same_string(tmp->msg, item->msg)
+        && tmp->msg == item->msg
         && same_string(tmp->slaying, item->slaying))
             return 1;
         if (tmp->inv && follower_has_similar_item(tmp, item))

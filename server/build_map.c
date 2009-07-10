@@ -295,7 +295,7 @@ static int find_or_create_connection_for_map(object *pl, short x, short y, objec
     FOR_INV_PREPARE(pl, tmp) {
         if (tmp->type == FORCE
         && tmp->slaying != NULL && strcmp(tmp->slaying, pl->map->path) == 0
-        && tmp->msg != NULL && strcmp(tmp->msg, rune->msg) == 0) {
+        && tmp->msg != NULL && tmp->msg == rune->msg) {
             force = tmp;
             break;
         }
