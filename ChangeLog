@@ -15,7 +15,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 Fix player save file parser. Now usekeys and applymode settings are
-retained between logins.
+retained between logins. Fixes #2819301 (usekeys setting no longer
+persists across logout.)
 Andreas Kirschbaum 2009-07-10
 
 Fix some memory leaks when updating object->msg.
