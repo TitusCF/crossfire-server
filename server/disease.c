@@ -305,7 +305,6 @@ static void check_infection(object *disease) {
             }
         }
     }
-    return;
 }
 
 /**
@@ -587,7 +586,6 @@ static void grant_immunity(object *disease) {
     immunity->level = disease->level;
     immunity->move_block = 0;
     object_insert_in_ob(immunity, disease->env);
-    return;
 }
 
 /**
@@ -657,7 +655,6 @@ void move_symptom(object *symptom) {
     }
     draw_ext_info(NDI_UNIQUE|NDI_RED, 0, victim, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
                   symptom->msg, symptom->msg);
-    return;
 }
 
 /**
