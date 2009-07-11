@@ -1070,11 +1070,8 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
         } else
             ndir = object_find_free_spot(&summon_arch->clone, op->map, op->x, op->y, 1, SIZEOFFREE);
 
-        if (ndir > 0) {
-            x = freearr_x[ndir];
-            y = freearr_y[ndir];
-        }
-
+        x = ndir > 0 ? freearr_x[ndir] : 0;
+        y = ndir > 0 ? freearr_y[ndir] : 0;
         if (ndir == -1 || ob_blocked(&summon_arch->clone, op->map, op->x+x, op->y+y))
             continue;
 

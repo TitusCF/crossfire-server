@@ -159,6 +159,8 @@ int command_orcknuckle(object *op, char *params) {
                                  "You need at least %d dice to play orcknuckle!", DICE);
             return 0;
         }
+    } else {
+        dice_count = 0;
     }
 
     i = rndm(1, 5);
@@ -303,6 +305,8 @@ static int do_tell(object *op, char *params, int adjust_listen) {
         if (adjust_listen) {
             original_listen = pl->listening;
             pl->listening = 10;
+        } else {
+            original_listen = 0;
         }
 
         execute_global_event(EVENT_TELL, op, msg, pl->ob);

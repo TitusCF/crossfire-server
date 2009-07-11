@@ -610,7 +610,7 @@ void pick_up(object *op, object *alt) {
  * 0.
  */
 int command_take(object *op, char *params) {
-    object *tmp, *next;
+    object *tmp;
     int ival;
     int missed = 0;
 
@@ -638,7 +638,6 @@ int command_take(object *op, char *params) {
 
     FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp->invisible) {
-            tmp = next;
             continue;
         }
         /* This following two if and else if could be merged into line
