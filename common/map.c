@@ -517,7 +517,7 @@ int ob_blocked(const object *ob, mapstruct *m, sint16 x, sint16 y) {
     archetype *tmp;
     int flag;
     mapstruct *m1;
-    sint16  sx, sy;
+    sint16 sx, sy;
     const object *part;
 
     if (ob == NULL) {
