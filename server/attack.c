@@ -724,7 +724,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     tag_t op_tag, hitter_tag;
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
-        goto error;
+        return 1;
 
     /* Lauwenmark: Handle for plugin attack event */
     if (execute_event(op, EVENT_ATTACK, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
@@ -761,7 +761,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         if (object_was_destroyed(op, op_tag)
         || object_was_destroyed(hitter, hitter_tag)
         || abort_attack(op, hitter, simple_attack))
-            goto error;
+            return 1;
     }
 
     op_name = op->name;
@@ -825,8 +825,10 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             thrown_item_effect(hitter, op);
             if (object_was_destroyed(hitter, hitter_tag)
                 || object_was_destroyed(op, op_tag)
-                || abort_attack(op, hitter, simple_attack))
-                goto leave;
+                || abort_attack(op, hitter, simple_attack)) {
+                free_string(op_name);
+                return 0;
+            }
         }
 
         /* Need to do at least 1 damage, otherwise there is no point
@@ -847,8 +849,10 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             hit_player(hitter, random_roll(0, (op->stats.dam), hitter, PREFER_LOW), op, op->attacktype, 1);
             if (object_was_destroyed(op, op_tag)
             || object_was_destroyed(hitter, hitter_tag)
-            || abort_attack(op, hitter, simple_attack))
-                goto leave;
+            || abort_attack(op, hitter, simple_attack)) {
+                free_string(op_name);
+                return 0;
+            }
         }
 
         /* In the new attack code, it should handle multiple attack
@@ -857,24 +861,17 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         dam = hit_player(op, random_roll(1, hitdam, hitter, PREFER_HIGH), hitter, type, 1);
         if (object_was_destroyed(op, op_tag)
         || object_was_destroyed(hitter, hitter_tag)
-        || abort_attack(op, hitter, simple_attack))
-            goto leave;
+        || abort_attack(op, hitter, simple_attack)) {
+            free_string(op_name);
+            return 0;
+        }
     } else {/* end of if hitter hit op */
         dam = 0; /* if we missed, dam=0 */
     }
 
     /*attack_message(dam, type, op, hitter);*/
 
-    goto leave;
-
-error:
-    dam = 1;
-    goto leave;
-
-leave:
-    if (op_name)
-        free_string(op_name);
-
+    free_string(op_name);
     return dam;
 }
 
