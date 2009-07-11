@@ -1024,9 +1024,9 @@ static object *find_best_player_hth_skill(object *op) {
         } else {
             int i;
 
-            for (i=0; i < sizeof(unarmed_skills); i++)
-                if (best_skill->subtype == unarmed_skills[i]) break;
-
+            for (i = 0; i < sizeof(unarmed_skills); i++)
+                if (best_skill->subtype == unarmed_skills[i])
+                    break;
             if (i < sizeof(unarmed_skills))
                 return(best_skill);
         }
