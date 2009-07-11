@@ -1575,9 +1575,9 @@ int command_unarmed_skill(object *op, char *params) {
                              params);
         return 1;
     }
-    for (i=0; i < sizeof(unarmed_skills); i++)
-        if (skill->subtype == unarmed_skills[i]) break;
-
+    for (i = 0; i < sizeof(unarmed_skills); i++)
+        if (skill->subtype == unarmed_skills[i])
+            break;
     if (i == sizeof(unarmed_skills)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "%s is not an unarmed skill!",
