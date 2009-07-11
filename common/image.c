@@ -348,7 +348,8 @@ unsigned find_face(const char *name, unsigned error) {
 int read_smooth(void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
-    int regular, smoothed, nrofsmooth = 0;
+    unsigned regular, smoothed;
+    int nrofsmooth = 0;
 
     snprintf(buf, sizeof(buf), "%s/smooth", settings.datadir);
     LOG(llevDebug, "Reading smooth from %s...\n", buf);

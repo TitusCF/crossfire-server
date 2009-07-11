@@ -350,7 +350,7 @@ static int matches_sacrifice(const object *altar, const object *sacrifice) {
  */
 int check_altar_sacrifice(const object *altar, const object *sacrifice, int remove_others, int *toremove) {
     int money;
-    int wanted, rest;
+    uint32 wanted, rest;
     object *above;
 
     if (!matches_sacrifice(altar, sacrifice))
