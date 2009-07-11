@@ -1022,7 +1022,7 @@ static object *find_best_player_hth_skill(object *op) {
                                  "Unable to find skill %s - using default unarmed skill",
                                  op->contr->unarmed_skill);
         } else {
-            int i;
+            size_t i;
 
             for (i = 0; i < sizeof(unarmed_skills); i++)
                 if (best_skill->subtype == unarmed_skills[i])

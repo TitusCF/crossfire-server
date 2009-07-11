@@ -1923,12 +1923,12 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
              * so its cleaner just to do 2 statements - MSW
              */
             if (op->spell_tags
-            && !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp)
+            && !OB_SPELL_TAG_MATCH(op, (tag_t)tmp->stats.maxhp)
             && OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0)
                 continue;
 
             if (tmp->spell_tags
-            && !OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp)
+            && !OB_SPELL_TAG_MATCH(tmp, (tag_t)op->stats.maxhp)
             && OB_SPELL_TAG_HASH(tmp, op->stats.maxhp) != 0)
                 continue;
 
@@ -1936,7 +1936,7 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
              * so we need to make sure that slot isn't filled up.
              */
             if (tmp->spell_tags
-            && !OB_SPELL_TAG_MATCH(tmp, tmp->stats.maxhp)
+            && !OB_SPELL_TAG_MATCH(tmp, (tag_t)tmp->stats.maxhp)
             && OB_SPELL_TAG_HASH(tmp, tmp->stats.maxhp) != 0)
                 continue;
 
@@ -1982,7 +1982,7 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
                     for (i = 0; i < SPELL_TAG_SIZE; i++)
                         if (!op->spell_tags[i]
                         && tmp->spell_tags[i]
-                        && tmp->spell_tags[i] != op->stats.maxhp)
+                        && tmp->spell_tags[i] != (tag_t)op->stats.maxhp)
                             op->spell_tags[i] = tmp->spell_tags[i];
                 }
                 FREE_AND_CLEAR(tmp->spell_tags);
@@ -1996,7 +1996,7 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
                 /* We don't need to keep a copy of our maxhp value
                  * in the copied over value
                 */
-                if (OB_SPELL_TAG_MATCH(op, op->stats.maxhp))
+                if (OB_SPELL_TAG_MATCH(op, (tag_t)op->stats.maxhp))
                     OB_SPELL_TAG_HASH(op, op->stats.maxhp) = 0;
             }
 

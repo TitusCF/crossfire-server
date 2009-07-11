@@ -316,14 +316,19 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
                              name);
         return 0;
     }
-    if (sack->weight_limit && sack->carrying+(nrof ? nrof : 1)
-        *(op->weight+(op->type == CONTAINER ? op->carrying*op->stats.Str : 0))
-        *(100-sack->stats.Str)/100 > sack->weight_limit) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "That won't fit in the %s!",
-                             "That won't fit in the %s!",
-                             name);
-        return 0;
+    if (sack->weight_limit) {
+        sint32 new_weight;
+
+        new_weight = sack->carrying+(nrof ? nrof : 1)
+            *(op->weight+(op->type == CONTAINER ? op->carrying*op->stats.Str : 0))
+            *(100-sack->stats.Str)/100;
+        if (new_weight > sack->weight_limit) {
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                "That won't fit in the %s!",
+                "That won't fit in the %s!",
+                name);
+            return 0;
+        }
     }
     /* All other checks pass, must be OK */
     return 1;
@@ -2017,7 +2022,7 @@ int command_search_items(object *op, char *params) {
  */
 int command_rename_item(object *op, char *params) {
     char buf[VERY_BIG_BUF], name[MAX_BUF];
-    int itemnumber;
+    tag_t itemnumber;
     object *item = NULL;
     object *tmp;
     char *closebrace;

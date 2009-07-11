@@ -432,7 +432,7 @@ START_TEST(test_object_new) {
     fail_unless(ob->active_prev == NULL, "Field active_prev has not been nullified by object_new()");
     /* did you really thing i'll go with only one object? */
     /* let's go for about 2M allocations in a row, let's test roughness */
-    for (i = 0; i < 1U<<17; i++) {
+    for (i = 0; i < 1L<<17; i++) {
         ob = object_new();
         fail_unless(ob != NULL, "Should get an object after calling object_new() (iteration %l)", i);
         if (!(i&((1<<13)-1)))

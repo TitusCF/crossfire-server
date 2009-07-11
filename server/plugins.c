@@ -527,18 +527,18 @@ void *cfapi_get_hooks(int *type, ...) {
     va_list args;
     int request_type;
     char *buf;
-    int fid;
     f_plug_api *rapi;
-    int i;
 
     *type = CFAPI_NONE;
 
     va_start(args, type);
     request_type = va_arg(args, int);
     if (request_type == 0) { /* By nr */
+        size_t fid;
+
         fid = va_arg(args, int);
         rapi = va_arg(args, f_plug_api *);
-        if (fid < 0 || fid >= NR_OF_HOOKS) {
+        if (fid >= NR_OF_HOOKS) {
             *rapi = NULL;
             *type = CFAPI_NONE;
         } else {
@@ -546,6 +546,8 @@ void *cfapi_get_hooks(int *type, ...) {
             *type = CFAPI_FUNC;
         }
     } else { /* by name */
+        size_t i;
+
         buf = va_arg(args, char *);
         rapi = va_arg(args, f_plug_api *);
         *rapi = NULL;

@@ -782,7 +782,8 @@ int command_teleport(object *op, char *params) {
  */
 int command_create(object *op, char *params) {
     object *tmp = NULL;
-    int i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
+    uint32 i;
+    int magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
     uint32 nrof;
     char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4, *endline;
     archetype *at, *at_spell = NULL;

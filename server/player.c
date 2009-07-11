@@ -1385,7 +1385,7 @@ static void flee_player(object *op) {
 int check_pick(object *op) {
     tag_t op_tag;
     int stop = 0;
-    int j, k, wvratio;
+    int j, k, wvratio, current_ratio;
     char putstring[128], tmpstr[16];
 
     /* if you're flying, you can't pick up anything */
@@ -1715,7 +1715,8 @@ int check_pick(object *op) {
                  * >=7 is the old standard setting.  Now we take the last 4 bits
                  * and multiply them by 5, giving 0..15*5== 5..75 */
                 wvratio = (op->contr->mode&PU_RATIO)*5;
-                if ((query_cost(tmp, op, F_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1))) >= wvratio) {
+                current_ratio = query_cost(tmp, op, F_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1));
+                if (current_ratio >= wvratio) {
                     pick_up(op, tmp);
                     continue;
                 }

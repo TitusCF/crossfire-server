@@ -588,8 +588,8 @@ int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, uint32 immune_s
         && tmp->stats.maxhp
         && op->stats.maxhp) {
             if ((tmp->stats.maxhp == op->stats.maxhp)
-            || (tmp->spell_tags && OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp))
-            || (op->spell_tags && OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp))) {
+            || (tmp->spell_tags && OB_SPELL_TAG_MATCH(tmp, (tag_t)op->stats.maxhp))
+            || (op->spell_tags && OB_SPELL_TAG_MATCH(op, (tag_t)tmp->stats.maxhp))) {
                 statistics.spell_suppressions++;
                 return 0;
             }

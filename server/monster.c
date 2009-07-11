@@ -348,7 +348,7 @@ static int monster_check_wakeup(object *op, object *enemy, rv_vector *rv) {
     /* enemy should already be on this map, so don't really need to check
      * for that.
      */
-    if (rv->distance < (QUERY_FLAG(enemy, FLAG_STEALTH) ? radius/2+1 : radius)) {
+    if (rv->distance < (unsigned)(QUERY_FLAG(enemy, FLAG_STEALTH) ? radius/2+1 : radius)) {
         CLEAR_FLAG(op, FLAG_SLEEP);
         return 1;
     }

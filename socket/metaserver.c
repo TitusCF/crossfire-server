@@ -586,4 +586,5 @@ void *metaserver2_thread(void *junk) {
         metaserver2_updates();
         sleep(60);
     }
+    return NULL;
 }

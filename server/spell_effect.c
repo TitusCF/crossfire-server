@@ -2849,7 +2849,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
             } else {
                 /* If we got here, we are consecrating an altar */
                 object *new_altar;
-                int letter;
+                size_t letter;
                 archetype *altar_arch;
 
                 snprintf(buf, MAX_BUF, "altar_");

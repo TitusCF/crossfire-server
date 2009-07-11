@@ -1552,7 +1552,7 @@ int command_bowmode(object *op, char *params) {
  */
 int command_unarmed_skill(object *op, char *params) {
     object *skill;
-    int i;
+    size_t i;
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,

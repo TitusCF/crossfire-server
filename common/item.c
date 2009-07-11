@@ -239,7 +239,7 @@ static const int enc_to_item_power[] = {
 int get_power_from_ench(int ench) {
     if (ench < 0)
         ench = 0;
-    if (ench > (int)sizeof(enc_to_item_power)/sizeof(*enc_to_item_power)-1)
+    if (ench > (int)(sizeof(enc_to_item_power)/sizeof(*enc_to_item_power)-1))
         ench = sizeof(enc_to_item_power)/sizeof(*enc_to_item_power)-1;
     return enc_to_item_power[ench];
 }

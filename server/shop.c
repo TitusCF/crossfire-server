@@ -794,7 +794,7 @@ static void insert_objects(object *pl, object *container, object *objects[], int
  * amount still not paid after using "pouch".
  */
 static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
-    int i;
+    size_t i;
     sint64 remain;
     object *coin_objs[NUM_COINS];
     object *other_money[16]; /* collects MONEY objects not matching coins[] */
