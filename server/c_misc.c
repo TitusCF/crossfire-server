@@ -1586,7 +1586,7 @@ int command_unarmed_skill(object *op, char *params) {
         return 1;
 
     }
-    
+
     if (op->contr->unarmed_skill)
         free_string(op->contr->unarmed_skill);
 
