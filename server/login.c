@@ -768,7 +768,7 @@ void check_login(object *op) {
      */
     if (op->stats.hp < 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                      "Your character was dead last your played.",
+                      "Your character was dead last time you played.",
                       NULL);
         kill_player(op);
         if (pl->state != ST_PLAYING)
@@ -827,7 +827,7 @@ void check_login(object *op) {
         if (pl->party)
             snprintf(buf, MAX_BUF, "Rejoined party %s.", party->partyname);
         else
-            snprintf(buf, MAX_BUF, "Couldn't rejoined party %s: %s.", party_name, party ? "invalid password." : "no such party.");
+            snprintf(buf, MAX_BUF, "Couldn't rejoin party %s: %s.", party_name, party ? "invalid password." : "no such party.");
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                       buf, NULL);
     }
