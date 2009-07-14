@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Disembark transport when using dimension door from inside.
+Andreas Kirschbaum 2009-07-14
+
 Fix some grammar in server/login.c.
 Kevin Bulgrien 2009-07-11
 

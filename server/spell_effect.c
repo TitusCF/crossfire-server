@@ -1617,6 +1617,15 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
         }
     }
 
+    if (op->contr->transport && op->contr->transport->type == TRANSPORT) {
+        ob_apply(op->contr->transport, op, 0);
+        if (op->contr->transport) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                          "Your spell failed!", NULL);
+            return 0;
+        }
+    }
+
     /* Actually move the player now */
     object_remove(op);
     if ((op = object_insert_in_map_at(op, op->map, op, 0, op->x+freearr_x[dir]*dist, op->y+freearr_y[dir]*dist)) == NULL)
