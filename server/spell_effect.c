@@ -43,12 +43,12 @@
 #include <sounds.h>
 
 /**
- * This is really used mostly for spell fumbles at the like.
+ * This is really used mostly for spell fumbles and the like.
  *
  * @param op
  * what is casting this.
  * @param tmp
- * object to propogate.
+ * object to propagate.
  * @param lvl
  * how nasty should the propagation be.
  */
@@ -61,7 +61,7 @@ void cast_magic_storm(object *op, object *tmp, int lvl) {
 
     /* Put a cap on duration for this - if the player fails in their
      * apartment, don't want it to go on so long that it kills them
-     * multiple times.  Also, damge already increases with level,
+     * multiple times.  Also, damage already increases with level,
      * so don't really need to increase the duration as much either.
      */
     if (tmp->duration >= 40)
@@ -149,7 +149,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
  * Start of polymorph related functions.
  *
  * Changed around for 0.94.3 - it will now look through and use all the
- * possible choices for objects/monsters (before it was teh first 80 -
+ * possible choices for objects/monsters (before it was the first 80 -
  * arbitrary hardcoded limit in this file.)  Doing this will be a bit
  * slower however - while before, it traversed the archetypes once and
  * stored them into an array, it will now potentially traverse it
@@ -559,8 +559,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
             give_artifact_abilities(missile, al->item);
             /* These special arrows cost something extra.  Don't have them also be
             * magical - otherwise, in most cases, not enough will be created.
-            * I don't want to get into the parsing of having to do both plus and
-            * type.
+            * I don't want to get into the parsing both plus and type.
             */
             bonus_plus = 1+(al->item->value/5);
             missile_plus = 0;
@@ -639,7 +638,7 @@ int cast_create_food(object *op, object *caster, object *spell_ob, int dir, cons
         archetype *at_tmp;
 
         /* We try to find the archetype with the maximum food value.
-         * This removes the dependancy of hard coded food values in this
+         * This removes the dependency of hard coded food values in this
          * function, and addition of new food types is automatically added.
          * We don't use flesh types because the weight values of those need
          * to be altered from the donor.
@@ -990,7 +989,7 @@ int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
             LOG(llevError, "cast_wonder: spell returned is not a spell (%d, %s)!\n", newspell->type, newspell->name);
             return 0;
         }
-        /* Prevent inifinit recursion */
+        /* Prevent inifinite recursion */
         if (newspell->subtype == SP_WONDER) {
             LOG(llevError, "cast_wonder: spell returned is another wonder spell!\n");
             return 0;
@@ -1078,7 +1077,7 @@ int perceive_self(object *op) {
  * are inserted in the player to destruct the portal next time player
  * creates a new portal pair.
  * This spell has a side effect that it allows people to meet each other
- * in a permanent, private,  appartements by making a town portal from it
+ * in a permanent, private, apartments by making a town portal from it
  * to the town or another public place. So, check if the map is unique and if
  * so return an error
  *
@@ -1220,7 +1219,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
      * access to the destination map.
      * If we can't, don't fizzle. Simply warn player.
      * This ensure player pays his mana for the spell
-     * because HE is responsible of forgotting.
+     * because HE is responsible for forgetting.
      * 'force' is the destination of the town portal, which we got
      * from the players inventory above.
      */
@@ -2057,7 +2056,7 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
  * alchemied.
  */
 
-/* I didn't feel like passing these as arguements to the
+/* I didn't feel like passing these as arguments to the
  * two functions that need them.  Real values are put in them
  * when the spell is cast, and these are freed when the spell
  * is finished.
@@ -2537,7 +2536,7 @@ int cast_detection(object *op, object *caster, object *spell) {
                  * show the flash the magic item like it does for detect monster.
                  * however, if the object is within sight, this would then make it
                  * difficult to see what object is magical/cursed, so the
-                 * effect wouldn't be as apparant.
+                 * effect wouldn't be as apparent.
                  */
 
                 /* detect magic */
@@ -2546,7 +2545,7 @@ int cast_detection(object *op, object *caster, object *spell) {
                 && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
                 && is_magical(tmp)) {
                     SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-                    /* make runes more visibile */
+                    /* make runes more visible */
                     if (tmp->type == RUNE && tmp->attacktype&AT_MAGIC)
                         tmp->stats.Cha /= 4;
                     done_one = 1;
@@ -2845,7 +2844,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
         return 0;
     }
 
-    FOR_INV_PREPARE(op, tmp) {
+    FOR_BELOW_PREPARE(op, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
             break;
         if (tmp->type == HOLY_ALTAR) {
@@ -2884,7 +2883,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 return 1;
             }
         }
-    } FOR_INV_FINISH();
+    } FOR_BELOW_FINISH();
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                   "You are not standing over an altar!", NULL);
     return 0;
@@ -2896,7 +2895,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
  * and the attributes of the weapon.  The weapon is inserted in the golem's
  * inventory so that it falls to the ground when the golem dies.
  * This code was very odd - code early on would only let players use the spell,
- * yet the code wass full of player checks.  I've presumed that the code
+ * yet the code was full of player checks.  I've presumed that the code
  * that only let players use it was correct, and removed all the other
  * player checks. MSW 2003-01-06
  *
@@ -3241,7 +3240,7 @@ int create_aura(object *op, object *caster, object *spell) {
 
 /**
  * This writes a rune that contains the appropriate message.
- * There really isn't any adjustments we make.
+ * There really aren't any adjustments we make.
  *
  * @param op
  * who is casting.
