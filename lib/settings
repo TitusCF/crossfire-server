@@ -217,7 +217,7 @@ balanced_stat_loss false
 # entirely (the same effect would be achieved by setting the two
 # death_penalty settings below to 0).
 
-permanent_experience_percentage 25
+permanent_experience_percentage 50
 
 # When a player dies, they lose a proportion of their experience, which is
 # defined by the following two values. They will lose either
