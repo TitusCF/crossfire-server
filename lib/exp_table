@@ -153,7 +153,7 @@ max_level 115
 #D # New exp for better gain rate.  Main effect is for
 #D # lower levels so it is takes longer to gain a level.
 #D # after about level 20, this matches table C
-0,5000,10000, 20000, 40000,80000,150000,300000,500000, 800000,
+#0,5000,10000, 20000, 40000,80000,150000,300000,500000, 800000,
 # 10
 #1100000,1500000,1900000,2400000,
 #3000000,4600000,5300000,6000000, 6800000, 7600000,
