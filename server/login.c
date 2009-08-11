@@ -611,8 +611,14 @@ void check_login(object *op) {
             pl->no_shout = value;
         else if (!strcmp(buf, "digestion"))
             pl->digestion = value;
-        else if (!strcmp(buf, "pickup"))
+        else if (!strcmp(buf, "pickup")) {
+            /*
+             * Reparse pickup as an unsigned value.  The prior parse assumes
+             * all values are signed. If read as signed, pickup is corrupted.
+             */
+            sscanf(bufall,"%s %u\n",buf,&value);
             pl->mode = value;
+        }
         else if (!strcmp(buf, "outputs_sync"))
             pl->outputs_sync = value;
         else if (!strcmp(buf, "outputs_count"))
