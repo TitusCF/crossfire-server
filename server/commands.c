@@ -85,8 +85,6 @@ command_array_struct Commands[] = {
     { "motd", command_motd,              0.0 },
     { "rules", command_rules,            0.0 },
     { "news", command_news,              0.0 },
-    { "output-sync", command_output_sync, 0.0 },
-    { "output-count", command_output_count, 0.0 },
     { "passwd", command_passwd,          0.0 },
     { "peaceful", command_peaceful,      0.0 },
     { "pickup", command_pickup,          1.0 },

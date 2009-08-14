@@ -102,74 +102,6 @@ static void print_message(int colr, const object *pl, const char *tmp) {
 }
 
 /**
- * Prints out the contents of specified buffer structures,
- * and clears the string.
- */
-void flush_output_element(const object *pl, Output_Buf *outputs) {
-    char tbuf[MAX_BUF];
-
-    if (outputs->buf == NULL)
-        return;
-    if (outputs->count > 1) {
-        snprintf(tbuf, MAX_BUF, "%d times %s", outputs->count, outputs->buf);
-        print_message(NDI_BLACK, pl, tbuf);
-    } else {
-        print_message(NDI_BLACK, pl, outputs->buf);
-    }
-    free_string(outputs->buf);
-    outputs->buf = NULL;
-    outputs->first_update = 0; /* This way, it will be reused */
-}
-
-/**
- * Sends message to player through output buffers.
- * \param pl player to send message
- * \param buf message to send
- *
- * If player's output_count is 1, sends message directly.
- *
- * Else checks output buffers for specified message.
- *
- * If found, checks if message should be sent now.
- *
- * If message not already in buffers, flushes olders buffer,
- * and adds message to queue.
- */
-static void check_output_buffers(const object *pl, const char *buf) {
-    int i, oldest = 0;
-
-    if (pl->contr->outputs_count < 2) {
-        print_message(NDI_BLACK, pl, buf);
-        return;
-    } else {
-        for (i = 0; i < NUM_OUTPUT_BUFS; i++) {
-            if (pl->contr->outputs[i].buf
-            && !strcmp(buf, pl->contr->outputs[i].buf))
-                break;
-            else if (pl->contr->outputs[i].first_update < pl->contr->outputs[oldest].first_update)
-                oldest = i;
-        }
-        /* We found a match */
-        if (i < NUM_OUTPUT_BUFS) {
-            pl->contr->outputs[i].count++;
-            if (pl->contr->outputs[i].count >= pl->contr->outputs_count) {
-                flush_output_element(pl, &pl->contr->outputs[i]);
-            }
-        }
-        /* No match - flush the oldest, and put the new one in */
-        else {
-            flush_output_element(pl, &pl->contr->outputs[oldest]);
-
-            pl->contr->outputs[oldest].first_update = pticks;
-            pl->contr->outputs[oldest].count = 1;
-            if (pl->contr->outputs[oldest].buf != NULL)
-                free_string(pl->contr->outputs[oldest].buf);
-            pl->contr->outputs[oldest].buf = add_string(buf);
-        }
-    }
-}
-
-/**
  * Sends message to player(s).
  *
  * @param flags Various flags - mostly color, plus a few specials.
@@ -181,10 +113,6 @@ static void check_output_buffers(const object *pl, const char *buf) {
  *
  * @param pl Can be passed as NULL - in fact, this will be done if NDI_ALL is
  * set in the flags.
- *
- * If message is black, and not NDI_UNIQUE, gets sent through output buffers.
- * If the client supports the new readables, this is sent to the client without
- * processing in the output buffers.
  *
  * @param type The type MSG_TYPE for the type of message.
  *
@@ -238,12 +166,7 @@ void draw_ext_info(
             }
             strip_media_tag(buf);
         }
-        if ((flags&NDI_COLOR_MASK) == NDI_BLACK && !(flags&NDI_UNIQUE)) {
-            /* following prints stuff out, as appropriate */
-            check_output_buffers(pl, buf);
-        } else {
-            print_message(flags&NDI_COLOR_MASK, pl, buf);
-        }
+        print_message(flags&NDI_COLOR_MASK, pl, buf);
         if (!oldmessage)
             free(buf);
     } else {
@@ -269,10 +192,6 @@ void draw_ext_info(
  *
  * @param pl Can be passed as NULL - in fact, this will be done if NDI_ALL is
  * set in the flags.
- *
- * If message is black, and not NDI_UNIQUE, gets sent through output buffers.
- * If the client supports the new readables, this is sent to the client without
- * processing in the output buffers.
  *
  * @param type The type MSG_TYPE for the type of message.
  *

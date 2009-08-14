@@ -34,15 +34,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-/** How many output buffers a player has. */
-#define NUM_OUTPUT_BUFS 5
-/** One output buffer. */
-typedef struct {
-    const char *buf;        /**< Actual string pointer. */
-    uint32 first_update;    /**< First time this message was stored. */
-    uint16 count;           /**< How many times we got this message. */
-} Output_Buf;
-
 /**
  * What range is currntly selected by the player.
  *
@@ -223,9 +214,6 @@ typedef struct pl {
                                       * join. */
     party_rejoin_mode rejoin_party;  /**< Whether to rejoin or not party at login. */
     char        search_str[MAX_BUF]; /**< Item we are looking for. */
-    Output_Buf  outputs[NUM_OUTPUT_BUFS]; /**< Holds output strings to send to client. */
-    uint16      outputs_sync;        /**< How often to print, no matter what. */
-    uint16      outputs_count;       /**< Print if this count is exceeded. */
     uint32      mark_count;          /**< Count of marked object. */
     object      *mark;               /**< Marked object. */
     object      *transport;          /**< Transport the player is in. */

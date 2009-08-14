@@ -134,6 +134,16 @@ extern void change_exp(object *op, sint64 exp, const char *skill_name, int flag)
 extern void apply_death_exp_penalty(object *op);
 extern int did_make_save(const object *op, int level, int bonus);
 extern void share_exp(object *op, sint64 exp, const char *skill, int flag);
+extern float get_cha_bonus(int stat);
+extern int get_dex_bonus(int stat);
+extern int get_thaco_bonus(int stat);
+extern uint32 get_weight_limit(int stat);
+extern int get_learn_spell(int stat);
+extern int get_cleric_chance(int stat);
+extern int get_turn_bonus(int stat);
+extern int get_dam_bonus(int stat);
+extern float get_speed_bonus(int stat);
+extern int get_fear_bonus(int stat);
 /* logger.c */
 extern void LOG(LogLevel logLevel, const char *format, ...);
 /* los.c */
@@ -350,7 +360,6 @@ extern int buf_overflow(const char *buf1, const char *buf2, size_t bufsize);
 extern StringBuffer *stringbuffer_new(void);
 extern char *stringbuffer_finish(StringBuffer *sb);
 extern sstring stringbuffer_finish_shared(StringBuffer *sb);
-extern void stringbuffer_finish_socklist(StringBuffer *sb, SockList *sl);
 extern void stringbuffer_append_string(StringBuffer *sb, const char *str);
 extern void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 extern void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);

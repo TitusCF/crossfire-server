@@ -299,8 +299,6 @@ static player *get_player(player *p) {
      */
     p->party = NULL;
     p->rejoin_party = party_rejoin_if_exists;
-    p->outputs_sync = 16;  /* Every 2 seconds */
-    p->outputs_count = 1;  /* Keeps present behaviour */
     p->unapply = unapply_nochoice;
     p->Swap_First = -1;
 
@@ -2977,20 +2975,12 @@ void do_some_living(object *op) {
     int last_food = op->stats.food;
     int gen_hp, gen_sp, gen_grace;
     int over_hp, over_sp, over_grace;
-    int i;
     int rate_hp = 1200;
     int rate_sp = 2500;
     int rate_grace = 2000;
     const int max_hp = 1;
     const int max_sp = 1;
     const int max_grace = 1;
-
-    if (op->contr->outputs_sync) {
-        for (i = 0; i < NUM_OUTPUT_BUFS; i++)
-            if (op->contr->outputs[i].buf != NULL
-            && (op->contr->outputs[i].first_update+op->contr->outputs_sync) < pticks)
-                flush_output_element(op, &op->contr->outputs[i]);
-    }
 
     if (op->contr->state == ST_PLAYING) {
         /* these next three if clauses make it possible to SLOW DOWN

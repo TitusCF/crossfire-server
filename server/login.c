@@ -290,8 +290,14 @@ int save_player(object *op, int flag) {
     fprintf(fp, "no_shout %d\n", pl->no_shout);
     fprintf(fp, "digestion %d\n", pl->digestion);
     fprintf(fp, "pickup %u\n", pl->mode);
-    fprintf(fp, "outputs_sync %d\n", pl->outputs_sync);
-    fprintf(fp, "outputs_count %d\n", pl->outputs_count);
+    /*
+     * outputs_sync and outputs_count are now unused in favor of the facility
+     * being supported on the client instead of in the server, but for now,
+     * set sane values in case an older server is run on a new player file.
+     * Once the server is officially 2.x, this should likely be removed.
+     */
+    fprintf(fp, "outputs_sync %d\n", 16);
+    fprintf(fp, "outputs_count %d\n", 1);
     /* Match the enumerations but in string form */
     fprintf(fp, "usekeys %s\n", pl->usekeys == key_inventory ? "key_inventory" : (pl->usekeys == keyrings ? "keyrings" : "containers"));
     /* Match the enumerations but in string form */
@@ -619,10 +625,6 @@ void check_login(object *op) {
             sscanf(bufall,"%s %u\n",buf,&value);
             pl->mode = value;
         }
-        else if (!strcmp(buf, "outputs_sync"))
-            pl->outputs_sync = value;
-        else if (!strcmp(buf, "outputs_count"))
-            pl->outputs_count = value;
         else if (!strcmp(buf, "map"))
             snprintf(pl->maplevel, sizeof(pl->maplevel), "%s", val_string);
         else if (!strcmp(buf, "savebed_map"))

@@ -14,6 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove output-count and output-sync from the server.  Remove the output buffer
+defines and declarations, along with the outputs_sync and outputs_count items.
+Remove now unused flush_output_element(), check_output_buffers(), various
+comments, calls to removed functions, output-sync and output-count command
+support, player struct outputs_sunc and outputs_count members.  This mod does
+attempt to preserver player file compatibility with older server versions by
+always saving legacy defaults to the player file outputs_sync and count
+parameters.  Re-ran make cproto to add missing items fix brokenness in the
+proto files.
+Kevin Bulgrien 2009-08-13
+
 Fix bug 2835449 pickup is broken by changing server/login.c check_login() to
 read the pickup value saved in the player file as an unsigned value instead
 of as a signed value.  Unfortunately corrupted player files still have the
