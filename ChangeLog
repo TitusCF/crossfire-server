@@ -22,7 +22,9 @@ support, player struct outputs_sunc and outputs_count members.  This mod does
 attempt to preserver player file compatibility with older server versions by
 always saving legacy defaults to the player file outputs_sync and count
 parameters.  Re-ran make cproto to add missing items fix brokenness in the
-proto files.
+proto files.  NOTE:  References to I18N_MSG_CMISC_099, 100, 101, 102, 103, and
+104 were removed, but the messages themselves were not removed and no attempt
+was made to see if other references still exist.
 Kevin Bulgrien 2009-08-13
 
 Fix bug 2835449 pickup is broken by changing server/login.c check_login() to
