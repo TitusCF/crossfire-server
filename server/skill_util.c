@@ -690,28 +690,29 @@ sint64 calc_skill_exp(object *who, object *op, object *skill) {
 
     if (who->type != PLAYER) {            /* for monsters only */
         return ((sint64)(op_exp*0.1)+1);  /* we add one to insure positive value is returned */
-    } else {                            /* for players */
-        base = op_exp;
-        /* if skill really is a skill, then we can look at the skill archetype for
-         * base reward value (exp) and level multiplier factor.
-         */
-        if (skill->type == SKILL) {
-            base += skill->arch->clone.stats.exp;
-            if (settings.simple_exp) {
-                if (skill->arch->clone.level)
-                    lvl_mult = (float)skill->arch->clone.level/100.0;
-                else
-                    lvl_mult = 1.0; /* no adjustment */
-            } else {
-                if (skill->level)
-                    lvl_mult = ((float)skill->arch->clone.level*(float)op_lvl)/((float)skill->level*100.0);
-                else
-                    lvl_mult = 1.0;
-            }
+    }
+
+    /* for players */
+    base = op_exp;
+    /* if skill really is a skill, then we can look at the skill archetype for
+     * base reward value (exp) and level multiplier factor.
+     */
+    if (skill->type == SKILL) {
+        base += skill->arch->clone.stats.exp;
+        if (settings.simple_exp) {
+            if (skill->arch->clone.level)
+                lvl_mult = (float)skill->arch->clone.level/100.0;
+            else
+                lvl_mult = 1.0; /* no adjustment */
         } else {
-            /* Don't divide by zero here! */
-            lvl_mult = (float)op_lvl/(float)(skill->level ? skill->level : 1);
+            if (skill->level)
+                lvl_mult = ((float)skill->arch->clone.level*(float)op_lvl)/((float)skill->level*100.0);
+            else
+                lvl_mult = 1.0;
         }
+    } else {
+        /* Don't divide by zero here! */
+        lvl_mult = (float)op_lvl/(float)(skill->level ? skill->level : 1);
     }
 
     /* assemble the exp total, and return value */
