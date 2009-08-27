@@ -653,9 +653,9 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
  * experience for the skill use.
  */
 sint64 calc_skill_exp(object *who, object *op, object *skill) {
-    sint64 op_exp = 0;
-    int op_lvl = 0;
-    float base, value, lvl_mult = 0.0;
+    sint64 op_exp;
+    int op_lvl;
+    float base, value, lvl_mult;
 
     if (!skill)
         skill = who;

@@ -549,7 +549,6 @@ object *generate_treasure(treasurelist *t, int difficulty) {
 static int level_for_item(const object *op, int difficulty, int retmult) {
     int level, mult, olevel;
 
-    mult = 0;
     if (!op->inv) {
         LOG(llevError, "level_for_item: Object %s has no inventory!\n", op->name);
         return 0;

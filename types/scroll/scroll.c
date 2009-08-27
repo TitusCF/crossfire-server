@@ -76,7 +76,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
 
     if (applier->type == PLAYER) {
         /* players need a literacy skill to read stuff! */
-        int exp_gain = 0;
+        int exp_gain;
 
         /* hard code literacy - scroll->skill points to where the exp
          * should go for anything killed by the spell.
