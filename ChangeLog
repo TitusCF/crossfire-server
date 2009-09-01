@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+The hiscore command requests 50 high scores, but for some reason the command
+that outputs the scores arbitrarily returns only 49.  Removed a needless
+decrement of the max parameter.  Now the command returns 50.
+Kevin Bulgrien 2009-08-31
+
 Remove i18n strings and help files that used to support the output-sync and
 output-count functionality.
 Kevin Bulgrien 2009-08-31

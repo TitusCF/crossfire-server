@@ -418,7 +418,7 @@ void display_high_score(object *op, int max, const char *match) {
                   "Nr    Score    Who <max hp><max sp><max grace>");
 
     while (fgets(buf, MAX_BUF, fp) != NULL) {
-        if (j >= HIGHSCORE_LENGTH || i >= (max-1))
+        if (j >= HIGHSCORE_LENGTH || i >= max)
             break;
         if ((sc = get_score(buf)) == NULL)
             break;
