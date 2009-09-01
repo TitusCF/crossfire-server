@@ -64,12 +64,12 @@
 96|You will now be stopped by walls.\n
 97|You can now cast spells anywhere.
 98|You now cannot cast spells in no-magic areas.
-99|Output sync time is presently %d
-100|Output sync time now set to %d
-101|Invalid value for output_sync.
-102|Output count is presently %d
-103|Output count now set to %d
-104|Invalid value for output_count.
+#99|Output sync time is presently %d
+#100|Output sync time now set to %d
+#101|Invalid value for output_sync.
+#102|Output count is presently %d
+#103|Output count now set to %d
+#104|Invalid value for output_count.
 105|Set listen to what (presently %d)?
 106|Verbose level should be positive.
 107|Your verbose level is now %d.

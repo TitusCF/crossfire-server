@@ -64,12 +64,12 @@
 96|Vous serez désormais bloqué par les murs.\n
 97|Vous pouvez maintenant lancer des sorts n'importe où.
 98|Vous ne pouvez plus lancer de sorts dans les zones non-magiques.
-99|Output sync time is presently %d
-100|Output sync time now set to %d
-101|Invalid value for output_sync.
-102|Output count is presently %d
-103|Output count now set to %d
-104|Invalid value for output_count.
+#99|Output sync time is presently %d
+#100|Output sync time now set to %d
+#101|Invalid value for output_sync.
+#102|Output count is presently %d
+#103|Output count now set to %d
+#104|Invalid value for output_count.
 105|À quel niveau d'écoute faut-il se placer (actuellement: %d)?
 106|Le niveau de verbosité doit être positif.
 107|Niveau de verbosité réglé sur %d.

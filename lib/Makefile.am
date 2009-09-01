@@ -46,8 +46,7 @@ dist_help_DATA = help/apply.en help/applymode.en \
 	help/listen.en help/maps.en \
 	help/mark.en help/melee.en help/mode.en \
 	help/motd.en help/mouse.en help/move.en \
-	help/news.en help/output.en \
-	help/output-count.en help/output-sync.en \
+	help/news.en \
 	help/party.en help/party_rejoin.en help/peaceful.en \
 	help/petmode.en help/pickup.en \
 	help/quit.en help/range.en help/rename.en \
