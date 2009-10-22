@@ -814,18 +814,9 @@ void enter_exit(object *op, object *exit_ob) {
                 return;
             }
 
-            /* This supports the old behaviour, but it really should not be used.
-             * I will note for example that with this method, it is impossible to
-             * set 0,0 destination coordinates.  Really, if we want to support
-             * using the new maps default coordinates, the exit ob should use
-             * something like -1, -1 so it is clear to do that.
-             */
-            if (x == 0 && y == 0) {
+            if (x == -1 && y == -1) {
                 x = MAP_ENTER_X(newmap);
                 y = MAP_ENTER_Y(newmap);
-                LOG(llevDebug, "enter_exit: Exit %s (%d,%d) on map %s is 0 destination coordinates\n",
-                    exit_ob->name ? exit_ob->name : "(none)", exit_ob->x, exit_ob->y,
-                    exit_ob->map ? exit_ob->map->path : "(none)");
             }
 
             /* mids 02/13/2002 if exit is damned, update players death & WoR home-position and delete town portal */
