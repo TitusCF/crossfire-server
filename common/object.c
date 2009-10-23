@@ -2144,7 +2144,7 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
             /* Debugging information so you can see the last coordinates this object had */
             more->ox = more->x;
             more->oy = more->y;
-            more->map = get_map_from_coord(m, &more->x, &more->y);
+            more->map = get_map_from_coord(more->map, &more->x, &more->y);
         } else if (!more->map) {
             /* For backwards compatibility - when not dealing with tiled maps,
             * more->map should always point to the parent.

@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix #2879249 (SIGSEGV on transport moving across some edges of tiled maps).
+Andreas Kirschbaum 2009-10-23
+
 Change exits pointing to new map's default coordinates from (0,0) to
 (-1,-1). This allows exits to point to (0,0).
 Andreas Kirschbaum 2009-10-23
