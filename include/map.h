@@ -389,7 +389,7 @@ typedef struct mapdef {
  * creature is.  get_rangevector takes into account map tiling,
  * so you just can not look the the map coordinates and get the
  * righte value.  distance_x/y are distance away, which
- * can be negativbe.  direction is the crossfire direction scheme
+ * can be negative.  direction is the crossfire direction scheme
  * that the creature should head.  part is the part of the
  * monster that is closest.
  * Note: distance should be always >=0. I changed it to UINT. MT
