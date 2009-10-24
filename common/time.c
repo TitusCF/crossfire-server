@@ -240,8 +240,7 @@ void sleep_delta(void) {
      * Don't do too much catching up:
      * (Things can still get jerky on a slow/loaded computer)
      */
-    if (last_time.tv_sec*1000000+last_time.tv_usec <
-            new_time.tv_sec*1000000+new_time.tv_usec) {
+    if ((last_time.tv_sec-new_time.tv_sec)*1000000+(last_time.tv_usec-new_time.tv_usec) < 0) {
         last_time.tv_sec = new_time.tv_sec;
         last_time.tv_usec = new_time.tv_usec;
     }
