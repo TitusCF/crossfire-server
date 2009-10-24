@@ -294,8 +294,8 @@ typedef struct MapSpace {
  */
 typedef struct regiondef {
     struct regiondef *next;      /**< Pointer to next region, NULL for the last one */
-    const char  *name;           /**< Shortend name of the region as maps refer to it */
-    const char  *parent_name;    /**<
+    char  *name;                 /**< Shortend name of the region as maps refer to it */
+    char  *parent_name;          /**<
                                   * So that parent and child regions can be defined in
                                   * any order, we keep hold of the parent_name during
                                   * initialisation, and the children get assigned to their
@@ -307,9 +307,9 @@ typedef struct regiondef {
                                   * region, if a value isn't defined in the current region
                                   * we traverse this series of pointers until it is.
                                   */
-    const char  *longname;       /**< Official title of the region, this might be defined
+    char  *longname;             /**< Official title of the region, this might be defined
                                   * to be the same as name*/
-    const char  *msg;            /**< The description of the region */
+    char  *msg;                  /**< The description of the region */
     uint32      counter;         /**< A generic counter for holding temporary data. */
     sint8       fallback;        /**< Whether, in the event of a region not existing,
                                   * this should be the one we fall back on as the default. */

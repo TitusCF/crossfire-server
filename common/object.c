@@ -3192,7 +3192,7 @@ int object_find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, 
     /* If radius is not set, default to 1 */
     value = object_get_value(gen, "generator_radius");
     if (value) {
-        radius = (sint8)strtol((char *)value, NULL, 10);
+        radius = (sint8)strtol(value, NULL, 10);
         if (radius < 1) {
             radius = 1;
         }

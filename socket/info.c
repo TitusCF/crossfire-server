@@ -155,9 +155,11 @@ void draw_ext_info(
      */
     if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket, type)) {
         char *buf;
+        const char *buf2;
 
         if (oldmessage) {
-            buf = (char *)oldmessage;
+            buf2 = oldmessage;
+            buf = NULL;
         } else {
             buf = strdup_local(message);
             if (buf == NULL) {
@@ -165,10 +167,10 @@ void draw_ext_info(
                 return;
             }
             strip_media_tag(buf);
+            buf2 = buf;
         }
-        print_message(flags&NDI_COLOR_MASK, pl, buf);
-        if (!oldmessage)
-            free(buf);
+        print_message(flags&NDI_COLOR_MASK, pl, buf2);
+        free(buf);
     } else {
         esrv_print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, message);
     }

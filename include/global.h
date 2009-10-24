@@ -285,7 +285,7 @@ extern socket_struct *init_sockets;
  * This is generally done as a safety, and having this macro
  * makes the code a bit cleaner when doing so.
  */
-#define FREE_AND_CLEAR(xyz) { free((void *)xyz); xyz = NULL; }
+#define FREE_AND_CLEAR(xyz) { free(xyz); xyz = NULL; }
 #define FREE_AND_CLEAR_STR(xyz) { free_string(xyz); xyz = NULL; }
 
 /* FREE_AND_COPY is for the shared string - it is handy enough
