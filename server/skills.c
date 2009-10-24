@@ -1805,15 +1805,16 @@ static object *find_throw_ob(object *op, const char *request) {
     /* look through the inventory */
     if (tmp == NULL) {
         FOR_INV_PREPARE(op, tmp2) {
-            tmp = tmp2;
             /* can't toss invisible or inv-locked items */
-            if (tmp->invisible || QUERY_FLAG(tmp, FLAG_INV_LOCKED))
+            if (tmp2->invisible || QUERY_FLAG(tmp2, FLAG_INV_LOCKED))
                 continue;
-            query_name(tmp, name, MAX_BUF);
+            query_name(tmp2, name, MAX_BUF);
             if (!request
                 || !strcmp(name, request)
-                || !strcmp(tmp->name, request))
+                || !strcmp(tmp2->name, request)) {
+                tmp = tmp2;
                 break;
+            }
         } FOR_INV_FINISH();
     }
 
