@@ -1134,7 +1134,7 @@ static int yyerror(const char *s)
  */
 static char *yval(void)
 {
-    static char *em = "";
+    static char em[] = "";
     char *cp, *end;
 
     /* First skip over start of line, like animation or name */
