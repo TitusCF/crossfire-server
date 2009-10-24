@@ -121,7 +121,7 @@ WS      [ \t]*
  * is found.
  */
 static char *rmap_yval(void) {
-    static char *em = "";
+    static char em[] = "";
     char *cp;
 
     cp = strchr(yytext, ' ');
