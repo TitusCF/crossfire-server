@@ -1488,7 +1488,7 @@ int check_pick(object *op) {
 
             /* if mode is set to pick nothing up, return */
 
-            if (op->contr->mode&PU_NOTHING)
+            if (op->contr->mode == PU_NOTHING)
                 return 1;
 
             /* if mode is set to stop when encountering objects, return.
