@@ -1422,7 +1422,9 @@ int server_main(int argc, char **argv) {
 
         sleep_delta();       /* Sleep proper amount of time before next tick */
     }
+#if 0 /* unreachable */
     emergency_save(0);
     cleanup();
     return 0;
+#endif
 }

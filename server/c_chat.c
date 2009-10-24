@@ -1020,8 +1020,6 @@ static int basic_emote(object *op, char *params, int emotion) {
                              params);
         return(1);
     } /*else*/
-
-    return(0);
 }
 
 /*
