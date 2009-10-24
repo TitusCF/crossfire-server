@@ -212,7 +212,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
 #endif
 #endif
                 /* roll the dice */
-                } else if ((float)(random_roll(0, 101, caster, PREFER_LOW)) <= 100.0*success_chance) {
+                } else if (random_roll(0, 101, caster, PREFER_LOW) <= 100.0*success_chance) {
                     change_exp(caster, rp->exp, rp->skill, SK_EXP_NONE);
                     return;
                 }

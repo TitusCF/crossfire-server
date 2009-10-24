@@ -1455,9 +1455,9 @@ void fix_object(object *op) {
 
                 /* Got some extra bonus at first level */
                 if (i < 2) {
-                    stmp = op->contr->levsp[i]+((2.0*(float)get_sp_bonus(op->stats.Pow)+(float)get_sp_bonus(op->stats.Int))/6.0);
+                    stmp = op->contr->levsp[i]+(2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int))/6.0;
                 } else {
-                    stmp = (float)op->contr->levsp[i]+(2.0*(float)get_sp_bonus(op->stats.Pow)+(float)get_sp_bonus(op->stats.Int))/12.0;
+                    stmp = op->contr->levsp[i]+(2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int))/12.0;
                 }
                 if (stmp < 1.0)
                     stmp = 1.0;
@@ -1491,9 +1491,9 @@ void fix_object(object *op) {
 
                 /* Got some extra bonus at first level */
                 if (i < 2) {
-                    grace_tmp = op->contr->levgrace[i]+(((float)get_grace_bonus(op->stats.Pow)+2.0*(float)get_grace_bonus(op->stats.Wis))/6.0);
+                    grace_tmp = op->contr->levgrace[i]+(get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis))/6.0;
                 } else {
-                    grace_tmp = (float)op->contr->levgrace[i]+((float)get_grace_bonus(op->stats.Pow)+2.0*(float)get_grace_bonus(op->stats.Wis))/12.0;
+                    grace_tmp = op->contr->levgrace[i]+(get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis))/12.0;
                 }
                 if (grace_tmp < 1.0)
                     grace_tmp = 1.0;
