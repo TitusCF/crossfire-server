@@ -1602,14 +1602,14 @@ int command_abil(object *op, char *params) {
     thing[0] = '\0';
     thing2[0] = '\0';
     if (params == NULL
-    || !sscanf(params, "%s %s %d", thing, thing2, &iii)
-    || thing == NULL) {
+    || sscanf(params, "%s %s %d", thing, thing2, &iii) != 3
+    || thing[0] == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Who?", NULL);
         return 1;
     }
 
-    if (thing2 == NULL) {
+    if (thing2[0] == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You can't change that.", NULL);
         return 1;
