@@ -734,7 +734,7 @@ A       .+
                                 if (tmp->arch && (arch_init == 0)) {
                                     object_insert_in_ob(tmp, op);
                                 } else {
-                                    if (init_archetypes == 0)
+                                    if (arch_init == 0)
                                         LOG(llevDebug, "Discarding object without arch: %s\n", tmp->name ? tmp->name : "(null)");
                                     object_free(tmp);
                                 }
