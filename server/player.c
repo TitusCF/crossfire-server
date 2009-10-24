@@ -1517,30 +1517,22 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_FOOD)
                 if (tmp->type == FOOD) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "FOOD\n");
                     continue;
                 }
             if (op->contr->mode&PU_DRINK)
                 if (tmp->type == DRINK || (tmp->type == POISON && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "DRINK\n");
                     continue;
                 }
             /* we don't forget dragon food */
             if (op->contr->mode&PU_FLESH)
                 if (tmp->type == FLESH) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "FLESH\n");
                     continue;
                 }
             if (op->contr->mode&PU_POTION)
                 if (tmp->type == POTION) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "POTION\n");
                     continue;
                 }
 
@@ -1548,22 +1540,16 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_SPELLBOOK)
                 if (tmp->type == SPELLBOOK) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "SPELLBOOK\n");
                     continue;
                 }
             if (op->contr->mode&PU_SKILLSCROLL)
                 if (tmp->type == SKILLSCROLL) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "SKILLSCROLL\n");
                     continue;
                 }
             if (op->contr->mode&PU_READABLES)
                 if (tmp->type == BOOK || tmp->type == SCROLL) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "READABLES\n");
                     continue;
                 }
 
@@ -1571,8 +1557,6 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_MAGIC_DEVICE)
                 if (tmp->type == WAND || tmp->type == ROD) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "MAGIC_DEVICE\n");
                     continue;
                 }
 
@@ -1580,16 +1564,12 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_MAGICAL)
                 if (QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "MAGICAL\n");
                     continue;
                 }
 
             if (op->contr->mode&PU_VALUABLES) {
                 if (tmp->type == MONEY || tmp->type == GEM) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "MONEY/GEM\n");
                     continue;
                 }
             }
@@ -1598,8 +1578,6 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_JEWELS)
                 if (tmp->type == RING || tmp->type == AMULET) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "JEWELS\n");
                     continue;
                 }
 
@@ -1607,15 +1585,11 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_BOW)
                 if (tmp->type == BOW) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "BOW\n");
                     continue;
                 }
             if (op->contr->mode&PU_ARROW)
                 if (tmp->type == ARROW) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "ARROW\n");
                     continue;
                 }
 
@@ -1623,43 +1597,31 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_ARMOUR)
                 if (tmp->type == ARMOUR) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "ARMOUR\n");
                     continue;
                 }
             if (op->contr->mode&PU_HELMET)
                 if (tmp->type == HELMET) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "HELMET\n");
                     continue;
                 }
             if (op->contr->mode&PU_SHIELD)
                 if (tmp->type == SHIELD) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "SHIELD\n");
                     continue;
                 }
             if (op->contr->mode&PU_BOOTS)
                 if (tmp->type == BOOTS) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "BOOTS\n");
                     continue;
                 }
             if (op->contr->mode&PU_GLOVES)
                 if (tmp->type == GLOVES) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "GLOVES\n");
                     continue;
                 }
             if (op->contr->mode&PU_CLOAK)
                 if (tmp->type == CLOAK) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "GLOVES\n");
                     continue;
                 }
 
@@ -1667,8 +1629,6 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_MISSILEWEAPON)
                 if (tmp->type == WEAPON && QUERY_FLAG(tmp, FLAG_IS_THROWN)) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "MISSILEWEAPON\n");
                     continue;
                 }
 
@@ -1680,8 +1640,6 @@ int check_pick(object *op) {
                     && strstr(tmp->name, "chair")
                     && strstr(tmp->arch->name, "chair") == NULL) {
                         pick_up(op, tmp);
-                        if (0)
-                            fprintf(stderr, "WEAPON\n");
                         continue;
                     }
                 }
@@ -1689,8 +1647,6 @@ int check_pick(object *op) {
                     if (strstr(tmp->arch->name, "table") == NULL
                     && strstr(tmp->arch->name, "chair") == NULL) {
                         pick_up(op, tmp);
-                        if (0)
-                            fprintf(stderr, "WEAPON\n");
                         continue;
                     }
                 }
@@ -1700,8 +1656,6 @@ int check_pick(object *op) {
             if (op->contr->mode&PU_KEY)
                 if (tmp->type == KEY || tmp->type == SPECIAL_KEY) {
                     pick_up(op, tmp);
-                    if (0)
-                        fprintf(stderr, "KEY\n");
                     continue;
                 }
 
