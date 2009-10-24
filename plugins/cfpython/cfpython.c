@@ -368,7 +368,7 @@ static PyObject *getWhoIsThird(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getWhatIsMessage(PyObject *self, PyObject *args) {
-    if (current_context->message == NULL)
+    if (*current_context->message == '\0')
         return Py_BuildValue("");
     else
         return Py_BuildValue("s", current_context->message);
@@ -379,7 +379,7 @@ static PyObject *getScriptName(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getScriptParameters(PyObject *self, PyObject *args) {
-    if (!current_context->options) {
+    if (!*current_context->options) {
         Py_INCREF(Py_None);
         return Py_None;
     }
