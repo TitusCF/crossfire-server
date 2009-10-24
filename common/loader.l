@@ -1132,7 +1132,7 @@ static int yyerror(const char *s)
  * is found.  Modified 4/26/2000 to also strip spaces at end of
  * line
  */
-static char *yval()
+static char *yval(void)
 {
     static char *em = "";
     char *cp, *end;
@@ -1317,13 +1317,13 @@ static const char *const flag_names[NUM_FLAGS+1] = {
  * @todo
  * remove as it is empty.
  */
-void init_vars() {
+void init_vars(void) {
 }
 
 /**
  * Frees all memory allocated by the loader.
  */
-void free_loader() {
+void free_loader(void) {
     yy_delete_buffer(YY_CURRENT_BUFFER);
 
     /* Comment out this yylex_destroy(), as it results in link errors
