@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Disable [Debug] messages by default. Use the -d command-line option to
+enable debug messages.
+Andreas Kirschbaum 2009-10-25
+
 Fix incorrect error message for throwing skill when no throwable object
 was found.
 Andreas Kirschbaum 2009-10-25
