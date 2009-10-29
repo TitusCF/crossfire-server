@@ -546,6 +546,8 @@ int command_goto(object *op, char *params) {
     dummy = object_new();
     dummy->map = op->map;
     EXIT_PATH(dummy) = add_string(name);
+    EXIT_X(dummy) = -1;
+    EXIT_Y(dummy) = -1;
     dummy->name = add_string(name);
 
     enter_exit(op, dummy);
