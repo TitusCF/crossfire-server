@@ -251,6 +251,10 @@ void esrv_draw_look(object *pl) {
     FOR_OB_AND_BELOW_PREPARE(tmp) {
         object *head;
 
+        if (tmp == last) {
+            break;
+        }
+
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !last) {
             last = tmp->below;  /* assumes double floor mode */
             if (last && QUERY_FLAG(last, FLAG_IS_FLOOR))
