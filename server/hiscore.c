@@ -144,15 +144,18 @@ static score *get_score(char *bp) {
  * buf.
  */
 static char *draw_one_high_score(const score *sc, char *buf, size_t size) {
-    if (!strncmp(sc->killer, "quit", MAX_NAME))
-        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s %s quit the game on map %s <%d><%d><%d>.",
-                 sc->position, sc->exp, sc->name, sc->title, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
-    else if (!strncmp(sc->killer, "left", MAX_NAME))
-        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s %s left the game on map %s <%d><%d><%d>.",
-                 sc->position, sc->exp, sc->name, sc->title, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
-    else
-        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s %s was killed by %s on map %s <%d><%d><%d>.",
-                 sc->position, sc->exp, sc->name, sc->title, sc->killer, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
+    const char *s1;
+    const char *s2;
+
+    if (strcmp(sc->killer, "quit") == 0 || strcmp(sc->killer, "left") == 0) {
+        s1 = sc->killer;
+        s2 = "the game";
+    } else {
+        s1 = "was killed by";
+        s2 = sc->killer;
+    }
+    snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s %s %s %s on map %s <%d><%d><%d>.",
+        sc->position, sc->exp, sc->name, sc->title, s1, s2, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
     return buf;
 }
 
