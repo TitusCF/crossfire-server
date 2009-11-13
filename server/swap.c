@@ -83,7 +83,7 @@ static void write_map_log(void) {
 void read_map_log(void) {
     FILE *fp;
     mapstruct *map;
-    char buf[MAX_BUF], *cp, *cp1;
+    char buf[MAX_BUF];
     int do_los, darkness, lock;
     long sec = seconds();
 
@@ -93,23 +93,26 @@ void read_map_log(void) {
         return;
     }
     while (fgets(buf, MAX_BUF, fp) != NULL) {
+        char *tmp[3];
+
         map = get_linked_map();
         /* scanf doesn't work all that great on strings, so we break
          * out that manually.  strdup is used for tmpname, since other
          * routines will try to free that pointer.
          */
-        cp = strchr(buf, ':');
-        *cp++ = '\0';
-        strcpy(map->path, buf);
-        cp1 = strchr(cp, ':');
-        *cp1++ = '\0';
-        map->tmpname = strdup_local(cp);
+        if (split_string(buf, tmp, sizeof(tmp)/sizeof(*tmp)) != 3) {
+            LOG(llevDebug, "%s/temp.maps: ignoring invalid line: %s\n", settings.localdir, buf);
+            continue;
+        }
+
+        strcpy(map->path, tmp[0]);
+        map->tmpname = strdup_local(tmp[1]);
 
         /* Lock is left over from the lock items - we just toss it now.
          * We use it twice - second one is from encounter, but as we
          * don't care about the value, this works fine
          */
-        sscanf(cp1, "%u:%d:%d:%hu:%d:%d\n", &map->reset_time, &lock, &lock, &map->difficulty, &do_los, &darkness);
+        sscanf(tmp[2], "%u:%d:%d:%hu:%d:%d\n", &map->reset_time, &lock, &lock, &map->difficulty, &do_los, &darkness);
 
         map->in_memory = MAP_SWAPPED;
         map->darkness = darkness;

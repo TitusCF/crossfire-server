@@ -51,41 +51,6 @@ typedef struct scr {
 } score;
 
 /**
- * Spool works mostly like strtok(char *, ":"), but it can also
- * log a specified error message if something goes wrong.
- *
- * @param bp
- * string to search into. Should be non NULL for first call, NULL for subsequent calls.
- * @param error
- * message to display in case there is an error.
- * @return
- * next token, NULL if no more found.
- * @todo make thread-safe. is this function really useful?
- */
-static char *spool(char *bp, const char *error) {
-    static char *prev_pos = NULL;
-    char *next_pos;
-
-    if (bp == NULL) {
-        if (prev_pos == NULL) {
-            LOG(llevError, "Called spool (%s) with NULL without previous call.\n", error);
-            return NULL;
-        }
-        bp = prev_pos;
-    }
-    if (*bp == '\0') {
-        LOG(llevError, "spool: End of line at %s\n", error);
-        return NULL;
-    }
-    if ((next_pos = strchr(bp, ':')) != NULL) {
-        *next_pos = '\0';
-        prev_pos = next_pos+1;
-    } else
-        prev_pos = NULL;
-    return bp;
-}
-
-/**
  * Does what it says, copies the contents of the first score structure
  * to the second one.
  *
@@ -136,46 +101,33 @@ static void put_score(const score *sc, char *buf, int size) {
 static score *get_score(char *bp) {
     static score sc;
     char *cp;
+    char *tmp[8];
 
     if ((cp = strchr(bp, '\n')) != NULL)
         *cp = '\0';
 
-    if ((cp = spool(bp, "name")) == NULL)
+    if (split_string(bp, tmp, 8) != 8)
         return NULL;
-    strncpy(sc.name, cp, BIG_NAME);
+
+    strncpy(sc.name, tmp[0], BIG_NAME);
     sc.name[BIG_NAME-1] = '\0';
 
-    if ((cp = spool(NULL, "title")) == NULL)
-        return NULL;
-    strncpy(sc.title, cp, BIG_NAME);
+    strncpy(sc.title, tmp[1], BIG_NAME);
     sc.title[BIG_NAME-1] = '\0';
 
-    if ((cp = spool(NULL, "score")) == NULL)
-        return NULL;
+    sscanf(tmp[2], "%"FMT64, &sc.exp);
 
-    sscanf(cp, "%"FMT64, &sc.exp);
-
-    if ((cp = spool(NULL, "killer")) == NULL)
-        return NULL;
-    strncpy(sc.killer, cp, BIG_NAME);
+    strncpy(sc.killer, tmp[3], BIG_NAME);
     sc.killer[BIG_NAME-1] = '\0';
 
-    if ((cp = spool(NULL, "map")) == NULL)
-        return NULL;
-    strncpy(sc.maplevel, cp, BIG_NAME);
+    strncpy(sc.maplevel, tmp[4], BIG_NAME);
     sc.maplevel[BIG_NAME-1] = '\0';
 
-    if ((cp = spool(NULL, "maxhp")) == NULL)
-        return NULL;
-    sscanf(cp, "%d", &sc.maxhp);
+    sscanf(tmp[5], "%d", &sc.maxhp);
 
-    if ((cp = spool(NULL, "maxsp")) == NULL)
-        return NULL;
-    sscanf(cp, "%d", &sc.maxsp);
+    sscanf(tmp[6], "%d", &sc.maxsp);
 
-    if ((cp = spool(NULL, "maxgrace")) == NULL)
-        return NULL;
-    sscanf(cp, "%d", &sc.maxgrace);
+    sscanf(tmp[7], "%d", &sc.maxgrace);
     return &sc;
 }
 
@@ -226,8 +178,10 @@ static score *add_score(score *new_score) {
     snprintf(filename, sizeof(filename), "%s/%s", settings.localdir, HIGHSCORE);
     if ((fp = open_and_uncompress(filename, 1, &comp)) != NULL) {
         while (fgets(buf, MAX_BUF, fp) != NULL && nrofscores < HIGHSCORE_LENGTH) {
-            if ((tmp_score = get_score(buf)) == NULL)
+            if ((tmp_score = get_score(buf)) == NULL) {
+                LOG(llevError, "Corrupt highscore file %s\n", filename);
                 break;
+            }
             if (!flag && new_score->exp >= tmp_score->exp) {
                 copy_score(new_score, &pscore[nrofscores]);
                 new_score->position = nrofscores;

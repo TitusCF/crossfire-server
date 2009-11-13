@@ -410,6 +410,7 @@ extern int get_random_dir(void);
 extern int get_randomized_dir(int dir);
 extern int adjust_dir(int dir, int destination_dir);
 extern void replace_unprintable_chars(char *buf);
+extern size_t split_string(char *str, char *array[], size_t array_size);
 /* loader.c */
 extern int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode);
 extern void yyrestart(FILE *input_file);

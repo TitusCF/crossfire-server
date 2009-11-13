@@ -472,7 +472,7 @@ static void check_faceset_fallback(int faceset, int togo) {
 void read_client_images(void) {
     char filename[400];
     char buf[HUGE_BUF];
-    char *cp, *cps[7];
+    char *cp, *cps[7+1];
     FILE *infile;
     int num, len, compressed, fileno, i, badline;
 
@@ -487,15 +487,9 @@ void read_client_images(void) {
 
         if (buf[0] == '#')
             continue;
-        if (!(cps[0] = strtok(buf, ":")))
-            badline = 1;
-        for (i = 1; i < 7; i++) {
-            if (!(cps[i] = strtok(NULL, ":")))
-                badline = 1;
-        }
-        if (badline) {
+        if (split_string(buf, cps, sizeof(cps)/sizeof(*cps)) != 7)
             LOG(llevError, "Bad line in image_info file, ignoring line:\n  %s", buf);
-        } else {
+        else {
             len = atoi(cps[0]);
             if (len >= MAX_FACE_SETS) {
                 LOG(llevError, "To high a setnum in image_info file: %d > %d\n", len, MAX_FACE_SETS);
