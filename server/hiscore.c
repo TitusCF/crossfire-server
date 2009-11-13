@@ -93,13 +93,13 @@ static void put_score(const score *sc, char *buf, size_t size) {
  *
  * @param bp
  * string to parse.
+ * @param sc
+ * returns the parsed score.
  * @return
- * parsed score.
- * @todo make thread-safe, remove static stuff.
+ * whether parsing was successful
  */
 
-static score *get_score(char *bp) {
-    static score sc;
+static int get_score(char *bp, score *sc) {
     char *cp;
     char *tmp[8];
 
@@ -107,28 +107,28 @@ static score *get_score(char *bp) {
         *cp = '\0';
 
     if (split_string(bp, tmp, 8) != 8)
-        return NULL;
+        return 0;
 
-    strncpy(sc.name, tmp[0], BIG_NAME);
-    sc.name[BIG_NAME-1] = '\0';
+    strncpy(sc->name, tmp[0], BIG_NAME);
+    sc->name[BIG_NAME-1] = '\0';
 
-    strncpy(sc.title, tmp[1], BIG_NAME);
-    sc.title[BIG_NAME-1] = '\0';
+    strncpy(sc->title, tmp[1], BIG_NAME);
+    sc->title[BIG_NAME-1] = '\0';
 
-    sscanf(tmp[2], "%"FMT64, &sc.exp);
+    sscanf(tmp[2], "%"FMT64, &sc->exp);
 
-    strncpy(sc.killer, tmp[3], BIG_NAME);
-    sc.killer[BIG_NAME-1] = '\0';
+    strncpy(sc->killer, tmp[3], BIG_NAME);
+    sc->killer[BIG_NAME-1] = '\0';
 
-    strncpy(sc.maplevel, tmp[4], BIG_NAME);
-    sc.maplevel[BIG_NAME-1] = '\0';
+    strncpy(sc->maplevel, tmp[4], BIG_NAME);
+    sc->maplevel[BIG_NAME-1] = '\0';
 
-    sscanf(tmp[5], "%d", &sc.maxhp);
+    sscanf(tmp[5], "%d", &sc->maxhp);
 
-    sscanf(tmp[6], "%d", &sc.maxsp);
+    sscanf(tmp[6], "%d", &sc->maxsp);
 
-    sscanf(tmp[7], "%d", &sc.maxgrace);
-    return &sc;
+    sscanf(tmp[7], "%d", &sc->maxgrace);
+    return 1;
 }
 
 /**
@@ -172,7 +172,7 @@ static char *draw_one_high_score(const score *sc, char *buf, size_t size) {
 static score *add_score(score *new_score) {
     FILE *fp;
     static score old_score;
-    score *tmp_score, pscore[HIGHSCORE_LENGTH];
+    score tmp_score, pscore[HIGHSCORE_LENGTH];
     char buf[MAX_BUF], filename[MAX_BUF], bp[MAX_BUF];
     int nrofscores = 0, flag = 0, i, comp;
 
@@ -181,24 +181,24 @@ static score *add_score(score *new_score) {
     snprintf(filename, sizeof(filename), "%s/%s", settings.localdir, HIGHSCORE);
     if ((fp = open_and_uncompress(filename, 1, &comp)) != NULL) {
         while (fgets(buf, MAX_BUF, fp) != NULL && nrofscores < HIGHSCORE_LENGTH) {
-            if ((tmp_score = get_score(buf)) == NULL) {
+            if (!get_score(buf, &tmp_score)) {
                 LOG(llevError, "Corrupt highscore file %s\n", filename);
                 break;
             }
-            if (!flag && new_score->exp >= tmp_score->exp) {
+            if (!flag && new_score->exp >= tmp_score.exp) {
                 copy_score(new_score, &pscore[nrofscores]);
                 new_score->position = nrofscores;
                 flag = 1;
                 if (++nrofscores >= HIGHSCORE_LENGTH)
                     break;
             }
-            if (!strcmp(new_score->name, tmp_score->name)) { /* Another entry */
-                copy_score(tmp_score, &old_score);
+            if (!strcmp(new_score->name, tmp_score.name)) { /* Another entry */
+                copy_score(&tmp_score, &old_score);
                 old_score.position = nrofscores;
                 if (flag)
                     continue;
             }
-            copy_score(tmp_score, &pscore[nrofscores++]);
+            copy_score(&tmp_score, &pscore[nrofscores++]);
         }
         close_and_delete(fp, comp);
     }
@@ -357,7 +357,7 @@ void display_high_score(object *op, int max, const char *match) {
     FILE *fp;
     char buf[MAX_BUF], scorebuf[MAX_BUF];
     int i = 0, j = 0, comp;
-    score *sc;
+    score sc;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.localdir, HIGHSCORE);
     if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
@@ -377,15 +377,15 @@ void display_high_score(object *op, int max, const char *match) {
     while (fgets(buf, MAX_BUF, fp) != NULL) {
         if (j >= HIGHSCORE_LENGTH || i >= max)
             break;
-        if ((sc = get_score(buf)) == NULL)
+        if (!get_score(buf, &sc))
             break;
-        sc->position = ++j;
+        sc.position = ++j;
         if (match != NULL
-        && !strcasestr_local(sc->name, match)
-        && !strcasestr_local(sc->title, match))
+        && !strcasestr_local(sc.name, match)
+        && !strcasestr_local(sc.title, match))
             continue;
 
-        draw_one_high_score(sc, scorebuf, sizeof(scorebuf));
+        draw_one_high_score(&sc, scorebuf, sizeof(scorebuf));
         i++;
 
         if (op == NULL)
