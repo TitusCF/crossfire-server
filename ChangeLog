@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix formatting of 'hiscore' command output.
+Andreas Kirschbaum 2009-11-13
+
 Omit objects below the floor from the ground view.
 Andreas Kirschbaum 2009-10-29
 

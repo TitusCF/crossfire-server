@@ -154,7 +154,7 @@ static char *draw_one_high_score(const score *sc, char *buf, size_t size) {
         s1 = "was killed by";
         s2 = sc->killer;
     }
-    snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s %s %s %s on map %s <%d><%d><%d>.",
+    snprintf(buf, size, "[fixed]%3d %10"FMT64"[print] %s %s %s %s on map %s <%d><%d><%d>.",
         sc->position, sc->exp, sc->name, sc->title, s1, s2, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
     return buf;
 }
@@ -371,7 +371,7 @@ void display_high_score(object *op, int max, const char *match) {
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                  "[Fixed]Nr    Score    Who <max hp><max sp><max grace>",
+                  "[fixed]Nr    Score   [print] Who <max hp><max sp><max grace>",
                   "Nr    Score    Who <max hp><max sp><max grace>");
 
     while (fgets(buf, MAX_BUF, fp) != NULL) {
