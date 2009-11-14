@@ -34,18 +34,22 @@
 const char *language_codes[] = {
     "en",
     "fr",
+#if 0
     "nl",
     "it",
-    "de"
+    "de",
+#endif
 };
 
 /** Language names. */
 const char *language_names[] = {
     "English",
     "Français",
+#if 0
     "Nederlands",
     "Italiano",
-    "Deutsch"
+    "Deutsch",
+#endif
 };
 /** All translated strings. */
 const char *i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];

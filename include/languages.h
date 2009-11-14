@@ -30,7 +30,7 @@
 #ifndef LANGUAGES_H
 #define LANGUAGES_H
 
-#define NUM_LANGUAGES 5
+#define NUM_LANGUAGES 2
 #define NUM_I18N_STRINGS   218
 extern const char *language_codes[]; /**< Language codes ("en", "fr", etc.) table */
 extern const char *language_names[]; /**< Language names ("English", "French", etc.) table */
