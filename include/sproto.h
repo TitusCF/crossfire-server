@@ -280,8 +280,8 @@ void move_symptom(object *symptom);
 void check_physically_infect(object *victim, object *hitter);
 int cure_disease(object *sufferer, object *caster);
 /* hiscore.c */
-void check_score(object *op, int quiet);
-void display_high_score(object *op, int max, const char *match);
+void hiscore_check(object *op, int quiet);
+void hiscore_display(object *op, int max, const char *match);
 /* gods.c */
 const object *find_god(const char *name);
 const char *determine_god(object *op);

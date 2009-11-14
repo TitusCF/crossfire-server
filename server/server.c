@@ -938,7 +938,7 @@ static void process_players1(void) {
                 } else {
                     save_player(pl->ob, 1);
                     pl->last_save_tick = pticks;
-                    check_score(pl->ob, 1);
+                    hiscore_check(pl->ob, 1);
                 }
             }
 #endif
@@ -1221,7 +1221,7 @@ void leave(player *pl, int draw_exit) {
     pl->socket.status = Ns_Dead;
     LOG(llevInfo, "LOGOUT: Player named %s from ip %s\n", pl->ob->name, pl->socket.host);
 
-    check_score(pl->ob, 1);
+    hiscore_check(pl->ob, 1);
 
     /* If this player is the captain of the transport, need to do
      * some extra work.  By the time we get here, object_remove()

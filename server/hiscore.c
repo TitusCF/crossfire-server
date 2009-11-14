@@ -250,8 +250,11 @@ static score *add_score(score *new_score) {
  * If set, don't print anything out - used for periodic updates during game
  * play or when player unexpected quits - don't need to print anything
  * in those cases
+ *
+ * @note
+ * check_score() has been renamed to hiscore_check()
  */
-void check_score(object *op, int quiet) {
+void hiscore_check(object *op, int quiet) {
     score new_score;
     score *old_score;
     char bufscore[MAX_BUF];
@@ -345,8 +348,11 @@ void check_score(object *op, int quiet) {
  * maximum number of scores to display.
  * @param match
  * if set, will only print players with name or title containing the string (non case-sensitive).
+ *
+ * @note
+ * display_high_score() has been renamed to hiscore_display()
  */
-void display_high_score(object *op, int max, const char *match) {
+void hiscore_display(object *op, int max, const char *match) {
     FILE *fp;
     char buf[MAX_BUF], scorebuf[MAX_BUF];
     int i = 0, j = 0, comp;

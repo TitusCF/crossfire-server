@@ -80,7 +80,7 @@ static void apply_savebed(object *pl) {
     pl->contr->bed_y = pl->y;
 
     strcpy(pl->contr->killer, "left");
-    check_score(pl, 0); /* Always check score */
+    hiscore_check(pl, 0); /* Always check score */
     (void)save_player(pl, 0);
     party_leave(pl);
 #if MAP_MAXTIMEOUT

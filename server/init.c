@@ -66,7 +66,7 @@ static void call_version(void) {
 }
 
 static void showscores(void) {
-    display_high_score(NULL, 9999, NULL);
+    hiscore_display(NULL, 9999, NULL);
     exit(0);
 }
 
@@ -179,7 +179,7 @@ static void free_races(void);
 static void free_materials(void);
 
 static void showscoresparm(const char *data) {
-    display_high_score(NULL, 9999, data);
+    hiscore_display(NULL, 9999, data);
     exit(0);
 }
 

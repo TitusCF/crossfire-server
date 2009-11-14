@@ -925,7 +925,7 @@ int command_archs(object *op, char *params) {
  * 1.
  */
 int command_hiscore(object *op, char *params) {
-    display_high_score(op, op == NULL ? 9999 : 50, params);
+    hiscore_display(op, op == NULL ? 9999 : 50, params);
     return 1;
 }
 

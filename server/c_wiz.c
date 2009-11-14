@@ -370,7 +370,7 @@ int command_kick(object *op, const char *params) {
                                  "%s is kicked out of the game.",
                                  op->name);
             strcpy(op->contr->killer, "left");
-            check_score(op, 0); /* Always check score */
+            hiscore_check(op, 0); /* Always check score */
 
             /*
              * not sure how the player would be freed, but did see
@@ -511,7 +511,7 @@ int command_shutdown(object *op, char *params) {
      * the op won't get kicked off, so we do it ourselves
      */
     command_kick(op, NULL);
-    check_score(op, 0); /* Always check score */
+    hiscore_check(op, 0); /* Always check score */
     (void)save_player(op, 0);
     play_again(op);
     cleanup();
