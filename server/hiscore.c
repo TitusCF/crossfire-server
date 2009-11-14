@@ -207,14 +207,19 @@ static score *add_score(score *new_score) {
     if (!flag && nrofscores < HIGHSCORE_LENGTH)
         copy_score(new_score, &pscore[nrofscores++]);
     if ((fp = fopen(filename, "w")) == NULL) {
-        LOG(llevError, "Cannot write to highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
+        LOG(llevError, "Cannot create highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
         return NULL;
     }
     for (i = 0; i < nrofscores; i++) {
         put_score(&pscore[i], bp, sizeof(bp));
         fprintf(fp, "%s\n", bp);
     }
-    fclose(fp);
+    if (ferror(fp)) {
+        LOG(llevError, "Cannot write to highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
+        fclose(fp);
+    } else if (fclose(fp) != 0) {
+        LOG(llevError, "Cannot write to highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
+    }
     if (flag) {
         /* Eneq(@csd.uu.se): Patch to fix error in adding a new score to the
            hiscore-list */
