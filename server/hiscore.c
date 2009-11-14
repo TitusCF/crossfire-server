@@ -103,7 +103,8 @@ static int get_score(char *bp, score *sc) {
     char *cp;
     char *tmp[8];
 
-    if ((cp = strchr(bp, '\n')) != NULL)
+    cp = strchr(bp, '\n');
+    if (cp != NULL)
         *cp = '\0';
 
     if (split_string(bp, tmp, 8) != 8)
@@ -179,7 +180,8 @@ static score *add_score(score *new_score) {
     new_score->position = HIGHSCORE_LENGTH+1;
     old_score.position = -1;
     snprintf(filename, sizeof(filename), "%s/%s", settings.localdir, HIGHSCORE);
-    if ((fp = open_and_uncompress(filename, 1, &comp)) != NULL) {
+    fp = open_and_uncompress(filename, 1, &comp);
+    if (fp != NULL) {
         while (fgets(buf, MAX_BUF, fp) != NULL && nrofscores < HIGHSCORE_LENGTH) {
             if (!get_score(buf, &tmp_score)) {
                 LOG(llevError, "Corrupt highscore file %s\n", filename);
@@ -206,7 +208,8 @@ static score *add_score(score *new_score) {
         return &old_score; /* Did not beat old score */
     if (!flag && nrofscores < HIGHSCORE_LENGTH)
         copy_score(new_score, &pscore[nrofscores++]);
-    if ((fp = fopen(filename, "w")) == NULL) {
+    fp = fopen(filename, "w");
+    if (fp == NULL) {
         LOG(llevError, "Cannot create highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
         return NULL;
     }
@@ -287,7 +290,8 @@ void check_score(object *op, int quiet) {
     new_score.maxhp = (int)op->stats.maxhp;
     new_score.maxsp = (int)op->stats.maxsp;
     new_score.maxgrace = (int)op->stats.maxgrace;
-    if ((old_score = add_score(&new_score)) == NULL) {
+    old_score = add_score(&new_score);
+    if (old_score == NULL) {
         if (!quiet)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "Error in the highscore list.", NULL);
@@ -349,7 +353,8 @@ void display_high_score(object *op, int max, const char *match) {
     score sc;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.localdir, HIGHSCORE);
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
+    fp = open_and_uncompress(buf, 0, &comp);
+    if (fp == NULL) {
         char err[MAX_BUF];
 
         LOG(llevError, "Cannot open highscore file %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
