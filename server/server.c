@@ -104,11 +104,6 @@ void start_info(object *op) {
                          "%s entered the game.",
                          "%s entered the game.",
                          op->name);
-
-    if (!op->contr->name_changed) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                      "Note that you must set your name with the name command to enter the highscore list.", NULL);
-    }
 }
 
 /**

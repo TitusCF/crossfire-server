@@ -248,18 +248,9 @@ void check_score(object *op, int quiet) {
     score *old_score;
     char bufscore[MAX_BUF];
 
-    if (op->stats.exp == 0)
+    if (op->stats.exp == 0 || !op->contr->name_changed)
         return;
 
-    if (!op->contr->name_changed) {
-        if (op->stats.exp > 0) {
-            if (!quiet)
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "As you haven't changed your name, you won't "
-                              "get into the high-score list.", NULL);
-        }
-        return;
-    }
     if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
         if (!quiet)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
