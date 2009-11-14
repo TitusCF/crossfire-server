@@ -278,7 +278,6 @@ int save_player(object *op, int flag) {
         if (player_has_own_title(pl))
             fprintf(fp, "title %s\n", player_get_own_title(pl));
 
-    fprintf(fp, "explore %d\n", pl->explore);
     fprintf(fp, "gen_hp %d\n", pl->gen_hp);
     fprintf(fp, "gen_sp %d\n", pl->gen_sp);
     fprintf(fp, "gen_grace %d\n", pl->gen_grace);
@@ -596,7 +595,7 @@ void check_login(object *op) {
         else if (!strcmp(buf, "unarmed_skill"))
             pl->unarmed_skill = add_string(val_string);
         else if (!strcmp(buf, "explore"))
-            pl->explore = value;
+            ; /* ignore: explore mode has been removed */
         else if (!strcmp(buf, "gen_hp"))
             pl->gen_hp = value;
         else if (!strcmp(buf, "shoottype"))

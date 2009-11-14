@@ -76,7 +76,6 @@ struct Settings settings = {
     CASTING_TIME,
     REAL_WIZ,
     RECYCLE_TMP_MAPS,
-    EXPLORE_MODE,
     SPELLPOINT_LEVEL_DEPEND,
     SET_FRIENDLY_FIRE,
     "", /* Who format specifier */

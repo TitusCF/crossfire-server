@@ -69,7 +69,6 @@ command_array_struct Commands[] = {
     { "dropall", command_dropall,        1.0 },
     { "empty", command_empty,            1.0 },
     { "examine", command_examine,        0.5 },
-    { "explore", command_explore,        0.0 },
     { "fix_me", command_fix_me,          0.0 },
     { "get", command_take,               1.0 },
     { "help", command_help,              0.0 },

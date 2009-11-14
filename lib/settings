@@ -177,16 +177,6 @@ recycle_tmp_maps false
 
 spellpoint_level_depend true
 
-# This should only be set on private single player servers - basically,
-# it lets you wander around with no penalty if you die, but otherwise
-# doesn't give any extra powers, like the wiz has.  If in explore
-# mode, your characters score is not recorded.  However, to prevent
-# abuses, if in explore mode, no other players can join (as they
-# would not be in explore mode, so they could be abused by a player
-# in explore mode.
-
-explore_mode false
-
 # Set this to false if you don't want characters to loose a random stat when
 # they die - instead, they just get depleted.
 # Setting it to true keeps the old behaviour.  This can be

@@ -258,13 +258,6 @@ void check_score(object *op, int quiet) {
                           "you can't enter the high-score list.", NULL);
         return;
     }
-    if (op->contr->explore) {
-        if (!quiet)
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Since you were in explore mode, "
-                          "you can't enter the high-score list.", NULL);
-        return;
-    }
     if (!op->stats.exp) {
         if (!quiet)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,

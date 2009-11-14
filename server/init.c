@@ -686,14 +686,6 @@ static void load_settings(void) {
             } else {
                 LOG(llevError, "load_settings: Unknown value for recycle_tmp_maps: %s\n", cp);
             }
-        } else if (!strcasecmp(buf, "explore_mode")) {
-            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.explore_mode = TRUE;
-            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.explore_mode = FALSE;
-            } else {
-                LOG(llevError, "load_settings: Unknown value for explore_mode: %s\n", cp);
-            }
         } else if (!strcasecmp(buf, "who_format")) {
             if (has_val)
                 strcpy(settings.who_format, cp);

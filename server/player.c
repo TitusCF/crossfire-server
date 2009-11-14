@@ -330,7 +330,6 @@ static player *get_player(player *p) {
     p->last_weapon_sp = -1;
     p->peaceful = 1;   /* default peaceful */
     p->do_los = 1;
-    p->explore = 0;
     p->no_shout = 0;   /* default can shout */
     p->language = 0;
     p->unarmed_skill = NULL;
@@ -3226,25 +3225,9 @@ void kill_player(object *op) {
     /* Lauwenmark: Handle for the global death event */
     execute_global_event(EVENT_PLAYER_DEATH, op);
     if (op->stats.food < 0) {
-        if (op->contr->explore) {
-            draw_ext_info(NDI_UNIQUE, 0, op,
-                          MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_DIED,
-                          "You would have starved, but you are "
-                          "in explore mode, so...", NULL);
-            op->stats.food = 999;
-            return;
-        }
         snprintf(buf, sizeof(buf), "%s starved to death.", op->name);
         strcpy(op->contr->killer, "starvation");
     } else {
-        if (op->contr->explore) {
-            draw_ext_info(NDI_UNIQUE, 0, op,
-                          MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_DIED,
-                          "You would have died, but you are "
-                          "in explore mode, so...", NULL);
-            op->stats.hp = op->stats.maxhp;
-            return;
-        }
         snprintf(buf, sizeof(buf), "%s died.", op->name);
     }
     play_sound_player_only(op->contr, SOUND_TYPE_LIVING, op, 0, "death");

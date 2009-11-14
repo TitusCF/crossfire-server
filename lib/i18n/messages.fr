@@ -147,10 +147,6 @@
 179|Aide sur '%s'
 180|Aucune aide disponible sur '%s'
 181|Quitter effacera votre personnage.\nÊtes-vous vraiment sûr de vouloir quitter ? (y=oui/n=non):
-182|Désolé, le mode d'exploration est désactivé sur ce serveur.
-183|Vous ne pouvez pas passer en mode exploration tant que vous n'êtes pas seul.
-184|Vous ne pouvez pas quitterle mode d'exploration.
-185|Vous êtes désormais en mode d'exploration.
 186|Les sons sont désactivés.
 187|Les sons sont activés.
 188|Changement du mot de passe annulé.

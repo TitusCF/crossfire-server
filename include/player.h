@@ -158,7 +158,6 @@ typedef struct pl {
     uint32      name_changed:1;      /**< If true, the player has set a name. */
     uint32      peaceful:1;          /**< If set, won't attack friendly creatures. */
     uint32      hidden:1;            /**< If True, player (DM) is hidden from view. */
-    uint32      explore:1;           /**< if True, player is in explore mode. */
     uint32      no_shout:1;          /**< if True, player is *not *able to use shout command. */
     const char  *invis_race;         /**< What race invisible to? */
 

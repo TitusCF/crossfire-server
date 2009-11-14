@@ -191,14 +191,6 @@ enter extended command mode, type "'" followed by the command.
                    important messages, such as when a player shouts,
                    15 Verbose, every message.
 
- 'explore : 	   Enter explore mode. This allows the player to explore maps
-		   without have the player die from monster attacks.  (NOTE:
-		   Explore mode is permanent, you cannot leave explore mode,
-		   once you have entered it.  This options is by default
-		   disabled in the distribution, and most servers do not
-		   support it.  Once a player has entered explore mode,
-		   his/her score will not be written to the high score list.
-
  'add <display>  : Add a new display to the game.
 
  'hiscore        : Show the highscore list.

@@ -147,10 +147,6 @@
 179|Help about '%s'
 180|No help available on '%s'
 181|Quitting will delete your character.\nAre you sure you want to quit (y/n):
-182|Explore mode is disabled on this server, sorry.
-183|You can not enter explore mode if there are other players
-184|There is no return from explore mode
-185|You are now in explore mode
 186|Sounds are turned off
 187|The sounds are enabled.
 188|Password changed cancelled.

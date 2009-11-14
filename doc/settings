@@ -50,7 +50,6 @@ real_wiz	can wizards mangle objects for player use?  true
 recycle_tmp_maps	Do the same maps allways reappear?  false.  Not
 			good for multiplayer servers.
 spellpoint_level_depend	Do spell costs go up as level increases?  true
-explore_mode		Can players enter explore mode?  false
 stat_loss_on_death	if set, player loses stat when they die.  false
 permanent_experience_percentage This percentage of the player's exp will be
 				'permanent' and not lost on death: 25

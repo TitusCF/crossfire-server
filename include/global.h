@@ -364,7 +364,6 @@ typedef struct Settings {
     uint8   casting_time;       /**< It takes awhile to cast a spell */
     uint8   real_wiz;           /**< Use mud-like wizards */
     uint8   recycle_tmp_maps;   /**< Re-use tmp maps. */
-    uint8   explore_mode;       /**< Explore mode allowed? */
     uint8   spellpoint_level_depend; /**< Spell costs go up with level */
     uint16  set_friendly_fire;       /**< Percent of damage done by peaceful player vs player damage */
     char    who_format[MAX_BUF];     /**< The format that the who command should use */

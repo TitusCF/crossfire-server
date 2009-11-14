@@ -2060,43 +2060,6 @@ int command_quit(object *op, char *params) {
 }
 
 /**
- * Player wants to enter explore mode, that is never-dying mode.
- *
- * Don't allow people to exit explore mode.  It otherwise becomes
- * really easy to abuse this.
- *
- * @param op
- * player asking for explore mode.
- * @param params
- * unused.
- * @return
- * 1.
- */
-int command_explore(object *op, char *params) {
-    if (settings.explore_mode == FALSE) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_182), NULL);
-        return 1;
-    }
-    /*
-     * I guess this is the best way to see if we are solo or not.  Actually,
-     * are there any cases when first_player->next==NULL and we are not solo?
-     */
-    if ((first_player != op->contr) || (first_player->next != NULL)) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_183), NULL);
-    } else if (op->contr->explore)
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_184), NULL);
-    else {
-        op->contr->explore = 1;
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_185), NULL);
-    }
-    return 1;
-}
-
-/**
  * Player wants to change sound status.
  *
  * @param op
