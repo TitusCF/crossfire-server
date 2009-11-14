@@ -300,7 +300,7 @@ static player *get_player(player *p) {
     p->party = NULL;
     p->rejoin_party = party_rejoin_if_exists;
     p->unapply = unapply_nochoice;
-    p->Swap_First = -1;
+    p->swap_first = -1;
 
 #ifdef AUTOSAVE
     p->last_save_tick = 9999999;
@@ -1013,28 +1013,28 @@ void roll_again(object *op) {
  *
  * @param op
  * player.
- * @param Swap_Second
+ * @param swap_second
  * second statistic to swap.
  * @todo why the reinit of exp/ac/...?
  */
-static void swap_stat(object *op, int Swap_Second) {
+static void swap_stat(object *op, int swap_second) {
     signed char tmp;
 
-    if (op->contr->Swap_First == -1) {
-        LOG(llevError, "player.c:swap_stat() - Swap_First is -1\n");
+    if (op->contr->swap_first == -1) {
+        LOG(llevError, "player.c:swap_stat() - swap_first is -1\n");
         return;
     }
 
-    tmp = get_attr_value(&op->contr->orig_stats, op->contr->Swap_First);
+    tmp = get_attr_value(&op->contr->orig_stats, op->contr->swap_first);
 
-    set_attr_value(&op->contr->orig_stats, op->contr->Swap_First, get_attr_value(&op->contr->orig_stats, Swap_Second));
+    set_attr_value(&op->contr->orig_stats, op->contr->swap_first, get_attr_value(&op->contr->orig_stats, swap_second));
 
-    set_attr_value(&op->contr->orig_stats, Swap_Second, tmp);
+    set_attr_value(&op->contr->orig_stats, swap_second, tmp);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
                          "%s done\n",
                          "%s done\n",
-                         short_stat_name[Swap_Second]);
+                         short_stat_name[swap_second]);
 
     op->stats.Str = op->contr->orig_stats.Str;
     op->stats.Dex = op->contr->orig_stats.Dex;
@@ -1058,7 +1058,7 @@ static void swap_stat(object *op, int Swap_Second) {
     op->stats.sp = op->stats.maxsp;
     op->stats.grace = op->stats.maxgrace;
     op->contr->orig_stats = op->stats;
-    op->contr->Swap_First = -1;
+    op->contr->swap_first = -1;
 }
 
 /**
@@ -1090,8 +1090,8 @@ void key_roll_stat(object *op, char key) {
     };
 
     if (keynum > 0 && keynum <= 7) {
-        if (op->contr->Swap_First == -1) {
-            op->contr->Swap_First = stat_trans[keynum];
+        if (op->contr->swap_first == -1) {
+            op->contr->swap_first = stat_trans[keynum];
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
                                  "%s ->",
                                  "%s ->",

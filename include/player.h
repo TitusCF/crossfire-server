@@ -172,7 +172,7 @@ typedef struct pl {
     uint32      last_path_attuned;   /**< Last spell attunment sent to client. */
     uint32      last_path_repelled;  /**< Last spell repelled sent to client. */
     uint32      last_path_denied;    /**< Last spell denied sent to client. */
-    int         Swap_First;          /**< First stat player has selected to swap. */
+    int         swap_first;          /**< First stat player has selected to swap. */
     living      orig_stats;          /**< Permanent real stats of player. */
     living      last_stats;          /**< Last stats as sent to client. */
     float       last_speed;          /**< Last speed as sent to client. */
