@@ -761,16 +761,26 @@ void object_clear(object *op) {
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
      */
-    if (op->name != NULL) FREE_AND_CLEAR_STR(op->name);
-    if (op->name_pl != NULL) FREE_AND_CLEAR_STR(op->name_pl);
-    if (op->title != NULL) FREE_AND_CLEAR_STR(op->title);
-    if (op->race != NULL) FREE_AND_CLEAR_STR(op->race);
-    if (op->slaying != NULL) FREE_AND_CLEAR_STR(op->slaying);
-    if (op->skill != NULL) FREE_AND_CLEAR_STR(op->skill);
-    if (op->msg != NULL) FREE_AND_CLEAR_STR(op->msg);
-    if (op->lore != NULL) FREE_AND_CLEAR_STR(op->lore);
-    if (op->materialname != NULL) FREE_AND_CLEAR_STR(op->materialname);
-    if (op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
+    if (op->name != NULL)
+        FREE_AND_CLEAR_STR(op->name);
+    if (op->name_pl != NULL)
+        FREE_AND_CLEAR_STR(op->name_pl);
+    if (op->title != NULL)
+        FREE_AND_CLEAR_STR(op->title);
+    if (op->race != NULL)
+        FREE_AND_CLEAR_STR(op->race);
+    if (op->slaying != NULL)
+        FREE_AND_CLEAR_STR(op->slaying);
+    if (op->skill != NULL)
+        FREE_AND_CLEAR_STR(op->skill);
+    if (op->msg != NULL)
+        FREE_AND_CLEAR_STR(op->msg);
+    if (op->lore != NULL)
+        FREE_AND_CLEAR_STR(op->lore);
+    if (op->materialname != NULL)
+        FREE_AND_CLEAR_STR(op->materialname);
+    if (op->discrete_damage != NULL)
+        FREE_AND_CLEAR(op->discrete_damage);
 
     /* Remove object from friendly list if needed. */
     if (QUERY_FLAG(op, FLAG_FRIENDLY))
@@ -825,19 +835,32 @@ void object_copy(object *op2, object *op) {
 
     /* Decrement the refcounts, but don't bother zeroing the fields;
     they'll be overwritten by memcpy. */
-    if (op->name != NULL) free_string(op->name);
-    if (op->name_pl != NULL) free_string(op->name_pl);
-    if (op->anim_suffix != NULL) free_string(op->anim_suffix);
-    if (op->title != NULL) free_string(op->title);
-    if (op->race != NULL) free_string(op->race);
-    if (op->slaying != NULL) free_string(op->slaying);
-    if (op->skill != NULL) free_string(op->skill);
-    if (op->msg != NULL) free_string(op->msg);
-    if (op->lore != NULL) free_string(op->lore);
-    if (op->materialname != NULL) free_string(op->materialname);
-    if (op->custom_name != NULL) free_string(op->custom_name);
-    if (op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
-    if (op->spell_tags != NULL) FREE_AND_CLEAR(op->spell_tags);
+    if (op->name != NULL)
+        free_string(op->name);
+    if (op->name_pl != NULL)
+        free_string(op->name_pl);
+    if (op->anim_suffix != NULL)
+        free_string(op->anim_suffix);
+    if (op->title != NULL)
+        free_string(op->title);
+    if (op->race != NULL)
+        free_string(op->race);
+    if (op->slaying != NULL)
+        free_string(op->slaying);
+    if (op->skill != NULL)
+        free_string(op->skill);
+    if (op->msg != NULL)
+        free_string(op->msg);
+    if (op->lore != NULL)
+        free_string(op->lore);
+    if (op->materialname != NULL)
+        free_string(op->materialname);
+    if (op->custom_name != NULL)
+        free_string(op->custom_name);
+    if (op->discrete_damage != NULL)
+        FREE_AND_CLEAR(op->discrete_damage);
+    if (op->spell_tags != NULL)
+        FREE_AND_CLEAR(op->spell_tags);
 
     /* Basically, same code as from object_clear() */
 
@@ -849,19 +872,32 @@ void object_copy(object *op2, object *op) {
                 (void *)((char *)op2+offsetof(object, name)),
                 sizeof(object)-offsetof(object, name));
 
-    if (is_freed) SET_FLAG(op, FLAG_FREED);
-    if (is_removed) SET_FLAG(op, FLAG_REMOVED);
-    if (op->name != NULL) add_refcount(op->name);
-    if (op->name_pl != NULL) add_refcount(op->name_pl);
-    if (op->anim_suffix != NULL) add_refcount(op->anim_suffix);
-    if (op->title != NULL) add_refcount(op->title);
-    if (op->race != NULL) add_refcount(op->race);
-    if (op->slaying != NULL) add_refcount(op->slaying);
-    if (op->skill != NULL) add_refcount(op->skill);
-    if (op->lore != NULL) add_refcount(op->lore);
-    if (op->msg != NULL) add_refcount(op->msg);
-    if (op->custom_name != NULL) add_refcount(op->custom_name);
-    if (op->materialname != NULL) add_refcount(op->materialname);
+    if (is_freed)
+        SET_FLAG(op, FLAG_FREED);
+    if (is_removed)
+        SET_FLAG(op, FLAG_REMOVED);
+    if (op->name != NULL)
+        add_refcount(op->name);
+    if (op->name_pl != NULL)
+        add_refcount(op->name_pl);
+    if (op->anim_suffix != NULL)
+        add_refcount(op->anim_suffix);
+    if (op->title != NULL)
+        add_refcount(op->title);
+    if (op->race != NULL)
+        add_refcount(op->race);
+    if (op->slaying != NULL)
+        add_refcount(op->slaying);
+    if (op->skill != NULL)
+        add_refcount(op->skill);
+    if (op->lore != NULL)
+        add_refcount(op->lore);
+    if (op->msg != NULL)
+        add_refcount(op->msg);
+    if (op->custom_name != NULL)
+        add_refcount(op->custom_name);
+    if (op->materialname != NULL)
+        add_refcount(op->materialname);
     if (op->discrete_damage != NULL) {
         op->discrete_damage = malloc(sizeof(sint16)*NROFATTACKS);
         memcpy(op->discrete_damage, op2->discrete_damage, sizeof(sint16)*NROFATTACKS);

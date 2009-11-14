@@ -1483,36 +1483,59 @@ int save_map(mapstruct *m, int flag) {
 
     /* legacy */
     fprintf(fp, "arch map\n");
-    if (m->name) fprintf(fp, "name %s\n", m->name);
-    if (!flag) fprintf(fp, "swap_time %d\n", m->swap_time);
-    if (m->reset_timeout) fprintf(fp, "reset_timeout %u\n", m->reset_timeout);
-    if (m->fixed_resettime) fprintf(fp, "fixed_resettime %d\n", m->fixed_resettime);
+    if (m->name)
+        fprintf(fp, "name %s\n", m->name);
+    if (!flag)
+        fprintf(fp, "swap_time %d\n", m->swap_time);
+    if (m->reset_timeout)
+        fprintf(fp, "reset_timeout %u\n", m->reset_timeout);
+    if (m->fixed_resettime)
+        fprintf(fp, "fixed_resettime %d\n", m->fixed_resettime);
     /* we unfortunately have no idea if this is a value the creator set
      * or a difficulty value we generated when the map was first loaded
      */
-    if (m->difficulty) fprintf(fp, "difficulty %d\n", m->difficulty);
-    if (m->region) fprintf(fp, "region %s\n", m->region->name);
+    if (m->difficulty)
+        fprintf(fp, "difficulty %d\n", m->difficulty);
+    if (m->region)
+        fprintf(fp, "region %s\n", m->region->name);
     if (m->shopitems) {
         print_shop_string(m, shop, sizeof(shop));
         fprintf(fp, "shopitems %s\n", shop);
     }
-    if (m->shopgreed) fprintf(fp, "shopgreed %f\n", m->shopgreed);
-    if (m->shopmin) fprintf(fp, "shopmin %"FMT64U"\n", m->shopmin);
-    if (m->shopmax) fprintf(fp, "shopmax %"FMT64U"\n", m->shopmax);
-    if (m->shoprace) fprintf(fp, "shoprace %s\n", m->shoprace);
-    if (m->darkness) fprintf(fp, "darkness %d\n", m->darkness);
-    if (m->width) fprintf(fp, "width %d\n", m->width);
-    if (m->height) fprintf(fp, "height %d\n", m->height);
-    if (m->enter_x) fprintf(fp, "enter_x %d\n", m->enter_x);
-    if (m->enter_y) fprintf(fp, "enter_y %d\n", m->enter_y);
-    if (m->msg) fprintf(fp, "msg\n%sendmsg\n", m->msg);
-    if (m->maplore) fprintf(fp, "maplore\n%sendmaplore\n", m->maplore);
-    if (m->unique) fprintf(fp, "unique %d\n", m->unique);
-    if (m->is_template) fprintf(fp, "template %d\n", m->is_template);
-    if (m->outdoor) fprintf(fp, "outdoor %d\n", m->outdoor);
-    if (m->nosmooth) fprintf(fp, "nosmooth %d\n", m->nosmooth);
-    if (m->last_reset_time.tv_sec) fprintf(fp, "first_load %d\n", (int)m->last_reset_time.tv_sec);
-    if (m->background_music) fprintf(fp, "background_music %s\n", m->background_music);
+    if (m->shopgreed)
+        fprintf(fp, "shopgreed %f\n", m->shopgreed);
+    if (m->shopmin)
+        fprintf(fp, "shopmin %"FMT64U"\n", m->shopmin);
+    if (m->shopmax)
+        fprintf(fp, "shopmax %"FMT64U"\n", m->shopmax);
+    if (m->shoprace)
+        fprintf(fp, "shoprace %s\n", m->shoprace);
+    if (m->darkness)
+        fprintf(fp, "darkness %d\n", m->darkness);
+    if (m->width)
+        fprintf(fp, "width %d\n", m->width);
+    if (m->height)
+        fprintf(fp, "height %d\n", m->height);
+    if (m->enter_x)
+        fprintf(fp, "enter_x %d\n", m->enter_x);
+    if (m->enter_y)
+        fprintf(fp, "enter_y %d\n", m->enter_y);
+    if (m->msg)
+        fprintf(fp, "msg\n%sendmsg\n", m->msg);
+    if (m->maplore)
+        fprintf(fp, "maplore\n%sendmaplore\n", m->maplore);
+    if (m->unique)
+        fprintf(fp, "unique %d\n", m->unique);
+    if (m->is_template)
+        fprintf(fp, "template %d\n", m->is_template);
+    if (m->outdoor)
+        fprintf(fp, "outdoor %d\n", m->outdoor);
+    if (m->nosmooth)
+        fprintf(fp, "nosmooth %d\n", m->nosmooth);
+    if (m->last_reset_time.tv_sec)
+        fprintf(fp, "first_load %d\n", (int)m->last_reset_time.tv_sec);
+    if (m->background_music)
+        fprintf(fp, "background_music %s\n", m->background_music);
 
     /* Save any tiling information, except on overlays */
     if (flag != SAVE_MODE_OVERLAY)
@@ -1713,15 +1736,24 @@ void free_map(mapstruct *m) {
     /* Handle for plugin map unload event. */
     execute_global_event(EVENT_MAPUNLOAD, m);
 
-    if (m->spaces) free_all_objects(m);
-    if (m->name) FREE_AND_CLEAR(m->name);
-    if (m->spaces) FREE_AND_CLEAR(m->spaces);
-    if (m->msg) FREE_AND_CLEAR(m->msg);
-    if (m->maplore) FREE_AND_CLEAR(m->maplore);
-    if (m->shopitems) FREE_AND_CLEAR(m->shopitems);
-    if (m->shoprace) FREE_AND_CLEAR(m->shoprace);
-    if (m->background_music) FREE_AND_CLEAR(m->background_music);
-    if (m->buttons) free_objectlinkpt(m->buttons);
+    if (m->spaces)
+        free_all_objects(m);
+    if (m->name)
+        FREE_AND_CLEAR(m->name);
+    if (m->spaces)
+        FREE_AND_CLEAR(m->spaces);
+    if (m->msg)
+        FREE_AND_CLEAR(m->msg);
+    if (m->maplore)
+        FREE_AND_CLEAR(m->maplore);
+    if (m->shopitems)
+        FREE_AND_CLEAR(m->shopitems);
+    if (m->shoprace)
+        FREE_AND_CLEAR(m->shoprace);
+    if (m->background_music)
+        FREE_AND_CLEAR(m->background_music);
+    if (m->buttons)
+        free_objectlinkpt(m->buttons);
     m->buttons = NULL;
     for (i = 0; i < 4; i++) {
         if (m->tile_path[i])

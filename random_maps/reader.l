@@ -111,8 +111,15 @@ WS      [ \t]*
 #.*\n                    { }
 
 <<EOF>>                  {/* If we got an error, return the error.  Otherwise, return that we got EOF */
-                             if (rmap_lex_error != 0) return rmap_lex_error; else return LL_EOF;}
-.*                       { yyerror( "Unrecognized string"); rmap_lex_error= -1; }
+                             if (rmap_lex_error != 0)
+                                 return rmap_lex_error;
+                             else
+                                 return LL_EOF;
+                         }
+.*                       {
+                             yyerror("Unrecognized string");
+                             rmap_lex_error= -1;
+                         }
 %%
 
 /* Our save file syntax is very simple, so we can use a very simple
