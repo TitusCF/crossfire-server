@@ -280,6 +280,7 @@ void move_symptom(object *symptom);
 void check_physically_infect(object *victim, object *hitter);
 int cure_disease(object *sufferer, object *caster);
 /* hiscore.c */
+void hiscore_init(void);
 void hiscore_check(object *op, int quiet);
 void hiscore_display(object *op, int max, const char *match);
 /* gods.c */

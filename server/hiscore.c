@@ -51,27 +51,9 @@ typedef struct scr {
 } score;
 
 /**
- * Does what it says, copies the contents of the first score structure
- * to the second one.
- *
- * @param sc1
- * what to copy.
- * @param sc2
- * where to copy to.
+ * The highscore table. Unused entries are set to zero (except for position).
  */
-static void copy_score(const score *sc1, score *sc2) {
-    strncpy(sc2->name, sc1->name, BIG_NAME);
-    sc2->name[BIG_NAME-1] = '\0';
-    strncpy(sc2->title, sc1->title, BIG_NAME);
-    sc2->title[BIG_NAME-1] = '\0';
-    strncpy(sc2->killer, sc1->killer, BIG_NAME);
-    sc2->killer[BIG_NAME-1] = '\0';
-    sc2->exp = sc1->exp;
-    strcpy(sc2->maplevel, sc1->maplevel);
-    sc2->maxhp = sc1->maxhp;
-    sc2->maxsp = sc1->maxsp;
-    sc2->maxgrace = sc1->maxgrace;
-}
+static score hiscore_table[HIGHSCORE_LENGTH];
 
 /**
  * Writes the given score structure to specified buffer.
@@ -85,6 +67,39 @@ static void copy_score(const score *sc1, score *sc2) {
  */
 static void put_score(const score *sc, char *buf, size_t size) {
     snprintf(buf, size, "%s:%s:%"FMT64":%s:%s:%d:%d:%d", sc->name, sc->title, sc->exp, sc->killer, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
+}
+
+/**
+ * Saves the highscore_table into the highscore file.
+ */
+static void hiscore_save(void) {
+    FILE *fp;
+    char fname[MAX_BUF];
+    size_t i;
+    char buf[MAX_BUF];
+
+    snprintf(fname, sizeof(fname), "%s/%s", settings.localdir, HIGHSCORE);
+    LOG(llevDebug, "Writing highscore files %s\n", fname);
+
+    fp = fopen(fname, "w");
+    if (fp == NULL) {
+        LOG(llevError, "Cannot create highscore file %s: %s\n", fname, strerror_local(errno, buf, sizeof(buf)));
+        return;
+    }
+
+    for (i = 0; i < HIGHSCORE_LENGTH; i++) {
+        if (hiscore_table[i].name[0] == '\0')
+            break;
+
+        put_score(&hiscore_table[i], buf, sizeof(buf));
+        fprintf(fp, "%s\n", buf);
+    }
+    if (ferror(fp)) {
+        LOG(llevError, "Cannot write to highscore file %s: %s\n", fname, strerror_local(errno, buf, sizeof(buf)));
+        fclose(fp);
+    } else if (fclose(fp) != 0) {
+        LOG(llevError, "Cannot write to highscore file %s: %s\n", fname, strerror_local(errno, buf, sizeof(buf)));
+    }
 }
 
 /**
@@ -171,74 +186,106 @@ static char *draw_one_high_score(const score *sc, char *buf, size_t size) {
  * @todo remove static buffer.
  */
 static score *add_score(score *new_score) {
-    FILE *fp;
     static score old_score;
-    score tmp_score, pscore[HIGHSCORE_LENGTH];
-    char buf[MAX_BUF], filename[MAX_BUF], bp[MAX_BUF];
-    int nrofscores = 0, flag = 0, i, comp;
+    size_t i;
 
     new_score->position = HIGHSCORE_LENGTH+1;
+    memset(&old_score, 0, sizeof(old_score));
     old_score.position = -1;
-    snprintf(filename, sizeof(filename), "%s/%s", settings.localdir, HIGHSCORE);
-    fp = open_and_uncompress(filename, 1, &comp);
-    if (fp != NULL) {
-        while (fgets(buf, MAX_BUF, fp) != NULL && nrofscores < HIGHSCORE_LENGTH) {
-            if (!get_score(buf, &tmp_score)) {
-                LOG(llevError, "Corrupt highscore file %s\n", filename);
+
+    /* find existing entry by name */
+    for (i = 0; i < HIGHSCORE_LENGTH; i++) {
+        if (hiscore_table[i].name[0] == '\0') {
+            hiscore_table[i] = *new_score;
+            hiscore_table[i].position = i+1;
+            break;
+        }
+        if (strcmp(new_score->name, hiscore_table[i].name) == 0) {
+            old_score = hiscore_table[i];
+            if (hiscore_table[i].exp <= new_score->exp) {
+                hiscore_table[i] = *new_score;
+                hiscore_table[i].position = i+1;
+            }
+            break;
+        }
+    }
+
+    if (i >= HIGHSCORE_LENGTH) {
+        /* entry for unknown name */
+
+        if (new_score->exp < hiscore_table[i-1].exp) {
+            /* new exp is less than lowest hiscore entry => drop */
+            return &old_score;
+        }
+
+        /* new exp is not less than lowest hiscore entry => add */
+        i--;
+        hiscore_table[i] = *new_score;
+        hiscore_table[i].position = i+1;
+    }
+
+    /* move entry to correct position */
+    while (i > 0 && new_score->exp >= hiscore_table[i-1].exp) {
+        score tmp;
+
+        tmp = hiscore_table[i-1];
+        hiscore_table[i-1] = hiscore_table[i];
+        hiscore_table[i] = tmp;
+
+        hiscore_table[i-1].position = i;
+        hiscore_table[i].position = i+1;
+
+        i--;
+    }
+
+    new_score->position = hiscore_table[i].position;
+    hiscore_save();
+    return &old_score;
+}
+
+/**
+ * Initializes the module.
+ */
+void hiscore_init(void) {
+    FILE *fp;
+    char fname[MAX_BUF];
+    size_t i;
+
+    i = 0;
+
+    snprintf(fname, sizeof(fname), "%s/%s", settings.localdir, HIGHSCORE);
+    fp = fopen(fname, "r");
+    if (fp == NULL) {
+        if (errno == ENOENT) {
+            LOG(llevInfo, "Highscore file %s does not exist\n", fname);
+        } else {
+            char err[MAX_BUF];
+
+            LOG(llevError, "Cannot open highscore file %s: %s\n", fname, strerror_local(errno, err, sizeof(err)));
+        }
+    } else {
+        LOG(llevInfo, "Reading highscore file %s\n", fname);
+        while (i < HIGHSCORE_LENGTH) {
+            char buf[MAX_BUF];
+
+            if (fgets(buf, MAX_BUF, fp) == NULL) {
                 break;
             }
-            if (!flag && new_score->exp >= tmp_score.exp) {
-                copy_score(new_score, &pscore[nrofscores]);
-                new_score->position = nrofscores;
-                flag = 1;
-                if (++nrofscores >= HIGHSCORE_LENGTH)
-                    break;
-            }
-            if (!strcmp(new_score->name, tmp_score.name)) { /* Another entry */
-                copy_score(&tmp_score, &old_score);
-                old_score.position = nrofscores;
-                if (flag)
-                    continue;
-            }
-            copy_score(&tmp_score, &pscore[nrofscores++]);
+
+            if (!get_score(buf, &hiscore_table[i]))
+                break;
+            hiscore_table[i].position = i+1;
+            i++;
         }
-        close_and_delete(fp, comp);
-    }
-    if (old_score.position != -1 && old_score.exp >= new_score->exp)
-        return &old_score; /* Did not beat old score */
-    if (!flag && nrofscores < HIGHSCORE_LENGTH)
-        copy_score(new_score, &pscore[nrofscores++]);
-    fp = fopen(filename, "w");
-    if (fp == NULL) {
-        LOG(llevError, "Cannot create highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
-        return NULL;
-    }
-    for (i = 0; i < nrofscores; i++) {
-        put_score(&pscore[i], bp, sizeof(bp));
-        fprintf(fp, "%s\n", bp);
-    }
-    if (ferror(fp)) {
-        LOG(llevError, "Cannot write to highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
+
         fclose(fp);
-    } else if (fclose(fp) != 0) {
-        LOG(llevError, "Cannot write to highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
     }
-    if (flag) {
-        /* Eneq(@csd.uu.se): Patch to fix error in adding a new score to the
-           hiscore-list */
-        if (old_score.position == -1)
-            return new_score;
-        return &old_score;
+
+    while (i < HIGHSCORE_LENGTH) {
+        memset(&hiscore_table[i], 0, sizeof(hiscore_table[i]));
+        hiscore_table[i].position = i+1;
+        i++;
     }
-    new_score->position = -1;
-    if (old_score.position != -1)
-        return &old_score;
-    if (nrofscores) {
-        copy_score(&pscore[nrofscores-1], &old_score);
-        return &old_score;
-    }
-    LOG(llevError, "Highscore error.\n");
-    return NULL;
 }
 
 /**
@@ -258,6 +305,7 @@ void hiscore_check(object *op, int quiet) {
     score new_score;
     score *old_score;
     char bufscore[MAX_BUF];
+    const char *message;
 
     if (op->stats.exp == 0 || !op->contr->name_changed)
         return;
@@ -294,12 +342,7 @@ void hiscore_check(object *op, int quiet) {
     new_score.maxsp = (int)op->stats.maxsp;
     new_score.maxgrace = (int)op->stats.maxgrace;
     old_score = add_score(&new_score);
-    if (old_score == NULL) {
-        if (!quiet)
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Error in the highscore list.", NULL);
-        return;
-    }
+
     /* Everything below here is just related to print messages
      * to the player.  If quiet is set, we can just return
      * now.
@@ -307,37 +350,27 @@ void hiscore_check(object *op, int quiet) {
     if (quiet)
         return;
 
-    if (new_score.position == -1) {
-        new_score.position = HIGHSCORE_LENGTH+1; /* Not strictly correct... */
-
-        if (!strcmp(old_score->name, new_score.name))
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                          "You didn't beat your last highscore:", NULL);
+    if (old_score->position == -1) {
+        if (new_score.position > HIGHSCORE_LENGTH)
+            message = "You didn't enter the highscore list:";
         else
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                          "You didn't enter the highscore list:", NULL);
-
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                      draw_one_high_score(old_score, bufscore, sizeof(bufscore)), NULL);
-
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                      draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
-        return;
+            message = "You entered the highscore list:";
+    } else {
+        if (new_score.position > HIGHSCORE_LENGTH)
+            message = "You left the highscore list:";
+        else if (new_score.exp  > old_score->exp)
+            message = "You beat your last score:";
+        else
+            message = "You didn't beat your last score:";
     }
-    if (old_score->exp >= new_score.exp)
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                      "You didn't beat your last score:", NULL);
-    else
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                      "You beat your last score:", NULL);
 
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, message, NULL);
+    if (old_score->position != -1)
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+            draw_one_high_score(old_score, bufscore, sizeof(bufscore)), NULL);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                  draw_one_high_score(old_score, bufscore, sizeof(bufscore)), NULL);
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                         draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
+        draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
 }
-
-
 
 /**
  * Displays the high score file.
@@ -353,45 +386,28 @@ void hiscore_check(object *op, int quiet) {
  * display_high_score() has been renamed to hiscore_display()
  */
 void hiscore_display(object *op, int max, const char *match) {
-    FILE *fp;
-    char buf[MAX_BUF], scorebuf[MAX_BUF];
-    int i = 0, j = 0, comp;
-    score sc;
-
-    snprintf(buf, sizeof(buf), "%s/%s", settings.localdir, HIGHSCORE);
-    fp = open_and_uncompress(buf, 0, &comp);
-    if (fp == NULL) {
-        char err[MAX_BUF];
-
-        LOG(llevError, "Cannot open highscore file %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
-        if (op != NULL)
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "There is no highscore file.", NULL);
-        return;
-    }
+    int printed_entries;
+    size_t j;
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                   "[fixed]Nr    Score   [print] Who <max hp><max sp><max grace>",
                   "Nr    Score    Who <max hp><max sp><max grace>");
 
-    while (fgets(buf, MAX_BUF, fp) != NULL) {
-        if (j >= HIGHSCORE_LENGTH || i >= max)
-            break;
-        if (!get_score(buf, &sc))
-            break;
-        sc.position = ++j;
+    printed_entries = 0;
+    for (j = 0; j < HIGHSCORE_LENGTH && hiscore_table[j].name[0] != '\0' && printed_entries < max; j++) {
+        char scorebuf[MAX_BUF];
+
         if (match != NULL
-        && !strcasestr_local(sc.name, match)
-        && !strcasestr_local(sc.title, match))
+        && !strcasestr_local(hiscore_table[j].name, match)
+        && !strcasestr_local(hiscore_table[j].title, match))
             continue;
 
-        draw_one_high_score(&sc, scorebuf, sizeof(scorebuf));
-        i++;
+        draw_one_high_score(&hiscore_table[j], scorebuf, sizeof(scorebuf));
+        printed_entries++;
 
         if (op == NULL)
             LOG(llevDebug, "%s\n", scorebuf);
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf, NULL);
     }
-    close_and_delete(fp, comp);
 }

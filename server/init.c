@@ -913,6 +913,7 @@ void init(int argc, char **argv) {
     init_skills();
     init_ob_methods();
     cftimer_init();
+    hiscore_init();
 
     parse_args(argc, argv, 3);
 
