@@ -181,17 +181,15 @@ static char *draw_one_high_score(const score *sc, char *buf, size_t size) {
  *
  * @param new_score
  * score to add.
- * @return
- * old player score.
- * @todo remove static buffer.
+ * @param old_score
+ * returns the old player score.
  */
-static score *add_score(score *new_score) {
-    static score old_score;
+static void add_score(score *new_score, score *old_score) {
     size_t i;
 
     new_score->position = HIGHSCORE_LENGTH+1;
-    memset(&old_score, 0, sizeof(old_score));
-    old_score.position = -1;
+    memset(old_score, 0, sizeof(*old_score));
+    old_score->position = -1;
 
     /* find existing entry by name */
     for (i = 0; i < HIGHSCORE_LENGTH; i++) {
@@ -201,7 +199,7 @@ static score *add_score(score *new_score) {
             break;
         }
         if (strcmp(new_score->name, hiscore_table[i].name) == 0) {
-            old_score = hiscore_table[i];
+            *old_score = hiscore_table[i];
             if (hiscore_table[i].exp <= new_score->exp) {
                 hiscore_table[i] = *new_score;
                 hiscore_table[i].position = i+1;
@@ -215,7 +213,7 @@ static score *add_score(score *new_score) {
 
         if (new_score->exp < hiscore_table[i-1].exp) {
             /* new exp is less than lowest hiscore entry => drop */
-            return &old_score;
+            return;
         }
 
         /* new exp is not less than lowest hiscore entry => add */
@@ -240,7 +238,6 @@ static score *add_score(score *new_score) {
 
     new_score->position = hiscore_table[i].position;
     hiscore_save();
-    return &old_score;
 }
 
 /**
@@ -341,7 +338,7 @@ void hiscore_check(object *op, int quiet) {
     new_score.maxhp = (int)op->stats.maxhp;
     new_score.maxsp = (int)op->stats.maxsp;
     new_score.maxgrace = (int)op->stats.maxgrace;
-    old_score = add_score(&new_score);
+    add_score(&new_score, &old_score);
 
     /* Everything below here is just related to print messages
      * to the player.  If quiet is set, we can just return
