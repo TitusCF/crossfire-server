@@ -107,6 +107,7 @@ int execute_global_event(int , ...) {
 
 int apply_auto(object *op) {
     int i;
+    object* tmp;
 
     switch(op->type) {
         case SHOP_FLOOR:
@@ -157,6 +158,10 @@ int apply_auto(object *op) {
 void apply_auto_fix(mapstruct*)
 {
 }
+
+void rod_adjust(object *) {
+}
+
 
 }
 #endif
