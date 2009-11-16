@@ -48,6 +48,7 @@ static const char *const fatalmsgs[] = {
     "Failed to allocate memory",
     "Failed repeatedly to load maps",
     "Hashtable for archetypes is too small",
+    "Fatal issue in archetype file",
 };
 
 /**

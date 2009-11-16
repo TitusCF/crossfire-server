@@ -94,6 +94,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define OUT_OF_MEMORY           0
 #define MAP_ERROR               1
 #define ARCHTABLE_TOO_SMALL     2
+#define ARCHETYPE_ISSUE         3
 /*@}*/
 
 /**

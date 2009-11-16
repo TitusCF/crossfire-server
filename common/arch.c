@@ -451,7 +451,10 @@ static void second_arch_pass(FILE *fp) {
         }
         if (!strcmp("Object", variable)) {
             if ((at = find_archetype(argument)) == NULL)
-                LOG(llevError, "Warning: failed to find arch %s\n", argument);
+            {
+                LOG(llevError, "Fatal: failed to find arch %s in second_arch_pass\n", argument);
+                fatal(ARCHETYPE_ISSUE);
+            }
         } else if (!strcmp("other_arch", variable)) {
             if (at != NULL && at->clone.other_arch == NULL) {
                 if ((other = find_archetype(argument)) == NULL)
