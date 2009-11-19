@@ -300,7 +300,7 @@ void hiscore_init(void) {
  */
 void hiscore_check(object *op, int quiet) {
     score new_score;
-    score *old_score;
+    score old_score;
     char bufscore[MAX_BUF];
     const char *message;
 
@@ -347,7 +347,7 @@ void hiscore_check(object *op, int quiet) {
     if (quiet)
         return;
 
-    if (old_score->position == -1) {
+    if (old_score.position == -1) {
         if (new_score.position > HIGHSCORE_LENGTH)
             message = "You didn't enter the highscore list:";
         else
@@ -355,16 +355,16 @@ void hiscore_check(object *op, int quiet) {
     } else {
         if (new_score.position > HIGHSCORE_LENGTH)
             message = "You left the highscore list:";
-        else if (new_score.exp  > old_score->exp)
+        else if (new_score.exp  > old_score.exp)
             message = "You beat your last score:";
         else
             message = "You didn't beat your last score:";
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, message, NULL);
-    if (old_score->position != -1)
+    if (old_score.position != -1)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-            draw_one_high_score(old_score, bufscore, sizeof(bufscore)), NULL);
+            draw_one_high_score(&old_score, bufscore, sizeof(bufscore)), NULL);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
         draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
 }
