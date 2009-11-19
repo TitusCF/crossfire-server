@@ -241,9 +241,9 @@ static void add_score(score *new_score, score *old_score) {
 }
 
 /**
- * Initializes the module.
+ * Loads the hiscore_table from the highscore file.
  */
-void hiscore_init(void) {
+static void hiscore_load(void) {
     FILE *fp;
     char fname[MAX_BUF];
     size_t i;
@@ -283,6 +283,13 @@ void hiscore_init(void) {
         hiscore_table[i].position = i+1;
         i++;
     }
+}
+
+/**
+ * Initializes the module.
+ */
+void hiscore_init(void) {
+    hiscore_load();
 }
 
 /**
