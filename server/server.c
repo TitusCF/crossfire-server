@@ -1221,6 +1221,7 @@ void leave(player *pl, int draw_exit) {
     pl->socket.status = Ns_Dead;
     LOG(llevInfo, "LOGOUT: Player named %s from ip %s\n", pl->ob->name, pl->socket.host);
 
+    strcpy(pl->ob->contr->killer, "left");
     hiscore_check(pl->ob, 1);
 
     /* If this player is the captain of the transport, need to do
