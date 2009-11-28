@@ -2141,8 +2141,8 @@ static void poison_living(object *op, object *hitter, int dam) {
                         "Your %s poisons %s.",
                         hitter->name, op->name);
             }
+            tmp->speed_left = 0;
         }
-        tmp->speed_left = 0;
     } else
         tmp->stats.food++;
 }
