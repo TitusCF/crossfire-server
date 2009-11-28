@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix some crashes on malformed input in alchemy loading code.
+Arvid Norlander 2009-11-29
+
 Fix potential NULL dereference in poisoning code in server/attack.c.
 Arvid Norlander 2009-11-28
 

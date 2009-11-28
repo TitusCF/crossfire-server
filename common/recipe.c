@@ -192,6 +192,9 @@ void init_formulae(void) {
         if (!strncmp(cp, "Object", 6)) {
             formula = get_empty_formula();
             formula->title = add_string(strchr(cp, ' ')+1);
+        } else if (formula == NULL) {
+            LOG(llevError, "recipe.c: First key in formulae file is not \"Object\".\n");
+            fatal(SEE_LAST_ERROR);
         } else if (!strncmp(cp, "keycode", 7)) {
             formula->keycode = add_string(strchr(cp, ' ')+1);
         } else if (sscanf(cp, "trans %d", &value)) {
