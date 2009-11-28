@@ -109,6 +109,13 @@ int load_dir(const char *dir, char ***namelist, int skip_dirs) {
     }
     (void)closedir(dp);
 
+    /* We don't return -1 for this case here as directory isn't invalid as such.
+     * Most likely directory was empty. In theory it could also be due to
+     * realloc failing to allocate.
+     */
+    if (rn == NULL)
+        return 0;
+
     qsort(rn, entries, sizeof(char *), pointer_strcmp);
 
     *namelist = rn;
