@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Implement proper error handling on malformed regions file. Also added a
+new fatal() message to refer to the last error (used in region parsing,
+will be used elsewhere soon too).
+Arvid Norlander 2009-11-28
+
 Fix a potential NULL dereference due to passing a potential NULL pointer to
 qsort().
 Arvid Norlander 2009-11-28

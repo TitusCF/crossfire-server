@@ -95,6 +95,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAP_ERROR               1
 #define ARCHTABLE_TOO_SMALL     2
 #define ARCHETYPE_ISSUE         3
+#define SEE_LAST_ERROR          4
+
 /*@}*/
 
 /**

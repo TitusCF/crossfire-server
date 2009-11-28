@@ -373,7 +373,10 @@ static void parse_regions(FILE *fp) {
         } else {
             *value = 0;
             value++;
-            while (isspace(*value))
+            /* isspace() includes newline. To avoid crash on empty line further
+             * down we must check for it here.
+             */
+            while (isspace(*value) && *value != '\n')
                 value++;
             end = strchr(value, '\n');
         }
@@ -402,14 +405,40 @@ static void parse_regions(FILE *fp) {
              * parsed.
              */
             *end = 0;
+
+            if (!new) {
+                LOG(llevError, "region.c: malformated regions file: \"parent\" before \"region\".\n");
+                fatal(SEE_LAST_ERROR);
+            }
+            if (!value) {
+                LOG(llevError, "region.c: malformated regions file: No value given for \"parent\" key.\n");
+                fatal(SEE_LAST_ERROR);
+            }
             new->parent_name = strdup_local(value);
         } else if (!strcmp(key, "longname")) {
             *end = 0;
+            if (!new) {
+                LOG(llevError, "region.c: malformated regions file: \"longname\" before \"region\".\n");
+                fatal(SEE_LAST_ERROR);
+            }
+            if (!value) {
+                LOG(llevError, "region.c: malformated regions file: No value given for \"longname\" key.\n");
+                fatal(SEE_LAST_ERROR);
+            }
             new->longname = strdup_local(value);
         } else if (!strcmp(key, "jail")) {
             /* jail entries are of the form: /path/to/map x y */
             char path[MAX_BUF];
             int x, y;
+
+            if (!new) {
+                LOG(llevError, "region.c: malformated regions file: \"jail\" before \"region\".\n");
+                fatal(SEE_LAST_ERROR);
+            }
+            if (!value) {
+                LOG(llevError, "region.c: malformated regions file: No value given for \"jail\" key.\n");
+                fatal(SEE_LAST_ERROR);
+            }
 
             if (sscanf(value, "%[^ ] %d %d\n", path, &x, &y) != 3) {
                 LOG(llevError, "region.c: malformated regions entry: jail %s\n", value);
@@ -419,6 +448,10 @@ static void parse_regions(FILE *fp) {
             new->jailx = x;
             new->jaily = y;
         } else if (!strcmp(key, "msg")) {
+            if (!new) {
+                LOG(llevError, "region.c: malformated regions file: \"msg\" before \"region\".\n");
+                fatal(SEE_LAST_ERROR);
+            }
             while (fgets(buf, HUGE_BUF-1, fp) != NULL) {
                 if (!strcmp(buf, "endmsg\n"))
                     break;
@@ -439,8 +472,20 @@ static void parse_regions(FILE *fp) {
             msgpos = 0;
         } else if (!strcmp(key, "fallback")) {
             *end = 0;
+            if (!new) {
+                LOG(llevError, "region.c: malformated regions file: \"fallback\" before \"region\".\n");
+                fatal(SEE_LAST_ERROR);
+            }
+            if (!value) {
+                LOG(llevError, "region.c: malformated regions file: No value given for \"fallback\" key.\n");
+                fatal(SEE_LAST_ERROR);
+            }
             new->fallback = atoi(value);
         } else if (!strcmp(key, "end")) {
+            if (!new) {
+                LOG(llevError, "region.c: Ignoring spurious \"end\" between regions.\n");
+                continue;
+            }
             /* Place this new region last on the list, if the list is empty put it first */
             for (reg = first_region; reg != NULL && reg->next != NULL; reg = reg->next)
                 ;
@@ -451,6 +496,9 @@ static void parse_regions(FILE *fp) {
                 reg->next = new;
             new = NULL;
         } else if (!strcmp(key, "nomore")) {
+            if (new) {
+                LOG(llevError, "region.c: Last region not properly closed.\n");
+            }
             /* we have reached the end of the region specs....*/
             break;
         } else {
