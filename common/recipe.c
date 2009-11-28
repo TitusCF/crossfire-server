@@ -719,7 +719,7 @@ recipe *get_random_recipe(recipelist *rpl) {
  * Frees all memory allocated to recipes and recipes lists.
  */
 void free_all_recipes(void) {
-    recipelist *fl = formulalist, *flnext;
+    recipelist *fl, *flnext;
     recipe *formula = NULL, *next;
     linked_char *lchar, *charnext;
 

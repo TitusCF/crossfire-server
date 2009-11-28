@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix some dead initialisations (value assigned never used).
+Arvid Norlander 2009-11-28
+
 We already used the generic autoconf INSTALL. Update it to a newer version
 (autoreconf automatically updated it).
 Arvid Norlander 2009-11-28
