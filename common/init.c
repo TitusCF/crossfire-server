@@ -475,7 +475,7 @@ static void init_attackmess(void) {
     char *cp, *p;
     FILE *fp;
     static int has_been_done = 0;
-    int mess, level, comp;
+    int mess = -1, level, comp;
     int mode = 0, total = 0;
 
     if (has_been_done)
