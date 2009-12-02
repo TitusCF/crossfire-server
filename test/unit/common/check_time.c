@@ -60,7 +60,6 @@ END_TEST
 
 START_TEST(test_get_season_name) {
     fail_unless(get_season_name(-1) == NULL, "getting season name for negative value should bring a NULL");
-printf("got at season +2: %s\n", get_season_name(SEASONS_PER_YEAR+2));
     fail_unless(get_season_name(SEASONS_PER_YEAR+2) == NULL, "getting season name for too high value should bring a NULL");
     fail_unless(get_season_name(SEASONS_PER_YEAR) != NULL, "getting season name for limit value should bring a '\\n'");
     fail_unless(strcmp(get_season_name(SEASONS_PER_YEAR), "\n") == 0, "getting season name for limit value should bring a '\n'");
