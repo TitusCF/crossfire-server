@@ -1077,9 +1077,12 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    timing.
 
 	want_pickup (0/1)
-	    If set, the client wants pickup mode to be sent when player
-	    correctly logs in (to synchronize interface).
-	    Note that this flag only sends at login, not when mode changes.
+	    If set, the client wants to be informed of pickup mode changes.
+	    Mode will be sent when the player successfully logs in, and
+	    afterward any time the value is changed (for instance by the
+	    player through the direct use of 'pickup' command).
+	    The value is the same bit format the client sends through menus
+	    and such.
 
 	All data in the setup command is in ASCII text form.  options and
 	values can not have whitepace - the client and server use whitspace
