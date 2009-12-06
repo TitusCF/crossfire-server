@@ -1254,18 +1254,17 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                 op->value *= ((op->level > 10 ? op->level : (op->level+1)/2)*((strlen(op->msg)/250)+1));
                 /* creator related stuff */
 
-                /* for library, chained books.  Note that some monsters have
-                 * no_pick set - we don't want to set no pick in that case.
-                 */
-                if (QUERY_FLAG(creator, FLAG_NO_PICK)
-                && !QUERY_FLAG(creator, FLAG_MONSTER))
-                    SET_FLAG(op, FLAG_NO_PICK);
                 if (creator->slaying && !op->slaying) /* for check_inv floors */
                         op->slaying = add_string(creator->slaying);
 
                 /* add exp so reading it gives xp (once)*/
                 op->stats.exp = op->value > 10000 ? op->value/5 : op->value/10;
             }
+            /* for library, chained books.  Note that some monsters have
+             * no_pick set - we don't want to set no pick in that case. */
+            if (QUERY_FLAG(creator, FLAG_NO_PICK)
+                && !QUERY_FLAG(creator, FLAG_MONSTER))
+                SET_FLAG(op, FLAG_NO_PICK);
             break;
 
         case SPELLBOOK:
