@@ -1700,6 +1700,8 @@ static void display_new_pickup(const object *op) {
     if (!(i&PU_NEWMODE))
         return;
 
+    esrv_send_pickup(op->contr);
+
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d NEWMODE",
                          "%d NEWMODE",
