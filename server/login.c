@@ -334,6 +334,7 @@ int save_player(object *op, int flag) {
         fprintf(fp, "party_rejoin_password %s\n", party_get_password(pl->party));
     }
     fprintf(fp, "language %d\n", pl->language);
+    fprintf(fp, "ticks_played %u\n", pl->ticks_played);
     fprintf(fp, "endplst\n");
 
     SET_FLAG(op, FLAG_NO_FIX_PLAYER);
@@ -481,6 +482,7 @@ void check_login(object *op) {
     char filename[MAX_BUF];
     char buf[MAX_BUF], bufall[MAX_BUF];
     int i, value, comp;
+    uint32 uvalue;
     long checksum = 0;
     player *pl = op->contr, *pltmp;
     int correct = 0;
@@ -588,6 +590,13 @@ void check_login(object *op) {
         if (p != NULL)
             *p = '\0';
 
+        /* uvalue is an unsigned value.  Since at least a
+         * couple different things want an usigned value, cleaner
+         * to just do it once here vs everyplace it may be needed.
+         */
+           
+        uvalue = strtoul(val_string, (char **)NULL, 10);
+
         if (!strcmp(buf, "endplst"))
             break;
         if (!strcmp(buf, "title") && settings.set_title == TRUE)
@@ -617,12 +626,7 @@ void check_login(object *op) {
         else if (!strcmp(buf, "digestion"))
             pl->digestion = value;
         else if (!strcmp(buf, "pickup")) {
-            /*
-             * Reparse pickup as an unsigned value.  The prior parse assumes
-             * all values are signed. If read as signed, pickup is corrupted.
-             */
-            sscanf(bufall,"%s %u\n",buf,&value);
-            pl->mode = value;
+            pl->mode = uvalue;
         }
         else if (!strcmp(buf, "map"))
             snprintf(pl->maplevel, sizeof(pl->maplevel), "%s", val_string);
@@ -686,6 +690,9 @@ void check_login(object *op) {
             if (value < 0 || value >= NUM_LANGUAGES)
                 value = 0;
             pl->language = value;
+        }
+        else if (!strcmp(buf, "ticks_played")) {
+            pl->ticks_played = uvalue;
         }
     } /* End of loop loading the character file */
     object_remove(op);

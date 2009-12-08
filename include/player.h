@@ -223,6 +223,7 @@ typedef struct pl {
     int         stack_position;      /**< Current stack position, 0 for no item. */
     int         language;            /**< The language the player wishes to use. */
     const char  *unarmed_skill;      /**< Prefered skill to use in unarmed combat */
+    uint32      ticks_played;        /**< How many ticks this player has played */
 } player;
 
 #endif /* PLAYER_H */

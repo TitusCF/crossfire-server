@@ -1228,6 +1228,7 @@ int command_listen(object *op, char *params) {
 int command_statistics(object *pl, char *params) {
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
+    int hours, minutes;
 
     if (!pl->contr)
         return 1;
@@ -1284,6 +1285,24 @@ int command_statistics(object *pl, char *params) {
                          i18n_translate(get_language(pl), I18N_MSG_CMISC_128),
                          i18n_translate(get_language(pl), I18N_MSG_CMISC_129),
                          pl->contr->peaceful ?  "Peaceful" : "Hostile");
+
+    /* max_time is in microseconds - thus divide by 1000000.  60 seconds/minute.
+     * Note the message displayed here isn't really
+     * perfect, since if max_time has been changed since the player started,
+     * the time estimates use the current value.  But I'm presuming that
+     * max_time won't change very often.  MSW 2009-12-01
+     */
+    minutes = pl->contr->ticks_played * max_time / (60 * 1000000);
+    hours = minutes / 60;
+    minutes = minutes % 60;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
+                         "You have played this character for %u ticks, which amounts "
+                         "to %d hours and %d minutes.", 
+                         "You have played this character for %u ticks, which amounts "
+                         "to %d hours and %d minutes.", 
+                         pl->contr->ticks_played, hours, minutes);
+
 
     /* Can't think of anything else to print right now */
     return 0;

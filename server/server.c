@@ -889,6 +889,12 @@ static void process_players1(void) {
             if (pl->ob == NULL)
                 continue;
 
+            /* Only do this on the first pass - what we are recording
+             * here is the number of ticks the player has been online - not
+             * how many actions/moves the player has done.
+             */
+            if (!flag) pl->ticks_played++;
+
             /** Handle DM follow command */
             if (pl->followed_player) {
                 player *followed = find_player_partial_name(pl->followed_player);
