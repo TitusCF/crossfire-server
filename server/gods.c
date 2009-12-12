@@ -52,6 +52,7 @@ static void god_intervention(object *op, const object *god, object *skill);
 static int god_examines_priest(object *op, const object *god);
 static int god_examines_item(const object *god, object *item);
 static const char *get_god_for_race(const char *race);
+static void remove_special_prayers(object *op, const object *god);
 
 /**
  * Returns the id of specified god.
@@ -382,7 +383,8 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
          * note it gets harder to swap gods the higher we get
          */
         if ((angry == 1) && !(random_roll(0, skill->level, pl, PREFER_LOW))) {
-            become_follower(pl, &altar->other_arch->clone);
+            if (become_follower(pl, &altar->other_arch->clone))
+                remove_special_prayers(pl, pl_god);
         } else {
             /* toss this player off the altar.  He can try again. */
             draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, pl, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
@@ -395,18 +397,23 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 
 /**
  * Removes special prayers given by a god.
+ * After this function, op shouldn't know any prayer granted by god.
+ * Prayers will be given when player prays on god's altar, so not handled now.
  *
  * @param op
  * player to remove prayers from.
  * @param god
  * god we're removing the prayers.
  */
-static void check_special_prayers(object *op, const object *god) {
-    /* Ensure that 'op' doesn't know any special prayers that are not granted
-     * by 'god'.
-     */
+static void remove_special_prayers(object *op, const object *god) {
     treasure *tr;
     int remove = 0;
+
+    if (god->randomitems == NULL) {
+        LOG(llevError, "BUG: remove_special_prayers(): god %s without randomitems\n", god->name);
+        return;
+    }
+
 
     /* Outer loop iterates over all special prayer marks */
     FOR_INV_PREPARE(op, tmp) {
@@ -416,27 +423,18 @@ static void check_special_prayers(object *op, const object *god) {
         if (tmp->type != SPELL || !QUERY_FLAG(tmp, FLAG_STARTEQUIP))
             continue;
 
-        if (god->randomitems == NULL) {
-            LOG(llevError, "BUG: check_special_prayers(): god %s without randomitems\n", god->name);
-            do_forget_spell(op, tmp->name);
-            continue;
-        }
-
-        /* Inner loop tries to find the special prayer in the god's treasure
-         * list. We default that the spell should be removed.
+         /* Inner loop tries to find the special prayer in the god's treasure
+         * list. We default that the spell should not be removed.
         */
-        remove = 1;
+        remove = 0;
         for (tr = god->randomitems->items; tr; tr = tr->next) {
-            object *item;
-
             if (tr->item == NULL)
                 continue;
-            item = &tr->item->clone;
 
             /* Basically, see if the matching spell is granted by this god. */
 
             if (tr->item->clone.type == SPELL && tr->item->clone.name == tmp->name) {
-                remove = 0;
+                remove = 1;
                 break;
             }
         }
@@ -461,14 +459,18 @@ static void check_special_prayers(object *op, const object *god) {
  * switched to a new god. It handles basically all the stat changes
  * that happen to the player, including the removal of godgiven
  * items (from the former cult).
+ * Handles race restrictions on god, and will punish player if needed.
  *
  * @param op
  * player switching cults.
  * @param new_god
  * new god to worship.
- * @todo isn't there duplication with check_special_prayers() for spell removing?
+ * @return
+ * 1 if successfully converted, 0 if the god doesn't like the race, or something else.
+ * @todo isn't there duplication with remove_special_prayers() for spell removing?
+ * @todo split the check to make this function only actually become follower
  */
-void become_follower(object *op, const object *new_god) {
+int become_follower(object *op, const object *new_god) {
     const object *old_god = NULL;                      /* old god */
     treasure *tr;
     object *skop;
@@ -486,12 +488,8 @@ void become_follower(object *op, const object *new_god) {
         && item->invisible
         && (item->type != SKILL)
         && (item->type != EXPERIENCE)
-        && (item->type != FORCE)) {
-            if (item->type == SPELL)
-                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
-                                     "You lose knowledge of %s.",
-                                     "You lose knowledge of %s.",
-                                     item->name);
+        && (item->type != FORCE)
+        && (item->type != SPELL)) {
             player_unready_range_ob(op->contr, item);
             object_remove(item);
             object_free(item);
@@ -509,7 +507,7 @@ void become_follower(object *op, const object *new_god) {
     }
 
     if (!op || !new_god)
-        return;
+        return 0;
 
     if (op->race && new_god->slaying && strstr(op->race, new_god->slaying)) {
         draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
@@ -520,7 +518,7 @@ void become_follower(object *op, const object *new_god) {
             object *tmp = create_archetype(LOOSE_MANA);
             cast_magic_storm(op, tmp, new_god->level+10);
         }
-        return;
+        return 0;
     }
 
     /* give the player any special god-characteristic-items. */
@@ -642,7 +640,10 @@ void become_follower(object *op, const object *new_god) {
     if (!sk_applied)
         CLEAR_FLAG(skop, FLAG_APPLIED);
 
-    check_special_prayers(op, new_god);
+    // check is now done after converting
+    //remove_special_prayers(op, new_god);
+
+    return 1;
 }
 
 /**
@@ -1018,7 +1019,8 @@ static void god_intervention(object *op, const object *god, object *skill) {
         return;
     }
 
-    check_special_prayers(op, god);
+    // removed on 2009-12-12 because the function now removes prayers NOT from god.
+    //remove_special_prayers(op, god);
 
     /* lets do some checks of whether we are kosher with our god */
     if (god_examines_priest(op, god) < 0)

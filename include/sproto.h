@@ -287,7 +287,7 @@ void hiscore_display(object *op, int max, const char *match);
 const object *find_god(const char *name);
 const char *determine_god(object *op);
 void pray_at_altar(object *pl, object *altar, object *skill);
-void become_follower(object *op, const object *new_god);
+int become_follower(object *op, const object *new_god);
 archetype *determine_holy_arch(const object *god, const char *type);
 int tailor_god_spell(object *spellop, object *caster);
 /* init.c */
