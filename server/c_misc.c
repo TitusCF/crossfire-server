@@ -2071,6 +2071,11 @@ int onoff_value(const char *line) {
  * 1.
  */
 int command_quit(object *op, char *params) {
+    if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_ADMIN_DM, "Can't quit when in DM mode.", NULL);
+        return 1;
+    }
+
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR,
                i18n_translate(get_language(op), I18N_MSG_CMISC_181));
 

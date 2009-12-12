@@ -1276,6 +1276,14 @@ void key_change_class(object *op, char key) {
  */
 void key_confirm_quit(object *op, char key) {
     char buf[MAX_BUF];
+    mapstruct *mp, *next;
+
+    // this was tested when 'quit' command was issued, but better safe than sorry.
+    if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
+        op->contr->state = ST_PLAYING;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN, "Can't quit when in DM mode.", NULL);
+        return;
+    }
 
     if (key != 'y' && key != 'Y' && key != 'q' && key != 'Q') {
         op->contr->state = ST_PLAYING;
@@ -1300,22 +1308,20 @@ void key_confirm_quit(object *op, char key) {
     if (settings.set_title == TRUE)
         player_set_own_title(op->contr, "");
 
-    if (!QUERY_FLAG(op, FLAG_WAS_WIZ)) {
-        mapstruct *mp, *next;
 
-        /* We need to hunt for any per player unique maps in memory and
-         * get rid of them.  The trailing slash in the path is intentional,
-         * so that players named 'Ab' won't match against players 'Abe' pathname
-         */
-        snprintf(buf, sizeof(buf), "%s/%s/%s/", settings.localdir, settings.playerdir, op->name);
-        for (mp = first_map; mp != NULL; mp = next) {
-            next = mp->next;
-            if (!strncmp(mp->path, buf, strlen(buf)))
-                delete_map(mp);
-        }
-
-        delete_character(op->name);
+    /* We need to hunt for any per player unique maps in memory and
+     * get rid of them.  The trailing slash in the path is intentional,
+     * so that players named 'Ab' won't match against players 'Abe' pathname
+     */
+    snprintf(buf, sizeof(buf), "%s/%s/%s/", settings.localdir, settings.playerdir, op->name);
+    for (mp = first_map; mp != NULL; mp = next) {
+        next = mp->next;
+        if (!strncmp(mp->path, buf, strlen(buf)))
+            delete_map(mp);
     }
+
+    delete_character(op->name);
+
     play_again(op);
 }
 
