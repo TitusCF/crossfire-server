@@ -404,13 +404,17 @@ int monster_compute_path(object *source, object *target, int default_dir) {
     if (target->map != source->map)
         return default_dir;
 
-    /*    printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
+    /*printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
 
     size = source->map->width*source->map->height;
     distance = calloc(size, sizeof(*distance));
     if (distance == NULL) {
         fatal(OUT_OF_MEMORY);
     }
+    for (dir = 0; dir < size; dir++) {
+        distance[dir] = 999;
+    }
+    distance[source->map->height * target->x + target->y] = 0;
     explore_x[0] = target->x;
     explore_y[0] = target->y;
 
@@ -425,7 +429,7 @@ int monster_compute_path(object *source, object *target, int default_dir) {
             y = explore_y[current]+freearr_y[dir];
 
             if (x == source->x && y == source->y) {
-                /*          LOG(llevDebug, "monster_compute_path => %d\n", absdir(dir+4));*/
+                //LOG(llevDebug, "monster_compute_path => %d\n", absdir(dir+4));
                 free(distance);
                 return absdir(dir+4);
             }
@@ -441,7 +445,10 @@ int monster_compute_path(object *source, object *target, int default_dir) {
             this_distance = &distance[source->map->height*explore_x[current]+explore_y[current]];
             diagonal = dir%2 == 0;
             new_distance = *this_distance+(diagonal ? 3 : 2);
-            if (*this_distance == 0 || *this_distance > new_distance) {
+
+            /*LOG(llevDebug, "check %d, %d dist = %d, nd = %d\n", x, y, distance[source->map->height*x+y], new_distance);*/
+
+            if (distance[source->map->height*x+y] > new_distance) {
                 assert(max < MAX_EXPLORE);
                 explore_x[max] = x;
                 explore_y[max] = y;
@@ -458,6 +465,7 @@ int monster_compute_path(object *source, object *target, int default_dir) {
         current++;
     }
 
+    /*LOG(llevDebug, "no path\n");*/
     free(distance);
     return default_dir;
 }
