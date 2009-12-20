@@ -801,7 +801,7 @@ int command_create(object *op, char *params) {
     uint32 i;
     int magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
     uint32 nrof;
-    char buf[MAX_BUF], *cp, *bp, *bp2, *bp3, *bp4, *endline;
+    char *cp, *bp, *bp2, *bp3, *bp4, *endline;
     archetype *at, *at_spell = NULL;
     artifact *art = NULL;
 
