@@ -66,7 +66,7 @@ static void call_version(void) {
 }
 
 static void showscores(void) {
-    hiscore_display(NULL, 9999, NULL);
+    hiscore_display(NULL, 9999, "");
     exit(0);
 }
 

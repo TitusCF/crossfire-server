@@ -51,7 +51,17 @@
  * be initialized in one of the source files.
  */
 
-/** One command function. */
+/**
+ * One command function.
+ * @param op
+ * the player executing the command
+ * @param params
+ * the command parameters; empty string if no commands are given; leading and
+ * trailing spaces have been removed
+ * @return
+ * 0 if invalid command, else actual command's return value (which may be
+ * zero).
+ */
 typedef int (*command_function)(object *op, char *params);
 
 /** Represents one command. */

@@ -50,7 +50,7 @@
  * 0.
  */
 static int move_internal(object *op, char *params, int dir) {
-    if (params) {
+    if (*params != '\0') {
         if (params[0] == 'f') {
             if (!op->contr->fire_on) {
                 op->contr->fire_on = 1;
@@ -179,7 +179,7 @@ int command_west(object *op, char *params) {
  * 0.
  */
 int command_stay(object *op, char *params) {
-    if (!op->contr->fire_on && (!params || params[0] != 'f'))
+    if (!op->contr->fire_on && params[0] != 'f')
         return 0;
     fire(op, 0);
     return 0;

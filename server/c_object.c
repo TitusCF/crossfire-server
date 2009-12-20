@@ -113,7 +113,7 @@ static object *find_best_object_match(object *pl, const char *params) {
  * whether skill was used or not.
  */
 int command_uskill(object *pl, char *params) {
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: use_skill <skill name>", NULL);
         return 0;
@@ -134,7 +134,7 @@ int command_uskill(object *pl, char *params) {
 int command_rskill(object *pl, char *params) {
     object *skill;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: ready_skill <skill name>", NULL);
         return 0;
@@ -202,7 +202,7 @@ int command_throw(object *op, char *params) {
 
     skop = find_skill_by_name(op, skill_names[SK_THROWING]);
     if (skop)
-        return do_skill(op, op, skop, op->facing, params);
+        return do_skill(op, op, skop, op->facing, *params == '\0' ? NULL : params);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
                   "You have no knowledge of the skill throwing.", NULL);
@@ -224,7 +224,7 @@ int command_apply(object *op, char *params) {
     object *inv = op->inv;
     object *item;
 
-    if (!params) {
+    if (*params == '\0') {
         apply_by_living_below(op);
         return 0;
     }
@@ -633,7 +633,7 @@ int command_take(object *op, char *params) {
     }
 
     /* Makes processing easier */
-    if (params && *params == '\0')
+    if (*params == '\0')
         params = NULL;
 
     FOR_OB_AND_BELOW_PREPARE(tmp) {
@@ -1048,7 +1048,7 @@ int command_dropall(object *op, char *params) {
      * the drop() routine will do unknown things to it when dropping
      * in a shop. --Tero.Pelander@utu.fi
      */
-    if (params == NULL) {
+    if (*params == '\0') {
         FOR_INV_PREPARE(op, curinv) {
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && curinv->type != MONEY
@@ -1156,7 +1156,7 @@ int command_drop(object *op, char *params) {
     int ival = 0;
     int missed = 0;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Drop what?", NULL);
         return 0;
@@ -1243,7 +1243,7 @@ static void empty_container(object *container, object *pl) {
 int command_empty(object *op, char *params) {
     object *container;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Empty what?", NULL);
         return 0;
@@ -1284,7 +1284,7 @@ int command_empty(object *op, char *params) {
  * 0.
  */
 int command_examine(object *op, char *params) {
-    if (!params) {
+    if (*params == '\0') {
         FOR_BELOW_PREPARE(op, tmp)
             if (LOOK_OBJ(tmp)) {
                 examine(op, tmp);
@@ -1356,7 +1356,7 @@ int command_mark(object *op, char *params) {
 
     if (!op->contr)
         return 1;
-    if (!params) {
+    if (*params == '\0') {
         object *mark = find_marked_object(op);
         if (!mark)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1857,7 +1857,7 @@ int command_pickup(object *op, char *params) {
         PU_NOT_CURSED, PU_JEWELS, PU_FLESH, 0
     };
 
-    if (!params) {
+    if (*params == '\0') {
         /* if the new mode is used, just print the settings */
         if (op->contr->mode&PU_NEWMODE) {
             display_new_pickup(op);
@@ -1976,7 +1976,7 @@ int command_search_items(object *op, char *params) {
     if (settings.search_items == FALSE)
         return 1;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         if (op->contr->search_str[0] == '\0') {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                           "Example: search magic+1 "
@@ -2030,7 +2030,7 @@ int command_rename_item(object *op, char *params) {
     size_t counter;
     tag_t tag;
 
-    if (params) {
+    if (*params != '\0') {
         /* Let's skip white spaces */
         while (' ' == *params)
             params++;
@@ -2151,7 +2151,7 @@ int command_rename_item(object *op, char *params) {
             buf[0] = '\0';
         }
     } else {
-        /* Last case: params==NULL */
+        /* Last case: *params=='\0' */
         item = find_marked_object(op);
         if (!item) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -2220,7 +2220,7 @@ int command_lock_item(object *op, char *params) {
     tag_t tag;
     char name[HUGE_BUF];
 
-    if (!params || strlen(params) == 0) {
+    if (*params == '\0' || strlen(params) == 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                       "Lock what item?", "Lock what item?");
         return 1;

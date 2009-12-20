@@ -45,7 +45,7 @@
  * 0.
  */
 int command_say(object *op, char *params) {
-    if (!params)
+    if (*params == '\0')
         return 0;
     monster_communicate(op, params);
 
@@ -64,7 +64,7 @@ int command_say(object *op, char *params) {
 int command_me(object *op, char *params) {
     char buf[MAX_BUF];
 
-    if (!params)
+    if (*params == '\0')
         return 0;
     snprintf(buf, sizeof(buf), "%s %s", op->name, params);
     ext_info_map(NDI_UNIQUE|NDI_BLUE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_ME,
@@ -215,7 +215,7 @@ static int command_tell_all(object *op, char *params, int pri, int color, int su
         return 1;
     }
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Shout/Chat what?", NULL);
         return 1;
@@ -274,7 +274,7 @@ static int do_tell(object *op, char *params, int adjust_listen) {
     player *pl;
     uint8 original_listen;
 
-    if (params != NULL) {
+    if (*params != '\0') {
         name = params;
         msg = strchr(name, ' ');
         if (msg) {
@@ -379,7 +379,7 @@ int command_dmtell(object *op, char *params) {
 int command_reply(object *op, char *params) {
     player *pl;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Reply what?", NULL);
         return 1;
@@ -445,7 +445,7 @@ static int basic_emote(object *op, char *params, int emotion) {
     char buf[MAX_BUF], buf2[MAX_BUF], buf3[MAX_BUF];
     player *pl;
 
-    if (!params) {
+    if (*params == '\0') {
         switch (emotion) {
         case EMOTE_NOD:
             snprintf(buf, sizeof(buf), "%s nods solemnly.", op->name);

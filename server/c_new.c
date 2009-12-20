@@ -114,6 +114,8 @@ int execute_newserver_command(object *pl, char *command) {
         *(cp++) = '\0';
         while (*cp == ' ')
             cp++;
+    } else {
+        cp = strchr(command, '\0');
     }
 
     for (low = command; *low; low++)
@@ -168,7 +170,7 @@ int execute_newserver_command(object *pl, char *command) {
 int command_run(object *op, char *params) {
     int dir;
 
-    dir = params ? atoi(params) : 0;
+    dir = atoi(params);
     if (dir < 0 || dir >= 9) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't run into a non adjacent square.", NULL);
@@ -206,7 +208,7 @@ int command_run_stop(object *op, char *params) {
 int command_fire(object *op, char *params) {
     int dir;
 
-    dir = params ? atoi(params) : 0;
+    dir = atoi(params);
     if (dir < 0 || dir >= 9) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't fire to a non adjacent square.", NULL);

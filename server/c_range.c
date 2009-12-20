@@ -108,7 +108,7 @@ static void show_matching_spells(object *op, char *params) {
          * match the name, process this spell.
          */
         if (spell->type == SPELL
-        && (!params || !strncmp(params, spell->name, strlen(params)))) {
+        && (*params == '\0' || !strncmp(params, spell->name, strlen(params)))) {
             if (spell->path_attuned&op->path_denied) {
                 snprintf(spell_sort[num_found++], sizeof(spell_sort[0]),
                          "%s:%-22s %3s %3s", spell->skill ? spell->skill : "generic",
@@ -127,7 +127,7 @@ static void show_matching_spells(object *op, char *params) {
          * and it say you have no spells, when really, you do, but just
          * nothing that matches.
          */
-        if (params)
+        if (*params == '\0')
             show_matching_spells(op, NULL);
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -182,7 +182,7 @@ int command_cast_spell(object *op, char *params, char command) {
     if (command == 'i')
         castnow = 1;
 
-    if (params != NULL) {
+    if (*params != '\0') {
         tag_t spellnumber = 0;
         if ((spellnumber = atoi(params)) != 0)
             spob = object_find_by_tag(op, spellnumber);
@@ -388,7 +388,7 @@ void change_spell(object *op, char k) {
  * 0.
  */
 int command_rotateshoottype(object *op, char *params) {
-    if (!params)
+    if (*params == '\0')
         change_spell(op, '+');
     else
         change_spell(op, params[0]);

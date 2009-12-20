@@ -122,10 +122,10 @@ const char *get_name_of_region_for_map(const mapstruct  *m) {
  * @li a substring that matches to the region name (eg nav)
  * @li if it can find none of these it returns the first parentless region
  * (there should be only one of these - the top level one)
- * If we got a NULL, then just return the top level region
+ * An empty region name returns the top level region
  *
  * @param name
- * region we're searching. Can be NULL.
+ * region we're searching.
  * @return
  * matching region.
  */
@@ -138,7 +138,7 @@ region *get_region_from_string(const char *name) {
         return NULL;
     }
 
-    if (name == NULL) {
+    if (*name == '\0') {
         for (reg = first_region; reg->parent != NULL; reg = reg->parent)
             ;
         return reg;

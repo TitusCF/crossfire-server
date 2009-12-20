@@ -396,7 +396,7 @@ void hiscore_check(object *op, int quiet) {
  * @param max
  * maximum number of scores to display.
  * @param match
- * if set, will only print players with name or title containing the string (non case-sensitive).
+ * if non-empty, will only print players with name or title containing the string (non case-sensitive).
  *
  * @note
  * display_high_score() has been renamed to hiscore_display()
@@ -413,7 +413,7 @@ void hiscore_display(object *op, int max, const char *match) {
     for (j = 0; j < HIGHSCORE_LENGTH && hiscore_table.entry[j].name[0] != '\0' && printed_entries < max; j++) {
         char scorebuf[MAX_BUF];
 
-        if (match != NULL
+        if (*match != '\0'
         && !strcasestr_local(hiscore_table.entry[j].name, match)
         && !strcasestr_local(hiscore_table.entry[j].title, match))
             continue;

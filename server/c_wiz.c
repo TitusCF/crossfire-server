@@ -118,7 +118,7 @@ int command_loadtest(object *op, char *params) {
                          "{%s}",
                          "{%s}",
                          params);
-    if (!params)
+    if (*params == '\0')
         return 0;
     if (strncmp(params, "TRUE", 4))
         return 0;
@@ -209,8 +209,6 @@ int command_hide(object *op, char *params) {
  * suitable object, or NULL if none found.
  */
 static object *find_object_both(char *params) {
-    if (!params)
-        return NULL;
     if (params[0] == '#')
         return object_find_by_tag_global(atol(params+1));
     else
@@ -234,7 +232,7 @@ int command_setgod(object *op, char *params) {
     const object *god;
     char *str;
 
-    if (!params || !(str = strchr(params, ' '))) {
+    if (*params == '\0' || !(str = strchr(params, ' '))) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: setgod object god", NULL);
         return 0;
@@ -289,14 +287,14 @@ static int command_kick2(object *op, const char *params) {
     struct pl *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next) {
-        if ((params == NULL || !strcmp(pl->ob->name, params)) && pl->ob != op) {
+        if ((*params == '\0' || !strcmp(pl->ob->name, params)) && pl->ob != op) {
             object *op;
             int removed = 0;
 
             op = pl->ob;
             if (!QUERY_FLAG(op, FLAG_REMOVED)) {
                 /* Avion : Here we handle the KICK global event */
-                execute_global_event(EVENT_KICK, op, params);
+                execute_global_event(EVENT_KICK, op, *params == '\0' ? NULL : params);
                 object_remove(op);
                 removed = 1;
             }
@@ -350,7 +348,7 @@ int command_banish(object *op, char *params) {
     char buf[MAX_BUF];
     time_t now;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: banish <player>.", NULL);
         return 1;
@@ -473,7 +471,7 @@ int command_overlay_reset(object *op, char *params) {
 int command_toggle_shout(object *op, char *params) {
     player *pl;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: toggle_shout <player>.", NULL);
         return 1;
@@ -550,7 +548,7 @@ int command_goto(object *op, char *params) {
     if (!op)
         return 0;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Go to what level?", NULL);
         return 1;
@@ -588,7 +586,7 @@ int command_freeze(object *op, char *params) {
     int ticks;
     player *pl;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: freeze [ticks] <player>.", NULL);
         return 1;
@@ -638,7 +636,7 @@ int command_arrest(object *op, char *params) {
 
     if (!op)
         return 0;
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: arrest <player>.", NULL);
         return 1;
@@ -682,7 +680,7 @@ int command_summon(object *op, char *params) {
     if (!op)
         return 0;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: summon <player>.", NULL);
         return 1;
@@ -733,7 +731,7 @@ int command_teleport(object *op, char *params) {
     if (!op)
         return 0;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: teleport <player>.", NULL);
         return 0;
@@ -808,7 +806,7 @@ int command_create(object *op, char *params) {
     if (!op)
         return 0;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]",
                       NULL);
@@ -1144,7 +1142,7 @@ int command_inventory(object *op, char *params) {
     object *tmp;
     int i;
 
-    if (!params) {
+    if (*params == '\0') {
         inventory(op, NULL);
         return 0;
     }
@@ -1174,7 +1172,7 @@ int command_inventory(object *op, char *params) {
  * @todo move out of this file as it is used by all players.
  */
 int command_skills(object *op, char *params) {
-    show_skills(op, params);
+    show_skills(op, *params == '\0' ? NULL : params);
     return 0;
 }
 
@@ -1256,7 +1254,7 @@ int command_possess(object *op, char *params) {
     char buf[MAX_BUF];
 
     victim = NULL;
-    if (params != NULL) {
+    if (*params != '\0') {
         if (sscanf(params, "%d", &i))
             victim = object_find_by_tag_global(i);
         else if (sscanf(params, "%s", buf))
@@ -1324,7 +1322,7 @@ int command_patch(object *op, char *params) {
 
     /* params set to first value by get_dm_default */
     arg = params;
-    if (arg == NULL) {
+    if (*arg == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Patch what values?", NULL);
         return 1;
@@ -1454,7 +1452,7 @@ int command_addexp(object *op, char *params) {
     player *pl;
 
     skill[0] = '\0';
-    if ((params == NULL)
+    if ((*params == '\0')
     || (strlen(params) > MAX_BUF)
     || ((q = sscanf(params, "%s %d %s", buf, &i, skill)) < 2)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1510,7 +1508,7 @@ int command_addexp(object *op, char *params) {
 int command_speed(object *op, char *params) {
     int i;
 
-    if (params == NULL || !sscanf(params, "%d", &i)) {
+    if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                              "Current speed is %d",
                              "Current speed is %d",
@@ -1545,7 +1543,7 @@ int command_speed(object *op, char *params) {
 int command_stats(object *op, char *params) {
     player *pl;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Who?", NULL);
         return 1;
@@ -1617,7 +1615,7 @@ int command_abil(object *op, char *params) {
     iii = 0;
     thing[0] = '\0';
     thing2[0] = '\0';
-    if (params == NULL
+    if (*params == '\0'
     || sscanf(params, "%s %s %d", thing, thing2, &iii) != 3
     || thing[0] == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1685,7 +1683,7 @@ int command_reset(object *op, char *params) {
     char path[HUGE_BUF];
     int res = 0;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Reset what map [name]?", NULL);
         return 1;
@@ -1919,7 +1917,7 @@ int do_wizard_dm(object *op, char *params, int silent) {
         return 0;
     }
 
-    if (checkdm(op, op->name, (params ? params : "*"), op->contr->socket.host)) {
+    if (checkdm(op, op->name, (*params != '\0' ? params : "*"), op->contr->socket.host)) {
         SET_FLAG(op, FLAG_WIZ);
         SET_FLAG(op, FLAG_WAS_WIZ);
         SET_FLAG(op, FLAG_WIZPASS);
@@ -2121,7 +2119,7 @@ static object *get_spell_by_name(object *op, const char *spell_name) {
 static int command_learn_spell_or_prayer(object *op, char *params, int special_prayer) {
     object *tmp;
 
-    if (op->contr == NULL || params == NULL) {
+    if (op->contr == NULL || *params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Which spell do you want to learn?", NULL);
         return 0;
@@ -2190,7 +2188,7 @@ int command_learn_special_prayer(object *op, char *params) {
 int command_forget_spell(object *op, char *params) {
     object *spell;
 
-    if (op->contr == NULL || params == NULL) {
+    if (op->contr == NULL || *params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Which spell do you want to forget?", NULL);
         return 0;
@@ -2239,7 +2237,7 @@ int command_listplugins(object *op, char *params) {
 int command_loadplugin(object *op, char *params) {
     char buf[MAX_BUF];
 
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Load which plugin?", NULL);
         return 1;
@@ -2276,7 +2274,7 @@ int command_loadplugin(object *op, char *params) {
  * 1.
  */
 int command_unloadplugin(object *op, char *params) {
-    if (params == NULL) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Remove which plugin?", NULL);
         return 1;
@@ -2434,7 +2432,7 @@ object *get_dm_object(player *pl, char **params, int *from) {
     if (!pl)
         return NULL;
 
-    if (!*params || **params == '\0') {
+    if (**params == '\0') {
         if (from)
             *from = STACK_FROM_TOP;
         /* No parameter => get stack item */
@@ -2842,7 +2840,7 @@ int command_style_map_info(object *op, char *params) {
 int command_follow(object *op, char *params) {
     player *other;
 
-    if (!params) {
+    if (*params == '\0') {
         if (op->contr->followed_player != NULL) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You stop following %s.", NULL, op->contr->followed_player);
             FREE_AND_CLEAR_STR(op->contr->followed_player);

@@ -4087,6 +4087,7 @@ void *cfapi_object_say(int *type, ...) {
     char *msg;
     va_list args;
     int *rint;
+    char empty[] = "";
 
     va_start(args, type);
     op = va_arg(args, object *);
@@ -4095,7 +4096,7 @@ void *cfapi_object_say(int *type, ...) {
     va_end(args);
 
     if (op->type == PLAYER) {
-        *rint = command_say(op, msg);
+        *rint = command_say(op, msg == NULL ? empty  : msg);
     } else {
         monster_npc_say(op, msg);
         *rint = 0;

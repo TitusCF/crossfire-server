@@ -87,7 +87,7 @@ void receive_party_password(object *op) {
 int command_gsay(object *op, char *params) {
     char party_params[MAX_BUF];
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR, "Say what?", NULL);
         return 0;
     }
@@ -133,7 +133,7 @@ static void party_help(object *op) {
 int command_party(object *op, char *params) {
     char buf[MAX_BUF];
 
-    if (params == NULL) {
+    if (*params == '\0') {
         if (op->contr->party == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "You are not a member of any party. "
@@ -366,7 +366,7 @@ static const char *rejoin_modes[] = {
 int command_party_rejoin(object *op, char *params) {
     int mode;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "party rejoin: %s", NULL, rejoin_modes[op->contr->rejoin_party]);
         return 1;

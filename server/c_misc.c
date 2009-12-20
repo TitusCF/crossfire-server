@@ -69,7 +69,7 @@ void map_info(object *op, char *search) {
                   i18n_translate(get_language(op), I18N_MSG_CMISC_002));
 
     for (m = first_map; m != NULL; m = m->next) {
-        if (search && strstr(m->path, search) == NULL)
+        if (*search != '\0' && strstr(m->path, search) == NULL)
             continue;   /* Skip unwanted maps */
 
         /* Print out the last 18 characters of the map name... */
@@ -106,7 +106,7 @@ int command_language(object *op, char *params) {
 
     language_str = language_names[get_language(op)];
 
-    if (!params || (!strcmp(params, ""))) {
+    if (*params == '\0' || (!strcmp(params, ""))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_005),
                              i18n_translate(get_language(op), I18N_MSG_CMISC_005),
@@ -942,7 +942,7 @@ int command_hiscore(object *op, char *params) {
 int command_debug(object *op, char *params) {
     int i;
 
-    if (params == NULL || !sscanf(params, "%d", &i)) {
+    if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_092),
                              i18n_translate(get_language(op), I18N_MSG_CMISC_092),
@@ -1006,7 +1006,7 @@ int command_wizpass(object *op, char *params) {
     if (!op)
         return 0;
 
-    if (!params)
+    if (*params == '\0')
         i = (QUERY_FLAG(op, FLAG_WIZPASS)) ? 0 : 1;
     else
         i = onoff_value(params);
@@ -1039,7 +1039,7 @@ int command_wizcast(object *op, char *params) {
     if (!op)
         return 0;
 
-    if (!params)
+    if (*params == '\0')
         i = (QUERY_FLAG(op, FLAG_WIZCAST)) ? 0 : 1;
     else
         i = onoff_value(params);
@@ -1192,7 +1192,7 @@ int command_version(object *op, char *params) {
 int command_listen(object *op, char *params) {
     int i;
 
-    if (params == NULL || !sscanf(params, "%d", &i)) {
+    if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_105),
                              i18n_translate(get_language(op), I18N_MSG_CMISC_105),
@@ -1302,9 +1302,9 @@ int command_statistics(object *pl, char *params) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
                          "You have played this character for %u ticks, which amounts "
-                         "to %d hours and %d minutes.", 
+                         "to %d hours and %d minutes.",
                          "You have played this character for %u ticks, which amounts "
-                         "to %d hours and %d minutes.", 
+                         "to %d hours and %d minutes.",
                          pl->contr->ticks_played, hours, minutes);
 
 
@@ -1399,7 +1399,7 @@ int command_applymode(object *op, char *params) {
         "always"
     };
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_132),
                              i18n_translate(get_language(op), I18N_MSG_CMISC_133),
@@ -1458,7 +1458,7 @@ int command_bowmode(object *op, char *params) {
     char buf[MAX_BUF];
     int i, found;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_136),
                              i18n_translate(get_language(op), I18N_MSG_CMISC_136),
@@ -1508,7 +1508,7 @@ int command_unarmed_skill(object *op, char *params) {
     object *skill;
     size_t i;
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              "unarmed skill is set to %s",
                              "unarmed skill is set to %s",
@@ -1576,7 +1576,7 @@ int command_petmode(object *op, char *params) {
         "arena"
     };
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_138),
                              i18n_translate(get_language(op), I18N_MSG_CMISC_138),
@@ -1621,7 +1621,7 @@ int command_showpets(object *op, char *params) {
     objectlink *obl, *next;
     int counter = 0, target = 0;
     int have_shown_pet = 0;
-    if (params != NULL)
+    if (*params != '\0')
         target = atoi(params);
 
     for (obl = first_friendly_object; obl != NULL; obl = next) {
@@ -1711,7 +1711,7 @@ int command_usekeys(object *op, char *params) {
         "containers"
     };
 
-    if (!params) {
+    if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_165),
                              i18n_translate(get_language(op), I18N_MSG_CMISC_165),
@@ -1921,7 +1921,7 @@ int command_help(object *op, char *params) {
     /*
      * Main help page?
      */
-    if (!params) {
+    if (*params == '\0') {
         snprintf(filename, sizeof(filename), "%s/def_help", settings.datadir);
         if ((fp = fopen(filename, "r")) == NULL) {
             LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
@@ -2242,7 +2242,7 @@ int command_title(object *op, char *params) {
         return 1;
     }
 
-    if (params == NULL) {
+    if (*params == '\0') {
         char tmp[MAX_BUF];
 
         player_get_title(op->contr, tmp, sizeof(tmp));
@@ -2331,7 +2331,7 @@ int command_peaceful(object *op, char *params) {
 int command_wimpy(object *op, char *params) {
     int i;
 
-    if (params == NULL || !sscanf(params, "%d", &i)) {
+    if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_210),
                              i18n_translate(get_language(op), I18N_MSG_CMISC_210),
@@ -2358,7 +2358,7 @@ int command_wimpy(object *op, char *params) {
  * 1.
  */
 int command_brace(object *op, char *params) {
-    if (!params)
+    if (*params == '\0')
         op->contr->braced = !op->contr->braced;
     else
         op->contr->braced = onoff_value(params);
@@ -2389,7 +2389,7 @@ int command_kill_pets(object *op, char *params) {
     objectlink *obl, *next;
     int counter = 0, removecount = 0;
 
-    if (params == NULL) {
+    if (*params == '\0') {
         pets_terminate_all(op);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_214), NULL);
