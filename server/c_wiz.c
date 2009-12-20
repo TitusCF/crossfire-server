@@ -2434,7 +2434,7 @@ object *get_dm_object(player *pl, char **params, int *from) {
     if (!pl)
         return NULL;
 
-    if (!params || !*params || **params == '\0') {
+    if (!*params || **params == '\0') {
         if (from)
             *from = STACK_FROM_TOP;
         /* No parameter => get stack item */
