@@ -276,6 +276,60 @@ int command_setgod(object *op, char *params) {
 }
 
 /**
+ * Kicks a player from the server.
+ *
+ * @param op
+ * DM kicking.
+ * @param params
+ * player to kick. Must be a full name match.
+ * @return
+ * 1.
+ */
+static int command_kick2(object *op, const char *params) {
+    struct pl *pl;
+
+    for (pl = first_player; pl != NULL; pl = pl->next) {
+        if ((params == NULL || !strcmp(pl->ob->name, params)) && pl->ob != op) {
+            object *op;
+            int removed = 0;
+
+            op = pl->ob;
+            if (!QUERY_FLAG(op, FLAG_REMOVED)) {
+                /* Avion : Here we handle the KICK global event */
+                execute_global_event(EVENT_KICK, op, params);
+                object_remove(op);
+                removed = 1;
+            }
+            op->direction = 0;
+            draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_RED, 5, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
+                                 "%s is kicked out of the game.",
+                                 "%s is kicked out of the game.",
+                                 op->name);
+            strcpy(op->contr->killer, "left");
+            hiscore_check(op, 0); /* Always check score */
+
+            /*
+             * not sure how the player would be freed, but did see
+             * a crash here - if that is the case, don't save the
+             * the player.
+             */
+            if (!removed && !QUERY_FLAG(op, FLAG_FREED)) {
+                (void)save_player(op, 0);
+                if (op->map)
+                    op->map->players--;
+            }
+#if MAP_MAXTIMEOUT
+            if (op->map)
+                op->map->timeout = MAP_TIMEOUT(op->map);
+#endif
+            pl->socket.status = Ns_Dead;
+        }
+    }
+
+    return 1;
+}
+
+/**
  * Add player's IP to ban_file and kick them off the server.
  *
  * I know most people have dynamic IPs but this is more of a short term
@@ -335,7 +389,7 @@ int command_banish(object *op, char *params) {
                          "%s banishes %s from the land!",
                          "%s banishes %s from the land!",
                          op->name, pl->ob->name);
-    command_kick(op, pl->ob->name);
+    command_kick2(op, pl->ob->name);
     return 1;
 }
 
@@ -349,48 +403,8 @@ int command_banish(object *op, char *params) {
  * @return
  * 1.
  */
-int command_kick(object *op, const char *params) {
-    struct pl *pl;
-
-    for (pl = first_player; pl != NULL; pl = pl->next) {
-        if ((params == NULL || !strcmp(pl->ob->name, params)) && pl->ob != op) {
-            object *op;
-            int removed = 0;
-
-            op = pl->ob;
-            if (!QUERY_FLAG(op, FLAG_REMOVED)) {
-                /* Avion : Here we handle the KICK global event */
-                execute_global_event(EVENT_KICK, op, params);
-                object_remove(op);
-                removed = 1;
-            }
-            op->direction = 0;
-            draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_RED, 5, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                                 "%s is kicked out of the game.",
-                                 "%s is kicked out of the game.",
-                                 op->name);
-            strcpy(op->contr->killer, "left");
-            hiscore_check(op, 0); /* Always check score */
-
-            /*
-             * not sure how the player would be freed, but did see
-             * a crash here - if that is the case, don't save the
-             * the player.
-             */
-            if (!removed && !QUERY_FLAG(op, FLAG_FREED)) {
-                (void)save_player(op, 0);
-                if (op->map)
-                    op->map->players--;
-            }
-#if MAP_MAXTIMEOUT
-            if (op->map)
-                op->map->timeout = MAP_TIMEOUT(op->map);
-#endif
-            pl->socket.status = Ns_Dead;
-        }
-    }
-
-    return 1;
+int command_kick(object *op, char *params) {
+    return command_kick2(op, params);
 }
 
 /**
@@ -510,7 +524,7 @@ int command_shutdown(object *op, char *params) {
      * We need to give op - command_kick expects it.  however, this means
      * the op won't get kicked off, so we do it ourselves
      */
-    command_kick(op, NULL);
+    command_kick2(op, NULL);
     hiscore_check(op, 0); /* Always check score */
     (void)save_player(op, 0);
     play_again(op);

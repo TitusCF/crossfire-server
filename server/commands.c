@@ -231,7 +231,7 @@ command_array_struct WizCommands [] = {
     { "hide", command_hide,                      0.0 },
     { "insert_into", command_insert_into,        0.0 },
     { "invisible", command_invisible,            0.0 },
-    { "kick", (command_function)command_kick,    0.0 },
+    { "kick", command_kick,                      0.0 },
     { "learn_special_prayer", command_learn_special_prayer, 0.0 },
     { "learn_spell", command_learn_spell,        0.0 },
     { "malloc", command_malloc,                  0.0 },
