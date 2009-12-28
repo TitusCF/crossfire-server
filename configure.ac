@@ -252,7 +252,8 @@ AC_CONFIG_FILES([Makefile
                  doc/spell-docs/Makefile
                  doc/spoiler/Makefile doc/spoiler-html/Makefile
                  common/Makefile
-                 devel/Makefile
+                 plugins/cf_darcap/Makefile
+	devel/Makefile
                  include/Makefile
                  lib/Makefile
                  random_maps/Makefile
