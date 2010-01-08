@@ -4,8 +4,8 @@
 # This file will eventually be replaced by a configure script.  But for
 # now, this simple makefile should do the job.
 #
+#   Copyright (C) 2001,2010 Mark Wedel & Crossfire Development Team
 #   Copyright (C) 1992 Frank Tore Johansen
-#   Copyright (C) 2001 Mark Wedel
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ bin_PROGRAMS = crossfire-server
 noinst_LIBRARIES = libserver.a
 crossfire_server_SOURCES = main.c
 libserver_a_SOURCES = \
+	account.c\
 	alchemy.c\
 	apply.c\
 	attack.c\

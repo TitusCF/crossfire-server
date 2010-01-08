@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -487,7 +487,7 @@ void read_client_images(void) {
 
         if (buf[0] == '#')
             continue;
-        if (split_string(buf, cps, sizeof(cps)/sizeof(*cps)) != 7)
+        if (split_string(buf, cps, sizeof(cps)/sizeof(*cps), ':') != 7)
             LOG(llevError, "Bad line in image_info file, ignoring line:\n  %s", buf);
         else {
             len = atoi(cps[0]);

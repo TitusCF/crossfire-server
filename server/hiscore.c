@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -130,7 +130,7 @@ static int get_score(char *bp, score *sc) {
     if (cp != NULL)
         *cp = '\0';
 
-    if (split_string(bp, tmp, 8) != 8)
+    if (split_string(bp, tmp, 8, ':') != 8)
         return 0;
 
     strncpy(sc->name, tmp[0], BIG_NAME);

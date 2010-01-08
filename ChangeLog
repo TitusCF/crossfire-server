@@ -14,6 +14,26 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add account handling code.  This is work in progress - the checked in
+piece is the backend piece.  Protocol updates and client interface are
+next steps to do.  As part of this, split_string() was modified to take
+as an argument the seperator - this is useful because the account code
+stores the player names in a semicolon separated list.
+MSW 2010-01-07
+---
+common/image.c: Update call to split_string()
+common/utils.c: Modify split_string() to take as an argument the seperator -
+	this makes it more useful/general purpose.
+include/libproto.h: Update split_string() prototype
+include/sproto.h: Add prototypes for account.c
+server/Makefile.am: Add account.c
+server/hiscore.c: Update call to split_string()
+server/swap.c: Update call to split_string()
+test/unit/server/Makefile.am: Add check_account test.
+test/unit/server/check_account.c: functional tests for account code.
+test/unit/common/check_utils.c: Update split_string() call
+	
+
 First version of a Darcap handling plugin. For now handles the barman
 in the tavern.
 Nicolas Weeger 2009-12-28

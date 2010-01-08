@@ -56,7 +56,7 @@ static void check_split_string(const char *str, size_t array_size, ...) {
     snprintf(tmp, sizeof(tmp), "%s", str);
     for(i = 0; i < sizeof(array)/sizeof(*array); i++)
         array[i] = NULL;
-    result = split_string(tmp, array, array_size);
+    result = split_string(tmp, array, array_size, ':');
     fail_if(result > array_size, "result == %zu > %zu == array_size", result, array_size);
     va_start(arg, array_size);
     for(i = 0; i < sizeof(array)/sizeof(*array); i++) {

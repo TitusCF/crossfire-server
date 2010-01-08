@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -100,7 +100,7 @@ void read_map_log(void) {
          * out that manually.  strdup is used for tmpname, since other
          * routines will try to free that pointer.
          */
-        if (split_string(buf, tmp, sizeof(tmp)/sizeof(*tmp)) != 3) {
+        if (split_string(buf, tmp, sizeof(tmp)/sizeof(*tmp), ':') != 3) {
             LOG(llevDebug, "%s/temp.maps: ignoring invalid line: %s\n", settings.localdir, buf);
             continue;
         }

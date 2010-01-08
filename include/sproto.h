@@ -1,3 +1,13 @@
+/* account.c */
+void account_load_entries();
+void accounts_save();
+int account_exists(char *account_name);
+int account_check_name_password(char *account_name, char *account_password);
+int account_check_string(const char *str);
+int account_add_account(char *account_name, char *account_password);
+int account_add_player_to_account(char *account_name, char *player_name);
+int account_remove_player_from_account(char *account_name, char *player_name);
+char **account_get_players_for_account(char *account_name);
 /* alchemy.c */
 int use_alchemy(object *op);
 /* apply.c */

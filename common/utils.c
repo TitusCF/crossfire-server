@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -564,7 +564,7 @@ void replace_unprintable_chars(char *buf) {
 }
 
 /**
- * Splits a string delimited by ':' characters into an array of strings.
+ * Splits a string delimited by passed in sep value into characters into an array of strings.
  *
  * @param str
  * the string to be split; will be modified
@@ -573,11 +573,13 @@ void replace_unprintable_chars(char *buf) {
  * @param array_size
  * the number of elements in array; if <code>str</code> contains more fields
  * excess fields are not split but included into the last element
+ * @param sep
+ * seperator to use.
  * @return
  * the number of elements found; always less or equal to
  * <code>array_size</code>
  */
-size_t split_string(char *str, char *array[], size_t array_size) {
+size_t split_string(char *str, char *array[], size_t array_size, char sep) {
     char *p;
     size_t pos;
 
@@ -593,11 +595,11 @@ size_t split_string(char *str, char *array[], size_t array_size) {
     p = str;
     while (pos < array_size) {
         array[pos++] = p;
-        while (*p != '\0' && *p != ':')
+        while (*p != '\0' && *p != sep)
             p++;
         if (pos >= array_size)
             break;
-        if (*p != ':')
+        if (*p != sep)
             break;
         *p++ = '\0';
     }
