@@ -345,6 +345,42 @@ static void playerLeaves(object *who) {
     }
 }
 
+static void handleDeath(object *victim, object *killer) {
+    mapstruct *map = cf_object_get_map_property(victim, CFAPI_OBJECT_PROP_MAP);
+    sstring mappath;
+    int h, w, i, j;
+    object *npc, *say;
+
+    mappath = cf_map_get_sstring_property(map, CFAPI_MAP_PROP_PATH);
+
+    if (strcmp(mappath, "/darcap/darcap/church"))
+        return;
+
+    /* make all monsters aggressive */
+    h = cf_map_get_height(map);
+    w = cf_map_get_width(map);
+    say = NULL;
+
+    for (i = 0; i < h; i++) {
+        for (j = 0; j < w; j++) {
+            npc = cf_map_get_object_at(map, j, i);
+            while (npc) {
+                if (cf_object_get_flag(npc, FLAG_MONSTER) && cf_object_get_flag(npc, FLAG_UNAGGRESSIVE)) {
+                    say = npc;
+                    cf_object_set_flag(npc, FLAG_UNAGGRESSIVE, 0);
+                }
+
+                npc = cf_object_get_object_property(npc, CFAPI_OBJECT_PROP_OB_ABOVE);
+            }
+        }
+    }
+
+    /* And warn player of bad action */
+    if (say != NULL) {
+        cf_object_say(say, "You are going to pay!");
+    }
+}
+
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     int i;
 
@@ -457,6 +493,13 @@ CF_PLUGIN void *globalEventListener(int *type, ...) {
             mapstruct *map = va_arg(args, mapstruct *);
             if (map == tavernMap)
                 playerLeaves(who);
+        }
+
+        case EVENT_GKILL:
+        {
+            object *victim = va_arg(args, object *);
+            object *killer = va_arg(args, object *);
+            handleDeath(victim, killer);
         }
 
 /*
@@ -583,6 +626,7 @@ CF_PLUGIN int postInitPlugin(void) {
     cf_system_register_global_event(EVENT_MAPLOAD, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_MAPUNLOAD, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_MAPENTER, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, globalEventListener);
 
     /* Pick the global events you want to monitor from this plugin */
 /*
@@ -590,7 +634,6 @@ CF_PLUGIN int postInitPlugin(void) {
     cf_system_register_global_event(EVENT_CLOCK, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_CRASH, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_PLAYER_DEATH, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_LOGIN, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_LOGOUT, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_MAPLEAVE, PLUGIN_NAME, globalEventListener);
