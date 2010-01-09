@@ -381,6 +381,54 @@ static void handleDeath(object *victim, object *killer) {
     }
 }
 
+static int handleSelling(object *what, object *bywho, object *event) {
+    mapstruct *map = cf_object_get_map_property(bywho, CFAPI_OBJECT_PROP_MAP);
+    sstring mappath = cf_map_get_sstring_property(map, CFAPI_MAP_PROP_PATH);
+    sstring slaying = cf_object_get_sstring_property(event, CFAPI_OBJECT_PROP_SLAYING);
+    object *guard, *obj;
+    int count, x, y, i, j, h, w = 0;
+
+    if (strncmp(mappath, "/darcap/darcap", strlen("/darcap/darcap")))
+        return 0;
+    if (strcmp(slaying, "darcap_church_chalice"))
+        return 0;
+
+    /*
+     now for some punishment to the player who is selling those holy relics! :)
+     put some guards around the shop mats
+     */
+    h = cf_map_get_height(map);
+    w = cf_map_get_width(map);
+    for (i = 0; i < h; i++) {
+        for (j = 0; j < w; j++) {
+            obj = cf_map_get_object_at(map, j, i);
+            while (obj) {
+                if (cf_object_get_int_property(obj, CFAPI_OBJECT_PROP_TYPE) == SHOP_MAT) {
+                    count = random() % 10 + 2;
+                    while (count >= 0) {
+                        guard = cf_create_object_by_name("guard");
+                        if (!guard) {
+                            return;
+                        }
+                        cf_object_set_flag(guard, FLAG_UNAGGRESSIVE, 0);
+                        cf_object_set_flag(guard, FLAG_STAND_STILL, 0);
+                        guard = cf_map_insert_object_around(map, guard, j, i);
+                        count--;
+                    }
+                    /* no more for this spot obviously */
+                    break;
+                }
+                obj = cf_object_get_object_property(obj, CFAPI_OBJECT_PROP_OB_ABOVE);
+            }
+        }
+    }
+
+    if (guard != NULL)
+        cf_object_say(guard, "You thief!");
+
+    return 0;
+}
+
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     int i;
 
@@ -616,6 +664,8 @@ CF_PLUGIN void *eventListener(int *type, ...) {
 
     if (who == barmanObject)
         rv = handleBarman(activator, message, event_code);
+    if (event->subtype == EVENT_SELLING)
+        rv = handleSelling(who, activator, event);
 
     return &rv;
 }

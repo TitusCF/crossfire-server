@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Punishment for players selling holy relics from the St Andreas church.
+Nicolas Weeger 2010-01-09
+
 New object event for plugins: selling (object is being sold by activator).
 Nicolas Weeger 2010-01-09
 
