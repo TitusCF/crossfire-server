@@ -163,13 +163,14 @@ static int moveToPlayer() {
             barmanState = BS_IDLE;
         } else if (barmanState == BS_GOING_PLAYER) {
             int drink = 0;
-            char buf[MAX_BUF];
+            char buf[MAX_BUF], price[MAX_BUF];
 
             cf_object_say(barmanObject, "What may I serve you?");
             cf_object_say(barmanObject, "I can offer you:");
 
             while (drinkNames[drink]) {
-                snprintf(buf, MAX_BUF, "%s for %d silver coins", drinkNames[drink], drinkPrices[drink]);
+                cf_cost_string_from_value(drinkPrices[drink], price, MAX_BUF);
+                snprintf(buf, MAX_BUF, "%s for %s", drinkNames[drink], price);
                 cf_object_say(barmanObject, buf);
                 drink++;
             }
