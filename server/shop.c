@@ -1066,6 +1066,9 @@ void sell_item(object *op, object *pl) {
         return;
     }
 
+    if (execute_event(op, EVENT_SELLING, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+        return;
+
     if (op->custom_name)
         FREE_AND_CLEAR_STR(op->custom_name);
 
