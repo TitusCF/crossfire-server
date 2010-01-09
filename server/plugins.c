@@ -148,7 +148,9 @@ static const hook_entry plug_hooks[] = {
     { cfapi_get_periodofday_name,    85, "cfapi_system_get_periodofday_name" },
     { cfapi_map_trigger_connected,   86, "cfapi_map_trigger_connected" },
     { cfapi_object_user_event,       87, "cfapi_object_user_event" },
-    { cfapi_system_find_string,      88, "cfapi_system_find_string" }
+    { cfapi_system_find_string,      88, "cfapi_system_find_string" },
+    { cfapi_object_query_cost_string,89, "cfapi_object_query_cost_string" },
+    { cfapi_cost_string_from_value,  90, "cfapi_cost_string_from_value" }
 };
 
 int plugin_number = 0;
@@ -638,6 +640,39 @@ void plugins_display_list(object *op) {
 }
 
 /* SYSTEM-RELATED HOOKS */
+
+/**
+ * Wrapper for cost_string_from_value, modified to take a buffer and length instead of a StringBuffer.
+ * @param type
+ * will be CFAPI_NONE.
+ * @return NULL;
+*/
+void *cfapi_cost_string_from_value(int *type, ...) {
+    StringBuffer *sb;
+    uint64 cost;
+    char *buffer, *final;
+    int length;
+    va_list args;
+
+    va_start(args, type);
+    cost = va_arg(args, uint64);
+    buffer = va_arg(args, char*);
+    length = va_arg(args, int);
+    va_end(args);
+
+    *type = CFAPI_NONE;
+
+    if (length < 1)
+        return NULL;
+
+    sb = cost_string_from_value(cost, NULL);
+    final = stringbuffer_finish(sb);
+
+    strncpy(buffer, final, length - 1);
+    buffer[length - 1] = '\0';
+    free(final);
+    return NULL;
+}
 
 /**
  * Wrapper for find_animation().
@@ -3764,6 +3799,46 @@ void *cfapi_object_query_cost(int *type, ...) {
 
     *rint = query_cost(op, who, flags);
     *type = CFAPI_INT;
+    return NULL;
+}
+
+/**
+ * Wrapper for query_cost_string(), slightly modified to take a char* and int instead of a StringBuffer.
+ * @param type
+ * Will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
+void *cfapi_object_query_cost_string(int *type, ...) {
+    object *op;
+    object *who;
+    int flags, length;
+    char *buffer, *final;
+    va_list args;
+    int *rint;
+    StringBuffer *sb;
+
+    va_start(args, type);
+    op = va_arg(args, object *);
+    who = va_arg(args, object *);
+    flags = va_arg(args, int);
+    buffer = va_arg(args, char*);
+    length = va_arg(args, int);
+    va_end(args);
+
+    if (length < 1)
+    {
+        *type = CFAPI_NONE;
+        return NULL;
+    }
+    sb = query_cost_string(op, who, flags, NULL);
+    final = stringbuffer_finish(sb);
+
+    strncpy(buffer, final, strlen(final) - 1);
+    buffer[strlen(final)] = '\0';
+    free(final);
+
+    *type = CFAPI_NONE;
     return NULL;
 }
 

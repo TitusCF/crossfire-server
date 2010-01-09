@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Export query_cost_string and cost_string_from_value to plugins.
+Nicolas Weeger 2010-01-09
+
 Add account handling code.  This is work in progress - the checked in
 piece is the backend piece.  Protocol updates and client interface are
 next steps to do.  As part of this, split_string() was modified to take

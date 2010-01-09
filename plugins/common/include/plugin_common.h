@@ -62,6 +62,7 @@ extern const char  *cf_get_season_name(int index);
 extern const char  *cf_get_month_name(int index);
 extern const char  *cf_get_weekday_name(int index);
 extern const char  *cf_get_periodofday_name(int index);
+extern void         cf_cost_string_from_value(uint64 cost, char *buffer, int length);
 
 /* Objects */
 extern void         cf_object_set_int_property(object *op, int propcode, int value);
@@ -100,6 +101,7 @@ extern void         cf_spring_trap(object *trap, object *victim);
 extern int          cf_object_check_trigger(object *op, object *cause);
 extern int          cf_object_query_money(const object *op);
 extern int          cf_object_query_cost(const object *tmp, object *who, int flag);
+extern void         cf_object_query_cost_string(const object *tmp, object *who, int flag, char *buffer, int length);
 extern int          cf_object_cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stringarg);
 extern void         cf_object_learn_spell(object *op, object *spell, int special_prayer);
 extern void         cf_object_forget_spell(object *op, object *sp);

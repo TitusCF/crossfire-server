@@ -78,6 +78,7 @@ static f_plug_api cfapiObject_activate_rune = NULL;
 static f_plug_api cfapiObject_check_trigger = NULL;
 static f_plug_api cfapiObject_query_money = NULL;
 static f_plug_api cfapiObject_query_cost = NULL;
+static f_plug_api cfapiObject_query_cost_string = NULL;
 static f_plug_api cfapiObject_cast = NULL;
 static f_plug_api cfapiObject_learn_spell = NULL;
 static f_plug_api cfapiObject_forget_spell = NULL;
@@ -122,6 +123,7 @@ static f_plug_api cfapiSystem_get_season_name = NULL;
 static f_plug_api cfapiSystem_get_weekday_name = NULL;
 static f_plug_api cfapiSystem_get_periodofday_name = NULL;
 static f_plug_api cfapiObject_user_event = NULL;
+static f_plug_api cfapiCost_string_from_value = NULL;
 
 #define GET_HOOK(x, y, z) { \
     getHooks(&z, 1, y, &x); \
@@ -168,6 +170,7 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiObject_check_trigger, "cfapi_object_check_trigger", z);
     GET_HOOK(cfapiObject_query_money, "cfapi_object_query_money", z);
     GET_HOOK(cfapiObject_query_cost, "cfapi_object_query_cost", z);
+    GET_HOOK(cfapiObject_query_cost_string, "cfapi_object_query_cost_string", z);
     GET_HOOK(cfapiObject_cast, "cfapi_object_cast", z);
     GET_HOOK(cfapiObject_learn_spell, "cfapi_object_learn_spell", z);
     GET_HOOK(cfapiObject_forget_spell, "cfapi_object_forget_spell", z);
@@ -218,6 +221,7 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiSystem_get_periodofday_name, "cfapi_system_get_periodofday_name", z);
     GET_HOOK(cfapiObject_user_event, "cfapi_object_user_event", z);
     GET_HOOK(cfapiSystem_find_string, "cfapi_system_find_string", z);
+    GET_HOOK(cfapiCost_string_from_value, "cfapi_cost_string_from_value", z);
     return 1;
 }
 
@@ -827,6 +831,26 @@ int cf_object_query_cost(const object *tmp, object *who, int flag) {
     cfapiObject_query_cost(&type, tmp, who, flag, &value);
     assert(type == CFAPI_INT);
     return value;
+}
+
+/**
+ * Wrapper for query_cost_string modifier to take a char* and length instead of StringBuffer.
+ */
+void cf_object_query_cost_string(const object *tmp, object *who, int flag, char *buffer, int length) {
+    int type;
+
+    cfapiObject_query_cost_string(&type, tmp, who, flag, buffer, length);
+    assert(type == CFAPI_NONE);
+}
+
+/**
+ * Wrapper for cost_string_from_value modified to take a char* and length instead of a StringBuffer.
+ */
+void cf_cost_string_from_value(uint64 cost, char *buffer, int length) {
+    int type;
+
+    cfapiCost_string_from_value(&type, cost, buffer, length);
+    assert(type == CFAPI_NONE);
 }
 
 /**
