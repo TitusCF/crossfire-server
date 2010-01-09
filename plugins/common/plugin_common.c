@@ -1198,6 +1198,28 @@ object *cf_map_insert_object(mapstruct *where, object *op, int x, int y) {
     return value;
 }
 
+/**
+ * Will insert op in the map where around the spot x, y.
+ * Combination of object_find_free_spot and object_insert_in_map_at.
+ * @param where
+ * map to insert into.
+ * @param op
+ * what to insert.
+ * @param x
+ * @param y
+ * where to insert op.
+ * @return
+ * NULL if op couldn't be inserted around the spot, else op or an object it merged with.
+ */
+object *cf_map_insert_object_around(mapstruct *where, object *op, int x, int y) {
+    int type;
+    object *value;
+
+    cfapiObject_insert(&type, op, 2, where, NULL, 0 , x, y, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
+}
+
 int cf_object_teleport(object *op, mapstruct *map, int x, int y) {
     int type, value;
 

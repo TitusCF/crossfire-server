@@ -3484,6 +3484,29 @@ void *cfapi_object_insert(int *type, ...) {
         *type = CFAPI_POBJECT;
         break;
 
+    case 2:
+        map = va_arg(args, mapstruct *);
+        orig = va_arg(args, object *);
+        flag = va_arg(args, int);
+        x = va_arg(args, int);
+        y = va_arg(args, int);
+        robj = va_arg(args, object **);
+        if (!map) {
+            LOG(llevError, "cfapi_object_insert (0): called with NULL map, object %s!\n", op->name);
+            object_free(op);
+            *robj = NULL;
+        } else {
+            int dir = object_find_free_spot(op, map, x, y, 0, SIZEOFFREE);
+            if (dir != -1) {
+                *robj = object_insert_in_map_at(op, map, orig, flag, x + freearr_x[dir], y + freearr_y[dir]);
+            } else {
+                object_free(op);
+                *robj = NULL;
+            }
+        }
+        *type = CFAPI_POBJECT;
+        break;
+
     case 3:
         orig = va_arg(args, object *);
         robj = va_arg(args, object **);
