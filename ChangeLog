@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remind player when doing alchemy in wizard mode.
+Nicolas Weeger 2010-01-16
+
 Add 'failure_arch' and 'failure_message' to formulas, to have specific
 archetypes be generated in case of failure instead of a random effect.
 Nicolas Weeger 2010-01-16

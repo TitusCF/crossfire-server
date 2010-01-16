@@ -989,6 +989,9 @@ int use_alchemy(object *op) {
     int did_alchemy = 0;
     char name[MAX_BUF];
 
+    if (QUERY_FLAG(op, FLAG_WIZ))
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, "Note: alchemy in wizard-mode.\n", NULL);
+
     FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
