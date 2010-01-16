@@ -747,6 +747,10 @@ void free_all_recipes(void) {
                 free_string(formula->skill);
             if (formula->cauldron)
                 free_string(formula->cauldron);
+            if (formula->failure_arch)
+                free_string(formula->failure_arch);
+            if (formula->failure_message)
+                free_string(formula->failure_message);
             for (lchar = formula->ingred; lchar; lchar = charnext) {
                 charnext = lchar->next;
                 free_string(lchar->name);
