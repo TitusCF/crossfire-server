@@ -24,6 +24,8 @@ typedef struct recipestruct {
     const char *keycode;        /**< Optional keycode needed to use the recipe. */
     const char *skill;          /** Skill name used to make this recipe. */
     const char *cauldron;       /**< Arch of the cauldron/workbench used to house the formulae. */
+    const char *failure_arch;   /**< Arch of the item to generate on failure, instead of blowing up stuff. */
+    const char *failure_message;/**< Specific failure message. */
 } recipe;
 
 /** List of recipes with a certain number of ingredients. */

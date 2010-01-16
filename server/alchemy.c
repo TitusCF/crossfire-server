@@ -498,6 +498,23 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
     if (!op || !cauldron)
         return;
 
+    /** Recipe specifies a special failure archetype, so use it instead of evil random things. */
+    if (rp->failure_arch) {
+        object *failure = create_archetype(rp->failure_arch);
+        if (!failure) {
+            LOG(llevError, "invalid failure_arch %s for recipe %s\n", rp->failure_arch, rp->title);
+            return;
+        }
+
+        remove_contents(cauldron->inv, NULL);
+
+        object_insert_in_ob(failure, cauldron);
+        if (rp->failure_message) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, rp->failure_message, NULL);
+        }
+        return;
+    }
+
     if (danger > 1)
         level = random_roll(1, danger, op, PREFER_LOW);
 
