@@ -26,6 +26,7 @@ typedef struct recipestruct {
     const char *cauldron;       /**< Arch of the cauldron/workbench used to house the formulae. */
     const char *failure_arch;   /**< Arch of the item to generate on failure, instead of blowing up stuff. */
     const char *failure_message;/**< Specific failure message. */
+    int min_level;              /**< Minimum level to have in the skill to be able to use the formulae. 0 if no requirement. */
 } recipe;
 
 /** List of recipes with a certain number of ingredients. */

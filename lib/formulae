@@ -83,7 +83,10 @@
 #
 #  "failure_message" An optional string. If set, a failure in alchemy will
 #           display this message instead of a server-decided message. Only used if
-#  failure_arch is set too.
+#           failure_arch is set too.
+#
+#  "min_level" An optional integer. If set, this is the minimum required level
+#           needed to attempt the formulae.
 #
 # IMPORTANT NOTE ---->
 #	    It is not enough to construct ad-hoc lists of

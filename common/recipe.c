@@ -99,6 +99,7 @@ static recipe *get_empty_formula(void) {
     t->next = NULL;
     t->failure_arch = NULL;
     t->failure_message = NULL;
+    t->min_level = 0;
     return t;
 }
 
@@ -250,6 +251,8 @@ void init_formulae(void) {
             formula->failure_arch = add_string(strchr(cp, ' ')+1);
         } else if (!strncmp(cp, "failure_message ", 16)) {
             formula->failure_message = add_string(strchr(cp, ' ')+1);
+        } else if (sscanf(cp, "min_level %d", &value)) {
+            formula->min_level = value;
         } else
             LOG(llevError, "Unknown input in file %s: %s\n", filename, buf);
     }

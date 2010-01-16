@@ -183,6 +183,12 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
                 return;
             }
 
+            if (rp->min_level != 0 && skop->level < rp->min_level) {
+                draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                    "You aren't skilled enough to try this recipe.", NULL);
+                return;
+            }
+
             /* determine value of ingredients */
             value_ingredients = 0;
             FOR_INV_PREPARE(cauldron, tmp)

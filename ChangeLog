@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add 'min_level' for alchemy formulae.
+Nicolas Weeger 2010-01-16
+
 Failing at mushroom of Gourmet only yields ashes instead of some
 random nasty effect.
 Nicolas Weeger 2010-01-16
