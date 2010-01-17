@@ -522,7 +522,7 @@ int command_shutdown(object *op, char *params) {
      * We need to give op - command_kick expects it.  however, this means
      * the op won't get kicked off, so we do it ourselves
      */
-    command_kick2(op, NULL);
+    command_kick2(op, "");
     hiscore_check(op, 0); /* Always check score */
     (void)save_player(op, 0);
     play_again(op);
