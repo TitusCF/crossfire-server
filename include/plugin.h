@@ -283,6 +283,11 @@ extern crossfire_plugin *plugins_list;
 #define CFAPI_PLAYER_PROP_NEXT              156
 #define CFAPI_PLAYER_PROP_TITLE             157
 
+#define CFAPI_PLAYER_QUEST_START            0
+#define CFAPI_PLAYER_QUEST_END              1
+#define CFAPI_PLAYER_QUEST_GET_STATE        2
+#define CFAPI_PLAYER_QUEST_SET_STATE        3
+
 #define CFAPI_MAP_PROP_FLAGS                0
 #define CFAPI_MAP_PROP_DIFFICULTY           1
 #define CFAPI_MAP_PROP_PATH                 2

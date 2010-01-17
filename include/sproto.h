@@ -509,9 +509,17 @@ void *cfapi_set_random_map_variable(int *type, ...);
 void *cfapi_generate_random_map(int *type, ...);
 void *cfapi_object_user_event(int *type, ...);
 void *cfapi_cost_string_from_value(int *type, ...);
+void *cfapi_player_quest(int *type, ...);
 command_array_struct *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);
 void cleanupPlugins(void);
+/* quest.c */
+int quest_get_player_state(player *pl, sstring quest_code);
+void quest_start(player *pl, sstring quest_code, sstring quest_title, sstring quest_description, int state, sstring state_description);
+void quest_end(player *pl, sstring quest_code);
+void quest_set_player_state(player *pl, sstring quest_code, int state, sstring state_description);
+int command_quest(object *op, char *params);
+void free_quest();
 /* resurrection.c */
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg);
 void dead_player(object *op);
