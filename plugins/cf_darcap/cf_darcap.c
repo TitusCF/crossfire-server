@@ -429,11 +429,250 @@ static int handleSelling(object *what, object *bywho, object *event) {
     return 0;
 }
 
+typedef enum {
+    ds_get_potion = 1,
+    ds_get_roots = 2,
+    ds_bring_roots = 3,
+    ds_bring_potion = 4
+} darcapSpikeState;
+static sstring darcapSpike = NULL;
+static sstring darcapSpikeTitle = NULL;
+static sstring darcapSpikeDescription = NULL;
+static sstring darcapSpikeGetPotion = NULL;
+static sstring darcapSpikeGetRoots = NULL;
+static sstring darcapSpikeBringRoots = NULL;
+static sstring darcapSpikeBringPotion = NULL;
+
+static void fixMessageFromInventory(object *npc, const char *itemname) {
+    object *inv = cf_object_get_object_property(npc, CFAPI_OBJECT_PROP_INVENTORY);
+    sstring name;
+
+    while (inv) {
+        name = cf_object_get_sstring_property(inv, CFAPI_OBJECT_PROP_RAW_NAME);
+        if (strcmp(name, itemname) == 0) {
+            cf_object_set_string_property(npc, CFAPI_OBJECT_PROP_MESSAGE, inv->msg);
+            return;
+        }
+
+        inv = cf_object_get_object_property(inv, CFAPI_OBJECT_PROP_OB_BELOW);
+    }
+
+    cf_log(llevDebug, "fixMessageFromInventory: couldn't find %s for %s\n", itemname, npc);
+}
+
+static int handleSpike(object *npc, object *bywho, object *event, const char *message) {
+    int state = cf_quest_get_player_state(bywho, darcapSpike);
+
+    if (state == -1) {
+        /* ended */
+        fixMessageFromInventory(npc, "dlg_ended");
+        return 0;
+    }
+
+    if (state == 0) {
+        fixMessageFromInventory(npc, "dlg_start");
+
+        if (strcmp(message, "quest_accept") == 0) {
+            cf_quest_start(bywho, darcapSpike, darcapSpikeTitle, darcapSpikeDescription, ds_get_potion, darcapSpikeGetPotion);
+        }
+        return 0;
+    }
+    if (state == ds_get_potion) {
+        fixMessageFromInventory(npc, "dlg_progress");
+
+        if (strcmp(message, "yes")) {
+            /* check, give reward, or blame */
+        }
+        return 0;
+    }
+
+    return 0;
+}
+
+static object *giveItem(object *to, const char *archname, const char *name, const char *namepl, int face) {
+    object *item = cf_create_object_by_name(archname), *drop;
+    if (!item) {
+        cf_log(llevError, "cf_darcap/giveItem: can't create %s!\n", archname);
+        /* will crash later on anyway... */
+        return NULL;
+    }
+
+    drop = cf_create_object_by_name("event_drop");
+    cf_object_set_string_property(drop, CFAPI_OBJECT_PROP_TITLE, "cf_darcap");
+    cf_object_set_string_property(drop, CFAPI_OBJECT_PROP_SLAYING, "darcap/Spike");
+    cf_object_insert_object(drop, item);
+
+    cf_object_set_flag(item, FLAG_STARTEQUIP, 1);
+    cf_object_set_string_property(item, CFAPI_OBJECT_PROP_NAME, name);
+    cf_object_set_string_property(item, CFAPI_OBJECT_PROP_NAME_PLURAL, namepl);
+    if (face != 0)
+        cf_object_set_int_property(item, CFAPI_OBJECT_PROP_FACE, face);
+    return cf_object_insert_object(item, to);
+}
+
+static int handleMolthir(object *npc, object *bywho, object *event, const char *message) {
+    int state = cf_quest_get_player_state(bywho, darcapSpike);
+
+    if (state == ds_get_potion) {
+        fixMessageFromInventory(npc, "dlg_first");
+
+        if (strcmp(message, "sigh_ok") == 0) {
+            cf_quest_set_player_state(bywho, darcapSpike, ds_get_roots, darcapSpikeGetRoots);
+        }
+        return 0;
+    }
+
+    if (state == ds_get_roots) {
+        fixMessageFromInventory(npc, "dlg_wait_roots");
+        return 0;
+    }
+
+    fixMessageFromInventory(npc, "dlg_standard");
+
+    return 0;
+}
+
+static int handleBob(object *npc, object *bywho, object *event, const char *message) {
+    int state = cf_quest_get_player_state(bywho, darcapSpike);
+
+    if (state == ds_get_roots) {
+        /** @todo handle lost case? */
+        fixMessageFromInventory(npc, "dlg_roots");
+
+        if (strcmp(message, "roots") == 0) {
+            sstring playername = cf_object_get_sstring_property(bywho, CFAPI_OBJECT_PROP_RAW_NAME);
+            object *roots = giveItem(bywho, "blackroot", "smaprh root", "smaprh roots", 0);
+            /* no cheating */
+            cf_object_set_key(roots, darcapSpike, playername, 1);
+            cf_quest_set_player_state(bywho, darcapSpike, ds_bring_roots, darcapSpikeBringRoots);
+        }
+        return 0;
+    }
+
+    fixMessageFromInventory(npc, "dlg_standard");
+    return 0;
+}
+
+static int handleSay(object *npc, object *bywho, object *event, const char *message) {
+    sstring slaying = cf_object_get_sstring_property(event, CFAPI_OBJECT_PROP_SLAYING);
+    if (strcmp(slaying, "darcap/Spike") == 0) {
+        return handleSpike(npc, bywho, event, message);
+    }
+    if (strcmp(slaying, "darcap/Molthir") == 0) {
+        return handleMolthir(npc, bywho, event, message);
+    }
+    if (strcmp(slaying, "darcap/Bob") == 0) {
+        return handleBob(npc, bywho, event, message);
+    }
+    return 0;
+}
+
+static int handleDrop(object *who, object *activator, object *event) {
+    sstring slaying = cf_object_get_sstring_property(event, CFAPI_OBJECT_PROP_SLAYING);
+    if (strcmp(slaying, darcapSpike) == 0) {
+        /* item shouldn't be dropped, but check state to enable to clean inventory in case of corruption */
+        sstring name = cf_object_get_sstring_property(who, CFAPI_OBJECT_PROP_RAW_NAME);
+        int state = cf_quest_get_player_state(activator, darcapSpike);
+
+        if ((state == ds_bring_roots && strcmp(name, "smaprh root") == 0) || (state == ds_bring_potion && strcmp(name, "potion for the back") == 0)) {
+            cf_player_message(activator, "Better not lose that, it's important!", 0);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int handleGiveMolthir(object *to, object *by, object *item) {
+    int state = cf_quest_get_player_state(by, darcapSpike);
+    const char *key;
+    sstring playername, name;
+    int face;
+
+    if (state != ds_bring_roots) {
+        cf_object_say(to, "And what am I supposed to do with that?");
+        return 0;
+    }
+
+    /* check the roots are the real ones */
+    name = cf_object_get_sstring_property(item, CFAPI_OBJECT_PROP_RAW_NAME);
+    key = cf_object_get_key(item, darcapSpike);
+    if (!key || strcmp(name, "smaprh root")) {
+        cf_object_say(to, "Sorry, those are not the roots I'm looking for...");
+        return 0;
+    }
+    playername = cf_object_get_sstring_property(by, CFAPI_OBJECT_PROP_RAW_NAME);
+    if (strcmp(key, playername) != 0) {
+        cf_object_say(to, "Sorry, but those roots look weird, I'd better not use them.");
+        return 0;
+    }
+
+    /* all good, remove roots, give potion, set state */
+    cf_object_say(to, "Ha yes, those are the roots I need! Here, this is the potion Spike will need.");
+    cf_object_remove(item);
+    cf_quest_set_player_state(by, darcapSpike, ds_bring_potion, darcapSpikeBringPotion);
+    /* create lead because it's inert, can't be applied, and such */
+    /* and change face to that of a potion for consistency */
+    face = cf_find_face("potioncha.111", 0);
+    item = giveItem(by, "lead", "Molthir's potion for the back", "Molthir's potions for the back", face);
+    /* no cheating either */
+    cf_object_set_key(item, darcapSpike, playername, 1);
+
+    return 0;
+}
+
+static int handleGiveSpike(object *to, object *by, object *item) {
+    int state = cf_quest_get_player_state(by, darcapSpike);
+    const char *key;
+    sstring playername, name;
+
+    if (state == 0) {
+        cf_object_say(to, "And what am I supposed to do with that?");
+        return 0;
+    }
+
+    name = cf_object_get_sstring_property(item, CFAPI_OBJECT_PROP_RAW_NAME);
+    key = cf_object_get_key(item, darcapSpike);
+    if (!key || strcmp(name, "Molthir's potion for the back")) {
+        cf_object_say(to, "Ha, this is not Molthir's potion...");
+        return 0;
+    }
+    playername = cf_object_get_sstring_property(by, CFAPI_OBJECT_PROP_RAW_NAME);
+    if (strcmp(key, playername) != 0) {
+        cf_object_say(to, "Sorry, but this potion has a weird color, I'd rather not use it.");
+        return 0;
+    }
+
+    /* ok, this is the real one. */
+    cf_object_say(to, "Ha yes, this is Molthir's potion, many thanks!");
+    cf_object_remove(item);
+
+    /** @todo timer to reward? */
+    item = cf_create_object_by_name("platinacoin");
+    cf_object_set_int_property(item, CFAPI_OBJECT_PROP_NROF, 5);
+    cf_object_say(to, "Here is some reward for your good deeds.");
+    cf_object_insert_object(item, by);
+
+    cf_quest_end(by, darcapSpike);
+
+    return 0;
+}
+
+static int handleGive(object *to, object *by, object *item, object *event) {
+    sstring slaying = cf_object_get_sstring_property(event, CFAPI_OBJECT_PROP_SLAYING);
+
+    if (strcmp(slaying, "darcap/Spike") == 0) {
+        return handleGiveSpike(to, by, item);
+    }
+
+    if (strcmp(slaying, "darcap/Molthir") == 0) {
+        return handleGiveMolthir(to, by, item);
+    }
+}
+
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     int i;
 
     cf_init_plugin(gethooksptr);
-    printf("darcap");
 
     cf_log(llevDebug, PLUGIN_VERSION " init\n");
 
@@ -666,6 +905,12 @@ CF_PLUGIN void *eventListener(int *type, ...) {
         rv = handleBarman(activator, message, event_code);
     if (event->subtype == EVENT_SELLING)
         rv = handleSelling(who, activator, event);
+    if (event->subtype == EVENT_SAY)
+        rv = handleSay(who, activator, event, buf);
+    if (event->subtype == EVENT_DROP)
+        rv = handleDrop(who, activator, event);
+    if (event->subtype == EVENT_USER && strcmp(message, "give") == 0)
+        rv = handleGive(who, activator, third, event);
 
     return &rv;
 }
@@ -693,6 +938,15 @@ CF_PLUGIN int postInitPlugin(void) {
     cf_system_register_global_event(EVENT_MUZZLE, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_KICK, PLUGIN_NAME, globalEventListener);
 */
+
+    darcapSpike = cf_add_string("darcap/Spike");
+    darcapSpikeTitle = cf_add_string("Spike's aching back");
+    darcapSpikeDescription = cf_add_string("Spike, the weapon shop owner, has backaches, and needs a potion to endure his pains.");
+    darcapSpikeGetPotion = cf_add_string("You need to get a potion from the potion shop.");
+    darcapSpikeGetRoots = cf_add_string("You need to get some smaprh roots from Bob's shop in the south of Darcap.");
+    darcapSpikeBringRoots = cf_add_string("Bring back the smaprh roots to Molthir.");
+    darcapSpikeBringPotion = cf_add_string("Bring back the potion to Spike.");
+
     return 0;
 }
 
