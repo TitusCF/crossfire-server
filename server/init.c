@@ -938,6 +938,7 @@ void init(int argc, char **argv) {
 void free_server(void) {
     free_materials();
     free_races();
+    free_quest();
 }
 
 static void usage(void) {

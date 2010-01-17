@@ -150,7 +150,8 @@ static const hook_entry plug_hooks[] = {
     { cfapi_object_user_event,       87, "cfapi_object_user_event" },
     { cfapi_system_find_string,      88, "cfapi_system_find_string" },
     { cfapi_object_query_cost_string,89, "cfapi_object_query_cost_string" },
-    { cfapi_cost_string_from_value,  90, "cfapi_cost_string_from_value" }
+    { cfapi_cost_string_from_value,  90, "cfapi_cost_string_from_value" },
+    { cfapi_player_quest,            91, "cfapi_player_quest" }
 };
 
 int plugin_number = 0;
@@ -2473,6 +2474,9 @@ static void copy_message(object *op, const char *msg) {
     if (!msg)
         return;
 
+    /* need to reset parsed dialog information */
+    free_dialog_information(op);
+
     size = strlen(msg);
 
     /* need to reset parsed dialog information */
@@ -4653,6 +4657,63 @@ void *cfapi_object_user_event(int *type, ...) {
 
     *ret = user_event(op, activator, third, message, fix);
     *type = CFAPI_INT;
+
+    return NULL;
+}
+
+/**
+Quest-related wrappers, for all quest-related operations. */
+void *cfapi_player_quest(int *type, ...) {
+    int op;
+    va_list args;
+    object *player;
+
+    va_start(args, type);
+    op = va_arg(args, int);
+    player = va_arg(args, object *);
+    sstring code = va_arg(args, sstring);
+
+    if (player->contr == NULL) {
+        LOG(llevError, "cfapi_player_quest called with non player object %s!\n", player->name);
+        va_end(args);
+        /* crash/quit? */
+        return;
+    }
+
+    switch(op) {
+        case CFAPI_PLAYER_QUEST_START: {
+            sstring title = va_arg(args, sstring);
+            sstring qd = va_arg(args, sstring);
+            int state = va_arg(args, int);
+            sstring description = va_arg(args, sstring);
+            quest_start(player->contr, code, title, qd, state, description);
+            *type = CFAPI_NONE;
+            break;
+        }
+        case CFAPI_PLAYER_QUEST_END: {
+            quest_end(player->contr, code);
+            *type = CFAPI_NONE;
+            break;
+        }
+        case CFAPI_PLAYER_QUEST_GET_STATE: {
+            int *ret = va_arg(args, int *);
+            *ret = quest_get_player_state(player->contr, code);
+            *type = CFAPI_INT;
+            break;
+        }
+        case CFAPI_PLAYER_QUEST_SET_STATE: {
+            int state = va_arg(args, int);
+            sstring description = va_arg(args, sstring);
+            quest_set_player_state(player->contr, code, state, description);
+            *type = CFAPI_NONE;
+            break;
+        }
+        default:
+            LOG(llevError, "invalid quest type: %d\n", op);
+            *type = CFAPI_NONE;
+    }
+
+    va_end(args);
 
     return NULL;
 }

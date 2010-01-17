@@ -124,6 +124,7 @@ static f_plug_api cfapiSystem_get_weekday_name = NULL;
 static f_plug_api cfapiSystem_get_periodofday_name = NULL;
 static f_plug_api cfapiObject_user_event = NULL;
 static f_plug_api cfapiCost_string_from_value = NULL;
+static f_plug_api cfapiPlayer_quest = NULL;
 
 #define GET_HOOK(x, y, z) { \
     getHooks(&z, 1, y, &x); \
@@ -222,6 +223,7 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiObject_user_event, "cfapi_object_user_event", z);
     GET_HOOK(cfapiSystem_find_string, "cfapi_system_find_string", z);
     GET_HOOK(cfapiCost_string_from_value, "cfapi_cost_string_from_value", z);
+    GET_HOOK(cfapiPlayer_quest, "cfapi_player_quest", z);
     return 1;
 }
 
@@ -1858,6 +1860,55 @@ object *cf_friendlylist_get_next(object *ob) {
     assert(type == CFAPI_POBJECT);
     return value;
 }
+
+/* Quest-related functions */
+
+/**
+ * Wrapper for quest_get_player_state().
+ * @copydoc quest_get_player_state()
+ */
+int cf_quest_get_player_state(object *pl, sstring quest_code) {
+    int type, ret;
+
+    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_GET_STATE, pl, quest_code, &ret);
+    assert(type == CFAPI_INT);
+
+    return ret;
+}
+
+/**
+ * Wrapper for quest_start().
+ * @copydoc quest_start()
+ */
+void cf_quest_start(object *pl, sstring quest_code, sstring quest_title, sstring quest_description, int state, sstring state_description) {
+    int type;
+
+    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_START, pl, quest_code, quest_title, quest_description, state, state_description);
+    assert(type == CFAPI_NONE);
+}
+
+/**
+ * Wrapper for quest_end().
+ * @copydoc quest_end()
+ */
+void cf_quest_end(object *pl, sstring quest_code) {
+    int type;
+
+    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_END, pl, quest_code);
+    assert(type == CFAPI_NONE);
+}
+
+/**
+ * Wrapper for quest_set_player_state();
+ * @copydoc quest_set_player_state()
+ */
+void cf_quest_set_player_state(object *pl, sstring quest_code, int state, sstring state_description) {
+    int type;
+
+    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_SET_STATE, pl, quest_code, state, state_description);
+    assert(type == CFAPI_NONE);
+}
+
 
 #ifdef WIN32
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info) {

@@ -58,6 +58,7 @@ libserver_a_SOURCES = \
 	pets.c\
 	player.c\
 	plugins.c\
+	quest.c\
 	resurrection.c\
 	rune.c\
 	shop.c\

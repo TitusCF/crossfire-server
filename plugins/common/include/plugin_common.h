@@ -214,6 +214,13 @@ extern const char  *cf_region_get_message(region *reg);
 extern object      *cf_friendlylist_get_first(void);
 extern object      *cf_friendlylist_get_next(object *ob);
 
+/* Quest-related functions */
+extern int          cf_quest_get_player_state(object *pl, sstring quest_code);
+extern void         cf_quest_start(object *pl, sstring quest_code, sstring quest_title, sstring quest_description, int state, sstring state_description);
+extern void         cf_quest_end(object *pl, sstring quest_code);
+extern void         cf_quest_set_player_state(object *pl, sstring quest_code, int state, sstring state_description);
+
+
 #ifdef WIN32
 
 struct timezone {

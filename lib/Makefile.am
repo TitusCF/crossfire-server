@@ -73,7 +73,8 @@ dist_help_DATA = help/apply.en help/applymode.en \
 	help/cast.fr \
 	help/empty.fr \
 	help/maps.fr \
-	help/mode.fr
+	help/mode.fr \
+	help/quest.fr help/quest.en
 
 wizhelpdir=$(pkgdatadir)/wizhelp
 dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \

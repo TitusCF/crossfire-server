@@ -128,7 +128,8 @@ command_array_struct Commands[] = {
     { "run", command_run,                1.0 },
     { "run_stop", command_run_stop,      0.0 },
     { "fire", command_fire,              1.0 },
-    { "fire_stop", command_fire_stop,    0.0 }
+    { "fire_stop", command_fire_stop,    0.0 },
+    { "quest", command_quest,            0.0 }
 };
 
 /** Length of ::Commands array. */
