@@ -2469,6 +2469,9 @@ static void copy_message(object *op, const char *msg) {
 
     size = strlen(msg);
 
+    /* need to reset parsed dialog information */
+    free_dialog_information(op);
+
     if (msg[0] != 0 && msg[size-1] == '\n') {
         object_set_msg(op, msg);
         return;
