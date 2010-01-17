@@ -2113,6 +2113,12 @@ void *cfapi_object_get_property(int *type, ...) {
         }
         break;
 
+    case CFAPI_OBJECT_PROP_RAW_NAME:
+        rsstring = va_arg(args, sstring *);
+        *rsstring = op->name;
+	*type = CFAPI_SSTRING;
+	break;
+
     case CFAPI_OBJECT_PROP_MAGICAL:
         rint = va_arg(args, int *);
         *rint = is_magical(op);

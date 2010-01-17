@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+New property for plugins to get the raw name without any modification.
+Nicolas Weeger 2010-01-17
+
 Invalidate parsed dialog when setting the message through a plugin.
 Nicolas Weeger 2010-01-17
 
