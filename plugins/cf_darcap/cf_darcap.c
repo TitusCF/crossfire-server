@@ -152,7 +152,8 @@ static int moveToPlayer() {
             drink = cf_create_object_by_name(drinkArch[wantedDrink]);
             if (!drink) {
                 cf_log(llevError, "can't find archetype %s for drink %s\n", drinkNames[wantedDrink], drinkArch[wantedDrink]);
-                return;
+                barmanState = BS_IDLE;
+                return 1;
             }
             /** @todo insert on table instead of chair */
             cf_map_insert_object(tavernMap, drink, barmanTargetX, barmanTargetY);
@@ -332,7 +333,7 @@ static void playerLeaves(object *who) {
 
     for (i = 0; i < MAX_PLAYERS; i++) {
         if (checkPlayers[i] == who) {
-            checkPlayers[i] == NULL;
+            checkPlayers[i] = NULL;
             playerState[i] = 0;
             if (who == barmanTarget) {
                 barmanTarget = NULL;
@@ -408,7 +409,7 @@ static int handleSelling(object *what, object *bywho, object *event) {
                     while (count >= 0) {
                         guard = cf_create_object_by_name("guard");
                         if (!guard) {
-                            return;
+                            return 0;
                         }
                         cf_object_set_flag(guard, FLAG_UNAGGRESSIVE, 0);
                         cf_object_set_flag(guard, FLAG_STAND_STILL, 0);
@@ -667,6 +668,7 @@ static int handleGive(object *to, object *by, object *item, object *event) {
     if (strcmp(slaying, "darcap/Molthir") == 0) {
         return handleGiveMolthir(to, by, item);
     }
+    return 0;
 }
 
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {

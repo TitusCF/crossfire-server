@@ -4677,7 +4677,7 @@ void *cfapi_player_quest(int *type, ...) {
         LOG(llevError, "cfapi_player_quest called with non player object %s!\n", player->name);
         va_end(args);
         /* crash/quit? */
-        return;
+        return NULL;
     }
 
     switch(op) {
