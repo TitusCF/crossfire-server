@@ -1,0 +1,7 @@
+Affiche la liste des éléments importants connus par le personnage.
+
+Sans argument, affiche cette aide.
+
+Sous la forme "knowledge list", affiche tous les éléments connus, avec leur numéro.
+
+Sous la forme "knowledge show <numéro>", affiche les détails de l'élément spécifié.

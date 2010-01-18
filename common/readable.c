@@ -1652,7 +1652,7 @@ static void make_formula_book(object *book, int level) {
     char retbuf[BOOK_BUF], title[MAX_BUF];
     recipelist *fl;
     recipe *formula;
-    int chance;
+    int chance, count = 0;
     const char *op_name;
     archetype *at;
 
@@ -1745,6 +1745,7 @@ static void make_formula_book(object *book, int level) {
             " may be made at %s using the following ingredients:\n", name);
 
         for (next = formula->ingred; next != NULL; next = next->next) {
+            count++;
             snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf), "%s\n", next->name);
         }
     } else
@@ -1752,6 +1753,10 @@ static void make_formula_book(object *book, int level) {
     if (retbuf[strlen(retbuf)-1] != '\n')
         snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf), "\n");
     object_set_msg(book, retbuf);
+    /** knowledge marker */
+    /** @todo this would be better in knowledge.c, except this file is in server, not common... */
+    snprintf(retbuf, sizeof(retbuf), "alchemy:%d:%d:%s", count, formula->index, formula->title);
+    object_set_value(book, "knowledge_marker", retbuf, 1);
 }
 
 /**

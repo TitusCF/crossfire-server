@@ -110,6 +110,8 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
             "You open the %s and start reading.\n%s",
             "You open the %s and start reading.\n%s",
             ob_describe(op, applier, desc, sizeof(desc)), op->msg);
+        if (applier->contr)
+            knowledge_read(applier->contr, op);
     }
 
     /* gain xp from reading */

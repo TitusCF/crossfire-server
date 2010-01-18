@@ -49,6 +49,7 @@ libserver_a_SOURCES = \
 	hiscore.c\
 	gods.c\
 	init.c\
+	knowledge.c \
 	login.c\
 	monster.c\
 	move.c\

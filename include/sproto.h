@@ -304,6 +304,10 @@ int tailor_god_spell(object *spellop, object *caster);
 void init(int argc, char **argv);
 void free_server(void);
 racelink *find_racelink(const char *name);
+/* knowledge.c */
+void knowledge_read(player *pl, object *book);
+int command_knowledge(object *pl, char *params);
+void free_knowledge();
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name);

@@ -1,0 +1,20 @@
+Knowledge management documentation
+----------------------------------
+Date: 2010-01-18, by N. Weeger
+
+Note: this document doesn't concern the technical aspects of the knowledge,
+for such information refer to the server/knowledge.c file.
+
+
+Any player will automatically keep trace of various information found ingame.
+
+To display the known information, the 'knowledge list' command should be used.
+Next to each item is a number, which can be used to get details of the knowledge
+through the 'knowledge show <number>' command.
+Note that numbers will change when new knowledge is gained, or when joining the game.
+
+
+Currently, such knowledge is permanent and inalterable - no forgetting, no 'corruption'.
+
+
+Ideally, a client-side interface should present such information in a structured way.

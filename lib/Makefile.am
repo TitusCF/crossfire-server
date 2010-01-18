@@ -63,6 +63,7 @@ dist_help_DATA = help/apply.en help/applymode.en \
 	help/bowmode.fr \
 	help/dropall.fr \
 	help/killpets.fr \
+	help/knowledge.fr help/knowledge.en \
 	help/mark.fr \
 	help/applymode.fr \
 	help/brace.fr \

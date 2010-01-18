@@ -1204,6 +1204,7 @@ void cleanup(void) {
     free_globals();
     free_server();
     object_free_all_data();
+    free_knowledge();
     /* See what the string data that is out there that hasn't been freed. */
     /*    LOG(llevDebug, "%s", ss_dump_table(0xff));*/
 #endif
