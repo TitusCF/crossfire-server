@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002,2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2006,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -112,7 +112,7 @@
 #define CS_STAT_DEX              8
 #define CS_STAT_CON              9
 #define CS_STAT_CHA             10
-#define CS_STAT_EXP             11
+#define CS_STAT_EXP             11  /* This is no longer used */
 #define CS_STAT_LEVEL           12
 #define CS_STAT_WC              13
 #define CS_STAT_AC              14
@@ -341,9 +341,9 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_SPELL              16  /* Spell related info */
 #define MSG_TYPE_ITEM               17  /* Item related information */
 #define MSG_TYPE_MISC               18  /* Messages that don't go anyplace else */
-#define MSG_TYPE_VICTIM             19  /* Something bad is happening to player */
-#define MSG_TYPE_CLIENT             20  /* Messages originated by the client */
-#define MSG_TYPE_LAST               21
+#define MSG_TYPE_VICTIM		        19	/* Something bad is happening to player */
+#define MSG_TYPE_CLIENT		        20	/* Messages originated by the client */
+#define MSG_TYPE_LAST		        21
 
 #define MSG_SUBTYPE_NONE            0
 
@@ -426,7 +426,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_ADMIN_LOADSAVE     6       /* load/save operations */
 #define MSG_TYPE_ADMIN_LOGIN        7       /* login messages/errors */
 #define MSG_TYPE_ADMIN_VERSION      8       /* version info */
-
+#define MSG_TYPE_ADMIN_ERROR        9       /* Error on command, setup, etc */
 
 /* I'm not actually expecting anything to make much use of the MSG_TYPE_SHOP
  * values However, to use the media tags, need to use draw_ext_info, and need
@@ -549,8 +549,8 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_COMMUNICATION_TELL     4   /* Player tells something */
 #define MSG_TYPE_COMMUNICATION_EMOTE    5   /* Player emotes */
 #define MSG_TYPE_COMMUNICATION_PARTY    6   /* Party message */
-#define MSG_TYPE_COMMUNICATION_SHOUT    7   /* Shout message */
-#define MSG_TYPE_COMMUNICATION_CHAT     8   /* Chat message */
+#define MSG_TYPE_COMMUNICATION_SHOUT    7   /* Party message */
+#define MSG_TYPE_COMMUNICATION_CHAT     8   /* Party message */
 
 #define MSG_TYPE_SPELL_HEAL             1   /* Healing related spells */
 #define MSG_TYPE_SPELL_PET              2   /* Pet related messages */

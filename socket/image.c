@@ -6,7 +6,7 @@
 /*
   CrossFire, A Multiplayer game for X-windows
 
-  Copyright (C) 2006 Mark Wedel & Crossfire Development Team
+  Copyright (C) 2006,2010 Mark Wedel & Crossfire Development Team
   Copyright (C) 1992 Frank Tore Johansen
 
   This program is free software; you can redistribute it and/or modify
@@ -44,32 +44,6 @@
 #include <newserver.h>
 #include <loader.h>
 #include <image.h>
-
-/**
- * Client tells us what type of faces it wants.  Also sets
- * the caching attribute.
- */
-
-void set_face_mode_cmd(char *buf, int len, socket_struct *ns) {
-    int mask = (atoi(buf)&CF_FACE_CACHE), mode = (atoi(buf)&~CF_FACE_CACHE);
-
-    if (mode == CF_FACE_NONE) {
-        ns->facecache = 1;
-    } else if (mode != CF_FACE_PNG) {
-        SockList sl;
-
-        SockList_Init(&sl);
-        SockList_AddPrintf(&sl, "drawinfo %d %s", NDI_RED, "Warning - send unsupported face mode.  Will use Png");
-        Send_With_Handling(ns, &sl);
-        SockList_Term(&sl);
-#ifdef ESRV_DEBUG
-        LOG(llevDebug, "set_face_mode_cmd: Invalid mode from client: %d\n", mode);
-#endif
-    }
-    if (mask) {
-        ns->facecache = 1;
-    }
-}
 
 /**
  * Client has requested pixmap that it somehow missed getting.

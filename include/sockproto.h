@@ -6,6 +6,7 @@ void esrv_send_face(socket_struct *ns, short face_num, int nocache);
 void send_image_info(socket_struct *ns, char *params);
 void send_image_sums(socket_struct *ns, char *params);
 /* info.c */
+void print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, const char *message);
 void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *message, const char *oldmessage);
 void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *new_format, const char *old_format, ...);
 void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2);

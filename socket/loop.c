@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2006 Mark Wedel & The Crossfire Development Team
+    Copyright (C) 2006,2010 Mark Wedel & The Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -128,12 +128,8 @@ static const struct client_cmd_mapping client_commands[] = {
     { "addme",               add_me_cmd },
     { "askface",             send_face_cmd },             /* Added: phil */
     { "requestinfo",         request_info_cmd },
-    { "setfacemode",         set_face_mode_cmd },
-    { "setsound",            set_sound_cmd },
     { "setup",               set_up_cmd },
     { "version",             version_cmd },
-    { "toggleextendedinfos", toggle_extended_infos_cmd }, /*Added: tchize*/
-    { "toggleextendedtext",  toggle_extended_text_cmd },  /*Added: tchize*/
     { "asksmooth",           ask_smooth_cmd },            /*Added: tchize (smoothing technologies)*/
     { NULL,                  NULL }                       /* terminator (I, II & III)*/
 };

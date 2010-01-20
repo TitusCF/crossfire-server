@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -126,18 +126,14 @@ typedef struct socket_struct {
     buffer_struct outputbuffer;         /**< For undeliverable data. */
     uint8       password_fails;         /**< How many times the player has failed to give the right password. */
     uint32      facecache:1;            /**< If true, client is caching images. */
-    uint32      newmapcmd:1;            /**< Send newmap command when entering new map SMACFIGGEN. */
     uint32      darkness:1;             /**< True if client wants darkness information. */
     uint32      update_look:1;          /**< If true, we need to send the look window. */
     uint32      can_write:1;            /**< Can we write to this socket? */
-    uint32      has_readable_type:1;    /**< If true client accept additional text information
-                                         *   used to arrange text in books, scrolls, or scripted dialogs. */
     uint32      monitor_spells:1;       /**< Client wishes to be informed when their spell list changes. */
     uint32      tick:1;                 /**< Client wishes to get tick commands. */
     uint32      is_bot:1;               /**< Client shouldn't be reported to metaserver. */
     uint32      want_pickup:1;          /**< Client wants pickup information when logging in. */
     uint32      sound;                  /**< Client sound mode. */
-    uint32      supported_readables;    /**< Each bit is a readable supported by client. */
     uint32      cs_version, sc_version; /**< Versions of the client. */
     uint16      look_position;          /**< Start of drawing of look window. */
     uint8       mapx, mapy;             /**< How large a map the client wants. */
@@ -151,11 +147,6 @@ typedef struct socket_struct {
                                              Can be set through "num_look_objects" setup option;
                                              defaults to DEFAULT_NUM_LOOK_OBJECTS. */
 } socket_struct;
-
-#define CLIENT_SUPPORT_READABLES(__sockPtr, __type)\
-        (((__type) > 0) && \
-         ((__sockPtr)->has_readable_type) && \
-         ((__sockPtr)->supported_readables&(1<<(__type))))
 
 /**
  * Bitmask for the faces_sent[] array - what

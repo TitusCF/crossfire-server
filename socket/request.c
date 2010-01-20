@@ -6,7 +6,7 @@
 /*
   CrossFire, A Multiplayer game for X-windows
 
-  Copyright (C) 2001-2006 Mark Wedel
+  Copyright (C) 2001-2006,2010 Mark Wedel
   Copyright (C) 1992 Frank Tore Johansen
 
   This program is free software; you can redistribute it and/or modify
@@ -154,16 +154,9 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
 
         SockList_AddPrintf(&sl, " %s ", cmd);
 
-        if (!strcmp(cmd, "sound")) {
-            /* this is the old sound command, which means the client doesn't understand our sound => mute. */
-            ns->sound = 0;
-            SockList_AddString(&sl, "FALSE");
-        } else if (!strcmp(cmd, "sound2")) {
+        if (!strcmp(cmd, "sound2")) {
             ns->sound = atoi(param)&(SND_EFFECTS|SND_MUSIC|SND_MUTE);
             SockList_AddString(&sl, param);
-        } else if (!strcmp(cmd, "exp64")) {
-            /* for compatibility, return 1 since older clients can be confused else. */
-            SockList_AddString(&sl, "1");
         } else if (!strcmp(cmd, "spellmon")) {
             int monitor_spells;
 
@@ -193,16 +186,6 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             } else {
                 SockList_AddString(&sl, "1");
             }
-        } else if (!strcmp(cmd, "newmapcmd")) {
-            int newmapcmd;
-
-            newmapcmd = atoi(param);
-            if (newmapcmd != 0 && newmapcmd != 1) {
-                SockList_AddString(&sl, "FALSE");
-            } else {
-                ns->newmapcmd = newmapcmd;
-                SockList_AddPrintf(&sl, "%d", newmapcmd);
-            }
         } else if (!strcmp(cmd, "facecache")) {
             int facecache;
 
@@ -219,9 +202,6 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             if (is_valid_faceset(q))
                 ns->faceset = q;
             SockList_AddPrintf(&sl, "%d", ns->faceset);
-        } else if (!strcmp(cmd, "itemcmd")) {
-            /* client ignore the value anyway. */
-            SockList_AddString(&sl, "2");
         } else if (!strcmp(cmd, "mapsize")) {
             int x, y, n;
 
@@ -242,18 +222,6 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                  * a new map is best way to go.
                  */
                 map_newmap_cmd(ns);
-            }
-        } else if (!strcmp(cmd, "extendedMapInfos")) {
-            SockList_AddString(&sl, "1");
-        } else if (!strcmp(cmd, "extendedTextInfos")) {
-            int has_readable_type;
-
-            has_readable_type = atoi(param);
-            if (has_readable_type != 0 && has_readable_type != 1) {
-                SockList_AddString(&sl, "FALSE");
-            } else {
-                ns->has_readable_type = has_readable_type;
-                SockList_AddPrintf(&sl, "%d", has_readable_type);
             }
         } else if (!strcmp(cmd, "tick")) {
             int tick;
@@ -285,8 +253,6 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 ns->want_pickup = want_pickup;
                 SockList_AddPrintf(&sl, "%d", want_pickup);
             }
-        } else if (!strcmp(cmd, "inscribe")) {
-            SockList_AddString(&sl, "1");
         } else if (!strcmp(cmd, "num_look_objects")) {
             int tmp;
 
@@ -298,6 +264,32 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             }
             ns->num_look_objects = (uint8)tmp;
             SockList_AddPrintf(&sl, "%d", tmp);
+        } else if (!strcmp(cmd, "newmapcmd")) {
+            /* newmapcmd is deprecated (now standard part), but some
+             * clients still use this setup option, and if the server
+             * doesn't respond, erroneously report that the client is
+             * too old.  Since it is always on, regardless of what is
+             * request, send back one.
+             */
+            SockList_AddString(&sl, "1");
+        } else if (!strcmp(cmd, "extendedTextInfos")) {
+            /* like newmapcmd above, extendedTextInfos is
+             * obsolete, but we respond for the same reason as we do
+             * in newmapcmd
+             */
+            SockList_AddString(&sl, "1");
+        } else if (!strcmp(cmd, "itemcmd")) {
+            /* like newmapcmd above, itemcmd is
+             * obsolete, but we respond for the same reason as we do
+             * in newmapcmd
+             */
+            SockList_AddString(&sl, "2");
+        } else if (!strcmp(cmd, "exp64")) {
+            /* like newmapcmd above, exp64 is
+             * obsolete, but we respond for the same reason as we do
+             * in newmapcmd
+             */
+            SockList_AddString(&sl, "1");
         } else {
             /* Didn't get a setup command we understood -
              * report a failure to the client.
@@ -343,93 +335,14 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
              * quick test with client 1.1.0, it didn't print it
              * out correctly when done as a single line.
              */
-            SockList_Init(&sl);
-            SockList_AddString(&sl, "drawinfo 3 Warning: Your client is too old to receive map data. Please update to a new client at http://sourceforge.net/project/showfiles.php ?group_id=13833");
-            Send_With_Handling(ns, &sl);
-            SockList_Term(&sl);
+            print_ext_msg(ns, NDI_RED, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
+                          "Warning: Your client is too old to receive map data. Please update to a new client at http://sourceforge.net/project/showfiles.php ?group_id=13833");
         }
 
         socket_info.nconns--;
         ns->status = Ns_Avail;
     }
     settings = oldsettings;
-}
-
-/** Reply to ExtendedInfos command */
-void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns) {
-    SockList sl;
-    char command[50];
-    int info, nextinfo, smooth = 0;
-
-    nextinfo = 0;
-    while (1) {
-        /* 1. Extract an info*/
-        info = nextinfo;
-        while (info < len && buf[info] == ' ')
-            info++;
-        if (info >= len)
-            break;
-        nextinfo = info+1;
-        while (nextinfo < len && buf[nextinfo] != ' ')
-            nextinfo++;
-        if (nextinfo-info >= 49) /*Erroneous info asked*/
-            continue;
-        strncpy(command, &buf[info], nextinfo-info);
-        command[nextinfo-info] = '\0';
-        /* 2. Interpret info*/
-        if (!strcmp("smooth", command)) {
-            /* Toggle smoothing*/
-            smooth = 1;
-        } else {
-            /*bad value*/
-        }
-        /*3. Next info*/
-    }
-    SockList_Init(&sl);
-    SockList_AddString(&sl, "ExtendedInfoSet");
-    if (smooth) {
-        SockList_AddString(&sl, " smoothing");
-    }
-    Send_With_Handling(ns, &sl);
-    SockList_Term(&sl);
-}
-
-/** Reply to ExtendedInfos command */
-void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns) {
-    SockList sl;
-    char command[50];
-    int info, nextinfo, i, flag;
-
-    nextinfo = 0;
-    while (1) {
-        /* 1. Extract an info*/
-        info = nextinfo;
-        while (info < len && buf[info] == ' ')
-            info++;
-        if (info >= len)
-            break;
-        nextinfo = info+1;
-        while (nextinfo < len && buf[nextinfo] != ' ')
-            nextinfo++;
-        if (nextinfo-info >= 49) /*Erroneous info asked*/
-            continue;
-        strncpy(command, &buf[info], nextinfo-info);
-        command[nextinfo-info] = '\0';
-        /* 2. Interpret info*/
-        i = sscanf(command, "%d", &flag);
-        if (i == 1 && flag > 0 && flag <= MSG_TYPE_LAST)
-            ns->supported_readables |= (1<<flag);
-        /*3. Next info*/
-    }
-    /* Send resulting state */
-    SockList_Init(&sl);
-    SockList_AddString(&sl, "ExtendedTextSet");
-    for (i = 0; i <= MSG_TYPE_LAST; i++)
-        if (ns->supported_readables&(1<<i)) {
-            SockList_AddPrintf(&sl, " %d", i);
-        }
-    Send_With_Handling(ns, &sl);
-    SockList_Term(&sl);
 }
 
 /**
@@ -653,9 +566,6 @@ void version_cmd(char *buf, int len, socket_struct *ns) {
  * @todo remove once clients don't try to use this - server closes connection on invalid client.
  */
 
-void set_sound_cmd(char *buf, int len, socket_struct *ns) {
-}
-
 /** client wants the map resent
  * @todo remove
 */
@@ -670,21 +580,20 @@ void map_redraw_cmd(char *buf, int len, player *pl) {
 
 /** Newmap command */
 void map_newmap_cmd(socket_struct *ns) {
+    SockList sl;
+
     /* If getting a newmap command, this scroll information
      * is no longer relevant.
      */
     ns->map_scroll_x = 0;
     ns->map_scroll_y = 0;
 
-    if (ns->newmapcmd == 1) {
-        SockList sl;
 
-        memset(&ns->lastmap, 0, sizeof(ns->lastmap));
-        SockList_Init(&sl);
-        SockList_AddString(&sl, "newmap");
-        Send_With_Handling(ns, &sl);
-        SockList_Term(&sl);
-    }
+    memset(&ns->lastmap, 0, sizeof(ns->lastmap));
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "newmap");
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**

@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -113,11 +113,8 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->status = Ns_Add;
     ns->mapx = 11;
     ns->mapy = 11;
-    ns->newmapcmd = 0;
     ns->look_position = 0;
     ns->update_look = 0;
-    ns->has_readable_type = 0;
-    ns->supported_readables = 0;
     ns->monitor_spells = 0;
     ns->tick = 0;
     ns->is_bot = 0;

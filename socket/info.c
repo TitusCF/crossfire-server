@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002,2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2006,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -42,20 +42,6 @@
 #include <spells.h>
 #include <skills.h>
 
-/**
- * Draws a normal message on the client.  It is pretty
- * much the same thing as the draw_info above, but takes a color
- * parameter.  the esrv_drawinfo functions should probably be
- * replaced with this, just using black as the color.
- */
-static void esrv_print_msg(socket_struct *ns, int color, const char *str) {
-    SockList sl;
-
-    SockList_Init(&sl);
-    SockList_AddPrintf(&sl, "drawinfo %d %s", color, str);
-    Send_With_Handling(ns, &sl);
-    SockList_Term(&sl);
-}
 
 /**
  * Draws   an extended message on the client.
@@ -65,8 +51,10 @@ static void esrv_print_msg(socket_struct *ns, int color, const char *str) {
  * subtype type and subtype of text message
  * intro   Intro message to send with main message if client does not support the message type
  * message The main message
+ * make this non static, so other files can use this to send messages to client before
+ * player has been added.
  */
-static void esrv_print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, const char *message) {
+void print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, const char *message) {
     SockList sl;
 
     SockList_Init(&sl);
@@ -76,29 +64,23 @@ static void esrv_print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 s
 }
 
 /**
- * Frontend for esrv_print_msg
+ * For printing messages to a file
  * \param colr message color
  * \param pl player to send to. Can be NULL
  * \param tmp message to send. Can be NULL
  *
- * If pl is NULL or without contr set, writes message to log.
+ * This writes the message to a logfile.  Since the only
+ * function that calls this is draw_ext_info() below,
+ * and the only event it will call this routine is if the
+ * player is null, it always print to the logfile.
  *
- * Else sends message to player via esrv_print_msg
  */
 
 static void print_message(int colr, const object *pl, const char *tmp) {
     if (tmp == NULL) {
         tmp = "[NULL]";
     }
-
-    if (!pl || (pl->type == PLAYER && pl->contr == NULL)) {
-        fprintf(logfile, "%s\n", tmp);
-        return;
-    }
-    if (pl->type == PLAYER) {
-        esrv_print_msg(&pl->contr->socket, colr, tmp);
-        return;
-    }
+    fprintf(logfile, "%s\n", tmp);
 }
 
 /**
@@ -126,6 +108,7 @@ static void print_message(int colr, const object *pl, const char *tmp) {
 void draw_ext_info(
     int flags, int pri, const object *pl, uint8 type,
     uint8 subtype, const char *message, const char *oldmessage) {
+
     if ((flags&NDI_ALL) || (flags&NDI_ALL_DMS)) {
         player *tmppl;
 
@@ -148,32 +131,8 @@ void draw_ext_info(
     if (pri >= pl->contr->listening)
         return;
 
-    /* If the client doesn't support the readables, need to convert
-     * it to old format.  If oldmessage is specified, it is presumed
-     * that no conversion is needed (if the caller isn't sure, it
-     * should pass NULL for oldmessage).
-     */
-    if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket, type)) {
-        char *buf;
-        const char *buf2;
+    print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, message);
 
-        if (oldmessage) {
-            buf2 = oldmessage;
-            buf = NULL;
-        } else {
-            buf = strdup_local(message);
-            if (buf == NULL) {
-                LOG(llevError, "info::draw_ext_info -> Out of memory!\n");
-                return;
-            }
-            strip_media_tag(buf);
-            buf2 = buf;
-        }
-        print_message(flags&NDI_COLOR_MASK, pl, buf2);
-        free(buf);
-    } else {
-        esrv_print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, message);
-    }
 }
 
 /**

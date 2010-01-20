@@ -14,6 +14,31 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+General cleanup related to protocol and documentation.  Make many setup
+options that have been around for a while standard.
+MSW 2010-01-19
+--
+doc/Developers/protocol: Clean this up - remove obsolete commands,
+    document protocol commands consistently, stating what type
+    of data the different commands expect.  Update for new account
+    based protocol commands (not yet implemented)
+include/shared/newclient.h: Formatting fixes, add MSG_TYPE_ADMIN_ERROR
+include/newserver.h: Remove fields from socket structure which are now
+    considered standard.
+include/sockproto.h: Add print_ext_msg()
+socket/image.c: Remove code that handles setfacemode
+socket/info.c: Always use drawextinfo
+socket/init.c: remove initializations for what are now standard options.
+socket/loop.c: Remove setfacemode, setsound, toggleextendedinfos,
+    toggleextendedtext protocol commands.
+socket/request.c: Remove obsolete setup options.  Put options that
+    should be removed (but clients are using them as version tests) to
+    end of routine.  Remove toggle_extended_infos_cmd() - now default.
+    Remove toggle_extended_text_cmd() - server now uses drawextinfo
+    exclusively.  Remove set_sound_cmd().  Update map_newmap_cmd()
+    to assume client supports newmap command.
+--	
+
 Fix various missing return values and warnings in functions.
 Nicolas Weeger 2010-01-18
 
