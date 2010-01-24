@@ -522,6 +522,7 @@ int quest_get_player_state(player *pl, sstring quest_code);
 void quest_start(player *pl, sstring quest_code, int state);
 void quest_end(player *pl, sstring quest_code);
 void quest_set_player_state(player *pl, sstring quest_code, int state);
+int quest_was_completed(player *pl, sstring quest_code);
 int command_quest(object *op, char *params);
 void free_quest();
 /* resurrection.c */

@@ -49,6 +49,7 @@ Write is done for each player whenever the state changes, to ensure data integri
 typedef struct quest_state {
     sstring code;               /**< Quest internal code. */
     int state;                  /**< State for the player. */
+    int was_completed;          /**< Whether the quest was completed once or not, indepandently of the state. */
     struct quest_state *next;   /**< Next quest on the list. */
 } quest_state;
 
@@ -333,6 +334,10 @@ static void quest_read_player_data(quest_player *pq) {
             qs = NULL;
             continue;
         }
+        if (sscanf(read, "completed %d\n", &state)) {
+            qs->was_completed = state ? 1 : 0;
+            continue;
+        }
 
         LOG(llevError, "quest: invalid line in %s: %s\n", final, read);
     }
@@ -369,6 +374,7 @@ static void quest_write_player_data(const quest_player *pq) {
     while (state) {
         fprintf(file, "quest %s\n", state->code);
         fprintf(file, "state %d\n", state->state);
+        fprintf(file, "completed %d\n", state->was_completed);
         fprintf(file, "end_quest\n");
         state = state->next;
     }
@@ -719,6 +725,7 @@ void quest_end(player *pl, sstring quest_code) {
     }
 
     qs->state = QC_COMPLETED;
+    qs->was_completed = 1;
     quest_write_player_data(ps);
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest %s completed.", NULL, quest->quest_title);
@@ -732,6 +739,19 @@ void quest_end(player *pl, sstring quest_code) {
  */
 void quest_set_player_state(player *pl, sstring quest_code, int state) {
     quest_set_state(pl, quest_code, state, 1);
+}
+
+/**
+ * Check if a quest was completed once for a player, without taking account the current state.
+ * @param pl who to check for.
+ * @param quest_code quest internal code.
+ * @return 1 if the quest was already completed at least once, 0 else.
+ */
+int quest_was_completed(player *pl, sstring quest_code) {
+    quest_player *qp = get_or_create_quest(pl);
+    quest_state *state = get_state(qp, quest_code);
+
+    return (state && state->was_completed);
 }
 
 /**
