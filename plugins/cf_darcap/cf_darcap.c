@@ -457,29 +457,19 @@ static void fixMessageFromInventory(object *npc, const char *itemname) {
 
 static int handleSpike(object *npc, object *bywho, object *event, const char *message) {
     int state = cf_quest_get_player_state(bywho, darcapSpike);
+    int completed = cf_quest_was_completed(bywho, darcapSpike);
 
-    if (state == -1) {
-        /* ended */
-        fixMessageFromInventory(npc, "dlg_ended");
-        return 0;
-    }
-
-    if (state == 0) {
-        fixMessageFromInventory(npc, "dlg_start");
+    if (state == 0 || state == -1) {
+        fixMessageFromInventory(npc, completed ? "dlg_again" : "dlg_start");
 
         if (strcmp(message, "quest_accept") == 0) {
             cf_quest_start(bywho, darcapSpike, ds_get_potion);
         }
         return 0;
     }
-    if (state == ds_get_potion) {
-        fixMessageFromInventory(npc, "dlg_progress");
 
-        if (strcmp(message, "yes")) {
-            /* check, give reward, or blame */
-        }
-        return 0;
-    }
+    /* In any case the quest was started, so ask on the progress. */
+    fixMessageFromInventory(npc, "dlg_progress");
 
     return 0;
 }

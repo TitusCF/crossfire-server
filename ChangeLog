@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tweak Spike's quest (Darcap) so it can be done again and again.
+Nicolas Weeger 2010-01-24
+
+Plugin access to 'quest_was_completed' function.
+Nicolas Weeger 2010-01-24
+
 Track quests already completed once, so we can avoid giving a super reward
 all the time.
 Nicolas Weeger 2010-01-24
