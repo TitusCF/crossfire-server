@@ -1909,6 +1909,18 @@ void cf_quest_set_player_state(object *pl, sstring quest_code, int state) {
     assert(type == CFAPI_NONE);
 }
 
+/**
+ * Wrapper for quest_was_completed().
+ * @copydoc quest_was_completed()
+ */
+int cf_quest_was_completed(object *pl, sstring quest_code) {
+    int type, ret;
+
+    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_WAS_COMPLETED, pl, quest_code, &ret);
+    assert(type == CFAPI_INT);
+
+    return ret;
+}
 
 #ifdef WIN32
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info) {

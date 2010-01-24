@@ -287,6 +287,7 @@ extern crossfire_plugin *plugins_list;
 #define CFAPI_PLAYER_QUEST_END              1
 #define CFAPI_PLAYER_QUEST_GET_STATE        2
 #define CFAPI_PLAYER_QUEST_SET_STATE        3
+#define CFAPI_PLAYER_QUEST_WAS_COMPLETED    4
 
 #define CFAPI_MAP_PROP_FLAGS                0
 #define CFAPI_MAP_PROP_DIFFICULTY           1

@@ -4704,6 +4704,12 @@ void *cfapi_player_quest(int *type, ...) {
             *type = CFAPI_NONE;
             break;
         }
+        case CFAPI_PLAYER_QUEST_WAS_COMPLETED: {
+            int *ret = va_arg(args, int*);
+            *ret = quest_was_completed(player->contr, code);
+            *type = CFAPI_INT;
+            break;
+        }
         default:
             LOG(llevError, "invalid quest type: %d\n", op);
             *type = CFAPI_NONE;
