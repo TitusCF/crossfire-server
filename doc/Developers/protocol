@@ -641,7 +641,7 @@ S->C delinv <tag>
 	a delitem should be issued.
 
 S->C addspell <tag1> <level1> <casting time1> <mana1> <grace1> <damage1> <skill>
-	<path1> <name1> <display name1> <message1> <spell2 ....>
+	<path1> <name1> <display name1> <message1> <usage information> <requirements> <spell2 ....>
 	Tells the client to add the spell(s) listed to the list of spells
 	the client knows about. This will be sent at login, and again whenever
 	new spells are sent.
@@ -696,6 +696,21 @@ S->C addspell <tag1> <level1> <casting time1> <mana1> <grace1> <damage1> <skill>
 		The description of the spell. Note that this has an extra length
 		byte because the messages may well be longer than 256 bytes in
 		length.
+	
+	<usage information> (1 byte)
+	       Only sent if 'spellmon 2' was setup by the client.
+	       Values are:
+                - 0: spell needs no argument.
+                - 1: spell needs the name of another spell.
+                - 2: spell can use a freeform string argument.
+                - 3: spell requires a freeform string argument.
+
+       <requirements> (1 byte of length, then that many bytes of ASCII text)
+               Only sent if 'spellmon 2' was setup by the client.
+               If the spell required items to be cast, then this is the list of
+               those items. Comma-separated, potential number of items, singular
+               names (like the ingredients for alchemy).
+
 
 S->C updspell <flags><tag><vals>+
 
@@ -1095,7 +1110,7 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    this does not allow the client to cheat.  In the case of the
 	    old 'map' protocol command, turning darkness off will result
 	    in the masking faces not getting sent to the client.
-
+	
 	facecache (0/1)
 	    Determines if the client is caching images (1) or wants the
 	    images sent to it without caching them (0).  Default is 0.  This
@@ -1176,9 +1191,10 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    2=send music
 	    64=mute sound; same as "sound" ncom command
 
-	spellmon (0/1)
+	spellmon (0/1/2)
 	    If set to 1 the client has indicated that it wishes to be
 	    sent the spell list and updated when it changes.
+	    If set to 2, like 1 but with extra information (see "addspell").
 
 	tick (0/1)
 	    If set, the client want tick commands so it knows animation

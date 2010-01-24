@@ -161,7 +161,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             int monitor_spells;
 
             monitor_spells = atoi(param);
-            if (monitor_spells != 0 && monitor_spells != 1) {
+            if (monitor_spells < 0 || monitor_spells > 2) {
                 SockList_AddString(&sl, "FALSE");
             } else {
                 ns->monitor_spells = monitor_spells;
@@ -1663,6 +1663,36 @@ void esrv_send_pickup(player *pl) {
     SockList_Term(&sl);
 }
 
+/**
+ * Give the client-side use information for a spell, to know how to use a spell.
+ * @param spell what to check.
+ * @retval 0 spell needs no argument.
+ * @retval 1 spell needs the name of another spell.
+ * @retval 2 spell can use a freeform string argument.
+ * @retval 3 spell requires a freeform string argument.
+ */
+static int spell_client_use(const object *spell) {
+    if (spell->type == SP_RAISE_DEAD)
+        return 3;
+
+    if (spell->type == SP_RUNE && !spell->other_arch)
+        return 1;
+
+    if (spell->type == SP_MAKE_MARK)
+        return 3;
+
+    if (spell->type == SP_CREATE_FOOD)
+        return 2;
+
+    if (spell->type == SP_SUMMON_MONSTER && spell->randomitems != NULL)
+        return 2;
+
+    if (spell->type == SP_CREATE_MISSILE)
+        return 2;
+
+    return 0;
+}
+
 /** appends the spell *spell to the Socklist we will send the data to. */
 static void append_spell(player *pl, SockList *sl, object *spell) {
     client_spell *spell_info;
@@ -1710,6 +1740,18 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
         SockList_AddShort(sl, len);
         SockList_AddData(sl, spell->msg, len);
     }
+
+    /* extended spell information, if client wants them. */
+    if (pl->socket.monitor_spells >= 2) {
+        sstring req = object_get_value(spell, "casting_requirements");
+
+        SockList_AddChar(sl, spell_client_use(spell));
+        if (req) {
+            SockList_AddLen8Data(sl, req, strlen(req));
+        } else {
+            SockList_AddChar(sl, 0);
+        }
+    }
 }
 
 /**
@@ -1718,6 +1760,8 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
  */
 void esrv_add_spells(player *pl, object *spell) {
     SockList sl;
+    int size;
+    sstring value;
 
     if (!pl) {
         LOG(llevError, "esrv_add_spells, tried to add a spell to a NULL player\n");
@@ -1743,7 +1787,13 @@ void esrv_add_spells(player *pl, object *spell) {
              * If it does, we need to send what we already have,
              * and restart packet formation.
              */
-            if (SockList_Avail(&sl) < 26+strlen(spell->name)+(spell->msg ? strlen(spell->msg) : 0)) {
+            size = 26+strlen(spell->name)+(spell->msg ? strlen(spell->msg) : 0);
+            if (pl->socket.monitor_spells >= 2) {
+                /** @todo casting_requirements should be a constant somewhere */
+                value = object_get_value(spell, "casting_requirements");
+                size += 2 + value ? strlen(value) : 0;
+            }
+            if (SockList_Avail(&sl) < size) {
                 Send_With_Handling(&pl->socket, &sl);
                 SockList_Reset(&sl);
                 SockList_AddString(&sl, "addspell ");

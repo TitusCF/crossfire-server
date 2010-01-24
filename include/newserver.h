@@ -129,10 +129,10 @@ typedef struct socket_struct {
     uint32      darkness:1;             /**< True if client wants darkness information. */
     uint32      update_look:1;          /**< If true, we need to send the look window. */
     uint32      can_write:1;            /**< Can we write to this socket? */
-    uint32      monitor_spells:1;       /**< Client wishes to be informed when their spell list changes. */
     uint32      tick:1;                 /**< Client wishes to get tick commands. */
     uint32      is_bot:1;               /**< Client shouldn't be reported to metaserver. */
     uint32      want_pickup:1;          /**< Client wants pickup information when logging in. */
+    uint32      monitor_spells;         /**< Client wishes to be informed when their spell list changes. */
     uint32      sound;                  /**< Client sound mode. */
     uint32      cs_version, sc_version; /**< Versions of the client. */
     uint16      look_position;          /**< Start of drawing of look window. */

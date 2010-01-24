@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add 'spellmon 2' setup option, to send more spell information.
+This includes if the spell needs arguments (another spell, ...)
+and if the spell requires items to be cast.
+Nicolas Weeger 2010-01-24
+
 Enable spells to consume items to be cast.
 Nicolas Weeger 2010-01-24
 
