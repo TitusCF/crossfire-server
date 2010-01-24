@@ -356,18 +356,36 @@ static int monster_check_wakeup(object *op, object *enemy, rv_vector *rv) {
 }
 
 /**
- * Makes an object move in a random direction.
+ * Handles random object movement. If the monster was talked to lately, then don't move and reduce wait time.
  *
  * @param op
  * object to move.
  * @return
- * 1 if moved, 0 else.
- *
- * @note
- * move_randomly() has been renamed to monster_move_randomly()
+ * 1 if moved or should wait (talked to), 0 else.
  */
 static int monster_move_randomly(object *op) {
     int i;
+    sstring talked;
+    char value[2];
+
+    /* timeout before moving */
+    if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE)) {
+        talked = object_get_value(op, "talked_to");
+        if (talked && strlen(talked) > 0) {
+            i = atoi(talked);
+            i--;
+
+            if (i != 0) {
+                value[1] = '\0';
+                value[0] = '0' + i;
+                object_set_value(op, "talked_to", value, 1);
+                    return 1;
+            }
+
+            /* finished timeout talked to */
+            object_set_value(op, "talked_to", "", 1);
+        }
+    }
 
     /* Give up to 15 chances for a monster to move randomly */
     for (i = 0; i < 15; i++) {
@@ -2088,8 +2106,14 @@ static int monster_do_talk_npc(object *op, object *npc, const char *txt, int *ta
         ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH, message->message, NULL);
         use_trigger(npc);
     } else {
+        char value[2];
+
         monster_npc_say(npc, message->message);
         reply = message->replies;
+        /* mark that the npc was talked to, so it won't move randomly later on */
+        value[0] = '3' + rand() % 6;
+        value[1] = '\0';
+        object_set_value(npc, "talked_to", value, 1);
 
         if (reply) {
             draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, "Replies:", NULL);
