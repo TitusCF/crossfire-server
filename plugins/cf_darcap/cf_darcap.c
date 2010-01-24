@@ -474,7 +474,7 @@ static int handleSpike(object *npc, object *bywho, object *event, const char *me
         fixMessageFromInventory(npc, "dlg_start");
 
         if (strcmp(message, "quest_accept") == 0) {
-            cf_quest_start(bywho, darcapSpike, darcapSpikeTitle, darcapSpikeDescription, ds_get_potion, darcapSpikeGetPotion);
+            cf_quest_start(bywho, darcapSpike, ds_get_potion);
         }
         return 0;
     }
@@ -518,7 +518,7 @@ static int handleMolthir(object *npc, object *bywho, object *event, const char *
         fixMessageFromInventory(npc, "dlg_first");
 
         if (strcmp(message, "sigh_ok") == 0) {
-            cf_quest_set_player_state(bywho, darcapSpike, ds_get_roots, darcapSpikeGetRoots);
+            cf_quest_set_player_state(bywho, darcapSpike, ds_get_roots);
         }
         return 0;
     }
@@ -545,7 +545,7 @@ static int handleBob(object *npc, object *bywho, object *event, const char *mess
             object *roots = giveItem(bywho, "blackroot", "smaprh root", "smaprh roots", 0);
             /* no cheating */
             cf_object_set_key(roots, darcapSpike, playername, 1);
-            cf_quest_set_player_state(bywho, darcapSpike, ds_bring_roots, darcapSpikeBringRoots);
+            cf_quest_set_player_state(bywho, darcapSpike, ds_bring_roots);
         }
         return 0;
     }
@@ -610,7 +610,7 @@ static int handleGiveMolthir(object *to, object *by, object *item) {
     /* all good, remove roots, give potion, set state */
     cf_object_say(to, "Ha yes, those are the roots I need! Here, this is the potion Spike will need.");
     cf_object_remove(item);
-    cf_quest_set_player_state(by, darcapSpike, ds_bring_potion, darcapSpikeBringPotion);
+    cf_quest_set_player_state(by, darcapSpike, ds_bring_potion);
     /* create lead because it's inert, can't be applied, and such */
     /* and change face to that of a potion for consistency */
     face = cf_find_face("potioncha.111", 0);
@@ -942,12 +942,12 @@ CF_PLUGIN int postInitPlugin(void) {
 */
 
     darcapSpike = cf_add_string("darcap/Spike");
-    darcapSpikeTitle = cf_add_string("Spike's aching back");
+/*    darcapSpikeTitle = cf_add_string("Spike's aching back");
     darcapSpikeDescription = cf_add_string("Spike, the weapon shop owner, has backaches, and needs a potion to endure his pains.");
     darcapSpikeGetPotion = cf_add_string("You need to get a potion from the potion shop.");
     darcapSpikeGetRoots = cf_add_string("You need to get some smaprh roots from Bob's shop in the south of Darcap.");
     darcapSpikeBringRoots = cf_add_string("Bring back the smaprh roots to Molthir.");
-    darcapSpikeBringPotion = cf_add_string("Bring back the potion to Spike.");
+    darcapSpikeBringPotion = cf_add_string("Bring back the potion to Spike.");*/
 
     return 0;
 }

@@ -48,10 +48,7 @@ Write is done for each player whenever the state changes, to ensure data integri
 /** Information about a quest for a player. */
 typedef struct quest_state {
     sstring code;               /**< Quest internal code. */
-    sstring title;              /**< Player-readable title. */
-    sstring description;        /**< Short quest description. */
     int state;                  /**< State for the player. */
-    sstring state_description;  /**< State description for the player. */
     struct quest_state *next;   /**< Next quest on the list. */
 } quest_state;
 
@@ -64,6 +61,223 @@ typedef struct quest_player {
 
 /** Player quest state. */
 static quest_player *player_states = NULL;
+
+/** One step of a quest. */
+typedef struct quest_step_definition {
+    int step;                           /**< Step identifier. */
+    sstring step_description;           /**< Step description to show player. */
+    struct quest_step_definition *next; /**< Next step. */
+} quest_step_definition;
+
+/** Definition of an in-game quest. */
+typedef struct quest_definition {
+    sstring quest_code;             /**< Quest internal code. */
+    sstring quest_title;            /**< Quest title for player. */
+    sstring quest_description;      /**< Quest longer description. */
+    int quest_restart;              /**< If non zero, can be restarted. */
+    quest_step_definition *steps;   /**< Quest steps. */
+    struct quest_definition *next;  /**< Next quest in the definition list. */
+} quest_definition;
+
+static int quests_loaded = 0;           /**< Did we already read the 'default.quests' file? */
+static quest_definition *quests = NULL; /**< All known quests. */
+
+/**
+ * Allocate a quest_step_definition, will call fatal() if out of memory.
+ * @return new structure.
+ */
+static quest_step_definition *quest_create_step() {
+    quest_step_definition *step = calloc(1, sizeof(quest_step_definition));
+    if (!step)
+        fatal(OUT_OF_MEMORY);
+    return step;
+}
+
+/**
+ * Allocate a quest_definition, will call fatal() if out of memory.
+ * @return new structure.
+ */
+static quest_definition *quest_create_definition() {
+    quest_definition *quest = calloc(1, sizeof(quest_definition));
+    if (!quest)
+        fatal(OUT_OF_MEMORY);
+    return quest;
+}
+
+/** Load all quest definitions. Can be called multiple times, will be ignored. */
+static void quest_load_definitions() {
+    int found = 0, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description */
+    int i;
+    quest_definition *quest = NULL;
+    quest_step_definition *step = NULL;
+    char final[MAX_BUF], read[MAX_BUF];
+    FILE *file;
+    StringBuffer *buf;
+
+    if (quests_loaded)
+        return;
+
+    quests_loaded = 1;
+
+    snprintf(final, sizeof(final), "%s/%s/default.quests", settings.datadir, settings.mapdir);
+
+    file = fopen(final, "r");
+    if (!file) {
+        /* no quest defined yet, no big deal */
+        return;
+    }
+
+    while (fgets(read, sizeof(read), file) != NULL) {
+        if (in == 4) {
+            if (strcmp(read, "end_description\n") == 0) {
+                char *message;
+
+                in = 3;
+
+                message = stringbuffer_finish(buf);
+                buf = NULL;
+
+                step->step_description = add_string(message);
+                free(message);
+
+                continue;
+            }
+
+            stringbuffer_append_string(buf, read);
+            continue;
+        }
+
+        if (in == 3) {
+            if (strcmp(read, "end_step\n") == 0) {
+                step = NULL;
+                in = 1;
+                continue;
+            }
+            if (strcmp(read, "description\n") == 0) {
+                buf = stringbuffer_new();
+                in = 4;
+                continue;
+            }
+            LOG(llevError, "quests: invalid line %s in file!\n", read);
+            continue;
+        }
+
+        if (in == 2) {
+            if (strcmp(read, "end_description\n") == 0) {
+                char *message;
+
+                in = 1;
+
+                message = stringbuffer_finish(buf);
+                buf = NULL;
+
+                quest->quest_description = add_string(message);
+                free(message);
+
+                continue;
+            }
+            stringbuffer_append_string(buf, read);
+            continue;
+        }
+
+        if (in == 1) {
+            if (strcmp(read, "end_quest\n") == 0) {
+                quest = NULL;
+                in = 0;
+                continue;
+            }
+
+            if (strcmp(read, "description\n") == 0) {
+                in = 2;
+                buf = stringbuffer_new();
+                continue;
+            }
+
+            if (strncmp(read, "title ", 6) == 0) {
+                read[strlen(read) - 1] = '\0';
+                quest->quest_title = add_string(read + 6);
+                continue;
+            }
+
+            if (sscanf(read, "step %d\n", &i)) {
+                step = quest_create_step();
+                step->step = i;
+                step->next = quest->steps;
+                quest->steps = step;
+                in = 3;
+                continue;
+            }
+
+            if (sscanf(read, "restart %d\n", &i)) {
+                quest->quest_restart = i;
+                continue;
+            }
+        }
+
+        if (read[0] == '#')
+            continue;
+
+        if (strncmp(read, "quest ", 6) == 0) {
+            quest = quest_create_definition();
+            read[strlen(read) - 1] = '\0';
+            quest->quest_code = add_string(read + 6);
+            quest->next = quests;
+            quests = quest;
+            in = 1;
+            found++;
+            continue;
+        }
+
+        if (strcmp(read, "\n") == 0)
+            continue;
+
+        LOG(llevError, "quest: invalid file format for %s\n", final);
+    }
+
+    LOG(llevInfo, "%d quests found.\n", found);
+}
+
+/**
+ * Get a step for the specified quest.
+ * @param quest quest to consider.
+ * @param step step to find.
+ * @return step, or NULL if no such step in which case a llevError is emitted.
+ */
+static quest_step_definition *quest_get_step(quest_definition *quest, int step) {
+    quest_step_definition *qsd = quest->steps;
+
+    while (qsd) {
+        if (qsd->step == step)
+            return qsd;
+
+        qsd = qsd->next;
+    }
+
+    LOG(llevError, "quest %s has no required step %d\n", quest->quest_code, step);
+    return NULL;
+}
+
+/**
+ * Find a quest from its code.
+ * @param code quest to search.
+ * @return quest, , or NULL if no such quest in which case a llevError is emitted.
+ */
+static quest_definition *quest_get(sstring code) {
+    quest_definition *quest;
+
+    quest_load_definitions();
+
+    quest = quests;
+    while (quest) {
+        if (quest->quest_code == code)
+            return quest;
+
+        quest = quest->next;
+    }
+
+    LOG(llevError, "quest %s required but not found!\n", code);
+    return NULL;
+}
 
 /**
  * Return a new quest_state*, calling fatal() if memory shortage.
@@ -85,7 +299,7 @@ static void quest_read_player_data(quest_player *pq) {
     char final[MAX_BUF], read[MAX_BUF], data[MAX_BUF];
     StringBuffer *buf = NULL;
     quest_state *qs = NULL;
-    int warned = 0, state, in = 0;
+    int warned = 0, state;
 
     snprintf(final, sizeof(final), "%s/%s/%s/%s.quest", settings.localdir, settings.playerdir, pq->player_name, pq->player_name);
 
@@ -96,49 +310,6 @@ static void quest_read_player_data(quest_player *pq) {
     }
 
     while (fgets(read, sizeof(read), file) != NULL) {
-        if (in == 1) {
-            if (strcmp(read, "end_description\n") == 0) {
-                char *message;
-
-                in = 0;
-
-                message = stringbuffer_finish(buf);
-                buf = NULL;
-
-                /* we introduced a newline when saving, so remove it now */
-                if (strlen(message) > 0 && message[strlen(message) - 1] == '\n')
-                    message[strlen(message) - 1] = '\0';
-
-                qs->description = add_string(message);
-                free(message);
-
-                continue;
-            }
-            stringbuffer_append_string(buf, read);
-            continue;
-        }
-
-        if (in == 2) {
-            if (strcmp(read, "end_state_description\n") == 0) {
-                char *message;
-
-                in = 0;
-
-                message = stringbuffer_finish(buf);
-                buf = NULL;
-
-                /* we introduced a newline when saving, so remove it now */
-                if (strlen(message) > 0 && message[strlen(message) - 1] == '\n')
-                    message[strlen(message) - 1] = '\0';
-                qs->state_description = add_string(message);
-                free(message);
-
-                continue;
-            }
-            stringbuffer_append_string(buf, read);
-            continue;
-        }
-
         if (sscanf(read, "quest %s\n", data)) {
             qs = get_new_quest_state();
             qs->code = add_string(data);
@@ -154,21 +325,6 @@ static void quest_read_player_data(quest_player *pq) {
             continue;
         }
 
-        if (strncmp(read, "title ", 6) == 0) {
-            read[strlen(read) - 1] = '\0';
-            qs->title = add_string(read + 6);
-            continue;
-        }
-        if (strcmp(read, "description\n") == 0) {
-            in = 1;
-            buf = stringbuffer_new();
-            continue;
-        }
-        if (strcmp(read, "state_description\n") == 0) {
-            in = 2;
-            buf = stringbuffer_new();
-            continue;
-        }
         if (sscanf(read, "state %d\n", &state)) {
             qs->state = state;
             continue;
@@ -181,11 +337,7 @@ static void quest_read_player_data(quest_player *pq) {
         LOG(llevError, "quest: invalid line in %s: %s\n", final, read);
     }
 
-    if (in == 1)
-        LOG(llevError, "quest: missing end_description in %s\n", final);
-    else if (in == 2)
-        LOG(llevError, "quest: missing end_state_description in %s\n", final);
-    else if (qs)
+    if (qs)
         LOG(llevError, "quest: missing end_quest in %s\n", final);
     if (buf)
         free(stringbuffer_finish(buf));
@@ -216,10 +368,7 @@ static void quest_write_player_data(const quest_player *pq) {
 
     while (state) {
         fprintf(file, "quest %s\n", state->code);
-        fprintf(file, "title %s\n", state->title);
-        fprintf(file, "description\n%s\nend_description\n", state->description);
         fprintf(file, "state %d\n", state->state);
-        fprintf(file, "state_description\n%s\nend_state_description\n", state->state_description);
         fprintf(file, "end_quest\n");
         state = state->next;
     }
@@ -313,32 +462,41 @@ static quest_player *get_or_create_quest(player *pl) {
  * @param pl player to set the state for.
  * @param quest_code quest internal code.
  * @param state new state for the quest, must be greater than 0 else forced to 100 and a warning is emitted.
- * @param state_description state description.
  * @param started if 1, quest must have been started first or a warning is emitted, else it doesn't matter.
  */
-static void quest_set_state(player *pl, sstring quest_code, int state, sstring state_description, int started) {
+static void quest_set_state(player *pl, sstring quest_code, int state, int started) {
     quest_player *pq = get_or_create_quest(pl);
     quest_state *qs = get_or_create_state(pq, quest_code);
+    quest_definition *quest = quest_get(quest_code);
+    quest_step_definition *step;
+
+    if (!quest) {
+        LOG(llevError, "quest: asking for set_state of unknown quest %s!\n", quest_code);
+        return;
+    }
 
     if (state <= 0) {
         LOG(llevDebug, "quest_set_player_state: warning: called with invalid state %d for quest %s, player %s", state, pl->ob->name, quest_code);
         state = 100;
     }
 
+    step = quest_get_step(quest, state);
+    if (!step) {
+        LOG(llevError, "quest_set_player_state: couldn't find state definition %d for quest %s, player %s", state, quest_code, pl->ob->name);
+        return;
+    }
+
     if (started && qs->state == 0) {
         LOG(llevDebug, "quest_set_player_state: warning: called for player %s not having started quest %s\n", pl->ob->name, quest_code);
     }
-    if (qs->state_description)
-        FREE_AND_CLEAR_STR(qs->state_description);
 
     qs->state = state;
-    qs->state_description = add_refcount(state_description);
     quest_write_player_data(pq);
 
     LOG(llevDebug, "quest_set_player_state %s %s %d\n", pl->ob->name, quest_code, state);
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New objective for the quest '%s':", NULL, qs->title);
-    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, qs->state_description, NULL);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New objective for the quest '%s':", NULL, quest->quest_title);
+    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, step->step_description, NULL);
 }
 
 /**
@@ -349,11 +507,18 @@ static void quest_set_state(player *pl, sstring quest_code, int state, sstring s
  */
 static void quest_display(player *pl, quest_player *pq, int completed) {
     quest_state *state;
+    quest_definition *quest;
     int header = 0, count = 1;
+    const char *restart;
 
     state = pq->quests;
     while (state) {
         if ((completed && state->state == QC_COMPLETED) || (!completed && state->state != QC_COMPLETED)) {
+            quest = quest_get(state->code);
+            if (!quest)
+                /* already warned through quest_get */
+                continue;
+
             if (!header) {
                 if (completed)
                     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You completed the following quests:", NULL);
@@ -363,7 +528,12 @@ static void quest_display(player *pl, quest_player *pq, int completed) {
                 header = 1;
             }
 
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "(%3d) %s", NULL, count, state->title);
+            if (state->state == QC_COMPLETED && quest->quest_restart)
+                restart = " (can be replayed)";
+            else
+                restart = "";
+
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "(%3d) %s%s", NULL, count, quest->quest_title, restart);
         }
 
         state = state->next;
@@ -377,7 +547,6 @@ static void quest_display(player *pl, quest_player *pq, int completed) {
  */
 static void quest_list(player *pl) {
     quest_player *pq;
-    int started = 0, completed = 0;
 
     /* ensure we load data if not loaded yet */
     pq = get_or_create_quest(pl);
@@ -410,6 +579,8 @@ static void quest_info(player *pl, const char *params) {
     /* load if required */
     quest_player *pq = get_or_create_quest(pl);
     quest_state *qs;
+    quest_definition *quest;
+    quest_step_definition *step;
 
     if (number <= 0 || !pq) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid quest number", NULL);
@@ -419,12 +590,30 @@ static void quest_info(player *pl, const char *params) {
     qs = pq->quests;
     while (qs) {
         if (number == 1) {
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: %s", NULL, qs->title);
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Description: %s", NULL, qs->description);
-            if (qs->state == QC_COMPLETED)
-                draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "This quest is completed.", NULL);
-            else
-                draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \nNext objective: %s", NULL, qs->state_description);
+            quest = quest_get(qs->code);
+            if (!quest) {
+                /* already warned by quest_get */
+                draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: (internal error)", NULL);
+                return;
+            }
+
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: %s", NULL, quest->quest_title);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Description: %s", NULL, quest->quest_description);
+            if (qs->state == QC_COMPLETED) {
+                const char *restart = "";
+                if (quest->quest_restart)
+                    restart = " (can be replayed)";
+
+                draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "This quest is completed%s.", NULL, restart);
+            } else {
+                step = quest_get_step(quest, qs->state);
+                if (!step) {
+                    /* already warned by quest_get_step */
+                    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \nNext objective: (invalid quest)", NULL);
+                    return;
+                }
+                draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \nNext objective: %s", NULL, step->step_description);
+            }
             return;
         }
 
@@ -445,9 +634,6 @@ static void free_state(quest_player *pq) {
     while (qs) {
         next = qs->next;
         free_string(qs->code);
-        free_string(qs->title);
-        free_string(qs->description);
-        free_string(qs->state_description);
         free(qs);
         qs = next;
     }
@@ -461,13 +647,17 @@ static void free_state(quest_player *pq) {
  * Get the quest state for a player.
  * @param pl player.
  * @param quest_code internal quest code.
- * @return QC_COMPLETED if finished, 0 if not started, else quest-specific value.
+ * @return QC_COMPLETED if finished and quest can't be replayed, 0 if not started or finished and can be replayed, else quest-specific value.
  */
 int quest_get_player_state(player *pl, sstring quest_code) {
     quest_player *q = get_or_create_quest(pl);
     quest_state *s = get_state(q, quest_code);
+    quest_definition *quest = quest_get(quest_code);
 
     if (!s)
+        return 0;
+
+    if (s->state == QC_COMPLETED && quest && quest->quest_restart)
         return 0;
 
     return s->state;
@@ -477,34 +667,29 @@ int quest_get_player_state(player *pl, sstring quest_code) {
  * Start a quest for a player. Will notify the player.
  * @param pl player.
  * @param quest_code internal quest code.
- * @param quest_title quest short description.
- * @param quest_description quest longer description.
  * @param state initial quest state, must be greater than 0 else forced to 100 and warning emitted.
- * @param state_description initial quest state description for player.
  */
-void quest_start(player *pl, sstring quest_code, sstring quest_title, sstring quest_description, int state, sstring state_description) {
+void quest_start(player *pl, sstring quest_code, int state) {
     quest_player *pq = get_or_create_quest(pl);
     quest_state *q = get_or_create_state(pq, quest_code);
+    quest_definition *quest = quest_get(quest_code);
+    quest_step_definition *step;
 
     if (state <= 0) {
         state = 100;
         LOG(llevDebug, "quest_start: negative state %d for %s quest %s\n", state, pl->ob->name, quest_code);
     }
 
-    if (q->state != 0) {
+    step = quest_get_step(quest, state);
+
+    /* if completed already, assume the player can redo it */
+    if (q->state > 0) {
         LOG(llevDebug, "quest_start: warning: player %s has already started quest %s\n", pl->ob->name, quest_code);
     }
-    if (q->title)
-        FREE_AND_CLEAR_STR(q->title);
-    if (q->description)
-        FREE_AND_CLEAR_STR(q->description);
 
-    q->title = add_refcount(quest_title);
-    q->description = add_refcount(quest_description);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New quest started: %s", NULL, quest->quest_title);
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New quest started: %s", NULL, q->title);
-
-    quest_set_state(pl, quest_code, state, state_description, 0);
+    quest_set_state(pl, quest_code, state, 0);
 
     /* saving state will be done in quest_set_state(). */
 }
@@ -519,6 +704,8 @@ void quest_start(player *pl, sstring quest_code, sstring quest_title, sstring qu
 void quest_end(player *pl, sstring quest_code) {
     quest_player *ps = get_quest(pl);
     quest_state *qs;
+    quest_definition *quest = quest_get(quest_code);
+
     if (!ps) {
         /* maybe this could happen, if a quest can be completed whatever its state (no call to quest_get_player_state()) */
         LOG(llevDebug, "quest_end: called for not loaded player %s, quest %s\n", pl->ob->name, quest_code);
@@ -534,7 +721,7 @@ void quest_end(player *pl, sstring quest_code) {
     qs->state = QC_COMPLETED;
     quest_write_player_data(ps);
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest %s completed.", NULL, qs->title);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest %s completed.", NULL, quest->quest_title);
 }
 
 /**
@@ -542,10 +729,9 @@ void quest_end(player *pl, sstring quest_code) {
  * @param pl player to set the state for.
  * @param quest_code quest internal code.
  * @param state new state for the quest, must be greater than 0 else forced to 100 and a warning is emitted.
- * @param state_description state description.
  */
-void quest_set_player_state(player *pl, sstring quest_code, int state, sstring state_description) {
-    quest_set_state(pl, quest_code, state, state_description, 1);
+void quest_set_player_state(player *pl, sstring quest_code, int state) {
+    quest_set_state(pl, quest_code, state, 1);
 }
 
 /**

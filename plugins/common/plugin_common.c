@@ -1880,10 +1880,10 @@ int cf_quest_get_player_state(object *pl, sstring quest_code) {
  * Wrapper for quest_start().
  * @copydoc quest_start()
  */
-void cf_quest_start(object *pl, sstring quest_code, sstring quest_title, sstring quest_description, int state, sstring state_description) {
+void cf_quest_start(object *pl, sstring quest_code, int state) {
     int type;
 
-    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_START, pl, quest_code, quest_title, quest_description, state, state_description);
+    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_START, pl, quest_code, state);
     assert(type == CFAPI_NONE);
 }
 
@@ -1902,10 +1902,10 @@ void cf_quest_end(object *pl, sstring quest_code) {
  * Wrapper for quest_set_player_state();
  * @copydoc quest_set_player_state()
  */
-void cf_quest_set_player_state(object *pl, sstring quest_code, int state, sstring state_description) {
+void cf_quest_set_player_state(object *pl, sstring quest_code, int state) {
     int type;
 
-    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_SET_STATE, pl, quest_code, state, state_description);
+    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_SET_STATE, pl, quest_code, state);
     assert(type == CFAPI_NONE);
 }
 

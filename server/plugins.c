@@ -4682,11 +4682,8 @@ void *cfapi_player_quest(int *type, ...) {
 
     switch(op) {
         case CFAPI_PLAYER_QUEST_START: {
-            sstring title = va_arg(args, sstring);
-            sstring qd = va_arg(args, sstring);
             int state = va_arg(args, int);
-            sstring description = va_arg(args, sstring);
-            quest_start(player->contr, code, title, qd, state, description);
+            quest_start(player->contr, code, state);
             *type = CFAPI_NONE;
             break;
         }
@@ -4703,8 +4700,7 @@ void *cfapi_player_quest(int *type, ...) {
         }
         case CFAPI_PLAYER_QUEST_SET_STATE: {
             int state = va_arg(args, int);
-            sstring description = va_arg(args, sstring);
-            quest_set_player_state(player->contr, code, state, description);
+            quest_set_player_state(player->contr, code, state);
             *type = CFAPI_NONE;
             break;
         }
