@@ -601,6 +601,11 @@ static PyObject *Player_GetBedY(Crossfire_Player *whoptr, void *closure);
 static int Player_SetBedMap(Crossfire_Player *whoptr, PyObject *value, void *closure);
 static int Player_SetBedX(Crossfire_Player *whoptr, PyObject *value, void *closure);
 static int Player_SetBedY(Crossfire_Player *whoptr, PyObject *value, void *closure);
+static PyObject *Player_QuestStart(Crossfire_Player *whoptr, PyObject *args);
+static PyObject *Player_QuestGetState(Crossfire_Player *whoptr, PyObject *args);
+static PyObject *Player_QuestSetState(Crossfire_Player *whoptr, PyObject *args);
+static PyObject *Player_QuestEnd(Crossfire_Player *whoptr, PyObject *args);
+static PyObject *Player_QuestWasCompleted(Crossfire_Player *whoptr, PyObject *args);
 
 static PyGetSetDef Player_getseters[] = {
     { "Title",         (getter)Player_GetTitle,         (setter)Player_SetTitle, NULL, NULL },
@@ -617,6 +622,11 @@ static PyMethodDef PlayerMethods[] = {
     { "Message",        (PyCFunction)Crossfire_Player_Message, METH_VARARGS, NULL },
     { "Write",          (PyCFunction)Crossfire_Player_Message, METH_VARARGS, NULL },
     { "CanPay",         (PyCFunction)Crossfire_Player_CanPay,  METH_NOARGS,  NULL },
+    { "QuestStart",     (PyCFunction)Player_QuestStart,        METH_VARARGS,  NULL },
+    { "QuestGetState",  (PyCFunction)Player_QuestGetState,     METH_VARARGS,  NULL },
+    { "QuestSetState",  (PyCFunction)Player_QuestSetState,     METH_VARARGS,  NULL },
+    { "QuestEnd",       (PyCFunction)Player_QuestEnd,          METH_VARARGS,  NULL },
+    { "QuestWasCompleted",  (PyCFunction)Player_QuestWasCompleted, METH_VARARGS,  NULL },
     { NULL, NULL, 0, NULL }
 };
 

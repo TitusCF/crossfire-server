@@ -175,6 +175,88 @@ static int Player_SetBedY(Crossfire_Player *whoptr, PyObject *value, void *closu
     return 0;
 }
 
+static PyObject *Player_QuestStart(Crossfire_Player *whoptr, PyObject *args) {
+    char *code;
+    int state;
+    sstring quest_code;
+
+    EXISTCHECK(whoptr);
+    if (!PyArg_ParseTuple(args, "si", &code, &state))
+        return NULL;
+
+    quest_code = cf_add_string(code);
+    cf_quest_start(whoptr->obj, quest_code, state);
+    cf_free_string(quest_code);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *Player_QuestGetState(Crossfire_Player *whoptr, PyObject *args) {
+    char *code;
+    int state;
+    sstring quest_code;
+
+    EXISTCHECK(whoptr);
+    if (!PyArg_ParseTuple(args, "s", &code))
+        return NULL;
+
+    quest_code = cf_add_string(code);
+    state = cf_quest_get_player_state(whoptr->obj, quest_code);
+    cf_free_string(quest_code);
+
+    return Py_BuildValue("i", state);
+}
+
+static PyObject *Player_QuestSetState(Crossfire_Player *whoptr, PyObject *args) {
+    char *code;
+    int state;
+    sstring quest_code;
+
+    EXISTCHECK(whoptr);
+    if (!PyArg_ParseTuple(args, "si", &code, &state))
+        return NULL;
+
+    quest_code = cf_add_string(code);
+    cf_quest_set_player_state(whoptr->obj, quest_code, state);
+    cf_free_string(quest_code);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *Player_QuestEnd(Crossfire_Player *whoptr, PyObject *args) {
+    char *code;
+    sstring quest_code;
+
+    EXISTCHECK(whoptr);
+    if (!PyArg_ParseTuple(args, "s", &code))
+        return NULL;
+
+    quest_code = cf_add_string(code);
+    cf_quest_end(whoptr->obj, quest_code);
+    cf_free_string(quest_code);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *Player_QuestWasCompleted(Crossfire_Player *whoptr, PyObject *args) {
+    char *code;
+    int completed;
+    sstring quest_code;
+
+    EXISTCHECK(whoptr);
+    if (!PyArg_ParseTuple(args, "s", &code))
+        return NULL;
+
+    quest_code = cf_add_string(code);
+    completed = cf_quest_was_completed(whoptr->obj, quest_code);
+    cf_free_string(quest_code);
+
+    return Py_BuildValue("i", completed);
+}
+
 /* Object properties. Get and maybe set. */
 static PyObject *Object_GetName(Crossfire_Object *whoptr, void *closure) {
     char name[200];
