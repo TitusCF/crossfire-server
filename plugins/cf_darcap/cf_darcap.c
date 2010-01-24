@@ -130,7 +130,7 @@ static int playerMoved() {
 }
 
 static int moveToPlayer() {
-    int x, y, p;
+    int x, y;
 
     if (barmanObject == NULL)
         return 0;
@@ -387,7 +387,7 @@ static int handleSelling(object *what, object *bywho, object *event) {
     sstring mappath = cf_map_get_sstring_property(map, CFAPI_MAP_PROP_PATH);
     sstring slaying = cf_object_get_sstring_property(event, CFAPI_OBJECT_PROP_SLAYING);
     object *guard, *obj;
-    int count, x, y, i, j, h, w = 0;
+    int count, i, j, h, w = 0;
 
     if (strncmp(mappath, "/darcap/darcap", strlen("/darcap/darcap")))
         return 0;
@@ -437,12 +437,6 @@ typedef enum {
     ds_bring_potion = 4
 } darcapSpikeState;
 static sstring darcapSpike = NULL;
-static sstring darcapSpikeTitle = NULL;
-static sstring darcapSpikeDescription = NULL;
-static sstring darcapSpikeGetPotion = NULL;
-static sstring darcapSpikeGetRoots = NULL;
-static sstring darcapSpikeBringRoots = NULL;
-static sstring darcapSpikeBringPotion = NULL;
 
 static void fixMessageFromInventory(object *npc, const char *itemname) {
     object *inv = cf_object_get_object_property(npc, CFAPI_OBJECT_PROP_INVENTORY);
@@ -693,7 +687,7 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
 CF_PLUGIN void *getPluginProperty(int *type, ...) {
     va_list args;
     const char *propname;
-    int i, size;
+    int size;
     command_array_struct *rtn_cmd;
     char *buf;
 
@@ -732,9 +726,8 @@ CF_PLUGIN int runPluginCommand(object *op, char *params) {
 CF_PLUGIN void *globalEventListener(int *type, ...) {
     va_list args;
     static int rv = 0;
-    char *buf, message[MAX_BUF];
-    player *pl;
-    object *op, *who, *activator, *third, *event;
+    char message[MAX_BUF];
+    object *who, *activator, *third, *event;
     int event_code, return_value;
 
     va_start(args, type);
@@ -942,12 +935,6 @@ CF_PLUGIN int postInitPlugin(void) {
 */
 
     darcapSpike = cf_add_string("darcap/Spike");
-/*    darcapSpikeTitle = cf_add_string("Spike's aching back");
-    darcapSpikeDescription = cf_add_string("Spike, the weapon shop owner, has backaches, and needs a potion to endure his pains.");
-    darcapSpikeGetPotion = cf_add_string("You need to get a potion from the potion shop.");
-    darcapSpikeGetRoots = cf_add_string("You need to get some smaprh roots from Bob's shop in the south of Darcap.");
-    darcapSpikeBringRoots = cf_add_string("Bring back the smaprh roots to Molthir.");
-    darcapSpikeBringPotion = cf_add_string("Bring back the potion to Spike.");*/
 
     return 0;
 }
