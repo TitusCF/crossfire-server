@@ -1313,6 +1313,93 @@ static void handle_spell_confusion(object *op) {
 }
 
 /**
+ * Check if the player attempting to cast a spell has the required items, and eat those.
+ * Will warn of insufficient resources if failure. Only eats if all items are found, else don't do anything.
+ * @param op who is casting.
+ * @param spell_ob spell being cast.
+ * @return 0 if some items were missing, and warn player, 1 if all if ok.
+ */
+static int spell_consume_items(object *op, const object *spell_ob) {
+    sstring requirements;
+    char *copy;
+    char *ingredients[10];
+    object *found[10];
+    int count, i, nrof[10];
+    char name_ob[MAX_BUF];
+    const char *name2;
+
+    if (op->type != PLAYER)
+        return 1;
+
+    requirements = object_get_value(spell_ob, "casting_requirements");
+    if (!requirements)
+        /* no special requirements */
+        return 1;
+
+    /* find items */
+    copy = strdup_local(requirements);
+    count = split_string(copy, ingredients, 10, ',');
+
+    /* first pass, find items */
+    for (i = 0; i < count; i++) {
+        nrof[i] = 0;
+        found[i] = NULL;
+        while (isdigit(*ingredients[i])) {
+            nrof[i] = 10*nrof[i]+(*(ingredients[i])-'0');
+            ingredients[i]++;
+        }
+        if (nrof[i] == 0)
+            nrof[i] = 1;
+        while (*ingredients[i] == ' ')
+            ingredients[i]++;
+
+        /* now find item in op's inv */
+        FOR_INV_PREPARE(op, check) {
+
+            if (check->title == NULL)
+                name2 = check->name;
+            else {
+                snprintf(name_ob, sizeof(name_ob), "%s %s", check->name, check->title);
+                name2 = name_ob;
+            }
+
+            if (strcmp(name2, ingredients[i]) == 0) {
+                found[i] = check;
+                break;
+            }
+        } FOR_INV_FINISH();
+
+        if (found[i] == NULL) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op,
+                MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                "Casting this spell requires %s, but you don't have any.",
+                NULL, ingredients[i]);
+            free(copy);
+            return 0;
+        }
+
+        if (found[i]->nrof < nrof[i]) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op,
+                MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                "Casting this spell requires %d %s, but you only have %d.",
+                NULL, nrof[i], found[i]->name_pl, found[i]->nrof);
+            free(copy);
+            return 0;
+        }
+    }
+
+    free(copy);
+
+    /* ok, found ingredients, remove'em */
+    for (i = 0; i < count; i++) {
+        object_decrease_nrof(found[i], nrof[i]);
+    }
+
+    /* all right, spell can be cast */
+    return 1;
+}
+
+/**
  * Main dispatch when someone casts a spell.
  *
  * Will decrease mana/gr points, check for skill, confusion and such.
@@ -1475,6 +1562,11 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
                     return 0;
                 }
             }
+
+            /* ensure the potentially required items are eaten */
+            if (!spell_consume_items(op, spell_ob))
+                /* already warned by the function */
+                return 0;
         }
     }
 
