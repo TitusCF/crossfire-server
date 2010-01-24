@@ -494,7 +494,7 @@ static object *find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_
  * @param cauldron
  * container that was used.
  * @param rp
- * recipe that failed.
+ * recipe that failed, can be NULL.
  * @param danger
  * danger value, the higher the more evil the effect.
  */
@@ -505,7 +505,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         return;
 
     /** Recipe specifies a special failure archetype, so use it instead of evil random things. */
-    if (rp->failure_arch) {
+    if (rp && rp->failure_arch) {
         object *failure = create_archetype(rp->failure_arch);
         if (!failure) {
             LOG(llevError, "invalid failure_arch %s for recipe %s\n", rp->failure_arch, rp->title);
