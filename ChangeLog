@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tighten up string checking for accounts, since they will get used for
+filenames.  Add new checks for these new allowed characters.
+Files: server/account.c test/unit/server/check_account.c
+MSW 2010-01-21
+
 Add 'spellmon 2' setup option, to send more spell information.
 This includes if the spell needs arguments (another spell, ...)
 and if the spell requires items to be cast.

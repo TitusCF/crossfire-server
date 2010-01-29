@@ -58,11 +58,21 @@ START_TEST(test_account_check_string) {
      */
     i=account_check_string("abcd:");
     fail_unless(i != 0, "string with colons should not be considered valid");
-    i=account_check_string(";abcd");
+    i=account_check_string("a;bcd");
     fail_unless(i != 0, "string with semicolons should not be considered valid");
+    i=account_check_string("a/bcd");
+    fail_unless(i != 0, "string with slash should not be considered valid");
+    i=account_check_string("a'bcd");
+    fail_unless(i != 0, "string with quote should not be considered valid");
 
     i=account_check_string("abc\n\nefg");
     fail_unless(i != 0, "string with non printable characters should not be considered valid");
+
+    i=account_check_string("$abc");
+    fail_unless(i != 0, "string starting with non alphanumeric should not be considered valid");
+
+    i=account_check_string("abc ");
+    fail_unless(i != 0, "string ending in space should not be considered valid");
 
     for (i=0; i<=MAX_NAME; i++) {
         longname[i]='a';
@@ -74,6 +84,7 @@ START_TEST(test_account_check_string) {
 
     i=account_check_string("Some Body");
     fail_unless(i == 0, "Valid string not considered valid");
+
 }
 END_TEST
 
