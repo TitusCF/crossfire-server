@@ -20,6 +20,7 @@ typedef struct recipestruct {
                                   * used as the basis for the product object. */
     int yield;                  /**< Maximum number of items produced by the recipe. */
     linked_char *ingred;        /**< List of ingredients. */
+    int ingred_count;           /**< Number of items in ingred. */
     struct recipestruct *next;  /**< Next recipe with the same number of ingredients. */
     const char *keycode;        /**< Optional keycode needed to use the recipe. */
     const char *skill;          /** Skill name used to make this recipe. */
@@ -27,6 +28,9 @@ typedef struct recipestruct {
     const char *failure_arch;   /**< Arch of the item to generate on failure, instead of blowing up stuff. */
     const char *failure_message;/**< Specific failure message. */
     int min_level;              /**< Minimum level to have in the skill to be able to use the formulae. 0 if no requirement. */
+    int is_combination;         /**< Whather this is an alchemy recipe, or an item transformation description. */
+    char **tool;                /**< Tool(s) for item transformation. */
+    size_t tool_size;           /**< Length of tool. */
 } recipe;
 
 /** List of recipes with a certain number of ingredients. */
