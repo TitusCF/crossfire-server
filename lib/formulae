@@ -58,16 +58,18 @@
 #	    slaying field matching the keycode
 #
 #  "skill"  A string, such as "alchemy".  This is the name of the skill
-#	    that is used to create this formula.  This is a required field
-#	    and must match one of the following:
-#	    smithery, bowyer, jeweler, alchemy, thaumaturgy, literacy,
+#	    that is used to create this formula. Must be set if this is
+#           an alchemy recipe, in which case it must match one of the
+#           following:
+#           smithery, bowyer, jeweler, alchemy, thaumaturgy, literacy,
 #	    woodsman
 #
 #  "cauldron"  A string, which must be the valid archetype name for an
 #	    archetype.  In the example of a true alchemy formula, this
 #	    would be a cauldron.  A smithery formula might use something
 #	    like a forge.  You can create formulae that are only usable
-#	    with a specific facilities.  This field is required.
+#	    with a specific facilities.  This field is required unless the
+#           formula describes an item transformation.
 #
 #  "exp"    A required integer.  This is the amount of experience a user
 #           gets by using this formula.  You should factor difficulty in
@@ -87,6 +89,14 @@
 #
 #  "min_level" An optional integer. If set, this is the minimum required level
 #           needed to attempt the formulae.
+#
+#  "combination" An optional integer. If set (and non-zero), the formula will never
+#           appear in the randomly generated books.
+#
+#  "tool"   An optional comma delimited list of archetypes names. If set, the formula
+#           explains what items can be transformed into when a 'tool' is used.
+#           'arch' then lists all generated products, and 'ingred' what is transformed.
+#
 #
 # IMPORTANT NOTE ---->
 #	    It is not enough to construct ad-hoc lists of
@@ -3177,3 +3187,26 @@ yield 2
 skill jeweler
 cauldron jeweler_bench
 ingred 6 diamond,rock
+#
+# Item combinations
+Object NONE
+arch apple_half
+yield 2
+ingred apple
+chance 0
+combination 1
+tool slicingknife,b_slicingknife
+Object NONE
+arch apple_fourth
+yield 2
+ingred apple halve
+chance 0
+combination 1
+tool slicingknife,b_slicingknife
+Object NONE
+arch apple_eighth
+yield 2
+ingred apple fourth
+chance 0
+combination 1
+tool slicingknife,b_slicingknife
