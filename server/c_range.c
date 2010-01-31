@@ -232,6 +232,8 @@ int command_cast_spell(object *op, char *params, char command) {
             if (castnow) {
                 cast_spell(op, op, op->facing, spob, cp);
             } else {
+                /** @todo present the list nicely instead of comma-separated simply */
+                sstring required = object_get_value(spob, "casting_requirements");
                 op->contr->ranges[range_magic] = spob;
                 op->contr->shoottype = range_magic;
                 if (cp != NULL) {
@@ -241,9 +243,9 @@ int command_cast_spell(object *op, char *params, char command) {
                     op->contr->spellparam[0] = '\0';
                 }
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                                     "You ready the spell %s",
-                                     "You ready the spell %s",
-                                     spob->name);
+                                     "You ready the spell %s%s%s",
+                                     NULL,
+                                     spob->name, required ? " which consumes for each invocation " : "", required ? required : "");
             }
             return 0;
         } /* else fall through to below and print spells */
