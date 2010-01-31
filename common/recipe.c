@@ -96,10 +96,14 @@ static recipe *get_empty_formula(void) {
     t->skill = NULL;
     t->cauldron = NULL;
     t->ingred = NULL;
+    t->ingred_count = 0;
     t->next = NULL;
     t->failure_arch = NULL;
     t->failure_message = NULL;
     t->min_level = 0;
+    t->is_combination = 0;
+    t->tool = NULL;
+    t->tool_size = 0;
     return t;
 }
 
@@ -211,12 +215,13 @@ void init_formulae(void) {
         } else if (sscanf(cp, "diff %d", &value)) {
             formula->diff = value;
         } else if (!strncmp(cp, "ingred", 6)) {
-            int numb_ingred = 1;
+            int numb_ingred;
+            formula->ingred_count = 1;
             cp = strchr(cp, ' ')+1;
             do {
                 if ((next = strchr(cp, ',')) != NULL) {
                     *(next++) = '\0';
-                    numb_ingred++;
+                    formula->ingred_count++;
                 }
                 tmp = (linked_char *)malloc(sizeof(linked_char));
                 tmp->name = add_string(cp);
@@ -229,6 +234,7 @@ void init_formulae(void) {
                 formula->index += strtoint(cp);
             } while ((cp = next) != NULL);
             /* now find the correct (# of ingred ordered) formulalist */
+            numb_ingred = formula->ingred_count;
             fl = formulalist;
             while (numb_ingred != 1) {
                 if (!fl->next)
@@ -253,6 +259,10 @@ void init_formulae(void) {
             formula->failure_message = add_string(strchr(cp, ' ')+1);
         } else if (sscanf(cp, "min_level %d", &value)) {
             formula->min_level = value;
+        } else if (!strncmp(cp, "tool ", 5)) {
+            build_stringlist(strchr(cp, ' ')+1, &formula->tool, &formula->tool_size);
+        } else if (sscanf(cp, "combination %d", &value)) {
+            formula->is_combination = value ? 1 : 0;
         } else
             LOG(llevError, "Unknown input in file %s: %s\n", filename, buf);
     }
@@ -273,6 +283,8 @@ void init_formulae(void) {
  * that possibility here. -b.t.
  *
  * LOG() to error level.
+ *
+ * @todo check archetypes exist, check coherence (skill present, cauldron ok, and such things), set chance to 0 for combinations
  */
 static void check_formulae(void) {
     recipelist *fl;
@@ -759,6 +771,7 @@ void free_all_recipes(void) {
                 free_string(lchar->name);
                 free(lchar);
             }
+            free(formula->tool[0]);
             free(formula);
         }
         free(fl);
@@ -800,4 +813,32 @@ static void build_stringlist(const char *str, char ***result_list, size_t *resul
         (*result_list)[i] = dup;
         dup = dup+strlen(dup)+1;
     }
+}
+
+/**
+ * Find a recipe for a specified tool. This function can be called multiple times to browse the whole list,
+ * using the 'from' parameter.
+ * @param tool tool's archetype name.
+ * @param from formula to search from, if NULL from the first one.
+ * @return matching formula, NULL if none matching.
+ */
+recipe *find_recipe_for_tool(const char *tool, recipe *from) {
+    int t;
+    recipelist *list = from ? get_formulalist(from->ingred_count) : formulalist;
+    recipe *test = from ? from->next : list->items;
+
+    while (list) {
+        while (test) {
+            for (t = 0; t < test->tool_size; t++) {
+                if (strcmp(test->tool[t], tool) == 0) {
+                    return test;
+                }
+            }
+            test = test->next;
+        }
+
+        list = list->next;
+    }
+
+    return NULL;
 }

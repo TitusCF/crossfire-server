@@ -1674,7 +1674,7 @@ static void make_formula_book(object *book, int level) {
     chance = RANDOM()%fl->total_chance;
     for (formula = fl->items; formula != NULL; formula = formula->next) {
         chance -= formula->chance;
-        if (chance <= 0)
+        if (chance <= 0 && formula->chance != 0 && !formula->is_combination)
             break;
     }
 

@@ -335,6 +335,7 @@ extern int strtoint(const char *buf);
 extern artifact *locate_recipe_artifact(const recipe *rp, size_t idx);
 extern recipe *get_random_recipe(recipelist *rpl);
 extern void free_all_recipes(void);
+extern recipe *find_recipe_for_tool(const char *tool, recipe *from);
 /* region.c */
 extern region *get_region_by_name(const char *region_name);
 extern region *get_region_by_map(mapstruct *m);

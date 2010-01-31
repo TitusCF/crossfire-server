@@ -2268,6 +2268,7 @@ int command_use(object *op, char *params) {
     archetype *arch;
     int count;
     sstring data;
+    recipe *transformation;
 
     if (!op->type == PLAYER)
         return 1;
@@ -2293,6 +2294,28 @@ int command_use(object *op, char *params) {
         return 1;
     }
 
+    transformation = NULL;
+    while ((transformation = find_recipe_for_tool(first->arch->name, transformation))) {
+        /** @todo handle multiple ingredients */
+        if (transformation->ingred_count != 1)
+            continue;
+
+/*        LOG(llevDebug, "use: check %s\n", transformation->title);*/
+        if (strcmp(second->name, transformation->ingred->name) == 0) {
+            /** @todo handle ingredient count, handle batches, and such */
+            object *generated = create_archetype(transformation->arch_name[0]);
+            if (transformation->yield)
+                generated->nrof = transformation->yield;
+            object_insert_in_ob(generated, op);
+            /*draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Found recipe %s", NULL, transformation->title);*/
+            object_decrease_nrof_by_one(second);
+            return 1;
+        }
+    }
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Nothing happens.", NULL);
+    return 1;
+
+    /*
     snprintf(copy, sizeof(copy), "on_use_with_%s", first->arch->name);
     data = object_get_value(second, copy);
     if (!data) {
@@ -2354,4 +2377,5 @@ int command_use(object *op, char *params) {
     }
 
     return 1;
+    */
 }

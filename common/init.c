@@ -49,7 +49,7 @@ struct Settings settings = {
     LOGFILE,   /* Logfile */
     CSPORT,    /* Client/server port */
 
-    llevInfo,  /* Debug level */
+    llevDebug,  /* Debug level */
     0, NULL, 0,    /* dumpvalues, dumparg, daemonmode */
     0, /* argc */
     NULL, /* argv */
