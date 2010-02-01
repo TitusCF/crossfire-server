@@ -78,7 +78,7 @@ socket/request.c: Remove obsolete setup options.  Put options that
     Remove toggle_extended_text_cmd() - server now uses drawextinfo
     exclusively.  Remove set_sound_cmd().  Update map_newmap_cmd()
     to assume client supports newmap command.
---	
+--
 
 Fix various missing return values and warnings in functions.
 Nicolas Weeger 2010-01-18
@@ -152,7 +152,7 @@ server/swap.c: Update call to split_string()
 test/unit/server/Makefile.am: Add check_account test.
 test/unit/server/check_account.c: functional tests for account code.
 test/unit/common/check_utils.c: Update split_string() call
-	
+
 
 First version of a Darcap handling plugin. For now handles the barman
 in the tavern.
