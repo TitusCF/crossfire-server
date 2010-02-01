@@ -103,18 +103,9 @@ if (!$archonly) {
 	binmode(TREASURES);
     print TREASURES "#
 # Do not modify this file - any changes will get overwritten.
-# instead, modify the treasures file or the .trs file in the
-# arch directory.\n#
+# instead, modify the .trs file in the arch directory.
+#
 ";
-
-    open(TR, "<treasures");
-	binmode(TR);
-    while (<TR>) {
-	print TREASURES $_;
-    }
-    close(TR);
-    print TREASURES "#\n# Start of collected .trs files\n#\n";
-
     &treasuresOut;
     close(TREASURES);
 
