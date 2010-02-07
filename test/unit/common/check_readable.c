@@ -229,16 +229,28 @@ static char *old_god_info_msg(int level, char *retbuf, size_t booksize) {
 START_TEST(test_god_info_msg_rewrite) {
     /* todo: write */
     char old[HUGE_BUF], new[HUGE_BUF];
-    int todo = 10000, seed, what;
+    int todo = 10000, seed, what, size;
+    const archetype *arch;
+
+    const char* archs[] = { "book_clasp", "book_read", "checkbook", "letter", "note", "quarto", "scroll", "scroll_2", "tome" };
+    const arch_count = 9;
+    object *dummy = object_new();
 
     while (todo-- > 0) {
+
+        what = RANDOM() % arch_count;
+        arch = find_archetype(archs[what]);
+        fail_unless(arch != NULL, "missing arch %s", archs[what]);
+        size = BOOKSIZE(&arch->clone);
+        size -= strlen("\n"); /* Keep enough for final \n. */
+
         old[0] = '\0';
         new[0] = '\0';
         seed = RANDOM();
         SRANDOM(seed);
-        old_god_info_msg(RANDOM() % 100, old, sizeof(old));
+        old_god_info_msg(RANDOM() % 100, old, size);
         SRANDOM(seed);
-        god_info_msg(RANDOM() % 100, new, sizeof(new));
+        god_info_msg(RANDOM() % 100, new, size, dummy);
         if (strcmp(old, new)) {
             int match = 0;
             while (old[match] == new[match] && old[match] != '\0') {
@@ -250,6 +262,7 @@ START_TEST(test_god_info_msg_rewrite) {
         }
     }
 
+    object_free(dummy);
 }
 END_TEST
 
@@ -271,6 +284,8 @@ int main(void) {
     Suite *s = readable_suite();
     SRunner *sr = srunner_create(s);
 
+    /* to debug, uncomment this line */
+    srunner_set_fork_status(sr, CK_NOFORK);
     srunner_set_xml(sr, LOGDIR "/unit/common/readable.xml");
     srunner_set_log(sr, LOGDIR "/unit/common/readable.out");
     srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
