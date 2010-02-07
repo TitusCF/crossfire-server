@@ -40,6 +40,7 @@ typedef struct artifactstruct {
     uint8 difficulty;               /**< Minimum map difficulty for the artifact to happen. */
     struct artifactstruct *next;    /**< Next artifact in the list. */
     linked_char *allowed;           /**< List of archetypes the artifact can affect. */
+    int allowed_size;               /**< Length of allowed, for faster computation. */
 } artifact;
 
 /**

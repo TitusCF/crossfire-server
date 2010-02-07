@@ -42,6 +42,7 @@
 #include <book.h>
 #include <living.h>
 #include <spells.h>
+#include <assert.h>
 
 /* Define this if you want to archive book titles by contents.
  * This option should enforce UNIQUE combinations of titles,authors and
@@ -1536,17 +1537,37 @@ static char *artifact_msg(int level, char *retbuf, size_t booksize) {
         /* Name */
         if (art->allowed != NULL && strcmp(art->allowed->name, "All")) {
             archetype *arch;
-            linked_char *temp, *next = art->allowed;
+            linked_char *temp = art->allowed;
+            int inv = 0, w;
 
-            do {
-                temp = next;
-                next = next->next;
-            } while (next != (linked_char *)NULL && RANDOM()%2);
-            arch = try_find_archetype(temp->name);
-            if (!arch)
-                LOG(llevError, "artifact_msg: missing archetype %s for artifact %s (type %d)\n", temp->name, art->item->name, art->item->type);
+            assert(art->allowed_size > 0);
+            if (art->allowed_size > 1)
+                w = 1 + RANDOM() % art->allowed_size;
             else
-                snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s of %s", arch->clone.name, art->item->name);
+                w = 1;
+
+            while (w > 1) {
+                assert(temp);
+                temp = temp->next;
+                w--;
+            }
+
+            if (temp->name[0] == '!')
+                inv = 1;
+
+            /** @todo check archetype when loading archetypes, not here */
+            arch = try_find_archetype(temp->name + inv);
+            if (!arch)
+                arch = find_archetype_by_object_name(temp->name + inv);
+
+            if (!arch)
+                LOG(llevError, "artifact_msg: missing archetype %s for artifact %s (type %d)\n", temp->name + inv, art->item->name, art->item->type);
+            else {
+                if (inv)
+                    snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s (excepted %s) of %s", art_name_array[index].name, arch->clone.name_pl, art->item->name);
+                else
+                    snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s of %s", arch->clone.name, art->item->name);
+            }
         } else {  /* default name is used */
             /* use the base 'generic' name for our artifact */
             snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " The %s of %s", art_name_array[index].name, art->item->name);

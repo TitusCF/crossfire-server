@@ -1396,6 +1396,7 @@ static artifact *get_empty_artifact(void) {
     t->chance = 0;
     t->difficulty = 0;
     t->allowed = NULL;
+    t->allowed_size = 0;
     return t;
 }
 
@@ -1574,6 +1575,7 @@ void init_artifacts(void) {
                 tmp->name = add_string(cp);
                 tmp->next = art->allowed;
                 art->allowed = tmp;
+                art->allowed_size++;
             } while ((cp = next) != NULL);
         } else if (sscanf(cp, "chance %d", &value))
             art->chance = (uint16)value;
