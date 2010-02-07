@@ -152,3 +152,7 @@ static void stringbuffer_ensure(StringBuffer *sb, size_t len) {
     sb->buf = tmp;
     sb->size = new_size;
 }
+
+size_t stringbuffer_length(StringBuffer *sb) {
+    return sb->pos;
+}

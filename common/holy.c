@@ -35,6 +35,8 @@
 #include <global.h>
 #include <living.h>
 #include <spells.h>
+#include <libproto.h>
+#include <assert.h>
 
 static void add_god_to_list(archetype *god_arch);
 
@@ -134,6 +136,212 @@ const object *pntr_to_god_obj(godlink *godlnk) {
     if (godlnk && godlnk->arch)
         return &godlnk->arch->clone;
     return NULL;
+}
+
+/**
+ * Describe a god. The reason we return a combination is to know what exactly was written for knowledge management.
+ * @param god which god to describe.
+ * @param what information to describe, combination of @ref GOD_xxx "GOD_xxx" flags.
+ * @param buf where to describe, must not be NULL.
+ * @param maxlen maximum wanted length of the description, if 0 no maximum length.
+ * @return information actually written, combination of @ref GOD_xxx "GOD_xxx", based on maxlen.
+ */
+int describe_god(const object *god, int what, StringBuffer *buf, int maxlen) {
+    int hassomething = 0, real = 0;
+    char temp[HUGE_BUF];
+    StringBuffer *add;
+    const char *name;
+
+    name = god->name;
+
+    /* preamble.. */
+    assert(buf);
+    stringbuffer_append_printf(buf, "This document contains knowledge concerning the diety %s", name);
+
+    /* Always have as default information the god's descriptive terms. */
+    if (nstrtok(god->msg, ",") > 0) {
+        stringbuffer_append_string(buf, ", known as");
+        stringbuffer_append_string(buf, strtoktolin(god->msg, ",", temp, sizeof(temp)));
+    } else
+        stringbuffer_append_string(buf, "...");
+
+    stringbuffer_append_string(buf, "\n ---\n");
+
+    if (what & GOD_PATHS) {
+        /* spell paths */
+        int has_effect = 0;
+        size_t buflen = 0;
+        temp[0] = '\0';
+
+        add = stringbuffer_new();
+        stringbuffer_append_printf(add, "It is rarely known fact that the priests of %s are mystically transformed. Effects of this include:\n", name);
+
+        if (god->path_attuned) {
+            has_effect = 1;
+            DESCRIBE_PATH_SAFE(temp, god->path_attuned, "Attuned", &buflen, BOOK_BUF);
+        }
+        if (god->path_repelled) {
+            has_effect = 1;
+            DESCRIBE_PATH_SAFE(temp, god->path_repelled, "Repelled", &buflen, BOOK_BUF);
+        }
+        if (god->path_denied) {
+            has_effect = 1;
+            DESCRIBE_PATH_SAFE(temp, god->path_denied, "Denied", &buflen, BOOK_BUF);
+        }
+        if (has_effect) {
+            stringbuffer_append_printf(add, "%s\n ---\n", temp);
+
+            if ((maxlen == 0) || (stringbuffer_length(add) + stringbuffer_length(buf) < maxlen)) {
+                stringbuffer_append_stringbuffer(buf, add);
+                free(stringbuffer_finish(add));
+                hassomething = 1;
+            } else {
+                free(stringbuffer_finish(add));
+                return real;
+            }
+        } else {
+            free(stringbuffer_finish(add));
+        }
+        what |= GOD_PATHS;
+    }
+
+    if (what & GOD_IMMUNITIES) {
+        int has_effect = 0, tmpvar;
+        char tmpbuf[MAX_BUF];
+
+        add = stringbuffer_new();
+        stringbuffer_append_printf(add, "\nThe priests of %s are known to make cast a mighty prayer of possession which gives the recipient", name);
+
+        for (tmpvar = 0; tmpvar < NROFATTACKS; tmpvar++) {
+            if (god->resist[tmpvar] == 100) {
+                has_effect = 1;
+                snprintf(tmpbuf, MAX_BUF, "Immunity to %s", attacktype_desc[tmpvar]);
+            }
+        }
+        if (has_effect) {
+            stringbuffer_append_printf(add, "%s\n ---\n", tmpbuf);
+            if ((maxlen == 0) || (stringbuffer_length(add) + stringbuffer_length(buf) < maxlen)) {
+                stringbuffer_append_stringbuffer(buf, add);
+                free(stringbuffer_finish(add));
+                hassomething = 1;
+            } else {
+                free(stringbuffer_finish(add));
+                return real;
+            }
+        } else {
+            free(stringbuffer_finish(add));
+        }
+        real |= GOD_IMMUNITIES;
+    }
+
+    if (what & GOD_BLESSED) {
+        char cp[MAX_BUF];
+        describe_resistance(god, 1, cp, MAX_BUF);
+
+        if (*cp) {  /* This god does have protections */
+            add = stringbuffer_new();
+            stringbuffer_append_printf(add, "\nThe priests of %s are known to be able to bestow a blessing which makes the recipient %s\n ---\n", name, cp);
+
+            if ((maxlen == 0) || (stringbuffer_length(add) + stringbuffer_length(buf) < maxlen)) {
+                stringbuffer_append_stringbuffer(buf, add);
+                free(stringbuffer_finish(add));
+                hassomething = 1;
+            } else {
+                free(stringbuffer_finish(add));
+                return real;
+            }
+        }
+        real |= GOD_BLESSED;
+    }
+
+    if (what & GOD_SACRED) {
+        if (god->race && !(god->path_denied&PATH_SUMMON)) {
+            int i = nstrtok(god->race, ",");
+            add = stringbuffer_new();
+            stringbuffer_append_printf(add, "Creatures sacred to %s include the\n", name);
+
+            if (i > 1)
+                stringbuffer_append_printf(add, "following races:%s\n ---\n", strtoktolin(god->race, ",", temp, sizeof(temp)));
+            else
+                stringbuffer_append_printf(add, "race of %s\n ---\n", strtoktolin(god->race, ",", temp, sizeof(temp)));
+
+            if ((maxlen == 0) || (stringbuffer_length(add) + stringbuffer_length(buf) < maxlen)) {
+                stringbuffer_append_stringbuffer(buf, add);
+                free(stringbuffer_finish(add));
+                hassomething = 1;
+            } else {
+                free(stringbuffer_finish(add));
+                return real;
+            }
+        }
+        real |= GOD_SACRED;
+    }
+
+    if (what & GOD_RESISTANCES) {
+        char cp[BOOK_BUF];
+        describe_resistance(god, 1, cp, sizeof(cp));
+
+        if (*cp) {  /* This god does have protections */
+            add = stringbuffer_new();
+            stringbuffer_append_printf(add, "%s has a potent aura which is extended to faithful priests. The effects of this aura include:\n%s\n ---\n", name, cp);
+
+            if ((maxlen == 0) || (stringbuffer_length(add) + stringbuffer_length(buf) < maxlen)) {
+                stringbuffer_append_stringbuffer(buf, add);
+                free(stringbuffer_finish(add));
+                hassomething = 1;
+            } else {
+                free(stringbuffer_finish(add));
+                return real;
+            }
+        }
+        real |= GOD_RESISTANCES;
+    }
+
+    if (what & GOD_HOLYWORD) {
+        if ((god->slaying) && !(god->path_denied&PATH_TURNING)) {
+            add = stringbuffer_new();
+            stringbuffer_append_printf(add, "The holy words of %s have the power to slay creatures belonging to the ", name);
+
+            if (nstrtok(god->slaying, ",") > 1)
+                stringbuffer_append_printf(add, "following races:%s\n ---\n", strtoktolin(god->slaying, ",", temp, sizeof(temp)));
+            else
+                stringbuffer_append_printf(add, "race of%s\n ---\n", strtoktolin(god->slaying, ",", temp, sizeof(temp)));
+
+            if ((maxlen == 0) || (stringbuffer_length(add) + stringbuffer_length(buf) < maxlen)) {
+                stringbuffer_append_stringbuffer(buf, add);
+                free(stringbuffer_finish(add));
+                hassomething = 1;
+            } else {
+                free(stringbuffer_finish(add));
+                return real;
+            }
+        }
+        real |= GOD_HOLYWORD;
+    }
+
+    if (what & GOD_ENEMY) {
+        if (god->title) {
+            add = stringbuffer_new();
+            stringbuffer_append_printf(add, "The gods %s and %s are enemies.\n ---\n", name, god->title);
+
+            if ((maxlen == 0) || (stringbuffer_length(add) + stringbuffer_length(buf) < maxlen)) {
+                stringbuffer_append_stringbuffer(buf, add);
+                free(stringbuffer_finish(add));
+                hassomething = 1;
+            } else {
+                free(stringbuffer_finish(add));
+                return real;
+            }
+        }
+        real |= GOD_ENEMY;
+    }
+
+    if (hassomething == 0) {
+        /* we got no information beyond the preamble! */
+        stringbuffer_append_string(buf, " Unfortunately the rest of the information is hopelessly garbled!\n ---\n");
+    }
+
+    return real;
 }
 
 /**

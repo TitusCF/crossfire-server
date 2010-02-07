@@ -112,4 +112,12 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
  */
 void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);
 
+/**
+ * Return the current length of the buffer.
+ * @param sb The string buffer to check.
+ *
+ * @return current length of sb.
+ */
+size_t stringbuffer_length(StringBuffer *sb);
+
 #endif

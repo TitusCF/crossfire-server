@@ -65,6 +65,7 @@ extern godlink *get_rand_god(void);
 extern const object *pntr_to_god_obj(godlink *godlnk);
 extern void free_all_god(void);
 extern void dump_gods(void);
+extern int describe_god(const object *god, int what, StringBuffer *buf, int maxlen);
 /* info.c */
 extern void dump_abilities(void);
 extern void print_monsters(void);
@@ -325,6 +326,8 @@ extern void tailor_readable_ob(object *book, int msg_type);
 extern void free_all_readable(void);
 extern void write_book_archive(void);
 extern const readable_message_type *get_readable_message_type(object *readable);
+extern char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, size_t size);
+extern int nstrtok(const char *buf1, const char *buf2);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
 extern void init_formulae(void);
