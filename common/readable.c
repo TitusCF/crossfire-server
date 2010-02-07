@@ -1843,11 +1843,13 @@ static char *msgfile_msg(int level, size_t booksize) {
  * buffer that will contain the description. Must be at least length chars.
  * @param booksize
  * desired length of the book.
+ * @param book
+ * book we're writing the information to, for knowledge management.
  * @return
  * retbuf.
  * @todo make static when check_readably is cleaned.
  */
-char *god_info_msg(int level, char *retbuf, size_t booksize) {
+char *god_info_msg(int level, char *retbuf, size_t booksize, object *book) {
     const char *name;
     char buf[BOOK_BUF], *final;
     int i, what;
@@ -1895,15 +1897,18 @@ char *god_info_msg(int level, char *retbuf, size_t booksize) {
         return (char *)NULL; /* oops, problems... */
 
     desc = stringbuffer_new();
-    describe_god(god, what, desc, booksize);
+    what = describe_god(god, what, desc, booksize);
 
     /* check to be sure new buffer size dont exceed either
     * the maximum buffer size, or the 'natural' size of the
     * book...
             */
     final = stringbuffer_finish(desc);
-    if (!book_overflow(retbuf, final, booksize) && strlen(final) > 1)
+    if (!book_overflow(retbuf, final, booksize) && strlen(final) > 1) {
         safe_strcat(retbuf, final, &retlen, BOOK_BUF);
+        snprintf(buf, sizeof(buf), "god:%s:%d", god->name, what);
+        object_set_value(book, "knowledge_marker", buf, 1);
+    }
 
     free(final);
 }
@@ -1975,7 +1980,7 @@ void tailor_readable_ob(object *book, int msg_type) {
         break;
 
     case MSGTYPE_GODS: /* bits of information about a god */
-        god_info_msg(level, msgbuf, book_buf_size);
+        god_info_msg(level, msgbuf, book_buf_size, book);
         break;
 
     case MSGTYPE_LIB: /* use info list in lib/ */

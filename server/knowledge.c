@@ -311,10 +311,128 @@ static int knowledge_monster_add(struct knowledge_player *current, const char *i
     return added;
 }
 
+/**
+ * God information summary.
+ * @param pl who to give the information to.
+ * @param item knowledge item.
+ * @param index number of the item to display.
+ * @todo merge with stuff in readable.c
+ */
+static void knowledge_god_summary(object *pl, const char *item, int index) {
+    char *dup = strdup_local(item), *pos = strchr(dup, ':');
+
+    if (pos)
+        *pos = '\0';
+
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s [god]", NULL, index, dup);
+    free(dup);
+}
+
+/**
+ * Describe in detail a god.
+ * @param pl who to describe for.
+ * @param item knowledge item for the god (object name and what is known).
+ * @todo merge with stuff in readable.c
+ */
+static void knowledge_god_detail(object *pl, const char *item) {
+    char *dup = strdup_local(item), *pos = strchr(dup, ':'), *final;
+    const archetype *god;
+    StringBuffer *buf;
+    int what;
+
+    if (!pos) {
+        LOG(llevError, "knowledge_god_detail: invalid god item %s\n", item);
+        free(dup);
+        return;
+    }
+
+    *pos = '\0';
+    what = atoi(pos + 1);
+    god = find_archetype_by_object_name(dup);
+    free(dup);
+
+    if (!god) {
+        LOG(llevError, "knowledge_god_detail: couldn't find god %s?\n", item);
+        return;
+    }
+
+    buf = stringbuffer_new();
+    describe_god(&god->clone, what, buf, 0);
+    final = stringbuffer_finish(buf);
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, final, NULL);
+    free(final);
+}
+
+/**
+ * Check if a god knowledge item is still valid.
+ * @param item monster to check
+ * @return 0 if invalid, 1 if valid.
+ */
+static int knowledge_god_validate(const char *item) {
+    char *dup = strdup_local(item), *pos = strchr(dup, ':');
+    int valid;
+
+    if (!pos) {
+        LOG(llevError, "knowledge_god_validate: invalid god item %s\n", item);
+        free(dup);
+        return;
+    }
+    *pos = '\0';
+    valid = find_archetype_by_object_name(dup) != NULL;
+    free(dup);
+    return valid;
+}
+
+/**
+ * Add god information to the player's knowledge, handling the multiple monster case.
+ * @param current where to add the information to.
+ * @param item god to add, a dot separating the exact knowledge.
+ * @param type pointer of the monster type.
+ * @return count of actually added items.
+ */
+static int knowledge_god_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type) {
+    char *dup = strdup_local(item), *pos = strchr(dup, ':'), *final;
+    const archetype *god;
+    StringBuffer *buf;
+    int what;
+    knowledge_item* check;
+
+    if (!pos) {
+        LOG(llevError, "knowledge_god_add: invalid god item %s\n", item);
+        free(dup);
+        return;
+    }
+
+    *pos = '\0';
+    what = atoi(pos + 1);
+
+    for (check = current->items; check; check = check->next) {
+        if (strncmp(check->item, dup, strlen(dup)) == 0) {
+            /* Already known, update information. */
+            int known;
+            pos = strchr(check->item, ':');
+            known = atoi(pos + 1);
+            known |= what;
+            buf = stringbuffer_new();
+            stringbuffer_append_printf(buf, "%s:%d", dup, known);
+            free_string(check->item);
+            check->item = stringbuffer_finish_shared(buf);
+            free(dup);
+            return (what != known);
+        }
+    }
+
+    free(dup);
+
+    /* Not known, so just add it regularly. */
+    return knowledge_add(current, item, type);
+}
+
 /** All handled knowledge items. */
 static const knowledge_type const knowledges[] = {
     { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate, knowledge_add },
     { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add },
+    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add },
     { NULL, 0, 0 }
 };
 
