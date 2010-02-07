@@ -338,19 +338,19 @@ static knowledge_player *knowledge_get_or_create(player *pl) {
 }
 
 /**
- * Add a knowledge item to a player's store if not found yet, notify player if added item.
- * @param pl who to give the knowledge to.
+ * Add a knowledge item to a player's store if not found yet.
+ * @param current where to look for the knowledge.
  * @param item internal value of the item to give.
  * @param kt how to handle the knowledge type.
+ * @return 0 if item was already known, 1 else.
  */
-static void knowledge_add(player *pl, const char *item, const knowledge_type *kt) {
-    knowledge_player *current = knowledge_get_or_create(pl);
+static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt) {
     knowledge_item *check = current->items;
 
     while (check) {
         if (strcmp(kt->type, check->handler->type) == 0 && strcmp(item, check->item) == 0) {
             /* already known, bailout */
-            return;
+            return 0;
         }
         check = check->next;
     }
@@ -361,11 +361,7 @@ static void knowledge_add(player *pl, const char *item, const knowledge_type *kt
     check->next = current->items;
     check->handler = kt;
     current->items = check;
-    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You write that down for future reference.", NULL);
-    if (check->next == NULL)
-        /* first information ever written down, be nice and give hint to recover it. */
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Use the 'knowledge' command to browse what you write down (this message will not appear anymore).", NULL);
-    knowledge_write_player_data(current);
+    return 1;
 }
 
 /**
@@ -377,6 +373,8 @@ void knowledge_read(player *pl, object *book) {
     sstring marker = object_get_value(book, "knowledge_marker");
     char *dot, *copy;
     const knowledge_type *type;
+    int none, added = 0;
+    knowledge_player *current = knowledge_get_or_create(pl);
 
     if (!marker)
         return;
@@ -400,8 +398,18 @@ void knowledge_read(player *pl, object *book) {
         return;
     }
 
-    knowledge_add(pl, dot, type);
+    none = (current->items == NULL);
+    added = knowledge_add(current, dot, type);
     free(copy);
+
+    if (added) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You write that down for future reference.", NULL);
+        if (none) {
+            /* first information ever written down, be nice and give hint to recover it. */
+            draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Use the 'knowledge' command to browse what you write down (this message will not appear anymore).", NULL);
+        }
+    }
+    knowledge_write_player_data(current);
 }
 
 /**

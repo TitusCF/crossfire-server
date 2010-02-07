@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tweak knowledge functions, preparing for additional items.
+Nicolas Weeger 2010-02-07
+
 Remove support for lib/treasures file from lib/collect.pl.
 Andreas Kirschbaum 2010-02-01
 
