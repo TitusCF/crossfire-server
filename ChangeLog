@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix artifact description to use item's name, not archetype name.
+Nicolas Weeger 2010-02-07
+
 Keep track of monster knowledge.
 Nicolas Weeger 2010-02-07
 

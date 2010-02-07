@@ -1535,13 +1535,18 @@ static char *artifact_msg(int level, char *retbuf, size_t booksize) {
 
         /* Name */
         if (art->allowed != NULL && strcmp(art->allowed->name, "All")) {
+            archetype *arch;
             linked_char *temp, *next = art->allowed;
 
             do {
                 temp = next;
                 next = next->next;
             } while (next != (linked_char *)NULL && RANDOM()%2);
-            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s of %s", temp->name, art->item->name);
+            arch = try_find_archetype(temp->name);
+            if (!arch)
+                LOG(llevError, "artifact_msg: missing archetype %s for artifact %s (type %d)\n", temp->name, art->item->name, art->item->type);
+            else
+                snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s of %s", arch->clone.name, art->item->name);
         } else {  /* default name is used */
             /* use the base 'generic' name for our artifact */
             snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " The %s of %s", art_name_array[index].name, art->item->name);
