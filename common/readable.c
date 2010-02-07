@@ -1409,8 +1409,7 @@ static object *get_next_mon(const object *tmp) {
 }
 
 /**
- * Generate a message detailing the properties
- * of randomly monster(s).
+ * Generate a message detailing the properties of randomly monster(s), and add relevant knowledge markers.
  *
  * @param level
  * book level.
@@ -1418,15 +1417,21 @@ static object *get_next_mon(const object *tmp) {
  * buffer that will contain the message. Must be at least of length booksize
  * @param booksize
  * size (in characters) of the book we want.
+ * @param book
+ * book in which we will put the information.
  * @return
  * buf.
  */
-static char *mon_info_msg(int level, char *buf, size_t booksize) {
+static char *mon_info_msg(int level, char *buf, size_t booksize, object *book) {
     char tmpbuf[HUGE_BUF], desc[MAX_BUF];
     object *tmp;
+    StringBuffer *marker = stringbuffer_new();
+    int added = 0;
+    sstring final;
 
     /*preamble */
     snprintf(buf, booksize, "This beastiary contains:");
+    stringbuffer_append_string(marker, "monster");
 
     /* lets print info on as many monsters as will fit in our
      * document.
@@ -1441,6 +1446,8 @@ static char *mon_info_msg(int level, char *buf, size_t booksize) {
 
         if (book_overflow(buf, tmpbuf, booksize))
             break;
+        added++;
+        stringbuffer_append_printf(marker, ":%s", tmp->arch->name);
         snprintf(buf+strlen(buf), booksize-strlen(buf), "%s", tmpbuf);
     }
 
@@ -1448,6 +1455,11 @@ static char *mon_info_msg(int level, char *buf, size_t booksize) {
     LOG(llevDebug, "\n mon_info_msg() created strng: %d\n", strlen(retbuf));
     fprintf(logfile, " MADE THIS:\n%s\n", retbuf);
 #endif
+
+    final = stringbuffer_finish_shared(marker);
+    if (added)
+        object_set_value(book, "knowledge_marker", final, 1);
+    free_string(final);
 
     return buf;
 }
@@ -2036,7 +2048,7 @@ void tailor_readable_ob(object *book, int msg_type) {
     msg_type = msg_type > 0 ? msg_type : RANDOM()%6;
     switch (msg_type) {
     case MSGTYPE_MONSTER:
-        mon_info_msg(level, msgbuf, book_buf_size);
+        mon_info_msg(level, msgbuf, book_buf_size, book);
         break;
 
     case MSGTYPE_ARTIFACT:

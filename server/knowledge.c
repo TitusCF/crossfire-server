@@ -25,10 +25,12 @@
 
 Handling of player knowledge of various things.
 
-Right now, only alchemy is considered.
+Right now, the following items are considered:
+- alchemy formulea
+- monster information
 
 Knowledge is specific for a player, and organized in 'items'.
-One item is a specific formulae, whatever is coded.
+One item is a specific formulae or monster, whatever is coded.
 
 Note that some things are done through functions in readable.c, especially item marking.
 
@@ -45,7 +47,7 @@ Knowledge is stored in a "player.knowledge" file in the player's directory.
 Knowledge relies on key/values. Key is "knowledge_marker", value is specific to the
 item class considered and must have a left-side part, delimited by a double dot, specifying a type.
 
-The value should be enough to determine a unique formulae / etc.
+The value should be enough to determine a unique formulae or monster etc.
 
 A type is linked to various functions for displaying, checking the key value.
 
@@ -64,18 +66,24 @@ During loading, obsolete items (eg formula changed) are discarded.
 #include <sproto.h>
 #endif
 
+struct knowledge_player;
+struct knowledge_type;
+
 /** Function to display the short description of an item. */
-typedef void (*knowledge_summary)(object *pl, const char *, int);
+typedef void (*knowledge_summary)(object *, const char *, int);
 /** Function to display a detailed description of an item. */
-typedef void (*knowledge_detail)(object *pl, const char *);
+typedef void (*knowledge_detail)(object *, const char *);
 /** Function to check if the specified item is valid. */
 typedef int (*knowledge_is_valid_item)(const char *);
+/** Function to add the specified item, should return how many actually written. */
+typedef int (*knowledge_add_item)(struct knowledge_player *, const char *, const struct knowledge_type *);
 /** One item type that may be known to the player. */
 typedef struct knowledge_type {
     const char *type;                   /**< Type internal code, musn't have a double dot, must be unique ingame. */
     knowledge_summary summary;          /**< Display the short description. */
     knowledge_detail detail;            /**< Display the detailed description. */
     knowledge_is_valid_item validate;   /**< Validate the specific value. */
+    knowledge_add_item add;             /**< Add the item to the knowledge store. */
 } knowledge_type;
 
 
@@ -210,9 +218,103 @@ static int knowledge_achemy_validate(const char *item) {
     return knowledge_alchemy_get_recipe(item) != NULL;
 }
 
+/**
+ * Add a knowledge item to a player's store if not found yet.
+ * @param current where to look for the knowledge.
+ * @param item internal value of the item to give, considered atomic.
+ * @param kt how to handle the knowledge type.
+ * @return 0 if item was already known, 1 else.
+ */
+static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt) {
+    knowledge_item *check = current->items;
+
+    while (check) {
+        if (strcmp(kt->type, check->handler->type) == 0 && strcmp(item, check->item) == 0) {
+            /* already known, bailout */
+            return 0;
+        }
+        check = check->next;
+    }
+
+    /* keep the knowledge */
+    check = calloc(1, sizeof(knowledge_item));
+    check->item = add_string(item);
+    check->next = current->items;
+    check->handler = kt;
+    current->items = check;
+    return 1;
+}
+
+/**
+ * Monster information summary.
+ * @param pl who to give the information to.
+ * @param item knowledge item.
+ * @param index number of the item to display.
+ * @todo merge with stuff in readable.c
+ */
+static void knowledge_monster_summary(object *pl, const char *item, int index) {
+    archetype *monster = find_archetype(item);
+    if (!monster)
+        return;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", NULL, index, monster->clone.name);
+}
+
+/**
+ * Describe in detail a monster.
+ * @param pl who to describe for.
+ * @param item knowledge item for the monster (archetype name).
+ * @todo merge with stuff in readable.c
+ */
+static void knowledge_monster_detail(object *pl, const char *item) {
+    char buf[HUGE_BUF];
+    archetype *monster = find_archetype(item);
+
+    if (!monster)
+        return;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, " *** %s ***", NULL, monster->clone.name);
+    describe_item(&monster->clone, NULL, buf, sizeof(buf));
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, buf, NULL);
+}
+
+/**
+ * Check if a monster knowledge item is still valid.
+ * @param item monster to check
+ * @return 0 if invalid, 1 if valid.
+ */
+static int knowledge_monster_validate(const char *item) {
+    return try_find_archetype(item) != NULL;
+}
+
+/**
+ * Add monster information to the player's knowledge, handling the multiple monster case.
+ * @param current where to add the information to.
+ * @param item monster to add, can be separated by dots for multiple ones.
+ * @param type pointer of the monster type.
+ * @return count of actually added items.
+ */
+static int knowledge_monster_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type) {
+    char *dup = strdup_local(item);
+    char *pos, *first = dup;
+    int added = 0;
+
+    while (first) {
+        pos = strchr(first, ':');
+        if (pos)
+            *pos = '\0';
+        added += knowledge_add(current, first, type);
+        first = pos ? pos + 1 : NULL;
+    }
+
+    free(dup);
+    return added;
+}
+
 /** All handled knowledge items. */
 static const knowledge_type const knowledges[] = {
-    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate },
+    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate, knowledge_add },
+    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add },
     { NULL, 0, 0 }
 };
 
@@ -227,6 +329,7 @@ static const knowledge_type *knowledge_find(const char *type) {
     while (knowledges[i].type != NULL) {
         if (strcmp(knowledges[i].type, type) == 0)
             return &knowledges[i];
+        i++;
     }
 
     return NULL;
@@ -278,7 +381,7 @@ static void knowledge_read_player_data(knowledge_player *kp) {
 
     file = fopen(final, "r");
     if (!file) {
-        /* no quest yet, no big deal */
+        /* no knowledge yet, no big deal */
         return;
     }
 
@@ -338,33 +441,6 @@ static knowledge_player *knowledge_get_or_create(player *pl) {
 }
 
 /**
- * Add a knowledge item to a player's store if not found yet.
- * @param current where to look for the knowledge.
- * @param item internal value of the item to give.
- * @param kt how to handle the knowledge type.
- * @return 0 if item was already known, 1 else.
- */
-static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt) {
-    knowledge_item *check = current->items;
-
-    while (check) {
-        if (strcmp(kt->type, check->handler->type) == 0 && strcmp(item, check->item) == 0) {
-            /* already known, bailout */
-            return 0;
-        }
-        check = check->next;
-    }
-
-    /* keep the knowledge */
-    check = calloc(1, sizeof(knowledge_item));
-    check->item = add_string(item);
-    check->next = current->items;
-    check->handler = kt;
-    current->items = check;
-    return 1;
-}
-
-/**
  * Player is reading a book, give knowledge if needed, warn player, and such.
  * @param pl who is reading.
  * @param book what is read.
@@ -399,7 +475,7 @@ void knowledge_read(player *pl, object *book) {
     }
 
     none = (current->items == NULL);
-    added = knowledge_add(current, dot, type);
+    added = type->add(current, dot, type);
     free(copy);
 
     if (added) {
