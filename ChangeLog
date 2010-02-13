@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix memory leak.
+Nicolas Weeger 2010-02-13
+
 Rewrite artifact_msg() to use stringbuffer, not complete.
 Nicolas Weeger 2010-02-13
 

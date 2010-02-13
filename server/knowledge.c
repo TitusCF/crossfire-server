@@ -704,6 +704,7 @@ static void free_knowledge_items(knowledge_player *kp) {
     while (item) {
         free_string(item->item);
         next = item->next;
+        free(item);
         item = next;
     }
     kp->items = NULL;
