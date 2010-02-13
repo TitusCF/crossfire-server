@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix stupid infinite loop.
+Nicolas Weeger 2010-02-13
+
 Track god-information knowledge.
 Nicolas Weeger 2010-02-07
 

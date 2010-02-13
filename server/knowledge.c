@@ -545,6 +545,7 @@ static knowledge_player *knowledge_get_or_create(player *pl) {
     while (cur) {
         if (cur->player_name == pl->ob->name)
             return cur;
+        cur = cur->next;
     }
 
     cur = calloc(1, sizeof(knowledge_player));
