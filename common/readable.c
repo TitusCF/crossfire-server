@@ -1481,14 +1481,16 @@ static char *mon_info_msg(int level, char *buf, size_t booksize, object *book) {
  * length of the book.
  * @return
  * retbuf.
+@todo make static (again) when check_readable is cleaned of the unit rewrite test.
  */
-static char *artifact_msg(int level, char *retbuf, size_t booksize) {
+char *artifact_msg(int level, char *retbuf, size_t booksize) {
     artifactlist *al;
     artifact *art;
     int chance, i, type, index;
     int book_entries = level > 5 ? RANDOM()%3+RANDOM()%3+2 : RANDOM()%level+1;
-    char buf[BOOK_BUF], sbuf[MAX_BUF];
+    char buf[BOOK_BUF], sbuf[MAX_BUF], *final;
     object *tmp;
+    StringBuffer *desc;
 
     /* values greater than 5 create msg buffers that are too big! */
     if (book_entries > 5)
@@ -1531,11 +1533,12 @@ static char *artifact_msg(int level, char *retbuf, size_t booksize) {
         if (art == NULL)
             art = al->items;
 
+        desc = stringbuffer_new();
         /* separator of items */
-        snprintf(buf, sizeof(buf), "---\n");
+        stringbuffer_append_string(desc, "---\n");
 
         /* Name */
-        if (art->allowed != NULL && strcmp(art->allowed->name, "All")) {
+        if (art->allowed != NULL) {
             archetype *arch;
             linked_char *temp = art->allowed;
             int inv = 0, w;
@@ -1564,36 +1567,35 @@ static char *artifact_msg(int level, char *retbuf, size_t booksize) {
                 LOG(llevError, "artifact_msg: missing archetype %s for artifact %s (type %d)\n", temp->name + inv, art->item->name, art->item->type);
             else {
                 if (inv)
-                    snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s (excepted %s) of %s", art_name_array[index].name, arch->clone.name_pl, art->item->name);
+                    stringbuffer_append_printf(desc, " A %s (excepted %s) of %s", art_name_array[index].name, arch->clone.name_pl, art->item->name);
                 else
-                    snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s of %s", arch->clone.name, art->item->name);
+                    stringbuffer_append_printf(desc, " A %s of %s", arch->clone.name, art->item->name);
             }
         } else {  /* default name is used */
             /* use the base 'generic' name for our artifact */
-            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " The %s of %s", art_name_array[index].name, art->item->name);
+            stringbuffer_append_printf(desc, " The %s of %s", art_name_array[index].name, art->item->name);
         }
 
         /* chance of finding */
+        stringbuffer_append_string(desc, " is ");
         chance = 100*((float)art->chance/al->total_chance);
         if (chance >= 20)
-            snprintf(sbuf, sizeof(sbuf), "an uncommon");
+            stringbuffer_append_string(desc, "an uncommon");
         else if (chance >= 10)
-            snprintf(sbuf, sizeof(sbuf), "an unusual");
+            stringbuffer_append_string(desc, "an unusual");
         else if (chance >= 5)
-            snprintf(sbuf, sizeof(sbuf), "a rare");
+            stringbuffer_append_string(desc, "a rare");
         else
-            snprintf(sbuf, sizeof(sbuf), "a very rare");
-        snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " is %s\n", sbuf);
+            stringbuffer_append_string(desc, "a very rare");
 
         /* value of artifact */
-        snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " item with a value that is %d times normal.\n",
-            art->item->value);
+        stringbuffer_append_printf(desc, " item with a value that is %d times normal.\n", art->item->value);
 
         /* include the message about the artifact, if exists, and book
         * level is kinda high */
         if (art->item->msg && RANDOM()%4+1 < level
         && !(strlen(art->item->msg)+strlen(buf) > BOOK_BUF))
-            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "%s", art->item->msg);
+            stringbuffer_append_string(desc, art->item->msg);
 
         /* properties of the artifact */
         tmp = object_new();
@@ -1602,12 +1604,18 @@ static char *artifact_msg(int level, char *retbuf, size_t booksize) {
         SET_FLAG(tmp, FLAG_IDENTIFIED);
         describe_item(tmp, NULL, sbuf, sizeof(sbuf));
         if (strlen(sbuf) > 1)
-            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " Properties of this artifact include:\n %s\n", sbuf);
+            stringbuffer_append_printf(desc, " Properties of this artifact include:\n %s\n", sbuf);
         object_free(tmp);
+
+        final = stringbuffer_finish(desc);
+
         /* add the buf if it will fit */
-        if (book_overflow(retbuf, buf, booksize))
+        if (book_overflow(retbuf, final, booksize)) {
+            free(final);
             break;
-        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s", buf);
+        }
+        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s", final);
+        free(final);
 
         art = art->next;
         book_entries--;
@@ -1847,9 +1855,8 @@ static char *msgfile_msg(int level, size_t booksize) {
  * book we're writing the information to, for knowledge management.
  * @return
  * retbuf.
- * @todo make static when check_readably is cleaned.
  */
-char *god_info_msg(int level, char *retbuf, size_t booksize, object *book) {
+static char *god_info_msg(int level, char *retbuf, size_t booksize, object *book) {
     const char *name;
     char buf[BOOK_BUF], *final;
     int i, what;

@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <check.h>
 #include <global.h>
+#include <assert.h>
 
 void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
@@ -46,188 +47,171 @@ void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-static char *old_god_info_msg(int level, char *retbuf, size_t booksize) {
-    const char *name;
-    char buf[BOOK_BUF];
-    int i;
-    size_t retlen, buflen;
-    size_t introlen;
-    const object *god = pntr_to_god_obj(get_rand_god());
-    char en[BOOK_BUF];
+#define arraysize(arrayname) (sizeof(arrayname)/sizeof(*(arrayname)))
+/** special structure, used only by art_name_array[] */
+typedef struct namebytype {
+    const char *name;  /**< generic name to call artifacts of this type */
+    int type;          /**< matching type */
+} arttypename;
 
-    if (booksize > BOOK_BUF) {
-        LOG(llevError, "common/readable.c:god_info_msg() - passed in booksize (%lu) is larger than book buffer (%d)\n", (unsigned long)booksize, BOOK_BUF);
-        booksize = BOOK_BUF;
+static const arttypename art_name_array[] = {
+    { "Helmet", HELMET },
+    { "Amulet", AMULET },
+    { "Shield", SHIELD },
+    { "Bracers", BRACERS },
+    { "Boots", BOOTS },
+    { "Cloak", CLOAK },
+    { "Gloves", GLOVES },
+    { "Gridle", GIRDLE },
+    { "Ring", RING },
+    { "Horn", ROD },
+    { "Missile Weapon", BOW },
+    { "Missile", ARROW },
+    { "Hand Weapon", WEAPON },
+    { "Artifact", SKILL },
+    { "Food", FOOD },
+    { "Body Armour", ARMOUR }
+};
+
+static char *old_artifact_msg(int level, char *retbuf, size_t booksize) {
+    artifactlist *al;
+    artifact *art;
+    int chance, i, type, index;
+    int book_entries = level > 5 ? RANDOM()%3+RANDOM()%3+2 : RANDOM()%level+1;
+    char buf[BOOK_BUF], sbuf[MAX_BUF];
+    object *tmp;
+
+    /* values greater than 5 create msg buffers that are too big! */
+    if (book_entries > 5)
+        book_entries = 5;
+
+    /* lets determine what kind of artifact type randomly.
+    * Right now legal artifacts only come from those listed
+    * in art_name_array. Also, we check to be sure an artifactlist
+    * for that type exists!
+    */
+    i = 0;
+    do {
+        index = RANDOM()%arraysize(art_name_array);
+        type = art_name_array[index].type;
+        al = find_artifactlist(type);
+        i++;
+    } while (al == NULL && i < 10);
+
+    if (i == 10) { /* Unable to find a message */
+        snprintf(retbuf, booksize, "None");
+        return retbuf;
     }
 
-    if (!god)
-        return (char *)NULL; /* oops, problems... */
-    name = god->name;
+    /* There is no reason to start on the artifact list at the beginning. Lets
+    * take our starting position randomly... */
+    art = al->items;
+    for (i = RANDOM()%level+RANDOM()%2+1; i > 0; i--) {
+        if (art == NULL)
+            art = al->items; /* hmm, out of stuff, loop back around */
+        art = art->next;
+    }
 
-    /* preamble.. */
-    snprintf(retbuf, BOOK_BUF, "This document contains knowledge concerning the diety %s", name);
+    /* Ok, lets print out the contents */
+    snprintf(retbuf, booksize, "Herein %s detailed %s...\n", book_entries > 1 ? "are" : "is", book_entries > 1 ? "some artifacts" : "an artifact");
 
-    retlen = strlen(retbuf);
-
-    /* Always have as default information the god's descriptive terms. */
-    if (nstrtok(god->msg, ",") > 0) {
-        safe_strcat(retbuf, ", known as", &retlen, BOOK_BUF);
-        safe_strcat(retbuf, strtoktolin(god->msg, ",", buf, sizeof(buf)), &retlen, BOOK_BUF);
-    } else
-        safe_strcat(retbuf, "...", &retlen, BOOK_BUF);
-
-        safe_strcat(retbuf, "\n ---\n", &retlen, BOOK_BUF);
-
-        introlen = retlen; /* so we will know if no new info is added later */
-
-    /* Information about the god is random, and based on the level of the
-        * 'book'. This goes through this loop 'level' times, reducing level by
-        * 1 each time.  If the info provided is filled up, we exit the loop.
-        * otherwise, buf is appended to the existing book buffer.
+    /* artifact msg attributes loop. Lets keep adding entries to the 'book'
+    * as long as we have space up to the allowed max # (book_entires)
     */
+    while (book_entries > 0) {
+        if (art == NULL)
+            art = al->items;
 
-        while (level > 0) {
-            buf[0]=' ';
-            buf[1]='\0';
-            if (level == 2 && RANDOM()%2) {
-                /* enemy god */
+        /* separator of items */
+        snprintf(buf, sizeof(buf), "---\n");
 
-                if (god->title)
-                    snprintf(buf, BOOK_BUF, "The gods %s and %s are enemies.\n ---\n", name, god->title);
-            }
-            if (level == 3 && RANDOM()%2) {
-                /* enemy race, what the god's holy word effects */
-                const char *enemy = god->slaying;
+        /* Name */
+        if (art->allowed != NULL && strcmp(art->allowed->name, "All")) {
+            archetype *arch;
+            linked_char *temp = art->allowed;
+            int inv = 0, w;
 
-                if (enemy && !(god->path_denied&PATH_TURNING)
-                    && (i = nstrtok(enemy, ",")) > 0) {
-                    char tmpbuf[MAX_BUF];
+            assert(art->allowed_size > 0);
+            if (art->allowed_size > 1)
+                w = 1 + RANDOM() % art->allowed_size;
+            else
+                w = 1;
 
-                    snprintf(buf, BOOK_BUF, "The holy words of %s have the power to slay creatures belonging to the ", name);
-                    if (i > 1)
-                        snprintf(tmpbuf, MAX_BUF, "following races:%s\n ---\n", strtoktolin(enemy, ",", en, sizeof(en)));
-                    else
-                        snprintf(tmpbuf, MAX_BUF, "race of%s\n ---\n", strtoktolin(enemy, ",", en, sizeof(en)));
-
-                    buflen = strlen(buf);
-                    safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
-                    }
-            }
-            if (level == 4 && RANDOM()%2) {
-                /* Priest of god gets these protect,vulnerable... */
-
-                char cp[BOOK_BUF];
-                describe_resistance(god, 1, cp, BOOK_BUF);
-
-                if (*cp) {  /* This god does have protections */
-                    snprintf(buf, BOOK_BUF, "%s has a potent aura which is extended to faithful priests. The effects of this aura include:\n%s\n ---\n", name, cp);
-                }
-            }
-            if (level == 5 && RANDOM()%2) {
-                /* aligned race, summoning */
-                const char *race = god->race; /* aligned race */
-
-                if (race && !(god->path_denied&PATH_SUMMON)) {
-                    i = nstrtok(race, ",");
-                    if (i > 0) {
-                        char tmpbuf[MAX_BUF];
-
-                        snprintf(buf, BOOK_BUF, "Creatures sacred to %s include the\n", name);
-
-                        if (i > 1)
-                            snprintf(tmpbuf, MAX_BUF, "following races:%s\n ---\n", strtoktolin(race, ",", en, sizeof(en)));
-                        else
-                            snprintf(tmpbuf, MAX_BUF, "race of %s\n ---\n", strtoktolin(race, ",", en, sizeof(en)));
-
-                        buflen = strlen(buf);
-                        safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
-                    }
-                }
-            }
-            if (level == 6 && RANDOM()%2) {
-                /* blessing,curse properties of the god */
-
-                char cp[MAX_BUF];
-                describe_resistance(god, 1, cp, MAX_BUF);
-
-                if (*cp) {  /* This god does have protections */
-                    snprintf(buf, MAX_BUF, "\nThe priests of %s are known to be able to bestow a blessing which makes the recipient %s\n ---\n", name, cp);
-                }
-            }
-            if (level == 8 && RANDOM()%2) {
-                /* immunity, holy possession */
-                int has_effect = 0, tmpvar;
-                char tmpbuf[MAX_BUF];
-
-                snprintf(buf, MAX_BUF, "\nThe priests of %s are known to make cast a mighty prayer of possession which gives the recipient", name);
-
-                for (tmpvar = 0; tmpvar < NROFATTACKS; tmpvar++) {
-                    if (god->resist[tmpvar] == 100) {
-                        has_effect = 1;
-                        snprintf(tmpbuf, MAX_BUF, "Immunity to %s", attacktype_desc[tmpvar]);
-                    }
-                }
-                if (has_effect) {
-                    buflen = strlen(buf);
-                    safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
-                    safe_strcat(buf, "\n ---\n", &buflen, BOOK_BUF);
-                } else {
-                    buf[0]=' ';
-                    buf[1]='\0';
-                }
-            }
-            if (level == 12 && RANDOM()%2) {
-                /* spell paths */
-                int has_effect = 0;
-
-                snprintf(buf, MAX_BUF, "It is rarely known fact that the priests of %s are mystically transformed. Effects of this include:\n", name);
-                buflen = strlen(buf);
-
-                if (god->path_attuned) {
-                    has_effect = 1;
-                    DESCRIBE_PATH_SAFE(buf, god->path_attuned, "Attuned", &buflen, BOOK_BUF);
-                }
-                if (god->path_repelled) {
-                    has_effect = 1;
-                    DESCRIBE_PATH_SAFE(buf, god->path_repelled, "Repelled", &buflen, BOOK_BUF);
-                }
-                if (god->path_denied) {
-                    has_effect = 1;
-                    DESCRIBE_PATH_SAFE(buf, god->path_denied, "Denied", &buflen, BOOK_BUF);
-                }
-                if (has_effect) {
-                    safe_strcat(buf, "\n ---\n", &buflen, BOOK_BUF);
-                } else {
-                    buf[0]=' ';
-                    buf[1]='\0';
-                }
+            while (w > 1) {
+                assert(temp);
+                temp = temp->next;
+                w--;
             }
 
-        /* check to be sure new buffer size dont exceed either
-            * the maximum buffer size, or the 'natural' size of the
-            * book...
-        */
-            if (book_overflow(retbuf, buf, booksize))
-                break;
-            if (strlen(buf) > 1)
-                safe_strcat(retbuf, buf, &retlen, BOOK_BUF);
+            if (temp->name[0] == '!')
+                inv = 1;
 
-            level--;
+            /** @todo check archetype when loading archetypes, not here */
+            arch = try_find_archetype(temp->name + inv);
+            if (!arch)
+                arch = find_archetype_by_object_name(temp->name + inv);
+
+            if (!arch)
+                LOG(llevError, "artifact_msg: missing archetype %s for artifact %s (type %d)\n", temp->name + inv, art->item->name, art->item->type);
+            else {
+                if (inv)
+                    snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s (excepted %s) of %s", art_name_array[index].name, arch->clone.name_pl, art->item->name);
+                else
+                    snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " A %s of %s", arch->clone.name, art->item->name);
+            }
+        } else {  /* default name is used */
+            /* use the base 'generic' name for our artifact */
+            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " The %s of %s", art_name_array[index].name, art->item->name);
         }
-        if (retlen == introlen) {
-            /* we got no information beyond the preamble! */
-            safe_strcat(retbuf, " Unfortunately the rest of the information is hopelessly garbled!\n ---\n", &retlen, BOOK_BUF);
-        }
+
+        /* chance of finding */
+        chance = 100*((float)art->chance/al->total_chance);
+        if (chance >= 20)
+            snprintf(sbuf, sizeof(sbuf), "an uncommon");
+        else if (chance >= 10)
+            snprintf(sbuf, sizeof(sbuf), "an unusual");
+        else if (chance >= 5)
+            snprintf(sbuf, sizeof(sbuf), "a rare");
+        else
+            snprintf(sbuf, sizeof(sbuf), "a very rare");
+        snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " is %s\n", sbuf);
+
+        /* value of artifact */
+        snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " item with a value that is %d times normal.\n",
+                 art->item->value);
+
+        /* include the message about the artifact, if exists, and book
+        * level is kinda high */
+        if (art->item->msg && RANDOM()%4+1 < level
+            && !(strlen(art->item->msg)+strlen(buf) > BOOK_BUF))
+            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "%s", art->item->msg);
+
+        /* properties of the artifact */
+        tmp = object_new();
+        add_abilities(tmp, art->item);
+        tmp->type = type;
+        SET_FLAG(tmp, FLAG_IDENTIFIED);
+        describe_item(tmp, NULL, sbuf, sizeof(sbuf));
+        if (strlen(sbuf) > 1)
+            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " Properties of this artifact include:\n %s\n", sbuf);
+        object_free(tmp);
+        /* add the buf if it will fit */
+        if (book_overflow(retbuf, buf, booksize))
+            break;
+        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s", buf);
+
+        art = art->next;
+        book_entries--;
+    }
+
 #ifdef BOOK_MSG_DEBUG
-        LOG(llevDebug, "\n god_info_msg() created strng: %d\n", strlen(retbuf));
-        fprintf(logfile, " MADE THIS:\n%s", retbuf);
+    LOG(llevDebug, "artifact_msg() created strng: %d\n", strlen(retbuf));
+    fprintf(logfile, " MADE THIS:\n%s", retbuf);
 #endif
-        return retbuf;
+    return retbuf;
 }
 
-
-START_TEST(test_god_info_msg_rewrite) {
-    /* todo: write */
+START_TEST(test_artifact_msg_rewrite) {
     char old[HUGE_BUF], new[HUGE_BUF];
     int todo = 10000, seed, what, size;
     const archetype *arch;
@@ -248,9 +232,9 @@ START_TEST(test_god_info_msg_rewrite) {
         new[0] = '\0';
         seed = RANDOM();
         SRANDOM(seed);
-        old_god_info_msg(RANDOM() % 100, old, size);
+        old_artifact_msg(1 + RANDOM() % 100, old, size);
         SRANDOM(seed);
-        god_info_msg(RANDOM() % 100, new, size, dummy);
+        artifact_msg(1 + RANDOM() % 100, new, size);
         if (strcmp(old, new)) {
             int match = 0;
             while (old[match] == new[match] && old[match] != '\0') {
@@ -274,7 +258,7 @@ Suite *readable_suite(void) {
     tcase_add_checked_fixture(tc_core, setup, teardown);
 
     suite_add_tcase(s, tc_core);
-    tcase_add_test(tc_core, test_god_info_msg_rewrite);
+    tcase_add_test(tc_core, test_artifact_msg_rewrite);
 
     return s;
 }
