@@ -34,6 +34,7 @@
 #include <check.h>
 #include <global.h>
 #include <assert.h>
+#include <spells.h>
 
 void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
@@ -250,6 +251,106 @@ START_TEST(test_artifact_msg_rewrite) {
 }
 END_TEST
 
+static const uint32 spellpathdef[NRSPELLPATHS] = {
+    PATH_PROT,
+    PATH_FIRE,
+    PATH_FROST,
+    PATH_ELEC,
+    PATH_MISSILE,
+    PATH_SELF,
+    PATH_SUMMON,
+    PATH_ABJURE,
+    PATH_RESTORE,
+    PATH_DETONATE,
+    PATH_MIND,
+    PATH_CREATE,
+    PATH_TELE,
+    PATH_INFO,
+    PATH_TRANSMUTE,
+    PATH_TRANSFER,
+    PATH_TURNING,
+    PATH_WOUNDING,
+    PATH_DEATH,
+    PATH_LIGHT
+};
+
+static char *old_spellpath_msg(int level, char *retbuf, size_t booksize) {
+    int path = RANDOM()%NRSPELLPATHS, prayers = RANDOM()%2;
+    int did_first_sp = 0;
+    uint32 pnum = spellpathdef[path];
+    archetype *at;
+
+    /* Preamble */
+    snprintf(retbuf, booksize, "Herein are detailed the names of %s\n", prayers ? "prayers" : "incantations");
+
+    snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "belonging to the path of %s:\n", spellpathnames[path]);
+
+    for (at = first_archetype; at != NULL; at = at->next) {
+        /* Determine if this is an appropriate spell.  Must
+        * be of matching path, must be of appropriate type (prayer
+        * or not), and must be within the valid level range.
+        */
+        if (at->clone.type == SPELL
+            && at->clone.path_attuned&pnum
+            && ((at->clone.stats.grace && prayers) || (at->clone.stats.sp && !prayers))
+            && at->clone.level < level*8) {
+            if (book_overflow(retbuf, at->clone.name, booksize))
+                break;
+
+            if (did_first_sp)
+                snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), ",\n");
+            did_first_sp = 1;
+            snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s", at->clone.name);
+            }
+    }
+    /* Geez, no spells were generated. */
+    if (!did_first_sp) {
+        if (RANDOM()%4)  /* usually, lets make a recursive call... */
+            return old_spellpath_msg(level, retbuf, booksize);
+        /* give up, cause knowing no spells exist for path is info too. */
+        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "\n - no known spells exist -\n");
+    } else {
+        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "\n");
+    }
+    return retbuf;
+}
+
+START_TEST(test_spellpath_msg_rewrite) {
+    char old[HUGE_BUF], new[HUGE_BUF];
+    int todo = 10000, seed, what, size;
+    const archetype *arch;
+
+    const char* archs[] = { "book_clasp", "book_read", "checkbook", "letter", "note", "quarto", "scroll", "scroll_2", "tome" };
+    const arch_count = 9;
+
+    while (todo-- > 0) {
+
+        what = RANDOM() % arch_count;
+        arch = find_archetype(archs[what]);
+        fail_unless(arch != NULL, "missing arch %s", archs[what]);
+        size = BOOKSIZE(&arch->clone);
+        size -= strlen("\n"); /* Keep enough for final \n. */
+
+        old[0] = '\0';
+        new[0] = '\0';
+        seed = RANDOM();
+        SRANDOM(seed);
+        old_spellpath_msg(1 + RANDOM() % 100, old, size);
+        SRANDOM(seed);
+        spellpath_msg(1 + RANDOM() % 100, new, size);
+        if (strcmp(old, new)) {
+            int match = 0;
+            while (old[match] == new[match] && old[match] != '\0') {
+                match++;
+            }
+            if (old[match] == '\0')
+                fail_unless(1 == 0, "test %d new longer than old, extra %s\n", todo, new + match);
+            fail_unless(1 == 0, "test %d wrong data ***\n%s\n********************\n%s\n\n *** %s => %s\n", todo, new, old, new + match, old + match);
+        }
+    }
+}
+END_TEST
+
 Suite *readable_suite(void) {
     Suite *s = suite_create("readable");
     TCase *tc_core = tcase_create("Core");
@@ -259,6 +360,7 @@ Suite *readable_suite(void) {
 
     suite_add_tcase(s, tc_core);
     tcase_add_test(tc_core, test_artifact_msg_rewrite);
+    tcase_add_test(tc_core, test_spellpath_msg_rewrite);
 
     return s;
 }

@@ -1644,17 +1644,22 @@ char *artifact_msg(int level, char *retbuf, size_t booksize) {
  * length of the book.
  * @return
  * retbuf
+@todo make static when check_readable is cleaned.
  */
-static char *spellpath_msg(int level, char *retbuf, size_t booksize) {
+char *spellpath_msg(int level, char *retbuf, size_t booksize) {
     int path = RANDOM()%NRSPELLPATHS, prayers = RANDOM()%2;
     int did_first_sp = 0;
     uint32 pnum = spellpathdef[path];
     archetype *at;
+    StringBuffer *buf;
+    char *final;
 
+    buf = stringbuffer_new();
+    retbuf[0] = '\0';
     /* Preamble */
-    snprintf(retbuf, booksize, "Herein are detailed the names of %s\n", prayers ? "prayers" : "incantations");
+    stringbuffer_append_printf(buf, "Herein are detailed the names of %s\n", prayers ? "prayers" : "incantations");
 
-    snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "belonging to the path of %s:\n", spellpathnames[path]);
+    stringbuffer_append_printf(buf, "belonging to the path of %s:\n", spellpathnames[path]);
 
     for (at = first_archetype; at != NULL; at = at->next) {
         /* Determine if this is an appropriate spell.  Must
@@ -1665,23 +1670,29 @@ static char *spellpath_msg(int level, char *retbuf, size_t booksize) {
         && at->clone.path_attuned&pnum
         && ((at->clone.stats.grace && prayers) || (at->clone.stats.sp && !prayers))
         && at->clone.level < level*8) {
-            if (book_overflow(retbuf, at->clone.name, booksize))
+            if (strlen(at->clone.name) + stringbuffer_length(buf) >= booksize)
                 break;
 
             if (did_first_sp)
-                snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), ",\n");
+                stringbuffer_append_string(buf, ",\n");
             did_first_sp = 1;
-            snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s", at->clone.name);
+            stringbuffer_append_string(buf,at->clone.name);
         }
     }
+
+    final = stringbuffer_finish(buf);
     /* Geez, no spells were generated. */
     if (!did_first_sp) {
-        if (RANDOM()%4)  /* usually, lets make a recursive call... */
+        if (RANDOM()%4) {  /* usually, lets make a recursive call... */
+            free(final);
             return spellpath_msg(level, retbuf, booksize);
-        /* give up, cause knowing no spells exist for path is info too. */
-        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "\n - no known spells exist -\n");
+        }
+        /* give up, cause knowing no spells exist for path is info too. need the header too. */
+        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s\n - no known spells exist -\n", final);
+        free(final);
     } else {
-        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "\n");
+        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s\n", final);
+        free(final);
     }
     return retbuf;
 }
