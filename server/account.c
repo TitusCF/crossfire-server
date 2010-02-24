@@ -42,7 +42,7 @@
  * extra overhead in that code has to search the linked list, but for a relatively
  * low number of entries, and relatively infrequent updates, this should not be much
  * of an issue.
- * 
+ *
  * Since the accounts file is updated in several places in this file,
  * it is documented here.  The file is a list of accounts, one line
  * per account, with fields separted by colons, eg:
@@ -220,7 +220,7 @@ void account_load_entries()
         else
             accounts = ac;
         last = ac;
-            
+
     }
     fclose(fp);
 }
@@ -289,7 +289,7 @@ void accounts_save()
     unlink(fname1);
     rename(fname, fname1);
 }
-	    
+
 /**
  * Checks the existing accounts, and see if this account exists.
  * @param account_name
@@ -311,7 +311,7 @@ int account_exists(char *account_name)
  * Checks if the name and password are valid.  Note that on the return modes,
  * we do not differentiate on non existing account and wrong password -
  * one could use account_exists() if one is checking just for the name.
- * Note - if we do get a match, we update the last_login value - it is 
+ * Note - if we do get a match, we update the last_login value - it is
  * presumed that if someone knows the right accountname/password, that
  * the account is effectively getting logged in.
  * @param account_name
@@ -357,7 +357,7 @@ int account_check_name_password(char *account_name, char *account_password)
  * number of characters now get blocked (|*[]()!, etc), and deciding
  * which should be allowed and not just becomes a judgement call, so easier
  * to just allow all and have the user put it in quotes.
- * 
+ *
  * @param str
  * string to check
  * @return
@@ -408,13 +408,13 @@ int account_add_account(char *account_name, char *account_password)
         return 1;
 
     if (account_exists(account_name)) return 2;
- 
+
     ac = malloc(sizeof(account_struct));
     ac->name = strdup_local(account_name);
     ac->password = strdup_local(crypt_string(account_password, NULL));
     ac->last_login = time(NULL);
     ac->num_characters = 0;
-    
+
     memset(ac->character_names, MAX_CHARACTERS_PER_ACCOUNT+1, sizeof(char*));
 
     /* We put this at the top of the list.  This means recent accounts will be at
@@ -515,7 +515,7 @@ int account_remove_player_from_account(char *account_name, char *player_name)
     }
     /* Otherwise, did not find player name */
     return 2;
-}    
+}
 
 
 /**

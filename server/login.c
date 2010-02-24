@@ -594,7 +594,7 @@ void check_login(object *op) {
          * couple different things want an usigned value, cleaner
          * to just do it once here vs everyplace it may be needed.
          */
-           
+
         uvalue = strtoul(val_string, (char **)NULL, 10);
 
         if (!strcmp(buf, "endplst"))
