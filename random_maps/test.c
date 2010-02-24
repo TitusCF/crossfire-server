@@ -23,7 +23,7 @@ void dump_layout(char **layout, int Xsize, int Ysize) {
     }
 }
 
-int main() {
+int main(void) {
     int Xsize, Ysize;
     char **layout, **biglayout;
     SRANDOM(time(0));

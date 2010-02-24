@@ -713,7 +713,7 @@ static void free_knowledge_items(knowledge_player *kp) {
 /**
  * Free all knowledge data.
  */
-void free_knowledge() {
+void free_knowledge(void) {
     knowledge_player *kp, *next;
 
     kp = knowledge_global;

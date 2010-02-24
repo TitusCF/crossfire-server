@@ -120,7 +120,7 @@ static account_struct *accounts=NULL;
  * it can then verify that the data is added is loaded back into memory
  * properly.  As such, we don't worry about memory cleanup, etc.
  */
-void clear_accounts() {
+void clear_accounts(void) {
     accounts = NULL;
 }
 
@@ -128,7 +128,7 @@ void clear_accounts() {
  * This loads all the account entries into memory.  It is presumed to only
  * be called once during the program startup.
  */
-void account_load_entries()
+void account_load_entries(void)
 {
     char fname[MAX_BUF], buf[VERY_BIG_BUF];
     FILE *fp;
@@ -255,7 +255,7 @@ static void account_write_entry(FILE *fp, account_struct *ac)
  * is to save all the data - there isn't an easy way to just add another player
  * name for an account.
  */
-void accounts_save()
+void accounts_save(void)
 {
     char fname[MAX_BUF], fname1[MAX_BUF];;
     FILE *fp;

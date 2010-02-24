@@ -216,7 +216,7 @@ SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
  * Registers the server to the service manager.
  * @sa service_unregister().
  */
-void service_register() {
+void service_register(void) {
     char strDir[1024];
     HANDLE schSCManager, schService;
     char *strDescription = SERVICE_DESCRIPTION;
@@ -261,7 +261,7 @@ void service_register() {
  * Removes the Crossfire service from the service manager.
  * @sa service_register().
  */
-void service_unregister() {
+void service_unregister(void) {
     HANDLE schSCManager;
     SC_HANDLE hService;
 
@@ -379,7 +379,7 @@ void WINAPI ServiceMain(DWORD argc, LPTSTR *argv) {
 /**
  * Service entry point.
  */
-void service_handle() {
+void service_handle(void) {
     SERVICE_TABLE_ENTRY DispatchTable[] = {
         { SERVICE_NAME, ServiceMain },
         { NULL, NULL }

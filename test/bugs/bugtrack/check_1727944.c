@@ -102,7 +102,7 @@ static mapstruct *get_random_map(mapstruct *map) {
     return generate_random_map(newmap_name, &rp, NULL);
 }
 
-static void do_run() {
+static void do_run(void) {
     mapstruct *worldmap;
     mapstruct *random;
     mapstruct *old;
@@ -143,7 +143,7 @@ static void do_run() {
 #endif
 
 #if 0
-static void do_run() {
+static void do_run(void) {
     mapstruct *map, *overlay;
     int x, y, found = 0, test = 0;
     object *check;

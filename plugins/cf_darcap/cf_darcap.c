@@ -62,7 +62,7 @@ static const int const drinkPrices[] = {
     18,
     0 };
 
-static int checkPlayersTable() {
+static int checkPlayersTable(void) {
     int i, x, y;
     object *test;
 
@@ -110,7 +110,7 @@ static int checkPlayersTable() {
     return 0;
 }
 
-static int playerMoved() {
+static int playerMoved(void) {
     int x, y;
 
     if (barmanTarget == NULL)
@@ -129,7 +129,7 @@ static int playerMoved() {
     return 0;
 }
 
-static int moveToPlayer() {
+static int moveToPlayer(void) {
     int x, y;
 
     if (barmanObject == NULL)
@@ -194,7 +194,7 @@ static int moveToPlayer() {
     return 1;
 }
 
-static int moveToBar() {
+static int moveToBar(void) {
     int move;
 
     if (barmanObject == NULL)

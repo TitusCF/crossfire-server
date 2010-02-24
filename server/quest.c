@@ -87,7 +87,7 @@ static quest_definition *quests = NULL; /**< All known quests. */
  * Allocate a quest_step_definition, will call fatal() if out of memory.
  * @return new structure.
  */
-static quest_step_definition *quest_create_step() {
+static quest_step_definition *quest_create_step(void) {
     quest_step_definition *step = calloc(1, sizeof(quest_step_definition));
     if (!step)
         fatal(OUT_OF_MEMORY);
@@ -98,7 +98,7 @@ static quest_step_definition *quest_create_step() {
  * Allocate a quest_definition, will call fatal() if out of memory.
  * @return new structure.
  */
-static quest_definition *quest_create_definition() {
+static quest_definition *quest_create_definition(void) {
     quest_definition *quest = calloc(1, sizeof(quest_definition));
     if (!quest)
         fatal(OUT_OF_MEMORY);
@@ -106,7 +106,7 @@ static quest_definition *quest_create_definition() {
 }
 
 /** Load all quest definitions. Can be called multiple times, will be ignored. */
-static void quest_load_definitions() {
+static void quest_load_definitions(void) {
     int found = 0, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description */
     int i;
     quest_definition *quest = NULL;
@@ -284,7 +284,7 @@ static quest_definition *quest_get(sstring code) {
  * Return a new quest_state*, calling fatal() if memory shortage.
  * @return new value, never NULL.
  */
-static quest_state *get_new_quest_state() {
+static quest_state *get_new_quest_state(void) {
     quest_state *qs = calloc(1, sizeof(quest_state));
     if (qs == NULL)
         fatal(OUT_OF_MEMORY);
@@ -788,7 +788,7 @@ int command_quest(object *op, char *params) {
 /**
  * Free all quest status structures. It is all right to call quest functions again after that.
  */
-void free_quest() {
+void free_quest(void) {
     quest_player *pq = player_states, *next;
 
     while (pq) {
