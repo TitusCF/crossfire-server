@@ -3851,7 +3851,6 @@ void *cfapi_object_query_cost_string(int *type, ...) {
     int flags, length;
     char *buffer, *final;
     va_list args;
-    int *rint;
     StringBuffer *sb;
 
     va_start(args, type);
