@@ -391,8 +391,7 @@ static int knowledge_god_validate(const char *item) {
  * @return count of actually added items.
  */
 static int knowledge_god_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type) {
-    char *dup = strdup_local(item), *pos = strchr(dup, ':'), *final;
-    const archetype *god;
+    char *dup = strdup_local(item), *pos = strchr(dup, ':');
     StringBuffer *buf;
     int what;
     knowledge_item* check;
