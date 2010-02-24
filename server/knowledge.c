@@ -610,7 +610,7 @@ void knowledge_read(player *pl, object *book) {
  * Display all a player's knowledge.
  * @param pl who to display knowledge of.
  */
-void knowledge_display(object *pl) {
+static void knowledge_display(object *pl) {
     knowledge_player *kp;
     knowledge_item *item;
     int index = 1, header = 0;
@@ -637,7 +637,7 @@ void knowledge_display(object *pl) {
  * @param pl who is asking for details.
  * @param params additional parameters, should contain the knowledge item number.
  */
-void knowledge_show(object *pl, const char *params) {
+static void knowledge_show(object *pl, const char *params) {
     knowledge_player *kp;
     knowledge_item *item;
     int count = atoi(params);
