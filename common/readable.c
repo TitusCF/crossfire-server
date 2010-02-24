@@ -1868,13 +1868,10 @@ static char *msgfile_msg(int level, size_t booksize) {
  * retbuf.
  */
 static char *god_info_msg(int level, char *retbuf, size_t booksize, object *book) {
-    const char *name;
     char buf[BOOK_BUF], *final;
-    int i, what;
-    size_t retlen, buflen;
-    size_t introlen;
+    int what;
+    size_t retlen;
     const object *god = pntr_to_god_obj(get_rand_god());
-    char en[BOOK_BUF];
     StringBuffer *desc = NULL;
 
     retbuf[0] = '\0';

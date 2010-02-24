@@ -2264,10 +2264,10 @@ int command_lock_item(object *op, char *params) {
  */
 int command_use(object *op, char *params) {
     char *with, copy[MAX_BUF];
-    object *first, *second, *add;
-    archetype *arch;
-    int count;
-    sstring data;
+    object *first, *second/*, *add*/;
+    /*archetype *arch;*/
+    /*int count;*/
+    /*sstring data;*/
     recipe *transformation;
 
     if (!op->type == PLAYER)
