@@ -375,7 +375,7 @@ static int knowledge_god_validate(const char *item) {
     if (!pos) {
         LOG(llevError, "knowledge_god_validate: invalid god item %s\n", item);
         free(dup);
-        return;
+        return 0;
     }
     *pos = '\0';
     valid = find_archetype_by_object_name(dup) != NULL;
@@ -400,7 +400,7 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
     if (!pos) {
         LOG(llevError, "knowledge_god_add: invalid god item %s\n", item);
         free(dup);
-        return;
+        return 0;
     }
 
     *pos = '\0';
