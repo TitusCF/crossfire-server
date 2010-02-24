@@ -1864,10 +1864,8 @@ static char *msgfile_msg(int level, size_t booksize) {
  * desired length of the book.
  * @param book
  * book we're writing the information to, for knowledge management.
- * @return
- * retbuf.
  */
-static char *god_info_msg(int level, char *retbuf, size_t booksize, object *book) {
+static void god_info_msg(int level, char *retbuf, size_t booksize, object *book) {
     char buf[BOOK_BUF], *final;
     int what;
     size_t retlen;
@@ -1909,7 +1907,7 @@ static char *god_info_msg(int level, char *retbuf, size_t booksize, object *book
     }
 
     if (!god)
-        return (char *)NULL; /* oops, problems... */
+        return; /* oops, problems... */
 
     desc = stringbuffer_new();
     what = describe_god(god, what, desc, booksize);
