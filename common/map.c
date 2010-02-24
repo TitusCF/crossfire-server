@@ -51,7 +51,7 @@ static void free_all_objects(mapstruct *m);
  * since some of the types can be on multiple layers,
  * names are duplicated to correspond to that layer.
  */
-const char *map_layer_name[MAP_LAYERS] = {
+const char *const map_layer_name[MAP_LAYERS] = {
     "floor", "no_pick", "no_pick", "item", "item",
     "item", "living", "living", "fly", "fly"
 };
@@ -68,7 +68,7 @@ typedef struct Map_Layer_Info {
  * visibility should be honored.  This table has that information,
  * so that it doesn't need to be hardcoded.
  */
-static Map_Layer_Info map_layer_info[MAP_LAYERS] = {
+static const Map_Layer_Info map_layer_info[MAP_LAYERS] = {
     { MAP_LAYER_FLOOR, 1 },
     { MAP_LAYER_NO_PICK2, 0 }, { MAP_LAYER_NO_PICK2, 0 },
     { MAP_LAYER_ITEM3, 1 }, { MAP_LAYER_ITEM3, 1 }, { MAP_LAYER_ITEM3, 1 },

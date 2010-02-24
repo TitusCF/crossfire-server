@@ -59,7 +59,7 @@
  */
 #define MAP_LAYERS 10
 
-extern const char *map_layer_name[MAP_LAYERS];
+extern const char *const map_layer_name[MAP_LAYERS];
 
 /**
  * @defgroup MAP_LAYER_xxx Map layers
