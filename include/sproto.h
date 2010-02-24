@@ -1,6 +1,6 @@
 /* account.c */
-void account_load_entries();
-void accounts_save();
+void account_load_entries(void);
+void accounts_save(void);
 int account_exists(char *account_name);
 int account_check_name_password(char *account_name, char *account_password);
 int account_check_string(const char *str);
@@ -307,7 +307,7 @@ racelink *find_racelink(const char *name);
 /* knowledge.c */
 void knowledge_read(player *pl, object *book);
 int command_knowledge(object *pl, char *params);
-void free_knowledge();
+void free_knowledge(void);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name);
@@ -524,7 +524,7 @@ void quest_end(player *pl, sstring quest_code);
 void quest_set_player_state(player *pl, sstring quest_code, int state);
 int quest_was_completed(player *pl, sstring quest_code);
 int command_quest(object *op, char *params);
-void free_quest();
+void free_quest(void);
 /* resurrection.c */
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg);
 void dead_player(object *op);
