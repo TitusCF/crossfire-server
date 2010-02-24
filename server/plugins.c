@@ -4667,11 +4667,12 @@ void *cfapi_player_quest(int *type, ...) {
     int op;
     va_list args;
     object *player;
+    sstring code;
 
     va_start(args, type);
     op = va_arg(args, int);
     player = va_arg(args, object *);
-    sstring code = va_arg(args, sstring);
+    code = va_arg(args, sstring);
 
     if (player->contr == NULL) {
         LOG(llevError, "cfapi_player_quest called with non player object %s!\n", player->name);
