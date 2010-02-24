@@ -257,7 +257,7 @@ static void account_write_entry(FILE *fp, account_struct *ac)
  */
 void accounts_save(void)
 {
-    char fname[MAX_BUF], fname1[MAX_BUF];;
+    char fname[MAX_BUF], fname1[MAX_BUF];
     FILE *fp;
     account_struct *ac;
 
