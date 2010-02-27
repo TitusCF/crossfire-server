@@ -846,6 +846,4 @@ void check_login(object *op) {
                       buf, NULL);
     }
     free(party_name);
-
-    return;
 }
