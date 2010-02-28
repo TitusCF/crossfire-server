@@ -11,12 +11,16 @@ CREArchetypePanel::CREArchetypePanel()
 {
     QGridLayout* layout = new QGridLayout(this);
 
-    QLabel* label = new QLabel(this);
-    label->setText("Name:");
-    layout->addWidget(label, 1, 1);
+    myDisplay = new QTextEdit(this);
+    layout->addWidget(myDisplay, 1, 1);
 }
 
 void CREArchetypePanel::setArchetype(const archt* archetype)
 {
     myArchetype = archetype;
+    StringBuffer* dump = stringbuffer_new();
+    object_dump((object*)&myArchetype->clone, dump);
+    char* final = stringbuffer_finish(dump);
+    myDisplay->setText(final);
+    free(final);
 }
