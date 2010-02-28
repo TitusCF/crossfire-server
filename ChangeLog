@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Only consider items of the right knowledge type, to avoid dumb crashes.
+Nicolas Weeger 2010-02-28
+
 Correctly handle NONE subtreasure list in treasure list.
 Nicolas Weeger 2010-02-28
 

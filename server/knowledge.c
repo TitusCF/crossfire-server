@@ -406,6 +406,9 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
     what = atoi(pos + 1);
 
     for (check = current->items; check; check = check->next) {
+        if (check->handler != type)
+            /* Only consider our own type. */
+            continue;
         if (strncmp(check->item, dup, strlen(dup)) == 0) {
             /* Already known, update information. */
             int known;
