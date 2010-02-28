@@ -40,7 +40,9 @@ QTreeWidgetItem* CREUtils::artifactNode(const artifact* arti, QTreeWidgetItem* p
         {
             if (allowed->name[0] == '!')
                 continue;
-            const archt* specific = find_archetype(allowed->name);
+            const archt* specific = try_find_archetype(allowed->name);
+            if (!specific)
+                specific = find_archetype_by_object_name(allowed->name);
             if (specific && specific->clone.face != NULL)
             {
                 face = specific->clone.face->number;
