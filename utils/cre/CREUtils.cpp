@@ -86,11 +86,11 @@ QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, QTreeWidgetIte
     }
     else
     {
-        treasurelist* other = find_treasurelist(treasure->name);
-        if (other == NULL)
-            item = new QTreeWidgetItem(parent, QStringList(QString(QTreeWidget::tr("Invalid list: %1")).arg(treasure->name)));
+        if (treasure->name && strcmp(treasure->name, "NONE") == 0)
+            item = new QTreeWidgetItem(parent, QStringList(QString(QTreeWidget::tr("Nothing"))));
         else
         {
+            treasurelist* other = find_treasurelist(treasure->name);
             item = CREUtils::treasureNode(other, parent);
         }
     }
