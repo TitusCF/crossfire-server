@@ -152,7 +152,9 @@ static const hook_entry plug_hooks[] = {
     { cfapi_object_query_cost_string,89, "cfapi_object_query_cost_string" },
     { cfapi_cost_string_from_value,  90, "cfapi_cost_string_from_value" },
     { cfapi_player_quest,            91, "cfapi_player_quest" },
-    { cfapi_object_remove_depletion, 92, "cfapi_object_remove_depletion" }
+    { cfapi_object_remove_depletion, 92, "cfapi_object_remove_depletion" },
+    { cfapi_object_find_by_arch_name, 93, "cfapi_object_find_by_arch_name" },
+    { cfapi_object_find_by_name,     94, "cfapi_object_find_by_name" }
 };
 
 int plugin_number = 0;
@@ -4160,6 +4162,40 @@ void *cfapi_object_find_archetype_inside(int *type, ...) {
     }
     va_end(args);
 
+    return NULL;
+}
+
+void *cfapi_object_find_by_arch_name(int *type, ...) {
+    const object *who;
+    object **result;
+    const char *name;
+    va_list args;
+
+    va_start(args, type);
+    who = va_arg(args, const object *);
+    name = va_arg(args, const char *);
+    result = va_arg(args, object **);
+    va_end(args);
+    *type = CFAPI_POBJECT;
+
+    *result = object_find_by_arch_name(who, name);
+    return NULL;
+}
+
+void *cfapi_object_find_by_name(int *type, ...) {
+    const object *who;
+    object **result;
+    const char *name;
+    va_list args;
+
+    va_start(args, type);
+    who = va_arg(args, const object *);
+    name = va_arg(args, const char *);
+    result = va_arg(args, object **);
+    va_end(args);
+    *type = CFAPI_POBJECT;
+
+    *result = object_find_by_name(who, name);
     return NULL;
 }
 

@@ -87,6 +87,8 @@ static f_plug_api cfapiObject_pay_amount = NULL;
 static f_plug_api cfapiObject_pay_item = NULL;
 static f_plug_api cfapiObject_transfer = NULL;
 static f_plug_api cfapiObject_find_archetype_inside = NULL;
+static f_plug_api cfapiObject_find_by_arch_name = NULL;
+static f_plug_api cfapiObject_find_by_name = NULL;
 static f_plug_api cfapiObject_out_of_map = NULL;
 static f_plug_api cfapiObject_drop = NULL;
 static f_plug_api cfapiObject_change_abil = NULL;
@@ -226,6 +228,8 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiCost_string_from_value, "cfapi_cost_string_from_value", z);
     GET_HOOK(cfapiPlayer_quest, "cfapi_player_quest", z);
     GET_HOOK(cfapiObject_remove_depletion, "cfapi_object_remove_depletion", z);
+    GET_HOOK(cfapiObject_find_by_arch_name, "cfapi_object_find_by_arch_name", z);
+    GET_HOOK(cfapiObject_find_by_name, "cfapi_object_find_by_name", z);
     return 1;
 }
 
@@ -521,6 +525,32 @@ object *cf_object_present_archname_inside(object *op, char *whatstr) {
     cfapiObject_find_archetype_inside(&type, op, whatstr, &value);
     assert(type == CFAPI_POBJECT);
     return value;
+}
+
+/**
+ * Wrapper for object_find_by_arch_name().
+ * @copydoc object_find_by_arch_name()
+ */
+object *cf_object_find_by_arch_name(const object *who, const char *name) {
+    int type;
+    object *result;
+
+    cfapiObject_find_by_arch_name(&type, who, name, &result);
+    assert(type == CFAPI_POBJECT);
+    return result;
+}
+
+/**
+ * Wrapper for object_find_by_name().
+ * @copydoc object_find_by_name()
+ */
+object *cf_object_find_by_name(const object *who, const char *name) {
+    int type;
+    object *result;
+
+    cfapiObject_find_by_name(&type, who, name, &result);
+    assert(type == CFAPI_POBJECT);
+    return result;
 }
 
 /**

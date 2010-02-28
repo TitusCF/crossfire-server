@@ -2286,7 +2286,7 @@ static PyObject *Crossfire_Object_CheckArchInventory(Crossfire_Object *who, PyOb
     if (!PyArg_ParseTuple(args, "s", &whatstr))
         return NULL;
 
-    tmp = object_find_by_arch_name(who->obj, whatstr);
+    tmp = cf_object_find_by_arch_name(who->obj, whatstr);
     return Crossfire_Object_wrap(tmp);
 }
 

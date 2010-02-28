@@ -3837,14 +3837,14 @@ object *object_create_clone(object *asrc) {
 }
 
 /**
- * Finds an object in inventory by type and name name.
+ * Finds an object in inventory name.
  *
  * @param who
  * the object to search
  * @param name
  * name to search for
  * @return
- * the first object which has a type and name equal to the argument.
+ * the first object which has a name equal to the argument, NULL if none found.
  */
 object *object_find_by_name(const object *who, const char *name) {
     const char *name_shared = add_string(name);
