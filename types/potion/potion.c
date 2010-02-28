@@ -61,9 +61,6 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
 
     /* Potion of restoration - only for players */
     if (applier->type == PLAYER && (potion->attacktype&AT_DEPLETE)) {
-        object *depl;
-        archetype *at;
-
         if (QUERY_FLAG(potion, FLAG_CURSED) || QUERY_FLAG(potion, FLAG_DAMNED)) {
             drain_stat(applier);
             fix_object(applier);
@@ -71,26 +68,9 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             return METHOD_OK;
         }
 
-        if ((at = find_archetype(ARCH_DEPLETION)) == NULL) {
-            LOG(llevError, "Could not find archetype depletion\n");
-            return METHOD_ERROR;
-        }
-
-        depl = arch_present_in_ob(at, applier);
-        if (depl != NULL
-        && (potion->level != 0 && potion->level >= applier->level)) {
-            for (i = 0; i < NUM_STATS; i++)
-                if (get_attr_value(&depl->stats, i)) {
-                    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_GAIN,
-                        restore_msg[i], NULL);
-                }
-            object_remove(depl);
-            object_free(depl);
-            fix_object(applier);
-        }
-        else
+        if (remove_depletion(applier, potion->level) == 0)
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "You potion had no effect.", NULL);
+                "Your potion had no effect.", NULL);
 
         object_decrease_nrof_by_one(potion);
         return METHOD_OK;

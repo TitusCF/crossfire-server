@@ -277,6 +277,7 @@ static PyObject *Crossfire_Object_AddExp(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Move(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_ChangeAbil(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Event(Crossfire_Object *who, PyObject *args);
+static PyObject *Crossfire_Object_RemoveDepletion(Crossfire_Object *who, PyObject *args);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object *left, Crossfire_Object *right);
 static PyObject *Crossfire_Object_RichCompare(Crossfire_Object *left, Crossfire_Object *right, int op);
@@ -454,6 +455,7 @@ static PyMethodDef ObjectMethods[] = {
     { "Move",           (PyCFunction)Crossfire_Object_Move,         METH_VARARGS, NULL },
     { "ChangeAbil",     (PyCFunction)Crossfire_Object_ChangeAbil,   METH_O,       NULL },
     { "Event",          (PyCFunction)Crossfire_Object_Event,        METH_VARARGS, NULL },
+    { "RemoveDepletion",(PyCFunction)Crossfire_Object_RemoveDepletion,    METH_VARARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 

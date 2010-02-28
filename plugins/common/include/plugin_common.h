@@ -136,6 +136,7 @@ extern object      *cf_object_clone(object *op, int clonetype);
 extern void         cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int flag);
 extern int          cf_object_change_abil(object *op, object *tmp);
 extern int          cf_object_user_event(object *op, object *activator, object *third, const char *message, int fix);
+extern int          cf_object_remove_depletion(object *op, int level);
 /* Maps */
 /*extern void        *cf_map_get_property(mapstruct *map, int propcode);*/
 extern sstring cf_map_get_sstring_property(mapstruct *map, int propcode);

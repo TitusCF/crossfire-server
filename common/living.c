@@ -882,6 +882,44 @@ void drain_specific_stat(object *op, int deplete_stats) {
 }
 
 /**
+ * Remove depletion from op, if present, and warn player of such restorations.
+ * @param op who to remove depletion from.
+ * @param level maximum depletion level to remove, if -1 no maximum.
+ * @return 0 if no depletion (or with no drained statistics) was present or level was insufficient, 1 if something was removed.
+ */
+int remove_depletion(object *op, int level) {
+    object *depl;
+    archetype *at;
+    int i, count = 0;
+
+    if ((at = find_archetype(ARCH_DEPLETION)) == NULL) {
+        LOG(llevError, "Could not find archetype depletion\n");
+        return 0;
+    }
+
+    depl = arch_present_in_ob(at, op);
+
+    if (depl == NULL)
+        return 0;
+
+    if (level != -1 && level < op->level)
+        return 0;
+
+    for (i = 0; i < NUM_STATS; i++) {
+        if (get_attr_value(&depl->stats, i)) {
+            count++;
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_GAIN, restore_msg[i], NULL);
+        }
+    }
+
+    object_remove(depl);
+    object_free(depl);
+    fix_object(op);
+
+    return (count == 0) ? 0 : 1;
+}
+
+/**
  * Alter the object's luck.
  *
  * @param op

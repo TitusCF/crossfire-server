@@ -119,6 +119,7 @@ extern void check_stat_bounds(living *stats, sint8 min_stat, sint8 max_stat);
 extern int change_abil(object *op, object *tmp);
 extern void drain_stat(object *op);
 extern void drain_specific_stat(object *op, int deplete_stats);
+extern int remove_depletion(object *op, int level);
 extern void change_luck(object *op, int value);
 extern void remove_statbonus(object *op);
 extern void add_statbonus(object *op);

@@ -2386,6 +2386,18 @@ static PyObject *Crossfire_Object_Event(Crossfire_Object *who, PyObject *args) {
     return Py_BuildValue("i", cf_object_user_event(op1, op2, op3, message, fix));
 }
 
+static PyObject *Crossfire_Object_RemoveDepletion(Crossfire_Object *who, PyObject *args) {
+    int level;
+
+    if (!PyArg_ParseTuple(args, "i", &level))
+        return NULL;
+    EXISTCHECK(who);
+
+    return Py_BuildValue("i", cf_object_remove_depletion(who->obj, level));
+}
+
+
+
 static int Crossfire_Object_InternalCompare(Crossfire_Object *left, Crossfire_Object *right) {
     EXISTCHECK_INT(left);
     EXISTCHECK_INT(right);

@@ -464,6 +464,7 @@ void *cfapi_object_apply(int *type, ...);
 void *cfapi_object_identify(int *type, ...);
 void *cfapi_object_describe(int *type, ...);
 void *cfapi_object_drain(int *type, ...);
+void *cfapi_object_remove_depletion(int *type, ...);
 void *cfapi_object_fix(int *type, ...);
 void *cfapi_object_give_skill(int *type, ...);
 void *cfapi_object_transmute(int *type, ...);

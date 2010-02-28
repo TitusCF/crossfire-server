@@ -125,6 +125,7 @@ static f_plug_api cfapiSystem_get_periodofday_name = NULL;
 static f_plug_api cfapiObject_user_event = NULL;
 static f_plug_api cfapiCost_string_from_value = NULL;
 static f_plug_api cfapiPlayer_quest = NULL;
+static f_plug_api cfapiObject_remove_depletion = NULL;
 
 #define GET_HOOK(x, y, z) { \
     getHooks(&z, 1, y, &x); \
@@ -224,6 +225,7 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiSystem_find_string, "cfapi_system_find_string", z);
     GET_HOOK(cfapiCost_string_from_value, "cfapi_cost_string_from_value", z);
     GET_HOOK(cfapiPlayer_quest, "cfapi_player_quest", z);
+    GET_HOOK(cfapiObject_remove_depletion, "cfapi_object_remove_depletion", z);
     return 1;
 }
 
@@ -687,6 +689,18 @@ void cf_player_message(object *op, char *txt, int flags) {
 
     cfapiPlayer_message(&type, flags, 0, op, txt);
     assert(type == CFAPI_NONE);
+}
+
+/**
+ * Wrapper for remove_depletion().
+ * @copydoc remove_depletion()
+ */
+int cf_object_remove_depletion(object *op, int level) {
+    int type, result;
+
+    cfapiObject_remove_depletion(&type, op, level, &result);
+    assert(type == CFAPI_INT);
+    return result;
 }
 
 /**

@@ -151,7 +151,8 @@ static const hook_entry plug_hooks[] = {
     { cfapi_system_find_string,      88, "cfapi_system_find_string" },
     { cfapi_object_query_cost_string,89, "cfapi_object_query_cost_string" },
     { cfapi_cost_string_from_value,  90, "cfapi_cost_string_from_value" },
-    { cfapi_player_quest,            91, "cfapi_player_quest" }
+    { cfapi_player_quest,            91, "cfapi_player_quest" },
+    { cfapi_object_remove_depletion, 92, "cfapi_object_remove_depletion" }
 };
 
 int plugin_number = 0;
@@ -3214,6 +3215,26 @@ void *cfapi_object_drain(int *type, ...) {
     drain_specific_stat(op, ds);
 
     *type = CFAPI_NONE;
+    return NULL;
+}
+
+void *cfapi_object_remove_depletion(int *type, ...) {
+    va_list args;
+
+    object *op;
+    int level, *result;
+
+    va_start(args, type);
+
+    op = va_arg(args, object *);
+    level = va_arg(args, int);
+    result = va_arg(args, int*);
+
+    va_end(args);
+
+    *result = remove_depletion(op, level);
+
+    *type = CFAPI_INT;
     return NULL;
 }
 
