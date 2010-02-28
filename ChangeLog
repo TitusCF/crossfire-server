@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Simplify code.
+Nicolas Weeger 2010-02-28
+
 Extract 'remove_depletion' function from potion. Give access to plugins to it,
 add to Python wrappers.
 Nicolas Weeger 2010-02-28

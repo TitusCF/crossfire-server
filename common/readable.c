@@ -1880,30 +1880,26 @@ static void god_info_msg(int level, char *retbuf, size_t booksize, object *book)
         booksize = BOOK_BUF;
     }
 
-    while (level > 0) {
-        if (level == 2 && RANDOM()%2) {
-            what |= GOD_ENEMY;
-        }
-        if (level == 3 && RANDOM()%2) {
-            what |= GOD_HOLYWORD;
-        }
-        if (level == 4 && RANDOM()%2) {
-            what |= GOD_RESISTANCES;
-        }
-        if (level == 5 && RANDOM()%2) {
-            what |= GOD_SACRED;
-        }
-        if (level == 6 && RANDOM()%2) {
-            what |= GOD_BLESSED;
-        }
-        if (level == 8 && RANDOM()%2) {
-            what |= GOD_IMMUNITIES;
-        }
-        if (level == 12 && RANDOM()%2) {
-            what |= GOD_PATHS;
-        }
-
-        level--;
+    if (level >= 2 && RANDOM()%2) {
+        what |= GOD_ENEMY;
+    }
+    if (level >= 3 && RANDOM()%2) {
+        what |= GOD_HOLYWORD;
+    }
+    if (level >= 4 && RANDOM()%2) {
+        what |= GOD_RESISTANCES;
+    }
+    if (level >= 5 && RANDOM()%2) {
+        what |= GOD_SACRED;
+    }
+    if (level >= 6 && RANDOM()%2) {
+        what |= GOD_BLESSED;
+    }
+    if (level >= 8 && RANDOM()%2) {
+        what |= GOD_IMMUNITIES;
+    }
+    if (level >= 12 && RANDOM()%2) {
+        what |= GOD_PATHS;
     }
 
     if (!god)
