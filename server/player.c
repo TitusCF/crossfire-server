@@ -3299,7 +3299,7 @@ static void kill_player_not_permadeath(object *op) {
             lost_a_stat = 1;
         } else {
             /* deplete a stat */
-            archetype *deparch = find_archetype("depletion");
+            archetype *deparch = find_archetype(ARCH_DEPLETION);
             object *dep;
             int lose_this_stat;
             int i;
