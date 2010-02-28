@@ -222,7 +222,7 @@ static anim_move_result runapplyobject(struct CFanimation_struct *animation, lon
             break;
     FOR_OB_AND_BELOW_FINISH();
     if (!current)
-        current = object_find_by_name(animation->victim, parameters);
+        current = cf_object_find_by_name(animation->victim, parameters);
     if (!current) {
         cf_free_string(parameters);
         return mr_finished;
