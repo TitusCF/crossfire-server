@@ -1409,7 +1409,7 @@ static void get_string_move_type(StringBuffer *sb, MoveType mt)
  * @param op2
  * object's original archetype.
  */
-void get_ob_diff(StringBuffer *sb, object *op, object *op2) {
+void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
     static char buf2[64];
     int tmp;
     int i;

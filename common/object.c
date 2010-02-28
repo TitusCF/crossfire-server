@@ -370,6 +370,28 @@ object *object_get_player_container(object *op) {
 }
 
 /**
+ * Returns the object which this object marks as being the owner, constant version.
+ * Mostly written for object_dump, which takes a const object.
+ *
+ * @param op
+ * item to search owner of.
+ * @return
+ * owner, or NULL if not found.
+ */
+static const object *object_get_owner_const(const object *op) {
+    if (op->owner == NULL)
+        return NULL;
+
+    if (!QUERY_FLAG(op->owner, FLAG_FREED)
+         && !QUERY_FLAG(op->owner, FLAG_REMOVED)
+         && op->owner->count == op->ownercount)
+        return op->owner;
+
+    LOG(llevError, "Warning, no owner found\n");
+    return NULL;
+}
+
+/**
  * Dumps an object.
  *
  * @param op
@@ -380,7 +402,7 @@ object *object_get_player_container(object *op) {
  * @note
  * dump_object() has been renamed to object_dump()
  */
-void object_dump(object *op, StringBuffer *sb) {
+void object_dump(const object *op, StringBuffer *sb) {
     if (op == NULL) {
         stringbuffer_append_string(sb, "[NULL pointer]");
         return;
@@ -389,7 +411,7 @@ void object_dump(object *op, StringBuffer *sb) {
     /*  object *tmp;*/
 
     if (op->arch != NULL) {
-        object *owner;
+        const object *owner;
 
         stringbuffer_append_string(sb, "arch ");
         stringbuffer_append_string(sb, op->arch->name ? op->arch->name : "(null)");
@@ -408,7 +430,7 @@ void object_dump(object *op, StringBuffer *sb) {
         if (op->inv) {
             stringbuffer_append_printf(sb, "inv %u\n", op->inv->count);
         }
-        owner = object_get_owner(op);
+        owner = object_get_owner_const(op);
         if (owner != NULL) {
             stringbuffer_append_printf(sb, "owner %u\n", owner->count);
         }

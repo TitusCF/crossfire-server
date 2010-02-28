@@ -19,7 +19,7 @@ void CREArchetypePanel::setArchetype(const archt* archetype)
 {
     myArchetype = archetype;
     StringBuffer* dump = stringbuffer_new();
-    object_dump((object*)&myArchetype->clone, dump);
+    object_dump(&myArchetype->clone, dump);
     char* final = stringbuffer_finish(dump);
     myDisplay->setText(final);
     free(final);
