@@ -83,6 +83,18 @@ QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, QTreeWidgetIte
     if (treasure->item)
     {
         item = CREUtils::archetypeNode(treasure->item, parent);
+        if (treasure->next_yes)
+        {
+            QTreeWidgetItem* node = new QTreeWidgetItem(item, QStringList(QTreeWidget::tr("Yes")));
+            node->setIcon(0, CREPixmap::getTreasureYesIcon());
+            CREUtils::treasureNode(treasure->next_yes, node);
+        }
+        if (treasure->next_no)
+        {
+            QTreeWidgetItem* node = new QTreeWidgetItem(item, QStringList(QTreeWidget::tr("No")));
+            node->setIcon(0, CREPixmap::getTreasureNoIcon());
+            CREUtils::treasureNode(treasure->next_no, node);
+        }
     }
     else
     {
