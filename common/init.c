@@ -90,7 +90,7 @@ struct Settings settings = {
     0,
     "",
     0, 0, 0, 0, 0, 0, 0,  /* worldmap settings*/
-    EMERGENCY_MAPPATH, EMERGENCY_X, EMERGENCY_Y,
+    NULL, EMERGENCY_X, EMERGENCY_Y,
     0,
     1.0,
     /* Armor enchantment stuff */
@@ -157,6 +157,8 @@ static void init_emergency_mappath(void) {
     FILE *fp;
     int online = 0;
 
+    settings.emergency_mapname = strdup_local(EMERGENCY_MAPPATH);
+
     /* If this file doesn't exist, not a big deal */
     snprintf(filename, sizeof(filename), "%s/%s/.emergency", settings.datadir, settings.mapdir);
     fp = fopen(filename, "r");
@@ -167,6 +169,7 @@ static void init_emergency_mappath(void) {
 
             if (online == 0) {
                 tmpbuf[strlen(tmpbuf)-1] = 0; /* kill newline */
+                free(settings.emergency_mapname);
                 settings.emergency_mapname = strdup_local(tmpbuf);
             } else if (online == 1) {
                 settings.emergency_x = atoi(tmpbuf);
