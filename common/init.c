@@ -159,7 +159,8 @@ static void init_emergency_mappath(void) {
 
     /* If this file doesn't exist, not a big deal */
     snprintf(filename, sizeof(filename), "%s/%s/.emergency", settings.datadir, settings.mapdir);
-    if ((fp = fopen(filename, "r")) != NULL) {
+    fp = fopen(filename, "r");
+    if (fp != NULL) {
         while (fgets(tmpbuf, MAX_BUF-1, fp)) {
             if (tmpbuf[0] == '#')
                 continue; /* ignore comments */
@@ -421,7 +422,8 @@ void write_todclock(void) {
     FILE *fp;
 
     snprintf(filename, sizeof(filename), "%s/clockdata", settings.localdir);
-    if ((fp = fopen(filename, "w")) == NULL) {
+    fp = fopen(filename, "w");
+    if (fp == NULL) {
         LOG(llevError, "Cannot open %s for writing\n", filename);
         return;
     }
@@ -445,7 +447,8 @@ static void init_clocks(void) {
 
     snprintf(filename, sizeof(filename), "%s/clockdata", settings.localdir);
     LOG(llevDebug, "Reading clockdata from %s...\n", filename);
-    if ((fp = fopen(filename, "r")) == NULL) {
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         todtick = 0;
         write_todclock();
@@ -485,7 +488,8 @@ static void init_attackmess(void) {
 
     snprintf(filename, sizeof(filename), "%s/attackmess", settings.datadir);
     LOG(llevDebug, "Reading attack messages from %s...\n", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+    fp = open_and_uncompress(filename, 0, &comp);
+    if (fp == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;
     }
@@ -494,7 +498,8 @@ static void init_attackmess(void) {
     while (fgets(buf, MAX_BUF, fp) != NULL) {
         if (*buf == '#')
             continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
+        cp = strchr(buf, '\n');
+        if (cp != NULL)
             *cp = '\0';
         cp = buf;
         while (*cp == ' ') /* Skip blanks */
