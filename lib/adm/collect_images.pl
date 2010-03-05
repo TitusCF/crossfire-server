@@ -26,18 +26,18 @@ $DESTDIR="$TMPDIR/$ARCHNAME";
 $MAXFILESIZE=100000;
 
 if ($ARGV[0] eq "-src") {
-	$src_path = $ARGV[1];
-	print "Using $ARGV[1] as source directory\n";
-	die("$src_path doesn't exist.") if (! -d $src_path);
-	shift;
-	shift;
+    $src_path = $ARGV[1];
+    print "Using $ARGV[1] as source directory\n";
+    die("$src_path doesn't exist.") if (! -d $src_path);
+    shift;
+    shift;
 }
 
 if ($ARGV[0] eq "-archive") {
-	$archive =1;
-	print "Will generate appropriate files for image archive\n";
-	die("$DESTDIR already exists - remove if you really want to remake the images") if (-d $DESTDIR);
-	die("$0: unable to mkdir $DESTDIR: $1\n") if (!mkdir($DESTDIR, 0755));
+    $archive =1;
+    print "Will generate appropriate files for image archive\n";
+    die("$DESTDIR already exists - remove if you really want to remake the images") if (-d $DESTDIR);
+    die("$0: unable to mkdir $DESTDIR: $1\n") if (!mkdir($DESTDIR, 0755));
 }
 
 open(IMAGEINFO,"$src_path/image_info") || die("Can't open image_info file: $!\n");
@@ -65,7 +65,7 @@ for ($count=0; $count<=$#extension; $count++) {
     $fh = $ESRV[$count];
     open($fh, ">crossfire.$count") ||
 	die("Can't open crossfire.$count for write: $!\n");
-	binmode( $fh );
+    binmode( $fh );
 }
 
 open(BMAPS,"bmaps.paths") || die("Can't open bmaps.paths: $!\n");
@@ -156,4 +156,3 @@ if ($archive) {
     system("mv $TMPDIR/$ARCHNAME.tar ../");
     system("rm -rf $TMPDIR/$ARCHNAME");
 }
-
