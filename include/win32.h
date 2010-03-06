@@ -160,6 +160,8 @@ extern void service_register();
 extern void service_unregister();
 extern void service_handle();
 
+#define HAVE_CURL_CURL_H
+
 /* For Win32 service */
 extern int bRunning;
 
