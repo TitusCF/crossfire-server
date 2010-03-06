@@ -866,6 +866,10 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
     if (execute_event(tmp, EVENT_DROP, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return NULL;
 
+    /* ensure the plugin didn't destroy the object */
+    if (QUERY_FLAG(tmp, FLAG_REMOVED))
+        return NULL;
+
     /* We are only dropping some of the items.  We split the current objec
      * off
      */
