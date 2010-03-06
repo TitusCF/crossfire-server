@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Misc Win32 fixes.
+Nicolas Weeger 2010-03-06
+
 Fix possible segmentation fault when shutting down the server.
 Andreas Kirschbaum 2010-03-04
 
