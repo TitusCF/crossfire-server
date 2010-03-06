@@ -52,7 +52,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib pthreadVC2.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"d:\python21\libs"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib pthreadVC2.lib libcurl.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"d:\python21\libs"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=copy FullDebug\crossfire32.exe ..\crossfire32.exe
@@ -721,6 +721,10 @@ SOURCE=..\server\init.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\server\knowledge.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\server\login.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -821,6 +825,10 @@ SOURCE=..\server\ob_types.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\server\party.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\server\pets.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -887,6 +895,10 @@ SOURCE=..\server\plugins.c
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\server\quest.c
 # End Source File
 # Begin Source File
 
