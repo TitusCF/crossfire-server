@@ -39,7 +39,9 @@
 #endif
 
 /* Needed for strcasecmp(). */
+#ifndef WIN32
 #include <strings.h>
+#endif
 
 static void help(void);
 static void usage(void);
