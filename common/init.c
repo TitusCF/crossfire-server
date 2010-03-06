@@ -212,6 +212,7 @@ void init_library(void) {
     init_clocks();
     init_emergency_mappath();
     init_experience();
+    init_regions(); /* init_dynamic() loads a map, so needs a region */
     init_dynamic();
 }
 
