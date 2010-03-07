@@ -212,12 +212,21 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             if (x < 9 || y < 9 || x > MAP_CLIENT_X || y > MAP_CLIENT_Y) {
                 SockList_AddPrintf(&sl, "%dx%d", MAP_CLIENT_X, MAP_CLIENT_Y);
             } else {
+                player *pl;
                 ns->mapx = x;
                 ns->mapy = y;
                 /* better to send back what we are really using and not the
                  * param as given to us in case it gets parsed differently.
                  */
                 SockList_AddPrintf(&sl, "%dx%d", x, y);
+                /* need to update the los, else the view jumps */
+                /** @todo find or make a function to find a player from socket_struct */
+                for (pl = first_player; pl; pl = pl->next) {
+                    if (&pl->socket == ns) {
+                        update_los(pl->ob);
+                        break;
+                    }
+                }
                 /* Client and server need to resynchronize on data - treating it as
                  * a new map is best way to go.
                  */

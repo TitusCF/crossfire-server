@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Correctly reset los when mapsize changes.
+ socket/request.c
+Nicolas Weeger 2010-03-07
+
 Load regions before trying to load the initial map.
  common/init.c
 Nicolas Weeger 2010-03-07
