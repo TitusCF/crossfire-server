@@ -182,7 +182,7 @@ void init_formulae(void) {
 
     snprintf(filename, sizeof(filename), "%s/formulae", settings.datadir);
     LOG(llevDebug, "Reading alchemical formulae from %s...\n", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;
     }

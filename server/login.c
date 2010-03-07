@@ -133,7 +133,7 @@ int verify_player(const char *name, char *password) {
         return 1;
     }
 
-    fp = open_and_uncompress(buf, 0, &comp);
+    fp = open_and_uncompress(buf, 0, &comp, "r");
     if (fp == NULL)
         return 1;
 
@@ -524,7 +524,7 @@ void check_login(object *op) {
      * the password.  Return control to the higher level dispatch,
      * since the rest of this just deals with loading of the file.
      */
-    fp = open_and_uncompress(filename, 1, &comp);
+    fp = open_and_uncompress(filename, 1, &comp, "r");
     if (fp == NULL) {
         confirm_password(op);
         return;

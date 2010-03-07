@@ -301,7 +301,7 @@ extern char *strdup_local(const char *str);
 extern const char *strcasestr_local(const char *s, const char *find);
 extern char *strerror_local(int errnum, char *buf, size_t size);
 extern int isqrt(int n);
-extern FILE *open_and_uncompress(const char *name, int flag, int *compressed);
+extern FILE *open_and_uncompress(const char *name, int flag, int *compressed, const char *mode);
 extern void close_and_delete(FILE *fp, int compressed);
 extern void make_path_to_file(const char *filename);
 /* player.c */

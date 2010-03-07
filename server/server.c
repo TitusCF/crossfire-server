@@ -1294,7 +1294,7 @@ int forbid_play(void) {
     tm = (struct tm *)localtime(&clock);
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, PERM_FILE);
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL)
+    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) == NULL)
         return 0;
 
     while (fgets(buf, sizeof(buf), fp)) {

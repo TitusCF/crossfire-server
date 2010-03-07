@@ -478,7 +478,7 @@ void read_client_images(void) {
 
     memset(facesets, 0, sizeof(facesets));
     snprintf(filename, sizeof(filename), "%s/image_info", settings.datadir);
-    if ((infile = open_and_uncompress(filename, 0, &compressed)) == NULL) {
+    if ((infile = open_and_uncompress(filename, 0, &compressed, "r")) == NULL) {
         LOG(llevError, "Unable to open %s\n", filename);
         abort();
     }
@@ -521,7 +521,7 @@ void read_client_images(void) {
         snprintf(filename, sizeof(filename), "%s/crossfire.%d", settings.datadir, fileno);
         LOG(llevDebug, "Loading image file %s\n", filename);
 
-        if ((infile = open_and_uncompress(filename, 0, &compressed)) == NULL) {
+        if ((infile = open_and_uncompress(filename, 0, &compressed, "rb")) == NULL) {
             LOG(llevError, "Unable to open %s\n", filename);
             abort();
         }

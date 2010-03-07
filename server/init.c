@@ -501,7 +501,7 @@ static void load_settings(void) {
      * there will probably be so many values that not having a settings file
      * will not be a good thing.
      */
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) == NULL) {
         LOG(llevError, "Warning: No settings file found\n");
         return;
     }
@@ -1054,7 +1054,7 @@ static void init_startup(void) {
 
 #ifdef SHUTDOWN_FILE
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, SHUTDOWN_FILE);
-    if ((fp = open_and_uncompress(buf, 0, &comp)) != NULL) {
+    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) != NULL) {
         while (fgets(buf, MAX_BUF-1, fp) != NULL)
             printf("%s", buf);
         close_and_delete(fp, comp);

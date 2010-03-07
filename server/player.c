@@ -121,7 +121,7 @@ void display_motd(const object *op) {
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.motd);
-    fp = open_and_uncompress(buf, 0, &comp);
+    fp = open_and_uncompress(buf, 0, &comp, "r");
     if (fp == NULL) {
         return;
     }
@@ -152,7 +152,7 @@ void send_rules(const object *op) {
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.rules);
-    fp = open_and_uncompress(buf, 0, &comp);
+    fp = open_and_uncompress(buf, 0, &comp, "r");
     if (fp == NULL) {
         return;
     }
@@ -188,7 +188,7 @@ void send_news(const object *op) {
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.news);
-    fp = open_and_uncompress(buf, 0, &comp);
+    fp = open_and_uncompress(buf, 0, &comp, "r");
     if (fp == NULL)
         return;
     news[0] = '\0';

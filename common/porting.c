@@ -612,13 +612,15 @@ const char *uncomp[NROF_COMPRESS_METHODS][3] = {
  * @li if unset, uncompress the file via pipe
  * @param[out] compressed
  * set to zero if the file was uncompressed
+ * @param mode
+ * the mode to pass to fopen
  * @return
  * pointer to opened file, NULL on failure.
  *
  * @note
  * will set ::errno if an error occurs.
  */
-static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor, const char *name, int flag, int *compressed) {
+static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor, const char *name, int flag, int *compressed, const char *mode) {
     struct stat st;
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
@@ -645,7 +647,7 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
 
     if (uncompressor == NULL) {
         /* open without uncompression */
-        return fopen(buf, "rb");
+        return fopen(buf, mode);
     }
 
     /* The file name buf (and its substring name) is passed as an argument to a
@@ -692,7 +694,7 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
     *compressed = 0;            /* Change to "uncompressed file" */
     chmod(name, st.st_mode);    /* Copy access mode from compressed file */
 
-    return fopen(name, "rb");
+    return fopen(name, mode);
 }
 
 /**
@@ -715,19 +717,21 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
  * @li if unset, uncompress the file via pipe
  * @param[out] compressed
  * set to zero if the file was uncompressed
+ * @param mode
+ * the mode to pass to fopen
  * @return
  * pointer to opened file, NULL on failure.
  *
  * @note
  * will set ::errno if an error occurs.
  */
-FILE *open_and_uncompress(const char *name, int flag, int *compressed) {
+FILE *open_and_uncompress(const char *name, int flag, int *compressed, const char *mode) {
     size_t i;
     FILE *fp;
 
     for (i = 0; i < NROF_COMPRESS_METHODS; i++) {
         *compressed = i;
-        fp = open_and_uncompress_file(uncomp[i][0], uncomp[i][1], name, flag, compressed);
+        fp = open_and_uncompress_file(uncomp[i][0], uncomp[i][1], name, flag, compressed, mode);
         if (fp != NULL) {
             return fp;
         }

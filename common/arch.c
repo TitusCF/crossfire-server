@@ -516,7 +516,7 @@ static void load_archetypes(void) {
 
     snprintf(filename, sizeof(filename), "%s/%s", settings.datadir, settings.archetypes);
     LOG(llevDebug, "Reading archetypes from %s...\n", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
         LOG(llevError, " Can't open archetype file.\n");
         return;
     }
@@ -549,7 +549,7 @@ static void load_archetypes(void) {
      * file has been compressed.
      */
     close_and_delete(fp, comp);
-    fp = open_and_uncompress(filename, 0, &comp);
+    fp = open_and_uncompress(filename, 0, &comp, "r");
 
     LOG(llevDebug, " loading treasure...\n");
     load_treasures();

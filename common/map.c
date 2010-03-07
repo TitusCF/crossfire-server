@@ -1217,7 +1217,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     else
         create_pathname(filename, pathname, MAX_BUF);
 
-    if ((fp = open_and_uncompress(pathname, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(pathname, 0, &comp, "r")) == NULL) {
         char err[MAX_BUF];
 
         LOG((flags&MAP_PLAYER_UNIQUE) ? llevDebug : llevError, "Can't open %s: %s\n", pathname, strerror_local(errno, err, sizeof(err)));
@@ -1281,7 +1281,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
         return m;
     }
 
-    if ((fp = open_and_uncompress(m->tmpname, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(m->tmpname, 0, &comp, "r")) == NULL) {
         LOG(llevError, "Cannot open %s: %s\n", m->tmpname, strerror_local(errno, buf, sizeof(buf)));
         snprintf(buf, sizeof(buf), "%s", m->path);
         delete_map(m);
@@ -1325,7 +1325,7 @@ static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
 
     create_overlay_pathname(filename, pathname, MAX_BUF);
 
-    if ((fp = open_and_uncompress(pathname, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(pathname, 0, &comp, "r")) == NULL) {
         /* LOG(llevDebug, "Can't open overlay %s\n", pathname);*/
         return m;
     }
@@ -1396,7 +1396,7 @@ static void load_unique_objects(mapstruct *m) {
     if (count == 10)
         return;
 
-    if ((fp = open_and_uncompress(firstname, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(firstname, 0, &comp, "r")) == NULL) {
         /* There is no expectation that every map will have unique items, but this
         * is debug output, so leave it in.
         */

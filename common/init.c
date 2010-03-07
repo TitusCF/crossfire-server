@@ -492,7 +492,7 @@ static void init_attackmess(void) {
 
     snprintf(filename, sizeof(filename), "%s/attackmess", settings.datadir);
     LOG(llevDebug, "Reading attack messages from %s...\n", filename);
-    fp = open_and_uncompress(filename, 0, &comp);
+    fp = open_and_uncompress(filename, 0, &comp, "r");
     if (fp == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;

@@ -307,7 +307,7 @@ void init_regions(void) {
 
     snprintf(filename, sizeof(filename), "%s/%s/%s", settings.datadir, settings.mapdir, settings.regions);
     LOG(llevDebug, "Reading regions from %s...\n", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
         LOG(llevError, " Can't open regions file %s in init_regions.\n", filename);
         return;
     }

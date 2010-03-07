@@ -722,7 +722,7 @@ static void init_msgfile(void) {
     snprintf(fname, sizeof(fname), "%s/messages", settings.datadir);
     LOG(llevDebug, "Reading messages from %s...\n", fname);
 
-    fp = open_and_uncompress(fname, 0, &comp);
+    fp = open_and_uncompress(fname, 0, &comp, "r");
     if (fp != NULL) {
         linked_char *tmp = NULL;
         int lineno;
@@ -795,7 +795,7 @@ static void init_book_archive(void) {
     snprintf(fname, sizeof(fname), "%s/bookarch", settings.localdir);
     LOG(llevDebug, " Reading bookarch from %s...\n", fname);
 
-    fp = open_and_uncompress(fname, 0, &comp);
+    fp = open_and_uncompress(fname, 0, &comp, "r");
     if (fp != NULL) {
         int type;
         size_t i;

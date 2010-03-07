@@ -229,7 +229,7 @@ void load_treasures(void) {
     int comp, line = 0;
 
     snprintf(filename, sizeof(filename), "%s/%s", settings.datadir, settings.treasures);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
         LOG(llevError, "Can't open treasure file.\n");
         return;
     }
@@ -1536,7 +1536,7 @@ void init_artifacts(void) {
 
     snprintf(filename, sizeof(filename), "%s/artifacts", settings.datadir);
     LOG(llevDebug, "Reading artifacts from %s...\n", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;
     }
