@@ -2233,7 +2233,7 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
             if (object_can_merge(op, tmp)) {
                 op->nrof += tmp->nrof;
                 object_remove(tmp);
-                object_free_drop_inventory(tmp);
+                object_free2(tmp, 1);
             }
         } FOR_MAP_FINISH();
     } else if (op->type == SPELL_EFFECT
