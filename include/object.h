@@ -361,6 +361,15 @@ extern int nroffreeobjects;
 /*@}*/
 
 /**
+ * @defgroup FREE_OBJ_xxx Object free flags
+ *
+ * Used by object_free2() to specify options.
+ */
+/*@{*/
+#define FREE_OBJ_FREE_INVENTORY      1 /**< Free inventory objects; if not set, drop inventory. */
+/*@}*/
+
+/**
  * @defgroup INS_xxx Object insertion flags.
  *
  * These are flags passed to object_insert_in_map() and

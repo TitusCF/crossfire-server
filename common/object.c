@@ -1393,8 +1393,8 @@ void object_free_drop_inventory(object *ob) {
  *
  * @param ob
  * object to free. Will become invalid when function returns.
- * @param free_inventory
- * if set, free inventory as well. Else drop items in inventory to the ground.
+ * @param flags
+ * the flags; see FREE_OBJ_xxx constants.
  *
  * @warning
  * the object's archetype should be a valid pointer, or NULL.
@@ -1402,7 +1402,7 @@ void object_free_drop_inventory(object *ob) {
  * @note
  * free_object2() has been renamed to object_free2()
  */
-void object_free2(object *ob, int free_inventory) {
+void object_free2(object *ob, int flags) {
     if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
         StringBuffer *sb;
         char *diff;
@@ -1441,13 +1441,13 @@ void object_free2(object *ob, int free_inventory) {
          * if some form of movemnt is allowed, let objects
          * drop on that space.
          */
-        if (free_inventory
+        if ((flags & FREE_OBJ_FREE_INVENTORY) != 0
         || ob->map == NULL
         || ob->map->in_memory != MAP_IN_MEMORY
         || (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) {
             FOR_INV_PREPARE(ob, op) {
                 object_remove(op);
-                object_free2(op, free_inventory);
+                object_free2(op, flags);
             } FOR_INV_FINISH();
         } else { /* Put objects in inventory onto this space */
             FOR_INV_PREPARE(ob, op) {
@@ -1488,7 +1488,7 @@ void object_free2(object *ob, int free_inventory) {
     }
 
     if (ob->more != NULL) {
-        object_free2(ob->more, free_inventory);
+        object_free2(ob->more, flags);
         ob->more = NULL;
     }
 
@@ -2233,7 +2233,7 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
             if (object_can_merge(op, tmp)) {
                 op->nrof += tmp->nrof;
                 object_remove(tmp);
-                object_free2(tmp, 1);
+                object_free2(tmp, FREE_OBJ_FREE_INVENTORY);
             }
         } FOR_MAP_FINISH();
     } else if (op->type == SPELL_EFFECT

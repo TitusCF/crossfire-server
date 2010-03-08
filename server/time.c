@@ -578,7 +578,7 @@ int free_no_drop(object *op) {
         object_remove(op);
     }
 
-    object_free2(op, 1);
+    object_free2(op, FREE_OBJ_FREE_INVENTORY);
     return 1;
 }
 
