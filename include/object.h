@@ -367,6 +367,7 @@ extern int nroffreeobjects;
  */
 /*@{*/
 #define FREE_OBJ_FREE_INVENTORY      1 /**< Free inventory objects; if not set, drop inventory. */
+#define FREE_OBJ_NO_DESTROY_CALLBACK 2 /**< Do not run the destroy callback. */
 /*@}*/
 
 /**

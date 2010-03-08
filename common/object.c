@@ -1433,8 +1433,10 @@ void object_free2(object *ob, int flags) {
         return;
     }
 
-    /* Handle for plugin destroy event */
-    execute_event(ob, EVENT_DESTROY, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+    if ((flags & FREE_OBJ_NO_DESTROY_CALLBACK) == 0) {
+        /* Handle for plugin destroy event */
+        execute_event(ob, EVENT_DESTROY, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+    }
 
     if (ob->inv) {
         /* Only if the space blocks everything do we not process -
@@ -1883,7 +1885,7 @@ object *object_merge(object *op, object *top) {
             increase_ob_nr(top, op->nrof);
             op->weight = 0; /* Don't want any adjustements now */
             object_remove(op);
-            object_free_drop_inventory(op);
+            object_free2(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
             return top;
         }
     } FOR_OB_AND_BELOW_FINISH();
@@ -2233,7 +2235,7 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
             if (object_can_merge(op, tmp)) {
                 op->nrof += tmp->nrof;
                 object_remove(tmp);
-                object_free2(tmp, FREE_OBJ_FREE_INVENTORY);
+                object_free2(tmp, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
             }
         } FOR_MAP_FINISH();
     } else if (op->type == SPELL_EFFECT
@@ -2706,7 +2708,7 @@ object *object_insert_in_ob(object *op, object *where) {
                  * (client needs the original object) */
                 increase_ob_nr(tmp, op->nrof);
                 SET_FLAG(op, FLAG_REMOVED);
-                object_free_drop_inventory(op); /* free the inserted object */
+                object_free2(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK); /* free the inserted object */
                 return tmp;
             }
         FOR_INV_FINISH();
