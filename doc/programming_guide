@@ -13,8 +13,7 @@ object, and pl is for player.
 2) Some functions are named using the conventions above - the naming reflects
 what options they take (insert_ob_in_ob takes 2 object structures)
 
-3) Identation is either 2 spaces or 4 spaces.  This can be a pain
-to read, but most functions should be consistent through the function.
+3) Indentation is 4 spaces.
 
 4) Some structure elements should never be accessed directly - rather,
 there are other functions to use the values.
