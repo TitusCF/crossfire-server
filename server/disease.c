@@ -203,7 +203,7 @@ int move_disease(object *disease) {
             disease->value--;
         if (disease->value == 0) {
             object_remove(disease);
-            object_free(disease);
+            object_free_drop_inventory(disease);
             return 1;
         }
     } else {
@@ -215,7 +215,7 @@ int move_disease(object *disease) {
                 remove_symptoms(disease);  /* remove the symptoms of this disease */
                 grant_immunity(disease);
                 object_remove(disease);
-                object_free(disease);
+                object_free_drop_inventory(disease);
                 return 1;
             }
         }
@@ -250,7 +250,7 @@ static void remove_symptoms(object *disease) {
         if (!victim)
             victim = symptom->env;
         object_remove(symptom);
-        object_free(symptom);
+        object_free_drop_inventory(symptom);
     }
     if (victim)
         fix_object(victim);
@@ -602,7 +602,7 @@ void move_symptom(object *symptom) {
 
     if (victim == NULL || victim->map == NULL) { /* outside a monster/player, die immediately */
         object_remove(symptom);
-        object_free(symptom);
+        object_free_drop_inventory(symptom);
         return;
     }
 
@@ -617,7 +617,7 @@ void move_symptom(object *symptom) {
     if (QUERY_FLAG(victim, FLAG_FREED)) {
         if (!object_was_destroyed(symptom, tag)) {
             object_remove(symptom);
-            object_free(symptom);
+            object_free_drop_inventory(symptom);
         }
         return;
     }
@@ -709,7 +709,7 @@ int cure_disease(object *sufferer, object *caster) {
                 cure = 1;
                 if (caster)
                     change_exp(caster, disease->stats.exp, caster->chosen_skill ? caster->chosen_skill->skill : NULL, 0);
-                object_free(disease);
+                object_free_drop_inventory(disease);
             }
         }
     } FOR_INV_FINISH();

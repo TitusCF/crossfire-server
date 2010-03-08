@@ -1208,7 +1208,7 @@ static void change_book(object *book, int msgtype) {
         tmpbook = create_archetype(t->archname);
         object_set_msg(tmpbook, book->msg);
         object_copy(tmpbook, book);
-        object_free(tmpbook);
+        object_free_drop_inventory(tmpbook);
 
         book->title = add_string(t->authour);
         free_string(book->name);
@@ -1605,7 +1605,7 @@ char *artifact_msg(int level, char *retbuf, size_t booksize) {
         describe_item(tmp, NULL, sbuf, sizeof(sbuf));
         if (strlen(sbuf) > 1)
             stringbuffer_append_printf(desc, " Properties of this artifact include:\n %s\n", sbuf);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
 
         final = stringbuffer_finish(desc);
 

@@ -736,7 +736,7 @@ A       .+
                                 } else {
                                     if (arch_init == 0)
                                         LOG(llevDebug, "Discarding object without arch: %s\n", tmp->name ? tmp->name : "(null)");
-                                    object_free(tmp);
+                                    object_free_drop_inventory(tmp);
                                 }
                             }
                         } else {

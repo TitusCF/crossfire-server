@@ -770,7 +770,7 @@ static void insert_objects(object *pl, object *container, object *objects[], int
             object_insert_in_ob(objects[i], container);
             one = 1;
         } else {
-            object_free(objects[i]);
+            object_free_drop_inventory(objects[i]);
         }
     }
     if (one)
@@ -822,7 +822,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                         LOG(llevError, "%s has two money entries of (%s)\n", pouch->name, coins[NUM_COINS-1-i]);
                         object_remove(tmp);
                         coin_objs[i]->nrof += tmp->nrof;
-                        object_free(tmp);
+                        object_free_drop_inventory(tmp);
                     } else {
                         object_remove(tmp);
                         coin_objs[i] = tmp;

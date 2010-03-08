@@ -50,7 +50,7 @@ static method_ret thrown_object_type_process(ob_methods *context, object *op) {
     if (op->map == NULL) {
         LOG(llevError, "BUG: Thrown object had no map.\n");
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return METHOD_ERROR;
     }
 
@@ -66,7 +66,7 @@ static method_ret thrown_object_type_process(ob_methods *context, object *op) {
          */
         if (op->inv == NULL) {
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
             return METHOD_OK;
         }
         if (op->last_sp-- < 0) {

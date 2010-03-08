@@ -222,7 +222,7 @@ void save_throw_object(object *op, uint32 type, object *originator) {
         } else {
             if (!QUERY_FLAG(op, FLAG_REMOVED))
                 object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
         }
         if (type&(AT_FIRE|AT_ELECTRICITY)) {
             if (env) {
@@ -992,7 +992,7 @@ object *hit_with_arrow(object *op, object *victim) {
     if (object_was_destroyed(hitter, hitter_tag) || hitter->env != NULL) {
         if (container) {
             object_remove(container);
-            object_free(container);
+            object_free_drop_inventory(container);
         }
         return NULL;
     }
@@ -1012,7 +1012,7 @@ object *hit_with_arrow(object *op, object *victim) {
                 return NULL;
         } else {
             object_remove(container);
-            object_free(container);
+            object_free_drop_inventory(container);
         }
 
         /* Try to stick arrow into victim */
@@ -1064,7 +1064,7 @@ static void tear_down_wall(object *op) {
         /* Object has been called - no animations, so remove it */
         if (op->stats.hp < 0) {
             object_remove(op); /* Should update LOS */
-            object_free(op);
+            object_free_drop_inventory(op);
             /* Don't know why this is here - object_remove() should do it for us */
             /*update_position(m, x, y);*/
         }
@@ -1081,7 +1081,7 @@ static void tear_down_wall(object *op) {
         if (op->face == blank_face) {
             /* If the last face is blank, remove the ob */
             object_remove(op); /* Should update LOS */
-            object_free(op);
+            object_free_drop_inventory(op);
 
             /* object_remove() should call update_position for us */
             /*update_position(m, x, y);*/
@@ -1540,7 +1540,7 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
             LOG(llevError, "BUG: hit_player(): Encountered golem without owner.\n");
 
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return maxdam;
     }
 
@@ -1751,7 +1751,7 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
             remove_friendly_object(op);
         }
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
     /* Player has been killed! */
     } else {
         if (owner->type == PLAYER) {
@@ -2054,13 +2054,13 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
         if (QUERY_FLAG(hitter, FLAG_FRIENDLY))
             remove_friendly_object(hitter);
         object_remove(hitter);
-        object_free(hitter);
+        object_free_drop_inventory(hitter);
     /* Lets handle creatures that are splitting now */
     } else if (type&AT_PHYSICAL && !QUERY_FLAG(op, FLAG_FREED) && QUERY_FLAG(op, FLAG_SPLITTING)) {
         change_object(op);
     } else if (type&AT_DRAIN && hitter->type == GRIMREAPER && hitter->value++ > 10) {
         object_remove(hitter);
-        object_free(hitter);
+        object_free_drop_inventory(hitter);
     }
     return maxdam;
 }

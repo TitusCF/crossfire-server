@@ -711,7 +711,7 @@ void give_initial_items(object *pl, treasurelist *items) {
             || (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && IS_WEAPON(op))
             || (!QUERY_FLAG(pl, FLAG_USE_SHIELD) && IS_SHIELD(op))) {
                 object_remove(op);
-                object_free(op);
+                object_free_drop_inventory(op);
                 continue;
             }
         }
@@ -735,7 +735,7 @@ void give_initial_items(object *pl, treasurelist *items) {
             if (found) {
                 LOG(llevError, "give_initial_items: Removing duplicate object %s\n", op->name);
                 object_remove(op);
-                object_free(op);
+                object_free_drop_inventory(op);
                 continue;
             }
             if (op->nrof > 1)
@@ -848,7 +848,7 @@ void receive_play_again(object *op, char key) {
 
         add_refcount(name);
         remove_friendly_object(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         pl = get_player(pl);
         op = pl->ob;
         add_friendly_object(op);
@@ -1222,7 +1222,7 @@ void key_change_class(object *op, char key) {
                 snprintf(op->contr->savebed_map, sizeof(op->contr->savebed_map), "%s", mapname);
             }
 
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
         } else {
             LOG(llevDebug, "first_map_ext_path not set\n");
         }
@@ -1936,7 +1936,7 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     /* this should not happen, but sometimes does */
     if (arrow->nrof == 0) {
         object_remove(arrow);
-        object_free(arrow);
+        object_free_drop_inventory(arrow);
         return 0;
     }
 
@@ -2843,7 +2843,7 @@ static int save_life(object *op) {
                              "Your %s vibrates violently, then evaporates.",
                              name);
         object_remove(tmp);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
         CLEAR_FLAG(op, FLAG_LIFESAVE);
         if (op->stats.hp < 0)
             op->stats.hp = op->stats.maxhp;
@@ -2875,7 +2875,7 @@ void remove_unpaid_objects(object *op, object *env, int free_items) {
         if (QUERY_FLAG(op, FLAG_UNPAID)) {
             object_remove(op);
             if (free_items)
-                object_free(op);
+                object_free_drop_inventory(op);
             else
                 object_insert_in_map_at(op, env->map, NULL, 0, env->x, env->y);
         } else if (op->inv)
@@ -3125,10 +3125,10 @@ static void loot_object(object *op) {
         && (QUERY_FLAG(tmp, FLAG_STARTEQUIP) || QUERY_FLAG(tmp, FLAG_NO_DROP) || !(RANDOM()%3))) {
             if (tmp->nrof > 1) {
                 tmp2 = object_split(tmp, 1+RANDOM()%(tmp->nrof-1), NULL, 0);
-                object_free(tmp2);
+                object_free_drop_inventory(tmp2);
                 object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
             } else
-                object_free(tmp);
+                object_free_drop_inventory(tmp);
         } else
             object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
     } FOR_INV_FINISH();
@@ -3172,7 +3172,7 @@ void kill_player(object *op) {
         tmp = arch_present_in_ob(at, op);
         if (tmp) {
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                           "Your body feels cleansed", NULL);
         }
@@ -3181,7 +3181,7 @@ void kill_player(object *op) {
         tmp = arch_present_in_ob(at, op);
         if (tmp) {
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                           "Your mind feels clearer", NULL);
         }
@@ -3398,7 +3398,7 @@ static void kill_player_not_permadeath(object *op) {
     tmp = arch_present_in_ob(at, op);
     if (tmp) {
         object_remove(tmp);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
             "Your body feels cleansed", NULL);
     }
@@ -3407,7 +3407,7 @@ static void kill_player_not_permadeath(object *op) {
     tmp = arch_present_in_ob(at, op);
     if (tmp) {
         object_remove(tmp);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
         draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
             "Your mind feels clearer", NULL);
     }
@@ -3502,7 +3502,7 @@ static void kill_player_permadeath(object *op) {
     if (op->contr->ranges[range_golem] != NULL) {
         remove_friendly_object(op->contr->ranges[range_golem]);
         object_remove(op->contr->ranges[range_golem]);
-        object_free(op->contr->ranges[range_golem]);
+        object_free_drop_inventory(op->contr->ranges[range_golem]);
         op->contr->ranges[range_golem] = NULL;
         op->contr->golem_count = 0;
     }
@@ -3612,7 +3612,7 @@ void cast_dust(object *op, object *throw_ob, int dir) {
 
     if (!QUERY_FLAG(throw_ob, FLAG_REMOVED))
         object_remove(throw_ob);
-    object_free(throw_ob);
+    object_free_drop_inventory(throw_ob);
 }
 
 /**

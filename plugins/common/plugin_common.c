@@ -507,10 +507,10 @@ void cf_object_remove(object *op) {
     cfapiObject_remove(&type, op);
 }
 /**
- * Wrapper for object_free().
- * @copydoc object_free()
+ * Wrapper for object_free_drop_inventory().
+ * @copydoc object_free_drop_inventory()
  */
-void cf_object_free(object *ob) {
+void cf_object_free_drop_inventory(object *ob) {
     int type;
 
     cfapiObject_delete(&type, ob);

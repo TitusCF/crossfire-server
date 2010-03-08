@@ -193,11 +193,11 @@ int check_name(player *me, const char *name) {
 }
 
 /**
- * Recursively object_free() op and its inventory.
+ * Recursively object_free_drop_inventory() op and its inventory.
  *
  * @param op
- * object to totally object_free().
- * @todo doesn't object_free() handle inventory?
+ * object to totally object_free_drop_inventory().
+ * @todo doesn't object_free_drop_inventory() handle inventory?
  */
 void destroy_object(object *op) {
     while (op->inv != NULL)
@@ -205,7 +205,7 @@ void destroy_object(object *op) {
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
         object_remove(op);
-    object_free(op);
+    object_free_drop_inventory(op);
 }
 
 /**

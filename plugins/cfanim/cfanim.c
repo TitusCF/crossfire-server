@@ -308,7 +308,7 @@ static anim_move_result runghosted(struct CFanimation_struct *animation, long in
         animation->wizard = 0;
         animation->invisible = 0;
         cf_object_remove(animation->corpse);
-        cf_object_free(animation->corpse);
+        cf_object_free_drop_inventory(animation->corpse);
         animation->corpse = NULL;
         animation->victim->invisible = 0;
         cf_player_move(animation->victim->contr, 0);

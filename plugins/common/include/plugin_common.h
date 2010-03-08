@@ -119,7 +119,7 @@ extern object      *cf_object_insert_object(object *op, object *container);
 extern object      *cf_object_present_archname_inside(object *op, char *whatstr);
 extern int          cf_object_apply(object *op, object *author, int flags);
 extern void         cf_object_remove(object *op);
-extern void         cf_object_free(object *ob);
+extern void         cf_object_free_drop_inventory(object *ob);
 extern object      *cf_create_object(void);
 extern object      *cf_create_object_by_name(const char *name);
 extern object      *cf_object_change_map(object *op, mapstruct *m, object *originator, int flag, int x, int y);

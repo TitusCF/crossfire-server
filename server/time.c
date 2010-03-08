@@ -65,7 +65,7 @@ void remove_door(object *op) {
         object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y);
     }
     object_remove(op);
-    object_free(op);
+    object_free_drop_inventory(op);
 }
 
 /**
@@ -92,7 +92,7 @@ void remove_locked_door(object *op) {
         object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y);
     }
     object_remove(op);
-    object_free(op);
+    object_free_drop_inventory(op);
 }
 
 /**
@@ -305,7 +305,7 @@ static void generate_monster(object *gen) {
 
         if (num_generated++ >= limit) {
             object_remove(gen);
-            object_free(gen);
+            object_free_drop_inventory(gen);
         } else {
             char buf[50];
 
@@ -363,7 +363,7 @@ static void remove_force(object *op) {
             }
             inv = op->env;
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
             object_remove(inv);
         }
         return;
@@ -378,7 +378,7 @@ static void remove_force(object *op) {
         fix_object(op->env);
     }
     object_remove(op);
-    object_free(op);
+    object_free_drop_inventory(op);
 }
 
 /**
@@ -474,7 +474,7 @@ object *stop_item(object *op) {
                 return NULL;
             object_remove(payload);
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
             return payload;
         }
 
@@ -523,7 +523,7 @@ object *fix_stopped_arrow(object *op) {
     if (rndm(0, 99) < op->stats.food) {
         /* Small chance of breaking */
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return NULL;
     }
 
@@ -642,7 +642,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
     }
     if (friendly)
         remove_friendly_object(op);
-    object_free(op);
+    object_free_drop_inventory(op);
 }
 
 /**
@@ -701,7 +701,7 @@ void move_player_mover(object *op) {
 
             if (QUERY_FLAG(op, FLAG_LIFESAVE) && op->stats.hp-- < 0) {
                 object_remove(op);
-                object_free(op);
+                object_free_drop_inventory(op);
                 return;
             }
             nx = op->x+freearr_x[dir];
@@ -803,7 +803,7 @@ int process_object(object *op) {
             object_remove(op);
             if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
                 make_sure_not_seen(op);
-            object_free(op);
+            object_free_drop_inventory(op);
         }
         return 1;
     }

@@ -338,12 +338,12 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             FOR_MAP_PREPARE(new_map, MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map), tmp)
                 /* Remove exit back to previous random map.  There should only be one
                  * which is why we break out.  To try to process more than one
-                 * would require keeping a 'next' pointer, as object_free() kills tmp, which
+                 * would require keeping a 'next' pointer, as object_free_drop_inventory() kills tmp, which
                  * breaks the for loop.
                  */
                 if (tmp->type == EXIT && EXIT_PATH(tmp) && !strncmp(EXIT_PATH(tmp), "/random/", 8)) {
                     object_remove(tmp);
-                    object_free(tmp);
+                    object_free_drop_inventory(tmp);
                     break;
                 }
             FOR_MAP_FINISH();

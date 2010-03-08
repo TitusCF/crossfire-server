@@ -93,7 +93,7 @@ static int convert_item(object *item, object *converter) {
         /* silently burn unpaid items (only if they match what we want) */
         if (QUERY_FLAG(item, FLAG_UNPAID)) {
             object_remove(item);
-            object_free(item);
+            object_free_drop_inventory(item);
             item = create_archetype("burnout");
             if (item != NULL)
                 object_insert_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
@@ -107,7 +107,7 @@ static int convert_item(object *item, object *converter) {
         } else {
             price_in = item->value;
             object_remove(item);
-            object_free(item);
+            object_free_drop_inventory(item);
         }
     }
 
@@ -143,7 +143,7 @@ static int convert_item(object *item, object *converter) {
         SET_FLAG(item, FLAG_UNPAID);
     else if (price_in < item->nrof*item->value && settings.allow_broken_converters == FALSE) {
         LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d for %s\n", converter->name, converter->map->path, converter->x, converter->y, price_in, item->nrof*item->value, item->name);
-        object_free(item);
+        object_free_drop_inventory(item);
         return -1;
     }
     object_insert_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);

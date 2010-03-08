@@ -239,7 +239,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     /* first, find a place to put the chest. */
     i = object_find_first_free_spot(the_chest, map, x, y);
     if (i == -1) {
-        object_free(the_chest);
+        object_free_drop_inventory(the_chest);
         return NULL;
     }
     xl = x+freearr_x[i];
@@ -247,7 +247,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
 
     /* if the placement is blocked, return a fail. */
     if (wall_blocked(map, xl, yl)) {
-        object_free(the_chest);
+        object_free_drop_inventory(the_chest);
         return NULL;
     }
 
@@ -716,7 +716,7 @@ void remove_monsters(int x, int y, mapstruct *map) {
         if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
             tmp = HEAD(tmp);
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             tmp = GET_MAP_OB(map, x, y);
             if (tmp == NULL)
                 break;
@@ -915,7 +915,7 @@ static void remove_adjacent_doors(object *door) {
             FOR_MAP_PREPARE(m, x+freearr_x[i], y+freearr_y[i], tmp) {
                 if (tmp->type == DOOR) {
                     object_remove(tmp);
-                    object_free(tmp);
+                    object_free_drop_inventory(tmp);
                     break;
                 }
             } FOR_MAP_FINISH();
@@ -951,7 +951,7 @@ void lock_and_hide_doors(object **doorlist, mapstruct *map, int opts, RMParms *R
             door = doorlist[i];
             new_door->face = door->face;
             object_remove(door);
-            object_free(door);
+            object_free_drop_inventory(door);
             doorlist[i] = new_door;
             object_insert_in_map_at(new_door, map, NULL, 0, door->x, door->y);
 
@@ -978,7 +978,7 @@ void lock_and_hide_doors(object **doorlist, mapstruct *map, int opts, RMParms *R
                 door->face = wallface->face;
                 if (!QUERY_FLAG(wallface, FLAG_REMOVED))
                     object_remove(wallface);
-                object_free(wallface);
+                object_free_drop_inventory(wallface);
             }
         }
     }

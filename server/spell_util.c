@@ -662,7 +662,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
 
     mflags = get_map_flags(m, &tmp->map, x, y, &tmp->x, &tmp->y);
     if (mflags&P_OUT_OF_MAP) {
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
         return 0;
     }
 
@@ -693,7 +693,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
                 /* If caster is not player, it's for instance a swarm, so don't say there's an issue. */
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                               "You can't cast the spell on top of a wall!", NULL);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             return 0;
         }
 
@@ -716,7 +716,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
     if (spell->subtype == SP_BULLET) {
         if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
             if (!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
-                object_free(tmp);
+                object_free_drop_inventory(tmp);
                 return 0;
             }
             tmp->direction = absdir(tmp->direction+4);
@@ -724,7 +724,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
             y += DIRY(tmp);
             mflags = get_map_flags(m, &m, x, y, &x, &y);
             if (mflags&P_OUT_OF_MAP) {
-                object_free(tmp);
+                object_free_drop_inventory(tmp);
                 return 0;
             }
             tmp->x = x;
@@ -1077,7 +1077,7 @@ static void prayer_failure(object *op, int failure, int power) {
                              godname);
         tmp = create_archetype(SPELL_WONDER);
         cast_cone(op, op, 0, tmp);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
     } else if (failure <= -40 && failure > -60) { /* confusion */
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "Your diety touches your mind!", NULL);
@@ -1127,7 +1127,7 @@ void spell_failure(object *op, int failure, int power, object *skill) {
                       "Your spell causes an unexpected effect.", NULL);
         tmp = create_archetype(SPELL_WONDER);
         cast_cone(op, op, 0, tmp);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
     } else if (failure <= -40 && failure > -60) { /* confusion */
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "Your magic recoils on you, making you confused!", NULL);

@@ -71,7 +71,7 @@ static void do_turn(object *op, object *who, int aflags, const char *onoff) {
     object_insert_in_ob(tmp2, who);
 
     object_remove(op);
-    object_free(op);
+    object_free_drop_inventory(op);
 
     fix_object(who);
 

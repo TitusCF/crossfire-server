@@ -290,7 +290,7 @@ static void add_npc_to_zone(const mapzone *zone, mapstruct *map) {
         return;
     which = RANDOM()%zone->count_zones;
     if (cf_object_teleport(npc, map, zone->zones[which].sx+RANDOM()%(zone->zones[which].ex-zone->zones[which].sx), zone->zones[which].sy+RANDOM()%(zone->zones[which].ey-zone->zones[which].sy))) {
-        cf_object_free(npc);
+        cf_object_free_drop_inventory(npc);
     }
 }
 
@@ -307,7 +307,7 @@ static void add_npc_to_point(const mapzone *zone, mapstruct *map) {
 
     which = RANDOM()%zone->count_points;
     if (cf_object_teleport(npc, map, zone->points[which].x, zone->points[which].y)) {
-        cf_object_free(npc);
+        cf_object_free_drop_inventory(npc);
     }
 }
 
@@ -447,7 +447,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
 
                 cf_log(llevDebug, PLUGIN_NAME ": NPC entering building.\n");
                 cf_object_remove(who);
-                cf_object_free(who);
+                cf_object_free_drop_inventory(who);
                 return &rv;
             }
         }

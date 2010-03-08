@@ -43,7 +43,7 @@ void stop_projectile(object *op) {
         object_clear_owner(payload);
         object_insert_in_map_at(payload, op->map, payload, 0, op->x, op->y);
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
     } else {
         op = fix_stopped_arrow(op);
         if (op)
@@ -68,7 +68,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
     if (op->map == NULL) {
         LOG(llevError, "BUG: Projectile had no map.\n");
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return METHOD_ERROR;
     }
 

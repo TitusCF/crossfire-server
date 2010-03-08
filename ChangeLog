@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Rename object_free() to object_free_drop_inventory() to hint about
+possible side-effects.
+Andreas Kirschbaum 2010-03-08
+
 Properly distinguish between text and binary files.
 Andreas Kirschbaum 2010-03-07
 

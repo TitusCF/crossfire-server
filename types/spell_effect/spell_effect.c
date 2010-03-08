@@ -83,7 +83,7 @@ static method_ret spell_effect_type_move_on(ob_methods *context, object *trap, o
             hit_player(victim, trap->stats.dam, trap, trap->attacktype, 1);
             if (!object_was_destroyed(trap, spell_tag)) {
                 object_remove(trap);
-                object_free(trap);
+                object_free_drop_inventory(trap);
             }
         }
         break;
@@ -163,7 +163,7 @@ static void move_bolt(object *op) {
 
     if (--(op->duration) < 0) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
     hit_map(op, 0, op->attacktype, 1);
@@ -267,7 +267,7 @@ static void move_bullet(object *op) {
             explode_bullet(op);
         } else {
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
         }
         return;
     }
@@ -279,7 +279,7 @@ static void move_bullet(object *op) {
 
     if (mflags&P_OUT_OF_MAP) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
 
@@ -288,7 +288,7 @@ static void move_bullet(object *op) {
             explode_bullet(op);
         } else {
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
         }
         return;
     }
@@ -317,7 +317,7 @@ static void explosion(object *op) {
 
     if (--(op->duration) < 0) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
     hit_map(op, 0, op->attacktype, 0);
@@ -387,7 +387,7 @@ static void move_cone(object *op) {
 
     if ((op->duration--) < 0) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
     /* Object has hit maximum range, so don't have it move
@@ -484,7 +484,7 @@ static void move_missile(object *op) {
 
     if (op->range-- <= 0) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
 
@@ -505,14 +505,14 @@ static void move_missile(object *op) {
          */
         if (!object_was_destroyed(op, tag)) {
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
         }
         return;
     }
 
     object_remove(op);
     if (!op->direction || (mflags&P_OUT_OF_MAP)) {
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
     i = spell_find_dir(m, new_x, new_y, object_get_owner(op));
@@ -541,7 +541,7 @@ static void execute_word_of_recall(object *op) {
             enter_exit(op, wor);
     }
     object_remove(wor);
-    object_free(wor);
+    object_free_drop_inventory(wor);
 }
 
 /**
@@ -659,7 +659,7 @@ static void move_swarm_spell(object *op) {
     owner = object_get_owner(op);
     if (op->duration == 0 || owner == NULL || owner->x != op->x || owner->y != op->y) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
     op->duration--;
@@ -733,13 +733,13 @@ static void move_aura(object *aura) {
 
     /* exit if we're out of gas */
     if (aura->duration-- < 0) {
-        object_free(aura);
+        object_free_drop_inventory(aura);
         return;
     }
 
     /* auras only exist in inventories */
     if (env == NULL || env->map == NULL) {
-        object_free(aura);
+        object_free_drop_inventory(aura);
         return;
     }
 

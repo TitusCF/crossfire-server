@@ -195,7 +195,7 @@ static char *old_artifact_msg(int level, char *retbuf, size_t booksize) {
         describe_item(tmp, NULL, sbuf, sizeof(sbuf));
         if (strlen(sbuf) > 1)
             snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " Properties of this artifact include:\n %s\n", sbuf);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
         /* add the buf if it will fit */
         if (book_overflow(retbuf, buf, booksize))
             break;
@@ -247,7 +247,7 @@ START_TEST(test_artifact_msg_rewrite) {
         }
     }
 
-    object_free(dummy);
+    object_free_drop_inventory(dummy);
 }
 END_TEST
 

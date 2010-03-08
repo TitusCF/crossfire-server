@@ -65,7 +65,7 @@ void move_duplicator(object *op) {
         if (strcmp(op->other_arch->name, tmp->arch->name) == 0) {
             if (op->level <= 0) {
                 object_remove(tmp);
-                object_free(tmp);
+                object_free_drop_inventory(tmp);
             } else {
                 uint64 new_nrof = (uint64)tmp->nrof*op->level;
 

@@ -97,7 +97,7 @@ static void move_creator(object *creator) {
 
     /* Make sure this multipart object fits */
     if (new_ob->arch->more && ob_blocked(new_ob, creator->map, creator->x, creator->y)) {
-        object_free(new_ob);
+        object_free_drop_inventory(new_ob);
         return;
     }
 

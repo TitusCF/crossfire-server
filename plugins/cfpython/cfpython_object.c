@@ -1966,7 +1966,7 @@ static PyObject *Crossfire_Object_Remove(Crossfire_Object *who, PyObject *args) 
         cf_object_remove(who->obj);
     }
 
-    cf_object_free(who->obj);
+    cf_object_free_drop_inventory(who->obj);
     Py_INCREF(Py_None);
     return Py_None;
 }

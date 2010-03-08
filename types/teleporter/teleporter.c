@@ -84,7 +84,7 @@ static void move_teleporter(object *op) {
         if (out_of_map(head->map, EXIT_X(head), EXIT_Y(head))) {
             LOG(llevError, "Removed illegal teleporter.\n");
             object_remove(head);
-            object_free(head);
+            object_free_drop_inventory(head);
             return;
         }
         /* Lauwenmark: Handle for plugin TRIGGER event */

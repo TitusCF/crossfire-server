@@ -50,7 +50,7 @@ static method_ret arrow_type_process(ob_methods *context, object *op) {
     if (op->map == NULL) {
         LOG(llevError, "BUG: Arrow had no map.\n");
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return METHOD_ERROR;
     }
 

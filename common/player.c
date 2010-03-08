@@ -61,7 +61,7 @@ void clear_player(player *pl) {
 }
 
 /**
- * Clears player structure, including pointed object (through object_free()).
+ * Clears player structure, including pointed object (through object_free_drop_inventory()).
  *
  * @param pl
  * player to clear. Pointer is invalid after this call.
@@ -83,7 +83,7 @@ void free_player(player *pl) {
     if (pl->ob != NULL) {
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
             object_remove(pl->ob);
-        object_free(pl->ob);
+        object_free_drop_inventory(pl->ob);
     }
 
     clear_player(pl);

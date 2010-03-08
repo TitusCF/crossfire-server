@@ -113,7 +113,7 @@ START_TEST(test_put_object_in_sack) {
     fail_unless(sack->inv == NULL, "sack's inventory isn't null?");
 
     object_remove(sack);
-    object_free(sack);
+    object_free_drop_inventory(sack);
 
     /* basic insertion */
     sack = create_archetype("sack");

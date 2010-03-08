@@ -563,7 +563,7 @@ int command_goto(object *op, char *params) {
     dummy->name = add_string(name);
 
     enter_exit(op, dummy);
-    object_free(dummy);
+    object_free_drop_inventory(dummy);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "Difficulty: %d.",
                          "Difficulty: %d.",
@@ -652,7 +652,7 @@ int command_arrest(object *op, char *params) {
         return 0;
     }
     enter_exit(pl->ob, dummy);
-    object_free(dummy);
+    object_free_drop_inventory(dummy);
     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                   "You have been arrested.", NULL);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
@@ -702,7 +702,7 @@ int command_summon(object *op, char *params) {
     EXIT_X(dummy) = op->x+freearr_x[i];
     EXIT_Y(dummy) = op->y+freearr_y[i];
     enter_exit(pl->ob, dummy);
-    object_free(dummy);
+    object_free_drop_inventory(dummy);
     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                   "You are summoned.", NULL);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
@@ -756,7 +756,7 @@ int command_teleport(object *op, char *params) {
     EXIT_X(dummy) = pl->ob->x+freearr_x[i];
     EXIT_Y(dummy) = pl->ob->y+freearr_y[i];
     enter_exit(op, dummy);
-    object_free(dummy);
+    object_free_drop_inventory(dummy);
     if (!op->contr->hidden)
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                       "You see a portal open.", NULL);
@@ -1085,10 +1085,10 @@ int command_create(object *op, char *params) {
             if (out_of_map(op->map, head->x+size_x, head->y+size_y)) {
                 if (head->x < size_x || head->y < size_y) {
                     dm_stack_pop(op->contr);
-                    object_free(head);
+                    object_free_drop_inventory(head);
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                   "Object too big to insert in map, or wrong position.", NULL);
-                    object_free(tmp);
+                    object_free_drop_inventory(tmp);
                     return 1;
                 }
 
@@ -1119,7 +1119,7 @@ int command_create(object *op, char *params) {
     }
 
     /* free the one we used to copy */
-    object_free(tmp);
+    object_free_drop_inventory(tmp);
 
     return 1;
 }
@@ -1431,7 +1431,7 @@ int command_free(object *op, char *params) {
         object_remove(tmp);
     }
 
-    object_free(tmp);
+    object_free_drop_inventory(tmp);
     return 1;
 }
 
@@ -1755,7 +1755,7 @@ int command_reset(object *op, char *params) {
         /* Need to re-insert player if swap failed for some reason */
         if (tmp) {
             object_insert_in_map_at(op, m, NULL, 0, op->x, op->y);
-            object_free(dummy);
+            object_free_drop_inventory(dummy);
         }
 
         if (res < 0 && res != SAVE_ERROR_PLAYER)
@@ -1798,7 +1798,7 @@ int command_reset(object *op, char *params) {
 
     if (tmp) {
         enter_exit(tmp, dummy);
-        object_free(dummy);
+        object_free_drop_inventory(dummy);
     }
 
     return 1;
@@ -2139,7 +2139,7 @@ static int command_learn_spell_or_prayer(object *op, char *params, int special_p
     }
 
     do_learn_spell(op, tmp, special_prayer);
-    object_free(tmp);
+    object_free_drop_inventory(tmp);
     return 1;
 }
 

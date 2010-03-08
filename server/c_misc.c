@@ -2403,7 +2403,7 @@ int command_kill_pets(object *op, char *params) {
                     if (!QUERY_FLAG(ob, FLAG_REMOVED))
                         object_remove(ob);
                     remove_friendly_object(ob);
-                    object_free(ob);
+                    object_free_drop_inventory(ob);
                     removecount++;
                 }
         }

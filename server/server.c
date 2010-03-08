@@ -192,7 +192,7 @@ void enter_player_savebed(object *op) {
         EXIT_Y(tmp) = op->contr->bed_y;
         enter_exit(op, tmp);
     }
-    object_free(tmp);
+    object_free_drop_inventory(tmp);
 }
 
 /**
@@ -277,7 +277,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
         object_remove(op->contr->ranges[range_golem]);
         if (i == -1) {
             remove_friendly_object(op->contr->ranges[range_golem]);
-            object_free(op->contr->ranges[range_golem]);
+            object_free_drop_inventory(op->contr->ranges[range_golem]);
             op->contr->ranges[range_golem] = NULL;
             op->contr->golem_count = 0;
         } else {
@@ -822,7 +822,7 @@ void enter_exit(object *op, object *exit_ob) {
                 tmp = object_find_by_type_and_slaying(op, FORCE, PORTAL_DESTINATION_NAME);
                 if (tmp) {
                     object_remove(tmp);
-                    object_free(tmp);
+                    object_free_drop_inventory(tmp);
                 }
 
                 path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob), op->contr->savebed_map, sizeof(op->contr->savebed_map));
@@ -1058,8 +1058,8 @@ void process_events(void) {
          * and thus the map it points to (last map it was on) may be bogus
          * The real bug is to try to find out the cause of this - someone
          * is probably calling object_remove() without either an insert_ob or
-         * object_free() afterwards, leaving an object dangling.  But I'd
-         * rather log this and continue on instead of crashing.
+         * object_free_drop_inventory() afterwards, leaving an object dangling.
+	 * But I'd rather log this and continue on instead of crashing.
          * Don't remove players - when a player quits, the object is in
          * sort of a limbo, of removed, but something we want to keep
          * around.
@@ -1077,7 +1077,7 @@ void process_events(void) {
             diff = stringbuffer_finish(sb);
             LOG(llevError, "%s\n", diff);
             free(diff);
-            object_free(op);
+            object_free_drop_inventory(op);
             continue;
         }
 

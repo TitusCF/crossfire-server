@@ -516,7 +516,7 @@ object *object_find_by_name_global(const char *str) {
  * Destroys all allocated objects.
  *
  * @note
- * free() is called instead of object_free() as the object's memory has already by cleaned.
+ * free() is called instead of object_free_drop_inventory() as the object's memory has already by cleaned.
  *
  * @warning
  * this should be the last method called.
@@ -931,7 +931,7 @@ void object_copy(object *op2, object *op) {
     }
 
     /* If archetype is a temporary one, we need to update reference count, because
-     * that archetype will be freed by object_free() when the last object is removed.
+     * that archetype will be freed by object_free_drop_inventory() when the last object is removed.
      */
     if (op->arch->reference_count > 0)
         op->arch->reference_count++;
@@ -1377,9 +1377,9 @@ void object_update(object *op, int action) {
  * object to free. Will become invalid when function returns.
  *
  * @note
- * free_object() has been renamed to object_free()
+ * free_object() has been renamed to object_free_drop_inventory()
  */
-void object_free(object *ob) {
+void object_free_drop_inventory(object *ob) {
     object_free2(ob, 0);
 }
 
@@ -1457,7 +1457,7 @@ void object_free2(object *ob, int free_inventory) {
                 || op->type == RUNE
                 || op->type == TRAP
                 || QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
-                    object_free(op);
+                    object_free_drop_inventory(op);
                 else {
                     object *part;
 
@@ -1883,7 +1883,7 @@ object *object_merge(object *op, object *top) {
             increase_ob_nr(top, op->nrof);
             op->weight = 0; /* Don't want any adjustements now */
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
             return top;
         }
     } FOR_OB_AND_BELOW_FINISH();
@@ -2104,7 +2104,7 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
             }
 
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
         }
     } FOR_MAP_FINISH();
 }
@@ -2233,7 +2233,7 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
             if (object_can_merge(op, tmp)) {
                 op->nrof += tmp->nrof;
                 object_remove(tmp);
-                object_free(tmp);
+                object_free_drop_inventory(tmp);
             }
         } FOR_MAP_FINISH();
     } else if (op->type == SPELL_EFFECT
@@ -2420,7 +2420,7 @@ void object_replace_insert_in_map(const char *arch_string, object *op) {
     FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         if (!strcmp(tmp->arch->name, arch_string)) { /* same archetype */
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
         }
     } FOR_MAP_FINISH();
 
@@ -2467,7 +2467,7 @@ object *object_split(object *orig_ob, uint32 nr, char *err, size_t size) {
         if (!QUERY_FLAG(orig_ob, FLAG_REMOVED)) {
             object_remove(orig_ob);
         }
-        object_free(orig_ob);
+        object_free_drop_inventory(orig_ob);
     } else {
         newob->nrof = nr;
         object_decrease_nrof(orig_ob, nr);
@@ -2556,7 +2556,7 @@ object *object_decrease_nrof(object *op, uint32 i) {
     if (op->nrof) {
         return op;
     } else {
-        object_free(op);
+        object_free_drop_inventory(op);
         return NULL;
     }
 }
@@ -2706,7 +2706,7 @@ object *object_insert_in_ob(object *op, object *where) {
                  * (client needs the original object) */
                 increase_ob_nr(tmp, op->nrof);
                 SET_FLAG(op, FLAG_REMOVED);
-                object_free(op); /* free the inserted object */
+                object_free_drop_inventory(op); /* free the inserted object */
                 return tmp;
             }
         FOR_INV_FINISH();
@@ -4648,7 +4648,7 @@ void object_insert_to_free_spot_or_free(object *op, mapstruct *map, int x, int y
 
     pos = object_find_free_spot(op, map, x, y, start, stop);
     if (pos == -1) {
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
 

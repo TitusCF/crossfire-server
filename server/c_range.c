@@ -223,7 +223,7 @@ int command_cast_spell(object *op, char *params, char command) {
                 if (op->contr->golem_count == op->contr->ranges[range_golem]->count) {
                     remove_friendly_object(op->contr->ranges[range_golem]);
                     object_remove(op->contr->ranges[range_golem]);
-                    object_free(op->contr->ranges[range_golem]);
+                    object_free_drop_inventory(op->contr->ranges[range_golem]);
                 }
                 op->contr->ranges[range_golem] = NULL;
                 op->contr->golem_count = 0;

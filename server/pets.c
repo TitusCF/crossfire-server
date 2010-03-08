@@ -250,7 +250,7 @@ void pets_terminate_all(object *owner) {
             if (!QUERY_FLAG(ob, FLAG_REMOVED))
                 object_remove(ob);
             remove_friendly_object(ob);
-            object_free(ob);
+            object_free_drop_inventory(ob);
         }
     }
 }
@@ -285,7 +285,7 @@ void pets_remove_all(void) {
 
                 LOG(llevMonster, "(pet failed to follow)\n");
                 remove_friendly_object(ob);
-                object_free(ob);
+                object_free_drop_inventory(ob);
             }
         }
     }
@@ -350,7 +350,7 @@ void pets_move(object *ob) {
     if (owner == NULL) {
         object_remove(ob); /* Will be freed when returning */
         remove_friendly_object(ob);
-        object_free(ob);
+        object_free_drop_inventory(ob);
         LOG(llevMonster, "Pet: no owner, leaving.\n");
         return;
     }
@@ -553,7 +553,7 @@ void pets_move_golem(object *op) {
     if (owner == NULL) {
         LOG(llevDebug, "Golem without owner destructed.\n");
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
     /* It would be nice to have a cleaner way of what message to print
@@ -569,7 +569,7 @@ void pets_move_golem(object *op) {
         owner->contr->golem_count = 0;
         remove_friendly_object(op);
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
 
@@ -696,7 +696,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
                       MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
                       "You dismiss your existing golem.", NULL);
         object_remove(op->contr->ranges[range_golem]);
-        object_free(op->contr->ranges[range_golem]);
+        object_free_drop_inventory(op->contr->ranges[range_golem]);
         op->contr->ranges[range_golem] = NULL;
         op->contr->golem_count = -1;
     }

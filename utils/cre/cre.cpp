@@ -120,7 +120,7 @@ int apply_auto(object *op) {
                 if (tmp == NULL)
                     return 0;
                 if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                    object_free(tmp);
+                    object_free_drop_inventory(tmp);
                     tmp = NULL;
                 }
             } while(!tmp);
@@ -146,10 +146,10 @@ int apply_auto(object *op) {
                 if (op->env)
                     object_insert_in_ob(tmp, op->env);
                 else
-                    object_free(tmp);
+                    object_free_drop_inventory(tmp);
             } FOR_INV_FINISH();
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
             break;
     }
     return tmp ? 1 : 0;

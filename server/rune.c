@@ -205,7 +205,7 @@ static void rune_attack(object *op, object *victim) {
 
             infect_object(victim, disease, 1);
             object_remove(disease);
-            object_free(disease);
+            object_free_drop_inventory(disease);
         }
     } else
         hit_map(op, 0, op->attacktype, 1);
@@ -280,7 +280,7 @@ void spring_trap(object *trap, object *victim) {
             else {
                 spell = arch_to_object(trap->other_arch);
                 cast_spell(trap, trap, trap->direction, spell, NULL);
-                object_free(spell);
+                object_free_drop_inventory(spell);
             }
         }
     } else {
@@ -358,7 +358,7 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
          */
         if (tmp->type == SIGN && !strcmp(tmp->arch->name, "rune_mark")) {
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                           "You wipe out the rune of marking!", NULL);
             return 1;

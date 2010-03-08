@@ -97,7 +97,7 @@ int apply_auto(object *op) {
             if (tmp == NULL)
                 return 0;
             if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                object_free(tmp);
+                object_free_drop_inventory(tmp);
                 tmp = NULL;
             }
         } while (!tmp);
@@ -113,7 +113,7 @@ int apply_auto(object *op) {
             while ((op->stats.hp--) > 0)
                 create_treasure(op->randomitems, op, GT_ENVIRONMENT, op->stats.exp ? op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         break;
     }
 

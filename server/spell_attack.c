@@ -102,12 +102,12 @@ int fire_bolt(object *op, object *caster, int dir, object *spob) {
 
     mflags = get_map_flags(op->map, &tmp->map, op->x+DIRX(tmp), op->y+DIRY(tmp), &tmp->x, &tmp->y);
     if (mflags&P_OUT_OF_MAP) {
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
         return 0;
     }
     if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
         if (!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             return 0;
         }
         tmp->direction = absdir(tmp->direction+4);
@@ -140,7 +140,7 @@ void explode_bullet(object *op) {
     if (op->other_arch == NULL) {
         LOG(llevError, "BUG: explode_bullet(): op without other_arch\n");
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
 
@@ -151,7 +151,7 @@ void explode_bullet(object *op) {
         if (env->map == NULL || out_of_map(env->map, env->x, env->y)) {
             LOG(llevError, "BUG: explode_bullet(): env out of map\n");
             object_remove(op);
-            object_free(op);
+            object_free_drop_inventory(op);
             return;
         }
         object_remove(op);
@@ -159,7 +159,7 @@ void explode_bullet(object *op) {
     } else if (out_of_map(op->map, op->x, op->y)) {
         LOG(llevError, "BUG: explode_bullet(): op out of map\n");
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
 
@@ -181,7 +181,7 @@ void explode_bullet(object *op) {
     owner = object_get_owner(op);
     if ((tmp->attacktype&AT_HOLYWORD || tmp->attacktype&AT_GODPOWER) && owner && !tailor_god_spell(tmp, owner)) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return;
     }
 
@@ -216,7 +216,7 @@ void explode_bullet(object *op) {
     /* remove the firebullet */
     if (!object_was_destroyed(op, op_tag)) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
     }
 }
 
@@ -255,7 +255,7 @@ void check_bullet(object *op) {
             if (object_was_destroyed(op, op_tag) || !object_was_destroyed(tmp, tmp_tag) || (op->stats.dam -= dam) < 0) {
                 if (!QUERY_FLAG(op, FLAG_REMOVED)) {
                     object_remove(op);
-                    object_free(op);
+                    object_free_drop_inventory(op);
                     return;
                 }
             }
@@ -623,7 +623,7 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
                                      "The %s looks stronger!",
                                      target_name);
                 target->stats.hp = target->stats.maxhp*2;
-                object_free(effect);
+                object_free_drop_inventory(effect);
                 return 0;
             }
         }
@@ -1286,12 +1286,12 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
 
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS, "You inflict %s on %s!", NULL, disease->name, target_head->name);
 
-                        object_free(disease); /* don't need this one anymore */
+                        object_free_drop_inventory(disease); /* don't need this one anymore */
                         flash = create_archetype(ARCH_DETECT_MAGIC);
                         object_insert_in_map_at(flash, walk->map, op, 0, x, y);
                         return 1;
                     }
-                    object_free(disease);
+                    object_free_drop_inventory(disease);
                 } /* Found a victim */
             } FOR_MAP_FINISH(); /* Search squares for living creature */
         } /* if living creature on square */

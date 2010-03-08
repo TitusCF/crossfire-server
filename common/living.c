@@ -913,7 +913,7 @@ int remove_depletion(object *op, int level) {
     }
 
     object_remove(depl);
-    object_free(depl);
+    object_free_drop_inventory(depl);
     fix_object(op);
 
     return (count == 0) ? 0 : 1;

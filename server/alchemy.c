@@ -649,7 +649,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
 
         remove_contents(cauldron->inv, NULL);
         fire_arch_from_position(cauldron, cauldron, cauldron->x, cauldron->y, 0, fb);
-        object_free(fb);
+        object_free_drop_inventory(fb);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "The %s erupts in flame!",
                              "The %s erupts in flame!",
@@ -743,7 +743,7 @@ static void remove_contents(object *first_ob, object *save_item) {
             if (tmp->inv)
                 remove_contents(tmp->inv, NULL);
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
         }
     } FOR_OB_AND_BELOW_FINISH();
 }

@@ -376,7 +376,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
                       NULL);
         if (!QUERY_FLAG(tmp, FLAG_REMOVED))
             object_remove(tmp);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
         return;
     }
 
@@ -893,7 +893,7 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
                              "You drop the %s. The gods who lent it to you retrieves it.",
                              "You drop the %s. The gods who lent it to you retrieves it.",
                              name);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
 
         if (!QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
             fix_object(op);
@@ -960,7 +960,7 @@ void drop(object *op, object *tmp) {
              * around anyways
              */
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             return;
         } else {
             FOR_OB_AND_BELOW_PREPARE(tmp)

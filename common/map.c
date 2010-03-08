@@ -727,7 +727,7 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
             } FOR_MAP_FINISH();
         }
     }
-    object_free(op);
+    object_free_drop_inventory(op);
     link_multipart_objects(m);
 }
 
@@ -1370,7 +1370,7 @@ static void delete_unique_items(mapstruct *m) {
                     if (QUERY_FLAG(op, FLAG_IS_LINKED))
                         remove_button_link(op);
                     object_remove(op);
-                    object_free(op);
+                    object_free_drop_inventory(op);
                 }
             } FOR_MAP_FINISH();
         }
@@ -1668,7 +1668,7 @@ void clean_object(object *op) {
         if (QUERY_FLAG(tmp, FLAG_IS_LINKED))
             remove_button_link(tmp);
         object_remove(tmp);
-        object_free(tmp);
+        object_free_drop_inventory(tmp);
     } FOR_INV_FINISH();
 }
 
@@ -1694,13 +1694,13 @@ static void free_all_objects(mapstruct *m) {
                 previous_obj = op;
                 op = HEAD(op);
 
-                /* If the map isn't in memory, object_free() will remove and
+                /* If the map isn't in memory, object_free_drop_inventory() will remove and
                 * free objects in op's inventory.  So let it do the job.
                 */
                 if (m->in_memory == MAP_IN_MEMORY)
                     clean_object(op);
                 object_remove(op);
-                object_free(op);
+                object_free_drop_inventory(op);
             }
         }
 #ifdef MANY_CORES

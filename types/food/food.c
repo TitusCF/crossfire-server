@@ -184,7 +184,7 @@ static void eat_special_food(object *who, object *food) {
         change_abil(who, force);
         object_insert_in_ob(force, who);
     } else {
-        object_free(force);
+        object_free_drop_inventory(force);
     }
 
     /* check for hp, sp change */

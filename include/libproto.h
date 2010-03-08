@@ -229,7 +229,7 @@ extern void object_update_turn_face(object *op);
 extern void object_update_speed(object *op);
 extern void object_remove_from_active_list(object *op);
 extern void object_update(object *op, int action);
-extern void object_free(object *ob);
+extern void object_free_drop_inventory(object *ob);
 extern void object_free2(object *ob, int free_inventory);
 extern int object_count_free(void);
 extern int object_count_used(void);

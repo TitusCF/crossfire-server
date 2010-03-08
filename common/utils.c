@@ -242,7 +242,7 @@ void decay_objects(mapstruct *m) {
                 /* adjust overall chance below */
                 if (destroy && rndm(0, 1)) {
                     object_remove(op);
-                    object_free(op);
+                    object_free_drop_inventory(op);
                 }
             } FOR_MAP_FINISH();
 }

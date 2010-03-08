@@ -528,7 +528,7 @@ object *generate_treasure(treasurelist *t, int difficulty) {
     if (ob->inv) {
         LOG(llevError, "In generate treasure, created multiple objects.\n");
     }
-    object_free(ob);
+    object_free_drop_inventory(ob);
     return tmp;
 }
 
@@ -1205,7 +1205,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
         case RING:
             if (op->arch == NULL) {
                 object_remove(op);
-                object_free(op);
+                object_free_drop_inventory(op);
                 op = NULL;
                 break;
             }
@@ -1705,7 +1705,7 @@ void add_abilities(object *op, object *change) {
             while (op->inv) {
                 tmp_obj = op->inv;
                 object_remove(tmp_obj);
-                object_free(tmp_obj);
+                object_free_drop_inventory(tmp_obj);
             }
             tmp_obj = arch_to_object(change->other_arch);
             object_insert_in_ob(tmp_obj, op);
@@ -2056,7 +2056,7 @@ static void free_charlinks(linked_char *lc) {
  * Objects at->item are malloc()ed by init_artifacts(), so can simply be free()d.
  *
  * But artifact inventory is a 'real' object, that may be created for 'old' objects. So should be
- * destroyed through object_free(). Note that it isn't on the usual item list, so some tweaking is required.
+ * destroyed through object_free_drop_inventory(). Note that it isn't on the usual item list, so some tweaking is required.
  */
 static void free_artifact(artifact *at) {
     object *next;

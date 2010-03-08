@@ -76,7 +76,7 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
                 if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
                     tmp = HEAD(tmp);
                     object_remove(tmp);
-                    object_free(tmp);
+                    object_free_drop_inventory(tmp);
                 }
             } FOR_MAP_FINISH();
         }
@@ -197,8 +197,8 @@ void place_fountain_with_specials(mapstruct *map) {
         tries++;
     };
     if (i == -1) { /* can't place fountain */
-        object_free(fountain);
-        object_free(potion);
+        object_free_drop_inventory(fountain);
+        object_free_drop_inventory(potion);
         return;
     }
     ix += freearr_x[i];

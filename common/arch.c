@@ -419,7 +419,7 @@ static void first_arch_pass(FILE *fp) {
         object_clear(op);
         op->arch = at;
     }
-    object_free(op);
+    object_free_drop_inventory(op);
     op->arch = NULL; /* arch is checked for temporary archetypes if not NULL. */
     free(at);
 }
@@ -478,7 +478,7 @@ static void second_arch_pass(FILE *fp) {
                 /*LOG(llevDebug, "Put %s in %s\n", inv->name, at->clone.name);*/
             } else {
                 LOG(llevError, "Got an arch %s not inside an Object.\n", argument);
-                object_free(inv);
+                object_free_drop_inventory(inv);
             }
         }
     }

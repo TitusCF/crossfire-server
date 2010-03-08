@@ -168,7 +168,7 @@ static void remove_marking_runes(struct mapdef *map, short x, short y) {
     FOR_MAP_PREPARE(map, x, y, rune) {
         if ((rune->type == SIGN) && (!strcmp(rune->arch->name, "rune_mark"))) {
             object_remove(rune);
-            object_free(rune);
+            object_free_drop_inventory(rune);
         }
     } FOR_MAP_FINISH();
 }
@@ -225,7 +225,7 @@ static int adjust_sign_msg(object *pl, short x, short y, object *tmp) {
         tmp->invisible = 0;
     }
     object_remove(book);
-    object_free(book);
+    object_free_drop_inventory(book);
     return 0;
 }
 
@@ -482,7 +482,7 @@ static void fix_walls(struct mapdef *map, int x, int y) {
     for (flag = 0; flag < 4; flag++)
         old_flags[flag] = wall->flags[flag];
     object_remove(wall);
-    object_free(wall);
+    object_free_drop_inventory(wall);
 
     wall = arch_to_object(new_arch);
     wall->type = WALL;
@@ -534,12 +534,12 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
             /* There was a wall, remove it & keep its archetype to make new walls */
             new_wall = tmp->arch;
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             snprintf(message, sizeof(message), "You destroy the wall and redo the floor.");
             wall_removed = 1;
             if (floor != NULL) {
                 object_remove(floor);
-                object_free(floor);
+                object_free_drop_inventory(floor);
                 floor = NULL;
             }
         } else if ((FLOOR == tmp->type) || (QUERY_FLAG(tmp, FLAG_IS_FLOOR))) {
@@ -553,7 +553,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
     if (wall_removed == 0 && floor != NULL) {
         if (floor->arch == new_floor->arch) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the exact same floor.", NULL);
-            object_free(new_floor);
+            object_free_drop_inventory(new_floor);
             return 0;
         }
     }
@@ -566,7 +566,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
     /* if there was a floor, remove it */
     if (floor) {
         object_remove(floor);
-        object_free(floor);
+        object_free_drop_inventory(floor);
         floor = NULL;
     }
 
@@ -662,7 +662,7 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
         }
         if (!strncmp(current_basename, new_basename, sizeof(new_basename))) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the exact same wall.", NULL);
-            object_free(new_wall);
+            object_free_drop_inventory(new_wall);
             return 0;
         }
     }
@@ -673,7 +673,7 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
     if (current_wall) {
         /* If existing wall, replace it, no need to fix other walls */
         object_remove(current_wall);
-        object_free(current_wall);
+        object_free_drop_inventory(current_wall);
         object_insert_in_map_at(new_wall, pl->map, NULL, INS_ABOVE_FLOOR_ONLY, x, y);
         fix_walls(pl->map, x, y);
         snprintf(message, sizeof(message), "You redecorate the wall to better suit your tastes.");
@@ -721,7 +721,7 @@ static int apply_builder_window(object *pl, object *new_wall_win, short x, short
     int flag;
 
     /* Too bad, we never use the window contained in the building material */
-    object_free(new_wall_win);
+    object_free_drop_inventory(new_wall_win);
 
     current_wall = get_wall(pl->map, x, y);
 
@@ -768,7 +768,7 @@ static int apply_builder_window(object *pl, object *new_wall_win, short x, short
     for (flag = 0; flag < 4; flag++)
         old_flags[flag] = current_wall->flags[flag];
     object_remove(current_wall);
-    object_free(current_wall);
+    object_free_drop_inventory(current_wall);
 
     window = arch_to_object(new_arch);
     window->type = WALL;
@@ -813,7 +813,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
     floor = GET_MAP_OB(pl->map, x, y);
     if (!floor) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "Invalid square.", NULL);
-        object_free(new_item);
+        object_free_drop_inventory(new_item);
         return 0;
     }
 
@@ -824,7 +824,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
     if (!floor) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
                       "This square has no floor, you can't build here.", NULL);
-        object_free(new_item);
+        object_free_drop_inventory(new_item);
         return 0;
     }
 
@@ -855,7 +855,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
         connected = find_or_create_connection_for_map(pl, x, y, con_rune);
         if (connected == -1) {
             /* Player already informed of failure by the previous function */
-            object_free(new_item);
+            object_free_drop_inventory(new_item);
             return 0;
         }
     }
@@ -863,7 +863,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
     /* For magic mouths/ears, and signs, take the msg from a book of scroll */
     if ((new_item->type == SIGN) || (new_item->type == MAGIC_EAR)) {
         if (adjust_sign_msg(pl, x, y, new_item) == -1) {
-            object_free(new_item);
+            object_free_drop_inventory(new_item);
             return 0;
         }
     }
@@ -871,7 +871,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
     if (con_rune != NULL) {
         /* Remove marking rune */
         object_remove(con_rune);
-        object_free(con_rune);
+        object_free_drop_inventory(con_rune);
     }
 
     object_insert_in_map_at(new_item, pl->map, floor, insert_flag, x, y);
@@ -952,7 +952,7 @@ void apply_builder_remove(object *pl, int dir) {
                              "You remove the %s",
                              name);
         object_remove(item);
-        object_free(item);
+        object_free_drop_inventory(item);
     }
 }
 

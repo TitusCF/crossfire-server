@@ -472,7 +472,7 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
         new_wall = arch_to_object(wall_arch);
         if (the_wall && the_wall->map) {
             object_remove(the_wall);
-            object_free(the_wall);
+            object_free_drop_inventory(the_wall);
         }
         the_wall->move_block = MOVE_ALL;
         object_insert_in_map_at(new_wall, the_map, new_wall, INS_NO_MERGE|INS_NO_WALK_ON, i, j);

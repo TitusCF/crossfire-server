@@ -223,7 +223,7 @@ static void follower_remove_given_items(object *pl, object *op, const object *go
                                      name);
 
             object_remove(tmp);    /* remove obj from players inv. */
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
         } else if (tmp->inv)
             follower_remove_given_items(pl, tmp, god);
     } FOR_INV_FINISH();
@@ -449,7 +449,7 @@ static void remove_special_prayers(object *op, const object *god) {
                                  tmp->name);
             player_unready_range_ob(op->contr, tmp);
             object_remove(tmp);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
         }
     } FOR_INV_FINISH();
 }
@@ -492,7 +492,7 @@ int become_follower(object *op, const object *new_god) {
         && (item->type != SPELL)) {
             player_unready_range_ob(op->contr, item);
             object_remove(item);
-            object_free(item);
+            object_free_drop_inventory(item);
         }
     } FOR_INV_FINISH();
 
@@ -1067,7 +1067,7 @@ static void god_intervention(object *op, const object *god, object *skill) {
 
                 tmp = create_archetype(HOLY_POSSESSION);
                 cast_change_ability(op, op, tmp, 0, 1);
-                object_free(tmp);
+                object_free_drop_inventory(tmp);
                 return;
             }
             continue;
@@ -1118,7 +1118,7 @@ static void god_intervention(object *op, const object *god, object *skill) {
             tmp = create_archetype_by_object_name(item->slaying);
 
             success = cast_heal(op, op, tmp, 0);
-            object_free(tmp);
+            object_free_drop_inventory(tmp);
             if (success)
                 return;
 
@@ -1165,7 +1165,7 @@ static void god_intervention(object *op, const object *god, object *skill) {
                                   MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                                   restore_msg[i], restore_msg[i]);
             object_remove(depl);
-            object_free(depl);
+            object_free_drop_inventory(depl);
             fix_object(op);
             return;
         }
@@ -1375,7 +1375,7 @@ int tailor_god_spell(object *spellop, object *caster) {
                           "This prayer is useless unless you worship an appropriate god", NULL);
         else
             LOG(llevError, "BUG: tailor_god_spell(): no god\n");
-        object_free(spellop);
+        object_free_drop_inventory(spellop);
         return 0;
     }
 

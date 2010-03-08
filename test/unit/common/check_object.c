@@ -55,7 +55,7 @@ void teardown(void) {
  * object_update_speed
  * object_remove_from_active_list
  * object_update
- * object_free
+ * object_free_drop_inventory
  * object_count_free
  * object_count_used
  * object_count_active
@@ -531,16 +531,16 @@ START_TEST(test_object_update) {
 END_TEST
 
 /** This is the test to check the behaviour of the method
- *  void object_free(object *ob);
+ *  void object_free_drop_inventory(object *ob);
  */
-START_TEST(test_object_free) {
+START_TEST(test_object_free_drop_inventory) {
     object *ob1;
     object *ob2;
 
     ob1 = cctk_create_game_object(NULL);
     ob2 = cctk_create_game_object(NULL);
     object_insert_in_ob(ob2, ob1);
-    object_free(ob1);
+    object_free_drop_inventory(ob1);
     fail_unless(QUERY_FLAG(ob1, FLAG_FREED), "Freeing ob1 should mark it freed");
     fail_unless(QUERY_FLAG(ob2, FLAG_FREED), "Freeing ob1 should mark it's content freed");
 }
@@ -1219,7 +1219,7 @@ Suite *object_suite(void) {
     tcase_add_test(tc_core, test_object_update_speed);
     tcase_add_test(tc_core, test_object_remove_from_active_list);
     tcase_add_test(tc_core, test_object_update);
-    tcase_add_test(tc_core, test_object_free);
+    tcase_add_test(tc_core, test_object_free_drop_inventory);
     tcase_add_test(tc_core, test_object_count_free);
     tcase_add_test(tc_core, test_object_count_used);
     tcase_add_test(tc_core, test_object_count_active);

@@ -100,7 +100,7 @@ void move_marker(object *op) {
                     if (op->stats.hp == 0) {
                         /* marker expires--granted mark number limit */
                         object_remove(op);
-                        object_free(op);
+                        object_free_drop_inventory(op);
                         return;
                     }
                 }

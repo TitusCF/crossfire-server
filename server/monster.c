@@ -558,7 +558,7 @@ static int monster_move_no_enemy(object *op) {
 
     if (QUERY_FLAG(op, FLAG_ONLY_ATTACK))  {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return 1;
     }
 
@@ -686,7 +686,7 @@ int monster_move(object *op) {
             /* If the pet was unable to follow the owner, free it */
             if (QUERY_FLAG(op, FLAG_REMOVED) && FABS(op->speed) > MIN_ACTIVE_SPEED) {
                 remove_friendly_object(op);
-                object_free(op);
+                object_free_drop_inventory(op);
                 return 1;
             }
             return 0;
@@ -875,7 +875,7 @@ int monster_move(object *op) {
 
     if (QUERY_FLAG(op, FLAG_ONLY_ATTACK)) {
         object_remove(op);
-        object_free(op);
+        object_free_drop_inventory(op);
         return 1;
     }
     return 0;
