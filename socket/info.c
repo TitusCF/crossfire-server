@@ -457,7 +457,7 @@ void draw_magic_map(object *pl) {
     }
 
     SockList_Init(&sl);
-    SockList_AddPrintf(&sl, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1), MAGIC_MAP_HALF-xmin, MAGIC_MAP_HALF-ymin);
+    SockList_AddPrintf(&sl, "magicmap %d %d %d %d ", xmin <= xmax ? xmax-xmin+1 : 0, ymin <= ymax ? ymax-ymin+1 : 0, MAGIC_MAP_HALF-xmin, MAGIC_MAP_HALF-ymin);
 
     for (y = ymin; y <= ymax; y++) {
         for (x = xmin; x <= xmax; x++) {
