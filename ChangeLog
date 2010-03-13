@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Enable sacrificed items on altars and such to be alive, if asked for.
+ server/common/button.c
+Nicolas Weeger 2010-03-13
+
 Fix some object_free_drop_inventory() to object_free2().
  server/apply.c c_wiz.c login.c plugins.c server.c skills.c spell_effect.c
 Nicolas Weeger 2010-03-13

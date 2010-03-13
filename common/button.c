@@ -301,7 +301,7 @@ void animate_turning(object *op) {
 static int matches_sacrifice(const object *altar, const object *sacrifice) {
     char name[MAX_BUF];
 
-    if (QUERY_FLAG(sacrifice, FLAG_ALIVE)
+    if ((QUERY_FLAG(sacrifice, FLAG_ALIVE) && object_get_value(altar, "accept_alive") == NULL)
     || QUERY_FLAG(sacrifice, FLAG_IS_LINKED)
     || sacrifice->type == PLAYER)
         return 0;
