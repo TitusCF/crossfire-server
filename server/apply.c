@@ -450,7 +450,7 @@ void do_forget_spell(object *op, const char *spell) {
     player_unready_range_ob(op->contr, spob);
     esrv_remove_spell(op->contr, spob);
     object_remove(spob);
-    object_free_drop_inventory(spob);
+    object_free2(spob, 0);
 }
 
 /**
@@ -580,7 +580,7 @@ int apply_by_living(object *pl, object *op, int aflag, int quiet) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                       "It must have been an illusion.", NULL);
         object_remove(op);
-        object_free_drop_inventory(op);
+        object_free2(op, 0);
         return 1;
     }
 
@@ -1404,7 +1404,7 @@ int apply_auto(object *op) {
             if (tmp == NULL)
                 return 0;
             if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                object_free_drop_inventory(tmp);
+                object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
                 tmp = NULL;
             }
         } while (!tmp);
@@ -1434,7 +1434,7 @@ int apply_auto(object *op) {
                 object_free_drop_inventory(tmp);
         } FOR_INV_FINISH();
         object_remove(op);
-        object_free_drop_inventory(op);
+        object_free2(op, FREE_OBJ_NO_DESTROY_CALLBACK);
         break;
     }
     return 0;
@@ -1581,7 +1581,7 @@ void scroll_failure(object *op, int failure, int power) {
         if (op->stats.sp < 0)
             /* For some reason the sp can become negative here. */
             op->stats.sp = 0;
-        object_free_drop_inventory(tmp);
+        object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
         return;
     }
 
@@ -1614,7 +1614,7 @@ void scroll_failure(object *op, int failure, int power) {
             cast_magic_storm(op, tmp, power);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "You unlease uncontrolled mana!", NULL);
-            object_free_drop_inventory(tmp);
+            object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
             return;
         }
     }

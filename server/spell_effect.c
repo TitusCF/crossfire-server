@@ -104,7 +104,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
                              name);
         play_sound_map(SOUND_TYPE_ITEM, wand, 0, "explode");
         object_remove(wand);
-        object_free_drop_inventory(wand);
+        object_free2(wand, 0);
         tmp = create_archetype("fireball");
         tmp->stats.dam = (spell_ob->stats.dam+SP_level_dam_adjust(caster, spell_ob))/10;
         if (!tmp->stats.dam)
@@ -214,7 +214,7 @@ static void polymorph_living(object *op, int level) {
             apply_manual(op, tmp, 0);
         if (tmp->type == SPELL) {
             object_remove(tmp);
-            object_free_drop_inventory(tmp);
+            object_free2(tmp, 0);
         }
     } FOR_INV_FINISH();
 
@@ -274,7 +274,7 @@ static void polymorph_melt(object *who, object *op) {
                              name);
     play_sound_map(SOUND_TYPE_ITEM, op, 0, "evaporate");
     object_remove(op);
-    object_free_drop_inventory(op);
+    object_free2(op, 0);
     return;
 }
 
@@ -341,14 +341,14 @@ static void polymorph_item(object *who, object *op, int level) {
     } while (new_ob->value > max_value && tries < 10);
     if (new_ob->invisible) {
         LOG(llevError, "polymorph_item: fix_generated_object made %s invisible?!\n", new_ob->name);
-        object_free_drop_inventory(new_ob);
+        object_free2(new_ob, FREE_OBJ_NO_DESTROY_CALLBACK);
         return;
     }
 
     /* Unable to generate an acceptable item?  Melt it */
     if (tries == 10) {
         polymorph_melt(who, op);
-        object_free_drop_inventory(new_ob);
+        object_free2(new_ob, FREE_OBJ_NO_DESTROY_CALLBACK);
         return;
     }
 
@@ -369,7 +369,7 @@ static void polymorph_item(object *who, object *op, int level) {
     y = op->y;
     m = op->map;
     object_remove(op);
-    object_free_drop_inventory(op);
+    object_free2(op, FREE_OBJ_NO_DESTROY_CALLBACK);
     /*
      * Don't want objects merged or re-arranged, as it then messes up the
      * order
@@ -541,7 +541,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
                     break;
 
             if (!al) {
-                object_free_drop_inventory(missile);
+                object_free2(missile, FREE_OBJ_NO_DESTROY_CALLBACK);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                      "No such object %ss of %s",
                                      "No such object %ss of %s",
@@ -549,7 +549,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
                 return 0;
             }
             if (al->item->slaying) {
-                object_free_drop_inventory(missile);
+                object_free2(missile, FREE_OBJ_NO_DESTROY_CALLBACK);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                      "You are not allowed to create %ss of %s",
                                      "You are not allowed to create %ss of %s",
@@ -573,7 +573,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
 
     missile->nrof = spell->duration+SP_level_duration_adjust(caster, spell);
     if (missile->nrof <= 3*(missile_plus+bonus_plus)) {
-        object_free_drop_inventory(missile);
+        object_free2(missile, FREE_OBJ_NO_DESTROY_CALLBACK);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                              "This item is too powerful for you to create!",
                              NULL);
@@ -1153,7 +1153,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
                       NULL);
         return 1;
     }
-    object_free_drop_inventory(dummy);
+    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
 
     /* Here we know where the town portal should go to
      * We should kill any existing portal associated with the player.
@@ -1203,16 +1203,16 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
             FOR_OB_AND_ABOVE_PREPARE(tmp)
                 if (tmp->name == old_force->name) {
                     object_remove(tmp);
-                    object_free_drop_inventory(tmp);
+                    object_free2(tmp, 0);
                     break;
                 }
             FOR_OB_AND_ABOVE_FINISH();
         }
         object_remove(old_force);
-        object_free_drop_inventory(old_force);
+        object_free2(old_force, 0);
         LOG(llevDebug, "\n");
     }
-    object_free_drop_inventory(dummy);
+    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
 
     /* Creating the portals.
      * The very first thing to do is to ensure
@@ -1236,13 +1236,13 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
                       "Something strange happens. You can't remember where to go!?",
                       NULL);
         object_remove(force);
-        object_free_drop_inventory(force);
+        object_free2(force, 0);
         return 1;
     } else if (exitmap->last_reset_time.tv_sec != force->weapontype) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "The spell effect has expired.", NULL);
         object_remove(force);
-        object_free_drop_inventory(force);
+        object_free2(force, 0);
         return 1;
     }
 
@@ -1339,7 +1339,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                   "You see air moving and showing you the way home.", NULL);
     object_remove(force); /* Delete the force inside the player*/
-    object_free_drop_inventory(force);
+    object_free2(force, 0);
     return 1;
 }
 
@@ -2120,7 +2120,7 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
     }
     weight += obj->weight;
     object_remove(obj);
-    object_free_drop_inventory(obj);
+    object_free2(obj, FREE_OBJ_NO_DESTROY_CALLBACK);
 }
 
 /**
@@ -2241,8 +2241,8 @@ int alchemy(object *op, object *caster, object *spell_ob) {
 
                     if (weight > weight_max) {
                         place_alchemy_objects(op, mp, small_nuggets, large_nuggets, nx, ny);
-                        object_free_drop_inventory(large);
-                        object_free_drop_inventory(small);
+                        object_free2(large, FREE_OBJ_NO_DESTROY_CALLBACK);
+                        object_free2(small, FREE_OBJ_NO_DESTROY_CALLBACK);
                         return 1;
                     }
                 } /* is alchemable object */
@@ -2255,8 +2255,9 @@ int alchemy(object *op, object *caster, object *spell_ob) {
             place_alchemy_objects(op, mp, small_nuggets, large_nuggets, nx, ny);
         }
     }
-    object_free_drop_inventory(large);
-    object_free_drop_inventory(small);
+    /** @todo fix global variables */
+    object_free2(large, FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free2(small, FREE_OBJ_NO_DESTROY_CALLBACK);
     /* reset this so that if player standing on a big pile of stuff,
      * it is redrawn properly.
      */
@@ -2795,12 +2796,12 @@ void counterspell(object *op, int dir) {
         && !QUERY_FLAG(head, FLAG_MONSTER)
         && (op->level > head->level)) {
             object_remove(head);
-            object_free_drop_inventory(head);
+            object_free2(head, 0);
         } else switch (head->type) {
             case SPELL_EFFECT:
                 if ((op->level > head->level) && !op->stats.food && !op->speed_left) {
                     object_remove(head);
-                    object_free_drop_inventory(head);
+                    object_free2(head, 0);
                 }
                 break;
 
@@ -2812,7 +2813,7 @@ void counterspell(object *op, int dir) {
                     head->stats.hp--;  /* weaken the rune */
                     if (!head->stats.hp) {
                         object_remove(head);
-                        object_free_drop_inventory(head);
+                        object_free2(head, 0);
                     }
                 }
                 break;

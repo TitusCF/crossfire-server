@@ -197,7 +197,7 @@ int check_name(player *me, const char *name) {
  *
  * @param op
  * object to totally object_free_drop_inventory().
- * @todo doesn't object_free_drop_inventory() handle inventory?
+ * @todo trash that function
  */
 void destroy_object(object *op) {
     while (op->inv != NULL)
