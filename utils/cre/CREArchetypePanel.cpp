@@ -13,6 +13,11 @@ CREArchetypePanel::CREArchetypePanel()
 
     myDisplay = new QTextEdit(this);
     layout->addWidget(myDisplay, 1, 1);
+
+    myUsing = new QTreeWidget(this);
+    myUsing->setHeaderLabel(tr("Used by"));
+    myUsing->setIconSize(QSize(32, 32));
+    layout->addWidget(myUsing, 2, 1);
 }
 
 void CREArchetypePanel::setArchetype(const archt* archetype)
@@ -23,4 +28,45 @@ void CREArchetypePanel::setArchetype(const archt* archetype)
     char* final = stringbuffer_finish(dump);
     myDisplay->setText(final);
     free(final);
+
+    myUsing->clear();
+    QTreeWidgetItem* root = NULL;
+
+    const archt* arch;
+
+    for (arch = first_archetype; arch; arch = (arch->more ? arch->more : arch->next))
+    {
+        if (arch->clone.other_arch == myArchetype)
+        {
+            if (root == NULL)
+            {
+                root = CREUtils::archetypeNode(NULL);
+                myUsing->addTopLevelItem(root);
+                root->setExpanded(true);
+            }
+            CREUtils::archetypeNode(arch, root);
+        }
+    }
+
+    root = NULL;
+
+    const treasurelist* list;
+    const treasure* t;
+
+    for (list = first_treasurelist; list; list = list->next)
+    {
+        for (t = list->items; t; t = t->next)
+        {
+            if (t->item == myArchetype)
+            {
+                if (root == NULL)
+                {
+                    root = CREUtils::treasureNode(NULL);
+                    myUsing->addTopLevelItem(root);
+                    root->setExpanded(true);
+                }
+                CREUtils::treasureNode(list, root);
+            }
+        }
+    }
 }

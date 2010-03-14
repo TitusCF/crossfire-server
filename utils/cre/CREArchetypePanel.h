@@ -19,6 +19,7 @@ class CREArchetypePanel : public QWidget
     protected:
         const archt* myArchetype;
         QTextEdit* myDisplay;
+        QTreeWidget* myUsing;
 };
 
 #endif // CLASS_CRE_ARCHETYPE_PANEL_H
