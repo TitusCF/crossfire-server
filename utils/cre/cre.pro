@@ -23,7 +23,9 @@ CREPixmap.cpp \
  CRETreeItemArchetype.cpp \
  CREArchetypePanel.cpp \
  CREMapInformation.cpp \
- CREMapInformationManager.cpp
+ CREMapInformationManager.cpp \
+ CRESettings.cpp \
+ CRESettingsDialog.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -44,7 +46,9 @@ CREPixmap.h \
  CRETreeItemArchetype.h \
  CREArchetypePanel.h \
  CREMapInformation.h \
- CREMapInformationManager.h
+ CREMapInformationManager.h \
+ CRESettings.h \
+ CRESettingsDialog.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

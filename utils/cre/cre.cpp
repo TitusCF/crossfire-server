@@ -8,6 +8,7 @@ extern "C" {
 #include <QCoreApplication>
 
 #include <CREMainWindow.h>
+#include "CRESettings.h"
 
 #include "CREPixmap.h"
 
@@ -24,6 +25,10 @@ int main(int argc, char **argv) {
     load_treasures();
 
     CREPixmap::init();
+
+    CRESettings settings;
+    if (!settings.ensureOptions())
+        return -1;
 
     CREMainWindow win;
     win.show();
