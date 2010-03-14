@@ -115,7 +115,7 @@ Account_Char *account_char_load(const char *account_name)
         }
         ac = malloc(sizeof(Account_Char));
         ac->name = add_string(tmp[0]);
-        ac->class = add_string(tmp[1]);
+        ac->character_class = add_string(tmp[1]);
         ac->race = add_string(tmp[2]);
         ac->level = strtoul(tmp[3], (char**)NULL, 10);
         ac->face = add_string(tmp[4]);
@@ -175,7 +175,7 @@ void account_char_save(const char *account, Account_Char *chars)
     fprintf(fp, "# Otherwise, any changes made may be overwritten by the server\n");
     for (ac=chars; ac; ac=ac->next) {
         fprintf(fp,"%s:%s:%s:%d:%s:%s:%s\n",
-                ac->name, ac->class, ac->race, ac->level,
+                ac->name, ac->character_class, ac->race, ac->level,
                 ac->face, ac->party, ac->map);
     }
     fclose(fp);
@@ -227,10 +227,10 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
          * anyplace, so we don't know what it is.  Keep this code here
          * until it can be determined.
          */
-        free_string(ap->class);
-        ap->class = add_string();
+        free_string(ap->character_class);
+        ap->character_class = add_string();
 #else
-        ap->class = add_string("");
+        ap->character_class = add_string("");
 #endif
 
         free_string(ap->race);
@@ -262,7 +262,7 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
         /* In this case, we are adding a new entry */
         ap = malloc(sizeof(Account_Char));
         ap->name = add_string(pl->ob->name);
-        ap->class = add_string("");
+        ap->character_class = add_string("");
         ap->race = add_string(pl->ob->arch->clone.name);
         ap->level = pl->ob->level;
         ap->face = add_string(pl->ob->face->name);
@@ -304,7 +304,7 @@ Account_Char *account_char_remove(Account_Char *chars, const char *pl_name)
 
     /* As per previous notes, these should never be NULL */
     free_string(ap->name);
-    free_string(ap->class);
+    free_string(ap->character_class);
     free_string(ap->race);
     free_string(ap->face);
     free_string(ap->party);
@@ -335,7 +335,7 @@ void account_char_free(Account_Char *chars)
         next = ap->next;
 
         free_string(ap->name);
-        free_string(ap->class);
+        free_string(ap->character_class);
         free_string(ap->race);
         free_string(ap->face);
         free_string(ap->party);

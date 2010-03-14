@@ -35,12 +35,12 @@
 #define ACCOUNT_CHAR_H
 
 
-/** * One body location.
- * See common/item.c.
+/**
+ * One character account.
  */
 typedef struct account_char_struct {
     const char *name;         /**< Name of this character/player */
-    const char *class;        /**< Class of this character */
+    const char *character_class;        /**< Class of this character */
     const char *race;         /**< Race of this character */
     uint8 level;              /**< Level of this character */
     const char *face;         /**< Face of this character */
