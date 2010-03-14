@@ -21,6 +21,7 @@ CREAnimationPanel::CREAnimationPanel()
     myUsing->setColumnCount(1);
     myUsing->setHeaderLabel(tr("Used by"));
     myUsing->setIconSize(QSize(32, 32));
+    myUsing->sortByColumn(0, Qt::AscendingOrder);
     layout->addWidget(myUsing, 1, 1);
 
     myDisplay = new CREAnimationControl(this);

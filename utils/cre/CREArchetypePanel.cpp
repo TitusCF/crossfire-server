@@ -17,6 +17,8 @@ CREArchetypePanel::CREArchetypePanel()
     myUsing = new QTreeWidget(this);
     myUsing->setHeaderLabel(tr("Used by"));
     myUsing->setIconSize(QSize(32, 32));
+    myUsing->setSortingEnabled(true);
+    myUsing->sortByColumn(0, Qt::AscendingOrder);
     layout->addWidget(myUsing, 2, 1);
 }
 

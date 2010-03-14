@@ -37,6 +37,7 @@ CREResourcesWindow::CREResourcesWindow(DisplayMode mode)
     mySplitter->addWidget(myTree);
     myTree->setIconSize(QSize(32, 32));
     myTree->setHeaderLabel(tr("All resources"));
+    myTree->sortByColumn(0, Qt::AscendingOrder);
 
     QString title;
     if (mode & DisplayArchetypes)
