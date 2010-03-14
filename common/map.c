@@ -1096,23 +1096,23 @@ static int load_map_header(FILE *fp, mapstruct *m) {
          * for compatibility reasons.  The new values (second) are
          * what really should be used.
          */
-        } else if (!strcmp(key, "hp") || !strcmp(key, "enter_x")) {
+        } else if (!strcmp(key, "enter_x")) {
             m->enter_x = atoi(value);
-        } else if (!strcmp(key, "sp") || !strcmp(key, "enter_y")) {
+        } else if (!strcmp(key, "enter_y")) {
             m->enter_y = atoi(value);
-        } else if (!strcmp(key, "x") || !strcmp(key, "width")) {
+        } else if (!strcmp(key, "width")) {
             m->width = atoi(value);
-        } else if (!strcmp(key, "y") || !strcmp(key, "height")) {
+        } else if (!strcmp(key, "height")) {
             m->height = atoi(value);
-        } else if (!strcmp(key, "weight") || !strcmp(key, "reset_timeout")) {
+        } else if (!strcmp(key, "reset_timeout")) {
             m->reset_timeout = atoi(value);
-        } else if (!strcmp(key, "value") || !strcmp(key, "swap_time")) {
+        } else if (!strcmp(key, "swap_time")) {
             m->timeout = atoi(value);
-        } else if (!strcmp(key, "level") || !strcmp(key, "difficulty")) {
+        } else if (!strcmp(key, "difficulty")) {
             m->difficulty = atoi(value);
-        } else if (!strcmp(key, "invisible") || !strcmp(key, "darkness")) {
+        } else if (!strcmp(key, "darkness")) {
             m->darkness = atoi(value);
-        } else if (!strcmp(key, "stand_still") || !strcmp(key, "fixed_resettime")) {
+        } else if (!strcmp(key, "fixed_resettime")) {
             m->fixed_resettime = atoi(value);
         } else if (!strcmp(key, "unique")) {
             m->unique = atoi(value);
