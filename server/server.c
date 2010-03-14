@@ -1361,6 +1361,9 @@ static void do_specials(void) {
     if (!(pticks%2521))
         metaserver_update();    /* 2500 ticks is about 5 minutes */
 
+    if (!(pticks%2531))
+        accounts_save();
+
     if (!(pticks%5003))
         write_book_archive();
 

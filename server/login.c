@@ -257,6 +257,11 @@ int save_player(object *op, int flag) {
     if (flag == 0)
         pets_terminate_all(op);
 
+    /* Update information on this character.  Only do it if it is eligible for
+     * for saving.
+     */
+    pl->socket.account_chars = account_char_add(pl->socket.account_chars, pl);
+
     snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name, op->name);
     make_path_to_file(filename);
     fp = tempnam_secure(settings.tmpdir, NULL, &tmpfilename);

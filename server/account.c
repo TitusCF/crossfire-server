@@ -1,6 +1,6 @@
 /*
- * static char *rcsid_acount_c =
- *   "$Id: alchemy.c 12219 2009-10-24 21:28:41Z akirschbaum $";
+ * static char *rcsid_account_c =
+ *   "$Id$";
  */
 
 /*
@@ -81,7 +81,7 @@
 #define MAX_CHARACTERS_PER_ACCOUNT (VERY_BIG_BUF - 150) / (MAX_NAME+1)
 
 /* Number of fields in the accounts file.  These are colon seperated */
-#define NUM_ACCOUNT_FIELDS 5
+#define NUM_ACCOUNT_FIELDS 6
 
 /**
  * Structure that holds account data.  This is basically in game representation
@@ -101,6 +101,7 @@ typedef struct account_struct {
     int	  num_characters;           /** Number of characters on this account */
     char  *character_names[MAX_CHARACTERS_PER_ACCOUNT+1];
                                     /** character names associated with this account */
+    time_t  created;                /** When character was created */
     struct account_struct *next;    /** Next in list */
 } account_struct;
 
@@ -133,6 +134,7 @@ void account_load_entries(void)
     char fname[MAX_BUF], buf[VERY_BIG_BUF];
     FILE *fp;
     account_struct *ac, *last=NULL;
+    int fields=0;
 
     if (accounts != NULL) {
         LOG(llevError, "account_load_entries(): Called when accounts has been set.\n");
@@ -158,14 +160,21 @@ void account_load_entries(void)
         cp = strchr(buf, '\n');
         if (cp) *cp='\0';
 
-        if (split_string(buf, tmp, NUM_ACCOUNT_FIELDS, ':') != NUM_ACCOUNT_FIELDS) {
-            LOG(llevError,"Corrupt entry in %s: %s\n", fname, buf);
-            continue;
-        }
+        fields = split_string(buf, tmp, NUM_ACCOUNT_FIELDS, ':');
+
         ac = malloc(sizeof(account_struct));
         ac->name = strdup_local(tmp[0]);
         ac->password = strdup_local(tmp[1]);
         ac->last_login = strtoul(tmp[2], (char**)NULL, 10);
+
+        /* While probably no one was using this code before this
+         * field was added, this provides a nice example of handling
+         * additional fields.
+         */
+        if (fields>4) ac->created = strtoul(tmp[4], (char**)NULL, 10);
+        else
+            ac->created = ac->last_login;
+
         ac->next = NULL;
 
         /* count up how many semicolons - this is the character
@@ -245,7 +254,7 @@ static void account_write_entry(FILE *fp, account_struct *ac)
         else
             fprintf(fp,"%s", ac->character_names[i]);
     }
-    fprintf(fp,":\n");
+    fprintf(fp,":%u:\n", (uint32) ac->created);
 }
 
 
@@ -275,9 +284,13 @@ void accounts_save(void)
     fprintf(fp, "# This file should not be edited while the server is running.\n");
     fprintf(fp, "# Otherwise, any changes made may be overwritten by the server\n");
     fprintf(fp, "# Format:\n");
-    fprintf(fp, "# Account name:Password:Account last used:Characters (semicolon separated):expansion\n");
+    fprintf(fp, "# Account name:Password:Account last used:Characters (semicolon separated):created:expansion\n");
     for (ac=accounts; ac; ac=ac->next) {
-                account_write_entry(fp, ac);
+        /* Don't write out accounts with no characters associated unless the
+         * account is at least a day old.
+         */
+        if (ac->num_characters || (ac->created > (time(NULL) - 24*60*60)))
+            account_write_entry(fp, ac);
     }
     fclose(fp);
 
@@ -413,6 +426,7 @@ int account_add_account(char *account_name, char *account_password)
     ac->name = strdup_local(account_name);
     ac->password = strdup_local(crypt_string(account_password, NULL));
     ac->last_login = time(NULL);
+    ac->created = ac->last_login;
     ac->num_characters = 0;
 
     memset(ac->character_names, MAX_CHARACTERS_PER_ACCOUNT+1, sizeof(char*));
@@ -538,4 +552,3 @@ char **account_get_players_for_account(char *account_name)
     }
     return NULL;
 }
-

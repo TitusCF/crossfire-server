@@ -30,6 +30,7 @@ noinst_LIBRARIES = libserver.a
 crossfire_server_SOURCES = main.c
 libserver_a_SOURCES = \
 	account.c\
+	account_char.c\
 	alchemy.c\
 	apply.c\
 	attack.c\
@@ -53,8 +54,8 @@ libserver_a_SOURCES = \
 	login.c\
 	monster.c\
 	move.c\
-        ob_methods.c\
-        ob_types.c\
+    ob_methods.c\
+    ob_types.c\
 	party.c\
 	pets.c\
 	player.c\

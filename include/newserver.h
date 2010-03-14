@@ -146,6 +146,8 @@ typedef struct socket_struct {
                                              this number includes the prev/next group fake items.
                                              Can be set through "num_look_objects" setup option;
                                              defaults to DEFAULT_NUM_LOOK_OBJECTS. */
+    char    *account_name;              /**< Name of the account logged in on this socket */
+    Account_Char    *account_chars;     /**< Detailed information on characters on this account */
 } socket_struct;
 
 /**

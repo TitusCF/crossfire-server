@@ -8,6 +8,12 @@ int account_add_account(char *account_name, char *account_password);
 int account_add_player_to_account(char *account_name, char *player_name);
 int account_remove_player_from_account(char *account_name, char *player_name);
 char **account_get_players_for_account(char *account_name);
+/* account_char.c */
+Account_Char *account_char_load(const char *account_name);
+void account_char_save(const char *account, Account_Char *chars);
+Account_Char *account_char_add(Account_Char *chars, player *pl);
+Account_Char *account_char_remove(Account_Char *chars, const char *pl_name);
+void account_char_free(Account_Char *chars);
 /* alchemy.c */
 int use_alchemy(object *op);
 /* apply.c */

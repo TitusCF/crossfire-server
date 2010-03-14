@@ -134,6 +134,9 @@ typedef signed long long        sint64;
 
 #include "skills.h"
 
+/* This defines the Account_Char structure which is used in the socket */
+#include "account_char.h"
+
 /* Pull in the socket structure - used in the player structure */
 #include "newserver.h"
 

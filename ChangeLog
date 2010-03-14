@@ -14,6 +14,27 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Update account handling - add character specific handling for the accounts,
+add test case, and add some missing svn keywords.  Still some more
+work to be done here
+---
+doc/Developers/protocol: Clean up formatting some.
+include/Makefile.am: Add new file
+include/account_char.h: New file for account information
+include/global.h: Include account_char.h
+include/newserver.h: Add references to account information to socket
+include/sproto.h: Add function prototypes
+socket/init.c: And initialization & cleanup for account info in socket
+server/Makefile.am: Add new file
+server/account.c: Add creation time to account record
+server/account_char.c: New file - character management
+server/login.c: Add code to update character info in socket.
+server/server.c: Add periodic saving of account information.
+test/unit/server/Makefile.am: Update for new file
+test/unit/server/check_account_char.c: New file - test for character
+    management
+MSW 2010-03-09	
+
 Enable sacrificed items on altars and such to be alive, if asked for.
  server/common/button.c
 Nicolas Weeger 2010-03-13

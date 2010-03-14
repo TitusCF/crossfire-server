@@ -120,6 +120,8 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->is_bot = 0;
     ns->num_look_objects = DEFAULT_NUM_LOOK_OBJECTS;
     ns->want_pickup = 0;
+    ns->account_name = NULL;
+    ns->account_chars = NULL;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
@@ -318,6 +320,14 @@ void free_newsocket(socket_struct *ns) {
         FREE_AND_CLEAR(ns->stats.title);
     if (ns->host)
         FREE_AND_CLEAR(ns->host);
+    if (ns->account_name) {
+        account_char_save(ns->account_name, ns->account_chars);
+        FREE_AND_CLEAR(ns->account_name);
+    }
+    if (ns->account_chars) {
+        account_char_free(ns->account_chars);
+        ns->account_chars = NULL;
+    }
     SockList_Term(&ns->inbuf);
 }
 

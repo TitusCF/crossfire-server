@@ -309,9 +309,10 @@ S->C: failure <protocol command> <message>
    the first place, the user is trying to log in with an established account,
    in the second, the user is trying to create a new account.
 
-   It is up to the client to determine what is trying to be done - in general,
-   this means that player should be hitting a 'new account' type button or a the
-   like.  It is up to the client to do double confirmation of passwords, etc.
+   It is up to the client to determine what is trying to be done - in
+   general, this means that player should be hitting a 'new account'
+   type button or a the like.  It is up to the client to do double
+   confirmation of passwords, etc.
 
    account name and account password are strings, with the first byte being
    the length of the string.
@@ -319,11 +320,15 @@ S->C: failure <protocol command> <message>
    If the login or creation fails, a failure protocol message is generated.
    That is documented up above.  The client should retry in that case.
 
-S->C: accountplayers <num characters><char name1><char name2>...
+S->C: accountplayers <num characters><char name1><char data><char name2>...
 
       <num characters> 8 bit binary value noting how many characters on
             this account.  It may be zero.
       <char name ..> length prefixed string of each character name.
+      <char data> length prefixed data on character.  Yet to be defined, but
+          will likely be type followed by value - similar to how the stats
+          command is used.  This data is length prefixed so if there are types
+          unknown to client, it could skip over the rest of this block.
 
    This is a list of the players (characters) associated with this account.
    In the case of new accounts, the num characters will be zero.
