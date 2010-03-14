@@ -27,7 +27,7 @@ class CREMapInformationManager : public QObject
 
     protected:
         QHash<QString, CREMapInformation*> myInformation;
-        QMultiHash<const archetype*, CREMapInformation*> myArchetypeUse;
+        QMultiHash<QString, CREMapInformation*> myArchetypeUse;
         QStringList myToProcess;
         int myCurrentMap;
         QFuture<void> myWorker;

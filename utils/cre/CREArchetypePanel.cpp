@@ -82,7 +82,7 @@ void CREArchetypePanel::setArchetype(const archt* archetype)
 
         foreach(CREMapInformation* information, mapuse)
         {
-            new QTreeWidgetItem(root, QStringList(information->path()));
+            CREUtils::mapNode(information, root);
         }
     }
 }

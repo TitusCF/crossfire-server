@@ -1,6 +1,7 @@
 #include <QtGui>
 #include "CREUtils.h"
 #include "CREPixmap.h"
+#include "CREMapInformation.h"
 
 extern "C" {
 #include "global.h"
@@ -166,4 +167,9 @@ QTreeWidgetItem* CREUtils::animationNode(const Animations* anim, QTreeWidgetItem
     else
         LOG(llevDebug, "empty animation: %s\n", anim->name);
     return item;
+}
+
+QTreeWidgetItem* CREUtils::mapNode(const CREMapInformation* map, QTreeWidgetItem *parent)
+{
+    return new QTreeWidgetItem(parent, QStringList(QObject::tr("%1 [%2]").arg(map->name(), map->path())));
 }

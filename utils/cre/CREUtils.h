@@ -9,6 +9,8 @@ extern "C" {
 #include "treasure.h"
 }
 
+class CREMapInformation;
+
 class CREUtils
 {
     public:
@@ -29,6 +31,8 @@ class CREUtils
 
         static QTreeWidgetItem* animationNode(QTreeWidgetItem* parent);
         static QTreeWidgetItem* animationNode(const Animations* anim, QTreeWidgetItem* parent);
+
+        static QTreeWidgetItem* mapNode(const CREMapInformation* map, QTreeWidgetItem *parent);
 };
 
 #endif // CREUTILS_H

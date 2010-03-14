@@ -55,6 +55,7 @@ void CREMapInformationManager::process(const QString& path)
     Q_ASSERT(!myInformation.contains(path));
     CREMapInformation* information = new CREMapInformation(path);
     myInformation[path] = information;
+    information->setName(m->name);
 
     char exit_path[500];
     char tmppath[MAX_BUF];
@@ -68,16 +69,16 @@ void CREMapInformationManager::process(const QString& path)
                 {
                     archetype *arch = find_archetype(item->arch->name);
                     QMutexLocker lock(&myLock);
-                    if (!myArchetypeUse.values(arch).contains(information))
-                        myArchetypeUse.insert(arch, information);
+                    if (!myArchetypeUse.values(arch->name).contains(information))
+                        myArchetypeUse.insert(arch->name, information);
                 }
 
                 FOR_INV_PREPARE(item, inv)
                 {
                     archetype *arch = find_archetype(inv->arch->name);
                     QMutexLocker lock(&myLock);
-                    if (!myArchetypeUse.values(arch).contains(information))
-                        myArchetypeUse.insert(arch, information);
+                    if (!myArchetypeUse.values(arch->name).contains(information))
+                        myArchetypeUse.insert(arch->name, information);
                 } FOR_INV_FINISH();
 
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
@@ -170,5 +171,5 @@ void CREMapInformationManager::cancel()
 QList<CREMapInformation*> CREMapInformationManager::getArchetypeUse(const archetype* arch)
 {
     QMutexLocker lock(&myLock);
-    return myArchetypeUse.values(arch);
+    return myArchetypeUse.values(arch->name);
 }

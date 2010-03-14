@@ -22,9 +22,9 @@ CREMainWindow::CREMainWindow()
 
     setWindowTitle(tr("Crossfire Resource Editor"));
 
-    CREMapInformationManager::instance()->start();
     connect(CREMapInformationManager::instance(), SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
     connect(CREMapInformationManager::instance(), SIGNAL(finished()), this, SLOT(browsingFinished()));
+    CREMapInformationManager::instance()->start();
 }
 
 void CREMainWindow::closeEvent(QCloseEvent* event)
