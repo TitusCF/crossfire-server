@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add relevant debug flags to compilation.
+ utils/cre/.qmake.cache
+Nicolas Weeger 2010-03-14
+
 Use archetype name instead of archetype itself. Show map name in list too.
  utils/cre/CREArchetypePanel.cpp CREMapInformation.{cpp,h} CREMapInformationManager.{cpp,h} CREMainWindow.cpp CREUtils.{cpp,h}
 Nicolas Weeger 2010-03-14
