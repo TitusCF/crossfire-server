@@ -5,6 +5,7 @@
 class QMdiArea;
 class QAction;
 class QMenu;
+class QLabel;
 class CREArtifactWindow;
 class CREArchetypeWindow;
 class CRETreasureWindow;
@@ -36,6 +37,10 @@ class CREMainWindow : public QMainWindow
         QAction* myOpenFaces;
         QAction* myOpenResources;
         QAction* mySaveFormulae;
+        QLabel* myMapBrowseStatus;
+
+    protected:
+        void closeEvent(QCloseEvent* event);
 
     private slots:
         void onOpenArtifacts();
@@ -46,4 +51,6 @@ class CREMainWindow : public QMainWindow
         void onOpenFaces();
         void onOpenResources();
         void onSaveFormulae();
+        void browsingMap(const QString& path);
+        void browsingFinished();
 };

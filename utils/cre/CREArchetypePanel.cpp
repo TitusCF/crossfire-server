@@ -1,4 +1,6 @@
 #include <Qt>
+#include "CREMapInformation.h"
+#include "CREMapInformationManager.h"
 
 extern "C" {
 #include "global.h"
@@ -69,6 +71,18 @@ void CREArchetypePanel::setArchetype(const archt* archetype)
                 }
                 CREUtils::treasureNode(list, root);
             }
+        }
+    }
+
+    QList<CREMapInformation*> mapuse = CREMapInformationManager::instance()->getArchetypeUse(myArchetype);
+    if (mapuse.size() > 0)
+    {
+        root = new QTreeWidgetItem(myUsing, QStringList(QTreeWidget::tr("Maps [%1]").arg(mapuse.size())));
+        root->setExpanded(true);
+
+        foreach(CREMapInformation* information, mapuse)
+        {
+            new QTreeWidgetItem(root, QStringList(information->path()));
         }
     }
 }

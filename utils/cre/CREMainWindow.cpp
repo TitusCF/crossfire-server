@@ -2,6 +2,7 @@
 #include <QtGui>
 #include <CREMainWindow.h>
 #include <CREResourcesWindow.h>
+#include "CREMapInformationManager.h"
 
 extern "C" {
 #include "global.h"
@@ -16,8 +17,20 @@ CREMainWindow::CREMainWindow()
     createMenus();
 
     statusBar()->showMessage(tr("Ready"));
+    myMapBrowseStatus = new QLabel(tr("Browsing maps..."));
+    statusBar()->addPermanentWidget(myMapBrowseStatus);
 
     setWindowTitle(tr("Crossfire Resource Editor"));
+
+    CREMapInformationManager::instance()->start();
+    connect(CREMapInformationManager::instance(), SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
+    connect(CREMapInformationManager::instance(), SIGNAL(finished()), this, SLOT(browsingFinished()));
+}
+
+void CREMainWindow::closeEvent(QCloseEvent* event)
+{
+    CREMapInformationManager::instance()->cancel();
+    QMainWindow::closeEvent(event);
 }
 
 void CREMainWindow::createActions()
@@ -113,4 +126,15 @@ void CREMainWindow::onOpenResources()
 
 void CREMainWindow::onSaveFormulae()
 {
+}
+
+void CREMainWindow::browsingMap(const QString& path)
+{
+    myMapBrowseStatus->setText(tr("Browsing map %1").arg(path));
+}
+
+void CREMainWindow::browsingFinished()
+{
+    statusBar()->showMessage(tr("Finished browsing maps."), 5000);
+    myMapBrowseStatus->setVisible(false);
 }

@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Basic map browsing. Report archetype use in maps.
+Modified files:
+ utils/cre/cre.pro CREArchetypePanel.cpp CREMainWindow.{cpp,h}
+New files:
+ utils/cre/CREMapInformationManager.{cpp,h} CREMapInformation.{cpp,h}
+Nicolas Weeger 2010-03-14
+
 Sort alphabetically by default.
  utils/cre/CREAnimationPanel.cpp CREArchetypePanel.cpp CREResourcesWindow.cpp
 Nicolas Weeger 2010-03-14
