@@ -12,6 +12,7 @@ class CRETreasureWindow;
 class CREAnimationWindow;
 class CREFormulaeWindow;
 class CREResourcesWindow;
+class CREMapInformationManager;
 
 class CREMainWindow : public QMainWindow
 {
@@ -38,6 +39,7 @@ class CREMainWindow : public QMainWindow
         QAction* myOpenResources;
         QAction* mySaveFormulae;
         QLabel* myMapBrowseStatus;
+        CREMapInformationManager* myMapManager;
 
     protected:
         void closeEvent(QCloseEvent* event);

@@ -24,9 +24,12 @@ extern "C" {
 #include "recipe.h"
 }
 
-CREResourcesWindow::CREResourcesWindow(DisplayMode mode)
+CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayMode mode)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    Q_ASSERT(store);
+    myStore = store;
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -179,7 +182,7 @@ void CREResourcesWindow::fillArchetypes()
         }
     }
 
-    addPanel("Archetype", new CREArchetypePanel());
+    addPanel("Archetype", new CREArchetypePanel(myStore));
 }
 
 void CREResourcesWindow::fillFormulae()

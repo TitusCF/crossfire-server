@@ -14,6 +14,21 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Cache map information.
+utils/cre/
+ CREArchetypePanel.cpp
+ CREArchetypePanel.h
+ CREMainWindow.cpp
+ CREMainWindow.h
+ CREMapInformationManager.h
+ CREMapInformationManager.cpp
+ CREMapInformation.cpp
+ CREMapInformation.h
+ CREResourcesWindow.cpp
+ CREResourcesWindow.h
+ cre.pro
+Nicolas Weeger 2010-03-17
+
 Basic settings for map cache directory, and associated dialog.
  utils/cre/cre.{cpp,pro} CRESettings.{cpp,h} CRESettingsDialog.{cpp,h}
 Nicolas Weeger 2010-03-14

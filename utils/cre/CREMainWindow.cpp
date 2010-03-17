@@ -22,14 +22,15 @@ CREMainWindow::CREMainWindow()
 
     setWindowTitle(tr("Crossfire Resource Editor"));
 
-    connect(CREMapInformationManager::instance(), SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
-    connect(CREMapInformationManager::instance(), SIGNAL(finished()), this, SLOT(browsingFinished()));
-    CREMapInformationManager::instance()->start();
+    myMapManager = new CREMapInformationManager(this);
+    connect(myMapManager, SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
+    connect(myMapManager, SIGNAL(finished()), this, SLOT(browsingFinished()));
+    myMapManager->start();
 }
 
 void CREMainWindow::closeEvent(QCloseEvent* event)
 {
-    CREMapInformationManager::instance()->cancel();
+    myMapManager->cancel();
     QMainWindow::closeEvent(event);
 }
 
@@ -77,49 +78,49 @@ void CREMainWindow::createMenus()
 
 void CREMainWindow::onOpenArtifacts()
 {
-    QWidget* artifacts = new CREResourcesWindow(DisplayArtifacts);
+    QWidget* artifacts = new CREResourcesWindow(myMapManager, DisplayArtifacts);
     myArea->addSubWindow(artifacts);
     artifacts->show();
 }
 
 void CREMainWindow::onOpenArchetypes()
 {
-    QWidget* archetypes = new CREResourcesWindow(DisplayArchetypes);
+    QWidget* archetypes = new CREResourcesWindow(myMapManager, DisplayArchetypes);
     myArea->addSubWindow(archetypes);
     archetypes->show();
 }
 
 void CREMainWindow::onOpenTreasures()
 {
-    QWidget* myTreasures = new CREResourcesWindow(DisplayTreasures);
+    QWidget* myTreasures = new CREResourcesWindow(myMapManager, DisplayTreasures);
     myArea->addSubWindow(myTreasures);
     myTreasures->show();
 }
 
 void CREMainWindow::onOpenAnimations()
 {
-    QWidget* myAnimations = new CREResourcesWindow(DisplayAnimations);
+    QWidget* myAnimations = new CREResourcesWindow(myMapManager, DisplayAnimations);
     myArea->addSubWindow(myAnimations);
     myAnimations->show();
 }
 
 void CREMainWindow::onOpenFormulae()
 {
-    QWidget* myFormulae = new CREResourcesWindow(DisplayFormulae);
+    QWidget* myFormulae = new CREResourcesWindow(myMapManager, DisplayFormulae);
     myArea->addSubWindow(myFormulae);
     myFormulae->show();
 }
 
 void CREMainWindow::onOpenFaces()
 {
-    QWidget* myResources = new CREResourcesWindow(DisplayFaces);
+    QWidget* myResources = new CREResourcesWindow(myMapManager, DisplayFaces);
     myArea->addSubWindow(myResources);
     myResources->show();
 }
 
 void CREMainWindow::onOpenResources()
 {
-    QWidget* myResources = new CREResourcesWindow();
+    QWidget* myResources = new CREResourcesWindow(myMapManager);
     myArea->addSubWindow(myResources);
     myResources->show();
 }

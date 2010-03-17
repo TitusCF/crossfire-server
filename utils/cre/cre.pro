@@ -54,3 +54,5 @@ LIBS += ../../common/libcross.a
 RESOURCES += cre.qrc
 
 CONFIG -= precompile_header
+CONFIG += thread
+

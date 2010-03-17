@@ -13,7 +13,7 @@ class CREMapInformationManager : public QObject
     Q_OBJECT
 
     public:
-        static CREMapInformationManager* instance();
+        CREMapInformationManager(QObject* parent);
 
         bool browseFinished() const;
         void start();
@@ -36,10 +36,10 @@ class CREMapInformationManager : public QObject
 
         void browseMaps();
         void process(const QString& path);
-
-    private:
-        CREMapInformationManager();
-        static CREMapInformationManager* theInstance;
+        void loadCache();
+        void storeCache();
+        CREMapInformation* getOrCreateMapInformation(const QString& path);
+        void addArchetypeUse(const QString& name, CREMapInformation* map);
 };
 
 #endif // CLASS_CRE_MAP_INFORMATION_MANAGER_H

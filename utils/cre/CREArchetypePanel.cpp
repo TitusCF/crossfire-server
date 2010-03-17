@@ -9,8 +9,11 @@ extern "C" {
 #include "CREArchetypePanel.h"
 #include "CREUtils.h"
 
-CREArchetypePanel::CREArchetypePanel()
+CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store)
 {
+    Q_ASSERT(store);
+    myStore = store;
+
     QGridLayout* layout = new QGridLayout(this);
 
     myDisplay = new QTextEdit(this);
@@ -74,7 +77,7 @@ void CREArchetypePanel::setArchetype(const archt* archetype)
         }
     }
 
-    QList<CREMapInformation*> mapuse = CREMapInformationManager::instance()->getArchetypeUse(myArchetype);
+    QList<CREMapInformation*> mapuse = myStore->getArchetypeUse(myArchetype);
     if (mapuse.size() > 0)
     {
         root = new QTreeWidgetItem(myUsing, QStringList(QTreeWidget::tr("Maps [%1]").arg(mapuse.size())));

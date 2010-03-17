@@ -1,24 +1,12 @@
 #include "CREMapInformationManager.h"
+#include "CRESettings.h"
+
 extern "C" {
 #include "global.h"
 }
 
-CREMapInformationManager* CREMapInformationManager::theInstance = NULL;
-static QMutex lock;
-
-CREMapInformationManager::CREMapInformationManager()
+CREMapInformationManager::CREMapInformationManager(QObject* parent) : QObject(parent)
 {
-}
-
-CREMapInformationManager* CREMapInformationManager::instance()
-{
-    if (theInstance == NULL)
-    {
-        QMutexLocker locker(&lock);
-        if (theInstance == NULL)
-            theInstance = new CREMapInformationManager();
-    }
-    return theInstance;
 }
 
 bool CREMapInformationManager::browseFinished() const
@@ -35,30 +23,58 @@ void CREMapInformationManager::start()
     myInformation.clear();
     myArchetypeUse.clear();
 
+    loadCache();
+
     myCancelled = false;
     myCurrentMap = 0;
     myToProcess.clear();
-    myToProcess.append(first_map_path);
+    myToProcess.append(QString(first_map_path));
 
     myWorker = QtConcurrent::run(this, &CREMapInformationManager::browseMaps);
 }
 
-void CREMapInformationManager::process(const QString& path)
+void CREMapInformationManager::process(const QString& path2)
 {
+    /*
+     don't ask why, but the variable gets apparently destroyed on the myToProcess.append() when it reallocated values...
+    so keep a copy to avoid messes
+     */
+    QString path(path2);
+
     if (myCancelled)
         return;
 
     emit browsingMap(path);
 //    qDebug() << "processing" << path;
-    mapstruct *m = ready_map_name(path.toAscii(), 0);
+    CREMapInformation* information = getOrCreateMapInformation(path);
 
-    Q_ASSERT(!myInformation.contains(path));
-    CREMapInformation* information = new CREMapInformation(path);
-    myInformation[path] = information;
+    char tmppath[MAX_BUF];
+    create_pathname(path.toAscii(), tmppath, MAX_BUF);
+    QFileInfo info(tmppath);
+
+    if (!info.exists())
+    {
+//        qDebug() << "non existant map" << tmppath;
+        return;
+    }
+
+    if (!information->mapTime().isNull() && information->mapTime() >= info.lastModified())
+    {
+        foreach(QString exit, information->exitsTo())
+        {
+            if (!myToProcess.contains(exit))
+                myToProcess.append(exit);
+        }
+//        qDebug() << "skipping " << tmppath;
+        return;
+    }
+
+    mapstruct *m = ready_map_name(path.toAscii(), 0);
+//    qDebug() << "processing" << path << information->mapTime() << info.lastModified();
     information->setName(m->name);
+    information->setMapTime(info.lastModified());
 
     char exit_path[500];
-    char tmppath[MAX_BUF];
 
     for (int x = MAP_WIDTH(m)-1; x >= 0; x--)
     {
@@ -68,17 +84,15 @@ void CREMapInformationManager::process(const QString& path)
             {
                 {
                     archetype *arch = find_archetype(item->arch->name);
-                    QMutexLocker lock(&myLock);
-                    if (!myArchetypeUse.values(arch->name).contains(information))
-                        myArchetypeUse.insert(arch->name, information);
+                    addArchetypeUse(arch->name, information);
+                    information->addArchetype(arch->name);
                 }
 
                 FOR_INV_PREPARE(item, inv)
                 {
                     archetype *arch = find_archetype(inv->arch->name);
-                    QMutexLocker lock(&myLock);
-                    if (!myArchetypeUse.values(arch->name).contains(information))
-                        myArchetypeUse.insert(arch->name, information);
+                    addArchetypeUse(arch->name, information);
+                    information->addArchetype(arch->name);
                 } FOR_INV_FINISH();
 
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
@@ -118,8 +132,15 @@ void CREMapInformationManager::process(const QString& path)
                             if (stat(tmppath, &stats)) {
                                 //printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, info->path, item->x, item->y);
                             } else {
-                                if (!myToProcess.contains(exit_path))
-                                    myToProcess.append(exit_path);
+                                QString exit = exit_path;
+                                if (!myToProcess.contains(exit))
+                                    myToProcess.append(exit);
+
+                                CREMapInformation* other = getOrCreateMapInformation(path);
+                                Q_ASSERT(other);
+                                other->addAccessedFrom(path);
+                                information->addExitTo(exit_path);
+
 #if 0
                                 link = get_map_info(exit_path);
                                 add_map(link, &info->exits_from);
@@ -160,16 +181,155 @@ void CREMapInformationManager::browseMaps()
         if (myCancelled)
             break;
     }
+
+    storeCache();
+
     emit finished();
 }
 
 void CREMapInformationManager::cancel()
 {
     myCancelled = true;
+    myWorker.waitForFinished();
 }
 
 QList<CREMapInformation*> CREMapInformationManager::getArchetypeUse(const archetype* arch)
 {
     QMutexLocker lock(&myLock);
     return myArchetypeUse.values(arch->name);
+}
+
+void CREMapInformationManager::loadCache()
+{
+    Q_ASSERT(myInformation.isEmpty());
+
+    CRESettings settings;
+    QFile file(settings.mapCacheDirectory() + QDir::separator() + "maps_cache.xml");
+    file.open(QFile::ReadOnly);
+
+    QXmlStreamReader reader(&file);
+    bool hasMaps = false;
+    CREMapInformation* map = NULL;
+
+    while (!reader.atEnd())
+    {
+        reader.readNext();
+
+        if (reader.isStartElement() && reader.name() == "maps")
+        {
+            hasMaps = true;
+            continue;
+        }
+
+        if (!hasMaps)
+            continue;
+
+        if (reader.isStartElement() && reader.name() == "map")
+        {
+            map = new CREMapInformation();
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "path")
+        {
+            QString path = reader.readElementText();
+            map->setPath(path);
+            Q_ASSERT(!myInformation.contains(path));
+            myInformation[path] = map;
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "name")
+        {
+            map->setName(reader.readElementText());
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "lastModified")
+        {
+            QString date = reader.readElementText();
+            map->setMapTime(QDateTime::fromString(date, Qt::ISODate));
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "arch")
+        {
+            QString arch = reader.readElementText();
+            map->addArchetype(arch);
+            addArchetypeUse(arch, map);
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "exitTo")
+        {
+            QString path = reader.readElementText();
+            map->addExitTo(path);
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "accessedFrom")
+        {
+            QString path = reader.readElementText();
+            map->addAccessedFrom(path);
+            continue;
+        }
+        if (reader.isEndElement() && reader.name() == "map")
+        {
+            map = NULL;
+            continue;
+        }
+    }
+
+//    qDebug() << "loaded maps from cache:" << myInformation.size();
+}
+
+void CREMapInformationManager::storeCache()
+{
+    CRESettings settings;
+    QFile file(settings.mapCacheDirectory() + QDir::separator() + "maps_cache.xml");
+    file.open(QFile::WriteOnly | QFile::Truncate);
+
+    QXmlStreamWriter writer(&file);
+
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+
+    writer.writeStartElement("maps");
+
+    QList<CREMapInformation*> maps = myInformation.values();
+    foreach(CREMapInformation* map, maps)
+    {
+        writer.writeStartElement("map");
+        writer.writeTextElement("path", map->path());
+        writer.writeTextElement("name", map->name());
+        writer.writeTextElement("lastModified", map->mapTime().toString(Qt::ISODate));
+        foreach(QString arch, map->archetypes())
+        {
+            writer.writeTextElement("arch", arch);
+        }
+        foreach(QString path, map->exitsTo())
+        {
+            writer.writeTextElement("exitTo", path);
+        }
+        foreach(QString path, map->accessedFrom())
+        {
+            writer.writeTextElement("accessedFrom", path);
+        }
+        writer.writeEndElement();
+    }
+
+    writer.writeEndElement();
+
+    writer.writeEndDocument();
+}
+
+CREMapInformation* CREMapInformationManager::getOrCreateMapInformation(const QString& path)
+{
+    if (!myInformation.contains(path))
+    {
+        CREMapInformation* information = new CREMapInformation(path);
+        myInformation[path] = information;
+    }
+    return myInformation[path];
+}
+
+void CREMapInformationManager::addArchetypeUse(const QString& name, CREMapInformation* map)
+{
+    QMutexLocker lock(&myLock);
+    if (!myArchetypeUse.values(name).contains(map))
+        myArchetypeUse.insert(name, map);
 }
