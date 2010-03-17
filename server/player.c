@@ -1837,7 +1837,7 @@ static object *pick_arrow_target(object *op, const char *type, int dir) {
         }
         if (mflags&P_IS_ALIVE) {
             FOR_MAP_PREPARE(m, x, y, tmp2)
-                if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
+                if (QUERY_FLAG(tmp2, FLAG_ALIVE)) {
                     tmp = tmp2;
                     found++;
                     break;
