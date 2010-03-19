@@ -94,7 +94,7 @@ int command_prepare(object *op, char *params) {
  * @param params
  * if supplied, the spell name must match that.
  */
-static void show_matching_spells(object *op, char *params) {
+static void show_matching_spells(object *op, const char *params) {
     char spell_sort[NROFREALSPELLS][MAX_BUF], tmp[MAX_BUF], *cp;
     int num_found = 0, i;
 
@@ -127,8 +127,8 @@ static void show_matching_spells(object *op, char *params) {
          * and it say you have no spells, when really, you do, but just
          * nothing that matches.
          */
-        if (*params == '\0')
-            show_matching_spells(op, NULL);
+        if (*params != '\0')
+            show_matching_spells(op, "");
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "You know no spells", NULL);
