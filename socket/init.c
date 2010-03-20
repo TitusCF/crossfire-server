@@ -120,6 +120,7 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->is_bot = 0;
     ns->num_look_objects = DEFAULT_NUM_LOOK_OBJECTS;
     ns->want_pickup = 0;
+    ns->extended_stats = 0;
     ns->account_name = NULL;
     ns->account_chars = NULL;
 

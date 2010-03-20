@@ -132,6 +132,7 @@ typedef struct socket_struct {
     uint32      tick:1;                 /**< Client wishes to get tick commands. */
     uint32      is_bot:1;               /**< Client shouldn't be reported to metaserver. */
     uint32      want_pickup:1;          /**< Client wants pickup information when logging in. */
+    uint32      extended_stats:1;       /**< Client wants base and maximum statistics information. */
     uint32      monitor_spells;         /**< Client wishes to be informed when their spell list changes. */
     uint32      sound;                  /**< Client sound mode. */
     uint32      cs_version, sc_version; /**< Versions of the client. */

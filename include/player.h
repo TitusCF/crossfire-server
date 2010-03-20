@@ -174,6 +174,8 @@ typedef struct pl {
     int         swap_first;          /**< First stat player has selected to swap. */
     living      orig_stats;          /**< Permanent real stats of player. */
     living      last_stats;          /**< Last stats as sent to client. */
+    living      last_orig_stats;     /**< Last permanent stats sent to client. */
+    living      last_race_stats;     /**< Last race stats sent to the client. */
     float       last_speed;          /**< Last speed as sent to client. */
     sint16      last_resist[NROFATTACKS];       /**< last resist values sent to client. */
     object      *ob;                 /**< The object representing the player. */

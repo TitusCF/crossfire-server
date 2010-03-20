@@ -132,6 +132,20 @@
 #define CS_STAT_SPELL_ATTUNE    29
 #define CS_STAT_SPELL_REPEL     30
 #define CS_STAT_SPELL_DENY      31
+#define CS_STAT_RACE_STR        32
+#define CS_STAT_RACE_INT        33
+#define CS_STAT_RACE_WIS        34
+#define CS_STAT_RACE_DEX        35
+#define CS_STAT_RACE_CON        36
+#define CS_STAT_RACE_CHA        37
+#define CS_STAT_RACE_POW        38
+#define CS_STAT_BASE_STR        39
+#define CS_STAT_BASE_INT        40
+#define CS_STAT_BASE_WIS        41
+#define CS_STAT_BASE_DEX        42
+#define CS_STAT_BASE_CON        43
+#define CS_STAT_BASE_CHA        44
+#define CS_STAT_BASE_POW        45
 
 /* Start & end of resistances, inclusive. */
 #define CS_STAT_RESIST_START    100

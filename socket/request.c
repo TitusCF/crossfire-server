@@ -273,6 +273,17 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             }
             ns->num_look_objects = (uint8)tmp;
             SockList_AddPrintf(&sl, "%d", tmp);
+        } else if (!strcmp(cmd, "extended_stats")) {
+            int extended_stats;
+
+            extended_stats = atoi(param);
+            if (extended_stats != 0 && extended_stats != 1) {
+                SockList_AddString(&sl, "FALSE");
+            } else {
+                ns->extended_stats = extended_stats;
+                SockList_AddPrintf(&sl, "%d", extended_stats);
+            }
+
         } else if (!strcmp(cmd, "newmapcmd")) {
             /* newmapcmd is deprecated (now standard part), but some
              * clients still use this setup option, and if the server
@@ -716,6 +727,24 @@ void esrv_update_stats(player *pl) {
         AddIfShort(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
         AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
         AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
+    }
+    if (pl->socket.extended_stats) {
+        AddIfShort(pl->last_orig_stats.Str, pl->orig_stats.Str, CS_STAT_BASE_STR);
+        AddIfShort(pl->last_orig_stats.Int, pl->orig_stats.Int, CS_STAT_BASE_INT);
+        AddIfShort(pl->last_orig_stats.Pow, pl->orig_stats.Pow, CS_STAT_BASE_POW);
+        AddIfShort(pl->last_orig_stats.Wis, pl->orig_stats.Wis, CS_STAT_BASE_WIS);
+        AddIfShort(pl->last_orig_stats.Dex, pl->orig_stats.Dex, CS_STAT_BASE_DEX);
+        AddIfShort(pl->last_orig_stats.Con, pl->orig_stats.Con, CS_STAT_BASE_CON);
+        AddIfShort(pl->last_orig_stats.Cha, pl->orig_stats.Cha, CS_STAT_BASE_CHA);
+        if (pl->ob != NULL) {
+            AddIfShort(pl->last_race_stats.Str, 20 + pl->ob->arch->clone.stats.Str, CS_STAT_RACE_STR);
+            AddIfShort(pl->last_race_stats.Int, 20 + pl->ob->arch->clone.stats.Int, CS_STAT_RACE_INT);
+            AddIfShort(pl->last_race_stats.Pow, 20 + pl->ob->arch->clone.stats.Pow, CS_STAT_RACE_POW);
+            AddIfShort(pl->last_race_stats.Wis, 20 + pl->ob->arch->clone.stats.Wis, CS_STAT_RACE_WIS);
+            AddIfShort(pl->last_race_stats.Dex, 20 + pl->ob->arch->clone.stats.Dex, CS_STAT_RACE_DEX);
+            AddIfShort(pl->last_race_stats.Con, 20 + pl->ob->arch->clone.stats.Con, CS_STAT_RACE_CON);
+            AddIfShort(pl->last_race_stats.Cha, 20 + pl->ob->arch->clone.stats.Cha, CS_STAT_RACE_CHA);
+        }
     }
 
     for (s = 0; s < NUM_SKILLS; s++) {
