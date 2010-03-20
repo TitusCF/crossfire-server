@@ -765,7 +765,9 @@ S->C: stats <stat1><val1><stat2><val2>...
                         is no longer sent.
             skill experience: 64 bit.
             spellpaths: 32 bit.  Only sent if spellmon is set in setup.
-                        
+            The CS_STATS_RACE_xxx and CS_STATS_BASE_xxx are only sent if
+            extended_stats was used in setup.
+
 
 	This is a server message that tells the client values of the various
 	stats. Multiple stats can be sent on one command.
@@ -1115,6 +1117,11 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    this does not allow the client to cheat.  In the case of the
 	    old 'map' protocol command, turning darkness off will result
 	    in the masking faces not getting sent to the client.
+	
+	extended_stats (0/1 value):
+	   If set to 1, the server will send the CS_STATS_RACE_xxx and
+	   CS_STATS_BASE_xxx values too, so the client can display
+	   various status related to statistics. Default is 0.
 	
 	facecache (0/1)
 	    Determines if the client is caching images (1) or wants the
