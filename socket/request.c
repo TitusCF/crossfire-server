@@ -261,6 +261,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             }
         } else if (!strcmp(cmd, "num_look_objects")) {
             int tmp;
+            player *pl;
 
             tmp = atoi(param);
             if (tmp < MIN_NUM_LOOK_OBJECTS) {
@@ -270,6 +271,12 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             }
             ns->num_look_objects = (uint8)tmp;
             SockList_AddPrintf(&sl, "%d", tmp);
+
+            pl = find_player_socket(ns);
+            if (pl && pl->ob) {
+              ns->update_look = 1;
+              esrv_draw_look(pl->ob);
+            }
         } else if (!strcmp(cmd, "extended_stats")) {
             int extended_stats;
 
