@@ -378,6 +378,7 @@ int pets_should_arena_attack(object *pet, object *owner, object *target);
 /* player.c */
 player *find_player(const char *plname);
 player *find_player_partial_name(const char *plname);
+player* find_player_socket(const socket_struct *ns);
 void display_motd(const object *op);
 void send_rules(const object *op);
 void send_news(const object *op);

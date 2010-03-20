@@ -108,6 +108,21 @@ player *find_player_partial_name(const char *plname) {
 }
 
 /**
+ * Return a player for a socket structure.
+ * @param ns socket to search for.
+ * @return NULL if no player, player else.
+ */
+player* find_player_socket(const socket_struct *ns) {
+    player *pl;
+
+    for (pl = first_player; pl != NULL; pl = pl->next) {
+        if (&pl->socket == ns)
+            return pl;
+    }
+    return NULL;
+}
+
+/**
  * Sends the message of the day to the player.
  *
  * @param op
