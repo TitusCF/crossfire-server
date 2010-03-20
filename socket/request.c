@@ -798,8 +798,8 @@ void esrv_update_stats(player *pl) {
     set_title(pl->ob, buf, sizeof(buf));
     AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
 
-    /* Only send it away if we have some actual data */
-    if (sl.len > 6) {
+    /* Only send it away if we have some actual data - 2 bytes for length, 6 for "stats ". */
+    if (sl.len > 8) {
 #ifdef ESRV_DEBUG
         LOG(llevDebug, "Sending stats command, %d bytes long.\n", sl.len);
 #endif
