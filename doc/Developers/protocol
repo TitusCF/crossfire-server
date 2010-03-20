@@ -1084,7 +1084,8 @@ S->C: setup <option1> <value1> <option2> <value2>
             may convert this to an integer or other value.
 
 	Client first sends a setup command to the server to request a change
-	in some value (option1).
+	in some value (option1). This can be at any point during the life of
+	connection between client and server.
 
 	All data in the setup command is in ASCII text form.  options and
 	values can not have whitepace - the client and server use whitspace
