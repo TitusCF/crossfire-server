@@ -16,8 +16,9 @@ else.  With this, include the file(s) that you changed.
 
 Add extended statistics informations: race stats, natural stats.
 This enables clients to display depletion and such.
+ doc/Developers/protocol
  include/newserver.h player.h
- include/shared/newclient.h
+ include/shared/newclient.h README
  socket/init.c request.c
 Nicolas Weeger 2010-03-20
 
