@@ -8,5 +8,5 @@
 # starting with %
 %server update
 This server support news and rules files.
-Server manager, please update those files
-located in the crossfire config directory
+
+Server manager, please update those files located in the crossfire config directory.
