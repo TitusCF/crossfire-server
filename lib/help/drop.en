@@ -15,7 +15,7 @@ unlocked - drops items not locked in your inventory
 number is optional.  This acts as the number of the object to drop.
 The objects number must be at least the number for it to be dropped.
 For example, if you do 'drop 10 scroll', only groupings of 10 or more
-scrolsl will be dropped.  A collection of 5 scrolls will not be dropped.
+scrolls will be dropped.  A collection of 5 scrolls will not be dropped.
 
 See also 'dropall' and mouse button control within client for dropping
 objects.

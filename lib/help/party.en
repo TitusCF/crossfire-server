@@ -1,5 +1,5 @@
 party join partyname
-        Puts you in a party, prompts you for a passwd if there is
+        Puts you in a party, prompts you for a password if there is
 one
 
 party form partyname
@@ -11,13 +11,13 @@ party list
         Lists currently formed parties and their 'leader'
 
 party passwd <password>
-        Changes the passwd for the party you are in, 8 character max.
+        Changes the password for the party you are in, 8 character max.
 
 party who
         lists the members of the party you are in
 
-party say <msg>
-        sends messsage to party members
+party say <message>
+        sends message to party members
 
 party leave
         takes you out of current party

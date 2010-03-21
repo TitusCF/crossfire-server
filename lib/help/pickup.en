@@ -18,7 +18,7 @@ Value density is value in gold/weight in kilograms.
 The value in gold is what the item is worth if you
 sold it in the shop.
 
-Goldcoins have a value density of 66,
+Gold coins have a value density of 66,
 
 Density 10 will pickup silver, gold,
 rings, wands, books, and scrolls.

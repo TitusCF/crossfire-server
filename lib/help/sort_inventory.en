@@ -13,7 +13,7 @@ items will be inserted via type,
 subtype and magic.  This, all axes
 will be grouped together in magic
 order, all daggers by magic order,
-etc.  Unforunately, for scrolls and
+etc.  Unfortunately, for scrolls and
 rings, new ones just get inserted
 last.
 

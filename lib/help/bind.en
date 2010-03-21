@@ -8,7 +8,7 @@ Flags (default -nrf):
  g - global key (not recommended)
 
 Multiple commands can be bound to
-the same key be seperating them
+the same key be separating them
 with semicolons.
 
 Special bind's:
