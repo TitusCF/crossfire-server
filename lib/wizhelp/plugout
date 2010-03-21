@@ -1,4 +1,3 @@
-syntax: plugout <plugin name>
+Syntax: plugout <plugin name>
 
-notes: this will remove a loaded
-plugin from memory.
+This will remove a loaded plugin from memory.

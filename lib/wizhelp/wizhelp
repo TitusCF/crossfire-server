@@ -2,7 +2,7 @@ The following commands are available to you:
 dmhelp <command name>
 abil <player> <attribute> <value>
 addexp <player> <how much>
-create <number> <bonus> <archtype>
+create <number> <bonus> <archetype>
 debug <level>
 dump <tag>
 dumpallarchtypes
@@ -41,5 +41,4 @@ wizcast [<on_off>]
 wizpass
 who
 
-General notes for DM's:
-Case sensitivity is important in player and map names.
+General notes for DMs: Case sensitivity is important in player and map names.

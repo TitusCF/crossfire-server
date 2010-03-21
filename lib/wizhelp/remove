@@ -1,6 +1,5 @@
-syntax: remove <tag>
-notes:
-remove will, suprisingly enough,
-remove the object specified by
-the tag supplied.  see also:
-free
+Syntax: remove <tag>
+
+Remove will, surprisingly enough, remove the object specified by the tag supplied.
+
+See also: free

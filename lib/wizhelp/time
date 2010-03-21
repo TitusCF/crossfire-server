@@ -1,5 +1,3 @@
-syntax: time
-notes: this will
-give additional information
-about server performance when
-used as dm.
+Syntax: time
+
+This will give additional information about server performance when used as dm.

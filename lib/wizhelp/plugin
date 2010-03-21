@@ -1,10 +1,3 @@
-syntax: plugin <plugin name>
+Syntax: plugin <plugin name>
 
-notes: this will load a new
-plugin into memory. Using this
-with no arguments, or invalid
-arguments will cause a server
-crash. Plugin name should be as
-it appears in your plugin
-directory. Double check the
-names before using plugins.
+This will load a new plugin into memory. Using this with no arguments, or invalid arguments will cause a server crash. Plugin name should be as it appears in your plugin directory. Double check the names before using plugins.

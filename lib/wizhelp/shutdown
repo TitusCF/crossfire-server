@@ -1,4 +1,3 @@
-syntax: shutdown
-notes: This
-will cause the server to shut
-down entirely.
+Syntax: shutdown
+
+This will cause the server to shut down entirely.

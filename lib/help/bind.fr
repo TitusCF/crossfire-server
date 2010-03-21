@@ -6,11 +6,11 @@ Syntaxe:
 
 Paramètres:
 
-    n: Commande en mode normal
-    f: Commande en mode "tir"
-    r: Commande en mode "course"
-    e: Laisse la commande dans la ligne d'édition (utile pour say/tell/chat, par exemple)
-    g: Raccourci global (non recommandé)
+    -n: Commande en mode normal
+    -f: Commande en mode "tir"
+    -r: Commande en mode "course"
+    -e: Laisse la commande dans la ligne d'édition (utile pour say/tell/chat, par exemple)
+    -g: Raccourci global (non recommandé)
 
 Plusieurs commandes peuvent être reliées à une seule touche en séparant chacune par un point-virgule.
 

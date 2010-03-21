@@ -1,5 +1,6 @@
 Quest displays quest-related information.
 
 Available sub-commands:
-- list: displays quests you started or completed
-- info: displays information about the specified (by number) quest
+
+    list: displays quests you started or completed
+    info: displays information about the specified (by number) quest

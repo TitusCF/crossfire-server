@@ -1,30 +1,14 @@
-syntax: create <number> <bonus>
-<archtype> <variable1> <value1>
-<variable2> <value2> ...
-notes:
-creating items is rather dangerous
-and tends to crash the server
-when creating some items.
+Syntax: create <number> <bonus> <archetype> <variable1> <value1> <variable2> <value2> ...
 
-The number and bonus attributes
-may be left off, or the bonus
-itself may be left off any time.
-If a bonus is desired, number
-must be specified as well.
-Archtype must be specified in
-all cases. Variable and values
-may be left off at any time,
-but specifiying a variable
-requires a value also be specified.
+Creating items is rather dangerous and tends to crash the server when creating some items.
 
-Multipart values such as for an
-item name must be quoted.
+The number and bonus attributes may be left off, or the bonus itself may be left off any time. If a bonus is desired, number must be specified as well. Archetype must be specified in all cases. Variable and values may be left off at any time, but specifying a variable requires a value also be specified.
 
-Example: create 5 +1 sword
-name "Spiffy Sword" face
-chicken.171
+Multipart values such as for an item name must be quoted.
 
-This would create 5 +1 longswords
-named 'Spiffy Sword' that look
-like chickens.  see also: patch,
-dump
+Example:
+    create 5 +1 sword name "Spiffy Sword" face chicken.171
+
+This would create 5 +1 longswords named 'Spiffy Sword' that look like chickens.
+
+See also: patch, dump

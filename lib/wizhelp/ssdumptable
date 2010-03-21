@@ -1,4 +1,3 @@
-syntax: ssdumptable
-notes: this
-will print out the current hash
-table to stderr.
+Syntax: ssdumptable
+
+This will print out the current hash table to stderr.

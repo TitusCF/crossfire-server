@@ -1,4 +1,3 @@
-syntax: set_god <player> <diety>
+Syntax: set_god <player> <diety>
 
-notes: this will change a players
-diety to the diety specified.
+This will change a players deity to the deity specified.

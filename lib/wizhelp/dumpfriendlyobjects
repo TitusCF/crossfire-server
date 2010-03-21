@@ -1,5 +1,3 @@
-syntax: dumpfriendlyobjects
+Syntax: dumpfriendlyobjects
 
-notes: This prints out a list
-of all active friendly objects
-to stderr.
+This prints out a list of all active friendly objects to stderr.
