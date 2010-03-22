@@ -2166,7 +2166,7 @@ static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *ta
     /* Lauwenmark - Here we let the objects inside inventories hear and answer, too. */
     /* This allows the existence of "intelligent" weapons you can discuss with */
     FOR_INV_PREPARE(npc, cobj)
-        if (execute_event(cobj, EVENT_SAY, npc, NULL, txt, SCRIPT_FIX_ALL) != 0)
+        if (execute_event(cobj, EVENT_SAY, op, NULL, txt, SCRIPT_FIX_ALL) != 0)
             return 0;
     FOR_INV_FINISH();
     if (op == npc)
