@@ -1355,7 +1355,7 @@ void fix_object(object *op) {
             case GLOVES:
             case CLOAK:
                 if (tmp->stats.wc)
-                    wc -= (tmp->stats.wc+tmp->magic);
+                    wc -= tmp->stats.wc;
                 if (tmp->stats.dam)
                     op->stats.dam += (tmp->stats.dam+tmp->magic);
                 if (tmp->stats.ac)
@@ -1363,7 +1363,7 @@ void fix_object(object *op) {
                 break;
 
             case WEAPON:
-                wc -= (tmp->stats.wc+tmp->magic);
+                wc -= tmp->stats.wc;
                 if (tmp->stats.ac && tmp->stats.ac+tmp->magic > 0)
                     ac -= tmp->stats.ac+tmp->magic;
                 op->stats.dam += (tmp->stats.dam+tmp->magic);
@@ -1389,14 +1389,16 @@ void fix_object(object *op) {
                 if (settings.spell_encumbrance == TRUE && op->type == PLAYER)
                     op->contr->encumbrance += (int)tmp->weight/1000;
 
+                /* ARMOUR falls through to here */
+
             case BRACERS:
             case FORCE:
                 if (tmp->stats.wc) {
-                    if (best_wc < tmp->stats.wc+tmp->magic) {
+                    if (best_wc < tmp->stats.wc) {
                         wc += best_wc;
-                        best_wc = tmp->stats.wc+tmp->magic;
+                        best_wc = tmp->stats.wc;
                     } else
-                        wc += tmp->stats.wc+tmp->magic;
+                        wc += tmp->stats.wc;
                 }
                 if (tmp->stats.ac) {
                     if (best_ac < tmp->stats.ac+tmp->magic) {
@@ -1408,7 +1410,7 @@ void fix_object(object *op) {
                 if (tmp->stats.dam && tmp->type == BRACERS)
                     op->stats.dam += (tmp->stats.dam+tmp->magic);
                 if (tmp->stats.wc)
-                    wc -= (tmp->stats.wc+tmp->magic);
+                    wc -= tmp->stats.wc;
                 if (tmp->stats.ac)
                     ac -= (tmp->stats.ac+tmp->magic);
                 if (ARMOUR_SPEED(tmp) && ARMOUR_SPEED(tmp)/10.0 < max)

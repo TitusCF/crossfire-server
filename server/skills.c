@@ -376,9 +376,9 @@ static int attempt_pick_lock(object *door, object *pl, object *skill) {
      * the map level difficulty.
      */
     number = (die_roll(2, 40, pl, PREFER_LOW)-2)/2;
-    if (number < pl->stats.Dex+skill->level-difficulty) {
+    if (number < pl->stats.Dex + skill->level*2 - difficulty ) {
         remove_door(door);
-        success = 1;
+        success = difficulty;
     } else if (door->inv && (door->inv->type == RUNE || door->inv->type == TRAP)) {  /* set off any traps? */
         spring_trap(door->inv, pl);
     }
@@ -405,6 +405,7 @@ int pick_lock(object *pl, int dir, object *skill) {
     object *tmp;
     int x = pl->x+freearr_x[dir];
     int y = pl->y+freearr_y[dir];
+    int difficulty=0;
 
     if (!dir)
         dir = pl->facing;
@@ -437,7 +438,9 @@ int pick_lock(object *pl, int dir, object *skill) {
         return 0;
     }
 
-    if (!attempt_pick_lock(tmp, pl, skill)) {
+    difficulty = attempt_pick_lock(tmp, pl, skill);
+    /* Failure */
+    if (!difficulty) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                       "You fail to pick the lock.", NULL);
         return 0;
@@ -445,7 +448,7 @@ int pick_lock(object *pl, int dir, object *skill) {
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                   "You pick the lock.", NULL);
-    return calc_skill_exp(pl, NULL, skill);
+    return (calc_skill_exp(pl, NULL, skill) * isqrt(difficulty));
 }
 
 

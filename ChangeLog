@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+As per discussion on IRC, some changes to hopefully improve balance - will
+await feedback:
+common/living.c: Don't have the magic of an item affect wc.  Only if wc
+     is explicitly set does it improve the character.
+server/skills.c: Tweak lockpicking - give the skill level more relevence.
+     Have difficulty increase exp gained.
+MSW 2010-03-23
+	
 Fix EVENT_SAY for items in a container.
  server/monster.c
 Nicolas Weeger 2010-03-22
