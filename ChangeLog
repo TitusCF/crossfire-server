@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Enable filtering on archetypes (name and clone's type).
+Nicolas Weeger 2010-03-24
+
 Add requestinfo/replyinfo mechanisms to get the news/rules/motd file.  In
 this way, client does not need to parse drawinfo commands, and this
 functionality is needed in account based logins since the login code path is
@@ -33,7 +36,7 @@ common/living.c: Don't have the magic of an item affect wc.  Only if wc
 server/skills.c: Tweak lockpicking - give the skill level more relevence.
      Have difficulty increase exp gained.
 MSW 2010-03-23
-	
+
 Fix EVENT_SAY for items in a container.
  server/monster.c
 Nicolas Weeger 2010-03-22

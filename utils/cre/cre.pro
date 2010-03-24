@@ -25,7 +25,11 @@ CREPixmap.cpp \
  CREMapInformation.cpp \
  CREMapInformationManager.cpp \
  CRESettings.cpp \
- CRESettingsDialog.cpp
+ CRESettingsDialog.cpp \
+ CREFilterDialog.cpp \
+ CREFilter.cpp \
+ CREWrapperArchetype.cpp \
+ CREWrapperObject.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -48,7 +52,11 @@ CREPixmap.h \
  CREMapInformation.h \
  CREMapInformationManager.h \
  CRESettings.h \
- CRESettingsDialog.h
+ CRESettingsDialog.h \
+ CREFilterDialog.h \
+ CREFilter.h \
+ CREWrapperArchetype.h \
+ CREWrapperObject.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc
@@ -56,3 +64,4 @@ RESOURCES += cre.qrc
 CONFIG -= precompile_header
 CONFIG += thread
 
+QT += script

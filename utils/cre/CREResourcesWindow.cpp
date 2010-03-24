@@ -5,6 +5,10 @@
 #include "CREUtils.h"
 #include "CREPixmap.h"
 
+#include "CREFilter.h"
+#include "CREFilteredModel.h"
+#include "CREFilterDialog.h"
+
 #include "CRETreeItemAnimation.h"
 #include "CRETreeItemArchetype.h"
 #include "CRETreeItemTreasure.h"
@@ -19,6 +23,8 @@
 #include "CREFormulaePanel.h"
 #include "CREFacePanel.h"
 
+#include "CREWrapperArchetype.h"
+
 extern "C" {
 #include "global.h"
 #include "recipe.h"
@@ -28,12 +34,21 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
+    myDisplay = mode;
+
     Q_ASSERT(store);
     myStore = store;
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QGridLayout* layout = new QGridLayout(this);
+    QHBoxLayout* layout = new QHBoxLayout(this);
+
+    QVBoxLayout* buttons = new QVBoxLayout();
+    QPushButton* filter = new QPushButton(tr("Filter"), this);
+    connect(filter, SIGNAL(pressed()), this, SLOT(onFilter()));
+    buttons->addWidget(filter);
+    layout->addLayout(buttons);
+
     mySplitter = new QSplitter(this);
     layout->addWidget(mySplitter);
     myTree = new QTreeWidget(this);
@@ -42,46 +57,57 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
     myTree->setHeaderLabel(tr("All resources"));
     myTree->sortByColumn(0, Qt::AscendingOrder);
 
-    QString title;
-    if (mode & DisplayArchetypes)
-    {
-        title = tr("Archetypes");
-        fillArchetypes();
-    }
-    if (mode & DisplayAnimations)
-    {
-        title = tr("Animations");
-        fillAnimations();
-    }
-    if (mode & DisplayTreasures)
-    {
-        title = tr("Treasures");
-        fillTreasures();
-    }
-    if (mode & DisplayFormulae)
-    {
-        title = tr("Formulae");
-        fillFormulae();
-    }
-    if (mode & DisplayArtifacts)
-    {
-        title = tr("Artifacts");
-        fillArtifacts();
-    }
-    if (mode & DisplayFaces)
-    {
-        title = tr("Faces");
-        fillFaces();
-    }
-
-    if (mode == DisplayAll)
-        title = tr("All resources");
-
     myTree->setSortingEnabled(true);
 
     myCurrentPanel = NULL;
 
     connect(myTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+
+    fillData();
+
+    QApplication::restoreOverrideCursor();
+}
+
+void CREResourcesWindow::fillData()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    myTree->clear();
+
+    QString title;
+    if (myDisplay & DisplayArchetypes)
+    {
+        title = tr("Archetypes");
+        fillArchetypes();
+    }
+    if (myDisplay & DisplayAnimations)
+    {
+        title = tr("Animations");
+        fillAnimations();
+    }
+    if (myDisplay & DisplayTreasures)
+    {
+        title = tr("Treasures");
+        fillTreasures();
+    }
+    if (myDisplay & DisplayFormulae)
+    {
+        title = tr("Formulae");
+        fillFormulae();
+    }
+    if (myDisplay & DisplayArtifacts)
+    {
+        title = tr("Artifacts");
+        fillArtifacts();
+    }
+    if (myDisplay & DisplayFaces)
+    {
+        title = tr("Faces");
+        fillFaces();
+    }
+
+    if (myDisplay == DisplayAll)
+        title = tr("All resources");
 
     setWindowTitle(title);
 
@@ -170,8 +196,14 @@ void CREResourcesWindow::fillArchetypes()
     root = CREUtils::archetypeNode(NULL);
     myTree->addTopLevelItem(root);
 
+    CREWrapperArchetype wrapper;
+
     for (arch = first_archetype; arch; arch = arch->next)
     {
+        wrapper.setArchetype(arch);
+        if (!myFilter.showItem(&wrapper))
+            continue;
+
         item = CREUtils::archetypeNode(arch, root);
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemArchetype(arch)));
 
@@ -259,4 +291,13 @@ void CREResourcesWindow::addPanel(QString name, QWidget* panel)
     panel->setVisible(false);
     myPanels[name] = panel;
     mySplitter->addWidget(panel);
+}
+
+void CREResourcesWindow::onFilter()
+{
+    CREFilterDialog dlg(&myFilter);
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    fillData();
 }

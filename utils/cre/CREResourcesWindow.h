@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QtGui>
 
+#include "CREFilter.h"
+
 class CREMapInformationManager;
 
 enum DisplayMode { DisplayAll = 255, DisplayArchetypes = 1, DisplayAnimations = 2, DisplayTreasures = 4, DisplayFormulae = 8, DisplayArtifacts = 16, DisplayFaces = 32 };
@@ -21,7 +23,10 @@ class CREResourcesWindow : public QWidget
         QHash<QString, QPointer<QWidget> > myPanels;
         QSplitter* mySplitter;
         CREMapInformationManager* myStore;
+        DisplayMode myDisplay;
+        CREFilter myFilter;
 
+        void fillData();
         void fillAnimations();
         void fillTreasures();
         void fillArchetypes();
@@ -32,6 +37,7 @@ class CREResourcesWindow : public QWidget
 
     protected slots:
         void tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
+        void onFilter();
 };
 
 #endif // CRERESOURCESWINDOW_H
