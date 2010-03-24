@@ -24,6 +24,8 @@
 #include "CREFacePanel.h"
 
 #include "CREWrapperArchetype.h"
+#include "CREWrapperArtifact.h"
+#include "CREWrapperFormulae.h"
 
 extern "C" {
 #include "global.h"
@@ -222,6 +224,7 @@ void CREResourcesWindow::fillFormulae()
     recipelist* list;
     recipe* recipe;
     QTreeWidgetItem* root, *form, *sub;
+    CREWrapperFormulae wrapper;
 
     form = new QTreeWidgetItem(myTree, QStringList(tr("Formulae")));
 //    myTree->addTopLevelItem(form);
@@ -236,6 +239,10 @@ void CREResourcesWindow::fillFormulae()
 
         for (recipe = list->items; recipe; recipe = recipe->next)
         {
+            wrapper.setFormulae(recipe);
+            if (!myFilter.showItem(&wrapper))
+                continue;
+
             sub = CREUtils::formulaeNode(recipe, root);
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemFormulae(recipe)));
         }
@@ -252,6 +259,8 @@ void CREResourcesWindow::fillArtifacts()
 
     root = new QTreeWidgetItem(myTree, QStringList(tr("Artifacts")));
 
+    CREWrapperArtifact wrapper;
+
     for (list = first_artifactlist; list; list = list->next)
     {
         data = get_typedata(list->type);
@@ -260,6 +269,10 @@ void CREResourcesWindow::fillArtifacts()
 
         for (artifact* art = list->items; art; art = art->next)
         {
+            wrapper.setArtifact(art);
+            if (!myFilter.showItem(&wrapper))
+                continue;
+
             sub = CREUtils::artifactNode(art, item);
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemArtifact(art)));
         }

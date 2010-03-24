@@ -29,7 +29,9 @@ CREPixmap.cpp \
  CREFilterDialog.cpp \
  CREFilter.cpp \
  CREWrapperArchetype.cpp \
- CREWrapperObject.cpp
+ CREWrapperObject.cpp \
+ CREWrapperArtifact.cpp \
+ CREWrapperFormulae.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -56,7 +58,9 @@ CREPixmap.h \
  CREFilterDialog.h \
  CREFilter.h \
  CREWrapperArchetype.h \
- CREWrapperObject.h
+ CREWrapperObject.h \
+ CREWrapperArtifact.h \
+ CREWrapperFormulae.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc
