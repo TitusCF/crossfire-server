@@ -178,6 +178,12 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
         send_class_list(ns, params);
     else if (!strcmp(buf, "class_info"))
         send_class_info(ns, params);
+    else if (!strcmp(buf, "rules"))
+        send_file(ns, "rules");
+    else if (!strcmp(buf, "motd"))
+        send_file(ns, "motd");
+    else if (!strcmp(buf, "news"))
+        send_file(ns, "news");
     else
         Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

@@ -288,6 +288,15 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 SockList_AddPrintf(&sl, "%d", extended_stats);
             }
 
+        } else if (!strcmp(cmd, "loginmethod")) {
+            int loginmethod;
+
+            loginmethod = atoi(param);
+
+            /* Only support basic login right now */
+            if (loginmethod > 1) loginmethod=1;
+            SockList_AddPrintf(&sl, "%d", loginmethod);
+
         } else if (!strcmp(cmd, "newmapcmd")) {
             /* newmapcmd is deprecated (now standard part), but some
              * clients still use this setup option, and if the server
@@ -1613,6 +1622,53 @@ void send_class_list(socket_struct *ns, char *params) {
  */
 void send_class_info(socket_struct *ns, char *params) {
 }
+
+/**
+ * Sends the desired file to the client.  In all
+ * three cases, we are basically just dumping file
+ * contents to the client - nothing more.
+ *
+ * @parm ns
+ * socket to send to
+ * @param file
+ * Which file to send - string of either motd, news, rules
+ */
+void send_file(socket_struct *ns, char *file) {
+    char buf[MAX_BUF];
+    FILE *fp;
+    int comp;
+    SockList sl;
+
+    if (!strcmp(file,"motd"))
+        snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.motd);
+    else if (!strcmp(file,"rules"))
+        snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.rules);
+    else if (!strcmp(file,"news"))
+        snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.news);
+    else {
+        LOG(llevError,"send_file requested to send unknown file: %s\n", file);
+        return;
+    }
+    fp = open_and_uncompress(buf, 0, &comp, "r");
+    if (fp == NULL)
+        return;
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "replyinfo ");
+    SockList_AddString(&sl, file);
+    SockList_AddString(&sl, "\n");
+
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+        if (*buf == '#')
+            continue;
+        SockList_AddString(&sl, buf);
+    }
+    close_and_delete(fp, comp);
+    SockList_AddChar(&sl, 0);   /* Null terminate it */
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
+}
+
+
 
 /**
  * This looks for any spells the player may have that have changed

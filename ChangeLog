@@ -14,6 +14,18 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add requestinfo/replyinfo mechanisms to get the news/rules/motd file.  In
+this way, client does not need to parse drawinfo commands, and this
+functionality is needed in account based logins since the login code path is
+different.  Add setup command for loginmethod - work in progress
+but needed for testing.
+---
+socket/request.c: Add setup loginmethod, add send_file() to send files
+socket/loop.c: Update requestinfo handling to deal with motd/news/rules
+doc/Developers/protocol: Clarify some areas of protocol.  Add information
+    about requestinfo/replyinfo for news/rules/motd
+MSW 2010-03-23
+
 As per discussion on IRC, some changes to hopefully improve balance - will
 await feedback:
 common/living.c: Don't have the magic of an item affect wc.  Only if wc

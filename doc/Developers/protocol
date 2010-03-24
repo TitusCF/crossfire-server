@@ -342,6 +342,9 @@ C->S: accountplay <char name>
    failure protocol command.  On choosing a character, the game will log in and
    play will start.
 
+   Upon receipt of this command, the server will do necessary setup to start
+   play.  This removes the need for the addme command below.
+
 C->S: accountaddplayer <force> <char name> <char password>
       <force> - 8 bit binary data to force this association (see description
               below
@@ -371,6 +374,8 @@ C->S: addme
 	Tells the server that it should add me (the client) to the game.
 	Generally, the client will always send this command, but I suppose there
 	can be actions the client wants to do before being added.
+
+    Deprecated - this has been superseded by the accountplay command.
 
 S->C: addme_failed
 S->C: addme_success
@@ -1415,6 +1420,14 @@ S->C: replyinfo <info_type> [options] <data>
     class_info <class name>
         Returns information about specified class.
         (work in progress)
+
+    news/rules/motd (no parameters)
+        Send the news/rules/motd file information to the client.  This
+        is mainly useful as a way for the client to easily capture
+        this information instead of getting it from drawinfo commands.
+        This is most useful in that the client can more easily choose
+        where to display this information.  The sent data is null terminated
+        to make string handling easier on the client.
 
 ------------------------------------------------------------------------------
 
