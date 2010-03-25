@@ -1482,7 +1482,10 @@ void object_free2(object *ob, int flags) {
                     if (QUERY_FLAG(op, FLAG_ALIVE)) {
                         object_insert_to_free_spot_or_free(op, part->map, part->x, part->y, 0, SIZEOFFREE, NULL);
                     } else {
-                        object_insert_in_map_at(op, part->map, NULL, 0, part->x, part->y); /* Insert in same map as the envir */
+                        int f = 0;
+                        if (flags & FREE_OBJ_DROP_ABOVE_FLOOR)
+                            f = INS_ABOVE_FLOOR_ONLY;
+                        object_insert_in_map_at(op, part->map, NULL, f, part->x, part->y); /* Insert in same map as the envir */
                     }
                 }
             } FOR_INV_FINISH();

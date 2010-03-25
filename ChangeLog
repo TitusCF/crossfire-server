@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add new flag to object_free() to force inventory contents on the ground instead on pile top.
+ common/object.c
+ include/object.h
+Nicolas Weeger 2010-03-25
+
 Add '!' to pickup to toggle the mode.
  lib/help/pickup.en
  server/c_object.c
