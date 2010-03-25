@@ -1876,7 +1876,7 @@ int command_pickup(object *op, char *params) {
     while (*params == ' ')
         params++;
 
-    if (*params == '+' || *params == '-') {
+    if (*params == '+' || *params == '-' || *params == '!') {
         int mode;
 
         for (mode = 0; names[mode]; mode++) {
@@ -1886,8 +1886,14 @@ int command_pickup(object *op, char *params) {
                     i = PU_NEWMODE;
                 if (*params == '+')
                     i = i|modes[mode];
-                else
+                else if (*params == '-')
                     i = i&~modes[mode];
+                else {
+                    if (i&modes[mode])
+                        i = i&~modes[mode];
+                    else
+                        i = i|modes[mode];
+                }
                 op->contr->mode = i;
                 display_new_pickup(op);
                 return 1;

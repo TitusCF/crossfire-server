@@ -18,3 +18,35 @@ The value in gold is what the item is worth if you sold it in the shop.
 Gold coins have a value density of 66,
 
 Density 10 will pickup silver, gold, rings, wands, books, and scrolls. Artifacts are also picked up.
+
+You can also use the syntax 'pickup +<type>' to just add the specified type to what you pickup.
+
+Valid types are:
+- debug
+- inhibit
+- stop
+- food
+- drink
+- valuables
+- bow
+- arrow
+- helmet
+- shield
+- armour
+- boots
+- gloves
+- cloak
+- key
+- missile
+- allweapon
+- magical
+- potion
+- spellbook
+- skillscroll
+- readables
+- magicdevice
+- notcursed
+- jewels
+- flesh
+
+Three options are possible for the first character: + will make you pick the item type, - will make you stop picking the item type and ! will toggle the pick mode.
