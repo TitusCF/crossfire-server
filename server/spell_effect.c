@@ -1102,7 +1102,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     char portal_name [1024], portal_message [1024];
     sint16 exitx, exity;
     mapstruct *exitmap;
-    int op_level;
+    int op_level, x, y;
 
     /* Check to see if the map the player is currently on is a per player unique
      * map.  This can be determined in that per player unique maps have the
@@ -1148,7 +1148,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
         dummy->weapontype = op->map->last_reset_time.tv_sec;
         object_insert_in_ob(dummy, op);
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                      "You fix this place in your mind and feel that you"
+                      "You fix this place in your mind and feel that you "
                       "can come here from anywhere.",
                       NULL);
         return 1;
@@ -1206,6 +1206,16 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
                     object_free2(tmp, 0);
                     break;
                 }
+            FOR_OB_AND_ABOVE_FINISH();
+
+            /* kill any opening animation there is */
+            tmp = map_find_by_archetype(exitmap, exitx, exity, find_archetype("town_portal_open"));
+            FOR_OB_AND_ABOVE_PREPARE(tmp)
+                if (tmp->name == old_force->name) {
+                object_remove(tmp);
+                object_free2(tmp, FREE_OBJ_FREE_INVENTORY);
+                break;
+            }
             FOR_OB_AND_ABOVE_FINISH();
         }
         object_remove(old_force);
@@ -1276,7 +1286,16 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     FREE_AND_COPY(dummy->name_pl, portal_name);
     object_set_msg(dummy, portal_message);
     dummy->race = add_string(op->name);   /*Save the owner of the portal*/
-    cast_create_obj(op, dummy, 0);
+
+    /* create a nice animation */
+    tmp = create_archetype("town_portal_open");
+    FREE_AND_COPY(tmp->name, portal_name);
+    FREE_AND_COPY(tmp->name_pl, portal_name);
+    object_insert_in_ob(dummy, tmp);
+    /* and put it on the floor, when it ends the portal will be on the ground */
+    cast_create_obj(op, tmp, 0);
+    x = tmp->x;
+    y = tmp->y;
 
     /* Now we need to to create a town portal marker inside the player
      * object, so on future castings, we can know that he has an active
@@ -1291,8 +1310,8 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     }
     tmp->race = add_string(op->map->path);
     FREE_AND_COPY(tmp->name, portal_name);
-    EXIT_X(tmp) = dummy->x;
-    EXIT_Y(tmp) = dummy->y;
+    EXIT_X(tmp) = x;
+    EXIT_Y(tmp) = y;
     object_insert_in_ob(tmp, op);
 
     /* Create a portal in the destination map
@@ -1316,7 +1335,16 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     FREE_AND_COPY(dummy->name_pl, portal_name);
     object_set_msg(dummy, portal_message);
     dummy->race = add_string(op->name);   /*Save the owner of the portal*/
-    object_insert_in_map_at(dummy, exitmap, op, 0, EXIT_X(force), EXIT_Y(force));
+
+    /* animation here too */
+    tmp = create_archetype("town_portal_open");
+    FREE_AND_COPY(tmp->name, portal_name);
+    FREE_AND_COPY(tmp->name_pl, portal_name);
+    object_insert_in_ob(dummy, tmp);
+    /* and put it on the floor, when it ends the portal will be on the ground */
+    object_insert_in_map_at(tmp, exitmap, op, 0, EXIT_X(force), EXIT_Y(force));
+    x = tmp->x;
+    y = tmp->y;
 
     /* Now we create another town portal marker that
      * points back to the one we just made
@@ -1330,8 +1358,8 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     }
     tmp->race = add_string(force->name);
     FREE_AND_COPY(tmp->name, portal_name);
-    EXIT_X(tmp) = dummy->x;
-    EXIT_Y(tmp) = dummy->y;
+    EXIT_X(tmp) = x;
+    EXIT_Y(tmp) = y;
     object_insert_in_ob(tmp, op);
 
     /* Describe the player what happened
