@@ -57,7 +57,7 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
          /* Nice side effect of new treasure creation method is that the
          * treasure for the chest is done when the chest is created,
          * and put into the chest inventory.  So that when the chest
-         * burns up, the items still exist.  Also prevents peapplierle from
+         * burns up, the items still exist.  Also prevents people from
          * moving chests to more difficult maps to get better treasure
          */
 
@@ -72,11 +72,14 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
             treas = op->inv;
 
             object_remove(treas);
-            query_name(treas, name, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "You find %s in the chest.",
-                "You find %s in the chest.",
-                name);
+            /* don't tell the player about invisible objects */
+            if (!treas->invisible) {
+                query_name(treas, name, MAX_BUF);
+                draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                        "You find %s in the chest.",
+                        "You find %s in the chest.",
+                        name);
+            }
 
             treas = object_insert_in_map_at(treas, applier->map, applier, INS_BELOW_ORIGINATOR, applier->x, applier->y);
 

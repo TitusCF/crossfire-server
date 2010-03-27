@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Don't list invisible items as part of the contents of chests when applied.
+ types/treasure/treasure.c
+Brendan Lally 2010-03-26
+
 Town portal now has an animation instead of being immediate.
  server/spell_effect.c
 Nicolas Weeger 2010-03-25
