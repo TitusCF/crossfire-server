@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 
+#include "CREResourcesWindow.h"
+
 class QMdiArea;
 class QAction;
 class QMenu;
@@ -11,7 +13,6 @@ class CREArchetypeWindow;
 class CRETreasureWindow;
 class CREAnimationWindow;
 class CREFormulaeWindow;
-class CREResourcesWindow;
 class CREMapInformationManager;
 
 class CREMainWindow : public QMainWindow
@@ -20,6 +21,9 @@ class CREMainWindow : public QMainWindow
 
     public:
         CREMainWindow();
+
+    signals:
+        void updateFilters();
 
     private:
         QMdiArea* myArea;
@@ -43,6 +47,7 @@ class CREMainWindow : public QMainWindow
 
     protected:
         void closeEvent(QCloseEvent* event);
+        void doResourceWindow(DisplayMode mode);
 
     private slots:
         void onOpenArtifacts();
@@ -55,4 +60,5 @@ class CREMainWindow : public QMainWindow
         void onSaveFormulae();
         void browsingMap(const QString& path);
         void browsingFinished();
+        void onFiltersModified();
 };

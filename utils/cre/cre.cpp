@@ -12,10 +12,16 @@ extern "C" {
 
 #include "CREPixmap.h"
 
+#include "CREFilterDefinition.h"
+#include "CREFilterDefinitionManager.h"
+
 int main(int argc, char **argv) {
     QCoreApplication::setOrganizationName("The Legendary Team of Ailesse");
     QCoreApplication::setApplicationName("CRE");
     QApplication app(argc, argv);
+
+    qRegisterMetaTypeStreamOperators<CREFilterDefinition>("CREFilterDefinition");
+    qRegisterMetaTypeStreamOperators<CREFilterDefinitionManager>("CREFilterDefinitionManager");
 
     init_globals();
     init_library();

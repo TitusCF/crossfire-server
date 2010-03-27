@@ -8,6 +8,12 @@
 #include "CREFilter.h"
 #include "CREFilteredModel.h"
 #include "CREFilterDialog.h"
+#include "CREFilterDefinition.h"
+
+#include "CRESettings.h"
+
+#include "CREReportDialog.h"
+#include "CREReportDisplay.h"
 
 #include "CRETreeItemAnimation.h"
 #include "CRETreeItemArchetype.h"
@@ -45,10 +51,16 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
 
     QHBoxLayout* layout = new QHBoxLayout(this);
 
+    myFiltersMenu = new QMenu(this);
     QVBoxLayout* buttons = new QVBoxLayout();
     QPushButton* filter = new QPushButton(tr("Filter"), this);
-    connect(filter, SIGNAL(pressed()), this, SLOT(onFilter()));
+    filter->setMenu(myFiltersMenu);
     buttons->addWidget(filter);
+
+    QPushButton* report = new QPushButton(tr("Report"), this);
+    connect(report, SIGNAL(pressed()), this, SLOT(onReport()));
+    buttons->addWidget(report);
+
     layout->addLayout(buttons);
 
     mySplitter = new QSplitter(this);
@@ -67,7 +79,16 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
 
     fillData();
 
+    connect(&myFiltersMapper, SIGNAL(mapped(QObject*)), this, SLOT(onFilterChange(QObject*)));
+    updateFilters();
+
     QApplication::restoreOverrideCursor();
+}
+
+CREResourcesWindow::~CREResourcesWindow()
+{
+    qDeleteAll(myDisplayedItems);
+    myDisplayedItems.clear();
 }
 
 void CREResourcesWindow::fillData()
@@ -75,6 +96,8 @@ void CREResourcesWindow::fillData()
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     myTree->clear();
+    qDeleteAll(myDisplayedItems);
+    myDisplayedItems.clear();
 
     QString title;
     if (myDisplay & DisplayArchetypes)
@@ -198,12 +221,14 @@ void CREResourcesWindow::fillArchetypes()
     root = CREUtils::archetypeNode(NULL);
     myTree->addTopLevelItem(root);
 
-    CREWrapperArchetype wrapper;
+    CREWrapperArchetype* wrapper = NULL;
 
     for (arch = first_archetype; arch; arch = arch->next)
     {
-        wrapper.setArchetype(arch);
-        if (!myFilter.showItem(&wrapper))
+        if (!wrapper)
+            wrapper = new CREWrapperArchetype();
+        wrapper->setArchetype(arch);
+        if (!myFilter.showItem(wrapper))
             continue;
 
         item = CREUtils::archetypeNode(arch, root);
@@ -214,8 +239,11 @@ void CREResourcesWindow::fillArchetypes()
             sub = CREUtils::archetypeNode(more, item);
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemArchetype(more)));
         }
+        myDisplayedItems.append(wrapper);
+        wrapper = NULL;
     }
 
+    delete wrapper;
     addPanel("Archetype", new CREArchetypePanel(myStore));
 }
 
@@ -224,7 +252,7 @@ void CREResourcesWindow::fillFormulae()
     recipelist* list;
     recipe* recipe;
     QTreeWidgetItem* root, *form, *sub;
-    CREWrapperFormulae wrapper;
+    CREWrapperFormulae* wrapper = NULL;
 
     form = new QTreeWidgetItem(myTree, QStringList(tr("Formulae")));
 //    myTree->addTopLevelItem(form);
@@ -239,15 +267,20 @@ void CREResourcesWindow::fillFormulae()
 
         for (recipe = list->items; recipe; recipe = recipe->next)
         {
-            wrapper.setFormulae(recipe);
-            if (!myFilter.showItem(&wrapper))
+            if (!wrapper)
+                wrapper = new CREWrapperFormulae();
+            wrapper->setFormulae(recipe);
+            if (!myFilter.showItem(wrapper))
                 continue;
 
             sub = CREUtils::formulaeNode(recipe, root);
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemFormulae(recipe)));
+            myDisplayedItems.append(wrapper);
+            wrapper = NULL;
         }
     }
 
+    delete wrapper;
     addPanel("Formulae", new CREFormulaePanel());
 }
 
@@ -308,9 +341,128 @@ void CREResourcesWindow::addPanel(QString name, QWidget* panel)
 
 void CREResourcesWindow::onFilter()
 {
-    CREFilterDialog dlg(&myFilter);
+    CREFilterDialog dlg;
     if (dlg.exec() != QDialog::Accepted)
         return;
 
+    /* sending this signal will ultimately call our own updateFilters() */
+    emit filtersModified();
+}
+
+void CREResourcesWindow::onReport()
+{
+    CREReportDialog dlg;
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    QStringList headers = dlg.getHeaders().split("\n");
+    QStringList fields = dlg.getFields().split("\n");
+    QString sort = dlg.getSort();
+
+    QString report("<table><thead><tr>");
+
+    foreach(QString header, headers)
+    {
+        report += "<th>" + header + "</th>";
+    }
+    report += "</tr></thead><tbody>";
+
+    QScriptEngine engine;
+
+    engine.pushContext();
+    QList<QObject*> data;
+    int pos;
+    for (int i = 0; i < myDisplayedItems.size(); i++)
+    {
+        QScriptValue left = engine.newQObject(myDisplayedItems[i]);
+        engine.globalObject().setProperty("left", left);
+
+        pos = 0;
+        while (pos < data.size())
+        {
+            QScriptValue right = engine.newQObject(data[pos]);
+            engine.globalObject().setProperty("right", right);
+            if (engine.evaluate(sort).toBoolean() == false)
+                break;
+            pos++;
+        }
+        if (pos == data.size())
+            data.append(myDisplayedItems[i]);
+        else
+            data.insert(pos, myDisplayedItems[i]);
+    }
+    engine.popContext();
+
+    foreach(QObject* item, data)
+    {
+        report += "<tr>";
+
+        engine.pushContext();
+        QScriptValue engineValue = engine.newQObject(item);
+        engine.globalObject().setProperty("item", engineValue);
+
+        foreach(QString field, fields)
+        {
+            report += "<td>";
+            QString data = engine.evaluate(field).toString();
+            if (!engine.hasUncaughtException())
+            {
+                report += data;
+            }
+            report += "</td>\n";
+        }
+        engine.popContext();
+        report += "</tr>\n";
+    }
+    report += "</tbody></table>";
+    qDebug() << "report finished";
+
+    CREReportDisplay display(report);
+    display.exec();
+}
+
+void CREResourcesWindow::updateFilters()
+{
+    CRESettings settings;
+    settings.loadFilters(myFilters);
+
+    myFiltersMenu->clear();
+
+    if (myFilters.filters().size() > 0)
+    {
+        QAction* clear = new QAction(tr("(none)"), this);
+        connect(clear, SIGNAL(triggered()), this, SLOT(clearFilter()));
+        myFiltersMenu->addAction(clear);
+
+        foreach(CREFilterDefinition* filter, myFilters.filters())
+        {
+            QAction* a = new QAction(filter->name(), this);
+            myFiltersMenu->addAction(a);
+            myFiltersMapper.setMapping(a, filter);
+            connect(a, SIGNAL(triggered()), &myFiltersMapper, SLOT(map()));
+        }
+
+        myFiltersMenu->addSeparator();
+    }
+
+    QAction* dialog = new QAction(tr("Filters definition..."), this);
+    connect(dialog, SIGNAL(triggered()), this, SLOT(onFilter()));
+    myFiltersMenu->addAction(dialog);
+
+    clearFilter();
+}
+
+void CREResourcesWindow::onFilterChange(QObject* object)
+{
+    CREFilterDefinition* filter = qobject_cast<CREFilterDefinition*>(object);
+    if (filter == NULL)
+        return;
+    myFilter.setFilter(filter->filter());
+    fillData();
+}
+
+void CREResourcesWindow::clearFilter()
+{
+    myFilter.setFilter(QString());
     fillData();
 }

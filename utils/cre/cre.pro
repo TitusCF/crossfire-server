@@ -31,7 +31,11 @@ CREPixmap.cpp \
  CREWrapperArchetype.cpp \
  CREWrapperObject.cpp \
  CREWrapperArtifact.cpp \
- CREWrapperFormulae.cpp
+ CREWrapperFormulae.cpp \
+ CREReportDialog.cpp \
+ CREReportDisplay.cpp \
+ CREFilterDefinition.cpp \
+ CREFilterDefinitionManager.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -60,7 +64,11 @@ CREPixmap.h \
  CREWrapperArchetype.h \
  CREWrapperObject.h \
  CREWrapperArtifact.h \
- CREWrapperFormulae.h
+ CREWrapperFormulae.h \
+ CREReportDialog.h \
+ CREReportDisplay.h \
+ CREFilterDefinition.h \
+ CREFilterDefinitionManager.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

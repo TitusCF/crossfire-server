@@ -44,3 +44,15 @@ QString CRESettings::mapCacheDirectory() const
 {
     return value("mapCacheDirectory").toString();
 }
+
+void CRESettings::loadFilters(CREFilterDefinitionManager& filters)
+{
+    filters.copy(value("filters").value<CREFilterDefinitionManager>());
+}
+
+void CRESettings::saveFilters(const CREFilterDefinitionManager& filters)
+{
+    QVariant val;
+    val.setValue(filters);
+    setValue("filters", val);
+}

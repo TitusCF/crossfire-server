@@ -3,6 +3,8 @@
 
 #include <QSettings>
 
+#include "CREFilterDefinitionManager.h"
+
 class CRESettings : protected QSettings
 {
     public:
@@ -11,6 +13,9 @@ class CRESettings : protected QSettings
         bool ensureOptions();
 
         QString mapCacheDirectory() const;
+
+        void loadFilters(CREFilterDefinitionManager& filters);
+        void saveFilters(const CREFilterDefinitionManager& filters);
 };
 
 #endif // CLASS_CRE_SETTINGS_H

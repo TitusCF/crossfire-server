@@ -12,6 +12,9 @@ class CREWrapperObject : public QObject
     Q_OBJECT
 
     Q_PROPERTY(int type READ type);
+    Q_PROPERTY(int level READ level);
+    Q_PROPERTY(bool isMonster READ isMonster);
+    Q_PROPERTY(bool isAlive READ isAlive);
 
     public:
         CREWrapperObject();
@@ -19,6 +22,9 @@ class CREWrapperObject : public QObject
         void setObject(const object* obj);
 
         int type() const;
+        int level() const;
+        bool isMonster() const;
+        bool isAlive() const;
 
     protected:
         const object* myObject;

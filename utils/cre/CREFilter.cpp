@@ -19,7 +19,7 @@ bool CREFilter::showItem(QObject* item)
     myEngine.popContext();
     if (myEngine.hasUncaughtException())
     {
-        qDebug() << myEngine.uncaughtException().toString();
+        //qDebug() << myEngine.uncaughtException().toString();
         return false;
     }
 

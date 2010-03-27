@@ -76,53 +76,48 @@ void CREMainWindow::createMenus()
     mySaveMenu->addAction(mySaveFormulae);
 }
 
+void CREMainWindow::doResourceWindow(DisplayMode mode)
+{
+    QWidget* resources = new CREResourcesWindow(myMapManager, mode);
+    connect(this, SIGNAL(updateFilters()), resources, SLOT(updateFilters()));
+    connect(resources, SIGNAL(filtersModified()), this, SLOT(onFiltersModified()));
+    myArea->addSubWindow(resources);
+    resources->show();
+}
+
 void CREMainWindow::onOpenArtifacts()
 {
-    QWidget* artifacts = new CREResourcesWindow(myMapManager, DisplayArtifacts);
-    myArea->addSubWindow(artifacts);
-    artifacts->show();
+    doResourceWindow(DisplayArtifacts);
 }
 
 void CREMainWindow::onOpenArchetypes()
 {
-    QWidget* archetypes = new CREResourcesWindow(myMapManager, DisplayArchetypes);
-    myArea->addSubWindow(archetypes);
-    archetypes->show();
+    doResourceWindow(DisplayArchetypes);
 }
 
 void CREMainWindow::onOpenTreasures()
 {
-    QWidget* myTreasures = new CREResourcesWindow(myMapManager, DisplayTreasures);
-    myArea->addSubWindow(myTreasures);
-    myTreasures->show();
+    doResourceWindow(DisplayTreasures);
 }
 
 void CREMainWindow::onOpenAnimations()
 {
-    QWidget* myAnimations = new CREResourcesWindow(myMapManager, DisplayAnimations);
-    myArea->addSubWindow(myAnimations);
-    myAnimations->show();
+    doResourceWindow(DisplayAnimations);
 }
 
 void CREMainWindow::onOpenFormulae()
 {
-    QWidget* myFormulae = new CREResourcesWindow(myMapManager, DisplayFormulae);
-    myArea->addSubWindow(myFormulae);
-    myFormulae->show();
+    doResourceWindow(DisplayFormulae);
 }
 
 void CREMainWindow::onOpenFaces()
 {
-    QWidget* myResources = new CREResourcesWindow(myMapManager, DisplayFaces);
-    myArea->addSubWindow(myResources);
-    myResources->show();
+    doResourceWindow(DisplayFaces);
 }
 
 void CREMainWindow::onOpenResources()
 {
-    QWidget* myResources = new CREResourcesWindow(myMapManager);
-    myArea->addSubWindow(myResources);
-    myResources->show();
+    doResourceWindow(DisplayAll);
 }
 
 void CREMainWindow::onSaveFormulae()
@@ -138,4 +133,9 @@ void CREMainWindow::browsingFinished()
 {
     statusBar()->showMessage(tr("Finished browsing maps."), 5000);
     myMapBrowseStatus->setVisible(false);
+}
+
+void CREMainWindow::onFiltersModified()
+{
+    emit updateFilters();
 }
