@@ -73,6 +73,20 @@
  */
 #define MAP2_COORD_OFFSET   15
 
+/* The different type values that may be present in a map2 command
+ * These are described in the protocol entry in more detail.
+ * These values are sent in the bottom 5 bits of their byte, the
+ * top 3 are for the length of the data that is sent.
+ */
+#define MAP2_TYPE_CLEAR         0x0
+#define MAP2_TYPE_DARKNESS      0x1
+/* These next two are not used presently, but these numbers are
+ * set aside for when support is added.
+#define MAP2_TYPE_SOUND         0x2
+#define MAP2_TYPE_LIGHTSOURCE   0x3
+ */
+#define MAP2_LAYER_START        0x10
+
 /**
  * Encodes a (x, y) pair suitable for map2 parameters. The coordinates must be
  * between [-MAP2_COORD_OFFSET..63-MAP2_COORD_OFFSET]. The flags value must be

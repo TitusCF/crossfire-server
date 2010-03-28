@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Replace the numbers in the map2 command handling with some #define's
+ include/shared/newclient.h
+ socket/request.c
+Brendan Lally 2010-03-28
+
 Don't drop the inventory of items marked as 'no drop'
  common/object.c
 Brendan Lally 2010-03-28

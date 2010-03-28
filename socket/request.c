@@ -1010,7 +1010,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl, sock
             ns->lastmap.cells[ax][ay].faces[layer] = face_num;
 
             /* Now form the data packet */
-            nlayer = 0x10+layer;
+            nlayer = MAP2_LAYER_START+layer;
 
             len = 2;
 
@@ -1226,7 +1226,7 @@ void draw_client_map2(object *pl) {
                      */
                     if (pl->contr->socket.lastmap.cells[ax][ay].darkness != 0) {
                         SockList_AddShort(&sl, coord);
-                        SockList_AddChar(&sl, 0);
+                        SockList_AddChar(&sl, MAP2_TYPE_CLEAR);
                         SockList_AddChar(&sl, 255); /* Termination byte */
                         map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay], 0, 0);
                     }
@@ -1262,7 +1262,7 @@ void draw_client_map2(object *pl) {
                     && pl->contr->socket.darkness) {
                         pl->contr->socket.lastmap.cells[ax][ay].darkness = d;
                         /* Darkness tag & length*/
-                        SockList_AddChar(&sl, 0x1|1<<5);
+                        SockList_AddChar(&sl, MAP2_TYPE_DARKNESS|1<<5);
                         SockList_AddChar(&sl, 255-d*(256/MAX_LIGHT_RADII));
                         have_darkness = 1;
                     }
@@ -1306,7 +1306,7 @@ void draw_client_map2(object *pl) {
                          * - we can send it when an object shows up.
                          */
                         sl.len = oldlen+2;          /* 2 bytes for coordinate */
-                        SockList_AddChar(&sl, 0);   /* Clear byte */
+                        SockList_AddChar(&sl, MAP2_TYPE_CLEAR);
                         SockList_AddChar(&sl, 255); /* Termination byte */
                         map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay], 0, 0);
                     } else {
