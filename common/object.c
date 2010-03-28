@@ -1454,11 +1454,14 @@ void object_free2(object *ob, int flags) {
         } else { /* Put objects in inventory onto this space */
             FOR_INV_PREPARE(ob, op) {
                 object_remove(op);
-                if (QUERY_FLAG(op, FLAG_STARTEQUIP)
-                || QUERY_FLAG(op, FLAG_NO_DROP)
-                || op->type == RUNE
-                || op->type == TRAP
-                || QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
+                /* No drop means no drop, including its inventory */
+                if (QUERY_FLAG(op, FLAG_NO_DROP))
+                    object_free2(op, FREE_OBJ_FREE_INVENTORY);
+                else if (QUERY_FLAG(op, FLAG_STARTEQUIP)
+                        || QUERY_FLAG(op, FLAG_NO_DROP)
+                        || op->type == RUNE
+                        || op->type == TRAP
+                        || QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
                     object_free_drop_inventory(op);
                 else {
                     object *part;
