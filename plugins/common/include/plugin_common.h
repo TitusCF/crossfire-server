@@ -220,7 +220,6 @@ extern object      *cf_friendlylist_get_next(object *ob);
 /* Quest-related functions */
 extern int          cf_quest_get_player_state(object *pl, sstring quest_code);
 extern void         cf_quest_start(object *pl, sstring quest_code, int state);
-extern void         cf_quest_end(object *pl, sstring quest_code);
 extern void         cf_quest_set_player_state(object *pl, sstring quest_code, int state);
 extern int          cf_quest_was_completed(object *pl, sstring quest_code);
 

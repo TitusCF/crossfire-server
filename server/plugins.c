@@ -4744,11 +4744,6 @@ void *cfapi_player_quest(int *type, ...) {
             *type = CFAPI_NONE;
             break;
         }
-        case CFAPI_PLAYER_QUEST_END: {
-            quest_end(player->contr, code);
-            *type = CFAPI_NONE;
-            break;
-        }
         case CFAPI_PLAYER_QUEST_GET_STATE: {
             int *ret = va_arg(args, int *);
             *ret = quest_get_player_state(player->contr, code);

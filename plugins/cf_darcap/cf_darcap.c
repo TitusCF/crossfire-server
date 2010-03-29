@@ -431,10 +431,11 @@ static int handleSelling(object *what, object *bywho, object *event) {
 }
 
 typedef enum {
-    ds_get_potion = 1,
-    ds_get_roots = 2,
-    ds_bring_roots = 3,
-    ds_bring_potion = 4
+    ds_get_potion = 10,
+    ds_get_roots = 20,
+    ds_bring_roots = 30,
+    ds_bring_potion = 40,
+    ds_deliver_potion = 50
 } darcapSpikeState;
 static sstring darcapSpike = NULL;
 
@@ -637,7 +638,7 @@ static int handleGiveSpike(object *to, object *by, object *item) {
     cf_object_say(to, "Here is some reward for your good deeds.");
     cf_object_insert_object(item, by);
 
-    cf_quest_end(by, darcapSpike);
+    cf_quest_set_player_state(by, darcapSpike, ds_deliver_potion);
 
     return 0;
 }

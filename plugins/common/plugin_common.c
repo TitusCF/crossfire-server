@@ -1932,17 +1932,6 @@ void cf_quest_start(object *pl, sstring quest_code, int state) {
 }
 
 /**
- * Wrapper for quest_end().
- * @copydoc quest_end()
- */
-void cf_quest_end(object *pl, sstring quest_code) {
-    int type;
-
-    cfapiPlayer_quest(&type, CFAPI_PLAYER_QUEST_END, pl, quest_code);
-    assert(type == CFAPI_NONE);
-}
-
-/**
  * Wrapper for quest_set_player_state();
  * @copydoc quest_set_player_state()
  */

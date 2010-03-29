@@ -225,22 +225,6 @@ static PyObject *Player_QuestSetState(Crossfire_Player *whoptr, PyObject *args) 
     return Py_None;
 }
 
-static PyObject *Player_QuestEnd(Crossfire_Player *whoptr, PyObject *args) {
-    char *code;
-    sstring quest_code;
-
-    EXISTCHECK(whoptr);
-    if (!PyArg_ParseTuple(args, "s", &code))
-        return NULL;
-
-    quest_code = cf_add_string(code);
-    cf_quest_end(whoptr->obj, quest_code);
-    cf_free_string(quest_code);
-
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
 static PyObject *Player_QuestWasCompleted(Crossfire_Player *whoptr, PyObject *args) {
     char *code;
     int completed;

@@ -606,7 +606,6 @@ static int Player_SetBedY(Crossfire_Player *whoptr, PyObject *value, void *closu
 static PyObject *Player_QuestStart(Crossfire_Player *whoptr, PyObject *args);
 static PyObject *Player_QuestGetState(Crossfire_Player *whoptr, PyObject *args);
 static PyObject *Player_QuestSetState(Crossfire_Player *whoptr, PyObject *args);
-static PyObject *Player_QuestEnd(Crossfire_Player *whoptr, PyObject *args);
 static PyObject *Player_QuestWasCompleted(Crossfire_Player *whoptr, PyObject *args);
 
 static PyGetSetDef Player_getseters[] = {
@@ -627,7 +626,6 @@ static PyMethodDef PlayerMethods[] = {
     { "QuestStart",     (PyCFunction)Player_QuestStart,        METH_VARARGS,  NULL },
     { "QuestGetState",  (PyCFunction)Player_QuestGetState,     METH_VARARGS,  NULL },
     { "QuestSetState",  (PyCFunction)Player_QuestSetState,     METH_VARARGS,  NULL },
-    { "QuestEnd",       (PyCFunction)Player_QuestEnd,          METH_VARARGS,  NULL },
     { "QuestWasCompleted",  (PyCFunction)Player_QuestWasCompleted, METH_VARARGS,  NULL },
     { NULL, NULL, 0, NULL }
 };
