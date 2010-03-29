@@ -117,7 +117,7 @@ void CREMapInformationManager::process(const QString& path2)
                                     /* Message start is final_map, nice */
                                     start = item->msg;
                                 if (start) {
-                                    char *end = strchr(start+1, '\n');
+                                    const char *end = strchr(start+1, '\n');
 
                                     start += strlen("final_map")+2;
                                     strncpy(ep, start, end-start);
