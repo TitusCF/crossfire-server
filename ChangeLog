@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Commit some edits made in conjunction with wiki edits a while back:
+Sort the normal commands alphabetically.
+Move gsay to the communications command list.
+Move printlos out of the communications command list to the normal list.
+Move cointoss and orcknuckle out from among the emote commands and put them
+next to the non-emotion commands in the communications commands group.  They
+still do not seem to be communication commands, but that's where they were
+already and I don't feel like debating it at the moment.
+Kevin Bulgrien 2010-03-29
+
 Add extra detail to the apply command help (lib/help/apply.en)
 Kevin Bulgrien 2010-03-29
 

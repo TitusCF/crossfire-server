@@ -47,19 +47,11 @@
  * Normal game commands.
  */
 command_array_struct Commands[] = {
-    { "language", command_language,      0.0 },
-    { "save", command_save,              0.0 },
-
-    { "sound", command_sound,            0.0 },
-    { "party", command_party,            0.0 },
-    { "party_rejoin", command_party_rejoin, 0.0 },
-    { "gsay", command_gsay,              1.0 },
-#ifdef DEBUG_MALLOC_LEVEL
-    { "verify", command_malloc_verify,   0.0 },
-#endif
+    { "afk", command_afk,                0.0 },
     { "apply", command_apply,            1.0 },   /* should be variable */
     { "applymode", command_applymode,    1.0 },   /* should be variable */
     { "body", command_body,              0.0 },
+    { "bowmode", command_bowmode,        0.0 },
     { "brace", command_brace,            0.0 },
     { "cast", command_cast,              0.2 },   /* Is this right? */
     { "disarm", command_disarm,          1.0 },
@@ -76,45 +68,54 @@ command_array_struct Commands[] = {
     { "inventory", command_inventory,    0.0 },
     { "invoke", command_invoke,          1.0 },
     { "killpets", command_kill_pets,     0.0 },
+    { "language", command_language,      0.0 },
     { "listen", command_listen,          0.0 },
     { "lock", command_lock_item,         0.0 },
     { "maps", command_maps,              0.0 },
     { "mapinfo", command_mapinfo,        0.0 },
     { "mark", command_mark,              0.0 },
     { "motd", command_motd,              0.0 },
-    { "rules", command_rules,            0.0 },
     { "news", command_news,              0.0 },
+    { "party", command_party,            0.0 },
+    { "party_rejoin", command_party_rejoin, 0.0 },
     { "passwd", command_passwd,          0.0 },
     { "peaceful", command_peaceful,      0.0 },
+    { "petmode", command_petmode,        0.0 },
     { "pickup", command_pickup,          1.0 },
     { "prepare", command_prepare,        1.0 },
+    { "printlos", command_printlos,      0.0 },
     { "quit", command_quit,              0.0 },
+    { "ready_skill", command_rskill,     1.0 },
     { "rename", command_rename_item,     0.0 },
     { "resistances", command_resistances, 0.0 },
     { "rotateshoottype", command_rotateshoottype, 0.0 },
+    { "rules", command_rules,            0.0 },
+    { "save", command_save,              0.0 },
     { "skills", command_skills,          0.0 },   /* shows player list of skills */
     { "use_skill", command_uskill,       1.0 },
-    { "ready_skill", command_rskill,     1.0 },
     { "search", command_search,          1.0 },
     { "search-items", command_search_items, 0.0 },
     { "showpets", command_showpets,      1.0 },
+    { "sound", command_sound,            0.0 },
     { "statistics", command_statistics,  0.0 },
     { "take", command_take,              1.0 },
     { "throw", command_throw,            1.0 },
     { "time", command_time,              0.0 },
+    { "title", command_title,            0.0 },
     { "use", command_use,                1.0 },
+    { "usekeys", command_usekeys,        0.0 },
     { "whereabouts", command_whereabouts, 0.0 },
     { "whereami", command_whereami,      0.0 },
-    { "title", command_title,            0.0 },
-    { "usekeys", command_usekeys,        0.0 },
-    { "bowmode", command_bowmode,        0.0 },
-    { "petmode", command_petmode,        0.0 },
     { "unarmed_skill", command_unarmed_skill, 0.0 },
+#ifdef DEBUG_MALLOC_LEVEL
+    { "verify", command_malloc_verify,   0.0 },
+#endif
     { "version", command_version,        0.0 },
     { "wimpy", command_wimpy,            0.0 },
     { "who", command_who,                0.0 },
-    { "afk", command_afk,                0.0 },
-
+    /*
+     * directional commands
+     */
     { "stay", command_stay,              1.0 }, /* 1.0 because it is used when using a
                                                *  skill on yourself */
     { "north", command_north,            1.0 },
@@ -138,13 +139,18 @@ const int CommandsSize = sizeof(Commands)/sizeof(command_array_struct);
 
 /** Chat/shout related commands. */
 command_array_struct CommunicationCommands [] = {
-    /* begin emotions */
     { "tell", command_tell,              0.1 },
     { "reply", command_reply,            0.0 },
     { "say", command_say,                0.1 },
+    { "gsay", command_gsay,              1.0 },
     { "shout", command_shout,            0.1 },
     { "chat", command_chat,              0.1 },
     { "me", command_me,                  0.1 },
+    { "cointoss", command_cointoss,      0.0 },
+    { "orcknuckle", command_orcknuckle,  0.0 },
+    /*
+     * begin emotions
+     */
     { "nod", command_nod,                0.0 },
     { "dance", command_dance,            0.0 },
     { "kiss", command_kiss,              0.0 },
@@ -198,10 +204,7 @@ command_array_struct CommunicationCommands [] = {
     { "beg", command_beg,                0.0 },
     { "bleed", command_bleed,            0.0 },
     { "cringe", command_cringe,          0.0 },
-    { "think", command_think,            0.0 },
-    { "cointoss", command_cointoss,      0.0 },
-    { "orcknuckle", command_orcknuckle,  0.0 },
-    { "printlos", command_printlos,      0.0 },
+    { "think", command_think,            0.0 }
 };
 
 /** Length of the ::CommunicationCommands array. */
