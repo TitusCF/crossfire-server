@@ -3569,7 +3569,7 @@ void *cfapi_object_insert(int *type, ...) {
 /**
  * Wrapper for object_split().
  * @param type
- * will be CFAPI_POBJECT.
+ * will be CFAPI_POBJECT, or CFAPI_NONE if split failed.
  * @return
  * NULL.
  */
@@ -3590,8 +3590,15 @@ void *cfapi_object_split(int *type, ...) {
     split = va_arg(args, object **);
     va_end(args);
 
-    *type = CFAPI_POBJECT;
     *split = object_split(op, nr, buf, size);
+    if (*split != NULL)
+    {
+        *type = CFAPI_POBJECT;
+    }
+    else
+    {
+        *type = CFAPI_NONE;
+    }
     return NULL;
 }
 

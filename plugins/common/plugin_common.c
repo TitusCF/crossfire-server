@@ -631,6 +631,30 @@ object *cf_object_clone(object *op, int clonetype) {
     return value;
 }
 
+
+/**
+ * Wrapper for object_split().
+ * @copydoc object_split().
+ */
+object *cf_object_split(object *op, int nr, char *buf, int size) {
+    int type;
+    object *value;
+
+    cfapiObject_split(&type, op, nr, buf, size, &value);
+
+    if (value == NULL)
+    {
+        assert(type == CFAPI_NONE);
+    }
+    else
+    {
+        assert(type == CFAPI_POBJECT);
+    }
+
+    return value;
+}
+
+
 /**
  * Wrapper for pay_for_item().
  * @copydoc pay_for_item().

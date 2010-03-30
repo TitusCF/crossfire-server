@@ -1979,6 +1979,49 @@ static PyObject *Crossfire_Object_Drop(Crossfire_Object *who, PyObject *args) {
     return Py_None;
 }
 
+static PyObject *Crossfire_Object_Clone(Crossfire_Object *who, PyObject *args) {
+    int clone_type;
+    object *clone;
+
+    if (!PyArg_ParseTuple(args, "i", &clone_type))
+        return NULL;
+
+    if (clone_type != 0 && clone_type != 1)
+    {
+        PyErr_SetString(PyExc_ValueError, "Clone type must be 0 (object_create_clone) or 1 (object_copy).");
+        return NULL;
+    }
+
+    clone = cf_object_split(who->obj, clone_type);
+
+    if (clone == NULL)
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Clone failed.");
+        return NULL;
+    }
+
+    return Crossfire_Object_wrap(clone);
+}
+
+static PyObject *Crossfire_Object_Split(Crossfire_Object *who, PyObject *args) {
+    int count;
+    char err[255];
+    err[0] = '\0'; // Just in case.
+
+    if (!PyArg_ParseTuple(args, "i", &count))
+        return NULL;
+
+    object *split = cf_object_split(who->obj, count, err, 255);
+
+    if (split == NULL)
+    {
+        PyErr_SetString(PyExc_ValueError, err);
+        return NULL;
+    }
+
+    return Crossfire_Object_wrap(split);
+}
+
 static PyObject *Crossfire_Object_Fix(Crossfire_Object *who, PyObject *args) {
     cf_fix_object(who->obj);
     Py_INCREF(Py_None);

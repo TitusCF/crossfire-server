@@ -245,6 +245,8 @@ static int Object_SetRandomMovement(Crossfire_Object *whoptr, PyObject *value, v
 static PyObject *Crossfire_Object_Remove(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Apply(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Drop(Crossfire_Object *who, PyObject *args);
+static PyObject *Crossfire_Object_Clone(Crossfire_Object *who, PyObject *args);
+static PyObject *Crossfire_Object_Split(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Fix(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Say(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Pickup(Crossfire_Object *who, PyObject *args);
@@ -424,6 +426,8 @@ static PyMethodDef ObjectMethods[] = {
     { "Remove",         (PyCFunction)Crossfire_Object_Remove,       METH_NOARGS,  NULL },
     { "Apply",          (PyCFunction)Crossfire_Object_Apply,        METH_VARARGS, NULL },
     { "Drop",           (PyCFunction)Crossfire_Object_Drop,         METH_O,       NULL },
+    { "Clone",           (PyCFunction)Crossfire_Object_Clone,       METH_VARARGS, NULL },
+    { "Split",           (PyCFunction)Crossfire_Object_Split,       METH_VARARGS, NULL },
     { "Fix",            (PyCFunction)Crossfire_Object_Fix,          METH_NOARGS,  NULL },
     { "Say",            (PyCFunction)Crossfire_Object_Say,          METH_VARARGS, NULL },
     { "Speak",          (PyCFunction)Crossfire_Object_Say,          METH_VARARGS, NULL },
