@@ -2,12 +2,12 @@ Apply applies an object.
 
 If no options are given, it applies an object you are standing on.
 
-If an object name is given, it will apply/unapply that object (toggle)
+If a name follows the command, an object of that name is affected.  The name does not have to be complete as long as the text uniquely matches the first part of an item name.
 
-Extra options to apply:
+Apply options:
 
-    -a: Always applies the object
-    -u: Always unapplies the object.
-    -b: Applies an item on the ground or in active container.
+-a: Always apply an object and never unapply it when already applied.
+-u: Always unapply an object and never apply it when already unapplied.
+-b: Apply an item on the ground or in the active container, but not one in the characters main inventory.
 
--a and -u disable the toggling feature.
+As -a and -u do not toggle the applied status of an item, they are useful for making keybinds that work even when the current state of the object is unknown.
