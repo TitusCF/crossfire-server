@@ -2006,12 +2006,14 @@ static PyObject *Crossfire_Object_Clone(Crossfire_Object *who, PyObject *args) {
 static PyObject *Crossfire_Object_Split(Crossfire_Object *who, PyObject *args) {
     int count;
     char err[255];
-    err[0] = '\0'; // Just in case.
+    object *split;
+
+    err[0] = '\0'; /* Just in case. */
 
     if (!PyArg_ParseTuple(args, "i", &count))
         return NULL;
 
-    object *split = cf_object_split(who->obj, count, err, 255);
+    split = cf_object_split(who->obj, count, err, 255);
 
     if (split == NULL)
     {
