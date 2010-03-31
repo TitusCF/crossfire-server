@@ -524,7 +524,8 @@ static const readable_message_type readable_message_types[] = {
     /*subtype 50 */ { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_3 },
                     { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_1 },
                     { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_2 },
-                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_3 }
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_3 },
+                    { MSG_TYPE_SIGN, MSG_TYPE_SIGN_MAGIC_MOUTH }
 };
 
 /** Number of elements in ::readable_message_types */

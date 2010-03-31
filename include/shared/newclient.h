@@ -418,11 +418,12 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_PAPER_SCROLL_NEW_2 13
 #define MSG_TYPE_PAPER_SCROLL_MAGIC 14
 
-/* road signs messages subtypes */
+/* road signs messages subtypes */          /* Including magic mouths */
 #define MSG_TYPE_SIGN_BASIC         1
 #define MSG_TYPE_SIGN_DIR_LEFT      2
 #define MSG_TYPE_SIGN_DIR_RIGHT     3
 #define MSG_TYPE_SIGN_DIR_BOTH      4
+#define MSG_TYPE_SIGN_MAGIC_MOUTH   5
 
 /* stones and monument messages */
 #define MSG_TYPE_MONUMENT_STONE_1      1
@@ -438,10 +439,10 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_MONUMENT_WALL_2       11
 #define MSG_TYPE_MONUMENT_WALL_3       12
 
-/* dialog messsage */
+/* dialog message */
 #define MSG_TYPE_DIALOG_NPC             1   /* A message from the npc */
 #define MSG_TYPE_DIALOG_ALTAR           2   /* A message from an altar */
-#define MSG_TYPE_DIALOG_MAGIC_MOUTH     3   /* Magic Mouth/Magic Ear */
+#define MSG_TYPE_DIALOG_MAGIC_EAR       3   /* Magic ear */
 
 /* MOTD doesn't have any subtypes */
 

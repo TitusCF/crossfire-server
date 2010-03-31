@@ -14,17 +14,31 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
-Commit some edits made in conjunction with wiki edits a while back:
-Sort the normal commands alphabetically.
-Move gsay to the communications command list.
-Move printlos out of the communications command list to the normal list.
-Move cointoss and orcknuckle out from among the emote commands and put them
-next to the non-emotion commands in the communications commands group.  They
-still do not seem to be communication commands, but that's where they were
-already and I don't feel like debating it at the moment.
+include/shared/newclient.h
+- Rename the confusing MSG_TYPE_DIALOG_MAGIC_MOUTH to
+  MSG_TYPE_DIALOG_MAGIC_EAR since only magic ears are MSG_TYPE_DIALOG.
+- Add a new MSG_TYPE_SIGN subtype of MSG_TYPE_SIGN_MAGIC_MOUTH since magic
+  mouths are distinctly different from all other signs, and this might mean a
+  client might want to handle their messages uniquely.
+server/monster.c
+- Rename MSG_TYPE_DIALOG_MAGIC_MOUTH to MSG_TYPE_DIALOG_MAGIC_EAR to match up
+  with newclient.h changes.
+common/readable.c
+- Add a new MSG_TYPE_SIGN subtype MSG_TYPE_SIGN_MAGIC_MOUTH in conjunction
+  with changes made to newclient.h.
+Kevin Bulgrien 2010-03-30
+
+- Commit some edits made in conjunction with wiki edits a while back:
+- Sort the normal commands alphabetically.
+- Move gsay to the communications command list.
+- Move printlos out of the communications command list to the normal list.
+- Move cointoss and orcknuckle out from among the emote commands and put them
+  next to the non-emotion commands in the communications commands group.  They
+  still do not seem to be communication commands, but that's where they were
+  already and I don't feel like debating it at the moment.
 Kevin Bulgrien 2010-03-29
 
-Add extra detail to the apply command help (lib/help/apply.en)
+- Add extra detail to the apply command help (lib/help/apply.en)
 Kevin Bulgrien 2010-03-29
 
 Add a patch written by Funnyman3595 to add Object.Split and Object.Clone to 
