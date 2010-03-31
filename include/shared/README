@@ -11,11 +11,17 @@ If the server/include/shared directory files are modified, for the client to
 get the changes,  the following must be done.
 
 1) Commit the change.
+
 2) Note the revision number of the prior commit.
+
 3) Update the svn:externals property of client/common to specify the new
-   revision number of the server/include/shared commit.
-   Change to 'server/include', use 'svn propedit svn:externals .',
-   change the revision number and commit.
+   revision number of the server/include/shared commit.  Do so by:
+
+   a. Changing the working directory to the client common' folder.
+   b. Using 'svn propedit svn:externals .'
+   c. Changing the revision number for the server/trunk/include/shared
+      folder.
+   d. Commit the change.
 
 If the client/common/shared directory files are modified and committed from a
 client checkout of the crossfire source tree, in SVN, it is actually the
