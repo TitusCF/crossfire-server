@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix invalid function call. Add function prototypes.
+ plugins/cfpython/cfpython_object.c
+ plugins/common/include/plugin_common.h
+Nicolas Weeger 2010-04-01
+
 include/shared/newclient.h
 - Rename the confusing MSG_TYPE_DIALOG_MAGIC_MOUTH to
   MSG_TYPE_DIALOG_MAGIC_EAR since only magic ears are MSG_TYPE_DIALOG.

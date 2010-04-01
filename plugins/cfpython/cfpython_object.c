@@ -1992,7 +1992,7 @@ static PyObject *Crossfire_Object_Clone(Crossfire_Object *who, PyObject *args) {
         return NULL;
     }
 
-    clone = cf_object_split(who->obj, clone_type);
+    clone = cf_object_clone(who->obj, clone_type);
 
     if (clone == NULL)
     {
