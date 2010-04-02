@@ -217,6 +217,19 @@
 #define SF_RUNON    0x02
 
 /**
+ * These values are used for the account login code to denote
+ * what field follows.
+ * ACL = Account Character Login
+ */
+#define ACL_NAME    1
+#define ACL_CLASS   2
+#define ACL_RACE    3
+#define ACL_LEVEL   4
+#define ACL_FACE    5
+#define ACL_PARTY   6
+#define ACL_MAP     7
+
+/**
  * @defgroup NDI_xxx Flags for messages
  *
  * The following are the color flags passed to new_draw_info().
