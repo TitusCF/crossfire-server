@@ -1839,16 +1839,22 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
         SockList_AddData(sl, spell->msg, len);
     }
 
-    /* extended spell information, if client wants them. */
+    /* Extended spell information available if the client wants it.
+     */
     if (pl->socket.monitor_spells >= 2) {
+        /* spellmon 2
+         */
         sstring req = object_get_value(spell, "casting_requirements");
 
-        SockList_AddChar(sl, spell_client_use(spell));
-        if (req) {
+        SockList_AddChar(sl, spell_client_use(spell));  /* Usage code */
+
+        if (req) {                                      /* Requirements */
             SockList_AddLen8Data(sl, req, strlen(req));
         } else {
             SockList_AddChar(sl, 0);
         }
+        /* end spellmon 2
+         */
     }
 }
 
@@ -1889,7 +1895,7 @@ void esrv_add_spells(player *pl, object *spell) {
             if (pl->socket.monitor_spells >= 2) {
                 /** @todo casting_requirements should be a constant somewhere */
                 value = object_get_value(spell, "casting_requirements");
-                size += 2 + value ? strlen(value) : 0;
+                size += 2 + (value ? strlen(value) : 0);
             }
             if (SockList_Avail(&sl) < size) {
                 Send_With_Handling(&pl->socket, &sl);

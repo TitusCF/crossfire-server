@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+socket/request.c
+- Fix segfault when client requests spellmon 2.
+Kevin Bulgrien 2010-04-02
+
 socket/init.c
 - Remove duplicate initializer.
 Kevin Bulgrien 2010-04-01
