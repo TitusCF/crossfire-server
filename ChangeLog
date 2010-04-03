@@ -54,7 +54,7 @@ Kevin Bulgrien 2010-03-29
 - Add extra detail to the apply command help (lib/help/apply.en)
 Kevin Bulgrien 2010-03-29
 
-Add a patch written by Funnyman3595 to add Object.Split and Object.Clone to 
+Add a patch written by Funnyman3595 to add Object.Split and Object.Clone to
 the methods which can be used by python scripts through the plugin.
 plugins/cfpython/include/cfpython_object_private.h
 server/plugins.c
@@ -71,7 +71,7 @@ step description (called 'outcome') is shown for completed quests also.
 The quest list command output is reworked, it defaults to showing the number
 of completed quests, and listing the active ones, but 'quest list all' can
 be used to show all of the quests whether completed or not.
-plugins/cf_darcap/cf_darcap.c 
+plugins/cf_darcap/cf_darcap.c
 plugins/common/include/plugin_common.h
 plugins/common/plugin_common.c
 plugins/cfpython/cfpython_object.c
@@ -169,7 +169,7 @@ Don't send empty "stats " commands.
  socket/request.c
 Nicolas Weeger 2010-03-20
 
-Add extended statistics informations: race stats, natural stats.
+Add extended statistics information: race stats, natural stats.
 This enables clients to display depletion and such.
  doc/Developers/protocol
  include/newserver.h player.h
@@ -11915,8 +11915,8 @@ protocol/doc/code:
 Tchize 2003-07-08
 
 protocol:
-	Added new command to send extended map informations to the
-	client. Mainly used for now to send smoothing informations.
+	Added new command to send extended map information to the
+	client. Mainly used for now to send smoothing information.
 	Also commented the modifications in the protocol file ind doc/
 lib/Makefiles:
 	Changed to install the smooth file too. Needed by smooth code
