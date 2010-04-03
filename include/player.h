@@ -176,6 +176,8 @@ typedef struct pl {
     living      last_stats;          /**< Last stats as sent to client. */
     living      last_orig_stats;     /**< Last permanent stats sent to client. */
     living      last_race_stats;     /**< Last race stats sent to the client. */
+    living      applied_stats;       /**< Stat changes due to gear or skills. */
+    living      last_applied_stats;  /**< Last applied stats sent to the client. */
     float       last_speed;          /**< Last speed as sent to client. */
     sint16      last_resist[NROFATTACKS];       /**< last resist values sent to client. */
     object      *ob;                 /**< The object representing the player. */

@@ -1049,6 +1049,7 @@ void fix_object(object *op) {
     if (op->type == PLAYER) {
         for (i = 0; i < NUM_STATS; i++) {
             set_attr_value(&(op->stats), i, get_attr_value(&(op->contr->orig_stats), i));
+            set_attr_value(&(op->contr->applied_stats), i, 0);
         }
         if (settings.spell_encumbrance == TRUE)
             op->contr->encumbrance = 0;
@@ -1185,8 +1186,14 @@ void fix_object(object *op) {
                 if (tmp->type == WAND || tmp->type == ROD)
                     op->contr->ranges[range_misc] = tmp;
 
-                for (i = 0; i < NUM_STATS; i++)
-                    change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                for (i = 0; i < NUM_STATS; i++) {
+                    sint8 value;
+
+                    value = get_attr_value(&(tmp->stats), i);
+                    change_attr_value(&(op->stats), i, value);
+                    if (strcmp(tmp->arch->clone.name, ARCH_DEPLETION) != 0)
+                        change_attr_value(&(op->contr->applied_stats), i, value);
+                }
 
                 /* For this temporary calculation, allow wider range of stat - if we have
                  * having that gives +5 and different object that gives -5 and stat

@@ -160,6 +160,13 @@
 #define CS_STAT_BASE_CON        43
 #define CS_STAT_BASE_CHA        44
 #define CS_STAT_BASE_POW        45
+#define CS_STAT_APPLIED_STR     46  /**< STR changes due to gear or skills */
+#define CS_STAT_APPLIED_INT     47  /**< INT changes due to gear or skills */
+#define CS_STAT_APPLIED_WIS     48  /**< WIS changes due to gear or skills */
+#define CS_STAT_APPLIED_DEX     49  /**< DEX changes due to gear or skills */
+#define CS_STAT_APPLIED_CON     50  /**< CON changes due to gear or skills */
+#define CS_STAT_APPLIED_CHA     51  /**< CHA changes due to gear or skills */
+#define CS_STAT_APPLIED_POW     52  /**< POW changes due to gear or skills */
 
 /* Start & end of resistances, inclusive. */
 #define CS_STAT_RESIST_START    100

@@ -757,6 +757,13 @@ void esrv_update_stats(player *pl) {
             AddIfShort(pl->last_race_stats.Dex, 20 + pl->ob->arch->clone.stats.Dex, CS_STAT_RACE_DEX);
             AddIfShort(pl->last_race_stats.Con, 20 + pl->ob->arch->clone.stats.Con, CS_STAT_RACE_CON);
             AddIfShort(pl->last_race_stats.Cha, 20 + pl->ob->arch->clone.stats.Cha, CS_STAT_RACE_CHA);
+            AddIfShort(pl->last_applied_stats.Str, pl->applied_stats.Str, CS_STAT_APPLIED_STR);
+            AddIfShort(pl->last_applied_stats.Int, pl->applied_stats.Int, CS_STAT_APPLIED_INT);
+            AddIfShort(pl->last_applied_stats.Pow, pl->applied_stats.Pow, CS_STAT_APPLIED_POW);
+            AddIfShort(pl->last_applied_stats.Wis, pl->applied_stats.Wis, CS_STAT_APPLIED_WIS);
+            AddIfShort(pl->last_applied_stats.Dex, pl->applied_stats.Dex, CS_STAT_APPLIED_DEX);
+            AddIfShort(pl->last_applied_stats.Con, pl->applied_stats.Con, CS_STAT_APPLIED_CON);
+            AddIfShort(pl->last_applied_stats.Cha, pl->applied_stats.Cha, CS_STAT_APPLIED_CHA);
         }
     }
 
