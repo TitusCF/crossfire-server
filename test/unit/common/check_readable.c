@@ -218,7 +218,7 @@ START_TEST(test_artifact_msg_rewrite) {
     const archetype *arch;
 
     const char* archs[] = { "book_clasp", "book_read", "checkbook", "letter", "note", "quarto", "scroll", "scroll_2", "tome" };
-    const arch_count = 9;
+    const int arch_count = 9;
     object *dummy = object_new();
 
     while (todo-- > 0) {
@@ -321,7 +321,7 @@ START_TEST(test_spellpath_msg_rewrite) {
     const archetype *arch;
 
     const char* archs[] = { "book_clasp", "book_read", "checkbook", "letter", "note", "quarto", "scroll", "scroll_2", "tome" };
-    const arch_count = 9;
+    const int arch_count = 9;
 
     while (todo-- > 0) {
 
