@@ -75,6 +75,7 @@ void CREMapInformationManager::process(const QString& path2)
     information->setMapTime(info.lastModified());
 
     char exit_path[500];
+    quint64 exp = 0;
 
     for (int x = MAP_WIDTH(m)-1; x >= 0; x--)
     {
@@ -163,9 +164,19 @@ void CREMapInformationManager::process(const QString& path2)
                         }
                     }
                 }
+
+                if (QUERY_FLAG(item, FLAG_MONSTER))
+                    exp += item->stats.exp;
             } FOR_MAP_FINISH();
         }
     }
+
+    information->setExperience(exp);
+
+    QMutexLocker lock(&myLock);
+    if (m->region == NULL)
+        qDebug() << "map without region" << m->name << m->path;
+    myExperience[m->region ? m->region->name : "(undefined)"] += exp;
 
     m->reset_time = 1;
     m->in_memory = MAP_IN_MEMORY;
@@ -185,6 +196,13 @@ void CREMapInformationManager::browseMaps()
     storeCache();
 
     emit finished();
+
+    /** @todo make nicer report */
+    qDebug() << "experience repartition:";
+    foreach(QString region, myExperience.keys())
+    {
+        qDebug() << region << myExperience[region];
+    }
 }
 
 void CREMapInformationManager::cancel()
@@ -248,6 +266,10 @@ void CREMapInformationManager::loadCache()
             map->setMapTime(QDateTime::fromString(date, Qt::ISODate));
             continue;
         }
+        if (reader.isStartElement() && reader.name() == "experience")
+        {
+            map->setExperience(reader.readElementText().toLongLong());
+        }
         if (reader.isStartElement() && reader.name() == "arch")
         {
             QString arch = reader.readElementText();
@@ -297,6 +319,7 @@ void CREMapInformationManager::storeCache()
         writer.writeTextElement("path", map->path());
         writer.writeTextElement("name", map->name());
         writer.writeTextElement("lastModified", map->mapTime().toString(Qt::ISODate));
+        writer.writeTextElement("experience", QString::number(map->experience()));
         foreach(QString arch, map->archetypes())
         {
             writer.writeTextElement("arch", arch);

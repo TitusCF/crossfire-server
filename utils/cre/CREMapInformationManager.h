@@ -33,6 +33,7 @@ class CREMapInformationManager : public QObject
         QFuture<void> myWorker;
         bool myCancelled;
         QMutex myLock;
+        QHash<QString, qint64> myExperience;
 
         void browseMaps();
         void process(const QString& path);

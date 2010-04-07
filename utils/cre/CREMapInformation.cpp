@@ -2,6 +2,7 @@
 
 CREMapInformation::CREMapInformation()
 {
+    myExperience = 0;
 }
 
 CREMapInformation::CREMapInformation(const QString& path)
@@ -70,4 +71,14 @@ void CREMapInformation::addAccessedFrom(const QString& path)
 {
     if (!myAccessedFrom.contains(path))
         myAccessedFrom.append(path);
+}
+
+qint64 CREMapInformation::experience() const
+{
+    return myExperience;
+}
+
+void CREMapInformation::setExperience(qint64 experience)
+{
+    myExperience = experience;
 }
