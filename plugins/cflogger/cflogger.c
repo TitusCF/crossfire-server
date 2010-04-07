@@ -468,6 +468,9 @@ static void add_player_event(object *pl, int event_code) {
     int map_id = 0;
     char *sql;
 
+    if (pl == NULL)
+        return;
+
     if (pl->map)
         map_id = get_map_id(pl->map);
 
