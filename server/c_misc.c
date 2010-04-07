@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -2213,7 +2213,7 @@ void receive_player_password(object *op) {
 
     strcpy(op->contr->password, crypt_string(op->contr->write_buf+1, NULL));
     op->contr->state = ST_ROLL_STAT;
-    check_login(op);
+    check_login(op, TRUE);
 }
 
 /**

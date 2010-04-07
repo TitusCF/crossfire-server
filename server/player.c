@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002,2006-2007 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2006-2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -277,7 +277,7 @@ int playername_ok(const char *cp) {
  * @return
  * initialized player structure.
  */
-static player *get_player(player *p) {
+player *get_player(player *p) {
     object *op = arch_to_object(get_player_archetype(NULL));
     int i;
 
@@ -870,14 +870,24 @@ void receive_play_again(object *op, char key) {
         op->contr->password[0] = '~';
         FREE_AND_CLEAR_STR(op->name);
         FREE_AND_CLEAR_STR(op->name_pl);
-
-        /* Lets put a space in here */
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+        if (pl->socket.login_method >= 1) {
+            /* If we are using new login, we send the
+             * list of characters to the client - this should
+             * result in the client popping up this list so
+             * the player can choose which one to play - better
+             * than going to legacy login code.
+             */
+            send_account_players(&pl->socket);
+            pl->state = ST_GET_NAME;
+        } else {
+            /* Lets put a space in here */
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
                       "\n", "\n");
-        get_name(op);
+            get_name(op);
+            set_first_map(op);
+        }
         op->name = name;  /* Already added a refcount above */
         op->name_pl = add_string(name);
-        set_first_map(op);
     } else {
         /* user pressed something else so just ask again... */
         play_again(op);

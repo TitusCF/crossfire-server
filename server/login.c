@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006-2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -261,6 +261,9 @@ int save_player(object *op, int flag) {
      * for saving.
      */
     pl->socket.account_chars = account_char_add(pl->socket.account_chars, pl);
+    if (pl->socket.account_name)
+        account_char_save(pl->socket.account_name, pl->socket.account_chars);
+
 
     snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name, op->name);
     make_path_to_file(filename);
@@ -480,9 +483,14 @@ static void wrong_password(object *op) {
  *
  * @param op
  * player.
+ * @param check_pass
+ * If true, we should do password checking.  Otherwise, we just log this
+ * character in.  This later setting is used for the account code,
+ * where that already does authentication.
+ *
  * @todo describe connect/login/logout/disconnect process.
  */
-void check_login(object *op) {
+void check_login(object *op, int check_pass) {
     FILE *fp;
     char filename[MAX_BUF];
     char buf[MAX_BUF], bufall[MAX_BUF];
@@ -501,7 +509,7 @@ void check_login(object *op) {
     /* Check if this matches a connected player, and if yes disconnect old / connect new. */
     for (pltmp = first_player; pltmp != NULL; pltmp = pltmp->next) {
         if (pltmp != pl && pltmp->ob->name != NULL && !strcmp(pltmp->ob->name, op->name)) {
-            if (check_password(pl->write_buf+1, pltmp->password)) {
+            if (!check_pass || check_password(pl->write_buf+1, pltmp->password)) {
                 /* We could try and be more clever and re-assign the existing
                  * object to the new player, etc.  However, I'm concerned that
                  * there may be a lot of other state that still needs to be sent
@@ -517,9 +525,10 @@ void check_login(object *op) {
                 final_free_player(pltmp);
                 break;
             }
-
-            wrong_password(op);
-            return;
+            if (check_pass) {
+                wrong_password(op);
+                return;
+            }
         }
     }
 
@@ -553,13 +562,22 @@ void check_login(object *op) {
         if (sscanf(bufall, "password %s\n", buf)) {
             /* New password scheme: */
             correct = check_password(pl->write_buf+1, buf);
+            if (!check_pass) {
+                /* We want to preserve the password.  Normally,
+                 * pl->password is filled in when user enters
+                 * data in the password prompt, but with new login,
+                 * there is no password prompt.
+                 */
+                strncpy(pl->password, buf, 15);
+                pl->password[15] = 0;
+            }
         }
         /* Old password mode removed - I have no idea what it
          * was, and the current password mechanism has been used
          * for at least several years.
          */
     }
-    if (!correct) {
+    if (!correct && check_pass) {
         wrong_password(op);
         fclose(fp);
         return;
@@ -700,7 +718,12 @@ void check_login(object *op) {
             pl->ticks_played = uvalue;
         }
     } /* End of loop loading the character file */
-    object_remove(op);
+
+    /* on first login via account, this player does not exist anyplace -
+     * so don't remove them.
+     */
+    if (!QUERY_FLAG(op, FLAG_REMOVED))
+        object_remove(op);
     op->speed = 0;
     object_update_speed(op);
     /*FIXME dangerous call, object_reset() should be used to init freshly allocated obj struct!*/

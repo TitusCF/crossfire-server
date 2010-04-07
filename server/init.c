@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -928,6 +928,7 @@ void init(int argc, char **argv) {
     init_server();
     metaserver_init();
     metaserver2_init();
+    account_load_entries();
     reset_sleep();
     init_done = 1;
 }

@@ -14,6 +14,39 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Commit account management code.  Seems mature enough for general use - probably
+a few bugs.  What this adds is an account that characters use to log in,
+at which point they then choose what character they want to play.
+---
+doc/Developers/protocol: Fix some formatting, clarify some points, make
+    some revisions to account protocol commands.
+include/account_char.h: Move MAX_CHARACTERS_PER_ACCOUNT to this
+    file so other files to access it.                        
+include/newserver.h: Add login_method to socket structure.
+include/sockproto.h: Update for new functions.
+include/sproto.h: Update for new functions.
+lib/Makefile.am: Have it make account directory if it does not exist.
+server/account.c: Fix bug related to loading when only 1 character
+    is associated with account.  Change account_exists() to return
+    proper name of account.  Clean up some function declarations
+    and bugs.  Add some new functions to get character/account
+    data.
+server/account_char.c: Fix typo and minor errors in error message.
+server/c_misc.c: Update check_login() for 2 params
+server/init.c: Add call to load account information.
+server/login.c: Save account information.  Modify check_login() for
+    account logins which bypass password checking.
+server/player.c: Make get_player() non static.  Add enhancements
+   for new login code in play again.
+socket/init.c: initialize login_method to 0.
+socket/loop.c: Add new protocol commands with callbacks.
+socket/request.c: Add loginmethod setup command.  Add several new functions
+    to handle account management functionality.
+test/unit/server/check_account.c: Update for new return semantics for
+	account_exists()
+---
+MSW 2010-04-06
+
 Add more extended statistics information: applied stats. These allow
 clients to distinguish between depleted stats and stat changes due to gear
 or skills.

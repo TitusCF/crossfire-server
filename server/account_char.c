@@ -48,7 +48,7 @@
  * Addtional fields can be added as necessary.
  *
  * Note about characters vs players:
- * In may parts of the code, a character may be called a player,
+ * In many parts of the code, a character may be called a player,
  * but that is misleading, since a player suggests the person sitting
  * at the computer, and they play a character.  In the past, there was
  * a 1:1 mapping between players and characters, but with accounts, there
@@ -96,7 +96,7 @@ Account_Char *account_char_load(const char *account_name)
         /* This may not in fact be a critical error - for a new account, there
          * may not be any data associated with it.
          */
-        LOG(llevInfo,"Warning: Unable to open %s\n");
+        LOG(llevInfo,"Warning: Unable to open %s\n", fname);
         return NULL;
     }
     while (fgets(buf, VERY_BIG_BUF, fp)) {
@@ -343,7 +343,6 @@ void account_char_free(Account_Char *chars)
         free(ap);
     }
 }
-
 
 void account_char_init()
 {

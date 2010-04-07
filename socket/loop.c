@@ -131,6 +131,10 @@ static const struct client_cmd_mapping client_commands[] = {
     { "setup",               set_up_cmd },
     { "version",             version_cmd },
     { "asksmooth",           ask_smooth_cmd },            /*Added: tchize (smoothing technologies)*/
+    { "accountlogin",       account_login_cmd },
+    { "accountnew",         account_new_cmd },
+    { "accountaddplayer",   account_add_player_cmd },
+    { "accountplay",        account_play_cmd },
     { NULL,                  NULL }                       /* terminator (I, II & III)*/
 };
 

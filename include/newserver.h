@@ -149,6 +149,7 @@ typedef struct socket_struct {
                                              defaults to DEFAULT_NUM_LOOK_OBJECTS. */
     char    *account_name;              /**< Name of the account logged in on this socket */
     Account_Char    *account_chars;     /**< Detailed information on characters on this account */
+    uint8   login_method;               /**< Login method this client is using */
 } socket_struct;
 
 /**

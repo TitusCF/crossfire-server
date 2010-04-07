@@ -101,6 +101,12 @@ void esrv_remove_spell(player *pl, object *spell);
 void esrv_send_pickup(player *pl);
 void esrv_add_spells(player *pl, object *spell);
 void send_tick(player *pl);
+void send_file(socket_struct *ns, char *file);
+void account_login_cmd(char *buf, int len, socket_struct *ns);
+void account_new_cmd(char *buf, int len, socket_struct *ns);
+void account_add_player_cmd(char *buf, int len, socket_struct *ns);
+void account_play_cmd(char *buf, int len, socket_struct *ns);
+void send_account_players(socket_struct *ns);
 /* sounds.c */
 void play_sound_player_only(player *pl, sint8 sound_type, object *emitter, int dir, const char *action);
 void play_sound_map(sint8 sound_type, object *emitter, int dir, const char *action);

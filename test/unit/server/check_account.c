@@ -148,14 +148,15 @@ START_TEST(test_account_load_entries) {
     int i,j;
     char names[50];
     char **char_names;
+    char *ae;
 
     clear_accounts();
     account_load_entries();
 
-    i = account_exists("Every Body");
-    fail_unless(i == 1, "Could not find valid account");
-    i = account_exists("Some Body");
-    fail_unless(i == 1, "Could not find valid account");
+    ae = account_exists("Every Body");
+    fail_unless(ae != NULL, "Could not find valid account");
+    ae = account_exists("Some Body");
+    fail_unless(ae != NULL, "Could not find valid account");
 
     char_names =  account_get_players_for_account("No Body");
     fail_unless(char_names != NULL, "Got null value for players on account");

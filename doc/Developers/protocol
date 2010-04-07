@@ -189,7 +189,9 @@ S->C: failure <protocol command> <failure string>
       generated the failure.
 
       <failure string> is a message which notes the failure - it will
-      be displayed to the player, so should be
+      be displayed to the player, so should be informative to the
+      player so they can take corrective action (omit illegal characters
+      from their username, etc)
 
       This command is used to denote failure in some way (as detailed in
       failure string) of a protocol commands.  This does not mean that
@@ -205,7 +207,7 @@ S->C: failure <protocol command> <failure string>
       command which failed, better informs the client it needs to retry.
       For example, if the user enters wrong account information, the
       server will send 'failure accountlogin wrong user name or password'.
-      With this, the client can display the message is the correct location,
+      With this, the client can display the message in the correct location,
       but also knows it needs to go back to the point of asking for login
       information.  draw_info provides no mechanism to tell the client
       to retry an event.
@@ -216,6 +218,21 @@ S->C: failure <protocol command> <failure string>
       same type - this command will only tell that a command of that
       name failed, but may not include enough information to note which
       of several commands failed.
+
+      Note that the format of message, while text data, can contain other
+      information.  In particular, some messages may have the first 'word'
+      be a number which denotes some type of status - this will be detailed
+      in the protocol area for that command. For example:
+
+      failure accountaddplayer 0 That name is too long
+      failure accountaddplayer 1 That character is associated with another account
+
+      The client should intercept that number and not display it, but this may
+      indicate that the command is retriable by changing a parameter - in the
+      case of accountaddplayer, if force is set, the second message there
+      is not an error.
+
+
 
 ******************************************************************************
 COMMANDS RELATING TO ESTABLISHING THE INITIAL CONNECTION AND CLOSING THE
@@ -320,18 +337,38 @@ S->C: failure <protocol command> <message>
    If the login or creation fails, a failure protocol message is generated.
    That is documented up above.  The client should retry in that case.
 
-S->C: accountplayers <num characters><char name1><char data><char name2>...
+S->C: accountplayers <num characters><char data1><char data2>...
 
       <num characters> 8 bit binary value noting how many characters on
             this account.  It may be zero.
-      <char name ..> length prefixed string of each character name.
-      <char data> length prefixed data on character.  Yet to be defined, but
-          will likely be type followed by value - similar to how the stats
-          command is used.  This data is length prefixed so if there are types
-          unknown to client, it could skip over the rest of this block.
+      <char data> length prefixed data on character.  The ACL_...
+            values in newclient.h define these.  The format of each
+            data value is:
+            <len><type><value>
+
+            <len> is an 8 bit value which is the length of type + value -
+                  in this way, the client can skip over the entire field
+                  in cases where it does not know the type.
+                  If len is 0, it notes that there is no more information
+                  for this character.
+            <type> is an 8 bit value which is an ACL_ type value.
+            <value> type specific - if a string value, it is just
+                    a string value.  If binary, its length can be
+                    determined.  At current time (March 2010), all
+                    values except level are strings.  Level is a 16
+                    bit binary value.
+
+            Note:  There is no requirement that the server sends all
+                   fields (may choose to not send empty fields.)
+                   Likewise, there is no requirement they get
+                   sent in a specific order.
 
    This is a list of the players (characters) associated with this account.
    In the case of new accounts, the num characters will be zero.
+
+   This is sent after the server receives a successful login or accountnew
+   request.  The client can thus use the receipt of this command, even
+   if empty, to note that the user has logged in.
 
 C->S: accountplay <char name>
 
@@ -347,7 +384,7 @@ C->S: accountplay <char name>
 
 C->S: accountaddplayer <force> <char name> <char password>
       <force> - 8 bit binary data to force this association (see description
-              below
+              below.  This is not an optional field - it must always be sent.
       <char name> length prefixed string of the character name.
       <char password> length prefixed string of the characters password.
 
@@ -363,6 +400,10 @@ C->S: accountaddplayer <force> <char name> <char password>
 
    On success, the server  will send a new accountplayers command, with all
    characters for this account.  On failure, a failure message will be generated.
+
+   The failure message for accountaddplayer does include the optional integer
+   parameter - if 0, the command is not retriable - if set to 1, then this account
+   may succeed if force is set.
 
 C->S: newplayer
    The player wants to make a new player - this is done on the client -
@@ -386,6 +427,17 @@ S->C: addme_success
 	really be replaced with a terminate type of of message (player quits
 	game, server could inform us nicely and exit out).  addme_success is
 	really of no use - client just throws it away.
+
+    Note: With account based login method, server will send the
+    addme_success in certain circumstances - this is really to tell
+    the client that play has started and hide any login/character
+    selection information.  However the note above still applies -
+    addme_failed could get replaced by a 'failure addme ...' type
+    response, and there is probably some use for having a 'success'
+    type protocol response to tell the client that something has
+    worked - right now, this is done by the client seeing the next
+    message in a protocol state (eg, accountplayers follows an
+    accountlogin request)
 
 S->C: goodbye (Added in SC protocol version 1022)
 	Informs the client that the server has finished transmitting data

@@ -161,7 +161,7 @@ install-data-local: archetypes crossfire.0 faces animations smooth collect.pl ut
 		touch $(DESTDIR)$(pkgstatedir)/$$i ; \
 	done
 
-	@for i in datafiles players unique-items template-maps maps; do \
+	@for i in account datafiles players unique-items template-maps maps; do \
 	    if [ ! -d $(DESTDIR)$(pkgstatedir)/$$i ]; then \
 		echo "Creating directory $(pkgstatedir)/$$i"; \
 		$(mkinstalldirs) $(DESTDIR)$(pkgstatedir)/$$i; \

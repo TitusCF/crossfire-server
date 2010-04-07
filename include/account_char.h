@@ -34,6 +34,19 @@
 #ifndef ACCOUNT_CHAR_H
 #define ACCOUNT_CHAR_H
 
+/**
+ * The maximum characters per account is really driven by the size of
+ * the buffer we use to read in the data.  Take 150 characters off for
+ * the account name, password, overhead, and other wiggle room and
+ * find a maximum.  From my quick calculations, this amounts to
+ * 18 characters/account.  I think that is sufficient - moving to a
+ * HUGE_BUF would allow 82.
+ * The code could be more clever and look at the length of each
+ * character name and total it up, but having the same limit for everyone
+ * is better IMO.
+ */
+#define MAX_CHARACTERS_PER_ACCOUNT (VERY_BIG_BUF - 150) / (MAX_NAME+1)
+
 
 /**
  * One character account.

@@ -40,20 +40,18 @@
  * have the prototype of (char *data, int datalen, int client_num). This
  * way, we can use one dispatch table.
  *
- * esrv_map_new starts updating the map
- *
- * esrv_map_setbelow allows filling in all of the faces for the map.
- * if a face has not already been sent to the client, it is sent now.
- *
- * compactstack, perform the map compressing
- * operations
- *
  * esrv_map_scroll tells the client to scroll the map, and does similarily
  * for the locally cached copy.
  *
  * @todo
  * smoothing should be automatic for latest clients. Remove some stuff we can assume is always on.
  * fix comments for this file.
+ *
+ * This file should probably be broken up into smaller sections - having all request
+ * handling from the client in one file makes this a very large file in which
+ * it is hard to find data (and know how it is related).  In addition, a lot
+ * of the function is not actually requests from the client, but push from
+ * the server (stats, maps)
  */
 
 #include <assert.h>
@@ -295,6 +293,8 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
 
             /* Only support basic login right now */
             if (loginmethod > 1) loginmethod=1;
+
+            ns->login_method = loginmethod;
             SockList_AddPrintf(&sl, "%d", loginmethod);
 
         } else if (!strcmp(cmd, "newmapcmd")) {
@@ -1944,4 +1944,544 @@ void send_tick(player *pl) {
     if (setsockopt(pl->socket.fd, IPPROTO_TCP, TCP_NODELAY, &tmp, sizeof(tmp)))
         LOG(llevError, "send_tick: Unable to turn off TCP_NODELAY\n");
     SockList_Term(&sl);
+}
+
+/**
+ * Basic helper function which adds a piece of data for
+ * the accountplayers protocol command.  Called from
+ * send_account_players.  If data is empty, we don't add.
+ *
+ * @param sl
+ * socklist to add data to.
+ * @param type
+ * type of data (ACL_.. value)
+ * @param data
+ * string data to add
+ */
+static void add_char_field(SockList *sl, int type, const char *data)
+{
+    int len;
+
+    len = strlen(data);
+
+    if (len) {
+        /* one extra for length for the type byte */
+        SockList_AddChar(sl, len+1);
+        SockList_AddChar(sl, type);
+        SockList_AddString(sl, data);
+    }
+}
+
+/**
+ * Upon successful login/account creation, we send a list of
+ * characters associated with the account to the client - in
+ * this way, it lets the client present a nice list so that
+ * the player can choose one.
+ * Note it is important that ns->account_name is set before
+ * calling this.
+ * Note 2: Some of the operations here are not especially
+ * efficient - O(n^2) or repeating same loop instead of
+ * trying to combine them.  This is not a worry as
+ * MAX_CHARACTERS_PER_ACCOUNT is a fairly low value
+ * (less than 20), so even inefficient operations don't take
+ * much time.  If that value as a lot larger, then some
+ * rethink may be needed.  For now, having clearer code
+ * is better than trying to save a few microseconds of
+ * execution time.
+ *
+ * @param ns
+ * socket structure to send data for.
+ */
+void send_account_players(socket_struct *ns)
+{
+    SockList sl;
+    Account_Char *acn;
+    int i, num_chars, need_send[MAX_CHARACTERS_PER_ACCOUNT];
+    char **chars;
+
+    ns->account_chars = account_char_load(ns->account_name);
+
+    /*
+     * The acocunt logic here is a little tricky - account_char_load()
+     * is best source as it has a lot more data.  However, if a user
+     * has just added an player to an account, that will not be filled
+     * in until the player has actually logged in with that character -
+     * to fill the data in at time of adding the character to the account
+     * requires a fair amount of work to check_login(), since the load
+     * of the player file and other initialization is fairly closely 
+     * intertwined.  So until that is done, we still at least have
+     * account names we can get and send.
+     * note: chars[] has the last entry NULL terminated - thus,
+     * if there are 2 valid accounts, chars[0], chars[1] will be
+     * set, and chars[2] will be NULL.  chars[3...MAX] will have
+     * undefined values.
+     */
+    chars = account_get_players_for_account(ns->account_name);
+
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "accountplayers ");
+    num_chars=0;
+
+    /* First, set up an array so we know which character we may
+     * need to send specially.  Only non NULL values would
+     * ever need to get sent.
+     */
+    for (i=0; i<MAX_CHARACTERS_PER_ACCOUNT; i++) {
+        if (chars[i])
+            need_send[i] = 1;
+        else break;
+    }
+    /* This counts up the number of characters.
+     * But also, we look and see if the character exists
+     * in chars[i] - if so, we set need_send[i] to 0.
+     */
+    for (acn = ns->account_chars; acn; acn = acn->next) {
+        num_chars++;
+        for (i=0; i<MAX_CHARACTERS_PER_ACCOUNT; i++) {
+            /* If this is NULL, we know there will not be
+             * any more entries - so break out.
+             */
+            if (!chars[i]) break;
+
+            if (!strcmp(chars[i], acn->name)) {
+                need_send[i] = 0;
+                break;
+            }
+        }
+    }
+
+    /* total up number with limited information */
+    for (i=0; i< MAX_CHARACTERS_PER_ACCOUNT; i++) {
+        if (!chars[i]) break;
+
+        if (need_send[i])
+            num_chars++;
+    }
+
+    SockList_AddChar(&sl, num_chars);
+
+    /* Now add real character data */
+    for (acn = ns->account_chars; acn; acn = acn->next) {
+
+        add_char_field(&sl, ACL_NAME, acn->name);
+        add_char_field(&sl, ACL_CLASS, acn->character_class);
+        add_char_field(&sl, ACL_RACE, acn->race);
+        add_char_field(&sl, ACL_FACE, acn->face);
+        add_char_field(&sl, ACL_PARTY, acn->party);
+        add_char_field(&sl, ACL_MAP, acn->map);
+        SockList_AddChar(&sl, 3);
+        SockList_AddChar(&sl, ACL_LEVEL);
+        SockList_AddShort(&sl, acn->level);
+        SockList_AddChar(&sl, 0);
+    }
+    /* Now for any characters where we just have the name */
+    for (i=0; i< MAX_CHARACTERS_PER_ACCOUNT; i++) {
+        if (!chars[i]) break;
+
+        if (need_send[i]) {
+            add_char_field(&sl, ACL_NAME, chars[i]);
+            SockList_AddChar(&sl, 0);
+        }
+    }
+
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
+}
+
+/**
+ * This is a basic routine which extracts the name/password
+ * from the buffer.  Several of the account login routines
+ * provide a length prefixed string for name, and another for
+ * password. 
+ *
+ * @param buf
+ * character data to process.
+ * @param len
+ * length of this buffer
+ * @param name
+ * preallocated (MAX_BUF) buffer to return the name (really, first string) in
+ * @param password
+ * preallocated (MAX_BUF) buffer to return the password (second string) in
+ * @return
+ * 0 - success
+ * 1 - name is too long
+ * 2 - password is too long
+ * 3 - corrupt data - length of name & password > len
+ */
+static int decode_name_password(const char *buf, int len, char *name, char *password)
+{
+    int nlen, plen;
+
+    nlen = buf[0];
+    if (nlen >= MAX_BUF || nlen > len) {
+        return 1;
+    }
+    strncpy(name, buf+1, nlen);
+    name[nlen] = 0;
+
+    plen = buf[nlen + 1];
+    if (plen >= MAX_BUF || (plen + nlen) > len) {
+        return 2;
+    }
+    strncpy(password, buf+2+nlen, plen);
+    password[plen] = 0;
+
+    return 0;
+}
+/**
+ * Handles the account login
+ *
+ * @param buf
+ * remaining socket data - from this we need to extract name & password
+ * @param len
+ * length of this buffer
+ * @param ns
+ * pointer to socket structure.
+ */
+void account_login_cmd(char *buf, int len, socket_struct *ns) {
+    char name[MAX_BUF], password[MAX_BUF];
+    int status;
+    SockList sl;
+
+    SockList_Init(&sl);
+
+    status = decode_name_password(buf, len, name, password);
+
+    if (status == 1) {
+        SockList_AddString(&sl, "failure accountlogin Name is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+    if (status == 2) {
+        SockList_AddString(&sl, "failure accountlogin Password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    if (!account_exists(name)) {
+        SockList_AddString(&sl, "failure accountlogin No such account name exists on this server");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    if (account_check_name_password(name, password)) {
+        player *pl;
+        socket_struct *tns;
+
+        /* Checking against init_sockets must be done before
+         * we set ns->account - otherwise we will match
+         * that.  What we are doing here is limiting the account
+         * to only one login.
+         */
+        tns = account_get_logged_in_init_socket(name);
+        /* Other code will clean this up.  We could try to
+         * set the same state this other socket is in, but we
+         * really don't know what that state is, and then
+         * we would have to try to communicate that to the client
+         * so it can activate the right dialogs.  Simpler to
+         * just go to a known state.
+         */
+        if (tns && tns != ns)
+            tns->status = Ns_Dead;
+
+        /* Same note as above applies - it can be simpler in
+         * this case - we could check against the ST_PLAYING
+         * value, but right now we don't have a method to
+         * tell the client to go directly from login to playing.
+         */
+        pl = account_get_logged_in_player(name);
+        if (pl)
+            pl->socket.status = Ns_Dead;
+
+
+        if (ns->account_name) free(ns->account_name);
+        /* We want to store away official name so we do not
+         * have any case sensitivity issues on the files.
+         * because we have already checked password, we
+         * know that account_exists should never return NULL in
+         * this case.
+         */
+        ns->account_name = strdup_local(account_exists(name));
+
+        send_account_players(ns);
+
+    } else {
+        SockList_AddString(&sl, "failure accountlogin Incorrect password for account");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+    }
+}
+
+/**
+ * Handles the account creation  This function shares a fair amount of
+ * the same logic as account_login_cmd() above.
+ *
+ * @param buf
+ * remaining socket data - from this we need to extract name & password
+ * @param len
+ * length of this buffer
+ * @param ns
+ * pointer to socket structure.
+ */
+void account_new_cmd(char *buf, int len, socket_struct *ns) {
+    char name[MAX_BUF], password[MAX_BUF];
+    int status;
+    SockList sl;
+
+    SockList_Init(&sl);
+
+    status = decode_name_password(buf, len, name, password);
+    if (status == 1) {
+        SockList_AddString(&sl, "failure accountlogin Name is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+    if (status == 2) {
+        SockList_AddString(&sl, "failure accountlogin Password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    if (account_exists(name)) {
+        SockList_AddString(&sl, "failure accountnew That account already exists on this server");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    status = account_check_string(name);
+    if (status == 1) {
+        SockList_AddString(&sl, 
+                       "failure accountnew That account name contains invalid characters.");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    if (status == 2) {
+        SockList_AddString(&sl, 
+                           "failure accountnew That account name is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    status = account_check_string(password);
+    if (status == 1) {
+        SockList_AddString(&sl, 
+                       "failure accountnew That password contains invalid characters.");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    if (status == 2) {
+        SockList_AddString(&sl, 
+                           "failure accountnew That password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    /* If we got here, we passed all checks - so now add it */
+    if (ns->account_name) free(ns->account_name);
+    ns->account_name = strdup_local(name);
+    account_add_account(name, password);
+    send_account_players(ns);
+}
+
+/**
+ * Handle accountaddplayer from server (add a character to this
+ * account).
+ * We check to see if character exists, if password is correct,
+ * if character is associated with other account.
+ *
+ * @param buf
+ * socket data to process
+ * @param len
+ * length of socket data.
+ * @param ns
+ * socket of incoming request.
+ */
+void account_add_player_cmd(char *buf, int len, socket_struct *ns) {
+    char name[MAX_BUF], password[MAX_BUF];
+    int status, force;
+    SockList sl;
+    const char *cp;
+
+    SockList_Init(&sl);
+
+    force = buf[0];
+    status = decode_name_password(buf+1, len-1, name, password);
+    if (status == 1) {
+        SockList_AddString(&sl, "failure accountaddplayer Name is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+    if (status == 2) {
+        SockList_AddString(&sl, "failure accountaddplayer Password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    status = verify_player(name, password);
+    if (status) {
+        /* From a security standpoint, telling random folks if it
+         * it as wrong password makes it easier to hack.  However,
+         * it is fairly easy to determine what characters exist on a server
+         * (either by trying to create a new one and see if the name is in
+         * in use, or just looking at the high score file), so this
+         * really does not make things much less secure
+         */
+        if (status == 1)
+            SockList_AddString(&sl, "failure accountaddplayer 0 The character does not exist.");
+        else 
+            SockList_AddString(&sl, "failure accountaddplayer 0 That password is incorrect.");
+
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+    /* Check to see if this character is associated with an account.
+     */
+    cp = account_get_account_for_char(name);
+    if (cp) {
+        if (!strcmp(cp, ns->account_name)) {
+            SockList_AddString(&sl, "failure accountaddplayer 0 That character is already connected to this account.");
+            Send_With_Handling(ns, &sl);
+            SockList_Term(&sl);
+            return;
+        } else {
+            if (!force) {
+                SockList_AddString(&sl, "failure accountaddplayer 1 That character is already connected to a different account.");
+                Send_With_Handling(ns, &sl);
+                SockList_Term(&sl);
+                return;
+            } else if (account_is_logged_in(cp)) {
+                /* We could be clever and try to handle this case, but it is
+                 * trickier.  If the character is logged in, it has to
+                 * be logged out.  And the socket holds some data which
+                 * needs to be cleaned up.  Since it should be fairly
+                 * uncommon that users need to do this, just disallowing
+                 * it makes things a lot simpler.
+                 */
+                SockList_AddString(&sl, "failure accountaddplayer 0 That character is already connected to a different account which is currently logged in.");
+                Send_With_Handling(ns, &sl);
+                SockList_Term(&sl);
+                return;
+            }
+        }
+    }
+    /* If we have gotten this far, the name/password provided is OK,
+     * and the character is not associated with a different account (or
+     * force is true).  Now try to add the character to this account.
+     */
+    status = account_add_player_to_account(ns->account_name, name);
+
+    /* This should never happen, but check for it just in case -
+     * if we were able to log in, the account should exist.  but
+     * if this fails, need to give the user some clue.
+     */
+    if (status==1) {
+        SockList_AddString(&sl, "failure accountaddplayer 0 Could not find your account.");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    } else if (status == 2) {
+        SockList_AddString(&sl, "failure accountaddplayer 0 You have reached the maximum number of characters allowed per account.");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    /* If cp is set, then this character used to belong to a different
+     * account.  Remove it now.
+     */
+    if (cp) {
+        Account_Char *chars;
+
+        account_remove_player_from_account(cp, name);
+        chars = account_char_load(cp);
+        chars=account_char_remove(chars, name);
+        account_char_save(cp, chars);
+        account_char_free(chars);
+    }
+
+    send_account_players(ns);
+}
+
+/**
+ * We have received an accountplay command.
+ * try to log in and play the character.
+ */
+void account_play_cmd(char *buf, int len, socket_struct *ns)
+{
+    char **chars;
+    int i;
+    SockList sl;
+    player *pl;
+
+    SockList_Init(&sl);
+
+    if (!buf[0]) {
+        SockList_AddString(&sl, "failure accountplay Malformed character name");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    chars = account_get_players_for_account(ns->account_name);
+
+    for (i=0; i<MAX_CHARACTERS_PER_ACCOUNT; i++) {
+        if (!chars[i] || !strcmp(chars[i], buf)) break;
+    }
+    /* Make sure a client is not trying to spoof us here */
+    if (i == MAX_CHARACTERS_PER_ACCOUNT || !chars[i]) {
+        SockList_AddPrintf(&sl, 
+                           "failure accountplay Character %s is not associated with account %s",
+                           buf, ns->account_name);
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    /* from a protocol standpoint, accountplay can be used
+     * before there is a player structure (first login) or after
+     * (character has logged in and is changing characters).
+     * Checkthe sockets for that second case - if so,
+     * we don't need to make a new player object, etc.
+     */
+    for (pl=first_player; pl; pl=pl->next)
+        if (&pl->socket == ns) break;
+
+    /* Some of this logic is from add_player()
+     * we just don't use add_player() as it does some other work
+     * we don't really want to do.
+     */
+    if (!pl) {
+        pl = get_player(NULL);
+        memcpy(&pl->socket, ns, sizeof(socket_struct));
+        ns->faces_sent = NULL;
+        SockList_ResetRead(&pl->socket.inbuf);
+    } else {
+        pl->state = ST_PLAYING;
+    }
+
+    pl->ob->name = add_string(buf);
+    check_login(pl->ob, 0);
+
+    SockList_AddString(&sl, "addme_success");
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
+
+    socket_info.nconns--;
+    ns->status = Ns_Avail;
+
 }

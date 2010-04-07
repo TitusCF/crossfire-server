@@ -67,19 +67,6 @@
 #include <sproto.h>
 #endif
 
-/**
- * The maximum characters per account is really driven by the size of
- * the buffer we use to read in the data.  Take 150 characters off for
- * the account name, password, overhead, and other wiggle room and
- * find a maximum.  From my quick calculations, this amounts to
- * 18 characters/account.  I think that is sufficient - moving to a
- * HUGE_BUF would allow 82.
- * The code could be more clever and look at the length of each
- * character name and total it up, but having the same limit for everyone
- * is better IMO.
- */
-#define MAX_CHARACTERS_PER_ACCOUNT (VERY_BIG_BUF - 150) / (MAX_NAME+1)
-
 /* Number of fields in the accounts file.  These are colon seperated */
 #define NUM_ACCOUNT_FIELDS 6
 
@@ -101,6 +88,7 @@ typedef struct account_struct {
     int	  num_characters;           /** Number of characters on this account */
     char  *character_names[MAX_CHARACTERS_PER_ACCOUNT+1];
                                     /** character names associated with this account */
+                                    /** +1 added to allow for NULL termination */
     time_t  created;                /** When character was created */
     struct account_struct *next;    /** Next in list */
 } account_struct;
@@ -177,49 +165,60 @@ void account_load_entries(void)
 
         ac->next = NULL;
 
-        /* count up how many semicolons - this is the character
-         * seperator.  We start at one, because these are seperators,
-         * so there will be one more name than seperators.
-         */
-        ac->num_characters=1;
-        for (cp = tmp[3]; *cp != '\0'; cp++) {
-            if (*cp == ';') ac->num_characters++;
-        }
+        /* If this is a blank field, nothing to do */
+        if (tmp[3][0] == 0) {
+            ac->num_characters = 0;
+            for (i=0; i <= MAX_CHARACTERS_PER_ACCOUNT; i++)
+                ac->character_names[i] = NULL;
+        } else {
+            /* count up how many semicolons - this is the character
+             * seperator.  We start at one, because these are seperators,
+             * so there will be one more name than seperators.
+             */
+            ac->num_characters=1;
+            for (cp = tmp[3]; *cp != '\0'; cp++) {
+                if (*cp == ';') ac->num_characters++;
+            }
 
-        result = split_string(tmp[3], ac->character_names, ac->num_characters, ';');
-        /* This should never happen, but check for it.  Even if we do get it, not necessarily
-         * a critical error - this is why we use calloc above.
-         */
-        if (result != ac->num_characters) {
-            LOG(llevError, "account_load_entries: split_string found different number of characters: %d != %d\n",
-                result, ac->num_characters);
-        }
+            result = split_string(tmp[3], ac->character_names, ac->num_characters, ';');
+            /* This should never happen, but check for it.  Even if we do get it, not necessarily
+             * a critical error - this is why we use calloc above.
+             */
+            if (result != ac->num_characters) {
+                LOG(llevError, "account_load_entries: split_string found different number of characters: %d != %d\n",
+                    result, ac->num_characters);
+            }
 
-        if (ac->num_characters > MAX_CHARACTERS_PER_ACCOUNT) {
-            LOG(llevError,"account_load_entries: Too many characters set for account %s - truncating to %d\n",
-                ac->name, MAX_CHARACTERS_PER_ACCOUNT);
-                ac->num_characters = MAX_CHARACTERS_PER_ACCOUNT;
-        }
+            if (ac->num_characters > MAX_CHARACTERS_PER_ACCOUNT) {
+                LOG(llevError,"account_load_entries: Too many characters set for account %s - truncating to %d\n",
+                    ac->name, MAX_CHARACTERS_PER_ACCOUNT);
+                    ac->num_characters = MAX_CHARACTERS_PER_ACCOUNT;
+            }
 
-        /* The string data that the names are stored in is currently temporary data
-         * that will go away, so we need to allocate some permanent data
-         * now.  Also, if we have a NULL value, means we got the error above -
-         * NULL values would only be at the end of the split, so just reduce
-         * the character count.
-         */
-        for (i=0; i<ac->num_characters; i++) {
-            if (ac->character_names[i] != NULL) {
-                ac->character_names[i] = strdup_local(ac->character_names[i]);
-            } else {
-                ac->num_characters = i;
-                break;
+            /* The string data that the names are stored in is currently temporary data
+             * that will go away, so we need to allocate some permanent data
+             * now.  Also, if we have a NULL value, means we got the error above -
+             * NULL values would only be at the end of the split, so just reduce
+             * the character count.
+             */
+            for (i=0; i<ac->num_characters; i++) {
+                if (ac->character_names[i] != NULL) {
+                    ac->character_names[i] = strdup_local(ac->character_names[i]);
+                } else {
+                    ac->num_characters = i;
+                    break;
+                }
+            }
+            /* NULL terminate - in that way, we can just return ac->character_names to
+             * callers that want to know all characters associated with an account,
+             * and it can just iterate until it gets the NULL terminator.
+             * For safety, just set all remaining values to NULL
+             */
+            while (i <= MAX_CHARACTERS_PER_ACCOUNT) {
+                ac->character_names[i] = NULL;
+                i++;
             }
         }
-        /* NULL terminate - in that way, we can just return ac->character_names to
-         * callers that want to know all characters associated with an account,
-         * and it can just iterate until it gets the NULL terminator.
-         */
-        ac->character_names[ac->num_characters] = NULL;
 
         /* We tack on to the end of the list - in this way,
          * the order of the file remains the same.
@@ -305,19 +304,21 @@ void accounts_save(void)
 
 /**
  * Checks the existing accounts, and see if this account exists.
+ * This can also be used to get the official name for the account
+ * (eg, as user first entered, so Mark instead of mARk)
  * @param account_name
  * account name we are looking for.
  * @return
- * returns 1 on match, 0 on no match.
+ * returns official name on match, NULL on no match.
  */
-int account_exists(char *account_name)
+const char *account_exists(char *account_name)
 {
     account_struct *ac;
 
     for (ac=accounts; ac; ac=ac->next) {
-        if (!strcasecmp(ac->name, account_name)) return 1;
+        if (!strcasecmp(ac->name, account_name)) return ac->name;
     }
-    return 0;
+    return NULL;
 }
 
 /**
@@ -429,7 +430,7 @@ int account_add_account(char *account_name, char *account_password)
     ac->created = ac->last_login;
     ac->num_characters = 0;
 
-    memset(ac->character_names, MAX_CHARACTERS_PER_ACCOUNT+1, sizeof(char*));
+    memset(ac->character_names, 0, MAX_CHARACTERS_PER_ACCOUNT+1 * sizeof(char*));
 
     /* We put this at the top of the list.  This means recent accounts will be at
      * the top of the file, which is likely a good thing.
@@ -499,7 +500,7 @@ int account_add_player_to_account(char *account_name, char *player_name)
  * player of this name not on account.
  */
 
-int account_remove_player_from_account(char *account_name, char *player_name)
+int account_remove_player_from_account(const char *account_name, const char *player_name)
 {
     account_struct *ac;
     int i, match=0;
@@ -552,3 +553,89 @@ char **account_get_players_for_account(char *account_name)
     }
     return NULL;
 }
+
+/**
+ * This looks at all the accounts and sees if charname is associated
+ * with any of them. 
+ *
+ * @params charname
+ * character name to check for.
+ * @return
+ * Account name the character is associated with, NULL if none.
+ */
+const char *account_get_account_for_char(const char *charname)
+{
+    account_struct *ac;
+    int i;
+
+    for (ac=accounts; ac; ac=ac->next) {
+        for (i=0; i<ac->num_characters; i++) {
+            if (!strcasecmp(ac->character_names[i], charname)) {
+                return ac->name;
+            }
+        }
+    }
+    return NULL;
+
+}
+
+/**
+ * This checks to see if the account is logged in with a player attached
+ * If so, it returns the player object.
+ *
+ * @param name
+ * account name to check against.
+ * @return
+ * player structure of matching account, or NULL if no match.
+ */
+player *account_get_logged_in_player(const char *name)
+{
+    player *pl;
+
+    for (pl = first_player; pl; pl=pl->next) {
+        if (pl->socket.account_name &&
+            !strcasecmp(pl->socket.account_name, name)) return pl;
+    }
+    return NULL;
+}
+
+/**
+ * This is like the above routine, but checks the init_sockets
+ * (account in process of logging in).
+ *
+ * @param name
+ * account name to check against
+ * @return
+ * index value into init_sockets[] of matching socket, or -1 if
+ * no match.
+ */
+socket_struct *account_get_logged_in_init_socket(const char *name)
+{
+    int i;
+
+    for (i=0; i < socket_info.allocated_sockets; i++) {
+        if (init_sockets[i].account_name &&
+            !strcasecmp(init_sockets[i].account_name, name)) return(&init_sockets[i]);
+    }
+    return NULL;
+}
+
+/**
+ * This checkes if an account is logged in.  It is mainly
+ * used because some operations should not be done on logged
+ * in accounts (keeping everything synchronized is harder.)
+ *
+ * @param name
+ * name to look for.
+ * @return
+ * 0 if not logged in, 1 if logged in.
+ */
+int account_is_logged_in(const char *name)
+{
+    if (account_get_logged_in_player(name)) return 1;
+
+    if (account_get_logged_in_init_socket(name)!=NULL) return 1;
+
+    return 0;
+}
+

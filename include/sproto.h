@@ -1,13 +1,17 @@
 /* account.c */
 void account_load_entries(void);
 void accounts_save(void);
-int account_exists(char *account_name);
+const char *account_exists(char *account_name);
 int account_check_name_password(char *account_name, char *account_password);
 int account_check_string(const char *str);
 int account_add_account(char *account_name, char *account_password);
 int account_add_player_to_account(char *account_name, char *player_name);
-int account_remove_player_from_account(char *account_name, char *player_name);
+int account_remove_player_from_account(const char *account_name, const char *player_name);
 char **account_get_players_for_account(char *account_name);
+const char *account_get_account_for_char(const char *charname);
+int account_is_logged_in(const char *name);
+socket_struct *account_get_logged_in_init_socket(const char *name);
+player *account_get_logged_in_player(const char *name);
 /* account_char.c */
 Account_Char *account_char_load(const char *account_name);
 void account_char_save(const char *account, Account_Char *chars);
@@ -321,7 +325,7 @@ int verify_player(const char *name, char *password);
 int check_name(player *me, const char *name);
 void destroy_object(object *op);
 int save_player(object *op, int flag);
-void check_login(object *op);
+void check_login(object *op, int check_pass);
 /* monster.c */
 object *monster_check_enemy(object *npc, rv_vector *rv);
 object *monster_find_nearest_living_creature(object *npc);
@@ -376,6 +380,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob);
 int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg);
 int pets_should_arena_attack(object *pet, object *owner, object *target);
 /* player.c */
+player *get_player(player *p);
 player *find_player(const char *plname);
 player *find_player_partial_name(const char *plname);
 player* find_player_socket(const socket_struct *ns);
