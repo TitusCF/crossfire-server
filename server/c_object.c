@@ -1703,7 +1703,7 @@ static void display_new_pickup(const object *op) {
 
     esrv_send_pickup(op->contr);
 
-    if (!(i&PU_NEWMODE))
+    if (!(i&PU_NEWMODE) || !(i&PU_DEBUG))
         return;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,

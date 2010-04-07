@@ -14,7 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
-Fix crash potential when changing class.
+Don't send pickup information if not explicitely asked for.
+ server/c_object.c
+Nicolas Weeger 2010-04-07
+
+Fix potential crash when changing class.
  plugins/cflogger/cflogger.c
 Nicolas Weeger 2010-04-07
 
