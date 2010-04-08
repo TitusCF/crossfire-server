@@ -261,8 +261,16 @@ int save_player(object *op, int flag) {
      * for saving.
      */
     pl->socket.account_chars = account_char_add(pl->socket.account_chars, pl);
-    if (pl->socket.account_name)
+    if (pl->socket.account_name) {
         account_char_save(pl->socket.account_name, pl->socket.account_chars);
+        /* Add this character to the account.  This really only comes up
+         * for new characters, at which time we want to wait until save -
+         * otherwise there is a good chance that character will be 
+         * terminated.
+         */
+        if (!account_get_account_for_char(pl->ob->name)) 
+            account_add_player_to_account(pl->socket.account_name, pl->ob->name);
+    }
 
 
     snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name, op->name);

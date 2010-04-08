@@ -386,7 +386,7 @@ player *get_player(player *p) {
  * @param op
  * player to put on map.
  */
-static void set_first_map(object *op) {
+void set_first_map(object *op) {
     strcpy(op->contr->maplevel, first_map_path);
     op->x = -1;
     op->y = -1;
@@ -400,8 +400,14 @@ static void set_first_map(object *op) {
  *
  * @param ns
  * connection.
+ * @param new_char
+ * If set, go right to new character creation - used in case
+ * of new account code.  We don't display motd and other
+ * bits in this case either.
+ * @return player
+ * returns pointer to newly created player structure.
  */
-void add_player(socket_struct *ns) {
+player *add_player(socket_struct *ns, int new_char) {
     player *p;
 
     p = get_player(NULL);
@@ -424,10 +430,16 @@ void add_player(socket_struct *ns) {
 
     CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
     add_friendly_object(p->ob);
-    send_rules(p->ob);
-    send_news(p->ob);
-    display_motd(p->ob);
-    get_name(p->ob);
+    if (new_char) {
+        roll_again(p->ob);
+        p->state = ST_ROLL_STAT;
+    } else {
+        send_rules(p->ob);
+        send_news(p->ob);
+        display_motd(p->ob);
+        get_name(p->ob);
+    }
+    return p;
 }
 
 /**
@@ -1034,7 +1046,7 @@ void roll_stats(object *op) {
  */
 void roll_again(object *op) {
     esrv_new_player(op->contr, 0);
-    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "[y] to roll new stats [n] to use stats\n[1-7] [1-7] to swap stats.\nRoll again (y/n/1-7)?  ");
+    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "<y> to roll new stats <n> to use stats\n<1-7> <1-7> to swap stats.\nRoll again (y/n/1-7)?  ");
 }
 
 /**

@@ -405,10 +405,20 @@ C->S: accountaddplayer <force> <char name> <char password>
    parameter - if 0, the command is not retriable - if set to 1, then this account
    may succeed if force is set.
 
-C->S: newplayer
+C->S: createplayer <name><password>
    The player wants to make a new player - this is done on the client -
    this basically tells the server to send the client information regarding
    making new characters (races, classes, etc).
+
+   Loginmethod 1 supports following:
+   <name>: Length prefixed string - desired character name.
+   <password>: Length prefixed string - password
+
+   createplayer can return failure in case of invalid name, name already in use,
+   etc.
+
+   Note:  Expected that this command will expand with new character creation
+   method.
 
 
 C->S: addme

@@ -135,6 +135,7 @@ static const struct client_cmd_mapping client_commands[] = {
     { "accountnew",         account_new_cmd },
     { "accountaddplayer",   account_add_player_cmd },
     { "accountplay",        account_play_cmd },
+    { "createplayer",       create_player_cmd },
     { NULL,                  NULL }                       /* terminator (I, II & III)*/
 };
 

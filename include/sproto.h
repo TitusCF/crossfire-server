@@ -380,6 +380,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob);
 int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg);
 int pets_should_arena_attack(object *pet, object *owner, object *target);
 /* player.c */
+void set_first_map(object *op);
 player *get_player(player *p);
 player *find_player(const char *plname);
 player *find_player_partial_name(const char *plname);
@@ -388,7 +389,7 @@ void display_motd(const object *op);
 void send_rules(const object *op);
 void send_news(const object *op);
 int playername_ok(const char *cp);
-void add_player(socket_struct *ns);
+player *add_player(socket_struct *ns, int new_char);
 object *get_nearest_player(object *mon);
 int path_to_player(object *mon, object *pl, unsigned mindiff);
 void give_initial_items(object *pl, treasurelist *items);

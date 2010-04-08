@@ -14,6 +14,25 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add some minimal new character support.  Work in progress, but added code
+that at least hands off the username/password to server.
+---
+doc/Developers/protocol: Add some docs on createplayer protocol command.
+include/sockproto.h, include/sproto.h: Update with new functions.
+server/login.c: Add code to update account for new characters.
+server/player.c: Make set_first_map() non static.  Change add_player()
+  to take second argument and return the newly created player object.
+  Fix roll_again() output to use <> instead of [], since later are
+  markup commands.
+socket/loop.c: Add callback for createplayer protocol command.
+socket/request.c: Add create_player_cmd().  Update add_player to take
+   second argument.
+types/savebed/savebed.c: Add warning message and prevent player from
+   saving if they have 0 exp and the character won't be saved.
+   Otherwise, it seems to work but does nothing.
+---
+MSW 2010-04-07
+
 Keep rough monster experience for maps. Dump region experience after parsing.
  utils/cre/CREMapInformation.{h,cpp} CREMapInformationManager.{cpp,h}
 Nicolas Weeger 2010-04-07

@@ -62,6 +62,17 @@ static method_ret savebed_type_apply(ob_methods *context, object *op, object *ap
  * player who is applying the bed.
  */
 static void apply_savebed(object *pl) {
+
+    /* What is otherwise happening is a brand new character goes to save, it seems to work,
+     * but the character isn't actually saved as save_player() won't save characters
+     * with 0 exp. Warn the player
+     */
+    if (!pl->stats.exp) {
+        draw_ext_info_format(NDI_UNIQUE | NDI_RED, 5, pl, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+                             "You need to earn some experience before you can save the character", NULL);
+        return;
+    }
+
     /* Lauwenmark : Here we handle the LOGOUT global event */
     execute_global_event(EVENT_LOGOUT, pl->contr, pl->contr->socket.host);
 

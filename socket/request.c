@@ -356,7 +356,7 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
         /* if there is already a player for this socket (add_me was already called),
          * just ignore, else weird issues. */
 
-        add_player(ns);
+        add_player(ns, 0);
         /* Basically, the add_player copies the socket structure into
          * the player structure, so this one (which is from init_sockets)
          * is not needed anymore. The write below should still work,
@@ -2487,4 +2487,92 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
     socket_info.nconns--;
     ns->status = Ns_Avail;
 
+}
+
+/**
+ * We have received an accountplay command.
+ * try to log in and play the character.
+ */
+void create_player_cmd(char *buf, int len, socket_struct *ns)
+{
+    char name[MAX_BUF], password[MAX_BUF];
+    int status;
+    SockList sl;
+    player *pl;
+
+    SockList_Init(&sl);
+
+    status = decode_name_password(buf, len, name, password);
+    if (status == 1) {
+        SockList_AddString(&sl, "failure createplayer Name is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+    if (status == 2 || strlen(password)<=1 || strlen(password) > 17) {
+        SockList_AddString(&sl, "failure createplayer Password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+    /* We just can't call check_name(), since that uses draw_info() to
+     * report status.  We are also more permissive on names, so we use
+     * account_check_string() - if that is safe for account, also safe
+     * for player names.
+     */
+    if (account_check_string(name)) {
+        SockList_AddString(&sl, "failure createplayer The name contains illegal characters");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    /* 1 means no such player, 0 is correct name/password (which in this
+     * case, is an error), and 2 is incorrect password. Only way we
+     * go onward is if there is no such player.
+     */
+    if (verify_player(name, password) != 1) {
+        SockList_AddString(&sl, "failure createplayer That name is already in use");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    /* from a protocol standpoint, accountplay can be used
+     * before there is a player structure (first login) or after
+     * (character has logged in and is changing characters).
+     * Checkthe sockets for that second case - if so,
+     * we don't need to make a new player object, etc.
+     */
+    for (pl=first_player; pl; pl=pl->next)
+        if (&pl->socket == ns) break;
+
+    /* Some of this logic is from add_player()
+     * we just don't use add_player() as it does some other work
+     * we don't really want to do.
+     */
+    if (!pl) {
+        pl = add_player(ns, 1);
+        SockList_ResetRead(&pl->socket.inbuf);
+    } else {
+        roll_again(pl->ob);
+        pl->state = ST_ROLL_STAT;
+        set_first_map(pl->ob);
+    }
+
+    /* add_player does a lot of the work, but there are a few
+     * things we need to update, like starting name and
+     * password.
+     */
+    FREE_AND_COPY(pl->ob->name, name);
+    FREE_AND_COPY(pl->ob->name_pl, name);
+    pl->name_changed = 1;
+    strcpy(pl->password, crypt_string(password, NULL));
+
+    SockList_AddString(&sl, "addme_success");
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
+
+    socket_info.nconns--;
+    ns->status = Ns_Avail;
 }
