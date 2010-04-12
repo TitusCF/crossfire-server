@@ -2509,6 +2509,17 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         SockList_Term(&sl);
         return;
     }
+    /* This is a fairly ugly solution - we're truncating the password.
+     * however, the password information for characters is really
+     * a legacy issue - when every character is associated with
+     * an account, legacy login (character name/password) will get
+     * removed, at which point the only use for password might be
+     * to move characters from one account to another, but not sure
+     * if that is something we want to allow.
+     */
+    if (strlen(password)>17) 
+        password[16] = 0;
+
     if (status == 2 || strlen(password)<=1 || strlen(password) > 17) {
         SockList_AddString(&sl, "failure createplayer Password is too long");
         Send_With_Handling(ns, &sl);
