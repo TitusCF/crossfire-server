@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+CRE: display map name, and exits to and from.
+Nicolas Weeger 2010-04-14
+
 CRE improvements. Keep region information for maps.
 Display map list by region, with map experience.
 Nicolas Weeger 2010-04-14

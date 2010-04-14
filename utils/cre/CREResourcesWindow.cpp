@@ -21,6 +21,7 @@
 #include "CRETreeItemArtifact.h"
 #include "CRETreeItemFormulae.h"
 #include "CRETreeItemFace.h"
+#include "CRETreeItemMap.h"
 
 #include "CREAnimationPanel.h"
 #include "CREArchetypePanel.h"
@@ -28,6 +29,7 @@
 #include "CREArtifactPanel.h"
 #include "CREFormulaePanel.h"
 #include "CREFacePanel.h"
+#include "CREMapPanel.h"
 
 #include "CREWrapperArchetype.h"
 #include "CREWrapperArtifact.h"
@@ -366,6 +368,7 @@ void CREResourcesWindow::fillMaps()
         foreach(CREMapInformation* map, maps)
         {
             leaf = CREUtils::mapNode(map, regionNode);
+            leaf->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemMap(map)));
             if (full)
                 leaf->setText(1, tr("%1").arg(QString::number(map->experience()), 20));
         }
@@ -373,6 +376,8 @@ void CREResourcesWindow::fillMaps()
 
     if (full)
         myTree->resizeColumnToContents(1);
+
+    addPanel("Map", new CREMapPanel());
 }
 
 void CREResourcesWindow::addPanel(QString name, QWidget* panel)
