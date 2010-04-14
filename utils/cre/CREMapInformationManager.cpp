@@ -20,17 +20,6 @@ void CREMapInformationManager::start()
     if (myWorker.isRunning())
         return;
 
-    /** @todo clear memory */
-    myInformation.clear();
-    myArchetypeUse.clear();
-
-    loadCache();
-
-    myCancelled = false;
-    myCurrentMap = 0;
-    myToProcess.clear();
-    myToProcess.append(QString(first_map_path));
-
     myWorker = QtConcurrent::run(this, &CREMapInformationManager::browseMaps);
 }
 
@@ -209,6 +198,17 @@ void CREMapInformationManager::process(const QString& path2)
 
 void CREMapInformationManager::browseMaps()
 {
+    /** @todo clear memory */
+    myInformation.clear();
+    myArchetypeUse.clear();
+
+    loadCache();
+
+    myCancelled = false;
+    myCurrentMap = 0;
+    myToProcess.clear();
+    myToProcess.append(QString(first_map_path));
+
     while (myCurrentMap < myToProcess.size())
     {
         process(myToProcess[myCurrentMap]);
