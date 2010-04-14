@@ -32,6 +32,8 @@ class CREUtils
         static QTreeWidgetItem* animationNode(QTreeWidgetItem* parent);
         static QTreeWidgetItem* animationNode(const Animations* anim, QTreeWidgetItem* parent);
 
+        static QTreeWidgetItem* regionNode(const QString& name, int count, QTreeWidgetItem *parent);
+        static QTreeWidgetItem* mapNode(QTreeWidgetItem *parent);
         static QTreeWidgetItem* mapNode(const CREMapInformation* map, QTreeWidgetItem *parent);
 };
 

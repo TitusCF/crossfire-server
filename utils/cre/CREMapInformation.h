@@ -35,6 +35,9 @@ class CREMapInformation : public QObject
         qint64 experience() const;
         void setExperience(qint64 experience);
 
+        const QString& region() const;
+        void setRegion(const QString& region);
+
     protected:
         QString myPath;
         QString myName;
@@ -43,6 +46,7 @@ class CREMapInformation : public QObject
         QStringList myExitsTo;
         QStringList myAccessedFrom;
         qint64 myExperience;
+        QString myRegion;
 };
 
 #endif // CLASS_CRE_MAP_INFORMATION_H

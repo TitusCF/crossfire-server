@@ -169,6 +169,16 @@ QTreeWidgetItem* CREUtils::animationNode(const Animations* anim, QTreeWidgetItem
     return item;
 }
 
+QTreeWidgetItem* CREUtils::regionNode(const QString& name, int count, QTreeWidgetItem *parent)
+{
+    return new QTreeWidgetItem(parent, QStringList(QObject::tr("%1 - %2 maps").arg(name).arg(count)));
+}
+
+QTreeWidgetItem* CREUtils::mapNode(QTreeWidgetItem *parent)
+{
+  return new QTreeWidgetItem(parent, QStringList(QTreeWidget::tr("Maps")));
+}
+
 QTreeWidgetItem* CREUtils::mapNode(const CREMapInformation* map, QTreeWidgetItem *parent)
 {
     return new QTreeWidgetItem(parent, QStringList(QObject::tr("%1 [%2]").arg(map->name(), map->path())));

@@ -57,6 +57,9 @@ void CREMainWindow::createActions()
     myOpenFaces = new QAction(tr("Faces"), this);
     connect(myOpenFaces, SIGNAL(triggered()), this, SLOT(onOpenFaces()));
 
+    myOpenMaps = new QAction(tr("Maps"), this);
+    connect(myOpenMaps, SIGNAL(triggered()), this, SLOT(onOpenMaps()));
+
     mySaveFormulae = new QAction(tr("Formulae"), this);
     connect(mySaveFormulae, SIGNAL(triggered()), this, SLOT(onSaveFormulae()));
 }
@@ -71,6 +74,7 @@ void CREMainWindow::createMenus()
     myOpenMenu->addAction(myOpenAnimations);
     myOpenMenu->addAction(myOpenFormulae);
     myOpenMenu->addAction(myOpenFaces);
+    myOpenMenu->addAction(myOpenMaps);
 
     mySaveMenu = menuBar()->addMenu(tr("&Save"));
     mySaveMenu->addAction(mySaveFormulae);
@@ -113,6 +117,11 @@ void CREMainWindow::onOpenFormulae()
 void CREMainWindow::onOpenFaces()
 {
     doResourceWindow(DisplayFaces);
+}
+
+void CREMainWindow::onOpenMaps()
+{
+    doResourceWindow(DisplayMaps);
 }
 
 void CREMainWindow::onOpenResources()

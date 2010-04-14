@@ -35,7 +35,8 @@ CREPixmap.cpp \
  CREReportDialog.cpp \
  CREReportDisplay.cpp \
  CREFilterDefinition.cpp \
- CREFilterDefinitionManager.cpp
+ CREFilterDefinitionManager.cpp \
+ CREReportDefinition.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -68,7 +69,8 @@ CREPixmap.h \
  CREReportDialog.h \
  CREReportDisplay.h \
  CREFilterDefinition.h \
- CREFilterDefinitionManager.h
+ CREFilterDefinitionManager.h \
+ CREReportDefinition.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

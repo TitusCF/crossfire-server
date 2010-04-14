@@ -40,6 +40,7 @@ class CREMainWindow : public QMainWindow
         QAction* myOpenAnimations;
         QAction* myOpenFormulae;
         QAction* myOpenFaces;
+        QAction* myOpenMaps;
         QAction* myOpenResources;
         QAction* mySaveFormulae;
         QLabel* myMapBrowseStatus;
@@ -56,6 +57,7 @@ class CREMainWindow : public QMainWindow
         void onOpenAnimations();
         void onOpenFormulae();
         void onOpenFaces();
+        void onOpenMaps();
         void onOpenResources();
         void onSaveFormulae();
         void browsingMap(const QString& path);

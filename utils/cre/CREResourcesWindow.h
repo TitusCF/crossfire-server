@@ -9,7 +9,7 @@
 
 class CREMapInformationManager;
 
-enum DisplayMode { DisplayAll = 255, DisplayArchetypes = 1, DisplayAnimations = 2, DisplayTreasures = 4, DisplayFormulae = 8, DisplayArtifacts = 16, DisplayFaces = 32 };
+enum DisplayMode { DisplayAll = 255, DisplayArchetypes = 1, DisplayAnimations = 2, DisplayTreasures = 4, DisplayFormulae = 8, DisplayArtifacts = 16, DisplayFaces = 32, DisplayMaps = 64 };
 
 class CREResourcesWindow : public QWidget
 {
@@ -45,6 +45,7 @@ class CREResourcesWindow : public QWidget
         void fillFormulae();
         void fillArtifacts();
         void fillFaces();
+        void fillMaps();
         void addPanel(QString name, QWidget* panel);
 
     protected slots:

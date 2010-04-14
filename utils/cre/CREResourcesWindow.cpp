@@ -33,6 +33,8 @@
 #include "CREWrapperArtifact.h"
 #include "CREWrapperFormulae.h"
 
+#include "CREMapInformationManager.h"
+
 extern "C" {
 #include "global.h"
 #include "recipe.h"
@@ -130,11 +132,18 @@ void CREResourcesWindow::fillData()
         title = tr("Faces");
         fillFaces();
     }
+    if (myDisplay & DisplayMaps)
+    {
+        title = tr("Maps");
+        fillMaps();
+    }
 
     if (myDisplay == DisplayAll)
         title = tr("All resources");
 
     setWindowTitle(title);
+
+    myTree->resizeColumnToContents(0);
 
     QApplication::restoreOverrideCursor();
 }
@@ -330,6 +339,40 @@ void CREResourcesWindow::fillFaces()
     }
 
     addPanel("Face", new CREFacePanel());
+}
+
+void CREResourcesWindow::fillMaps()
+{
+    bool full = false;
+    if (myDisplay == DisplayMaps)
+    {
+        QStringList headers;
+        headers << tr("Maps") << tr("Experience");
+        myTree->setHeaderLabels(headers);
+        myTree->sortByColumn(0, Qt::AscendingOrder);
+        full = true;
+    }
+
+    QTreeWidgetItem* regionNode, *root, *leaf;
+
+    root = CREUtils::mapNode(NULL);
+    myTree->addTopLevelItem(root);
+
+    region* reg;
+    for (reg = first_region; reg; reg = reg->next)
+    {
+        QList<CREMapInformation*> maps = myStore->getMapsForRegion(reg->name);
+        regionNode = CREUtils::regionNode(reg->name, maps.size(), root);
+        foreach(CREMapInformation* map, maps)
+        {
+            leaf = CREUtils::mapNode(map, regionNode);
+            if (full)
+                leaf->setText(1, tr("%1").arg(QString::number(map->experience()), 20));
+        }
+    }
+
+    if (full)
+        myTree->resizeColumnToContents(1);
 }
 
 void CREResourcesWindow::addPanel(QString name, QWidget* panel)

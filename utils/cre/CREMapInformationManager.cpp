@@ -1,5 +1,6 @@
 #include "CREMapInformationManager.h"
 #include "CRESettings.h"
+#include "CREArchetypePanel.h"
 
 extern "C" {
 #include "global.h"
@@ -73,9 +74,32 @@ void CREMapInformationManager::process(const QString& path2)
 //    qDebug() << "processing" << path << information->mapTime() << info.lastModified();
     information->setName(m->name);
     information->setMapTime(info.lastModified());
+    if (m->region != NULL)
+        information->setRegion(m->region->name);
+    else
+        information->setRegion("wilderness"); /** @todo get from config */
 
     char exit_path[500];
     quint64 exp = 0;
+    struct stat stats;
+
+    for (int x = 0; x < 4; x++)
+        if (m->tile_path[x] != NULL) {
+            path_combine_and_normalize(m->path, m->tile_path[x], exit_path, sizeof(exit_path));
+            create_pathname(exit_path, tmppath, MAX_BUF);
+            if (stat(tmppath, &stats)) {
+                printf("  map %s doesn't exist in map %s, for tile %d.\n", exit_path, m->path, x);
+            }
+
+            QString exit = exit_path;
+            if (!myToProcess.contains(exit))
+                myToProcess.append(exit);
+
+            CREMapInformation* other = getOrCreateMapInformation(path);
+            Q_ASSERT(other);
+            other->addAccessedFrom(path);
+            information->addExitTo(exit_path);
+        }
 
     for (int x = MAP_WIDTH(m)-1; x >= 0; x--)
     {
@@ -131,7 +155,7 @@ void CREMapInformationManager::process(const QString& path2)
                             create_pathname(exit_path, tmppath, MAX_BUF);
                             struct stat stats;
                             if (stat(tmppath, &stats)) {
-                                //printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, info->path, item->x, item->y);
+                                printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, m->path, item->x, item->y);
                             } else {
                                 QString exit = exit_path;
                                 if (!myToProcess.contains(exit))
@@ -203,6 +227,8 @@ void CREMapInformationManager::browseMaps()
     {
         qDebug() << region << myExperience[region];
     }
+
+    qDebug() << myToProcess.size() << "maps processed";
 }
 
 void CREMapInformationManager::cancel()
@@ -270,6 +296,10 @@ void CREMapInformationManager::loadCache()
         {
             map->setExperience(reader.readElementText().toLongLong());
         }
+        if (reader.isStartElement() && reader.name() == "region")
+        {
+            map->setRegion(reader.readElementText());
+        }
         if (reader.isStartElement() && reader.name() == "arch")
         {
             QString arch = reader.readElementText();
@@ -320,6 +350,7 @@ void CREMapInformationManager::storeCache()
         writer.writeTextElement("name", map->name());
         writer.writeTextElement("lastModified", map->mapTime().toString(Qt::ISODate));
         writer.writeTextElement("experience", QString::number(map->experience()));
+        writer.writeTextElement("region", map->region());
         foreach(QString arch, map->archetypes())
         {
             writer.writeTextElement("arch", arch);
@@ -355,4 +386,17 @@ void CREMapInformationManager::addArchetypeUse(const QString& name, CREMapInform
     QMutexLocker lock(&myLock);
     if (!myArchetypeUse.values(name).contains(map))
         myArchetypeUse.insert(name, map);
+}
+
+QList<CREMapInformation*> CREMapInformationManager::getMapsForRegion(const QString& region)
+{
+    QList<CREMapInformation*> list;
+
+    foreach(CREMapInformation* map, myInformation.values())
+    {
+        if (map->region() == region)
+            list.append(map);
+    }
+
+    return list;
 }

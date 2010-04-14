@@ -82,3 +82,12 @@ void CREMapInformation::setExperience(qint64 experience)
 {
     myExperience = experience;
 }
+
+const QString& CREMapInformation::region() const
+{
+    return myRegion;
+}
+void CREMapInformation::setRegion(const QString& region)
+{
+    myRegion = region;
+}
