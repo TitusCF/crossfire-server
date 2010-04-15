@@ -22,6 +22,7 @@
 #include "CRETreeItemFormulae.h"
 #include "CRETreeItemFace.h"
 #include "CRETreeItemMap.h"
+#include "CRETreeItemRegion.h"
 
 #include "CREAnimationPanel.h"
 #include "CREArchetypePanel.h"
@@ -30,6 +31,7 @@
 #include "CREFormulaePanel.h"
 #include "CREFacePanel.h"
 #include "CREMapPanel.h"
+#include "CRERegionPanel.h"
 
 #include "CREWrapperArchetype.h"
 #include "CREWrapperArtifact.h"
@@ -365,6 +367,7 @@ void CREResourcesWindow::fillMaps()
     {
         QList<CREMapInformation*> maps = myStore->getMapsForRegion(reg->name);
         regionNode = CREUtils::regionNode(reg->name, maps.size(), root);
+        regionNode->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemRegion(reg)));
         foreach(CREMapInformation* map, maps)
         {
             leaf = CREUtils::mapNode(map, regionNode);
@@ -377,6 +380,7 @@ void CREResourcesWindow::fillMaps()
     if (full)
         myTree->resizeColumnToContents(1);
 
+    addPanel("Region", new CRERegionPanel());
     addPanel("Map", new CREMapPanel());
 }
 
