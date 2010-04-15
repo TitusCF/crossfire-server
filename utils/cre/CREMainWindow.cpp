@@ -3,6 +3,7 @@
 #include <CREMainWindow.h>
 #include <CREResourcesWindow.h>
 #include "CREMapInformationManager.h"
+#include "CREExperienceWindow.h"
 
 extern "C" {
 #include "global.h"
@@ -60,6 +61,9 @@ void CREMainWindow::createActions()
     myOpenMaps = new QAction(tr("Maps"), this);
     connect(myOpenMaps, SIGNAL(triggered()), this, SLOT(onOpenMaps()));
 
+    myOpenExperience = new QAction(tr("Experience"), this);
+    connect(myOpenExperience, SIGNAL(triggered()), this, SLOT(onOpenExperience()));
+
     mySaveFormulae = new QAction(tr("Formulae"), this);
     connect(mySaveFormulae, SIGNAL(triggered()), this, SLOT(onSaveFormulae()));
 }
@@ -75,6 +79,7 @@ void CREMainWindow::createMenus()
     myOpenMenu->addAction(myOpenFormulae);
     myOpenMenu->addAction(myOpenFaces);
     myOpenMenu->addAction(myOpenMaps);
+    myOpenMenu->addAction(myOpenExperience);
 
     mySaveMenu = menuBar()->addMenu(tr("&Save"));
     mySaveMenu->addAction(mySaveFormulae);
@@ -127,6 +132,13 @@ void CREMainWindow::onOpenMaps()
 void CREMainWindow::onOpenResources()
 {
     doResourceWindow(DisplayAll);
+}
+
+void CREMainWindow::onOpenExperience()
+{
+    QWidget* experience = new CREExperienceWindow();
+    myArea->addSubWindow(experience);
+    experience->show();
 }
 
 void CREMainWindow::onSaveFormulae()
