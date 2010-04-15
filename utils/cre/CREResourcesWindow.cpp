@@ -55,10 +55,10 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QHBoxLayout* layout = new QHBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
 
     myFiltersMenu = new QMenu(this);
-    QVBoxLayout* buttons = new QVBoxLayout();
+    QHBoxLayout* buttons = new QHBoxLayout();
     QPushButton* filter = new QPushButton(tr("Filter"), this);
     filter->setMenu(myFiltersMenu);
     buttons->addWidget(filter);
