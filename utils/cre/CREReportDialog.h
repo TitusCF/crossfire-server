@@ -5,6 +5,9 @@
 
 class QTextEdit;
 class QLineEdit;
+class QListWidget;
+
+#include "CREReportDefinitionManager.h"
 
 class CREReportDialog : public QDialog
 {
@@ -13,14 +16,27 @@ class CREReportDialog : public QDialog
     public:
         CREReportDialog();
 
-        QString getHeaders();
-        QString getFields();
-        QString getSort();
-
     protected:
-        QTextEdit* myHeaders;
-        QTextEdit* myFields;
-        QLineEdit* mySort;
+        QListWidget* myList;
+        QLineEdit* myName;
+        QTextEdit* myHeader;
+        QTextEdit* mySort;
+        QTextEdit* myDisplay;
+        QTextEdit* myFooter;
+        CREReportDefinitionManager myReports;
+        int myReportIndex;
+
+        virtual void accept();
+        virtual void reject();
+
+        void refreshList();
+        void saveCurrentReport();
+
+    protected slots:
+        void onHelp();
+        void onAdd();
+        void onDelete();
+        void currentRowChanged(int currentRow);
 };
 
 #endif // CRE_REPORT_DIALOG_H

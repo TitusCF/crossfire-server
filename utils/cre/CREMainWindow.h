@@ -24,6 +24,7 @@ class CREMainWindow : public QMainWindow
 
     signals:
         void updateFilters();
+        void updateReports();
 
     private:
         QMdiArea* myArea;
@@ -65,4 +66,5 @@ class CREMainWindow : public QMainWindow
         void browsingMap(const QString& path);
         void browsingFinished();
         void onFiltersModified();
+        void onReportsModified();
 };

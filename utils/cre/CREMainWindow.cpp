@@ -90,6 +90,8 @@ void CREMainWindow::doResourceWindow(DisplayMode mode)
     QWidget* resources = new CREResourcesWindow(myMapManager, mode);
     connect(this, SIGNAL(updateFilters()), resources, SLOT(updateFilters()));
     connect(resources, SIGNAL(filtersModified()), this, SLOT(onFiltersModified()));
+    connect(this, SIGNAL(updateReports()), resources, SLOT(updateReports()));
+    connect(resources, SIGNAL(reportsModified()), this, SLOT(onReportsModified()));
     myArea->addSubWindow(resources);
     resources->show();
 }
@@ -159,4 +161,9 @@ void CREMainWindow::browsingFinished()
 void CREMainWindow::onFiltersModified()
 {
     emit updateFilters();
+}
+
+void CREMainWindow::onReportsModified()
+{
+    emit updateReports();
 }

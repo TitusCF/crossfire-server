@@ -41,7 +41,8 @@ CREPixmap.cpp \
  CRETreeItemMap.cpp \
  CREExperienceWindow.cpp \
  CRERegionPanel.cpp \
- CRETreeItemRegion.cpp
+ CRETreeItemRegion.cpp \
+ CREReportDefinitionManager.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -80,7 +81,8 @@ CREPixmap.h \
  CRETreeItemMap.h \
  CREExperienceWindow.h \
  CRERegionPanel.h \
- CRETreeItemRegion.h
+ CRETreeItemRegion.h \
+ CREReportDefinitionManager.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

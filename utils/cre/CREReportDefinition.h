@@ -2,6 +2,7 @@
 #define CRE_REPORT_DEFINITION_H
 
 #include <QObject>
+#include <QMetaType>
 
 class CREReportDefinition : public QObject
 {
@@ -34,5 +35,10 @@ class CREReportDefinition : public QObject
         QString myItemDisplay;
         QString myFooter;
 };
+
+Q_DECLARE_METATYPE(CREReportDefinition);
+
+QDataStream &operator<<(QDataStream &out, const CREReportDefinition &report);
+QDataStream &operator>>(QDataStream &in, CREReportDefinition &report);
 
 #endif // CRE_REPORT_DEFINITION_H

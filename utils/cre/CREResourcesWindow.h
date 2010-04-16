@@ -6,6 +6,7 @@
 
 #include "CREFilter.h"
 #include "CREFilterDefinitionManager.h"
+#include "CREReportDefinitionManager.h"
 
 class CREMapInformationManager;
 
@@ -21,9 +22,11 @@ class CREResourcesWindow : public QWidget
 
     public slots:
         void updateFilters();
+        void updateReports();
 
     signals:
         void filtersModified();
+        void reportsModified();
 
     protected:
         QTreeWidget* myTree;
@@ -34,9 +37,13 @@ class CREResourcesWindow : public QWidget
         DisplayMode myDisplay;
         CREFilter myFilter;
         QList<QObject*> myDisplayedItems;
+        QPushButton* myFilterButton;
         QMenu* myFiltersMenu;
         QSignalMapper myFiltersMapper;
         CREFilterDefinitionManager myFilters;
+        QMenu* myReportsMenu;
+        QSignalMapper myReportsMapper;
+        CREReportDefinitionManager myReports;
 
         void fillData();
         void fillAnimations();
@@ -51,9 +58,11 @@ class CREResourcesWindow : public QWidget
     protected slots:
         void tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
         void onFilter();
-        void onReport();
         void onFilterChange(QObject* object);
+        void onQuickFilter();
         void clearFilter();
+        void onReport();
+        void onReportChange(QObject* object);
 };
 
 #endif // CRERESOURCESWINDOW_H

@@ -8,6 +8,7 @@ CREReportDefinition::CREReportDefinition(const CREReportDefinition& other) : QOb
 {
     setName(other.name());
     setHeader(other.header());
+    setFooter(other.footer());
     setItemSort(other.itemSort());
     setItemDisplay(other.itemDisplay());
 }
@@ -64,4 +65,26 @@ const QString& CREReportDefinition::footer() const
 void CREReportDefinition::setFooter(const QString& footer)
 {
     myFooter = footer;
+}
+
+QDataStream &operator<<(QDataStream &out, const CREReportDefinition &report)
+{
+    out << report.name() << report.header() << report.itemSort() << report.itemDisplay() << report.footer();
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, CREReportDefinition &report)
+{
+    QString data;
+    in >> data;
+    report.setName(data);
+    in >> data;
+    report.setHeader(data);
+    in >> data;
+    report.setItemSort(data);
+    in >> data;
+    report.setItemDisplay(data);
+    in >> data;
+    report.setFooter(data);
+    return in;
 }

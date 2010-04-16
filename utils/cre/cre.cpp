@@ -14,6 +14,8 @@ extern "C" {
 
 #include "CREFilterDefinition.h"
 #include "CREFilterDefinitionManager.h"
+#include "CREReportDefinition.h"
+#include "CREReportDefinitionManager.h"
 
 int main(int argc, char **argv) {
     QCoreApplication::setOrganizationName("The Legendary Team of Ailesse");
@@ -22,6 +24,8 @@ int main(int argc, char **argv) {
 
     qRegisterMetaTypeStreamOperators<CREFilterDefinition>("CREFilterDefinition");
     qRegisterMetaTypeStreamOperators<CREFilterDefinitionManager>("CREFilterDefinitionManager");
+    qRegisterMetaTypeStreamOperators<CREReportDefinition>("CREReportDefinition");
+    qRegisterMetaTypeStreamOperators<CREReportDefinitionManager>("CREReportDefinitionManager");
 
     init_globals();
     init_library();

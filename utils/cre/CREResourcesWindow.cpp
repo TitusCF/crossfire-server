@@ -14,6 +14,7 @@
 
 #include "CREReportDialog.h"
 #include "CREReportDisplay.h"
+#include "CREReportDefinition.h"
 
 #include "CRETreeItemAnimation.h"
 #include "CRETreeItemArchetype.h"
@@ -59,12 +60,13 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
 
     myFiltersMenu = new QMenu(this);
     QHBoxLayout* buttons = new QHBoxLayout();
-    QPushButton* filter = new QPushButton(tr("Filter"), this);
-    filter->setMenu(myFiltersMenu);
-    buttons->addWidget(filter);
+    myFilterButton = new QPushButton(tr("Filter..."), this);
+    myFilterButton->setMenu(myFiltersMenu);
+    buttons->addWidget(myFilterButton);
 
+    myReportsMenu = new QMenu(this);
     QPushButton* report = new QPushButton(tr("Report"), this);
-    connect(report, SIGNAL(pressed()), this, SLOT(onReport()));
+    report->setMenu(myReportsMenu);
     buttons->addWidget(report);
 
     layout->addLayout(buttons);
@@ -87,6 +89,8 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
 
     connect(&myFiltersMapper, SIGNAL(mapped(QObject*)), this, SLOT(onFilterChange(QObject*)));
     updateFilters();
+    connect(&myReportsMapper, SIGNAL(mapped(QObject*)), this, SLOT(onReportChange(QObject*)));
+    updateReports();
 
     QApplication::restoreOverrideCursor();
 }
@@ -407,17 +411,119 @@ void CREResourcesWindow::onReport()
     if (dlg.exec() != QDialog::Accepted)
         return;
 
-    QStringList headers = dlg.getHeaders().split("\n");
-    QStringList fields = dlg.getFields().split("\n");
-    QString sort = dlg.getSort();
+    /* sending this signal will ultimately call our own updateReports() */
+    emit reportsModified();
+}
 
-    QString report("<table><thead><tr>");
+void CREResourcesWindow::updateFilters()
+{
+    CRESettings settings;
+    settings.loadFilters(myFilters);
+
+    myFiltersMenu->clear();
+
+    if (myFilters.filters().size() > 0)
+    {
+        QAction* clear = new QAction(tr("(none)"), this);
+        connect(clear, SIGNAL(triggered()), this, SLOT(clearFilter()));
+        myFiltersMenu->addAction(clear);
+
+        foreach(CREFilterDefinition* filter, myFilters.filters())
+        {
+            QAction* a = new QAction(filter->name(), this);
+            myFiltersMenu->addAction(a);
+            myFiltersMapper.setMapping(a, filter);
+            connect(a, SIGNAL(triggered()), &myFiltersMapper, SLOT(map()));
+        }
+
+        myFiltersMenu->addSeparator();
+    }
+
+    QAction* quick = new QAction(tr("Quick filter..."), this);
+    connect(quick, SIGNAL(triggered()), this, SLOT(onQuickFilter()));
+    myFiltersMenu->addAction(quick);
+    QAction* dialog = new QAction(tr("Filters definition..."), this);
+    connect(dialog, SIGNAL(triggered()), this, SLOT(onFilter()));
+    myFiltersMenu->addAction(dialog);
+
+    clearFilter();
+}
+
+void CREResourcesWindow::onFilterChange(QObject* object)
+{
+    CREFilterDefinition* filter = qobject_cast<CREFilterDefinition*>(object);
+    if (filter == NULL)
+        return;
+    myFilter.setFilter(filter->filter());
+    fillData();
+    myFilterButton->setText(tr("Filter: %1").arg(filter->name()));
+}
+
+void CREResourcesWindow::onQuickFilter()
+{
+    bool ok;
+    QString filter = QInputDialog::getText(this, tr("Quick filter"), tr("Filter:"), QLineEdit::Normal, myFilter.filter(), &ok);
+    if (!ok)
+        return;
+    if (filter.isEmpty())
+    {
+        clearFilter();
+        return;
+    }
+    myFilter.setFilter(filter);
+    fillData();
+    myFilterButton->setText(tr("Filter: %1").arg(filter));
+}
+
+void CREResourcesWindow::clearFilter()
+{
+    myFilter.setFilter(QString());
+    fillData();
+    myFilterButton->setText(tr("Filter..."));
+}
+
+void CREResourcesWindow::updateReports()
+{
+    CRESettings settings;
+    settings.loadReports(myReports);
+
+    myReportsMenu->clear();
+
+    if (myReports.reports().size() > 0)
+    {
+        foreach(CREReportDefinition* report, myReports.reports())
+        {
+            QAction* a = new QAction(report->name(), this);
+            myReportsMenu->addAction(a);
+            myReportsMapper.setMapping(a, report);
+            connect(a, SIGNAL(triggered()), &myReportsMapper, SLOT(map()));
+        }
+
+        myReportsMenu->addSeparator();
+    }
+
+    QAction* dialog = new QAction(tr("Reports definition..."), this);
+    connect(dialog, SIGNAL(triggered()), this, SLOT(onReport()));
+    myReportsMenu->addAction(dialog);
+}
+
+void CREResourcesWindow::onReportChange(QObject* object)
+{
+    CREReportDefinition* report = qobject_cast<CREReportDefinition*>(object);
+    if (report == NULL)
+        return;
+
+    QStringList headers = report->header().split("\n");
+    QStringList fields = report->itemDisplay().split("\n");
+    QString sort = report->itemSort();
+
+    QString text("<table><thead><tr>");
 
     foreach(QString header, headers)
     {
-        report += "<th>" + header + "</th>";
+        text += "<th>" + header + "</th>";
     }
-    report += "</tr></thead><tbody>";
+    text += "</tr></thead><tbody>";
 
     QScriptEngine engine;
 
@@ -447,7 +553,7 @@ void CREResourcesWindow::onReport()
 
     foreach(QObject* item, data)
     {
-        report += "<tr>";
+        text += "<tr>";
 
         engine.pushContext();
         QScriptValue engineValue = engine.newQObject(item);
@@ -455,66 +561,20 @@ void CREResourcesWindow::onReport()
 
         foreach(QString field, fields)
         {
-            report += "<td>";
+            text += "<td>";
             QString data = engine.evaluate(field).toString();
             if (!engine.hasUncaughtException())
             {
-                report += data;
+                text += data;
             }
-            report += "</td>\n";
+            text += "</td>\n";
         }
         engine.popContext();
-        report += "</tr>\n";
+        text += "</tr>\n";
     }
-    report += "</tbody></table>";
+    text += "</tbody></table>";
     qDebug() << "report finished";
 
-    CREReportDisplay display(report);
+    CREReportDisplay display(text);
     display.exec();
-}
-
-void CREResourcesWindow::updateFilters()
-{
-    CRESettings settings;
-    settings.loadFilters(myFilters);
-
-    myFiltersMenu->clear();
-
-    if (myFilters.filters().size() > 0)
-    {
-        QAction* clear = new QAction(tr("(none)"), this);
-        connect(clear, SIGNAL(triggered()), this, SLOT(clearFilter()));
-        myFiltersMenu->addAction(clear);
-
-        foreach(CREFilterDefinition* filter, myFilters.filters())
-        {
-            QAction* a = new QAction(filter->name(), this);
-            myFiltersMenu->addAction(a);
-            myFiltersMapper.setMapping(a, filter);
-            connect(a, SIGNAL(triggered()), &myFiltersMapper, SLOT(map()));
-        }
-
-        myFiltersMenu->addSeparator();
-    }
-
-    QAction* dialog = new QAction(tr("Filters definition..."), this);
-    connect(dialog, SIGNAL(triggered()), this, SLOT(onFilter()));
-    myFiltersMenu->addAction(dialog);
-
-    clearFilter();
-}
-
-void CREResourcesWindow::onFilterChange(QObject* object)
-{
-    CREFilterDefinition* filter = qobject_cast<CREFilterDefinition*>(object);
-    if (filter == NULL)
-        return;
-    myFilter.setFilter(filter->filter());
-    fillData();
-}
-
-void CREResourcesWindow::clearFilter()
-{
-    myFilter.setFilter(QString());
-    fillData();
 }
