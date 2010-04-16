@@ -16,7 +16,8 @@ CREFormulaePanel::CREFormulaePanel()
     QGridLayout* layout = new QGridLayout(this);
 
     layout->addWidget(new QLabel(tr("Title:"), this), 1, 1);
-    myTitle = new QLineEdit(this);
+    myTitle = new QComboBox(this);
+
     layout->addWidget(myTitle, 1, 2);
 
     layout->addWidget(new QLabel(tr("Skill:"), this), 2, 1);
@@ -80,13 +81,34 @@ void CREFormulaePanel::setRecipe(const recipe* recipe)
     Q_ASSERT(recipe);
     myRecipe = recipe;
 
-    myTitle->setText(recipe->title);
+    myTitle->clear();
+    myTitle->addItem("NONE");
+    if (recipe->arch_names > 0)
+    {
+        archetype* arch = find_archetype(recipe->arch_name[0]);
+        artifactlist* at = find_artifactlist(arch->clone.type);
+        if (at != NULL)
+        {
+            artifact* art = at->items;
+            while (art)
+            {
+                if (art->item != NULL && art->item->name != NULL)
+                    myTitle->addItem(art->item->name);
+                art = art->next;
+            }
+        }
+    }
+
+    int index = myTitle->findText(recipe->title);
+    if (index == -1)
+        index = 0;
+    myTitle->setCurrentIndex(index);
     myYield->setText(QString::number(recipe->yield));
     myChance->setText(QString::number(recipe->chance));
     myExperience->setText(QString::number(recipe->exp));
     myDifficulty->setText(QString::number(recipe->diff));
 
-    int index = mySkill->findText(recipe->skill);
+    index = mySkill->findText(recipe->skill);
     if (index == -1)
         index = 0;
     mySkill->setCurrentIndex(index);

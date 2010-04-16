@@ -20,7 +20,7 @@ class CREFormulaePanel : public QWidget
 
     protected:
         const recipe* myRecipe;
-        QLineEdit* myTitle;
+        QComboBox* myTitle;
         QLineEdit* myYield;
         QLineEdit* myChance;
         QLineEdit* myExperience;
