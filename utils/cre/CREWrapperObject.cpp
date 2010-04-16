@@ -10,6 +10,11 @@ void CREWrapperObject::setObject(const object* obj)
     myObject = obj;
 }
 
+QString CREWrapperObject::name() const
+{
+    return myObject->name;
+}
+
 int CREWrapperObject::type() const
 {
     return myObject->type;
@@ -28,4 +33,9 @@ bool CREWrapperObject::isMonster() const
 bool CREWrapperObject::isAlive() const
 {
     return QUERY_FLAG(myObject, FLAG_ALIVE);
+}
+
+qint64 CREWrapperObject::experience() const
+{
+    return myObject->stats.exp;
 }
