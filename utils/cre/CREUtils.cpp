@@ -110,6 +110,11 @@ QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, QTreeWidgetIte
         }
     }
 
+    if (treasure->chance != 100)
+    {
+        item->setText(0, QTreeWidget::tr("%1 (%2%)").arg(item->text(0)).arg(treasure->chance));
+    }
+
     return item;
 }
 
