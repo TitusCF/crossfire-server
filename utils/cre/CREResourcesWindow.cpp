@@ -535,6 +535,9 @@ void CREResourcesWindow::onReportChange(QObject* object)
     if (report == NULL)
         return;
 
+    QProgressDialog progress(tr("Generating report..."), tr("Abort report"), 0, myDisplayedItems.size() * 2, this);
+    progress.setWindowModality(Qt::WindowModal);
+
     QStringList headers = report->header().split("\n");
     QStringList fields = report->itemDisplay().split("\n");
     QString sort = report->itemSort();
@@ -549,11 +552,16 @@ void CREResourcesWindow::onReportChange(QObject* object)
 
     QScriptEngine engine;
 
+    progress.setLabelText(tr("Sorting items..."));
+
     engine.pushContext();
     QList<QObject*> data;
     int pos;
     for (int i = 0; i < myDisplayedItems.size(); i++)
     {
+        if (progress.wasCanceled())
+            return;
+
         QScriptValue left = engine.newQObject(myDisplayedItems[i]);
         engine.globalObject().setProperty("left", left);
 
@@ -570,11 +578,17 @@ void CREResourcesWindow::onReportChange(QObject* object)
             data.append(myDisplayedItems[i]);
         else
             data.insert(pos, myDisplayedItems[i]);
+
+        progress.setValue(i + 1);
     }
     engine.popContext();
 
+    progress.setLabelText(tr("Generating items text..."));
     foreach(QObject* item, data)
     {
+        if (progress.wasCanceled())
+            return;
+
         text += "<tr>";
 
         engine.pushContext();
@@ -593,6 +607,8 @@ void CREResourcesWindow::onReportChange(QObject* object)
         }
         engine.popContext();
         text += "</tr>\n";
+
+        progress.setValue(progress.value() + 1);
     }
     text += "</tbody></table>";
     qDebug() << "report finished";
