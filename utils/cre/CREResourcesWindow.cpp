@@ -393,6 +393,9 @@ void CREResourcesWindow::fillMaps()
             leaf->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemMap(map)));
             if (full)
                 leaf->setText(1, tr("%1").arg(QString::number(map->experience()), 20));
+
+            /** @todo clean at some point - the issue is wrapper's ownership */
+            myDisplayedItems.append(map->clone());
         }
     }
 

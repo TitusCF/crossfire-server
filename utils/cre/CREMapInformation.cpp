@@ -11,6 +11,26 @@ CREMapInformation::CREMapInformation(const QString& path)
     myPath = path;
 }
 
+CREMapInformation* CREMapInformation::clone() const
+{
+    CREMapInformation* clone = new CREMapInformation();
+    clone->copy(*this);
+    return clone;
+}
+
+void CREMapInformation::copy(const CREMapInformation& other)
+{
+    setPath(other.path());
+    setName(other.name());
+    myArchetypes.append(other.archetypes());
+    setMapTime(other.mapTime());
+    myExitsTo.append(other.exitsTo());
+    myAccessedFrom.append(other.accessedFrom());
+    setLevel(other.level());
+    setExperience(other.experience());
+    setRegion(other.region());
+}
+
 const QString& CREMapInformation::path() const
 {
     return myPath;

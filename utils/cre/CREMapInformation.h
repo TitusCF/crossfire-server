@@ -10,9 +10,16 @@ class CREMapInformation : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString path READ path);
+    Q_PROPERTY(QString name READ name);
+    Q_PROPERTY(int level READ level);
+    Q_PROPERTY(qint64 experience READ experience);
+
     public:
         CREMapInformation();
         CREMapInformation(const QString& path);
+
+        CREMapInformation* clone() const;
 
         const QString& path() const;
         void setPath(const QString& path);
@@ -51,6 +58,8 @@ class CREMapInformation : public QObject
         int myLevel;
         qint64 myExperience;
         QString myRegion;
+
+        void copy(const CREMapInformation& other);
 };
 
 #endif // CLASS_CRE_MAP_INFORMATION_H
