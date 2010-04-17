@@ -3,6 +3,8 @@
 
 CREReportDisplay::CREReportDisplay(const QString& report)
 {
+    myReport = report;
+
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     layout->addWidget(new QLabel(tr("Report:"), this));
@@ -12,11 +14,26 @@ CREReportDisplay::CREReportDisplay(const QString& report)
     view->setText(report);
     layout->addWidget(view);
 
-    QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Close | QDialogButtonBox::Help, Qt::Horizontal, this);
-    connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(buttons, SIGNAL(rejected()), this, SLOT(reject()));
-    /*connect(buttons, SIGNAL(helpRequested()), this, SLOT(onHelp()));*/
-    layout->addWidget(buttons);
+    QHBoxLayout* buttons = new QHBoxLayout();
+    layout->addLayout(buttons);
+
+    QPushButton* copy = new QPushButton(tr("Copy (HTML)"), this);
+    buttons->addWidget(copy);
+    connect(copy, SIGNAL(clicked(bool)), this, SLOT(copyClicked(bool)));
+
+    QPushButton* close = new QPushButton(tr("Close"), this);
+    buttons->addWidget(close);
+    connect(close, SIGNAL(clicked(bool)), this, SLOT(closeClicked(bool)));
 
     setSizeGripEnabled(true);
+}
+
+void CREReportDisplay::copyClicked(bool)
+{
+    QApplication::clipboard()->setText(myReport);
+}
+
+void CREReportDisplay::closeClicked(bool)
+{
+    accept();
 }
