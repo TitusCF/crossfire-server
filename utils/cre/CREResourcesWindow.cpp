@@ -536,6 +536,7 @@ void CREResourcesWindow::onReportChange(QObject* object)
         return;
 
     QProgressDialog progress(tr("Generating report..."), tr("Abort report"), 0, myDisplayedItems.size() * 2, this);
+    progress.setWindowTitle(tr("Report: '%1'").arg(report->name()));
     progress.setWindowModality(Qt::WindowModal);
 
     QStringList headers = report->header().split("\n");
