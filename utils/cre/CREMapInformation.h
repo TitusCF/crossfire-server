@@ -32,6 +32,9 @@ class CREMapInformation : public QObject
         QStringList accessedFrom() const;
         void addAccessedFrom(const QString& path);
 
+        int level() const;
+        void setLevel(int level);
+
         qint64 experience() const;
         void setExperience(qint64 experience);
 
@@ -45,6 +48,7 @@ class CREMapInformation : public QObject
         QDateTime myMapTime;
         QStringList myExitsTo;
         QStringList myAccessedFrom;
+        int myLevel;
         qint64 myExperience;
         QString myRegion;
 };

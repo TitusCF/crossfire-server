@@ -67,6 +67,7 @@ void CREMapInformationManager::process(const QString& path2)
         information->setRegion(m->region->name);
     else
         information->setRegion("wilderness"); /** @todo get from config */
+    information->setLevel(m->difficulty);
 
     char exit_path[500];
     quint64 exp = 0;
@@ -292,6 +293,10 @@ void CREMapInformationManager::loadCache()
             map->setMapTime(QDateTime::fromString(date, Qt::ISODate));
             continue;
         }
+        if (reader.isStartElement() && reader.name() == "level")
+        {
+            map->setLevel(reader.readElementText().toInt());
+        }
         if (reader.isStartElement() && reader.name() == "experience")
         {
             map->setExperience(reader.readElementText().toLongLong());
@@ -349,6 +354,7 @@ void CREMapInformationManager::storeCache()
         writer.writeTextElement("path", map->path());
         writer.writeTextElement("name", map->name());
         writer.writeTextElement("lastModified", map->mapTime().toString(Qt::ISODate));
+        writer.writeTextElement("level", QString::number(map->level()));
         writer.writeTextElement("experience", QString::number(map->experience()));
         writer.writeTextElement("region", map->region());
         foreach(QString arch, map->archetypes())
