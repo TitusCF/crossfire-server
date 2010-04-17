@@ -16,6 +16,7 @@
 #include "CREReportDisplay.h"
 #include "CREReportDefinition.h"
 
+#include "CRETreeItemEmpty.h"
 #include "CRETreeItemAnimation.h"
 #include "CRETreeItemArchetype.h"
 #include "CRETreeItemTreasure.h"
@@ -84,6 +85,13 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
     myCurrentPanel = NULL;
 
     connect(myTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+
+    /* dummy panel to display for empty items */
+    QWidget* dummy = new QWidget(this);
+    QVBoxLayout* dl = new QVBoxLayout(dummy);
+    dl->addWidget(new QLabel(tr("No details available."), dummy));
+    addPanel("(dummy)", dummy);
+    dummy->setVisible(true);
 
     fillData();
 
@@ -186,6 +194,7 @@ void CREResourcesWindow::tree_currentItemChanged(QTreeWidgetItem* current, QTree
 void CREResourcesWindow::fillAnimations()
 {
     QTreeWidgetItem* animationsNode = CREUtils::animationNode(NULL);
+    animationsNode->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(animationsNode);
 
     QTreeWidgetItem* item;
@@ -207,6 +216,7 @@ void CREResourcesWindow::fillTreasures()
     const treasure* treasure;
 
     QTreeWidgetItem* treasures = CREUtils::treasureNode(NULL);
+    treasures->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(treasures);
 
     for (list = first_treasurelist; list; list = list->next)
@@ -236,6 +246,7 @@ void CREResourcesWindow::fillArchetypes()
     archt* arch;
 
     root = CREUtils::archetypeNode(NULL);
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(root);
 
     CREWrapperArchetype* wrapper = NULL;
@@ -272,6 +283,7 @@ void CREResourcesWindow::fillFormulae()
     CREWrapperFormulae* wrapper = NULL;
 
     form = new QTreeWidgetItem(myTree, QStringList(tr("Formulae")));
+    form->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
 //    myTree->addTopLevelItem(form);
 
     for (int ing = 1; ; ing++)
@@ -308,6 +320,7 @@ void CREResourcesWindow::fillArtifacts()
     const typedata* data;
 
     root = new QTreeWidgetItem(myTree, QStringList(tr("Artifacts")));
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
 
     CREWrapperArtifact wrapper;
 
@@ -336,6 +349,7 @@ void CREResourcesWindow::fillFaces()
     QTreeWidgetItem* item, *root;
 
     root = CREUtils::faceNode(NULL);
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(root);
 
     extern int nrofpixmaps;
@@ -364,6 +378,7 @@ void CREResourcesWindow::fillMaps()
     QTreeWidgetItem* regionNode, *root, *leaf;
 
     root = CREUtils::mapNode(NULL);
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(root);
 
     region* reg;

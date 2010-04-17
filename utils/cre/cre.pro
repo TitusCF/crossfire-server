@@ -82,7 +82,8 @@ CREPixmap.h \
  CREExperienceWindow.h \
  CRERegionPanel.h \
  CRETreeItemRegion.h \
- CREReportDefinitionManager.h
+ CREReportDefinitionManager.h \
+ CRETreeItemEmpty.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc
