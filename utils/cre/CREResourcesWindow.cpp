@@ -397,7 +397,11 @@ void CREResourcesWindow::fillMaps()
     }
 
     if (full)
+    {
+        root->setExpanded(true);
+        myTree->resizeColumnToContents(0);
         myTree->resizeColumnToContents(1);
+    }
 
     addPanel("Region", new CRERegionPanel());
     addPanel("Map", new CREMapPanel());
