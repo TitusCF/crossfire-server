@@ -20,6 +20,7 @@ class CREWrapperFormulae : public QObject
     Q_PROPERTY(int difficulty READ difficulty);
     Q_PROPERTY(int experience READ experience);
     Q_PROPERTY(QStringList archs READ archs);
+    Q_PROPERTY(QStringList ingredients READ ingredients);
 
     public:
         CREWrapperFormulae();
@@ -32,6 +33,7 @@ class CREWrapperFormulae : public QObject
         int difficulty() const;
         int experience() const;
         QStringList archs() const;
+        QStringList ingredients() const;
 
     protected:
         const recipe* myFormulae;

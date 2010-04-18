@@ -55,3 +55,13 @@ QStringList CREWrapperFormulae::archs() const
     }
     return archs;
 }
+
+QStringList CREWrapperFormulae::ingredients() const
+{
+    QStringList ingredients;
+    for (linked_char* ing = myFormulae->ingred; ing; ing = ing->next)
+    {
+        ingredients.append(ing->name);
+    }
+    return ingredients;
+}
