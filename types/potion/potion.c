@@ -174,6 +174,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
     if (force) {
         /* cursed items last longer */
         if (QUERY_FLAG(potion, FLAG_CURSED) || QUERY_FLAG(potion, FLAG_DAMNED)) {
+            draw_ext_info_format(NDI_RED|NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED, "The %s was cursed!", NULL, potion->name);
             force->stats.food *= 10;
             for (i = 0; i < NROFATTACKS; i++)
                 if (force->resist[i] > 0)
