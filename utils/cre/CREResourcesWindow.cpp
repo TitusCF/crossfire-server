@@ -244,6 +244,7 @@ void CREResourcesWindow::fillArchetypes()
 {
     QTreeWidgetItem* item, *root, *sub;
     archt* arch;
+    int added = 0, count = 0;
 
     root = CREUtils::archetypeNode(NULL);
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
@@ -253,6 +254,7 @@ void CREResourcesWindow::fillArchetypes()
 
     for (arch = first_archetype; arch; arch = arch->next)
     {
+        count++;
         if (!wrapper)
             wrapper = new CREWrapperArchetype();
         wrapper->setArchetype(arch);
@@ -269,10 +271,15 @@ void CREResourcesWindow::fillArchetypes()
         }
         myDisplayedItems.append(wrapper);
         wrapper = NULL;
+        added++;
     }
 
     delete wrapper;
     addPanel("Archetype", new CREArchetypePanel(myStore));
+    if (added == count)
+        root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(count));
+    else
+        root->setText(0, tr("%1 [%2 items out of %3]").arg(root->text(0)).arg(added).arg(count));
 }
 
 void CREResourcesWindow::fillFormulae()
@@ -281,6 +288,7 @@ void CREResourcesWindow::fillFormulae()
     recipe* recipe;
     QTreeWidgetItem* root, *form, *sub;
     CREWrapperFormulae* wrapper = NULL;
+    int count = 0, added = 0, subCount, subAdded;
 
     form = new QTreeWidgetItem(myTree, QStringList(tr("Formulae")));
     form->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
@@ -293,9 +301,13 @@ void CREResourcesWindow::fillFormulae()
             break;
 
         root = new QTreeWidgetItem(form, QStringList(tr("%1 ingredients").arg(ing)));
+        subCount = 0;
+        subAdded = 0;
 
         for (recipe = list->items; recipe; recipe = recipe->next)
         {
+            subCount++;
+            count++;
             if (!wrapper)
                 wrapper = new CREWrapperFormulae();
             wrapper->setFormulae(recipe);
@@ -306,11 +318,21 @@ void CREResourcesWindow::fillFormulae()
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemFormulae(recipe)));
             myDisplayedItems.append(wrapper);
             wrapper = NULL;
+            subAdded++;
+            added++;
         }
+        if (subCount == subAdded)
+            root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(count));
+        else
+            root->setText(0, tr("%1 [%2 items out of %3]").arg(root->text(0)).arg(added).arg(count));
     }
 
     delete wrapper;
     addPanel("Formulae", new CREFormulaePanel());
+    if (added == count)
+        form->setText(0, tr("%1 [%2 items]").arg(form->text(0)).arg(count));
+    else
+        form->setText(0, tr("%1 [%2 items out of %3]").arg(form->text(0)).arg(added).arg(count));
 }
 
 void CREResourcesWindow::fillArtifacts()
@@ -318,6 +340,7 @@ void CREResourcesWindow::fillArtifacts()
     QTreeWidgetItem* item, *root, *sub;
     artifactlist* list;
     const typedata* data;
+    int count = 0, added = 0;
 
     root = new QTreeWidgetItem(myTree, QStringList(tr("Artifacts")));
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
@@ -326,22 +349,36 @@ void CREResourcesWindow::fillArtifacts()
 
     for (list = first_artifactlist; list; list = list->next)
     {
+        int subCount = 0, subAdded = 0;
         data = get_typedata(list->type);
 
         item = new QTreeWidgetItem(root, QStringList(data ? data->name : tr("type %1").arg(list->type)));
 
         for (artifact* art = list->items; art; art = art->next)
         {
+            count++;
+            subCount++;
             wrapper.setArtifact(art);
             if (!myFilter.showItem(&wrapper))
                 continue;
 
             sub = CREUtils::artifactNode(art, item);
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemArtifact(art)));
+            added++;
+            subAdded++;
         }
+
+        if (subCount == subAdded)
+            item->setText(0, tr("%1 [%2 items]").arg(item->text(0)).arg(subCount));
+        else
+            item->setText(0, tr("%1 [%2 items out of %3]").arg(item->text(0)).arg(subAdded).arg(subCount));
     }
 
     addPanel("Artifact", new CREArtifactPanel());
+    if (added == count)
+        root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(count));
+    else
+        root->setText(0, tr("%1 [%2 items out of %3]").arg(root->text(0)).arg(added).arg(count));
 }
 
 void CREResourcesWindow::fillFaces()
