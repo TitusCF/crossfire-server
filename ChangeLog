@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix invalid attack roll handling in easy cases.
+Nicolas Weeger 2010-04-18
+
 CRE: export some properties for formulae.
 Nicolas Weeger 2010-04-18
 

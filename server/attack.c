@@ -774,7 +774,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         roll += adj_attackroll(hitter, op);
 
     /* See if we hit the creature */
-    if (roll == 20 || op->stats.ac >= base_wc-roll) {
+    if (roll >= 20 || op->stats.ac >= base_wc-roll) {
         int hitdam = base_dam;
         if (settings.casting_time == TRUE) {
             if (hitter->type == PLAYER && hitter->casting_time > -1) {
