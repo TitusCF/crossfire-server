@@ -1,5 +1,4 @@
 #include "CREFilter.h"
-#include <QScriptEngine>
 #include <QDebug>
 
 CREFilter::CREFilter()

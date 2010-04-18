@@ -3,7 +3,7 @@
 
 class QObject;
 #include <QString>
-#include <QScriptEngine>
+#include "CREScriptEngine.h"
 
 class CREFilter
 {
@@ -17,7 +17,7 @@ class CREFilter
 
     protected:
         QString myFilter;
-        QScriptEngine myEngine;
+        CREScriptEngine myEngine;
 };
 
 #endif // CRE_FILTER_H

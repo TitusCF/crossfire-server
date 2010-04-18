@@ -41,6 +41,8 @@
 
 #include "CREMapInformationManager.h"
 
+#include "CREScriptEngine.h"
+
 extern "C" {
 #include "global.h"
 #include "recipe.h"
@@ -588,7 +590,7 @@ void CREResourcesWindow::onReportChange(QObject* object)
     }
     text += "</tr></thead><tbody>";
 
-    QScriptEngine engine;
+    CREScriptEngine engine;
 
     progress.setLabelText(tr("Sorting items..."));
 
