@@ -17,6 +17,7 @@ class CREWrapperObject : public QObject
     Q_PROPERTY(bool isMonster READ isMonster);
     Q_PROPERTY(bool isAlive READ isAlive);
     Q_PROPERTY(qint64 experience READ experience);
+    Q_PROPERTY(quint32 attacktype READ attacktype);
 
     public:
         CREWrapperObject();
@@ -29,6 +30,7 @@ class CREWrapperObject : public QObject
         bool isMonster() const;
         bool isAlive() const;
         qint64 experience() const;
+        quint32 attacktype() const;
 
     protected:
         const object* myObject;

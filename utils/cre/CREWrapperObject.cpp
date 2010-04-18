@@ -39,3 +39,8 @@ qint64 CREWrapperObject::experience() const
 {
     return myObject->stats.exp;
 }
+
+quint32 CREWrapperObject::attacktype() const
+{
+    return myObject->attacktype;
+}
