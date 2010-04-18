@@ -35,6 +35,7 @@
 #include <loader.h>
 #include <toolkit_common.h>
 #include <sproto.h>
+#include <unistd.h>
 
 void setup(void) {
 }
@@ -101,14 +102,14 @@ START_TEST(test_account_add_account) {
      * duplicate account names, saving them out, etc.
      */
     i=account_add_account("Some Body", "mypassword");
-    fail_unless(i == 0, "Could not add valid account");
+    fail_unless(i == 0, "Could not add valid account, got code %d", i);
 
     i=account_add_account("Some Body", "mypassword");
     fail_unless(i != 0, "Duplicate account successfully added");
 
     /* This is mainly here to have 2 valid accounts */
     i=account_add_account("No Body", "mypassword");
-    fail_unless(i == 0, "Could not add valid account");
+    fail_unless(i == 0, "Could not add valid account, got code %d", i);
 
     /* This third account is to have one with no players associated to it */
     i=account_add_account("Every Body", "hispassword");
@@ -236,6 +237,9 @@ int main(void) {
      * that file.
      */
     settings.localdir = strdup_local("/tmp/");
+    /** remove files from previous runs. */
+    unlink("/tmp/account/testaccount");
+    unlink("/tmp/accounts");
     init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/unit/server/account.xml");
