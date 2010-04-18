@@ -10,6 +10,22 @@ void CREWrapperFormulae::setFormulae(const recipe* rec)
     myFormulae = rec;
 }
 
+QString CREWrapperFormulae::fullname() const
+{
+    if (myFormulae->arch_names == 0)
+    {
+        return QString("%1 (no archetype?)").arg(myFormulae->title);
+    }
+
+    const archetype* base = find_archetype(myFormulae->arch_name[0]);
+    if (strcmp(myFormulae->title, "NONE") == 0)
+    {
+        return base->clone.name;
+    }
+
+    return QString("%1 of %2").arg(base->clone.name, myFormulae->title);
+}
+
 QString CREWrapperFormulae::title() const
 {
     return myFormulae->title;
@@ -23,6 +39,11 @@ int CREWrapperFormulae::chance() const
 int CREWrapperFormulae::difficulty() const
 {
     return myFormulae->diff;
+}
+
+int CREWrapperFormulae::experience() const
+{
+    return myFormulae->exp;
 }
 
 QStringList CREWrapperFormulae::archs() const

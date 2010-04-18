@@ -556,6 +556,11 @@ void CREResourcesWindow::onReportChange(QObject* object)
     progress.setLabelText(tr("Sorting items..."));
 
     engine.pushContext();
+
+    sort = "(function(left, right) { return " + sort + "; })";
+    QScriptValue sortFun = engine.evaluate(sort);
+    QScriptValueList args;
+
     QList<QObject*> data;
     int pos;
     for (int i = 0; i < myDisplayedItems.size(); i++)
@@ -563,15 +568,21 @@ void CREResourcesWindow::onReportChange(QObject* object)
         if (progress.wasCanceled())
             return;
 
+        args.clear();
+
         QScriptValue left = engine.newQObject(myDisplayedItems[i]);
-        engine.globalObject().setProperty("left", left);
+        args.append(left);
+//        engine.globalObject().setProperty("left", left);
 
         pos = 0;
         while (pos < data.size())
         {
             QScriptValue right = engine.newQObject(data[pos]);
-            engine.globalObject().setProperty("right", right);
-            if (engine.evaluate(sort).toBoolean() == false)
+            args.push_back(right);
+            //engine.globalObject().setProperty("right", right);
+            bool still = sortFun.call(QScriptValue(), args).toBoolean();
+            args.pop_back();
+            if (still == false)
                 break;
             pos++;
         }
