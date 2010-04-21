@@ -764,9 +764,6 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             return 1;
     }
 
-    op_name = op->name;
-    add_refcount(op_name);
-
     roll = random_roll(1, 20, hitter, PREFER_HIGH);
 
     /* Adjust roll for various situations. */
@@ -791,7 +788,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
                                          MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_FUMBLE,
                                          "%s was hit by %s and lost a spell.",
                                          "%s was hit by %s and lost a spell.",
-                                         op_name, hitter->name);
+                                         op->name, hitter->name);
                 }
             }
         }
@@ -826,7 +823,6 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             if (object_was_destroyed(hitter, hitter_tag)
                 || object_was_destroyed(op, op_tag)
                 || abort_attack(op, hitter, simple_attack)) {
-                free_string(op_name);
                 return 0;
             }
         }
@@ -850,7 +846,6 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             if (object_was_destroyed(op, op_tag)
             || object_was_destroyed(hitter, hitter_tag)
             || abort_attack(op, hitter, simple_attack)) {
-                free_string(op_name);
                 return 0;
             }
         }
@@ -862,7 +857,6 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         if (object_was_destroyed(op, op_tag)
         || object_was_destroyed(hitter, hitter_tag)
         || abort_attack(op, hitter, simple_attack)) {
-            free_string(op_name);
             return 0;
         }
     } else {/* end of if hitter hit op */
@@ -871,7 +865,6 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
 
     /*attack_message(dam, type, op, hitter);*/
 
-    free_string(op_name);
     return dam;
 }
 
