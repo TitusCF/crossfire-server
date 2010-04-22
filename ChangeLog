@@ -14,6 +14,19 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+random_maps/treasure.c
+- Make sure random map dungeon level numbers on signs and keys match up and
+  make sense.  This is an off-by-one issue.
+include/map.h
+- Change mapstruct members enter_x and enter_y to sint16 since it appears that
+  most other server code uses sint16 types for map coordinates, and the change
+  results in dropping some -Wconversion warnings.  Use of -1,-1 in an exit is
+  now the way to mark it the defaults set in the map are used without having
+  to set them in the exit.  It may be odd to have -1,-1 in a map (mapstruct),
+  but it still seems better to have type consistency.  Also fix up the broken
+  doxygen comment on these items, and add some content detail.
+Kevin Bulgrien 2010-04-21
+
 Simplify code.
 Nicolas Weeger 2010-04-21
 

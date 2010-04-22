@@ -366,8 +366,12 @@ typedef struct mapdef {
 
     uint8   darkness;           /**< Indicates level of darkness of map. */
     uint16  width, height;      /**< Width and height of map. */
-    uint16  enter_x;            /**< Enter_x and enter_y are default entrance location. */
-    uint16  enter_y;            /**< on the map if none are set in the exit. */
+    sint16  enter_x, enter_y;   /**< Enter_x and enter_y are default entrance
+                                 *   coordinates to use for a map such that
+                                 *   when an exit specifies hp,sp of -1,-1 for
+                                 *   an exit pointing to the map, when the
+                                 *   exit is applied, the character is placed
+                                 *   at enter_x,enter_y when they arrive.    */
     oblinkpt *buttons;          /**< Linked list of linked lists of buttons. */
     MapSpace *spaces;           /**< Array of spaces on this map. */
     struct shopitem *shopitems;     /**< List of item-types the map's shop will trade in. */
