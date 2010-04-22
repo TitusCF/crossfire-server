@@ -3,11 +3,21 @@
 CREWrapperObject::CREWrapperObject()
 {
     myObject = NULL;
+    myArchetype = NULL;
 }
 
 void CREWrapperObject::setObject(const object* obj)
 {
     myObject = obj;
+    if (myArchetype == NULL)
+        myArchetype = new CREWrapperArchetype(this, obj->arch);
+    else
+        myArchetype->setArchetype(obj->arch);
+}
+
+const CREWrapperArchetype* CREWrapperObject::arch() const
+{
+    return myArchetype;
 }
 
 QString CREWrapperObject::name() const

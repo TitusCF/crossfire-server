@@ -35,7 +35,7 @@
 #include "CREMapPanel.h"
 #include "CRERegionPanel.h"
 
-#include "CREWrapperArchetype.h"
+#include "CREWrapperObject.h"
 #include "CREWrapperArtifact.h"
 #include "CREWrapperFormulae.h"
 
@@ -252,14 +252,14 @@ void CREResourcesWindow::fillArchetypes()
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(root);
 
-    CREWrapperArchetype* wrapper = NULL;
+    CREWrapperObject* wrapper = NULL;
 
     for (arch = first_archetype; arch; arch = arch->next)
     {
         count++;
         if (!wrapper)
-            wrapper = new CREWrapperArchetype();
-        wrapper->setArchetype(arch);
+            wrapper = new CREWrapperObject();
+        wrapper->setObject(&arch->clone);
         if (!myFilter.showItem(wrapper))
             continue;
 

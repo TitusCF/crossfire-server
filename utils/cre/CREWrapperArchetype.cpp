@@ -1,14 +1,15 @@
 #include "CREWrapperArchetype.h"
+#include "CREWrapperObject.h"
 
-CREWrapperArchetype::CREWrapperArchetype()
+CREWrapperArchetype::CREWrapperArchetype(CREWrapperObject* parent, const archetype* arch)
 {
-    myArchetype = NULL;
+    myArchetype = arch;
+    myObject = parent;
 }
 
 void CREWrapperArchetype::setArchetype(const archetype* arch)
 {
     myArchetype = arch;
-    myObject.setObject(&arch->clone);
 }
 
 QString CREWrapperArchetype::name() const
@@ -18,5 +19,5 @@ QString CREWrapperArchetype::name() const
 
 QObject* CREWrapperArchetype::clone()
 {
-    return &myObject;
+    return myObject;
 }

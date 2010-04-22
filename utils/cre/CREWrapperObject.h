@@ -6,6 +6,7 @@ extern "C" {
 }
 
 #include <QObject>
+#include "CREWrapperArchetype.h"
 
 class CREWrapperObject : public QObject
 {
@@ -20,12 +21,14 @@ class CREWrapperObject : public QObject
     Q_PROPERTY(quint32 attacktype READ attacktype);
     Q_PROPERTY(qint8 ac READ ac);
     Q_PROPERTY(qint8 wc READ wc);
+    Q_PROPERTY(const CREWrapperArchetype* arch READ arch);
 
     public:
         CREWrapperObject();
 
         void setObject(const object* obj);
 
+        const CREWrapperArchetype* arch() const;
         QString name() const;
         int type() const;
         int level() const;
@@ -38,6 +41,7 @@ class CREWrapperObject : public QObject
 
     protected:
         const object* myObject;
+        CREWrapperArchetype* myArchetype;
 };
 
 #endif // CRE_WRAPPER_OBJECT_h

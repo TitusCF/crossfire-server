@@ -8,7 +8,7 @@ extern "C"
 #include "global.h"
 }
 
-#include "CREWrapperObject.h"
+class CREWrapperObject;
 
 class CREWrapperArchetype : public QObject
 {
@@ -18,7 +18,7 @@ class CREWrapperArchetype : public QObject
     Q_PROPERTY(QObject* clone READ clone);
 
     public:
-        CREWrapperArchetype();
+        CREWrapperArchetype(CREWrapperObject* parent, const archetype* arch);
 
         void setArchetype(const archetype* arch);
 
@@ -27,7 +27,7 @@ class CREWrapperArchetype : public QObject
 
     protected:
         const archetype* myArchetype;
-        CREWrapperObject myObject;
+        CREWrapperObject* myObject;
 };
 
 #endif // CRE_WRAPPER_ARCHETYPE_H
