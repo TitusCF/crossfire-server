@@ -18,6 +18,8 @@ class CREWrapperObject : public QObject
     Q_PROPERTY(bool isAlive READ isAlive);
     Q_PROPERTY(qint64 experience READ experience);
     Q_PROPERTY(quint32 attacktype READ attacktype);
+    Q_PROPERTY(qint8 ac READ ac);
+    Q_PROPERTY(qint8 wc READ wc);
 
     public:
         CREWrapperObject();
@@ -31,6 +33,8 @@ class CREWrapperObject : public QObject
         bool isAlive() const;
         qint64 experience() const;
         quint32 attacktype() const;
+        qint8 ac() const;
+        qint8 wc() const;
 
     protected:
         const object* myObject;

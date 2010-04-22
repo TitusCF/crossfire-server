@@ -44,3 +44,13 @@ quint32 CREWrapperObject::attacktype() const
 {
     return myObject->attacktype;
 }
+
+qint8 CREWrapperObject::ac() const
+{
+    return myObject->stats.ac;
+}
+
+qint8 CREWrapperObject::wc() const
+{
+    return myObject->stats.wc;
+}
