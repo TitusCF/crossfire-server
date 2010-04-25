@@ -228,13 +228,14 @@
  * what field follows.
  * ACL = Account Character Login
  */
-#define ACL_NAME    1
-#define ACL_CLASS   2
-#define ACL_RACE    3
-#define ACL_LEVEL   4
-#define ACL_FACE    5
-#define ACL_PARTY   6
-#define ACL_MAP     7
+#define ACL_NAME        1
+#define ACL_CLASS       2
+#define ACL_RACE        3
+#define ACL_LEVEL       4
+#define ACL_FACE        5
+#define ACL_PARTY       6
+#define ACL_MAP         7
+#define ACL_FACE_NUM    8
 
 /**
  * @defgroup NDI_xxx Flags for messages

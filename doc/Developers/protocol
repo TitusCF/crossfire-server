@@ -354,9 +354,10 @@ S->C: accountplayers <num characters><char data1><char data2>...
             <type> is an 8 bit value which is an ACL_ type value.
             <value> type specific - if a string value, it is just
                     a string value.  If binary, its length can be
-                    determined.  At current time (March 2010), all
-                    values except level are strings.  Level is a 16
-                    bit binary value.
+                    determined.  Except for noted values, all value types
+                    are strings.  Exceptions:
+                    ACL_LEVEL is a 16 bit binary value.
+                    ACL_FACE_NUM is a 16 bit binary value.
 
             Note:  There is no requirement that the server sends all
                    fields (may choose to not send empty fields.)
