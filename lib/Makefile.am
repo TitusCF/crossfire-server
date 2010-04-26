@@ -33,7 +33,7 @@ dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
 
 CONF_FILES = settings metaserver2 motd dm_file forbid ban_file exp_table news rules
 VAR_FILES = highscore banish_file bookarch temp.maps clockdata
-EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures treasures.bld
+EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures.bld
 
 helpdir=$(pkgdatadir)/help
 dist_help_DATA = help/apply.en help/applymode.en \
