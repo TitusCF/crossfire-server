@@ -210,7 +210,7 @@ int describe_god(const object *god, int what, StringBuffer *buf, int maxlen) {
         char tmpbuf[MAX_BUF];
 
         add = stringbuffer_new();
-        stringbuffer_append_printf(add, "\nThe priests of %s are known to make cast a mighty prayer of possession which gives the recipient", name);
+        stringbuffer_append_printf(add, "\nThe priests of %s are known to make cast a mighty prayer of possession which gives the recipient ", name);
 
         for (tmpvar = 0; tmpvar < NROFATTACKS; tmpvar++) {
             if (god->resist[tmpvar] == 100) {

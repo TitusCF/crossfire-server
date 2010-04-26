@@ -14,12 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix a missing whitespace issue that makes books read like "which gives the
+recipientImmunity to magic".
+Kevin Bulgrien 2010-04-25
+
 Add ability to send face number (instead of name) - add new definition
 to newclient.h, update protocol doc.  First commit is so shared newclient.h
 file can get used.
 Files affected: include/shared/newclient.h doc/Developers/protocol
 MSW 2010-04-24
 
+>>>>>>> .r12949
 Replace [NULL] from response to command-line `crossfire-server -v` with the
 same text that is sent back to a client when it requests server version.
 Make `crossfire-server -help` information for -v more accurate to current
