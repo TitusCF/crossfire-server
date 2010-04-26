@@ -107,27 +107,46 @@ static quest_definition *quest_create_definition(void) {
     return quest;
 }
 
-/** Load all quest definitions. Can be called multiple times, will be ignored. */
-static void quest_load_definitions(void) {
-    int found = 0, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description */
-    int i;
+/**
+ * Find a quest from its code. This is called by quest_get and also
+ * used in the quest loading code
+ * @param code quest to search.
+ * @return quest, or NULL if no such quest.
+ */
+static quest_definition *quest_get_by_code(sstring code) {
+    quest_definition *quest;
+
+    quest = quests;
+    while (quest) {
+        if (quest->quest_code == code)
+            return quest;
+
+        quest = quest->next;
+    }
+    return NULL;
+}
+
+/**
+ * Loads all of the quests which are found in the given file, any global states
+ * for quest loading are passed down into this function, but not back up again.
+ * @param filename filename to load quests from.
+ * @return number of quests loaded from file, negative value if there was an error.
+ */
+static int load_quests_from_file(char *filename) {
+    int i, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description */
     quest_definition *quest = NULL;
+    char includefile[MAX_BUF];
     quest_step_definition *step = NULL;
     char final[MAX_BUF], read[MAX_BUF];
     FILE *file;
     StringBuffer *buf;
 
-    if (quests_loaded)
-        return;
-
-    quests_loaded = 1;
-
-    snprintf(final, sizeof(final), "%s/%s/default.quests", settings.datadir, settings.mapdir);
-
+    int loaded_quests =0, found =0;
+    snprintf(final, sizeof(final), "%s/%s/%s", settings.datadir, settings.mapdir, filename);
     file = fopen(final, "r");
     if (!file) {
-        /* no quest defined yet, no big deal */
-        return;
+        LOG(llevError, "Can't open %s for reading quests", filename);
+        return -1;
     }
 
     while (fgets(read, sizeof(read), file) != NULL) {
@@ -165,7 +184,8 @@ static void quest_load_definitions(void) {
                 in = 4;
                 continue;
             }
-            LOG(llevError, "quests: invalid line %s in file!\n", read);
+            LOG(llevError, "quests: invalid line %s in definition of quest %s in file %s!\n",
+                    read, quest->quest_code, filename);
             continue;
         }
 
@@ -228,20 +248,48 @@ static void quest_load_definitions(void) {
             quest = quest_create_definition();
             read[strlen(read) - 1] = '\0';
             quest->quest_code = add_string(read + 6);
+            if (quest_get_by_code(quest->quest_code)) {
+                LOG(llevError, "Quest %s is listed in file %s, but this quest has already been defined\n", quest->quest_code, filename);
+            }
             quest->next = quests;
             quests = quest;
             in = 1;
-            found++;
+            loaded_quests++;
+            continue;
+        }
+        if (sscanf(read, "include %s\n", includefile)) {
+            char inc_path[HUGE_BUF];
+            path_combine_and_normalize(filename, includefile, inc_path, sizeof(inc_path));
+            found = load_quests_from_file(inc_path);
+            if (found >=0) {
+                LOG(llevDebug, "loaded %d quests from file %s\n", found, inc_path);
+                loaded_quests += found;
+            } else {
+                LOG(llevError, "Failed to load quests from file %s\n", inc_path);
+            }
             continue;
         }
 
         if (strcmp(read, "\n") == 0)
             continue;
 
-        LOG(llevError, "quest: invalid file format for %s\n", final);
+        LOG(llevError, "quest: invalid file format for %s, I don't know what to do with the line %s\n", final, read);
     }
+    return loaded_quests;
+}
 
-    LOG(llevInfo, "%d quests found.\n", found);
+/** Load all quest definitions. Can be called multiple times, will be ignored. */
+static void quest_load_definitions(void) {
+    int found = 0;
+    if (quests_loaded)
+        return;
+    quests_loaded = 1;
+    found = load_quests_from_file("world.quests");
+    if (found >= 0) {
+        LOG(llevInfo, "%d quests found.\n", found);
+    } else {
+        LOG(llevError, "Quest Loading Failed");
+    }
 }
 
 /**
@@ -274,16 +322,12 @@ static quest_definition *quest_get(sstring code) {
 
     quest_load_definitions();
 
-    quest = quests;
-    while (quest) {
-        if (quest->quest_code == code)
-            return quest;
-
-        quest = quest->next;
+    quest = quest_get_by_code(code);
+    if (!quest) {
+        LOG(llevError, "quest %s required but not found!\n", code);
+        return NULL;
     }
-
-    LOG(llevError, "quest %s required but not found!\n", code);
-    return NULL;
+    return quest;
 }
 
 /**

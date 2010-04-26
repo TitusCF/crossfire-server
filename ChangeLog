@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/quest.c: Allow quest definition files to 'include' other quest definition
+files. Make the error messages from the quest file parsing code more
+explicit to make tracking down errors easier. Add quest_get_by_code() which
+quest_get() now acts as a wrapper to, so that error messages can be given if
+a quest is defined multiple times.
+Change the default quest file to world.quests so that old servers will still
+work properly (but without the new syntax)
+Brendan Lally 2010-04-26 
+
 Clear hp fixing code.
 Nicolas Weeger 2010-04-26
 
