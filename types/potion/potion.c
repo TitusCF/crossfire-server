@@ -167,20 +167,30 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
                 force = create_archetype(FORCE_NAME);
             memcpy(force->resist, potion->resist, sizeof(potion->resist));
             force->type = POTION_EFFECT;
+            force->speed = 0.2;
+            force->duration = 100;
             break;  /* Only need to find one protection since we cappliery entire batch */
         }
     }
     /* This is a protection potion */
     if (force) {
+        char name[MAX_BUF];
+        int resist = i;
+
         /* cursed items last longer */
         if (QUERY_FLAG(potion, FLAG_CURSED) || QUERY_FLAG(potion, FLAG_DAMNED)) {
             draw_ext_info_format(NDI_RED|NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED, "The %s was cursed!", NULL, potion->name);
-            force->stats.food *= 10;
+            force->duration *= 10;
             for (i = 0; i < NROFATTACKS; i++)
                 if (force->resist[i] > 0)
                     force->resist[i] = -force->resist[i];  /* prot => vuln */
         }
         force->speed_left = -1;
+        /* set name for expiry messages */
+        snprintf(name, MAX_BUF, "resistance to %s", change_resist_msg[resist]);
+        free_string(force->name);
+        force->name = add_string(name);
+        store_spell_expiry(force);
         force = object_insert_in_ob(force, applier);
         CLEAR_FLAG(potion, FLAG_APPLIED);
         SET_FLAG(force, FLAG_APPLIED);
