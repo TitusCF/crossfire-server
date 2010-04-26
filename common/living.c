@@ -1069,16 +1069,11 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
      * relevant experience object (mana_obj, see above)
      */
     /* following happen when skills system is not used */
-    if (!mana_obj)
-        mana_obj = op;
     if (!grace_obj)
         grace_obj = op;
 
     /* set maxsp */
-    if (!mana_obj || !mana_obj->level || op->type != PLAYER)
-        mana_obj = op;
-
-    if (mana_obj == op && op->type == PLAYER) {
+    if (!mana_obj || !mana_obj->level) {
         op->stats.maxsp = 1;
     } else {
         float sp_tmp = 0.0;
@@ -1097,8 +1092,8 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
         }
         op->stats.maxsp = (int)sp_tmp+op->arch->clone.stats.maxsp;
 
-        for (i = 11; i <= mana_obj->level; i++)
-            op->stats.maxsp += 2;
+        if (mana_obj->level > 10)
+            op->stats.maxsp += 2 * (mana_obj->level - 10);
     }
 
     /* Characters can get their sp supercharged via rune of transferrance */
