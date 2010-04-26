@@ -23,6 +23,7 @@
 #
 #   The author can be reached via e-mail to mwedel@sonic.net
 
+SUBDIRS = include
 plugindir=$(pkglibdir)/plugins
 noinst_HEADERS = include/citylife.h	../common/include/plugin_common.h
 plugin_LTLIBRARIES = citylife.la

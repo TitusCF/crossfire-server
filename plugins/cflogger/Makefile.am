@@ -24,7 +24,7 @@
 #   The author can be reached via e-mail to mwedel@sonic.net
 
 plugindir=$(pkglibdir)/plugins
-noinst_HEADERS = include/cflogger.h	../common/include/plugin_common.h
+noinst_HEADERS = include/cflogger.h	include/cflogger_proto.h ../common/include/plugin_common.h
 if HAVE_CFLOGGER
 plugin_LTLIBRARIES = cflogger.la
 else

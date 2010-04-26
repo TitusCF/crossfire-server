@@ -23,6 +23,8 @@
 #
 #   The author can be reached via e-mail to mwedel@sonic.net
 
+SUBDIRS = include
+
 plugindir=$(pkglibdir)/plugins
 noinst_HEADERS = include/cfrhg.h	../common/include/plugin_common.h
 plugin_LTLIBRARIES = cfrhg.la

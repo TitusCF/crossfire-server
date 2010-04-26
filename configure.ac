@@ -253,7 +253,7 @@ AC_CONFIG_FILES([Makefile
                  doc/spoiler/Makefile doc/spoiler-html/Makefile
                  common/Makefile
                  plugins/cf_darcap/Makefile
-	devel/Makefile
+                 devel/Makefile
                  include/Makefile
                  lib/Makefile
                  random_maps/Makefile
@@ -268,9 +268,12 @@ AC_CONFIG_FILES([Makefile
                  plugins/cfanim/Makefile plugins/cfanim/include/Makefile
                  plugins/cflogger/Makefile
                  plugins/cfnewspaper/Makefile
+                 plugins/cfnewspaper/include/Makefile
                  plugins/cfpython/Makefile plugins/cfpython/include/Makefile
                  plugins/cfrhg/Makefile
+                 plugins/cfrhg/include/Makefile
                  plugins/citylife/Makefile
+                 plugins/citylife/include/Makefile
                  plugins/common/Makefile plugins/common/include/Makefile
                  test/Makefile
                  test/bugs/Makefile test/bugs/bugtrack/Makefile

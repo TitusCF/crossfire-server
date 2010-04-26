@@ -23,8 +23,9 @@
 #
 #   The author can be reached via e-mail to mwedel@sonic.net
 
+SUBDIRS = include
 plugindir=$(pkglibdir)/plugins
-noinst_HEADERS = include/cfnewspaper.h	../common/include/plugin_common.h
+noinst_HEADERS =  ../common/include/plugin_common.h
 if HAVE_CFNEWSPAPER
 plugin_LTLIBRARIES = cfnewspaper.la
 else
