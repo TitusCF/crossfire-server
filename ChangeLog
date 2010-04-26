@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Some unit tests for fix_object().
+Nicolas Weeger 2010-04-26
+
 server/skills.c, server/c_object.c, include/sproto.h: Make the 'examine' 
 command id of objects. 
 * Move the detect curse and detect magic logic out into separate functions 
