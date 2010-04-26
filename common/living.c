@@ -1018,6 +1018,214 @@ void add_statbonus(object *op) {
 }
 
 /**
+ * Complement to fix_object() for player.
+ * Figure out the players sp/mana/hp totals. Also do encumberance and various speeds.
+ * @param op object being fixed, must not be NULL.
+ * @param ac current ac, may be adjusted.
+ * @param wc current wc, may be adjusted.
+ * @param grace_obj praying skill, can be NULL.
+ * @param mana_obj spell-casting skill, can be NULL.
+ * @param wc_obj applied combat skill, can be NULL.
+ * @param weapon_speed current weapon's speed.
+ * @param added_speed speed bonus from items.
+ */
+static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, const object *mana_obj, const object *wc_obj, int weapon_speed, float added_speed)
+{
+    int pl_level, i, j;
+    float character_load = 0.0;
+
+    if (op->type != PLAYER)
+        return;
+
+    check_stat_bounds(&(op->stats), MIN_STAT, MAX_STAT);
+    pl_level = op->level;
+
+    if (pl_level < 1)
+        pl_level = 1; /* safety, we should always get 1 levels worth of hp! */
+
+    /* You basically get half a con bonus/level.  But we do take into account rounding,
+     * so if your bonus is 7, you still get 7 worth of bonus every 2 levels.
+     */
+    for (i = 1, op->stats.maxhp = 0; i <= pl_level && i <= 10; i++) {
+        j = op->contr->levhp[i]+get_con_bonus(op->stats.Con)/2;
+        if (i%2 && get_con_bonus(op->stats.Con)%2) {
+            if (get_con_bonus(op->stats.Con) > 0)
+                j++;
+            else
+                j--;
+        }
+        op->stats.maxhp += j > 1 ? j : 1; /* always get at least 1 hp/level */
+    }
+
+    for (i = 11; i <= op->level; i++)
+        op->stats.maxhp += 2;
+
+    op->stats.maxhp += op->arch->clone.stats.maxhp;
+
+    if (op->stats.hp > op->stats.maxhp)
+        op->stats.hp = op->stats.maxhp;
+
+    /* Sp gain is controlled by the level of the player's
+     * relevant experience object (mana_obj, see above)
+     */
+    /* following happen when skills system is not used */
+    if (!mana_obj)
+        mana_obj = op;
+    if (!grace_obj)
+        grace_obj = op;
+
+    /* set maxsp */
+    if (!mana_obj || !mana_obj->level || op->type != PLAYER)
+        mana_obj = op;
+
+    if (mana_obj == op && op->type == PLAYER) {
+        op->stats.maxsp = 1;
+    } else {
+        float sp_tmp = 0.0;
+        for (i = 1; i <= mana_obj->level && i <= 10; i++) {
+            float stmp;
+
+            /* Got some extra bonus at first level */
+            if (i < 2) {
+                stmp = op->contr->levsp[i]+(2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int))/6.0;
+            } else {
+                stmp = op->contr->levsp[i]+(2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int))/12.0;
+            }
+            if (stmp < 1.0)
+                stmp = 1.0;
+            sp_tmp += stmp;
+        }
+        op->stats.maxsp = (int)sp_tmp+op->arch->clone.stats.maxsp;
+
+        for (i = 11; i <= mana_obj->level; i++)
+            op->stats.maxsp += 2;
+    }
+
+    /* Characters can get their sp supercharged via rune of transferrance */
+    if (op->stats.sp > op->stats.maxsp*2)
+        op->stats.sp = op->stats.maxsp*2;
+
+    /* set maxgrace, notice 3-4 lines below it depends on both Wis and Pow */
+    if (!grace_obj || !grace_obj->level || op->type != PLAYER)
+        grace_obj = op;
+
+    if (grace_obj == op && op->type == PLAYER) {
+        op->stats.maxgrace = 1;
+    } else {
+        /* store grace in a float - this way, the divisions below don't create
+         * big jumps when you go from level to level - with int's, it then
+         * becomes big jumps when the sums of the bonuses jump to the next
+         * step of 8 - with floats, even fractional ones are useful.
+         */
+        float sp_tmp = 0.0;
+        for (i = 1, op->stats.maxgrace = 0; i <= grace_obj->level && i <= 10; i++) {
+            float grace_tmp = 0.0;
+
+            /* Got some extra bonus at first level */
+            if (i < 2) {
+                grace_tmp = op->contr->levgrace[i]+(get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis))/6.0;
+            } else {
+                grace_tmp = op->contr->levgrace[i]+(get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis))/12.0;
+            }
+            if (grace_tmp < 1.0)
+                grace_tmp = 1.0;
+            sp_tmp += grace_tmp;
+        }
+        op->stats.maxgrace = (int)sp_tmp+op->arch->clone.stats.maxgrace;
+
+        /* two grace points per level after 11 */
+        for (i = 11; i <= grace_obj->level; i++)
+            op->stats.maxgrace += 2;
+    }
+    /* No limit on grace vs maxgrace */
+
+    if (op->contr->braced) {
+        (*ac) += 2;
+        (*wc) += 4;
+    } else
+        (*ac) -= get_dex_bonus(op->stats.Dex);
+
+    /* In new exp/skills system, wc bonuses are related to
+     * the players level in a relevant exp object (wc_obj)
+     * not the general player level -b.t.
+     * I changed this slightly so that wc bonuses are better
+     * than before. This is to balance out the fact that
+     * the player no longer gets a personal weapon w/ 1
+     * improvement every level, now its fighterlevel/5. So
+     * we give the player a bonus here in wc and dam
+     * to make up for the change. Note that I left the
+     * monster bonus the same as before. -b.t.
+     */
+
+    if (wc_obj && wc_obj->level >= 1) {
+        const  char *wc_in = object_get_value(wc_obj, "wc_increase_rate");
+        int wc_increase_rate;
+
+        wc_increase_rate = wc_in?atoi(wc_in):5;
+        (*wc) -= get_thaco_bonus(op->stats.Str);
+        (*wc) -= (wc_obj->level-1)/wc_increase_rate;
+        op->stats.dam += (wc_obj->level-1)/4;
+    } else {
+        (*wc) -= (((op->level-1)/5)+get_thaco_bonus(op->stats.Str));
+    }
+    op->stats.dam += get_dam_bonus(op->stats.Str);
+
+    if (op->stats.dam < 1)
+        op->stats.dam = 1;
+
+    op->speed = MAX_PLAYER_SPEED+get_speed_bonus(op->stats.Dex);
+
+    if (settings.search_items && op->contr->search_str[0])
+        op->speed -= 0.25;
+
+    if (op->attacktype == 0)
+        op->attacktype = op->arch->clone.attacktype;
+
+
+    /* First block is for encumbrance of the player */
+
+    /* The check for FREE_PLAYER_LOAD_PERCENT < 1.0 is really a safety.  One would
+     * think that it should never be the case if that is set to 1.0, that carrying
+     * would be above the limit.  But it could be if character is weakened and
+     * was otherwise at limit.  Without that safety, could get divide by zeros.
+     */
+    if (op->carrying > (get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT)
+    && (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
+        int extra_weight = op->carrying-get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT;
+
+        character_load = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
+
+        /* character_load is used for weapon speed below, so sanitize value */
+        if (character_load >= 1.0)
+            character_load = 1.0;
+
+        /* If a character is fully loaded, they will always get cut down to min
+         * speed no matter what their dex.  Note that magic is below, so
+         * still helps out.
+         */
+        if (op->speed > MAX_PLAYER_SPEED)
+            op->speed -= character_load*(op->speed-MIN_PLAYER_SPEED);
+        else
+            op->speed -= character_load*(MAX_PLAYER_SPEED-MIN_PLAYER_SPEED);
+    }
+
+    /* This block is for weapon speed */
+    op->weapon_speed = BASE_WEAPON_SPEED+get_speed_bonus(op->stats.Dex)-weapon_speed/20.0+added_speed/10.0;
+    if (wc_obj) {
+        op->weapon_speed += 0.005*wc_obj->level;
+    } else
+        op->weapon_speed += 0.005*op->level;
+
+    /* character_load=1.0 means character is fully loaded, 0.0 is unloaded.  Multiplying
+     * by 0.2 for penalty is purely arbitrary, but slows things down without completely
+     * stopping them.
+     */
+    op->weapon_speed -= character_load*0.2;
+
+    if (op->weapon_speed < 0.05)
+        op->weapon_speed = 0.05;
+}
+/**
  * Updates all abilities given by applied objects in the inventory
  * of the given object.
  *
@@ -1039,7 +1247,7 @@ void add_statbonus(object *op) {
  */
 void fix_object(object *op) {
     int i, j;
-    float max = 9, added_speed = 0, sp_tmp, speed_reduce_from_disease = 1;
+    float max = 9, added_speed = 0, speed_reduce_from_disease = 1;
     int weapon_weight = 0, weapon_speed = 0;
     int best_wc = 0, best_ac = 0, wc = 0, ac = 0;
     int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
@@ -1444,203 +1652,7 @@ void fix_object(object *op) {
             op->resist[i] = potion_resist[i];
     }
 
-    /* Figure out the players sp/mana/hp totals.
-     * Also do encumberance.  This entire blob should
-     * probably be its own function.
-     */
-    if (op->type == PLAYER) {
-        int pl_level;
-        float character_load = 0.0;
-
-        check_stat_bounds(&(op->stats), MIN_STAT, MAX_STAT);
-        pl_level = op->level;
-
-        if (pl_level < 1)
-            pl_level = 1; /* safety, we should always get 1 levels worth of hp! */
-
-        /* You basically get half a con bonus/level.  But we do take into account rounding,
-         * so if your bonus is 7, you still get 7 worth of bonus every 2 levels.
-         */
-        for (i = 1, op->stats.maxhp = 0; i <= pl_level && i <= 10; i++) {
-            j = op->contr->levhp[i]+get_con_bonus(op->stats.Con)/2;
-            if (i%2 && get_con_bonus(op->stats.Con)%2) {
-                if (get_con_bonus(op->stats.Con) > 0)
-                    j++;
-                else
-                    j--;
-            }
-            op->stats.maxhp += j > 1 ? j : 1; /* always get at least 1 hp/level */
-        }
-
-        for (i = 11; i <= op->level; i++)
-            op->stats.maxhp += 2;
-
-        op->stats.maxhp += op->arch->clone.stats.maxhp;
-
-        if (op->stats.hp > op->stats.maxhp)
-            op->stats.hp = op->stats.maxhp;
-
-        /* Sp gain is controlled by the level of the player's
-         * relevant experience object (mana_obj, see above)
-         */
-        /* following happen when skills system is not used */
-        if (!mana_obj)
-            mana_obj = op;
-        if (!grace_obj)
-            grace_obj = op;
-
-        /* set maxsp */
-        if (!mana_obj || !mana_obj->level || op->type != PLAYER)
-            mana_obj = op;
-
-        if (mana_obj == op && op->type == PLAYER) {
-            op->stats.maxsp = 1;
-        } else {
-            sp_tmp = 0.0;
-            for (i = 1; i <= mana_obj->level && i <= 10; i++) {
-                float stmp;
-
-                /* Got some extra bonus at first level */
-                if (i < 2) {
-                    stmp = op->contr->levsp[i]+(2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int))/6.0;
-                } else {
-                    stmp = op->contr->levsp[i]+(2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int))/12.0;
-                }
-                if (stmp < 1.0)
-                    stmp = 1.0;
-                sp_tmp += stmp;
-            }
-            op->stats.maxsp = (int)sp_tmp+op->arch->clone.stats.maxsp;
-
-            for (i = 11; i <= mana_obj->level; i++)
-                op->stats.maxsp += 2;
-        }
-
-        /* Characters can get their sp supercharged via rune of transferrance */
-        if (op->stats.sp > op->stats.maxsp*2)
-            op->stats.sp = op->stats.maxsp*2;
-
-        /* set maxgrace, notice 3-4 lines below it depends on both Wis and Pow */
-        if (!grace_obj || !grace_obj->level || op->type != PLAYER)
-            grace_obj = op;
-
-        if (grace_obj == op && op->type == PLAYER) {
-            op->stats.maxgrace = 1;
-        } else {
-            /* store grace in a float - this way, the divisions below don't create
-             * big jumps when you go from level to level - with int's, it then
-             * becomes big jumps when the sums of the bonuses jump to the next
-             * step of 8 - with floats, even fractional ones are useful.
-             */
-            sp_tmp = 0.0;
-            for (i = 1, op->stats.maxgrace = 0; i <= grace_obj->level && i <= 10; i++) {
-                float grace_tmp = 0.0;
-
-                /* Got some extra bonus at first level */
-                if (i < 2) {
-                    grace_tmp = op->contr->levgrace[i]+(get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis))/6.0;
-                } else {
-                    grace_tmp = op->contr->levgrace[i]+(get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis))/12.0;
-                }
-                if (grace_tmp < 1.0)
-                    grace_tmp = 1.0;
-                sp_tmp += grace_tmp;
-            }
-            op->stats.maxgrace = (int)sp_tmp+op->arch->clone.stats.maxgrace;
-
-            /* two grace points per level after 11 */
-            for (i = 11; i <= grace_obj->level; i++)
-                op->stats.maxgrace += 2;
-        }
-        /* No limit on grace vs maxgrace */
-
-        if (op->contr->braced) {
-            ac += 2;
-            wc += 4;
-        } else
-            ac -= get_dex_bonus(op->stats.Dex);
-
-        /* In new exp/skills system, wc bonuses are related to
-         * the players level in a relevant exp object (wc_obj)
-         * not the general player level -b.t.
-         * I changed this slightly so that wc bonuses are better
-         * than before. This is to balance out the fact that
-         * the player no longer gets a personal weapon w/ 1
-         * improvement every level, now its fighterlevel/5. So
-         * we give the player a bonus here in wc and dam
-         * to make up for the change. Note that I left the
-         * monster bonus the same as before. -b.t.
-         */
-
-        if (op->type == PLAYER && wc_obj && wc_obj->level >= 1) {
-            const  char *wc_in = object_get_value(wc_obj, "wc_increase_rate");
-            int wc_increase_rate;
-
-            wc_increase_rate = wc_in?atoi(wc_in):5;
-            wc -= get_thaco_bonus(op->stats.Str);
-            wc -= (wc_obj->level-1)/wc_increase_rate;
-            op->stats.dam += (wc_obj->level-1)/4;
-        } else {
-            wc -= (((op->level-1)/5)+get_thaco_bonus(op->stats.Str));
-        }
-        op->stats.dam += get_dam_bonus(op->stats.Str);
-
-        if (op->stats.dam < 1)
-            op->stats.dam = 1;
-
-        op->speed = MAX_PLAYER_SPEED+get_speed_bonus(op->stats.Dex);
-
-        if (settings.search_items && op->contr->search_str[0])
-            op->speed -= 0.25;
-
-        if (op->attacktype == 0)
-            op->attacktype = op->arch->clone.attacktype;
-
-
-        /* First block is for encumbrance of the player */
-
-        /* The check for FREE_PLAYER_LOAD_PERCENT < 1.0 is really a safety.  One would
-         * think that it should never be the case if that is set to 1.0, that carrying
-         * would be above the limit.  But it could be if character is weakened and
-         * was otherwise at limit.  Without that safety, could get divide by zeros.
-         */
-        if (op->carrying > (get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT)
-        && (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
-            int extra_weight = op->carrying-get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT;
-
-            character_load = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
-
-            /* character_load is used for weapon speed below, so sanitize value */
-            if (character_load >= 1.0)
-                character_load = 1.0;
-
-            /* If a character is fully loaded, they will always get cut down to min
-             * speed no matter what their dex.  Note that magic is below, so
-             * still helps out.
-             */
-            if (op->speed > MAX_PLAYER_SPEED)
-                op->speed -= character_load*(op->speed-MIN_PLAYER_SPEED);
-            else
-                op->speed -= character_load*(MAX_PLAYER_SPEED-MIN_PLAYER_SPEED);
-        }
-
-        /* This block is for weapon speed */
-        op->weapon_speed = BASE_WEAPON_SPEED+get_speed_bonus(op->stats.Dex)-weapon_speed/20.0+added_speed/10.0;
-        if (wc_obj) {
-            op->weapon_speed += 0.005*wc_obj->level;
-        } else
-            op->weapon_speed += 0.005*op->level;
-
-        /* character_load=1.0 means character is fully loaded, 0.0 is unloaded.  Multiplying
-         * by 0.2 for penalty is purely arbitrary, but slows things down without completely
-         * stopping them.
-         */
-        op->weapon_speed -= character_load*0.2;
-
-        if (op->weapon_speed < 0.05)
-            op->weapon_speed = 0.05;
-
-    }
+    fix_player(op, &ac, &wc, grace_obj, mana_obj, wc_obj, weapon_speed, added_speed);
 
     op->speed = op->speed*speed_reduce_from_disease;
 
