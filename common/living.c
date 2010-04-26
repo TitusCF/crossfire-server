@@ -1057,8 +1057,8 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
         op->stats.maxhp += j > 1 ? j : 1; /* always get at least 1 hp/level */
     }
 
-    for (i = 11; i <= op->level; i++)
-        op->stats.maxhp += 2;
+    if (op->level > 10)
+        op->stats.maxhp += 2 * (op->level - 10);
 
     op->stats.maxhp += op->arch->clone.stats.maxhp;
 
@@ -1123,7 +1123,7 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
 
         /* two grace points per level after 11 */
         if (grace_obj->level > 10)
-            op->stats.maxgrace += 2 * (grace_obj - 10);
+            op->stats.maxgrace += 2 * (grace_obj->level - 10);
     }
     /* No limit on grace vs maxgrace */
 
