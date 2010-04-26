@@ -682,6 +682,28 @@ int jump(object *pl, int dir, object *skill) {
 }
 
 /**
+ * Runs a 'detect curse' check on a given item
+ *
+ * @param pl
+ * player detecting a curse.
+ * @param tmp
+ * object to check for curse
+ * @param skill
+ * detect skill object.
+ * @return
+ * amount of experience gained (on successful detecting).
+ */
+int detect_curse_on_item(object *pl, object *tmp, object *skill) {
+    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)
+            && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+            && tmp->item_power < skill->level) {
+        SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+        esrv_update_item(UPD_FLAGS, pl, tmp);
+        return calc_skill_exp(pl, tmp, skill);
+    }
+    return 0;
+}
+/**
  * Check for cursed object with the 'detect curse' skill.
  *
  * @param pl
@@ -695,32 +717,39 @@ static int do_skill_detect_curse(object *pl, object *skill) {
     int success = 0;
 
     FOR_INV_PREPARE(pl, tmp)
-        if (!tmp->invisible
-        && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-        && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)
-        && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
-        && tmp->item_power < skill->level) {
-            SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-            esrv_update_item(UPD_FLAGS, pl, tmp);
-            success += calc_skill_exp(pl, tmp, skill);
-        }
+        if (!tmp->invisible) success += detect_curse_on_item(pl, tmp, skill);
     FOR_INV_FINISH();
 
     /* Check ground, too, but only objects the player could pick up. Cauldrons are exceptions,
      * you definitely want to know if they are cursed */
     FOR_MAP_PREPARE(pl->map, pl->x, pl->y, tmp)
-        if ((object_can_pick(pl, tmp) || QUERY_FLAG(tmp, FLAG_IS_CAULDRON))
-        && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-        && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)
-        && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
-        && tmp->item_power < skill->level) {
-            SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-            esrv_update_item(UPD_FLAGS, pl, tmp);
-            success += calc_skill_exp(pl, tmp, skill);
-        }
+        if (object_can_pick(pl, tmp) || QUERY_FLAG(tmp, FLAG_IS_CAULDRON))
+            success += detect_curse_on_item(pl, tmp, skill);
     FOR_MAP_FINISH();
 
     return success;
+}
+/**
+ * Runs a 'detect magic' check on a given item
+ *
+ * @param pl
+ * player detecting magic.
+ * @param tmp
+ * object to check for magic
+ * @param skill
+ * detect skill object.
+ * @return
+ * amount of experience gained (on successful detecting).
+ */
+
+int detect_magic_on_item(object *pl, object *tmp, object *skill) {
+    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
+            && (is_magical(tmp)) && tmp->item_power < skill->level) {
+        SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+        esrv_update_item(UPD_FLAGS, pl, tmp);
+        return calc_skill_exp(pl, tmp, skill);
+    }
+    return 0;
 }
 
 /**
@@ -737,28 +766,14 @@ static int do_skill_detect_magic(object *pl, object *skill) {
     int success = 0;
 
     FOR_INV_PREPARE(pl, tmp)
-        if (!tmp->invisible
-        && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-        && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
-        && (is_magical(tmp))
-        && tmp->item_power < skill->level) {
-            SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-            esrv_update_item(UPD_FLAGS, pl, tmp);
-            success += calc_skill_exp(pl, tmp, skill);
-        }
+        if (!tmp->invisible)
+            success += detect_magic_on_item(pl, tmp, skill);
     FOR_INV_FINISH();
 
     /* Check ground, too, but like above, only if the object can be picked up*/
     FOR_MAP_PREPARE(pl->map, pl->x, pl->y, tmp)
-        if (object_can_pick(pl, tmp)
-        && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-        && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
-        && is_magical(tmp)
-        && tmp->item_power < skill->level) {
-            SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-            esrv_update_item(UPD_FLAGS, pl, tmp);
-            success += calc_skill_exp(pl, tmp, skill);
-        }
+        if (object_can_pick(pl, tmp))
+            success += detect_magic_on_item(pl, tmp, skill);
     FOR_MAP_FINISH();
 
     return success;
@@ -772,22 +787,21 @@ static int do_skill_detect_magic(object *pl, object *skill) {
  * object to try to identify.
  * @param pl
  * object identifying.
- * @param obj_class
- * object type to identify.
  * @param skill
  * identification skill.
+ * @param print_on_success
+ * 1 to print a description if the object is identified, 0 to leave it to the calling function
  * @return
  * experience for successful identification.
  */
-static int do_skill_ident2(object *tmp, object *pl, int obj_class, object *skill) {
+int identify_object_with_skill(object *tmp, object *pl, object *skill, int print_on_success) {
     int success = 0, chance, ip;
     int skill_value = skill->level*pl->stats.Int ? pl->stats.Int : 10;
 
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)
     && !QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT)
     && need_identify(tmp)
-    && !tmp->invisible
-    && tmp->type == obj_class) {
+    && !tmp->invisible) {
         ip = tmp->magic;
         if (tmp->item_power > ip)
             ip = tmp->item_power;
@@ -795,7 +809,7 @@ static int do_skill_ident2(object *tmp, object *pl, int obj_class, object *skill
         chance = die_roll(3, 10, pl, PREFER_LOW)-3+rndm(0, (tmp->magic ? tmp->magic*5 : 1)-1);
         if (skill_value >= chance) {
             identify(tmp);
-            if (pl->type == PLAYER) {
+            if (pl->type == PLAYER && print_on_success) {
                 char desc[MAX_BUF];
 
                 draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
@@ -833,7 +847,8 @@ static int do_skill_ident(object *pl, int obj_class, object *skill) {
 
     /* check the player */
     FOR_INV_PREPARE(pl, tmp)
-        success += do_skill_ident2(tmp, pl, obj_class, skill);
+        if (tmp->type == obj_class)
+            success += identify_object_with_skill(tmp, pl, skill, 1);
     FOR_INV_FINISH();
 
     /*  check the ground */
@@ -863,7 +878,8 @@ static int do_skill_ident(object *pl, int obj_class, object *skill) {
 
         if (can_see_monsterP(m, pl->x, pl->y, i)) {
             FOR_MAP_PREPARE(m, x, y, tmp)
-                success += do_skill_ident2(tmp, pl, obj_class, skill);
+                if (tmp->type == obj_class)
+                    success += identify_object_with_skill(tmp, pl, skill, 1);
             FOR_MAP_FINISH();
         }
     }
@@ -881,6 +897,8 @@ static int do_skill_ident(object *pl, int obj_class, object *skill) {
  */
 int skill_ident(object *pl, object *skill) {
     int success = 0;
+    int i, identifiable_types=0;
+    const typedata *tmptype;
 
     if (pl->type != PLAYER)
         return 0; /* only players will skill-identify */
@@ -889,54 +907,6 @@ int skill_ident(object *pl, object *skill) {
                   "You look at the objects nearby...", NULL);
 
     switch (skill->subtype) {
-    case SK_SMITHERY:
-        success += do_skill_ident(pl, WEAPON, skill)
-            +do_skill_ident(pl, ARMOUR, skill)
-            +do_skill_ident(pl, BRACERS, skill)
-            +do_skill_ident(pl, CLOAK, skill)
-            +do_skill_ident(pl, BOOTS, skill)
-            +do_skill_ident(pl, SHIELD, skill)
-            +do_skill_ident(pl, GIRDLE, skill)
-            +do_skill_ident(pl, HELMET, skill)
-            +do_skill_ident(pl, GLOVES, skill);
-            break;
-
-    case SK_BOWYER:
-        success += do_skill_ident(pl, BOW, skill)
-            +do_skill_ident(pl, ARROW, skill);
-        break;
-
-    case SK_ALCHEMY:
-        success += do_skill_ident(pl, POTION, skill)
-            +do_skill_ident(pl, POISON, skill)
-            +do_skill_ident(pl, CONTAINER, skill)
-            +do_skill_ident(pl, DRINK, skill)
-            +do_skill_ident(pl, INORGANIC, skill);
-        break;
-
-    case SK_WOODSMAN:
-        success += do_skill_ident(pl, FOOD, skill)
-            +do_skill_ident(pl, DRINK, skill)
-            +do_skill_ident(pl, FLESH, skill);
-        break;
-
-    case SK_JEWELER:
-        success += do_skill_ident(pl, GEM, skill)
-            +do_skill_ident(pl, RING, skill)
-            +do_skill_ident(pl, AMULET, skill);
-        break;
-
-    case SK_LITERACY:
-        success += do_skill_ident(pl, SPELLBOOK, skill)
-            +do_skill_ident(pl, SCROLL, skill)
-            +do_skill_ident(pl, BOOK, skill);
-        break;
-
-    case SK_THAUMATURGY:
-        success += do_skill_ident(pl, WAND, skill)
-            +do_skill_ident(pl, ROD, skill);
-        break;
-
     case SK_DET_CURSE:
         success = do_skill_detect_curse(pl, skill);
         if (success)
@@ -952,8 +922,21 @@ int skill_ident(object *pl, object *skill) {
         break;
 
     default:
-        LOG(llevError, "Error: bad call to skill_ident()\n");
-        return 0;
+        /* we will try to identify items with this skill instead */
+        for (i=0; i<=OBJECT_TYPE_MAX; i++) {
+            tmptype = get_typedata(i);
+            if (tmptype) {
+                if (skill->subtype == tmptype->identifyskill || skill->subtype == tmptype->identifyskill2) {
+                    success += do_skill_ident(pl, i, skill);
+                    identifiable_types++;
+                }
+            }
+        }
+        if (identifiable_types == 0) {
+            LOG(llevError, "Error: skill_ident() called with skill %d which can't identify any items\n", skill->subtype);
+            return 0;
+            break;
+        }
         break;
     }
     if (!success) {

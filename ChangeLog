@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/skills.c, server/c_object.c, include/sproto.h: Make the 'examine' 
+command id of objects. 
+* Move the detect curse and detect magic logic out into separate functions 
+* Make the id skills use the item types array to figure out which objects 
+   they should identify
+* For any object which is examined, use the player's skills to attempt to
+   detect magic, sense curse and then perform a skill-based id of objects.
+Brendan Lally 2010-04-26
+
 ==============================================================================
 Changes for 1.50.0
 ==============================================================================

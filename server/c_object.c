@@ -1463,31 +1463,98 @@ void examine_monster(object *op, object *tmp) {
 void examine(object *op, object *tmp) {
     char buf[VERY_BIG_BUF];
     int in_shop;
-    int i;
+    int i, exp = 0;
+
+    /* we use this to track how far along we got with trying to identify an item,
+     * so that we can give the appropriate message to the player */
+    int id_attempted = 0;
+    char prefix[MAX_BUF] = "That is";
+    const typedata *tmptype;
+    object *skill;
 
     buf[0] = '\0';
 
     if (tmp == NULL || tmp->type == CLOSE_CON)
         return;
+    tmptype = get_typedata(tmp->type);
+    if (!tmptype) {
+        LOG(llevError, "Attempted to examine item %d with type %d, which is invalid", tmp->count, tmp->type);
+        return;
+    }
+    /* first of all check whether this is an item we need to identify, and identify it as best we can.*/
+    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
+        /* We will look for magic status, cursed status and then try to do a full skill-based ID, in that order */
+        skill = find_skill_by_number(op, SK_DET_MAGIC);
+        if (skill && (object_can_pick(op, tmp))) {
+            exp = detect_magic_on_item(op, tmp, skill);
+            if (exp) {
+                change_exp(op, exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
+                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+                        "You discover mystic forces on %s", "You discover mystic forces on %s",tmp->nrof <= 1?"that item":"those items" );
+            }
+        }
+        skill = find_skill_by_number(op, SK_DET_CURSE);
+        /* Cauldrons are a special case of item where it should be possible to detect a curse */
+        if (skill && (object_can_pick(op, tmp) || QUERY_FLAG(tmp, FLAG_IS_CAULDRON))) {
+            exp = detect_curse_on_item(op, tmp, skill);
+            if (exp) {
+                change_exp(op, exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
+                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+                        "You have a bad feeling about %s", "You have a bad feeling about %s",tmp->nrof <= 1?"that item":"those items" );
+            }
+        }
+        if (!QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT)) {
 
-    /* Put the description in buf. */
+            id_attempted = 1;
+            skill = find_skill_by_number(op, tmptype->identifyskill);
+            if (skill) {
+                id_attempted = 2;
+                exp = identify_object_with_skill(tmp, op, skill, 0);
+                if (exp) {
+                    change_exp(op, exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
+                    snprintf(prefix, MAX_BUF, "Using your %s skill you identify %s as:", skill->skill, tmp->nrof <= 1?"that":"those");
+                }
+            }
+            if(!exp) {
+                /* The primary id skill didn't work, let's try the secondary one */
+                skill = find_skill_by_number(op, tmptype->identifyskill2);
+                if (skill) {
+                    /* if we've reached here, then the first skill will have been attempted
+                     * and failed; this will have set FLAG_NO_SKILL_IDENT we want to clear
+                     * that now, and try with the secondary ID skill, if it fails, then the
+                     * flag will be reset anyway, if it succeeds, it won't matter.*/
+                    CLEAR_FLAG(tmp, FLAG_NO_SKILL_IDENT);
+                    id_attempted = 2;
+                    exp = identify_object_with_skill(tmp, op, skill, 0);
+                    if (exp) {
+                        change_exp(op, exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
+                        snprintf(prefix, MAX_BUF, "Using your %s skill you identify %s as:", skill->skill, tmp->nrof <= 1?"this":"those");
+                    }
+                }
+            }
+        }
+    }
+    if (!exp) {
+        /* if we did get exp we'll already have propulated prefix */
+        if (tmptype->identifyskill || tmptype->identifyskill2) {
+            switch (id_attempted) {
+                case 1:
+                    snprintf(prefix, MAX_BUF, "You lack the skill to understand %s:",  tmp->nrof <= 1?"that fully; it is":"those fully, they are");
+                    break;
+                case 2:
+                    snprintf(prefix, MAX_BUF, "You fail to understand %s:",  tmp->nrof <= 1?"that fully; it is":"those fully, they are");
+                    break;
+                default:
+                    snprintf(prefix, MAX_BUF, "%s:",  tmp->nrof <= 1?"That is":"Those are");
+            }
+        } else snprintf(prefix, MAX_BUF, "%s:",  tmp->nrof <= 1?"That is":"Those are");
+    }
+    /* now we need to get the rest of the object description */
     ob_describe(tmp, op, buf, sizeof(buf));
 
-    /* Send the player the description, prepending "That is" if singular
-     * and "Those are" if plural.
-     */
-    if (tmp->nrof <= 1)
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                             "That is %s",
-                             "That is %s",
-                             buf);
-    else
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                             "Those are %s",
-                             "Those are %s",
-                             buf);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+                                            "%s %s", "%s %s", prefix, buf);
     buf[0] = '\0';
-
     if (tmp->custom_name) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                              "You name it %s",
