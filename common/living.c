@@ -1066,11 +1066,7 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
         op->stats.hp = op->stats.maxhp;
 
     /* Sp gain is controlled by the level of the player's
-     * relevant experience object (mana_obj, see above)
-     */
-    /* following happen when skills system is not used */
-    if (!grace_obj)
-        grace_obj = op;
+     * relevant experience object (mana_obj, see above) */
 
     /* set maxsp */
     if (!mana_obj || !mana_obj->level) {
@@ -1101,10 +1097,7 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
         op->stats.sp = op->stats.maxsp*2;
 
     /* set maxgrace, notice 3-4 lines below it depends on both Wis and Pow */
-    if (!grace_obj || !grace_obj->level || op->type != PLAYER)
-        grace_obj = op;
-
-    if (grace_obj == op && op->type == PLAYER) {
+    if (!grace_obj || !grace_obj->level) {
         op->stats.maxgrace = 1;
     } else {
         /* store grace in a float - this way, the divisions below don't create
@@ -1129,8 +1122,8 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
         op->stats.maxgrace = (int)sp_tmp+op->arch->clone.stats.maxgrace;
 
         /* two grace points per level after 11 */
-        for (i = 11; i <= grace_obj->level; i++)
-            op->stats.maxgrace += 2;
+        if (grace_obj->level > 10)
+            op->stats.maxgrace += 2 * (grace_obj - 10);
     }
     /* No limit on grace vs maxgrace */
 
