@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/attack.c: Don't make doors (or other objects) harder to hit because
+   they lack a move type.  Remove unused variable.
+MSW 2010-04-25
+
 Fix a missing whitespace issue that makes books read like "which gives the
 recipientImmunity to magic".
 Kevin Bulgrien 2010-04-25
@@ -24,7 +28,6 @@ file can get used.
 Files affected: include/shared/newclient.h doc/Developers/protocol
 MSW 2010-04-24
 
->>>>>>> .r12949
 Replace [NULL] from response to command-line `crossfire-server -v` with the
 same text that is sent back to a client when it requests server version.
 Make `crossfire-server -help` information for -v more accurate to current

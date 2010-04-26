@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2010 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -720,7 +720,6 @@ static void thrown_item_effect(object *, object *);
 static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_wc) {
     int simple_attack, roll, dam;
     uint32 type;
-    const char *op_name;
     tag_t op_tag, hitter_tag;
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
@@ -2459,8 +2458,13 @@ static int adj_attackroll(object *hitter, object *target) {
     if (QUERY_FLAG(attacker, FLAG_CONFUSED))
         adjust -= 3;
 
-    /* if we attack at a different 'altitude' its harder */
-    if ((attacker->move_type&target->move_type) == 0)
+    /* if we attack at a different 'altitude' its harder
+     * Note - only make this adjustment if the target actually
+     * has a move type.  Doors don't (they don't move), and
+     * this would evaluate as true.  If anything, something without
+     * a move type should be easier to hit.
+     */
+    if (target->move_type && (attacker->move_type&target->move_type) == 0)
         adjust -= 2;
 
     return adjust;
