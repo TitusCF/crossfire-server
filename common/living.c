@@ -1252,7 +1252,7 @@ void fix_object(object *op) {
                     /* Potential for cursed potions, in which case we just can use
                      * a straight MAX, as potion_resist is initialized to zero.
                      */
-                    if (tmp->type == POTION_EFFECT) {
+                    if (tmp->type == POTION_RESIST_EFFECT) {
                         if (potion_resist[i])
                             potion_resist[i] = MAX(potion_resist[i], tmp->resist[i]);
                         else

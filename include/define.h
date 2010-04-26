@@ -266,8 +266,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define DIRECTOR                    112
 #define GIRDLE                      113
 #define FORCE                       114
-#define POTION_EFFECT               115   /**< A force, holding the effect of a
-                                           * potion */
+#define POTION_RESIST_EFFECT        115   /**< A force, holding the effect of a
+                                           * resistance potion */
 #define EVENT_CONNECTOR             116   /**< Lauwenmark: an invisible object
                                            * holding a plugin event hook */
 #define CLOSE_CON                   121   /**< Eneq((at)csd.uu.se): Id for

@@ -166,7 +166,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             if (!force)
                 force = create_archetype(FORCE_NAME);
             memcpy(force->resist, potion->resist, sizeof(potion->resist));
-            force->type = POTION_EFFECT;
+            force->type = POTION_RESIST_EFFECT;
             force->speed = 0.2;
             force->duration = 100;
             break;  /* Only need to find one protection since we cappliery entire batch */

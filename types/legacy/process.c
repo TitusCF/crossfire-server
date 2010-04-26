@@ -35,7 +35,7 @@ method_ret legacy_ob_process(ob_methods *context, object *op) {
         return METHOD_OK;
 
     case FORCE:
-    case POTION_EFFECT:
+    case POTION_RESIST_EFFECT:
         legacy_remove_force(op);
         return METHOD_OK;
 

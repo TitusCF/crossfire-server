@@ -1005,7 +1005,7 @@ static void initConstants(PyObject *module) {
         { "DIRECTOR", DIRECTOR },
         { "GIRDLE", GIRDLE },
         { "FORCE", FORCE },
-        { "POTION_EFFECT", POTION_EFFECT },
+        { "POTION_RESIST_EFFECT", POTION_RESIST_EFFECT },
         { "EVENT_CONNECTOR", EVENT_CONNECTOR },
         { "CLOSE_CON", CLOSE_CON },
         { "CONTAINER", CONTAINER },

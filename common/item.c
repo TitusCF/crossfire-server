@@ -198,7 +198,7 @@ static const typedata item_types[] = {
     { DIRECTOR, "director", "directors", 0, 0 },
     { GIRDLE, "girdle", "girdles", SK_SMITHERY, 0 },
     { FORCE, "force", "forces", 0, 0 },
-    { POTION_EFFECT, "potion effect", "potion effects", 0, 0 },
+    { POTION_RESIST_EFFECT, "potion effect", "potion effects", 0, 0 },
     { CLOSE_CON, "closed container", "closed container", 0, 0 },
     { CONTAINER, "container", "containers", SK_ALCHEMY, 0 },
     { ARMOUR_IMPROVER, "armour improver", "armour improvers", 0, 0 },
