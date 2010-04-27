@@ -55,7 +55,7 @@ START_TEST(test_fix_object) {
 
     object *ob, *grace, *mana;
     player *pl;
-    int test;
+    int test,i;
 
     int wc[3][50] = {
         { 21, 3, 3, 22, 2, 10, 18, 10, 20, 14, 1, 14, 15, 9, 19, 4, 2, 3, 16, 17, 9, 2, 11, 14, 4, 11, 14, 12, 8, 20, 16, 21, 19, 3, 12, 6, 14, 8, 10, 14, 15, 17, 6, 21, 16, 9, 3, 19, 2, 20}
@@ -111,7 +111,7 @@ START_TEST(test_fix_object) {
 
     pl = calloc(1, sizeof(player));
 
-    for (int i = 0; i < ARCHS; i++)
+    for (i = 0; i < ARCHS; i++)
     {
 #if GENERATE
         stringbuffer_append_printf(swc, "%s{ ", sep);

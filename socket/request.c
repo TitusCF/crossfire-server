@@ -2065,16 +2065,34 @@ void send_account_players(socket_struct *ns)
 
     /* Now add real character data */
     for (acn = ns->account_chars; acn; acn = acn->next) {
+        uint16 faceno;
 
         add_char_field(&sl, ACL_NAME, acn->name);
         add_char_field(&sl, ACL_CLASS, acn->character_class);
         add_char_field(&sl, ACL_RACE, acn->race);
         add_char_field(&sl, ACL_FACE, acn->face);
+        if (acn->face[0] != 0 ) {
+            faceno = find_face(acn->face, 0);
+
+            if (faceno != 0) {
+                if (!(ns->faces_sent[faceno]&NS_FACESENT_FACE)) {
+                    esrv_send_face(ns, faceno, 0);
+                }
+            }
+        } else 
+            faceno=0;
+
         add_char_field(&sl, ACL_PARTY, acn->party);
         add_char_field(&sl, ACL_MAP, acn->map);
         SockList_AddChar(&sl, 3);
         SockList_AddChar(&sl, ACL_LEVEL);
         SockList_AddShort(&sl, acn->level);
+        if (faceno) {
+            SockList_AddChar(&sl, 3);
+            SockList_AddChar(&sl, ACL_FACE_NUM);
+            SockList_AddShort(&sl, faceno);
+        }
+
         SockList_AddChar(&sl, 0);
     }
     /* Now for any characters where we just have the name */

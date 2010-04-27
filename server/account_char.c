@@ -243,6 +243,12 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
 
         ap->level = pl->ob->level;
 
+        /* We should try and get the best face (front view) of
+         * the character - right now, we just get whatever view the character
+         * happens to be facing.  Unfortunately, the animation code is such
+         * that it isn't a simple matter as most of that logic is not
+         * conveniently exposed.
+         */
         free_string(ap->face);
         ap->face = add_string(pl->ob->face->name);
 
@@ -253,11 +259,20 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
             ap->party = add_string("");
 
         free_string(ap->map);
-        /* Use the stored value - this may not be as up to date, but is
-         * probably more reliable, as depending when this charapter is added,
-         * it may not really be on any map.
+
+        /* If there is a real name set for the map, use that instead
+         * of the pathname, which is what maplevel holds.  This is
+         * more friendly (eg, Scorn Inn vs /scorn/inns/....)
          */
-        ap->map = add_string(pl->maplevel);
+        if (pl->ob->map && pl->ob->map->name) {
+            ap->map = add_string(pl->ob->map->name);
+        } else {
+            /* Use the stored value - this may not be as up to date, but is
+             * probably more reliable, as depending when this charapter is added,
+             * it may not really be on any map.
+             */
+            ap->map = add_string(pl->maplevel);
+        }
     } else {
         /* In this case, we are adding a new entry */
         ap = malloc(sizeof(Account_Char));
