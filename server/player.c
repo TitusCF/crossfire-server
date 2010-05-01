@@ -882,12 +882,14 @@ void receive_play_again(object *op, char key) {
         op->contr->password[0] = '~';
         FREE_AND_CLEAR_STR(op->name);
         FREE_AND_CLEAR_STR(op->name_pl);
-        if (pl->socket.login_method >= 1) {
+        if (pl->socket.login_method >= 1 && pl->socket.account_name != NULL) {
             /* If we are using new login, we send the
              * list of characters to the client - this should
              * result in the client popping up this list so
              * the player can choose which one to play - better
              * than going to legacy login code.
+             * If the account_name is NULL, it means the client
+             * says it uses account but started playing without logging in.
              */
             send_account_players(&pl->socket);
             pl->state = ST_GET_NAME;
