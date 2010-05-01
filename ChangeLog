@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Enforce 2 characters minimum for account passwords, else accounts with 1
+character can't create new characters. Some code cleaning.
+ socket/request.c
+Nicolas Weeger 2010-05-01
+
+server/player.c: don't switch to account mode if no account name (else segfault).
+This could happen if the client sends the setup command but starts playing without
+actually logging in.
+Nicolas Weeger 2010-04-27
+
 server/account_char.c: Modify to use the map name, not path for character
     listing if that data is available - gives nicer output.
 socket/request.c: Add numeric face number for character information, add

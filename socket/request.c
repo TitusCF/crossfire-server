@@ -2267,6 +2267,16 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
         SockList_Term(&sl);
         return;
     }
+    /*The minimum length isn't exactly required, but in the current implementation,
+     * client will send the same password for character for which there is a
+     * 2 character minimum size. Thus an account with a one character password
+     * won't be able to create a character. */
+    if (strlen(password)<2) {
+        SockList_AddString(&sl, "failure accountlogin Password is too short");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
 
     if (account_exists(name)) {
         SockList_AddString(&sl, "failure accountnew That account already exists on this server");
@@ -2527,6 +2537,23 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         SockList_Term(&sl);
         return;
     }
+
+    /* 2 characters minimum for password */
+    if (strlen(password)<2) {
+        SockList_AddString(&sl, "failure createplayer Password is too short");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    /** too long, buffer overflow */
+    if (status == 2) {
+        SockList_AddString(&sl, "failure createplayer Password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
     /* This is a fairly ugly solution - we're truncating the password.
      * however, the password information for characters is really
      * a legacy issue - when every character is associated with
@@ -2538,12 +2565,6 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     if (strlen(password)>17) 
         password[16] = 0;
 
-    if (status == 2 || strlen(password)<=1 || strlen(password) > 17) {
-        SockList_AddString(&sl, "failure createplayer Password is too long");
-        Send_With_Handling(ns, &sl);
-        SockList_Term(&sl);
-        return;
-    }
     /* We just can't call check_name(), since that uses draw_info() to
      * report status.  We are also more permissive on names, so we use
      * account_check_string() - if that is safe for account, also safe
