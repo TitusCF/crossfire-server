@@ -141,7 +141,7 @@ to describe the data.  This section is used to clarify what the different
 types are:
 
 string: A set of ASCII characters.  If a protocol command has several string
-        fields, then spaces are used to seperate the strings.
+        fields, then spaces are used to separate the strings.
 
 length prefixed string: An 8 bit length field prepends the string.  EG:
        <length><string>
@@ -194,7 +194,7 @@ S->C: failure <protocol command> <failure string>
       from their username, etc)
 
       This command is used to denote failure in some way (as detailed in
-      failure string) of a protocol commands.  This does not mean that
+      failure string) of a protocol command.  This does not mean that
       there was an error in the protocol (which typically results in
       a command being dropped), but rather that the server was unable
       to complete the given protocol request.
@@ -266,7 +266,7 @@ S->C: version <csval> [scval [vinfo]]
 	now - all it currently does is log mismatches.  In theory, the
 	server should keep track of what the client has, and adjust the
 	commands it sends respectively in the S->C direction.  The server is
-	resilant enough that it won't crash with a version mistmach
+	resilant enough that it won't crash with a version mismatch
 	(however, client may end up sending commands that the server just
 	ignores).  It is really up to the client to enforce versioning and
 	quit if the versions don't match.
@@ -434,7 +434,7 @@ S->C: addme_success
 
 	This are responses to the last addme command.  I really think these
 	should be discontinued, as they are one of the few messages which is
-	just a confirmation of a previous messsage.  The addme_failed should
+	just a confirmation of a previous message.  The addme_failed should
 	really be replaced with a terminate type of of message (player quits
 	game, server could inform us nicely and exit out).  addme_success is
 	really of no use - client just throws it away.
@@ -524,7 +524,7 @@ S->C: query <flags> [text]
 	client sends a long string (Server will use the first character.)
 
 	[text] is the question/prompt that should be printed.  Right now, it is
-	typically just a ':'.  Client should display it no matter what is is,
+	typically just a ':'.  Client should display it no matter what it is,
 	however.  Text is an optional field.  Note - as of 0.94.2, text may
 	be multi line, delimited by newlines.  Client should handle this
 	appropriately.
@@ -533,7 +533,7 @@ S->C: drawextinfo <color> <type> <subtype> message
 	<color> string integer data - color to draw text in.
 	<type>  string integer data - type of message
 	<subtype> string integer data - subtype (flavor) of message.
-	<message> is a string representation of textual message. 
+	<message> is a string representation of textual message.
               Content of message may very well vary depending on the type.
 
 	Tell the client to draw specific text.  Color are specified in
@@ -581,7 +581,7 @@ C->S: examine <val>
 C->S: apply <val>
       <val> string integer data.  Tag of object to apply.
 
-	Tells the server that I want to apply the object <val>. 
+	Tells the server that I want to apply the object <val>.
 
 C->S: lock <val><tag>
       <val> binary 1 byte data.  0=unlock, 1=lock
@@ -677,9 +677,9 @@ S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
     in the same spot, but in the case of a players inventory, a
     single item2 with a large number of items can be sent.
 
-S->C: upditem <flags><tag><vals>+ 
+S->C: upditem <flags><tag><vals>+
 
-    <flags> 1 byte bnary value. flags determines what values are
+    <flags> 1 byte binary value. flags determines what values are
             sent and to be updated (for a definition of the flag
             values, see the UPD_ flags in newclient.h file.)
 
@@ -769,7 +769,7 @@ S->C addspell <tag1> <level1> <casting time1> <mana1> <grace1> <damage1> <skill>
 		The description of the spell. Note that this has an extra length
 		byte because the messages may well be longer than 256 bytes in
 		length.
-	
+
 	<usage information> (1 byte)
 	       Only sent if 'spellmon 2' was setup by the client.
 	       Values are:
@@ -852,7 +852,7 @@ S->C: anim <num><flags><face1><face2>...
         <num> once per run - the client needs to keep track what has
         been sent.  On new runs, anim commands will be resent.
 
-      
+
 	<flags> 2 byte binary data.  Currently unused, but is included
 	    because I think there may end up being cases were more about
 	    the animation than just the num and faces are needed.
@@ -932,7 +932,7 @@ S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 
 	All data is in standard binary form.
 
-	<coord> 2 byte binary 
+	<coord> 2 byte binary
 
     	the coord values are length + x + y values.
        	The data represented looks like this:
@@ -1103,7 +1103,7 @@ S->C: magicmap <width> <height> <px> <py> <data>
       <data> binary data - one byte per space.  Low nibble contains
              color information, high nibble contains FACE_FLOOR
              and FACE_WALL (see newclient.h) to denote nature of
-             object on that space.  This string of data 
+             object on that space.  This string of data
              represents the space from left to right,
              then up to down.
 
@@ -1156,7 +1156,7 @@ S->C: setup <option1> <value1> <option2> <value2>
 	connection between client and server.
 
 	All data in the setup command is in ASCII text form.  options and
-	values can not have whitepace - the client and server use whitspace
+	values can not have whitespace - the client and server use whitespace
 	to split the options and values.
 
     The server only sends a setup command in response to one from the
@@ -1186,12 +1186,12 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    this does not allow the client to cheat.  In the case of the
 	    old 'map' protocol command, turning darkness off will result
 	    in the masking faces not getting sent to the client.
-	
+
 	extended_stats (0/1 value):
 	   If set to 1, the server will send the CS_STATS_RACE_xxx and
 	   CS_STATS_BASE_xxx values too, so the client can display
 	   various status related to statistics. Default is 0.
-	
+
 	facecache (0/1)
 	    Determines if the client is caching images (1) or wants the
 	    images sent to it without caching them (0).  Default is 0.  This
@@ -1360,7 +1360,7 @@ S->C: replyinfo <info_type> [options] <data>
          comments.  The server will ignore any parameters the client
          sends.
 
-         An examply response:
+         An example response:
 
          replyinfo image_info
          3512
@@ -1411,7 +1411,7 @@ S->C: replyinfo <info_type> [options] <data>
         accurate.)
 
         If the client sends invalid data (stop is less than start,
-        missing stop paremeter, stop is beyond the number of images,
+        missing stop parameter, stop is beyond the number of images,
         or asking for more than 1000 at a time), the reply will just
         be an empty list.
 
@@ -1420,7 +1420,7 @@ S->C: replyinfo <info_type> [options] <data>
         it again (unless requested via requestinfo).  Thus, this
         request should always do the right thing with the returned
         information.
-    
+
     exp_table (no parameters)
 
         This requests the experience table (what exp is needed for
@@ -1535,7 +1535,7 @@ C->S: reply (return player password.)
 
  At this point, things could deviate two ways - player could be
 starting a new character, in which case, numerous draw infos, query's
-(stat rolling), replys, stats (change stats that were just
+(stat rolling), replies, stats (change stats that were just
 rolled), map updates (player changing class) could be sent.  However,
 we will assume that the player actually entered the proper password
 and an existing character is rejoining the game.
@@ -1754,7 +1754,7 @@ that when we actually get the image, we know what filename to store it
 as.
 
  Second, we request the server to do image caching.  This is done
-by oring the cache directive to the image mode we want.
+by or-ing the cache directive to the image mode we want.
 
 C->S: setup facecache 1
 
@@ -1782,7 +1782,7 @@ C->S: askface 65
 
  The server will then send the image via image2 protocol commands.
 
-S->C:  image2 <face><set><len><data> 
+S->C:  image2 <face><set><len><data>
 
 Because image2 does not include the image name, the client must store
 the name & number mapping someplace before sending the askface.  In
@@ -1857,4 +1857,3 @@ if the command is not a player action (ie, maybe requesting an image, or
 a misc command like who), we could still execute it.  Actually, we can
 get around the select problem by only adding the file descriptors from
 sockets that actually have time to perform actions.
-
