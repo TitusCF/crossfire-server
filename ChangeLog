@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+ANSI C89 fix.
+ server/quest.c
+Nicolas Weeger 2010-05-04
+
 server/player.c: don't switch to account mode if no account name (else segfault).
 This could happen if the client sends the setup command but starts playing without
 actually logging in.

@@ -702,6 +702,7 @@ static void quest_info(player *pl, quest_state *qs) {
     quest_player *pq = get_or_create_quest(pl);
     quest_definition *quest;
     quest_step_definition *step;
+    const char *prefix;
 
     if (!qs) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid quest number", NULL);
@@ -724,7 +725,7 @@ static void quest_info(player *pl, quest_state *qs) {
                     restart = " (can be replayed)";
         draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "This quest has been completed%s.", NULL, restart);
     }
-    const char *prefix = "";
+    prefix = "";
     if (qs->state != QC_CAN_RESTART) {
         /* ie, if we are in progress or completed for a non-restartable quest */
                 if (!step) {
