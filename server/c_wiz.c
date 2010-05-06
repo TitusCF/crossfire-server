@@ -801,7 +801,7 @@ int command_create(object *op, char *params) {
     uint32 nrof;
     char *cp, *bp, *bp2, *bp3, *bp4, *endline;
     archetype *at, *at_spell = NULL;
-    artifact *art = NULL;
+    const artifact *art = NULL;
 
     if (!op)
         return 0;
@@ -851,7 +851,7 @@ int command_create(object *op, char *params) {
         }
     }
 
-    if ((at = find_archetype(bp)) == NULL) {
+    if ((at = try_find_archetype(bp)) == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "No such archetype.", NULL);
         return 1;
@@ -866,7 +866,7 @@ int command_create(object *op, char *params) {
          * the first word.
          */
 
-        at_spell = find_archetype(cp);
+        at_spell = try_find_archetype(cp);
         if (!at_spell || at_spell->clone.type != SPELL)
             at_spell = find_archetype_by_object_name(cp);
         if (!at_spell || at_spell->clone.type != SPELL) {
@@ -875,7 +875,7 @@ int command_create(object *op, char *params) {
             if (fsp) {
                 *fsp = 0;
                 fsp++;
-                at_spell = find_archetype(spell_name);
+                at_spell = try_find_archetype(spell_name);
 
                 /* Got a spell, update the first string pointer */
                 if (at_spell && at_spell->clone.type == SPELL)
