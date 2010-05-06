@@ -987,6 +987,7 @@ static void help(void) {
     printf(" -m8          Dumps out gods information.\n");
     printf(" -m9          Dumps out more alchemy information (formula checking).\n");
     printf(" -mt <name>   Dumps out list of treasures for a monster.\n");
+    printf(" -mexp        Dumps out the experience table.\n");
     exit(0);
 }
 
