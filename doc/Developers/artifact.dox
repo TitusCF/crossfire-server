@@ -9,6 +9,6 @@ The definition for the artifacts is in the <tt>lib/artifacts</tt> file.
 
 Artifacts are loaded during startup and not modified during the server run.
 
-Artifact manipulation functions are defined in the @ref treasure.c file, and the associated structure are ::artifactstruct and ::artifactliststruct.
+Artifact manipulation functions are defined in the @ref artifact.c file, and the associated structure are ::artifactstruct and ::artifactliststruct.
 
 */
