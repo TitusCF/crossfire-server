@@ -1638,7 +1638,7 @@ void send_class_info(socket_struct *ns, char *params) {
  * three cases, we are basically just dumping file
  * contents to the client - nothing more.
  *
- * @parm ns
+ * @param ns
  * socket to send to
  * @param file
  * Which file to send - string of either motd, news, rules

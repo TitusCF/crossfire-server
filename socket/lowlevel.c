@@ -97,8 +97,8 @@ void SockList_ResetRead(SockList *sl) {
 
 /**
  * Adds an 8 bit value.
- * @pram sl the SockList instance to add to
- * @param c the value to add
+ * @param sl the SockList instance to add to
+ * @param data the value to add
  */
 void SockList_AddChar(SockList *sl, char data) {
     SockList_Ensure(sl, 1);
@@ -107,7 +107,7 @@ void SockList_AddChar(SockList *sl, char data) {
 
 /**
  * Adds a 16 bit value.
- * @pram sl the SockList instance to add to
+ * @param sl the SockList instance to add to
  * @param data the value to add
  */
 void SockList_AddShort(SockList *sl, uint16 data) {
@@ -118,7 +118,7 @@ void SockList_AddShort(SockList *sl, uint16 data) {
 
 /**
  * Adds a 32 bit value.
- * @pram sl the SockList instance to add to
+ * @param sl the SockList instance to add to
  * @param data the value to add
  */
 void SockList_AddInt(SockList *sl, uint32 data) {
@@ -131,7 +131,7 @@ void SockList_AddInt(SockList *sl, uint32 data) {
 
 /**
  * Adds a 64 bit value.
- * @pram sl the SockList instance to add to
+ * @param sl the SockList instance to add to
  * @param data the value to add
  */
 void SockList_AddInt64(SockList *sl, uint64 data) {

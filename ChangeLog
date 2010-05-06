@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Doxygen fixes.
+Nicolas Weeger 2010-05-06
+
 Make parameters and return values const when applicable.
 Nicolas Weeger 2010-05-06
 

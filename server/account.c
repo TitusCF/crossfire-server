@@ -558,7 +558,7 @@ char **account_get_players_for_account(char *account_name)
  * This looks at all the accounts and sees if charname is associated
  * with any of them. 
  *
- * @params charname
+ * @param charname
  * character name to check for.
  * @return
  * Account name the character is associated with, NULL if none.
