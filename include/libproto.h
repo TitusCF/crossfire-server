@@ -26,6 +26,15 @@ extern object *create_archetype(const char *name);
 extern archetype *try_find_archetype(const char *name);
 extern archetype *find_archetype(const char *name);
 extern object *object_create_arch(archetype *at);
+/* artifact.c */
+extern void free_all_artifacts(void);
+extern void generate_artifact(object *op, int difficulty);
+extern void give_artifact_abilities(object *op, object *artifact);
+extern int legal_artifact_combination(object *op, artifact *art);
+extern void add_abilities(object *op, object *change);
+extern void init_artifacts(void);
+extern artifactlist *find_artifactlist(int type);
+extern void dump_artifacts(void);
 /* button.c */
 extern void trigger_connected(objectlink *ol, object *cause, const int state);
 extern void push_button(object *op);
@@ -391,14 +400,7 @@ extern void create_treasure(treasurelist *t, object *op, int flag, int difficult
 extern object *generate_treasure(treasurelist *t, int difficulty);
 extern void set_abs_magic(object *op, int magic);
 extern void fix_generated_item(object *op, object *creator, int difficulty, int max_magic, int flags);
-extern artifactlist *find_artifactlist(int type);
-extern void dump_artifacts(void);
 extern void dump_monster_treasure(const char *name);
-extern void init_artifacts(void);
-extern void add_abilities(object *op, object *change);
-extern int legal_artifact_combination(object *op, artifact *art);
-extern void give_artifact_abilities(object *op, object *artifact);
-extern void generate_artifact(object *op, int difficulty);
 extern void free_all_treasures(void);
 /* utils.c */
 extern int random_roll(int min, int max, const object *op, int goodbad);

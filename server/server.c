@@ -1195,6 +1195,7 @@ void cleanup(void) {
 #ifdef MEMORY_DEBUG
     free_all_archs();
     free_all_treasures();
+    free_all_artifacts();
     free_all_images();
     free_all_newserver();
     free_all_recipes();
