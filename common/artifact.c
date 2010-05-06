@@ -164,8 +164,8 @@ void free_all_artifacts(void) {
  * the artifact.
  */
 void generate_artifact(object *op, int difficulty) {
-    artifactlist *al;
-    artifact *art;
+    const artifactlist *al;
+    const artifact *art;
     int i;
 
     al = find_artifactlist(op->type);
@@ -211,7 +211,7 @@ void generate_artifact(object *op, int difficulty) {
  * Fixes the given object, giving it the abilities and titles
  * it should have due to the second artifact-template.
  */
-void give_artifact_abilities(object *op, object *artifact) {
+void give_artifact_abilities(object *op, const object *artifact) {
     char new_name[MAX_BUF];
 
     snprintf(new_name, sizeof(new_name), "of %s", artifact->name);
@@ -226,7 +226,7 @@ void give_artifact_abilities(object *op, object *artifact) {
 /**
  * Checks if op can be combined with art.
  */
-int legal_artifact_combination(object *op, artifact *art) {
+int legal_artifact_combination(const object *op, const artifact *art) {
     int neg, success = 0;
     linked_char *tmp;
     const char *name;
@@ -261,7 +261,7 @@ int legal_artifact_combination(object *op, artifact *art) {
  * Used in artifact generation.  The bonuses of the first object
  * is modified by the bonuses of the second object.
  */
-void add_abilities(object *op, object *change) {
+void add_abilities(object *op, const object *change) {
     int i, tmp;
 
     if (change->face != blank_face) {
@@ -450,6 +450,23 @@ void add_abilities(object *op, object *change) {
 }
 
 /**
+ * Searches the artifact lists and returns one that has the same type
+ * of objects on it, non-const version of find_artifactlist() used only
+ * during artifact loading.
+ *
+ * @return
+ * NULL if no suitable list found.
+ */
+static artifactlist *find_artifactlist_internal(int type) {
+    artifactlist *al;
+
+    for (al = first_artifactlist; al != NULL; al = al->next)
+        if (al->type == type)
+            return al;
+    return NULL;
+}
+
+/**
  * Builds up the lists of artifacts from the file in the libdir.
  * Can be called multiple times without ill effects.
  */
@@ -531,7 +548,7 @@ void init_artifacts(void) {
                 LOG(llevError, "Init_Artifacts: Could not load object.\n");
             art->item->arch = NULL;
             art->item->name = add_string((strchr(cp, ' ')+1));
-            al = find_artifactlist(art->item->type);
+            al = find_artifactlist_internal(art->item->type);
             if (al == NULL) {
                 al = get_empty_artifactlist();
                 al->type = art->item->type;
@@ -570,13 +587,8 @@ void init_artifacts(void) {
  * @return
  * NULL if no suitable list found.
  */
-artifactlist *find_artifactlist(int type) {
-    artifactlist *al;
-
-    for (al = first_artifactlist; al != NULL; al = al->next)
-        if (al->type == type)
-            return al;
-    return NULL;
+const artifactlist *find_artifactlist(int type) {
+    return find_artifactlist_internal(type);
 }
 
 /**

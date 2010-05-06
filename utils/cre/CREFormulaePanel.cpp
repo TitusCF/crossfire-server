@@ -86,7 +86,7 @@ void CREFormulaePanel::setRecipe(const recipe* recipe)
     if (recipe->arch_names > 0)
     {
         archetype* arch = find_archetype(recipe->arch_name[0]);
-        artifactlist* at = find_artifactlist(arch->clone.type);
+        const artifactlist* at = find_artifactlist(arch->clone.type);
         if (at != NULL)
         {
             artifact* art = at->items;

@@ -29,11 +29,11 @@ extern object *object_create_arch(archetype *at);
 /* artifact.c */
 extern void free_all_artifacts(void);
 extern void generate_artifact(object *op, int difficulty);
-extern void give_artifact_abilities(object *op, object *artifact);
-extern int legal_artifact_combination(object *op, artifact *art);
-extern void add_abilities(object *op, object *change);
+extern void give_artifact_abilities(object *op, const object *artifact);
+extern int legal_artifact_combination(const object *op, const artifact *art);
+extern void add_abilities(object *op, const object *change);
 extern void init_artifacts(void);
-extern artifactlist *find_artifactlist(int type);
+extern const artifactlist *find_artifactlist(int type);
 extern void dump_artifacts(void);
 /* button.c */
 extern void trigger_connected(objectlink *ol, object *cause, const int state);
