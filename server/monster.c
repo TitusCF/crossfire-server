@@ -40,6 +40,27 @@
 #include <skills.h>
 #endif
 
+/** How many NPC replies maximum to tell the player. */
+#define MAX_REPLIES 10
+/** How many NPCs maximum will reply to the player. */
+#define MAX_NPC     5
+/**
+ * Structure used to build up dialog information when a player says something.
+ * @sa monster_communicate().
+ */
+typedef struct talk_info {
+    object *who;                        /**< Player saying something. */
+    const char *text;                   /**< What the player actually said. */
+    const char *message;                /**< If not NULL, what the player will be displayed as said. */
+    int message_type;                   /**< A reply_type value for message. */
+    int replies_count;                  /**< How many items in replies_words and replies. */
+    char *replies_words[MAX_REPLIES];   /**< Available reply words. */
+    char *replies[MAX_REPLIES];         /**< Description for replies_words. */
+    int npc_count;                      /**< How many NPCs reacted to the text being said. */
+    object *npc[MAX_NPC];               /**< The NPCs reacting. */
+    char *npc_msgs[MAX_NPC];            /**< What the NPCs in npc will say. */
+} talk_info;
+
 static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv);
 static int monster_cast_spell(object *head, object *part, object *pl, int dir, rv_vector *rv);
 static int monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv);
@@ -62,7 +83,7 @@ static void monster_pace_moveh(object *ob);
 static void monster_pace2_movev(object *ob);
 static void monster_pace2_moveh(object *ob);
 static void monster_rand_move(object *ob);
-static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *talked);
+static int monster_talk_to_npc(object *npc, talk_info *info);
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
 
@@ -2004,6 +2025,13 @@ void monster_check_doors(object *op, mapstruct *m, int x, int y) {
 /**
  * This function looks for an object or creature that is listening to said text.
  *
+ * The process is such:
+ * - first, build up information on NPCs reacting to what is said, replies
+ * - second, figure what the player will be displayed as said
+ * - third, have the player actually talk
+ * - fourth, the NPCs talk too
+ * - fifth: show the player available replies
+ *
  * There is a rare event that the orig_map is used for - basically, if
  * a player says the magic word that gets him teleported off the map,
  * it can result in the new map putting the object count too high,
@@ -2018,20 +2046,19 @@ void monster_check_doors(object *op, mapstruct *m, int x, int y) {
  *
  * @param op who is saying something.
  * @param txt what is said.
- *
- * @note
- * communicate() has been renamed to monster_communicate()
  */
 void monster_communicate(object *op, const char *txt) {
-    int i, mflags, talked = 0;
+    int i, mflags;
     sint16 x, y;
     mapstruct *mp, *orig_map = op->map;
-    char buf[MAX_BUF];
+    char own[MAX_BUF], others[MAX_BUF];
+    talk_info info;
 
-    snprintf(buf, sizeof(buf), "%s says: %s", op->name, txt);
-    if (op->type == PLAYER) {
-        ext_info_map(NDI_WHITE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
-    }
+    info.text = txt;
+    info.message = NULL;
+    info.replies_count = 0;
+    info.who = op;
+    info.npc_count = 0;
 
     /* Note that this loop looks pretty inefficient to me - we look and try to talk
      * to every object within 2 spaces.  It would seem that if we trim this down to
@@ -2049,7 +2076,7 @@ void monster_communicate(object *op, const char *txt) {
             continue;
 
         FOR_MAP_PREPARE(mp, x, y, npc) {
-            monster_talk_to_npc(op, npc, txt, &talked);
+            monster_talk_to_npc(npc, &info);
             if (orig_map != op->map) {
                 LOG(llevDebug, "Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
                 return;
@@ -2057,50 +2084,50 @@ void monster_communicate(object *op, const char *txt) {
         } FOR_MAP_FINISH();
     }
 
-    /* if talked is set, then the monster_talk_to_npc() wrote out this information, so
-     * don't do it again.
-     */
-    if (!talked) {
+    /* First, what the player says. */
+    if (info.message != NULL) {
+        snprintf(own, sizeof(own), "You %s: %s", (info.message_type == rt_question) ? "ask" : "reply", info.message);
+        snprintf(others, sizeof(others), "%s %s: %s", op->name, (info.message_type == rt_question) ? "asks" : "replies", info.message);
+    } else {
+        snprintf(own, sizeof(own), "You say: %s", txt);
+        snprintf(others, sizeof(others), "%s says: %s", op->name, txt);
+    }
+    draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, own, NULL);
+    ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, others, NULL);
+
+    /* Then NPCs can actually talk. */
+    for (i = 0; i < info.npc_count; i++) {
+        monster_npc_say(info.npc[i], info.npc_msgs[i]);
+    }
+
+    /* Finally, the replies the player can use. */
+    if (info.replies_count > 0) {
+        draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, "Replies:", NULL);
+        for (i = 0; i < info.replies_count; i++) {
+            draw_ext_info_format(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, " - %s: %s", NULL, info.replies_words[i], info.replies[i]);
+        }
     }
 }
 
 /**
  * Checks the messages of a NPC for a matching text. Will not call
  * plugin events. Called by monster_talk_to_npc().
- * @param op who is saying something
- * @param npc object that gets a chance to reply.
- * @param txt text being said.
- * @param talked did op already talk? Will be modified if this function makes op talk.
- * @return 1 if npc talked, 0 else.
  *
- * @note
- * do_talk_npc() has been renamed to monster_do_talk_npc()
+ * @param npc object that gets a chance to reply.
+ * @param info message information.
+ * @return 1 if npc talked, 0 else.
  */
-static int monster_do_talk_npc(object *op, object *npc, const char *txt, int *talked) {
-    char buf[MAX_BUF];
+static int monster_do_talk_npc(object *npc, talk_info *info) {
     struct_dialog_reply *reply;
     struct_dialog_message *message;
 
-    if (!get_dialog_message(npc, txt, &message, &reply))
+    if (!get_dialog_message(npc, info->text, &message, &reply))
         return 0;
 
     if (reply) {
-        snprintf(buf, sizeof(buf), "%s %s: %s", op->name, (reply->type == rt_reply ? "replies" : "asks"), reply->message);
-        ext_info_map(NDI_WHITE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
-        *talked = 1;
+        info->message = reply->message;
+        info->message_type = reply->type;
     }
-#if 0
-    /* let the caller handle this reply - no reason we need to.  Leaving this in for the
-     * time being, as I don't completely understand what all of this is trying to do.
-     * MSW 2009-04-14
-     */
-
-    else if (!*talked) {
-        *talked = 1;
-        snprintf(buf, sizeof(buf), "%s says: %s", op->name, txt);
-        ext_info_map(NDI_WHITE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
-    }
-#endif
 
     if (npc->type == MAGIC_EAR) {
         ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_EAR, message->message, NULL);
@@ -2108,19 +2135,23 @@ static int monster_do_talk_npc(object *op, object *npc, const char *txt, int *ta
     } else {
         char value[2];
 
-        monster_npc_say(npc, message->message);
-        reply = message->replies;
+        if (info->npc_count < MAX_NPC) {
+            info->npc[info->npc_count] = npc;
+            info->npc_msgs[info->npc_count] = message->message;
+            info->npc_count++;
+        }
+
         /* mark that the npc was talked to, so it won't move randomly later on */
         value[0] = '3' + rand() % 6;
         value[1] = '\0';
         object_set_value(npc, "talked_to", value, 1);
 
-        if (reply) {
-            draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, "Replies:", NULL);
-            while (reply) {
-                draw_ext_info_format(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, " - %s: %s", NULL, reply->reply, reply->message);
-                reply = reply->next;
-            }
+        reply = message->replies;
+        while (reply && info->replies_count < MAX_REPLIES) {
+            info->replies[info->replies_count] = reply->message;
+            info->replies_words[info->replies_count] = reply->reply;
+            info->replies_count++;
+            reply = reply->next;
         }
     }
 
@@ -2131,9 +2162,6 @@ static int monster_do_talk_npc(object *op, object *npc, const char *txt, int *ta
  * Simple function to have some NPC say something.
  * @param npc who should say something.
  * @param cp what is being said.
- *
- * @note
- * npc_say() has been renamed to monster_npc_say()
  */
 void monster_npc_say(object *npc, const char *cp) {
     char buf[HUGE_BUF], name[MAX_BUF];
@@ -2148,30 +2176,25 @@ void monster_npc_say(object *npc, const char *cp) {
  * Give an object the chance to handle something being said.
  * Plugin hooks will be called, including in the NPC's inventory.
  *
- * @param op who is talking.
  * @param npc object to try to talk to. Can be an NPC or a MAGIC_EAR.
- * @param txt what op is saying.
- * @param talked did op already talk? Can be modified by this function.
+ * @param info message information.
  * @return 0 if text was handled by a plugin or not handled, 1 if handled internally by the server.
- *
- * @note
- * talk_to_npc() has been renamed to monster_talk_to_npc()
  */
-static int monster_talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
+static int monster_talk_to_npc(object *npc, talk_info *info) {
     /* Move this commone area up here - shouldn't cost much extra cpu
      * time, and makes the function more readable */
     /* Lauwenmark: Handle for plugin say event */
-    if (execute_event(npc, EVENT_SAY, op, NULL, txt, SCRIPT_FIX_ALL) != 0)
+    if (execute_event(npc, EVENT_SAY, info->who, NULL, info->text, SCRIPT_FIX_ALL) != 0)
         return 0;
     /* Lauwenmark - Here we let the objects inside inventories hear and answer, too. */
     /* This allows the existence of "intelligent" weapons you can discuss with */
     FOR_INV_PREPARE(npc, cobj)
-        if (execute_event(cobj, EVENT_SAY, op, NULL, txt, SCRIPT_FIX_ALL) != 0)
+        if (execute_event(cobj, EVENT_SAY, info->who, NULL, info->text, SCRIPT_FIX_ALL) != 0)
             return 0;
     FOR_INV_FINISH();
-    if (op == npc)
+    if (info->who == npc)
         return 0;
-    return monster_do_talk_npc(op, npc, txt, talked);
+    return monster_do_talk_npc(npc, info);
 }
 
 /* monster_find_throw_ob() - modeled on find_throw_ob
