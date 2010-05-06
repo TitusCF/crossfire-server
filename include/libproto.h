@@ -63,9 +63,9 @@ extern void fatal(int err);
 extern void init_gods(void);
 extern godlink *get_rand_god(void);
 extern const object *pntr_to_god_obj(godlink *godlnk);
+extern int describe_god(const object *god, int what, StringBuffer *buf, int maxlen);
 extern void free_all_god(void);
 extern void dump_gods(void);
-extern int describe_god(const object *god, int what, StringBuffer *buf, int maxlen);
 /* info.c */
 extern void dump_abilities(void);
 extern void print_monsters(void);
@@ -230,7 +230,7 @@ extern void object_update_speed(object *op);
 extern void object_remove_from_active_list(object *op);
 extern void object_update(object *op, int action);
 extern void object_free_drop_inventory(object *ob);
-extern void object_free2(object *ob, int free_inventory);
+extern void object_free2(object *ob, int flags);
 extern int object_count_free(void);
 extern int object_count_used(void);
 extern int object_count_active(void);
@@ -320,15 +320,17 @@ extern void player_set_own_title(struct pl *pl, const char *title);
 /* re-cmp.c */
 extern const char *re_cmp(const char *str, const char *regexp);
 /* readable.c */
+extern int nstrtok(const char *buf1, const char *buf2);
+extern char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, size_t size);
 extern int book_overflow(const char *buf1, const char *buf2, size_t booksize);
 extern void init_readable(void);
 extern object *get_random_mon(int level);
+extern char *artifact_msg(int level, char *retbuf, size_t booksize);
+extern char *spellpath_msg(int level, char *retbuf, size_t booksize);
 extern void tailor_readable_ob(object *book, int msg_type);
 extern void free_all_readable(void);
 extern void write_book_archive(void);
 extern const readable_message_type *get_readable_message_type(object *readable);
-extern char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, size_t size);
-extern int nstrtok(const char *buf1, const char *buf2);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
 extern void init_formulae(void);
@@ -368,6 +370,7 @@ extern sstring stringbuffer_finish_shared(StringBuffer *sb);
 extern void stringbuffer_append_string(StringBuffer *sb, const char *str);
 extern void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 extern void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);
+extern size_t stringbuffer_length(StringBuffer *sb);
 /* time.c */
 extern const char *get_periodofday(const int index);
 extern const char *get_month_name(const int index);
