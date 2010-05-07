@@ -93,6 +93,12 @@ Dumps out more alchemy information.
 .TP
 .B -mt <name>
 Dumps out a list of treasures for a monster.
+.TP
+.B -mexp
+Dumps out the experience table.
+.TP
+.B -mq
+Dumps out the list of defined quests.
 
 .SH SEE ALSO
 .B cfclient(6)
