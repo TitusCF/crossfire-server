@@ -285,6 +285,7 @@ static struct Command_Line_Options options[] = {
     { "-m9", 0, 3, set_dumpmon9 },
     { "-mt", 1, 3, set_dumpmont },
     { "-mexp", 0, 3, dump_experience },
+    { "-mq", 0, 3, dump_quests },
     { "-s", 0, 3, showscores },
     { "-score", 1, 3, showscoresparm }
 };
@@ -988,6 +989,7 @@ static void help(void) {
     printf(" -m9          Dumps out more alchemy information (formula checking).\n");
     printf(" -mt <name>   Dumps out list of treasures for a monster.\n");
     printf(" -mexp        Dumps out the experience table.\n");
+    printf(" -mq          Dumps out the list of defined quests.\n");
     exit(0);
 }
 

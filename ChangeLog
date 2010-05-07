@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add -mq as a command line option to dump a list of the quests that the
+server recognises.
+Brendan Lally 2010-05-07
+
 Improve dialog system. Use "You" for the player saying something.
 Don't send multiple texts when @reply is used in dialogs.
 Nicolas Weeger 2010-05-06

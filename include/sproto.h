@@ -541,6 +541,7 @@ void quest_start(player *pl, sstring quest_code, int state);
 void quest_set_player_state(player *pl, sstring quest_code, int state);
 int quest_was_completed(player *pl, sstring quest_code);
 int command_quest(object *op, char *params);
+void dump_quests(void);
 void free_quest(void);
 /* resurrection.c */
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg);

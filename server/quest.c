@@ -872,6 +872,30 @@ int command_quest(object *op, char *params) {
 }
 
 /**
+ * Dump all of the quests, then calls exit() - useful in terms of debugging to make sure that
+ * quests are set up and recognised correctly.
+ */
+void dump_quests(void) {
+    quest_definition *quest;
+    quest_step_definition *step;
+    quest_load_definitions();
+    int questcount, stepcount;
+    quest = quests;
+    while (quest) {
+        questcount++;
+        stepcount=0;
+        step = quest->steps;
+        while (step) {
+            stepcount++;
+            step= step->next;
+        }
+        fprintf(logfile, "%s - %s - %d steps (%srestartable)\n", quest->quest_code, quest->quest_title, stepcount, quest->quest_restart?"":"not ");
+        quest = quest->next;
+    }
+    exit(0);
+}
+
+/**
  * Free all quest status structures. It is all right to call quest functions again after that.
  */
 void free_quest(void) {
