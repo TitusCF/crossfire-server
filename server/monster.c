@@ -2002,6 +2002,32 @@ void monster_check_doors(object *op, mapstruct *m, int x, int y) {
 }
 
 /**
+ * Output a NPC message on a map.
+ * @param map where to talk to.
+ * @param message what to say.
+ */
+void monster_do_say(const mapstruct *map, const char *message) {
+    ext_info_map(NDI_NAVY|NDI_UNIQUE, map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
+                 message, message);
+}
+
+/**
+ * Format an NPC message.
+ * @param npc who is talking.
+ * @param message what is being said.
+ * @return new StringBuffer containing the text.
+ */
+StringBuffer *monster_format_say(const object* npc, const char *message) {
+    char name[MAX_BUF];
+    StringBuffer *buf;
+
+    query_name(npc, name, sizeof(name));
+    buf = stringbuffer_new();
+    stringbuffer_append_printf(buf, "%s says: %s", name, message);
+    return buf;
+}
+
+/**
  * This function looks for an object or creature that is listening to said text.
  *
  * The process is such:
@@ -2037,7 +2063,7 @@ void monster_communicate(object *op, const char *txt) {
     info.message = NULL;
     info.replies_count = 0;
     info.who = op;
-    info.npc_count = 0;
+    info.npc_msg_count = 0;
 
     /* Note that this loop looks pretty inefficient to me - we look and try to talk
      * to every object within 2 spaces.  It would seem that if we trim this down to
@@ -2076,8 +2102,8 @@ void monster_communicate(object *op, const char *txt) {
     ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, others, NULL);
 
     /* Then NPCs can actually talk. */
-    for (i = 0; i < info.npc_count; i++) {
-        monster_npc_say(info.npc[i], info.npc_msgs[i]);
+    for (i = 0; i < info.npc_msg_count; i++) {
+        monster_do_say(orig_map, info.npc_msgs[i]);
         free_string(info.npc_msgs[i]);
     }
 
@@ -2118,10 +2144,9 @@ static int monster_do_talk_npc(object *npc, talk_info *info) {
     } else {
         char value[2];
 
-        if (info->npc_count < MAX_NPC) {
-            info->npc[info->npc_count] = npc;
-            info->npc_msgs[info->npc_count] = add_string(message->message);
-            info->npc_count++;
+        if (info->npc_msg_count < MAX_NPC) {
+            info->npc_msgs[info->npc_msg_count] = stringbuffer_finish_shared(monster_format_say(npc, message->message));
+            info->npc_msg_count++;
         }
 
         /* mark that the npc was talked to, so it won't move randomly later on */
@@ -2147,12 +2172,12 @@ static int monster_do_talk_npc(object *npc, talk_info *info) {
  * @param cp what is being said.
  */
 void monster_npc_say(object *npc, const char *cp) {
-    char buf[HUGE_BUF], name[MAX_BUF];
+    char *message;
+    StringBuffer *buf = monster_format_say(npc, cp);
 
-    query_name(npc, name, sizeof(name));
-    snprintf(buf, sizeof(buf), "%s says: %s", name, cp);
-    ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
-                 buf, buf);
+    message = stringbuffer_finish(buf);
+    monster_do_say(npc->map, message);
+    free(message);
 }
 
 /**
