@@ -1253,6 +1253,13 @@ static void initConstants(PyObject *module) {
         { NULL, 0 }
     };
 
+    static const CFConstant cstReplyTypes[] = {
+        { "SAY", rt_say },
+        { "REPLY", rt_reply },
+        { "QUESTION", rt_question },
+        { NULL, 0 }
+    };
+
     addConstants(module, "Direction", cstDirection);
     addConstants(module, "Type", cstType);
     addConstants(module, "Move", cstMove);
@@ -1262,6 +1269,7 @@ static void initConstants(PyObject *module) {
     addConstants(module, "AttackTypeNumber", cstAttackTypeNumber);
     addConstants(module, "EventType", cstEventType);
     addSimpleConstants(module, "Time", cstTime);
+    addSimpleConstants(module, "ReplyType", cstReplyTypes);
 }
 
 /*

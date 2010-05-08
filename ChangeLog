@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Expose rt_xxx to Python scripts through 'Crossfire.ReplyType'.
+Nicolas Weeger 2010-05-08
+
 Add 'rt_say', give explicit values. Extract texts to function.
 Nicolas Weeger 2010-05-08
 
