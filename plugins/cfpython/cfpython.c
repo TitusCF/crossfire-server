@@ -120,6 +120,9 @@ static PyObject *getSeasonName(PyObject *self, PyObject *args);
 static PyObject *getMonthName(PyObject *self, PyObject *args);
 static PyObject *getWeekdayName(PyObject *self, PyObject *args);
 static PyObject *getPeriodofdayName(PyObject *self, PyObject *args);
+static PyObject *addReply(PyObject *self, PyObject *args);
+static PyObject *setPlayerMessage(PyObject *self, PyObject *args);
+static PyObject *npcSay(PyObject *self, PyObject *args);
 
 /** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...) {
@@ -178,6 +181,9 @@ static PyMethodDef CFPythonMethods[] = {
     { "GetMonthName",        getMonthName,           METH_VARARGS, NULL },
     { "GetWeekdayName",      getWeekdayName,         METH_VARARGS, NULL },
     { "GetPeriodofdayName",  getPeriodofdayName,     METH_VARARGS, NULL },
+    { "AddReply",            addReply,               METH_VARARGS, NULL },
+    { "SetPlayerMessage",    setPlayerMessage,       METH_VARARGS, NULL },
+    { "NPCSay",              npcSay,                 METH_VARARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 
@@ -644,6 +650,82 @@ static PyObject *getPeriodofdayName(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "i", &i))
         return NULL;
     return Py_BuildValue("s", cf_get_periodofday_name(i));
+}
+
+static PyObject *addReply(PyObject */*self*/, PyObject *args) {
+    char *word, *reply;
+    talk_info *talk;
+
+    if (current_context->talk == NULL) {
+        set_exception("not in a dialog context");
+        return NULL;
+    }
+    talk = current_context->talk;
+
+    if (!PyArg_ParseTuple(args, "ss", &word, &reply)) {
+        return NULL;
+    }
+
+    if (talk->replies_count == MAX_REPLIES) {
+        set_exception("too many replies");
+        return NULL;
+    }
+
+    talk->replies_words[talk->replies_count] = cf_add_string(word);
+    talk->replies[talk->replies_count] = cf_add_string(reply);
+    talk->replies_count++;
+    Py_INCREF(Py_None);
+    return Py_None;
+
+}
+
+static PyObject *setPlayerMessage(PyObject */*self*/, PyObject *args) {
+    char *message;
+    int type = rt_reply;
+
+    if (current_context->talk == NULL) {
+        set_exception("not in a dialog context");
+        return NULL;
+    }
+
+    if (!PyArg_ParseTuple(args, "s|i", &message, &type)) {
+        return NULL;
+    }
+
+    if (current_context->talk->message != NULL)
+        cf_free_string(current_context->talk->message);
+    current_context->talk->message = cf_add_string(message);
+    current_context->talk->message_type = type;
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *npcSay(PyObject */*self*/, PyObject *args) {
+    Crossfire_Object *npc = NULL;
+    char *message, buf[MAX_BUF];
+
+    if (!PyArg_ParseTuple(args, "O!s", &Crossfire_ObjectType, &npc, &message))
+        return NULL;
+
+    if (current_context->talk == NULL) {
+        set_exception("not in a dialog context");
+        return NULL;
+    }
+
+    if (current_context->talk->npc_msg_count == MAX_NPC) {
+        set_exception("too many NPCs");
+        return NULL;
+    }
+
+    /** @todo fix by wrapping monster_format_say() (or the whole talk structure methods) */
+    snprintf(buf, sizeof(buf), "%s says: %s", npc->obj->name, message);
+
+    current_context->talk->npc_msgs[current_context->talk->npc_msg_count] = cf_add_string(buf);
+    current_context->talk->npc_msg_count++;
+
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static void initContextStack(void) {
