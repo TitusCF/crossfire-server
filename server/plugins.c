@@ -217,7 +217,7 @@ int user_event(object *op, object *activator, object *third, const char *message
     return execute_event(op, EVENT_USER, activator, third, message, fix);
 }
 
-int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
+static int do_execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix, talk_info *talk) {
     crossfire_plugin *plugin;
     int rv = 0;
 
@@ -260,7 +260,7 @@ int execute_event(object *op, int eventcode, object *activator, object *third, c
                     int rvt = 0;
                     int *rv;
 
-                    rv = plugin->eventfunc(&rvt, op, /*eventcode, */ activator, third, message, fix, /*tmp->slaying, tmp->name*/ tmp);
+                    rv = plugin->eventfunc(&rvt, op, /*eventcode, */ activator, third, message, fix, /*tmp->slaying, tmp->name*/ tmp, talk);
                     if (QUERY_FLAG(tmp, FLAG_UNIQUE)) {
 #ifdef PLUGIN_DEBUG
                         LOG(llevDebug, "Removing unique event %s\n", tmp->slaying);
@@ -274,6 +274,14 @@ int execute_event(object *op, int eventcode, object *activator, object *third, c
         }
     } FOR_INV_FINISH();
     return rv;
+}
+
+int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
+    return do_execute_event(op, eventcode, activator, third, message, fix, NULL);
+}
+
+int plugin_event_say(object *npc, talk_info *talk) {
+    return do_execute_event(npc, EVENT_SAY, talk->who, NULL, talk->text, SCRIPT_FIX_ALL, talk);
 }
 
 int execute_global_event(int eventcode, ...) {

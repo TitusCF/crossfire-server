@@ -885,6 +885,8 @@ CF_PLUGIN void *eventListener(int *type, ...) {
     fix = va_arg(args, int);
     event = va_arg(args, object *);
     event_code = event->subtype;
+    /** ignored for now */
+    va_arg(args, talk_info *);
     va_end(args);
 
     if (who == barmanObject)

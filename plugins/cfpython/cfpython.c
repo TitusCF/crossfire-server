@@ -1440,6 +1440,7 @@ CF_PLUGIN void *cfpython_globalEventListener(int *type, ...) {
     context->activator   = NULL;
     context->third       = NULL;
     context->event       = NULL;
+    context->talk        = NULL;
     rv = context->returnvalue = 0;
     cf_get_maps_directory("python/events/python_event.py", context->script, sizeof(context->script));
     strcpy(context->options, "");
@@ -1605,6 +1606,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
         snprintf(context->message, sizeof(context->message), "%s", buf);
     context->fix         = va_arg(args, int);
     event = va_arg(args, object *);
+    context->talk = va_arg(args, talk_info *);
     context->event_code  = event->subtype;
     context->event       = Crossfire_Object_wrap(event);
     cf_get_maps_directory(event->slaying, context->script, sizeof(context->script));

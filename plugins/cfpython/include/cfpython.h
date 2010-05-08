@@ -126,6 +126,7 @@ typedef struct _cfpcontext {
     char        options[1024];
     int         returnvalue;
     int         parms[5];
+    struct talk_info    *talk;
 } CFPContext;
 
 extern f_plug_api gethook;

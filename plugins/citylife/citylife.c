@@ -427,6 +427,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
     buf = va_arg(args, char *);
     fix = va_arg(args, int);
     event = va_arg(args, object *);
+    va_arg(args, talk_info *); /* ignored for now */
     va_end(args);
 
     /* should our npc disappear? */

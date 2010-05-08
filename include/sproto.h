@@ -432,6 +432,7 @@ void player_unready_range_ob(player *pl, object *ob);
 /* plugins.c */
 int user_event(object *op, object *activator, object *third, const char *message, int fix);
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);
+int plugin_event_say(object *npc, struct talk_info *talk);
 int execute_global_event(int eventcode, ...);
 int plugins_init_plugin(const char *libfile);
 void *cfapi_get_hooks(int *type, ...);

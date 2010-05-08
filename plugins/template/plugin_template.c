@@ -281,6 +281,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
     context->event_code = context->event->subtype;
     strncpy(context->options, context->event->name, sizeof(context->options));
     context->returnvalue = 0;
+    va_arg(args, talk_info *); /* ignored for now */
     va_end(args);
 
     pushContext(context);
