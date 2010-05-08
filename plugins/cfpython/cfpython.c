@@ -652,7 +652,7 @@ static PyObject *getPeriodofdayName(PyObject *self, PyObject *args) {
     return Py_BuildValue("s", cf_get_periodofday_name(i));
 }
 
-static PyObject *addReply(PyObject */*self*/, PyObject *args) {
+static PyObject *addReply(PyObject *self, PyObject *args) {
     char *word, *reply;
     talk_info *talk;
 
@@ -679,7 +679,7 @@ static PyObject *addReply(PyObject */*self*/, PyObject *args) {
 
 }
 
-static PyObject *setPlayerMessage(PyObject */*self*/, PyObject *args) {
+static PyObject *setPlayerMessage(PyObject *self, PyObject *args) {
     char *message;
     int type = rt_reply;
 
@@ -701,7 +701,7 @@ static PyObject *setPlayerMessage(PyObject */*self*/, PyObject *args) {
     return Py_None;
 }
 
-static PyObject *npcSay(PyObject */*self*/, PyObject *args) {
+static PyObject *npcSay(PyObject *self, PyObject *args) {
     Crossfire_Object *npc = NULL;
     char *message, buf[MAX_BUF];
 
