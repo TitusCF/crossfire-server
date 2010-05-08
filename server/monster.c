@@ -40,27 +40,6 @@
 #include <skills.h>
 #endif
 
-/** How many NPC replies maximum to tell the player. */
-#define MAX_REPLIES 10
-/** How many NPCs maximum will reply to the player. */
-#define MAX_NPC     5
-/**
- * Structure used to build up dialog information when a player says something.
- * @sa monster_communicate().
- */
-typedef struct talk_info {
-    object *who;                        /**< Player saying something. */
-    const char *text;                   /**< What the player actually said. */
-    const char *message;                /**< If not NULL, what the player will be displayed as said. */
-    int message_type;                   /**< A reply_type value for message. */
-    int replies_count;                  /**< How many items in replies_words and replies. */
-    char *replies_words[MAX_REPLIES];   /**< Available reply words. */
-    char *replies[MAX_REPLIES];         /**< Description for replies_words. */
-    int npc_count;                      /**< How many NPCs reacted to the text being said. */
-    object *npc[MAX_NPC];               /**< The NPCs reacting. */
-    char *npc_msgs[MAX_NPC];            /**< What the NPCs in npc will say. */
-} talk_info;
-
 static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv);
 static int monster_cast_spell(object *head, object *part, object *pl, int dir, rv_vector *rv);
 static int monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv);
@@ -2088,6 +2067,7 @@ void monster_communicate(object *op, const char *txt) {
     if (info.message != NULL) {
         snprintf(own, sizeof(own), "You %s: %s", (info.message_type == rt_question) ? "ask" : "reply", info.message);
         snprintf(others, sizeof(others), "%s %s: %s", op->name, (info.message_type == rt_question) ? "asks" : "replies", info.message);
+        free_string(info.message);
     } else {
         snprintf(own, sizeof(own), "You say: %s", txt);
         snprintf(others, sizeof(others), "%s says: %s", op->name, txt);
@@ -2098,6 +2078,7 @@ void monster_communicate(object *op, const char *txt) {
     /* Then NPCs can actually talk. */
     for (i = 0; i < info.npc_count; i++) {
         monster_npc_say(info.npc[i], info.npc_msgs[i]);
+        free_string(info.npc_msgs[i]);
     }
 
     /* Finally, the replies the player can use. */
@@ -2105,6 +2086,8 @@ void monster_communicate(object *op, const char *txt) {
         draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, "Replies:", NULL);
         for (i = 0; i < info.replies_count; i++) {
             draw_ext_info_format(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, " - %s: %s", NULL, info.replies_words[i], info.replies[i]);
+            free_string(info.replies_words[i]);
+            free_string(info.replies[i]);
         }
     }
 }
@@ -2125,7 +2108,7 @@ static int monster_do_talk_npc(object *npc, talk_info *info) {
         return 0;
 
     if (reply) {
-        info->message = reply->message;
+        info->message = add_string(reply->message);
         info->message_type = reply->type;
     }
 
@@ -2137,7 +2120,7 @@ static int monster_do_talk_npc(object *npc, talk_info *info) {
 
         if (info->npc_count < MAX_NPC) {
             info->npc[info->npc_count] = npc;
-            info->npc_msgs[info->npc_count] = message->message;
+            info->npc_msgs[info->npc_count] = add_string(message->message);
             info->npc_count++;
         }
 
@@ -2148,8 +2131,8 @@ static int monster_do_talk_npc(object *npc, talk_info *info) {
 
         reply = message->replies;
         while (reply && info->replies_count < MAX_REPLIES) {
-            info->replies[info->replies_count] = reply->message;
-            info->replies_words[info->replies_count] = reply->reply;
+            info->replies[info->replies_count] = add_string(reply->message);
+            info->replies_words[info->replies_count] = add_string(reply->reply);
             info->replies_count++;
             reply = reply->next;
         }
