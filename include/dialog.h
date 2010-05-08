@@ -5,8 +5,9 @@
 
 
 typedef enum {
-    rt_reply,
-    rt_question
+    rt_say = 0,
+    rt_reply = 1,
+    rt_question = 2
 } reply_type;
 
 typedef struct struct_dialog_reply {

@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add 'rt_say', give explicit values. Extract texts to function.
+Nicolas Weeger 2010-05-08
+
+Add Crossfire.AddReply, Crossfire.SetPlayerMessage and Crossfire.NPCSay wrappers
+to the Python plugin.
+Nicolas Weeger 2010-05-08
+
 Transmit talk information to plugins. Make a specific "say" plugin command.
 Nicolas Weeger 2010-05-08
 

@@ -2028,6 +2028,42 @@ StringBuffer *monster_format_say(const object* npc, const char *message) {
 }
 
 /**
+ * Return the verb for the player's dialog type.
+ * @param rt dialog type.
+ * @return verb.
+ */
+static const char *get_reply_text_own(reply_type rt) {
+    switch (rt) {
+        case rt_say:
+            return "say";
+        case rt_reply:
+            return "reply";
+        case rt_question:
+            return "ask";
+    }
+    assert(0);
+    return NULL;
+}
+
+/**
+ * Return the verb for the player's dialog type seen from others (third person).
+ * @param rt dialog type.
+ * @return verb.
+ */
+static const char *get_reply_text_other(reply_type rt) {
+    switch (rt) {
+        case rt_say:
+            return "says";
+        case rt_reply:
+            return "replies";
+        case rt_question:
+            return "asks";
+    }
+    assert(0);
+    return NULL;
+}
+
+/**
  * This function looks for an object or creature that is listening to said text.
  *
  * The process is such:
@@ -2091,8 +2127,8 @@ void monster_communicate(object *op, const char *txt) {
 
     /* First, what the player says. */
     if (info.message != NULL) {
-        snprintf(own, sizeof(own), "You %s: %s", (info.message_type == rt_question) ? "ask" : "reply", info.message);
-        snprintf(others, sizeof(others), "%s %s: %s", op->name, (info.message_type == rt_question) ? "asks" : "replies", info.message);
+        snprintf(own, sizeof(own), "You %s: %s", get_reply_text_own(info.message_type), info.message);
+        snprintf(others, sizeof(others), "%s %s: %s", op->name, get_reply_text_other(info.message_type), info.message);
         free_string(info.message);
     } else {
         snprintf(own, sizeof(own), "You say: %s", txt);
