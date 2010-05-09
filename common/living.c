@@ -1234,12 +1234,12 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
  * this function is too long, and should be cleaned / split.
  */
 void fix_object(object *op) {
-    int i, j;
+    int i;
     float max = 9, added_speed = 0, speed_reduce_from_disease = 1;
     int weapon_weight = 0, weapon_speed = 0;
     int best_wc = 0, best_ac = 0, wc = 0, ac = 0;
     int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
-    object *grace_obj = NULL, *mana_obj = NULL, *wc_obj = NULL;
+    const object *grace_obj = NULL, *mana_obj = NULL, *wc_obj = NULL;
 
     /* First task is to clear all the values back to their original values */
     if (op->type == PLAYER) {
