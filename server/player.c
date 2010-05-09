@@ -2977,13 +2977,9 @@ static const char *gravestone_text(object *op, char *buf2, int len) {
 void do_some_living(object *op) {
     int last_food = op->stats.food;
     int gen_hp, gen_sp, gen_grace;
-    int over_hp, over_sp, over_grace;
     int rate_hp = 1200;
     int rate_sp = 2500;
     int rate_grace = 2000;
-    const int max_hp = 1;
-    const int max_sp = 1;
-    const int max_grace = 1;
 
     if (op->contr->state == ST_PLAYING) {
         /* these next three if clauses make it possible to SLOW DOWN
@@ -3022,23 +3018,7 @@ void do_some_living(object *op) {
                         op->stats.food = last_food;
                 }
             }
-            if (max_sp > 1) {
-                over_sp = (gen_sp+10)/rate_sp;
-                if (over_sp > 0) {
-                    if (op->stats.sp < op->stats.maxsp) {
-                        op->stats.sp += MIN(over_sp, max_sp);
-                        if (random_roll(0, rate_sp-1, op, PREFER_LOW) > ((gen_sp+10)%rate_sp))
-                            op->stats.sp--;
-                        if (op->stats.sp > op->stats.maxsp)
-                            op->stats.sp = op->stats.maxsp;
-                    }
-                    op->last_sp = 0;
-                } else {
-                    op->last_sp = rate_sp/(MAX(gen_sp, 20)+10);
-                }
-            } else {
-                op->last_sp = rate_sp/(MAX(gen_sp, 20)+10);
-            }
+            op->last_sp = rate_sp/(MAX(gen_sp, 20)+10);
         }
 
         /* Regenerate Grace */
@@ -3046,17 +3026,7 @@ void do_some_living(object *op) {
         if (--op->last_grace < 0) {
             if (op->stats.grace < op->stats.maxgrace/2)
                 op->stats.grace++; /* no penalty in food for regaining grace */
-            if (max_grace > 1) {
-                over_grace = (MAX(gen_grace, 20)+10)/rate_grace;
-                if (over_grace > 0) {
-                    op->stats.sp += over_grace+(random_roll(0, rate_grace-1, op, PREFER_HIGH) > ((MAX(gen_grace, 20)+10)%rate_grace)) ? -1 : 0;
-                    op->last_grace = 0;
-                } else {
-                    op->last_grace = rate_grace/(MAX(gen_grace, 20)+10);
-                }
-            } else {
-                op->last_grace = rate_grace/(MAX(gen_grace, 20)+10);
-            }
+            op->last_grace = rate_grace/(MAX(gen_grace, 20)+10);
             /* wearing stuff doesn't detract from grace generation. */
         }
 
@@ -3074,17 +3044,7 @@ void do_some_living(object *op) {
                         op->stats.food = last_food;
                 }
             }
-            if (max_hp > 1 && !is_wraith_pl(op)) {
-                over_hp = (MAX(gen_hp, 20)+10)/rate_hp;
-                if (over_hp > 0) {
-                    op->stats.sp += over_hp+(RANDOM()%rate_hp > ((MAX(gen_hp, 20)+10)%rate_hp)) ? -1 : 0;
-                    op->last_heal = 0;
-                } else {
-                    op->last_heal = rate_hp/(MAX(gen_hp, 20)+10);
-                }
-            } else {
-                op->last_heal = rate_hp/(MAX(gen_hp, 20)+10);
-            }
+            op->last_heal = rate_hp/(MAX(gen_hp, 20)+10);
         }
 
         /* Digestion */
