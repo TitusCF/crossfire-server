@@ -132,7 +132,7 @@ static quest_definition *quest_get_by_code(sstring code) {
  * @param filename filename to load quests from.
  * @return number of quests loaded from file, negative value if there was an error.
  */
-static int load_quests_from_file(char *filename) {
+static int load_quests_from_file(const char *filename) {
     int i, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description */
     quest_definition *quest = NULL;
     char includefile[MAX_BUF];
@@ -699,7 +699,6 @@ static quest_state *get_quest_by_number(player *pl, int number) {
  * @param qs quest_state to give details about
  */
 static void quest_info(player *pl, quest_state *qs) {
-    quest_player *pq = get_or_create_quest(pl);
     quest_definition *quest;
     quest_step_definition *step;
     const char *prefix;
@@ -878,8 +877,9 @@ int command_quest(object *op, char *params) {
 void dump_quests(void) {
     quest_definition *quest;
     quest_step_definition *step;
-    quest_load_definitions();
     int questcount, stepcount;
+
+    quest_load_definitions();
     quest = quests;
     while (quest) {
         questcount++;
