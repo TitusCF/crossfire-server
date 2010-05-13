@@ -577,7 +577,7 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
     quest_state *state;
     quest_definition *quest;
     const char *restart;
-    int completed_count, restart_count, total_count, current_count;
+    int completed_count = 0, restart_count = 0, total_count = 0, current_count = 0;
 
     state = pq->quests;
     while (state) {
@@ -668,7 +668,7 @@ static void quest_help(player *pl) {
 static quest_state *get_quest_by_number(player *pl, int number) {
     quest_state *state;
     quest_player *pq = get_or_create_quest(pl);
-    int questnum;
+    int questnum = 0;
 
     if (number <= 0 || !pq) {
         return NULL;
