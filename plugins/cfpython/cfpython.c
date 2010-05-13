@@ -703,7 +703,7 @@ static PyObject *setPlayerMessage(PyObject *self, PyObject *args) {
 
 static PyObject *npcSay(PyObject *self, PyObject *args) {
     Crossfire_Object *npc = NULL;
-    char *message, buf[MAX_BUF];
+    char *message, buf[2048];
 
     if (!PyArg_ParseTuple(args, "O!s", &Crossfire_ObjectType, &npc, &message))
         return NULL;
@@ -718,6 +718,8 @@ static PyObject *npcSay(PyObject *self, PyObject *args) {
         return NULL;
     }
 
+    if (strlen(message) >= sizeof(buf) - 1)
+        cf_log(llevError, "warning, too long message in npcSay, will be truncated");
     /** @todo fix by wrapping monster_format_say() (or the whole talk structure methods) */
     snprintf(buf, sizeof(buf), "%s says: %s", npc->obj->name, message);
 
