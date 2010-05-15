@@ -121,6 +121,7 @@ void CREResourcesWindow::fillData()
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     myTree->clear();
+    qDeleteAll(myTreeItems);
     qDeleteAll(myDisplayedItems);
     myDisplayedItems.clear();
 
@@ -471,13 +472,15 @@ void CREResourcesWindow::fillQuests()
     QTreeWidgetItem* item, *root;
 
     root = CREUtils::questsNode();
-    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
+    myTreeItems.append(new CRETreeItemEmpty());
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     myTree->addTopLevelItem(root);
 
     foreach(Quest* quest, myQuests->quests())
     {
         item = CREUtils::questNode(quest, root);
-        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemQuest(quest)));
+        myTreeItems.append(new CRETreeItemQuest(quest, item));
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
     addPanel("Quest", new CREQuestPanel());

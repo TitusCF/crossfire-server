@@ -23,8 +23,10 @@ class QuestStep : public QObject
         bool myIsCompletion;
 };
 
-class Quest
+class Quest : public QObject
 {
+    Q_OBJECT
+
     public:
         Quest();
         virtual ~Quest();
@@ -42,6 +44,9 @@ class Quest
 
         bool isModified() const;
         void setModified(bool modified);
+
+    signals:
+        void modified();
 
     private:
         QString myCode;

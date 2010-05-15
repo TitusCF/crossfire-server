@@ -125,4 +125,5 @@ void Quest::setModified(bool modified)
 void Quest::markModified()
 {
     setModified(true);
+    emit modified();
 }

@@ -9,6 +9,7 @@
 #include "CREPanel.h"
 
 class Quest;
+class QuestStep;
 
 class CREQuestPanel : public CREPanel
 {
@@ -23,10 +24,19 @@ class CREQuestPanel : public CREPanel
         void setQuest(Quest* quest);
     private:
         Quest* myQuest;
+        QuestStep* myCurrentStep;
         QLineEdit* myCode;
         QLineEdit* myTitle;
         QTextEdit* myDescription;
-        QTreeWidget* mySteps;
+        QListWidget* mySteps;
+        QLineEdit* myStep;
+        QTextEdit* myStepDescription;
+        QCheckBox* myStepEnd;
+
+        void commitStep();
+
+    private slots:
+        void stepChanged(int newStep);
 };
 
 #endif	/* _CREQUESTPANEL_H */

@@ -8,6 +8,7 @@
 #include "CREFilterDefinitionManager.h"
 #include "CREReportDefinitionManager.h"
 #include "CREPanel.h"
+#include "CRETreeItem.h"
 
 class CREMapInformationManager;
 class QuestManager;
@@ -58,6 +59,7 @@ class CREResourcesWindow : public QWidget
         QMenu* myReportsMenu;
         QSignalMapper myReportsMapper;
         CREReportDefinitionManager myReports;
+        QList<CRETreeItem*> myTreeItems;
 
         void fillData();
         void fillAnimations();
