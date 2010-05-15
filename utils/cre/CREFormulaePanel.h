@@ -3,13 +3,14 @@
 
 #include <QObject>
 #include <QtGui>
+#include "CREPanel.h"
 
 extern "C" {
 #include "global.h"
 #include "recipe.h"
 }
 
-class CREFormulaePanel : public QWidget
+class CREFormulaePanel : public CREPanel
 {
     Q_OBJECT
 

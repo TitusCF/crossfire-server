@@ -25,14 +25,18 @@ CREQuestPanel::CREQuestPanel()
     labels << tr("Step") << tr("title");
     mySteps->setHeaderLabels(labels);
     layout->addWidget(mySteps, line++, 1, 1, 2);
+
+    myQuest = NULL;
 }
 
 CREQuestPanel::~CREQuestPanel()
 {
 }
 
-void CREQuestPanel::setQuest(const Quest* quest)
+void CREQuestPanel::setQuest(Quest* quest)
 {
+    myQuest = quest;
+
     myCode->setText(quest->code());
     myTitle->setText(quest->title());
     myDescription->setText(quest->description());
@@ -45,4 +49,14 @@ void CREQuestPanel::setQuest(const Quest* quest)
         data << QString::number(step->step()) << step->description();
         new QTreeWidgetItem(mySteps, data);
     }
+}
+
+void CREQuestPanel::commitData()
+{
+    if (!myQuest)
+        return;
+
+    myQuest->setCode(myCode->text());
+    myQuest->setTitle(myTitle->text());
+    myQuest->setDescription(myDescription->toPlainText());
 }

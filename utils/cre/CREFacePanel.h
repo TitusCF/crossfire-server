@@ -3,12 +3,13 @@
 
 #include <QObject>
 #include <QtGui>
+#include "CREPanel.h"
 
 extern "C" {
 #include "global.h"
 }
 
-class CREFacePanel : public QWidget
+class CREFacePanel : public CREPanel
 {
     Q_OBJECT
 

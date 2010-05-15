@@ -6,10 +6,11 @@
 
 #include "CREFilterDialog.h"
 #include "CREReportDialog.h"
+#include "CREPanel.h"
 
 class Quest;
 
-class CREQuestPanel : public QWidget
+class CREQuestPanel : public CREPanel
 {
     Q_OBJECT
 
@@ -17,8 +18,11 @@ class CREQuestPanel : public QWidget
         CREQuestPanel();
         virtual ~CREQuestPanel();
 
-        void setQuest(const Quest* quest);
+        virtual void commitData();
+
+        void setQuest(Quest* quest);
     private:
+        Quest* myQuest;
         QLineEdit* myCode;
         QLineEdit* myTitle;
         QTextEdit* myDescription;

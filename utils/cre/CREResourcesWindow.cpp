@@ -94,7 +94,7 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
     connect(myTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 
     /* dummy panel to display for empty items */
-    QWidget* dummy = new QWidget(this);
+    CREPanel* dummy = new CREPanel();
     QVBoxLayout* dl = new QVBoxLayout(dummy);
     dl->addWidget(new QLabel(tr("No details available."), dummy));
     addPanel("(dummy)", dummy);
@@ -176,6 +176,12 @@ void CREResourcesWindow::fillData()
     QApplication::restoreOverrideCursor();
 }
 
+void CREResourcesWindow::commitData()
+{
+    if (myCurrentPanel != NULL)
+        myCurrentPanel->commitData();
+}
+
 void CREResourcesWindow::tree_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem*)
 {
     if (!current || current->data(0, Qt::UserRole).value<void*>() == NULL)
@@ -184,8 +190,9 @@ void CREResourcesWindow::tree_currentItemChanged(QTreeWidgetItem* current, QTree
     if (!item)
         return;
 
+    commitData();
 
-    QWidget* newPanel = myPanels[item->getPanelName()];
+    CREPanel* newPanel = myPanels[item->getPanelName()];
     if (!newPanel)
     {
 //        printf("no panel for %s\n", qPrintable(item->getPanelName()));
@@ -467,7 +474,7 @@ void CREResourcesWindow::fillQuests()
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(root);
 
-    foreach(const Quest* quest, myQuests->quests())
+    foreach(Quest* quest, myQuests->quests())
     {
         item = CREUtils::questNode(quest, root);
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemQuest(quest)));
@@ -476,7 +483,7 @@ void CREResourcesWindow::fillQuests()
     addPanel("Quest", new CREQuestPanel());
 }
 
-void CREResourcesWindow::addPanel(QString name, QWidget* panel)
+void CREResourcesWindow::addPanel(QString name, CREPanel* panel)
 {
     panel->setVisible(false);
     myPanels[name] = panel;

@@ -47,7 +47,8 @@ CREPixmap.cpp \
  Quest.cpp \
  QuestManager.cpp \
  CREQuestPanel.cpp \
- CRETreeItemQuest.cpp
+ CRETreeItemQuest.cpp \
+ CREPanel.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -93,7 +94,8 @@ CREPixmap.h \
  Quest.h \
  QuestManager.h \
  CREQuestPanel.h \
- CRETreeItemQuest.h
+ CRETreeItemQuest.h \
+ CREPanel.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

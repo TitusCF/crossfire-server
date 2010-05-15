@@ -7,6 +7,7 @@
 #include "CREFilter.h"
 #include "CREFilterDefinitionManager.h"
 #include "CREReportDefinitionManager.h"
+#include "CREPanel.h"
 
 class CREMapInformationManager;
 class QuestManager;
@@ -34,6 +35,7 @@ class CREResourcesWindow : public QWidget
     public slots:
         void updateFilters();
         void updateReports();
+        void commitData();
 
     signals:
         void filtersModified();
@@ -41,8 +43,8 @@ class CREResourcesWindow : public QWidget
 
     protected:
         QTreeWidget* myTree;
-        QWidget* myCurrentPanel;
-        QHash<QString, QPointer<QWidget> > myPanels;
+        CREPanel* myCurrentPanel;
+        QHash<QString, QPointer<CREPanel> > myPanels;
         QSplitter* mySplitter;
         CREMapInformationManager* myStore;
         QuestManager* myQuests;
@@ -66,7 +68,7 @@ class CREResourcesWindow : public QWidget
         void fillFaces();
         void fillMaps();
         void fillQuests();
-        void addPanel(QString name, QWidget* panel);
+        void addPanel(QString name, CREPanel* panel);
 
     protected slots:
         void tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);

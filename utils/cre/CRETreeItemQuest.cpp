@@ -1,7 +1,7 @@
 #include "CRETreeItemQuest.h"
 #include "CREQuestPanel.h"
 
-CRETreeItemQuest::CRETreeItemQuest(const Quest* quest)
+CRETreeItemQuest::CRETreeItemQuest(Quest* quest)
 {
     myQuest = quest;
 }

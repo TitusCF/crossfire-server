@@ -40,12 +40,18 @@ class Quest
         QList<const QuestStep*> steps() const;
         QList<QuestStep*>& steps();
 
+        bool isModified() const;
+        void setModified(bool modified);
+
     private:
         QString myCode;
         QString myTitle;
         QString myDescription;
         bool myCanRestart;
         QList<QuestStep*> mySteps;
+        bool myModified;
+
+        void markModified();
 };
 
 #endif	/* _QUEST_H */

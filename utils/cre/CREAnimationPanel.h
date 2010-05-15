@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QtGui>
+#include "CREPanel.h"
 
 extern "C" {
 #include "global.h"
@@ -11,7 +12,7 @@ extern "C" {
 
 class CREAnimationControl;
 
-class CREAnimationPanel : public QWidget
+class CREAnimationPanel : public CREPanel
 {
     Q_OBJECT
 

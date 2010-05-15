@@ -8,13 +8,13 @@ class Quest;
 class CRETreeItemQuest : public CRETreeItem
 {
     public:
-        CRETreeItemQuest(const Quest* quest);
+        CRETreeItemQuest(Quest* quest);
         virtual ~CRETreeItemQuest();
         virtual QString getPanelName() const  { return "Quest"; }
         virtual void fillPanel(QWidget* panel);
 
     protected:
-        const Quest* myQuest;
+        Quest* myQuest;
 };
 
 #endif	/* _CRETREEITEMQUEST_H */

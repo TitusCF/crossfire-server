@@ -40,6 +40,7 @@ void QuestStep::setCompletion(bool completion)
 Quest::Quest()
 {
     myCanRestart = false;
+    myModified = false;
 }
 
 Quest::~Quest()
@@ -54,7 +55,10 @@ const QString& Quest::code() const
 
 void Quest::setCode(const QString& code)
 {
+    if (code == myCode)
+        return;
     myCode = code;
+    markModified();
 }
 
 const QString& Quest::title() const
@@ -64,7 +68,10 @@ const QString& Quest::title() const
 
 void Quest::setTitle(const QString& title)
 {
+    if (title == myTitle)
+        return;
     myTitle = title;
+    markModified();
 }
 
 const QString& Quest::description()const
@@ -74,7 +81,10 @@ const QString& Quest::description()const
 
 void Quest::setDescription(const QString& description)
 {
+    if (description == myDescription)
+        return;
     myDescription = description;
+    markModified();
 }
 
 bool Quest::canRestart() const
@@ -84,7 +94,10 @@ bool Quest::canRestart() const
 
 void Quest::setRestart(bool restart)
 {
+    if (myCanRestart == restart)
+        return;
     myCanRestart = restart;
+    markModified();
 }
 
 QList<const QuestStep*> Quest::steps() const
@@ -98,4 +111,18 @@ QList<const QuestStep*> Quest::steps() const
 QList<QuestStep*>& Quest::steps()
 {
     return mySteps;
+}
+
+bool Quest::isModified() const
+{
+    return myModified;
+}
+void Quest::setModified(bool modified)
+{
+    myModified = modified;
+}
+
+void Quest::markModified()
+{
+    setModified(true);
 }

@@ -2,6 +2,7 @@
 #define	_CREREGIONPANEL_H
 
 #include <QWidget>
+#include "CREPanel.h"
 class QLabel;
 
 extern "C"
@@ -10,7 +11,7 @@ extern "C"
 #include "map.h"
 }
 
-class CRERegionPanel : public QWidget
+class CRERegionPanel : public CREPanel
 {
     public:
         CRERegionPanel();

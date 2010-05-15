@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QtGui>
+#include "CREPanel.h"
 
 extern "C" {
 #include "global.h"
@@ -10,7 +11,7 @@ extern "C" {
 
 class CREMapInformationManager;
 
-class CREArchetypePanel : public QWidget
+class CREArchetypePanel : public CREPanel
 {
     Q_OBJECT
 

@@ -26,6 +26,7 @@ class CREMainWindow : public QMainWindow
     signals:
         void updateFilters();
         void updateReports();
+        void commitData();
 
     private:
         QMdiArea* myArea;
@@ -47,6 +48,7 @@ class CREMainWindow : public QMainWindow
         QAction* myOpenExperience;
         QAction* myOpenQuests;
         QAction* mySaveFormulae;
+        QAction* mySaveQuests;
         QLabel* myMapBrowseStatus;
         CREMapInformationManager* myMapManager;
         QuestManager* myQuestManager;
@@ -67,6 +69,7 @@ class CREMainWindow : public QMainWindow
         void onOpenResources();
         void onOpenExperience();
         void onSaveFormulae();
+        void onSaveQuests();
         void browsingMap(const QString& path);
         void browsingFinished();
         void onFiltersModified();

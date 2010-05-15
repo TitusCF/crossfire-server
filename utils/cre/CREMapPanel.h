@@ -3,10 +3,11 @@
 
 #include <QObject>
 #include <QtGui>
+#include "CREPanel.h"
 
 class CREMapInformation;
 
-class CREMapPanel : public QWidget
+class CREMapPanel : public CREPanel
 {
     public:
         CREMapPanel();

@@ -36,6 +36,8 @@ CREMainWindow::CREMainWindow()
 void CREMainWindow::closeEvent(QCloseEvent* event)
 {
     myMapManager->cancel();
+    delete myMapManager;
+    delete myQuestManager;
     QMainWindow::closeEvent(event);
 }
 
@@ -73,6 +75,9 @@ void CREMainWindow::createActions()
 
     mySaveFormulae = new QAction(tr("Formulae"), this);
     connect(mySaveFormulae, SIGNAL(triggered()), this, SLOT(onSaveFormulae()));
+
+    mySaveQuests = new QAction(tr("Quests"), this);
+    connect(mySaveQuests, SIGNAL(triggered()), this, SLOT(onSaveQuests()));
 }
 
 void CREMainWindow::createMenus()
@@ -91,6 +96,7 @@ void CREMainWindow::createMenus()
 
     mySaveMenu = menuBar()->addMenu(tr("&Save"));
     mySaveMenu->addAction(mySaveFormulae);
+    mySaveMenu->addAction(mySaveQuests);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -100,6 +106,7 @@ void CREMainWindow::doResourceWindow(DisplayMode mode)
     connect(resources, SIGNAL(filtersModified()), this, SLOT(onFiltersModified()));
     connect(this, SIGNAL(updateReports()), resources, SLOT(updateReports()));
     connect(resources, SIGNAL(reportsModified()), this, SLOT(onReportsModified()));
+    connect(this, SIGNAL(commitData()), resources, SLOT(commitData()));
     myArea->addSubWindow(resources);
     resources->show();
 }
@@ -158,6 +165,12 @@ void CREMainWindow::onOpenExperience()
 
 void CREMainWindow::onSaveFormulae()
 {
+}
+
+void CREMainWindow::onSaveQuests()
+{
+    emit commitData();
+    myQuestManager->saveQuests();
 }
 
 void CREMainWindow::browsingMap(const QString& path)

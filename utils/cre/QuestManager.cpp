@@ -12,11 +12,15 @@ QuestManager::QuestManager()
 
 QuestManager::~QuestManager()
 {
+    qDeleteAll(myQuests);
+    qDeleteAll(myFiles);
 }
 
 void QuestManager::loadQuests()
 {
     loadQuestFile("world.quests");
+    foreach(Quest* quest, myQuests)
+        quest->setModified(false);
     qDebug() << "found quests:" << myQuests.size();
 }
 
@@ -47,7 +51,7 @@ void QuestManager::loadQuestFile(const QString& filename)
                 message = stringbuffer_finish(buf);
                 buf = NULL;
 
-                step->setDescription(add_string(message));
+                step->setDescription(message);
                 free(message);
 
                 continue;
@@ -133,6 +137,7 @@ void QuestManager::loadQuestFile(const QString& filename)
 
         if (strncmp(read, "quest ", 6) == 0) {
             quest = new Quest();
+            addQuest(filename, quest);
             read[strlen(read) - 1] = '\0';
             quest->setCode(read + 6);
             if (getByCode(quest->code()) != NULL) {
@@ -147,6 +152,7 @@ void QuestManager::loadQuestFile(const QString& filename)
             snprintf(p, sizeof(p), qPrintable(filename));
             path_combine_and_normalize(p, includefile, inc_path, sizeof(inc_path));
             loadQuestFile(inc_path);
+            myIncludes[filename].append(includefile);
             continue;
         }
 
@@ -173,4 +179,94 @@ QList<const Quest*> QuestManager::quests() const
     foreach(const Quest* quest, myQuests)
         quests.append(quest);
     return quests;
+}
+
+QList<Quest*>& QuestManager::quests()
+{
+    return myQuests;
+}
+
+void QuestManager::addQuest(const QString& filename, Quest* quest)
+{
+    if (!myFiles.contains(filename))
+        myFiles[filename] = new QList<Quest*>();
+    myFiles[filename]->append(quest);
+}
+
+void QuestManager::saveQuests()
+{
+    foreach(const QString& filename, myFiles.keys())
+        saveQuestFile(filename);
+}
+
+void QuestManager::saveQuestFile(const QString& filename)
+{
+    QList<Quest*>* list = myFiles[filename];
+    bool modified = false;
+    foreach(Quest* quest, *list)
+    {
+        if (quest->isModified())
+        {
+            modified = true;
+            break;
+        }
+    }
+
+    if (!modified)
+        return;
+
+    QString path = QString("%1/%2/%3").arg(settings.datadir, settings.mapdir, filename);
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        qDebug() << "save error quest file" << filename << path;
+        /** @todo be smarter */
+        return;
+    }
+
+    qDebug() << "saving quests" << filename;
+
+    QTextStream stream(&file);
+
+    QStringList includes = myIncludes[filename];
+    if (includes.size() > 0)
+    {
+        foreach(QString include, includes)
+            stream << "include " << include << "\n";
+        stream << "\n\n";
+    }
+
+    foreach(Quest* quest, *list)
+    {
+        stream << "quest " << quest->code() << "\n";
+        if (!quest->title().isEmpty())
+            stream << "title " << quest->title() << "\n";
+        if (!quest->description().isEmpty())
+        {
+            stream << "description\n" << quest->description();
+            if (!quest->description().endsWith("\n"))
+                stream << "\n";
+            stream << "end_description\n";
+        }
+        if (quest->canRestart())
+            stream << "restart 1\n";
+
+        foreach(QuestStep* step, quest->steps())
+        {
+            stream << "step " << step->step() << "\n";
+            if (step->isCompletion())
+                stream << "finishes_quest\n";
+            if (!step->description().isEmpty())
+            {
+                stream << "description\n" << step->description();
+                if (!step->description().endsWith("\n"))
+                    stream << "\n";
+                stream << "end_description\n";
+            }
+            stream << "end_step\n";
+
+        }
+
+        stream << "end_quest\n\n";
+    }
 }
