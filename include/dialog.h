@@ -38,7 +38,7 @@ typedef struct struct_dialog_information {
  * @sa monster_communicate().
  */
 typedef struct talk_info {
-    struct object *who;                 /**< Player saying something. */
+    struct obj *who;                    /**< Player saying something. */
     const char *text;                   /**< What the player actually said. */
     sstring message;                    /**< If not NULL, what the player will be displayed as said. */
     int message_type;                   /**< A reply_type value for message. */
