@@ -2,12 +2,14 @@
 #define	_CREMESSAGEPANEL_H
 
 #include <QObject>
+#include <QBrush>
 #include "CREPanel.h"
 
 class MessageFile;
 class QLineEdit;
 class QTreeWidget;
 class QTextEdit;
+class QTreeWidgetItem;
 
 class CREMessagePanel : public CREPanel
 {
@@ -22,7 +24,11 @@ class CREMessagePanel : public CREPanel
         MessageFile* myMessage;
         QLineEdit* myLocation;
         QTreeWidget* myRules;
+        QBrush myDefaultBackground;
         //QTextEdit
+
+    private slots:
+        void currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 };
 
 #endif	/* _CREMESSAGEPANEL_H */
