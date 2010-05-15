@@ -3,6 +3,7 @@
 #include "CREPixmap.h"
 #include "CREMapInformation.h"
 #include "Quest.h"
+#include "MessageFile.h"
 
 extern "C" {
 #include "global.h"
@@ -198,4 +199,14 @@ QTreeWidgetItem* CREUtils::questsNode()
 QTreeWidgetItem* CREUtils::questNode(const Quest* quest, QTreeWidgetItem* parent)
 {
     return new QTreeWidgetItem(parent, QStringList(quest->code()));
+}
+
+QTreeWidgetItem* CREUtils::messagesNode()
+{
+  return new QTreeWidgetItem(QStringList(QTreeWidget::tr("Messages")));
+}
+
+QTreeWidgetItem* CREUtils::messageNode(const MessageFile* message, QTreeWidgetItem* parent)
+{
+    return new QTreeWidgetItem(parent, QStringList(message->path()));
 }

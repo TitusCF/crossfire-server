@@ -12,9 +12,10 @@
 
 class CREMapInformationManager;
 class QuestManager;
+class MessageManager;
 
 enum DisplayMode {
-    DisplayAll = 255,
+    DisplayAll = 0xFFFF,
     DisplayArchetypes = 1,
     DisplayAnimations = 2,
     DisplayTreasures = 4,
@@ -22,7 +23,8 @@ enum DisplayMode {
     DisplayArtifacts = 16,
     DisplayFaces = 32,
     DisplayMaps = 64,
-    DisplayQuests = 128
+    DisplayQuests = 128,
+    DisplayMessage = 256
 };
 
 class CREResourcesWindow : public QWidget
@@ -30,7 +32,7 @@ class CREResourcesWindow : public QWidget
     Q_OBJECT
 
     public:
-        CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, DisplayMode mode = DisplayAll);
+        CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, DisplayMode mode = DisplayAll);
         virtual ~CREResourcesWindow();
 
     public slots:
@@ -49,6 +51,7 @@ class CREResourcesWindow : public QWidget
         QSplitter* mySplitter;
         CREMapInformationManager* myStore;
         QuestManager* myQuests;
+        MessageManager* myMessages;
         DisplayMode myDisplay;
         CREFilter myFilter;
         QList<QObject*> myDisplayedItems;
@@ -70,6 +73,7 @@ class CREResourcesWindow : public QWidget
         void fillFaces();
         void fillMaps();
         void fillQuests();
+        void fillMessages();
         void addPanel(QString name, CREPanel* panel);
 
     protected slots:

@@ -26,6 +26,7 @@
 #include "CRETreeItemMap.h"
 #include "CRETreeItemRegion.h"
 #include "CRETreeItemQuest.h"
+#include "CRETreeItemMessage.h"
 
 #include "CREAnimationPanel.h"
 #include "CREArchetypePanel.h"
@@ -36,6 +37,7 @@
 #include "CREMapPanel.h"
 #include "CRERegionPanel.h"
 #include "CREQuestPanel.h"
+#include "CREMessagePanel.h"
 
 #include "CREWrapperObject.h"
 #include "CREWrapperArtifact.h"
@@ -49,9 +51,10 @@
 extern "C" {
 #include "global.h"
 #include "recipe.h"
+#include "MessageManager.h"
 }
 
-CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, DisplayMode mode)
+CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages,DisplayMode mode)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -61,6 +64,8 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
     myStore = store;
     Q_ASSERT(quests);
     myQuests = quests;
+    Q_ASSERT(messages);
+    myMessages = messages;
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -165,6 +170,11 @@ void CREResourcesWindow::fillData()
     {
         title = tr("Quests");
         fillQuests();
+    }
+    if (myDisplay & DisplayMessage)
+    {
+        title = tr("Messages");
+        fillMessages();
     }
 
     if (myDisplay == DisplayAll)
@@ -484,6 +494,25 @@ void CREResourcesWindow::fillQuests()
     }
 
     addPanel("Quest", new CREQuestPanel());
+}
+
+void CREResourcesWindow::fillMessages()
+{
+    QTreeWidgetItem* item, *root;
+
+    root = CREUtils::messagesNode();
+    myTreeItems.append(new CRETreeItemEmpty());
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    myTree->addTopLevelItem(root);
+
+    foreach(MessageFile* message, myMessages->messages())
+    {
+        item = CREUtils::messageNode(message, root);
+        myTreeItems.append(new CRETreeItemMessage(message));
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    }
+
+    addPanel("Message", new CREMessagePanel());
 }
 
 void CREResourcesWindow::addPanel(QString name, CREPanel* panel)
