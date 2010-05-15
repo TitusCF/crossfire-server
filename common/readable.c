@@ -1485,8 +1485,8 @@ static char *mon_info_msg(int level, char *buf, size_t booksize, object *book) {
 @todo make static (again) when check_readable is cleaned of the unit rewrite test.
  */
 char *artifact_msg(int level, char *retbuf, size_t booksize) {
-    artifactlist *al;
-    artifact *art;
+    const artifactlist *al;
+    const artifact *art;
     int chance, i, type, index;
     int book_entries = level > 5 ? RANDOM()%3+RANDOM()%3+2 : RANDOM()%level+1;
     char buf[BOOK_BUF], sbuf[MAX_BUF], *final;
@@ -1868,7 +1868,7 @@ static char *msgfile_msg(int level, size_t booksize) {
  */
 static void god_info_msg(int level, char *retbuf, size_t booksize, object *book) {
     char buf[BOOK_BUF], *final;
-    int what;
+    int what = 0;
     size_t retlen;
     const object *god = pntr_to_god_obj(get_rand_god());
     StringBuffer *desc = NULL;
