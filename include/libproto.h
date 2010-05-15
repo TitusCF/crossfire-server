@@ -347,7 +347,7 @@ extern void dump_alchemy(void);
 extern archetype *find_treasure_by_name(const treasure *t, const char *name, int depth);
 extern void dump_alchemy_costs(void);
 extern int strtoint(const char *buf);
-extern artifact *locate_recipe_artifact(const recipe *rp, size_t idx);
+extern const artifact *locate_recipe_artifact(const recipe *rp, size_t idx);
 extern recipe *get_random_recipe(recipelist *rpl);
 extern void free_all_recipes(void);
 extern recipe *find_recipe_for_tool(const char *tool, recipe *from);

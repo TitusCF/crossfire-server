@@ -145,7 +145,7 @@ static int check_recipe(const recipe *rp) {
     result = 1;
     for (i = 0; i < rp->arch_names; i++) {
         if (find_archetype(rp->arch_name[i]) != NULL) {
-            artifact *art = locate_recipe_artifact(rp, i);
+            const artifact *art = locate_recipe_artifact(rp, i);
 
             if (!art && strcmp(rp->title, "NONE") != 0) {
                 LOG(llevError, "\nWARNING: Formula %s of %s has no artifact.\n", rp->arch_name[i], rp->title);
@@ -324,7 +324,7 @@ void dump_alchemy(void) {
     while (fl) {
         fprintf(logfile, "\n Formulae with %d ingredient%s  %d Formulae with total_chance=%d\n", num_ingred, num_ingred > 1 ? "s." : ".", fl->number, fl->total_chance);
         for (formula = fl->items; formula != NULL; formula = formula->next) {
-            artifact *art = NULL;
+            const artifact *art = NULL;
             char buf[MAX_BUF];
             size_t i;
 
@@ -440,8 +440,8 @@ archetype *find_treasure_by_name(const treasure *t, const char *name, int depth)
 static long find_ingred_cost(const char *name) {
     archetype *at;
     archetype *at2;
-    artifactlist *al;
-    artifact *art;
+    const artifactlist *al;
+    const artifact *art;
     long mult;
     char *cp;
     char part1[100];
@@ -529,8 +529,8 @@ void dump_alchemy_costs(void) {
     while (fl) {
         fprintf(logfile, "\n Formulae with %d ingredient%s  %d Formulae with total_chance=%d\n", num_ingred, num_ingred > 1 ? "s." : ".", fl->number, fl->total_chance);
         for (formula = fl->items; formula != NULL; formula = formula->next) {
-            artifact *art = NULL;
-            archetype *at = NULL;
+            const artifact *art = NULL;
+            const archetype *at = NULL;
             char buf[MAX_BUF];
             size_t i;
 
@@ -658,10 +658,10 @@ int strtoint(const char *buf) {
  * @return
  * artifact, or NULL if not found.
  */
-artifact *locate_recipe_artifact(const recipe *rp, size_t idx) {
+const artifact *locate_recipe_artifact(const recipe *rp, size_t idx) {
     object *item = create_archetype(rp->arch_name[idx]);
-    artifactlist *at = NULL;
-    artifact *art = NULL;
+    const artifactlist *at = NULL;
+    const artifact *art = NULL;
 
     if (!item)
         return (artifact *)NULL;

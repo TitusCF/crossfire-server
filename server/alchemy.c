@@ -393,7 +393,7 @@ static void adjust_product(object *item, int lvl, int yield) {
  */
 
 static object *make_item_from_recipe(object *cauldron, recipe *rp) {
-    artifact *art = NULL;
+    const artifact *art = NULL;
     object *item = NULL;
     size_t rp_arch_index;
 
