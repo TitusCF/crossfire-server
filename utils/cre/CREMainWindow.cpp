@@ -4,6 +4,7 @@
 #include <CREResourcesWindow.h>
 #include "CREMapInformationManager.h"
 #include "CREExperienceWindow.h"
+#include "QuestManager.h"
 
 extern "C" {
 #include "global.h"
@@ -27,6 +28,9 @@ CREMainWindow::CREMainWindow()
     connect(myMapManager, SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
     connect(myMapManager, SIGNAL(finished()), this, SLOT(browsingFinished()));
     myMapManager->start();
+
+    myQuestManager = new QuestManager();
+    myQuestManager->loadQuests();
 }
 
 void CREMainWindow::closeEvent(QCloseEvent* event)
@@ -61,6 +65,9 @@ void CREMainWindow::createActions()
     myOpenMaps = new QAction(tr("Maps"), this);
     connect(myOpenMaps, SIGNAL(triggered()), this, SLOT(onOpenMaps()));
 
+    myOpenQuests = new QAction(tr("Quests"), this);
+    connect(myOpenQuests, SIGNAL(triggered()), this, SLOT(onOpenQuests()));
+
     myOpenExperience = new QAction(tr("Experience"), this);
     connect(myOpenExperience, SIGNAL(triggered()), this, SLOT(onOpenExperience()));
 
@@ -79,6 +86,7 @@ void CREMainWindow::createMenus()
     myOpenMenu->addAction(myOpenFormulae);
     myOpenMenu->addAction(myOpenFaces);
     myOpenMenu->addAction(myOpenMaps);
+    myOpenMenu->addAction(myOpenQuests);
     myOpenMenu->addAction(myOpenExperience);
 
     mySaveMenu = menuBar()->addMenu(tr("&Save"));
@@ -87,7 +95,7 @@ void CREMainWindow::createMenus()
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
 {
-    QWidget* resources = new CREResourcesWindow(myMapManager, mode);
+    QWidget* resources = new CREResourcesWindow(myMapManager, myQuestManager, mode);
     connect(this, SIGNAL(updateFilters()), resources, SLOT(updateFilters()));
     connect(resources, SIGNAL(filtersModified()), this, SLOT(onFiltersModified()));
     connect(this, SIGNAL(updateReports()), resources, SLOT(updateReports()));
@@ -129,6 +137,11 @@ void CREMainWindow::onOpenFaces()
 void CREMainWindow::onOpenMaps()
 {
     doResourceWindow(DisplayMaps);
+}
+
+void CREMainWindow::onOpenQuests()
+{
+    doResourceWindow(DisplayQuests);
 }
 
 void CREMainWindow::onOpenResources()

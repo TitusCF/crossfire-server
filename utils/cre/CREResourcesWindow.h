@@ -9,15 +9,26 @@
 #include "CREReportDefinitionManager.h"
 
 class CREMapInformationManager;
+class QuestManager;
 
-enum DisplayMode { DisplayAll = 255, DisplayArchetypes = 1, DisplayAnimations = 2, DisplayTreasures = 4, DisplayFormulae = 8, DisplayArtifacts = 16, DisplayFaces = 32, DisplayMaps = 64 };
+enum DisplayMode {
+    DisplayAll = 255,
+    DisplayArchetypes = 1,
+    DisplayAnimations = 2,
+    DisplayTreasures = 4,
+    DisplayFormulae = 8,
+    DisplayArtifacts = 16,
+    DisplayFaces = 32,
+    DisplayMaps = 64,
+    DisplayQuests = 128
+};
 
 class CREResourcesWindow : public QWidget
 {
     Q_OBJECT
 
     public:
-        CREResourcesWindow(CREMapInformationManager* store, DisplayMode mode = DisplayAll);
+        CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, DisplayMode mode = DisplayAll);
         virtual ~CREResourcesWindow();
 
     public slots:
@@ -34,6 +45,7 @@ class CREResourcesWindow : public QWidget
         QHash<QString, QPointer<QWidget> > myPanels;
         QSplitter* mySplitter;
         CREMapInformationManager* myStore;
+        QuestManager* myQuests;
         DisplayMode myDisplay;
         CREFilter myFilter;
         QList<QObject*> myDisplayedItems;
@@ -53,6 +65,7 @@ class CREResourcesWindow : public QWidget
         void fillArtifacts();
         void fillFaces();
         void fillMaps();
+        void fillQuests();
         void addPanel(QString name, QWidget* panel);
 
     protected slots:

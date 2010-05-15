@@ -43,7 +43,11 @@ CREPixmap.cpp \
  CRERegionPanel.cpp \
  CRETreeItemRegion.cpp \
  CREReportDefinitionManager.cpp \
- CREScriptEngine.cpp
+ CREScriptEngine.cpp \
+ Quest.cpp \
+ QuestManager.cpp \
+ CREQuestPanel.cpp \
+ CRETreeItemQuest.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -85,7 +89,11 @@ CREPixmap.h \
  CRETreeItemRegion.h \
  CREReportDefinitionManager.h \
  CRETreeItemEmpty.h \
- CREScriptEngine.h
+ CREScriptEngine.h \
+ Quest.h \
+ QuestManager.h \
+ CREQuestPanel.h \
+ CRETreeItemQuest.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

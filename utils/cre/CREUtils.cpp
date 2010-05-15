@@ -2,6 +2,7 @@
 #include "CREUtils.h"
 #include "CREPixmap.h"
 #include "CREMapInformation.h"
+#include "Quest.h"
 
 extern "C" {
 #include "global.h"
@@ -187,4 +188,14 @@ QTreeWidgetItem* CREUtils::mapNode(QTreeWidgetItem *parent)
 QTreeWidgetItem* CREUtils::mapNode(const CREMapInformation* map, QTreeWidgetItem *parent)
 {
     return new QTreeWidgetItem(parent, QStringList(QObject::tr("%1 [%2]").arg(map->name(), map->path())));
+}
+
+QTreeWidgetItem* CREUtils::questsNode()
+{
+  return new QTreeWidgetItem(QStringList(QTreeWidget::tr("Quests")));
+}
+
+QTreeWidgetItem* CREUtils::questNode(const Quest* quest, QTreeWidgetItem* parent)
+{
+    return new QTreeWidgetItem(parent, QStringList(quest->code()));
 }

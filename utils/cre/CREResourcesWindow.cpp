@@ -25,6 +25,7 @@
 #include "CRETreeItemFace.h"
 #include "CRETreeItemMap.h"
 #include "CRETreeItemRegion.h"
+#include "CRETreeItemQuest.h"
 
 #include "CREAnimationPanel.h"
 #include "CREArchetypePanel.h"
@@ -34,12 +35,14 @@
 #include "CREFacePanel.h"
 #include "CREMapPanel.h"
 #include "CRERegionPanel.h"
+#include "CREQuestPanel.h"
 
 #include "CREWrapperObject.h"
 #include "CREWrapperArtifact.h"
 #include "CREWrapperFormulae.h"
 
 #include "CREMapInformationManager.h"
+#include "QuestManager.h"
 
 #include "CREScriptEngine.h"
 
@@ -48,7 +51,7 @@ extern "C" {
 #include "recipe.h"
 }
 
-CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayMode mode)
+CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, DisplayMode mode)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -56,6 +59,8 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, DisplayM
 
     Q_ASSERT(store);
     myStore = store;
+    Q_ASSERT(quests);
+    myQuests = quests;
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -154,6 +159,11 @@ void CREResourcesWindow::fillData()
     {
         title = tr("Maps");
         fillMaps();
+    }
+    if (myDisplay & DisplayQuests)
+    {
+        title = tr("Quests");
+        fillQuests();
     }
 
     if (myDisplay == DisplayAll)
@@ -447,6 +457,23 @@ void CREResourcesWindow::fillMaps()
 
     addPanel("Region", new CRERegionPanel());
     addPanel("Map", new CREMapPanel());
+}
+
+void CREResourcesWindow::fillQuests()
+{
+    QTreeWidgetItem* item, *root;
+
+    root = CREUtils::questsNode();
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
+    myTree->addTopLevelItem(root);
+
+    foreach(const Quest* quest, myQuests->quests())
+    {
+        item = CREUtils::questNode(quest, root);
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemQuest(quest)));
+    }
+
+    addPanel("Quest", new CREQuestPanel());
 }
 
 void CREResourcesWindow::addPanel(QString name, QWidget* panel)

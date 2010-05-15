@@ -10,6 +10,7 @@ extern "C" {
 }
 
 class CREMapInformation;
+class Quest;
 
 class CREUtils
 {
@@ -35,6 +36,9 @@ class CREUtils
         static QTreeWidgetItem* regionNode(const QString& name, int count, QTreeWidgetItem *parent);
         static QTreeWidgetItem* mapNode(QTreeWidgetItem *parent);
         static QTreeWidgetItem* mapNode(const CREMapInformation* map, QTreeWidgetItem *parent);
+
+        static QTreeWidgetItem* questsNode();
+        static QTreeWidgetItem* questNode(const Quest* quest, QTreeWidgetItem* parent);
 };
 
 #endif // CREUTILS_H

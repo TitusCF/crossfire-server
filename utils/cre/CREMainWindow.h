@@ -14,6 +14,7 @@ class CRETreasureWindow;
 class CREAnimationWindow;
 class CREFormulaeWindow;
 class CREMapInformationManager;
+class QuestManager;
 
 class CREMainWindow : public QMainWindow
 {
@@ -44,9 +45,11 @@ class CREMainWindow : public QMainWindow
         QAction* myOpenMaps;
         QAction* myOpenResources;
         QAction* myOpenExperience;
+        QAction* myOpenQuests;
         QAction* mySaveFormulae;
         QLabel* myMapBrowseStatus;
         CREMapInformationManager* myMapManager;
+        QuestManager* myQuestManager;
 
     protected:
         void closeEvent(QCloseEvent* event);
@@ -60,6 +63,7 @@ class CREMainWindow : public QMainWindow
         void onOpenFormulae();
         void onOpenFaces();
         void onOpenMaps();
+        void onOpenQuests();
         void onOpenResources();
         void onOpenExperience();
         void onSaveFormulae();
