@@ -15,6 +15,9 @@ CREQuestPanel::CREQuestPanel()
     myTitle = new QLineEdit();
     layout->addWidget(myTitle, line++, 2);
 
+    myCanRestart = new QCheckBox(tr("this quest can be done multiple times"));
+    layout->addWidget(myCanRestart, line++, 1, 1, 2);
+
     layout->addWidget(new QLabel(tr("Description:"), this), line++, 1, 1, 2);
     myDescription = new QTextEdit();
     layout->addWidget(myDescription, line++, 1, 1, 2);
@@ -53,15 +56,20 @@ void CREQuestPanel::setQuest(Quest* quest)
 
     myCode->setText(quest->code());
     myTitle->setText(quest->title());
+    myCanRestart->setChecked(quest->canRestart());
     myDescription->setText(quest->description());
     myStepDescription->setText("");
     myStepEnd->setChecked(false);
 
     mySteps->clear();
 
+    QString display;
     foreach(const QuestStep* step, quest->steps())
     {
-        new QListWidgetItem(QString::number(step->step()), mySteps);
+        display = QString::number(step->step());
+        if (step->isCompletion())
+            display += tr(" (end)");
+        new QListWidgetItem(display, mySteps);
     }
 }
 
@@ -72,6 +80,7 @@ void CREQuestPanel::commitData()
 
     myQuest->setCode(myCode->text());
     myQuest->setTitle(myTitle->text());
+    myQuest->setRestart(myCanRestart->isChecked());
     myQuest->setDescription(myDescription->toPlainText());
     commitStep();
 }

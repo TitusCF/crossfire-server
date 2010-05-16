@@ -27,6 +27,7 @@ class CREQuestPanel : public CREPanel
         QuestStep* myCurrentStep;
         QLineEdit* myCode;
         QLineEdit* myTitle;
+        QCheckBox* myCanRestart;
         QTextEdit* myDescription;
         QListWidget* mySteps;
         QLineEdit* myStep;
