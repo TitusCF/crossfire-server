@@ -787,10 +787,18 @@ int quest_get_player_state(player *pl, sstring quest_code) {
  * @param state initial quest state, must be greater than 0 else forced to 100 and warning emitted.
  */
 void quest_start(player *pl, sstring quest_code, int state) {
-    quest_player *pq = get_or_create_quest(pl);
-    quest_state *q = get_or_create_state(pq, quest_code);
-    quest_definition *quest = quest_get(quest_code);
+    quest_player *pq;
+    quest_state *q;
+    quest_definition *quest;
     quest_step_definition *step;
+
+    quest = quest_get(quest_code);
+    if (!quest) {
+        LOG(llevError, "quest_start: requested unknown quest %s\n", quest_code);
+        return;
+    }
+    pq = get_or_create_quest(pl);
+    q = get_or_create_state(pq, quest_code);
 
     if (state <= 0) {
         state = 100;
