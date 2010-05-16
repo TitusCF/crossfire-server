@@ -6,7 +6,6 @@
 #include "CREPixmap.h"
 
 #include "CREFilter.h"
-#include "CREFilteredModel.h"
 #include "CREFilterDialog.h"
 #include "CREFilterDefinition.h"
 
