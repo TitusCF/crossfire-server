@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Improve quest edition, now can add or remove steps. Can add new quests.
+Nicolas Weeger 2010-05-16
+
 Indicate quest end steps. Enable edition of the 'can restart?' flag.
 Nicolas Weeger 2010-05-16
 

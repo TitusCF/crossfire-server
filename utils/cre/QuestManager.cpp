@@ -270,3 +270,27 @@ void QuestManager::saveQuestFile(const QString& filename)
         stream << "end_quest\n\n";
     }
 }
+
+QStringList QuestManager::getFiles() const
+{
+    return myFiles.keys();
+}
+
+QString QuestManager::getQuestFile(Quest* quest) const
+{
+    foreach(QString file, myFiles.keys())
+    {
+        if (myFiles[file]->contains(quest))
+            return file;
+    }
+    return QString();
+}
+
+void QuestManager::setQuestFile(Quest* quest, const QString& file)
+{
+    if (file.isEmpty())
+        return;
+
+    Q_ASSERT(getQuestFile(quest).isEmpty());
+    addQuest(file, quest);
+}

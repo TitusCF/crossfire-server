@@ -43,6 +43,7 @@
 #include "CREWrapperFormulae.h"
 
 #include "CREMapInformationManager.h"
+#include "Quest.h"
 #include "QuestManager.h"
 
 #include "CREScriptEngine.h"
@@ -92,6 +93,8 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
     myTree->sortByColumn(0, Qt::AscendingOrder);
 
     myTree->setSortingEnabled(true);
+    myTree->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(myTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(treeCustomMenu(const QPoint&)));
 
     myCurrentPanel = NULL;
 
@@ -126,6 +129,7 @@ void CREResourcesWindow::fillData()
 
     myTree->clear();
     qDeleteAll(myTreeItems);
+    myTreeItems.clear();
     qDeleteAll(myDisplayedItems);
     myDisplayedItems.clear();
 
@@ -481,18 +485,18 @@ void CREResourcesWindow::fillQuests()
     QTreeWidgetItem* item, *root;
 
     root = CREUtils::questsNode();
-    myTreeItems.append(new CRETreeItemEmpty());
+    myTreeItems.append(new CRETreeItemQuest(NULL, root, this));
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     myTree->addTopLevelItem(root);
 
     foreach(Quest* quest, myQuests->quests())
     {
         item = CREUtils::questNode(quest, root);
-        myTreeItems.append(new CRETreeItemQuest(quest, item));
+        myTreeItems.append(new CRETreeItemQuest(quest, item, this));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
-    addPanel("Quest", new CREQuestPanel());
+    addPanel("Quest", new CREQuestPanel(myQuests));
 }
 
 void CREResourcesWindow::fillMessages()
@@ -731,4 +735,49 @@ void CREResourcesWindow::onReportChange(QObject* object)
 
     CREReportDisplay display(text);
     display.exec();
+}
+
+void CREResourcesWindow::fillItem(const QPoint& pos, QMenu* menu)
+{
+    QTreeWidgetItem* node = myTree->itemAt(pos);
+    if (!node || node->data(0, Qt::UserRole).value<void*>() == NULL)
+        return;
+    CRETreeItem* item = reinterpret_cast<CRETreeItem*>(node->data(0, Qt::UserRole).value<void*>());
+    if (!item)
+        return;
+
+    item->fillContextMenu(menu);
+}
+
+void CREResourcesWindow::treeCustomMenu(const QPoint & pos)
+{
+    QMenu menu;
+
+    if (myDisplay & DisplayQuests)
+    {
+        QAction* addQuest = new QAction("add quest", &menu);
+        connect(addQuest, SIGNAL(triggered(bool)), this, SLOT(addQuest(bool)));
+        menu.addAction(addQuest);
+    }
+
+    fillItem(pos, &menu);
+    menu.exec(myTree->mapToGlobal(pos));
+}
+
+void CREResourcesWindow::deleteQuest(Quest* /*quest*/)
+{
+    /** @todo doesn't work for some reason, signal issue probably */
+    /*
+    myQuests->quests().removeAll(quest);
+    fillData();
+    delete quest;
+     */
+}
+
+void CREResourcesWindow::addQuest(bool)
+{
+    Quest* quest = new Quest();
+    quest->setCode("(new quest)");
+    myQuests->quests().append(quest);
+    fillData();
 }

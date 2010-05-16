@@ -11,6 +11,7 @@
 #include "CRETreeItem.h"
 
 class CREMapInformationManager;
+class Quest;
 class QuestManager;
 class MessageManager;
 
@@ -35,6 +36,7 @@ class CREResourcesWindow : public QWidget
         CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, DisplayMode mode = DisplayAll);
         virtual ~CREResourcesWindow();
 
+        void deleteQuest(Quest* quest);
     public slots:
         void updateFilters();
         void updateReports();
@@ -75,6 +77,7 @@ class CREResourcesWindow : public QWidget
         void fillQuests();
         void fillMessages();
         void addPanel(QString name, CREPanel* panel);
+        void fillItem(const QPoint& pos, QMenu* menu);
 
     protected slots:
         void tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*);
@@ -84,6 +87,8 @@ class CREResourcesWindow : public QWidget
         void clearFilter();
         void onReport();
         void onReportChange(QObject* object);
+        void treeCustomMenu(const QPoint & pos);
+        void addQuest(bool);
 };
 
 #endif // CRERESOURCESWINDOW_H

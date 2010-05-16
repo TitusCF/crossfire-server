@@ -2,9 +2,7 @@
 #define CRETREEITEM_H
 
 #include <QObject>
-#include <Qt>
-#include <QHash>
-#include <QPointer>
+#include <QMenu>
 
 class CRETreeItem : public QObject
 {
@@ -13,6 +11,7 @@ class CRETreeItem : public QObject
     public:
         virtual QString getPanelName() const = 0;
         virtual void fillPanel(QWidget* panel) = 0;
+        virtual void fillContextMenu(QMenu*) { };
 };
 
 #endif // CRETREEITEM_H
