@@ -1,10 +1,19 @@
 This is a basic resource viewer for Crossfire, written in C++/Qt.
 
-It requires Crossfire to be compiled before being built.
+Resources are only readonly, but may become writable at some point.
 
-For now resources are only readonly, but may become writable at some point.
+Requirements:
 
-To build: qmake && make
-(will build in debug mode, feel free to change .qmake.cache to suit your needs better)
+  Qt 4 is required.  The project does not build under Qt 3.
+  The crossfire-server must be compiled before this project.
 
-PNG files in the 'resources' folder were taken from Gridarta's 'resource/system' directory and are supposed to be under a free licence.
+To build:
+
+  qmake && make
+    (Builds in debug mode; change .qmake.cache to suit other needs better.)
+
+Notes:
+
+  PNG files in the 'resources' folder were taken from Gridarta's
+  'resource/system' directory and are supposed to be under a free license.
+
