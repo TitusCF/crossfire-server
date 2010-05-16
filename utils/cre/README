@@ -6,6 +6,7 @@ Requirements:
 
   Qt 4 is required.  The project does not build under Qt 3.
   The crossfire-server must be compiled before this project.
+  A `make install` of crossfire server is required for CRE to run.
 
 To build:
 
