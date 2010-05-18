@@ -13,6 +13,13 @@ changes' is much more useful than 'misc edits' or 'code cleanup.'
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Implement requestinfo for race_info and class_info.  Note there is a bug with
+the archetypes in that many archetypes have type==37 (CLASS) which are not
+actually class descriptors.
+socket/request.c: New functions to send class/race information.
+doc/Developers/protocol: Update document for format of race/class_info
+  requestinfo.
+MSW 2010-05-18
 
 Improve quest edition, now can add or remove steps. Can add new quests.
 Nicolas Weeger 2010-05-16

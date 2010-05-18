@@ -1557,6 +1557,68 @@ void send_race_list(socket_struct *ns, char *params) {
     Send_With_Handling(ns, &sl);
 }
 
+/* This is like the AddIf... routines, but instead of
+ * checking against another value which we overwrite,
+ * we just check against 0.
+ */
+#define AddShortAttr(New, Type) \
+    if (New) { \
+        SockList_AddChar(sl, Type); \
+        SockList_AddShort(sl, New); \
+        }
+
+/** This sends information about object op to client - used
+ * in response to requestinfo.  This function is used by
+ * both race & class transmissions, and could perhaps be used
+ * by future requestinfo types.
+ *
+ * @param ns
+ * socket to add data to
+ * @param op
+ * Object to extract data from.
+ */
+static void send_arch_info(SockList *sl, const object *op)
+{
+    SockList_AddString(sl, "name ");
+    if (op->name) {
+        SockList_AddLen8Data(sl, op->name, strlen(op->name));
+    }
+
+    /* It is conceivable some may lack messages */
+    if (op->msg) {
+        SockList_AddString(sl, "msg ");
+        SockList_AddShort(sl, strlen(op->msg));
+        SockList_AddData(sl, op->msg, strlen(op->msg));
+    }
+
+    SockList_AddString(sl, "stats ");
+    /* Only send non zero stats.  More stats could be added here,
+     * but ideally, the text description (op->msg) should give information
+     * about resistances and other abilities.
+     * Send stats last - if the client gets a stat it does not understand,
+     * it stops processing this replyinfo.
+     */
+    AddShortAttr(op->stats.Str, CS_STAT_STR);
+    AddShortAttr(op->stats.Int, CS_STAT_INT);
+    AddShortAttr(op->stats.Pow, CS_STAT_POW);
+    AddShortAttr(op->stats.Wis, CS_STAT_WIS);
+    AddShortAttr(op->stats.Dex, CS_STAT_DEX);
+    AddShortAttr(op->stats.Con, CS_STAT_CON);
+    AddShortAttr(op->stats.Cha, CS_STAT_CHA);
+
+    /* Terminator for the stats line */
+    SockList_AddChar(sl, 0);
+
+    /* Any addition to data to send should be at the end of the function -
+     * in other words, the order of data sent here should match order of addition.
+     * In that way, the newest additions are sent last, so client can process this
+     * data until it gets something it does not understand - if new data (subfields
+     * in the replyinfo) are sent first, the client basically has to stop processing
+     * once it gets something it does not understand.
+     */
+
+}
+
 /**
  * Sends information on specified race to the client.
  *
@@ -1564,16 +1626,19 @@ void send_race_list(socket_struct *ns, char *params) {
  * where to send.
  * @param params
  * race name to send.
- * @todo finish writing
  */
 void send_race_info(socket_struct *ns, char *params) {
     archetype *race = try_find_archetype(params);
     SockList sl;
 
     SockList_Init(&sl);
-    SockList_AddPrintf(&sl, "replyinfo race_info %s", params);
+    SockList_AddPrintf(&sl, "replyinfo race_info %s\n", params);
 
-    if (race) {
+    /* do not let the client arbitrarily request information about
+     * any archetype, so put a check in here for the right clone type.
+     */
+    if (race && race->clone.type == PLAYER) {
+        send_arch_info(&sl, &race->clone);
     }
 
     Send_With_Handling(ns, &sl);
@@ -1628,9 +1693,24 @@ void send_class_list(socket_struct *ns, char *params) {
  * where to send.
  * @param params
  * class name to send.
- * @todo finish writing
  */
 void send_class_info(socket_struct *ns, char *params) {
+    archetype *class = try_find_archetype(params);
+    SockList sl;
+
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "replyinfo class_info %s\n", params);
+
+    /* do not let the client arbitrarily request information about
+     * any archetype, so put a check in here for the right clone type.
+     */
+    if (class && class->clone.type == CLASS) {
+        send_arch_info(&sl, &class->clone);
+    }
+
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
+
 }
 
 /**

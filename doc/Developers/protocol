@@ -1333,6 +1333,15 @@ S->C: replyinfo <info_type> [options] <data>
 	requestinfo command will not generally support getting information related
 	to the player object.
 
+    As a general rule, the information returned is static - if the
+    client makes a second requestinfo with same parameters during the
+    same session, it will get the same data back.  Thus, the client
+    can safely cache the data instead of making multiple requests.
+    There could be rare cases where information changes (eg, server
+    admin is updating the new file), but these would be rare and
+    generally are not something that needs to be designed for.
+    
+
 	The following info_types are supported:
 
     image_info:
@@ -1471,18 +1480,54 @@ S->C: replyinfo <info_type> [options] <data>
         The names can be used to request more information with race_info.
         Reply format is: replyinfo race_list |race1|race2|...|racen
 
+        Note that the names returned are archetype names, and thus not
+        really suitable to display to the player.
+
     race_info <race name>
-        Returns information about specified race.
-        (work in progress)
+        Returns information about specified playable race (one from
+        race_list above).  Format is:
+        
+        name <namelen><namedata>
+        msg <desc len><description>
+        stats <statno1><adj1><statno2><adj2>....0
+
+        name is the name that the player sees (data returned by
+        race_list above is archetype name).  It is a length
+        prefixed string.
+
+        stats is a literal string value, and what follows are binary
+        statno and adjustment values.  statno uses the CS_STAT value
+        that is used by the stats command, and the type of adjustment
+        matches that for stats (eg, if statno1 is a 32 bit type, a 32
+        bit type will be used here).  Any/all of the CS_STAT types
+        could be sent, but in general only a subset will be sent.  The
+        server will only send stats which are not zero, so the client
+        should assume all stats that are not sent have a zero value.  0
+        is used for a statno to denote there are no more stats.
+
+        description is a text description.  It is length prefixed (2
+        bytes) to allow for possible expansion (with it having a known
+        length, additional fields could be set to follow the
+        description.  NOTE: The length parameter here is unusual in
+        that most strings use only an 8 bit length value, but for
+        messages that would not be long enough, hence the 16 bit value.
+
+        Note that the race archetype name will be included in the replyinfo
+        header, eg, 'replyinfo race_info dwarf_pl'.
+
+        Note also that the order of the fields here is not fixed - the
+        server could send them in 'stats, msg, name' order - the
+        client should be able to handle any order.  Note also that it
+        is conceivable that the server will send multiple stats
+        command if new stats are to be sent - in this way, the client
+        can process as much as possible, and then stop processing once it gets
+        something it does not understand.
 
     class_list (no parameters)
-        Returns the classes players can choose.
-        The names can be used to request more information with class_info.
-        Reply format is: replyinfo class_list |class1|class2|...|classn
-
     class_info <class name>
-        Returns information about specified class.
-        (work in progress)
+        The format of the data returned is exactly the same as for the
+        race_.. command of the same name - the only difference is this
+        is class information.
 
     news/rules/motd (no parameters)
         Send the news/rules/motd file information to the client.  This
