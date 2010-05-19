@@ -13,6 +13,7 @@ class CREWrapperObject : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString name READ name);
+    Q_PROPERTY(QString race READ race);
     Q_PROPERTY(int type READ type);
     Q_PROPERTY(int level READ level);
     Q_PROPERTY(bool isMonster READ isMonster);
@@ -30,6 +31,7 @@ class CREWrapperObject : public QObject
 
         const CREWrapperArchetype* arch() const;
         QString name() const;
+        QString race() const;
         int type() const;
         int level() const;
         bool isMonster() const;

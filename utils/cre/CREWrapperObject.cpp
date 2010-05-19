@@ -25,6 +25,11 @@ QString CREWrapperObject::name() const
     return myObject->name;
 }
 
+QString CREWrapperObject::race() const
+{
+    return myObject->race;
+}
+
 int CREWrapperObject::type() const
 {
     return myObject->type;
