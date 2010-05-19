@@ -761,6 +761,9 @@ void CREResourcesWindow::treeCustomMenu(const QPoint & pos)
     }
 
     fillItem(pos, &menu);
+
+    if (menu.actions().size() == 0)
+        return;
     menu.exec(myTree->mapToGlobal(pos));
 }
 
