@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Update help text for filters.
+Nicolas Weeger 2010-05-21
+
 Don't display an empty menu on right click.
 Nicolas Weeger 2010-05-19
 
