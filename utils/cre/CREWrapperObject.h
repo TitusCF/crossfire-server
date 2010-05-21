@@ -22,14 +22,14 @@ class CREWrapperObject : public QObject
     Q_PROPERTY(quint32 attacktype READ attacktype);
     Q_PROPERTY(qint8 ac READ ac);
     Q_PROPERTY(qint8 wc READ wc);
-    Q_PROPERTY(const CREWrapperArchetype* arch READ arch);
+    Q_PROPERTY(QObject* arch READ arch);
 
     public:
         CREWrapperObject();
 
         void setObject(const object* obj);
 
-        const CREWrapperArchetype* arch() const;
+        CREWrapperArchetype* arch();
         QString name() const;
         QString race() const;
         int type() const;

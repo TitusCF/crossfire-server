@@ -15,7 +15,7 @@ void CREWrapperObject::setObject(const object* obj)
         myArchetype->setArchetype(obj->arch);
 }
 
-const CREWrapperArchetype* CREWrapperObject::arch() const
+CREWrapperArchetype* CREWrapperObject::arch()
 {
     return myArchetype;
 }
