@@ -1,37 +1,22 @@
 #include "CRERulePanel.h"
 #include "MessageFile.h"
 #include <QtGui>
+#include "CREStringListPanel.h"
 
 CRERulePanel::CRERulePanel(QWidget* parent) : QTabWidget(parent)
 {
-    QWidget* matches = new QWidget(this);
-    QGridLayout* layout = new QGridLayout(matches);
-    myMatches = new QListWidget(this);
-    connect(myMatches, SIGNAL(currentRowChanged(int)), this, SLOT(onCurrentMatchChanged(int)));
-    layout->addWidget(new QLabel(tr("Matches:"), this), 0, 0, 1, 2);
-    layout->addWidget(myMatches, 1, 0, 1, 2);
-
-    QPushButton* add = new QPushButton(tr("add"), this);
-    connect(add, SIGNAL(clicked(bool)), this, SLOT(onAddMatch(bool)));
-    layout->addWidget(add, 2, 0);
-
-    QPushButton* remove = new QPushButton(tr("remove"), this);
-    connect(remove, SIGNAL(clicked(bool)), this, SLOT(onDeleteMatch(bool)));
-    layout->addWidget(remove, 2, 1);
-
-    layout->addWidget(new QLabel(tr("Match:"), this), 3, 0);
-    myMatch = new QLineEdit(this);
-    layout->addWidget(myMatch, 3, 1);
-
-    addTab(matches, tr("matches"));
+    myMatches = new CREStringListPanel(true, this);
+    connect(myMatches, SIGNAL(dataModified()), this, SLOT(onMatchModified()));
+    addTab(myMatches, tr("matches"));
     addTab(new QLabel(tr("pre")), tr("pre"));
-    addTab(new QLabel(tr("message")), tr("message"));
+    myMessages = new CREStringListPanel(false, this);
+    connect(myMessages, SIGNAL(dataModified()), this, SLOT(onMessageModified()));
+    addTab(myMessages, tr("message"));
     addTab(new QLabel(tr("post")), tr("post"));
     addTab(new QLabel(tr("replies")), tr("replies"));
     addTab(new QLabel(tr("includes")), tr("includes"));
 
     myRule = NULL;
-    myCurrentMatch = -1;
 }
 
 CRERulePanel::~CRERulePanel()
@@ -40,56 +25,26 @@ CRERulePanel::~CRERulePanel()
 
 void CRERulePanel::setMessageRule(MessageRule* rule)
 {
-    commitMatch();
-
     myRule = rule;
 
-    myMatches->clear();
-    myMatch->clear();
+    myMatches->clearData();
+    myMessages->clearData();
 
     if (rule != NULL)
     {
-        myMatches->addItems(rule->match());
+        myMatches->setData(rule->match());
+        myMessages->setData(rule->messages());
     }
 }
 
-void CRERulePanel::onAddMatch(bool)
+void CRERulePanel::onMatchModified()
 {
-    myRule->match().append("<match>");
-    myMatches->addItem("<match>");
+    myRule->setMatch(myMatches->getData());
     emit currentRuleModified();
 }
 
-void CRERulePanel::onDeleteMatch(bool)
+void CRERulePanel::onMessageModified()
 {
-    if (myCurrentMatch == -1 || myCurrentMatch >= myRule->match().size())
-        return;
-
-    myRule->match().removeAt(myCurrentMatch);
-    myCurrentMatch = -1;
-    myMatches->clear();
-    myMatches->addItems(myRule->match());
-    myMatch->setText("");
+    myRule->setMessages(myMessages->getData());
     emit currentRuleModified();
-}
-
-void CRERulePanel::commitMatch()
-{
-    if (myCurrentMatch == -1)
-        return;
-
-    myRule->match()[myCurrentMatch] = myMatch->text();
-    myMatches->item(myCurrentMatch)->setText(myMatch->text());
-    myCurrentMatch = -1;
-    myMatch->setText("");
-    emit currentRuleModified();
-}
-
-void CRERulePanel::onCurrentMatchChanged(int currentRow)
-{
-    commitMatch();
-    if (currentRow == -1)
-        return;
-    myCurrentMatch = currentRow;
-    myMatch->setText(myRule->match()[currentRow]);
 }

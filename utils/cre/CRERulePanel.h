@@ -7,6 +7,7 @@ class QListWidget;
 class MessageRule;
 class QPushButton;
 class QLineEdit;
+class CREStringListPanel;
 
 class CRERulePanel : public QTabWidget
 {
@@ -23,15 +24,12 @@ class CRERulePanel : public QTabWidget
 
     protected:
         MessageRule* myRule;
-        int myCurrentMatch;
-        QListWidget* myMatches;
-        QLineEdit* myMatch;
+        CREStringListPanel* myMatches;
+        CREStringListPanel* myMessages;
 
-        void commitMatch();
     protected slots:
-        void onAddMatch(bool);
-        void onDeleteMatch(bool);
-        void onCurrentMatchChanged(int currentRow);
+        void onMatchModified();
+        void onMessageModified();
 };
 
 #endif	/* _CRERULEPANEL_H */
