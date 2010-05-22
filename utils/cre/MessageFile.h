@@ -13,6 +13,7 @@ class MessageRule : public QObject
         virtual ~MessageRule();
 
         const QStringList& match() const;
+        QStringList& match();
         void setMatch(const QStringList& match);
         const QList<QStringList>& preconditions() const;
         void setPreconditions(const QList<QStringList>& preconditions);
@@ -25,7 +26,11 @@ class MessageRule : public QObject
         const QList<QStringList>& replies() const;
         void setReplies(const QList<QStringList>& replies);
 
+        bool isModified() const;
+        void setModified(bool modified = true);
+
     private:
+        bool myIsModified;
         QStringList myMatch;
         QList<QStringList> myPreconditions;
         QList<QStringList> myPostconditions;
@@ -50,6 +55,8 @@ class MessageFile : public QObject
         void setLocation(const QString& location);
 
         QList<MessageRule*> rules();
+
+        void save();
 
     private:
         QString myPath;

@@ -51,6 +51,7 @@ class CREMainWindow : public QMainWindow
         QAction* myOpenMessages;
         QAction* mySaveFormulae;
         QAction* mySaveQuests;
+        QAction* mySaveMessages;
         QLabel* myMapBrowseStatus;
         CREMapInformationManager* myMapManager;
         QuestManager* myQuestManager;
@@ -74,6 +75,7 @@ class CREMainWindow : public QMainWindow
         void onOpenExperience();
         void onSaveFormulae();
         void onSaveQuests();
+        void onSaveMessages();
         void browsingMap(const QString& path);
         void browsingFinished();
         void onFiltersModified();

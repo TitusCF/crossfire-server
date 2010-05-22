@@ -11,7 +11,7 @@ extern "C" {
 
 MessageRule::MessageRule()
 {
-
+    myIsModified = false;
 }
 
 MessageRule::~MessageRule()
@@ -19,6 +19,11 @@ MessageRule::~MessageRule()
 }
 
 const QStringList& MessageRule::match() const
+{
+    return myMatch;
+}
+
+QStringList& MessageRule::match()
 {
     return myMatch;
 }
@@ -76,6 +81,16 @@ const QList<QStringList>& MessageRule::replies() const
 void MessageRule::setReplies(const QList<QStringList>& replies)
 {
     myReplies = replies;
+}
+
+bool MessageRule::isModified() const
+{
+    return myIsModified;
+}
+
+void MessageRule::setModified(bool modified)
+{
+    myIsModified = modified;
 }
 
 MessageFile::MessageFile(const QString& path)
@@ -182,4 +197,101 @@ bool MessageFile::parseFile()
 QList<MessageRule*> MessageFile::rules()
 {
     return myRules;
+}
+
+QString convert(const QString& text)
+{
+    QString tmp(text);
+    return tmp.replace('"', "\\\"").replace('\n', "\\n");
+}
+
+QString convert(const QStringList& list)
+{
+    QStringList one;
+    foreach(const QString& line, list)
+    {
+        one.append("\"" + convert(line) + "\"");
+    }
+    return "[" + one.join(", ") + "]";
+}
+
+QString convert(const QList<QStringList>& data)
+{
+    QStringList lines;
+
+    foreach(const QStringList& list, data)
+    {
+        lines.append(convert(list));
+    }
+
+    return "[" + lines.join(", ") + "]";
+}
+
+QString convert(const MessageRule* rule)
+{
+    QString result;
+
+    if (!rule->include().isEmpty())
+    {
+        result += "{\n  \"include\" : [\"" + convert(rule->include());
+        result += "\"],\n  \"pre\" : " + convert(rule->preconditions()) + "\n  }";
+        return result;
+    }
+
+    result += "{\n  \"match\" : ";
+    result += convert(rule->match());
+
+    result += ",\n  \"pre\" : ";
+    result += convert(rule->preconditions());
+
+    result += ",\n  \"post\" : ";
+    result += convert(rule->postconditions());
+
+    result += ",\n  \"msg\" : ";
+    result += convert(rule->messages());
+
+    result += ",\n  \"replies\" : ";
+    result += convert(rule->replies());
+
+    result += "\n  }";
+
+    return result;
+}
+
+void MessageFile::save()
+{
+    bool one = false;
+    foreach(MessageRule* rule, myRules)
+    {
+        if (rule->isModified())
+        {
+            one = true;
+            break;
+        }
+    }
+    if (!one)
+        return;
+
+    qDebug() << "MessageFile saving" << myPath;
+
+    QString data = "{\n";
+    if (!myLocation.isEmpty())
+        data += "  \"location\" : \"" + myLocation + "\",\n";
+    data += "  \"rules\": [\n  ";
+
+    QStringList rules;
+    foreach(MessageRule* rule, myRules)
+    {
+        rules.append(convert(rule));
+        rule->setModified(false);
+    }
+
+    data += rules.join(",");
+    data += "\n]}\n";
+
+    QString full = QString("%1/%2/%3").arg(settings.datadir, settings.mapdir, myPath);
+    QFile file(full);
+    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    file.write(data.toAscii());
+    file.close();
 }

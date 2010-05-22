@@ -11,6 +11,7 @@ class MessageManager
         virtual ~MessageManager();
 
         void loadMessages();
+        void saveMessages();
 
         QList<MessageFile*> messages();
 

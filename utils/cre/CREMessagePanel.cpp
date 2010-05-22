@@ -2,6 +2,7 @@
 #include "CREMessagePanel.h"
 #include "CREFilterDefinition.h"
 #include "MessageFile.h"
+#include "CRERulePanel.h"
 
 CREMessagePanel::CREMessagePanel()
 {
@@ -23,6 +24,10 @@ CREMessagePanel::CREMessagePanel()
     labels << tr("match") << tr("pre") << tr("message") << tr("post") << tr("replies") << tr("include");
     myRules->setHeaderLabels(labels);
     connect(myRules, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+
+    myRulePanel = new CRERulePanel(this);
+    connect(myRulePanel, SIGNAL(currentRuleModified()), this, SLOT(currentRuleModified()));
+    rules->addWidget(myRulePanel, 4, 0, 4, 1);
 
     myMessage = NULL;
 }
@@ -62,6 +67,8 @@ void CREMessagePanel::setMessage(MessageFile* message)
 
     if (myRules->topLevelItemCount() != 0)
         myDefaultBackground = myRules->topLevelItem(0)->background(0);
+
+    myRulePanel->setMessageRule(NULL);
 }
 
 void setBackgroundColor(QTreeWidgetItem* item, QBrush color)
@@ -85,6 +92,8 @@ void CREMessagePanel::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetIt
         return;
 
     MessageRule* rule = myMessage->rules()[index];
+
+    myRulePanel->setMessageRule(rule);
 
     foreach(QStringList pre, rule->preconditions())
     {
@@ -158,4 +167,21 @@ void CREMessagePanel::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetIt
                 setBackgroundColor(myRules->topLevelItem(c), Qt::blue);
         }
     }
+}
+
+void CREMessagePanel::currentRuleModified()
+{
+    int index = myRules->currentIndex().row();
+    fillRuleItem(myRules->currentItem(), myMessage->rules()[index]);
+    myMessage->rules()[index]->setModified();
+}
+
+void CREMessagePanel::fillRuleItem(QTreeWidgetItem* item, MessageRule* rule)
+{
+    item->setText(0, rule->match().join("\n"));
+    item->setText(1, toDisplay(rule->preconditions()));
+    item->setText(2, rule->messages().join("\n"));
+    item->setText(3, toDisplay(rule->postconditions()));
+    item->setText(4, toDisplay(rule->replies()));
+    item->setText(5, rule->include());
 }

@@ -52,7 +52,8 @@ CREPixmap.cpp \
  MessageManager.cpp \
  CREMessagePanel.cpp \
  MessageFile.cpp \
- CRETreeItemMessage.cpp
+ CRETreeItemMessage.cpp \
+ CRERulePanel.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -103,7 +104,8 @@ CREPixmap.h \
  MessageManager.h \
  CREMessagePanel.h \
  MessageFile.h \
- CRETreeItemMessage.h
+ CRETreeItemMessage.h \
+ CRERulePanel.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

@@ -6,10 +6,12 @@
 #include "CREPanel.h"
 
 class MessageFile;
+class MessageRule;
 class QLineEdit;
 class QTreeWidget;
 class QTextEdit;
 class QTreeWidgetItem;
+class CRERulePanel;
 
 class CREMessagePanel : public CREPanel
 {
@@ -25,10 +27,12 @@ class CREMessagePanel : public CREPanel
         QLineEdit* myLocation;
         QTreeWidget* myRules;
         QBrush myDefaultBackground;
-        //QTextEdit
+        CRERulePanel* myRulePanel;
 
+        void fillRuleItem(QTreeWidgetItem* item, MessageRule* rule);
     private slots:
         void currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+        void currentRuleModified();
 };
 
 #endif	/* _CREMESSAGEPANEL_H */

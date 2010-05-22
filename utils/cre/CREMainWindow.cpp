@@ -86,6 +86,9 @@ void CREMainWindow::createActions()
 
     mySaveQuests = new QAction(tr("Quests"), this);
     connect(mySaveQuests, SIGNAL(triggered()), this, SLOT(onSaveQuests()));
+
+    mySaveMessages = new QAction(tr("Messages"), this);
+    connect(mySaveMessages, SIGNAL(triggered()), this, SLOT(onSaveMessages()));
 }
 
 void CREMainWindow::createMenus()
@@ -106,6 +109,7 @@ void CREMainWindow::createMenus()
     mySaveMenu = menuBar()->addMenu(tr("&Save"));
     mySaveMenu->addAction(mySaveFormulae);
     mySaveMenu->addAction(mySaveQuests);
+    mySaveMenu->addAction(mySaveMessages);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -185,6 +189,12 @@ void CREMainWindow::onSaveQuests()
 {
     emit commitData();
     myQuestManager->saveQuests();
+}
+
+void CREMainWindow::onSaveMessages()
+{
+    emit commitData();
+    myMessageManager->saveMessages();
 }
 
 void CREMainWindow::browsingMap(const QString& path)

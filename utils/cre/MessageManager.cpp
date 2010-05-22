@@ -22,6 +22,14 @@ void MessageManager::loadMessages()
     loadDirectory("");
 }
 
+void MessageManager::saveMessages()
+{
+    foreach(MessageFile* file, myMessages)
+    {
+        file->save();
+    }
+}
+
 QList<MessageFile*> MessageManager::messages()
 {
     return myMessages;
