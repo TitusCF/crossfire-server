@@ -9,6 +9,7 @@ class QPushButton;
 class QLineEdit;
 class CREStringListPanel;
 class CREPrePostPanel;
+class CREReplyPanel;
 
 class CRERulePanel : public QTabWidget
 {
@@ -29,6 +30,7 @@ class CRERulePanel : public QTabWidget
         CREPrePostPanel* myPre;
         CREStringListPanel* myMessages;
         CREPrePostPanel* myPost;
+        CREReplyPanel* myReplies;
         QLineEdit* myInclude;
 
     protected slots:
@@ -36,6 +38,7 @@ class CRERulePanel : public QTabWidget
         void onPreModified();
         void onMessageModified();
         void onPostModified();
+        void onRepliesModified();
         void onIncludeModified(const QString& text);
 };
 
