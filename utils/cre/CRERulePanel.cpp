@@ -61,24 +61,32 @@ void CRERulePanel::setMessageRule(MessageRule* rule)
 
 void CRERulePanel::onMatchModified()
 {
+    if (myRule == NULL)
+        return;
     myRule->setMatch(myMatches->getData());
     emit currentRuleModified();
 }
 
 void CRERulePanel::onPreModified()
 {
+    if (myRule == NULL)
+        return;
     myRule->setPreconditions(myPre->getData());
     emit currentRuleModified();
 }
 
 void CRERulePanel::onMessageModified()
 {
+    if (myRule == NULL)
+        return;
     myRule->setMessages(myMessages->getData());
     emit currentRuleModified();
 }
 
 void CRERulePanel::onPostModified()
 {
+    if (myRule == NULL)
+        return;
     myRule->setPostconditions(myPost->getData());
     emit currentRuleModified();
 }
