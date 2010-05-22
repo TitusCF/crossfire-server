@@ -8,6 +8,7 @@ class MessageRule;
 class QPushButton;
 class QLineEdit;
 class CREStringListPanel;
+class CREPrePostPanel;
 
 class CRERulePanel : public QTabWidget
 {
@@ -25,11 +26,17 @@ class CRERulePanel : public QTabWidget
     protected:
         MessageRule* myRule;
         CREStringListPanel* myMatches;
+        CREPrePostPanel* myPre;
         CREStringListPanel* myMessages;
+        CREPrePostPanel* myPost;
+        QLineEdit* myInclude;
 
     protected slots:
         void onMatchModified();
+        void onPreModified();
         void onMessageModified();
+        void onPostModified();
+        void onIncludeModified(const QString& text);
 };
 
 #endif	/* _CRERULEPANEL_H */
