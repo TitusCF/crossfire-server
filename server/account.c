@@ -311,7 +311,7 @@ void accounts_save(void)
  * @return
  * returns official name on match, NULL on no match.
  */
-const char *account_exists(char *account_name)
+const char *account_exists(const char *account_name)
 {
     account_struct *ac;
 
@@ -336,7 +336,7 @@ const char *account_exists(char *account_name)
  * @return
  * 0 if no match/wrong password, 1 if a match is found and password matches.
  */
-int account_check_name_password(char *account_name, char *account_password)
+int account_check_name_password(const char *account_name, const char *account_password)
 {
     account_struct *ac;
 
@@ -408,7 +408,7 @@ int account_check_string(const char *str)
  * @retval 2
  * account already exists.
  */
-int account_add_account(char *account_name, char *account_password)
+int account_add_account(const char *account_name, const char *account_password)
 {
     account_struct *ac;
 
@@ -463,7 +463,7 @@ int account_add_account(char *account_name, char *account_password)
  * number of characters on this account has reached a maximum.
  */
 
-int account_add_player_to_account(char *account_name, char *player_name)
+int account_add_player_to_account(const char *account_name, const char *player_name)
 {
     account_struct *ac;
 
@@ -544,7 +544,7 @@ int account_remove_player_from_account(const char *account_name, const char *pla
  * first entry being NULL in the case of a valid account with no characters added.
  * This returned data should not be altered in any way.
  */
-char **account_get_players_for_account(char *account_name)
+char **account_get_players_for_account(const char *account_name)
 {
     account_struct *ac;
 

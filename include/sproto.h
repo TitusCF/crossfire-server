@@ -2,13 +2,13 @@
 void clear_accounts(void);
 void account_load_entries(void);
 void accounts_save(void);
-const char *account_exists(char *account_name);
-int account_check_name_password(char *account_name, char *account_password);
+const char *account_exists(const char *account_name);
+int account_check_name_password(const char *account_name, const char *account_password);
 int account_check_string(const char *str);
-int account_add_account(char *account_name, char *account_password);
-int account_add_player_to_account(char *account_name, char *player_name);
+int account_add_account(const char *account_name, const char *account_password);
+int account_add_player_to_account(const char *account_name, const char *player_name);
 int account_remove_player_from_account(const char *account_name, const char *player_name);
-char **account_get_players_for_account(char *account_name);
+char **account_get_players_for_account(const char *account_name);
 const char *account_get_account_for_char(const char *charname);
 player *account_get_logged_in_player(const char *name);
 socket_struct *account_get_logged_in_init_socket(const char *name);
@@ -567,6 +567,8 @@ double shopkeeper_approval(const mapstruct *map, const object *player);
 int describe_shop(const object *op);
 int is_in_shop(object *ob);
 int coords_in_shop(mapstruct *map, int x, int y);
+StringBuffer *query_cost_string(const object *tmp, object *who, int flag, StringBuffer *buf);
+StringBuffer *cost_string_from_value(uint64 cost, StringBuffer *buf);
 /* skills.c */
 int steal(object *op, int dir, object *skill);
 int pick_lock(object *pl, int dir, object *skill);
@@ -707,8 +709,8 @@ int similar_direction(int a, int b);
 /* server.c */
 void version(object *op);
 void start_info(object *op);
-char *crypt_string(char *str, char *salt);
-int check_password(char *typed, char *crypted);
+char *crypt_string(const char *str, const char *salt);
+int check_password(const char *typed, const char *crypted);
 void enter_player_savebed(object *op);
 void set_map_timeout(mapstruct *oldmap);
 void enter_exit(object *op, object *exit_ob);

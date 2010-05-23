@@ -122,7 +122,7 @@ void start_info(object *op) {
  * crypted str.
  * @todo make thread-safe?
  */
-char *crypt_string(char *str, char *salt) {
+char *crypt_string(const char *str, const char *salt) {
 #if defined(WIN32) || (defined(__FreeBSD__) && !defined(HAVE_LIBDES))
     return(str);
 #else
@@ -154,7 +154,7 @@ char *crypt_string(char *str, char *salt) {
  * @return
  * 1 if the passwords match, 0 else.
  */
-int check_password(char *typed, char *crypted) {
+int check_password(const char *typed, const char *crypted) {
     return !strcmp(crypt_string(typed, crypted), crypted);
 }
 
