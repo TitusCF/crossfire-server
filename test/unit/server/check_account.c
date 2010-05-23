@@ -147,9 +147,8 @@ END_TEST
  */
 START_TEST(test_account_load_entries) {
     int i,j;
-    char names[50];
     char **char_names;
-    char *ae;
+    const char *ae;
 
     clear_accounts();
     account_load_entries();
