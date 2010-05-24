@@ -105,6 +105,9 @@ void init_anim(void) {
             for (i = 0; i < num_frames; i++)
                 animations[num_animations].faces[i] = faces[i];
             animations[num_animations].num_animations = num_frames;
+            if (num_frames <= 1) {
+                LOG(llevDebug, "Animation %s has only one or none face!\n", animations[num_animations].name);
+            }
             if (num_frames%animations[num_animations].facings) {
                 LOG(llevDebug, "Animation %s frame numbers (%d) is not a multiple of facings (%d)\n",
                     animations[num_animations].name, num_frames, animations[num_animations].facings);
