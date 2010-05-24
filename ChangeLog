@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Support for building utils/mapper.c as crossfire-mapper.  The utility is not
+built by default as it requires libgd (not normally required by the server).
+crossfire-mapper is not needed to run a server, but it is useful for making
+crossfire world maps for publishing via web server.  To build this utility,
+specify --enable-mapper when running ./configure.
+Kevin Bulgrien 2010-05-24
+
 Add missing function prototypes. Use 'const' where possible.
 Nicolas Weeger 2010-05-23
 

@@ -42,6 +42,9 @@ AC_ARG_WITH(python,
             [AS_HELP_STRING([--with-python=dir], [Directory to look for python headers/library (default=standard system location)])],
             PYTHON_HOME="$withval")
 
+AC_ARG_ENABLE(mapper,
+            [AS_HELP_STRING([--enable-mapper], [Whether or not to build the crossfire-mapper utility (default=no; requires libgd)])],,
+            enable_mapper=no)
 
 # check for some other programs
 AC_PATH_PROG(LATEX, latex)
@@ -90,6 +93,19 @@ AC_CHECK_LIB(z, compress)
 AC_CHECK_LIB(pthread, pthread_create)
 LIBCURL_CHECK_CONFIG()
 
+# For utils/mapper
+cf_make_mapper=no
+if eval "test x$enable_mapper = xyes"; then
+    AC_PATH_PROG(GDLIB_CONFIG,gdlib-config)
+    if test -n "$GDLIB_CONFIG"; then
+        GD_LIBS="`$GDLIB_CONFIG --ldflags` `$GDLIB_CONFIG --libs` -lgd"
+        AC_SUBST(GD_LIBS, $GD_LIBS)
+        cf_make_mapper=yes
+    else
+        AC_MSG_WARN([Cannot find gdlib-config; will not build crossfire-mapper.])
+    fi
+fi
+AM_CONDITIONAL(MAPPER, test x$cf_make_mapper = xyes)
 
 LIBS="$LIBS $LIBCURL"
 CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
@@ -307,8 +323,8 @@ fi
 
 if test "x$cf_have_libdl" = "xyes" ; then
 AC_MSG_NOTICE([    Will build python plugin?            $cf_will_build_python])
-
 fi
+
 if test x"$xsltengine" != "x" ; then
     check_complement=["(will generate report)"]
 fi
@@ -320,3 +336,8 @@ AC_MSG_NOTICE([    Will process unit testing?           no])
 AC_MSG_NOTICE([      If you are a developer, you MUST install the check framework])
 AC_MSG_NOTICE([      and write automated tests for all your add-ons!])
 fi
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([  Build utilities (Not required to build or run the server)])
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([    Will build crossfire-mapper?         $cf_make_mapper])
+AC_MSG_NOTICE([])
