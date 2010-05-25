@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Permit Quests to define parents, display only parent quests in the quest
+lists and fold child quests into the parent's description. The same
+behaviour is used for the quest summary with the -mq flag
+ server/quest.c
+Brendan Lally 2010-05-25
+
 Display warning if an animation only has one face.
 Nicolas Weeger 2010-05-24
 

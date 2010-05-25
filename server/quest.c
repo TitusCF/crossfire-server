@@ -64,12 +64,20 @@ typedef struct quest_player {
 /** Player quest state. */
 static quest_player *player_states = NULL;
 
+typedef struct quest_condition {
+    sstring *quest_code;          /**< The quest that triggers the condition */
+    int step;                     /**< The step in the quest that triggers the condition,
+                                    -1 means finished, 0 means not started */
+    struct quest_condition *next; /**< The next condition to check */
+} quest_condition;
+
 /** One step of a quest. */
 typedef struct quest_step_definition {
     int step;                           /**< Step identifier. */
     sstring step_description;           /**< Step description to show player. */
     int is_completion_step:1;           /**< Whether this step completes the quest (1) or not (0) */
     struct quest_step_definition *next; /**< Next step. */
+    quest_condition *conditions;        /**< The conditions that must be satisfied to trigger the step */
 } quest_step_definition;
 
 /** Definition of an in-game quest. */
@@ -79,6 +87,7 @@ typedef struct quest_definition {
     sstring quest_description;      /**< Quest longer description. */
     int quest_restart;              /**< If non zero, can be restarted. */
     quest_step_definition *steps;   /**< Quest steps. */
+    struct quest_definition *parent;/**< Parent for this quest, NULL if it is a 'top-level' quest */
     struct quest_definition *next;  /**< Next quest in the definition list. */
 } quest_definition;
 
@@ -136,6 +145,7 @@ static int load_quests_from_file(const char *filename) {
     int i, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description */
     quest_definition *quest = NULL;
     char includefile[MAX_BUF];
+    sstring questname;
     quest_step_definition *step = NULL;
     char final[MAX_BUF], read[MAX_BUF];
     FILE *file;
@@ -237,6 +247,17 @@ static int load_quests_from_file(const char *filename) {
 
             if (sscanf(read, "restart %d\n", &i)) {
                 quest->quest_restart = i;
+                continue;
+            }
+            if (strncmp(read, "parent ", 7) == 0) {
+                read[strlen(read) - 1] = '\0';
+                questname = add_string(read + 7);
+                if (!quest_get_by_code(questname)) {
+                    LOG(llevError, "Quest %s lists %s, as a parent, but this hasn't been defined\n", quest->quest_code, questname);
+                } else {
+                    quest->parent = quest_get_by_code(questname);
+                }
+                free_string(questname);
                 continue;
             }
         }
@@ -581,14 +602,17 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
 
     state = pq->quests;
     while (state) {
-        total_count++;
-        /* count up the number of completed quests first */
-        if (state->state == QC_CAN_RESTART) {
-            restart_count++;
-            completed_count++;
-        } else if(state->is_complete) {
-            completed_count++;
+        quest = quest_get(state->code);
+        if (quest->parent == NULL) {
+            total_count++;
+            /* count up the number of completed quests first */
+            if (state->state == QC_CAN_RESTART) {
+                restart_count++;
+                completed_count++;
+            } else if(state->is_complete) {
+                completed_count++;
             }
+        }
         state = state->next;
     }
     if (completed_count > 0) {
@@ -605,13 +629,16 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
                     "You have completed the following quests:", NULL);
             state = pq->quests;
             while (state) {
-                if (state->state == QC_CAN_RESTART || state->is_complete) {
-                    quest = quest_get(state->code);
-                    restart = state->state == QC_CAN_RESTART?" (can be replayed)":"";
-                    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                quest = quest_get(state->code);
+                if (quest->parent == NULL) {
+                    if (state->state == QC_CAN_RESTART || state->is_complete) {
+
+                        restart = state->state == QC_CAN_RESTART?" (can be replayed)":"";
+                        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                             "(%3d) %s%s", NULL, ++current_count, quest->quest_title, restart);
-        }
-        state = state->next;
+                    }
+                }
+                state = state->next;
            }
         }
     }
@@ -620,10 +647,13 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
                 "You have started the following quests:", NULL);
         state = pq->quests;
         while (state) {
-            if (state->state != QC_CAN_RESTART && state->is_complete==0) {
-                quest = quest_get(state->code);
-                draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+            quest = quest_get(state->code);
+            if (quest->parent == NULL) {
+                if (state->state != QC_CAN_RESTART && state->is_complete==0) {
+                    quest = quest_get(state->code);
+                    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                         "(%3d) %s", NULL, ++current_count, quest->quest_title);
+                }
             }
             state = state->next;
         }
@@ -677,7 +707,7 @@ static quest_state *get_quest_by_number(player *pl, int number) {
     state = pq->quests;
     while (state) {
             /* count up the number of completed quests first */
-            if (state->state == QC_CAN_RESTART || state->is_complete)
+            if (!(quest_get(state->code)->parent) && (state->state == QC_CAN_RESTART || state->is_complete))
                 if (++questnum == number) return state;
             state = state->next;
         }
@@ -685,7 +715,7 @@ static quest_state *get_quest_by_number(player *pl, int number) {
     state = pq->quests;
     while (state) {
         /* count up the number of completed quests first */
-        if (state->state != QC_CAN_RESTART && state->is_complete ==0)
+        if (!(quest_get(state->code)->parent) && state->state != QC_CAN_RESTART && state->is_complete ==0)
             if (++questnum == number) return state;
         state = state->next;
     }
@@ -697,9 +727,12 @@ static quest_state *get_quest_by_number(player *pl, int number) {
  * Give details about a quest.
  * @param pl player to give quest details to.
  * @param qs quest_state to give details about
+ * @param level The level of recursion for the quest info that's being provided
  */
-static void quest_info(player *pl, quest_state *qs) {
-    quest_definition *quest;
+static void quest_info(player *pl, quest_state *qs, int level) {
+    quest_definition *quest, *child;
+    quest_state *state;
+    quest_player *pq = get_or_create_quest(pl);
     quest_step_definition *step;
     const char *prefix;
 
@@ -707,38 +740,49 @@ static void quest_info(player *pl, quest_state *qs) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid quest number", NULL);
         return;
     }
-            quest = quest_get(qs->code);
-            if (!quest) {
-                /* already warned by quest_get */
-                draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: (internal error)", NULL);
-                return;
-            }
+    quest = quest_get(qs->code);
+    if (!quest) {
+        /* already warned by quest_get */
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: (internal error)", NULL);
+        return;
+    }
 
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: %s", NULL, quest->quest_title);
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Description: %s", NULL, quest->quest_description);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: %s", NULL, quest->quest_title);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Description: %s", NULL, quest->quest_description);
 
     step = quest_get_step(quest, qs->state);
     if (qs->state == QC_CAN_RESTART || qs->is_complete) {
-                const char *restart = "";
-                if (quest->quest_restart)
-                    restart = " (can be replayed)";
+        const char *restart = "";
+        if (quest->quest_restart)
+            restart = " (can be replayed)";
         draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "This quest has been completed%s.", NULL, restart);
     }
     prefix = "";
     if (qs->state != QC_CAN_RESTART) {
         /* ie, if we are in progress or completed for a non-restartable quest */
-                if (!step) {
-                    /* already warned by quest_get_step */
+        if (!step) {
+            /* already warned by quest_get_step */
             draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \nOutcome: (invalid quest)", NULL);
-                    return;
-                }
-        if (qs->is_complete)
+            return;
+        }
+        if (level > 0) {
+            prefix = " * ";
+        } else if (qs->is_complete)
             prefix = "Outcome";
         else
             prefix = "Current Status";
         draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \n%s: %s", NULL, prefix, step->step_description);
-            }
-            return;
+    }
+
+    /* ok, now check all of the player's other quests for any children, and print those in order */
+    state = pq->quests;
+    while (state) {
+        child = quest_get(state->code);
+        if (child->parent == quest)
+            quest_info(pl, state, level+1);
+        state = state->next;
+    }
+    return;
 }
 
 /**
@@ -870,12 +914,42 @@ int command_quest(object *op, char *params) {
 
     if (strncmp(params, "info ", 5) == 0) {
         int number = atoi(params+5);
-        quest_info(op->contr, get_quest_by_number(op->contr, number));
+        quest_info(op->contr, get_quest_by_number(op->contr, number), 0);
         return 0;
     }
 
     quest_help(op->contr);
     return 0;
+}
+
+static void output_quests(quest_definition *parent, int level) {
+    quest_definition *quest;
+    quest_step_definition *step;
+    char prefix[MAX_BUF];
+    int questcount, stepcount, i;
+
+    /* we only need to set the prefix once,
+     * all quests that are printed in this call will be at the same level */
+    prefix[0]='\0';
+    for (i=0; i<level; i++) {
+        snprintf(prefix, MAX_BUF, "%s-", prefix);
+    }
+
+    quest = quests;
+    while (quest) {
+        if (quest->parent == parent) {
+            questcount++;
+            stepcount=0;
+            step = quest->steps;
+            while (step) {
+                stepcount++;
+                step= step->next;
+            }
+            fprintf(logfile, "%s%s - %s - %d steps (%srestartable)\n", prefix, quest->quest_code, quest->quest_title, stepcount, quest->quest_restart?"":"not ");
+            output_quests(quest, level+1);
+        }
+        quest = quest->next;
+    }
 }
 
 /**
@@ -888,18 +962,7 @@ void dump_quests(void) {
     int questcount, stepcount;
 
     quest_load_definitions();
-    quest = quests;
-    while (quest) {
-        questcount++;
-        stepcount=0;
-        step = quest->steps;
-        while (step) {
-            stepcount++;
-            step= step->next;
-        }
-        fprintf(logfile, "%s - %s - %d steps (%srestartable)\n", quest->quest_code, quest->quest_title, stepcount, quest->quest_restart?"":"not ");
-        quest = quest->next;
-    }
+    output_quests(NULL, 0);
     exit(0);
 }
 
