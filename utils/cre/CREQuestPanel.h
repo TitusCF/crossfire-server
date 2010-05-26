@@ -31,6 +31,7 @@ class CREQuestPanel : public CREPanel
         QLineEdit* myTitle;
         QComboBox* myFile;
         QCheckBox* myCanRestart;
+        QComboBox* myParent;
         QTextEdit* myDescription;
         QListWidget* mySteps;
         QLineEdit* myStep;

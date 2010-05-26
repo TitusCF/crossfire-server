@@ -41,6 +41,7 @@ Quest::Quest()
 {
     myCanRestart = false;
     myModified = false;
+    myParent = NULL;
 }
 
 Quest::~Quest()
@@ -126,4 +127,18 @@ void Quest::markModified()
 {
     setModified(true);
     emit modified();
+}
+
+const Quest* Quest::parent() const
+{
+    return myParent;
+}
+
+void Quest::setParent(Quest* parent)
+{
+    if (parent != myParent)
+    {
+        myParent = parent;
+        markModified();
+    }
 }

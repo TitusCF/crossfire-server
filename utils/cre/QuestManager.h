@@ -19,6 +19,7 @@ class QuestManager
         QStringList getFiles() const;
         QString getQuestFile(Quest* quest) const;
         void setQuestFile(Quest* quest, const QString& file);
+        Quest* findByCode(const QString& code);
 
     private:
         QList<Quest*> myQuests;

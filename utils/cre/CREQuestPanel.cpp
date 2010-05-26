@@ -21,6 +21,15 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
     myCanRestart = new QCheckBox(tr("this quest can be done multiple times"));
     layout->addWidget(myCanRestart, line++, 1, 1, 2);
 
+    layout->addWidget(new QLabel(tr("Parent:"), this), line, 1);
+    myParent = new QComboBox(this);
+    layout->addWidget(myParent, line++, 2);
+    myParent->addItem(tr("(none)"));
+    foreach(const Quest* quest, manager->quests())
+    {
+        myParent->addItem(quest->code());
+    }
+
     layout->addWidget(new QLabel(tr("Quest file:"), this), line, 1);
     myFile = new QComboBox(this);
     layout->addWidget(myFile, line++, 2);
@@ -85,6 +94,15 @@ void CREQuestPanel::setQuest(Quest* quest)
     myFile->setEditText(file);
     myFile->setEnabled(file.isEmpty());
 
+    if (quest->parent() != NULL)
+    {
+        int idx = myParent->findText(quest->parent()->code());
+        if (idx != -1)
+            myParent->setCurrentIndex(idx);
+    }
+    else
+        myParent->setCurrentIndex(0);
+
     displaySteps();
 }
 
@@ -99,6 +117,12 @@ void CREQuestPanel::commitData()
     myQuest->setDescription(myDescription->toPlainText());
     if (myQuestManager->getQuestFile(myQuest).isEmpty())
         myQuestManager->setQuestFile(myQuest, myFile->currentText());
+    if (myParent->currentIndex() == 0)
+    {
+        myQuest->setParent(NULL);
+    }
+    else
+        myQuest->setParent(myQuestManager->findByCode(myParent->currentText()));
     commitStep();
 }
 

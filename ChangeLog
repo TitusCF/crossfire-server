@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Quest parent edition in CRE.
+Nicolas Weeger 2010-05-26
+
 Permit Quests to define parents, display only parent quests in the quest
 lists and fold child quests into the parent's description. The same
 behaviour is used for the quest summary with the -mq flag

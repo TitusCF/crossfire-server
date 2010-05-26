@@ -155,6 +155,15 @@ void QuestManager::loadQuestFile(const QString& filename)
             myIncludes[filename].append(includefile);
             continue;
         }
+        if (strncmp(read, "parent ", 7) == 0) {
+            read[strlen(read) - 1] = '\0';
+            Quest* parent = findByCode(read + 7);
+            if (parent == NULL)
+                LOG(llevError, "Quest %s was defined before its parent %s", qPrintable(quest->code()), read + 7);
+            else
+                quest->setParent(parent);
+            continue;
+        }
 
         if (strcmp(read, "\n") == 0)
             continue;
@@ -248,6 +257,8 @@ void QuestManager::saveQuestFile(const QString& filename)
                 stream << "\n";
             stream << "end_description\n";
         }
+        if (quest->parent() != NULL)
+            stream << "parent " << quest->parent()->code() << "\n";
         if (quest->canRestart())
             stream << "restart 1\n";
 
@@ -293,4 +304,14 @@ void QuestManager::setQuestFile(Quest* quest, const QString& file)
 
     Q_ASSERT(getQuestFile(quest).isEmpty());
     addQuest(file, quest);
+}
+
+Quest* QuestManager::findByCode(const QString& code)
+{
+    foreach(Quest* quest, myQuests)
+    {
+        if (quest->code() == code)
+            return quest;
+    }
+    return NULL;
 }

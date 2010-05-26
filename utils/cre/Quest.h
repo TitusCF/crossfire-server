@@ -44,6 +44,8 @@ class Quest : public QObject
 
         bool isModified() const;
         void setModified(bool modified);
+        const Quest* parent() const;
+        void setParent(Quest* parent);
 
     signals:
         void modified();
@@ -55,6 +57,7 @@ class Quest : public QObject
         bool myCanRestart;
         QList<QuestStep*> mySteps;
         bool myModified;
+        Quest* myParent;
 
         void markModified();
 };
