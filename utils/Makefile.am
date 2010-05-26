@@ -23,7 +23,7 @@ crossloop: crossloop.tmpl
 	$(SED) s%BINDIR%$(bindir)%g < crossloop.tmpl > crossloop
 
 if MAPPER
-bin_PROGRAMS = crossfire-mapper
+noinst_PROGRAMS = crossfire-mapper
 crossfire_mapper_SOURCES = mapper.c
 crossfire_mapper_INCLUDES = -I ../include
 crossfire_mapper_DEPENDENCIES = ../common/libcross.a
