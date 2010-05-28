@@ -149,7 +149,7 @@ void display_motd(const object *op) {
         size += strlen(buf);
     }
     draw_ext_info(NDI_UNIQUE|NDI_GREEN, 0, op, MSG_TYPE_MOTD, MSG_SUBTYPE_NONE,
-                  motd, NULL);
+                  motd);
     close_and_delete(fp, comp);
 }
 
@@ -184,7 +184,7 @@ void send_rules(const object *op) {
         size += strlen(buf);
     }
     draw_ext_info(NDI_UNIQUE|NDI_GREEN, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_RULES,
-                  rules, NULL);
+                  rules);
     close_and_delete(fp, comp);
 }
 
@@ -217,7 +217,6 @@ void send_news(const object *op) {
                 draw_ext_info_format(NDI_UNIQUE|NDI_GREEN, 0, op,
                                      MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_NEWS,
                                      "%s:\n%s",
-                                     "%s:\n%s",
                                      subject, news); /*send previously read news*/
             strcpy(subject, buf+1);
             strip_endline(subject);
@@ -235,7 +234,6 @@ void send_news(const object *op) {
 
     draw_ext_info_format(NDI_UNIQUE|NDI_GREEN, 0, op,
                          MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_NEWS,
-                         "%s:\n%s",
                          "%s:\n%s",
                          subject, news);
     close_and_delete(fp, comp);
@@ -896,7 +894,7 @@ void receive_play_again(object *op, char key) {
         } else {
             /* Lets put a space in here */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                      "\n", "\n");
+                      "\n");
             get_name(op);
             set_first_map(op);
         }
@@ -1076,7 +1074,6 @@ static void swap_stat(object *op, int swap_second) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
                          "%s done\n",
-                         "%s done\n",
                          short_stat_name[swap_second]);
 
     op->stats.Str = op->contr->orig_stats.Str;
@@ -1137,7 +1134,6 @@ void key_roll_stat(object *op, char key) {
             op->contr->swap_first = stat_trans[keynum];
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
                                  "%s ->",
-                                 "%s ->",
                                  short_stat_name[stat_trans[keynum]]);
         } else
             swap_stat(op, stat_trans[keynum]);
@@ -1162,7 +1158,7 @@ void key_roll_stat(object *op, char key) {
         if (op->msg)
             draw_ext_info(NDI_BLUE, 0, op,
                           MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
-                          op->msg, op->msg);
+                          op->msg);
         return;
     }
     case 'y':
@@ -1301,7 +1297,7 @@ void key_change_class(object *op, char key) {
     op->stats.grace = 0;
     if (op->msg)
         draw_ext_info(NDI_BLUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
-                      op->msg, op->msg);
+                      op->msg);
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Press any key for the next race.\nPress `d' to play this race.\n");
 }
 
@@ -1320,14 +1316,14 @@ void key_confirm_quit(object *op, char key) {
     // this was tested when 'quit' command was issued, but better safe than sorry.
     if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
         op->contr->state = ST_PLAYING;
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN, "Can't quit when in DM mode.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN, "Can't quit when in DM mode.");
         return;
     }
 
     if (key != 'y' && key != 'Y' && key != 'q' && key != 'Q') {
         op->contr->state = ST_PLAYING;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                      "OK, continuing to play.", NULL);
+                      "OK, continuing to play.");
         return;
     }
 
@@ -1337,7 +1333,6 @@ void key_confirm_quit(object *op, char key) {
     object_remove(op);
     op->direction = 0;
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                         "%s quits the game.",
                          "%s quits the game.",
                          op->name);
 
@@ -1503,7 +1498,6 @@ int check_pick(object *op) {
                 /* some debugging code to figure out item information */
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                                      "item name: %s    item type: %d    weight/value: %d",
-                                     "item name: %s    item type: %d    weight/value: %d",
                                      tmp->name ? tmp->name : tmp->arch->name, tmp->type,
                                      (int)(query_cost(tmp, op, F_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1))));
 
@@ -1518,7 +1512,7 @@ int check_pick(object *op) {
                     }
                 }
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                              putstring, putstring);
+                              putstring);
             }
             /* philosophy:
              * It's easy to grab an item type from a pile, as long as it's
@@ -1918,7 +1912,7 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
 
     if (!dir) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You can't shoot yourself!", NULL);
+                      "You can't shoot yourself!");
         return 0;
     }
     if (op->type == PLAYER)
@@ -1935,7 +1929,6 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     }
     if (!bow->race || !bow->skill) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "Your %s is broken.",
                              "Your %s is broken.",
                              bow->name);
         return 0;
@@ -1955,7 +1948,6 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
             if (op->type == PLAYER)
                 draw_ext_info_format(NDI_UNIQUE, 0, op,
                                      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                     "You have no %s left.",
                                      "You have no %s left.",
                                      bow->race);
             /* FLAG_READY_BOW will get reset if the monsters picks up some arrows */
@@ -1985,7 +1977,6 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     arrow = object_split(arrow, 1, NULL, 0);
     if (arrow == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "You have no %s left.",
                              "You have no %s left.",
                              bow->race);
         return 0;
@@ -2132,7 +2123,7 @@ static void fire_misc_object(object *op, int dir) {
     item = op->contr->ranges[range_misc];
     if (!item) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You have no range item readied.", NULL);
+                      "You have no range item readied.");
         return;
     }
     if (!item->inv) {
@@ -2145,7 +2136,6 @@ static void fire_misc_object(object *op, int dir) {
             query_base_name(item, 0, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                                  "The %s goes poof.",
-                                 "The %s goes poof.",
                                  name);
             return;
         }
@@ -2154,7 +2144,6 @@ static void fire_misc_object(object *op, int dir) {
             play_sound_player_only(op->contr, SOUND_TYPE_ITEM, item, 0, "poof");
             query_base_name(item, 0, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                                 "The %s whines for a while, but nothing happens.",
                                  "The %s whines for a while, but nothing happens.",
                                  name);
             return;
@@ -2217,7 +2206,7 @@ void fire(object *op, int dir) {
         if (!op->chosen_skill) {
             if (op->type == PLAYER)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "You have no applicable skill to use.", NULL);
+                              "You have no applicable skill to use.");
             return;
         }
         (void)do_skill(op, op, op->chosen_skill, dir, NULL);
@@ -2229,7 +2218,7 @@ void fire(object *op, int dir) {
 
     default:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Illegal shoot type.", NULL);
+                      "Illegal shoot type.");
         return;
     }
 }
@@ -2317,7 +2306,6 @@ object *find_key(object *pl, object *container, object *door) {
             draw_ext_info_format(NDI_UNIQUE|NDI_BROWN, 0, pl,
                                  MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                  "The %s in your %s vibrates as you approach the door",
-                                 "The %s in your %s vibrates as you approach the door",
                                  name_tmp, name_cont);
             return NULL;
         }
@@ -2360,7 +2348,6 @@ static int player_attack_door(object *op, object *door) {
             draw_ext_info_format(NDI_UNIQUE, NDI_BROWN, op,
                                  MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
                                  "You open the door with the %s",
-                                 "You open the door with the %s",
                                  name);
             remove_locked_door(door); /* remove door without violence ;-) */
         }
@@ -2373,7 +2360,7 @@ static int player_attack_door(object *op, object *door) {
     } else if (door->type == LOCKED_DOOR) {
         /* Might as well return now - no other way to open this */
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_NOKEY,
-                      door->msg, door->msg);
+                      door->msg);
         return 1;
     }
     return 0;
@@ -2499,7 +2486,7 @@ void move_player_attack(object *op, int dir) {
                 (void)push_ob(mon, dir, op);
             } else {
                 draw_ext_info(0, 0, op, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_NOATTACK,
-                              "You withhold your attack", NULL);
+                              "You withhold your attack");
             }
             if (op->contr->tmp_invis || op->hide)
                 make_visible(op);
@@ -2806,7 +2793,7 @@ int handle_newcs_player(object *op) {
         if (!op->invisible) {
             make_visible(op);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_END,
-                          "Your invisibility spell runs out.", NULL);
+                          "Your invisibility spell runs out.");
         }
     }
 
@@ -2878,7 +2865,6 @@ static int save_life(object *op) {
         query_name(tmp, name, MAX_BUF);
         play_sound_map(SOUND_TYPE_ITEM, tmp, 0, "evaporate");
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-                             "Your %s vibrates violently, then evaporates.",
                              "Your %s vibrates violently, then evaporates.",
                              name);
         object_remove(tmp);
@@ -3063,7 +3049,7 @@ void do_some_living(object *op) {
 
     if (op->contr->state == ST_PLAYING && op->stats.food < 0 && op->stats.hp >= 0) {
         if (is_wraith_pl(op))
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE, "You feel a hunger for living flesh.", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE, "You feel a hunger for living flesh.");
         else {
             object *flesh = NULL;
 
@@ -3071,7 +3057,7 @@ void do_some_living(object *op) {
                 if (!QUERY_FLAG(tmp, FLAG_UNPAID)) {
                     if (tmp->type == FOOD || tmp->type == DRINK || tmp->type == POISON) {
                         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-                                      "You blindly grab for a bite of food.", NULL);
+                                      "You blindly grab for a bite of food.");
                         apply_manual(op, tmp, 0);
                         if (op->stats.food >= 0 || op->stats.hp < 0)
                             break;
@@ -3084,7 +3070,7 @@ void do_some_living(object *op) {
              */
             if (op->stats.food < 0 && op->stats.hp >= 0 && flesh) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-                              "You blindly grab for a bite of food.", NULL);
+                              "You blindly grab for a bite of food.");
                 apply_manual(op, flesh, 0);
             }
         } /* end not wraith */
@@ -3163,8 +3149,7 @@ void kill_player(object *op) {
     if (op_on_battleground(op, &x, &y, &trophy)) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_VICTIM,  MSG_TYPE_VICTIM_DIED,
                       "You have been defeated in combat!\n"
-                      "Local medics have saved your life...",
-                      NULL);
+                      "Local medics have saved your life...");
 
         /* restore player */
         at = find_archetype("poisoning");
@@ -3173,7 +3158,7 @@ void kill_player(object *op) {
             object_remove(tmp);
             object_free_drop_inventory(tmp);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                          "Your body feels cleansed", NULL);
+                          "Your body feels cleansed");
         }
 
         at = find_archetype("confusion");
@@ -3182,7 +3167,7 @@ void kill_player(object *op) {
             object_remove(tmp);
             object_free_drop_inventory(tmp);
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                          "Your mind feels clearer", NULL);
+                          "Your mind feels clearer");
         }
 
         cure_disease(op, NULL);  /* remove any disease */
@@ -3294,7 +3279,7 @@ static void kill_player_not_permadeath(object *op) {
             check_stat_bounds(&(op->contr->orig_stats), MIN_STAT, MAX_STAT);
             draw_ext_info(NDI_UNIQUE, 0, op,
                 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
-                lose_msg[i], lose_msg[i]);
+                lose_msg[i]);
             lost_a_stat = 1;
         } else {
             /* deplete a stat */
@@ -3350,7 +3335,7 @@ static void kill_player_not_permadeath(object *op) {
                     change_attr_value(&(dep->stats), i, -1);
                     SET_FLAG(dep, FLAG_APPLIED);
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
-                        lose_msg[i], lose_msg[i]);
+                        lose_msg[i]);
                     fix_object(op);
                         lost_a_stat = 1;
                 }
@@ -3366,13 +3351,11 @@ static void kill_player_not_permadeath(object *op) {
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                 "For a brief moment you feel the holy presence of %s protecting you",
-                "For a brief moment you feel the holy presence of %s protecting you",
                 god);
         else
             draw_ext_info(NDI_UNIQUE, 0, op,
                 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
-                "For a brief moment you feel a holy presence protecting you.",
-                NULL);
+                "For a brief moment you feel a holy presence protecting you.");
     }
 
     /* Put a gravestone up where the character 'almost' died.  List the
@@ -3399,7 +3382,7 @@ static void kill_player_not_permadeath(object *op) {
         object_remove(tmp);
         object_free_drop_inventory(tmp);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-            "Your body feels cleansed", NULL);
+            "Your body feels cleansed");
     }
 
     at = find_archetype("confusion");
@@ -3408,7 +3391,7 @@ static void kill_player_not_permadeath(object *op) {
         object_remove(tmp);
         object_free_drop_inventory(tmp);
         draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-            "Your mind feels clearer", NULL);
+            "Your mind feels clearer");
     }
     cure_disease(op, NULL);  /* remove any disease */
 
@@ -3470,7 +3453,7 @@ static void kill_player_not_permadeath(object *op) {
 
     /* Tell the player they have died */
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_DIED,
-        "YOU HAVE DIED.", NULL);
+        "YOU HAVE DIED.");
 }
 
 /**
@@ -3496,7 +3479,7 @@ static void kill_player_permadeath(object *op) {
 
     /* buf should be the kill message */
     draw_ext_info(NDI_UNIQUE|NDI_ALL, 0, NULL, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_DIED,
-        buf, buf);
+        buf);
     hiscore_check(op, 0);
     if (op->contr->ranges[range_golem] != NULL) {
         remove_friendly_object(op->contr->ranges[range_golem]);
@@ -3603,7 +3586,6 @@ void cast_dust(object *op, object *throw_ob, int dir) {
     spob = throw_ob->inv;
     if (op->type == PLAYER && spob)
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "You cast %s.",
                              "You cast %s.",
                              spob->name);
 
@@ -3716,7 +3698,7 @@ void do_hidden_move(object *op) {
     if (op->type == PLAYER && op->contr->run_on) {
         if (!skop || num >= skop->level) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "You ran too much! You are no longer hidden!", NULL);
+                          "You ran too much! You are no longer hidden!");
             make_visible(op);
             return;
         } else
@@ -3730,7 +3712,7 @@ void do_hidden_move(object *op) {
         make_visible(op);
         if (op->type == PLAYER)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "You moved out of hiding! You are visible!", NULL);
+                          "You moved out of hiding! You are visible!");
     } else if (op->type == PLAYER && skop) {
         change_exp(op, calc_skill_exp(op, NULL, skop), skop->skill, 0);
     }
@@ -3875,7 +3857,6 @@ static int action_makes_visible(object *op) {
         if (op->hide || !op->contr || (op->contr && op->contr->tmp_invis)) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
                                  "You become %s!",
-                                 "You become %s!",
                                  op->hide ? "unhidden" : "visible");
             return 1;
         }
@@ -3998,7 +3979,6 @@ void dragon_ability_gain(object *who, int atnr, int level) {
         draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, who,
                              MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
                              "You gained the ability of %s",
-                             "You gained the ability of %s",
                              item->name);
         do_learn_spell(who, item, 0);
         return;
@@ -4015,7 +3995,6 @@ void dragon_ability_gain(object *who, int atnr, int level) {
         if (item->invisible) {
             draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, who,
                                  MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                                 "You gained the ability of %s",
                                  "You gained the ability of %s",
                                  item->inv->name);
             do_learn_spell(who, item->inv, 0);
@@ -4038,7 +4017,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
                 if (item->msg != NULL)
                     draw_ext_info(NDI_UNIQUE|NDI_BLUE, 0, who,
                                   MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                                  item->msg, item->msg);
+                                  item->msg);
 
                 /* Give player new face */
                 if (item->animation_id) {
@@ -4078,7 +4057,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
             strcat(buf, ".");
             draw_ext_info(NDI_UNIQUE|NDI_BLUE, 0, who,
                           MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                          buf, buf);
+                          buf);
         }
 
         /* evtl. adding flags: */
@@ -4093,7 +4072,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
         if (item->msg != NULL)
             draw_ext_info(NDI_UNIQUE|NDI_BLUE, 0, who,
                           MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                          item->msg, item->msg);
+                          item->msg);
     } else {
         /* generate misc. treasure */
         char name[HUGE_BUF];
@@ -4102,7 +4081,6 @@ void dragon_ability_gain(object *who, int atnr, int level) {
         query_short_name(tmp, name, HUGE_BUF);
         draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, who,
                              MSG_TYPE_ITEM, MSG_TYPE_ITEM_ADD,
-                             "You gained %s",
                              "You gained %s",
                              name);
         tmp = object_insert_in_ob(tmp, who);

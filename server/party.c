@@ -70,7 +70,6 @@ partylist *party_form(object *op, const char *partyname) {
     party->partyleader = strdup_local(op->name);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                          "You have formed party: %s",
-                         "You have formed party: %s",
                          party->partyname);
     op->contr->party = party;
 
@@ -101,7 +100,6 @@ void party_join(object *op, partylist *party) {
     op->contr->party = party;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                          "You have joined party: %s\n",
-                         "You have joined party: %s\n",
                          party->partyname);
     snprintf(buf, MAX_BUF, "%s joins party %s", op->name, party->partyname);
     party_send_message(op, buf);
@@ -122,7 +120,6 @@ void party_leave(object *op) {
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                         "You leave party %s.",
                          "You leave party %s.",
                          op->contr->party->partyname);
     snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
@@ -322,7 +319,7 @@ void party_send_message(object *op, const char *message) {
     for (pl = first_player; pl != NULL; pl = pl->next)
         if (pl->ob->contr->party == op->contr->party && pl->ob != op)
             draw_ext_info(NDI_WHITE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_PARTY,
-                          message, NULL);
+                          message);
 }
 
 /**

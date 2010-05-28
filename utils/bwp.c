@@ -792,19 +792,19 @@ void apply_auto_fix(mapstruct *m) {
  * Added as part of glue cleaning.
  * Ryo 2005-07-15
  **/
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2) {
+void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt) {
     fprintf(logfile, "%s\n", txt);
 }
 
-void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *new_format, const char *old_format, ...) {
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *format, ...) {
     va_list ap;
-    va_start(ap, old_format);
-    vfprintf(logfile, old_format, ap);
+    va_start(ap, format);
+    vfprintf(logfile, format, ap);
     va_end(ap);
 }
 
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2) {
-    fprintf(logfile, "ext_info_map: %s\n", str2);
+void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1) {
+    fprintf(logfile, "ext_info_map: %s\n", str1);
 }
 
 void move_firewall(object *ob) {

@@ -65,7 +65,7 @@ static int adj_stealchance(object *op, object *victim, int roll) {
     && op->body_used[BODY_ARMS] <= 0
     && op->body_info[BODY_ARMS]) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "But you have no free hands to steal with!", NULL);
+                      "But you have no free hands to steal with!");
         return -1;
     }
 
@@ -139,7 +139,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
             monster_npc_call_help(op);
             CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "Your attempt is prevented!", NULL);
+                          "Your attempt is prevented!");
             return 0;
         }
 
@@ -154,12 +154,12 @@ static int attempt_steal(object *op, object *who, object *skill) {
     }
     if (op->type == PLAYER && QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "You can't steal from the dungeon master!", NULL);
+                      "You can't steal from the dungeon master!");
         return 0;
     }
     if (op->type == PLAYER && who->type == PLAYER && settings.no_player_stealing) {
         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "You can't steal from other players!", NULL);
+                      "You can't steal from other players!");
         return 0;
     }
 
@@ -218,7 +218,6 @@ static int attempt_steal(object *op, object *who, object *skill) {
         query_name(op, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "%s%s has nothing you can steal!",
-                             "%s%s has nothing you can steal!",
                              op->type == PLAYER ? "" : "The ", name);
         return 0;
     }
@@ -242,7 +241,6 @@ static int attempt_steal(object *op, object *who, object *skill) {
                 query_name(op, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                                      "%s notices your attempted pilfering!",
-                                     "%s notices your attempted pilfering!",
                                      name);
             }
             CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
@@ -261,7 +259,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
                 snprintf(buf, sizeof(buf), "Your pack feels strangely lighter.");
             }
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-                          buf, buf);
+                          buf);
             if (!success) {
                 if (who->invisible) {
                     snprintf(buf, sizeof(buf), "you feel itchy fingers getting at your pack.");
@@ -270,7 +268,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
                     snprintf(buf, sizeof(buf), "%s looks very shifty.", name);
                 }
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_STEAL,
-                              buf, buf);
+                              buf);
             }
         } /* else stealing from another player */
         /* play_sound("stop! thief!"); kindofthing */
@@ -413,7 +411,7 @@ int pick_lock(object *pl, int dir, object *skill) {
     /* For all the stacked objects at this point find a door*/
     if (out_of_map(pl->map, x, y)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "There is no lock there.", NULL);
+                      "There is no lock there.");
         return 0;
     }
 
@@ -423,18 +421,18 @@ int pick_lock(object *pl, int dir, object *skill) {
 
     if (!tmp) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "There is no lock there.", NULL);
+                      "There is no lock there.");
         return 0;
     }
     if (tmp->type == LOCKED_DOOR) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You can't pick that lock!", NULL);
+                      "You can't pick that lock!");
         return 0;
     }
 
     if (!tmp->move_block) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "The door has no lock!", NULL);
+                      "The door has no lock!");
         return 0;
     }
 
@@ -442,12 +440,12 @@ int pick_lock(object *pl, int dir, object *skill) {
     /* Failure */
     if (!difficulty) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "You fail to pick the lock.", NULL);
+                      "You fail to pick the lock.");
         return 0;
     }
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                  "You pick the lock.", NULL);
+                  "You pick the lock.");
     return (calc_skill_exp(pl, NULL, skill) * isqrt(difficulty));
 }
 
@@ -508,30 +506,30 @@ int hide(object *op, object *skill) {
 
     if (QUERY_FLAG(op, FLAG_MAKE_INVIS)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You don't need to hide while invisible!", NULL);
+                      "You don't need to hide while invisible!");
         return 0;
     }
 
     if (!op->hide && op->invisible > 0 && op->type == PLAYER) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
-                      "Your attempt to hide breaks the invisibility spell!", NULL);
+                      "Your attempt to hide breaks the invisibility spell!");
         make_visible(op);
     }
 
     if (op->invisible > 50*skill->level) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You are as hidden as you can get.", NULL);
+                      "You are as hidden as you can get.");
         return 0;
     }
 
     if (attempt_hide(op, skill)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                      "You hide in the shadows.", NULL);
+                      "You hide in the shadows.");
         object_update(op, UP_OBJ_FACE);
         return calc_skill_exp(op, NULL, skill);
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                  "You fail to conceal yourself.", NULL);
+                  "You fail to conceal yourself.");
     return 0;
 }
 
@@ -594,7 +592,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
         }
         if (OB_TYPE_MOVE_BLOCK(pl, GET_MAP_MOVE_BLOCK(m, x, y))) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "Your jump is blocked.", NULL);
+                          "Your jump is blocked.");
             stop_jump(pl);
             return 0;
         }
@@ -604,7 +602,6 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
             if (QUERY_FLAG(tmp, FLAG_MONSTER)
                 || (tmp->type == PLAYER && (!QUERY_FLAG(tmp, FLAG_WIZ) || !tmp->contr->hidden))) {
                 draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                                     "You jump into %s%s.",
                                      "You jump into %s%s.",
                                      tmp->type == PLAYER ? "" : "the ", tmp->name);
 
@@ -675,7 +672,7 @@ int jump(object *pl, int dir, object *skill) {
         spaces = 2;
     else if (spaces == 0) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "You are carrying too much weight to jump.", NULL);
+                      "You are carrying too much weight to jump.");
         return 0;
     }
     return attempt_jump(pl, dir, spaces, skill);
@@ -814,11 +811,9 @@ int identify_object_with_skill(object *tmp, object *pl, object *skill, int print
 
                 draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                                      "You identify %s.",
-                                     "You identify %s.",
                                      ob_describe(tmp, pl, desc, sizeof(desc)));
                 if (tmp->msg) {
                     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
-                                         "The item has a story:\n%s",
                                          "The item has a story:\n%s",
                                          tmp->msg);
                 }
@@ -904,21 +899,21 @@ int skill_ident(object *pl, object *skill) {
         return 0; /* only players will skill-identify */
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                  "You look at the objects nearby...", NULL);
+                  "You look at the objects nearby...");
 
     switch (skill->subtype) {
     case SK_DET_CURSE:
         success = do_skill_detect_curse(pl, skill);
         if (success)
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                          "...and discover cursed items!", NULL);
+                          "...and discover cursed items!");
             break;
 
     case SK_DET_MAGIC:
         success = do_skill_detect_magic(pl, skill);
         if (success)
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                          "...and discover items imbued with mystic forces!", NULL);
+                          "...and discover items imbued with mystic forces!");
         break;
 
     default:
@@ -941,7 +936,7 @@ int skill_ident(object *pl, object *skill) {
     }
     if (!success) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                      "...and learn nothing more.", NULL);
+                      "...and learn nothing more.");
     }
     return success;
 }
@@ -983,7 +978,7 @@ int use_oratory(object *pl, int dir, object *skill) {
      */
     if (!(mflags&P_IS_ALIVE)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "There is nothing to orate to.", NULL);
+                      "There is nothing to orate to.");
         return 0;
     }
 
@@ -1002,14 +997,13 @@ int use_oratory(object *pl, int dir, object *skill) {
 
     if (!tmp) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "There is nothing to orate to.", NULL);
+                      "There is nothing to orate to.");
         return 0;
     }
 
     tmp = HEAD(tmp);
     query_name(tmp, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                         "You orate to the %s.",
                          "You orate to the %s.",
                          name);
 
@@ -1020,7 +1014,6 @@ int use_oratory(object *pl, int dir, object *skill) {
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "Too bad the %s isn't listening!",
-                             "Too bad the %s isn't listening!",
                              name);
         return 0;
     }
@@ -1029,7 +1022,7 @@ int use_oratory(object *pl, int dir, object *skill) {
     if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && tmp->attack_movement == PETMOVE) {
         if (object_get_owner(tmp) == pl) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                          "Your follower loves your speech.", NULL);
+                          "Your follower loves your speech.");
             return 0;
         }
 
@@ -1040,7 +1033,6 @@ int use_oratory(object *pl, int dir, object *skill) {
             object_set_owner(tmp, pl);
             query_name(tmp, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                                 "You convince the %s to follow you instead!",
                                  "You convince the %s to follow you instead!",
                                  name);
 
@@ -1061,7 +1053,6 @@ int use_oratory(object *pl, int dir, object *skill) {
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                              "You convince the %s to become your follower.",
-                             "You convince the %s to become your follower.",
                              name);
 
         object_set_owner(tmp, pl);
@@ -1076,7 +1067,6 @@ int use_oratory(object *pl, int dir, object *skill) {
     if (skill->level+(pl->stats.Cha-10)/2 < random_roll(1, 2*tmp->level, pl, PREFER_LOW)) {
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "Your speech angers the %s!",
                              "Your speech angers the %s!",
                              name);
 
@@ -1122,7 +1112,7 @@ int singing(object *pl, int dir, object *skill) {
         return 0;   /* only players use this skill */
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                         "You sing", NULL);
+                         "You sing");
     for (i = dir; i < (dir+MIN(skill->level, SIZEOFFREE)); i++) {
         x = pl->x+freearr_x[i];
         y = pl->y+freearr_y[i];
@@ -1165,7 +1155,6 @@ int singing(object *pl, int dir, object *skill) {
                 query_name(tmp, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                                      "You calm down the %s",
-                                     "You calm down the %s",
                                      name);
 
                 /* Give exp only if they are not aware */
@@ -1175,7 +1164,6 @@ int singing(object *pl, int dir, object *skill) {
             } else {
                 query_name(tmp, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                                     "Too bad the %s isn't listening!",
                                      "Too bad the %s isn't listening!",
                                      name);
                 SET_FLAG(tmp, FLAG_NO_STEAL);
@@ -1251,7 +1239,7 @@ int find_traps(object *pl, object *skill) {
         } FOR_MAP_FINISH();
     }
     draw_ext_info(NDI_BLACK, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                  "You search the area.", NULL);
+                  "You search the area.");
     return expsum;
 }
 
@@ -1362,7 +1350,7 @@ int pray(object *pl, object *skill) {
     FOR_BELOW_FINISH();
 
     draw_ext_info(NDI_BLACK, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                  buf, buf);
+                  buf);
 
     if (pl->stats.grace < pl->stats.maxgrace) {
         pl->stats.grace++;
@@ -1394,7 +1382,7 @@ void meditate(object *pl, object *skill) {
     /* check if pl has removed encumbering armour and weapons */
     if (QUERY_FLAG(pl, FLAG_READY_WEAPON) && skill->level < 6) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You can't concentrate while wielding a weapon!", NULL);
+                      "You can't concentrate while wielding a weapon!");
         return;
     }
 
@@ -1406,7 +1394,7 @@ void meditate(object *pl, object *skill) {
             || (tmp->type == GLOVES && skill->level < 2))
         && QUERY_FLAG(tmp, FLAG_APPLIED)) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                          "You can't concentrate while wearing so much armour!", NULL);
+                          "You can't concentrate while wearing so much armour!");
             return;
         }
     FOR_INV_FINISH();
@@ -1420,7 +1408,7 @@ void meditate(object *pl, object *skill) {
      */
 
     draw_ext_info(NDI_BLACK, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                  "You meditate.", NULL);
+                  "You meditate.");
 
     if (pl->stats.sp < pl->stats.maxsp) {
         pl->stats.sp++;
@@ -1458,13 +1446,12 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
     if (!msg) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                              "No message to write!\nUsage: use_skill %s <message>",
-                             "No message to write!\nUsage: use_skill %s <message>",
                              skill->skill);
         return 0;
     }
     if (strcasestr_local(msg, "endmsg")) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "Trying to cheat now are we?", NULL);
+                      "Trying to cheat now are we?");
         return 0;
     }
 
@@ -1496,14 +1483,12 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
         query_short_name(item, buf, BOOK_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                              "You write in the %s.",
-                             "You write in the %s.",
                              buf);
         return strlen(msg);
     }
 
     query_short_name(item, buf, BOOK_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                         "Your message won't fit in the %s!",
                          "Your message won't fit in the %s!",
                          buf);
     return 0;
@@ -1531,7 +1516,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
     /* this is a sanity check */
     if (scroll->type != SCROLL) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "A spell can only be inscribed into a scroll!", NULL);
+                      "A spell can only be inscribed into a scroll!");
         return 0;
     }
 
@@ -1539,7 +1524,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
     chosen_spell = pl->contr->ranges[range_magic];
     if (!chosen_spell) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You need a spell readied in order to inscribe!", NULL);
+                      "You need a spell readied in order to inscribe!");
         return 0;
     }
     /* grace can become negative, we don't want a sp spell to block writing. */
@@ -1547,13 +1532,11 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
     if (grace_cost > 0 && grace_cost > pl->stats.grace) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "You don't have enough grace to write a scroll of %s.",
-                             "You don't have enough grace to write a scroll of %s.",
                              chosen_spell->name);
         return 0;
     }
     if (SP_level_spellpoint_cost(pl, chosen_spell, SPELL_MANA) > pl->stats.sp) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "You don't have enough mana to write a scroll of %s.",
                              "You don't have enough mana to write a scroll of %s.",
                              chosen_spell->name);
         return 0;
@@ -1567,7 +1550,6 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
         query_name(chosen_spell, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "The simple idea of writing a scroll of %s makes you sick !",
-                             "The simple idea of writing a scroll of %s makes you sick !",
                              name);
         return 0;
     }
@@ -1579,7 +1561,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
     if ((scroll->stats.sp || scroll->inv)
     && random_roll(0, scroll->level*2, pl, PREFER_LOW) > skill->level) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "Oops! You accidently read it while trying to write on it.", NULL);
+                      "Oops! You accidently read it while trying to write on it.");
         apply_manual(pl, scroll, 0);
         return 0;
     }
@@ -1608,7 +1590,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
         if (!confused) {
             newscroll->level = MAX(skill->level, chosen_spell->level);
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                          "You succeed in writing a new scroll.", NULL);
+                          "You succeed in writing a new scroll.");
         } else {
             chosen_spell = find_random_spell_in_ob(pl, NULL);
             if (!chosen_spell)
@@ -1616,7 +1598,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
 
             newscroll->level = MAX(skill->level, chosen_spell->level);
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "In your confused state, you write down some odd spell.", NULL);
+                          "In your confused state, you write down some odd spell.");
         }
 
         if (newscroll->inv) {
@@ -1655,7 +1637,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
     /* Inscription has failed */
     if (chosen_spell->level > skill->level || confused) { /*backfire!*/
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "Ouch! Your attempt to write a new scroll strains your mind!", NULL);
+                      "Ouch! Your attempt to write a new scroll strains your mind!");
         if (random_roll(0, 1, pl, PREFER_LOW) == 1)
             drain_specific_stat(pl, 4);
         else {
@@ -1664,11 +1646,11 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
         }
     } else if (random_roll(0, pl->stats.Int-1, pl, PREFER_HIGH) < 15) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "Your attempt to write a new scroll rattles your mind!", NULL);
+                      "Your attempt to write a new scroll rattles your mind!");
         confuse_living(pl, pl, 99);
     } else
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "You fail to write a new scroll.", NULL);
+                      "You fail to write a new scroll.");
     return 0;
 }
 
@@ -1704,13 +1686,13 @@ int write_on_item(object *pl, const char *params, object *skill) {
     /* Need to be able to read before we can write! */
     if (!find_skill_by_name(pl, skat->clone.skill)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                      "You must learn to read before you can write!", NULL);
+                      "You must learn to read before you can write!");
         return 0;
     }
 
     if (QUERY_FLAG(pl, FLAG_BLIND) && !QUERY_FLAG(pl, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-            "You are unable to write while blind.", NULL);
+            "You are unable to write while blind.");
         return 0;
     }
 
@@ -1724,18 +1706,17 @@ int write_on_item(object *pl, const char *params, object *skill) {
     item = find_marked_object(pl);
     if (item == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You don't have any marked item to write on.", NULL);
+                      "You don't have any marked item to write on.");
         return 0;
     }
 
     if (QUERY_FLAG(item, FLAG_UNPAID)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You had better pay for that before you write on it.", NULL);
+                      "You had better pay for that before you write on it.");
         return 0;
     }
     if (msgtype != item->type) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                             "You have no %s to write %s",
                              "You have no %s to write %s",
                              msgtype == BOOK ? "book" : "scroll",
                              msgtype == BOOK ? "on" : "your spell down");
@@ -1816,14 +1797,12 @@ static object *find_throw_ob(object *op, const char *request) {
             query_name(tmp, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                                  "You can't throw %s.",
-                                 "You can't throw %s.",
                                  name);
             tmp = NULL;
         } else if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
             query_name(tmp, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                                 "The %s sticks to your hand!",
                                  "The %s sticks to your hand!",
                                  name);
             tmp = NULL;
@@ -1836,7 +1815,6 @@ static object *find_throw_ob(object *op, const char *request) {
     } else if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                             "You should pay for the %s first.",
                              "You should pay for the %s first.",
                              name);
         tmp = NULL;
@@ -1915,14 +1893,14 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     if (throw_ob == NULL) {
         if (op->type == PLAYER) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                          "You have nothing to throw.", NULL);
+                          "You have nothing to throw.");
         }
         return 0;
     }
     if (QUERY_FLAG(throw_ob, FLAG_STARTEQUIP)) {
         if (op->type == PLAYER) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                          "The gods won't let you throw that.", NULL);
+                          "The gods won't let you throw that.");
         }
         return 0;
     }
@@ -1953,7 +1931,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     else { /* 0 or negative weight?!? Odd object, can't throw it */
         query_name(throw_ob, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                             "You can't throw %s.",
                              "You can't throw %s.",
                              name);
         return 0;
@@ -1992,17 +1969,15 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
                 query_name(throw_ob, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                                      "Your load is so heavy you drop %s to the ground.",
-                                     "Your load is so heavy you drop %s to the ground.",
                                      name);
             } else if (!dir) {
                 query_name(throw_ob, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                                      "You throw %s at the ground.",
-                                     "You throw %s at the ground.",
                                      name);
             } else
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                              "Something is in the way.", NULL);
+                              "Something is in the way.");
         }
         return 0;
     } /* if object can't be thrown */

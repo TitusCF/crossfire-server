@@ -76,18 +76,18 @@ static player *get_other_player_from_name(object *op, const char *name) {
 
     if (pl == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "No such player.", NULL);
+                      "No such player.");
         return NULL;
     }
 
     if (pl->ob == op) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You can't do that to yourself.", NULL);
+                      "You can't do that to yourself.");
         return NULL;
     }
     if (pl->state != ST_PLAYING) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "That player is in no state for that right now.", NULL);
+                      "That player is in no state for that right now.");
         return NULL;
     }
     return pl;
@@ -112,10 +112,8 @@ int command_loadtest(object *op, char *params) {
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                   "loadtest will stress server through teleporting at different map places. "
                   "Use at your own risk.  Very long loop used so server may have to be reset. "
-                  "type loadtest TRUE to run",
-                  NULL);
+                  "type loadtest TRUE to run");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "{%s}",
                          "{%s}",
                          params);
     if (*params == '\0')
@@ -124,7 +122,7 @@ int command_loadtest(object *op, char *params) {
         return 0;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "gogogo", NULL);
+                         "gogogo");
 
     for (x = 0; x < settings.worldmaptilesx; x++) {
         for (y = 0; y < settings.worldmaptilesy; y++) {
@@ -149,36 +147,33 @@ void do_wizard_hide(object *op, int silent_dm) {
         op->contr->hidden = 0;
         op->invisible = 1;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "You are no longer hidden from other players", NULL);
+                      "You are no longer hidden from other players");
         op->map->players++;
         draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
                              MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                              "%s has entered the game.",
-                             "%s has entered the game.",
                              op->name);
         if (!silent_dm) {
             draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL,
                           MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                          "The Dungeon Master has arrived!", NULL);
+                          "The Dungeon Master has arrived!");
         }
     } else {
         op->contr->hidden = 1;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Other players will no longer see you.", NULL);
+                      "Other players will no longer see you.");
         op->map->players--;
         if (!silent_dm) {
             draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL,
                           MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                          "The Dungeon Master is gone..", NULL);
+                          "The Dungeon Master is gone..");
         }
         draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
                              MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                              "%s leaves the game.",
-                             "%s leaves the game.",
                              op->name);
         draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
                              MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                             "%s left the game.",
                              "%s left the game.",
                              op->name);
     }
@@ -234,7 +229,7 @@ int command_setgod(object *op, char *params) {
 
     if (*params == '\0' || !(str = strchr(params, ' '))) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: setgod object god", NULL);
+                      "Usage: setgod object god");
         return 0;
     }
 
@@ -242,7 +237,6 @@ int command_setgod(object *op, char *params) {
     *str++ = '\0';
     if (!(ob = find_object_both(params))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "Set whose god - can not find object %s?",
                              "Set whose god - can not find object %s?",
                              params);
         return 1;
@@ -255,7 +249,6 @@ int command_setgod(object *op, char *params) {
     if (ob->type != PLAYER) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "%s is not a player - can not change its god",
-                             "%s is not a player - can not change its god",
                              ob->name);
         return 1;
     }
@@ -263,7 +256,6 @@ int command_setgod(object *op, char *params) {
     god = find_god(str);
     if (god == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "No such god %s.",
                              "No such god %s.",
                              str);
         return 1;
@@ -300,7 +292,6 @@ static int command_kick2(object *op, const char *params) {
             }
             op->direction = 0;
             draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_RED, 5, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                                 "%s is kicked out of the game.",
                                  "%s is kicked out of the game.",
                                  op->name);
             strcpy(op->contr->killer, "left");
@@ -350,7 +341,7 @@ int command_banish(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: banish <player>.", NULL);
+                      "Usage: banish <player>.");
         return 1;
     }
 
@@ -363,7 +354,7 @@ int command_banish(object *op, char *params) {
     if ((banishfile = fopen(buf, "a")) == NULL) {
         LOG(llevDebug, "Could not find file banish_file.\n");
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Could not find banish_file.", NULL);
+                      "Could not find banish_file.");
         return 0;
     }
 
@@ -380,11 +371,9 @@ int command_banish(object *op, char *params) {
 
     draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "You banish %s",
-                         "You banish %s",
                          pl->ob->name);
 
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_RED, 5, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                         "%s banishes %s from the land!",
                          "%s banishes %s from the land!",
                          op->name, pl->ob->name);
     command_kick2(op, pl->ob->name);
@@ -421,10 +410,10 @@ int command_overlay_save(object *op, char *params) {
 
     if (save_map(op->map, SAVE_MODE_OVERLAY) < 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Overlay save error!", NULL);
+                      "Overlay save error!");
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Current map has been saved as an overlay.", NULL);
+                      "Current map has been saved as an overlay.");
 
     return 1;
 }
@@ -447,13 +436,13 @@ int command_overlay_reset(object *op, char *params) {
     if (!stat(filename, &stats))
         if (!unlink(filename))
             draw_ext_info(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND,  MSG_TYPE_COMMAND_DM,
-                          "Overlay successfully removed.", NULL);
+                          "Overlay successfully removed.");
         else
             draw_ext_info(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND,  MSG_TYPE_COMMAND_DM,
-                          "Overlay couldn't be removed.", NULL);
+                          "Overlay couldn't be removed.");
     else
         draw_ext_info(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND,  MSG_TYPE_COMMAND_DM,
-                      "No overlay for current map.", NULL);
+                      "No overlay for current map.");
 
     return 1;
 }
@@ -473,7 +462,7 @@ int command_toggle_shout(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: toggle_shout <player>.", NULL);
+                      "Usage: toggle_shout <player>.");
         return 1;
     }
 
@@ -485,9 +474,8 @@ int command_toggle_shout(object *op, char *params) {
         pl->ob->contr->no_shout = 1;
 
         draw_ext_info(NDI_UNIQUE|NDI_RED, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                      "You have been muzzled by the DM!", NULL);
+                      "You have been muzzled by the DM!");
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                             "You muzzle %s.",
                              "You muzzle %s.",
                              pl->ob->name);
 
@@ -499,9 +487,8 @@ int command_toggle_shout(object *op, char *params) {
 
     pl->ob->contr->no_shout = 0;
     draw_ext_info(NDI_UNIQUE|NDI_ORANGE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                  "You are allowed to shout and chat again.", NULL);
+                  "You are allowed to shout and chat again.");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "You remove %s's muzzle.",
                          "You remove %s's muzzle.",
                          pl->ob->name);
     return 1;
@@ -550,7 +537,7 @@ int command_goto(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Go to what level?", NULL);
+                      "Go to what level?");
         return 1;
     }
 
@@ -565,7 +552,6 @@ int command_goto(object *op, char *params) {
     enter_exit(op, dummy);
     object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Difficulty: %d.",
                          "Difficulty: %d.",
                          op->map->difficulty);
 
@@ -588,7 +574,7 @@ int command_freeze(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: freeze [ticks] <player>.", NULL);
+                      "Usage: freeze [ticks] <player>.");
         return 1;
     }
 
@@ -598,7 +584,7 @@ int command_freeze(object *op, char *params) {
             params++;
         if (*params == 0) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Usage: freeze [ticks] <player>.", NULL);
+                          "Usage: freeze [ticks] <player>.");
             return 1;
         }
     } else
@@ -609,10 +595,9 @@ int command_freeze(object *op, char *params) {
         return 1;
 
     draw_ext_info(NDI_UNIQUE|NDI_RED, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                  "You have been frozen by the DM!", NULL);
+                  "You have been frozen by the DM!");
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "You freeze %s for %d ticks",
                          "You freeze %s for %d ticks",
                          pl->ob->name, ticks);
 
@@ -638,7 +623,7 @@ int command_arrest(object *op, char *params) {
         return 0;
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: arrest <player>.", NULL);
+                      "Usage: arrest <player>.");
         return 1;
     }
     pl = get_other_player_from_name(op, params);
@@ -648,15 +633,14 @@ int command_arrest(object *op, char *params) {
     if (!dummy) {
         /* we have nowhere to send the prisoner....*/
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Can't jail player, there is no map to hold them", NULL);
+                      "Can't jail player, there is no map to hold them");
         return 0;
     }
     enter_exit(pl->ob, dummy);
     object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                  "You have been arrested.", NULL);
+                  "You have been arrested.");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Jailed %s",
                          "Jailed %s",
                          pl->ob->name);
     LOG(llevInfo, "Player %s arrested by %s\n", pl->ob->name, op->name);
@@ -682,7 +666,7 @@ int command_summon(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: summon <player>.", NULL);
+                      "Usage: summon <player>.");
         return 1;
     }
 
@@ -693,7 +677,7 @@ int command_summon(object *op, char *params) {
     i = object_find_free_spot(op, op->map, op->x, op->y, 1, 9);
     if (i == -1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Can not find a free spot to place summoned player.", NULL);
+                      "Can not find a free spot to place summoned player.");
         return 1;
     }
 
@@ -704,9 +688,8 @@ int command_summon(object *op, char *params) {
     enter_exit(pl->ob, dummy);
     object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                  "You are summoned.", NULL);
+                  "You are summoned.");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "You summon %s",
                          "You summon %s",
                          pl->ob->name);
     return 1;
@@ -733,21 +716,21 @@ int command_teleport(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: teleport <player>.", NULL);
+                      "Usage: teleport <player>.");
         return 0;
     }
 
     pl = find_player_partial_name(params);
     if (!pl) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "No such player or ambiguous name.", NULL);
+                      "No such player or ambiguous name.");
         return 0;
     }
 
     i = object_find_free_spot(pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 1, 9);
     if (i == -1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Can not find a free spot to teleport to.", NULL);
+                      "Can not find a free spot to teleport to.");
         return 0;
     }
 
@@ -759,9 +742,8 @@ int command_teleport(object *op, char *params) {
     object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
     if (!op->contr->hidden)
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                      "You see a portal open.", NULL);
+                      "You see a portal open.");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "You teleport to %s",
                          "You teleport to %s",
                          pl->ob->name);
 
@@ -808,8 +790,7 @@ int command_create(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]",
-                      NULL);
+                      "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]");
         return 1;
     }
     bp = params;
@@ -820,8 +801,7 @@ int command_create(object *op, char *params) {
     if (sscanf(bp, "%u ", &nrof)) {
         if ((bp = strchr(params, ' ')) == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]",
-                          NULL);
+                          "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]");
             return 1;
         }
         bp++;
@@ -831,8 +811,7 @@ int command_create(object *op, char *params) {
     if (sscanf(bp, "%d ", &magic)) {
         if ((bp = strchr(bp, ' ')) == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]",
-                          NULL);
+                          "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]");
             return 1;
         }
         bp++;
@@ -853,7 +832,7 @@ int command_create(object *op, char *params) {
 
     if ((at = try_find_archetype(bp)) == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "No such archetype.", NULL);
+                      "No such archetype.");
         return 1;
     }
 
@@ -893,7 +872,6 @@ int command_create(object *op, char *params) {
             if (find_artifactlist(at->clone.type) == NULL) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                      "No artifact list for type %d\n",
-                                     "No artifact list for type %d\n",
                                      at->clone.type);
             } else {
                 art = find_artifactlist(at->clone.type)->items;
@@ -906,7 +884,6 @@ int command_create(object *op, char *params) {
                 if (!art) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                          "No such artifact ([%d] of %s)",
-                                         "No such artifact ([%d] of %s)",
                                          at->clone.type, cp);
                 }
             }
@@ -917,7 +894,6 @@ int command_create(object *op, char *params) {
     if ((at->clone.type == ROD || at->clone.type == WAND || at->clone.type == SCROLL || at->clone.type == SPELLBOOK)
     && !at_spell) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "Unable to find spell %s for object that needs it, or it is of wrong type",
                              "Unable to find spell %s for object that needs it, or it is of wrong type",
                              cp);
         return 1;
@@ -993,7 +969,6 @@ int command_create(object *op, char *params) {
              */
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "Malformed create line: %s",
-                                 "Malformed create line: %s",
                                  bp2);
             break;
         }
@@ -1003,11 +978,9 @@ int command_create(object *op, char *params) {
         if (set_variable(tmp, bp2) == -1)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "Unknown variable %s",
-                                 "Unknown variable %s",
                                  bp2);
         else
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                                 "(%s#%d)->%s",
                                  "(%s#%d)->%s",
                                  tmp->name, tmp->count, bp2);
         bp2 = bp3+1;
@@ -1087,7 +1060,7 @@ int command_create(object *op, char *params) {
                     dm_stack_pop(op->contr);
                     object_free2(head, FREE_OBJ_NO_DESTROY_CALLBACK);
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                  "Object too big to insert in map, or wrong position.", NULL);
+                                  "Object too big to insert in map, or wrong position.");
                     object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
                     return 1;
                 }
@@ -1149,7 +1122,7 @@ int command_inventory(object *op, char *params) {
 
     if (!sscanf(params, "%d", &i) || (tmp = object_find_by_tag_global(i)) == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Inventory of what object (nr)?", NULL);
+                      "Inventory of what object (nr)?");
         return 1;
     }
 
@@ -1198,11 +1171,11 @@ int command_dump(object *op, char *params) {
     sb = stringbuffer_new();
     object_dump(tmp, sb);
     diff = stringbuffer_finish(sb);
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, diff, diff);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, diff);
     free(diff);
     if (QUERY_FLAG(tmp, FLAG_OBJ_ORIGINAL))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "Object is marked original", NULL);
+                      "Object is marked original");
     return 1;
 }
 
@@ -1222,12 +1195,12 @@ int command_mon_aggr(object *op, char *params) {
         object_set_enemy(op, NULL);
         SET_FLAG(op, FLAG_UNAGGRESSIVE);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "Aggression turned OFF", NULL);
+                      "Aggression turned OFF");
     } else {
         CLEAR_FLAG(op, FLAG_FRIENDLY);
         CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "Aggression turned ON", NULL);
+                      "Aggression turned ON");
     }
 
     return 1;
@@ -1262,13 +1235,13 @@ int command_possess(object *op, char *params) {
     }
     if (victim == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Patch what object (nr)?", NULL);
+                      "Patch what object (nr)?");
         return 1;
     }
 
     if (victim == op) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "As insane as you are, I cannot allow you to possess yourself.", NULL);
+                      "As insane as you are, I cannot allow you to possess yourself.");
         return 1;
     }
 
@@ -1324,7 +1297,7 @@ int command_patch(object *op, char *params) {
     arg = params;
     if (*arg == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Patch what values?", NULL);
+                      "Patch what values?");
         return 1;
     }
 
@@ -1335,11 +1308,9 @@ int command_patch(object *op, char *params) {
     if (set_variable(tmp, arg) == -1)
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Unknown variable %s",
-                             "Unknown variable %s",
                              arg);
     else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                             "(%s#%d)->%s=%s",
                              "(%s#%d)->%s=%s",
                              tmp->name, tmp->count, arg, arg2);
     }
@@ -1364,13 +1335,13 @@ int command_remove(object *op, char *params) {
     tmp = get_dm_object(op->contr, &params, &from);
     if (!tmp) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Remove what object (nr)?", NULL);
+                      "Remove what object (nr)?");
         return 1;
     }
 
     if (tmp->type == PLAYER) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Unable to remove a player!", NULL);
+                      "Unable to remove a player!");
         return 1;
     }
 
@@ -1379,7 +1350,6 @@ int command_remove(object *op, char *params) {
 
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "%s is already removed!",
                              "%s is already removed!",
                              name);
         return 1;
@@ -1416,7 +1386,7 @@ int command_free(object *op, char *params) {
 
     if (!tmp) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Free what object (nr)?", NULL);
+                      "Free what object (nr)?");
         return 1;
     }
 
@@ -1427,7 +1397,7 @@ int command_free(object *op, char *params) {
     tmp = HEAD(tmp);
     if (!QUERY_FLAG(tmp, FLAG_REMOVED)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "Warning: item was not removed, will do so now.", NULL);
+                      "Warning: item was not removed, will do so now.");
         object_remove(tmp);
     }
 
@@ -1456,7 +1426,7 @@ int command_addexp(object *op, char *params) {
     || (strlen(params) > MAX_BUF)
     || ((q = sscanf(params, "%s %d %s", buf, &i, skill)) < 2)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: addexp player quantity [skill].", NULL);
+                      "Usage: addexp player quantity [skill].");
         return 1;
     }
 
@@ -1466,7 +1436,7 @@ int command_addexp(object *op, char *params) {
 
     if (pl == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "No such player.", NULL);
+                      "No such player.");
         return 1;
     }
 
@@ -1474,7 +1444,6 @@ int command_addexp(object *op, char *params) {
         skillob = find_skill_by_name(pl->ob, skill);
         if (!skillob) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "Unable to find skill %s in %s",
                                  "Unable to find skill %s in %s",
                                  skill, buf);
             return 1;
@@ -1511,7 +1480,6 @@ int command_speed(object *op, char *params) {
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                              "Current speed is %d",
-                             "Current speed is %d",
                              max_time);
         return 1;
     }
@@ -1519,7 +1487,6 @@ int command_speed(object *op, char *params) {
     set_max_time(i);
     reset_sleep();
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "The speed is changed to %d.",
                          "The speed is changed to %d.",
                          i);
     return 1;
@@ -1545,53 +1512,46 @@ int command_stats(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Who?", NULL);
+                      "Who?");
         return 1;
     }
 
     pl = find_player_partial_name(params);
     if (pl == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "No such player.", NULL);
+                      "No such player.");
         return 1;
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "[Fixed]Statistics for %s:", "Statistics for %s:", pl->ob->name);
+                         "[Fixed]Statistics for %s:", pl->ob->name);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Str : %-2d      H.P. : %-4d  MAX : %d",
-                         "Str : %-2d      H.P. : %-4d  MAX : %d",
                          pl->ob->stats.Str, pl->ob->stats.hp, pl->ob->stats.maxhp);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Dex : %-2d      S.P. : %-4d  MAX : %d",
-                         "Dex : %-2d      S.P. : %-4d  MAX : %d",
                          pl->ob->stats.Dex, pl->ob->stats.sp, pl->ob->stats.maxsp);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Con : %-2d        AC : %-4d  WC  : %d",
-                         "Con : %-2d        AC : %-4d  WC  : %d",
                          pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Int : %-2d    Damage : %d",
-                         "Int : %-2d    Damage : %d",
                          pl->ob->stats.Int, pl->ob->stats.dam);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Wis : %-2d       EXP : %"FMT64,
-                         "Wis : %-2d       EXP : %"FMT64,
                          pl->ob->stats.Wis, pl->ob->stats.exp);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Pow : %-2d    Grace : %d",
-                         "Pow : %-2d    Grace : %d",
                          pl->ob->stats.Pow, pl->ob->stats.grace);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Cha : %-2d      Food : %d",
-                         "Cha : %-2d      Food : %d",
                          pl->ob->stats.Cha, pl->ob->stats.food);
     return 1;
 }
@@ -1619,19 +1579,19 @@ int command_abil(object *op, char *params) {
     || sscanf(params, "%s %s %d", thing, thing2, &iii) != 3
     || thing[0] == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Who?", NULL);
+                      "Who?");
         return 1;
     }
 
     if (thing2[0] == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You can't change that.", NULL);
+                      "You can't change that.");
         return 1;
     }
 
     if (iii < MIN_STAT || iii > MAX_STAT) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Illegal range of stat.\n", NULL);
+                      "Illegal range of stat.\n");
         return 1;
     }
 
@@ -1655,7 +1615,6 @@ int command_abil(object *op, char *params) {
                 pl->ob->stats.Pow = iii, pl->orig_stats.Pow = iii;
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                                  "%s has been altered.",
-                                 "%s has been altered.",
                                  pl->ob->name);
             fix_object(pl->ob);
             return 1;
@@ -1663,7 +1622,7 @@ int command_abil(object *op, char *params) {
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                  "No such player.", NULL);
+                  "No such player.");
     return 1;
 }
 
@@ -1685,7 +1644,7 @@ int command_reset(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Reset what map [name]?", NULL);
+                      "Reset what map [name]?");
         return 1;
     }
 
@@ -1696,7 +1655,7 @@ int command_reset(object *op, char *params) {
     m = has_been_loaded(path);
     if (m == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "No such map.", NULL);
+                      "No such map.");
         return 1;
     }
 
@@ -1705,7 +1664,7 @@ int command_reset(object *op, char *params) {
      * - gros, July 25th 2006 */
     if ((op->contr && op->contr->transport) && (op->map == m)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You need to disembark first.", NULL);
+                      "You need to disembark first.");
         return 1;
     }
 
@@ -1732,7 +1691,7 @@ int command_reset(object *op, char *params) {
                  * situation caused. - gros, 26th July 2006.
                  */
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "You cannot reset a random map when inside it.", NULL);
+                              "You cannot reset a random map when inside it.");
                 return 1;
             }
 
@@ -1761,22 +1720,20 @@ int command_reset(object *op, char *params) {
         if (res < 0 && res != SAVE_ERROR_PLAYER)
             /* no need to warn if player on map, code below checks that. */
             draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "Reset failed, error code: %d.", NULL, res);
+                                 "Reset failed, error code: %d.", res);
         else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Reset failed, couldn't swap map, the following players are on it:",
-                          NULL);
+                          "Reset failed, couldn't swap map, the following players are on it:");
             for (pl = first_player; pl != NULL; pl = pl->next) {
                 if (pl->ob->map == m && pl->ob != op) {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                  pl->ob->name, NULL);
+                                  pl->ob->name);
                     playercount++;
                 }
             }
             if (!playercount)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "hmm, I don't see any other players on this map, something else is the problem.",
-                              NULL);
+                              "hmm, I don't see any other players on this map, something else is the problem.");
             return 1;
         }
     }
@@ -1792,7 +1749,6 @@ int command_reset(object *op, char *params) {
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Resetting map %s.",
                          "Resetting map %s.",
                          path);
 
@@ -1825,17 +1781,16 @@ int command_nowiz(object *op, char *params) { /* 'noadm' is alias */
         CLEAR_FLAG(op, FLAG_WAS_WIZ);
     if (op->contr->hidden) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "You are no longer hidden from other players", NULL);
+                      "You are no longer hidden from other players");
         op->map->players++;
         draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                             "%s has entered the game.",
                              "%s has entered the game.",
                              op->name);
         op->contr->hidden = 0;
         op->invisible = 1;
     } else
         draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                      "The Dungeon Master is gone..", NULL);
+                      "The Dungeon Master is gone..");
 
     update_los(op);
 
@@ -1913,7 +1868,7 @@ int do_wizard_dm(object *op, char *params, int silent) {
 
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You are already the Dungeon Master!", NULL);
+                      "You are already the Dungeon Master!");
         return 0;
     }
 
@@ -1923,7 +1878,7 @@ int do_wizard_dm(object *op, char *params, int silent) {
         SET_FLAG(op, FLAG_WIZPASS);
         SET_FLAG(op, FLAG_WIZCAST);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "Ok, you are the Dungeon Master!", NULL);
+                      "Ok, you are the Dungeon Master!");
         /*
          * Remove setting flying here - that won't work, because next
         * fix_object() is called that will get cleared - proper solution
@@ -1936,13 +1891,13 @@ int do_wizard_dm(object *op, char *params, int silent) {
         if (!silent)
             draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL,
                           MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-                          "The Dungeon Master has arrived!", NULL);
+                          "The Dungeon Master has arrived!");
 
         return 1;
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                  "Sorry Pal, I don't think so.", NULL);
+                  "Sorry Pal, I don't think so.");
     op->contr->write_buf[0] = '\0';
     return 0;
 }
@@ -1978,7 +1933,7 @@ int command_invisible(object *op, char *params) {
         op->invisible += 100;
         object_update(op, UP_OBJ_FACE);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "You turn invisible.", NULL);
+                      "You turn invisible.");
     }
 
     return 0;
@@ -2025,15 +1980,12 @@ static object *get_spell_by_name(object *op, const char *spell_name) {
                 conflict_found = 1;
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                      "More than one archetype matches the spell name %s:",
-                                     "More than one archetype matches the spell name %s:",
                                      spell_name);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                     "- %s",
                                      "- %s",
                                      found->name);
             }
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "- %s",
                                  "- %s",
                                  ar->name);
             continue;
@@ -2069,15 +2021,12 @@ static object *get_spell_by_name(object *op, const char *spell_name) {
                 conflict_found = 1;
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                      "More than one spell matches %s:",
-                                     "More than one spell matches %s:",
                                      spell_name);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                     "- %s",
                                      "- %s",
                                      found->clone.name);
             }
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "- %s",
                                  "- %s",
                                  ar->clone.name);
             continue;
@@ -2096,7 +2045,6 @@ static object *get_spell_by_name(object *op, const char *spell_name) {
 
     /* No spell found: just print an error message. */
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                         "The spell %s does not exist.",
                          "The spell %s does not exist.",
                          spell_name);
     return NULL;
@@ -2121,7 +2069,7 @@ static int command_learn_spell_or_prayer(object *op, char *params, int special_p
 
     if (op->contr == NULL || *params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Which spell do you want to learn?", NULL);
+                      "Which spell do you want to learn?");
         return 0;
     }
 
@@ -2132,7 +2080,6 @@ static int command_learn_spell_or_prayer(object *op, char *params, int special_p
 
     if (check_spell_known(op, tmp->name)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "You already know the spell %s.",
                              "You already know the spell %s.",
                              tmp->name);
         return 0;
@@ -2190,14 +2137,13 @@ int command_forget_spell(object *op, char *params) {
 
     if (op->contr == NULL || *params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Which spell do you want to forget?", NULL);
+                      "Which spell do you want to forget?");
         return 0;
     }
 
     spell = lookup_spell_by_name(op, params);
     if (spell == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "You do not know the spell %s.",
                              "You do not know the spell %s.",
                              params);
         return 0;
@@ -2239,7 +2185,7 @@ int command_loadplugin(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Load which plugin?", NULL);
+                      "Load which plugin?");
         return 1;
     }
 
@@ -2251,11 +2197,9 @@ int command_loadplugin(object *op, char *params) {
         LOG(llevInfo, "DM %s loaded plugin %s\n", op->name, params);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                              "Plugin %s successfully loaded.",
-                             "Plugin %s successfully loaded.",
                              params);
     } else
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "Could not load plugin %s.",
                              "Could not load plugin %s.",
                              params);
     return 1;
@@ -2276,7 +2220,7 @@ int command_loadplugin(object *op, char *params) {
 int command_unloadplugin(object *op, char *params) {
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Remove which plugin?", NULL);
+                      "Remove which plugin?");
         return 1;
     }
 
@@ -2284,11 +2228,9 @@ int command_unloadplugin(object *op, char *params) {
         LOG(llevInfo, "DM %s unloaded plugin %s\n", op->name, params);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                              "Plugin %s successfully removed.",
-                             "Plugin %s successfully removed.",
                              params);
     } else
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "Could not remove plugin %s.",
                              "Could not remove plugin %s.",
                              params);
     return 1;
@@ -2325,13 +2267,12 @@ int command_dmhide(object *op, char *params) {
 void dm_stack_pop(player *pl) {
     if (!pl->stack_items || !pl->stack_position) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Empty stack!", NULL);
+                      "Empty stack!");
         return;
     }
 
     pl->stack_position--;
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Popped item from stack, %d left.",
                          "Popped item from stack, %d left.",
                          pl->stack_position);
 }
@@ -2353,14 +2294,14 @@ object *dm_stack_peek(player *pl) {
 
     if (!pl->stack_position) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Empty stack!", NULL);
+                      "Empty stack!");
         return NULL;
     }
 
     ob = object_find_by_tag_global(pl->stack_items[pl->stack_position-1]);
     if (!ob) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "Stacked item was removed!", NULL);
+                      "Stacked item was removed!");
         dm_stack_pop(pl);
         return NULL;
     }
@@ -2386,13 +2327,12 @@ void dm_stack_push(player *pl, tag_t item) {
 
     if (pl->stack_position == STACK_SIZE) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Item stack full!", NULL);
+                      "Item stack full!");
         return;
     }
 
     pl->stack_items[pl->stack_position] = item;
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Item stacked as %d.",
                          "Item stacked as %d.",
                          pl->stack_position);
     pl->stack_position++;
@@ -2460,7 +2400,6 @@ object *get_dm_object(player *pl, char **params, int *from) {
                 *from = STACK_FROM_NONE;
             draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "No such item %d!",
-                                 "No such item %d!",
                                  item_tag);
             return NULL;
         }
@@ -2487,7 +2426,6 @@ object *get_dm_object(player *pl, char **params, int *from) {
                 *from = STACK_FROM_NONE;
             draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "No such stack item %d!",
-                                 "No such stack item %d!",
                                  item_position);
             return NULL;
         }
@@ -2497,7 +2435,6 @@ object *get_dm_object(player *pl, char **params, int *from) {
             if (from)
                 *from = STACK_FROM_NONE;
             draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                                 "Stack item %d was removed.",
                                  "Stack item %d was removed.",
                                  item_position);
             return NULL;
@@ -2581,19 +2518,17 @@ int command_stack_list(object *op, char *params) {
     player *pl = op->contr;
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                  "Item stack contents:", NULL);
+                  "Item stack contents:");
 
     for (item = 0; item < pl->stack_position; item++) {
         display = object_find_by_tag_global(pl->stack_items[item]);
         if (display)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                                  " %d : %s [%d]",
-                                 " %d : %s [%d]",
                                  item, display->name, display->count);
         else
             /* Item was freed */
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                                 " %d : (lost item: %d)",
                                  " %d : (lost item: %d)",
                                  item, pl->stack_items[item]);
     }
@@ -2614,7 +2549,7 @@ int command_stack_list(object *op, char *params) {
 int command_stack_clear(object *op, char *params) {
     op->contr->stack_position = 0;
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                  "Item stack cleared.", NULL);
+                  "Item stack cleared.");
     return 0;
 }
 
@@ -2650,7 +2585,7 @@ int command_diff(object *op, char *params) {
     left = get_dm_object(op->contr, &params, &left_from);
     if (!left) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Compare to what item?", NULL);
+                      "Compare to what item?");
         return 0;
     }
 
@@ -2662,12 +2597,12 @@ int command_diff(object *op, char *params) {
 
     if (!right) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Compare what item?", NULL);
+                      "Compare what item?");
         return 0;
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                  "Item difference:", NULL);
+                  "Item difference:");
 
     if (left_from == STACK_FROM_TOP && right_from == STACK_FROM_TOP) {
         /*
@@ -2680,7 +2615,7 @@ int command_diff(object *op, char *params) {
             left = object_find_by_tag_global(op->contr->stack_items[op->contr->stack_position-2]);
             if (left)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                              "(Note: first item taken from undertop)", NULL);
+                              "(Note: first item taken from undertop)");
             else
                 /* Stupid case: item under top was freed, fallback to stack top */
                 left = right;
@@ -2691,9 +2626,9 @@ int command_diff(object *op, char *params) {
     get_ob_diff(sb, left, right);
     diff = stringbuffer_finish(sb);
     if (*diff == '\0') {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, "Objects are the same.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, "Objects are the same.");
     } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, diff, NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, diff);
     }
     free(diff);
     return 0;
@@ -2716,7 +2651,7 @@ int command_insert_into(object *op, char *params) {
     left = get_dm_object(op->contr, &params, &left_from);
     if (!left) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Insert into what object?", NULL);
+                      "Insert into what object?");
         return 0;
     }
 
@@ -2728,7 +2663,7 @@ int command_insert_into(object *op, char *params) {
 
     if (!right) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Insert what item?", NULL);
+                      "Insert what item?");
         return 0;
     }
 
@@ -2743,7 +2678,7 @@ int command_insert_into(object *op, char *params) {
             left = object_find_by_tag_global(op->contr->stack_items[op->contr->stack_position-2]);
             if (left)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                              "(Note: item to insert into taken from undertop)", NULL);
+                              "(Note: item to insert into taken from undertop)");
             else
                 /* Stupid case: item under top was freed, fallback to stack top */
                 left = right;
@@ -2752,13 +2687,13 @@ int command_insert_into(object *op, char *params) {
 
     if (left == right) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Can't insert an object into itself!", NULL);
+                      "Can't insert an object into itself!");
         return 0;
     }
 
     if (right->type == PLAYER) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Can't insert a player into something!", NULL);
+                      "Can't insert a player into something!");
         return 0;
     }
 
@@ -2773,7 +2708,6 @@ int command_insert_into(object *op, char *params) {
     query_name(inserted, what, MAX_BUF);
     query_name(left, where, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Inserted %s in %s",
                          "Inserted %s in %s",
                          what, where);
     return 0;
@@ -2807,22 +2741,17 @@ int command_style_map_info(object *op, char *params) {
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
                          "[fixed]Style maps loaded:    %d",
-                         "Style maps loaded:    %d",
                          maps_used);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                  "[fixed]Memory used, not",
-                  "Memory used, not");
+                  "[fixed]Memory used, not");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
                          "[fixed]including objects:    %d",
-                         "including objects:    %d",
                          mapmem);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
                          "[fixed]Style objects:        %d",
-                         "Style objects:        %d",
                          objects_used);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
                          "[fixed]Mem for objects:      %lu",
-                         "Mem for objects:      %lu",
                          (unsigned long)(objects_used*sizeof(object)));
     return 0;
 }
@@ -2842,7 +2771,7 @@ int command_follow(object *op, char *params) {
 
     if (*params == '\0') {
         if (op->contr->followed_player != NULL) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You stop following %s.", NULL, op->contr->followed_player);
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You stop following %s.", op->contr->followed_player);
             FREE_AND_CLEAR_STR(op->contr->followed_player);
         }
         return 0;
@@ -2850,11 +2779,11 @@ int command_follow(object *op, char *params) {
 
     other = find_player_partial_name(params);
     if (!other) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "No such player or ambiguous name.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "No such player or ambiguous name.");
         return 0;
     }
     if (other == op->contr) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You can't follow yourself.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You can't follow yourself.");
         return 0;
     }
 
@@ -2862,6 +2791,6 @@ int command_follow(object *op, char *params) {
         FREE_AND_CLEAR_STR(op->contr->followed_player);
 
     op->contr->followed_player = add_string(other->ob->name);
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Following %s.", NULL, op->contr->followed_player);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Following %s.", op->contr->followed_player);
     return 0;
 }

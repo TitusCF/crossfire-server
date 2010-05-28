@@ -163,13 +163,13 @@ static void knowledge_alchemy_summary(object *pl, const char *value, int index) 
         return;
 
     if (strcmp(rec->title, "NONE"))
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s of %s", NULL, index, arch->clone.name, rec->title);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s of %s", index, arch->clone.name, rec->title);
     else {
         if (arch->clone.title != NULL) {
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s %s", NULL, index, arch->clone.name, arch->clone.title);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s %s", index, arch->clone.name, arch->clone.title);
         }
         else
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", NULL, index, arch->clone.name);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", index, arch->clone.name);
     }
 }
 
@@ -194,17 +194,17 @@ static void knowledge_alchemy_detail(object *pl, const char *value) {
         return;
 
     if (strcmp(rec->title, "NONE"))
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s of %s:", NULL, arch->clone.name, rec->title);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s of %s:", arch->clone.name, rec->title);
     else {
         if (arch->clone.title != NULL) {
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s %s", NULL, arch->clone.name, arch->clone.title);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s %s", arch->clone.name, arch->clone.title);
         }
         else
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s", NULL, arch->clone.name);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s", arch->clone.name);
     }
 
     for (next = rec->ingred; next != NULL; next = next->next) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, " - %s", NULL, next->name);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, " - %s", next->name);
     }
 
 }
@@ -257,7 +257,7 @@ static void knowledge_monster_summary(object *pl, const char *item, int index) {
     if (!monster)
         return;
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", NULL, index, monster->clone.name);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", index, monster->clone.name);
 }
 
 /**
@@ -273,9 +273,9 @@ static void knowledge_monster_detail(object *pl, const char *item) {
     if (!monster)
         return;
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, " *** %s ***", NULL, monster->clone.name);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, " *** %s ***", monster->clone.name);
     describe_item(&monster->clone, NULL, buf, sizeof(buf));
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, buf, NULL);
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, buf);
 }
 
 /**
@@ -324,7 +324,7 @@ static void knowledge_god_summary(object *pl, const char *item, int index) {
     if (pos)
         *pos = '\0';
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s [god]", NULL, index, dup);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s [god]", index, dup);
     free(dup);
 }
 
@@ -359,7 +359,7 @@ static void knowledge_god_detail(object *pl, const char *item) {
     buf = stringbuffer_new();
     describe_god(&god->clone, what, buf, 0);
     final = stringbuffer_finish(buf);
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, final, NULL);
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, final);
     free(final);
 }
 
@@ -470,7 +470,7 @@ static void knowledge_write_player_data(const knowledge_player *kp) {
     file = fopen(write, "w+");
     if (!file) {
         LOG(llevError, "knowledge: couldn't open player knowledge file %s!", write);
-        draw_ext_info(NDI_UNIQUE | NDI_ALL_DMS, 0, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "File write error on server!", NULL);
+        draw_ext_info(NDI_UNIQUE | NDI_ALL_DMS, 0, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "File write error on server!");
         return;
     }
 
@@ -600,10 +600,10 @@ void knowledge_read(player *pl, object *book) {
     free(copy);
 
     if (added) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You write that down for future reference.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You write that down for future reference.");
         if (none) {
             /* first information ever written down, be nice and give hint to recover it. */
-            draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Use the 'knowledge' command to browse what you write down (this message will not appear anymore).", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Use the 'knowledge' command to browse what you write down (this message will not appear anymore).");
         }
     }
     knowledge_write_player_data(current);
@@ -622,7 +622,7 @@ static void knowledge_display(object *pl) {
     item = kp->items;
     while (item) {
         if (header == 0) {
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You know this information:", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You know this information:");
             header = 1;
         }
 
@@ -632,7 +632,7 @@ static void knowledge_display(object *pl) {
     }
 
     if (header == 0)
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information.");
 }
 
 /**
@@ -646,7 +646,7 @@ static void knowledge_show(object *pl, const char *params) {
     int count = atoi(params);
 
     if (count <= 0) {
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number");
         return;
     }
 
@@ -661,7 +661,7 @@ static void knowledge_show(object *pl, const char *params) {
         count--;
     }
 
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number", NULL);
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number");
 }
 
 /**

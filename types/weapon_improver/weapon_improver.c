@@ -62,23 +62,23 @@ static method_ret weapon_improver_type_apply(ob_methods *context, object *op, ob
     if (!QUERY_FLAG(applier, FLAG_WIZCAST)
     && (get_map_flags(applier->map, NULL, applier->x, applier->y, NULL, NULL)&P_NO_MAGIC)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Something blocks the magic of the scroll.", NULL);
+            "Something blocks the magic of the scroll.");
         return METHOD_ERROR;
     }
 
     oop = find_marked_object(applier);
     if (!oop) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "You need to mark a weapon object.", NULL);
+            "You need to mark a weapon object.");
         return METHOD_ERROR;
     }
     if (oop->type != WEAPON && oop->type != BOW) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Marked item is not a weapon or bow", NULL);
+            "Marked item is not a weapon or bow");
         return METHOD_ERROR;
     }
     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        "Applied weapon builder.", NULL);
+        "Applied weapon builder.");
     improve_weapon(applier, op, oop);
     esrv_update_item(UPD_NAME|UPD_NROF|UPD_FLAGS, applier, oop);
     return METHOD_OK;
@@ -176,7 +176,6 @@ static int check_sacrifice(object *op, const object *improver) {
         if (count < 1) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "The gods want more %ss",
-                "The gods want more %ss",
                 improver->slaying);
             return 0;
         }
@@ -206,13 +205,12 @@ static int check_sacrifice(object *op, const object *improver) {
  */
 static int improve_weapon_stat(object *op, object *improver, object *weapon, signed char *stat, int sacrifice_count, const char *statname) {
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        "Your sacrifice was accepted.", NULL);
+        "Your sacrifice was accepted.");
 
     *stat += sacrifice_count;
     weapon->last_eat++;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        "Weapon's bonus to %s improved by %d",
         "Weapon's bonus to %s improved by %d",
         statname, sacrifice_count);
 
@@ -256,7 +254,7 @@ static int prepare_weapon(object *op, object *improver, object *weapon) {
 
     if (weapon->level != 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Weapon already prepared.", NULL);
+            "Weapon already prepared.");
         return 0;
     }
     for (i = 0; i < NROFATTACKS; i++)
@@ -272,7 +270,7 @@ static int prepare_weapon(object *op, object *improver, object *weapon) {
     || weapon->stats.exp       /* speed */
     || weapon->stats.ac) {     /* AC - only taifu's I think */
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Cannot prepare magic weapons.", NULL);
+            "Cannot prepare magic weapons.");
         return 0;
     }
 
@@ -300,7 +298,7 @@ static int prepare_weapon(object *op, object *improver, object *weapon) {
 
     weapon->level = isqrt(sacrifice_count);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        "Your sacrifice was accepted.", NULL);
+        "Your sacrifice was accepted.");
     eat_item(op, improver->slaying, sacrifice_count);
 
 
@@ -309,7 +307,6 @@ static int prepare_weapon(object *op, object *improver, object *weapon) {
     FREE_AND_COPY(weapon->name_pl, buf);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        "Your %s may be improved %d times.",
         "Your %s may be improved %d times.",
         weapon->name, weapon->level);
 
@@ -347,20 +344,20 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
 
     if (weapon->level == 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "This weapon has not been prepared.", NULL);
+            "This weapon has not been prepared.");
         return 0;
     }
 
     if (weapon->level == weapon->last_eat && weapon->item_power >= MAX_WEAPON_ITEM_POWER) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "This weapon cannot be improved any more.", NULL);
+            "This weapon cannot be improved any more.");
         return 0;
     }
 
     if (QUERY_FLAG(weapon, FLAG_APPLIED)
     && !apply_check_weapon_power(op, weapon->last_eat+1)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Improving the weapon will make it too powerful for you to use.  Unready it if you really want to improve it.", NULL);
+            "Improving the weapon will make it too powerful for you to use.  Unready it if you really want to improve it.");
         return 0;
     }
 
@@ -374,7 +371,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
         if (QUERY_FLAG(weapon, FLAG_APPLIED)) {
             /* Weapon is cursed, too bad */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                "You can't enchant this weapon without unapplying it because it would consume your soul!", NULL);
+                "You can't enchant this weapon without unapplying it because it would consume your soul!");
             return 0;
         }
     }
@@ -388,7 +385,6 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
         weapon->stats.dam += 5;
         weapon->weight += 5000;         /* 5 KG's */
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-            "Damage has been increased by 5 to %d",
             "Damage has been increased by 5 to %d",
             weapon->stats.dam);
         weapon->last_eat++;
@@ -405,7 +401,6 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
             weapon->weight = 1;
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
             "Weapon weight reduced to %6.1f kg",
-            "Weapon weight reduced to %6.1f kg",
             (float)weapon->weight/1000.0);
         weapon->last_eat++;
         weapon->item_power++;
@@ -417,7 +412,6 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
         weapon->magic++;
         weapon->last_eat++;
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-            "Weapon magic increased to %d",
             "Weapon magic increased to %d",
             weapon->magic);
         object_decrease_nrof_by_one(improver);
@@ -440,7 +434,6 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
     sacrifice_count = check_sacrifice(op, improver);
     if (sacrifice_count < sacrifice_needed) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "You need at least %d %s",
             "You need at least %d %s",
             sacrifice_needed, improver->slaying);
         return 0;
@@ -472,7 +465,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
 
     default:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Unknown improvement type.", NULL);
+            "Unknown improvement type.");
     }
 
     LOG(llevError, "improve_weapon: Got to end of function\n");

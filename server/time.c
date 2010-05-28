@@ -334,7 +334,7 @@ static void remove_force(object *op) {
             CLEAR_FLAG(op->env, FLAG_CONFUSED);
             draw_ext_info(NDI_UNIQUE, 0, op->env,
                           MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                          "You regain your senses.", NULL);
+                          "You regain your senses.");
         }
         break;
 
@@ -353,7 +353,6 @@ static void remove_force(object *op) {
 
                     query_short_name(inv, name, HUGE_BUF);
                     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
-                                         "Your %s recovers its original form.",
                                          "Your %s recovers its original form.",
                                          name);
                 }

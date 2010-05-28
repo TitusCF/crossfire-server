@@ -970,7 +970,7 @@ int can_pay(object *pl) {
         else if (denominations > 1)
             make_list_like(buf);
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP,
-                      MSG_TYPE_SHOP_PAYMENT, buf, NULL);
+                      MSG_TYPE_SHOP_PAYMENT, buf);
         return 0;
     } else
         return 1;
@@ -1013,7 +1013,6 @@ int get_payment(object *pl, object *op) {
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
                                  "You lack %s to buy %s.",
-                                 "You lack %s to buy %s.",
                                  missing, name_op);
             free(missing);
             SET_FLAG(op, FLAG_UNPAID);
@@ -1027,7 +1026,6 @@ int get_payment(object *pl, object *op) {
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
-                                 "You paid %s for %s.",
                                  "You paid %s for %s.",
                                  value, name_op);
             free(value);
@@ -1076,7 +1074,6 @@ void sell_item(object *op, object *pl) {
         query_name(op, name_op, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
-                             "We're not interested in %s.",
                              "We're not interested in %s.",
                              name_op);
 
@@ -1153,7 +1150,6 @@ void sell_item(object *op, object *pl) {
     value = stringbuffer_finish(query_cost_string(op, pl, F_SELL|F_SHOP, NULL));
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
-                         "You receive %s for %s.",
                          "You receive %s for %s.",
                          value,
                          name_op);
@@ -1326,8 +1322,7 @@ int describe_shop(const object *op) {
     || map->shopmin
     || map->shopmax) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
-                      "From looking at the nearby shop you determine that it trades in:",
-                      NULL);
+                      "From looking at the nearby shop you determine that it trades in:");
 
         if (map->shopitems) {
             for (i = 0; i < map->shopitems[0].index; i++) {
@@ -1343,13 +1338,12 @@ int describe_shop(const object *op) {
         /* format the string into a list */
         make_list_like(tmp);
         draw_ext_info(NDI_UNIQUE, 0, op,
-                      MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, tmp, NULL);
+                      MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, tmp);
 
         if (map->shopmax) {
             value = stringbuffer_finish(cost_string_from_value(map->shopmax, NULL));
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                                 "It won't trade for items above %s.",
                                  "It won't trade for items above %s.",
                                  value);
             free(value);
@@ -1360,7 +1354,6 @@ int describe_shop(const object *op) {
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade in items worth less than %s.",
-                                 "It won't trade in items worth less than %s.",
                                  value);
             free(value);
         }
@@ -1369,37 +1362,37 @@ int describe_shop(const object *op) {
             if (map->shopgreed > 2.0)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                              "It tends to overcharge massively.", NULL);
+                              "It tends to overcharge massively.");
             else if (map->shopgreed > 1.5)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                              "It tends to overcharge substantially.", NULL);
+                              "It tends to overcharge substantially.");
             else if (map->shopgreed > 1.1)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                              "It tends to overcharge slightly.", NULL);
+                              "It tends to overcharge slightly.");
             else if (map->shopgreed < 0.9)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                              "It tends to undercharge.", NULL);
+                              "It tends to undercharge.");
         }
         if (map->shoprace) {
             opinion = shopkeeper_approval(map, op);
             if (opinion > 0.8)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                              "You think the shopkeeper likes you.", NULL);
+                              "You think the shopkeeper likes you.");
             else if (opinion > 0.5)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                              "The shopkeeper seems unconcerned by you.", NULL);
+                              "The shopkeeper seems unconcerned by you.");
             else
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                              "The shopkeeper seems to have taken a dislike to you.", NULL);
+                              "The shopkeeper seems to have taken a dislike to you.");
         }
     } else draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                             "There is no shop nearby.", NULL);
+                             "There is no shop nearby.");
 
     return 1;
 }

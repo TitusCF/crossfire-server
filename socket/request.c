@@ -469,7 +469,6 @@ void new_player_cmd(uint8 *buf, int len, player *pl) {
     if (pl->state != ST_PLAYING) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "You can not issue commands - state is not ST_PLAYING (%s)",
-                             "You can not issue commands - state is not ST_PLAYING (%s)",
                              buf);
         return;
     }

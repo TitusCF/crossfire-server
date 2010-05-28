@@ -536,7 +536,7 @@ static void execute_word_of_recall(object *op) {
     if (op != NULL && op->map) {
         if ((get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL)&P_NO_CLERIC) && (!QUERY_FLAG(op, FLAG_WIZCAST)))
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                "You feel something fizzle inside you.", NULL);
+                "You feel something fizzle inside you.");
         else
             enter_exit(op, wor);
     }

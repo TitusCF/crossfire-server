@@ -49,7 +49,7 @@ void init_type_cf_handle(void) {
  */
 static method_ret cf_handle_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        "You turn the handle.", NULL);
+        "You turn the handle.");
     play_sound_map(SOUND_TYPE_ITEM, op, 0, "turn handle");
     op->value = op->value ? 0 : 1;
     SET_ANIMATION(op, op->value);

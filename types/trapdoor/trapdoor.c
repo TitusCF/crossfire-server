@@ -79,7 +79,7 @@ static method_ret trapdoor_type_move_on(ob_methods *context, object *trap, objec
                 sound_was_played = 1;
             }
             draw_ext_info(NDI_UNIQUE, 0, ab, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
-                  "You fall into a trapdoor!", NULL);
+                  "You fall into a trapdoor!");
             transfer_ob(ab, (int)EXIT_X(trap), (int)EXIT_Y(trap), 0, ab);
         }
     }

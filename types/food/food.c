@@ -56,7 +56,7 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
     int capacity_remaining;
 
     if (QUERY_FLAG(food, FLAG_NO_PICK)) {
-        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE, "You can't %s that!", NULL, food->type == DRINK ? "drink" : "eat");
+        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE, "You can't %s that!", food->type == DRINK ? "drink" : "eat");
         return METHOD_OK;
     }
 
@@ -79,9 +79,9 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
 
                 snprintf(buf, sizeof(buf), "You have been dead for too long to taste %s, ", food->name);
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                    buf, NULL);
+                    buf);
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                    "and seem to have obtained a taste for living flesh.", NULL);
+                    "and seem to have obtained a taste for living flesh.");
             } else
                 LOG(llevError, "wraith feed skill not found\n");
             /* Wraith player gets no food from eating. */
@@ -90,16 +90,16 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
 
             snprintf(buf, sizeof(buf), "You can no longer taste %s, and do not feel less hungry after %s it.", food->name, food->type == DRINK ? "drinking" : "eating");
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                buf, NULL);
+                buf);
             /* usual case - not a wraith or a dgaron: */
         } else {
             if (applier->stats.food+food->stats.food > 999) {
                 if (food->type == FOOD || food->type == FLESH)
                     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                        "You feel full, but what a waste of food!", NULL);
+                        "You feel full, but what a waste of food!");
                 else
                     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                        "Most of the drink goes down your face not your throat!", NULL);
+                        "Most of the drink goes down your face not your throat!");
             }
 
             if (!QUERY_FLAG(food, FLAG_CURSED)) {
@@ -117,7 +117,7 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
                 }
 
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                              buf, NULL);
+                              buf);
                 capacity_remaining = 999-applier->stats.food;
                 applier->stats.food += food->stats.food;
                 if (capacity_remaining < food->stats.food)
@@ -193,27 +193,27 @@ static void eat_special_food(object *who, object *food) {
             strcpy(who->contr->killer, food->name);
             hit_player(who, food->stats.hp, food, AT_POISON, 1);
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                "Eck!...that was poisonous!", NULL);
+                "Eck!...that was poisonous!");
         } else {
             if (food->stats.hp > 0)
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    "You begin to feel better.", NULL);
+                    "You begin to feel better.");
             else
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                    "Eck!...that was poisonous!", NULL);
+                    "Eck!...that was poisonous!");
             who->stats.hp += food->stats.hp;
         }
     }
     if (food->stats.sp != 0) {
         if (QUERY_FLAG(food, FLAG_CURSED)) {
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                "You are drained of mana!", NULL);
+                "You are drained of mana!");
             who->stats.sp -= food->stats.sp;
             if (who->stats.sp < 0)
                 who->stats.sp = 0;
         } else {
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "You feel a rush of magical energy!", NULL);
+                "You feel a rush of magical energy!");
             who->stats.sp += food->stats.sp;
             /* place limit on max sp from food? */
         }
@@ -335,7 +335,7 @@ static int dragon_eat_flesh(object *op, object *meal) {
     else
         snprintf(buf, sizeof(buf), "The %s had no taste.", meal->name);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        buf, NULL);
+        buf);
 
         /* now choose a winner if we have any */
     i = -1;
@@ -348,7 +348,6 @@ static int dragon_eat_flesh(object *op, object *meal) {
         fix_object(op);
 
         draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
-            "Your skin is now more resistant to %s!",
             "Your skin is now more resistant to %s!",
             change_resist_msg[i]);
     }
@@ -364,15 +363,12 @@ static int dragon_eat_flesh(object *op, object *meal) {
         if (meal->last_eat != abil->stats.exp) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
                 "Your metabolism prepares to focus on %s!",
-                "Your metabolism prepares to focus on %s!",
                 change_resist_msg[meal->last_eat]);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                "The change will happen at level %d",
                 "The change will happen at level %d",
                 abil->level+1);
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                "Your metabolism will continue to focus on %s.",
                 "Your metabolism will continue to focus on %s.",
                 change_resist_msg[meal->last_eat]);
             abil->last_eat = 0;

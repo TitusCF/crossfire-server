@@ -325,7 +325,7 @@ void pets_follow_owner(object *ob, object *owner) {
     object_insert_in_map_at(ob, owner->map, NULL, 0, owner->x+freearr_x[dir], owner->y+freearr_y[dir]);
     if (owner->type == PLAYER) /* Uh, I hope this is always true... */
         draw_ext_info(NDI_UNIQUE, 0, owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
-                      "Your pet magically appears next to you", NULL);
+                      "Your pet magically appears next to you");
     return;
 }
 
@@ -425,7 +425,7 @@ void pets_move(object *ob) {
                 } else if (new_ob->type == PLAYER) {
                     draw_ext_info(NDI_UNIQUE, 0, new_ob,
                                   MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
-                                  "You stand in the way of someones pet.", NULL);
+                                  "You stand in the way of someones pet.");
                     return;
                 }
             } FOR_MAP_FINISH();
@@ -564,7 +564,7 @@ void pets_move_golem(object *op) {
     if (--op->stats.hp < 0) {
         if (op->msg != NULL)
             draw_ext_info(NDI_UNIQUE, 0, owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
-                          op->msg, op->msg);
+                          op->msg);
         owner->contr->ranges[range_golem] = NULL;
         owner->contr->golem_count = 0;
         remove_friendly_object(op);
@@ -621,13 +621,11 @@ void pets_move_golem(object *op) {
                     draw_ext_info_format(NDI_UNIQUE, 0, owner,
                                          MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
                                          "%s avoids damaging %s.",
-                                         "%s avoids damaging %s.",
                                          op->name, victim->name);
             } else if (victim == owner) {
                 if (owner != NULL)
                     draw_ext_info_format(NDI_UNIQUE, 0, owner,
                                          MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
-                                         "%s avoids damaging you.",
                                          "%s avoids damaging you.",
                                          op->name);
             } else {
@@ -694,7 +692,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
     && op->contr->golem_count == op->contr->ranges[range_golem]->count) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
-                      "You dismiss your existing golem.", NULL);
+                      "You dismiss your existing golem.");
         object_remove(op->contr->ranges[range_golem]);
         object_free_drop_inventory(op->contr->ranges[range_golem]);
         op->contr->ranges[range_golem] = NULL;
@@ -709,7 +707,6 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                                  "You must worship a god to cast %s.",
-                                 "You must worship a god to cast %s.",
                                  spob->name);
             return 0;
         }
@@ -718,7 +715,6 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
         if (at == NULL) {
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                                 "%s has no %s for you to call.",
                                  "%s has no %s for you to call.",
                                  god->name, spob->race);
             return 0;
@@ -735,7 +731,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
     || ob_blocked(&at->clone, op->map, op->x+freearr_x[dir], op->y+freearr_y[dir])) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "There is something in the way.", NULL);
+                      "There is something in the way.");
         return 0;
     }
     /* basically want to get proper map/coordinates for this object */
@@ -743,7 +739,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "Your spell fails.", NULL);
+                      "Your spell fails.");
         return 0;
     }
 
@@ -886,7 +882,6 @@ static object *choose_cult_monster(object *pl, const object *god, int summon_lev
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "The spell fails! %s's creatures are beyond the range of your summons",
-                             "The spell fails! %s's creatures are beyond the range of your summons",
                              god->name);
         LOG(llevDebug, "choose_cult_monster() requested non-existent aligned race!\n");
         return NULL;
@@ -972,7 +967,7 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
             LOG(llevError, "Treasurelist %s did not generate a valid entry in pets_summon_object\n", spell_ob->randomitems->name);
             draw_ext_info(NDI_UNIQUE, 0, op,
                           MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "The spell fails to summon any monsters.", NULL);
+                          "The spell fails to summon any monsters.");
             return 0;
         }
         summon_arch = lasttr->item;
@@ -996,7 +991,6 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                                  "%s has no creatures that you may summon!",
-                                 "%s has no creatures that you may summon!",
                                  god->name);
             return 0;
         }
@@ -1011,7 +1005,6 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
                 draw_ext_info_format(NDI_UNIQUE, 0, op,
                                      MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                                      "%s fails to send anything.",
-                                     "%s fails to send anything.",
                                      god->name);
                 return 0;
             }
@@ -1024,7 +1017,7 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
                 if (++tries == 5) {
                     draw_ext_info(NDI_UNIQUE, 0, op,
                                   MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                                  "There is something in the way.", NULL);
+                                  "There is something in the way.");
                     return 0;
                 }
             }
@@ -1043,7 +1036,7 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
 
     if (summon_arch == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "There is no monsters available for summoning.", NULL);
+                      "There is no monsters available for summoning.");
         return 0;
     }
 
@@ -1053,7 +1046,7 @@ int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, co
         y = freearr_y[dir];
         if (ob_blocked(&summon_arch->clone, op->map, op->x+x, op->y+y)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "There is something in the way.", NULL);
+                          "There is something in the way.");
             return 0;
         }
     }

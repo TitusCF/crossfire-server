@@ -198,7 +198,7 @@ static int adjust_sign_msg(object *pl, short x, short y, object *tmp) {
     book = get_msg_book(pl, x, y);
     if (!book) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "You need to put a book or scroll with the message.", NULL);
+                      "You need to put a book or scroll with the message.");
         return -1;
     }
 
@@ -286,7 +286,7 @@ static int find_or_create_connection_for_map(object *pl, short x, short y, objec
 
     if (!rune || !rune->msg) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "You need to put a marking rune with the group name.", NULL);
+                      "You need to put a marking rune with the group name.");
         return -1;
     }
 
@@ -307,7 +307,7 @@ static int find_or_create_connection_for_map(object *pl, short x, short y, objec
         connected = find_unused_connected_value(pl->map);
         if (connected == -1) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                          "Could not create more groups.", NULL);
+                          "Could not create more groups.");
             return -1;
         }
 
@@ -552,7 +552,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
 
     if (wall_removed == 0 && floor != NULL) {
         if (floor->arch == new_floor->arch) {
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the exact same floor.", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the exact same floor.");
             object_free_drop_inventory(new_floor);
             return 0;
         }
@@ -611,7 +611,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
         }
 
     /* Tell player about the fix */
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, message, NULL);
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, message);
     return 1;
 }
 
@@ -661,7 +661,7 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
             *underscore = '\0';
         }
         if (!strncmp(current_basename, new_basename, sizeof(new_basename))) {
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the exact same wall.", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the exact same wall.");
             object_free_drop_inventory(new_wall);
             return 0;
         }
@@ -692,7 +692,7 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
     }
 
     /* Tell player what happened */
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, message, NULL);
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, message);
     return 1;
 }
 
@@ -736,7 +736,7 @@ static int apply_builder_window(object *pl, object *new_wall_win, short x, short
             /* Check if the current wall has a window */
             if (!strcmp(underscore, "win1")
             || !strcmp(underscore, "win2")) {
-                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the window.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the window.");
                 return 0;
             }
             if (!strcmp(underscore, "2_1_1"))
@@ -745,20 +745,20 @@ static int apply_builder_window(object *pl, object *new_wall_win, short x, short
                 strcpy(underscore, "win2");
             else {
                 /* Wrong wall orientation */
-                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You cannot build a window in that wall.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You cannot build a window in that wall.");
                 return 0;
             }
         }
     } else {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "There is no wall there.", NULL);
+                      "There is no wall there.");
         return 0;
     }
 
     new_arch = find_archetype(archetype);
     if (!new_arch) {
         /* That type of wall doesn't have corresponding window archetypes */
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You cannot build a window in that wall.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You cannot build a window in that wall.");
         return 0;
     }
 
@@ -777,7 +777,7 @@ static int apply_builder_window(object *pl, object *new_wall_win, short x, short
         window->flags[flag] = old_flags[flag];
 
     /* Tell player what happened */
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You build a window in the wall.", NULL);
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You build a window in the wall.");
     return 1;
 }
 
@@ -812,7 +812,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
     /* Find floor */
     floor = GET_MAP_OB(pl->map, x, y);
     if (!floor) {
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "Invalid square.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "Invalid square.");
         object_free_drop_inventory(new_item);
         return 0;
     }
@@ -823,7 +823,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
     FOR_OB_AND_ABOVE_FINISH();
     if (!floor) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "This square has no floor, you can't build here.", NULL);
+                      "This square has no floor, you can't build here.");
         object_free_drop_inventory(new_item);
         return 0;
     }
@@ -881,7 +881,6 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
     query_name(new_item, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
                          "You build the %s",
-                         "You build the %s",
                          name);
     return 1;
 }
@@ -909,7 +908,7 @@ void apply_builder_remove(object *pl, int dir) {
     if (!item) {
         /* Should not happen with previous tests, but we never know */
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "Invalid square.", NULL);
+                      "Invalid square.");
         LOG(llevError, "apply_builder_remove: (null) square at (%d, %d, %s)\n", x, y, pl->map->path);
         return;
     }
@@ -919,7 +918,7 @@ void apply_builder_remove(object *pl, int dir) {
 
     if (!item) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "Nothing to remove.", NULL);
+                      "Nothing to remove.");
         return;
     }
 
@@ -927,7 +926,7 @@ void apply_builder_remove(object *pl, int dir) {
     switch (item->type) {
     case WALL:
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "Can't remove a wall with that, build a floor.", NULL);
+                      "Can't remove a wall with that, build a floor.");
         return;
 
     case DOOR:
@@ -948,7 +947,6 @@ void apply_builder_remove(object *pl, int dir) {
         /* Remove generic item */
         query_name(item, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                             "You remove the %s",
                              "You remove the %s",
                              name);
         object_remove(item);
@@ -977,7 +975,7 @@ void apply_map_builder(object *pl, int dir) {
 
     if (dir == 0) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "You can't build or destroy under yourself.", NULL);
+                      "You can't build or destroy under yourself.");
         return;
     }
 
@@ -987,7 +985,7 @@ void apply_map_builder(object *pl, int dir) {
     if ((1 > x) || (1 > y)
     || ((MAP_WIDTH(pl->map)-2) < x) || ((MAP_HEIGHT(pl->map)-2) < y)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "Can't build on map edge.", NULL);
+                      "Can't build on map edge.");
         return;
     }
 
@@ -1003,7 +1001,7 @@ void apply_map_builder(object *pl, int dir) {
         /* Nothing, meaning player is standing next to an undefined square. */
         LOG(llevError, "apply_map_builder: undefined square at (%d, %d, %s)\n", x, y, pl->map->path);
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "You'd better not build here, it looks weird.", NULL);
+                      "You'd better not build here, it looks weird.");
         return;
     }
 
@@ -1014,7 +1012,7 @@ void apply_map_builder(object *pl, int dir) {
             if (!QUERY_FLAG(tmp, FLAG_IS_BUILDABLE)
             && ((tmp->type != SIGN) || (strcmp(tmp->arch->name, "rune_mark")))) {
                 draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                              "You can't build here.", NULL);
+                              "You can't build here.");
                 return;
             }
         FOR_OB_AND_ABOVE_FINISH();
@@ -1039,13 +1037,13 @@ void apply_map_builder(object *pl, int dir) {
         material = find_marked_object(pl);
         if (!material) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                          "You need to mark raw materials to use.", NULL);
+                          "You need to mark raw materials to use.");
             return;
         }
 
         if (material->type != MATERIAL) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                          "You can't use the marked item to build.", NULL);
+                          "You can't use the marked item to build.");
             return;
         }
 
@@ -1053,7 +1051,7 @@ void apply_map_builder(object *pl, int dir) {
         new_arch = find_archetype(material->slaying);
         if (!new_arch) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                         "You can't use this strange material.", NULL);
+                         "You can't use this strange material.");
             LOG(llevError, "apply_map_builder: unable to find archetype %s\n", material->slaying);
             return;
         }
@@ -1062,7 +1060,7 @@ void apply_map_builder(object *pl, int dir) {
 
         if (!can_build_over(pl->map, new_item, x, y)) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                          "You can't build here.", NULL);
+                          "You can't build here.");
             return;
         }
 
@@ -1086,7 +1084,7 @@ void apply_map_builder(object *pl, int dir) {
 
         default:
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                          "Don't know how to apply this material, sorry.", NULL);
+                          "Don't know how to apply this material, sorry.");
             LOG(llevError, "apply_map_builder: invalid material subtype %d\n", material->subtype);
             break;
         }
@@ -1097,6 +1095,6 @@ void apply_map_builder(object *pl, int dir) {
 
     /* Here, it means the builder has an invalid type */
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                  "Don't know how to apply this tool, sorry.", NULL);
+                  "Don't know how to apply this tool, sorry.");
     LOG(llevError, "apply_map_builder: invalid builder subtype %d\n", builder->subtype);
 }

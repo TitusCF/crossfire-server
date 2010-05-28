@@ -9,8 +9,8 @@
 void apply_auto_fix(mapstruct *m) {
 }
 
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *message, const char *txt) {
-    fprintf(logfile, "%s\n", txt);
+void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *message) {
+    fprintf(logfile, "%s\n", message);
 }
 
 void move_firewall(object *ob) {

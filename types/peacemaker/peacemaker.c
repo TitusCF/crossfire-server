@@ -86,7 +86,6 @@ static method_ret peacemaker_type_process(ob_methods *context, object *op) {
             if (victim->name) {
                 draw_ext_info_format(NDI_UNIQUE, 0, owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                     "%s no longer feels like fighting.",
-                    "%s no longer feels like fighting.",
                     victim->name);
             }
         }

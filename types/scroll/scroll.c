@@ -64,13 +64,13 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
 
     if (QUERY_FLAG(applier, FLAG_BLIND) && !QUERY_FLAG(applier, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "You are unable to read while blind.", NULL);
+            "You are unable to read while blind.");
         return METHOD_OK;
     }
 
     if (!scroll->inv || scroll->inv->type != SPELL) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-            "The scroll just doesn't make sense!", NULL);
+            "The scroll just doesn't make sense!");
         return METHOD_OK;
     }
 
@@ -85,7 +85,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
 
         if (!skapplier) {
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "You are unable to decipher the strange symbols.", NULL);
+                "You are unable to decipher the strange symbols.");
             return METHOD_OK;
         }
 
@@ -119,11 +119,9 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
     if (QUERY_FLAG(scroll, FLAG_BLESSED) && die_roll(1, 100, applier, 1) < 10) {
         draw_ext_info_format(NDI_BLACK, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
             "Your scroll of %s glows for a second!",
-            "Your scroll of %s glows for a second!",
             name);
     } else {
         draw_ext_info_format(NDI_BLACK, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-            "The scroll of %s turns to dust.",
             "The scroll of %s turns to dust.",
             name);
 

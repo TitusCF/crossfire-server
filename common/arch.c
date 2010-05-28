@@ -209,7 +209,6 @@ void init_archetypes(void) {
 void arch_info(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
         "%d searches and %d strcmp()'s",
-        "%d searches and %d strcmp()'s",
         arch_search, arch_cmp);
 }
 

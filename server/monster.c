@@ -2008,7 +2008,7 @@ void monster_check_doors(object *op, mapstruct *m, int x, int y) {
  */
 void monster_do_say(const mapstruct *map, const char *message) {
     ext_info_map(NDI_NAVY|NDI_UNIQUE, map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
-                 message, message);
+                 message);
 }
 
 /**
@@ -2134,8 +2134,8 @@ void monster_communicate(object *op, const char *txt) {
         snprintf(own, sizeof(own), "You say: %s", txt);
         snprintf(others, sizeof(others), "%s says: %s", op->name, txt);
     }
-    draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, own, NULL);
-    ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, others, NULL);
+    draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, own);
+    ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, others);
 
     /* Then NPCs can actually talk. */
     for (i = 0; i < info.npc_msg_count; i++) {
@@ -2145,9 +2145,9 @@ void monster_communicate(object *op, const char *txt) {
 
     /* Finally, the replies the player can use. */
     if (info.replies_count > 0) {
-        draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, "Replies:", NULL);
+        draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, "Replies:");
         for (i = 0; i < info.replies_count; i++) {
-            draw_ext_info_format(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, " - %s: %s", NULL, info.replies_words[i], info.replies[i]);
+            draw_ext_info_format(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, " - %s: %s", info.replies_words[i], info.replies[i]);
             free_string(info.replies_words[i]);
             free_string(info.replies[i]);
         }
@@ -2175,7 +2175,7 @@ static int monster_do_talk_npc(object *npc, talk_info *info) {
     }
 
     if (npc->type == MAGIC_EAR) {
-        ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_EAR, message->message, NULL);
+        ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_EAR, message->message);
         use_trigger(npc);
     } else {
         char value[2];
@@ -2390,7 +2390,6 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
             if (enemy->type == PLAYER && player_can_view(enemy, op))
                 draw_ext_info_format(NDI_UNIQUE, 0, enemy, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                                      "You are discovered by %s!",
-                                     "You are discovered by %s!",
                                      op->name);
             return 1; /* detected enemy */
         } else if (enemy->invisible) {
@@ -2407,7 +2406,6 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
 
                     query_name(op, name, MAX_BUF);
                     draw_ext_info_format(NDI_UNIQUE, 0, enemy, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                                         "You see %s noticing your position.",
                                          "You see %s noticing your position.",
                                          name);
                 }
@@ -2491,8 +2489,7 @@ int monster_can_see_enemy(object *op, object *enemy) {
             if (enemy->hide) {
                 make_visible(enemy);
                 draw_ext_info(NDI_UNIQUE, 0, enemy, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                              "Your light reveals your hiding spot!",
-                              NULL);
+                              "Your light reveals your hiding spot!");
             }
             return 1;
         } else if (enemy->hide)

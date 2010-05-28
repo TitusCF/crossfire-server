@@ -185,7 +185,7 @@ int swap_map(mapstruct *map) {
         LOG(llevError, "Failed to swap map %s.\n", map->path);
         /* This is sufficiently critical to mandate to warn all DMs. */
         draw_ext_info_format(NDI_ALL_DMS|NDI_UNIQUE|NDI_RED, -1, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                             "Failed to swap map %s!", NULL, map->path);
+                             "Failed to swap map %s!", map->path);
         /* Map is *not *swapped. */
         map->in_memory = MAP_IN_MEMORY;
         return res;

@@ -330,13 +330,13 @@ void hiscore_check(object *op, int quiet) {
         if (!quiet)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "Since you have been in wizard mode, "
-                          "you can't enter the high-score list.", NULL);
+                          "you can't enter the high-score list.");
         return;
     }
     if (!op->stats.exp) {
         if (!quiet)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                          "You don't deserve to save your character yet.", NULL);
+                          "You don't deserve to save your character yet.");
         return;
     }
 
@@ -380,12 +380,12 @@ void hiscore_check(object *op, int quiet) {
             message = "You didn't beat your last score:";
     }
 
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, message, NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, message);
     if (old_score.position != -1)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-            draw_one_high_score(&old_score, bufscore, sizeof(bufscore)), NULL);
+            draw_one_high_score(&old_score, bufscore, sizeof(bufscore)));
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-        draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
+        draw_one_high_score(&new_score, bufscore, sizeof(bufscore)));
 }
 
 /**
@@ -406,8 +406,7 @@ void hiscore_display(object *op, int max, const char *match) {
     size_t j;
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                  "[fixed]Nr    Score   [print] Who <max hp><max sp><max grace>",
-                  "Nr    Score    Who <max hp><max sp><max grace>");
+                  "[fixed]Nr    Score   [print] Who <max hp><max sp><max grace>");
 
     printed_entries = 0;
     for (j = 0; j < HIGHSCORE_LENGTH && hiscore_table.entry[j].name[0] != '\0' && printed_entries < max; j++) {
@@ -424,6 +423,6 @@ void hiscore_display(object *op, int max, const char *match) {
         if (op == NULL)
             LOG(llevDebug, "%s\n", scorebuf);
         else
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf, NULL);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf);
     }
 }

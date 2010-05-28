@@ -134,7 +134,6 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
     if (!(formula = content_recipe_value(cauldron))) {
         draw_ext_info_format(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "The %s is empty.",
-                             "The %s is empty.",
                              cauldron->name);
         return;
     }
@@ -169,7 +168,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
                 skop = find_skill_by_name(caster, rp->skill);
                 if (!skop) {
                     draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                                  "You do not have the proper skill for this recipe", NULL);
+                                  "You do not have the proper skill for this recipe");
                 } else {
                     ability += skop->level*((4.0+cauldron->magic)/4.0);
                 }
@@ -185,7 +184,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
 
             if (rp->min_level != 0 && skop->level < rp->min_level) {
                 draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                    "You aren't skilled enough to try this recipe.", NULL);
+                    "You aren't skilled enough to try this recipe.");
                 return;
             }
 
@@ -312,7 +311,7 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, rec
     /* is the cauldron the right type? */
     if (!ignore_cauldron && (strcmp(rp->cauldron, cauldron->arch->name) != 0)) {
         draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You are not using the proper facilities for this formula.", NULL);
+                      "You are not using the proper facilities for this formula.");
         return NULL;
     }
 
@@ -328,8 +327,7 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, rec
         tmp = object_find_by_type_and_slaying(caster, FORCE, rp->keycode);
         if (tmp == NULL) { /* failure--no code found */
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                          "You know the ingredients, but not the technique.  Go learn how to do this recipe.",
-                          NULL);
+                          "You know the ingredients, but not the technique.  Go learn how to do this recipe.");
             return NULL;
         }
     }
@@ -345,11 +343,10 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, rec
         adjust_product(item, ability, rp->yield ? (rp->yield*batches) : batches);
         if (!item->env && (item = object_insert_in_ob(item, cauldron)) == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "Nothing happened.", NULL);
+                          "Nothing happened.");
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, caster,
                                  MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                                 "The %s %s.",
                                  "The %s %s.",
                                  cauldron->name, cauldron_sound());
         }
@@ -516,7 +513,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
 
         object_insert_in_ob(failure, cauldron);
         if (rp->failure_message) {
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, rp->failure_message, NULL);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, rp->failure_message);
         }
         return;
     }
@@ -559,7 +556,6 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         }
         remove_contents(cauldron->inv, item);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "The %s %s.",
                              "The %s %s.",
                              cauldron->name, cauldron_sound());
         return;
@@ -623,7 +619,6 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
             tmp->stats.hp = random_roll(1, level, op, PREFER_LOW);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                                  "The %s creates a bomb!",
-                                 "The %s creates a bomb!",
                                  cauldron->name);
             break;
 
@@ -633,7 +628,6 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
             tmp->stats.hp = random_roll(1, level, op, PREFER_LOW)/10+2;
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                                  "The %s erupts in flame!",
-                                 "The %s erupts in flame!",
                                  cauldron->name);
             break;
         }
@@ -641,7 +635,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         return;
     } else if (level < 60) {                 /* CREATE MONSTER */
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "The %s %s.", NULL, cauldron->name, cauldron_sound());
+                             "The %s %s.", cauldron->name, cauldron_sound());
         remove_contents(cauldron->inv, NULL);
         return;
     } else if (level < 80) {                 /* MAJOR FIRE */
@@ -651,7 +645,6 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         fire_arch_from_position(cauldron, cauldron, cauldron->x, cauldron->y, 0, fb);
         object_free_drop_inventory(fb);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "The %s erupts in flame!",
                              "The %s erupts in flame!",
                              cauldron->name);
         return;
@@ -667,11 +660,9 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
             remove_contents(cauldron->inv, NULL);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                                  "Your %s turns darker then makes a gulping sound!",
-                                 "Your %s turns darker then makes a gulping sound!",
                                  cauldron->name);
         } else
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                                 "Your %s becomes darker.",
                                  "Your %s becomes darker.",
                                  cauldron->name);
         return;
@@ -683,7 +674,6 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
             alchemy_failure_effect(op, cauldron, rp, level);
         else if (summon_hostile_monsters(cauldron, random_roll(1, 10, op, PREFER_LOW), tmp->arch->name))
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                                 "The %s %s and then pours forth monsters!",
                                  "The %s %s and then pours forth monsters!",
                                  cauldron->name, cauldron_sound());
         return;
@@ -710,7 +700,6 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
                 draw_ext_info_format(NDI_UNIQUE, 0, op,
                                      MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                                      "The %s %s.",
-                                     "The %s %s.",
                                      cauldron->name, cauldron_sound());
             }
         }
@@ -718,7 +707,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
     } else {                /* MANA STORM - watch out!! */
         object *tmp = create_archetype(LOOSE_MANA);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "You unwisely release potent forces!", NULL);
+                      "You unwisely release potent forces!");
         remove_contents(cauldron->inv, NULL);
         cast_magic_storm(op, tmp, level);
         return;
@@ -996,7 +985,7 @@ int use_alchemy(object *op) {
     char name[MAX_BUF];
 
     if (QUERY_FLAG(op, FLAG_WIZ))
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, "Note: alchemy in wizard-mode.\n", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, "Note: alchemy in wizard-mode.\n");
 
     FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
@@ -1018,12 +1007,10 @@ int use_alchemy(object *op) {
         query_base_name(unpaid_cauldron, 0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                              "You must pay for your %s first!",
-                             "You must pay for your %s first!",
                              name);
     } else if (unpaid_item) {
         query_base_name(unpaid_item, 0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                             "You must pay for your %s first!",
                              "You must pay for your %s first!",
                              name);
     }

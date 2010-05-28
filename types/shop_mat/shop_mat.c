@@ -93,7 +93,7 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
         rv = teleport(trap, SHOP_MAT, victim);
         if (trap->msg) {
             draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                trap->msg, NULL);
+                trap->msg);
         }
         /* This check below is a bit simplistic - generally it should be correct,
          * but there is never a guarantee that the bottom space on the map is
@@ -103,16 +103,16 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
             opinion = shopkeeper_approval(victim->map, victim);
             if (opinion > 0.9)
                 draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                    "The shopkeeper gives you a friendly wave.", NULL);
+                    "The shopkeeper gives you a friendly wave.");
             else if (opinion > 0.75)
                 draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                    "The shopkeeper waves to you.", NULL);
+                    "The shopkeeper waves to you.");
             else if (opinion > 0.5)
                 draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                    "The shopkeeper ignores you.", NULL);
+                    "The shopkeeper ignores you.");
             else
                 draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
-                    "The shopkeeper glares at you with contempt.", NULL);
+                    "The shopkeeper glares at you with contempt.");
         }
     } else {
         /* if we get here, a player tried to leave a shop but was not able

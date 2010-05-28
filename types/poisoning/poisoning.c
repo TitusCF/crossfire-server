@@ -63,7 +63,7 @@ static method_ret poisoning_type_process(ob_methods *context, object *op) {
             CLEAR_FLAG(op, FLAG_APPLIED);
             fix_object(op->env);
             draw_ext_info(NDI_UNIQUE, 0, op->env, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                "You feel much better now.", NULL);
+                "You feel much better now.");
         }
         object_remove(op);
         object_free_drop_inventory(op);
@@ -74,7 +74,7 @@ static method_ret poisoning_type_process(ob_methods *context, object *op) {
         op->env->stats.food--;
         /* Not really the start of a bad effect, more the continuing effect */
         draw_ext_info(NDI_UNIQUE, 0, op->env, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-            "You feel very sick...", NULL);
+            "You feel very sick...");
     }
     (void)hit_player(op->env, op->stats.dam, op, AT_INTERNAL, 1);
     return METHOD_OK;

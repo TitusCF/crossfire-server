@@ -93,13 +93,12 @@ int recharge(object *op, object *caster, object *spell_ob) {
     wand = find_marked_object(op);
     if (wand == NULL || wand->type != WAND) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "You need to mark the wand you want to recharge.", NULL);
+                      "You need to mark the wand you want to recharge.");
         return 0;
     }
     if (!(random_roll(0, 3, op, PREFER_HIGH))) {
         query_name(wand, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                             "The %s vibrates violently, then explodes!",
                              "The %s vibrates violently, then explodes!",
                              name);
         play_sound_map(SOUND_TYPE_ITEM, wand, 0, "explode");
@@ -123,7 +122,6 @@ int recharge(object *op, object *caster, object *spell_ob) {
         query_name(wand, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "Your %s is broken.",
-                             "Your %s is broken.",
                              name);
         return 0;
     }
@@ -133,7 +131,6 @@ int recharge(object *op, object *caster, object *spell_ob) {
     wand->stats.food += ncharges;
     query_name(wand, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                         "The %s glows with power.",
                          "The %s glows with power.",
                          name);
 
@@ -265,11 +262,9 @@ static void polymorph_melt(object *who, object *op) {
     if (op->nrof > 1)
         draw_ext_info_format(NDI_GREY, 0, who, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "The %s glow red, melt and evaporate!",
-                             "The %s glow red, melt and evaporate!",
                              name);
     else
         draw_ext_info_format(NDI_GREY, 0, who, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                             "The %s glows red, melts and evaporates!",
                              "The %s glows red, melts and evaporates!",
                              name);
     play_sound_map(SOUND_TYPE_ITEM, op, 0, "evaporate");
@@ -544,14 +539,12 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
                 object_free2(missile, FREE_OBJ_NO_DESTROY_CALLBACK);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                      "No such object %ss of %s",
-                                     "No such object %ss of %s",
                                      missile_name, stringarg);
                 return 0;
             }
             if (al->item->slaying) {
                 object_free2(missile, FREE_OBJ_NO_DESTROY_CALLBACK);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                                     "You are not allowed to create %ss of %s",
                                      "You are not allowed to create %ss of %s",
                                      missile_name, stringarg);
                 return 0;
@@ -575,8 +568,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
     if (missile->nrof <= 3*(missile_plus+bonus_plus)) {
         object_free2(missile, FREE_OBJ_NO_DESTROY_CALLBACK);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                             "This item is too powerful for you to create!",
-                             NULL);
+                             "This item is too powerful for you to create!");
         return 0;
     }
     missile->nrof -= 3*(missile_plus+bonus_plus);
@@ -662,7 +654,7 @@ int cast_create_food(object *op, object *caster, object *spell_ob, int dir, cons
      */
     if (!at) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "You don't have enough experience to create any food.", NULL);
+                      "You don't have enough experience to create any food.");
         return 0;
     }
 
@@ -715,14 +707,14 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
 
         if (!QUERY_FLAG(op, FLAG_WIZCAST) && (mflags&P_NO_MAGIC)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "Something blocks your magic.", NULL);
+                          "Something blocks your magic.");
             return 0;
         }
         if (mflags&P_IS_ALIVE) {
             FOR_MAP_PREPARE(m, x, y, tmp)
                 if (QUERY_FLAG(tmp, FLAG_ALIVE) && (tmp->type == PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                                  "You detect something.", NULL);
+                                  "You detect something.");
                     examine_monster(op, HEAD(tmp));
                     return 1;
                 }
@@ -730,7 +722,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
         }
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                  "You detect nothing.", NULL);
+                  "You detect nothing.");
     return 1;
 }
 
@@ -804,7 +796,7 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
 
     if (op->invisible > 1000) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "You can not extend the duration of your invisibility any further", NULL);
+                      "You can not extend the duration of your invisibility any further");
         return 0;
     }
 
@@ -830,10 +822,10 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
     }
     if (makes_invisible_to(op, op))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                      "You can't see your hands!", NULL);
+                      "You can't see your hands!");
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                      "You feel more transparent!", NULL);
+                      "You feel more transparent!");
 
     object_update(op, UP_OBJ_FACE);
 
@@ -920,14 +912,14 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
 
     if (object_find_by_type_subtype(op, SPELL_EFFECT, SP_WORD_OF_RECALL)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                      "You feel a force starting to build up inside you.", NULL);
+                      "You feel a force starting to build up inside you.");
         return 1;
     }
 
     dummy = create_archetype(FORCE_NAME);
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!", NULL);
+                      "Oops, program error!");
         LOG(llevError, "cast_word_of_recall: create_archetype(force) failed!\n");
         return 0;
     }
@@ -954,7 +946,7 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
 
     (void)object_insert_in_ob(dummy, op);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                  "You feel a force starting to build up inside you.", NULL);
+                  "You feel a force starting to build up inside you.");
     return 1;
 }
 
@@ -1020,27 +1012,25 @@ int perceive_self(object *op) {
     if (god)
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
                              "You worship %s",
-                             "You worship %s",
                              god->name);
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
-                      "You worship no god", NULL);
+                      "You worship no god");
 
     tmp = arch_present_in_ob(at, op);
 
     if (*cp == '\0' && tmp == NULL)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
-                      "You feel very mundane", NULL);
+                      "You feel very mundane");
     else {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
-                      "You have:", NULL);
+                      "You have:");
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
-                      cp, cp);
+                      cp);
         if (tmp != NULL) {
             for (i = 0; i < NUM_STATS; i++) {
                 if (get_attr_value(&tmp->stats, i) < 0) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
-                                         "Your %s is depleted by %d",
                                          "Your %s is depleted by %d",
                                          statname[i], -(get_attr_value(&tmp->stats, i)));
                 }
@@ -1049,7 +1039,7 @@ int perceive_self(object *op) {
     }
     if (op->glow_radius > 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
-                      "You glow in the dark.", NULL);
+                      "You glow in the dark.");
 
     if (is_dragon_pl(op)) {
         /* now grab the 'dragon_ability'-force from the player's inventory */
@@ -1061,7 +1051,7 @@ int perceive_self(object *op) {
                 snprintf(buf, sizeof(buf), "Your metabolism is focused on %s.", change_resist_msg[tmp->stats.exp]);
             }
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
-                          buf, buf);
+                          buf);
         }
     }
     return 1;
@@ -1111,7 +1101,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     if (!settings.create_home_portals) {
         if (!strncmp(op->map->path, settings.localdir, strlen(settings.localdir))) {
             draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                          "You can't cast that here.", NULL);
+                          "You can't cast that here.");
             return 0;
         }
     }
@@ -1119,7 +1109,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     /* Check to see if the player is on a transport */
     if (op->contr && op->contr->transport) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "You need to exit the transport to cast that.", NULL);
+                      "You need to exit the transport to cast that.");
         return 0;
     }
 
@@ -1129,7 +1119,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     dummy = arch_to_object(spell->other_arch);
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!", NULL);
+                      "Oops, program error!");
         LOG(llevError, "object_new failed (force in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
@@ -1149,8 +1139,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
         object_insert_in_ob(dummy, op);
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                       "You fix this place in your mind and feel that you "
-                      "can come here from anywhere.",
-                      NULL);
+                      "can come here from anywhere.");
         return 1;
     }
     object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
@@ -1175,7 +1164,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     dummy = create_archetype(spell->race);
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!", NULL);
+                      "Oops, program error!");
         LOG(llevError, "object_new failed (force) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
@@ -1243,14 +1232,13 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     /* If we were unable to load (ex. random map deleted), warn player*/
     if (exitmap == NULL) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "Something strange happens. You can't remember where to go!?",
-                      NULL);
+                      "Something strange happens. You can't remember where to go!?");
         object_remove(force);
         object_free2(force, 0);
         return 1;
     } else if (exitmap->last_reset_time.tv_sec != force->weapontype) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "The spell effect has expired.", NULL);
+                      "The spell effect has expired.");
         object_remove(force);
         object_free2(force, 0);
         return 1;
@@ -1275,7 +1263,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     dummy = create_archetype(spell->slaying); /*The portal*/
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!", NULL);
+                      "Oops, program error!");
         LOG(llevError, "object_new failed (perm_magic_portal) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
@@ -1304,7 +1292,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     tmp = create_archetype(spell->race);
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!", NULL);
+                      "Oops, program error!");
         LOG(llevError, "object_new failed (force) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
@@ -1324,7 +1312,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     dummy = create_archetype(spell->slaying);  /*The portal*/
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!", NULL);
+                      "Oops, program error!");
         LOG(llevError, "object_new failed (perm_magic_portal) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
@@ -1352,7 +1340,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     tmp = create_archetype(spell->race);
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!", NULL);
+                      "Oops, program error!");
         LOG(llevError, "object_new failed (force) in cast_create_town_portal for %s!\n", op->name);
         return 0;
     }
@@ -1365,7 +1353,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     /* Describe the player what happened
      */
     draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                  "You see air moving and showing you the way home.", NULL);
+                  "You see air moving and showing you the way home.");
     object_remove(force); /* Delete the force inside the player*/
     object_free2(force, 0);
     return 1;
@@ -1411,7 +1399,7 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
     && (get_map_flags(m, &m, x, y, &x, &y)&(P_OUT_OF_MAP|P_IS_ALIVE)
     || ((spell_ob->move_block&GET_MAP_MOVE_BLOCK(m, x, y)) == spell_ob->move_block))) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Something is in the way.", NULL);
+                      "Something is in the way.");
         return 0;
     }
     if (spell_ob->other_arch) {
@@ -1424,7 +1412,7 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
         if (!at) {
             LOG(llevError, "summon_wall: Unable to find archetype %s\n", buf1);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                          "This spell is broken.", NULL);
+                          "This spell is broken.");
             return 0;
         }
         tmp = arch_to_object(at);
@@ -1465,7 +1453,6 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
     name = tmp->name;
     if ((tmp = object_insert_in_map_at(tmp, m, op, 0, x, y)) == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                             "Something destroys your %s",
                              "Something destroys your %s",
                              name);
         return 0;
@@ -1554,7 +1541,7 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
 
     if (!dir) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "In what direction?", NULL);
+                      "In what direction?");
         return 0;
     }
 
@@ -1566,7 +1553,7 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
     if (op->contr->count) {
         if (op->contr->count > maxdist) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                          "You can't dimension door that far!", NULL);
+                          "You can't dimension door that far!");
             return 0;
         }
 
@@ -1586,7 +1573,7 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
 
         if (dist < op->contr->count) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "Something blocks the magic of the spell.", NULL);
+                          "Something blocks the magic of the spell.");
             op->contr->count = 0;
             return 0;
         }
@@ -1604,7 +1591,7 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
                                &sx, &sy);
         if (mflags&P_IS_ALIVE || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy))) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "You cast your spell, but nothing happens.", NULL);
+                          "You cast your spell, but nothing happens.");
             return 1; /* Maybe the penalty should be more severe... */
         }
     } else {
@@ -1639,7 +1626,7 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
         }
         if (!dist) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "Your spell failed!", NULL);
+                          "Your spell failed!");
             return 0;
         }
     }
@@ -1648,7 +1635,7 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
         ob_apply(op->contr->transport, op, 0);
         if (op->contr->transport) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "Your spell failed!", NULL);
+                          "Your spell failed!");
             return 0;
         }
     }
@@ -1698,7 +1685,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
     if (heal) {
         if (tmp->stats.hp >= tmp->stats.maxhp) {
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "You are already fully healed.", NULL);
+                          "You are already fully healed.");
         } else {
             /* See how many points we actually heal.  Instead of messages
              * based on type of spell, we instead do messages based
@@ -1710,19 +1697,19 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
 
             if (tmp->stats.hp >= tmp->stats.maxhp) {
                 draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                              "You feel just fine!", NULL);
+                              "You feel just fine!");
             } else if (heal > 50) {
                 draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                              "Your wounds close!", NULL);
+                              "Your wounds close!");
             } else if (heal > 25) {
                 draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                              "Your wounds mostly close.", NULL);
+                              "Your wounds mostly close.");
             } else if (heal > 10) {
                 draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                              "Your wounds start to fade.", NULL);
+                              "Your wounds start to fade.");
             } else {
                 draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                              "Your wounds start to close.", NULL);
+                              "Your wounds start to close.");
             }
             success = 1;
         }
@@ -1737,7 +1724,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         if (poison) {
             success = 1;
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                          "Your body feels cleansed", NULL);
+                          "Your body feels cleansed");
             poison->stats.food = 1;
         }
     }
@@ -1746,7 +1733,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         if (poison) {
             success = 1;
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                          "Your mind feels clearer", NULL);
+                          "Your mind feels clearer");
             poison->duration = 1;
         }
     }
@@ -1756,7 +1743,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         if (poison) {
             success = 1;
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                          "Your vision begins to return.", NULL);
+                          "Your vision begins to return.");
             poison->stats.food = 1;
         }
     }
@@ -1766,7 +1753,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
             tmp->stats.sp = tmp->stats.maxsp;
         success = 1;
         draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                      "Magical energies surge through your body!", NULL);
+                      "Magical energies surge through your body!");
     }
     if (spell->last_grace && tmp->stats.grace < tmp->stats.maxgrace) {
         tmp->stats.grace += spell->last_grace;
@@ -1774,7 +1761,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
             tmp->stats.grace = tmp->stats.maxgrace;
         success = 1;
         draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                      "You feel redeemed with you god!", NULL);
+                      "You feel redeemed with you god!");
     }
     if (spell->stats.food && tmp->stats.food < 999) {
         tmp->stats.food += spell->stats.food;
@@ -1783,7 +1770,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         success = 1;
         /* We could do something a bit better like the messages for healing above */
         draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                      "You feel your belly fill with food", NULL);
+                      "You feel your belly fill with food");
     }
     return success;
 }
@@ -1848,7 +1835,6 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
                 if (!silent)
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                          "You can not cast %s while %s is in effect",
-                                         "You can not cast %s while %s is in effect",
                                          spell_ob->name, tmp2->name_pl);
                 return 0;
             }
@@ -1871,10 +1857,10 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
         if (duration > force->duration) {
             force->duration = duration;
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                          "You recast the spell while in effect.", NULL);
+                          "You recast the spell while in effect.");
         } else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "Recasting the spell had no effect.", NULL);
+                          "Recasting the spell had no effect.");
         }
         return 1;
     }
@@ -1914,7 +1900,7 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
                 set_attr_value(&force->stats, i, sm);
                 if (!sm)
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                                  no_gain_msgs[i], no_gain_msgs[i]);
+                                  no_gain_msgs[i]);
             }
         }
     }
@@ -1984,7 +1970,6 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
             } else if (spell_ob->race && spell_ob->race == tmp2->name) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                      "You can not cast %s while %s is in effect",
-                                     "You can not cast %s while %s is in effect",
                                      spell_ob->name, tmp2->name_pl);
                 return 0;
             }
@@ -2007,10 +1992,10 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
         if (duration > force->duration) {
             force->duration = duration;
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                          "You recast the spell while in effect.", NULL);
+                          "You recast the spell while in effect.");
         } else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "Recasting the spell had no effect.", NULL);
+                          "Recasting the spell had no effect.");
         }
         return 0;
     }
@@ -2021,7 +2006,7 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
 
     if (!god) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "Your blessing seems empty.", NULL);
+                      "Your blessing seems empty.");
     } else {
         /* Only give out good benefits, and put a max on it */
         for (i = 0; i < NROFATTACKS; i++) {
@@ -2038,15 +2023,12 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
         if (tmp != op) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                  "You bless %s.",
-                                 "You bless %s.",
                                  tmp->name);
             draw_ext_info_format(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
-                                 "%s blessed you.",
                                  "%s blessed you.",
                                  op->name);
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
-                                 "You are blessed by %s!",
                                  "You are blessed by %s!",
                                  god->name);
         }
@@ -2333,14 +2315,14 @@ int remove_curse(object *op, object *caster, object *spell) {
     if (op->type == PLAYER) {
         if (success) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                          "You feel like some of your items are looser now.", NULL);
+                          "You feel like some of your items are looser now.");
         } else {
             if (was_one)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                              "You failed to remove the curse.", NULL);
+                              "You failed to remove the curse.");
             else
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                              "You are not using any cursed items.", NULL);
+                              "You are not using any cursed items.");
         }
     }
     return success;
@@ -2364,21 +2346,21 @@ int cast_item_curse_or_curse(object *op, object *caster, object *spell_ob) {
 
     if (!marked) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "You need to mark an item first!", NULL);
+                      "You need to mark an item first!");
         return 0;
     }
 
     if ((QUERY_FLAG(marked, FLAG_CURSED) && QUERY_FLAG(spell_ob, FLAG_CURSED))
         || (QUERY_FLAG(marked, FLAG_BLESSED) && QUERY_FLAG(spell_ob, FLAG_BLESSED))) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "The spell has no effect", NULL);
+                      "The spell has no effect");
         return 0;
     }
 
     query_short_name(marked, name, HUGE_BUF);
     if (QUERY_FLAG(spell_ob, FLAG_CURSED)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                             "Your %s emits a dark light for a few seconds.", "Your %s emits a dark light for a few seconds.", name);
+                             "Your %s emits a dark light for a few seconds.", name);
         SET_FLAG(marked, FLAG_CURSED);
         CLEAR_FLAG(marked, FLAG_KNOWN_CURSED);
         CLEAR_FLAG(marked, FLAG_IDENTIFIED);
@@ -2387,7 +2369,7 @@ int cast_item_curse_or_curse(object *op, object *caster, object *spell_ob) {
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                         "Your %s glows blue for a few seconds.", "Your %s glows blue for a few seconds.", name);
+                         "Your %s glows blue for a few seconds.", name);
     SET_FLAG(marked, FLAG_BLESSED);
     SET_FLAG(marked, FLAG_KNOWN_BLESSED);
     SET_FLAG(marked, FLAG_STARTEQUIP);
@@ -2424,11 +2406,9 @@ int cast_identify(object *op, object *caster, object *spell) {
             if (op->type == PLAYER) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                      "You have %s.",
-                                     "You have %s.",
                                      ob_describe(tmp, op, desc, sizeof(desc)));
                 if (tmp->msg) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
-                                         "The item has a story:\n%s",
                                          "The item has a story:\n%s",
                                          tmp->msg);
                 }
@@ -2452,11 +2432,9 @@ int cast_identify(object *op, object *caster, object *spell) {
                 if (op->type == PLAYER) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                          "On the ground is %s.",
-                                         "On the ground is %s.",
                                          ob_describe(tmp, op, desc, sizeof(desc)));
                     if (tmp->msg) {
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
-                                             "The item has a story:\n%s",
                                              "The item has a story:\n%s",
                                              tmp->msg);
                     }
@@ -2471,7 +2449,7 @@ int cast_identify(object *op, object *caster, object *spell) {
     }
     if (!success)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "You can't reach anything unidentified.", NULL);
+                      "You can't reach anything unidentified.");
     else {
         spell_effect(spell, op->x, op->y, op->map, op);
     }
@@ -2667,13 +2645,13 @@ static void charge_mana_effect(object *victim, int caster_level) {
         return;
 
     draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
-                  "You feel energy course through you.", NULL);
+                  "You feel energy course through you.");
 
     if (victim->stats.sp >= victim->stats.maxsp*2) {
         object *tmp;
 
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SPELL,
-                      "Your head explodes!", NULL);
+                      "Your head explodes!");
 
         /* Explodes a fireball centered at player */
         tmp = create_archetype(EXPLODING_FIREBALL);
@@ -2683,17 +2661,17 @@ static void charge_mana_effect(object *victim, int caster_level) {
         victim->stats.sp = 2*victim->stats.maxsp;
     } else if (victim->stats.sp >= victim->stats.maxsp*1.88) {
         draw_ext_info(NDI_UNIQUE, NDI_ORANGE, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
-                      "You feel like your head is going to explode.", NULL);
+                      "You feel like your head is going to explode.");
     } else if (victim->stats.sp >= victim->stats.maxsp*1.66) {
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
-                      "You get a splitting headache!", NULL);
+                      "You get a splitting headache!");
     } else if (victim->stats.sp >= victim->stats.maxsp*1.5) {
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
-                      "Chaos fills your world.", NULL);
+                      "Chaos fills your world.");
         confuse_living(victim, victim, 99);
     } else if (victim->stats.sp >= victim->stats.maxsp*1.25) {
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
-                      "You start hearing voices.", NULL);
+                      "You start hearing voices.");
     }
 }
 
@@ -2745,7 +2723,7 @@ int cast_transfer(object *op, object *caster, object *spell, int dir) {
 
     if (!plyr) {
         draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "There is no one there.", NULL);
+                      "There is no one there.");
         return 0;
     }
 
@@ -2869,7 +2847,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
 
     if (!god) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "You can't consecrate anything if you don't worship a god!", NULL);
+                      "You can't consecrate anything if you don't worship a god!");
         return 0;
     }
 
@@ -2879,7 +2857,6 @@ int cast_consecrate(object *op, object *caster, object *spell) {
         if (tmp->type == HOLY_ALTAR) {
             if (tmp->level > caster_level(caster, spell)) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                                     "You are not powerful enough to reconsecrate the %s",
                                      "You are not powerful enough to reconsecrate the %s",
                                      tmp->name);
                 return 0;
@@ -2897,7 +2874,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 altar_arch = find_archetype(buf);
                 if (!altar_arch) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                                         "You fail to consecrate the altar.", NULL);
+                                         "You fail to consecrate the altar.");
                     LOG(llevError, "cast_consecrate: can't find altar %s for god %s\n", buf, god->name);
                     return 0;
                 }
@@ -2907,14 +2884,13 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 object_remove(tmp);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                      "You consecrated the altar to %s!",
-                                     "You consecrated the altar to %s!",
                                      god->name);
                 return 1;
             }
         }
     } FOR_BELOW_FINISH();
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                  "You are not standing over an altar!", NULL);
+                  "You are not standing over an altar!");
     return 0;
 }
 
@@ -2951,7 +2927,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
 
     if (!spell->other_arch) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!", NULL);
+                      "Oops, program error!");
         LOG(llevError, "animate_weapon failed: spell %s missing other_arch!\n", spell->name);
         return 0;
     }
@@ -2979,7 +2955,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
     || (get_map_flags(m, &m, x, y, &x, &y)&P_OUT_OF_MAP)
     || ((spell->other_arch->clone.move_type&GET_MAP_MOVE_BLOCK(m, x, y)) == spell->other_arch->clone.move_type)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "There is something in the way.", NULL);
+                      "There is something in the way.");
         return 0;
     }
 
@@ -2988,22 +2964,22 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
 
     if (!weapon) {
         draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "You must mark a weapon to use with this spell!", NULL);
+                      "You must mark a weapon to use with this spell!");
         return 0;
     }
     if (spell->race && strcmp(weapon->arch->name, spell->race)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "The spell fails to transform your weapon.", NULL);
+                      "The spell fails to transform your weapon.");
         return 0;
     }
     if (weapon->type != WEAPON) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "You need to mark a weapon to animate it.", NULL);
+                      "You need to mark a weapon to animate it.");
         return 0;
     }
     if (QUERY_FLAG(weapon, FLAG_UNPAID)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "You need to pay for the weapon to animate it.", NULL);
+                      "You need to pay for the weapon to animate it.");
         return 0;
     }
     if (QUERY_FLAG(weapon, FLAG_APPLIED)) {
@@ -3011,7 +2987,6 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
 
         query_name(weapon, wn, MAX_BUF);
         draw_ext_info_format(NDI_BLACK, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                             "You need to unequip %s before using it in this spell",
                              "You need to unequip %s before using it in this spell",
                              wn);
         return 0;
@@ -3178,10 +3153,10 @@ int cast_change_map_lightlevel(object *op, object *caster, object *spell) {
     if (!success) {
         if (spell->stats.dam < 0)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "It can be no brighter here.", NULL);
+                          "It can be no brighter here.");
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                          "It can be no darker here.", NULL);
+                          "It can be no darker here.");
     }
     return success;
 }
@@ -3261,7 +3236,7 @@ int create_aura(object *op, object *caster, object *spell) {
 
     if (refresh)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                      "You recast the spell while in effect.", NULL);
+                      "You recast the spell while in effect.");
     else
         object_insert_in_ob(new_aura, op);
     return 1;
@@ -3288,13 +3263,13 @@ int write_mark(object *op, object *spell, const char *msg) {
 
     if (!msg || msg[0] == 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Write what?", NULL);
+                      "Write what?");
         return 0;
     }
 
     if (strcasestr_local(msg, "endmsg")) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Trying to cheat are we?", NULL);
+                      "Trying to cheat are we?");
         LOG(llevInfo, "write_rune: player %s tried to write bogus rune %s\n", op->name, msg);
         return 0;
     }

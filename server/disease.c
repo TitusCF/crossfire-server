@@ -419,14 +419,14 @@ int infect_object(object *victim, object *disease, int force) {
 
         if (victim->type == PLAYER)
             draw_ext_info(NDI_UNIQUE|NDI_RED, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
-                          buf, buf);
+                          buf);
         else
             draw_ext_info(0, 4, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
-                          buf, buf);
+                          buf);
     }
     if (victim->type == PLAYER)
         draw_ext_info(NDI_UNIQUE|NDI_RED, 0, victim, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-                      "You suddenly feel ill.", NULL);
+                      "You suddenly feel ill.");
 
     return 1;
 }
@@ -654,7 +654,7 @@ void move_symptom(object *symptom) {
         return;
     }
     draw_ext_info(NDI_UNIQUE|NDI_RED, 0, victim, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-                  symptom->msg, symptom->msg);
+                  symptom->msg);
 }
 
 /**
@@ -717,10 +717,10 @@ int cure_disease(object *sufferer, object *caster) {
         /* Only draw these messages once */
         if (caster)
             draw_ext_info_format(NDI_UNIQUE, 0, caster, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                                 "You cure a disease!", NULL);
+                                 "You cure a disease!");
 
         draw_ext_info(NDI_UNIQUE, 0, sufferer, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                      "You no longer feel diseased.", NULL);
+                      "You no longer feel diseased.");
     }
     return cure;
 }

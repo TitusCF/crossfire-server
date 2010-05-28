@@ -70,7 +70,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
 
         if (remove_depletion(applier, potion->level) == 0)
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "Your potion had no effect.", NULL);
+                "Your potion had no effect.");
 
         object_decrease_nrof_by_one(potion);
         return METHOD_OK;
@@ -115,18 +115,18 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
                 fix_object(applier);
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                               "The Gods smile upon you and remake you a little more in their image."
-                              "You feel a little more perfect.", NULL);
+                              "You feel a little more perfect.");
             } else
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                              "The potion had no effect - you are already perfect", NULL);
+                              "The potion had no effect - you are already perfect");
         } else {  /* cursed potion */
             if (got_one) {
                 fix_object(applier);
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                              "The Gods are angry and punish you.", NULL);
+                              "The Gods are angry and punish you.");
             } else
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                              "You are fortunate that you are so pathetic.", NULL);
+                              "You are fortunate that you are so pathetic.");
         }
         object_decrease_nrof_by_one(potion);
         return METHOD_OK;
@@ -143,7 +143,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             object *fball;
 
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                "Yech!  Your lungs are on fire!", NULL);
+                "Yech!  Your lungs are on fire!");
             /* Explodes a fireball centered at player */
             fball = create_archetype(EXPLODING_FIREBALL);
             fball->dam_modifier = random_roll(1, applier->level, applier, PREFER_LOW)/5+1;
@@ -179,7 +179,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
 
         /* cursed items last longer */
         if (QUERY_FLAG(potion, FLAG_CURSED) || QUERY_FLAG(potion, FLAG_DAMNED)) {
-            draw_ext_info_format(NDI_RED|NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED, "The %s was cursed!", NULL, potion->name);
+            draw_ext_info_format(NDI_RED|NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED, "The %s was cursed!", potion->name);
             force->duration *= 10;
             for (i = 0; i < NROFATTACKS; i++)
                 if (force->resist[i] > 0)
@@ -208,7 +208,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             SET_FLAG(potion, FLAG_APPLIED);
         if (!change_abil(applier, potion))
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "Nothing happened.", NULL);
+                "Nothing happened.");
     }
 
     /* CLEAR_FLAG is so that if the character has other potions

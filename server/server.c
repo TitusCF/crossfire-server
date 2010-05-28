@@ -81,10 +81,8 @@ static const char days[7][4] = {
 void version(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
                          "This is Crossfire v%s",
-                         "This is Crossfire v%s",
                          FULL_VERSION);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
-                  "The authors can be reached at crossfire@metalforge.org",
 "The authors can be reached at crossfire@metalforge.org");
 }
 
@@ -97,12 +95,10 @@ void version(object *op) {
 void start_info(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
                          "Welcome to Crossfire, v%s!\nPress `?' for help\n",
-                         "Welcome to Crossfire, v%s!\nPress `?' for help\n",
                          VERSION);
 
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, op,
                          MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                         "%s entered the game.",
                          "%s entered the game.",
                          op->name);
 }
@@ -217,7 +213,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
         if (out_of_map(newmap, x, y)) {
             LOG(llevError, "enter_map: map %s provides invalid default enter location (%d, %d) > (%d, %d)\n", newmap->path, x, y, MAP_WIDTH(newmap), MAP_HEIGHT(newmap));
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                          "The exit is closed", NULL);
+                          "The exit is closed");
             return;
         }
     }
@@ -486,7 +482,6 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                              "The %s is closed.",
-                             "The %s is closed.",
                              exit_ob->name);
         /* Should only occur when no source map is set.
          */
@@ -550,7 +545,6 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
     } else {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                             "The %s is closed.",
                              "The %s is closed.",
                              exit_ob->name);
         /* Should only occur when an invalid source map is set.
@@ -694,7 +688,6 @@ static void enter_unique_map(object *op, object *exit_ob) {
         draw_ext_info_format(NDI_UNIQUE, 0, op,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                              "The %s is closed.",
-                             "The %s is closed.",
                              exit_ob->name);
         /* Perhaps not critical, but I would think that the unique maps
          * should be new enough this does not happen.  This also creates
@@ -775,7 +768,6 @@ void enter_exit(object *op, object *exit_ob) {
                         draw_ext_info_format(NDI_UNIQUE, 0, op,
                                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                                              "The %s is closed.",
-                                             "The %s is closed.",
                                              exit_ob->name);
                         return;
                     }
@@ -802,7 +794,6 @@ void enter_exit(object *op, object *exit_ob) {
                 if (exit_ob->name)
                     draw_ext_info_format(NDI_UNIQUE, 0, op,
                                          MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                                         "The %s is closed.",
                                          "The %s is closed.",
                                          exit_ob->name);
                 /* don't cry to momma if name is not set - as in tmp objects
@@ -912,7 +903,7 @@ static void process_players1(void) {
                         map_newmap_cmd(&pl->socket);
                     }
                 } else {
-                    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", NULL, pl->followed_player);
+                    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", pl->followed_player);
                     FREE_AND_CLEAR_STR(pl->followed_player);
                 }
             } /** End of follow */
@@ -1253,7 +1244,6 @@ void leave(player *pl, int draw_exit) {
             draw_ext_info_format(NDI_UNIQUE, 0, pl->transport->contr->ob,
                                  MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                                  "%s has left.  You are now the captain of %s",
-                                 "%s has left.  You are now the captain of %s",
                                  pl->ob->name, name);
         }
     }
@@ -1272,7 +1262,6 @@ void leave(player *pl, int draw_exit) {
     && (pl != NULL && draw_exit) && (pl->state != ST_GET_NAME && pl->state != ST_GET_PASSWORD && pl->state != ST_CONFIRM_PASSWORD))
         draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
                              MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                             "%s left the game.",
                              "%s left the game.",
                              pl->ob->name);
 }

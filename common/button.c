@@ -102,7 +102,7 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
             if (!tmp->stats.food || tmp->last_eat < tmp->stats.food) {
                 ext_info_map(NDI_UNIQUE|NDI_NAVY, tmp->map,
                     MSG_TYPE_SIGN, MSG_SUBTYPE_NONE,
-                    tmp->msg, tmp->msg);
+                    tmp->msg);
                 if (tmp->stats.food)
                     tmp->last_eat++;
             }
@@ -484,7 +484,7 @@ int operate_altar(object *altar, object **sacrifice) {
     *sacrifice = object_decrease_nrof(*sacrifice, number);
 
     if (altar->msg)
-        ext_info_map(NDI_BLACK, altar->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_ALTAR, altar->msg, altar->msg);
+        ext_info_map(NDI_BLACK, altar->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_ALTAR, altar->msg);
     return 1;
 }
 

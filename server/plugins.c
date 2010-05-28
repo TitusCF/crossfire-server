@@ -638,14 +638,13 @@ void plugins_display_list(object *op) {
     crossfire_plugin *cp;
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                  "List of loaded plugins:\n-----------------------", NULL);
+                  "List of loaded plugins:\n-----------------------");
 
     if (plugins_list == NULL)
         return;
 
     for (cp = plugins_list; cp != NULL; cp = cp->next) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                             "%s, %s",
                              "%s, %s",
                              cp->id, cp->fullname);
     }
@@ -1484,7 +1483,7 @@ void *cfapi_map_message(int *type, ...) {
     va_end(args);
 
     /* function should be extended to take message types probably */
-    ext_info_map(color, map, MSG_TYPE_MISC, MSG_SUBTYPE_NONE, string, string);
+    ext_info_map(color, map, MSG_TYPE_MISC, MSG_SUBTYPE_NONE, string);
     *type = CFAPI_NONE;
     return NULL;
 }
@@ -4328,7 +4327,7 @@ void *cfapi_player_message(int *type, ...) {
     va_end(args);
 
     draw_ext_info(flags, pri, pl, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
-                  buf, buf);
+                  buf);
     *type = CFAPI_NONE;
     return NULL;
 }

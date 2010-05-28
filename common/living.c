@@ -524,7 +524,7 @@ void check_stat_bounds(living *stats, sint8 min_stat, sint8 max_stat) {
  * function since some of the values passed to draw_ext_info are hardcoded.
  */
 #define DIFF_MSG(flag, subtype1, subtype2, msg1, msg2) \
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, (flag > 0) ? subtype1 : subtype2, (flag > 0) ? msg1 : msg2, NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, (flag > 0) ? subtype1 : subtype2, (flag > 0) ? msg1 : msg2);
 
 /**
  * Permanently alters an object's stats/flags based on another object.
@@ -692,7 +692,7 @@ int change_abil(object *op, object *tmp) {
                 if (op->race)
                     free_string(op->race);
                 op->race = add_string("undead");
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE, "Your lifeforce drains away!", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE, "Your lifeforce drains away!");
             } else {
                 if (op->race)
                     free_string(op->race);
@@ -700,7 +700,7 @@ int change_abil(object *op, object *tmp) {
                     op->race = add_string(op->arch->clone.race);
                 else
                     op->race = NULL;
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE, "Your lifeforce returns!", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE, "Your lifeforce returns!");
             }
         }
 
@@ -723,18 +723,18 @@ int change_abil(object *op, object *tmp) {
         success = 1;
         if (flag > 0) {
             if (QUERY_FLAG(op, FLAG_WIZ))
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START, "Your mortal self is blinded.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START, "Your mortal self is blinded.");
             else {
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START, "You are blinded.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START, "You are blinded.");
                 SET_FLAG(op, FLAG_BLIND);
                 if (op->type == PLAYER)
                     op->contr->do_los = 1;
             }
         } else {
             if (QUERY_FLAG(op, FLAG_WIZ))
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END, "Your mortal self can now see again.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END, "Your mortal self can now see again.");
             else {
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END, "Your vision returns.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END, "Your vision returns.");
                 CLEAR_FLAG(op, FLAG_BLIND);
                 if (op->type == PLAYER)
                     op->contr->do_los = 1;
@@ -755,17 +755,17 @@ int change_abil(object *op, object *tmp) {
         success = 1;
         if (flag > 0) {
             if (QUERY_FLAG(op, FLAG_WIZ))
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, "Your vision becomes a little clearer.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, "Your vision becomes a little clearer.");
             else {
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, "Everything becomes transparent.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, "Everything becomes transparent.");
                 if (op->type == PLAYER)
                     op->contr->do_los = 1;
             }
         } else {
             if (QUERY_FLAG(op, FLAG_WIZ))
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END, "Your vision becomes a bit out of focus.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END, "Your vision becomes a bit out of focus.");
             else {
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END, "Everything suddenly looks very solid.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END, "Everything suddenly looks very solid.");
                 if (op->type == PLAYER)
                     op->contr->do_los = 1;
             }
@@ -818,11 +818,9 @@ int change_abil(object *op, object *tmp) {
             if (op->resist[i] > refop.resist[i])
                 draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
                                      "Your resistance to %s rises to %d%%.",
-                                     "Your resistance to %s rises to %d%%.",
                                      change_resist_msg[i], op->resist[i]);
             else
                 draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
-                                     "Your resistance to %s drops to %d%%.",
                                      "Your resistance to %s drops to %d%%.",
                                      change_resist_msg[i], op->resist[i]);
         }
@@ -876,7 +874,7 @@ void drain_specific_stat(object *op, int deplete_stats) {
         }
     }
 
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS, drain_msg[deplete_stats], NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS, drain_msg[deplete_stats]);
     change_attr_value(&tmp->stats, deplete_stats, -1);
     fix_object(op);
 }
@@ -908,7 +906,7 @@ int remove_depletion(object *op, int level) {
     for (i = 0; i < NUM_STATS; i++) {
         if (get_attr_value(&depl->stats, i)) {
             count++;
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_GAIN, restore_msg[i], NULL);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_GAIN, restore_msg[i]);
         }
     }
 
@@ -1805,7 +1803,6 @@ static void dragon_level_gain(object *who) {
             /* apply new ability focus */
             draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
                                  "Your metabolism now focuses on %s!",
-                                 "Your metabolism now focuses on %s!",
                                  change_resist_msg[abil->last_eat]);
 
             abil->stats.exp = abil->last_eat;
@@ -1906,7 +1903,7 @@ void player_lvl_adj(object *who, object *op) {
                 snprintf(buf, sizeof(buf), "You are now level %d.", op->level);
 
             if (who)
-                draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf, buf);
+                draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf);
         }
         player_lvl_adj(who, op); /* To increase more levels */
     } else if (op->level > 1 && op->stats.exp < level_exp(op->level, who->expmul)) {
@@ -1916,7 +1913,6 @@ void player_lvl_adj(object *who, object *op) {
         if (op->type != PLAYER) {
             if (who)
                 draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_LOSS,
-                                     "You are now level %d in the %s skill.",
                                      "You are now level %d in the %s skill.",
                                      op->level, op->name);
         }

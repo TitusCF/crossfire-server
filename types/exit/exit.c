@@ -59,7 +59,7 @@ static method_ret exit_type_move_on(ob_methods *context, object *trap, object *v
         if (trap->msg
         && strncmp(EXIT_PATH(trap), "/!", 2)
         && strncmp(EXIT_PATH(trap), "/random/", 8))
-            draw_ext_info(NDI_NAVY, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP, trap->msg, NULL);
+            draw_ext_info(NDI_NAVY, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP, trap->msg);
         enter_exit(victim, trap);
     }
     common_post_ob_move_on(trap, victim, originator);
@@ -165,13 +165,13 @@ static method_ret exit_type_apply(ob_methods *context, object *exit, object *op,
 
         query_name(exit, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                             "The %s is closed.", "The %s is closed.", name);
+                             "The %s is closed.", name);
     } else {
         /* Don't display messages for random maps. */
         if (exit->msg
         && strncmp(EXIT_PATH(exit), "/!", 2)
         && strncmp(EXIT_PATH(exit), "/random/", 8))
-            draw_ext_info(NDI_NAVY, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, exit->msg, NULL);
+            draw_ext_info(NDI_NAVY, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, exit->msg);
         enter_exit(op, exit);
     }
     return METHOD_OK;

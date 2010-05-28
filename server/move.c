@@ -290,13 +290,11 @@ void recursive_roll(object *op, int dir, object *pusher) {
     if (!roll_ob(op, dir, pusher)) {
         draw_ext_info_format(NDI_UNIQUE, 0, pusher, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                              "You fail to push the %s.",
-                             "You fail to push the %s.",
                              name);
         return;
     }
     (void)move_ob(pusher, dir, pusher);
     draw_ext_info_format(NDI_BLACK, 0, pusher, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                         "You move the %s.",
                          "You move the %s.",
                          name);
     return;
@@ -485,7 +483,6 @@ int push_ob(object *who, int dir, object *pusher) {
             draw_ext_info_format(NDI_UNIQUE, 0, pusher,
                                  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                                  "You start to attack %s !!",
-                                 "You start to attack %s !!",
                                  who->name);
             CLEAR_FLAG(who, FLAG_UNAGGRESSIVE); /* the sucker don't like you anymore */
             object_set_enemy(who, pusher);
@@ -493,7 +490,6 @@ int push_ob(object *who, int dir, object *pusher) {
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, pusher,
                                  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                                 "You avoid attacking %s.",
                                  "You avoid attacking %s.",
                                  who->name);
         }
@@ -503,7 +499,6 @@ int push_ob(object *who, int dir, object *pusher) {
     if (QUERY_FLAG(who, FLAG_STAND_STILL)) {
         draw_ext_info_format(NDI_UNIQUE, 0, pusher,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                             "You can't push %s.",
                              "You can't push %s.",
                              who->name);
         return 0;
@@ -524,7 +519,6 @@ int push_ob(object *who, int dir, object *pusher) {
         if (who->type == PLAYER) {
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_PUSHED,
                                  "%s tried to push you.",
-                                 "%s tried to push you.",
                                  pusher->name);
         }
         return 0;
@@ -536,12 +530,10 @@ int push_ob(object *who, int dir, object *pusher) {
     if (who->type == PLAYER) {
         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_PUSHED,
                              "%s pushed you.",
-                             "%s pushed you.",
                              pusher->name);
     }
     if (pusher->type == PLAYER) {
         draw_ext_info_format(NDI_UNIQUE, 0, pusher, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_PUSHED,
-                             "You pushed %s back.",
                              "You pushed %s back.",
                              who->name);
     }

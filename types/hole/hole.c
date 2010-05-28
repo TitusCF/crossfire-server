@@ -63,7 +63,7 @@ static method_ret hole_type_move_on(ob_methods *context, object *trap, object *v
     }
     play_sound_map(SOUND_TYPE_GROUND, trap, 0, "fall hole");
     draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
-       "You fall through the hole!", NULL);
+       "You fall through the hole!");
     transfer_ob(victim, EXIT_X(trap), EXIT_Y(trap), 1, victim);
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;

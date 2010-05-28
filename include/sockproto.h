@@ -7,11 +7,11 @@ void send_image_info(socket_struct *ns, char *params);
 void send_image_sums(socket_struct *ns, char *params);
 /* info.c */
 void print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, const char *message);
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *message, const char *oldmessage);
-void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *new_format, const char *old_format, ...);
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2);
-void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, uint8 subtype, const char *str1, const char *str2);
-void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2, int type, int subtype, const char *str1, const char *str2);
+void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *message);
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *format, ...);
+void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1);
+void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, uint8 subtype, const char *str1);
+void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2, int type, int subtype, const char *str1);
 void rangetostring(const object *pl, char *obuf, size_t len);
 void set_title(const object *pl, char *buf, size_t len);
 void magic_mapping_mark(object *pl, char *map_mark, int strength);

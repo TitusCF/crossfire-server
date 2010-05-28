@@ -55,24 +55,23 @@ extern "C"
  * Dummy functions to link the library.
  */
 
-void draw_ext_info(int, int, const object *, uint8, uint8, const char *txt, const char *) {
+void draw_ext_info(int, int, const object *, uint8, uint8, const char *txt) {
     fprintf(logfile, "%s\n", txt);
 }
 
 void draw_ext_info_format(
                           int, int, const object *, uint8,
                           uint8,
-                          const char *,
-                          const char *old_format,
+                          const char *format,
                           ...) {
     va_list ap;
-    va_start(ap, old_format);
-    vfprintf(logfile, old_format, ap);
+    va_start(ap, format);
+    vfprintf(logfile, format, ap);
     va_end(ap);
 }
 
-void ext_info_map(int, const mapstruct *, uint8, uint8, const char *, const char *str2) {
-    fprintf(logfile, "ext_info_map: %s\n", str2);
+void ext_info_map(int, const mapstruct *, uint8, uint8, const char *str1) {
+    fprintf(logfile, "ext_info_map: %s\n", str1);
 }
 
 void move_firewall(object *) {

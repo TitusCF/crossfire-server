@@ -457,11 +457,11 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
         if (QUERY_FLAG(skill, FLAG_APPLIED)) {
             CLEAR_FLAG(skill, FLAG_APPLIED);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                          "You come to earth.", NULL);
+                          "You come to earth.");
         } else {
             SET_FLAG(skill, FLAG_APPLIED);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                          "You rise into the air!.", NULL);
+                          "You rise into the air!.");
         }
         fix_object(op);
         success = 1;
@@ -556,13 +556,13 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
 
     case SK_SET_TRAP:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "This skill is not currently implemented.", NULL);
+                      "This skill is not currently implemented.");
         break;
 
     case SK_USE_MAGIC_ITEM:
     case SK_MISSILE_WEAPON:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "There is no special attack for this skill.", NULL);
+                      "There is no special attack for this skill.");
         break;
 
     case SK_PRAYING:
@@ -583,7 +583,7 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
     case SK_FIRE_MAGIC:
     case SK_WATER_MAGIC:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "This skill is already in effect.", NULL);
+                      "This skill is already in effect.");
         break;
 
     case SK_HARVESTING:
@@ -869,25 +869,24 @@ void show_skills(object *op, const char *search) {
             if (num_skills_found >= NUM_SKILLS) {
                 draw_ext_info(NDI_RED, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                               "Your character has too many skills. "
-                              "Something isn't right - contact the server admin", NULL);
+                              "Something isn't right - contact the server admin");
                 break;
             }
         }
     } FOR_INV_FINISH();
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
-                  "Player skills:", NULL);
+                  "Player skills:");
 
     if (num_skills_found > 1)
         qsort(skills, num_skills_found, MAX_BUF, (int (*)(const void *, const void *))strcmp);
 
     for (i = 0; i < num_skills_found; i++) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
-                      skills[i], skills[i]);
+                      skills[i]);
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
-                         "You can handle %d weapon improvements.",
                          "You can handle %d weapon improvements.",
                          op->level/5+5);
 
@@ -896,11 +895,9 @@ void show_skills(object *op, const char *search) {
         cp = NULL;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
                          "You worship %s.",
-                         "You worship %s.",
                          cp ? cp : "no god at current time");
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
-                         "Your equipped item power is %d out of %d\n",
                          "Your equipped item power is %d out of %d\n",
                          op->contr->item_power, op->level);
 }
@@ -943,7 +940,6 @@ int use_skill(object *op, const char *string) {
     } FOR_INV_FINISH();
     if (!skop) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                             "Unable to find skill %s",
                              "Unable to find skill %s",
                              string);
         return 0;
@@ -1019,7 +1015,6 @@ static object *find_best_player_hth_skill(object *op) {
 
         if (!best_skill) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                                 "Unable to find skill %s - using default unarmed skill",
                                  "Unable to find skill %s - using default unarmed skill",
                                  op->contr->unarmed_skill);
         } else {
@@ -1122,7 +1117,7 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                     if (!skill) {
                         draw_ext_info(NDI_BLACK, 0, op,
                                       MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                                      "You have no unarmed combat skills!", NULL);
+                                      "You have no unarmed combat skills!");
                         return 0;
                     }
                 }
@@ -1132,7 +1127,6 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                 if (!change_skill(op, skill, 1)) { /* oh oh, trouble! */
                     draw_ext_info_format(NDI_UNIQUE, 0, tmp,
                                          MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                                         "Couldn't change to skill %s",
                                          "Couldn't change to skill %s",
                                          skill->name);
                     return 0;
@@ -1188,13 +1182,11 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
                                  "You %s %s!",
-                                 "You %s %s!",
                                  string, op_name);
         } else if (tmp->type == PLAYER) {
             query_name(op, op_name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, tmp,
                                  MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
-                                 "%s %s you!",
                                  "%s %s you!",
                                  op_name, string);
         }
@@ -1204,7 +1196,6 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
         query_name(tmp, op_name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op,
                              MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_MISS,
-                             "You miss %s!",
                              "You miss %s!",
                              op_name);
     }
@@ -1281,7 +1272,7 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
     if (!tmp) {
         if (pl->type == PLAYER)
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "There is nothing to attack!", NULL);
+                          "There is nothing to attack!");
         return 0;
     }
 
@@ -1321,12 +1312,11 @@ static int attack_hth(object *pl, int dir, const char *string, object *skill) {
                 draw_ext_info_format(NDI_UNIQUE, 0, pl,
                                      MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                                      "You are unable to unwield %s in order to attack with %s.",
-                                     "You are unable to unwield %s in order to attack with %s.",
                                      weaponname, skill->name);
                 return 0;
             } else {
                 draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                              "You unwield your weapon in order to attack.", NULL);
+                              "You unwield your weapon in order to attack.");
             }
         }
     }
@@ -1359,7 +1349,7 @@ static int attack_melee_weapon(object *op, int dir, const char *string, object *
     if (!QUERY_FLAG(op, FLAG_READY_WEAPON)) {
         if (op->type == PLAYER)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                          "You have no ready weapon to attack with!", NULL);
+                          "You have no ready weapon to attack with!");
         return 0;
     }
     return skill_attack(NULL, op, dir, string, skill);

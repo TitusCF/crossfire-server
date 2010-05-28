@@ -57,7 +57,6 @@ static void do_turn(object *op, object *who, int aflags, const char *onoff) {
     if (!(aflags&AP_NOPRINT))
         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
             "You turn %s your %s.",
-            NULL,
             onoff, op->name);
 
     tmp2 = arch_to_object(op->other_arch);
@@ -79,7 +78,7 @@ static void do_turn(object *op, object *who, int aflags, const char *onoff) {
         if (who->type == PLAYER) {
             if (!(aflags&AP_NOPRINT))
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                    "Oops, it feels deadly cold!", NULL);
+                    "Oops, it feels deadly cold!");
             SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
         }
     }
@@ -110,7 +109,7 @@ static method_ret lamp_type_apply(ob_methods *context, object *lamp, object *app
 
     if (object_get_player_container(lamp) != applier) {
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "You must get it first!\n", NULL);
+            "You must get it first!\n");
         return METHOD_ERROR;
     }
 
@@ -126,7 +125,6 @@ static method_ret lamp_type_apply(ob_methods *context, object *lamp, object *app
             if (!(aflags&AP_NOPRINT))
                 draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                     "Your %s is out of fuel!",
-                    NULL,
                     lamp->name);
             return METHOD_OK;
         }

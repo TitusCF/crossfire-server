@@ -66,7 +66,7 @@ static method_ret altar_type_move_on(ob_methods *context, object *trap, object *
          */
         if (trap->inv && trap->inv->type == SPELL) {
             draw_ext_info_format(NDI_BLACK, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "The altar casts %s.", "The altar casts %s.", trap->inv->name);
+                "The altar casts %s.", trap->inv->name);
             cast_spell(originator, trap, 0, trap->inv, NULL);
         } else {
             trap->value = 1;  /* works only once */

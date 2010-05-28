@@ -68,7 +68,7 @@ int command_me(object *op, char *params) {
         return 0;
     snprintf(buf, sizeof(buf), "%s %s", op->name, params);
     ext_info_map(NDI_UNIQUE|NDI_BLUE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_ME,
-                 buf, NULL);
+                 buf);
     return 0;
 }
 
@@ -89,12 +89,11 @@ int command_cointoss(object *op, char *params) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
         "You flip a coin.... %s!",
-        "You flip a coin.... %s!",
         result);
 
     snprintf(buf, sizeof(buf), "%s flips a coin.... %s!", op->name, result);
     ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-        buf, NULL);
+        buf);
 
     return 0;
 }
@@ -155,7 +154,6 @@ int command_orcknuckle(object *op, char *params) {
 
         if (number_dice < DICE) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-                                 "You need at least %d dice to play orcknuckle!",
                                  "You need at least %d dice to play orcknuckle!", DICE);
             return 0;
         }
@@ -172,9 +170,9 @@ int command_orcknuckle(object *op, char *params) {
     snprintf(buf, sizeof(buf), "You roll %s, %s, %s, %s!", orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-                  buf, NULL);
+                  buf);
     ext_info_map_except(NDI_UNIQUE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-                        buf2, NULL);
+                        buf2);
 
     if (name) {
         /* Randomly lose dice */
@@ -182,7 +180,7 @@ int command_orcknuckle(object *op, char *params) {
             /* Lose one randomly. */
             object_decrease_nrof_by_one(dice[rndm(1, dice_count)-1]);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-                          "Oops, you lost a die!", "Oops, you lost a die!");
+                          "Oops, you lost a die!");
         }
     }
 
@@ -211,18 +209,17 @@ int command_orcknuckle(object *op, char *params) {
 static int command_tell_all(object *op, char *params, int pri, int color, int subtype, const char *desc) {
     if (op->contr->no_shout == 1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You are no longer allowed to shout or chat.", NULL);
+                      "You are no longer allowed to shout or chat.");
         return 1;
     }
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Shout/Chat what?", NULL);
+                      "Shout/Chat what?");
         return 1;
     }
 
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|color, pri, NULL, MSG_TYPE_COMMUNICATION, subtype,
-                         "%s %s: %s",
                          "%s %s: %s",
                          op->name, desc, params);
 
@@ -286,13 +283,12 @@ static int do_tell(object *op, char *params, int adjust_listen) {
 
     if (name == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Tell whom what?", NULL);
+                      "Tell whom what?");
         return 1;
     }
 
     if (msg == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "Tell %s what?",
                              "Tell %s what?",
                              name);
         return 1;
@@ -312,7 +308,7 @@ static int do_tell(object *op, char *params, int adjust_listen) {
         execute_global_event(EVENT_TELL, op, msg, pl->ob);
 
         draw_ext_info(NDI_UNIQUE|NDI_ORANGE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-                      buf, NULL);
+                      buf);
 
         if (adjust_listen)
             pl->listening = original_listen;
@@ -324,7 +320,6 @@ static int do_tell(object *op, char *params, int adjust_listen) {
         if (!pl->hidden || QUERY_FLAG(op, FLAG_WIZ)) {
             draw_ext_info_format(NDI_UNIQUE|NDI_ORANGE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
                                  "You tell %s: %s",
-                                 "You tell %s: %s",
                                  pl->ob->name, msg);
 
             return 1;
@@ -332,7 +327,7 @@ static int do_tell(object *op, char *params, int adjust_listen) {
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                  "No such player or ambiguous name.", NULL);
+                  "No such player or ambiguous name.");
     return 1;
 }
 
@@ -381,13 +376,13 @@ int command_reply(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Reply what?", NULL);
+                      "Reply what?");
         return 1;
     }
 
     if (op->contr->last_tell[0] == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You can't reply to nobody.", NULL);
+                      "You can't reply to nobody.");
         return 1;
     }
 
@@ -395,7 +390,7 @@ int command_reply(object *op, char *params) {
     pl = find_player(op->contr->last_tell);
     if (pl == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You can't reply, this player left.", NULL);
+                      "You can't reply, this player left.");
         return 1;
     }
 
@@ -404,17 +399,15 @@ int command_reply(object *op, char *params) {
 
     draw_ext_info_format(NDI_UNIQUE|NDI_ORANGE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
                          "%s tells you: %s",
-                         "%s tells you: %s",
                          op->name, params);
 
     if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You can't reply, this player left.", NULL);
+                      "You can't reply, this player left.");
         return 1;
     }
 
     draw_ext_info_format(NDI_UNIQUE|NDI_ORANGE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-                         "You tell to %s: %s",
                          "You tell to %s: %s",
                          pl->ob->name, params);
     return 1;
@@ -693,9 +686,9 @@ static int basic_emote(object *op, char *params, int emotion) {
             break;
         } /*case*/
         ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                            buf, NULL);
+                            buf);
         draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                      buf2, NULL);
+                      buf2);
         return(0);
     } else {
         for (pl = first_player; pl != NULL; pl = pl->next) {
@@ -886,11 +879,11 @@ static int basic_emote(object *op, char *params, int emotion) {
                     break;
                 } /*case*/
                 draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                              buf, NULL);
+                              buf);
                 draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                              buf2, NULL);
+                              buf2);
                 ext_info_map_except2(NDI_WHITE, op->map, op, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                                     buf3, NULL);
+                                     buf3);
                 return(0);
             }
             if (strncasecmp(pl->ob->name, params, MAX_NAME) == 0
@@ -1008,14 +1001,13 @@ static int basic_emote(object *op, char *params, int emotion) {
                     break;
                 }/*case*/
                 draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                              buf, NULL);
+                              buf);
                 ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                                    buf2, NULL);
+                                    buf2);
                 return(0);
             }/*if self*/
         }/*for*/
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "%s is not around.",
                              "%s is not around.",
                              params);
         return(1);

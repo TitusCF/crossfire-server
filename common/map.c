@@ -439,7 +439,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
                          */
                         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, ob,
                                       MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_NOKEY,
-                                      tmp->msg, tmp->msg);
+                                      tmp->msg);
                     }
                     return 1;
                 }
@@ -451,7 +451,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
                     if (tmp->msg) {
                         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, ob,
                                       MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_NOKEY,
-                                      tmp->msg, tmp->msg);
+                                      tmp->msg);
                     }
                     return 1;
                 }
@@ -2034,9 +2034,9 @@ int change_map_light(mapstruct *m, int change) {
 
     /* inform all players on the map */
     if (change > 0)
-        ext_info_map(NDI_BLACK, m, MSG_TYPE_MISC, MSG_SUBTYPE_NONE, "It becomes darker.", NULL);
+        ext_info_map(NDI_BLACK, m, MSG_TYPE_MISC, MSG_SUBTYPE_NONE, "It becomes darker.");
     else
-        ext_info_map(NDI_BLACK, m, MSG_TYPE_MISC, MSG_SUBTYPE_NONE, "It becomes brighter.", NULL);
+        ext_info_map(NDI_BLACK, m, MSG_TYPE_MISC, MSG_SUBTYPE_NONE, "It becomes brighter.");
 
     /* Do extra checking.  since m->darkness is a unsigned value,
      * we need to be extra careful about negative values.

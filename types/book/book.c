@@ -57,12 +57,11 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
 
     if (QUERY_FLAG(applier, FLAG_BLIND) && !QUERY_FLAG(applier, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "You are unable to read while blind.", NULL);
+            "You are unable to read while blind.");
         return METHOD_OK;
     }
     if (op->msg == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-            "You open the %s and find it empty.",
             "You open the %s and find it empty.",
             op->name);
         return METHOD_OK;
@@ -72,29 +71,29 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
     skill_ob = find_skill_by_name(applier, op->skill);
     if (!skill_ob) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-            "You are unable to decipher the strange symbols.", NULL);
+            "You are unable to decipher the strange symbols.");
         return METHOD_OK;
     }
     lev_diff = op->level-(skill_ob->level+5);
     if (!QUERY_FLAG(applier, FLAG_WIZ) && lev_diff > 0) {
         if (lev_diff < 2)
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "This book is just barely beyond your comprehension.", NULL);
+                "This book is just barely beyond your comprehension.");
         else if (lev_diff < 3)
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "This book is slightly beyond your comprehension.", NULL);
+                "This book is slightly beyond your comprehension.");
         else if (lev_diff < 5)
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "This book is beyond your comprehension.", NULL);
+                "This book is beyond your comprehension.");
         else if (lev_diff < 8)
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "This book is quite a bit beyond your comprehension.", NULL);
+                "This book is quite a bit beyond your comprehension.");
         else if (lev_diff < 15)
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "This book is way beyond your comprehension.", NULL);
+                "This book is way beyond your comprehension.");
         else
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "This book is totally beyond your comprehension.", NULL);
+                "This book is totally beyond your comprehension.");
         return METHOD_OK;
     }
 
@@ -107,7 +106,6 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
         const readable_message_type *msgType = get_readable_message_type(op);
 
         draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, applier, msgType->message_type, msgType->message_subtype,
-            "You open the %s and start reading.\n%s",
             "You open the %s and start reading.\n%s",
             ob_describe(op, applier, desc, sizeof(desc)), op->msg);
         if (applier->contr)

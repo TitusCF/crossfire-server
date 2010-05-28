@@ -316,7 +316,6 @@ static void print_tod(object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "It is %d minute%s past %d o'clock %s, on %s",
-                         "It is %d minute%s past %d o'clock %s, on %s",
                          tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
                          ((tod.hour%14 == 0) ? 14 : ((tod.hour)%14)),
                          ((tod.hour >= 14) ? "pm" : "am"),
@@ -334,11 +333,9 @@ static void print_tod(object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "The %d%s Day of the %s, Year %d",
-                         "The %d%s Day of the %s, Year %d",
                          day, suf, month_name[tod.month], tod.year+1);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "Time of Year: %s",
                          "Time of Year: %s",
                          season_name[tod.season]);
 }
@@ -359,28 +356,24 @@ void time_info(object *op) {
         return;
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                  "Total time:", NULL);
+                  "Total time:");
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "ticks=%d  time=%d.%2d",
                          "ticks=%d  time=%d.%2d",
                          pticks, process_tot_mtime/1000, process_tot_mtime%1000);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "avg time=%dms  max time=%dms  min time=%dms",
                          "avg time=%dms  max time=%dms  min time=%dms",
                          process_tot_mtime/pticks, process_max_utime/1000,
                          process_min_utime/1000);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "ticks longer than max time (%dms) = %d (%d%%)",
-                         "ticks longer than max time (%dms) = %d (%d%%)",
                          max_time/1000,
                          process_utime_long_count, 100*process_utime_long_count/pticks);
 
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "Time last %d ticks:",
                          "Time last %d ticks:",
                          MIN(pticks, PBUFLEN));
 
@@ -396,12 +389,10 @@ void time_info(object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "avg time=%dms  max time=%dms  min time=%dms",
-                         "avg time=%dms  max time=%dms  min time=%dms",
                          tot/MIN(pticks, PBUFLEN)/1000, maxt/1000,
                          mint/1000);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "ticks longer than max time (%dms) = %d (%d%%)",
                          "ticks longer than max time (%dms) = %d (%d%%)",
                          max_time/1000, long_count,
                          100*long_count/MIN(pticks, PBUFLEN));

@@ -61,7 +61,7 @@ void emergency_save(int flag) {
         }
         LOG(llevError, "%s ", pl->ob->name);
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
-                      "Emergency save...", NULL);
+                      "Emergency save...");
 
         /* If we are not exiting the game (ie, this is sort of a backup save), then
          * don't change the location back to the village.  Note that there are other
@@ -77,7 +77,7 @@ void emergency_save(int flag) {
         if (!save_player(pl->ob, flag)) {
             LOG(llevError, "(failed) ");
             draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                          "Emergency save failed, checking score...", NULL);
+                          "Emergency save failed, checking score...");
         }
         hiscore_check(pl->ob, 1);
     }
@@ -174,18 +174,18 @@ int verify_player(const char *name, char *password) {
 int check_name(player *me, const char *name) {
     if (*name == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, me->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                      "Your username cannot be blank.", NULL);
+                      "Your username cannot be blank.");
         return 0;
     }
 
     if (!playername_ok(name)) {
         draw_ext_info(NDI_UNIQUE, 0, me->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                      "That name contains illegal characters. Use letters, hyphens and underscores only. Hyphens and underscores are not allowed as the first character.", NULL);
+                      "That name contains illegal characters. Use letters, hyphens and underscores only. Hyphens and underscores are not allowed as the first character.");
         return 0;
     }
     if (strlen(name) >= MAX_NAME) {
         draw_ext_info_format(NDI_UNIQUE, 0, me->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                             "That name is too long. (Max length: %d characters)", NULL, MAX_NAME);
+                             "That name is too long. (Max length: %d characters)", MAX_NAME);
         return 0;
     }
 
@@ -239,7 +239,7 @@ int save_player(object *op, int flag) {
     if (!pl->name_changed || (!flag && !op->stats.exp)) {
         if (!flag) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                          "Your game is not valid, game not saved.", NULL);
+                          "Your game is not valid, game not saved.");
         }
         return 0;
     }
@@ -278,7 +278,7 @@ int save_player(object *op, int flag) {
     fp = tempnam_secure(settings.tmpdir, NULL, &tmpfilename);
     if (!fp) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                      "Can't get secure temporary file for save.", NULL);
+                      "Can't get secure temporary file for save.");
         LOG(llevDebug, "Can't get secure temporary file for save.\n");
         return 0;
     }
@@ -379,8 +379,8 @@ int save_player(object *op, int flag) {
 
     if (fclose(fp) != 0 || i != SAVE_ERROR_OK) { /* make sure the write succeeded */
         draw_ext_info(NDI_UNIQUE|NDI_RED, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                      "Can't save character!", NULL);
-        draw_ext_info_format(NDI_ALL_DMS|NDI_RED, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "Save failure for player %s!", NULL, op->name);
+                      "Can't save character!");
+        draw_ext_info_format(NDI_ALL_DMS|NDI_RED, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "Save failure for player %s!", op->name);
         unlink(tmpfilename);
         free(tmpfilename);
         return 0;
@@ -404,7 +404,7 @@ int save_player(object *op, int flag) {
     fp = fopen(filename, "w");
     if (!fp) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                      "Can't open file for save.", NULL);
+                      "Can't open file for save.");
         unlink(tmpfilename);
         free(tmpfilename);
         return 0;
@@ -415,7 +415,7 @@ int save_player(object *op, int flag) {
     free(tmpfilename);
     if (fclose(fp) == EOF) { /* got write error */
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                      "Can't close file for save.", NULL);
+                      "Can't close file for save.");
         rename(backupfile, filename); /* Restore the original */
         return 0;
     } else
@@ -465,8 +465,7 @@ static void wrong_password(object *op) {
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
                   "\nA character with this name already exists. "
                   "Please choose another name, or make sure you entered your "
-                  "password correctly.\n",
-                  NULL);
+                  "password correctly.\n");
 
     FREE_AND_COPY(op->name, "noname");
     FREE_AND_COPY(op->name_pl, "noname");
@@ -475,8 +474,7 @@ static void wrong_password(object *op) {
     if (op->contr->socket.password_fails >= MAX_PASSWORD_FAILURES) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
                       "You gave an incorrect password too many times, "
-                      "you will now be dropped from the server.",
-                      NULL);
+                      "you will now be dropped from the server.");
 
         LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n",
             op->contr->socket.host);
@@ -800,10 +798,9 @@ void check_login(object *op, int check_pass) {
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                  "Welcome Back!", NULL);
+                  "Welcome Back!");
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
                          MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                         "%s has entered the game.",
                          "%s has entered the game.",
                          pl->ob->name);
 
@@ -818,8 +815,7 @@ void check_login(object *op, int check_pass) {
      */
     if (op->stats.hp < 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                      "Your character was dead last time you played.",
-                      NULL);
+                      "Your character was dead last time you played.");
         kill_player(op);
         if (pl->state != ST_PLAYING)
             return;
@@ -879,7 +875,7 @@ void check_login(object *op, int check_pass) {
         else
             snprintf(buf, MAX_BUF, "Couldn't rejoin party %s: %s.", party_name, party ? "invalid password." : "no such party.");
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      buf, NULL);
+                      buf);
     }
     free(party_name);
 }

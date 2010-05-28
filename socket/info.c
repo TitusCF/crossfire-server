@@ -87,15 +87,13 @@ void print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, cons
  *
  * @param type The type MSG_TYPE for the type of message.
  *
- * @param subtype The subtype of MSG_TYPE for the message.
+ * @param subtype The subtype of the message.
  *
- * @param message The message to send to clients that support draw_ext_info.
- *
- * @param oldmessage Ignored.
+ * @param message The message to send.
  */
 void draw_ext_info(
     int flags, int pri, const object *pl, uint8 type,
-    uint8 subtype, const char *message, const char *oldmessage) {
+    uint8 subtype, const char *message) {
 
     if ((flags&NDI_ALL) || (flags&NDI_ALL_DMS)) {
         player *tmppl;
@@ -103,7 +101,7 @@ void draw_ext_info(
         for (tmppl = first_player; tmppl != NULL; tmppl = tmppl->next) {
             if ((flags&NDI_ALL_DMS) && !QUERY_FLAG(tmppl->ob, FLAG_WIZ))
                 continue;
-            draw_ext_info((flags&~NDI_ALL&~NDI_ALL_DMS), pri, tmppl->ob, type, subtype, message, oldmessage);
+            draw_ext_info((flags&~NDI_ALL&~NDI_ALL_DMS), pri, tmppl->ob, type, subtype, message);
         }
 
         return;
@@ -117,7 +115,6 @@ void draw_ext_info(
         return;
 
     print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, message);
-
 }
 
 /**
@@ -126,8 +123,7 @@ void draw_ext_info(
  *  This function is the same as draw_ext_info, but takes varargs format.
  *  Otherwise, the meaning of all the fields is the same.  This is perhaps not
  *  the most efficient as we do vsnprintf on both the old and newbuf, but it
- *  simplifies the code greatly since we can just call draw_ext_info.  Also,
- *  hopefully at some point, need for old_format will go away.
+ *  simplifies the code greatly since we can just call draw_ext_info.
  *
  * @param flags Various flags - mostly color, plus a few specials.
  *
@@ -144,60 +140,52 @@ void draw_ext_info(
  * @param subtype The type MSG_TYPE for the type of message.
  *
  * @param new_format
- *
- * @param old_format
  */
-void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *new_format, const char *old_format, ...) {
-    char newbuf[HUGE_BUF], oldbuf[HUGE_BUF];
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *format, ...) {
+    char buf[HUGE_BUF];
     va_list ap;
 
-    if (!old_format)
-        old_format = new_format;
-
-    va_start(ap, old_format);
-    vsnprintf(oldbuf, HUGE_BUF, old_format, ap);
-    va_end(ap);
-    va_start(ap, old_format);
-    vsnprintf(newbuf, HUGE_BUF, new_format, ap);
+    va_start(ap, format);
+    vsnprintf(buf, HUGE_BUF, format, ap);
     va_end(ap);
 
-    draw_ext_info(flags, pri, pl, type, subtype, newbuf, oldbuf);
+    draw_ext_info(flags, pri, pl, type, subtype, buf);
 }
 
 /**
  * Writes to everyone on the specified map
  */
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2) {
+void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
         if (pl->ob != NULL && pl->ob->map == map) {
-            draw_ext_info(color, 0, pl->ob, type, subtype, str1, str2);
+            draw_ext_info(color, 0, pl->ob, type, subtype, str1);
         }
 }
 
 /**
  * Writes to everyone on the map *except *op.  This is useful for emotions.
  */
-void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, uint8 subtype, const char *str1, const char *str2) {
+void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, uint8 subtype, const char *str1) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
         if (pl->ob != NULL && pl->ob->map == map && pl->ob != op) {
-            draw_ext_info(color, 0, pl->ob, type, subtype, str1, str2);
+            draw_ext_info(color, 0, pl->ob, type, subtype, str1);
         }
 }
 
 /**
  * Writes to everyone on the map except op1 and op2
  */
-void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2, int type, int subtype, const char *str1, const char *str2) {
+void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2, int type, int subtype, const char *str1) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
         if (pl->ob != NULL && pl->ob->map == map
                 && pl->ob != op1 && pl->ob != op2) {
-            draw_ext_info(color, 0, pl->ob, type, subtype, str1, str2);
+            draw_ext_info(color, 0, pl->ob, type, subtype, str1);
         }
 }
 

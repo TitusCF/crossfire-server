@@ -55,7 +55,6 @@ static method_ret clock_type_apply(ob_methods *context, object *op, object *appl
         play_sound_player_only(applier->contr, SOUND_TYPE_ITEM, op, 0, "tick");
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
              "It is %d minute%s past %d o'clock %s",
-             "It is %d minute%s past %d o'clock %s",
              tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
              ((tod.hour%14 == 0) ? 14 : ((tod.hour)%14)),
              ((tod.hour >= 14) ? "pm" : "am"));

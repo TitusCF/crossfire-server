@@ -93,7 +93,7 @@ void move_marker(object *op) {
                 object_insert_in_ob(force, tmp);
                 if (op->msg)
                     draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, tmp, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
-                        op->msg, op->msg);
+                        op->msg);
 
                 if (op->stats.hp > 0) {
                     op->stats.hp--;

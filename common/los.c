@@ -618,14 +618,14 @@ void print_los(object *op) {
         snprintf(buf2, sizeof(buf2), "%2d", x);
         strncat(buf, buf2, sizeof(buf)-strlen(buf)-1);
     }
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, buf, NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, buf);
     for (y = 0; y < op->contr->socket.mapy; y++) {
         snprintf(buf, sizeof(buf), "[fixed]%2d:", y);
         for (x = 0; x < op->contr->socket.mapx; x++) {
             snprintf(buf2, sizeof(buf2), " %1d", op->contr->blocked_los[x][y] == 100 ? 1 : 0);
             strncat(buf, buf2, sizeof(buf)-strlen(buf)-1);
         }
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, buf, NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, buf);
     }
 }
 

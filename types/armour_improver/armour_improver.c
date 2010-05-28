@@ -61,8 +61,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
 
     if (armour->magic >= settings.armor_max_enchant) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "This armour can not be enchanted any further.",
-            NULL);
+            "This armour can not be enchanted any further.");
         return;
     }
 
@@ -73,8 +72,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
      * what not?) */
     if (armour->title) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "This armour will not accept further enchantment.",
-            NULL);
+            "This armour will not accept further enchantment.");
         return;
     }
 
@@ -88,7 +86,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
                 /* Armour is cursed, too bad */
             draw_ext_info(NDI_UNIQUE, 0, op,
                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                "You can't enchant this armour without unapplying it because it would consume your soul!", NULL);
+                "You can't enchant this armour without unapplying it because it would consume your soul!");
             return;
         }
     }
@@ -171,13 +169,13 @@ static method_ret armour_improver_type_apply(ob_methods *context, object *scroll
     if (!QUERY_FLAG(applier, FLAG_WIZCAST)
     && (get_map_flags(applier->map, NULL, applier->x, applier->y, NULL, NULL)&P_NO_MAGIC)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Something blocks the magic of the scroll.", NULL);
+            "Something blocks the magic of the scroll.");
         return METHOD_OK;
     }
     armor = find_marked_object(applier);
     if (!armor) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "You need to mark an armor object.", NULL);
+                      "You need to mark an armor object.");
         return METHOD_OK;
     }
     if (armor->type != ARMOUR
@@ -188,12 +186,12 @@ static method_ret armour_improver_type_apply(ob_methods *context, object *scroll
     && armor->type != SHIELD
     && armor->type != HELMET) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Your marked item is not armour!", NULL);
+            "Your marked item is not armour!");
         return METHOD_OK;
     }
 
     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        "Applying armour enchantment.", NULL);
+        "Applying armour enchantment.");
     improve_armour(applier, scroll, armor);
     return METHOD_OK;
 }

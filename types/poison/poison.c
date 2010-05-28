@@ -52,7 +52,7 @@ static method_ret poison_type_apply(ob_methods *context, object *op, object *app
     if (applier->type == PLAYER) {
         play_sound_player_only(applier->contr, SOUND_TYPE_ITEM, op, 0, "poison");
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-            "Yech!  That tasted poisonous!", NULL);
+            "Yech!  That tasted poisonous!");
         snprintf(applier->contr->killer, BIG_NAME, "poisonous %s", op->name);
     }
     /* If the 'hp' of the poison is greater than zero, use poison attacktype */

@@ -436,7 +436,7 @@ static void quest_write_player_data(const quest_player *pq) {
     file = fopen(write, "w+");
     if (!file) {
         LOG(llevError, "quest: couldn't open player quest file %s!", write);
-        draw_ext_info(NDI_UNIQUE | NDI_ALL_DMS, 0, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "File write error on server!", NULL);
+        draw_ext_info(NDI_UNIQUE | NDI_ALL_DMS, 0, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "File write error on server!");
         return;
     }
 
@@ -571,7 +571,7 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
     if (step->is_completion_step) {
         /* don't send an update note if the quest was already completed, this is just to show the outcome afterwards. */
         if (!qs->is_complete)
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest %s completed.", NULL, quest->quest_title);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest %s completed.", quest->quest_title);
         qs->was_completed = 1;
         if (quest->quest_restart)
             qs->state = QC_CAN_RESTART;
@@ -579,8 +579,8 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
             qs->is_complete =1;
 
     } else {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New objective for the quest '%s':", NULL, quest->quest_title);
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, step->step_description, NULL);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New objective for the quest '%s':", quest->quest_title);
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, step->step_description);
     }
     quest_write_player_data(pq);
 
@@ -619,14 +619,14 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
         if (!showall) {
             if (restart_count > 0)
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                        "You have completed %d quests, of which %d may be restarted", NULL, completed_count, restart_count);
+                        "You have completed %d quests, of which %d may be restarted", completed_count, restart_count);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                        "You have completed %d quests", NULL, completed_count);
+                        "You have completed %d quests", completed_count);
             current_count = completed_count;
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                    "You have completed the following quests:", NULL);
+                    "You have completed the following quests:");
             state = pq->quests;
             while (state) {
                 quest = quest_get(state->code);
@@ -635,7 +635,7 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
 
                         restart = state->state == QC_CAN_RESTART?" (can be replayed)":"";
                         draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                            "(%3d) %s%s", NULL, ++current_count, quest->quest_title, restart);
+                            "(%3d) %s%s", ++current_count, quest->quest_title, restart);
                     }
                 }
                 state = state->next;
@@ -644,7 +644,7 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
     }
     if (total_count > completed_count) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                "You have started the following quests:", NULL);
+                "You have started the following quests:");
         state = pq->quests;
         while (state) {
             quest = quest_get(state->code);
@@ -652,7 +652,7 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
                 if (state->state != QC_CAN_RESTART && state->is_complete==0) {
                     quest = quest_get(state->code);
                     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                        "(%3d) %s", NULL, ++current_count, quest->quest_title);
+                        "(%3d) %s", ++current_count, quest->quest_title);
                 }
             }
             state = state->next;
@@ -671,7 +671,7 @@ static void quest_list(player *pl, int showall) {
     /* ensure we load data if not loaded yet */
     pq = get_or_create_quest(pl);
     if (!pq->quests) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You didn't start any quest.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You didn't start any quest.");
         return;
     }
 
@@ -683,9 +683,9 @@ static void quest_list(player *pl, int showall) {
  * @param pl player to display help for.
  */
 static void quest_help(player *pl) {
-    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest commands:", NULL);
-    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - list: displays quests you are currently attempting add 'all' to show completed quests also", NULL);
-    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - info: displays information about the specified (by number) quest", NULL);
+    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest commands:");
+    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - list: displays quests you are currently attempting add 'all' to show completed quests also");
+    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - info: displays information about the specified (by number) quest");
 }
 
 /**
@@ -737,32 +737,32 @@ static void quest_info(player *pl, quest_state *qs, int level) {
     const char *prefix;
 
     if (!qs) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid quest number", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid quest number");
         return;
     }
     quest = quest_get(qs->code);
     if (!quest) {
         /* already warned by quest_get */
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: (internal error)", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: (internal error)");
         return;
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: %s", NULL, quest->quest_title);
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Description: %s", NULL, quest->quest_description);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: %s", quest->quest_title);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Description: %s", quest->quest_description);
 
     step = quest_get_step(quest, qs->state);
     if (qs->state == QC_CAN_RESTART || qs->is_complete) {
         const char *restart = "";
         if (quest->quest_restart)
             restart = " (can be replayed)";
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "This quest has been completed%s.", NULL, restart);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "This quest has been completed%s.", restart);
     }
     prefix = "";
     if (qs->state != QC_CAN_RESTART) {
         /* ie, if we are in progress or completed for a non-restartable quest */
         if (!step) {
             /* already warned by quest_get_step */
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \nOutcome: (invalid quest)", NULL);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \nOutcome: (invalid quest)");
             return;
         }
         if (level > 0) {
@@ -771,7 +771,7 @@ static void quest_info(player *pl, quest_state *qs, int level) {
             prefix = "Outcome";
         else
             prefix = "Current Status";
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \n%s: %s", NULL, prefix, step->step_description);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " \n%s: %s", prefix, step->step_description);
     }
 
     /* ok, now check all of the player's other quests for any children, and print those in order */
@@ -856,7 +856,7 @@ void quest_start(player *pl, sstring quest_code, int state) {
         LOG(llevDebug, "quest_start: warning: player %s has already started quest %s\n", pl->ob->name, quest_code);
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New quest started: %s", NULL, quest->quest_title);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New quest started: %s", quest->quest_title);
 
     quest_set_state(pl, quest_code, state, 0);
 

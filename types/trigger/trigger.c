@@ -53,11 +53,11 @@ void init_type_trigger(void) {
 static method_ret trigger_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     if (check_trigger(op, applier)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-            "You turn the handle.", NULL);
+            "You turn the handle.");
         play_sound_map(SOUND_TYPE_GROUND, op, 0, "turn handle");
     } else {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-            "The handle doesn't move.", NULL);
+            "The handle doesn't move.");
     }
     return 1;
 }

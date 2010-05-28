@@ -70,7 +70,7 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
     item = find_marked_object(applier);
     if (!item) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "You need to mark a lightable object.", NULL);
+            "You need to mark a lightable object.");
         return METHOD_OK;
     }
 

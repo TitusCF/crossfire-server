@@ -68,7 +68,6 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
                 if (rndm(0, 2) == 0) {
                     draw_ext_info_format(NDI_UNIQUE, 0, above, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
                         "You are down to your waist in the wet %s.",
-                        "You are down to your waist in the wet %s.",
                         op->name);
                         op->stats.food = woodsman ? op->stats.food+1 : 10;
                         above->speed_left -= op->move_slow_penalty;
@@ -76,7 +75,6 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
             } else if (op->stats.food < 20) {
                 if (rndm(0, 2) == 0) {
                     draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, above, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
-                        "You are down to your NECK in the dangerous %s.",
                         "You are down to your NECK in the dangerous %s.",
                         op->name);
                     op->stats.food = woodsman ? op->stats.food+1 : 20;
@@ -87,8 +85,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
             } else if (rndm(0, 4) == 0) {
                 op->stats.food = 0;
                 draw_ext_info_format(NDI_UNIQUE|NDI_ALL, 1, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                    "%s disappeared into a %s.", "%s disappeared into a %s.",
-                    above->name, op->name);
+                    "%s disappeared into a %s.", above->name, op->name);
                 snprintf(above->contr->killer, sizeof(above->contr->killer), "drowning in a %s", op->name);
                 above->stats.hp = -1;
                 kill_player(above); /* player dies in the swamp */
@@ -123,7 +120,6 @@ static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap, obj
     && victim->stats.hp >= 0
     && !(victim->move_type&MOVE_FLYING)) {
         draw_ext_info_format(NDI_UNIQUE, 0, victim, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
-            "You are down to your knees in the %s.",
             "You are down to your knees in the %s.", trap->name);
         trap->stats.food = 1;
         victim->speed_left -= trap->move_slow_penalty;

@@ -77,14 +77,13 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
             identify(marked);
             draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "You have %s.",
-                NULL,
                 ob_describe(marked, originator, desc, sizeof(desc)));
 
             if (marked->msg) {
                 draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    "The item has a story:", NULL);
+                    "The item has a story:");
                 draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    marked->msg, NULL);
+                    marked->msg);
             }
             common_post_ob_move_on(altar, money, originator);
             return METHOD_OK;
@@ -98,12 +97,12 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
             if (operate_altar(altar, &money)) {
                 identify(id);
                 draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    "You have %s.", "You have %s.", ob_describe(id, originator, desc, sizeof(desc)));
+                    "You have %s.", ob_describe(id, originator, desc, sizeof(desc)));
                 if (id->msg) {
                     draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                        "The item has a story:", NULL);
+                        "The item has a story:");
                     draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                        id->msg, NULL);
+                        id->msg);
                 }
                 success = 1;
                 /* If no more money, might as well quit now */
@@ -117,7 +116,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
     } FOR_INV_FINISH();
     if (!success)
         draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-            "You have nothing that needs identifying", NULL);
+            "You have nothing that needs identifying");
     common_post_ob_move_on(altar, money, originator);
     return METHOD_OK;
 }

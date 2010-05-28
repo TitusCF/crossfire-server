@@ -253,7 +253,6 @@ int apply_container(object *op, object *sack) {
         draw_ext_info_format(NDI_UNIQUE, 0, op,
                              MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                              "You close %s.",
-                             "You close %s.",
                              name_tmp);
         CLEAR_FLAG(op->container, FLAG_APPLIED);
         op->container = NULL;
@@ -279,12 +278,10 @@ int apply_container(object *op, object *sack) {
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                  "You unlock %s with %s.",
-                                 "You unlock %s with %s.",
                                  name_sack, name_tmp);
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                 "You don't have the key to unlock %s.",
                                  "You don't have the key to unlock %s.",
                                  name_sack);
             return 0;
@@ -312,7 +309,6 @@ int apply_container(object *op, object *sack) {
         if (sack->env) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                  "You can't open %s",
-                                 "You can't open %s",
                                  name_sack);
             return 0;
         }
@@ -331,7 +327,6 @@ int apply_container(object *op, object *sack) {
         CLEAR_FLAG(sack, FLAG_APPLIED);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                              "You open %s.",
-                             "You open %s.",
                              name_sack);
         SET_FLAG(sack, FLAG_APPLIED);
         op->container = sack;
@@ -344,7 +339,6 @@ int apply_container(object *op, object *sack) {
         if (QUERY_FLAG(sack, FLAG_APPLIED)) {  /* readied sack becoming open */
             CLEAR_FLAG(sack, FLAG_APPLIED);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "You open %s.",
                                  "You open %s.",
                                  name_sack);
             SET_FLAG(sack, FLAG_APPLIED);
@@ -362,7 +356,6 @@ int apply_container(object *op, object *sack) {
 
             CLEAR_FLAG(sack, FLAG_APPLIED);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "You readied %s.",
                                  "You readied %s.",
                                  name_sack);
             SET_FLAG(sack, FLAG_APPLIED);
@@ -416,7 +409,6 @@ void do_learn_spell(object *op, object *spell, int special_prayer) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                          "Type 'bind cast %s to store the spell in a key.",
-                         "Type 'bind cast %s to store the spell in a key.",
                          spell->name);
 
     esrv_add_spells(op->contr, tmp);
@@ -444,7 +436,6 @@ void do_forget_spell(object *op, const char *spell) {
     }
 
     draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                         "You lose knowledge of %s.",
                          "You lose knowledge of %s.",
                          spell);
     player_unready_range_ob(op->contr, spob);
@@ -484,7 +475,7 @@ static int apply_check_race_restrictions(object *who, object *item) {
         return 1;
 
     query_name(item, buf, sizeof(buf));
-    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION, "Somehow you can't seem to use the %s.", NULL, buf);
+    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION, "Somehow you can't seem to use the %s.", buf);
 
     return 0;
 }
@@ -515,7 +506,7 @@ int apply_manual(object *op, object *tmp, int aflag) {
     if (QUERY_FLAG(tmp, FLAG_UNPAID) && !QUERY_FLAG(tmp, FLAG_APPLIED)) {
         if (op->type == PLAYER) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                          "You should pay for it first.", NULL);
+                          "You should pay for it first.");
             return METHOD_SILENT_ERROR;
         }
         return 0;   /* monsters just skip unpaid items */
@@ -563,7 +554,7 @@ int apply_by_living(object *pl, object *op, int aflag, int quiet) {
         /* player is flying and applying object not in inventory */
         if (!QUERY_FLAG(pl, FLAG_WIZ) && !(op->move_type&MOVE_FLYING)) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                          "But you are floating high above the ground!", NULL);
+                          "But you are floating high above the ground!");
             return 0;
         }
     }
@@ -576,9 +567,9 @@ int apply_by_living(object *pl, object *op, int aflag, int quiet) {
     && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
         play_sound_map(SOUND_TYPE_ITEM, op, 0, "evaporate");
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "The object disappears in a puff of smoke!", NULL);
+                      "The object disappears in a puff of smoke!");
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "It must have been an illusion.", NULL);
+                      "It must have been an illusion.");
         object_remove(op);
         object_free2(op, 0);
         return 1;
@@ -595,11 +586,10 @@ int apply_by_living(object *pl, object *op, int aflag, int quiet) {
             query_name(op, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                  "I don't know how to apply the %s.",
-                                 "I don't know how to apply the %s.",
                                  name);
         } else if (tmp == METHOD_ERROR)
             draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                 "You must get it first!\n", NULL);
+                                 "You must get it first!\n");
         else if (tmp == METHOD_SILENT_ERROR)
             return tmp;
     }
@@ -688,7 +678,6 @@ static int unapply_special(object *who, object *op, int aflags) {
         if (!(aflags&AP_NOPRINT))
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                  "You unwield %s.",
-                                 "You unwield %s.",
                                  name);
         (void)change_abil(who, op);
         CLEAR_FLAG(who, FLAG_READY_WEAPON);
@@ -707,12 +696,10 @@ static int unapply_special(object *who, object *op, int aflags) {
                 if (!(aflags&AP_NOPRINT))
                     draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                          "You stop using the %s.",
-                                         "You stop using the %s.",
                                          name);
             } else {
                 if (!(aflags&AP_NOPRINT))
                     draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                         "You can no longer use the skill: %s.",
                                          "You can no longer use the skill: %s.",
                                          op->skill);
             }
@@ -735,7 +722,6 @@ static int unapply_special(object *who, object *op, int aflags) {
         if (!(aflags&AP_NOPRINT))
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                  "You unwear %s.",
-                                 "You unwear %s.",
                                  name);
         (void)change_abil(who, op);
         break;
@@ -746,7 +732,6 @@ static int unapply_special(object *who, object *op, int aflags) {
         clear_skill(who);
         if (!(aflags&AP_NOPRINT))
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                 "You unready %s.",
                                  "You unready %s.",
                                  name);
         if (who->type == PLAYER)
@@ -761,7 +746,6 @@ static int unapply_special(object *who, object *op, int aflags) {
         if (!(aflags&AP_NOPRINT))
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                  "You unready %s.",
-                                 "You unready %s.",
                                  name);
         who->contr->shoottype = range_none;
         who->contr->ranges[range_builder] = NULL;
@@ -770,7 +754,6 @@ static int unapply_special(object *who, object *op, int aflags) {
     default:
         if (!(aflags&AP_NOPRINT))
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                 "You unapply %s.",
                                  "You unapply %s.",
                                  name);
         break;
@@ -871,7 +854,6 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
                         query_name(tmp, name, MAX_BUF);
                         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                              "No matter how hard you try, you just can't remove %s.",
-                                             "No matter how hard you try, you just can't remove %s.",
                                              name);
                     }
                     return 1;
@@ -880,7 +862,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
                 if (aflags&AP_PRINT) {
                     query_name(tmp, name, MAX_BUF);
                     draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                  name, NULL);
+                                  name);
                 } else
                     unapply_special(who, tmp, aflags);
             }
@@ -907,7 +889,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
                     if (aflags&AP_PRINT) {
                         query_name(tmp, name, MAX_BUF);
                         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                      name, NULL);
+                                      name);
                     } else
                         unapply_special(who, tmp, aflags);
                 } else {
@@ -919,7 +901,6 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
                     if (!(aflags&AP_NOPRINT)) {
                         query_name(tmp, name, MAX_BUF);
                         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                             "The %s just won't come off",
                                              "The %s just won't come off",
                                              name);
                     }
@@ -1156,7 +1137,6 @@ int apply_special(object *who, object *op, int aflags) {
                 query_name(op, name_op, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                      "No matter how hard you try, you just can't remove %s.",
-                                     "No matter how hard you try, you just can't remove %s.",
                                      name_op);
             }
             return 1;
@@ -1175,7 +1155,6 @@ int apply_special(object *who, object *op, int aflags) {
         if (!skop) {
             if (!(aflags&AP_NOPRINT))
                 draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                     "You need the %s skill to use this item!",
                                      "You need the %s skill to use this item!",
                                      op->skill);
             if (who->type == PLAYER)
@@ -1208,8 +1187,7 @@ int apply_special(object *who, object *op, int aflags) {
         if (!apply_check_weapon_power(who, op->last_eat)) {
             if (!(aflags&AP_NOPRINT))
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                    "That weapon is too powerful for you to use.  It would consume your soul!",
-                    NULL);
+                    "That weapon is too powerful for you to use.  It would consume your soul!");
             if (tmp != NULL)
                 (void)object_insert_in_ob(tmp, who);
             return 1;
@@ -1230,7 +1208,7 @@ int apply_special(object *who, object *op, int aflags) {
         if (!(aflags&AP_NOPRINT)) {
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "You wield %s.", "You wield %s.",
+                "You wield %s.",
                 name_op);
         }
 
@@ -1251,7 +1229,6 @@ int apply_special(object *who, object *op, int aflags) {
         if (!(aflags&AP_NOPRINT)) {
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "You wear %s.",
                                  "You wear %s.",
                                  name_op);
         }
@@ -1277,8 +1254,7 @@ int apply_special(object *who, object *op, int aflags) {
         if (!apply_check_weapon_power(who, op->last_eat)) {
             if (!(aflags&AP_NOPRINT))
                 draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                    "That weapon is too powerful for you to use.  It would consume your soul!",
-                    NULL);
+                    "That weapon is too powerful for you to use.  It would consume your soul!");
             if (tmp != NULL)
                 (void)object_insert_in_ob(tmp, who);
             return 1;
@@ -1300,7 +1276,6 @@ int apply_special(object *who, object *op, int aflags) {
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                  "You ready %s.",
-                                 "You ready %s.",
                                  name_op);
         }
         if (who->type == PLAYER) {
@@ -1309,7 +1284,6 @@ int apply_special(object *who, object *op, int aflags) {
                 if (!(aflags&AP_NOPRINT)) {
                     query_name(op, name_op, MAX_BUF);
                     draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                         "You will now fire %s with %s.",
                                          "You will now fire %s with %s.",
                                          op->race ? op->race : "nothing",
                                          name_op);
@@ -1334,7 +1308,6 @@ int apply_special(object *who, object *op, int aflags) {
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                  "You ready your %s.",
-                                 "You ready your %s.",
                                  name_op);
         }
         break;
@@ -1342,7 +1315,6 @@ int apply_special(object *who, object *op, int aflags) {
     default:
         query_name(op, name_op, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "You apply %s.",
                              "You apply %s.",
                              name_op);
         break;
@@ -1365,7 +1337,7 @@ int apply_special(object *who, object *op, int aflags) {
     if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
         if (who->type == PLAYER) {
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                          "Oops, it feels deadly cold!", NULL);
+                          "Oops, it feels deadly cold!");
             SET_FLAG(op, FLAG_KNOWN_CURSED);
         }
     }
@@ -1575,7 +1547,7 @@ void scroll_failure(object *op, int failure, int power) {
         object *tmp;
 
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                      "Your spell warps!", NULL);
+                      "Your spell warps!");
         tmp = create_archetype(SPELL_WONDER);
         cast_wonder(op, op, 0, tmp);
         if (op->stats.sp < 0)
@@ -1588,21 +1560,21 @@ void scroll_failure(object *op, int failure, int power) {
     if (settings.spell_failure_effects == TRUE) {
         if (failure <= -35 && failure > -60) { /* confusion */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "The magic recoils on you!", NULL);
+                          "The magic recoils on you!");
             confuse_living(op, op, power);
             return;
         }
 
         if (failure <= -60 && failure > -70) {/* paralysis */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "The magic recoils and paralyzes you!", NULL);
+                          "The magic recoils and paralyzes you!");
             paralyze_living(op, op, power);
             return;
         }
 
         if (failure <= -70 && failure > -80) {/* blind */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "The magic recoils on you!", NULL);
+                          "The magic recoils on you!");
             blind_living(op, op, power);
             return;
         }
@@ -1613,7 +1585,7 @@ void scroll_failure(object *op, int failure, int power) {
             tmp = create_archetype(LOOSE_MANA);
             cast_magic_storm(op, tmp, power);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "You unlease uncontrolled mana!", NULL);
+                          "You unlease uncontrolled mana!");
             object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
             return;
         }
@@ -1622,7 +1594,7 @@ void scroll_failure(object *op, int failure, int power) {
      * in any case let's punish.
      */
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                  "Your mana is drained!", NULL);
+                  "Your mana is drained!");
     op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
     if (op->stats.sp < 0)
         op->stats.sp = 0;
@@ -1753,7 +1725,6 @@ static int apply_check_apply_restrictions(object *who, object *op, int aflags) {
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BADBODY,
                 "You don't have the body to use a %s",
-                "You don't have the body to use a %s",
                 name_op);
         }
         return 0;
@@ -1765,7 +1736,6 @@ static int apply_check_apply_restrictions(object *who, object *op, int aflags) {
 
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION,
-                "You have a prohibition against using a %s",
                 "You have a prohibition against using a %s",
                 name_op);
         }
@@ -1781,7 +1751,7 @@ static int apply_check_apply_restrictions(object *who, object *op, int aflags) {
     || (i&CAN_APPLY_UNAPPLY_CHOICE && who->contr->unapply == unapply_nochoice)) {
         if (!(aflags&AP_NOPRINT))
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                "You need to unapply some item(s):", NULL);
+                "You need to unapply some item(s):");
         unapply_for_ob(who, op, AP_PRINT);
         return 0;
     }
@@ -1814,7 +1784,7 @@ static int apply_check_item_power(const object *who, const object *op, int aflag
 
     if (!(aflags&AP_NOPRINT))
         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "Equipping that combined with other items would consume your soul!", NULL);
+            "Equipping that combined with other items would consume your soul!");
     return 0;
 }
 
@@ -1854,7 +1824,6 @@ static int apply_check_personalized_blessings(object *who, const object *op) {
     if (item_will > who->stats.exp) {
         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "This %s refuses to serve you - it keeps evading your hand !",
-            "This %s refuses to serve you - it keeps evading your hand !",
             op->name);
         return 0;
     }
@@ -1882,14 +1851,13 @@ static int apply_check_personalized_blessings(object *who, const object *op) {
     }
     if (msg != NULL)
         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-            msg, msg, op->name);
+            msg, op->name);
     if (damage_percentile > 0) {
         int weapon_bite = (who->stats.hp*damage_percentile)/100;
         if (weapon_bite < 1)
             weapon_bite = 1;
         who->stats.hp -= weapon_bite;
         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
-            "You get a nasty bite in the hand !",
             "You get a nasty bite in the hand !");
     }
 
@@ -1922,7 +1890,7 @@ static int apply_check_owner(const object *who, const object *op, int aflags) {
 
     if (!(aflags&AP_NOPRINT))
         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "The weapon does not recognize you as its owner.", NULL);
+            "The weapon does not recognize you as its owner.");
     return 0;
 }
 
@@ -1947,7 +1915,6 @@ static void apply_update_ranged_skill(const object *who, object *op, int aflags)
         if (!(aflags&AP_NOPRINT))
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "Readied skill: %s.",
-                "Readied skill: %s.",
                 op->skill ? op->skill : op->name);
     } else {
         if (!(aflags&AP_NOPRINT)) {
@@ -1956,10 +1923,8 @@ static void apply_update_ranged_skill(const object *who, object *op, int aflags)
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "You ready %s.",
-                "You ready %s.",
                 name_op);
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "You can now use the skill: %s.",
                 "You can now use the skill: %s.",
                 op->skill);
         }

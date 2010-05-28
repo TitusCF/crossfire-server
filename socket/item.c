@@ -621,7 +621,7 @@ void lock_item_cmd(uint8 *data, int len, player *pl) {
 
     if (!op) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Could not find object to lock/unlock", NULL);
+                      "Could not find object to lock/unlock");
         return;
     }
     if (!flag)
@@ -660,14 +660,13 @@ void mark_item_cmd(uint8 *data, int len, player *pl) {
     op = esrv_get_ob_from_count(pl->ob, tag);
     if (!op) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Could not find object to mark", NULL);
+                      "Could not find object to mark");
         return;
     }
     pl->mark = op;
     pl->mark_count = op->count;
     query_name(op, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                         "Marked item %s",
                          "Marked item %s",
                          name);
 }
@@ -705,10 +704,10 @@ void look_at(object *op, int dx, int dy) {
         if (!flag) {
             if (dx || dy)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                              "There you see:", NULL);
+                              "There you see:");
             else {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                              "You see:", NULL);
+                              "You see:");
             }
             flag = 1;
         }
@@ -717,11 +716,9 @@ void look_at(object *op, int dx, int dy) {
         if (QUERY_FLAG(op, FLAG_WIZ))
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                                  "- %s (%d).",
-                                 "- %s (%d).",
                                  name, tmp->count);
         else
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                                 "- %s.",
                                  "- %s.",
                                  name);
 
@@ -737,10 +734,10 @@ void look_at(object *op, int dx, int dy) {
     if (!flag) {
         if (dx || dy)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                          "You see nothing there.", NULL);
+                          "You see nothing there.");
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                          "You see nothing.", NULL);
+                          "You see nothing.");
     }
 }
 
@@ -843,7 +840,7 @@ void inscribe_scroll_cmd(char *buf, int len, player *pl) {
 
     inscription = find_skill_by_name(pl->ob, "inscription");
     if (!inscription) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You don't know how to write!", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You don't know how to write!");
         return;
     }
 

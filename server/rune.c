@@ -79,13 +79,13 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
 
     if (get_map_flags(m, &m, nx, ny, &nx, &ny)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Can't make a rune there!", NULL);
+                      "Can't make a rune there!");
         return 0;
     }
     FOR_MAP_PREPARE(m, nx, ny, tmp)
         if (tmp->type == RUNE) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                              "You can't write a rune there.", NULL);
+                              "You can't write a rune there.");
                 return 0;
         }
     FOR_MAP_FINISH();
@@ -101,7 +101,7 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
 
         if (!runename || *runename == 0) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                          "Write a rune of what?", NULL);
+                          "Write a rune of what?");
             return 0;
         }
 
@@ -119,7 +119,6 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                  "You don't know any spell named %s",
-                                 "You don't know any spell named %s",
                                  runename);
             return 0;
         }
@@ -127,13 +126,11 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                  "You can't cast %s with %s",
-                                 "You can't cast %s with %s",
                                  rune_spell->name, spell->name);
             return 0;
         }
         if (caster->path_denied&spell->path_attuned) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                                 "%s belongs to a spell path denied to you.",
                                  "%s belongs to a spell path denied to you.",
                                  rune_spell->name);
             return 0;
@@ -141,18 +138,17 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
         if (caster_level(caster, rune_spell) < rune_spell->level) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                  "%s is beyond your ability to cast!",
-                                 "%s is beyond your ability to cast!",
                                  rune_spell->name);
             return 0;
         }
         if (SP_level_spellpoint_cost(caster, rune_spell, SPELL_MANA) > op->stats.sp) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                          "You don't have enough mana.", NULL);
+                          "You don't have enough mana.");
             return 0;
         }
         if (SP_level_spellpoint_cost(caster, rune_spell, SPELL_GRACE) > op->stats.grace) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                          "You don't have enough grace.", NULL);
+                          "You don't have enough grace.");
             return 0;
         }
         op->stats.grace -= SP_level_spellpoint_cost(caster, rune_spell, SPELL_GRACE);
@@ -256,7 +252,7 @@ void spring_trap(object *trap, object *victim) {
 
     if (victim && victim->type == PLAYER && trap->msg != NULL)
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
-                      trap->msg, trap->msg);
+                      trap->msg);
 
     /*  Flash an image of the trap on the map so the poor sod
      *   knows what hit him.
@@ -331,7 +327,7 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
      */
     if (mflags&P_OUT_OF_MAP) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "There's nothing there!", NULL);
+                      "There's nothing there!");
         return 0;
     }
 
@@ -360,7 +356,7 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
             object_remove(tmp);
             object_free_drop_inventory(tmp);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                          "You wipe out the rune of marking!", NULL);
+                          "You wipe out the rune of marking!");
             return 1;
         }
 
@@ -377,7 +373,7 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
     /* no rune there. */
     if (rune == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                      "There's nothing there!", NULL);
+                      "There's nothing there!");
         return 0;
     }
     trap_disarm(op, rune, 0, skill);
@@ -404,7 +400,6 @@ int trap_see(object *op, object *trap) {
     if ((trap->stats.Cha == 1)
     || (chance > MIN(95, MAX(5, ((int)((float)(op->map->difficulty+trap->level+trap->stats.Cha-op->level)/10.0*50.0)))))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                             "You spot a %s!",
                              "You spot a %s!",
                              trap->name);
         return 1;
@@ -462,7 +457,6 @@ int trap_disarm(object *disarmer, object *trap, int risk, object *skill) {
         draw_ext_info_format(NDI_UNIQUE, 0, disarmer,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "You successfully disarm the %s!",
-                             "You successfully disarm the %s!",
                              trap->name);
         destroy_object(trap);
         /* If it is your own trap, (or any players trap), don't you don't
@@ -477,13 +471,12 @@ int trap_disarm(object *disarmer, object *trap, int risk, object *skill) {
         draw_ext_info_format(NDI_UNIQUE, 0, disarmer,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                              "You fail to disarm the %s.",
-                             "You fail to disarm the %s.",
                              trap->name);
         if (!(random_roll(0, (MAX(2, skill->level-trap->level+disarmer->stats.Dex/2-6))-1, disarmer, PREFER_LOW))
         && risk) {
             draw_ext_info(NDI_UNIQUE, 0, disarmer,
                           MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                          "In fact, you set it off!", NULL);
+                          "In fact, you set it off!");
             spring_trap(trap, disarmer);
         }
         return 0;

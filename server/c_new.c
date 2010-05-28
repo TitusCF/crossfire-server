@@ -134,7 +134,6 @@ int execute_newserver_command(object *pl, char *command) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "'%s' is not a valid command.",
-                             "'%s' is not a valid command.",
                              command);
         return 0;
     }
@@ -173,7 +172,7 @@ int command_run(object *op, char *params) {
     dir = atoi(params);
     if (dir < 0 || dir >= 9) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Can't run into a non adjacent square.", NULL);
+                      "Can't run into a non adjacent square.");
         return 0;
     }
     op->contr->run_on = 1;
@@ -211,7 +210,7 @@ int command_fire(object *op, char *params) {
     dir = atoi(params);
     if (dir < 0 || dir >= 9) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Can't fire to a non adjacent square.", NULL);
+                      "Can't fire to a non adjacent square.");
         return 0;
     }
     op->contr->fire_on = 1;

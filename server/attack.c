@@ -593,7 +593,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
                     play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, "high");
             }
         }
-        draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT, buf, NULL);
+        draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT, buf);
     } /* end of player hitting player */
 
     /* scale down these messages too */
@@ -611,7 +611,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
                 play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, "high");
         }
         draw_ext_info(NDI_BLACK, 0, hitter, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
-                      buf, NULL);
+                      buf);
     } else if (owner != NULL && owner->type == PLAYER) {
         /* look for stacked spells and start reducing the message chances */
         if (hitter->type == SPELL_EFFECT
@@ -633,7 +633,6 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
             return;
         play_sound_map(SOUND_TYPE_HIT, owner, 0, "hit");
         draw_ext_info_format(NDI_BLACK, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_HIT,
-                             "Your %s%s %s.",
                              "Your %s%s %s.",
                              hitter->name, buf2, op->name);
     }
@@ -776,16 +775,15 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             if (hitter->type == PLAYER && hitter->casting_time > -1) {
                 hitter->casting_time = -1;
                 draw_ext_info(NDI_UNIQUE, 0, hitter, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_FUMBLE,
-                              "You attacked and lost your spell!", NULL);
+                              "You attacked and lost your spell!");
             }
             if (op->casting_time > -1 && hitdam > 0) {
                 op->casting_time = -1;
                 if (op->type == PLAYER)  {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_FUMBLE,
-                                  "You were hit and lost your spell!", NULL);
+                                  "You were hit and lost your spell!");
                     draw_ext_info_format(NDI_ALL|NDI_UNIQUE, 5, NULL,
                                          MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_FUMBLE,
-                                         "%s was hit by %s and lost a spell.",
                                          "%s was hit by %s and lost a spell.",
                                          op->name, hitter->name);
                 }
@@ -809,8 +807,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
                 make_visible(op);
                 if (op->type == PLAYER)
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
-                                  "You were hit by a wild attack. You are no longer hidden!",
-                                  NULL);
+                                  "You were hit by a wild attack. You are no longer hidden!");
             }
 
             /* thrown items (hitter) will have various effects
@@ -840,7 +837,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             && QUERY_FLAG(hitter, FLAG_ALIVE)) {
             if (op->attacktype&AT_ACID && hitter->type == PLAYER)
                 draw_ext_info(NDI_UNIQUE, 0, hitter, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
-                              "You are splashed by acid!\n", NULL);
+                              "You are splashed by acid!\n");
             hit_player(hitter, random_roll(0, (op->stats.dam), hitter, PREFER_LOW), op, op->attacktype, 1);
             if (object_was_destroyed(op, op_tag)
             || object_was_destroyed(hitter, hitter_tag)
@@ -1269,7 +1266,6 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                             draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, op,
                                                  MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
                                                  "The %s's acid corrodes your %s!",
-                                                 "The %s's acid corrodes your %s!",
                                                  name_hitter, name_op);
                         }
                         flag = 1;
@@ -1589,14 +1585,12 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
                 query_name(hitter, with, MAX_BUF);
                 draw_ext_info_format(NDI_BLACK, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_KILL,
                                      "You killed %s with %s.",
-                                     "You killed %s with %s.",
                                      killed, with);
             } else {
                 char killed[MAX_BUF];
 
                 query_name(op, killed, MAX_BUF);
                 draw_ext_info_format(NDI_BLACK, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_KILL,
-                                     "You killed %s.",
                                      "You killed %s.",
                                      killed);
             }
@@ -1679,7 +1673,7 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
         skill = skop->skill;
 
     draw_ext_info(NDI_ALL, op->type == PLAYER ? 1 : 10, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                  buf, NULL);
+                  buf);
 
 
     /* If you didn't kill yourself, and your not the wizard */
@@ -1692,7 +1686,7 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
         if (op->type == PLAYER) {
             if (battleg) {
                 draw_ext_info(NDI_UNIQUE, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_KILL,
-                              "Your foe has fallen!\nVICTORY!!!", NULL);
+                              "Your foe has fallen!\nVICTORY!!!");
             } else {
                 exp = settings.pk_max_experience_percent*exp/100;
                 if (settings.pk_max_experience >= 0)
@@ -1736,7 +1730,6 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
                 /*play_sound_player_only(owner1->contr, SOUND_PET_IS_KILLED, 0, 0);*/
                 /* Maybe we should include the owner that killed this, maybe not */
                 draw_ext_info_format(NDI_UNIQUE, 0, owner1, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_DIED,
-                                     "Your pet, the %s, is killed by %s.",
                                      "Your pet, the %s, is killed by %s.",
                                      op->name, hitter->name);
             }
@@ -2114,12 +2107,11 @@ static void poison_living(object *op, object *hitter, int dam) {
                 fix_object(op);
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-                              "You suddenly feel very ill.", NULL);
+                              "You suddenly feel very ill.");
             }
             if (hitter->type == PLAYER)
                 draw_ext_info_format(NDI_UNIQUE, 0, hitter,
                                      MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
-                                     "You poison %s.",
                                      "You poison %s.",
                                      op->name);
             else {
@@ -2129,7 +2121,6 @@ static void poison_living(object *op, object *hitter, int dam) {
                 if (owner != NULL && owner->type == PLAYER)
                     draw_ext_info_format(NDI_UNIQUE, 0, owner,
                         MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_HIT,
-                        "Your %s poisons %s.",
                         "Your %s poisons %s.",
                         hitter->name, op->name);
             }
@@ -2161,7 +2152,7 @@ static void slow_living(object *op, object *hitter, int dam) {
         tmp = arch_to_object(at);
         tmp = object_insert_in_ob(tmp, op);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-                      "The world suddenly moves very fast!", NULL);
+                      "The world suddenly moves very fast!");
     } else
         tmp->stats.food++;
     SET_FLAG(tmp, FLAG_APPLIED);
@@ -2204,7 +2195,7 @@ void confuse_living(object *op, object *hitter, int dam) {
 
     if (op->type == PLAYER && !QUERY_FLAG(op, FLAG_CONFUSED))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-                      "You suddenly feel very confused!", NULL);
+                      "You suddenly feel very confused!");
     SET_FLAG(op, FLAG_CONFUSED);
 }
 
@@ -2246,7 +2237,6 @@ void blind_living(object *op, object *hitter, int dam) {
 
         query_name(op, victim, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
-                             "Your attack blinds %s!",
                              "Your attack blinds %s!",
                              victim);
     }

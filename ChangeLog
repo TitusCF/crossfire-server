@@ -13,6 +13,10 @@ changes' is much more useful than 'misc edits' or 'code cleanup.'
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Remove unused "oldmessage" parameter from draw_ext_info, draw_ext_info_format,
+  ext_info_map, ext_info_map_except, and ext_info_map_except2 functions and
+  calls.
+Kevin Bulgrien 2010-05-28
 
 Fix socket/info.c::draw_ext_message() comments to be more informative and to
   update them to more completely describe current behavior.

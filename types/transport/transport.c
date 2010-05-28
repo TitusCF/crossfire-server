@@ -74,7 +74,6 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         query_name(old_transport, name_old, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You must exit %s before you can board %s.",
-            "You must exit %s before you can board %s.",
             name_old, name_op);
         return 1;
     }
@@ -91,7 +90,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
 
         query_name(old_transport, name_old, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-            "You disembark from %s.", "You disembark from %s.",
+            "You disembark from %s.",
             name_old);
         object_remove(applier);
         if (applier->contr == old_transport->contr)
@@ -113,7 +112,6 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             old_transport->contr = inv->contr;
             draw_ext_info_format(NDI_UNIQUE, 0, inv, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "%s has disembarked.  You are now the captain of %s",
-                "%s has disembarked.  You are now the captain of %s",
                 applier->name, name_old);
         }
         return 1;
@@ -130,7 +128,6 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         if (!transport_can_hold(op, applier, 1)) {
             draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "The %s is unable to hold your weight!",
-                "The %s is unable to hold your weight!",
                 name_op);
             return 1;
         }
@@ -144,14 +141,12 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             } else {
                 draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                     "You cannot drop the %s in a shop to use it.",
-                    "You cannot drop the %s in a shop to use it.",
                     name_old);
                 return 1;
             }
             /* Did it fail to drop? */
             if (!op) {
                 draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                    "You need to drop the %s to use it.",
                     "You need to drop the %s to use it.",
                     name_old);
                 return 1;
@@ -172,7 +167,6 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         if (pc >= p_limit) {
             draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "The %s does not have space for any more people",
-                "The %s does not have space for any more people",
                 name_op);
             return 1;
         }
@@ -183,11 +177,9 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         if (op->contr) {
             draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "The %s's captain is currently %s",
-                "The %s's captain is currently %s",
                 name_op, op->contr->ob->name);
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "You're the %s's captain",
                 "You're the %s's captain",
                 name_op);
             op->contr = applier->contr;

@@ -64,7 +64,7 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
         treas = op->inv;
         if (treas == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "The chest was empty.", NULL);
+                "The chest was empty.");
             object_decrease_nrof_by_one(op);
             return METHOD_OK;
         }
@@ -76,7 +76,6 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
             if (!treas->invisible) {
                 query_name(treas, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                        "You find %s in the chest.",
                         "You find %s in the chest.",
                         name);
             }

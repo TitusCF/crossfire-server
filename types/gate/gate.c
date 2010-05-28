@@ -138,7 +138,6 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
                     if (tmp->type == PLAYER)
                         draw_ext_info_format(NDI_UNIQUE, 0, tmp, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
                                              "You are crushed by the %s!",
-                                             "You are crushed by the %s!",
                                              op->name);
                 } else
                     /* If the object is not alive, and the object either can

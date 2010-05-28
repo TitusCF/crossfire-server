@@ -53,7 +53,7 @@ static void apply_sign(object *sign, object *op, int autoapply) {
 
     if (sign->msg == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-            "Nothing is written on it.", NULL);
+            "Nothing is written on it.");
         return;
     }
 
@@ -61,7 +61,7 @@ static void apply_sign(object *sign, object *op, int autoapply) {
         if (sign->last_eat >= sign->stats.food) {
             if (!sign->move_on)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                    "You cannot read it anymore.", NULL);
+                    "You cannot read it anymore.");
             return;
         }
 
@@ -78,12 +78,12 @@ static void apply_sign(object *sign, object *op, int autoapply) {
     && !QUERY_FLAG(op, FLAG_WIZ)
     && !sign->move_on) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-            "You are unable to read while blind.", NULL);
+            "You are unable to read while blind.");
         return;
     }
     msgType = get_readable_message_type(sign);
     draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, msgType->message_type, msgType->message_subtype,
-        sign->msg, sign->msg);
+        sign->msg);
 }
 
 /**

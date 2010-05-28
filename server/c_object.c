@@ -115,7 +115,7 @@ static object *find_best_object_match(object *pl, const char *params) {
 int command_uskill(object *pl, char *params) {
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: use_skill <skill name>", NULL);
+                      "Usage: use_skill <skill name>");
         return 0;
     }
     return use_skill(pl, params);
@@ -136,14 +136,13 @@ int command_rskill(object *pl, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: ready_skill <skill name>", NULL);
+                      "Usage: ready_skill <skill name>");
         return 0;
     }
     skill = find_skill_by_name(pl, params);
 
     if (!skill) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                             "You have no knowledge of the skill %s",
                              "You have no knowledge of the skill %s",
                              params);
         return 0;
@@ -205,7 +204,7 @@ int command_throw(object *op, char *params) {
         return do_skill(op, op, skop, op->facing, *params == '\0' ? NULL : params);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                  "You have no knowledge of the skill throwing.", NULL);
+                  "You have no knowledge of the skill throwing.");
     return 0;
 }
 
@@ -260,7 +259,6 @@ int command_apply(object *op, char *params) {
     } else
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Could not find any match to the %s.",
-                             "Could not find any match to the %s.",
                              params);
     return 0;
 }
@@ -290,13 +288,11 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
     if (!QUERY_FLAG(sack, FLAG_APPLIED)) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "The %s is not active.",
-                             "The %s is not active.",
                              name);
         return 0;
     }
     if (sack == op) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "You can't put the %s into itself.",
                              "You can't put the %s into itself.",
                              name);
         return 0;
@@ -305,13 +301,11 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
     && (sack->race != op->race || op->type == CONTAINER || (sack->stats.food && sack->stats.food != op->type))) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "You can put only %s into the %s.",
-                             "You can put only %s into the %s.",
                              sack->race,  name);
         return 0;
     }
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "You can't want put the key into %s.",
                              "You can't want put the key into %s.",
                              name);
         return 0;
@@ -324,7 +318,6 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
             *(100-sack->stats.Str)/100;
         if (new_weight > sack->weight_limit) {
             draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                "That won't fit in the %s!",
                 "That won't fit in the %s!",
                 name);
             return 0;
@@ -364,7 +357,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     && !QUERY_FLAG(pl, FLAG_WIZ)
     && object_get_player_container(tmp) != pl) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You are levitating, you can't reach the ground!", NULL);
+                      "You are levitating, you can't reach the ground!");
         return;
     }
     if (QUERY_FLAG(tmp, FLAG_NO_DROP))
@@ -372,8 +365,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
 
     if (QUERY_FLAG(tmp, FLAG_WAS_WIZ) && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                      "The object disappears in a puff of smoke! It must have been an illusion.",
-                      NULL);
+                      "The object disappears in a puff of smoke! It must have been an illusion.");
         if (!QUERY_FLAG(tmp, FLAG_REMOVED))
             object_remove(tmp);
         object_free_drop_inventory(tmp);
@@ -392,7 +384,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
 
     if (pl->weight+pl->carrying+weight > effective_weight_limit) {
         draw_ext_info(0, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                      "That item is too heavy for you to pick up.", NULL);
+                      "That item is too heavy for you to pick up.");
         return;
     }
 
@@ -405,7 +397,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
         tmp = object_split(tmp, nrof, failure, sizeof(failure));
         if (!tmp) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          failure, NULL);
+                          failure);
             return;
         }
     } else {
@@ -431,7 +423,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
         return;
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                  buf, NULL);
+                  buf);
 
     tmp = object_insert_in_ob(tmp, op);
 
@@ -477,7 +469,6 @@ void pick_up(object *op, object *alt) {
         if (!object_can_pick(op, alt)) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "You can't pick up the %s.",
-                                 "You can't pick up the %s.",
                                  alt->name);
             return;
         }
@@ -485,7 +476,7 @@ void pick_up(object *op, object *alt) {
     } else {
         if (op->below == NULL || !object_can_pick(op, op->below)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "There is nothing to pick up here.", NULL);
+                          "There is nothing to pick up here.");
             return;
         }
         tmp = op->below;
@@ -589,7 +580,7 @@ void pick_up(object *op, object *alt) {
     && alt->type == CONTAINER
     && QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "This object cannot be put into containers!", NULL);
+                      "This object cannot be put into containers!");
         return;
     }
 
@@ -628,7 +619,7 @@ int command_take(object *op, char *params) {
 
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Nothing to take!", NULL);
+                      "Nothing to take!");
         return 0;
     }
 
@@ -666,7 +657,6 @@ int command_take(object *op, char *params) {
             if (!tmp->invisible) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                      "You can't pick up a %s.",
-                                     "You can't pick up a %s.",
                                      tmp->name ? tmp->name : "null");
                 found = 1;
                 break;
@@ -674,14 +664,13 @@ int command_take(object *op, char *params) {
         FOR_BELOW_FINISH();
         if (!found)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "There is nothing to pick up.", NULL);
+                          "There is nothing to pick up.");
     }
     if (missed == 1)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You were unable to take one of the items.", NULL);
+                      "You were unable to take one of the items.");
     else if (missed > 1)
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                             "You were unable to take %d of the items.",
                              "You were unable to take %d of the items.",
                              missed);
     return 0;
@@ -716,14 +705,12 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
     if (sack->type != CONTAINER && sack->type != TRANSPORT) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "The %s is not a container.",
-                             "The %s is not a container.",
                              name_sack);
         return;
     }
     if (QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
         query_name(tmp, name_tmp, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "You cannot put the %s in the %s.",
                              "You cannot put the %s in the %s.",
                              name_tmp, name_sack);
         return;
@@ -742,7 +729,6 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
             query_name(tmp, name_tmp, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "You move the items from %s into %s.",
-                             "You move the items from %s into %s.",
                              name_tmp, name_sack);
 
             FOR_INV_PREPARE(tmp, tmp2) {
@@ -753,7 +739,6 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
                                       MSG_TYPE_COMMAND_FAILURE,
                                      "Your %s fills up.",
-                                     "Your %s fills up.",
                                      name_sack);
                     break;
                 }
@@ -763,7 +748,6 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
         } else {
             query_name(tmp, name_tmp, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "You can not put a %s into a %s",
                                  "You can not put a %s into a %s",
                                  name_tmp,
                                  name_sack);
@@ -792,7 +776,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
 
         if (!tmp) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          failure, NULL);
+                          failure);
             return;
         }
     } else
@@ -812,7 +796,6 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
 
     query_name(tmp, name_tmp, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                         "You put the %s in %s.",
                          "You put the %s in %s.",
                          name_tmp, name_sack);
     tmp_tag = tmp->count;
@@ -879,7 +862,7 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
         tmp = object_split(tmp, nrof, failure, sizeof(failure));
         if (!tmp) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          failure, NULL);
+                          failure);
             return NULL;
         }
     } else
@@ -890,7 +873,6 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
 
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                             "You drop the %s. The gods who lent it to you retrieves it.",
                              "You drop the %s. The gods who lent it to you retrieves it.",
                              name);
         object_free_drop_inventory(tmp);
@@ -972,12 +954,12 @@ void drop(object *op, object *tmp) {
 
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "You don't have anything to drop.", NULL);
+                      "You don't have anything to drop.");
         return;
     }
     if (QUERY_FLAG(tmp, FLAG_INV_LOCKED)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "This item is locked", NULL);
+                      "This item is locked");
         return;
     }
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
@@ -1033,7 +1015,7 @@ int command_dropall(object *op, char *params) {
     if (op->inv == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Nothing to drop!", NULL);
+                      "Nothing to drop!");
         return 0;
     }
 
@@ -1162,7 +1144,7 @@ int command_drop(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Drop what?", NULL);
+                      "Drop what?");
         return 0;
     } else {
         FOR_INV_PREPARE(op, tmp) {
@@ -1179,13 +1161,12 @@ int command_drop(object *op, char *params) {
         } FOR_INV_FINISH();
         if (!did_one)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Nothing to drop.", NULL);
+                          "Nothing to drop.");
         if (missed == 1)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "One item couldn't be dropped because it was locked.", NULL);
+                          "One item couldn't be dropped because it was locked.");
         else if (missed > 1)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "%d items couldn't be dropped because they were locked.",
                                  "%d items couldn't be dropped because they were locked.",
                                  missed);
     }
@@ -1229,9 +1210,9 @@ static void empty_container(object *container, object *pl) {
 
     query_name(container, name, sizeof(name));
     if (left)
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS, "You empty the %s except %d items.", NULL, name, left);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS, "You empty the %s except %d items.", name, left);
     else
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS, "You empty the %s.", NULL, name);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS, "You empty the %s.", name);
 }
 
 /**
@@ -1249,7 +1230,7 @@ int command_empty(object *op, char *params) {
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Empty what?", NULL);
+                      "Empty what?");
         return 0;
     }
 
@@ -1264,12 +1245,12 @@ int command_empty(object *op, char *params) {
     container = find_best_object_match(op, params);
     if (!container) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "No such item.", NULL);
+                      "No such item.");
         return 0;
     }
     if (container->type != CONTAINER) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "This is not a container!", NULL);
+                      "This is not a container!");
         return 0;
     }
     empty_container(container, op);
@@ -1302,7 +1283,6 @@ int command_examine(object *op, char *params) {
             examine(op, tmp);
         else
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "Could not find an object that matches %s",
                                  "Could not find an object that matches %s",
                                  params);
     }
@@ -1364,11 +1344,10 @@ int command_mark(object *op, char *params) {
         object *mark = find_marked_object(op);
         if (!mark)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "You have no marked object.", NULL);
+                          "You have no marked object.");
         else {
             query_name(mark, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                                 "%s is marked.",
                                  "%s is marked.",
                                  name);
         }
@@ -1378,7 +1357,6 @@ int command_mark(object *op, char *params) {
         if (!mark1) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "Could not find an object that matches %s",
-                                 "Could not find an object that matches %s",
                                  params);
             return 1;
         } else {
@@ -1386,7 +1364,6 @@ int command_mark(object *op, char *params) {
             op->contr->mark_count = mark1->count;
             query_name(mark1, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                                 "Marked item %s",
                                  "Marked item %s",
                                  name);
             return 0;
@@ -1408,20 +1385,20 @@ void examine_monster(object *op, object *tmp) {
 
     if (QUERY_FLAG(mon, FLAG_UNDEAD))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It is an undead force.", NULL);
+                      "It is an undead force.");
     if (mon->level > op->level)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It is likely more powerful than you.", NULL);
+                      "It is likely more powerful than you.");
     else if (mon->level < op->level)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It is likely less powerful than you.", NULL);
+                      "It is likely less powerful than you.");
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It is probably as powerful as you.", NULL);
+                      "It is probably as powerful as you.");
 
     if (mon->attacktype&AT_ACID)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "You smell an acrid odor.", NULL);
+                      "You smell an acrid odor.");
 
     /* Anyone know why this used to use the clone value instead of the
      * maxhp field?  This seems that it should give more accurate results.
@@ -1429,27 +1406,27 @@ void examine_monster(object *op, object *tmp) {
     switch ((mon->stats.hp+1)*4/(mon->stats.maxhp+1)) { /* From 1-4 */
     case 1:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It is in a bad shape.", NULL);
+                      "It is in a bad shape.");
         break;
 
     case 2:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It is hurt.", NULL);
+                      "It is hurt.");
         break;
 
     case 3:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It is somewhat hurt.", NULL);
+                      "It is somewhat hurt.");
         break;
 
     case 4:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It is in excellent shape.", NULL);
+                      "It is in excellent shape.");
         break;
     }
     if (object_present_in_ob(POISONING, mon) != NULL)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "It looks very ill.", NULL);
+                      "It looks very ill.");
 }
 
 /**
@@ -1490,7 +1467,7 @@ void examine(object *op, object *tmp) {
             if (exp) {
                 change_exp(op, exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                        "You discover mystic forces on %s", "You discover mystic forces on %s",tmp->nrof <= 1?"that item":"those items" );
+                        "You discover mystic forces on %s", tmp->nrof <= 1?"that item":"those items" );
             }
         }
         skill = find_skill_by_number(op, SK_DET_CURSE);
@@ -1500,7 +1477,7 @@ void examine(object *op, object *tmp) {
             if (exp) {
                 change_exp(op, exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                        "You have a bad feeling about %s", "You have a bad feeling about %s",tmp->nrof <= 1?"that item":"those items" );
+                        "You have a bad feeling about %s", tmp->nrof <= 1?"that item":"those items" );
             }
         }
         if (!QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT)) {
@@ -1553,11 +1530,10 @@ void examine(object *op, object *tmp) {
     ob_describe(tmp, op, buf, sizeof(buf));
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                                            "%s %s", "%s %s", prefix, buf);
+                                            "%s %s", prefix, buf);
     buf[0] = '\0';
     if (tmp->custom_name) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                             "You name it %s",
                              "You name it %s",
                              tmp->custom_name);
     }
@@ -1596,11 +1572,10 @@ void examine(object *op, object *tmp) {
 
     if (buf[0] != '\0')
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      buf, NULL);
+                      buf);
 
     if (tmp->materialname != NULL && !tmp->msg) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                             "It is made of: %s.",
                              "It is made of: %s.",
                              tmp->materialname);
     }
@@ -1610,22 +1585,18 @@ void examine(object *op, object *tmp) {
             if (op->body_info[i])
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                                      "It goes %s (%d)",
-                                     "It goes %s (%d)",
                                      body_locations[i].use_name, -tmp->body_info[i]);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                                     "It goes %s",
                                      "It goes %s",
                                      body_locations[i].nonuse_name);
         } else if (tmp->body_info[i]) {
             if (op->body_info[i])
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                                      "It goes %s",
-                                     "It goes %s",
                                      body_locations[i].use_name);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                                     "It goes %s",
                                      "It goes %s",
                                      body_locations[i].nonuse_name);
         }
@@ -1634,7 +1605,7 @@ void examine(object *op, object *tmp) {
     if (tmp->weight) {
         snprintf(buf, sizeof(buf), tmp->nrof > 1 ? "They weigh %3.3f kg." : "It weighs %3.3f kg.", tmp->weight*((float)(tmp->nrof ? tmp->nrof : 1)/1000.0));
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      buf, NULL);
+                      buf);
     }
 
     in_shop = is_in_shop(op);
@@ -1644,7 +1615,7 @@ void examine(object *op, object *tmp) {
         snprintf(buf, sizeof(buf), "You reckon %s worth %s.", tmp->nrof > 1 ? "they are" : "it is", value);
         free(value);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      buf, NULL);
+                      buf);
         if (in_shop) {
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
                 value = stringbuffer_finish(query_cost_string(tmp, op, F_BUY|F_SHOP, NULL));
@@ -1656,7 +1627,7 @@ void examine(object *op, object *tmp) {
                 free(value);
             }
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                          buf, NULL);
+                          buf);
         }
     }
 
@@ -1666,7 +1637,7 @@ void examine(object *op, object *tmp) {
     /* Is this item buildable? */
     if (QUERY_FLAG(tmp, FLAG_IS_BUILDABLE))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      "This is a buildable item.", NULL);
+                      "This is a buildable item.");
 
     /* Does the object have a message?  Don't show message for all object
      * types - especially if the first entry is a match
@@ -1682,13 +1653,13 @@ void examine(object *op, object *tmp) {
          */
         if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                          "The object has a story:", NULL);
+                          "The object has a story:");
 
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      tmp->msg, NULL);
+                      tmp->msg);
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                  " ", " "); /* Blank line */
+                  " "); /* Blank line */
 }
 
 /**
@@ -1706,7 +1677,7 @@ void inventory(object *op, object *inv) {
 
     if (inv == NULL && op == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Inventory of what object?", NULL);
+                      "Inventory of what object?");
         return;
     }
     FOR_INV_PREPARE(inv ? inv : op, tmp)
@@ -1717,13 +1688,13 @@ void inventory(object *op, object *inv) {
     if (inv == NULL) { /* player's inventory */
         if (items == 0) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "You carry nothing.", NULL);
+                          "You carry nothing.");
             return;
         } else {
             length = 28;
             in = "";
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
-                          "Inventory:", NULL);
+                          "Inventory:");
         }
     } else {
         if (items == 0)
@@ -1742,19 +1713,16 @@ void inventory(object *op, object *inv) {
         if (!op || QUERY_FLAG(op, FLAG_WIZ))
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
                                  "[fixed]%s- %-*.*s (%5d) %-8s",
-                                 "%s- %-*.*s (%5d) %-8s",
                                  in, length, length, name, tmp->count, weight);
         else
             draw_ext_info_format(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
                                  "[fixed]%s- %-*.*s %-8s",
-                                 "%s- %-*.*s %-8s",
                                  in, length+8, length+8, name, weight);
     } FOR_INV_FINISH();
     if (!inv && op) {
         query_weight(op, weight, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
                              "[fixed]%-*s %-8s",
-                             "%-*s %-8s",
                              41, "Total weight :", weight);
     }
 }
@@ -1775,129 +1743,101 @@ static void display_new_pickup(const object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d NEWMODE",
-                         "%d NEWMODE",
                          i&PU_NEWMODE ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d DEBUG",
                          "%d DEBUG",
                          i&PU_DEBUG ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d INHIBIT",
-                         "%d INHIBIT",
                          i&PU_INHIBIT ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d STOP",
                          "%d STOP",
                          i&PU_STOP ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d <= x pickup weight/value RATIO (0==off)",
-                         "%d <= x pickup weight/value RATIO (0==off)",
                          (i&PU_RATIO)*5);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d FOOD",
-                         "%d FOOD",
                          i&PU_FOOD ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d DRINK",
-                         "%d DRINK",
                          i&PU_DRINK ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d VALUABLES",
                          "%d VALUABLES",
                          i&PU_VALUABLES ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d BOW",
-                         "%d BOW",
                          i&PU_BOW ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d ARROW",
                          "%d ARROW",
                          i&PU_ARROW ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d HELMET",
-                         "%d HELMET",
                          i&PU_HELMET ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d SHIELD",
-                         "%d SHIELD",
                          i&PU_SHIELD ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d ARMOUR",
                          "%d ARMOUR",
                          i&PU_ARMOUR ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d BOOTS",
-                         "%d BOOTS",
                          i&PU_BOOTS ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d GLOVES",
                          "%d GLOVES",
                          i&PU_GLOVES ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d CLOAK",
-                         "%d CLOAK",
                          i&PU_CLOAK ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d KEY",
                          "%d KEY",
                          i&PU_KEY ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d MISSILEWEAPON",
-                         "%d MISSILEWEAPON",
                          i&PU_MISSILEWEAPON ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d ALLWEAPON",
                          "%d ALLWEAPON",
                          i&PU_ALLWEAPON ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d MAGICAL",
-                         "%d MAGICAL",
                          i&PU_MAGICAL ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d POTION",
                          "%d POTION",
                          i&PU_POTION ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d SPELLBOOK",
-                         "%d SPELLBOOK",
                          i&PU_SPELLBOOK ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d SKILLSCROLL",
                          "%d SKILLSCROLL",
                          i&PU_SKILLSCROLL ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d READABLES",
-                         "%d READABLES",
                          i&PU_READABLES ? 1 : 0);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d MAGICDEVICE",
                          "%d MAGICDEVICE",
                          i&PU_MAGIC_DEVICE ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d NOT CURSED",
-                         "%d NOT CURSED",
                          i&PU_NOT_CURSED ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "%d JEWELS",
                          "%d JEWELS",
                          i&PU_JEWELS ? 1 : 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d FLESH",
-                         "%d FLESH",
                          i&PU_FLESH ? 1 : 0);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                  "", "");
+                  "");
 }
 
 /**
@@ -1968,7 +1908,6 @@ int command_pickup(object *op, char *params) {
         }
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Pickup: invalid item %s\n",
-                             "Pickup: invalid item %s\n",
                              params);
         return 1;
     }
@@ -1977,7 +1916,7 @@ int command_pickup(object *op, char *params) {
         if (1)
             LOG(llevDebug, "command_pickup: params==NULL\n");
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: pickup <0-7> or <value_density> .", NULL);
+                      "Usage: pickup <0-7> or <value_density> .");
         return 1;
     }
     set_pickup_mode(op, i);
@@ -1999,42 +1938,42 @@ static void set_pickup_mode(const object *op, int i) {
     switch (op->contr->mode) {
     case 0:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Mode: Don't pick up.", NULL);
+                      "Mode: Don't pick up.");
         break;
 
     case 1:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Mode: Pick up one item.", NULL);
+                      "Mode: Pick up one item.");
         break;
 
     case 2:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Mode: Pick up one item and stop.", NULL);
+                      "Mode: Pick up one item and stop.");
         break;
 
     case 3:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Mode: Stop before picking up.", NULL);
+                      "Mode: Stop before picking up.");
         break;
 
     case 4:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Mode: Pick up all items.", NULL);
+                      "Mode: Pick up all items.");
         break;
 
     case 5:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Mode: Pick up all items and stop.", NULL);
+                      "Mode: Pick up all items and stop.");
         break;
 
     case 6:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Mode: Pick up all magic items.", NULL);
+                      "Mode: Pick up all magic items.");
         break;
 
     case 7:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Mode: Pick up all coins and gems", NULL);
+                      "Mode: Pick up all coins and gems");
         break;
     }
 }
@@ -2058,24 +1997,22 @@ int command_search_items(object *op, char *params) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                           "Example: search magic+1 "
                           "Would automatically pick up all "
-                          "items containing the word 'magic+1'.",
-                          NULL);
+                          "items containing the word 'magic+1'.");
             return 1;
         }
         op->contr->search_str[0] = '\0';
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "Search mode turned off.", NULL);
+                      "Search mode turned off.");
         fix_object(op);
         return 1;
     }
     if ((int)strlen(params) >= MAX_BUF) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Search string too long.", NULL);
+                      "Search string too long.");
         return 1;
     }
     strcpy(op->contr->search_str, params);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                         "Searching for '%s'.",
                          "Searching for '%s'.",
                          op->contr->search_str);
     fix_object(op);
@@ -2124,7 +2061,7 @@ int command_rename_item(object *op, char *params) {
             FOR_INV_FINISH();
             if (!found) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "Tried to rename an invalid item.", NULL);
+                              "Tried to rename an invalid item.");
                 return 1;
             }
             while (isdigit(*params) || ' ' == *params)
@@ -2134,13 +2071,13 @@ int command_rename_item(object *op, char *params) {
             closebrace = strchr(params, '>');
             if (!closebrace) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "Syntax error!", NULL);
+                              "Syntax error!");
                 return 1;
             }
             /* Sanity check for buffer overruns */
             if (closebrace-params > 127) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "Old name too long (up to 127 characters allowed)!", NULL);
+                              "Old name too long (up to 127 characters allowed)!");
                 return 1;
             }
             /* Copy the old name */
@@ -2150,7 +2087,7 @@ int command_rename_item(object *op, char *params) {
             item = find_best_object_match(op, buf);
             if (!item) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "Could not find a matching item to rename.", NULL);
+                              "Could not find a matching item to rename.");
                 return 1;
             }
 
@@ -2163,7 +2100,7 @@ int command_rename_item(object *op, char *params) {
             item = find_marked_object(op);
             if (!item) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "No marked item to rename.", NULL);
+                              "No marked item to rename.");
                 return 1;
             }
         }
@@ -2175,20 +2112,20 @@ int command_rename_item(object *op, char *params) {
                 params++;
             if ('<' != *params) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "Syntax error, expecting < at start of new name!", NULL);
+                              "Syntax error, expecting < at start of new name!");
                 return 1;
             }
             closebrace = strchr(params+1, '>');
             if (!closebrace) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "Syntax error, expecting > at end of new name!", NULL);
+                              "Syntax error, expecting > at end of new name!");
                 return 1;
             }
 
             /* Sanity check for buffer overruns */
             if (closebrace-params > 127) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "New name too long (up to 127 characters allowed)!", NULL);
+                              "New name too long (up to 127 characters allowed)!");
                 return 1;
             }
 
@@ -2214,14 +2151,14 @@ int command_rename_item(object *op, char *params) {
                  * tell the player & exit
                  */
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "Invalid new name!", NULL);
+                              "Invalid new name!");
                 return 1;
             }
         } else {
             /* If param contains something, then syntax error... */
             if (strlen(params)) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                              "Syntax error, expected 'to <' after old name!", NULL);
+                              "Syntax error, expected 'to <' after old name!");
                 return 1;
             }
             /* New name is empty */
@@ -2232,7 +2169,7 @@ int command_rename_item(object *op, char *params) {
         item = find_marked_object(op);
         if (!item) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "No marked item to rename.", NULL);
+                          "No marked item to rename.");
             return 1;
         }
         buf[0] = '\0';
@@ -2243,7 +2180,7 @@ int command_rename_item(object *op, char *params) {
         /* Clear custom name */
         if (item->custom_name == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "This item has no custom name.", NULL);
+                          "This item has no custom name.");
             return 1;
         }
 
@@ -2251,13 +2188,11 @@ int command_rename_item(object *op, char *params) {
         query_base_name(item, item->nrof > 1 ? 1 : 0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "You stop calling your %s with weird names.",
-                             "You stop calling your %s with weird names.",
                              name);
     } else {
         if (item->custom_name != NULL && strcmp(item->custom_name, buf) == 0) {
             query_base_name(item, item->nrof > 1 ? 1 : 0, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                                 "You keep calling your %s %s.",
                                  "You keep calling your %s %s.",
                                  name, buf);
             return 1;
@@ -2268,7 +2203,6 @@ int command_rename_item(object *op, char *params) {
 
         query_base_name(item, item->nrof > 1 ? 1 : 0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                             "Your %s will now be called %s.",
                              "Your %s will now be called %s.",
                              name, buf);
     }
@@ -2299,25 +2233,25 @@ int command_lock_item(object *op, char *params) {
 
     if (*params == '\0' || strlen(params) == 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                      "Lock what item?", "Lock what item?");
+                      "Lock what item?");
         return 1;
     }
 
     item = find_best_object_match(op, params);
     if (!item) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                      "Can't find any matching item.", "Can't find any matching item.");
+                      "Can't find any matching item.");
         return 1;
     }
 
     query_short_name(item, name, HUGE_BUF);
     if (QUERY_FLAG(item, FLAG_INV_LOCKED)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                             "Unlocked %s.", "Unlocked %s.", name);
+                             "Unlocked %s.", name);
         CLEAR_FLAG(item, FLAG_INV_LOCKED);
     } else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                             "Locked %s.", "Locked %s.", name);
+                             "Locked %s.", name);
         SET_FLAG(item, FLAG_INV_LOCKED);
     }
 
@@ -2353,7 +2287,7 @@ int command_use(object *op, char *params) {
     snprintf(copy, sizeof(copy), "%s", params);
     with = strstr(copy, " with ");
     if (!with) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Syntax is use <item> with <item>.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Syntax is use <item> with <item>.");
         return 1;
     }
 
@@ -2362,12 +2296,12 @@ int command_use(object *op, char *params) {
 
     first = find_best_object_match(op, copy);
     if (!first) {
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No match for %s.", NULL, copy);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No match for %s.", copy);
         return 1;
     }
     second = find_best_object_match(op, with);
     if (!second) {
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No match for %s.", NULL, with);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No match for %s.", with);
         return 1;
     }
 
@@ -2384,12 +2318,12 @@ int command_use(object *op, char *params) {
             if (transformation->yield)
                 generated->nrof = transformation->yield;
             object_insert_in_ob(generated, op);
-            /*draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Found recipe %s", NULL, transformation->title);*/
+            /*draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Found recipe %s", transformation->title);*/
             object_decrease_nrof_by_one(second);
             return 1;
         }
     }
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Nothing happens.", NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Nothing happens.");
     return 1;
 
     /*
@@ -2402,7 +2336,7 @@ int command_use(object *op, char *params) {
             snprintf(copy, sizeof(copy), "on_use_with_%d", first->type);
             data = object_get_value(second, copy);
             if (!data) {
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Nothing happens.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Nothing happens.");
                 return 1;
             }
         }
