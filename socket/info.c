@@ -64,46 +64,34 @@ void print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, cons
 }
 
 /**
- * For printing messages to a file
- * \param colr message color
- * \param pl player to send to. Can be NULL
- * \param tmp message to send. Can be NULL
- *
- * This writes the message to a logfile.  Since the only
- * function that calls this is draw_ext_info() below,
- * and the only event it will call this routine is if the
- * player is null, it always print to the logfile.
- *
- */
-
-static void print_message(int colr, const object *pl, const char *tmp) {
-    if (tmp == NULL) {
-        tmp = "[NULL]";
-    }
-    fprintf(logfile, "%s\n", tmp);
-}
-
-/**
  * Sends message to player(s).
  *
- * @param flags Various flags - mostly color, plus a few specials.
+ * @param flags Various flags - mostly color, plus a few specials.  If NDI_ALL
+ * or NDI_ALL_DMS is set, pl is ignored and the message is resent to all
+ * players or all DMs individually.
  *
- * @param pri Priority.  It is a little odd - the lower the value, the more
- * important it is.  Thus, 0 gets sent no matter what.  Otherwise, the
- * value must be less than the listening level that the player has set.
- * Unfortunately, there is no clear guideline on what each level does what.
+ * @param pri Priority.  The lower the value, the more important it is.  Thus,
+ * 0 gets sent no matter what.  Otherwise, the value must be less than the
+ * listening level that the player has set.  Unfortunately, there is no clear
+ * guideline on what each level does what.
  *
- * @param pl Can be passed as NULL - in fact, this will be done if NDI_ALL is
- * set in the flags.
+ * @param pl Who to send the message to.  pl may be NULL, particularly if
+ * flags has NDI_ALL or NDI_DMS set since it is ignored in that case.  If
+ * NDI_ALL and NDI_DMS are not set, when pl is NULL, nobody gets the message.
+ * This is sometimes useful when a function that can be invoked by a player
+ * is automatically called by some other mechanism.  For example, if a player
+ * tries to put something in a container, they should get a message that tells
+ * them they cannot put it in an unsuitable container, but when auto-pickup is
+ * at work, all containers are tried, even unsuitable ones, and so messages
+ * should not be sent to the player.
  *
  * @param type The type MSG_TYPE for the type of message.
  *
- * @param subtype The type MSG_TYPE for the type of message.
+ * @param subtype The subtype of MSG_TYPE for the message.
  *
- * @param message The message to send for clients that support draw_ext_info.
+ * @param message The message to send to clients that support draw_ext_info.
  *
- * @param oldmessage is for clients that do not support it.  oldmessage can be
- * NULL, in which case this function will strip out the tags of message.
+ * @param oldmessage Ignored.
  */
 void draw_ext_info(
     int flags, int pri, const object *pl, uint8 type,
@@ -121,11 +109,8 @@ void draw_ext_info(
         return;
     }
 
-    if (!pl || (pl->type == PLAYER && pl->contr == NULL)) {
-        /* Write to the socket? */
-        print_message(0, NULL, oldmessage);
+    if (!pl || (pl->type == PLAYER && pl->contr == NULL))
         return;
-    }
     if (pl->type != PLAYER)
         return;
     if (pri >= pl->contr->listening)

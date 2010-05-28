@@ -14,6 +14,23 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix socket/info.c::draw_ext_message() comments to be more informative and to
+  update them to more completely describe current behavior.
+Remove the socket/info.c::draw_ext_message() socket/info.c::print_message()
+  call to fix bug 2984255 and to remove inappropriate log file clutter.
+Remove socket/info.c::print_message() as LOG() is the proper method of logging
+  messages.  It is obvious that the function has been modified from its
+  original implementation as it expects a player pointer but does not use it.
+  The only function that called it was draw_ext_info(), and it only did so
+  when the player pointer was NULL or when a player's contr pointer was NULL.
+  It appears that print_message() used to be a mechanism by which an old
+  client could get simple messages without any formatting (based on out-dated
+  comments in draw_ext_info()'s header), but that functionality is long gone.
+Note:  draw_ext_info()'s oldmessage parameter is completely useless, unused,
+  and should be set to NULL.  Really it should be removed and all calls to
+  draw_ext_info() cleaned up likewise.
+Kevin Bulgrien 2010-05-27
+
 Quest parent edition in CRE.
 Nicolas Weeger 2010-05-26
 
