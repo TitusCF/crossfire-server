@@ -96,6 +96,7 @@ void MessageRule::setModified(bool modified)
 MessageFile::MessageFile(const QString& path)
 {
     myPath = path;
+    myIsModified = false;
 }
 
 MessageFile::~MessageFile()
@@ -113,9 +114,22 @@ const QString& MessageFile::path() const
     return myPath;
 }
 
+void MessageFile::setPath(const QString& path)
+{
+    if (myPath != path)
+    {
+        myPath = path;
+        setModified();
+    }
+}
+
 void MessageFile::setLocation(const QString& location)
 {
-    myLocation = location;
+    if (myLocation != location)
+    {
+        myLocation = location;
+        setModified();
+    }
 }
 
 void convert(QScriptValue& value, QList<QStringList>& list)
@@ -260,7 +274,7 @@ QString convert(const MessageRule* rule)
 
 void MessageFile::save()
 {
-    bool one = false;
+    bool one = myIsModified;
     foreach(MessageRule* rule, myRules)
     {
         if (rule->isModified())
@@ -294,4 +308,16 @@ void MessageFile::save()
     file.open(QIODevice::WriteOnly | QIODevice::Truncate);
     file.write(data.toAscii());
     file.close();
+
+    setModified(false);
+}
+
+bool MessageFile::isModified() const
+{
+    return myIsModified;
+}
+
+void MessageFile::setModified(bool modified)
+{
+    myIsModified = modified;
 }

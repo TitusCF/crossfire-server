@@ -13,7 +13,7 @@ class MessageManager
         void loadMessages();
         void saveMessages();
 
-        QList<MessageFile*> messages();
+        QList<MessageFile*>& messages();
 
     private:
         QList<MessageFile*> myMessages;

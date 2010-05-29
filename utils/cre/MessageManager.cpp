@@ -30,7 +30,7 @@ void MessageManager::saveMessages()
     }
 }
 
-QList<MessageFile*> MessageManager::messages()
+QList<MessageFile*>& MessageManager::messages()
 {
     return myMessages;
 }

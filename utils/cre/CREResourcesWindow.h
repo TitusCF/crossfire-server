@@ -89,6 +89,7 @@ class CREResourcesWindow : public QWidget
         void onReportChange(QObject* object);
         void treeCustomMenu(const QPoint & pos);
         void addQuest(bool);
+        void addMessage(bool);
 };
 
 #endif // CRERESOURCESWINDOW_H

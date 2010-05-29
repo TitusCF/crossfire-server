@@ -45,6 +45,7 @@
 #include "CREMapInformationManager.h"
 #include "Quest.h"
 #include "QuestManager.h"
+#include "MessageFile.h"
 
 #include "CREScriptEngine.h"
 
@@ -753,6 +754,13 @@ void CREResourcesWindow::treeCustomMenu(const QPoint & pos)
 {
     QMenu menu;
 
+    if (myDisplay & DisplayMessage)
+    {
+        QAction* addMessage = new QAction("add message", &menu);
+        connect(addMessage, SIGNAL(triggered(bool)), this, SLOT(addMessage(bool)));
+        menu.addAction(addMessage);
+    }
+
     if (myDisplay & DisplayQuests)
     {
         QAction* addQuest = new QAction("add quest", &menu);
@@ -782,5 +790,13 @@ void CREResourcesWindow::addQuest(bool)
     Quest* quest = new Quest();
     quest->setCode("(new quest)");
     myQuests->quests().append(quest);
+    fillData();
+}
+
+void CREResourcesWindow::addMessage(bool)
+{
+    MessageFile* file = new MessageFile("<new file>");
+    file->setModified();
+    myMessages->messages().append(file);
     fillData();
 }

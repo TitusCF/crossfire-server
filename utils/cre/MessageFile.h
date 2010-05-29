@@ -50,6 +50,7 @@ class MessageFile : public QObject
         bool parseFile();
 
         const QString& path() const;
+        void setPath(const QString& path);
 
         const QString& location() const;
         void setLocation(const QString& location);
@@ -58,7 +59,11 @@ class MessageFile : public QObject
 
         void save();
 
+        bool isModified() const;
+        void setModified(bool modified = true);
+
     private:
+        bool myIsModified;
         QString myPath;
         QString myLocation;
         QList<MessageRule*> myRules;

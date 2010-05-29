@@ -22,8 +22,11 @@ class CREMessagePanel : public CREPanel
         virtual ~CREMessagePanel();
 
         void setMessage(MessageFile* message);
+        virtual void commitData();
+
     private:
         MessageFile* myMessage;
+        QLineEdit* myPath;
         QLineEdit* myLocation;
         QTreeWidget* myRules;
         QBrush myDefaultBackground;

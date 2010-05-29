@@ -8,12 +8,18 @@ CREMessagePanel::CREMessagePanel()
 {
     QGridLayout* layout = new QGridLayout(this);
 
-    layout->addWidget(new QLabel(tr("Location:"), this), 0, 0);
+    int line = 0;
+
+    layout->addWidget(new QLabel(tr("Path:"), this), line, 0);
+    myPath = new QLineEdit(this);
+    layout->addWidget(myPath, line++, 1);
+
+    layout->addWidget(new QLabel(tr("Location:"), this), line, 0);
     myLocation = new QLineEdit(this);
-    layout->addWidget(myLocation, 0, 1);
+    layout->addWidget(myLocation, line++, 1);
 
     QGroupBox* box = new QGroupBox(tr("Rules"));
-    layout->addWidget(box, 1, 0, 1, 2);
+    layout->addWidget(box, line++, 0, 1, 2);
 
     QGridLayout* rules = new QGridLayout();
     box->setLayout(rules);
@@ -53,6 +59,9 @@ QString toDisplay(const QList<QStringList>& list)
 
 void CREMessagePanel::setMessage(MessageFile* message)
 {
+    myPath->setText(message->path());
+    /* can only change path when new file is created */
+    myPath->setEnabled(message->path() == "<new file>");
     myLocation->setText(message->location());
 
     /* so the change handler won't do anything */
@@ -210,4 +219,10 @@ void CREMessagePanel::onDeleteRule(bool)
 
     myMessage->rules().removeAt(index);
     delete myRules->takeTopLevelItem(index);
+}
+
+void CREMessagePanel::commitData()
+{
+    myMessage->setPath(myPath->text());
+    myMessage->setLocation(myLocation->text());
 }
