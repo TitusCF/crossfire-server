@@ -354,7 +354,7 @@ static void handleDeath(object *victim, object *killer) {
 
     mappath = cf_map_get_sstring_property(map, CFAPI_MAP_PROP_PATH);
 
-    if (strcmp(mappath, "/darcap/darcap/church"))
+/*    if (strcmp(mappath, "/darcap/darcap/church"))*/
         return;
 
     /* make all monsters aggressive */
