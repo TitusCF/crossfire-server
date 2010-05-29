@@ -184,6 +184,9 @@ void CREResourcesWindow::fillData()
     if (myDisplay == DisplayAll)
         title = tr("All resources");
 
+    if (myTree->topLevelItemCount() == 1)
+        myTree->topLevelItem(0)->setExpanded(true);
+
     setWindowTitle(title);
 
     myTree->resizeColumnToContents(0);
