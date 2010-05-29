@@ -54,7 +54,7 @@ class MessageFile : public QObject
         const QString& location() const;
         void setLocation(const QString& location);
 
-        QList<MessageRule*> rules();
+        QList<MessageRule*>& rules();
 
         void save();
 

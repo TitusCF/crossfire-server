@@ -194,7 +194,7 @@ bool MessageFile::parseFile()
     return true;
 }
 
-QList<MessageRule*> MessageFile::rules()
+QList<MessageRule*>& MessageFile::rules()
 {
     return myRules;
 }

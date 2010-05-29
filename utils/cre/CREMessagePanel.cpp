@@ -19,15 +19,22 @@ CREMessagePanel::CREMessagePanel()
     box->setLayout(rules);
 
     myRules = new QTreeWidget();
-    rules->addWidget(myRules, 0, 0, 4, 1);
+    rules->addWidget(myRules, 0, 0, 4, 2);
     QStringList labels;
     labels << tr("match") << tr("pre") << tr("message") << tr("post") << tr("replies") << tr("include");
     myRules->setHeaderLabels(labels);
     connect(myRules, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 
+    QPushButton* add = new QPushButton(tr("add rule"), this);
+    rules->addWidget(add, 4, 0);
+    connect(add, SIGNAL(clicked(bool)), this, SLOT(onAddRule(bool)));
+    QPushButton* remove = new QPushButton(tr("remove rule"), this);
+    rules->addWidget(remove, 4, 1);
+    connect(remove, SIGNAL(clicked(bool)), this, SLOT(onDeleteRule(bool)));
+
     myRulePanel = new CRERulePanel(this);
     connect(myRulePanel, SIGNAL(currentRuleModified()), this, SLOT(currentRuleModified()));
-    rules->addWidget(myRulePanel, 4, 0, 4, 1);
+    rules->addWidget(myRulePanel, 5, 0, 4, 2);
 
     myMessage = NULL;
 }
@@ -184,4 +191,23 @@ void CREMessagePanel::fillRuleItem(QTreeWidgetItem* item, MessageRule* rule)
     item->setText(3, toDisplay(rule->postconditions()));
     item->setText(4, toDisplay(rule->replies()));
     item->setText(5, rule->include());
+}
+
+void CREMessagePanel::onAddRule(bool)
+{
+    MessageRule* rule = new MessageRule();
+    rule->match().append("*");
+    rule->setModified(true);
+    myMessage->rules().append(rule);
+    new QTreeWidgetItem(myRules, QStringList("*"));
+}
+
+void CREMessagePanel::onDeleteRule(bool)
+{
+    int index = myRules->currentIndex().row();
+    if (index < 0 || index > myMessage->rules().size())
+        return;
+
+    myMessage->rules().removeAt(index);
+    delete myRules->takeTopLevelItem(index);
 }

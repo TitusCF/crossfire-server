@@ -33,6 +33,8 @@ class CREMessagePanel : public CREPanel
     private slots:
         void currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
         void currentRuleModified();
+        void onAddRule(bool);
+        void onDeleteRule(bool);
 };
 
 #endif	/* _CREMESSAGEPANEL_H */
