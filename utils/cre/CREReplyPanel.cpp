@@ -78,8 +78,8 @@ void CREReplyPanel::setText(QTreeWidgetItem* item, QStringList data)
 {
     while (data.size() > 3)
         data.removeLast();
-    if (data.size() == 2)
-        data.append("0");
+    while (data.size() < 3)
+        data.append("");
     data[2] = myType->itemText(data[2].toInt());
     item->setText(0, data[0]);
     item->setText(1, data[1]);
