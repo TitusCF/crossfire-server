@@ -50,6 +50,7 @@ static PyObject *Map_CreateObject(Crossfire_Map *map, PyObject *args);
 static PyObject *Map_Check(Crossfire_Map *map, PyObject *args);
 static PyObject *Map_Next(Crossfire_Map *map, PyObject *args);
 static PyObject *Map_Insert(Crossfire_Map *map, PyObject *args);
+static PyObject *Map_InsertAround(Crossfire_Map *map, PyObject *args);
 static PyObject *Map_ChangeLight(Crossfire_Map *map, PyObject *args);
 static PyObject *Map_TriggerConnected(Crossfire_Map *map, PyObject *args);
 
@@ -91,6 +92,7 @@ static PyMethodDef MapMethods[] = {
     { "Check",            (PyCFunction)Map_Check,            METH_VARARGS, NULL },
     { "Next",             (PyCFunction)Map_Next,             METH_NOARGS,  NULL },
     { "Insert",           (PyCFunction)Map_Insert,           METH_VARARGS, NULL },
+    { "InsertAround",     (PyCFunction)Map_InsertAround,     METH_VARARGS, NULL },
     { "ChangeLight",      (PyCFunction)Map_ChangeLight,      METH_VARARGS, NULL },
     { "TriggerConnected", (PyCFunction)Map_TriggerConnected, METH_VARARGS, NULL },
     { NULL, NULL, 0, NULL }
