@@ -10,13 +10,14 @@ class QLineEdit;
 class CREStringListPanel;
 class CREPrePostPanel;
 class CREReplyPanel;
+class MessageManager;
 
 class CRERulePanel : public QTabWidget
 {
     Q_OBJECT
 
     public:
-        CRERulePanel(QWidget* parent);
+        CRERulePanel(const MessageManager* manager, QWidget* parent);
         virtual ~CRERulePanel();
 
         void setMessageRule(MessageRule* rule);

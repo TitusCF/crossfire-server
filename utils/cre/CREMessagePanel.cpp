@@ -4,7 +4,7 @@
 #include "MessageFile.h"
 #include "CRERulePanel.h"
 
-CREMessagePanel::CREMessagePanel()
+CREMessagePanel::CREMessagePanel(const MessageManager* manager)
 {
     QGridLayout* layout = new QGridLayout(this);
 
@@ -45,7 +45,7 @@ CREMessagePanel::CREMessagePanel()
     rules->addWidget(down, 4, 3);
     connect(down, SIGNAL(clicked(bool)), this, SLOT(onMoveDown(bool)));
 
-    myRulePanel = new CRERulePanel(this);
+    myRulePanel = new CRERulePanel(manager, this);
     connect(myRulePanel, SIGNAL(currentRuleModified()), this, SLOT(currentRuleModified()));
     rules->addWidget(myRulePanel, 5, 0, 4, 4);
 

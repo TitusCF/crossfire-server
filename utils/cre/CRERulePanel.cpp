@@ -4,23 +4,20 @@
 #include "CREStringListPanel.h"
 #include "CREPrePostPanel.h"
 #include "CREReplyPanel.h"
+#include "MessageManager.h"
 
-CRERulePanel::CRERulePanel(QWidget* parent) : QTabWidget(parent)
+CRERulePanel::CRERulePanel(const MessageManager* manager, QWidget* parent) : QTabWidget(parent)
 {
     myMatches = new CREStringListPanel(true, this);
     connect(myMatches, SIGNAL(dataModified()), this, SLOT(onMatchModified()));
     addTab(myMatches, tr("matches"));
-    QStringList pre;
-    pre << "age" << "item" << "level" << "npctoken" << "quest" << "token";
-    myPre = new CREPrePostPanel(pre, this);
+    myPre = new CREPrePostPanel(manager->preConditions(), this);
     connect(myPre, SIGNAL(dataModified()), this, SLOT(onPreModified()));
     addTab(myPre, tr("pre"));
     myMessages = new CREStringListPanel(false, this);
     connect(myMessages, SIGNAL(dataModified()), this, SLOT(onMessageModified()));
     addTab(myMessages, tr("message"));
-    QStringList post;
-    post << "connection" << "givecontents" << "giveitem" << "marktime" << "quest" << "setnpctoken" << "settoken" << "takeitem";
-    myPost = new CREPrePostPanel(post, this);
+    myPost = new CREPrePostPanel(manager->postConditions(), this);
     connect(myPost, SIGNAL(dataModified()), this, SLOT(onPostModified()));
     addTab(myPost, tr("post"));
 

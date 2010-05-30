@@ -20,6 +20,10 @@ MessageManager::~MessageManager()
 void MessageManager::loadMessages()
 {
     loadDirectory("");
+
+    /* get pre and post conditions */
+    findPrePost("pre", myPreConditions);
+    findPrePost("post", myPostConditions);
 }
 
 void MessageManager::saveMessages()
@@ -62,4 +66,24 @@ void MessageManager::loadDirectory(const QString& directory)
     QStringList subdirs = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
     foreach(QString sub, subdirs)
         loadDirectory(directory + QDir::separator() + sub);
+}
+
+const QStringList& MessageManager::preConditions() const
+{
+    return myPreConditions;
+}
+
+const QStringList& MessageManager::postConditions() const
+{
+    return myPostConditions;
+}
+
+void MessageManager::findPrePost(const QString directory, QStringList& list)
+{
+    QDir dir(QString("%1/%2/python/dialog/%3").arg(settings.datadir, settings.mapdir, directory));
+    QFileInfoList files = dir.entryInfoList(QStringList("*.py"));
+    foreach(QFileInfo file, files)
+    {
+        list.append(file.baseName());
+    }
 }
