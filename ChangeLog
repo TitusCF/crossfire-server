@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/quest.c, #define the state numbers in the quest parsing code
+Brendan Lally 2010-05-30
+
 Use a specific message to query animation state, fix isn't enough.
 Nicolas Weeger 2010-05-30
 

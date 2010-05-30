@@ -135,6 +135,13 @@ static quest_definition *quest_get_by_code(sstring code) {
     return NULL;
 }
 
+#define QUESTFILE_NEXTQUEST 0
+#define QUESTFILE_QUEST 1
+#define QUESTFILE_QUESTDESC 2
+#define QUESTFILE_STEP 3
+#define QUESTFILE_STEPDESC 4
+#define QUESTFILE_STEPCOND 5
+
 /**
  * Loads all of the quests which are found in the given file, any global states
  * for quest loading are passed down into this function, but not back up again.
@@ -164,7 +171,7 @@ static int load_quests_from_file(const char *filename) {
             if (strcmp(read, "end_description\n") == 0) {
                 char *message;
 
-                in = 3;
+                in = QUESTFILE_STEP;
 
                 message = stringbuffer_finish(buf);
                 buf = NULL;
@@ -179,10 +186,10 @@ static int load_quests_from_file(const char *filename) {
             continue;
         }
 
-        if (in == 3) {
+        if (in == QUESTFILE_STEP) {
             if (strcmp(read, "end_step\n") == 0) {
                 step = NULL;
-                in = 1;
+                in = QUESTFILE_QUEST;
                 continue;
             }
             if (strcmp(read, "finishes_quest\n") == 0) {
@@ -191,7 +198,11 @@ static int load_quests_from_file(const char *filename) {
             }
             if (strcmp(read, "description\n") == 0) {
                 buf = stringbuffer_new();
-                in = 4;
+                in = QUESTFILE_STEPDESC;
+                continue;
+            }
+            if (strcmp(read, "setwhen\n") == 0) {
+                in = QUESTFILE_STEPCOND;
                 continue;
             }
             LOG(llevError, "quests: invalid line %s in definition of quest %s in file %s!\n",
@@ -199,11 +210,11 @@ static int load_quests_from_file(const char *filename) {
             continue;
         }
 
-        if (in == 2) {
+        if (in == QUESTFILE_QUESTDESC) {
             if (strcmp(read, "end_description\n") == 0) {
                 char *message;
 
-                in = 1;
+                in = QUESTFILE_QUEST;
 
                 message = stringbuffer_finish(buf);
                 buf = NULL;
@@ -217,15 +228,15 @@ static int load_quests_from_file(const char *filename) {
             continue;
         }
 
-        if (in == 1) {
+        if (in == QUESTFILE_QUEST) {
             if (strcmp(read, "end_quest\n") == 0) {
                 quest = NULL;
-                in = 0;
+                in = QUESTFILE_NEXTQUEST;
                 continue;
             }
 
             if (strcmp(read, "description\n") == 0) {
-                in = 2;
+                in = QUESTFILE_QUESTDESC;
                 buf = stringbuffer_new();
                 continue;
             }
@@ -241,7 +252,7 @@ static int load_quests_from_file(const char *filename) {
                 step->step = i;
                 step->next = quest->steps;
                 quest->steps = step;
-                in = 3;
+                in = QUESTFILE_STEP;
                 continue;
             }
 
@@ -274,7 +285,7 @@ static int load_quests_from_file(const char *filename) {
             }
             quest->next = quests;
             quests = quest;
-            in = 1;
+            in = QUESTFILE_QUEST;
             loaded_quests++;
             continue;
         }
@@ -296,6 +307,7 @@ static int load_quests_from_file(const char *filename) {
 
         LOG(llevError, "quest: invalid file format for %s, I don't know what to do with the line %s\n", final, read);
     }
+    LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", final, in);
     return loaded_quests;
 }
 
