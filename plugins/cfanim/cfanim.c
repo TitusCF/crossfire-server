@@ -1170,7 +1170,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
     query = va_arg(args, int); /* 'fix', ignored */
     event = va_arg(args, object *);
 
-    if (query == 1) {
+    if (query == 1 && strcmp(message, "query_object_is_animated") == 0) {
         rv = is_animated_object(who);
         return &rv;
     }
