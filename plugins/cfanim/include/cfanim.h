@@ -71,6 +71,7 @@ typedef struct CFmovement_struct {
 typedef struct CFanimation_struct {
     char *name;
     object *victim;
+    object *event;
     int paralyze;
     int invisible;
     int wizard;
@@ -78,6 +79,7 @@ typedef struct CFanimation_struct {
     int verbose;
     int ghosted;
     int errors_allowed;
+    int delete_end;
     object *corpse;
     long int tick_left;
     enum time_enum time_representation;

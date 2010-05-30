@@ -672,6 +672,21 @@ static int get_boolean(const char *strg, int *bl) {
 }
 
 /**
+ * Is specified object currently being animated?
+ * @param ob object to search for.
+ * @return 1 if ob is part of animation, 0 else.
+ */
+static int is_animated_object(const object *ob) {
+    CFanimation *current;
+
+    for (current = first_animation; current; current++)
+        if (current->victim == ob) {
+            return 1;
+        }
+    return 0;
+}
+
+/**
  * Is specified player currently victim of a paralysing animation?
  * @param pl player to search for.
  * @return 1 if pl is part of animation, 0 else.
@@ -701,8 +716,10 @@ static CFanimation *create_animation(void) {
         return NULL;
     new->name = NULL;
     new->victim = NULL;
+    new->event = NULL;
     new->nextmovement = NULL;
     new->nextanimation = NULL;
+    new->delete_end = 0;
     for (current = first_animation; (current && current->nextanimation); current = current->nextanimation)
         ;
     if (!current)
@@ -762,6 +779,7 @@ static int start_animation(object *who, object *activator, object *event, const 
     object  *victim = NULL;
     int     unique = 0;
     int     always_delete = 0;
+    int     delete_end = 0;
     int     parallel = 0;
     int     paralyzed = 1;
     int     invisible = 0;
@@ -852,6 +870,9 @@ static int start_animation(object *who, object *activator, object *event, const 
             } else if (!strcmp(variable, "always_delete")) {
                 if (!get_boolean(value, &always_delete))
                     errors_found = 1;
+            } else if (!strcmp(variable, "delete_event_end")) {
+                if (!get_boolean(value, &delete_end))
+                    errors_found = 1;
             } else if (!strcmp(variable, "parallel")) {
                 if (!get_boolean(value, &parallel))
                     errors_found = 1;
@@ -910,6 +931,7 @@ static int start_animation(object *who, object *activator, object *event, const 
     if (always_delete) {
         /*if (verbose) printf("CFAnim: Freeing event nr. %d for %s.\n", current_event, who->name);*/
         cf_object_remove(event);
+        event = NULL;
     }
     if (((victim->type == PLAYER) && (victimtype == 1))
     || ((victim->type != PLAYER) && (victimtype == 0))
@@ -923,13 +945,16 @@ static int start_animation(object *who, object *activator, object *event, const 
     if (unique && !always_delete) {
         /*if (verbose) printf("CFAnim: Freeing event nr. %d for %s.\n", current_event, who->name);*/
         cf_object_remove(event);
+        event = NULL;
     }
     current_anim->name = name;
     current_anim->victim = victim;
+    current_anim->event = event;
     current_anim->paralyze = paralyzed;
     current_anim->invisible = invisible;
     current_anim->wizard = wizard;
     current_anim->unique = unique;
+    current_anim->delete_end = delete_end;
     current_anim->ghosted = 0;
     current_anim->corpse = NULL;
     current_anim->time_representation = timetype;
@@ -1044,6 +1069,8 @@ static void animate(void) {
             else {
                 previous_anim->nextanimation = next;
             }
+            if (current->delete_end && current->event != NULL)
+                cf_object_remove(current->event);
             free(current->name);
             free(current);
             current = next;
@@ -1126,6 +1153,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
     va_list args;
     char *buf, message[MAX_BUF], script[MAX_BUF];
     object *who, *activator, *third, *event;
+    int query;
 
     va_start(args, type);
 
@@ -1139,8 +1167,13 @@ CF_PLUGIN void *eventListener(int *type, ...) {
     else
         message[0] = '\0';
 
-    va_arg(args, int); /* 'fix', ignored */
+    query = va_arg(args, int); /* 'fix', ignored */
     event = va_arg(args, object *);
+
+    if (query == 1) {
+        rv = is_animated_object(who);
+        return &rv;
+    }
 
     /** @todo build from current map's path, probably */
     cf_get_maps_directory(event->slaying, script, sizeof(script));
