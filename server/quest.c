@@ -65,9 +65,11 @@ typedef struct quest_player {
 static quest_player *player_states = NULL;
 
 typedef struct quest_condition {
-    sstring *quest_code;          /**< The quest that triggers the condition */
-    int step;                     /**< The step in the quest that triggers the condition,
+    sstring quest_code;          /**< The quest that triggers the condition */
+    int minstep;                  /**< The earliest step in the quest that triggers the condition,
                                     -1 means finished, 0 means not started */
+    int maxstep;                  /**< The latest step that triggers the condition, to match,
+                                        the stages must be between minstep and maxstep */
     struct quest_condition *next; /**< The next condition to check */
 } quest_condition;
 
@@ -104,6 +106,18 @@ static quest_step_definition *quest_create_step(void) {
         fatal(OUT_OF_MEMORY);
     return step;
 }
+
+/**
+ * Allocate a quest_condition, will call fatal() if out of memory.
+ * @return new structure.
+ */
+static quest_condition *quest_create_condition(void) {
+    quest_condition *cond = calloc(1, sizeof(quest_condition));
+    if (!cond)
+        fatal(OUT_OF_MEMORY);
+    return cond;
+}
+
 
 /**
  * Allocate a quest_definition, will call fatal() if out of memory.
@@ -149,8 +163,11 @@ static quest_definition *quest_get_by_code(sstring code) {
  * @return number of quests loaded from file, negative value if there was an error.
  */
 static int load_quests_from_file(const char *filename) {
-    int i, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description */
+    int i, in = QUESTFILE_NEXTQUEST, condition_parsed;
+    int minstep, maxstep;
+    char namedquest[MAX_BUF];
     quest_definition *quest = NULL;
+    quest_condition *cond = NULL;
     char includefile[MAX_BUF];
     sstring questname;
     quest_step_definition *step = NULL;
@@ -167,7 +184,55 @@ static int load_quests_from_file(const char *filename) {
     }
 
     while (fgets(read, sizeof(read), file) != NULL) {
-        if (in == 4) {
+        if (in == QUESTFILE_STEPCOND) {
+            if (strcmp(read, "end_setwhen\n") == 0) {
+                in = QUESTFILE_STEP;
+                continue;
+            }
+            /* we are reading in a list of conditions for the 'setwhen' block for a quest step
+             * There will be one entry per line, containing the quest, and the steps that it applies to.
+             * This may be expressed as one of the following
+             * questcode 20 (the quest questcode must be at step 20)
+             * questcode <=20 (the quest questcode must not be beyond step 20)
+             * questcode 10-20 (the quest questcode must be between steps 10 and 20)
+             * questcode finished (the quest questcode must have been completed)
+             */
+
+            minstep = 0;
+            maxstep = 0;
+            condition_parsed = 0;
+            namedquest[0]='\0';
+            if (sscanf(read, "%s %d-%d\n", namedquest, &minstep, &maxstep)!=3) {
+                if (sscanf(read, "%s <=%d\n", namedquest, &maxstep)== 2) {
+                    minstep=0;
+                    condition_parsed =1;
+                } else if (sscanf(read, "%s %d\n", namedquest, &minstep)==2) {
+                    maxstep = minstep;
+                    condition_parsed =1;
+                } else if (strstr(read, "finished")) {
+                    if (sscanf(read, "%s finished\n", namedquest)==1) {
+                        minstep = maxstep = -1;
+                        condition_parsed =1;
+                    }
+                }
+            } else
+                condition_parsed =1;
+            if (!condition_parsed) {
+                LOG(llevError, "Invalid line '%s' in setwhen block for quest %s", read, quest->quest_code);
+                continue;
+            }
+
+            cond = quest_create_condition();
+            cond->minstep = minstep;
+            cond->maxstep = maxstep;
+            cond->quest_code = add_string(namedquest);
+            cond->next = step->conditions;
+            step->conditions = cond;
+            LOG(llevDebug, "condition added for step %d of quest %s, looking for quest %s between steps %d and %d\n",
+                    step->step, quest->quest_code, cond->quest_code, cond->minstep, cond->maxstep);
+            continue;
+        }
+        if (in == QUESTFILE_STEPDESC) {
             if (strcmp(read, "end_description\n") == 0) {
                 char *message;
 
@@ -546,6 +611,71 @@ static quest_player *get_or_create_quest(player *pl) {
     return pq;
 }
 
+/* quest_set_state can call itself through the function update_quests, so it needs to be declared here */
+static void quest_set_state(player *pl, sstring quest_code, int state, int started);
+
+/**
+ * Checks whether the conditions for a given step are met
+ * @param condition the linked list of conditions to check
+ * @param pq the current state of the player's quests
+ * @return 1 if the conditions match, 0 if they don't
+ */
+static int evaluate_quest_conditions(quest_condition *condition, player *pl) {
+    quest_condition *cond;
+    int current_step;
+
+    if (!condition)
+        return 0;
+    cond = condition;
+    while (cond) {
+        current_step = quest_get_player_state(pl, cond->quest_code);
+        if (cond->minstep < 0 && cond->maxstep < 0) {
+            /* we are checking for the quest to have been completed. */
+            if (!quest_was_completed(pl, cond->quest_code))
+                return 0;
+        } else {
+            if (current_step < cond->minstep || current_step > cond->maxstep)
+                return 0;
+        }
+        cond = cond->next;
+    }
+    return 1;
+}
+
+/**
+ * Look through all of the quests for the given player, and see if any need to be updated.
+ * @param pl
+ */
+static void update_quests(player *pl) {
+    quest_definition *quest;
+    quest_step_definition *step;
+
+    /* we are going to check the conditions for every step, and then find the highest
+     * numbered step for which all conditions match, this will then be updated if that
+     * is a later stage than the player is at currently.
+     */
+    int new_step, current_step;
+    quest = quests;
+    while (quest) {
+        new_step=0;
+        step = quest->steps;
+        while (step) {
+            if (step->conditions)
+                if (evaluate_quest_conditions(step->conditions, pl)) {
+                    new_step=new_step<step->step?step->step:new_step;
+                }
+            step = step->next;
+        }
+        if (new_step > 0) {
+            current_step = quest_get_player_state(pl, quest->quest_code);
+            if (new_step > current_step) {
+                quest_set_state(pl, quest->quest_code, new_step, 0);
+            }
+        }
+        quest = quest->next;
+    }
+}
+
 /**
  * Set the state of a quest for a player.
  * @param pl player to set the state for.
@@ -595,7 +725,7 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, step->step_description);
     }
     quest_write_player_data(pq);
-
+    update_quests(pl);
     LOG(llevDebug, "quest_set_player_state %s %s %d\n", pl->ob->name, quest_code, state);
 
 }
