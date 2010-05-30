@@ -291,6 +291,7 @@ int command_diff(object *op, char *params);
 int command_insert_into(object *op, char *params);
 int command_style_map_info(object *op, char *params);
 int command_follow(object *op, char *params);
+int command_purge_quest(object *op, char *);
 /* commands.c */
 void init_commands(void);
 /* daemon.c */

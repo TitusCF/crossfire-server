@@ -247,6 +247,7 @@ command_array_struct WizCommands [] = {
     { "plugin", command_loadplugin,              0.0 },
     { "pluglist", command_listplugins,           0.0 },
     { "plugout", command_unloadplugin,           0.0 },
+    { "purge_quest_state", command_purge_quest,  0.0 },
     { "remove", command_remove,                  0.0 },
     { "reset", command_reset,                    0.0 },
     { "set_god", command_setgod,                 0.0 },

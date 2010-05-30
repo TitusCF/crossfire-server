@@ -2794,3 +2794,8 @@ int command_follow(object *op, char *params) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Following %s.", op->contr->followed_player);
     return 0;
 }
+
+int command_purge_quest(object *op, char * param) {
+    free_quest();
+    return 0;
+}
