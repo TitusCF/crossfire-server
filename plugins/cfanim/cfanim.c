@@ -143,7 +143,7 @@ static long int initvisible(const char *name, char *parameters, struct CFmovemen
 
     if (get_boolean(parameters, &result))
         return result;
-    cf_log(llevDebug, "CFAnim: Error in animation - possible values for 'invisible' are 'yes' and 'no'\n");
+    cf_log(llevError, "CFAnim: Error in animation - possible values for 'invisible' are 'yes' and 'no'\n");
     return -1;
 }
 
@@ -159,7 +159,7 @@ static long int initwizard(const char *name, char *parameters, struct CFmovement
 
     if (get_boolean(parameters, &result))
         return result;
-    cf_log(llevDebug, "CFAnim: Error in animation - possible values for 'wizard' are 'yes' and 'no'\n");
+    cf_log(llevError, "CFAnim: Error in animation - possible values for 'wizard' are 'yes' and 'no'\n");
     return -1;
 }
 
@@ -185,7 +185,7 @@ static anim_move_result runsay(struct CFanimation_struct *animation, long int id
         cf_object_say(animation->victim, parameters);
         free(parameters);
     } else
-        cf_log(llevDebug, "CFAnim: Error in animation: nothing to say with say function\n");
+        cf_log(llevError, "CFAnim: Error in animation: nothing to say with say function\n");
     return mr_finished;
 }
 
@@ -283,7 +283,7 @@ static long int initghosted(const char *name, char *parameters, struct CFmovemen
 
     if (get_boolean(parameters, &result))
         return result;
-    cf_log(llevDebug, "CFAnim: Error in animation: possible values for 'ghosted' are 'yes' and 'no'\n");
+    cf_log(llevError, "CFAnim: Error in animation: possible values for 'ghosted' are 'yes' and 'no'\n");
     return -1;
 }
 
@@ -332,7 +332,7 @@ static long int initteleport(const char *name, char *parameters, struct CFmoveme
     move_entity->parameters = NULL;
     cf_log(llevDebug, ".(%s)\n", parameters);
     if (!parameters) {
-        cf_log(llevDebug, "CFAnim: Error - no parameters for teleport\n");
+        cf_log(llevError, "CFAnim: Error - no parameters for teleport\n");
         return 0;
     }
     mapname = strstr(parameters, " ");
@@ -344,7 +344,7 @@ static long int initteleport(const char *name, char *parameters, struct CFmoveme
     mapname++;
     parameters = mapname;
     if (!parameters) {
-        cf_log(llevDebug, "CFAnim: Error - not enough parameters for teleport\n");
+        cf_log(llevError, "CFAnim: Error - not enough parameters for teleport\n");
         return 0;
     }
     cf_log(llevDebug, ".(%s)\n", parameters);
@@ -584,7 +584,7 @@ static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE 
         animationhook = get_command(name);
         if (parent->verbose) {
             if (!animationhook)
-                cf_log(llevDebug, "CFAnim: %s - Unknown animation command\n", name);
+                cf_log(llevError, "CFAnim: %s - Unknown animation command\n", name);
             else
                 cf_log(llevDebug, "CFAnim: Parsed %s -> %p\n", name, animationhook);
         }
@@ -807,12 +807,12 @@ static int start_animation(object *who, object *activator, object *event, const 
         if (!strcmp(buffer, "\n"))
             continue;
         errors_found = 1;
-        cf_log(llevDebug, "CFAnim: '%s' has an invalid syntax.\n", buffer);
+        cf_log(llevError, "CFAnim: '%s' has an invalid syntax.\n", buffer);
     }
     if (feof(fichier))
         return 0;
     if (strncmp(buffer, "[Config]", 8)) {
-        cf_log(llevDebug, "CFAnim: Fatal error in %s: [Config] must be the first group defined.\n", file);
+        cf_log(llevError, "CFAnim: Fatal error in %s: [Config] must be the first group defined.\n", file);
         return 0;
     }
     while (fgets(buffer, HUGE_BUF, fichier)) {
@@ -851,13 +851,13 @@ static int start_animation(object *who, object *activator, object *event, const 
                 else if (!strcmp(value, "who_owner"))
                     if (!who) {
                         errors_found = 1;
-                        cf_log(llevDebug, "CFAnim: Warning: object \"who\" doesn't exist and you're victimized it's owner\n");
+                        cf_log(llevError, "CFAnim: Warning: object \"who\" doesn't exist and you're victimized it's owner\n");
                     } else
                         victim = who->env;
                 else if (!strcmp(value, "activator_owner"))
                     if (!activator) {
                         errors_found = 1;
-                        cf_log(llevDebug, "CFAnim: Warning: object \"activator\" doesn't exist and you're victimized it's owner\n");
+                        cf_log(llevError, "CFAnim: Warning: object \"activator\" doesn't exist and you're victimized it's owner\n");
                     } else
                         victim = activator->env;
                 else if (victimtype == 3) {
@@ -913,19 +913,19 @@ static int start_animation(object *who, object *activator, object *event, const 
     if (buffer[0] == '\0') {
         if (animationitem)
             cf_free_string(animationitem);
-        cf_log(llevDebug, "CFAnim: Errors occurred during the parsing of %s\n", file);
+        cf_log(llevError, "CFAnim: Errors occurred during the parsing of %s\n", file);
         return 0;
     }
     if (!victim) {
         if (animationitem)
             cf_free_string(animationitem);
-        cf_log(llevDebug,  "CFAnim: Fatal error - victim is NULL");
+        cf_log(llevError,  "CFAnim: Fatal error - victim is NULL");
         return 0;
     }
     if (!(current_anim = create_animation())) {
         if (animationitem)
             cf_free_string(animationitem);
-        cf_log(llevDebug, "CFAnim: Fatal error - Not enough memory.\n");
+        cf_log(llevError, "CFAnim: Fatal error - Not enough memory.\n");
         return 0;
     }
     if (always_delete) {
@@ -937,7 +937,7 @@ static int start_animation(object *who, object *activator, object *event, const 
     || ((victim->type != PLAYER) && (victimtype == 0))
     || (errors_found && !errors_allowed)) {
         if (verbose)
-            cf_log(llevDebug, "CFAnim: No correct victim found or errors found, aborting.\n");
+            cf_log(llevError, "CFAnim: No correct victim found or errors found, aborting.\n");
         if (animationitem)
             cf_free_string(animationitem);
         return 0;
@@ -968,7 +968,7 @@ static int start_animation(object *who, object *activator, object *event, const 
                 if (buffer[0] == '[')
                     break;
             if (value == NULL) {
-                cf_log(llevDebug, "CFAnim: no matching animation %s in file.\n", animationitem);
+                cf_log(llevError, "CFAnim: no matching animation %s in file.\n", animationitem);
                 cf_free_string(animationitem);
                 return 0;
             }
