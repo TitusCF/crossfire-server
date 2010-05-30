@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+CRE: add 'npctoken' and 'setnpctoken' pre and post conditions.
+Nicolas Weeger 2010-05-30
+
 Add DM 'purge_quest_state' command to make it easy to fix quest state
 through manual file editing without restarting server.
 Nicolas Weeger 2010-05-30

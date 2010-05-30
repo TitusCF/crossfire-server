@@ -11,7 +11,7 @@ CRERulePanel::CRERulePanel(QWidget* parent) : QTabWidget(parent)
     connect(myMatches, SIGNAL(dataModified()), this, SLOT(onMatchModified()));
     addTab(myMatches, tr("matches"));
     QStringList pre;
-    pre << "age" << "item" << "level" << "quest" << "token";
+    pre << "age" << "item" << "level" << "npctoken" << "quest" << "token";
     myPre = new CREPrePostPanel(pre, this);
     connect(myPre, SIGNAL(dataModified()), this, SLOT(onPreModified()));
     addTab(myPre, tr("pre"));
@@ -19,7 +19,7 @@ CRERulePanel::CRERulePanel(QWidget* parent) : QTabWidget(parent)
     connect(myMessages, SIGNAL(dataModified()), this, SLOT(onMessageModified()));
     addTab(myMessages, tr("message"));
     QStringList post;
-    post << "connection" << "givecontents" << "giveitem" << "marktime" << "quest" << "settoken" << "takeitem";
+    post << "connection" << "givecontents" << "giveitem" << "marktime" << "quest" << "setnpctoken" << "settoken" << "takeitem";
     myPost = new CREPrePostPanel(post, this);
     connect(myPost, SIGNAL(dataModified()), this, SLOT(onPostModified()));
     addTab(myPost, tr("post"));
