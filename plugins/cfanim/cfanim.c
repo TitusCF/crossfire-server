@@ -679,7 +679,7 @@ static int get_boolean(const char *strg, int *bl) {
 static int is_animated_object(const object *ob) {
     CFanimation *current;
 
-    for (current = first_animation; current; current++)
+    for (current = first_animation; current; current = current->nextanimation)
         if (current->victim == ob) {
             return 1;
         }
@@ -694,7 +694,7 @@ static int is_animated_object(const object *ob) {
 static int is_animated_player(object *pl) {
     CFanimation *current;
 
-    for (current = first_animation; current; current++)
+    for (current = first_animation; current; current = current->nextanimation)
         if ((current->victim == pl) && (current->paralyze)) {
             if (current->verbose)
                 cf_log(llevDebug, "CFAnim: Getting a command for a paralyzed player %s.\n", pl->name);
