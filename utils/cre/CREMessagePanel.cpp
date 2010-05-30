@@ -14,18 +14,18 @@ CREMessagePanel::CREMessagePanel()
     myPath = new QLineEdit(this);
     layout->addWidget(myPath, line++, 1);
 
-    layout->addWidget(new QLabel(tr("Location:"), this), line, 0);
+    layout->addWidget(new QLabel(tr("Location:"), this), line, 0, 1, 2);
     myLocation = new QLineEdit(this);
-    layout->addWidget(myLocation, line++, 1);
+    layout->addWidget(myLocation, line++, 1, 1, 2);
 
     QGroupBox* box = new QGroupBox(tr("Rules"));
-    layout->addWidget(box, line++, 0, 1, 2);
+    layout->addWidget(box, line++, 0, 1, 4);
 
     QGridLayout* rules = new QGridLayout();
     box->setLayout(rules);
 
     myRules = new QTreeWidget();
-    rules->addWidget(myRules, 0, 0, 4, 2);
+    rules->addWidget(myRules, 0, 0, 4, 4);
     QStringList labels;
     labels << tr("match") << tr("pre") << tr("message") << tr("post") << tr("replies") << tr("include");
     myRules->setHeaderLabels(labels);
@@ -38,9 +38,16 @@ CREMessagePanel::CREMessagePanel()
     rules->addWidget(remove, 4, 1);
     connect(remove, SIGNAL(clicked(bool)), this, SLOT(onDeleteRule(bool)));
 
+    QPushButton* up = new QPushButton(tr("move up"), this);
+    rules->addWidget(up, 4, 2);
+    connect(up, SIGNAL(clicked(bool)), this, SLOT(onMoveUp(bool)));
+    QPushButton* down = new QPushButton(tr("move down"), this);
+    rules->addWidget(down, 4, 3);
+    connect(down, SIGNAL(clicked(bool)), this, SLOT(onMoveDown(bool)));
+
     myRulePanel = new CRERulePanel(this);
     connect(myRulePanel, SIGNAL(currentRuleModified()), this, SLOT(currentRuleModified()));
-    rules->addWidget(myRulePanel, 5, 0, 4, 2);
+    rules->addWidget(myRulePanel, 5, 0, 4, 4);
 
     myMessage = NULL;
 }
@@ -225,4 +232,36 @@ void CREMessagePanel::commitData()
 {
     myMessage->setPath(myPath->text());
     myMessage->setLocation(myLocation->text());
+}
+
+void CREMessagePanel::onMoveUp(bool)
+{
+    int index = myRules->currentIndex().row();
+    if (index <= 0 || index >= myMessage->rules().size())
+        return;
+
+    MessageRule* swap = myMessage->rules()[index - 1];
+    myMessage->rules()[index - 1] = myMessage->rules()[index];
+    myMessage->rules()[index] = swap;
+
+    QTreeWidgetItem* item = myRules->takeTopLevelItem(index - 1);
+    myRules->insertTopLevelItem(index, item);
+
+    myMessage->setModified();
+}
+
+void CREMessagePanel::onMoveDown(bool)
+{
+    int index = myRules->currentIndex().row();
+    if (index < 0 || index >= myMessage->rules().size() - 1)
+        return;
+
+    MessageRule* swap = myMessage->rules()[index + 1];
+    myMessage->rules()[index + 1] = myMessage->rules()[index];
+    myMessage->rules()[index] = swap;
+
+    QTreeWidgetItem* item = myRules->takeTopLevelItem(index + 1);
+    myRules->insertTopLevelItem(index, item);
+
+    myMessage->setModified();
 }

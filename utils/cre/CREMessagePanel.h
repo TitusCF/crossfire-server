@@ -38,6 +38,8 @@ class CREMessagePanel : public CREPanel
         void currentRuleModified();
         void onAddRule(bool);
         void onDeleteRule(bool);
+        void onMoveUp(bool);
+        void onMoveDown(bool);
 };
 
 #endif	/* _CREMESSAGEPANEL_H */
