@@ -37,6 +37,7 @@ class CREQuestPanel : public CREPanel
         QLineEdit* myStep;
         QTextEdit* myStepDescription;
         QCheckBox* myStepEnd;
+        QTextEdit* mySetWhen;
 
         void commitStep();
         void displaySteps();

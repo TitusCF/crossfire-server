@@ -53,14 +53,14 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
 
     mySteps = new QListWidget(this);
     connect(mySteps, SIGNAL(currentRowChanged(int)), this, SLOT(stepChanged(int)));
-    stepsLayout->addWidget(mySteps, 0, 0, 3, 2);
+    stepsLayout->addWidget(mySteps, 0, 0, 6, 2);
 
     QPushButton* add = new QPushButton(tr("add step"), this);
     connect(add, SIGNAL(clicked(bool)), this, SLOT(onAddStep(bool)));
-    stepsLayout->addWidget(add, 3, 0);
+    stepsLayout->addWidget(add, 6, 0);
     QPushButton* del = new QPushButton(tr("remove step"), this);
     connect(del, SIGNAL(clicked(bool)), this, SLOT(onDeleteStep(bool)));
-    stepsLayout->addWidget(del, 3, 1);
+    stepsLayout->addWidget(del, 6, 1);
 
     stepsLayout->addWidget(new QLabel(tr("Step:"), this), 0, 2);
     myStep = new QLineEdit();
@@ -69,6 +69,10 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
     stepsLayout->addWidget(myStepDescription, 2, 2, 1, 2);
     myStepEnd = new QCheckBox(tr("end"));
     stepsLayout->addWidget(myStepEnd, 3, 2);
+
+    stepsLayout->addWidget(new QLabel(tr("Set when:"), this), 4, 2);
+    mySetWhen = new QTextEdit(this);
+    stepsLayout->addWidget(mySetWhen, 5, 2, 2, 2);
 
     myQuest = NULL;
     myCurrentStep = NULL;
@@ -134,6 +138,13 @@ void CREQuestPanel::commitStep()
     myCurrentStep->setStep(myStep->text().toInt());
     myCurrentStep->setDescription(myStepDescription->toPlainText());
     myCurrentStep->setCompletion(myStepEnd->isChecked());
+
+    myCurrentStep->setWhen() = mySetWhen->toPlainText().split("\n");
+    for (int i = myCurrentStep->setWhen().size() - 1; i >= 0; i--)
+    {
+        if (myCurrentStep->setWhen()[i].isEmpty())
+            myCurrentStep->setWhen().removeAt(i);
+    }
     /** @todo shouldn't be required */
     myQuest->setModified(true);
 }
@@ -147,6 +158,7 @@ void CREQuestPanel::stepChanged(int newStep)
         myStep->setText(QString::number(myCurrentStep->step()));
         myStepDescription->setText(myCurrentStep->description());
         myStepEnd->setChecked(myCurrentStep->isCompletion());
+        mySetWhen->setText(myCurrentStep->setWhen().join("\n"));
     }
     else
     {
@@ -154,6 +166,7 @@ void CREQuestPanel::stepChanged(int newStep)
         myStep->setText("");
         myStepDescription->setText("");
         myStepEnd->setChecked(false);
+        mySetWhen->setText("");
     }
 }
 
