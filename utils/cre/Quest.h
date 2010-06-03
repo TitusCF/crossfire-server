@@ -2,6 +2,7 @@
 #define	_QUEST_H
 
 #include <QObject>
+#include <QStringList>
 
 class QuestStep : public QObject
 {
@@ -16,11 +17,14 @@ class QuestStep : public QObject
         void setDescription(const QString& description);
         bool isCompletion() const;
         void setCompletion(bool completion);
+        const QStringList& setWhen() const;
+        QStringList& setWhen();
 
     private:
         int myStep;
         QString myDescription;
         bool myIsCompletion;
+        QStringList mySetWhen;
 };
 
 class Quest : public QObject

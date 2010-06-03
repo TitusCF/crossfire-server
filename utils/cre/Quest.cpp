@@ -36,6 +36,16 @@ void QuestStep::setCompletion(bool completion)
     myIsCompletion = completion;
 }
 
+const QStringList& QuestStep::setWhen() const
+{
+    return mySetWhen;
+}
+
+QStringList& QuestStep::setWhen()
+{
+    return mySetWhen;
+}
+
 
 Quest::Quest()
 {

@@ -26,7 +26,7 @@ void QuestManager::loadQuests()
 
 void QuestManager::loadQuestFile(const QString& filename)
 {
-    int i, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description */
+    int i, in = 0; /* 0: quest file, 1: one quest, 2: quest description, 3: quest step, 4: step description, 5: setwhen */
     Quest *quest = NULL;
     char includefile[MAX_BUF];
     QuestStep *step = NULL;
@@ -42,6 +42,17 @@ void QuestManager::loadQuestFile(const QString& filename)
     }
 
     while (fgets(read, sizeof(read), file) != NULL) {
+        if (in == 5) {
+            if (strcmp(read, "end_setwhen\n") == 0) {
+                in = 3;
+                continue;
+            }
+
+            read[strlen(read) - 1] = '\0';
+            step->setWhen().append(read);
+
+            continue;
+        }
         if (in == 4) {
             if (strcmp(read, "end_description\n") == 0) {
                 char *message;
@@ -74,6 +85,10 @@ void QuestManager::loadQuestFile(const QString& filename)
             if (strcmp(read, "description\n") == 0) {
                 buf = stringbuffer_new();
                 in = 4;
+                continue;
+            }
+            if (strcmp(read, "setwhen\n") == 0) {
+                in = 5;
                 continue;
             }
             LOG(llevError, "quests: invalid line %s in definition of quest %s in file %s!\n",
@@ -273,6 +288,15 @@ void QuestManager::saveQuestFile(const QString& filename)
                 if (!step->description().endsWith("\n"))
                     stream << "\n";
                 stream << "end_description\n";
+            }
+            if (step->setWhen().size() > 0)
+            {
+                stream << "setwhen\n";
+                foreach(QString when, step->setWhen())
+                {
+                    stream << when << "\n";
+                }
+                stream << "end_setwhen\n";
             }
             stream << "end_step\n";
 
