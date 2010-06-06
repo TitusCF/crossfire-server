@@ -55,22 +55,26 @@ CREFormulaePanel::CREFormulaePanel()
             myCauldron->addItem(arch->name);
     }
 
+    layout->addWidget(new QLabel(tr("Index:"), this), 8, 1);
+    myIndex = new QLabel(this);
+    layout->addWidget(myIndex, 8, 2);
+
     myArchetypes = new QTreeWidget(this);
     myArchetypes->setHeaderLabel(tr("Archetypes:"));
     myArchetypes->setRootIsDecorated(false);
     myArchetypes->setIconSize(QSize(32, 32));
-    layout->addWidget(myArchetypes, 8, 1, 1, 2);
+    layout->addWidget(myArchetypes, 9, 1, 1, 2);
 
-    layout->addWidget(new QLabel(tr("Ingredients:"), this), 9, 1, 1, 2);
+    layout->addWidget(new QLabel(tr("Ingredients:"), this), 10, 1, 1, 2);
     myIngredients = new QTextEdit(this);
-    layout->addWidget(myIngredients, 10, 1, 1, 2);
+    layout->addWidget(myIngredients, 11, 1, 1, 2);
 
     QHBoxLayout* buttons = new QHBoxLayout;
     myValidate = new QPushButton(tr("&Validate"));
     buttons->addWidget(myValidate);
     myReset = new QPushButton(tr("&Reset"));
     buttons->addWidget(myReset);
-    layout->addLayout(buttons, 11, 1, 1, 2);
+    layout->addLayout(buttons, 12, 1, 1, 2);
 
     connect(myReset, SIGNAL(clicked(bool)), this, SLOT(resetClicked(bool)));
     connect(myValidate, SIGNAL(clicked(bool)), this, SLOT(validateClicked(bool)));
@@ -107,6 +111,7 @@ void CREFormulaePanel::setRecipe(const recipe* recipe)
     myChance->setText(QString::number(recipe->chance));
     myExperience->setText(QString::number(recipe->exp));
     myDifficulty->setText(QString::number(recipe->diff));
+    myIndex->setText(QString::number(recipe->index));
 
     index = mySkill->findText(recipe->skill);
     if (index == -1)

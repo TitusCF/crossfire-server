@@ -28,6 +28,7 @@ class CREFormulaePanel : public CREPanel
         QLineEdit* myDifficulty;
         QComboBox* mySkill;
         QComboBox* myCauldron;
+        QLabel* myIndex;
         QTreeWidget* myArchetypes;
         QTextEdit* myIngredients;
         QPushButton* myValidate;
