@@ -620,8 +620,8 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
  * @param pq the current state of the player's quests
  * @return 1 if the conditions match, 0 if they don't
  */
-static int evaluate_quest_conditions(quest_condition *condition, player *pl) {
-    quest_condition *cond;
+static int evaluate_quest_conditions(const quest_condition *condition, player *pl) {
+    const quest_condition *cond;
     int current_step;
 
     if (!condition)
@@ -647,8 +647,8 @@ static int evaluate_quest_conditions(quest_condition *condition, player *pl) {
  * @param pl
  */
 static void update_quests(player *pl) {
-    quest_definition *quest;
-    quest_step_definition *step;
+    const quest_definition *quest;
+    const quest_step_definition *step;
 
     /* we are going to check the conditions for every step, and then find the highest
      * numbered step for which all conditions match, this will then be updated if that
