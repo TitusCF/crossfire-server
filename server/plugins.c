@@ -154,7 +154,8 @@ static const hook_entry plug_hooks[] = {
     { cfapi_player_quest,            91, "cfapi_player_quest" },
     { cfapi_object_remove_depletion, 92, "cfapi_object_remove_depletion" },
     { cfapi_object_find_by_arch_name, 93, "cfapi_object_find_by_arch_name" },
-    { cfapi_object_find_by_name,     94, "cfapi_object_find_by_name" }
+    { cfapi_object_find_by_name,     94, "cfapi_object_find_by_name" },
+    { cfapi_player_knowledge,       95, "cfapi_player_knowledge" }
 };
 
 int plugin_number = 0;
@@ -4377,6 +4378,48 @@ void *cfapi_player_can_pay(int *type, ...) {
 
     *rint = can_pay(pl);
     *type = CFAPI_INT;
+    return NULL;
+}
+
+/**
+ * Wrapper for knowledge-related functions().
+ * @param type
+ * Depends on the type.
+ * @return
+ * NULL.
+ */
+void *cfapi_player_knowledge(int *type, ...) {
+    va_list args;
+    object *pl;
+    int *rint, what;
+    const char *knowledge;
+
+    va_start(args, type);
+    what = va_arg(args, int);
+
+    switch(what)
+    {
+        case 1:
+            pl = va_arg(args, object *);
+            knowledge = va_arg(args, const char *);
+            rint = va_arg(args, int *);
+
+            *type = CFAPI_INT;
+
+            if (pl->contr == NULL) {
+                LOG(llevError, "cfapi_player_knowledge: 'has' called for non player object %s", pl->name);
+                *rint = 0;
+                return NULL;
+            }
+
+            *rint = knowledge_player_knows(pl->contr, knowledge);
+            break;
+
+        default:
+            LOG(llevError, "cfapi_player_knowledge: invalid what %d", what);
+    }
+
+    va_end(args);
     return NULL;
 }
 

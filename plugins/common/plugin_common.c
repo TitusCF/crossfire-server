@@ -128,6 +128,7 @@ static f_plug_api cfapiObject_user_event = NULL;
 static f_plug_api cfapiCost_string_from_value = NULL;
 static f_plug_api cfapiPlayer_quest = NULL;
 static f_plug_api cfapiObject_remove_depletion = NULL;
+static f_plug_api cfapiPlayer_knowledge = NULL;
 
 #define GET_HOOK(x, y, z) { \
     getHooks(&z, 1, y, &x); \
@@ -230,6 +231,7 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiObject_remove_depletion, "cfapi_object_remove_depletion", z);
     GET_HOOK(cfapiObject_find_by_arch_name, "cfapi_object_find_by_arch_name", z);
     GET_HOOK(cfapiObject_find_by_name, "cfapi_object_find_by_name", z);
+    GET_HOOK(cfapiPlayer_knowledge, "cfapi_player_knowledge", z);
     return 1;
 }
 
@@ -827,6 +829,20 @@ int cf_player_can_pay(object *pl) {
     int type, value;
 
     cfapiPlayer_can_pay(&type, pl, &value);
+    assert(type == CFAPI_INT);
+    return value;
+}
+
+/**
+ * Wrapper for knowledge_player_has().
+ * @param op who to check knowledge for.
+ * @param knowledge what to check for.
+ * @return 0 if op is not a player or knowledge is not known, 1 else.
+ */
+int cf_player_knowledge_has(object *op, const char *knowledge) {
+    int type, value;
+
+    cfapiPlayer_knowledge(&type, 1, op, knowledge, &value);
     assert(type == CFAPI_INT);
     return value;
 }

@@ -108,6 +108,16 @@ static PyObject *Crossfire_Player_Message(Crossfire_Player *who, PyObject *args)
     return Py_None;
 }
 
+static PyObject *Player_KnowledgeKnown(Crossfire_Player *who, PyObject *args) {
+    const char *knowledge;
+
+    EXISTCHECK(who);
+    if (!PyArg_ParseTuple(args, "s", &knowledge))
+        return NULL;
+
+    return Py_BuildValue("i", cf_player_knowledge_has(who->obj, knowledge));
+}
+
 static PyObject *Player_GetParty(Crossfire_Player *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Crossfire_Party_wrap(cf_player_get_party(whoptr->obj));

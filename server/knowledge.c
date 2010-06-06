@@ -219,6 +219,26 @@ static int knowledge_achemy_validate(const char *item) {
 }
 
 /**
+ * Check whether a player already knows a knowledge item or not.
+ * @param current player to check.
+ * @param item what to check for.
+ * @param kt the knowledge type for item.
+ * @return 0 if item is known, 1 else.
+ */
+static int knowledge_known(const knowledge_player *current, const char *item, const knowledge_type *kt) {
+    const knowledge_item *check = current->items;
+
+    while (check) {
+        if (strcmp(kt->type, check->handler->type) == 0 && strcmp(item, check->item) == 0) {
+            /* already known, bailout */
+            return 1;
+        }
+        check = check->next;
+    }
+    return 0;
+}
+
+/**
  * Add a knowledge item to a player's store if not found yet.
  * @param current where to look for the knowledge.
  * @param item internal value of the item to give, considered atomic.
@@ -226,14 +246,10 @@ static int knowledge_achemy_validate(const char *item) {
  * @return 0 if item was already known, 1 else.
  */
 static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt) {
-    knowledge_item *check = current->items;
+    knowledge_item *check;
 
-    while (check) {
-        if (strcmp(kt->type, check->handler->type) == 0 && strcmp(item, check->item) == 0) {
-            /* already known, bailout */
-            return 0;
-        }
-        check = check->next;
+    if (knowledge_known(current, item, kt)) {
+        return 0;
     }
 
     /* keep the knowledge */
@@ -541,7 +557,7 @@ static void knowledge_read_player_data(knowledge_player *kp) {
  * @param pl who to find data for.
  * @return data store, never NULL.
  */
-static knowledge_player *knowledge_get_or_create(player *pl) {
+static knowledge_player *knowledge_get_or_create(const player *pl) {
     knowledge_player *cur = knowledge_global;
 
     while (cur) {
@@ -727,4 +743,35 @@ void free_knowledge(void) {
         kp = next;
     }
     knowledge_global = NULL;
+}
+
+int knowledge_player_knows(const player *pl, const char *knowledge) {
+    const knowledge_type *type;
+    char copy[MAX_BUF], *pos;
+    const knowledge_player *current;
+
+    if (strlen(knowledge) >= MAX_BUF - 1) {
+        LOG(llevError, "knowledge_player_knows: too long knowledge %s\n", knowledge);
+        return 0;
+    }
+
+    strncpy(copy, knowledge, MAX_BUF);
+    pos = strchr(copy, ':');
+    if (pos == NULL) {
+        LOG(llevError, "knowledge_player_knows: invalid knowledge item %s\n", knowledge);
+        return 0;
+    }
+
+    *pos = '\0';
+    pos++;
+
+    type = knowledge_find(copy);
+    if (type == NULL) {
+        LOG(llevError, "knowledge_player_knows: invalid knowledge type %s\n", knowledge);
+        return 0;
+    }
+
+    current = knowledge_get_or_create(pl);
+
+    return knowledge_known(current, pos, type);
 }

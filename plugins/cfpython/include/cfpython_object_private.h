@@ -611,6 +611,7 @@ static PyObject *Player_QuestStart(Crossfire_Player *whoptr, PyObject *args);
 static PyObject *Player_QuestGetState(Crossfire_Player *whoptr, PyObject *args);
 static PyObject *Player_QuestSetState(Crossfire_Player *whoptr, PyObject *args);
 static PyObject *Player_QuestWasCompleted(Crossfire_Player *whoptr, PyObject *args);
+static PyObject *Player_KnowledgeKnown(Crossfire_Player *whoptr, PyObject *args);
 
 static PyGetSetDef Player_getseters[] = {
     { "Title",         (getter)Player_GetTitle,         (setter)Player_SetTitle, NULL, NULL },
@@ -631,6 +632,7 @@ static PyMethodDef PlayerMethods[] = {
     { "QuestGetState",  (PyCFunction)Player_QuestGetState,     METH_VARARGS,  NULL },
     { "QuestSetState",  (PyCFunction)Player_QuestSetState,     METH_VARARGS,  NULL },
     { "QuestWasCompleted",  (PyCFunction)Player_QuestWasCompleted, METH_VARARGS,  NULL },
+    { "KnowledgeKnown",  (PyCFunction)Player_KnowledgeKnown, METH_VARARGS,  NULL },
     { NULL, NULL, 0, NULL }
 };
 

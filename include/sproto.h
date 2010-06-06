@@ -321,6 +321,7 @@ racelink *find_racelink(const char *name);
 void knowledge_read(player *pl, object *book);
 int command_knowledge(object *pl, char *params);
 void free_knowledge(void);
+int knowledge_player_knows(const player *pl, const char *knowledge);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name);
@@ -534,6 +535,7 @@ void *cfapi_set_random_map_variable(int *type, ...);
 void *cfapi_generate_random_map(int *type, ...);
 void *cfapi_object_user_event(int *type, ...);
 void *cfapi_player_quest(int *type, ...);
+void *cfapi_player_knowledge(int *type, ...);
 command_array_struct *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);
 void cleanupPlugins(void);
