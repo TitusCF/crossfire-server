@@ -134,7 +134,7 @@ own inventory).
 2. Things that are alive
 *******************************************************************************
 
-The name in parantheses after a flag description is the name as it should be
+The name in parentheses after a flag description is the name as it should be
 used in the archetype file.  For example:  Attack type (attacktype)
 
 
@@ -672,7 +672,7 @@ See also: http://wiki.metalforge.net/doku.php/cfdialog
 3. Objects in general
 ******************************************************************************
 
-The name in parantheses after a flag description is the name as it should be
+The name in parentheses after a flag description is the name as it should be
 used in the archetype file.  For example:  type field (type)
 
 A. Names (name, name_pl)
