@@ -772,13 +772,12 @@ player *cf_player_find(const char *plname) {
     return value;
 }
 
-sstring cf_player_get_title(object *op) {
+char *cf_player_get_title(object *op, char *title, int size) {
     int type;
-    sstring value;
 
-    cfapiObject_get_property(&type, op, CFAPI_PLAYER_PROP_TITLE, &value);
-    assert(type == CFAPI_SSTRING);
-    return value;
+    cfapiObject_get_property(&type, op, CFAPI_PLAYER_PROP_TITLE, title, size);
+    assert(type == CFAPI_STRING);
+    return title;
 }
 
 void cf_player_set_title(object *op, const char *title) {

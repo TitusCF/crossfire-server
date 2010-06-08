@@ -2384,9 +2384,10 @@ void *cfapi_object_get_property(int *type, ...) {
         break;
 
     case CFAPI_PLAYER_PROP_TITLE:
-        rsstring = va_arg(args, sstring *);
-        *rsstring = op->contr->title;
-        *type = CFAPI_SSTRING;
+        rbuffer = va_arg(args, char *);
+        rbufsize = va_arg(args, int);
+        player_get_title(op->contr, rbuffer, rbufsize);
+        *type = CFAPI_STRING;
         break;
 
     case CFAPI_OBJECT_PROP_NO_SAVE:
@@ -3095,8 +3096,7 @@ void *cfapi_object_set_property(int *type, ...) {
         case CFAPI_PLAYER_PROP_TITLE:
             sarg = va_arg(args, char *);
             *type = CFAPI_STRING;
-            strncpy(op->contr->title, sarg, sizeof(op->contr->title));
-            op->contr->title[sizeof(op->contr->title) - 1]= '\0';
+            player_set_own_title(op->contr, sarg);
             break;
 
         default:

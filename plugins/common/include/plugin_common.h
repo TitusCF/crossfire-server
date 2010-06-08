@@ -179,7 +179,7 @@ extern int          cf_random_map_set_variable(RMParms *rp, const char *buf);
 extern mapstruct   *cf_random_map_generate(const char *OutFileName, RMParms *RP, char **use_layout);
 
 /* Players */
-extern sstring      cf_player_get_title(object *op);
+extern char        *cf_player_get_title(object *op, char *title, int size);
 extern void         cf_player_set_title(object *op, const char *title);
 extern sstring      cf_player_get_ip(object *op);
 extern object      *cf_player_get_marked_item(object *op);

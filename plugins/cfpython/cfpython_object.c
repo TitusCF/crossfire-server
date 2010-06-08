@@ -52,8 +52,9 @@ static void free_object_assoc(object *key) {
 }
 
 static PyObject *Player_GetTitle(Crossfire_Object *whoptr, void *closure) {
+    char title[MAX_NAME];
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_player_get_title(whoptr->obj));
+    return Py_BuildValue("s", cf_player_get_title(whoptr->obj, title, MAX_NAME));
 }
 
 static int Player_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *closure) {

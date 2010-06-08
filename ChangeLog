@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Make the plugin calls to player titles respect the custom titles the player
+has set.
+server/plugins.c, plugins/common, plugins/cfpython
+Brendan Lally 2010-06-08
+
 Expose one knowledge function to plugin.
 Nicolas Weeger 2010-06-06
 
