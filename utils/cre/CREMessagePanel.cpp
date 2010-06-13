@@ -29,6 +29,7 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager)
     QStringList labels;
     labels << tr("match") << tr("pre") << tr("message") << tr("post") << tr("replies") << tr("include");
     myRules->setHeaderLabels(labels);
+    myRules->setWordWrap(true);
     connect(myRules, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 
     QPushButton* add = new QPushButton(tr("add rule"), this);
