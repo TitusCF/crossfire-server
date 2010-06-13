@@ -37,6 +37,10 @@ CREArtifactPanel::CREArtifactPanel()
     myArchetypes->setHeaderLabel("Allowed/forbidden archetypes");
     myArchetypes->setIconSize(QSize(32, 32));
     myArchetypes->setRootIsDecorated(false);
+
+    layout->addWidget(new QLabel(tr("Values:"), this), 5, 1, 1, 2);
+    myValues = new QTextEdit(this);
+    layout->addWidget(myValues, 6, 1, 1, 2);
 }
 
 void CREArtifactPanel::setArtifact(const artifact* artifact)
@@ -77,4 +81,10 @@ void CREArtifactPanel::setArtifact(const artifact* artifact)
             myArchetypes->addTopLevelItem(item);
         }
     }
+
+    StringBuffer* dump = stringbuffer_new();
+    get_ob_diff(dump, myArtifact->item, &empty_archetype->clone);
+    char* final = stringbuffer_finish(dump);
+    myValues->setText(final);
+    free(final);
 }

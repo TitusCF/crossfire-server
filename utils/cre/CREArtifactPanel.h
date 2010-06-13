@@ -24,6 +24,7 @@ class CREArtifactPanel : public CREPanel
         QLineEdit* myChance;
         QLineEdit* myType;
         QTreeWidget* myArchetypes;
+        QTextEdit* myValues;
 };
 
 #endif // CREARTIFACTPANEL_H
