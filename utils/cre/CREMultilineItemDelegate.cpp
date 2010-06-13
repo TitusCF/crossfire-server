@@ -40,6 +40,6 @@ void CREMultilineItemDelegate::setModelData(QWidget* editor, QAbstractItemModel*
     if (qim == NULL)
         return;
 
-    QVariant value = edit->toPlainText().split("\n");
+    QVariant value = edit->toPlainText();
     qim->setData(index, value);
 }

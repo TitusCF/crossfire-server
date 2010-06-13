@@ -136,7 +136,7 @@ bool CREQuestItemModel::setData(const QModelIndex& index, const QVariant& value,
     else if (index.column() == 2)
         step->setCompletion(value == Qt::Checked);
     else if (index.column() == 3)
-        step->setWhen() = value.toStringList();
+        step->setWhen() = value.toString().split("\n");
 
     emit dataChanged(index, index);
     myQuest->setModified(true);

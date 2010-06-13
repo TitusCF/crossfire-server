@@ -54,6 +54,7 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
     mySteps->setRootIsDecorated(false);
     mySteps->setWordWrap(true);
     mySteps->setModel(myStepsModel);
+    mySteps->setItemDelegateForColumn(1, delegate);
     mySteps->setItemDelegateForColumn(3, delegate);
     mySteps->setSelectionMode(QAbstractItemView::SingleSelection);
 
