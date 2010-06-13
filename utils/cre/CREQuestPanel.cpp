@@ -2,6 +2,8 @@
 #include "CRERegionPanel.h"
 #include "Quest.h"
 #include "QuestManager.h"
+#include "CREQuestItemModel.h"
+#include "CREMultilineItemDelegate.h"
 
 CREQuestPanel::CREQuestPanel(QuestManager* manager)
 {
@@ -43,36 +45,26 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
     myDescription = new QTextEdit();
     layout->addWidget(myDescription, line++, 1, 1, 2);
 
-    myStepDescription = new QTextEdit(this);
-    QGroupBox* steps = new QGroupBox(tr("Steps"));
 
-    layout->addWidget(steps, line++, 1, 1, 2);
+    layout->addWidget(new QLabel(tr("Steps:"), this), line++, 1, 1, 2);
 
-    QGridLayout* stepsLayout = new QGridLayout();
-    steps->setLayout(stepsLayout);
+    myStepsModel = new CREQuestItemModel(this);
+    CREMultilineItemDelegate* delegate = new CREMultilineItemDelegate(this);
+    mySteps = new QTreeView(this);
+    mySteps->setRootIsDecorated(false);
+    mySteps->setWordWrap(true);
+    mySteps->setModel(myStepsModel);
+    mySteps->setItemDelegateForColumn(3, delegate);
+    mySteps->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    mySteps = new QListWidget(this);
-    connect(mySteps, SIGNAL(currentRowChanged(int)), this, SLOT(stepChanged(int)));
-    stepsLayout->addWidget(mySteps, 0, 0, 6, 2);
+    layout->addWidget(mySteps, line++, 1, 1, 2);
 
     QPushButton* add = new QPushButton(tr("add step"), this);
-    connect(add, SIGNAL(clicked(bool)), this, SLOT(onAddStep(bool)));
-    stepsLayout->addWidget(add, 6, 0);
+    connect(add, SIGNAL(clicked(bool)), myStepsModel, SLOT(addStep(bool)));
+    layout->addWidget(add, line, 1);
     QPushButton* del = new QPushButton(tr("remove step"), this);
-    connect(del, SIGNAL(clicked(bool)), this, SLOT(onDeleteStep(bool)));
-    stepsLayout->addWidget(del, 6, 1);
-
-    stepsLayout->addWidget(new QLabel(tr("Step:"), this), 0, 2);
-    myStep = new QLineEdit();
-    stepsLayout->addWidget(myStep, 0, 3);
-    stepsLayout->addWidget(new QLabel(tr("Description"), this), 1, 2, 1, 2);
-    stepsLayout->addWidget(myStepDescription, 2, 2, 1, 2);
-    myStepEnd = new QCheckBox(tr("end"));
-    stepsLayout->addWidget(myStepEnd, 3, 2);
-
-    stepsLayout->addWidget(new QLabel(tr("Set when:"), this), 4, 2);
-    mySetWhen = new QTextEdit(this);
-    stepsLayout->addWidget(mySetWhen, 5, 2, 2, 2);
+    connect(del, SIGNAL(clicked(bool)), this, SLOT(deleteStep(bool)));
+    layout->addWidget(del, line++, 2);
 
     myQuest = NULL;
     myCurrentStep = NULL;
@@ -91,8 +83,6 @@ void CREQuestPanel::setQuest(Quest* quest)
     myTitle->setText(quest->title());
     myCanRestart->setChecked(quest->canRestart());
     myDescription->setText(quest->description());
-    myStepDescription->setText("");
-    myStepEnd->setChecked(false);
 
     QString file = myQuestManager->getQuestFile(myQuest);
     myFile->setEditText(file);
@@ -127,84 +117,20 @@ void CREQuestPanel::commitData()
     }
     else
         myQuest->setParent(myQuestManager->findByCode(myParent->currentText()));
-    commitStep();
-}
-
-void CREQuestPanel::commitStep()
-{
-    if (myCurrentStep == NULL)
-        return;
-
-    myCurrentStep->setStep(myStep->text().toInt());
-    myCurrentStep->setDescription(myStepDescription->toPlainText());
-    myCurrentStep->setCompletion(myStepEnd->isChecked());
-
-    myCurrentStep->setWhen() = mySetWhen->toPlainText().split("\n");
-    for (int i = myCurrentStep->setWhen().size() - 1; i >= 0; i--)
-    {
-        if (myCurrentStep->setWhen()[i].isEmpty())
-            myCurrentStep->setWhen().removeAt(i);
-    }
-    /** @todo shouldn't be required */
-    myQuest->setModified(true);
-}
-
-void CREQuestPanel::stepChanged(int newStep)
-{
-    commitStep();
-    if (newStep >= 0 && newStep < myQuest->steps().size())
-    {
-        myCurrentStep = myQuest->steps()[newStep];
-        myStep->setText(QString::number(myCurrentStep->step()));
-        myStepDescription->setText(myCurrentStep->description());
-        myStepEnd->setChecked(myCurrentStep->isCompletion());
-        mySetWhen->setText(myCurrentStep->setWhen().join("\n"));
-    }
-    else
-    {
-        myCurrentStep = NULL;
-        myStep->setText("");
-        myStepDescription->setText("");
-        myStepEnd->setChecked(false);
-        mySetWhen->setText("");
-    }
-}
-
-void CREQuestPanel::onAddStep(bool)
-{
-    if (myQuest == NULL)
-        return;
-
-    QuestStep* step = new QuestStep();
-    step->setStep(-1);
-    myQuest->steps().append(step);
-    new QListWidgetItem("-1", mySteps);
-}
-
-void CREQuestPanel::onDeleteStep(bool)
-{
-    if (myQuest == NULL || myCurrentStep == NULL)
-        return;
-
-    int idx = myQuest->steps().indexOf(myCurrentStep);
-    myQuest->steps().removeAt(idx);
-
-    delete myCurrentStep;
-    myCurrentStep = NULL;
-
-    displaySteps();
 }
 
 void CREQuestPanel::displaySteps()
 {
-    mySteps->clear();
+    myStepsModel->setQuest(myQuest);
+}
 
-    QString display;
-    foreach(const QuestStep* step, myQuest->steps())
-    {
-        display = QString::number(step->step());
-        if (step->isCompletion())
-            display += tr(" (end)");
-        new QListWidgetItem(display, mySteps);
-    }
+void CREQuestPanel::deleteStep(bool)
+{
+    if (myQuest == NULL)
+        return;
+
+    if (!mySteps->currentIndex().isValid())
+        return;
+
+    myStepsModel->removeRow(mySteps->currentIndex().row());
 }

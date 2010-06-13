@@ -11,6 +11,7 @@
 class Quest;
 class QuestStep;
 class QuestManager;
+class CREQuestItemModel;
 
 class CREQuestPanel : public CREPanel
 {
@@ -33,19 +34,13 @@ class CREQuestPanel : public CREPanel
         QCheckBox* myCanRestart;
         QComboBox* myParent;
         QTextEdit* myDescription;
-        QListWidget* mySteps;
-        QLineEdit* myStep;
-        QTextEdit* myStepDescription;
-        QCheckBox* myStepEnd;
-        QTextEdit* mySetWhen;
+        CREQuestItemModel* myStepsModel;
+        QTreeView* mySteps;
 
-        void commitStep();
         void displaySteps();
 
-    private slots:
-        void stepChanged(int newStep);
-        void onAddStep(bool);
-        void onDeleteStep(bool);
+    protected slots:
+        void deleteStep(bool);
 };
 
 #endif	/* _CREQUESTPANEL_H */
