@@ -370,11 +370,6 @@ void add_abilities(object *op, const object *change) {
     else
         op->level += change->level;
 
-    if (change->gen_sp_armour < 0)
-        op->gen_sp_armour = -(change->gen_sp_armour);
-    else
-        op->gen_sp_armour = (op->gen_sp_armour*(change->gen_sp_armour))/100;
-
     op->item_power = change->item_power;
 
     for (i = 0; i < NROFATTACKS; i++) {

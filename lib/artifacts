@@ -39,9 +39,9 @@
 #	in increments of 10 (a value of 10 has the normal value, 5
 #	would be half normal, 20 twice, etc.
 #
-#	weight, last_sp, gen_sp_armour is in percent (200% would
-#	be twice normal, 50% half of normal).  Negative values
-#	work the same as armour and dam.
+#	weight, last_sp, gen_sp_armour is in percent (200 would
+#	be twice normal, 50 half of normal) if positive. If negative,
+#	the absolute value is used (so -5 would give 5);
 #
 #	'value' is a multiplier to the previous value (value 10
 #	means the object is worth 10 times normal)
