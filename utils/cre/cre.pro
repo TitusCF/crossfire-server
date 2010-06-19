@@ -58,7 +58,8 @@ CREPixmap.cpp \
  CREPrePostPanel.cpp \
  CREReplyPanel.cpp \
  CREQuestItemModel.cpp \
- CREMultilineItemDelegate.cpp
+ CREMultilineItemDelegate.cpp \
+ QuestConditionScript.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -115,7 +116,8 @@ CREPixmap.h \
  CREPrePostPanel.h \
  CREReplyPanel.h \
  CREQuestItemModel.h \
- CREMultilineItemDelegate.h
+ CREMultilineItemDelegate.h \
+ QuestConditionScript.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

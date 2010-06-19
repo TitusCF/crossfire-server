@@ -1,8 +1,9 @@
 #include "CREPrePostPanel.h"
 #include "CRERulePanel.h"
 #include <QtGui>
+#include "QuestConditionScript.h"
 
-CREPrePostPanel::CREPrePostPanel(const QStringList& choices, QWidget* parent) : QWidget(parent)
+CREPrePostPanel::CREPrePostPanel(const QList<QuestConditionScript*> scripts, QWidget* parent) : QWidget(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
 
@@ -21,7 +22,13 @@ CREPrePostPanel::CREPrePostPanel(const QStringList& choices, QWidget* parent) : 
     layout->addWidget(new QLabel(tr("Script:"), this), 0, 2);
     myChoices = new QComboBox(this);
     connect(myChoices, SIGNAL(currentIndexChanged(int)), this, SLOT(currentChoiceChanged(int)));
-    myChoices->addItems(choices);
+
+    for(int script = 0; script < scripts.size(); script++)
+    {
+        myChoices->addItem(scripts[script]->name());
+        myChoices->setItemData(script, scripts[script]->comment(), Qt::ToolTipRole);
+    }
+    
     layout->addWidget(myChoices, 0, 3);
 
     mySubItems = new QListWidget(this);

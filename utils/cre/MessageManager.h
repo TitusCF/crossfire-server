@@ -4,6 +4,8 @@
 #include <QList>
 class MessageFile;
 
+class QuestConditionScript;
+
 class MessageManager
 {
     public:
@@ -15,16 +17,17 @@ class MessageManager
 
         QList<MessageFile*>& messages();
 
-        const QStringList& preConditions() const;
-        const QStringList& postConditions() const;
+        QList<QuestConditionScript*> preConditions() const;
+        QList<QuestConditionScript*> postConditions() const;
 
     private:
         QList<MessageFile*> myMessages;
-        QStringList myPreConditions;
-        QStringList myPostConditions;
+        QList<QuestConditionScript*> myPreConditions;
+        QList<QuestConditionScript*> myPostConditions;
 
+        QString loadScriptComment(const QString& path) const;
         void loadDirectory(const QString& directory);
-        void findPrePost(const QString directory, QStringList& list);
+        void findPrePost(const QString directory, QList<QuestConditionScript*>& list);
 };
 
 #endif	/* _MESSAGEMANAGER_H */

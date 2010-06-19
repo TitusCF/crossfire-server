@@ -3,16 +3,19 @@
 
 #include <QWidget>
 
+#include "MessageManager.h"
+
 class QListWidget;
 class QComboBox;
 class QLineEdit;
+class QuestConditionScript;
 
 class CREPrePostPanel : public QWidget
 {
     Q_OBJECT
 
     public:
-        CREPrePostPanel(const QStringList& choices, QWidget* parent);
+        CREPrePostPanel(const QList<QuestConditionScript*> scripts, QWidget* parent);
         virtual ~CREPrePostPanel();
 
         QList<QStringList> getData();

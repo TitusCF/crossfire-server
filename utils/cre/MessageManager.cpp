@@ -1,5 +1,6 @@
 #include "MessageManager.h"
 #include "MessageFile.h"
+#include "QuestConditionScript.h"
 
 extern "C" {
     #include "global.h"
@@ -15,6 +16,8 @@ MessageManager::MessageManager()
 MessageManager::~MessageManager()
 {
     qDeleteAll(myMessages);
+    qDeleteAll(myPreConditions);
+    qDeleteAll(myPostConditions);
 }
 
 void MessageManager::loadMessages()
@@ -68,22 +71,45 @@ void MessageManager::loadDirectory(const QString& directory)
         loadDirectory(directory + QDir::separator() + sub);
 }
 
-const QStringList& MessageManager::preConditions() const
+QList<QuestConditionScript*> MessageManager::preConditions() const
 {
     return myPreConditions;
 }
 
-const QStringList& MessageManager::postConditions() const
+QList<QuestConditionScript*> MessageManager::postConditions() const
 {
     return myPostConditions;
 }
 
-void MessageManager::findPrePost(const QString directory, QStringList& list)
+QString MessageManager::loadScriptComment(const QString& path) const
+{
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly))
+        return "";
+
+    QTextStream stream(&file);
+    QStringList lines = stream.readAll().split("\n");
+
+    QString comment, line;
+
+    /* by convention, the first 2 lines are encoding and script name */
+    for(int i = 2; i < lines.size(); i++)
+    {
+        line = lines[i];
+        if (!line.startsWith("# "))
+            break;
+        comment += line.mid(2) + "\n";
+    }
+
+    return comment.trimmed();
+}
+
+void MessageManager::findPrePost(const QString directory, QList<QuestConditionScript*>& list)
 {
     QDir dir(QString("%1/%2/python/dialog/%3").arg(settings.datadir, settings.mapdir, directory));
     QFileInfoList files = dir.entryInfoList(QStringList("*.py"));
     foreach(QFileInfo file, files)
     {
-        list.append(file.baseName());
+        list.append(new QuestConditionScript(file.baseName(), loadScriptComment(file.absoluteFilePath())));
     }
 }
