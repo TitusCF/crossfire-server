@@ -14,6 +14,7 @@ class CREMapInformationManager : public QObject
 
     public:
         CREMapInformationManager(QObject* parent);
+        virtual ~CREMapInformationManager();
 
         bool browseFinished() const;
         void start();

@@ -10,6 +10,11 @@ CREMapInformationManager::CREMapInformationManager(QObject* parent) : QObject(pa
 {
 }
 
+CREMapInformationManager::~CREMapInformationManager()
+{
+    qDeleteAll(myInformation.values());
+}
+
 bool CREMapInformationManager::browseFinished() const
 {
     return myWorker.isFinished();
