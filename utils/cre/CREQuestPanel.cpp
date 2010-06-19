@@ -60,12 +60,23 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
 
     layout->addWidget(mySteps, line++, 1, 1, 2);
 
+    QHBoxLayout* buttons = new QHBoxLayout(this);
+
     QPushButton* add = new QPushButton(tr("add step"), this);
     connect(add, SIGNAL(clicked(bool)), myStepsModel, SLOT(addStep(bool)));
-    layout->addWidget(add, line, 1);
+    buttons->addWidget(add);
     QPushButton* del = new QPushButton(tr("remove step"), this);
     connect(del, SIGNAL(clicked(bool)), this, SLOT(deleteStep(bool)));
-    layout->addWidget(del, line++, 2);
+    buttons->addWidget(del);
+
+    QPushButton* up = new QPushButton(tr("move up"), this);
+    connect(up, SIGNAL(clicked(bool)), this, SLOT(moveUp(bool)));
+    buttons->addWidget(up);
+    QPushButton* down = new QPushButton(tr("move down"), this);
+    connect(down, SIGNAL(clicked(bool)), this, SLOT(moveDown(bool)));
+    buttons->addWidget(down);
+
+    layout->addLayout(buttons, line++, 1, 1, 2);
 
     myQuest = NULL;
     myCurrentStep = NULL;
@@ -134,4 +145,26 @@ void CREQuestPanel::deleteStep(bool)
         return;
 
     myStepsModel->removeRow(mySteps->currentIndex().row());
+}
+
+void CREQuestPanel::moveUp(bool)
+{
+    if (myQuest == NULL)
+        return;
+
+    if (!mySteps->currentIndex().isValid())
+        return;
+
+    myStepsModel->moveUp(mySteps->currentIndex().row());
+}
+
+void CREQuestPanel::moveDown(bool)
+{
+    if (myQuest == NULL)
+        return;
+
+    if (!mySteps->currentIndex().isValid())
+        return;
+
+    myStepsModel->moveDown(mySteps->currentIndex().row());
 }

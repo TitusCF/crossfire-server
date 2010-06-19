@@ -17,6 +17,9 @@ class CREQuestItemModel : public QAbstractItemModel
         Quest* quest() const;
         void setQuest(Quest* quest);
 
+        void moveUp(int step);
+        void moveDown(int step);
+
         virtual int columnCount(const QModelIndex& parent) const;
         virtual QModelIndex index(int row, int column, const QModelIndex& parent) const;
         virtual QModelIndex parent(const QModelIndex& index) const;

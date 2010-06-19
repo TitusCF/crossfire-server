@@ -41,6 +41,8 @@ class CREQuestPanel : public CREPanel
 
     protected slots:
         void deleteStep(bool);
+        void moveUp(bool);
+        void moveDown(bool);
 };
 
 #endif	/* _CREQUESTPANEL_H */

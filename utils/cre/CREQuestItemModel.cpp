@@ -171,3 +171,29 @@ bool CREQuestItemModel::removeRows(int row, int count, const QModelIndex& parent
 
     return true;
 }
+
+void CREQuestItemModel::moveUp(int step)
+{
+    if (step < 1)
+        return;
+
+    beginMoveRows(QModelIndex(), step, step, QModelIndex(), step - 1);
+    QuestStep* s = myQuest->steps()[step];
+    myQuest->steps()[step] = myQuest->steps()[step - 1];
+    myQuest->steps()[step - 1] = s;
+    endMoveRows();
+    myQuest->setModified(true);
+}
+
+void CREQuestItemModel::moveDown(int step)
+{
+    if (step >= myQuest->steps().size() - 1)
+        return;
+
+    beginMoveRows(QModelIndex(), step + 1, step + 1, QModelIndex(), step);
+    QuestStep* s = myQuest->steps()[step];
+    myQuest->steps()[step] = myQuest->steps()[step + 1];
+    myQuest->steps()[step + 1] = s;
+    endMoveRows();
+    myQuest->setModified(true);
+}
