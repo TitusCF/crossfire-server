@@ -49,7 +49,7 @@ int CREWrapperFormulae::experience() const
 QStringList CREWrapperFormulae::archs() const
 {
     QStringList archs;
-    for (int i = 0; i < myFormulae->arch_names; i++)
+    for (size_t i = 0; i < myFormulae->arch_names; i++)
     {
         archs.append(myFormulae->arch_name[i]);
     }
