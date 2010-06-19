@@ -11,7 +11,7 @@ CREMultilineItemDelegate::~CREMultilineItemDelegate()
 {
 }
 
-QWidget* CREMultilineItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+QWidget* CREMultilineItemDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& /*option*/, const QModelIndex& /*index*/) const
 {
     QTextEdit* edit = new QTextEdit(parent);
     edit->setAcceptRichText(false);
