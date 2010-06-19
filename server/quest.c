@@ -1115,10 +1115,6 @@ static void output_quests(quest_definition *parent, int level) {
  * quests are set up and recognised correctly.
  */
 void dump_quests(void) {
-    quest_definition *quest;
-    quest_step_definition *step;
-    int questcount, stepcount;
-
     quest_load_definitions();
     output_quests(NULL, 0);
     exit(0);
