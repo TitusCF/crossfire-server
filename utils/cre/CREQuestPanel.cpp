@@ -60,7 +60,7 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
 
     layout->addWidget(mySteps, line++, 1, 1, 2);
 
-    QHBoxLayout* buttons = new QHBoxLayout(this);
+    QHBoxLayout* buttons = new QHBoxLayout();
 
     QPushButton* add = new QPushButton(tr("add step"), this);
     connect(add, SIGNAL(clicked(bool)), myStepsModel, SLOT(addStep(bool)));
