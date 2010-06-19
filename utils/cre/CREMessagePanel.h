@@ -41,6 +41,7 @@ class CREMessagePanel : public CREPanel
         void onDeleteRule(bool);
         void onMoveUp(bool);
         void onMoveDown(bool);
+        void onDuplicate(bool);
 };
 
 #endif	/* _CREMESSAGEPANEL_H */

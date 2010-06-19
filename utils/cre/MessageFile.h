@@ -10,6 +10,7 @@ class MessageRule : public QObject
 
     public:
         MessageRule();
+        MessageRule(const MessageRule& original);
         virtual ~MessageRule();
 
         const QStringList& match() const;

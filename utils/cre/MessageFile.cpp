@@ -14,6 +14,16 @@ MessageRule::MessageRule()
     myIsModified = false;
 }
 
+MessageRule::MessageRule(const MessageRule& original) : QObject()
+{
+    myIsModified = true;
+    myMatch = original.match();
+    myPreconditions = original.preconditions();
+    myMessages = original.messages();
+    myPostconditions = original.postconditions();
+    myReplies = original.replies();
+}
+
 MessageRule::~MessageRule()
 {
 }

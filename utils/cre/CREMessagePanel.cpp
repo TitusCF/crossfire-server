@@ -32,19 +32,27 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager)
     myRules->setWordWrap(true);
     connect(myRules, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 
+    QHBoxLayout* buttons = new QHBoxLayout();
+
     QPushButton* add = new QPushButton(tr("add rule"), this);
-    rules->addWidget(add, 4, 0);
+    buttons->addWidget(add);
     connect(add, SIGNAL(clicked(bool)), this, SLOT(onAddRule(bool)));
     QPushButton* remove = new QPushButton(tr("remove rule"), this);
-    rules->addWidget(remove, 4, 1);
+    buttons->addWidget(remove);
     connect(remove, SIGNAL(clicked(bool)), this, SLOT(onDeleteRule(bool)));
 
     QPushButton* up = new QPushButton(tr("move up"), this);
-    rules->addWidget(up, 4, 2);
+    buttons->addWidget(up);
     connect(up, SIGNAL(clicked(bool)), this, SLOT(onMoveUp(bool)));
     QPushButton* down = new QPushButton(tr("move down"), this);
-    rules->addWidget(down, 4, 3);
+    buttons->addWidget(down);
     connect(down, SIGNAL(clicked(bool)), this, SLOT(onMoveDown(bool)));
+
+    QPushButton* copy = new QPushButton(tr("copy"), this);
+    buttons->addWidget(copy);
+    connect(copy, SIGNAL(clicked(bool)), this, SLOT(onDuplicate(bool)));
+
+    rules->addLayout(buttons, 4, 0, 1, 4);
 
     myRulePanel = new CRERulePanel(manager, this);
     connect(myRulePanel, SIGNAL(currentRuleModified()), this, SLOT(currentRuleModified()));
@@ -265,4 +273,17 @@ void CREMessagePanel::onMoveDown(bool)
     myRules->insertTopLevelItem(index, item);
 
     myMessage->setModified();
+}
+
+void CREMessagePanel::onDuplicate(bool)
+{
+    int index = myRules->currentIndex().row();
+    if (index < 0 || index > myMessage->rules().size())
+        return;
+
+    const MessageRule* original = myMessage->rules()[index];
+
+    MessageRule* rule = new MessageRule(*original);
+    myMessage->rules().append(rule);
+    fillRuleItem(new QTreeWidgetItem(myRules, rule->match()), rule);
 }
