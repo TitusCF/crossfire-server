@@ -943,6 +943,7 @@ void free_server(void) {
     free_materials();
     free_races();
     free_quest();
+    free_quest_definitions();
 }
 
 static void usage(void) {

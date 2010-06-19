@@ -292,6 +292,7 @@ int command_insert_into(object *op, char *params);
 int command_style_map_info(object *op, char *params);
 int command_follow(object *op, char *params);
 int command_purge_quest(object *op, char *);
+int command_purge_quest_definitions(object *op, char *);
 /* commands.c */
 void init_commands(void);
 /* daemon.c */
@@ -547,6 +548,7 @@ int quest_was_completed(player *pl, sstring quest_code);
 int command_quest(object *op, char *params);
 void dump_quests(void);
 void free_quest(void);
+void free_quest_definitions(void);
 /* resurrection.c */
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg);
 void dead_player(object *op);

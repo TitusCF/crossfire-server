@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add 'purge_quests' DM command to unload quest definition.
+Useful when modifying quest files, to avoid restarting server.
+Nicolas Weeger 2010-06-19
+
 Remove unused variables.
 Nicolas Weeger 2010-06-19
 

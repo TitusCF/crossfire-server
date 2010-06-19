@@ -94,6 +94,7 @@ dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
 	wizhelp/patch wizhelp/plugin \
 	wizhelp/pluglist wizhelp/plugout \
 	wizhelp/purge_quest_state \
+	wizhelp/purge_quests \
 	wizhelp/possess \
 	wizhelp/printlos wizhelp/remove \
 	wizhelp/reset wizhelp/set_god \

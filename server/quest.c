@@ -1134,3 +1134,42 @@ void free_quest(void) {
     }
     player_states = NULL;
 }
+
+/**
+ * Free all quest definitions and steps.
+ * Can be called multiple times.
+ * Used by DMs through the 'purge_quests' command.
+ */
+void free_quest_definitions(void) {
+    quest_definition *quest = quests, *next_quest;
+    quest_step_definition *step, *next_step;
+    quest_condition *condition, *next_condition;
+
+    while (quest != NULL) {
+        next_quest = quest->next;
+        free_string(quest->quest_code);
+        if (quest->quest_description != NULL)
+            free_string(quest->quest_description);
+        if (quest->quest_title != NULL)
+            free_string(quest->quest_title);
+        step = quest->steps;
+        while (step != NULL) {
+            next_step = step->next;
+            free_string(step->step_description);
+            condition = step->conditions;
+            while (condition != NULL) {
+                next_condition = condition->next;
+                free_string(condition->quest_code);
+                free(condition);
+                condition = next_condition;
+            }
+            free(step);
+            step = next_step;
+        }
+        free(quest);
+        quest = next_quest;
+    }
+
+    quests = NULL;
+    quests_loaded = 0;
+}

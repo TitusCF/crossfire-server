@@ -2800,3 +2800,9 @@ int command_purge_quest(object *op, char * param) {
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Purged quest state.");
     return 0;
 }
+
+int command_purge_quest_definitions(object *op, char * param) {
+    free_quest_definitions();
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Purged quests definitions.");
+    return 0;
+}
