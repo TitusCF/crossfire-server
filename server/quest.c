@@ -449,6 +449,10 @@ static void quest_read_player_data(quest_player *pq) {
     StringBuffer *buf = NULL;
     quest_state *qs = NULL;
     int warned = 0, state;
+    quest_definition *quest = NULL;
+
+    /* needed, so we can check ending steps. */
+    quest_load_definitions();
 
     snprintf(final, sizeof(final), "%s/%s/%s/%s.quest", settings.localdir, settings.playerdir, pq->player_name, pq->player_name);
 
@@ -464,6 +468,10 @@ static void quest_read_player_data(quest_player *pq) {
             qs->code = add_string(data);
             qs->next = pq->quests;
             pq->quests = qs;
+            quest = quest_get_by_code(qs->code);
+            if (quest == NULL) {
+                LOG(llevDebug, "Unknown quest %s in quest file %s", qs->code, final);
+            }
             continue;
         }
 
@@ -476,6 +484,14 @@ static void quest_read_player_data(quest_player *pq) {
 
         if (sscanf(read, "state %d\n", &state)) {
             qs->state = state;
+            if (quest != NULL && state != -1) {
+                quest_step_definition *step = quest_get_step(quest, state);
+                if (step == NULL) {
+                    LOG(llevError, "invalid quest step %d for %s in %s", state, quest->quest_code, final);
+                }
+                else if (step->is_completion_step)
+                    qs->is_complete = 1;
+            }
             continue;
         }
         if (strcmp(read, "end_quest\n") == 0) {
