@@ -41,6 +41,13 @@ CREArtifactPanel::CREArtifactPanel()
     layout->addWidget(new QLabel(tr("Values:"), this), 5, 1, 1, 2);
     myValues = new QTextEdit(this);
     layout->addWidget(myValues, 6, 1, 1, 2);
+
+    layout->addWidget(new QLabel(tr("Display result item for:"), this), 7, 1);
+    myDisplay = new QComboBox(this);
+    layout->addWidget(myDisplay, 7, 2);
+    myInstance = new QTextEdit(this);
+    layout->addWidget(myInstance, 8, 1, 1, 2);
+    connect(myDisplay, SIGNAL(currentIndexChanged(int)), this, SLOT(displayArchetypeChanged(int)));
 }
 
 void CREArtifactPanel::setArtifact(const artifact* artifact)
@@ -87,4 +94,40 @@ void CREArtifactPanel::setArtifact(const artifact* artifact)
     char* final = stringbuffer_finish(dump);
     myValues->setText(final);
     free(final);
+
+    myDisplay->clear();
+    for (arch = first_archetype; arch != NULL; arch = arch->next)
+    {
+        if (arch->clone.type == artifact->item->type && legal_artifact_combination(&arch->clone, artifact))
+        {
+            myDisplay->addItem(tr("%1 [%2]").arg(arch->clone.name, arch->name));
+            myDisplay->setItemData(myDisplay->count() - 1, arch->name, Qt::UserRole);
+        }
+    }
+    if (myDisplay->count() > 0)
+        displayArchetypeChanged(0);
+    else
+        myInstance->clear();
+}
+
+void CREArtifactPanel::displayArchetypeChanged(int index)
+{
+    if (index < 0 || index >= myDisplay->count())
+        return;
+
+    QByteArray name = myDisplay->itemData(index, Qt::UserRole).toString().toLatin1();
+    if (name.isEmpty())
+        return;
+    archetype* arch = find_archetype(name);
+    if (arch == NULL)
+        return;
+
+    char desc[MAX_BUF];
+    object* obj = arch_to_object(arch);
+    SET_FLAG(obj, FLAG_IDENTIFIED);
+    give_artifact_abilities(obj, myArtifact->item);
+    describe_item(obj, NULL, desc, sizeof(desc));
+    myInstance->setText(desc);
+
+    object_free2(obj, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
 }

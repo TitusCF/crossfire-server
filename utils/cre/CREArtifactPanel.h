@@ -25,6 +25,11 @@ class CREArtifactPanel : public CREPanel
         QLineEdit* myType;
         QTreeWidget* myArchetypes;
         QTextEdit* myValues;
+        QComboBox* myDisplay;
+        QTextEdit* myInstance;
+
+    protected slots:
+        void displayArchetypeChanged(int index);
 };
 
 #endif // CREARTIFACTPANEL_H
