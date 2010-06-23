@@ -132,7 +132,7 @@ void CREMessagePanel::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetIt
         if (pre.size() < 3)
             continue;
 
-        if (pre[0] != "token")
+        if (pre[0] != "token" && pre[0] != "npctoken")
             continue;
 
         QStringList acceptable = pre;
@@ -151,7 +151,7 @@ void CREMessagePanel::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetIt
             {
                 if (post.size() < 3)
                     continue;
-                if (post[0] != "settoken" || post[1] != pre[1] || !acceptable.contains(post[2]))
+                if ((post[0] != "settoken" && post[0] != "setnpctoken") || post[1] != pre[1] || !acceptable.contains(post[2]))
                     continue;
                 match = true;
                 break;
@@ -167,7 +167,7 @@ void CREMessagePanel::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetIt
         if (post.size() < 3)
             continue;
 
-        if (post[0] != "settoken")
+        if (post[0] != "settoken" && post[0] != "setnpctoken")
             continue;
 
         for (int c = 0; c < myMessage->rules().size(); c++)
@@ -182,7 +182,7 @@ void CREMessagePanel::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetIt
             {
                 if (pre.size() < 3)
                     continue;
-                if (pre[0] != "token" || pre[1] != post[1])
+                if ((pre[0] != "token" && pre[0] != "npctoken") || pre[1] != post[1])
                     continue;
 
                 QStringList acceptable = pre;

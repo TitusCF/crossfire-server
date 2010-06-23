@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+CRE: take 'npctoken' and 'setnpctoken' into account for message display.
+Nicolas Weeger 2010-06-23
+
 CRE: display actual item values for artifacts, as suggested by Leaf.
 Nicolas Weeger 2010-06-20
 
