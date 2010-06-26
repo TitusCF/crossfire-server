@@ -359,6 +359,11 @@ static void check_loaded_object(object *op) {
         /* Artifacts are special beasts, let's not check them. */
         return;
 
+    if (!is_type_valid(op->type)) {
+        LOG(llevError, "Invalid type %d for %s\n", op->type, op->arch ? op->arch->name : op->name);
+        op->type = 0;
+    }
+
     /* We do some specialized handling to handle legacy cases of name_pl.
      * If the object doesn't have a name_pl, we just use the object name -
      * this isn't perfect (things won't be properly pluralized), but works to

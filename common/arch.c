@@ -756,4 +756,37 @@ object *object_create_arch(archetype *at) {
     return (head);
 }
 
+/**
+ * Checks if the specified type is a valid one for a Crossfire object.
+ * @param type value to check.
+ * @return 1 if the type is valid, 0 else.
+ */
+int is_type_valid(uint8 type) {
+    if (type < 0 || type >= OBJECT_TYPE_MAX)
+        return 0;
+
+    if (type >= 10 && type <= 12)
+        return 0;
+    if (type == 19 || type == 25 || type == 35 || type == 38 || type == 47)
+        return 0;
+    if (type == 61 || type == 63 || type == 76 || type == 78 || type == 81)
+        return 0;
+    if (type == 81 || type == 84 || type == 86 || type == 88 || type == 89)
+        return 0;
+    if (type == 96 || type == 97 || type == 107 || type == 108 || type == 110)
+        return 0;
+    if (type >= 117 && type <= 120)
+        return 0;
+    if (type >= 125 && type <= 129)
+        return 0;
+    if (type >= 131 && type <= 137)
+        return 0;
+    if (type >= 140 && type <= 149)
+        return 0;
+    if (type >= 151 && type <= 153)
+        return 0;
+
+    return 1;
+}
+
 /*** end of arch.c ***/

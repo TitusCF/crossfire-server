@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add item type validity check when loading something.
+Nicolas Weeger 2010-06-26
+
 CRE: take 'npctoken' and 'setnpctoken' into account for message display.
 Nicolas Weeger 2010-06-23
 
