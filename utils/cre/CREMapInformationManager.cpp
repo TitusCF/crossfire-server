@@ -215,6 +215,26 @@ void CREMapInformationManager::browseMaps()
     myToProcess.clear();
     myToProcess.append(QString(first_map_path));
 
+    /* try to find race-specific start maps */
+    if (first_map_ext_path[0] != 0)
+    {
+        char path[MAX_BUF], name[MAX_BUF];
+        const archetype* arch = first_archetype;
+        struct stat stats;
+        while (arch)
+        {
+            if (arch->clone.type == PLAYER)
+            {
+                snprintf(name, sizeof(name), "%s/%s", first_map_ext_path, arch->name);
+                create_pathname(name, path, sizeof(path));
+                if (stat(path, &stats) == 0) {
+                    myToProcess.append(name);
+                }
+            }
+            arch = arch->next;
+        }
+    }
+
     while (myCurrentMap < myToProcess.size())
     {
         process(myToProcess[myCurrentMap]);
