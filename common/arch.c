@@ -226,8 +226,13 @@ static void init_archetable(void) {
     archetype *at;
 
     LOG(llevDebug, " Setting up archetable...\n");
-    for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
+    for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more) {
+        if (at->name == NULL) {
+            LOG(llevError, "archetype without name? %s\n", at->clone.name ? at->clone.name : "(no clone name)");
+            abort();
+        }
         add_arch(at);
+    }
     LOG(llevDebug, "done\n");
 }
 
