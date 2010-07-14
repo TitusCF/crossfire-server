@@ -2,6 +2,6 @@ Displays known relevant information.
 
 Without any parameter, displays this help text.
 
-With "knowledge list", you can see all you know.
+With "knowledge list", you can see all you know. Additionnal parameter can restrict the displayed items, using an invalid one shows the available types.
 
 With "knowledge show <number>", displays details about the specified item.

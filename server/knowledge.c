@@ -84,6 +84,7 @@ typedef struct knowledge_type {
     knowledge_detail detail;            /**< Display the detailed description. */
     knowledge_is_valid_item validate;   /**< Validate the specific value. */
     knowledge_add_item add;             /**< Add the item to the knowledge store. */
+    const char *name;                   /**< Type name for player, to use with 'list'. */
 } knowledge_type;
 
 
@@ -448,9 +449,9 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
 
 /** All handled knowledge items. */
 static const knowledge_type const knowledges[] = {
-    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate, knowledge_add },
-    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add },
-    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add },
+    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate, knowledge_add, "recipes" },
+    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters" },
+    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods" },
     { NULL, 0, 0, 0, 0 }
 };
 
@@ -628,17 +629,47 @@ void knowledge_read(player *pl, object *book) {
 /**
  * Display all a player's knowledge.
  * @param pl who to display knowledge of.
+ * @param params additionnal parameters.
  */
-static void knowledge_display(object *pl) {
+static void knowledge_display(object *pl, const char *params) {
     knowledge_player *kp;
     knowledge_item *item;
     int index = 1, header = 0;
+    const knowledge_type *show_only = NULL;
+
+    if (params && params[0] == ' ') {
+        const char *type = params + 1;
+        int idx = 0;
+        for (; knowledges[idx].type != NULL; idx++) {
+            if (strcmp(knowledges[idx].name, type) == 0) {
+                show_only = &knowledges[idx];
+                break;
+            }
+        }
+
+        if (show_only == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Invalid type, valid types are:");
+            for (idx = 0; knowledges[idx].type != NULL; idx++) {
+                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "- %s", knowledges[idx].name);
+            }
+            return;
+        }
+    }
 
     kp = knowledge_get_or_create(pl->contr);
     item = kp->items;
     while (item) {
+        if (show_only != NULL && item->handler != show_only) {
+            item = item->next;
+            index++;
+            continue;
+        }
+
         if (header == 0) {
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You know this information:");
+            if (show_only != NULL)
+                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You have knowledge of those %s:", show_only->name);
+            else
+                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You have knowledge of:");
             header = 1;
         }
 
@@ -647,8 +678,12 @@ static void knowledge_display(object *pl) {
         index++;
     }
 
-    if (header == 0)
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information.");
+    if (header == 0) {
+        if (show_only != NULL)
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information about %s.", show_only->name);
+        else
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information.");
+    }
 }
 
 /**
@@ -698,8 +733,8 @@ int command_knowledge(object *pl, char *params) {
         return 0;
     }
 
-    if (strcmp(params, "list") == 0) {
-        knowledge_display(pl);
+    if (strncmp(params, "list", 4) == 0) {
+        knowledge_display(pl, params + 4);
         return 0;
     }
 
