@@ -70,9 +70,9 @@ struct knowledge_player;
 struct knowledge_type;
 
 /** Function to fill the StringBuffer with the short description of an item. */
-typedef void (*knowledge_summary)(object *, const char *, StringBuffer *);
+typedef void (*knowledge_summary)(const char *, StringBuffer *);
 /** Function to fill the StringBuffer with a detailed description of an item. */
-typedef void (*knowledge_detail)(object *, const char *, StringBuffer *);
+typedef void (*knowledge_detail)(const char *, StringBuffer *);
 /** Function to check if the specified item is valid. */
 typedef int (*knowledge_is_valid_item)(const char *);
 /** Function to add the specified item, should return how many actually written. */
@@ -145,12 +145,11 @@ static const recipe* knowledge_alchemy_get_recipe(const char *value) {
 
 /**
  * Give the title of the alchemy recpie.
- * @param pl player to give description for.
  * @param value recipe internal value.
  * @param buf where to put the information.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_alchemy_summary(object *pl, const char *value, StringBuffer *buf) {
+static void knowledge_alchemy_summary(const char *value, StringBuffer *buf) {
     const recipe *rec = knowledge_alchemy_get_recipe(value);
     const archetype *arch;
 
@@ -176,12 +175,11 @@ static void knowledge_alchemy_summary(object *pl, const char *value, StringBuffe
 
 /**
  * Give the full description of the alchemy recpie.
- * @param pl player to give description for.
  * @param value recipe internal value.
  * @param buf where to store the detail.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_alchemy_detail(object *pl, const char *value, StringBuffer *buf) {
+static void knowledge_alchemy_detail(const char *value, StringBuffer *buf) {
     const recipe *rec = knowledge_alchemy_get_recipe(value);
     const linked_char *next;
     const archetype *arch;
@@ -265,12 +263,11 @@ static int knowledge_add(knowledge_player *current, const char *item, const know
 
 /**
  * Monster information summary.
- * @param pl who to give the information to.
  * @param item knowledge item.
  * @param buf where to put the information.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_monster_summary(object *pl, const char *item, StringBuffer *buf) {
+static void knowledge_monster_summary(const char *item, StringBuffer *buf) {
     archetype *monster = find_archetype(item);
     if (!monster)
         return;
@@ -280,12 +277,11 @@ static void knowledge_monster_summary(object *pl, const char *item, StringBuffer
 
 /**
  * Describe in detail a monster.
- * @param pl who to describe for.
  * @param item knowledge item for the monster (archetype name).
  * @param buf where to put the description.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_monster_detail(object *pl, const char *item, StringBuffer *buf) {
+static void knowledge_monster_detail(const char *item, StringBuffer *buf) {
     char buf2[HUGE_BUF];
     archetype *monster = find_archetype(item);
 
@@ -332,13 +328,11 @@ static int knowledge_monster_add(struct knowledge_player *current, const char *i
 
 /**
  * God information summary.
- * @param pl who to give the information to.
  * @param item knowledge item.
- * @param index number of the item to display.
  * @param buf where to put the information.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_god_summary(object *pl, const char *item, StringBuffer *buf) {
+static void knowledge_god_summary(const char *item, StringBuffer *buf) {
     char *dup = strdup_local(item), *pos = strchr(dup, ':');
 
     if (pos)
@@ -350,12 +344,11 @@ static void knowledge_god_summary(object *pl, const char *item, StringBuffer *bu
 
 /**
  * Describe in detail a god.
- * @param pl who to describe for.
  * @param item knowledge item for the god (object name and what is known).
  * @param buf where to put the description.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_god_detail(object *pl, const char *item, StringBuffer *buf) {
+static void knowledge_god_detail(const char *item, StringBuffer *buf) {
     char *dup = strdup_local(item), *pos = strchr(dup, ':'), *final;
     const archetype *god;
     int what;
@@ -675,7 +668,7 @@ static void knowledge_display(object *pl, const char *params) {
         }
 
         summary = stringbuffer_new();
-        item->handler->summary(pl, item->item, summary);
+        item->handler->summary(item->item, summary);
         final = stringbuffer_finish(summary);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", index, final);
         free(final);
@@ -713,7 +706,7 @@ static void knowledge_show(object *pl, const char *params) {
             StringBuffer *buf = stringbuffer_new();
             char *final;
 
-            item->handler->detail(pl, item->item, buf);
+            item->handler->detail(item->item, buf);
             final = stringbuffer_finish(buf);
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, final);
             free(final);
