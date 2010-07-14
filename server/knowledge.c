@@ -65,6 +65,7 @@ During loading, obsolete items (eg formula changed) are discarded.
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
+#include <assert.h>
 
 struct knowledge_player;
 struct knowledge_type;
@@ -619,17 +620,80 @@ void knowledge_read(player *pl, object *book) {
 }
 
 /**
+ * Actually display knowledge list.
+ * @param pl who to display to.
+ * @param show_only if not NULL, only display this knowledge type.
+ * @param search if not NULL, only display items having the summary or detail contain the string. Must be either NULL or a non empty string.
+ */
+static void knowledge_do_display(object *pl, const knowledge_type *show_only, const char *search) {
+    knowledge_player *kp;
+    knowledge_item *item;
+    int index = 1, header = 0, show;
+    StringBuffer *summary;
+    char *final;
+
+    assert(search == NULL || search[0] != '\0');
+
+    kp = knowledge_get_or_create(pl->contr);
+    item = kp->items;
+    while (item) {
+        show = 1;
+
+        summary = stringbuffer_new();
+        item->handler->summary(item->item, summary);
+        final = stringbuffer_finish(summary);
+
+        if (show_only != NULL && item->handler != show_only) {
+            show = 0;
+        }
+        if (search != NULL && search[0] != '\0') {
+            if (strstr(final, search) == NULL) {
+                char *fd;
+                StringBuffer *detail = stringbuffer_new();
+                item->handler->detail(item->item, detail);
+                fd = stringbuffer_finish(detail);
+                if (strstr(fd, search) == NULL)
+                    show = 0;
+                free(fd);
+            }
+        }
+
+        if (show == 1) {
+            if (header == 0) {
+                if (search != NULL)
+                    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You have knowledge of the following %s concerning '%s':", show_only == NULL ? "things" : show_only->type, search);
+                else if (show_only != NULL)
+                    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You have knowledge of those %s:", show_only->name);
+                else
+                    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You have knowledge of:");
+                header = 1;
+            }
+
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", index, final);
+        }
+
+        free(final);
+        item = item->next;
+        index++;
+    }
+
+    if (header == 0) {
+        if (search != NULL)
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information about '%s'.", search);
+        else if (show_only != NULL)
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information about %s.", show_only->name);
+        else
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information.");
+    }
+};
+
+/**
  * Display all a player's knowledge.
  * @param pl who to display knowledge of.
  * @param params additionnal parameters.
  */
 static void knowledge_display(object *pl, const char *params) {
-    knowledge_player *kp;
-    knowledge_item *item;
-    int index = 1, header = 0;
     const knowledge_type *show_only = NULL;
-    StringBuffer *summary;
-    char *final;
 
     if (params && params[0] == ' ') {
         const char *type = params + 1;
@@ -650,38 +714,7 @@ static void knowledge_display(object *pl, const char *params) {
         }
     }
 
-    kp = knowledge_get_or_create(pl->contr);
-    item = kp->items;
-    while (item) {
-        if (show_only != NULL && item->handler != show_only) {
-            item = item->next;
-            index++;
-            continue;
-        }
-
-        if (header == 0) {
-            if (show_only != NULL)
-                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You have knowledge of those %s:", show_only->name);
-            else
-                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You have knowledge of:");
-            header = 1;
-        }
-
-        summary = stringbuffer_new();
-        item->handler->summary(item->item, summary);
-        final = stringbuffer_finish(summary);
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", index, final);
-        free(final);
-        item = item->next;
-        index++;
-    }
-
-    if (header == 0) {
-        if (show_only != NULL)
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information about %s.", show_only->name);
-        else
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information.");
-    }
+    knowledge_do_display(pl, show_only, NULL);
 }
 
 /**
@@ -739,6 +772,11 @@ int command_knowledge(object *pl, char *params) {
 
     if (strncmp(params, "list", 4) == 0) {
         knowledge_display(pl, params + 4);
+        return 0;
+    }
+
+    if (strncmp(params, "search ", 7) == 0) {
+        knowledge_do_display(pl, NULL, params + 7);
         return 0;
     }
 
