@@ -196,17 +196,17 @@ static void knowledge_alchemy_detail(object *pl, const char *value, StringBuffer
         return;
 
     if (strcmp(rec->title, "NONE"))
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s of %s:", arch->clone.name, rec->title);
+        stringbuffer_append_printf(buf, "Recipe for %s of %s:", arch->clone.name, rec->title);
     else {
         if (arch->clone.title != NULL) {
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s %s", arch->clone.name, arch->clone.title);
+            stringbuffer_append_printf(buf, "Recipe for %s %s:", arch->clone.name, arch->clone.title);
         }
         else
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Recipe for %s", arch->clone.name);
+            stringbuffer_append_printf(buf, "Recipe for %s:", arch->clone.name);
     }
 
     for (next = rec->ingred; next != NULL; next = next->next) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, " - %s", next->name);
+        stringbuffer_append_printf(buf, "\n - %s", next->name);
     }
 
 }
