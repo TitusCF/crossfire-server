@@ -69,8 +69,8 @@ During loading, obsolete items (eg formula changed) are discarded.
 struct knowledge_player;
 struct knowledge_type;
 
-/** Function to display the short description of an item. */
-typedef void (*knowledge_summary)(object *, const char *, int);
+/** Function to fill the StringBuffer with the short description of an item. */
+typedef void (*knowledge_summary)(object *, const char *, StringBuffer *);
 /** Function to fill the StringBuffer with a detailed description of an item. */
 typedef void (*knowledge_detail)(object *, const char *, StringBuffer *);
 /** Function to check if the specified item is valid. */
@@ -147,10 +147,10 @@ static const recipe* knowledge_alchemy_get_recipe(const char *value) {
  * Give the title of the alchemy recpie.
  * @param pl player to give description for.
  * @param value recipe internal value.
- * @param index recipe index in the display list.
+ * @param buf where to put the information.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_alchemy_summary(object *pl, const char *value, int index) {
+static void knowledge_alchemy_summary(object *pl, const char *value, StringBuffer *buf) {
     const recipe *rec = knowledge_alchemy_get_recipe(value);
     const archetype *arch;
 
@@ -164,13 +164,13 @@ static void knowledge_alchemy_summary(object *pl, const char *value, int index) 
         return;
 
     if (strcmp(rec->title, "NONE"))
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s of %s", index, arch->clone.name, rec->title);
+        stringbuffer_append_printf(buf, "%s of %s", arch->clone.name, rec->title);
     else {
         if (arch->clone.title != NULL) {
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s %s", index, arch->clone.name, arch->clone.title);
+            stringbuffer_append_printf(buf, "%s %s", arch->clone.name, arch->clone.title);
         }
         else
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", index, arch->clone.name);
+            stringbuffer_append_printf(buf, "%s", arch->clone.name);
     }
 }
 
@@ -267,15 +267,15 @@ static int knowledge_add(knowledge_player *current, const char *item, const know
  * Monster information summary.
  * @param pl who to give the information to.
  * @param item knowledge item.
- * @param index number of the item to display.
+ * @param buf where to put the information.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_monster_summary(object *pl, const char *item, int index) {
+static void knowledge_monster_summary(object *pl, const char *item, StringBuffer *buf) {
     archetype *monster = find_archetype(item);
     if (!monster)
         return;
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", index, monster->clone.name);
+    stringbuffer_append_printf(buf, "%s", monster->clone.name);
 }
 
 /**
@@ -335,15 +335,16 @@ static int knowledge_monster_add(struct knowledge_player *current, const char *i
  * @param pl who to give the information to.
  * @param item knowledge item.
  * @param index number of the item to display.
+ * @param buf where to put the information.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_god_summary(object *pl, const char *item, int index) {
+static void knowledge_god_summary(object *pl, const char *item, StringBuffer *buf) {
     char *dup = strdup_local(item), *pos = strchr(dup, ':');
 
     if (pos)
         *pos = '\0';
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s [god]", index, dup);
+    stringbuffer_append_printf(buf, "%s [god]", dup);
     free(dup);
 }
 
@@ -634,6 +635,8 @@ static void knowledge_display(object *pl, const char *params) {
     knowledge_item *item;
     int index = 1, header = 0;
     const knowledge_type *show_only = NULL;
+    StringBuffer *summary;
+    char *final;
 
     if (params && params[0] == ' ') {
         const char *type = params + 1;
@@ -671,7 +674,11 @@ static void knowledge_display(object *pl, const char *params) {
             header = 1;
         }
 
-        item->handler->summary(pl, item->item, index);
+        summary = stringbuffer_new();
+        item->handler->summary(pl, item->item, summary);
+        final = stringbuffer_finish(summary);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", index, final);
+        free(final);
         item = item->next;
         index++;
     }
