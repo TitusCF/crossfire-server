@@ -71,8 +71,8 @@ struct knowledge_type;
 
 /** Function to display the short description of an item. */
 typedef void (*knowledge_summary)(object *, const char *, int);
-/** Function to display a detailed description of an item. */
-typedef void (*knowledge_detail)(object *, const char *);
+/** Function to fill the StringBuffer with a detailed description of an item. */
+typedef void (*knowledge_detail)(object *, const char *, StringBuffer *);
 /** Function to check if the specified item is valid. */
 typedef int (*knowledge_is_valid_item)(const char *);
 /** Function to add the specified item, should return how many actually written. */
@@ -178,9 +178,10 @@ static void knowledge_alchemy_summary(object *pl, const char *value, int index) 
  * Give the full description of the alchemy recpie.
  * @param pl player to give description for.
  * @param value recipe internal value.
+ * @param buf where to store the detail.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_alchemy_detail(object *pl, const char *value) {
+static void knowledge_alchemy_detail(object *pl, const char *value, StringBuffer *buf) {
     const recipe *rec = knowledge_alchemy_get_recipe(value);
     const linked_char *next;
     const archetype *arch;
@@ -281,18 +282,19 @@ static void knowledge_monster_summary(object *pl, const char *item, int index) {
  * Describe in detail a monster.
  * @param pl who to describe for.
  * @param item knowledge item for the monster (archetype name).
+ * @param buf where to put the description.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_monster_detail(object *pl, const char *item) {
-    char buf[HUGE_BUF];
+static void knowledge_monster_detail(object *pl, const char *item, StringBuffer *buf) {
+    char buf2[HUGE_BUF];
     archetype *monster = find_archetype(item);
 
     if (!monster)
         return;
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, " *** %s ***", monster->clone.name);
-    describe_item(&monster->clone, NULL, buf, sizeof(buf));
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, buf);
+    stringbuffer_append_printf(buf, " *** %s ***\n", monster->clone.name);
+    describe_item(&monster->clone, NULL, buf2, sizeof(buf2));
+    stringbuffer_append_string(buf, buf2);
 }
 
 /**
@@ -349,12 +351,12 @@ static void knowledge_god_summary(object *pl, const char *item, int index) {
  * Describe in detail a god.
  * @param pl who to describe for.
  * @param item knowledge item for the god (object name and what is known).
+ * @param buf where to put the description.
  * @todo merge with stuff in readable.c
  */
-static void knowledge_god_detail(object *pl, const char *item) {
+static void knowledge_god_detail(object *pl, const char *item, StringBuffer *buf) {
     char *dup = strdup_local(item), *pos = strchr(dup, ':'), *final;
     const archetype *god;
-    StringBuffer *buf;
     int what;
 
     if (!pos) {
@@ -373,11 +375,7 @@ static void knowledge_god_detail(object *pl, const char *item) {
         return;
     }
 
-    buf = stringbuffer_new();
     describe_god(&god->clone, what, buf, 0);
-    final = stringbuffer_finish(buf);
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, final);
-    free(final);
 }
 
 /**
@@ -705,7 +703,13 @@ static void knowledge_show(object *pl, const char *params) {
     item = kp->items;
     while (item) {
         if (count == 1) {
-            item->handler->detail(pl, item->item);
+            StringBuffer *buf = stringbuffer_new();
+            char *final;
+
+            item->handler->detail(pl, item->item, buf);
+            final = stringbuffer_finish(buf);
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, final);
+            free(final);
             return;
         }
         item = item->next;
