@@ -23,6 +23,7 @@ class CREWrapperObject : public QObject
     Q_PROPERTY(qint8 ac READ ac);
     Q_PROPERTY(qint8 wc READ wc);
     Q_PROPERTY(QObject* arch READ arch);
+    Q_PROPERTY(qint16 damage READ damage)
 
     public:
         CREWrapperObject();
@@ -40,6 +41,7 @@ class CREWrapperObject : public QObject
         quint32 attacktype() const;
         qint8 ac() const;
         qint8 wc() const;
+        qint16 damage() const;
 
     protected:
         const object* myObject;

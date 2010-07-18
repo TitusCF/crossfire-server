@@ -69,3 +69,8 @@ qint8 CREWrapperObject::wc() const
 {
     return myObject->stats.wc;
 }
+
+qint16 CREWrapperObject::damage() const
+{
+    return myObject->stats.dam;
+}
