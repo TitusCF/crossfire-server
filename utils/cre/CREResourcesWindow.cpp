@@ -91,9 +91,9 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
     mySplitter->addWidget(myTree);
     myTree->setIconSize(QSize(32, 32));
     myTree->setHeaderLabel(tr("All resources"));
-    myTree->sortByColumn(0, Qt::AscendingOrder);
+//    myTree->sortByColumn(0, Qt::AscendingOrder);
 
-    myTree->setSortingEnabled(true);
+//    myTree->setSortingEnabled(true);
     myTree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(myTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(treeCustomMenu(const QPoint&)));
 

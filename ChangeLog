@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+CRE: disable tree sorting for resource window, as that prevents reading
+the treasure lists correctly.
+Nicolas Weeger 2010-07-18
+
 Add 'knowledge search <text>' to filter knowledge.
 Nicolas Weeger 2010-07-14
 
