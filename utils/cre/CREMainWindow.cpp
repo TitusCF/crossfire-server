@@ -5,10 +5,11 @@
 #include "CREMapInformationManager.h"
 #include "CREExperienceWindow.h"
 #include "QuestManager.h"
+#include "MessageManager.h"
+#include "CREReportDisplay.h"
 
 extern "C" {
 #include "global.h"
-#include "MessageManager.h"
 }
 
 CREMainWindow::CREMainWindow()
@@ -103,6 +104,10 @@ void CREMainWindow::createActions()
     mySaveMessages = new QAction(tr("Messages"), this);
     mySaveMessages->setStatusTip(tr("Save all modified messages."));
     connect(mySaveMessages, SIGNAL(triggered()), this, SLOT(onSaveMessages()));
+
+    myReportSpellDamage = new QAction(tr("Spell damage"), this);
+    myReportSpellDamage->setStatusTip(tr("Display spell damage by level (bullet spells only for now)"));
+    connect(myReportSpellDamage, SIGNAL(triggered()), this, SLOT(onReportSpellDamage()));
 }
 
 void CREMainWindow::createMenus()
@@ -128,6 +133,9 @@ void CREMainWindow::createMenus()
     mySaveMenu->addAction(mySaveFormulae);
     mySaveMenu->addAction(mySaveQuests);
     mySaveMenu->addAction(mySaveMessages);
+
+    QMenu* reportMenu = menuBar()->addMenu("&Reports");
+    reportMenu->addAction(myReportSpellDamage);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -234,4 +242,210 @@ void CREMainWindow::onFiltersModified()
 void CREMainWindow::onReportsModified()
 {
     emit updateReports();
+}
+
+
+
+/**
+ * This function takes a caster and spell and presents the
+ * effective level the caster needs to be to cast the spell.
+ * Basically, it just adjusts the spell->level with attuned/repelled
+ * spellpaths.
+ *
+ * @param caster
+ * person casting the spell.
+ * @param spell
+ * spell object.
+ * @return
+ * adjusted level.
+ */
+int min_casting_level(const object *caster, const object *spell) {
+    int new_level;
+
+    if (caster->path_denied&spell->path_attuned) {
+        /* This case is not a bug, just the fact that this function is
+         * usually called BEFORE checking for path_deny. -AV
+         */
+        return 1;
+    }
+    new_level = spell->level
+                +((caster->path_repelled&spell->path_attuned) ? +2 : 0)
+                +((caster->path_attuned&spell->path_attuned) ? -2 : 0);
+    return MAX(new_level, 1);
+}
+
+
+/**
+ * This function returns the effective level the spell
+ * is being cast at.
+ * Note that I changed the repelled/attuned bonus to 2 from 5.
+ * This is because the new code compares casting_level against
+ * min_caster_level, so the difference is effectively 4
+ *
+ * @param caster
+ * person casting the spell.
+ * @param spell
+ * spell object.
+ * @return
+ * adjusted level.
+ */
+int caster_level(const object *caster, const object *spell) {
+    int level = caster->level;
+
+    /* If this is a player, try to find the matching skill */
+    if (caster->type == PLAYER && spell->skill) {
+        int i;
+
+        for (i = 0; i < NUM_SKILLS; i++)
+            if (caster->contr->last_skill_ob[i]
+            && caster->contr->last_skill_ob[i]->skill == spell->skill) {
+                level = caster->contr->last_skill_ob[i]->level;
+                break;
+            }
+    };
+    /* Got valid caster level.  Now adjust for attunement */
+    level += ((caster->path_repelled&spell->path_attuned) ? -2 : 0)
+            +((caster->path_attuned&spell->path_attuned) ? 2 : 0);
+
+    /* Always make this at least 1.  If this is zero, we get divide by zero
+     * errors in various places.
+     */
+    if (level < 1)
+        level = 1;
+    return level;
+}
+
+/**
+ * Scales the spellpoint cost of a spell by it's increased effectiveness.
+ * Some of the lower level spells become incredibly vicious at high
+ * levels.  Very cheap mass destruction.  This function is
+ * intended to keep the sp cost related to the effectiveness.
+ *
+ * Note that it is now possible for a spell to cost both grace and
+ * mana.  In that case, we return which ever value is higher.
+ *
+ * @param caster
+ * what is casting the spell.
+ * @param spell
+ * spell object.
+ * @param flags
+ * one of @ref SPELL_xxx.
+ * @return
+ * sp/mana points cost.
+ */
+sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags) {
+    int sp, grace, level = caster_level(caster, spell);
+
+    if (settings.spellpoint_level_depend == TRUE) {
+        if (spell->stats.sp && spell->stats.maxsp) {
+            sp = (int)(spell->stats.sp*(1.0+MAX(0, (float)(level-spell->level)/(float)spell->stats.maxsp)));
+        } else
+            sp = spell->stats.sp;
+
+        sp *= PATH_SP_MULT(caster, spell);
+        if (!sp && spell->stats.sp)
+            sp = 1;
+
+        if (spell->stats.grace && spell->stats.maxgrace) {
+            grace = (int)(spell->stats.grace*(1.0+MAX(0, (float)(level-spell->level)/(float)spell->stats.maxgrace)));
+        } else
+            grace = spell->stats.grace;
+
+        grace *= PATH_SP_MULT(caster, spell);
+        if (spell->stats.grace && !grace)
+            grace = 1;
+    } else {
+        sp = spell->stats.sp*PATH_SP_MULT(caster, spell);
+        if (spell->stats.sp && !sp)
+            sp = 1;
+        grace = spell->stats.grace*PATH_SP_MULT(caster, spell);
+        if (spell->stats.grace && !grace)
+            grace = 1;
+    }
+    if (flags == SPELL_HIGHEST)
+        return MAX(sp, grace);
+    else if (flags == SPELL_GRACE)
+        return grace;
+    else if (flags == SPELL_MANA)
+        return sp;
+    else {
+        LOG(llevError, "SP_level_spellpoint_cost: Unknown flags passed: %d\n", flags);
+        return 0;
+    }
+}
+
+/**
+ * Returns adjusted damage based on the caster.
+ *
+ * @param caster
+ * who is casting.
+ * @param spob
+ * spell we are adjusting.
+ * @return
+ * adjusted damage.
+ */
+int SP_level_dam_adjust(const object *caster, const object *spob) {
+    int level = caster_level(caster, spob);
+    int adj = level-min_casting_level(caster, spob);
+
+    if (adj < 0)
+        adj = 0;
+    if (spob->dam_modifier)
+        adj /= spob->dam_modifier;
+    else
+        adj = 0;
+    return adj;
+}
+
+
+void CREMainWindow::onReportSpellDamage()
+{
+    QStringList spell;
+    QList<QStringList> damage;
+
+    archetype* arch = first_archetype;
+    object* caster = create_archetype("orc");
+    int dm, cost;
+
+    while (arch != NULL)
+    {
+        if (arch->clone.type == SPELL && arch->clone.subtype == SP_BULLET && arch->clone.skill && strcmp(arch->clone.skill, "praying") == 0)
+        {
+            spell.append(arch->clone.name);
+            QStringList dam;
+            for (int l = 0; l < settings.max_level; l++)
+            {
+                caster->level = l;
+                dm = arch->clone.stats.dam + SP_level_dam_adjust(caster, &arch->clone);
+                cost = SP_level_spellpoint_cost(caster, &arch->clone, SPELL_GRACE);
+                dam.append(tr("%1 [%2]").arg(dm).arg(cost));
+            }
+            damage.append(dam);
+        }
+
+        arch = arch->next;
+    }
+    object_free_drop_inventory(caster);
+
+    QString report("<table><thead><tr><th>level</th>");
+
+    for (int i = 0; i < spell.size(); i++)
+    {
+        report += "<th>" + spell[i] + "</th>";
+    }
+
+    report += "</tr></thead><tbody>";
+
+    for (int l = 0; l < settings.max_level; l++)
+    {
+        report += "<tr><td>" + QString::number(l) + "</td>";
+        for (int s = 0; s < spell.size(); s++)
+            report += "<td>" + damage[s][l] + "</td>";
+        report += "</tr>";
+    }
+
+    report += "</tbody></table>";
+
+    CREReportDisplay show(report);
+    show.exec();
 }
