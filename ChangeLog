@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Correctly generate readable of specified type if set.
+This fixes a bug in Scorn (and elsewhere) library where
+you could have alchemy recipes in the god section.
+Nicolas Weeger 2010-07-19
+
 CRE: bullet-like spells damage and cost report, praying only.
 Nicolas Weeger 2010-07-18
 

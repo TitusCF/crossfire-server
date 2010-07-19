@@ -1248,7 +1248,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                 } else
                     op->level = RANDOM()%creator->level;
 
-                tailor_readable_ob(op, -1);
+                tailor_readable_ob(op, creator->stats.sp);
                 /* books w/ info are worth more! */
                 op->value *= ((op->level > 10 ? op->level : (op->level+1)/2)*((strlen(op->msg)/250)+1));
                 /* creator related stuff */
