@@ -108,6 +108,10 @@ void CREMainWindow::createActions()
     myReportSpellDamage = new QAction(tr("Spell damage"), this);
     myReportSpellDamage->setStatusTip(tr("Display spell damage by level (bullet spells only for now)"));
     connect(myReportSpellDamage, SIGNAL(triggered()), this, SLOT(onReportSpellDamage()));
+
+    myReportAlchemy = new QAction(tr("Alchemy"), this);
+    myReportAlchemy->setStatusTip(tr("Display alchemy formulae, in a table."));
+    connect(myReportAlchemy, SIGNAL(triggered()), this, SLOT(onReportAlchemy()));
 }
 
 void CREMainWindow::createMenus()
@@ -136,6 +140,7 @@ void CREMainWindow::createMenus()
 
     QMenu* reportMenu = menuBar()->addMenu("&Reports");
     reportMenu->addAction(myReportSpellDamage);
+    reportMenu->addAction(myReportAlchemy);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -445,6 +450,91 @@ void CREMainWindow::onReportSpellDamage()
     }
 
     report += "</tbody></table>";
+
+    CREReportDisplay show(report);
+    show.exec();
+}
+
+static QString alchemyTable(const QString& skill)
+{
+    bool one = false;
+
+    QString report = QString("<h2>%1</h2><table><thead><tr><th>product</th><th>difficulty</th><th>ingredients count</th><th>experience</th>").arg(skill);
+    report += "</tr></thead><tbody>";
+
+    QHash<int, QStringList> recipes;
+
+    const recipelist* list;
+    const recipe* recipe;
+
+    for (int ing = 1; ; ing++)
+    {
+        list = get_formulalist(ing);
+        if (!list)
+            break;
+
+        for (recipe = list->items; recipe; recipe = recipe->next)
+        {
+            if (skill == recipe->skill)
+            {
+                if (recipe->arch_names == 0)
+                    // hu?
+                    continue;
+
+                const archetype* arch = find_archetype(recipe->arch_name[0]);
+
+                QString name;
+                if (strcmp(recipe->title, "NONE") == 0)
+                {
+                    if (arch->clone.title == NULL)
+                        name = arch->clone.name;
+                    else
+                        name = QString("%1 %2").arg(arch->clone.name, arch->clone.title);
+                }
+                else
+                {
+                    name = QString("%1 of %2").arg(arch->clone.name, recipe->title);
+                }
+                recipes[recipe->diff].append(QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td></tr>").arg(name).arg(recipe->diff).arg(recipe->ingred_count).arg(recipe->exp));
+                one = true;
+            }
+        }
+    }
+
+    if (!one)
+        return QString();
+
+    QList<int> difficulties = recipes.keys();
+    qSort(difficulties);
+    foreach(int difficulty, difficulties)
+    {
+        report += recipes[difficulty].join("\n");
+    }
+
+    report += "</tbody></table>";
+
+    return report;
+}
+
+void CREMainWindow::onReportAlchemy()
+{
+    QStringList skills;
+
+    const archt* arch = first_archetype;
+    for (; arch; arch = arch->next)
+    {
+        if (arch->clone.type == SKILL)
+            skills.append(arch->clone.name);
+    }
+
+    skills.sort();
+
+    QString report("<h1>Alchemy formulae</h1>");
+
+    foreach(const QString skill, skills)
+    {
+        report += alchemyTable(skill);
+    }
 
     CREReportDisplay show(report);
     show.exec();
