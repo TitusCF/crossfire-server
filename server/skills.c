@@ -1752,7 +1752,7 @@ int write_on_item(object *pl, const char *params, object *skill) {
  * throwable object, NULL if none suitable found.
  */
 static object *find_throw_ob(object *op, const char *request) {
-    object *tmp;
+    object *tmp, *other = NULL;
     char name[MAX_BUF];
 
     if (!op) { /* safety */
@@ -1779,11 +1779,18 @@ static object *find_throw_ob(object *op, const char *request) {
             if (!request
                 || !strcmp(name, request)
                 || !strcmp(tmp2->name, request)) {
-                tmp = tmp2;
-                break;
+                if (QUERY_FLAG(tmp2, FLAG_IS_THROWN)) {
+                    tmp = tmp2;
+                    break;
+                }
+                if (other == NULL)
+                    other = tmp2;
             }
         } FOR_INV_FINISH();
     }
+
+    if (tmp == NULL)
+        tmp = other;
 
     /* this should prevent us from throwing away
      * cursed items, worn armour, etc. Only weapons
