@@ -466,6 +466,14 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
         if (atmp == at) {
             if (!is_golem)
                 SET_FLAG(tmp, FLAG_MONSTER);
+
+            /* Ensure the golem can actually move if no move_type defined.
+             * This check is redundant since this is checked at server startup. */
+            if (tmp->move_type == 0) {
+                LOG(llevError, "summoned %s [%s] is without move_type!\n", tmp->name, atmp->name);
+                tmp->move_type = MOVE_WALK;
+            }
+
             object_set_owner(tmp, op);
             if (op->type == PLAYER) {
                 tmp->stats.exp = 0;

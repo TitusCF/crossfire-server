@@ -504,6 +504,23 @@ void check_generators(void) {
 #endif
 
 /**
+ * This checks all summonable items for move_type and other things.
+ * Will call fatal() if an error is found.
+ */
+void check_summoned(void) {
+    const archetype *at;
+
+    for (at = first_archetype; at != NULL; at = at->next) {
+        if (at->clone.type == SPELL && at->clone.subtype == SP_SUMMON_GOLEM && at->clone.other_arch) {
+            if (at->clone.other_arch->clone.move_type == 0) {
+                LOG(llevError, "Summonable archetype %s [%s] has no move_type defined!\n", at->clone.other_arch->name, at->clone.other_arch->clone.name);
+                fatal(SEE_LAST_ERROR);
+            }
+        }
+    }
+}
+
+/**
  * Loads all archetypes and treasures.
  * First initialises the archtype hash-table (init_archetable()).
  * Reads and parses the archetype file (with the first and second-pass
@@ -564,6 +581,7 @@ static void load_archetypes(void) {
 #ifdef DEBUG
     check_generators();
 #endif
+    check_summoned();
     close_and_delete(fp, comp);
     LOG(llevDebug, " done\n");
 }
