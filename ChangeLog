@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Explicit why the 'accounts' file can't be opened, to help debug.
+Nicolas Weeger 2010-07-28
+
 Abort at startup if a creature one can summon has no move_type defined.
 Add a redundant check for move_type 0 when summoning, set it to walk
 in this case. This is a fix enforcer for bug #2791003.

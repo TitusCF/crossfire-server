@@ -134,7 +134,8 @@ void account_load_entries(void)
         /* This may not in fact be a critical error - on a new server,
          * the accounts file may not yet exist.
          */
-        LOG(llevInfo,"Warning: Unable to open %s\n");
+        char err[MAX_BUF];
+        LOG(llevInfo,"Warning: Unable to open %s [%s]\n", fname, strerror_local(errno, err, sizeof(err)));
         return;
     }
     while (fgets(buf, VERY_BIG_BUF, fp)) {
