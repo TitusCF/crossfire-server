@@ -67,7 +67,7 @@
 #include <sproto.h>
 #endif
 
-/* Number of fields in the accounts file.  These are colon seperated */
+/** Number of fields in the accounts file.  These are colon seperated */
 #define NUM_ACCOUNT_FIELDS 6
 
 /**
@@ -82,15 +82,15 @@
  */
 
 typedef struct account_struct {
-    char  *name;                    /** Account name */
-    char  *password;                /** Password for this account */
-    time_t last_login;              /** Last time this account was logged in */
-    int	  num_characters;           /** Number of characters on this account */
+    char  *name;                    /**< Account name */
+    char  *password;                /**< Password for this account */
+    time_t last_login;              /**< Last time this account was logged in */
+    int	  num_characters;           /**< Number of characters on this account */
     char  *character_names[MAX_CHARACTERS_PER_ACCOUNT+1];
-                                    /** character names associated with this account */
-                                    /** +1 added to allow for NULL termination */
-    time_t  created;                /** When character was created */
-    struct account_struct *next;    /** Next in list */
+                                    /**< Character names associated with this account
+                                     +1 added to allow for NULL termination */
+    time_t  created;                /**< When character was created */
+    struct account_struct *next;    /**< Next in list */
 } account_struct;
 
 /**

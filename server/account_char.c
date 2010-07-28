@@ -66,7 +66,7 @@
 #include <sproto.h>
 #endif
 
-/* Number of fields in the accounts file.  These are colon seperated */
+/** Number of fields in the accounts file.  These are colon seperated */
 #define NUM_ACCOUNT_CHAR_FIELDS 7
 
 /**
@@ -77,7 +77,8 @@
 
 /**
  * For a given account name, load the character information and
- * return it.
+ * return it. It is the responsibility of the caller to call account_char_free()
+ * on the returned value to free it.
  * @param account_name
  * Name of the account.  The name should be validated before this routine
  * is called (eg, passed checks for legitimate characters and logged in)
@@ -189,7 +190,8 @@ void account_char_save(const char *account, Account_Char *chars)
     rename(fname, fname1);
 }
 	    
-/* This add a player to the list of accounts.  We check to see if the player
+/**
+ * This adds a player to the list of accounts.  We check to see if the player
  * has already been added to this account - if so, we just update
  * the infromation.  Note that all strings are filled in, even if that
  * may just be a blank field.  This simplifies a lot of the code instead
@@ -296,7 +298,8 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
     return chars;
 }
 
-/* This removes a character on this account.  This is typically used
+/**
+ * This removes a character on this account.  This is typically used
  * when a character has been deleted, and not for general cleanup 
  *
  * @param chars
@@ -336,7 +339,8 @@ Account_Char *account_char_remove(Account_Char *chars, const char *pl_name)
 
 }
 
-/* This frees all data associated with the character information.
+/**
+ * This frees all data associated with the character information.
  *
  * @param chars
  * Data to free.  The caller should make sure it no longer uses
