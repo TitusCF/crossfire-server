@@ -60,6 +60,7 @@
 
 #include <assert.h>
 
+/** Number of hooked functions a plugin can call. */
 #define NR_OF_HOOKS (sizeof(plug_hooks)/sizeof(*plug_hooks))
 
 /**
@@ -163,6 +164,7 @@ static const hook_entry plug_hooks[] = {
     { cfapi_player_knowledge,       95, "cfapi_player_knowledge" }
 };
 
+/** Linked list of loaded plugins. */
 crossfire_plugin *plugins_list = NULL;
 
 /*****************************************************************************/
@@ -469,6 +471,12 @@ int execute_global_event(int eventcode, ...) {
     return 0;
 }
 
+/**
+ * Try to load the specified plugin. Update ::plugins_list if successful.
+ * Log errors at ::llevError.
+ * @param libfile full path to the plugin.
+ * @return -1 if an error occurred, 0 if the plugin was loaded.
+ */
 int plugins_init_plugin(const char *libfile) {
     LIBPTRTYPE ptr;
     f_plug_init initfunc;
@@ -581,6 +589,12 @@ void *cfapi_get_hooks(int *type, ...) {
     return NULL;
 }
 
+/**
+ * Unload the specified plugin. No logging is done in case of error.
+ * Updates ::plugins_list.
+ * @param id plugin internal identifier.
+ * @return 0 if the plugin was unloaded, -1 if no such plugin.
+ */
 int plugins_remove_plugin(const char *id) {
     crossfire_plugin *cp;
 
@@ -618,6 +632,11 @@ int plugins_remove_plugin(const char *id) {
     return -1;
 }
 
+/**
+ * Find a plugin from its internal name.
+ * @param id internal plugin name.
+ * @return plugin, NULL if not found.
+ */
 crossfire_plugin *plugins_find_plugin(const char *id) {
     crossfire_plugin *cp;
 
@@ -632,10 +651,11 @@ crossfire_plugin *plugins_find_plugin(const char *id) {
     return NULL;
 }
 
-/*****************************************************************************/
-/* Displays a list of loaded plugins (keystrings and description) in the     */
-/* game log window.                                                          */
-/*****************************************************************************/
+/**
+ * Displays a list of loaded plugins (keystrings and description) in the
+ * game log window.
+ * @param op who to display the list to.
+ */
 void plugins_display_list(object *op) {
     crossfire_plugin *cp;
 
@@ -4901,7 +4921,8 @@ int initPlugins(void) {
 }
 
 /**
- * Call closePlugin() on the various plugins, used at server shutdown.
+ * Call the crossfire_plugin::closefunc on the various plugins, used at server shutdown.
+ * Will not unload plugins. Free all items of ::plugins_list.
  */
 void cleanupPlugins(void) {
     crossfire_plugin *cp;
