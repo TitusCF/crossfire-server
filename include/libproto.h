@@ -107,7 +107,7 @@ extern void get_levelnumber(int i, char *buf, size_t size);
 extern void query_short_name(const object *op, char *buf, size_t size);
 extern void query_name(const object *op, char *buf, size_t size);
 extern void query_base_name(const object *op, int plural, char *buf, size_t size);
-extern void describe_monster(const object *op, char *retbuf, size_t size);
+extern StringBuffer *describe_monster(const object *op, StringBuffer *buf);
 extern void describe_item(const object *op, const object *owner, char *retbuf, size_t size);
 extern int is_magical(const object *op);
 extern int need_identify(const object *op);
@@ -423,6 +423,7 @@ extern int adjust_dir(int dir, int destination_dir);
 extern void replace_unprintable_chars(char *buf);
 extern size_t split_string(char *str, char *array[], size_t array_size, char sep);
 extern StringBuffer *describe_spellpath_attenuation(const char *path, int value, StringBuffer *buf);
+extern StringBuffer *describe_attacktype(const char *attack, int value, StringBuffer *buf);
 /* loader.c */
 extern int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode);
 extern void yyrestart(FILE *input_file);

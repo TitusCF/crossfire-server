@@ -328,6 +328,172 @@ START_TEST(test_ring_desc_rewrite) {
 END_TEST
 
 
+static void old_describe_monster(const object *op, char *retbuf, size_t size) {
+    int i;
+    size_t len;
+
+    retbuf[0] = '\0';
+
+    /* Note that the resolution this provides for players really isn't
+     * very good.  Any player with a speed greater than .67 will
+     * fall into the 'lightning fast movement' category.
+     */
+    if (FABS(op->speed) > MIN_ACTIVE_SPEED) {
+        switch ((int)((FABS(op->speed))*15)) {
+        case 0:
+            snprintf(retbuf, size, "(very slow movement)");
+            break;
+
+        case 1:
+            snprintf(retbuf, size, "(slow movement)");
+            break;
+
+        case 2:
+            snprintf(retbuf, size, "(normal movement)");
+            break;
+
+        case 3:
+        case 4:
+            snprintf(retbuf, size, "(fast movement)");
+            break;
+
+        case 5:
+        case 6:
+            snprintf(retbuf, size, "(very fast movement)");
+            break;
+
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+            snprintf(retbuf, size, "(extremely fast movement)");
+            break;
+
+        default:
+            snprintf(retbuf, size, "(lightning fast movement)");
+            break;
+        }
+    }
+    if (QUERY_FLAG(op, FLAG_UNDEAD))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(undead)");
+    if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(see invisible)");
+    if (QUERY_FLAG(op, FLAG_USE_WEAPON))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wield weapon)");
+    if (QUERY_FLAG(op, FLAG_USE_BOW))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(archer)");
+    if (QUERY_FLAG(op, FLAG_USE_ARMOUR))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear armour)");
+    if (QUERY_FLAG(op, FLAG_USE_RING))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear ring)");
+    if (QUERY_FLAG(op, FLAG_USE_SCROLL))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(read scroll)");
+    if (QUERY_FLAG(op, FLAG_USE_RANGE))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(fires wand/rod/horn)");
+    if (QUERY_FLAG(op, FLAG_CAN_USE_SKILL))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(skill user)");
+    if (QUERY_FLAG(op, FLAG_CAST_SPELL))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellcaster)");
+    if (QUERY_FLAG(op, FLAG_FRIENDLY))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(friendly)");
+    if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(unaggressive)");
+    if (QUERY_FLAG(op, FLAG_HITBACK))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(hitback)");
+    if (QUERY_FLAG(op, FLAG_STEALTH))
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealthy)");
+    if (op->randomitems != NULL) {
+        treasure *t;
+        int first = 1;
+
+        for (t = op->randomitems->items; t != NULL; t = t->next)
+            if (t->item && (t->item->clone.type == SPELL)) {
+                if (first) {
+                    first = 0;
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Spell abilities:)");
+                }
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s)",  t->item->clone.name);
+            }
+    }
+    if (op->type == PLAYER) {
+        if (op->contr->digestion) {
+            if (op->contr->digestion != 0)
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->contr->digestion);
+        }
+        if (op->contr->gen_grace) {
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(grace%+d)", op->contr->gen_grace);
+        }
+        if (op->contr->gen_sp) {
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(magic%+d)", op->contr->gen_sp);
+        }
+        if (op->contr->gen_hp) {
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(regeneration%+d)", op->contr->gen_hp);
+        }
+        if (op->stats.luck) {
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)", op->stats.luck);
+        }
+    }
+
+    /* describe attacktypes */
+    len = strlen(retbuf);
+    if (is_dragon_pl(op)) {
+        /* for dragon players display the attacktypes from clawing skill
+         * Break apart the for loop - move the comparison checking down -
+         * this makes it more readable.
+         */
+        object *tmp;
+
+        tmp = object_find_by_type_and_name(op, SKILL, "clawing");
+        if (tmp && tmp->attacktype != 0) {
+            DESCRIBE_ABILITY_SAFE(retbuf, tmp->attacktype, "Claws", &len, size);
+        } else {
+            DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
+        }
+    } else {
+        DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
+    }
+    DESCRIBE_PATH_SAFE(retbuf, op->path_attuned, "Attuned", &len, size);
+    DESCRIBE_PATH_SAFE(retbuf, op->path_repelled, "Repelled", &len, size);
+    DESCRIBE_PATH_SAFE(retbuf, op->path_denied, "Denied", &len, size);
+    for (i = 0; i < NROFATTACKS; i++) {
+        if (op->resist[i]) {
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s %+d)", resist_plus[i], op->resist[i]);
+        }
+    }
+}
+
+START_TEST(test_describe_monster_rewrite) {
+    char buf[HUGE_BUF], compat[HUGE_BUF], *final;
+    archetype *arch;
+    const artifactlist *ring, *amulet, *check;
+    const artifact *art;
+    object *ob;
+    player pl;
+
+    memset(&pl, 0, sizeof(pl));
+
+    for (arch = first_archetype; arch; arch = arch->next) {
+
+        if (!QUERY_FLAG(&arch->clone, FLAG_MONSTER) && arch->clone.type != PLAYER)
+            continue;
+
+        ob = object_create_arch(arch);
+        ob->contr = &pl;
+
+        old_describe_monster(ob, buf, sizeof(buf));
+        compat[0] = 0;
+        describe_item(ob, NULL, compat, sizeof(compat));
+        fail_unless(strcmp(buf, compat) == 0, "(compat) description change:\n%s\n  === vs ===\n%s", buf, compat);
+
+        final = stringbuffer_finish(describe_monster(ob, NULL));
+
+        fail_unless(strcmp(buf, final) == 0, "description change: \"%s\" vs \"%s\"", buf, final);
+        free(final);
+        object_free2(ob, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
+    }
+
+} END_TEST
+
 Suite *item_suite(void) {
     Suite *s = suite_create("item");
     TCase *tc_core = tcase_create("Core");
@@ -338,6 +504,7 @@ Suite *item_suite(void) {
     suite_add_tcase(s, tc_core);
     tcase_add_test(tc_core, test_describe_item);
     tcase_add_test(tc_core, test_ring_desc_rewrite);
+    tcase_add_test(tc_core, test_describe_monster_rewrite);
 
     return s;
 }
@@ -348,7 +515,7 @@ int main(void) {
     SRunner *sr = srunner_create(s);
 
     /* to debug, uncomment this line */
-    /* srunner_set_fork_status(sr, CK_NOFORK); */
+    srunner_set_fork_status(sr, CK_NOFORK);
 
     srunner_set_xml(sr, LOGDIR "/unit/common/item.xml");
     srunner_set_log(sr, LOGDIR "/unit/common/item.out");

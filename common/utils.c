@@ -633,3 +633,31 @@ StringBuffer *describe_spellpath_attenuation(const char *attenuation, int value,
 
     return buf;
 }
+
+/**
+ * Describe the specified attack type.
+ * @param attack string describing the attack ("Clawing", and such).
+ * @param value attack type to describe.
+ * @param buf where to describe, can be NULL.
+ * @return buf, newly allocated StringBuffer the caller should free if buf was NULL.
+ */
+StringBuffer *describe_attacktype(const char *attack, int value, StringBuffer *buf) {
+    if (buf == NULL)
+        buf = stringbuffer_new();
+
+    if (value) {
+        int i, j = 0;
+        stringbuffer_append_printf(buf, "(%s: ", attack);
+        for (i = 0; i < NROFATTACKS; i++)
+            if (value&(1<<i)) {
+                if (j)
+                    stringbuffer_append_string(buf, ", ");
+                else
+                    j = 1;
+                stringbuffer_append_string(buf, attacks[i]);
+            }
+        stringbuffer_append_string(buf, ")");
+    }
+
+    return buf;
+}

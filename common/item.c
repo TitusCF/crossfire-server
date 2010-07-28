@@ -849,27 +849,23 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
  * Describes a monster.
  *
  * @param op
- * monster to describe. Must not be NULL.
- * @param retbuf
- * buffer that will contain the description. Must not be NULL.
- * @param size
- * buffer size.
- *
- * @note
- * Break this off from describe_item - that function was way
- * too long, making it difficult to read.  This function deals
- * with describing the monsters & players abilities.  It should only
- * be called with monster & player objects.
+ * monster to describe. Must not be NULL, and must have FLAG_MONSTER or be a PLAYER.
+ * @param buf
+ * buffer that will contain the description. Can be NULL.
+ * @return buf, or a new StringBuffer the caller should clear if buf was NULL.
  *
  * @todo
  * Rename to describe_living (or equivalent) since called for player too.
- * Use safe string functions. Fix weird sustenance logic.
+ * Fix weird sustenance logic.
  */
-void describe_monster(const object *op, char *retbuf, size_t size) {
+StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
     int i;
-    size_t len;
 
-    retbuf[0] = '\0';
+    assert(op != NULL);
+    assert(QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER);
+
+    if (buf == NULL)
+        buf = stringbuffer_new();
 
     /* Note that the resolution this provides for players really isn't
      * very good.  Any player with a speed greater than .67 will
@@ -878,67 +874,67 @@ void describe_monster(const object *op, char *retbuf, size_t size) {
     if (FABS(op->speed) > MIN_ACTIVE_SPEED) {
         switch ((int)((FABS(op->speed))*15)) {
         case 0:
-            snprintf(retbuf, size, "(very slow movement)");
+            stringbuffer_append_string(buf, "(very slow movement)");
             break;
 
         case 1:
-            snprintf(retbuf, size, "(slow movement)");
+            stringbuffer_append_string(buf, "(slow movement)");
             break;
 
         case 2:
-            snprintf(retbuf, size, "(normal movement)");
+            stringbuffer_append_string(buf, "(normal movement)");
             break;
 
         case 3:
         case 4:
-            snprintf(retbuf, size, "(fast movement)");
+            stringbuffer_append_string(buf, "(fast movement)");
             break;
 
         case 5:
         case 6:
-            snprintf(retbuf, size, "(very fast movement)");
+            stringbuffer_append_string(buf, "(very fast movement)");
             break;
 
         case 7:
         case 8:
         case 9:
         case 10:
-            snprintf(retbuf, size, "(extremely fast movement)");
+            stringbuffer_append_string(buf, "(extremely fast movement)");
             break;
 
         default:
-            snprintf(retbuf, size, "(lightning fast movement)");
+            stringbuffer_append_string(buf, "(lightning fast movement)");
             break;
         }
     }
     if (QUERY_FLAG(op, FLAG_UNDEAD))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(undead)");
+        stringbuffer_append_string(buf, "(undead)");
     if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(see invisible)");
+        stringbuffer_append_string(buf, "(see invisible)");
     if (QUERY_FLAG(op, FLAG_USE_WEAPON))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wield weapon)");
+        stringbuffer_append_string(buf, "(wield weapon)");
     if (QUERY_FLAG(op, FLAG_USE_BOW))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(archer)");
+        stringbuffer_append_string(buf, "(archer)");
     if (QUERY_FLAG(op, FLAG_USE_ARMOUR))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear armour)");
+        stringbuffer_append_string(buf, "(wear armour)");
     if (QUERY_FLAG(op, FLAG_USE_RING))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear ring)");
+        stringbuffer_append_string(buf, "(wear ring)");
     if (QUERY_FLAG(op, FLAG_USE_SCROLL))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(read scroll)");
+        stringbuffer_append_string(buf, "(read scroll)");
     if (QUERY_FLAG(op, FLAG_USE_RANGE))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(fires wand/rod/horn)");
+        stringbuffer_append_string(buf, "(fires wand/rod/horn)");
     if (QUERY_FLAG(op, FLAG_CAN_USE_SKILL))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(skill user)");
+        stringbuffer_append_string(buf, "(skill user)");
     if (QUERY_FLAG(op, FLAG_CAST_SPELL))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellcaster)");
+        stringbuffer_append_string(buf, "(spellcaster)");
     if (QUERY_FLAG(op, FLAG_FRIENDLY))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(friendly)");
+        stringbuffer_append_string(buf, "(friendly)");
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(unaggressive)");
+        stringbuffer_append_string(buf, "(unaggressive)");
     if (QUERY_FLAG(op, FLAG_HITBACK))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(hitback)");
+        stringbuffer_append_string(buf, "(hitback)");
     if (QUERY_FLAG(op, FLAG_STEALTH))
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealthy)");
+        stringbuffer_append_string(buf, "(stealthy)");
     if (op->randomitems != NULL) {
         treasure *t;
         int first = 1;
@@ -947,32 +943,31 @@ void describe_monster(const object *op, char *retbuf, size_t size) {
             if (t->item && (t->item->clone.type == SPELL)) {
                 if (first) {
                     first = 0;
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Spell abilities:)");
+                    stringbuffer_append_string(buf, "(Spell abilities:)");
                 }
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s)",  t->item->clone.name);
+                stringbuffer_append_printf(buf, "(%s)",  t->item->clone.name);
             }
     }
     if (op->type == PLAYER) {
         if (op->contr->digestion) {
             if (op->contr->digestion != 0)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->contr->digestion);
+                stringbuffer_append_printf(buf, "(sustenance%+d)", op->contr->digestion);
         }
         if (op->contr->gen_grace) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(grace%+d)", op->contr->gen_grace);
+            stringbuffer_append_printf(buf, "(grace%+d)", op->contr->gen_grace);
         }
         if (op->contr->gen_sp) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(magic%+d)", op->contr->gen_sp);
+            stringbuffer_append_printf(buf, "(magic%+d)", op->contr->gen_sp);
         }
         if (op->contr->gen_hp) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(regeneration%+d)", op->contr->gen_hp);
+            stringbuffer_append_printf(buf, "(regeneration%+d)", op->contr->gen_hp);
         }
         if (op->stats.luck) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)", op->stats.luck);
+            stringbuffer_append_printf(buf, "(luck%+d)", op->stats.luck);
         }
     }
 
     /* describe attacktypes */
-    len = strlen(retbuf);
     if (is_dragon_pl(op)) {
         /* for dragon players display the attacktypes from clawing skill
          * Break apart the for loop - move the comparison checking down -
@@ -982,21 +977,23 @@ void describe_monster(const object *op, char *retbuf, size_t size) {
 
         tmp = object_find_by_type_and_name(op, SKILL, "clawing");
         if (tmp && tmp->attacktype != 0) {
-            DESCRIBE_ABILITY_SAFE(retbuf, tmp->attacktype, "Claws", &len, size);
+            describe_attacktype("Claws", tmp->attacktype, buf);
         } else {
-            DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
+            describe_attacktype("Attacks", op->attacktype, buf);
         }
     } else {
-        DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
+        describe_attacktype("Attacks", op->attacktype, buf);
     }
-    DESCRIBE_PATH_SAFE(retbuf, op->path_attuned, "Attuned", &len, size);
-    DESCRIBE_PATH_SAFE(retbuf, op->path_repelled, "Repelled", &len, size);
-    DESCRIBE_PATH_SAFE(retbuf, op->path_denied, "Denied", &len, size);
+    describe_spellpath_attenuation("Attuned", op->path_attuned, buf);
+    describe_spellpath_attenuation("Repelled", op->path_repelled, buf );
+    describe_spellpath_attenuation("Denied", op->path_denied, buf);
     for (i = 0; i < NROFATTACKS; i++) {
         if (op->resist[i]) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s %+d)", resist_plus[i], op->resist[i]);
+            stringbuffer_append_printf(buf, "(%s %+d)", resist_plus[i], op->resist[i]);
         }
     }
+
+    return buf;
 }
 
 /**
@@ -1045,7 +1042,9 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
 
     retbuf[0] = '\0';
     if (QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER) {
-        describe_monster(op, retbuf, size);
+        char *final = stringbuffer_finish(describe_monster(op, NULL));
+        strncpy(retbuf, final, size);
+        free(final);
         return;
     }
     /* figure this out once, instead of making multiple calls to need_identify.
