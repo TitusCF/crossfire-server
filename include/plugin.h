@@ -145,7 +145,6 @@ typedef struct _crossfire_plugin {
     struct _crossfire_plugin *prev;     /**< Previous plugin in list           */
 } crossfire_plugin;
 
-extern int plugin_number;
 extern crossfire_plugin *plugins_list;
 
 #ifdef WIN32

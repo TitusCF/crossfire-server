@@ -62,6 +62,9 @@
 
 #define NR_OF_HOOKS (sizeof(plug_hooks)/sizeof(*plug_hooks))
 
+/**
+ * All hooked functions plugins can call.
+ */
 static const hook_entry plug_hooks[] = {
     { cfapi_system_add_string,       0, "cfapi_system_add_string" },
     { cfapi_system_register_global_event,   1, "cfapi_system_register_global_event" },
@@ -159,8 +162,6 @@ static const hook_entry plug_hooks[] = {
     { cfapi_object_find_by_name,     94, "cfapi_object_find_by_name" },
     { cfapi_player_knowledge,       95, "cfapi_player_knowledge" }
 };
-
-int plugin_number = 0;
 
 crossfire_plugin *plugins_list = NULL;
 
@@ -536,7 +537,6 @@ int plugins_init_plugin(const char *libfile) {
         cp->prev = ccp;
     }
     postfunc();
-    plugin_number++;
     return 0;
 }
 
@@ -612,7 +612,6 @@ int plugins_remove_plugin(const char *id) {
                     plugins_list = NULL;
             }
             free(cp);
-            plugin_number--;
             return 0;
         }
     }
@@ -4864,11 +4863,11 @@ command_array_struct *find_plugin_command(const char *cmd, command_array_struct 
     return NULL;
 }
 
-/*****************************************************************************/
-/* Plugins initialization. Browses the plugins directory and call            */
-/* initOnePlugin for each file found.                                        */
-/* Returns 0 if at least one plugin was successfully loaded, -1 if not       */
-/*****************************************************************************/
+/**
+ * Plugins initialization. Browses the plugins directory and call
+ * plugins_init_plugin() for each file found.
+ * @return 0 if at least one plugin was successfully loaded, -1 if not
+ */
 int initPlugins(void) {
     struct dirent *currentfile;
     DIR *plugdir;
@@ -4920,7 +4919,6 @@ void cleanupPlugins(void) {
          */
         /* plugins_dlclose(cp->libptr); */
         free(cp);
-        plugin_number--;
         cp = next;
     }
     plugins_list = NULL;
