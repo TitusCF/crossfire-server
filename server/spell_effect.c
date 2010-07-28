@@ -2066,14 +2066,8 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
  * alchemied.
  */
 
-/* I didn't feel like passing these as arguments to the
- * two functions that need them.  Real values are put in them
- * when the spell is cast, and these are freed when the spell
- * is finished.
- */
-static object *small, *large; /**< Nugget items. */
-
-static uint64 small_value, large_value; /**< Value of nuggets. */
+#define SMALL_NUGGET "smallnugget"
+#define LARGE_NUGGET "largenugget"
 
 /**
  * Compute how many nuggets an object is worth, and remove it.
@@ -2091,6 +2085,7 @@ static uint64 small_value, large_value; /**< Value of nuggets. */
  */
 static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int *large_nuggets, int *weight) {
     uint64 value = query_cost(obj, NULL, F_TRUE);
+    uint64 small_value, large_value; /**< Value of nuggets. */
 
     /* Multiply the value of the object by value_adj, which should range
      * from 0.05 to 0.40. Set value to 0 instead if unpaid.
@@ -2100,6 +2095,8 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
     else
         value *= value_adj;
 
+    small_value = query_cost(&find_archetype(SMALL_NUGGET)->clone, NULL, F_TRUE);
+    large_value = query_cost(&find_archetype(LARGE_NUGGET)->clone, NULL, F_TRUE);
 
     /* Give half of what value_adj says when we alchemy money (This should
      * hopefully make it so that it isn't worth it to alchemy money, sell
@@ -2157,14 +2154,12 @@ static void place_alchemy_objects(object *op, mapstruct *m, int small_nuggets, i
         flag = INS_BELOW_ORIGINATOR;
 
     if (small_nuggets) {
-        tmp = object_new();
-        object_copy(small, tmp);
+        tmp = create_archetype(SMALL_NUGGET);
         tmp-> nrof = small_nuggets;
         object_insert_in_map_at(tmp, m, op, flag, x, y);
     }
     if (large_nuggets) {
-        tmp = object_new();
-        object_copy(large, tmp);
+        tmp = create_archetype(LARGE_NUGGET);
         tmp-> nrof = large_nuggets;
         object_insert_in_map_at(tmp, m, op, flag, x, y);
     }
@@ -2199,10 +2194,6 @@ int alchemy(object *op, object *caster, object *spell_ob) {
      */
     weight_max = spell_ob->duration+SP_level_duration_adjust(caster, spell_ob);
     weight_max *= 1000;
-    small = create_archetype("smallnugget"),
-    large = create_archetype("largenugget");
-    small_value = query_cost(small, NULL, F_TRUE);
-    large_value = query_cost(large, NULL, F_TRUE);
 
     /* Set value_adj to be a multiplier for how much of the original value
      * will be in the nuggets. Starts at 0.05, increasing by 0.01 per casting
@@ -2251,8 +2242,6 @@ int alchemy(object *op, object *caster, object *spell_ob) {
 
                     if (weight > weight_max) {
                         place_alchemy_objects(op, mp, small_nuggets, large_nuggets, nx, ny);
-                        object_free2(large, FREE_OBJ_NO_DESTROY_CALLBACK);
-                        object_free2(small, FREE_OBJ_NO_DESTROY_CALLBACK);
                         return 1;
                     }
                 } /* is alchemable object */
@@ -2265,9 +2254,7 @@ int alchemy(object *op, object *caster, object *spell_ob) {
             place_alchemy_objects(op, mp, small_nuggets, large_nuggets, nx, ny);
         }
     }
-    /** @todo fix global variables */
-    object_free2(large, FREE_OBJ_NO_DESTROY_CALLBACK);
-    object_free2(small, FREE_OBJ_NO_DESTROY_CALLBACK);
+
     /* reset this so that if player standing on a big pile of stuff,
      * it is redrawn properly.
      */
