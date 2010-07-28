@@ -1053,7 +1053,7 @@ static int get_magic(int diff) {
  * maximum magic for the item.
  * @param flags
  * @li ::GT_ENVIRONMENT: if not set, calls fix_flesh_item().
- * @li ::GT_STARTEQUIP: Sets ::FLAG_STARTEQIUP on item if appropriate, or clears the item's
+ * @li ::GT_STARTEQUIP: Sets ::FLAG_STARTEQUIP on item if appropriate, or clears the item's
  *  value.
  * @li ::GT_MINIMAL: Does minimal processing on the object - just enough to make it
  * a working object - don't change magic, value, etc, but set it material

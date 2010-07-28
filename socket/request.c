@@ -1571,7 +1571,7 @@ void send_race_list(socket_struct *ns, char *params) {
  * both race & class transmissions, and could perhaps be used
  * by future requestinfo types.
  *
- * @param ns
+ * @param sl
  * socket to add data to
  * @param op
  * Object to extract data from.

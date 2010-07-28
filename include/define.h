@@ -1138,8 +1138,6 @@ static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, siz
  * Constructs a loop iterating over an object and all objects above it in the
  * same pile.
  * @param op_ the object to start with
- * @param it_ a variable name that holds the inventory objects; the variable
- * must be declared outside of the loop; modifications do not affect the loop
  */
 #define FOR_OB_AND_ABOVE_PREPARE(op_) FOR_OB_PREPARE(op_, above, __LINE__)
 /**
@@ -1151,8 +1149,6 @@ static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, siz
  * Constructs a loop iterating over an object and all objects below it in the
  * same pile.
  * @param op_ the object to start with
- * @param it_ a variable name that holds the inventory objects; the variable
- * must be declared outside of the loop; modifications do not affect the loop
  */
 #define FOR_OB_AND_BELOW_PREPARE(op_) FOR_OB_PREPARE(op_, below, __LINE__)
 /**

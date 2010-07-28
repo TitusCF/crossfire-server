@@ -1706,6 +1706,8 @@ void legacy_apply_container(object *op, object *sack) {
  * the object applying the item
  * @param op
  * the item being applied
+ * @param aflags
+ * combinaison of @ref AP_xxx "AP_xxx" flags
  * @return
  * whether applying is possible
  */
@@ -1771,6 +1773,8 @@ static int apply_check_apply_restrictions(object *who, object *op, int aflags) {
  * the object applying the item
  * @param op
  * the item being applied
+ * @param aflags
+ * combinaison of @ref AP_xxx "AP_xxx" flags
  * @return
  * whether applying is possible
  */

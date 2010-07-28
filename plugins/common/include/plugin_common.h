@@ -139,7 +139,7 @@ extern int          cf_object_user_event(object *op, object *activator, object *
 extern int          cf_object_remove_depletion(object *op, int level);
 extern object      *cf_object_find_by_arch_name(const object *who, const char *name);
 extern object      *cf_object_find_by_name(const object *who, const char *name);
-extern object      *cf_object_split(object *op, int nr, char *buf, int size);
+extern object      *cf_object_split(object *orig_ob, uint32 nr, char *err, size_t size);
 extern object      *cf_object_clone(object *op, int clonetype);
 /* Maps */
 /*extern void        *cf_map_get_property(mapstruct *map, int propcode);*/

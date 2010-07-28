@@ -139,7 +139,7 @@ void draw_ext_info(
  *
  * @param subtype The type MSG_TYPE for the type of message.
  *
- * @param new_format
+ * @param format The message to send, with optional format specifiers.
  */
 void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *format, ...) {
     char buf[HUGE_BUF];

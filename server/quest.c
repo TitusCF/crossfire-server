@@ -631,10 +631,10 @@ static quest_player *get_or_create_quest(player *pl) {
 static void quest_set_state(player *pl, sstring quest_code, int state, int started);
 
 /**
- * Checks whether the conditions for a given step are met
- * @param condition the linked list of conditions to check
- * @param pq the current state of the player's quests
- * @return 1 if the conditions match, 0 if they don't
+ * Checks whether the conditions for a given step are met.
+ * @param condition the linked list of conditions to check.
+ * @param pl the player to evaluate conditions for.
+ * @return 1 if the conditions match, 0 if they don't.
  */
 static int evaluate_quest_conditions(const quest_condition *condition, player *pl) {
     const quest_condition *cond;

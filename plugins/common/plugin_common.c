@@ -638,11 +638,11 @@ object *cf_object_clone(object *op, int clonetype) {
  * Wrapper for object_split().
  * @copydoc object_split().
  */
-object *cf_object_split(object *op, int nr, char *buf, int size) {
+object *cf_object_split(object *orig_ob, uint32 nr, char *err, size_t size) {
     int type;
     object *value;
 
-    cfapiObject_split(&type, op, nr, buf, size, &value);
+    cfapiObject_split(&type, orig_ob, nr, err, size, &value);
 
     if (value == NULL)
     {
