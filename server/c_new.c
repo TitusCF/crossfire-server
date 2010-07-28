@@ -96,7 +96,7 @@ static command_array_struct *find_command_element(const char *cmd, command_array
  * 0 if invalid command, else actual command's return value (which may be zero).
  */
 int execute_newserver_command(object *pl, char *command) {
-    command_array_struct *csp;
+    command_array_struct *csp, sent;
     char *cp, *low;
 
     pl->contr->has_hit = 0;
@@ -121,7 +121,7 @@ int execute_newserver_command(object *pl, char *command) {
     for (low = command; *low; low++)
         *low = tolower(*low);
 
-    csp = find_plugin_command(command, pl);
+    csp = find_plugin_command(command, &sent);
     if (!csp)
         csp = find_command_element(command, Commands, CommandsSize);
     if (!csp)

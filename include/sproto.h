@@ -537,7 +537,7 @@ void *cfapi_generate_random_map(int *type, ...);
 void *cfapi_object_user_event(int *type, ...);
 void *cfapi_player_quest(int *type, ...);
 void *cfapi_player_knowledge(int *type, ...);
-command_array_struct *find_plugin_command(char *cmd, object *op);
+command_array_struct *find_plugin_command(const char *cmd, command_array_struct *command);
 int initPlugins(void);
 void cleanupPlugins(void);
 /* quest.c */

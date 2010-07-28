@@ -58,6 +58,8 @@
 #include <timers.h>
 #endif
 
+#include <assert.h>
+
 #define NR_OF_HOOKS (sizeof(plug_hooks)/sizeof(*plug_hooks))
 
 static const hook_entry plug_hooks[] = {
@@ -4834,26 +4836,30 @@ void *cfapi_player_quest(int *type, ...) {
 /*****************************************************************************/
 
 
-/*****************************************************************************/
-/* Tries to find if a given command is handled by a plugin.                  */
-/* Note that find_plugin_command is called *before *the internal commands are*/
-/* checked, meaning that you can "overwrite" them.                           */
-/*****************************************************************************/
 /**
- * @todo
- * remove static buffer.
+ * Tries to find if a given command is handled by a plugin.
+ * Note that this function is called before the internal commands are
+ * checked, meaning that you can "overwrite" them.
+ * @param cmd
+ * command to search for.
+ * @param command
+ * must be a valid structure pointer, that will be returned if the command is
+ * indeed handled by a plugin.
+ * @return NULL if the command is not handled by a plugin, else command is returned filled.
  */
-command_array_struct *find_plugin_command(char *cmd, object *op) {
+command_array_struct *find_plugin_command(const char *cmd, command_array_struct *command) {
     int i;
     crossfire_plugin *cp;
-    static command_array_struct rtn_cmd;
+
+    assert(cmd != NULL);
+    assert(command != NULL);
 
     if (plugins_list == NULL)
         return NULL;
 
     for (cp = plugins_list; cp != NULL; cp = cp->next) {
-        if (cp->propfunc(&i, "command?", cmd, &rtn_cmd) != NULL)
-            return &rtn_cmd;
+        if (cp->propfunc(&i, "command?", cmd, command) != NULL)
+            return command;
     }
     return NULL;
 }
