@@ -1049,46 +1049,9 @@ int apply_can_apply_object(const object *who, const object *op) {
  * improvement level.
  * @return
  * 1 if who can use the item, 0 else.
- * @todo
- * remove obsolete code.
- *
- * @note
- * check_weapon_power() has been renamed to apply_check_weapon_power()
  */
 int apply_check_weapon_power(const object *who, int improves) {
-    /* Old code is below (commented out).  Basically, since weapons
-     * are the only object players really have any control to improve,
-     * it's a bit harsh to require high level in some combat skill,
-     * so we just use overall level.
-     */
-#if 1
     return (who->level/5)+5 >= improves;
-#else
-    int level = 0;
-
-    /* The skill system hands out wc and dam bonuses to fighters
-     * more generously than the old system (see fix_object). Thus
-     * we need to curtail the power of player enchanted weapons.
-     * I changed this to 1 improvement per "fighter" level/5 -b.t.
-     * Note:  Nothing should break by allowing this ratio to be
-     * different or using normal level - it is just a matter of play
-     * balance.
-     */
-    if (who->type == PLAYER) {
-        FOR_INV_PREPARE(who, wc_obj)
-            if (wc_obj->type == SKILL && IS_COMBAT_SKILL(wc_obj->subtype) && wc_obj->level > level)
-                level = wc_obj->level;
-        FOR_INV_FINISH();
-
-        if (!level)  {
-            LOG(llevError, "Error: Player: %s lacks wc experience object\n", who->name);
-            level = who->level;
-        }
-    } else
-        level = who->level;
-
-    return improves <= (level/5)+5;
-#endif
 }
 
 /**
