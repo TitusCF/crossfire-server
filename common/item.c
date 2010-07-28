@@ -35,6 +35,7 @@
  */
 
 #include <stdio.h>
+#include <assert.h>
 #include <global.h>
 #include <living.h>
 #include <spells.h>
@@ -458,6 +459,84 @@ void get_levelnumber(int i, char *buf, size_t size) {
 }
 
 /**
+ * Describes a ring or amulet, or a skill.
+ * @param op
+ * item to describe, must be RING, AMULET or SKILL.
+ * @param buf
+ * buffer that will contain the description. If NULL a new one is created.
+ * @return buf, or a new StringBuffer the caller should free if buf was NULL.
+ * @todo why does this also describe a SKILL?
+ * @todo rename to ring_desc when the current one is removed, make static when
+ * check (test/unit/common/check_item.c) is removed.
+ */
+StringBuffer *new_ring_desc(const object *op, StringBuffer *buf) {
+    int attr, val;
+    size_t len;
+
+    assert(op != NULL);
+    assert(op->type == RING || op->type == AMULET || op->type == SKILL);
+
+    if (buf == NULL)
+        buf = stringbuffer_new();
+    len = stringbuffer_length(buf);
+
+    if (!QUERY_FLAG(op, FLAG_IDENTIFIED))
+        return buf;
+
+    for (attr = 0; attr < NUM_STATS; attr++) {
+        if ((val = get_attr_value(&(op->stats), attr)) != 0) {
+            stringbuffer_append_printf(buf, "(%s%+d)", short_stat_name[attr], val);
+        }
+    }
+    if (op->stats.exp)
+        stringbuffer_append_printf(buf, "(speed %+"FMT64")", op->stats.exp);
+    if (op->stats.wc)
+        stringbuffer_append_printf(buf, "(wc%+d)", op->stats.wc);
+    if (op->stats.dam)
+        stringbuffer_append_printf(buf, "(dam%+d)", op->stats.dam);
+    if (op->stats.ac)
+        stringbuffer_append_printf(buf, "(ac%+d)", op->stats.ac);
+
+    {
+        char resist[MAX_BUF];
+        resist[0] = 0;
+        describe_resistance(op, 0, resist, sizeof(resist));
+        stringbuffer_append_string(buf, resist);
+    }
+
+    if (op->stats.food != 0)
+        stringbuffer_append_printf(buf, "(sustenance%+d)", op->stats.food);
+    if (op->stats.grace)
+        stringbuffer_append_printf(buf, "(grace%+d)", op->stats.grace);
+    if (op->stats.sp && op->type != SKILL)
+        stringbuffer_append_printf(buf, "(magic%+d)", op->stats.sp);
+    if (op->stats.hp)
+        stringbuffer_append_printf(buf, "(regeneration%+d)", op->stats.hp);
+    if (op->stats.luck)
+        stringbuffer_append_printf(buf, "(luck%+d)", op->stats.luck);
+    if (QUERY_FLAG(op, FLAG_LIFESAVE))
+        stringbuffer_append_printf(buf, "(lifesaving)");
+    if (QUERY_FLAG(op, FLAG_REFL_SPELL))
+        stringbuffer_append_printf(buf, "(reflect spells)");
+    if (QUERY_FLAG(op, FLAG_REFL_MISSILE))
+        stringbuffer_append_printf(buf, "(reflect missiles)");
+    if (QUERY_FLAG(op, FLAG_STEALTH))
+        stringbuffer_append_printf(buf, "(stealth)");
+
+    describe_spellpath_attenuation("Attuned", op->path_attuned, buf);
+    describe_spellpath_attenuation("Repelled", op->path_repelled, buf);
+    describe_spellpath_attenuation("Denied", op->path_denied, buf);
+
+    /* item_power is done by the caller */
+ /*   if (op->item_power)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);*/
+    if (stringbuffer_length(buf) == len && op->type != SKILL)
+        stringbuffer_append_string(buf, "of adornment");
+
+    return buf;
+}
+
+/**
  * Describes a ring or amulet.
  * @param op
  * item to describe.
@@ -477,63 +556,14 @@ void get_levelnumber(int i, char *buf, size_t size) {
  * from stats.sp - b.t.
  *
  * @todo
- * Use safe string functions. Check if really ring/amulet?
+ * replace with new_ring_desc() when callers are cleared.
  */
-static void ring_desc(const object *op, char *buf, size_t size) {
-    int attr, val;
-    size_t len;
+void ring_desc(const object *op, char *buf, size_t size) {
+    char *desc;
 
-    buf[0] = 0;
-
-    if (!QUERY_FLAG(op, FLAG_IDENTIFIED))
-        return;
-
-    for (attr = 0; attr < NUM_STATS; attr++) {
-        if ((val = get_attr_value(&(op->stats), attr)) != 0) {
-            snprintf(buf+strlen(buf), size-strlen(buf), "(%s%+d)", short_stat_name[attr], val);
-        }
-    }
-    if (op->stats.exp)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(speed %+"FMT64")", op->stats.exp);
-    if (op->stats.wc)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(wc%+d)", op->stats.wc);
-    if (op->stats.dam)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(dam%+d)", op->stats.dam);
-    if (op->stats.ac)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(ac%+d)", op->stats.ac);
-
-    describe_resistance(op, 0, buf+strlen(buf), size-strlen(buf));
-
-    if (op->stats.food != 0)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(sustenance%+d)", op->stats.food);
-/*  else if (op->stats.food < 0)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(hunger%+d)", op->stats.food); */
-    if (op->stats.grace)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(grace%+d)", op->stats.grace);
-    if (op->stats.sp && op->type != SKILL)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(magic%+d)", op->stats.sp);
-    if (op->stats.hp)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(regeneration%+d)", op->stats.hp);
-    if (op->stats.luck)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(luck%+d)", op->stats.luck);
-    if (QUERY_FLAG(op, FLAG_LIFESAVE))
-        snprintf(buf+strlen(buf), size-strlen(buf), "(lifesaving)");
-    if (QUERY_FLAG(op, FLAG_REFL_SPELL))
-        snprintf(buf+strlen(buf), size-strlen(buf), "(reflect spells)");
-    if (QUERY_FLAG(op, FLAG_REFL_MISSILE))
-        snprintf(buf+strlen(buf), size-strlen(buf), "(reflect missiles)");
-    if (QUERY_FLAG(op, FLAG_STEALTH))
-        snprintf(buf+strlen(buf), size-strlen(buf), "(stealth)");
-    /* Shorten some of the names, so they appear better in the windows */
-    len = strlen(buf);
-    DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, size);
-    DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, size);
-    DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, size);
-
-/*  if (op->item_power)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);*/
-    if (buf[0] == 0 && op->type != SKILL)
-        snprintf(buf, size, "of adornment");
+    desc = stringbuffer_finish(new_ring_desc(op, NULL));
+    strncpy(buf, desc, size);
+    free(desc);
 }
 
 /**

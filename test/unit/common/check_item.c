@@ -201,6 +201,133 @@ START_TEST(test_describe_item) {
 }
 END_TEST
 
+
+static void old_ring_desc(const object *op, char *buf, size_t size) {
+    int attr, val;
+    size_t len;
+
+    buf[0] = 0;
+
+    if (!QUERY_FLAG(op, FLAG_IDENTIFIED))
+        return;
+
+    for (attr = 0; attr < NUM_STATS; attr++) {
+        if ((val = get_attr_value(&(op->stats), attr)) != 0) {
+            snprintf(buf+strlen(buf), size-strlen(buf), "(%s%+d)", short_stat_name[attr], val);
+        }
+    }
+    if (op->stats.exp)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(speed %+"FMT64")", op->stats.exp);
+    if (op->stats.wc)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(wc%+d)", op->stats.wc);
+    if (op->stats.dam)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(dam%+d)", op->stats.dam);
+    if (op->stats.ac)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(ac%+d)", op->stats.ac);
+
+    describe_resistance(op, 0, buf+strlen(buf), size-strlen(buf));
+
+    if (op->stats.food != 0)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(sustenance%+d)", op->stats.food);
+/*  else if (op->stats.food < 0)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(hunger%+d)", op->stats.food); */
+    if (op->stats.grace)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(grace%+d)", op->stats.grace);
+    if (op->stats.sp && op->type != SKILL)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(magic%+d)", op->stats.sp);
+    if (op->stats.hp)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(regeneration%+d)", op->stats.hp);
+    if (op->stats.luck)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(luck%+d)", op->stats.luck);
+    if (QUERY_FLAG(op, FLAG_LIFESAVE))
+        snprintf(buf+strlen(buf), size-strlen(buf), "(lifesaving)");
+    if (QUERY_FLAG(op, FLAG_REFL_SPELL))
+        snprintf(buf+strlen(buf), size-strlen(buf), "(reflect spells)");
+    if (QUERY_FLAG(op, FLAG_REFL_MISSILE))
+        snprintf(buf+strlen(buf), size-strlen(buf), "(reflect missiles)");
+    if (QUERY_FLAG(op, FLAG_STEALTH))
+        snprintf(buf+strlen(buf), size-strlen(buf), "(stealth)");
+    /* Shorten some of the names, so they appear better in the windows */
+    len = strlen(buf);
+    DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, size);
+    DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, size);
+    DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, size);
+
+/*  if (op->item_power)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);*/
+    if (buf[0] == 0 && op->type != SKILL)
+        snprintf(buf, size, "of adornment");
+}
+
+StringBuffer *new_ring_desc(const object *op, StringBuffer *buf);
+
+START_TEST(test_ring_desc_rewrite) {
+    char buf[MAX_BUF], compat[MAX_BUF], *final;
+    archetype *arch;
+    object *ob;
+    const artifactlist *ring, *amulet, *check;
+    const artifact *art;
+
+    init_artifacts();
+    ring = find_artifactlist(RING);
+    fail_unless(ring != NULL);
+    amulet = find_artifactlist(AMULET);
+    fail_unless(amulet != NULL);
+
+    for (arch = first_archetype; arch; arch = arch->next) {
+
+        if (arch->clone.type == SKILL) {
+            ob = object_create_arch(arch);
+            SET_FLAG(ob, FLAG_IDENTIFIED);
+
+            old_ring_desc(ob, buf, sizeof(buf));
+            compat[0] = 0;
+            ring_desc(ob, compat, sizeof(compat));
+            fail_unless(strcmp(buf, compat) == 0, "(compat) description change: \"%s\" vs \"%s\"", buf, compat);
+
+            final = stringbuffer_finish(new_ring_desc(ob, NULL));
+
+            fail_unless(strcmp(buf, final) == 0, "description change: \"%s\" vs \"%s\"", buf, final);
+            free(final);
+            object_free2(ob, FREE_OBJ_FREE_INVENTORY);
+            
+        }
+
+        if (arch->clone.type != RING && arch->clone.type != AMULET) {
+            continue;
+        }
+
+        if (arch->clone.type == RING)
+            check = ring;
+        else if (arch->clone.type == AMULET)
+            check = amulet;
+        else
+            fail("???");
+
+        for (art = check->items; art; art = art->next) {
+            if (!legal_artifact_combination(&arch->clone, art))
+                continue;
+
+            ob = object_create_arch(arch);
+            SET_FLAG(ob, FLAG_IDENTIFIED);
+            give_artifact_abilities(ob, art->item);
+
+            old_ring_desc(ob, buf, sizeof(buf));
+            compat[0] = 0;
+            ring_desc(ob, compat, sizeof(compat));
+            fail_unless(strcmp(buf, compat) == 0, "(compat) description change: \"%s\" vs \"%s\"", buf, compat);
+
+            final = stringbuffer_finish(new_ring_desc(ob, NULL));
+
+            fail_unless(strcmp(buf, final) == 0, "description change: \"%s\" vs \"%s\"", buf, final);
+            free(final);
+            object_free2(ob, FREE_OBJ_FREE_INVENTORY);
+        }
+    }
+}
+END_TEST
+
+
 Suite *item_suite(void) {
     Suite *s = suite_create("item");
     TCase *tc_core = tcase_create("Core");
@@ -210,6 +337,7 @@ Suite *item_suite(void) {
 
     suite_add_tcase(s, tc_core);
     tcase_add_test(tc_core, test_describe_item);
+    tcase_add_test(tc_core, test_ring_desc_rewrite);
 
     return s;
 }
@@ -218,6 +346,9 @@ int main(void) {
     int nf;
     Suite *s = item_suite();
     SRunner *sr = srunner_create(s);
+
+    /* to debug, uncomment this line */
+    /* srunner_set_fork_status(sr, CK_NOFORK); */
 
     srunner_set_xml(sr, LOGDIR "/unit/common/item.xml");
     srunner_set_log(sr, LOGDIR "/unit/common/item.out");
