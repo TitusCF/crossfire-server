@@ -225,7 +225,11 @@ static void old_ring_desc(const object *op, char *buf, size_t size) {
     if (op->stats.ac)
         snprintf(buf+strlen(buf), size-strlen(buf), "(ac%+d)", op->stats.ac);
 
-    describe_resistance(op, 0, buf+strlen(buf), size-strlen(buf));
+    {
+        char *final = stringbuffer_finish(describe_resistance(op, 0, NULL));
+        snprintf(buf+strlen(buf), size-strlen(buf), final);
+        free(final);
+    }
 
     if (op->stats.food != 0)
         snprintf(buf+strlen(buf), size-strlen(buf), "(sustenance%+d)", op->stats.food);

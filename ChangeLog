@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Rewrite 'describe_resistance' to use StringBuffer.
+Nicolas Weeger 2010-07-29
+
 Changes related to new character creation code - add new settings value
 which determine stat ranges, split out the requestinfo replies to its
 own file (request.c was getting a bit large), add handling for 'newcharinfo'

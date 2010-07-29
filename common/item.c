@@ -390,26 +390,27 @@ const typedata *get_typedata_by_name(const char *name) {
  * object we want information about.
  * @param newline
  * If TRUE, we don't put parens around the description
- * but do put a newline at the end.  Useful when dumping to files
- * @param[out] buf
- * buffer that will receive the description.
- * @param size
- * buffer size.
+ * but do put a newline at the end. Useful when dumping to files
+ * @param buf
+ * buffer that will receive the description. Can be NULL.
+ * @return buf, a new StringBuffer the caller should free if buf was NULL.
  */
-void describe_resistance(const object *op, int newline, char *buf, size_t size) {
-    char *p;
+StringBuffer *describe_resistance(const object *op, int newline, StringBuffer *buf) {
     int tmpvar;
 
-    p = buf;
+    if (buf == NULL)
+        buf = stringbuffer_new();
+
     for (tmpvar = 0; tmpvar < NROFATTACKS; tmpvar++) {
         if (op->resist[tmpvar] && (op->type != FLESH || atnr_is_dragon_enabled(tmpvar) == 1)) {
             if (!newline)
-                snprintf(p, buf+size-p, "(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
+                stringbuffer_append_printf(buf, "(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
             else
-                snprintf(p, buf+size-p, "%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
-            p = strchr(p, '\0');
+                stringbuffer_append_printf(buf, "%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
         }
     }
+
+    return buf;
 }
 
 /**
@@ -497,12 +498,7 @@ StringBuffer *new_ring_desc(const object *op, StringBuffer *buf) {
     if (op->stats.ac)
         stringbuffer_append_printf(buf, "(ac%+d)", op->stats.ac);
 
-    {
-        char resist[MAX_BUF];
-        resist[0] = 0;
-        describe_resistance(op, 0, resist, sizeof(resist));
-        stringbuffer_append_string(buf, resist);
-    }
+    describe_resistance(op, 0, buf);
 
     if (op->stats.food != 0)
         stringbuffer_append_printf(buf, "(sustenance%+d)", op->stats.food);
@@ -1310,7 +1306,9 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
          * non flesh, everyone can see its resistances
          */
         if (op->type != FLESH || (owner && is_dragon_pl(owner))) {
-            describe_resistance(op, 0, retbuf+strlen(retbuf), size-strlen(retbuf));
+            char *final = stringbuffer_finish(describe_resistance(op, 0, NULL));
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), final);
+            free(final);
         }
         len = strlen(retbuf);
         DESCRIBE_PATH_SAFE(retbuf, op->path_attuned, "Attuned", &len, size);

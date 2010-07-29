@@ -235,8 +235,7 @@ int describe_god(const object *god, int what, StringBuffer *buf, int maxlen) {
     }
 
     if (what & GOD_BLESSED) {
-        char cp[MAX_BUF];
-        describe_resistance(god, 1, cp, MAX_BUF);
+        char *cp = stringbuffer_finish(describe_resistance(god, 1, NULL));
 
         if (*cp) {  /* This god does have protections */
             add = stringbuffer_new();
@@ -251,6 +250,7 @@ int describe_god(const object *god, int what, StringBuffer *buf, int maxlen) {
                 return real;
             }
         }
+        free(cp);
         real |= GOD_BLESSED;
     }
 
@@ -278,8 +278,8 @@ int describe_god(const object *god, int what, StringBuffer *buf, int maxlen) {
     }
 
     if (what & GOD_RESISTANCES) {
-        char cp[BOOK_BUF];
-        describe_resistance(god, 1, cp, sizeof(cp));
+        char *cp;
+        cp = stringbuffer_finish(describe_resistance(god, 1, NULL));
 
         if (*cp) {  /* This god does have protections */
             add = stringbuffer_new();
@@ -294,6 +294,7 @@ int describe_god(const object *god, int what, StringBuffer *buf, int maxlen) {
                 return real;
             }
         }
+        free(cp);
         real |= GOD_RESISTANCES;
     }
 
@@ -372,7 +373,7 @@ void dump_gods(void) {
     fprintf(stderr, "\n");
     for (glist = first_god; glist; glist = glist->next) {
         const object *god = pntr_to_god_obj(glist);
-        char tmpbuf[HUGE_BUF];
+        char tmpbuf[HUGE_BUF], *final;
         int tmpvar, gifts = 0;
 
         fprintf(stderr, "GOD: %s\n", god->name);
@@ -391,8 +392,9 @@ void dump_gods(void) {
             fprintf(stderr, " servant: NONE\n");
         fprintf(stderr, " aligned_race(s): %s\n", god->race);
         fprintf(stderr, " enemy_race(s): %s\n", (god->slaying ? god->slaying : "none"));
-        describe_resistance(god, 1, tmpbuf, HUGE_BUF);
-        fprintf(stderr, "%s", tmpbuf);
+        final = stringbuffer_finish(describe_resistance(god, 1, NULL));
+        fprintf(stderr, "%s", final);
+        free(final);
         snprintf(tmpbuf, sizeof(tmpbuf), " attacktype:");
         if ((tmpvar = god->attacktype)) {
             strcat(tmpbuf, "\n  ");
