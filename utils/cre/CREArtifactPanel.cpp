@@ -163,12 +163,13 @@ void CREArtifactPanel::displayArchetypeChanged(int index)
     if (arch == NULL)
         return;
 
-    char desc[MAX_BUF];
+    char* desc;
     object* obj = arch_to_object(arch);
     SET_FLAG(obj, FLAG_IDENTIFIED);
     give_artifact_abilities(obj, myArtifact->item);
-    describe_item(obj, NULL, desc, sizeof(desc));
+    desc = stringbuffer_finish(describe_item_new(obj, NULL, NULL));
     myInstance->setText(desc);
+    free(desc);
 
     object_free2(obj, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
 }

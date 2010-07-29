@@ -192,9 +192,12 @@ static char *old_artifact_msg(int level, char *retbuf, size_t booksize) {
         add_abilities(tmp, art->item);
         tmp->type = type;
         SET_FLAG(tmp, FLAG_IDENTIFIED);
-        describe_item(tmp, NULL, sbuf, sizeof(sbuf));
-        if (strlen(sbuf) > 1)
-            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " Properties of this artifact include:\n %s\n", sbuf);
+        {
+            char *tmp = stringbuffer_finish(describe_item_new(tmp, NULL, NULL));
+            if (strlen(tmp) > 1)
+                snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " Properties of this artifact include:\n %s\n", tmp);
+            free(tmp);
+        }
         object_free_drop_inventory(tmp);
         /* add the buf if it will fit */
         if (book_overflow(retbuf, buf, booksize))

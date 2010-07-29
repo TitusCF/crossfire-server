@@ -283,15 +283,13 @@ static void knowledge_monster_summary(const char *item, StringBuffer *buf) {
  * @todo merge with stuff in readable.c
  */
 static void knowledge_monster_detail(const char *item, StringBuffer *buf) {
-    char buf2[HUGE_BUF];
     archetype *monster = find_archetype(item);
 
     if (!monster)
         return;
 
     stringbuffer_append_printf(buf, " *** %s ***\n", monster->clone.name);
-    describe_item(&monster->clone, NULL, buf2, sizeof(buf2));
-    stringbuffer_append_string(buf, buf2);
+    describe_item_new(&monster->clone, NULL, buf);
 }
 
 /**

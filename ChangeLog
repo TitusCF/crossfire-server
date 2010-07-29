@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Replace some calls to describe_item() with the StringBuffer version.
+Nicolas Weeger 2010-07-29
+
 Rewrite 'describe_item' to use StringBuffer.
 Nicolas Weeger 2010-07-29
 
