@@ -112,6 +112,10 @@ void CREMainWindow::createActions()
     myReportAlchemy = new QAction(tr("Alchemy"), this);
     myReportAlchemy->setStatusTip(tr("Display alchemy formulae, in a table."));
     connect(myReportAlchemy, SIGNAL(triggered()), this, SLOT(onReportAlchemy()));
+
+    myReportSpells = new QAction(tr("Spells"), this);
+    myReportSpells->setStatusTip(tr("Display all spells, in a table."));
+    connect(myReportSpells, SIGNAL(triggered()), this, SLOT(onReportSpells()));
 }
 
 void CREMainWindow::createMenus()
@@ -141,6 +145,7 @@ void CREMainWindow::createMenus()
     QMenu* reportMenu = menuBar()->addMenu("&Reports");
     reportMenu->addAction(myReportSpellDamage);
     reportMenu->addAction(myReportAlchemy);
+    reportMenu->addAction(myReportSpells);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -534,6 +539,65 @@ void CREMainWindow::onReportAlchemy()
     foreach(const QString skill, skills)
     {
         report += alchemyTable(skill);
+    }
+
+    CREReportDisplay show(report);
+    show.exec();
+}
+
+static QString spellsTable(const QString& skill)
+{
+    bool one = false;
+
+    QString report = QString("<h2>%1</h2><table><thead><tr><th>Spell</th><th>Level</th>").arg(skill);
+    report += "</tr></thead><tbody>";
+
+    QHash<int, QStringList> spells;
+
+    const archetype* spell;
+
+    for (spell = first_archetype; spell; spell = spell->next)
+    {
+        if (spell->clone.type == SPELL && spell->clone.skill == skill)
+        {
+            spells[spell->clone.level].append(QString("<tr><td>%1</td><td>%2</td></tr>").arg(spell->clone.name).arg(spell->clone.level));
+            one = true;
+        }
+    }
+
+    if (!one)
+        return QString();
+
+    QList<int> levels = spells.keys();
+    qSort(levels);
+    foreach(int level, levels)
+    {
+        report += spells[level].join("\n");
+    }
+
+    report += "</tbody></table>";
+
+    return report;
+}
+
+void CREMainWindow::onReportSpells()
+{
+    QStringList skills;
+
+    const archt* arch = first_archetype;
+    for (; arch; arch = arch->next)
+    {
+        if (arch->clone.type == SKILL)
+            skills.append(arch->clone.name);
+    }
+
+    skills.sort();
+
+    QString report("<h1>Spell list</h1>");
+
+    foreach(const QString skill, skills)
+    {
+        report += spellsTable(skill);
     }
 
     CREReportDisplay show(report);
