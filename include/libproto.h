@@ -108,6 +108,7 @@ extern void query_short_name(const object *op, char *buf, size_t size);
 extern void query_name(const object *op, char *buf, size_t size);
 extern void query_base_name(const object *op, int plural, char *buf, size_t size);
 extern StringBuffer *describe_monster(const object *op, StringBuffer *buf);
+extern StringBuffer *describe_item_new(const object *op, const object *owner, StringBuffer *buf);
 extern void describe_item(const object *op, const object *owner, char *retbuf, size_t size);
 extern int is_magical(const object *op);
 extern int need_identify(const object *op);

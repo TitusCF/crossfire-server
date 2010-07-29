@@ -1018,10 +1018,9 @@ StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
  * object to describe. Must not be NULL.
  * @param owner
  * player examining the object.
- * @param retbuf
- * buffer that will contain the description. Must not be NULL.
- * @param size
- * size of buffer.
+ * @param buf
+ * buffer that will contain the description. Can be NULL.
+ * @return buf, or new StringBuffer the caller must free if buf was NULL.
  *
  * @note
  * This function is really much more complicated than it should
@@ -1030,26 +1029,25 @@ StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
  * means these special cases need to be worked out.
  *
  * @todo
- * Check whether owner is really needed. Use safe string functions.
- * Check spurious food logic.
+ * Check whether owner is really needed.
  */
-void describe_item(const object *op, const object *owner, char *retbuf, size_t size) {
+StringBuffer *describe_item_new(const object *op, const object *owner, StringBuffer *buf) {
     int identified, i;
 
-    retbuf[0] = '\0';
+    if (buf == NULL)
+        buf = stringbuffer_new();
+
     if (QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER) {
-        char *final = stringbuffer_finish(describe_monster(op, NULL));
-        strncpy(retbuf, final, size);
-        free(final);
-        return;
+        return describe_monster(op, buf);
     }
+
     /* figure this out once, instead of making multiple calls to need_identify.
      * also makes the code easier to read.
      */
     if (!need_identify(op) || QUERY_FLAG(op, FLAG_IDENTIFIED))
         identified = 1;
     else {
-        snprintf(retbuf, size, "(unidentified)");
+        stringbuffer_append_string(buf, "(unidentified)");
         identified = 0;
     }
     switch (op->type) {
@@ -1075,31 +1073,31 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
     case POWER_CRYSTAL:
         /* Avoid division by zero... */
         if (op->stats.maxsp == 0) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d).", op->stats.maxsp);
+            stringbuffer_append_printf(buf, "(capacity %d).", op->stats.maxsp);
         } else {
             if (op->stats.maxsp > 1000) { /*higher capacity crystals*/
                 i = (op->stats.maxsp%1000)/100;
                 if (i)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d.%dk). It is ", op->stats.maxsp/1000, i);
+                    stringbuffer_append_printf(buf, "(capacity %d.%dk). It is ", op->stats.maxsp/1000, i);
                 else
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %dk). It is ", op->stats.maxsp/1000);
+                    stringbuffer_append_printf(buf, "(capacity %dk). It is ", op->stats.maxsp/1000);
             } else
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d). It is ", op->stats.maxsp);
+                stringbuffer_append_printf(buf, "(capacity %d). It is ", op->stats.maxsp);
             i = (op->stats.sp*10)/op->stats.maxsp;
             if (op->stats.sp == 0)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "empty.");
+                stringbuffer_append_string(buf, "empty.");
             else if (i == 0)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost empty.");
+                stringbuffer_append_string(buf, "almost empty.");
             else if (i < 3)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "partially filled.");
+                stringbuffer_append_string(buf, "partially filled.");
             else if (i < 6)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "half full.");
+                stringbuffer_append_string(buf, "half full.");
             else if (i < 9)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "well charged.");
+                stringbuffer_append_string(buf, "well charged.");
             else if (op->stats.sp == op->stats.maxsp)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "fully charged.");
+                stringbuffer_append_string(buf, "fully charged.");
             else
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost full.");
+                stringbuffer_append_string(buf, "almost full.");
         }
         break;
 
@@ -1107,22 +1105,22 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
     case FLESH:
     case DRINK:
         if (identified || QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(food+%d)", op->stats.food);
+            stringbuffer_append_printf(buf, "(food+%d)", op->stats.food);
 
             if (op->type == FLESH && op->last_eat > 0 && atnr_is_dragon_enabled(op->last_eat)) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s metabolism)", change_resist_msg[op->last_eat]);
+                stringbuffer_append_printf(buf, "(%s metabolism)", change_resist_msg[op->last_eat]);
             }
 
             if (!QUERY_FLAG(op, FLAG_CURSED)) {
                 if (op->stats.hp)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(heals)");
+                    stringbuffer_append_string(buf, "(heals)");
                 if (op->stats.sp)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint regen)");
+                    stringbuffer_append_string(buf, "(spellpoint regen)");
             } else {
                 if (op->stats.hp)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(damages)");
+                    stringbuffer_append_string(buf, "(damages)");
                 if (op->stats.sp)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint depletion)");
+                    stringbuffer_append_string(buf, "(spellpoint depletion)");
             }
         }
         break;
@@ -1131,15 +1129,15 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
     case RING:
     case AMULET:
         if (op->item_power) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(item_power %+d)", op->item_power);
+            stringbuffer_append_printf(buf, "(item_power %+d)", op->item_power);
         }
         if (op->title) {
-            ring_desc(op, retbuf+strlen(retbuf), size-strlen(retbuf));
+            new_ring_desc(op, buf);
         }
-        return;
+        return buf;
 
     default:
-        return;
+        return buf;
     }
 
     /* Down here, we more further describe equipment type items.
@@ -1150,11 +1148,11 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
 
         for (attr = 0; attr < NUM_STATS; attr++) {
             if ((val = get_attr_value(&(op->stats), attr)) != 0) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s%+d)", short_stat_name[attr], val);
+                stringbuffer_append_printf(buf, "(%s%+d)", short_stat_name[attr], val);
             }
         }
         if (op->glow_radius)
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(glowing)");
+            stringbuffer_append_string(buf, "(glowing)");
 
         switch (op->type) {
         case FLESH:
@@ -1162,7 +1160,7 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
 
         default:
             if (op->stats.exp) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(speed %+"FMT64")", op->stats.exp);
+                stringbuffer_append_printf(buf, "(speed %+"FMT64")", op->stats.exp);
             }
             break;
         }
@@ -1183,16 +1181,16 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
         case FORCE:
         case CLOAK:
             if (op->stats.wc) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wc%+d)", op->stats.wc);
+                stringbuffer_append_printf(buf, "(wc%+d)", op->stats.wc);
             }
             if (op->stats.dam) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(dam%+d)", op->stats.dam);
+                stringbuffer_append_printf(buf, "(dam%+d)", op->stats.dam);
             }
             if (op->stats.ac) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(ac%+d)", op->stats.ac);
+                stringbuffer_append_printf(buf, "(ac%+d)", op->stats.ac);
             }
             if ((op->type == WEAPON || op->type == BOW) && op->level > 0) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(improved %d/%d)", op->last_eat, op->level);
+                stringbuffer_append_printf(buf, "(improved %d/%d)", op->last_eat, op->level);
             }
             break;
 
@@ -1200,24 +1198,24 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
             break;
         }
         if (QUERY_FLAG(op, FLAG_XRAYS))
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(xray-vision)");
+            stringbuffer_append_string(buf, "(xray-vision)");
         if (QUERY_FLAG(op, FLAG_SEE_IN_DARK))
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(infravision)");
+            stringbuffer_append_string(buf, "(infravision)");
 
         /* levitate was what is was before, so we'll keep it */
         if (op->move_type&MOVE_FLY_LOW)
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(levitate)");
+            stringbuffer_append_string(buf, "(levitate)");
 
         if (op->move_type&MOVE_FLY_HIGH)
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(fly)");
+            stringbuffer_append_string(buf, "(fly)");
 
         if (op->move_type&MOVE_SWIM)
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(swim)");
+            stringbuffer_append_string(buf, "(swim)");
 
         /* walking is presumed as 'normal', so doesn't need mentioning */
 
         if (op->item_power) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(item_power %+d)", op->item_power);
+            stringbuffer_append_printf(buf, "(item_power %+d)", op->item_power);
         }
     } /* End if identified or applied */
 
@@ -1227,7 +1225,6 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
       */
     if (identified) {
         int more_info = 0;
-        size_t len;
 
         switch (op->type) {
         case ROD:  /* These use stats.sp for spell selection and stats.food */
@@ -1250,10 +1247,10 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
         case BRACERS:
         case CLOAK:
             if (ARMOUR_SPEED(op)) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Max speed %1.2f)", ARMOUR_SPEED(op)/10.0);
+                stringbuffer_append_printf(buf, "(Max speed %1.2f)", ARMOUR_SPEED(op)/10.0);
             }
             if (ARMOUR_SPELLS(op)) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Spell regen penalty %d)", ARMOUR_SPELLS(op));
+                stringbuffer_append_printf(buf, "(Spell regen penalty %d)", ARMOUR_SPELLS(op));
             }
             more_info = 1;
             break;
@@ -1266,55 +1263,98 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
             if (i < 0)
                 i = 0;
 
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(weapon speed %d)", i);
+            stringbuffer_append_printf(buf, "(weapon speed %d)", i);
             more_info = 1;
             break;
         }
         if (more_info) {
             if (op->stats.food) {
                 if (op->stats.food != 0)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->stats.food);
+                    stringbuffer_append_printf(buf, "(sustenance%+d)", op->stats.food);
             }
             if (op->stats.grace) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(grace%+d)", op->stats.grace);
+                stringbuffer_append_printf(buf, "(grace%+d)", op->stats.grace);
             }
             if (op->stats.sp) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(magic%+d)", op->stats.sp);
+                stringbuffer_append_printf(buf, "(magic%+d)", op->stats.sp);
             }
             if (op->stats.hp) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(regeneration%+d)", op->stats.hp);
+                stringbuffer_append_printf(buf, "(regeneration%+d)", op->stats.hp);
             }
         }
 
         if (op->stats.luck) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)", op->stats.luck);
+            stringbuffer_append_printf(buf, "(luck%+d)", op->stats.luck);
         }
         if (QUERY_FLAG(op, FLAG_LIFESAVE))
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(lifesaving)");
+            stringbuffer_append_string(buf, "(lifesaving)");
         if (QUERY_FLAG(op, FLAG_REFL_SPELL))
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(reflect spells)");
+            stringbuffer_append_string(buf, "(reflect spells)");
         if (QUERY_FLAG(op, FLAG_REFL_MISSILE))
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(reflect missiles)");
+            stringbuffer_append_string(buf, "(reflect missiles)");
         if (QUERY_FLAG(op, FLAG_STEALTH))
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealth)");
+            stringbuffer_append_string(buf, "(stealth)");
         if (op->slaying != NULL && op->type != FOOD) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(slay %s)", op->slaying);
+            stringbuffer_append_printf(buf, "(slay %s)", op->slaying);
         }
-        len = strlen(retbuf);
-        DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
+        describe_attacktype("Attacks", op->attacktype, buf);
         /* resistance on flesh is only visible for dragons.  If
          * non flesh, everyone can see its resistances
          */
         if (op->type != FLESH || (owner && is_dragon_pl(owner))) {
-            char *final = stringbuffer_finish(describe_resistance(op, 0, NULL));
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), final);
-            free(final);
+            describe_resistance(op, 0, buf);
         }
-        len = strlen(retbuf);
-        DESCRIBE_PATH_SAFE(retbuf, op->path_attuned, "Attuned", &len, size);
-        DESCRIBE_PATH_SAFE(retbuf, op->path_repelled, "Repelled", &len, size);
-        DESCRIBE_PATH_SAFE(retbuf, op->path_denied, "Denied", &len, size);
+        describe_spellpath_attenuation("Attuned", op->path_attuned, buf);
+        describe_spellpath_attenuation("Repelled", op->path_repelled, buf);
+        describe_spellpath_attenuation("Denied", op->path_denied, buf);
     }
+
+    return buf;
+}
+
+/**
+ * Describes an item, in all its details.
+ *
+ * \li If it is a monster, lots of information about its abilities
+ * will be returned.
+ * \li If it is an item, lots of information about which abilities
+ * will be gained about its user will be returned.
+ * \li If it is a player, it writes out the current abilities
+ * of the player, which is usually gained by the items applied.
+ *
+ * It would be really handy to actually pass another object
+ * pointer on who is examining this object.  Then, you could reveal
+ * certain information depending on what the examiner knows, eg,
+ * wouldn't need to use the SEE_INVISIBLE flag to know it is
+ * a dragon player examining food.  Could have things like
+ * a dwarven axe, in which the full abilities are only known to
+ * dwarves, etc.
+ *
+ * Add 'owner' who is the person examining this object.
+ * owner can be null if no one is being associated with this
+ * item (eg, debug dump or the like)
+ *
+ * @param op
+ * object to describe. Must not be NULL.
+ * @param owner
+ * player examining the object.
+ * @param retbuf
+ * buffer that will contain the description. Must not be NULL.
+ * @param size
+ * size of buffer.
+ *
+ * @note
+ * This function is really much more complicated than it should
+ * be, because different objects have different meanings
+ * for the same field (eg, wands use 'food' for charges).  This
+ * means these special cases need to be worked out.
+ *
+ * @deprecated use describe_item_new()
+ */
+void describe_item(const object *op, const object *owner, char *retbuf, size_t size) {
+    char *final = stringbuffer_finish(describe_item_new(op, owner, NULL));
+    strncpy(retbuf, final, size);
+    free(final);
 }
 
 /**
