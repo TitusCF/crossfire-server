@@ -108,6 +108,10 @@ struct Settings settings = {
     0, /* allow_broken_converters */
     0, /* log_timestamp */
     NULL, /* log_timestamp_format */
+    3,      /* starting_stat_min */
+    18,     /* starting_stat_max */
+    85,     /* starting_stat_points */
+    115,    /* roll_stat_points */
 };
 
 struct Statistics statistics;

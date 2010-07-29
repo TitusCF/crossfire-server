@@ -21,6 +21,29 @@ metaserver_host put.your.hostname.here
 metaserver_port 13326
 metaserver_comment Put a comment here.
 
+# Character creation values.
+# The min, max, and points values are used for new (in client)
+# creation method - this determines those values as one would expect.
+# Note - the order here is relevant as the server has built in defaults
+# it will use, and it ensures that all the values are reasonable - thus
+# if one increase the points value to 140 before increasing the max value,
+# it will generate an error.
+#
+# the roll_stat_points is used for the legacy system where stats are rolled
+# up.
+# The reason for that difference is with the new client method, the player
+# can choose their stat points, so even with 84 points, they could generate
+# a character with 3 18 stats (it would mean the remaining stats average
+# 7.5) - with the roll method, it is very unlikely to generate such
+# characters, so if the same number of stat points were given, while
+# the characters total stats would be higher, the character itself
+# would likely be worse.
+# 
+starting_stat_min 3
+starting_stat_max 18
+starting_stat_points 84
+roll_stat_points 105
+
 # values for the new big worldmap, and weather. Only use if you are using the
 # new bigmap.
 #

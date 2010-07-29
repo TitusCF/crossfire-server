@@ -1529,6 +1529,103 @@ S->C: replyinfo <info_type> [options] <data>
         race_.. command of the same name - the only difference is this
         is class information.
 
+    newcharinfo (no parameters)
+        This sends information to the client for creating a new character.  The
+        information sent multiple length prefixed strings - each string 
+        corresponds to an entire line/variable set.
+
+        The idea behind this is that new types/options for character creation
+        can get added without needing to rewrite the entire protocol commands
+        or increase the protocol version - the client requests this information
+        and see if it understands all the data the server wants.  If so, it
+        can then create a character.
+
+        While this setup looks fairly complicated, the simplest
+        way for the client to handle it is to just make sure it understands all
+        the variables present (ignoring type) and it gets all the ones it expects,
+        and if it doesn't, just throw up an error that client needs to be updated
+        in order to create a character on that server.   One reason for the
+        extra complexity here (instead of just making a set of assumptions that
+        are fixed in the protocol) is that lots of discussions have gone on about
+        character creation changes, so this allows for many of them.
+
+        <type> <variable name> <values>
+            type is a single character which denotes the type of data that is in
+            this line, currently values are:
+
+            R: required - needed value in the createchar command.
+            O: optional - if not present in createchar, server can fill in some default
+                 value.  If a client does not understand an Optional type
+                 but understands all the other types, it could still create the
+                 character.
+            V: values - this contains some values which are used in character creation
+                but may not be sent back in the actual createchar command.  An example
+                here is the number of points the player has to spend on stats -
+                the client does not send that back, but rather sends the actual
+                stat values during the createchar command, but it needs this
+                value to do so.
+            I: Informational - some piece of information that the client should
+                communicate to the player.  An example here could be a requestinfo
+                that is related to class or race choices for new characters - one
+                may not want to put it in the news since it is only relevant for
+                people creating new characters.
+
+        <variable name>
+            name of variable - race, class, map, etc are all possible names.  The only
+            constraint on name is that it can not contain any spaces.
+
+            Short description of variables currently supported:
+
+            points: How many total points the character has to spend - at current time
+                these are just used for stats, but possible in future they could get
+                used for other things.
+
+            race, class: Notes that race and class information need to be sent to
+                the server.  This is a fixed assumption now, but if at some point
+                someone wanted to remove either races or classes (or both) and reduce
+                the number of choices, this provides a mechanism to do so.
+
+            statrange: The minimum and maximum value for a stat.
+
+            statname: The name of the different statistics.  Like race & class above,
+                this is a fixed assumption now, but if a stat was to get removed,
+                or a new one added, this provides a mechanism for the client to know
+                it.
+
+        <values>
+            value tends to be specific to the variable itself.  In general, the client
+            will need to be able to parse each required and value variable - if it
+            is unable to do so, it is likely it will not be able to properly
+            generate a character.  requestinfo is used for some variables to note
+            that a requestinfo protocol command should be used to retrieve additional
+            data.  Note that the client will have to have support for that requestinfo
+            command, and still has know the actual mapping of variable name to
+            requestinfo name.  In the case of race and class, it would have to do
+            the race_list/class_list, and when it gets the response from that would
+            then have to know to do the race_info/class_info
+
+        Below is a sample for first set of supported values (note in the actual
+        protocol, each of these lines is prefixed by a single length byte).  Note
+        that all values should be considered case insensitive.  Each line is also
+        null terminated by the server.
+
+        V points 200
+        V statrange 1 20
+        V statname Str Dex Con Wis Cha Int Pow
+        R race requestinfo
+        R class requestinfo
+
+        Possible future extensions (these are provided as an example):
+        O map requestinfo
+          : Provide choice of starting maps
+        V statpointcosts 0 1 2 3 4 ....
+          : If different stat points have different costs (nonlinear) this can
+          be used to return a list of the costs.  Instead of values, this could
+          also point to a requestinfo.
+        O skill skill1 skill2 ...
+          If at some point the player can choose some of the skills for their
+          character, this would be used.
+
     news/rules/motd (no parameters)
         Send the news/rules/motd file information to the client.  This
         is mainly useful as a way for the client to easily capture

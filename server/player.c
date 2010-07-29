@@ -984,7 +984,7 @@ void roll_stats(object *op) {
         op->stats.Pow = roll_stat();
         op->stats.Cha = roll_stat();
         sum = op->stats.Str+op->stats.Dex+op->stats.Int+op->stats.Con+op->stats.Wis+op->stats.Pow+op->stats.Cha;
-    } while (sum != 105); /* 116 used to be best possible character */
+    } while (sum != settings.roll_stat_points);
 
     /* Sort the stats so that rerolling is easier... */
     statsort[0] = op->stats.Str;

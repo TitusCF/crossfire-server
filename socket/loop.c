@@ -189,6 +189,8 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
         send_file(ns, "motd");
     else if (!strcmp(buf, "news"))
         send_file(ns, "news");
+    else if (!strcmp(buf,"newcharinfo"))
+        send_new_char_info(ns, params);
     else
         Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

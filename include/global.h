@@ -414,6 +414,10 @@ typedef struct Settings {
                                           * than the price of converted items. */
     int     log_timestamp;            /**< If set, log will comport a timestamp. */
     char    *log_timestamp_format;    /**< Format for timestap, if log_timestamp is set. */
+    uint8   starting_stat_min;        /**< Minimum value of a starting stat */
+    uint8   starting_stat_max;        /**< Maximum value of a starting stat */
+    uint8   starting_stat_points;     /**< How many stat points character starts with */
+    uint8   roll_stat_points;         /**< How many stat points legacy (rolled) chars start with */
 } Settings;
 
 extern Settings settings;

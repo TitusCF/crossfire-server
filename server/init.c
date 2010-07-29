@@ -863,6 +863,44 @@ static void load_settings(void) {
         } else if (!strcasecmp(buf, "log_timestamp_format")) {
             free(settings.log_timestamp_format);
             settings.log_timestamp_format = strdup_local(cp);
+        } else if (!strcasecmp(buf, "starting_stat_min")) {
+            int val = atoi(cp);
+
+            if (val < 1 || val > MAX_STAT || val > settings.starting_stat_max)
+                LOG(llevError, "load_settings: starting_stat_min (%d) need to be within %d-%d (%d)\n",
+                    val, 1, MAX_STAT, settings.starting_stat_max);
+            else
+                settings.starting_stat_min = val;
+        } else if (!strcasecmp(buf, "starting_stat_max")) {
+            int val = atoi(cp);
+
+            if (val < 1 || val > MAX_STAT || val<settings.starting_stat_min)
+                LOG(llevError, "load_settings: starting_stat_max (%d) need to be within %d-%d (%d)\n",
+                    val, 1, MAX_STAT, settings.starting_stat_min);
+            else
+                settings.starting_stat_max = val;
+        } else if (!strcasecmp(buf, "starting_stat_points")) {
+            int val = atoi(cp);
+
+            if (val < NUM_STATS * settings.starting_stat_min || 
+                val > NUM_STATS * settings.starting_stat_max)
+                LOG(llevError, "load_settings: starting_stat_points (%d) need to be within %d-%d\n",
+                    val, NUM_STATS * settings.starting_stat_min, NUM_STATS * settings.starting_stat_max);
+            else
+                settings.starting_stat_points = val;
+        } else if (!strcasecmp(buf, "roll_stat_points")) {
+            int val = atoi(cp);
+
+            /* The 3 and 18 values are hard coded in because we know that
+             * roll_stat() generates a value between 3 and 18 - if that ever
+             * changed, this code should change also, but that code will eventually
+             * go away.
+             */
+            if (val < NUM_STATS * 3 || val > NUM_STATS * 18)
+                LOG(llevError, "load_settings: roll_stat_points need to be within %d-%d\n",
+                    NUM_STATS * 3,  NUM_STATS * 18);
+            else
+                settings.roll_stat_points = val;
         } else {
             LOG(llevError, "Unknown value in settings file: %s\n", buf);
         }

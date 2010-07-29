@@ -14,6 +14,25 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Changes related to new character creation code - add new settings value
+which determine stat ranges, split out the requestinfo replies to its
+own file (request.c was getting a bit large), add handling for 'newcharinfo'
+requestinfo, document this in the protocol file.  NOTE: you will need to
+re-run automake & configure to pick up the new source file.
+---
+common/init.c: Initialize new fields in setting structure to default values.
+doc/Developers/protocol: Add documentation on newcharinfo
+include/global.h: Add new fields in settings structure for starting stat info.
+lib/settings: Add new starting stat values to file.
+server/init.c: Add logic to load new settings value from file.
+server/player.c: Remove hard coded value, change to use settings value.
+socket/Makefile.am: Add requestinfo.c file
+socket/loop.c: Add callback for newcharinfo requestinfo.
+socket/request.c, requestinfo.c: Move requestinfo handling to its own file,
+   and new function for newcharinfo handling.
+---
+MSW 2010-07-28
+	
 Rewrite 'describe_monster' to use StringBuffer.
 Nicolas Weeger 2010-07-28
 

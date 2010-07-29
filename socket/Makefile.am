@@ -33,6 +33,7 @@ libsocket_a_SOURCES = \
 	lowlevel.c\
 	metaserver.c\
 	request.c\
+	requestinfo.c\
 	sounds.c
 
 EXTRA_DIST = README
