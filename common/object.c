@@ -2475,7 +2475,7 @@ object *object_split(object *orig_ob, uint32 nr, char *err, size_t size) {
         if (!QUERY_FLAG(orig_ob, FLAG_REMOVED)) {
             object_remove(orig_ob);
         }
-        object_free_drop_inventory(orig_ob);
+        object_free2(orig_ob, FREE_OBJ_FREE_INVENTORY);
     } else {
         newob->nrof = nr;
         object_decrease_nrof(orig_ob, nr);
@@ -3823,6 +3823,11 @@ object *object_create_clone(object *asrc) {
     for (part = src; part; part = part->more) {
         tmp = object_new();
         object_copy(part, tmp);
+        /*
+         * Need to reset the weight, since object_insert_in_ob() later will
+         * recompute this field.
+         */
+        tmp->carrying = tmp->arch->clone.carrying;
         tmp->x -= src->x;
         tmp->y -= src->y;
         if (!part->head) {
