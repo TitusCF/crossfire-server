@@ -980,8 +980,8 @@ StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
     } else {
         describe_attacktype("Attacks", op->attacktype, buf);
     }
-    describe_spellpath_attenuation("Attuned", op->path_attuned, buf);
-    describe_spellpath_attenuation("Repelled", op->path_repelled, buf );
+    describe_spellpath_attenuation("Attuned", op->path_attuned &~ op->path_denied, buf);
+    describe_spellpath_attenuation("Repelled", op->path_repelled &~ op->path_denied, buf );
     describe_spellpath_attenuation("Denied", op->path_denied, buf);
     for (i = 0; i < NROFATTACKS; i++) {
         if (op->resist[i]) {
@@ -1304,8 +1304,8 @@ StringBuffer *describe_item(const object *op, const object *owner, StringBuffer 
         if (op->type != FLESH || (owner && is_dragon_pl(owner))) {
             describe_resistance(op, 0, buf);
         }
-        describe_spellpath_attenuation("Attuned", op->path_attuned, buf);
-        describe_spellpath_attenuation("Repelled", op->path_repelled, buf);
+        describe_spellpath_attenuation("Attuned", op->path_attuned &~ op->path_denied, buf);
+        describe_spellpath_attenuation("Repelled", op->path_repelled &~ op->path_denied, buf);
         describe_spellpath_attenuation("Denied", op->path_denied, buf);
     }
 
