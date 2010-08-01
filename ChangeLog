@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bug #2546538: odd rune spell behavior.
+Don't check grace cost against player's grace if no grace cost.
+Nicolas Weeger 2010-08-01
+
 Don't display attenuation or repell if denied.
 Fixes part of #2941923: 11 bugs, alchemy, spell attunement, npc shops, client (WIN).
 Nicolas Weeger 2010-08-01

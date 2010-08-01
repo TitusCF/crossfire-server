@@ -67,7 +67,7 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
     object *rune_spell, *rune;
     char buf[MAX_BUF];
     mapstruct *m;
-    sint16 nx, ny;
+    sint16 nx, ny, gr;
 
     if (!dir) {
         dir = 1;
@@ -146,12 +146,13 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
                           "You don't have enough mana.");
             return 0;
         }
-        if (SP_level_spellpoint_cost(caster, rune_spell, SPELL_GRACE) > op->stats.grace) {
+        gr = SP_level_spellpoint_cost(caster, rune_spell, SPELL_GRACE);
+        if ((gr > 0) && (gr > op->stats.grace)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                           "You don't have enough grace.");
             return 0;
         }
-        op->stats.grace -= SP_level_spellpoint_cost(caster, rune_spell, SPELL_GRACE);
+        op->stats.grace -= gr;
         op->stats.sp -= SP_level_spellpoint_cost(caster, rune_spell, SPELL_MANA);
     }
     /* already proper rune.  Note this should only be the case if other_arch was set */
