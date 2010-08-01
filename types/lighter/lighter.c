@@ -89,7 +89,6 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
     } else if (lighter->last_eat) { /* no charges left in lighter */
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "You fail to light the %s with a used up %s.",
-            NULL,
             item->name, lighter->name);
         return METHOD_OK;
     }
@@ -113,7 +112,6 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
     if ((nrof != item->nrof) || (count != item->count)) {
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
             "You light the %s with the %s.",
-            NULL,
             item_name, lighter->name);
 
         /* Need to update the player so that the players glow radius
@@ -123,7 +121,6 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
     } else {
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "You attempt to light the %s with the %s and fail.",
-            NULL,
             item->name, lighter->name);
     }
 
