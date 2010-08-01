@@ -193,10 +193,10 @@ static char *old_artifact_msg(int level, char *retbuf, size_t booksize) {
         tmp->type = type;
         SET_FLAG(tmp, FLAG_IDENTIFIED);
         {
-            char *tmp = stringbuffer_finish(describe_item_new(tmp, NULL, NULL));
-            if (strlen(tmp) > 1)
+            char *desc = stringbuffer_finish(describe_item_new(tmp, NULL, NULL));
+            if (strlen(desc) > 1)
                 snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " Properties of this artifact include:\n %s\n", tmp);
-            free(tmp);
+            free(desc);
         }
         object_free_drop_inventory(tmp);
         /* add the buf if it will fit */

@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix a unit test.
+Nicolas Weeger 2010-08-01
+
 CRE: add a 'spell table' report.
 Nicolas Weeger 2010-07-29
 
