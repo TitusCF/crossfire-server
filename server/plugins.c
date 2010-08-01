@@ -3214,7 +3214,7 @@ void *cfapi_object_describe(int *type, ...) {
     va_list args;
     object *op;
     object *owner;
-    char *desc;
+    char *desc, *final;
     int size;
 
     va_start(args, type);
@@ -3226,7 +3226,10 @@ void *cfapi_object_describe(int *type, ...) {
     va_end(args);
 
     *type = CFAPI_STRING;
-    describe_item(op, owner, desc, size);
+    final = stringbuffer_finish(describe_item(op, owner, NULL));
+    strncpy(desc, final, size);
+    desc[size - 1] = '\0';
+    free(final);
     return NULL;
 }
 

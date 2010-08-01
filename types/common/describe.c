@@ -37,15 +37,15 @@
  * @param size buf's size.
  */
 void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, size_t size) {
-    char name[VERY_BIG_BUF];
+    char *desc;
 
     buf[0] = '\0';
 
     if (op == NULL)
         return;
 
-    describe_item(op, observer, name, VERY_BIG_BUF);
-    if (name[0] != '\0') {
+    desc = stringbuffer_finish(describe_item(op, observer, NULL));
+    if (desc[0] != '\0') {
         size_t len;
 
         query_name(op, buf, size-1);
@@ -56,10 +56,11 @@ void common_ob_describe(const ob_methods *context, const object *op, const objec
              * it instead of calling strcat */
             strcpy(buf+len, " ");
             len++;
-            strncpy(buf+len, name, size-len-1);
+            strncpy(buf+len, desc, size-len-1);
             buf[size-1] = 0;
         }
     }
+    free(desc);
     if (buf[0] == '\0') {
         query_name(op, buf, size-1);
         buf[size-1] = 0;

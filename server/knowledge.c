@@ -299,7 +299,7 @@ static void knowledge_monster_detail(const char *item, StringBuffer *buf) {
         return;
 
     stringbuffer_append_printf(buf, " *** %s ***\n", monster->clone.name);
-    describe_item_new(&monster->clone, NULL, buf);
+    describe_item(&monster->clone, NULL, buf);
 }
 
 /**

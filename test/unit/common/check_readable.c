@@ -193,7 +193,7 @@ static char *old_artifact_msg(int level, char *retbuf, size_t booksize) {
         tmp->type = type;
         SET_FLAG(tmp, FLAG_IDENTIFIED);
         {
-            char *desc = stringbuffer_finish(describe_item_new(tmp, NULL, NULL));
+            char *desc = stringbuffer_finish(describe_item(tmp, NULL, NULL));
             if (strlen(desc) > 1)
                 snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), " Properties of this artifact include:\n %s\n", tmp);
             free(desc);

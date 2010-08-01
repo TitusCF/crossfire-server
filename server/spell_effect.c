@@ -1000,13 +1000,11 @@ int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
  * 1.
  */
 int perceive_self(object *op) {
-    char cp[VERY_BIG_BUF], buf[MAX_BUF];
+    char *cp, buf[MAX_BUF];
     archetype *at = find_archetype(ARCH_DEPLETION);
     object *tmp;
     const object *god;
     int i;
-
-    describe_item(op, op, cp, VERY_BIG_BUF);
 
     god = find_god(determine_god(op));
     if (god)
@@ -1018,6 +1016,8 @@ int perceive_self(object *op) {
                       "You worship no god");
 
     tmp = arch_present_in_ob(at, op);
+
+    cp = stringbuffer_finish(describe_item(op, op, NULL));
 
     if (*cp == '\0' && tmp == NULL)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
@@ -1037,6 +1037,8 @@ int perceive_self(object *op) {
             }
         }
     }
+    free(cp);
+
     if (op->glow_radius > 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
                       "You glow in the dark.");

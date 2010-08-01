@@ -49,7 +49,7 @@ void teardown(void) {
 
 START_TEST(test_describe_item) {
     object *test;
-    char buf[5000];
+    char *buf;
     int check;
     treasurelist *list;
 
@@ -164,7 +164,7 @@ START_TEST(test_describe_item) {
         test = cctk_create_game_object(archs[check]);
         fail_unless(test != NULL, "couldn't create arch %s", archs[check]);
         SET_FLAG(test, FLAG_IDENTIFIED);
-        describe_item(test, NULL, buf, sizeof(buf));
+        buf = stringbuffer_finish(describe_item(test, NULL, NULL));
 
         /* if you're adding items, uncomment that so make finding the good value easier. */
         /*
@@ -174,6 +174,7 @@ START_TEST(test_describe_item) {
 
         fail_unless(strcmp(buf, arch_results[check]) == 0, "describe_item(%s) returned \"%s\" instead of \"%s\"", archs[check], buf, arch_results[check]);
 
+        free(buf);
         object_free_drop_inventory(test);
     }
 
@@ -185,7 +186,7 @@ START_TEST(test_describe_item) {
         test = generate_treasure(list, 50);
         fail_if(test == NULL, "couldn't create item from treasure list %s", treasures[check]);
         SET_FLAG(test, FLAG_IDENTIFIED);
-        describe_item(test, NULL, buf, sizeof(buf));
+        buf = stringbuffer_finish(describe_item(test, NULL, NULL));
 
         /* if you're adding lists, uncomment that so make finding the good value easier. */
         /*
@@ -195,6 +196,7 @@ START_TEST(test_describe_item) {
 
         fail_unless(strcmp(buf, treasure_results[check]) == 0, "describe_item(treasure %s) returned \"%s\" instead of \"%s\"", treasures[check], buf, treasure_results[check]);
 
+        free(buf);
         object_free_drop_inventory(test);
 
     }
@@ -467,7 +469,7 @@ static void old_describe_monster(const object *op, char *retbuf, size_t size) {
 }
 
 START_TEST(test_describe_monster_rewrite) {
-    char buf[HUGE_BUF], compat[HUGE_BUF], *final;
+    char buf[HUGE_BUF], *compat, *final;
     archetype *arch;
     const artifactlist *ring, *amulet, *check;
     const artifact *art;
@@ -485,9 +487,9 @@ START_TEST(test_describe_monster_rewrite) {
         ob->contr = &pl;
 
         old_describe_monster(ob, buf, sizeof(buf));
-        compat[0] = 0;
-        describe_item(ob, NULL, compat, sizeof(compat));
+        compat = stringbuffer_finish(describe_item(ob, NULL, NULL));
         fail_unless(strcmp(buf, compat) == 0, "(compat) description change:\n%s\n  === vs ===\n%s", buf, compat);
+        free(compat);
 
         final = stringbuffer_finish(describe_monster(ob, NULL));
 

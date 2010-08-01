@@ -1378,8 +1378,10 @@ object *get_random_mon(int level) {
  * buf
  */
 static char *mon_desc(const object *mon, char *buf, size_t size) {
-    snprintf(buf, size, " *** %s ***\n", mon->name);
-    describe_item(mon, NULL, buf+strlen(buf), size-strlen(buf));
+    char *desc;
+    desc = stringbuffer_finish(describe_item(mon, NULL, NULL));
+    snprintf(buf, size, " *** %s ***\n%s", mon->name, desc);
+    free(desc);
     return buf;
 }
 
@@ -1489,9 +1491,9 @@ char *artifact_msg(int level, char *retbuf, size_t booksize) {
     const artifact *art;
     int chance, i, type, index;
     int book_entries = level > 5 ? RANDOM()%3+RANDOM()%3+2 : RANDOM()%level+1;
-    char buf[BOOK_BUF], sbuf[MAX_BUF], *final;
+    char buf[BOOK_BUF], *final;
     object *tmp;
-    StringBuffer *desc;
+    StringBuffer *desc, *sbuf;
 
     /* values greater than 5 create msg buffers that are too big! */
     if (book_entries > 5)
@@ -1603,9 +1605,13 @@ char *artifact_msg(int level, char *retbuf, size_t booksize) {
         add_abilities(tmp, art->item);
         tmp->type = type;
         SET_FLAG(tmp, FLAG_IDENTIFIED);
-        describe_item(tmp, NULL, sbuf, sizeof(sbuf));
-        if (strlen(sbuf) > 1)
-            stringbuffer_append_printf(desc, " Properties of this artifact include:\n %s\n", sbuf);
+        sbuf = describe_item(tmp, NULL, NULL);
+        if (stringbuffer_length(sbuf) > 1) {
+            stringbuffer_append_string(desc, " Properties of this artifact include:\n ");
+            stringbuffer_append_stringbuffer(desc, sbuf);
+            stringbuffer_append_string(desc, "\n");
+        }
+        free(stringbuffer_finish(sbuf));
         object_free_drop_inventory(tmp);
 
         final = stringbuffer_finish(desc);

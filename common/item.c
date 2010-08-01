@@ -1031,7 +1031,7 @@ StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
  * @todo
  * Check whether owner is really needed.
  */
-StringBuffer *describe_item_new(const object *op, const object *owner, StringBuffer *buf) {
+StringBuffer *describe_item(const object *op, const object *owner, StringBuffer *buf) {
     int identified, i;
 
     if (buf == NULL)
@@ -1310,51 +1310,6 @@ StringBuffer *describe_item_new(const object *op, const object *owner, StringBuf
     }
 
     return buf;
-}
-
-/**
- * Describes an item, in all its details.
- *
- * \li If it is a monster, lots of information about its abilities
- * will be returned.
- * \li If it is an item, lots of information about which abilities
- * will be gained about its user will be returned.
- * \li If it is a player, it writes out the current abilities
- * of the player, which is usually gained by the items applied.
- *
- * It would be really handy to actually pass another object
- * pointer on who is examining this object.  Then, you could reveal
- * certain information depending on what the examiner knows, eg,
- * wouldn't need to use the SEE_INVISIBLE flag to know it is
- * a dragon player examining food.  Could have things like
- * a dwarven axe, in which the full abilities are only known to
- * dwarves, etc.
- *
- * Add 'owner' who is the person examining this object.
- * owner can be null if no one is being associated with this
- * item (eg, debug dump or the like)
- *
- * @param op
- * object to describe. Must not be NULL.
- * @param owner
- * player examining the object.
- * @param retbuf
- * buffer that will contain the description. Must not be NULL.
- * @param size
- * size of buffer.
- *
- * @note
- * This function is really much more complicated than it should
- * be, because different objects have different meanings
- * for the same field (eg, wands use 'food' for charges).  This
- * means these special cases need to be worked out.
- *
- * @deprecated use describe_item_new()
- */
-void describe_item(const object *op, const object *owner, char *retbuf, size_t size) {
-    char *final = stringbuffer_finish(describe_item_new(op, owner, NULL));
-    strncpy(retbuf, final, size);
-    free(final);
 }
 
 /**
