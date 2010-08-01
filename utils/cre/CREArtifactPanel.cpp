@@ -32,8 +32,8 @@ CREArtifactPanel::CREArtifactPanel()
     myType = new QLineEdit(this);
     layout->addWidget(myType, 3, 2);
 
-    myViaAlchemy = new QCheckBox(tr("Can be made with alchemy"), this);
-    myViaAlchemy->setEnabled(false);
+    myViaAlchemy = new QLabel(this);
+    myViaAlchemy->setWordWrap(true);
     layout->addWidget(myViaAlchemy, 4, 1, 1, 2);
 
     myArchetypes = new QTreeWidget(this);
@@ -54,13 +54,14 @@ CREArtifactPanel::CREArtifactPanel()
     connect(myDisplay, SIGNAL(currentIndexChanged(int)), this, SLOT(displayArchetypeChanged(int)));
 }
 
-bool CREArtifactPanel::madeViaAlchemy(const artifact* artifact) const
+void CREArtifactPanel::computeMadeViaAlchemy(const artifact* artifact) const
 {
     Q_ASSERT(artifact != NULL);
 
     const recipelist* list;
     const recipe* recipe;
     const archetype* arch;
+    QStringList possible;
 
     for (int ing = 1; ; ing++)
     {
@@ -80,13 +81,27 @@ bool CREArtifactPanel::madeViaAlchemy(const artifact* artifact) const
                 arch = find_archetype(recipe->arch_name[a]);
                 if (!arch)
                     continue;
-                if (arch->clone.type == artifact->item->type)
-                    return true;
+                if ((arch->clone.type == artifact->item->type) && legal_artifact_combination(&arch->clone, artifact))
+                {
+                    if (!possible.contains(arch->name))
+                        possible.append(arch->name);
+                }
             }
         }
     }
 
-    return false;
+    if (possible.isEmpty())
+        myViaAlchemy->setText(tr("Can't be made via alchemy."));
+    else
+    {
+        if (possible.size() == artifact->allowed_size)
+            myViaAlchemy->setText(tr("Can be made via alchemy."));
+        else
+        {
+            possible.sort();
+            myViaAlchemy->setText(tr("The following archetypes can be used via alchemy: %1").arg(possible.join(tr(", "))));
+        }
+    }
 }
 
 void CREArtifactPanel::setArtifact(const artifact* artifact)
@@ -98,7 +113,7 @@ void CREArtifactPanel::setArtifact(const artifact* artifact)
     myChance->setText(QString::number(artifact->chance));
     myType->setText(QString::number(artifact->item->type));
 
-    myViaAlchemy->setChecked(madeViaAlchemy(artifact));
+    computeMadeViaAlchemy(artifact);
 
     const archt* arch;
     const char* name;
