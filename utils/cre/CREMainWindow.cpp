@@ -7,6 +7,8 @@
 #include "QuestManager.h"
 #include "MessageManager.h"
 #include "CREReportDisplay.h"
+#include "CREPixmap.h"
+#include "CRESmoothFaceMaker.h"
 
 extern "C" {
 #include "global.h"
@@ -116,6 +118,10 @@ void CREMainWindow::createActions()
     myReportSpells = new QAction(tr("Spells"), this);
     myReportSpells->setStatusTip(tr("Display all spells, in a table."));
     connect(myReportSpells, SIGNAL(triggered()), this, SLOT(onReportSpells()));
+
+    myToolSmooth = new QAction(tr("Generate smooth face base"), this);
+    myToolSmooth->setStatusTip(tr("Generate the basic smoothed picture for a face."));
+    connect(myToolSmooth, SIGNAL(triggered()), this, SLOT(onToolSmooth()));
 }
 
 void CREMainWindow::createMenus()
@@ -146,6 +152,9 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportSpellDamage);
     reportMenu->addAction(myReportAlchemy);
     reportMenu->addAction(myReportSpells);
+
+    QMenu* toolsMenu = menuBar()->addMenu("&Tools");
+    toolsMenu->addAction(myToolSmooth);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -602,4 +611,10 @@ void CREMainWindow::onReportSpells()
 
     CREReportDisplay show(report);
     show.exec();
+}
+
+void CREMainWindow::onToolSmooth()
+{
+    CRESmoothFaceMaker smooth;
+    smooth.exec();
 }

@@ -27,6 +27,7 @@ class CREFacePanel : public CREPanel
 
     private slots:
         void saveClicked(bool);
+        void makeSmooth(bool);
 };
 
 #endif // CLASS_CRE_FACE_PANEL_H

@@ -8,6 +8,7 @@ extern "C" {
 
 #include "CREFacePanel.h"
 #include "CREUtils.h"
+#include "CRESmoothFaceMaker.h"
 
 /** @todo duplication with common/image */
 static const char *const colorname[] = {
@@ -53,8 +54,11 @@ CREFacePanel::CREFacePanel()
 
     mySave = new QPushButton(tr("Save face"));
     layout->addWidget(mySave, 6, 1);
-
     connect(mySave, SIGNAL(clicked(bool)), this, SLOT(saveClicked(bool)));
+
+    QPushButton* smooth = new QPushButton(tr("Make smooth base"), this);
+    layout->addWidget(smooth, 6, 2);
+    connect(smooth, SIGNAL(clicked(bool)), this, SLOT(makeSmooth(bool)));
 }
 
 void CREFacePanel::setFace(const New_Face* face)
@@ -138,4 +142,12 @@ void CREFacePanel::setFace(const New_Face* face)
 }
 void CREFacePanel::saveClicked(bool)
 {
+}
+
+void CREFacePanel::makeSmooth(bool)
+{
+    CRESmoothFaceMaker maker;
+    maker.setSelectedFace(myFace->number);
+    maker.setAutoClose();
+    maker.exec();
 }

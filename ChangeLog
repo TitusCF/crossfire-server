@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+CRE: tool to create base for smoothed face from a face.
+Nicolas Weeger 2010-08-02
+
 Fix bug #2546538: odd rune spell behavior.
 Don't check grace cost against player's grace if no grace cost.
 Nicolas Weeger 2010-08-01
