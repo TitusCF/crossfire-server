@@ -1430,11 +1430,12 @@ static int spell_consume_items(object *op, const object *spell_ob) {
  */
 int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stringarg) {
     const char *godname;
-    int success = 0, mflags, cast_level = 0, old_shoottype;
+    int success = 0, mflags, cast_level = 0;
+    rangetype old_shoottype;
     object *skill = NULL;
     int confusion_effect = 0;
 
-    old_shoottype = op->contr ? op->contr->shoottype : 0;
+    old_shoottype = op->contr ? op->contr->shoottype : range_none;
 
     if (!spell_ob) {
         LOG(llevError, "cast_spell: null spell object passed\n");
@@ -1743,7 +1744,14 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
 
     case SP_SUMMON_GOLEM:
         success = pets_summon_golem(op, caster, dir, spell_ob);
-        old_shoottype = range_golem;
+        if (success || op->contr == NULL)
+            old_shoottype = range_golem;
+        else
+            /*
+             * if the spell failed (something in the way for instance),
+             * don't change the range so the player can try easily after that
+             */
+            old_shoottype = op->contr->shoottype;
         break;
 
     case SP_DIMENSION_DOOR:
