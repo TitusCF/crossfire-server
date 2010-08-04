@@ -1172,7 +1172,12 @@ int command_drop(object *op, char *params) {
     }
     if (op->type == PLAYER) {
         op->contr->count = 0;
-        op->contr->socket.update_look = 1;
+        /*
+         * Don't force a whole look update, items were transferred during their move.
+         * Also this would send a 'delinv 0' to the client, which would make it appear
+         * an opened container was closed.
+         */
+        /*op->contr->socket.update_look = 1;*/
     }
     return 0;
 }
