@@ -1251,7 +1251,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
  * @todo
  * document return value.
  */
-int set_variable(object *op, char *buf) {
+int set_variable(object *op, const char *buf) {
     YY_BUFFER_STATE yybufstate, yycurbuf = YY_CURRENT_BUFFER;
     int retval, depth;
     object *items[MAXDEPTH];

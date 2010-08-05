@@ -92,10 +92,8 @@ static command_array_struct *find_command_element(const char *cmd, command_array
  * player who is issuing the command
  * @param command
  * the actual command with its arguments.
- * @return
- * 0 if invalid command, else actual command's return value (which may be zero).
  */
-int execute_newserver_command(object *pl, char *command) {
+void execute_newserver_command(object *pl, char *command) {
     command_array_struct *csp, sent;
     char *cp, *low;
 
@@ -135,7 +133,7 @@ int execute_newserver_command(object *pl, char *command) {
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "'%s' is not a valid command.",
                              command);
-        return 0;
+        return;
     }
 
     pl->speed_left -= csp->time;
@@ -153,7 +151,7 @@ int execute_newserver_command(object *pl, char *command) {
     if (csp->time && pl->speed_left < -2.0) {
         LOG(llevDebug, "execute_newclient_command: Player issued command that takes more time than he has left.\n");
     }
-    return csp->func(pl, cp);
+    csp->func(pl, cp);
 }
 
 /**
@@ -163,20 +161,18 @@ int execute_newserver_command(object *pl, char *command) {
  * player.
  * @param params
  * additional parameters.
- * @return
- * 0.
  */
-int command_run(object *op, char *params) {
+void command_run(object *op, const char *params) {
     int dir;
 
     dir = atoi(params);
     if (dir < 0 || dir >= 9) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't run into a non adjacent square.");
-        return 0;
+        return;
     }
     op->contr->run_on = 1;
-    return move_player(op, dir);
+    move_player(op, dir);
 }
 
 /**
@@ -189,9 +185,8 @@ int command_run(object *op, char *params) {
  * @return
  * 1.
  */
-int command_run_stop(object *op, char *params) {
+void command_run_stop(object *op, const char *params) {
     op->contr->run_on = 0;
-    return 1;
 }
 
 /**
@@ -201,20 +196,18 @@ int command_run_stop(object *op, char *params) {
  * player.
  * @param params
  * additional parameters.
- * @return
- * 0.
  */
-int command_fire(object *op, char *params) {
+void command_fire(object *op, const char *params) {
     int dir;
 
     dir = atoi(params);
     if (dir < 0 || dir >= 9) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't fire to a non adjacent square.");
-        return 0;
+        return;
     }
     op->contr->fire_on = 1;
-    return move_player(op, dir);
+    move_player(op, dir);
 }
 
 /**
@@ -224,10 +217,7 @@ int command_fire(object *op, char *params) {
  * player.
  * @param params
  * ignored.
- * @return
- * 0.
  */
-int command_fire_stop(object *op, char *params) {
+void command_fire_stop(object *op, const char *params) {
     op->contr->fire_on = 0;
-    return 1;
 }

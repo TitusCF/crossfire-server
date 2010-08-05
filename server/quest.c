@@ -1048,36 +1048,34 @@ int quest_was_completed(player *pl, sstring quest_code) {
  * Command handler for 'quest'.
  * @param op player asking for information, warning emitted if not a player.
  * @param params extra parameters for command.
- * @return 0
  */
-int command_quest(object *op, char *params) {
+void command_quest(object *op, const char *params) {
     if (!op->contr) {
         LOG(llevError, "command_quest called for a non player!\n");
-        return 0;
+        return;
     }
 
     if (!params || *params == '\0') {
         quest_help(op->contr);
-        return 0;
+        return;
     }
     if (strcmp(params, "list all") == 0) {
         quest_list(op->contr, 1);
-        return 0;
+        return;
     }
 
     if (strcmp(params, "list") == 0) {
         quest_list(op->contr, 0);
-        return 0;
+        return;
     }
 
     if (strncmp(params, "info ", 5) == 0) {
         int number = atoi(params+5);
         quest_info(op->contr, get_quest_by_number(op->contr, number), 0);
-        return 0;
+        return;
     }
 
     quest_help(op->contr);
-    return 0;
 }
 
 static void output_quests(quest_definition *parent, int level) {

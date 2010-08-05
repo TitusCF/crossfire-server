@@ -441,7 +441,7 @@ extern void yyset_debug(int bdebug);
 extern int yylex_destroy(void);
 extern void yyfree(void *ptr);
 extern int load_object(FILE *fp, object *op, int bufstate, int map_flags);
-extern int set_variable(object *op, char *buf);
+extern int set_variable(object *op, const char *buf);
 extern void init_vars(void);
 extern void free_loader(void);
 extern void get_ob_diff(StringBuffer *sb, const object *op, const object *op2);

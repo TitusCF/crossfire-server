@@ -47,11 +47,9 @@
  * player.
  * @param params
  * spell.
- * @return
- * 1 for success, 0 for failure.
  */
-int command_invoke(object *op, char *params) {
-    return command_cast_spell(op, params, 'i');
+void command_invoke(object *op, const char *params) {
+    command_cast_spell(op, params, 'i');
 }
 
 /**
@@ -61,11 +59,9 @@ int command_invoke(object *op, char *params) {
  * player.
  * @param params
  * spell.
- * @return
- * 1 for success, 0 for failure.
  */
-int command_cast(object *op, char *params) {
-    return command_cast_spell(op, params, 'c');
+void command_cast(object *op, const char *params) {
+    command_cast_spell(op, params, 'c');
 }
 
 /**
@@ -75,12 +71,10 @@ int command_cast(object *op, char *params) {
  * player.
  * @param params
  * spell.
- * @return
- * 1 for success, 0 for failure.
  * @todo remove.
  */
-int command_prepare(object *op, char *params) {
-    return command_cast_spell(op, params, 'p');
+void command_prepare(object *op, const char *params) {
+    command_cast_spell(op, params, 'p');
 }
 
 /**
@@ -169,23 +163,23 @@ static void show_matching_spells(object *op, const char *params) {
  * spell name.
  * @param command
  * first letter of the spell type (c=cast, i=invoke, p=prepare).
- * @return
- * 0 if success, 1 for failure.
  */
-int command_cast_spell(object *op, char *params, char command) {
+void command_cast_spell(object *op, const char *params, char command) {
     int castnow = 0;
-    char *cp;
+    char *cp, cpy[MAX_BUF];
     object *spob;
+
+    strncpy(cpy, params, sizeof(cpy));
 
     if (command == 'i')
         castnow = 1;
 
-    if (*params != '\0') {
+    if (*cpy != '\0') {
         tag_t spellnumber = 0;
-        if ((spellnumber = atoi(params)) != 0)
+        if ((spellnumber = atoi(cpy)) != 0)
             spob = object_find_by_tag(op, spellnumber);
         else
-            spob = lookup_spell_by_name(op, params);
+            spob = lookup_spell_by_name(op, cpy);
 
         if (spob && spob->type == SPELL) {
             /* Now grab any extra data, if there is any.  Forward pass
@@ -193,14 +187,14 @@ int command_cast_spell(object *op, char *params, char command) {
              */
             if (spellnumber) {
                 /* if we passed a number, the options start at the second word */
-                cp = strchr(params, ' ');
+                cp = strchr(cpy, ' ');
                 if (cp) {
                     cp++;
                     if (!strncmp(cp, "of ", 3))
                         cp += 3;
                 }
-            } else if (strlen(params) > strlen(spob->name)) {
-                cp = params+strlen(spob->name);
+            } else if (strlen(cpy) > strlen(spob->name)) {
+                cp = cpy+strlen(spob->name);
                 *cp = 0;
                 cp++;
                 if (!strncmp(cp, "of ", 3))
@@ -212,7 +206,7 @@ int command_cast_spell(object *op, char *params, char command) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
                                      "You need the skill %s to cast %s!",
                                      spob->skill, spob->name);
-                return 1;
+                return;
             }
 
             /* Remove control of the golem */
@@ -243,7 +237,7 @@ int command_cast_spell(object *op, char *params, char command) {
                                      "You ready the spell %s%s%s",
                                      spob->name, required ? " which consumes for each invocation " : "", required ? required : "");
             }
-            return 0;
+            return;
         } /* else fall through to below and print spells */
     } /* params supplied */
 
@@ -252,8 +246,7 @@ int command_cast_spell(object *op, char *params, char command) {
      */
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                   "Cast what spell?  Choose one of:");
-    show_matching_spells(op, params);
-    return 1;
+    show_matching_spells(op, cpy);
 }
 
 /**************************************************************************/
@@ -378,13 +371,10 @@ void change_spell(object *op, char k) {
  * player.
  * @param params
  * arguments to the command.
- * @return
- * 0.
  */
-int command_rotateshoottype(object *op, char *params) {
+void command_rotateshoottype(object *op, const char *params) {
     if (*params == '\0')
         change_spell(op, '+');
     else
         change_spell(op, params[0]);
-    return 0;
 }

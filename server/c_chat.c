@@ -41,15 +41,11 @@
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_say(object *op, char *params) {
+void command_say(object *op, const char *params) {
     if (*params == '\0')
-        return 0;
+        return;
     monster_communicate(op, params);
-
-    return 0;
 }
 
 /**
@@ -58,18 +54,15 @@ int command_say(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_me(object *op, char *params) {
+void command_me(object *op, const char *params) {
     char buf[MAX_BUF];
 
     if (*params == '\0')
-        return 0;
+        return;
     snprintf(buf, sizeof(buf), "%s %s", op->name, params);
     ext_info_map(NDI_UNIQUE|NDI_BLUE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_ME,
                  buf);
-    return 0;
 }
 
 /**
@@ -78,10 +71,8 @@ int command_me(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_cointoss(object *op, char *params) {
+void command_cointoss(object *op, const char *params) {
     char buf[MAX_BUF];
     const char *result;
 
@@ -94,8 +85,6 @@ int command_cointoss(object *op, char *params) {
     snprintf(buf, sizeof(buf), "%s flips a coin.... %s!", op->name, result);
     ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
         buf);
-
-    return 0;
 }
 
 /** Results for the "orcknucle" game. */
@@ -125,10 +114,8 @@ static const char *const orcknuckle[7] = {
  * player who plays.
  * @param params
  * string sent by the player. Ignored.
- * @return
- * always 0.
  */
-int command_orcknuckle(object *op, char *params) {
+void command_orcknuckle(object *op, const char *params) {
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
     object *dice[DICE];
@@ -155,7 +142,7 @@ int command_orcknuckle(object *op, char *params) {
         if (number_dice < DICE) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
                                  "You need at least %d dice to play orcknuckle!", DICE);
-            return 0;
+            return;
         }
     } else {
         dice_count = 0;
@@ -183,8 +170,6 @@ int command_orcknuckle(object *op, char *params) {
                           "Oops, you lost a die!");
         }
     }
-
-    return 0;
 #undef DICE
 }
 
@@ -203,20 +188,18 @@ int command_orcknuckle(object *op, char *params) {
  * message subtype.
  * @param desc
  * 'chat' or 'shouts', will be appened after the player's name and before a :.
- * @return
- * 1.
  */
-static int command_tell_all(object *op, char *params, int pri, int color, int subtype, const char *desc) {
+static void command_tell_all(object *op, const char *params, int pri, int color, int subtype, const char *desc) {
     if (op->contr->no_shout == 1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You are no longer allowed to shout or chat.");
-        return 1;
+        return;
     }
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Shout/Chat what?");
-        return 1;
+        return;
     }
 
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|color, pri, NULL, MSG_TYPE_COMMUNICATION, subtype,
@@ -225,7 +208,6 @@ static int command_tell_all(object *op, char *params, int pri, int color, int su
 
     /* Lauwenmark : Here we handle the SHOUT global event */
     execute_global_event(EVENT_SHOUT, op, params, pri);
-    return 1;
 }
 
 /**
@@ -234,11 +216,9 @@ static int command_tell_all(object *op, char *params, int pri, int color, int su
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_shout(object *op, char *params) {
-    return command_tell_all(op, params, 1, NDI_RED, MSG_TYPE_COMMUNICATION_SHOUT, "shouts");
+void command_shout(object *op, const char *params) {
+    command_tell_all(op, params, 1, NDI_RED, MSG_TYPE_COMMUNICATION_SHOUT, "shouts");
 }
 
 /**
@@ -247,11 +227,9 @@ int command_shout(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_chat(object *op, char *params) {
-    return command_tell_all(op, params, 9, NDI_BLUE, MSG_TYPE_COMMUNICATION_CHAT, "chats");
+void command_chat(object *op, const char *params) {
+    command_tell_all(op, params, 9, NDI_BLUE, MSG_TYPE_COMMUNICATION_CHAT, "chats");
 }
 
 /**
@@ -263,11 +241,10 @@ int command_chat(object *op, char *params) {
  * who to tell, and message
  * @param adjust_listen
  * if non-zero, recipient can't ignore the message through 'listen' levels.
- * @return
- * 1.
  */
-static int do_tell(object *op, char *params, int adjust_listen) {
-    char buf[MAX_BUF], *name = NULL, *msg = NULL;
+static void do_tell(object *op, const char *params, int adjust_listen) {
+    char buf[MAX_BUF];
+    const char *name = NULL, *msg = NULL;
     player *pl;
     uint8 original_listen;
 
@@ -275,8 +252,8 @@ static int do_tell(object *op, char *params, int adjust_listen) {
         name = params;
         msg = strchr(name, ' ');
         if (msg) {
-            *(msg++) = 0;
-            if (*msg == 0)
+            msg++;
+            if ((*msg) == 0)
                 msg = NULL;
         }
     }
@@ -284,14 +261,14 @@ static int do_tell(object *op, char *params, int adjust_listen) {
     if (name == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Tell whom what?");
-        return 1;
+        return;
     }
 
     if (msg == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Tell %s what?",
                              name);
-        return 1;
+        return;
     }
 
     snprintf(buf, sizeof(buf), "%s tells you: %s", op->name, msg);
@@ -322,13 +299,12 @@ static int do_tell(object *op, char *params, int adjust_listen) {
                                  "You tell %s: %s",
                                  pl->ob->name, msg);
 
-            return 1;
+            return;
         }
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                   "No such player or ambiguous name.");
-    return 1;
 }
 
 /**
@@ -338,11 +314,9 @@ static int do_tell(object *op, char *params, int adjust_listen) {
  * player trying to tell something to someone.
  * @param params
  * who to tell, and message.
- * @return
- * 1.
  */
-int command_tell(object *op, char *params) {
-    return do_tell(op, params, 0);
+void command_tell(object *op, const char *params) {
+    do_tell(op, params, 0);
 }
 
 /**
@@ -352,11 +326,9 @@ int command_tell(object *op, char *params) {
  * player trying to tell something to someone.
  * @param params
  * who to tell, and message.
- * @return
- * 1.
  */
-int command_dmtell(object *op, char *params) {
-    return do_tell(op, params, 1);
+void command_dmtell(object *op, const char *params) {
+    do_tell(op, params, 1);
 }
 
 /**
@@ -371,19 +343,19 @@ int command_dmtell(object *op, char *params) {
  * @return
  * 1.
  */
-int command_reply(object *op, char *params) {
+void command_reply(object *op, const char *params) {
     player *pl;
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Reply what?");
-        return 1;
+        return;
     }
 
     if (op->contr->last_tell[0] == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You can't reply to nobody.");
-        return 1;
+        return;
     }
 
     /* Find player object of player to reply to and check if player still exists */
@@ -391,7 +363,7 @@ int command_reply(object *op, char *params) {
     if (pl == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You can't reply, this player left.");
-        return 1;
+        return;
     }
 
     /* Update last_tell value */
@@ -404,13 +376,12 @@ int command_reply(object *op, char *params) {
     if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You can't reply, this player left.");
-        return 1;
+        return;
     }
 
     draw_ext_info_format(NDI_UNIQUE|NDI_ORANGE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
                          "You tell to %s: %s",
                          pl->ob->name, params);
-    return 1;
 }
 
 /**
@@ -434,7 +405,7 @@ int command_reply(object *op, char *params) {
  * 0 for invalid emotion, 1 else.
  * @todo simplify function (indexed array, for instance).
  */
-static int basic_emote(object *op, char *params, int emotion) {
+static int basic_emote(object *op, const char *params, int emotion) {
     char buf[MAX_BUF], buf2[MAX_BUF], buf3[MAX_BUF];
     player *pl;
 
@@ -1024,11 +995,9 @@ static int basic_emote(object *op, char *params, int emotion) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_nod(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_NOD));
+void command_nod(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_NOD);
 }
 
 /**
@@ -1037,11 +1006,9 @@ int command_nod(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_dance(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_DANCE));
+void command_dance(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_DANCE);
 }
 
 /**
@@ -1050,11 +1017,9 @@ int command_dance(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_kiss(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_KISS));
+void command_kiss(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_KISS);
 }
 
 /**
@@ -1063,11 +1028,9 @@ int command_kiss(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_bounce(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_BOUNCE));
+void command_bounce(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_BOUNCE);
 }
 
 /**
@@ -1076,11 +1039,9 @@ int command_bounce(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_smile(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SMILE));
+void command_smile(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SMILE);
 }
 
 /**
@@ -1089,11 +1050,9 @@ int command_smile(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_cackle(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_CACKLE));
+void command_cackle(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_CACKLE);
 }
 
 /**
@@ -1102,11 +1061,9 @@ int command_cackle(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_laugh(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_LAUGH));
+void command_laugh(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_LAUGH);
 }
 
 /**
@@ -1115,11 +1072,9 @@ int command_laugh(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_giggle(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_GIGGLE));
+void command_giggle(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_GIGGLE);
 }
 
 /**
@@ -1128,11 +1083,9 @@ int command_giggle(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_shake(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SHAKE));
+void command_shake(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SHAKE);
 }
 
 /**
@@ -1141,11 +1094,9 @@ int command_shake(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_puke(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_PUKE));
+void command_puke(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_PUKE);
 }
 
 /**
@@ -1154,11 +1105,9 @@ int command_puke(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_growl(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_GROWL));
+void command_growl(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_GROWL);
 }
 
 /**
@@ -1167,11 +1116,9 @@ int command_growl(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_scream(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SCREAM));
+void command_scream(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SCREAM);
 }
 
 /**
@@ -1180,11 +1127,9 @@ int command_scream(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_sigh(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SIGH));
+void command_sigh(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SIGH);
 }
 
 /**
@@ -1193,11 +1138,9 @@ int command_sigh(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_sulk(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SULK));
+void command_sulk(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SULK);
 }
 
 /**
@@ -1206,11 +1149,9 @@ int command_sulk(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_hug(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_HUG));
+void command_hug(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_HUG);
 }
 
 /**
@@ -1219,11 +1160,9 @@ int command_hug(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_cry(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_CRY));
+void command_cry(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_CRY);
 }
 
 /**
@@ -1232,11 +1171,9 @@ int command_cry(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_poke(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_POKE));
+void command_poke(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_POKE);
 }
 
 /**
@@ -1245,11 +1182,9 @@ int command_poke(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_accuse(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_ACCUSE));
+void command_accuse(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_ACCUSE);
 }
 
 /**
@@ -1258,11 +1193,9 @@ int command_accuse(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_grin(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_GRIN));
+void command_grin(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_GRIN);
 }
 
 /**
@@ -1271,11 +1204,9 @@ int command_grin(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_bow(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_BOW));
+void command_bow(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_BOW);
 }
 
 /**
@@ -1284,11 +1215,9 @@ int command_bow(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_clap(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_CLAP));
+void command_clap(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_CLAP);
 }
 
 /**
@@ -1297,11 +1226,9 @@ int command_clap(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_blush(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_BLUSH));
+void command_blush(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_BLUSH);
 }
 
 /**
@@ -1310,11 +1237,9 @@ int command_blush(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_burp(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_BURP));
+void command_burp(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_BURP);
 }
 
 /**
@@ -1323,11 +1248,9 @@ int command_burp(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_chuckle(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_CHUCKLE));
+void command_chuckle(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_CHUCKLE);
 }
 
 /**
@@ -1336,11 +1259,9 @@ int command_chuckle(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_cough(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_COUGH));
+void command_cough(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_COUGH);
 }
 
 /**
@@ -1349,11 +1270,9 @@ int command_cough(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_flip(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_FLIP));
+void command_flip(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_FLIP);
 }
 
 /**
@@ -1362,11 +1281,9 @@ int command_flip(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_frown(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_FROWN));
+void command_frown(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_FROWN);
 }
 
 /**
@@ -1375,11 +1292,9 @@ int command_frown(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_gasp(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_GASP));
+void command_gasp(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_GASP);
 }
 
 /**
@@ -1388,11 +1303,9 @@ int command_gasp(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_glare(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_GLARE));
+void command_glare(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_GLARE);
 }
 
 /**
@@ -1401,11 +1314,9 @@ int command_glare(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_groan(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_GROAN));
+void command_groan(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_GROAN);
 }
 
 /**
@@ -1414,11 +1325,9 @@ int command_groan(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_hiccup(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_HICCUP));
+void command_hiccup(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_HICCUP);
 }
 
 /**
@@ -1427,11 +1336,9 @@ int command_hiccup(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_lick(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_LICK));
+void command_lick(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_LICK);
 }
 
 /**
@@ -1440,11 +1347,9 @@ int command_lick(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_pout(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_POUT));
+void command_pout(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_POUT);
 }
 
 /**
@@ -1453,11 +1358,9 @@ int command_pout(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_shiver(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SHIVER));
+void command_shiver(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SHIVER);
 }
 
 /**
@@ -1466,11 +1369,9 @@ int command_shiver(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_shrug(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SHRUG));
+void command_shrug(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SHRUG);
 }
 
 /**
@@ -1479,11 +1380,9 @@ int command_shrug(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_slap(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SLAP));
+void command_slap(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SLAP);
 }
 
 /**
@@ -1492,11 +1391,9 @@ int command_slap(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_smirk(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SMIRK));
+void command_smirk(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SMIRK);
 }
 
 /**
@@ -1505,11 +1402,9 @@ int command_smirk(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_snap(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SNAP));
+void command_snap(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SNAP);
 }
 
 /**
@@ -1518,11 +1413,9 @@ int command_snap(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_sneeze(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SNEEZE));
+void command_sneeze(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SNEEZE);
 }
 
 /**
@@ -1531,11 +1424,9 @@ int command_sneeze(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_snicker(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SNICKER));
+void command_snicker(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SNICKER);
 }
 
 /**
@@ -1544,11 +1435,9 @@ int command_snicker(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_sniff(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SNIFF));
+void command_sniff(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SNIFF);
 }
 
 /**
@@ -1557,11 +1446,9 @@ int command_sniff(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_snore(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SNORE));
+void command_snore(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SNORE);
 }
 
 /**
@@ -1570,11 +1457,9 @@ int command_snore(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_spit(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_SPIT));
+void command_spit(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_SPIT);
 }
 
 /**
@@ -1583,11 +1468,9 @@ int command_spit(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_strut(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_STRUT));
+void command_strut(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_STRUT);
 }
 
 /**
@@ -1596,11 +1479,9 @@ int command_strut(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_thank(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_THANK));
+void command_thank(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_THANK);
 }
 
 /**
@@ -1609,11 +1490,9 @@ int command_thank(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_twiddle(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_TWIDDLE));
+void command_twiddle(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_TWIDDLE);
 }
 
 /**
@@ -1622,11 +1501,9 @@ int command_twiddle(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_wave(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_WAVE));
+void command_wave(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_WAVE);
 }
 
 /**
@@ -1635,11 +1512,9 @@ int command_wave(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_whistle(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_WHISTLE));
+void command_whistle(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_WHISTLE);
 }
 
 /**
@@ -1648,11 +1523,9 @@ int command_whistle(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_wink(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_WINK));
+void command_wink(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_WINK);
 }
 
 /**
@@ -1661,11 +1534,9 @@ int command_wink(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_yawn(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_YAWN));
+void command_yawn(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_YAWN);
 }
 
 /**
@@ -1674,11 +1545,9 @@ int command_yawn(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_beg(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_BEG));
+void command_beg(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_BEG);
 }
 
 /**
@@ -1687,11 +1556,9 @@ int command_beg(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_bleed(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_BLEED));
+void command_bleed(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_BLEED);
 }
 
 /**
@@ -1700,11 +1567,9 @@ int command_bleed(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_cringe(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_CRINGE));
+void command_cringe(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_CRINGE);
 }
 
 /**
@@ -1713,9 +1578,7 @@ int command_cringe(object *op, char *params) {
  * player.
  * @param params
  * message.
- * @return
- * 0.
  */
-int command_think(object *op, char *params) {
-    return(basic_emote(op, params, EMOTE_THINK));
+void command_think(object *op, const char *params) {
+    basic_emote(op, params, EMOTE_THINK);
 }

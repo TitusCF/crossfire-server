@@ -587,7 +587,8 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
         break;
 
     case SK_HARVESTING:
-        success = do_harvest(op, dir, skill);
+        do_harvest(op, dir, skill);
+        success = 0;
         break;
 
     default: {

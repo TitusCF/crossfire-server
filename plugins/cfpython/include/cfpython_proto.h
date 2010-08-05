@@ -1,7 +1,7 @@
 /* cfpython.c */
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr);
 CF_PLUGIN void *getPluginProperty(int *type, ...);
-CF_PLUGIN int cfpython_runPluginCommand(object *op, char *params);
+CF_PLUGIN void cfpython_runPluginCommand(object *op, const char *params);
 CF_PLUGIN int postInitPlugin(void);
 CF_PLUGIN void *cfpython_globalEventListener(int *type, ...);
 CF_PLUGIN void *eventListener(int *type, ...);

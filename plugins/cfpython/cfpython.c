@@ -1438,16 +1438,13 @@ CF_PLUGIN void *getPluginProperty(int *type, ...) {
     return NULL;
 }
 
-CF_PLUGIN int cfpython_runPluginCommand(object *op, char *params) {
+CF_PLUGIN void cfpython_runPluginCommand(object *op, const char *params) {
     char buf[1024], path[1024];
     CFPContext *context;
-    static int rv = 0;
-
-    rv = 0;
 
     if (current_command < 0) {
         cf_log(llevError, "Illegal call of cfpython_runPluginCommand, call find_plugin_command first.\n");
-        return 1;
+        return;
     }
     snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].script, path, sizeof(path)));
 
@@ -1468,14 +1465,12 @@ CF_PLUGIN int cfpython_runPluginCommand(object *op, char *params) {
     current_command = -999;
     if (!do_script(context, 0)) {
         freeContext(context);
-        return rv;
+        return;
     }
 
     context = popContext();
-    rv = context->returnvalue;
     freeContext(context);
 /*    printf("Execution complete"); */
-    return rv;
 }
 
 CF_PLUGIN int postInitPlugin(void) {

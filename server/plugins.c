@@ -4302,11 +4302,11 @@ void *cfapi_object_say(int *type, ...) {
     va_end(args);
 
     if (op->type == PLAYER) {
-        *rint = command_say(op, msg == NULL ? empty  : msg);
+        command_say(op, msg == NULL ? empty  : msg);
     } else {
         monster_npc_say(op, msg);
-        *rint = 0;
     }
+    *rint = 0;
     *type = CFAPI_INT;
     return NULL;
 }

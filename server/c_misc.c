@@ -54,7 +54,7 @@
  * @param search
  * optional substring to search for.
  */
-void map_info(object *op, char *search) {
+void map_info(object *op, const char *search) {
     mapstruct *m;
     char map_path[MAX_BUF];
     long sec = seconds();
@@ -93,13 +93,13 @@ void map_info(object *op, char *search) {
  * @param params
  * optional language code ("en", "fr", etc.)
  */
-int command_language(object *op, char *params) {
+void command_language(object *op, const char *params) {
     const char *language_str;
     int language = -1;
     int i;
 
     if (!op->contr)
-        return 0;
+        return;
 
     language_str = language_names[get_language(op)];
 
@@ -116,7 +116,7 @@ int command_language(object *op, char *params) {
                                  language_codes[i],
                                  language_names[i]);
         }
-        return 0;
+        return;
     }
 
     for (i = 0; i < NUM_LANGUAGES; i++) {
@@ -129,7 +129,7 @@ int command_language(object *op, char *params) {
     if (language == -1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       "Unknown language");
-        return 0;
+        return;
     }
     op->contr->language = language;
     language_str = language_names[language];
@@ -137,7 +137,6 @@ int command_language(object *op, char *params) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                          i18n_translate(language, I18N_MSG_CMISC_006),
                          language_str);
-    return 0;
 }
 
 /**
@@ -152,10 +151,8 @@ int command_language(object *op, char *params) {
  * player to display body info for.
  * @param params
  * unused
- * @retval
- * 1.
  */
-int command_body(object *op, char *params) {
+void command_body(object *op, const char *params) {
     int i;
 
     /* Too hard to try and make a header that lines everything up, so just
@@ -186,8 +183,6 @@ int command_body(object *op, char *params) {
     if (!QUERY_FLAG(op, FLAG_USE_WEAPON))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_013));
-
-    return 1;
 }
 
 /**
@@ -197,12 +192,9 @@ int command_body(object *op, char *params) {
  * player requesting the motd.
  * @param params
  * unused.
- * @retval
- * 1.
  */
-int command_motd(object *op, char *params) {
+void command_motd(object *op, const char *params) {
     display_motd(op);
-    return 1;
 }
 
 /**
@@ -212,12 +204,9 @@ int command_motd(object *op, char *params) {
  * player requesting the rules.
  * @param params
  * unused.
- * @retval
- * 1.
  */
-int command_rules(object *op, char *params) {
+void command_rules(object *op, const char *params) {
     send_rules(op);
-    return 1;
 }
 
 /**
@@ -227,12 +216,9 @@ int command_rules(object *op, char *params) {
  * player requesting the news.
  * @param params
  * unused.
- * @retval
- * 1.
  */
-int command_news(object *op, char *params) {
+void command_news(object *op, const char *params) {
     send_news(op);
-    return 1;
 }
 
 /**
@@ -431,9 +417,8 @@ void current_map_info(object *op) {
  * player checking.
  * @param parms
  * ignored.
- * @retval 1
  */
-int command_malloc_verify(object *op, char *parms) {
+void command_malloc_verify(object *op, char *parms) {
     extern int malloc_verify(void);
 
     if (!malloc_verify())
@@ -456,10 +441,8 @@ int command_malloc_verify(object *op, char *parms) {
  * player requesting information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_whereabouts(object *op, char *params) {
+void command_whereabouts(object *op, const char *params) {
     region *reg;
     player *pl;
 
@@ -494,7 +477,6 @@ int command_whereabouts(object *op, char *params) {
                                  i18n_translate(get_language(op), I18N_MSG_CMISC_050),
                                  reg->counter, get_region_longname(reg));
         }
-    return 1;
 }
 
 /** Utility structure for the 'who' command. */
@@ -598,16 +580,12 @@ void list_players(object *op, region *reg, partylist *party) {
  * player requesting the information.
  * @param params
  * optional region to limit the information to.
- * @return
- * 1.
  */
-int command_who(object *op, char *params) {
+void command_who(object *op, const char *params) {
     region *reg;
 
     reg = get_region_from_string(params);
     list_players(op, reg, NULL);
-
-    return 1;
 }
 
 /**
@@ -751,10 +729,8 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
  * player to toggle status for.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_afk(object *op, char *params) {
+void command_afk(object *op, const char *params) {
     if QUERY_FLAG(op, FLAG_AFK) {
         CLEAR_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
@@ -764,7 +740,6 @@ int command_afk(object *op, char *params) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_057));
     }
-    return 1;
 }
 
 /**
@@ -774,12 +749,9 @@ int command_afk(object *op, char *params) {
  * player requesting information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_malloc(object *op, char *params) {
+void command_malloc(object *op, const char *params) {
     malloc_info(op);
-    return 1;
 }
 
 /**
@@ -789,12 +761,9 @@ int command_malloc(object *op, char *params) {
  * player requesting the information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_mapinfo(object *op, char *params) {
+void command_mapinfo(object *op, const char *params) {
     current_map_info(op);
-    return 1;
 }
 
 /**
@@ -804,12 +773,9 @@ int command_mapinfo(object *op, char *params) {
  * player requesting the information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_whereami(object *op, char *params) {
+void command_whereami(object *op, const char *params) {
     current_region_info(op);
-    return 1;
 }
 
 /**
@@ -820,9 +786,8 @@ int command_whereami(object *op, char *params) {
  * @param params
  * region to restrict to.
  */
-int command_maps(object *op, char *params) {
+void command_maps(object *op, const char *params) {
     map_info(op, params);
-    return 1;
 }
 
 /**
@@ -832,10 +797,8 @@ int command_maps(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_strings(object *op, char *params) {
+void command_strings(object *op, const char *params) {
     char stats[HUGE_BUF];
 
     ss_dump_statistics(stats, sizeof(stats));
@@ -845,7 +808,6 @@ int command_strings(object *op, char *params) {
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
                   ss_dump_table(SS_DUMP_TOTALS, stats, sizeof(stats)));
-    return 1;
 }
 
 /**
@@ -855,12 +817,9 @@ int command_strings(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_time(object *op, char *params) {
+void command_time(object *op, const char *params) {
     time_info(op);
-    return 1;
 }
 
 /**
@@ -870,12 +829,9 @@ int command_time(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_archs(object *op, char *params) {
+void command_archs(object *op, const char *params) {
     arch_info(op);
-    return 1;
 }
 
 /**
@@ -885,12 +841,9 @@ int command_archs(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_hiscore(object *op, char *params) {
+void command_hiscore(object *op, const char *params) {
     hiscore_display(op, op == NULL ? 9999 : 50, params);
-    return 1;
 }
 
 /**
@@ -900,28 +853,25 @@ int command_hiscore(object *op, char *params) {
  * player asking for information.
  * @param params
  * new debug value.
- * @return
- * 1.
  */
-int command_debug(object *op, char *params) {
+void command_debug(object *op, const char *params) {
     int i;
 
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_092),
                              settings.debug);
-        return 1;
+        return;
     }
     if (op != NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_093));
-        return 1;
+        return;
     }
     settings.debug = (enum LogLevel)FABS(i);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_094),
                          i);
-    return 1;
 }
 
 
@@ -932,14 +882,12 @@ int command_debug(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_wizpass(object *op, char *params) {
+void command_wizpass(object *op, const char *params) {
     int i;
 
     if (!op)
-        return 0;
+        return;
 
     if (*params == '\0')
         i = (QUERY_FLAG(op, FLAG_WIZPASS)) ? 0 : 1;
@@ -955,7 +903,6 @@ int command_wizpass(object *op, char *params) {
                       i18n_translate(get_language(op), I18N_MSG_CMISC_096));
         CLEAR_FLAG(op, FLAG_WIZPASS);
     }
-    return 0;
 }
 
 /**
@@ -965,14 +912,12 @@ int command_wizpass(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_wizcast(object *op, char *params) {
+void command_wizcast(object *op, const char *params) {
     int i;
 
     if (!op)
-        return 0;
+        return;
 
     if (*params == '\0')
         i = (QUERY_FLAG(op, FLAG_WIZCAST)) ? 0 : 1;
@@ -988,7 +933,6 @@ int command_wizcast(object *op, char *params) {
                       i18n_translate(get_language(op), I18N_MSG_CMISC_098));
         CLEAR_FLAG(op, FLAG_WIZCAST);
     }
-    return 0;
 }
 
 /**
@@ -998,12 +942,9 @@ int command_wizcast(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_dumpallobjects(object *op, char *params) {
+void command_dumpallobjects(object *op, const char *params) {
     object_dump_all();
-    return 0;
 }
 
 /**
@@ -1013,12 +954,9 @@ int command_dumpallobjects(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_dumpfriendlyobjects(object *op, char *params) {
+void command_dumpfriendlyobjects(object *op, const char *params) {
     dump_friendly_objects();
-    return 0;
 }
 
 /**
@@ -1028,12 +966,9 @@ int command_dumpfriendlyobjects(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_dumpallarchetypes(object *op, char *params) {
+void command_dumpallarchetypes(object *op, const char *params) {
     dump_all_archetypes();
-    return 0;
 }
 
 /**
@@ -1043,12 +978,9 @@ int command_dumpallarchetypes(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_ssdumptable(object *op, char *params) {
+void command_ssdumptable(object *op, const char *params) {
     ss_dump_table(SS_DUMP_TABLE, NULL, 0);
-    return 0;
 }
 
 /**
@@ -1058,13 +990,10 @@ int command_ssdumptable(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_dumpmap(object *op, char *params) {
+void command_dumpmap(object *op, const char *params) {
     if (op)
         dump_map(op->map);
-    return 0;
 }
 
 /**
@@ -1074,12 +1003,9 @@ int command_dumpmap(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_dumpallmaps(object *op, char *params) {
+void command_dumpallmaps(object *op, const char *params) {
     dump_all_maps();
-    return 0;
 }
 
 /**
@@ -1089,13 +1015,10 @@ int command_dumpallmaps(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_printlos(object *op, char *params) {
+void command_printlos(object *op, const char *params) {
     if (op)
         print_los(op);
-    return 0;
 }
 
 
@@ -1106,12 +1029,9 @@ int command_printlos(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_version(object *op, char *params) {
+void command_version(object *op, const char *params) {
     version(op);
-    return 0;
 }
 
 /**
@@ -1121,28 +1041,25 @@ int command_version(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_listen(object *op, char *params) {
+void command_listen(object *op, const char *params) {
     int i;
 
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_105),
                              op->contr->listening);
-        return 1;
+        return;
     }
     if (i < 0) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_106));
-        return 1;
+        return;
     }
     op->contr->listening = (char)i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_107),
                          i);
-    return 1;
 }
 
 /**
@@ -1155,16 +1072,14 @@ int command_listen(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_statistics(object *pl, char *params) {
+void command_statistics(object *pl, const char *params) {
     char buf[MAX_BUF];
     uint32 hours, minutes;
     uint64 seconds; /* 64 bit to prevent overflows an intermediate results */
 
     if (!pl->contr)
-        return 1;
+        return;
     strcpy(buf, i18n_translate(get_language(pl), I18N_MSG_CMISC_108));
     strcat(buf, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
@@ -1224,7 +1139,6 @@ int command_statistics(object *pl, char *params) {
 
 
     /* Can't think of anything else to print right now */
-    return 0;
 }
 
 /**
@@ -1234,13 +1148,10 @@ int command_statistics(object *pl, char *params) {
  * player asking to be fixed.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_fix_me(object *op, char *params) {
+void command_fix_me(object *op, const char *params) {
     object_sum_weight(op);
     fix_object(op);
-    return 1;
 }
 
 /**
@@ -1250,10 +1161,8 @@ int command_fix_me(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_players(object *op, char *params) {
+void command_players(object *op, const char *params) {
     char buf[MAX_BUF];
     char *t;
     DIR *dir;
@@ -1292,7 +1201,6 @@ int command_players(object *op, char *params) {
         }
     }
     closedir(dir);
-    return 0;
 }
 
 /**
@@ -1302,10 +1210,8 @@ int command_players(object *op, char *params) {
  * player asking for change.
  * @param params
  * new mode.
- * @return
- * 1.
  */
-int command_applymode(object *op, char *params) {
+void command_applymode(object *op, const char *params) {
     unapplymode unapply = op->contr->unapply;
     static const char *const types[] = {
         "nochoice",
@@ -1317,7 +1223,7 @@ int command_applymode(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_132),
                              types[op->contr->unapply]);
-        return 1;
+        return;
     }
 
     if (!strcmp(params, "nochoice"))
@@ -1330,14 +1236,12 @@ int command_applymode(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_134),
                              params);
-        return 0;
+        return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_135),
                          (unapply == op->contr->unapply ? "" : " now"),
                          types[op->contr->unapply]);
-
-    return 1;
 }
 
 /**
@@ -1347,10 +1251,8 @@ int command_applymode(object *op, char *params) {
  * player asking for change.
  * @param params
  * new mode.
- * @return
- * 1.
  */
-int command_bowmode(object *op, char *params) {
+void command_bowmode(object *op, const char *params) {
     bowtype_t oldtype = op->contr->bowtype;
     static const char *const types[] = {
         "normal",
@@ -1373,7 +1275,7 @@ int command_bowmode(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_136),
                              types[op->contr->bowtype]);
-        return 1;
+        return;
     }
 
     for (i = 0, found = 0; i <= bow_bestarrow; i++) {
@@ -1394,13 +1296,13 @@ int command_bowmode(object *op, char *params) {
                 strcat(buf, ".");
         }
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG, buf);
-        return 0;
+        return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_137),
                          (oldtype == op->contr->bowtype ? "" : "now"),
                          types[op->contr->bowtype]);
-    return 1;
+    return;
 }
 
 /**
@@ -1410,10 +1312,8 @@ int command_bowmode(object *op, char *params) {
  * player asking for change.
  * @param params
  * new mode.
- * @return
- * 1.
  */
-int command_unarmed_skill(object *op, char *params) {
+void command_unarmed_skill(object *op, const char *params) {
     object *skill;
     size_t i;
 
@@ -1421,7 +1321,7 @@ int command_unarmed_skill(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              "unarmed skill is set to %s",
                              op->contr->unarmed_skill ? op->contr->unarmed_skill: "nothing");
-        return 1;
+        return;
     }
 
     /* find_skill_by_name() will ready any skill tools - which
@@ -1434,7 +1334,7 @@ int command_unarmed_skill(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "You do not know any such skill called %s",
                              params);
-        return 1;
+        return;
     }
     for (i = 0; i < sizeof(unarmed_skills); i++)
         if (skill->subtype == unarmed_skills[i])
@@ -1443,7 +1343,7 @@ int command_unarmed_skill(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "%s is not an unarmed skill!",
                              skill->name);
-        return 1;
+        return;
 
     }
 
@@ -1458,7 +1358,6 @@ int command_unarmed_skill(object *op, char *params) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          "unarmed skill is now set to %s",
                          op->contr->unarmed_skill);
-    return 1;
 }
 
 
@@ -1469,10 +1368,8 @@ int command_unarmed_skill(object *op, char *params) {
  * player asking for change.
  * @param params
  * new mode.
- * @return
- * 1.
  */
-int command_petmode(object *op, char *params) {
+void command_petmode(object *op, const char *params) {
     petmode_t oldtype = op->contr->petmode;
     static const char *const types[] = {
         "normal",
@@ -1485,7 +1382,7 @@ int command_petmode(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_138),
                              types[op->contr->petmode]);
-        return 1;
+        return;
     }
 
     if (!strcmp(params, "normal"))
@@ -1500,13 +1397,12 @@ int command_petmode(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_139),
                              params);
-        return 0;
+        return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_140),
                          (oldtype == op->contr->petmode ? "" : "now"),
                          types[op->contr->petmode]);
-    return 1;
 }
 
 /**
@@ -1516,10 +1412,8 @@ int command_petmode(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_showpets(object *op, char *params) {
+void command_showpets(object *op, const char *params) {
     objectlink *obl, *next;
     int counter = 0, target = 0;
     int have_shown_pet = 0;
@@ -1581,7 +1475,6 @@ int command_showpets(object *op, char *params) {
     else if (target != 0 && have_shown_pet == 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_164));
-    return 0;
 }
 
 /**
@@ -1591,10 +1484,8 @@ int command_showpets(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_usekeys(object *op, char *params) {
+void command_usekeys(object *op, const char *params) {
     usekeytype oldtype = op->contr->usekeys;
     static const char *const types[] = {
         "inventory",
@@ -1606,7 +1497,7 @@ int command_usekeys(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_165),
                              types[op->contr->usekeys]);
-        return 1;
+        return;
     }
 
     if (!strcmp(params, "inventory"))
@@ -1619,14 +1510,12 @@ int command_usekeys(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_166),
                              params);
-        return 0;
+        return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_167),
                          (oldtype == op->contr->usekeys ? "" : "now"),
                          types[op->contr->usekeys]);
-
-    return 1;
 }
 
 /**
@@ -1636,13 +1525,11 @@ int command_usekeys(object *op, char *params) {
  * player asking for information.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_resistances(object *op, char *params) {
+void command_resistances(object *op, const char *params) {
     int i;
     if (!op)
-        return 0;
+        return;
 
     for (i = 0; i < NROFATTACKS; i++) {
         if (i == ATNR_INTERNAL)
@@ -1672,8 +1559,6 @@ int command_resistances(object *op, char *params) {
             }
         }
     }
-
-    return 0;
 }
 
 /**
@@ -1792,10 +1677,8 @@ static void show_commands(object *op, int what) {
  * player asking for information.
  * @param params
  * what kind of help to ask for.
- * @return
- * 0.
  */
-int command_help(object *op, char *params) {
+void command_help(object *op, const char *params) {
     struct stat st;
     FILE *fp;
     char filename[MAX_BUF], line[MAX_BUF];
@@ -1811,7 +1694,7 @@ int command_help(object *op, char *params) {
         snprintf(filename, sizeof(filename), "%s/def_help", settings.datadir);
         if ((fp = fopen(filename, "r")) == NULL) {
             LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
-            return 0;
+            return;
         }
         while (fgets(line, MAX_BUF, fp)) {
             line[MAX_BUF-1] = '\0';
@@ -1821,7 +1704,7 @@ int command_help(object *op, char *params) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
         }
         fclose(fp);
-        return 0;
+        return;
     }
 
     /*
@@ -1832,7 +1715,7 @@ int command_help(object *op, char *params) {
         help_topics(op, 0);
         if (QUERY_FLAG(op, FLAG_WIZ))
             help_topics(op, 1);
-        return 0;
+        return;
     }
 
     /*
@@ -1846,7 +1729,7 @@ int command_help(object *op, char *params) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n");
             show_commands(op, 1);
         }
-        return 0;
+        return;
     }
 
     /*
@@ -1856,7 +1739,7 @@ int command_help(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_178),
                              params);
-        return 0;
+        return;
     }
 
     snprintf(filename, sizeof(filename), "%s/mischelp/%s.%s", settings.datadir, params, language);
@@ -1879,7 +1762,7 @@ int command_help(object *op, char *params) {
      */
     if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
-        return 0;
+        return;
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
@@ -1894,7 +1777,7 @@ int command_help(object *op, char *params) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
     }
     fclose(fp);
-    return 0;
+    return;
 
     /*
      * No_help -escape
@@ -1904,8 +1787,6 @@ nohelp:
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_180),
                          params);
-
-    return 0;
 }
 
 /**
@@ -1954,20 +1835,17 @@ int onoff_value(const char *line) {
  * player wanting to delete her character.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_quit(object *op, char *params) {
+void command_quit(object *op, const char *params) {
     if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_ADMIN_DM, "Can't quit when in DM mode.");
-        return 1;
+        return;
     }
 
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR,
                i18n_translate(get_language(op), I18N_MSG_CMISC_181));
 
     op->contr->state = ST_CONFIRM_QUIT;
-    return 1;
 }
 
 /**
@@ -1977,10 +1855,8 @@ int command_quit(object *op, char *params) {
  * player asking for change.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_sound(object *op, char *params) {
+void command_sound(object *op, const char *params) {
     if (!(op->contr->socket.sound&SND_MUTE)) {
         op->contr->socket.sound = op->contr->socket.sound|SND_MUTE;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
@@ -1990,7 +1866,7 @@ int command_sound(object *op, char *params) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_187));
     }
-    return 1;
+    return;
 }
 
 /**
@@ -2109,20 +1985,20 @@ void receive_player_password(object *op) {
  * @return
  * 1.
  */
-int command_title(object *op, char *params) {
+void command_title(object *op, const char *params) {
     char buf[MAX_BUF];
 
     if (settings.set_title == FALSE) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_197));
-        return 1;
+        return;
     }
 
     /* dragon players cannot change titles */
     if (is_dragon_pl(op)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_198));
-        return 1;
+        return;
     }
 
     if (*params == '\0') {
@@ -2131,7 +2007,7 @@ int command_title(object *op, char *params) {
         player_get_title(op->contr, tmp, sizeof(tmp));
         snprintf(buf, sizeof(buf), i18n_translate(get_language(op), I18N_MSG_CMISC_199), tmp);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG, buf);
-        return 1;
+        return;
     }
     if (strcmp(params, "clear") == 0 || strcmp(params, "default") == 0) {
         if (!player_has_own_title(op->contr))
@@ -2141,16 +2017,15 @@ int command_title(object *op, char *params) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                           i18n_translate(get_language(op), I18N_MSG_CMISC_202));
         player_set_own_title(op->contr, "");
-        return 1;
+        return;
     }
 
     if ((int)strlen(params) >= MAX_NAME) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_203));
-        return 1;
+        return;
     }
     player_set_own_title(op->contr, params);
-    return 1;
 }
 
 /**
@@ -2160,10 +2035,8 @@ int command_title(object *op, char *params) {
  * player.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_save(object *op, char *params) {
+void command_save(object *op, const char *params) {
     if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL)&P_NO_CLERIC) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_204));
@@ -2178,7 +2051,6 @@ int command_save(object *op, char *params) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                           i18n_translate(get_language(op), I18N_MSG_CMISC_207));
     }
-    return 1;
 }
 
 /**
@@ -2188,17 +2060,14 @@ int command_save(object *op, char *params) {
  * player.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_peaceful(object *op, char *params) {
+void command_peaceful(object *op, const char *params) {
     if ((op->contr->peaceful = !op->contr->peaceful))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_208));
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_209));
-    return 1;
 }
 
 /**
@@ -2208,24 +2077,21 @@ int command_peaceful(object *op, char *params) {
  * player.
  * @param params
  * new value.
- * @return
- * 1.
  */
-int command_wimpy(object *op, char *params) {
+void command_wimpy(object *op, const char *params) {
     int i;
 
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                              i18n_translate(get_language(op), I18N_MSG_CMISC_210),
                              op->run_away);
-        return 1;
+        return;
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_211),
                          i);
     op->run_away = i;
-    return 1;
 }
 
 /**
@@ -2235,10 +2101,8 @@ int command_wimpy(object *op, char *params) {
  * player.
  * @param params
  * brace status (on/off).
- * @return
- * 1.
  */
-int command_brace(object *op, char *params) {
+void command_brace(object *op, const char *params) {
     if (*params == '\0')
         op->contr->braced = !op->contr->braced;
     else
@@ -2252,8 +2116,6 @@ int command_brace(object *op, char *params) {
                       i18n_translate(get_language(op), I18N_MSG_CMISC_213));
 
     fix_object(op);
-
-    return 0;
 }
 
 /**
@@ -2263,10 +2125,8 @@ int command_brace(object *op, char *params) {
  * player.
  * @param params
  * unused.
- * @return
- * 0.
  */
-int command_kill_pets(object *op, char *params) {
+void command_kill_pets(object *op, const char *params) {
     objectlink *obl, *next;
     int counter = 0, removecount = 0;
 
@@ -2296,7 +2156,6 @@ int command_kill_pets(object *op, char *params) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                           i18n_translate(get_language(op), I18N_MSG_CMISC_216));
     }
-    return 0;
 }
 
 /**
@@ -2306,14 +2165,11 @@ int command_kill_pets(object *op, char *params) {
  * player.
  * @param params
  * unused.
- * @return
- * 1.
  */
-int command_passwd(object *pl, char *params) {
+void command_passwd(object *pl, const char *params) {
     send_query(&pl->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(pl), I18N_MSG_CMISC_217));
 
     pl->contr->state = ST_CHANGE_PASSWORD_OLD;
-    return 1;
 }
 
 /**
@@ -2324,10 +2180,8 @@ int command_passwd(object *pl, char *params) {
  * direction.
  * @param skill
  * skill being used.
- * @return
- * 0
  */
-int do_harvest(object *pl, int dir, object *skill) {
+void do_harvest(object *pl, int dir, object *skill) {
     sint16 x, y;
     int count = 0, proba; /* Probability to get the item, 100 based. */
     int level, exp;
@@ -2342,18 +2196,18 @@ int do_harvest(object *pl, int dir, object *skill) {
     map = pl->map;
 
     if (!pl->type == PLAYER)
-        return 0;
+        return;
 
     if (!map)
-        return 0;
+        return;
 
     if (get_map_flags(map, &map, x, y, &x, &y)&P_OUT_OF_MAP) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", skill->slaying);
-        return 0;
+        return;
     }
 
     if (!pl->chosen_skill || pl->chosen_skill->skill != skill->skill)
-        return 0;
+        return;
 
     trace = object_get_value(pl->chosen_skill, "harvest_race");
     ttool = object_get_value(pl->chosen_skill, "harvest_tool");
@@ -2361,7 +2215,7 @@ int do_harvest(object *pl, int dir, object *skill) {
     if (!trace || strcmp(trace, "") == 0 || !ttool || strcmp(ttool, "") == 0 || !tspeed || strcmp(tspeed, "") == 0) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", skill->slaying);
         LOG(llevError, "do_harvest: tool %s without harvest_[race|tool|speed]\n", pl->chosen_skill->name);
-        return 0;
+        return;
     }
 
     item = GET_MAP_OB(map, x, y);
@@ -2384,7 +2238,7 @@ int do_harvest(object *pl, int dir, object *skill) {
     }
     if (count == 0) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", skill->slaying);
-        return 0;
+        return;
     }
 
     inv = found[rndm(0, count-1)];
@@ -2404,7 +2258,7 @@ int do_harvest(object *pl, int dir, object *skill) {
     /* Now we found something to harvest, randomly try to get it. */
     if (level > skill->level+10) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", skill->slaying);
-        return 0;
+        return;
     }
 
     if (level >= skill->level)
@@ -2417,7 +2271,7 @@ int do_harvest(object *pl, int dir, object *skill) {
 
     if (proba <= random_roll(0, 100, pl, 1)) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", skill->slaying);
-        return 0;
+        return;
     }
 
     /* Ok, got it. */
@@ -2430,7 +2284,7 @@ int do_harvest(object *pl, int dir, object *skill) {
             /* Better luck next time...*/
             object_remove(item);
             draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", skill->slaying);
-            return 0;
+            return;
         }
         object_insert_in_map_at(item, pl->map, NULL, 0, pl->x+freearr_x[spot], pl->y+freearr_y[spot]);
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s a %s!", skill->slaying, item->name);
@@ -2442,5 +2296,5 @@ int do_harvest(object *pl, int dir, object *skill) {
     /* Get exp */
     change_exp(pl, exp, skill->name, SK_EXP_ADD_SKILL);
 
-    return 0;
+    return;
 }

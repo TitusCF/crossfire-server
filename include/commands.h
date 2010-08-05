@@ -58,11 +58,8 @@
  * @param params
  * the command parameters; empty string if no commands are given; leading and
  * trailing spaces have been removed
- * @return
- * 0 if invalid command, else actual command's return value (which may be
- * zero).
  */
-typedef int (*command_function)(object *op, char *params);
+typedef void (*command_function)(object *op, const char *params);
 
 /** Represents one command. */
 typedef struct {

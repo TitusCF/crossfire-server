@@ -109,16 +109,14 @@ static object *find_best_object_match(object *pl, const char *params) {
  * player.
  * @param params
  * skill to use, and optional parameters.
- * @return
- * whether skill was used or not.
  */
-int command_uskill(object *pl, char *params) {
+void command_uskill(object *pl, const char *params) {
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: use_skill <skill name>");
-        return 0;
+        return;
     }
-    return use_skill(pl, params);
+    use_skill(pl, params);
 }
 
 /**
@@ -128,16 +126,14 @@ int command_uskill(object *pl, char *params) {
  * player.
  * @param params
  * skill name.
- * @return
- * whether skill was readied or not.
  */
-int command_rskill(object *pl, char *params) {
+void command_rskill(object *pl, const char *params) {
     object *skill;
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: ready_skill <skill name>");
-        return 0;
+        return;
     }
     skill = find_skill_by_name(pl, params);
 
@@ -145,9 +141,9 @@ int command_rskill(object *pl, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
                              "You have no knowledge of the skill %s",
                              params);
-        return 0;
+        return;
     }
-    return change_skill(pl, skill, 0);
+    change_skill(pl, skill, 0);
 }
 
 
@@ -162,11 +158,9 @@ int command_rskill(object *pl, char *params) {
  * player.
  * @param params
  * unused.
- * @return
- * whether skill was used or not.
  */
-int command_search(object *op, char *params) {
-    return use_skill(op, skill_names[SK_FIND_TRAPS]);
+void command_search(object *op, const char *params) {
+    use_skill(op, skill_names[SK_FIND_TRAPS]);
 }
 
 /**
@@ -176,11 +170,9 @@ int command_search(object *op, char *params) {
  * player.
  * @param params
  * unused.
- * @return
- * whether skill was used or not.
  */
-int command_disarm(object *op, char *params) {
-    return use_skill(op, skill_names[SK_DISARM_TRAPS]);
+void command_disarm(object *op, const char *params) {
+    use_skill(op, skill_names[SK_DISARM_TRAPS]);
 }
 
 /**
@@ -193,19 +185,18 @@ int command_disarm(object *op, char *params) {
  * player.
  * @param params
  * what to throw.
- * @return
- * whether skill was used or not.
  */
-int command_throw(object *op, char *params) {
+void command_throw(object *op, const char *params) {
     object *skop;
 
     skop = find_skill_by_name(op, skill_names[SK_THROWING]);
-    if (skop)
-        return do_skill(op, op, skop, op->facing, *params == '\0' ? NULL : params);
+    if (skop) {
+        do_skill(op, op, skop, op->facing, *params == '\0' ? NULL : params);
+        return;
+    }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
                   "You have no knowledge of the skill throwing.");
-    return 0;
 }
 
 /**
@@ -215,17 +206,15 @@ int command_throw(object *op, char *params) {
  * player.
  * @param params
  * what to apply.
- * @return
- * whether skill was used or not.
  */
-int command_apply(object *op, char *params) {
+void command_apply(object *op, const char *params) {
     int aflag = 0;
     object *inv = op->inv;
     object *item;
 
     if (*params == '\0') {
         apply_by_living_below(op);
-        return 0;
+        return;
     }
 
     while (*params == ' ')
@@ -260,7 +249,6 @@ int command_apply(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Could not find any match to the %s.",
                              params);
-    return 0;
 }
 
 /**
@@ -597,10 +585,8 @@ void pick_up(object *op, object *alt) {
  * player who issued the command.
  * @param params
  * string to match against the item name.
- * @return
- * 0.
  */
-int command_take(object *op, char *params) {
+void command_take(object *op, const char *params) {
     object *tmp;
     int ival;
     int missed = 0;
@@ -620,7 +606,7 @@ int command_take(object *op, char *params) {
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Nothing to take!");
-        return 0;
+        return;
     }
 
     /* Makes processing easier */
@@ -673,7 +659,6 @@ int command_take(object *op, char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                              "You were unable to take %d of the items.",
                              missed);
-    return 0;
 }
 
 /**
@@ -1006,17 +991,15 @@ void drop(object *op, object *tmp) {
  * player.
  * @param params
  * optional specifier, like 'armour', 'weapon' and such.
- * @return
- * 0.
  */
-int command_dropall(object *op, char *params) {
+void command_dropall(object *op, const char *params) {
     int count = 0;
 
     if (op->inv == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Nothing to drop!");
-        return 0;
+        return;
     }
 
     if (op->contr)
@@ -1123,8 +1106,6 @@ int command_dropall(object *op, char *params) {
     /* Need to update weight of player.  Likewise, only do it once */
     if (op->type == PLAYER)
         esrv_update_item(UPD_WEIGHT, op, op);
-
-    return 0;
 }
 
 /**
@@ -1134,10 +1115,8 @@ int command_dropall(object *op, char *params) {
  * player.
  * @param params
  * what to drop.
- * @return
- * 0.
  */
-int command_drop(object *op, char *params) {
+void command_drop(object *op, const char *params) {
     int did_one = 0;
     int ival = 0;
     int missed = 0;
@@ -1145,7 +1124,7 @@ int command_drop(object *op, char *params) {
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Drop what?");
-        return 0;
+        return;
     } else {
         FOR_INV_PREPARE(op, tmp) {
             if (QUERY_FLAG(tmp, FLAG_NO_DROP) || tmp->invisible)
@@ -1179,7 +1158,6 @@ int command_drop(object *op, char *params) {
          */
         /*op->contr->socket.update_look = 1;*/
     }
-    return 0;
 }
 
 /**
@@ -1227,16 +1205,14 @@ static void empty_container(object *container, object *pl) {
  * player.
  * @param params
  * item specifier.
- * @return
- * 0.
  */
-int command_empty(object *op, char *params) {
+void command_empty(object *op, const char *params) {
     object *container;
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Empty what?");
-        return 0;
+        return;
     }
 
     if (strcmp(params, "all") == 0) {
@@ -1244,23 +1220,21 @@ int command_empty(object *op, char *params) {
             if (inv->type == CONTAINER)
                 empty_container(inv, op);
         FOR_INV_FINISH();
-        return 0;
+        return;
     }
 
     container = find_best_object_match(op, params);
     if (!container) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "No such item.");
-        return 0;
+        return;
     }
     if (container->type != CONTAINER) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "This is not a container!");
-        return 0;
+        return;
     }
     empty_container(container, op);
-
-    return 0;
 }
 
 /**
@@ -1270,10 +1244,8 @@ int command_empty(object *op, char *params) {
  * player.
  * @param params
  * optional item specifier.
- * @return
- * 0.
  */
-int command_examine(object *op, char *params) {
+void command_examine(object *op, const char *params) {
     if (*params == '\0') {
         FOR_BELOW_PREPARE(op, tmp)
             if (LOOK_OBJ(tmp)) {
@@ -1291,7 +1263,6 @@ int command_examine(object *op, char *params) {
                                  "Could not find an object that matches %s",
                                  params);
     }
-    return 0;
 }
 
 /**
@@ -1337,14 +1308,12 @@ object *find_marked_object(object *op) {
  * @param params
  * If empty, we print out the currently marked object.
  * Otherwise, try to find a matching object - try best match first.
- * @return
- * 1 or 0.
  */
-int command_mark(object *op, char *params) {
+void command_mark(object *op, const char *params) {
     char name[MAX_BUF];
 
     if (!op->contr)
-        return 1;
+        return;
     if (*params == '\0') {
         object *mark = find_marked_object(op);
         if (!mark)
@@ -1363,7 +1332,7 @@ int command_mark(object *op, char *params) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "Could not find an object that matches %s",
                                  params);
-            return 1;
+            return;
         } else {
             op->contr->mark = mark1;
             op->contr->mark_count = mark1->count;
@@ -1371,10 +1340,10 @@ int command_mark(object *op, char *params) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                  "Marked item %s",
                                  name);
-            return 0;
+            return;
         }
     }
-    return 0; /*shouldnt get here */
+    /*shouldnt get here */
 }
 
 /**
@@ -1852,11 +1821,9 @@ static void display_new_pickup(const object *op) {
  * player.
  * @param params
  * pickup mode. Can be empty to display the current mode.
- * @return
- * 1 if success, 0 else.
  * @todo trash old pickup mode, merge with new pickup.
  */
-int command_pickup(object *op, char *params) {
+void command_pickup(object *op, const char *params) {
     uint32 i;
     static const char *names[] = {
         "debug", "inhibit", "stop", "food", "drink",
@@ -1877,12 +1844,12 @@ int command_pickup(object *op, char *params) {
         /* if the new mode is used, just print the settings */
         if (op->contr->mode&PU_NEWMODE) {
             display_new_pickup(op);
-            return 1;
+            return;
         }
         if (1)
             LOG(llevDebug, "command_pickup: !params\n");
         set_pickup_mode(op, op->contr->mode > 6 ? 0 : op->contr->mode+1);
-        return 0;
+        return;
     }
 
     while (*params == ' ')
@@ -1908,13 +1875,13 @@ int command_pickup(object *op, char *params) {
                 }
                 op->contr->mode = i;
                 display_new_pickup(op);
-                return 1;
+                return;
             }
         }
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Pickup: invalid item %s\n",
                              params);
-        return 1;
+        return;
     }
 
     if (sscanf(params, "%u", &i) != 1) {
@@ -1922,12 +1889,10 @@ int command_pickup(object *op, char *params) {
             LOG(llevDebug, "command_pickup: params==NULL\n");
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: pickup <0-7> or <value_density> .");
-        return 1;
+        return;
     }
     set_pickup_mode(op, i);
     display_new_pickup(op);
-
-    return 1;
 }
 
 /**
@@ -1990,12 +1955,10 @@ static void set_pickup_mode(const object *op, int i) {
  * player.
  * @param params
  * options.
- * @return
- * 1.
  */
-int command_search_items(object *op, char *params) {
+void command_search_items(object *op, const char *params) {
     if (settings.search_items == FALSE)
-        return 1;
+        return;
 
     if (*params == '\0') {
         if (op->contr->search_str[0] == '\0') {
@@ -2003,25 +1966,24 @@ int command_search_items(object *op, char *params) {
                           "Example: search magic+1 "
                           "Would automatically pick up all "
                           "items containing the word 'magic+1'.");
-            return 1;
+            return;
         }
         op->contr->search_str[0] = '\0';
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                       "Search mode turned off.");
         fix_object(op);
-        return 1;
+        return;
     }
     if ((int)strlen(params) >= MAX_BUF) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Search string too long.");
-        return 1;
+        return;
     }
     strcpy(op->contr->search_str, params);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                          "Searching for '%s'.",
                          op->contr->search_str);
     fix_object(op);
-    return 1;
 }
 
 /**
@@ -2038,9 +2000,8 @@ int command_search_items(object *op, char *params) {
  * player.
  * @param params
  * how to rename.
- * @return 1
  */
-int command_rename_item(object *op, char *params) {
+void command_rename_item(object *op, const char *params) {
     char buf[VERY_BIG_BUF], name[MAX_BUF];
     tag_t itemnumber;
     object *item = NULL;
@@ -2067,7 +2028,7 @@ int command_rename_item(object *op, char *params) {
             if (!found) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Tried to rename an invalid item.");
-                return 1;
+                return;
             }
             while (isdigit(*params) || ' ' == *params)
                 params++;
@@ -2077,13 +2038,13 @@ int command_rename_item(object *op, char *params) {
             if (!closebrace) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Syntax error!");
-                return 1;
+                return;
             }
             /* Sanity check for buffer overruns */
             if (closebrace-params > 127) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Old name too long (up to 127 characters allowed)!");
-                return 1;
+                return;
             }
             /* Copy the old name */
             snprintf(buf, sizeof(buf), "%.*s", (int)(closebrace-(params+1)), params+1);
@@ -2093,7 +2054,7 @@ int command_rename_item(object *op, char *params) {
             if (!item) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Could not find a matching item to rename.");
-                return 1;
+                return;
             }
 
             /* Now need to move pointer to just after > */
@@ -2106,7 +2067,7 @@ int command_rename_item(object *op, char *params) {
             if (!item) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "No marked item to rename.");
-                return 1;
+                return;
             }
         }
 
@@ -2118,20 +2079,20 @@ int command_rename_item(object *op, char *params) {
             if ('<' != *params) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Syntax error, expecting < at start of new name!");
-                return 1;
+                return;
             }
             closebrace = strchr(params+1, '>');
             if (!closebrace) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Syntax error, expecting > at end of new name!");
-                return 1;
+                return;
             }
 
             /* Sanity check for buffer overruns */
             if (closebrace-params > 127) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "New name too long (up to 127 characters allowed)!");
-                return 1;
+                return;
             }
 
             /* Copy the new name */
@@ -2157,14 +2118,14 @@ int command_rename_item(object *op, char *params) {
                  */
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Invalid new name!");
-                return 1;
+                return;
             }
         } else {
             /* If param contains something, then syntax error... */
             if (strlen(params)) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "Syntax error, expected 'to <' after old name!");
-                return 1;
+                return;
             }
             /* New name is empty */
             buf[0] = '\0';
@@ -2175,7 +2136,7 @@ int command_rename_item(object *op, char *params) {
         if (!item) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "No marked item to rename.");
-            return 1;
+            return;
         }
         buf[0] = '\0';
     }
@@ -2186,7 +2147,7 @@ int command_rename_item(object *op, char *params) {
         if (item->custom_name == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "This item has no custom name.");
-            return 1;
+            return;
         }
 
         FREE_AND_CLEAR_STR(item->custom_name);
@@ -2200,7 +2161,7 @@ int command_rename_item(object *op, char *params) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                  "You keep calling your %s %s.",
                                  name, buf);
-            return 1;
+            return;
         }
 
         /* Set custom name */
@@ -2218,8 +2179,6 @@ int command_rename_item(object *op, char *params) {
         /* object was not merged - if it was, object_merge() handles updating for us. */
         esrv_update_item(UPD_NAME, op, item);
     }
-
-    return 1;
 }
 
 /**
@@ -2230,7 +2189,7 @@ int command_rename_item(object *op, char *params) {
  * @param params
  * sent command line.
  */
-int command_lock_item(object *op, char *params) {
+void command_lock_item(object *op, const char *params) {
     object *item;
     object *tmp;
     tag_t tag;
@@ -2239,14 +2198,14 @@ int command_lock_item(object *op, char *params) {
     if (*params == '\0' || strlen(params) == 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                       "Lock what item?");
-        return 1;
+        return;
     }
 
     item = find_best_object_match(op, params);
     if (!item) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                       "Can't find any matching item.");
-        return 1;
+        return;
     }
 
     query_short_name(item, name, HUGE_BUF);
@@ -2266,7 +2225,6 @@ int command_lock_item(object *op, char *params) {
         /* object was not merged, if it was object_merge() handles updates for us */
         esrv_update_item(UPD_FLAGS, op, item);
     }
-    return 1;
 }
 
 /**
@@ -2275,10 +2233,8 @@ int command_lock_item(object *op, char *params) {
  * player.
  * @param params
  * sent string, with all parameters.
- * @return
- * 1.
  */
-int command_use(object *op, char *params) {
+void command_use(object *op, const char *params) {
     char *with, copy[MAX_BUF];
     object *first, *second/*, *add*/;
     /*archetype *arch;*/
@@ -2287,13 +2243,13 @@ int command_use(object *op, char *params) {
     recipe *transformation;
 
     if (!op->type == PLAYER)
-        return 1;
+        return;
 
     snprintf(copy, sizeof(copy), "%s", params);
     with = strstr(copy, " with ");
     if (!with) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Syntax is use <item> with <item>.");
-        return 1;
+        return;
     }
 
     with[0] = '\0';
@@ -2302,12 +2258,12 @@ int command_use(object *op, char *params) {
     first = find_best_object_match(op, copy);
     if (!first) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No match for %s.", copy);
-        return 1;
+        return;
     }
     second = find_best_object_match(op, with);
     if (!second) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No match for %s.", with);
-        return 1;
+        return;
     }
 
     transformation = NULL;
@@ -2325,11 +2281,11 @@ int command_use(object *op, char *params) {
             object_insert_in_ob(generated, op);
             /*draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Found recipe %s", transformation->title);*/
             object_decrease_nrof_by_one(second);
-            return 1;
+            return;
         }
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Nothing happens.");
-    return 1;
+    return;
 
     /*
     snprintf(copy, sizeof(copy), "on_use_with_%s", first->arch->name);

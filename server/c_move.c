@@ -46,23 +46,20 @@
  * optional parameters for moving (fire, run).
  * @param dir
  * moving direction.
- * @return
- * 0.
  */
-static int move_internal(object *op, char *params, int dir) {
+static void move_internal(object *op, const char *params, int dir) {
     if (*params != '\0') {
         if (params[0] == 'f') {
             if (!op->contr->fire_on) {
                 op->contr->fire_on = 1;
                 move_player(op, dir);
                 op->contr->fire_on = 0;
-                return 0;
+                return;
             }
         } else if (params[0] == 'r' && !op->contr->run_on)
             op->contr->run_on = 1;
     }
     move_player(op, dir);
-    return 0;
 }
 
 /**
@@ -71,11 +68,9 @@ static int move_internal(object *op, char *params, int dir) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_east(object *op, char *params) {
-    return move_internal(op, params, 3);
+void command_east(object *op, const char *params) {
+    move_internal(op, params, 3);
 }
 
 /**
@@ -84,11 +79,9 @@ int command_east(object *op, char *params) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_north(object *op, char *params) {
-    return move_internal(op, params, 1);
+void command_north(object *op, const char *params) {
+    move_internal(op, params, 1);
 }
 
 /**
@@ -97,11 +90,9 @@ int command_north(object *op, char *params) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_northeast(object *op, char *params) {
-    return move_internal(op, params, 2);
+void command_northeast(object *op, const char *params) {
+    move_internal(op, params, 2);
 }
 
 /**
@@ -110,11 +101,9 @@ int command_northeast(object *op, char *params) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_northwest(object *op, char *params) {
-    return move_internal(op, params, 8);
+void command_northwest(object *op, const char *params) {
+    move_internal(op, params, 8);
 }
 
 /**
@@ -123,11 +112,9 @@ int command_northwest(object *op, char *params) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_south(object *op, char *params) {
-    return move_internal(op, params, 5);
+void command_south(object *op, const char *params) {
+    move_internal(op, params, 5);
 }
 
 /**
@@ -136,11 +123,9 @@ int command_south(object *op, char *params) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_southeast(object *op, char *params) {
-    return move_internal(op, params, 4);
+void command_southeast(object *op, const char *params) {
+    move_internal(op, params, 4);
 }
 
 /**
@@ -149,11 +134,9 @@ int command_southeast(object *op, char *params) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_southwest(object *op, char *params) {
-    return move_internal(op, params, 6);
+void command_southwest(object *op, const char *params) {
+    move_internal(op, params, 6);
 }
 
 /**
@@ -162,11 +145,9 @@ int command_southwest(object *op, char *params) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_west(object *op, char *params) {
-    return move_internal(op, params, 7);
+void command_west(object *op, const char *params) {
+    move_internal(op, params, 7);
 }
 
 /**
@@ -175,12 +156,9 @@ int command_west(object *op, char *params) {
  * player.
  * @param params
  * optional parameters for moving (fire, run).
- * @return
- * 0.
  */
-int command_stay(object *op, char *params) {
+void command_stay(object *op, const char *params) {
     if (!op->contr->fire_on && params[0] != 'f')
-        return 0;
+        return;
     fire(op, 0);
-    return 0;
 }

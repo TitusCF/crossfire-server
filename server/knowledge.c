@@ -764,37 +764,35 @@ static void knowledge_show(object *pl, const char *params) {
  * Handle the 'knowledge' for a player.
  * @param pl who is using the command.
  * @param params additional parameters.
- * @return 0
  */
-int command_knowledge(object *pl, char *params) {
+void command_knowledge(object *pl, const char *params) {
 
     if (!pl->contr) {
         LOG(llevError, "command_knowledge: called for %s not a player!\n", pl->name);
-        return 0;
+        return;
     }
 
     if (!params || *params == '\0') {
         command_help(pl, "knowledge");
-        return 0;
+        return;
     }
 
     if (strncmp(params, "list", 4) == 0) {
         knowledge_display(pl, params + 4);
-        return 0;
+        return;
     }
 
     if (strncmp(params, "search ", 7) == 0) {
         knowledge_do_display(pl, NULL, params + 7);
-        return 0;
+        return;
     }
 
     if (strncmp(params, "show ", 5) == 0) {
         knowledge_show(pl, params + 5);
-        return 0;
+        return;
     }
 
     command_help(pl, "knowledge");
-    return 0;
 }
 
 /**
