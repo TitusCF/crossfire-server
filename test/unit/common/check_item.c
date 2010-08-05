@@ -265,6 +265,8 @@ static void old_ring_desc(const object *op, char *buf, size_t size) {
         snprintf(buf, size, "of adornment");
 }
 
+StringBuffer *ring_desc(const object *op, StringBuffer *buf);
+
 StringBuffer *new_ring_desc(const object *op, StringBuffer *buf);
 
 START_TEST(test_ring_desc_rewrite) {
