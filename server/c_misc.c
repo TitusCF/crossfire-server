@@ -926,33 +926,6 @@ int command_debug(object *op, char *params) {
 
 
 /**
- * Player wants to dump object below her.
- *
- * @param op
- * player asking for information.
- * @param params
- * unused.
- * @return
- * 0.
- */
-int command_dumpbelow(object *op, char *params) {
-    if (op && op->below) {
-        StringBuffer *sb;
-        char *diff;
-
-        sb = stringbuffer_new();
-        object_dump(op->below, sb);
-        diff = stringbuffer_finish(sb);
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, diff);
-        free(diff);
-
-        /* Let's push that item on the dm's stack */
-        dm_stack_push(op->contr, op->below->count);
-    }
-    return 0;
-}
-
-/**
  * Wizard toggling wall-crossing.
  *
  * @param op

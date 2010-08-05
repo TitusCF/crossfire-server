@@ -94,6 +94,213 @@ static player *get_other_player_from_name(object *op, const char *name) {
 }
 
 /**
+ * Remove an item from the wizard's item stack.
+ *
+ * @param pl
+ * wizard.
+ */
+static void dm_stack_pop(player *pl) {
+    if (!pl->stack_items || !pl->stack_position) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Empty stack!");
+        return;
+    }
+
+    pl->stack_position--;
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                         "Popped item from stack, %d left.",
+                         pl->stack_position);
+}
+
+/**
+ * Get current stack top item for player.
+ * Returns NULL if no stacked item.
+ * If stacked item disappeared (freed), remove it.
+ *
+ * Ryo, august 2004
+ *
+ * @param pl
+ * wizard.
+ * @return
+ * item on top of stack, or NULL if deleted/stack empty.
+ */
+static object *dm_stack_peek(player *pl) {
+    object *ob;
+
+    if (!pl->stack_position) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Empty stack!");
+        return NULL;
+    }
+
+    ob = object_find_by_tag_global(pl->stack_items[pl->stack_position-1]);
+    if (!ob) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                      "Stacked item was removed!");
+        dm_stack_pop(pl);
+        return NULL;
+    }
+
+    return ob;
+}
+
+/**
+ * Push specified item on player stack.
+ * Inform player of position.
+ * Initializes variables if needed.
+ *
+ * @param pl
+ * wizard.
+ * @param item
+ * item to put on stack.
+ */
+static void dm_stack_push(player *pl, tag_t item) {
+    if (!pl->stack_items) {
+        pl->stack_items = (tag_t *)malloc(sizeof(tag_t)*STACK_SIZE);
+        memset(pl->stack_items, 0, sizeof(tag_t)*STACK_SIZE);
+    }
+
+    if (pl->stack_position == STACK_SIZE) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Item stack full!");
+        return;
+    }
+
+    pl->stack_items[pl->stack_position] = item;
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                         "Item stacked as %d.",
+                         pl->stack_position);
+    pl->stack_position++;
+}
+
+/**
+ * Checks 'params' for object code.
+ *
+ * Can be:
+ *  - empty => get current object stack top for player
+ *  - number => get item with that tag, stack it for future use
+ *  - $number => get specified stack item
+ *  - "me" => player himself
+ *
+ * At function exit, params points to first non-object char
+ *
+ * 'from', if not NULL, contains at exit:
+ *  - ::STACK_FROM_NONE => object not found
+ *  - ::STACK_FROM_TOP => top item stack, may be NULL if stack was empty
+ *  - ::STACK_FROM_STACK => item from somewhere in the stack
+ *  - ::STACK_FROM_NUMBER => item by number, pushed on stack
+ *
+ * Ryo, august 2004
+ *
+ * @param pl
+ * wizard.
+ * @param params
+ * object specified.
+ * @param from
+ * @return
+ * pointed object, or NULL if nothing suitable was found.
+ */
+static object *get_dm_object(player *pl, char **params, int *from) {
+    int item_tag, item_position;
+    object *ob;
+
+    if (!pl)
+        return NULL;
+
+    if (**params == '\0') {
+        if (from)
+            *from = STACK_FROM_TOP;
+        /* No parameter => get stack item */
+        return dm_stack_peek(pl);
+    }
+
+    /* Let's clean white spaces */
+    while (**params == ' ')
+        (*params)++;
+
+    /* Next case: number => item tag */
+    if (sscanf(*params, "%d", &item_tag)) {
+        /* Move parameter to next item */
+        while (isdigit(**params))
+            (*params)++;
+
+        /* And skip blanks, too */
+        while (**params == ' ')
+            (*params)++;
+
+        /* Get item */
+        ob = object_find_by_tag_global(item_tag);
+        if (!ob) {
+            if (from)
+                *from = STACK_FROM_NONE;
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                                 "No such item %d!",
+                                 item_tag);
+            return NULL;
+        }
+
+        /* Got one, let's push it on stack */
+        dm_stack_push(pl, item_tag);
+        if (from)
+            *from = STACK_FROM_NUMBER;
+        return ob;
+    }
+
+    /* Next case: $number => stack item */
+    if (sscanf(*params, "$%d", &item_position)) {
+        /* Move parameter to next item */
+        (*params)++;
+
+        while (isdigit(**params))
+            (*params)++;
+        while (**params == ' ')
+            (*params)++;
+
+        if (item_position >= pl->stack_position) {
+            if (from)
+                *from = STACK_FROM_NONE;
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                                 "No such stack item %d!",
+                                 item_position);
+            return NULL;
+        }
+
+        ob = object_find_by_tag_global(pl->stack_items[item_position]);
+        if (!ob) {
+            if (from)
+                *from = STACK_FROM_NONE;
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                                 "Stack item %d was removed.",
+                                 item_position);
+            return NULL;
+        }
+
+        if (from)
+            *from = item_position < pl->stack_position-1 ? STACK_FROM_STACK : STACK_FROM_TOP;
+        return ob;
+    }
+
+    /* Next case: 'me' => return pl->ob */
+    if (!strncmp(*params, "me", 2)) {
+        if (from)
+            *from = STACK_FROM_NUMBER;
+        dm_stack_push(pl, pl->ob->count);
+
+        /* Skip to next token */
+        (*params) += 2;
+        while (**params == ' ')
+            (*params)++;
+
+        return pl->ob;
+    }
+
+    /* Last case: get stack top */
+    if (from)
+        *from = STACK_FROM_TOP;
+    return dm_stack_peek(pl);
+}
+
+/**
  * This command will stress server.
  *
  * It will basically load all world maps (so 900 maps).
@@ -142,7 +349,7 @@ int command_loadtest(object *op, char *params) {
  * @param silent_dm
  * if non zero, other players are informed of DM entering/leaving, else they just think someone left/entered.
  */
-void do_wizard_hide(object *op, int silent_dm) {
+static void do_wizard_hide(object *op, int silent_dm) {
     if (op->contr->hidden) {
         op->contr->hidden = 0;
         op->invisible = 1;
@@ -1862,7 +2069,7 @@ static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const
  * @retval 1
  * op is now a wizard.
  */
-int do_wizard_dm(object *op, char *params, int silent) {
+static int do_wizard_dm(object *op, char *params, int silent) {
     if (!op->contr)
         return 0;
 
@@ -2259,213 +2466,6 @@ int command_dmhide(object *op, char *params) {
 }
 
 /**
- * Remove an item from the wizard's item stack.
- *
- * @param pl
- * wizard.
- */
-void dm_stack_pop(player *pl) {
-    if (!pl->stack_items || !pl->stack_position) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Empty stack!");
-        return;
-    }
-
-    pl->stack_position--;
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Popped item from stack, %d left.",
-                         pl->stack_position);
-}
-
-/**
- * Get current stack top item for player.
- * Returns NULL if no stacked item.
- * If stacked item disappeared (freed), remove it.
- *
- * Ryo, august 2004
- *
- * @param pl
- * wizard.
- * @return
- * item on top of stack, or NULL if deleted/stack empty.
- */
-object *dm_stack_peek(player *pl) {
-    object *ob;
-
-    if (!pl->stack_position) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Empty stack!");
-        return NULL;
-    }
-
-    ob = object_find_by_tag_global(pl->stack_items[pl->stack_position-1]);
-    if (!ob) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "Stacked item was removed!");
-        dm_stack_pop(pl);
-        return NULL;
-    }
-
-    return ob;
-}
-
-/**
- * Push specified item on player stack.
- * Inform player of position.
- * Initializes variables if needed.
- *
- * @param pl
- * wizard.
- * @param item
- * item to put on stack.
- */
-void dm_stack_push(player *pl, tag_t item) {
-    if (!pl->stack_items) {
-        pl->stack_items = (tag_t *)malloc(sizeof(tag_t)*STACK_SIZE);
-        memset(pl->stack_items, 0, sizeof(tag_t)*STACK_SIZE);
-    }
-
-    if (pl->stack_position == STACK_SIZE) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Item stack full!");
-        return;
-    }
-
-    pl->stack_items[pl->stack_position] = item;
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Item stacked as %d.",
-                         pl->stack_position);
-    pl->stack_position++;
-}
-
-/**
- * Checks 'params' for object code.
- *
- * Can be:
- *  - empty => get current object stack top for player
- *  - number => get item with that tag, stack it for future use
- *  - $number => get specified stack item
- *  - "me" => player himself
- *
- * At function exit, params points to first non-object char
- *
- * 'from', if not NULL, contains at exit:
- *  - ::STACK_FROM_NONE => object not found
- *  - ::STACK_FROM_TOP => top item stack, may be NULL if stack was empty
- *  - ::STACK_FROM_STACK => item from somewhere in the stack
- *  - ::STACK_FROM_NUMBER => item by number, pushed on stack
- *
- * Ryo, august 2004
- *
- * @param pl
- * wizard.
- * @param params
- * object specified.
- * @param from
- * @return
- * pointed object, or NULL if nothing suitable was found.
- */
-object *get_dm_object(player *pl, char **params, int *from) {
-    int item_tag, item_position;
-    object *ob;
-
-    if (!pl)
-        return NULL;
-
-    if (**params == '\0') {
-        if (from)
-            *from = STACK_FROM_TOP;
-        /* No parameter => get stack item */
-        return dm_stack_peek(pl);
-    }
-
-    /* Let's clean white spaces */
-    while (**params == ' ')
-        (*params)++;
-
-    /* Next case: number => item tag */
-    if (sscanf(*params, "%d", &item_tag)) {
-        /* Move parameter to next item */
-        while (isdigit(**params))
-            (*params)++;
-
-        /* And skip blanks, too */
-        while (**params == ' ')
-            (*params)++;
-
-        /* Get item */
-        ob = object_find_by_tag_global(item_tag);
-        if (!ob) {
-            if (from)
-                *from = STACK_FROM_NONE;
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "No such item %d!",
-                                 item_tag);
-            return NULL;
-        }
-
-        /* Got one, let's push it on stack */
-        dm_stack_push(pl, item_tag);
-        if (from)
-            *from = STACK_FROM_NUMBER;
-        return ob;
-    }
-
-    /* Next case: $number => stack item */
-    if (sscanf(*params, "$%d", &item_position)) {
-        /* Move parameter to next item */
-        (*params)++;
-
-        while (isdigit(**params))
-            (*params)++;
-        while (**params == ' ')
-            (*params)++;
-
-        if (item_position >= pl->stack_position) {
-            if (from)
-                *from = STACK_FROM_NONE;
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "No such stack item %d!",
-                                 item_position);
-            return NULL;
-        }
-
-        ob = object_find_by_tag_global(pl->stack_items[item_position]);
-        if (!ob) {
-            if (from)
-                *from = STACK_FROM_NONE;
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                                 "Stack item %d was removed.",
-                                 item_position);
-            return NULL;
-        }
-
-        if (from)
-            *from = item_position < pl->stack_position-1 ? STACK_FROM_STACK : STACK_FROM_TOP;
-        return ob;
-    }
-
-    /* Next case: 'me' => return pl->ob */
-    if (!strncmp(*params, "me", 2)) {
-        if (from)
-            *from = STACK_FROM_NUMBER;
-        dm_stack_push(pl, pl->ob->count);
-
-        /* Skip to next token */
-        (*params) += 2;
-        while (**params == ' ')
-            (*params)++;
-
-        return pl->ob;
-    }
-
-    /* Last case: get stack top */
-    if (from)
-        *from = STACK_FROM_TOP;
-    return dm_stack_peek(pl);
-}
-
-/**
  * Pop the stack top.
  *
  * @param op
@@ -2804,5 +2804,32 @@ int command_purge_quest(object *op, char * param) {
 int command_purge_quest_definitions(object *op, char * param) {
     free_quest_definitions();
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Purged quests definitions.");
+    return 0;
+}
+
+/**
+ * Player wants to dump object below her.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
+int command_dumpbelow(object *op, char *params) {
+    if (op && op->below) {
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        object_dump(op->below, sb);
+        diff = stringbuffer_finish(sb);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, diff);
+        free(diff);
+
+        /* Let's push that item on the dm's stack */
+        dm_stack_push(op->contr, op->below->count);
+    }
     return 0;
 }

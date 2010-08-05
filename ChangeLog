@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Make some DM functions static. Move 'command_dumpbelow' to c_wiz.c.
+Nicolas Weeger 2010-08-05
+
 Remove old 'ring_desc' function.
 Nicolas Weeger 2010-08-05
 
