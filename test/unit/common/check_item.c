@@ -287,11 +287,8 @@ START_TEST(test_ring_desc_rewrite) {
             SET_FLAG(ob, FLAG_IDENTIFIED);
 
             old_ring_desc(ob, buf, sizeof(buf));
-            compat[0] = 0;
-            ring_desc(ob, compat, sizeof(compat));
-            fail_unless(strcmp(buf, compat) == 0, "(compat) description change: \"%s\" vs \"%s\"", buf, compat);
 
-            final = stringbuffer_finish(new_ring_desc(ob, NULL));
+            final = stringbuffer_finish(ring_desc(ob, NULL));
 
             fail_unless(strcmp(buf, final) == 0, "description change: \"%s\" vs \"%s\"", buf, final);
             free(final);
@@ -319,11 +316,8 @@ START_TEST(test_ring_desc_rewrite) {
             give_artifact_abilities(ob, art->item);
 
             old_ring_desc(ob, buf, sizeof(buf));
-            compat[0] = 0;
-            ring_desc(ob, compat, sizeof(compat));
-            fail_unless(strcmp(buf, compat) == 0, "(compat) description change: \"%s\" vs \"%s\"", buf, compat);
 
-            final = stringbuffer_finish(new_ring_desc(ob, NULL));
+            final = stringbuffer_finish(ring_desc(ob, NULL));
 
             fail_unless(strcmp(buf, final) == 0, "description change: \"%s\" vs \"%s\"", buf, final);
             free(final);

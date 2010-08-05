@@ -467,10 +467,9 @@ void get_levelnumber(int i, char *buf, size_t size) {
  * buffer that will contain the description. If NULL a new one is created.
  * @return buf, or a new StringBuffer the caller should free if buf was NULL.
  * @todo why does this also describe a SKILL?
- * @todo rename to ring_desc when the current one is removed, make static when
- * check (test/unit/common/check_item.c) is removed.
+ * @todo make static when check (test/unit/common/check_item.c) is removed.
  */
-StringBuffer *new_ring_desc(const object *op, StringBuffer *buf) {
+StringBuffer *ring_desc(const object *op, StringBuffer *buf) {
     int attr, val;
     size_t len;
 
@@ -533,36 +532,6 @@ StringBuffer *new_ring_desc(const object *op, StringBuffer *buf) {
 }
 
 /**
- * Describes a ring or amulet.
- * @param op
- * item to describe.
- * @param buf
- * buffer that will contain the description.
- * @param size
- * size of buffer.
- *
- * @note
- * These are taken from old query_name(), but it would work better
- * if describle_item() would be called to get this information and
- * caller would handle FULL_RING_DESCRIPTION definition.
- * Or make FULL_RING_DESCRIPTION standard part of a game and let
- * client handle names.
- * @note
- * Aug 95 modified this slightly so that Skill tools don't have magic bonus
- * from stats.sp - b.t.
- *
- * @todo
- * replace with new_ring_desc() when callers are cleared.
- */
-void ring_desc(const object *op, char *buf, size_t size) {
-    char *desc;
-
-    desc = stringbuffer_finish(new_ring_desc(op, NULL));
-    strncpy(buf, desc, size);
-    free(desc);
-}
-
-/**
  * query_short_name(object) is similar to query_name(), but doesn't
  * contain any information about object status (worn/cursed/etc.)
  *
@@ -621,13 +590,14 @@ void query_short_name(const object *op, char *buf, size_t size) {
     case RING:
         if (!op->title) {
             /* If ring has a title, full description isn't so useful */
-            char desc[VERY_BIG_BUF];
+            char* desc;
 
-            ring_desc(op, desc, VERY_BIG_BUF);
+            desc = stringbuffer_finish(ring_desc(op, NULL));
             if (desc[0]) {
                 safe_strcat(buf, " ", &len, size);
                 safe_strcat(buf, desc, &len, size);
             }
+            free(desc);
         }
         break;
 
@@ -823,13 +793,14 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
     case RING:
         if (!op->title) {
             /* If ring has a title, full description isn't so useful */
-            char s[MAX_BUF];
+            char* s;
 
-            ring_desc(op, s, MAX_BUF);
+            s = stringbuffer_finish(ring_desc(op, NULL));
             if (s[0]) {
                 safe_strcat(buf, " ", &len, size);
                 safe_strcat(buf, s, &len, size);
             }
+            free(s);
         }
         break;
 
@@ -1132,7 +1103,7 @@ StringBuffer *describe_item(const object *op, const object *owner, StringBuffer 
             stringbuffer_append_printf(buf, "(item_power %+d)", op->item_power);
         }
         if (op->title) {
-            new_ring_desc(op, buf);
+            ring_desc(op, buf);
         }
         return buf;
 
