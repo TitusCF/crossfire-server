@@ -688,6 +688,16 @@ void move_player_mover(object *op) {
     sint16 nx, ny;
     mapstruct *m;
 
+    if (!op->map) {
+        if (op->env && op->env->map)
+            LOG(llevError, "move_player_mover: mover not in a map at %s %d %d!\n", op->env->map->path, op->env->x, op->env->y);
+        else
+            LOG(llevError, "move_player_mover: mover not in a map at undefinite location!");
+        op->speed = 0;
+        object_update_speed(op);
+        return;
+    }
+
     /* Determine direction now for random movers so we do the right thing */
     if (!dir)
         dir = get_random_dir();

@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix mover-related crash if in an inventory.
+Nicolas Weeger 2010-08-07
+
 Change plugin hooks prototype, don't return anything. Make functions static.
 Nicolas Weeger 2010-08-07
 
