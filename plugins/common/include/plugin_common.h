@@ -40,7 +40,7 @@
 #define PLUGIN_ERROR_INT        0x0FFFFF
 
 extern int cf_init_plugin(f_plug_api getHooks);
-extern void cf_system_register_global_event(int event, const char *name, f_plug_api hook);
+extern void cf_system_register_global_event(int event, const char *name, f_plug_event hook);
 extern void cf_system_unregister_global_event(int event, const char *name);
 
 /* General functions */

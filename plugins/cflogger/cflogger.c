@@ -608,12 +608,10 @@ CF_PLUGIN int cflogger_runPluginCommand(object *op, char *params) {
  * @param type
  * ignored.
  * @return
- * pointer to an int containing 0.
+ * 0.
  */
-void *eventListener(int *type, ...) {
-    static int rv = 0;
-
-    return &rv;
+int eventListener(int *type, ...) {
+    return 0;
 }
 
 /**
@@ -622,11 +620,11 @@ void *eventListener(int *type, ...) {
  * @param type
  * ignored.
  * @return
- * pointer to an int containing 0.
+ * 0
  */
-CF_PLUGIN void *cflogger_globalEventListener(int *type, ...) {
+CF_PLUGIN int cflogger_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv = 0;
+    int rv = 0;
     player *pl;
     object *op;
     int event_code;
@@ -679,7 +677,7 @@ CF_PLUGIN void *cflogger_globalEventListener(int *type, ...) {
     }
     va_end(args);
 
-    return &rv;
+    return rv;
 }
 
 /**

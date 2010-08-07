@@ -1039,7 +1039,7 @@ object *cf_create_object_by_name(const char *name) {
     return value;
 }
 
-void cf_system_register_global_event(int event, const char *name, f_plug_api hook) {
+void cf_system_register_global_event(int event, const char *name, f_plug_event hook) {
     int type;
 
     cfapiSystem_register_global_event(&type, event, name, hook);

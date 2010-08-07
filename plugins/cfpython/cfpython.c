@@ -1507,16 +1507,14 @@ CF_PLUGIN int postInitPlugin(void) {
     return 0;
 }
 
-CF_PLUGIN void *cfpython_globalEventListener(int *type, ...) {
+CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv = 0;
+    int rv = 0;
     CFPContext *context;
     char *buf;
     player *pl;
     object *op;
     context = malloc(sizeof(CFPContext));
-
-    rv = 0;
 
     va_start(args, type);
     context->event_code = va_arg(args, int);
@@ -1655,7 +1653,7 @@ CF_PLUGIN void *cfpython_globalEventListener(int *type, ...) {
 
     if (!do_script(context, 1)) {
         freeContext(context);
-        return &rv;
+        return rv;
     }
 
     context = popContext();
@@ -1667,17 +1665,15 @@ CF_PLUGIN void *cfpython_globalEventListener(int *type, ...) {
 
     freeContext(context);
 
-    return &rv;
+    return rv;
 }
 
-CF_PLUGIN void *eventListener(int *type, ...) {
-    static int rv = 0;
+CF_PLUGIN int eventListener(int *type, ...) {
+    int rv = 0;
     va_list args;
     char *buf;
     CFPContext *context;
     object *event;
-
-    rv = 0;
 
     context = malloc(sizeof(CFPContext));
 
@@ -1704,13 +1700,13 @@ CF_PLUGIN void *eventListener(int *type, ...) {
 
     if (!do_script(context, 0)) {
         freeContext(context);
-        return &rv;
+        return rv;
     }
 
     context = popContext();
     rv = context->returnvalue;
     freeContext(context);
-    return &rv;
+    return rv;
 }
 
 CF_PLUGIN int   closePlugin(void) {

@@ -195,18 +195,16 @@ static void add_exits_to_map(const mapstruct *map) {
  * @param type
  * unused.
  * @return
- * pointer to integer with value 0.
+ * 0.
  */
-CF_PLUGIN void *cfrhg_globalEventListener(int *type, ...) {
+CF_PLUGIN int cfrhg_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv = 0;
+    int rv = 0;
     mapstruct *map;
     int code;
 
     va_start(args, type);
     code = va_arg(args, int);
-
-    rv = 0;
 
     switch (code) {
     case EVENT_MAPLOAD:
@@ -216,7 +214,7 @@ CF_PLUGIN void *cfrhg_globalEventListener(int *type, ...) {
     }
     va_end(args);
 
-    return &rv;
+    return rv;
 }
 
 /**
@@ -224,10 +222,10 @@ CF_PLUGIN void *cfrhg_globalEventListener(int *type, ...) {
  * @param type
  * unused.
  * @return
- * NULL.
+ * 0.
  */
-CF_PLUGIN void *eventListener(int *type, ...) {
-    return NULL;
+CF_PLUGIN int eventListener(int *type, ...) {
+    return 0;
 }
 
 /**

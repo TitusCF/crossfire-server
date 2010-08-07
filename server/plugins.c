@@ -264,7 +264,7 @@ static int do_execute_event(object *op, int eventcode, object *activator, object
                     object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
                 } else {
                     int rvt = 0;
-                    int *rv;
+                    int rv;
 
                     rv = plugin->eventfunc(&rvt, op, /*eventcode, */ activator, third, message, fix, /*tmp->slaying, tmp->name*/ tmp, talk);
                     if (QUERY_FLAG(tmp, FLAG_UNIQUE)) {
@@ -274,7 +274,7 @@ static int do_execute_event(object *op, int eventcode, object *activator, object
                         object_remove(tmp);
                         object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
                     }
-                    return *rv;
+                    return rv;
                 }
             }
         }
@@ -481,7 +481,7 @@ int plugins_init_plugin(const char *libfile) {
     LIBPTRTYPE ptr;
     f_plug_init initfunc;
     f_plug_api propfunc;
-    f_plug_api eventfunc;
+    f_plug_event eventfunc;
     f_plug_postinit postfunc;
     f_plug_postinit closefunc;
     int i;
@@ -506,7 +506,7 @@ int plugins_init_plugin(const char *libfile) {
         plugins_dlclose(ptr);
         return -1;
     }
-    eventfunc = (f_plug_api)plugins_dlsym(ptr, "eventListener");
+    eventfunc = (f_plug_event)plugins_dlsym(ptr, "eventListener");
     if (eventfunc == NULL) {
         LOG(llevError, "Plugin error while requesting %s.eventListener: %s\n", libfile, plugins_dlerror());
         plugins_dlclose(ptr);
@@ -779,13 +779,13 @@ void *cfapi_system_register_global_event(int *type, ...) {
     va_list args;
     int eventcode;
     char *pname;
-    f_plug_api hook;
+    f_plug_event hook;
     crossfire_plugin *cp;
 
     va_start(args, type);
     eventcode = va_arg(args, int);
     pname     = va_arg(args, char *);
-    hook      = va_arg(args, f_plug_api);
+    hook      = va_arg(args, f_plug_event);
     va_end(args);
 
     *type = CFAPI_NONE;

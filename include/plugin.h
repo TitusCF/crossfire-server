@@ -124,6 +124,8 @@ typedef void *(*f_plug_api)(int *type, ...);
 typedef int (*f_plug_postinit)(void);
 /** First function called in a plugin. */
 typedef int (*f_plug_init)(const char *iversion, f_plug_api gethooksptr);
+/** Function to call to handle global or object-related events. */
+typedef int (*f_plug_event)(int *type, ...);
 
 #ifndef WIN32
 #define LIBPTRTYPE void *
@@ -134,13 +136,13 @@ typedef int (*f_plug_init)(const char *iversion, f_plug_api gethooksptr);
 
 /** One loaded plugin. */
 typedef struct _crossfire_plugin {
-    f_plug_api      eventfunc;          /**< Event Handler function            */
+    f_plug_event    eventfunc;          /**< Event Handler function            */
     f_plug_api      propfunc;           /**< Plugin getProperty function       */
     f_plug_postinit closefunc;          /**< Plugin Termination function       */
     LIBPTRTYPE      libptr;             /**< Pointer to the plugin library     */
     char            id[MAX_BUF];        /**< Plugin identification string      */
     char            fullname[MAX_BUF];  /**< Plugin full name                  */
-    f_plug_api      gevent[NR_EVENTS];  /**< Global events registered          */
+    f_plug_event    gevent[NR_EVENTS];  /**< Global events registered          */
     struct _crossfire_plugin *next;     /**< Next plugin in list               */
     struct _crossfire_plugin *prev;     /**< Previous plugin in list           */
 } crossfire_plugin;

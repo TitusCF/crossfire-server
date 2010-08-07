@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Change event listener prototype for plugins to return int instead of void*.
+Nicolas Weeger 2010-08-07
+
 Remove unused 'command_' return values. Change function prototype to make
 'params' const. Fix some const discarding.
 Nicolas Weeger 2010-08-05

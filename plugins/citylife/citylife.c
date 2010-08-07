@@ -355,16 +355,14 @@ static void add_npc_to_random_map(void) {
     add_npc_to_point(&available_zones[zones[test]], list[test]);
 }
 
-CF_PLUGIN void *citylife_globalEventListener(int *type, ...) {
+CF_PLUGIN int citylife_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv = 0;
+    int rv = 0;
     mapstruct *map;
     int code;
 
     va_start(args, type);
     code = va_arg(args, int);
-
-    rv = 0;
 
     switch (code) {
     case EVENT_MAPLOAD:
@@ -378,7 +376,7 @@ CF_PLUGIN void *citylife_globalEventListener(int *type, ...) {
     }
     va_end(args);
 
-    return &rv;
+    return rv;
 }
 
 CF_PLUGIN int postInitPlugin(void) {
@@ -411,8 +409,8 @@ CF_PLUGIN int postInitPlugin(void) {
     return 0;
 }
 
-CF_PLUGIN void *eventListener(int *type, ...) {
-    static int rv = 1;
+CF_PLUGIN int eventListener(int *type, ...) {
+    int rv = 1;
     va_list args;
     char *buf;
     object *ground, *who, *activator, *third, *event;
@@ -449,7 +447,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
                 cf_log(llevDebug, PLUGIN_NAME ": NPC entering building.\n");
                 cf_object_remove(who);
                 cf_object_free_drop_inventory(who);
-                return &rv;
+                return rv;
             }
         }
     }
@@ -457,7 +455,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
     /* we have to move manually, because during the night NPCs don't move. */
     cf_object_move(who, 1+RANDOM()%8, NULL);
 
-    return &rv;
+    return rv;
 }
 
 CF_PLUGIN int   closePlugin(void) {

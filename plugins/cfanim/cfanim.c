@@ -1132,9 +1132,9 @@ CF_PLUGIN int postInitPlugin(void) {
     return 0;
 }
 
-CF_PLUGIN void *cfanim_globalEventListener(int *type, ...) {
+CF_PLUGIN int cfanim_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv = 0;
+    int rv = 0;
     int event_code;
 
     va_start(args, type);
@@ -1145,11 +1145,11 @@ CF_PLUGIN void *cfanim_globalEventListener(int *type, ...) {
 
     va_end(args);
 
-    return &rv;
+    return rv;
 }
 
-CF_PLUGIN void *eventListener(int *type, ...) {
-    static int rv = 0;
+CF_PLUGIN int eventListener(int *type, ...) {
+    int rv = 0;
     va_list args;
     char *buf, message[MAX_BUF], script[MAX_BUF];
     object *who, *activator, *third, *event;
@@ -1172,7 +1172,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
 
     if (query == 1 && strcmp(message, "query_object_is_animated") == 0) {
         rv = is_animated_object(who);
-        return &rv;
+        return rv;
     }
 
     /** @todo build from current map's path, probably */
@@ -1189,7 +1189,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
 
     rv = start_animation(who, activator, event, script, message);
 
-    return &rv;
+    return rv;
 }
 
 CF_PLUGIN int   closePlugin(void) {
