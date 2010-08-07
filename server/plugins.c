@@ -63,6 +63,102 @@
 /** Number of hooked functions a plugin can call. */
 #define NR_OF_HOOKS (sizeof(plug_hooks)/sizeof(*plug_hooks))
 
+static void cfapi_cost_string_from_value(int *type, ...);
+static void cfapi_system_find_animation(int *type, ...);
+static void cfapi_system_find_face(int *type, ...);
+static void cfapi_system_strdup_local(int *type, ...);
+static void cfapi_system_register_global_event(int *type, ...);
+static void cfapi_system_unregister_global_event(int *type, ...);
+static void cfapi_system_add_string(int *type, ...);
+static void cfapi_system_remove_string(int *type, ...);
+static void cfapi_system_find_string(int *type, ...);
+static void cfapi_system_check_path(int *type, ...);
+static void cfapi_system_re_cmp(int *type, ...);
+static void cfapi_system_directory(int *type, ...);
+static void cfapi_get_time(int *type, ...);
+static void cfapi_get_season_name(int *type, ...);
+static void cfapi_get_weekday_name(int *type, ...);
+static void cfapi_get_month_name(int *type, ...);
+static void cfapi_get_periodofday_name(int *type, ...);
+static void cfapi_timer_create(int *type, ...);
+static void cfapi_timer_destroy(int *type, ...);
+static void cfapi_log(int *type, ...);
+static void cfapi_map_get_map(int *type, ...);
+static void cfapi_map_has_been_loaded(int *type, ...);
+static void cfapi_map_create_path(int *type, ...);
+static void cfapi_map_get_map_property(int *type, ...);
+static void cfapi_map_set_map_property(int *type, ...);
+static void cfapi_map_out_of_map(int *type, ...);
+static void cfapi_map_update_position(int *type, ...);
+static void cfapi_map_delete_map(int *type, ...);
+static void cfapi_map_message(int *type, ...);
+static void cfapi_map_get_object_at(int *type, ...);
+static void cfapi_map_find_by_archetype_name(int *type, ...);
+static void cfapi_map_change_light(int *type, ...);
+static void cfapi_object_move(int *type, ...);
+static void cfapi_object_get_key(int *type, ...);
+static void cfapi_object_set_key(int *type, ...);
+static void cfapi_object_get_property(int *type, ...);
+static void cfapi_object_set_property(int *type, ...);
+static void cfapi_object_apply_below(int *type, ...);
+static void cfapi_object_apply(int *type, ...);
+static void cfapi_object_identify(int *type, ...);
+static void cfapi_object_describe(int *type, ...);
+static void cfapi_object_drain(int *type, ...);
+static void cfapi_object_remove_depletion(int *type, ...);
+static void cfapi_object_fix(int *type, ...);
+static void cfapi_object_give_skill(int *type, ...);
+static void cfapi_object_transmute(int *type, ...);
+static void cfapi_object_remove(int *type, ...);
+static void cfapi_object_delete(int *type, ...);
+static void cfapi_object_clone(int *type, ...);
+static void cfapi_object_find(int *type, ...);
+static void cfapi_object_create(int *type, ...);
+static void cfapi_object_insert(int *type, ...);
+static void cfapi_object_split(int *type, ...);
+static void cfapi_object_merge(int *type, ...);
+static void cfapi_object_distance(int *type, ...);
+static void cfapi_object_update(int *type, ...);
+static void cfapi_object_clear(int *type, ...);
+static void cfapi_object_reset(int *type, ...);
+static void cfapi_object_check_inventory(int *type, ...);
+static void cfapi_object_clean_object(int *type, ...);
+static void cfapi_object_on_same_map(int *type, ...);
+static void cfapi_object_spring_trap(int *type, ...);
+static void cfapi_object_check_trigger(int *type, ...);
+static void cfapi_map_trigger_connected(int *type, ...);
+static void cfapi_object_query_cost(int *type, ...);
+static void cfapi_object_query_cost_string(int *type, ...);
+static void cfapi_object_query_money(int *type, ...);
+static void cfapi_object_cast(int *type, ...);
+static void cfapi_object_learn_spell(int *type, ...);
+static void cfapi_object_forget_spell(int *type, ...);
+static void cfapi_object_check_spell(int *type, ...);
+static void cfapi_object_pay_amount(int *type, ...);
+static void cfapi_object_pay_item(int *type, ...);
+static void cfapi_object_transfer(int *type, ...);
+static void cfapi_object_find_archetype_inside(int *type, ...);
+static void cfapi_object_find_by_arch_name(int *type, ...);
+static void cfapi_object_find_by_name(int *type, ...);
+static void cfapi_object_drop(int *type, ...);
+static void cfapi_object_change_abil(int *type, ...);
+static void cfapi_object_say(int *type, ...);
+static void cfapi_player_find(int *type, ...);
+static void cfapi_player_message(int *type, ...);
+static void cfapi_object_change_exp(int *type, ...);
+static void cfapi_player_can_pay(int *type, ...);
+static void cfapi_player_knowledge(int *type, ...);
+static void cfapi_object_teleport(int *type, ...);
+static void cfapi_object_pickup(int *type, ...);
+static void cfapi_archetype_get_property(int *type, ...);
+static void cfapi_party_get_property(int *type, ...);
+static void cfapi_region_get_property(int *type, ...);
+static void cfapi_friendlylist_get_next(int *type, ...);
+static void cfapi_set_random_map_variable(int *type, ...);
+static void cfapi_generate_random_map(int *type, ...);
+static void cfapi_object_user_event(int *type, ...);
+static void cfapi_player_quest(int *type, ...);
+
 /**
  * All hooked functions plugins can call.
  */
@@ -480,7 +576,7 @@ int execute_global_event(int eventcode, ...) {
 int plugins_init_plugin(const char *libfile) {
     LIBPTRTYPE ptr;
     f_plug_init initfunc;
-    f_plug_api propfunc;
+    f_plug_property propfunc;
     f_plug_event eventfunc;
     f_plug_postinit postfunc;
     f_plug_postinit closefunc;
@@ -500,7 +596,7 @@ int plugins_init_plugin(const char *libfile) {
         plugins_dlclose(ptr);
         return -1;
     }
-    propfunc = (f_plug_api)plugins_dlsym(ptr, "getPluginProperty");
+    propfunc = (f_plug_property)plugins_dlsym(ptr, "getPluginProperty");
     if (propfunc == NULL) {
         LOG(llevError, "Plugin error while requesting %s.getPluginProperty: %s\n", libfile, plugins_dlerror());
         plugins_dlclose(ptr);
@@ -548,7 +644,7 @@ int plugins_init_plugin(const char *libfile) {
     return 0;
 }
 
-void *cfapi_get_hooks(int *type, ...) {
+void cfapi_get_hooks(int *type, ...) {
     va_list args;
     int request_type;
     char *buf;
@@ -586,7 +682,6 @@ void *cfapi_get_hooks(int *type, ...) {
         }
     }
     va_end(args);
-    return NULL;
 }
 
 /**
@@ -678,9 +773,8 @@ void plugins_display_list(object *op) {
  * Wrapper for cost_string_from_value, modified to take a buffer and length instead of a StringBuffer.
  * @param type
  * will be CFAPI_NONE.
- * @return NULL;
 */
-void *cfapi_cost_string_from_value(int *type, ...) {
+void cfapi_cost_string_from_value(int *type, ...) {
     StringBuffer *sb;
     uint64 cost;
     char *buffer, *final;
@@ -696,7 +790,7 @@ void *cfapi_cost_string_from_value(int *type, ...) {
     *type = CFAPI_NONE;
 
     if (length < 1)
-        return NULL;
+        return;
 
     sb = cost_string_from_value(cost, NULL);
     final = stringbuffer_finish(sb);
@@ -704,17 +798,14 @@ void *cfapi_cost_string_from_value(int *type, ...) {
     strncpy(buffer, final, length - 1);
     buffer[length - 1] = '\0';
     free(final);
-    return NULL;
 }
 
 /**
  * Wrapper for find_animation().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_system_find_animation(int *type, ...) {
+void cfapi_system_find_animation(int *type, ...) {
     va_list args;
     const char *anim;
     int *num;
@@ -726,17 +817,14 @@ void *cfapi_system_find_animation(int *type, ...) {
 
     *num = find_animation(anim);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
  * Wrapper for find_face().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_system_find_face(int *type, ...) {
+void cfapi_system_find_face(int *type, ...) {
     va_list args;
     const char *face;
     int error;
@@ -750,17 +838,14 @@ void *cfapi_system_find_face(int *type, ...) {
 
     *num = find_face(face, error);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
  * Wrapper for strdup_local().
  * @param type
  * will be CFAPI_STRING.
- * @return
- * NULL.
  */
-void *cfapi_system_strdup_local(int *type, ...) {
+void cfapi_system_strdup_local(int *type, ...) {
     va_list args;
     const char *txt;
     char **ret;
@@ -772,10 +857,9 @@ void *cfapi_system_strdup_local(int *type, ...) {
 
     *ret = strdup_local(txt);
     *type = CFAPI_STRING;
-    return NULL;
 }
 
-void *cfapi_system_register_global_event(int *type, ...) {
+void cfapi_system_register_global_event(int *type, ...) {
     va_list args;
     int eventcode;
     char *pname;
@@ -792,10 +876,9 @@ void *cfapi_system_register_global_event(int *type, ...) {
 
     cp = plugins_find_plugin(pname);
     cp->gevent[eventcode] = hook;
-    return NULL;
 }
 
-void *cfapi_system_unregister_global_event(int *type, ...) {
+void cfapi_system_unregister_global_event(int *type, ...) {
     va_list args;
     int eventcode;
     char *pname;
@@ -810,8 +893,6 @@ void *cfapi_system_unregister_global_event(int *type, ...) {
 
     cp = plugins_find_plugin(pname);
     cp->gevent[eventcode] = NULL;
-
-    return NULL;
 }
 
 /**
@@ -819,10 +900,8 @@ void *cfapi_system_unregister_global_event(int *type, ...) {
  *
  * @param type
  * will be CFAPI_SSTRING.
- * @return
- * NULL.
  */
-void *cfapi_system_add_string(int *type, ...) {
+void cfapi_system_add_string(int *type, ...) {
     va_list args;
     const char *str;
     sstring *rv;
@@ -834,7 +913,6 @@ void *cfapi_system_add_string(int *type, ...) {
 
     *rv = add_string(str);
     *type = CFAPI_SSTRING;
-    return NULL;
 }
 
 /**
@@ -842,10 +920,8 @@ void *cfapi_system_add_string(int *type, ...) {
  *
  * @param type
  * will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_system_remove_string(int *type, ...) {
+void cfapi_system_remove_string(int *type, ...) {
     va_list args;
     sstring str;
 
@@ -855,7 +931,6 @@ void *cfapi_system_remove_string(int *type, ...) {
 
     free_string(str);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
@@ -863,10 +938,8 @@ void *cfapi_system_remove_string(int *type, ...) {
  *
  * @param type
  * will be CFAPI_SSTRING.
- * @return
- * NULL.
  */
-void *cfapi_system_find_string(int *type, ...) {
+void cfapi_system_find_string(int *type, ...) {
     va_list args;
     const char *str;
     sstring *rv;
@@ -878,17 +951,14 @@ void *cfapi_system_find_string(int *type, ...) {
 
     *rv = find_string(str);
     *type = CFAPI_SSTRING;
-    return NULL;
 }
 
 /**
  * Wrapper for check_path().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_system_check_path(int *type, ...) {
+void cfapi_system_check_path(int *type, ...) {
     va_list args;
     const char *name;
     int prepend_dir;
@@ -904,17 +974,14 @@ void *cfapi_system_check_path(int *type, ...) {
 
     va_end(args);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
  * Wrapper for re_cmp().
  * @param type
  * will be CFAPI_STRING.
- * @return
- * NULL.
  */
-void *cfapi_system_re_cmp(int *type, ...) {
+void cfapi_system_re_cmp(int *type, ...) {
     va_list args;
     const char *str;
     const char *regexp;
@@ -930,10 +997,9 @@ void *cfapi_system_re_cmp(int *type, ...) {
 
     va_end(args);
     *type = CFAPI_STRING;
-    return NULL;
 }
 
-void *cfapi_system_directory(int *type, ...) {
+void cfapi_system_directory(int *type, ...) {
     va_list args;
     int dirtype;
     const char **str;
@@ -978,8 +1044,6 @@ void *cfapi_system_directory(int *type, ...) {
     default:
         *str = NULL;
     }
-
-    return NULL;
 }
 
 /**
@@ -987,10 +1051,8 @@ void *cfapi_system_directory(int *type, ...) {
  *
  * @param type
  * will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_get_time(int *type, ...) {
+void cfapi_get_time(int *type, ...) {
     va_list args;
     timeofday_t *tod;
 
@@ -1000,7 +1062,6 @@ void *cfapi_get_time(int *type, ...) {
 
     get_tod(tod);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 #define string_get_int(name)            \
@@ -1013,7 +1074,6 @@ void *cfapi_get_time(int *type, ...) {
     va_end(args);                       \
     *str = name(index);                 \
     *type = CFAPI_STRING;               \
-    return NULL;                        \
 
 /**
  * Wrapper for get_season_name().
@@ -1023,7 +1083,7 @@ void *cfapi_get_time(int *type, ...) {
  * @return
  * NULL.
  */
-void *cfapi_get_season_name(int *type, ...) {
+void cfapi_get_season_name(int *type, ...) {
     string_get_int(get_season_name)
 }
 
@@ -1035,7 +1095,7 @@ void *cfapi_get_season_name(int *type, ...) {
  * @return
  * NULL.
  */
-void *cfapi_get_weekday_name(int *type, ...) {
+void cfapi_get_weekday_name(int *type, ...) {
     string_get_int(get_weekday)
 }
 
@@ -1047,7 +1107,7 @@ void *cfapi_get_weekday_name(int *type, ...) {
  * @return
  * NULL.
  */
-void *cfapi_get_month_name(int *type, ...) {
+void cfapi_get_month_name(int *type, ...) {
     string_get_int(get_month_name)
 }
 
@@ -1059,7 +1119,7 @@ void *cfapi_get_month_name(int *type, ...) {
  * @return
  * NULL.
  */
-void *cfapi_get_periodofday_name(int *type, ...) {
+void cfapi_get_periodofday_name(int *type, ...) {
     string_get_int(get_periodofday)
 }
 
@@ -1067,8 +1127,6 @@ void *cfapi_get_periodofday_name(int *type, ...) {
  * Wrapper for cfapi_timer_create().
  * @param type
  * unused
- * @return
- * always 0
  *
  * Additional parameters:
  * - ob : ::object *for which to create a timer
@@ -1076,7 +1134,7 @@ void *cfapi_get_periodofday_name(int *type, ...) {
  * - mode : int, either ::TIMER_MODE_SECONDS or ::TIMER_MODE_CYCLES
  * - timer : int *that will contain timer's id
  */
-void *cfapi_timer_create(int *type, ...) {
+void cfapi_timer_create(int *type, ...) {
     va_list args;
     int res;
     object *ob;
@@ -1098,21 +1156,18 @@ void *cfapi_timer_create(int *type, ...) {
         if (res != TIMER_ERR_NONE)
             *timer = res;
     }
-    return NULL;
 }
 
 /**
  * Wrapper for cftimer_destroy().
  * @param type
  * will be CFAPI_INT.
- * @return
- * always 0
  *
  * Additional parameters:
  * - timer: int that should be destroyed
  * - err: int *which will contain the return code of cftimer_destroy().
  */
-void *cfapi_timer_destroy(int *type, ...) {
+void cfapi_timer_destroy(int *type, ...) {
     va_list args;
     int id;
     int *err;
@@ -1124,18 +1179,14 @@ void *cfapi_timer_destroy(int *type, ...) {
     *type = CFAPI_INT;
 
     *err = cftimer_destroy(id);
-
-    return NULL;
 }
 
 /**
  * Wrapper for LOG().
  * @param type
  * will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_log(int *type, ...) {
+void cfapi_log(int *type, ...) {
     va_list args;
     LogLevel logLevel;
     const char *message;
@@ -1147,8 +1198,6 @@ void *cfapi_log(int *type, ...) {
     va_end(args);
 
     *type = CFAPI_NONE;
-
-    return NULL;
 }
 
 /* MAP RELATED HOOKS */
@@ -1161,7 +1210,7 @@ void *cfapi_log(int *type, ...) {
  * - 1 with char*, int, mapstruct**: call ready_map_name().
  * - 2 with mapstruct*, 2 int and mapstruct**: call to get_map_from_coord().
  */
-void *cfapi_map_get_map(int *type, ...) {
+void cfapi_map_get_map(int *type, ...) {
     va_list args;
     mapstruct **ret;
     int ctype;
@@ -1200,22 +1249,19 @@ void *cfapi_map_get_map(int *type, ...) {
     default:
         *type = CFAPI_NONE;
         va_end(args);
-        return NULL;
+        return;
         break;
     }
     va_end(args);
     *type = CFAPI_PMAP;
-    return NULL;
 }
 
 /**
  * Wrapper for has_been_loaded().
  * @param type
  * will be CFAPI_PMAP.
- * @return
- * NULL.
  */
-void *cfapi_map_has_been_loaded(int *type, ...) {
+void cfapi_map_has_been_loaded(int *type, ...) {
     va_list args;
     mapstruct **map;
     char *string;
@@ -1226,17 +1272,14 @@ void *cfapi_map_has_been_loaded(int *type, ...) {
     *map = has_been_loaded(string);
     va_end(args);
     *type = CFAPI_PMAP;
-    return NULL;
 }
 
 /**
  * Wrapper for create_pathname() and create_overlay_pathname().
  * @param type
  * will be CFAPI_STRING.
- * @return
- * NULL.
  */
-void *cfapi_map_create_path(int *type, ...) {
+void cfapi_map_create_path(int *type, ...) {
     va_list args;
     int ctype, size;
     const char *str;
@@ -1268,10 +1311,9 @@ void *cfapi_map_create_path(int *type, ...) {
         break;
     }
     va_end(args);
-    return NULL;
 }
 
-void *cfapi_map_get_map_property(int *type, ...) {
+void cfapi_map_get_map_property(int *type, ...) {
     va_list args;
     mapstruct *map;
     int property;
@@ -1401,10 +1443,9 @@ void *cfapi_map_get_map_property(int *type, ...) {
         break;
     }
     va_end(args);
-    return NULL;
 }
 
-void *cfapi_map_set_map_property(int *type, ...) {
+void cfapi_map_set_map_property(int *type, ...) {
     va_list args;
     mapstruct *map;
     int property;
@@ -1427,17 +1468,14 @@ void *cfapi_map_set_map_property(int *type, ...) {
         break;
     }
     va_end(args);
-    return NULL;
 }
 
 /**
  * Wrapper for out_of_map().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_map_out_of_map(int *type, ...) {
+void cfapi_map_out_of_map(int *type, ...) {
     va_list args;
     mapstruct *map;
     int x, y;
@@ -1452,17 +1490,14 @@ void *cfapi_map_out_of_map(int *type, ...) {
     *rint = out_of_map(map, x, y);
     va_end(args);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
  * Wrapper for update_position().
  * @param type
  * CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_map_update_position(int *type, ...) {
+void cfapi_map_update_position(int *type, ...) {
     va_list args;
     mapstruct *map;
     int x, y;
@@ -1476,10 +1511,9 @@ void *cfapi_map_update_position(int *type, ...) {
     update_position(map, x, y);
     va_end(args);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
-void *cfapi_map_delete_map(int *type, ...) {
+void cfapi_map_delete_map(int *type, ...) {
     va_list args;
     mapstruct *map;
     va_start(args, type);
@@ -1490,9 +1524,9 @@ void *cfapi_map_delete_map(int *type, ...) {
 
     va_end(args);
     *type = CFAPI_NONE;
-    return NULL;
 }
-void *cfapi_map_message(int *type, ...) {
+
+void cfapi_map_message(int *type, ...) {
     va_list args;
     mapstruct *map;
     const char *string;
@@ -1507,17 +1541,14 @@ void *cfapi_map_message(int *type, ...) {
     /* function should be extended to take message types probably */
     ext_info_map(color, map, MSG_TYPE_MISC, MSG_SUBTYPE_NONE, string);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for GET_MAP_OB().
  * @param type
  * will be CFAPI_POBJECT.
- * @return
- * NULL.
  */
-void *cfapi_map_get_object_at(int *type, ...) {
+void cfapi_map_get_object_at(int *type, ...) {
     va_list args;
     mapstruct *map;
     int x, y;
@@ -1538,18 +1569,15 @@ void *cfapi_map_get_object_at(int *type, ...) {
     else
         *robj = GET_MAP_OB(map, sx, sy);
     *type = CFAPI_POBJECT;
-    return NULL;
 }
 
 /**
  * Kinda wrapper for map_find_by_archetype() (but uses a string, not an archetype*).
  * @param type
  * will be CFAPI_POBJECT.
- * @return
- * NULL.
  * @todo fix archetype instead of string.
  */
-void *cfapi_map_find_by_archetype_name(int *type, ...) {
+void cfapi_map_find_by_archetype_name(int *type, ...) {
     va_list args;
     int x, y;
     mapstruct *map;
@@ -1568,17 +1596,14 @@ void *cfapi_map_find_by_archetype_name(int *type, ...) {
 
     *robj = map_find_by_archetype(map, x, y, try_find_archetype(msg));
     *type = CFAPI_POBJECT;
-    return NULL;
 }
 
 /**
  * Wrapper for change_map_light().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_map_change_light(int *type, ...) {
+void cfapi_map_change_light(int *type, ...) {
     va_list args;
     int change;
     mapstruct *map;
@@ -1592,8 +1617,6 @@ void *cfapi_map_change_light(int *type, ...) {
 
     *type = CFAPI_INT;
     *rint = change_map_light(map, change);
-
-    return NULL;
 }
 
 /* OBJECT-RELATED HOOKS */
@@ -1609,10 +1632,8 @@ void *cfapi_map_change_light(int *type, ...) {
  *
  * @param type
  * unused
- * @return
- * NULL.
  */
-void *cfapi_object_move(int *type, ...) {
+void cfapi_object_move(int *type, ...) {
     va_list args;
     int kind;
     object *op;
@@ -1642,7 +1663,6 @@ void *cfapi_object_move(int *type, ...) {
         break;
     }
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
@@ -1650,11 +1670,9 @@ void *cfapi_object_move(int *type, ...) {
  *
  * @param type
  * will contain CFAPI_SSTRING.
- * @return
- * NULL.
  * @see object_get_value().
  */
-void *cfapi_object_get_key(int *type, ...) {
+void cfapi_object_get_key(int *type, ...) {
     va_list args;
     const char *keyname;
     const char **value;
@@ -1668,18 +1686,15 @@ void *cfapi_object_get_key(int *type, ...) {
 
     *value = object_get_value(op, keyname);
     *type = CFAPI_SSTRING;
-    return NULL;
 }
 
 /**
  * Write a key/value for an object.
  * @param type
  * will contain CFAPI_SSTRING.
- * @return
- * NULL.
  * @see object_set_value().
  */
-void *cfapi_object_set_key(int *type, ...) {
+void cfapi_object_set_key(int *type, ...) {
     va_list args;
     const char *keyname;
     const char *value;
@@ -1697,13 +1712,12 @@ void *cfapi_object_set_key(int *type, ...) {
 
     *ret = object_set_value(op, keyname, value, add_key);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
  * Main object property getter.
  */
-void *cfapi_object_get_property(int *type, ...) {
+void cfapi_object_get_property(int *type, ...) {
     va_list args;
     int property;
     object *op;
@@ -2489,7 +2503,6 @@ void *cfapi_object_get_property(int *type, ...) {
         break;
     }
     va_end(args);
-    return NULL;
 }
 
 /**
@@ -2535,10 +2548,8 @@ static void copy_message(object *op, const char *msg) {
  * Will not change an archetype's object.
  * @param type
  * will contain the type of the first argument used to change the property.
- * @return
- * NULL.
  */
-void *cfapi_object_set_property(int *type, ...) {
+void cfapi_object_set_property(int *type, ...) {
     va_list args;
     int iarg;
     long larg;
@@ -3125,8 +3136,6 @@ void *cfapi_object_set_property(int *type, ...) {
         }
     }
     va_end(args);
-
-    return NULL;
 }
 
 /**
@@ -3134,10 +3143,8 @@ void *cfapi_object_set_property(int *type, ...) {
  *
  * @param type
  * will be CFAPI_NONE.
- * @return
- * always NULL.
  */
-void *cfapi_object_apply_below(int *type, ...) {
+void cfapi_object_apply_below(int *type, ...) {
     va_list args;
     object *applier;
 
@@ -3149,7 +3156,6 @@ void *cfapi_object_apply_below(int *type, ...) {
 
     apply_by_living_below(applier);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
@@ -3157,10 +3163,8 @@ void *cfapi_object_apply_below(int *type, ...) {
  *
  * @param type
  * will be CFAPI_INT.
- * @return
- * always NULL.
  */
-void *cfapi_object_apply(int *type, ...) {
+void cfapi_object_apply(int *type, ...) {
     va_list args;
     object *applied;
     object *applier;
@@ -3178,17 +3182,14 @@ void *cfapi_object_apply(int *type, ...) {
 
     *type = CFAPI_INT;
     *ret = apply_manual(applier, applied, aflags);
-    return NULL;
 }
 
 /**
  * Wrapper for identify().
  * @param type
  * will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_object_identify(int *type, ...) {
+void cfapi_object_identify(int *type, ...) {
     va_list args;
     object *op;
 
@@ -3200,17 +3201,14 @@ void *cfapi_object_identify(int *type, ...) {
 
     identify(op);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for describe_item().
  * @param type
  * will be CFAPI_STRING.
- * @return
- * NULL.
  */
-void *cfapi_object_describe(int *type, ...) {
+void cfapi_object_describe(int *type, ...) {
     va_list args;
     object *op;
     object *owner;
@@ -3230,10 +3228,9 @@ void *cfapi_object_describe(int *type, ...) {
     strncpy(desc, final, size);
     desc[size - 1] = '\0';
     free(final);
-    return NULL;
 }
 
-void *cfapi_object_drain(int *type, ...) {
+void cfapi_object_drain(int *type, ...) {
     va_list args;
 
     object *op;
@@ -3249,10 +3246,9 @@ void *cfapi_object_drain(int *type, ...) {
     drain_specific_stat(op, ds);
 
     *type = CFAPI_NONE;
-    return NULL;
 }
 
-void *cfapi_object_remove_depletion(int *type, ...) {
+void cfapi_object_remove_depletion(int *type, ...) {
     va_list args;
 
     object *op;
@@ -3269,10 +3265,9 @@ void *cfapi_object_remove_depletion(int *type, ...) {
     *result = remove_depletion(op, level);
 
     *type = CFAPI_INT;
-    return NULL;
 }
 
-void *cfapi_object_fix(int *type, ...) {
+void cfapi_object_fix(int *type, ...) {
     va_list args;
     object *op;
 
@@ -3285,10 +3280,10 @@ void *cfapi_object_fix(int *type, ...) {
     fix_object(op);
 
     *type = CFAPI_NONE;
-    return NULL;
 }
 
-void *cfapi_object_give_skill(int *type, ...) {
+/** @todo seems broken, return value isn't used - fix. */
+void cfapi_object_give_skill(int *type, ...) {
     va_list args;
 
     object *op;
@@ -3302,10 +3297,10 @@ void *cfapi_object_give_skill(int *type, ...) {
     va_end(args);
 
     *type = CFAPI_POBJECT;
-    return give_skill_by_name(op, skillname);
+    give_skill_by_name(op, skillname);
 }
 
-void *cfapi_object_transmute(int *type, ...) {
+void cfapi_object_transmute(int *type, ...) {
     va_list args;
 
     object *op;
@@ -3320,10 +3315,9 @@ void *cfapi_object_transmute(int *type, ...) {
 
     transmute_materialname(op, chg);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
-void *cfapi_object_remove(int *type, ...) {
+void cfapi_object_remove(int *type, ...) {
     va_list args;
     object *op;
 
@@ -3334,17 +3328,16 @@ void *cfapi_object_remove(int *type, ...) {
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
         LOG(llevError, "Plugin trying to remove removed object %s\n", op->name);
         *type = CFAPI_NONE;
-        return NULL;
+        return;
     }
 
     va_end(args);
 
     object_remove(op);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
-void *cfapi_object_delete(int *type, ...) {
+void cfapi_object_delete(int *type, ...) {
     va_list args;
     object *op;
 
@@ -3355,7 +3348,7 @@ void *cfapi_object_delete(int *type, ...) {
     if (QUERY_FLAG(op, FLAG_FREED) || !QUERY_FLAG(op, FLAG_REMOVED)) {
         LOG(llevError, "Plugin trying to free freed/non removed object %s\n", op->name);
         *type = CFAPI_NONE;
-        return NULL;
+        return;
     }
 
     va_end(args);
@@ -3363,17 +3356,14 @@ void *cfapi_object_delete(int *type, ...) {
     object_free_drop_inventory(op);
 
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Clone an object, either through object_create_clone() or object_copy().
  * @param type
  * will be CFAPI_POBJECT.
- * @return
- * NULL.
  */
-void *cfapi_object_clone(int *type, ...) {
+void cfapi_object_clone(int *type, ...) {
     va_list args;
     object *op;
     int kind;
@@ -3397,10 +3387,11 @@ void *cfapi_object_clone(int *type, ...) {
         *type = CFAPI_POBJECT;
         *robj = tmp;
     }
-    return NULL;
+    return;
 }
 
-void *cfapi_object_find(int *type, ...) {
+/** @todo broken, return value isn't sent. */
+void cfapi_object_find(int *type, ...) {
     va_list args;
     int ftype;
     void *rv;
@@ -3443,18 +3434,14 @@ void *cfapi_object_find(int *type, ...) {
     }
 
     va_end(args);
-
-    return rv;
 }
 
 /**
  * Wrapper for object_new(), create_archetype() and create_archetype_by_object_name().
  * @param type
  * will be CFAPI_POBJECT, or CFAPI_NONE if invalid value asked for.
- * @return
- * NULL.
  */
-void *cfapi_object_create(int *type, ...) {
+void cfapi_object_create(int *type, ...) {
     va_list args;
     int ival;
     object **robj;
@@ -3491,9 +3478,9 @@ void *cfapi_object_create(int *type, ...) {
         break;
     }
     va_end(args);
-    return NULL;
 }
-void *cfapi_object_insert(int *type, ...) {
+
+void cfapi_object_insert(int *type, ...) {
     va_list args;
     object *op;
     object *orig;
@@ -3508,12 +3495,12 @@ void *cfapi_object_insert(int *type, ...) {
     if (!op) {
         LOG(llevError, "cfapi_object_insert: called with NULL object!\n");
         va_end(args);
-        return NULL;
+        return;
     }
     if (QUERY_FLAG(op, FLAG_FREED)) {
         LOG(llevError, "cfapi_object_insert: called with FREED object!\n");
         va_end(args);
-        return NULL;
+        return;
     }
     if (!QUERY_FLAG(op, FLAG_REMOVED)) {
         LOG(llevError, "cfapi_object_insert: called with not removed object %s!\n", op->name);
@@ -3595,17 +3582,13 @@ void *cfapi_object_insert(int *type, ...) {
     }
 
     va_end(args);
-
-    return NULL;
 }
 /**
  * Wrapper for object_split().
  * @param type
  * will be CFAPI_POBJECT, or CFAPI_NONE if split failed.
- * @return
- * NULL.
  */
-void *cfapi_object_split(int *type, ...) {
+void cfapi_object_split(int *type, ...) {
     va_list args;
 
     int nr, size;
@@ -3631,17 +3614,14 @@ void *cfapi_object_split(int *type, ...) {
     {
         *type = CFAPI_NONE;
     }
-    return NULL;
 }
 
 /**
  * Wrapper for object_merge().
  * @param type
  * Will be CFAPI_POBJECT.
- * @return
- * NULL.
  */
-void *cfapi_object_merge(int *type, ...) {
+void cfapi_object_merge(int *type, ...) {
     va_list args;
     object *op;
     object *op2;
@@ -3657,17 +3637,14 @@ void *cfapi_object_merge(int *type, ...) {
 
     *type = CFAPI_POBJECT;
     *merge = object_merge(op, op2);
-    return NULL;
 }
 
 /**
  * Wrapper for object_distance().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_object_distance(int *type, ...) {
+void cfapi_object_distance(int *type, ...) {
     va_list args;
     object *op;
     object *op2;
@@ -3682,16 +3659,13 @@ void *cfapi_object_distance(int *type, ...) {
 
     *type = CFAPI_INT;
     *rint = object_distance(op, op2);
-    return NULL;
 }
 /**
  * Wrapper for object_update().
  * @param type
  * Will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_object_update(int *type, ...) {
+void cfapi_object_update(int *type, ...) {
     va_list args;
     int action;
     object *op;
@@ -3704,17 +3678,14 @@ void *cfapi_object_update(int *type, ...) {
 
     object_update(op, action);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for object_clear().
  * @param type
  * Will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_object_clear(int *type, ...) {
+void cfapi_object_clear(int *type, ...) {
     va_list args;
     object *op;
     va_start(args, type);
@@ -3725,17 +3696,14 @@ void *cfapi_object_clear(int *type, ...) {
 
     object_clear(op);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for clear_reset().
  * @param type
  * Will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_object_reset(int *type, ...) {
+void cfapi_object_reset(int *type, ...) {
     va_list args;
     object *op;
 
@@ -3747,10 +3715,10 @@ void *cfapi_object_reset(int *type, ...) {
 
     object_reset(op);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
-void *cfapi_object_check_inventory(int *type, ...) {
+/** @todo broken, ret isn't sent back. */
+void cfapi_object_check_inventory(int *type, ...) {
     va_list args;
     object *op;
     object *op2;
@@ -3772,11 +3740,9 @@ void *cfapi_object_check_inventory(int *type, ...) {
     }
 
     va_end(args);
-
-    return ret;
 }
 
-void *cfapi_object_clean_object(int *type, ...) {
+void cfapi_object_clean_object(int *type, ...) {
     va_list args;
     object *op;
 
@@ -3785,10 +3751,9 @@ void *cfapi_object_clean_object(int *type, ...) {
     clean_object(op);
     va_end(args);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
-void *cfapi_object_on_same_map(int *type, ...) {
+void cfapi_object_on_same_map(int *type, ...) {
     va_list args;
     object *op1;
     object *op2;
@@ -3802,11 +3767,9 @@ void *cfapi_object_on_same_map(int *type, ...) {
 
     *type = CFAPI_INT;
     *rint = on_same_map(op1, op2);
-
-    return NULL;
 }
 
-void *cfapi_object_spring_trap(int *type, ...) {
+void cfapi_object_spring_trap(int *type, ...) {
     object *trap;
     object *victim;
     va_list args;
@@ -3818,17 +3781,14 @@ void *cfapi_object_spring_trap(int *type, ...) {
 
     spring_trap(trap, victim);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for check_trigger().
  * @param type
  * Will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_object_check_trigger(int *type, ...) {
+void cfapi_object_check_trigger(int *type, ...) {
     object *op;
     object *cause;
     va_list args;
@@ -3842,7 +3802,6 @@ void *cfapi_object_check_trigger(int *type, ...) {
 
     *rint = check_trigger(op, cause);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
@@ -3855,10 +3814,8 @@ void *cfapi_object_check_trigger(int *type, ...) {
  *
  * @param[out] type
  * Will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_map_trigger_connected(int *type, ...) {
+void cfapi_map_trigger_connected(int *type, ...) {
     objectlink *ol;
     object *cause;
     int state;
@@ -3871,17 +3828,14 @@ void *cfapi_map_trigger_connected(int *type, ...) {
     va_end(args);
     trigger_connected(ol, cause, state);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for query_cost().
  * @param type
  * Will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_object_query_cost(int *type, ...) {
+void cfapi_object_query_cost(int *type, ...) {
     object *op;
     object *who;
     int flags;
@@ -3897,17 +3851,14 @@ void *cfapi_object_query_cost(int *type, ...) {
 
     *rint = query_cost(op, who, flags);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
  * Wrapper for query_cost_string(), slightly modified to take a char* and int instead of a StringBuffer.
  * @param type
  * Will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_object_query_cost_string(int *type, ...) {
+void cfapi_object_query_cost_string(int *type, ...) {
     object *op;
     object *who;
     int flags, length;
@@ -3926,7 +3877,7 @@ void *cfapi_object_query_cost_string(int *type, ...) {
     if (length < 1)
     {
         *type = CFAPI_NONE;
-        return NULL;
+        return;
     }
     sb = query_cost_string(op, who, flags, NULL);
     final = stringbuffer_finish(sb);
@@ -3936,17 +3887,14 @@ void *cfapi_object_query_cost_string(int *type, ...) {
     free(final);
 
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for query_money().
  * @param type
  * Will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_object_query_money(int *type, ...) {
+void cfapi_object_query_money(int *type, ...) {
     object *op;
     va_list args;
     int *rint;
@@ -3958,17 +3906,14 @@ void *cfapi_object_query_money(int *type, ...) {
 
     *rint = query_money(op);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
  * Wrapper for query_money().
  * @param type
  * Will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_object_cast(int *type, ...) {
+void cfapi_object_cast(int *type, ...) {
     object *op;
     object *sp;
     int dir;
@@ -3990,14 +3935,13 @@ void *cfapi_object_cast(int *type, ...) {
 
     if (!op->map) {
         *rint = -1;
-        return NULL;
+        return;
     }
 
     *rint = cast_spell(op, caster, dir, sp, str);
-    return NULL;
 }
 
-void *cfapi_object_learn_spell(int *type, ...) {
+void cfapi_object_learn_spell(int *type, ...) {
     object *op;
     object *sp;
     int prayer;
@@ -4010,10 +3954,9 @@ void *cfapi_object_learn_spell(int *type, ...) {
     va_end(args);
     do_learn_spell(op, sp, prayer);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
-void *cfapi_object_forget_spell(int *type, ...) {
+void cfapi_object_forget_spell(int *type, ...) {
     object *op;
     object *sp;
     va_list args;
@@ -4026,17 +3969,14 @@ void *cfapi_object_forget_spell(int *type, ...) {
     query_name(sp, name, MAX_BUF);
     do_forget_spell(op, name);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for check_spell_known().
  * @param type
  * Will be CFAPI_POBJECT.
- * @return
- * NULL.
  */
-void *cfapi_object_check_spell(int *type, ...) {
+void cfapi_object_check_spell(int *type, ...) {
     object *op;
     char *spellname;
     va_list args;
@@ -4049,17 +3989,14 @@ void *cfapi_object_check_spell(int *type, ...) {
     va_end(args);
     *robj = check_spell_known(op, spellname);
     *type = CFAPI_POBJECT;
-    return NULL;
 }
 
 /**
  * Wrapper for pay_for_amount().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_object_pay_amount(int *type, ...) {
+void cfapi_object_pay_amount(int *type, ...) {
     object *op;
     uint64 amount;
     va_list args;
@@ -4073,16 +4010,14 @@ void *cfapi_object_pay_amount(int *type, ...) {
 
     *rint = pay_for_amount(amount, op);
     *type = CFAPI_INT;
-    return NULL;
 }
+
 /**
  * Wrapper for pay_for_item().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_object_pay_item(int *type, ...) {
+void cfapi_object_pay_item(int *type, ...) {
     object *op;
     object *tobuy;
     int *rint;
@@ -4097,7 +4032,6 @@ void *cfapi_object_pay_item(int *type, ...) {
 
     *rint = pay_for_item(tobuy, op);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
@@ -4106,10 +4040,8 @@ void *cfapi_object_pay_item(int *type, ...) {
  * 0: call to transfer_ob()
  * 1: call to object_insert_in_map_at()
  * 2: call to move_to()
- * @return
- * NULL.
  */
-void *cfapi_object_transfer(int *type, ...) {
+void cfapi_object_transfer(int *type, ...) {
     object *op;
     object *originator;
     int x, y, randompos, ttype, flag;
@@ -4132,7 +4064,7 @@ void *cfapi_object_transfer(int *type, ...) {
 
         *rint = transfer_ob(op, x, y, randompos, originator);
         *type = CFAPI_INT;
-        return NULL;
+        return;
         break;
 
     case 1:
@@ -4149,7 +4081,7 @@ void *cfapi_object_transfer(int *type, ...) {
         }
         *robj = object_insert_in_map_at(op, map, originator, flag, x, y);
         *type = CFAPI_POBJECT;
-        return NULL;
+        return;
         break;
 
     case 2:
@@ -4160,11 +4092,11 @@ void *cfapi_object_transfer(int *type, ...) {
 
         *rint = move_to(op, x, y);
         *type = CFAPI_INT;
-        return NULL;
+        return;
 
     default:
         *type = CFAPI_NONE;
-        return NULL;
+        return;
         break;
     }
 }
@@ -4172,7 +4104,7 @@ void *cfapi_object_transfer(int *type, ...) {
 /**
  * Kinda wrapper for arch__present_in_ob().
  */
-void *cfapi_object_find_archetype_inside(int *type, ...) {
+void cfapi_object_find_archetype_inside(int *type, ...) {
     object *op;
     char *str;
     va_list args;
@@ -4200,11 +4132,9 @@ void *cfapi_object_find_archetype_inside(int *type, ...) {
         } FOR_INV_FINISH();
     }
     va_end(args);
-
-    return NULL;
 }
 
-void *cfapi_object_find_by_arch_name(int *type, ...) {
+void cfapi_object_find_by_arch_name(int *type, ...) {
     const object *who;
     object **result;
     const char *name;
@@ -4218,10 +4148,9 @@ void *cfapi_object_find_by_arch_name(int *type, ...) {
     *type = CFAPI_POBJECT;
 
     *result = object_find_by_arch_name(who, name);
-    return NULL;
 }
 
-void *cfapi_object_find_by_name(int *type, ...) {
+void cfapi_object_find_by_name(int *type, ...) {
     const object *who;
     object **result;
     const char *name;
@@ -4235,17 +4164,14 @@ void *cfapi_object_find_by_name(int *type, ...) {
     *type = CFAPI_POBJECT;
 
     *result = object_find_by_name(who, name);
-    return NULL;
 }
 
 /**
  * Wrapper for drop().
  * @param type
  * will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_object_drop(int *type, ...) {
+void cfapi_object_drop(int *type, ...) {
     object *op;
     object *author;
     va_list args;
@@ -4257,21 +4183,19 @@ void *cfapi_object_drop(int *type, ...) {
     *type = CFAPI_NONE;
 
     if (QUERY_FLAG(op, FLAG_NO_DROP))
-        return NULL;
+        return;
     drop(author, op);
 
     if (author->type == PLAYER) {
         author->contr->count = 0;
         author->contr->socket.update_look = 1;
     }
-
-    return NULL;
 }
 
 /**
  * Wrapper for change_abil().
  */
-void *cfapi_object_change_abil(int *type, ...) {
+void cfapi_object_change_abil(int *type, ...) {
     object *op, *tmp;
     int *rint;
     va_list args;
@@ -4284,11 +4208,9 @@ void *cfapi_object_change_abil(int *type, ...) {
 
     *type = CFAPI_INT;
     *rint = change_abil(op, tmp);
-
-    return NULL;
 }
 
-void *cfapi_object_say(int *type, ...) {
+void cfapi_object_say(int *type, ...) {
     object *op;
     char *msg;
     va_list args;
@@ -4308,7 +4230,6 @@ void *cfapi_object_say(int *type, ...) {
     }
     *rint = 0;
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /* PLAYER SUBCLASS */
@@ -4317,10 +4238,8 @@ void *cfapi_object_say(int *type, ...) {
  * Wrapper for find_player_partial_name().
  * @param type
  * will be CFAPI_PPLAYER.
- * @return
- * NULL.
  */
-void *cfapi_player_find(int *type, ...) {
+void cfapi_player_find(int *type, ...) {
     va_list args;
     char *sval;
     player **rpl;
@@ -4333,10 +4252,9 @@ void *cfapi_player_find(int *type, ...) {
     *rpl = find_player_partial_name(sval);
 
     *type = CFAPI_PPLAYER;
-    return NULL;
 }
 
-void *cfapi_player_message(int *type, ...) {
+void cfapi_player_message(int *type, ...) {
     va_list args;
     int flags;
     int pri;
@@ -4354,17 +4272,14 @@ void *cfapi_player_message(int *type, ...) {
     draw_ext_info(flags, pri, pl, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
                   buf);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /**
  * Wrapper for change_exp().
  * @param type
  * will be CFAPI_NONE.
- * @return
- * NULL.
  */
-void *cfapi_object_change_exp(int *type, ...) {
+void cfapi_object_change_exp(int *type, ...) {
     va_list(args);
     int flag;
     object *ob;
@@ -4380,17 +4295,14 @@ void *cfapi_object_change_exp(int *type, ...) {
 
     *type = CFAPI_NONE;
     change_exp(ob, exp, skill, flag);
-    return NULL;
 }
 
 /**
  * Wrapper for can_pay().
  * @param type
  * will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_player_can_pay(int *type, ...) {
+void cfapi_player_can_pay(int *type, ...) {
     va_list args;
     object *pl;
     int *rint;
@@ -4402,17 +4314,14 @@ void *cfapi_player_can_pay(int *type, ...) {
 
     *rint = can_pay(pl);
     *type = CFAPI_INT;
-    return NULL;
 }
 
 /**
  * Wrapper for knowledge-related functions().
  * @param type
  * Depends on the type.
- * @return
- * NULL.
  */
-void *cfapi_player_knowledge(int *type, ...) {
+void cfapi_player_knowledge(int *type, ...) {
     va_list args;
     object *pl;
     int *rint, what;
@@ -4433,7 +4342,7 @@ void *cfapi_player_knowledge(int *type, ...) {
             if (pl->contr == NULL) {
                 LOG(llevError, "cfapi_player_knowledge: 'has' called for non player object %s", pl->name);
                 *rint = 0;
-                return NULL;
+                return;
             }
 
             *rint = knowledge_player_knows(pl->contr, knowledge);
@@ -4444,17 +4353,14 @@ void *cfapi_player_knowledge(int *type, ...) {
     }
 
     va_end(args);
-    return NULL;
 }
 
 /**
  * Teleports an object at a specified destination if possible.
  * @param type
  * Will be CFAPI_INT.
- * @return
- * NULL.
  */
-void *cfapi_object_teleport(int *type, ...) {
+void cfapi_object_teleport(int *type, ...) {
     mapstruct *map;
     int x, y;
     object *who;
@@ -4474,7 +4380,7 @@ void *cfapi_object_teleport(int *type, ...) {
         k = object_find_first_free_spot(who, map, x, y);
         if (k == -1) {
             *res = 1;
-            return NULL;
+            return;
         }
 
         if (!QUERY_FLAG(who, FLAG_REMOVED)) {
@@ -4486,11 +4392,9 @@ void *cfapi_object_teleport(int *type, ...) {
             map_newmap_cmd(&who->contr->socket);
         *res = 0;
     }
-
-    return NULL;
 }
 
-void *cfapi_object_pickup(int *type, ...) {
+void cfapi_object_pickup(int *type, ...) {
     object *who;
     object *what;
     va_list args;
@@ -4502,11 +4406,10 @@ void *cfapi_object_pickup(int *type, ...) {
 
     pick_up(who, what);
     *type = CFAPI_NONE;
-    return NULL;
 }
 
 /* Archetype-related functions */
-void *cfapi_archetype_get_property(int *type, ...) {
+void cfapi_archetype_get_property(int *type, ...) {
     int prop;
     archetype *arch;
     va_list args;
@@ -4553,7 +4456,6 @@ void *cfapi_archetype_get_property(int *type, ...) {
         break;
     }
     va_end(args);
-    return NULL;
 }
 
 /**
@@ -4561,10 +4463,8 @@ void *cfapi_archetype_get_property(int *type, ...) {
  *
  * @param type
  * data type returned.
- * @return
- * NULL.
  */
-void *cfapi_party_get_property(int *type, ...) {
+void cfapi_party_get_property(int *type, ...) {
     partylist *party;
     int prop;
     va_list args;
@@ -4611,7 +4511,6 @@ void *cfapi_party_get_property(int *type, ...) {
         break;
     }
     va_end(args);
-    return NULL;
 }
 
 /**
@@ -4619,10 +4518,8 @@ void *cfapi_party_get_property(int *type, ...) {
  *
  * @param type
  * data type returned.
- * @return
- * NULL.
  */
-void *cfapi_region_get_property(int *type, ...) {
+void cfapi_region_get_property(int *type, ...) {
     region *reg;
     int prop;
     va_list args;
@@ -4669,7 +4566,6 @@ void *cfapi_region_get_property(int *type, ...) {
         break;
     }
     va_end(args);
-    return NULL;
 }
 
 /**
@@ -4683,7 +4579,7 @@ void *cfapi_region_get_property(int *type, ...) {
  * - if ob is NULL, gets the first object on the friendlylist.
  * - if not NULL, get next object on the friendlylist after ob. NULL if none or ob not on list.
  */
-void *cfapi_friendlylist_get_next(int *type, ...) {
+void cfapi_friendlylist_get_next(int *type, ...) {
     object *ob;
     va_list args;
     objectlink *link;
@@ -4702,19 +4598,17 @@ void *cfapi_friendlylist_get_next(int *type, ...) {
             if (ob == link->ob) {
                 if (link->next) {
                     *robject = link->next->ob;
-                    return NULL;
+                    return;
                 } else {
-                    return NULL;
+                    return;
                 }
             }
         }
-        return NULL;
+        return;
     }
 
     if (first_friendly_object)
         *robject = first_friendly_object->ob;
-
-    return NULL;
 }
 
 /*
@@ -4725,11 +4619,9 @@ void *cfapi_friendlylist_get_next(int *type, ...) {
  * Wrapper for set_random_map_variable().
  *
  * @param type
- * unused.
- * @return
- * NULL.
+ * will be CFAPI_INT.
  */
-void *cfapi_set_random_map_variable(int *type, ...) {
+void cfapi_set_random_map_variable(int *type, ...) {
     va_list args;
     RMParms *rp;
     const char *buf;
@@ -4743,8 +4635,6 @@ void *cfapi_set_random_map_variable(int *type, ...) {
 
     *ret = set_random_map_variable(rp, buf);
     *type = CFAPI_INT;
-
-    return NULL;
 }
 
 /**
@@ -4752,10 +4642,8 @@ void *cfapi_set_random_map_variable(int *type, ...) {
  *
  * @param type
  * unused.
- * @return
- * NULL.
  */
-void *cfapi_generate_random_map(int *type, ...) {
+void cfapi_generate_random_map(int *type, ...) {
     va_list args;
     const char *name;
     RMParms *rp;
@@ -4770,11 +4658,9 @@ void *cfapi_generate_random_map(int *type, ...) {
     va_end(args);
 
     *ret = generate_random_map(name, rp, use_layout);
-
-    return NULL;
 }
 
-void *cfapi_object_user_event(int *type, ...) {
+void cfapi_object_user_event(int *type, ...) {
     object *op;
     object *activator;
     object *third;
@@ -4794,13 +4680,11 @@ void *cfapi_object_user_event(int *type, ...) {
 
     *ret = user_event(op, activator, third, message, fix);
     *type = CFAPI_INT;
-
-    return NULL;
 }
 
 /**
 Quest-related wrappers, for all quest-related operations. */
-void *cfapi_player_quest(int *type, ...) {
+void cfapi_player_quest(int *type, ...) {
     int op;
     va_list args;
     object *player;
@@ -4815,7 +4699,7 @@ void *cfapi_player_quest(int *type, ...) {
         LOG(llevError, "cfapi_player_quest called with non player object %s!\n", player->name);
         va_end(args);
         /* crash/quit? */
-        return NULL;
+        return;
     }
 
     switch(op) {
@@ -4849,8 +4733,6 @@ void *cfapi_player_quest(int *type, ...) {
     }
 
     va_end(args);
-
-    return NULL;
 }
 
 /*****************************************************************************/

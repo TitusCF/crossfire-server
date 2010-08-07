@@ -119,13 +119,15 @@
 #define CFAPI_MOVETYPE 18 /* MoveType */
 
 /** General API function. */
-typedef void *(*f_plug_api)(int *type, ...);
+typedef void (*f_plug_api)(int *type, ...);
 /** Function called after the plugin was initialized. */
 typedef int (*f_plug_postinit)(void);
 /** First function called in a plugin. */
 typedef int (*f_plug_init)(const char *iversion, f_plug_api gethooksptr);
 /** Function to call to handle global or object-related events. */
 typedef int (*f_plug_event)(int *type, ...);
+/** Get various plugin properties. */
+typedef void *(*f_plug_property)(int *type, ...);
 
 #ifndef WIN32
 #define LIBPTRTYPE void *
@@ -137,7 +139,7 @@ typedef int (*f_plug_event)(int *type, ...);
 /** One loaded plugin. */
 typedef struct _crossfire_plugin {
     f_plug_event    eventfunc;          /**< Event Handler function            */
-    f_plug_api      propfunc;           /**< Plugin getProperty function       */
+    f_plug_property propfunc;           /**< Plugin getProperty function       */
     f_plug_postinit closefunc;          /**< Plugin Termination function       */
     LIBPTRTYPE      libptr;             /**< Pointer to the plugin library     */
     char            id[MAX_BUF];        /**< Plugin identification string      */
