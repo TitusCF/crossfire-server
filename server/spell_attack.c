@@ -817,11 +817,11 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
     /* If we've already got a force of this type, don't add a new one. */
     force = NULL;
     FOR_INV_PREPARE(tmp, inv) {
-        force = tmp;
-        if (force->type == FORCE && force->subtype == FORCE_CHANGE_ABILITY)  {
-            if (force->name == spell_ob->name) {
+        if (inv->type == FORCE && inv->subtype == FORCE_CHANGE_ABILITY)  {
+            if (inv->name == spell_ob->name) {
+                force = inv;
                 break;
-            } else if (spell_ob->race && spell_ob->race == force->name) {
+            } else if (spell_ob->race && spell_ob->race == inv->name) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op,
                                      MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                                      "You can not cast %s while %s is in effect",
