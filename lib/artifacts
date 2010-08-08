@@ -393,9 +393,7 @@ weight 80
 wc 2
 resist_fear 5
 msg
-  Zormola was a great female orcish warrior
-  making efficient use of most weapons and
-  known for her courage on the battlefield.
+  Zormola was a great female orcish warrior making efficient use of most weapons and known for her courage on the battlefield.
 endmsg
 item_power 2
 end
@@ -446,10 +444,7 @@ Dex -2
 Con -2
 damned 1
 msg
-  Morgul was a Dark Mage who built a tower in the hope
-  of creating a bridge with the skies so that demons
-  could attack heavens. Altough he was defeated, some
-  weapons are still influenced by his dark magic.
+  Morgul was a Dark Mage who built a tower in the hope of creating a bridge with the skies so that demons could attack heavens. Altough he was defeated, some weapons are still influenced by his dark magic.
 endmsg
 end
 #
@@ -472,11 +467,9 @@ last_sp 120
 value 30
 magic 2
 msg
-  This weapon faintly glows with a
-  warm radiance that casts no shadows.
-  Just holding it gives you the
-  courage to send the most evil monsters
-  back to whatever Hell they came from.
+  This weapon faintly glows with a warm radiance that casts no shadows.
+
+  Just holding it gives you the courage to send the most evil monsters back to whatever Hell they came from.
 endmsg
 item_power 2
 end
@@ -490,13 +483,7 @@ last_sp 120
 value 30
 magic 2
 msg
-  This weapon faintly glows with a
-  dark radiance that makes shadows
-  seem deeper and darker than they
-  should be.  You have a strong
-  feeling that even the mightiest
-  champions of light must fall to
-  such powerful darkness.
+  This weapon faintly glows with a dark radiance that makes shadows seem deeper and darker than they should be. You have a strong feeling that even the mightiest champions of light must fall to such powerful darkness.
 endmsg
 item_power 2
 end
@@ -509,8 +496,7 @@ value 30
 attacktype 65553
 magic 1
 msg
-  This weapon radiates a bone-chilling
-  aura of otherworldly cold.
+  This weapon radiates a bone-chilling aura of otherworldly cold.
 endmsg
 item_power 2
 end
@@ -540,9 +526,7 @@ magic 3
 Str 1
 weight 110
 msg
-  This weapon shares with its owner a bit of
-  the strength of Crolmi, the Dwarven Spirit
-  of Rocks and Mountains.
+  This weapon shares with its owner a bit of the strength of Crolmi, the Dwarven Spirit of Rocks and Mountains.
 endmsg
 item_power 1
 end
@@ -576,11 +560,7 @@ slaying undead
 value 50
 magic 2
 msg
-  This vicious weapon is designed
-  specifically for destroying any
-  abominations that have risen from
-  their graves and making sure they
-  stay dead this time.
+  This vicious weapon is designed specifically for destroying any abominations that have risen from their graves and making sure they stay dead this time.
 endmsg
 item_power 2
 end
@@ -616,8 +596,7 @@ Str 1
 Dex 1
 weight 90
 msg
-  The Archmage Rhyz devised many items that increased
-  the strength and dexterity of their owners.
+  The Archmage Rhyz devised many items that increased the strength and dexterity of their owners.
 endmsg
 item_power 2
 end
@@ -633,10 +612,7 @@ Int 1
 Pow 1
 weight 90
 msg
-  This weapon is dedicated to Glamdri the
-  Last Standing One, a lesser spirit of light
-  that represents original thinking used to
-  get out of difficult situations.
+  This weapon is dedicated to Glamdri the Last Standing One, a lesser spirit of light that represents original thinking used to get out of difficult situations.
 endmsg
 item_power 5
 end
@@ -661,10 +637,7 @@ weight 50
 exp 3
 hp 2
 msg
-  This weapon burns with a supernatural rage:
-  its anger invests the wielder and empowers
-  him.  However, it also clouds his thoughts,
-  and drool is very unattractive.
+  This weapon burns with a supernatural rage: its anger invests the wielder and empowers him.  However, it also clouds his thoughts, and drool is very unattractive.
 endmsg
 attacktype 16385
 damned 1
@@ -702,8 +675,7 @@ type 15
 magic 2
 value 20
 msg
-  The Ancient School of Occidental Mages created that weapon during
-  the Empire Wars, charging it with their Chaotic Powers.
+  The Ancient School of Occidental Mages created that weapon during the Empire Wars, charging it with their Chaotic Powers.
 endmsg
 arch event_attack
 title Python
@@ -811,10 +783,7 @@ path_attuned 1024
 sp 1
 magic 2
 msg
-  This valuable item created by the Archdaemonist Xebinon
-  enhances the mind of its wearer and channels the powers
-  of magic.  It has a small influence on its wearer's
-  ability to regenerate spell points.
+  This valuable item created by the Archdaemonist Xebinon enhances the mind of its wearer and channels the powers of magic.  It has a small influence on its wearer's ability to regenerate spell points.
 endmsg
 item_power 1
 end
@@ -871,11 +840,7 @@ Cha 1
 resist_fire 30
 resist_physical 8
 msg
-  Argoth was an ancient dwarven city
-  in a mountain which was infested with
-  dragons. The dwarves specialized in
-  equipment which helped them survive their
-  environment.
+  Argoth was an ancient dwarven city in a mountain which was infested with dragons. The dwarves specialized in equipment which helped them survive their environment.
 endmsg
 item_power 3
 end
@@ -1069,9 +1034,7 @@ magic 2
 ac 3
 weight 110
 msg
-  This highly enchanted shield is
-  craftfully made to give more
-  protection than usual.
+  This highly enchanted shield is craftfully made to give more protection than usual.
 endmsg
 item_power 2
 end
@@ -1116,12 +1079,7 @@ resist_cold 25
 glow_radius 1
 face holyshield.111
 msg
-  Passed down from one of the elder
-  this shield is amazing. Its soft glow
-  hides a deep power which you feel
-  you can almost taste. It soon dawns
-  on you that this must be one of the
-  most prized shields of all the lands.
+  Passed down from one of the elder this shield is amazing. Its soft glow hides a deep power which you feel you can almost taste. It soon dawns on you that this must be one of the most prized shields of all the lands.
 endmsg
 item_power 25
 end
@@ -1372,14 +1330,9 @@ ac 2
 resist_physical 20
 magic 3
 msg
-  The quality of this superb armour
-  is extreme; it gives much more
-  protection than any made today.
-  It is very old, probably from some
-  lost civilization who had much
-  better skills, but it doesn't look
-  worn at all.  It is obviously highly
-  enchanted.
+  The quality of this superb armour is extreme; it gives much more protection than any made today.
+
+  It is very old, probably from some lost civilization who had much better skills, but it doesn't look worn at all.  It is obviously highly enchanted.
 endmsg
 item_power 3
 end
@@ -1395,10 +1348,7 @@ last_sp 150
 exp 1
 weight 70
 msg
-  This armour is made of very light and
-  expensive material.  As a result you
-  can move much faster in it, but it gives
-  a bit worse protection than normal armour.
+  This armour is made of very light and expensive material.  As a result you can move much faster in it, but it gives a bit worse protection than normal armour.
 endmsg
 end
 #
@@ -1447,13 +1397,11 @@ last_sp 5
 resist_physical 20
 ac 1
 msg
-  This extremely unique platemail was made
-  for the line of dwarven kings in one of the
-  vanished northern kingdoms of old.
+  This extremely unique platemail was made for the line of dwarven kings in one of the vanished northern kingdoms of old.
+
   Due to its magic, it will fit creatures of any size.
-  It is highly enchanted, increasing the strength of the
-  wearer and protecting against fire.
-  Unfortunately it is also very heavy, limiting speed somewhat.
+
+  It is highly enchanted, increasing the strength of the wearer and protecting against fire. Unfortunately it is also very heavy, limiting speed somewhat.
 endmsg
 item_power 4
 end
@@ -1471,13 +1419,7 @@ Int -5
 Pow -5
 value 100
 msg
-  This very heavy armour gives protection
-  greater than normal mail.  It is created
-  for fighters - the high weight and the fact
-  that it clouds the mind makes it unsuitable for
-  mages.  It increases the wearer's strength and
-  dexterity, making him even more fearsome in
-  battle.
+  This very heavy armour gives protection greater than normal mail.  It is created for fighters - the high weight and the fact that it clouds the mind makes it unsuitable for mages.  It increases the wearer's strength and dexterity, making him even more fearsome in battle.
 endmsg
 end
 #
@@ -1488,8 +1430,7 @@ type 16
 value 10
 Cha 1
 msg
-  This armour, which is of elven origin,
-  is beautifully decorated with ancient emblems.
+  This armour, which is of elven origin, is beautifully decorated with ancient emblems.
 endmsg
 item_power 1
 end
@@ -1503,8 +1444,7 @@ type 16
 value 100
 ac 3
 msg
-  This robe blurs the vision of those trying
-  to attack, making the wearer more difficult to hit.
+  This robe blurs the vision of those trying to attack, making the wearer more difficult to hit.
 endmsg
 item_power 3
 end
@@ -1520,8 +1460,7 @@ weight 150
 resist_physical 15
 ac 3
 msg
-  This magical robe is somehow woven of
-  metal fibers.
+  This magical robe is somehow woven of metal fibers.
 endmsg
 item_power 3
 end
@@ -1642,13 +1581,9 @@ value 30
 resist_cold 30
 path_attuned 4
 msg
-  This elemental ring is one of those made at
-  the Guild of Magicks by the powerful wizards
-  who survived the ancient war of the elementals.
-  The wielder is surrounded by a thin, almost
-  invisible, globe of warmth; which protects
-  against cold.  It also grants its holder
-  greater control of cold spells.
+  This elemental ring is one of those made at the Guild of Magicks by the powerful wizards who survived the ancient war of the elementals.
+
+  The wielder is surrounded by a thin, almost invisible, globe of warmth; which protects against cold.  It also grants its holder greater control of cold spells.
 endmsg
 item_power 3
 end
@@ -1662,15 +1597,9 @@ value 35
 resist_fire 30
 path_attuned 2
 msg
-  This elemental ring is one of those
-  made at the Guild of Magicks by the
-  powerful wizards who survived the
-  ancient war of the elementals.
-  The wielder is surrounded by a thin,
-  almost invisible, globe of coolness;
-  which protects against heat.  It also
-  grants the holder greater facility
-  with fire spells.
+  This elemental ring is one of those made at the Guild of Magicks by the powerful wizards who survived the ancient war of the elementals.
+
+  The wielder is surrounded by a thin, almost invisible, globe of coolness; which protects against heat.  It also grants the holder greater facility with fire spells.
 endmsg
 item_power 3
 end
@@ -1684,14 +1613,9 @@ value 25
 resist_electricity 30
 path_attuned 8
 msg
-  This elemental ring is one of those made
-  at the Guild of Magicks by the powerful
-  wizards who survived the ancient war
-  of the elementals.  The wielder is
-  surrounded by a thin, almost invisible,
-  grid of force; which protects against
-  electricity.  It also gives facility
-  with electricity spells.
+  This elemental ring is one of those made at the Guild of Magicks by the powerful wizards who survived the ancient war of the elementals.
+
+  The wielder is surrounded by a thin, almost invisible, grid of force; which protects against electricity.  It also gives facility with electricity spells.
 endmsg
 item_power 3
 end
@@ -1706,9 +1630,7 @@ sp 1
 Pow 1
 resist_magic 20
 msg
-  Most highlevel wizards receive one of
-  these from their guild when they become
-  its leader.
+  Most highlevel wizards receive one of these from their guild when they become its leader.
 endmsg
 item_power 3
 end
@@ -1954,9 +1876,7 @@ grace 2
 resist_magic 30
 item_power 7
 msg
-This ring is blessed by the gods who do good,
-and protects a little against the power of those who
-twist natural forces to do harm.
+  This ring is blessed by the gods who do good, and protects a little against the power of those who twist natural forces to do harm.
 endmsg
 end
 #
@@ -2056,14 +1976,9 @@ resist_acid 30
 material 256
 resist_physical 20
 msg
-  This elemental ring is one of those
-  made at the Guild of Magicks by the
-  powerful wizards who survived the
-  ancient war of the elementals.
-  The wielder is surrounded by a thin,
-  almost invisible globe of base liquid;
-  which protects against acid. It also
-  gives a fair protection against normal attacks.
+  This elemental ring is one of those made at the Guild of Magicks by the powerful wizards who survived the ancient war of the elementals.
+
+  The wielder is surrounded by a thin, almost invisible globe of base liquid; which protects against acid. It also gives a fair protection against normal attacks.
 endmsg
 item_power 3
 end
@@ -2091,13 +2006,9 @@ resist_drain 100
 resist_deplete 100
 hp 2
 msg
-  This semi-elemental ring is one of those made
-  at the Guild of Magics by the powerful wizards
-  who survived the ancient war of the elementals.
-  The wielder is surrounded by a thin, almost
-  invisible, globe of positive energy; which
-  makes the wielder immune from life draining.
-  It also grants an unnatural vitality.
+  This semi-elemental ring is one of those made at the Guild of Magics by the powerful wizards who survived the ancient war of the elementals.
+
+  The wielder is surrounded by a thin, almost invisible, globe of positive energy; which makes the wielder immune from life draining. It also grants an unnatural vitality.
 endmsg
 item_power 9
 end
@@ -2181,8 +2092,7 @@ type 70
 face ring.117
 value 5
 msg
-  The Ancient School of Occidental Mages created that ring during
-  the Empire Wars, charging it with their Chaotic Powers.
+  The Ancient School of Occidental Mages created that ring during the Empire Wars, charging it with their Chaotic Powers.
 endmsg
 arch event_apply
 title Python
@@ -2612,9 +2522,7 @@ Str -10
 Dex -10
 Con -10
 msg
-  This cloak sucks vitality from the
-  wearer in order to maintain his
-  invisibility.
+  This cloak sucks vitality from the wearer in order to maintain his invisibility.
 endmsg
 make_invisible 1
 resist_paralyze -100
@@ -2654,11 +2562,7 @@ Str -10
 Dex -12
 Con -10
 msg
-  These shoes prevent others from seeing
-  your movements. Bewarned however that
-  they slow you down and draw strength
-  from you. Not only this but some
-  enemies can still see you with magic!
+  These shoes prevent others from seeing your movements. Bewarned however that they slow you down and draw strength from you. Not only this but some enemies can still see you with magic!
 endmsg
 make_invisible 1
 face low_boots.111
@@ -2676,11 +2580,7 @@ material 8256
 materialname granite
 ac 5
 msg
-  What strange boots, they look very
-  protective, but amazingly heavy.
-  There also doesn't appear to be
-  any laces, you wonder how you're ever
-  going to take them off.
+  What strange boots, they look very protective, but amazingly heavy. There also doesn't appear to be any laces, you wonder how you're ever going to take them off.
 endmsg
 face high_boots.111
 stand_still 1
@@ -2702,9 +2602,7 @@ resist_paralyze 20
 resist_fear 50
 speed 2
 msg
-  These sure look like useful boots.
-  They feel a little lighter and appear
-  a bit sleeker.
+  These sure look like useful boots. They feel a little lighter and appear a bit sleeker.
 endmsg
 stand_still 1
 item_power 4
@@ -2721,9 +2619,7 @@ material 8200
 materialname dragonhide
 dam 2
 msg
-  These boots have sharpened claws at the
-  tips, which look like they would aid
-  greatly in combat.
+  These boots have sharpened claws at the tips, which look like they would aid greatly in combat.
 endmsg
 stand_still 1
 item_power 1
@@ -3217,10 +3113,7 @@ value 8
 wc 2
 food 80
 msg
-These missiles have been soaked in some
-strange liquid which stuns the victim.
-These missiles also broken much more easily
-than normal ones.
+  These missiles have been soaked in some strange liquid which stuns the victim. These missiles also broken much more easily than normal ones.
 endmsg
 end
 #
@@ -3230,10 +3123,7 @@ Object Assassinating Trolls
 slaying troll
 attacktype 131072
 msg
-  These missiles are inscribed with
-  powerful runes for the bane of
-  trolls.  A scratch from one of
-  these arrows could smite one dead.
+  These missiles are inscribed with powerful runes for the bane of trolls.  A scratch from one of these arrows could smite one dead.
 endmsg
 type 13
 value 500
@@ -3251,10 +3141,7 @@ Object Assassinating Dragons
 slaying dragon
 attacktype 131072
 msg
-  These missiles are inscribed with
-  powerful runes for the bane of
-  dragons.  A scratch from one of
-  these arrows could smite one dead.
+  These missiles are inscribed with powerful runes for the bane of dragons.  A scratch from one of these arrows could smite one dead.
 endmsg
 type 13
 value 1000
@@ -3273,12 +3160,7 @@ difficulty 5
 Object Blessedness
 slaying undead,demon
 msg
-  These missiles are invested
-  with a great holiness so that
-  even a scratch might banish
-  an undead creature or a demon
-  back to the hell from which it
-  came.
+  These missiles are invested with a great holiness so that even a scratch might banish an undead creature or a demon back to the hell from which it came.
 endmsg
 attacktype 131072
 type 13
@@ -3311,7 +3193,7 @@ attacktype 2
 dam -20
 wc 6
 msg
-These magical arrows are very powerful weapon.
+  These magical arrows are very powerful weapon.
 endmsg
 food 90
 end
@@ -3327,10 +3209,7 @@ magic 4
 dam 12
 food 10
 msg
-  This powerful bolt can rip
-  right through any demon it
-  is shot at, but it tends to
-  break very easily.
+  This powerful bolt can rip right through any demon it is shot at, but it tends to break very easily.
 endmsg
 end
 #
@@ -3482,10 +3361,7 @@ Object Auriga
 type 14
 weight 80
 msg
-  This magical bow shoots with
-  such force that the arrows
-  sometimes fly right through
-  the target.
+  This magical bow shoots with such force that the arrows sometimes fly right through the target.
 endmsg
 value 100
 wc 5
@@ -3500,9 +3376,7 @@ type 14
 value 5
 dam -7
 msg
-This bow is magically enchanted
-so that archer's strength doesn't
-affect damage made by it.
+  This bow is magically enchanted so that archer's strength doesn't affect damage made by it.
 endmsg
 no_strength 1
 end
