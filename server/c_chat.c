@@ -243,22 +243,22 @@ void command_chat(object *op, const char *params) {
  * if non-zero, recipient can't ignore the message through 'listen' levels.
  */
 static void do_tell(object *op, const char *params, int adjust_listen) {
-    char buf[MAX_BUF];
-    const char *name = NULL, *msg = NULL;
+    char buf[MAX_BUF], name[MAX_BUF];
+    char *msg = NULL;
     player *pl;
     uint8 original_listen;
 
-    if (*params != '\0') {
-        name = params;
-        msg = strchr(name, ' ');
-        if (msg) {
-            msg++;
-            if ((*msg) == 0)
-                msg = NULL;
-        }
+    strncpy(name, params, sizeof(name));
+
+    msg = strchr(name, ' ');
+    if (msg) {
+        (*msg) = '\0';
+        msg++;
+        if ((*msg) == '\0')
+            msg = NULL;
     }
 
-    if (name == NULL) {
+    if (strlen(name) == 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Tell whom what?");
         return;
