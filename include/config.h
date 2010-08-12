@@ -312,7 +312,7 @@
  */
 /* GD */
 
-#define PERM_EXP_GAIN_RATIO           0.10f
+#define PERM_EXP_GAIN_RATIO           0.50f
 #define PERM_EXP_MAX_LOSS_RATIO       0.50f
 
 /**
