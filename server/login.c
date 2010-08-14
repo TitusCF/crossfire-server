@@ -777,7 +777,7 @@ void check_login(object *op, int check_pass) {
     enter_exit(op, NULL);
 
     pl->name_changed = 1;
-    pl->state = ST_PLAYING;
+    player_set_state(pl, ST_PLAYING);
 #ifdef AUTOSAVE
     pl->last_save_tick = pticks;
 #endif

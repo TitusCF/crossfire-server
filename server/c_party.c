@@ -64,14 +64,14 @@ void receive_party_password(object *op) {
     if (confirm_party_password(op) == 0) {
         party_join(op, op->contr->party_to_join);
         op->contr->party_to_join = NULL;
-        op->contr->state = ST_PLAYING;
+        player_set_state(op->contr, ST_PLAYING);
         return;
     }
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                   "You entered the wrong password");
     op->contr->party_to_join = NULL;
-    op->contr->state = ST_PLAYING;
+    player_set_state(op->contr, ST_PLAYING);
 }
 
 /**

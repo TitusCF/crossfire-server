@@ -335,7 +335,7 @@ player *get_player(player *p) {
     p->socket.monitor_spells = 0; /* this needs to be set before roll_stats() as it calls fix_object() that sends the spells. */
 
     roll_stats(op);
-    p->state = ST_ROLL_STAT;
+    player_set_state(p, ST_ROLL_STAT);
     clear_los(op);
 
     p->gen_sp_armour = 10;
@@ -430,7 +430,7 @@ player *add_player(socket_struct *ns, int new_char) {
     add_friendly_object(p->ob);
     if (new_char) {
         roll_again(p->ob);
-        p->state = ST_ROLL_STAT;
+        player_set_state(p, ST_ROLL_STAT);
     } else {
         send_rules(p->ob);
         send_news(p->ob);
@@ -811,7 +811,7 @@ void give_initial_items(object *pl, treasurelist *items) {
  */
 void get_name(object *op) {
     op->contr->write_buf[0] = '\0';
-    op->contr->state = ST_GET_NAME;
+    player_set_state(op->contr, ST_GET_NAME);
     send_query(&op->contr->socket, 0, "What is your name?\n:");
 }
 
@@ -823,7 +823,7 @@ void get_name(object *op) {
  */
 void get_password(object *op) {
     op->contr->write_buf[0] = '\0';
-    op->contr->state = ST_GET_PASSWORD;
+    player_set_state(op->contr, ST_GET_PASSWORD);
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is your password?\n:");
 }
 
@@ -834,7 +834,7 @@ void get_password(object *op) {
  * player.
  */
 void play_again(object *op) {
-    op->contr->state = ST_PLAY_AGAIN;
+    player_set_state(op->contr, ST_PLAY_AGAIN);
     op->chosen_skill = NULL;
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
     /* a bit of a hack, but there are various places early in th
@@ -890,7 +890,7 @@ void receive_play_again(object *op, char key) {
              * says it uses account but started playing without logging in.
              */
             send_account_players(&pl->socket);
-            pl->state = ST_GET_NAME;
+            player_set_state(pl, ST_GET_NAME);
         } else {
             /* Lets put a space in here */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
@@ -914,7 +914,7 @@ void receive_play_again(object *op, char key) {
  */
 void confirm_password(object *op) {
     op->contr->write_buf[0] = '\0';
-    op->contr->state = ST_CONFIRM_PASSWORD;
+    player_set_state(op->contr, ST_CONFIRM_PASSWORD);
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
 }
 
@@ -934,7 +934,7 @@ int get_party_password(object *op, partylist *party) {
     }
 
     op->contr->write_buf[0] = '\0';
-    op->contr->state = ST_GET_PARTY_PASSWORD;
+    player_set_state(op->contr, ST_GET_PARTY_PASSWORD);
     op->contr->party_to_join = party;
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
     return 1;
@@ -1154,7 +1154,7 @@ void key_roll_stat(object *op, char key) {
         /* Enter exit adds a player otherwise */
         add_statbonus(op);
         send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Now choose a character.\nPress any key to change outlook.\nPress `d' when you're pleased.\n");
-        op->contr->state = ST_CHANGE_CLASS;
+        player_set_state(op->contr, ST_CHANGE_CLASS);
         if (op->msg)
             draw_ext_info(NDI_BLUE, 0, op,
                           MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
@@ -1212,7 +1212,7 @@ void key_change_class(object *op, char key) {
 
         /* Lauwenmark : We then generate a LOGIN event */
         execute_global_event(EVENT_LOGIN, op->contr, op->contr->socket.host);
-        op->contr->state = ST_PLAYING;
+        player_set_state(op->contr, ST_PLAYING);
 
         object_set_msg(op, NULL);
 
@@ -1315,13 +1315,13 @@ void key_confirm_quit(object *op, char key) {
 
     // this was tested when 'quit' command was issued, but better safe than sorry.
     if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
-        op->contr->state = ST_PLAYING;
+        player_set_state(op->contr, ST_PLAYING);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN, "Can't quit when in DM mode.");
         return;
     }
 
     if (key != 'y' && key != 'Y' && key != 'q' && key != 'Q') {
-        op->contr->state = ST_PLAYING;
+        player_set_state(op->contr, ST_PLAYING);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
                       "OK, continuing to play.");
         return;
@@ -4109,4 +4109,16 @@ void player_unready_range_ob(player *pl, object *ob) {
             }
         }
     }
+}
+
+/**
+ * Set the player's state to the specified one.
+ * @param pl who to set state for.
+ * @param state new state.
+ */
+void player_set_state(player *pl, uint8 state) {
+
+    assert(pl);
+    assert(state >= ST_PLAYING && state <= ST_CHANGE_PASSWORD_CONFIRM);
+    pl->state = state;
 }

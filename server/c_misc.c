@@ -1845,7 +1845,7 @@ void command_quit(object *op, const char *params) {
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR,
                i18n_translate(get_language(op), I18N_MSG_CMISC_181));
 
-    op->contr->state = ST_CONFIRM_QUIT;
+    player_set_state(op->contr, ST_CONFIRM_QUIT);
 }
 
 /**
@@ -1905,7 +1905,7 @@ void receive_player_password(object *op) {
         || op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                           i18n_translate(get_language(op), I18N_MSG_CMISC_188));
-            op->contr->state = ST_PLAYING;
+            player_set_state(op->contr, ST_PLAYING);
         } else
             get_name(op);
         return;
@@ -1934,7 +1934,7 @@ void receive_player_password(object *op) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n_translate(get_language(op), I18N_MSG_CMISC_191));
         roll_again(op);
-        op->contr->state = ST_ROLL_STAT;
+        player_set_state(op->contr, ST_ROLL_STAT);
         return;
     }
 
@@ -1942,10 +1942,10 @@ void receive_player_password(object *op) {
         if (!check_password(op->contr->write_buf+1, op->contr->password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                           i18n_translate(get_language(op), I18N_MSG_CMISC_192));
-            op->contr->state = ST_PLAYING;
+            player_set_state(op->contr, ST_PLAYING);
         } else {
             send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(op), I18N_MSG_CMISC_193));
-            op->contr->state = ST_CHANGE_PASSWORD_NEW;
+            player_set_state(op->contr, ST_CHANGE_PASSWORD_NEW);
         }
         return;
     }
@@ -1953,7 +1953,7 @@ void receive_player_password(object *op) {
     if (op->contr->state == ST_CHANGE_PASSWORD_NEW) {
         strcpy(op->contr->new_password, crypt_string(op->contr->write_buf+1, NULL));
         send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(op), I18N_MSG_CMISC_194));
-        op->contr->state = ST_CHANGE_PASSWORD_CONFIRM;
+        player_set_state(op->contr, ST_CHANGE_PASSWORD_CONFIRM);
         return;
     }
 
@@ -1966,12 +1966,12 @@ void receive_player_password(object *op) {
                           i18n_translate(get_language(op), I18N_MSG_CMISC_196));
             strncpy(op->contr->password, op->contr->new_password, 13);
         }
-        op->contr->state = ST_PLAYING;
+        player_set_state(op->contr, ST_PLAYING);
         return;
     }
 
     strcpy(op->contr->password, crypt_string(op->contr->write_buf+1, NULL));
-    op->contr->state = ST_ROLL_STAT;
+    player_set_state(op->contr, ST_ROLL_STAT);
     check_login(op, TRUE);
 }
 
@@ -2169,7 +2169,7 @@ void command_kill_pets(object *op, const char *params) {
 void command_passwd(object *pl, const char *params) {
     send_query(&pl->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(pl), I18N_MSG_CMISC_217));
 
-    pl->contr->state = ST_CHANGE_PASSWORD_OLD;
+    player_set_state(pl->contr, ST_CHANGE_PASSWORD_OLD);
 }
 
 /**

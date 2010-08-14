@@ -427,6 +427,7 @@ int player_can_view(object *pl, object *op);
 int op_on_battleground(object *op, int *x, int *y, archetype **trophy);
 void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
+void player_set_state(player *pl, uint8 state);
 /* plugins.c */
 int user_event(object *op, object *activator, object *third, const char *message, int fix);
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);
