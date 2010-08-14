@@ -445,9 +445,26 @@ char *cf_object_get_string_property(object *op, int propcode, char *buf, int siz
 void cf_object_set_string_property(object *op, int propcode, const char *value) {
     int type;
 
+    /* use cf_object_set_face() for changing the face! */
+    assert(propcode != CFAPI_OBJECT_PROP_FACE);
+
     cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_STRING);
 }
+
+/**
+ * Set the object's face.
+ * @param op who to change the face for.
+ * @param face face to set.
+ * @return 0 if invalid face, non zero is set.
+ */
+int cf_object_set_face(object *op, const char *face) {
+    int type, ret;
+    cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_FACE, face, &ret);
+    assert(type == CFAPI_INT);
+    return ret;
+}
+
 void cf_object_set_object_property(object *op, int propcode, object *value) {
     int type;
 

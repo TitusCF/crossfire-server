@@ -2379,9 +2379,13 @@ void cfapi_object_get_property(int *type, ...) {
         break;
 
     case CFAPI_OBJECT_PROP_FACE:
-        rint = va_arg(args, int *);
-        *rint = op->face->number;
-        *type = CFAPI_INT;
+        rbuffer = va_arg(args, char *);
+        rbufsize = va_arg(args, int);
+        if (rbufsize > 0) {
+            strncpy(rbuffer, op->face->name, rbufsize);
+            rbuffer[rbufsize - 1] = '\0';
+        }
+        *type = CFAPI_STRING;
         break;
 
     case CFAPI_OBJECT_PROP_ANIMATION:
@@ -3061,13 +3065,18 @@ void cfapi_object_set_property(int *type, ...) {
             op->stats.dam = iarg;
             break;
 
-        case CFAPI_OBJECT_PROP_FACE:
-            iarg = va_arg(args, int);
+        case CFAPI_OBJECT_PROP_FACE: {
+            sarg = va_arg(args, char *);
+            int *ret = va_arg(args, int *);
             *type = CFAPI_INT;
-            op->face = &new_faces[iarg];
-            op->state = 0;
-            object_update(op, UP_OBJ_FACE);
+            *ret = find_face(sarg, 0);
+            if (*ret != 0) {
+                op->face = &new_faces[*ret];
+                op->state = 0;
+                object_update(op, UP_OBJ_FACE);
+            }
             break;
+        }
 
         case CFAPI_OBJECT_PROP_ANIMATION:
             iarg = va_arg(args, int);

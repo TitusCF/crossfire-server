@@ -141,6 +141,7 @@ extern object      *cf_object_find_by_arch_name(const object *who, const char *n
 extern object      *cf_object_find_by_name(const object *who, const char *name);
 extern object      *cf_object_split(object *orig_ob, uint32 nr, char *err, size_t size);
 extern object      *cf_object_clone(object *op, int clonetype);
+extern int          cf_object_set_face(object *op, const char *face);
 /* Maps */
 /*extern void        *cf_map_get_property(mapstruct *map, int propcode);*/
 extern sstring cf_map_get_sstring_property(mapstruct *map, int propcode);

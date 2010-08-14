@@ -523,7 +523,8 @@ static PyObject *Object_GetLevel(Crossfire_Object *whoptr, void *closure) {
 
 static PyObject *Object_GetFace(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE));
+    char buf[200];
+    return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE, buf, sizeof(buf)));
 }
 
 static PyObject *Object_GetAnim(Crossfire_Object *whoptr, void *closure) {
@@ -1410,20 +1411,16 @@ static int Object_SetLastEat(Crossfire_Object *whoptr, PyObject *value, void *cl
 }
 
 static int Object_SetFace(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    char *txt;
-    int face;
+    char *face;
 
     EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "s", &txt))
+    if (!PyArg_Parse(value, "s", &face))
         return -1;
 
-    face = cf_find_face(txt, -1);
-    if (face == -1) {
+    if (!cf_object_set_face(whoptr->obj, face)) {
         PyErr_SetString(PyExc_TypeError, "Unknown face.");
         return -1;
     }
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE, face);
     return 0;
 }
 

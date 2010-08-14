@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Make Python's Object.Face a String in both read and write.
+Raise an error if invalid face is set.
+Nicolas Weeger 2010-08-14
+
 Fix accidentally broke 'tell' command.
 Nicolas Weeger 2010-08-10
 
