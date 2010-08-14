@@ -522,14 +522,15 @@ static PyObject *Object_GetLevel(Crossfire_Object *whoptr, void *closure) {
 }
 
 static PyObject *Object_GetFace(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
     char buf[200];
+    EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE, buf, sizeof(buf)));
 }
 
 static PyObject *Object_GetAnim(Crossfire_Object *whoptr, void *closure) {
+    char buf[200];
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIMATION));
+    return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIMATION, buf, sizeof(buf)));
 }
 
 static PyObject *Object_GetAnimSpeed(Crossfire_Object *whoptr, void *closure) {
@@ -1425,20 +1426,17 @@ static int Object_SetFace(Crossfire_Object *whoptr, PyObject *value, void *closu
 }
 
 static int Object_SetAnim(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    char *txt;
-    int anim;
+    char *anim;
 
     EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "s", &txt))
+    if (!PyArg_Parse(value, "s", &anim))
         return -1;
 
-    anim = cf_find_animation(txt);
-    if (anim == 0) {
+    if (!cf_object_set_animation(whoptr->obj, anim)) {
         PyErr_SetString(PyExc_TypeError, "Unknown animation.");
         return -1;
     }
 
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIMATION, anim);
     return 0;
 }
 

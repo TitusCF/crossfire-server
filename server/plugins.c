@@ -2389,9 +2389,17 @@ void cfapi_object_get_property(int *type, ...) {
         break;
 
     case CFAPI_OBJECT_PROP_ANIMATION:
-        rint = va_arg(args, int *);
-        *rint = op->animation_id;
-        *type = CFAPI_INT;
+        rbuffer = va_arg(args, char *);
+        rbufsize = va_arg(args, int);
+        if (rbufsize > 0) {
+            if (op->animation_id != 0) {
+                strncpy(rbuffer, animations[op->animation_id].name, rbufsize);
+                rbuffer[rbufsize - 1] = '\0';
+            }
+            else
+                rbuffer[0] = '\0';
+        }
+        *type = CFAPI_STRING;
         break;
 
     case CFAPI_PLAYER_PROP_IP:
@@ -2555,7 +2563,7 @@ static void copy_message(object *op, const char *msg) {
  */
 void cfapi_object_set_property(int *type, ...) {
     va_list args;
-    int iarg;
+    int iarg, *ret;
     long larg;
     char *sarg;
     double darg;
@@ -3067,7 +3075,7 @@ void cfapi_object_set_property(int *type, ...) {
 
         case CFAPI_OBJECT_PROP_FACE: {
             sarg = va_arg(args, char *);
-            int *ret = va_arg(args, int *);
+            ret = va_arg(args, int *);
             *type = CFAPI_INT;
             *ret = find_face(sarg, 0);
             if (*ret != 0) {
@@ -3079,11 +3087,15 @@ void cfapi_object_set_property(int *type, ...) {
         }
 
         case CFAPI_OBJECT_PROP_ANIMATION:
-            iarg = va_arg(args, int);
+            sarg = va_arg(args, char *);
+            ret = va_arg(args, int *);
             *type = CFAPI_INT;
-            op->animation_id = iarg;
-            SET_ANIMATION(op, 0);
-            object_update(op, UP_OBJ_FACE);
+            *ret = try_find_animation(sarg);
+            if (*ret != 0) {
+                op->animation_id = *ret;
+                SET_ANIMATION(op, 0);
+                object_update(op, UP_OBJ_FACE);
+            }
             break;
 
         case CFAPI_OBJECT_PROP_DURATION:

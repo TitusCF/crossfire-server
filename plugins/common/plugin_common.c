@@ -447,6 +447,8 @@ void cf_object_set_string_property(object *op, int propcode, const char *value) 
 
     /* use cf_object_set_face() for changing the face! */
     assert(propcode != CFAPI_OBJECT_PROP_FACE);
+    /* use cf_object_set_animation() to change the animation */
+    assert(propcode != CFAPI_OBJECT_PROP_ANIMATION);
 
     cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_STRING);
@@ -461,6 +463,18 @@ void cf_object_set_string_property(object *op, int propcode, const char *value) 
 int cf_object_set_face(object *op, const char *face) {
     int type, ret;
     cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_FACE, face, &ret);
+    assert(type == CFAPI_INT);
+    return ret;
+}
+/**
+ * Set the object's animation.
+ * @param op who to change the animation for.
+ * @param animation animation's name to set.
+ * @return 0 if invalid animation, non zero is set.
+ */
+int cf_object_set_animation(object *op, const char *animation) {
+    int type, ret;
+    cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_ANIMATION, animation, &ret);
     assert(type == CFAPI_INT);
     return ret;
 }
