@@ -2431,8 +2431,8 @@ static int adj_attackroll(object *hitter, object *target) {
         /* target is unseen */
         if (target->invisible || QUERY_FLAG(attacker, FLAG_BLIND))
             adjust -= 10;
-        /* dark map penalty for the hitter (lacks infravision if we got here). */
-        else if (target->map && target->map->darkness > 0 && !monster_stand_in_light(target))
+        /* dark map penalty for the hitter, though xray can help for a player */
+        else if (target->map && target->map->darkness > 0 && !monster_stand_in_light(target) && (hitter->type != PLAYER || !player_can_view(hitter, target)))
             adjust -= target->map->darkness;
     }
 
