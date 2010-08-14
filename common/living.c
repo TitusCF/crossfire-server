@@ -35,6 +35,7 @@
  */
 
 #include <stdlib.h>
+#include <assert.h>
 #include <global.h>
 #include <sproto.h>
 
@@ -1868,15 +1869,17 @@ object *give_skill_by_name(object *op, const char *skill_name) {
  * Will tell the player about changed levels.
  *
  * @param who
- * player
+ * player, must not be NULL.
  * @param op
- * what we are checking to gain the level (eg, skill)
+ * what we are checking to gain the level (eg, skill), can be NULL.
  *
  * @note
  * this function can call itself recursively to check for multiple levels.
  */
 void player_lvl_adj(object *who, object *op) {
     char buf[MAX_BUF];
+
+    assert(who);
 
     if (!op)       /* when rolling stats */
         op = who;
@@ -1888,34 +1891,32 @@ void player_lvl_adj(object *who, object *op) {
             dragon_level_gain(who);
 
         /* Only roll these if it is the player (who) that gained the level */
-        if (who && op == who && (who->level < 11) && who->type == PLAYER) {
+        if (op == who && (who->level < 11) && who->type == PLAYER) {
             who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
             who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
             who->contr->levgrace[who->level] = die_roll(2, 2, who, PREFER_HIGH)-1;
         }
 
-        if (who)
-            fix_object(who);
+        fix_object(who);
         if (op->level > 1) {
             if (op->type != PLAYER)
                 snprintf(buf, sizeof(buf), "You are now level %d in the %s skill.", op->level, op->name);
             else
                 snprintf(buf, sizeof(buf), "You are now level %d.", op->level);
 
-            if (who)
-                draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf);
+            draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf);
         }
         player_lvl_adj(who, op); /* To increase more levels */
     } else if (op->level > 1 && op->stats.exp < level_exp(op->level, who->expmul)) {
         op->level--;
-        if (who)
-            fix_object(who);
-        if (op->type != PLAYER) {
-            if (who)
-                draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_LOSS,
-                                     "You are now level %d in the %s skill.",
-                                     op->level, op->name);
-        }
+        fix_object(who);
+        if (op->type != PLAYER)
+            snprintf(buf, sizeof(buf), "You are now level %d in the %s skill.", op->level, op->name);
+        else
+            snprintf(buf, sizeof(buf), "You are now level %d.", op->level);
+
+        draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_LOSS, buf);
+
         player_lvl_adj(who, op); /* To decrease more levels */
     }
     /* check if the spell data has changed */
