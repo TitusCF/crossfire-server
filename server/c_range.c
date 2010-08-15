@@ -220,6 +220,8 @@ void command_cast_spell(object *op, const char *params, char command) {
                 op->contr->golem_count = 0;
             }
 
+            /* This assignment is need for casting_time logic */
+            op->spell = spob;
             if (castnow) {
                 cast_spell(op, op, op->facing, spob, cp);
             } else {
@@ -227,8 +229,6 @@ void command_cast_spell(object *op, const char *params, char command) {
                 sstring required = object_get_value(spob, "casting_requirements");
                 op->contr->ranges[range_magic] = spob;
                 op->contr->shoottype = range_magic;
-                /* This assignment is need for casting_time logic */
-                op->spell = spob;
 
                 if (cp != NULL) {
                     strncpy(op->contr->spellparam, cp, MAX_BUF);
