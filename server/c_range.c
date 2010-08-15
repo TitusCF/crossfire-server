@@ -227,6 +227,9 @@ void command_cast_spell(object *op, const char *params, char command) {
                 sstring required = object_get_value(spob, "casting_requirements");
                 op->contr->ranges[range_magic] = spob;
                 op->contr->shoottype = range_magic;
+                /* This assignment is need for casting_time logic */
+                op->spell = spob;
+
                 if (cp != NULL) {
                     strncpy(op->contr->spellparam, cp, MAX_BUF);
                     op->contr->spellparam[MAX_BUF-1] = '\0';
