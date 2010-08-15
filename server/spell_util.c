@@ -1602,7 +1602,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         return 0;
     }
 
-    if (caster == op && settings.casting_time == TRUE && spell_ob->type == SPELL) {
+    if (caster == op && caster->type ==PLAYER && settings.casting_time == TRUE && spell_ob->type == SPELL) {
         if (op->casting_time == -1) { /* begin the casting */
             op->casting_time = spell_ob->casting_time*PATH_TIME_MULT(op, spell_ob);
             op->spell = spell_ob;
