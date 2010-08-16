@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix container-related crash, when a plugin removes the container or equivalent.
+Nicolas Weeger 2010-08-16
+
 server/c_range.c:
 Fix missing assignment of spell in player object - only results in crashes if
 casting time is used.

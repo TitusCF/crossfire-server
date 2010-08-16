@@ -242,24 +242,34 @@ int apply_container(object *op, object *sack) {
      * container.
      */
     if (op->container && QUERY_FLAG(sack, FLAG_APPLIED)) {
+        tag_t tmp_tag = op->container->count;
+
         if (op->container->env != op) { /* if container is on the ground */
             op->container->move_off = 0;
         }
+
+        /* Query name before the close event, as the container could be destroyed. */
+        query_name(op->container, name_tmp, MAX_BUF);
+
         /* Lauwenmark: Handle for plugin close event */
         if (execute_event(tmp, EVENT_CLOSE, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
             return 1;
 
-        query_name(op->container, name_tmp, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op,
                              MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                              "You close %s.",
                              name_tmp);
-        CLEAR_FLAG(op->container, FLAG_APPLIED);
+
         op->container = NULL;
-        if (set_object_face_main(tmp))
-            esrv_update_item(UPD_FLAGS|UPD_FACE, op, tmp);
-        else
-            esrv_update_item(UPD_FLAGS, op, tmp);
+
+        /* The container may have been destroyed by the event handler. */
+        if (!object_was_destroyed(tmp, tmp_tag)) {
+            CLEAR_FLAG(tmp, FLAG_APPLIED);
+            if (set_object_face_main(tmp))
+                esrv_update_item(UPD_FLAGS|UPD_FACE, op, tmp);
+            else
+                esrv_update_item(UPD_FLAGS, op, tmp);
+        }
         if (tmp == sack)
             return 1;
     }
