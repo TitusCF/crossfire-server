@@ -167,6 +167,9 @@ static void move_bolt(object *op) {
         return;
     }
     hit_map(op, 0, op->attacktype, 1);
+    
+    if (op->weight)
+        check_spell_knockback(op);
 
     if (!op->direction)
         return;
@@ -321,11 +324,13 @@ static void explosion(object *op) {
         return;
     }
     hit_map(op, 0, op->attacktype, 0);
+//     if (op->weight)
+    check_spell_knockback(op);
 
     if (op->range > 0) {
         for (i = 1; i < 9; i++) {
             sint16 dx, dy;
-
+	    sint16 Dx, Dy;
             dx = op->x+freearr_x[i];
             dy = op->y+freearr_y[i];
             /* ok_to_put_more already does things like checks for walls,
@@ -338,7 +343,35 @@ static void explosion(object *op) {
                 tmp->speed_left = -0.21;
                 tmp->range--;
                 tmp->value = 0;
+		Dx=dx-op->x;
+		Dy=dy-op->y;
+		if (Dx==-1 && Dy==-1){
+		  tmp->direction=8;
+		}
+		if (Dx==0 && Dy==-1){
+		  tmp->direction=1;
+		}
+		if (Dx==1 && Dy==-1){
+		  tmp->direction=2;
+		}
+		if (Dx==1 && Dy==0){
+		  tmp->direction=3;
+		}
+		if (Dx==1 && Dy==1){
+		  tmp->direction=4;
+		}
+		if (Dx==0 && Dy==1){
+		  tmp->direction=5;
+		}
+		if (Dx==-1 && Dy==-1){
+		  tmp->direction=6;
+		}
+		if (Dx==-1 && Dy==0){
+		  tmp->direction=7;
+		}
+		
                 object_insert_in_map_at(tmp, m, op, 0, dx, dy);
+		
             }
         }
         /* Reset range so we don't try to propogate anymore.
@@ -357,7 +390,7 @@ static void explosion(object *op) {
 static void move_cone(object *op) {
     int i;
     tag_t tag;
-
+    
     /* if no map then hit_map will crash so just ignore object */
     if (!op->map) {
         LOG(llevError, "Tried to move_cone object %s without a map.\n", op->name ? op->name : "unknown");
@@ -380,6 +413,7 @@ static void move_cone(object *op) {
      * degree.
      */
     if (op->weight)
+	
         check_spell_knockback(op);
 
     if (object_was_destroyed(op, tag))
@@ -839,7 +873,7 @@ static void check_spell_knockback(object *op) {
     int frictionmod = 2; /*poor man's physics - multipy targets weight by this amount */
 
     if (!op->weight) { /*shouldn't happen but if cone object has no weight drop out*/
-        /*LOG(llevDebug, "DEBUG: arch weighs nothing\n");*/
+        LOG(llevDebug, "DEBUG: arch weighs nothing in check_spell_knockback\n");
         return;
     } else {
         weight_move = op->weight+(op->weight*op->level)/3;
@@ -874,7 +908,6 @@ static void check_spell_knockback(object *op) {
 
         if (tmp->move_type&MOVE_FLYING)
             frictionmod = 1; /* flying objects loose the friction modifier */
-
         if (rndm(0, weight_move-1) > ((tmp->weight/num_sections)*frictionmod)) {  /* move it. */
             /* move_object is really for monsters, but looking at
              * the move_object function, it appears that it should
@@ -883,7 +916,18 @@ static void check_spell_knockback(object *op) {
              * I don't see us doing anything useful with that information
              * right now.
              */
-            move_object(tmp, absdir(op->stats.sp));
+// 	    LOG(llevDebug, "trying move\n");
+	    if (op->direction){
+	      move_object(tmp,absdir(op->direction));
+	    }
+	    
+            else {
+	      (move_object(tmp, absdir(op->stats.sp)));
+	      
+	    }
         }
+        else{
+// 	  LOG(llevDebug, "did not try move, don't know why\n");
+	}
     }
 }
