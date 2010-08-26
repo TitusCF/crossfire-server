@@ -1135,7 +1135,8 @@ int singing(object *pl, int dir, object *skill) {
         /* Whole bunch of checks to see if this is a type of monster that would
          * listen to singing.
          */
-        tmp = HEAD(tmp);
+        if (tmp)
+            tmp = HEAD(tmp);
         if (tmp
         && QUERY_FLAG(tmp, FLAG_MONSTER)
         && !QUERY_FLAG(tmp, FLAG_NO_STEAL)      /* Been charmed or abused before */
