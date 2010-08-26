@@ -141,7 +141,7 @@ socket/request.c, requestinfo.c: Move requestinfo handling to its own file,
    and new function for newcharinfo handling.
 ---
 MSW 2010-07-28
-	
+
 Rewrite 'describe_monster' to use StringBuffer.
 Nicolas Weeger 2010-07-28
 
@@ -557,7 +557,7 @@ quest_get() now acts as a wrapper to, so that error messages can be given if
 a quest is defined multiple times.
 Change the default quest file to world.quests so that old servers will still
 work properly (but without the new syntax)
-Brendan Lally 2010-04-26 
+Brendan Lally 2010-04-26
 
 Clear hp fixing code.
 Nicolas Weeger 2010-04-26
@@ -580,10 +580,10 @@ Nicolas Weeger 2010-04-26
 Some unit tests for fix_object().
 Nicolas Weeger 2010-04-26
 
-server/skills.c, server/c_object.c, include/sproto.h: Make the 'examine' 
-command id of objects. 
-* Move the detect curse and detect magic logic out into separate functions 
-* Make the id skills use the item types array to figure out which objects 
+server/skills.c, server/c_object.c, include/sproto.h: Make the 'examine'
+command id of objects.
+* Move the detect curse and detect magic logic out into separate functions
+* Make the id skills use the item types array to figure out which objects
    they should identify
 * For any object which is examined, use the player's skills to attempt to
    detect magic, sense curse and then perform a skill-based id of objects.
@@ -750,7 +750,7 @@ at which point they then choose what character they want to play.
 doc/Developers/protocol: Fix some formatting, clarify some points, make
     some revisions to account protocol commands.
 include/account_char.h: Move MAX_CHARACTERS_PER_ACCOUNT to this
-    file so other files to access it.                        
+    file so other files to access it.
 include/newserver.h: Add login_method to socket structure.
 include/sockproto.h: Update for new functions.
 include/sproto.h: Update for new functions.
