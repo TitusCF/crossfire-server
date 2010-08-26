@@ -598,6 +598,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
         }
 
         FOR_MAP_PREPARE(m, x, y, tmp) {
+            tmp = HEAD(tmp);
             /* Jump into creature */
             if (QUERY_FLAG(tmp, FLAG_MONSTER)
                 || (tmp->type == PLAYER && (!QUERY_FLAG(tmp, FLAG_WIZ) || !tmp->contr->hidden))) {
@@ -982,18 +983,22 @@ int use_oratory(object *pl, int dir, object *skill) {
         return 0;
     }
 
-    for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+    tmp = NULL;
+    FOR_MAP_PREPARE(m, x, y, tmp2) {
+        tmp2 = HEAD(tmp2);
         /* can't persuade players - return because there is nothing else
          * on that space to charm.
          */
-        if (tmp->type == PLAYER)
+        if (tmp2->type == PLAYER)
             return 0;
-        if (tmp->msg)
+        if (tmp2->msg)
             return 0;
 
-        if (QUERY_FLAG(tmp, FLAG_MONSTER))
+        if (QUERY_FLAG(tmp2, FLAG_MONSTER)) {
+            tmp = tmp2;
             break;
-    }
+        }
+    } FOR_MAP_FINISH();
 
     if (!tmp) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
@@ -1001,7 +1006,6 @@ int use_oratory(object *pl, int dir, object *skill) {
         return 0;
     }
 
-    tmp = HEAD(tmp);
     query_name(tmp, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                          "You orate to the %s.",
@@ -1124,19 +1128,23 @@ int singing(object *pl, int dir, object *skill) {
         if (!(mflags&P_IS_ALIVE))
             continue;
 
-        for (tmp = GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
-            if (QUERY_FLAG(tmp, FLAG_MONSTER))
+        tmp = NULL;
+        FOR_MAP_PREPARE(m, x, y, tmp2) {
+            tmp2 = HEAD(tmp2);
+            if (QUERY_FLAG(tmp2, FLAG_MONSTER)) {
+                tmp = tmp2;
                 break;
+            }
             /* can't affect players */
-            if (tmp->type == PLAYER)
+            if (tmp2->type == PLAYER) {
+                tmp = tmp2;
                 break;
-        }
+            }
+        } FOR_MAP_FINISH();
 
         /* Whole bunch of checks to see if this is a type of monster that would
          * listen to singing.
          */
-        if (tmp)
-            tmp = HEAD(tmp);
         if (tmp
         && QUERY_FLAG(tmp, FLAG_MONSTER)
         && !QUERY_FLAG(tmp, FLAG_NO_STEAL)      /* Been charmed or abused before */
