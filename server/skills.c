@@ -606,12 +606,12 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
                                      "You jump into %s%s.",
                                      tmp->type == PLAYER ? "" : "the ", tmp->name);
 
+                stop_jump(pl);
                 if (tmp->type != PLAYER
                 || (pl->type == PLAYER && pl->contr->party == NULL)
                 || (pl->type == PLAYER && tmp->type == PLAYER && pl->contr->party != tmp->contr->party))
                     exp = skill_attack(tmp, pl, pl->facing, "kicked", skill); /* pl makes an attack */
 
-                stop_jump(pl);
                 return exp;  /* note that calc_skill_exp() is already called by skill_attack() */
             }
             /* If the space has fly on set (no matter what the space is),
