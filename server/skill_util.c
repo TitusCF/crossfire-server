@@ -55,6 +55,7 @@
 #endif
 #include <living.h>     /* for defs of STR,CON,DEX,etc. -b.t.*/
 #include <spells.h>
+#include <skills.h>
 
 static int attack_hth(object *pl, int dir, const char *string, object *skill);
 static int attack_melee_weapon(object *op, int dir, const char *string, object *skill);
@@ -1105,7 +1106,9 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                  * it if appropriate.
                  */
                 if (op->chosen_skill) {
-                    for (i = 0; i < sizeof(unarmed_skills); i++)
+                    /* the list is 0-terminated, and talismans, which can be in chosen_skill,
+                     * have a subtype of 0, therefore don't check the 0 */
+                    for (i = 0; unarmed_skills[i] != 0; i++)
                         if (op->chosen_skill->subtype == unarmed_skills[i]) {
                             skill = op->chosen_skill;
                             break;
