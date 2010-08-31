@@ -301,6 +301,16 @@ player *get_player(player *p) {
             first_player = p;
 
         p->next = NULL;
+        /* This only needs to be done on initial creation of player
+         * object.  the callers of get_player() will copy over the
+         * socket structure to p->socket, and if this is an existing
+         * player object, that has been done.  The call to
+         * roll_stats() below will try to send spell information to
+         * the client - if this is non zero (eg, garbage from not
+         * being cleared), that will cause problems.  So just clear
+         * it, and no spell data is sent.
+         */
+        p->socket.monitor_spells = 0;
     } else {
         /* Only needed when reusing existing player. */
         clear_player(p);
@@ -332,7 +342,6 @@ player *get_player(player *p) {
     op->direction = 5;     /* So player faces south */
     op->stats.wc = 2;
     op->run_away = 25; /* Then we panic... */
-    p->socket.monitor_spells = 0; /* this needs to be set before roll_stats() as it calls fix_object() that sends the spells. */
 
     roll_stats(op);
     player_set_state(p, ST_ROLL_STAT);
