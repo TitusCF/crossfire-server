@@ -2043,7 +2043,7 @@ static PyObject *Crossfire_Object_Take(Crossfire_Object *who, PyObject *args) {
     EXISTCHECK(who);
     TYPEEXISTCHECK(whoptr);
 
-    cf_object_pickup(whoptr->obj, who->obj);
+    cf_object_pickup(who->obj, whoptr->obj);
     Py_INCREF(Py_None);
     return Py_None;
 }

@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix broken Python Object.Take (inverted parameters).
+Nicolas Weeger 2010-09-02
+
 server/player.c: Move clearing of monitor_spells to initial socket allocation.
 Fixes bug where spell updates would cease if player used a savebed and
 then played again on same server.
