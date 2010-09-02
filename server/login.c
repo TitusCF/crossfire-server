@@ -866,7 +866,7 @@ void check_login(object *op, int check_pass) {
             if (party)
                 party_set_password(party, party_password);
         }
-        if (party && party_confirm_password(party, party_password)) {
+        if (party && !pl->party && party_confirm_password(party, party_password)) {
             party_join(op, party);
         }
 

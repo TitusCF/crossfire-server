@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Don't join party again at startup if formed automatically.
+This leads to party removal, and memory corruption.
+Nicolas Weeger 2010-09-02
+
 Fix bug #3055569: godenchanting is still buggy.
 The enchanting code was bypassing attacktypes if weapon was already enchanted.
 Also fix wrong name check.
