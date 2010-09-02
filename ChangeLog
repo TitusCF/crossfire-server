@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bug #3055569: godenchanting is still buggy.
+The enchanting code was bypassing attacktypes if weapon was already enchanted.
+Also fix wrong name check.
+Nicolas Weeger 2010-09-02
+
 Fix Python Object.Say to automatically use the dialog system if in a dialog context.
 This makes the object talk after the player, like expected, without
 needing to change all scripts.

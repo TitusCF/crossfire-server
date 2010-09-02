@@ -911,17 +911,7 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
         const char *owner = object_get_value(weapon, "item_owner");
         object *skillop = NULL;
 
-        if (divine_owner != NULL) {
-            if (!strcmp(divine_owner, god->name)) {
-                /* It already belongs to this god - do not go further. */
-                /*
-                [DT] (2009-06-10): It is ok if the weapon has already been enchanted
-                one time, but in that particular case we only give out additional plusses.
-                No new slays or new attacktypes
-                */
-                return improve_weapon_magic(op, tr, weapon, skill);
-            }
-
+        if (divine_owner != NULL && strcmp(divine_owner, god->name) != 0) {
             /* Huho... Another god already blessed this one ! */
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                  "Your %s already belongs to %s !",
@@ -929,7 +919,7 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
             return 0;
         }
 
-        if ((owner != NULL) && (!strcmp(owner, op->name))) {
+        if ((owner != NULL) && (strcmp(owner, op->name) != 0)) {
             /* Maybe the weapon itself will not agree ? */
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                  "The %s is not yours, and is magically protected against such changes !",
