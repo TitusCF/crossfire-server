@@ -2094,14 +2094,35 @@ static PyObject *Crossfire_Object_CheckTrigger(Crossfire_Object *who, PyObject *
 }
 
 static PyObject *Crossfire_Object_Say(Crossfire_Object *who, PyObject *args) {
-    char *message;
+    char *message, buf[2048];
 
     EXISTCHECK(who);
     if (!PyArg_ParseTuple(args, "s", &message))
         return NULL;
-    cf_object_say(who->obj, message);
+
+    /* compatibility */
+    if (current_context->talk == NULL) {
+        cf_object_say(who->obj, message);
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    if (current_context->talk->npc_msg_count == MAX_NPC) {
+        PyErr_SetString(PyExc_ValueError, "too many NPCs");
+        return NULL;
+    }
+
+    if (strlen(message) >= sizeof(buf) - 1)
+        cf_log(llevError, "warning, too long message in npcSay, will be truncated");
+    /** @todo fix by wrapping monster_format_say() (or the whole talk structure methods) */
+    snprintf(buf, sizeof(buf), "%s says: %s", who->obj->name, message);
+
+    current_context->talk->npc_msgs[current_context->talk->npc_msg_count] = cf_add_string(buf);
+    current_context->talk->npc_msg_count++;
+
     Py_INCREF(Py_None);
     return Py_None;
+
 }
 
 static PyObject *Crossfire_Object_Reposition(Crossfire_Object *who, PyObject *args) {
