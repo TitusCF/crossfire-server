@@ -9,6 +9,7 @@
 #include "CREReportDisplay.h"
 #include "CREPixmap.h"
 #include "CRESmoothFaceMaker.h"
+#include "ResourcesManager.h"
 
 extern "C" {
 #include "global.h"
@@ -28,6 +29,9 @@ CREMainWindow::CREMainWindow()
 
     setWindowTitle(tr("Crossfire Resource Editor"));
 
+    myResourcesManager = new ResourcesManager();
+    myResourcesManager->load();
+
     myMapManager = new CREMapInformationManager(this);
     connect(myMapManager, SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
     connect(myMapManager, SIGNAL(finished()), this, SLOT(browsingFinished()));
@@ -46,6 +50,7 @@ void CREMainWindow::closeEvent(QCloseEvent* event)
     delete myMapManager;
     delete myQuestManager;
     delete myMessageManager;
+    delete myResourcesManager;
     QMainWindow::closeEvent(event);
 }
 
@@ -159,7 +164,7 @@ void CREMainWindow::createMenus()
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
 {
-    QWidget* resources = new CREResourcesWindow(myMapManager, myQuestManager, myMessageManager, mode);
+    QWidget* resources = new CREResourcesWindow(myMapManager, myQuestManager, myMessageManager, myResourcesManager, mode);
     connect(this, SIGNAL(updateFilters()), resources, SLOT(updateFilters()));
     connect(resources, SIGNAL(filtersModified()), this, SLOT(onFiltersModified()));
     connect(this, SIGNAL(updateReports()), resources, SLOT(updateReports()));

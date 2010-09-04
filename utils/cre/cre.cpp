@@ -1,8 +1,3 @@
-extern "C" {
-#include "global.h"
-#include "libproto.h"
-}
-
 #include <Qt>
 #include <QApplication>
 #include <QCoreApplication>
@@ -26,13 +21,6 @@ int main(int argc, char **argv) {
     qRegisterMetaTypeStreamOperators<CREFilterDefinitionManager>("CREFilterDefinitionManager");
     qRegisterMetaTypeStreamOperators<CREReportDefinition>("CREReportDefinition");
     qRegisterMetaTypeStreamOperators<CREReportDefinitionManager>("CREReportDefinitionManager");
-
-    init_globals();
-    init_library();
-    read_client_images();
-    init_artifacts();
-    init_formulae();
-    load_treasures();
 
     CREPixmap::init();
 

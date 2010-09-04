@@ -16,6 +16,7 @@ class CREFormulaeWindow;
 class CREMapInformationManager;
 class QuestManager;
 class MessageManager;
+class ResourcesManager;
 
 class CREMainWindow : public QMainWindow
 {
@@ -60,6 +61,7 @@ class CREMainWindow : public QMainWindow
         CREMapInformationManager* myMapManager;
         QuestManager* myQuestManager;
         MessageManager* myMessageManager;
+        ResourcesManager* myResourcesManager;
 
     protected:
         void closeEvent(QCloseEvent* event);

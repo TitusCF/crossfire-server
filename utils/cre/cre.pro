@@ -60,7 +60,8 @@ CREPixmap.cpp \
  CREQuestItemModel.cpp \
  CREMultilineItemDelegate.cpp \
  QuestConditionScript.cpp \
- CRESmoothFaceMaker.cpp
+ CRESmoothFaceMaker.cpp \
+ ResourcesManager.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -119,7 +120,8 @@ CREPixmap.h \
  CREQuestItemModel.h \
  CREMultilineItemDelegate.h \
  QuestConditionScript.h \
- CRESmoothFaceMaker.h
+ CRESmoothFaceMaker.h \
+ ResourcesManager.h
 LIBS += ../../common/libcross.a
 
 RESOURCES += cre.qrc

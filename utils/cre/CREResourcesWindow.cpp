@@ -53,9 +53,10 @@ extern "C" {
 #include "global.h"
 #include "recipe.h"
 #include "MessageManager.h"
+#include "ResourcesManager.h"
 }
 
-CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages,DisplayMode mode)
+CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, DisplayMode mode)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -67,6 +68,8 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
     myQuests = quests;
     Q_ASSERT(messages);
     myMessages = messages;
+    Q_ASSERT(resources);
+    myResources = resources;
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -236,11 +239,13 @@ void CREResourcesWindow::fillAnimations()
 
     QTreeWidgetItem* item;
 
+    QStringList animations = myResources->allAnimations();
     // There is the "bug" animation to consider
-    for (int anim = 0; anim <= num_animations; anim++)
+    foreach(QString name, animations)
     {
-        item = CREUtils::animationNode(&animations[anim], animationsNode);
-        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemAnimation(&animations[anim])));
+        const animations_struct* anim = myResources->animation(name);
+        item = CREUtils::animationNode(anim, animationsNode);
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemAnimation(anim)));
     }
 
     addPanel("Animation", new CREAnimationPanel());
@@ -256,8 +261,11 @@ void CREResourcesWindow::fillTreasures()
     treasures->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(treasures);
 
-    for (list = first_treasurelist; list; list = list->next)
+    QStringList names = myResources->treasureLists();
+
+    foreach(QString name, names)
     {
+        list = myResources->treasureList(name);
         item = CREUtils::treasureNode(list, treasures);
 
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemTreasure(list)));
@@ -280,7 +288,7 @@ void CREResourcesWindow::fillTreasures()
 void CREResourcesWindow::fillArchetypes()
 {
     QTreeWidgetItem* item, *root, *sub;
-    archt* arch;
+    const archt* arch;
     int added = 0, count = 0;
 
     root = CREUtils::archetypeNode(NULL);
@@ -289,8 +297,11 @@ void CREResourcesWindow::fillArchetypes()
 
     CREWrapperObject* wrapper = NULL;
 
-    for (arch = first_archetype; arch; arch = arch->next)
+    QStringList archs = myResources->archetypes();
+
+    foreach(QString name, archs)
     {
+        arch = myResources->archetype(name);
         count++;
         if (!wrapper)
             wrapper = new CREWrapperObject();
@@ -321,8 +332,7 @@ void CREResourcesWindow::fillArchetypes()
 
 void CREResourcesWindow::fillFormulae()
 {
-    recipelist* list;
-    recipe* recipe;
+    const recipe* recipe;
     QTreeWidgetItem* root, *form, *sub;
     CREWrapperFormulae* wrapper = NULL;
     int count = 0, added = 0, subCount, subAdded;
@@ -331,18 +341,17 @@ void CREResourcesWindow::fillFormulae()
     form->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
 //    myTree->addTopLevelItem(form);
 
-    for (int ing = 1; ; ing++)
+    for (int ing = 1; ing <= myResources->recipeMaxIngredients() ; ing++)
     {
-        list = get_formulalist(ing);
-        if (!list)
-            break;
-
         root = new QTreeWidgetItem(form, QStringList(tr("%1 ingredients").arg(ing)));
         subCount = 0;
         subAdded = 0;
 
-        for (recipe = list->items; recipe; recipe = recipe->next)
+        QStringList recipes = myResources->recipes(ing);
+
+        foreach(QString name, recipes)
         {
+            recipe = myResources->recipe(ing, name);
             subCount++;
             count++;
             if (!wrapper)
@@ -421,17 +430,19 @@ void CREResourcesWindow::fillArtifacts()
 void CREResourcesWindow::fillFaces()
 {
     QTreeWidgetItem* item, *root;
+    const New_Face* face;
 
     root = CREUtils::faceNode(NULL);
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemEmpty()));
     myTree->addTopLevelItem(root);
 
-    extern int nrofpixmaps;
+    QStringList faces = myResources->faces();
 
-    for (int f = 0; f < nrofpixmaps; f++)
+    foreach(QString name, faces)
     {
-        item = CREUtils::faceNode(&new_faces[f], root);
-        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemFace(&new_faces[f])));
+        face = myResources->face(name);
+        item = CREUtils::faceNode(face, root);
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemFace(face)));
     }
 
     addPanel("Face", new CREFacePanel());
