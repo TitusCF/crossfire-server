@@ -275,7 +275,7 @@ void CREResourcesWindow::fillTreasures()
 
         for (treasure = list->items; treasure; treasure = treasure->next)
         {
-            sub = CREUtils::treasureNode(treasure, item);
+            sub = CREUtils::treasureNode(treasure, list, item);
             if (treasure->chance)
                 sub->setText(1, QString::number(treasure->chance));
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(new CRETreeItemTreasure(list)));

@@ -24,7 +24,7 @@ class CREUtils
 
         static QTreeWidgetItem* treasureNode(QTreeWidgetItem* parent);
         static QTreeWidgetItem* treasureNode(const treasurelist* list, QTreeWidgetItem* parent);
-        static QTreeWidgetItem* treasureNode(const treasure* treasure, QTreeWidgetItem* parent);
+        static QTreeWidgetItem* treasureNode(const treasure* treasure, const treasurelist* list, QTreeWidgetItem* parent);
 
         static QTreeWidgetItem* formulaeNode(const recipe* recipe, QTreeWidgetItem* parent);
 

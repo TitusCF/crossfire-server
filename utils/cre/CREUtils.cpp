@@ -82,7 +82,7 @@ QTreeWidgetItem* CREUtils::treasureNode(const treasurelist* list, QTreeWidgetIte
     return item;
 }
 
-QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, QTreeWidgetItem* parent)
+QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, const treasurelist* list, QTreeWidgetItem* parent)
 {
     QTreeWidgetItem* item;
     if (treasure->item)
@@ -92,13 +92,13 @@ QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, QTreeWidgetIte
         {
             QTreeWidgetItem* node = new QTreeWidgetItem(item, QStringList(QTreeWidget::tr("Yes")));
             node->setIcon(0, CREPixmap::getTreasureYesIcon());
-            CREUtils::treasureNode(treasure->next_yes, node);
+            CREUtils::treasureNode(treasure->next_yes, list, node);
         }
         if (treasure->next_no)
         {
             QTreeWidgetItem* node = new QTreeWidgetItem(item, QStringList(QTreeWidget::tr("No")));
             node->setIcon(0, CREPixmap::getTreasureNoIcon());
-            CREUtils::treasureNode(treasure->next_no, node);
+            CREUtils::treasureNode(treasure->next_no, list, node);
         }
     }
     else
@@ -112,9 +112,9 @@ QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, QTreeWidgetIte
         }
     }
 
-    if (treasure->chance != 100)
+    if (list->total_chance != 0)
     {
-        item->setText(0, QTreeWidget::tr("%1 (%2%)").arg(item->text(0)).arg(treasure->chance));
+        item->setText(0, QTreeWidget::tr("%1 (%2%, %3 chances on %4)").arg(item->text(0)).arg(qRound(100 * treasure->chance / list->total_chance)).arg(treasure->chance).arg(list->total_chance));
     }
 
     return item;
