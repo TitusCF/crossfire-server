@@ -38,6 +38,7 @@
 
 void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
+    cctk_setconfdir(BUILD_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/living.out");
     cctk_init_std_archetypes();
     init_experience();
@@ -218,7 +219,7 @@ int main(void) {
     SRunner *sr = srunner_create(s);
 
     /* to debug, uncomment this line */
-    srunner_set_fork_status(sr, CK_NOFORK);
+    /*srunner_set_fork_status(sr, CK_NOFORK);*/
 
     srunner_set_xml(sr, LOGDIR "/unit/common/living.xml");
     srunner_set_log(sr, LOGDIR "/unit/common/living.out");

@@ -40,6 +40,7 @@
 
 #define STATUS_LOGDIR    0x0001
 #define STATUS_DATADIR   0x0002
+#define STATUS_CONFDIR   0x0004
 
 #define STATUS_GLOBALS   0x0100
 #define STATUS_HASHTABLE 0x0200
@@ -70,6 +71,12 @@ void cctk_setdatadir(char *datadir) {
     settings.datadir = datadir;
     SET_TKFLAG(STATUS_DATADIR);
 }
+
+void cctk_setconfdir(char *confdir) {
+    settings.confdir = confdir;
+    SET_TKFLAG(STATUS_CONFDIR);
+}
+
 /**
  * Loads up to archetype initialisation using standard crossfire files in source
  * tree. This function requires that cctk_setlog and cctk_setdatadir have both
