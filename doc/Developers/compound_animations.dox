@@ -11,6 +11,8 @@ The basic principle is:
 
 Animation suffixes are stored in objects in their obj::anim_suffix 's field.
 
+It is defined in archetypes with 'anim_suffix name'.
+
 Existing animation events:
 - when a player attacks with a weapon, the weapon is checked for an animation suffix
 - when an object casts a spell, the spell being cast is checked for an animation suffix
