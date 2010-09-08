@@ -2274,6 +2274,13 @@ void do_harvest(object *pl, int dir, object *skill) {
         return;
     }
 
+    /* Check the new item can fit into inventory.
+     * Fixes bug #3060474: fishing puts more fishes into inventory than you can carry. */
+    if (pl->weight + pl->carrying + inv->weight > get_weight_limit(pl->stats.Str)) {
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You are carrying too much to %s a %s.", skill->slaying, inv->name);
+        return;
+    }
+
     /* Ok, got it. */
     item = object_new();
     object_copy_with_inv(inv, item);

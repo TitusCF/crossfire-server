@@ -14,8 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix do_harvest() not checking if player can actually carry what is harvested.
+This fixes bug #3060474: fishing puts more fishes into inventory than you can carry.
+Nicolas Weeger 2010-09-08
+
 Fix examine_monster() to handle critically hit cases.
-Nicolas Weeger 2010-09-06
+Nicolas Weeger 2010-09-08
 
 Unit tests: correctly initialise the config dir (for experience and such).
 Nicolas Weeger 2010-09-06
