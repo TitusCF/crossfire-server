@@ -1377,7 +1377,13 @@ void examine_monster(object *op, object *tmp) {
     /* Anyone know why this used to use the clone value instead of the
      * maxhp field?  This seems that it should give more accurate results.
      */
-    switch ((mon->stats.hp+1)*4/(mon->stats.maxhp+1)) { /* From 1-4 */
+    switch ((mon->stats.hp+1)*4/(mon->stats.maxhp+1)) {
+        /* From 0-4+, since hp can be higher than maxhp if defined in map. */
+    case 0:
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+                      "It is critically wounded.");
+        break;
+
     case 1:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                       "It is in a bad shape.");
@@ -1393,7 +1399,7 @@ void examine_monster(object *op, object *tmp) {
                       "It is somewhat hurt.");
         break;
 
-    case 4:
+    default:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                       "It is in excellent shape.");
         break;
