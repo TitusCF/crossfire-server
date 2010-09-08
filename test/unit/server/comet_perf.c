@@ -61,7 +61,7 @@
  * values is to set this to 0.0 - in that case, checks should
  * pass.
  */
-#define HP_DELTA    5
+#define HP_DELTA    10
 
 /* The first time you set up a test, you want to dump the
  * initial values to put into the hp_row/hp_diag arrays.
