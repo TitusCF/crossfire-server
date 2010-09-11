@@ -7,9 +7,9 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_212, @ref page_type_28
-		</td><td>    This entry defines which kinds of environment actions the
-    creature is able to perform.</td>
+@ref page_type_213, @ref page_type_28
+		</td><td>                This entry defines which kinds of environment actions the
+                creature is able to perform.</td>
 	</tr>
 
 */

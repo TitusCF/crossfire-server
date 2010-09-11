@@ -7,9 +7,10 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_212, @ref page_type_28
-		</td><td>    If &lt;can cast spell&gt; is disabled, the monster cannot cast any spell.
-    Only wands/rods/etc can be used, given the appropriate abilities.</td>
+@ref page_type_213, @ref page_type_28
+		</td><td>                If &lt;can cast spell&gt; is disabled, the monster cannot cast
+                any spell. Only wands/rods/etc can be used, given the
+                appropriate abilities.</td>
 	</tr>
 
 */

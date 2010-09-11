@@ -7,8 +7,13 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_211, @ref page_type_67, @ref page_type_88, @ref page_type_138
-		</td><td>    The movement types that are affected by &lt;slow penalty&gt;.</td>
+@ref page_type_212, @ref page_type_67, @ref page_type_88
+		</td><td>                The movement types that are affected by &lt;slow penalty&gt;.</td>
+	</tr>
+	<tr>
+		<td>
+@ref page_type_138
+		</td><td>            The movement types that are affected by &lt;slow penalty&gt;.</td>
 	</tr>
 
 */

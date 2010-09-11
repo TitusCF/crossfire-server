@@ -7,9 +7,9 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_213
-		</td><td>    If set, the object is able to "roll", so it can be pushed around.
-    This setting is used for boulders and barrels.</td>
+@ref page_type_214
+		</td><td>            If set, the object is able to "roll", so it can be pushed around.
+            This setting is used for boulders and barrels.</td>
 	</tr>
 
 */
