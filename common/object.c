@@ -2535,8 +2535,15 @@ object *object_decrease_nrof(object *op, uint32 i) {
                     tmp = NULL;
             }
 
-            object_sub_weight(op->env, op->weight*i);
+            /* Because of weight reduction by container and integer arithmetic,
+             * there is no guarantee the rounded weight of combined items will be
+             * the same as the sum of rounded weights.
+             * Therefore just remove the current weight, and add the new.
+             * Same adjustment done in increase_ob_nr().
+             */
+            object_sub_weight(op->env, op->weight * op->nrof);
             op->nrof -= i;
+            object_add_weight(op->env, op->weight * op->nrof);
             if (tmp) {
                 esrv_update_item(UPD_NROF, tmp, op);
             }
@@ -2609,8 +2616,15 @@ static void increase_ob_nr(object *op, uint32 i) {
                 tmp = NULL;
         }
 
-        object_add_weight(op->env, op->weight*i);
+        /* Because of weight reduction by container and integer arithmetic,
+         * there is no guarantee the rounded weight of combined items will be
+         * the same as the sum of rounded weights.
+         * Therefore just remove the current weight, and add the new.
+         * Same adjustment done in object_decrease_nrof().
+         */
+        object_sub_weight(op->env, op->weight * op->nrof);
         op->nrof += i;
+        object_add_weight(op->env, op->weight * op->nrof);
         if (tmp) {
             esrv_update_item(UPD_NROF, tmp, op);
         }

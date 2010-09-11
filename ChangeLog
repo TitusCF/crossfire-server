@@ -15,6 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 Add unit test exposing a weight reduction issue with containers.
+Fix said weight reduction bug.
 Nicolas Weeger 2010-09-11
 
 Fix fishing rod not being correctly applied with ready_skill.
