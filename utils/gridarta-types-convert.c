@@ -630,15 +630,18 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
             strncpy(tmp, find+1, end-find-1);
             attr->name = strdup(tmp);
 
-            while (read_line(buf, 200, file)) {
-                if (strstr(buf, "</attribute>") != NULL)
-                    break;
-                if (attr->description) {
-                    attr->description = realloc(attr->description, strlen(attr->description)+strlen(buf)+1);
-                    strcat(attr->description, buf);
+            /* Description can be empty, with end tag on the same line. */
+            if (strstr(buf, "</attribute>") == NULL) {
+                while (read_line(buf, 200, file)) {
+                    if (strstr(buf, "</attribute>") != NULL)
+                        break;
+                    if (attr->description) {
+                        attr->description = realloc(attr->description, strlen(attr->description)+strlen(buf)+1);
+                        strcat(attr->description, buf);
+                    }
+                    else
+                        attr->description = strdup(buf);
                 }
-                else
-                    attr->description = strdup(buf);
             }
             if (attr->description)
                 while (attr->description[strlen(attr->description)-1] == '\n')
@@ -820,6 +823,7 @@ static const char *custom_attributes[] = {
     "price_adjustment",
     "price_adjustment_buy",
     "price_adjustment_sell",
+    "casting_requirement",
     NULL
 };
 
