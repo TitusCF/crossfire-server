@@ -1310,7 +1310,7 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     NULL, "make_invisible",  "inv_locked", "is_wooded",
     "is_hilly", "has_ready_skill", "has_ready_weapon",              /* 90 */
     "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
-    "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",   /* 100 */
+    NULL, "no_steal", "one_hit", NULL, "berserk", "neutral",   /* 100 */
     "no_attack", "no_damage", NULL, NULL, "activate_on_push",
     "activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable",   /* 110 */
     NULL, "blessed", "known_blessed"
