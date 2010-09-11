@@ -805,6 +805,21 @@ static const char *custom_attributes[] = {
     "passenger_limit",
     "face_full",
     "anim_full",
+    /* misc */
+    "accept_alive",
+    "death_animation",
+    "face_opened",
+    "generator_code",
+    "generator_limit",
+    "generator_max_map",
+    "generator_radius",
+    "no_mood_change",
+    "on_use_yield",
+    "race_restriction",
+    "wc_increase_rate",
+    "price_adjustment",
+    "price_adjustment_buy",
+    "price_adjustment_sell",
     NULL
 };
 
@@ -835,7 +850,7 @@ void write_attribute_reference(const char *attribute, FILE *file) {
         }
     }
     if (is_custom_attribute(attribute)) {
-        fprintf(file, "page_custom_attributes \"%s\"", attribute);
+        fprintf(file, "page_custom_attribute_%s \"%s\"", attribute, attribute);
         return;
         }
     if (strstr(attribute, "resist_")) {
@@ -925,8 +940,13 @@ void write_attribute_file(attribute_definition *attribute) {
     snprintf(buf, 200, "%s/%s/field_%s.dox", destination_dir, field_dir, attribute->field);
     file = fopen(buf, "w+");
 
-    fprintf(file, "/**\n@fn ");
-    write_attribute_reference(attribute->field, file);
+    if (is_custom_attribute(attribute->field)) {
+        fprintf(file, "/**\n@page page_custom_attribute_%s %s", attribute->field, attribute->field);
+        fprintf(file, "\nThis is a @ref page_custom_attributes \"custom attribute\".\n");
+    } else {
+        fprintf(file, "/**\n@fn ");
+        write_attribute_reference(attribute->field, file);
+    }
 
     /* resistances are special, they'll be merged in the obj::resist paragraph, so specify the name. */
     if (strstr(attribute->field, "resist_"))
@@ -1061,8 +1081,7 @@ int main(int argc, char **argv) {
     write_type_file(fallback_type);
 
     for (attr = 0; attr < attribute_count; attr++)
-        if (!is_custom_attribute(attributes[attr]->field))
-            write_attribute_file(attributes[attr]);
+        write_attribute_file(attributes[attr]);
 
     fclose(xml);
     free(types);
