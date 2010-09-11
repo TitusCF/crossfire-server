@@ -237,7 +237,6 @@ static type_name type_names[] = {
     { "TRIGGER_PEDESTAL", TRIGGER_PEDESTAL },
     { "SHIELD", SHIELD },
     { "HELMET", HELMET },
-    { "HORN", HORN },
     { "MONEY", MONEY },
     { "CLASS", CLASS },
     { "AMULET", AMULET },
@@ -865,7 +864,7 @@ void write_type_file(type_definition *type) {
     if (type->number > 0) {
         for (req = 0; type_names[req].code_name != NULL; req++) {
             if (type_names[req].value == type->number) {
-                fprintf(file, "@var %s\nSee @ref page_type_%d\n*/\n\n/**\n", type_names[req].qcode_name, type->number);
+                fprintf(file, "@var %s\nSee @ref page_type_%d\n*/\n\n/**\n", type_names[req].code_name, type->number);
                 break;
             }
         }
