@@ -633,6 +633,12 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
             /* Description can be empty, with end tag on the same line. */
             if (strstr(buf, "</attribute>") == NULL) {
                 while (read_line(buf, 200, file)) {
+                    if (strstr(buf, "<![CDATA[<html>") != NULL)
+                        /* some data is in HTML, that's ok */
+                        continue;
+                    if (strstr(buf, "]]>") != NULL)
+                        /* end of cdata html */
+                        continue;
                     if (strstr(buf, "</attribute>") != NULL)
                         break;
                     if (attr->description) {
@@ -823,7 +829,7 @@ static const char *custom_attributes[] = {
     "price_adjustment",
     "price_adjustment_buy",
     "price_adjustment_sell",
-    "casting_requirement",
+    "casting_requirements",
     NULL
 };
 
@@ -926,7 +932,7 @@ void write_type_index(void) {
     fprintf(index, "Types not listed here have the attributes defined in @ref page_type_0 \"this page\".\n\n");
 
     for (type = 0; type < type_count; type++) {
-        fprintf(index, "-@ref page_type_%d \"%s\"\n", types[type]->number, types[type]->name);
+        fprintf(index, "- @ref page_type_%d \"%s\"\n", types[type]->number, types[type]->name);
     }
 
     fprintf(index, "*/\n");
