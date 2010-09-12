@@ -39,7 +39,7 @@
  * - ATNR_xxx is the attack number that is indexed into the
  * the resist array in the object structure.
  * - ATM_xxx is the message number
- * - AT_xxx is the bitmask in the ::obj::attacktype field.
+ * - AT_xxx is the bitmask in the obj::attacktype field.
  */
 /*@{*/
 #define NROFATTACKS             26

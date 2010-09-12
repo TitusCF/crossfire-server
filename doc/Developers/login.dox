@@ -4,7 +4,7 @@
 
 The core connection structure is ::socket_struct.
 
-The ::init_sockets array, length contained in ::socket_info.allocated_sockets, contains at indice 0 the listening socket for the server, initialized through init_server(). This socket is always in use.
+The ::init_sockets array, length contained in Socket_Info::allocated_sockets, contains at indice 0 the listening socket for the server, initialized through init_server(). This socket is always in use.
 
 When a client connects, a socket from ::init_sockets is reused or reallocated in do_server(). During the first connection phase, the client can issue any command in the ::client_commands array - mostly, commands to negociate the connection, request faces and various game-related information -, 'add_me' and 'reply' commands, processed by add_me_cmd() and reply_cmd() respectively.
 

@@ -42,7 +42,7 @@ Most of the object manipulation functions are defined in the @ref object.c file.
 @subsection subsec_obj_fct_getting Object construction
 
 An object can be obtained:
-- through ::get_object(), which returns an empty object. It is the responsibility of the caller to correctly initialize it, including the pointer to the archetype structure
+- through ::object_new(), which returns an empty object. It is the responsibility of the caller to correctly initialize it, including the pointer to the archetype structure
 - through an archetype function, in which case the object has its fields set to the default archetype values. Available functions are create_archetype_by_object_name(), arch_to_object(), create_archetype(), object_create_arch()
 - from another object, via functions such as get_split_ob() and object_create_clone(), in which case the object has the properties of the source object.
 

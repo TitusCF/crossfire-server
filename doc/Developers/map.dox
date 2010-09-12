@@ -14,7 +14,7 @@ When a map resets, all objects on it are lost except when:
 
 Maps can have different types:
 - regular maps, currently loaded in memory
-- temporary maps, identified by ::mapstruct::in_memory == ::MAP_SWAPPED. Those are maps currently not loaded ingame to spare memory, but considered not reset. They will be reloaded when the need arises by ready_map_name()
+- temporary maps, identified by mapstruct::in_memory == ::MAP_SWAPPED. Those are maps currently not loaded ingame to spare memory, but considered not reset. They will be reloaded when the need arises by ready_map_name()
 - unique maps. Each player entering such a map will have her own instance of the map, all objects on the map are always saved, regardless of their ::FLAG_UNIQUE set or not
 - overlay maps. Those contain unique items that were in a regular map last time it was reset
 

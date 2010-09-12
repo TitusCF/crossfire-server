@@ -438,7 +438,7 @@ typedef struct typedata {
 /**
  * @defgroup FLAG_xxx Object flags
  *
- * Those flags are object-related flags, stored in the ::obj::flags fields.
+ * Those flags are object-related flags, stored in the obj::flags fields.
  *
  * Flag structure now changed.
  * Each flag is now a bit offset, starting at zero.  The macros
