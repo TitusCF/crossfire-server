@@ -239,7 +239,7 @@ int object_can_merge(object *ob1, object *ob2) {
     || (ob1->flags[0] != ob2->flags[0])
     || (ob1->flags[1] != ob2->flags[1])
     || (ob1->flags[2] != ob2->flags[2])
-    || ((ob1->flags[3]&~0x4) != (ob2->flags[3]&~0x4)) /* ignore CLIENT_SENT */
+    || ((ob1->flags[3]&~0x84) != (ob2->flags[3]&~0x84)) /* ignore CLIENT_SENT and FLAG_OBJ_ORIGINAL */
     || (ob1->name != ob2->name)
     || (ob1->title != ob2->title)
     || (ob1->msg != ob2->msg)
