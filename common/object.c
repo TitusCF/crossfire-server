@@ -2539,7 +2539,7 @@ object *object_decrease_nrof(object *op, uint32 i) {
              * there is no guarantee the rounded weight of combined items will be
              * the same as the sum of rounded weights.
              * Therefore just remove the current weight, and add the new.
-             * Same adjustment done in increase_ob_nr().
+             * Same adjustment done in object_increase_nrof().
              */
             object_sub_weight(op->env, op->weight * op->nrof);
             op->nrof -= i;
