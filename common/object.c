@@ -55,7 +55,7 @@ static int compare_ob_value_lists(const object *, const object *);
 static void expand_objects(void);
 static void permute(int *, int, int);
 static int object_set_value_s(object *, const char *, const char *, int);
-static void increase_ob_nr(object *op, uint32 i);
+static void object_increase_nrof(object *op, uint32 i);
 
 #ifdef MEMORY_DEBUG
 int nroffreeobjects = 0;  /**< Number of free objects. */
@@ -1888,7 +1888,7 @@ object *object_merge(object *op, object *top) {
         if (top == op)
             continue;
         if (object_can_merge(op, top)) {
-            increase_ob_nr(top, op->nrof);
+            object_increase_nrof(top, op->nrof);
             op->weight = 0; /* Don't want any adjustements now */
             object_remove(op);
             object_free2(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
@@ -2586,7 +2586,7 @@ object *object_decrease_nrof(object *op, uint32 i) {
  * @param i
  * number to add.
  */
-static void increase_ob_nr(object *op, uint32 i) {
+static void object_increase_nrof(object *op, uint32 i) {
     object *tmp;
 
     if (i == 0)   /* objects with op->nrof require this check */
@@ -2726,7 +2726,7 @@ object *object_insert_in_ob(object *op, object *where) {
             if (object_can_merge(tmp, op)) {
                 /* return the original object and remove inserted object
                  * (client needs the original object) */
-                increase_ob_nr(tmp, op->nrof);
+                object_increase_nrof(tmp, op->nrof);
                 SET_FLAG(op, FLAG_REMOVED);
                 object_free2(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK); /* free the inserted object */
                 return tmp;
