@@ -397,10 +397,8 @@ void send_file(socket_struct *ns, char *file) {
  * 
  * @param ns
  * socket to send to
- * @param <empty>
- * Not currently used - may be in future
  */
-void send_new_char_info(socket_struct *ns, char *param) {
+void send_new_char_info(socket_struct *ns) {
     char buf[MAX_BUF];
     int i, len;
     SockList sl;
