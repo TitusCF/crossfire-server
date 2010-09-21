@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Directors should not move doors.
+This fixes bug #3059451: force (smover) throws doors off hinges.
+Nicolas Weeger 2010-09-21
+
 Ignore 'FLAG_OBJ_ORIGINAL' for merging purposes. This fixes a merging bug with
 unique maps.
 Nicolas Weeger 2010-09-12

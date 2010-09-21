@@ -83,6 +83,11 @@ int transport_can_hold(const object *transport, const object *op, int nrof) {
  */
 int should_director_abort(object *op, object *victim) {
     int arch_flag, name_flag, race_flag;
+
+    /* Never move doors, it messes things. */
+    if (victim->type == DOOR)
+        return 1;
+
     /* Get flags to determine what of arch, name, and race should be
      * checked. This is stored in subtype, and is a bitmask, the LSB
      * is the arch flag, the next is the name flag, and the last is
