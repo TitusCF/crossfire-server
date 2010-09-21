@@ -81,7 +81,7 @@ int transport_can_hold(const object *transport, const object *op, int nrof) {
  * @return
  * 1 if it should abort, 0 if it should continue.
  */
-int should_director_abort(object *op, object *victim) {
+int should_director_abort(const object *op, const object *victim) {
     int arch_flag, name_flag, race_flag;
 
     /* Never move doors, it messes things. */
