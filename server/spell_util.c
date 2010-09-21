@@ -159,12 +159,24 @@ void check_spells(void) {
  */
 void dump_spells(void) {
     archetype *at;
+    int banner = 0;
 
     for (at = first_archetype; at; at = at->next) {
         if (at->clone.type == SPELL) {
             fprintf(stderr, "%s:%s:%s:%s:%d\n", at->clone.name ? at->clone.name : "null",
                     at->name, at->clone.other_arch ? at->clone.other_arch->name : "null",
                     at->clone.skill ? at->clone.skill : "null", at->clone.level);
+        }
+    }
+
+    for (at = first_archetype; at; at = at->next) {
+        if (at->clone.type == SPELL && at->clone.path_attuned == 0) {
+            if (banner == 0) {
+                banner = 1;
+                fprintf(stderr, "Spells with no path set:\n");
+            }
+
+            fprintf(stderr, "- %s\n", at->clone.name ? at->clone.name : "null");
         }
     }
 }
