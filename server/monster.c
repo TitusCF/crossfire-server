@@ -1536,13 +1536,15 @@ static void monster_check_pickup(object *monster) {
         } FOR_BELOW_FINISH();
 }
 
-/*
- * monster_can_pick(): If the monster is interested in picking up
- * the item, then return 0.  Otherwise 0.
- * Instead of pick_up, flags for "greed", etc, should be used.
- * I've already utilized flags for bows, wands, rings, etc, etc. -Frank.
+/**
+ * Check if the monster can and is interested in picking up
+ * an item.
+ * @param monster monster to check.
+ * @param item what item to check against
+ * @return
+ * - 0 if item can or should not be picked by monster.
+ * - 1 if monster picks item.
  */
-
 static int monster_can_pick(object *monster, object *item) {
     int flag = 0;
     int i;
@@ -1618,11 +1620,11 @@ static int monster_can_pick(object *monster, object *item) {
     return 0;
 }
 
-/*
- * monster_apply_below():
- * Vick's (vick@bern.docs.uu.se) @921107 -> If a monster who's
- * eager to apply things, encounters something apply-able,
- * then make him apply it
+/**
+ * If a monster who's eager to apply things encounters something apply-able,
+ * then make him apply it.
+ * @author Vick's (vick@bern.docs.uu.se)
+ * @date 921107
  */
 static void monster_apply_below(object *monster) {
     FOR_BELOW_PREPARE(monster, tmp) {
@@ -1653,18 +1655,13 @@ void monster_check_apply_all(object *monster) {
     FOR_INV_FINISH();
 }
 
-/*
- * monster_check_apply() is meant to be called after an item is
- * inserted in a monster.
- * If an item becomes outdated (monster found a better item),
- * a pointer to that object is returned, so it can be dropped.
- * (so that other monsters can pick it up and use it)
- * Note that as things are now, monsters never drop something -
- * they can pick up all that they can use.
+/**
+ * Called after an item is inserted in a monster.
+ * Will look if item should be applied to replace another item.
+ * @param mon monster who picked an item.
+ * @param item what was picked up.
+ * @note Sept 96, fixed this so skills will be readied -b.t.
  */
-
-/* Sept 96, fixed this so skills will be readied -b.t.*/
-
 void monster_check_apply(object *mon, object *item) {
     int flag = 0;
 
@@ -1764,6 +1761,8 @@ void monster_check_apply(object *mon, object *item) {
 }
 
 /**
+ * A monster calls for help against its enemy.
+ * @param op monster calling for help.
  * @note
  * npc_call_help() has been renamed to monster_npc_call_help()
  */
