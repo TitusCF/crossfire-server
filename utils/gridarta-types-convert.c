@@ -1002,6 +1002,12 @@ int main(int argc, char **argv) {
     dummy = OBJECT_TYPE_MAX+50;
 
     xml = fopen(argv[1], "r");
+
+    if (!xml) {
+        printf("Could not find file %s\n", argv[1]);
+        return 1;
+    }
+
     while (read_line(buf, 200, xml) != NULL) {
         if (buf[0] == '#')
             continue;
