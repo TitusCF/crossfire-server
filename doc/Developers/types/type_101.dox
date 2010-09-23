@@ -38,6 +38,12 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>attuned paths</td>
+		<td>@ref obj::path_attuned</td>
+		<td>            Spellpath for this spell. A player needs to not be denied this path to cast the spell.
+		</td>
+	</tr>
+	<tr>
 		<td>block view</td>
 		<td>@ref FLAG_BLOCKSVIEW</td>
 		<td>            If an item is set to block view, players (and monsters) cannot see
@@ -47,7 +53,8 @@ Type defined by:
 	<tr>
 		<td>casting time</td>
 		<td>@ref obj::casting_time</td>
-		<td>(no description)
+		<td>          If the server uses spell casting times, this is the base number of ticks required
+          for casting this spell.
 		</td>
 	</tr>
 	<tr>
@@ -74,31 +81,33 @@ Type defined by:
 	<tr>
 		<td>cost grace</td>
 		<td>@ref liv::grace</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>cost spellpoints</td>
-		<td>@ref liv::sp</td>
-		<td>(no description)
+		<td>          How many base grace points this spell costs to cast.
+          The effective cost can be based on the casting level, depending on server settings.
 		</td>
 	</tr>
 	<tr>
 		<td>create object</td>
 		<td>@ref obj::other_arch</td>
-		<td>(no description)
+		<td>          For spells creating or launching things, the archetype to use.
 		</td>
 	</tr>
 	<tr>
-		<td>double cost per level</td>
+		<td>double grace cost per level</td>
+		<td>@ref liv::maxgrace</td>
+		<td>          If non zero, the grace cost will increase &lt;grace cost&gt; per this value levels.
+		</td>
+	</tr>
+	<tr>
+		<td>double sp cost per level</td>
 		<td>@ref liv::maxsp</td>
-		<td>(no description)
+		<td>          If non zero, the spellpoint cost will increase &lt;spellpoint cost&gt; per this value levels.
 		</td>
 	</tr>
 	<tr>
 		<td>duration</td>
 		<td>@ref obj::duration</td>
-		<td>(no description)
+		<td>          Base spell effect duration. The actual duration will depend on the effective
+          casting level.
 		</td>
 	</tr>
 	<tr>
@@ -220,7 +229,7 @@ Type defined by:
 	<tr>
 		<td>spell level</td>
 		<td>@ref obj::level</td>
-		<td>(no description)
+		<td>          The level, without taking into account spellpath attenuation, required to cast this spell.
 		</td>
 	</tr>
 	<tr>
@@ -228,6 +237,13 @@ Type defined by:
 		<td>@ref obj::subtype</td>
 		<td>            The &lt;spell type&gt; defines the basic type of spell. Some of
             these types are of a more generic nature than others.
+		</td>
+	</tr>
+	<tr>
+		<td>spellpoint cost</td>
+		<td>@ref liv::sp</td>
+		<td>          How many base spell points this spell costs to cast.
+          The effective cost can be based on the casting level, depending on server settings.
 		</td>
 	</tr>
 	<tr>

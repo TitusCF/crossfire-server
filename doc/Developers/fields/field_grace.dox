@@ -16,7 +16,8 @@
 	<tr>
 		<td>
 @ref page_type_101
-		</td><td>(no description)</td>
+		</td><td>          How many base grace points this spell costs to cast.
+          The effective cost can be based on the casting level, depending on server settings.</td>
 	</tr>
 
 */

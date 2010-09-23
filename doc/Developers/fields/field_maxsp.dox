@@ -48,7 +48,7 @@
 	<tr>
 		<td>
 @ref page_type_101
-		</td><td>(no description)</td>
+		</td><td>          If non zero, the spellpoint cost will increase &lt;spellpoint cost&gt; per this value levels.</td>
 	</tr>
 
 */

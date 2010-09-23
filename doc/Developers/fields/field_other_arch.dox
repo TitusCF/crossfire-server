@@ -79,7 +79,7 @@
 	<tr>
 		<td>
 @ref page_type_101
-		</td><td>(no description)</td>
+		</td><td>          For spells creating or launching things, the archetype to use.</td>
 	</tr>
 
 */

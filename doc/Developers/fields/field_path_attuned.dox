@@ -20,6 +20,11 @@
 	</tr>
 	<tr>
 		<td>
+@ref page_type_101
+		</td><td>            Spellpath for this spell. A player needs to not be denied this path to cast the spell.</td>
+	</tr>
+	<tr>
+		<td>
 @ref page_type_15
 		</td><td>                Click on the &lt;attuned paths&gt; button to select spellpaths.
                 The player will get attuned to the specified spellpaths while

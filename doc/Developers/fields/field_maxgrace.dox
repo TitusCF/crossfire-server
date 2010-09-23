@@ -21,5 +21,10 @@
                 code. Due to that, most default diseases take a lot longer to
                 cure than it seems.</td>
 	</tr>
+	<tr>
+		<td>
+@ref page_type_101
+		</td><td>          If non zero, the grace cost will increase &lt;grace cost&gt; per this value levels.</td>
+	</tr>
 
 */

@@ -132,8 +132,13 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_43, @ref page_type_101
+@ref page_type_43
 		</td><td>(no description)</td>
+	</tr>
+	<tr>
+		<td>
+@ref page_type_101
+		</td><td>          The level, without taking into account spellpath attenuation, required to cast this spell.</td>
 	</tr>
 	<tr>
 		<td>

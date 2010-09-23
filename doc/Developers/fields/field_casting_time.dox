@@ -8,7 +8,8 @@
 	</tr>	<tr>
 		<td>
 @ref page_type_101
-		</td><td>(no description)</td>
+		</td><td>          If the server uses spell casting times, this is the base number of ticks required
+          for casting this spell.</td>
 	</tr>
 
 */
