@@ -64,17 +64,7 @@ static int action_makes_visible(object *op);
  * matching player, or NULL if no match.
  */
 player *find_player(const char *plname) {
-    player *pl;
-    char name[MAX_BUF];
-
-    for (pl = first_player; pl != NULL; pl = pl->next) {
-        if (pl->ob != NULL) {
-            query_name(pl->ob, name, MAX_BUF);
-            if (!strcmp(name, plname))
-                return pl;
-        }
-    }
-    return NULL;
+    return find_player_options(plname, 0, NULL);
 }
 
 /**
@@ -129,25 +119,7 @@ player *find_player_options(const char *plname, int options, const mapstruct *ma
  * matching player if only one matching, or one perfectly matching, NULL if no match or more than one.
  */
 player *find_player_partial_name(const char *plname) {
-    player *pl;
-    player *found = NULL;
-    size_t namelen = strlen(plname);
-
-    for (pl = first_player; pl != NULL; pl = pl->next) {
-        if (strlen(pl->ob->name) < namelen)
-            continue;
-
-        if (!strcmp(pl->ob->name, plname))
-            return pl;
-
-        if (!strncasecmp(pl->ob->name, plname, namelen)) {
-            if (found)
-                return NULL;
-
-            found = pl;
-        }
-    }
-    return found;
+    return find_player_options(plname, FIND_PLAYER_PARTIAL_NAME, NULL);
 }
 
 /**
