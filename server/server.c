@@ -1192,6 +1192,7 @@ void cleanup(void) {
     LOG(llevDebug, "Cleanup called.  freeing data.\n");
     clean_tmp_files();
     write_book_archive();
+    accounts_save();
 
 #ifdef MEMORY_DEBUG
     free_all_maps();
