@@ -1082,12 +1082,12 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
     if (!(flags&GT_MINIMAL)) {
         if (op->arch == crown_arch) {
             set_magic(difficulty > 25 ? 30 : difficulty+5, op, max_magic, flags);
-            num_enchantments = calc_item_power(op, 1);
+            num_enchantments = calc_item_power(op);
             generate_artifact(op, difficulty);
         } else {
             if (!op->magic && max_magic)
                 set_magic(difficulty, op, max_magic, flags);
-            num_enchantments = calc_item_power(op, 1);
+            num_enchantments = calc_item_power(op);
             if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT))
             || op->type == ROD
             || difficulty >= 999)
@@ -1123,7 +1123,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
              * item_power value.
              * - gros, 21th of July 2006.
              */
-            op->item_power = calc_item_power(op, 0);
+            op->item_power = calc_item_power(op);
             save_item_power = op->item_power; /* Just in case it would get used
                                                * again below */
         }

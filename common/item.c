@@ -250,18 +250,12 @@ int get_power_from_ench(int ench) {
  * rating should be.  This should only really be used by the treasure
  * generation code, and when loading legacy objects.  It returns
  * the item_power it calculates.
- * If flag is 1, we return the number of enchantment, and not the
- * the power.  This is used in the treasure code.
  *
  * @param op
  * object of which to compute the item_power
- * @param flag
- * unused
- *
- * @todo
- * fix function, and remove unused flag variable.
+ * @return op's item power.
  */
-int calc_item_power(const object *op, int flag) {
+int calc_item_power(const object *op) {
     int i, tmp, enc;
 
     enc = 0;

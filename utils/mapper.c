@@ -625,7 +625,7 @@ static void add_one_item(object *item, struct_map_info *map) {
 
     add->name = strdup(item->name);
     add->power = item->item_power;
-    add->calc_power = calc_item_power(item, 0);
+    add->calc_power = calc_item_power(item);
 
     add = ensure_unique(add);
     add_map(map, &add->origin);

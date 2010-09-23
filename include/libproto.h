@@ -98,7 +98,7 @@ extern void init_objects(void);
 extern void write_todclock(void);
 /* item.c */
 extern int get_power_from_ench(int ench);
-extern int calc_item_power(const object *op, int flag);
+extern int calc_item_power(const object *op);
 extern const typedata *get_typedata(int itemtype);
 extern const typedata *get_typedata_by_name(const char *name);
 extern StringBuffer *describe_resistance(const object *op, int newline, StringBuffer *buf);
