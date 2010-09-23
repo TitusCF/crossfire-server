@@ -661,328 +661,328 @@ static void basic_emote(object *op, const char *params, int emotion) {
         draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
                       buf2);
         return;
-    } else {
-        for (pl = first_player; pl != NULL; pl = pl->next) {
-            if (strncasecmp(pl->ob->name, params, MAX_NAME) == 0
-            && pl->ob->map == op->map
-            && pl->ob != op
-            && !(QUERY_FLAG(pl->ob, FLAG_WIZ) && pl->ob->contr->hidden)) {
-                /* Hidden dms are not affected by emotions*/
-                switch (emotion) {
-                case EMOTE_NOD:
-                    snprintf(buf, sizeof(buf), "You nod solemnly to %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s nods solemnly to you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s nods solemnly to %s.", op->name, pl->ob->name);
-                    break;
 
-                case EMOTE_DANCE:
-                    snprintf(buf, sizeof(buf), "You grab %s and begin doing the Cha-Cha!", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s grabs you, and begins dancing!", op->name);
-                    snprintf(buf3, sizeof(buf3), "Yipe! %s and %s are doing the Macarena!", op->name, pl->ob->name);
-                    break;
+    }
 
-                case EMOTE_KISS:
-                    snprintf(buf, sizeof(buf), "You kiss %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s kisses you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s kisses %s.", op->name, pl->ob->name);
-                    break;
+    pl = find_player_options(params, FIND_PLAYER_NO_HIDDEN_DM | FIND_PLAYER_PARTIAL_NAME, op->map);
 
-                case EMOTE_BOUNCE:
-                    snprintf(buf, sizeof(buf), "You bounce around the room with %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s bounces around the room with you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s bounces around the room with %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_SMILE:
-                    snprintf(buf, sizeof(buf), "You smile at %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s smiles at you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s beams a smile at %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_LAUGH:
-                    snprintf(buf, sizeof(buf), "You take one look at %s and fall down laughing.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s looks at you and falls down on the ground laughing.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s looks at %s and falls down on the ground laughing.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_SHAKE:
-                    snprintf(buf, sizeof(buf), "You shake %s's hand.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s shakes your hand.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s shakes %s's hand.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_PUKE:
-                    snprintf(buf, sizeof(buf), "You puke on %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s pukes on your clothes!", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s pukes on %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_HUG:
-                    snprintf(buf, sizeof(buf), "You hug %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s hugs you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s hugs %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_CRY:
-                    snprintf(buf, sizeof(buf), "You cry on %s's shoulder.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s cries on your shoulder.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s cries on %s's shoulder.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_POKE:
-                    snprintf(buf, sizeof(buf), "You poke %s in the ribs.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s pokes you in the ribs.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s pokes %s in the ribs.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_ACCUSE:
-                    snprintf(buf, sizeof(buf), "You look accusingly at %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s looks accusingly at you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s looks accusingly at %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_GRIN:
-                    snprintf(buf, sizeof(buf), "You grin at %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s grins evilly at you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s grins evilly at %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_BOW:
-                    snprintf(buf, sizeof(buf), "You bow before %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s bows before you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s bows before %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_FROWN:
-                    snprintf(buf, sizeof(buf), "You frown darkly at %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s frowns darkly at you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s frowns darkly at %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_GLARE:
-                    snprintf(buf, sizeof(buf), "You glare icily at %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s glares icily at you, you feel cold to your bones.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s glares at %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_LICK:
-                    snprintf(buf, sizeof(buf), "You lick %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s licks you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s licks %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_SHRUG:
-                    snprintf(buf, sizeof(buf), "You shrug at %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s shrugs at you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s shrugs at %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_SLAP:
-                    snprintf(buf, sizeof(buf), "You slap %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "You are slapped by %s.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s slaps %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_SNEEZE:
-                    snprintf(buf, sizeof(buf), "You sneeze at %s and a film of snot shoots onto him.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s sneezes on you, you feel the snot cover you. EEEEEEW.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s sneezes on %s and a film of snot covers him.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_SNIFF:
-                    snprintf(buf, sizeof(buf), "You sniff %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s sniffs you.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s sniffs %s", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_SPIT:
-                    snprintf(buf, sizeof(buf), "You spit on %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s spits in your face!", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s spits in %s's face.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_THANK:
-                    snprintf(buf, sizeof(buf), "You thank %s heartily.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s thanks you heartily.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s thanks %s heartily.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_WAVE:
-                    snprintf(buf, sizeof(buf), "You wave goodbye to %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s waves goodbye to you. Have a good journey.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s waves goodbye to %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_WHISTLE:
-                    snprintf(buf, sizeof(buf), "You whistle at %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s whistles at you.", op->name);
-                    snprintf(buf2, sizeof(buf2), "%s whistles at %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_WINK:
-                    snprintf(buf, sizeof(buf), "You wink suggestively at %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s winks suggestively at you.", op->name);
-                    snprintf(buf2, sizeof(buf2), "%s winks at %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_BEG:
-                    snprintf(buf, sizeof(buf), "You beg %s for mercy.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s begs you for mercy! Show no quarter!", op->name);
-                    snprintf(buf2, sizeof(buf2), "%s begs %s for mercy!", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_BLEED:
-                    snprintf(buf, sizeof(buf), "You slash your wrist and bleed all over %s", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s slashes his wrist and bleeds all over you.", op->name);
-                    snprintf(buf2, sizeof(buf2), "%s slashes his wrist and bleeds all over %s.", op->name, pl->ob->name);
-                    break;
-
-                case EMOTE_CRINGE:
-                    snprintf(buf, sizeof(buf), "You cringe away from %s.", pl->ob->name);
-                    snprintf(buf2, sizeof(buf2), "%s cringes away from you.", op->name);
-                    snprintf(buf2, sizeof(buf2), "%s cringes away from %s in mortal terror.", op->name, pl->ob->name);
-                    break;
-
-                default:
-                    snprintf(buf, sizeof(buf), "You are still nuts.");
-                    snprintf(buf2, sizeof(buf2), "You get the distinct feeling that %s is nuts.", op->name);
-                    snprintf(buf3, sizeof(buf3), "%s is eyeing %s quizzically.", pl->ob->name, op->name);
-                    break;
-                } /*case*/
-                draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                              buf);
-                draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                              buf2);
-                ext_info_map_except2(NDI_WHITE, op->map, op, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                                     buf3);
-                return;
-            }
-            if (strncasecmp(pl->ob->name, params, MAX_NAME) == 0
-            && pl->ob->map == op->map
-            && pl->ob == op) {
-                switch (emotion) {
-                case EMOTE_DANCE:
-                    snprintf(buf, sizeof(buf), "You skip and dance around by yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s embraces himself and begins to dance!", op->name);
-                    break;
-
-                case EMOTE_LAUGH:
-                    snprintf(buf, sizeof(buf), "Laugh at yourself all you want, the others won't understand.");
-                    snprintf(buf2, sizeof(buf2), "%s is laughing at something.", op->name);
-                    break;
-
-                case EMOTE_SHAKE:
-                    snprintf(buf, sizeof(buf), "You are shaken by yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s shakes and quivers like a bowlful of jelly.", op->name);
-                    break;
-
-                case EMOTE_PUKE:
-                    snprintf(buf, sizeof(buf), "You puke on yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s pukes on his clothes.", op->name);
-                    break;
-
-                case EMOTE_HUG:
-                    snprintf(buf, sizeof(buf), "You hug yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s hugs himself.", op->name);
-                    break;
-
-                case EMOTE_CRY:
-                    snprintf(buf, sizeof(buf), "You cry to yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s sobs quietly to himself.", op->name);
-                    break;
-
-                case EMOTE_POKE:
-                    snprintf(buf, sizeof(buf), "You poke yourself in the ribs, feeling very silly.");
-                    snprintf(buf2, sizeof(buf2), "%s pokes himself in the ribs, looking very sheepish.", op->name);
-                    break;
-
-                case EMOTE_ACCUSE:
-                    snprintf(buf, sizeof(buf), "You accuse yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s seems to have a bad conscience.", op->name);
-                    break;
-
-                case EMOTE_BOW:
-                    snprintf(buf, sizeof(buf), "You kiss your toes.");
-                    snprintf(buf2, sizeof(buf2), "%s folds up like a jackknife and kisses his own toes.", op->name);
-                    break;
-
-                case EMOTE_FROWN:
-                    snprintf(buf, sizeof(buf), "You frown at yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s frowns at himself.", op->name);
-                    break;
-
-                case EMOTE_GLARE:
-                    snprintf(buf, sizeof(buf), "You glare icily at your feet, they are suddenly very cold.");
-                    snprintf(buf2, sizeof(buf2), "%s glares at his feet, what is bothering him?", op->name);
-                    break;
-
-                case EMOTE_LICK:
-                    snprintf(buf, sizeof(buf), "You lick yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s licks himself - YUCK.", op->name);
-                    break;
-
-                case EMOTE_SLAP:
-                    snprintf(buf, sizeof(buf), "You slap yourself, silly you.");
-                    snprintf(buf2, sizeof(buf2), "%s slaps himself, really strange...", op->name);
-                    break;
-
-                case EMOTE_SNEEZE:
-                    snprintf(buf, sizeof(buf), "You sneeze on yourself, what a mess!");
-                    snprintf(buf2, sizeof(buf2), "%s sneezes, and covers himself in a slimy substance.", op->name);
-                    break;
-
-                case EMOTE_SNIFF:
-                    snprintf(buf, sizeof(buf), "You sniff yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s sniffs himself.", op->name);
-                    break;
-
-                case EMOTE_SPIT:
-                    snprintf(buf, sizeof(buf), "You drool all over yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s drools all over himself.", op->name);
-                    break;
-
-                case EMOTE_THANK:
-                    snprintf(buf, sizeof(buf), "You thank yourself since nobody else wants to!");
-                    snprintf(buf2, sizeof(buf2), "%s thanks himself since you won't.", op->name);
-                    break;
-
-                case EMOTE_WAVE:
-                    snprintf(buf, sizeof(buf), "Are you going on adventures as well??");
-                    snprintf(buf2, sizeof(buf2), "%s waves goodbye to himself.", op->name);
-                    break;
-
-                case EMOTE_WHISTLE:
-                    snprintf(buf, sizeof(buf), "You whistle while you work.");
-                    snprintf(buf2, sizeof(buf2), "%s whistles to himself in boredom.", op->name);
-                    break;
-
-                case EMOTE_WINK:
-                    snprintf(buf, sizeof(buf), "You wink at yourself?? What are you up to?");
-                    snprintf(buf2, sizeof(buf2), "%s winks at himself - something strange is going on...", op->name);
-                    break;
-
-                case EMOTE_BLEED:
-                    snprintf(buf, sizeof(buf), "Very impressive! You wipe your blood all over yourself.");
-                    snprintf(buf2, sizeof(buf2), "%s performs some satanic ritual while wiping his blood on himself.", op->name);
-                    break;
-
-                default:
-                    snprintf(buf, sizeof(buf), "My god! is that LEGAL?");
-                    snprintf(buf2, sizeof(buf2), "You look away from %s.", op->name);
-                    break;
-                }/*case*/
-                draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                              buf);
-                ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                                    buf2);
-                return;
-            }/*if self*/
-        }/*for*/
+    if (pl == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "%s is not around.",
                              params);
         return;
-    } /*else*/
+    }
+
+    if (pl->ob == op) {
+        /* Player doing self-emote. */
+        switch (emotion) {
+            case EMOTE_DANCE:
+                snprintf(buf, sizeof(buf), "You skip and dance around by yourself.");
+                snprintf(buf2, sizeof(buf2), "%s embraces himself and begins to dance!", op->name);
+                break;
+
+            case EMOTE_LAUGH:
+                snprintf(buf, sizeof(buf), "Laugh at yourself all you want, the others won't understand.");
+                snprintf(buf2, sizeof(buf2), "%s is laughing at something.", op->name);
+                break;
+
+            case EMOTE_SHAKE:
+                snprintf(buf, sizeof(buf), "You are shaken by yourself.");
+                snprintf(buf2, sizeof(buf2), "%s shakes and quivers like a bowlful of jelly.", op->name);
+                break;
+
+            case EMOTE_PUKE:
+                snprintf(buf, sizeof(buf), "You puke on yourself.");
+                snprintf(buf2, sizeof(buf2), "%s pukes on his clothes.", op->name);
+                break;
+
+            case EMOTE_HUG:
+                snprintf(buf, sizeof(buf), "You hug yourself.");
+                snprintf(buf2, sizeof(buf2), "%s hugs himself.", op->name);
+                break;
+
+            case EMOTE_CRY:
+                snprintf(buf, sizeof(buf), "You cry to yourself.");
+                snprintf(buf2, sizeof(buf2), "%s sobs quietly to himself.", op->name);
+                break;
+
+            case EMOTE_POKE:
+                snprintf(buf, sizeof(buf), "You poke yourself in the ribs, feeling very silly.");
+                snprintf(buf2, sizeof(buf2), "%s pokes himself in the ribs, looking very sheepish.", op->name);
+                break;
+
+            case EMOTE_ACCUSE:
+                snprintf(buf, sizeof(buf), "You accuse yourself.");
+                snprintf(buf2, sizeof(buf2), "%s seems to have a bad conscience.", op->name);
+                break;
+
+            case EMOTE_BOW:
+                snprintf(buf, sizeof(buf), "You kiss your toes.");
+                snprintf(buf2, sizeof(buf2), "%s folds up like a jackknife and kisses his own toes.", op->name);
+                break;
+
+            case EMOTE_FROWN:
+                snprintf(buf, sizeof(buf), "You frown at yourself.");
+                snprintf(buf2, sizeof(buf2), "%s frowns at himself.", op->name);
+                break;
+
+            case EMOTE_GLARE:
+                snprintf(buf, sizeof(buf), "You glare icily at your feet, they are suddenly very cold.");
+                snprintf(buf2, sizeof(buf2), "%s glares at his feet, what is bothering him?", op->name);
+                break;
+
+            case EMOTE_LICK:
+                snprintf(buf, sizeof(buf), "You lick yourself.");
+                snprintf(buf2, sizeof(buf2), "%s licks himself - YUCK.", op->name);
+                break;
+
+            case EMOTE_SLAP:
+                snprintf(buf, sizeof(buf), "You slap yourself, silly you.");
+                snprintf(buf2, sizeof(buf2), "%s slaps himself, really strange...", op->name);
+                break;
+
+            case EMOTE_SNEEZE:
+                snprintf(buf, sizeof(buf), "You sneeze on yourself, what a mess!");
+                snprintf(buf2, sizeof(buf2), "%s sneezes, and covers himself in a slimy substance.", op->name);
+                break;
+
+            case EMOTE_SNIFF:
+                snprintf(buf, sizeof(buf), "You sniff yourself.");
+                snprintf(buf2, sizeof(buf2), "%s sniffs himself.", op->name);
+                break;
+
+            case EMOTE_SPIT:
+                snprintf(buf, sizeof(buf), "You drool all over yourself.");
+                snprintf(buf2, sizeof(buf2), "%s drools all over himself.", op->name);
+                break;
+
+            case EMOTE_THANK:
+                snprintf(buf, sizeof(buf), "You thank yourself since nobody else wants to!");
+                snprintf(buf2, sizeof(buf2), "%s thanks himself since you won't.", op->name);
+                break;
+
+            case EMOTE_WAVE:
+                snprintf(buf, sizeof(buf), "Are you going on adventures as well??");
+                snprintf(buf2, sizeof(buf2), "%s waves goodbye to himself.", op->name);
+                break;
+
+            case EMOTE_WHISTLE:
+                snprintf(buf, sizeof(buf), "You whistle while you work.");
+                snprintf(buf2, sizeof(buf2), "%s whistles to himself in boredom.", op->name);
+                break;
+
+            case EMOTE_WINK:
+                snprintf(buf, sizeof(buf), "You wink at yourself?? What are you up to?");
+                snprintf(buf2, sizeof(buf2), "%s winks at himself - something strange is going on...", op->name);
+                break;
+
+            case EMOTE_BLEED:
+                snprintf(buf, sizeof(buf), "Very impressive! You wipe your blood all over yourself.");
+                snprintf(buf2, sizeof(buf2), "%s performs some satanic ritual while wiping his blood on himself.", op->name);
+                break;
+
+            default:
+                snprintf(buf, sizeof(buf), "My god! is that LEGAL?");
+                snprintf(buf2, sizeof(buf2), "You look away from %s.", op->name);
+                break;
+        }/*case*/
+
+        draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+                      buf);
+        ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+                            buf2);
+        return;
+    }
+
+    /* Emote to another player. */
+    switch (emotion) {
+        case EMOTE_NOD:
+            snprintf(buf, sizeof(buf), "You nod solemnly to %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s nods solemnly to you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s nods solemnly to %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_DANCE:
+            snprintf(buf, sizeof(buf), "You grab %s and begin doing the Cha-Cha!", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s grabs you, and begins dancing!", op->name);
+            snprintf(buf3, sizeof(buf3), "Yipe! %s and %s are doing the Macarena!", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_KISS:
+            snprintf(buf, sizeof(buf), "You kiss %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s kisses you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s kisses %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_BOUNCE:
+            snprintf(buf, sizeof(buf), "You bounce around the room with %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s bounces around the room with you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s bounces around the room with %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_SMILE:
+            snprintf(buf, sizeof(buf), "You smile at %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s smiles at you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s beams a smile at %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_LAUGH:
+            snprintf(buf, sizeof(buf), "You take one look at %s and fall down laughing.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s looks at you and falls down on the ground laughing.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s looks at %s and falls down on the ground laughing.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_SHAKE:
+            snprintf(buf, sizeof(buf), "You shake %s's hand.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s shakes your hand.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s shakes %s's hand.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_PUKE:
+            snprintf(buf, sizeof(buf), "You puke on %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s pukes on your clothes!", op->name);
+            snprintf(buf3, sizeof(buf3), "%s pukes on %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_HUG:
+            snprintf(buf, sizeof(buf), "You hug %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s hugs you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s hugs %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_CRY:
+            snprintf(buf, sizeof(buf), "You cry on %s's shoulder.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s cries on your shoulder.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s cries on %s's shoulder.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_POKE:
+            snprintf(buf, sizeof(buf), "You poke %s in the ribs.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s pokes you in the ribs.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s pokes %s in the ribs.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_ACCUSE:
+            snprintf(buf, sizeof(buf), "You look accusingly at %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s looks accusingly at you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s looks accusingly at %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_GRIN:
+            snprintf(buf, sizeof(buf), "You grin at %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s grins evilly at you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s grins evilly at %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_BOW:
+            snprintf(buf, sizeof(buf), "You bow before %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s bows before you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s bows before %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_FROWN:
+            snprintf(buf, sizeof(buf), "You frown darkly at %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s frowns darkly at you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s frowns darkly at %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_GLARE:
+            snprintf(buf, sizeof(buf), "You glare icily at %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s glares icily at you, you feel cold to your bones.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s glares at %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_LICK:
+            snprintf(buf, sizeof(buf), "You lick %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s licks you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s licks %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_SHRUG:
+            snprintf(buf, sizeof(buf), "You shrug at %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s shrugs at you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s shrugs at %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_SLAP:
+            snprintf(buf, sizeof(buf), "You slap %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "You are slapped by %s.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s slaps %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_SNEEZE:
+            snprintf(buf, sizeof(buf), "You sneeze at %s and a film of snot shoots onto him.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s sneezes on you, you feel the snot cover you. EEEEEEW.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s sneezes on %s and a film of snot covers him.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_SNIFF:
+            snprintf(buf, sizeof(buf), "You sniff %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s sniffs you.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s sniffs %s", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_SPIT:
+            snprintf(buf, sizeof(buf), "You spit on %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s spits in your face!", op->name);
+            snprintf(buf3, sizeof(buf3), "%s spits in %s's face.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_THANK:
+            snprintf(buf, sizeof(buf), "You thank %s heartily.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s thanks you heartily.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s thanks %s heartily.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_WAVE:
+            snprintf(buf, sizeof(buf), "You wave goodbye to %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s waves goodbye to you. Have a good journey.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s waves goodbye to %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_WHISTLE:
+            snprintf(buf, sizeof(buf), "You whistle at %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s whistles at you.", op->name);
+            snprintf(buf2, sizeof(buf2), "%s whistles at %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_WINK:
+            snprintf(buf, sizeof(buf), "You wink suggestively at %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s winks suggestively at you.", op->name);
+            snprintf(buf2, sizeof(buf2), "%s winks at %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_BEG:
+            snprintf(buf, sizeof(buf), "You beg %s for mercy.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s begs you for mercy! Show no quarter!", op->name);
+            snprintf(buf2, sizeof(buf2), "%s begs %s for mercy!", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_BLEED:
+            snprintf(buf, sizeof(buf), "You slash your wrist and bleed all over %s", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s slashes his wrist and bleeds all over you.", op->name);
+            snprintf(buf2, sizeof(buf2), "%s slashes his wrist and bleeds all over %s.", op->name, pl->ob->name);
+            break;
+
+        case EMOTE_CRINGE:
+            snprintf(buf, sizeof(buf), "You cringe away from %s.", pl->ob->name);
+            snprintf(buf2, sizeof(buf2), "%s cringes away from you.", op->name);
+            snprintf(buf2, sizeof(buf2), "%s cringes away from %s in mortal terror.", op->name, pl->ob->name);
+            break;
+
+        default:
+            snprintf(buf, sizeof(buf), "You are still nuts.");
+            snprintf(buf2, sizeof(buf2), "You get the distinct feeling that %s is nuts.", op->name);
+            snprintf(buf3, sizeof(buf3), "%s is eyeing %s quizzically.", pl->ob->name, op->name);
+            break;
+    } /*case*/
+
+    draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+                  buf);
+    draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+                  buf2);
+    ext_info_map_except2(NDI_WHITE, op->map, op, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+                         buf3);
 }
 
 /*
