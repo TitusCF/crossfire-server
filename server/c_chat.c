@@ -405,7 +405,7 @@ void command_reply(object *op, const char *params) {
  * 0 for invalid emotion, 1 else.
  * @todo simplify function (indexed array, for instance).
  */
-static int basic_emote(object *op, const char *params, int emotion) {
+static void basic_emote(object *op, const char *params, int emotion) {
     char buf[MAX_BUF], buf2[MAX_BUF], buf3[MAX_BUF];
     player *pl;
 
@@ -660,7 +660,7 @@ static int basic_emote(object *op, const char *params, int emotion) {
                             buf);
         draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
                       buf2);
-        return(0);
+        return;
     } else {
         for (pl = first_player; pl != NULL; pl = pl->next) {
             if (strncasecmp(pl->ob->name, params, MAX_NAME) == 0
@@ -855,7 +855,7 @@ static int basic_emote(object *op, const char *params, int emotion) {
                               buf2);
                 ext_info_map_except2(NDI_WHITE, op->map, op, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
                                      buf3);
-                return(0);
+                return;
             }
             if (strncasecmp(pl->ob->name, params, MAX_NAME) == 0
             && pl->ob->map == op->map
@@ -975,13 +975,13 @@ static int basic_emote(object *op, const char *params, int emotion) {
                               buf);
                 ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
                                     buf2);
-                return(0);
+                return;
             }/*if self*/
         }/*for*/
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "%s is not around.",
                              params);
-        return(1);
+        return;
     } /*else*/
 }
 
