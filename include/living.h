@@ -59,20 +59,19 @@ extern const char *const short_stat_name[NUM_STATS];
 extern const char *const lose_msg[NUM_STATS];
 
 /**
- * Mostly used by "alive" objects
- * @todo fix comment, living is used for many things :)
- * also fix comments for fields (should probably be in a separate file).
+ * Various statistics of objects.
  */
 typedef struct liv {
     sint8         Str, Dex, Con, Wis, Cha, Int, Pow;
-    sint8         wc, ac;     /**< Weapon Class and Armour Class */
+    sint8         wc;         /**< Weapon Class, how skilled, the lower the better. */
+    sint8         ac;         /**< Armour Class, how hard to hit, the lower the better. */
     sint8         luck;       /**< Affects thaco and ac from time to time */
     sint16        hp;         /**< Hit Points. */
     sint16        maxhp;      /**< Max hit points. */
     sint16        sp;         /**< Spell points.  Used to cast mage spells. */
     sint16        maxsp;      /**< Max spell points. */
     sint16        grace;      /**< Grace.  Used to invoke clerical prayers. */
-    sint16        maxgrace;   /**< Grace.  Used to invoke clerical prayers. */
+    sint16        maxgrace;   /**< Maximum grace.  Used to invoke clerical prayers. */
     sint16        dam;        /**< How much damage this object does when hitting */
     sint64        exp;        /**< Experience.  Killers gain 1/10. */
     sint32        food;       /**< How much food in stomach.  0 = starved. */
