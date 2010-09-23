@@ -78,6 +78,49 @@ player *find_player(const char *plname) {
 }
 
 /**
+ * Find a player.
+ * @param plname name of the player to search for. Can be partial.
+ * @param options combination of @ref FIND_PLAYER_xxx "FIND_PLAYER_xxx" flags.
+ * @param map optional map the player must be on (adjacent maps are ok too).
+ * @return matching player, NULL if none or more than one.
+ */
+player *find_player_options(const char *plname, int options, const mapstruct *map) {
+    player *pl;
+    player *found = NULL;
+    size_t namelen = strlen(plname);
+    char name[MAX_BUF];
+
+    for (pl = first_player; pl != NULL; pl = pl->next) {
+        if ((options & FIND_PLAYER_NO_HIDDEN_DM) && (QUERY_FLAG(pl->ob, FLAG_WIZ) && pl->ob->contr->hidden))
+            continue;
+
+        if (map != NULL && pl->ob->map != map)
+            continue;
+
+        if (!(options & FIND_PLAYER_PARTIAL_NAME)) {
+            query_name(pl->ob, name, sizeof(name));
+            if (!strcmp(name, plname))
+                return pl;
+            continue;
+        }
+
+        if (strlen(pl->ob->name) < namelen)
+            continue;
+
+        if (!strcmp(pl->ob->name, plname))
+            return pl;
+
+        if (!strncasecmp(pl->ob->name, plname, namelen)) {
+            if (found)
+                return NULL;
+
+            found = pl;
+        }
+    }
+    return found;
+}
+
+/**
  * Find a player by a partial name.
  *
  * @param plname

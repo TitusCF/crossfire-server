@@ -380,6 +380,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob);
 int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg);
 int pets_should_arena_attack(object *pet, object *owner, object *target);
 /* player.c */
+player *find_player_options(const char *plname, int options, const mapstruct *map);
 player *find_player(const char *plname);
 player *find_player_partial_name(const char *plname);
 player *find_player_socket(const socket_struct *ns);

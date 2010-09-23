@@ -230,4 +230,15 @@ typedef struct pl {
     uint32      ticks_played;        /**< How many ticks this player has played */
 } player;
 
+/**
+ * @defgroup FIND_PLAYER_xxx Flags to search players through find_player().
+ * Those flag control what player should be returned.
+ */
+/*@{*/
+
+#define FIND_PLAYER_PARTIAL_NAME    0x1
+#define FIND_PLAYER_NO_HIDDEN_DM    0x2
+
+/*@}*/
+
 #endif /* PLAYER_H */
