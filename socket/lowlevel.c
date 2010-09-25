@@ -44,15 +44,6 @@
 #include <sproto.h>
 #include <errno.h>
 
-/**
- * Checks that at least a given number of bytes is available in a SockList
- * instance. Returns normal if the space is available. Otherwise calls
- * fatal(OUT_OF_MEMORY);
- * @param sl the SockList instance to check
- * @param size the number of bytes to ensure
- */
-static void SockList_Ensure(const SockList *sl, size_t size);
-
 /***********************************************************************
  *
  * SockList functions/utilities
@@ -93,6 +84,20 @@ void SockList_Reset(SockList *sl) {
  */
 void SockList_ResetRead(SockList *sl) {
     sl->len = 0;
+}
+
+/**
+ * Checks that at least a given number of bytes is available in a SockList
+ * instance. Returns normal if the space is available. Otherwise calls
+ * fatal(OUT_OF_MEMORY);
+ *
+ * @param sl the SockList instance to check
+ * @param size the number of bytes to ensure
+ */
+static void SockList_Ensure(const SockList *sl, size_t size) {
+    if (sl->len+size > sizeof(sl->buf)) {
+        fatal(OUT_OF_MEMORY);
+    }
 }
 
 /**
@@ -579,8 +584,3 @@ void write_cs_stats(void) {
 }
 #endif
 
-static void SockList_Ensure(const SockList *sl, size_t size) {
-    if (sl->len+size > sizeof(sl->buf)) {
-        fatal(OUT_OF_MEMORY);
-    }
-}
