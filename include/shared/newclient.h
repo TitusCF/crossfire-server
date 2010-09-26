@@ -281,7 +281,6 @@
 /** Flags for the item command */
 enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define F_APPLIED       0x000F
-#define F_LOCATION      0x00F0
 #define F_UNPAID        0x0200
 #define F_MAGIC         0x0400
 #define F_CURSED        0x0800
