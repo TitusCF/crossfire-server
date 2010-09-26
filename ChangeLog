@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bug #1811411: Ground view is not correctly updated.
+Correctly send face and name information when there is a player on an item
+that is being identified.
+Nicolas Weeger 2010-09-26
+
 Simplify door-opening with keys for player, bypassing hit_player().
 This should partly fix bug #1811331: discrete damage bug.
 Nicolas Weeger 2010-09-26
