@@ -1111,27 +1111,34 @@ S->C: magicmap <width> <height> <px> <py> <data>
 SOUND RELATED COMMANDS:
 
 S->C: sound2 <x><y><dir><volume><type><action><name>
-      <x><y> 1 byte binary data.  Offset of sound location relative to player
-      <dir> 1 byte binary data.  Location the sound is moving.  Uses
-            crossfire direction map (values 0 to 8, 0 being north (up), rotating
-            clockwise)
-      <volume> 1 byte binary data.  Value of 1-100, arbitrary intensity of sound.
-      <type> 1 byte bianry value.  The major sound type.
-      <action> length prefixed string.  String describe subtype information
-      <name> length prefixed string.  Name of the source of the sound - typically
-             object name, but in the case of player generated sounds, will be
-             the race of the player.
 
-	Plays a sound. See the 'sound' document for more information.
+      <x>      1 byte binary data each.  Offset of sound location relative to
+      <y>      player
+      <dir>    1 byte binary data.  Location the sound is moving.  Uses
+               crossfire direction map (values 0 to 8, 0 being north (up),
+               rotating clockwise)
+      <volume> 1 byte binary data.  Value of 1-100, arbitrary intensity of
+               sound.
+      <type>   1 byte binary value.  The major sound type.
+      <action> Length prefixed string.  String describes subtype information
+               The length is an 8-bit value.
+      <name>   Length prefixed string.  Name of the source of the sound -
+               typically object name, but in the case of player generated
+               sounds, will be the race of the player.  The length prefix is
+               an 8-bit value.
+
+      Plays a sound. See the 'doc/Developers/sound' document for more
+      information.
 
 S->C: music <song>
-     <song> string data of sound to play.
 
-	Change background music. Server will send NONE as the string to stop any
-	music from playing. This song data is set in a map property.
-    (Due to someone forgetting to update this file when
-	he/she implemented the command, it is unknown what exactly should be done
-	with the string parameter, is it a filename? If yes: relative what?)
+      <song> string data of sound to play.
+
+      Change background music. Server will send NONE as the string to stop any
+      music from playing. This song data is set in a map property.  (Due to
+      someone forgetting to update this file when he/she implemented the
+      command, it is unknown what exactly should be done with the string
+      parameter, is it a filename? If yes: relative what?)
 
 ******************************************************************************
 MISC COMMANDS:
