@@ -53,7 +53,7 @@
 #define PATH_TELE       0x00001000      /* 4096 */
 #define PATH_INFO       0x00002000      /* 8192 */
 #define PATH_TRANSMUTE  0x00004000      /* 16384 */
-#define PATH_TRANSFER   0x00008000      /*  32768 */
+#define PATH_TRANSFER   0x00008000      /* 32768 */
 #define PATH_TURNING    0x00010000      /* 65536 */
 #define PATH_WOUNDING   0x00020000      /* 131072 */
 #define PATH_DEATH      0x00040000      /* 262144 */
