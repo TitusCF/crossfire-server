@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bug #2938887: problem with casting unknown spell.
+Change the display logic, don't show all spells when no matching spell.
+Nicolas Weeger 2010-09-26
+
 Directors should not move doors.
 This fixes bug #3059451: force (smover) throws doors off hinges.
 Nicolas Weeger 2010-09-21

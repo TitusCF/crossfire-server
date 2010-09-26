@@ -116,39 +116,44 @@ static void show_matching_spells(object *op, const char *params) {
         }
     } FOR_INV_FINISH();
     if (!num_found) {
-        /* If a matching string was passed along, now try it without that
-         * string.  It is odd to do something like 'cast trans',
-         * and it say you have no spells, when really, you do, but just
-         * nothing that matches.
-         */
         if (*params != '\0')
-            show_matching_spells(op, "");
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                          "You know no spells like '%s'.", params);
         else
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "You know no spells");
-    } else {
-        /* Note in the code below that we make some
-         * presumptions that there will be a colon in the
-         * string.  given the code above, this is always
-         * the case.
-         */
-        qsort(spell_sort, num_found, MAX_BUF, (int (*)(const void *, const void *))strcmp);
-        strcpy(tmp, "asdfg"); /* Dummy string so initial compare fails */
-        for (i = 0; i < num_found; i++) {
-            /* Different skill name, so print banner */
-            if (strncmp(tmp, spell_sort[i], strlen(tmp))) {
-                strcpy(tmp, spell_sort[i]);
-                cp = strchr(tmp, ':');
-                *cp = '\0';
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                          "You know no spells.");
 
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                                     "\n[fixed]%s spells %.*s <lvl> <sp>",
-                                     tmp, (int)(12-strlen(tmp)), "              ");
-            }
+        return;
+    }
+
+    if (*params != '\0')
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                      "You know the following '%s' spells:", params);
+    else
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                      "You know the following spells:");
+
+    /* Note in the code below that we make some
+     * presumptions that there will be a colon in the
+     * string.  given the code above, this is always
+     * the case.
+     */
+    qsort(spell_sort, num_found, MAX_BUF, (int (*)(const void *, const void *))strcmp);
+    strcpy(tmp, "asdfg"); /* Dummy string so initial compare fails */
+    for (i = 0; i < num_found; i++) {
+        /* Different skill name, so print banner */
+        if (strncmp(tmp, spell_sort[i], strlen(tmp))) {
+            strcpy(tmp, spell_sort[i]);
+            cp = strchr(tmp, ':');
+            *cp = '\0';
+
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                                 "[fixed]%s",
-                                 strchr(spell_sort[i], ':')+1);
+                                 "\n[fixed]%s spells %.*s <lvl> <sp>",
+                                 tmp, (int)(12-strlen(tmp)), "              ");
         }
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                             "[fixed]%s",
+                             strchr(spell_sort[i], ':')+1);
     }
 }
 
@@ -247,8 +252,6 @@ void command_cast_spell(object *op, const char *params, char command) {
     /* We get here if cast was given without options or we could not find
      * the requested spell.  List all the spells the player knows.
      */
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                  "Cast what spell?  Choose one of:");
     show_matching_spells(op, cpy);
 }
 
