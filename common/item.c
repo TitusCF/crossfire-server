@@ -1458,7 +1458,7 @@ void identify(object *op) {
          */
         object *player = map_find_by_type(op->map, op->x, op->y, PLAYER);
         if (player)
-            esrv_update_item(UPD_FACE | UPD_NAME, player, op);
+            esrv_update_item(UPD_FACE | UPD_NAME | UPD_FLAGS, player, op);
         object_update(op, UP_OBJ_FACE);
     } else {
         pl = object_get_player_container(op->env);
