@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix for bug #2020224: buggy(?) crafting yields.
+Don't call again attempt_recipe(), as that would give again artifact properties
+to the item. Instead, use the item in the cauldron.
+Nicolas Weeger 2010-09-26
+
 Partial fix for bug #3075860: Auto-pickup fails to pickup certain items.
 Correctly pick weapons.
 Nicolas Weeger 2010-09-26
