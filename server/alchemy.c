@@ -124,7 +124,6 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
     float success_chance;
     int numb, ability = 1;
     int formula = 0;
-    float ave_chance;
     object *item, *skop;
 
     if (caster->type != PLAYER)
@@ -162,7 +161,6 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
             uint64 value_item;
             int attempt_shadow_alchemy;
 
-            ave_chance = fl->total_chance/(float)fl->number;
             /* the caster gets an increase in ability based on thier skill lvl */
             if (rp->skill != NULL) {
                 skop = find_skill_by_name(caster, rp->skill);
@@ -200,8 +198,6 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
             if ((item = attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, attempt_shadow_alchemy)) != NULL) {
                 /*  compute base chance of recipe success */
                 success_chance = ((float)ability/(float)(rp->diff*(item->level+2)));
-                if (ave_chance == 0)
-                    ave_chance = 1;
 
 #ifdef ALCHEMY_DEBUG
                 LOG(llevDebug, "percent success chance =  %f ab%d / diff%d*lev%d\n", success_chance, ability, rp->diff, item->level);
