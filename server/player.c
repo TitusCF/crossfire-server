@@ -2354,34 +2354,37 @@ static int player_attack_door(object *op, object *door) {
      */
     object *key = find_key(op, op, door);
 
+    assert(door->type == DOOR || door->type == LOCKED_DOOR);
+
     /* IF we found a key, do some extra work */
     if (key) {
-        object *container = key->env;
+        char name[HUGE_BUF];
 
         play_sound_map(SOUND_TYPE_GROUND, door, 0, "open");
         if (action_makes_visible(op))
             make_visible(op);
         if (door->inv && (door->inv->type == RUNE || door->inv->type == TRAP))
             spring_trap(door->inv, op);
-        if (door->type == DOOR) {
-            hit_player(door, 9998, op, AT_PHYSICAL, 1); /* Break through the door */
-        } else if (door->type == LOCKED_DOOR) {
-            char name[HUGE_BUF];
 
-            query_short_name(key, name, HUGE_BUF);
-            draw_ext_info_format(NDI_UNIQUE, NDI_BROWN, op,
-                                 MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-                                 "You open the door with the %s",
-                                 name);
+        query_short_name(key, name, HUGE_BUF);
+        draw_ext_info_format(NDI_UNIQUE, NDI_BROWN, op,
+                             MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+                             "You open the door with the %s",
+                             name);
+
+        if (door->type == DOOR)
+            remove_door(door);
+        else
             remove_locked_door(door); /* remove door without violence ;-) */
-        }
+
         /* Do this after we print the message */
         object_decrease_nrof_by_one(key); /* Use up one of the keys */
-        /* Need to update the weight the container the key was in */
-        if (container != op)
-            esrv_update_item(UPD_WEIGHT, op, container);
+
         return 1; /* Nothing more to do below */
-    } else if (door->type == LOCKED_DOOR) {
+
+    }
+
+    if (door->type == LOCKED_DOOR) {
         /* Might as well return now - no other way to open this */
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_NOKEY,
                       door->msg);
