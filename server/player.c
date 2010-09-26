@@ -1704,7 +1704,7 @@ int check_pick(object *op) {
                 if (tmp->type == WEAPON && tmp->name != NULL) {
                     if (strstr(tmp->name, "table") == NULL
                     && strstr(tmp->arch->name, "table") == NULL
-                    && strstr(tmp->name, "chair")
+                    && strstr(tmp->name, "chair") == NULL
                     && strstr(tmp->arch->name, "chair") == NULL) {
                         pick_up(op, tmp);
                         continue;
