@@ -584,6 +584,14 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
         }
         return;
     }
+#if 0
+    /*
+    Note: this does not work as expected...
+    At this point there is only one item in the cauldron, and get_formulalist(0) will return
+    the first formula list for recipes with 1 ingredient.
+    So disable this, and just use the next case.
+     */
+
     if (level == 40) {                   /* MAKE RANDOM RECIPE */
         recipelist *fl;
         int numb = numb_ob_inside(cauldron);
@@ -596,7 +604,9 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
             alchemy_failure_effect(op, cauldron, rp, level-1);
         return;
 
-    } else if (level < 45) {                 /* INFURIATE NPC's */
+    } else
+#endif
+        if (level < 45) {                 /* INFURIATE NPC's */
         /* this is kind of kludgy I know...*/
         object_set_enemy(cauldron, op);
         monster_npc_call_help(cauldron);
