@@ -382,7 +382,7 @@ typedef struct typedata {
 #define PU_KEY                  0x00008000
 
 #define PU_MISSILEWEAPON        0x00010000
-#define PU_ALLWEAPON            0x00020000
+#define PU_MELEEWEAPON          0x00020000
 #define PU_MAGICAL              0x00040000
 #define PU_POTION               0x00080000
 

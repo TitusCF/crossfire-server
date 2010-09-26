@@ -1700,7 +1700,7 @@ int check_pick(object *op) {
                 }
 
             /* careful: chairs and tables are weapons! */
-            if (op->contr->mode&PU_ALLWEAPON) {
+            if (op->contr->mode&PU_MELEEWEAPON) {
                 if (tmp->type == WEAPON && tmp->name != NULL) {
                     if (strstr(tmp->name, "table") == NULL
                     && strstr(tmp->arch->name, "table") == NULL
