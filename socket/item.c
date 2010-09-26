@@ -99,6 +99,9 @@ static unsigned int query_flags(const object *op) {
     && ((op->env && op->env->container == op) || (!op->env && QUERY_FLAG(op, FLAG_APPLIED))))
         flags |= F_OPEN;
 
+    if (QUERY_FLAG(op, FLAG_IDENTIFIED))
+        flags |= F_IS_IDENTIFIED;
+
     if (QUERY_FLAG(op, FLAG_KNOWN_CURSED)) {
         if (QUERY_FLAG(op, FLAG_DAMNED))
             flags |= F_DAMNED;
