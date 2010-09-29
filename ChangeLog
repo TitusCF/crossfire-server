@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Extend 'reset' to enable to reset unique player maps and unique squares in maps.
+Nicolas Weeger 2010-09-29
+
 Fix bug #1811411: Ground view is not correctly updated.
 Correctly send face and name information when there is a player on an item
 that is being identified.

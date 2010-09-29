@@ -1754,12 +1754,19 @@ void command_reset(object *op, const char *params) {
     mapstruct *m;
     object *dummy = NULL, *tmp = NULL;
     char path[HUGE_BUF];
+    const char *space, *confirmation = NULL;
     int res = 0;
 
     if (*params == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Reset what map [name]?");
         return;
+    }
+
+    space = strchr(params, ' ');
+    if (space != NULL) {
+        confirmation = params;
+        params = space + 1;
     }
 
     if (strcmp(params, ".") == 0)
@@ -1771,6 +1778,21 @@ void command_reset(object *op, const char *params) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "No such map.");
         return;
+    }
+
+    if (confirmation) {
+        if (strcmp(params, ".") == 0 && m->unique) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                                 "Can't reset a player unique map while on it, use 'reset full-reset %s' while not on it.",
+                                 m->path);
+            return;
+        }
+
+        if (strncmp("full-reset", confirmation, strlen("full-reset"))) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                          "Invalid confirmation, must be 'full-reset'.");
+            return;
+        }
     }
 
     /* Forbid using reset on our own map when we're in a transport, as
@@ -1855,20 +1877,35 @@ void command_reset(object *op, const char *params) {
     /* Here, map reset succeeded. */
 
     if (m && m->in_memory == MAP_SWAPPED) {
-        LOG(llevDebug, "DM %s Resetting map %s.\n", op->name, m->path);
+
+        if (confirmation) {
+            map_remove_unique_files(m);
+            LOG(llevDebug, "DM %s fully resetting map %s.\n", op->name, m->path);
+        } else
+            LOG(llevDebug, "DM %s resetting map %s.\n", op->name, m->path);
 
         /* setting this effectively causes an immediate reload */
         m->reset_time = 1;
         flush_old_maps();
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Resetting map %s.",
-                         path);
+    if (confirmation)
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                             "Fully resetting map %s.",
+                             path);
+    else
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                             "Resetting map %s.",
+                             path);
 
     if (tmp) {
         enter_exit(tmp, dummy);
         object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    }
+
+    if (confirmation == NULL) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                         "Use 'reset full-reset %s' to fully reset the map.", params);
     }
 }
 
