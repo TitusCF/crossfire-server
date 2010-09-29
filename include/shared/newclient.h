@@ -73,12 +73,14 @@
  */
 #define MAP2_COORD_OFFSET   15
 
-/*
+/**
+ * @defgroup MAP2_TYPE_xxx Type values present in map2 commands.
  * The different type values that may be present in a map2 command. These are
  * described in the protocol entry in more detail.  These values are sent in
  * the bottom 5 bits of their byte, the top 3 are for the length of the data
  * that is sent.
  */
+/*@{*/
 #define MAP2_TYPE_CLEAR         0x0
 #define MAP2_TYPE_DARKNESS      0x1
 /*
@@ -88,6 +90,8 @@
  * #define MAP2_TYPE_SOUND         0x2
  * #define MAP2_TYPE_LIGHTSOURCE   0x3
  */
+/*@}*/
+
 #define MAP2_LAYER_START        0x10
 
 /**
@@ -110,7 +114,7 @@
 #define CS_SAY_GSAY         0x4 /**< Text is group say command. */
 
 /**
- * @defgroup FLOAT_xxx  Multiplication values used when changing floats to int
+ * @defgroup FLOAT_xxx FLOAT_xxx multipliers for changing floats to int.
  * and vice versa.
  */
 /*@{*/
@@ -119,7 +123,7 @@
 /*@} FLOAT_xxx */
 
 /**
- * @defgroup CS_STAT_xxx IDs for the various (C)haracter (S)tatistics.
+ * @defgroup CS_STAT_xxx CS_STAT_xxx IDs for character statistics.
  */
 /*@{*/
 #define CS_STAT_HP                  1
@@ -229,7 +233,7 @@
 /*@}*/
 
 /**
- * @defgroup SF_xxx Masks used in conjunction with fire and run states.
+ * @defgroup SF_xxx SF_xxx Masks used in conjunction with fire and run states.
  *
  * These values are used with CS_STAT_FLAGS above to communicate S->C what the
  * server thinks the fireon & runon states are.
@@ -240,7 +244,7 @@
 /*@}*/
 
 /**
- * @defgroup ACL_xxx Field IDs that support account login.
+ * @defgroup ACL_xxx ACL_xxx field IDs that support account login.
  *
  * These values are used for the account login code to denote what field
  * follows.  ACL = Account Character Login
@@ -257,7 +261,7 @@
 /*@}*/
 
 /**
- * @defgroup NDI_xxx Message color flags and masks.
+ * @defgroup NDI_xxx NDI_xxx message color flags and masks.
  *
  * The following are the color flags passed to new_draw_info().
  *
@@ -298,7 +302,7 @@
 /*@}*/
 
 /**
- * @defgroup F_xxx Flags for the item command.
+ * @defgroup F_xxx F_xxx flags for the item command.
  */
 /*@{*/
 enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
@@ -322,7 +326,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 /*@}*/
 
 /**
- * @defgroup FACE_xxx Magic map masks.
+ * @defgroup FACE_xxx FACE_xxx magic map masks.
  *
  * Used in the new_face structure on the magicmap field.  Low bits are color
  * information.  For now, only high bit information we need is for the floor.
@@ -334,6 +338,11 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define FACE_COLOR_MASK 0xf
 /*@}*/
 
+/**
+ * @defgroup UPD_xxx UPD_xxx UpdSpell constants.
+ *
+ */
+/*@{*/
 #define UPD_LOCATION    0x01
 #define UPD_FLAGS       0x02
 #define UPD_WEIGHT      0x04
@@ -344,14 +353,25 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define UPD_NROF        0x80
 #define UPD_ALL         0xFF
 
-/* Flag values sent by the updspell command */
-#define UPD_SP_MANA     0x01
-#define UPD_SP_GRACE    0x02
-#define UPD_SP_DAMAGE   0x04
+#define UPD_SP_MANA     0x01            /**< updspell command flag value. */
+#define UPD_SP_GRACE    0x02            /**< updspell command flag value. */
+#define UPD_SP_DAMAGE   0x04            /**< updspell command flag value. */
+/*@}*/
 
+/**
+ * @defgroup SOUND_xxx SOUND_xxx constants.
+ *
+ */
+/*@{*/
 #define SOUND_NORMAL    0
 #define SOUND_SPELL     1
+/*@}*/
 
+/**
+ * @defgroup ANIM_xxx Animation constants.
+ *
+ */
+/*@{*/
 #define FACE_IS_ANIM    1<<15
 #define ANIM_RANDOM     1<<13
 #define ANIM_SYNC       2<<13
@@ -363,9 +383,10 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
  * only by the client.
  */
 #define ANIM_MASK       0x1fff
+/*@}*/
 
 /**
- * @defgroup EMI_xxx Extended map information.
+ * @defgroup EMI_xxx EMI_xxx extended map constants.
  *
  * Even if the client select the additionnal infos it wants on the map, there
  * may exist cases where this whole info is not given in one bunch but in
@@ -397,7 +418,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
  */
 
 /**
- * @defgroup MSG_TYPE_xxx Message types
+ * @defgroup MSG_TYPE_xxx MSG_TYPE_xxx message types
  */
 /*@{*/
 #define MSG_TYPE_BOOK                  1
