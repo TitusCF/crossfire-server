@@ -43,20 +43,6 @@
 #define NEWCLIENT_H
 
 /**
- * Maximum size of any packet the server expects. This number includes both
- * the length bytes (2 bytes) at the start of each packet and the trailing
- * null (1 byte) at the end of each packet.
- */
-#define MAXSOCKRECVBUF (2+65535+1)
-
-/**
- * Maximum size of any packet the server sends. This number does not include
- * the length bytes at the start of each packet. The value is chosen to not
- * overflow the input buffer of old clients (2006-05-21).
- */
-#define MAXSOCKSENDBUF 10239
-
-/**
  * Maximum size of a packet the client expects to get.  Using a buffer of this
  * size allows the client to avoid constant allocation and deallocation of the
  * same buffer over and over again (at the cost of using extra memory).  This
