@@ -43,12 +43,12 @@
 #define NEWCLIENT_H
 
 /**
- * Maximum size of a packet the client expects to get.  Using a buffer of this
- * size allows the client to avoid constant allocation and deallocation of the
- * same buffer over and over again (at the cost of using extra memory).  This
- * also makes the code simpler.  The size is big enough to receive any valid
- * packet: 2 bytes for length, 65535 for maximum packet size, 1 for appended a
- * trailing null character.
+ * Maximum size of a packet the client expects to get and that the server can
+ * send.  Using a buffer of this size allows the client to avoid constant
+ * allocation and deallocation of the same buffer over and over again (at the
+ * cost of using extra memory).  This also makes the code simpler.  The size
+ * is big enough to receive any valid packet: 2 bytes for length, 65535 for
+ * maximum packet size, 1 for a trailing null character.
  */
 #define MAXSOCKBUF (2+65535+1)
 
@@ -692,7 +692,7 @@ typedef struct SockList {
     unsigned char *buf;
 #else                                       /* Used by the server */
     size_t len;
-    unsigned char buf[2+65536UL+1]; /* 2=length, 65536=content, 1=trailing NUL */
+    unsigned char buf[MAXSOCKBUF]; /* 2(size)+65535(content)+1(ending NULL) */
 #endif
 } SockList;
 
