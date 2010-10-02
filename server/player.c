@@ -1726,6 +1726,11 @@ int check_pick(object *op) {
                     continue;
                 }
 
+            if (op->contr->mode&PU_CONTAINER && tmp->type == CONTAINER) {
+                pick_up(op, tmp);
+                continue;
+            }
+
             /* any of the last 4 bits set means we use the ratio for value
              * pickups */
             if (op->contr->mode&PU_RATIO) {
