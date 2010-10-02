@@ -3,6 +3,7 @@
 
 AC_REVISION($Id$)
 AC_INIT([crossfire], [1.50.trunk], [crossfire-devel@listserv.real-time.com])
+AC_CONFIG_MACRO_DIR([macros])
 AC_CONFIG_AUX_DIR([utils])
 AC_CONFIG_SRCDIR([server/main.c])
 AM_INIT_AUTOMAKE
