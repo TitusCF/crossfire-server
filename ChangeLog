@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Discard items of type PLAYER during map loading.
+Fix for bug #3079997: server crash from misc type object in a petshop.
+Nicolas Weeger 2010-10-03
+
 New pickup type, 'container'.
 Partial fix for bug #3075860: Auto-pickup fails to pickup certain items.
 Nicolas Weeger 2010-10-02

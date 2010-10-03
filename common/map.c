@@ -686,6 +686,15 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
             continue;
         }
 
+        /*
+         * You can NOT have players on a map being loaded.
+         * Trying to use such a type leads to crashes everywhere as op->contr is NULL.
+         */
+        if (op->type == PLAYER) {
+            LOG(llevError, "Discarding invalid item with type PLAYER in map %s\n", m->path);
+            continue;
+        }
+
         switch (i) {
         case LL_NORMAL:
             /* if we are loading an overlay, put the floors on the bottom */
