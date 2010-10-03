@@ -63,6 +63,13 @@ static void do_mood_floor(object *op, object *op2) {
     object *tmp;
     object *tmp2;
 
+    if (op->map == NULL) {
+        LOG(llevError, "mood floor not in a map but in %s\n", op->env ? op->env->name : "null??");
+        op->speed = 0;
+        object_update_speed(op);
+        return;
+    }
+
     tmp = map_find_by_flag(op->map, op->x, op->y, FLAG_MONSTER);
     /* doesn't effect players, and if there is a player on this space, won't also
     * be a monster here.

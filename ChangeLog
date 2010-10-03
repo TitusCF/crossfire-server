@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Don't crash when there is a mood floor with speed in a container.
+Fix for bug #3079991: server crash from bad map object.
+Nicolas Weeger 2010-10-03
+
 Discard items of type PLAYER during map loading.
 Fix for bug #3079997: server crash from misc type object in a petshop.
 Nicolas Weeger 2010-10-03
