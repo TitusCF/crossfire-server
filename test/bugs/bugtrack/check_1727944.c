@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <check.h>
 #include <global.h>
+#include <sproto.h>
 
 void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */

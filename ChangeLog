@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix some serious compiler warnings (missing declaration of function, fixed by
+adding an #include; wrong type for argument to snprintf, fixed by changing to
+use the proper variable) in the test suites.
+Arvid Norlander 2010-10-08
+
 Fix case where a size_t* and an int* were confused. On my system that
 resulted in rare data corruption sometimes when the function in question
 was called.
