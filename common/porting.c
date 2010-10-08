@@ -106,9 +106,9 @@ char *tempnam_local(const char *dir, const char *pfx) {
             return(NULL);
         do {
 #ifdef HAVE_SNPRINTF
-            (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%u", dir, pfx, pid, curtmp);
+            (void)snprintf(name, MAXPATHLEN, "%s/%s%x.%u", dir, pfx, (unsigned int)pid, curtmp);
 #else
-            (void)sprintf(name, "%s/%s%hx%u", dir, pfx, pid, curtmp);
+            (void)sprintf(name, "%s/%s%x%u", dir, pfx, (unsigned int)pid, curtmp);
 #endif
             curtmp++;
         } while (access(name, F_OK) != -1);
