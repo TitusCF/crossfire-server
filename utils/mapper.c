@@ -1417,7 +1417,7 @@ static void write_quests_page(void) {
 
     snprintf(path, sizeof(path), "%s/quests.html", root);
     out = fopen(path, "w+");
-    fprintf(out, text_idx);
+    fprintf(out, "%s", text_idx);
     fclose(out);
     free(text_idx);
 
@@ -2268,7 +2268,7 @@ static void write_region_page(struct_region_info *reg) {
     strcat(html, reg->reg->name);
     strcat(html, ".html");
     index = fopen(html, "w+");
-    fprintf(index, string);
+    fprintf(index, "%s", string);
     fclose(index);
     free(string);
 
@@ -2303,7 +2303,7 @@ static void write_maps_index(void) {
     strcpy(index_path, root);
     strcat(index_path, "/maps.html");
     index = fopen(index_path, "w+");
-    fprintf(index, tmp);
+    fprintf(index, "%s", tmp);
     fclose(index);
     free(tmp);
 
@@ -2344,7 +2344,7 @@ static void write_region_index(void) {
     strcpy(file, root);
     strcat(file, "/regions.html");
     out = fopen(file, "w+");
-    fprintf(out, final);
+    fprintf(out, "%s", final);
     fclose(out);
     free(final);
 
@@ -2450,7 +2450,7 @@ static void write_world_map(void) {
     total = do_template(world_template, vars, values);
     free(row);
     out = fopen(file, "w+");
-    fprintf(out, total);
+    fprintf(out, "%s", total);
     free(total);
     fclose(out);
 
@@ -2661,7 +2661,7 @@ static void write_map_page(struct_map_info *map) {
     vars[vars_count] = NULL;
     out = fopen(htmlpath, "w+");
     tmp = do_template(map_template, vars, values);
-    fprintf(out, tmp);
+    fprintf(out, "%s", tmp);
     fclose(out);
     free(tmp);
     free(exits_text);
@@ -3101,7 +3101,7 @@ static void write_maps_by_level(void) {
     free(letters);
 
     out = fopen(name, "w+");
-    fprintf(out, level);
+    fprintf(out, "%s", level);
     fclose(out);
     free(level);
 
@@ -3324,7 +3324,7 @@ static void write_regions_link(void) {
     file = fopen(path, "wb+");
     fprintf(file, "digraph {\n");
     for (link = 0; link < regions_link_count; link++)
-        fprintf(file, regions_link[link]);
+        fprintf(file, "%s", regions_link[link]);
     fprintf(file, "}\n");
     fclose(file);
     printf("done.\n");
@@ -3361,13 +3361,13 @@ static void write_one_slaying_info(FILE *file, struct_slaying_info *info, int it
 
     if (info->maps[item].count == 0) {
         if (without)
-            fprintf(file, without);
+            fprintf(file, "%s", without);
         return;
     }
 
     qsort(info->maps[item].maps, info->maps[item].count, sizeof(const char *), sort_mapname);
 
-    fprintf(file, with);
+    fprintf(file, "%s", with);
     fprintf(file, "<ul>\n");
     for (map = 0; map < info->maps[item].count; map++) {
         fprintf(file, "\t<li>");
