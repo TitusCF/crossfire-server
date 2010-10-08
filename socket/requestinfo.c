@@ -400,7 +400,8 @@ void send_file(socket_struct *ns, char *file) {
  */
 void send_new_char_info(socket_struct *ns) {
     char buf[MAX_BUF];
-    int i, len;
+    int i;
+    size_t len;
     SockList sl;
 
     SockList_Init(&sl);
