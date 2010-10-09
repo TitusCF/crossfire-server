@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add missing CF_PLUGIN in cflogger. This would only fail on Windows since by
+default on *nix, all symbols are exported. Thus this error went unnoticed
+until I tried with -fvisibility=hidden and setting the MODULEAPI and CF_PLUGIN
+macros use __attribute__((visibility("default"))...
+Arvid Norlander 2010-10-09
+
 Fix some serious compiler warnings (missing declaration of function, fixed by
 adding an #include; wrong type for argument to snprintf, fixed by changing to
 use the proper variable) in the test suites.

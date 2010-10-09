@@ -610,7 +610,7 @@ CF_PLUGIN int cflogger_runPluginCommand(object *op, char *params) {
  * @return
  * 0.
  */
-int eventListener(int *type, ...) {
+CF_PLUGIN int eventListener(int *type, ...) {
     return 0;
 }
 
