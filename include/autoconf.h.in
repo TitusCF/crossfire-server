@@ -211,6 +211,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define if __attribute__((visibility)) is supported */
+#undef HAVE_VISIBILITY
+
 /* Define to 1 if you have the `vprintf' function. */
 #undef HAVE_VPRINTF
 

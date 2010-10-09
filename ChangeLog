@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Do not make symbols globally visible by default on *nix (when supported),
+on Windows this is always the case. To prevent hidden errors (since most
+developers seem to test on *nix), use -fvisibility=hidden when GCC is used
+and make the MODULEAPI and CF_PLUGIN macros use __attribute__ to mark those
+as visible. This will not break on any compiler not supporting this, but will
+prevent future hidden errors of this type.
+A further advantage with this is that it reduces risk of symbol name collision
+between various dynamic objects.
+Arvid Norlander 2010-10-09
+
 Add missing CF_PLUGIN in cflogger. This would only fail on Windows since by
 default on *nix, all symbols are exported. Thus this error went unnoticed
 until I tried with -fvisibility=hidden and setting the MODULEAPI and CF_PLUGIN

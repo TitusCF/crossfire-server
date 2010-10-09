@@ -31,6 +31,8 @@
 
 #ifdef WIN32
 #define CF_PLUGIN __declspec(dllexport)
+#elif HAVE_VISIBILITY
+#define CF_PLUGIN __attribute__((visibility("default")))
 #else
 #define CF_PLUGIN
 #endif

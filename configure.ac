@@ -35,6 +35,9 @@ AM_PROG_LEX
 AM_PROG_CC_C_O
 AC_PROG_AWK
 
+CF_CHECK_VISIBILITY()
+
+
 AC_ARG_ENABLE(dmalloc,
               [AS_HELP_STRING([--enable-dmalloc], [Use the dmalloc library if available, may prevent plugins from working])],,
               enable_dmalloc=no)

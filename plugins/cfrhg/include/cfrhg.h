@@ -46,14 +46,15 @@
 
 #undef MODULEAPI
 #ifdef WIN32
-#ifdef PYTHON_PLUGIN_EXPORTS
-#define MODULEAPI __declspec(dllexport)
+# ifdef PYTHON_PLUGIN_EXPORTS
+#  define MODULEAPI __declspec(dllexport)
+# else
+#  define MODULEAPI __declspec(dllimport)
+# endif
+#elif HAVE_VISIBILITY
+# define MODULEAPI __attribute__((visibility("default")))
 #else
-#define MODULEAPI __declspec(dllimport)
-#endif
-
-#else
-#define MODULEAPI
+# define MODULEAPI
 #endif
 
 #include <plugin_common.h>
