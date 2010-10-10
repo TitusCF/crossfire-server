@@ -211,6 +211,7 @@ void init_server(void) {
     socket_info.nconns = 1;
     init_sockets = malloc(sizeof(socket_struct));
     init_sockets[0].faces_sent = NULL; /* unused */
+    init_sockets[0].account_name = NULL; /* Must be set to avoid undef behaviour elsewhere. */
     socket_info.allocated_sockets = 1;
 
     protox = getprotobyname("tcp");
