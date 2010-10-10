@@ -1921,6 +1921,13 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
         return 0;
     }
 
+    /* Lauwenmark - Now we can call the associated script_throw event (if any) */
+    tag = throw_ob->count;
+    execute_event(throw_ob, EVENT_THROW, op, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+    if (object_was_destroyed(throw_ob, tag)) {
+        return 1;
+    }
+
     /* Because throwing effectiveness must be reduced by the
      * encumbrance of the thrower and weight of the object. THus,
      * we use the concept of 'effective strength' as defined below.
@@ -2134,8 +2141,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     throw_ob->move_type = MOVE_FLY_LOW;
     throw_ob->move_on = MOVE_FLY_LOW|MOVE_WALK;
 
-    /* Lauwenmark - Now we can call the associated script_throw event (if any) */
-    execute_event(throw_ob, EVENT_THROW, op, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
 #ifdef DEBUG_THROW
     LOG(llevDebug, " pause_f=%d \n", pause_f);
     LOG(llevDebug, " %s stats: wc=%d dam=%d dist=%d spd=%f break=%d\n", throw_ob->name, throw_ob->stats.wc, throw_ob->stats.dam, throw_ob->last_sp, throw_ob->speed, throw_ob->stats.food);

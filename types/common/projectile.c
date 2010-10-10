@@ -35,7 +35,23 @@
  */
 void stop_projectile(object *op) {
     /* Lauwenmark: Handle for plugin stop event */
-    execute_event(op, EVENT_STOP, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+    object *event = op;
+    tag_t tag;
+
+    if (op->inv)
+        event = op->inv;
+
+    tag = event->count;
+    execute_event(event, EVENT_STOP, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+
+    if (object_was_destroyed(event, tag)) {
+        if (event != op) {
+            object_remove(op);
+            object_free2(op, FREE_OBJ_FREE_INVENTORY);
+        }
+        return;
+    }
+
     if (op->inv) {
         object *payload = op->inv;
 

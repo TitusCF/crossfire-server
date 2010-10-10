@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Correctly enable plugins to handle THROW and STOP events for projectiles.
+Nicolas Weeger 2010-10-10
+
 Change from using memory.h to using string.h, include memory.h as well
 but make use of the check for it we already have in configure... That
 header shouldn't be needed, but who knows... Also Update the output of
