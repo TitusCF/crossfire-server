@@ -417,7 +417,7 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
 StringBuffer *cost_string_from_value(uint64 cost, StringBuffer *buf) {
     archetype *coin, *next_coin;
     uint32 num;
-    int cointype = LARGEST_COIN_GIVEN;
+    int cointype = 0;
 
     if (!buf)
         buf = stringbuffer_new();
