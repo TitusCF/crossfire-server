@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Give access to 'cost_string_from_value' to the Python plugin.
+Nicolas Weeger 2010-10-10
+
 Use all coin types when displaying prices.
 Nicolas Weeger 2010-10-10
 

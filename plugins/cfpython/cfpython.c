@@ -123,6 +123,7 @@ static PyObject *getPeriodofdayName(PyObject *self, PyObject *args);
 static PyObject *addReply(PyObject *self, PyObject *args);
 static PyObject *setPlayerMessage(PyObject *self, PyObject *args);
 static PyObject *npcSay(PyObject *self, PyObject *args);
+static PyObject *costStringFromValue(PyObject *self, PyObject *args);
 
 /** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...) {
@@ -184,6 +185,7 @@ static PyMethodDef CFPythonMethods[] = {
     { "AddReply",            addReply,               METH_VARARGS, NULL },
     { "SetPlayerMessage",    setPlayerMessage,       METH_VARARGS, NULL },
     { "NPCSay",              npcSay,                 METH_VARARGS, NULL },
+    { "CostStringFromValue", costStringFromValue,    METH_VARARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 
@@ -728,6 +730,17 @@ static PyObject *npcSay(PyObject *self, PyObject *args) {
 
     Py_INCREF(Py_None);
     return Py_None;
+}
+
+static PyObject *costStringFromValue(PyObject *self, PyObject *args) {
+    uint64 value;
+    char buf[2048];
+
+    if (!PyArg_ParseTuple(args, "L", &value))
+        return NULL;
+
+    cf_cost_string_from_value(value, buf, sizeof(buf));
+    return Py_BuildValue("s", buf);
 }
 
 static void initContextStack(void) {
