@@ -1122,24 +1122,12 @@ static void compile_info(void) {
     char err[MAX_BUF];
 
     printf("Non-standard include files:\n");
-#if !defined(__STRICT_ANSI__) || defined(__sun__)
-#if !defined(Mips)
-    printf("<stdlib.h>\n");
-    i = 1;
-#endif
-#if !defined(MACH) && !defined(sony)
+#ifdef HAVE_MALLOC_H
     printf("<malloc.h>\n");
     i = 1;
 #endif
-#endif
-#ifndef __STRICT_ANSI__
-#ifndef MACH
+#ifdef HAVE_MEMORY_H
     printf("<memory.h\n");
-    i = 1;
-#endif
-#endif
-#ifndef sgi
-    printf("<sys/timeb.h>\n");
     i = 1;
 #endif
     if (!i)

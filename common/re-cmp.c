@@ -21,12 +21,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include <limits.h>
 #include <re-cmp.h>
 #include <ctype.h>
 #include <global.h>
 #include <define.h> /* Needed for OUT_OF_MEMORY. */
+
+/* Unlikely to be needed any more... */
+#ifdef HAVE_MEMORY_H
+#  include <memory.h>
+#endif
 
 /* Get prototype functions to prevent warnings. */
 #if defined(__sun__) && defined(StupidSunHeaders)
