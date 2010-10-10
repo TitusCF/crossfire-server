@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix incorrect check in test/bugs/bugtrack/check_2879249.c.
+Arvid Norlander 2010-10-10
+
 Fix bug that caused server to sometimes crash on account login.
 Arvid Norlander 2010-10-10
 

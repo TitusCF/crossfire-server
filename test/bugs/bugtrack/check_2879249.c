@@ -47,7 +47,7 @@ START_TEST(test_insert) {
     fail_unless(map1 != NULL, "cannot load map /world/world_103_128");
 
     big_galleon_arch = find_archetype("big_galleon");
-    fail_unless(big_galleon != NULL, "cannot find archetype big_galleon");
+    fail_unless(big_galleon_arch != NULL, "cannot find archetype big_galleon");
     big_galleon = object_create_arch(big_galleon_arch);
     fail_unless(big_galleon != NULL, "cannot create object big_galleon");
 
