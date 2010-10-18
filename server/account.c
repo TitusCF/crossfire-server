@@ -615,7 +615,8 @@ socket_struct *account_get_logged_in_init_socket(const char *name)
     int i;
 
     for (i=0; i < socket_info.allocated_sockets; i++) {
-        if (init_sockets[i].account_name &&
+        if (init_sockets[i].status == Ns_Add &&
+            init_sockets[i].account_name &&
             !strcasecmp(init_sockets[i].account_name, name)) return(&init_sockets[i]);
     }
     return NULL;
