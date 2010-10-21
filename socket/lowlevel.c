@@ -185,6 +185,18 @@ void SockList_AddLen8Data(SockList *sl, const void *data, size_t len) {
 }
 
 /**
+ * Adds a data block prepended with an 16 bit length field.
+ * @param sl the SockList instance to add to
+ * @param data the value to add
+ * @param len the length in byte; must not exceed 65535
+ */
+void SockList_AddLen16Data(SockList *sl, const void *data, size_t len) {
+    assert(len <= 65535);
+    SockList_AddShort(sl, len);
+    SockList_AddData(sl, data, len);
+}
+
+/**
  * Adds a printf like formatted string.
  * @param sl the SockList instance to add to
  * @param format the format specifier

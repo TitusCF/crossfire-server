@@ -422,14 +422,16 @@ void set_first_map(object *op) {
  *
  * @param ns
  * connection.
- * @param new_char
- * If set, go right to new character creation - used in case
- * of new account code.  We don't display motd and other
- * bits in this case either.
+ * @param flags
+ * flag values are define in player.h:
+ * ADD_PLAYER_NEW -  If set, go right to new character creation - used in case
+ *    of new account code.  We don't display motd and other bits in this case either.
+ * ADD_PLAYER_NO_MAP - Do not set up map information - used in character login
+ *    method >2 where we do not use the same starting map.
  * @return player
  * returns pointer to newly created player structure.
  */
-player *add_player(socket_struct *ns, int new_char) {
+player *add_player(socket_struct *ns, int flags) {
     player *p;
 
     p = get_player(NULL);
@@ -448,11 +450,12 @@ player *add_player(socket_struct *ns, int new_char) {
      * on the incoming socket.
      */
     SockList_ResetRead(&p->socket.inbuf);
-    set_first_map(p->ob);
+    if (!(flags & ADD_PLAYER_NO_MAP))
+        set_first_map(p->ob);
 
     CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
     add_friendly_object(p->ob);
-    if (new_char) {
+    if (flags & ADD_PLAYER_NEW) {
         roll_again(p->ob);
         player_set_state(p, ST_ROLL_STAT);
     } else {
@@ -1299,6 +1302,9 @@ void key_change_class(object *op, char key) {
 
         remove_statbonus(op);
         object_remove(op);
+        /* get_player_archetype() is really misnamed - it will
+         * get the next archetype from the list.
+         */
         op->arch = get_player_archetype(op->arch);
         object_copy(&op->arch->clone, op);
         op->stats = op->contr->orig_stats;
@@ -1323,6 +1329,90 @@ void key_change_class(object *op, char key) {
         draw_ext_info(NDI_BLUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
                       op->msg);
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Press any key for the next race.\nPress `d' to play this race.\n");
+}
+
+/**
+ * This is somewhat like key_change_class() above, except we know
+ * the race to change to, but we still basically need to do
+ * the same work (apply bonuses, update archetype, etc.)
+ *
+ * @param op
+ * Player object
+ * @param race
+ * race to use - caller should do sanity checking that this is
+ * a valid race.
+ * @param class
+ * class to use - like race, caller should do sanity checking.
+ * @return
+ * 0 on success, non zero on failure (may be extended with
+ * unique error codes).  It is the responsibility of the
+ * caller to notify the client of this failure.
+ */
+int apply_race_and_class(object *op, archetype *race, archetype *class)
+{
+    const char *name = add_string(op->name);
+    char buf[MAX_BUF];
+
+    object_copy(&race->clone, op);
+    op->stats = op->contr->orig_stats;
+    free_string(op->name);
+    op->name = name;
+    free_string(op->name_pl);
+    op->name_pl = add_string(name);
+    SET_ANIMATION(op, 2);    /* So player faces south */
+    snprintf(op->contr->title, sizeof(op->contr->title), "%s", op->arch->clone.name);
+
+    /* Note that this will repeated increase the stat values
+     * if the caller does not reset them.
+     */
+    add_statbonus(op);
+
+    /* Checks that all stats are greater than 1 */
+    if (!allowed_class(op)) return 1;
+
+    object_update(op, UP_OBJ_FACE);
+    op->stats.hp = op->stats.maxhp;
+    op->stats.sp = op->stats.maxsp;
+    op->stats.grace = 0;
+
+    /* this must before then initial items are given */
+    esrv_new_player(op->contr, op->weight+op->carrying);
+    create_treasure(find_treasurelist("starting_wealth"), op, 0, 0, 0);
+
+    /* Apply class information */
+    apply_changes_to_player(op, &class->clone, FALSE);
+
+    /* Checks that all stats are greater than 1 */
+    if (!allowed_class(op)) return 2;
+
+    /* Lauwenmark : Here we handle the BORN global event */
+    execute_global_event(EVENT_BORN, op);
+
+    /* Lauwenmark : We then generate a LOGIN event */
+    execute_global_event(EVENT_LOGIN, op->contr, op->contr->socket.host);
+
+    object_set_msg(op, NULL);
+
+    /* We create this now because some of the unique maps will need it
+     * to save here.
+     */
+    snprintf(buf, sizeof(buf), "%s/%s/%s", settings.localdir, settings.playerdir, op->name);
+    make_path_to_file(buf);
+
+#ifdef AUTOSAVE
+    op->contr->last_save_tick = pticks;
+#endif
+
+    CLEAR_FLAG(op, FLAG_WIZ);
+    give_initial_items(op, op->randomitems);
+    link_player_skills(op);
+    fix_object(op);
+
+    esrv_send_inventory(op, op);
+    esrv_update_item(UPD_FACE, op, op);
+
+    return 0;
+
 }
 
 /**

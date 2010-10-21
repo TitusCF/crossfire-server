@@ -1584,92 +1584,120 @@ void scroll_failure(object *op, int failure, int power) {
  * object to change.
  * @param change
  * what kind of changes to apply. Should be of type CLASS.
+ * @param limit_stats
+ * If true, stats from class can not exceed racial maximum.
+ * if not true, then they can - this is used for point based
+ * character creation.
  */
-void apply_changes_to_player(object *pl, object *change) {
-    switch (change->type) {
-    case CLASS: {
-            int i, j;
-            int excess_stat = 0;  /* if the stat goes over the maximum
-                                   * for the race, put the excess stat some
-                                   * where else.
-                                   */
+void apply_changes_to_player(object *pl, object *change, int limit_stats) {
+    int i, j;
+    int excess_stat = 0;  /* if the stat goes over the maximum
+                           * for the race, put the excess stat some
+                           * where else.
+                           */
 
-            /* the following code assigns stats up to the stat max
-             * for the race, and if the stat max is exceeded,
-             * tries to randomly reassign the excess stat
-             */
-            for (i = 0; i < NUM_STATS; i++) {
-                sint8 stat = get_attr_value(&pl->contr->orig_stats, i);
-                int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
+    if (change->type != CLASS) return;
 
-                stat += get_attr_value(&change->stats, i);
-                if (stat > 20+race_bonus) {
-                    excess_stat++;
-                    stat = 20+race_bonus;
-                }
-                set_attr_value(&pl->contr->orig_stats, i, stat);
+    /* the following code assigns stats up to the stat max
+     * for the race, and if the stat max is exceeded,
+     * tries to randomly reassign the excess stat
+     */
+    for (i = 0; i < NUM_STATS; i++) {
+        sint8 stat = get_attr_value(&pl->contr->orig_stats, i);
+        int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
+
+        stat += get_attr_value(&change->stats, i);
+        if (limit_stats) {
+            if (stat > 20+race_bonus) {
+                excess_stat++;
+                stat = 20+race_bonus;
+            } else if (stat < 1) {
+                /* I didn't see any code here before to make sure minimum
+                 * stats were enforced - maybe it was just dumb
+                 * luck that one would not have a stat low enough that then
+                 * has a stat penalty for class that would bring it negative?
+                 * I imagine a negative stat would crash the server pretty
+                 * quickly - MSW, Sept 2010
+                 */
+                excess_stat += stat;
+                stat = 1;
             }
+        }
+        set_attr_value(&pl->contr->orig_stats, i, stat);
+    }
 
-            for (j = 0; excess_stat > 0 && j < 100; j++) {
-                /* try 100 times to assign excess stats */
-                int i = rndm(0, 6);
-                int stat = get_attr_value(&pl->contr->orig_stats, i);
-                int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
+    /* Maybe we should randomly deduct stats in this case?
+     * It's will go away sometime soon in any case.
+     */
+    if (excess_stat < 0) excess_stat = 0;
 
-                if (i == CHA)
-                    continue; /* exclude cha from this */
-                if (stat < 20+race_bonus) {
-                    change_attr_value(&pl->contr->orig_stats, i, 1);
-                    excess_stat--;
-                }
-            }
+    /* We don't put an explicit check for limit_stats here -
+     * excess stat will never be 0 if limit_stats is not
+     * true.
+     */
+    for (j = 0; excess_stat > 0 && j < 100; j++) {
+        /* try 100 times to assign excess stats */
+        int i = rndm(0, NUM_STATS-1);
+        int stat = get_attr_value(&pl->contr->orig_stats, i);
+        int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
 
-            /* insert the randomitems from the change's treasurelist into
-             * the player ref: player.c
-             */
-            if (change->randomitems != NULL)
-                give_initial_items(pl, change->randomitems);
-
-
-            /* set up the face, for some races. */
-
-            /* first, look for the force object banning changing the
-             * face.  Certain races never change face with class.
-             */
-            if (object_find_by_name(pl, "NOCLASSFACECHANGE") == NULL) {
-                pl->animation_id = GET_ANIM_ID(change);
-                pl->face = change->face;
-
-                if (QUERY_FLAG(change, FLAG_ANIMATE))
-                    SET_FLAG(pl, FLAG_ANIMATE);
-                else
-                    CLEAR_FLAG(pl, FLAG_ANIMATE);
-            }
-
-            if (change->anim_suffix) {
-                char buf[MAX_BUF];
-                int anim;
-
-                snprintf(buf, MAX_BUF, "%s_%s", animations[pl->animation_id].name, change->anim_suffix);
-                anim = try_find_animation(buf);
-                if (anim) {
-                    pl->animation_id = anim;
-                    pl->anim_speed = -1;
-                    CLEAR_FLAG(pl, FLAG_ANIMATE);
-                    animate_object(pl, pl->facing);
-                }
-            }
-
-            /* check the special case of can't use weapons */
-            /*if(QUERY_FLAG(change, FLAG_USE_WEAPON))
-             *    CLEAR_FLAG(pl, FLAG_USE_WEAPON);
-             */
-            if (!strcmp(change->name, "monk"))
-                CLEAR_FLAG(pl, FLAG_USE_WEAPON);
-
-            break;
+        if (i == CHA)
+            continue; /* exclude cha from this */
+        if (stat < 20+race_bonus) {
+            change_attr_value(&pl->contr->orig_stats, i, 1);
+            excess_stat--;
         }
     }
+
+    /* insert the randomitems from the change's treasurelist into
+     * the player ref: player.c
+     */
+    if (change->randomitems != NULL)
+        give_initial_items(pl, change->randomitems);
+
+
+    /* set up the face, for some races. */
+
+    /* first, look for the force object banning changing the
+     * face.  Certain races never change face with class.
+     */
+    if (object_find_by_name(pl, "NOCLASSFACECHANGE") == NULL) {
+        pl->animation_id = GET_ANIM_ID(change);
+        pl->face = change->face;
+
+        if (QUERY_FLAG(change, FLAG_ANIMATE))
+            SET_FLAG(pl, FLAG_ANIMATE);
+        else
+            CLEAR_FLAG(pl, FLAG_ANIMATE);
+    }
+
+    if (change->anim_suffix) {
+        char buf[MAX_BUF];
+        int anim;
+
+        snprintf(buf, MAX_BUF, "%s_%s", animations[pl->animation_id].name, change->anim_suffix);
+        anim = try_find_animation(buf);
+        if (anim) {
+            pl->animation_id = anim;
+            pl->anim_speed = -1;
+            CLEAR_FLAG(pl, FLAG_ANIMATE);
+            animate_object(pl, pl->facing);
+        }
+    }
+#if 0
+    /* check the special case of can't use weapons */
+    /*if(QUERY_FLAG(change, FLAG_USE_WEAPON))
+     *    CLEAR_FLAG(pl, FLAG_USE_WEAPON);
+     */
+    if (!strcmp(change->name, "monk"))
+        CLEAR_FLAG(pl, FLAG_USE_WEAPON);
+#endif
+    /* Hard coding in class name is a horrible idea - lets
+     * use the supported mechanism for this
+     */
+    if (object_present_in_ob_by_name(FORCE, "no weapon force", pl))
+        CLEAR_FLAG(pl, FLAG_USE_WEAPON);
+
 }
 
 void legacy_apply_container(object *op, object *sack) {

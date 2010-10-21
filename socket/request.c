@@ -292,7 +292,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             loginmethod = atoi(param);
 
             /* Only support basic login right now */
-            if (loginmethod > 1) loginmethod=1;
+            if (loginmethod > 2) loginmethod=2;
 
             ns->login_method = loginmethod;
             SockList_AddPrintf(&sl, "%d", loginmethod);
@@ -1882,7 +1882,9 @@ void send_account_players(socket_struct *ns)
  * @param buf
  * character data to process.
  * @param len
- * length of this buffer
+ * length of this buffer.  This will be updated to be the next
+ * byte to process in the case that there is additional data
+ * in this packet that the caller may need to process.
  * @param name
  * preallocated (MAX_BUF) buffer to return the name (really, first string) in
  * @param password
@@ -1893,23 +1895,25 @@ void send_account_players(socket_struct *ns)
  * 2 - password is too long
  * 3 - corrupt data - length of name & password > len
  */
-static int decode_name_password(const char *buf, int len, char *name, char *password)
+static int decode_name_password(const char *buf, int *len, char *name, char *password)
 {
     int nlen, plen;
 
     nlen = buf[0];
-    if (nlen >= MAX_BUF || nlen > len) {
+    if (nlen >= MAX_BUF || nlen > *len) {
         return 1;
     }
     strncpy(name, buf+1, nlen);
     name[nlen] = 0;
 
     plen = buf[nlen + 1];
-    if (plen >= MAX_BUF || (plen + nlen) > len) {
+    if (plen >= MAX_BUF || (plen + nlen) > *len) {
         return 2;
     }
     strncpy(password, buf+2+nlen, plen);
     password[plen] = 0;
+
+    *len = nlen + plen+2;
 
     return 0;
 }
@@ -1930,7 +1934,7 @@ void account_login_cmd(char *buf, int len, socket_struct *ns) {
 
     SockList_Init(&sl);
 
-    status = decode_name_password(buf, len, name, password);
+    status = decode_name_password(buf, &len, name, password);
 
     if (status == 1) {
         SockList_AddString(&sl, "failure accountlogin Name is too long");
@@ -2018,7 +2022,7 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
 
     SockList_Init(&sl);
 
-    status = decode_name_password(buf, len, name, password);
+    status = decode_name_password(buf, &len, name, password);
     if (status == 1) {
         SockList_AddString(&sl, "failure accountlogin Name is too long");
         Send_With_Handling(ns, &sl);
@@ -2105,14 +2109,15 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
  */
 void account_add_player_cmd(char *buf, int len, socket_struct *ns) {
     char name[MAX_BUF], password[MAX_BUF];
-    int status, force;
+    int status, force, nlen;
     SockList sl;
     const char *cp;
 
     SockList_Init(&sl);
 
     force = buf[0];
-    status = decode_name_password(buf+1, len-1, name, password);
+    nlen = len - 1;
+    status = decode_name_password(buf+1, &nlen, name, password);
     if (status == 1) {
         SockList_AddString(&sl, "failure accountaddplayer Name is too long");
         Send_With_Handling(ns, &sl);
@@ -2288,13 +2293,16 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
 void create_player_cmd(char *buf, int len, socket_struct *ns)
 {
     char name[MAX_BUF], password[MAX_BUF];
-    int status;
+    int status, nlen;
     SockList sl;
     player *pl;
+    archetype *map=NULL;
+    mapstruct *newmap;
 
     SockList_Init(&sl);
 
-    status = decode_name_password(buf, len, name, password);
+    nlen = len;
+    status = decode_name_password(buf, &nlen, name, password);
     if (status == 1) {
         SockList_AddString(&sl, "failure createplayer Name is too long");
         Send_With_Handling(ns, &sl);
@@ -2355,7 +2363,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     /* from a protocol standpoint, accountplay can be used
      * before there is a player structure (first login) or after
      * (character has logged in and is changing characters).
-     * Checkthe sockets for that second case - if so,
+     * Check the sockets for that second case - if so,
      * we don't need to make a new player object, etc.
      */
     for (pl=first_player; pl; pl=pl->next)
@@ -2366,9 +2374,9 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
      * we don't really want to do.
      */
     if (!pl) {
-        pl = add_player(ns, 1);
+        pl = add_player(ns, ADD_PLAYER_NEW | ADD_PLAYER_NO_MAP);
         SockList_ResetRead(&pl->socket.inbuf);
-    } else {
+    } else if (ns->login_method < 2) {
         roll_again(pl->ob);
         pl->state = ST_ROLL_STAT;
         set_first_map(pl->ob);
@@ -2377,15 +2385,164 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     /* add_player does a lot of the work, but there are a few
      * things we need to update, like starting name and
      * password.
+     * This is done before processing in login_method>2.
+     * The character creation process it does when
+     * applying the race/class will use this
+     * name information.
      */
     FREE_AND_COPY(pl->ob->name, name);
     FREE_AND_COPY(pl->ob->name_pl, name);
     pl->name_changed = 1;
     strcpy(pl->password, crypt_string(password, NULL));
 
+    /* In this mode, we have additional data */
+    if (ns->login_method >= 2) {
+        int i, j, stat_total=0;
+        char *key, *value, *race=NULL, *class=NULL;
+        archetype *race_a=NULL, *class_a=NULL;
+
+        /* By setting this to zero, then we can easily
+         * check to see if all stats have been set.
+         */
+        memset(&pl->orig_stats, sizeof(living), 0);
+
+        while (nlen < len) {
+            i = buf[nlen];  /* Length of this line */
+            /* Sanity check from client - don't want to loop
+             * forever if there is a 0 length, and don't
+             * want to read beyond size of packet.
+             * Likewise, client should have sent
+             * the string to us already null terminated,
+             * but we will just make sure.
+             */
+            if ((i == 0) || (nlen + i > len)) break;
+            buf[nlen + i] = 0;
+
+            /* What we have are a series of lines -
+             * 'key value' format.  Find that space,
+             * and null it out so we can do strcasecmp.
+             * If no space, abort processing
+             */
+            key = buf + nlen + 1;
+            value = strchr(key, ' ');
+            if (!value) break;
+            *value = 0;
+            value++;
+
+            if (!strcasecmp(key,"race"))    race = value;
+            else if (!strcasecmp(key,"class"))   class = value;
+            else if (!strcasecmp(key,"starting_map")) {
+                map = try_find_archetype(value);
+                if (!map || map->clone.type != MAP || map->clone.subtype !=MAP_TYPE_CHOICE) {
+                    SockList_AddString(&sl,
+                               "failure createplayer Invalid or map");
+                    Send_With_Handling(ns, &sl);
+                    SockList_Term(&sl);
+                    return;
+                }
+            }
+            else {
+                /* Do stat processing here */
+                for (j=0; j < NUM_STATS; j++) {
+                    if (!strcasecmp(key,short_stat_name[j])) {
+                        int val = atoi(value);
+
+                        set_attr_value(&pl->orig_stats, j, val);
+                        break;
+                    }
+                }
+                if (j >= NUM_STATS) {
+                    /* Bad clients could do this - we should at least report
+                     * it, and useful when trying to add new parameters.
+                     */
+                    LOG(llevError, "Got unknown key/value from client: %s %s\n", key, value);
+                }
+            }
+            nlen += i + 1;
+        }
+        /* Do some sanity checking now.  But checking the stat
+         * values here, we will catch any 0 values since we do
+         * a memset above.  A properly behaving client should
+         * never do any of these things, but we do not presume
+         * clients will behave properly.
+         */
+        for (j=0; j<NUM_STATS; j++) {
+            int val = get_attr_value(&pl->orig_stats, j);
+
+            stat_total += val;
+            if (val > settings.starting_stat_max ||
+                val < settings.starting_stat_min) {
+                SockList_AddPrintf(&sl,
+                    "failure createplayer Stat value is out of range - %d must be between %d and %d",
+                     val, settings.starting_stat_min, settings.starting_stat_max);
+                Send_With_Handling(ns, &sl);
+                SockList_Term(&sl);
+                return;
+            }
+        }
+        if (stat_total > settings.starting_stat_points) {
+            SockList_AddPrintf(&sl,
+                "failure createplayer Total allocated statistics is higher than allowed (%d>%d)",
+                stat_total, settings.starting_stat_points);
+            Send_With_Handling(ns, &sl);
+            SockList_Term(&sl);
+            return;
+        }
+
+        if (race) 
+            race_a = try_find_archetype(race);
+
+        if (class) 
+            class_a = try_find_archetype(class);
+
+        /* This should never happen with a properly behaving client, so the error message
+         * doesn't have to be that great.
+         */
+        if (!race_a || race_a->clone.type != PLAYER || !class_a || class_a->clone.type != CLASS) {
+            SockList_AddString(&sl,
+                               "failure createplayer Invalid or unknown race or class");
+            Send_With_Handling(ns, &sl);
+            SockList_Term(&sl);
+            return;
+        }
+        /* At current time, only way this can fail is if the adjusted
+         * stat is less than 1.
+         */
+        if (apply_race_and_class(pl->ob, race_a, class_a)) {
+            SockList_AddString(&sl,
+                               "failure createplayer Unable to apply race - stat is out of bounds");
+            Send_With_Handling(ns, &sl);
+            SockList_Term(&sl);
+            return;
+        }
+
+    }
+
     SockList_AddString(&sl, "addme_success");
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
+
+    /* The client could have provided us a map - if so, map will be set
+     * and we don't want to overwrite it
+     */
+    if (!map)
+        map = get_archetype_by_type_subtype(MAP, MAP_TYPE_DEFAULT);
+
+    if (!map) {
+        /* This should never happen - its not something that can
+         * be easily worked around without other weird issues,
+         * like having 2 classes.
+         */
+        LOG(llevError, "Can not find object of type MAP subtype MAP_TYPE_DEFAULT.\n");
+        LOG(llevError, "Are the archetype files up to date?  Can not continue.\n");
+        abort();
+    }
+    strcpy(pl->maplevel, map->clone.slaying);
+        
+    pl->ob->x = map->clone.stats.hp;
+    pl->ob->y = map->clone.stats.sp;
+    enter_exit(pl->ob, NULL);
+    player_set_state(pl, ST_PLAYING);
 
     socket_info.nconns--;
     ns->status = Ns_Avail;

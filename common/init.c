@@ -394,7 +394,7 @@ static void init_defaults(void) {
 static void init_dynamic(void) {
     archetype *at = first_archetype;
     while (at) {
-        if (at->clone.type == MAP) {
+        if (at->clone.type == MAP && at->clone.subtype == MAP_TYPE_LEGACY) {
             if (at->clone.race) {
                 strcpy(first_map_ext_path, at->clone.race);
             }

@@ -77,6 +77,15 @@ extern const char *const map_layer_name[MAP_LAYERS];
 #define MAP_LAYER_FLY2          9   /**< Arrows, etc */
 /*@}*/
 
+/**
+ * These are map subtypes.  With new character
+ * creation code, additional types are needed.
+ */
+
+#define MAP_TYPE_LEGACY         1   /**< For old character creation method */
+#define MAP_TYPE_DEFAULT        2   /**< If no map is specified, where character starts */
+#define MAP_TYPE_CHOICE         3   /**< Choice of maps presented to player */
+
 /** This is when the map will reset */
 #define MAP_WHEN_RESET(m)       ((m)->reset_time)
 

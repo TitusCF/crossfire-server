@@ -347,6 +347,41 @@ void send_class_info(socket_struct *ns, char *params) {
 }
 
 /**
+ * Send information on the specified class.
+ *
+ * @param ns
+ * where to send.
+ */
+void send_map_info(socket_struct *ns) {
+    archetype *m;
+    SockList sl;
+
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "replyinfo startingmap\n");
+
+    for (m = first_archetype; m; m = m->next) {
+        if (m->clone.type == MAP && m->clone.subtype == MAP_TYPE_CHOICE) {
+            SockList_AddChar(&sl, INFO_MAP_ARCH_NAME);
+            SockList_AddLen16Data(&sl, m->name, strlen(m->name));
+
+            SockList_AddChar(&sl, INFO_MAP_NAME);
+            SockList_AddLen16Data(&sl, m->clone.name, strlen(m->clone.name));
+
+            /* In theory, this should always be set, but better not to crash
+             * if it is not.
+             */
+            if (m->clone.msg) {
+                SockList_AddChar(&sl, INFO_MAP_DESCRIPTION);
+                SockList_AddLen16Data(&sl, m->clone.msg, strlen(m->clone.msg));
+            }
+        }
+    }
+
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
+}
+
+/**
  * Sends the desired file to the client.  In all
  * three cases, we are basically just dumping file
  * contents to the client - nothing more.
@@ -430,6 +465,9 @@ void send_new_char_info(socket_struct *ns) {
     SockList_AddLen8Data(&sl, buf, strlen(buf) + 1);
 
     snprintf(buf, MAX_BUF, "R class requestinfo");
+    SockList_AddLen8Data(&sl, buf, strlen(buf) + 1);
+
+    snprintf(buf, MAX_BUF, "O startingmap requestinfo");
     SockList_AddLen8Data(&sl, buf, strlen(buf) + 1);
 
     Send_With_Handling(ns, &sl);

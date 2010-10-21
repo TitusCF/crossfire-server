@@ -13,6 +13,29 @@ changes' is much more useful than 'misc edits' or 'code cleanup.'
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Update for advanced (in game) character creation:
+common/init.c: Add check for new subtype for finding first map.
+doc/Developers/protocol: Fix formatting, add starting map information.
+include/shared/newclient.h: Add types for map requestinfo data.
+include/map.h: Add new map subtypes.
+include/player.h: Add new ADD_PLAYER_... values for add_player()
+include/sockproto.h: updated
+include/sproto.h: updated
+server/player.c: Change add_player() to have second parameter be a 
+   bitmask value and not true/false.  Add apply_race_and_class().
+server/apply.c: Reformat apply_changes_to_player() and have it take new
+    parameter which determines if class stat bonus can exceed racial maximum.
+socket/loop.c: Handle startingmap requestinfo requrest.
+socket/lowlevel.c: Add SockList_AddLen16Data() for cases were we want
+    to send a length prefixed block of data that is >255 bytes long.
+socket/request.c: Update for loginmethod 2.  Update decode_name_password()
+    to support passing length of data back to server via parameter.  Handle
+    new character creation data from client.
+socket/requestinfo.c: Add command to send choice of starting maps
+   to the client.
+types/player_changer/player_changer.c: Add new parameter to call of
+   apply_changes_to_player()
+MSW 2010-10-20
 
 Prevent duplicate freeing of socket_struct entries.
 Andreas Kirschbaum 2010-10-18

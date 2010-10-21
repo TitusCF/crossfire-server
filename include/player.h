@@ -241,4 +241,13 @@ typedef struct pl {
 
 /*@}*/
 
+/**
+ * @defgroup ADD_PLAYER_xxx Flags - flags passed to add_player
+ * to control behavior
+ */
+/*@{*/
+#define ADD_PLAYER_NEW              0x1
+#define ADD_PLAYER_NO_MAP           0x2
+/*@{*/
+
 #endif /* PLAYER_H */

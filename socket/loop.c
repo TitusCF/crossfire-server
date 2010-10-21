@@ -191,6 +191,8 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
         send_file(ns, "news");
     else if (!strcmp(buf,"newcharinfo"))
         send_new_char_info(ns);
+    else if (!strcmp(buf,"startingmap"))
+        send_map_info(ns);
     else
         Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

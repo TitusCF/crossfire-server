@@ -69,7 +69,7 @@ static method_ret player_changer_type_process(ob_methods *context, object *op) {
             return METHOD_OK;
         player = op->above;
         FOR_INV_PREPARE(op, walk)
-            apply_changes_to_player(player, walk);
+            apply_changes_to_player(player, walk, TRUE);
         FOR_INV_FINISH();
 
         fix_object(player);

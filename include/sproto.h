@@ -39,7 +39,7 @@ int apply_special(object *who, object *op, int aflags);
 int apply_auto(object *op);
 void apply_auto_fix(mapstruct *m);
 void scroll_failure(object *op, int failure, int power);
-void apply_changes_to_player(object *pl, object *change);
+void apply_changes_to_player(object *pl, object *change, int limit_stats);
 void legacy_apply_container(object *op, object *sack);
 /* attack.c */
 void save_throw_object(object *op, uint32 type, object *originator);
@@ -429,6 +429,7 @@ int op_on_battleground(object *op, int *x, int *y, archetype **trophy);
 void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
 void player_set_state(player *pl, uint8 state);
+int apply_race_and_class(object *op, archetype *race, archetype *class);
 /* plugins.c */
 int user_event(object *op, object *activator, object *third, const char *message, int fix);
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);
