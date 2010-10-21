@@ -684,6 +684,13 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 /*@}*/
 
 /**
+ * Definitions for the requestion/replyinfo map data.
+ */
+#define INFO_MAP_ARCH_NAME          1 /**< Archetype name of this entry */
+#define INFO_MAP_NAME               2 /**< Proper name of this entry */
+#define INFO_MAP_DESCRIPTION        3 /**< Description of this map */
+
+/**
  * Contains the base information we use to make up a packet we want to send.
  */
 typedef struct SockList {
