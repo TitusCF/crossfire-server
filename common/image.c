@@ -323,10 +323,6 @@ void read_bmap_names(void) {
  */
 unsigned find_face(const char *name, unsigned error) {
     struct bmappair *bp, tmp;
-    char *p;
-
-    if ((p = strchr(name, '\n')))
-        *p = '\0';
 
     tmp.name = (char *)name;
     bp = (struct bmappair *)bsearch(&tmp, xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void *, const void *))compar);
@@ -361,6 +357,9 @@ int read_smooth(void) {
     while (fgets(buf, MAX_BUF, fp) != NULL) {
         if (*buf == '#')
             continue;
+
+        if ((p = strchr(buf, '\n')))
+            *p = '\0';
 
         p = strchr(buf, ' ');
         if (!p)
