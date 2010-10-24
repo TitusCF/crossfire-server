@@ -13,6 +13,11 @@ changes' is much more useful than 'misc edits' or 'code cleanup.'
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+
+server/player.c: Bug fix for new character creation - give racial items
+   before applying class so special racial faces stick.
+MSW 2010-10-23
+
 Update for advanced (in game) character creation:
 common/init.c: Add check for new subtype for finding first map.
 doc/Developers/protocol: Fix formatting, add starting map information.

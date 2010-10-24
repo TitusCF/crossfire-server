@@ -1352,6 +1352,19 @@ int apply_race_and_class(object *op, archetype *race, archetype *class)
 {
     const char *name = add_string(op->name);
     char buf[MAX_BUF];
+    object *inv;
+
+    /* Free any objects in character inventory - they
+     * shouldn't have any, but there is the potential that
+     * we give them objects below and then get a creation
+     * failure (stat out of range), in which case
+     * those objects would be in the inventory.
+     */
+    while (op->inv) {
+        inv = op->inv;
+        object_remove(inv);
+        object_free2(inv, 0);
+    }
 
     object_copy(&race->clone, op);
     op->stats = op->contr->orig_stats;
@@ -1379,6 +1392,11 @@ int apply_race_and_class(object *op, archetype *race, archetype *class)
     esrv_new_player(op->contr, op->weight+op->carrying);
     create_treasure(find_treasurelist("starting_wealth"), op, 0, 0, 0);
 
+    /* This has to be done before class, otherwise the NOCLASSFACECHANGE
+     * object is not in the inventory, and racial face will get overwritten.
+     */
+    give_initial_items(op, op->randomitems);
+
     /* Apply class information */
     apply_changes_to_player(op, &class->clone, FALSE);
 
@@ -1404,7 +1422,6 @@ int apply_race_and_class(object *op, archetype *race, archetype *class)
 #endif
 
     CLEAR_FLAG(op, FLAG_WIZ);
-    give_initial_items(op, op->randomitems);
     link_player_skills(op);
     fix_object(op);
 
