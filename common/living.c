@@ -661,7 +661,7 @@ int change_abil(object *op, object *tmp) {
          */
         if (tmp->move_type&MOVE_FLY_LOW && !(op->move_type&MOVE_FLY_HIGH)) {
             DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
-                     "You start to float in the air!.",
+                     "You start to float in the air!",
                      "You float down to the ground.");
         }
 
@@ -670,7 +670,7 @@ int change_abil(object *op, object *tmp) {
              * in that case, you don't actually land
              */
             DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
-                     "You soar into the air air!.",
+                     "You soar into the air!.",
                      (op->move_type&MOVE_FLY_LOW ? "You fly lower in the air":
                       "You float down to the ground."));
         }
