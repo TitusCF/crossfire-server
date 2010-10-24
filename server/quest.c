@@ -1088,8 +1088,9 @@ static void output_quests(quest_definition *parent, int level) {
      * all quests that are printed in this call will be at the same level */
     prefix[0]='\0';
     for (i=0; i<level; i++) {
-        snprintf(prefix, MAX_BUF, "%s-", prefix);
+        strncat(prefix, "-", MAX_BUF - 1);
     }
+    prefix[MAX_BUF - 1] = '\0';
 
     quest = quests;
     while (quest) {
