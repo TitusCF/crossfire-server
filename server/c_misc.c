@@ -305,7 +305,7 @@ void malloc_info(object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_029),
-                         anims, i = (anims*sizeof(Fontindex)));
+                         anims, i = (anims*sizeof(uint16)));
 
     sum_alloc += i;
     sum_used += i;

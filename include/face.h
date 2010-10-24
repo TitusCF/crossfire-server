@@ -56,7 +56,7 @@ typedef struct animations_struct {
     uint8 num_animations;   /**< How many different faces to animate */
     uint8 facings;          /**< How many facings (1,2,4,8) */
     uint16 num;             /**< Where we are in the array */
-    Fontindex *faces;       /**< The different animations */
+    uint16 *faces;          /**< The different animations */
 } Animations;
 
 #endif /* FACE_H */

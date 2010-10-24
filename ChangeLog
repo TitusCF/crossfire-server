@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove 'Fontindex' type and use 'uint16', for coherence.
+Nicolas Weeger 2010-10-24
+
 server/player.c: Bug fix for new character creation - give racial items
    before applying class so special racial faces stick.
 MSW 2010-10-23

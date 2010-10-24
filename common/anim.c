@@ -70,7 +70,7 @@ void init_anim(void) {
      */
     animations[0].name = add_string("###none");
     animations[0].num_animations = 1;
-    animations[0].faces = malloc(sizeof(Fontindex));
+    animations[0].faces = malloc(sizeof(uint16));
     animations[0].faces[0] = 0;
     animations[0].facings = 0;
 
@@ -101,7 +101,7 @@ void init_anim(void) {
             animations[num_animations].num = num_animations; /* for bsearch */
             animations[num_animations].facings = 1;
         } else if (!strncmp(buf, "mina", 4)) {
-            animations[num_animations].faces = malloc(sizeof(Fontindex)*num_frames);
+            animations[num_animations].faces = malloc(sizeof(uint16)*num_frames);
             for (i = 0; i < num_frames; i++)
                 animations[num_animations].faces[i] = faces[i];
             animations[num_animations].num_animations = num_frames;

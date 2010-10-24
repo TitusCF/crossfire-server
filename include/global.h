@@ -83,8 +83,6 @@ typedef signed char     sint8;
 /** Strings that should be manipulated through add_string() and free_string(). */
 typedef const char *sstring;
 
-typedef unsigned short Fontindex;
-
 #ifdef WIN32
 /* Python plugin stuff defines SIZEOF_LONG_LONG as 8, and besides __int64 is a 64b type on MSVC...
  * So let's force the typedef */
