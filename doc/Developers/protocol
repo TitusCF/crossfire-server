@@ -424,10 +424,14 @@ C->S: createplayer <name><password>
    race <race arch name>
    class <class arch name>
    <statname> <statvalue> (eg, Str 18)
+   starting_map <map arch>
 
    The client should query the player for these values through some
    method.  The statvalues that are sent are the values _before_
    race and class adjustments.
+
+   The <map arch> for starting_map is the value of INFO_MAP_ARCH_NAME as returned
+   by the 'startingmap' requestinfo.
 
 
    createplayer can return failure in case of invalid name, name
@@ -1571,9 +1575,9 @@ S->C: replyinfo <info_type> [options] <data>
         or the end of the packet is reached.
 
     newcharinfo (no parameters)
-        This sends information to the client for creating a new character.  The
-        information sent multiple length prefixed strings - each string 
-        corresponds to an entire line/variable set.
+        This sends information to the client for creating a new character through
+        the 'createplayer' command.  The information sent multiple length prefixed
+        strings - each string corresponds to an entire line/variable set.
 
         The idea behind this is that new types/options for character creation
         can get added without needing to rewrite the entire protocol commands
@@ -1596,18 +1600,18 @@ S->C: replyinfo <info_type> [options] <data>
             type is a single character which denotes the type of data
             that is in this line, currently values are:
 
-            R: required - needed value in the createchar command.
-            O: optional - if not present in createchar, server can fill in
+            R: required - needed value in the createplayer command.
+            O: optional - if not present in createplayer, server can fill in
                  some default value.  If a client does not understand
                  an Optional type but understands all the other types,
                  it could still create the character.
 
             V: values - this contains some values which are used in character
                 creation but may not be sent back in the actual
-                createchar command.  An example here is the number of
+                createplayer command.  An example here is the number of
                 points the player has to spend on stats - the client
                 does not send that back, but rather sends the actual
-                stat values during the createchar command, but it
+                stat values during the createplayer command, but it
                 needs this value to do so.
 
             I: Informational - some piece of information that the
@@ -1641,6 +1645,10 @@ S->C: replyinfo <info_type> [options] <data>
                 a stat was to get removed, or a new one added, this
                 provides a mechanism for the client to know it.
 
+            startingmap: Provide choice of starting maps for the player.
+                List of maps is provided through the 'startingmap'
+                requestinfo command.
+
         <values> value tends to be specific to the variable itself.
             In general, the client will need to be able to parse each
             required and value variable - if it is unable to do so, it
@@ -1668,8 +1676,6 @@ S->C: replyinfo <info_type> [options] <data>
         R class requestinfo
 
         Possible future extensions (these are provided as an example):
-        O startingmap requestinfo
-          : Provide choice of starting maps
         V statpointcosts 0 1 2 3 4 ....
           : If different stat points have different costs (nonlinear) this can
           be used to return a list of the costs.  Instead of values, this could
