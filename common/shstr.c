@@ -386,9 +386,6 @@ char *ss_dump_table(int what, char *buf, size_t size) {
  * size of buf1. Can be NULL.
  * @return
  * true if overflow will occur.
- *
- * @todo
- * This could maybe overflow. Make sure it doesn't.
  */
 int buf_overflow(const char *buf1, const char *buf2, size_t bufsize) {
     size_t len1 = 0, len2 = 0;
@@ -397,7 +394,9 @@ int buf_overflow(const char *buf1, const char *buf2, size_t bufsize) {
         len1 = strlen(buf1);
     if (buf2)
         len2 = strlen(buf2);
-    if ((len1+len2) >= bufsize)
+    if (len2 >= bufsize)
+        return 1;
+    if (len1 >= (bufsize-len2))
         return 1;
     return 0;
 }
