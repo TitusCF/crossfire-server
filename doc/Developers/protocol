@@ -1517,6 +1517,8 @@ S->C: replyinfo <info_type> [options] <data>
         name <namelen><namedata>
         msg <desc len><description>
         stats <statno1><adj1><statno2><adj2>....0
+        choice <len><choice name><len><choice description>
+             <len>arch name<len>arch_desc(repeat arch)0
 
         name is the name that the player sees (data returned by
         race_list above is archetype name).  It is a length
@@ -1538,6 +1540,32 @@ S->C: replyinfo <info_type> [options] <data>
         description.  NOTE: The length parameter here is unusual in
         that most strings use only an 8 bit length value, but for
         messages that would not be long enough, hence the 16 bit value.
+
+        choice is a choice of values to present the player for character
+        creation - it is a choice of one of many archetypes - it could
+        be skill, ability, or potentially even choice of items.  All
+        of the field in the choice are 1 byte length prefixed, since
+        they may contain spaces.  An example values (where | would
+        be the length value - | is used to improve readability):
+
+        choice |race_choice_1|Choose a racial skill|
+            skill_smithery|Smithery|skill_jeweler|jeweler0
+
+        When the client replies in the create player, it would include
+        the choice name and archetype name, eg:
+
+        choice race_choice_1 skill_smithery
+
+        This makes it easier for the server to check the returned values -
+        if it is a racial skill, it knows to check the race, if a class
+        skill, it checks the class, etc.
+
+        There is currently no way to do something like 'choose 2 out of
+        4 skills' - however, this could be done by using multiple choice
+        (choice race_choice_1 ... choice race_choice_2 ...)
+
+        For the choice command, all the passed values come in pairs -
+        choice name/choice description, arch_name/arch_description
 
         Note that the race archetype name will be included in the replyinfo
         header, eg, 'replyinfo race_info dwarf_pl'.

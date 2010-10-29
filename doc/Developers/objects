@@ -48,6 +48,8 @@ Sections:
   	N. POISONOUS BOOZ
 	O. Duplicators
 	P. Transports
+    Q. Dragon Focus
+    R. Races & Classes
 
 5. Flags & specifications for objects
 
@@ -2062,6 +2064,127 @@ damaged.
 
 As of this writing, transports are non living creatures, and thus can't
 be damaged.
+
+Q. Dragon Focus
+===============
+
+The dragon focus is a special item that is used during character
+creation - it is used to set a dragon characters elemental focus.
+During login, the archetype is looked up based on selection from the
+client.  Since auto_apply is set in the archetype of the focus, the
+object is then automatically applied to the character.
+
+The apply code finds the dragon_ability_force in the player, and copies
+values from the dragon focus into the dragon ability or player:
+
+dragon ability->exp (which becomes attacktype)
+player->animation
+player->face
+player->title
+
+Note: This logic could be changed with a little amount of work to
+work more generically for other races, allowing some degree of customization
+for the face.
+
+R. Races & Classes
+===================
+
+Objects of type RACE and CLASS and objects used for initial character  creation.
+
+The characters base archetype becomes that of the race - thus, any fields
+set in the race archetype will be set in the player object - this is
+all fields - ac, hp, body information, see in dark, etc.
+
+The actual attributes (str, dex, etc) are modifiers to the base
+attributes - whether these are rolled or a point system is used.
+Thus, Str +2 means the character gets +2 to strength.
+
+For the class, the stat modifiers are also applied.  Normally, the
+character will have the face/animation of the class - if a character
+choose wizard, they have a wizard looking image.
+
+However, if the race contains the NOCLASSFACECHANGE object, the
+character will use the racial face.  This is used for the nonhuman
+races where that is a more noticable feature than the class faces.
+The NOCLASSFACECHANGE can be made present by putting it in the racial
+treasure list.
+
+For all characters, their starting skills and items is that generated
+from both the racial and class treasure lists.  This can result in
+duplicate treasure in rare cases, but in general, racial treasure
+lists contain skills and abilities, and the class treasure list will
+contain items.
+
+With new character creation method, additional choices can be
+presented to the character - the code will check for racial/class
+choices, and send them to the client where the player can make a
+choice.
+
+The key/value fields are:
+
+race_choice_%d archetype1 archetype2 ...
+race_choice_description_%d description of this choice
+
+And example for dragons:
+race_choice_1 dragon_ability_force_fire dragon_ability_force_cold
+dragon_ability_force_electricity dragon_ability_force_poison
+race_choice_description_1 Choose a dragon focus
+
+This data in a slightly different form will be sent to the client when
+the requestinfo class/race is made.  The format for races and classes
+is the same, except that for classes, it will be class_choice_%d
+
+Any type of items could be present here - skills, armor, weapons,
+spells, special abilities, etc.
+
+If auto_apply is set in the archetype, it will be applied (using usual
+apply routines) when the character is created.  This can be useful for
+certain items where inserting a force object does not have the desired
+effect - a specific example here is the dragon focuses - depending on
+the focus, it modifies the character object directly.
+
+Note that both race_choice_%d and race_choice_description_%d must be
+present - if only one is present, the choices will not be sent.
+
+The numeric numbers must start at one and increase by one.  For
+example, if there is race_choice_1 and race_choice_3 (but no _2), _3
+will not be sent, and processing will stop once _2 is not found.
+
+The reason for multiple lines is because there may be multiple
+disjoint choices.  For example:
+
+class_choice_description_1 Choose your bonus skill
+class_choice_description_2 Choose your starting armor
+class_choice_description_3 Choose your starting weapon
+
+(the archetype choice is ommitted from above list to make it
+clearer).  From that list, there are 3 different choices for the
+player to make - while they may be related, one can not condense those
+into a single entry.
+
+For each choice entry, the player is only able to choose one of the
+values - if you want the player to be able to choose multiple values,
+this could be done with repeating choices with same values, eg:
+
+class_choice_1 arch1 arch2 arch3 arch4
+class_choice_2 arch1 arch2 arch3 arch4
+
+Where  the archetypes in both lists are exactly the same - the client
+will present both lists, so the player is then able to choose 2 of the
+4 items.  Unfortunately, there is no clear way for the client to
+present the player from choosing the same item twice.  In some cases,
+this could be OK (for example, starting with 2 healing potions vs 1
+healing potion and one bow), but in other cases would not be good if
+they start with 2 of the same skill or 2 of the same spell.
+
+Note it is possible here to also provide starting packages - the
+archetype in question could have a treasure list which gives the
+character several different items.  A reasonable example of this might
+be spellcaster packages - the player chooses wizard class, then
+chooses from amongst the pyromance, evoker, etc, sub classes.  If they
+select pyromancer, they get appropriate skill as well as appropriate
+spells for that subclass.
+
 
 *******************************************************************************
 5. Flags & specifications: (usage: flag value)
