@@ -1477,7 +1477,7 @@ static int kill_object(object *op, int dam, object *hitter) {
     int battleg = 0;  /* true if op standing on battleground */
     int pk = 0;       /* true if op and what controls hitter are both players*/
     object *owner = NULL;
-    object *skop = NULL;
+    const object *skop = NULL;
     sstring death_animation;
 
     if (op->stats.hp >= 0)
