@@ -1520,10 +1520,17 @@ static int kill_object(object *op, int dam, object *hitter) {
         remove_friendly_object(op);
         owner = object_get_owner(op);
         if (owner != NULL
-        && owner->type == PLAYER
-        && owner->contr->ranges[range_golem] == op) {
-            owner->contr->ranges[range_golem] = NULL;
-            owner->contr->golem_count = 0;
+        && owner->type == PLAYER) {
+            if (owner->contr->ranges[range_golem] == op) {
+                owner->contr->ranges[range_golem] = NULL;
+                owner->contr->golem_count = 0;
+            }
+
+            /*play_sound_player_only(owner1->contr, SOUND_PET_IS_KILLED, 0, 0);*/
+            /* Maybe we should include the owner that killed this, maybe not */
+            draw_ext_info_format(NDI_UNIQUE, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_DIED,
+                                 "Your pet, the %s, is killed by %s.",
+                                 op->name, hitter->name);
         } else
             LOG(llevError, "BUG: hit_player(): Encountered golem without owner.\n");
 
@@ -1723,18 +1730,6 @@ static int kill_object(object *op, int dam, object *hitter) {
     } /* end if person didn't kill himself */
 
     if (op->type != PLAYER) {
-        if (QUERY_FLAG(op, FLAG_FRIENDLY)) {
-            object *owner1 = object_get_owner(op);
-
-            if (owner1 != NULL && owner1->type == PLAYER) {
-                /*play_sound_player_only(owner1->contr, SOUND_PET_IS_KILLED, 0, 0);*/
-                /* Maybe we should include the owner that killed this, maybe not */
-                draw_ext_info_format(NDI_UNIQUE, 0, owner1, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_DIED,
-                                     "Your pet, the %s, is killed by %s.",
-                                     op->name, hitter->name);
-            }
-            remove_friendly_object(op);
-        }
         object_remove(op);
         object_free_drop_inventory(op);
     /* Player has been killed! */
