@@ -57,7 +57,7 @@
 #include <spells.h>
 #include <skills.h>
 
-static int attack_hth(object *pl, int dir, const char *string, object *skill);
+static void attack_hth(object *pl, int dir, const char *string, object *skill);
 static int attack_melee_weapon(object *op, int dir, const char *string, object *skill);
 
 /**
@@ -496,23 +496,23 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
         /* note that the following 'attack' skills gain exp through hit_player() */
 
     case SK_KARATE:
-        (void)attack_hth(op, dir, "karate-chopped", skill);
+        attack_hth(op, dir, "karate-chopped", skill);
         break;
 
     case SK_PUNCHING:
-        (void)attack_hth(op, dir, "punched", skill);
+        attack_hth(op, dir, "punched", skill);
         break;
 
     case SK_FLAME_TOUCH:
-        (void)attack_hth(op, dir, "flamed", skill);
+        attack_hth(op, dir, "flamed", skill);
         break;
 
     case SK_CLAWING:
-        (void)attack_hth(op, dir, "clawed", skill);
+        attack_hth(op, dir, "clawed", skill);
         break;
 
     case SK_WRAITH_FEED:
-        (void)attack_hth(op, dir, "fed upon", skill);
+        attack_hth(op, dir, "fed upon", skill);
         break;
 
     case SK_ONE_HANDED_WEAPON:
@@ -1301,10 +1301,8 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
  * describes the attack ("claw", "punch", ...).
  * @param skill
  * attack skill used.
- * @return
- * 0 if no attack was done, non zero else.
  */
-static int attack_hth(object *pl, int dir, const char *string, object *skill) {
+static void attack_hth(object *pl, int dir, const char *string, object *skill) {
     object *weapon;
 
     if (QUERY_FLAG(pl, FLAG_READY_WEAPON)) {
@@ -1318,14 +1316,14 @@ static int attack_hth(object *pl, int dir, const char *string, object *skill) {
                                      MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                                      "You are unable to unwield %s in order to attack with %s.",
                                      weaponname, skill->name);
-                return 0;
+                return;
             } else {
                 draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                               "You unwield your weapon in order to attack.");
             }
         }
     }
-    return skill_attack(NULL, pl, dir, string, skill);
+    skill_attack(NULL, pl, dir, string, skill);
 }
 
 /**
