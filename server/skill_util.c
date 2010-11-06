@@ -651,11 +651,11 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
  * @param op
  * object that was 'defeated'.
  * @param skill
- * used skill.  If none, it should just point back to who.
+ * used skill.  If none, it should just point back to who or be NULL.
  * @return
  * experience for the skill use.
  */
-sint64 calc_skill_exp(object *who, object *op, object *skill) {
+sint64 calc_skill_exp(const object *who, const object *op, const object *skill) {
     sint64 op_exp;
     int op_lvl;
     float base, value, lvl_mult;
