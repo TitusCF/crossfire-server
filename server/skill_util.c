@@ -1086,10 +1086,8 @@ static object *find_best_player_hth_skill(object *op) {
  * describes the damage ("claw", "punch", ...).
  * @param skill
  * skill used to damage.
- * @return
- * true if the attack damaged the opponent.
  */
-static int do_skill_attack(object *tmp, object *op, const char *string, object *skill) {
+static void do_skill_attack(object *tmp, object *op, const char *string, object *skill) {
     int success;
 
     /* For Players only: if there is no ready weapon, and no "attack" skill
@@ -1123,7 +1121,7 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                         draw_ext_info(NDI_BLACK, 0, op,
                                       MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
                                       "You have no unarmed combat skills!");
-                        return 0;
+                        return;
                     }
                 }
             }
@@ -1134,7 +1132,7 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                                          MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                                          "Couldn't change to skill %s",
                                          skill->name);
-                    return 0;
+                    return;
                 }
             }
         } else {
@@ -1150,7 +1148,7 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                 if (!tmp) {
                     LOG(llevError, "Could not find applied weapon on %s\n", op->name);
                     op->current_weapon = NULL;
-                    return 0;
+                    return;
                 } else {
                     char weapon[MAX_BUF];
 
@@ -1204,7 +1202,6 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
                              "You miss %s!",
                              op_name);
     }
-    return success;
 }
 
 /**
