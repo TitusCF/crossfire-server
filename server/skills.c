@@ -991,10 +991,12 @@ int use_oratory(object *pl, int dir, object *skill) {
          */
         if (tmp2->type == PLAYER)
             return 0;
-        if (tmp2->msg)
-            return 0;
 
         if (QUERY_FLAG(tmp2, FLAG_MONSTER)) {
+            const char *value = object_get_value(tmp2, "no_mood_change");
+            if (value && strcmp(value, "1") == 0)
+                return 0;
+
             tmp = tmp2;
             break;
         }
