@@ -1470,7 +1470,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
  * @todo
  * finish commenting what it does exactly.
  */
-static int kill_object(object *op, int dam, object *hitter, int type) {
+static int kill_object(object *op, int dam, object *hitter) {
     char buf[MAX_BUF];
     const char *skill;
     int maxdam = 0;
@@ -2027,7 +2027,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     }
 
     /* See if the creature has been killed */
-    rtn_kill = kill_object(op, maxdam, hitter, type);
+    rtn_kill = kill_object(op, maxdam, hitter);
     if (rtn_kill != -1)
         return rtn_kill;
 
