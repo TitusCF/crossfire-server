@@ -58,7 +58,7 @@
 #include <skills.h>
 
 static void attack_hth(object *pl, int dir, const char *string, object *skill);
-static int attack_melee_weapon(object *op, int dir, const char *string, object *skill);
+static void attack_melee_weapon(object *op, int dir, const char *string, object *skill);
 
 /**
  * Will contain a number-name mapping for skills, initialized by init_skills().
@@ -1345,15 +1345,13 @@ static void attack_hth(object *pl, int dir, const char *string, object *skill) {
  * describes the attack ("claw", "punch", ...).
  * @param skill
  * attack skill used.
- * @return
- * 0 if no attack was done, non zero else.
  */
-static int attack_melee_weapon(object *op, int dir, const char *string, object *skill) {
+static void attack_melee_weapon(object *op, int dir, const char *string, object *skill) {
     if (!QUERY_FLAG(op, FLAG_READY_WEAPON)) {
         if (op->type == PLAYER)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                           "You have no ready weapon to attack with!");
-        return 0;
+        return;
     }
-    return skill_attack(NULL, op, dir, string, skill);
+    skill_attack(NULL, op, dir, string, skill);
 }
