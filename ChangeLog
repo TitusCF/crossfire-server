@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Have singing honor the 'no_mood_change' flag.
+Nicolas Weeger 2010-11-06
+
 Partial fix for #3093752: Too hard to get experience in oratory (part 3).
 Allow orating to monsters with a message (why not?). This also
 enables to orate to monsters on signs.

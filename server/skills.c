@@ -1121,6 +1121,7 @@ int singing(object *pl, int dir, object *skill) {
     mapstruct *m;
     sint16  x, y;
     char name[MAX_BUF];
+    const char *value;
 
     if (pl->type != PLAYER)
         return 0;   /* only players use this skill */
@@ -1169,6 +1170,11 @@ int singing(object *pl, int dir, object *skill) {
              * over and over again and getting exp for it.
              */
             chance = skill->level*2+(pl->stats.Cha-5-tmp->stats.Int)/2;
+
+            value = object_get_value(tmp, "no_mood_change");
+            if (value && strcmp(value, "1") == 0)
+                chance = 0;
+
             if (chance && tmp->level*2 < random_roll(0, chance-1, pl, PREFER_HIGH)) {
                 SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
                 query_name(tmp, name, MAX_BUF);
