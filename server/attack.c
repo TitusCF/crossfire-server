@@ -1471,7 +1471,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
  * finish commenting what it does exactly.
  */
 static int kill_object(object *op, int dam, object *hitter) {
-    char buf[MAX_BUF];
+    char kill_message[MAX_BUF];
     const char *skill;
     int maxdam = 0;
     int battleg = 0;  /* true if op standing on battleground */
@@ -1654,7 +1654,7 @@ static int kill_object(object *op, int dam, object *hitter) {
 
         query_name(op, name_op, MAX_BUF);
         query_name(hitter, name_hitter, MAX_BUF);
-        snprintf(buf, sizeof(buf), "%s%s killed %s%s with %s%s.", owner_prefix, owner->name, op_prefix, name_op, name_hitter, battleg ? " (duel)" : (pk ? " (pk)" : ""));
+        snprintf(kill_message, sizeof(kill_message), "%s%s killed %s%s with %s%s.", owner_prefix, owner->name, op_prefix, name_op, name_hitter, battleg ? " (duel)" : (pk ? " (pk)" : ""));
     } else {
         const char *hitter_prefix;
         const char *op_prefix;
@@ -1662,7 +1662,7 @@ static int kill_object(object *op, int dam, object *hitter) {
         hitter_prefix = !battleg && pk && hitter->contr != NULL && !hitter->contr->peaceful ? "hostile " : "";
         op_prefix = !battleg && pk && op->contr != NULL && !op->contr->peaceful ? "hostile " : "";
 
-        snprintf(buf, sizeof(buf), "%s%s killed %s%s%s%s.", hitter_prefix, hitter->name, op_prefix, op->name,
+        snprintf(kill_message, sizeof(kill_message), "%s%s killed %s%s%s%s.", hitter_prefix, hitter->name, op_prefix, op->name,
                       (QUERY_FLAG(hitter, FLAG_MONSTER)) || hitter->type == PLAYER ?
                       " in hand to hand combat" : "", battleg ? " (duel)" : (pk ? " (pk)" : ""));
     }
@@ -1673,7 +1673,7 @@ static int kill_object(object *op, int dam, object *hitter) {
         skill = skop->skill;
 
     draw_ext_info(NDI_ALL, op->type == PLAYER ? 1 : 10, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                  buf);
+                  kill_message);
 
 
     /* If you didn't kill yourself, and your not the wizard */
