@@ -556,10 +556,10 @@ static void stop_jump(object *pl) {
  * @param skill
  * jumping skill.
  * @return
- * experience gained when jumping into another living thing.
+ * 1 if jump was successful, 0 else.
  */
 static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
-    int i, exp = 0, dx = freearr_x[dir], dy = freearr_y[dir], mflags;
+    int i, dx = freearr_x[dir], dy = freearr_y[dir], mflags;
     sint16 x, y;
     mapstruct *m;
 
@@ -610,9 +610,9 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
                 if (tmp->type != PLAYER
                 || (pl->type == PLAYER && pl->contr->party == NULL)
                 || (pl->type == PLAYER && tmp->type == PLAYER && pl->contr->party != tmp->contr->party))
-                    exp = skill_attack(tmp, pl, pl->facing, "kicked", skill); /* pl makes an attack */
+                    skill_attack(tmp, pl, pl->facing, "kicked", skill); /* pl makes an attack */
 
-                return exp;  /* note that calc_skill_exp() is already called by skill_attack() */
+                return 1;
             }
             /* If the space has fly on set (no matter what the space is),
              * we should get the effects - after all, the player is
@@ -625,7 +625,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
                 if (pl->contr)
                     esrv_map_scroll(&pl->contr->socket, dx, dy);
                 stop_jump(pl);
-                return calc_skill_exp(pl, NULL, skill);
+                return 1;
             }
         } FOR_MAP_FINISH();
         pl->x = x;
@@ -635,7 +635,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
             esrv_map_scroll(&pl->contr->socket, dx, dy);
     }
     stop_jump(pl);
-    return calc_skill_exp(pl, NULL, skill);
+    return 1;
 }
 
 /**
@@ -652,7 +652,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
  * @param skill
  * jumping skill.
  * @return
- * experience gained for jumping.
+ * 1 if jump was successful, 0 else
  */
 int jump(object *pl, int dir, object *skill) {
     int spaces = 0, stats;
