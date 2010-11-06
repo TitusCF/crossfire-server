@@ -1054,17 +1054,21 @@ int use_oratory(object *pl, int dir, object *skill) {
 
     /* Ok, got a 'sucker' lets try to make them a follower */
     if (chance > 0 && tmp->level < random_roll(0, chance-1, pl, PREFER_HIGH)-1) {
+        sint64 exp;
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                              "You convince the %s to become your follower.",
                              name);
 
         object_set_owner(tmp, pl);
+        /* compute exp before setting to 0, else the monster's experience is not taken into account. */
+        tmp->stats.exp /= 5; /* why 5? because. */
+        exp = calc_skill_exp(pl, tmp, skill);
         tmp->stats.exp = 0;
         add_friendly_object(tmp);
         SET_FLAG(tmp, FLAG_FRIENDLY);
         tmp->attack_movement = PETMOVE;
-        return calc_skill_exp(pl, tmp, skill);
+        return exp;
     }
 
     /* Charm failed.  Creature may be angry now */
