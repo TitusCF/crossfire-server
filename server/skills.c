@@ -1040,6 +1040,8 @@ int use_oratory(object *pl, int dir, object *skill) {
                                  "You convince the %s to follow you instead!",
                                  name);
 
+            FREE_AND_COPY(tmp->skill, skill->skill);
+
             /* Abuse fix - don't give exp since this can otherwise
              * be used by a couple players to gets lots of exp.
              */
@@ -1068,6 +1070,8 @@ int use_oratory(object *pl, int dir, object *skill) {
         add_friendly_object(tmp);
         SET_FLAG(tmp, FLAG_FRIENDLY);
         tmp->attack_movement = PETMOVE;
+        /* keep oratory skill, so exp goes where it should if the pet kills something */
+        FREE_AND_COPY(tmp->skill, skill->skill);
         return exp;
     }
 
