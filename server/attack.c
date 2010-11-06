@@ -1555,13 +1555,6 @@ static int kill_object(object *op, int dam, object *hitter) {
 
     /* Player killed something */
     if (owner->type == PLAYER) {
-        char name_op[MAX_BUF], name_hitter[MAX_BUF];
-
-        query_name(op, name_op, MAX_BUF);
-        if (hitter)
-            query_name(hitter, name_hitter, MAX_BUF);
-        else
-            name_hitter[0] = '\0';
 
         /* Log players killing other players - makes it easier to detect
          * and filter out malicious player killers - that is why the
