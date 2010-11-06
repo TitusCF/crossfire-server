@@ -864,10 +864,10 @@ int monster_move(object *op) {
          */
         if (QUERY_FLAG(op, FLAG_RUN_AWAY)) {
             part->stats.wc += 10;
-            (void)skill_attack(enemy, part, 0, NULL, NULL);
+            skill_attack(enemy, part, 0, NULL, NULL);
             part->stats.wc -= 10;
         } else
-            (void)skill_attack(enemy, part, 0, NULL, NULL);
+            skill_attack(enemy, part, 0, NULL, NULL);
     } /* if monster is in attack range */
 
     if (QUERY_FLAG(part, FLAG_FREED))   /* Might be freed by ghost-attack or hit-back */

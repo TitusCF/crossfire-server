@@ -506,7 +506,7 @@ sint64 calc_skill_exp(const object *who, const object *op, const object *skill);
 int learn_skill(object *pl, object *scroll);
 void show_skills(object *op, const char *search);
 int use_skill(object *op, const char *string);
-int skill_attack(object *tmp, object *pl, int dir, const char *string, object *skill);
+void skill_attack(object *tmp, object *pl, int dir, const char *string, object *skill);
 /* spell_attack.c */
 int fire_bolt(object *op, object *caster, int dir, object *spob);
 void explode_bullet(object *op);

@@ -1229,10 +1229,8 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
  * describes the damage ("claw", "punch", ...).
  * @param skill
  * attack skill.
- * @return
- * 0 if no attack, non zero if an attack was done.
  */
-int skill_attack(object *tmp, object *pl, int dir, const char *string, object *skill) {
+void skill_attack(object *tmp, object *pl, int dir, const char *string, object *skill) {
     sint16 tx, ty;
     mapstruct *m;
     int mflags;
@@ -1253,12 +1251,12 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
 
         mflags = get_map_flags(m, &m, tx, ty, &tx, &ty);
         if (mflags&P_OUT_OF_MAP)
-            return 0;
+            return;
 
         /* space must be blocked for there to be anything interesting to do */
         if (!(mflags&P_IS_ALIVE)
         && !OB_TYPE_MOVE_BLOCK(pl, GET_MAP_MOVE_BLOCK(m, tx, ty))) {
-            return 0;
+            return;
         }
 
         FOR_MAP_PREPARE(m, tx, ty, tmp2)
@@ -1268,7 +1266,7 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
                 /* Don't attack party members */
                 if ((pl->type == PLAYER && tmp2->type == PLAYER)
                 && (pl->contr->party != NULL && pl->contr->party == tmp2->contr->party))
-                    return 0;
+                    return;
                 tmp = tmp2;
                 break;
             }
@@ -1278,10 +1276,10 @@ int skill_attack(object *tmp, object *pl, int dir, const char *string, object *s
         if (pl->type == PLAYER)
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                           "There is nothing to attack!");
-        return 0;
+        return;
     }
 
-    return do_skill_attack(tmp, pl, string, skill);
+    do_skill_attack(tmp, pl, string, skill);
 }
 
 /**
