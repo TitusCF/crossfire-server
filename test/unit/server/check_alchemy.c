@@ -32,6 +32,8 @@
 
 #include <stdlib.h>
 #include <check.h>
+#include <global.h>
+#include <assert.h>
 
 void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
@@ -41,8 +43,36 @@ void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST(test_empty) {
-    /*TESTME test not yet developped*/
+/* copied from alchemy.c */
+static float recipe_chance(const recipe *rp, const object *skill) {
+    assert(rp);
+    assert(skill);
+
+    if (skill->level < rp->diff - 10)
+        return MAX(.01, .3 - (rp->diff - 10 - skill->level) * .03);
+
+    if (skill->level <= rp->diff + 10)
+        return .5 + .02 * (float)(skill->level - rp->diff);
+
+    return MIN(.95, .70 + (skill->level - rp->diff - 10) * .01);
+}
+
+
+START_TEST(test_recipe_chance) {
+    recipe rp;
+    object skill;
+    float chance;
+
+    for (rp.diff = 0; rp.diff < 150; rp.diff++) {
+        for (skill.level = 0; skill.level < 150; skill.level++) {
+            chance = recipe_chance(&rp, &skill);
+            /* use .009 because of floating point issues */
+            fail_unless(chance >= .00999, "success can't be less than .01 but got %f for %d rp, %d skill", chance, rp.diff, skill.level);
+            fail_unless(chance <= .95, "success can't be more than .95 but got %f for %d rp, %d skill", chance, rp.diff, skill.level);
+            /*printf("%d %d => %f\n", rp.diff, skill.level, chance);*/
+        }
+        /*printf("\n");*/
+    }
 }
 END_TEST
 
@@ -54,7 +84,7 @@ Suite *alchemy_suite(void) {
     tcase_add_checked_fixture(tc_core, setup, teardown);
 
     suite_add_tcase(s, tc_core);
-    tcase_add_test(tc_core, test_empty);
+    tcase_add_test(tc_core, test_recipe_chance);
 
     return s;
 }

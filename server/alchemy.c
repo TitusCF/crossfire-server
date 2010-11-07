@@ -40,6 +40,7 @@
 #endif
 #include <skills.h>
 #include <spells.h>
+#include <assert.h>
 
 /** define this for some helpful debuging information */
 #if 0
@@ -88,6 +89,28 @@ static const char *cauldron_sound(void) {
     int size = sizeof(cauldron_effect)/sizeof(char *);
 
     return cauldron_effect[rndm(0, size-1)];
+}
+
+/**
+ * Compute the success probability of a recipe.
+ *
+ * The scale is kind of linear, with 3 steps depending on the level difference between recipe and skill.
+ *
+ * @param rp recipe to attempt.
+ * @param skill skill being used.
+ * @return chance between 0.01 and .95.
+ */
+static float recipe_chance(const recipe *rp, const object *skill) {
+    assert(rp);
+    assert(skill);
+
+    if (skill->level < rp->diff - 10)
+        return MAX(.01, .3 - (rp->diff - 10 - skill->level) * .03);
+
+    if (skill->level <= rp->diff + 10)
+        return .5 + .02 * (float)(skill->level - rp->diff);
+
+    return MIN(.95, .70 + (skill->level - rp->diff - 10) * .01);
 }
 
 /**
@@ -197,7 +220,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
             /* create the object **FIRST**, then decide whether to keep it. */
             if ((item = attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, attempt_shadow_alchemy)) != NULL) {
                 /*  compute base chance of recipe success */
-                success_chance = ((float)ability/(float)(rp->diff*(item->level+2)));
+                success_chance = recipe_chance(rp, skop);
 
 #ifdef ALCHEMY_DEBUG
                 LOG(llevDebug, "percent success chance =  %f ab%d / diff%d*lev%d\n", success_chance, ability, rp->diff, item->level);
