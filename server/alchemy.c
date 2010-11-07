@@ -756,7 +756,7 @@ static void remove_contents(object *first_ob, object *save_item) {
 /**
  *"Danger" level, will determine how bad the backfire
  * could be if the user fails to concoct a recipe properly. Factors include
- * the number of ingredients, the length of the name of each ingredient,
+ * the number of ingredients, the magical nature of ingredients,
  * the user's effective level, the user's Int and the enchantment on the
  * mixing device (aka "cauldron"). Higher values of 'danger' indicate more
  * danger. Note that we assume that we have had the caster ready the alchemy
@@ -773,8 +773,7 @@ static void remove_contents(object *first_ob, object *save_item) {
  * danger value.
  */
 static int calc_alch_danger(object *caster, object *cauldron, recipe *rp) {
-    char name[MAX_BUF];
-    int danger = 0, nrofi = 0;
+    int danger = 0;
 
     /* Knowing alchemy skill reduces yer risk */
     danger -= caster->chosen_skill ? caster->chosen_skill->level : caster->level;
@@ -785,17 +784,14 @@ static int calc_alch_danger(object *caster, object *cauldron, recipe *rp) {
     /* Higher Int, lower the risk */
     danger -= 3*(caster->stats.Int-15);
 
-    /* Ingredients. Longer names usually mean rarer stuff.
-     * Thus the backfire is worse. Also, more ingredients
-     * means we are attempting a more powerfull potion,
-     * and thus the backfire will be worse.  */
+    /* Ingredients. */
     FOR_INV_PREPARE(cauldron, item) {
-        strcpy(name, item->name);
-        if (item->title)
-            snprintf(name, sizeof(name), "%s %s", item->name, item->title);
-        danger += (strtoint(name)/1000)+3;
-        nrofi++;
+        danger += item->weight / 100;
+        danger++;
+        if (QUERY_FLAG(item, FLAG_CURSED) || QUERY_FLAG(item, FLAG_DAMNED))
+            danger += 5;
     } FOR_INV_FINISH();
+
     if (rp == NULL)
         danger += 110;
     else
