@@ -72,16 +72,16 @@ static const char *const cauldron_effect [] = {
 
 
 static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster);
-static recipe *find_recipe(recipelist *fl, int formula, object *ingredients);
+static const recipe *find_recipe(const recipelist *fl, int formula, object *ingredients);
 static int content_recipe_value(object *op);
-static int numb_ob_inside(object *op);
-static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger);
-static object *attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches, int ignore_cauldron);
-static int calc_alch_danger(object *caster, object *cauldron, recipe *rp);
-static object *make_item_from_recipe(object *cauldron, recipe *rp);
+static int numb_ob_inside(const object *op);
+static void alchemy_failure_effect(object *op, object *cauldron, const recipe *rp, int danger);
+static object *attempt_recipe(object *caster, object *cauldron, int ability, const recipe *rp, int nbatches, int ignore_cauldron);
+static int calc_alch_danger(object *caster, object *cauldron, const recipe *rp);
+static object *make_item_from_recipe(object *cauldron, const recipe *rp);
 static void remove_contents(object *first_ob, object *save_item);
 static void adjust_product(object *item, int lvl, int yield);
-static object *find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item);
+static object *find_transmution_ob(object *first_ingred, const recipe *rp, size_t *rp_arch_index, int create_item);
 static void attempt_do_alchemy(object *caster, object *cauldron);
 
 /** Returns a random selection from cauldron_effect[] */
@@ -142,8 +142,8 @@ static float recipe_chance(const recipe *rp, const object *skill) {
  * the cauldron in which alchemy should take place.
  */
 static void attempt_do_alchemy(object *caster, object *cauldron) {
-    recipelist *fl;
-    recipe *rp = NULL;
+    const recipelist *fl;
+    const recipe *rp = NULL;
     float success_chance;
     int numb, ability = 1;
     int formula = 0;
@@ -285,7 +285,7 @@ static int content_recipe_value(object *op) {
  * @return
  * total item count.
  */
-static int numb_ob_inside(object *op) {
+static int numb_ob_inside(const object *op) {
     int o_number = 0;
 
     FOR_INV_PREPARE(op, tmp)
@@ -322,7 +322,7 @@ static int numb_ob_inside(object *op) {
  * generated item, can be NULL if contents were destroyed.
  * @todo check meaning of ability/nbatches.
  */
-static object *attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches, int ignore_cauldron) {
+static object *attempt_recipe(object *caster, object *cauldron, int ability, const recipe *rp, int nbatches, int ignore_cauldron) {
     object *item = NULL, *skop;
     /* this should be passed to this fctn, not effiecent cpu use this way */
     int batches = abs(nbatches);
@@ -408,7 +408,7 @@ static void adjust_product(object *item, int lvl, int yield) {
  * @return the newly created object, NULL if something failed
  */
 
-static object *make_item_from_recipe(object *cauldron, recipe *rp) {
+static object *make_item_from_recipe(object *cauldron, const recipe *rp) {
     const artifact *art = NULL;
     object *item = NULL;
     size_t rp_arch_index;
@@ -460,7 +460,7 @@ static object *make_item_from_recipe(object *cauldron, recipe *rp) {
  * @return
  * NULL if no suitable item was found and create_item is 0, existing or new item else.
  */
-static object *find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item) {
+static object *find_transmution_ob(object *first_ingred, const recipe *rp, size_t *rp_arch_index, int create_item) {
     object *item = NULL;
 
     *rp_arch_index = 0;
@@ -514,7 +514,7 @@ static object *find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_
  * @param danger
  * danger value, the higher the more evil the effect.
  */
-static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int danger) {
+static void alchemy_failure_effect(object *op, object *cauldron, const recipe *rp, int danger) {
     int level = 0;
 
     if (!op || !cauldron)
@@ -795,7 +795,7 @@ static void remove_contents(object *first_ob, object *save_item) {
  * @return
  * danger value.
  */
-static int calc_alch_danger(object *caster, object *cauldron, recipe *rp) {
+static int calc_alch_danger(object *caster, object *cauldron, const recipe *rp) {
     int danger = 0;
 
     /* Knowing alchemy skill reduces yer risk */
@@ -936,9 +936,9 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
  * @todo
  * document parameters.
  */
-static recipe *find_recipe(recipelist *fl, int formula, object *ingredients) {
-    recipe *rp;
-    recipe *result;       /* winning recipe, or NULL if no recipe found */
+static const recipe *find_recipe(const recipelist *fl, int formula, object *ingredients) {
+    const recipe *rp;
+    const recipe *result;       /* winning recipe, or NULL if no recipe found */
     int recipes_matching; /* total number of matching recipes so far */
     int transmute_found;  /* records whether a transmuting recipe was found so far */
     size_t rp_arch_index;
