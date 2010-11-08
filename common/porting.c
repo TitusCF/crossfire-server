@@ -531,14 +531,14 @@ char *strerror_local(int errnum, char *buf, size_t size) {
     buf[0] = 0;
     bbuf = (char *)strerror_r(errnum, buf, size);
     if ((buf[0] == 0) && (bbuf != NULL))
-        strncpy(buf, bbuf, size);
+        snprintf(buf, size, "%s", bbuf);
 # else
     if (strerror_r(errnum, buf, size) != 0) {
         /* EINVAL and ERANGE are possible errors from this strerror_r */
         if (errno == ERANGE) {
-            strncat(buf, "Too small buffer.", size);
+            snprintf(buf, size, "Too small buffer.");
         } else if (errno == EINVAL) {
-            strncat(buf, "Error number invalid.", size);
+            snprintf(buf, size, "Error number invalid.");
         }
     }
 # endif /* STRERROR_R_CHAR_P */
