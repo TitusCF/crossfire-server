@@ -521,6 +521,23 @@ void check_summoned(void) {
 }
 
 /**
+ * This ensures all spells have a skill defined, calling fatal() if any error was found.
+ */
+static void check_spells(void) {
+    int abort = 0;
+    const archetype *at;
+
+    for (at = first_archetype; at != NULL; at = at->next) {
+        if (at->clone.type == SPELL && at->clone.skill == NULL) {
+            LOG(llevError, "Spell archetype %s [%s] has no skill defined!\n", at->name, at->clone.name);
+            abort = 1;
+        }
+    }
+    if (abort)
+        fatal(SEE_LAST_ERROR);
+}
+
+/**
  * Loads all archetypes and treasures.
  * First initialises the archtype hash-table (init_archetable()).
  * Reads and parses the archetype file (with the first and second-pass
@@ -581,6 +598,7 @@ static void load_archetypes(void) {
 #ifdef DEBUG
     check_generators();
 #endif
+    check_spells();
     check_summoned();
     close_and_delete(fp, comp);
     LOG(llevDebug, " done\n");
