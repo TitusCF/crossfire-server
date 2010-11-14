@@ -2538,9 +2538,15 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         abort();
     }
     strcpy(pl->maplevel, map->clone.slaying);
-        
+
     pl->ob->x = map->clone.stats.hp;
     pl->ob->y = map->clone.stats.sp;
+
+    /* copy information to bed of reality information, in case the player dies */
+    snprintf(pl->savebed_map, sizeof(pl->savebed_map), "%s", map->clone.slaying);
+    pl->bed_x = pl->ob->x;
+    pl->bed_y = pl->ob->y;
+
     enter_exit(pl->ob, NULL);
     player_set_state(pl, ST_PLAYING);
 

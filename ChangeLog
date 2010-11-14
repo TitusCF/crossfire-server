@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Correctly copy initial map information when using advanced character creation.
+This ensures that if a player dies she'll come back to the initial spot
+instead of the hall of selection.
+Fix for bug #3108219: Wrong map upon player death.
+Nicolas Weeger 2010-11-14
+
 Make skill tools be picked up by the 'magical device' category.
 This implements part of feature request #3094026: auto-pickup option for
 lockpick/flint&steel/torch archetypes
