@@ -488,20 +488,32 @@ static void second_arch_pass(FILE *fp) {
     }
 }
 
-#ifdef DEBUG
 /**
- * Check all generators have the other_arch set.
- * @note
- * doesn't work anymore, as generators can use their inventory.
+ * Check all generators have the other_arch set or something in inventory.
  */
 void check_generators(void) {
-    archetype *at;
+    const archetype *at;
+    int abort = 0;
 
-    for (at = first_archetype; at != NULL; at = at->next)
-        if (QUERY_FLAG(&at->clone, FLAG_GENERATOR) && at->clone.other_arch == NULL)
-            LOG(llevError, "Warning: %s is generator but lacks other_arch.\n", at->name);
+    for (at = first_archetype; at != NULL; at = at->next) {
+        if (!QUERY_FLAG(&at->clone, FLAG_GENERATOR))
+            continue;
+
+        if (!QUERY_FLAG(&at->clone, FLAG_CONTENT_ON_GEN) && at->clone.other_arch == NULL) {
+            LOG(llevError, "Fatal: %s is generator without content_on_gen but lacks other_arch.\n", at->name);
+            abort = 1;
+            continue;
+        }
+        if (QUERY_FLAG(&at->clone, FLAG_CONTENT_ON_GEN) && at->clone.inv == NULL) {
+            LOG(llevError, "Fatal: %s is generator with content_on_gen but lacks inventory.\n", at->name);
+            abort = 1;
+            continue;
+        }
+    }
+
+    if (abort)
+        fatal(SEE_LAST_ERROR);
 }
-#endif
 
 /**
  * This checks all summonable items for move_type and other things.
@@ -595,9 +607,7 @@ static void load_archetypes(void) {
     LOG(llevDebug, "arch-pass 2...\n");
     second_arch_pass(fp);
     LOG(llevDebug, " done\n");
-#ifdef DEBUG
     check_generators();
-#endif
     check_spells();
     check_summoned();
     close_and_delete(fp, comp);
