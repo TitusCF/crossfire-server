@@ -1727,9 +1727,9 @@ int check_pick(object *op) {
                     continue;
                 }
 
-            /* wands/staves/rods/horns */
+            /* wands/staves/rods/horns/skill tools */
             if (op->contr->mode&PU_MAGIC_DEVICE)
-                if (tmp->type == WAND || tmp->type == ROD || tmp->type == WEAPON_IMPROVER || tmp->type == ARMOUR_IMPROVER) {
+                if (tmp->type == WAND || tmp->type == ROD || tmp->type == WEAPON_IMPROVER || tmp->type == ARMOUR_IMPROVER || tmp->type == SKILL_TOOL) {
                     pick_up(op, tmp);
                     continue;
                 }
