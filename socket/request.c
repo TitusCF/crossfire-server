@@ -2374,7 +2374,10 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
      * we don't really want to do.
      */
     if (!pl) {
-        pl = add_player(ns, ADD_PLAYER_NEW | ADD_PLAYER_NO_MAP);
+        int flags = ADD_PLAYER_NEW;
+        if (ns->login_method >= 2)
+            flags |= ADD_PLAYER_NO_MAP;
+        pl = add_player(ns, flags);
         SockList_ResetRead(&pl->socket.inbuf);
     } else if (ns->login_method < 2) {
         roll_again(pl->ob);
@@ -2522,33 +2525,35 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
 
-    /* The client could have provided us a map - if so, map will be set
-     * and we don't want to overwrite it
-     */
-    if (!map)
-        map = get_archetype_by_type_subtype(MAP, MAP_TYPE_DEFAULT);
-
-    if (!map) {
-        /* This should never happen - its not something that can
-         * be easily worked around without other weird issues,
-         * like having 2 classes.
+    if (ns->login_method >= 2) {
+        /* The client could have provided us a map - if so, map will be set
+         * and we don't want to overwrite it
          */
-        LOG(llevError, "Can not find object of type MAP subtype MAP_TYPE_DEFAULT.\n");
-        LOG(llevError, "Are the archetype files up to date?  Can not continue.\n");
-        abort();
+        if (!map)
+            map = get_archetype_by_type_subtype(MAP, MAP_TYPE_DEFAULT);
+
+        if (!map) {
+            /* This should never happen - its not something that can
+             * be easily worked around without other weird issues,
+             * like having 2 classes.
+             */
+            LOG(llevError, "Can not find object of type MAP subtype MAP_TYPE_DEFAULT.\n");
+            LOG(llevError, "Are the archetype files up to date?  Can not continue.\n");
+            abort();
+        }
+        strcpy(pl->maplevel, map->clone.slaying);
+
+        pl->ob->x = map->clone.stats.hp;
+        pl->ob->y = map->clone.stats.sp;
+
+        /* copy information to bed of reality information, in case the player dies */
+        snprintf(pl->savebed_map, sizeof(pl->savebed_map), "%s", map->clone.slaying);
+        pl->bed_x = pl->ob->x;
+        pl->bed_y = pl->ob->y;
+
+        enter_exit(pl->ob, NULL);
+        player_set_state(pl, ST_PLAYING);
     }
-    strcpy(pl->maplevel, map->clone.slaying);
-
-    pl->ob->x = map->clone.stats.hp;
-    pl->ob->y = map->clone.stats.sp;
-
-    /* copy information to bed of reality information, in case the player dies */
-    snprintf(pl->savebed_map, sizeof(pl->savebed_map), "%s", map->clone.slaying);
-    pl->bed_x = pl->ob->x;
-    pl->bed_y = pl->ob->y;
-
-    enter_exit(pl->ob, NULL);
-    player_set_state(pl, ST_PLAYING);
 
     socket_info.nconns--;
     ns->status = Ns_Avail;

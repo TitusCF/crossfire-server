@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix fox unability to create characters with some clients.
+Nicolas Weeger 2010-11-14
+
 Correctly copy initial map information when using advanced character creation.
 This ensures that if a player dies she'll come back to the initial spot
 instead of the hall of selection.
