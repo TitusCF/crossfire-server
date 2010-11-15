@@ -693,7 +693,7 @@ static void knowledge_do_display(object *pl, const knowledge_type *show_only, co
         else
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "You don't know yet any relevant information.");
     }
-};
+}
 
 /**
  * Display all a player's knowledge.
