@@ -14,6 +14,22 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add ability for server to provide choice of starting items for new - 
+characters - add support for sending that data and receiving and validating
+the responses.  Add DRAGON_FOCUS type which changes the dragon focus.
+----
+common/arch.c: Update type checking.  Remove check for < 0 - since
+    unsigned value is passed in, that will never happen.
+doc/Developers/protocol: Add information about choice handling.
+include/define.h: Add dragon_focus type.
+server/ob_types.c: Add call to init_type_dragon_focus()
+socket/requestinfo.c: Include choice options in race/class information
+   we send to client.
+socket/request.c: Add handling of item choices during character creation.
+types/Makefile.am, types/dragon_focus/dragon_focus.c: Add code to
+    handle applying dragon focus object.
+MSW 2010-11-14
+
 Tentative fix fox unability to create characters with some clients.
 Nicolas Weeger 2010-11-14
 

@@ -2286,17 +2286,19 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
 
 }
 
+#define MAX_CHOICES 100
 /**
  * We have received an accountplay command.
  * try to log in and play the character.
  */
 void create_player_cmd(char *buf, int len, socket_struct *ns)
 {
-    char name[MAX_BUF], password[MAX_BUF];
-    int status, nlen;
+    char name[MAX_BUF], password[MAX_BUF], *choices[MAX_CHOICES];
+    int status, nlen, choice_num=0, i;
     SockList sl;
     player *pl;
-    archetype *map=NULL;
+    archetype *map=NULL, *race_a=NULL, *class_a=NULL;
+
     mapstruct *newmap;
 
     SockList_Init(&sl);
@@ -2402,7 +2404,6 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     if (ns->login_method >= 2) {
         int i, j, stat_total=0;
         char *key, *value, *race=NULL, *class=NULL;
-        archetype *race_a=NULL, *class_a=NULL;
 
         /* By setting this to zero, then we can easily
          * check to see if all stats have been set.
@@ -2442,6 +2443,21 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
                     Send_With_Handling(ns, &sl);
                     SockList_Term(&sl);
                     return;
+                }
+            }
+            else if (!strcasecmp(key,"choice")) {
+                /* In general, MAX_CHOICES should be large enough
+                 * to always handle the choices from the client - of
+                 * course, the client could be broken and send us many
+                 * more choices than we should have, so handle that.
+                 */
+                if (choice_num == MAX_CHOICES) {
+                    LOG(llevError, 
+                        "Number of choices receive exceed max value: %d>%d\n",
+                        choice_num, MAX_CHOICES);
+                } else {
+                    choices[choice_num] = value;
+                    choice_num++;
                 }
             }
             else {
@@ -2553,6 +2569,65 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
 
         enter_exit(pl->ob, NULL);
         player_set_state(pl, ST_PLAYING);
+    }
+
+    /* We insert any objects after we have put the player on the map -
+     * this makes things safer, as certain objects may expect a normal
+     * environment.  Note that choice_num will only be set in the
+     * loginmethod > 2, which also checks (and errors out) if the
+     * race/class is not set, which is why explicit checking for
+     * those is not need.
+     */
+    for (i=0; i < choice_num; i++) {
+        char *choiceval, *cp, *token, *lasts;
+        const char *value;
+        archetype *arch;
+        object *op;
+
+        choiceval = strchr(choices[i], ' ');
+        if (!choiceval) {
+            LOG(llevError, "Choice does not specify value: %s\n", choices[i]);
+            continue;
+        }
+        *choiceval=0;
+        choiceval++;
+        value = object_get_value(&race_a->clone, choices[i]);
+        if (!value)
+            value = object_get_value(&class_a->clone, choices[i]);
+
+        if (!value) {
+            LOG(llevError, "Choice not found in archetype: %s\n", choices[i]);
+            continue;
+        }
+        cp = strstr(value, choiceval);
+        if (!cp) {
+            LOG(llevError, "Choice value not found in archetype: %s %s\n",
+                choices[i], choiceval);
+            continue;
+        }
+
+        /* Check to make sure that the matched string is an entire word,
+         * and not a substring (eg, valid choice being great_sword but
+         * we just get sword) - the space after the match should either be a
+         * space or null, and space before match should also be a space
+         * or the start of the string.
+         */
+        if ((cp[strlen(choiceval)] != ' ') && (cp[strlen(choiceval)] != 0) &&
+            (cp != value) && (*(cp-1) != ' ')) {
+
+            LOG(llevError, "Choice value matches substring but not entire word: %s substring %s\n",
+                choiceval, value);
+            continue;
+        }
+        arch = try_find_archetype(choiceval);
+        if (!arch) {
+            LOG(llevError, "Choice value can not find archetype %s\n", choiceval);
+            continue;
+        }
+        op = arch_to_object(arch);
+        op = object_insert_in_ob(op, pl->ob);
+        if (QUERY_FLAG(op, FLAG_AUTO_APPLY))
+            ob_apply(op, pl->ob, 0);
     }
 
     socket_info.nconns--;

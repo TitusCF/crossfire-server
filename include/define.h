@@ -122,7 +122,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define POISON                      7
 #define BOOK                        8
 #define CLOCK                       9
-/*#define FBULLET                   10 */
+#define DRAGON_FOCUS                10    /**< Used during character creation */
 /*#define FBALL                     11 */
 /*#define LIGHTNING                 12 */
 #define ARROW                       13

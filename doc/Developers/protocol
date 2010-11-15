@@ -425,6 +425,7 @@ C->S: createplayer <name><password>
    class <class arch name>
    <statname> <statvalue> (eg, Str 18)
    starting_map <map arch>
+   choice <choice name> <choice value>
 
    The client should query the player for these values through some
    method.  The statvalues that are sent are the values _before_
@@ -433,6 +434,9 @@ C->S: createplayer <name><password>
    The <map arch> for starting_map is the value of INFO_MAP_ARCH_NAME as returned
    by the 'startingmap' requestinfo.
 
+   The choice values are included in the race/class information as retrieved
+   by requestinfo.  If the server is providing choices, it must also accept
+   them in return.
 
    createplayer can return failure in case of invalid name, name
    already in use, invalid race or class, stat value at of range,

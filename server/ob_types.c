@@ -100,4 +100,5 @@ void register_all_ob_types(void) {
     init_type_trigger_button();
     init_type_trigger_pedestal();
     init_type_weapon_improver();
+    init_type_dragon_focus();
 }

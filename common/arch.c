@@ -809,14 +809,19 @@ object *object_create_arch(archetype *at) {
 
 /**
  * Checks if the specified type is a valid one for a Crossfire object.
+ * It would be better (not sure how) if it could automatically
+ * extract this somehow from define.h .  Otherwise, it will complain
+ * if a new type is added, but if a type is removed and this
+ * function not updated, that will no be noticed.
+ *
  * @param type value to check.
  * @return 1 if the type is valid, 0 else.
  */
 int is_type_valid(uint8 type) {
-    if (type < 0 || type >= OBJECT_TYPE_MAX)
+    if (type >= OBJECT_TYPE_MAX)
         return 0;
 
-    if (type >= 10 && type <= 12)
+    if (type == 11 || type == 12)
         return 0;
     if (type == 19 || type == 25 || type == 35 || type == 38 || type == 47)
         return 0;

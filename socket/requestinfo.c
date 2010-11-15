@@ -203,12 +203,75 @@ static void send_arch_info(SockList *sl, const object *op)
     /* Terminator for the stats line */
     SockList_AddChar(sl, 0);
 
-    /* Any addition to data to send should be at the end of the function -
-     * in other words, the order of data sent here should match order of addition.
-     * In that way, the newest additions are sent last, so client can process this
-     * data until it gets something it does not understand - if new data (subfields
-     * in the replyinfo) are sent first, the client basically has to stop processing
-     * once it gets something it does not understand.
+    /* Handle any race/class_choice options -
+     * the code is exactly the same, except for
+     * name of field we are looking for.
+     */
+    if (op->type == CLASS || op->type == PLAYER) {
+        int i=1;
+        char buf[MAX_BUF], buf1[MAX_BUF];
+        const char *value, *value1;
+        char *lasts, *mychoices, *token;
+
+        while (1) {
+            if (op->type == PLAYER) {
+                snprintf(buf, MAX_BUF, "race_choice_description_%d", i);
+                value = object_get_value(op, buf);
+                snprintf(buf, MAX_BUF, "race_choice_%d", i);
+                value1 = object_get_value(op, buf);
+            } else { /* Must be class */
+                snprintf(buf, MAX_BUF, "class_choice_description_%d", i);
+                value = object_get_value(op, buf);
+                snprintf(buf, MAX_BUF, "class_choice_%d", i);
+                value1 = object_get_value(op, buf);
+            }
+
+            if (value && value1) {
+                SockList_AddString(sl, "choice ");
+                SockList_AddLen8Data(sl, buf, strlen(buf));
+                SockList_AddLen8Data(sl, value, strlen(value));
+                i++;
+                /* value1 now contains a list of archetypes */
+                /* Following operations modify string */
+                mychoices = strdup_local(value1);
+
+                /* split_string() requires we have some
+                 * idea on number of fields - in this case,
+                 * we really have no idea - one could conceive
+                 * of a choice of 50 weapons - using strtok_r
+                 * is just as safe and will scale to any amount.
+                 */
+                token = strtok_r(mychoices, " ", &lasts);
+                while (token) {
+                    archetype *arch;
+
+                    arch = try_find_archetype(token);
+                    if (arch) {
+                        SockList_AddLen8Data(sl, token, strlen(token));
+                        SockList_AddLen8Data(sl, arch->clone.name,
+                                             strlen(arch->clone.name));
+                    } else {
+                        LOG(llevError, "send_arch_info: Unable to find archetype %s\n", token);
+                    }
+                    token = strtok_r(NULL, " ", &lasts);
+                }
+                free(mychoices);
+                /* Terminator byte */
+                SockList_AddChar(sl, 0);
+            } else {
+                break;
+            }
+        }
+    }
+
+
+    /* Any addition to data to send should be at the end of the
+     * function - in other words, the order of data sent here should
+     * match order of addition.  In that way, the newest additions are
+     * sent last, so client can process this data until it gets
+     * something it does not understand - if new data (subfields in the
+     * replyinfo) are sent first, the client basically has to stop
+     * processing once it gets something it does not understand.  
      */
 
 }
