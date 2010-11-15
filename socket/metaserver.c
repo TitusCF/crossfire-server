@@ -115,6 +115,7 @@ void metaserver_init(void) {
 
         if (hostbn == (struct hostent *)NULL) {
 #else
+        /* getdomainname is not POSIX */
         if (getdomainname(domain, sizeof(domain))) {
 #endif /* win32 */
             LOG(llevDebug, "metaserver_init: getdomainname failed - will not report hostname\n");
