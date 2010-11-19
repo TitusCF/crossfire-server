@@ -90,7 +90,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
         }
 
         if (!QUERY_FLAG(scroll, FLAG_IDENTIFIED))
-            identify(scroll);
+            scroll = identify(scroll);
 
         if (QUERY_FLAG(scroll, FLAG_CURSED) || QUERY_FLAG(scroll, FLAG_DAMNED)) {
             /* Player made a mistake, let's shake her/him :)

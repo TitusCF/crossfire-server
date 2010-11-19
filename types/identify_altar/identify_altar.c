@@ -74,7 +74,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
     && !QUERY_FLAG(marked, FLAG_IDENTIFIED)
     && need_identify(marked)) {
         if (operate_altar(altar, &money)) {
-            identify(marked);
+            marked = identify(marked);
             draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "You have %s.",
                 ob_describe(marked, originator, desc, sizeof(desc)));
@@ -95,7 +95,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
         && !id->invisible
         && need_identify(id)) {
             if (operate_altar(altar, &money)) {
-                identify(id);
+                id = identify(id);
                 draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                     "You have %s.", ob_describe(id, originator, desc, sizeof(desc)));
                 if (id->msg) {

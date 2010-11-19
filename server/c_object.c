@@ -1466,10 +1466,20 @@ void examine(object *op, object *tmp) {
             skill = find_skill_by_number(op, tmptype->identifyskill);
             if (skill) {
                 id_attempted = 2;
-                exp = identify_object_with_skill(tmp, op, skill, 0);
+
+                /* identify_object_with_skill() may merge tmp with another
+                 * object, so once that happens, we really can not do
+                 * any further processing with tmp.  It would be possible
+                 * to modify identify_object_with_skill() to return
+                 * the merged object, but it is currently set to return
+                 * exp, so it would have to do it via modifying the
+                 * passed in value, but many other consumers would
+                 * need to be modified for that.
+                 */
+                exp = identify_object_with_skill(tmp, op, skill, 1);
                 if (exp) {
                     change_exp(op, exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
-                    snprintf(prefix, MAX_BUF, "Using your %s skill you identify %s as:", skill->skill, tmp->nrof <= 1?"that":"those");
+                    return;
                 }
             }
             if(!exp) {
@@ -1482,10 +1492,10 @@ void examine(object *op, object *tmp) {
                      * flag will be reset anyway, if it succeeds, it won't matter.*/
                     CLEAR_FLAG(tmp, FLAG_NO_SKILL_IDENT);
                     id_attempted = 2;
-                    exp = identify_object_with_skill(tmp, op, skill, 0);
+                    exp = identify_object_with_skill(tmp, op, skill, 1);
                     if (exp) {
                         change_exp(op, exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
-                        snprintf(prefix, MAX_BUF, "Using your %s skill you identify %s as:", skill->skill, tmp->nrof <= 1?"this":"those");
+                        return;
                     }
                 }
             }

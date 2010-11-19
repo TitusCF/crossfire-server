@@ -54,7 +54,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
 
     if (applier->type == PLAYER) {
         if (!QUERY_FLAG(potion, FLAG_IDENTIFIED))
-            identify(potion);
+            potion = identify(potion);
     }
 
     apply_handle_yield(potion);

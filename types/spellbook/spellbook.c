@@ -116,7 +116,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             if (book && (!QUERY_FLAG(book, FLAG_IDENTIFIED))) {
                 /* Well, not everything is lost, player now knows the
                  * book is cursed/damned. */
-                identify(book);
+                book = identify(book);
                 if (book->env)
                     esrv_update_item(UPD_FLAGS|UPD_NAME, applier, book);
                 else
@@ -140,7 +140,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             level, spell->name);
 
         if (!QUERY_FLAG(book, FLAG_IDENTIFIED)) {
-            identify(book);
+            book = identify(book);
             if (book->env)
                 esrv_update_item(UPD_FLAGS|UPD_NAME, applier, book);
             else

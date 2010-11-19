@@ -2391,7 +2391,7 @@ int cast_identify(object *op, object *caster, object *spell) {
 
     FOR_INV_PREPARE(op, tmp)
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !tmp->invisible &&  need_identify(tmp)) {
-            identify(tmp);
+            tmp = identify(tmp);
             if (op->type == PLAYER) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                      "You have %s.",
@@ -2417,7 +2417,7 @@ int cast_identify(object *op, object *caster, object *spell) {
             if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)
             && !tmp->invisible
             && need_identify(tmp)) {
-                identify(tmp);
+                tmp = identify(tmp);
                 if (op->type == PLAYER) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                          "On the ground is %s.",

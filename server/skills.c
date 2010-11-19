@@ -806,7 +806,7 @@ int identify_object_with_skill(object *tmp, object *pl, object *skill, int print
 
         chance = die_roll(3, 10, pl, PREFER_LOW)-3+rndm(0, (tmp->magic ? tmp->magic*5 : 1)-1);
         if (skill_value >= chance) {
-            identify(tmp);
+            tmp = identify(tmp);
             if (pl->type == PLAYER && print_on_success) {
                 char desc[MAX_BUF];
 

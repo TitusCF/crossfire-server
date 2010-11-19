@@ -111,7 +111,7 @@ extern StringBuffer *describe_monster(const object *op, StringBuffer *buf);
 extern StringBuffer *describe_item(const object *op, const object *owner, StringBuffer *buf);
 extern int is_magical(const object *op);
 extern int need_identify(const object *op);
-extern void identify(object *op);
+object *identify(object *op);
 /* languages.c */
 extern int get_language(object *op);
 extern const char *i18n_translate(int language, int id);

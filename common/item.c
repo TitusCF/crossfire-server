@@ -1419,12 +1419,18 @@ int need_identify(const object *op) {
 /**
  * Identifies an item.
  * Supposed to fix face-values as well here, but later.
+ * Note - this may merge op with other object, so
+ * this function returns either the merged object
+ * or the original if no merge happened.
  *
  * @param op
  * item to identify. Can be already identified without ill effects.
+ * @retval object
+ * The identify object - this may vary from op if the object was
+ * merged.
  */
-void identify(object *op) {
-    object *pl;
+object *identify(object *op) {
+    object *pl, *op1;
 
     SET_FLAG(op, FLAG_IDENTIFIED);
     CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
@@ -1457,15 +1463,24 @@ void identify(object *op) {
          * Also send name and such information to a player standing on it.
          */
         object *player = map_find_by_type(op->map, op->x, op->y, PLAYER);
+
+        object_update(op, UP_OBJ_FACE);
+        op1 = object_merge(op, GET_MAP_TOP(op->map, op->x, op->y));
+        if (op1) op = op1;
+
         if (player)
             esrv_update_item(UPD_FACE | UPD_NAME | UPD_FLAGS, player, op);
-        object_update(op, UP_OBJ_FACE);
+
     } else {
         pl = object_get_player_container(op->env);
+        op1 = object_merge(op, op->env->inv);
+        if (op1) op = op1;
+
         if (pl)
             /* A lot of the values can change from an update - might as well send
              * it all.
              */
             esrv_update_item(UPD_ALL, pl, op);
     }
+    return op;
 }
