@@ -252,7 +252,7 @@ void spring_trap(object *trap, object *victim) {
     if (!QUERY_FLAG(trap, FLAG_LIFESAVE))
         trap->stats.hp--;  /*decrement detcount */
 
-    if (victim && victim->type == PLAYER && trap->msg != NULL)
+    if (victim && victim->type == PLAYER && trap->msg != NULL && trap->msg[0] != '\0')
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
                       trap->msg);
 
