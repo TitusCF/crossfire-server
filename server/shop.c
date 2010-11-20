@@ -364,6 +364,10 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
          * the same type for valuable items (below a value of 50 this
          * effect wouldn't be very meaningful, and could give fun with
          * rounding.
+         * Not sure if this is intentionaly, but using tmp->count effectively
+         * randomizes the result - this means that selling the same item
+         * (eg, have stack of 50 but sell them 1 by 1) you get different values
+         * for each object
          */
         if (who->map->path != NULL && val > 50)
             val = (sint64)val+0.05*(sint64)val*cos(tmp->count+strlen(who->map->path));
@@ -1053,7 +1057,8 @@ int get_payment(object *pl, object *op) {
  * player. Shouldn't be NULL or non player.
  */
 void sell_item(object *op, object *pl) {
-    uint64 i = query_cost(op, pl, F_SELL|F_SHOP), extra_gain;
+    uint64 i = query_cost(op, pl, F_SELL|F_SHOP);
+    sint64 extra_gain;
     int count;
     object *tmp;
     archetype *at;
