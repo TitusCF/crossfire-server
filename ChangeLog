@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Automatically attempt to lockpick doors when not running.
+This apparently doesn't alter readied spell or such, so should be ok.
+Nicolas Weeger 2010-11-20
+
 Fix bug 3028405 - Too high bargaining experience when selling containers -
 due to variations in shop pricing (probably another bug), it can sometimes be
 the case that bargaining skill results in a higher price (by 1 sp) - I think

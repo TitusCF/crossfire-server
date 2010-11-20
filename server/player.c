@@ -2502,6 +2502,18 @@ static int player_attack_door(object *op, object *door) {
                       door->msg);
         return 1;
     }
+
+    if (door->type == DOOR && op->contr && !op->contr->run_on) {
+        /* Player so try to pick the door */
+        object *lock = find_skill_by_name(op, "lockpicking");
+        if (lock) {
+            /* Even if the lockpicking failed, don't go on moving, player should explicitely attack or run
+             * to bash the door. */
+            do_skill(op, op, lock, op->facing, NULL);
+            return 1;
+        }
+    }
+
     return 0;
 }
 
