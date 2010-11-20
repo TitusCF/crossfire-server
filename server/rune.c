@@ -249,7 +249,8 @@ void spring_trap(object *trap, object *victim) {
     if (!QUERY_FLAG(victim, FLAG_ALIVE) && !has_spell)
         return;
 
-    trap->stats.hp--;  /*decrement detcount */
+    if (!QUERY_FLAG(trap, FLAG_LIFESAVE))
+        trap->stats.hp--;  /*decrement detcount */
 
     if (victim && victim->type == PLAYER && trap->msg != NULL)
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
