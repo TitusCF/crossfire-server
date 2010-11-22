@@ -14,6 +14,20 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Few shop fixes:
+1) limit total paid for unpaid items to be per item, not per group -
+   otherwise, player just has to sell items in smaller bunches which
+   doesn't make much sense.
+2) Change the minor randomization of shop values to be based on
+   map reset time - in this way, values will change slightly, bug
+   if you are splitting a larger group, you will get consistent values
+   (and if you logout and log back in, as long as the map hasn't reset,
+   will also get same value)
+3) Reset value strings for sold items to cap at platinum - fixes problem
+   when selling valuable items that message said you got paid in jade
+   coins, when in fact you did not.
+MSW 2010-11-21
+
 Enable traps to have unlimited uses, with the 'lifesave' flag.
 Nicolas Weeger 2010-11-20
 

@@ -322,12 +322,16 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     if ((sint64)val < 0)
         val = 0;
 
-    /* Unidentified stuff won't sell for more than 60gp */
+    /* Unidentified stuff won't sell for more than 60gp each - 
+     * it makes no sense to limit total number to 60, as all that
+     * does is force players to sell the itm in smaller blocks, which
+     * doesn't make much sense.
+     */
     if (flag == F_SELL
     && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
     && need_identify(tmp)
     && !identified) {
-        val = MIN(val, 600);
+        val = MIN(val, 600 * number);
     }
 
     /* if in a shop, check how the type of shop should affect the price */
@@ -360,17 +364,19 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
                     /(shop_specialisation_ratio(tmp, who->map)
                       *shopkeeper_approval(who->map, who));
         }
-        /* We will also have an extra 0-5% variation between shops of
+        /* We will also have an extra +/-5% variation between shops of
          * the same type for valuable items (below a value of 50 this
          * effect wouldn't be very meaningful, and could give fun with
          * rounding.
-         * Not sure if this is intentionaly, but using tmp->count effectively
-         * randomizes the result - this means that selling the same item
-         * (eg, have stack of 50 but sell them 1 by 1) you get different values
-         * for each object
+         * Change to use map reset time as a semi random but semi
+         * constant value - different maps are going to have different times,
+         * but it means the same shop will give consistent results until
+         * it resets - one can not save/load character hoping to get
+         * better prices.  Also, simplify this - really no reason
+         * to use cos for what is just a simple variation.
          */
         if (who->map->path != NULL && val > 50)
-            val = (sint64)val+0.05*(sint64)val*cos(tmp->count+strlen(who->map->path));
+            val += (val * (who->map->reset_time % 1000) - 500) / 10000;
     }
     return val;
 }
@@ -421,7 +427,7 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
 StringBuffer *cost_string_from_value(uint64 cost, StringBuffer *buf) {
     archetype *coin, *next_coin;
     uint32 num;
-    int cointype = 0;
+    int cointype = LARGEST_COIN_GIVEN;
 
     if (!buf)
         buf = stringbuffer_new();
