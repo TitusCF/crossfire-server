@@ -64,7 +64,7 @@ extern const char  *cf_get_season_name(int index);
 extern const char  *cf_get_month_name(int index);
 extern const char  *cf_get_weekday_name(int index);
 extern const char  *cf_get_periodofday_name(int index);
-extern void         cf_cost_string_from_value(uint64 cost, char *buffer, int length);
+extern void         cf_cost_string_from_value(uint64 cost, int largest_coin, char *buffer, int length);
 
 /* Objects */
 extern void         cf_object_set_int_property(object *op, int propcode, int value);

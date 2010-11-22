@@ -419,15 +419,22 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
  *
  * @param cost
  * value to transform to currency.
+ * @param largest_coin
+ * maximum coin to give the price into, should be between 0 and NUM_COINS - 1.
  * @param buf
  * buffer to append to, if NULL a new one is returned.
  * @return
  * buffer containing the price, either buf or if NULL a new StringBuffer.
  */
-StringBuffer *cost_string_from_value(uint64 cost, StringBuffer *buf) {
+StringBuffer *cost_string_from_value(uint64 cost, int largest_coin, StringBuffer *buf) {
     archetype *coin, *next_coin;
     uint32 num;
-    int cointype = LARGEST_COIN_GIVEN;
+    int cointype = largest_coin;
+
+    if (cointype < 0)
+        cointype = 0;
+    else if (cointype >= NUM_COINS)
+        cointype = NUM_COINS - 1;
 
     if (!buf)
         buf = stringbuffer_new();
@@ -576,7 +583,7 @@ StringBuffer *query_cost_string(const object *tmp, object *who, int flag, String
             }
         }
     }
-    return cost_string_from_value(real_value, buf);
+    return cost_string_from_value(real_value, LARGEST_COIN_GIVEN, buf);
 }
 
 /**
@@ -962,7 +969,7 @@ int can_pay(object *pl) {
     if (unpaid_price > player_wealth) {
         char buf[MAX_BUF], coinbuf[MAX_BUF];
         int denominations = 0;
-        char *value = stringbuffer_finish(cost_string_from_value(unpaid_price, NULL));
+        char *value = stringbuffer_finish(cost_string_from_value(unpaid_price, LARGEST_COIN_GIVEN, NULL));
 
         snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ", unpaid_count, value);
         free(value);
@@ -1016,7 +1023,7 @@ int get_payment(object *pl, object *op) {
     if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID)) {
         if (!pay_for_item(op, pl)) {
             uint64 i = query_cost(op, pl, F_BUY|F_SHOP)-query_money(pl);
-            char *missing = stringbuffer_finish(cost_string_from_value(i, NULL));
+            char *missing = stringbuffer_finish(cost_string_from_value(i, LARGEST_COIN_GIVEN, NULL));
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             query_name(op, name_op, MAX_BUF);
@@ -1352,7 +1359,7 @@ int describe_shop(const object *op) {
                       MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, tmp);
 
         if (map->shopmax) {
-            value = stringbuffer_finish(cost_string_from_value(map->shopmax, NULL));
+            value = stringbuffer_finish(cost_string_from_value(map->shopmax, LARGEST_COIN_GIVEN, NULL));
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade for items above %s.",
@@ -1361,7 +1368,7 @@ int describe_shop(const object *op) {
         }
 
         if (map->shopmin) {
-            value = stringbuffer_finish(cost_string_from_value(map->shopmin, NULL));
+            value = stringbuffer_finish(cost_string_from_value(map->shopmin, LARGEST_COIN_GIVEN, NULL));
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade in items worth less than %s.",

@@ -735,11 +735,12 @@ static PyObject *npcSay(PyObject *self, PyObject *args) {
 static PyObject *costStringFromValue(PyObject *self, PyObject *args) {
     uint64 value;
     char buf[2048];
+    int largest_coin = 0;
 
-    if (!PyArg_ParseTuple(args, "L", &value))
+    if (!PyArg_ParseTuple(args, "L|i", &value, &largest_coin))
         return NULL;
 
-    cf_cost_string_from_value(value, buf, sizeof(buf));
+    cf_cost_string_from_value(value, largest_coin, buf, sizeof(buf));
     return Py_BuildValue("s", buf);
 }
 

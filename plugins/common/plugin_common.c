@@ -962,10 +962,10 @@ void cf_object_query_cost_string(const object *tmp, object *who, int flag, char 
 /**
  * Wrapper for cost_string_from_value modified to take a char* and length instead of a StringBuffer.
  */
-void cf_cost_string_from_value(uint64 cost, char *buffer, int length) {
+void cf_cost_string_from_value(uint64 cost, int largest_coin, char *buffer, int length) {
     int type;
 
-    cfapiCost_string_from_value(&type, cost, buffer, length);
+    cfapiCost_string_from_value(&type, cost, largest_coin, buffer, length);
     assert(type == CFAPI_NONE);
 }
 
