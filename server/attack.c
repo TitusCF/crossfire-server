@@ -1463,8 +1463,6 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
  * damage done to it.
  * @param hitter
  * what is hitting it.
- * @param type
- * the attacktype.
  * @return
  * dealt damage.
  * @todo

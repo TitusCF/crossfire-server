@@ -248,6 +248,6 @@ typedef struct pl {
 /*@{*/
 #define ADD_PLAYER_NEW              0x1
 #define ADD_PLAYER_NO_MAP           0x2
-/*@{*/
+/*@}*/
 
 #endif /* PLAYER_H */
