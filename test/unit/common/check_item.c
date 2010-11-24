@@ -295,7 +295,7 @@ START_TEST(test_ring_desc_rewrite) {
             fail_unless(strcmp(buf, final) == 0, "description change: \"%s\" vs \"%s\"", buf, final);
             free(final);
             object_free2(ob, FREE_OBJ_FREE_INVENTORY);
-            
+
         }
 
         if (arch->clone.type != RING && arch->clone.type != AMULET) {

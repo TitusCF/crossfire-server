@@ -28,7 +28,7 @@ CREPrePostPanel::CREPrePostPanel(const QList<QuestConditionScript*> scripts, QWi
         myChoices->addItem(scripts[script]->name());
         myChoices->setItemData(script, scripts[script]->comment(), Qt::ToolTipRole);
     }
-    
+
     layout->addWidget(myChoices, 0, 3);
 
     mySubItems = new QListWidget(this);

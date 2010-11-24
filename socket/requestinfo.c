@@ -271,7 +271,7 @@ static void send_arch_info(SockList *sl, const object *op)
      * sent last, so client can process this data until it gets
      * something it does not understand - if new data (subfields in the
      * replyinfo) are sent first, the client basically has to stop
-     * processing once it gets something it does not understand.  
+     * processing once it gets something it does not understand.
      */
 
 }
@@ -492,7 +492,7 @@ void send_file(socket_struct *ns, char *file) {
 /**
  * Sends information related to creating a new character
  * to the client.
- * 
+ *
  * @param ns
  * socket to send to
  */
@@ -511,7 +511,7 @@ void send_new_char_info(socket_struct *ns) {
      */
     SockList_AddLen8Data(&sl, buf, strlen(buf) + 1);
 
-    snprintf(buf, MAX_BUF, "V statrange %d %d", 
+    snprintf(buf, MAX_BUF, "V statrange %d %d",
              settings.starting_stat_min, settings.starting_stat_max);
     SockList_AddLen8Data(&sl, buf, strlen(buf) + 1);
 

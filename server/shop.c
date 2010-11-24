@@ -322,7 +322,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     if ((sint64)val < 0)
         val = 0;
 
-    /* Unidentified stuff won't sell for more than 60gp each - 
+    /* Unidentified stuff won't sell for more than 60gp each -
      * it makes no sense to limit total number to 60, as all that
      * does is force players to sell the itm in smaller blocks, which
      * doesn't make much sense.

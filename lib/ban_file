@@ -28,5 +28,5 @@
 #                    line would forbid it.  For example, together with a
 #                    following line "mark@*" would allow mark to play only if
 #                    he connects from 1.2.3.4.
-#   
+#
 # Ip address can be determined by looking at the logs, or with the who command.

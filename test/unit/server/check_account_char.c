@@ -57,7 +57,7 @@ START_TEST(test_account_char_add) {
     pl =  calloc(1, sizeof(player));
 
     /* The account_character code takes a player structure to
-     * fill in the values, so we create a fake one here - 
+     * fill in the values, so we create a fake one here -
      * we just fill in the fields that are used.
      */
     pl->ob = create_archetype("human_player");
@@ -89,7 +89,7 @@ START_TEST(test_account_char_add) {
 
     sprintf(path,"%s/account", settings.localdir);
     mkdir(path, S_IRWXU);
-    
+
     /* This does not return anything, but this at least checks for
      * core dumps, etc
      */
@@ -112,22 +112,22 @@ START_TEST(test_account_char_load) {
 
     /* As of now, the account order is in FIFO order */
 
-    fail_unless(!strcmp(chars->name, "test character"), 
+    fail_unless(!strcmp(chars->name, "test character"),
                 "Name for first character is not test char");
 
-    fail_unless(!strcmp(chars->race, ob->race), 
+    fail_unless(!strcmp(chars->race, ob->race),
                 "Race for first character does not match");
 
-    fail_unless(chars->level == 2, 
+    fail_unless(chars->level == 2,
                 "Level for first character is not 2");
 
-    fail_unless(!strcmp(chars->face, ob->face->name), 
+    fail_unless(!strcmp(chars->face, ob->face->name),
                 "Face for first character does not match");
 
-    fail_unless(chars->party[0] == 0, 
+    fail_unless(chars->party[0] == 0,
                 "Party for first character is not blank");
 
-    fail_unless(!strcmp(chars->map, "test map"), 
+    fail_unless(!strcmp(chars->map, "test map"),
                 "Map for first character does not match");
 
     fail_unless(chars->next != NULL, "account_char_load only loaded one character");
@@ -138,10 +138,10 @@ START_TEST(test_account_char_load) {
      */
     chars = chars->next;
 
-    fail_unless(!strcmp(chars->name, "char 2"), 
+    fail_unless(!strcmp(chars->name, "char 2"),
                 "Name for second character does not match");
 
-    fail_unless(!strcmp(chars->party, "rockon"), 
+    fail_unless(!strcmp(chars->party, "rockon"),
                 "Party for second character does not match");
 }
 

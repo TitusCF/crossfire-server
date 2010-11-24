@@ -11,7 +11,7 @@ extern "C" {
 CREExperienceWindow::CREExperienceWindow()
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
-    
+
     QTreeWidget* tree = new QTreeWidget(this);
     tree->setColumnCount(3);
     QStringList headers;

@@ -38,7 +38,7 @@ metaserver_comment Put a comment here.
 # characters, so if the same number of stat points were given, while
 # the characters total stats would be higher, the character itself
 # would likely be worse.
-# 
+#
 starting_stat_min 3
 starting_stat_max 18
 starting_stat_points 84

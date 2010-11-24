@@ -4,7 +4,7 @@ crossfire (1.5.0.0.20040317-1) unstable; urgency=low
   * Patches upstream release for Bug #232421
   * Created -dbg package for better feedback on crashes
   * Added some simple manpages to keep lintian happy
- 
+
  -- Bob Tanner <tanner@real-time.com>  Tue, 16 Feb 2004 14:32:00 -0600
 
 crossfire (1.5.0-1) unstable; urgency=low
@@ -56,7 +56,7 @@ crossfire (1.1.0-1) unstable; urgency=low
   * New upstream version
   * Added russian debconf template (closes: #137628)
     Thanks, Ilgiz Kalmetev
-  
+
  -- Jaakko Niemi <liiwi@debian.org>  Wed, 17 Apr 2002 22:23:17 +0300
 
 crossfire (1.0.0-2) unstable; urgency=low
@@ -90,7 +90,7 @@ crossfire (0.96.0-1) unstable; urgency=low
 
 crossfire (0.95.5-2) unstable; urgency=low
 
-  * This version is internal only.  It is used to generate 
+  * This version is internal only.  It is used to generate
     patches for upstream.
 
  -- Darren Benham <gecko@debian.org>  Tue,  3 Aug 1999 22:08:45 -0700
@@ -129,12 +129,12 @@ crossfire (0.95.3-1) unstable; urgency=low
 
   * New upstream version
   	+ Biggest change for Debianers: the /var/lib directory was split
-      to be more FHS compliant and I took advantage of that.  Maps 
+      to be more FHS compliant and I took advantage of that.  Maps
       and artifacts and archtypes and all such files are now looked
       for in /usr/share/crossfire/*.  Players, highscores, temp maps
       and "unique item saves" are all that are stored in /var/lib/*
       now.
-  * I am running a server at benham.net..  It's pretty much straight 
+  * I am running a server at benham.net..  It's pretty much straight
     out of the deb and I use it to test my deb.  It might, therefore,
     not be 100% reliable but it's a place to play.
 

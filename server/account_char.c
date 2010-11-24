@@ -133,7 +133,7 @@ Account_Char *account_char_load(const char *account_name)
         else
             first = ac;
         last = ac;
-            
+
     }
     fclose(fp);
     return(first);
@@ -189,7 +189,7 @@ void account_char_save(const char *account, Account_Char *chars)
     unlink(fname1);
     rename(fname, fname1);
 }
-	    
+
 /**
  * This adds a player to the list of accounts.  We check to see if the player
  * has already been added to this account - if so, we just update
@@ -300,7 +300,7 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
 
 /**
  * This removes a character on this account.  This is typically used
- * when a character has been deleted, and not for general cleanup 
+ * when a character has been deleted, and not for general cleanup
  *
  * @param chars
  * Existing list of characters for account.

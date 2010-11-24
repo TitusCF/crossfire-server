@@ -1775,7 +1775,7 @@ void send_account_players(socket_struct *ns)
      * in until the player has actually logged in with that character -
      * to fill the data in at time of adding the character to the account
      * requires a fair amount of work to check_login(), since the load
-     * of the player file and other initialization is fairly closely 
+     * of the player file and other initialization is fairly closely
      * intertwined.  So until that is done, we still at least have
      * account names we can get and send.
      * note: chars[] has the last entry NULL terminated - thus,
@@ -1843,7 +1843,7 @@ void send_account_players(socket_struct *ns)
                     esrv_send_face(ns, faceno, 0);
                 }
             }
-        } else 
+        } else
             faceno=0;
 
         add_char_field(&sl, ACL_PARTY, acn->party);
@@ -1877,7 +1877,7 @@ void send_account_players(socket_struct *ns)
  * This is a basic routine which extracts the name/password
  * from the buffer.  Several of the account login routines
  * provide a length prefixed string for name, and another for
- * password. 
+ * password.
  *
  * @param buf
  * character data to process.
@@ -2055,7 +2055,7 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
 
     status = account_check_string(name);
     if (status == 1) {
-        SockList_AddString(&sl, 
+        SockList_AddString(&sl,
                        "failure accountnew That account name contains invalid characters.");
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
@@ -2063,7 +2063,7 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
     }
 
     if (status == 2) {
-        SockList_AddString(&sl, 
+        SockList_AddString(&sl,
                            "failure accountnew That account name is too long");
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
@@ -2072,7 +2072,7 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
 
     status = account_check_string(password);
     if (status == 1) {
-        SockList_AddString(&sl, 
+        SockList_AddString(&sl,
                        "failure accountnew That password contains invalid characters.");
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
@@ -2080,7 +2080,7 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
     }
 
     if (status == 2) {
-        SockList_AddString(&sl, 
+        SockList_AddString(&sl,
                            "failure accountnew That password is too long");
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
@@ -2142,7 +2142,7 @@ void account_add_player_cmd(char *buf, int len, socket_struct *ns) {
          */
         if (status == 1)
             SockList_AddString(&sl, "failure accountaddplayer 0 The character does not exist.");
-        else 
+        else
             SockList_AddString(&sl, "failure accountaddplayer 0 That password is incorrect.");
 
         Send_With_Handling(ns, &sl);
@@ -2244,7 +2244,7 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
     }
     /* Make sure a client is not trying to spoof us here */
     if (i == MAX_CHARACTERS_PER_ACCOUNT || !chars[i]) {
-        SockList_AddPrintf(&sl, 
+        SockList_AddPrintf(&sl,
                            "failure accountplay Character %s is not associated with account %s",
                            buf, ns->account_name);
         Send_With_Handling(ns, &sl);
@@ -2336,7 +2336,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
      * to move characters from one account to another, but not sure
      * if that is something we want to allow.
      */
-    if (strlen(password)>17) 
+    if (strlen(password)>17)
         password[16] = 0;
 
     /* We just can't call check_name(), since that uses draw_info() to
@@ -2452,7 +2452,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
                  * more choices than we should have, so handle that.
                  */
                 if (choice_num == MAX_CHOICES) {
-                    LOG(llevError, 
+                    LOG(llevError,
                         "Number of choices receive exceed max value: %d>%d\n",
                         choice_num, MAX_CHOICES);
                 } else {
@@ -2508,10 +2508,10 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
             return;
         }
 
-        if (race) 
+        if (race)
             race_a = try_find_archetype(race);
 
-        if (class) 
+        if (class)
             class_a = try_find_archetype(class);
 
         /* This should never happen with a properly behaving client, so the error message

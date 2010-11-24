@@ -557,7 +557,7 @@ char **account_get_players_for_account(const char *account_name)
 
 /**
  * This looks at all the accounts and sees if charname is associated
- * with any of them. 
+ * with any of them.
  *
  * @param charname
  * character name to check for.

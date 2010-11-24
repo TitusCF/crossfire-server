@@ -882,7 +882,7 @@ static void load_settings(void) {
         } else if (!strcasecmp(buf, "starting_stat_points")) {
             int val = atoi(cp);
 
-            if (val < NUM_STATS * settings.starting_stat_min || 
+            if (val < NUM_STATS * settings.starting_stat_min ||
                 val > NUM_STATS * settings.starting_stat_max)
                 LOG(llevError, "load_settings: starting_stat_points (%d) need to be within %d-%d\n",
                     val, NUM_STATS * settings.starting_stat_min, NUM_STATS * settings.starting_stat_max);

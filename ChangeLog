@@ -54,7 +54,7 @@ examine() modified to stop processing once it does a skill ident
 on an item, since the pointer is has may now be invalid.
 MSW 2010-11-18
 
-Add ability for server to provide choice of starting items for new - 
+Add ability for server to provide choice of starting items for new -
 characters - add support for sending that data and receiving and validating
 the responses.  Add DRAGON_FOCUS type which changes the dragon focus.
 ----
@@ -137,7 +137,7 @@ include/map.h: Add new map subtypes.
 include/player.h: Add new ADD_PLAYER_... values for add_player()
 include/sockproto.h: updated
 include/sproto.h: updated
-server/player.c: Change add_player() to have second parameter be a 
+server/player.c: Change add_player() to have second parameter be a
    bitmask value and not true/false.  Add apply_race_and_class().
 server/apply.c: Reformat apply_changes_to_player() and have it take new
     parameter which determines if class stat bonus can exceed racial maximum.

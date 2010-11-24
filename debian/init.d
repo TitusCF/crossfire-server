@@ -22,7 +22,7 @@ case "$1" in
     start-stop-daemon --stop --verbose --exec $DAEMON
     echo -n "waiting a bit for the server to stop"
     count=0
-    while test "`ps aux|grep /usr/games/crossfire|wc -l`" -gt 1 
+    while test "`ps aux|grep /usr/games/crossfire|wc -l`" -gt 1
 	do
 	count=`expr $count + 1`
 	if [ $count -gt 30 ]

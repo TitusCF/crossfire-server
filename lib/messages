@@ -1,20 +1,20 @@
 #
-# Message file for books  
+# Message file for books
 #
-# Message entries contained in this file will  
+# Message entries contained in this file will
 # appear randomly in readable objects like books, scrolls
 # and such (op->type==BOOK).
 #
-# To add an entry: 
+# To add an entry:
 # ---------------
-# Start all entries w/ MSG and end with ENDMSG. The body of 
+# Start all entries w/ MSG and end with ENDMSG. The body of
 # the text between these 2 words will be the message.
 #
-# When designing messages please keep in mind: 
+# When designing messages please keep in mind:
 # -------------------------------------------
 #    1) Message length shouldn't exceed the maximum
 # buffer size for books (you'll generate a warning message
-# if you do this). Check the file include/read.h for the 
+# if you do this). Check the file include/read.h for the
 # current message size limit (BOOK_BUF).
 #    2) Only put newlines where significant. Clients will
 # automatically wrap the text.
@@ -31,7 +31,7 @@ MSG
 
 What treasures could lie in it I do not know for our party never gained its way past the entryway.
 
-Skulls, pixies, and a horrible creature I hesitate to name decimated my friends and I." 
+Skulls, pixies, and a horrible creature I hesitate to name decimated my friends and I."
 ENDMSG
 #
 #
@@ -54,7 +54,7 @@ MSG
 ~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~
 ~~~~~~~~~
-~~~~~~~~~              ^^^^^^^^^^^^^ 
+~~~~~~~~~              ^^^^^^^^^^^^^
 ~~~~~~~~X==========   ^  %%%%%%^%^^^^^
 ~~~~~~~ santo	  =     %%%%%%%%%%%%%%
 ~~~~~~~	dominion  =      %%%The%%%%%%%
@@ -67,8 +67,8 @@ MSG
 ~~~          ^^^   =    %%%%%%%%%%%%%%
 ~~~           ^^^  =    %%%%%%%%%%%%%%
 ~~~         ^^   ===     %%%%%%%%%%%%%
-~~~              X Brest 
-~~~~           ~~~~~ 
+~~~              X Brest
+~~~~           ~~~~~
 ~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ----------Map of Western World--------
@@ -118,7 +118,7 @@ ENDMSG
 MSG
 In 5122EK, Bottle Riots, only reprimed with difficulty, in Port Jospeh drove local authorities to totally forbid taverns and other drink-related places, with the sole exception of shops controlled by the Sea Princes themselves.
 
-However, Josephians rapidly found a loophole in the decree, noticing it only applied to buildings on or above the ground level. They thus refurbished to taverns caves in individual houses; they are indicated by their green frontage. 
+However, Josephians rapidly found a loophole in the decree, noticing it only applied to buildings on or above the ground level. They thus refurbished to taverns caves in individual houses; they are indicated by their green frontage.
 ENDMSG
 #
 # The following extracts are from the Crossfire wiki at http://wiki.metalforge.net/doku.php
