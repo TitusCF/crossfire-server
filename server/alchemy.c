@@ -98,19 +98,25 @@ static const char *cauldron_sound(void) {
  *
  * @param rp recipe to attempt.
  * @param skill skill being used.
+ * @param cauldron provides the magic of the used device.
  * @return chance between 0.01 and .95.
  */
-static float recipe_chance(const recipe *rp, const object *skill) {
+static float recipe_chance(const recipe *rp, const object *skill, const object *cauldron) {
+    int cauldron_add_skill;
+
     assert(rp);
     assert(skill);
+    assert(cauldron);
 
-    if (skill->level < rp->diff - 10)
-        return MAX(.01, .3 - (rp->diff - 10 - skill->level) * .03);
+    cauldron_add_skill = (cauldron->magic + 1) / 2;
 
-    if (skill->level <= rp->diff + 10)
-        return .5 + .02 * (float)(skill->level - rp->diff);
+    if (skill->level + cauldron_add_skill < rp->diff - 10)
+        return MAX(.01, .3 - (rp->diff - 10 - skill->level - cauldron_add_skill) * .03);
 
-    return MIN(.95, .70 + (skill->level - rp->diff - 10) * .01);
+    if (skill->level + cauldron_add_skill <= rp->diff + 10)
+        return .5 + .02 * (float)(skill->level + cauldron_add_skill - rp->diff);
+
+    return MIN(.95, .70 + (skill->level + cauldron_add_skill - rp->diff - 10) * .01);
 }
 
 /**
@@ -220,7 +226,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
             /* create the object **FIRST**, then decide whether to keep it. */
             if ((item = attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, attempt_shadow_alchemy)) != NULL) {
                 /*  compute base chance of recipe success */
-                success_chance = recipe_chance(rp, skop);
+                success_chance = recipe_chance(rp, skop, cauldron);
 
 #ifdef ALCHEMY_DEBUG
                 LOG(llevDebug, "percent success chance =  %f ab%d / diff%d*lev%d\n", success_chance, ability, rp->diff, item->level);

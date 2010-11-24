@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Takes in account the magic of a cauldron when the chance of successfully
+making a recipe is calculated (adds (cauldron->magic+1)/2 to the skill_level
+in the calculation).
+Khaleh 2010-11-24
+
 Allow cost_string_from_value() callers to specify maximum coin to use.
 This enables the guild script to display the account balance with amberium
 instead of platinum, while leaving shops in platinum.
