@@ -242,7 +242,6 @@ static int Object_SetAnimated(Crossfire_Object *whoptr, PyObject *value, void *c
 static int Object_SetNoDamage(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetRandomMovement(Crossfire_Object *whoptr, PyObject *value, void *closure);
 
-
 static PyObject *Crossfire_Object_Remove(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Apply(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Drop(Crossfire_Object *who, PyObject *args);
