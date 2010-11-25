@@ -242,6 +242,7 @@ static int Object_SetAnimated(Crossfire_Object *whoptr, PyObject *value, void *c
 static int Object_SetNoDamage(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetRandomMovement(Crossfire_Object *whoptr, PyObject *value, void *closure);
 
+
 static PyObject *Crossfire_Object_Remove(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Apply(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Drop(Crossfire_Object *who, PyObject *args);
@@ -280,6 +281,7 @@ static PyObject *Crossfire_Object_Move(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_ChangeAbil(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Event(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_RemoveDepletion(Crossfire_Object *who, PyObject *args);
+static PyObject *Object_GetMaterial(Crossfire_Object *whoptr, void *closure);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object *left, Crossfire_Object *right);
 static PyObject *Crossfire_Object_RichCompare(Crossfire_Object *left, Crossfire_Object *right, int op);
@@ -419,6 +421,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Animated",       (getter)Object_GetAnimated,     (setter)Object_SetAnimated, NULL, NULL },
     { "NoDamage",       (getter)Object_GetNoDamage,     (setter)Object_SetNoDamage, NULL, NULL },
     { "RandomMovement", (getter)Object_GetRandomMovement, (setter)Object_SetRandomMovement, NULL, NULL },
+    { "Material",       (getter)Object_GetMaterial,     NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

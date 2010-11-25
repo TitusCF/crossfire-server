@@ -907,7 +907,10 @@ static PyObject *Object_GetAnimated(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_ANIMATE));
 }
-
+static PyObject *Object_GetMaterial(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("{s:s,s:i}","Name", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_MATERIAL_NAME),"Number",cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MATERIAL));
+}
 /** Setters */
 static int Object_SetMessage(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *val;

@@ -13,6 +13,10 @@ changes' is much more useful than 'misc edits' or 'code cleanup.'
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Added function to python plugin for getting the material name and materil 
+number of objects.  Returns python dict. (Affects cfpython_object.c and 
+cfpython_object_private.h)
+Alestan 2010-11-25
 
 Takes in account the magic of a cauldron when the chance of successfully
 making a recipe is calculated (adds (cauldron->magic+1)/2 to the skill_level
