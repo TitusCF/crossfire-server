@@ -1,5 +1,6 @@
-#include "CREMultilineItemDelegate.h"
 #include <QTextEdit>
+#include <qstyleditemdelegate.h>
+#include "CREMultilineItemDelegate.h"
 #include "CREQuestItemModel.h"
 #include "Quest.h"
 

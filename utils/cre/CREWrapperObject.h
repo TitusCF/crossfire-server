@@ -12,17 +12,17 @@ class CREWrapperObject : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ name);
-    Q_PROPERTY(QString race READ race);
-    Q_PROPERTY(int type READ type);
-    Q_PROPERTY(int level READ level);
-    Q_PROPERTY(bool isMonster READ isMonster);
-    Q_PROPERTY(bool isAlive READ isAlive);
-    Q_PROPERTY(qint64 experience READ experience);
-    Q_PROPERTY(quint32 attacktype READ attacktype);
-    Q_PROPERTY(qint8 ac READ ac);
-    Q_PROPERTY(qint8 wc READ wc);
-    Q_PROPERTY(QObject* arch READ arch);
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QString race READ race)
+    Q_PROPERTY(int type READ type)
+    Q_PROPERTY(int level READ level)
+    Q_PROPERTY(bool isMonster READ isMonster)
+    Q_PROPERTY(bool isAlive READ isAlive)
+    Q_PROPERTY(qint64 experience READ experience)
+    Q_PROPERTY(quint32 attacktype READ attacktype)
+    Q_PROPERTY(qint8 ac READ ac)
+    Q_PROPERTY(qint8 wc READ wc)
+    Q_PROPERTY(QObject* arch READ arch)
     Q_PROPERTY(qint16 damage READ damage)
 
     public:

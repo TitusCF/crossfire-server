@@ -10,10 +10,10 @@ class CREMapInformation : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString path READ path);
-    Q_PROPERTY(QString name READ name);
-    Q_PROPERTY(int level READ level);
-    Q_PROPERTY(qint64 experience READ experience);
+    Q_PROPERTY(QString path READ path)
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(int level READ level)
+    Q_PROPERTY(qint64 experience READ experience)
 
     public:
         CREMapInformation();

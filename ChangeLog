@@ -13,6 +13,12 @@ changes' is much more useful than 'misc edits' or 'code cleanup.'
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+
+Fix some compilers errors in CRE - 0b is non standard constant declaration,
+some compilers do not like a semicolon after Q_PROPERTY declarations, and
+it seemed some include files were missing.
+MSW 2010-11-26
+
 Added function to python plugin for getting the material name and materil 
 number of objects.  Returns python dict. (Affects cfpython_object.c and 
 cfpython_object_private.h)

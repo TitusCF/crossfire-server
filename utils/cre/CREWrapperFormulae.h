@@ -14,13 +14,13 @@ class CREWrapperFormulae : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString fullname READ fullname);
-    Q_PROPERTY(QString title READ title);
-    Q_PROPERTY(int chance READ chance);
-    Q_PROPERTY(int difficulty READ difficulty);
-    Q_PROPERTY(int experience READ experience);
-    Q_PROPERTY(QStringList archs READ archs);
-    Q_PROPERTY(QStringList ingredients READ ingredients);
+    Q_PROPERTY(QString fullname READ fullname)
+    Q_PROPERTY(QString title READ title)
+    Q_PROPERTY(int chance READ chance)
+    Q_PROPERTY(int difficulty READ difficulty)
+    Q_PROPERTY(int experience READ experience)
+    Q_PROPERTY(QStringList archs READ archs)
+    Q_PROPERTY(QStringList ingredients READ ingredients)
 
     public:
         CREWrapperFormulae();

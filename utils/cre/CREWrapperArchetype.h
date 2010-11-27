@@ -14,8 +14,8 @@ class CREWrapperArchetype : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ name);
-    Q_PROPERTY(QObject* clone READ clone);
+    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QObject* clone READ clone)
 
     public:
         CREWrapperArchetype(CREWrapperObject* parent, const archetype* arch);

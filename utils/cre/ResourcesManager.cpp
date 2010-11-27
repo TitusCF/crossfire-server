@@ -1,6 +1,8 @@
-#include "ResourcesManager.h"
 #include <QString>
 #include <qlist.h>
+#include <qhash.h>
+#include <QStringList>
+#include "ResourcesManager.h"
 
 extern "C" {
 #include "global.h"

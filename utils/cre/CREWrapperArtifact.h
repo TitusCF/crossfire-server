@@ -14,10 +14,10 @@ class CREWrapperArtifact : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QObject* item READ item);
-    Q_PROPERTY(int chance READ chance);
-    Q_PROPERTY(int difficulty READ difficulty);
-    Q_PROPERTY(QStringList allowed READ allowed);
+    Q_PROPERTY(QObject* item READ item)
+    Q_PROPERTY(int chance READ chance)
+    Q_PROPERTY(int difficulty READ difficulty)
+    Q_PROPERTY(QStringList allowed READ allowed)
 
     public:
         CREWrapperArtifact();

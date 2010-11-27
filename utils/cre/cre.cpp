@@ -12,6 +12,7 @@
 #include "CREReportDefinition.h"
 #include "CREReportDefinitionManager.h"
 
+
 int main(int argc, char **argv) {
     QCoreApplication::setOrganizationName("The Legendary Team of Ailesse");
     QCoreApplication::setApplicationName("CRE");
@@ -38,7 +39,7 @@ int main(int argc, char **argv) {
 
 extern "C"
 {
-
+#include "global.h"
 /**
  * Dummy functions to link the library.
  */
