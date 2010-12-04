@@ -1550,7 +1550,7 @@ void command_addexp(object *op, const char *params) {
     skill[0] = '\0';
     if ((*params == '\0')
     || (strlen(params) > MAX_BUF)
-    || ((q = sscanf(params, "%s %d %s", buf, &i, skill)) < 2)) {
+    || ((q = sscanf(params, "%s %d %[^\r\n]", buf, &i, skill)) < 2)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: addexp player quantity [skill].");
         return;

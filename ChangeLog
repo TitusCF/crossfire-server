@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Accept skill names with spaces (sense curse/sense magic) in addexp
+command.
+Andreas Kirschbaum 2010-12-04
+
 Fix some compilers errors in CRE - 0b is non standard constant declaration,
 some compilers do not like a semicolon after Q_PROPERTY declarations, and
 it seemed some include files were missing.
