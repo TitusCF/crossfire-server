@@ -19,8 +19,8 @@ some compilers do not like a semicolon after Q_PROPERTY declarations, and
 it seemed some include files were missing.
 MSW 2010-11-26
 
-Added function to python plugin for getting the material name and materil 
-number of objects.  Returns python dict. (Affects cfpython_object.c and 
+Added function to python plugin for getting the material name and materil
+number of objects.  Returns python dict. (Affects cfpython_object.c and
 cfpython_object_private.h)
 Alestan 2010-11-25
 
