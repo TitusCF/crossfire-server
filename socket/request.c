@@ -881,10 +881,10 @@ void esrv_send_animation(socket_struct *ns, short anim_num) {
      * the face itself) down to the client.
      */
     for (i = 0; i < animations[anim_num].num_animations; i++) {
-        if (!(ns->faces_sent[animations[anim_num].faces[i]]&NS_FACESENT_FACE))
-            esrv_send_face(ns, animations[anim_num].faces[i], 0);
+        if (!(ns->faces_sent[animations[anim_num].faces[i]->number]&NS_FACESENT_FACE))
+            esrv_send_face(ns, animations[anim_num].faces[i]->number, 0);
         /* flags - not used right now */
-        SockList_AddShort(&sl, animations[anim_num].faces[i]);
+        SockList_AddShort(&sl, animations[anim_num].faces[i]->number);
     }
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
@@ -1053,8 +1053,8 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl, sock
                  */
                 if (smoothlevel) {
                     for (i = 0; i < NUM_ANIMATIONS(ob); i++) {
-                        if (!(ns->faces_sent[animations[ob->animation_id].faces[i]]&NS_FACESENT_SMOOTH))
-                            send_smooth(ns, animations[ob->animation_id].faces[i]);
+                        if (!(ns->faces_sent[animations[ob->animation_id].faces[i]->number]&NS_FACESENT_SMOOTH))
+                            send_smooth(ns, animations[ob->animation_id].faces[i]->number);
                     }
                 }
             } else if (!(ns->faces_sent[face_num]&NS_FACESENT_FACE)) {

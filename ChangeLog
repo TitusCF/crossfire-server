@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Change the Animations structure to use New_Face* instead of indexes.
+Nicolas Weeger 2010-12-05
+
 Accept skill names with spaces (sense curse/sense magic) in addexp
 command.
 Andreas Kirschbaum 2010-12-04

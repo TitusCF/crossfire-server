@@ -52,11 +52,11 @@ typedef struct new_face_struct {
  * This represents one animation. It points to different faces.
  */
 typedef struct animations_struct {
-    const char *name;       /**< Name of the animation sequence */
-    uint8 num_animations;   /**< How many different faces to animate */
-    uint8 facings;          /**< How many facings (1,2,4,8) */
-    uint16 num;             /**< Where we are in the array */
-    uint16 *faces;          /**< The different animations */
+    const char *name;       /**< Name of the animation sequence. */
+    uint8 num_animations;   /**< How many different faces to animate, size of the faces array. */
+    uint8 facings;          /**< How many facings (1,2,4,8). */
+    uint16 num;             /**< Where we are in the array. */
+    const New_Face **faces; /**< The actual faces for the animation. */
 } Animations;
 
 #endif /* FACE_H */

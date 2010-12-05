@@ -426,7 +426,7 @@ int trap_show(object *trap, object *where) {
     if (where == NULL)
         return 0;
     tmp2 = create_archetype("runedet");
-    tmp2->face = &new_faces[GET_ANIMATION(trap, 0)];
+    tmp2->face = GET_ANIMATION(trap, 0);
     object_insert_in_map_at(tmp2, where->map, NULL, 0, where->x, where->y);
     return 1;
 }
