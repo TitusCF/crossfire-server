@@ -41,6 +41,7 @@ void setup(void) {
     cctk_setlog(LOGDIR "/unit/common/item.out");
     cctk_init_std_archetypes();
     init_gods();
+    init_formulae();
 }
 
 void teardown(void) {
