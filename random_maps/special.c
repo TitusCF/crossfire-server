@@ -83,7 +83,7 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
 }
 
 /**
- * Copy in_map into dest_map at point x,y
+ * Copy in_map into dest_map at point x,y. This also copies shop information if set in in_map.
  * @param dest_map
  * map where to copy to.
  * @param in_map
@@ -115,6 +115,29 @@ void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int
                 insert_multisquare_ob_in_map(new_ob, dest_map);
             } FOR_MAP_FINISH();
         }
+
+    /* Copy shop-related information.
+     * This ensures that, if a shop map is included, its information is correctly
+     * copied.
+     * Most of the time dest_map won't have any information set (random map), but better
+     * safe than sorry.
+     */
+
+    if (in_map->shopgreed)
+        dest_map->shopgreed = in_map->shopgreed;
+    if (in_map->shopmax)
+        dest_map->shopmax = in_map->shopmax;
+    if (in_map->shopmin)
+        dest_map->shopmin = in_map->shopmin;
+    if (in_map->shoprace) {
+        FREE_AND_CLEAR(dest_map->shoprace);
+        dest_map->shoprace = strdup_local(in_map->shoprace);
+    }
+    if (in_map->shopitems) {
+        FREE_AND_CLEAR(dest_map->shopitems);
+        dest_map->shopitems = CALLOC(in_map->shopitems[0].index + 1, sizeof(shopitems));
+        memcpy(dest_map->shopitems, in_map->shopitems, in_map->shopitems[0].index * sizeof(shopitems));
+    }
 }
 
 /**
