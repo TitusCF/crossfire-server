@@ -42,7 +42,8 @@ static void init_dynamic(void);
 static void init_clocks(void);
 static void init_attackmess(void);
 
-/** You unforunately need to looking in include/global.h to see what these
+/*
+ * You unforunately need to looking in include/global.h to see what these
  * correspond to.
  */
 struct Settings settings = {

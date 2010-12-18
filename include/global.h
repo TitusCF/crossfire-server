@@ -282,15 +282,20 @@ extern socket_struct *init_sockets;
  */
 #define object_decrease_nrof_by_one(xyz) object_decrease_nrof(xyz, 1)
 
-/* FREE_AND_CLEAR frees the pointer and then sets it to NULL.
+/**
+ * Free the pointer and then set it to NULL.
  * This is generally done as a safety, and having this macro
  * makes the code a bit cleaner when doing so.
  */
 #define FREE_AND_CLEAR(xyz) { free(xyz); xyz = NULL; }
+/**
+ * Release the shared string, and set it to NULL.
+ * Must not be NULL.
+ */
 #define FREE_AND_CLEAR_STR(xyz) { free_string(xyz); xyz = NULL; }
 
-/* FREE_AND_COPY is for the shared string - it is handy enough
- * to use all over the place.
+/**
+ * Release the shared string if not NULL, and make it a reference to nv.
  */
 #define FREE_AND_COPY(sv, nv) { if (sv) free_string(sv); sv = add_string(nv); }
 
@@ -418,6 +423,9 @@ typedef struct Settings {
     uint8   roll_stat_points;         /**< How many stat points legacy (rolled) chars start with */
 } Settings;
 
+/**
+ * Server settings.
+ */
 extern Settings settings;
 
 /**
@@ -436,6 +444,9 @@ typedef struct Statistics {
     uint64 spell_suppressions;  /**< Number of times ok_to_put_more() returned FALSE*/
 } Statistics;
 
+/**
+ * Merged spell statistics.
+ */
 extern Statistics statistics;
 
 /* 0.94.1 - change to GETTIMEOFDAY macro - SNI systems only one one option.
