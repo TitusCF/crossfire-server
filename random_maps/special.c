@@ -92,7 +92,7 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
  * @param y
  * coordinates to put in_map to.
  */
-void include_map_in_map(mapstruct *dest_map, mapstruct *in_map, int x, int y) {
+void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int y) {
     int i, j;
     object *new_ob;
 

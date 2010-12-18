@@ -61,7 +61,7 @@ extern object **find_doors_in_room(mapstruct *map, int x, int y, RMParms *RP);
 extern void lock_and_hide_doors(object **doorlist, mapstruct *map, int opts, RMParms *RP);
 /* special.c */
 extern void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysize);
-extern void include_map_in_map(mapstruct *dest_map, mapstruct *in_map, int x, int y);
+extern void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int y);
 extern int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xsize, int ysize);
 extern void place_fountain_with_specials(mapstruct *map);
 extern void place_special_exit(mapstruct *map, int hole_type, RMParms *RP);
