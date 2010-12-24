@@ -2,6 +2,7 @@
 
 #include "CREAnimationControl.h"
 #include "CREAnimationWidget.h"
+#include "face.h"
 
 CREAnimationControl::CREAnimationControl(QWidget* parent) : QWidget(parent)
 {
@@ -70,7 +71,7 @@ void CREAnimationControl::display(const Animations* animation)
         myWidgets[widget]->setVisible(true);
         QList<int> faces;
         for (faceCurrent = 0; faceCurrent < faceCount; faceCurrent++)
-            faces.append(animation->faces[face++]);
+            faces.append(animation->faces[face++]->number);
         myWidgets[widget]->setAnimation(faces);
 
         widget += widgetStep;

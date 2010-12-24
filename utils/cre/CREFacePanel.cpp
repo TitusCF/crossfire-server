@@ -96,7 +96,7 @@ void CREFacePanel::setFace(const New_Face* face)
         anim = &animations[a];
         for (int face = 0; face < anim->num_animations; face++)
         {
-            if (anim->faces[face] == myFace->number)
+            if (anim->faces[face] == myFace)
             {
                 if (root == NULL)
                 {

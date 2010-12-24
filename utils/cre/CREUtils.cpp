@@ -170,7 +170,7 @@ QTreeWidgetItem* CREUtils::animationNode(const Animations* anim, QTreeWidgetItem
 {
     QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(anim->name));
     if (anim->num_animations > 0)
-        item->setIcon(0, CREPixmap::getIcon(anim->faces[0]));
+        item->setIcon(0, CREPixmap::getIcon((anim->faces[0] != NULL) ? anim->faces[0]->number : 0));
     else
         LOG(llevDebug, "empty animation: %s\n", anim->name);
     return item;
