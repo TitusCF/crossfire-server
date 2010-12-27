@@ -513,6 +513,17 @@ Suite *item_suite(void) {
 }
 
 int main(void) {
+#ifndef __GLIBC__
+    /* This test makes calls into the common library, and that
+     * library makes calls to the random function.  But the random function
+     * in different libraries return different results - GLIBC seems
+     * consistent - so far - but even that could change.  But if GLIBC
+     * is not being used, almost certain in that case that the random
+     * numbers returned are different.
+     */
+    printf("Skipping item test - need glibc to get same results to check against\n");
+    return EXIT_SUCCESS;
+#else
     int nf;
     Suite *s = item_suite();
     SRunner *sr = srunner_create(s);
@@ -526,4 +537,5 @@ int main(void) {
     nf = srunner_ntests_failed(sr);
     srunner_free(sr);
     return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+#endif
 }

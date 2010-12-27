@@ -14,6 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+test/unit/common/check_living.c: Modify some hard coded array sizes to use
+    the defined values.  Remove randomly generated input values and put those
+    into arrays - the test only works with specific input values, and randomly
+    generating them only works if one is using the same random number generator.
+test/unit/common/check_item.c: Disable this test if not using glibc - its
+    checking requires specific random number sequence - however, since many
+    of the RANDOM() calls are from within libcommon, not easy to hard code
+    the values.
+INSTALL: Update notes on make check - only works with default values.
+MSW 2010-12-26
+
 Change the Animations structure to use New_Face* instead of indexes.
 Nicolas Weeger 2010-12-05
 

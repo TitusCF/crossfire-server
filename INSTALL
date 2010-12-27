@@ -53,7 +53,10 @@ The simplest way to compile this package is:
   2. Type `make' to compile the package.
 
   3. Optionally, type `make check' to run any self-tests that come with
-     the package.
+     the package.  For 'make check' to return expected results, especially
+     on some of the unit tests, various configuration values must be
+     unmodified - if treasure lists are modified, check_item may fail
+     because different treasures can now be generated, etc.
 
   4. Type `make install' to install the programs and any data files and
      documentation.
