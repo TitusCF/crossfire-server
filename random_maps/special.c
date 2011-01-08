@@ -209,30 +209,38 @@ int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xs
 void place_fountain_with_specials(mapstruct *map) {
     int ix, iy, i = -1, tries = 0;
     mapstruct *fountain_style = find_style("/styles/misc", "fountains", -1);
-    object *fountain = create_archetype("fountain");
+    const archetype *fountain = find_archetype("fountain");
     object *potion = object_new();
 
     object_copy_with_inv(pick_random_object(fountain_style), potion);
     while (i < 0 && tries < 10) {
         ix = RANDOM()%(MAP_WIDTH(map)-2)+1;
         iy = RANDOM()%(MAP_HEIGHT(map)-2)+1;
-        i = object_find_first_free_spot(fountain, map, ix, iy);
+        i = object_find_first_free_spot(potion, map, ix, iy);
         tries++;
     };
     if (i == -1) { /* can't place fountain */
-        object_free_drop_inventory(fountain);
         object_free_drop_inventory(potion);
         return;
     }
     ix += freearr_x[i];
     iy += freearr_y[i];
-    potion->face = fountain->face;
+    potion->speed = fountain->clone.speed;
+    potion->face = fountain->clone.face;
+    potion->anim_speed = fountain->clone.anim_speed;
+    potion->animation_id = fountain->clone.animation_id;
+    if (QUERY_FLAG(&fountain->clone, FLAG_ANIMATE)) {
+        SET_FLAG(potion, FLAG_ANIMATE);
+        SET_FLAG(potion, FLAG_CLIENT_ANIM_RANDOM);
+    } else
+        CLEAR_FLAG(potion, FLAG_ANIMATE);
+    object_update_speed(potion);
     SET_FLAG(potion, FLAG_NO_PICK);
     SET_FLAG(potion, FLAG_IDENTIFIED);
-    potion->name = add_string("fountain");
-    potion->name_pl = add_string("fountain");
+    FREE_AND_COPY(potion->name, fountain->clone.name);
+    FREE_AND_COPY(potion->name_pl, fountain->clone.name_pl);
+    object_set_value(potion, "on_use_yield", fountain->name, 1);
     potion->material = M_ADAMANT;
-    object_insert_in_map_at(fountain, map, NULL, 0, ix, iy);
     object_insert_in_map_at(potion, map, NULL, 0, ix, iy);
 }
 
