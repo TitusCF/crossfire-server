@@ -237,12 +237,13 @@ int legal_artifact_combination(const object *op, const artifact *art) {
 #ifdef TREASURE_VERBOSE
         LOG(llevDebug, "legal_art: %s\n", tmp->name);
 #endif
-        if (*tmp->name == '!')
-            name = tmp->name+1,
+        if (*tmp->name == '!') {
+            name = tmp->name+1;
             neg = 1;
-        else
-            name = tmp->name,
+        } else {
+            name = tmp->name;
             neg = 0;
+        }
 
         /* If we match name, then return the opposite of 'neg' */
         if (!strcmp(name, op->name) || (op->arch && !strcmp(name, op->arch->name)))
