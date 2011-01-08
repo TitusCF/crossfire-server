@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix broken fountains in random maps.
+Nicolas Weeger 2011-01-08
+
 test/unit/common/check_living.c: Modify some hard coded array sizes to use
     the defined values.  Remove randomly generated input values and put those
     into arrays - the test only works with specific input values, and randomly

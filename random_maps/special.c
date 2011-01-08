@@ -212,7 +212,7 @@ void place_fountain_with_specials(mapstruct *map) {
     object *fountain = create_archetype("fountain");
     object *potion = object_new();
 
-    object_copy(pick_random_object(fountain_style), potion);
+    object_copy_with_inv(pick_random_object(fountain_style), potion);
     while (i < 0 && tries < 10) {
         ix = RANDOM()%(MAP_WIDTH(map)-2)+1;
         iy = RANDOM()%(MAP_HEIGHT(map)-2)+1;
