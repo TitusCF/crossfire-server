@@ -771,6 +771,8 @@ void free_all_recipes(void) {
                 free_string(lchar->name);
                 free(lchar);
             }
+            if (formula->tool)
+                free(formula->tool[0]);
             free(formula->tool);
             free(formula);
         }
