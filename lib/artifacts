@@ -2600,7 +2600,7 @@ resist_confusion 25
 resist_slow 20
 resist_paralyze 20
 resist_fear 50
-speed 2
+exp 2
 msg
   These sure look like useful boots. They feel a little lighter and appear a bit sleeker.
 endmsg
