@@ -539,7 +539,7 @@ void init_artifacts(void) {
             }
             object_reset(art->item);
             art->item->arch = &dummy_archetype;
-            if (!load_object(fp, art->item, LO_LINEMODE, 0))
+            if (!load_object(fp, art->item, LO_LINEMODE, MAP_STYLE))
                 LOG(llevError, "Init_Artifacts: Could not load object.\n");
             art->item->arch = NULL;
             art->item->name = add_string((strchr(cp, ' ')+1));
