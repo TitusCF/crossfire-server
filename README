@@ -25,14 +25,16 @@ REQUIREMENTS
   the archetype files.  They need to be unpacked or sym-linked under the lib
   directory.
 
+  The map distribution is needed in order to have a usable map set.
+
   You also need Perl to generate the archetype files.  This is only done at
   build time.
 
   There are some optional dependencies:
   * Support for dynamically loaded libraries.  Most modern systems have this.
-  * SQLite3 - For cflogger and cfnewspaper.  Python 2.4 or later - For
-    cfpython. This is highly recommended.  A lot of items, maps and quests
-    won't work without Python.
+  * SQLite3 - For cflogger and cfnewspaper.
+  * Python 2.4 or later - For cfpython. This is highly recommended.  A lot of
+    items, maps and quests will not work without Python.
   * Check - for unit tests.  This is required for developers, normal users
     do not need to bother about this.  Check is not always distributed with
     popular distributions, but it is found at http://check.sourceforge.net/.
@@ -101,8 +103,16 @@ WEB SITES:
   The following web addresses have crossfire information that you may find
   useful:
 
+  real-time is the main crossfire site:
   http://crossfire.real-time.com/
-  real-time is the main crossfire site.
+
+  Following link contains much more detailed steps on compiling
+  the server from source:
+  http://wiki.metalforge.net/doku.php/crossfire_compile_guide
+
+  If you plan to run a public server, the following link provides a lot of
+  useful information on various customizations you should make:
+  http://wiki.metalforge.net/doku.php/serverhosting:hosting_a_crossfire_server
 
 
 REPORTING BUGS
