@@ -9,17 +9,8 @@
 #
 
 # metaserver values.
-# notification on/off controls the notification to the metaserver.
-# server and port is the metaserver host and port to connect to.
-# comment is sent to the metaserver.  It can be specific settings to on
-# the server, play behaviour, etc.
-# host is the name of this host as we should report it to the metaserver
-
-metaserver_notification off
-metaserver_server crossfire.real-time.com
-metaserver_host put.your.hostname.here
-metaserver_port 13326
-metaserver_comment Put a comment here.
+# metaserver1 support has been removed.  Update metaserver2
+# file instead
 
 # Character creation values.
 # The min, max, and points values are used for new (in client)

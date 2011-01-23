@@ -965,7 +965,6 @@ void init(int argc, char **argv) {
 
     init_beforeplay();
     init_server();
-    metaserver_init();
     metaserver2_init();
     account_load_entries();
     reset_sleep();
