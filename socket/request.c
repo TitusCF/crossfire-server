@@ -2378,7 +2378,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     if (!pl) {
         int flags = ADD_PLAYER_NEW;
         if (ns->login_method >= 2)
-            flags |= ADD_PLAYER_NO_MAP;
+            flags |= (ADD_PLAYER_NO_MAP | ADD_PLAYER_NO_STATS_ROLL);
         pl = add_player(ns, flags);
         SockList_ResetRead(&pl->socket.inbuf);
     } else if (ns->login_method < 2) {

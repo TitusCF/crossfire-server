@@ -242,12 +242,13 @@ typedef struct pl {
 /*@}*/
 
 /**
- * @defgroup ADD_PLAYER_xxx Flags - flags passed to add_player
+ * @defgroup ADD_PLAYER_xxx Flags - flags passed to add_player()
  * to control behavior
  */
 /*@{*/
-#define ADD_PLAYER_NEW              0x1
-#define ADD_PLAYER_NO_MAP           0x2
+#define ADD_PLAYER_NEW              0x1 /** Name/password provided, so skip to roll stats */
+#define ADD_PLAYER_NO_MAP           0x2 /** Do not set the first map */
+#define ADD_PLAYER_NO_STATS_ROLL    0x4 /** Stats provided from client */
 /*@}*/
 
 #endif /* PLAYER_H */

@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add another flag to add_player() to have it supress harmless, but perhaps
+confusing message, about swapping stats - on new clients, all stats are
+set up in the client - message will still be printed for older clients.
+MSW 2011-01-22
+
 Remove metaserver1 support from server.
 lib/settings: Remove settings for metaserver1, add not to update metaserver2
 server/init.c, socket/metaserver.c: Remove code

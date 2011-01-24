@@ -455,6 +455,14 @@ player *add_player(socket_struct *ns, int flags) {
 
     CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
     add_friendly_object(p->ob);
+
+    /* In this case, the client is provide all the informatin for the
+     * new character, so just return it.  Do not display any messages,
+     * etc
+     */
+    if (flags & ADD_PLAYER_NO_STATS_ROLL)
+        return p;
+
     if (flags & ADD_PLAYER_NEW) {
         roll_again(p->ob);
         player_set_state(p, ST_ROLL_STAT);
