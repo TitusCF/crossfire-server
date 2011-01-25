@@ -1082,7 +1082,7 @@ static void output_quests(quest_definition *parent, int level) {
     quest_definition *quest;
     quest_step_definition *step;
     char prefix[MAX_BUF];
-    int questcount, stepcount, i;
+    int questcount = 0, stepcount, i;
 
     /* we only need to set the prefix once,
      * all quests that are printed in this call will be at the same level */
