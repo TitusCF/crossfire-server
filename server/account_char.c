@@ -62,6 +62,7 @@
 #include <global.h>
 #include <object.h>
 #include <account_char.h>
+#include <stdlib.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
@@ -148,7 +149,7 @@ Account_Char *account_char_load(const char *account_name)
  */
 void account_char_save(const char *account, Account_Char *chars)
 {
-    char fname[MAX_BUF], fname1[MAX_BUF];;
+    char fname[MAX_BUF], fname1[MAX_BUF];
     FILE *fp;
     Account_Char *ac;
 

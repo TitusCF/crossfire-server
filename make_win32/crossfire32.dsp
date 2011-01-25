@@ -112,7 +112,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python21\libs"
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib pthreadVC2.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python21\libs"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib pthreadVC2.lib libcurl.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python21\libs"
 # SUBTRACT LINK32 /debug
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -299,6 +299,10 @@ SOURCE=..\socket\request.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\socket\requestinfo.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\socket\sounds.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -324,6 +328,14 @@ SOURCE=..\socket\sounds.c
 # Begin Group "server"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\server\account.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\server\account_char.c
+# End Source File
 # Begin Source File
 
 SOURCE=..\server\alchemy.c
@@ -1592,6 +1604,10 @@ SOURCE=..\common\arch.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\artifact.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\button.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -2228,6 +2244,10 @@ SOURCE=..\types\detector\detector.c
 # Begin Source File
 
 SOURCE=..\types\director\director.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\dragon_focus\dragon_focus.c
 # End Source File
 # Begin Source File
 
