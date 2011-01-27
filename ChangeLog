@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+lib/collect.pl.in: Remove default line which just generates an error when
+    server starts up and doesn't do anything.
+server/init.c: Update copyright date & owners that is displayed when program
+   starts up.
+MSW 2011-01-26
+
 Add another flag to add_player() to have it supress harmless, but perhaps
 confusing message, about swapping stats - on new clients, all stats are
 set up in the client - message will still be printed for older clients.

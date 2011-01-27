@@ -473,8 +473,6 @@ sub smoothOut {
     print SMOOTHS "# to an archetype and collect.pl will put below an entry #\n";
     print SMOOTHS "#      xxx yyy                                           #\n";
     print SMOOTHS "##########################################################\n\n";
-    print SMOOTHS "# default smooth. Needed for fallbacking\n";
-    print SMOOTHS "default_smoothed.111 sdefault.001\n";
     print SMOOTHS "\n# Data extracted from arch files\n";
     foreach $sm (sort (keys %smoothing)) {
 	print SMOOTHS "$sm $smoothing{$sm}\n";

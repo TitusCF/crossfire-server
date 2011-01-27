@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002,2010 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2010-2011 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -938,7 +938,7 @@ void init(int argc, char **argv) {
     load_materials();
     parse_args(argc, argv, 2);
     fprintf(logfile, "Welcome to CrossFire, v%s\n", FULL_VERSION);
-    fprintf(logfile, "Copyright (C) 1994 Mark Wedel.\n");
+    fprintf(logfile, "Copyright (C) 1994,2011 Mark Wedel & Crossfire Development Team\n");
     fprintf(logfile, "Copyright (C) 1992 Frank Tore Johansen.\n");
 
     if (strcmp(settings.dm_mail, "") != 0) {
