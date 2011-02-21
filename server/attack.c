@@ -770,14 +770,13 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
 
     /* See if we hit the creature */
     if (roll >= 20 || op->stats.ac >= base_wc-roll) {
-        int hitdam = base_dam;
         if (settings.casting_time == TRUE) {
             if (hitter->type == PLAYER && hitter->casting_time > -1) {
                 hitter->casting_time = -1;
                 draw_ext_info(NDI_UNIQUE, 0, hitter, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_FUMBLE,
                               "You attacked and lost your spell!");
             }
-            if (op->casting_time > -1 && hitdam > 0) {
+            if (op->casting_time > -1 && base_dam > 0) {
                 op->casting_time = -1;
                 if (op->type == PLAYER)  {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_FUMBLE,
@@ -826,8 +825,8 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         /* Need to do at least 1 damage, otherwise there is no point
          * to go further and it will cause FPE's below.
          */
-        if (hitdam <= 0)
-            hitdam = 1;
+        if (base_dam <= 0)
+            base_dam = 1;
 
         type = hitter->attacktype;
         if (!type)
@@ -849,7 +848,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         /* In the new attack code, it should handle multiple attack
          * types in its area, so remove it from here.
          */
-        dam = hit_player(op, random_roll(1, hitdam, hitter, PREFER_HIGH), hitter, type, 1);
+        dam = hit_player(op, random_roll(1, base_dam, hitter, PREFER_HIGH), hitter, type, 1);
         if (object_was_destroyed(op, op_tag)
         || object_was_destroyed(hitter, hitter_tag)
         || abort_attack(op, hitter, simple_attack)) {
