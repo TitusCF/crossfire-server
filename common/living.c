@@ -239,23 +239,6 @@ static const int fear_bonus[MAX_STAT+1] = {
 */
 #define MAX_EXPERIENCE levels[settings.max_level]
 
-/**
- * Because exp_obj sum to make the total score,
- * we cannot allow that sum to exceed the maximum
- * amount of experience a player can gain. Thus
- * we define MAX_EXP_IN_OBJ. It is important to try
- * to make the value of MAX_EXP_CAT close to the
- * actual number of experience objects in the game,
- * otherwise the maximum level in any experience
- * category could be quite low. To help the situation
- * out a little I added 10 more levels, and jacked
- * up the last level experience value. Its out of
- * line with progression of previous levels, so
- * if more levels are desired, this should be fixed.
- *  -b.t.
- */
-#define MAX_EXP_IN_OBJ levels[settings.max_level]/(MAX_EXP_CAT-1)
-
 extern sint64 *levels;
 
 #define MAX_SAVE_LEVEL 110
