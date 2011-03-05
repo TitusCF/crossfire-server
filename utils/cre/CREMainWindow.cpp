@@ -14,6 +14,7 @@
 
 extern "C" {
 #include "global.h"
+#include "sproto.h"
 }
 
 CREMainWindow::CREMainWindow()
@@ -125,6 +126,10 @@ void CREMainWindow::createActions()
     myReportSpells->setStatusTip(tr("Display all spells, in a table."));
     connect(myReportSpells, SIGNAL(triggered()), this, SLOT(onReportSpells()));
 
+    myReportPlayer = new QAction(tr("Player vs monsters"), this);
+    myReportPlayer->setStatusTip(tr("Compute statistics related to player vs monster combat."));
+    connect(myReportPlayer, SIGNAL(triggered()), this, SLOT(onReportPlayer()));
+
     myToolSmooth = new QAction(tr("Generate smooth face base"), this);
     myToolSmooth->setStatusTip(tr("Generate the basic smoothed picture for a face."));
     connect(myToolSmooth, SIGNAL(triggered()), this, SLOT(onToolSmooth()));
@@ -162,6 +167,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportSpellDamage);
     reportMenu->addAction(myReportAlchemy);
     reportMenu->addAction(myReportSpells);
+    reportMenu->addAction(myReportPlayer);
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
     toolsMenu->addAction(myToolSmooth);
@@ -273,160 +279,6 @@ void CREMainWindow::onReportsModified()
 {
     emit updateReports();
 }
-
-
-
-/**
- * This function takes a caster and spell and presents the
- * effective level the caster needs to be to cast the spell.
- * Basically, it just adjusts the spell->level with attuned/repelled
- * spellpaths.
- *
- * @param caster
- * person casting the spell.
- * @param spell
- * spell object.
- * @return
- * adjusted level.
- */
-int min_casting_level(const object *caster, const object *spell) {
-    int new_level;
-
-    if (caster->path_denied&spell->path_attuned) {
-        /* This case is not a bug, just the fact that this function is
-         * usually called BEFORE checking for path_deny. -AV
-         */
-        return 1;
-    }
-    new_level = spell->level
-                +((caster->path_repelled&spell->path_attuned) ? +2 : 0)
-                +((caster->path_attuned&spell->path_attuned) ? -2 : 0);
-    return MAX(new_level, 1);
-}
-
-
-/**
- * This function returns the effective level the spell
- * is being cast at.
- * Note that I changed the repelled/attuned bonus to 2 from 5.
- * This is because the new code compares casting_level against
- * min_caster_level, so the difference is effectively 4
- *
- * @param caster
- * person casting the spell.
- * @param spell
- * spell object.
- * @return
- * adjusted level.
- */
-int caster_level(const object *caster, const object *spell) {
-    int level = caster->level;
-
-    /* If this is a player, try to find the matching skill */
-    if (caster->type == PLAYER && spell->skill) {
-        int i;
-
-        for (i = 0; i < NUM_SKILLS; i++)
-            if (caster->contr->last_skill_ob[i]
-            && caster->contr->last_skill_ob[i]->skill == spell->skill) {
-                level = caster->contr->last_skill_ob[i]->level;
-                break;
-            }
-    };
-    /* Got valid caster level.  Now adjust for attunement */
-    level += ((caster->path_repelled&spell->path_attuned) ? -2 : 0)
-            +((caster->path_attuned&spell->path_attuned) ? 2 : 0);
-
-    /* Always make this at least 1.  If this is zero, we get divide by zero
-     * errors in various places.
-     */
-    if (level < 1)
-        level = 1;
-    return level;
-}
-
-/**
- * Scales the spellpoint cost of a spell by it's increased effectiveness.
- * Some of the lower level spells become incredibly vicious at high
- * levels.  Very cheap mass destruction.  This function is
- * intended to keep the sp cost related to the effectiveness.
- *
- * Note that it is now possible for a spell to cost both grace and
- * mana.  In that case, we return which ever value is higher.
- *
- * @param caster
- * what is casting the spell.
- * @param spell
- * spell object.
- * @param flags
- * one of @ref SPELL_xxx.
- * @return
- * sp/mana points cost.
- */
-sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags) {
-    int sp, grace, level = caster_level(caster, spell);
-
-    if (settings.spellpoint_level_depend == TRUE) {
-        if (spell->stats.sp && spell->stats.maxsp) {
-            sp = (int)(spell->stats.sp*(1.0+MAX(0, (float)(level-spell->level)/(float)spell->stats.maxsp)));
-        } else
-            sp = spell->stats.sp;
-
-        sp *= PATH_SP_MULT(caster, spell);
-        if (!sp && spell->stats.sp)
-            sp = 1;
-
-        if (spell->stats.grace && spell->stats.maxgrace) {
-            grace = (int)(spell->stats.grace*(1.0+MAX(0, (float)(level-spell->level)/(float)spell->stats.maxgrace)));
-        } else
-            grace = spell->stats.grace;
-
-        grace *= PATH_SP_MULT(caster, spell);
-        if (spell->stats.grace && !grace)
-            grace = 1;
-    } else {
-        sp = spell->stats.sp*PATH_SP_MULT(caster, spell);
-        if (spell->stats.sp && !sp)
-            sp = 1;
-        grace = spell->stats.grace*PATH_SP_MULT(caster, spell);
-        if (spell->stats.grace && !grace)
-            grace = 1;
-    }
-    if (flags == SPELL_HIGHEST)
-        return MAX(sp, grace);
-    else if (flags == SPELL_GRACE)
-        return grace;
-    else if (flags == SPELL_MANA)
-        return sp;
-    else {
-        LOG(llevError, "SP_level_spellpoint_cost: Unknown flags passed: %d\n", flags);
-        return 0;
-    }
-}
-
-/**
- * Returns adjusted damage based on the caster.
- *
- * @param caster
- * who is casting.
- * @param spob
- * spell we are adjusting.
- * @return
- * adjusted damage.
- */
-int SP_level_dam_adjust(const object *caster, const object *spob) {
-    int level = caster_level(caster, spob);
-    int adj = level-min_casting_level(caster, spob);
-
-    if (adj < 0)
-        adj = 0;
-    if (spob->dam_modifier)
-        adj /= spob->dam_modifier;
-    else
-        adj = 0;
-    return adj;
-}
-
 
 void CREMainWindow::onReportSpellDamage()
 {
@@ -621,6 +473,208 @@ void CREMainWindow::onReportSpells()
     }
 
     CREReportDisplay show(report);
+    show.exec();
+}
+
+static int monsterFight(archetype* monster, archetype* skill, int level)
+{
+    int limit = 50, result = 1;
+    player pl;
+    memset(&pl, 0, sizeof(player));
+    strncpy(pl.savebed_map, "HallOfSelection", MAX_BUF);
+    pl.bed_x = 5;
+    pl.bed_y = 5;
+    extern int nrofpixmaps;
+    pl.socket.faces_sent = (uint8*)calloc(sizeof(uint8), nrofpixmaps);
+
+    object* obfirst = object_create_arch(find_archetype("dwarf_player"));
+    obfirst->level = level;
+    obfirst->contr = &pl;
+    object* obskill = object_create_arch(skill);
+    obskill->level = level;
+    SET_FLAG(obskill, FLAG_APPLIED);
+    object_insert_in_ob(obskill, obfirst);
+    object* sword = object_create_arch(find_archetype((skill->clone.subtype == SK_TWO_HANDED_WEAPON) ? "sword_3" : "sword"));
+    SET_FLAG(sword, FLAG_APPLIED);
+    object_insert_in_ob(sword, obfirst);
+    fix_object(obfirst);
+    obfirst->stats.hp = obfirst->stats.maxhp;
+
+    object* obsecond = object_create_arch(monster);
+    tag_t tagfirst = obfirst->count;
+    tag_t tagsecond = obsecond->count;
+
+    // make a big map so large monsters are ok in map
+    mapstruct* test_map = get_empty_map(50, 50);
+
+    obfirst = object_insert_in_map_at(obfirst, test_map, NULL, 0, 0, 0);
+    obsecond = object_insert_in_map_at(obsecond, test_map, NULL, 0, 1 + monster->tail_x, monster->tail_y);
+
+    if (!obsecond || object_was_destroyed(obsecond, tagsecond))
+    {
+        qDebug() << "second removed??";
+    }
+
+    while (limit-- > 0 && obfirst->stats.hp >= 0 && obsecond->stats.hp >= 0)
+    {
+        if (obfirst->weapon_speed_left > 0) {
+            --obfirst->weapon_speed_left;
+            do_some_living(obfirst);
+
+            move_player(obfirst, 3);
+            if (object_was_destroyed(obsecond, tagsecond))
+                break;
+
+            /* the player may have been killed (acid for instance), so check here */
+            if (object_was_destroyed(obfirst, tagfirst) || (obfirst->map != test_map))
+            {
+                result = 0;
+                break;
+            }
+        }
+
+        if (obsecond->speed_left > 0) {
+            --obsecond->speed_left;
+            monster_do_living(obsecond);
+
+            attack_ob(obfirst, obsecond);
+            /* when player is killed, she is teleported to bed of reality -> check map */
+            if (object_was_destroyed(obfirst, tagfirst) || (obfirst->map != test_map))
+            {
+                result = 0;
+                break;
+            }
+        }
+
+        obfirst->weapon_speed_left += obfirst->weapon_speed;
+        if (obfirst->weapon_speed_left > 1.0)
+            obfirst->weapon_speed_left = 1.0;
+        if (obsecond->speed_left <= 0)
+            obsecond->speed_left += FABS(obsecond->speed);
+    }
+
+    free(pl.socket.faces_sent);
+    if (!object_was_destroyed(obfirst, tagfirst))
+    {
+        object_remove(obfirst);
+        object_free2(obfirst, 0);
+    }
+    if (!object_was_destroyed(obsecond, tagsecond))
+    {
+        object_remove(obsecond);
+        object_free2(obsecond, 0);
+    }
+    free_map(test_map);
+
+    return result;
+}
+
+static int monsterFight(archetype* monster, archetype* skill, int level, int count)
+{
+    int victory = 0;
+    while (count-- > 0)
+        victory += monsterFight(monster, skill, level);
+    return victory;
+}
+
+static QString monsterFight(archetype* monster, archetype* skill)
+{
+    qDebug() << "monsterFight:" << monster->clone.name << skill->clone.name;
+    int ret, min = settings.max_level + 1, half = 0, count = 5, level;
+    int first = 1, max = settings.max_level;
+
+    while (first != max)
+    {
+        level = (max + first) / 2;
+        if (level < first)
+            level = first;
+        if (first > max)
+            first = max;
+
+        ret = monsterFight(monster, skill, level, count);
+        if (ret > 0)
+        {
+            if (level < min)
+                min = level;
+            if (ret > (count / 2) && (level < half))
+                half = level;
+
+            max = level;
+        }
+        else
+        {
+            if (first == level)
+                break;
+            first = level;
+        }
+    }
+
+    //qDebug() << "   result:" << min << half;
+
+    if (min == settings.max_level + 1)
+        return "<td colspan=\"2\">-</td>";
+    return "<td>" + QString::number(min) + "</td><td>" + ((half != 0) ? QString::number(half) : "") + "</td>";
+}
+
+static QString monsterTable(archetype* monster, QList<archetype*> skills)
+{
+    QString line = "<tr><td>" + QString(monster->clone.name) + "</td>";
+
+    foreach(archetype* skill, skills)
+    {
+        line += monsterFight(monster, skill);
+    }
+    line += "</tr>";
+
+    return line;
+}
+
+void CREMainWindow::onReportPlayer()
+{
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+    QStringList names;
+    QMap<QString, archetype*> monsters;
+    QList<archetype*> skills;
+
+    archt* arch = first_archetype;
+    for (; arch; arch = arch->next)
+    {
+        if (QUERY_FLAG(&arch->clone, FLAG_MONSTER) && arch->clone.stats.hp > 0 && arch->head == NULL)
+            monsters[QString(arch->clone.name).toLower()] = arch;
+        if (arch->clone.type == SKILL && IS_COMBAT_SKILL(arch->clone.subtype))
+        {
+            if (strcmp(arch->name, "skill_missile_weapon") == 0 || strcmp(arch->name, "skill_throwing") == 0)
+                continue;
+            skills.append(arch);
+        }
+    }
+
+    names = monsters.keys();
+    names.sort();
+
+    QString report(tr("<h1>Player vs monsters</h1><p><strong>fh</strong> is the level at which the first victory happened, <strong>hh</strong> is the level at which at least 50% of fights were victorious.</p>")), line;
+    report += "<table border=\"1\"><tbody>";
+    report += "<tr><th rowspan=\"2\">Monster</th>";
+
+    line = "<tr>";
+    foreach(archetype* skill, skills)
+    {
+        report += "<th colspan=\"2\">" + QString(skill->clone.name) + "</th>";
+        line += "<th>fh</th><th>hh</th>";
+    }
+    report += "</tr>" + line + "</tr>";
+
+    int limit = 500;
+    foreach(const QString name, names)
+    {
+        report += monsterTable(monsters[name], skills);
+        if (limit-- <= 0)
+            break;
+    }
+
+    CREReportDisplay show(report);
+    QApplication::restoreOverrideCursor();
     show.exec();
 }
 
