@@ -63,8 +63,9 @@ void CRECombatSimulator::fight()
     // make a big map so large monsters are ok in map
     mapstruct* test_map = get_empty_map(50, 50);
 
-    obfirst = object_insert_in_map_at(obfirst, test_map, NULL, 0, 0, 0);
-    obsecond = object_insert_in_map_at(obsecond, test_map, NULL, 0, 25, 25);
+    // insert shifted for monsters like titans who have parts with negative values
+    obfirst = object_insert_in_map_at(obfirst, test_map, NULL, 0, 12, 12);
+    obsecond = object_insert_in_map_at(obsecond, test_map, NULL, 0, 37, 37);
 
     while (limit-- > 0 && obfirst->stats.hp > 0 && obsecond->stats.hp > 0)
     {
