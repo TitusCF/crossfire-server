@@ -1349,14 +1349,14 @@ void key_change_class(object *op, char key) {
  * @param race
  * race to use - caller should do sanity checking that this is
  * a valid race.
- * @param class
+ * @param opclass
  * class to use - like race, caller should do sanity checking.
  * @return
  * 0 on success, non zero on failure (may be extended with
  * unique error codes).  It is the responsibility of the
  * caller to notify the client of this failure.
  */
-int apply_race_and_class(object *op, archetype *race, archetype *class)
+int apply_race_and_class(object *op, archetype *race, archetype *opclass)
 {
     const char *name = add_string(op->name);
     char buf[MAX_BUF];
@@ -1406,7 +1406,7 @@ int apply_race_and_class(object *op, archetype *race, archetype *class)
     give_initial_items(op, op->randomitems);
 
     /* Apply class information */
-    apply_changes_to_player(op, &class->clone, FALSE);
+    apply_changes_to_player(op, &opclass->clone, FALSE);
 
     /* Checks that all stats are greater than 1 */
     if (!allowed_class(op)) return 2;
