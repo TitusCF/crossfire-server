@@ -10,6 +10,7 @@
 #include "CREPixmap.h"
 #include "CRESmoothFaceMaker.h"
 #include "ResourcesManager.h"
+#include "CRECombatSimulator.h"
 
 extern "C" {
 #include "global.h"
@@ -127,6 +128,10 @@ void CREMainWindow::createActions()
     myToolSmooth = new QAction(tr("Generate smooth face base"), this);
     myToolSmooth->setStatusTip(tr("Generate the basic smoothed picture for a face."));
     connect(myToolSmooth, SIGNAL(triggered()), this, SLOT(onToolSmooth()));
+
+    myToolCombatSimulator = new QAction(tr("Combat simulator"), this);
+    myToolCombatSimulator->setStatusTip(tr("Simulate fighting between two objects."));
+    connect(myToolCombatSimulator, SIGNAL(triggered()), this, SLOT(onToolCombatSimulator()));
 }
 
 void CREMainWindow::createMenus()
@@ -160,6 +165,7 @@ void CREMainWindow::createMenus()
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
     toolsMenu->addAction(myToolSmooth);
+    toolsMenu->addAction(myToolCombatSimulator);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -622,4 +628,10 @@ void CREMainWindow::onToolSmooth()
 {
     CRESmoothFaceMaker smooth;
     smooth.exec();
+}
+
+void CREMainWindow::onToolCombatSimulator()
+{
+    CRECombatSimulator simulator;
+    simulator.exec();
 }

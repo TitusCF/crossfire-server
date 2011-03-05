@@ -57,6 +57,7 @@ class CREMainWindow : public QMainWindow
         QAction* myReportAlchemy;
         QAction* myReportSpells;
         QAction* myToolSmooth;
+        QAction* myToolCombatSimulator;
         QLabel* myMapBrowseStatus;
         CREMapInformationManager* myMapManager;
         QuestManager* myQuestManager;
@@ -86,6 +87,7 @@ class CREMainWindow : public QMainWindow
         void onReportAlchemy();
         void onReportSpells();
         void onToolSmooth();
+        void onToolCombatSimulator();
         void browsingMap(const QString& path);
         void browsingFinished();
         void onFiltersModified();

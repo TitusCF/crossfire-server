@@ -61,7 +61,8 @@ CREPixmap.cpp \
  CREMultilineItemDelegate.cpp \
  QuestConditionScript.cpp \
  CRESmoothFaceMaker.cpp \
- ResourcesManager.cpp
+ ResourcesManager.cpp \
+ CRECombatSimulator.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -121,8 +122,9 @@ CREPixmap.h \
  CREMultilineItemDelegate.h \
  QuestConditionScript.h \
  CRESmoothFaceMaker.h \
- ResourcesManager.h
-LIBS += ../../common/libcross.a
+ ResourcesManager.h \
+ CRECombatSimulator.h
+LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt
 
 RESOURCES += cre.qrc
 
