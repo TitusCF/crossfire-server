@@ -1250,7 +1250,8 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
 
                 tailor_readable_ob(op, creator->stats.sp);
                 /* books w/ info are worth more! */
-                op->value *= ((op->level > 10 ? op->level : (op->level+1)/2)*((strlen(op->msg)/250)+1));
+                if (op->msg != NULL)
+                    op->value *= ((op->level > 10 ? op->level : (op->level+1)/2)*((strlen(op->msg)/250)+1));
                 /* creator related stuff */
 
                 if (creator->slaying && !op->slaying) /* for check_inv floors */
