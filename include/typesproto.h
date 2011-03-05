@@ -28,6 +28,8 @@ void init_type_deep_swamp(void);
 void init_type_detector(void);
 /* director/director.c */
 void init_type_director(void);
+/* dragon_focus/dragon_focus.c */
+void init_type_dragon_focus(void);
 /* duplicator/duplicator.c */
 void init_type_duplicator(void);
 void move_duplicator(object *op);

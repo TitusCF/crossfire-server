@@ -494,7 +494,8 @@ int monster_compute_path(object *source, object *target, int default_dir) {
  * @param op
  * monster. Must have FLAG_MONSTER set.
  */
-static void monster_do_living(object *op) {
+void monster_do_living(object *op) {
+    assert(op);
     assert(QUERY_FLAG(op, FLAG_MONSTER));
 
     /*  generate hp, if applicable */
