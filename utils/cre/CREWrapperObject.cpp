@@ -74,3 +74,8 @@ qint16 CREWrapperObject::damage() const
 {
     return myObject->stats.dam;
 }
+
+qint16 CREWrapperObject::hp() const
+{
+    return myObject->stats.hp;
+}
