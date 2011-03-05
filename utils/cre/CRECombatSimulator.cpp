@@ -85,7 +85,7 @@ void CRECombatSimulator::fight(const archetype* first, const archetype* second)
             if (obfirst->stats.hp > myFirstMaxHp)
                 myFirstMaxHp = obfirst->stats.hp;
 
-            attack_ob(obfirst, obsecond);
+            attack_ob(obsecond, obfirst);
             if (object_was_destroyed(obsecond, tagsecond))
                 break;
             if (obsecond->stats.hp < mySecondMinHp && obsecond->stats.hp > 0)
@@ -98,7 +98,7 @@ void CRECombatSimulator::fight(const archetype* first, const archetype* second)
             if (obsecond->stats.hp > mySecondMaxHp)
                 mySecondMaxHp = obsecond->stats.hp;
 
-            attack_ob(obsecond, obfirst);
+            attack_ob(obfirst, obsecond);
             if (object_was_destroyed(obfirst, tagfirst))
                 break;
             if (obfirst->stats.hp < myFirstMinHp && obfirst->stats.hp > 0)
