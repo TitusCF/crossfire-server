@@ -69,11 +69,26 @@ void CRECombatSimulator::fight()
 
     while (limit-- > 0 && obfirst->stats.hp > 0 && obsecond->stats.hp > 0)
     {
-        attack_ob(obfirst, obsecond);
-        if (!object_was_destroyed(obsecond, tagsecond))
+        if (obfirst->speed_left > 0) {
+            --obfirst->speed_left;
+            monster_do_living(obfirst);
+            attack_ob(obfirst, obsecond);
+            if (object_was_destroyed(obsecond, tagsecond))
+                break;
+        }
+
+        if (obsecond->speed_left > 0) {
+            --obsecond->speed_left;
+            monster_do_living(obsecond);
             attack_ob(obsecond, obfirst);
-        if (object_was_destroyed(obfirst, tagfirst))
-            break;
+            if (object_was_destroyed(obfirst, tagfirst))
+                break;
+        }
+
+        if (obfirst->speed_left <= 0)
+            obfirst->speed_left += FABS(obfirst->speed);
+        if (obsecond->speed_left <= 0)
+            obsecond->speed_left += FABS(obsecond->speed);
     }
 
     if (limit < 0)
