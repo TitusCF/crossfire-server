@@ -5,6 +5,7 @@
 #include <QDialog>
 
 class QComboBox;
+class QSpinBox;
 
 class CRECombatSimulator : public QDialog
 {
@@ -18,10 +19,20 @@ class CRECombatSimulator : public QDialog
         void fight();
 
     private:
+        void fight(const archetype* first, const archetype* second);
+
         QComboBox* myFirst;
         QComboBox* mySecond;
+        QSpinBox* myCombats;
         QLabel* myResultLabel;
         QLabel* myResult;
+
+        int myFirstVictories;
+        int myFirstMinHp;
+        int myFirstMaxHp;
+        int mySecondVictories;
+        int mySecondMinHp;
+        int mySecondMaxHp;
 };
 
 #endif	/* CRECOMBATSIMULATOR_H */
