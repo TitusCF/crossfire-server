@@ -127,6 +127,8 @@ void CRECombatSimulator::fight(const archetype* first, const archetype* second)
 
 void CRECombatSimulator::fight()
 {
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
     myFirstVictories = 0;
     myFirstMinHp = 100000;
     myFirstMaxHp = -1;
@@ -150,4 +152,6 @@ void CRECombatSimulator::fight()
 
     myResultLabel->setVisible(true);
     myResult->setVisible(true);
+
+    QApplication::restoreOverrideCursor();
 }
