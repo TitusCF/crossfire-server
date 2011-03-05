@@ -20,6 +20,8 @@ ResourcesManager::~ResourcesManager()
 
 void ResourcesManager::load()
 {
+    setlocale(LC_NUMERIC, "C");
+
     init_globals();
     init_library();
     read_client_images();
