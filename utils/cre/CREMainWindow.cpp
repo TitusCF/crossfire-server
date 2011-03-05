@@ -580,7 +580,7 @@ static int monsterFight(archetype* monster, archetype* skill, int level, int cou
 static QString monsterFight(archetype* monster, archetype* skill)
 {
     qDebug() << "monsterFight:" << monster->clone.name << skill->clone.name;
-    int ret, min = settings.max_level + 1, half = 0, count = 5, level;
+    int ret, min = settings.max_level + 1, half = settings.max_level + 1, count = 5, level;
     int first = 1, max = settings.max_level;
 
     while (first != max)
@@ -624,7 +624,7 @@ static QString monsterTable(archetype* monster, QList<archetype*> skills)
     {
         line += monsterFight(monster, skill);
     }
-    line += "</tr>";
+    line += "</tr>\n";
 
     return line;
 }
@@ -641,7 +641,19 @@ void CREMainWindow::onReportPlayer()
     for (; arch; arch = arch->next)
     {
         if (QUERY_FLAG(&arch->clone, FLAG_MONSTER) && arch->clone.stats.hp > 0 && arch->head == NULL)
-            monsters[QString(arch->clone.name).toLower()] = arch;
+        {
+            QString name(QString(arch->clone.name).toLower());
+            if (monsters.contains(name))
+            {
+                int suffix = 1;
+                do
+                {
+                    name = QString(arch->clone.name).toLower() + "_" + QString::number(suffix);
+                    suffix++;
+                } while (monsters.contains(name));
+            }
+            monsters[name] = arch;
+        }
         if (arch->clone.type == SKILL && IS_COMBAT_SKILL(arch->clone.subtype))
         {
             if (strcmp(arch->name, "skill_missile_weapon") == 0 || strcmp(arch->name, "skill_throwing") == 0)
@@ -653,17 +665,17 @@ void CREMainWindow::onReportPlayer()
     names = monsters.keys();
     names.sort();
 
-    QString report(tr("<h1>Player vs monsters</h1><p><strong>fh</strong> is the level at which the first victory happened, <strong>hh</strong> is the level at which at least 50% of fights were victorious.</p>")), line;
-    report += "<table border=\"1\"><tbody>";
+    QString report(tr("<h1>Player vs monsters</h1><p><strong>fv</strong> is the level at which the first victory happened, <strong>hv</strong> is the level at which at least 50% of fights were victorious.</p>\n")), line;
+    report += "<table border=\"1\"><tbody>\n";
     report += "<tr><th rowspan=\"2\">Monster</th>";
 
     line = "<tr>";
     foreach(archetype* skill, skills)
     {
         report += "<th colspan=\"2\">" + QString(skill->clone.name) + "</th>";
-        line += "<th>fh</th><th>hh</th>";
+        line += "<th>fv</th><th>hv</th>";
     }
-    report += "</tr>" + line + "</tr>";
+    report += "</tr>\n" + line + "</tr>\n";
 
     int limit = 500;
     foreach(const QString name, names)
@@ -672,6 +684,8 @@ void CREMainWindow::onReportPlayer()
         if (limit-- <= 0)
             break;
     }
+
+    report += "</tbody></table>\n";
 
     CREReportDisplay show(report);
     QApplication::restoreOverrideCursor();
