@@ -36,6 +36,13 @@ CRECombatSimulator::CRECombatSimulator()
     myCombats->setMaximum(10000);
     layout->addWidget(myCombats, line++, 1);
 
+    layout->addWidget(new QLabel(tr("Maximum number of rounds:"), this), line, 0);
+    myMaxRounds = new QSpinBox(this);
+    myMaxRounds->setMinimum(1);
+    myMaxRounds->setMaximum(10000);
+    myMaxRounds->setValue(500);
+    layout->addWidget(myMaxRounds, line++, 1);
+
     myResultLabel = new QLabel(tr("Combat result:"), this);
     myResultLabel->setVisible(false);
     layout->addWidget(myResultLabel, line++, 0, 1, 2);
@@ -57,7 +64,7 @@ CRECombatSimulator::~CRECombatSimulator()
 
 void CRECombatSimulator::fight(const archetype* first, const archetype* second)
 {
-    int limit = 5000;
+    int limit = myMaxRounds->value();
     object* obfirst = object_create_arch((archetype*)first);
     object* obsecond = object_create_arch((archetype*)second);
     tag_t tagfirst = obfirst->count;

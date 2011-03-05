@@ -24,6 +24,7 @@ class CRECombatSimulator : public QDialog
         QComboBox* myFirst;
         QComboBox* mySecond;
         QSpinBox* myCombats;
+        QSpinBox* myMaxRounds;
         QLabel* myResultLabel;
         QLabel* myResult;
 
