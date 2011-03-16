@@ -13,6 +13,8 @@ class MessageRule : public QObject
         MessageRule(const MessageRule& original);
         virtual ~MessageRule();
 
+        const QString& comment() const;
+        void setComment(const QString& comment);
         const QStringList& match() const;
         QStringList& match();
         void setMatch(const QStringList& match);
@@ -32,6 +34,7 @@ class MessageRule : public QObject
 
     private:
         bool myIsModified;
+        QString myComment;
         QStringList myMatch;
         QList<QStringList> myPreconditions;
         QList<QStringList> myPostconditions;

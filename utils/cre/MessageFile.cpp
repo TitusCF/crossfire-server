@@ -28,6 +28,16 @@ MessageRule::~MessageRule()
 {
 }
 
+const QString& MessageRule::comment() const
+{
+    return myComment;
+}
+
+void MessageRule::setComment(const QString& comment)
+{
+    myComment = comment;
+}
+
 const QStringList& MessageRule::match() const
 {
     return myMatch;
@@ -192,6 +202,8 @@ bool MessageFile::parseFile()
         myRules.append(rule);
         QScriptValue v = rules.property(r);
 
+        rule->setComment(v.property("comment").toString());
+
         QStringList items;
         qScriptValueToSequence(v.property("match"), items);
         rule->setMatch(items);
@@ -262,7 +274,16 @@ QString convert(const MessageRule* rule)
         return result;
     }
 
-    result += "{\n  \"match\" : ";
+    result += "{\n";
+
+    if (!rule->comment().isEmpty())
+    {
+        result += "  \"comment\" : \"";
+        result += convert(rule->comment());
+        result += "\",\n";
+    }
+
+    result += "  \"match\" : ";
     result += convert(rule->match());
 
     result += ",\n  \"pre\" : ";
@@ -274,8 +295,11 @@ QString convert(const MessageRule* rule)
     result += ",\n  \"msg\" : ";
     result += convert(rule->messages());
 
-    result += ",\n  \"replies\" : ";
-    result += convert(rule->replies());
+    if (!rule->replies().isEmpty())
+    {
+        result += ",\n  \"replies\" : ";
+        result += convert(rule->replies());
+    }
 
     result += "\n  }";
 
@@ -310,7 +334,7 @@ void MessageFile::save()
         rule->setModified(false);
     }
 
-    data += rules.join(",");
+    data += rules.join(", ");
     data += "\n]}\n";
 
     QString full = QString("%1/%2/%3").arg(settings.datadir, settings.mapdir, myPath);
