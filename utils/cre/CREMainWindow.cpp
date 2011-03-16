@@ -53,6 +53,7 @@ void CREMainWindow::closeEvent(QCloseEvent* event)
     delete myQuestManager;
     delete myMessageManager;
     delete myResourcesManager;
+    cleanup();
     QMainWindow::closeEvent(event);
 }
 
