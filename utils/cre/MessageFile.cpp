@@ -288,11 +288,8 @@ QString convert(const MessageRule* rule)
     result += "  \"match\" : ";
     result += convert(rule->match());
 
-    if (!rule->preconditions().isEmpty())
-    {
-        result += ",\n  \"pre\" : ";
-        result += convert(rule->preconditions());
-    }
+    result += ",\n  \"pre\" : ";
+    result += convert(rule->preconditions());
 
     result += ",\n  \"post\" : ";
     result += convert(rule->postconditions());
