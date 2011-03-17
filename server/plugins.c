@@ -355,7 +355,7 @@ static int do_execute_event(object *op, int eventcode, object *activator, object
                 plugin = plugins_find_plugin(tmp->title);
                 if (plugin == NULL) {
                     object *env = object_get_env_recursive(tmp);
-                    LOG(llevError, "The requested plugin doesn't exit: %s at %d/%d in map %s\n", tmp->title, env->x, env->y, env->map->name);
+                    LOG(llevError, "The requested plugin doesn't exist: %s at %d/%d in map %s\n", tmp->title, env->x, env->y, env->map->name);
                     object_remove(tmp);
                     object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
                 } else {
