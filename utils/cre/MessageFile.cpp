@@ -269,8 +269,10 @@ QString convert(const MessageRule* rule)
 
     if (!rule->include().isEmpty())
     {
-        result += "{\n  \"include\" : [\"" + convert(rule->include());
-        result += "\"],\n  \"pre\" : " + convert(rule->preconditions()) + "\n  }";
+        result += "{\n  \"include\" : [\"" + convert(rule->include()) + "\"]";
+        if (!rule->preconditions().isEmpty())
+            result += ",\n  \"pre\" : " + convert(rule->preconditions());
+        result +=  "\n  }";
         return result;
     }
 
@@ -286,8 +288,11 @@ QString convert(const MessageRule* rule)
     result += "  \"match\" : ";
     result += convert(rule->match());
 
-    result += ",\n  \"pre\" : ";
-    result += convert(rule->preconditions());
+    if (!rule->preconditions().isEmpty())
+    {
+        result += ",\n  \"pre\" : ";
+        result += convert(rule->preconditions());
+    }
 
     result += ",\n  \"post\" : ";
     result += convert(rule->postconditions());
