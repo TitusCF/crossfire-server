@@ -375,9 +375,24 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
          * better prices.  Also, simplify this - really no reason
          * to use cos for what is just a simple variation.
          */
-        if (who->map->path != NULL && val > 50)
-            val += (val * (who->map->reset_time % 1000) - 500) / 10000;
+        if (who->map->path != NULL && val > 50) {
+            /**
+             * Fix Nicolas Weeger 2011/03/22, various things:
+             * - the " -500" was applied to the result of val*(reset_time%1000),
+             * which is definitely not what we want
+             * - issues with type conversion, so explicitely using a separate int
+             * - just to be safe, check val won't become negative at the end too
+             */
+            int variation = ((who->map->reset_time % 1000) - 500);
+            sint64 adjust = ((sint64)val * variation) / 10000;
+            if (adjust > 0 || ((-adjust) < val))
+                val += adjust;
+        }
     }
+
+    if (((sint64)val) < 0)
+        LOG(llevError, "got a negative price for %s [%s], flags %d, map->reset_time %d\n",
+            tmp->name, tmp->arch->name, flag, (who && who->map && who->map->path) ? who->map->reset_time : -1 );
     return val;
 }
 

@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix type conversion error and logic mistake resulting in really high prices
+when selling items in some situations.
+See the end of query_cost() in server/shop.c for more details.
+This may fix bug #3163782: Inscription glitch brings 'unimaginable amount of platinum'.
+Nicolas Weeger 2011-03-22
+
 ==============================================================================
 Changes for 1.60.0
 ==============================================================================
