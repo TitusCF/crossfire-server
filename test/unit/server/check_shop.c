@@ -32,6 +32,8 @@
 
 #include <stdlib.h>
 #include <check.h>
+#include <global.h>
+#include <sproto.h>
 
 void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
@@ -41,8 +43,40 @@ void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST(test_empty) {
-    /*TESTME test not yet developped*/
+START_TEST(test_query_cost) {
+    object *tosell, *player;
+    int map_reset_time, player_charisma, arch;
+    mapstruct* map;
+    uint64 cost;
+    static const char *sell_archs[] = { "fl_corpse", "Pdragon_mail", NULL };
+
+    player = arch_to_object(find_archetype("dwarf_player"));
+    fail_unless(player != NULL, "can't find player?");
+    fail_unless(player->type == PLAYER, "invalid type for player?");
+    fail_unless(strcmp(player->name, "dwarf") == 0, "wrong name?");
+
+    map = get_empty_map(5, 5);
+    strncpy(map->path, "test", sizeof(map->path) - 1);
+    player->map = map;
+
+    for (arch = 0; sell_archs[arch] != NULL; arch++) {
+        tosell = arch_to_object(find_archetype(sell_archs[arch]));
+        fail_unless(tosell != NULL, "can't find %s", sell_archs[arch]);
+        tosell->nrof = 6;
+        CLEAR_FLAG(tosell, FLAG_IDENTIFIED);
+
+        for (player_charisma = 1; player_charisma <= 30; player_charisma++) {
+            player->stats.Cha = player_charisma;
+            for (map_reset_time = 0; map_reset_time < 1000; map_reset_time++) {
+                map->reset_time = map_reset_time;
+                cost = query_cost(tosell, player, F_SELL|F_SHOP);
+                fail_unless(cost < 18446744073710, "mega price %" FMT64U " for charisma %d reset_time %d!", cost, player_charisma, map_reset_time);
+            }
+        }
+        object_free_drop_inventory(tosell);
+    }
+
+    object_free_drop_inventory(player);
 }
 END_TEST
 
@@ -54,7 +88,7 @@ Suite *shop_suite(void) {
     tcase_add_checked_fixture(tc_core, setup, teardown);
 
     suite_add_tcase(s, tc_core);
-    tcase_add_test(tc_core, test_empty);
+    tcase_add_test(tc_core, test_query_cost);
 
     return s;
 }
@@ -63,6 +97,11 @@ int main(void) {
     int nf;
     Suite *s = shop_suite();
     SRunner *sr = srunner_create(s);
+
+    srunner_set_fork_status(sr, CK_NOFORK);
+
+    /* Only want to run this once, so don't put it in setup() */
+    init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/unit/server/shop.xml");
     srunner_set_log(sr, LOGDIR "/unit/server/shop.out");
