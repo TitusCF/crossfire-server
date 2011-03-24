@@ -565,7 +565,7 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
         object_remove(obsecond);
         object_free2(obsecond, 0);
     }
-    free_map(test_map);
+    delete_map(test_map);
 
     return result;
 }
