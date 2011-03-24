@@ -124,7 +124,7 @@ CREPixmap.h \
  CRESmoothFaceMaker.h \
  ResourcesManager.h \
  CRECombatSimulator.h
-LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt
+LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt -ldl
 
 RESOURCES += cre.qrc
 
