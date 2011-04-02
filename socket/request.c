@@ -2299,8 +2299,6 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     player *pl;
     archetype *map=NULL, *race_a=NULL, *class_a=NULL;
 
-    mapstruct *newmap;
-
     SockList_Init(&sl);
 
     nlen = len;
