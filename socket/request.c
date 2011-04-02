@@ -2555,17 +2555,19 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
             LOG(llevError, "Are the archetype files up to date?  Can not continue.\n");
             abort();
         }
-        strcpy(pl->maplevel, map->clone.slaying);
 
-        pl->ob->x = map->clone.stats.hp;
-        pl->ob->y = map->clone.stats.sp;
+        enter_exit(pl->ob, &map->clone);
+
+        if (pl->ob->map == NULL) {
+            LOG(llevError, "Couldn't put player %s on start map %s!", pl->ob->name, map->name);
+            abort();
+        }
 
         /* copy information to bed of reality information, in case the player dies */
-        snprintf(pl->savebed_map, sizeof(pl->savebed_map), "%s", map->clone.slaying);
+        snprintf(pl->savebed_map, sizeof(pl->savebed_map), "%s", pl->ob->map->path);
         pl->bed_x = pl->ob->x;
         pl->bed_y = pl->ob->y;
 
-        enter_exit(pl->ob, NULL);
         player_set_state(pl, ST_PLAYING);
     }
 
