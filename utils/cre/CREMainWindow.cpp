@@ -558,12 +558,12 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     if (!object_was_destroyed(obfirst, tagfirst))
     {
         object_remove(obfirst);
-        object_free2(obfirst, 0);
+        object_free2(obfirst, FREE_OBJ_FREE_INVENTORY);
     }
     if (!object_was_destroyed(obsecond, tagsecond))
     {
         object_remove(obsecond);
-        object_free2(obsecond, 0);
+        object_free2(obsecond, FREE_OBJ_FREE_INVENTORY);
     }
     delete_map(test_map);
 
@@ -575,6 +575,7 @@ static int monsterFight(archetype* monster, archetype* skill, int level, int cou
     int victory = 0;
     while (count-- > 0)
         victory += monsterFight(monster, skill, level);
+
     return victory;
 }
 
