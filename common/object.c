@@ -535,6 +535,7 @@ void object_free_all_data(void) {
         nroffreeobjects--;
         op = next;
     }
+    free_objects = NULL;
 
     for (op = objects; op != NULL; ) {
         next = op->next;
