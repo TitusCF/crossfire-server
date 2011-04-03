@@ -129,6 +129,8 @@ void CREMainWindow::createActions()
 
     myReportPlayer = new QAction(tr("Player vs monsters"), this);
     myReportPlayer->setStatusTip(tr("Compute statistics related to player vs monster combat."));
+    // can't use that while map browsing is running ; will be enabled in browsingFinished()
+    myReportPlayer->setEnabled(false);
     connect(myReportPlayer, SIGNAL(triggered()), this, SLOT(onReportPlayer()));
 
     myToolSmooth = new QAction(tr("Generate smooth face base"), this);
@@ -269,6 +271,7 @@ void CREMainWindow::browsingFinished()
 {
     statusBar()->showMessage(tr("Finished browsing maps."), 5000);
     myMapBrowseStatus->setVisible(false);
+    myReportPlayer->setEnabled(true);
 }
 
 void CREMainWindow::onFiltersModified()
