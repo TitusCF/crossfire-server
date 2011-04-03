@@ -99,9 +99,6 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
 //    myTree->setSortingEnabled(true);
     myTree->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(myTree, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(treeCustomMenu(const QPoint&)));
-
-    myCurrentPanel = NULL;
-
     connect(myTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 
     /* dummy panel to display for empty items */
@@ -110,6 +107,7 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
     dl->addWidget(new QLabel(tr("No details available."), dummy));
     addPanel("(dummy)", dummy);
     dummy->setVisible(true);
+    myCurrentPanel = dummy;
 
     fillData();
 
