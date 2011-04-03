@@ -482,7 +482,7 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     int limit = 50, result = 1;
     player pl;
     memset(&pl, 0, sizeof(player));
-    strncpy(pl.savebed_map, "HallOfSelection", MAX_BUF);
+    strncpy(pl.savebed_map, "/HallOfSelection", MAX_BUF);
     pl.bed_x = 5;
     pl.bed_y = 5;
     extern int nrofpixmaps;
@@ -612,6 +612,21 @@ static QString monsterFight(archetype* monster, archetype* skill)
     }
 
     //qDebug() << "   result:" << min << half;
+
+    // if player was killed, then HallOfSelection was loaded, so clean  it now.
+    // This speeds up various checks, like in free_all_objects().
+    mapstruct* hos = has_been_loaded("/HallOfSelection");
+    if (hos)
+    {
+        hos->reset_time = 1;
+        hos->in_memory = MAP_IN_MEMORY;
+        delete_map(hos);
+    }
+    /*
+    extern int nroffreeobjects;
+    extern int nrofallocobjects;
+    qDebug() << "free: " << nroffreeobjects << ", all: " << nrofallocobjects;
+     */
 
     if (min == settings.max_level + 1)
         return "<td colspan=\"2\">-</td>";
