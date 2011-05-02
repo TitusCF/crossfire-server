@@ -1585,9 +1585,9 @@ void scroll_failure(object *op, int failure, int power) {
  * @param change
  * what kind of changes to apply. Should be of type CLASS.
  * @param limit_stats
- * If true, stats from class can not exceed racial maximum.
- * if not true, then they can - this is used for point based
- * character creation.
+ * uses the AC_PLAYER_STAT defines from define.h:
+ * AC_PLAYER_STAT_LIMIT: Limit stats to racial maximum
+ * AC_PLAYER_STAT_NO_CHANGE: Do not make any stat adjustments
  */
 void apply_changes_to_player(object *pl, object *change, int limit_stats) {
     int i, j;
@@ -1602,52 +1602,55 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
      * for the race, and if the stat max is exceeded,
      * tries to randomly reassign the excess stat
      */
-    for (i = 0; i < NUM_STATS; i++) {
-        sint8 stat = get_attr_value(&pl->contr->orig_stats, i);
-        int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
+    if (! (limit_stats & AC_PLAYER_STAT_NO_CHANGE)) {
+        for (i = 0; i < NUM_STATS; i++) {
+            sint8 stat = get_attr_value(&pl->contr->orig_stats, i);
+            int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
 
-        stat += get_attr_value(&change->stats, i);
-        if (limit_stats) {
-            if (stat > 20+race_bonus) {
-                excess_stat++;
-                stat = 20+race_bonus;
-            } else if (stat < 1) {
-                /* I didn't see any code here before to make sure minimum
-                 * stats were enforced - maybe it was just dumb
-                 * luck that one would not have a stat low enough that then
-                 * has a stat penalty for class that would bring it negative?
-                 * I imagine a negative stat would crash the server pretty
-                 * quickly - MSW, Sept 2010
-                 */
-                excess_stat += stat;
-                stat = 1;
+            stat += get_attr_value(&change->stats, i);
+            if (limit_stats & AC_PLAYER_STAT_LIMIT) {
+                if (stat > 20+race_bonus) {
+                    excess_stat++;
+                    stat = 20+race_bonus;
+                } else if (stat < 1) {
+                    /* I didn't see any code here before to make sure minimum
+                     * stats were enforced - maybe it was just dumb
+                     * luck that one would not have a stat low enough that then
+                     * has a stat penalty for class that would bring it negative?
+                     * I imagine a negative stat would crash the server pretty
+                     * quickly - MSW, Sept 2010
+                     */
+                    excess_stat += stat;
+                    stat = 1;
+                }
+            }
+            set_attr_value(&pl->contr->orig_stats, i, stat);
+        }
+
+        /* Maybe we should randomly deduct stats in this case?
+         * It's will go away sometime soon in any case.
+         */
+        if (excess_stat < 0) excess_stat = 0;
+
+        /* We don't put an explicit check for limit_stats here -
+         * excess stat will never be 0 if limit_stats is not
+         * true.
+         */
+        for (j = 0; excess_stat > 0 && j < 100; j++) {
+            /* try 100 times to assign excess stats */
+            int i = rndm(0, NUM_STATS-1);
+            int stat = get_attr_value(&pl->contr->orig_stats, i);
+            int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
+
+            if (i == CHA)
+                continue; /* exclude cha from this */
+            if (stat < 20+race_bonus) {
+                change_attr_value(&pl->contr->orig_stats, i, 1);
+                excess_stat--;
             }
         }
-        set_attr_value(&pl->contr->orig_stats, i, stat);
     }
-
-    /* Maybe we should randomly deduct stats in this case?
-     * It's will go away sometime soon in any case.
-     */
-    if (excess_stat < 0) excess_stat = 0;
-
-    /* We don't put an explicit check for limit_stats here -
-     * excess stat will never be 0 if limit_stats is not
-     * true.
-     */
-    for (j = 0; excess_stat > 0 && j < 100; j++) {
-        /* try 100 times to assign excess stats */
-        int i = rndm(0, NUM_STATS-1);
-        int stat = get_attr_value(&pl->contr->orig_stats, i);
-        int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
-
-        if (i == CHA)
-            continue; /* exclude cha from this */
-        if (stat < 20+race_bonus) {
-            change_attr_value(&pl->contr->orig_stats, i, 1);
-            excess_stat--;
-        }
-    }
+    /* Done with stat processing */
 
     /* insert the randomitems from the change's treasurelist into
      * the player ref: player.c
@@ -1684,14 +1687,6 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
             animate_object(pl, pl->facing);
         }
     }
-#if 0
-    /* check the special case of can't use weapons */
-    /*if(QUERY_FLAG(change, FLAG_USE_WEAPON))
-     *    CLEAR_FLAG(pl, FLAG_USE_WEAPON);
-     */
-    if (!strcmp(change->name, "monk"))
-        CLEAR_FLAG(pl, FLAG_USE_WEAPON);
-#endif
     /* Hard coding in class name is a horrible idea - lets
      * use the supported mechanism for this
      */

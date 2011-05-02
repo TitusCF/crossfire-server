@@ -406,7 +406,7 @@ void roll_stats(object *op);
 void roll_again(object *op);
 void key_roll_stat(object *op, char key);
 void key_change_class(object *op, char key);
-int apply_race_and_class(object *op, archetype *race, archetype *opclass);
+int apply_race_and_class(object *op, archetype *race, archetype *opclass, living *stats);
 void key_confirm_quit(object *op, char key);
 int check_pick(object *op);
 int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 sy);

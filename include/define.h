@@ -951,6 +951,16 @@ static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, siz
 /*@}*/
 
 /**
+ * @defgroup AC_PLAYER_STAT for apply_changes_to_player()
+ *
+ * These flags determine what apply_changes_to_player() does for
+ * stat adjustment, if anything.
+ */
+#define AC_PLAYER_STAT_LIMIT        1   /** Limit stats to racial maximum */
+#define AC_PLAYER_STAT_NO_CHANGE    2   /** Do not make any stat adjustments */
+
+
+/**
  * @defgroup CAN_APPLY_xxx Values returned by apply_can_apply_object().
  *
  * Bitmask values for 'apply_can_apply_object()' return values.

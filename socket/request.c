@@ -2298,6 +2298,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     SockList sl;
     player *pl;
     archetype *map=NULL, *race_a=NULL, *class_a=NULL;
+    living  new_stats;
 
     SockList_Init(&sl);
 
@@ -2369,36 +2370,14 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     for (pl=first_player; pl; pl=pl->next)
         if (&pl->socket == ns) break;
 
-    /* Some of this logic is from add_player()
-     * we just don't use add_player() as it does some other work
-     * we don't really want to do.
+    /* In this mode, we have additional data
+     * Note that because there are a lot of failure cases in here
+     * (where we end up not creating the new player), the code
+     * to create the new player is done within this routine
+     * after all checks pass.  Note that all of the checks
+     * done are done without using the player structure,
+     * as pl may be null right now.
      */
-    if (!pl) {
-        int flags = ADD_PLAYER_NEW;
-        if (ns->login_method >= 2)
-            flags |= (ADD_PLAYER_NO_MAP | ADD_PLAYER_NO_STATS_ROLL);
-        pl = add_player(ns, flags);
-        SockList_ResetRead(&pl->socket.inbuf);
-    } else if (ns->login_method < 2) {
-        roll_again(pl->ob);
-        pl->state = ST_ROLL_STAT;
-        set_first_map(pl->ob);
-    }
-
-    /* add_player does a lot of the work, but there are a few
-     * things we need to update, like starting name and
-     * password.
-     * This is done before processing in login_method>2.
-     * The character creation process it does when
-     * applying the race/class will use this
-     * name information.
-     */
-    FREE_AND_COPY(pl->ob->name, name);
-    FREE_AND_COPY(pl->ob->name_pl, name);
-    pl->name_changed = 1;
-    strcpy(pl->password, crypt_string(password, NULL));
-
-    /* In this mode, we have additional data */
     if (ns->login_method >= 2) {
         int i, j, stat_total=0;
         char *key, *value, *race=NULL, *class=NULL;
@@ -2406,7 +2385,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         /* By setting this to zero, then we can easily
          * check to see if all stats have been set.
          */
-        memset(&pl->orig_stats, sizeof(living), 0);
+        memset(&new_stats, sizeof(living), 0);
 
         while (nlen < len) {
             i = buf[nlen];  /* Length of this line */
@@ -2464,7 +2443,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
                     if (!strcasecmp(key,short_stat_name[j])) {
                         int val = atoi(value);
 
-                        set_attr_value(&pl->orig_stats, j, val);
+                        set_attr_value(&new_stats, j, val);
                         break;
                     }
                 }
@@ -2484,7 +2463,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
          * clients will behave properly.
          */
         for (j=0; j<NUM_STATS; j++) {
-            int val = get_attr_value(&pl->orig_stats, j);
+            int val = get_attr_value(&new_stats, j);
 
             stat_total += val;
             if (val > settings.starting_stat_max ||
@@ -2522,18 +2501,45 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
             SockList_Term(&sl);
             return;
         }
+
         /* At current time, only way this can fail is if the adjusted
          * stat is less than 1.
          */
-        if (apply_race_and_class(pl->ob, race_a, class_a)) {
+        if (check_race_and_class(&new_stats, race_a, class_a)) {
             SockList_AddString(&sl,
-                               "failure createplayer Unable to apply race - stat is out of bounds");
+                               "failure createplayer Unable to apply race or class - statistic is out of bounds");
             Send_With_Handling(ns, &sl);
             SockList_Term(&sl);
             return;
         }
 
+        if (!pl)
+            pl = add_player(ns, ADD_PLAYER_NEW | ADD_PLAYER_NO_MAP | ADD_PLAYER_NO_STATS_ROLL);
+
+        apply_race_and_class(pl->ob, race_a, class_a, &new_stats);
+
+    }  else {
+        /* In thise case, old login method */
+        if (!pl)
+            pl = add_player(ns, ADD_PLAYER_NEW);
+
+        roll_again(pl->ob);
+        pl->state = ST_ROLL_STAT;
+        set_first_map(pl->ob);
     }
+
+    /* add_player does a lot of the work, but there are a few
+     * things we need to update, like starting name and
+     * password.
+     * This is done before processing in login_method>2.
+     * The character creation process it does when
+     * applying the race/class will use this
+     * name information.
+     */
+    FREE_AND_COPY(pl->ob->name, name);
+    FREE_AND_COPY(pl->ob->name_pl, name);
+    pl->name_changed = 1;
+    strcpy(pl->password, crypt_string(password, NULL));
 
     SockList_AddString(&sl, "addme_success");
     Send_With_Handling(ns, &sl);
