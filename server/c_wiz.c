@@ -1706,7 +1706,7 @@ void command_abil(object *op, const char *params) {
         return;
     }
 
-    if (iii < MIN_STAT || iii > MAX_STAT) {
+    if (iii < MIN_STAT || iii > settings.max_stat) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Illegal range of stat.\n");
         return;

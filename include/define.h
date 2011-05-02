@@ -75,7 +75,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define NAME_MAX 255
 #endif
 
-#define MAX_STAT                30      /**< The maximum legal value of any stat */
 #define MIN_STAT                1       /**< The minimum legal value of any stat */
 
 #define MAX_BUF                 256     /**< Used for all kinds of things */

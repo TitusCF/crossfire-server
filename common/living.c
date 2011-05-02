@@ -41,9 +41,9 @@
 
 #include "living.h"
 
-static int get_con_bonus(int stat);
-static int get_sp_bonus(int stat);
-static int get_grace_bonus(int stat);
+static float get_con_bonus(int stat);
+static float get_sp_bonus(int stat);
+static float get_grace_bonus(int stat);
 static size_t get_index(int stat, size_t max_index);
 
 /**
@@ -54,189 +54,60 @@ static size_t get_index(int stat, size_t max_index);
 #define ADD_EXP(exptotal, exp) { exptotal += exp; if (exptotal > MAX_EXPERIENCE) exptotal = MAX_EXPERIENCE; }
 
 /**
- * Constitution bonus
- */
-static const int con_bonus[MAX_STAT+1] = {
-    -6,
-    -5, -4, -3, -2, -1,
-    -1, 0, 0, 0, 0,
-    1, 2, 3, 4, 5,
-    6, 7, 8, 9, 10,
-    12, 14, 16, 18, 20,
-    22, 25, 30, 40, 50
-};
-
-/**
- * Spell point bonus.
- * Changed the name of this to "sp_bonus" from "int_bonus"
- * because Pow can now be the stat that controls spellpoint
- * advancement. -b.t.
- */
-static const int sp_bonus[MAX_STAT+1] = {
-    -10,
-    -10, -9, -8, -7, -6,
-    -5, -4, -3, -2, -1,
-    0, 1, 2, 3, 4,
-    5, 6, 7, 8, 9,
-    10, 12, 15, 20, 25,
-    30, 40, 50, 70, 100
-};
-
-/**
- * Grace bonus
- */
-static const int grace_bonus[MAX_STAT+1] = {
-    -10,
-    -10, -9, -8, -7, -6,
-    -5, -4, -3, -2, -1,
-    0, 1, 2, 3, 4,
-    5, 6, 7, 8, 9,
-    10, 12, 15, 20, 25,
-    30, 40, 50, 70, 100
-};
-
-/**
- * Charisma bonus.
+ * The definitions below are indexes into the bonuses[] array.
+ * Rather than have a bunch of different variables, it is easier
+ * to just have a single array - all access to these is done
+ * through the get_cha_...() function in any case -
+ * making it an array makes processing simpler.
  *
- * @note
- * 0.92.7 Changed way charisma works.  Values now
- * represent how much more it costs to buy something than to sell it
- * (10, a value of 10 means it is that if it costs 50 gp to buy, you
- * would only get 5 gp when you sell.)  Let query_cost do the calculations
- * on how to really do this.  Buy keeping it this simple number, it is
- * much easier to know how things will be influenced.  A value of '1' means
- * buying and selling is both the same value - any value less than or equal
- * to 1 should not be used.
- * At least as of now, the only place that uses this code is query_cost,
- * in server/shop.c.  This bonus is split evenly between buying and selling
- * (ie, if the bonus is 2.0, then items are bought for 1.33 list, and sold
- * at .667
- * This is figured by diff=(y-1)/(1+y), and for buy, it is 1+diff, for sell
- * it is 1-diff
- */
-static const float cha_bonus[MAX_STAT+1] = {
-    10.0,
-    10.0, 9.0, 8.0, 7.0, 6.0,       /*<-5*/
-    5.0, 4.5, 4.0, 3.5, 3.0,        /*<-10*/
-    2.9, 2.8, 2.7, 2.6, 2.5,        /*<-15*/
-    2.4, 2.3, 2.2, 2.1, 2.0,        /*<-20*/
-    1.95, 1.90, 1.85, 1.80, 1.75,   /*25 */
-    1.70, 1.65, 1.60, 1.55, 1.50    /*30 */
-};
-
-/** Dexterity bonus */
-static const int dex_bonus[MAX_STAT+1] = {
-    -4,
-    -3, -2, -2, -1, -1,
-    -1, 0, 0, 0, 0,
-    0, 0, 0, 1, 1,
-    1, 2, 2, 2, 3,
-    3, 3, 4, 4, 4,
-    5, 5, 6, 6, 7
-};
-
-/** speed_bonus, which uses dex as its stat */
-static const float speed_bonus[MAX_STAT+1] = {
-    -0.1,                            /* 0 */
-    -0.1, -0.1, -0.05, -0.05, -0.05, /* 5 */
-    -0.05, 0.0, 0.0, 0.0, 0.0,       /* 10 */
-    0.05, 0.05, 0.05, 0.1, 0.1,      /* 15 */
-    0.1, 0.1, 0.1, 0.15, 0.15,       /* 20 */
-    0.15, 0.15, 0.2, 0.2, 0.2,       /* 25 */
-    0.2, 0.25, 0.25, 0.25, 0.25      /* 30 */
-};
-
-/**
- * dam_bonus, thaco_bonus, weight limit all are based on strength.
- */
-static const int dam_bonus[MAX_STAT+1] = {
-    -2,
-    -2, -2, -1, -1, -1,
-    0, 0, 0, 0, 0,
-    0, 1, 1, 1, 2,
-    2, 2, 3, 3, 3,
-    4, 4, 5, 5, 6,
-    6, 7, 8, 9, 10
-};
-
-/** THAC0 bonus */
-static const int thaco_bonus[MAX_STAT+1] = {
-    -2,
-    -2, -2, -2, -1, -1,    /* 5 */
-    -1, -1, 0, 0, 0,       /* 10 */
-    0, 1, 1, 1, 1,         /* 15 */
-    2, 2, 2, 2, 2,         /* 20 */
-    3, 3, 3, 3, 4,         /* 25 */
-    4, 4, 4, 5, 5          /* 30 */
-};
-
-/**
- * The absolute most a character can carry - a character can't
- * pick stuff up if it would put him above this limit.
+ * The INT_ prefix is to note the type of array the bonus
+ * goes into (vs FLOAT) - it is unfortunately that it is also the
+ * name of one of the stats.
  *
- * Value is in grams, so we don't need to do conversion later
- *
- * These limits are probably overly generous, but being there were no values
- * before, you need to start someplace.
+ * The NUM_BONUSES is how many bonuses they are (size of the array),
+ * so is equal to last value +1.
  */
-static const uint32 weight_limit[MAX_STAT+1] = {
-    200000,  /* 0 */
-    250000, 300000, 350000, 400000, 500000,      /* 5*/
-    600000, 700000, 800000, 900000, 1000000,     /* 10 */
-    1100000, 1200000, 1300000, 1400000, 1500000, /* 15 */
-    1650000, 1800000, 1950000, 2100000, 2250000, /* 20 */
-    2400000, 2550000, 2700000, 2850000, 3000000, /* 25 */
-    3250000, 3500000, 3750000, 4000000, 4500000  /*30 */
-};
+#define INT_FEAR_BONUS      0
+#define INT_TURN_BONUS      1
+#define INT_CLERIC_CHANCE   2
+#define INT_LEARN_SPELL     3
+#define INT_CHA_BONUS       4
+#define INT_DEX_BONUS       5
+#define INT_DAM_BONUS       6
+#define INT_THAC0_BONUS     7
+#define INT_WEIGHT_LIMIT    8
+#define NUM_INT_BONUSES     9
 
-/** Probability to learn a spell or skill, based on intelligence or wisdom. */
-static const int learn_spell[MAX_STAT+1] = {
-    0,
-    0, 0, 1, 2, 4,
-    8, 12, 16, 25, 36,
-    45, 55, 65, 70, 75,
-    80, 85, 90, 95, 100,
-    100, 100, 100, 100, 100,
-    100, 100, 100, 100, 100
-};
+static int *int_bonuses[NUM_INT_BONUSES];
 
-/** Probability of messing a divine spell. Based on wisdom. */
-static const int cleric_chance[MAX_STAT+1] = {
-    100,
-    100, 100, 100, 90, 80,
-    70, 60, 50, 40, 35,
-    30, 25, 20, 15, 14,
-    13, 12, 11, 10, 9,
-    8, 7, 6, 5, 4,
-    3, 2, 1, 0, 0
-};
-
-/** Bonus for spell duration (holyword and turn undead), bonus for resistance to these spells. */
-static const int turn_bonus[MAX_STAT+1] = {
-    -1,
-    -1, -1, -1, -1, -1,
-    -1, -1, 0, 0, 0,
-    1, 1, 1, 2, 2,
-    2, 3, 3, 3, 4,
-    4, 5, 5, 6, 7,
-    8, 9, 10, 12, 15
-};
-
-/** Bonus for fear resistance for players. */
-static const int fear_bonus[MAX_STAT+1] = {
-    3,
-    3, 3, 3, 2, 2,
-    2, 1, 1, 1, 0,
-    0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0
+/**
+ * Following array corresponds to the defines above, but are the text
+ * names as found in the file.  In this way, processing of file is simpler.
+ */
+static const char *int_bonus_names[NUM_INT_BONUSES] = {
+    "cha_fear_bonus", "wis_turn_bonus", "wis_cleric_chance", "int_wis_learn_spell",
+    "cha_shop_bonus", "dex_bonus", "str_damage_bonus", "str_hit_bonus",
+    "str_weight_limit", 
 };
 
 /**
+ * This is basically same as above, but for bonuses in which we store
+ * the value as a float.
+ */
+#define FLOAT_CON_BONUS     0
+#define FLOAT_DEX_BONUS     1
+#define FLOAT_SP_BONUS      2
+#define FLOAT_GRACE_BONUS   3
+#define NUM_FLOAT_BONUSES   4
+static float *float_bonuses[NUM_FLOAT_BONUSES];
+static const char *float_bonus_names[NUM_FLOAT_BONUSES] = {
+    "con_hp_bonus", "dex_speed_bonus", "pow_int_sp_bonus", "wis_pow_grace_bonus"
+};
+
+/*
  * Since this is nowhere defined ...
  * Both come in handy at least in function add_exp()
-*/
+ */
 #define MAX_EXPERIENCE levels[settings.max_level]
 
 extern sint64 *levels;
@@ -579,7 +450,7 @@ int change_abil(object *op, object *tmp) {
              */
             for (j = 0; j < NUM_STATS; j++)
                 change_attr_value(&(op->stats), j, flag*get_attr_value(&(tmp->stats), j));
-            check_stat_bounds(&(op->stats), MIN_STAT, MAX_STAT);
+            check_stat_bounds(&(op->stats), MIN_STAT, settings.max_stat);
         } /* end of potion handling code */
     }
 
@@ -1014,31 +885,39 @@ void add_statbonus(object *op) {
 static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, const object *mana_obj, const object *wc_obj, int weapon_speed, float added_speed)
 {
     int pl_level, i, j;
-    float character_load = 0.0;
+    float character_load = 0.0, maxhp, tmpf;
 
     if (op->type != PLAYER)
         return;
 
-    check_stat_bounds(&(op->stats), MIN_STAT, MAX_STAT);
+    check_stat_bounds(&(op->stats), MIN_STAT, settings.max_stat);
     pl_level = op->level;
 
     if (pl_level < 1)
         pl_level = 1; /* safety, we should always get 1 levels worth of hp! */
 
-    /* You basically get half a con bonus/level.  But we do take into account rounding,
-     * so if your bonus is 7, you still get 7 worth of bonus every 2 levels.
+    /* 
+     * We store maxhp as a float to hold any fractional hp bonuses,
+     * (eg, 2.5 con bonus).  While it may seem simpler to just
+     * do a get_con_bonus() * min(level,10), there is also a 1 hp/level
+     * minimum (including bonus), se we have to do the logic on a
+     * level basis.
      */
+    maxhp = 0.0;
     for (i = 1, op->stats.maxhp = 0; i <= pl_level && i <= 10; i++) {
-        j = op->contr->levhp[i]+get_con_bonus(op->stats.Con)/2;
-        if (i%2 && get_con_bonus(op->stats.Con)%2) {
-            if (get_con_bonus(op->stats.Con) > 0)
-                j++;
-            else
-                j--;
-        }
-        op->stats.maxhp += j > 1 ? j : 1; /* always get at least 1 hp/level */
+
+        tmpf = op->contr->levhp[i]+get_con_bonus(op->stats.Con);
+
+        /* always get at least 1 hp/level */
+        if (tmpf < 1.0) tmpf = 1.0;
+
+        maxhp += tmpf;
     }
 
+    /* Add 0.5 so that this rounds normally - the cast just drops the
+     * fraction, so 1.5 becomes 1.
+     */
+    op->stats.maxhp = (int)(maxhp + 0.5);
     if (op->level > 10)
         op->stats.maxhp += 2 * (op->level - 10);
 
@@ -1054,20 +933,26 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
     if (!mana_obj || !mana_obj->level) {
         op->stats.maxsp = 1;
     } else {
-        float sp_tmp = 0.0;
-        for (i = 1; i <= mana_obj->level && i <= 10; i++) {
+        float sp_tmp = 0.0, mana_bonus;
+        int mana_lvl_max;
+
+        mana_lvl_max = (mana_obj->level >10 ? 10: mana_obj->level);
+        mana_bonus = (2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int)) / 3.0;
+
+        for (i = 1; i <= mana_lvl_max; i++) {
             float stmp;
 
+            stmp =  op->contr->levsp[i] + mana_bonus;
+
             /* Got some extra bonus at first level */
-            if (i < 2) {
-                stmp = op->contr->levsp[i]+(2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int))/6.0;
-            } else {
-                stmp = op->contr->levsp[i]+(2.0*get_sp_bonus(op->stats.Pow)+get_sp_bonus(op->stats.Int))/12.0;
-            }
+            if (i == 1) stmp += mana_bonus;
+
             if (stmp < 1.0)
                 stmp = 1.0;
+
             sp_tmp += stmp;
         }
+
         op->stats.maxsp = (int)sp_tmp+op->arch->clone.stats.maxsp;
 
         if (mana_obj->level > 10)
@@ -1087,16 +972,19 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
          * becomes big jumps when the sums of the bonuses jump to the next
          * step of 8 - with floats, even fractional ones are useful.
          */
-        float sp_tmp = 0.0;
-        for (i = 1, op->stats.maxgrace = 0; i <= grace_obj->level && i <= 10; i++) {
+        float sp_tmp = 0.0, grace_bonus;
+
+        grace_bonus = (get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis)) / 3.0;
+
+        for (i = 1; i <= grace_obj->level && i <= 10; i++) {
             float grace_tmp = 0.0;
 
+            grace_tmp = op->contr->levgrace[i] + grace_bonus;
+
             /* Got some extra bonus at first level */
-            if (i < 2) {
-                grace_tmp = op->contr->levgrace[i]+(get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis))/6.0;
-            } else {
-                grace_tmp = op->contr->levgrace[i]+(get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis))/12.0;
-            }
+            if (i == 1)
+                grace_tmp += grace_bonus;
+
             if (grace_tmp < 1.0)
                 grace_tmp = 1.0;
             sp_tmp += grace_tmp;
@@ -1378,7 +1266,7 @@ void fix_object(object *op) {
                  * is maxed, we don't want different results based on order of
                  * inventory.
                  */
-                check_stat_bounds(&(tmp->stats), -MAX_STAT, 2*MAX_STAT);
+                check_stat_bounds(&(tmp->stats), -settings.max_stat, 2*settings.max_stat);
 
                 /* these are the items that currently can change digestion, regeneration,
                  * spell point recovery and mana point recovery.  Seems sort of an arbitary
@@ -2323,56 +2211,56 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
     }
 }
 
-float get_cha_bonus(int stat) {
-    return cha_bonus[get_index(stat, sizeof(cha_bonus)/sizeof(*cha_bonus))];
+int get_cha_bonus(int stat) {
+    return int_bonuses[INT_CHA_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
 int get_dex_bonus(int stat) {
-    return dex_bonus[get_index(stat, sizeof(dex_bonus)/sizeof(*dex_bonus))];
+    return int_bonuses[INT_DEX_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
 int get_thaco_bonus(int stat) {
-    return thaco_bonus[get_index(stat, sizeof(thaco_bonus)/sizeof(*thaco_bonus))];
+    return int_bonuses[INT_THAC0_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
 uint32 get_weight_limit(int stat) {
-    return weight_limit[get_index(stat, sizeof(weight_limit)/sizeof(*weight_limit))];
+    return int_bonuses[INT_WEIGHT_LIMIT][get_index(stat, settings.max_stat+1)];
 }
 
 int get_learn_spell(int stat) {
-    return learn_spell[get_index(stat, sizeof(learn_spell)/sizeof(*learn_spell))];
+    return int_bonuses[INT_LEARN_SPELL][get_index(stat, settings.max_stat+1)];
 }
 
 int get_cleric_chance(int stat) {
-    return cleric_chance[get_index(stat, sizeof(cleric_chance)/sizeof(*cleric_chance))];
+    return int_bonuses[INT_CLERIC_CHANCE][get_index(stat, settings.max_stat+1)];
 }
 
 int get_turn_bonus(int stat) {
-    return turn_bonus[get_index(stat, sizeof(turn_bonus)/sizeof(*turn_bonus))];
+    return int_bonuses[INT_TURN_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
 int get_dam_bonus(int stat) {
-    return dam_bonus[get_index(stat, sizeof(dam_bonus)/sizeof(*dam_bonus))];
+    return int_bonuses[INT_DAM_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
 float get_speed_bonus(int stat) {
-    return speed_bonus[get_index(stat, sizeof(speed_bonus)/sizeof(*speed_bonus))];
+    return float_bonuses[FLOAT_DEX_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
 int get_fear_bonus(int stat) {
-    return fear_bonus[get_index(stat, sizeof(fear_bonus)/sizeof(*fear_bonus))];
+    return int_bonuses[INT_FEAR_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
-static int get_con_bonus(int stat) {
-    return con_bonus[get_index(stat, sizeof(con_bonus)/sizeof(*con_bonus))];
+static float get_con_bonus(int stat) {
+    return float_bonuses[FLOAT_CON_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
-static int get_sp_bonus(int stat) {
-    return sp_bonus[get_index(stat, sizeof(sp_bonus)/sizeof(*sp_bonus))];
+static float get_sp_bonus(int stat) {
+    return float_bonuses[FLOAT_SP_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
-static int get_grace_bonus(int stat) {
-    return grace_bonus[get_index(stat, sizeof(grace_bonus)/sizeof(*grace_bonus))];
+static float get_grace_bonus(int stat) {
+    return float_bonuses[FLOAT_GRACE_BONUS][get_index(stat, settings.max_stat+1)];
 }
 
 /**
@@ -2392,4 +2280,320 @@ static size_t get_index(int stat, size_t max_index) {
 
     index = (size_t)stat;
     return MIN(index, max_index-1);
+}
+
+/**
+ * This loads up a stat table from the file - basically,
+ * it keeps processing until it gets the closing brace.
+ *
+ * @param bonuses
+ * an array will be allocated and the bonus put into this allocated
+ * array.
+ * @param fp
+ * File to load the data from.
+ * @param bonus_name
+ * Used purely for error messages to make it easier to identify
+ * where in the file an error is.
+ *
+ * @return
+ * 0 on success, 1 on error.  In general, the error
+ * will be too many or too few bonus values.
+ */
+static int load_table_int(int **bonuses, FILE *fp, char *bonus_name)
+{
+    char buf[MAX_BUF], *cp;
+    int on_stat = 0, tmp_bonus;
+
+    *bonuses = calloc(settings.max_stat+1, sizeof(int));
+
+    while (fgets(buf, MAX_BUF-1, fp) != NULL) {
+        if (buf[0] == '#')
+            continue;
+
+        /* Skip over empty lines */
+        if (buf[0] == '\n')
+            continue;
+
+        /* Do not care about opening brace */
+        if (buf[0] == '{')
+            continue;
+
+        if (buf[0] == '}') {
+            if ((on_stat-1) != settings.max_stat) {
+                LOG(llevError,"Number of bonus does not match max stat (%d!=%d, bonus=%s)\n",
+                    on_stat, settings.max_stat, bonus_name);
+                return 1;
+            }
+            else return 0;
+        }
+
+        /* If not any of the above values, must be the stat table,
+         * or so we hope.
+         */
+        cp = buf;
+        while (*cp != 0) {
+            /* Skip over any non numbers */
+            while (!isdigit(*cp) && *cp!='.' && *cp!='-' && *cp!='+' && *cp != 0)
+                cp++;
+
+            if (*cp == 0) break;
+
+            tmp_bonus = atoi(cp);
+
+            if (on_stat > settings.max_stat) {
+                LOG(llevError,"Number of bonus entries exceed max stat (line=%s, bonus=%s)\n",
+                    buf, bonus_name);
+                return 1;
+            }
+            (*bonuses)[on_stat] = tmp_bonus;
+            on_stat++;
+
+            /* Skip over any digits, as that is the number we just processed */
+            while ((isdigit(*cp) || *cp=='-' || *cp=='+') && *cp != 0)
+                cp++;
+        }
+    }
+    /* This should never happen - we should always get the closing brace */
+    LOG(llevError,"Reached end of file without getting close brace?  bonus=%s\n", bonus_name);
+    return 1;
+}
+
+/**
+ * This loads up a stat table from the file - basically,
+ * it keeps processing until it gets the closing brace.
+ *
+ * @param bonuses
+ * an array will be allocated and the bonus put into this allocated
+ * array.
+ * @param fp
+ * File to load the data from.
+ * @param bonus_name
+ * Used purely for error messages to make it easier to identify
+ * where in the file an error is.
+ *
+ * @return
+ * 0 on success, 1 on error.  In general, the error
+ * will be too many or too few bonus values.
+ */
+static int load_table_float(float **bonuses, FILE *fp, char *bonus_name)
+{
+    char buf[MAX_BUF], *cp;
+    int on_stat = 0;
+    float tmp_bonus;
+
+    *bonuses = calloc(settings.max_stat+1, sizeof(float));
+
+    while (fgets(buf, MAX_BUF-1, fp) != NULL) {
+        if (buf[0] == '#')
+            continue;
+
+        /* Skip over empty lines */
+        if (buf[0] == '\n')
+            continue;
+
+        /* Do not care about opening brace */
+        if (buf[0] == '{')
+            continue;
+
+        if (buf[0] == '}') {
+            if ((on_stat-1) != settings.max_stat) {
+                LOG(llevError,"Number of bonus does not match max stat (%d!=%d, bonus=%s)\n",
+                    on_stat, settings.max_stat, bonus_name);
+                return 1;
+            }
+            else return 0;
+        }
+
+        /* If not any of the above values, must be the stat table,
+         * or so we hope.
+         */
+        cp = buf;
+        while (*cp != 0) {
+            /* Skip over any non numbers */
+            while (!isdigit(*cp) && *cp!='.' && *cp!='-' && *cp!='+' && *cp != 0)
+                cp++;
+
+            if (*cp == 0) break;
+
+            tmp_bonus = atof(cp);
+
+            if (on_stat > settings.max_stat) {
+                LOG(llevError,"Number of bonus entries exceed max stat (line=%s, bonus=%s)\n",
+                    buf, bonus_name);
+                return 1;
+            }
+            (*bonuses)[on_stat] = tmp_bonus;
+            on_stat++;
+
+            /* Skip over any digits, as that is the number we just processed
+             * since this is floats, also skip over any dots.
+             */
+            while ((isdigit(*cp) || *cp=='-' || *cp=='+' || *cp=='.') && *cp != 0)
+                cp++;
+        }
+    }
+    /* This should never happen - we should always get the closing brace */
+    LOG(llevError,"Reached end of file without getting close brace?  bonus=%s\n", bonus_name);
+    return 1;
+}
+
+
+/**
+ * This loads statistic bonus/penalties from the stat_bonus file.
+ * If reload is false (eg, this is initial start time load),
+ * then any error becomes fatal, as system needs working
+ * bonuses.
+ *
+ * @param reload
+ * If set, this is reloading new values - this can be useful for
+ * real time adjustment of stat bonuses - however, it also has some
+ * more restraints - in particular, max_stat can not decrease (that could
+ * be made to work but is more work) and also errors are not fatal - it
+ * will just use the old stat bonus tables in the case of any errors.
+ * TODO: add code that uses reload
+ *
+ * @note
+ * will call exit() if file is invalid or not found.
+ */
+void init_stats(int reload) {
+    char buf[MAX_BUF], *cp;
+    int lastlevel = 0, comp, error=0, i, oldmax = settings.max_stat;
+    sint64 lastexp = -1, tmpexp;
+    FILE *fp;
+    float *new_float_bonuses[NUM_FLOAT_BONUSES];
+    int *new_int_bonuses[NUM_INT_BONUSES];
+
+    snprintf(buf, sizeof(buf), "%s/stat_bonus", settings.confdir);
+
+    memset(new_int_bonuses, 0, NUM_INT_BONUSES * sizeof(int));
+    memset(new_float_bonuses, 0, NUM_FLOAT_BONUSES * sizeof(float));
+
+    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) == NULL) {
+        LOG(llevError, "Fatal error: could not open experience table (%s)\n", buf);
+        if (reload) return;
+        else exit(1);
+    }
+    while (fgets(buf, MAX_BUF-1, fp) != NULL) {
+        if (buf[0] == '#')
+            continue;
+
+        /* eliminate newline */
+        if ((cp = strrchr(buf, '\n')) != NULL)
+            *cp = '\0';
+
+        /* Skip over empty lines */
+        if (buf[0] == 0)
+            continue;
+
+        /* Skip over leading spaces */
+        cp = buf;
+        while (isspace(*cp) && *cp != 0)
+            cp++;
+
+        if (!strncasecmp(cp, "max_stat", 8)) {
+            int newmax = atoi(cp+8);
+
+            /* newmax must be at least MIN_STAT and we do not currently
+             * cupport decrease max stat on the fly - why this might be possible,
+             * bounds checking for all objects would be needed, potentionally resetting
+             * them.
+             * If this is a reload, then on error, we just return without doing work.
+             * If this is initial load, having an invalid stat range is an error, so
+             * exit the program.
+             */
+            if (newmax < MIN_STAT || newmax < settings.max_stat) {
+                LOG(llevError, "Got invalid max_stat (%d) from stat_bonus file\n", newmax);
+                close_and_delete(fp, comp);
+                if (reload) return;
+                else exit(1);
+            }
+            settings.max_stat = newmax;
+            continue;
+        }
+        /* max_stat needs to be set before any of the bonus values - we
+         * need to know how large to make the array.
+         */
+        if (settings.max_stat == 0) {
+            LOG(llevError, "Got bonus line or otherwise unknown value before max stat! (%s)\n",
+                buf);
+            if (reload) return;
+            else exit(1);
+        }
+
+        for (i=0; i<NUM_INT_BONUSES; i++) {
+            if (!strncasecmp(cp, int_bonus_names[i], strlen(int_bonus_names[i]))) {
+                error = load_table_int(&new_int_bonuses[i], fp, cp);
+                break;
+            }
+        }
+        /* If we did not find a match in the int bonuses, check the
+         * float bonuses now.
+         */
+        if (i == NUM_INT_BONUSES) {
+            for (i=0; i<NUM_FLOAT_BONUSES; i++) {
+                if (!strncasecmp(cp, float_bonus_names[i], strlen(float_bonus_names[i]))) {
+                    error = load_table_float(&new_float_bonuses[i], fp, cp);
+                    break;
+                }
+            }
+            /* This may not actually be a critical error */
+            if (i == NUM_FLOAT_BONUSES) {
+                LOG(llevError,"Unknown line in stat_bonus file: %s\n", buf);
+            }
+        }
+        if (error) break;
+    }
+    close_and_delete(fp, comp);
+
+    /* Make sure that we have load tables for all the bonuses.
+     * This is critical on initial load, but on reloads, it enusres that
+     * all the bonus data matches.
+     */
+    for (i=0; i<NUM_INT_BONUSES; i++) {
+        if (!new_int_bonuses[i]) {
+            LOG(llevError,"No bonus loaded for %s\n", int_bonus_names[i]);
+            error=2;
+        }
+    }
+
+    for (i=0; i<NUM_FLOAT_BONUSES; i++) {
+        if (!new_float_bonuses[i]) {
+            LOG(llevError,"No bonus loaded for %s\n", float_bonus_names[i]);
+            error=2;
+        }
+    }
+
+    /* If we got an error, we just free up the data we read in and return/exit.
+     * if no error, we make the tables we just read in into the default
+     * tables.
+     */
+    if (error) {
+        if (error==1)
+            LOG(llevError,"Got error reading stat_bonus: %s\n", buf);
+
+        if (reload) {
+            for (i=0; i<NUM_INT_BONUSES; i++) 
+                if (new_int_bonuses[i]) FREE_AND_CLEAR(new_int_bonuses[i]);
+            for (i=0; i<NUM_FLOAT_BONUSES; i++) 
+                if (new_float_bonuses[i]) FREE_AND_CLEAR(new_float_bonuses[i]);
+            settings.max_stat = oldmax;
+        } else {
+            exit(1);
+        }
+    } else {
+        /* Everything check out - now copy the data into
+         * the live arrays.
+         */
+        for (i=0; i<NUM_INT_BONUSES; i++) {
+            if (int_bonuses[i]) free(int_bonuses[i]);
+            int_bonuses[i] = new_int_bonuses[i];
+            new_int_bonuses[i] = NULL;
+        }
+
+        for (i=0; i<NUM_FLOAT_BONUSES; i++) {
+            if (float_bonuses[i]) free(float_bonuses[i]);
+            float_bonuses[i] = new_float_bonuses[i];
+            new_float_bonuses[i] = NULL;
+        }
+    }
 }

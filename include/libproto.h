@@ -148,7 +148,7 @@ extern void change_exp(object *op, sint64 exp, const char *skill_name, int flag)
 extern void apply_death_exp_penalty(object *op);
 extern int did_make_save(const object *op, int level, int bonus);
 extern void share_exp(object *op, sint64 exp, const char *skill, int flag);
-extern float get_cha_bonus(int stat);
+extern int get_cha_bonus(int stat);
 extern int get_dex_bonus(int stat);
 extern int get_thaco_bonus(int stat);
 extern uint32 get_weight_limit(int stat);

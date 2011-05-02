@@ -88,6 +88,7 @@ void cctk_init_std_archetypes(void) {
     settings.treasures = "treasures.bld";
     init_globals();
     init_hash_table();
+    init_stats(FALSE);
     init_objects();
     init_vars();
     init_block();

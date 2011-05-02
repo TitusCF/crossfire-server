@@ -1403,7 +1403,7 @@ int check_race_and_class(living *stats, archetype *race, archetype *opclass)
         /* Maybe this should be an error?  Player is losing
          * some stats points here, but it is legal.
          */
-        if (stat > MAX_STAT) stat = MAX_STAT;
+        if (stat > settings.max_stat) stat = settings.max_stat;
     }
     return failure;
 
@@ -3528,9 +3528,9 @@ static void kill_player_not_permadeath(object *op) {
              */
             i = RANDOM()%7;
             change_attr_value(&(op->stats), i, -1);
-            check_stat_bounds(&(op->stats), MIN_STAT, MAX_STAT);
+            check_stat_bounds(&(op->stats), MIN_STAT, settings.max_stat);
             change_attr_value(&(op->contr->orig_stats), i, -1);
-            check_stat_bounds(&(op->contr->orig_stats), MIN_STAT, MAX_STAT);
+            check_stat_bounds(&(op->contr->orig_stats), MIN_STAT, settings.max_stat);
             draw_ext_info(NDI_UNIQUE, 0, op,
                 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
                 lose_msg[i]);

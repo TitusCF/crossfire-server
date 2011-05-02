@@ -368,7 +368,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     if (tmp->inv)
         weight += tmp->carrying*(100-tmp->stats.Str)/100;
 
-    effective_weight_limit = get_weight_limit(MIN(pl->stats.Str, MAX_STAT));
+    effective_weight_limit = get_weight_limit(MIN(pl->stats.Str, settings.max_stat));
 
     if (pl->weight+pl->carrying+weight > effective_weight_limit) {
         draw_ext_info(0, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
@@ -1612,7 +1612,7 @@ void examine(object *op, object *tmp) {
                 snprintf(buf, sizeof(buf), "%s would cost you %s.", tmp->nrof > 1 ? "They" : "It", value);
                 free(value);
             } else {
-                value = stringbuffer_finish(query_cost_string(tmp, op, F_SELL+F_SHOP, NULL));
+                value = stringbuffer_finish(query_cost_string(tmp, op, F_SELL|F_SHOP, NULL));
                 snprintf(buf, sizeof(buf), "You are offered %s for %s.", value, tmp->nrof > 1 ? "them" : "it");
                 free(value);
             }

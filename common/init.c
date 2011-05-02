@@ -113,6 +113,7 @@ struct Settings settings = {
     18,     /* starting_stat_max */
     85,     /* starting_stat_points */
     115,    /* roll_stat_points */
+    0,     /* max_stat - will be loaded from stats file */
 };
 
 struct Statistics statistics;
@@ -204,6 +205,9 @@ static void init_emergency_mappath(void) {
 void init_library(void) {
     init_environ();
     init_globals();
+    init_stats(FALSE);   /* Needs to be fairly early, since the loader will check
+                          * against the settings.max_stat value
+                          */
     init_hash_table();
     i18n_init();
     init_objects();

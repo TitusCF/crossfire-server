@@ -866,17 +866,17 @@ static void load_settings(void) {
         } else if (!strcasecmp(buf, "starting_stat_min")) {
             int val = atoi(cp);
 
-            if (val < 1 || val > MAX_STAT || val > settings.starting_stat_max)
+            if (val < 1 || val > settings.max_stat || val > settings.starting_stat_max)
                 LOG(llevError, "load_settings: starting_stat_min (%d) need to be within %d-%d (%d)\n",
-                    val, 1, MAX_STAT, settings.starting_stat_max);
+                    val, 1, settings.max_stat, settings.starting_stat_max);
             else
                 settings.starting_stat_min = val;
         } else if (!strcasecmp(buf, "starting_stat_max")) {
             int val = atoi(cp);
 
-            if (val < 1 || val > MAX_STAT || val<settings.starting_stat_min)
+            if (val < 1 || val > settings.max_stat || val<settings.starting_stat_min)
                 LOG(llevError, "load_settings: starting_stat_max (%d) need to be within %d-%d (%d)\n",
-                    val, 1, MAX_STAT, settings.starting_stat_min);
+                    val, 1, settings.max_stat, settings.starting_stat_min);
             else
                 settings.starting_stat_max = val;
         } else if (!strcasecmp(buf, "starting_stat_points")) {

@@ -1350,8 +1350,14 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                 || !god->slaying
                 || strstr(god->slaying, undead_name) == NULL)
                     div = 2;
-                /* Give a bonus if you resist turn undead */
-                if (op->level*div < get_turn_bonus(owner->stats.Wis)+owner->level+(op->resist[ATNR_TURN_UNDEAD]/100))
+
+                /* The previous code was highly suspect - resist turn undead/100 would
+                 * at best give a bonus of 1 - increase that to resist turn undead/20 -
+                 * this gives a bit higher bonus.  Also the bonus was added to the wrong
+                 * side of the equation, actually making it easier to turn creatures
+                 * if they had that resistance.
+                 */
+                if ((op->level*div + (op->resist[ATNR_TURN_UNDEAD] / 20)) < (get_turn_bonus(owner->stats.Wis)+owner->level))
                     scare_creature(op, owner);
             } else
                 dam = 0; /* don't damage non undead - should we damage undead? */

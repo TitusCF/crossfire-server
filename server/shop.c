@@ -293,7 +293,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
         diff *= 1-ratio;
 
         /* Diff is now a float between 0.2 and 0.8 */
-        diff += (get_cha_bonus(who->stats.Cha)-1)/(1+get_cha_bonus(who->stats.Cha))*ratio;
+        diff += ratio * ((float)get_cha_bonus(who->stats.Cha)/100.0);
 
         if (flag == F_BUY)
             val = (val*(long)(1000*(1+diff)))/1000;

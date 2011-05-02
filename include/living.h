@@ -77,7 +77,7 @@ typedef struct liv {
     sint32        food;       /**< How much food in stomach.  0 = starved. */
 } living;
 
-float get_cha_bonus(int stat);
+int get_cha_bonus(int stat);
 int get_dex_bonus(int stat);
 int get_thaco_bonus(int stat);
 uint32 get_weight_limit(int stat);

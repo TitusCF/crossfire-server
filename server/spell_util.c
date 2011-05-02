@@ -1541,7 +1541,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
 
             /* player/monster is trying to cast the spell.  might fumble it */
             if (spell_ob->stats.grace
-            && random_roll(0, 99, op, PREFER_HIGH) < (spell_ob->level/(float)MAX(1, op->level)*get_cleric_chance(op->stats.Wis))) {
+                && random_roll(0, 99, op, PREFER_HIGH) < (get_cleric_chance(op->stats.Wis) * spell_ob->level/MAX(1, op->level))) {
                 play_sound_player_only(op->contr, SOUND_TYPE_SPELL, spell_ob, 0, "fumble");
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                               "You fumble the spell.");

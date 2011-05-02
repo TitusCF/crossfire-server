@@ -543,7 +543,7 @@ static void do_symptoms(object *disease) {
             cur_stat = (int)(scale * cur_stat);
             set_attr_value(&symptom->stats, i, cur_stat);
         }
-        check_stat_bounds(&symptom->stats, -MAX_STAT, MAX_STAT);
+        check_stat_bounds(&symptom->stats, -settings.max_stat, settings.max_stat);
 
         symptom->stats.dam = (int)(scale*disease->stats.dam);
         symptom->stats.sp = (int)(scale*disease->stats.sp);

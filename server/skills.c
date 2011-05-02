@@ -149,8 +149,8 @@ static int attempt_steal(object *op, object *who, object *skill) {
          * might be to use force objects for this - MSW 2009/02/24
          */
         op->stats.Wis += (op->stats.Int/5)+1;
-        if (op->stats.Wis > MAX_STAT)
-            op->stats.Wis = MAX_STAT;
+        if (op->stats.Wis > settings.max_stat)
+            op->stats.Wis = settings.max_stat;
     }
     if (op->type == PLAYER && QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
@@ -1949,10 +1949,10 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
      * we use the concept of 'effective strength' as defined below.
      */
 
-    /* if str exceeds MAX_STAT (30, eg giants), lets assign a str_factor > 1 */
-    if (str > MAX_STAT) {
-        str_factor = (float)str/(float)MAX_STAT;
-        str = MAX_STAT;
+    /* if str exceeds settings.max_stat (30, eg giants), lets assign a str_factor > 1 */
+    if (str > settings.max_stat) {
+        str_factor = (float)str/(float)settings.max_stat;
+        str = settings.max_stat;
     }
 
     /* the more we carry, the less we can throw. Limit only on players */
@@ -1978,10 +1978,10 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     eff_str = str*MIN(load_factor, 1.0);
     eff_str = (float)eff_str*item_factor*str_factor;
 
-    /* alas, arrays limit us to a value of MAX_STAT (30). Use str_factor to
+    /* alas, arrays limit us to a value of settings.max_stat (30). Use str_factor to
      * account for super-strong throwers. */
-    if (eff_str > MAX_STAT)
-        eff_str = MAX_STAT;
+    if (eff_str > settings.max_stat)
+        eff_str = settings.max_stat;
 
 #ifdef DEBUG_THROW
     LOG(llevDebug, "%s carries %d, eff_str=%d\n", op->name, op->carrying, eff_str);
@@ -2076,7 +2076,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     throw_ob->speed = MIN(1.0, throw_ob->speed); /* no faster than an arrow! */
 
     /* item damage. Eff_str and item weight influence damage done */
-    weight_f = MIN(throw_ob->weight/2000, MAX_STAT);
+    weight_f = MIN(throw_ob->weight/2000, settings.max_stat);
     throw_ob->stats.dam += (dam/3)+get_dam_bonus(weight_f)+(throw_ob->weight/15000)-2;
 
     /* chance of breaking. Proportional to force used and weight of item */
