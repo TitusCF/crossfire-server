@@ -180,9 +180,10 @@ there will be an exit/detonation point for the fired spell.  Having
 loops that go for over typically bring the game to a halt, as the
 objects just multiply and the game consumes more and more cpu time.
 
-
 13) Read the 'quests' file to learn how to manage quests.
 
+14) For any special characters (accented a for example), the format
+for maps and archetype is utf8.
 
 ------------------------------------------------------------------------------
 The following are various suggestions for making good or interesting
