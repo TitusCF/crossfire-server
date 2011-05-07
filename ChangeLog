@@ -14,10 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Allow messages from lib/messages to be stored through knowledge system.
+Nicolas Weeger 2011-05-07
+
 Improve messages (lib/messages): add relative chance, so messages can be
 more frequent than others.
 Nicolas Weeger 2011-05-07
-
 
 Remove hard coded stat values - the stat bonuses (as well as max stat) can
 be set in a file that is read at load time.  The default lib/stat_bonus

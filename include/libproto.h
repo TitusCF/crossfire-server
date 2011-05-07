@@ -344,6 +344,9 @@ extern void tailor_readable_ob(object *book, int msg_type);
 extern void free_all_readable(void);
 extern void write_book_archive(void);
 extern const readable_message_type *get_readable_message_type(object *readable);
+extern const GeneralMessage *get_message_from_identifier(const char *identifier);
+extern sstring get_message_title(const GeneralMessage *message);
+extern sstring get_message_body(const GeneralMessage *message);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
 extern void init_formulae(void);

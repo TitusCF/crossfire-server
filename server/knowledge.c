@@ -449,11 +449,54 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
     return knowledge_add(current, item, type);
 }
 
+/**
+ * Give the title of a message.
+ * @param value message internal value.
+ * @param buf where to put the information.
+ * @todo merge with stuff in readable.c
+ */
+static void knowledge_message_summary(const char *value, StringBuffer *buf) {
+    const GeneralMessage *msg = get_message_from_identifier(value);
+
+    if (!msg)
+        /* warn? */
+        return;
+
+    stringbuffer_append_printf(buf, "%s", get_message_title(msg));
+}
+
+/**
+ * Give the full description of a message.
+ * @param value message internal value.
+ * @param buf where to store the detail.
+ * @todo merge with stuff in readable.c
+ */
+static void knowledge_message_detail(const char *value, StringBuffer *buf) {
+    const GeneralMessage *msg = get_message_from_identifier(value);
+
+    if (!msg)
+        /* warn? */
+        return;
+
+    stringbuffer_append_printf(buf, "%s", get_message_body(msg));
+}
+
+/**
+ * Check if a message is still valid.
+ * @param item what to check for
+ * @return 0 if non valid, 1 else.
+ */
+static int knowledge_message_validate(const char *item) {
+    return get_message_from_identifier(item) != NULL;
+}
+
+
 /** All handled knowledge items. */
 static const knowledge_type const knowledges[] = {
     { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate, knowledge_add, "recipes" },
     { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters" },
     { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods" },
+    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages" },
     { NULL, 0, 0, 0, 0 }
 };
 

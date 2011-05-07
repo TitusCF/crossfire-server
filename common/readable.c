@@ -127,14 +127,11 @@ typedef struct namebytype {
 /**
  * One general message, from the lib/messages file.
  */
-typedef struct GeneralMessage GeneralMessage ;
-
-/**
- * One general message, from the lib/messages file.
- */
 struct GeneralMessage {
     int chance;             /**< Relative chance of the message appearing
                               randomly. If 0 will never appear. */
+    sstring identifier;     /**< Message identifier, can be NULL. */
+    sstring title;          /**< The message's title, only used for knowledge. */
     sstring message;        /**< The message's body. */
     GeneralMessage *next;   /**< Next message in the list. */
 };
@@ -764,6 +761,10 @@ static void init_msgfile(void) {
                     tmp->next = first_msg;
                     first_msg = tmp;
                     nrofmsg++;
+                    if (tmp->identifier != NULL && tmp->title == NULL) {
+                        LOG(llevError, "Error: message can't have identifier without title, on line %d\n", error_lineno);
+                        fatal(SEE_LAST_ERROR);
+                    }
                     tmp = NULL;
                     text = 0;
                 } else if (text) {
@@ -778,13 +779,27 @@ static void init_msgfile(void) {
                 } else if (strncmp(buf, "CHANCE ", 7) == 0) {
                     tmp->chance = atoi(buf + 7);
                     msg_total_chance += tmp->chance;
+                } else if (strncmp(buf, "TITLE ", 6) == 0) {
+                    tmp->title = add_string(buf + 6);
                 } else if (error_lineno != 0) {
                     LOG(llevInfo, "Warning: unknown line %s, line %d\n", buf, error_lineno);
                 }
-            } else if (strcmp(buf, "MSG") == 0) {
+            } else if (strncmp(buf, "MSG", 3) == 0) {
                 error_lineno = lineno;
                 tmp = (GeneralMessage *)calloc(1, sizeof(GeneralMessage));
                 strcpy(msgbuf, " ");  /* reset msgbuf for new message */
+                if (buf[3] == ' ') {
+                    int i = 4;
+                    while (buf[i] == ' ' && buf[i] != '\0')
+                        i++;
+                    if (buf[i] != '\0') {
+                        tmp->identifier = add_string(buf + i);
+                        if (get_message_from_identifier(buf + i)) {
+                            LOG(llevError, "Duplicated message identifier %s at line %d\n", buf + i, error_lineno);
+                            fatal(SEE_LAST_ERROR);
+                        }
+                    }
+                }
             } else {
                 LOG(llevInfo, "Warning: syntax error at %s, line %d\n", fname, lineno);
             }
@@ -1230,9 +1245,13 @@ static void change_book(object *book, int msgtype) {
 
     if (strlen(book->msg) > 5 && (t = find_title(book, msgtype))) {
         object *tmpbook;
+        sstring marker = object_get_value(book, "knowledge_marker");
 
         /* alter book properties */
         tmpbook = create_archetype(t->archname);
+        if (marker != NULL)
+            /* need to copy the knowledge_marker */
+            object_set_value(tmpbook, "knowledge_marker", marker, 1);
         object_set_msg(tmpbook, book->msg);
         object_copy(tmpbook, book);
         object_free_drop_inventory(tmpbook);
@@ -1850,16 +1869,16 @@ static void make_formula_book(object *book, int level) {
 }
 
 /**
- * Generate a message drawn randomly from a
- * file in lib/. Level currently has no effect on the message
- * which is returned.
+ * Generate a message drawn randomly from lib/messages.
  *
- * @param level
- * (ignored)
+ * @param book
+ * book to fill.
  * @param booksize
  * length of the book we want.
+ * @return
+ * message to put into book.
  */
-static char *msgfile_msg(int level, size_t booksize) {
+static char *msgfile_msg(object *book, size_t booksize) {
     static char retbuf[BOOK_BUF];
     int weight;
     GeneralMessage *msg = NULL;
@@ -1874,9 +1893,16 @@ static char *msgfile_msg(int level, size_t booksize) {
         }
     }
 
-    if (msg && !book_overflow(retbuf, msg->message, booksize))
+    if (msg && !book_overflow(retbuf, msg->message, booksize)) {
         snprintf(retbuf, sizeof(retbuf), "%s", msg->message);
-    else
+        if (msg->identifier != NULL) {
+            char km[HUGE_BUF];
+            /** knowledge marker */
+            /** @todo this would be better in knowledge.c, except this file is in server, not common... */
+            snprintf(km, sizeof(km), "message:%s", msg->identifier);
+            object_set_value(book, "knowledge_marker", km, 1);
+        }
+    } else
         snprintf(retbuf, sizeof(retbuf), "\n <undecipherable text>");
 
 #ifdef BOOK_MSG_DEBUG
@@ -1991,6 +2017,8 @@ void tailor_readable_ob(object *book, int msg_type) {
     book_buf_size = BOOKSIZE(book);
     book_buf_size -= strlen("\n"); /* Keep enough for final \n. */
 
+    msgbuf[0] = '\0';
+
     /* &&& The message switch &&& */
     /* Below all of the possible types of messages in the "book"s.
      */
@@ -2029,7 +2057,7 @@ void tailor_readable_ob(object *book, int msg_type) {
 
     case MSGTYPE_LIB: /* use info list in lib/ */
     default:
-        strcpy(msgbuf, msgfile_msg(level, book_buf_size));
+        strcpy(msgbuf, msgfile_msg(book, book_buf_size));
         break;
     }
 
@@ -2071,6 +2099,10 @@ void free_all_readable(void) {
     }
     for (lmsg = first_msg; lmsg; lmsg = nextmsg) {
         nextmsg = lmsg->next;
+        if (lmsg->identifier)
+            free_string(lmsg->identifier);
+        if (lmsg->title)
+            free_string(lmsg->title);
         if (lmsg->message)
             free_string(lmsg->message);
         free(lmsg);
@@ -2150,4 +2182,35 @@ const readable_message_type *get_readable_message_type(object *readable) {
     if (subtype > last_readable_subtype)
         return &readable_message_types[0];
     return &readable_message_types[subtype];
+}
+
+/**
+ * Find the message from its identifier.
+ * @param identifier message's identifier.
+ * @return corresponding message, NULL if no such message.
+ */
+const GeneralMessage *get_message_from_identifier(const char *identifier) {
+    GeneralMessage *msg = first_msg;
+    while (msg && ((msg->identifier == 0) || (strcmp(msg->identifier, identifier) != 0)))
+        msg = msg->next;
+
+    return msg;
+}
+
+/**
+ * Get a message's title.
+ * @param message message, must not be NULL.
+ * @return title.
+ */
+sstring get_message_title(const GeneralMessage *message) {
+    return message->title;
+}
+
+/**
+ * Get a message's body.
+ * @param message message, must not be NULL.
+ * @return body.
+ */
+sstring get_message_body(const GeneralMessage *message) {
+    return message->message;
 }

@@ -61,4 +61,9 @@ typedef struct {
     uint8 message_subtype;  /**< Message subtype to be sent to the client. */
 } readable_message_type;
 
+/**
+ * One general message, from the lib/messages file.
+ */
+typedef struct GeneralMessage GeneralMessage;
+
 #endif /* BOOK_H */
