@@ -430,16 +430,16 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
             continue;
         if (strncmp(check->item, dup, strlen(dup)) == 0) {
             /* Already known, update information. */
-            int known;
+            int known, result;
             pos = strchr(check->item, ':');
             known = atoi(pos + 1);
-            known |= what;
+            result = known | what;
             buf = stringbuffer_new();
-            stringbuffer_append_printf(buf, "%s:%d", dup, known);
+            stringbuffer_append_printf(buf, "%s:%d", dup, result);
             free_string(check->item);
             check->item = stringbuffer_finish_shared(buf);
             free(dup);
-            return (what != known);
+            return (result != known);
         }
     }
 
