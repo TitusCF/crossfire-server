@@ -5,10 +5,15 @@
 # appear randomly in readable objects like books, scrolls
 # and such (op->type==BOOK).
 #
-# To add an entry:
-# ---------------
-# Start all entries w/ MSG and end with ENDMSG. The body of
-# the text between these 2 words will be the message.
+# File format:
+# ------------
+# MSG: start of new message.
+# CHANCE <chance>: optional chance of the message appearing in a book, relative
+# to the sum of all chances. 0 or no line means this message will never appear.
+# TEXT: start of the message's body
+# ENDMSG: marks the end of a message's body and message.
+#
+# TEXT must be the last item in a MSG block.
 #
 # When designing messages please keep in mind:
 # -------------------------------------------
@@ -21,12 +26,15 @@
 #
 #
 MSG
-
+CHANCE 1
+TEXT
  <undecipherable text>
 ENDMSG
 #
 #
 MSG
+CHANCE 1
+TEXT
 "In the mountains north-east of the great  city we found it at last--the hidden fortress of Barad-Dur.
 
 What treasures could lie in it I do not know for our party never gained its way past the entryway.
@@ -36,6 +44,8 @@ ENDMSG
 #
 #
 MSG
+CHANCE 1
+TEXT
 In ancient times past the great fortress of Ang was raised on the western shore. Many inhabitants it has had, but the last known was the most unusual.
 
 A titan of rare power is said to live in Ang now. There he serves as guardian of an artifact of unusual might.
@@ -43,6 +53,8 @@ ENDMSG
 #
 #
 MSG
+CHANCE 1
+TEXT
 Many have ventured into the northern country. Up beyond the mountains, alone in the wastes lies a vast domain of mines that delve deep into the earth.
 
 Know that these tunnels and shafts are quite perilous; for only once in recent times have I heard of an expedition returning from them.
@@ -50,6 +62,8 @@ ENDMSG
 #
 #
 MSG
+CHANCE 1
+TEXT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~~~~~~~~~
 ~~~~~~~~~~~~~
@@ -76,6 +90,8 @@ ENDMSG
 #
 #
 MSG
+CHANCE 1
+TEXT
 ...and then did the Alchemist agree to make me my potion.
 
 First he called to his grimm servants who hauld forth a great iron cauldron. Into this black device did he deposit his ingredients and, opening his spell book for reference, then did he cast his spell of alchemy therepon the cauldron.
@@ -87,6 +103,8 @@ ENDMSG
 #
 #
 MSG
+CHANCE 1
+TEXT
   Know that there are 4 principle philosophical ingredients. In order, they are:
 
    - philosophical salt
@@ -101,6 +119,8 @@ ENDMSG
 # (C)2007 Y.E.J. Chachkoff. All rights reserved.
 # The author agreed to have his work distributed with the original Crossfire RPG game, any fork excluded.
 MSG
+CHANCE 1
+TEXT
 11 Tromisian 5211EK: We made a strange encounter while we were travelling down the ancient road to Lake Country. Plunderers from Jangk were attacking a caravan near the Iron Doors.
 
 We of course helped the merchants, and easily defeated the bandits, some fleeing. But merchants seemed... uneasy, once they recognized our Guard uniforms.
@@ -116,6 +136,8 @@ ENDMSG
 # (C)2007 Y.E.J. Chachkoff. All rights reserved.
 # The author agreed to have his work distributed with the original Crossfire RPG game, any fork excluded.
 MSG
+CHANCE 1
+TEXT
 In 5122EK, Bottle Riots, only reprimed with difficulty, in Port Jospeh drove local authorities to totally forbid taverns and other drink-related places, with the sole exception of shops controlled by the Sea Princes themselves.
 
 However, Josephians rapidly found a loophole in the decree, noticing it only applied to buildings on or above the ground level. They thus refurbished to taverns caves in individual houses; they are indicated by their green frontage.
@@ -124,25 +146,37 @@ ENDMSG
 # The following extracts are from the Crossfire wiki at http://wiki.metalforge.net/doku.php
 # and are supposed to be GPL or at least reusable ingame. If not the case, please tell and we'll remove
 MSG
+CHANCE 1
+TEXT
 The colony of Skorn was founded in 435EK by Skud the Great, when his expedition reached the shores of the continent. It is said that he first pitched his tent on the site where the inn now stands.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 The war against the Dragons rages from 1064 to 1135EK. Scorn is destroyed. Most of its inhabitants flee to the south. After 1115EK, the city is progressively rebuilt on top of the now buried ruins nowadays known as the Old City.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 The War of the Sea Princes took place in 1177EK. The last imperial ship reaches Scorn. Contacts with Khelens are now broken. Scorn becomes an independent kingdom.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 Khelens is the name of both a city and an Empire, that once ruled the world. The cities of Scorn and Navar were initially colonies of the Empire of Khelens.
 
 The fate of Khelens is currently unknown. According to the last known historical records, a political crisis shattered the very foundations of the Empire 5000 years ago, creating a civil war that ended by the independence of Scorn and the other colonies from it. Since that time, no imperial ship ever sailed back to Scorn, and the location of Khelens is now forgotten.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 One of the first Builders, Skud the Great created many famous places, like the Scorn’s First Inn or the Newbie Tower.
 
 The reasons of the disappearance of Skud are mostly unknown. The Codex Skudensis mentions that it could have been because of the negative influence of the Arch-Demon Neth Aq. It is thought that The Tower of Skud, although left unfinished by its creator, may contain informations about the fate of one of the most famous Builder.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 It is said that Scorn, as we currently know it, was built on an older version of itself, now buried underground.
 
 When the colony of Skorn was founded by Skud, the whole west was infested by dragons and wyverns. The imperial armies successfully fought the monsters, pushing them back on the other side of the mountains, and kept a vigilant guard to ensure that the huge monsters wouldn’t sneak in and attack their settlements.
@@ -152,9 +186,13 @@ But there are always men who think they’re smarter than everybody else. Entera
 When dragon were finally vainquished, Scorn was rebuilt on top of its own ruins. The Old City of Scorn is now a dark, forgotten maze of crypts and halls infested by vermin of all sorts. Rumors say that some treasures from the glorious past of the city still sleep there, waiting to be found. Who knows ? Maybe it is true, after all.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 Straddling the corner of the Imperial highway as it turns North near the Eastern border of the known world, and surrounded by dangerous territory, Navar is an unlikely site for one of the world’s grandest cities. Yet there it stands, dominating the skyline for miles around and showing the same bustling activity expected of any thriving market town.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 In 2264 EK, the Kingdom of the Masts founded a colony called Darcap in the north of the continent. But before this colony could become autonomous the kingdom was destroyed, in 2287 EK, leaving it totally isolated.
 
 The inhabitants endured many hardships, many died of hunger. Some tried to reach, by small boat or on foot, a better land – none of them ever came back.
@@ -164,25 +202,37 @@ One of the colonists, named Andreas, succeeded in persuading many inhabitants to
 After his death, Andreas was nicknamed “Andreas the Ravenous” – because he always liked good jokes –, and the church of Devourers was named after him.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 In 6138 EK, a famous explorer named Herghist Appelnisht set foot in Darcap, the first stranger in four millenia. He stayed 2 years, learning the history and customs of Darcap and teaching the whereabouts of the rest of the world to the inhabitants. He then travelled back to Navar with a delegation in order to establish relations between Darcap and the other towns.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 In 6795 EK, a magician named Julio, wishing to take some distance with the agitation of the world, came to live in Darcap. He was expert in the four elements and spent the rest of his life studying the interactions of those, transforming four houses in the center of the town in laboratories. He was at the origin of many incidents and many inhabitants came to hate him.
 
 It is only many years after his death, in 6813 EK, that his major contribution to the town was made public. He had advised leaders on the affairs of the world, giving advice, solving many conflicts. A status was made as a token of gratitude and his house, which was once considered for destruction, was restored to display his work.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 The proverbial “Yellow Brick Road” (nicknamed because the durable yellow clay used to make the bricks) which strings its way across the Main continent of BigWorld, the Imperial Highway was created during the time of the Empire and is a lasting legacy of a more peaceful time. Travel along the Imperial Highway is still reasonable safe as the road is maintained and there are inns and shops along this road.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 Shortly summarized, the Sannista is a legendary flying boat that was powered by the reaction of a fire and a water elemental. It was built by the tenth Commander of Euthville, Farkennis, as a gift for the 18th Birthday of his daughter, Sannista. That’s the boat that was stolen by Fax when he fled from Euthville, and that he used to get to Khelens. Giusitta the Verbous then sailed it back to the Continent, and hid it “somewhere in the mountains of Euth”.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 If you went there about half a millenia ago, you’d have seen something very different than the field of haunted ruins Euthville has since become. It was initially founded by a handful of industrious, clever dwarves, that had found a mystical way to locate fields of precious Karitta, the famous metal that is as transparent as a pearl of the North Sea, yet as strong as the best irons of Navar.
 
 And thus, they found at the location of Euthville a lot of that raw metal, which quickly made the city one of the richest of all. And for a long time, it stayed so. The inhabitants of Euthville weren’t interested by war, work, or anything else too tiresome - they preferred to pay somebody else to do all of this. And with the advanced technical knowledge brought by the dwarves, working was less and less an issue for them.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 Finally, the Commander decided that the city couldn’t stand this anymore, and ordered that the Demons had to be attracted faraway from the city. On this fateful day, a whole fanfare left the city, hoping that the demons would follow, attracted by the music.
 
 And so, they did. One after another, they climbed out of Earth itself, and walked in the direction of the music, obviously unaware of the hundreds of buildings they were crushing by their giant footsteps, and the thousands of inhabitants that they toasted with their dark fire. Seeing that, even the bravest ones went mad, and ran for their lives, leaving pipes, clavicelles and harpsichords fall on the ground.
@@ -192,14 +242,20 @@ The rest of the story is easy to understand: Demons, free from the magical music
 The Commander went mad, of course, and it is said that his madness was so strong that his mind was unable to understand that he was dead. If you search enough in the ruins of Euthville, you’ll probably encounter his ghost, as well as those of the many who perished for having believed that mortals could enslave the hell. Some demons stayed there, obviously enjoying the area and its newborn ashes that smelled fresh blood and carnage. Euthville is now, of course, a dangerous, deserted place, and the richesses that are still sleeping below the ruins of its former palaces are now guarded by powerful entities of the 9th Circle.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 Many said that, if the Enchanted Music could be found, it would open the gates of many treasures, but because none of the former Euthvillians survived, and because nobody knows where the Boy went afterwards, those gates are still closed. I’ve heard that the School of Daemonology was precisely founded to rediscover that spell. But who am I to claim this to be true? I’m only a man of the past that tells stories before a fire, and the fire is dying, and so has my tale reached the end.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 Yet they were facing a problem. All their devices, all their machineries, all their tricks to cheat with nature required energy. Lots of energy. They relied first on the strength of horses and donkeys, but it wasn’t enough. Then, they tamed the dangerous Wyverns of Kal-Durandasi, so that the hot lizards would provide them with the full force of their steamy breath. But soon, it wasn’t enough. They also used the hidden power provided by the Faeries of the Tarniska river, building a dam, so that they could put the invisible horses of water that the sylphids are rumored to breed in use.
 
 But even so, their hunger for power wasn’t satisfied, and became an increasing nuisance for them. So, the Commander of Euthville (which was, more or less, the equivalent to our King at Scorn), finally decided to send messengers across the whole Continent, calling the world for a challenge. Whoever would be able to fulfill the needs of Euthvillians of energy would become the new Commander, thus the ruler of the richest city ever built since Khelens.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 And then came a boy. He wasn’t a wizard, nor pretended to be one. He was young, but the story didn’t kept the record of his name, and some now think it is because he was damned. Who knows? The Boy sat in the middle of the city, playing with his flute, laughing whenever he saw one of the demonstrations of the powerful wizards and engineers, who were failing again and again.
 
 After several days, the Commander noticed the Boy, and said: “who are you to laugh, you, who has only a flute ?” “I have only a flute for sure - but there’s more in my simple pipe than in those legions of wizards.” “Really ?” said the Commander, half-laughing, half-curious, “so you think you can solve my challenge ?”
@@ -211,6 +267,8 @@ The Boy then started to play an amused melody. It sounded like an invitation to 
 The Boy then said to the Commander: “As long as you keep playing for the Demons there, at least 23 hours each day, you’ll get them to make whatever you need.” And he gave them the score, took a brand new silver flute, and left, and never was seen again at Euthville.
 ENDMSG
 MSG
+CHANCE 1
+TEXT
 At first, things seemed fine, and the Commander couldn’t believe his luck, as a pipe was a feeble price to pay for such a powerful recipe of prosperity. Who wouldn’t want to tame the Demons themselves? Quickly, though, it appeared obvious that, for enough demons to be there, that music needed to be played rather loudly. And if, at first, it sounded entertaining, joyous, and funny, it quickly grew on the nerves of many. And especially because it was played 23 hours a day.
 
 Finally, the Commander decided that the city couldn’t stand this anymore, and ordered that the Demons had to be attracted faraway from the city. On this fateful day, a whole fanfare left the city, hoping that the demons would follow, attracted by the music.

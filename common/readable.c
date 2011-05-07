@@ -124,6 +124,21 @@ typedef struct namebytype {
     int type;          /**< matching type */
 } arttypename;
 
+/**
+ * One general message, from the lib/messages file.
+ */
+typedef struct GeneralMessage GeneralMessage ;
+
+/**
+ * One general message, from the lib/messages file.
+ */
+struct GeneralMessage {
+    int chance;             /**< Relative chance of the message appearing
+                              randomly. If 0 will never appear. */
+    sstring message;        /**< The message's body. */
+    GeneralMessage *next;   /**< Next message in the list. */
+};
+
 static void add_book(title *book, int type, const char *fname, int lineno);
 
 /**
@@ -142,16 +157,16 @@ static objectlink *first_mon_info = NULL;
 static int nrofmon = 0, need_to_write_bookarchive = 0;
 
 /**
- * this is needed to keep track of status of initialization
- * of the message file
+ * First message from data read from the messages file.
+ * Note that this points to the last message in the file,
+ * as messages are added to the start of the list.
  */
-static int nrofmsg = 0;
+static GeneralMessage *first_msg = NULL;
 
 /**
- * first_msg is the started of the linked list of messages as read from
- * the messages file
+ * Total chance of messages (GeneralMessage), to randomly select one.
  */
-static linked_char *first_msg = NULL;
+static int msg_total_chance = 0;
 
 /**
  * Spellpath information
@@ -713,7 +728,7 @@ int book_overflow(const char *buf1, const char *buf2, size_t booksize) {
 static void init_msgfile(void) {
     FILE *fp;
     char buf[MAX_BUF], msgbuf[HUGE_BUF], fname[MAX_BUF], *cp;
-    int comp;
+    int comp, text = 0, nrofmsg = 0;
     static int did_init_msgfile = 0;
 
     if (did_init_msgfile)
@@ -725,7 +740,7 @@ static void init_msgfile(void) {
 
     fp = open_and_uncompress(fname, 0, &comp, "r");
     if (fp != NULL) {
-        linked_char *tmp = NULL;
+        GeneralMessage *tmp = NULL;
         int lineno;
         int error_lineno;
 
@@ -740,38 +755,49 @@ static void init_msgfile(void) {
                 *cp = '\0';
             }
             if (tmp != NULL) {
-                if (strcmp(buf, "ENDMSG") == 0) {
+                if (text && strcmp(buf, "ENDMSG") == 0) {
                     if (strlen(msgbuf) > BOOK_BUF) {
                         LOG(llevDebug, "Warning: this string exceeded max book buf size:\n");
                         LOG(llevDebug, "  %s\n", msgbuf);
                     }
-                    tmp->name = add_string(msgbuf);
+                    tmp->message = add_string(msgbuf);
                     tmp->next = first_msg;
                     first_msg = tmp;
                     nrofmsg++;
                     tmp = NULL;
-                } else if (!buf_overflow(msgbuf, buf, HUGE_BUF-1)) {
-                    strcat(msgbuf, buf);
-                    strcat(msgbuf, "\n");
+                    text = 0;
+                } else if (text) {
+                    if (!buf_overflow(msgbuf, buf, HUGE_BUF-1)) {
+                        strcat(msgbuf, buf);
+                        strcat(msgbuf, "\n");
+                    } else if (error_lineno != 0) {
+                        LOG(llevInfo, "Warning: truncating book at %s, line %d\n", fname, error_lineno);
+                    }
+                } else if (strcmp(buf, "TEXT") == 0) {
+                    text = 1;
+                } else if (strncmp(buf, "CHANCE ", 7) == 0) {
+                    tmp->chance = atoi(buf + 7);
+                    msg_total_chance += tmp->chance;
                 } else if (error_lineno != 0) {
-                    LOG(llevInfo, "Warning: truncating book at %s, line %d\n", fname, error_lineno);
-                    error_lineno = 0;
+                    LOG(llevInfo, "Warning: unknown line %s, line %d\n", buf, error_lineno);
                 }
             } else if (strcmp(buf, "MSG") == 0) {
                 error_lineno = lineno;
-                tmp = (linked_char *)malloc(sizeof(linked_char));
+                tmp = (GeneralMessage *)calloc(1, sizeof(GeneralMessage));
                 strcpy(msgbuf, " ");  /* reset msgbuf for new message */
             } else {
                 LOG(llevInfo, "Warning: syntax error at %s, line %d\n", fname, lineno);
             }
         }
         close_and_delete(fp, comp);
+
+        if (tmp != NULL) {
+            LOG(llevError, "Invalid file %s", fname);
+            fatal(SEE_LAST_ERROR);
+        }
     }
 
-#ifdef BOOK_MSG_DEBUG
-    LOG(llevDebug, "init_info_listfile() got %d messages.\n", nrofmsg);
-#endif
-    LOG(llevDebug, "done messages.\n");
+    LOG(llevDebug, "done messages, found %d for total chance %d.\n", nrofmsg, msg_total_chance);
 }
 
 /**
@@ -1835,19 +1861,21 @@ static void make_formula_book(object *book, int level) {
  */
 static char *msgfile_msg(int level, size_t booksize) {
     static char retbuf[BOOK_BUF];
-    int i, msgnum;
-    linked_char *msg = NULL;
+    int weight;
+    GeneralMessage *msg = NULL;
 
     /* get a random message for the 'book' from linked list */
-    if (nrofmsg > 1) {
+    if (msg_total_chance > 0) {
         msg = first_msg;
-        msgnum = RANDOM()%nrofmsg;
-        for (i = 0; msg && i < nrofmsg && i != msgnum; i++)
+        weight = RANDOM() % msg_total_chance;
+        for (; msg && (((msg->chance != 0) && (weight > 0)) || (msg->chance == 0)) ; ) {
+            weight -= msg->chance;
             msg = msg->next;
+        }
     }
 
-    if (msg && !book_overflow(retbuf, msg->name, booksize))
-        snprintf(retbuf, sizeof(retbuf), "%s", msg->name);
+    if (msg && !book_overflow(retbuf, msg->message, booksize))
+        snprintf(retbuf, sizeof(retbuf), "%s", msg->message);
     else
         snprintf(retbuf, sizeof(retbuf), "\n <undecipherable text>");
 
@@ -2022,7 +2050,7 @@ void tailor_readable_ob(object *book, int msg_type) {
 void free_all_readable(void) {
     titlelist *tlist, *tnext;
     title *title1, *titlenext;
-    linked_char *lmsg, *nextmsg;
+    GeneralMessage *lmsg, *nextmsg;
     objectlink *monlink, *nextmon;
 
     LOG(llevDebug, "freeing all book information\n");
@@ -2043,8 +2071,8 @@ void free_all_readable(void) {
     }
     for (lmsg = first_msg; lmsg; lmsg = nextmsg) {
         nextmsg = lmsg->next;
-        if (lmsg->name)
-            free_string(lmsg->name);
+        if (lmsg->message)
+            free_string(lmsg->message);
         free(lmsg);
     }
     for (monlink = first_mon_info; monlink; monlink = nextmon) {
