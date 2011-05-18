@@ -122,3 +122,25 @@ void CREMapInformation::setRegion(const QString& region)
 {
     myRegion = region;
 }
+
+QStringList CREMapInformation::messages() const
+{
+    return myMessages;
+}
+
+void CREMapInformation::addMessage(const QString& message)
+{
+    if (!myMessages.contains(message))
+        myMessages.append(message);
+}
+
+QStringList CREMapInformation::quests() const
+{
+    return myQuests;
+}
+
+void CREMapInformation::addQuest(const QString& quest)
+{
+    if (!myQuests.contains(quest))
+        myQuests.append(quest);
+}

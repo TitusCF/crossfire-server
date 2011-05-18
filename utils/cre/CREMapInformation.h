@@ -48,6 +48,12 @@ class CREMapInformation : public QObject
         const QString& region() const;
         void setRegion(const QString& region);
 
+        QStringList messages() const;
+        void addMessage(const QString& message);
+
+        QStringList quests() const;
+        void addQuest(const QString& quest);
+
     protected:
         QString myPath;
         QString myName;
@@ -58,6 +64,8 @@ class CREMapInformation : public QObject
         int myLevel;
         qint64 myExperience;
         QString myRegion;
+        QStringList myMessages;
+        QStringList myQuests;
 
         void copy(const CREMapInformation& other);
 };

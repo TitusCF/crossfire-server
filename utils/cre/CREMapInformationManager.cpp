@@ -1,13 +1,21 @@
 #include "CREMapInformationManager.h"
 #include "CRESettings.h"
 #include "CREArchetypePanel.h"
+#include "MessageManager.h"
+#include "MessageFile.h"
+#include "QuestManager.h"
+#include "Quest.h"
 
 extern "C" {
 #include "global.h"
 }
 
-CREMapInformationManager::CREMapInformationManager(QObject* parent) : QObject(parent)
+CREMapInformationManager::CREMapInformationManager(QObject* parent, MessageManager* messageManager, QuestManager* questManager) : QObject(parent)
 {
+    Q_ASSERT(messageManager != NULL);
+    Q_ASSERT(questManager != NULL);
+    myMessageManager = messageManager;
+    myQuestManager = questManager;
 }
 
 CREMapInformationManager::~CREMapInformationManager()
@@ -26,6 +34,18 @@ void CREMapInformationManager::start()
         return;
 
     myWorker = QtConcurrent::run(this, &CREMapInformationManager::browseMaps);
+}
+
+void CREMapInformationManager::checkInventory(const object* item, CREMapInformation* information)
+{
+    FOR_INV_PREPARE(item, inv)
+    {
+        archetype *arch = find_archetype(inv->arch->name);
+        addArchetypeUse(arch->name, information);
+        information->addArchetype(arch->name);
+        checkEvent(inv, information);
+        checkInventory(inv, information);
+    } FOR_INV_FINISH();
 }
 
 void CREMapInformationManager::process(const QString& path2)
@@ -108,12 +128,7 @@ void CREMapInformationManager::process(const QString& path2)
                     information->addArchetype(arch->name);
                 }
 
-                FOR_INV_PREPARE(item, inv)
-                {
-                    archetype *arch = find_archetype(inv->arch->name);
-                    addArchetypeUse(arch->name, information);
-                    information->addArchetype(arch->name);
-                } FOR_INV_FINISH();
+                checkInventory(item, information);
 
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
                     char ep[500];
@@ -287,6 +302,9 @@ void CREMapInformationManager::loadCache()
 
         if (reader.isStartElement() && reader.name() == "maps")
         {
+            int version = reader.attributes().value("version").toString().toInt();
+            if (version < 1)
+                return;
             hasMaps = true;
             continue;
         }
@@ -349,6 +367,24 @@ void CREMapInformationManager::loadCache()
             map->addAccessedFrom(path);
             continue;
         }
+        if (reader.isStartElement() && reader.name() == "messageFile")
+        {
+            QString file = reader.readElementText();
+            map->addMessage(file);
+            MessageFile* message = myMessageManager->findMessage(file);
+            if (message != NULL)
+                message->maps().append(map);
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "quest")
+        {
+            QString code = reader.readElementText();
+            map->addQuest(code);
+            Quest* quest = myQuestManager->findByCode(code);
+            if (quest != NULL)
+                quest->maps().append(map);
+            continue;
+        }
         if (reader.isEndElement() && reader.name() == "map")
         {
             map = NULL;
@@ -371,6 +407,7 @@ void CREMapInformationManager::storeCache()
     writer.writeStartDocument();
 
     writer.writeStartElement("maps");
+    writer.writeAttribute("version", "1");
 
     QList<CREMapInformation*> maps = myInformation.values();
     foreach(CREMapInformation* map, maps)
@@ -393,6 +430,14 @@ void CREMapInformationManager::storeCache()
         foreach(QString path, map->accessedFrom())
         {
             writer.writeTextElement("accessedFrom", path);
+        }
+        foreach(QString file, map->messages())
+        {
+            writer.writeTextElement("messageFile", file);
+        }
+        foreach(QString code, map->quests())
+        {
+            writer.writeTextElement("quest", code);
         }
         writer.writeEndElement();
     }
@@ -417,6 +462,50 @@ void CREMapInformationManager::addArchetypeUse(const QString& name, CREMapInform
     QMutexLocker lock(&myLock);
     if (!myArchetypeUse.values(name).contains(map))
         myArchetypeUse.insert(name, map);
+}
+
+void CREMapInformationManager::checkEvent(const object* item, CREMapInformation* map)
+{
+    const QString slaying = "/python/dialog/npc_dialog.py";
+    const QString python = "Python";
+
+    if (item->type != EVENT_CONNECTOR || python != item->title)
+        return;
+
+    if (item->subtype == EVENT_SAY && slaying == item->slaying)
+    {
+        //qDebug() << "message event in" << map->path() << item->name;
+        QString path = item->name;
+        if (!path.startsWith('/'))
+            path = '/' + path;
+
+        MessageFile* message = myMessageManager->findMessage(path);
+        if (message != NULL)
+        {
+            if (!message->maps().contains(map))
+                message->maps().append(map);
+            map->addMessage(path);
+        } else
+            qDebug() << "missing message file" << path << "in" << map->path();
+    }
+
+    if (QString(item->slaying).startsWith("/python/quests/"))
+    {
+        //qDebug() << "quest-related Python stuff";
+        QStringList split = QString(item->name).split(' ', QString::SkipEmptyParts);
+        if (split.length() > 1)
+        {
+            Quest* quest = myQuestManager->findByCode(split[0]);
+            if (quest != NULL)
+            {
+                //qDebug() << "definitely quest" << split[0];
+                map->addQuest(split[0]);
+                if (!quest->maps().contains(map))
+                    quest->maps().append(map);
+            } else
+                qDebug() << "missing quest" << split[0] << "in" << map->path();
+        }
+    }
 }
 
 QList<CREMapInformation*> CREMapInformationManager::getMapsForRegion(const QString& region)

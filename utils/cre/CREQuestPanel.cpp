@@ -4,12 +4,22 @@
 #include "QuestManager.h"
 #include "CREQuestItemModel.h"
 #include "CREMultilineItemDelegate.h"
+#include "CRETreeItemQuest.h"
+#include "CREMapInformation.h"
 
 CREQuestPanel::CREQuestPanel(QuestManager* manager)
 {
     Q_ASSERT(manager);
     myQuestManager = manager;
-    QGridLayout* layout = new QGridLayout(this);
+
+    QVBoxLayout* main = new QVBoxLayout(this);
+    QTabWidget* tab = new QTabWidget(this);
+    main->addWidget(tab);
+
+    QWidget* details = new QWidget(this);
+    tab->addTab(details, tr("Details"));
+
+    QGridLayout* layout = new QGridLayout(details);
 
     int line = 1;
     layout->addWidget(new QLabel(tr("Code:"), this), line, 1);
@@ -78,6 +88,10 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
 
     layout->addLayout(buttons, line++, 1, 1, 2);
 
+    myUse = new QTreeWidget(this);
+    tab->addTab(myUse, tr("Use"));
+    myUse->setHeaderLabel(tr("Map"));
+
     myQuest = NULL;
     myCurrentStep = NULL;
 }
@@ -110,6 +124,12 @@ void CREQuestPanel::setQuest(Quest* quest)
         myParent->setCurrentIndex(0);
 
     displaySteps();
+
+    myUse->clear();
+    foreach(CREMapInformation* map, quest->maps())
+    {
+        new QTreeWidgetItem(myUse, QStringList(map->path()));
+    }
 }
 
 void CREQuestPanel::commitData()

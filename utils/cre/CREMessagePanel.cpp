@@ -3,10 +3,19 @@
 #include "CREFilterDefinition.h"
 #include "MessageFile.h"
 #include "CRERulePanel.h"
+#include "CREMapInformation.h"
 
 CREMessagePanel::CREMessagePanel(const MessageManager* manager)
 {
-    QGridLayout* layout = new QGridLayout(this);
+    QVBoxLayout* main = new QVBoxLayout(this);
+    QTabWidget* tab = new QTabWidget(this);
+    main->addWidget(tab);
+
+    QWidget* details = new QWidget(this);
+    tab->addTab(details, tr("Details"));
+
+
+    QGridLayout* layout = new QGridLayout(details);
 
     int line = 0;
 
@@ -58,6 +67,10 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager)
     connect(myRulePanel, SIGNAL(currentRuleModified()), this, SLOT(currentRuleModified()));
     rules->addWidget(myRulePanel, 5, 0, 4, 4);
 
+    myUse = new QTreeWidget(this);
+    tab->addTab(myUse, tr("Use"));
+    myUse->setHeaderLabel(tr("Map"));
+
     myMessage = NULL;
 }
 
@@ -101,6 +114,12 @@ void CREMessagePanel::setMessage(MessageFile* message)
         myDefaultBackground = myRules->topLevelItem(0)->background(0);
 
     myRulePanel->setMessageRule(NULL);
+
+    myUse->clear();
+    foreach(CREMapInformation* map, myMessage->maps())
+    {
+        new QTreeWidgetItem(myUse, QStringList(map->path()));
+    }
 }
 
 void setBackgroundColor(QTreeWidgetItem* item, QBrush color)

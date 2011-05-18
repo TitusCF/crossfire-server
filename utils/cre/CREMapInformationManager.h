@@ -8,12 +8,15 @@ extern "C" {
 #include "global.h"
 }
 
+class MessageManager;
+class QuestManager;
+
 class CREMapInformationManager : public QObject
 {
     Q_OBJECT
 
     public:
-        CREMapInformationManager(QObject* parent);
+        CREMapInformationManager(QObject* parent, MessageManager* messageManager, QuestManager* questManager);
         virtual ~CREMapInformationManager();
 
         bool browseFinished() const;
@@ -28,6 +31,8 @@ class CREMapInformationManager : public QObject
         void finished();
 
     protected:
+        MessageManager* myMessageManager;
+        QuestManager* myQuestManager;
         QHash<QString, CREMapInformation*> myInformation;
         QMultiHash<QString, CREMapInformation*> myArchetypeUse;
         QStringList myToProcess;
@@ -39,10 +44,12 @@ class CREMapInformationManager : public QObject
 
         void browseMaps();
         void process(const QString& path);
+        void checkInventory(const object* item, CREMapInformation* information);
         void loadCache();
         void storeCache();
         CREMapInformation* getOrCreateMapInformation(const QString& path);
         void addArchetypeUse(const QString& name, CREMapInformation* map);
+        void checkEvent(const object* item, CREMapInformation* map);
 };
 
 #endif // CLASS_CRE_MAP_INFORMATION_MANAGER_H

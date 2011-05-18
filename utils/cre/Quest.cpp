@@ -152,3 +152,8 @@ void Quest::setParent(Quest* parent)
         markModified();
     }
 }
+
+QList<CREMapInformation*>& Quest::maps()
+{
+    return myMaps;
+}

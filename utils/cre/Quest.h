@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QStringList>
 
+class CREMapInformation;
+
 class QuestStep : public QObject
 {
     Q_OBJECT
@@ -51,6 +53,8 @@ class Quest : public QObject
         const Quest* parent() const;
         void setParent(Quest* parent);
 
+        QList<CREMapInformation*>& maps();
+
     signals:
         void modified();
 
@@ -62,6 +66,7 @@ class Quest : public QObject
         QList<QuestStep*> mySteps;
         bool myModified;
         Quest* myParent;
+        QList<CREMapInformation*> myMaps;
 
         void markModified();
 };

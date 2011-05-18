@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QStringList>
 
+class CREMapInformation;
+
 class MessageRule : public QObject
 {
     Q_OBJECT
@@ -60,6 +62,7 @@ class MessageFile : public QObject
         void setLocation(const QString& location);
 
         QList<MessageRule*>& rules();
+        QList<CREMapInformation*>& maps();
 
         void save();
 
@@ -71,6 +74,7 @@ class MessageFile : public QObject
         QString myPath;
         QString myLocation;
         QList<MessageRule*> myRules;
+        QList<CREMapInformation*> myMaps;
 };
 
 #endif	/* _MESSAGEFILE_H */

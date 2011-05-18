@@ -36,6 +36,7 @@ class CREQuestPanel : public CREPanel
         QTextEdit* myDescription;
         CREQuestItemModel* myStepsModel;
         QTreeView* mySteps;
+        QTreeWidget* myUse;
 
         void displaySteps();
 

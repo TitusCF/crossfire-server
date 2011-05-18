@@ -34,16 +34,16 @@ CREMainWindow::CREMainWindow()
     myResourcesManager = new ResourcesManager();
     myResourcesManager->load();
 
-    myMapManager = new CREMapInformationManager(this);
-    connect(myMapManager, SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
-    connect(myMapManager, SIGNAL(finished()), this, SLOT(browsingFinished()));
-    myMapManager->start();
-
     myQuestManager = new QuestManager();
     myQuestManager->loadQuests();
 
     myMessageManager = new MessageManager();
     myMessageManager->loadMessages();
+
+    myMapManager = new CREMapInformationManager(this, myMessageManager, myQuestManager);
+    connect(myMapManager, SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
+    connect(myMapManager, SIGNAL(finished()), this, SLOT(browsingFinished()));
+    myMapManager->start();
 }
 
 void CREMainWindow::closeEvent(QCloseEvent* event)

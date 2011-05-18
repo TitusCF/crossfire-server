@@ -42,6 +42,17 @@ QList<MessageFile*>& MessageManager::messages()
     return myMessages;
 }
 
+MessageFile* MessageManager::findMessage(const QString& path)
+{
+    foreach(MessageFile* file, myMessages)
+    {
+        if (file->path() == path)
+            return file;
+    }
+
+    return NULL;
+}
+
 void MessageManager::loadDirectory(const QString& directory)
 {
     //qDebug() << "load" << directory;

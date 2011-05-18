@@ -32,6 +32,7 @@ class CREMessagePanel : public CREPanel
         QTreeWidget* myRules;
         QBrush myDefaultBackground;
         CRERulePanel* myRulePanel;
+        QTreeWidget* myUse;
 
         void fillRuleItem(QTreeWidgetItem* item, MessageRule* rule);
     private slots:

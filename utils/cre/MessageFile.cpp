@@ -235,6 +235,11 @@ QList<MessageRule*>& MessageFile::rules()
     return myRules;
 }
 
+QList<CREMapInformation*>& MessageFile::maps()
+{
+    return myMaps;
+}
+
 QString convert(const QString& text)
 {
     QString tmp(text);
