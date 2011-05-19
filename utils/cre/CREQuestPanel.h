@@ -12,13 +12,14 @@ class Quest;
 class QuestStep;
 class QuestManager;
 class CREQuestItemModel;
+class MessageManager;
 
 class CREQuestPanel : public CREPanel
 {
     Q_OBJECT
 
     public:
-        CREQuestPanel(QuestManager* manager);
+        CREQuestPanel(QuestManager* manager, MessageManager* messageManager);
         virtual ~CREQuestPanel();
 
         virtual void commitData();
@@ -26,6 +27,7 @@ class CREQuestPanel : public CREPanel
         void setQuest(Quest* quest);
     private:
         QuestManager* myQuestManager;
+        MessageManager* myMessageManager;
         Quest* myQuest;
         QuestStep* myCurrentStep;
         QLineEdit* myCode;

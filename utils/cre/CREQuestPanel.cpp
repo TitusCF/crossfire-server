@@ -6,11 +6,16 @@
 #include "CREMultilineItemDelegate.h"
 #include "CRETreeItemQuest.h"
 #include "CREMapInformation.h"
+#include "MessageManager.h"
+#include "CREMessagePanel.h"
+#include "MessageFile.h"
 
-CREQuestPanel::CREQuestPanel(QuestManager* manager)
+CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManager)
 {
     Q_ASSERT(manager);
+    Q_ASSERT(messageManager);
     myQuestManager = manager;
+    myMessageManager = messageManager;
 
     QVBoxLayout* main = new QVBoxLayout(this);
     QTabWidget* tab = new QTabWidget(this);
@@ -90,7 +95,7 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager)
 
     myUse = new QTreeWidget(this);
     tab->addTab(myUse, tr("Use"));
-    myUse->setHeaderLabel(tr("Map"));
+    myUse->setHeaderLabel(tr("Used by..."));
 
     myQuest = NULL;
     myCurrentStep = NULL;
@@ -126,9 +131,44 @@ void CREQuestPanel::setQuest(Quest* quest)
     displaySteps();
 
     myUse->clear();
-    foreach(CREMapInformation* map, quest->maps())
+    QTreeWidgetItem* root = NULL;
+    if (quest->maps().length() > 0)
     {
-        new QTreeWidgetItem(myUse, QStringList(map->path()));
+        root = new QTreeWidgetItem(myUse, QStringList(tr("Maps")));
+        root->setExpanded(true);
+        foreach(CREMapInformation* map, quest->maps())
+        {
+            new QTreeWidgetItem(root, QStringList(map->path()));
+        }
+        root = NULL;
+    }
+
+    foreach(MessageFile* message, myMessageManager->messages())
+    {
+        bool got = false;
+        foreach(MessageRule* rule, message->rules())
+        {
+            QList<QStringList> conditions = rule->preconditions();
+            conditions.append(rule->postconditions());
+            foreach(QStringList list, conditions)
+            {
+                if (list.size() > 1 && (list[0] == "quest" || list[0] == "questdone") && list[1] == quest->code())
+                {
+                    if (root == NULL)
+                    {
+                        root = new QTreeWidgetItem(myUse, QStringList(tr("Messages")));
+                        root->setExpanded(true);
+                    }
+
+                    new QTreeWidgetItem(root, QStringList(message->path()));
+                    got = true;
+                    break;
+                }
+            }
+
+            if (got)
+                break;
+        }
     }
 }
 
