@@ -16,6 +16,7 @@ class MessageManager
         void saveMessages();
 
         QList<MessageFile*>& messages();
+        const QList<MessageFile*>& messages() const;
         MessageFile* findMessage(const QString& path);
 
         QList<QuestConditionScript*> preConditions() const;

@@ -26,6 +26,7 @@ class CREMessagePanel : public CREPanel
         virtual void commitData();
 
     private:
+        const MessageManager* myMessageManager;
         MessageFile* myMessage;
         QLineEdit* myPath;
         QLineEdit* myLocation;

@@ -42,6 +42,11 @@ QList<MessageFile*>& MessageManager::messages()
     return myMessages;
 }
 
+const QList<MessageFile*>& MessageManager::messages() const
+{
+    return myMessages;
+}
+
 MessageFile* MessageManager::findMessage(const QString& path)
 {
     foreach(MessageFile* file, myMessages)
