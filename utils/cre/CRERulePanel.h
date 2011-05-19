@@ -32,7 +32,7 @@ class CRERulePanel : public QTabWidget
         CREStringListPanel* myMessages;
         CREPrePostPanel* myPost;
         CREReplyPanel* myReplies;
-        QLineEdit* myInclude;
+        QTextEdit* myInclude;
 
     protected slots:
         void onMatchModified();
@@ -40,7 +40,7 @@ class CRERulePanel : public QTabWidget
         void onMessageModified();
         void onPostModified();
         void onRepliesModified();
-        void onIncludeModified(const QString& text);
+        void onIncludeModified();
 };
 
 #endif	/* _CRERULEPANEL_H */

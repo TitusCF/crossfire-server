@@ -83,12 +83,12 @@ void MessageRule::setMessages(const QStringList& messages)
     myMessages = messages;
 }
 
-const QString& MessageRule::include() const
+const QStringList& MessageRule::include() const
 {
     return myInclude;
 }
 
-void MessageRule::setInclude(const QString& include)
+void MessageRule::setInclude(const QStringList& include)
 {
     myInclude = include;
 }
@@ -218,9 +218,11 @@ bool MessageFile::parseFile()
         rule->setPostconditions(lists);
 
         items.clear();
-        qScriptValueToSequence(v.property("msg"), items);
+        qScriptValueToSequence(v.property("include"), items);
+        rule->setInclude(items);
 
-        rule->setInclude(v.property("include").toString());
+        items.clear();
+        qScriptValueToSequence(v.property("msg"), items);
         rule->setMessages(items);
 
         p = v.property("replies");
@@ -274,7 +276,7 @@ QString convert(const MessageRule* rule)
 
     if (!rule->include().isEmpty())
     {
-        result += "{\n  \"include\" : [\"" + convert(rule->include()) + "\"]";
+        result += "{\n  \"include\" : " + convert(rule->include());
         if (!rule->preconditions().isEmpty())
             result += ",\n  \"pre\" : " + convert(rule->preconditions());
         result +=  "\n  }";

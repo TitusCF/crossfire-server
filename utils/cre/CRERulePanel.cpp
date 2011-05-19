@@ -26,10 +26,11 @@ CRERulePanel::CRERulePanel(const MessageManager* manager, QWidget* parent) : QTa
     addTab(myReplies, tr("replies"));
 
     QWidget* w = new QWidget(this);
-    QHBoxLayout* l = new QHBoxLayout(w);
-    l->addWidget(new QLabel(tr("Includes:"), this));
-    myInclude = new QLineEdit(this);
-    connect(myInclude, SIGNAL(textChanged(const QString&)), this, SLOT(onIncludeModified(const QString&)));
+    QVBoxLayout* l = new QVBoxLayout(w);
+    l->addWidget(new QLabel(tr("Includes (one per line, path can be absolute or relative to the current message file):"), this));
+    myInclude = new QTextEdit(this);
+    myInclude->setAcceptRichText(false);
+    connect(myInclude, SIGNAL(textChanged()), this, SLOT(onIncludeModified()));
     l->addWidget(myInclude);
     addTab(w, tr("includes"));
 
@@ -57,7 +58,7 @@ void CRERulePanel::setMessageRule(MessageRule* rule)
         myMessages->setData(rule->messages());
         myPost->setData(rule->postconditions());
         myReplies->setData(rule->replies());
-        myInclude->setText(rule->include());
+        myInclude->setText(rule->include().join("\n"));
     }
 }
 
@@ -101,11 +102,19 @@ void CRERulePanel::onRepliesModified()
     emit currentRuleModified();
 }
 
-void CRERulePanel::onIncludeModified(const QString& text)
+void CRERulePanel::onIncludeModified()
 {
     if (myRule != NULL)
     {
-        myRule->setInclude(text);
+        QStringList include;
+        include = myInclude->toPlainText().split("\n");
+        for (int i = include.length() - 1; i >= 0; i--)
+        {
+            if (include[i].isEmpty())
+                include.removeAt(i);
+        }
+
+        myRule->setInclude(include);
         emit currentRuleModified();
     }
 }

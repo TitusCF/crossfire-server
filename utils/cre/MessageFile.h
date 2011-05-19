@@ -26,8 +26,8 @@ class MessageRule : public QObject
         void setPostconditions(const QList<QStringList>& postconditions);
         const QStringList& messages() const;
         void setMessages(const QStringList& messages);
-        const QString& include() const;
-        void setInclude(const QString& include);
+        const QStringList& include() const;
+        void setInclude(const QStringList& include);
         const QList<QStringList>& replies() const;
         void setReplies(const QList<QStringList>& replies);
 
@@ -41,7 +41,7 @@ class MessageRule : public QObject
         QList<QStringList> myPreconditions;
         QList<QStringList> myPostconditions;
         QStringList myMessages;
-        QString myInclude;
+        QStringList myInclude;
         QList<QStringList> myReplies;
 };
 

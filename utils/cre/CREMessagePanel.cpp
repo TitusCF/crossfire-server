@@ -139,30 +139,36 @@ void CREMessagePanel::setMessage(MessageFile* message)
         bool got = false;
         foreach(MessageRule* rule, file->rules())
         {
-            QString include = rule->include();
-            if (include.isEmpty())
-                continue;
-
-            if (!include.startsWith('/'))
+            QStringList includes = rule->include();
+            foreach(QString include, includes)
             {
-                int last = file->path().lastIndexOf(QDir::separator());
-                if (last == -1)
+                if (include.isEmpty())
                     continue;
-                include = file->path().left(last + 1) + include;
-            }
 
-            if (include == message->path())
-            {
-                if (root == NULL)
+                if (!include.startsWith('/'))
                 {
-                    root = new QTreeWidgetItem(myUse, QStringList(tr("Messages")));
-                    root->setExpanded(true);
+                    int last = file->path().lastIndexOf(QDir::separator());
+                    if (last == -1)
+                        continue;
+                    include = file->path().left(last + 1) + include;
                 }
 
-                new QTreeWidgetItem(root, QStringList(file->path()));
+                if (include == message->path())
+                {
+                    if (root == NULL)
+                    {
+                        root = new QTreeWidgetItem(myUse, QStringList(tr("Messages")));
+                        root->setExpanded(true);
+                    }
 
-                got = true;
-                break;
+                    new QTreeWidgetItem(root, QStringList(file->path()));
+
+                    got = true;
+                    break;
+                }
+
+                if (got)
+                    break;
             }
         }
 
@@ -283,7 +289,7 @@ void CREMessagePanel::fillRuleItem(QTreeWidgetItem* item, MessageRule* rule)
     item->setText(2, rule->messages().join("\n"));
     item->setText(3, toDisplay(rule->postconditions()));
     item->setText(4, toDisplay(rule->replies()));
-    item->setText(5, rule->include());
+    item->setText(5, rule->include().join("\n"));
 }
 
 void CREMessagePanel::onAddRule(bool)
