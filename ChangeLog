@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Prevent converters from creating unpaid coins.
+Andreas Kirschbaum 2011-05-21
+
 Fix Lythander's pipe not having spell it should.
 Nicolas Weeger 2011-05-21
 
