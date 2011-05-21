@@ -270,6 +270,19 @@ static int god_gives_present(object *op, const object *god, treasure *tr) {
         return 0;
 
     tmp = arch_to_object(tr->item);
+
+    /*
+     * Give inventory if needed, for instance Lythander's pipe.
+     * Use high level and magic so something IS put in inventory.
+     */
+    fix_generated_item(tmp, NULL, 120, 120, GT_ONLY_GOOD);
+
+    /* And just in case nothing was put and something is needed, bail out. */
+    if ((tmp->type == ROD || tmp->type == WAND) && (tmp->inv == NULL)) {
+        object_free2(tmp, 0);
+        return 0;
+    }
+
     query_short_name(tmp, name, HUGE_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_ADD,
                          "%s lets %s appear in your hands.",

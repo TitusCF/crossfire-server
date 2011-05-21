@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix Lythander's pipe not having spell it should.
+Nicolas Weeger 2011-05-21
+
+Fix god's knowledge handling always considering the god information as new.
+Nicolas Weeger 2011-05-07
+
 Allow messages from lib/messages to be stored through knowledge system.
 Nicolas Weeger 2011-05-07
 
