@@ -209,6 +209,11 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 
     if (out_of_map(newmap, x, y)) {
         LOG(llevError, "enter_map: supplied coordinates are not within the map! (%s: %d, %d)\n", newmap->path, x, y);
+        /* If op has invalid (probably -1,-1) coordinates, force them to a correct value, else issues later on. */
+        if (op->x == x)
+            op->x = MAP_ENTER_X(newmap);
+        if (op->y == y)
+            op->y = MAP_ENTER_Y(newmap);
         x = MAP_ENTER_X(newmap);
         y = MAP_ENTER_Y(newmap);
         if (out_of_map(newmap, x, y)) {
