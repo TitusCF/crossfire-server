@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix for bug #3127973: 'detect monster' effect badly positioned.
+Nicolas Weeger 2011-05-22
+
 Fix crash with character creation using jxclient.
 Nicolas Weeger 2011-05-22
 

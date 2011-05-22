@@ -2577,19 +2577,52 @@ int cast_detection(object *op, object *caster, object *spell) {
              * where the magic is.
              */
             if (done_one) {
-                object *detect_ob = arch_to_object(spell->other_arch);
+                object *detect_ob;
+                int dx = nx, dy = ny;
 
                 /* if this is set, we want to copy the face */
                 if (done_one == 2 && detect) {
-                    detect_ob->face = detect->face;
-                    detect_ob->animation_id = detect->animation_id;
-                    detect_ob->anim_speed = detect->anim_speed;
-                    detect_ob->last_anim = 0;
-                    /* by default, the detect_ob is already animated */
-                    if (!QUERY_FLAG(detect, FLAG_ANIMATE))
-                        CLEAR_FLAG(detect_ob, FLAG_ANIMATE);
-                }
-                object_insert_in_map_at(detect_ob, m, op, 0, nx, ny);
+                    /*
+                     * We can't simply copy the face to a single item, because
+                     * multipart objects need to have multipart glows.
+                     * So copy the initial item, erase some properties, and use that.
+                     */
+
+                    object *part;
+                    int flag;
+
+                    dx = HEAD(detect)->x;
+                    dy = HEAD(detect)->y;
+
+                    detect_ob = object_create_arch(HEAD(detect)->arch);
+                    for (part = detect_ob; part != NULL; part = part->more) {
+                        part->last_anim = 0;
+                        part->type = spell->other_arch->clone.type;
+                        for (flag = 0; flag < 4; flag++) {
+                            part->flags[flag] = spell->other_arch->clone.flags[flag];
+                        }
+                        part->stats.food = spell->other_arch->clone.stats.food;
+                        part->last_anim = 0;
+                        part->speed = spell->other_arch->clone.speed;
+                        part->speed_left = spell->other_arch->clone.speed_left;
+                        part->move_allow = spell->other_arch->clone.move_allow;
+                        part->move_block = spell->other_arch->clone.move_block;
+                        part->move_type = spell->other_arch->clone.move_type;
+                        part->glow_radius = spell->other_arch->clone.glow_radius;
+                        part->invisible = spell->other_arch->clone.invisible;
+                        part->weight = spell->other_arch->clone.weight;
+                        part->map_layer = spell->other_arch->clone.map_layer;
+                        FREE_AND_COPY(part->name, spell->other_arch->clone.name);
+
+                        /* by default, the detect_ob is already animated */
+                        if (!QUERY_FLAG(detect, FLAG_ANIMATE))
+                            CLEAR_FLAG(part, FLAG_ANIMATE);
+                    }
+                    object_update_speed(detect_ob);
+                } else
+                    detect_ob = arch_to_object(spell->other_arch);
+
+                object_insert_in_map_at(detect_ob, m, op, 0, dx, dy);
             }
         } /* for processing the surrounding spaces */
 
