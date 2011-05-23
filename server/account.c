@@ -641,3 +641,48 @@ int account_is_logged_in(const char *name)
     return 0;
 }
 
+/**
+ * Change an account password.  It does error checking, but the caller might
+ * want to do checking before getting here.
+ * @param account_name
+ * account name we are changing
+ * @param current_password
+ * current password for the account. This is the unencrypted password (password as entered
+ * by user)
+ * @param new_password
+ * new password to set, unencrypted.
+ * @retval 0
+ * password changed successfully.
+ * @retval 1
+ * account name, old or new password has invalid character.
+ * @retval 2
+ * account does not exist.
+ * @retval 3
+ * current password is invalid.
+ */
+int account_change_password(const char *account_name, const char *current_password, const char *new_password)
+{
+    account_struct *ac;
+
+    /* We need to check the password because we don't know what crypt_string() will do -
+     * it may just return the string we pass in.  We should probably check the results
+     * returned from crypt_string(), but the problem there is that if we have a faulty
+     * algorithm which in fact is putting in invalid characters, there isn not much
+     * the players can do about that.
+     */
+    if (account_check_string(account_name) || account_check_string(current_password) || account_check_string(new_password))
+        return 1;
+
+    for (ac=accounts; ac; ac=ac->next) {
+        if (!strcasecmp(ac->name, account_name)) break;
+    }
+    if (ac == NULL) return 2;
+
+    if (strcmp(crypt_string(current_password, ac->password), ac->password))
+        return 3;
+
+    free(ac->password);
+    ac->password = strdup_local(crypt_string(new_password, NULL));
+
+    return 0;
+}

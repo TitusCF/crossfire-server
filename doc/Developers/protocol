@@ -445,6 +445,16 @@ C->S: createplayer <name><password>
    Note:  Expected that this command will expand with new character creation
    method.
 
+C->S: accountpw <current account password><new account password>
+S->C: failure accountpw <message>
+
+      <current account password> is a length prefixed string of the current password.
+      <account password> is a length prefixed string of the new password.
+
+  Tells the server to change the password for the current account.
+  A failure message is generated if something is wrong. If all goes well the server
+  will send the character list for the account.
+
 
 C->S: addme
 	Tells the server that it should add me (the client) to the game.

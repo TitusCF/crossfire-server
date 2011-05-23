@@ -2639,3 +2639,80 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     socket_info.nconns--;
     ns->status = Ns_Avail;
 }
+
+/**
+ * Handles the account password change.
+ *
+ * @param buf
+ * remaining socket data - from this we need to extract old & new password
+ * @param len
+ * length of this buffer
+ * @param ns
+ * pointer to socket structure.
+ */
+void account_password(char *buf, int len, socket_struct *ns) {
+    char old[MAX_BUF], change[MAX_BUF];
+    int status;
+    SockList sl;
+
+    SockList_Init(&sl);
+
+    status = decode_name_password(buf, &len, old, change);
+    if (status == 1) {
+        SockList_AddString(&sl, "failure accountpw Old password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+    if (status == 2) {
+        SockList_AddString(&sl, "failure accountpw New password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+    /*The minimum length isn't exactly required, but in the current implementation,
+     * client will send the same password for character for which there is a
+     * 2 character minimum size. Thus an account with a one character password
+     * won't be able to create a character. */
+    if (strlen(change)<2) {
+        SockList_AddString(&sl, "failure accountpw New password is too short");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    status = account_check_string(change);
+    if (status == 1) {
+        SockList_AddString(&sl,
+                       "failure accountpw That password contains invalid characters.");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    if (status == 2) {
+        SockList_AddString(&sl,
+                           "failure accountpw That password is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    status = account_change_password(ns->account_name, old, change);
+    if (status != 0) {
+        const char *error;
+        if (status == 1)
+            error = "failure accountpw Invalid characters";
+        else if (status == 2)
+            error = "failure accountpw Invalid account";
+        else
+            error = "failure accountpw Invalid password for account";
+        SockList_AddString(&sl, error);
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    /* If we got here, we passed all checks, and password was changed */
+    send_account_players(ns);
+}
