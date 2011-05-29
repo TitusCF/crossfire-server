@@ -452,20 +452,16 @@ void pets_move(object *ob) {
  * caster of the spell
  * @param dir
  * direction the monster should be placed in.
- * @param is_golem
- * if set then this is a golem spell.
  * @return
  * suitable golem.
  */
-static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) {
+static object *fix_summon_pet(archetype *at, object *op, int dir) {
     archetype *atmp;
     object *tmp = NULL, *prev = NULL, *head = NULL;
 
     for (atmp = at; atmp != NULL; atmp = atmp->more) {
         tmp = arch_to_object(atmp);
         if (atmp == at) {
-            if (!is_golem)
-                SET_FLAG(tmp, FLAG_MONSTER);
 
             /* Ensure the golem can actually move if no move_type defined.
              * This check is redundant since this is checked at server startup. */
@@ -479,8 +475,7 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
                 tmp->stats.exp = 0;
                 add_friendly_object(tmp);
                 SET_FLAG(tmp, FLAG_FRIENDLY);
-                if (is_golem)
-                    CLEAR_FLAG(tmp, FLAG_MONSTER);
+                CLEAR_FLAG(tmp, FLAG_MONSTER);
             } else if (QUERY_FLAG(op, FLAG_FRIENDLY)) {
                 object *owner = object_get_owner(op);
 
@@ -491,7 +486,7 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
                     SET_FLAG(tmp, FLAG_FRIENDLY);
                 }
             }
-            if (op->type != PLAYER || !is_golem) {
+            if (op->type != PLAYER) {
                 tmp->attack_movement = PETMOVE;
                 tmp->speed_left = -1;
                 tmp->type = 0;
@@ -743,7 +738,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
         return 0;
     }
     /* basically want to get proper map/coordinates for this object */
-    tmp = fix_summon_pet(at, op, dir, GOLEM);
+    tmp = fix_summon_pet(at, op, dir);
     if (tmp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
