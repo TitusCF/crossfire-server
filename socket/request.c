@@ -2091,6 +2091,8 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
     if (ns->account_name) free(ns->account_name);
     ns->account_name = strdup_local(name);
     account_add_account(name, password);
+    /* save account information */
+    accounts_save();
     send_account_players(ns);
 }
 
@@ -2215,6 +2217,9 @@ void account_add_player_cmd(char *buf, int len, socket_struct *ns) {
     }
 
     send_account_players(ns);
+
+    /* store data so nothing is lost in case of crash */
+    account_char_save(ns->account_name, ns->account_chars);
 }
 
 /**

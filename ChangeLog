@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Ensure account information is stored at creation and character linking.
+Nicolas Weeger 2011-05-29
+
 Implement account password change.
 Nicolas Weeger 2011-05-23
 
