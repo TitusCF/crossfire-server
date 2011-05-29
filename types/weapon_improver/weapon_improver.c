@@ -391,6 +391,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
 
         weapon->item_power++;
         object_decrease_nrof_by_one(improver);
+        esrv_update_item(UPD_WEIGHT, op, weapon);
         return 1;
     }
 
@@ -405,6 +406,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
         weapon->last_eat++;
         weapon->item_power++;
         object_decrease_nrof_by_one(improver);
+        esrv_update_item(UPD_WEIGHT, op, weapon);
         return 1;
     }
 

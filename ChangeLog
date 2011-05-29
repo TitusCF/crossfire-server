@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Correctly update improved weapon's weight in inventory.
+Nicolas Weeger 2011-05-29
+
 Ensure account information is stored at creation and character linking.
 Nicolas Weeger 2011-05-29
 
