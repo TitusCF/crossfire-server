@@ -133,6 +133,10 @@ void CREMainWindow::createActions()
     myReportPlayer->setEnabled(false);
     connect(myReportPlayer, SIGNAL(triggered()), this, SLOT(onReportPlayer()));
 
+    myReportSummon = new QAction(tr("Summoned pets statistics"), this);
+    myReportSummon->setStatusTip(tr("Display wc, hp, speed and other statistics for summoned pets."));
+    connect(myReportSummon, SIGNAL(triggered()), this, SLOT(onReportSummon()));
+
     myToolSmooth = new QAction(tr("Generate smooth face base"), this);
     myToolSmooth->setStatusTip(tr("Generate the basic smoothed picture for a face."));
     connect(myToolSmooth, SIGNAL(triggered()), this, SLOT(onToolSmooth()));
@@ -171,6 +175,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportAlchemy);
     reportMenu->addAction(myReportSpells);
     reportMenu->addAction(myReportPlayer);
+    reportMenu->addAction(myReportSummon);
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
     toolsMenu->addAction(myToolSmooth);
@@ -725,6 +730,117 @@ void CREMainWindow::onReportPlayer()
 
     report += "</tbody></table>\n";
 
+    CREReportDisplay show(report);
+    QApplication::restoreOverrideCursor();
+    show.exec();
+}
+
+static QString reportSummon(const archetype* summon, const object* other, QString name)
+{
+    QString report;
+    int level;
+
+    const object* spell = &summon->clone;
+
+    // hp, dam, speed, wc
+
+    QString ac("<tr><td>ac</td>");
+    QString hp("<tr><td>hp</td>");
+    QString dam("<tr><td>dam</td>");
+    QString speed("<tr><td>speed</td>");
+    QString wc("<tr><td>wc</td>");
+    int ihp, idam, iwc, diff;
+    float fspeed;
+
+    for (level = 1; level < 120; level += 10)
+    {
+        if (level < spell->level)
+        {
+            ac += "<td></td>";
+            hp += "<td></td>";
+            dam += "<td></td>";
+            speed += "<td></td>";
+            wc += "<td></td>";
+            continue;
+        }
+
+        diff = level - spell->level;
+
+        ihp = other->stats.hp + spell->duration + (spell->duration_modifier != 0 ? (diff / spell->duration_modifier) : 0);
+        idam = (spell->stats.dam ? spell->stats.dam : other->stats.dam) + (spell->dam_modifier != 0 ? (diff / spell->dam_modifier) : 0);
+        fspeed = MIN(1.0, FABS(other->speed) + .02 * (spell->range_modifier != 0 ? (diff / spell->range_modifier) : 0));
+        iwc = other->duration - (spell->range_modifier != 0 ? (diff / spell->range_modifier) : 0);
+
+        ac += "<td>" + QString::number(other->stats.ac) + "</td>";
+        hp += "<td>" + QString::number(ihp) + "</td>";
+        dam += "<td>" + QString::number(idam) + "</td>";
+        speed += "<td>" + QString::number(fspeed) + "</td>";
+        wc += "<td>" + QString::number(iwc) + "</td>";
+    }
+
+    report += "<tr><td colspan=\"13\"><strong>" + name + "</strong></td></tr>";
+
+    report += ac + "</tr>" + hp + "</tr>" + dam + "</tr>" + speed + "</tr>" + wc + "</tr>";
+
+    return report;
+}
+
+void CREMainWindow::onReportSummon()
+{
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+    int level;
+
+    QString report(tr("<h1>Summoned pet statistics</h1>\n")), line;
+    report += "<table border=\"1\"><thead>\n";
+    report += "<tr>";
+    report += "<th rowspan=\"2\">Spell</th>";
+    report += "<th colspan=\"12\">Level</th>";
+    report += "</tr>";
+    report += "<tr>";
+
+    for (level = 1; level < 120; level += 10)
+    {
+        report += "<th>" + QString::number(level) + "</th>";
+    }
+    report += "</tr></thead><tbody>";
+
+    QMap<QString, QString> spells;
+
+    for (const archetype* summon = first_archetype; summon; summon = summon->next)
+    {
+        if (summon->clone.type != SPELL || summon->clone.subtype != SP_SUMMON_GOLEM)
+            continue;
+        if (summon->clone.other_arch != NULL)
+        {
+            spells[summon->clone.name] = reportSummon(summon, &summon->clone.other_arch->clone, QString(summon->clone.name));
+            continue;
+        }
+
+        // god-based summoning
+        for (const archetype* god = first_archetype; god; god = god->next)
+        {
+            if (god->clone.type != GOD)
+                continue;
+
+            QString name(QString(summon->clone.name) + " (" + QString(god->name) + ")");
+            archetype* holy = determine_holy_arch(&god->clone, summon->clone.race);
+            if (holy == NULL)
+                continue;
+            
+            spells[name] = reportSummon(summon, &holy->clone, name);
+        }
+    }
+
+    QStringList keys = spells.keys();
+    keys.sort();
+    foreach(QString key, keys)
+    {
+        report += spells[key];
+    }
+
+    report += "</tbody></table>";
+    
     CREReportDisplay show(report);
     QApplication::restoreOverrideCursor();
     show.exec();
