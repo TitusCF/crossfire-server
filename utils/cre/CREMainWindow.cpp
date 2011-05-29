@@ -778,9 +778,9 @@ static QString reportSummon(const archetype* summon, const object* other, QStrin
         wc += "<td>" + QString::number(iwc) + "</td>";
     }
 
-    report += "<tr><td colspan=\"13\"><strong>" + name + "</strong></td></tr>";
+    report += "<tr><td colspan=\"13\"><strong>" + name + "</strong></td></tr>\n";
 
-    report += ac + "</tr>" + hp + "</tr>" + dam + "</tr>" + speed + "</tr>" + wc + "</tr>";
+    report += ac + "</tr>\n" + hp + "</tr>\n" + dam + "</tr>\n" + speed + "</tr>\n" + wc + "</tr>\n\n";
 
     return report;
 }
@@ -792,18 +792,18 @@ void CREMainWindow::onReportSummon()
     int level;
 
     QString report(tr("<h1>Summoned pet statistics</h1>\n")), line;
-    report += "<table border=\"1\"><thead>\n";
+    report += "<table border=\"1\">\n<thead>\n";
     report += "<tr>";
     report += "<th rowspan=\"2\">Spell</th>";
     report += "<th colspan=\"12\">Level</th>";
-    report += "</tr>";
+    report += "</tr>\n";
     report += "<tr>";
 
     for (level = 1; level < 120; level += 10)
     {
         report += "<th>" + QString::number(level) + "</th>";
     }
-    report += "</tr></thead><tbody>";
+    report += "</tr>\n</thead>\n<tbody>\n";
 
     QMap<QString, QString> spells;
 
@@ -839,7 +839,7 @@ void CREMainWindow::onReportSummon()
         report += spells[key];
     }
 
-    report += "</tbody></table>";
+    report += "</tbody>\n</table>\n";
     
     CREReportDisplay show(report);
     QApplication::restoreOverrideCursor();
