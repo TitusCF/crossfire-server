@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #3309792: Invidious server crash.
+Don't try to send animation 0, instead clear FLAG_ANIMATE.
+Set a bug face for animation 0, just in case.
+Nicolas Weeger 2011-06-01
+
 Correctly update improved weapon's weight in inventory.
 Nicolas Weeger 2011-05-29
 

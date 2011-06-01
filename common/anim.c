@@ -72,7 +72,7 @@ void init_anim(void) {
     animations[0].name = add_string("###none");
     animations[0].num_animations = 1;
     animations[0].faces = malloc(sizeof(New_Face*));
-    animations[0].faces[0] = NULL;
+    animations[0].faces[0] = &new_faces[find_face("bug.111", 0)];
     animations[0].facings = 0;
 
     snprintf(buf, sizeof(buf), "%s/animations", settings.datadir);

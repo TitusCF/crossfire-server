@@ -136,8 +136,13 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     if (!(ns->faces_sent[head->face->number]&NS_FACESENT_FACE))
         esrv_send_face(ns, head->face->number, 0);
 
-    if (QUERY_FLAG(head, FLAG_ANIMATE) && !ns->anims_sent[head->animation_id])
-        esrv_send_animation(ns, head->animation_id);
+    if (QUERY_FLAG(head, FLAG_ANIMATE)) {
+        if (head->animation_id == 0) {
+            LOG(llevError, "Item %s in %s (%d,%d) has FLAG_ANIMATE but animation_id 0\n", head->name, (head->env ? head->env->name : (head->map ? head->map->path : "???")), head->x, head->y);
+            CLEAR_FLAG(head, FLAG_ANIMATE);
+        } else if (!ns->anims_sent[head->animation_id])
+            esrv_send_animation(ns, head->animation_id);
+    }
 
     SockList_AddInt(sl, head->count);
     SockList_AddInt(sl, flags);
