@@ -1,14 +1,14 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server 1.10.0"
+Name "Crossfire Server trunk-14250"
 
 VIAddVersionKey "ProductName" "Crossfire server installer"
 VIAddVersionKey "Comments" "Website: http://crossfire.real-time.com"
 VIAddVersionKey "FileDescription" "Crossfire server installer"
-VIAddVersionKey "FileVersion" "1.10.0"
+VIAddVersionKey "FileVersion" "trunk-14250"
 VIAddVersionKey "LegalCopyright" "Crossfire is released under the GPL."
-VIProductVersion "1.10.0.0"
+VIProductVersion "2.0.0.14250"
 
 ;Do A CRC Check
 CRCCheck On
@@ -50,6 +50,9 @@ Section "Crossfire Server (required)" cf
   SetCompress Auto
   SetOverwrite IfNewer
   File "ReleaseLog\crossfire32.exe"
+  File "..\pthreadVC2.dll"
+  File "..\zlib1.dll"
+  File "..\libcurl.dll"
   File "Release_notes.txt"
   File /oname=Changelog.rtf "..\changelog"
   SetOutPath $INSTDIR\share
@@ -78,10 +81,13 @@ Section "Crossfire Server (required)" cf
   File "..\lib\smooth"
   File "..\lib\animations"
   File /oname=treasures "..\lib\treasures.bld"
+  File "..\lib\stat_bonus"
   SetOutPath $INSTDIR\share\help
   File "..\lib\help\*.*"
   SetOutPath $INSTDIR\share\wizhelp
   File "..\lib\wizhelp\*.*"
+  SetOutPath $INSTDIR\share\i18n
+  File "..\lib\i18n\*.*"
 
   ; Additional directories
   CreateDirectory $INSTDIR\tmp
@@ -90,6 +96,7 @@ Section "Crossfire Server (required)" cf
   CreateDirectory $INSTDIR\var\template-maps
   CreateDirectory $INSTDIR\var\unique-items
   CreateDirectory $INSTDIR\var\datafiles
+  CreateDirectory $INSTDIR\var\account
 
   ; Write the uninstall keys for Windows
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Crossfire Server" "DisplayName" "Crossfire Server (remove only)"
@@ -108,8 +115,8 @@ Section "Crossfire Server (required)" cf
 SectionEnd
 
 Section "Python plugin" py
-  DetailPrint "Checking for Python25.dll..."
-  GetDllVersion "Python25.dll" $R0 $R1
+  DetailPrint "Checking for Python26.dll..."
+  GetDllVersion "Python26.dll" $R0 $R1
   IntOp $R2 $R0 / 0x00010000
   IntOp $R3 $R0 & 0x0000FFFF
   IntCmp $R2 2 0 wrong
@@ -117,7 +124,7 @@ Section "Python plugin" py
   DetailPrint "   found"
   Goto ok
 wrong:
-  MessageBox MB_YESNO|MB_ICONQUESTION "Couldn't find Python25.dll. Make sure Python is installed, and that Python24.dll is in your PATH.$\rServer may fail to start if this DLL is not found.$\rInstall plugin anyway?" /SD IDNO IDNO end
+  MessageBox MB_YESNO|MB_ICONQUESTION "Couldn't find Python26.dll. Make sure Python is installed, and that Python26.dll is in your PATH.$\rServer may fail to start if this DLL is not found.$\rInstall plugin anyway?" /SD IDNO IDNO end
   DetailPrint "  install anyway."
 ok:
   SetOutPath $INSTDIR\share\plugins
@@ -153,6 +160,9 @@ Section "un.Crossfire Server" un_cf
 
   ;Delete Files
   Delete "$INSTDIR\crossfire32.exe"
+  Delete "$INSTDIR\pthreadvc2.dll"
+  Delete "$INSTDIR\zlib1.dll"
+  Delete "$INSTDIR\libcurl.dll"
   Delete "$INSTDIR\Changelog.rtf"
   Delete "$INSTDIR\Share\plugins\python21.dll"
   Delete "$INSTDIR\Release_notes.txt"
@@ -185,6 +195,7 @@ Section "un.Crossfire Server" un_cf
   ;Delete help files
   RmDir /r "$INSTDIR\Share\Help"
   RmDir /r "$INSTDIR\Share\WizHelp"
+  RmDir /r "$INSTDIR\Share\i18n"
   
   ;Delete plugins
   RmDir /r "$INSTDIR\Share\Plugins"
@@ -198,6 +209,10 @@ Section "un.Crossfire Server" un_cf
   Delete "$INSTDIR\Var\crossfire.log"
   Delete "$INSTDIR\Var\crossfiremail"
   Delete "$INSTDIR\Var\highscore"
+  Delete "$INSTDIR\Var\accounts"
+  rmdir /r "$INSTDIR\account"
+
+  rmdir $INSTDIR
 
   ;Delete Start Menu Shortcuts
   RmDir /r "$SMPROGRAMS\Crossfire Server"
@@ -215,6 +230,7 @@ Section "un.Player files and unique maps data" un_pl
   RmDir /r "$INSTDIR\var\template-maps"
   RmDir /r "$INSTDIR\var\unique-items"
   RmDir /r "$INSTDIR\var\datafiles"
+  RmDir /r "$INSTDIR\var\account"
   skip:
 SectionEnd
 
