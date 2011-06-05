@@ -776,9 +776,13 @@ void CREMainWindow::onReportPlayer()
 static QString reportSummon(const archetype* summon, const object* other, QString name)
 {
     QString report;
-    int level;
+    int level, wc_adj = 0;
 
     const object* spell = &summon->clone;
+    sstring rate = object_get_value(spell, "wc_increase_rate");
+    if (rate != NULL) {
+        wc_adj = atoi(rate);
+    }
 
     // hp, dam, speed, wc
 
@@ -807,7 +811,9 @@ static QString reportSummon(const archetype* summon, const object* other, QStrin
         ihp = other->stats.hp + spell->duration + (spell->duration_modifier != 0 ? (diff / spell->duration_modifier) : 0);
         idam = (spell->stats.dam ? spell->stats.dam : other->stats.dam) + (spell->dam_modifier != 0 ? (diff / spell->dam_modifier) : 0);
         fspeed = MIN(1.0, FABS(other->speed) + .02 * (spell->range_modifier != 0 ? (diff / spell->range_modifier) : 0));
-        iwc = other->stats.wc - (spell->range_modifier != 0 ? (diff / spell->range_modifier) : 0);
+        iwc = other->stats.wc;
+        if (wc_adj > 0)
+            iwc -= (diff / wc_adj);
 
         ac += "<td>" + QString::number(other->stats.ac) + "</td>";
         hp += "<td>" + QString::number(ihp) + "</td>";
