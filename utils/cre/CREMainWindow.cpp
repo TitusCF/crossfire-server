@@ -807,7 +807,7 @@ static QString reportSummon(const archetype* summon, const object* other, QStrin
         ihp = other->stats.hp + spell->duration + (spell->duration_modifier != 0 ? (diff / spell->duration_modifier) : 0);
         idam = (spell->stats.dam ? spell->stats.dam : other->stats.dam) + (spell->dam_modifier != 0 ? (diff / spell->dam_modifier) : 0);
         fspeed = MIN(1.0, FABS(other->speed) + .02 * (spell->range_modifier != 0 ? (diff / spell->range_modifier) : 0));
-        iwc = other->duration - (spell->range_modifier != 0 ? (diff / spell->range_modifier) : 0);
+        iwc = other->stats.wc - (spell->range_modifier != 0 ? (diff / spell->range_modifier) : 0);
 
         ac += "<td>" + QString::number(other->stats.ac) + "</td>";
         hp += "<td>" + QString::number(ihp) + "</td>";
