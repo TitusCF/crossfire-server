@@ -485,6 +485,15 @@ void CREMainWindow::onReportSpells()
     show.exec();
 }
 
+/**
+ * Simulates a fight between a player and a monster.
+ * Player is a dwarf, with low statistics, no equipment.
+ * A maximum of 50 rounds are fighted (can be changed by modifying 'limit').
+ * @param monster evil guy being fighted.
+ * @param skill what the player attacks the monster with.
+ * @param level what skill level to use.
+ * @return 1 if the player could kill the monster, 0 else.
+ */
 static int monsterFight(archetype* monster, archetype* skill, int level)
 {
     int limit = 50, result = 1;
@@ -578,6 +587,16 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     return result;
 }
 
+/**
+ * Simulates a fight between a player and a monster.
+ * Player is a dwarf, with low statistics, no equipment.
+ * A maximum of 50 rounds are fighted per round.
+ * @param monster evil guy being fighted.
+ * @param skill what the player attacks the monster with.
+ * @param level what skill level to use.
+ * @param count how many fights to simulate.
+ * @return how many fights, on count, the player could kill the monster.
+ */
 static int monsterFight(archetype* monster, archetype* skill, int level, int count)
 {
     int victory = 0;
@@ -587,6 +606,15 @@ static int monsterFight(archetype* monster, archetype* skill, int level, int cou
     return victory;
 }
 
+/**
+ * Generate a report cell for player versus monster fight.
+ * Cell will contain the first level the player could defeat the monster.
+ * This level is determined via a kind of dichotomic search, trying levels and
+ * using the middle ground for next iteration.
+ * @param monster monster being fighted.
+ * @param skill what the player uses to fight the monster.
+ * @return full HTML table line for the statistics.
+ */
 static QString monsterFight(archetype* monster, archetype* skill)
 {
     qDebug() << "monsterFight:" << monster->clone.name << skill->clone.name;
@@ -641,6 +669,12 @@ static QString monsterFight(archetype* monster, archetype* skill)
     return "<td>" + QString::number(min) + "</td><td>" + ((half != 0) ? QString::number(half) : "") + "</td>";
 }
 
+/**
+ * Generate an HTML table line for a player versus monster fight statistics.
+ * @param monster what is being attacked.
+ * @param skills list of skills to fight with.
+ * @return HTML line for the monster and skills.
+ */
 static QString monsterTable(archetype* monster, QList<archetype*> skills)
 {
     QString line = "<tr>";
@@ -663,6 +697,10 @@ static QString monsterTable(archetype* monster, QList<archetype*> skills)
     return line;
 }
 
+/**
+ * Generate and display a table reporting for each monster and skill at what
+ * level approximately the player could kill the monster.
+ */
 void CREMainWindow::onReportPlayer()
 {
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
