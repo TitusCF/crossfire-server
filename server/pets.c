@@ -785,7 +785,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
         if (spob->attacktype)
             tmp->attacktype = spob->attacktype;
     }
-    tmp->stats.wc -= SP_level_range_adjust(caster, spob);
+    tmp->stats.wc -= SP_level_wc_adjust(caster, spob);
 
     /* limit the speed to 0.3 for non-players, 1 for players. */
 

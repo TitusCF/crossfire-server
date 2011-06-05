@@ -405,6 +405,37 @@ int SP_level_range_adjust(const object *caster, const object *spob) {
 }
 
 /**
+ * Returns adjusted wc based on the caster and the spell.
+ *
+ * @param caster
+ * who is casting.
+ * @param spob
+ * spell we are adjusting.
+ * @return
+ * adjusted wc (positive is best).
+ */
+int SP_level_wc_adjust(const object *caster, const object *spob) {
+    int level = caster_level(caster, spob);
+    int adj = level - min_casting_level(caster, spob), irate;
+    sstring rate;
+
+    rate = object_get_value(spob, "wc_increase_rate");
+
+    if (rate == NULL)
+        return 0;
+
+    if (adj < 0)
+        adj = 0;
+
+    irate = atoi(rate);
+    if (irate > 0)
+        adj /= irate;
+    else
+        adj = 0;
+    return adj;
+}
+
+/**
  * Checks to see if player knows the spell.  If the name is the same
  * as an existing spell, we presume they know it.
  *

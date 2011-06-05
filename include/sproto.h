@@ -566,6 +566,7 @@ sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags);
 int SP_level_dam_adjust(const object *caster, const object *spob);
 int SP_level_duration_adjust(const object *caster, const object *spob);
 int SP_level_range_adjust(const object *caster, const object *spob);
+int SP_level_wc_adjust(const object *caster, const object *spob);
 object *check_spell_known(object *op, const char *name);
 object *lookup_spell_by_name(object *op, const char *spname);
 int reflwall(mapstruct *m, int x, int y, object *sp_op);
