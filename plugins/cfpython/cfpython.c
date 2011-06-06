@@ -1151,6 +1151,7 @@ static void initConstants(PyObject *module) {
         { "NDI_TAN", NDI_TAN },
         { "NDI_UNIQUE", NDI_UNIQUE },
         { "NDI_ALL", NDI_ALL },
+        { "NDI_ALL_DMS", NDI_ALL_DMS },
         { NULL, 0 }
     };
 
