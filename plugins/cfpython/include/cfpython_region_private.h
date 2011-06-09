@@ -3,6 +3,9 @@ static PyObject *Crossfire_Region_GetLongname(Crossfire_Region *whoptr, void *cl
 static PyObject *Crossfire_Region_GetMessage(Crossfire_Region *whoptr, void *closure);
 static PyObject *Crossfire_Region_GetNext(Crossfire_Region *who, void *closure);
 static PyObject *Crossfire_Region_GetParent(Crossfire_Region *who, PyObject *args);
+static PyObject *Crossfire_Region_GetJailX(Crossfire_Region *who, void *closure);
+static PyObject *Crossfire_Region_GetJailY(Crossfire_Region *who, void *closure);
+static PyObject *Crossfire_Region_GetJailPath(Crossfire_Region *who, void *closure);
 
 static int Crossfire_Region_InternalCompare(Crossfire_Region *left, Crossfire_Region *right);
 static PyObject *Crossfire_Region_RichCompare(Crossfire_Region *left, Crossfire_Region *right, int op);
@@ -12,6 +15,9 @@ static PyGetSetDef Region_getseters[] = {
     { "Longname",   (getter)Crossfire_Region_GetLongname, NULL, NULL, NULL },
     { "Message",    (getter)Crossfire_Region_GetMessage,  NULL, NULL, NULL },
     { "Next",       (getter)Crossfire_Region_GetNext,     NULL, NULL, NULL },
+    { "JailX",      (getter)Crossfire_Region_GetJailX,    NULL, NULL, NULL },
+    { "JailY",      (getter)Crossfire_Region_GetJailY,    NULL, NULL, NULL },
+    { "JailPath",   (getter)Crossfire_Region_GetJailPath, NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

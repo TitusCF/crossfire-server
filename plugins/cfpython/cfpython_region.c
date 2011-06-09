@@ -50,6 +50,18 @@ static PyObject *Crossfire_Region_GetParent(Crossfire_Region *party, PyObject *a
     return Crossfire_Region_wrap(cf_region_get_parent(party->reg));
 }
 
+static PyObject *Crossfire_Region_GetJailX(Crossfire_Region *regionptr, void *closure) {
+    return Py_BuildValue("i", cf_region_get_jail_x(regionptr->reg));
+}
+
+static PyObject *Crossfire_Region_GetJailY(Crossfire_Region *regionptr, void *closure) {
+    return Py_BuildValue("i", cf_region_get_jail_y(regionptr->reg));
+}
+
+static PyObject *Crossfire_Region_GetJailPath(Crossfire_Region *regionptr, void *closure) {
+    return Py_BuildValue("s", cf_region_get_jail_path(regionptr->reg));
+}
+
 PyObject *Crossfire_Region_wrap(region *what) {
     Crossfire_Region *wrapper;
 
