@@ -778,11 +778,15 @@ void command_freeze(object *op, const char *params) {
  * @retval 0 player was moved to jail.
  * @retval -1 no jail found.
  * @retval -2 couldn't move to jail (map loading error, or already at jail's position).
+ * @retval -3 op isn't a player.
  */
 int player_arrest(object *who) {
     object *dummy;
     mapstruct *cur;
     int x, y;
+
+    if (who->type != PLAYER)
+        return -3;
 
     dummy = get_jail_exit(who);
     if (!dummy) {

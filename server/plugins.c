@@ -1630,9 +1630,10 @@ void cfapi_map_change_light(int *type, ...) {
  * where kind is:
  * - 0: call move_ob()
  * - 1: call move_player()
+ * - 2: call player_arrest(), only for player
  *
  * @param type
- * unused
+ * will contain CFAPI_INT.
  */
 void cfapi_object_move(int *type, ...) {
     va_list args;
@@ -1662,6 +1663,12 @@ void cfapi_object_move(int *type, ...) {
         va_end(args);
         *ret = move_player(pl->ob, direction);
         break;
+
+    case 2:
+        op = va_arg(args, object *);
+        ret = va_arg(args, int *);
+        va_end(args);
+        *ret = player_arrest(op);
     }
     *type = CFAPI_INT;
 }

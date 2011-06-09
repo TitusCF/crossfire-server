@@ -878,6 +878,17 @@ int cf_player_knowledge_has(object *op, const char *knowledge) {
 }
 
 /**
+ * Wrapper for player_arrest().
+ * @copy_doc player_arrest()
+ */
+int cf_player_arrest(object *op) {
+    int type, value;
+    cfapiObject_move(&type, 2, op, &value);
+    assert(type == CFAPI_INT);
+    return value;
+}
+
+/**
  * Wrapper for ready_map_name().
  * @copydoc ready_map_name()
  */
