@@ -280,6 +280,7 @@ static PyObject *Crossfire_Object_Move(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_ChangeAbil(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Event(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_RemoveDepletion(Crossfire_Object *who, PyObject *args);
+static PyObject *Crossfire_Object_Arrest(Crossfire_Object *who, PyObject *args);
 static PyObject *Object_GetMaterial(Crossfire_Object *whoptr, void *closure);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object *left, Crossfire_Object *right);
@@ -462,6 +463,7 @@ static PyMethodDef ObjectMethods[] = {
     { "ChangeAbil",     (PyCFunction)Crossfire_Object_ChangeAbil,   METH_O,       NULL },
     { "Event",          (PyCFunction)Crossfire_Object_Event,        METH_VARARGS, NULL },
     { "RemoveDepletion",(PyCFunction)Crossfire_Object_RemoveDepletion,    METH_VARARGS, NULL },
+    { "Arrest",         (PyCFunction)Crossfire_Object_Arrest,    METH_VARARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 

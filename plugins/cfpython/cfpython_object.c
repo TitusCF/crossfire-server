@@ -2455,7 +2455,10 @@ static PyObject *Crossfire_Object_RemoveDepletion(Crossfire_Object *who, PyObjec
     return Py_BuildValue("i", cf_object_remove_depletion(who->obj, level));
 }
 
-
+static PyObject *Crossfire_Object_Arrest(Crossfire_Object *who, PyObject *args) {
+    EXISTCHECK(who);
+    return Py_BuildValue("i", cf_player_arrest(who->obj));
+}
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object *left, Crossfire_Object *right) {
     EXISTCHECK_INT(left);
