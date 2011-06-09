@@ -418,7 +418,7 @@ int move_player(object *op, int dir);
 int handle_newcs_player(object *op);
 void remove_unpaid_objects(object *op, object *env, int free_items);
 void do_some_living(object *op);
-void kill_player(object *op);
+void kill_player(object *op, const object *killer);
 void fix_weight(void);
 void fix_luck(void);
 void cast_dust(object *op, object *throw_ob, int dir);

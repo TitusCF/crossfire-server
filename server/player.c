@@ -3335,7 +3335,7 @@ void do_some_living(object *op) {
         op->stats.hp--;
 
     if (!op->contr->state && !QUERY_FLAG(op, FLAG_WIZ) && (op->stats.hp < 0 || op->stats.food < 0))
-        kill_player(op);
+        kill_player(op, NULL);
 }
 
 /**
@@ -3384,9 +3384,11 @@ static void loot_object(object *op) {
  *
  * @param op
  * player in jeopardy.
+ * @param killer
+ * who is trying to kill op, can be NULL.
  * @todo describe battleground.
  */
-void kill_player(object *op) {
+void kill_player(object *op, const object *killer) {
     char buf[MAX_BUF];
     int x, y;
     archetype *at;
@@ -3465,7 +3467,7 @@ void kill_player(object *op) {
         return;
 
     /* Lauwenmark: Handle for the global death event */
-    execute_global_event(EVENT_PLAYER_DEATH, op);
+    execute_global_event(EVENT_PLAYER_DEATH, op, killer);
     if (op->stats.food < 0) {
         snprintf(buf, sizeof(buf), "%s starved to death.", op->name);
         strcpy(op->contr->killer, "starvation");

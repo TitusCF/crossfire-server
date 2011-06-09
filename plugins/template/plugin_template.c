@@ -172,6 +172,7 @@ CF_PLUGIN void *globalEventListener(int *type, ...) {
 
     case EVENT_PLAYER_DEATH:
         context->who = va_arg(args, object *);
+        context->activator = va_arg(args, object *);
         break;
 
     case EVENT_GKILL:

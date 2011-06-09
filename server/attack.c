@@ -1738,7 +1738,7 @@ static int kill_object(object *op, int dam, object *hitter) {
         }
         /* Need to run kill_player (just in case, make sure is not wiz) */
         if (!QUERY_FLAG(op, FLAG_WIZ))
-            kill_player(op);
+            kill_player(op, owner->type == PLAYER ? owner : hitter);
     }
     /* This was return -1 - that doesn't seem correct - if we return -1, process
      * continues in the calling function.

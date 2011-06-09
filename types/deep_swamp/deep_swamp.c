@@ -88,7 +88,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
                     "%s disappeared into a %s.", above->name, op->name);
                 snprintf(above->contr->killer, sizeof(above->contr->killer), "drowning in a %s", op->name);
                 above->stats.hp = -1;
-                kill_player(above); /* player dies in the swamp */
+                kill_player(above, op); /* player dies in the swamp */
             }
         } else if (!QUERY_FLAG(above, FLAG_ALIVE)
         && !(above->move_type&MOVE_FLYING)

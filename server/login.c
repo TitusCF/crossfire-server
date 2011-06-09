@@ -816,7 +816,7 @@ void check_login(object *op, int check_pass) {
     if (op->stats.hp < 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
                       "Your character was dead last time you played.");
-        kill_player(op);
+        kill_player(op, NULL);
         if (pl->state != ST_PLAYING)
             return;
     }

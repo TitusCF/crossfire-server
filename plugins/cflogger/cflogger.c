@@ -626,7 +626,7 @@ CF_PLUGIN int cflogger_globalEventListener(int *type, ...) {
     va_list args;
     int rv = 0;
     player *pl;
-    object *op;
+    object *op, *op2;
     int event_code;
     mapstruct *map;
 
@@ -635,11 +635,16 @@ CF_PLUGIN int cflogger_globalEventListener(int *type, ...) {
 
     switch (event_code) {
     case EVENT_BORN:
-    case EVENT_PLAYER_DEATH:
     case EVENT_REMOVE:
     case EVENT_MUZZLE:
     case EVENT_KICK:
         op = va_arg(args, object *);
+        add_player_event(op, event_code);
+        break;
+
+    case EVENT_PLAYER_DEATH:
+        op = va_arg(args, object *);
+        op2 = va_arg(args, object *);
         add_player_event(op, event_code);
         break;
 

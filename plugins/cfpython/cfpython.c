@@ -1558,6 +1558,8 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
     case EVENT_PLAYER_DEATH:
         op = va_arg(args, object *);
         context->who = Crossfire_Object_wrap(op);
+        op = va_arg(args, object *);
+        context->activator = Crossfire_Object_wrap(op);
         snprintf(context->options, sizeof(context->options), "death");
         break;
 

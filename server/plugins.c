@@ -429,9 +429,10 @@ int execute_global_event(int eventcode, ...) {
     case EVENT_PLAYER_DEATH:
         /*PLAYER_DEATH: op*/
         op = va_arg(args, object *);
+        op2 = va_arg(args, object *);
         for (cp = plugins_list; cp != NULL; cp = cp->next) {
             if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op);
+                cp->gevent[eventcode](&rt, eventcode, op, op2);
         }
         break;
 
