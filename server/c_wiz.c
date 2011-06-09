@@ -773,6 +773,34 @@ void command_freeze(object *op, const char *params) {
 }
 
 /**
+ * Put a player into jail, taking into account cursed exits and player's region.
+ * @param who player to put in jail
+ * @retval 0 player was moved to jail.
+ * @retval -1 no jail found.
+ * @retval -2 couldn't move to jail (map loading error, or already at jail's position).
+ */
+int player_arrest(object *who) {
+    object *dummy;
+    mapstruct *cur;
+    int x, y;
+
+    dummy = get_jail_exit(who);
+    if (!dummy) {
+        return -1;
+    }
+    cur = who->map;
+    x = who->x;
+    y = who->y;
+    enter_exit(who, dummy);
+    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+
+    if (cur == who->map && x == who->x && y == who->y)
+        return -2;
+
+    return 0;
+}
+
+/**
  * Wizard jails player.
  *
  * @param op
@@ -781,8 +809,8 @@ void command_freeze(object *op, const char *params) {
  * player to jail.
  */
 void command_arrest(object *op, const char *params) {
-    object *dummy;
     player *pl;
+    int ret;
 
     if (!op)
         return;
@@ -794,15 +822,22 @@ void command_arrest(object *op, const char *params) {
     pl = get_other_player_from_name(op, params);
     if (!pl)
         return;
-    dummy = get_jail_exit(pl->ob);
-    if (!dummy) {
+
+    ret = player_arrest(pl->ob);
+    if (ret == -1) {
         /* we have nowhere to send the prisoner....*/
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't jail player, there is no map to hold them");
         return;
     }
-    enter_exit(pl->ob, dummy);
-    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    if (ret == -2) {
+        /* something prevented jailing the player */
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+          "Can't jail player, map loading issue or already in jail's position");
+        return;
+
+    }
+
     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                   "You have been arrested.");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,

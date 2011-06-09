@@ -249,6 +249,7 @@ void command_toggle_shout(object *op, const char *params);
 void command_shutdown(object *op, const char *params);
 void command_goto(object *op, const char *params);
 void command_freeze(object *op, const char *params);
+int player_arrest(object *who);
 void command_arrest(object *op, const char *params);
 void command_summon(object *op, const char *params);
 void command_teleport(object *op, const char *params);
