@@ -4543,7 +4543,7 @@ void cfapi_party_get_property(int *type, ...) {
  */
 void cfapi_region_get_property(int *type, ...) {
     region *reg;
-    int prop;
+    int prop, *rint;
     va_list args;
     /** Return values. */
     sstring *rsstring;
@@ -4580,6 +4580,19 @@ void cfapi_region_get_property(int *type, ...) {
     case CFAPI_REGION_PROP_MESSAGE:
         rsstring = va_arg(args, sstring *);
         *rsstring = reg->msg;
+        *type = CFAPI_SSTRING;
+        break;
+
+    case CFAPI_REGION_PROP_JAIL_X:
+    case CFAPI_REGION_PROP_JAIL_Y:
+        rint = va_arg(args, int*);
+        *rint = (prop == CFAPI_REGION_PROP_JAIL_X ? reg->jailx : reg->jaily);
+        *type = CFAPI_INT;
+        break;
+
+    case CFAPI_REGION_PROP_JAIL_PATH:
+        rsstring = va_arg(args, sstring *);
+        *rsstring = reg->jailmap;
         *type = CFAPI_SSTRING;
         break;
 

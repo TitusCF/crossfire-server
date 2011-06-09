@@ -328,6 +328,9 @@ extern crossfire_plugin *plugins_list;
 #define CFAPI_REGION_PROP_PARENT            2
 #define CFAPI_REGION_PROP_LONGNAME          3
 #define CFAPI_REGION_PROP_MESSAGE           4
+#define CFAPI_REGION_PROP_JAIL_X            5
+#define CFAPI_REGION_PROP_JAIL_Y            6
+#define CFAPI_REGION_PROP_JAIL_PATH         7
 
 /*****************************************************************************/
 /* Exportable functions. Any plugin should define all those.                 */

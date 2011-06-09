@@ -1943,6 +1943,52 @@ const char *cf_region_get_message(region *reg) {
     return value;
 }
 
+/**
+ * Get region's jail x coordinate.
+ * @param reg
+ * region. Mustn't be NULL.
+ * @return
+ * region's x coordinate for jail.
+ */
+int cf_region_get_jail_x(region *reg) {
+    int type, value;
+
+    cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_JAIL_X, &value);
+    assert(type == CFAPI_INT);
+    return value;
+}
+
+/**
+ * Get region's jail y coordinate.
+ * @param reg
+ * region. Mustn't be NULL.
+ * @return
+ * region's y coordinate for jail.
+ */
+int cf_region_get_jail_y(region *reg) {
+    int type, value;
+
+    cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_JAIL_Y, &value);
+    assert(type == CFAPI_INT);
+    return value;
+}
+
+/**
+ * Get jail path of region.
+ * @param reg
+ * region. Mustn't be NULL.
+ * @return
+ * region's jail path, can be NULL.
+ */
+const char *cf_region_get_jail_path(region *reg) {
+    int type;
+    sstring value;
+
+    cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_JAIL_PATH, &value);
+    assert(type == CFAPI_SSTRING);
+    return value;
+}
+
 /* Friendlylist functions. */
 
 /**

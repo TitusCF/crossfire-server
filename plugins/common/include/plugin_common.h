@@ -219,6 +219,9 @@ extern region      *cf_region_get_next(region *reg);
 extern region      *cf_region_get_parent(region *reg);
 extern const char  *cf_region_get_longname(region *reg);
 extern const char  *cf_region_get_message(region *reg);
+extern int         cf_region_get_jail_x(region *reg);
+extern int         cf_region_get_jail_y(region *reg);
+extern const char  *cf_region_get_jail_path(region *reg);
 
 /* Friendly list */
 extern object      *cf_friendlylist_get_first(void);
