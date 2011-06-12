@@ -163,6 +163,8 @@
 #define CS_STAT_APPLIED_CON        50 /**< CON changes from gear or skills. */
 #define CS_STAT_APPLIED_CHA        51 /**< CHA changes from gear or skills. */
 #define CS_STAT_APPLIED_POW        52 /**< POW changes from gear or skills. */
+#define CS_STAT_GOLEM_HP           53 /**< Golem's current hp, 0 if no golem. */
+#define CS_STAT_GOLEM_MAXHP        54 /**< Golem's max hp, 0 if no golem. */
 
 #define CS_STAT_RESIST_START      100 /**< Start of resistances (inclusive) */
 #define CS_STAT_RESIST_END        117 /**< End of resistances (inclusive)   */

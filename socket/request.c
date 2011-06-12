@@ -744,6 +744,7 @@ void esrv_update_stats(player *pl) {
         AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
     }
     if (pl->socket.extended_stats) {
+        sint16 golem_hp, golem_maxhp;
         AddIfShort(pl->last_orig_stats.Str, pl->orig_stats.Str, CS_STAT_BASE_STR);
         AddIfShort(pl->last_orig_stats.Int, pl->orig_stats.Int, CS_STAT_BASE_INT);
         AddIfShort(pl->last_orig_stats.Pow, pl->orig_stats.Pow, CS_STAT_BASE_POW);
@@ -767,6 +768,22 @@ void esrv_update_stats(player *pl) {
             AddIfShort(pl->last_applied_stats.Con, pl->applied_stats.Con, CS_STAT_APPLIED_CON);
             AddIfShort(pl->last_applied_stats.Cha, pl->applied_stats.Cha, CS_STAT_APPLIED_CHA);
         }
+        if (pl->ranges[range_golem]) {
+            object *golem = pl->ranges[range_golem];
+            if (QUERY_FLAG(golem, FLAG_REMOVED) || golem->count != pl->golem_count || QUERY_FLAG(golem, FLAG_FREED)) {
+                golem_hp = 0;
+                golem_maxhp = 0;
+            } else {
+                golem_hp = golem->stats.hp;
+                golem_maxhp = golem->stats.maxhp;
+            }
+        } else {
+            golem_hp = 0;
+            golem_maxhp = 0;
+        }
+        /* send first the maxhp, so the client can set up the display */
+        AddIfShort(pl->last_golem_maxhp, golem_maxhp, CS_STAT_GOLEM_MAXHP);
+        AddIfShort(pl->last_golem_hp, golem_hp, CS_STAT_GOLEM_HP);
     }
 
     for (s = 0; s < NUM_SKILLS; s++) {

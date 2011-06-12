@@ -180,6 +180,8 @@ typedef struct pl {
     living      last_applied_stats;  /**< Last applied stats sent to the client. */
     float       last_speed;          /**< Last speed as sent to client. */
     sint16      last_resist[NROFATTACKS];       /**< last resist values sent to client. */
+    sint16      last_golem_hp;       /**< Last golem hp value sent to the client. */
+    sint16      last_golem_maxhp;    /**< Last golem max hp value sent to the client. */
     object      *ob;                 /**< The object representing the player. */
     object      *last_used;          /**< Pointer to object last picked or applied. */
     uint32      last_used_id;        /**< Safety measures to be sure it's the same. */
