@@ -776,6 +776,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
     /* but monsters can.  reserve these for players. */
     if (op->type == PLAYER) {
         tmp->stats.hp += spob->duration+SP_level_duration_adjust(caster, spob);
+        tmp->stats.maxhp = tmp->stats.hp;
         if (!spob->stats.dam)
             tmp->stats.dam += SP_level_dam_adjust(caster, spob);
         else
