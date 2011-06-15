@@ -3,6 +3,74 @@
 #include <QtGui>
 #include "QuestConditionScript.h"
 
+CRESubItemList::CRESubItemList(QWidget* parent) : CRESubItemWidget(parent)
+{
+    QGridLayout* layout = new QGridLayout(this);
+
+    mySubItems = new QListWidget(this);
+    connect(mySubItems, SIGNAL(currentRowChanged(int)), this, SLOT(currentSubItemChanged(int)));
+    layout->addWidget(mySubItems, 0, 0, 1, 2);
+
+    QPushButton* addSubItem = new QPushButton(tr("add"), this);
+    connect(addSubItem, SIGNAL(clicked(bool)), this, SLOT(onAddSubItem(bool)));
+    layout->addWidget(addSubItem, 1, 0);
+
+    QPushButton* delSubItem = new QPushButton(tr("delete"), this);
+    connect(delSubItem, SIGNAL(clicked(bool)), this, SLOT(onDeleteSubItem(bool)));
+    layout->addWidget(delSubItem, 1, 1);
+
+    myItemEdit = new QLineEdit(this);
+    connect(myItemEdit, SIGNAL(textChanged(const QString&)), this, SLOT(subItemChanged(const QString&)));
+    layout->addWidget(myItemEdit, 2, 0, 1, 2);
+}
+
+void CRESubItemList::setData(const QStringList& data)
+{
+    myData = data;
+    myData.takeFirst();
+    mySubItems->clear();
+    mySubItems->addItems(myData);
+    myItemEdit->clear();
+}
+
+void CRESubItemList::currentSubItemChanged(int)
+{
+    if (mySubItems->currentItem())
+        myItemEdit->setText(mySubItems->currentItem()->text());
+}
+
+
+void CRESubItemList::onAddSubItem(bool)
+{
+    myData.append("(item)");
+    mySubItems->addItem("(item)");
+    mySubItems->setCurrentRow(myData.size() - 1);
+
+    emit dataModified(myData);
+}
+
+void CRESubItemList::onDeleteSubItem(bool)
+{
+    if (mySubItems->currentRow() < 0)
+        return;
+
+    myData.removeAt(mySubItems->currentRow());
+    delete mySubItems->takeItem(mySubItems->currentRow());
+    mySubItems->setCurrentRow(0);
+    emit dataModified(myData);
+}
+
+void CRESubItemList::subItemChanged(const QString& text)
+{
+    if (mySubItems->currentRow() < 0)
+        return;
+
+    myData[mySubItems->currentRow()] = text;
+    mySubItems->currentItem()->setText(text);
+    emit dataModified(myData);
+}
+
+
 CREPrePostPanel::CREPrePostPanel(const QList<QuestConditionScript*> scripts, QWidget* parent) : QWidget(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
@@ -23,29 +91,20 @@ CREPrePostPanel::CREPrePostPanel(const QList<QuestConditionScript*> scripts, QWi
     myChoices = new QComboBox(this);
     connect(myChoices, SIGNAL(currentIndexChanged(int)), this, SLOT(currentChoiceChanged(int)));
 
+    mySubItemsStack = new QStackedWidget(this);
+
     for(int script = 0; script < scripts.size(); script++)
     {
         myChoices->addItem(scripts[script]->name());
         myChoices->setItemData(script, scripts[script]->comment(), Qt::ToolTipRole);
+        mySubWidgets.append(new CRESubItemList(mySubItemsStack));
+        mySubItemsStack->addWidget(mySubWidgets.last());
+        connect(mySubWidgets.last(), SIGNAL(dataModified(const QStringList&)), this, SLOT(subItemChanged(const QStringList&)));
     }
 
     layout->addWidget(myChoices, 0, 3);
 
-    mySubItems = new QListWidget(this);
-    connect(mySubItems, SIGNAL(currentRowChanged(int)), this, SLOT(currentSubItemChanged(int)));
-    layout->addWidget(mySubItems, 1, 2, 1, 2);
-
-    QPushButton* addSubItem = new QPushButton(tr("add"), this);
-    connect(addSubItem, SIGNAL(clicked(bool)), this, SLOT(onAddSubItem(bool)));
-    layout->addWidget(addSubItem, 2, 2);
-
-    QPushButton* delSubItem = new QPushButton(tr("delete"), this);
-    connect(delSubItem, SIGNAL(clicked(bool)), this, SLOT(onDeleteSubItem(bool)));
-    layout->addWidget(delSubItem, 2, 3);
-
-    myItemEdit = new QLineEdit(this);
-    connect(myItemEdit, SIGNAL(textChanged(const QString&)), this, SLOT(subItemChanged(const QString&)));
-    layout->addWidget(myItemEdit, 3, 2, 1, 2);
+    layout->addWidget(mySubItemsStack, 1, 2, 3, 2);
 }
 
 CREPrePostPanel::~CREPrePostPanel()
@@ -60,8 +119,6 @@ QList<QStringList> CREPrePostPanel::getData()
 void CREPrePostPanel::setData(const QList<QStringList> data)
 {
     myItems->clear();
-    mySubItems->clear();
-    myItemEdit->clear();
 
     myData = data;
 
@@ -93,31 +150,6 @@ void CREPrePostPanel::onDeleteItem(bool)
     emit dataModified();
 }
 
-void CREPrePostPanel::onAddSubItem(bool)
-{
-    if (myItems->currentRow() < 0 || myItems->currentRow() >= myData.size())
-        return;
-
-    QStringList& data = myData[myItems->currentRow()];
-    data.append("(item)");
-    mySubItems->addItem("(item)");
-    mySubItems->setCurrentRow(data.size() - 1);
-    emit dataModified();
-}
-
-void CREPrePostPanel::onDeleteSubItem(bool)
-{
-    if (myItems->currentRow() < 0 || myItems->currentRow() >= myData.size())
-        return;
-    if (mySubItems->currentRow() < 0)
-        return;
-
-    myData[myItems->currentRow()].removeAt(mySubItems->currentRow() + 1); /* 0 is script */
-    delete mySubItems->takeItem(mySubItems->currentRow());
-    mySubItems->setCurrentRow(0);
-    emit dataModified();
-}
-
 void CREPrePostPanel::currentItemChanged(int index)
 {
     if (index < 0 || index >= myData.size())
@@ -128,16 +160,8 @@ void CREPrePostPanel::currentItemChanged(int index)
         return;
 
     myChoices->setCurrentIndex(myChoices->findText(data[0]));
-    mySubItems->clear();
-    data.takeFirst();
-    mySubItems->addItems(data);
-    myItemEdit->clear();
-}
 
-void CREPrePostPanel::currentSubItemChanged(int)
-{
-    if (mySubItems->currentItem())
-        myItemEdit->setText(mySubItems->currentItem()->text());
+    mySubWidgets[myChoices->currentIndex()]->setData(data);
 }
 
 void CREPrePostPanel::currentChoiceChanged(int)
@@ -152,20 +176,18 @@ void CREPrePostPanel::currentChoiceChanged(int)
         data[0] = myChoices->currentText();
     myItems->currentItem()->setText(data[0]);
 
+    mySubItemsStack->setCurrentIndex(myChoices->currentIndex());
+    mySubWidgets[myChoices->currentIndex()]->setData(data);
+
     emit dataModified();
 }
 
-void CREPrePostPanel::subItemChanged(const QString& text)
+void CREPrePostPanel::subItemChanged(const QStringList& data)
 {
-    if (myItems->currentRow() < 0 || myItems->currentRow() >= myData.size())
-        return;
+    QStringList& item = myData[myItems->currentRow()];
+    while (item.size() > 1)
+        item.removeLast();
+    item.append(data);
 
-    QStringList& data = myData[myItems->currentRow()];
-
-    if (mySubItems->currentRow() < 0)
-        return;
-
-    data[mySubItems->currentRow() + 1] = text;
-    mySubItems->currentItem()->setText(text);
     emit dataModified();
 }

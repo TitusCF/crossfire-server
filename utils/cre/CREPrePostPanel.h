@@ -11,6 +11,48 @@ class QLineEdit;
 class QuestConditionScript;
 
 /**
+ * Base class for a pre- or post- panel displaying script arguments.
+ */
+class CRESubItemWidget : public QWidget
+{
+    Q_OBJECT
+
+    public:
+        CRESubItemWidget(QWidget* parent) : QWidget(parent) { };
+
+        virtual void setData(const QStringList& data) = 0;
+
+    signals:
+        void dataModified(const QStringList& data);
+};
+
+/**
+ * Pre- or post- panel displaying script arguments as a string list.
+ */
+class CRESubItemList : public CRESubItemWidget
+{
+    Q_OBJECT
+
+    public:
+        CRESubItemList(QWidget* parent);
+        void setData(const QStringList& data);
+
+    private:
+        /** For one condition, arguments to the script. */
+        QListWidget* mySubItems;
+        /** Argument edit zone. */
+        QLineEdit* myItemEdit;
+        /** Current arguments. */
+        QStringList myData;
+
+    private slots:
+        void currentSubItemChanged(int);
+        void subItemChanged(const QString& text);
+        void onAddSubItem(bool);
+        void onDeleteSubItem(bool);
+};
+
+/**
  * This panel is the 'pre' or 'post' subpanel in the messages panel.
  */
 class CREPrePostPanel : public QWidget
@@ -40,20 +82,16 @@ class CREPrePostPanel : public QWidget
         QListWidget* myItems;
         /** Available conditions types. */
         QComboBox* myChoices;
-        /** For one condition, arguments to the script. */
-        QListWidget* mySubItems;
-        /** Argument edit zone. */
-        QLineEdit* myItemEdit;
+        /** Matching between index of myChoices and the variable subpanels. */
+        QList<CRESubItemWidget*> mySubWidgets;
+        QStackedWidget* mySubItemsStack;
 
     private slots:
         void onAddItem(bool);
         void onDeleteItem(bool);
-        void onAddSubItem(bool);
-        void onDeleteSubItem(bool);
         void currentItemChanged(int index);
-        void currentSubItemChanged(int);
         void currentChoiceChanged(int index);
-        void subItemChanged(const QString& text);
+        void subItemChanged(const QStringList& data);
 };
 
 #endif	/* _CREPREPOSTPANEL_H */
