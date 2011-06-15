@@ -62,10 +62,11 @@ class CREPrePostPanel : public QWidget
     public:
         /**
          * Standard constructor.
+         * @param isPre true if displaying preconditions, false for postconditions.
          * @param scripts available script types for the conditions.
          * @param parent ancestor of this panel.
          */
-        CREPrePostPanel(const QList<QuestConditionScript*> scripts, QWidget* parent);
+        CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, QWidget* parent);
         virtual ~CREPrePostPanel();
 
         QList<QStringList> getData();
@@ -84,7 +85,16 @@ class CREPrePostPanel : public QWidget
         QComboBox* myChoices;
         /** Matching between index of myChoices and the variable subpanels. */
         QList<CRESubItemWidget*> mySubWidgets;
+        /** Arguments panels, only one visible based on the choice. */
         QStackedWidget* mySubItemsStack;
+
+        /**
+         * Creates a CRESubItemWidget for the specified script.
+         * @param isPre true if pre-condition, false for post-condition.
+         * @param script the script to create the display for.
+         * @return specialised CRESubItemWidget if available, CRESubItemList else.
+         */
+        CRESubItemWidget* createSubItemWidget(bool isPre, const QuestConditionScript* script);
 
     private slots:
         void onAddItem(bool);

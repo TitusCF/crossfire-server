@@ -71,7 +71,7 @@ void CRESubItemList::subItemChanged(const QString& text)
 }
 
 
-CREPrePostPanel::CREPrePostPanel(const QList<QuestConditionScript*> scripts, QWidget* parent) : QWidget(parent)
+CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, QWidget* parent) : QWidget(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
 
@@ -97,7 +97,7 @@ CREPrePostPanel::CREPrePostPanel(const QList<QuestConditionScript*> scripts, QWi
     {
         myChoices->addItem(scripts[script]->name());
         myChoices->setItemData(script, scripts[script]->comment(), Qt::ToolTipRole);
-        mySubWidgets.append(new CRESubItemList(mySubItemsStack));
+        mySubWidgets.append(createSubItemWidget(isPre, scripts[script]));
         mySubItemsStack->addWidget(mySubWidgets.last());
         connect(mySubWidgets.last(), SIGNAL(dataModified(const QStringList&)), this, SLOT(subItemChanged(const QStringList&)));
     }
@@ -190,4 +190,9 @@ void CREPrePostPanel::subItemChanged(const QStringList& data)
     item.append(data);
 
     emit dataModified();
+}
+
+CRESubItemWidget* CREPrePostPanel::createSubItemWidget(bool isPre, const QuestConditionScript* script)
+{
+    return new CRESubItemList(this);
 }
