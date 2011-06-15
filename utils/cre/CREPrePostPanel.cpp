@@ -70,6 +70,61 @@ void CRESubItemList::subItemChanged(const QString& text)
     emit dataModified(myData);
 }
 
+CRESubItemConnection::CRESubItemConnection(QWidget* parent) : CRESubItemWidget(parent)
+{
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    layout->addWidget(new QLabel(tr("Connection number:"), this));
+    myEdit = new QLineEdit(this);
+    myEdit->setValidator(new QIntValidator(1, 65000, myEdit));
+    connect(myEdit, SIGNAL(textChanged(const QString&)), this, SLOT(editChanged(const QString&)));
+    layout->addWidget(myEdit);
+    myWarning = new QLabel(this);
+    myWarning->setVisible(false);
+    layout->addWidget(myWarning);
+    layout->addStretch();
+}
+
+void CRESubItemConnection::setData(const QStringList& data)
+{
+    if (data.size() < 2)
+    {
+        showWarning(tr("Not enough arguments"));
+        return;
+    }
+
+    bool ok = false;
+    int value = data[1].toInt(&ok);
+    if (!ok || value <= 0 || value > 65000)
+    {
+        showWarning(tr("Invalid number %1, must be a number between 1 and 65000").arg(data[1]));
+        value = 1;
+    }
+
+    myWarning->setVisible(false);
+    myEdit->setText(QString::number(value));
+}
+
+void CRESubItemConnection::showWarning(const QString& warning)
+{
+    myWarning->setText(warning);
+    myWarning->setVisible(true);
+}
+
+void CRESubItemConnection::editChanged(const QString& text)
+{
+    bool ok = false;
+    int value = text.toInt(&ok);
+    if (!ok || value <= 0 || value > 65000)
+    {
+        showWarning(tr("Invalid number %1, must be a number between 1 and 65000").arg(text));
+        return;
+    }
+
+    myWarning->setVisible(false);
+    emit dataModified(QStringList(text));
+}
+
 
 CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, QWidget* parent) : QWidget(parent)
 {
@@ -194,5 +249,8 @@ void CREPrePostPanel::subItemChanged(const QStringList& data)
 
 CRESubItemWidget* CREPrePostPanel::createSubItemWidget(bool isPre, const QuestConditionScript* script)
 {
+    if (!isPre && script->name() == "connection")
+        return new CRESubItemConnection(this);
+
     return new CRESubItemList(this);
 }

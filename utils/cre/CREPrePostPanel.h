@@ -27,6 +27,28 @@ class CRESubItemWidget : public QWidget
 };
 
 /**
+ * Post-condition panel displaying a connection (number).
+ */
+class CRESubItemConnection : public CRESubItemWidget
+{
+    Q_OBJECT
+
+    public:
+        CRESubItemConnection(QWidget* parent);
+
+        virtual void setData(const QStringList& data);
+
+    private:
+        QLineEdit* myEdit;
+        QLabel* myWarning;
+
+        void showWarning(const QString& warning);
+
+    private slots:
+        void editChanged(const QString& text);
+};
+
+/**
  * Pre- or post- panel displaying script arguments as a string list.
  */
 class CRESubItemList : public CRESubItemWidget
