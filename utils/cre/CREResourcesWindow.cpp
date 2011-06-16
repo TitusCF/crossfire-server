@@ -547,7 +547,7 @@ void CREResourcesWindow::fillMessages()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
-    addPanel("Message", new CREMessagePanel(myMessages));
+    addPanel("Message", new CREMessagePanel(myMessages, myQuests));
 }
 
 void CREResourcesWindow::addPanel(QString name, CREPanel* panel)

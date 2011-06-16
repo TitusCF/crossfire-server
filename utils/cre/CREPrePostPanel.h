@@ -9,6 +9,7 @@ class QListWidget;
 class QComboBox;
 class QLineEdit;
 class QuestConditionScript;
+class QuestManager;
 
 /**
  * Base class for a pre- or post- panel displaying script arguments.
@@ -46,6 +47,42 @@ class CRESubItemConnection : public CRESubItemWidget
 
     private slots:
         void editChanged(const QString& text);
+};
+
+/**
+ * Pre- or post- conditions panel displaying a quest step
+ * @return
+ */
+class CRESubItemQuest : public CRESubItemWidget
+{
+    Q_OBJECT
+
+    public:
+        CRESubItemQuest(bool isPre, const QuestManager* quests, QWidget* parent);
+
+        virtual void setData(const QStringList& data);
+
+    private:
+        const QuestManager* myQuests;
+        bool myIsPre;
+        /** List of quests. */
+        QComboBox* myQuestList;
+        /** Steps of the current quest for new step (post-) or at/frop step (pre-). */
+        QComboBox* myFirstStep;
+        /** Steps of the current quest for up to step (pre-). */
+        QComboBox* mySecondStep;
+        QRadioButton* myAtStep;
+        QRadioButton* myFromStep;
+        QRadioButton* myStepRange;
+        bool myInit;
+
+        void fillQuestSteps();
+        void updateData();
+
+    private slots:
+        void selectedQuestChanged(int index);
+        void checkToggled(bool checked);
+        void selectedStepChanged(int index);
 };
 
 /**
@@ -88,7 +125,7 @@ class CREPrePostPanel : public QWidget
          * @param scripts available script types for the conditions.
          * @param parent ancestor of this panel.
          */
-        CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, QWidget* parent);
+        CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, const QuestManager* quests, QWidget* parent);
         virtual ~CREPrePostPanel();
 
         QList<QStringList> getData();
@@ -114,9 +151,10 @@ class CREPrePostPanel : public QWidget
          * Creates a CRESubItemWidget for the specified script.
          * @param isPre true if pre-condition, false for post-condition.
          * @param script the script to create the display for.
+         * @param quests available quests, for specific panel.
          * @return specialised CRESubItemWidget if available, CRESubItemList else.
          */
-        CRESubItemWidget* createSubItemWidget(bool isPre, const QuestConditionScript* script);
+        CRESubItemWidget* createSubItemWidget(bool isPre, const QuestConditionScript* script, const QuestManager* quests);
 
     private slots:
         void onAddItem(bool);

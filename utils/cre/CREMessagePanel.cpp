@@ -7,7 +7,7 @@
 #include "CREMapInformation.h"
 #include "MessageManager.h"
 
-CREMessagePanel::CREMessagePanel(const MessageManager* manager)
+CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManager* quests)
 {
     Q_ASSERT(manager != NULL);
     myMessageManager = manager;
@@ -68,7 +68,7 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager)
 
     rules->addLayout(buttons, 4, 0, 1, 4);
 
-    myRulePanel = new CRERulePanel(manager, this);
+    myRulePanel = new CRERulePanel(manager, quests, this);
     connect(myRulePanel, SIGNAL(currentRuleModified()), this, SLOT(currentRuleModified()));
     rules->addWidget(myRulePanel, 5, 0, 4, 4);
 

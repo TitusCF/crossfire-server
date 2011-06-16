@@ -13,13 +13,14 @@ class QTextEdit;
 class QTreeWidgetItem;
 class CRERulePanel;
 class MessageManager;
+class QuestManager;
 
 class CREMessagePanel : public CREPanel
 {
     Q_OBJECT
 
     public:
-        CREMessagePanel(const MessageManager* manager);
+        CREMessagePanel(const MessageManager* manager, const QuestManager* quests);
         virtual ~CREMessagePanel();
 
         void setMessage(MessageFile* message);

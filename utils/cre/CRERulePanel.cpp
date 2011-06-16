@@ -6,18 +6,18 @@
 #include "CREReplyPanel.h"
 #include "MessageManager.h"
 
-CRERulePanel::CRERulePanel(const MessageManager* manager, QWidget* parent) : QTabWidget(parent)
+CRERulePanel::CRERulePanel(const MessageManager* manager, const QuestManager* quests, QWidget* parent) : QTabWidget(parent)
 {
     myMatches = new CREStringListPanel(true, this);
     connect(myMatches, SIGNAL(dataModified()), this, SLOT(onMatchModified()));
     addTab(myMatches, tr("matches"));
-    myPre = new CREPrePostPanel(true, manager->preConditions(), this);
+    myPre = new CREPrePostPanel(true, manager->preConditions(), quests, this);
     connect(myPre, SIGNAL(dataModified()), this, SLOT(onPreModified()));
     addTab(myPre, tr("pre"));
     myMessages = new CREStringListPanel(false, this);
     connect(myMessages, SIGNAL(dataModified()), this, SLOT(onMessageModified()));
     addTab(myMessages, tr("message"));
-    myPost = new CREPrePostPanel(false, manager->postConditions(), this);
+    myPost = new CREPrePostPanel(false, manager->postConditions(), quests, this);
     connect(myPost, SIGNAL(dataModified()), this, SLOT(onPostModified()));
     addTab(myPost, tr("post"));
 
