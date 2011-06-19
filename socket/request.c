@@ -1910,27 +1910,30 @@ void send_account_players(socket_struct *ns)
  * 0 - success
  * 1 - name is too long
  * 2 - password is too long
- * 3 - corrupt data - length of name & password > len
  */
 static int decode_name_password(const char *buf, int *len, char *name, char *password)
 {
     int nlen, plen;
 
-    nlen = buf[0];
-    if (nlen >= MAX_BUF || nlen > *len) {
+    if (*len < 2) {
         return 1;
     }
-    strncpy(name, buf+1, nlen);
+
+    nlen = (unsigned char)buf[0];
+    if (nlen >= MAX_BUF || nlen > *len-2) {
+        return 1;
+    }
+    memcpy(name, buf+1, nlen);
     name[nlen] = 0;
 
-    plen = buf[nlen + 1];
-    if (plen >= MAX_BUF || (plen + nlen) > *len) {
+    plen = (unsigned char)buf[nlen+1];
+    if (plen >= MAX_BUF || plen > *len-2-nlen) {
         return 2;
     }
-    strncpy(password, buf+2+nlen, plen);
+    memcpy(password, buf+2+nlen, plen);
     password[plen] = 0;
 
-    *len = nlen + plen+2;
+    *len = nlen+plen+2;
 
     return 0;
 }

@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Do not crash due to corrupted name/password protocol packets.
+Andreas Kirschbaum 2011-06-19
+
 Send golem's hp and maxhp as part of statistics, so client can display that.
 Nicolas Weeger 2011-06-12
 
