@@ -360,9 +360,11 @@ int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, int n_k
     object *the_keymaster; /* the monster that gets the key. */
     object *the_key;
     char keybuf[256];
+    const char *keys[] = { "key2", "blue_key", "brown_key", "darkgray_key", "darkgreen_key", "gray_key", "green_key", "magenta_key", "red_key", "white_key" };
+    const int keys_count = 10;
 
     /* get a key and set its keycode */
-    the_key = create_archetype("key2");
+    the_key = create_archetype(keys[RANDOM() % keys_count]);
     the_key->slaying = add_string(keycode);
     free_string(the_key->name);
     snprintf(keybuf, 256, "key from level %d of %s", RP->dungeon_level-1, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map");
