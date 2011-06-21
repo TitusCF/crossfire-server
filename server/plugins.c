@@ -120,7 +120,6 @@ static void cfapi_object_distance(int *type, ...);
 static void cfapi_object_update(int *type, ...);
 static void cfapi_object_clear(int *type, ...);
 static void cfapi_object_reset(int *type, ...);
-static void cfapi_object_check_inventory(int *type, ...);
 static void cfapi_object_clean_object(int *type, ...);
 static void cfapi_object_on_same_map(int *type, ...);
 static void cfapi_object_spring_trap(int *type, ...);
@@ -195,7 +194,6 @@ static const hook_entry plug_hooks[] = {
     { cfapi_object_update,           31, "cfapi_object_update" },
     { cfapi_object_clear,            32, "cfapi_object_clear" },
     { cfapi_object_reset,            33, "cfapi_object_reset" },
-    { cfapi_object_check_inventory,  34, "cfapi_object_check_inventory" },
     { cfapi_object_spring_trap,      35, "cfapi_object_spring_trap" },
     { cfapi_object_check_trigger,    36, "cfapi_object_check_trigger" },
     { cfapi_object_query_cost,       37, "cfapi_object_query_cost" },
@@ -3697,31 +3695,6 @@ void cfapi_object_reset(int *type, ...) {
 
     object_reset(op);
     *type = CFAPI_NONE;
-}
-
-/** @todo broken, ret isn't sent back. */
-void cfapi_object_check_inventory(int *type, ...) {
-    va_list args;
-    object *op;
-    object *op2;
-    int checktype;
-    object *ret = NULL;
-
-    va_start(args, type);
-
-    op = va_arg(args, object *);
-    op2 = va_arg(args, object *);
-    checktype = va_arg(args, int);
-
-    if (checktype == 0) {
-        check_inv(op, op2);
-        *type = CFAPI_NONE;
-    } else {
-        ret = check_inv_recursive(op, op2);
-        *type = CFAPI_POBJECT;
-    }
-
-    va_end(args);
 }
 
 void cfapi_object_clean_object(int *type, ...) {
