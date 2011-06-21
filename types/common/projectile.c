@@ -78,7 +78,7 @@ void stop_projectile(object *op) {
 method_ret common_process_projectile(ob_methods *context, object *op) {
     object *tmp;
     sint16 new_x, new_y;
-    int was_reflected, mflags;
+    int mflags;
     mapstruct *m;
 
     if (op->map == NULL) {
@@ -91,7 +91,6 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
     /* Calculate target map square */
     new_x = op->x+DIRX(op);
     new_y = op->y+DIRY(op);
-    was_reflected = 0;
 
     m = op->map;
     mflags = get_map_flags(m, &m, new_x, new_y, &new_x, &new_y);
@@ -122,7 +121,6 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
                 if (GET_ANIM_ID(op)) {
                     SET_ANIMATION(op, op->direction);
                 }
-                was_reflected = 1;   /* skip normal movement calculations */
             } else {
                 /* Attack the object. */
                 op = hit_with_arrow(op, tmp);

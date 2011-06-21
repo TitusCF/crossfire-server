@@ -512,7 +512,6 @@ static void animate_bomb(object *op) {
  */
 static void move_missile(object *op) {
     int i, mflags;
-    object *owner;
     sint16 new_x, new_y;
     mapstruct *m;
 
@@ -522,7 +521,8 @@ static void move_missile(object *op) {
         return;
     }
 
-    owner = object_get_owner(op);
+    /* call is required to potentially clean owner, but we don't care for the result */
+    object_get_owner(op);
 
     new_x = op->x+DIRX(op);
     new_y = op->y+DIRY(op);

@@ -450,7 +450,6 @@ void pick_up(object *op, object *alt) {
     object *tmp = NULL, *tmp1;
     mapstruct *tmp_map = NULL;
     int count;
-    tag_t tag;
 
     /* Decide which object to pick. */
     if (alt) {
@@ -572,7 +571,6 @@ void pick_up(object *op, object *alt) {
         return;
     }
 
-    tag = tmp->count;
     pick_up_object(op, alt, tmp, count);
     if (op->type == PLAYER)
         op->contr->count = 0;
@@ -680,8 +678,7 @@ void command_take(object *op, const char *params) {
  * if non zero, then nrof objects is tried to put into sack, else everything is put.
  */
 void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
-    tag_t tmp_tag, tmp2_tag;
-    object *tmp2, *sack2, *orig = sack;
+    object *sack2, *orig = sack;
     char name_sack[MAX_BUF], name_tmp[MAX_BUF];
 
     if (sack == tmp)
@@ -754,9 +751,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
     /* we want to put some portion of the item into the container */
     if (nrof && tmp->nrof != nrof) {
         char failure[MAX_BUF];
-        object *tmp2 = tmp;
 
-        tmp2_tag = tmp2->count;
         tmp = object_split(tmp, nrof, failure, sizeof(failure));
 
         if (!tmp) {
@@ -783,8 +778,8 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                          "You put the %s in %s.",
                          name_tmp, name_sack);
-    tmp_tag = tmp->count;
-    tmp2 = object_insert_in_ob(tmp, sack);
+
+    object_insert_in_ob(tmp, sack);
     if (!QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
         fix_object(op); /* This is overkill, fix_player() is called somewhere */
     /* in object.c */
@@ -2028,7 +2023,6 @@ void command_rename_item(object *op, const char *params) {
     object *tmp;
     char *closebrace;
     size_t counter;
-    tag_t tag;
 
     if (*params != '\0') {
         /* Let's skip white spaces */
@@ -2193,7 +2187,6 @@ void command_rename_item(object *op, const char *params) {
                              name, buf);
     }
 
-    tag = item->count;
     tmp = object_merge(item, NULL);
     if (tmp == NULL) {
         /* object was not merged - if it was, object_merge() handles updating for us. */
@@ -2212,7 +2205,6 @@ void command_rename_item(object *op, const char *params) {
 void command_lock_item(object *op, const char *params) {
     object *item;
     object *tmp;
-    tag_t tag;
     char name[HUGE_BUF];
 
     if (*params == '\0' || strlen(params) == 0) {
@@ -2239,7 +2231,6 @@ void command_lock_item(object *op, const char *params) {
         SET_FLAG(item, FLAG_INV_LOCKED);
     }
 
-    tag = item->count;
     tmp = object_merge(item, NULL);
     if (tmp == NULL) {
         /* object was not merged, if it was object_merge() handles updates for us */

@@ -975,7 +975,7 @@ void command_create(object *op, const char *params) {
     uint32 i;
     int magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
     uint32 nrof;
-    char *cp, *bp, *bp2, *bp3, *bp4, *endline, cpy[MAX_BUF];
+    char *cp, *bp, *bp2, *bp3, *endline, cpy[MAX_BUF];
     archetype *at, *at_spell = NULL;
     const artifact *art = NULL;
 
@@ -1119,7 +1119,6 @@ void command_create(object *op, const char *params) {
      * any spaces there don't count.
      */
     while (*bp2 && bp2 <= endline) {
-        bp4 = NULL;
         gotspace = 0;
         gotquote = 0;
         /* find the first quote */
@@ -2501,12 +2500,10 @@ void command_stack_clear(object *op, const char *params) {
  * object specifier.
  */
 void command_diff(object *op, const char *params) {
-    object *left, *right, *top;
+    object *left, *right;
     char *diff;
     StringBuffer *sb;
     int left_from, right_from;
-
-    top = NULL;
 
     left = get_dm_object(op->contr, &params, &left_from);
     if (!left) {

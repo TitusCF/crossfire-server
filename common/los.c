@@ -138,7 +138,7 @@ void init_block(void) {
                         set_block(MAP_CLIENT_X-x-1, y, MAP_CLIENT_X-dx-1, dy);
                     }
                 } else {
-                    float d1, r, s, l;
+                    float d1, s, l;
 
                     /* We use the algorihm that found out how close the point
                      * (x,y) is to the line from dx,dy to the center of the viewable
@@ -148,7 +148,6 @@ void init_block(void) {
                      */
 
                     d1 = (float)(pow(MAP_CLIENT_X/2-dx, 2)+pow(MAP_CLIENT_Y/2-dy, 2));
-                    r = (float)((dy-y)*(dy-MAP_CLIENT_Y/2)-(dx-x)*(MAP_CLIENT_X/2-dx))/d1;
                     s = (float)((dy-y)*(MAP_CLIENT_X/2-dx)-(dx-x)*(MAP_CLIENT_Y/2-dy))/d1;
                     l = FABS(sqrt(d1)*s);
 

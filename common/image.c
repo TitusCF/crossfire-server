@@ -473,7 +473,7 @@ void read_client_images(void) {
     char buf[HUGE_BUF];
     char *cp, *cps[7+1];
     FILE *infile;
-    int num, len, compressed, fileno, i, badline;
+    int num, len, compressed, fileno, i;
 
     memset(facesets, 0, sizeof(facesets));
     snprintf(filename, sizeof(filename), "%s/image_info", settings.datadir);
@@ -482,8 +482,6 @@ void read_client_images(void) {
         abort();
     }
     while (fgets(buf, HUGE_BUF-1, infile) != NULL) {
-        badline = 0;
-
         if (buf[0] == '#')
             continue;
         if (split_string(buf, cps, sizeof(cps)/sizeof(*cps), ':') != 7)

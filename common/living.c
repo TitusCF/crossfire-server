@@ -1106,7 +1106,7 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
 void fix_object(object *op) {
     int i;
     float max = 9, added_speed = 0, speed_reduce_from_disease = 1;
-    int weapon_weight = 0, weapon_speed = 0;
+    int weapon_speed = 0;
     int best_wc = 0, best_ac = 0, wc = 0, ac = 0;
     int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
     const object *grace_obj = NULL, *mana_obj = NULL, *wc_obj = NULL;
@@ -1386,7 +1386,6 @@ void fix_object(object *op) {
                         weapon_speed = (int)WEAPON_SPEED(tmp);
                     if (weapon_speed < 0)
                         weapon_speed = 0;
-                    weapon_weight = tmp->weight;
                     op->stats.dam += tmp->stats.dam*(1+(op->chosen_skill->level/9));
                     if (tmp->magic)
                         op->stats.dam += tmp->magic;
@@ -1440,7 +1439,6 @@ void fix_object(object *op) {
                 if (tmp->stats.ac && tmp->stats.ac+tmp->magic > 0)
                     ac -= tmp->stats.ac+tmp->magic;
                 op->stats.dam += (tmp->stats.dam+tmp->magic);
-                weapon_weight = tmp->weight;
                 weapon_speed = ((int)WEAPON_SPEED(tmp)*2-tmp->magic)/2;
                 if (weapon_speed < 0)
                     weapon_speed = 0;

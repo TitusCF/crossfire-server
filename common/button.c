@@ -351,7 +351,6 @@ static int matches_sacrifice(const object *altar, const object *sacrifice) {
 int check_altar_sacrifice(const object *altar, const object *sacrifice, int remove_others, int *toremove) {
     int money;
     uint32 wanted, rest;
-    object *above;
 
     if (!matches_sacrifice(altar, sacrifice))
         /* New dropped object doesn't match the altar, other objects already on top are not enough to
@@ -420,7 +419,6 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
     FOR_ABOVE_PREPARE(altar, tmp) {
         if (rest <= 0)
             break;
-        above = tmp->above;
         if (tmp == sacrifice || !matches_sacrifice(altar, tmp))
             continue;
         if (money) {

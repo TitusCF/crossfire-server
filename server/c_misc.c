@@ -1634,7 +1634,7 @@ static void help_topics(object *op, int what) {
  */
 static void show_commands(object *op, int what) {
     char line[HUGE_BUF];
-    int i, size, namelen;
+    int i, size;
     command_array_struct *ap;
 
     switch (what) {
@@ -1662,8 +1662,6 @@ static void show_commands(object *op, int what) {
 
     line[0] = '\0';
     for (i = 0; i < size; i++) {
-        namelen = strlen(ap[i].name);
-
         strcat(line, ap[i].name);
         strcat(line, " ");
     }
