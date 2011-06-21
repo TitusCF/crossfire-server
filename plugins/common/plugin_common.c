@@ -64,7 +64,6 @@ static f_plug_api cfapiObject_transmute = NULL;
 static f_plug_api cfapiObject_remove = NULL;
 static f_plug_api cfapiObject_delete = NULL;
 static f_plug_api cfapiObject_clone = NULL;
-static f_plug_api cfapiObject_find = NULL;
 static f_plug_api cfapiObject_create = NULL;
 static f_plug_api cfapiObject_insert = NULL;
 static f_plug_api cfapiObject_split = NULL;
@@ -162,7 +161,6 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiObject_remove, "cfapi_object_remove", z);
     GET_HOOK(cfapiObject_delete, "cfapi_object_delete", z);
     GET_HOOK(cfapiObject_clone, "cfapi_object_clone", z);
-    GET_HOOK(cfapiObject_find, "cfapi_object_find", z);
     GET_HOOK(cfapiObject_create, "cfapi_object_create", z);
     GET_HOOK(cfapiObject_insert, "cfapi_object_insert", z);
     GET_HOOK(cfapiObject_split, "cfapi_object_split", z);

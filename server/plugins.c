@@ -112,7 +112,6 @@ static void cfapi_object_transmute(int *type, ...);
 static void cfapi_object_remove(int *type, ...);
 static void cfapi_object_delete(int *type, ...);
 static void cfapi_object_clone(int *type, ...);
-static void cfapi_object_find(int *type, ...);
 static void cfapi_object_create(int *type, ...);
 static void cfapi_object_insert(int *type, ...);
 static void cfapi_object_split(int *type, ...);
@@ -188,7 +187,6 @@ static const hook_entry plug_hooks[] = {
     { cfapi_object_remove,           22, "cfapi_object_remove" },
     { cfapi_object_delete,           23, "cfapi_object_delete" },
     { cfapi_object_clone,            24, "cfapi_object_clone" },
-    { cfapi_object_find,             25, "cfapi_object_find" },
     { cfapi_object_create,           26, "cfapi_object_create" },
     { cfapi_object_insert,           27, "cfapi_object_insert" },
     { cfapi_object_split,            28, "cfapi_object_split" },
@@ -3418,52 +3416,6 @@ void cfapi_object_clone(int *type, ...) {
         *robj = tmp;
     }
     return;
-}
-
-/** @todo broken, return value isn't sent. */
-void cfapi_object_find(int *type, ...) {
-    va_list args;
-    int ftype;
-    void *rv;
-    int ival;
-    int ival2;
-    char *sval;
-    object *op;
-
-    va_start(args, type);
-
-    *type = CFAPI_POBJECT;
-    ftype = va_arg(args, int);
-    switch (ftype) {
-    case 0:
-        ival = va_arg(args, int);
-        rv = object_find_by_tag_global(ival);
-        break;
-
-    case 1:
-        sval = va_arg(args, char *);
-        rv = object_find_by_name_global(sval);
-        break;
-
-    case 2:
-        op = va_arg(args, object *);
-        ival = va_arg(args, int);
-        ival2 = va_arg(args, int);
-        rv = object_find_by_type_subtype(op, ival, ival2);
-        break;
-
-    case 3:
-        op = va_arg(args, object *);
-        rv = object_get_player_container(op);
-        break;
-
-    default:
-        rv = NULL;
-        *type = CFAPI_NONE;
-        break;
-    }
-
-    va_end(args);
 }
 
 /**
