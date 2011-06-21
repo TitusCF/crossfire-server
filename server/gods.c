@@ -749,7 +749,6 @@ static void update_priest_flag(const object *god, object *exp_ob, uint32 flag) {
 archetype *determine_holy_arch(const object *god, const char *type) {
     treasure *tr;
     int count;
-    archetype *last;
     object *item;
 
     if (!god || !god->randomitems) {
@@ -758,7 +757,6 @@ archetype *determine_holy_arch(const object *god, const char *type) {
     }
 
     count = 0;
-    last = NULL;
     for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
         if (!tr->item)
             continue;

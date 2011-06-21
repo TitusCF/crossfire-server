@@ -1913,7 +1913,6 @@ static object *make_throw_ob(object *orig) {
  */
 static int do_throw(object *op, object *part, object *toss_item, int dir, object *skill) {
     object *throw_ob = toss_item, *left = NULL;
-    tag_t left_tag;
     int eff_str = 0, str = op->stats.Str, dam = 0;
     int pause_f, weight_f = 0, mflags;
     float str_factor = 1.0, load_factor = 1.0, item_factor = 1.0;
@@ -2022,8 +2021,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     } /* if object can't be thrown */
 
     left = throw_ob; /* these are throwing objects left to the player */
-    /* BUG? The value in left_tag doesn't seem to be used. */
-    left_tag = left->count;
 
     /* sometimes object_split() can't split an object (because op->nrof==0?)
      * and returns NULL. We must use 'left' then

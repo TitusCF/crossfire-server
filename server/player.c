@@ -2144,8 +2144,8 @@ static object *pick_arrow_target(object *op, const char *type, int dir) {
  * @todo describe player firing modes.
  */
 int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 sy) {
-    object *left, *bow;
-    tag_t left_tag, tag;
+    object *bow;
+    tag_t tag;
     int bowspeed, mflags;
     mapstruct *m;
 
@@ -2210,9 +2210,6 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
         return 0;
     }
 
-    left = arrow; /* these are arrows left to the player */
-    /* BUG? The value in left_tag doesn't seem to be used. */
-    left_tag = left->count;
     arrow = object_split(arrow, 1, NULL, 0);
     if (arrow == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -2408,7 +2405,6 @@ static void fire_misc_object(object *op, int dir) {
  * direction to fire into.
  */
 void fire(object *op, int dir) {
-    int spellcost = 0;
 
     /* check for loss of invisiblity/hide */
     if (action_makes_visible(op))
@@ -2423,8 +2419,7 @@ void fire(object *op, int dir) {
         return;
 
     case range_magic: /* Casting spells */
-        /* BUG? The value in spellcost is never used again it seems. */
-        spellcost = (cast_spell(op, op, dir, op->contr->ranges[range_magic], op->contr->spellparam[0] ? op->contr->spellparam : NULL));
+        cast_spell(op, op, dir, op->contr->ranges[range_magic], op->contr->spellparam[0] ? op->contr->spellparam : NULL);
         return;
 
     case range_misc:

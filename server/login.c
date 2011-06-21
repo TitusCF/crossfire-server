@@ -502,7 +502,6 @@ void check_login(object *op, int check_pass) {
     char buf[MAX_BUF], bufall[MAX_BUF];
     int i, value, comp;
     uint32 uvalue;
-    long checksum = 0;
     player *pl = op->contr, *pltmp;
     int correct = 0;
     time_t elapsed_save_time = 0;
@@ -562,7 +561,6 @@ void check_login(object *op, int check_pass) {
 
     if (fgets(bufall, MAX_BUF, fp) != NULL) {
         if (!strncmp(bufall, "checksum ", 9)) {
-            checksum = strtol(bufall+9, (char **)NULL, 16);
             (void)fgets(bufall, MAX_BUF, fp);
         }
         if (sscanf(bufall, "password %s\n", buf)) {

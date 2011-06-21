@@ -631,7 +631,7 @@ static int monster_move_no_enemy(object *op) {
  */
 int monster_move(object *op) {
     int dir, diff;
-    object *owner, *enemy, *part, *oph;
+    object *owner, *enemy, *part;
     rv_vector rv;
 
     /* Monsters not on maps don't do anything.  These monsters are things
@@ -639,9 +639,6 @@ int monster_move(object *op) {
      */
     if (!op->map)
         return 0;
-
-    /* for target facing, we copy this value here for fast access */
-    oph = HEAD(op);                       /* force update the head - one arch one pic */
 
     if (QUERY_FLAG(op, FLAG_NO_ATTACK)) { /* we never ever attack */
         object_set_enemy(op, NULL);

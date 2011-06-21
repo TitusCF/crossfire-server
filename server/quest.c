@@ -992,7 +992,6 @@ void quest_start(player *pl, sstring quest_code, int state) {
     quest_player *pq;
     quest_state *q;
     quest_definition *quest;
-    quest_step_definition *step;
 
     quest = quest_get(quest_code);
     if (!quest) {
@@ -1006,8 +1005,6 @@ void quest_start(player *pl, sstring quest_code, int state) {
         state = 100;
         LOG(llevDebug, "quest_start: negative state %d for %s quest %s\n", state, pl->ob->name, quest_code);
     }
-
-    step = quest_get_step(quest, state);
 
     /* if completed already, assume the player can redo it */
     if (q->state > 0) {
