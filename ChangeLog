@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Don't open Python script file if cached.
+Nicolas Weeger 2011-06-23
+
 Do not crash due to corrupted name/password protocol packets.
 Andreas Kirschbaum 2011-06-19
 

@@ -814,21 +814,15 @@ static FILE* cfpython_pyfile_asfile(PyObject* obj) {
 
 /** Outputs the compiled bytecode for a given python file, using in-memory caching of bytecode */
 static PyCodeObject *compilePython(char *filename) {
-    PyObject *scriptfile;
+    PyObject *scriptfile = NULL;
     sstring sh_path;
     struct stat stat_buf;
     struct _node *n;
     int i;
     pycode_cache_entry *replace = NULL, *run = NULL;
-    if (!(scriptfile = cfpython_openpyfile(filename))) {
-        cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
-        return NULL;
-    }
+
     if (stat(filename, &stat_buf)) {
         cf_log(llevDebug, "cfpython - The Script file %s can't be stat:ed\n", filename);
-        if (scriptfile) {
-            Py_DECREF(scriptfile);
-        }
         return NULL;
     }
 
@@ -873,12 +867,16 @@ static PyCodeObject *compilePython(char *filename) {
             replace->file = cf_add_string(sh_path);
         }
 
-        /* Load, parse and compile */
-        if (!scriptfile && !(scriptfile = cfpython_openpyfile(filename))) {
+        /* Load, parse and compile. Note: because Pyhon may have been built with a
+         * different library than Crossfire, the FILE* it uses may be incompatible.
+         * Therefore we use PyFile to open the file, then convert to FILE* and get
+         * Python's own structure. Messy, but can't be helped...  */
+        if (!(scriptfile = cfpython_openpyfile(filename))) {
             cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
-            replace->code = NULL;
+            cf_free_string(sh_path);
             return NULL;
         } else {
+            /* Note: FILE* being opaque, it works, but the actual structure may be different! */
             FILE* pyfile = cfpython_pyfile_asfile(scriptfile);
             if ((n = PyParser_SimpleParseFile(pyfile, filename, Py_file_input))) {
                 replace->code = PyNode_Compile(n, filename);
