@@ -812,6 +812,37 @@ static FILE* cfpython_pyfile_asfile(PyObject* obj) {
 #endif
 }
 
+/**
+ * A Python object receiving the contents of Python's stderr, and used to output
+ * to the Crossfire log instead of stderr.
+ */
+static PyObject *catcher = NULL;
+
+/**
+ * Trace a Python error to the Crossfire log.
+ * This uses code from:
+ * http://stackoverflow.com/questions/4307187/how-to-catch-python-stdout-in-c-code
+ * See also in initPlugin() the parts about stdOutErr.
+ */
+static void log_python_error() {
+
+    PyErr_Print();
+
+    if (catcher != NULL) {
+        PyObject *output = PyObject_GetAttrString(catcher, "value"); //get the stdout and stderr from our catchOutErr object
+        PyObject* empty = PyString_FromString("");
+
+        cf_log_plain(llevError, PyString_AsString(output));
+        Py_DECREF(output);
+
+        PyObject_SetAttrString(catcher, "value", empty);
+        Py_DECREF(empty);
+    }
+
+    return;
+}
+
+
 /** Outputs the compiled bytecode for a given python file, using in-memory caching of bytecode */
 static PyCodeObject *compilePython(char *filename) {
     PyObject *scriptfile = NULL;
@@ -884,7 +915,7 @@ static PyCodeObject *compilePython(char *filename) {
             }
 
             if (PyErr_Occurred())
-                PyErr_Print();
+                log_python_error();
             else
                 replace->cached_time = stat_buf.st_mtime;
             run = replace;
@@ -919,7 +950,7 @@ static int do_script(CFPContext *context, int silent) {
         PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
         ret = PyEval_EvalCode(pycode, dict, NULL);
         if (PyErr_Occurred()) {
-            PyErr_Print();
+            log_python_error();
         }
         Py_XDECREF(ret);
 #if 0
@@ -1364,6 +1395,18 @@ static PyObject* PyInit_Crossfire(void)
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     PyObject *m;
     int i;
+    /* Python code to redirect stdouts/stderr. */
+    const char *stdOutErr =
+"import sys\n\
+class CatchOutErr:\n\
+    def __init__(self):\n\
+        self.value = ''\n\
+    def write(self, txt):\n\
+        self.value += txt\n\
+catchOutErr = CatchOutErr()\n\
+sys.stdout = catchOutErr\n\
+sys.stderr = catchOutErr\n\
+";
 
     cf_init_plugin(gethooksptr);
     cf_log(llevDebug, "CFPython 2.0a init\n");
@@ -1398,6 +1441,12 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     initConstants(m);
     private_data = PyDict_New();
     shared_data = PyDict_New();
+
+    /* Redirect Python's stderr to a special object so it can be put to
+     * the Crossfire log. */
+    m = PyImport_AddModule("__main__");
+    PyRun_SimpleString(stdOutErr);
+    catcher = PyObject_GetAttrString(m, "catchOutErr");
 
 #ifndef IS_PY3K
     /* add cjson module*/
