@@ -100,12 +100,12 @@
 132|applymode mis sur %s
 133|applymode mis sur %s
 134|applymode: %s est une option inconnue, les choix valides sont nochoice, never, always
-135|Applymode %s mis sur %s
+135|applymode%s mis sur %s
 136|bowmode est mis sur %s
-137|bowmode %s mis sur %s
+137|bowmode%s mis sur %s
 138|petmode est mis sur %s
 139|petmode: %s est une option inconnue, les choix valides sont normal, sad (trouver et détruire), defend, arena
-140|petmode %s mis sur %s
+140|petmode%s mis sur %s
 141|Familiers:
 142|%d  %s - niveau %d
 143|[fixed]niveau %d %s
@@ -132,7 +132,7 @@
 164|Pas de familier correspondant.
 165|usekeys mis sur %s
 166|usekeys: %s est une option inconnue, les choix valides sont inventory, keyrings, containers
-167|usekeys %s mis sur %s
+167|usekeys%s mis sur %s
 168|[fixed]%-20s %+5d
 169|%-20s %+5d
 170|\nRésistances naturelles de peau:

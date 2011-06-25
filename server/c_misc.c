@@ -1300,7 +1300,7 @@ void command_bowmode(object *op, const char *params) {
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_137),
-                         (oldtype == op->contr->bowtype ? "" : "now"),
+                         (oldtype == op->contr->bowtype ? "" : " now"),
                          types[op->contr->bowtype]);
     return;
 }
@@ -1401,7 +1401,7 @@ void command_petmode(object *op, const char *params) {
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_140),
-                         (oldtype == op->contr->petmode ? "" : "now"),
+                         (oldtype == op->contr->petmode ? "" : " now"),
                          types[op->contr->petmode]);
 }
 
@@ -1514,7 +1514,7 @@ void command_usekeys(object *op, const char *params) {
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n_translate(get_language(op), I18N_MSG_CMISC_167),
-                         (oldtype == op->contr->usekeys ? "" : "now"),
+                         (oldtype == op->contr->usekeys ? "" : " now"),
                          types[op->contr->usekeys]);
 }
 
