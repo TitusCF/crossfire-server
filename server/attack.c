@@ -739,7 +739,9 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
                 return 0;
             if (hitter->current_weapon->anim_suffix)
                 apply_anim_suffix(hitter, hitter->current_weapon->anim_suffix);
-        }
+        } else if (hitter->chosen_skill &&  hitter->chosen_skill->anim_suffix)
+            /* if no weapon, then skill (karate, wraith feed) attack */
+            apply_anim_suffix(hitter, hitter->chosen_skill->anim_suffix);
     }
     op_tag = op->count;
     hitter_tag = hitter->count;
