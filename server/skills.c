@@ -179,7 +179,6 @@ static int attempt_steal(object *op, object *who, object *skill) {
         if (QUERY_FLAG(inv, FLAG_WAS_WIZ)
         || QUERY_FLAG(inv, FLAG_APPLIED)
         || !(inv->type)
-        || inv->type == EXPERIENCE
         || inv->type == SPELL
         || QUERY_FLAG(inv, FLAG_STARTEQUIP)
         || QUERY_FLAG(inv, FLAG_NO_STEAL)

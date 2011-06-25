@@ -681,7 +681,7 @@ int change_abil(object *op, object *tmp) {
         }
     }
 
-    if (tmp->type != EXPERIENCE && !potion_max) {
+    if (!potion_max) {
         for (j = 0; j < NUM_STATS; j++) {
             if ((i = get_attr_value(&(tmp->stats), j)) != 0) {
                 success = 1;
@@ -1272,8 +1272,7 @@ void fix_object(object *op) {
                  * spell point recovery and mana point recovery.  Seems sort of an arbitary
                  * list, but other items store other info into stats array.
                  */
-                if ((tmp->type == EXPERIENCE)
-                || (tmp->type == WEAPON)
+                if ((tmp->type == WEAPON)
                 || (tmp->type == ARMOUR)
                 || (tmp->type == HELMET)
                 || (tmp->type == SHIELD)

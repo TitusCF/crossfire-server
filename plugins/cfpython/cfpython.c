@@ -1076,7 +1076,6 @@ static void initConstants(PyObject *module) {
         { "TELEPORTER", TELEPORTER },
         { "CREATOR", CREATOR },
         { "SKILL", SKILL },
-        { "EXPERIENCE", EXPERIENCE },
         { "EARTHWALL", EARTHWALL },
         { "GOLEM", GOLEM },
         { "THROWN_OBJ", THROWN_OBJ },

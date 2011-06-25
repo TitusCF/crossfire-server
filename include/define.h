@@ -156,11 +156,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TELEPORTER                  41
 #define CREATOR                     42
 #define SKILL                       43    /**< Also see ::SKILL_TOOL (74) below */
-#define EXPERIENCE                  44    /**< This is basically obsolete now.
-                                           * It used to contain experience for
-                                           * broad skill categories.  This
-                                           * value is now automatically
-                                           * converted at load time. */
 #define EARTHWALL                   45
 #define GOLEM                       46
 /*#define BOMB                      47 */

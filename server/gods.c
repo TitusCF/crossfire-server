@@ -493,7 +493,6 @@ int become_follower(object *op, const object *new_god) {
         if (QUERY_FLAG(item, FLAG_STARTEQUIP)
         && item->invisible
         && (item->type != SKILL)
-        && (item->type != EXPERIENCE)
         && (item->type != FORCE)
         && (item->type != SPELL)) {
             player_unready_range_ob(op->contr, item);

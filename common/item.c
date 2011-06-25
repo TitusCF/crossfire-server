@@ -143,7 +143,6 @@ static const typedata item_types[] = {
     { TELEPORTER, "teleporter", "teleporters", 0, 0 },
     { CREATOR, "creator", "creators", 0, 0 },
     { SKILL, "skill", "skills", 0, 0 },
-    { EXPERIENCE, "experience", "experience", 0, 0 },
     { EARTHWALL, "earthwall", "earthwalls", 0, 0 },
     { GOLEM, "golem", "golems", 0, 0 },
     { THROWN_OBJ, "projectile", "projectiles", 0, 0 },

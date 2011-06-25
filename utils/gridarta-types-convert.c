@@ -244,7 +244,6 @@ static type_name type_names[] = {
     { "TELEPORTER", TELEPORTER },
     { "CREATOR", CREATOR },
     { "SKILL", SKILL },
-    { "EXPERIENCE", EXPERIENCE },
     { "EARTHWALL", EARTHWALL },
     { "GOLEM", GOLEM },
     { "THROWN_OBJ", THROWN_OBJ },
