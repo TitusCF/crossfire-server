@@ -823,7 +823,7 @@ int is_type_valid(uint8 type) {
 
     if (type == 11 || type == 12)
         return 0;
-    if (type == 19 || type == 25 || type == 35 || type == 38 || type == 47)
+    if (type == 19 || type == 25 || type == 35 || type == 38 || type == 44 || type == 47)
         return 0;
     if (type == 61 || type == 63 || type == 76 || type == 78 || type == 81)
         return 0;
