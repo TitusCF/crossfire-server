@@ -97,7 +97,7 @@ while(<BMAPS>) {
 	$length = -s "$filename";
 	if (open(FILE,"$filename")) {
 	    binmode( FILE );
-	    print $fh "IMAGE $num $length $file.$file1\n";
+	    print $fh "IMAGE $length $file.$file1\n";
 	    print "Error reading file $filename" if (!read(FILE, $buf, $length));
 	    $position = tell $fh;
 	    print $fh $buf;

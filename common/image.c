@@ -515,14 +515,7 @@ void read_client_images(void) {
                 LOG(llevError, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
                 abort();
             }
-            num = atoi(buf+6);
-            if (num < 0 || num >= nrofpixmaps) {
-                LOG(llevError, "read_client_images: Image num %d not in 0..%d\n%s", num, nrofpixmaps, buf);
-                abort();
-            }
-            /* Skip accross the number data */
-            for (cp = buf+6; *cp != ' '; cp++)
-                ;
+            cp = buf + 6;
             len = atoi(cp);
             if (len == 0 || len > MAX_IMAGE_SIZE) {
                 LOG(llevError, "read_client_images: length not valid: %d > %d \n%s", len, MAX_IMAGE_SIZE, buf);

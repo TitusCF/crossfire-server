@@ -16,6 +16,7 @@ else.  With this, include the file(s) that you changed.
 
 Rewrite picture loading logic to not be dependant on picture number
 in the various bmaps and crossfire.x files.
+Remove picture number in crossfire.x files.
 Nicolas Weeger 2011-06-26
 
 Remove stray spaces from outputs of applymode, bowmode, petmode, usekeys.
