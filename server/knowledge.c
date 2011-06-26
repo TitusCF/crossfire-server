@@ -29,6 +29,7 @@ Right now, the following items are considered:
 - alchemy formulea
 - monster information
 - god information (various types, like enemy, resistances, and such)
+- messages in books, from the lib/messages file
 
 Knowledge is specific for a player, and organized in 'items'.
 One item is a specific formulae or monster, whatever is coded.
