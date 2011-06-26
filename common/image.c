@@ -35,29 +35,11 @@
 #include <stdio.h>
 #include "image.h"
 
+/**
+ * Contains face information, with names, numbers, magicmap color and such.
+ * It is sorted by alphabetical order.
+ */
 New_Face *new_faces;
-
-/**
- * bmappair and ::xbm are used when looking for the image id numbers
- * of a face by name.  xbm is sorted alphabetically so that bsearch
- * can be used to quickly find the entry for a name.  the number is
- * then an index into the new_faces array.
- * This data is redundant with new_face information - the difference
- * is that this data gets sorted, and that doesn't necessarily happen
- * with the new_face data - when accessing new_face[some number],
- * that some number corresponds to the face at that number - for
- * xbm, it may not.  At current time, these do in fact match because
- * the bmaps file is created in a sorted order.
- */
-struct bmappair {
-    char *name;
-    unsigned int number;
-};
-/**
- * The xbm array (which contains name and number information, and
- * is then sorted) contains nroffiles entries.
- */
-static struct bmappair *xbm = NULL;
 
 /**
  * Following can just as easily be pointers, but
@@ -66,12 +48,8 @@ static struct bmappair *xbm = NULL;
 New_Face *blank_face, *empty_face, *smooth_face;
 
 
-/** nroffiles is the actual number of bitmaps defined. */
-static int nroffiles = 0;
-
-/** nrofpixmaps is the number of bitmaps loaded.  With
- * the automatic generation of the bmaps file, this is now equal
- * to nroffiles.
+/**
+ * Number of bitmaps loaded from the "bmaps" file.
  */
 int nrofpixmaps = 0;
 
@@ -101,9 +79,23 @@ static const char *const colorname[] = {
 };
 
 /**
- * Used for bsearch searching.
+ * Used for bsearch searching for faces by name.
+ * The face "bug.111" is always put at first.
+ * @todo "bug.111" should be a regular face, alas many places consider face 0
+ * to be that face. This should be fixed at some point.
+ * @param a first item to compare.
+ * @param b second item to compare.
+ * @retval -1 if a < b
+ * @retval 0 if a == b
+ * @retval 1 if a > b
  */
-static int compar(const struct bmappair *a, const struct bmappair *b) {
+static int compare_face(const New_Face *a, const New_Face *b) {
+    if (strcmp(a->name, "bug.111") == 0) {
+        if (strcmp(b->name, "bug.111") == 0)
+            return 0;
+        return -1;
+    } else if (strcmp(b->name, "bug.111") == 0)
+        return 1;
     return strcmp(a->name, b->name);
 }
 
@@ -133,7 +125,7 @@ static uint8 find_color(const char *name) {
 
 /**
  * This reads the lib/faces file, getting color and visibility information.
- * it is called by read_bmap_names().
+ * It is called by read_bmap_names().
  *
  * @note
  * will call exit() if file doesn't exist.
@@ -163,6 +155,7 @@ static void read_face_data(void) {
 
             if ((tmp = find_face(cp, (unsigned)-1)) == (unsigned)-1) {
                 LOG(llevError, "Could not find face %s\n", cp);
+                on_face = NULL;
                 continue;
             }
             on_face = &new_faces[tmp];
@@ -198,7 +191,7 @@ static void read_face_data(void) {
 void read_bmap_names(void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
-    int value, nrofbmaps = 0, i;
+    int value, i;
     size_t l;
 
     bmaps_checksum = 0;
@@ -209,21 +202,29 @@ void read_bmap_names(void) {
         exit(-1);
     }
 
+    nrofpixmaps = 0;
+
     /* First count how many bitmaps we have, so we can allocate correctly */
     while (fgets(buf, MAX_BUF, fp) != NULL)
         if (buf[0] != '#' && buf[0] != '\n')
-            nrofbmaps++;
+            nrofpixmaps++;
     rewind(fp);
 
-    xbm = (struct bmappair *)malloc(sizeof(struct bmappair)*nrofbmaps);
-    if (xbm == NULL) {
-        LOG(llevError, "read_bmap_names: xbm memory allocation failure.\n");
+    new_faces = (New_Face *)malloc(sizeof(New_Face)*nrofpixmaps);
+    if (new_faces == NULL) {
+        LOG(llevError, "read_bmap_names: new_faces memory allocation failure.\n");
         abort();
     }
-    memset(xbm, 0, sizeof(struct bmappair)*nrofbmaps);
 
-    nroffiles = 0;
-    while (nroffiles < nrofbmaps && fgets(buf, MAX_BUF, fp) != NULL) {
+    for (i = 0; i < nrofpixmaps; i++) {
+        new_faces[i].name = NULL;
+        new_faces[i].visibility = 0;
+        new_faces[i].magicmap = 255;
+        new_faces[i].smoothface = (uint16)-1;
+    }
+
+    i = 0;
+    while (i < nrofpixmaps && fgets(buf, MAX_BUF, fp) != NULL) {
         if (*buf == '#')
             continue;
 
@@ -233,7 +234,7 @@ void read_bmap_names(void) {
             continue;
         }
         value = atoi(p);
-        xbm[nroffiles].name = strdup_local(q);
+        new_faces[i].name = strdup_local(q);
 
         /* We need to calculate the checksum of the bmaps file
          * name->number mapping to send to the client.  This does not
@@ -255,34 +256,22 @@ void read_bmap_names(void) {
             bmaps_checksum &= 0xffffffff;
         }
 
-        xbm[nroffiles].number = value;
-        nroffiles++;
-        if (value >= nrofpixmaps)
-            nrofpixmaps = value+1;
+        i++;
     }
     fclose(fp);
 
-    LOG(llevDebug, "done (got %d/%d/%d)\n", nrofpixmaps, nrofbmaps, nroffiles);
-
-    new_faces = (New_Face *)malloc(sizeof(New_Face)*nrofpixmaps);
-    if (new_faces == NULL) {
-        LOG(llevError, "read_bmap_names: new_faces memory allocation failure.\n");
-        abort();
+    if (i != nrofpixmaps) {
+        LOG(llevError, "read_bmap_names: first read gave %d faces but only loaded %d??\n", nrofpixmaps, i);
+        fatal(SEE_LAST_ERROR);
     }
+
+    LOG(llevDebug, "done (got %d faces)\n", nrofpixmaps);
+
+    qsort(new_faces, nrofpixmaps, sizeof(New_Face), (int (*)(const void *, const void *))compare_face);
 
     for (i = 0; i < nrofpixmaps; i++) {
-        new_faces[i].name = "";
         new_faces[i].number = i;
-        new_faces[i].visibility = 0;
-        new_faces[i].magicmap = 255;
-        new_faces[i].smoothface = (uint16)-1;
     }
-
-    for (i = 0; i < nroffiles; i++) {
-        new_faces[xbm[i].number].name = xbm[i].name;
-    }
-
-    qsort(xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void *, const void *))compar);
 
     read_face_data();
 
@@ -322,10 +311,10 @@ void read_bmap_names(void) {
  * from the server)
  */
 unsigned find_face(const char *name, unsigned error) {
-    struct bmappair *bp, tmp;
+    New_Face *bp, tmp;
 
     tmp.name = (char *)name;
-    bp = (struct bmappair *)bsearch(&tmp, xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void *, const void *))compar);
+    bp = (New_Face *)bsearch(&tmp, new_faces, nrofpixmaps, sizeof(New_Face), (int (*)(const void *, const void *))compare_face);
 
     return bp ? bp->number : error;
 }
@@ -418,9 +407,8 @@ int find_smooth(uint16 face, uint16 *smoothed) {
 void free_all_images(void) {
     int i;
 
-    for (i = 0; i < nroffiles; i++)
-        free(xbm[i].name);
-    free(xbm);
+    for (i = 0; i < nrofpixmaps; i++)
+        free((char*)(new_faces[i].name));
     free(new_faces);
 }
 
@@ -471,7 +459,7 @@ static void check_faceset_fallback(int faceset, int togo) {
 void read_client_images(void) {
     char filename[400];
     char buf[HUGE_BUF];
-    char *cp, *cps[7+1];
+    char *cp, *cps[7+1], *slash;
     FILE *infile;
     int num, len, compressed, fileno, i;
 
@@ -540,9 +528,32 @@ void read_client_images(void) {
                 LOG(llevError, "read_client_images: length not valid: %d > %d \n%s", len, MAX_IMAGE_SIZE, buf);
                 abort();
             }
-            /* We don't actualy care about the name if the image that
-             * is embedded in the image file, so just ignore it.
-             */
+
+            for ( ; *cp != ' ' && *cp != '\n' && *cp != '\0'; cp++)
+                ;
+            if (*cp != ' ') {
+                LOG(llevError, "read_client_images: couldn't find name start for %d\n", num);
+                abort();
+            }
+            cp++;
+            /* cp points to the start of the full name */
+            slash = strrchr(cp, '/');
+            if (slash != NULL)
+                cp = slash + 1;
+            if (cp[strlen(cp) - 1] == '\n')
+                cp[strlen(cp) - 1] = '\0';
+
+            /* cp points to the start of the picture name itself */
+            num = find_face(cp, (unsigned)-1);
+            if (num == (unsigned)-1) {
+                LOG(llevError, "read_client_images: couldn't find picture %s\n", cp);
+                abort();
+            }
+            if (num >= nrofpixmaps) {
+                LOG(llevError, "read_client_images: invalid picture number %d for %s\n", num, cp);
+                abort();
+            }
+
             facesets[fileno].faces[num].datalen = len;
             facesets[fileno].faces[num].data = malloc(len);
             if ((i = fread(facesets[fileno].faces[num].data, len, 1, infile)) != 1) {
