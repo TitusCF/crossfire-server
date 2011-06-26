@@ -1800,7 +1800,6 @@ CF_PLUGIN int   closePlugin(void) {
     int i;
 
     cf_log(llevDebug, "CFPython 2.0a closing\n");
-    Py_Finalize();
 
     for (i = 0; i < NR_CUSTOM_CMD; i++) {
         if (CustomCommand[i].name != NULL)
@@ -1810,11 +1809,12 @@ CF_PLUGIN int   closePlugin(void) {
     }
 
     for (i = 0; i < PYTHON_CACHE_SIZE; i++) {
-        if (pycode_cache[i].code != NULL)
-            cf_free_string(pycode_cache[i].code);
+        Py_XDECREF(pycode_cache[i].code);
         if (pycode_cache[i].file != NULL)
             cf_free_string(pycode_cache[i].file);
     }
+
+    Py_Finalize();
 
     return 0;
 }
