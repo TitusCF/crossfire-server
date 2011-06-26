@@ -70,6 +70,17 @@ typedef struct {
     time_t cached_time, used_time;
 } pycode_cache_entry;
 
+/* This structure is used to define one python-implemented crossfire command.*/
+typedef struct PythonCmdStruct {
+    sstring name;   /* The name of the command, as known in the game.         */
+    sstring script; /* The name of the script file to bind.                   */
+    double speed;   /* The speed of the command execution.                    */
+} PythonCmd;
+
+/* This plugin allows up to 1024 custom commands.                            */
+#define NR_CUSTOM_CMD 1024
+
+/** Commands defined by scripts. */
 static PythonCmd CustomCommand[NR_CUSTOM_CMD];
 
 static pycode_cache_entry pycode_cache[PYTHON_CACHE_SIZE];
