@@ -551,7 +551,7 @@ static void knowledge_write_player_data(const knowledge_player *kp) {
 }
 
 /**
- * Read all knowledge data for a player from disk.
+ * Read all knowledge data for a player from disk, discarding invalid data.
  * @param kp player structure to load data into.
  */
 static void knowledge_read_player_data(knowledge_player *kp) {
@@ -600,7 +600,8 @@ static void knowledge_read_player_data(knowledge_player *kp) {
 }
 
 /**
- * Find or create the knowledge store for a player. Will load data if required. fatal() will be called if memory failure.
+ * Find or create the knowledge store for a player. Will load data if required.
+ * fatal() will be called if memory failure.
  * @param pl who to find data for.
  * @return data store, never NULL.
  */
@@ -873,6 +874,12 @@ void free_knowledge(void) {
     knowledge_global = NULL;
 }
 
+/**
+ * Determines whether a player knows a specific knowledge or not.
+ * @param pl who to check knowledge for.
+ * @param knowledge what to check for, in format "type:(type specific value)".
+ * @return 0 if item is known, 1 else.
+ */
 int knowledge_player_knows(const player *pl, const char *knowledge) {
     const knowledge_type *type;
     char copy[MAX_BUF], *pos;
