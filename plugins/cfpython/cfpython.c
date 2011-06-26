@@ -71,7 +71,7 @@ typedef struct {
     sstring file;                   /**< Script full path. */
     PyCodeObject *code;             /**< Compiled code, NULL if there was an error. */
     time_t cached_time,             /**< Time this cache entry was created. */
-            used_time;              /**< Last use of this cache entry. @todo not used? */
+            used_time;              /**< Last use of this cache entry. */
 } pycode_cache_entry;
 
 /* This structure is used to define one python-implemented crossfire command.*/
@@ -944,9 +944,10 @@ static PyCodeObject *compilePython(char *filename) {
         Py_DECREF(scriptfile);
     }
 
-    if (run)
+    if (run) {
+        run->used_time = time(NULL);
         return run->code;
-    else
+    } else
         return NULL;
 }
 
