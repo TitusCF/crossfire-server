@@ -523,8 +523,8 @@ static PyObject *registerCommand(PyObject *self, PyObject *args) {
     }
     for (i = 0; i < NR_CUSTOM_CMD; i++) {
         if (CustomCommand[i].name == NULL) {
-            CustomCommand[i].name = cf_strdup_local(cmdname);
-            CustomCommand[i].script = cf_strdup_local(scriptname);
+            CustomCommand[i].name = cf_add_string(cmdname);
+            CustomCommand[i].script = cf_add_string(scriptname);
             CustomCommand[i].speed = cmdspeed;
             break;
         }
@@ -1773,7 +1773,17 @@ CF_PLUGIN int eventListener(int *type, ...) {
 }
 
 CF_PLUGIN int   closePlugin(void) {
+    int i;
+
     cf_log(llevDebug, "CFPython 2.0a closing\n");
     Py_Finalize();
+
+    for (i = 0; i < NR_CUSTOM_CMD; i++) {
+        if (CustomCommand[i].name != NULL)
+            cf_free_string(CustomCommand[i].name);
+        if (CustomCommand[i].script != NULL)
+            cf_free_string(CustomCommand[i].script);
+    }
+
     return 0;
 }

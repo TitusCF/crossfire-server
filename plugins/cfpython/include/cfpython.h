@@ -138,9 +138,9 @@ extern CFPContext *current_context;
 
 /* This structure is used to define one python-implemented crossfire command.*/
 typedef struct PythonCmdStruct {
-    char *name;    /* The name of the command, as known in the game.         */
-    char *script;  /* The name of the script file to bind.                   */
-    double speed;  /* The speed of the command execution.                    */
+    sstring name;   /* The name of the command, as known in the game.         */
+    sstring script; /* The name of the script file to bind.                   */
+    double speed;   /* The speed of the command execution.                    */
 } PythonCmd;
 
 /* This plugin allows up to 1024 custom commands.                            */
