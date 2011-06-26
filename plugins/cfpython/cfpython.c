@@ -1553,6 +1553,7 @@ CF_PLUGIN void cfpython_runPluginCommand(object *op, const char *params) {
 CF_PLUGIN int postInitPlugin(void) {
     PyObject *scriptfile;
     char path[1024];
+    int i;
 
     cf_log(llevDebug, "CFPython 2.0a post init\n");
     initContextStack();
@@ -1579,6 +1580,13 @@ CF_PLUGIN int postInitPlugin(void) {
         FILE* pyfile = cfpython_pyfile_asfile(scriptfile);
         PyRun_SimpleFile(pyfile, cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)));
         Py_DECREF(scriptfile);
+    }
+
+    for (i = 0; i < PYTHON_CACHE_SIZE; i++) {
+        pycode_cache[i].code = NULL;
+        pycode_cache[i].file = NULL;
+        pycode_cache[i].cached_time = 0;
+        pycode_cache[i].used_time = 0;
     }
 
     return 0;
@@ -1799,6 +1807,13 @@ CF_PLUGIN int   closePlugin(void) {
             cf_free_string(CustomCommand[i].name);
         if (CustomCommand[i].script != NULL)
             cf_free_string(CustomCommand[i].script);
+    }
+
+    for (i = 0; i < PYTHON_CACHE_SIZE; i++) {
+        if (pycode_cache[i].code != NULL)
+            cf_free_string(pycode_cache[i].code);
+        if (pycode_cache[i].file != NULL)
+            cf_free_string(pycode_cache[i].file);
     }
 
     return 0;
