@@ -372,7 +372,9 @@ static int load_quests_from_file(const char *filename) {
 
         LOG(llevError, "quest: invalid file format for %s, I don't know what to do with the line %s\n", final, read);
     }
-    LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", final, in);
+    if (in != 0)
+        LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", final, in);
+
     return loaded_quests;
 }
 
