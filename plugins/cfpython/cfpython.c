@@ -64,10 +64,14 @@
 #define PYTHON_DEBUG   /* give us some general infos out */
 #define PYTHON_CACHE_SIZE 16    /* number of python scripts to store the bytecode of at a time */
 
+/**
+ * One compiled script, cached in memory.
+ */
 typedef struct {
-    sstring file;
-    PyCodeObject *code;
-    time_t cached_time, used_time;
+    sstring file;                   /**< Script full path. */
+    PyCodeObject *code;             /**< Compiled code, NULL if there was an error. */
+    time_t cached_time,             /**< Time this cache entry was created. */
+            used_time;              /**< Last use of this cache entry. @todo not used? */
 } pycode_cache_entry;
 
 /* This structure is used to define one python-implemented crossfire command.*/
@@ -83,6 +87,7 @@ typedef struct PythonCmdStruct {
 /** Commands defined by scripts. */
 static PythonCmd CustomCommand[NR_CUSTOM_CMD];
 
+/** Cached compiled scripts. */
 static pycode_cache_entry pycode_cache[PYTHON_CACHE_SIZE];
 
 static void set_exception(const char *fmt, ...);
