@@ -363,7 +363,3 @@ void account_char_free(Account_Char *chars)
         free(ap);
     }
 }
-
-void account_char_init()
-{
-}
