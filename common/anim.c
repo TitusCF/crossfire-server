@@ -121,11 +121,13 @@ void init_anim(void) {
                 animations[num_animations].facings = 1;
             }
         } else {
-            int face = find_face(buf, 0);
-            faces[num_frames++] = &new_faces[face];
-            if (face == 0)
-                LOG(llevDebug, "Could not find face %s for animation %s\n",
+            int face = find_face(buf, (unsigned)-1);
+            if (face == (unsigned)-1) {
+                LOG(llevError, "Could not find face %s for animation %s\n",
                     buf, animations[num_animations].name);
+                face = find_face("bug.111", 0);
+            }
+            faces[num_frames++] = &new_faces[face];
         }
     }
     fclose(fp);
