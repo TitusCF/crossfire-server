@@ -65,15 +65,6 @@ typedef struct _materialtype {
     int         material;
     sint8       save[NROFATTACKS];
     sint8       mod[NROFATTACKS];
-    sint8       chance;
-    sint8       difficulty;
-    sint8       magic;
-    sint8       damage;
-    sint8       wc;
-    sint8       ac;
-    sint8       sp;
-    int         weight;
-    int         value;
     struct _materialtype *next;
 } materialtype_t;
 

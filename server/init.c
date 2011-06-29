@@ -365,15 +365,6 @@ static materialtype_t *get_empty_mat(void) {
         mt->save[i] = 0;
         mt->mod[i] = 0;
     }
-    mt->chance = 0;
-    mt->difficulty = 0;
-    mt->magic = 0;
-    mt->damage = 0;
-    mt->wc = 0;
-    mt->ac = 0;
-    mt->sp = 0;
-    mt->weight = 100;
-    mt->value = 100;
     mt->next = NULL;
     return mt;
 }
@@ -446,24 +437,6 @@ static void load_materials(void) {
                 mt->mod[i] = (sint8)value;
                 cp = next;
             }
-        } else if (sscanf(cp, "chance %d\n", &value)) {
-            mt->chance = (sint8)value;
-        } else if (sscanf(cp, "diff %d\n", &value)) {
-            mt->difficulty = (sint8)value;
-        } else if (sscanf(cp, "magic %d\n", &value)) {
-            mt->magic = (sint8)value;
-        } else if (sscanf(cp, "damage %d\n", &value)) {
-            mt->damage = (sint8)value;
-        } else if (sscanf(cp, "wc %d\n", &value)) {
-            mt->wc = (sint8)value;
-        } else if (sscanf(cp, "ac %d\n", &value)) {
-            mt->ac = (sint8)value;
-        } else if (sscanf(cp, "sp %d\n", &value)) {
-            mt->sp = (sint8)value;
-        } else if (sscanf(cp, "weight %d\n", &value)) {
-            mt->weight = value;
-        } else if (sscanf(cp, "value %d\n", &value)) {
-            mt->value = value;
         }
     }
     free(mt->next);

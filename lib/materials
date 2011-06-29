@@ -4,14 +4,6 @@
 # material	the material type this corresponds to.  see materials.h
 # saves		savingthrows for each of the 25 attacktypes
 # mods		modifications to resistances for the 25 atttypes.
-# chance	chance for appearance.  similar to artifact gen.
-# diff		difficulty, similar to artifact generation.
-# magic		minimum magic.  0 can be on anything.  similar to artifacts
-# damage	bonus/negative to damage
-# wc		bonus/negative to wc
-# ac		bonus/negative to ac
-# weight	weight modifer. similar to artifacts
-# value		value modifier. similar to artifacts.
 # anything left unspecified in this file will default to zero.
 #
 # NOTE
@@ -24,162 +16,60 @@ name paper
 material 1
 saves 15,10,17,9,5,7,13,0,20,15,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name iron
 material 2
 saves 2,12,3,12,2,10,7,0,20,15,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name glass
 material 4
 saves 14,11,8,3,10,5,1,0,20,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name leather
 material 8
 saves 5,10,10, 3, 3,10,10, 0,20,15, 0,0,0,0,0,12,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name pine
 material 16
 saves 10,11,13, 2, 2,10, 9, 0,20,15, 0,0,0,0,0,12,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name organics
 description organic
 material 32
 saves 3,12,9,11,3,10,9,0,20,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name granite
 material 64
 saves 2,5,2,2,2,2,1,0,20,15,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name cloth
 description cotton
 material 128
 saves 14,11,13,4,4,5,10,0,20,15,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name adamant
 material 256
 saves 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name liquid
 material 512
 saves 0,8,9,6,17,0,15,0,20,15,12,0,0,0,0,11,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name tin
 material 1024
 saves 6,12,6,14,2,10,1,0,20,15,0,0,0,0,0,10,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name bone
 material 2048
 saves 10,9,4,5,3,10,10,0,20,15,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 name ice
 material 4096
 saves 14,11,16,5,0,5,6,0,20,15,0,0,0,0,0,7,0,0,0,0,0,0,0,0,0
 mods  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chance 100
-diff 0
-magic 0
-damage 0
-wc 0
-ac 0
-weight 100
-value 100
 #
 # NEW NON BASIC TYPES START HERE
+# Those are unused from 2011/06/29 on, left in case someone feels like using that.
 #
 # BEGIN iron
 name gold
