@@ -383,10 +383,7 @@ static void check_loaded_object(object *op) {
 
     /* objects now have a materialname.  try to patch it in */
     if (!(IS_WEAPON(op) && op->level > 0)) {
-        if (op->map != NULL)
-            set_materialname(op, op->map->difficulty, NULL);
-        else
-            set_materialname(op, 5, NULL);
+        set_materialname(op);
     }
     /* only do these when program is first run - a bit
      * excessive to do this at every run - most of this is

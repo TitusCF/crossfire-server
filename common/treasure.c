@@ -1133,8 +1133,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
     }
 
     /* materialtype modifications.  Note we allow this on artifacts. */
-
-    set_materialname(op, difficulty, NULL);
+    set_materialname(op);
 
     if (flags&GT_MINIMAL) {
         if (op->type == POTION)

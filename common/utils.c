@@ -303,28 +303,23 @@ void transmute_materialname(object *op, const object *change) {
 }
 
 /**
- * Set the materialname and type for an item
+ * Set the material name and type for an item, if not set.
+ * @param op item to set the material for.
  */
-void set_materialname(object *op, int difficulty, materialtype_t *nmt) {
-    materialtype_t *mt, *lmt;
+void set_materialname(object *op) {
+    materialtype_t *mt;
 
     if (op->materialname != NULL)
         return;
 
-    if (nmt == NULL) {
-        lmt = NULL;
-        for (mt = materialt; mt != NULL && mt->next != NULL; mt = mt->next) {
-            if (op->material&mt->material) {
-                lmt = mt;
-                break;
-            }
+    for (mt = materialt; mt != NULL && mt->next != NULL; mt = mt->next) {
+        if (op->material&mt->material) {
+            break;
         }
-    } else {
-        lmt = nmt;
     }
 
-    if (lmt != NULL) {
-        op->materialname = add_string(lmt->name);
+    if (mt != NULL) {
+        op->materialname = add_string(mt->name);
         return;
     }
 }
