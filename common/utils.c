@@ -313,65 +313,19 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt) {
 
     if (nmt == NULL) {
         lmt = NULL;
-#ifndef NEW_MATERIAL_CODE
         for (mt = materialt; mt != NULL && mt->next != NULL; mt = mt->next) {
             if (op->material&mt->material) {
                 lmt = mt;
                 break;
             }
         }
-#else
-        for (mt = materialt; mt != NULL && mt->next != NULL; mt = mt->next) {
-            if (op->material&mt->material
-            && rndm(1, 100) <= mt->chance
-            && difficulty >= mt->difficulty
-            && (op->magic >= mt->magic || mt->magic == 0)) {
-                lmt = mt;
-                if (!(IS_WEAPON(op) || IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK))
-                    break;
-            }
-        }
-#endif
     } else {
         lmt = nmt;
     }
 
     if (lmt != NULL) {
-#ifndef NEW_MATERIAL_CODE
         op->materialname = add_string(lmt->name);
         return;
-#else
-
-        if (op->stats.dam && IS_WEAPON(op)) {
-            op->stats.dam += lmt->damage;
-            if (op->stats.dam < 1)
-                op->stats.dam = 1;
-        }
-        if (op->stats.sp && op->type == BOW)
-            op->stats.sp += lmt->sp;
-        if (op->stats.wc && IS_WEAPON(op))
-            op->stats.wc += lmt->wc;
-        if (IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK) {
-            int j;
-
-            if (op->stats.ac)
-                op->stats.ac += lmt->ac;
-            for (j = 0; j < NROFATTACKS; j++)
-                if (op->resist[j] != 0) {
-                    op->resist[j] += lmt->mod[j];
-                    if (op->resist[j] > 100)
-                        op->resist[j] = 100;
-                    if (op->resist[j] < -100)
-                        op->resist[j] = -100;
-                }
-        }
-        op->materialname = add_string(lmt->name);
-        /* dont make it unstackable if it doesn't need to be */
-        if (IS_WEAPON(op) || IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK) {
-            op->weight = (op->weight*lmt->weight)/100;
-            op->value = (op->value*lmt->value)/100;
-        }
-#endif
     }
 }
 

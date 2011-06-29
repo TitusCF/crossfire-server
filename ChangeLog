@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove NEW_MATERIAL_CODE support.
+Nicolas Weeger 2011-06-29
+
 Fix crash with detect monster on custom monsters.
 Reference count wasn't uptodate, thus archetype would be freed.
 Nicolas Weeger 2011-06-28

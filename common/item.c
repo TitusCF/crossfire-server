@@ -615,21 +615,8 @@ void query_short_name(const object *op, char *buf, size_t size) {
  */
 void query_name(const object *op, char *buf, size_t size) {
     size_t len = 0;
-#ifdef NEW_MATERIAL_CODE
-    materialtype_t *mt;
-#endif
 
     buf[0] = '\0';
-
-#ifdef NEW_MATERIAL_CODE
-    if ((IS_ARMOR(op) || IS_WEAPON(op) || IS_SHIELD(op)) && op->materialname) {
-        mt = name_to_material(op->materialname);
-        if (mt) {
-            safe_strcat(buf, mt->description, &len, size);
-            safe_strcat(buf, " ", &len, size);
-        }
-    }
-#endif
 
     query_short_name(op, buf+len, size-len);
     len += strlen(buf+len);
@@ -718,9 +705,6 @@ void query_name(const object *op, char *buf, size_t size) {
  */
 void query_base_name(const object *op, int plural, char *buf, size_t size) {
     size_t len;
-#ifdef NEW_MATERIAL_CODE
-    materialtype_t *mt;
-#endif
 
     if ((!plural && !op->name)
     || (plural && !op->name_pl)) {
@@ -735,26 +719,8 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
 
     buf[0] = '\0';
 
-#ifdef NEW_MATERIAL_CODE
-    if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname)
-        mt = name_to_material(op->materialname);
-    else
-        mt = NULL;
-
-    if (mt
-    && op->arch->clone.materialname != mt->name
-    && !(op->material&M_SPECIAL)) {
-        snprintf(buf, size, "%s", mt->description);
-        len = strlen(buf);
-        safe_strcat(buf, " ", &len, size);
-        safe_strcat(buf, plural ? op->name_pl : op->name, &len, size);
-    } else {
-#endif
-        snprintf(buf, size, "%s", plural ? op->name_pl : op->name);
-        len = strlen(buf);
-#ifdef NEW_MATERIAL_CODE
-    }
-#endif
+    snprintf(buf, size, "%s", plural ? op->name_pl : op->name);
+    len = strlen(buf);
 
     if (op->title && QUERY_FLAG(op, FLAG_IDENTIFIED)) {
         safe_strcat(buf, " ", &len, size);
