@@ -518,9 +518,12 @@ static void assign_region_parents(void) {
     uint32 parent_count = 0;
     uint32 region_count = 0;
 
-    for (reg = first_region; reg != NULL && reg->next != NULL; reg = reg->next) {
+    for (reg = first_region; reg != NULL; reg = reg->next) {
         if (reg->parent_name != NULL) {
             reg->parent = get_region_by_name(reg->parent_name);
+            if (reg->parent == NULL) {
+                LOG(llevError, "Couldn't find parent %s for region %s\n", reg->name, reg->parent_name);
+            }
             parent_count++;
         }
         region_count++;
