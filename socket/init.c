@@ -169,50 +169,19 @@ void init_connection(socket_struct *ns, const char *from_ip) {
 #endif
 }
 
-/** This sets up the socket and reads all the image information into memory. */
-void init_server(void) {
+/**
+ * This opens init_socket[0] for listening to connections.
+ * The structure must be allocated already.
+ * No other variable is changed.
+ * @param exit_on_error if non 0, any error will call exit(), else the socket
+ * is merely closed. This value should be non zero at server start, then
+ * 0 during the server's life, to reopen the socket.
+ */
+void init_listening_socket(int exit_on_error) {
     struct sockaddr_in insock;
     struct protoent *protox;
     struct linger linger_opt;
     char err[MAX_BUF];
-
-#ifdef WIN32 /* ***win32  -  we init a windows socket */
-    WSADATA w;
-
-    socket_info.max_filedescriptor = 1; /* used in select, ignored in winsockets */
-    WSAStartup(0x0101, &w);     /* this setup all socket stuff */
-    /* ill include no error tests here, winsocket 1.1 should always work */
-    /* except some old win95 versions without tcp/ip stack */
-#else /* non windows */
-
-#ifdef HAVE_SYSCONF
-    socket_info.max_filedescriptor = sysconf(_SC_OPEN_MAX);
-#else
-#  ifdef HAVE_GETDTABLESIZE
-    socket_info.max_filedescriptor = getdtablesize();
-#  else
-    "Unable to find usable function to get max filedescriptors";
-#  endif
-#endif
-#endif /* win32 */
-
-    socket_info.timeout.tv_sec = 0;
-    socket_info.timeout.tv_usec = 0;
-    socket_info.nconns = 0;
-
-#ifdef CS_LOGSTATS
-    memset(&cst_tot, 0, sizeof(CS_Stats));
-    memset(&cst_lst, 0, sizeof(CS_Stats));
-    cst_tot.time_start = time(NULL);
-    cst_lst.time_start = time(NULL);
-#endif
-
-    LOG(llevDebug, "Initialize new client/server data\n");
-    socket_info.nconns = 1;
-    init_sockets = malloc(sizeof(socket_struct));
-    init_sockets[0].faces_sent = NULL; /* unused */
-    init_sockets[0].account_name = NULL; /* Must be set to avoid undef behaviour elsewhere. */
-    socket_info.allocated_sockets = 1;
 
     protox = getprotobyname("tcp");
     if (protox == NULL) {
@@ -222,7 +191,9 @@ void init_server(void) {
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
     if (init_sockets[0].fd == -1) {
         LOG(llevError, "Cannot create socket: %s\n", strerror_local(errno, err, sizeof(err)));
-        exit(-1);
+        if (exit_on_error)
+            exit(-1);
+        return;
     }
     insock.sin_family = AF_INET;
     insock.sin_port = htons(settings.csport);
@@ -267,7 +238,10 @@ void init_server(void) {
 #else
         close(init_sockets[0].fd);
 #endif /* win32 */
-        exit(-1);
+        if (exit_on_error)
+            exit(-1);
+        init_sockets[0].fd = -1;
+        return;
     }
     if (listen(init_sockets[0].fd, 5) == (-1))  {
         LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno, err, sizeof(err)));
@@ -277,9 +251,57 @@ void init_server(void) {
 #else
         close(init_sockets[0].fd);
 #endif /* win32 */
-        exit(-1);
+        if (exit_on_error)
+            exit(-1);
+        init_sockets[0].fd = -1;
+        return;
     }
     init_sockets[0].status = Ns_Add;
+}
+
+/** This sets up the socket and reads all the image information into memory. */
+void init_server(void) {
+
+#ifdef WIN32 /* ***win32  -  we init a windows socket */
+    WSADATA w;
+
+    socket_info.max_filedescriptor = 1; /* used in select, ignored in winsockets */
+    WSAStartup(0x0101, &w);     /* this setup all socket stuff */
+    /* ill include no error tests here, winsocket 1.1 should always work */
+    /* except some old win95 versions without tcp/ip stack */
+#else /* non windows */
+
+#ifdef HAVE_SYSCONF
+    socket_info.max_filedescriptor = sysconf(_SC_OPEN_MAX);
+#else
+#  ifdef HAVE_GETDTABLESIZE
+    socket_info.max_filedescriptor = getdtablesize();
+#  else
+    "Unable to find usable function to get max filedescriptors";
+#  endif
+#endif
+#endif /* win32 */
+
+    socket_info.timeout.tv_sec = 0;
+    socket_info.timeout.tv_usec = 0;
+    socket_info.nconns = 0;
+
+#ifdef CS_LOGSTATS
+    memset(&cst_tot, 0, sizeof(CS_Stats));
+    memset(&cst_lst, 0, sizeof(CS_Stats));
+    cst_tot.time_start = time(NULL);
+    cst_lst.time_start = time(NULL);
+#endif
+
+    LOG(llevDebug, "Initialize new client/server data\n");
+    socket_info.nconns = 1;
+    init_sockets = malloc(sizeof(socket_struct));
+    init_sockets[0].faces_sent = NULL; /* unused */
+    init_sockets[0].account_name = NULL; /* Must be set to avoid undef behaviour elsewhere. */
+    socket_info.allocated_sockets = 1;
+
+    init_listening_socket(1);
+
     read_client_images();
 }
 

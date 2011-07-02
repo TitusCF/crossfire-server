@@ -415,9 +415,14 @@ void do_server(void) {
             init_sockets[i].status = Ns_Dead;
         }
         if (init_sockets[i].status == Ns_Dead) {
-            free_newsocket(&init_sockets[i]);
-            init_sockets[i].status = Ns_Avail;
-            socket_info.nconns--;
+            if (i == 0) {
+                /* try to reopen the listening socket */
+                init_listening_socket(0);
+            } else {
+                free_newsocket(&init_sockets[i]);
+                init_sockets[i].status = Ns_Avail;
+                socket_info.nconns--;
+            }
         } else if (init_sockets[i].status != Ns_Avail) {
             FD_SET((uint32)init_sockets[i].fd, &tmp_read);
             FD_SET((uint32)init_sockets[i].fd, &tmp_write);
@@ -469,7 +474,7 @@ void do_server(void) {
     /*    if (!pollret) return;*/
 
     /* Following adds a new connection */
-    if (pollret && FD_ISSET(init_sockets[0].fd, &tmp_read)) {
+    if (pollret && is_fd_valid(init_sockets[0].fd) && FD_ISSET(init_sockets[0].fd, &tmp_read)) {
         int newsocknum = 0;
 
 #ifdef ESRV_DEBUG

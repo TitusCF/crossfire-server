@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix for bug #3349111: invidious server crash.
+Do not destroy init_socket[0], instead try to reopen the listening socket.
+Do not try to check its status if not valid.
+Nicolas Weeger 2011-07-02
+
 Correctly link all regions to their parent. Warn if not found.
 Nicolas Weeger 2011-07-02
 
