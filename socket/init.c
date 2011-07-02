@@ -61,9 +61,13 @@
 
 /** Socket information. */
 Socket_Info socket_info;
+
 /**
  * Established connections for clients not yet playing.  See the page on
  * @ref page_connection "the login process" for a description of its use.
+ * Socket at index 0 is the socket listening for connections, and must not
+ * be freed.
+ * If this socket becomes invalid, then the server will try to reopen it.
  */
 socket_struct *init_sockets;
 
