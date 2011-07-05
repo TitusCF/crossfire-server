@@ -632,6 +632,18 @@ void lock_item_cmd(uint8 *data, int len, player *pl) {
                       "Could not find object to lock/unlock");
         return;
     }
+
+    if (op->map) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "Can't lock/unlock an item on the ground");
+        return;
+    }
+    if (op->env != pl->ob) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "Can't lock/unlock an item not directly in your inventory");
+        return;
+    }
+
     if (!flag)
         CLEAR_FLAG(op, FLAG_INV_LOCKED);
     else
