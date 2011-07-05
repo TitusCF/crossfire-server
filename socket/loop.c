@@ -500,6 +500,11 @@ void do_server(void) {
                     newsocknum = j;
                     break;
                 }
+
+            if (newsocknum == 0) {
+                LOG(llevError, "FATAL: couldn't find free socket, nconns = %d, alloc = %d!", socket_info.nconns, socket_info.allocated_sockets);
+                fatal(SEE_LAST_ERROR);
+            }
         }
         init_sockets[newsocknum].fd = accept(init_sockets[0].fd, (struct sockaddr *)&addr, &addrlen);
         if (init_sockets[newsocknum].fd == -1) {

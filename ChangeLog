@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix for bug #3349111: invidious server crash.
+Don't decrease socket_info.nconns if the socket is not available.
+In some cases nconns gets decreased too much, which leads to issues.
+The real fix would be to figure why there is a double decrease...
+Nicolas Weeger 2011-07-05
+
 Forbid un-locking items not in direct player's inventory.
 Nicolas Weeger 2011-07-05
 

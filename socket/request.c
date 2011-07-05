@@ -375,8 +375,12 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
                           "Warning: Your client is too old to receive map data. Please update to a new client at http://sourceforge.net/project/showfiles.php ?group_id=13833");
         }
 
-        socket_info.nconns--;
-        ns->status = Ns_Avail;
+        if (ns->status != Ns_Avail) {
+            /* This is a workaround. In some cases nconns will be decreased
+             * too much for the same connection, leading to issues later on. */
+            socket_info.nconns--;
+            ns->status = Ns_Avail;
+        }
     }
     settings = oldsettings;
 }
@@ -2306,9 +2310,12 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
 
-    socket_info.nconns--;
-    ns->status = Ns_Avail;
-
+    if (ns->status != Ns_Avail) {
+        /* This is a workaround. In some cases nconns will be decreased
+         * too much for the same connection, leading to issues later on. */
+        socket_info.nconns--;
+        ns->status = Ns_Avail;
+    }
 }
 
 #define MAX_CHOICES 100
@@ -2661,8 +2668,12 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
             ob_apply(op, pl->ob, 0);
     }
 
-    socket_info.nconns--;
-    ns->status = Ns_Avail;
+    if (ns->status != Ns_Avail) {
+        /* This is a workaround. In some cases nconns will be decreased
+         * too much for the same connection, leading to issues later on. */
+        socket_info.nconns--;
+        ns->status = Ns_Avail;
+    }
 }
 
 /**
