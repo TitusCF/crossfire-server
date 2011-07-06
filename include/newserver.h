@@ -159,9 +159,6 @@ typedef struct socket_struct {
 #define NS_FACESENT_FACE        0x1
 #define NS_FACESENT_SMOOTH      0x2
 
-#define FACE_TYPES  1
-#define PNG_FACE_INDEX  0
-
 /** Holds some system-related information. */
 typedef struct Socket_Info {
     struct timeval timeout;     /**< Timeout for select. */
