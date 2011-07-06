@@ -580,7 +580,7 @@ CS_Stats cst_tot, cst_lst;
 void write_cs_stats(void) {
     time_t now = time(NULL);
 
-    /* If no connections recently, don't both to log anything */
+    /* If no connections recently, don't bother to log anything */
     if (cst_lst.ibytes == 0 && cst_lst.obytes == 0)
         return;
 
