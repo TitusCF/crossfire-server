@@ -318,6 +318,7 @@ void knowledge_read(player *pl, object *book);
 void command_knowledge(object *pl, const char *params);
 void free_knowledge(void);
 int knowledge_player_knows(const player *pl, const char *knowledge);
+void knowledge_item_can_be_used_alchemy(object *op, const object *item);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name);

@@ -80,6 +80,8 @@ typedef void (*knowledge_detail)(const char *, StringBuffer *);
 typedef int (*knowledge_is_valid_item)(const char *);
 /** Function to add the specified item, should return how many actually written. */
 typedef int (*knowledge_add_item)(struct knowledge_player *, const char *, const struct knowledge_type *);
+/** Function checking if the specified item can be used for alchemy. */
+typedef StringBuffer* (*knowledge_can_use_alchemy)(sstring, const char *, StringBuffer *);
 /** One item type that may be known to the player. */
 typedef struct knowledge_type {
     const char *type;                   /**< Type internal code, musn't have a double dot, must be unique ingame. */
@@ -88,6 +90,7 @@ typedef struct knowledge_type {
     knowledge_is_valid_item validate;   /**< Validate the specific value. */
     knowledge_add_item add;             /**< Add the item to the knowledge store. */
     const char *name;                   /**< Type name for player, to use with 'list'. */
+    knowledge_can_use_alchemy use_alchemy; /**< If not null, checks if an item can be used in alchemy. */
 } knowledge_type;
 
 
@@ -229,6 +232,57 @@ static void knowledge_alchemy_detail(const char *value, StringBuffer *buf) {
  */
 static int knowledge_achemy_validate(const char *item) {
     return knowledge_alchemy_get_recipe(item) != NULL;
+}
+
+/**
+ * Check if an item can be used for a recipe, and fill the return buffer if it's the case.
+ * @param code recipe internal code.
+ * @param item item's name, including title if there is one.
+ * @param buf where to put the results. If NULL a new one can be allocated.
+ * @return buf, if it was null and the recipe uses the item, a new one is allocated.
+ */
+static StringBuffer* knowledge_alchemy_can_use_item(sstring code, const char *item, StringBuffer *buf) {
+    const recipe *rec = knowledge_alchemy_get_recipe(code);
+    const linked_char *next;
+    const archetype *arch;
+    const char *name;
+
+    if (!rec)
+        /* warn? */
+        return buf;
+
+    arch = find_archetype(rec->arch_name[RANDOM()%rec->arch_names]);
+    if (!arch)
+        /* not supposed to happen */
+        return buf;
+
+    for (next = rec->ingred; next != NULL; next = next->next) {
+        name = next->name;
+        while ((*name) != '\0' && (isdigit(*name) || (*name) == ' '))
+            name++;
+
+        if (strcmp(item, name) == 0) {
+            if (buf == NULL) {
+                buf = stringbuffer_new();
+                stringbuffer_append_string(buf, "It can be used in the following recipes: ");
+            } else
+                stringbuffer_append_string(buf, ", ");
+
+            if (strcmp(rec->title, "NONE"))
+                stringbuffer_append_printf(buf, "%s of %s", arch->clone.name, rec->title);
+            else {
+                if (arch->clone.title != NULL) {
+                    stringbuffer_append_printf(buf, "%s %s", arch->clone.name, arch->clone.title);
+                }
+                else
+                    stringbuffer_append_printf(buf, "%s", arch->clone.name);
+            }
+
+            break;
+        }
+    }
+
+    return buf;
 }
 
 /**
@@ -494,11 +548,11 @@ static int knowledge_message_validate(const char *item) {
 
 /** All handled knowledge items. */
 static const knowledge_type const knowledges[] = {
-    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate, knowledge_add, "recipes" },
-    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters" },
-    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods" },
-    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages" },
-    { NULL, 0, 0, 0, 0 }
+    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item },
+    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL },
+    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL },
+    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL },
+    { NULL, 0, 0, 0, 0, NULL }
 };
 
 
@@ -909,4 +963,43 @@ int knowledge_player_knows(const player *pl, const char *knowledge) {
     current = knowledge_get_or_create(pl);
 
     return knowledge_known(current, pos, type);
+}
+
+/**
+ * Displays known alchemy recipes an item can be used in.
+ * @param op who to display recipes for.
+ * @param item what to check formulae for.
+ */
+void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
+    knowledge_player *cur;
+    knowledge_item *ki;
+    char item_name[MAX_BUF], *result;
+    const char *name;
+    StringBuffer *buf = NULL;
+
+    if (op->type != PLAYER || op->contr == NULL)
+        return;
+
+    cur = knowledge_get_or_create(op->contr);
+
+    if (item->title != NULL) {
+        snprintf(item_name, sizeof(item_name), "%s %s", item->name, item->title);
+        name = item_name;
+    } else
+        name = item->name;
+
+    for (ki = cur->items; ki; ki = ki->next) {
+        if (ki->handler->use_alchemy != NULL) {
+            buf = ki->handler->use_alchemy(ki->item, name, buf);
+        }
+    }
+
+    if (buf == NULL)
+        return;
+
+    stringbuffer_append_string(buf, ".");
+    result = stringbuffer_finish(buf);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+        result);
+    free(result);
 }
