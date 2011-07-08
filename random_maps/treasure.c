@@ -263,13 +263,15 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
 
         if (trap_map) {
             the_trap = pick_random_object(trap_map);
-            the_trap->stats.Cha = 10+RP->difficulty;
-            the_trap->level = BC_RANDOM((3*RP->difficulty)/2);
             if (the_trap) {
                 object *new_trap;
 
-                new_trap = arch_to_object(the_trap->arch);
-                object_copy(new_trap, the_trap);
+                new_trap = object_new();
+                object_copy_with_inv(the_trap, new_trap);
+                new_trap->stats.Cha = 10+RP->difficulty;
+                new_trap->level = BC_RANDOM((3*RP->difficulty)/2);
+                if (new_trap->level == 0)
+                    new_trap->level = 1;
                 new_trap->x = x;
                 new_trap->y = y;
                 object_insert_in_ob(new_trap, the_chest);
