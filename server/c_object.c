@@ -1405,7 +1405,8 @@ void examine_monster(object *op, object *tmp) {
 }
 
 /**
- * Player examines some object.
+ * Player examines some object. The item may be identified automatically
+ * if the player has the correct skill for that.
  *
  * @param op
  * player.
