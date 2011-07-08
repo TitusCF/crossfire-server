@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Randomize chests in random maps.
+Nicolas Weeger 2011-07-08
+
 Make immunity reduce symptoms when not totally immune.
 This enables partial disease resistances.
 Nicolas Weeger 2011-07-08
