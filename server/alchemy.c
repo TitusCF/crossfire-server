@@ -932,15 +932,13 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
  * transmuting recipe matches, it only considers matching transmuting recipes.
  *
  * @param fl
- * ?
+ * list containing the potential formulae based on the number of ingredients.
  * @param formula
- * ?
+ * hash of the ingredients.
  * @param ingredients
- * ?
+ * ingredients, linked through the 'below' field.
  * @return
  * one matching recipe, or NULL if no recipe matches
- * @todo
- * document parameters.
  */
 static const recipe *find_recipe(const recipelist *fl, int formula, object *ingredients) {
     const recipe *rp;
