@@ -845,109 +845,106 @@ void object_clear(object *op) {
  * if the first object is freed, the pointers in the new object
  * will point at garbage.
  *
- * @param op2
+ * @param src_ob
  * object that we copy.from
- * @param op
+ * @param dest_ob
  * object that we copy to.
- *
- * @note
- * copy_object() has been renamed to object_copy()
  */
-void object_copy(object *op2, object *op) {
-    int is_freed = QUERY_FLAG(op, FLAG_FREED), is_removed = QUERY_FLAG(op, FLAG_REMOVED);
+void object_copy(object *src_ob, object *dest_ob) {
+    int is_freed = QUERY_FLAG(dest_ob, FLAG_FREED), is_removed = QUERY_FLAG(dest_ob, FLAG_REMOVED);
 
     /* Decrement the refcounts, but don't bother zeroing the fields;
     they'll be overwritten by memcpy. */
-    if (op->name != NULL)
-        free_string(op->name);
-    if (op->name_pl != NULL)
-        free_string(op->name_pl);
-    if (op->anim_suffix != NULL)
-        free_string(op->anim_suffix);
-    if (op->title != NULL)
-        free_string(op->title);
-    if (op->race != NULL)
-        free_string(op->race);
-    if (op->slaying != NULL)
-        free_string(op->slaying);
-    if (op->skill != NULL)
-        free_string(op->skill);
-    if (op->msg != NULL)
-        free_string(op->msg);
-    if (op->lore != NULL)
-        free_string(op->lore);
-    if (op->materialname != NULL)
-        free_string(op->materialname);
-    if (op->custom_name != NULL)
-        free_string(op->custom_name);
-    if (op->discrete_damage != NULL)
-        FREE_AND_CLEAR(op->discrete_damage);
-    if (op->spell_tags != NULL)
-        FREE_AND_CLEAR(op->spell_tags);
+    if (dest_ob->name != NULL)
+        free_string(dest_ob->name);
+    if (dest_ob->name_pl != NULL)
+        free_string(dest_ob->name_pl);
+    if (dest_ob->anim_suffix != NULL)
+        free_string(dest_ob->anim_suffix);
+    if (dest_ob->title != NULL)
+        free_string(dest_ob->title);
+    if (dest_ob->race != NULL)
+        free_string(dest_ob->race);
+    if (dest_ob->slaying != NULL)
+        free_string(dest_ob->slaying);
+    if (dest_ob->skill != NULL)
+        free_string(dest_ob->skill);
+    if (dest_ob->msg != NULL)
+        free_string(dest_ob->msg);
+    if (dest_ob->lore != NULL)
+        free_string(dest_ob->lore);
+    if (dest_ob->materialname != NULL)
+        free_string(dest_ob->materialname);
+    if (dest_ob->custom_name != NULL)
+        free_string(dest_ob->custom_name);
+    if (dest_ob->discrete_damage != NULL)
+        FREE_AND_CLEAR(dest_ob->discrete_damage);
+    if (dest_ob->spell_tags != NULL)
+        FREE_AND_CLEAR(dest_ob->spell_tags);
 
     /* Basically, same code as from object_clear() */
 
-    object_free_key_values(op);
-    free_dialog_information(op);
+    object_free_key_values(dest_ob);
+    free_dialog_information(dest_ob);
 
     /* op is the destination, op2 is the source. */
-    (void)memcpy((void *)((char *)op+offsetof(object, name)),
-                (void *)((char *)op2+offsetof(object, name)),
+    (void)memcpy((void *)((char *)dest_ob+offsetof(object, name)),
+                (void *)((char *)src_ob+offsetof(object, name)),
                 sizeof(object)-offsetof(object, name));
 
     if (is_freed)
-        SET_FLAG(op, FLAG_FREED);
+        SET_FLAG(dest_ob, FLAG_FREED);
     if (is_removed)
-        SET_FLAG(op, FLAG_REMOVED);
-    if (op->name != NULL)
-        add_refcount(op->name);
-    if (op->name_pl != NULL)
-        add_refcount(op->name_pl);
-    if (op->anim_suffix != NULL)
-        add_refcount(op->anim_suffix);
-    if (op->title != NULL)
-        add_refcount(op->title);
-    if (op->race != NULL)
-        add_refcount(op->race);
-    if (op->slaying != NULL)
-        add_refcount(op->slaying);
-    if (op->skill != NULL)
-        add_refcount(op->skill);
-    if (op->lore != NULL)
-        add_refcount(op->lore);
-    if (op->msg != NULL)
-        add_refcount(op->msg);
-    if (op->custom_name != NULL)
-        add_refcount(op->custom_name);
-    if (op->materialname != NULL)
-        add_refcount(op->materialname);
-    if (op->discrete_damage != NULL) {
-        op->discrete_damage = malloc(sizeof(sint16)*NROFATTACKS);
-        memcpy(op->discrete_damage, op2->discrete_damage, sizeof(sint16)*NROFATTACKS);
+        SET_FLAG(dest_ob, FLAG_REMOVED);
+    if (dest_ob->name != NULL)
+        add_refcount(dest_ob->name);
+    if (dest_ob->name_pl != NULL)
+        add_refcount(dest_ob->name_pl);
+    if (dest_ob->anim_suffix != NULL)
+        add_refcount(dest_ob->anim_suffix);
+    if (dest_ob->title != NULL)
+        add_refcount(dest_ob->title);
+    if (dest_ob->race != NULL)
+        add_refcount(dest_ob->race);
+    if (dest_ob->slaying != NULL)
+        add_refcount(dest_ob->slaying);
+    if (dest_ob->skill != NULL)
+        add_refcount(dest_ob->skill);
+    if (dest_ob->lore != NULL)
+        add_refcount(dest_ob->lore);
+    if (dest_ob->msg != NULL)
+        add_refcount(dest_ob->msg);
+    if (dest_ob->custom_name != NULL)
+        add_refcount(dest_ob->custom_name);
+    if (dest_ob->materialname != NULL)
+        add_refcount(dest_ob->materialname);
+    if (dest_ob->discrete_damage != NULL) {
+        dest_ob->discrete_damage = malloc(sizeof(sint16)*NROFATTACKS);
+        memcpy(dest_ob->discrete_damage, src_ob->discrete_damage, sizeof(sint16)*NROFATTACKS);
     }
 
-    if (op->spell_tags != NULL) {
-        op->spell_tags = malloc(sizeof(tag_t)*SPELL_TAG_SIZE);
-        memcpy(op->spell_tags, op2->spell_tags, sizeof(tag_t)*SPELL_TAG_SIZE);
+    if (dest_ob->spell_tags != NULL) {
+        dest_ob->spell_tags = malloc(sizeof(tag_t)*SPELL_TAG_SIZE);
+        memcpy(dest_ob->spell_tags, src_ob->spell_tags, sizeof(tag_t)*SPELL_TAG_SIZE);
     }
 
     /* If archetype is a temporary one, we need to update reference count, because
      * that archetype will be freed by object_free_drop_inventory() when the last object is removed.
      */
-    if (op->arch->reference_count > 0)
-        op->arch->reference_count++;
+    if (dest_ob->arch->reference_count > 0)
+        dest_ob->arch->reference_count++;
 
-    if (op2->speed < 0)
-        op->speed_left = op2->speed_left-RANDOM()%200/100.0;
+    if (src_ob->speed < 0)
+        dest_ob->speed_left = src_ob->speed_left-RANDOM()%200/100.0;
 
     /* Copy over key_values, if any. */
-    if (op2->key_values != NULL) {
+    if (src_ob->key_values != NULL) {
         key_value *tail = NULL;
         key_value *i;
 
-        op->key_values = NULL;
+        dest_ob->key_values = NULL;
 
-        for (i = op2->key_values; i != NULL; i = i->next) {
+        for (i = src_ob->key_values; i != NULL; i = i->next) {
             key_value *new_link = malloc(sizeof(key_value));
 
             new_link->next = NULL;
@@ -958,8 +955,8 @@ void object_copy(object *op2, object *op) {
                 new_link->value = NULL;
 
             /* Try and be clever here, too. */
-            if (op->key_values == NULL) {
-                op->key_values = new_link;
+            if (dest_ob->key_values == NULL) {
+                dest_ob->key_values = new_link;
                 tail = new_link;
             } else {
                 tail->next = new_link;
@@ -969,9 +966,9 @@ void object_copy(object *op2, object *op) {
     }
 
     /* This way, dialog information will be parsed again when/if needed. */
-    CLEAR_FLAG(op, FLAG_DIALOG_PARSED);
+    CLEAR_FLAG(dest_ob, FLAG_DIALOG_PARSED);
 
-    object_update_speed(op);
+    object_update_speed(dest_ob);
 }
 
 /**

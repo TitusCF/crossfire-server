@@ -235,7 +235,7 @@ extern void object_set_enemy(object *op, object *enemy);
 extern void object_reset(object *op);
 extern void object_free_key_values(object *op);
 extern void object_clear(object *op);
-extern void object_copy(object *op2, object *op);
+extern void object_copy(object *src_ob, object *dest_ob);
 extern void object_copy_with_inv(object *src_ob, object *dest_ob);
 extern object *object_new(void);
 extern void object_update_turn_face(object *op);
