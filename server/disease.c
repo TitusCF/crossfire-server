@@ -461,6 +461,7 @@ static void do_symptoms(object *disease) {
     if (symptom == NULL) {
         /* no symptom?  need to generate one! */
         object *new_symptom;
+        int reduce_level = 0;
 
         /* first check and see if the carrier of the disease is immune.  If so, no symptoms!  */
         if (!is_susceptible_to_disease(victim, disease))
@@ -469,8 +470,12 @@ static void do_symptoms(object *disease) {
         /* check for an actual immunity */
         /* do an immunity check */
         tmp = object_find_by_type_and_name(HEAD(victim), SIGN, disease->name);
-        if (tmp != NULL && tmp->level >= disease->level)
-            return;  /*Immune! */
+        if (tmp != NULL) {
+            if (tmp->level >= disease->level)
+                return;  /*Immune! */
+            /* partially immune */
+            reduce_level = tmp->level;
+        }
 
         new_symptom = create_archetype(ARCH_SYMPTOM);
 
@@ -494,7 +499,7 @@ static void do_symptoms(object *disease) {
 
         FREE_AND_COPY(new_symptom->name, disease->name);
         FREE_AND_COPY(new_symptom->name_pl, disease->name);
-        new_symptom->level = disease->level;
+        new_symptom->level = disease->level - reduce_level;
         new_symptom->speed = disease->speed;
         new_symptom->value = 0;
         new_symptom->stats.Str = disease->stats.Str;
