@@ -2067,7 +2067,10 @@ end
 Allowed all
 chance 33
 Object Doom
-face ring.117
+face ring_doom.117
+animation ring_doom
+anim_speed 5
+client_anim_random 1
 type 70
 damned 1
 Str -5
@@ -2084,7 +2087,10 @@ Allowed all
 chance 200
 Object Woe
 type 70
-face ring.117
+face ring_woe.117
+animation ring_woe
+anim_speed 5
+client_anim_random 1
 cursed 1
 Str -1
 Con -1
