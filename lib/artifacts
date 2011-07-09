@@ -2841,7 +2841,7 @@ end
 Allowed all
 chance 127
 Object Shielding
-face amulet_lif.111
+face amulet_shielding.111
 resist_physical 20
 type 39
 value 20
@@ -2851,7 +2851,7 @@ end
 Allowed all
 chance 127
 Object Sustenance
-face amulet_lif.111
+face amulet_sustenance.111
 food 15
 type 39
 value 20
@@ -2864,7 +2864,7 @@ Allowed all
 chance 100
 difficulty 6
 Object Empowerment
-face amulet_lif.111
+face amulet_empowerement.111
 material 256
 type 39
 value 40
@@ -2876,7 +2876,7 @@ Allowed all
 chance 255
 difficulty 6
 Object Sorrow
-face amulet_lif.111
+face amulet_sorrow.111
 type 39
 value 0
 cursed 1
@@ -2887,7 +2887,7 @@ Allowed all
 chance 50
 difficulty 4
 Object Calling Death
-face amulet_lif.111
+face amulet_calling_death.111
 type 39
 value 0
 damned 1
@@ -2905,7 +2905,7 @@ Allowed all
 chance 10
 difficulty 10
 Object Aethereality
-face amulet_lif.111
+face amulet_aethereality.111
 material 256
 type 39
 value 3000
@@ -2918,7 +2918,7 @@ chance 10
 difficulty 10
 Object Power
 type 39
-face amulet_lif.111
+face amulet_power.111
 material 256
 sp 7
 value 4000
@@ -2930,7 +2930,7 @@ chance 75
 difficulty 7
 Object Deflection
 reflect_spell 1
-face amulet_lif.111
+face amulet_deflection.111
 reflect_missile 1
 material 256
 ac 2
@@ -2944,7 +2944,7 @@ Allowed all
 chance 50
 difficulty 7
 Object the Shielded Mind
-face amulet_lif.111
+face amulet_shielded_mind.111
 type 39
 material 256
 resist_confusion 100
@@ -2958,7 +2958,7 @@ Allowed all
 chance 40
 difficulty 5
 Object Free Action
-face amulet_lif.111
+face amulet_free_action.111
 type 39
 material 256
 value 300
