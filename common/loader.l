@@ -818,7 +818,13 @@ A       .+
                             FREE_AND_COPY(op->title, y);
                     }
 
-^face{S}            op->face = &new_faces[find_face(yval(), 0)];
+^face{S}            {
+                        const char *name = yval();
+                        int face = find_face(yval(), 0);
+                        op->face = &new_faces[face];
+                        if (face == 0)
+                            LOG(llevError, "couldn't find face %s for %s\n", name, op->arch ? op->arch->name : op->name);
+                    }
 ^str{S}             op->stats.Str = IVAL;
 ^dex{S}             op->stats.Dex = IVAL;
 ^con{S}             op->stats.Con = IVAL;
