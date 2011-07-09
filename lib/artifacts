@@ -2973,7 +2973,7 @@ Allowed all
 chance 5
 difficulty 9
 Object the Magi
-face amulet_lif.111
+face amulet_magi.111
 type 39
 material 256
 sp 5
@@ -2989,7 +2989,7 @@ Allowed all
 chance 30
 difficulty 9
 Object Holiness
-face amulet_lif.111
+face amulet_holiness.111
 type 39
 material 256
 Wis 3
@@ -3002,7 +3002,7 @@ Allowed all
 chance 60
 difficulty 9
 Object Unholiness
-face amulet_lif.111
+face amulet_unholiness.111
 type 39
 value 10
 path_repelled 257
@@ -3015,7 +3015,7 @@ Allowed all
 chance 1
 difficulty 9
 Object Destruction
-face amulet_lif.111
+face amulet_destruction.111
 type 39
 value 800
 material 256
