@@ -1933,7 +1933,7 @@ Allowed all
 difficulty 7
 chance 1
 Object the Saint
-face ring_saint.117
+face ring_saint.111
 animation ring_saint
 client_anim_random 1
 anim_speed 5
@@ -1978,7 +1978,7 @@ end
 Allowed all
 chance 40
 Object Acid
-face ring_acid.117
+face ring_acid.111
 animation ring_acid
 anim_speed 5
 client_anim_random 1
@@ -2067,7 +2067,7 @@ end
 Allowed all
 chance 33
 Object Doom
-face ring_doom.117
+face ring_doom.111
 animation ring_doom
 anim_speed 5
 client_anim_random 1
@@ -2087,7 +2087,7 @@ Allowed all
 chance 200
 Object Woe
 type 70
-face ring_woe.117
+face ring_woe.111
 animation ring_woe
 anim_speed 5
 client_anim_random 1
