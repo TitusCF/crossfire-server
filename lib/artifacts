@@ -1933,7 +1933,10 @@ Allowed all
 difficulty 7
 chance 1
 Object the Saint
-face ring.117
+face ring_saint.117
+animation ring_saint
+client_anim_random 1
+anim_speed 5
 type 70
 material 256
 value 400
