@@ -1975,7 +1975,10 @@ end
 Allowed all
 chance 40
 Object Acid
-face ring.117
+face ring_acid.117
+animation ring_acid
+anim_speed 5
+client_anim_random 1
 type 70
 value 25
 resist_acid 30
