@@ -1577,6 +1577,8 @@ chance 33
 Object Ice
 face ring_ice.111
 animation ring_ice
+client_anim_random 1
+anim_speed 5
 type 70
 value 30
 resist_cold 30
@@ -1592,7 +1594,10 @@ end
 Allowed all
 chance 28
 Object Fire
-face ring.117
+face ring_fire.111
+animation ring_fire
+client_anim_random 1
+anim_speed 5
 type 70
 value 35
 resist_fire 30
