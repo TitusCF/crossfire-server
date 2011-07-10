@@ -310,12 +310,16 @@ void esrv_draw_look(object *pl) {
 }
 
 /**
- * Sends whole inventory.
+ * Sends inventory of a container. If pl == op, then the whole contents are sent,
+ * else the contents is sent with "next group" and "prev group" arrows if required.
+ * @param pl who to send to.
+ * @param op what item's contents to send.
  */
 void esrv_send_inventory(object *pl, object *op) {
     int got_one = 0, start_look = 0, end_look = 0, objects_sent = 0;
     SockList sl;
     char buf[MAX_BUF];
+    int prev_len = pl->contr->socket.num_look_objects - 2 - (((pl->contr->socket.container_position > pl->contr->socket.num_look_objects - 1)) ? 1 : 0);
 
     SockList_Init(&sl);
     SockList_AddPrintf(&sl, "delinv %u", op->count);
@@ -326,8 +330,7 @@ void esrv_send_inventory(object *pl, object *op) {
     SockList_AddInt(&sl, op->count);
     objects_sent++;
 
-    if (pl->contr->socket.container_position) {
-        int prev_len = pl->contr->socket.num_look_objects - 2 - (((pl->contr->socket.container_position > pl->contr->socket.num_look_objects - 1)) ? 1 : 0);
+    if (pl != op && pl->contr->socket.container_position) {
         SockList_AddInt(&sl, 0x80000000|MAX(0, pl->contr->socket.container_position-prev_len));
         SockList_AddInt(&sl, 0);
         SockList_AddInt(&sl, -1);
@@ -347,11 +350,11 @@ void esrv_send_inventory(object *pl, object *op) {
 
         head = HEAD(tmp);
         if (LOOK_OBJ(head)) {
-            if (start_look++ < pl->contr->socket.container_position)
+            if (start_look++ < pl->contr->socket.container_position && pl != op)
                 continue;
             end_look++;
             objects_sent++;
-            if (objects_sent >= pl->contr->socket.num_look_objects) {
+            if (pl != op && objects_sent >= pl->contr->socket.num_look_objects) {
                 /* What we basically do is make a 'fake' object -
                  * when the user applies it, we notice the special
                  * tag the object has, and act accordingly.
@@ -386,8 +389,19 @@ void esrv_send_inventory(object *pl, object *op) {
             }
         } /* If LOOK_OBJ() */
     } FOR_INV_FINISH();
-    if (got_one)
-        Send_With_Handling(&pl->contr->socket, &sl);
+    if (got_one) {
+        /* special case: only one item, the "prev group" arrow */
+        if (pl != op && pl->contr->socket.container_position) {
+            if (got_one > 1)
+                Send_With_Handling(&pl->contr->socket, &sl);
+            else {
+                /* view shifted, get to previous page and resend */
+                pl->contr->socket.container_position = MAX(0, pl->contr->socket.container_position - prev_len);
+                esrv_send_inventory(pl, op);
+            }
+        } else
+            Send_With_Handling(&pl->contr->socket, &sl);
+    }
     SockList_Term(&sl);
 }
 
@@ -540,7 +554,7 @@ void esrv_send_item(object *pl, object*op) {
     /* if the object is in an opened container, then it may shift the contents,
      * so resend everything */
     if (pl->contr != NULL && pl->container != NULL && op->env == pl->container)
-        esrv_send_inventory(pl, pl->container);
+        pl->contr->socket.update_inventory = 1;
 }
 
 /**
@@ -559,7 +573,7 @@ void esrv_del_item(player *pl, object *ob) {
     /* if the object is in an opened container, then it may shift the contents,
      * so resend everything */
     if (pl->ob->container != NULL && ob->env == pl->ob->container)
-        esrv_send_inventory(pl->ob, pl->ob->container);     
+        pl->socket.update_inventory = 1;
 }
 
 /**************************************************************************
@@ -653,6 +667,7 @@ void apply_cmd(char *buf, int len, player *pl) {
         if (pl->ob->container != NULL) {
             pl->socket.container_position = tag&0x7fffffff;
             esrv_send_inventory(pl->ob, pl->ob->container);
+            pl->socket.update_inventory = 0;
         } else {
             pl->socket.look_position = tag&0x7fffffff;
             pl->socket.update_look = 1;

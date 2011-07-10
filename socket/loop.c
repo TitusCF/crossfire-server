@@ -611,6 +611,11 @@ void do_server(void) {
                 draw_client_map(pl->ob);
                 if (pl->socket.update_look)
                     esrv_draw_look(pl->ob);
+                if (pl->socket.update_inventory) {
+                    if (pl->ob->container != NULL)
+                        esrv_send_inventory(pl->ob, pl->ob->container);
+                    pl->socket.update_inventory = 0;
+                }
                 if (pl->socket.tick)
                     send_tick(pl);
             }

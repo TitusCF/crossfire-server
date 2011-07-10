@@ -120,6 +120,7 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->look_position = 0;
     ns->container_position = 0;
     ns->update_look = 0;
+    ns->update_inventory = 0;
     ns->tick = 0;
     ns->is_bot = 0;
     ns->num_look_objects = DEFAULT_NUM_LOOK_OBJECTS;
