@@ -137,6 +137,7 @@ typedef struct socket_struct {
     uint32      sound;                  /**< Client sound mode. */
     uint32      cs_version, sc_version; /**< Versions of the client. */
     uint16      look_position;          /**< Start of drawing of look window. */
+    uint16      container_position;     /**< Start of container contents to send to client. */
     uint8       mapx, mapy;             /**< How large a map the client wants. */
     uint8       faceset;                /**< Set the client is using, default 0. */
 

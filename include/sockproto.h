@@ -28,7 +28,7 @@ void esrv_draw_look(object *pl);
 void esrv_send_inventory(object *pl, object *op);
 void esrv_update_item(int flags, object *pl, object *op);
 void esrv_send_item(object *pl, object *op);
-void esrv_del_item(player *pl, int tag);
+void esrv_del_item(player *pl, object *ob);
 void examine_cmd(char *buf, int len, player *pl);
 void apply_cmd(char *buf, int len, player *pl);
 void lock_item_cmd(uint8 *data, int len, player *pl);

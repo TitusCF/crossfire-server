@@ -1278,7 +1278,7 @@ static void transmute_item_to_flower(object *op) {
     object_remove(item);
     flower->weight = item->nrof ? item->nrof*item->weight : item->weight;
     item->weight = 0;
-    esrv_del_item(op->contr, item->count);
+    esrv_del_item(op->contr, item);
     object_insert_in_ob(item, force);
 
     query_short_name(item, name, HUGE_BUF);

@@ -1692,6 +1692,8 @@ void object_remove(object *op) {
      */
     /* TODO try to call a generic inventory weight adjusting function like object_sub_weight */
     if (op->env != NULL) {
+        player *pl = NULL;
+
         if (op->nrof)
             object_sub_weight(op->env, op->weight*op->nrof);
         else
@@ -1699,10 +1701,8 @@ void object_remove(object *op) {
 
         /* Update in two cases: item is in a player, or in a container the player is looking into. */
         if (op->env->contr != NULL && op->head == NULL) {
-            if (LOOK_OBJ(op))
-                esrv_del_item(op->env->contr, op->count);
+            pl = op->env->contr;
         } else if (op->env->type == CONTAINER && QUERY_FLAG(op->env, FLAG_APPLIED)) {
-            player *pl = NULL;
 
             if (op->env->env && op->env->env->contr)
                 /* Container is in player's inventory. */
@@ -1716,8 +1716,6 @@ void object_remove(object *op) {
                 if (above)
                     pl = above->contr;
             }
-            if (pl && LOOK_OBJ(op))
-                esrv_del_item(pl, op->count);
         }
 
         /* NO_FIX_PLAYER is set when a great many changes are being
@@ -1749,6 +1747,10 @@ void object_remove(object *op) {
         op->map = op->env->map;
         op->above = NULL;
         op->below = NULL;
+        /* send the delitem before resetting env, so container's contents be may
+         * refreshed */
+        if (LOOK_OBJ(op) && pl != NULL)
+            esrv_del_item(pl, op);
         op->env = NULL;
         return;
     }

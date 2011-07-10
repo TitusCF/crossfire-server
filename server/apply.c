@@ -266,6 +266,8 @@ int apply_container(object *op, object *sack) {
                              name_tmp);
 
         op->container = NULL;
+        if (op->contr != NULL)
+            op->contr->socket.container_position = 0;
 
         /* The container may have been destroyed by the event handler. */
         if (!object_was_destroyed(tmp, tmp_tag)) {
@@ -345,6 +347,9 @@ int apply_container(object *op, object *sack) {
                              name_sack);
         SET_FLAG(sack, FLAG_APPLIED);
         op->container = sack;
+        if (op->contr != NULL)
+            op->contr->socket.container_position = 0;
+
         if (set_object_face_other(sack))
             esrv_update_item(UPD_FLAGS|UPD_FACE, op, sack);
         else
@@ -358,6 +363,9 @@ int apply_container(object *op, object *sack) {
                                  name_sack);
             SET_FLAG(sack, FLAG_APPLIED);
             op->container = sack;
+            if (op->contr != NULL)
+                op->contr->socket.container_position = 0;
+
             if (set_object_face_other(sack))
                 esrv_update_item(UPD_FLAGS|UPD_FACE, op, sack);
             else
