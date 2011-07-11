@@ -277,7 +277,8 @@ void add_abilities(object *op, const object *change) {
         op->anim_speed = change->anim_speed;
         op->last_anim = 1;
     }
-    if (change->animation_id != 0) {
+    if (change->animation_id != 0 && op->arch != NULL) {
+        /* op->arch can be NULL when called from artifact_msg(). */
         op->animation_id = change->animation_id;
         SET_FLAG(op, FLAG_ANIMATE);
         animate_object(op, op->facing);
