@@ -203,7 +203,7 @@ QTreeWidgetItem* CREUtils::questNode(const Quest* quest, QTreeWidgetItem* parent
 
 QTreeWidgetItem* CREUtils::messagesNode()
 {
-  return new QTreeWidgetItem(QStringList(QTreeWidget::tr("Messages")));
+  return new QTreeWidgetItem(QStringList(QTreeWidget::tr("NPC dialogs")));
 }
 
 QTreeWidgetItem* CREUtils::messageNode(const MessageFile* message, QTreeWidgetItem* parent)

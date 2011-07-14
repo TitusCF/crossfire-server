@@ -180,7 +180,7 @@ void CREResourcesWindow::fillData()
     }
     if (myDisplay & DisplayMessage)
     {
-        title = tr("Messages");
+        title = tr("NPC dialogs");
         fillMessages();
     }
 

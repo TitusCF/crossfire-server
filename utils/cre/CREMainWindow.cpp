@@ -95,8 +95,8 @@ void CREMainWindow::createActions()
     myOpenQuests->setStatusTip(tr("List all defined quests."));
     connect(myOpenQuests, SIGNAL(triggered()), this, SLOT(onOpenQuests()));
 
-    myOpenMessages = new QAction(tr("Messages"), this);
-    myOpenMessages->setStatusTip(tr("List all message files."));
+    myOpenMessages = new QAction(tr("NPC dialogs"), this);
+    myOpenMessages->setStatusTip(tr("List all NPC dialogs in files."));
     connect(myOpenMessages, SIGNAL(triggered()), this, SLOT(onOpenMessages()));
 
     myOpenExperience = new QAction(tr("Experience"), this);
@@ -111,8 +111,8 @@ void CREMainWindow::createActions()
     mySaveQuests->setStatusTip(tr("Save all modified quests to disk."));
     connect(mySaveQuests, SIGNAL(triggered()), this, SLOT(onSaveQuests()));
 
-    mySaveMessages = new QAction(tr("Messages"), this);
-    mySaveMessages->setStatusTip(tr("Save all modified messages."));
+    mySaveMessages = new QAction(tr("Dialogs"), this);
+    mySaveMessages->setStatusTip(tr("Save all modified NPC dialogs."));
     connect(mySaveMessages, SIGNAL(triggered()), this, SLOT(onSaveMessages()));
 
     myReportSpellDamage = new QAction(tr("Spell damage"), this);
