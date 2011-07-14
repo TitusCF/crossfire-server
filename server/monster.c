@@ -652,6 +652,8 @@ int monster_move(object *op) {
         }
     }
 
+    monster_do_living(op);
+
     if (QUERY_FLAG(op, FLAG_SLEEP)
     || QUERY_FLAG(op, FLAG_BLIND)
     || (op->map->darkness > 0 && !QUERY_FLAG(op, FLAG_SEE_IN_DARK) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))) {
@@ -668,8 +670,6 @@ int monster_move(object *op) {
 
     if (op->will_apply)
         monster_apply_below(op); /* Check for items to apply below */
-
-    monster_do_living(op);
 
     /* If we don't have an enemy, do special movement or the like */
     if (!enemy) {
