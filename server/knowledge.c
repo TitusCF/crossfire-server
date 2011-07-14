@@ -72,16 +72,46 @@ During loading, obsolete items (eg formula changed) are discarded.
 struct knowledge_player;
 struct knowledge_type;
 
-/** Function to fill the StringBuffer with the short description of an item. */
-typedef void (*knowledge_summary)(const char *, StringBuffer *);
-/** Function to fill the StringBuffer with a detailed description of an item. */
-typedef void (*knowledge_detail)(const char *, StringBuffer *);
-/** Function to check if the specified item is valid. */
-typedef int (*knowledge_is_valid_item)(const char *);
-/** Function to add the specified item, should return how many actually written. */
-typedef int (*knowledge_add_item)(struct knowledge_player *, const char *, const struct knowledge_type *);
-/** Function checking if the specified item can be used for alchemy. */
-typedef StringBuffer* (*knowledge_can_use_alchemy)(sstring, const char *, StringBuffer *, int index);
+/**
+ * Function to fill the StringBuffer with the short description of an item.
+ * @param code knowledge internal code.
+ * @param buf where to write the summary, must not be NULL.
+ */
+typedef void (*knowledge_summary)(const char *code, StringBuffer *buf);
+
+/**
+ * Function to fill the StringBuffer with a detailed description of an item.
+ * @param code knowledge internal code.
+ * @param buf where to write the description, must not be NULL.
+ */
+typedef void (*knowledge_detail)(const char *code, StringBuffer *buf);
+
+/**
+ * Function to check if the specified item is valid.
+ * @param code knowledge internal code.
+ * @return 0 if invalid, non 0 if valid.
+ */
+typedef int (*knowledge_is_valid_item)(const char *code);
+
+/**
+ * Add knowledge information to the player's knowledge.
+ * @param current where to add the information to.
+ * @param item what to add, format specific to the type.
+ * @param type pointer of the handler type.
+ * @return count of actually added items.
+ */
+typedef int (*knowledge_add_item)(struct knowledge_player *current, const char *item, const struct knowledge_type *type);
+
+/**
+ * Check if an item can be used for a recipe, and fill the return buffer if it's the case.
+ * @param code knowledge internal code.
+ * @param item item's name, including title if there is one.
+ * @param buf where to put the results. If NULL a new one can be allocated.
+ * @param index the knowledge index for this item.
+ * @return buf, if it was NULL and the recipe uses the item, a new one is allocated.
+ */
+typedef StringBuffer* (*knowledge_can_use_alchemy)(sstring code, const char *item, StringBuffer *buf, int index);
+
 /** One item type that may be known to the player. */
 typedef struct knowledge_type {
     const char *type;                   /**< Type internal code, musn't have a double dot, must be unique ingame. */
