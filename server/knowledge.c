@@ -81,7 +81,7 @@ typedef int (*knowledge_is_valid_item)(const char *);
 /** Function to add the specified item, should return how many actually written. */
 typedef int (*knowledge_add_item)(struct knowledge_player *, const char *, const struct knowledge_type *);
 /** Function checking if the specified item can be used for alchemy. */
-typedef StringBuffer* (*knowledge_can_use_alchemy)(sstring, const char *, StringBuffer *);
+typedef StringBuffer* (*knowledge_can_use_alchemy)(sstring, const char *, StringBuffer *, int index);
 /** One item type that may be known to the player. */
 typedef struct knowledge_type {
     const char *type;                   /**< Type internal code, musn't have a double dot, must be unique ingame. */
@@ -239,9 +239,10 @@ static int knowledge_achemy_validate(const char *item) {
  * @param code recipe internal code.
  * @param item item's name, including title if there is one.
  * @param buf where to put the results. If NULL a new one can be allocated.
+ * @param index the knowledge index for this item.
  * @return buf, if it was null and the recipe uses the item, a new one is allocated.
  */
-static StringBuffer* knowledge_alchemy_can_use_item(sstring code, const char *item, StringBuffer *buf) {
+static StringBuffer* knowledge_alchemy_can_use_item(sstring code, const char *item, StringBuffer *buf, int index) {
     const recipe *rec = knowledge_alchemy_get_recipe(code);
     const linked_char *next;
     const archetype *arch;
@@ -277,6 +278,7 @@ static StringBuffer* knowledge_alchemy_can_use_item(sstring code, const char *it
                 else
                     stringbuffer_append_printf(buf, "%s", arch->clone.name);
             }
+            stringbuffer_append_printf(buf, " (%d)", index);
 
             break;
         }
@@ -976,6 +978,7 @@ void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
     char item_name[MAX_BUF], *result;
     const char *name;
     StringBuffer *buf = NULL;
+    int index = 1;
 
     if (op->type != PLAYER || op->contr == NULL)
         return;
@@ -990,8 +993,9 @@ void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
 
     for (ki = cur->items; ki; ki = ki->next) {
         if (ki->handler->use_alchemy != NULL) {
-            buf = ki->handler->use_alchemy(ki->item, name, buf);
+            buf = ki->handler->use_alchemy(ki->item, name, buf, index);
         }
+        index++;
     }
 
     if (buf == NULL)
