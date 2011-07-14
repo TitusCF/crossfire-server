@@ -55,7 +55,7 @@
 
 static void change_treasure(treasure *t, object *op); /* overrule default values */
 static int special_potion(object *op);
-static void fix_flesh_item(object *item, object *donor);
+static void fix_flesh_item(object *item, const object *donor);
 
 extern const char *const spell_mapping[];
 
@@ -1423,7 +1423,7 @@ void dump_monster_treasure(const char *name) {
  * FOOD, except they inherit properties (name, food value, etc).
  * based on the original owner (or 'donor' if you like). -b.t.
  */
-static void fix_flesh_item(object *item, object *donor) {
+static void fix_flesh_item(object *item, const object *donor) {
     char tmpbuf[MAX_BUF];
     int i;
 
