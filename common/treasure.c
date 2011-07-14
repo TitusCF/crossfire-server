@@ -968,7 +968,7 @@ static void set_ring_bonus(object *op, int bonus) {
             if (val > 35)
                 val = 35; /* Upper limit */
             b = 0;
-            while (op->resist[resist_table[resist]] != 0 && b < 4) {
+            while (op->resist[resist_table[resist]] != 0 && b++ < 4) {
                 resist = RANDOM()%num_resist_table;
             }
             if (b == 4)
