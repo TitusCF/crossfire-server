@@ -1129,7 +1129,7 @@ static void prayer_failure(object *op, int failure, int power) {
                              "%s requires you to pray NOW. You comply, ignoring all else.",
                              godname);
 
-        paralyze_living(op, op, 99);
+        paralyze_living(op, 99);
     } else if (failure <= -150) { /* blast the immediate area */
         tmp = create_archetype(GOD_POWER);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
@@ -1175,7 +1175,7 @@ void spell_failure(object *op, int failure, int power, object *skill) {
     } else if (failure <= -60 && failure > -80) { /* paralysis */
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "Your magic stuns you!");
-        paralyze_living(op, op, 99);
+        paralyze_living(op, 99);
     } else if (failure <= -80) { /* blast the immediate area */
         object *tmp;
 

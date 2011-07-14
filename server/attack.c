@@ -1216,7 +1216,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                 else if (attacknum == ATNR_SLOW)
                     slow_living(op, hitter, dam);
                 else if (attacknum == ATNR_PARALYZE)
-                    paralyze_living(op, hitter, dam);
+                    paralyze_living(op, dam);
                 else if (attacknum == ATNR_FEAR)
                     scare_creature(op, hitter);
                 else if (attacknum == ATNR_CANCELLATION)
@@ -2243,26 +2243,11 @@ void blind_living(object *op, object *hitter, int dam) {
  *
  * @param op
  * victim.
- * @param hitter
- * who is attacking.
  * @param dam
  * damage to deal.
  */
-void paralyze_living(object *op, object *hitter, int dam) {
+void paralyze_living(object *op, int dam) {
     float effect, max;
-    /* object *tmp; */
-
-    /* This is strange stuff... someone knows for what this is
-     * written? Well, i think this can and should be removed
-    */
-
-/*
-    tmp = map_find_by_type(op->map, op->x, op->y, PARAIMAGE);
-    if (tmp == NULL) {
-        tmp = clone_arch(PARAIMAGE);
-        object_insert_in_map_at(tmp, op->map, tmp, INS_NO_MERGE|INS_NO_WALK_ON, op->x, op->y);
-    }
-*/
 
     /* Do this as a float - otherwise, rounding might very well reduce this to 0 */
     effect = (float)dam*3.0*(100.0-op->resist[ATNR_PARALYZE])/100;
@@ -2271,15 +2256,11 @@ void paralyze_living(object *op, object *hitter, int dam) {
         return;
 
     op->speed_left -= FABS(op->speed)*effect;
-/*  tmp->stats.food += (signed short)
-        effect/op->speed;*/
 
     /* max number of ticks to be affected for. */
     max = (100-op->resist[ATNR_PARALYZE])/2;
     if (op->speed_left < -(FABS(op->speed)*max))
         op->speed_left = (float)-(FABS(op->speed)*max);
-
-/*  tmp->stats.food = (signed short)(max/FABS(op->speed)); */
 }
 
 /**

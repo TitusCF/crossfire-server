@@ -50,7 +50,7 @@ int friendly_fire(object *op, object *hitter);
 int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit);
 void confuse_living(object *op, object *hitter, int dam);
 void blind_living(object *op, object *hitter, int dam);
-void paralyze_living(object *op, object *hitter, int dam);
+void paralyze_living(object *op, int dam);
 /* ban.c */
 int checkbanned(const char *login, const char *host);
 /* build_map.c */

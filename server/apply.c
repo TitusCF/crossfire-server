@@ -1554,7 +1554,7 @@ void scroll_failure(object *op, int failure, int power) {
         if (failure <= -60 && failure > -70) {/* paralysis */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "The magic recoils and paralyzes you!");
-            paralyze_living(op, op, power);
+            paralyze_living(op, power);
             return;
         }
 
