@@ -1211,6 +1211,8 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                 /* It's a special artifact!*/
                 break;
 
+            if (GET_ANIM_ID(op))
+                SET_ANIMATION(op, RANDOM()%((int)NUM_ANIMATIONS(op)));
             if (!(flags&GT_ONLY_GOOD) && !(RANDOM()%3))
                 SET_FLAG(op, FLAG_CURSED);
             set_ring_bonus(op, QUERY_FLAG(op, FLAG_CURSED) ? -DICE2 : DICE2);
@@ -1228,8 +1230,6 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                     set_ring_bonus(op, d);
                 }
             }
-            if (GET_ANIM_ID(op))
-                SET_ANIMATION(op, RANDOM()%((int)NUM_ANIMATIONS(op)));
             break;
 
         case BOOK:
