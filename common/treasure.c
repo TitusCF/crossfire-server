@@ -1419,9 +1419,11 @@ void dump_monster_treasure(const char *name) {
 }
 
 /**
- * fix_flesh_item() - objects of type FLESH are similar to type
+ * Objects of type FLESH are similar to type
  * FOOD, except they inherit properties (name, food value, etc).
  * based on the original owner (or 'donor' if you like). -b.t.
+ * @param item FLESH item to fix based on the donor.
+ * @param donor what monster will give item.
  */
 static void fix_flesh_item(object *item, const object *donor) {
     char tmpbuf[MAX_BUF];
