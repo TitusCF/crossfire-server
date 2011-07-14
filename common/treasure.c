@@ -53,6 +53,23 @@
 #include <sproto.h>
 
 
+/**
+ * Resistances which can show up on rings and amulets.
+ * If you want to weight things so certain resistances show up more often than
+ * others, just add more entries in the table for the protections you want to
+ * show up.
+ */
+static int resist_table[] = {
+    ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
+    ATNR_ELECTRICITY, ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN,
+    ATNR_GHOSTHIT, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_TURN_UNDEAD,
+    ATNR_FEAR, ATNR_DEPLETE, ATNR_DEATH, ATNR_HOLYWORD, ATNR_BLIND,
+    ATNR_LIFE_STEALING, ATNR_DISEASE
+};
+
+/** Number of items in ::resist_table. */
+#define num_resist_table 19
+
 static void change_treasure(treasure *t, object *op); /* overrule default values */
 static int special_potion(object *op);
 static void fix_flesh_item(object *item, const object *donor);

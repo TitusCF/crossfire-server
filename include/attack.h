@@ -160,7 +160,6 @@ EXTERN attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
 
 #ifndef INIT_C
 EXTERN Chaos_Attacks ATTACKS[22];
-EXTERN int resist_table[];
 EXTERN const char *const change_resist_msg[NROFATTACKS];
 EXTERN const char *const resist_plus[NROFATTACKS];
 EXTERN const char *const attacktype_desc[NROFATTACKS];
@@ -213,20 +212,6 @@ EXTERN const char *const change_resist_msg[NROFATTACKS] = {
 };
 
 
-/**
- * If you want to weight things so certain resistances show up more often than
- * others, just add more entries in the table for the protections you want to
- * show up.
- */
-EXTERN int resist_table[] = {
-    ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
-    ATNR_ELECTRICITY, ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN,
-    ATNR_GHOSTHIT, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_TURN_UNDEAD,
-    ATNR_FEAR, ATNR_DEPLETE, ATNR_DEATH, ATNR_HOLYWORD, ATNR_BLIND,
-    ATNR_LIFE_STEALING, ATNR_DISEASE
-};
-
-
 /** Some local definitions for shuffle_attack(). */
 EXTERN Chaos_Attacks ATTACKS[22] = {
     { AT_PHYSICAL, 0 },
@@ -254,7 +239,5 @@ EXTERN Chaos_Attacks ATTACKS[22] = {
 };
 
 #endif /* ifdef init_c */
-
-#define num_resist_table 19
 
 #endif /* ATTACK_H */
