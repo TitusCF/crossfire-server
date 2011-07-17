@@ -313,13 +313,14 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     if (downx == -1)
         find_in_layout(0, 0, &downx, &downy, maze, RP);
     if (the_exit_down) {
-        char buf[2048];
+        char *buf;
 
         i = object_find_first_free_spot(the_exit_down, map, downx, downy);
         RP->origin_x = downx+freearr_x[i];
         RP->origin_y = downy+freearr_y[i];
-        write_map_parameters_to_string(RP, buf, sizeof(buf));
+        buf = stringbuffer_finish(write_map_parameters_to_string(RP));
         object_set_msg(the_exit_down, buf);
+        free(buf);
         /* the identifier for making a random map. */
         if (RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0] != 0) {
             /* Next map is the final map, special case. */

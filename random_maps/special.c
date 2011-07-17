@@ -255,7 +255,7 @@ void place_fountain_with_specials(mapstruct *map) {
  */
 void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
     int ix, iy, i = -1;
-    char buf[HUGE_BUF];
+    char *buf;
     const char *style, *decor, *mon;
     mapstruct *exit_style = find_style("/styles/misc", "obscure_exits", -1);
     int g_xsize, g_ysize;
@@ -349,9 +349,11 @@ void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
     hole.treasureoptions = 0;
     hole.difficulty_increase = RP->difficulty_increase;
 
-    write_map_parameters_to_string(&hole, buf, sizeof(buf));
-    the_exit->slaying = add_string("/!");
+    buf = stringbuffer_finish(write_map_parameters_to_string(&hole));
     object_set_msg(the_exit, buf);
+    free(buf);
+
+    the_exit->slaying = add_string("/!");
 
     object_insert_in_map_at(the_exit, map, NULL, 0, ix+freearr_x[i], iy+freearr_y[i]);
 }
