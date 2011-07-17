@@ -350,10 +350,6 @@ void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
     hole.difficulty_increase = RP->difficulty_increase;
 
     write_map_parameters_to_string(&hole, buf, sizeof(buf));
-/*    write_parameters_to_string(buf, g_xsize, g_ysize, RP->wallstyle, RP->floorstyle, mon,
-        "none", style, decor, "none", RP->exitstyle, NULL, NULL, NULL,
-        OPT_WALLS_ONLY, 0, 0, 1, RP->dungeon_level, RP->dungeon_level,
-        RP->difficulty, RP->difficulty, -1, 1, 0, 0, 0, 0, RP->difficulty_increase);*/
     the_exit->slaying = add_string("/!");
     object_set_msg(the_exit, buf);
 
