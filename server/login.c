@@ -119,7 +119,6 @@ void delete_character(const char *name) {
  */
 int verify_player(const char *name, char *password) {
     char buf[MAX_BUF];
-    int comp;
     FILE *fp;
 
     if (strpbrk(name, "/.\\") != NULL) {
@@ -133,7 +132,7 @@ int verify_player(const char *name, char *password) {
         return 1;
     }
 
-    fp = open_and_uncompress(buf, 0, &comp, "r");
+    fp = fopen(buf, "r");
     if (fp == NULL)
         return 1;
 
@@ -146,16 +145,16 @@ int verify_player(const char *name, char *password) {
         if (!strncmp(buf, "password ", 9)) {
             buf[strlen(buf)-1] = 0; /* remove newline */
             if (check_password(password, buf+9)) {
-                close_and_delete(fp, comp);
+                fclose(fp);
                 return 0;
             }
 
-            close_and_delete(fp, comp);
+            fclose(fp);
             return 2;
         }
     }
     LOG(llevDebug, "Could not find a password line in player %s\n", name);
-    close_and_delete(fp, comp);
+    fclose(fp);
     return 1;
 }
 
@@ -500,7 +499,7 @@ void check_login(object *op, int check_pass) {
     FILE *fp;
     char filename[MAX_BUF];
     char buf[MAX_BUF], bufall[MAX_BUF];
-    int i, value, comp;
+    int i, value;
     uint32 uvalue;
     player *pl = op->contr, *pltmp;
     int correct = 0;
@@ -543,7 +542,7 @@ void check_login(object *op, int check_pass) {
      * the password.  Return control to the higher level dispatch,
      * since the rest of this just deals with loading of the file.
      */
-    fp = open_and_uncompress(filename, 1, &comp, "r");
+    fp = fopen(filename, "r");
     if (fp == NULL) {
         confirm_password(op);
         return;
@@ -736,7 +735,7 @@ void check_login(object *op, int check_pass) {
     pl->ob = op;
     /* this loads the standard objects values. */
     load_object(fp, op, LO_NEWFILE, 0);
-    close_and_delete(fp, comp);
+    fclose(fp);
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 

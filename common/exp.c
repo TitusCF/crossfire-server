@@ -182,13 +182,13 @@ int has_ability(const object *ob) {
  */
 void init_experience(void) {
     char buf[MAX_BUF], *cp;
-    int lastlevel = 0, comp;
+    int lastlevel = 0;
     sint64 lastexp = -1, tmpexp;
     FILE *fp;
 
     snprintf(buf, sizeof(buf), "%s/exp_table", settings.confdir);
 
-    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Fatal error: could not open experience table (%s)\n", buf);
         exit(1);
     }
@@ -248,7 +248,7 @@ void init_experience(void) {
                 cp++;
         }
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
     if (settings.max_level == 0 || lastlevel != settings.max_level) {
         LOG(llevError, "Fatal: exp_table does not have any level definition or not %d as defined, found %d.\n", settings.max_level, lastlevel);
         exit(1);

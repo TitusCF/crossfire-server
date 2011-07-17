@@ -147,11 +147,10 @@ void display_motd(const object *op) {
     char buf[MAX_BUF];
     char motd[HUGE_BUF];
     FILE *fp;
-    int comp;
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.motd);
-    fp = open_and_uncompress(buf, 0, &comp, "r");
+    fp = fopen(buf, "r");
     if (fp == NULL) {
         return;
     }
@@ -165,7 +164,7 @@ void display_motd(const object *op) {
     }
     draw_ext_info(NDI_UNIQUE|NDI_GREEN, 0, op, MSG_TYPE_MOTD, MSG_SUBTYPE_NONE,
                   motd);
-    close_and_delete(fp, comp);
+    fclose(fp);
 }
 
 /**
@@ -178,11 +177,10 @@ void send_rules(const object *op) {
     char buf[MAX_BUF];
     char rules[HUGE_BUF];
     FILE *fp;
-    int comp;
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.rules);
-    fp = open_and_uncompress(buf, 0, &comp, "r");
+    fp = fopen(buf, "r");
     if (fp == NULL) {
         return;
     }
@@ -200,7 +198,7 @@ void send_rules(const object *op) {
     }
     draw_ext_info(NDI_UNIQUE|NDI_GREEN, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_RULES,
                   rules);
-    close_and_delete(fp, comp);
+    fclose(fp);
 }
 
 /**
@@ -214,11 +212,10 @@ void send_news(const object *op) {
     char news[HUGE_BUF];
     char subject[MAX_BUF];
     FILE *fp;
-    int comp;
     int size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.news);
-    fp = open_and_uncompress(buf, 0, &comp, "r");
+    fp = fopen(buf, "r");
     if (fp == NULL)
         return;
     news[0] = '\0';
@@ -251,7 +248,7 @@ void send_news(const object *op) {
                          MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_NEWS,
                          "%s:\n%s",
                          subject, news);
-    close_and_delete(fp, comp);
+    fclose(fp);
 }
 
 /**
