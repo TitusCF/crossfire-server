@@ -201,9 +201,6 @@ EXTERN godlink *first_god;                  /**< God list. */
 EXTERN racelink *first_race;                /**< Race list. */
 /*@}*/
 
-#define NROF_COMPRESS_METHODS 4
-extern const char *uncomp[NROF_COMPRESS_METHODS][3];
-
 /*
  * Variables set by different flags (see init.c):
  */
