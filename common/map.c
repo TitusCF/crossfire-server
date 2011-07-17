@@ -1215,7 +1215,6 @@ static int load_map_header(FILE *fp, mapstruct *m) {
 mapstruct *load_original_map(const char *filename, int flags) {
     FILE *fp;
     mapstruct *m;
-    int comp;
     char pathname[MAX_BUF];
 
     LOG(llevDebug, "load_original_map: %s (%x)\n", filename, flags);
@@ -1226,7 +1225,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     else
         create_pathname(filename, pathname, MAX_BUF);
 
-    if ((fp = open_and_uncompress(pathname, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(pathname, "r")) == NULL) {
         char err[MAX_BUF];
 
         LOG((flags&MAP_PLAYER_UNIQUE) ? llevDebug : llevError, "Can't open %s: %s\n", pathname, strerror_local(errno, err, sizeof(err)));
@@ -1243,11 +1242,11 @@ mapstruct *load_original_map(const char *filename, int flags) {
     }
 
     allocate_map(m);
-    m->compressed = comp;
+    m->compressed = 0;
 
     m->in_memory = MAP_LOADING;
     load_objects(m, fp, flags&(MAP_BLOCK|MAP_STYLE));
-    close_and_delete(fp, comp);
+    fclose(fp);
     m->in_memory = MAP_IN_MEMORY;
     if (!MAP_DIFFICULTY(m))
         MAP_DIFFICULTY(m) = calculate_difficulty(m);
@@ -1276,7 +1275,6 @@ mapstruct *load_original_map(const char *filename, int flags) {
  */
 static mapstruct *load_temporary_map(mapstruct *m) {
     FILE *fp;
-    int comp;
     char buf[MAX_BUF];
 
     if (!m->tmpname) {
@@ -1290,7 +1288,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
         return m;
     }
 
-    if ((fp = open_and_uncompress(m->tmpname, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(m->tmpname, "r")) == NULL) {
         LOG(llevError, "Cannot open %s: %s\n", m->tmpname, strerror_local(errno, buf, sizeof(buf)));
         snprintf(buf, sizeof(buf), "%s", m->path);
         delete_map(m);
@@ -1307,12 +1305,12 @@ static mapstruct *load_temporary_map(mapstruct *m) {
         m = load_original_map(m->path, 0);
         return NULL;
     }
-    m->compressed = comp;
+    m->compressed = 0;
     allocate_map(m);
 
     m->in_memory = MAP_LOADING;
     load_objects(m, fp, 0);
-    close_and_delete(fp, comp);
+    fclose(fp);
     m->in_memory = MAP_IN_MEMORY;
     return m;
 }
@@ -1329,12 +1327,11 @@ static mapstruct *load_temporary_map(mapstruct *m) {
  */
 static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
     FILE *fp;
-    int comp;
     char pathname[MAX_BUF];
 
     create_overlay_pathname(filename, pathname, MAX_BUF);
 
-    if ((fp = open_and_uncompress(pathname, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(pathname, "r")) == NULL) {
         /* LOG(llevDebug, "Can't open overlay %s\n", pathname);*/
         return m;
     }
@@ -1345,12 +1342,12 @@ static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
         m = load_original_map(m->path, 0);
         return NULL;
     }
-    m->compressed = comp;
+    m->compressed = 0;
     /*allocate_map(m);*/
 
     m->in_memory = MAP_LOADING;
     load_objects(m, fp, MAP_OVERLAY);
-    close_and_delete(fp, comp);
+    fclose(fp);
     m->in_memory = MAP_IN_MEMORY;
     return m;
 }
@@ -1392,7 +1389,7 @@ static void delete_unique_items(mapstruct *m) {
  */
 static void load_unique_objects(mapstruct *m) {
     FILE *fp;
-    int comp, count;
+    int count;
     char firstname[MAX_BUF], name[MAX_BUF];
 
     create_items_path(m->path, name, MAX_BUF);
@@ -1405,7 +1402,7 @@ static void load_unique_objects(mapstruct *m) {
     if (count == 10)
         return;
 
-    if ((fp = open_and_uncompress(firstname, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(firstname, "r")) == NULL) {
         /* There is no expectation that every map will have unique items, but this
         * is debug output, so leave it in.
         */
@@ -1418,7 +1415,7 @@ static void load_unique_objects(mapstruct *m) {
         delete_unique_items(m); /* original map before, don't duplicate them */
     load_object(fp, NULL, LO_NOREAD, 0);
     load_objects(m, fp, 0);
-    close_and_delete(fp, comp);
+    fclose(fp);
     m->in_memory = MAP_IN_MEMORY;
 }
 
