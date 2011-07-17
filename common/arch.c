@@ -559,14 +559,13 @@ static void check_spells(void) {
 static void load_archetypes(void) {
     FILE *fp;
     char filename[MAX_BUF];
-    int comp;
 #if TIME_ARCH_LOAD
     struct timeval tv1, tv2;
 #endif
 
     snprintf(filename, sizeof(filename), "%s/%s", settings.datadir, settings.archetypes);
     LOG(llevDebug, "Reading archetypes from %s...\n", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, " Can't open archetype file.\n");
         return;
     }
@@ -595,11 +594,7 @@ static void load_archetypes(void) {
     init_archetable();
     warn_archetypes = 1;
 
-    /* do a close and reopen instead of a rewind - necessary in case the
-     * file has been compressed.
-     */
-    close_and_delete(fp, comp);
-    fp = open_and_uncompress(filename, 0, &comp, "r");
+    rewind(fp);
 
     LOG(llevDebug, " loading treasure...\n");
     load_treasures();
@@ -610,7 +605,7 @@ static void load_archetypes(void) {
     check_generators();
     check_spells();
     check_summoned();
-    close_and_delete(fp, comp);
+    fclose(fp);
     LOG(llevDebug, " done\n");
 }
 
