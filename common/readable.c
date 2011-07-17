@@ -725,7 +725,7 @@ int book_overflow(const char *buf1, const char *buf2, size_t booksize) {
 static void init_msgfile(void) {
     FILE *fp;
     char buf[MAX_BUF], msgbuf[HUGE_BUF], fname[MAX_BUF], *cp;
-    int comp, text = 0, nrofmsg = 0;
+    int text = 0, nrofmsg = 0;
     static int did_init_msgfile = 0;
 
     if (did_init_msgfile)
@@ -735,7 +735,7 @@ static void init_msgfile(void) {
     snprintf(fname, sizeof(fname), "%s/messages", settings.datadir);
     LOG(llevDebug, "Reading messages from %s...\n", fname);
 
-    fp = open_and_uncompress(fname, 0, &comp, "r");
+    fp = fopen(fname, "r");
     if (fp != NULL) {
         GeneralMessage *tmp = NULL;
         int lineno;
@@ -804,7 +804,7 @@ static void init_msgfile(void) {
                 LOG(llevInfo, "Warning: syntax error at %s, line %d\n", fname, lineno);
             }
         }
-        close_and_delete(fp, comp);
+        fclose(fp);
 
         if (tmp != NULL) {
             LOG(llevError, "Invalid file %s", fname);
@@ -823,7 +823,7 @@ static void init_msgfile(void) {
  */
 static void init_book_archive(void) {
     FILE *fp;
-    int comp, nroftitle = 0;
+    int nroftitle = 0;
     char buf[MAX_BUF], fname[MAX_BUF], *cp;
     static int did_init_barch = 0;
 
@@ -837,7 +837,7 @@ static void init_book_archive(void) {
     snprintf(fname, sizeof(fname), "%s/bookarch", settings.localdir);
     LOG(llevDebug, " Reading bookarch from %s...\n", fname);
 
-    fp = open_and_uncompress(fname, 0, &comp, "r");
+    fp = fopen(fname, "r");
     if (fp != NULL) {
         int type;
         size_t i;
@@ -923,7 +923,7 @@ static void init_book_archive(void) {
         for (bl = booklist, i = 0; bl != NULL && i < arraysize(max_titles); bl = bl->next, i++) {
             LOG(llevDebug, "(%d/%d)\n", bl->number, max_titles[i]);
         }
-        close_and_delete(fp, comp);
+        fclose(fp);
     }
 
 #ifdef BOOK_MSG_DEBUG
