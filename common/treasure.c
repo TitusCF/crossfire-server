@@ -242,10 +242,10 @@ void load_treasures(void) {
     char filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
     treasurelist *previous = NULL;
     treasure *t;
-    int comp, line = 0;
+    int line = 0;
 
     snprintf(filename, sizeof(filename), "%s/%s", settings.datadir, settings.treasures);
-    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Can't open treasure file.\n");
         return;
     }
@@ -283,7 +283,7 @@ void load_treasures(void) {
         } else
             LOG(llevError, "Treasure-list didn't understand: %s, line %d\n", buf, line);
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
 
 #ifdef TREASURE_DEBUG
     /* Perform some checks on how valid the treasure data actually is.

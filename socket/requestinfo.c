@@ -457,7 +457,6 @@ void send_map_info(socket_struct *ns) {
 void send_file(socket_struct *ns, char *file) {
     char buf[MAX_BUF];
     FILE *fp;
-    int comp;
     SockList sl;
 
     if (!strcmp(file,"motd"))
@@ -470,7 +469,7 @@ void send_file(socket_struct *ns, char *file) {
         LOG(llevError,"send_file requested to send unknown file: %s\n", file);
         return;
     }
-    fp = open_and_uncompress(buf, 0, &comp, "r");
+    fp = fopen(buf, "r");
     if (fp == NULL)
         return;
     SockList_Init(&sl);
@@ -483,7 +482,7 @@ void send_file(socket_struct *ns, char *file) {
             continue;
         SockList_AddString(&sl, buf);
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
     SockList_AddChar(&sl, 0);   /* Null terminate it */
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

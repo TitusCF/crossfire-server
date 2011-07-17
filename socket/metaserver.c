@@ -177,7 +177,6 @@ int metaserver2_init(void) {
     FILE *fp;
     char buf[MAX_BUF], *cp;
     MetaServer2 *ms2, *msnext;
-    int comp;
     pthread_t thread_id;
 
 #ifdef HAVE_CURL_CURL_H
@@ -216,7 +215,7 @@ int metaserver2_init(void) {
     /* Now load up the values from the file */
     snprintf(buf, sizeof(buf), "%s/metaserver2", settings.confdir);
 
-    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Warning: No metaserver2 file found\n");
         return 0;
     }
@@ -292,7 +291,7 @@ int metaserver2_init(void) {
             LOG(llevError, "Unknown value in metaserver2 file: %s\n", buf);
         }
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
 
     /* If no hostname is set, can't do updates */
     if (!local_info.hostname)
@@ -309,6 +308,8 @@ int metaserver2_init(void) {
 #endif
 
     if (local_info.notification) {
+        int ret;
+
         /* As noted above, it is much easier for the rest of the code
          * to not have to check for null pointers.  So we do that
          * here, and anything that is null, we just allocate
@@ -327,9 +328,9 @@ int metaserver2_init(void) {
         if (!local_info.flags)
             local_info.flags = strdup("");
 
-        comp = pthread_create(&thread_id, NULL, metaserver2_thread, NULL);
-        if (comp) {
-            LOG(llevError, "metaserver2_init: return code from pthread_create() is %d\n", comp);
+        ret = pthread_create(&thread_id, NULL, metaserver2_thread, NULL);
+        if (ret) {
+            LOG(llevError, "metaserver2_init: return code from pthread_create() is %d\n", ret);
 
             /* Effectively true - we're not going to update the metaserver */
             local_info.notification = 0;

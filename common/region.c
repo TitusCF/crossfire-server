@@ -300,14 +300,13 @@ object *get_jail_exit(object *op) {
 void init_regions(void) {
     FILE *fp;
     char filename[MAX_BUF];
-    int comp;
 
     if (first_region != NULL) /* Only do this once */
         return;
 
     snprintf(filename, sizeof(filename), "%s/%s/%s", settings.datadir, settings.mapdir, settings.regions);
     LOG(llevDebug, "Reading regions from %s...\n", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, " Can't open regions file %s in init_regions.\n", filename);
         return;
     }
@@ -315,7 +314,7 @@ void init_regions(void) {
     assign_region_parents();
     LOG(llevDebug, " done\n");
 
-    close_and_delete(fp, comp);
+    fclose(fp);
 }
 
 /**
