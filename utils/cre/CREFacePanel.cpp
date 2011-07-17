@@ -113,15 +113,10 @@ void CREFacePanel::setFace(const New_Face* face)
     root = NULL;
 
     const artifactlist* list;
-    const typedata* data;
     const artifact* arti;
 
     for (list = first_artifactlist; list; list = list->next)
     {
-        data = get_typedata(list->type);
-
-//        item = new QTreeWidgetItem(root, QStringList(data ? data->name : tr("type %1").arg(type)));
-
         for (arti = list->items; arti; arti = arti->next)
         {
             if (arti->item->face == myFace)
