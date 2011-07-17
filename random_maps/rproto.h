@@ -64,7 +64,7 @@ extern void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, i
 extern void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int y);
 extern int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xsize, int ysize);
 extern void place_fountain_with_specials(mapstruct *map);
-extern void place_special_exit(mapstruct *map, int hole_type, RMParms *RP);
+extern void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP);
 extern void place_specials_in_map(mapstruct *map, char **layout, RMParms *RP);
 /* style.c */
 extern int load_dir(const char *dir, char ***namelist, int skip_dirs);

@@ -253,13 +253,14 @@ void place_fountain_with_specials(mapstruct *map) {
  * @param RP
  * parameters from which map was generated.
  */
-void place_special_exit(mapstruct *map, int hole_type, RMParms *RP) {
+void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
     int ix, iy, i = -1;
     char buf[HUGE_BUF];
     const char *style, *decor, *mon;
     mapstruct *exit_style = find_style("/styles/misc", "obscure_exits", -1);
     int g_xsize, g_ysize;
     object *the_exit;
+    RMParms hole;
 
     if (!exit_style)
         return;
@@ -319,10 +320,40 @@ void place_special_exit(mapstruct *map, int hole_type, RMParms *RP) {
     if (g_ysize < MIN_RANDOM_MAP_SIZE)
         g_ysize = MIN_RANDOM_MAP_SIZE;
 
-    write_parameters_to_string(buf, g_xsize, g_ysize, RP->wallstyle, RP->floorstyle, mon,
+    hole.Xsize = g_xsize;
+    hole.Ysize = g_ysize;
+    strcpy(hole.wallstyle, RP->wallstyle);
+    strcpy(hole.floorstyle, RP->floorstyle);
+    strcpy(hole.monsterstyle, mon);
+    strcpy(hole.treasurestyle, "none");
+    strcpy(hole.layoutstyle, style);
+    strcpy(hole.decorstyle, decor);
+    strcpy(hole.doorstyle, "none");
+    strcpy(hole.exitstyle, RP->exitstyle);
+    strcpy(hole.final_map, "");
+    strcpy(hole.exit_on_final_map, "");
+    strcpy(hole.this_map, "");
+    hole.layoutoptions1 = OPT_WALLS_ONLY;
+    hole.layoutoptions2 = 0;
+    hole.layoutoptions3 = 0;
+    hole.symmetry = 1;
+    hole.dungeon_depth = RP->dungeon_level;
+    hole.dungeon_level = RP->dungeon_level;
+    hole.difficulty = RP->difficulty;
+    hole.difficulty_given = RP->difficulty;
+    hole.decoroptions = -1;
+    hole.orientation = 1;
+    hole.origin_x = 0;
+    hole.origin_y = 0;
+    hole.random_seed = 0;
+    hole.treasureoptions = 0;
+    hole.difficulty_increase = RP->difficulty_increase;
+
+    write_map_parameters_to_string(&hole, buf, sizeof(buf));
+/*    write_parameters_to_string(buf, g_xsize, g_ysize, RP->wallstyle, RP->floorstyle, mon,
         "none", style, decor, "none", RP->exitstyle, NULL, NULL, NULL,
         OPT_WALLS_ONLY, 0, 0, 1, RP->dungeon_level, RP->dungeon_level,
-        RP->difficulty, RP->difficulty, -1, 1, 0, 0, 0, 0, RP->difficulty_increase);
+        RP->difficulty, RP->difficulty, -1, 1, 0, 0, 0, 0, RP->difficulty_increase);*/
     the_exit->slaying = add_string("/!");
     object_set_msg(the_exit, buf);
 
