@@ -228,7 +228,7 @@ int check_path(const char *name, int prepend_dir) {
     return(_access(buf, 0));
 #else
 
-    if (!stat(buf, &statbuf))
+    if (stat(buf, &statbuf) != 0)
         return -1;
 
     if (!S_ISREG(statbuf.st_mode))
