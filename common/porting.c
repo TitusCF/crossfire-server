@@ -585,20 +585,6 @@ int isqrt(int n) {
 }
 
 /**
- * This is a list of the suffix, uncompress and compress functions.  Thus,
- * if you have some other compress program you want to use, the only thing
- * that needs to be done is to extended this.
- * The first entry must be NULL - this is what is used for non
- * compressed files.
- */
-const char *uncomp[NROF_COMPRESS_METHODS][3] = {
-    { NULL, NULL, NULL },
-    { ".Z", UNCOMPRESS, COMPRESS },
-    { ".gz", GUNZIP, GZIP },
-    { ".bz2", BUNZIP, BZIP }
-};
-
-/**
  * Checks if any directories in the given path doesn't exist, and creates if necessary.
  *
  * @param filename

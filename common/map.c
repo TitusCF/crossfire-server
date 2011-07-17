@@ -216,7 +216,6 @@ static void create_items_path(const char *s, char *buf, size_t size) {
 int check_path(const char *name, int prepend_dir) {
     char buf[MAX_BUF];
 #ifndef WIN32
-    char *endbuf;
     struct stat statbuf;
     int mode = 0, i;
 #endif
@@ -229,23 +228,9 @@ int check_path(const char *name, int prepend_dir) {
     return(_access(buf, 0));
 #else
 
-    /* old method (strchr(buf, '\0')) seemd very odd to me -
-     * this method should be equivalant and is clearer.
-     * Can not use strcat because we need to cycle through
-     * all the names.
-     */
-    endbuf = buf+strlen(buf);
+    if (!stat(buf, &statbuf))
+        return -1;
 
-    for (i = 0; i < NROF_COMPRESS_METHODS; i++) {
-        if (uncomp[i][0])
-            snprintf(endbuf, buf+sizeof(buf)-endbuf, "%s", uncomp[i][0]);
-        else
-            *endbuf = '\0';
-        if (!stat(buf, &statbuf))
-            break;
-    }
-    if (i == NROF_COMPRESS_METHODS)
-        return (-1);
     if (!S_ISREG(statbuf.st_mode))
         return (-1);
 
@@ -1454,13 +1439,6 @@ int save_map(mapstruct *m, int flag) {
         } else
             snprintf(filename, sizeof(filename), "%s", m->path);
 
-        /* If the compression suffix already exists on the filename, don't
-         * put it on again.  This nasty looking strcmp checks to see if the
-         * compression suffix is at the end of the filename already.
-         */
-        if (m->compressed
-        && strcmp((filename+strlen(filename)-strlen(uncomp[m->compressed][0])), uncomp[m->compressed][0]))
-            strcat(filename, uncomp[m->compressed][0]);
         make_path_to_file(filename);
     } else {
         if (!m->tmpname)
@@ -1470,17 +1448,9 @@ int save_map(mapstruct *m, int flag) {
     LOG(llevDebug, "Saving map %s\n", m->path);
     m->in_memory = MAP_SAVING;
 
-    /* Compress if it isn't a temporary save.  Do compress if unique */
-    if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
-        char buf[MAX_BUF];
-        snprintf(buf, sizeof(buf), "%s > %s%s", uncomp[m->compressed][2], filename, TEMP_EXT);
-        snprintf(final, sizeof(final), "%s", filename);
-        fp = popen(buf, "w");
-    } else {
-        snprintf(final, sizeof(final), "%s", filename);
-        snprintf(filename, sizeof(filename), "%s%s", final, TEMP_EXT);
-        fp = fopen(filename, "w");
-    }
+    snprintf(final, sizeof(final), "%s", filename);
+    snprintf(filename, sizeof(filename), "%s%s", final, TEMP_EXT);
+    fp = fopen(filename, "w");
 
     if (fp == NULL) {
         LOG(llevError, "Cannot open regular objects file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
