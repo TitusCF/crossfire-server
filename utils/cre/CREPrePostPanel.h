@@ -51,7 +51,6 @@ class CRESubItemConnection : public CRESubItemWidget
 
 /**
  * Pre- or post- conditions panel displaying a quest step
- * @return
  */
 class CRESubItemQuest : public CRESubItemWidget
 {
