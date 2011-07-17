@@ -307,20 +307,33 @@ void CRESubItemQuest::selectedStepChanged(int index)
     updateData();
 }
 
-CRESubItemToken::CRESubItemToken(QWidget* parent) : CRESubItemWidget(parent)
+CRESubItemToken::CRESubItemToken(bool isPre, QWidget* parent) : CRESubItemWidget(parent)
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     layout->addWidget(new QLabel(tr("Token:"), this));
     myToken = new QLineEdit(this);
     layout->addWidget(myToken);
-    layout->addWidget(new QLabel(tr("Values (one per line):"), this));
-    myValues = new QTextEdit(this);
-    myValues->setAcceptRichText(false);
-    layout->addWidget(myValues);
-
     connect(myToken, SIGNAL(textChanged(const QString&)), this, SLOT(tokenChanged(const QString&)));
-    connect(myValues, SIGNAL(textChanged()), this, SLOT(valuesChanged()));
+
+    if (isPre)
+    {
+        layout->addWidget(new QLabel(tr("Values the token can be (one per line):"), this));
+        myValues = new QTextEdit(this);
+        myValues->setAcceptRichText(false);
+        layout->addWidget(myValues);
+        connect(myValues, SIGNAL(textChanged()), this, SLOT(valuesChanged()));
+        myValue = NULL;
+    }
+    else
+    {
+        layout->addWidget(new QLabel(tr("Value to set for the token:"), this));
+        myValue = new QLineEdit(this);
+        layout->addWidget(myValue);
+        connect(myValue, SIGNAL(textChanged(const QString&)), this, SLOT(tokenChanged(const QString&)));
+        myValues = NULL;
+    }
+    layout->addStretch();
 }
 
 void CRESubItemToken::setData(const QStringList& data)
@@ -330,19 +343,31 @@ void CRESubItemToken::setData(const QStringList& data)
     if (data.size() < 2)
     {
         myToken->clear();
-        myValues->clear();
+        if (myValues != NULL)
+            myValues->clear();
+        if (myValue != NULL)
+            myValue->clear();
+        
         return;
     }
     copy.removeFirst();
     myToken->setText(copy.takeFirst());
-    myValues->setText(copy.join("\n"));
+    if (myValues != NULL)
+        myValues->setText(copy.join("\n"));
+    else if (copy.size() > 0)
+        myValue->setText(copy[0]);
+    else
+        myValue->clear();
 }
 
 void CRESubItemToken::updateData()
 {
     QStringList values;
     values.append(myToken->text());
-    values.append(myValues->toPlainText().split("\n"));
+    if (myValues != NULL)
+        values.append(myValues->toPlainText().split("\n"));
+    else
+        values.append(myValue->text());
     emit dataModified(values);
 }
 
@@ -490,7 +515,7 @@ CRESubItemWidget* CREPrePostPanel::createSubItemWidget(bool isPre, const QuestCo
         return new CRESubItemQuest(isPre, quests, this);
 
     if (script->name() == "token" || script->name() == "settoken" || script->name() == "npctoken" || script->name() == "setnpctoken")
-        return new CRESubItemToken(this);
+        return new CRESubItemToken(isPre, this);
 
     return new CRESubItemList(this);
 }

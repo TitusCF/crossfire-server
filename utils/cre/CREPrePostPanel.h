@@ -92,12 +92,13 @@ class CRESubItemToken : public CRESubItemWidget
     Q_OBJECT
 
     public:
-        CRESubItemToken(QWidget* parent);
+        CRESubItemToken(bool isPre, QWidget* parent);
 
         virtual void setData(const QStringList& data);
 
     private:
         QLineEdit* myToken;
+        QLineEdit* myValue;
         QTextEdit* myValues;
 
         void updateData();
