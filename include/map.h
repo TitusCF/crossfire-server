@@ -371,8 +371,6 @@ typedef struct mapdef {
     uint16  difficulty;         /**< What level the player should be to play here. */
     sint16  players;            /**< How many players are on this level right now. Automatically updated by the object handling functions. */
     uint32  in_memory;          /**< Combination of @ref IN_MEMORY_xxx "IN_MEMORY_xxx" flags. */
-    uint8   compressed;         /**< Compression method used. */
-
     uint8   darkness;           /**< Indicates level of darkness of map. */
     uint16  width, height;      /**< Width and height of map. */
     sint16  enter_x, enter_y;   /**< Enter_x and enter_y are default entrance

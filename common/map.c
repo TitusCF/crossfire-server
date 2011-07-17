@@ -1227,7 +1227,6 @@ mapstruct *load_original_map(const char *filename, int flags) {
     }
 
     allocate_map(m);
-    m->compressed = 0;
 
     m->in_memory = MAP_LOADING;
     load_objects(m, fp, flags&(MAP_BLOCK|MAP_STYLE));
@@ -1290,7 +1289,6 @@ static mapstruct *load_temporary_map(mapstruct *m) {
         m = load_original_map(m->path, 0);
         return NULL;
     }
-    m->compressed = 0;
     allocate_map(m);
 
     m->in_memory = MAP_LOADING;
@@ -1327,7 +1325,6 @@ static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
         m = load_original_map(m->path, 0);
         return NULL;
     }
-    m->compressed = 0;
     /*allocate_map(m);*/
 
     m->in_memory = MAP_LOADING;
