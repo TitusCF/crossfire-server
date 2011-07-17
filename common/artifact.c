@@ -479,7 +479,7 @@ void init_artifacts(void) {
     char filename[MAX_BUF], buf[HUGE_BUF], *cp, *next;
     artifact *art = NULL;
     linked_char *tmp;
-    int value, comp;
+    int value;
     artifactlist *al;
     archetype dummy_archetype;
 
@@ -494,7 +494,7 @@ void init_artifacts(void) {
 
     snprintf(filename, sizeof(filename), "%s/artifacts", settings.datadir);
     LOG(llevDebug, "Reading artifacts from %s...\n", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;
     }
@@ -565,7 +565,7 @@ void init_artifacts(void) {
             LOG(llevError, "Unknown input in artifact file: %s\n", buf);
     }
 
-    close_and_delete(fp, comp);
+    fclose(fp);
 
     for (al = first_artifactlist; al != NULL; al = al->next) {
         for (art = al->items; art != NULL; art = art->next) {
