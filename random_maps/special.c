@@ -259,10 +259,12 @@ void place_special_exit(mapstruct *map, int hole_type, RMParms *RP) {
     const char *style, *decor, *mon;
     mapstruct *exit_style = find_style("/styles/misc", "obscure_exits", -1);
     int g_xsize, g_ysize;
-    object *the_exit = object_new();
+    object *the_exit;
 
     if (!exit_style)
         return;
+
+    the_exit = object_new();
 
     object_copy(pick_random_object(exit_style), the_exit);
 
