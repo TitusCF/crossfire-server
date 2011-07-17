@@ -1534,11 +1534,7 @@ int save_map(mapstruct *m, int flag) {
         snprintf(buf, sizeof(buf), "%s%s", final_unique, TEMP_EXT);
         if ((fp2 = fopen(buf, "w")) == NULL) {
             LOG(llevError, "Can't open unique items file %s\n", buf);
-            if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
-                pclose(fp);
-            } else {
-                fclose(fp);
-            }
+            fclose(fp);
             return SAVE_ERROR_UCREATION;
         }
         if (flag == SAVE_MODE_OVERLAY) {
@@ -1546,11 +1542,7 @@ int save_map(mapstruct *m, int flag) {
             res = save_objects(m, fp, fp2, SAVE_FLAG_NO_REMOVE);
             if (res < 0) {
                 LOG(llevError, "Save error during object save: %d\n", res);
-                if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
-                    pclose(fp);
-                } else {
-                    fclose(fp);
-                }
+                fclose(fp);
                 fclose(fp2);
                 return res;
             }
@@ -1559,11 +1551,7 @@ int save_map(mapstruct *m, int flag) {
             res = save_objects(m, fp, fp2, 0);
             if (res < 0) {
                 LOG(llevError, "Save error during object save: %d\n", res);
-                if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
-                    pclose(fp);
-                } else {
-                    fclose(fp);
-                }
+                fclose(fp);
                 fclose(fp2);
                 return res;
             }
@@ -1583,11 +1571,7 @@ int save_map(mapstruct *m, int flag) {
             unlink(final_unique); /* failure isn't too bad, maybe the file doesn't exist. */
             if (rename(buf, final_unique) == -1) {
                 LOG(llevError, "Couldn't rename unique file %s to %s\n", buf, final_unique);
-                if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
-                    pclose(fp);
-                } else {
-                    fclose(fp);
-                }
+                fclose(fp);
                 return SAVE_ERROR_URENAME;
             }
             chmod(final_unique, SAVE_MODE);
@@ -1596,28 +1580,16 @@ int save_map(mapstruct *m, int flag) {
         res = save_objects(m, fp, fp, 0);
         if (res < 0) {
             LOG(llevError, "Save error during object save: %d\n", res);
-            if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
-                pclose(fp);
-            } else {
-                fclose(fp);
-            }
+            fclose(fp);
             return res;
         }
         free_all_objects(m);
     }
 
-    if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
-        fflush(fp);
-        if (pclose(fp) == -1) {
-            LOG(llevError, "pclose error!\n");
-            return SAVE_ERROR_CLOSE;
-        }
-    } else {
-        fflush(fp);
-        if (fclose(fp) != 0) {
-            LOG(llevError, "fclose error!\n");
-            return SAVE_ERROR_CLOSE;
-        }
+    fflush(fp);
+    if (fclose(fp) != 0) {
+        LOG(llevError, "fclose error!\n");
+        return SAVE_ERROR_CLOSE;
     }
     unlink(final); /* failure isn't too bad, maybe the file doesn't exist. */
     if (rename(filename, final) == -1) {
