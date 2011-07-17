@@ -217,7 +217,7 @@ int check_path(const char *name, int prepend_dir) {
     char buf[MAX_BUF];
 #ifndef WIN32
     struct stat statbuf;
-    int mode = 0, i;
+    int mode = 0;
 #endif
 
     if (prepend_dir)
