@@ -461,11 +461,11 @@ void read_client_images(void) {
     char buf[HUGE_BUF];
     char *cp, *cps[7+1], *slash;
     FILE *infile;
-    int num, len, compressed, fileno, i;
+    int num, len, fileno, i;
 
     memset(facesets, 0, sizeof(facesets));
     snprintf(filename, sizeof(filename), "%s/image_info", settings.datadir);
-    if ((infile = open_and_uncompress(filename, 0, &compressed, "r")) == NULL) {
+    if ((infile = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Unable to open %s\n", filename);
         abort();
     }
@@ -488,7 +488,7 @@ void read_client_images(void) {
             facesets[len].comment = strdup_local(cps[6]);
         }
     }
-    close_and_delete(infile, compressed);
+    fclose(infile);
     for (i = 0; i < MAX_FACE_SETS; i++) {
         if (facesets[i].prefix)
             check_faceset_fallback(i, MAX_FACE_SETS);
@@ -506,7 +506,7 @@ void read_client_images(void) {
         snprintf(filename, sizeof(filename), "%s/crossfire.%d", settings.datadir, fileno);
         LOG(llevDebug, "Loading image file %s\n", filename);
 
-        if ((infile = open_and_uncompress(filename, 0, &compressed, "rb")) == NULL) {
+        if ((infile = fopen(filename, "rb")) == NULL) {
             LOG(llevError, "Unable to open %s\n", filename);
             abort();
         }
@@ -560,7 +560,7 @@ void read_client_images(void) {
                 facesets[fileno].faces[num].checksum &= 0xffffffff;
             }
         }
-        close_and_delete(infile, compressed);
+        fclose(infile);
     } /* For fileno < MAX_FACE_SETS */
 }
 
