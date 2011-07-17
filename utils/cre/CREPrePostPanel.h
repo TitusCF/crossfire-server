@@ -86,6 +86,29 @@ class CRESubItemQuest : public CRESubItemWidget
 };
 
 /**
+ * Pre- or post- conditions panel displaying a token, either as read or write.
+ */
+class CRESubItemToken : public CRESubItemWidget
+{
+    Q_OBJECT
+
+    public:
+        CRESubItemToken(QWidget* parent);
+
+        virtual void setData(const QStringList& data);
+
+    private:
+        QLineEdit* myToken;
+        QTextEdit* myValues;
+
+        void updateData();
+
+    private slots:
+        void tokenChanged(const QString&);
+        void valuesChanged();
+};
+
+/**
  * Pre- or post- panel displaying script arguments as a string list.
  */
 class CRESubItemList : public CRESubItemWidget

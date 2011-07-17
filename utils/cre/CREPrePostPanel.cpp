@@ -307,6 +307,55 @@ void CRESubItemQuest::selectedStepChanged(int index)
     updateData();
 }
 
+CRESubItemToken::CRESubItemToken(QWidget* parent) : CRESubItemWidget(parent)
+{
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    layout->addWidget(new QLabel(tr("Token:"), this));
+    myToken = new QLineEdit(this);
+    layout->addWidget(myToken);
+    layout->addWidget(new QLabel(tr("Values (one per line):"), this));
+    myValues = new QTextEdit(this);
+    myValues->setAcceptRichText(false);
+    layout->addWidget(myValues);
+
+    connect(myToken, SIGNAL(textChanged(const QString&)), this, SLOT(tokenChanged(const QString&)));
+    connect(myValues, SIGNAL(textChanged()), this, SLOT(valuesChanged()));
+}
+
+void CRESubItemToken::setData(const QStringList& data)
+{
+    QStringList copy(data);
+
+    if (data.size() < 2)
+    {
+        myToken->clear();
+        myValues->clear();
+        return;
+    }
+    copy.removeFirst();
+    myToken->setText(copy.takeFirst());
+    myValues->setText(copy.join("\n"));
+}
+
+void CRESubItemToken::updateData()
+{
+    QStringList values;
+    values.append(myToken->text());
+    values.append(myValues->toPlainText().split("\n"));
+    emit dataModified(values);
+}
+
+void CRESubItemToken::tokenChanged(const QString&)
+{
+    updateData();
+}
+
+void CRESubItemToken::valuesChanged()
+{
+    updateData();
+}
+
 
 CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, const QuestManager* quests, QWidget* parent) : QWidget(parent)
 {
@@ -439,6 +488,9 @@ CRESubItemWidget* CREPrePostPanel::createSubItemWidget(bool isPre, const QuestCo
 
     if (script->name() == "quest")
         return new CRESubItemQuest(isPre, quests, this);
+
+    if (script->name() == "token" || script->name() == "settoken" || script->name() == "npctoken" || script->name() == "setnpctoken")
+        return new CRESubItemToken(this);
 
     return new CRESubItemList(this);
 }
