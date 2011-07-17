@@ -320,6 +320,7 @@ void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
     if (g_ysize < MIN_RANDOM_MAP_SIZE)
         g_ysize = MIN_RANDOM_MAP_SIZE;
 
+    memset(&hole, 0, sizeof(hole));
     hole.Xsize = g_xsize;
     hole.Ysize = g_ysize;
     strcpy(hole.wallstyle, RP->wallstyle);
