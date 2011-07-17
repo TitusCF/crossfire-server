@@ -466,7 +466,7 @@ static void free_materials(void) {
  */
 static void load_settings(void) {
     char buf[MAX_BUF], *cp;
-    int has_val, comp;
+    int has_val;
     FILE *fp;
 
     snprintf(buf, sizeof(buf), "%s/settings", settings.confdir);
@@ -475,7 +475,7 @@ static void load_settings(void) {
      * there will probably be so many values that not having a settings file
      * will not be a good thing.
      */
-    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Warning: No settings file found\n");
         return;
     }
@@ -878,7 +878,7 @@ static void load_settings(void) {
             LOG(llevError, "Unknown value in settings file: %s\n", buf);
         }
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
     if (settings.log_timestamp_format == NULL)
         settings.log_timestamp_format = strdup_local("%y/%m/%d %H:%M:%S");
 
@@ -1065,14 +1065,13 @@ static void init_beforeplay(void) {
 static void init_startup(void) {
     char buf[MAX_BUF];
     FILE *fp;
-    int comp;
 
 #ifdef SHUTDOWN_FILE
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, SHUTDOWN_FILE);
-    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) != NULL) {
+    if ((fp = fopen(buf, "r")) != NULL) {
         while (fgets(buf, MAX_BUF-1, fp) != NULL)
             printf("%s", buf);
-        close_and_delete(fp, comp);
+        fclose(fp);
         exit(1);
     }
 #endif

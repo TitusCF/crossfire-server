@@ -2454,7 +2454,7 @@ static int load_table_float(float **bonuses, FILE *fp, char *bonus_name)
  */
 void init_stats(int reload) {
     char buf[MAX_BUF], *cp;
-    int lastlevel = 0, comp, error=0, i, oldmax = settings.max_stat;
+    int lastlevel = 0, error=0, i, oldmax = settings.max_stat;
     sint64 lastexp = -1, tmpexp;
     FILE *fp;
     float *new_float_bonuses[NUM_FLOAT_BONUSES];
@@ -2465,7 +2465,7 @@ void init_stats(int reload) {
     memset(new_int_bonuses, 0, NUM_INT_BONUSES * sizeof(int));
     memset(new_float_bonuses, 0, NUM_FLOAT_BONUSES * sizeof(float));
 
-    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) == NULL) {
+    if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Fatal error: could not open experience table (%s)\n", buf);
         if (reload) return;
         else exit(1);
@@ -2500,7 +2500,7 @@ void init_stats(int reload) {
              */
             if (newmax < MIN_STAT || newmax < settings.max_stat) {
                 LOG(llevError, "Got invalid max_stat (%d) from stat_bonus file\n", newmax);
-                close_and_delete(fp, comp);
+                fclose(fp);
                 if (reload) return;
                 else exit(1);
             }
@@ -2540,7 +2540,7 @@ void init_stats(int reload) {
         }
         if (error) break;
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
 
     /* Make sure that we have load tables for all the bonuses.
      * This is critical on initial load, but on reloads, it enusres that

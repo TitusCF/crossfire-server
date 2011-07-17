@@ -1300,13 +1300,13 @@ int forbid_play(void) {
     FILE *fp;
     time_t clock;
     struct tm *tm;
-    int i, start, stop, forbit = 0, comp;
+    int i, start, stop, forbit = 0;
 
     clock = time(NULL);
     tm = (struct tm *)localtime(&clock);
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, PERM_FILE);
-    if ((fp = open_and_uncompress(buf, 0, &comp, "r")) == NULL)
+    if ((fp = fopen(buf, "r")) == NULL)
         return 0;
 
     while (fgets(buf, sizeof(buf), fp)) {
@@ -1331,7 +1331,7 @@ int forbid_play(void) {
         }
     }
 
-    close_and_delete(fp, comp);
+    fclose(fp);
 
     return forbit;
 #else

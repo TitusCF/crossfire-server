@@ -491,7 +491,7 @@ static void init_attackmess(void) {
     char *cp, *p;
     FILE *fp;
     static int has_been_done = 0;
-    int mess = -1, level, comp;
+    int mess = -1, level;
     int mode = 0, total = 0;
 
     if (has_been_done)
@@ -501,7 +501,7 @@ static void init_attackmess(void) {
 
     snprintf(filename, sizeof(filename), "%s/attackmess", settings.datadir);
     LOG(llevDebug, "Reading attack messages from %s...\n", filename);
-    fp = open_and_uncompress(filename, 0, &comp, "r");
+    fp = fopen(filename, "r");
     if (fp == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;
@@ -567,5 +567,5 @@ static void init_attackmess(void) {
         }
     }
     LOG(llevDebug, "got %d messages in %d categories.\n", total, mess+1);
-    close_and_delete(fp, comp);
+    fclose(fp);
 }
