@@ -3916,7 +3916,7 @@ object *find_skill_by_number(object *who, int skillno) {
     return NULL;
 }
 
-void esrv_del_item(player *pl, int tag) {
+void esrv_del_item(player *pl, object *ob) {
 }
 
 void esrv_update_item(int flags, object *pl, object *op) {
