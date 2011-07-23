@@ -2903,6 +2903,16 @@ ingred ring,potion of Rainbow Wave,3 sapphire
 # Horns
 # -------------------
 #
+Object NONE
+arch horn_base
+chance 30
+diff 5
+exp 4000
+yield 1
+skill thaumaturgy
+cauldron thaumaturg_desk
+ingred quarterstaff,amethyst
+#
 Object Plenty
 arch horn2
 chance 15
@@ -2911,7 +2921,7 @@ exp 20000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred unicorn horn,3 mushroom of Gourmet,3 waybread of Aelingas
+ingred horn base,3 mushroom of Gourmet,3 waybread of Aelingas
 #
 Object Fire
 arch horn2
@@ -2921,7 +2931,7 @@ exp 20000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred unicorn horn,3 dust of ignition
+ingred horn base,3 dust of ignition
 #
 Object Frost
 arch horn2
@@ -2931,7 +2941,7 @@ exp 20000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred unicorn horn,3 dust of frost
+ingred horn base,3 dust of frost
 #
 Object Eorlingas
 arch horn2
@@ -2941,7 +2951,7 @@ exp 20000
 yield 1
 skill thaumaturgy
 cauldron thaumaturg_desk
-ingred unicorn horn,3 dust of ignition,potion of mystic power
+ingred horn base,3 dust of ignition,potion of mystic power
 #
 # -------------------
 # Talismans
