@@ -32,6 +32,7 @@ class CREQuestPanel : public CREPanel
         QuestStep* myCurrentStep;
         QLineEdit* myCode;
         QLineEdit* myTitle;
+        QLineEdit* myFace;
         QComboBox* myFile;
         QCheckBox* myCanRestart;
         QComboBox* myParent;

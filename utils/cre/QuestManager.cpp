@@ -145,6 +145,11 @@ void QuestManager::loadQuestFile(const QString& filename)
                 quest->setRestart(i != 0);
                 continue;
             }
+
+            if (strncmp(read, "face ", 5) == 0) {
+                read[strlen(read) - 1] = '\0';
+                quest->setFace(read + 5);
+            }
         }
 
         if (read[0] == '#')
@@ -265,6 +270,8 @@ void QuestManager::saveQuestFile(const QString& filename)
         stream << "quest " << quest->code() << "\n";
         if (!quest->title().isEmpty())
             stream << "title " << quest->title() << "\n";
+        if (!quest->face().isEmpty())
+            stream << "face " << quest->face() << "\n";
         if (!quest->description().isEmpty())
         {
             stream << "description\n" << quest->description();

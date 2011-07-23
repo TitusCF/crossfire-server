@@ -35,6 +35,10 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     myTitle = new QLineEdit();
     layout->addWidget(myTitle, line++, 2);
 
+    layout->addWidget(new QLabel(tr("Face:"), this), line, 1);
+    myFace = new QLineEdit();
+    layout->addWidget(myFace, line++, 2);
+
     myCanRestart = new QCheckBox(tr("this quest can be done multiple times"));
     layout->addWidget(myCanRestart, line++, 1, 1, 2);
 
@@ -112,6 +116,7 @@ void CREQuestPanel::setQuest(Quest* quest)
 
     myCode->setText(quest->code());
     myTitle->setText(quest->title());
+    myFace->setText(quest->face());
     myCanRestart->setChecked(quest->canRestart());
     myDescription->setText(quest->description());
 
@@ -179,6 +184,7 @@ void CREQuestPanel::commitData()
 
     myQuest->setCode(myCode->text());
     myQuest->setTitle(myTitle->text());
+    myQuest->setFace(myFace->text());
     myQuest->setRestart(myCanRestart->isChecked());
     myQuest->setDescription(myDescription->toPlainText());
     if (myQuestManager->getQuestFile(myQuest).isEmpty())

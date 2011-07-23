@@ -85,6 +85,19 @@ void Quest::setTitle(const QString& title)
     markModified();
 }
 
+const QString& Quest::face() const
+{
+    return myFace;
+}
+
+void Quest::setFace(const QString& face)
+{
+    if (myFace == face)
+        return;
+    myFace = face;
+    markModified();
+}
+
 const QString& Quest::description()const
 {
     return myDescription;

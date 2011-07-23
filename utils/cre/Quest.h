@@ -41,6 +41,8 @@ class Quest : public QObject
         void setCode(const QString& code);
         const QString& title() const;
         void setTitle(const QString& title);
+        const QString& face() const;
+        void setFace(const QString& face);
         const QString& description()const;
         void setDescription(const QString& description);
         bool canRestart() const;
@@ -61,6 +63,7 @@ class Quest : public QObject
     private:
         QString myCode;
         QString myTitle;
+        QString myFace;
         QString myDescription;
         bool myCanRestart;
         QList<QuestStep*> mySteps;
