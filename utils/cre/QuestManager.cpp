@@ -149,6 +149,7 @@ void QuestManager::loadQuestFile(const QString& filename)
             if (strncmp(read, "face ", 5) == 0) {
                 read[strlen(read) - 1] = '\0';
                 quest->setFace(read + 5);
+                continue;
             }
         }
 
