@@ -846,6 +846,49 @@ S->C delspell <tag>
 	Tells the client to remove its information about the spell. Tag is a 4
 	byte value, the same as the one sent when the spell was added.
 
+S->C addquest <code1> <title> <face> <replay> <end> <step> <code2 ...>
+	Tells the client to add the quest(s) listed to the list of quests
+	the player is doing. This will be sent at login, and again whenever
+	new quests are started, if notifications is 1 or greater.
+
+	The fields are;
+	<code> - (2 bytes - int) The ID number for the quest item. This is
+		going to be unique, for each quest and will be used to refer
+		to it henceforth.
+
+	<title> (2 bytes length, unsigned int, then string of specified length)
+		The quest title.
+
+	<face>  (4 bytes, signed int)
+		The number of the face that corresponds to the quest, which will be sent
+    before this packet if needed.
+
+  <replay> (1 byte, unsigned int)
+    If 1, then the quest can be replayed, else it can't.
+
+  <end> (1 byte, unsigned int)
+    If 1, the quest was completed.
+
+  <step> (2 bytes length, unsigned int, then string of specified length)
+    The current step's description, can be an empty string (length 0).
+
+
+S->C updquest <code><end><step>
+
+	<code> - (2 bytes - int) The ID number for the quest item.
+
+  <end> (1 byte, unsigned int)
+    If 1, the quest was completed.
+
+  <step> (2 bytes length, unsigned int, then string of specified length)
+    The current step's description, can be an empty string (length 0).
+
+	This updates some quest (of tag) with new values, if notifications is 1 or greater.
+
+	Only one quest can be updated with the updspell command.  A addquest
+	command should have been sent by the server before an addspell
+	command is set with the same ID.
+
 ******************************************************************************
 COMMANDS RELATING TO THE PLAYER OBJECT/STATS
 
@@ -1294,6 +1337,12 @@ S->C: setup <option1> <value1> <option2> <value2>
             this has not be tested.
 
             The server will send an updated map view when this command is sent.
+
+  notifications (int value)
+      Value indicating what notifications the client accepts.
+      It is incremental, a value means "all notifications till this level".
+      The following levels are supported:
+       1: quest-related notifications ("addquest" and "updquest")
 
 	num_look_objects (int value)
 	    The maximum number of objects shown in the ground view. If more

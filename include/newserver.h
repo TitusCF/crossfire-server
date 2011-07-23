@@ -152,6 +152,7 @@ typedef struct socket_struct {
     char    *account_name;              /**< Name of the account logged in on this socket */
     Account_Char    *account_chars;     /**< Detailed information on characters on this account */
     uint8   login_method;               /**< Login method this client is using */
+    uint16      notifications;          /**< Notifications this client wants to get. */
 } socket_struct;
 
 /**

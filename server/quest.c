@@ -51,6 +51,8 @@ typedef struct quest_state {
     int state;                  /**< State for the player. */
     int was_completed;          /**< Whether the quest was completed once or not, indepandently of the state. */
     int is_complete;            /**< Whether the quest is complete in the current playthrough */
+    int sent_to_client;         /**< Whether this state was sent to the client or not. */
+    int client_code;            /**< The code used to communicate with the client, merely a unique index. */
     struct quest_state *next;   /**< Next quest on the list. */
 } quest_state;
 
@@ -88,6 +90,7 @@ typedef struct quest_definition {
     sstring quest_title;            /**< Quest title for player. */
     sstring quest_description;      /**< Quest longer description. */
     int quest_restart;              /**< If non zero, can be restarted. */
+    int face;                       /**< Face associated with this quest. */
     quest_step_definition *steps;   /**< Quest steps. */
     struct quest_definition *parent;/**< Parent for this quest, NULL if it is a 'top-level' quest */
     struct quest_definition *next;  /**< Next quest in the definition list. */
@@ -348,6 +351,8 @@ static int load_quests_from_file(const char *filename) {
             if (quest_get_by_code(quest->quest_code)) {
                 LOG(llevError, "Quest %s is listed in file %s, but this quest has already been defined\n", quest->quest_code, filename);
             }
+            /* Set a default face, which will be overwritten if a face is defined. */
+            quest->face = find_face("quest_generic.111", 0);
             quest->next = quests;
             quests = quest;
             in = QUESTFILE_QUEST;
@@ -469,6 +474,10 @@ static void quest_read_player_data(quest_player *pq) {
             qs = get_new_quest_state();
             qs->code = add_string(data);
             qs->next = pq->quests;
+            if (pq->quests != NULL)
+                qs->client_code = pq->quests->client_code + 1;
+            else
+                qs->client_code = 1;
             pq->quests = qs;
             quest = quest_get_by_code(qs->code);
             if (quest == NULL) {
@@ -584,6 +593,10 @@ static quest_state *get_or_create_state(quest_player *pq, sstring name) {
             fatal(OUT_OF_MEMORY);
         qs->code = add_refcount(name);
         qs->next = pq->quests;
+        if (pq->quests != NULL)
+            qs->client_code = pq->quests->client_code + 1;
+        else
+            qs->client_code = 1;
         pq->quests = qs;
     }
 
@@ -742,6 +755,36 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
         draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New objective for the quest '%s':", quest->quest_title);
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, step->step_description);
     }
+
+    if (pl->socket.notifications > 0) {
+        SockList sl;
+        SockList_Init(&sl);
+
+        if (qs->sent_to_client) {
+            SockList_AddString(&sl, "updquest ");
+        } else {
+            SockList_AddString(&sl, "addquest ");
+        }
+
+        SockList_AddShort(&sl, qs->client_code);
+        if (qs->sent_to_client == 0) {
+            SockList_AddLen16Data(&sl, quest->quest_title, strlen(quest->quest_title));
+            if (quest->face && !(pl->socket.faces_sent[quest->face]&NS_FACESENT_FACE))
+                esrv_send_face(&pl->socket, quest->face, 0);
+            SockList_AddInt(&sl, quest->face);
+            SockList_AddChar(&sl, quest->quest_restart ? 1 : 0);
+        }
+
+        SockList_AddChar(&sl, (step == NULL || step->is_completion_step) ? 1 : 0);
+        if (step != NULL)
+            SockList_AddLen16Data(&sl, step->step_description, strlen(step->step_description));
+        else
+            SockList_AddShort(&sl, 0);
+
+        Send_With_Handling(&pl->socket, &sl);
+        SockList_Term(&sl);
+    }
+
     quest_write_player_data(pq);
     update_quests(pl);
     LOG(llevDebug, "quest_set_player_state %s %s %d\n", pl->ob->name, quest_code, state);
@@ -1170,4 +1213,59 @@ void free_quest_definitions(void) {
 
     quests = NULL;
     quests_loaded = 0;
+}
+
+/**
+ * Send the current quest states for the specified player, if the client
+ * supports those notifications.
+ * @param pl who to send quests for.
+ */
+void quest_send_initial_states(player *pl) {
+    quest_player *states = NULL;
+    quest_state *state = NULL;
+    SockList sl;
+    int size;
+    quest_definition *quest;
+    quest_step_definition *step;
+
+    if (pl->socket.notifications < 1)
+        return;
+
+    states = get_or_create_quest(pl);
+
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "addquest ");
+    for (state = states->quests; state != NULL; state = state->next) {
+
+        quest = quest_get_by_code(state->code);
+        if (state->state == -1)
+            step = NULL;
+        else
+            step = quest_get_step(quest, state->state);
+
+        size = 2 + (2 + strlen(quest->quest_title)) + 4 + 1 + (2 + (step != NULL ? strlen(step->step_description) : 0));
+
+        if (SockList_Avail(&sl) < size) {
+            Send_With_Handling(&pl->socket, &sl);
+            SockList_Reset(&sl);
+            SockList_AddString(&sl, "addquest ");
+        }
+
+        SockList_AddShort(&sl, state->client_code);
+        SockList_AddLen16Data(&sl, quest->quest_title, strlen(quest->quest_title));
+        if (quest->face && !(pl->socket.faces_sent[quest->face]&NS_FACESENT_FACE))
+            esrv_send_face(&pl->socket, quest->face, 0);
+        SockList_AddInt(&sl, quest->face);
+        SockList_AddChar(&sl, quest->quest_restart ? 1 : 0);
+        SockList_AddChar(&sl, (step == NULL || step->is_completion_step) ? 1 : 0);
+        if (step != NULL)
+            SockList_AddLen16Data(&sl, step->step_description, strlen(step->step_description));
+        else
+            SockList_AddShort(&sl, 0);
+
+        state->sent_to_client = 1;
+    }
+
+    Send_With_Handling(&pl->socket, &sl);
+    SockList_Term(&sl);
 }

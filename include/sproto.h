@@ -455,6 +455,7 @@ void command_quest(object *op, const char *params);
 void dump_quests(void);
 void free_quest(void);
 void free_quest_definitions(void);
+void quest_send_initial_states(player *pl);
 /* resurrection.c */
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg);
 void dead_player(object *op);

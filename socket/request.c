@@ -297,6 +297,14 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             ns->login_method = loginmethod;
             SockList_AddPrintf(&sl, "%d", loginmethod);
 
+        } else if (!strcmp(cmd, "notifications")) {
+            int notifications;
+
+            notifications = atoi(param);
+
+            ns->notifications = notifications;
+            SockList_AddPrintf(&sl, "%d", notifications);
+
         } else if (!strcmp(cmd, "newmapcmd")) {
             /* newmapcmd is deprecated (now standard part), but some
              * clients still use this setup option, and if the server
