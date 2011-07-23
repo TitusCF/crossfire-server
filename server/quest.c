@@ -339,6 +339,17 @@ static int load_quests_from_file(const char *filename) {
                 free_string(questname);
                 continue;
             }
+
+            if (strncmp(read, "face ", 5) == 0) {
+                read[strlen(read) - 1] = '\0';
+                int face = find_face(read + 5, 0);
+                if (face == 0) {
+                    LOG(llevError, "Quest %s has invalid face %s.\n", quest->quest_code, read + 5);
+                } else {
+                    quest->face = face;
+                }
+                continue;
+            }
         }
 
         if (read[0] == '#')

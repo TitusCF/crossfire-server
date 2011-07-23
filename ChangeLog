@@ -15,6 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 Add protocol to send quest updates to client.
+Add optional face to quests.
 Nicolas Weeger 2011-07-23
 
 Make container's contents browsable like the ground view.
