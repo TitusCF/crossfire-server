@@ -783,6 +783,8 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
 
         Send_With_Handling(&pl->socket, &sl);
         SockList_Term(&sl);
+
+        qs->sent_to_client = 1;
     }
 
     quest_write_player_data(pq);
