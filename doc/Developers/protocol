@@ -846,13 +846,13 @@ S->C delspell <tag>
 	Tells the client to remove its information about the spell. Tag is a 4
 	byte value, the same as the one sent when the spell was added.
 
-S->C addquest <code1> <title> <face> <replay> <end> <step> <code2 ...>
+S->C addquest <code1> <title> <face> <replay> <parent> <end> <step> <code2 ...>
 	Tells the client to add the quest(s) listed to the list of quests
 	the player is doing. This will be sent at login, and again whenever
 	new quests are started, if notifications is 1 or greater.
 
 	The fields are;
-	<code> - (2 bytes - int) The ID number for the quest item. This is
+	<code> - (4 bytes - unsigned int) The ID number for the quest item. This is
 		going to be unique, for each quest and will be used to refer
 		to it henceforth.
 
@@ -866,6 +866,9 @@ S->C addquest <code1> <title> <face> <replay> <end> <step> <code2 ...>
   <replay> (1 byte, unsigned int)
     If 1, then the quest can be replayed, else it can't.
 
+  <parent> (4 bytes, unsigned int)
+    Code of this quest's parent, 0 if top-level quest.
+
   <end> (1 byte, unsigned int)
     If 1, the quest was completed.
 
@@ -875,7 +878,7 @@ S->C addquest <code1> <title> <face> <replay> <end> <step> <code2 ...>
 
 S->C updquest <code><end><step>
 
-	<code> - (2 bytes - int) The ID number for the quest item.
+	<code> - (4 bytes - unsigned int) The ID number for the quest item.
 
   <end> (1 byte, unsigned int)
     If 1, the quest was completed.
