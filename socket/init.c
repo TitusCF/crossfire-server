@@ -169,10 +169,10 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
 #ifdef CS_LOGSTATS
-    if (socket_info.nconns > cst_tot.max_conn)
-        cst_tot.max_conn = socket_info.nconns;
-    if (socket_info.nconns > cst_lst.max_conn)
-        cst_lst.max_conn = socket_info.nconns;
+    if (socket_info.allocated_sockets > cst_tot.max_conn)
+        cst_tot.max_conn = socket_info.allocated_sockets;
+    if (socket_info.allocated_sockets > cst_lst.max_conn)
+        cst_lst.max_conn = socket_info.allocated_sockets;
 #endif
 }
 
@@ -291,7 +291,6 @@ void init_server(void) {
 
     socket_info.timeout.tv_sec = 0;
     socket_info.timeout.tv_usec = 0;
-    socket_info.nconns = 0;
 
 #ifdef CS_LOGSTATS
     memset(&cst_tot, 0, sizeof(CS_Stats));
@@ -301,7 +300,6 @@ void init_server(void) {
 #endif
 
     LOG(llevDebug, "Initialize new client/server data\n");
-    socket_info.nconns = 1;
     init_sockets = malloc(sizeof(socket_struct));
     init_sockets[0].faces_sent = NULL; /* unused */
     init_sockets[0].account_name = NULL; /* Must be set to avoid undef behaviour elsewhere. */

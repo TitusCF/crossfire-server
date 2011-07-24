@@ -591,7 +591,7 @@ void write_cs_stats(void) {
         cst_lst.max_conn, (long)(now-cst_lst.time_start));
     cst_lst.ibytes = 0;
     cst_lst.obytes = 0;
-    cst_lst.max_conn = socket_info.nconns;
+    cst_lst.max_conn = socket_info.allocated_sockets;
     cst_lst.time_start = now;
 }
 #endif

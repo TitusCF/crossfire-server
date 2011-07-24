@@ -166,8 +166,7 @@ typedef struct socket_struct {
 typedef struct Socket_Info {
     struct timeval timeout;     /**< Timeout for select. */
     int     max_filedescriptor; /**< max filedescriptor on the system. */
-    int     nconns;             /**< Number of connections used in init_socket. */
-    int     allocated_sockets;  /**< Number of allocated items in init_sockets. */
+    int     allocated_sockets;  /**< Number of allocated items in ::init_sockets. */
 } Socket_Info;
 
 extern Socket_Info socket_info;

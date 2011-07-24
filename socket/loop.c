@@ -393,7 +393,7 @@ static int is_fd_valid(int fd) {
  *
  */
 void do_server(void) {
-    int i, pollret;
+    int i, pollret, active = 0;
     fd_set tmp_read, tmp_exceptions, tmp_write;
     struct sockaddr_in addr;
     socklen_t addrlen = sizeof(struct sockaddr);
@@ -421,12 +421,12 @@ void do_server(void) {
             } else {
                 free_newsocket(&init_sockets[i]);
                 init_sockets[i].status = Ns_Avail;
-                socket_info.nconns--;
             }
         } else if (init_sockets[i].status != Ns_Avail) {
             FD_SET((uint32)init_sockets[i].fd, &tmp_read);
             FD_SET((uint32)init_sockets[i].fd, &tmp_write);
             FD_SET((uint32)init_sockets[i].fd, &tmp_exceptions);
+            active++;
         }
     }
 
@@ -454,7 +454,7 @@ void do_server(void) {
         }
     }
 
-    if (socket_info.nconns == 1 && first_player == NULL)
+    if (active == 1 && first_player == NULL)
         block_until_new_connection();
 
     /* Reset timeout each time, since some OS's will change the values on
@@ -475,14 +475,21 @@ void do_server(void) {
 
     /* Following adds a new connection */
     if (pollret && is_fd_valid(init_sockets[0].fd) && FD_ISSET(init_sockets[0].fd, &tmp_read)) {
-        int newsocknum = 0;
+        int newsocknum = 0, j;
 
 #ifdef ESRV_DEBUG
         LOG(llevDebug, "do_server: New Connection\n");
 #endif
-        /* If this is the case, all sockets currently in used */
-        if (socket_info.allocated_sockets <= socket_info.nconns) {
-            init_sockets = realloc(init_sockets, sizeof(socket_struct)*(socket_info.nconns+1));
+
+        for (j = 1; j < socket_info.allocated_sockets; j++)
+            if (init_sockets[j].status == Ns_Avail) {
+                newsocknum = j;
+                break;
+            }
+
+        if (newsocknum == 0) {
+            /* If this is the case, all sockets currently in used */
+            init_sockets = realloc(init_sockets, sizeof(socket_struct)*(socket_info.allocated_sockets+1));
             if (!init_sockets)
                 fatal(OUT_OF_MEMORY);
             newsocknum = socket_info.allocated_sockets;
@@ -492,20 +499,13 @@ void do_server(void) {
             if (!init_sockets[newsocknum].faces_sent)
                 fatal(OUT_OF_MEMORY);
             init_sockets[newsocknum].status = Ns_Avail;
-        } else {
-            int j;
-
-            for (j = 1; j < socket_info.allocated_sockets; j++)
-                if (init_sockets[j].status == Ns_Avail) {
-                    newsocknum = j;
-                    break;
-                }
-
-            if (newsocknum == 0) {
-                LOG(llevError, "FATAL: couldn't find free socket, nconns = %d, alloc = %d!", socket_info.nconns, socket_info.allocated_sockets);
-                fatal(SEE_LAST_ERROR);
-            }
         }
+
+        if (newsocknum <= 0) {
+            LOG(llevError, "FATAL: didn't allocate a newsocket?? alloc = %d, newsocknum = %d", socket_info.allocated_sockets, newsocknum);
+            fatal(SEE_LAST_ERROR);
+        }
+
         init_sockets[newsocknum].fd = accept(init_sockets[0].fd, (struct sockaddr *)&addr, &addrlen);
         if (init_sockets[newsocknum].fd == -1) {
             LOG(llevError, "accept failed: %s\n", strerror_local(errno, err, sizeof(err)));
@@ -525,7 +525,6 @@ void do_server(void) {
                 init_sockets[newsocknum].fd = -1;
             } else {
                 init_connection(ns, buf);
-                socket_info.nconns++;
             }
         }
     }
@@ -538,7 +537,6 @@ void do_server(void) {
             if (FD_ISSET(init_sockets[i].fd, &tmp_exceptions)) {
                 free_newsocket(&init_sockets[i]);
                 init_sockets[i].status = Ns_Avail;
-                socket_info.nconns--;
                 continue;
             }
             if (FD_ISSET(init_sockets[i].fd, &tmp_read)) {
