@@ -1061,6 +1061,17 @@ skill alchemy
 cauldron cauldron
 ingred sage's head,water of the wise
 #
+# -- probe
+Object testing monsters
+arch potion_generic
+chance 20
+diff 10
+exp 10000
+yield 3
+skill alchemy
+cauldron cauldron
+ingred magnifying glass,tissue paper,7 water
+#
 # -- cure disease
 Object cure disease
 arch potion_generic

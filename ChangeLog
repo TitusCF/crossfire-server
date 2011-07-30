@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add potion of 'testing monsters', casting probe.
+Add recipe for it.
+Both patches courtesy Khaleh.
+Nicolas Weeger 2011-07-30
+
 Give the alchemy level to generated potions. Fix documentation.
 Nicolas Weeger 2011-07-30
 
