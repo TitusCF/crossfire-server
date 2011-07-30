@@ -87,7 +87,6 @@ WS      [ \t]*
 ^expand2x{S}             RP->expand2x = IVAL;
 ^layoutoptions1{S}       RP->layoutoptions1 = IVAL;
 ^layoutoptions2{S}       RP->layoutoptions2 = IVAL;
-^layoutoptions3{S}       RP->layoutoptions3 = IVAL;
 ^symmetry{S}             RP->symmetry = IVAL;
 ^difficulty{S}           RP->difficulty = IVAL;
 ^difficulty_increase{S}  RP->difficulty_increase = FVAL;

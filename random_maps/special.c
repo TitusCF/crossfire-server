@@ -336,7 +336,6 @@ void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
     strcpy(hole.this_map, "");
     hole.layoutoptions1 = OPT_WALLS_ONLY;
     hole.layoutoptions2 = 0;
-    hole.layoutoptions3 = 0;
     hole.symmetry = 1;
     hole.dungeon_depth = RP->dungeon_level;
     hole.dungeon_level = RP->dungeon_level;

@@ -748,10 +748,6 @@ StringBuffer *write_map_parameters_to_string(RMParms *RP) {
         stringbuffer_append_printf(buf, "layoutoptions2 %d\n", RP->layoutoptions2);
     }
 
-    if (RP->layoutoptions3) {
-        stringbuffer_append_printf(buf, "layoutoptions3 %d\n", RP->layoutoptions3);
-    }
-
     if (RP->symmetry) {
         stringbuffer_append_printf(buf, "symmetry %d\n", RP->symmetry);
     }

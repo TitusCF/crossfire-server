@@ -61,7 +61,6 @@ typedef struct RMParms {
     int expand2x;
     int layoutoptions1;
     int layoutoptions2;
-    int layoutoptions3;
     int symmetry;
     int difficulty;
     int difficulty_given;
