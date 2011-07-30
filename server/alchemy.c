@@ -366,6 +366,11 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, con
         remove_contents(cauldron->inv, item);
         /* adj lvl, nrof on caster level */
         adjust_product(item, ability, rp->yield ? (rp->yield*batches) : batches);
+
+        if (item->type == POTION) {
+            item->level = MAX(item->level, skop->level);
+        }
+
         if (!item->env && (item = object_insert_in_ob(item, cauldron)) == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                           "Nothing happened.");
@@ -384,20 +389,20 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, con
  * on the item's default parameters, and the relevant caster skill level.
  * @param item
  * item to adjust.
- * @param lvl
- * alchemy skill level.
+ * @param adjust
+ * nrof adjustment parameter, the higher the better.
  * @param yield
  * how many products the recipe returns at maximum.
  */
-static void adjust_product(object *item, int lvl, int yield) {
+static void adjust_product(object *item, int adjust, int yield) {
     int nrof = 1;
 
     if (!yield)
         yield = 1;
-    if (lvl <= 0)
-        lvl = 1; /* lets avoid div by zero! */
+    if (adjust <= 0)
+        adjust = 1; /* lets avoid div by zero! */
     if (item->nrof) {
-        nrof = (1.0-1.0/(lvl/10.0+1.0))*(rndm(0, yield-1)+rndm(0, yield-1)+rndm(0, yield-1))+1;
+        nrof = (1.0-1.0/(adjust/10.0+1.0))*(rndm(0, yield-1)+rndm(0, yield-1)+rndm(0, yield-1))+1;
         if (nrof > yield)
             nrof = yield;
         item->nrof = nrof;
