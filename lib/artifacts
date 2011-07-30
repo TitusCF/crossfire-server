@@ -3911,6 +3911,15 @@ other_arch spell_cure_disease
 value 3
 end
 #
+Allowed potion_generic
+chance 1
+Object testing monsters
+stand_still 1
+type 5
+value 1
+other_arch spell_probe
+end
+#
 # - protective potions
 #
 Allowed balm_generic
