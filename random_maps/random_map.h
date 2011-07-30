@@ -40,20 +40,58 @@
  * Random map parameters.
  */
 typedef struct RMParms {
+    /**
+     * Name of the wall style file, in /styles/wallstyles, can be an empty
+     * string in which case a random one is chosen, or "none".
+     */
     char wallstyle[RM_SIZE];
+    /**
+     * Will contain the actual wall archetype, can be an empty
+     * string in which case a random one is chosen, or "none".
+     */
     char wall_name[RM_SIZE];
+    /**
+     * Name of the floor style file, in /styles/floors, can be an empty
+     * string in which case a random one is chosen, or "none".
+     */
     char floorstyle[RM_SIZE];
+    /**
+     * Name of the monster style directory, in /styles/monsters, can be an empty
+     * string in which case a random one is chosen.
+     */
     char monsterstyle[RM_SIZE];
+    /**
+     * Name of the treasures style file, in /styles/treasurestyles, can be an empty
+     * string in which case a random one is chosen, or "none".
+     */
     char treasurestyle[RM_SIZE];
+    /** Contains the layout type to generate, see layoutgen() for valid types. */
     char layoutstyle[RM_SIZE];
+    /** Name of the doors style file, in /styles/doorstyles, see put_doors(). */
     char doorstyle[RM_SIZE];
+    /**
+     * Name of the decor style file, in /styles/decorstyles, can be an empty
+     * string in which case a random one is chosen, or "none".
+     */
     char decorstyle[RM_SIZE];
+    /** Path to the map this random map is generated from, to make an exit back. */
     char origin_map[RM_SIZE];
+    /** If not empty, the path of the final map this whole maze leads to. */
     char final_map[RM_SIZE];
+    /** If not empty, the archetype name of the exit leading to the final map. */
     char final_exit_archetype[RM_SIZE];
+    /** Name of the exit style files, in /styles/exitstyles/{up,down}, can be
+     * an empty string in which case a random one is chosen, or "none".
+     */
     char exitstyle[RM_SIZE];
+    /** @todo remove, never non zero */
     char this_map[RM_SIZE];
+    /**
+     * If this is "no", then no exit will be made to the final map from the
+     * previous random map.
+     */
     char exit_on_final_map[RM_SIZE];
+    /** If not empty, will be used in the name of the random keys. */
     char dungeon_name[RM_SIZE];
 
     int Xsize;
@@ -63,6 +101,7 @@ typedef struct RMParms {
     int layoutoptions2;
     int symmetry;
     int difficulty;
+    /** If non zero, this means the difficulty was not zero initially. */
     int difficulty_given;
     float difficulty_increase;
     int dungeon_level;
@@ -73,10 +112,15 @@ typedef struct RMParms {
     int origin_x;
     int random_seed;
     int map_layout_style;
+    /** Total hit points of the monsters in the map, used for treasure generation. */
     long unsigned int total_map_hp;
     int treasureoptions;
     int symmetry_used;
     struct regiondef *region;
+    /**
+     * If non zero, then the map will have multiple floors, else only one
+     * floor will be used.
+     */
     int multiple_floors;
 } RMParms;
 
