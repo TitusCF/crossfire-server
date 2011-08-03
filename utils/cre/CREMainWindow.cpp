@@ -394,7 +394,9 @@ static QString alchemyTable(const QString& skill)
     qSort(difficulties);
     foreach(int difficulty, difficulties)
     {
-        report += recipes[difficulty].join("\n");
+        QStringList line = recipes[difficulty];
+        qSort(line);
+        report += line.join("\n");
     }
 
     report += "</tbody></table>";
