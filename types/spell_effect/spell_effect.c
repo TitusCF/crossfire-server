@@ -892,7 +892,7 @@ static void check_spell_knockback(object *op) {
             continue;
 
         /* don't move floors or immobile objects */
-        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) || (!QUERY_FLAG(tmp, FLAG_ALIVE) && QUERY_FLAG(tmp, FLAG_NO_PICK)))
+        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) || QUERY_FLAG(tmp, FLAG_NO_PICK))
             continue;
 
         /* count the object's sections */
