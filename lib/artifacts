@@ -4241,6 +4241,14 @@ end
 #
 Allowed dust_generic
 chance 1
+Object lethargy
+type 5
+value 1
+other_arch spell_slow
+end
+#
+Allowed dust_generic
+chance 1
 Object concussion
 type 5
 other_arch spell_shockwave

@@ -516,6 +516,17 @@ skill alchemy
 cauldron cauldron
 ingred 2 lead,pile of philosophical phosphorus
 #
+# -- slow
+Object lethargy
+arch dust_generic
+chance 23
+diff 15
+exp 9000
+yield 6
+skill alchemy
+cauldron cauldron
+ingred water of pearl,slug's slime,river stone
+#
 # -- icestorm #1
 Object frost
 arch dust_generic
