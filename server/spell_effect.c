@@ -2004,7 +2004,6 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
     force->duration = spell_ob->duration+SP_level_duration_adjust(caster, spell_ob)*50;
     force->speed = 1.0;
     force->speed_left = -1.0;
-    SET_FLAG(force, FLAG_APPLIED);
 
     if (!god) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
@@ -2038,9 +2037,10 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
     force->stats.wc = spell_ob->stats.wc;
     force->stats.ac = spell_ob->stats.ac;
 
-    change_abil(tmp, force); /* Mostly to display any messages */
+    store_spell_expiry(force);
     object_insert_in_ob(force, tmp);
-    fix_object(tmp);
+    SET_FLAG(force, FLAG_APPLIED);
+    change_abil(tmp, force); /* To display any messages, will call fix_object() */
     return 1;
 }
 
