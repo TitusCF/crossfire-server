@@ -1377,7 +1377,7 @@ int apply_auto(object *op) {
         if (QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
             return 0;
         while (op->stats.hp-- > 0)
-            create_treasure(op->randomitems, op, op->map ? GT_ENVIRONMENT : 0, op->stats.exp ? (int)op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
+            create_treasure(op->randomitems, op, (op->map ? GT_ENVIRONMENT : 0) | (QUERY_FLAG(op, FLAG_BLESSED) ? GT_ONLY_GOOD : 0), op->stats.exp ? (int)op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
 
         /* If we generated an object and put it in this object's
          * inventory, move it to the parent object as the current
