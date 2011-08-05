@@ -2546,6 +2546,7 @@ object *object_decrease_nrof(object *op, uint32 i) {
             object_add_weight(op->env, op->weight * op->nrof);
             if (tmp) {
                 esrv_update_item(UPD_NROF, tmp, op);
+                fix_object(tmp);
             }
         } else {
             object_remove(op);
