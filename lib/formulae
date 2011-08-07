@@ -1976,7 +1976,7 @@ Object Deflection
 arch high_shield
 chance 5
 diff 5
-exp 500
+exp 10000
 trans 1
 yield 1
 skill smithery
@@ -1987,7 +1987,7 @@ Object Mostrai
 arch small_shield,b_small_shield
 chance 3
 diff 7
-exp 1000
+exp 10000
 trans 1
 yield 1
 skill smithery
@@ -1998,7 +1998,7 @@ Object Mostrai
 arch high_shield
 chance 3
 diff 7
-exp 1000
+exp 10000
 trans 1
 yield 1
 skill smithery
@@ -2009,7 +2009,7 @@ Object Gnarg
 arch spiked_shield
 chance 3
 diff 7
-exp 1000
+exp 5000
 trans 1
 yield 1
 skill smithery
