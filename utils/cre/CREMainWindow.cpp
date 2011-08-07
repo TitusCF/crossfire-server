@@ -345,7 +345,7 @@ static QString alchemyTable(const QString& skill)
 {
     bool one = false;
 
-    QString report = QString("<h2>%1</h2><table><thead><tr><th>product</th><th>difficulty</th><th>ingredients count</th><th>experience</th>").arg(skill);
+    QString report = QString("<h2>%1</h2><table><thead><tr><th>product</th><th>difficulty</th><th>ingredients count</th><th>experience</th><th>Ingredients</th>").arg(skill);
     report += "</tr></thead><tbody>";
 
     QHash<int, QStringList> recipes;
@@ -381,7 +381,14 @@ static QString alchemyTable(const QString& skill)
                 {
                     name = QString("%1 of %2").arg(arch->clone.name, recipe->title);
                 }
-                recipes[recipe->diff].append(QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td></tr>").arg(name).arg(recipe->diff).arg(recipe->ingred_count).arg(recipe->exp));
+
+                QStringList ingredients;
+                for (const linked_char* ingred = recipe->ingred; ingred != NULL; ingred = ingred->next)
+                {
+                    ingredients.append(ingred->name);
+                }
+
+                recipes[recipe->diff].append(QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td></tr>").arg(name).arg(recipe->diff).arg(recipe->ingred_count).arg(recipe->exp).arg(ingredients.join(", ")));
                 one = true;
             }
         }
