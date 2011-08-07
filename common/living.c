@@ -656,6 +656,27 @@ int change_abil(object *op, object *tmp) {
                  "You suddenly feel less holy.");
     }
 
+    if (tmp->stats.wc && op->type == PLAYER) {
+        success = 1;
+        DIFF_MSG(flag*tmp->stats.wc, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
+                 "You feel more confident in combat.",
+                 "You feel less confident in combat.");
+    }
+
+    if (tmp->stats.ac && op->type == PLAYER) {
+        success = 1;
+        DIFF_MSG(flag*tmp->stats.ac, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
+                 "You feel more confident in your dodging skills.",
+                 "You feel less confident in your dodging skills.");
+    }
+
+    if (tmp->stats.exp && tmp->type != SKILL && op->type == PLAYER) {
+        success = 1;
+        DIFF_MSG(flag*tmp->stats.exp, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
+                 "You feel like you're moving faster.",
+                 "You feel like you're moving more slowly.");
+    }
+
     if (tmp->stats.food && op->type == PLAYER) {
         success = 1;
         DIFF_MSG(flag*tmp->stats.food, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
