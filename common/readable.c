@@ -1749,12 +1749,13 @@ StringBuffer *spellpath_msg(int level, size_t booksize, StringBuffer *buf) {
  * level for formulaes and such.
  */
 static void make_formula_book(object *book, int level) {
-    char retbuf[BOOK_BUF], title[MAX_BUF];
     recipelist *fl;
     recipe *formula;
     int chance, count = 0;
     const char *op_name;
     archetype *at;
+    StringBuffer *text, *title;
+    char *final, km[MAX_BUF];
 
     /* the higher the book level, the more complex (ie number of
      * ingredients) the formula can be.
@@ -1789,9 +1790,6 @@ static void make_formula_book(object *book, int level) {
      * of information on the booklevel and the spellevel
      * of the formula. */
 
-    /* preamble */
-    snprintf(retbuf, sizeof(retbuf), "Herein is described a project using %s:\n", formula->skill ? formula->skill : "an unknown skill");
-
     op_name = formula->arch_name[RANDOM()%formula->arch_names];
     at = find_archetype(op_name);
     if (at == (archetype *)NULL) {
@@ -1803,27 +1801,33 @@ static void make_formula_book(object *book, int level) {
     }
     op_name = at->clone.name;
 
+    text = stringbuffer_new();
+    title = stringbuffer_new();
+
+    /* preamble */
+    stringbuffer_append_printf(text, "Herein is described a project using %s:\n", formula->skill ? formula->skill : "an unknown skill");
+
     /* item name */
     if (strcmp(formula->title, "NONE")) {
-        snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf), "The %s of %s", op_name, formula->title);
+        stringbuffer_append_printf(text, "The %s of %s", op_name, formula->title);
         /* This results in things like pile of philo. sulfur.
         * while philo. sulfur may look better, without this,
         * you get things like 'the wise' because its missing the
         * water of section.
         */
-        snprintf(title, sizeof(title), "%s: %s of %s", formula_book_name[RANDOM()%arraysize(formula_book_name)], op_name, formula->title);
+        stringbuffer_append_printf(title, "%s: %s of %s", formula_book_name[RANDOM()%arraysize(formula_book_name)], op_name, formula->title);
     } else {
-        snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf), "The %s", op_name);
-        snprintf(title, sizeof(title), "%s: %s", formula_book_name[RANDOM()%arraysize(formula_book_name)], op_name);
+        stringbuffer_append_printf(text, "The %s", op_name);
+        stringbuffer_append_printf(title, formula_book_name[RANDOM()%arraysize(formula_book_name)], op_name);
         if (at->clone.title) {
-            snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf), " %s", at->clone.title);
-            snprintf(title+strlen(title), sizeof(title)-strlen(title), " %s", at->clone.title);
+            stringbuffer_append_printf(text, " %s", at->clone.title);
+            stringbuffer_append_printf(title, " %s", at->clone.title);
         }
     }
     /* Lets name the book something meaningful ! */
     if (book->name)
         free_string(book->name);
-    book->name = add_string(title);
+    book->name = stringbuffer_finish_shared(title);
     if (book->title) {
         free_string(book->title);
         book->title = NULL;
@@ -1841,22 +1845,25 @@ static void make_formula_book(object *book, int level) {
         else
             snprintf(name, sizeof(name), "an unknown place");
 
-        snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf),
-            " may be made at %s using the following ingredients:\n", name);
+        stringbuffer_append_printf(text, " may be made at %s using the following ingredients:\n", name);
 
         for (next = formula->ingred; next != NULL; next = next->next) {
             count++;
-            snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf), "%s\n", next->name);
+            stringbuffer_append_printf(text, "%s\n", next->name);
         }
-    } else
+    } else {
         LOG(llevError, "formula_msg() no ingredient list for object %s of %s\n", op_name, formula->title);
-    if (retbuf[strlen(retbuf)-1] != '\n')
-        snprintf(retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf), "\n");
-    object_set_msg(book, retbuf);
+        stringbuffer_append_string(text, "\n");
+    }
+
+    final = stringbuffer_finish(text);
+    object_set_msg(book, final);
+    free(final);
+
     /** knowledge marker */
     /** @todo this would be better in knowledge.c, except this file is in server, not common... */
-    snprintf(retbuf, sizeof(retbuf), "alchemy:%d:%d:%s", count, formula->index, formula->title);
-    object_set_value(book, "knowledge_marker", retbuf, 1);
+    snprintf(km, sizeof(km), "alchemy:%d:%d:%s", count, formula->index, formula->title);
+    object_set_value(book, "knowledge_marker", km, 1);
 }
 
 /**
