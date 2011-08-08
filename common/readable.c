@@ -1690,28 +1690,25 @@ char *artifact_msg(int level, char *retbuf, size_t booksize) {
  *
  * @param level
  * level of the book.
- * @param retbuf
- * buffer to write the description into.
  * @param booksize
- * length of the book.
+ * maximumlength of the book.
+ * @param buf
+ * where to store the message. If not NULL, it is supposed to contain the message header.
  * @return
- * retbuf
-@todo make static when check_readable is cleaned.
+ * buf, newly allocated StringBuffer if buf is NULL.
  */
-char *spellpath_msg(int level, char *retbuf, size_t booksize) {
+StringBuffer *spellpath_msg(int level, size_t booksize, StringBuffer *buf) {
     int path = RANDOM()%NRSPELLPATHS, prayers = RANDOM()%2;
     int did_first_sp = 0;
     uint32 pnum = spellpathdef[path];
     archetype *at;
-    StringBuffer *buf;
-    char *final;
 
-    buf = stringbuffer_new();
-    retbuf[0] = '\0';
-    /* Preamble */
-    stringbuffer_append_printf(buf, "Herein are detailed the names of %s\n", prayers ? "prayers" : "incantations");
-
-    stringbuffer_append_printf(buf, "belonging to the path of %s:\n", spellpathnames[path]);
+    if (buf == NULL) {
+        buf = stringbuffer_new();
+        /* Preamble */
+        stringbuffer_append_printf(buf, "Herein are detailed the names of %s", prayers ? "prayers" : "incantations");
+        stringbuffer_append_printf(buf, " belonging to the path of %s:\n ", spellpathnames[path]);
+    }
 
     for (at = first_archetype; at != NULL; at = at->next) {
         /* Determine if this is an appropriate spell.  Must
@@ -1726,27 +1723,21 @@ char *spellpath_msg(int level, char *retbuf, size_t booksize) {
                 break;
 
             if (did_first_sp)
-                stringbuffer_append_string(buf, ",\n");
+                stringbuffer_append_string(buf, ",\n ");
             did_first_sp = 1;
             stringbuffer_append_string(buf,at->clone.name);
         }
     }
 
-    final = stringbuffer_finish(buf);
     /* Geez, no spells were generated. */
     if (!did_first_sp) {
         if (RANDOM()%4) {  /* usually, lets make a recursive call... */
-            free(final);
-            return spellpath_msg(level, retbuf, booksize);
+            return spellpath_msg(level, booksize, buf);
         }
         /* give up, cause knowing no spells exist for path is info too. need the header too. */
-        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s\n - no known spells exist -\n", final);
-        free(final);
-    } else {
-        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s\n", final);
-        free(final);
+        stringbuffer_append_string(buf, "- no known spells exist -\n");
     }
-    return retbuf;
+    return buf;
 }
 
 /**
@@ -2005,6 +1996,7 @@ void tailor_readable_ob(object *book, int msg_type) {
     char msgbuf[BOOK_BUF];
     int level = book->level ? RANDOM()%book->level+1 : 1;
     size_t book_buf_size;
+    StringBuffer *message = NULL;
 
     /* safety */
     if (book->type != BOOK)
@@ -2042,7 +2034,7 @@ void tailor_readable_ob(object *book, int msg_type) {
         break;
 
     case MSGTYPE_SPELLPATH: /* grouping incantations/prayers by path */
-        spellpath_msg(level, msgbuf, book_buf_size);
+        message = spellpath_msg(level, book_buf_size, NULL);
         break;
 
     case MSGTYPE_ALCHEMY: /* describe an alchemy formula */
@@ -2061,6 +2053,16 @@ void tailor_readable_ob(object *book, int msg_type) {
         break;
     }
 
+    if (message != NULL) {
+        char *final;
+        stringbuffer_append_string(message, "\n");
+        final = stringbuffer_finish(message);
+        object_set_msg(book, final);
+        /* lets give the "book" a new name, which may be a compound word */
+        change_book(book, msg_type);
+        free(final);
+        return;
+    }
     strcat(msgbuf, "\n");  /* safety -- we get ugly map saves/crashes w/o this */
     if (strlen(msgbuf) > strlen("\n")) {
         object_set_msg(book, msgbuf);

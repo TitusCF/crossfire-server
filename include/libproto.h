@@ -337,7 +337,6 @@ extern int book_overflow(const char *buf1, const char *buf2, size_t booksize);
 extern void init_readable(void);
 extern object *get_random_mon(int level);
 extern char *artifact_msg(int level, char *retbuf, size_t booksize);
-extern char *spellpath_msg(int level, char *retbuf, size_t booksize);
 extern void tailor_readable_ob(object *book, int msg_type);
 extern void free_all_readable(void);
 extern void write_book_archive(void);
