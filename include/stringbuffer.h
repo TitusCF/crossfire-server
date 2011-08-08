@@ -61,6 +61,12 @@ typedef struct StringBuffer StringBuffer;
 StringBuffer *stringbuffer_new(void);
 
 /**
+ * Totally delete a string buffer.
+ * @param sb String to delete, pointer becomes invalid after the call.
+ */
+void stringbuffer_delete(StringBuffer *sb);
+
+/**
  * Deallocate the string buffer instance and return the string.
  *
  * The passed string buffer must not be accessed afterwards.

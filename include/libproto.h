@@ -377,6 +377,7 @@ extern char *ss_dump_table(int what, char *buf, size_t size);
 extern int buf_overflow(const char *buf1, const char *buf2, size_t bufsize);
 /* stringbuffer.c */
 extern StringBuffer *stringbuffer_new(void);
+extern void stringbuffer_delete(StringBuffer *sb);
 extern char *stringbuffer_finish(StringBuffer *sb);
 extern sstring stringbuffer_finish_shared(StringBuffer *sb);
 extern void stringbuffer_append_string(StringBuffer *sb, const char *str);

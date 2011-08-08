@@ -75,6 +75,11 @@ StringBuffer *stringbuffer_new(void) {
     return sb;
 }
 
+void stringbuffer_delete(StringBuffer *sb) {
+    free(sb->buf);
+    free(sb);
+}
+
 char *stringbuffer_finish(StringBuffer *sb) {
     char *result;
 
