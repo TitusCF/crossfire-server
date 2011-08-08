@@ -1518,27 +1518,116 @@ static char *mon_info_msg(int level, char *buf, size_t booksize, object *book) {
  ****************************************************************************/
 
 /**
+ * Describe an artifact.
+ * @param art artifact to describe.
+ * @param al list art is part of.
+ * @param message if non zero, and the artifact has a suitable message, add it to the description.
+ * @param art_name index in ::art_name_array the artifact is in.
+ * @param separator if non zero, a separator is inserted at the start of the description.
+ * @return newly allocated StringBuffer* containing the description.
+ */
+StringBuffer *artifact_describe(const artifact *art, const artifactlist *al, int message, int art_name, int separator) {
+    object *tmp;
+    int chance;
+    StringBuffer *desc = stringbuffer_new(), *sbuf;
+
+    if (separator)
+        stringbuffer_append_string(desc, "---\n");
+
+    /* Name */
+    if (art->allowed != NULL) {
+        archetype *arch;
+        linked_char *temp = art->allowed;
+        int inv = 0, w;
+
+        assert(art->allowed_size > 0);
+        if (art->allowed_size > 1)
+            w = 1 + RANDOM() % art->allowed_size;
+        else
+            w = 1;
+
+        while (w > 1) {
+            assert(temp);
+            temp = temp->next;
+            w--;
+        }
+
+        if (temp->name[0] == '!')
+            inv = 1;
+
+        /** @todo check archetype when loading archetypes, not here */
+        arch = try_find_archetype(temp->name + inv);
+        if (!arch)
+            arch = find_archetype_by_object_name(temp->name + inv);
+
+        if (!arch)
+            LOG(llevError, "artifact_msg: missing archetype %s for artifact %s (type %d)\n", temp->name + inv, art->item->name, art->item->type);
+        else {
+            if (inv)
+                stringbuffer_append_printf(desc, " A %s (excepted %s) of %s", art_name_array[art_name].name, arch->clone.name_pl, art->item->name);
+            else
+                stringbuffer_append_printf(desc, " A %s of %s", arch->clone.name, art->item->name);
+        }
+    } else {  /* default name is used */
+        /* use the base 'generic' name for our artifact */
+        stringbuffer_append_printf(desc, " The %s of %s", art_name_array[art_name].name, art->item->name);
+    }
+
+    /* chance of finding */
+    stringbuffer_append_string(desc, " is ");
+    chance = 100*((float)art->chance/al->total_chance);
+    if (chance >= 20)
+        stringbuffer_append_string(desc, "an uncommon");
+    else if (chance >= 10)
+        stringbuffer_append_string(desc, "an unusual");
+    else if (chance >= 5)
+        stringbuffer_append_string(desc, "a rare");
+    else
+        stringbuffer_append_string(desc, "a very rare");
+
+    /* value of artifact */
+    stringbuffer_append_printf(desc, " item with a value that is %d times normal.\n", art->item->value);
+
+    /* include the message about the artifact, if exists, and book
+    * level is kinda high */
+    if (message && !(strlen(art->item->msg) > BOOK_BUF))
+        stringbuffer_append_string(desc, art->item->msg);
+
+    /* properties of the artifact */
+    tmp = object_new();
+    add_abilities(tmp, art->item);
+    tmp->type = al->type;
+    SET_FLAG(tmp, FLAG_IDENTIFIED);
+    sbuf = describe_item(tmp, NULL, NULL);
+    if (stringbuffer_length(sbuf) > 1) {
+        stringbuffer_append_string(desc, " Properties of this artifact include:\n ");
+        stringbuffer_append_stringbuffer(desc, sbuf);
+        stringbuffer_append_string(desc, "\n");
+    }
+    free(stringbuffer_finish(sbuf));
+    object_free_drop_inventory(tmp);
+
+    return desc;
+}
+
+/**
  * Generate a message detailing the properties
  * of 1-6 artifacts drawn sequentially from the artifact list.
  *
  * @param level
  * level of the book.
- * @param retbuf
- * buffer to contain the description. Must be at least booksize chars.
  * @param booksize
- * length of the book.
+ * maximum length of the book.
  * @return
- * retbuf.
-@todo make static (again) when check_readable is cleaned of the unit rewrite test.
+ * new StringBuffer containing the dsecription.
  */
-char *artifact_msg(int level, char *retbuf, size_t booksize) {
+StringBuffer *artifact_msg(int level, size_t booksize) {
     const artifactlist *al;
     const artifact *art;
-    int chance, i, type, index;
+    int i, type, index;
     int book_entries = level > 5 ? RANDOM()%3+RANDOM()%3+2 : RANDOM()%level+1;
-    char buf[BOOK_BUF], *final;
-    object *tmp;
-    StringBuffer *desc, *sbuf;
+    char *final;
+    StringBuffer *desc, *message = stringbuffer_new();
 
     /* values greater than 5 create msg buffers that are too big! */
     if (book_entries > 5)
@@ -1558,8 +1647,8 @@ char *artifact_msg(int level, char *retbuf, size_t booksize) {
     } while (al == NULL && i < 10);
 
     if (i == 10) { /* Unable to find a message */
-        snprintf(retbuf, booksize, "None");
-        return retbuf;
+        stringbuffer_append_string(message, "None");
+        return desc;
     }
 
     /* There is no reason to start on the artifact list at the beginning. Lets
@@ -1572,112 +1661,35 @@ char *artifact_msg(int level, char *retbuf, size_t booksize) {
     }
 
     /* Ok, lets print out the contents */
-    snprintf(retbuf, booksize, "Herein %s detailed %s...\n", book_entries > 1 ? "are" : "is", book_entries > 1 ? "some artifacts" : "an artifact");
+    stringbuffer_append_printf(message, "Herein %s detailed %s...\n", book_entries > 1 ? "are" : "is", book_entries > 1 ? "some artifacts" : "an artifact");
 
+    i = 0;
     /* artifact msg attributes loop. Lets keep adding entries to the 'book'
      * as long as we have space up to the allowed max # (book_entires)
      */
     while (book_entries > 0) {
+        int with_message;
         if (art == NULL)
             art = al->items;
+        with_message = (art->item->msg && RANDOM()%4+1 < level) ? 1 : 0;
 
-        desc = stringbuffer_new();
-        /* separator of items */
-        stringbuffer_append_string(desc, "---\n");
-
-        /* Name */
-        if (art->allowed != NULL) {
-            archetype *arch;
-            linked_char *temp = art->allowed;
-            int inv = 0, w;
-
-            assert(art->allowed_size > 0);
-            if (art->allowed_size > 1)
-                w = 1 + RANDOM() % art->allowed_size;
-            else
-                w = 1;
-
-            while (w > 1) {
-                assert(temp);
-                temp = temp->next;
-                w--;
-            }
-
-            if (temp->name[0] == '!')
-                inv = 1;
-
-            /** @todo check archetype when loading archetypes, not here */
-            arch = try_find_archetype(temp->name + inv);
-            if (!arch)
-                arch = find_archetype_by_object_name(temp->name + inv);
-
-            if (!arch)
-                LOG(llevError, "artifact_msg: missing archetype %s for artifact %s (type %d)\n", temp->name + inv, art->item->name, art->item->type);
-            else {
-                if (inv)
-                    stringbuffer_append_printf(desc, " A %s (excepted %s) of %s", art_name_array[index].name, arch->clone.name_pl, art->item->name);
-                else
-                    stringbuffer_append_printf(desc, " A %s of %s", arch->clone.name, art->item->name);
-            }
-        } else {  /* default name is used */
-            /* use the base 'generic' name for our artifact */
-            stringbuffer_append_printf(desc, " The %s of %s", art_name_array[index].name, art->item->name);
-        }
-
-        /* chance of finding */
-        stringbuffer_append_string(desc, " is ");
-        chance = 100*((float)art->chance/al->total_chance);
-        if (chance >= 20)
-            stringbuffer_append_string(desc, "an uncommon");
-        else if (chance >= 10)
-            stringbuffer_append_string(desc, "an unusual");
-        else if (chance >= 5)
-            stringbuffer_append_string(desc, "a rare");
-        else
-            stringbuffer_append_string(desc, "a very rare");
-
-        /* value of artifact */
-        stringbuffer_append_printf(desc, " item with a value that is %d times normal.\n", art->item->value);
-
-        /* include the message about the artifact, if exists, and book
-        * level is kinda high */
-        if (art->item->msg && RANDOM()%4+1 < level
-        && !(strlen(art->item->msg)+strlen(buf) > BOOK_BUF))
-            stringbuffer_append_string(desc, art->item->msg);
-
-        /* properties of the artifact */
-        tmp = object_new();
-        add_abilities(tmp, art->item);
-        tmp->type = type;
-        SET_FLAG(tmp, FLAG_IDENTIFIED);
-        sbuf = describe_item(tmp, NULL, NULL);
-        if (stringbuffer_length(sbuf) > 1) {
-            stringbuffer_append_string(desc, " Properties of this artifact include:\n ");
-            stringbuffer_append_stringbuffer(desc, sbuf);
-            stringbuffer_append_string(desc, "\n");
-        }
-        free(stringbuffer_finish(sbuf));
-        object_free_drop_inventory(tmp);
+        desc = artifact_describe(art, al, with_message, index, i++);
 
         final = stringbuffer_finish(desc);
 
-        /* add the buf if it will fit */
-        if (book_overflow(retbuf, final, booksize)) {
+        if (stringbuffer_length(message) + strlen(final) >= booksize) {
             free(final);
             break;
         }
-        snprintf(retbuf+strlen(retbuf), booksize-strlen(retbuf), "%s", final);
+
+        stringbuffer_append_string(message, final);
         free(final);
 
         art = art->next;
         book_entries--;
     }
 
-#ifdef BOOK_MSG_DEBUG
-    LOG(llevDebug, "artifact_msg() created strng: %d\n", strlen(retbuf));
-    fprintf(logfile, " MADE THIS:\n%s", retbuf);
-#endif
-    return retbuf;
+    return message;
 }
 
 /*****************************************************************************
@@ -2031,7 +2043,7 @@ void tailor_readable_ob(object *book, int msg_type) {
         break;
 
     case MSGTYPE_ARTIFACT:
-        artifact_msg(level, msgbuf, book_buf_size);
+        message = artifact_msg(level, book_buf_size);
         break;
 
     case MSGTYPE_SPELLPATH: /* grouping incantations/prayers by path */
