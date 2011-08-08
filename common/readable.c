@@ -1867,12 +1867,12 @@ static void make_formula_book(object *book, int level) {
  * @param booksize
  * length of the book we want.
  * @return
- * message to put into book.
+ * message to put into book, newly allocated StringBuffer the caller should free.
  */
-static char *msgfile_msg(object *book, size_t booksize) {
-    static char retbuf[BOOK_BUF];
+static StringBuffer *msgfile_msg(object *book, size_t booksize) {
     int weight;
     GeneralMessage *msg = NULL;
+    StringBuffer *ret = stringbuffer_new();
 
     /* get a random message for the 'book' from linked list */
     if (msg_total_chance > 0) {
@@ -1884,8 +1884,8 @@ static char *msgfile_msg(object *book, size_t booksize) {
         }
     }
 
-    if (msg && !book_overflow(retbuf, msg->message, booksize)) {
-        snprintf(retbuf, sizeof(retbuf), "%s", msg->message);
+    if (msg && strlen(msg->message) <= booksize) {
+        stringbuffer_append_string(ret, msg->message);
         if (msg->identifier != NULL) {
             char km[HUGE_BUF];
             /** knowledge marker */
@@ -1894,14 +1894,9 @@ static char *msgfile_msg(object *book, size_t booksize) {
             object_set_value(book, "knowledge_marker", km, 1);
         }
     } else
-        snprintf(retbuf, sizeof(retbuf), "\n <undecipherable text>");
+        stringbuffer_append_string(ret, "\n <undecipherable text>");
 
-#ifdef BOOK_MSG_DEBUG
-    LOG(llevDebug, "\n info_list_msg() created strng: %d\n", strlen(retbuf));
-    LOG(llevDebug, " MADE THIS:\n%s\n", retbuf);
-#endif
-
-    return retbuf;
+    return ret;
 }
 
 /**
@@ -2050,7 +2045,7 @@ void tailor_readable_ob(object *book, int msg_type) {
 
     case MSGTYPE_LIB: /* use info list in lib/ */
     default:
-        strcpy(msgbuf, msgfile_msg(book, book_buf_size));
+        message = msgfile_msg(book, book_buf_size);
         break;
     }
 
