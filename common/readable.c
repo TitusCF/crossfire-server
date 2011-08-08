@@ -1984,7 +1984,6 @@ static StringBuffer *god_info_msg(int level, size_t booksize, object *book) {
  * message type - otherwise a random value is used.
  */
 void tailor_readable_ob(object *book, int msg_type) {
-    char msgbuf[BOOK_BUF];
     int level = book->level ? RANDOM()%book->level+1 : 1;
     size_t book_buf_size;
     StringBuffer *message = NULL;
@@ -2000,8 +1999,6 @@ void tailor_readable_ob(object *book, int msg_type) {
     book_buf_size = BOOKSIZE(book);
     book_buf_size -= strlen("\n"); /* Keep enough for final \n. */
     assert(book_buf_size < BOOK_BUF);
-
-    msgbuf[0] = '\0';
 
     /* &&& The message switch &&& */
     /* Below all of the possible types of messages in the "book"s.
@@ -2050,14 +2047,7 @@ void tailor_readable_ob(object *book, int msg_type) {
         stringbuffer_append_string(message, "\n");
         final = stringbuffer_finish(message);
         object_set_msg(book, final);
-        /* lets give the "book" a new name, which may be a compound word */
-        change_book(book, msg_type);
         free(final);
-        return;
-    }
-    strcat(msgbuf, "\n");  /* safety -- we get ugly map saves/crashes w/o this */
-    if (strlen(msgbuf) > strlen("\n")) {
-        object_set_msg(book, msgbuf);
         /* lets give the "book" a new name, which may be a compound word */
         change_book(book, msg_type);
     }
