@@ -1415,19 +1415,14 @@ object *get_random_mon(int level) {
  *
  * @param mon
  * monster to describe.
- * @param buf
- * buffer that will contain the description.
- * @param size
- * buf's length.
  * @return
- * buf
+ * new StringBuffer containing the description.
  */
-static char *mon_desc(const object *mon, char *buf, size_t size) {
-    char *desc;
-    desc = stringbuffer_finish(describe_item(mon, NULL, NULL));
-    snprintf(buf, size, " *** %s ***\n%s", mon->name, desc);
-    free(desc);
-    return buf;
+static StringBuffer *mon_desc(const object *mon) {
+    StringBuffer *desc = stringbuffer_new();
+    stringbuffer_append_printf(desc, "\n---\n *** %s ***\n", mon->name);
+    describe_item(mon, NULL, desc);
+    return desc;
 }
 
 /**
@@ -1462,24 +1457,21 @@ static object *get_next_mon(const object *tmp) {
  *
  * @param level
  * book level.
- * @param buf
- * buffer that will contain the message. Must be at least of length booksize
  * @param booksize
  * size (in characters) of the book we want.
  * @param book
  * book in which we will put the information.
  * @return
- * buf.
+ * StringBuffer containing the information.
  */
-static char *mon_info_msg(int level, char *buf, size_t booksize, object *book) {
-    char tmpbuf[HUGE_BUF], desc[MAX_BUF];
+static StringBuffer *mon_info_msg(int level, size_t booksize, object *book) {
     object *tmp;
-    StringBuffer *marker = stringbuffer_new();
+    StringBuffer *marker = stringbuffer_new(), *desc = stringbuffer_new(), *mon = NULL;
     int added = 0;
     sstring final;
 
     /*preamble */
-    snprintf(buf, booksize, "This beastiary contains:");
+    stringbuffer_append_string(desc, "This beastiary contains:");
     stringbuffer_append_string(marker, "monster");
 
     /* lets print info on as many monsters as will fit in our
@@ -1491,26 +1483,25 @@ static char *mon_info_msg(int level, char *buf, size_t booksize, object *book) {
      */
     for (tmp = get_random_mon(level*3); tmp; tmp = get_next_mon(tmp)) {
         /* monster description */
-        snprintf(tmpbuf, sizeof(tmpbuf), "\n---\n%s", mon_desc(tmp, desc, sizeof(desc)));
+        mon = mon_desc(tmp);
 
-        if (book_overflow(buf, tmpbuf, booksize))
+        if (stringbuffer_length(desc) + stringbuffer_length(mon) >= booksize)
             break;
         added++;
         stringbuffer_append_printf(marker, ":%s", tmp->arch->name);
-        snprintf(buf+strlen(buf), booksize-strlen(buf), "%s", tmpbuf);
+        stringbuffer_append_stringbuffer(desc, mon);
+        stringbuffer_delete(mon);
     }
 
-#ifdef BOOK_MSG_DEBUG
-    LOG(llevDebug, "\n mon_info_msg() created strng: %d\n", strlen(retbuf));
-    fprintf(logfile, " MADE THIS:\n%s\n", retbuf);
-#endif
+    if (mon != NULL)
+        stringbuffer_delete(mon);
 
     final = stringbuffer_finish_shared(marker);
     if (added)
         object_set_value(book, "knowledge_marker", final, 1);
     free_string(final);
 
-    return buf;
+    return desc;
 }
 
 /*****************************************************************************
@@ -2036,7 +2027,7 @@ void tailor_readable_ob(object *book, int msg_type) {
     msg_type = msg_type > 0 ? msg_type : RANDOM()%6;
     switch (msg_type) {
     case MSGTYPE_MONSTER:
-        mon_info_msg(level, msgbuf, book_buf_size, book);
+        message = mon_info_msg(level, book_buf_size, book);
         break;
 
     case MSGTYPE_ARTIFACT:
