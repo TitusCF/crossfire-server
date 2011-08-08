@@ -170,26 +170,24 @@ int describe_god(const object *god, int what, StringBuffer *buf, int maxlen) {
     if (what & GOD_PATHS) {
         /* spell paths */
         int has_effect = 0;
-        size_t buflen = 0;
-        temp[0] = '\0';
 
         add = stringbuffer_new();
         stringbuffer_append_printf(add, "It is rarely known fact that the priests of %s are mystically transformed. Effects of this include:\n", name);
 
         if (god->path_attuned) {
             has_effect = 1;
-            DESCRIBE_PATH_SAFE(temp, god->path_attuned, "Attuned", &buflen, BOOK_BUF);
+            describe_spellpath_attenuation("Attuned", god->path_attuned, add);
         }
         if (god->path_repelled) {
             has_effect = 1;
-            DESCRIBE_PATH_SAFE(temp, god->path_repelled, "Repelled", &buflen, BOOK_BUF);
+            describe_spellpath_attenuation("Repelled", god->path_repelled, add);
         }
         if (god->path_denied) {
             has_effect = 1;
-            DESCRIBE_PATH_SAFE(temp, god->path_denied, "Denied", &buflen, BOOK_BUF);
+            describe_spellpath_attenuation("Denied", god->path_denied, add);
         }
         if (has_effect) {
-            stringbuffer_append_printf(add, "%s\n ---\n", temp);
+            stringbuffer_append_string(add, "\n ---\n");
 
             if ((maxlen == 0) || (stringbuffer_length(add) + stringbuffer_length(buf) < maxlen)) {
                 stringbuffer_append_stringbuffer(buf, add);
