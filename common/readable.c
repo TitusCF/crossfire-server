@@ -1905,22 +1905,21 @@ static StringBuffer *msgfile_msg(object *book, size_t booksize) {
  *
  * @param level
  * number of elements to give.
- * @param retbuf
- * buffer that will contain the description. Must be at least length chars.
  * @param booksize
  * desired length of the book.
  * @param book
  * book we're writing the information to, for knowledge management.
+ * @return
+ * StringBuffer with the information that the caller is responsible for cleaning,
+ * NULL if information overflows the booksize.
  */
-static void god_info_msg(int level, char *retbuf, size_t booksize, object *book) {
-    char buf[BOOK_BUF], *final;
+static StringBuffer *god_info_msg(int level, size_t booksize, object *book) {
     int what = 0;
-    size_t retlen;
     const object *god = pntr_to_god_obj(get_rand_god());
     StringBuffer *desc = NULL;
 
-    retbuf[0] = '\0';
-    retlen = 0;
+    if (!god)
+        return NULL; /* oops, problems... */
 
     if (booksize > BOOK_BUF) {
         LOG(llevError, "common/readable.c:god_info_msg() - passed in booksize (%lu) is larger than book buffer (%d)\n", (unsigned long)booksize, BOOK_BUF);
@@ -1949,24 +1948,21 @@ static void god_info_msg(int level, char *retbuf, size_t booksize, object *book)
         what |= GOD_PATHS;
     }
 
-    if (!god)
-        return; /* oops, problems... */
-
     desc = stringbuffer_new();
     what = describe_god(god, what, desc, booksize);
 
     /* check to be sure new buffer size dont exceed either
     * the maximum buffer size, or the 'natural' size of the
-    * book...
-            */
-    final = stringbuffer_finish(desc);
-    if (!book_overflow(retbuf, final, booksize) && strlen(final) > 1) {
-        safe_strcat(retbuf, final, &retlen, BOOK_BUF);
+    * book... */
+    if (stringbuffer_length(desc) > 1 && stringbuffer_length(desc) <= booksize) {
+        char buf[BOOK_BUF];
         snprintf(buf, sizeof(buf), "god:%s:%d", god->name, what);
         object_set_value(book, "knowledge_marker", buf, 1);
+        return desc;
     }
 
-    free(final);
+    stringbuffer_delete(desc);
+    return NULL;
 }
 
 /**
@@ -2040,7 +2036,7 @@ void tailor_readable_ob(object *book, int msg_type) {
         break;
 
     case MSGTYPE_GODS: /* bits of information about a god */
-        god_info_msg(level, msgbuf, book_buf_size, book);
+        message = god_info_msg(level, book_buf_size, book);
         break;
 
     case MSGTYPE_LIB: /* use info list in lib/ */
