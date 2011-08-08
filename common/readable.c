@@ -1626,7 +1626,6 @@ StringBuffer *artifact_msg(int level, size_t booksize) {
     const artifact *art;
     int i, type, index;
     int book_entries = level > 5 ? RANDOM()%3+RANDOM()%3+2 : RANDOM()%level+1;
-    char *final;
     StringBuffer *desc, *message = stringbuffer_new();
 
     /* values greater than 5 create msg buffers that are too big! */
@@ -1675,15 +1674,13 @@ StringBuffer *artifact_msg(int level, size_t booksize) {
 
         desc = artifact_describe(art, al, with_message, index, i++);
 
-        final = stringbuffer_finish(desc);
-
-        if (stringbuffer_length(message) + strlen(final) >= booksize) {
-            free(final);
+        if (stringbuffer_length(message) + stringbuffer_length(desc) >= booksize) {
+            stringbuffer_delete(desc);
             break;
         }
 
-        stringbuffer_append_string(message, final);
-        free(final);
+        stringbuffer_append_stringbuffer(message, desc);
+        stringbuffer_delete(desc);
 
         art = art->next;
         book_entries--;
