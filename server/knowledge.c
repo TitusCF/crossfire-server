@@ -260,7 +260,7 @@ static void knowledge_alchemy_detail(const char *value, StringBuffer *buf) {
  * @param item what to check for
  * @return 0 if non valid, 1 else.
  */
-static int knowledge_achemy_validate(const char *item) {
+static int knowledge_alchemy_validate(const char *item) {
     return knowledge_alchemy_get_recipe(item) != NULL;
 }
 
@@ -580,7 +580,7 @@ static int knowledge_message_validate(const char *item) {
 
 /** All handled knowledge items. */
 static const knowledge_type const knowledges[] = {
-    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_achemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item },
+    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_alchemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item },
     { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL },
     { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL },
     { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL },
