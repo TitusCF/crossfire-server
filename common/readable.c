@@ -2008,6 +2008,7 @@ void tailor_readable_ob(object *book, int msg_type) {
     /* Max text length this book can have. */
     book_buf_size = BOOKSIZE(book);
     book_buf_size -= strlen("\n"); /* Keep enough for final \n. */
+    assert(book_buf_size < BOOK_BUF);
 
     msgbuf[0] = '\0';
 
