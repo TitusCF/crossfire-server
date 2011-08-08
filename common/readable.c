@@ -1517,7 +1517,7 @@ static StringBuffer *mon_info_msg(int level, size_t booksize, object *book) {
  * @param separator if non zero, a separator is inserted at the start of the description.
  * @return newly allocated StringBuffer* containing the description.
  */
-StringBuffer *artifact_describe(const artifact *art, const artifactlist *al, int message, int art_name, int separator) {
+static StringBuffer *artifact_describe(const artifact *art, const artifactlist *al, int message, int art_name, int separator) {
     object *tmp;
     int chance;
     StringBuffer *desc = stringbuffer_new(), *sbuf;
@@ -1612,7 +1612,7 @@ StringBuffer *artifact_describe(const artifact *art, const artifactlist *al, int
  * @return
  * new StringBuffer containing the dsecription.
  */
-StringBuffer *artifact_msg(int level, size_t booksize) {
+static StringBuffer *artifact_msg(int level, size_t booksize) {
     const artifactlist *al;
     const artifact *art;
     int i, type, index;
@@ -1697,7 +1697,7 @@ StringBuffer *artifact_msg(int level, size_t booksize) {
  * @return
  * buf, newly allocated StringBuffer if buf is NULL.
  */
-StringBuffer *spellpath_msg(int level, size_t booksize, StringBuffer *buf) {
+static StringBuffer *spellpath_msg(int level, size_t booksize, StringBuffer *buf) {
     int path = RANDOM()%NRSPELLPATHS, prayers = RANDOM()%2;
     int did_first_sp = 0;
     uint32 pnum = spellpathdef[path];
