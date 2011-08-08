@@ -204,6 +204,37 @@ START_TEST(test_describe_item) {
 }
 END_TEST
 
+#define DESCRIBE_PATH_SAFE(retbuf, variable, name, len, maxlen)    \
+    if (variable) {                                                \
+        int i, j = 0;                                              \
+        safe_strcat(retbuf, "(" name ": ", len, maxlen);           \
+        for (i = 0; i < NRSPELLPATHS; i++)                         \
+            if (variable&(1<<i)) {                                 \
+                if (j)                                             \
+                    safe_strcat(retbuf, ", ", len, maxlen);        \
+                else                                               \
+                    j = 1;                                         \
+                safe_strcat(retbuf, spellpathnames[i], len, maxlen); \
+            }                                                      \
+        safe_strcat(retbuf, ")", len, maxlen);                     \
+    }
+
+#define DESCRIBE_ABILITY_SAFE(retbuf, variable, name, len, maxlen) \
+    if (variable) {                                                \
+        int i, j = 0;                                              \
+        safe_strcat(retbuf, "(" name ": ", len, maxlen);           \
+        for (i = 0; i < NROFATTACKS; i++)                          \
+            if (variable&(1<<i)) {                                 \
+                if (j)                                             \
+                    safe_strcat(retbuf, ", ", len, maxlen);        \
+                else                                               \
+                    j = 1;                                         \
+                safe_strcat(retbuf, attacks[i], len, maxlen);      \
+            }                                                      \
+        safe_strcat(retbuf, ")", len, maxlen);                     \
+    }
+
+
 
 static void old_ring_desc(const object *op, char *buf, size_t size) {
     int attr, val;
