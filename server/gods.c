@@ -48,7 +48,7 @@
 static int worship_forbids_use(object *op, object *exp_obj, uint32 flag, const char *string);
 static void stop_using_item(object *op, int type, int number);
 static void update_priest_flag(const object *god, object *exp_ob, uint32 flag);
-static void god_intervention(object *op, const object *god, object *skill);
+static void god_intervention(object *op, const object *god, object *skill, object *altar);
 static int god_examines_priest(object *op, const object *god);
 static int god_examines_item(const object *god, object *item);
 static const char *get_god_for_race(const char *race);
@@ -344,7 +344,7 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
         bonus = MAX(1, bonus+MAX(pl->stats.luck, -3)); /* -- DAMN -- */
 
         if (((random_roll(0, 399, pl, PREFER_LOW))-bonus) < 0)
-            god_intervention(pl, pl_god, skill);
+            god_intervention(pl, pl_god, skill, altar);
     } else { /* praying to another god! */
         uint64 loss = 0;
         int angry = 1;
@@ -993,8 +993,10 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
  * god player is praying to.
  * @param skill
  * player's praying skill.
+ * @param altar
+ * where the player is praying.
  */
-static void god_intervention(object *op, const object *god, object *skill) {
+static void god_intervention(object *op, const object *god, object *skill, object *altar) {
     treasure *tr;
 
     if (!god || !god->randomitems) {
@@ -1011,6 +1013,9 @@ static void god_intervention(object *op, const object *god, object *skill) {
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
                   "You feel a holy presence!");
+
+    if (altar->anim_suffix != NULL)
+        apply_anim_suffix(altar, altar->anim_suffix);
 
     for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
         object *item;
