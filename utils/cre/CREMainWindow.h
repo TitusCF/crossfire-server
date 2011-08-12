@@ -58,6 +58,7 @@ class CREMainWindow : public QMainWindow
         QAction* myReportSpells;
         QAction* myReportPlayer;
         QAction* myReportSummon;
+        QAction* myReportShops;
         QAction* myToolSmooth;
         QAction* myToolCombatSimulator;
         QLabel* myMapBrowseStatus;
@@ -90,6 +91,7 @@ class CREMainWindow : public QMainWindow
         void onReportSpells();
         void onReportPlayer();
         void onReportSummon();
+        void onReportShops();
         void onToolSmooth();
         void onToolCombatSimulator();
         void browsingMap(const QString& path);

@@ -287,6 +287,12 @@ void CREMapInformationManager::cancel()
     myWorker.waitForFinished();
 }
 
+QList<CREMapInformation*> CREMapInformationManager::allMaps()
+{
+    QMutexLocker lock(&myLock);
+    return myInformation.values();
+}
+
 QList<CREMapInformation*> CREMapInformationManager::getArchetypeUse(const archetype* arch)
 {
     QMutexLocker lock(&myLock);

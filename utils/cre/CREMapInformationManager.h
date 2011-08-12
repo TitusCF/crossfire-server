@@ -23,6 +23,7 @@ class CREMapInformationManager : public QObject
         void start();
         void cancel();
 
+        QList<CREMapInformation*> allMaps();
         QList<CREMapInformation*> getArchetypeUse(const archetype* arch);
         QList<CREMapInformation*> getMapsForRegion(const QString& region);
 

@@ -137,6 +137,12 @@ void CREMainWindow::createActions()
     myReportSummon->setStatusTip(tr("Display wc, hp, speed and other statistics for summoned pets."));
     connect(myReportSummon, SIGNAL(triggered()), this, SLOT(onReportSummon()));
 
+    myReportShops = new QAction(tr("Shop specialization"), this);
+    myReportShops->setStatusTip(tr("Display the list of shops and their specialization for items."));
+    // can't use that while map browsing is running ; will be enabled in browsingFinished()
+    myReportShops->setEnabled(false);
+    connect(myReportShops, SIGNAL(triggered()), this, SLOT(onReportShops()));
+
     myToolSmooth = new QAction(tr("Generate smooth face base"), this);
     myToolSmooth->setStatusTip(tr("Generate the basic smoothed picture for a face."));
     connect(myToolSmooth, SIGNAL(triggered()), this, SLOT(onToolSmooth()));
@@ -176,6 +182,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportSpells);
     reportMenu->addAction(myReportPlayer);
     reportMenu->addAction(myReportSummon);
+    reportMenu->addAction(myReportShops);
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
     toolsMenu->addAction(myToolSmooth);
@@ -277,6 +284,7 @@ void CREMainWindow::browsingFinished()
     statusBar()->showMessage(tr("Finished browsing maps."), 5000);
     myMapBrowseStatus->setVisible(false);
     myReportPlayer->setEnabled(true);
+    myReportShops->setEnabled(true);
 }
 
 void CREMainWindow::onFiltersModified()
@@ -894,6 +902,63 @@ void CREMainWindow::onReportSummon()
 
     report += "</tbody>\n</table>\n";
     
+    CREReportDisplay show(report);
+    QApplication::restoreOverrideCursor();
+    show.exec();
+}
+
+void CREMainWindow::onReportShops()
+{
+    QString report(tr("<h1>Shop information</h1>\n"));
+
+    report += "<table border=\"1\">\n<thead>\n";
+    report += "<tr>";
+    report += "<th>Shop</th>";
+    report += "<th>Greed</th>";
+
+    QList<CREMapInformation*> maps = myMapManager->allMaps();
+    QStringList items;
+    foreach(const CREMapInformation* map, maps)
+    {
+        QStringList add = map->shopItems().keys();
+        foreach(const QString item, add)
+        {
+            if (!items.contains(item))
+                items.append(item);
+        }
+    }
+    qSort(items);
+
+    foreach(QString item, items)
+    {
+        report += "<th>" + item + "</th>";
+    }
+
+    report += "</tr>\n";
+
+    foreach(const CREMapInformation* map, maps)
+    {
+        if (map->shopItems().size() == 0)
+            continue;
+
+        report += "<tr>";
+
+        report += "<td>" + map->name() + " " + map->path() + "</td>";
+        report += "<td>" + QString::number(map->shopGreed()) + "</td>";
+
+        foreach(const QString item, items)
+        {
+            if (map->shopItems()[item] == 0)
+            {
+                report += "<td></td>";
+                continue;
+            }
+            report += "<td>" + QString::number(map->shopItems()[item]) + "</td>";
+        }
+
+        report += "</tr>";
+    }
+
     CREReportDisplay show(report);
     QApplication::restoreOverrideCursor();
     show.exec();
