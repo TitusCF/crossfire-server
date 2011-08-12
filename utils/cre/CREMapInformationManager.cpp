@@ -94,6 +94,15 @@ void CREMapInformationManager::process(const QString& path2)
         information->setRegion("wilderness"); /** @todo get from config */
     information->setLevel(m->difficulty);
 
+    information->setShopGreed(m->shopgreed);
+    if (m->shopitems != NULL)
+    {
+        for (int i = 0; i < m->shopitems[0].index; i++)
+        {
+            information->shopItems().insert(QString(m->shopitems[i].name == NULL ? "*" : m->shopitems[i].name), m->shopitems[i].strength);
+        }
+    }
+
     char exit_path[500];
     quint64 exp = 0;
     struct stat stats;
@@ -385,6 +394,17 @@ void CREMapInformationManager::loadCache()
                 quest->maps().append(map);
             continue;
         }
+        if (reader.isStartElement() && reader.name() == "shopItem")
+        {
+            QString item = reader.attributes().value("name").toString();
+            int strength = reader.readElementText().toInt();
+            map->shopItems()[item] = strength;
+        }
+        if (reader.isStartElement() && reader.name() == "shopGreed")
+        {
+            double greed = reader.readElementText().toDouble();
+            map->setShopGreed(greed);
+        }
         if (reader.isEndElement() && reader.name() == "map")
         {
             map = NULL;
@@ -438,6 +458,17 @@ void CREMapInformationManager::storeCache()
         foreach(QString code, map->quests())
         {
             writer.writeTextElement("quest", code);
+        }
+        foreach(QString item, map->shopItems().keys())
+        {
+            writer.writeStartElement("shopItem");
+            writer.writeAttribute("name", item);
+            writer.writeCharacters(QString::number(map->shopItems()[item]));
+            writer.writeEndElement();
+        }
+        if (map->shopGreed() != 0)
+        {
+            writer.writeTextElement("shopGreed", QString::number(map->shopGreed()));
         }
         writer.writeEndElement();
     }

@@ -4,11 +4,15 @@ CREMapInformation::CREMapInformation()
 {
     myLevel = 0;
     myExperience = 0;
+    myShopGreed = 0;
 }
 
 CREMapInformation::CREMapInformation(const QString& path)
 {
     myPath = path;
+    myLevel = 0;
+    myExperience = 0;
+    myShopGreed = 0;
 }
 
 CREMapInformation* CREMapInformation::clone() const
@@ -29,6 +33,8 @@ void CREMapInformation::copy(const CREMapInformation& other)
     setLevel(other.level());
     setExperience(other.experience());
     setRegion(other.region());
+    myShopItems = other.shopItems();
+    myShopGreed = other.shopGreed();
 }
 
 const QString& CREMapInformation::path() const
@@ -143,4 +149,24 @@ void CREMapInformation::addQuest(const QString& quest)
 {
     if (!myQuests.contains(quest))
         myQuests.append(quest);
+}
+
+QHash<QString, int>& CREMapInformation::shopItems()
+{
+    return myShopItems;
+}
+
+const QHash<QString, int>& CREMapInformation::shopItems() const
+{
+    return myShopItems;
+}
+
+double CREMapInformation::shopGreed() const
+{
+    return myShopGreed;
+}
+
+void CREMapInformation::setShopGreed(double greed)
+{
+    myShopGreed = greed;
 }

@@ -5,6 +5,7 @@
 #include <QString>
 #include <QStringList>
 #include <QDateTime>
+#include <QHash>
 
 class CREMapInformation : public QObject
 {
@@ -54,6 +55,12 @@ class CREMapInformation : public QObject
         QStringList quests() const;
         void addQuest(const QString& quest);
 
+        QHash<QString, int>& shopItems();
+        const QHash<QString, int>& shopItems() const;
+
+        double shopGreed() const;
+        void setShopGreed(double greed);
+
     protected:
         QString myPath;
         QString myName;
@@ -66,6 +73,8 @@ class CREMapInformation : public QObject
         QString myRegion;
         QStringList myMessages;
         QStringList myQuests;
+        QHash<QString, int> myShopItems;
+        double myShopGreed;
 
         void copy(const CREMapInformation& other);
 };
