@@ -2415,7 +2415,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         /* By setting this to zero, then we can easily
          * check to see if all stats have been set.
          */
-        memset(&new_stats, sizeof(living), 0);
+        memset(&new_stats, 0, sizeof(living));
 
         while (nlen < len) {
             i = buf[nlen];  /* Length of this line */
