@@ -145,6 +145,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                 esrv_update_item(UPD_FLAGS|UPD_NAME, applier, book);
             else
                 applier->contr->socket.update_look = 1;
+            spell = book->inv;
         }
 
         /* I removed the check for special_prayer_mark here - it didn't make
