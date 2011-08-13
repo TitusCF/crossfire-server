@@ -8,9 +8,16 @@
 
 CRERulePanel::CRERulePanel(const MessageManager* manager, const QuestManager* quests, QWidget* parent) : QTabWidget(parent)
 {
-    myMatches = new CREStringListPanel(true, this);
-    connect(myMatches, SIGNAL(dataModified()), this, SLOT(onMatchModified()));
-    addTab(myMatches, tr("matches"));
+    QWidget* m = new QWidget(this);
+    QVBoxLayout* ml = new QVBoxLayout(m);
+    ml->addWidget(new QLabel(tr("Matches (one per line, not case sensitive):"), this));
+    myMatches = new QTextEdit(this);
+    myMatches->setAcceptRichText(false);
+    connect(myMatches, SIGNAL(textChanged()), this, SLOT(onMatchModified()));
+    ml->addWidget(myMatches);
+    addTab(m, tr("matches"));
+    
+
     myPre = new CREPrePostPanel(true, manager->preConditions(), quests, this);
     connect(myPre, SIGNAL(dataModified()), this, SLOT(onPreModified()));
     addTab(myPre, tr("pre"));
@@ -45,7 +52,7 @@ void CRERulePanel::setMessageRule(MessageRule* rule)
 {
     myRule = NULL;
 
-    myMatches->clearData();
+    myMatches->clear();
     myMessages->clearData();
     myInclude->clear();
 
@@ -53,7 +60,7 @@ void CRERulePanel::setMessageRule(MessageRule* rule)
 
     if (rule != NULL)
     {
-        myMatches->setData(rule->match());
+        myMatches->setText(rule->match().join("\n"));
         myPre->setData(rule->preconditions());
         myMessages->setData(rule->messages());
         myPost->setData(rule->postconditions());
@@ -66,7 +73,7 @@ void CRERulePanel::onMatchModified()
 {
     if (myRule == NULL)
         return;
-    myRule->setMatch(myMatches->getData());
+    myRule->setMatch(myMatches->toPlainText().trimmed().split("\n"));
     emit currentRuleModified();
 }
 

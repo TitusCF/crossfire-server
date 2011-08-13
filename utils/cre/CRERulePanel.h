@@ -28,7 +28,7 @@ class CRERulePanel : public QTabWidget
 
     protected:
         MessageRule* myRule;
-        CREStringListPanel* myMatches;
+        QTextEdit* myMatches;
         CREPrePostPanel* myPre;
         CREStringListPanel* myMessages;
         CREPrePostPanel* myPost;
