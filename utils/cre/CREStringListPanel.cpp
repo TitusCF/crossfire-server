@@ -6,7 +6,7 @@ CREStringListPanel::CREStringListPanel(QWidget* parent) : QWidget(parent)
     QGridLayout* layout = new QGridLayout(this);
     myItems = new QListWidget(this);
     connect(myItems, SIGNAL(currentRowChanged(int)), this, SLOT(onCurrentItemChanged(int)));
-    layout->addWidget(new QLabel(tr("Matches:"), this), 0, 0, 1, 2);
+    layout->addWidget(new QLabel(tr("Message:"), this), 0, 0, 1, 2);
     layout->addWidget(myItems, 1, 0, 1, 2);
 
     QPushButton* add = new QPushButton(tr("add"), this);
@@ -17,7 +17,7 @@ CREStringListPanel::CREStringListPanel(QWidget* parent) : QWidget(parent)
     connect(remove, SIGNAL(clicked(bool)), this, SLOT(onDeleteItem(bool)));
     layout->addWidget(remove, 2, 1);
 
-    layout->addWidget(new QLabel(tr("Match:"), this), 3, 0);
+    layout->addWidget(new QLabel(tr("Message:"), this), 3, 0);
 
     myTextEdit = new QTextEdit(this);
     connect(myTextEdit, SIGNAL(textChanged()), this, SLOT(onTextEditChanged()));
