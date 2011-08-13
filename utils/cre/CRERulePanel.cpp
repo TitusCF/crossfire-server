@@ -21,7 +21,7 @@ CRERulePanel::CRERulePanel(const MessageManager* manager, const QuestManager* qu
     myPre = new CREPrePostPanel(true, manager->preConditions(), quests, this);
     connect(myPre, SIGNAL(dataModified()), this, SLOT(onPreModified()));
     addTab(myPre, tr("pre"));
-    myMessages = new CREStringListPanel(false, this);
+    myMessages = new CREStringListPanel(this);
     connect(myMessages, SIGNAL(dataModified()), this, SLOT(onMessageModified()));
     addTab(myMessages, tr("message"));
     myPost = new CREPrePostPanel(false, manager->postConditions(), quests, this);

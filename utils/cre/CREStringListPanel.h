@@ -14,7 +14,7 @@ class CREStringListPanel : public QWidget
     Q_OBJECT
 
     public:
-        CREStringListPanel(bool simpleText, QWidget* parent);
+        CREStringListPanel(QWidget* parent);
         virtual ~CREStringListPanel();
 
         void clearData();
@@ -27,7 +27,6 @@ class CREStringListPanel : public QWidget
     private:
         int myCurrentLine;
         QListWidget* myItems;
-        QLineEdit* myLineEdit;
         QTextEdit* myTextEdit;
 
         void commitData();
@@ -35,7 +34,6 @@ class CREStringListPanel : public QWidget
         void onAddItem(bool);
         void onDeleteItem(bool);
         void onCurrentItemChanged(int currentRow);
-        void onLineEditChanged(const QString& text);
         void onTextEditChanged();
 };
 

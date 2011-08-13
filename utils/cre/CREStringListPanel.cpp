@@ -1,7 +1,7 @@
 #include "CREStringListPanel.h"
 #include <QtGui>
 
-CREStringListPanel::CREStringListPanel(bool simpleText, QWidget* parent) : QWidget(parent)
+CREStringListPanel::CREStringListPanel(QWidget* parent) : QWidget(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
     myItems = new QListWidget(this);
@@ -19,20 +19,9 @@ CREStringListPanel::CREStringListPanel(bool simpleText, QWidget* parent) : QWidg
 
     layout->addWidget(new QLabel(tr("Match:"), this), 3, 0);
 
-    if (simpleText)
-    {
-        myLineEdit = new QLineEdit(this);
-        connect(myLineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(onLineEditChanged(const QString&)));
-        layout->addWidget(myLineEdit, 3, 1);
-        myTextEdit = NULL;
-    }
-    else
-    {
-        myTextEdit = new QTextEdit(this);
-        connect(myTextEdit, SIGNAL(textChanged()), this, SLOT(onTextEditChanged()));
-        layout->addWidget(myTextEdit, 3, 1);
-        myLineEdit = NULL;
-    }
+    myTextEdit = new QTextEdit(this);
+    connect(myTextEdit, SIGNAL(textChanged()), this, SLOT(onTextEditChanged()));
+    layout->addWidget(myTextEdit, 3, 1);
 
     myCurrentLine = -1;
 }
@@ -51,8 +40,6 @@ void CREStringListPanel::setData(const QStringList& list)
     myCurrentLine = -1;
     myItems->clear();
     myItems->addItems(list);
-    if (myLineEdit != NULL)
-        myLineEdit->setText("");
     if (myTextEdit != NULL)
         myTextEdit->setText("");
 }
@@ -78,8 +65,6 @@ void CREStringListPanel::onDeleteItem(bool)
 
     delete myItems->takeItem(myCurrentLine);
     myCurrentLine = -1;
-    if (myLineEdit != NULL)
-        myLineEdit->setText("");
     if (myTextEdit != NULL)
         myTextEdit->setText("");
     emit dataModified();
@@ -90,10 +75,7 @@ void CREStringListPanel::commitData()
     if (myCurrentLine == -1 || myCurrentLine >= myItems->count())
         return;
 
-    if (myLineEdit != NULL)
-        myItems->item(myCurrentLine)->setText(myLineEdit->text());
-    else
-        myItems->item(myCurrentLine)->setText(myTextEdit->toPlainText());
+    myItems->item(myCurrentLine)->setText(myTextEdit->toPlainText());
     emit dataModified();
 }
 
@@ -103,18 +85,7 @@ void CREStringListPanel::onCurrentItemChanged(int currentRow)
     if (currentRow == -1)
         return;
     myCurrentLine = currentRow;
-    if (myLineEdit != NULL)
-        myLineEdit->setText(myItems->item(myCurrentLine)->text());
-    else
-        myTextEdit->setText(myItems->item(myCurrentLine)->text());
-}
-
-void CREStringListPanel::onLineEditChanged(const QString& text)
-{
-    if (myCurrentLine == -1)
-        return;
-    myItems->item(myCurrentLine)->setText(text);
-    emit dataModified();
+    myTextEdit->setText(myItems->item(myCurrentLine)->text());
 }
 
 void CREStringListPanel::onTextEditChanged()
