@@ -1667,14 +1667,14 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
  * @todo check spurious cure_disease call (shouldn't the spell's level be sent?) and return check value (always 1).
  */
 int cast_heal(object *op, object *caster, object *spell, int dir) {
-    object *tmp;
+    object *target;
     archetype *at;
     object *poison;
     int heal = 0, success = 0;
 
-    tmp = find_target_for_friendly_spell(op, dir);
+    target = find_target_for_friendly_spell(op, dir);
 
-    if (tmp == NULL)
+    if (target == NULL)
         return 0;
 
     /* Figure out how many hp this spell might cure.
@@ -1685,93 +1685,93 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         heal += random_roll(spell->stats.hp, 6, op, PREFER_HIGH)+spell->stats.hp;
 
     if (heal) {
-        if (tmp->stats.hp >= tmp->stats.maxhp) {
-            draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+        if (target->stats.hp >= target->stats.maxhp) {
+            draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                           "You are already fully healed.");
         } else {
             /* See how many points we actually heal.  Instead of messages
              * based on type of spell, we instead do messages based
              * on amount of damage healed.
              */
-            if (heal > (tmp->stats.maxhp-tmp->stats.hp))
-                heal = tmp->stats.maxhp-tmp->stats.hp;
-            tmp->stats.hp += heal;
+            if (heal > (target->stats.maxhp-target->stats.hp))
+                heal = target->stats.maxhp-target->stats.hp;
+            target->stats.hp += heal;
 
-            if (tmp->stats.hp >= tmp->stats.maxhp) {
-                draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+            if (target->stats.hp >= target->stats.maxhp) {
+                draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                               "You feel just fine!");
             } else if (heal > 50) {
-                draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+                draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                               "Your wounds close!");
             } else if (heal > 25) {
-                draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+                draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                               "Your wounds mostly close.");
             } else if (heal > 10) {
-                draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+                draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                               "Your wounds start to fade.");
             } else {
-                draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+                draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                               "Your wounds start to close.");
             }
             success = 1;
         }
     }
     if (spell->attacktype&AT_DISEASE)
-        if (cure_disease(tmp, op, caster && caster->type != PLAYER ? caster->skill : spell->skill))
+        if (cure_disease(target, op, caster && caster->type != PLAYER ? caster->skill : spell->skill))
             success = 1;
 
     if (spell->attacktype&AT_POISON) {
         at = find_archetype("poisoning");
-        poison = arch_present_in_ob(at, tmp);
+        poison = arch_present_in_ob(at, target);
         if (poison) {
             success = 1;
-            draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+            draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                           "Your body feels cleansed");
             poison->stats.food = 1;
         }
     }
     if (spell->attacktype&AT_CONFUSION) {
-        poison = object_present_in_ob_by_name(FORCE, "confusion", tmp);
+        poison = object_present_in_ob_by_name(FORCE, "confusion", target);
         if (poison) {
             success = 1;
-            draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+            draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                           "Your mind feels clearer");
             poison->duration = 1;
         }
     }
     if (spell->attacktype&AT_BLIND) {
         at = find_archetype("blindness");
-        poison = arch_present_in_ob(at, tmp);
+        poison = arch_present_in_ob(at, target);
         if (poison) {
             success = 1;
-            draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+            draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                           "Your vision begins to return.");
             poison->stats.food = 1;
         }
     }
-    if (spell->last_sp && tmp->stats.sp < tmp->stats.maxsp) {
-        tmp->stats.sp += spell->last_sp;
-        if (tmp->stats.sp > tmp->stats.maxsp)
-            tmp->stats.sp = tmp->stats.maxsp;
+    if (spell->last_sp && target->stats.sp < target->stats.maxsp) {
+        target->stats.sp += spell->last_sp;
+        if (target->stats.sp > target->stats.maxsp)
+            target->stats.sp = target->stats.maxsp;
         success = 1;
-        draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+        draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                       "Magical energies surge through your body!");
     }
-    if (spell->last_grace && tmp->stats.grace < tmp->stats.maxgrace) {
-        tmp->stats.grace += spell->last_grace;
-        if (tmp->stats.grace > tmp->stats.maxgrace)
-            tmp->stats.grace = tmp->stats.maxgrace;
+    if (spell->last_grace && target->stats.grace < target->stats.maxgrace) {
+        target->stats.grace += spell->last_grace;
+        if (target->stats.grace > target->stats.maxgrace)
+            target->stats.grace = target->stats.maxgrace;
         success = 1;
-        draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+        draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                       "You feel redeemed with you god!");
     }
-    if (spell->stats.food && tmp->stats.food < 999) {
-        tmp->stats.food += spell->stats.food;
-        if (tmp->stats.food > 999)
-            tmp->stats.food = 999;
+    if (spell->stats.food && target->stats.food < 999) {
+        target->stats.food += spell->stats.food;
+        if (target->stats.food > 999)
+            target->stats.food = 999;
         success = 1;
         /* We could do something a bit better like the messages for healing above */
-        draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+        draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                       "You feel your belly fill with food");
     }
     return success;
