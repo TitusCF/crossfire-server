@@ -297,7 +297,7 @@ int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);
 void move_symptom(object *symptom);
 void check_physically_infect(object *victim, object *hitter);
-int cure_disease(object *sufferer, object *caster);
+int cure_disease(object *sufferer, object *caster, sstring skill);
 /* hiscore.c */
 void hiscore_init(void);
 void hiscore_check(object *op, int quiet);

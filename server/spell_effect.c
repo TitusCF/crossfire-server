@@ -1717,7 +1717,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         }
     }
     if (spell->attacktype&AT_DISEASE)
-        if (cure_disease(tmp, op))
+        if (cure_disease(tmp, op, caster && caster->type != PLAYER ? caster->skill : spell->skill))
             success = 1;
 
     if (spell->attacktype&AT_POISON) {

@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix experience for cure disease going to invalid skill (lockpicking for instance).
+Nicolas Weeger 2011-08-14
+
 Fix crash when a spellbook a player is reading gets identified, merges and
 thus changes.
 Nicolas Weeger 2011-08-13

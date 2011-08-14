@@ -685,12 +685,14 @@ void check_physically_infect(object *victim, object *hitter) {
  * @param caster
  * spell object used for curing. If NULL all diseases are removed, else only those of lower level than
  * caster or randomly chosen.
+ * @param skill
+ * skill to give experience to, can be NULL.
  * @retval 0
  * no disease was cured.
  * @retval 1
  * at least one disease was cured.
  */
-int cure_disease(object *sufferer, object *caster) {
+int cure_disease(object *sufferer, object *caster, sstring skill) {
     int casting_level;
     int cure = 0;
 
@@ -713,7 +715,7 @@ int cure_disease(object *sufferer, object *caster) {
                 object_remove(disease);
                 cure = 1;
                 if (caster)
-                    change_exp(caster, disease->stats.exp, caster->chosen_skill ? caster->chosen_skill->skill : NULL, 0);
+                    change_exp(caster, disease->stats.exp, skill, 0);
                 object_free_drop_inventory(disease);
             }
         }
