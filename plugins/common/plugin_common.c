@@ -877,11 +877,11 @@ int cf_player_knowledge_has(object *op, const char *knowledge) {
 
 /**
  * Wrapper for player_arrest().
- * @copy_doc player_arrest()
+ * @copydoc player_arrest()
  */
-int cf_player_arrest(object *op) {
+int cf_player_arrest(object *who) {
     int type, value;
-    cfapiObject_move(&type, 2, op, &value);
+    cfapiObject_move(&type, 2, who, &value);
     assert(type == CFAPI_INT);
     return value;
 }

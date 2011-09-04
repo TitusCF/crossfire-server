@@ -138,7 +138,7 @@ char *tempnam_local(const char *dir, const char *pfx) {
  * The file will be opened read-write.
  *
  * @todo
- * Maybe adding some #ifdef for non-UNIX? I don't have any such system around
+ * Maybe adding some ifdef for non-UNIX? I don't have any such system around
  * to test with.
  */
 FILE *tempnam_secure(const char *dir, const char *pfx, char **filename) {
