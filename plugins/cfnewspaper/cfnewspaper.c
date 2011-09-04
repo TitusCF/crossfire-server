@@ -394,10 +394,10 @@ CF_PLUGIN int eventListener(int *type, ...) {
     object *who;
     int event_code;
     object *activator;
-    object *third;
+    /*object *third;*/
     object *event;
-    char *buf;
-    int fix;
+    /*char *buf;*/
+    /*int fix;*/
     object *newspaper;
     paper_properties *paper;
     region *reg;
@@ -406,9 +406,9 @@ CF_PLUGIN int eventListener(int *type, ...) {
     who = va_arg(args, object *);
     /*event_code = va_arg(args, int);*/
     activator = va_arg(args, object *);
-    third = va_arg(args, object *);
-    buf = va_arg(args, char *);
-    fix = va_arg(args, int);
+    /*third =*/ va_arg(args, object *);
+    /*buf =*/ va_arg(args, char *);
+    /*fix =*/ va_arg(args, int);
     /*buf = va_arg(args, char *);*/
     event = va_arg(args, object *);
     event_code = event->subtype;

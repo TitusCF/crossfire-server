@@ -200,10 +200,10 @@ static int update_table_format(const char *table, const char *newschema,
  */
 static void check_tables(void) {
     int format;
-    int err;
+    /*int err;*/
     format = 0;
 
-    err = sqlite3_exec(database, "select param_value from parameters where param_name = 'version';", check_tables_callback, &format, NULL);
+    /*err =*/ sqlite3_exec(database, "select param_value from parameters where param_name = 'version';", check_tables_callback, &format, NULL);
 
     /* Safety check. */
     if (format > CFLOGGER_CURRENT_FORMAT) {
@@ -626,7 +626,7 @@ CF_PLUGIN int cflogger_globalEventListener(int *type, ...) {
     va_list args;
     int rv = 0;
     player *pl;
-    object *op, *op2;
+    object *op/*, *op2*/;
     int event_code;
     mapstruct *map;
 
@@ -644,7 +644,7 @@ CF_PLUGIN int cflogger_globalEventListener(int *type, ...) {
 
     case EVENT_PLAYER_DEATH:
         op = va_arg(args, object *);
-        op2 = va_arg(args, object *);
+        /*op2 =*/ va_arg(args, object *);
         add_player_event(op, event_code);
         break;
 

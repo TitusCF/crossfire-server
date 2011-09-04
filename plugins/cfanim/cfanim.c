@@ -1152,14 +1152,14 @@ CF_PLUGIN int eventListener(int *type, ...) {
     int rv = 0;
     va_list args;
     char *buf, message[MAX_BUF], script[MAX_BUF];
-    object *who, *activator, *third, *event;
+    object *who, *activator/*, *third*/, *event;
     int query;
 
     va_start(args, type);
 
     who = va_arg(args, object *);
     activator = va_arg(args, object *);
-    third = va_arg(args, object *);
+    /*third =*/ va_arg(args, object *);
     buf = va_arg(args, char *);
 
     if (buf != NULL)

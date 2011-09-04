@@ -412,19 +412,19 @@ CF_PLUGIN int postInitPlugin(void) {
 CF_PLUGIN int eventListener(int *type, ...) {
     int rv = 1;
     va_list args;
-    char *buf;
-    object *ground, *who, *activator, *third, *event;
-    int fix;
+    /*char *buf;*/
+    object *ground, *who/*, *activator, *third, *event*/;
+    /*int fix;*/
     const char *value;
 
     va_start(args, type);
 
     who = va_arg(args, object *);
-    activator = va_arg(args, object *);
-    third = va_arg(args, object *);
-    buf = va_arg(args, char *);
-    fix = va_arg(args, int);
-    event = va_arg(args, object *);
+    /*activator =*/ va_arg(args, object *);
+    /*third =*/ va_arg(args, object *);
+    /*buf =*/ va_arg(args, char *);
+    /*fix =*/ va_arg(args, int);
+    /*event =*/ va_arg(args, object *);
     va_arg(args, talk_info *); /* ignored for now */
     va_end(args);
 
