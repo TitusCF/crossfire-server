@@ -8,10 +8,10 @@ See @ref page_type_65
 
 
 @section Description
-    As the name implies, mood floors can change the "mood" of
-    a monsters/NPC. For example, an unaggressive monster could be
-    turned mad to start attacking. Similar, an aggressive monster
-    could be calmed. 
+            As the name implies, mood floors can change the "mood" of a
+            monster/NPC. For example, an unaggressive monster could be turned
+            mad to start attacking. Similar, an aggressive monster could be
+            calmed. 
 
 
 
@@ -108,22 +108,22 @@ Type defined by:
 	<tr>
 		<td>mood</td>
 		<td>@ref obj::last_sp</td>
-		<td>    &lt;mood&gt; is used to determine what will happen to the
-    monster when affected by the mood floor:
-    <ul>
-    <li>&lt;mood&gt; 'furious': Makes all monsters aggressive
+		<td>            &lt;mood&gt; is used to determine what will happen to the
+            monster when affected by the mood floor:
+            <ul>
+            <li>&lt;mood&gt; 'furious': Makes all monsters aggressive
 
-    <li>&lt;mood&gt; 'angry': As above but pets are unaffected
+            <li>&lt;mood&gt; 'angry': As above but pets are unaffected
 
-    <li>&lt;mood&gt; 'calm': Makes all monsters unaggressive
+            <li>&lt;mood&gt; 'calm': Makes all monsters unaggressive
 
-    <li>&lt;mood&gt; 'sleep': Puts all monsters to sleep
+            <li>&lt;mood&gt; 'sleep': Puts all monsters to sleep
 
-    <li>&lt;mood&gt; 'charm': Turns monster into a pet of person
-                    who triggers the square. <br> This setting is not
-                    enabled for continuous operation, you need to
-                    insert a &lt;connection&gt; value!
-    </ul>
+            <li>&lt;mood&gt; 'charm': Turns monster into a pet of person
+                who triggers the square. <br> This setting is not
+                enabled for continuous operation, you need to
+                insert a &lt;connection&gt; value!
+            </ul>
 		</td>
 	</tr>
 	<tr>
@@ -172,21 +172,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

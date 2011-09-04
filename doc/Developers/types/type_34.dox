@@ -8,10 +8,10 @@ See @ref page_type_34
 
 
 @section Description
-    Wearing a helmet, the object's stats will directly be inherited to
-    the player. Normal helmets usually increase defense, while crowns
-    add more special bonuses like stats/resistances paired with
-    low defense. 
+            Wearing a helmet, the object's stats will directly be inherited to
+            the player. Normal helmets usually increase defense, while crowns
+            add more special bonuses like stats/resistances paired with low
+            defense. 
 
 
 
@@ -229,7 +229,7 @@ Type defined by:
 		<td>luck bonus</td>
 		<td>@ref liv::luck</td>
 		<td>                With positive luck bonus, the player is more likely to succeed
-                in all sorts of things (spellcasting, praying,...). Unless the
+                in all sorts of things (spell-casting, praying,...). Unless the
                 &lt;luck bonus&gt; is very high, the effect will be barely
                 visible in-game. Luck bonus on one piece of equipment should
                 never exceed 3, and such bonus should not be too frequently
@@ -302,21 +302,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
@@ -381,8 +382,8 @@ Type defined by:
 		<td>                This adds chaos resistance to the item. The number is a
                 percent-value in the range 0-100. Treat this with CARE. Look at
                 other maps and what they require to do for getting this-and-that
-                artifact. Note that chaos is not a stand-alone attacktype. Chaos
-                "contains" a combination of other attacktypes.
+                artifact. Note that chaos is not a stand-alone attack type.
+                Chaos "contains" a combination of other attack types.
 		</td>
 	</tr>
 	<tr>
@@ -468,7 +469,7 @@ Type defined by:
 		<td>resist holy power %</td>
 		<td>@ref obj::resist</td>
 		<td>                This adds holy power resistance to the item. The number is a
-                percent-value in the range 0-100. Holy power is the attacktype
+                percent-value in the range 0-100. Holy power is the attack type
                 that holyword-type spells use to hurt undead creatures. This
                 kind of resistance is only reasonable for undead players (wraith
                 or devourer cult). Generally, resistance to holy word should not

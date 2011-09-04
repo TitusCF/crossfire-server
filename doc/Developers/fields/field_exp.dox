@@ -38,7 +38,7 @@
             If you create special monsters of tweaked strength/abilities, always
             make sure that the &lt;experience&gt; is set to a reasonable value.
             Compare with existing arches to get a feeling what reasonable means.
-            Keep in mind that spellcasting monsters are a lot harder to kill
+            Keep in mind that spell-casting monsters are a lot harder to kill
             than non spell casters!</td>
 	</tr>
 	<tr>
@@ -51,11 +51,6 @@
             very high quality, maybe charge an entrance fee, or make the shop
             hard-to-come-by. Note that &lt;quality level&gt; mainly affects
             chance of magic bonus and appearance of artifact-items.</td>
-	</tr>
-	<tr>
-		<td>
-@ref page_type_43
-		</td><td>(no description)</td>
 	</tr>
 	<tr>
 		<td>

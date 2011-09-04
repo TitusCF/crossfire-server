@@ -8,10 +8,10 @@ See @ref page_type_18
 
 
 @section Description
-    When a player puts a defined number of certain items on the altar,
-    then either a spell is casted (on the player) or a connector is
-    triggered. If the latter is the case, the altar works only once.
-    Either way, the sacrificed item disappears. 
+            When a player puts a defined number of certain items on the altar,
+            then either a spell is casted (on the player) or a connector is
+            triggered. If the latter is the case, the altar works only once.
+            Either way, the sacrificed item disappears. 
 
 
 
@@ -30,8 +30,8 @@ Type defined by:
 	<tr>
 		<td>accept alive things</td>
 		<td>@ref page_custom_attribute_accept_alive "accept_alive"</td>
-		<td>            If set, this altar will accept living things as sacrifice.
-            Else they will be ignored.
+		<td>            If set, this altar will accept living things as sacrifice. Else they
+            will be ignored.
 		</td>
 	</tr>
 	<tr>
@@ -173,21 +173,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

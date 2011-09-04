@@ -102,9 +102,11 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_154
+@ref page_type_154, @ref page_type_155
 		</td><td>            The rune will detonate &lt;number of charges&gt; times before
-            disappearing.</td>
+            disappearing.
+
+            Should be not 0 if 'unlimited charges' is set.</td>
 	</tr>
 	<tr>
 		<td>
@@ -128,12 +130,6 @@
 @ref page_type_26
 		</td><td>            Defines the duration the gate remains closed. This only takes effect
             if the gate is not connected.</td>
-	</tr>
-	<tr>
-		<td>
-@ref page_type_155
-		</td><td>            The trap will detonate &lt;number of charges&gt; times before
-            disappearing.</td>
 	</tr>
 	<tr>
 		<td>

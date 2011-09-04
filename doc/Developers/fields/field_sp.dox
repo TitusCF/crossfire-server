@@ -59,7 +59,7 @@
 		</td><td>                Like players, monsters need &lt;spellpoints&gt; to do magic.
                 Monsters use them for both wizard- and prayer-spells. However,
                 this value defines only the amount of *initial* spellpoints the
-                monster starts with. When creating a spellcasting monster,
+                monster starts with. When creating a spell-casting monster,
                 remember that &lt;max spellpoints&gt; and &lt;spellpoint regen.&gt;
                 are more important than just initial &lt;spellpoints&gt;.</td>
 	</tr>
@@ -98,8 +98,9 @@
 	<tr>
 		<td>
 @ref page_type_101
-		</td><td>          How many base spell points this spell costs to cast.
-          The effective cost can be based on the casting level, depending on server settings.</td>
+		</td><td>            How many base spell points this spell costs to cast. The effective
+            cost can be based on the casting level, depending on server
+            settings.</td>
 	</tr>
 	<tr>
 		<td>

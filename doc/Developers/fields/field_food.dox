@@ -37,8 +37,9 @@
 	<tr>
 		<td>
 @ref page_type_54, @ref page_type_72, @ref page_type_6
-		</td><td>            The player's stomach will get filled with this amount of food points.
-            The player's health will increase by &lt;food points&gt;/50 hp.</td>
+		</td><td>            The player's stomach will get filled with this amount of food
+            points. The player's health will increase by &lt;food points&gt;/50
+            hp.</td>
 	</tr>
 	<tr>
 		<td>

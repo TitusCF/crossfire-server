@@ -10,7 +10,8 @@
 @ref page_type_15
 		</td><td>            The &lt;weapon type&gt; characterizes the weapon's type of physical
             attack. It could best be considered a "sub-classification" of the
-            physical attacktype. For now, this is only used for attack messages!
+            physical attack type. For now, this is only used for attack
+            messages!
 
             You should always set this correctly when creating new weapons for
             your maps.</td>

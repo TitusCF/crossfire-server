@@ -8,9 +8,8 @@ See @ref page_type_73
 
 
 @section Description
-    Inorganic materials are generally used as ingredients for
-    alchemical recipes. By themselves, they have no special
-    functionality. 
+            Inorganic materials are generally used as ingredients for alchemical
+            recipes. By themselves, they have no special functionality. 
 
 
 
@@ -123,93 +122,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
-		</td>
-	</tr>
-	<tr>
-		<td>resist acid %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist chaos %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist cold %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist death-attack %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist electricity %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist fire %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist ghosthit %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist holy power %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist magic %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist physical %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist poison %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist weaponmagic %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

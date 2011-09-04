@@ -26,8 +26,8 @@
 	<tr>
 		<td>
 @ref page_type_15
-		</td><td>            If set, will apply a compound animation to the player or monster when
-            attacking with this weapon.</td>
+		</td><td>            If set, will apply a compound animation to the player or monster
+            when attacking with this weapon.</td>
 	</tr>
 
 */

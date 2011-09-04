@@ -8,10 +8,10 @@ See @ref page_type_23
 
 
 @section Description
-    A door can be opened with a normal key. It also can be broken by attacking
-    it, and it can be defeated with the lockpicking skill. If a door is
-    defeated, horizontally and vertically adjacent doors are automatically
-    removed. 
+            A door can be opened with a normal key. It also can be broken by
+            attacking it, and it can be defeated with the lockpicking skill. If
+            a door is defeated, horizontally and vertically adjacent doors are
+            automatically removed. 
 
 
 
@@ -158,21 +158,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

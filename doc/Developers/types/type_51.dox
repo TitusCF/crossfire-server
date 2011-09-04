@@ -8,13 +8,14 @@ See @ref page_type_51
 
 
 @section Description
-    Detectors work quite much like inventory checkers/pedestals: If the detector
-    finds a specific object, it toggles its connected value.
-    <br><br>
-    What is "unique" about them, compared to inventory checkers/ pedestals?
-    - First, detectors check their square for a match periodically, not
-    instantly. Second, detectors check directly for object names. Third,
-    detectors do not check the inventory of players/monsters. 
+            Detectors work quite much like inventory checkers/pedestals: If the
+            detector finds a specific object, it toggles its connected value.
+            <br><br>
+            What is "unique" about them, compared to inventory
+            checkers/pedestals?
+            - First, detectors check their square for a match periodically, not
+            instantly. Second, detectors check directly for object names. Third,
+            detectors do not check the inventory of players/monsters. 
 
 
 
@@ -151,21 +152,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

@@ -58,7 +58,7 @@
 @ref page_type_154
 		</td><td>                If this is set to the arch name of any monster, together with
                 &lt;spell name&gt; "summon evil monster", the rune will summon a
-                bunch of those on detonation. (dam and attacktype will still be
+                bunch of those on detonation. (dam and attack type will still be
                 ignored in this case). Runes are even capable of summoning
                 multi-square monsters, given enough space. You'd better test it
                 though.</td>

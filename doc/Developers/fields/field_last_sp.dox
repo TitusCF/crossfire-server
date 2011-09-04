@@ -41,22 +41,22 @@
 	<tr>
 		<td>
 @ref page_type_65
-		</td><td>    &lt;mood&gt; is used to determine what will happen to the
-    monster when affected by the mood floor:
-    <ul>
-    <li>&lt;mood&gt; 'furious': Makes all monsters aggressive
+		</td><td>            &lt;mood&gt; is used to determine what will happen to the
+            monster when affected by the mood floor:
+            <ul>
+            <li>&lt;mood&gt; 'furious': Makes all monsters aggressive
 
-    <li>&lt;mood&gt; 'angry': As above but pets are unaffected
+            <li>&lt;mood&gt; 'angry': As above but pets are unaffected
 
-    <li>&lt;mood&gt; 'calm': Makes all monsters unaggressive
+            <li>&lt;mood&gt; 'calm': Makes all monsters unaggressive
 
-    <li>&lt;mood&gt; 'sleep': Puts all monsters to sleep
+            <li>&lt;mood&gt; 'sleep': Puts all monsters to sleep
 
-    <li>&lt;mood&gt; 'charm': Turns monster into a pet of person
-                    who triggers the square. <br> This setting is not
-                    enabled for continuous operation, you need to
-                    insert a &lt;connection&gt; value!
-    </ul></td>
+            <li>&lt;mood&gt; 'charm': Turns monster into a pet of person
+                who triggers the square. <br> This setting is not
+                enabled for continuous operation, you need to
+                insert a &lt;connection&gt; value!
+            </ul></td>
 	</tr>
 	<tr>
 		<td>

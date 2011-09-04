@@ -8,14 +8,16 @@ See @ref page_type_14
 
 
 @section Description
-    Shooting weapons like bows/crossbows are used to shoot projectiles
-    (arrows/bolts). Shooting weapons and normal (melee) weapons can be
-    wielded both at the same time. Like with any other equipment,
-    stats/bonuses from shooting weapons are directly inherited to the player.
-    <br><br>
-    It's very easy to add new pairs of weapons &amp; projectiles.
-    Just set matching &lt;ammunition class&gt; both for shooting
-    weapon and projectile. 
+            Shooting weapons like bows/crossbows are used to shoot projectiles
+            (arrows/bolts). Shooting weapons and normal (melee) weapons can be
+            wielded both at the same time. Like with any other equipment,
+            stats/bonuses from shooting weapons are directly inherited to the
+            player.
+            <br>
+            <br>
+            It's very easy to add new pairs of weapons &amp; projectiles. Just
+            set matching &lt;ammunition class&gt; both for shooting weapon and
+            projectile. 
 
 
 
@@ -192,7 +194,7 @@ Type defined by:
 		<td>luck bonus</td>
 		<td>@ref liv::luck</td>
 		<td>                With positive luck bonus, the player is more likely to succeed
-                in all sorts of things (spellcasting, praying,...). Unless the
+                in all sorts of things (spell-casting, praying,...). Unless the
                 &lt;luck bonus&gt; is very high, the effect will be barely
                 visible in-game. Luck bonus on one piece of equipment should
                 never exceed 3, and such bonus should not be too frequently
@@ -255,21 +257,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

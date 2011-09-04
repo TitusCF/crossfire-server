@@ -8,12 +8,14 @@ See @ref page_type_83
 
 
 @section Description
-    When activated, a duplicator can duplicate, multiply or destroy a pile of
-    objects which lies somewhere on top of the duplicator.
-    The duplicator has one arch name specified as &lt;target arch&gt;,
-    and only objects of this archetype can be affected.<br>
-    It will multiply the number of items in the pile, by the &lt;multiply factor&gt;.
-    If the latter is set to zero, it will destroy objects. 
+            When activated, a duplicator can duplicate, multiply or destroy a
+            pile of objects which lies somewhere on top of the duplicator. The
+            duplicator has one arch name specified as &lt;target arch&gt;, and
+            only objects of this archetype can be affected.
+            <br>
+            It will multiply the number of items in the pile, by the
+            &lt;multiply factor&gt;. If the latter is set to zero, it will
+            destroy objects. 
 
 
 
@@ -143,21 +145,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

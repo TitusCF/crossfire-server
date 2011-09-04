@@ -8,10 +8,10 @@ See @ref page_type_158
 
 
 @section Description
-    Diseases are an interesting form of spellcraft in Crossfire.
-    Once casted, they can spread out and infect creatures in a large
-    area. Being infected can have various effects, from amusing farts
-    to horrible damage - almost everything is possible. 
+            Diseases are an interesting form of spellcraft in Crossfire.
+            Once casted, they can spread out and infect creatures in a large
+            area. Being infected can have various effects, from amusing farts
+            to horrible damage - almost everything is possible. 
 
 
 
@@ -28,10 +28,10 @@ Type defined by:
 		<th>Description</th>
 	</tr>
 	<tr>
-		<td>attacktype</td>
+		<td>attack type</td>
 		<td>@ref obj::attacktype</td>
-		<td>                The disease will attack the host with the given &lt;attacktype&gt;.
-                Godpower attacktype is commonly used for "unresistable"
+		<td>                The disease will attack the host with the given &lt;attack type&gt;.
+                Godpower attack type is commonly used for "unresistable"
                 diseases.
 		</td>
 	</tr>
@@ -313,21 +313,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

@@ -8,12 +8,12 @@ See @ref page_type_122
 
 
 @section Description
-    A player can put (certain kinds of) items in the container.
-    The overall weight of items is reduced when put inside a
-    container, depending on the settings.
-    <br><br>
-    A special feature of containers is the "cauldron",
-    capable of mixing alchemical recipes. 
+            A player can put (certain kinds of) items in the container.
+            The overall weight of items is reduced when put inside a container,
+            depending on the settings.
+            <br><br>
+            A special feature of containers is the "cauldron", capable of mixing
+            alchemical recipes. 
 
 
 
@@ -190,21 +190,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

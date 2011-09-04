@@ -8,13 +8,17 @@ See @ref page_type_94
 
 
 @section Description
-    Pits are holes, transporting the player when he walks (and falls) into them.
-    A specialty about pits is that they don't transport the player to
-    the exact destination, but within a two-square radius of the destination
-    (never on blocked squares).<br>
-    Optionally, pits can get closed and opened, similar to gates.<br><br>
-    Monsters and items are affected by pits just as well as players.
-    Even multi-part monsters can fall through them, given enough space. 
+            Pits are holes, transporting the player when he walks (and falls)
+            into them. A specialty about pits is that they don't transport the
+            player to the exact destination, but within a two-square radius of
+            the destination (never on blocked squares).
+            <br>
+            Optionally, pits can get closed and opened, similar to gates.
+            <br>
+            <br>
+            Monsters and items are affected by pits just as well as players.
+            Even multi-part monsters can fall through them, given enough space.
+            
 
 
 
@@ -172,21 +176,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

@@ -8,14 +8,17 @@ See @ref page_type_155
 
 
 @section Description
-    A trap is a object that can either do damage or trigger another connected object
-	when detonated. Traps are like runes except they are not magical in nature,
-	and generally have either a physical attack or trigger a reaction.
-    <br><br>
-    Traps hit any monster or person who steps on them for 'dam' damage in
-    'attacktype' attacktype and/or trigger a reaction.
-    <br><br>
-    Many traps are already defined in the archetypes. 
+            A trap is a object that can either do damage or trigger another
+            connected object when detonated. Traps are like runes except they
+            are not magical in nature, and generally have either a physical
+            attack or trigger a reaction.
+            <br>
+            <br>
+            Traps hit any monster or person who steps on them for 'dam' damage
+            in 'attack type' attacktype and/or trigger a reaction.
+            <br>
+            <br>
+            Many traps are already defined in the archetypes. 
 
 
 
@@ -32,10 +35,10 @@ Type defined by:
 		<th>Description</th>
 	</tr>
 	<tr>
-		<td>attacktype</td>
+		<td>attack type</td>
 		<td>@ref obj::attacktype</td>
-		<td>            This attribute defines what attacktype to use for direct damage when
-            the trap detonates.
+		<td>            This attribute defines what attack type to use for direct damage
+            when the trap detonates.
 		</td>
 	</tr>
 	<tr>
@@ -135,28 +138,31 @@ Type defined by:
 	<tr>
 		<td>number of charges</td>
 		<td>@ref liv::hp</td>
-		<td>            The trap will detonate &lt;number of charges&gt; times before
+		<td>            The rune will detonate &lt;number of charges&gt; times before
             disappearing.
+
+            Should be not 0 if 'unlimited charges' is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
@@ -185,6 +191,13 @@ Type defined by:
             much experience the player gets for doing so. Beware: High level
             traps can be quite a cheap source of experience! So either make them
             tough, or keep the level low.
+		</td>
+	</tr>
+	<tr>
+		<td>unlimited charges</td>
+		<td>@ref FLAG_LIFESAVE</td>
+		<td>            If set, then the rune will detonate forever if the number of charges
+            is not 0.
 		</td>
 	</tr>
 	<tr>

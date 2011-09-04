@@ -8,13 +8,13 @@ See @ref page_type_26
 
 
 @section Description
-    Gates play an important role in Crossfire. Gates can be opened
-    by activating a button/trigger, by speaking passwords (-> magic_ear)
-    or carrying special key-objects (-> inventory checker).
-    Unlike locked doors, gates can get shut again after a player has
-    passed, which makes them more practical in many cases. Unlike normal
-    gates, timed gates open when triggered but automatically close again
-    after some time.
+            Gates play an important role in Crossfire. Gates can be opened
+            by activating a button/trigger, by speaking passwords (-> magic_ear)
+            or carrying special key-objects (-> inventory checker).
+            Unlike locked doors, gates can get shut again after a player has
+            passed, which makes them more practical in many cases. Unlike normal
+            gates, timed gates open when triggered but automatically close again
+            after some time.
 
 
 
@@ -159,21 +159,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

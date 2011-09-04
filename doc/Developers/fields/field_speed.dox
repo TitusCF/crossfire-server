@@ -21,7 +21,7 @@
 	<tr>
 		<td>
 @ref page_type_62
-		</td><td>            The &lt;casting speed&gt; defines the spellcasting speed of the
+		</td><td>            The &lt;casting speed&gt; defines the spell-casting speed of the
             wall. You can fine-tune how long the duration between two casts
             shall be. If you want to create a wall that can be activated (cast
             per trigger) via connected lever/button/etc, you must set "speed 0".</td>

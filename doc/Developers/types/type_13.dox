@@ -8,12 +8,13 @@ See @ref page_type_13
 
 
 @section Description
-    Projectiles like arrows/crossbow bolts are used as ammunition
-    for shooting weapons.
-    <br><br>
-    It's very easy to add new pairs of weapons &amp; projectiles.
-    Just set matching &lt;ammunition class&gt; both for shooting
-    weapon and projectile. 
+            Projectiles like arrows/crossbow bolts are used as ammunition for
+            shooting weapons.
+            <br>
+            <br>
+            It's very easy to add new pairs of weapons &amp; projectiles. Just
+            set matching &lt;ammunition class&gt; both for shooting weapon and
+            projectile. 
 
 
 
@@ -46,12 +47,12 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
-		<td>attacktype</td>
+		<td>attack type</td>
 		<td>@ref obj::attacktype</td>
-		<td>            This number is a bitmask, specifying the projectile's attacktypes.
-            Attacktypes are: physical, magical, fire, cold.. etc. This works
+		<td>            This number is a bitmask, specifying the projectile's attack types.
+            Attack types are: physical, magical, fire, cold.. etc. This works
             identical to melee weapons. Note that shooting weapons cannot have
-            attacktypes.
+            attack types.
 		</td>
 	</tr>
 	<tr>
@@ -196,21 +197,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

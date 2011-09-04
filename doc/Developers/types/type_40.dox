@@ -8,15 +8,16 @@ See @ref page_type_40
 
 
 @section Description
-    Movers move the objects above them. However, only living objects
-    are affected (monsters/NPCs always, players optional). Movers have
-    a direction, so players can be made to move in a pattern, and so
-    can monsters. Motion is involuntary. Additionally, players or
-    monsters can be "frozen" while on top of movers so that they MUST
-    move along a chain of them.
-    <br><br>
-    Multi-square monsters can be moved as well, given
-    enough space. Movers are usually invisible. 
+            Movers move the objects above them. However, only living objects
+            are affected (monsters/NPCs always, players optional). Movers have
+            a direction, so players can be made to move in a pattern, and so
+            can monsters. Motion is involuntary. Additionally, players or
+            monsters can be "frozen" while on top of movers so that they MUST
+            move along a chain of them.
+            <br>
+            <br>
+            Multi-square monsters can be moved as well, given enough space.
+            Movers are usually invisible. 
 
 
 
@@ -208,21 +209,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

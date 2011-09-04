@@ -8,14 +8,16 @@ See @ref page_type_2
 
 
 @section Description
-    A transport is an object that helps the player move. It should not be confused
-    an EXIT, which instantaneously transport a player from one map to another.
-    <br><br>
-    Instead, a transport may let the player move faster, give him move types
-    they don't have, etc. A simple example of this would a horse. It doesn't
-    let the player move anyplace he normally couldn't go, but lets him get
-    there faster. Ships would be another case - the player normally can't move
-    across water, but with a ship, he can.
+            A transport is an object that helps the player move. It should not
+            be confused an EXIT, which instantaneously transport a player from
+            one map to another.
+            <br>
+            <br>
+            Instead, a transport may let the player move faster, give him move
+            types they don't have, etc. A simple example of this would a horse.
+            It doesn't let the player move anyplace he normally couldn't go, but
+            lets him get there faster. Ships would be another case - the player
+            normally can't move across water, but with a ship, he can. 
 
 
 
@@ -184,21 +186,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

@@ -8,11 +8,11 @@ See @ref page_type_111
 
 
 @section Description
-    Scrolls contain spells (similar to spell-potions). Unlike potions,
-    scrolls require a certain literacy skill to read successfully.
-    Accordingly, for a successful reading, a small amount of
-    experience is gained. Scrolls allow only one time usage, but
-    usually they are sold in bulks. 
+            Scrolls contain spells (similar to spell-potions). Unlike potions,
+            scrolls require a certain literacy skill to read successfully.
+            Accordingly, for a successful reading, a small amount of experience
+            is gained. Scrolls allow only one time usage, but usually they are
+            sold in bulks. 
 
 
 
@@ -139,21 +139,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

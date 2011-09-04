@@ -21,7 +21,8 @@
 	<tr>
 		<td>
 @ref page_type_101
-		</td><td>            Spellpath for this spell. A player needs to not be denied this path to cast the spell.</td>
+		</td><td>            Spellpath for this spell. A player needs to not be denied this path
+            to cast the spell.</td>
 	</tr>
 	<tr>
 		<td>

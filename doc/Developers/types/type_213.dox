@@ -3,12 +3,11 @@
 
 
 @section Description
-    Monsters can behave in various kinds of ways.
-    They can be aggressive, attacking the player. Or peaceful,
-    helping the player - maybe joining him as pet.
-    The unaggressive creatures who communicate with players are
-    usually called "NPCs" (Non Player Character), a well-known
-    term in role-play environments. 
+            Monsters can behave in various kinds of ways. They can be
+            aggressive, attacking the player. Or peaceful, helping the player -
+            maybe joining him as pet. The unaggressive creatures who communicate
+            with players are usually called "NPCs" (Non Player Character), a
+            well-known term in role-play environments. 
 
 
 
@@ -46,22 +45,16 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
-		<td>attack movement</td>
-		<td>@ref obj::attack_movement</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>attacktype</td>
+		<td>attack type</td>
 		<td>@ref obj::attacktype</td>
-		<td>                This number is a bitmask, specifying the monster's attacktypes
-                for melee damage. Attacktypes are: physical, magical, fire,
+		<td>                This number is a bitmask, specifying the monster's attack types
+                for melee damage. Attack types are: physical, magical, fire,
                 cold.. etc. Strong monsters often have more than just physical
-                attacktype.
+                attack type.
 
-                When a monster with multiple attacktypes hits an opponent, it
-                will do as much damage as the "best" of it's attacktypes does.
-                So, the more attacktypes, the more dangerous. Attacktypes
+                When a monster with multiple attack types hits an opponent, it
+                will do as much damage as the "best" of it's attack types does.
+                So, the more attack types, the more dangerous. Attack types
                 "magic" and "chaos" are somehow exceptions.
 		</td>
 	</tr>
@@ -217,7 +210,7 @@ Type defined by:
             If you create special monsters of tweaked strength/abilities, always
             make sure that the &lt;experience&gt; is set to a reasonable value.
             Compare with existing arches to get a feeling what reasonable means.
-            Keep in mind that spellcasting monsters are a lot harder to kill
+            Keep in mind that spell-casting monsters are a lot harder to kill
             than non spell casters!
 		</td>
 	</tr>
@@ -258,7 +251,7 @@ Type defined by:
 		<td>                Monsters with &lt;hitback&gt; enabled hurt the attacker in
                 proportion to the amount of damage the *attacker* inflicted.
                 This damage is additional to the regular melee damage of the
-                monster. As far as I know, hitback uses acid attacktype, and it
+                monster. As far as I know, hitback uses acid attack type, and it
                 only takes effect if the monster actually has acid attacktype at
                 it's disposal. Acid spheres for example use this feature.
 		</td>
@@ -307,7 +300,7 @@ Type defined by:
                 unless the monster has a decent &lt;spellpoint regen.&gt;, or
                 the spell "regenerate mana" at it's disposal.
 
-                Warning: Do not create spellcasting and breeding monsters since
+                Warning: Do not create spell-casting and breeding monsters since
                 this field is also used as &lt;multiply speed&gt;.
 		</td>
 	</tr>
@@ -358,23 +351,23 @@ Type defined by:
 	<tr>
 		<td>multiply map code</td>
 		<td>@ref page_custom_attribute_generator_code "generator_code"</td>
-		<td>            If &lt;multiply map limit&gt; is set, this groups generators for counting
-            purposes. If not set, defaults to the generator's name.
+		<td>            If &lt;multiply map limit&gt; is set, this groups generators for
+            counting purposes. If not set, defaults to the generator's name.
 		</td>
 	</tr>
 	<tr>
 		<td>multiply map limit</td>
 		<td>@ref page_custom_attribute_generator_max_map "generator_max_map"</td>
-		<td>            If &lt;multiply&gt; is enabled, this limits how many alive monsters at
-            the same time will be on the map.
+		<td>            If &lt;multiply&gt; is enabled, this limits how many alive monsters
+            at the same time will be on the map.
 		</td>
 	</tr>
 	<tr>
 		<td>multiply radius</td>
 		<td>@ref page_custom_attribute_generator_radius "generator_radius"</td>
-		<td>            If &lt;multiply&gt; is enabled, this is the radius, in square,
-            in which the generator will try to put a new monster. Default value
-            is 1.
+		<td>            If &lt;multiply&gt; is enabled, this is the radius, in square, in
+            which the generator will try to put a new monster. Default value is
+            1.
 		</td>
 	</tr>
 	<tr>
@@ -438,21 +431,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
@@ -494,132 +488,6 @@ Type defined by:
 		<td>@ref obj::path_repelled</td>
 		<td>                Click on the &lt;repelled paths&gt; button to select spellpaths.
                 The creature will get repelled to the specified spellpaths.
-		</td>
-	</tr>
-	<tr>
-		<td>resist acid %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist blinding %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist chaos %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist cold %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist confusion %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist death-attack %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist depletion %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist draining %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist electricity %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist fear %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist fire %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist ghosthit %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist godpower %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist holy power %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist magic %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist paralyze %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist physical %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist poison %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist slow %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist turn undead %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist weaponmagic %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
 		</td>
 	</tr>
 	<tr>
@@ -683,7 +551,7 @@ Type defined by:
 		<td>                Monsters regenerate this many spellpoints each 16 ticks. Hence,
                 the spellpoint regeneration rate is independent of &lt;speed&gt;.
 
-                To make a real tough spellcasting monster, the rate of
+                To make a real tough spell-casting monster, the rate of
                 spellpoint regeneration is most important. If your monster is
                 still not casting fast enough, give it the spell-ability of
                 "regenerate mana". That, paired with high &lt;max spellpoints&gt;,
@@ -696,7 +564,7 @@ Type defined by:
 		<td>                Like players, monsters need &lt;spellpoints&gt; to do magic.
                 Monsters use them for both wizard- and prayer-spells. However,
                 this value defines only the amount of *initial* spellpoints the
-                monster starts with. When creating a spellcasting monster,
+                monster starts with. When creating a spell-casting monster,
                 remember that &lt;max spellpoints&gt; and &lt;spellpoint regen.&gt;
                 are more important than just initial &lt;spellpoints&gt;.
 		</td>

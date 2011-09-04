@@ -1,25 +1,20 @@
 /**
-@var SPECIAL_KEY
-See @ref page_type_21
+@var PLAYER
+See @ref page_type_1
 */
 
 /**
-@page page_type_21 Special Key
+@page page_type_1 Player
 
 
 @section Description
-            When carrying the appropriate special key, a locked door can be
-            opened. The key will disappear.
-            <br>
-            <br>
-            This object-type can also be used for "passport"-like items: When
-            walking onto an inventory checker, a gate for example might get
-            opened. The "passport" will stay in the player's inventory. 
+            This type of objects must not be used on a map. They will be ignored
+            during map load by server.
 
 
 
 Type defined by:
-- @ref object::type = 21
+- @ref object::type = 1
 
 
 @section Attributes
@@ -48,16 +43,6 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
-		<td>description</td>
-		<td>@ref obj::msg</td>
-		<td>            This will add a description to the object. The player can read this
-            text by clicking on the item in his inventory. Use this message to
-            describe what the key/passport is good for. A player might have 50
-            different keys on his key-ring. Don't expect players to recall their
-            purpose just by their names.
-		</td>
-	</tr>
-	<tr>
 		<td>elevation</td>
 		<td>@ref obj::elevation</td>
 		<td>            The elevation (height above sea level) of this square. It is used
@@ -73,13 +58,6 @@ Type defined by:
 		<td>            If &lt;glow radius&gt; is set to a value greater zero, the object
             appears lit up on dark maps. &lt;glow radius&gt; can be a value
             between 0 and 4, the higher, the more light does the object emit.
-		</td>
-	</tr>
-	<tr>
-		<td>godgiven item</td>
-		<td>@ref FLAG_STARTEQUIP</td>
-		<td>            A godgiven item vanishes as soon as the player drops it to the
-            ground.
 		</td>
 	</tr>
 	<tr>
@@ -105,19 +83,11 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
-		<td>key string</td>
-		<td>@ref obj::slaying</td>
-		<td>            This string must be identical with the &lt;key string&gt; in the
-            locked door, then it can be unlocked. It can also be used to trigger
-            inventory checkers.
-		</td>
-	</tr>
-	<tr>
 		<td>material</td>
 		<td>@ref obj::material</td>
-		<td>            For Special Keys, material should always be unset or set to
-            Adamantite. This prevents the key from getting burned or otherwise
-            destroyed.
+		<td>            This bitmask-value informs the player of which material(s) the
+            object consists. Material does also affect how likely the object can
+            be destroyed by hazardous spell-effects.
 		</td>
 	</tr>
 	<tr>
@@ -195,17 +165,6 @@ Type defined by:
 		<td>            This is the object's title. Once an object is identified the title
             is attached to the name. Typical titles are "of Mostrai", "of xray
             vision" etc.
-		</td>
-	</tr>
-	<tr>
-		<td>unique item</td>
-		<td>@ref FLAG_UNIQUE</td>
-		<td>            Unique items exist only one time on a server. If the item is taken,
-            lost or destroyed - it's gone for good.
-
-            This can be used if you want to sell apartments on your map: Simply
-            sell a unique passport/key, and place an inventory checker at the
-            entrance of your apartment.
 		</td>
 	</tr>
 	<tr>

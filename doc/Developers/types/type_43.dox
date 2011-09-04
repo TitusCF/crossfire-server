@@ -8,9 +8,9 @@ See @ref page_type_43
 
 
 @section Description
-    Skills are objects which exist in the player/monster inventory.
-    Both NPC/monsters and players use the same skill archetypes. Not all skills
-    are enabled for monster use however. 
+            Skills are objects which exist in the player/monster inventory. Both
+            NPC/monsters and players use the same skill archetypes. Not all
+            skills are enabled for monster use however. 
 
 
 
@@ -73,12 +73,6 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
-		<td>experience</td>
-		<td>@ref liv::exp</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
 		<td>glow radius</td>
 		<td>@ref obj::glow_radius</td>
 		<td>            If &lt;glow radius&gt; is set to a value greater zero, the object
@@ -115,12 +109,6 @@ Type defined by:
             object is placed in the inventory of a monster (or player). If it is
             set, the monster or player knows the skill natively, which means he
             does not need a skill tool to use it.
-		</td>
-	</tr>
-	<tr>
-		<td>level</td>
-		<td>@ref obj::level</td>
-		<td>(no description)
 		</td>
 	</tr>
 	<tr>
@@ -183,21 +171,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

@@ -29,7 +29,7 @@
 		</td><td>                Monsters regenerate this many spellpoints each 16 ticks. Hence,
                 the spellpoint regeneration rate is independent of &lt;speed&gt;.
 
-                To make a real tough spellcasting monster, the rate of
+                To make a real tough spell-casting monster, the rate of
                 spellpoint regeneration is most important. If your monster is
                 still not casting fast enough, give it the spell-ability of
                 "regenerate mana". That, paired with high &lt;max spellpoints&gt;,

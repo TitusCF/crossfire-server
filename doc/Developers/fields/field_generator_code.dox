@@ -10,8 +10,8 @@ This is a @ref page_custom_attributes "custom attribute".
 	</tr>	<tr>
 		<td>
 @ref page_type_213, @ref page_type_28
-		</td><td>            If &lt;multiply map limit&gt; is set, this groups generators for counting
-            purposes. If not set, defaults to the generator's name.</td>
+		</td><td>            If &lt;multiply map limit&gt; is set, this groups generators for
+            counting purposes. If not set, defaults to the generator's name.</td>
 	</tr>
 
 */

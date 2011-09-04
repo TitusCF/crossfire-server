@@ -29,5 +29,11 @@
             (specified by &lt;number of uses&gt;). If disabled, the mover works
             infinitely.</td>
 	</tr>
+	<tr>
+		<td>
+@ref page_type_154, @ref page_type_155
+		</td><td>            If set, then the rune will detonate forever if the number of charges
+            is not 0.</td>
+	</tr>
 
 */

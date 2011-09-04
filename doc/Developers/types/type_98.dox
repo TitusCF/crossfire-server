@@ -8,10 +8,11 @@ See @ref page_type_98
 
 
 @section Description
-    The purpose of a sign or magic_mouth is to display a certain message to
-    the player. There are three ways to have the player get this message:
-    The player walking onto it (-&gt; magic_mouth), the player pressing &lt;a&gt;pply
-    (-&gt; sign) or the player triggering a button/handle/etc (-&gt; magic_mouth). 
+            The purpose of a sign or magic_mouth is to display a certain message
+            to the player. There are three ways to have the player get this
+            message: The player walking onto it (-&gt; magic_mouth), the player
+            pressing &lt;a&gt;pply (-&gt; sign) or the player triggering a
+            button/handle/etc (-&gt; magic_mouth). 
 
 
 
@@ -170,21 +171,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

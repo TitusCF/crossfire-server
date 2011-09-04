@@ -24,7 +24,8 @@
 	<tr>
 		<td>
 @ref page_type_101
-		</td><td>          If non zero, the grace cost will increase &lt;grace cost&gt; per this value levels.</td>
+		</td><td>            If non zero, the grace cost will increase &lt;grace cost&gt; per
+            this value levels.</td>
 	</tr>
 
 */

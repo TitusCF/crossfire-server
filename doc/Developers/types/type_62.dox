@@ -8,13 +8,14 @@ See @ref page_type_62
 
 
 @section Description
-    Magic walls fire spells in a given direction, in regular intervals.
-    Magic walls can contain any spell. However, some spells do not
-    operate very successfully in them. The only way to know is to test
-    the spell you want to use with a wall.
-    <br><br>
-    Several types of magical walls are predefined for you in the
-    archetypes, and can be found on the "connected" Pickmap. 
+            Magic walls fire spells in a given direction, in regular intervals.
+            Magic walls can contain any spell. However, some spells do not
+            operate very successfully in them. The only way to know is to test
+            the spell you want to use with a wall.
+            <br>
+            <br>
+            Several types of magical walls are predefined for you in the
+            archetypes, and can be found on the "connected" Pickmap. 
 
 
 
@@ -54,7 +55,7 @@ Type defined by:
 	<tr>
 		<td>casting speed</td>
 		<td>@ref obj::speed</td>
-		<td>            The &lt;casting speed&gt; defines the spellcasting speed of the
+		<td>            The &lt;casting speed&gt; defines the spell-casting speed of the
             wall. You can fine-tune how long the duration between two casts
             shall be. If you want to create a wall that can be activated (cast
             per trigger) via connected lever/button/etc, you must set "speed 0".
@@ -196,147 +197,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
-		</td>
-	</tr>
-	<tr>
-		<td>resist acid %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist blinding %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist chaos %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist cold %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist confusion %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist death-attack %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist depletion %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist draining %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist electricity %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist fear %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist fire %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist ghosthit %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist godpower %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist holy power %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist magic %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist paralyze %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist physical %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist poison %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist slow %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist turn undead %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
-		</td>
-	</tr>
-	<tr>
-		<td>resist weaponmagic %</td>
-		<td>@ref obj::resist</td>
-		<td>(no description)
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

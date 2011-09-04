@@ -8,14 +8,14 @@ See @ref page_type_69
 
 
 @section Description
-    Shop mats are used for entering/leaving shops. You should always
-    have exactly TWO shop mats on your shop-map: One inside the
-    "shopping-area" and one outside. Shop mats don't use exit paths/
-    or -destinations. When stepping onto a shop mat the player gets beamed
-    to the nearest other mat. If the player has unpaid items in his
-    inventory, the price gets charged from his coins automatically.
-    If the player has insufficient coins to buy his unpaid items, he
-    is unable to pass any shop mat (So he has to drop unpaid items). 
+            Shop mats are used for entering/leaving shops. You should always
+            have exactly TWO shop mats on your shop-map: One inside the
+            "shopping-area" and one outside. Shop mats don't use exit paths/
+            or -destinations. When stepping onto a shop mat the player gets
+            beamed to the nearest other mat. If the player has unpaid items in
+            his inventory, the price gets charged from his coins automatically.
+            If the player has insufficient coins to buy his unpaid items, he
+            is unable to pass any shop mat (So he has to drop unpaid items). 
 
 
 
@@ -135,21 +135,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

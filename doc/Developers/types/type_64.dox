@@ -8,17 +8,20 @@ See @ref page_type_64
 
 
 @section Description
-    Inventory checkers passively check the players inventory for a
-    specific object. You can set a connected value that is triggered
-    either if that object is present or missing (-&gt; "last_sp") when a
-    player walks over the inventory checker. A valid option is to remove the
-    matching object (usually not recommended, see "last_heal").
-    <br><br>
-    Alternatively, you can set your inventory checker to block all players
-    that do/don't carry the matching object (-&gt; "blocked movement").
-    <br><br>
-    As you can see, inventory checkers are quite powerful, holding a
-    great variety of possibilities. 
+            Inventory checkers passively check the players inventory for a
+            specific object. You can set a connected value that is triggered
+            either if that object is present or missing (-&gt; "last_sp") when a
+            player walks over the inventory checker. A valid option is to remove
+            the matching object (usually not recommended, see "last_heal").
+            <br>
+            <br>
+            Alternatively, you can set your inventory checker to block all
+            players that do/don't carry the matching object (-&gt; "blocked
+            movement").
+            <br>
+            <br>
+            As you can see, inventory checkers are quite powerful, holding a
+            great variety of possibilities. 
 
 
 
@@ -193,21 +196,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

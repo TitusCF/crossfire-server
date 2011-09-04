@@ -8,13 +8,13 @@ See @ref page_type_101
 
 
 @section Description
-    Spell objects define a spell. When a spell is put in a spellbook,
-    players can learn it by reading the book. Once learned, players
-    can use the spell as often as they like. With increasing skill level
-    of the player, spells may gain power but also increase cost.<br>
-    Monsters can use spells which are put in their inventory (provided
-    that certain "enabling" settings are correct). The monster's
-    &lt;treasurelist&gt; can also be used to provide it with spells. 
+            Spell objects define a spell. When a spell is put in a spellbook,
+            players can learn it by reading the book. Once learned, players
+            can use the spell as often as they like. With increasing skill level
+            of the player, spells may gain power but also increase cost.<br>
+            Monsters can use spells which are put in their inventory (provided
+            that certain "enabling" settings are correct). The monster's
+            &lt;treasurelist&gt; can also be used to provide it with spells. 
 
 
 
@@ -40,7 +40,8 @@ Type defined by:
 	<tr>
 		<td>attuned paths</td>
 		<td>@ref obj::path_attuned</td>
-		<td>            Spellpath for this spell. A player needs to not be denied this path to cast the spell.
+		<td>            Spellpath for this spell. A player needs to not be denied this path
+            to cast the spell.
 		</td>
 	</tr>
 	<tr>
@@ -53,8 +54,8 @@ Type defined by:
 	<tr>
 		<td>casting time</td>
 		<td>@ref obj::casting_time</td>
-		<td>          If the server uses spell casting times, this is the base number of ticks required
-          for casting this spell.
+		<td>            If the server uses spell casting times, this is the base number of
+            ticks required for casting this spell.
 		</td>
 	</tr>
 	<tr>
@@ -70,44 +71,46 @@ Type defined by:
 	<tr>
 		<td>consumed items</td>
 		<td>@ref page_custom_attribute_casting_requirements "casting_requirements"</td>
-		<td>          If set, this is a comma-separated list of items the spell will require and consume to
-          be cast by players and monsters.
-          The format is '&lt;optional count&gt; item's name, etc.'.
-          Examples:
-          - 'water' will make the spell use one water per casting.
-          - ' 2 diamonds' will make the spell use 2 diamonds per casting.
+		<td>            If set, this is a comma-separated list of items the spell will
+            require and consume to be cast by players and monsters. The format
+            is '&lt;optional count&gt; item's name, etc.'. Examples: - 'water'
+            will make the spell use one water per casting. - ' 2 diamonds' will
+            make the spell use 2 diamonds per casting.
 		</td>
 	</tr>
 	<tr>
 		<td>cost grace</td>
 		<td>@ref liv::grace</td>
-		<td>          How many base grace points this spell costs to cast.
-          The effective cost can be based on the casting level, depending on server settings.
+		<td>            How many base grace points this spell costs to cast. The effective
+            cost can be based on the casting level, depending on server
+            settings.
 		</td>
 	</tr>
 	<tr>
 		<td>create object</td>
 		<td>@ref obj::other_arch</td>
-		<td>          For spells creating or launching things, the archetype to use.
+		<td>            For spells creating or launching things, the archetype to use.
 		</td>
 	</tr>
 	<tr>
 		<td>double grace cost per level</td>
 		<td>@ref liv::maxgrace</td>
-		<td>          If non zero, the grace cost will increase &lt;grace cost&gt; per this value levels.
+		<td>            If non zero, the grace cost will increase &lt;grace cost&gt; per
+            this value levels.
 		</td>
 	</tr>
 	<tr>
 		<td>double sp cost per level</td>
 		<td>@ref liv::maxsp</td>
-		<td>          If non zero, the spellpoint cost will increase &lt;spellpoint cost&gt; per this value levels.
+		<td>            If non zero, the spellpoint cost will increase &lt;spellpoint cost&gt;
+            per this value levels.
 		</td>
 	</tr>
 	<tr>
 		<td>duration</td>
 		<td>@ref obj::duration</td>
-		<td>          Base spell effect duration. The actual duration will depend on the effective
-          casting level.
+		<td>            Base spell effect duration. The actual duration will depend on the
+            effective casting level.
 		</td>
 	</tr>
 	<tr>
@@ -190,21 +193,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
@@ -229,7 +233,8 @@ Type defined by:
 	<tr>
 		<td>spell level</td>
 		<td>@ref obj::level</td>
-		<td>          The level, without taking into account spellpath attenuation, required to cast this spell.
+		<td>            The level, without taking into account spellpath attenuation,
+            required to cast this spell.
 		</td>
 	</tr>
 	<tr>
@@ -242,8 +247,9 @@ Type defined by:
 	<tr>
 		<td>spellpoint cost</td>
 		<td>@ref liv::sp</td>
-		<td>          How many base spell points this spell costs to cast.
-          The effective cost can be based on the casting level, depending on server settings.
+		<td>            How many base spell points this spell costs to cast. The effective
+            cost can be based on the casting level, depending on server
+            settings.
 		</td>
 	</tr>
 	<tr>

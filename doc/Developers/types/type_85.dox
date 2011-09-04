@@ -8,15 +8,19 @@ See @ref page_type_85
 
 
 @section Description
-    By reading a spellbook, the player has a chance of learning the
-    contained spell. Once learned from a book, the spell is available
-    forever. Spellbooks with high level spells require some skill-level
-    to read.<br><br>
-    You can create widely customized spells only by adjusting the
-    spell object in the spellbooks inventory. Refer to the description
-    of spell objects for detailed information how to customize spells.<br>
-    If you want to have a random spellbook instead, choose a &lt;treasurelist&gt;
-    with a compilation of spells that the book may contain. 
+            By reading a spellbook, the player has a chance of learning the
+            contained spell. Once learned from a book, the spell is available
+            forever. Spellbooks with high level spells require some skill-level
+            to read.
+            <br>
+            <br>
+            You can create widely customized spells only by adjusting the
+            spell object in the spellbooks inventory. Refer to the description
+            of spell objects for detailed information how to customize spells.
+            <br>
+            If you want to have a random spellbook instead, choose a
+            &lt;treasurelist&gt; with a compilation of spells that the book may
+            contain. 
 
 
 
@@ -143,21 +147,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

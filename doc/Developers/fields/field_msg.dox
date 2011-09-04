@@ -53,9 +53,8 @@
 @ref page_type_66
 		</td><td>            If set, this message will be displayed to the player when he applies
             the exit. This is quite useful to throw in some "role-play feeling":
-            "As you enter the dark cave you hear the sound of rustling
-            dragon scales...". Well, my English is poor, but you get the point.
-            =)</td>
+            "As you enter the dark cave you hear the sound of rustling dragon
+            scales...". Well, my English is poor, but you get the point. =)</td>
 	</tr>
 	<tr>
 		<td>
@@ -95,8 +94,8 @@
 		<td>
 @ref page_type_29
 		</td><td>            This text field contains the keyword-matching-syntax. The text
-            should have the following format: "@match &lt;keyword1&gt;|&lt;keyword2&gt;|...
-            ". Any number of keywords from one to infinite is allowed. Make sure
+            should have the following format: "@match &lt;keyword1&gt;|&lt;keyword2&gt;|...".
+            Any number of keywords from one to infinite is allowed. Make sure
             they are separated by a '|'.
 
             Examples: "@match yes", "@match gold|treasure". The connected value

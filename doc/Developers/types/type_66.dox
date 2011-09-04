@@ -8,10 +8,10 @@ See @ref page_type_66
 
 
 @section Description
-    When the player applies an exit, he is transferred to a different location.
-    (Monsters cannot use exits.) Depending on how it is set, the player applies
-    the exit just by walking into it, or by pressing &lt;a&gt;pply when standing on
-    the exit.  
+            When the player applies an exit, he is transferred to a different
+            location. (Monsters cannot use exits.) Depending on how it is set,
+            the player applies the exit just by walking into it, or by pressing
+            &lt;a&gt;pply when standing on the exit.  
 
 
 
@@ -94,9 +94,8 @@ Type defined by:
 		<td>@ref obj::msg</td>
 		<td>            If set, this message will be displayed to the player when he applies
             the exit. This is quite useful to throw in some "role-play feeling":
-            "As you enter the dark cave you hear the sound of rustling
-            dragon scales...". Well, my English is poor, but you get the point.
-            =)
+            "As you enter the dark cave you hear the sound of rustling dragon
+            scales...". Well, my English is poor, but you get the point. =)
 		</td>
 	</tr>
 	<tr>
@@ -184,21 +183,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>

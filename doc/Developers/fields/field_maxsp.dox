@@ -20,7 +20,7 @@
                 unless the monster has a decent &lt;spellpoint regen.&gt;, or
                 the spell "regenerate mana" at it's disposal.
 
-                Warning: Do not create spellcasting and breeding monsters since
+                Warning: Do not create spell-casting and breeding monsters since
                 this field is also used as &lt;multiply speed&gt;.</td>
 	</tr>
 	<tr>
@@ -48,7 +48,8 @@
 	<tr>
 		<td>
 @ref page_type_101
-		</td><td>          If non zero, the spellpoint cost will increase &lt;spellpoint cost&gt; per this value levels.</td>
+		</td><td>            If non zero, the spellpoint cost will increase &lt;spellpoint cost&gt;
+            per this value levels.</td>
 	</tr>
 
 */

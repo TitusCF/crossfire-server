@@ -55,6 +55,7 @@ Types not listed here have the attributes defined in @ref page_type_0 "this page
 - @ref page_type_40 "Mover"
 - @ref page_type_17 "Pedestal"
 - @ref page_type_94 "Pit"
+- @ref page_type_1 "Player"
 - @ref page_type_7 "Poison Food"
 - @ref page_type_5 "Potion"
 - @ref page_type_156 "Power Crystal"

@@ -8,10 +8,10 @@ See @ref page_type_92
 
 
 @section Description
-    When a predefined amount of weigh is placed on a button, the
-    &lt;connection&gt; value is triggered. In most cases this happens when a
-    player or monster steps on it. When the button is "released", the
-    &lt;connection&gt; value gets triggered a second time. 
+            When a predefined amount of weigh is placed on a button, the
+            &lt;connection&gt; value is triggered. In most cases this happens
+            when a player or monster steps on it. When the button is "released",
+            the &lt;connection&gt; value gets triggered a second time. 
 
 
 
@@ -145,21 +145,22 @@ Type defined by:
 	<tr>
 		<td>price adjustment</td>
 		<td>@ref page_custom_attribute_price_adjustment "price_adjustment"</td>
-		<td>            If set, this is the buy and sell price adjustment ratio for the item.
+		<td>            If set, this is the buy and sell price adjustment ratio for the
+            item.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for buying</td>
 		<td>@ref page_custom_attribute_price_adjustment_buy "price_adjustment_buy"</td>
-		<td>            If set, this is the adjustment ratio when buying the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when buying the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
 		<td>price adjustment for selling</td>
 		<td>@ref page_custom_attribute_price_adjustment_sell "price_adjustment_sell"</td>
-		<td>            If set, this is the adjustment ratio when selling the item. Ignored if
-            &lt;price&gt; adjustment is set.
+		<td>            If set, this is the adjustment ratio when selling the item. Ignored
+            if &lt;price&gt; adjustment is set.
 		</td>
 	</tr>
 	<tr>
