@@ -189,18 +189,14 @@ static void showscoresparm(const char *data) {
  * Change the server's port. Will exit() if invalid value.
  *
  * @param val
- * port to use. Must be a valid one, between 1 and 32765 inclusive.
+ * port to use. Must be a valid one, between 1 and 65535 inclusive.
  */
 static void set_csport(const char *val) {
     settings.csport = atoi(val);
-#ifndef WIN32 /* ***win32: set_csport: we remove csport error secure check here, do this later */
-    if (settings.csport <= 0
-    || settings.csport > 32765
-    || (settings.csport < 1024 && getuid() != 0)) {
-        LOG(llevError, "%d is an invalid csport number.\n", settings.csport);
+    if (settings.csport <= 0 || settings.csport > 65535U) {
+        LOG(llevError, "%u is an invalid csport number.\n", settings.csport);
         exit(1);
     }
-#endif /* win32 */
 }
 
 /** Typedefs used when calling option handlers. */

@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Relax check for valid listening ports to allow 1..65535.
+Andreas Kirschbaum 2011-09-08
+
 Fix experience for cure disease going to invalid skill (lockpicking for instance).
 Nicolas Weeger 2011-08-14
 
