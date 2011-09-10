@@ -1213,7 +1213,6 @@ static void rec_sigpipe(int i) {
     fatal_signal(1); /*Might consider to uncomment this line */
 #endif
 }
-#endif
 
 #ifdef SIGBUS
 /**
@@ -1228,7 +1227,6 @@ static void rec_sigbus(int i) {
 }
 #endif
 
-#ifndef DEBUG
 /**
  * SIGTERM handler.
  *
