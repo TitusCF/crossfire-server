@@ -905,7 +905,7 @@ void add_statbonus(object *op) {
  */
 static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, const object *mana_obj, const object *wc_obj, int weapon_speed, float added_speed)
 {
-    int pl_level, i, j;
+    int pl_level, i;
     float character_load = 0.0, maxhp, tmpf;
 
     if (op->type != PLAYER)
@@ -2475,8 +2475,7 @@ static int load_table_float(float **bonuses, FILE *fp, char *bonus_name)
  */
 void init_stats(int reload) {
     char buf[MAX_BUF], *cp;
-    int lastlevel = 0, error=0, i, oldmax = settings.max_stat;
-    sint64 lastexp = -1, tmpexp;
+    int error=0, i, oldmax = settings.max_stat;
     FILE *fp;
     float *new_float_bonuses[NUM_FLOAT_BONUSES];
     int *new_int_bonuses[NUM_INT_BONUSES];

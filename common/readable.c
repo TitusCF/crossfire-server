@@ -1638,7 +1638,7 @@ static StringBuffer *artifact_msg(int level, size_t booksize) {
 
     if (i == 10) { /* Unable to find a message */
         stringbuffer_append_string(message, "None");
-        return desc;
+        return message;
     }
 
     /* There is no reason to start on the artifact list at the beginning. Lets
