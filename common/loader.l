@@ -1121,18 +1121,6 @@ A       .+
 %%
 
 /**
- * Error handler.
- *
- * @param s
- * lex-generated error message.
- */
-static int yyerror(const char *s)
-{
-    LOG(llevError, "%s: %s\n", s, yytext);
-    return -1;
-}
-
-/**
  * Returns the next token for lex.
  * Our save file syntax is very simple, so we can use a very simple
  * processing mechanism here instead using something like bison
