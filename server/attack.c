@@ -1448,6 +1448,14 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
     return dam;
 }
 
+/*
+ * This function is defined in party.c, but conditionally, something "make proto"
+ * doesn't handle. So define it locally.
+ */
+#ifdef PARTY_KILL_LOG
+void party_add_kill(partylist *party, const char *killer, const char *dead, long exp);
+#endif
+
 /**
  * An object was killed, handle various things (logging, messages, ...).
  *

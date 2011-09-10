@@ -150,8 +150,8 @@ void command_party(object *op, const char *params) {
     if (!strncmp(params, "kills", 5)) {
         int i, max;
         char chr;
-        char buffer[80];
         float exp;
+        partylist *tmpparty;
 
         if (op->contr->party == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -203,7 +203,7 @@ void command_party(object *op, const char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "Totals: %d kills, %.1f%c exp", tmpparty->kills,
                              exp, chr);
-        return 1;
+        return;
     }
 #endif /* PARTY_KILL_LOG */
     if (strncmp(params, "say ", 4) == 0) {
