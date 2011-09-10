@@ -158,6 +158,7 @@ extern int get_turn_bonus(int stat);
 extern int get_dam_bonus(int stat);
 extern float get_speed_bonus(int stat);
 extern int get_fear_bonus(int stat);
+extern void init_stats(int reload);
 /* logger.c */
 extern void LOG(LogLevel logLevel, const char *format, ...);
 /* los.c */

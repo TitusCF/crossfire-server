@@ -446,7 +446,7 @@ static void knowledge_god_summary(const char *item, StringBuffer *buf) {
  * @todo merge with stuff in readable.c
  */
 static void knowledge_god_detail(const char *item, StringBuffer *buf) {
-    char *dup = strdup_local(item), *pos = strchr(dup, ':'), *final;
+    char *dup = strdup_local(item), *pos = strchr(dup, ':');
     const archetype *god;
     int what;
 

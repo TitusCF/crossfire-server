@@ -2615,7 +2615,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
      * those is not need.
      */
     for (i=0; i < choice_num; i++) {
-        char *choiceval, *cp, *token, *lasts;
+        char *choiceval, *cp;
         const char *value;
         archetype *arch;
         object *op;

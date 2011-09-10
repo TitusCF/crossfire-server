@@ -113,6 +113,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns);
 void account_password(char *buf, int len, socket_struct *ns);
 /* requestinfo.c */
 void send_new_char_info(socket_struct *ns);
+void send_map_info(socket_struct *ns);
 /* sounds.c */
 void play_sound_player_only(player *pl, sint8 sound_type, object *emitter, int dir, const char *action);
 void play_sound_map(sint8 sound_type, object *emitter, int dir, const char *action);

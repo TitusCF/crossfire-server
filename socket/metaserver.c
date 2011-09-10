@@ -52,10 +52,6 @@
 #include <curl/easy.h>
 #endif
 
-static int metafd = -1;
-
-static struct sockaddr_in sock;
-
 /**
  * Updates our info in the metaserver
  * Note that this is used for both metaserver1 and metaserver2 -
@@ -63,7 +59,7 @@ static struct sockaddr_in sock;
  * data structure, doing locking in the process.
  */
 void metaserver_update(void) {
-    char data[MAX_BUF], num_players = 0;
+    char num_players = 0;
     player *pl;
 
     /* We could use socket_info.nconns, but that is not quite as accurate,

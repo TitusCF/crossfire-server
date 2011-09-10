@@ -13,6 +13,7 @@ const char *account_get_account_for_char(const char *charname);
 player *account_get_logged_in_player(const char *name);
 socket_struct *account_get_logged_in_init_socket(const char *name);
 int account_is_logged_in(const char *name);
+int account_change_password(const char *account_name, const char *current_password, const char *new_password);
 /* account_char.c */
 Account_Char *account_char_load(const char *account_name);
 void account_char_save(const char *account, Account_Char *chars);
@@ -408,6 +409,7 @@ void roll_stats(object *op);
 void roll_again(object *op);
 void key_roll_stat(object *op, char key);
 void key_change_class(object *op, char key);
+int check_race_and_class(living *stats, archetype *race, archetype *opclass);
 int apply_race_and_class(object *op, archetype *race, archetype *opclass, living *stats);
 void key_confirm_quit(object *op, char key);
 int check_pick(object *op);

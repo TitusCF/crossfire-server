@@ -209,7 +209,7 @@ static void send_arch_info(SockList *sl, const object *op)
      */
     if (op->type == CLASS || op->type == PLAYER) {
         int i=1;
-        char buf[MAX_BUF], buf1[MAX_BUF];
+        char buf[MAX_BUF];
         const char *value, *value1;
         char *lasts, *mychoices, *token;
 
