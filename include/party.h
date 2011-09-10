@@ -46,9 +46,9 @@ typedef struct party_struct {
         char killer[MAX_NAME+1], dead[MAX_NAME+1];
         sint64 exp;
     } party_kills[PARTY_KILL_LOG];
-#endif
     sint64 total_exp;
     uint32  kills;
+#endif
 } partylist;
 
 #endif

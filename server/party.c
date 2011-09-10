@@ -63,8 +63,10 @@ partylist *party_form(object *op, const char *partyname) {
     party_leave(op);
     party = (partylist *)malloc(sizeof(partylist));
     party->partyname = strdup_local(buf);
+#ifdef PARTY_KILL_LOG
     party->total_exp = 0;
     party->kills = 0;
+#endif
     party->passwd[0] = '\0';
     party->next = NULL;
     party->partyleader = strdup_local(op->name);
