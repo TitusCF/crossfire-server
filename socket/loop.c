@@ -322,6 +322,7 @@ static void block_until_new_connection(void) {
     struct timeval Timeout;
     fd_set readfs;
     int cycles;
+    int i;
 
     LOG(llevInfo, "Waiting for connections...\n");
 
@@ -335,7 +336,9 @@ static void block_until_new_connection(void) {
             tick_the_clock();
 
         FD_ZERO(&readfs);
-        FD_SET((uint32)init_sockets[0].fd, &readfs);
+        for (i = 0; i < socket_info.allocated_sockets && init_sockets[i].listen; i++)
+            if (init_sockets[i].status == Ns_Add)
+                FD_SET((uint32)init_sockets[i].fd, &readfs);
 
         /* If fastclock is set, we need to seriously slow down the updates
          * to the metaserver as well as watchdog.  Do same for flush_old_maps() -
@@ -385,6 +388,75 @@ static int is_fd_valid(int fd) {
 #endif
 }
 
+static void new_connection(int listen_fd) {
+    int newsocknum = -1, j;
+#ifdef HAVE_GETNAMEINFO
+    struct sockaddr_storage addr;
+#else
+    struct sockaddr_in addr;
+#endif
+    socklen_t addrlen = sizeof(addr);
+    char err[MAX_BUF];
+
+#ifdef ESRV_DEBUG
+    LOG(llevDebug, "do_server: New Connection\n");
+#endif
+
+    for (j = 0; j < socket_info.allocated_sockets; j++)
+        if (init_sockets[j].status == Ns_Avail) {
+            newsocknum = j;
+            break;
+        }
+
+    if (newsocknum == -1) {
+        /* If this is the case, all sockets currently in used */
+        init_sockets = realloc(init_sockets, sizeof(socket_struct)*(socket_info.allocated_sockets+1));
+        if (!init_sockets)
+            fatal(OUT_OF_MEMORY);
+        newsocknum = socket_info.allocated_sockets;
+        socket_info.allocated_sockets++;
+        init_sockets[newsocknum].listen = NULL;
+        init_sockets[newsocknum].faces_sent_len = nrofpixmaps;
+        init_sockets[newsocknum].faces_sent = calloc(1, nrofpixmaps*sizeof(*init_sockets[newsocknum].faces_sent));
+        if (!init_sockets[newsocknum].faces_sent)
+            fatal(OUT_OF_MEMORY);
+        init_sockets[newsocknum].status = Ns_Avail;
+    }
+
+    if (newsocknum < 0) {
+        LOG(llevError, "FATAL: didn't allocate a newsocket?? alloc = %d, newsocknum = %d", socket_info.allocated_sockets, newsocknum);
+        fatal(SEE_LAST_ERROR);
+    }
+
+    init_sockets[newsocknum].fd = accept(listen_fd, (struct sockaddr *)&addr, &addrlen);
+    if (init_sockets[newsocknum].fd == -1) {
+        LOG(llevError, "accept failed: %s\n", strerror_local(errno, err, sizeof(err)));
+    } else {
+        char buf[MAX_BUF];
+#ifndef HAVE_GETNAMEINFO
+        long ip;
+#endif
+        socket_struct *ns;
+
+        ns = &init_sockets[newsocknum];
+
+#ifdef HAVE_GETNAMEINFO
+        getnameinfo((struct sockaddr *) &addr, addrlen, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST);
+#else
+        ip = ntohl(addr.sin_addr.s_addr);
+        snprintf(buf, sizeof(buf), "%ld.%ld.%ld.%ld", (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
+#endif
+
+        if (checkbanned(NULL, buf)) {
+            LOG(llevInfo, "Banned host tried to connect: [%s]\n", buf);
+            close(init_sockets[newsocknum].fd);
+            init_sockets[newsocknum].fd = -1;
+        } else {
+            init_connection(ns, buf);
+        }
+    }
+}
+
 /**
  * This checks the sockets for input and exceptions, does the right thing.
  *
@@ -395,8 +467,6 @@ static int is_fd_valid(int fd) {
 void do_server(void) {
     int i, pollret, active = 0;
     fd_set tmp_read, tmp_exceptions, tmp_write;
-    struct sockaddr_in addr;
-    socklen_t addrlen = sizeof(struct sockaddr);
     player *pl, *next;
     char err[MAX_BUF];
 
@@ -415,9 +485,9 @@ void do_server(void) {
             init_sockets[i].status = Ns_Dead;
         }
         if (init_sockets[i].status == Ns_Dead) {
-            if (i == 0) {
+            if (init_sockets[i].listen) {
                 /* try to reopen the listening socket */
-                init_listening_socket(0);
+                init_listening_socket(&init_sockets[i]);
             } else {
                 free_newsocket(&init_sockets[i]);
                 init_sockets[i].status = Ns_Avail;
@@ -473,66 +543,11 @@ void do_server(void) {
     /* We need to do some of the processing below regardless */
     /*    if (!pollret) return;*/
 
-    /* Following adds a new connection */
-    if (pollret && is_fd_valid(init_sockets[0].fd) && FD_ISSET(init_sockets[0].fd, &tmp_read)) {
-        int newsocknum = 0, j;
-
-#ifdef ESRV_DEBUG
-        LOG(llevDebug, "do_server: New Connection\n");
-#endif
-
-        for (j = 1; j < socket_info.allocated_sockets; j++)
-            if (init_sockets[j].status == Ns_Avail) {
-                newsocknum = j;
-                break;
-            }
-
-        if (newsocknum == 0) {
-            /* If this is the case, all sockets currently in used */
-            init_sockets = realloc(init_sockets, sizeof(socket_struct)*(socket_info.allocated_sockets+1));
-            if (!init_sockets)
-                fatal(OUT_OF_MEMORY);
-            newsocknum = socket_info.allocated_sockets;
-            socket_info.allocated_sockets++;
-            init_sockets[newsocknum].faces_sent_len = nrofpixmaps;
-            init_sockets[newsocknum].faces_sent = calloc(1, nrofpixmaps*sizeof(*init_sockets[newsocknum].faces_sent));
-            if (!init_sockets[newsocknum].faces_sent)
-                fatal(OUT_OF_MEMORY);
-            init_sockets[newsocknum].status = Ns_Avail;
-        }
-
-        if (newsocknum <= 0) {
-            LOG(llevError, "FATAL: didn't allocate a newsocket?? alloc = %d, newsocknum = %d", socket_info.allocated_sockets, newsocknum);
-            fatal(SEE_LAST_ERROR);
-        }
-
-        init_sockets[newsocknum].fd = accept(init_sockets[0].fd, (struct sockaddr *)&addr, &addrlen);
-        if (init_sockets[newsocknum].fd == -1) {
-            LOG(llevError, "accept failed: %s\n", strerror_local(errno, err, sizeof(err)));
-        } else {
-            char buf[MAX_BUF];
-            long ip;
-            socket_struct *ns;
-
-            ns = &init_sockets[newsocknum];
-
-            ip = ntohl(addr.sin_addr.s_addr);
-            snprintf(buf, sizeof(buf), "%ld.%ld.%ld.%ld", (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
-
-            if (checkbanned(NULL, buf)) {
-                LOG(llevInfo, "Banned host tried to connect: [%s]\n", buf);
-                close(init_sockets[newsocknum].fd);
-                init_sockets[newsocknum].fd = -1;
-            } else {
-                init_connection(ns, buf);
-            }
-        }
-    }
-
     /* Check for any exceptions/input on the sockets */
     if (pollret)
-        for (i = 1; i < socket_info.allocated_sockets; i++) {
-            if (init_sockets[i].status == Ns_Avail)
+        for (i = 0; i < socket_info.allocated_sockets; i++) {
+            /* listen sockets can stay in status Ns_Dead */
+            if (init_sockets[i].status != Ns_Add)
                 continue;
             if (FD_ISSET(init_sockets[i].fd, &tmp_exceptions)) {
                 free_newsocket(&init_sockets[i]);
@@ -540,7 +555,10 @@ void do_server(void) {
                 continue;
             }
             if (FD_ISSET(init_sockets[i].fd, &tmp_read)) {
-                handle_client(&init_sockets[i], NULL);
+                if (init_sockets[i].listen)
+                    new_connection(init_sockets[i].fd);
+                else
+                    handle_client(&init_sockets[i], NULL);
             }
             if (FD_ISSET(init_sockets[i].fd, &tmp_write)) {
                 init_sockets[i].can_write = 1;

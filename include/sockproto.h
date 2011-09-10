@@ -18,7 +18,7 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength);
 void draw_magic_map(object *pl);
 /* init.c */
 void init_connection(socket_struct *ns, const char *from_ip);
-void init_listening_socket(int exit_on_error);
+void init_listening_socket(socket_struct *ns);
 void init_server(void);
 void free_all_newserver(void);
 void free_newsocket(socket_struct *ns);

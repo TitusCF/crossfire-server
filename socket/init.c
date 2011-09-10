@@ -177,38 +177,32 @@ void init_connection(socket_struct *ns, const char *from_ip) {
 }
 
 /**
- * This opens init_socket[0] for listening to connections.
- * The structure must be allocated already.
+ * This opens *ns for listening to connections.
+ * The structure must be allocated already and
+ * ns->listen must be initialized.
  * No other variable is changed.
- * @param exit_on_error if non 0, any error will call exit(), else the socket
- * is merely closed. This value should be non zero at server start, then
- * 0 during the server's life, to reopen the socket.
  */
-void init_listening_socket(int exit_on_error) {
-    struct sockaddr_in insock;
-    struct protoent *protox;
+void init_listening_socket(socket_struct *ns) {
     struct linger linger_opt;
+    char buf1[MAX_BUF], buf2[MAX_BUF];
     char err[MAX_BUF];
 
-    protox = getprotobyname("tcp");
-    if (protox == NULL) {
-        LOG(llevError, "init_server: Error getting protox\n");
-        return;
+    if (ns == NULL || ns->listen == NULL) {
+        LOG(llevError, "init_listening_socket: missing listen info in socket_struct?!\n");
+        fatal(SEE_LAST_ERROR);
     }
-    init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
-    if (init_sockets[0].fd == -1) {
+
+    ns->status = Ns_Dead;
+
+    ns->fd = socket(ns->listen->family, ns->listen->socktype, ns->listen->protocol);
+    if (ns->fd == -1) {
         LOG(llevError, "Cannot create socket: %s\n", strerror_local(errno, err, sizeof(err)));
-        if (exit_on_error)
-            exit(-1);
         return;
     }
-    insock.sin_family = AF_INET;
-    insock.sin_port = htons(settings.csport);
-    insock.sin_addr.s_addr = htonl(INADDR_ANY);
 
     linger_opt.l_onoff = 0;
     linger_opt.l_linger = 0;
-    if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_LINGER, (char *)&linger_opt, sizeof(struct linger))) {
+    if (setsockopt(ns->fd, SOL_SOCKET, SO_LINGER, (char *)&linger_opt, sizeof(struct linger))) {
         LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror_local(errno, err, sizeof(err)));
     }
 /* Would be nice to have an autoconf check for this.  It appears that
@@ -227,47 +221,68 @@ void init_listening_socket(int exit_on_error) {
         int tmp = 1;
 #endif
 
-        if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_REUSEADDR, &tmp, sizeof(tmp))) {
+        if (setsockopt(ns->fd, SOL_SOCKET, SO_REUSEADDR, &tmp, sizeof(tmp))) {
             LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
         }
+#ifdef HAVE_GETADDRINFO
+        if ((ns->listen->family == AF_INET6) && setsockopt(ns->fd, IPPROTO_IPV6, IPV6_V6ONLY, &tmp, sizeof(tmp))) {
+            LOG(llevError, "Cannot setsockopt(IPV6_V6ONLY): %s\n", strerror_local(errno, err, sizeof(err)));
+        }
+#endif
     }
 #else
-    if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_REUSEADDR, (char *)NULL, 0)) {
+    if (setsockopt(ns->fd, SOL_SOCKET, SO_REUSEADDR, (char *)NULL, 0)) {
         LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
     }
 #endif
 
-    if (bind(init_sockets[0].fd, (struct sockaddr *)&insock, sizeof(insock)) == (-1)) {
-        LOG(llevError, "Cannot bind socket to port %d: %s\n", ntohs(insock.sin_port), strerror_local(errno, err, sizeof(err)));
-#ifdef WIN32 /* ***win32: close() -> closesocket() */
-        shutdown(init_sockets[0].fd, SD_BOTH);
-        closesocket(init_sockets[0].fd);
+    if (bind(ns->fd, ns->listen->addr, ns->listen->addrlen) == (-1)) {
+#ifdef HAVE_GETNAMEINFO
+        getnameinfo(ns->listen->addr, ns->listen->addrlen, buf1, sizeof(buf1), buf2, sizeof(buf2), NI_NUMERICHOST|NI_NUMERICSERV);
 #else
-        close(init_sockets[0].fd);
+        short port;
+        long ip;
+
+        ip = ntohl(((struct sockaddr_in *)ns->listen->addr)->sin_addr.s_addr);
+        port = ntohs(((struct sockaddr_in *)ns->listen->addr)->sin_port);
+        snprintf(buf1, sizeof(buf1), "%ld.%ld.%ld.%ld", (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
+        snprintf(buf2, sizeof(buf2), "%d", port&65535);
+#endif
+        LOG(llevError, "Cannot bind socket to [%s]:%s: %s\n", buf1, buf2, strerror_local(errno, err, sizeof(err)));
+#ifdef WIN32 /* ***win32: close() -> closesocket() */
+        shutdown(ns->fd, SD_BOTH);
+        closesocket(ns->fd);
+#else
+        close(ns->fd);
 #endif /* win32 */
-        if (exit_on_error)
-            exit(-1);
-        init_sockets[0].fd = -1;
+        ns->fd = -1;
         return;
     }
-    if (listen(init_sockets[0].fd, 5) == (-1))  {
+    if (listen(ns->fd, 5) == (-1))  {
         LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno, err, sizeof(err)));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
-        shutdown(init_sockets[0].fd, SD_BOTH);
-        closesocket(init_sockets[0].fd);
+        shutdown(ns->fd, SD_BOTH);
+        closesocket(ns->fd);
 #else
-        close(init_sockets[0].fd);
+        close(ns->fd);
 #endif /* win32 */
-        if (exit_on_error)
-            exit(-1);
-        init_sockets[0].fd = -1;
+        ns->fd = -1;
         return;
     }
-    init_sockets[0].status = Ns_Add;
+    ns->status = Ns_Add;
 }
 
 /** This sets up the socket and reads all the image information into memory. */
 void init_server(void) {
+    int i, e, listen_socket_count;
+#ifdef HAVE_GETADDRINFO
+    struct addrinfo *ai, *ai_p;
+    struct addrinfo hints;
+    char buf[MAX_BUF];
+#else
+    struct sockaddr_in *insock;
+    struct protoent *protox;
+#endif
 
 #ifdef WIN32 /* ***win32  -  we init a windows socket */
     WSADATA w;
@@ -299,13 +314,71 @@ void init_server(void) {
     cst_lst.time_start = time(NULL);
 #endif
 
-    LOG(llevDebug, "Initialize new client/server data\n");
-    init_sockets = malloc(sizeof(socket_struct));
-    init_sockets[0].faces_sent = NULL; /* unused */
-    init_sockets[0].account_name = NULL; /* Must be set to avoid undef behaviour elsewhere. */
-    socket_info.allocated_sockets = 1;
+#ifdef HAVE_GETADDRINFO
+    memset(&hints, '\0', sizeof(hints));
+    hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;
+    hints.ai_socktype = SOCK_STREAM;
+    snprintf(buf, sizeof(buf), "%d", settings.csport);
+    e = getaddrinfo(NULL, buf, &hints, &ai);
+    if (e != 0) {
+        LOG(llevError, "init_server: getaddrinfo: %s\n", gai_strerror(e));
+        fatal(SEE_LAST_ERROR);
+    }
 
-    init_listening_socket(1);
+    listen_socket_count = 0;
+    for (ai_p = ai; ai_p != NULL; ai_p = ai_p->ai_next) {
+        listen_socket_count++;
+    }
+#else
+    listen_socket_count = 1;
+#endif
+
+    LOG(llevDebug, "Initialize new client/server data\n");
+    init_sockets = malloc(sizeof(socket_struct) * listen_socket_count);
+    socket_info.allocated_sockets = listen_socket_count;
+    for (i = 0; i < listen_socket_count; i++) {
+        init_sockets[i].listen = calloc(sizeof(struct listen_info), 1);
+        init_sockets[i].faces_sent = NULL; /* unused */
+        init_sockets[i].account_name = NULL; /* Must be set to avoid undef behaviour elsewhere. */
+    }
+
+#ifdef HAVE_GETADDRINFO
+    for (i = 0, ai_p = ai; i < listen_socket_count && ai_p != NULL; i++, ai_p = ai_p->ai_next) {
+        init_sockets[i].listen->family   = ai_p->ai_family;
+        init_sockets[i].listen->socktype = ai_p->ai_socktype;
+        init_sockets[i].listen->protocol = ai_p->ai_protocol;
+        init_sockets[i].listen->addrlen  = ai_p->ai_addrlen;
+        init_sockets[i].listen->addr     = malloc(ai_p->ai_addrlen);
+        memcpy(init_sockets[i].listen->addr, ai_p->ai_addr, ai_p->ai_addrlen);
+    }
+    freeaddrinfo(ai);
+#else
+    protox = getprotobyname("tcp");
+    if (protox == NULL) {
+        LOG(llevError, "init_server: Error getting protox\n");
+        fatal(SEE_LAST_ERROR);
+    }
+    init_sockets[0].listen->family   = PF_INET;
+    init_sockets[0].listen->socktype = SOCK_STREAM;
+    init_sockets[0].listen->protocol = protox->p_proto;
+    insock = calloc(sizeof(struct sockaddr_in), 1);
+    insock->sin_family = AF_INET;
+    insock->sin_port = htons(settings.csport);
+    insock->sin_addr.s_addr = htonl(INADDR_ANY);
+    init_sockets[0].listen->addr = (struct sockaddr *) insock;
+    init_sockets[0].listen->addrlen = sizeof(struct sockaddr_in);
+#endif
+
+    e = 1;
+    for (i = 0; i < listen_socket_count; i++) {
+        init_listening_socket(&init_sockets[i]);
+        if (init_sockets[i].fd != -1)
+            e = 0;
+    }
+    if (e != 0) {
+        LOG(llevError, "init_server: can't open any listening socket\n");
+        fatal(SEE_LAST_ERROR);
+    }
 
     read_client_images();
 }
@@ -318,8 +391,13 @@ void init_server(void) {
 
 /** Free's all the memory that ericserver allocates. */
 void free_all_newserver(void) {
+    int i;
     LOG(llevDebug, "Freeing all new client/server information.\n");
     free_socket_images();
+    for (i = 0; i < socket_info.allocated_sockets && init_sockets[i].listen; i++) {
+        free(init_sockets[i].listen->addr);
+        free(init_sockets[i].listen);
+    }
     free(init_sockets);
 }
 

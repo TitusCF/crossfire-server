@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Enable server to listen to IPV6 ports, as well as IPV4.
+Maurice Massar 2011-09-10
+
 Relax check for valid listening ports to allow 1..65535.
 Andreas Kirschbaum 2011-09-08
 

@@ -97,6 +97,19 @@ enum Sock_Status {
 };
 
 /**
+ * Contains parameters for socket() and bind() for listening sockets.
+ * This struct contains most fields of "struct addrinfo", but
+ * older systems do not know struct addrinfo yet.
+ */
+struct listen_info {
+    int family;
+    int socktype;
+    int protocol;
+    socklen_t addrlen;
+    struct sockaddr *addr;
+};
+
+/**
  * The following is the setup for a ring buffer for storing outbut
  * data that the OS can't handle right away.
  */
@@ -115,6 +128,7 @@ typedef struct buffer_struct {
 typedef struct socket_struct {
     enum Sock_Status status;
     int         fd;
+    struct listen_info  *listen;
     struct Map  lastmap;
     sint8       map_scroll_x, map_scroll_y;
     size_t      faces_sent_len;         /**< This is the number of elements allocated in faces_sent[]. */
