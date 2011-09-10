@@ -109,12 +109,13 @@ static long int initturn(const char *name, char *parameters, struct CFmovement_s
 static anim_move_result runturn(struct CFanimation_struct *animation, long int id, void *parameters) {
     object *op = animation->victim;
     int dir = id;
-    int face;
+    /*int face;*/
 
     if (animation->verbose)
         cf_log(llevDebug, "CFAnim: Turning in direction %ld\n", id);
     op->facing = dir;
-    cf_object_set_int_property(op, CFAPI_OBJECT_PROP_ANIMATION, face);
+    /** @todo fix suspicious or missing call */
+/*    cf_object_set_int_property(op, CFAPI_OBJECT_PROP_ANIMATION, face);*/
     return mr_finished;
 }
 
@@ -681,23 +682,6 @@ static int is_animated_object(const object *ob) {
 
     for (current = first_animation; current; current = current->nextanimation)
         if (current->victim == ob) {
-            return 1;
-        }
-    return 0;
-}
-
-/**
- * Is specified player currently victim of a paralysing animation?
- * @param pl player to search for.
- * @return 1 if pl is part of animation, 0 else.
- */
-static int is_animated_player(object *pl) {
-    CFanimation *current;
-
-    for (current = first_animation; current; current = current->nextanimation)
-        if ((current->victim == pl) && (current->paralyze)) {
-            if (current->verbose)
-                cf_log(llevDebug, "CFAnim: Getting a command for a paralyzed player %s.\n", pl->name);
             return 1;
         }
     return 0;

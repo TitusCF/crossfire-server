@@ -1708,17 +1708,6 @@ static int Object_SetUnique(Crossfire_Object *whoptr, PyObject *value, void *clo
     return 0;
 }
 
-static int Object_SetCanPassThru(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-    /* FIXME */
-    /*cf_object_set_flag(whoptr->obj, FLAG_CAN_PASS_THRU, val);*/
-    return 0;
-}
-
 static int Object_SetRunAway(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     int val;
 

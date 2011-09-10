@@ -61,30 +61,6 @@ static void do_sql(const char *sql, sqlite3 *base) {
     }
 }
 
-static int get_living_id(object *living) {
-    char **line;
-    char *sql;
-    int nrow, ncolumn, id;
-
-    if (living->type == PLAYER)
-        sql = sqlite3_mprintf("select liv_id from living where liv_name='%q' and liv_is_player = 1", living->name);
-    else
-        sql = sqlite3_mprintf("select liv_id from living where liv_name='%q' and liv_is_player = 0 and liv_level = %d", living->name, living->level);
-    sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
-    /* printf("get_table: nrow = %d, ncolumn = %d\n", nrow, ncolumn); */
-    if (nrow > 0)
-        id = atoi(line[ncolumn]);
-    else {
-        sqlite3_free(sql);
-        sql = sqlite3_mprintf("insert into living(liv_name, liv_is_player, liv_level) values('%q', %d, %d)", living->name, living->type == PLAYER ? 1 : 0, living->level);
-        do_sql(sql, logger_database);
-        id = sqlite3_last_insert_rowid(logger_database);
-    }
-    sqlite3_free(sql);
-    sqlite3_free_table(line);
-    return id;
-}
-
 static int get_region_id(region *reg) {
     char **line;
     char *sql;
@@ -111,29 +87,6 @@ static int get_region_id(region *reg) {
 
 static void format_time(timeofday_t *tod, char *buffer, int size) {
     snprintf(buffer, size, "%10d-%2d-%2d %2d:%2d", tod->year, tod->month, tod->day, tod->hour, tod->minute);
-}
-
-static int get_time_id(timeofday_t *tod, int create) {
-    char **line;
-    char *sql;
-    int nrow, ncolumn, id = 0;
-    char date[50];
-
-    format_time(tod, date, 50);
-
-    sql = sqlite3_mprintf("select time_id from time where time_time='%q'", date);
-    sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
-    if (nrow > 0)
-        id = atoi(line[ncolumn]);
-    else if (create) {
-        sqlite3_free(sql);
-        sql = sqlite3_mprintf("insert into time(time_time) values( '%q' )", date);
-        do_sql(sql, logger_database);
-        id = sqlite3_last_insert_rowid(logger_database);
-    }
-    sqlite3_free(sql);
-    sqlite3_free_table(line);
-    return id;
 }
 
 static void read_parameters(void) {

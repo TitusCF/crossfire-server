@@ -249,7 +249,6 @@ static PyObject *Crossfire_Object_Clone(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Split(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Fix(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Say(Crossfire_Object *who, PyObject *args);
-static PyObject *Crossfire_Object_Pickup(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Take(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Teleport(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Reposition(Crossfire_Object *who, PyObject *args);

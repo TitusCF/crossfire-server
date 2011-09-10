@@ -1506,28 +1506,6 @@ static void add_map(struct_map_info *info, struct_map_list *list) {
 }
 
 /**
- * Replaces a map in a map list. Will emit a warning if map can't be found.
- *
- * @param find
- * map to replace.
- * @param replace_by
- * replacement map.
- * @param list
- * where to search.
- */
-static void replace_map(struct_map_info *find, struct_map_info *replace_by, struct_map_list *list) {
-    int map;
-
-    for (map = 0; map < list->count; map++) {
-        if (list->maps[map] == find) {
-            list->maps[map] = replace_by;
-            return;
-        }
-    }
-    printf("replace_map: couldn't find map %s.\n", find->path);
-}
-
-/**
  * Returns an initialised struct_map_info.
  *
  * @return
@@ -3946,7 +3924,7 @@ int execute_global_event(int eventcode, ...) {
 }
 
 int apply_auto(object *op) {
-    object *tmp = NULL, *tmp2;
+    object *tmp = NULL;
     int i;
 
     switch (op->type) {
