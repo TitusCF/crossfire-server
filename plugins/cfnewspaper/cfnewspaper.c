@@ -220,10 +220,12 @@ static void do_kills(char *buffer, int size, time_t start, time_t end, const cha
     int nrow, ncolumn;
     int err;
     char *msg;
-    const char *raw = "select sum(1) as deaths from kill_event inner join living on liv_id = ke_victim_id where liv_is_player = %d and ke_time >= %d and ke_time < %d %s";
+    const char *raw_players = "select sum(1) as deaths from kill_event inner join living on liv_id = ke_victim_id where liv_is_player = %d and ke_time >= %d and ke_time < %d %s";
+    const char *raw_monsters = "select sum(1) as deaths from kill_event inner join living on liv_id = ke_victim_id where liv_is_player = %d and ke_time >= %d and ke_time < %d";
 
-    sql = sqlite3_mprintf(raw, 1, start, end, reg);
+    sql = sqlite3_mprintf(raw_players, 1, start, end, reg);
     err = sqlite3_get_table(logger_database, sql, &results, &nrow, &ncolumn, &msg);
+    sqlite3_free(sql);
     if (err != SQLITE_OK) {
         cf_log(llevError, " [%s] error: %d [%s] for sql = %s\n", PLUGIN_NAME, err, msg, sql);
         sqlite3_free(msg);
@@ -240,8 +242,9 @@ static void do_kills(char *buffer, int size, time_t start, time_t end, const cha
         news_cat(buffer, size, format->many_player_death, deaths);
     news_cat(buffer, size, "\n");
 
-    sql = sqlite3_mprintf(raw, 0, start, end);
+    sql = sqlite3_mprintf(raw_monsters, 0, start, end);
     err = sqlite3_get_table(logger_database, sql, &results, &nrow, &ncolumn, &msg);
+    sqlite3_free(sql);
     if (err != SQLITE_OK) {
         cf_log(llevError, " [%s] error: %d [%s] for sql = %s\n", PLUGIN_NAME, err, msg, sql);
         sqlite3_free(msg);
@@ -290,7 +293,7 @@ static void do_world_kills(char *buffer, int size, time_t start, time_t end) {
     f.one_player_death = "Only one player died in the whole world, May Fido(tm) Have Mercy.";
     f.many_player_death = "Monsters all around the world were busy, %d players died.";
     f.no_monster_death = "No monster was killed at all, players must be tired!";
-    f.one_monster_death = "One poor monster was killed in the whole, too bad for it.";
+    f.one_monster_death = "One poor monster was killed in the whole world, too bad for it.";
     f.many_monster_death = "Bad day for monsters, with %d dead in their ranks.";
     do_kills(buffer, size, start, end, "", &f);
 }
@@ -320,6 +323,7 @@ static void get_newspaper_content(object *paper, paper_properties *properties, r
 
     sql = sqlite3_mprintf("select * from time where time_ingame < '%q' order by time_ingame desc", date);
     err = sqlite3_get_table(logger_database, sql, &results, &nrow, &ncolumn, &msg);
+    sqlite3_free(sql);
     if (err != SQLITE_OK) {
         cf_log(llevError, " [%s] error: %d [%s] for sql = %s\n", PLUGIN_NAME, err, msg, sql);
         sqlite3_free(msg);
