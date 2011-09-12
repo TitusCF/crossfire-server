@@ -2269,6 +2269,13 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
         return;
     }
 
+    if (ns->account_name == NULL) {
+        SockList_AddString(&sl, "failure accountplay Not logged in");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
     chars = account_get_players_for_account(ns->account_name);
 
     for (i=0; i<MAX_CHARACTERS_PER_ACCOUNT; i++) {
