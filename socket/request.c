@@ -2144,6 +2144,13 @@ void account_add_player_cmd(char *buf, int len, socket_struct *ns) {
 
     SockList_Init(&sl);
 
+    if (ns->account_name == NULL) {
+        SockList_AddString(&sl, "failure accountaddplayer Not logged in");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
     force = buf[0];
     nlen = len - 1;
     status = decode_name_password(buf+1, &nlen, name, password);
@@ -2692,6 +2699,13 @@ void account_password(char *buf, int len, socket_struct *ns) {
     SockList sl;
 
     SockList_Init(&sl);
+
+    if (ns->account_name == NULL) {
+        SockList_AddString(&sl, "failure accountpw Not logged in");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
 
     status = decode_name_password(buf, &len, old, change);
     if (status == 1) {
