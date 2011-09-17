@@ -787,6 +787,21 @@ int cf_object_remove_depletion(object *op, int level) {
 }
 
 /**
+ * Wrapper for identify().
+ * @copydoc identify()
+ * @param op
+ * @return 
+ */
+object *cf_identify(object *op) {
+    int type;
+    object *result;
+
+    cfapiObject_identify(&type, op, &result);
+    assert(type == CFAPI_POBJECT);
+    return result;
+}
+
+/**
  * Wrapper for find_player_partial_name().
  * @copydoc find_player_partial_name().
  */

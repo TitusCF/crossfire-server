@@ -31,10 +31,12 @@
 
 #ifdef WIN32
 #define CF_PLUGIN __declspec(dllexport)
-#elif HAVE_VISIBILITY
+#else
+#ifdef HAVE_VISIBILITY
 #define CF_PLUGIN __attribute__((visibility("default")))
 #else
 #define CF_PLUGIN
+#endif
 #endif
 
 #include <plugin.h>
@@ -145,6 +147,7 @@ extern object      *cf_object_split(object *orig_ob, uint32 nr, char *err, size_
 extern object      *cf_object_clone(object *op, int clonetype);
 extern int          cf_object_set_face(object *op, const char *face);
 extern int          cf_object_set_animation(object *op, const char *animation);
+extern object      *cf_identify(object *op);
 /* Maps */
 /*extern void        *cf_map_get_property(mapstruct *map, int propcode);*/
 extern sstring cf_map_get_sstring_property(mapstruct *map, int propcode);
