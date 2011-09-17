@@ -3217,16 +3217,17 @@ void cfapi_object_apply(int *type, ...) {
  */
 void cfapi_object_identify(int *type, ...) {
     va_list args;
-    object *op;
+    object *op, **result;
 
     va_start(args, type);
 
     op = va_arg(args, object *);
+    result = va_arg(args, object **);
 
     va_end(args);
 
-    identify(op);
-    *type = CFAPI_NONE;
+    (*result) = identify(op);
+    *type = CFAPI_POBJECT;
 }
 
 /**
