@@ -30,10 +30,12 @@
 # else
 #  define MODULEAPI __declspec(dllimport)
 # endif
-#elif HAVE_VISIBILITY
+#else
+#ifdef HAVE_VISIBILITY
 # define MODULEAPI __attribute__((visibility("default")))
 #else
 # define MODULEAPI
+#endif
 #endif
 
 #include <global.h>
