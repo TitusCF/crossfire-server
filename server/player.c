@@ -464,6 +464,7 @@ player *add_player(socket_struct *ns, int flags) {
     player *p;
 
     p = get_player(NULL);
+    set_player_socket(p, ns);
 
     CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
 
@@ -471,8 +472,6 @@ player *add_player(socket_struct *ns, int flags) {
         set_first_map(p->ob);
 
     add_friendly_object(p->ob);
-
-    set_player_socket(p, ns);
 
     /* In this case, the client is provide all the informatin for the
      * new character, so just return it.  Do not display any messages,
