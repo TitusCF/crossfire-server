@@ -454,7 +454,7 @@ void send_map_info(socket_struct *ns) {
  * @param file
  * Which file to send - string of either motd, news, rules
  */
-void send_file(socket_struct *ns, char *file) {
+void send_file(socket_struct *ns, const char *file) {
     char buf[MAX_BUF];
     FILE *fp;
     SockList sl;
