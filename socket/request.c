@@ -1662,7 +1662,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
  */
 void esrv_add_spells(player *pl, object *spell) {
     SockList sl;
-    int size;
+    size_t size;
     sstring value;
 
     if (!pl) {
