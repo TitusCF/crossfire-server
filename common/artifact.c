@@ -270,6 +270,13 @@ void add_abilities(object *op, const object *change) {
         LOG(llevDebug, "FACE: %d\n", change->face->number);
 #endif
         op->face = change->face;
+        /* if the face is defined, clean the animation, because else
+         * the face can be lost ; if an animation is defined, it'll be
+         * processed later on */
+        CLEAR_FLAG(op, FLAG_CLIENT_ANIM_RANDOM);
+        CLEAR_FLAG(op, FLAG_CLIENT_ANIM_SYNC);
+        op->anim_speed = 0;
+        op->animation_id = 0;
     }
     if (QUERY_FLAG(change, FLAG_CLIENT_ANIM_RANDOM))
         SET_FLAG(op, FLAG_CLIENT_ANIM_RANDOM);
