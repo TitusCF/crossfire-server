@@ -57,6 +57,10 @@
 #include "win32.h"
 #else
 #include <autoconf.h>
+/* socklen_t is defined in this file on some systems, and that type is
+ * used in newserver.h, which is used in all other files
+ */
+#include <sys/socket.h>
 #endif
 
 #include <stdio.h>

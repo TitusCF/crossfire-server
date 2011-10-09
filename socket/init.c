@@ -44,7 +44,6 @@
 #ifndef WIN32 /* ---win32 exclude include files */
 #include <sys/types.h>
 #include <sys/time.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #endif /* win32 */
