@@ -146,7 +146,7 @@ const object *pntr_to_god_obj(godlink *godlnk) {
  * @param maxlen maximum wanted length of the description, if 0 no maximum length.
  * @return information actually written, combination of @ref GOD_xxx "GOD_xxx", based on maxlen.
  */
-int describe_god(const object *god, int what, StringBuffer *buf, int maxlen) {
+int describe_god(const object *god, int what, StringBuffer *buf, size_t maxlen) {
     int hassomething = 0, real = 0;
     char temp[HUGE_BUF];
     StringBuffer *add;

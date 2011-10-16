@@ -313,7 +313,7 @@ void read_bmap_names(void) {
 unsigned find_face(const char *name, unsigned error) {
     New_Face *bp, tmp;
 
-    tmp.name = (char *)name;
+    tmp.name = name;
     bp = (New_Face *)bsearch(&tmp, new_faces, nrofpixmaps, sizeof(New_Face), (int (*)(const void *, const void *))compare_face);
 
     return bp ? bp->number : error;

@@ -74,7 +74,7 @@ extern void fatal(int err);
 extern void init_gods(void);
 extern godlink *get_rand_god(void);
 extern const object *pntr_to_god_obj(godlink *godlnk);
-extern int describe_god(const object *god, int what, StringBuffer *buf, int maxlen);
+extern int describe_god(const object *god, int what, StringBuffer *buf, size_t maxlen);
 extern void free_all_god(void);
 extern void dump_gods(void);
 /* info.c */

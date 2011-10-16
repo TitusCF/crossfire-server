@@ -121,7 +121,7 @@ void init_anim(void) {
                 animations[num_animations].facings = 1;
             }
         } else {
-            int face = find_face(buf, (unsigned)-1);
+            unsigned face = find_face(buf, (unsigned)-1);
             if (face == (unsigned)-1) {
                 LOG(llevError, "Could not find face %s for animation %s\n",
                     buf, animations[num_animations].name);
