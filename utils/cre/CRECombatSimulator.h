@@ -1,8 +1,14 @@
 #ifndef CRECOMBATSIMULATOR_H
 #define	CRECOMBATSIMULATOR_H
 
-#include <QObject>
+#include <QWidget>
 #include <QDialog>
+#include <QtGui>
+
+
+extern "C" {
+#include "global.h"
+}
 
 class QComboBox;
 class QSpinBox;

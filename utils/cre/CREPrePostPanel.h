@@ -2,6 +2,8 @@
 #define	_CREPREPOSTPANEL_H
 
 #include <QWidget>
+#include <QObject>
+#include <QtGui>
 
 #include "MessageManager.h"
 

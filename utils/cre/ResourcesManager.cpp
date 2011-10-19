@@ -3,6 +3,7 @@
 #include <qhash.h>
 #include <QStringList>
 #include "ResourcesManager.h"
+#include <locale.h>
 
 extern "C" {
 #include "global.h"

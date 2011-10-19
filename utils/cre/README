@@ -18,3 +18,7 @@ Notes:
   PNG files in the 'resources' folder were taken from Gridarta's
   'resource/system' directory and are supposed to be under a free license.
 
+  On some systems (Solaris), -lsocket -lnsl need to get added to the link list
+  for cre.  Easiest way is to just edit the Makefile (after running qmake)
+  and add them.
+

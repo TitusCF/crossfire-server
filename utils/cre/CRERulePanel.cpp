@@ -1,3 +1,4 @@
+#include <Qt>
 #include "CRERulePanel.h"
 #include "MessageFile.h"
 #include <QtGui>

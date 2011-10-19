@@ -1,6 +1,8 @@
 #ifndef _CRERULEPANEL_H
 #define	_CRERULEPANEL_H
 
+#include <QObject>
+#include <QtGui>
 #include <QTabWidget>
 
 class QListWidget;
