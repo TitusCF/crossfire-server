@@ -460,9 +460,8 @@ void get_levelnumber(int i, char *buf, size_t size) {
  * buffer that will contain the description. If NULL a new one is created.
  * @return buf, or a new StringBuffer the caller should free if buf was NULL.
  * @todo why does this also describe a SKILL?
- * @todo make static when check (test/unit/common/check_item.c) is removed.
  */
-StringBuffer *ring_desc(const object *op, StringBuffer *buf) {
+static StringBuffer *ring_desc(const object *op, StringBuffer *buf) {
     int attr, val;
     size_t len;
 

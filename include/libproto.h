@@ -105,7 +105,6 @@ extern const typedata *get_typedata_by_name(const char *name);
 extern StringBuffer *describe_resistance(const object *op, int newline, StringBuffer *buf);
 extern void query_weight(const object *op, char *buf, size_t size);
 extern void get_levelnumber(int i, char *buf, size_t size);
-extern StringBuffer *ring_desc(const object *op, StringBuffer *buf);
 extern void query_short_name(const object *op, char *buf, size_t size);
 extern void query_name(const object *op, char *buf, size_t size);
 extern void query_base_name(const object *op, int plural, char *buf, size_t size);
