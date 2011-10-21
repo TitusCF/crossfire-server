@@ -462,10 +462,11 @@ static void free_materials(void) {
  * information, having it here probably makes more sense.
  */
 static void load_settings(void) {
-    char buf[MAX_BUF], *cp;
+    char buf[MAX_BUF], *cp, dummy[1];
     int has_val;
     FILE *fp;
 
+    dummy[0] = '\0';
     snprintf(buf, sizeof(buf), "%s/settings", settings.confdir);
 
     /* We don't require a settings file at current time, but down the road,
@@ -495,7 +496,7 @@ static void load_settings(void) {
                 *cp++ = 0;
             has_val = 1;
         } else {
-            cp = "";
+            cp = dummy;
             has_val = 0;
         }
 

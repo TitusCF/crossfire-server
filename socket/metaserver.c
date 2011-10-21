@@ -169,9 +169,11 @@ static void free_metaserver2(MetaServer2 *ms) {
 int metaserver2_init(void) {
     static int has_init = 0;
     FILE *fp;
-    char buf[MAX_BUF], *cp;
+    char buf[MAX_BUF], *cp, dummy[1];
     MetaServer2 *ms2, *msnext;
     pthread_t thread_id;
+
+    dummy[0] = '\0';
 
 #ifdef HAVE_CURL_CURL_H
     if (!has_init) {
@@ -233,7 +235,7 @@ int metaserver2_init(void) {
             /* This makes it so we don't have to do NULL checks against
              * cp everyplace
              */
-            cp = "";
+            cp = dummy;
         }
 
         if (!strcasecmp(buf, "metaserver2_notification")) {
