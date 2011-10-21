@@ -192,11 +192,12 @@ static void showscoresparm(const char *data) {
  * port to use. Must be a valid one, between 1 and 65535 inclusive.
  */
 static void set_csport(const char *val) {
-    settings.csport = atoi(val);
-    if (settings.csport <= 0 || settings.csport > 65535U) {
-        LOG(llevError, "%u is an invalid csport number.\n", settings.csport);
+    int port = atoi(val);
+    if (port <= 0 || port > 65535) {
+        LOG(llevError, "%d is an invalid csport number, must be between 1 and 65535.\n", port);
         exit(1);
     }
+    settings.csport = port;
 }
 
 /** Typedefs used when calling option handlers. */
