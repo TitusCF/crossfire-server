@@ -61,7 +61,7 @@ int surround_check2(char **layout, int i, int j, int Xsize, int Ysize) {
         surround_index += 2;
     if ((j > 0) && (layout[i][j-1] == 'D' || layout[i][j-1] == '#'))
         surround_index += 4;
-    if ((j < Ysize-1) && (layout[i][j+1] == 'D' && layout[i][j+1] == '#'))
+    if ((j < Ysize-1) && (layout[i][j+1] == 'D' || layout[i][j+1] == '#'))
         surround_index += 8;
     return surround_index;
 }

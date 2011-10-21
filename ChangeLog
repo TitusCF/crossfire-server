@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix invalid expression.
+Nicolas Weeger 2011-10-21
+
 Add sys/socket.h to includes, since newserver.h needs it on some systems, and
 every file includes that.  Remove it from files which previously included it,
 since includes.h takes care of that now.
