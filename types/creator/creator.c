@@ -110,7 +110,9 @@ static void move_creator(object *creator) {
 
     if (creator->slaying) {
         FREE_AND_COPY(new_ob->name, creator->slaying);
-        FREE_AND_COPY(new_ob->title, creator->slaying);
+        if (new_ob->title) {
+            FREE_AND_CLEAR(new_ob->title);
+        }
     }
 }
 
