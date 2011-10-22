@@ -226,7 +226,12 @@ AC_DEFINE_UNQUOTED(BUNZIP,"${BUNZIP}",[Path to the bunzip binary])
 AC_CHECK_LIB(dl, dlopen,[ cf_have_libdl=yes ])
 AM_CONDITIONAL(HAVE_LIBDL,test "x$cf_have_libdl" = "xyes")
 
-if test "x$cf_have_libdl" = "xyes" ; then
+
+# Test for libdl isn't taken into account for many plugins, don't take into
+# account for Python. Fixes bug #3353920.
+# Besides, one can hope modern systems do have that function.
+
+#if test "x$cf_have_libdl" = "xyes" ; then
     ###############
     # Python plugin
     CF_CHECK_PYTHON(
@@ -236,9 +241,9 @@ if test "x$cf_have_libdl" = "xyes" ; then
         [AC_MSG_NOTICE([No Python found. Python plugin will not be built.])]
     )
     # *** Put other plugins configuration code here ***
-else
-    AC_MSG_NOTICE([No dl library found. Plugins will not be supported.])
-fi
+#else
+#    AC_MSG_NOTICE([No dl library found. Plugins will not be supported.])
+#fi
 AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
 
