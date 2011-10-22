@@ -131,9 +131,9 @@ Type defined by:
 	<tr>
 		<td>name of creation</td>
 		<td>@ref obj::slaying</td>
-		<td>            The created object will bear the name and title specified in &lt;name
-            of creation&gt;. If nothing is set, the standard name and title of
-            the archetype is used.
+		<td>            The created object will bear the name specified in &lt;name
+            of creation&gt;, and not use any title. If nothing is set, the standard name and title of
+            the archetype are used.
 		</td>
 	</tr>
 	<tr>
