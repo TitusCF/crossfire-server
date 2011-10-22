@@ -25,9 +25,15 @@
 
 SUBDIRS = include
 
+if CFRHG_PLUGIN
+plugin_LTLIBRARIES = cfrhg.la
+else
+plugin_LTLIBRARIES =
+endif
+
+
 plugindir=$(pkglibdir)/plugins
 noinst_HEADERS = include/cfrhg.h	../common/include/plugin_common.h
-plugin_LTLIBRARIES = cfrhg.la
 cfrhg_la_SOURCES = cfrhg.c\
 	../common/plugin_common.c
 

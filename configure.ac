@@ -50,6 +50,10 @@ AC_ARG_ENABLE(mapper,
             [AS_HELP_STRING([--enable-mapper], [Whether or not to build the crossfire-mapper utility (default=no; requires libgd)])],,
             enable_mapper=no)
 
+AC_ARG_ENABLE(cfrhg,
+            [AS_HELP_STRING([--enable-cfrhg], [Whether or not to build the random house generator plugin (default=no)])],,
+            enable_cfrhg=no)
+
 # check for some other programs
 AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(GZIP, gzip)
@@ -110,6 +114,9 @@ if eval "test x$enable_mapper = xyes"; then
     fi
 fi
 AM_CONDITIONAL(MAPPER, test x$cf_make_mapper = xyes)
+
+# Random house generator
+AM_CONDITIONAL(CFRHG_PLUGIN, test x$enable_cfrhg = xyes)
 
 LIBS="$LIBS $LIBCURL"
 CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
@@ -326,6 +333,12 @@ fi
 
 if test "x$cf_have_libdl" = "xyes" ; then
 AC_MSG_NOTICE([    Will build python plugin?            $cf_will_build_python])
+fi
+
+if test "x$enable_cfrhg" = "xyes" ; then
+AC_MSG_NOTICE([    Will build random house plugin?      yes])
+else
+AC_MSG_NOTICE([    Will build random house plugin?      no])
 fi
 
 if test x"$xsltengine" != "x" ; then
