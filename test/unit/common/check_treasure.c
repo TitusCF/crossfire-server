@@ -92,6 +92,9 @@ START_TEST(test_treasurelist_find_matching_type) {
 #endif
         /* Following are legacy skills */
         "skill_sense_curse", "skill_sense_magic", "skill_meditation",
+        "skill_karate","skill_praying","skill_missile_weapon",
+        "skill_punching","skill_literacy","skill_use_magic_item",
+        "skill_remove_trap","skill_find_traps","skill_throwing",
          NULL
         },
        { NULL }
@@ -153,7 +156,6 @@ START_TEST(test_treasurelist_find_matching_type) {
                     }
                 }
 
-                fprintf(stderr,"found item %s\n", oltmp->ob->arch->name);
                 /* Did not find match */
                 fail_if(i == list_size, 
                         "On test %d, did not find match for %s", tr,
