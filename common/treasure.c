@@ -1565,3 +1565,111 @@ void free_all_treasures(void) {
         free(tl);
     }
 }
+
+/**
+ * This is the function that does the actual work for treasurelist_find_matching_type().
+ * See notes below on what we are doing here.  Note that the logic here follows
+ * that of create_all_treasures(), except we do not care about difficulty
+ * or chances.
+ *
+ * @param t
+ * treasure entry we are working on.
+ * @param type
+ * object type we are matching against.
+ * @param olp
+ * linked list pointer, may be null.
+ * @param tries
+ * For each depth, increases by one.  This is needed because treasurelists
+ * can loop back on each other (A->B, B->C, C->A), so we needto make sure
+ * we do not get in an infinite loop.
+ *
+ * @return
+ * linked list of entries.  This may be NULL if nothing is found.
+ */
+static objectlink *treasure_find_matching_type(treasure *t, int type, objectlink *olp, int tries)
+{
+
+    objectlink *nolp = olp;
+
+    /* I do not think this should get logged - since we are processing all
+     * possibilities, this could happen pretty often.
+     */
+    if (tries++ > 100) {
+        return olp;
+    }
+
+    if (t->name) {
+        if (strcmp(t->name, "NONE")) {
+            /* Look up treasurelist and then process - this is safer
+             * as if for some reason the treasurelist does not exist,
+             * this will just skip over it harmlessly.
+             */
+            treasurelist *tl = find_treasurelist(t->name);
+
+            if (tl)
+                nolp = treasure_find_matching_type(tl->items, type, nolp, tries);
+        }
+    } else {
+        if (t->item->clone.type == type) {
+            nolp = get_objectlink();
+            nolp->next = olp;
+            nolp->ob = &t->item->clone;
+        }
+    }
+    if (t->next_yes != NULL) {
+        nolp = treasure_find_matching_type(t->next_yes, type, nolp, tries);
+    }
+    if (t->next_no != NULL) {
+        nolp = treasure_find_matching_type(t->next_no, type, nolp, tries);
+    }
+    if (t->next != NULL) {
+        nolp = treasure_find_matching_type(t->next, type, nolp, tries);
+    }
+    return nolp;
+}
+
+/**
+ * This function looks at the passed in treasurelist and returns all
+ * objects on it, or on treasurelists it references, of matching
+ * type.  The oblinkpt linked list will return a pointer to all
+ * the archetype clones.
+ * This is useful for functions that need to examine treasurelists
+ * and potentially revoke or add a partial set of items on the list.
+ * This removes the need of other functions to have their own parsing
+ * logic of treasurelists.
+ * Note that this will return all objects that may show up on the
+ * the treasurelist of matching type.  This does not look at difficulty,
+ * yes/no combinations, etc.  In general, functions that call this should
+ * have some idea of what the treasurelist may be/what it may have on it.
+ * The contents of the linked list may not be unique - it is entirely
+ * possible that due to treasurelist traversals, the same item shows up
+ * multiple times, and there is no check here for that.
+ * The order of items on the returned linked list should not be taken
+ * to be meaningful in any way - based on different processing algorithms,
+ * the results could change.  As of this writing, order is reverse from
+ * that of the treasurelists, simply because that is fastest way to process them.
+ *
+ * @param randomitems
+ * The treasurelist to examine.
+ * @param type
+ * the object type (arch->clone.type) to match against.
+ * @param traverse
+ * If true, then this will process any treasurelists that this treasurelist points
+ * to, and so on.
+ *
+ * @return oblinkpt
+ * linked list containing pointers to the arch->clone fields.  Those objects
+ * should not be altered in any way, and must be copied to a new object
+ * before being used.  the returned oblinkpt must be freed with free_objectlink(),
+ * otherwise, this will result in a memory leak.
+ */
+objectlink * treasurelist_find_matching_type(const treasurelist *randomitems, int type, int traverse) {
+
+    objectlink *olp;
+
+    olp=treasure_find_matching_type(randomitems->items, type, NULL, 0);
+
+    return olp;
+
+}
+
