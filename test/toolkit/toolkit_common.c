@@ -62,17 +62,17 @@ static int status_flag = 0;
 /**
  * set the logdir to use
  */
-void cctk_setlog(char *logfile) {
+void cctk_setlog(const char *logfile) {
     settings.logfilename = logfile;
     SET_TKFLAG(STATUS_LOGDIR);
 }
 
-void cctk_setdatadir(char *datadir) {
+void cctk_setdatadir(const char *datadir) {
     settings.datadir = datadir;
     SET_TKFLAG(STATUS_DATADIR);
 }
 
-void cctk_setconfdir(char *confdir) {
+void cctk_setconfdir(const char *confdir) {
     settings.confdir = confdir;
     SET_TKFLAG(STATUS_CONFDIR);
 }
