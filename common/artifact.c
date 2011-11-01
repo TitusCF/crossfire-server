@@ -218,6 +218,9 @@ void give_artifact_abilities(object *op, const object *artifact) {
     if (op->title)
         free_string(op->title);
     op->title = add_string(new_name);
+    if (op->artifact)
+        free_string(op->artifact);
+    op->artifact = add_refcount(artifact->name);
     add_abilities(op, artifact); /* Give out the bonuses */
 
     return;

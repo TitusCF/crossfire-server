@@ -756,6 +756,15 @@ A       .+
                             }
                         }
                     }
+^artifact{S}        {
+                        const char *yv = yval();
+                        const artifact *art = find_artifact(op->type, yv);
+                        if (art == NULL) {
+                            LOG(llevError, "can't find artifact %s [%d]\n for loading", yv, op->type);
+                        } else {
+                            give_artifact_abilities(op, art->item);
+                        }
+                    }
 
 ^other_arch{S}      op->other_arch = find_archetype(yval());
 ^animation{S}       {
@@ -1800,8 +1809,27 @@ int save_object(FILE *fp, object *op, int flag) {
         if (op->y != op->arch->clone.y)
             FAST_SAVE_LONG(sb, "y ", op->y);
     }
-    else
-        get_ob_diff(sb, op, &at->clone);
+    else {
+        /* if op is an artifact, then find the "standard" artifact to use that for the diff */
+        if (op->artifact != NULL) {
+            object *base;
+            const artifact *artifact;
+
+            artifact = find_artifact(op->type, op->artifact);
+            if (artifact == NULL) {
+                LOG(llevError, "could not find artifact %s [%d] to save data\n", op->artifact, op->type);
+                get_ob_diff(sb, op, &at->clone);
+            } else {
+                stringbuffer_append_printf(sb, "artifact %s\n", op->artifact);
+                base = arch_to_object(at);
+                give_artifact_abilities(base, artifact->item);
+                get_ob_diff(sb, op, base);
+                object_free2(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
+            }
+        } else {
+            get_ob_diff(sb, op, &at->clone);
+        }
+    }
 
     cp = stringbuffer_finish(sb);
     if (fputs(cp, fp) == EOF) {

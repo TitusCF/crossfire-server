@@ -417,6 +417,12 @@ void object_dump(const object *op, StringBuffer *sb) {
         stringbuffer_append_string(sb, op->arch->name ? op->arch->name : "(null)");
         stringbuffer_append_string(sb, "\n");
 
+        if (op->artifact != NULL) {
+            stringbuffer_append_string(sb, "artifact ");
+            stringbuffer_append_string(sb, op->artifact);
+            stringbuffer_append_string(sb, "\n");
+        }
+
         get_ob_diff(sb, op, &empty_archetype->clone);
         if (op->more) {
             stringbuffer_append_printf(sb, "more %u\n", op->more->count);
@@ -855,6 +861,8 @@ void object_copy(object *src_ob, object *dest_ob) {
 
     /* Decrement the refcounts, but don't bother zeroing the fields;
     they'll be overwritten by memcpy. */
+    if (dest_ob->artifact != NULL)
+        free_string(dest_ob->artifact);
     if (dest_ob->name != NULL)
         free_string(dest_ob->name);
     if (dest_ob->name_pl != NULL)
@@ -896,6 +904,8 @@ void object_copy(object *src_ob, object *dest_ob) {
         SET_FLAG(dest_ob, FLAG_FREED);
     if (is_removed)
         SET_FLAG(dest_ob, FLAG_REMOVED);
+    if (dest_ob->artifact != NULL)
+        add_refcount(dest_ob->artifact);
     if (dest_ob->name != NULL)
         add_refcount(dest_ob->name);
     if (dest_ob->name_pl != NULL)
@@ -1516,6 +1526,7 @@ void object_free2(object *ob, int flags) {
             ob->next->prev = ob->prev;
     }
 
+    if (ob->artifact != NULL) FREE_AND_CLEAR_STR(ob->artifact);
     if (ob->name != NULL) FREE_AND_CLEAR_STR(ob->name);
     if (ob->name_pl != NULL) FREE_AND_CLEAR_STR(ob->name_pl);
     if (ob->title != NULL) FREE_AND_CLEAR_STR(ob->title);

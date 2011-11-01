@@ -164,6 +164,7 @@ typedef struct obj {
      * object_copy() to do so.  Everything below here also gets cleared
      * by object_clear()
      */
+    sstring     artifact;       /**< If set, the item is the artifact with this name and the matching type. */
     const char  *name;          /**< The name of the object, obviously... */
     const char  *name_pl;       /**< The plural name of the object */
     const char  *anim_suffix;   /**< Used to determine combined animations */
