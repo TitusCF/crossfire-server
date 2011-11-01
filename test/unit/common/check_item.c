@@ -371,8 +371,6 @@ static void old_describe_monster(const object *op, char *retbuf, size_t size) {
 START_TEST(test_describe_monster_rewrite) {
     char buf[HUGE_BUF], *compat, *final;
     archetype *arch;
-    const artifactlist *ring, *amulet, *check;
-    const artifact *art;
     object *ob;
     player pl;
 

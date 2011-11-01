@@ -222,13 +222,9 @@ END_TEST
  *  void object_dump_all(void);
  */
 START_TEST(test_object_dump_all) {
-    object *ob1;
-    object *ob2;
-    object *ob3;
-
-    ob1 = cctk_create_game_object(NULL);
-    ob2 = cctk_create_game_object(NULL);
-    ob3 = cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
     object_dump_all(); /*Should not crash, that all i can test*/
 }
 END_TEST
@@ -240,8 +236,8 @@ START_TEST(test_object_find_by_tag_global) {
     object *ob1;
     object *result;
 
-    ob1 = cctk_create_game_object(NULL);
-    ob1 = cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
     ob1 = cctk_create_game_object(NULL);
     result = object_find_by_tag_global(ob1->count);
     fail_unless(result == ob1, "Should find ob1(%p) while search for item %d but got %p", ob1, ob1->count, result);
@@ -446,8 +442,8 @@ END_TEST
  */
 START_TEST(test_object_update_turn_face) {
     object *ob1;
-    New_Face *face1;
-    New_Face *face2;
+    const New_Face *face1;
+    const New_Face *face2;
 
     ob1 = cctk_create_game_object("xan");
     ob1->direction = 1;
@@ -550,12 +546,11 @@ END_TEST
  *  int object_count_free(void);
  */
 START_TEST(test_object_count_free) {
-    object *ob1;
     int free1, free2;
 
-    ob1 = cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
     free1 = object_count_free();
-    ob1 = cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
     free2 = object_count_free();
     /* Behaviour under MEMORY_DEBUG is to allocate each object separately so
      * both will be 0. Allow test suite to pass with this option.
@@ -572,12 +567,11 @@ END_TEST
  *  int object_count_used(void);
  */
 START_TEST(test_object_count_used) {
-    object *ob1;
     int used1, used2;
 
-    ob1 = cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
     used1 = object_count_used();
-    ob1 = cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
     used2 = object_count_used();
     fail_unless((used2 == used1+1), "after creating an object, the object_count_used() should return one more (%d) but returned %d", used1-1, used2);
 }
@@ -654,13 +648,12 @@ START_TEST(test_object_merge) {
     object *ob2;
     object *ob3;
     object *ob4;
-    object *op;
 
     ob1 = cctk_create_game_object(NULL);
     ob2 = cctk_create_game_object(NULL);
     ob3 = cctk_create_game_object(NULL);
     ob4 = cctk_create_game_object(NULL);
-    op = cctk_create_game_object(NULL);
+    cctk_create_game_object(NULL);
     ob1->below = ob2;
     ob2->below = ob3;
     ob3->below = ob4;
