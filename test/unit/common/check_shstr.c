@@ -44,11 +44,11 @@ extern void free_string(const char *str);
 extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
 */
 
-void setup(void) {
+static void setup(void) {
     init_hash_table();
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* nothing to do */
 }
 
@@ -152,7 +152,7 @@ START_TEST(test_buf_overflow) {
 }
 END_TEST
 
-Suite *shstr_suite(void) {
+static Suite *shstr_suite(void) {
     Suite *s = suite_create("shstr");
     TCase *tc_core = tcase_create("Core");
 

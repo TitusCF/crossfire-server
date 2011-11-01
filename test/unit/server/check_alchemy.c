@@ -35,11 +35,11 @@
 #include <global.h>
 #include <assert.h>
 
-void setup(void) {
+static void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -76,7 +76,7 @@ START_TEST(test_recipe_chance) {
 }
 END_TEST
 
-Suite *alchemy_suite(void) {
+static Suite *alchemy_suite(void) {
     Suite *s = suite_create("alchemy");
     TCase *tc_core = tcase_create("Core");
 

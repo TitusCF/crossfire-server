@@ -35,11 +35,11 @@
 #include <global.h>
 #include <sproto.h>
 
-void setup(void) {
+static void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -100,7 +100,7 @@ START_TEST(test_party) {
 }
 END_TEST
 
-Suite *c_party_suite(void) {
+static Suite *c_party_suite(void) {
     Suite *s = suite_create("c_party");
     TCase *tc_core = tcase_create("Core");
 

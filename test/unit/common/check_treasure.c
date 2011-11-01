@@ -35,14 +35,14 @@
 #include <global.h>
 #include <toolkit_common.h>
 
-void setup(void) {
+static void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/object.out");
     printf("set log to %s\n", LOGDIR"/unit/common/object.out");
     cctk_init_std_archetypes();
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -73,9 +73,9 @@ START_TEST(test_treasurelist_find_matching_type) {
     /* We want to use the top level treasure list - in that way,
      * we can test that the recursion works properly
      */
-    char *treasurelists[NUM_TREASURE_LISTS] = {"monk_class_items",
+    const char *treasurelists[NUM_TREASURE_LISTS] = {"monk_class_items",
         "monk_class_items"};
-    char *items[NUM_TREASURE_LISTS][100] = { {
+    const char *items[NUM_TREASURE_LISTS][100] = { {
 #if 0
         /* Until new skill system is commited, these do not
          * exist.
@@ -182,7 +182,7 @@ START_TEST(test_treasurelist_find_matching_type) {
 
 END_TEST
 
-Suite *treasure_suite(void) {
+static Suite *treasure_suite(void) {
     Suite *s = suite_create("treasure");
     TCase *tc_core = tcase_create("Core");
 

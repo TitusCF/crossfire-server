@@ -33,11 +33,11 @@
 #include <stdlib.h>
 #include <check.h>
 
-void setup(void) {
+static void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -46,7 +46,7 @@ START_TEST(test_empty) {
 }
 END_TEST
 
-Suite *anim_suite(void) {
+static Suite *anim_suite(void) {
     Suite *s = suite_create("anim");
     TCase *tc_core = tcase_create("Core");
 

@@ -37,10 +37,10 @@
 #include <toolkit_common.h>
 #include <sproto.h>
 
-void setup(void) {
+static void setup(void) {
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -171,7 +171,7 @@ START_TEST(test_put_object_in_sack) {
 }
 END_TEST
 
-Suite *c_object_suite(void) {
+static Suite *c_object_suite(void) {
     Suite *s = suite_create("c_object");
     TCase *tc_core = tcase_create("Core");
 

@@ -38,13 +38,13 @@
 #include <object.h>
 #include <stringbuffer.h>
 
-void setup(void) {
+static void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/loader.out");
     cctk_init_std_archetypes();
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -125,7 +125,7 @@ START_TEST(test_object_dump) {
 }
 END_TEST
 
-Suite *loader_suite(void) {
+static Suite *loader_suite(void) {
     Suite *s = suite_create("loader");
     TCase *tc_core = tcase_create("Core");
 

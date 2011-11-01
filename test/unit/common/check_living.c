@@ -36,7 +36,7 @@
 #include <toolkit_common.h>
 #include <malloc.h>
 
-void setup(void) {
+static void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
     cctk_setconfdir(BUILD_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/living.out");
@@ -44,7 +44,7 @@ void setup(void) {
     init_experience();
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -327,7 +327,7 @@ START_TEST(test_fix_object) {
 }
 END_TEST
 
-Suite *living_suite(void) {
+static Suite *living_suite(void) {
     Suite *s = suite_create("living");
     TCase *tc_core = tcase_create("Core");
 

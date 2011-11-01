@@ -36,7 +36,7 @@
 #include <loader.h>
 #include <toolkit_common.h>
 
-void setup(void) {
+static void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/item.out");
     cctk_init_std_archetypes();
@@ -44,7 +44,7 @@ void setup(void) {
     init_formulae();
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -398,7 +398,7 @@ START_TEST(test_describe_monster_rewrite) {
 
 } END_TEST
 
-Suite *item_suite(void) {
+static Suite *item_suite(void) {
     Suite *s = suite_create("item");
     TCase *tc_core = tcase_create("Core");
 

@@ -36,11 +36,11 @@
 #include <libproto.h>
 #include "tod.h"
 
-void setup(void) {
+static void setup(void) {
     reset_sleep();
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -67,7 +67,7 @@ START_TEST(test_get_season_name) {
 }
 END_TEST
 
-Suite *time_suite(void) {
+static Suite *time_suite(void) {
     Suite *s = suite_create("time");
     TCase *tc_core = tcase_create("Core");
 

@@ -37,10 +37,10 @@
 #include <toolkit_common.h>
 #include <sproto.h>
 
-void setup(void) {
+static void setup(void) {
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -97,7 +97,7 @@ START_TEST(test_hit_player) {
 }
 END_TEST
 
-Suite *attack_suite(void) {
+static Suite *attack_suite(void) {
     Suite *s = suite_create("attack");
     TCase *tc_core = tcase_create("Core");
 

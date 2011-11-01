@@ -37,7 +37,7 @@
 #include <spells.h>
 #include <toolkit_common.h>
 
-void setup(void) {
+static void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/readable.out");
 /*    printf("set log to %s\n", LOGDIR"/unit/common/readable.out");*/
@@ -45,11 +45,11 @@ void setup(void) {
     init_gods();
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-Suite *readable_suite(void) {
+static Suite *readable_suite(void) {
     Suite *s = suite_create("readable");
     TCase *tc_core = tcase_create("Core");
 

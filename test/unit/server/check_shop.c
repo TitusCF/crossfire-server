@@ -35,11 +35,11 @@
 #include <global.h>
 #include <sproto.h>
 
-void setup(void) {
+static void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -80,7 +80,7 @@ START_TEST(test_query_cost) {
 }
 END_TEST
 
-Suite *shop_suite(void) {
+static Suite *shop_suite(void) {
     Suite *s = suite_create("shop");
     TCase *tc_core = tcase_create("Core");
 

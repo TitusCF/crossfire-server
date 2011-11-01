@@ -73,7 +73,7 @@
 mapstruct *test_map;
 object *mon;
 
-void setup(void) {
+static void setup(void) {
     object *mon1;
     int x, i;
 
@@ -116,11 +116,11 @@ void setup(void) {
 
 }
 
-void teardown(void) {
+static void teardown(void) {
     free_map(test_map);
 }
 
-void check_hp(const char *test, int hp_row[TEST_MAP_SIZE], int hp_diag[TEST_MAP_SIZE]) {
+static void check_hp(const char *test, int hp_row[TEST_MAP_SIZE], int hp_diag[TEST_MAP_SIZE]) {
     object *our_mon;
     int x, diff;
 
@@ -268,7 +268,7 @@ START_TEST(cast_bunch_comet) {
 }
 END_TEST
 
-Suite *comet_suite(void) {
+static Suite *comet_suite(void) {
     Suite *s = suite_create("comet");
     TCase *tc_core = tcase_create("Core");
 

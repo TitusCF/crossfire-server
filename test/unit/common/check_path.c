@@ -37,11 +37,11 @@
 
 #include "path.h"
 
-void setup(void) {
+static void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -125,7 +125,7 @@ START_TEST(test_path_combine_and_normalize) {
 }
 END_TEST
 
-Suite *path_suite(void) {
+static Suite *path_suite(void) {
     Suite *s = suite_create("path");
     TCase *tc_core = tcase_create("Core");
 

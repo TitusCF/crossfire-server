@@ -38,14 +38,14 @@
 
 #include "stringbuffer.h"
 
-void setup(void) {
+static void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/object.out");
     printf("set log to %s\n", LOGDIR"/unit/common/object.out");
     cctk_init_std_archetypes();
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -1183,7 +1183,7 @@ START_TEST(test_object_matches_string) {
 }
 END_TEST
 
-Suite *object_suite(void) {
+static Suite *object_suite(void) {
     Suite *s = suite_create("object");
     TCase *tc_core = tcase_create("Core");
 

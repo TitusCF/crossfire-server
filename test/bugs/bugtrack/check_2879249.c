@@ -31,10 +31,10 @@
 #include <global.h>
 #include <sproto.h>
 
-void setup(void) {
+static void setup(void) {
 }
 
-void teardown(void) {
+static void teardown(void) {
 }
 
 START_TEST(test_insert) {
@@ -61,7 +61,7 @@ START_TEST(test_insert) {
 }
 END_TEST
 
-Suite *bug_suite(void) {
+static Suite *bug_suite(void) {
     Suite *s = suite_create("bug");
     TCase *tc_core = tcase_create("Core");
 

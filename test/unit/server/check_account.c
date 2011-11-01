@@ -37,10 +37,10 @@
 #include <sproto.h>
 #include <unistd.h>
 
-void setup(void) {
+static void setup(void) {
 }
 
-void teardown(void) {
+static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -206,7 +206,7 @@ START_TEST(test_account_load_entries) {
 }
 END_TEST
 
-Suite *account_suite(void) {
+static Suite *account_suite(void) {
     Suite *s = suite_create("account");
     TCase *tc_core = tcase_create("Core");
 
