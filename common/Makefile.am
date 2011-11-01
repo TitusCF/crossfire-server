@@ -73,3 +73,5 @@ proto:
 	sed -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" -e "/yy_size_t/d" < ../include/libproto.h.bak > ../include/libproto.h
 	chmod 644 ../include/libproto.h
 	rm -f ../include/libproto.h.bak
+
+CLEANFILES = loader.c
