@@ -2442,12 +2442,6 @@ void cfapi_object_get_property(int *type, ...) {
         *type = CFAPI_STRING;
         break;
 
-    case CFAPI_OBJECT_PROP_NO_SAVE:
-        rint = va_arg(args, int *);
-        *rint = op->no_save;
-        *type = CFAPI_INT;
-        break;
-
     case CFAPI_OBJECT_PROP_MOVE_TYPE:
         rmove = va_arg(args, MoveType *);
         *rmove = op->move_type;
@@ -3125,12 +3119,6 @@ void cfapi_object_set_property(int *type, ...) {
                 *type = CFAPI_PPARTY;
                 party_join(op, partyarg);
             }
-            break;
-
-        case CFAPI_OBJECT_PROP_NO_SAVE:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->no_save = iarg;
             break;
 
         case CFAPI_PLAYER_PROP_BED_MAP:

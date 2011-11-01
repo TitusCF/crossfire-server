@@ -288,9 +288,6 @@ typedef struct obj {
     const char  *custom_name;   /**< Custom name assigned by player */
     key_value   *key_values;    /**< Fields not explictly known by the loader. */
 
-    uint8       no_save;        /**< This field indicates that the object should never
-                                 * be saved even for map swapout. Not handled by the
-                                 * loading or saving code. */
     sint16      *discrete_damage; /**< damage values, based on each attacktype. */
     tag_t       *spell_tags;
 } object;

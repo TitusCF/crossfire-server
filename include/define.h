@@ -498,7 +498,7 @@ typedef struct typedata {
 #define FLAG_CLIENT_ANIM_RANDOM 10 /**< Client animate this, randomized */
 #define FLAG_ANIMATE            11 /**< The object looks at archetype for faces */
 #define FLAG_DIALOG_PARSED      12 /**< Was the object::msg field parsed? Temporary flag not saved */
-/*#define FLAG_FLYING           13*//* Not affected by WALK_ON or SLOW_MOVE) */
+#define FLAG_NO_SAVE            13 /**< If set (through plugins), the object is not saved on maps. */
 #define FLAG_MONSTER            14 /**< Will attack players */
 #define FLAG_FRIENDLY           15 /**< Will help players */
 

@@ -800,7 +800,7 @@ static PyObject *Object_GetArchetype(Crossfire_Object *whoptr, void *closure) {
 
 static PyObject *Object_GetNoSave(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_NO_SAVE));
+    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_NO_SAVE));
 }
 
 static PyObject *Object_GetExists(Crossfire_Object *whoptr, void *closure) {
@@ -1814,7 +1814,7 @@ static int Object_SetNoSave(Crossfire_Object *whoptr, PyObject *value, void *clo
     if (!PyArg_Parse(value, "i", &val))
         return -1;
 
-    cf_object_set_long_property(whoptr->obj, CFAPI_OBJECT_PROP_NO_SAVE, val);
+    cf_object_set_flag(whoptr->obj, FLAG_NO_SAVE, val);
     return 0;
 }
 

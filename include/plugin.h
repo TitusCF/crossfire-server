@@ -270,7 +270,7 @@ extern crossfire_plugin *plugins_list;
 #define CFAPI_OBJECT_PROP_INVISIBLE         98
 #define CFAPI_OBJECT_PROP_FACE              99
 #define CFAPI_OBJECT_PROP_ANIMATION         100
-#define CFAPI_OBJECT_PROP_NO_SAVE           101
+/*#define CFAPI_OBJECT_PROP_NO_SAVE           101*/
 #define CFAPI_OBJECT_PROP_MOVE_TYPE         102
 #define CFAPI_OBJECT_PROP_MOVE_BLOCK        103
 #define CFAPI_OBJECT_PROP_MOVE_ALLOW        104
