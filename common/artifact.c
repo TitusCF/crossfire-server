@@ -602,6 +602,32 @@ const artifactlist *find_artifactlist(int type) {
 }
 
 /**
+ * Searches and returns a specific artifact, NULL if not found.
+ * @param type item type to search for.
+ * @param name artifact name.
+ * @return matching artifact, NULL if none matched.
+ */
+const artifact *find_artifact(int type, const char *name) {
+    artifactlist *list;
+    artifact *at;
+    sstring sname = find_string(name);
+
+    if (sname == NULL)
+        return NULL;
+
+    list = find_artifactlist_internal(type);
+    if (list == NULL)
+        return NULL;
+
+    for (at = list->items; at != NULL; at = at->next) {
+        if (at->item->name == sname)
+            return at;
+    }
+
+    return NULL;
+}
+
+/**
  * For debugging purposes.  Dumps all tables.
  *
  * @todo
