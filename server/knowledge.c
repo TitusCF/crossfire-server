@@ -584,7 +584,7 @@ static const knowledge_type const knowledges[] = {
     { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL },
     { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL },
     { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL },
-    { NULL, 0, 0, 0, 0, NULL }
+    { NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
 
 
