@@ -46,7 +46,8 @@ START_TEST(test_weight_reduction) {
     const char *items[] = { "scroll", "crown", "gem", "tooth", NULL };
     /* How many to put or remove from container. Sum should be 0, last value 0. */
     const int add[] = { 2, 5, 7, 3, 3, 9, -5, -7, 11, -8, -9, -11, 0 };
-    int red, a, i, nrof, sum;
+    int red, a, i, nrof;
+    uint32 sum;
     signed long carrying;
     object *container, *item;
 
