@@ -5,6 +5,7 @@
  **/
 
 #include <global.h>
+#include <sproto.h>
 
 void apply_auto_fix(mapstruct *m) {
 }

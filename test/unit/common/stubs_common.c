@@ -4,6 +4,7 @@
  * Ryo 2005-07-15
  **/
 #include <global.h>
+#include <sproto.h>
 
 void apply_auto_fix(mapstruct *m) {
 }
