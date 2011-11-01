@@ -605,6 +605,11 @@ A       .+
 /* need yy_push_state, yy_pop_state */
 %option stack
 
+/* those functions are unused, not sure of compatibility with Flex versions. */
+%option nounput
+%option noyy_top_state
+%option noinput
+
 %%
 
 %{
