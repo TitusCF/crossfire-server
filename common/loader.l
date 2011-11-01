@@ -1776,7 +1776,7 @@ int save_object(FILE *fp, object *op, int flag) {
     }
 
     /* If the object has no_save set, just return */
-    if (op->no_save)
+    if (QUERY_FLAG(op, FLAG_NO_SAVE))
         return SAVE_ERROR_OK;
 
     if ((at = op->arch) == NULL)
