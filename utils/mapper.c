@@ -2447,13 +2447,13 @@ static void write_world_map(void) {
 
         x = regions[region]->sum_x*SIZE/regions[region]->sum+SIZE/2-strlen(regions[region]->reg->name)*font->w/2;
         y = regions[region]->sum_y*SIZE/regions[region]->sum+SIZE/2-font->h/2;
-        gdImageString(small, font, x, y, regions[region]->reg->name, color);
-        gdImageString(pic, font, x, y, regions[region]->reg->name, color);
+        gdImageString(small, font, x, y, (unsigned char *)regions[region]->reg->name, color);
+        gdImageString(pic, font, x, y, (unsigned char *)regions[region]->reg->name, color);
 
         /* For exit/road map, size isn't the same. */
         x = regions[region]->sum_x*50/regions[region]->sum+50/2-strlen(regions[region]->reg->name)*font->w/2;
         y = regions[region]->sum_y*50/regions[region]->sum+50/2-font->h/2;
-        gdImageString(infomap, font, x, y, regions[region]->reg->name, color);
+        gdImageString(infomap, font, x, y, (unsigned char *)regions[region]->reg->name, color);
     }
 
     snprintf(mappath, sizeof(mappath), "%s/world_regions%s", root, output_extensions[output_format]);
@@ -3604,9 +3604,9 @@ int main(int argc, char **argv) {
     /* Add a dummy region so unlinked maps can be identified. */
     dummy = get_region_struct();
     dummy->fallback = 1;
-    dummy->name = add_string("unlinked");
-    dummy->longname = add_string("This dummy region contains all maps without a region set.");
-    dummy->longname = add_string("This dummy region contains all maps without a region set.");
+    dummy->name = strdup_local("unlinked");
+    dummy->longname = strdup_local("This dummy region contains all maps without a region set.");
+    dummy->longname = strdup_local("This dummy region contains all maps without a region set.");
     dummy->next = first_region;
     first_region = dummy;
 

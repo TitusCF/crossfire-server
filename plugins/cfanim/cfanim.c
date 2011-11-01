@@ -207,7 +207,7 @@ static anim_move_result runapply(struct CFanimation_struct *animation, long int 
 }
 
 static long int initapplyobject(const char *name, char *parameters, struct CFmovement_struct *move_entity) {
-    move_entity->parameters = parameters ? cf_add_string(parameters) : NULL;
+    move_entity->parameters = parameters ? (void*)cf_add_string(parameters) : NULL;
     return 1;
 }
 
@@ -262,7 +262,7 @@ static anim_move_result runpickup(struct CFanimation_struct *animation, long int
 }
 
 static long int initpickupobject(const char *name, char *parameters, struct CFmovement_struct *move_entity) {
-    move_entity->parameters = parameters ? cf_add_string(parameters) : NULL;
+    move_entity->parameters = parameters ? (void*)cf_add_string(parameters) : NULL;
     return 1;
 }
 
