@@ -37,6 +37,7 @@
 #include <room_gen.h>
 #include <random_map.h>
 #include <rproto.h>
+#include <sproto.h>
 
 int main(int argc, char *argv[]) {
     char InFileName[1024], OutFileName[1024];
