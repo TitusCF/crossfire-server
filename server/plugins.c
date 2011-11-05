@@ -4221,7 +4221,7 @@ void cfapi_player_message(int *type, ...) {
  * will be CFAPI_NONE.
  */
 void cfapi_object_change_exp(int *type, ...) {
-    va_list(args);
+    va_list args;
     int flag;
     object *ob;
     const char *skill;
