@@ -2131,7 +2131,7 @@ void cfapi_object_get_property(int *type, ...) {
 
     case CFAPI_OBJECT_PROP_CUSTOM_NAME:
         rsstring = va_arg(args, sstring *);
-        *rsstring = (char *)op->custom_name;
+        *rsstring = op->custom_name;
         *type = CFAPI_SSTRING;
         break;
 
