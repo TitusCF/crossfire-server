@@ -3,30 +3,41 @@
 
 #include "global.h"
 
-
+/**
+ * Various kind of messages a player or NPC can say.
+ */
 typedef enum {
-    rt_say = 0,
-    rt_reply = 1,
-    rt_question = 2
+    rt_say = 0,         /**< Basic sentence. */
+    rt_reply = 1,       /**< Reply to something. */
+    rt_question = 2     /**< Asking a question. */
 } reply_type;
 
+/**
+ * One reply a NPC can expect.
+ */
 typedef struct struct_dialog_reply {
-    char *reply;
-    char *message;
-    reply_type type;
-    struct struct_dialog_reply *next;
+    char *reply;                        /**< Reply expected from the player. */
+    char *message;                      /**< What the player will actually say for this reply. */
+    reply_type type;                    /**< Type of message. */
+    struct struct_dialog_reply *next;   /**< Next reply, NULL for last. */
 } struct_dialog_reply;
 
+/**
+ * One message a NPC can react to.
+ */
 typedef struct struct_dialog_message {
-    char *match;
-    char *message;
-    struct struct_dialog_reply *replies;
-    struct struct_dialog_message *next;
+    char *match;                                /**< What the player should say, can be a regexp. */
+    char *message;                              /**< What the NPC will say. */
+    struct struct_dialog_reply *replies;        /**< Replies this message has. */
+    struct struct_dialog_message *next;         /**< Next message, NULL if last. */
 } struct_dialog_message;
 
+/**
+ * Message information for a NPC.
+ */
 typedef struct struct_dialog_information {
-    struct struct_dialog_reply *all_replies;
-    struct struct_dialog_message *all_messages;
+    struct struct_dialog_reply *all_replies;    /**< All replies, to quickly search things. */
+    struct struct_dialog_message *all_messages; /**< Messages the NPC can use. */
 } struct_dialog_information;
 
 /** How many NPC replies maximum to tell the player. */
