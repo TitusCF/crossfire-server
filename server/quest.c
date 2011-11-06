@@ -470,7 +470,7 @@ static void quest_read_player_data(quest_player *pq) {
     FILE *file;
     char final[MAX_BUF], read[MAX_BUF], data[MAX_BUF];
     StringBuffer *buf = NULL;
-    quest_state *qs = NULL;
+    quest_state *qs = NULL, *prev = NULL;
     int warned = 0, state;
     quest_definition *quest = NULL;
 
@@ -489,8 +489,12 @@ static void quest_read_player_data(quest_player *pq) {
         if (sscanf(read, "quest %s\n", data)) {
             qs = get_new_quest_state();
             qs->code = add_string(data);
-            qs->next = pq->quests;
-            pq->quests = qs;
+            if (prev == NULL) {
+                pq->quests = qs;
+            } else {
+                prev->next = qs;
+            }
+            prev = qs;
             quest = quest_get_by_code(qs->code);
             if (quest == NULL) {
                 LOG(llevDebug, "Unknown quest %s in quest file %s", qs->code, final);
@@ -604,8 +608,14 @@ static quest_state *get_or_create_state(quest_player *pq, sstring name) {
         if (!qs)
             fatal(OUT_OF_MEMORY);
         qs->code = add_refcount(name);
-        qs->next = pq->quests;
-        pq->quests = qs;
+        if (pq->quests != NULL) {
+            quest_state *last;
+            for (last = pq->quests ; last->next != NULL; last = last->next)
+                ;
+            last->next = qs;
+        } else {
+            pq->quests = qs;
+        }
     }
 
     return qs;
