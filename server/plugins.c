@@ -263,6 +263,25 @@ crossfire_plugin *plugins_list = NULL;
 /* NEW PLUGIN STUFF STARTS HERE                                              */
 /*****************************************************************************/
 
+/**
+ * Find a plugin from its internal name.
+ * @param id internal plugin name.
+ * @return plugin, NULL if not found.
+ */
+static crossfire_plugin *plugins_find_plugin(const char *id) {
+    crossfire_plugin *cp;
+
+    if (plugins_list == NULL)
+        return NULL;
+
+    for (cp = plugins_list; cp != NULL; cp = cp->next) {
+        if (!strcmp(id, cp->id)) {
+            return cp;
+        }
+    }
+    return NULL;
+}
+
 #ifdef WIN32
 static const char *plugins_dlerror(void) {
     static char buf[256];
@@ -722,25 +741,6 @@ int plugins_remove_plugin(const char *id) {
         }
     }
     return -1;
-}
-
-/**
- * Find a plugin from its internal name.
- * @param id internal plugin name.
- * @return plugin, NULL if not found.
- */
-crossfire_plugin *plugins_find_plugin(const char *id) {
-    crossfire_plugin *cp;
-
-    if (plugins_list == NULL)
-        return NULL;
-
-    for (cp = plugins_list; cp != NULL; cp = cp->next) {
-        if (!strcmp(id, cp->id)) {
-            return cp;
-        }
-    }
-    return NULL;
 }
 
 /**
