@@ -1808,8 +1808,6 @@ void player_lvl_adj(object *who, object *op) {
 
         player_lvl_adj(who, op); /* To decrease more levels */
     }
-    /* check if the spell data has changed */
-    esrv_update_spells(who->contr);
 }
 
 /**
