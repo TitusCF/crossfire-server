@@ -1103,6 +1103,11 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
 
     if (op->weapon_speed < 0.05)
         op->weapon_speed = 0.05;
+
+    /* It is quite possible that a player's spell costing might have changed,
+     * so we will check that now.
+     */
+    esrv_update_spells(op->contr);
 }
 /**
  * Updates all abilities given by applied objects in the inventory
@@ -1579,12 +1584,6 @@ void fix_object(object *op) {
         op->move_type &= ~MOVE_WALK;
 
     object_update_speed(op);
-
-    /* It is quite possible that a player's spell costing might have changed,
-     * so we will check that now.
-     */
-    if (op->type == PLAYER)
-        esrv_update_spells(op->contr);
 }
 
 /**
