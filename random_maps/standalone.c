@@ -213,9 +213,6 @@ void esrv_del_item(player *pl, object *ob) {
 void esrv_update_spells(player *pl) {
 }
 
-void trap_adjust(object *ob, int x) {
-}
-
 void rod_adjust(object *rod) {
 }
 

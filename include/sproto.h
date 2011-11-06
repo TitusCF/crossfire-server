@@ -468,7 +468,6 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
 int trap_see(object *op, object *trap);
 int trap_show(object *trap, object *where);
 int trap_disarm(object *disarmer, object *trap, int risk, object *skill);
-void trap_adjust(object *trap, int difficulty);
 /* shop.c */
 uint64 query_cost(const object *tmp, object *who, int flag);
 StringBuffer *query_cost_string(const object *tmp, object *who, int flag, StringBuffer *buf);
