@@ -441,7 +441,6 @@ int execute_event(object *op, int eventcode, object *activator, object *third, c
 int plugin_event_say(object *npc, talk_info *talk);
 int execute_global_event(int eventcode, ...);
 int plugins_init_plugin(const char *libfile);
-void cfapi_get_hooks(int *type, ...);
 int plugins_remove_plugin(const char *id);
 crossfire_plugin *plugins_find_plugin(const char *id);
 void plugins_display_list(object *op);

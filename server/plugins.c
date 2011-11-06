@@ -564,6 +564,46 @@ int execute_global_event(int eventcode, ...) {
     return 0;
 }
 
+static void cfapi_get_hooks(int *type, ...) {
+    va_list args;
+    int request_type;
+    char *buf;
+    f_plug_api *rapi;
+
+    *type = CFAPI_NONE;
+
+    va_start(args, type);
+    request_type = va_arg(args, int);
+    if (request_type == 0) { /* By nr */
+        size_t fid;
+
+        fid = va_arg(args, int);
+        rapi = va_arg(args, f_plug_api *);
+        if (fid >= NR_OF_HOOKS) {
+            *rapi = NULL;
+            *type = CFAPI_NONE;
+        } else {
+            *rapi = plug_hooks[fid].func;
+            *type = CFAPI_FUNC;
+        }
+    } else { /* by name */
+        size_t i;
+
+        buf = va_arg(args, char *);
+        rapi = va_arg(args, f_plug_api *);
+        *rapi = NULL;
+        *type = CFAPI_NONE;
+        for (i = 0; i < NR_OF_HOOKS; i++) {
+            if (!strcmp(buf, plug_hooks[i].fname)) {
+                *rapi = plug_hooks[i].func;
+                *type = CFAPI_FUNC;
+                break;
+            }
+        }
+    }
+    va_end(args);
+}
+
 /**
  * Try to load the specified plugin. Update ::plugins_list if successful.
  * Log errors at ::llevError.
@@ -639,46 +679,6 @@ int plugins_init_plugin(const char *libfile) {
     }
     postfunc();
     return 0;
-}
-
-void cfapi_get_hooks(int *type, ...) {
-    va_list args;
-    int request_type;
-    char *buf;
-    f_plug_api *rapi;
-
-    *type = CFAPI_NONE;
-
-    va_start(args, type);
-    request_type = va_arg(args, int);
-    if (request_type == 0) { /* By nr */
-        size_t fid;
-
-        fid = va_arg(args, int);
-        rapi = va_arg(args, f_plug_api *);
-        if (fid >= NR_OF_HOOKS) {
-            *rapi = NULL;
-            *type = CFAPI_NONE;
-        } else {
-            *rapi = plug_hooks[fid].func;
-            *type = CFAPI_FUNC;
-        }
-    } else { /* by name */
-        size_t i;
-
-        buf = va_arg(args, char *);
-        rapi = va_arg(args, f_plug_api *);
-        *rapi = NULL;
-        *type = CFAPI_NONE;
-        for (i = 0; i < NR_OF_HOOKS; i++) {
-            if (!strcmp(buf, plug_hooks[i].fname)) {
-                *rapi = plug_hooks[i].func;
-                *type = CFAPI_FUNC;
-                break;
-            }
-        }
-    }
-    va_end(args);
 }
 
 /**
