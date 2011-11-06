@@ -2014,7 +2014,7 @@ void monster_do_say(const mapstruct *map, const char *message) {
  * @param message what is being said.
  * @return new StringBuffer containing the text.
  */
-StringBuffer *monster_format_say(const object* npc, const char *message) {
+static StringBuffer *monster_format_say(const object* npc, const char *message) {
     char name[MAX_BUF];
     StringBuffer *buf;
 

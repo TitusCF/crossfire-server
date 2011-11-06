@@ -424,7 +424,7 @@ void set_first_map(object *op) {
  * @param ns
  * the socket structure to copy.
  */
-void set_player_socket(player *p, socket_struct *ns) {
+static void set_player_socket(player *p, socket_struct *ns) {
     memcpy(&p->socket, ns, sizeof(socket_struct));
 
     /* The memcpy above copies the reference to faces sent.  So we need to clear
