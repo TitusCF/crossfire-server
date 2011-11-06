@@ -1242,6 +1242,8 @@ mapstruct *load_original_map(const char *filename, int flags) {
     /* Handle for map load event */
     execute_global_event(EVENT_MAPLOAD, m);
 
+    apply_auto_fix(m); /* Chests which open as default */
+
     return (m);
 }
 
@@ -1800,8 +1802,6 @@ mapstruct *ready_map_name(const char *name, int flags) {
         if (!(m = load_original_map(name, (flags&MAP_PLAYER_UNIQUE))))
             return (NULL);
 
-        apply_auto_fix(m); /* Chests which open as default */
-
         /* If a player unique map, no extra unique object file to load.
          * if from the editor, likewise.
          */
@@ -1816,8 +1816,6 @@ mapstruct *ready_map_name(const char *name, int flags) {
                     /* Really, this map is bad :( */
                     return NULL;
                 }
-
-                apply_auto_fix(m); /* Chests which open as default */
             }
         }
     } else {
@@ -1834,8 +1832,6 @@ mapstruct *ready_map_name(const char *name, int flags) {
                 /* Really, this map is bad :( */
                 return NULL;
             }
-
-            apply_auto_fix(m); /* Chests which open as default */
         }
         load_unique_objects(m);
 
