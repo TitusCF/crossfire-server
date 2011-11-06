@@ -1251,43 +1251,25 @@ mapstruct *load_original_map(const char *filename, int flags) {
  * @param m
  * map we want to reload.
  * @return
- * map object we load into (this can change from the passed
- * option if we can't find the original map)
- *
- * @todo
- * check spurious logic for load_map_header failure (shouldn't it return m?)
+ * 0 if success, non zero if failure, in which case error was LOG'ed.
  */
-static mapstruct *load_temporary_map(mapstruct *m) {
+static int load_temporary_map(mapstruct *m) {
     FILE *fp;
     char buf[MAX_BUF];
 
     if (!m->tmpname) {
         LOG(llevError, "No temporary filename for map %s\n", m->path);
-        snprintf(buf, sizeof(buf), "%s", m->path);
-        delete_map(m);
-        m = load_original_map(buf, 0);
-        if (m == NULL)
-            return NULL;
-        apply_auto_fix(m); /* Chests which open as default */
-        return m;
+        return 1;
     }
 
     if ((fp = fopen(m->tmpname, "r")) == NULL) {
         LOG(llevError, "Cannot open %s: %s\n", m->tmpname, strerror_local(errno, buf, sizeof(buf)));
-        snprintf(buf, sizeof(buf), "%s", m->path);
-        delete_map(m);
-        m = load_original_map(buf, 0);
-        if (m == NULL)
-            return NULL;
-        apply_auto_fix(m); /* Chests which open as default */
-        return m;
+        return 2;
     }
 
     if (load_map_header(fp, m)) {
         LOG(llevError, "Error loading map header for %s (%s)\n", m->path, m->tmpname);
-        delete_map(m);
-        m = load_original_map(m->path, 0);
-        return NULL;
+        return 3;
     }
     allocate_map(m);
 
@@ -1295,7 +1277,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
     load_objects(m, fp, 0);
     fclose(fp);
     m->in_memory = MAP_IN_MEMORY;
-    return m;
+    return 0;
 }
 
 /**
@@ -1837,9 +1819,20 @@ mapstruct *ready_map_name(const char *name, int flags) {
     } else {
         /* If in this loop, we found a temporary map, so load it up. */
 
-        m = load_temporary_map(m);
-        if (m == NULL)
-            return NULL;
+        if (load_temporary_map(m) != 0) {
+            /*
+             * There was a failure loading the temporary map, fall back to original one.
+             * load_temporary_map() already logged the error.
+             */
+            delete_map(m);
+            m = load_original_map(name, 0);
+            if (m == NULL) {
+                /* Really, this map is bad :( */
+                return NULL;
+            }
+
+            apply_auto_fix(m); /* Chests which open as default */
+        }
         load_unique_objects(m);
 
         clean_tmp_map(m);
