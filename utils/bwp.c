@@ -835,9 +835,6 @@ void esrv_del_item(player *pl, object *ob) {
 void esrv_update_spells(player *pl) {
 }
 
-void monster_check_apply(object *ob, object *obt) {
-}
-
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
     return 0;
 }

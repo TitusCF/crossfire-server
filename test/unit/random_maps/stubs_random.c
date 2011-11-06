@@ -42,8 +42,5 @@ void esrv_del_item(player *pl, object *ob) {
 void esrv_update_spells(player *pl) {
 }
 
-void monster_check_apply(object *ob, object *obt) {
-}
-
 void rod_adjust(object *rod) {
 }

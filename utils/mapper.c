@@ -3906,9 +3906,6 @@ void esrv_update_spells(player *pl) {
 void monster_check_apply_all(object *monster) {
 }
 
-void monster_check_apply(object *ob, object *obt) {
-}
-
 void rod_adjust(object *rod) {
 }
 
