@@ -1287,25 +1287,22 @@ static int load_temporary_map(mapstruct *m) {
  * @param m
  * map we want to load.
  * @return
- * map object we load into (this can change from the passed
- * option if we can't find the original map)
+ * 0 on success, non zero in case of error, which is LOG'ed.
  */
-static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
+static int load_overlay_map(const char *filename, mapstruct *m) {
     FILE *fp;
     char pathname[MAX_BUF];
 
     create_overlay_pathname(filename, pathname, MAX_BUF);
 
     if ((fp = fopen(pathname, "r")) == NULL) {
-        /* LOG(llevDebug, "Can't open overlay %s\n", pathname);*/
-        return m;
+        /* nothing bad to not having an overlay */
+        return 0;
     }
 
     if (load_map_header(fp, m)) {
         LOG(llevError, "Error loading map header for overlay %s (%s)\n", m->path, pathname);
-        delete_map(m);
-        m = load_original_map(m->path, 0);
-        return NULL;
+        return 1;
     }
     /*allocate_map(m);*/
 
@@ -1313,7 +1310,7 @@ static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
     load_objects(m, fp, MAP_OVERLAY);
     fclose(fp);
     m->in_memory = MAP_IN_MEMORY;
-    return m;
+    return 0;
 }
 
 /******************************************************************************
@@ -1812,9 +1809,16 @@ mapstruct *ready_map_name(const char *name, int flags) {
             load_unique_objects(m);
 
         if (!(flags&(MAP_FLUSH|MAP_PLAYER_UNIQUE|MAP_OVERLAY))) {
-            m = load_overlay_map(name, m);
-            if (m == NULL)
-                return NULL;
+            if (load_overlay_map(name, m) != 0) {
+                delete_map(m);
+                m = load_original_map(name, 0);
+                if (m == NULL) {
+                    /* Really, this map is bad :( */
+                    return NULL;
+                }
+
+                apply_auto_fix(m); /* Chests which open as default */
+            }
         }
     } else {
         /* If in this loop, we found a temporary map, so load it up. */
