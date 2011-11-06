@@ -3835,9 +3835,6 @@ void do_auto_apply(mapstruct *m) {
                 && HAS_RANDOM_ITEMS(tmp)) {
                     create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                     tmp->randomitems = NULL;
-                    if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
-                        monster_check_apply_all(tmp);
-                    }
                 }
             } FOR_MAP_FINISH();
 
@@ -3901,9 +3898,6 @@ void esrv_update_item(int flags, object *pl, object *op) {
 }
 
 void esrv_update_spells(player *pl) {
-}
-
-void monster_check_apply_all(object *monster) {
 }
 
 void rod_adjust(object *rod) {
