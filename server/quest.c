@@ -1245,7 +1245,7 @@ void quest_send_initial_states(player *pl) {
     quest_player *states = NULL;
     quest_state *state = NULL;
     SockList sl;
-    int size;
+    size_t size;
     quest_definition *quest;
     quest_step_definition *step;
 
