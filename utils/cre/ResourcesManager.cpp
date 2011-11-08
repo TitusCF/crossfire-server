@@ -57,9 +57,9 @@ void ResourcesManager::load()
         myRecipes.append(recipes);
     }
 
-    extern int nrofpixmaps;
+    extern unsigned int nrofpixmaps;
 
-    for (int f = 0; f < nrofpixmaps; f++)
+    for (unsigned int f = 0; f < nrofpixmaps; f++)
     {
         myFaces[new_faces[f].name] = &new_faces[f];
     }

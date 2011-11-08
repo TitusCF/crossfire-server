@@ -19,8 +19,8 @@ CRESmoothFaceMaker::CRESmoothFaceMaker()
     layout->addWidget(new QLabel(tr("Face to use:"), this), line, 0);
     myFace = new QComboBox(this);
     layout->addWidget(myFace, line++, 1, 1, 2);
-    extern int nrofpixmaps;
-    for (int face = 1; face < nrofpixmaps; face++)
+    extern unsigned int nrofpixmaps;
+    for (unsigned int face = 1; face < nrofpixmaps; face++)
         myFace->addItem(CREPixmap::getIcon(face), new_faces[face].name, face);
 
     layout->addWidget(new QLabel(tr("Path of the picture to create:"), this), line, 0);
