@@ -2227,55 +2227,55 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
 }
 
 int get_cha_bonus(int stat) {
-    return int_bonuses[INT_CHA_BONUS][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_CHA_BONUS][get_index(stat, settings.max_stat)];
 }
 
 int get_dex_bonus(int stat) {
-    return int_bonuses[INT_DEX_BONUS][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_DEX_BONUS][get_index(stat, settings.max_stat)];
 }
 
 int get_thaco_bonus(int stat) {
-    return int_bonuses[INT_THAC0_BONUS][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_THAC0_BONUS][get_index(stat, settings.max_stat)];
 }
 
 uint32 get_weight_limit(int stat) {
-    return int_bonuses[INT_WEIGHT_LIMIT][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_WEIGHT_LIMIT][get_index(stat, settings.max_stat)];
 }
 
 int get_learn_spell(int stat) {
-    return int_bonuses[INT_LEARN_SPELL][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_LEARN_SPELL][get_index(stat, settings.max_stat)];
 }
 
 int get_cleric_chance(int stat) {
-    return int_bonuses[INT_CLERIC_CHANCE][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_CLERIC_CHANCE][get_index(stat, settings.max_stat)];
 }
 
 int get_turn_bonus(int stat) {
-    return int_bonuses[INT_TURN_BONUS][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_TURN_BONUS][get_index(stat, settings.max_stat)];
 }
 
 int get_dam_bonus(int stat) {
-    return int_bonuses[INT_DAM_BONUS][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_DAM_BONUS][get_index(stat, settings.max_stat)];
 }
 
 float get_speed_bonus(int stat) {
-    return float_bonuses[FLOAT_DEX_BONUS][get_index(stat, settings.max_stat+1)];
+    return float_bonuses[FLOAT_DEX_BONUS][get_index(stat, settings.max_stat)];
 }
 
 int get_fear_bonus(int stat) {
-    return int_bonuses[INT_FEAR_BONUS][get_index(stat, settings.max_stat+1)];
+    return int_bonuses[INT_FEAR_BONUS][get_index(stat, settings.max_stat)];
 }
 
 static float get_con_bonus(int stat) {
-    return float_bonuses[FLOAT_CON_BONUS][get_index(stat, settings.max_stat+1)];
+    return float_bonuses[FLOAT_CON_BONUS][get_index(stat, settings.max_stat)];
 }
 
 static float get_sp_bonus(int stat) {
-    return float_bonuses[FLOAT_SP_BONUS][get_index(stat, settings.max_stat+1)];
+    return float_bonuses[FLOAT_SP_BONUS][get_index(stat, settings.max_stat)];
 }
 
 static float get_grace_bonus(int stat) {
-    return float_bonuses[FLOAT_GRACE_BONUS][get_index(stat, settings.max_stat+1)];
+    return float_bonuses[FLOAT_GRACE_BONUS][get_index(stat, settings.max_stat)];
 }
 
 /**
@@ -2283,7 +2283,7 @@ static float get_grace_bonus(int stat) {
  * @param stat
  * index of the stat to get.
  * @param max_index
- * the maximum index (exclusive).
+ * the maximum index (inclusive).
  * @return the limited index.
  */
 static size_t get_index(int stat, size_t max_index) {
@@ -2294,7 +2294,7 @@ static size_t get_index(int stat, size_t max_index) {
     }
 
     index = (size_t)stat;
-    return MIN(index, max_index-1);
+    return MIN(index, max_index);
 }
 
 /**
