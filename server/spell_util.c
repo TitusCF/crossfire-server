@@ -1276,7 +1276,7 @@ static void transmute_item_to_flower(object *op) {
     if (QUERY_FLAG(item, FLAG_APPLIED))
         apply_manual(op, item, AP_NOPRINT|AP_IGNORE_CURSE|AP_UNAPPLY);
     object_remove(item);
-    flower->weight = item->nrof ? item->nrof*item->weight : item->weight;
+    flower->weight = item->nrof ? ((sint32)item->nrof)*item->weight : item->weight;
     item->weight = 0;
     esrv_del_item(op->contr, item);
     object_insert_in_ob(item, force);
@@ -1361,7 +1361,8 @@ static int spell_consume_items(object *op, const object *spell_ob) {
     char *copy;
     char *ingredients[10];
     object *found[10];
-    int count, i, nrof[10];
+    int count, i;
+    uint32 nrof[10];
     char name_ob[MAX_BUF];
     const char *name2;
 
