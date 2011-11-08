@@ -51,7 +51,7 @@ New_Face *blank_face, *empty_face, *smooth_face;
 /**
  * Number of bitmaps loaded from the "bmaps" file.
  */
-int nrofpixmaps = 0;
+unsigned int nrofpixmaps = 0;
 
 face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
 
@@ -191,7 +191,8 @@ static void read_face_data(void) {
 void read_bmap_names(void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
-    int value, i;
+    int value;
+    unsigned int i;
     size_t l;
 
     bmaps_checksum = 0;
@@ -405,7 +406,7 @@ int find_smooth(uint16 face, uint16 *smoothed) {
  * Deallocates memory allocated by read_bmap_names() and read_smooth().
  */
 void free_all_images(void) {
-    int i;
+    unsigned int i;
 
     for (i = 0; i < nrofpixmaps; i++)
         free((char*)(new_faces[i].name));
@@ -461,7 +462,8 @@ void read_client_images(void) {
     char buf[HUGE_BUF];
     char *cp, *cps[7+1], *slash;
     FILE *infile;
-    int num, len, fileno, i;
+    int len, fileno, i;
+    unsigned int num;
 
     memset(facesets, 0, sizeof(facesets));
     snprintf(filename, sizeof(filename), "%s/image_info", settings.datadir);
@@ -578,7 +580,8 @@ int is_valid_faceset(int fsn) {
  * Frees all faceset information
  */
 void free_socket_images(void) {
-    int num, q;
+    int num;
+    unsigned int q;
 
     for (num = 0; num < MAX_FACE_SETS; num++) {
         if (facesets[num].prefix) {
