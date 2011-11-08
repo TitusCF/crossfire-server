@@ -825,7 +825,7 @@ static void build_stringlist(const char *str, char ***result_list, size_t *resul
  * @return matching formula, NULL if none matching.
  */
 recipe *find_recipe_for_tool(const char *tool, recipe *from) {
-    int t;
+    size_t t;
     recipelist *list = from ? get_formulalist(from->ingred_count) : formulalist;
     recipe *test = from ? from->next : list->items;
 
