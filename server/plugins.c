@@ -4061,12 +4061,14 @@ void cfapi_object_find_archetype_inside(int *type, ...) {
     if (*robj == NULL) {
         char name[MAX_BUF];
 
-        /* Search by query_name instead */
+        /* Search by name or slaying instead */
         FOR_INV_PREPARE(op, tmp) {
             query_name(tmp, name, MAX_BUF);
             if (!strncmp(name, str, strlen(str)))
                 *robj = tmp;
             if (!strncmp(tmp->name, str, strlen(str)))
+                *robj = tmp;
+            if (tmp->slaying && !strcmp(tmp->slaying, str))
                 *robj = tmp;
             if (*robj != NULL)
                 break;
