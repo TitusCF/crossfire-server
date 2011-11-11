@@ -358,24 +358,15 @@ archetype *get_archetype_struct(void) {
  * opened file descriptor which will be used to read the archetypes.
  */
 static void first_arch_pass(FILE *fp) {
-    object *op;
     archetype *at, *head = NULL, *last_more = NULL;
-    int i, first = 2;
+    int i, first = LO_NEWFILE;
 
-    op = object_new();
-    op->arch = first_archetype = at = get_archetype_struct();
+    at = get_archetype_struct();
+    first_archetype = at;
 
-    while ((i = load_object(fp, op, first, 0))) {
+    while ((i = load_object(fp, &at->clone, first, 0))) {
         first = 0;
-        object_copy(op, &at->clone);
         at->clone.speed_left = (float)(-0.1);
-        /* copy the body_info to the body_used - this is only really
-         * need for monsters, but doesn't hurt to do it for everything.
-         * by doing so, when a monster is created, it has good starting
-         * values for the body_used info, so when items are created
-         * for it, they can be properly equipped.
-         */
-        memcpy(&at->clone.body_used, &op->body_info, sizeof(op->body_info));
 
         switch (i) {
         case LL_NORMAL: /* A new archetype, just link it with the previous */
@@ -420,11 +411,8 @@ static void first_arch_pass(FILE *fp) {
         }
 
         at = get_archetype_struct();
-        object_clear(op);
-        op->arch = at;
     }
-    object_free_drop_inventory(op);
-    op->arch = NULL; /* arch is checked for temporary archetypes if not NULL. */
+    at->clone.arch = NULL; /* arch is checked for temporary archetypes if not NULL. */
     free(at);
 }
 
