@@ -840,7 +840,7 @@ static PyObject *catcher = NULL;
  * http://stackoverflow.com/questions/4307187/how-to-catch-python-stdout-in-c-code
  * See also in initPlugin() the parts about stdOutErr.
  */
-static void log_python_error() {
+static void log_python_error(void) {
 
     PyErr_Print();
 
