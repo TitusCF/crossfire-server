@@ -241,100 +241,100 @@ void malloc_info(object *op) {
         }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_014),
+                         i18n(op, "Sizeof: object=%d  player=%d  map=%d"),
                          sizeof(object), sizeof(player), sizeof(mapstruct));
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_015),
+                         i18n(op, "[fixed]%4d used objects:    %8d"),
                          ob_used, i = (ob_used*sizeof(object)));
 
     sum_used += i;
     sum_alloc += i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_017),
+                         i18n(op, "[fixed]%4d free objects:    %8d"),
                          ob_free, i = (ob_free*sizeof(object)));
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_019),
+                         i18n(op, "[fixed]%4d active objects:  %8d"),
                          object_count_active(), 0);
 
     sum_alloc += i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_021),
+                         i18n(op, "[fixed]%4d players:         %8d"),
                          players, i = (players*sizeof(player)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_023),
+                         i18n(op, "[fixed]%4d maps allocated:  %8d"),
                          nrofmaps, i = (nrofmaps*sizeof(mapstruct)));
 
     sum_alloc += i;
     sum_used += nrm*sizeof(mapstruct);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_025),
+                         i18n(op, "[fixed]%4d maps in memory:  %8d"),
                          nrm, mapmem);
 
     sum_alloc += mapmem;
     sum_used += mapmem;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_027),
+                         i18n(op, "[fixed]%4d archetypes:      %8d"),
                          anr, i = (anr*sizeof(archetype)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_029),
+                         i18n(op, "[fixed]%4d animations:      %8d"),
                          anims, i = (anims*sizeof(uint16)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_031),
+                         i18n(op, "[fixed]%4d treasurelists    %8d"),
                          tlnr, i = (tlnr*sizeof(treasurelist)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_033),
+                         i18n(op, "[fixed]%4ld treasures        %8d"),
                          nroftreasures, i = (nroftreasures*sizeof(treasure)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_035),
+                         i18n(op, "[fixed]%4ld artifacts        %8d"),
                          nrofartifacts, i = (nrofartifacts*sizeof(artifact)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_037),
+                         i18n(op, "[fixed]%4ld artifacts strngs %8d"),
                          nrofallowedstr, i = (nrofallowedstr*sizeof(linked_char)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_039),
+                         i18n(op, "[fixed]%4d artifactlists    %8d"),
                          alnr, i = (alnr*sizeof(artifactlist)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_041),
+                         i18n(op, "[fixed]Total space allocated:%8d"),
                          sum_alloc);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_043),
+                         i18n(op, "[fixed]Total space used:     %8d"),
                          sum_used);
 }
 
@@ -361,7 +361,7 @@ void current_region_info(object *op) {
         return;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_045),
+                         i18n(op, "You are in %s. \n %s"),
                          get_region_longname(r), get_region_msg(r));
 }
 
@@ -383,7 +383,7 @@ void current_map_info(object *op) {
 
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_046),
+                             i18n(op, "players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d"),
                              m->players, m->difficulty,
                              MAP_WIDTH(m), MAP_HEIGHT(m),
                              MAP_ENTER_X(m), MAP_ENTER_Y(m),
@@ -453,12 +453,12 @@ void command_whereabouts(object *op, const char *params) {
         }
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                  i18n_translate(get_language(op), I18N_MSG_CMISC_049));
+                  i18n(op, "In the world currently there are:"));
 
     for (reg = first_region; reg != NULL; reg = reg->next)
         if (reg->counter > 0) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                 i18n_translate(get_language(op), I18N_MSG_CMISC_050),
+                                 i18n(op, "%u players in %s"),
                                  reg->counter, get_region_longname(reg));
         }
 }
@@ -520,7 +520,7 @@ void list_players(object *op, region *reg, partylist *party) {
             chars = (chars_names *)realloc(chars, num_players*sizeof(chars_names));
             if (chars == NULL) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                              i18n_translate(get_language(op), I18N_MSG_CMISC_052));
+                              i18n(op, "who failed - out of memory!"));
                 return;
             }
             sprintf(chars[num_players-1].namebuf, "%s", pl->ob->name);
@@ -540,15 +540,15 @@ void list_players(object *op, region *reg, partylist *party) {
     if (first_player != (player *)NULL) {
         if (reg == NULL && party == NULL)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n_translate(get_language(op), I18N_MSG_CMISC_053),
+                                 i18n(op, "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)"),
                                  num_players, num_wiz, num_afk, num_bot);
         else if (party == NULL)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n_translate(get_language(op), I18N_MSG_CMISC_054),
+                                 i18n(op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)"),
                                  reg->longname ? reg->longname : reg->name, num_players, num_wiz, num_afk, num_bot);
         else
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n_translate(get_language(op), I18N_MSG_CMISC_055),
+                                 i18n(op, "Total Players in party %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)"),
                                  party->partyname, num_players, num_wiz, num_afk, num_bot);
     }
     qsort(chars, num_players, sizeof(chars_names), (int (*)(const void *, const void *))name_cmp);
@@ -718,11 +718,11 @@ void command_afk(object *op, const char *params) {
     if QUERY_FLAG(op, FLAG_AFK) {
         CLEAR_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_056));
+                      i18n(op, "You are no longer AFK"));
     } else {
         SET_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_057));
+                      i18n(op, "You are now AFK"));
     }
 }
 
@@ -843,18 +843,13 @@ void command_debug(object *op, const char *params) {
 
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_092),
+                             i18n(op, "Global debug level is %d."),
                              settings.debug);
-        return;
-    }
-    if (op != NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_093));
         return;
     }
     settings.debug = (enum LogLevel)FABS(i);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_094),
+                         i18n(op, "Debug level set to %d."),
                          i);
 }
 
@@ -880,11 +875,11 @@ void command_wizpass(object *op, const char *params) {
 
     if (i) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_095));
+                      i18n(op, "You will now walk through walls."));
         SET_FLAG(op, FLAG_WIZPASS);
     } else {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_096));
+                      i18n(op, "You will now be stopped by walls."));
         CLEAR_FLAG(op, FLAG_WIZPASS);
     }
 }
