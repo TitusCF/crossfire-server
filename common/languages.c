@@ -125,7 +125,10 @@ const char *i18n_translate(int language, int id) {
     if (found)
         return found->message;
 
-    return found->code;
+    if (language != i18n_default)
+        return i18n_translate(i18n_default, id);
+
+    return NULL;
 }
 
 /**
