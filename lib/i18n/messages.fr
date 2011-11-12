@@ -4,20 +4,46 @@ Your current language is set to: English.|Votre langue actuelle est le français
 Available languages:|Langues disponibles:
 Unknown language.|Langue inconnue.
 Your current language is set to English.|Votre langue est maintenant le français.
-0|Heure actuelle: %02ld:%02ld:%02ld.
+Current time is: %02ld:%02ld:%02ld.|Heure actuelle: %02ld:%02ld:%02ld.
 #1|[fixed]Path               Pl PlM IM   TO Dif Reset
 #2|Path               Pl PlM IM   TO Dif Reset
 #3|[fixed]%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
 #4|%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
 5|Votre parlez le %s
 6|Votre choix de langue est maintenant: %s
-7|La première colonne contient le nom de la partie du corps concernée.
-8|La seconde, le nombre de telles parties votre corps comporte.
-9|La troisième, le nombre de slots que chacune comporte.
+The first column is the name of the body location.|La première colonne contient le nom de la partie du corps concernée.
+The second column is how many of those locations your body has.|La seconde, le nombre de telles parties votre corps comporte.
+The third column is how many slots in that location are available.|La troisième, le nombre de slots que chacune comporte.
 #10|[fixed]%-30s %5d %5d
 #11|%-30s %5d %5d
-12|Vous ne pouvez pas porter d'armure
-13|Vous ne pouvez pas porter d'arme
+in your range slot|comme attaque à distance
+in a human's range slot|comme attaque à distance d'un humain
+on your arm|à votre bras
+on a human's arm|au bras d'un humain
+on your body|sur votre corps
+on a human's torso|sur le corps d'un humain
+on your head|sur votre tête
+on a human's head|sur la tête d'un humain
+around your neck|autour de votre cou
+around a humans neck|autour du cou d'un humain
+in your skill slot|comme compétence
+in a human's skill slot|comme compétence d'un humain
+on your finger|à votre doigt
+on a human's finger|au doigt d'un humain
+around your shoulders|sur vos épaules
+around a human's shoulders|sur les épaules d'un humain
+on your feet|à vos pieds
+on a human's feet|aux pieds d'un humain
+on your hands|dans vos mains
+on a human's hands|dans les mains d'un humain
+around your wrists|autour de votre poignet
+around a human's wrist|autour du poignet d'un humain
+around your waist|autour de votre taille
+around a human's waist|autour de la taille d'un humain
+around your legs|à vos jambes
+around a human's legs|aux jambes d'un humain
+You are not allowed to wear armor.|Vous ne pouvez pas porter d'armure.
+You are not allowed to use weapons.|Vous ne pouvez pas porter d'arme.
 14|Sizeof: object=%d  player=%d  map=%d
 15|[fixed]%4d objets utilisés:    %8d
 17|[fixed]%4d objets libres:      %8d

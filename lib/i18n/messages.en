@@ -1,19 +1,10 @@
 # English and Default messages
 LN|English
-0|Current time is: %02ld:%02ld:%02ld.
-1|[fixed]Path               Pl PlM IM   TO Dif Reset
 2|Path               Pl PlM IM   TO Dif Reset
-3|[fixed]%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
 4|%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
 5|Your current language is set to: %s
 6|Your language setting has been changed to: %s
-7|The first column is the name of the body location.
-8|The second column is how many of those locations your body has.
-9|The third column is how many slots in that location are available.
-10|[fixed]%-30s %5d %5d
 11|%-30s %5d %5d
-12|You are not allowed to wear armor
-13|You are not allowed to use weapons
 14|Sizeof: object=%d  player=%d  map=%d
 15|[fixed]%4d used objects:    %8d
 16|%4d used objects:    %8d

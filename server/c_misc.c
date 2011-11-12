@@ -60,11 +60,11 @@ void map_info(object *op, const char *search) {
     long sec = seconds();
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_000),
+                         i18n(op, "Current time is: %02ld:%02ld:%02ld."),
                          (sec%86400)/3600, (sec%3600)/60, sec%60);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                  i18n_translate(get_language(op), I18N_MSG_CMISC_001));
+                  i18n(op, "[fixed]Path               Pl PlM IM   TO Dif Reset"));
 
     for (m = first_map; m != NULL; m = m->next) {
         if (*search != '\0' && strstr(m->path, search) == NULL)
@@ -77,7 +77,7 @@ void map_info(object *op, const char *search) {
             strcpy(map_path, m->path+strlen(m->path)-18);
 
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_003),
+                             i18n(op, "[fixed]%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d"),
                              map_path, m->players, players_on_map(m, FALSE),
                              m->in_memory, m->timeout, m->difficulty,
                              (MAP_WHEN_RESET(m)%86400)/3600, (MAP_WHEN_RESET(m)%3600)/60,
@@ -143,13 +143,13 @@ void command_body(object *op, const char *params) {
      * give a description.
      */
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n_translate(get_language(op), I18N_MSG_CMISC_007));
+                  i18n(op, "The first column is the name of the body location."));
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n_translate(get_language(op), I18N_MSG_CMISC_008));
+                  i18n(op, "The second column is how many of those locations your body has."));
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n_translate(get_language(op), I18N_MSG_CMISC_009));
+                  i18n(op, "The third column is how many slots in that location are available."));
 
     for (i = 0; i < NUM_BODY_LOCATIONS; i++) {
         /* really debugging - normally body_used should not be set to anything
@@ -157,16 +157,16 @@ void command_body(object *op, const char *params) {
          */
         if (op->body_info[i] || op->body_used[i]) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                                 i18n_translate(get_language(op), I18N_MSG_CMISC_010),
-                                 body_locations[i].use_name, op->body_info[i], op->body_used[i]);
+                                 i18n(op, "[fixed]%-30s %5d %5d"),
+                                 i18n(op, body_locations[i].use_name), op->body_info[i], op->body_used[i]);
         }
     }
     if (!QUERY_FLAG(op, FLAG_USE_ARMOUR))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_012));
+                      i18n(op, "You are not allowed to wear armor."));
     if (!QUERY_FLAG(op, FLAG_USE_WEAPON))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_013));
+                      i18n(op, "You are not allowed to use weapons."));
 }
 
 /**
