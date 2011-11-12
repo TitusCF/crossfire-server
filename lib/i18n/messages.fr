@@ -132,80 +132,80 @@ applymode is set to %s|applymode mis sur %s
 133|applymode mis sur %s
 applymode: Unknown options %s, valid options are nochoice, never, always|applymode: %s est une option inconnue, les choix valides sont nochoice, never, always
 applymode%s set to %s|applymode%s mis sur %s
-136|bowmode est mis sur %s
-137|bowmode%s mis sur %s
-138|petmode est mis sur %s
-139|petmode: %s est une option inconnue, les choix valides sont normal, sad (trouver et détruire), defend, arena
-140|petmode%s mis sur %s
-141|Familiers:
-142|%d  %s - niveau %d
-143|[fixed]niveau %d %s
+bowmode is set to %s|bowmode est mis sur %s
+bowmode%s set to %s|bowmode%s mis sur %s
+petmode is set to %s|petmode est mis sur %s
+petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena|petmode: %s est une option inconnue, les choix valides sont normal, sad (trouver et détruire), defend, arena
+petmode%s set to %s|petmode%s mis sur %s
+Pets:|Familiers :
+%d  %s - level %d|%d  %s - niveau %d
+[fixed]level %d %s|[fixed]niveau %d %s
 144|niveau %d %s
-145|[fixed]%d/%d HP, %d/%d SP
+[fixed]%d/%d HP, %d/%d SP|[fixed]%d/%d HP, %d/%d SP
 146|%d/%d HP, %d/%d SP
-147|[fixed]For %d
+[fixed]Str %d|[fixed]For %d
 148|For %d
-149|[fixed]Dex %d
+[fixed]Dex %d|[fixed]Dex %d
 150|Dex %d
-151|[fixed]Con %d
+[fixed]Con %d|[fixed]Con %d
 152|Con %d
-153|[fixed]Int %d
+[fixed]Int %d|[fixed]Int %d
 154|Int %d
-155|[fixed]Sag %d
+[fixed]Wis %d|[fixed]Sag %d
 156|Sag %d
-157|[fixed]Cha %d
+[fixed]Cha %d|[fixed]Cha %d
 158|Cha %d
-159|[fixed]Pou %d
+[fixed]Pow %d|[fixed]Pou %d
 160|Pou %d
-161|[fixed]wc %d  dégats %d ac %d 
+[fixed]wc %d  damage %d ac %d|[fixed]wc %d  dégats %d ac %d 
 162|wc %d  dégats %d ac %d 
-163|Vous n'avez pas un tel familier.
-164|Pas de familier correspondant.
-165|usekeys mis sur %s
-166|usekeys: %s est une option inconnue, les choix valides sont inventory, keyrings, containers
-167|usekeys%s mis sur %s
-168|[fixed]%-20s %+5d
+You have no pets.|Vous n'avez pas de familier.
+No such pet.|Pas de familier correspondant.
+usekeys is set to %s|usekeys mis sur %s
+usekeys: Unknown option %s, valid options are inventory, keyrings, containers|usekeys: %s est une option inconnue, les choix valides sont inventory, keyrings, containers
+usekeys%s set to %s|usekeys%s mis sur %s
+[fixed]%-20s %+5d|[fixed]%-20s %+5d
 169|%-20s %+5d
-170|\nRésistances naturelles de peau:
+\nNatural skin resistances:|\nRésistances naturelles de peau:
 171|%s: %d
-172|      Commandes DM:
-173|      Divers:
-174|      Commandes:
-175|      Commandes DM:
-176|      Commandes de communication:
-177|      Commandes:
-178|Caractère illégal dans '%s'
-179|Aide sur '%s'
-180|Aucune aide disponible sur '%s'
-181|Quitter effacera votre personnage.\nÊtes-vous vraiment sûr de vouloir quitter ? (y=oui/n=non):
-186|Les sons sont désactivés.
-187|Les sons sont activés.
-188|Changement du mot de passe annulé.
-189|Vous ne pouvez pas jouer ici.
-190|Les mots de passe ne concordent pas.
-191|\nBienvenue, Brave Guerrier !\n
-192|Vous avez entré un mot de passe incorrect.
-193|Entrez votre nouveau mot de passe, ou rien pour annuler:
-194|Confirmez votre nouveau mot de passe, ou rien pour annuler:
-195|Les nouveaux mots de passe ne correspondent pas !
-196|Mot de passe changé.
-197|Vous ne pouvez pas choisir votre titre.
-198|Les Dragons ne peuvent changer leur titre.
-199|Votre titre est '%s'.
-201|Votre titre est le titre par défaut.
-202|Titre par défaut.
-203|Titre trop long.
-204|Vous ne pouvez pas sauver sur un sol maudit.
-205|Vous n'avez pas encore besoin de sauver.
-206|Sauvegarde effectuée.
-207|SAUVEGARDE IMPOSSIBLE!
-208|Vous n'attaquerez plus les autres joueurs.
-209|Vous attaquerez les autres joueurs.
-210|Votre niveau de Wimpy est %d.
-211|Votre nouveau niveau de Wimpy est %d.
+      Wiz commands:|      Commandes DM :
+      Misc help:|      Divers :
+      Commands:|      Commandes :
+      Wiz commands:|      Commandes DM :
+      Communication commands:|      Commandes de communication :
+      Commands:|      Commandes :
+Illegal characters in '%s'|Caractère illégal dans '%s'
+Help about '%s'|Aide sur '%s'
+No help available on '%s'|Aucune aide disponible sur '%s'
+Quitting will delete your character.\nAre you sure you want to delete your character (y/n):|Quitter effacera votre personnage.\nÊtes-vous vraiment sûr de vouloir quitter ? (y=oui/n=non):
+Sounds are turned off.|Les sons sont désactivés.
+The sounds are enabled.|Les sons sont activés.
+Password changed cancelled.|Changement du mot de passe annulé.
+You are not allowed to play.|Vous ne pouvez pas jouer ici.
+The passwords did not match.|Les mots de passe ne concordent pas.
+\nWelcome, Brave New Warrior!\n|\nBienvenue, Brave Guerrier !\n
+You entered the wrong current password.|Vous avez entré un mot de passe incorrect.
+Please enter your new password, or blank to cancel:|Entrez votre nouveau mot de passe, ou rien pour annuler :
+Please confirm your new password, or blank to cancel:|Confirmez votre nouveau mot de passe, ou rien pour annuler :
+The new passwords don't match!|Les nouveaux mots de passe ne correspondent pas !
+Password changed.|Mot de passe changé.
+You cannot change your title.|Vous ne pouvez pas choisir votre titre.
+Dragons cannot change titles.|Les Dragons ne peuvent changer leur titre.
+Your title is '%s'.|Votre titre est '%s'.
+Your title is the default title.|Votre titre est le titre par défaut.
+Title set to default.|Titre par défaut.
+Title too long.|Titre trop long.
+You can not save on unholy ground.|Vous ne pouvez pas sauver sur un sol maudit.
+You don't deserve to save yet.|Vous n'avez pas encore besoin de sauver.
+You have been saved.|Sauvegarde effectuée.
+SAVE FAILED!|SAUVEGARDE IMPOSSIBLE !
+You will not attack other players.|Vous n'attaquerez plus les autres joueurs.
+You will attack other players.|Vous attaquerez les autres joueurs.
+Your current wimpy level is %d.|Votre niveau de Wimpy est %d.
+Your new wimpy level is %d.|Votre nouveau niveau de Wimpy est %d.
 #212|You are braced.
 #213|Not braced.
-214|Vos familiers ont été tués.
-215|tué %d familiers.
-216|Couldn't find any suitable pets to kill.
-217|Password change.\nPlease enter your current password, or empty string to cancel.
+Your pets have been killed.|Vos familiers ont été tués.
+Killed %d pets.|Tué %d familiers.
+Couldn't find any suitable pets to kill.|Aucun familier ne correspond.
+Password change.\nPlease enter your current password, or empty string to cancel.|Modification de mot de passe.\nEntrez votre mot de passe actuel, ou une ligne vide pour annuler.
