@@ -76,8 +76,8 @@ You are not allowed to use weapons.|Vous ne pouvez pas porter d'arme.
 44|Espace total utilisé:   %8d
 You are in %s. \n %s|Vous êtes dans %s. \n %s
 players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d|joueurs:%d difficulté:%d taille:%dx%d début:%dx%d timeout %d
-47|Le Tas est corrompu.
-48|Aucune erreur détectée dans le Tas.
+Heap is corrupted.|Le Tas est corrompu.
+Heap checks out OK.|Aucune erreur détectée dans le Tas.
 In the world currently there are:|Pour l'instant, il y a dans le monde entier:
 %u players in %s|%u joueurs dans %s
 51|Langues disponibles:

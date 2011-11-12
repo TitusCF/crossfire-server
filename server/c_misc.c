@@ -407,10 +407,10 @@ void command_malloc_verify(object *op, char *parms) {
 
     if (!malloc_verify())
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_047));
+                      i18n(op, "Heap is corrupted."));
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_048));
+                      i18n(op, "Heap checks out OK."));
 
     return 1;
 }

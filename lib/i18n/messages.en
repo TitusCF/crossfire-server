@@ -20,8 +20,6 @@ LN|English
 40|%4d artifactlists    %8d
 42|Total space allocated:%8d
 44|Total space used:     %8d
-47|Heap is corrupted.
-48|Heap checks out OK.
 51|Available languages:
 #99|Output sync time is presently %d
 #100|Output sync time now set to %d
