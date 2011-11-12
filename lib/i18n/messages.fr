@@ -92,45 +92,46 @@ Global debug level is %d.|Niveau global de debogage: %d.
 Debug level set to %d.|Niveau de débogage: %d.
 You will now walk through walls.|Vous pouvez maintenant traverser les murs.
 You will now be stopped by walls.|Vous serez désormais bloqué par les murs.
-97|Vous pouvez maintenant lancer des sorts n'importe où.
-98|Vous ne pouvez plus lancer de sorts dans les zones non-magiques.
+You can now cast spells anywhere.|Vous pouvez maintenant lancer des sorts n'importe où.
+You now cannot cast spells in no-magic areas.|Vous ne pouvez plus lancer de sorts dans les zones non-magiques.
 #99|Output sync time is presently %d
 #100|Output sync time now set to %d
 #101|Invalid value for output_sync.
 #102|Output count is presently %d
 #103|Output count now set to %d
 #104|Invalid value for output_count.
-105|À quel niveau d'écoute faut-il se placer (actuellement: %d)?
-106|Le niveau de verbosité doit être positif.
-107|Niveau de verbosité réglé sur %d.
-108|[fixed]  Experience: %
+Set listen to what (presently %d)?|À quel niveau d'écoute faut-il se placer (actuellement: %d)?
+Verbose level should be positive.|Le niveau de verbosité doit être positif.
+Your verbose level is now %d.|Niveau de verbosité réglé sur %d.
+[fixed]  Experience: %|[fixed]  Expérience: %
 109|  Experience: %
-110|[fixed]  Prochain niveau: %
+[fixed]  Next Level: %|[fixed]  Prochain niveau: %
 111|  Prochain niveau: %
-112|[fixed]\nStat       Nat/Réel/Max
+[fixed]\nStat       Nat/Real/Max|[fixed]\nStat       Nat/Réel/Max
 113|\nStat       Nat/Réel/Max
-114|[fixed]For         %2d/ %3d/%3d
+[fixed]Str         %2d/ %3d/%3d|[fixed]For         %2d/ %3d/%3d
 115|For         %2d/ %3d/%3d
-116|[fixed]Dex         %2d/ %3d/%3d
+[fixed]Dex         %2d/ %3d/%3d|[fixed]Dex         %2d/ %3d/%3d
 117|Dex         %2d/ %3d/%3d
-118|[fixed]Con         %2d/ %3d/%3d
+[fixed]Con         %2d/ %3d/%3d|[fixed]Con         %2d/ %3d/%3d
 119|Con         %2d/ %3d/%3d
-120|[fixed]Int         %2d/ %3d/%3d
+[fixed]Int         %2d/ %3d/%3d|[fixed]Int         %2d/ %3d/%3d
 121|Int         %2d/ %3d/%3d
-122|[fixed]Sag         %2d/ %3d/%3d
+[fixed]Wis         %2d/ %3d/%3d|[fixed]Sag         %2d/ %3d/%3d
 123|Sag         %2d/ %3d/%3d
-124|[fixed]Pou         %2d/ %3d/%3d
+[fixed]Pow         %2d/ %3d/%3d|[fixed]Pou         %2d/ %3d/%3d
 125|Pou         %2d/ %3d/%3d
-126|[fixed]Cha         %2d/ %3d/%3d
+[fixed]Cha         %2d/ %3d/%3d|[fixed]Cha         %2d/ %3d/%3d
 127|Cha         %2d/ %3d/%3d
-128|\nMode d'attaque: %s
+\nAttack Mode: %s|\nMode d'attaque: %s
+Peaceful|Pacifique
 129|\nMode d'attaque: %s
-130|[fixed]%s\t%04d %02d %02d %02d %02d %02d
+[fixed]%s\t%04d %02d %02d %02d %02d %02d|[fixed]%s\t%04d %02d %02d %02d %02d %02d
 131|%s\t%04d %02d %02d %02d %02d %02d
-132|applymode mis sur %s
+applymode is set to %s|applymode mis sur %s
 133|applymode mis sur %s
-134|applymode: %s est une option inconnue, les choix valides sont nochoice, never, always
-135|applymode%s mis sur %s
+applymode: Unknown options %s, valid options are nochoice, never, always|applymode: %s est une option inconnue, les choix valides sont nochoice, never, always
+applymode%s set to %s|applymode%s mis sur %s
 136|bowmode est mis sur %s
 137|bowmode%s mis sur %s
 138|petmode est mis sur %s

@@ -23,45 +23,25 @@ LN|English
 47|Heap is corrupted.
 48|Heap checks out OK.
 51|Available languages:
-97|You can now cast spells anywhere.
-98|You now cannot cast spells in no-magic areas.
 #99|Output sync time is presently %d
 #100|Output sync time now set to %d
 #101|Invalid value for output_sync.
 #102|Output count is presently %d
 #103|Output count now set to %d
 #104|Invalid value for output_count.
-105|Set listen to what (presently %d)?
-106|Verbose level should be positive.
-107|Your verbose level is now %d.
-108|[fixed]  Experience: %
 109|  Experience: %
-110|[fixed]  Next Level: %
 111|  Next Level: %
-112|[fixed]\nStat       Nat/Real/Max
 113|\nStat       Nat/Real/Max
-114|[fixed]Str         %2d/ %3d/%3d
 115|Str         %2d/ %3d/%3d
-116|[fixed]Dex         %2d/ %3d/%3d
 117|Dex         %2d/ %3d/%3d
-118|[fixed]Con         %2d/ %3d/%3d
 119|Con         %2d/ %3d/%3d
-120|[fixed]Int         %2d/ %3d/%3d
 121|Int         %2d/ %3d/%3d
-122|[fixed]Wis         %2d/ %3d/%3d
 123|Wis         %2d/ %3d/%3d
-124|[fixed]Pow         %2d/ %3d/%3d
 125|Pow         %2d/ %3d/%3d
-126|[fixed]Cha         %2d/ %3d/%3d
 127|Cha         %2d/ %3d/%3d
-128|\nAttack Mode: %s
 129|\nAttack Mode: %s
-130|[fixed]%s\t%04d %02d %02d %02d %02d %02d
 131|%s\t%04d %02d %02d %02d %02d %02d
-132|applymode is set to %s
 133|applymode is set to %s
-134|applymode: Unknown options %s, valid options are nochoice, never, always
-135|applymode%s set to %s
 136|bowmode is set to %s
 137|bowmode%s set to %s
 138|petmode is set to %s

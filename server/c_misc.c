@@ -905,11 +905,11 @@ void command_wizcast(object *op, const char *params) {
 
     if (i) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_097));
+                      i18n(op, "You can now cast spells anywhere."));
         SET_FLAG(op, FLAG_WIZCAST);
     } else {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op), I18N_MSG_CMISC_098));
+                      i18n(op, "You now cannot cast spells in no-magic areas."));
         CLEAR_FLAG(op, FLAG_WIZCAST);
     }
 }
@@ -1026,18 +1026,18 @@ void command_listen(object *op, const char *params) {
 
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_105),
+                             i18n(op, "Set listen to what (presently %d)?"),
                              op->contr->listening);
         return;
     }
     if (i < 0) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_106));
+                             i18n(op, "Verbose level should be positive."));
         return;
     }
     op->contr->listening = (char)i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_107),
+                         i18n(op, "Your verbose level is now %d."),
                          i);
 }
 
@@ -1059,44 +1059,44 @@ void command_statistics(object *pl, const char *params) {
 
     if (!pl->contr)
         return;
-    strcpy(buf, i18n_translate(get_language(pl), I18N_MSG_CMISC_108));
+    strcpy(buf, i18n(pl, "[fixed]  Experience: %"));
     strcat(buf, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
                          buf,
                          pl->stats.exp);
-    strcpy(buf, i18n_translate(get_language(pl), I18N_MSG_CMISC_110));
+    strcpy(buf, i18n(pl, "[fixed]  Next Level: %"));
     strcat(buf, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
                          buf,
                          level_exp(pl->level+1, pl->expmul));
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                  i18n_translate(get_language(pl), I18N_MSG_CMISC_112));
+                  i18n(pl, "[fixed]\nStat       Nat/Real/Max"));
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl), I18N_MSG_CMISC_114),
+                         i18n(pl, "[fixed]Str         %2d/ %3d/%3d"),
                          pl->contr->orig_stats.Str, pl->stats.Str, 20+pl->arch->clone.stats.Str);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl), I18N_MSG_CMISC_116),
+                         i18n(pl, "[fixed]Dex         %2d/ %3d/%3d"),
                          pl->contr->orig_stats.Dex, pl->stats.Dex, 20+pl->arch->clone.stats.Dex);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl), I18N_MSG_CMISC_118),
+                         i18n(pl, "[fixed]Con         %2d/ %3d/%3d"),
                          pl->contr->orig_stats.Con, pl->stats.Con, 20+pl->arch->clone.stats.Con);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl), I18N_MSG_CMISC_120),
+                         i18n(pl, "[fixed]Int         %2d/ %3d/%3d"),
                          pl->contr->orig_stats.Int, pl->stats.Int, 20+pl->arch->clone.stats.Int);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl), I18N_MSG_CMISC_122),
+                         i18n(pl, "[fixed]Wis         %2d/ %3d/%3d"),
                          pl->contr->orig_stats.Wis, pl->stats.Wis, 20+pl->arch->clone.stats.Wis);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl), I18N_MSG_CMISC_124),
+                         i18n(pl, "[fixed]Pow         %2d/ %3d/%3d"),
                          pl->contr->orig_stats.Pow, pl->stats.Pow, 20+pl->arch->clone.stats.Pow);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl), I18N_MSG_CMISC_126),
+                         i18n(pl, "[fixed]Cha         %2d/ %3d/%3d"),
                          pl->contr->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl), I18N_MSG_CMISC_128),
-                         pl->contr->peaceful ?  "Peaceful" : "Hostile");
+                         i18n(pl, "\nAttack Mode: %s"),
+                         i18n(pl, pl->contr->peaceful ?  "Peaceful" : "Hostile"));
 
     /* max_time is in microseconds - thus divide by 1000000.
      * Need 64 bit values, as otherwise ticks_played * max_time
@@ -1166,7 +1166,7 @@ void command_players(object *op, const char *params) {
                         struct tm *tm = localtime(&st.st_mtime);
 
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                             i18n_translate(get_language(op), I18N_MSG_CMISC_130),
+                                             i18n(op, "[fixed]%s\t%04d %02d %02d %02d %02d %02d"),
                                              entry->d_name,
                                              1900+tm->tm_year,
                                              1+tm->tm_mon,
@@ -1200,7 +1200,7 @@ void command_applymode(object *op, const char *params) {
 
     if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_132),
+                             i18n(op, "applymode is set to %s"),
                              types[op->contr->unapply]);
         return;
     }
@@ -1213,12 +1213,12 @@ void command_applymode(object *op, const char *params) {
         op->contr->unapply = unapply_always;
     else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_134),
+                             i18n(op, "applymode: Unknown options %s, valid options are nochoice, never, always"),
                              params);
         return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n_translate(get_language(op), I18N_MSG_CMISC_135),
+                         i18n(op, "applymode%s set to %s"),
                          (unapply == op->contr->unapply ? "" : " now"),
                          types[op->contr->unapply]);
 }
