@@ -101,37 +101,6 @@ const char *i18n(const object *who, const char *code) {
 }
 
 /**
- * Translates a given i18n string into the provided language.
- * @param language The language numerical code to translate the string to
- * @param id The i18n string identifier
- * @return The translated string, or NULL if an error occured.
- * @todo remove
- */
-const char *i18n_translate(int language, int id) {
-    char buf[50];
-    i18n_message search, *found;
-
-    snprintf(buf, sizeof(buf), "%d", id);
-
-    if (language < 0 || language >= i18n_count)
-        return "(invalid)";
-
-    search.code = add_string(buf);
-
-    found = bsearch(&search, i18n_files[language].messages, i18n_files[language].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
-
-    free_string(search.code);
-
-    if (found)
-        return found->message;
-
-    if (language != i18n_default)
-        return i18n_translate(i18n_default, id);
-
-    return NULL;
-}
-
-/**
  * Attenmpt to find the identifier of a language from its code.
  * @param code language code.
  * @return index, -1 if not found.

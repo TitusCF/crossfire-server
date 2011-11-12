@@ -10,7 +10,7 @@ tod.h          god.h          newserver.h    xdir.h         book.h \
 includes.h     object.h       skills.h	    sockproto.h     plugin.h \
 timers.h       typesproto.h   ob_methods.h   ob_types.h     svnversion.h \
 version.h      shared/newclient.h            account_char.h \
-languages.h    image.h		  metaserver2.h
+image.h		  metaserver2.h
 
 BUILT_SOURCES = svnversion.h
 

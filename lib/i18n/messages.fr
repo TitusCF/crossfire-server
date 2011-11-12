@@ -5,17 +5,9 @@ Available languages:|Langues disponibles:
 Unknown language.|Langue inconnue.
 Your current language is set to English.|Votre langue est maintenant le français.
 Current time is: %02ld:%02ld:%02ld.|Heure actuelle: %02ld:%02ld:%02ld.
-#1|[fixed]Path               Pl PlM IM   TO Dif Reset
-#2|Path               Pl PlM IM   TO Dif Reset
-#3|[fixed]%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
-#4|%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
-5|Votre parlez le %s
-6|Votre choix de langue est maintenant: %s
 The first column is the name of the body location.|La première colonne contient le nom de la partie du corps concernée.
 The second column is how many of those locations your body has.|La seconde, le nombre de telles parties votre corps comporte.
 The third column is how many slots in that location are available.|La troisième, le nombre de slots que chacune comporte.
-#10|[fixed]%-30s %5d %5d
-#11|%-30s %5d %5d
 in your range slot|comme attaque à distance
 in a human's range slot|comme attaque à distance d'un humain
 on your arm|à votre bras
@@ -59,28 +51,12 @@ You are not allowed to use weapons.|Vous ne pouvez pas porter d'arme.
 [fixed]%4d artifactlists    %8d|[fixed]%4d artifactlists       %8d
 [fixed]Total space allocated:%8d|[fixed]Espace total alloué:    %8d
 [fixed]Total space used:     %8d|[fixed]Espace total utilisé:   %8d
-16|%4d objets utilisés:    %8d
-18|%4d objets libres:      %8d
-20|%4d objets actifs:      %8d
-22|%4d joueurs:            %8d
-24|%4d cartes allouées:    %8d
-26|%4d cartes en mémoire:  %8d
-28|%4d archetypes:         %8d
-30|%4d animations:         %8d
-32|%4d treasurelists       %8d
-34|%4ld trésors            %8d
-36|%4ld artéfacts          %8d
-38|%4ld chaînes artéfacts: %8d
-40|%4d artifactlists       %8d
-42|Espace total alloué:    %8d
-44|Espace total utilisé:   %8d
 You are in %s. \n %s|Vous êtes dans %s. \n %s
 players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d|joueurs:%d difficulté:%d taille:%dx%d début:%dx%d timeout %d
 Heap is corrupted.|Le Tas est corrompu.
 Heap checks out OK.|Aucune erreur détectée dans le Tas.
 In the world currently there are:|Pour l'instant, il y a dans le monde entier:
 %u players in %s|%u joueurs dans %s
-51|Langues disponibles:
 who failed - out of memory!|who a échoué - mémoire insuffisante !
 Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)|Total Joueurs (%d) -- WIZ(%d) AFK(%d) BOT(%d)
 Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)|Total Joueurs dans %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)
@@ -94,42 +70,23 @@ You will now walk through walls.|Vous pouvez maintenant traverser les murs.
 You will now be stopped by walls.|Vous serez désormais bloqué par les murs.
 You can now cast spells anywhere.|Vous pouvez maintenant lancer des sorts n'importe où.
 You now cannot cast spells in no-magic areas.|Vous ne pouvez plus lancer de sorts dans les zones non-magiques.
-#99|Output sync time is presently %d
-#100|Output sync time now set to %d
-#101|Invalid value for output_sync.
-#102|Output count is presently %d
-#103|Output count now set to %d
-#104|Invalid value for output_count.
 Set listen to what (presently %d)?|À quel niveau d'écoute faut-il se placer (actuellement: %d)?
 Verbose level should be positive.|Le niveau de verbosité doit être positif.
 Your verbose level is now %d.|Niveau de verbosité réglé sur %d.
 [fixed]  Experience: %|[fixed]  Expérience: %
-109|  Experience: %
 [fixed]  Next Level: %|[fixed]  Prochain niveau: %
-111|  Prochain niveau: %
 [fixed]\nStat       Nat/Real/Max|[fixed]\nStat       Nat/Réel/Max
-113|\nStat       Nat/Réel/Max
 [fixed]Str         %2d/ %3d/%3d|[fixed]For         %2d/ %3d/%3d
-115|For         %2d/ %3d/%3d
 [fixed]Dex         %2d/ %3d/%3d|[fixed]Dex         %2d/ %3d/%3d
-117|Dex         %2d/ %3d/%3d
 [fixed]Con         %2d/ %3d/%3d|[fixed]Con         %2d/ %3d/%3d
-119|Con         %2d/ %3d/%3d
 [fixed]Int         %2d/ %3d/%3d|[fixed]Int         %2d/ %3d/%3d
-121|Int         %2d/ %3d/%3d
 [fixed]Wis         %2d/ %3d/%3d|[fixed]Sag         %2d/ %3d/%3d
-123|Sag         %2d/ %3d/%3d
 [fixed]Pow         %2d/ %3d/%3d|[fixed]Pou         %2d/ %3d/%3d
-125|Pou         %2d/ %3d/%3d
 [fixed]Cha         %2d/ %3d/%3d|[fixed]Cha         %2d/ %3d/%3d
-127|Cha         %2d/ %3d/%3d
 \nAttack Mode: %s|\nMode d'attaque: %s
 Peaceful|Pacifique
-129|\nMode d'attaque: %s
 [fixed]%s\t%04d %02d %02d %02d %02d %02d|[fixed]%s\t%04d %02d %02d %02d %02d %02d
-131|%s\t%04d %02d %02d %02d %02d %02d
 applymode is set to %s|applymode mis sur %s
-133|applymode mis sur %s
 applymode: Unknown options %s, valid options are nochoice, never, always|applymode: %s est une option inconnue, les choix valides sont nochoice, never, always
 applymode%s set to %s|applymode%s mis sur %s
 bowmode is set to %s|bowmode est mis sur %s
@@ -140,34 +97,22 @@ petmode%s set to %s|petmode%s mis sur %s
 Pets:|Familiers :
 %d  %s - level %d|%d  %s - niveau %d
 [fixed]level %d %s|[fixed]niveau %d %s
-144|niveau %d %s
 [fixed]%d/%d HP, %d/%d SP|[fixed]%d/%d HP, %d/%d SP
-146|%d/%d HP, %d/%d SP
 [fixed]Str %d|[fixed]For %d
-148|For %d
 [fixed]Dex %d|[fixed]Dex %d
-150|Dex %d
 [fixed]Con %d|[fixed]Con %d
-152|Con %d
 [fixed]Int %d|[fixed]Int %d
-154|Int %d
 [fixed]Wis %d|[fixed]Sag %d
-156|Sag %d
 [fixed]Cha %d|[fixed]Cha %d
-158|Cha %d
 [fixed]Pow %d|[fixed]Pou %d
-160|Pou %d
 [fixed]wc %d  damage %d ac %d|[fixed]wc %d  dégats %d ac %d 
-162|wc %d  dégats %d ac %d 
 You have no pets.|Vous n'avez pas de familier.
 No such pet.|Pas de familier correspondant.
 usekeys is set to %s|usekeys mis sur %s
 usekeys: Unknown option %s, valid options are inventory, keyrings, containers|usekeys: %s est une option inconnue, les choix valides sont inventory, keyrings, containers
 usekeys%s set to %s|usekeys%s mis sur %s
 [fixed]%-20s %+5d|[fixed]%-20s %+5d
-169|%-20s %+5d
 \nNatural skin resistances:|\nRésistances naturelles de peau:
-171|%s: %d
       Wiz commands:|      Commandes DM :
       Misc help:|      Divers :
       Commands:|      Commandes :
@@ -203,8 +148,6 @@ You will not attack other players.|Vous n'attaquerez plus les autres joueurs.
 You will attack other players.|Vous attaquerez les autres joueurs.
 Your current wimpy level is %d.|Votre niveau de Wimpy est %d.
 Your new wimpy level is %d.|Votre nouveau niveau de Wimpy est %d.
-#212|You are braced.
-#213|Not braced.
 Your pets have been killed.|Vos familiers ont été tués.
 Killed %d pets.|Tué %d familiers.
 Couldn't find any suitable pets to kill.|Aucun familier ne correspond.
