@@ -22,19 +22,10 @@
 */
 /**
  * @file
- * i18n support definitions.
- * This one-liner will check to be sure the defines are lined up properly
- * with the values they represent:<br>
- * awk -v FS="[ _]" '/I18N_MSG/ { if ($5 != $6) print $5, $6 }' languages.h
+ * obsolete.
  */
 #ifndef LANGUAGES_H
 #define LANGUAGES_H
-
-#define NUM_LANGUAGES 2
-#define NUM_I18N_STRINGS   218
-extern const char *language_codes[]; /**< Language codes ("en", "fr", etc.) table */
-extern const char *language_names[]; /**< Language names ("English", "French", etc.) table */
-extern const char *i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS]; /**< Translation table */
 
 #define I18N_MSG_CMISC_000 0
 #define I18N_MSG_CMISC_001 1

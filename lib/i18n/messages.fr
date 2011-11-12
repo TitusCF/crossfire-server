@@ -1,4 +1,9 @@
 # Messages en Français
+LN|français
+Your current language is set to: English.|Votre langue actuelle est le français.
+Available languages:|Langues disponibles:
+Unknown language.|Langue inconnue.
+Your current language is set to English.|Votre langue est maintenant le français.
 0|Heure actuelle: %02ld:%02ld:%02ld.
 #1|[fixed]Path               Pl PlM IM   TO Dif Reset
 #2|Path               Pl PlM IM   TO Dif Reset

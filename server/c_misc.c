@@ -94,49 +94,33 @@ void map_info(object *op, const char *search) {
  * optional language code ("en", "fr", etc.)
  */
 void command_language(object *op, const char *params) {
-    const char *language_str;
     int language = -1;
-    int i;
 
     if (!op->contr)
         return;
 
-    language_str = language_names[get_language(op)];
-
     if (*params == '\0' || (!strcmp(params, ""))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_005),
-                             language_str);
+                             i18n(op, "Your current language is set to: English."));
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op), I18N_MSG_CMISC_051),
-                             language_str);
-        for (i = 0; i < NUM_LANGUAGES; i++) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                 "[fixed]%s: %s",
-                                 language_codes[i],
-                                 language_names[i]);
-        }
+                             i18n(op, "Available languages:"));
+        i18n_list_languages(op);
         return;
     }
 
-    for (i = 0; i < NUM_LANGUAGES; i++) {
-        if (!strcmp(language_codes[i], params)) {
-            language = i;
-            i = NUM_LANGUAGES;
-        }
-    }
+    language = i18n_find_language_by_code(params);
+
     /* Error out if unknown language. */
     if (language == -1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      "Unknown language");
+                      i18n(op, "Unknown language."));
         return;
     }
+
     op->contr->language = language;
-    language_str = language_names[language];
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n_translate(language, I18N_MSG_CMISC_006),
-                         language_str);
+                         i18n(op, "Your current language is set to English."));
 }
 
 /**
@@ -1579,7 +1563,7 @@ static void help_topics(object *op, int what) {
     int namelen;
     const char *language;
 
-    language = language_codes[get_language(op)];
+    language = i18n_get_language_code(op->contr->language);
     snprintf(suffix, sizeof(suffix), ".%s", language);
 
     switch (what) {
@@ -1683,7 +1667,7 @@ void command_help(object *op, const char *params) {
     int len;
     const char *language;
 
-    language = language_codes[get_language(op)];
+    language = i18n_get_language_code(op->contr->language);
 
     /*
      * Main help page?

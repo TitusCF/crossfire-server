@@ -115,6 +115,11 @@ extern int is_magical(const object *op);
 extern int need_identify(const object *op);
 extern object *identify(object *op);
 /* languages.c */
+const char *i18n(const object *who, const char *code);
+extern int i18n_get_language_by_code(const char *code);
+int i18n_find_language_by_code(const char *code);
+extern sstring i18n_get_language_code(int language);
+extern void i18n_list_languages(object *who);
 extern int get_language(object *op);
 extern const char *i18n_translate(int language, int id);
 extern void i18n_init(void);

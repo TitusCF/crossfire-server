@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Rewrite the i18n system. This makes it easier to use strings in the code,
+instead of arbitrary identifiers.
+Nicolas Weeger 2011-11-12
+
 Improve artifact support.
 Add an 'artifact' field to 'object', that is saved and loaded, to keep trace
 of what (optional) artifact an item was created with.

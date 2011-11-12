@@ -23,36 +23,41 @@
 
 /**
  * @file
- * i18n support routines.
+ * i18n support routines. See @ref page_i18n.
  * @warning
  * This file is encoded in UTF-8, take care to not mess the language_names array.
  */
 
 #include <global.h>
 
-/** List of available language codes. */
-const char *language_codes[] = {
-    "en",
-    "fr",
-#if 0
-    "nl",
-    "it",
-    "de",
-#endif
-};
+/**
+ * One message.
+ */
+typedef struct i18n_message {
+    sstring code;       /**< Message code, usually the English version. */
+    sstring message;    /**< Message to display. */
+} i18n_message;
 
-/** Language names. */
-const char *language_names[] = {
-    "English",
-    "Français",
-#if 0
-    "Nederlands",
-    "Italiano",
-    "Deutsch",
-#endif
-};
-/** All translated strings. */
-const char *i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];
+/**
+ * One available language.
+ */
+typedef struct i18n_file {
+    sstring code;                   /**< Language code, "message." extension. */
+    sstring name;                   /**< Language's name, in its native version. */
+    int count;                      /**< How many items in messages. */
+    struct i18n_message *messages;   /**< Available messages for this language. */
+} i18n_file;
+
+/** Number of defined languages. */
+static int i18n_count = 0;
+/** Defined languages. */
+static struct i18n_file *i18n_files = NULL;
+/** Index of "English" in the i18nfiles array. */
+static int i18n_default = -1;
+
+static int i18n_message_compare_code(const i18n_message *a, const i18n_message *b) {
+    return strcmp(a->code, b->code);
+}
 
 /**
  * Returns the i18n language index associated with the given object.
@@ -63,9 +68,36 @@ const char *i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];
 int get_language(object *op) {
     if (!op->contr)
         return 0;
-    if (op->contr->language < 0 || op->contr->language >= NUM_LANGUAGES)
+    if (op->contr->language < 0 || op->contr->language >= i18n_count)
         return 0;
     return op->contr->language;
+}
+
+/**
+ * Translate a message in the appropriate language.
+ * @param who who to translate for.
+ * @param code string to translate, usually the English version.
+ * @return translated message, or code if not found or who's language is invalid.
+ */
+const char *i18n(const object *who, const char *code) {
+    i18n_message search, *found;
+
+    if (!who || !who->contr)
+        return code;
+
+    if (who->contr->language < 0 || who->contr->language >= i18n_count)
+        return code;
+
+    search.code = add_string(code);
+
+    found = bsearch(&search, i18n_files[who->contr->language].messages, i18n_files[who->contr->language].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
+
+    free_string(search.code);
+
+    if (found)
+        return found->message;
+
+    return code;
 }
 
 /**
@@ -73,17 +105,79 @@ int get_language(object *op) {
  * @param language The language numerical code to translate the string to
  * @param id The i18n string identifier
  * @return The translated string, or NULL if an error occured.
+ * @todo remove
  */
 const char *i18n_translate(int language, int id) {
-    if (language >= NUM_LANGUAGES)
-        return NULL;
-    else if (id >= NUM_I18N_STRINGS)
-        return NULL;
+    char buf[50];
+    i18n_message search, *found;
 
-    if (i18n_strings[language][id] == NULL)
-        return i18n_strings[0][id];
-    else
-        return i18n_strings[language][id];
+    snprintf(buf, sizeof(buf), "%d", id);
+
+    if (language < 0 || language >= i18n_count)
+        return "(invalid)";
+
+    search.code = add_string(buf);
+
+    found = bsearch(&search, i18n_files[language].messages, i18n_files[language].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
+
+    free_string(search.code);
+
+    if (found)
+        return found->message;
+
+    return found->code;
+}
+
+/**
+ * Attenmpt to find the identifier of a language from its code.
+ * @param code language code.
+ * @return index, -1 if not found.
+ */
+int i18n_find_language_by_code(const char *code) {
+    int index;
+    for (index = 0; index < i18n_count; index++) {
+        if (strcmp(code, i18n_files[index].code) == 0)
+            return index;
+    }
+
+    return -1;
+}
+
+/**
+ * Find the identifier of a language from its code.
+ * @param code language's code.
+ * @return language's code, or the default language if code is invalid.
+ */
+int i18n_get_language_by_code(const char *code) {
+    int try = i18n_find_language_by_code(code);
+    if (try != -1)
+        return try;
+    return i18n_default;
+}
+
+/**
+ * Return the code of a specified language.
+ * @param language identifier of the language.
+ * @return language's code, or default language's code if identifier is invalid.
+ */
+sstring i18n_get_language_code(int language) {
+    if (language < 0 || language >= i18n_count)
+        return i18n_files[i18n_default].code;
+    return i18n_files[language].code;
+}
+
+/**
+ * List all languages for who.
+ * @param who who to display languages for.
+ */
+void i18n_list_languages(object *who) {
+    for (int index = 0; index < i18n_count; index++) {
+        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+            "[fixed]%s: %s",
+            i18n_files[index].code,
+            i18n_files[index].name
+            );
+    }
 }
 
 /**
@@ -108,38 +202,84 @@ static void convert_newline(char *line) {
 
 /**
  * Initializes the i18n subsystem.
+ * Will load all found strings.
+ * If there is an error, calls fatal().
  */
 void i18n_init(void) {
-    char filename[MAX_BUF], line[HUGE_BUF];
-    int i, entry;
+    char dirname[MAX_BUF], filename[MAX_BUF], line[HUGE_BUF];
     FILE *fp;
     char *token;
-    int counter;
-    char *buffer;
+    DIR *dir;
+    struct dirent *file;
+    i18n_message code, *found;
 
-    for (i = 0; i < NUM_LANGUAGES; i++) {
-        snprintf(filename, sizeof(filename), "%s/i18n/messages.%s", settings.datadir, language_codes[i]);
+    snprintf(dirname, sizeof(dirname), "%s/i18n/", settings.datadir);
+
+    dir = opendir(dirname);
+    if (dir == NULL) {
+        LOG(llevError, "couldn't open i18n directory %s\n", dirname);
+        fatal(SEE_LAST_ERROR);
+    }
+
+    code.code = add_string("LN");
+
+    while ((file = readdir(dir)) != NULL) {
+        if (strncmp(file->d_name, "messages.", 9) != 0)
+            continue;
+
+        snprintf(filename, sizeof(filename), "%s%s", dirname, file->d_name);
         if ((fp = fopen(filename, "r")) == NULL) {
             LOG(llevError, "Cannot open i18n file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
-            if (i == 0)
-                exit(1);
-        } else {
-            counter = 0;
-            while (fgets(line, MAX_BUF, fp)) {
-                if (strstr(line, "#") != line) {
-                    line[strlen(line)-1] = '\0'; /* erase the final newline that messes things. */
-                    token = strtok(line, "|");
-                    entry = atoi(token);
-                    token = strtok(NULL, "|");
-                    buffer = malloc(sizeof(char)*(strlen(token)+1));
-                    strcpy(buffer, token);
-                    convert_newline(buffer);
-                    i18n_strings[i][entry] = buffer;
-                }
-                counter++;
-            }
-            LOG(llevDebug, "Read %i strings for language: %s\n", counter, language_codes[i]);
-            fclose(fp);
+            fatal(SEE_LAST_ERROR);
         }
+
+        i18n_files = realloc(i18n_files, (i18n_count + 1) * sizeof(i18n_file));
+        i18n_files[i18n_count].code = add_string(file->d_name + 9);
+        i18n_files[i18n_count].count = 0;
+        i18n_files[i18n_count].messages = NULL;
+
+        while (fgets(line, MAX_BUF, fp)) {
+            if (strstr(line, "#") != line) {
+                line[strlen(line)-1] = '\0'; /* erase the final newline that messes things. */
+
+                i18n_files[i18n_count].messages = realloc(i18n_files[i18n_count].messages, (i18n_files[i18n_count].count + 1) * sizeof(i18n_message));
+
+                token = strtok(line, "|");
+                convert_newline(token);
+                i18n_files[i18n_count].messages[i18n_files[i18n_count].count].code = add_string(token);
+                token = strtok(NULL, "|");
+                if (token != NULL) {
+                    convert_newline(token);
+                    i18n_files[i18n_count].messages[i18n_files[i18n_count].count].message = add_string(token);
+                } else {
+                    i18n_files[i18n_count].messages[i18n_files[i18n_count].count].message = add_refcount(i18n_files[i18n_count].messages[i18n_files[i18n_count].count].code);
+                }
+                i18n_files[i18n_count].count++;
+            }
+        }
+        fclose(fp);
+
+        qsort(i18n_files[i18n_count].messages, i18n_files[i18n_count].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
+        found = bsearch(&code, i18n_files[i18n_count].messages, i18n_files[i18n_count].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
+        if (found == NULL) {
+            LOG(llevError, "couldn't find language name (LN) for %s\n", filename);
+            fatal(SEE_LAST_ERROR);
+        }
+
+        i18n_files[i18n_count].name = found->message;
+        LOG(llevDebug, "Read %i strings for language: %s\n", i18n_files[i18n_count].count, found->message);
+
+        if (strcmp(i18n_files[i18n_count].code, "en") == 0)
+            i18n_default = i18n_count;
+
+        i18n_count++;
+    }
+    closedir(dir);
+
+    free_string(code.code);
+
+    if (i18n_default == -1) {
+        LOG(llevError, "couldn't find default language en!\n");
+        fatal(SEE_LAST_ERROR);
     }
 }

@@ -348,7 +348,7 @@ int save_player(object *op, int flag) {
         fprintf(fp, "party_rejoin_name %s\n", pl->party->partyname);
         fprintf(fp, "party_rejoin_password %s\n", party_get_password(pl->party));
     }
-    fprintf(fp, "language %d\n", pl->language);
+    fprintf(fp, "language %s\n", i18n_get_language_code(pl->language));
     fprintf(fp, "ticks_played %u\n", pl->ticks_played);
     fprintf(fp, "endplst\n");
 
@@ -713,9 +713,7 @@ void check_login(object *op, int check_pass) {
             strncpy(party_password, val_string, sizeof(party_password));
             party_password[sizeof(party_password) - 1] = 0;
         } else if (!strcmp(buf, "language")) {
-            if (value < 0 || value >= NUM_LANGUAGES)
-                value = 0;
-            pl->language = value;
+            pl->language = i18n_get_language_by_code(val_string);
         }
         else if (!strcmp(buf, "ticks_played")) {
             pl->ticks_played = uvalue;
