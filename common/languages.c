@@ -143,7 +143,8 @@ sstring i18n_get_language_code(int language) {
  * @param who who to display languages for.
  */
 void i18n_list_languages(object *who) {
-    for (int index = 0; index < i18n_count; index++) {
+    int index;
+    for (index = 0; index < i18n_count; index++) {
         draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
             "[fixed]%s: %s",
             i18n_files[index].code,
