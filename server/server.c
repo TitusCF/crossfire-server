@@ -1220,6 +1220,8 @@ void cleanup(void) {
     free_server();
     object_free_all_data();
     free_knowledge();
+    free_quest();
+    free_quest_definitions();
     /* See what the string data that is out there that hasn't been freed. */
     /*    LOG(llevDebug, "%s", ss_dump_table(0xff));*/
 #endif
