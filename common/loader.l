@@ -763,7 +763,7 @@ A       .+
                     }
 ^artifact{S}        {
                         const char *yv = yval();
-                        const artifact *art = find_artifact(op->type, yv);
+                        const artifact *art = find_artifact(op, yv);
                         if (art == NULL) {
                             LOG(llevError, "can't find artifact %s [%d]\n for loading", yv, op->type);
                         } else {
@@ -1820,7 +1820,7 @@ int save_object(FILE *fp, object *op, int flag) {
             object *base;
             const artifact *artifact;
 
-            artifact = find_artifact(op->type, op->artifact);
+            artifact = find_artifact(op, op->artifact);
             if (artifact == NULL) {
                 LOG(llevError, "could not find artifact %s [%d] to save data\n", op->artifact, op->type);
                 get_ob_diff(sb, op, &at->clone);

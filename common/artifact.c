@@ -606,11 +606,11 @@ const artifactlist *find_artifactlist(int type) {
 
 /**
  * Searches and returns a specific artifact, NULL if not found.
- * @param type item type to search for.
+ * @param op item to search for.
  * @param name artifact name.
  * @return matching artifact, NULL if none matched.
  */
-const artifact *find_artifact(int type, const char *name) {
+const artifact *find_artifact(const object *op, const char *name) {
     artifactlist *list;
     artifact *at;
     sstring sname = find_string(name);
@@ -618,12 +618,12 @@ const artifact *find_artifact(int type, const char *name) {
     if (sname == NULL)
         return NULL;
 
-    list = find_artifactlist_internal(type);
+    list = find_artifactlist_internal(op->type);
     if (list == NULL)
         return NULL;
 
     for (at = list->items; at != NULL; at = at->next) {
-        if (at->item->name == sname)
+        if (at->item->name == sname && legal_artifact_combination(op, at))
             return at;
     }
 

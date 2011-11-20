@@ -1072,7 +1072,7 @@ void command_create(object *op, const char *params) {
                 art = find_artifactlist(at->clone.type)->items;
 
                 do {
-                    if (!strcmp(art->item->name, cp))
+                    if (!strcmp(art->item->name, cp) && legal_artifact_combination(&at->clone, art))
                         break;
                     art = art->next;
                 } while (art != NULL);

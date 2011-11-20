@@ -36,7 +36,7 @@ extern int legal_artifact_combination(const object *op, const artifact *art);
 extern void add_abilities(object *op, const object *change);
 extern void init_artifacts(void);
 extern const artifactlist *find_artifactlist(int type);
-const artifact *find_artifact(int type, const char *name);
+const artifact *find_artifact(const object *op, const char *name);
 extern void dump_artifacts(void);
 /* button.c */
 extern void trigger_connected(objectlink *ol, object *cause, const int state);
