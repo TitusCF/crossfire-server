@@ -2680,7 +2680,7 @@ Allowed diamond
 chance 20
 difficulty 3
 Object exceptional beauty
-face pretty_crystal.111
+face diamond_exceptional.111
 value 100
 stand_still 1
 type 60
@@ -2692,7 +2692,7 @@ Allowed diamond
 chance 5
 difficulty 5
 Object flawless beauty
-face pretty_crystal.111
+face diamond_flawless.111
 value 1000
 stand_still 1
 type 60
@@ -2714,7 +2714,7 @@ Allowed ruby
 chance 20
 difficulty 3
 Object exceptional beauty
-face pretty_ruby.111
+face ruby_exceptional.111
 value 100
 stand_still 1
 type 60
@@ -2726,7 +2726,7 @@ Allowed ruby
 chance 5
 difficulty 5
 Object flawless beauty
-face pretty_ruby.111
+face ruby_flawless.111
 value 1000
 stand_still 1
 type 60
@@ -2748,7 +2748,7 @@ Allowed sapphire
 chance 20
 difficulty 3
 Object exceptional beauty
-face pretty_sapphire.111
+face sapphire_exceptional.111
 value 100
 stand_still 1
 type 60
@@ -2760,7 +2760,7 @@ Allowed sapphire
 chance 5
 difficulty 5
 Object flawless beauty
-face pretty_sapphire.111
+face sapphire_flawless.111
 value 1000
 stand_still 1
 type 60
@@ -2782,7 +2782,7 @@ Allowed emerald
 chance 20
 difficulty 3
 Object exceptional beauty
-face pretty_emerald.111
+face emerald_exceptional.111
 value 100
 stand_still 1
 type 60
@@ -2794,7 +2794,7 @@ Allowed emerald
 chance 5
 difficulty 5
 Object flawless beauty
-face pretty_emerald.111
+face emerald_flawless.111
 value 1000
 stand_still 1
 type 60
@@ -2816,7 +2816,7 @@ Allowed amethyst
 chance 20
 difficulty 3
 Object exceptional beauty
-face pretty_amethyst.111
+face amethyst_exceptional.111
 value 100
 stand_still 1
 type 60
@@ -2828,7 +2828,7 @@ Allowed amethyst
 chance 5
 difficulty 5
 Object flawless beauty
-face pretty_amethyst.111
+face amethyst_flawless.111
 value 1000
 stand_still 1
 type 60
