@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+New server argument: -disable-plugin.
+Disables a plugin from its name, 'All' to disable all.
+Nicolas Weeger 2011-11-20
+
 New server setting: "special_break_map".
 Controls whether submaps in random maps can break the walls to be placed.
 On (can break) by default for historical reasons.

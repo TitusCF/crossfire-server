@@ -443,7 +443,7 @@ int plugins_init_plugin(const char *libfile);
 int plugins_remove_plugin(const char *id);
 void plugins_display_list(object *op);
 command_array_struct *find_plugin_command(const char *cmd, command_array_struct *command);
-int initPlugins(void);
+void initPlugins(void);
 void cleanupPlugins(void);
 /* quest.c */
 int quest_get_player_state(player *pl, sstring quest_code);

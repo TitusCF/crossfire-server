@@ -4727,14 +4727,12 @@ command_array_struct *find_plugin_command(const char *cmd, command_array_struct 
 /**
  * Plugins initialization. Browses the plugins directory and call
  * plugins_init_plugin() for each file found.
- * @return 0 if at least one plugin was successfully loaded, -1 if not
  */
-int initPlugins(void) {
+void initPlugins(void) {
     struct dirent *currentfile;
     DIR *plugdir;
     size_t l;
     char buf[MAX_BUF];
-    int result;
 
     LOG(llevInfo, "Initializing plugins\n");
     snprintf(buf, sizeof(buf), "%s/plugins/", LIBDIR);
@@ -4742,23 +4740,39 @@ int initPlugins(void) {
 
     plugdir = opendir(buf);
     if (plugdir == NULL)
-        return -1;
+        return;
 
-    result = -1;
     while ((currentfile = readdir(plugdir)) != NULL) {
         l = strlen(currentfile->d_name);
         if (l > strlen(PLUGIN_SUFFIX)) {
-            if (strcmp(currentfile->d_name+l-strlen(PLUGIN_SUFFIX), PLUGIN_SUFFIX) == 0) {
+            linked_char *disable = settings.disabled_plugins;
+            int ignore = 0;
+
+            if (strcmp(currentfile->d_name+l-strlen(PLUGIN_SUFFIX), PLUGIN_SUFFIX) != 0)
+                continue;
+
+            while (disable) {
+                if (strcmp(disable->name, "All") == 0) {
+                    LOG(llevInfo, " -> Disabling all plugins: %s\n", currentfile->d_name);
+                    ignore = 1;
+                    break;
+                }
+                if (strncmp(disable->name, currentfile->d_name, strlen(disable->name)) == 0 && strlen(currentfile->d_name) == strlen(PLUGIN_SUFFIX) + strlen(disable->name)) {
+                    LOG(llevInfo, " -> Disabling plugin: %s\n", currentfile->d_name);
+                    ignore = 1;
+                    break;
+                }
+                disable = disable->next;
+            }
+            if (ignore == 0) {
                 snprintf(buf, sizeof(buf), "%s/plugins/%s", LIBDIR, currentfile->d_name);
                 LOG(llevInfo, " -> Loading plugin : %s\n", currentfile->d_name);
-                if (plugins_init_plugin(buf) == 0)
-                    result = 0;
+                plugins_init_plugin(buf);
             }
         }
     }
 
     closedir(plugdir);
-    return result;
 }
 
 /**

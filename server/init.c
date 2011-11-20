@@ -200,6 +200,17 @@ static void set_csport(const char *val) {
     settings.csport = port;
 }
 
+/**
+ * Disable a plugin.
+ * @param name plugin's name, without extension.
+ */
+static void set_disable_plugin(const char *name) {
+    linked_char *disable = calloc(1, sizeof(linked_char));
+    disable->next = settings.disabled_plugins;
+    disable->name = strdup(name);
+    settings.disabled_plugins = disable;
+}
+
 /** Typedefs used when calling option handlers. */
 /*@{*/
 typedef void (*cmdlinefunc_args0)(void);
@@ -254,6 +265,7 @@ static struct Command_Line_Options options[] = {
     { "-tmpdir", 1, 1, set_tmpdir },
     { "-log", 1, 1, set_logfile },
     { "-detach", 0, 1, set_daemon },
+    { "-disable-plugin", 1, 1, set_disable_plugin },
 
 #ifdef WIN32
     /* Windows service stuff */
@@ -1007,6 +1019,9 @@ static void help(void) {
     printf(" -mt <name>   Dumps out list of treasures for a monster.\n");
     printf(" -mexp        Dumps out the experience table.\n");
     printf(" -mq          Dumps out the list of defined quests.\n");
+    printf(" -disable-plugin\n"
+           "              Disables specified plugin. Use the name without the extension.\n"
+           "              Can be specified multiple times. 'All' disables all plugins.\n");
     exit(0);
 }
 
