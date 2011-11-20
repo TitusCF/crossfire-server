@@ -972,6 +972,12 @@ void free_server(void) {
     free_races();
     free_quest();
     free_quest_definitions();
+    while (settings.disabled_plugins) {
+        linked_char *next = settings.disabled_plugins->next;
+        free(settings.disabled_plugins->name);
+        free(settings.disabled_plugins);
+        settings.disabled_plugins = next;
+    }
 }
 
 static void usage(void) {
