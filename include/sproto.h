@@ -128,7 +128,6 @@ void command_body(object *op, const char *params);
 void command_motd(object *op, const char *params);
 void command_rules(object *op, const char *params);
 void command_news(object *op, const char *params);
-void malloc_info(object *op);
 void current_region_info(object *op);
 void current_map_info(object *op);
 void command_whereabouts(object *op, const char *params);

@@ -211,7 +211,7 @@ void command_news(object *op, const char *params) {
  * @param op
  * player requesting the information.
  */
-void malloc_info(object *op) {
+static void malloc_info(object *op) {
     int ob_used = object_count_used(), ob_free = object_count_free(), players, nrofmaps;
     int nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, tlnr, alnr;
     treasurelist *tl;
