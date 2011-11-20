@@ -419,6 +419,7 @@ typedef struct Settings {
     uint8   starting_stat_points;     /**< How many stat points character starts with */
     uint8   roll_stat_points;         /**< How many stat points legacy (rolled) chars start with */
     uint8   max_stat;                 /**< Maximum stat value - 255 should be sufficient */
+    uint8   special_break_map;        /**< If set, then submaps in random maps can break the walls. */
 } Settings;
 
 /**

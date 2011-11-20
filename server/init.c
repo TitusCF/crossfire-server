@@ -872,6 +872,14 @@ static void load_settings(void) {
                     NUM_STATS * 3,  NUM_STATS * 18);
             else
                 settings.roll_stat_points = val;
+        } else if (!strcasecmp(buf, "special_break_map")) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.special_break_map = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.special_break_map = FALSE;
+            } else {
+                LOG(llevError, "load_settings: unknown value for special_break_map: %s\n", cp);
+            }
         } else {
             LOG(llevError, "Unknown value in settings file: %s\n", buf);
         }

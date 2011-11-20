@@ -114,6 +114,7 @@ struct Settings settings = {
     85,     /* starting_stat_points */
     115,    /* roll_stat_points */
     0,     /* max_stat - will be loaded from stats file */
+    1,     /* special_break_map, 1 for historical reasons */
 };
 
 struct Statistics statistics;

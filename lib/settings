@@ -321,3 +321,7 @@ log_timestamp_format %y/%m/%d %H:%M:%S
 # running multiple servers on same host), probably best not to change
 # this
 port 13327
+
+# When generating random maps, can a special map break the map's layout to be inserted?
+# TRUE by default for historical purposes
+special_break_map TRUE

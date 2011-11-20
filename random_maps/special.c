@@ -166,8 +166,14 @@ int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xs
     if (2*xsize > MAP_WIDTH(map) || 2*ysize > MAP_HEIGHT(map))
         return 0;
 
-    /* search a bit for a completely free spot. */
-    for (tries = 0; tries < 20; tries++) {
+    tries = 20;
+    if (!settings.special_break_map) {
+        /* can't break layout, so try harder */
+        tries = 50;
+    }
+
+    /* search for a completely free spot. */
+    for (; tries >= 0; tries--) {
         /* pick a random location in the layout */
         i = RANDOM()%(MAP_WIDTH(map)-xsize-2)+1;
         j = RANDOM()%(MAP_HEIGHT(map)-ysize-2)+1;
@@ -180,7 +186,7 @@ int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xs
     }
 
     /* if we failed, relax the restrictions */
-    if (is_occupied) { /* failure, try a relaxed placer. */
+    if (is_occupied && settings.special_break_map) { /* failure, try a relaxed placement if allowed. */
         /* pick a random location in the layout */
         for (tries = 0; tries < 10; tries++) {
             i = RANDOM()%(MAP_WIDTH(map)-xsize-2)+1;
