@@ -122,6 +122,7 @@ extern sstring i18n_get_language_code(int language);
 extern void i18n_list_languages(object *who);
 extern int get_language(object *op);
 extern void i18n_init(void);
+extern void i18n_free(void);
 /* links.c */
 extern objectlink *get_objectlink(void);
 extern oblinkpt *get_objectlinkpt(void);

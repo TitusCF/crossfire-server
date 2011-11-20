@@ -1214,6 +1214,7 @@ void cleanup(void) {
     free_all_readable();
     free_all_god();
     free_all_anim();
+    i18n_free();
     free_loader();
     free_globals();
     free_server();

@@ -256,3 +256,22 @@ void i18n_init(void) {
         fatal(SEE_LAST_ERROR);
     }
 }
+
+/**
+ * Clears all i18n-related data.
+ */
+void i18n_free(void) {
+  int file, message;
+
+  for (file = 0; file < i18n_count; file++) {
+      free_string(i18n_files[file].code); /* name is a copy of a message */
+      for (message = 0; message < i18n_files[file].count; message++) {
+          free_string(i18n_files[file].messages[message].code);
+          free_string(i18n_files[file].messages[message].message);
+      }
+      free(i18n_files[file].messages);
+  }
+  free(i18n_files);
+  i18n_files = NULL;
+  i18n_count = 0;
+}
