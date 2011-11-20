@@ -1192,6 +1192,7 @@ void free_quest(void) {
         next = pq->next;
         free_state(pq);
         free_string(pq->player_name);
+        free(pq);
         pq = next;
     }
     player_states = NULL;
