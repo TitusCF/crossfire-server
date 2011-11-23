@@ -3,22 +3,21 @@
 <title>#MAPNAME#</title>
 </head>
 <body>
-Map #MAPNAME#, in region <a href="#REGIONPATH#">#REGIONNAME#</a>. Map level: #MAPLEVEL#.
-<br />
-<br />
-Map view:
-<br />
-<a href="#MAPPIC#"><img src="#MAPSMALLPIC#"></a>
-<br />
+<h1>#MAPNAME#</h1>
+<p>Map #MAPNAME#, in region <a href="#REGIONPATH#">#REGIONNAME#</a>. Map level: #MAPLEVEL#.</p>
+<p>Map view:
+<br>
+<a href="#MAPPIC#"><img src="#MAPSMALLPIC#" alt=" "></a>
+<br>
 (click for larger view)
-<br />
+</p>
 #MAPEXITFROM#
 #MAPEXITTO#
-<br />
 #MAPLORE#
 #QUESTS#
 #MONSTERS#
-<br />
+<p>
 <a href="#REGIONPATH#">#REGIONNAME#'s map index</a> | <a href="#REGIONINDEXPATH#">Region index</a> | <a href="#INDEXPATH#">Global map index</a> | <a href="#WORLDMAPPATH#">World map</a>
+</p>
 </body>
 </html>

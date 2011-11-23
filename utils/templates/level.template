@@ -3,7 +3,7 @@
 <title>Maps by level</title>
 </head>
 <body>
-Maps by level:<br />
+<p>Maps by level:</p>
 #LEVELS#
 </body>
 </html>

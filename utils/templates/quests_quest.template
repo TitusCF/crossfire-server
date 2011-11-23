@@ -2,7 +2,7 @@
 <a name="#QUESTID#" />
 <p>#QUESTTEXT#</p>
 <p>Start in <a href="#MAINMAPPATH#">#MAINMAPNAME#</a>.</p>
-Maps:
+<p>Maps:</p>
 <ul>
 #QUESTMAPS#
 </ul>
