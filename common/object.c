@@ -856,7 +856,7 @@ void object_clear(object *op) {
  * @param dest_ob
  * object that we copy to.
  */
-void object_copy(object *src_ob, object *dest_ob) {
+void object_copy(const object *src_ob, object *dest_ob) {
     int is_freed = QUERY_FLAG(dest_ob, FLAG_FREED), is_removed = QUERY_FLAG(dest_ob, FLAG_REMOVED);
 
     /* Decrement the refcounts, but don't bother zeroing the fields;
@@ -993,7 +993,7 @@ void object_copy(object *src_ob, object *dest_ob) {
  * @note
  * copy_object_with_inv() has been renamed to object_copy_with_inv()
  */
-void object_copy_with_inv(object *src_ob, object *dest_ob) {
+void object_copy_with_inv(const object *src_ob, object *dest_ob) {
     object_copy(src_ob, dest_ob);
     FOR_INV_PREPARE(src_ob, walk) {
         object *tmp;
