@@ -3154,7 +3154,7 @@ void object_set_cheat(object *op) {
  * @note
  * find_multi_free_spot_around() has been renamed to object_find_multi_free_spot_around()
  */
-int object_find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
+int object_find_multi_free_spot_around(const object *ob, const object *gen, int *hx, int *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
     int freecount = 0;
 
@@ -3273,7 +3273,7 @@ int object_find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy
  * @note
  * find_multi_free_spot_within_radius() has been renamed to object_find_multi_free_spot_within_radius()
  */
-int object_find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy) {
+int object_find_multi_free_spot_within_radius(const object *ob, const object *gen, int *hx, int *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
     sint8 x, y, radius;
     int freecount = 0, freecountstop = 0;
@@ -4633,7 +4633,7 @@ void object_fix_multipart(object *tmp) {
  * @note
  * get_multi_size() has been renamed to object_get_multi_size()
  */
-void object_get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
+void object_get_multi_size(const object *ob, int *sx, int *sy, int *hx, int *hy) {
     archetype *part;
     int maxx = 0, maxy = 0, minx = 0, miny = 0;
 
