@@ -1242,7 +1242,8 @@ mapstruct *load_original_map(const char *filename, int flags) {
     /* Handle for map load event */
     execute_global_event(EVENT_MAPLOAD, m);
 
-    apply_auto_fix(m); /* Chests which open as default */
+    if (!(flags & MAP_STYLE))
+        apply_auto_fix(m); /* Chests which open as default */
 
     return (m);
 }
