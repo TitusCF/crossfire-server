@@ -537,8 +537,6 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
 
         create_pathname(sourcemap, path, MAX_BUF);
         new_map = load_original_map(path, MAP_PLAYER_UNIQUE);
-        if (new_map)
-            apply_auto_fix(new_map);
     }
 
     if (new_map) {
@@ -646,8 +644,6 @@ static void enter_unique_map(object *op, object *exit_ob) {
         if (!newmap) {
             create_pathname(EXIT_PATH(exit_ob), path, sizeof(path));
             newmap = load_original_map(path, MAP_PLAYER_UNIQUE);
-            if (newmap)
-                apply_auto_fix(newmap);
         }
     } else { /* relative directory */
         char reldir[HUGE_BUF], tmpc[HUGE_BUF], *cp;
@@ -667,8 +663,6 @@ static void enter_unique_map(object *op, object *exit_ob) {
             if (!newmap) {
                 create_pathname(path_combine_and_normalize(reldir, EXIT_PATH(exit_ob), tmpc, sizeof(tmpc)), path, sizeof(path));
                 newmap = load_original_map(path, MAP_PLAYER_UNIQUE);
-                if (newmap)
-                    apply_auto_fix(newmap);
             }
         } else {
             /* The exit is unique, but the map we are coming from is not unique.  So
