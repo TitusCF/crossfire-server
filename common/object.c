@@ -999,7 +999,7 @@ void object_copy_with_inv(object *src_ob, object *dest_ob) {
         object *tmp;
 
         tmp = object_new();
-        object_copy(walk, tmp);
+        object_copy_with_inv(walk, tmp);
         object_insert_in_ob(tmp, dest_ob);
     } FOR_INV_FINISH();
 }
