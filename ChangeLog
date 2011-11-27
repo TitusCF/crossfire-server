@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add logic to do svn version check between plugin and server - this prevents
+incompatible plugins from being used.
+MSW 2011-11-26
+
 New server argument: -disable-plugin.
 Disables a plugin from its name, 'All' to disable all.
 Nicolas Weeger 2011-11-20

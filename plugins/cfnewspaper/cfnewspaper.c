@@ -34,6 +34,9 @@
 #include <cfnewspaper_proto.h>
 #endif
 #include <sqlite3.h>
+#include <svnversion.h>
+
+CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 
 f_plug_api gethook;
 

@@ -52,6 +52,9 @@
 /*#include <stdarg.h>*/
 
 #include <sqlite3.h>
+#include <svnversion.h>
+
+CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 
 /** Current database format */
 #define CFLOGGER_CURRENT_FORMAT 3

@@ -52,6 +52,7 @@
 /* are done into it, and plugproto.h (which is used only by this file).      */
 /*****************************************************************************/
 #include <plugin.h>
+#include <svnversion.h>
 
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -639,6 +640,8 @@ int plugins_init_plugin(const char *libfile) {
     int i;
     crossfire_plugin *cp;
     crossfire_plugin *ccp;
+    char *svn_rev;
+
 
     /* Open the plugin lib and load the required functions */
     ptr = plugins_dlopen(libfile);
@@ -646,6 +649,18 @@ int plugins_init_plugin(const char *libfile) {
         LOG(llevError, "Error trying to load %s: %s\n", libfile, plugins_dlerror());
         return -1;
     }
+    svn_rev = (char*) plugins_dlsym(ptr, "SvnRevPlugin");
+    if (svn_rev == NULL) {
+        LOG(llevError, "Unable to find SvnRevPlugin in %s\n", libfile);
+        plugins_dlclose(ptr);
+        return -1;
+    }
+    if (strcmp(svn_rev, SVN_REV)) {
+        LOG(llevError, "SVN Version mismatch in in %s (%s != %s)\n", libfile, svn_rev, SVN_REV);
+        plugins_dlclose(ptr);
+        return -1;
+    }
+
     initfunc = (f_plug_init)plugins_dlsym(ptr, "initPlugin");
     if (initfunc == NULL) {
         LOG(llevError, "Plugin error while requesting %s.initPlugin: %s\n", libfile, plugins_dlerror());

@@ -54,6 +54,9 @@
 #ifndef __CEXTRACT__
 #include <cfrhg_proto.h>
 #endif
+#include <svnversion.h>
+
+CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 
 /** Link between a map and the exits to generate for it. */
 typedef struct house_zone_struct {

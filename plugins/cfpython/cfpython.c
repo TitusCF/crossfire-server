@@ -60,6 +60,9 @@
 #include <cfpython.h>
 #include <stdarg.h>
 #include <node.h>
+#include <svnversion.h>
+
+CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 
 #define PYTHON_DEBUG   /* give us some general infos out */
 #define PYTHON_CACHE_SIZE 16    /* number of python scripts to store the bytecode of at a time */

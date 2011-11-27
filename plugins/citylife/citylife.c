@@ -63,6 +63,9 @@
 #ifndef __CEXTRACT__
 #include <citylife_proto.h>
 #endif
+#include <svnversion.h>
+
+CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     cf_init_plugin(gethooksptr);

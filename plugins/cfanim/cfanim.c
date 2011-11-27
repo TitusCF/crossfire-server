@@ -32,6 +32,9 @@
 #include <assert.h>
 #include <cfanim.h>
 #include <stdarg.h>
+#include <svnversion.h>
+
+CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 
 static CFanimation *first_animation = NULL;  /**< Animations we're currently processing. */
 
