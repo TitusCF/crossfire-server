@@ -3102,7 +3102,7 @@ static void write_equipment_index(void) {
     snprintf(name, sizeof(name), "%s/items.html", root);
     out = fopen(name, "w+");
 
-    fprintf(out, "<html><head><title>Item list</title></head></body><h1>Special items found in maps</h1>\n");
+    fprintf(out, "<html><head><title>Item list</title></head><body><h1>Special items found in maps</h1>\n");
     fprintf(out, "<table border=\"1\"><tr><th>Name</th><th>Map(s)</th><th>Item power</th><th>Calc item power</th><th>Description</th></tr>\n");
 
     for (item = 0; item < equipment_count; item++) {
@@ -3135,7 +3135,7 @@ static void write_race_index(void) {
     snprintf(name, sizeof(name), "%s/monsters.html", root);
     out = fopen(name, "w+");
 
-    fprintf(out, "<html><head><title>Monster list</title></head></body><h1>Monsters found in maps</h1>\n");
+    fprintf(out, "<html><head><title>Monster list</title></head><body><h1>Monsters found in maps</h1>\n");
     fprintf(out, "<table border=\"1\"><tr><th>Name</th><th>Count</th><th>Map(s)</th></tr>\n");
 
     for (item = 0; item < races.count; item++) {
