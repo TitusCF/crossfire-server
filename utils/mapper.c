@@ -3113,7 +3113,7 @@ static void write_equipment_index(void) {
 
         fprintf(out, "</ul></td><td>%d</td><td>%d</td><td><pre>%s</pre></td></tr>\n", special_equipment[item]->power, special_equipment[item]->calc_power, special_equipment[item]->diff);
     }
-    fprintf(out, "</body></html>\n");
+    fprintf(out, "</table></body></html>\n");
     fclose(out);
 
     printf(" done.\n");
@@ -3148,7 +3148,7 @@ static void write_race_index(void) {
 
         fprintf(out, "</ul></td></tr>\n");
     }
-    fprintf(out, "</body></html>\n");
+    fprintf(out, "</table></body></html>\n");
     fclose(out);
 
     printf(" done.\n");
