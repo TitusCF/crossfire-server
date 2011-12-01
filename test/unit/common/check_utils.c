@@ -99,6 +99,24 @@ START_TEST(test_split_string) {
 }
 END_TEST
 
+START_TEST(test_replace) {
+    char init[MAX_BUF], replaced[MAX_BUF];
+
+    snprintf(init, sizeof(init), "first test");
+    replace(init, "first", "other", replaced, sizeof(replaced));
+    fail_if(strcmp(replaced, "other test") != 0, "%s != other test", replaced);
+
+    snprintf(init, sizeof(init), "second test");
+    replace(init, "e", "a", replaced, sizeof(replaced));
+    fail_if(strcmp(replaced, "sacond tast") != 0, "%s != sacond tast", replaced);
+
+    /* corner case for length */
+    snprintf(init, sizeof(init), "long test");
+    replace(init, "long", "really long", replaced, strlen(init) + 1);
+    fail_if(strcmp(replaced, "really lo") != 0, "%s != really lo", replaced);
+}
+END_TEST
+
 static Suite *utils_suite(void) {
     Suite *s = suite_create("utils");
     TCase *tc_core = tcase_create("Core");
@@ -108,6 +126,7 @@ static Suite *utils_suite(void) {
 
     suite_add_tcase(s, tc_core);
     tcase_add_test(tc_core, test_split_string);
+    tcase_add_test(tc_core, test_replace);
 
     return s;
 }
