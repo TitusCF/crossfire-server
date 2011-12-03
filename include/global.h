@@ -421,6 +421,7 @@ typedef struct Settings {
     uint8   max_stat;                 /**< Maximum stat value - 255 should be sufficient */
     uint8   special_break_map;        /**< If set, then submaps in random maps can break the walls. */
     linked_char *disabled_plugins;    /**< List of disabled plugins, 'All' means all. */
+    uint8   ignore_plugin_compatibility;    /**< If set, don't check plugin version. */
 } Settings;
 
 /**

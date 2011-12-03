@@ -116,6 +116,7 @@ struct Settings settings = {
     0,     /* max_stat - will be loaded from stats file */
     1,     /* special_break_map, 1 for historical reasons */
     NULL,  /* disabled_plugins */
+    0,      /* ignore_plugin_compatibility */
 };
 
 struct Statistics statistics;

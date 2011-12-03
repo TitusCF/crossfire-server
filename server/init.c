@@ -892,6 +892,14 @@ static void load_settings(void) {
             } else {
                 LOG(llevError, "load_settings: unknown value for special_break_map: %s\n", cp);
             }
+        } else if (!strcasecmp(buf, "ignore_plugin_compatibility")) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.ignore_plugin_compatibility = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.ignore_plugin_compatibility = FALSE;
+            } else {
+                LOG(llevError, "load_settings: unknown value for ignore_plugin_compatibility: %s\n", cp);
+            }
         } else {
             LOG(llevError, "Unknown value in settings file: %s\n", buf);
         }

@@ -325,3 +325,9 @@ port 13327
 # When generating random maps, can a special map break the map's layout to be inserted?
 # TRUE by default for historical purposes
 special_break_map TRUE
+
+# If set to TRUE, then the plugin version won't be checked at load time.
+# When set to FALSE, versions must match else a plugin is not loaded.
+# This is mostly intended for development purposes, to not have to 'make install'
+# all the time.
+ignore_plugin_compatibility FALSE
