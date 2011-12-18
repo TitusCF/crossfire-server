@@ -2225,7 +2225,8 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
         fix_object(op);
     }
 
-    SET_ANIMATION(arrow, arrow->direction);
+/*    SET_ANIMATION(arrow, arrow->direction);*/
+    object_update_turn_face(arrow);
     arrow->stats.sp = arrow->stats.wc; /* save original wc and dam */
     arrow->stats.hp = arrow->stats.dam;
     arrow->stats.grace = arrow->attacktype;
