@@ -8,7 +8,7 @@
 
 /** One alchemy recipe. */
 typedef struct recipestruct {
-    const char *title;          /**< Distinguishing name of product. */
+    sstring title;              /**< Distinguishing name of product. */
     size_t arch_names;          /**< Size of the arch_name[] array. */
     char **arch_name;           /**< Possible archetypes of the final product made. */
     int chance;                 /**< Chance that recipe for this item will appear
@@ -22,11 +22,11 @@ typedef struct recipestruct {
     linked_char *ingred;        /**< List of ingredients. */
     int ingred_count;           /**< Number of items in ingred. */
     struct recipestruct *next;  /**< Next recipe with the same number of ingredients. */
-    const char *keycode;        /**< Optional keycode needed to use the recipe. */
-    const char *skill;          /**< Skill name used to make this recipe. */
-    const char *cauldron;       /**< Arch of the cauldron/workbench used to house the formulae. */
-    const char *failure_arch;   /**< Arch of the item to generate on failure, instead of blowing up stuff. */
-    const char *failure_message;/**< Specific failure message. */
+    sstring keycode;            /**< Optional keycode needed to use the recipe. */
+    sstring skill;              /**< Skill name used to make this recipe. */
+    sstring cauldron;           /**< Arch of the cauldron/workbench used to house the formulae. */
+    sstring failure_arch;       /**< Arch of the item to generate on failure, instead of blowing up stuff. */
+    sstring failure_message;    /**< Specific failure message. */
     int min_level;              /**< Minimum level to have in the skill to be able to use the formulae. 0 if no requirement. */
     int is_combination;         /**< Whather this is an alchemy recipe, or an item transformation description. */
     char **tool;                /**< Tool(s) for item transformation. */
