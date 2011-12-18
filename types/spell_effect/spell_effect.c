@@ -551,7 +551,7 @@ static void move_missile(object *op) {
     i = spell_find_dir(m, new_x, new_y, object_get_owner(op));
     if (i > 0 && i != op->direction) {
         op->direction = adjust_dir(op->direction, i);
-        SET_ANIMATION(op, op->direction);
+        object_update_turn_face(op);
     }
     object_insert_in_map_at(op, m, op, 0, new_x, new_y);
 }

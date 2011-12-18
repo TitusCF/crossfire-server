@@ -2093,7 +2093,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
         throw_ob->stats.wc -= throw_ob->magic+throw_ob->inv->stats.wc;
         /* only throw objects get directional faces */
         if (GET_ANIM_ID(throw_ob) && NUM_ANIMATIONS(throw_ob))
-            SET_ANIMATION(throw_ob, dir);
+            object_update_turn_face(throw_ob);
     } else {
         /* some materials will adjust properties.. */
         if (throw_ob->material&M_LEATHER) {

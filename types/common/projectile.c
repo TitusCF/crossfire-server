@@ -119,7 +119,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
                 op->direction = absdir(op->direction+4);
                 op->state = 0;
                 if (GET_ANIM_ID(op)) {
-                    SET_ANIMATION(op, op->direction);
+                    object_update_turn_face(op);
                 }
             } else {
                 /* Attack the object. */
@@ -196,7 +196,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
             /* update object image for new facing */
             /* many thrown objects *don't *have more than one face */
             if (GET_ANIM_ID(op))
-                SET_ANIMATION(op, op->direction);
+                object_update_turn_face(op);
         } /* object is reflected */
     } /* object ran into a wall */
 
