@@ -23,7 +23,7 @@ typedef struct recipestruct {
     int ingred_count;           /**< Number of items in ingred. */
     struct recipestruct *next;  /**< Next recipe with the same number of ingredients. */
     const char *keycode;        /**< Optional keycode needed to use the recipe. */
-    const char *skill;          /** Skill name used to make this recipe. */
+    const char *skill;          /**< Skill name used to make this recipe. */
     const char *cauldron;       /**< Arch of the cauldron/workbench used to house the formulae. */
     const char *failure_arch;   /**< Arch of the item to generate on failure, instead of blowing up stuff. */
     const char *failure_message;/**< Specific failure message. */
