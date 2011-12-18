@@ -94,8 +94,7 @@ int fire_bolt(object *op, object *caster, int dir, object *spob) {
     tmp->stats.Con = spob->stats.Con;
 
     tmp->direction = dir;
-    if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
-        SET_ANIMATION(tmp, dir);
+    object_update_turn_face(tmp);
 
     object_set_owner(tmp, op);
     set_spell_skill(op, caster, spob, tmp);

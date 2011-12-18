@@ -496,8 +496,7 @@ static void animate_bomb(object *op) {
                     free_string(tmp->skill);
                 tmp->skill = add_refcount(op->skill);
             }
-            if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
-                SET_ANIMATION(tmp, i);
+            object_update_turn_face(tmp);
             object_insert_in_map_at(tmp, op->map, op, 0, op->x+freearr_x[i], op->y+freearr_x[i]);
             ob_process(tmp);
         }

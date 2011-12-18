@@ -723,8 +723,8 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
         tmp->stats.maxhp = spell->range+SP_level_range_adjust(caster, spell);
         tmp->dam_modifier = spell->stats.food+SP_level_dam_adjust(caster, spell);
 
-        if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
-            SET_ANIMATION(tmp, dir);
+        tmp->direction = dir;
+        object_update_turn_face(tmp);
 
         object_set_owner(tmp, op);
     } else {
@@ -784,8 +784,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
             if (!tailor_god_spell(tmp, op))
                 return 0;
         }
-        if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
-            SET_ANIMATION(tmp, dir);
+        object_update_turn_face(tmp);
 
         tmp = object_insert_in_map_at(tmp, tmp->map, op, 0, tmp->x, tmp->y);
         if (tmp != NULL)
