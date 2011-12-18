@@ -248,8 +248,6 @@ void animate_object(object *op, int dir) {
         op->state = 0;
         if (op->temp_animation_id) {
             op->temp_animation_id = 0;
-            /* op->last_anim = 0; */
-            /* object_update(op, UP_OBJ_FACE); */
             animate_object(op, dir);
             return;
         }
