@@ -313,7 +313,6 @@ void apply_anim_suffix(object *who, sstring suffix) {
         for (; head != NULL; head = head->more) {
             head->temp_animation_id = anim;
             head->temp_anim_speed = animations[anim].num_animations/animations[anim].facings;
-            head->temp_last_anim = 0;
             head->last_anim = 0;
             head->state = 0;
         }
