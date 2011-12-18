@@ -1128,10 +1128,11 @@ object *object_new(void) {
  * update_turn_face() has been renamed to object_update_turn_face()
  */
 void object_update_turn_face(object *op) {
-    if (!QUERY_FLAG(op, FLAG_IS_TURNABLE) || op->arch == NULL)
+    /*if (!QUERY_FLAG(op, FLAG_IS_TURNABLE) || op->arch == NULL)
         return;
     SET_ANIMATION(op, op->direction);
-    object_update(op, UP_OBJ_FACE);
+    object_update(op, UP_OBJ_FACE);*/
+    animate_object(op, op->direction);
 }
 
 /**

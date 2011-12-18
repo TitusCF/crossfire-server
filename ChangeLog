@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bug #3440456: Animated bolts.
+Adjust animate_object() to correctly handle FLAG_IS_TURNABLE,
+and make object_update_turn_face() a mere wrapper to that function.
+Nicolas Weeger 2011-12-18
+
 Add logic to do svn version check between plugin and server - this prevents
 incompatible plugins from being used.
 MSW 2011-11-26

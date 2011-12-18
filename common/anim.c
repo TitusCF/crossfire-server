@@ -182,13 +182,15 @@ int try_find_animation(const char *name) {
  * Updates the face-variable of an object.
  * If the object is the head of a multi-object, all objects are animated.
  * The object's state is not changed, but merely updated if needed (out of bounds of
- * new animation, reached end of animation, ...)
+ * new animation, reached end of animation, ...).
+ * This function correctly handles FLAG_IS_TURNABLE too.
  *
  * @param op is the object to animate.
  * @param dir is the direction the object is facing.  This is generally same as
  *    op->direction, but in some cases, op->facing is used instead - the
  *    caller has a better idea which one it really wants to be using,
- *    so let it pass along the right one.
+ *    so let it pass along the right one. This parameter is ignored if
+ *    the object has a head or is turnable.
  */
 void animate_object(object *op, int dir) {
     int max_state;  /* Max animation state object should be drawn in */
@@ -213,6 +215,8 @@ void animate_object(object *op, int dir) {
 
         if (NUM_ANIMATIONS(op) == NUM_ANIMATIONS(op->head))
             op->state = op->head->state;
+    } else if (QUERY_FLAG(op, FLAG_IS_TURNABLE)) {
+        dir = op->direction;
     }
 
     /* If object is turning, then max animation state is half through the
@@ -241,6 +245,9 @@ void animate_object(object *op, int dir) {
             base_state = 0;
         else
             base_state = (dir-1)*(NUM_ANIMATIONS(op)/8);
+    } else if (QUERY_FLAG(op, FLAG_IS_TURNABLE)) {
+        base_state = (NUM_ANIMATIONS(op) / 9) * (dir);
+        max_state = NUM_ANIMATIONS(op) / 9;
     }
 
     /* If beyond drawable states, reset */
