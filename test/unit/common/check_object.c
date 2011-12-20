@@ -445,7 +445,7 @@ START_TEST(test_object_update_turn_face) {
     const New_Face *face1;
     const New_Face *face2;
 
-    ob1 = cctk_create_game_object("xan");
+    ob1 = cctk_create_game_object("arrow");
     ob1->direction = 1;
     object_update_turn_face(ob1);
     face1 = ob1->face;
