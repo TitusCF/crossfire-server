@@ -60,6 +60,7 @@ CREPixmap.cpp \
  CREQuestItemModel.cpp \
  CREMultilineItemDelegate.cpp \
  QuestConditionScript.cpp \
+ CREHPBarMaker.cpp \
  CRESmoothFaceMaker.cpp \
  ResourcesManager.cpp \
  CRECombatSimulator.cpp
@@ -121,6 +122,7 @@ CREPixmap.h \
  CREQuestItemModel.h \
  CREMultilineItemDelegate.h \
  QuestConditionScript.h \
+ CREHPBarMaker.h \
  CRESmoothFaceMaker.h \
  ResourcesManager.h \
  CRECombatSimulator.h

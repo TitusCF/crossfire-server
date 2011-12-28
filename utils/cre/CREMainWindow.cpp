@@ -9,12 +9,14 @@
 #include "CREReportDisplay.h"
 #include "CREPixmap.h"
 #include "CRESmoothFaceMaker.h"
+#include "CREHPBarMaker.h"
 #include "ResourcesManager.h"
 #include "CRECombatSimulator.h"
 
 extern "C" {
 #include "global.h"
 #include "sproto.h"
+#include "CREHPBarMaker.h"
 }
 
 CREMainWindow::CREMainWindow()
@@ -147,6 +149,10 @@ void CREMainWindow::createActions()
     myToolSmooth->setStatusTip(tr("Generate the basic smoothed picture for a face."));
     connect(myToolSmooth, SIGNAL(triggered()), this, SLOT(onToolSmooth()));
 
+    myToolHPBar = new QAction(tr("Generate HP bar"), this);
+    myToolHPBar->setStatusTip(tr("Generate faces for a HP bar."));
+    connect(myToolHPBar, SIGNAL(triggered()), this, SLOT(onToolBarMaker()));
+
     myToolCombatSimulator = new QAction(tr("Combat simulator"), this);
     myToolCombatSimulator->setStatusTip(tr("Simulate fighting between two objects."));
     connect(myToolCombatSimulator, SIGNAL(triggered()), this, SLOT(onToolCombatSimulator()));
@@ -186,6 +192,7 @@ void CREMainWindow::createMenus()
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
     toolsMenu->addAction(myToolSmooth);
+    toolsMenu->addAction(myToolHPBar);
     toolsMenu->addAction(myToolCombatSimulator);
 }
 
@@ -974,4 +981,10 @@ void CREMainWindow::onToolCombatSimulator()
 {
     CRECombatSimulator simulator;
     simulator.exec();
+}
+
+void CREMainWindow::onToolBarMaker()
+{
+    CREHPBarMaker maker;
+    maker.exec();
 }
