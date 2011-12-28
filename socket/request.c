@@ -935,7 +935,7 @@ static void map_clearcell(struct map_cell_struct *cell, int face, int count) {
  * re-examined.
  */
 
-static object *heads[MAX_HEAD_POS][MAX_HEAD_POS][MAP_LAYERS];
+static const object *heads[MAX_HEAD_POS][MAX_HEAD_POS][MAP_LAYERS];
 
 /****************************************************************************
  * This block is for map2 drawing related commands.
@@ -962,10 +962,10 @@ static object *heads[MAX_HEAD_POS][MAX_HEAD_POS][MAP_LAYERS];
  *    with the function returning zero - this means there are objects
  *    on the space we have already sent to the client.
  */
-static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl, socket_struct *ns, int *has_obj, int is_head) {
+static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl, socket_struct *ns, int *has_obj, int is_head) {
     uint16 face_num;
     uint8 nlayer, smoothlevel = 0;
-    object *head;
+    const object *head;
 
     assert(ob != NULL);
 
@@ -1145,7 +1145,7 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
     SockList_AddShort(sl, coord);
 
     for (layer = 0; layer < MAP_LAYERS; layer++) {
-        object *head;
+        const object *head;
 
         head = heads[ay][ax][layer];
         if (head) {
