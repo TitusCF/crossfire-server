@@ -511,7 +511,7 @@ typedef struct typedata {
 #define FLAG_CAN_ROLL           22 /**< Object can be rolled */
 #define FLAG_OVERLAY_FLOOR      23 /**< Object is an overlay floor */
 #define FLAG_IS_TURNABLE        24 /**< Object can change face with direction */
-/*#define FLAG_WALK_OFF         25*//* Object is applied when left */
+#define FLAG_PROBE              25 /**< Object displays HP information to player. */
 /*#define FLAG_FLY_ON           26*//* As WALK_ON, but only with FLAG_FLYING */
 /*#define FLAG_FLY_OFF          27*//* As WALK_OFF, but only with FLAG_FLYING */
 #define FLAG_IS_USED_UP         28 /**< When (--food<0) the object will exit */

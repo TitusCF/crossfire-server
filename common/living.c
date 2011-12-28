@@ -1185,6 +1185,7 @@ void fix_object(object *op) {
         CLEAR_FLAG(op, FLAG_UNDEAD);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_SEE_IN_DARK))
         CLEAR_FLAG(op, FLAG_SEE_IN_DARK);
+    CLEAR_FLAG(op, FLAG_PROBE);
 
     op->path_attuned = op->arch->clone.path_attuned;
     op->path_repelled = op->arch->clone.path_repelled;
@@ -1379,6 +1380,8 @@ void fix_object(object *op) {
                 SET_FLAG(op, FLAG_BLIND);
             if (QUERY_FLAG(tmp, FLAG_SEE_IN_DARK))
                 SET_FLAG(op, FLAG_SEE_IN_DARK);
+            if (QUERY_FLAG(tmp, FLAG_PROBE))
+                SET_FLAG(op, FLAG_PROBE);
 
             if (QUERY_FLAG(tmp, FLAG_UNDEAD) && !QUERY_FLAG(&op->arch->clone, FLAG_UNDEAD))
                 SET_FLAG(op, FLAG_UNDEAD);

@@ -1348,9 +1348,11 @@ void command_mark(object *op, const char *params) {
  * player.
  * @param tmp
  * monster being examined.
+ * @param level
+ * level of the probe, to have a persistant marker for some duration.
  */
-void examine_monster(object *op, object *tmp) {
-    object *mon = HEAD(tmp);
+void examine_monster(object *op, object *tmp, int level) {
+    object *mon = HEAD(tmp), *probe;
 
     if (QUERY_FLAG(mon, FLAG_UNDEAD))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
@@ -1402,6 +1404,26 @@ void examine_monster(object *op, object *tmp) {
     if (object_present_in_ob(POISONING, mon) != NULL)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                       "It looks very ill.");
+
+    if (level < 15)
+        return;
+
+    probe = object_find_by_type_and_name(mon, FORCE, "probe_force");
+    if (probe != NULL && probe->level > level)
+        return;
+
+    if (probe == NULL) {
+        probe = create_archetype(FORCE_NAME);
+        free_string(probe->name);
+        probe->name = add_string("probe_force");
+        SET_FLAG(probe, FLAG_APPLIED);
+        SET_FLAG(probe, FLAG_PROBE);
+        object_insert_in_ob(probe, mon);
+        fix_object(mon);
+    }
+    probe->level = level;
+    if (level / 10 > probe->duration)
+        probe->duration = level / 10;
 }
 
 /**
@@ -1618,7 +1640,7 @@ void examine(object *op, object *tmp) {
     }
 
     if (QUERY_FLAG(tmp, FLAG_MONSTER))
-        examine_monster(op, tmp);
+        examine_monster(op, tmp, 0);
 
     /* Is this item buildable? */
     if (QUERY_FLAG(tmp, FLAG_IS_BUILDABLE))

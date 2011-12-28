@@ -1834,7 +1834,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         break;
 
     case SP_PROBE:
-        success = probe(op, caster, spell_ob, dir);
+        success = probe(op, caster, spell_ob, dir, skill != NULL ? skill->level : 0);
         break;
 
     case SP_HEALING:

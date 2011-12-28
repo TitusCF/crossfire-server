@@ -1046,7 +1046,7 @@ static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl
 
             len = 2;
 
-            if (!MAP_NOSMOOTH(ob->map)) {
+            if (ob->map && !MAP_NOSMOOTH(ob->map)) {
                 smoothlevel = ob->smoothlevel;
                 if (smoothlevel)
                     len++;
@@ -1119,6 +1119,65 @@ static int map2_delete_layer(int ax, int ay, int layer, SockList *sl, socket_str
         return 1;
     }
     return 0;
+}
+
+/**
+ * Check if a hp bar should be added to the map square.
+ * @param ax x coordinate.
+ * @param ay y coordinate.
+ * @param ob object to check for hp bar.
+ * @param sl where to write data.
+ * @param ns to know if the face was sent or not.
+ * @param has_obj number of objects, modified.
+ * @param alive_layer will be filled with the layer containing the hp bar if applicable.
+ * @return 1 if a bar was added, in which case alive_layer is modified, else 0.
+ */
+static int check_probe(int ax, int ay, const object *ob, SockList *sl, socket_struct *ns, int *has_obj, int *alive_layer) {
+    int got_one = 0;
+    char name[60];
+    int value, granularity;
+    const object *probe;
+
+    /* send hp bar if needed */
+    if (!QUERY_FLAG(ob, FLAG_PROBE) || (*alive_layer) != -1 || ob->head)
+        return 0;
+
+    probe = object_find_by_type_and_name(ob, FORCE, "probe_force");
+    if (probe == NULL || probe->level < 15) {
+        /* if probe is not null, this is an error, but well */
+        return 0;
+    }
+
+    granularity = (probe->level - 14) / 3;
+    if (granularity <= 0)
+        granularity = 1;
+    else if (granularity > 30)
+        granularity = 30;
+
+    if (ob->stats.maxhp > 0) {
+        value = (ob->stats.hp * granularity) / (ob->stats.maxhp);
+
+        if (value < 0)
+            value = 0;
+        else if (value > granularity)
+            value = granularity;
+    } else
+        value = 30;
+
+    value = (value * 30) / granularity;
+
+    if (value > 0) {
+        archetype *dummy;
+
+        snprintf(name, sizeof(name), "hpbar_standard_%d", value);
+        dummy = try_find_archetype(name);
+        if (dummy != NULL) {
+            got_one += map2_add_ob(ax, ay, MAP_LAYER_FLY2, &dummy->clone, sl, ns, has_obj, 0);
+            (*alive_layer) = MAP_LAYER_FLY2;
+        }
+    }
+
+    return got_one;
 }
 
 /*
@@ -1269,7 +1328,7 @@ void draw_client_map2(object *pl) {
                      */
                     check_space_for_heads(ax, ay, &sl, &pl->contr->socket);
                 } else {
-                    int have_darkness = 0, has_obj = 0, got_one = 0, del_one = 0, g1;
+                    int have_darkness = 0, has_obj = 0, got_one = 0, del_one = 0, g1, alive_layer = -1, old_got;
 
                     /* In this block, the space is visible. */
 
@@ -1312,16 +1371,27 @@ void draw_client_map2(object *pl) {
 
                         if (ob) {
                             g1 = has_obj;
+                            old_got = got_one;
                             got_one += map2_add_ob(ax, ay, layer, ob, &sl, &pl->contr->socket, &has_obj, 0);
+
+                            /* if we added the face, or it is a monster's head, check probe spell */
+                            if (got_one != old_got || (ob->head == NULL && ob->more))
+                                got_one += check_probe(ax, ay, ob, &sl, &pl->contr->socket, &has_obj, &alive_layer);
+
                             /* If we are just storing away the head
                              * for future use, then effectively this
                              * space/layer is blank, and we should clear
                              * it if needed.
                              */
-                            if (g1 == has_obj)
+                            if (g1 == has_obj) {
                                 del_one += map2_delete_layer(ax, ay, layer, &sl, &pl->contr->socket);
+                            } else if (ob->head == NULL) {
+                                /* for single-part items */
+                                got_one += check_probe(ax, ay, ob, &sl, &pl->contr->socket, &has_obj, &alive_layer);
+                            }
                         } else {
-                            del_one += map2_delete_layer(ax, ay, layer, &sl, &pl->contr->socket);
+                            if (layer != alive_layer)
+                                del_one += map2_delete_layer(ax, ay, layer, &sl, &pl->contr->socket);
                         }
                     }
                     /* If nothing to do for this space, we

@@ -682,17 +682,19 @@ int cast_create_food(object *op, object *caster, object *spell_ob, int dir, cons
  * spell object being cast.
  * @param dir
  * cast direction.
+ * @param level
+ * probe level.
  * @retval 0
  * nothing probed.
  * @retval 1
  * something was probed.
  */
-int probe(object *op, object *caster, object *spell_ob, int dir) {
+int probe(object *op, object *caster, object *spell_ob, int dir, int level) {
     int r, mflags, maxrange;
     mapstruct *m;
 
     if (!dir) {
-        examine_monster(op, op);
+        examine_monster(op, op, level);
         return 1;
     }
     maxrange = spell_ob->range+SP_level_range_adjust(caster, spell_ob);
@@ -715,7 +717,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
                 if (QUERY_FLAG(tmp, FLAG_ALIVE) && (tmp->type == PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                   "You detect something.");
-                    examine_monster(op, HEAD(tmp));
+                    examine_monster(op, HEAD(tmp), level);
                     return 1;
                 }
             FOR_MAP_FINISH();
