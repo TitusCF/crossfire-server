@@ -463,6 +463,9 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
     /* do alchemy */
     use_alchemy(pl->ob);
 
+    /* don't forget to slow the player */
+    pl->ob->speed_left -= 1.0;
+
     /* safety: ensure cauldron is still there, and player is still above */
     if (object_was_destroyed(cauldron, cauldron_tag) || map != pl->ob->map || x != pl->ob->x || y != pl->ob->y) {
         return;
