@@ -1133,7 +1133,7 @@ static int map2_delete_layer(int ax, int ay, int layer, SockList *sl, socket_str
  * @return 1 if a bar was added, in which case alive_layer is modified, else 0.
  */
 static int check_probe(int ax, int ay, const object *ob, SockList *sl, socket_struct *ns, int *has_obj, int *alive_layer) {
-    int got_one = 0;
+    int got_one = 0, poisoned = 0, diseased = 0;
     char name[60];
     int value, granularity;
     const object *probe;
@@ -1166,10 +1166,19 @@ static int check_probe(int ax, int ay, const object *ob, SockList *sl, socket_st
 
     value = (value * 30) / granularity;
 
+    if (object_present_in_ob(POISONING, ob) != NULL)
+        poisoned = 1;
+    if (object_present_in_ob(DISEASE, ob) != NULL)
+        diseased = 1;
+
     if (value > 0) {
         archetype *dummy;
 
-        snprintf(name, sizeof(name), "hpbar_standard_%d", value);
+        snprintf(name, sizeof(name), "hpbar%s%s%s_%d",
+            poisoned ? "_poisoned" : "",
+            diseased ? "_diseased" : "",
+            (!poisoned && !diseased) ? "_standard" : "",
+            value);
         dummy = try_find_archetype(name);
         if (dummy != NULL) {
             got_one += map2_add_ob(ax, ay, MAP_LAYER_FLY2, &dummy->clone, sl, ns, has_obj, 0);
