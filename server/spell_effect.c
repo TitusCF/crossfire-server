@@ -1007,6 +1007,7 @@ int perceive_self(object *op) {
     object *tmp;
     const object *god;
     int i;
+    StringBuffer *immunity;
 
     god = find_god(determine_god(op));
     if (god)
@@ -1044,6 +1045,31 @@ int perceive_self(object *op) {
     if (op->glow_radius > 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
                       "You glow in the dark.");
+
+    immunity = NULL;
+    for (tmp = op->inv; tmp; tmp = tmp->below) {
+        if (tmp->type == SIGN) {
+            if (immunity == NULL) {
+                immunity = stringbuffer_new();
+                stringbuffer_append_string(immunity, "You have been exposed to: ");
+            } else {
+                stringbuffer_append_string(immunity, ", ");
+            }
+            stringbuffer_append_string(immunity, tmp->name);
+            if (tmp->level > 100)
+                stringbuffer_append_string(immunity, " (full immunity)");
+            else if (tmp->level > 70)
+                stringbuffer_append_string(immunity, " (high immunity)");
+            else if (tmp->level > 20)
+                stringbuffer_append_string(immunity, " (partial immunity)");
+        }
+    }
+
+    if (immunity != NULL) {
+        cp = stringbuffer_finish(immunity);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF, cp);
+        free(cp);
+    }
 
     if (is_dragon_pl(op)) {
         /* now grab the 'dragon_ability'-force from the player's inventory */
