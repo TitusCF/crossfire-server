@@ -7,3 +7,5 @@ Sous la forme "knowledge list", affiche tous les éléments connus, avec leur nu
 Sous la forme "knowledge show <numéro>", affiche les détails de l'élément spécifié.
 
 Sous la forme "knowledge search <texte>", affiche les éléments ayant <texte> dans leur résumé ou détail.
+
+Sous la forme "knowledge attempt <numéro>", tente de faire de l'alchimie à partir de la formule.

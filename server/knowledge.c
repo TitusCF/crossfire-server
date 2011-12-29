@@ -112,6 +112,15 @@ typedef int (*knowledge_add_item)(struct knowledge_player *current, const char *
  */
 typedef StringBuffer* (*knowledge_can_use_alchemy)(sstring code, const char *item, StringBuffer *buf, int index);
 
+struct knowledge_item;
+
+/**
+ * Attempt an alchemy based on the specified knowledge.
+ * @param pl who attempts the recipe.
+ * @param item item to attempt, must not be NULL.
+ */
+typedef void (*knowledge_attempt)(player *pl, const struct knowledge_item *item);
+
 /** One item type that may be known to the player. */
 typedef struct knowledge_type {
     const char *type;                   /**< Type internal code, musn't have a double dot, must be unique ingame. */
@@ -121,6 +130,7 @@ typedef struct knowledge_type {
     knowledge_add_item add;             /**< Add the item to the knowledge store. */
     const char *name;                   /**< Type name for player, to use with 'list'. */
     knowledge_can_use_alchemy use_alchemy; /**< If not null, checks if an item can be used in alchemy. */
+    knowledge_attempt attempt_alchemy;
 } knowledge_type;
 
 
@@ -315,6 +325,157 @@ static StringBuffer* knowledge_alchemy_can_use_item(sstring code, const char *it
     }
 
     return buf;
+}
+
+/**
+ * Attempt an alchemy recipe through the knowledge system.
+ * @param pl who is attempting the recipe.
+ * @param item knowledge item, should be of type recipe.
+ */
+static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
+    const recipe *rp = knowledge_alchemy_get_recipe(item->item);
+    object *cauldron = NULL, *inv;
+    object *ingredients[50];
+    int index, x, y;
+    uint32 count, counts[50];
+    char name[MAX_BUF];
+    const char *ingname;
+    linked_char *ing;
+    tag_t cauldron_tag;
+    mapstruct *map;
+
+    if (!rp) {
+        LOG(llevError, "knowledge: couldn't find recipe for %s", item->item);
+        return;
+    }
+
+    if (rp->ingred_count > 50) {
+        LOG(llevError, "knowledge: recipe %s has more than 50 ingredients!", item->item);
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "This recipe is too complicated.");
+        return;
+    }
+
+    /* first, check for a cauldron */
+    for (cauldron = pl->ob->below; cauldron; cauldron = cauldron->below) {
+        if (strcmp(rp->cauldron, cauldron->arch->name) == 0)
+            break;
+    }
+
+    if (cauldron == NULL) {
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You are not on a %s", rp->cauldron);
+        return;
+    }
+
+    cauldron_tag = cauldron->count;
+
+    /* find ingredients in player's inventory */
+    for (index = 0; index < 50; index++) {
+        ingredients[index] = NULL;
+    }
+    for (inv = pl->ob->inv; inv != NULL; inv = inv->below) {
+
+        if (QUERY_FLAG(inv, FLAG_INV_LOCKED) || QUERY_FLAG(inv, FLAG_STARTEQUIP))
+            continue;
+
+        if (inv->title == NULL)
+            strncpy(name, inv->name, sizeof(name));
+        else
+            snprintf(name, sizeof(name), "%s %s", inv->name, inv->title);
+
+        index = 0;
+        for (ing = rp->ingred; ing != NULL; ing = ing->next) {
+
+            if (ingredients[index] != NULL) {
+                index++;
+                continue;
+            }
+
+            ingname = ing->name;
+            count = 0;
+            while (isdigit(*ingname)) {
+                count = 10 * count + (*ingname - '0');
+                ingname++;
+            }
+            if (count == 0)
+                count = 1;
+            while (*ingname == ' ')
+                ingname++;
+
+            if (strcmp(name, ingname) == 0 && ((inv->nrof == 0 && count == 1) || (inv->nrof >= count))) {
+                ingredients[index] = inv;
+                counts[index] = count;
+                break;
+            }
+
+            index++;
+        }
+    }
+
+    index = 0;
+    for (ing = rp->ingred; ing != NULL; ing = ing->next) {
+        if (ingredients[index] == NULL) {
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You don't have %s.", ing->name);
+            return;
+        }
+
+        index++;
+    }
+
+    /* ensure cauldron is applied */
+    if (pl->ob->container != cauldron) {
+        apply_by_living_below(pl->ob);
+        if (pl->ob->container != cauldron) {
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Couldn't activate the %s.", rp->cauldron);
+            return;
+        }
+    }
+
+    /* ensure cauldron is empty */
+    while (cauldron->inv != NULL) {
+        inv = cauldron->inv;
+        command_take(pl->ob, "");
+        if (cauldron->inv == inv) {
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Couldn't empty the %s", rp->cauldron);
+            return;
+        }
+    }
+
+    /* drop ingredients */
+    for (index = 0; index < rp->ingred_count; index++) {
+        tag_t tag = ingredients[index]->count;
+        count = ingredients[index]->nrof;
+        put_object_in_sack(pl->ob, cauldron, ingredients[index], counts[index]);
+        if (object_was_destroyed(ingredients[index], tag)) {
+            draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Hum, some item disappeared, stopping the attempt.");
+            return;
+            
+        }
+        if (count == ingredients[index]->nrof && ingredients[index]->env == pl->ob) {
+            draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Hum, couldn't drop some items, stopping the attempt.");
+            return;
+        }
+    }
+
+    map = pl->ob->map;
+    x = pl->ob->x;
+    y = pl->ob->y;
+
+    /* do alchemy */
+    use_alchemy(pl->ob);
+
+    /* safety: ensure cauldron is still there, and player is still above */
+    if (object_was_destroyed(cauldron, cauldron_tag) || map != pl->ob->map || x != pl->ob->x || y != pl->ob->y) {
+        return;
+    }
+
+    /* get back the result */
+    while (cauldron->inv) {
+        inv = cauldron->inv;
+        examine(pl->ob, inv);
+        command_take(pl->ob, "");
+        if (inv == cauldron->inv)
+            break;
+    }
 }
 
 /**
@@ -580,11 +741,11 @@ static int knowledge_message_validate(const char *item) {
 
 /** All handled knowledge items. */
 static const knowledge_type const knowledges[] = {
-    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_alchemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item },
-    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL },
-    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL },
-    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL },
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL }
+    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_alchemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item, knowledge_alchemy_attempt },
+    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL, NULL },
+    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL, NULL },
+    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL, NULL },
+    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
 
 
@@ -893,6 +1054,39 @@ static void knowledge_show(object *pl, const char *params) {
 }
 
 /**
+ * Player attempts something on a knowledge, get item and try it.
+ * @param pl who is trying.
+ * @param params command parameters.
+ */
+static void knowledge_do_attempt(object *pl, const char *params) {
+    knowledge_player *kp;
+    knowledge_item *item;
+    int count = atoi(params);
+
+    if (count <= 0) {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number");
+        return;
+    }
+
+    kp = knowledge_get_or_create(pl->contr);
+    item = kp->items;
+    while (item) {
+        if (count == 1) {
+            if (item->handler->attempt_alchemy == NULL) {
+                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You can't do anything with that knowledge.");
+            } else {
+                item->handler->attempt_alchemy(pl->contr, item);
+            }
+            return;
+        }
+        item = item->next;
+        count--;
+    }
+
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number");
+}
+
+/**
  * Handle the 'knowledge' for a player.
  * @param pl who is using the command.
  * @param params additional parameters.
@@ -921,6 +1115,11 @@ void command_knowledge(object *pl, const char *params) {
 
     if (strncmp(params, "show ", 5) == 0) {
         knowledge_show(pl, params + 5);
+        return;
+    }
+
+    if (strncmp(params, "attempt ", 8) == 0) {
+        knowledge_do_attempt(pl, params + 8);
         return;
     }
 

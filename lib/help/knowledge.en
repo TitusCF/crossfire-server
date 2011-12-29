@@ -7,3 +7,5 @@ With "knowledge list", you can see all you know. Additionnal parameter can restr
 With "knowledge show <number>", displays details about the specified item.
 
 With "knowledge search <text>", displays things having <text> in summary or detail.
+
+With "knowledge attempt <number>", attempts to do alchemy or equivalent based on that recipe.
