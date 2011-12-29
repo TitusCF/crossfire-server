@@ -1075,6 +1075,9 @@ int perceive_self(object *op) {
         /* now grab the 'dragon_ability'-force from the player's inventory */
         tmp = object_find_by_type_and_arch_name(op, FORCE, "dragon_ability_force");
         if (tmp != NULL) {
+            StringBuffer *levels = NULL;
+            int i;
+
             if (tmp->stats.exp == 0) {
                 snprintf(buf, sizeof(buf), "Your metabolism isn't focused on anything.");
             } else {
@@ -1082,6 +1085,22 @@ int perceive_self(object *op) {
             }
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
                           buf);
+
+            for (i = 0; i < NROFATTACKS; i++) {
+                if (atnr_is_dragon_enabled(i) && tmp->resist[i] > 0) {
+                    if (levels == NULL) {
+                        levels = stringbuffer_new();
+                        stringbuffer_append_string(levels, "Ability levels:\n");
+                    }
+                    stringbuffer_append_printf(levels, "- %s: %d\n", change_resist_msg[i], tmp->resist[i]);
+                }
+            }
+
+            if (levels != NULL) {
+                cp = stringbuffer_finish(levels);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF, cp);
+                free(cp);
+            }
         }
     }
     return 1;
