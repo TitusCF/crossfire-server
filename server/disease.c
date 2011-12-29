@@ -331,6 +331,8 @@ int infect_object(object *victim, object *disease, int force) {
     object *new_disease;
     object *owner;
 
+    victim = HEAD(victim);
+
     /* don't infect inanimate objects */
     if (!QUERY_FLAG(victim, FLAG_MONSTER) && !(victim->type == PLAYER))
         return 0;
