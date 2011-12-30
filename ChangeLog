@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Implement feature request #1676810: Throw specific items.
+Throwing will now use marked item, or items in a 'quiver of throwing items'.
+Nicolas Weeger 2011-12-30
+
 Improve 'probe' spell. Over level 15, a status bar is displayed over the target.
 Duration and precision are based on the level.
 Requires arch revision 16342 or higher.

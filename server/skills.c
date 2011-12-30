@@ -1760,23 +1760,18 @@ int write_on_item(object *pl, const char *params, object *skill) {
 
 /**
  * Find an object to throw.
- * If we request an object, then
- * we search for it in the inventory of the owner (you've
- * got to be carrying something in order to throw it!).
- * If we didnt request an object, then the top object in inventory
- * (that is "throwable", ie no throwing your skills away!)
- * is the object of choice. Also check to see if object is
- * 'throwable' (ie not applied cursed obj, worn, etc).
+ * If there is a suitable marked item, use it.
+ * Else find the first item that is of the correct race.
  *
  * @param op
  * object wishing to throw.
- * @param request
- * requested item to throw.
+ * @param race
+ * 'throwing' race.
  * @return
  * throwable object, NULL if none suitable found.
  */
-static object *find_throw_ob(object *op, const char *request) {
-    object *tmp, *other = NULL;
+static object *find_throw_ob(object *op, sstring race) {
+    object *tmp;
     char name[MAX_BUF];
 
     if (!op) { /* safety */
@@ -1793,28 +1788,31 @@ static object *find_throw_ob(object *op, const char *request) {
         }
     }
 
-    /* look through the inventory */
+    /* look through the inventory if no marked found */
     if (tmp == NULL) {
         FOR_INV_PREPARE(op, tmp2) {
-            /* can't toss invisible or inv-locked items */
-            if (tmp2->invisible || QUERY_FLAG(tmp2, FLAG_INV_LOCKED))
+            /* can't toss invisible items */
+            if (tmp2->invisible)
                 continue;
-            query_name(tmp2, name, MAX_BUF);
-            if (!request
-                || !strcmp(name, request)
-                || !strcmp(tmp2->name, request)) {
-                if (QUERY_FLAG(tmp2, FLAG_IS_THROWN)) {
-                    tmp = tmp2;
+
+            if (tmp2->type == CONTAINER && QUERY_FLAG(tmp2, FLAG_APPLIED) && tmp2->race == race) {
+                tmp = find_throw_ob(tmp2, race);
+                if (tmp != NULL) {
                     break;
                 }
-                if (other == NULL)
-                    other = tmp2;
             }
+
+            /* if not a container, then don't look if locked */
+            if (tmp2->type == CONTAINER || QUERY_FLAG(tmp2, FLAG_INV_LOCKED))
+                continue;
+
+            if (tmp2->race == race) {
+                tmp = tmp2;
+                break;
+            }
+
         } FOR_INV_FINISH();
     }
-
-    if (tmp == NULL)
-        tmp = other;
 
     /* this should prevent us from throwing away
      * cursed items, worn armour, etc. Only weapons
@@ -2173,8 +2171,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
  * actual part of op throwing.
  * @param dir
  * direction to throw into.
- * @param params
- * optional message, used to find object to throw.
  * @param skill
  * throwing skill.
  * @retval 0
@@ -2182,11 +2178,11 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
  * @retval 1
  * skill was successfully used.
  */
-int skill_throw(object *op, object *part, int dir, const char *params, object *skill) {
+int skill_throw(object *op, object *part, int dir, object *skill) {
     object *throw_ob;
 
     if (op->type == PLAYER)
-        throw_ob = find_throw_ob(op, params);
+        throw_ob = find_throw_ob(op, find_string("throwing"));
     else
         throw_ob = monster_find_throw_ob(op);
 

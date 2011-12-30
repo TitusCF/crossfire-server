@@ -553,7 +553,7 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
         break;
 
     case SK_THROWING:
-        success = skill_throw(op, part, dir, string, skill);
+        success = skill_throw(op, part, dir, skill);
         break;
 
     case SK_SET_TRAP:

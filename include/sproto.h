@@ -495,7 +495,7 @@ int remove_trap(object *op, object *skill);
 int pray(object *pl, object *skill);
 void meditate(object *pl, object *skill);
 int write_on_item(object *pl, const char *params, object *skill);
-int skill_throw(object *op, object *part, int dir, const char *params, object *skill);
+int skill_throw(object *op, object *part, int dir, object *skill);
 /* skill_util.c */
 void init_skills(void);
 void link_player_skills(object *op);
