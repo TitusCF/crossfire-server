@@ -3564,6 +3564,7 @@ Object the wise
 type 54
 food 1
 value 10
+face water_wise.111
 end
 #
 Allowed water
@@ -3573,6 +3574,7 @@ Object pearl
 type 54
 food 1
 value 50
+face water_pearl.111
 end
 #
 Allowed water
@@ -3582,6 +3584,7 @@ Object emerald
 type 54
 food 1
 value 58
+face water_emerald.111
 end
 #
 Allowed water
@@ -3591,6 +3594,7 @@ Object sapphire
 type 54
 food 1
 value 67
+face water_sapphire.111
 end
 #
 Allowed water
@@ -3600,6 +3604,7 @@ Object ruby
 type 54
 food 1
 value 76
+face water_ruby.111
 end
 #
 Allowed water
@@ -3609,6 +3614,7 @@ Object diamond
 type 54
 food 1
 value 191
+face water_diamond.111
 end
 #
 # FOOD. Types of food which can effect player status
