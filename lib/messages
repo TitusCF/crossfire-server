@@ -17,6 +17,9 @@
 #  to the sum of all chances. 0 or no line means this message will never appear.
 # TEXT: start of the message's body
 # ENDMSG: marks the end of a message's body and message.
+# QUEST: optional quest internal code and state this message will activate.
+#  Example: "QUEST TempleOfDoom 0>10" will set the quest 'TempleOfDoom' to state 10
+#  if the player didn't yet do it.
 #
 # TEXT must be the last item in a MSG block.
 #
@@ -305,3 +308,20 @@ At first, things seemed fine, and the Commander couldn’t believe his luck, as 
 Finally, the Commander decided that the city couldn’t stand this anymore, and ordered that the Demons had to be attracted faraway from the city. On this fateful day, a whole fanfare left the city, hoping that the demons would follow, attracted by the music.
 ENDMSG
 # End of extract from the wiki
+MSG G-027
+TITLE Temple of Justice
+QUEST darcap/TempleJustice 0>10
+CHANCE 1
+TEXT
+And so the Temple of Justice was founded, to show Valriel's Glory to the whole world!
+
+Oh, it was magnificient, located on the north side of the Continent, west of Darcap.
+
+And for years followers of Valriel came as pilgrims, to worship His Altar.
+
+But things started to fall over, and slowly the priests started to accumulate wealth instead of giving it back, and using it for their glory instead of Valriel's.
+
+So the Temple was slowly abandonned by pilgrims, who sought other Places Of Glory.
+
+It probably still exists, but who knows what secrets it bears.
+ENDMSG
