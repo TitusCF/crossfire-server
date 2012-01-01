@@ -46,10 +46,14 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     myParent = new QComboBox(this);
     layout->addWidget(myParent, line++, 2);
     myParent->addItem(tr("(none)"));
+
+    QStringList codes;
     foreach(const Quest* quest, manager->quests())
     {
-        myParent->addItem(quest->code());
+        codes.append(quest->code());
     }
+    codes.sort();
+    myParent->addItems(codes);
 
     layout->addWidget(new QLabel(tr("Quest file:"), this), line, 1);
     myFile = new QComboBox(this);
