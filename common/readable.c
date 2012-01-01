@@ -133,6 +133,7 @@ struct GeneralMessage {
     sstring identifier;     /**< Message identifier, can be NULL. */
     sstring title;          /**< The message's title, only used for knowledge. */
     sstring message;        /**< The message's body. */
+    sstring quest_code;     /**< Optional quest code and state this message will start. */
     GeneralMessage *next;   /**< Next message in the list. */
 };
 
@@ -781,6 +782,8 @@ static void init_msgfile(void) {
                     msg_total_chance += tmp->chance;
                 } else if (strncmp(buf, "TITLE ", 6) == 0) {
                     tmp->title = add_string(buf + 6);
+                } else if (strncmp(buf, "QUEST ", 6) == 0) {
+                    tmp->quest_code = add_string(buf + 6);
                 } else if (error_lineno != 0) {
                     LOG(llevInfo, "Warning: unknown line %s, line %d\n", buf, error_lineno);
                 }
@@ -1903,6 +1906,12 @@ static StringBuffer *msgfile_msg(object *book, size_t booksize) {
             snprintf(km, sizeof(km), "message:%s", msg->identifier);
             object_set_value(book, "knowledge_marker", km, 1);
         }
+        if (msg->quest_code) {
+            /* add a 'apply' hook to launch the quest */
+            object *event = object_create_arch(find_archetype("quest_advance_apply"));
+            FREE_AND_COPY(event->name, msg->quest_code);
+            object_insert_in_ob(event, book);
+        }
     } else
         stringbuffer_append_string(ret, "\n <undecipherable text>");
 
@@ -2099,6 +2108,8 @@ void free_all_readable(void) {
             free_string(lmsg->title);
         if (lmsg->message)
             free_string(lmsg->message);
+        if (lmsg->quest_code)
+            free_string(lmsg->quest_code);
         free(lmsg);
     }
     for (monlink = first_mon_info; monlink; monlink = nextmon) {
