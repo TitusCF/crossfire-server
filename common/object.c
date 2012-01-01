@@ -1806,7 +1806,7 @@ void object_remove(object *op) {
             sb = stringbuffer_new();
             object_dump(op, sb);
             diff = stringbuffer_finish(sb);
-            LOG(llevError, "object_remove: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", diff);
+            LOG(llevError, "object_remove: GET_MAP_OB on %s does not return object to be removed even though it appears to be on the bottom?\n%s\n", m->path, diff);
             free(diff);
 
             sb = stringbuffer_new();
