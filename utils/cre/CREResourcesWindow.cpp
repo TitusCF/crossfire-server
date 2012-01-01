@@ -521,8 +521,17 @@ void CREResourcesWindow::fillQuests()
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     myTree->addTopLevelItem(root);
 
+    QStringList codes;
+
     foreach(Quest* quest, myQuests->quests())
     {
+        codes.append(quest->code());
+    }
+    codes.sort();
+
+    foreach(QString code, codes)
+    {
+        Quest* quest = myQuests->getByCode(code);
         item = CREUtils::questNode(quest, root);
         myTreeItems.append(new CRETreeItemQuest(quest, item, this));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
