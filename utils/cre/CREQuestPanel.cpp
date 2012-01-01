@@ -62,7 +62,9 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     myFile->setInsertPolicy(QComboBox::InsertAlphabetically);
     myFile->setEditable(true);
     myFile->addItem("");
-    myFile->addItems(myQuestManager->getFiles());
+    QStringList files = myQuestManager->getFiles();
+    files.sort();
+    myFile->addItems(files);
 
     layout->addWidget(new QLabel(tr("Description:"), this), line++, 1, 1, 2);
     myDescription = new QTextEdit();
