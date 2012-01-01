@@ -1883,12 +1883,15 @@ static StringBuffer *msgfile_msg(object *book, size_t booksize) {
 
     /* get a random message for the 'book' from linked list */
     if (msg_total_chance > 0) {
+        assert(first_msg != NULL);
         msg = first_msg;
-        weight = RANDOM() % msg_total_chance;
-        for (; msg && (((msg->chance != 0) && (weight > 0)) || (msg->chance == 0)) ; ) {
+        weight = (RANDOM() % msg_total_chance) - msg->chance;
+        while (weight > 0 && msg) {
             weight -= msg->chance;
             msg = msg->next;
         }
+        /* if msg is NULL, then something is really wrong in the computation! */
+        assert(msg != NULL);
     }
 
     if (msg && strlen(msg->message) <= booksize) {
