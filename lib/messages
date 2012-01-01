@@ -325,3 +325,18 @@ So the Temple was slowly abandonned by pilgrims, who sought other Places Of Glor
 
 It probably still exists, but who knows what secrets it bears.
 ENDMSG
+MSG G-028
+TITLE The Tower of Grukk
+QUEST navar/grukk 0>10
+CHANCE 1
+TEXT
+Grukk was a rich merchant from Navar, who accumulated wealth by being the right person at the right place.
+
+Alas, all his influcence couldn't prevent him from being ostracised when Navar decided to banish all undead creatures.
+
+For some time he still stayed in his house, but then decided he couldn't bear anymore this situation.
+
+So he had a tower built, somewhere on the east shore of the continent, south of Navar, and moved all belongings here.
+
+There are rumours he still deals in some goods through intermediaries, but no one has any proof.
+ENDMSG
