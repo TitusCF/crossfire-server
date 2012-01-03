@@ -3029,6 +3029,15 @@ end
 # It would be better that it would be possible to define object
 # NONE also, and not use the fixed probability.
 #
+Allowed quiver_throwing
+chance 100
+Object Holding Throwing
+type 122
+value 100
+race throwing
+Str 80
+end
+#
 Allowed quiver
 chance 100
 Object Holding Bolts
