@@ -27,8 +27,8 @@ Here is a list of topics:
 - @ref plugin_citylife
 - @ref type_index
 - @ref page_i18n
-- @ref TYPE_BUILDER
-- @ref TYPE_MATERIAL
+- @ref page_type_160
+- @ref page_type_161
 - @ref PU_xxx
 - @ref IS_xxx
 - @ref FLAG_xxx

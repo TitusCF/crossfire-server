@@ -10,6 +10,8 @@ Types not listed here have the attributes defined in @ref page_type_0 "this page
 - @ref page_type_99 "Boots"
 - @ref page_type_104 "Bracers"
 - @ref page_type_16 "Breastplate Armor"
+- @ref page_type_160 "Builder"
+- @ref page_type_161 "Building material"
 - @ref page_type_92 "Button"
 - @ref page_type_30 "Button Trigger"
 - @ref page_type_37 "Class Changer"

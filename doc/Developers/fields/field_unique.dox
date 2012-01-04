@@ -7,7 +7,7 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_39, @ref page_type_8, @ref page_type_99, @ref page_type_104, @ref page_type_16, @ref page_type_87, @ref page_type_113, @ref page_type_100, @ref page_type_34, @ref page_type_13, @ref page_type_70, @ref page_type_33, @ref page_type_14, @ref page_type_15
+@ref page_type_39, @ref page_type_8, @ref page_type_99, @ref page_type_104, @ref page_type_16, @ref page_type_160, @ref page_type_161, @ref page_type_87, @ref page_type_113, @ref page_type_100, @ref page_type_34, @ref page_type_13, @ref page_type_70, @ref page_type_33, @ref page_type_14, @ref page_type_15
 		</td><td>            Unique items exist only one time on a server. If the item is taken,
             lost or destroyed - it's gone for good.</td>
 	</tr>
