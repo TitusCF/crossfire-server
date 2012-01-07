@@ -1537,15 +1537,19 @@ S->C: replyinfo <info_type> [options] <data>
        	Note that num_levels and the actual exp values are transmitted
         as binary values.
 
-    skill_info (no parameters)
+    skill_info (empty or '1')
 
     	This returns the skill number to skill name mappings.  In this
        	way, new skills can be added in the server, and the client can
        	use this new skill information with no changes to the code.
 
-        All data below is in text format.  Format is:
+        All data below is in text format. If the additional value if empty then format is:
 
         stat number:skill name
+
+        else format is
+
+        stat number:skill name:face number
 
         Where stat number is the number that will be used to send
         that skill information.  Example:

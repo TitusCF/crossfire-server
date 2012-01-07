@@ -97,7 +97,10 @@ void send_skill_info(socket_struct *ns, char *params) {
             break;
         }
 
-        SockList_AddPrintf(&sl, "%d:%s\n", i+CS_STAT_SKILLINFO, skill_names[i]);
+        if (params != NULL && *params == '1')
+            SockList_AddPrintf(&sl, "%d:%s:%d\n", i+CS_STAT_SKILLINFO, skill_names[i], skill_faces[i]);
+        else
+            SockList_AddPrintf(&sl, "%d:%s\n", i+CS_STAT_SKILLINFO, skill_names[i]);
     }
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

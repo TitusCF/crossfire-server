@@ -64,6 +64,10 @@ static void attack_melee_weapon(object *op, int dir, const char *string, object 
  * Will contain a number-name mapping for skills, initialized by init_skills().
  */
 const char *skill_names[NUM_SKILLS];
+/**
+ * Will contain the face numbers for the skills, initialized by init_skill().
+ */
+int skill_faces[NUM_SKILLS];
 
 /**
  * This just sets up the ::skill_names table above. The index into the array is set up by the
@@ -73,8 +77,10 @@ void init_skills(void) {
     int i;
     archetype *at;
 
-    for (i = 0; i < NUM_SKILLS; i++)
+    for (i = 0; i < NUM_SKILLS; i++) {
         skill_names[i] = NULL;
+        skill_faces[i] = -1;
+    }
 
     for (at = first_archetype; at != NULL; at = at->next) {
         if (at->clone.type == SKILL) {
@@ -85,6 +91,8 @@ void init_skills(void) {
                     at->clone.subtype, skill_names[at->clone.subtype], at->clone.skill);
             } else {
                 skill_names[at->clone.subtype] = add_refcount(at->clone.skill);
+                if (at->clone.face != NULL)
+                    skill_faces[at->clone.subtype] = at->clone.face->number;
             }
         }
     }

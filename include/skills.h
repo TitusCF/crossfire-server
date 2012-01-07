@@ -151,6 +151,7 @@
     (num == SK_PRAYING)
 
 extern const char *skill_names[NUM_SKILLS];
+extern int skill_faces[NUM_SKILLS];
 
 #ifdef WANT_UNARMED_SKILLS
 /** Table of unarmed attack skills.  Terminated by 0.  This
