@@ -656,3 +656,51 @@ void dump_artifacts(void) {
     }
     fprintf(logfile, "\n");
 }
+
+/**
+ * Get a suitable face number for representing an artifact.
+ * @param art what to get the face of.
+ * @return face, -1 as unsigned if none could be found.
+ */
+unsigned artifact_get_face(const artifact *art) {
+    const archetype *arch = first_archetype;
+
+    if (art->item->face != blank_face && art->item->face != NULL)
+        return art->item->face->number;
+
+    if (art->allowed_size > 0) {
+        if (art->allowed->name[0] == '!') {
+            linked_char *allowed;
+            while (arch) {
+                if (arch->clone.type != art->item->type)
+                    arch = arch->next;
+
+                for (allowed = art->allowed; allowed != NULL; allowed = allowed->next) {
+                    if (strcmp(arch->name, allowed->name + 1) == 0) {
+                        break;
+                    }
+                }
+                if (allowed != NULL)
+                    continue;
+
+                if (arch->clone.face == NULL)
+                    continue;
+                return arch->clone.face->number;
+            }
+            return (unsigned)-1;
+        } else {
+            const archetype *arch = find_archetype(art->allowed->name);
+            if (arch != NULL)
+                return arch->clone.face->number;
+            return (unsigned)-1;
+        }
+    }
+
+    while (arch != NULL) {
+        if (arch->clone.type == art->item->type && arch->clone.face != NULL)
+            return arch->clone.face->number;
+
+        arch = arch->next;
+    }
+    return (unsigned)-1;
+}

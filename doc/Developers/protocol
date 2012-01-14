@@ -892,6 +892,26 @@ S->C updquest <code><end><step>
 	command should have been sent by the server before an addspell
 	command is set with the same ID.
 
+S->C addknowledge <code1> <type> <title> <face> <code2 ...>
+	Tells the client to add the knowledge item(s) listed to the list of things
+	the player knows. This will be sent at login, and again whenever
+	new knowledge is learnt, if 'notifications' is 2 or greater.
+
+	The fields are;
+	<code> - (4 bytes - unsigned int) The ID number for the knowledge item. This is
+		going to be unique, for each knowledge and will be used to refer
+		to it henceforth. It is the same number the player sees with the 'knowledge' commands.
+
+  <type> (2 bytes length, unsigned int, then string of specified length)
+   The knowledge's type, as defined in the knowledge_info reply.
+
+	<title> (2 bytes length, unsigned int, then string of specified length)
+		The knowledge title.
+
+	<face>  (4 bytes, signed int)
+		The number of the face that corresponds to the knowledge item, which will be sent
+    before this packet if needed.
+
 ******************************************************************************
 COMMANDS RELATING TO THE PLAYER OBJECT/STATS
 
@@ -1346,6 +1366,7 @@ S->C: setup <option1> <value1> <option2> <value2>
       It is incremental, a value means "all notifications till this level".
       The following levels are supported:
        1: quest-related notifications ("addquest" and "updquest")
+       2: knowledge-related notifications ("addknowledge")
 
 	num_look_objects (int value)
 	    The maximum number of objects shown in the ground view. If more
@@ -1536,6 +1557,18 @@ S->C: replyinfo <info_type> [options] <data>
 
        	Note that num_levels and the actual exp values are transmitted
         as binary values.
+
+    knowledge_info
+
+      This returns the list of knowledge types the server uses.
+      One item per line, in the format:
+        type:display name:face number:attempt
+
+      'type' and 'display name' are strings.
+      'attempt' is 0 if the knowledge type isn't alchemy-like, 1 if it can be 'attempted'.
+
+      The first line will always contain empty types and names, to indicate the
+      face of the 'generic' type.
 
     skill_info (empty or '1')
 

@@ -38,6 +38,7 @@ extern void init_artifacts(void);
 extern const artifactlist *find_artifactlist(int type);
 const artifact *find_artifact(const object *op, const char *name);
 extern void dump_artifacts(void);
+extern unsigned artifact_get_face(const artifact *art);
 /* button.c */
 extern void trigger_connected(objectlink *ol, object *cause, const int state);
 extern void push_button(object *op);

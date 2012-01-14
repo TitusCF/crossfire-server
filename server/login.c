@@ -839,6 +839,7 @@ void check_login(object *op, int check_pass) {
     esrv_send_inventory(op, op);
     esrv_send_pickup(pl);
     quest_send_initial_states(pl);
+    knowledge_send_known(pl);
 
     CLEAR_FLAG(op, FLAG_FRIENDLY);
 

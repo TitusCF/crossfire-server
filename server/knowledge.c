@@ -98,9 +98,10 @@ typedef int (*knowledge_is_valid_item)(const char *code);
  * @param current where to add the information to.
  * @param item what to add, format specific to the type.
  * @param type pointer of the handler type.
+ * @param pl who we're adding the information for.
  * @return count of actually added items.
  */
-typedef int (*knowledge_add_item)(struct knowledge_player *current, const char *item, const struct knowledge_type *type);
+typedef int (*knowledge_add_item)(struct knowledge_player *current, const char *item, const struct knowledge_type *type, player *pl);
 
 /**
  * Check if an item can be used for a recipe, and fill the return buffer if it's the case.
@@ -111,6 +112,13 @@ typedef int (*knowledge_add_item)(struct knowledge_player *current, const char *
  * @return buf, if it was NULL and the recipe uses the item, a new one is allocated.
  */
 typedef StringBuffer* (*knowledge_can_use_alchemy)(sstring code, const char *item, StringBuffer *buf, int index);
+
+/**
+ * Get the face for a knowledge item.
+ * @param code knowledge internal code.
+ * @return face number, -1 (as unsigned) for invalid.
+ */
+typedef unsigned (*knowledge_face)(sstring code);
 
 struct knowledge_item;
 
@@ -131,6 +139,8 @@ typedef struct knowledge_type {
     const char *name;                   /**< Type name for player, to use with 'list'. */
     knowledge_can_use_alchemy use_alchemy; /**< If not null, checks if an item can be used in alchemy. */
     knowledge_attempt attempt_alchemy;
+    const char *face;                   /**< Face for the type, as a basename. */
+    knowledge_face item_face;           /**< Face for an item, if not defined the face it used. */
 } knowledge_type;
 
 
@@ -145,6 +155,7 @@ typedef struct knowledge_item {
 typedef struct knowledge_player {
     sstring player_name;            /**< Player's name. */
     struct knowledge_item *items;   /**< Known knowledge. */
+    int item_count;                 /**< How many items this players knows. */
     struct knowledge_player *next;  /**< Next player on the list. */
 } knowledge_player;
 
@@ -482,6 +493,36 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
 }
 
 /**
+ * Try to get a face for an alchemy recipe.
+ * @param code alchemy code.
+ * @return face, -1 as unsigned if none could be found.
+ */
+static unsigned knowledge_alchemy_face(sstring code) {
+    const recipe *rp = knowledge_alchemy_get_recipe(code);
+    const artifact *art;
+    const archetype *arch;
+
+    if (!rp) {
+        LOG(llevError, "knowledge: couldn't find recipe for %s", code);
+        return (unsigned)-1;
+    }
+
+    if (rp->arch_names == 0)
+        return (unsigned)-1;
+
+    arch = find_archetype(rp->arch_name[0]);
+    if (strcmp(rp->title, "NONE") == 0) {
+        return arch->clone.face->number;
+    }
+
+    art = locate_recipe_artifact(rp, 0);
+    if (art == NULL)
+        return arch->clone.face->number;
+
+    return artifact_get_face(art);
+}
+
+/**
  * Check whether a player already knows a knowledge item or not.
  * @param current player to check.
  * @param item what to check for.
@@ -506,10 +547,15 @@ static int knowledge_known(const knowledge_player *current, const char *item, co
  * @param current where to look for the knowledge.
  * @param item internal value of the item to give, considered atomic.
  * @param kt how to handle the knowledge type.
+ * @param pl who we're adding the information to.
  * @return 0 if item was already known, 1 else.
  */
-static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt) {
+static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt, player *pl) {
     knowledge_item *check;
+    SockList sl;
+    StringBuffer *buf;
+    char *title;
+    unsigned face;
 
     if (knowledge_known(current, item, kt)) {
         return 0;
@@ -518,9 +564,46 @@ static int knowledge_add(knowledge_player *current, const char *item, const know
     /* keep the knowledge */
     check = calloc(1, sizeof(knowledge_item));
     check->item = add_string(item);
-    check->next = current->items;
+    check->next = NULL;
     check->handler = kt;
-    current->items = check;
+    if (current->items == NULL) {
+        current->items = check;
+    } else {
+        knowledge_item *last = current->items;
+        while (last->next) {
+            last = last->next;
+        }
+        last->next = check;
+    }
+
+    current->item_count++;
+
+    if (pl->socket.notifications < 2)
+        return 1;
+
+    buf = stringbuffer_new();
+    kt->summary(item, buf);
+    title = stringbuffer_finish(buf);
+
+    if (kt->item_face != NULL)
+        face = kt->item_face(item);
+    else
+        face = find_face(kt->face, (unsigned)-1);
+
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "addknowledge ");
+    SockList_AddInt(&sl, current->item_count);
+    SockList_AddLen16Data(&sl, kt->type, strlen(kt->type));
+    if ((face != (unsigned)-1) && !(pl->socket.faces_sent[face]&NS_FACESENT_FACE))
+        esrv_send_face(&pl->socket, face, 0);
+    SockList_AddLen16Data(&sl, title, strlen(title));
+    SockList_AddInt(&sl, face);
+
+    free(title);
+
+    Send_With_Handling(&pl->socket, &sl);
+    SockList_Term(&sl);
+
     return 1;
 }
 
@@ -568,9 +651,10 @@ static int knowledge_monster_validate(const char *item) {
  * @param current where to add the information to.
  * @param item monster to add, can be separated by dots for multiple ones.
  * @param type pointer of the monster type.
+ * @param pl who we're adding the information to.
  * @return count of actually added items.
  */
-static int knowledge_monster_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type) {
+static int knowledge_monster_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type, player *pl) {
     char *dup = strdup_local(item);
     char *pos, *first = dup;
     int added = 0;
@@ -579,12 +663,26 @@ static int knowledge_monster_add(struct knowledge_player *current, const char *i
         pos = strchr(first, ':');
         if (pos)
             *pos = '\0';
-        added += knowledge_add(current, first, type);
+        added += knowledge_add(current, first, type, pl);
         first = pos ? pos + 1 : NULL;
     }
 
     free(dup);
     return added;
+}
+
+/**
+ * Get the face for a monster.
+ * @param code monster's code.
+ * @return face, -1 as unsigned if invalid.
+ */
+static unsigned knowledge_monster_face(sstring code) {
+    const archetype *monster = find_archetype(code);
+
+    if (!monster || monster->clone.face == blank_face || monster->clone.face == NULL)
+        return (unsigned)-1;
+
+    return monster->clone.face->number;
 }
 
 /**
@@ -658,9 +756,10 @@ static int knowledge_god_validate(const char *item) {
  * @param current where to add the information to.
  * @param item god to add, a dot separating the exact knowledge.
  * @param type pointer of the monster type.
+ * @param pl who we're adding the information to.
  * @return count of actually added items.
  */
-static int knowledge_god_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type) {
+static int knowledge_god_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type, player *pl) {
     char *dup = strdup_local(item), *pos = strchr(dup, ':');
     StringBuffer *buf;
     int what;
@@ -697,7 +796,7 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
     free(dup);
 
     /* Not known, so just add it regularly. */
-    return knowledge_add(current, item, type);
+    return knowledge_add(current, item, type, pl);
 }
 
 /**
@@ -744,11 +843,11 @@ static int knowledge_message_validate(const char *item) {
 
 /** All handled knowledge items. */
 static const knowledge_type const knowledges[] = {
-    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_alchemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item, knowledge_alchemy_attempt },
-    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL, NULL },
-    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL, NULL },
-    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL, NULL },
-    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
+    { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_alchemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item, knowledge_alchemy_attempt, "knowledge_recipes.111", knowledge_alchemy_face },
+    { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL, NULL, "knowledge_monsters.111", knowledge_monster_face },
+    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL, NULL, "knowledge_gods.111", NULL },
+    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL, NULL, "knowledge_messages.111", NULL },
+    { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
 
 
@@ -845,6 +944,7 @@ static void knowledge_read_player_data(knowledge_player *kp) {
         item->next = kp->items;
         item->handler = type;
         kp->items = item;
+        kp->item_count++;
     }
     fclose(file);
 }
@@ -910,7 +1010,7 @@ void knowledge_read(player *pl, object *book) {
     }
 
     none = (current->items == NULL);
-    added = type->add(current, dot, type);
+    added = type->add(current, dot, type, pl);
     free(copy);
 
     if (added) {
@@ -1238,4 +1338,85 @@ void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
         result);
     free(result);
+}
+
+/**
+ * Send the reply_info for 'knowledge_info'.
+ * @param ns socket to send information to.
+ */
+void knowledge_send_info(socket_struct *ns) {
+    int i;
+    unsigned face;
+    SockList sl;
+
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "replyinfo knowledge_info\n");
+    SockList_AddPrintf(&sl, "::%u:0\n", find_face("knowledge_generic.111", (unsigned)-1));
+
+    for (i = 0; knowledges[i].type != NULL; i++) {
+        face = find_face(knowledges[i].face, (unsigned)-1);
+        if (face != (unsigned)-1 && (!ns->faces_sent[face] & NS_FACESENT_FACE))
+            esrv_send_face(ns, face, 0);
+
+        SockList_AddPrintf(&sl, "%s:%s:%u:%s\n", knowledges[i].type, knowledges[i].name, face, knowledges[i].attempt_alchemy != NULL ? "1" : "0");
+    }
+
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
+}
+
+/**
+ * Send initial known knowledge to player, if requested.
+ * @param pl who to send knowledge for.
+ */
+void knowledge_send_known(player *pl) {
+    SockList sl;
+    size_t size;
+    const knowledge_item *item;
+    const knowledge_player *kp;
+    int index = 1;
+    StringBuffer *buf;
+    char *title;
+    unsigned face;
+
+    if (pl->socket.notifications < 2)
+        return;
+
+    kp = knowledge_get_or_create(pl);
+
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "addknowledge ");
+    for (item = kp->items; item != NULL; item = item->next) {
+
+        buf = stringbuffer_new();
+        item->handler->summary(item->item, buf);
+        title = stringbuffer_finish(buf);
+
+        if (item->handler->item_face != NULL)
+            face = item->handler->item_face(item->item);
+        else
+            face = find_face(item->handler->face, (unsigned)-1);
+
+        size = 4 + (2 + strlen(item->handler->type)) + (2 + strlen(title)) + 4;
+
+        if (SockList_Avail(&sl) < size) {
+            Send_With_Handling(&pl->socket, &sl);
+            SockList_Reset(&sl);
+            SockList_AddString(&sl, "addknowledge ");
+        }
+
+        SockList_AddInt(&sl, index);
+        SockList_AddLen16Data(&sl, item->handler->type, strlen(item->handler->type));
+        if ((face != (unsigned)-1) && !(pl->socket.faces_sent[face]&NS_FACESENT_FACE))
+            esrv_send_face(&pl->socket, face, 0);
+        SockList_AddLen16Data(&sl, title, strlen(title));
+        SockList_AddInt(&sl, face);
+
+        free(title);
+
+        index++;
+    }
+
+    Send_With_Handling(&pl->socket, &sl);
+    SockList_Term(&sl);
 }

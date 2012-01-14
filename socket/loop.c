@@ -193,6 +193,8 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
         send_new_char_info(ns);
     else if (!strcmp(buf,"startingmap"))
         send_map_info(ns);
+    else if (!strcmp(buf, "knowledge_info"))
+        knowledge_send_info(ns);
     else
         Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

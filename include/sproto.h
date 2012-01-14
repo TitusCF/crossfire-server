@@ -319,6 +319,8 @@ void command_knowledge(object *pl, const char *params);
 void free_knowledge(void);
 int knowledge_player_knows(const player *pl, const char *knowledge);
 void knowledge_item_can_be_used_alchemy(object *op, const object *item);
+void knowledge_send_info(socket_struct *ns);
+void knowledge_send_known(player *pl);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name);
