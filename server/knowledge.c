@@ -501,6 +501,7 @@ static unsigned knowledge_alchemy_face(sstring code) {
     const recipe *rp = knowledge_alchemy_get_recipe(code);
     const artifact *art;
     const archetype *arch;
+    unsigned face;
 
     if (!rp) {
         LOG(llevError, "knowledge: couldn't find recipe for %s", code);
@@ -519,7 +520,11 @@ static unsigned knowledge_alchemy_face(sstring code) {
     if (art == NULL)
         return arch->clone.face->number;
 
-    return artifact_get_face(art);
+    face = artifact_get_face(art);
+    if (face == (unsigned)-1)
+        return arch->clone.face->number;
+
+    return face;
 }
 
 /**
@@ -1392,9 +1397,11 @@ void knowledge_send_known(player *pl) {
         item->handler->summary(item->item, buf);
         title = stringbuffer_finish(buf);
 
+        face = (unsigned)-1;
         if (item->handler->item_face != NULL)
             face = item->handler->item_face(item->item);
-        else
+
+        if (face == (unsigned)-1)
             face = find_face(item->handler->face, (unsigned)-1);
 
         size = 4 + (2 + strlen(item->handler->type)) + (2 + strlen(title)) + 4;
