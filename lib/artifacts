@@ -4184,6 +4184,7 @@ type 5
 other_arch spell_summon_golem
 value 1
 level -20
+face figurine_clay.111
 end
 #
 Allowed figurine_generic
@@ -4193,6 +4194,7 @@ type 5
 other_arch spell_summon_earth_elemental
 level -20
 value 1
+face figurine_stone.111
 end
 #
 Allowed figurine_generic
@@ -4202,6 +4204,7 @@ type 5
 other_arch spell_summon_air_elemental
 level -20
 value 1
+face figurine_whirlwind.111
 end
 #
 Allowed figurine_generic
@@ -4211,6 +4214,7 @@ type 5
 other_arch spell_summon_water_elemental
 level -20
 value 1
+face figurine_great_wave.111
 end
 #
 Allowed figurine_generic
@@ -4220,6 +4224,7 @@ type 5
 other_arch spell_summon_fire_elemental
 value 1
 level -20
+face figurine_flame.111
 end
 #
 Allowed figurine_generic
