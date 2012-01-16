@@ -1107,7 +1107,8 @@ void command_create(object *op, const char *params) {
     if (art)
         give_artifact_abilities(tmp, art->item);
     if (need_identify(tmp)) {
-        identify(tmp);
+        SET_FLAG(tmp, FLAG_IDENTIFIED);
+        CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
     }
 
     /*
