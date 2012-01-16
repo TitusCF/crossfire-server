@@ -520,11 +520,10 @@ static unsigned knowledge_alchemy_face(sstring code) {
     if (art == NULL)
         return arch->clone.face->number;
 
-    face = artifact_get_face(art);
-    if (face == (unsigned)-1)
-        return arch->clone.face->number;
+    if (art->item->face != blank_face && art->item->face != NULL)
+        return art->item->face->number;
 
-    return face;
+    return arch->clone.face->number;
 }
 
 /**
