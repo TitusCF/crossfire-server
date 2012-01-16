@@ -53,6 +53,10 @@
 #
 #	item_power replaces the item's value.
 #
+# 'face' if defined replaces the item's face.
+#
+# 'animation' if defined replaces the item's animation.
+#
 #	items in inventory (through an "arch xxx", like in maps)
 #	will be copied into the item's inventory.
 #
