@@ -477,7 +477,7 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
     if (GET_MAP_FLAGS(map, x, y)&P_IS_ALIVE) {
         FOR_MAP_PREPARE(map, x, y, the_monster)
             if (QUERY_FLAG(the_monster, FLAG_ALIVE))
-                return the_monster;
+                return HEAD(the_monster);
         FOR_MAP_FINISH();
     }
 
