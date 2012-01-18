@@ -357,6 +357,9 @@ void add_abilities(object *op, const object *change) {
                 object_free_drop_inventory(tmp_obj);
             }
             tmp_obj = arch_to_object(change->other_arch);
+            /* This is an artifact, so this function will be called at load time,
+             * thus we don't need to keep the inventory */
+            SET_FLAG(tmp_obj, FLAG_NO_SAVE);
             object_insert_in_ob(tmp_obj, op);
         }
         /* No harm setting this for potions/horns */
