@@ -212,7 +212,7 @@ void i18n_init(void) {
         i18n_files[i18n_count].messages = NULL;
 
         while (fgets(line, MAX_BUF, fp)) {
-            if (strstr(line, "#") != line) {
+            if (line[0] != '#') {
                 line[strlen(line)-1] = '\0'; /* erase the final newline that messes things. */
 
                 i18n_files[i18n_count].messages = realloc(i18n_files[i18n_count].messages, (i18n_files[i18n_count].count + 1) * sizeof(i18n_message));
