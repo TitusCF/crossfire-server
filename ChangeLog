@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Do not fail build when not building in a working copy.
+Andreas Kirschbaum 2012-01-19
+
 Implement feature request #1676810: Throw specific items.
 Throwing will now use marked item, or items in a 'quiver of throwing items'.
 Nicolas Weeger 2011-12-30

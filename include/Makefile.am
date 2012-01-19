@@ -25,6 +25,7 @@ svnversion.h: FORCE
 	fi; \
 	if test -n "$(SVNVERSION)" -a -d "$(top_srcdir)/.svn"; \
 	then OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo_n '#define SVN_REV "'; $(SVNVERSION) -n "$(top_srcdir)"`'"'; \
+	else OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo '#define SVN_REV "unknown"'`; \
 	fi; \
 	if test ! -e svnversion.h; then \
 		echo "$$OUTPUT_DATA" > svnversion.h; \
