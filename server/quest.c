@@ -1300,7 +1300,8 @@ void quest_send_initial_states(player *pl) {
 /**
  * Ensure the quest state is correctly saved for a player.
  * This function should only be called once, when the player's save directory
- * is created. All other quest functions save the state automatically.
+ * is created. All other quest functions save the state automatically, but save
+ * can only happen when the player directory exists.
  * @param pl who to save quests for.
  */
 void quest_first_player_save(player *pl) {
