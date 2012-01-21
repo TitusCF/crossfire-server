@@ -474,8 +474,9 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
     /* do alchemy */
     use_alchemy(pl->ob);
 
-    /* don't forget to slow the player */
-    pl->ob->speed_left -= 1.0;
+    /* don't forget to slow the player: 1 for alchemy, 1 for each ingredient put,
+     * ingrediants taken are handler when picking */
+    pl->ob->speed_left -= 1.0 * (rp->ingred_count + 1);
 
     /* safety: ensure cauldron is still there, and player is still above */
     if (object_was_destroyed(cauldron, cauldron_tag) || map != pl->ob->map || x != pl->ob->x || y != pl->ob->y) {
@@ -487,6 +488,7 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
         inv = cauldron->inv;
         examine(pl->ob, inv);
         command_take(pl->ob, "");
+        pl->ob->speed_left -= 1.0;
         if (inv == cauldron->inv)
             break;
     }
