@@ -886,6 +886,8 @@ void get_password(object *op) {
  * player.
  */
 void play_again(object *op) {
+    SockList sl;
+
     player_set_state(op->contr, ST_PLAY_AGAIN);
     op->chosen_skill = NULL;
     send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
@@ -904,6 +906,17 @@ void play_again(object *op) {
      * the map is null or not swapped out.
      */
     op->map = NULL;
+
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "player ");
+    SockList_AddInt(&sl, 0);
+    SockList_AddInt(&sl, 0);
+    SockList_AddInt(&sl, 0);
+    SockList_AddChar(&sl, 0);
+
+    Send_With_Handling(&op->contr->socket, &sl);
+    SockList_Term(&sl);
+
 }
 
 /**
