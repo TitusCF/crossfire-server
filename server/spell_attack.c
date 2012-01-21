@@ -988,9 +988,13 @@ int mood_change(object *op, object *caster, object *spell) {
                  */
                 if (head->level > level)
                     continue;
-                if (random_roll(0, 100, caster, PREFER_LOW) >= (20+MIN(50, 2*(level-head->level))))
-                    /* Failed, no effect */
+                if (random_roll(0, 100, caster, PREFER_LOW) >= (20+MIN(50, 2*(level-head->level)))) {
+                    /* Additionnally, randomly make the monster immune to that spell. */
+                    if (random_roll(0, 100, caster, PREFER_LOW) >= 50) {
+                        object_set_value(head, "no_mood_change", "1", 1);
+                    }
                     continue;
+                }
 
                 /*
                  * There was no way to ensure immunity, so added a key/value for that.
