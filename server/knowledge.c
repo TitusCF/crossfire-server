@@ -1353,9 +1353,13 @@ void knowledge_send_info(socket_struct *ns) {
     unsigned face;
     SockList sl;
 
+    face = find_face("knowledge_generic.111", (unsigned)-1);
+    if (face != (unsigned)-1 && (!ns->faces_sent[face] & NS_FACESENT_FACE))
+        esrv_send_face(ns, face, 0);
+
     SockList_Init(&sl);
     SockList_AddString(&sl, "replyinfo knowledge_info\n");
-    SockList_AddPrintf(&sl, "::%u:0\n", find_face("knowledge_generic.111", (unsigned)-1));
+    SockList_AddPrintf(&sl, "::%u:0\n", face);
 
     for (i = 0; knowledges[i].type != NULL; i++) {
         face = find_face(knowledges[i].face, (unsigned)-1);
