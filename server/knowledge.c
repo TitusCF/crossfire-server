@@ -501,7 +501,6 @@ static unsigned knowledge_alchemy_face(sstring code) {
     const recipe *rp = knowledge_alchemy_get_recipe(code);
     const artifact *art;
     const archetype *arch;
-    unsigned face;
 
     if (!rp) {
         LOG(llevError, "knowledge: couldn't find recipe for %s", code);
