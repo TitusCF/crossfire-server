@@ -111,6 +111,7 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->faceset = 0;
     ns->facecache = 0;
     ns->sound = 0;
+    ns->sounds_this_tick = 0;
     ns->monitor_spells = 0;
     ns->darkness = 1;
     ns->status = Ns_Add;
