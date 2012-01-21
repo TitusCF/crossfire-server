@@ -890,7 +890,14 @@ void play_again(object *op) {
 
     player_set_state(op->contr, ST_PLAY_AGAIN);
     op->chosen_skill = NULL;
-    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
+
+    /*
+     * For old clients, ask if they want to play again.
+     * For clients with account support, just return to character seletion (see below).
+     */
+    if (op->contr->socket.login_method == 0) {
+        send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
+    }
     /* a bit of a hack, but there are various places early in th
      * player creation process that a user can quit (eg, roll
      * stats) that isn't removing the player.  Taking a quick
@@ -917,6 +924,9 @@ void play_again(object *op) {
     Send_With_Handling(&op->contr->socket, &sl);
     SockList_Term(&sl);
 
+    if (op->contr->socket.login_method > 0) {
+        receive_play_again(op, 'a');
+    }
 }
 
 /**
