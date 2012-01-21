@@ -428,6 +428,14 @@ int save_player(object *op, int flag) {
         esrv_send_inventory(op, op);
 
     chmod(filename, SAVE_MODE);
+
+    /* if this is the first player save, quest or knowledge states can be unsaved */
+    if (!op->contr->has_directory) {
+        op->contr->has_directory = 1;
+        knowledge_first_player_save(op->contr);
+        quest_first_player_save(op->contr);
+    }
+
     return 1;
 }
 
@@ -835,6 +843,8 @@ void check_login(object *op, int check_pass) {
      * we'll try to update spells from fix_object.
      */
     fix_object(op);
+
+    pl->has_directory = 1;
 
     esrv_send_inventory(op, op);
     esrv_send_pickup(pl);

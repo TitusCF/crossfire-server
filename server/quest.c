@@ -809,7 +809,8 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
         qs->sent_to_client = 1;
     }
 
-    quest_write_player_data(pq);
+    if (pl->has_directory)
+        quest_write_player_data(pq);
     update_quests(pl);
     LOG(llevDebug, "quest_set_player_state %s %s %d\n", pl->ob->name, quest_code, state);
 
@@ -1294,4 +1295,17 @@ void quest_send_initial_states(player *pl) {
 
     Send_With_Handling(&pl->socket, &sl);
     SockList_Term(&sl);
+}
+
+/**
+ * Ensure the quest state is correctly saved for a player.
+ * This function should only be called once, when the player's save directory
+ * is created. All other quest functions save the state automatically.
+ * @param pl who to save quests for.
+ */
+void quest_first_player_save(player *pl) {
+    quest_player *qp = get_quest(pl);
+    if (qp != NULL && qp->quests != NULL) {
+        quest_write_player_data(qp);
+    }
 }

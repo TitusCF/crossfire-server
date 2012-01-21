@@ -159,6 +159,7 @@ typedef struct pl {
     uint32      peaceful:1;          /**< If set, won't attack friendly creatures. */
     uint32      hidden:1;            /**< If True, player (DM) is hidden from view. */
     uint32      no_shout:1;          /**< if True, player is *not *able to use shout command. */
+    uint32      has_directory:1;     /**< If 0, the player was not yet saved, its directory doesn't exist. */
     const char  *invis_race;         /**< What race invisible to? */
 
     object      *last_skill_ob[NUM_SKILLS];     /**< Exp objects sent to client. */

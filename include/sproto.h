@@ -321,6 +321,7 @@ int knowledge_player_knows(const player *pl, const char *knowledge);
 void knowledge_item_can_be_used_alchemy(object *op, const object *item);
 void knowledge_send_info(socket_struct *ns);
 void knowledge_send_known(player *pl);
+void knowledge_first_player_save(player *pl);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name);
@@ -457,6 +458,7 @@ void dump_quests(void);
 void free_quest(void);
 void free_quest_definitions(void);
 void quest_send_initial_states(player *pl);
+void quest_first_player_save(player *pl);
 /* resurrection.c */
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg);
 void dead_player(object *op);

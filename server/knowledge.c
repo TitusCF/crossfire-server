@@ -1023,7 +1023,9 @@ void knowledge_read(player *pl, object *book) {
             draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "Use the 'knowledge' command to browse what you write down (this message will not appear anymore).");
         }
     }
-    knowledge_write_player_data(current);
+
+    if (pl->has_directory)
+        knowledge_write_player_data(current);
 }
 
 /**
@@ -1428,4 +1430,23 @@ void knowledge_send_known(player *pl) {
 
     Send_With_Handling(&pl->socket, &sl);
     SockList_Term(&sl);
+}
+
+/**
+ * Ensure the knowledge state is correctly saved for the player.
+ * This function should only be called once, when the player's save directory
+ * is created. All other knowledge functions save the state automatically, but save
+ * can only happen when the player directory exists.
+ * @param pl who to save the state for.
+ */
+void knowledge_first_player_save(player *pl) {
+    knowledge_player *cur = knowledge_global;
+
+    while (cur) {
+        if (cur->player_name == pl->ob->name) {
+            knowledge_write_player_data(cur);
+        }
+        cur = cur->next;
+    }
+
 }
