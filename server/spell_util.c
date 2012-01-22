@@ -687,6 +687,11 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
     int mflags;
     mapstruct *m;
 
+    if (dir < 0 || dir > 8) {
+        LOG(llevError, "Invalid direction %d in fire_arch_from_position for %s\n", dir, spell->name);
+        dir = RANDOM() % 8 + 1;
+    }
+
     if (spell->other_arch == NULL)
         return 0;
 
