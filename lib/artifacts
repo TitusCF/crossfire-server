@@ -3097,7 +3097,18 @@ dam -8
 food 50
 end
 #
-Allowed all
+Allowed arrow
+chance 100
+Object Fire
+attacktype 4
+type 13
+dam -8
+value 6
+animation arrow_fire
+face arrow_fire.101
+end
+#
+Allowed !arrow
 chance 100
 Object Fire
 attacktype 4
@@ -3106,7 +3117,18 @@ dam -8
 value 6
 end
 #
-Allowed all
+Allowed arrow
+chance 100
+Object Frost
+attacktype 16
+type 13
+dam -8
+value 6
+animation arrow_frost
+face arrow_frost.101
+end
+#
+Allowed !arrow
 chance 100
 Object Frost
 attacktype 16
@@ -3115,7 +3137,20 @@ dam -8
 value 6
 end
 #
-Allowed all
+Allowed arrow
+chance 100
+difficulty 6
+Object Poison
+attacktype 1025
+type 13
+dam -8
+value 6
+magic 1
+animation arrow_poison
+face arrow_poison.101
+end
+#
+Allowed !arrow
 chance 100
 difficulty 6
 Object Poison
@@ -3126,7 +3161,18 @@ value 6
 magic 1
 end
 #
-Allowed all
+Allowed arrow
+chance 100
+Object Lightning
+attacktype 8
+type 13
+dam -8
+value 6
+animation arrow_lightning
+face arrow_lightning.101
+end
+#
+Allowed !arrow
 chance 100
 Object Lightning
 attacktype 8
