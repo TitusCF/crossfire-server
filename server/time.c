@@ -553,7 +553,7 @@ object *fix_stopped_arrow(object *op) {
     op->stats.hp = 0;
     op->stats.grace = 0;
     op->level = 0;
-    op->face = op->arch->clone.face;
+    animate_object(op, 0);
     object_clear_owner(op); /* So that stopped arrows will be saved */
     object_update(op, UP_OBJ_FACE);
     return op;
