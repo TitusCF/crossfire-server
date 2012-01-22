@@ -290,7 +290,8 @@ void add_abilities(object *op, const object *change) {
     if (change->animation_id != 0 && op->arch != NULL) {
         /* op->arch can be NULL when called from artifact_msg(). */
         op->animation_id = change->animation_id;
-        SET_FLAG(op, FLAG_ANIMATE);
+        if (!QUERY_FLAG(op, FLAG_IS_TURNABLE))
+            SET_FLAG(op, FLAG_ANIMATE);
         animate_object(op, op->facing);
     }
 
