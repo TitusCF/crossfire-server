@@ -280,6 +280,7 @@ typedef struct struct_map_info {
     struct_race_list monsters;
 
     struct_npc_list npcs;
+    struct_npc_list readable;
 
     struct struct_map_info *tiled_group;
     int height, width;
@@ -1468,14 +1469,14 @@ static struct_npc_info *create_npc_info(const object *npc) {
  * @param npc
  * NPC to link. Must have a name and message.
  */
-static void add_npc_to_map(struct_map_info *map, const object *npc) {
-    if (map->npcs.count == map->npcs.allocated) {
-        map->npcs.allocated += 50;
-        map->npcs.npc = realloc(map->npcs.npc, map->npcs.allocated*sizeof(struct_npc_info *));
+static void add_npc_to_map(struct_npc_list *list, const object *npc) {
+    if (list->count == list->allocated) {
+        list->allocated += 50;
+        list->npc = realloc(list->npc, list->allocated*sizeof(struct_npc_info *));
     }
 
-    map->npcs.npc[map->npcs.count] = create_npc_info(npc);
-    map->npcs.count++;
+    list->npc[list->count] = create_npc_info(npc);
+    list->count++;
 }
 /* end of NPC stuff */
 
@@ -1521,6 +1522,7 @@ static struct_map_info *create_map_info(void) {
     init_struct_map_in_quest_list(&add->quests);
     init_race_list(&add->monsters);
     init_npc_list(&add->npcs);
+    init_npc_list(&add->readable);
     add->tiled_group = NULL;
 
     return add;
@@ -2017,7 +2019,9 @@ static void process_map(struct_map_info *info) {
 
                     add_monster(item, info);
                     if ((QUERY_FLAG(item, FLAG_UNAGGRESSIVE) || QUERY_FLAG(item, FLAG_FRIENDLY)) && (item->msg != arch->clone.msg) && (item->msg != NULL))
-                        add_npc_to_map(info, item);
+                        add_npc_to_map(&info->npcs, item);
+                } else if ((item->type == SIGN || item->type == BOOK) && (item->msg != item->arch->clone.msg) && (item->msg != NULL)) {
+                    add_npc_to_map(&info->readable, item);
                 }
 
                 if (item->invisible)
@@ -3448,6 +3452,40 @@ static void write_npc_list(void) {
 }
 
 /**
+ * Write the list of all found SIGN and BOOK in maps.
+ */
+static void write_readable_list(void) {
+    FILE *file;
+    char path[MAX_BUF];
+    int map, readable;
+
+    printf("Writing readable info file...");
+
+    snprintf(path, sizeof(path), "%s/%s", root, "readable_info.html");
+    file = fopen(path, "wb+");
+
+    fprintf(file, "<html>\n<head>\n<title>SIGN and BOOK with a special message</title>\n</head>\n<body>\n");
+    fprintf(file, "<p>This is a list of SIGN and BOOK with a special message.</p>");
+    fprintf(file, "<ul>\n");
+
+    for (map = 0; map < maps_list.count; map++) {
+        if (maps_list.maps[map]->readable.count == 0)
+            continue;
+        fprintf(file, "<li>%s</li>\n<ul>", maps_list.maps[map]->path);
+        for (readable = 0; readable < maps_list.maps[map]->readable.count; readable++) {
+            fprintf(file, "<li>%s (%d,%d): <br /><pre>%s</pre></li>\n", maps_list.maps[map]->readable.npc[readable]->name, maps_list.maps[map]->readable.npc[readable]->x, maps_list.maps[map]->readable.npc[readable]->y, maps_list.maps[map]->readable.npc[readable]->message);
+        }
+        fprintf(file, "</ul>\n</li>\n");
+    }
+
+    fprintf(file, "</ul>\n");
+    fprintf(file, "</body>\n</html>\n");
+
+    fclose(file);
+    printf("done.\n");
+}
+
+/**
  * Prints usage information, and exit.
  *
  * @param program
@@ -3751,6 +3789,7 @@ int main(int argc, char **argv) {
     write_equipment_index();
     write_race_index();
     write_npc_list();
+    write_readable_list();
 
     return 0;
 }
@@ -3910,7 +3949,10 @@ int execute_event(object *op, int eventcode, object *activator, object *third, c
 int execute_global_event(int eventcode, ...) {
     return 0;
 }
-
+/*
+ * This a modified version of apply_auto: BOOK are not generated, so they don't pollute
+ * the readable list.
+ */
 int apply_auto(object *op) {
     object *tmp = NULL;
     int i;
@@ -3925,7 +3967,7 @@ int apply_auto(object *op) {
                 ;
             if (tmp == NULL)
                 return 0;
-            if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+            if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED) || tmp->type == BOOK) {
                 object_free_drop_inventory(tmp);
                 tmp = NULL;
             }
@@ -3941,7 +3983,7 @@ int apply_auto(object *op) {
             return 0;
 
         while ((op->stats.hp--) > 0)
-            create_treasure(op->randomitems, op, op->map ? GT_ENVIRONMENT : 0, op->stats.exp ? (int)op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
+            create_treasure(op->randomitems, op, 0, op->stats.exp ? (int)op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
 
         /* If we generated an object and put it in this object inventory,
          * move it to the parent object as the current object is about
@@ -3950,7 +3992,7 @@ int apply_auto(object *op) {
          */
         FOR_INV_PREPARE(op, tmp) {
             object_remove(tmp);
-            if (op->env)
+            if (op->env && tmp->type != BOOK)
                 object_insert_in_ob(tmp, op->env);
             else
                 object_free_drop_inventory(tmp);
