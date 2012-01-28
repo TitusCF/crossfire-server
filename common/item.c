@@ -201,9 +201,9 @@ static const typedata item_types[] = {
     { POTION_RESIST_EFFECT, "potion effect", "potion effects", 0, 0 },
     { CLOSE_CON, "closed container", "closed container", 0, 0 },
     { CONTAINER, "container", "containers", SK_ALCHEMY, 0 },
-    { ARMOUR_IMPROVER, "armour improver", "armour improvers", 0, 0 },
-    { WEAPON_IMPROVER, "weapon improver", "weapon improvers", 0, 0 },
-    { SKILLSCROLL, "skillscroll", "skillscrolls", 0, 0 },
+    { ARMOUR_IMPROVER, "armour improver", "armour improvers", SK_LITERACY, 0 },
+    { WEAPON_IMPROVER, "weapon improver", "weapon improvers", SK_LITERACY, 0 },
+    { SKILLSCROLL, "skillscroll", "skillscrolls", SK_LITERACY, 0 },
     { DEEP_SWAMP, "deep swamp", "deep swamps", 0, 0 },
     { IDENTIFY_ALTAR, "identify altar", "identify altars", 0, 0 },
     { SHOP_INVENTORY, "inventory list", "inventory lists", 0, 0 },
@@ -1375,6 +1375,8 @@ int need_identify(const object *op) {
     case POISON:
     case BOOK:
     case SKILL_TOOL:
+    case ARMOUR_IMPROVER:
+    case WEAPON_IMPROVER:
         return 1;
     }
     return 0;
@@ -1420,7 +1422,19 @@ void object_give_identified_properties(object *op) {
         animate_object(op, op->facing);
         object_set_value(op, "identified_animation", NULL, 0);
     }
+
+    key = object_get_value(op, "identified_name");
+    if (key != NULL) {
+        FREE_AND_COPY(op->name, key);
+        object_set_value(op, "identified_name", NULL, 0);
+    }
+    key = object_get_value(op, "identified_name_pl");
+    if (key != NULL) {
+        FREE_AND_COPY(op->name_pl, key);
+        object_set_value(op, "identified_name_pl", NULL, 0);
+    }
 }
+
 /**
  * Identifies an item.
  * Supposed to fix face-values as well here, but later.
