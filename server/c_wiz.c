@@ -1109,6 +1109,7 @@ void command_create(object *op, const char *params) {
     if (need_identify(tmp)) {
         SET_FLAG(tmp, FLAG_IDENTIFIED);
         CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+        object_give_identified_properties(tmp);
     }
 
     /*

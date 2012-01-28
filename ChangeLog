@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Make artifacts hide their properties when not identified.
+Nicolas Weeger 2012-01-28
+
 Do not fail build when not building in a working copy.
 Andreas Kirschbaum 2012-01-19
 

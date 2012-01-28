@@ -1381,6 +1381,47 @@ int need_identify(const object *op) {
 }
 
 /**
+ * Ensure op has all its "identified" properties set.
+ * @param op object to process.
+ */
+void object_give_identified_properties(object *op) {
+    sstring key;
+
+    key = object_get_value(op, "identified_face");
+    if (key != NULL) {
+        op->face = &new_faces[find_face(key, op->face->number)];
+        /* if the face is defined, clean the animation, because else
+         * the face can be lost ; if an animation is defined, it'll be
+         * processed later on */
+        CLEAR_FLAG(op, FLAG_CLIENT_ANIM_RANDOM);
+        CLEAR_FLAG(op, FLAG_CLIENT_ANIM_SYNC);
+        op->anim_speed = 0;
+        op->animation_id = 0;
+        object_set_value(op, "identified_face", NULL, 0);
+    }
+
+    if (object_get_value(op, "identified_anim_random") != NULL) {
+        SET_FLAG(op, FLAG_CLIENT_ANIM_RANDOM);
+        object_set_value(op, "identified_anim_random", NULL, 0);
+    }
+
+    key = object_get_value(op, "identified_anim_speed");
+    if (key != NULL) {
+        op->anim_speed = atoi(key);
+        op->last_anim = 1;
+        object_set_value(op, "identified_anim_speed", NULL, 0);
+    }
+
+    key = object_get_value(op, "identified_animation");
+    if (key != NULL) {
+        op->animation_id = atoi(key);
+        if (!QUERY_FLAG(op, FLAG_IS_TURNABLE))
+            SET_FLAG(op, FLAG_ANIMATE);
+        animate_object(op, op->facing);
+        object_set_value(op, "identified_animation", NULL, 0);
+    }
+}
+/**
  * Identifies an item.
  * Supposed to fix face-values as well here, but later.
  * Note - this may merge op with other object, so
@@ -1399,6 +1440,8 @@ object *identify(object *op) {
     SET_FLAG(op, FLAG_IDENTIFIED);
     CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
     CLEAR_FLAG(op, FLAG_NO_SKILL_IDENT);
+
+    object_give_identified_properties(op);
 
     /*
      * We want autojoining of equal objects:

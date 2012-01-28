@@ -425,6 +425,10 @@ static void check_loaded_object(object *op) {
         object_set_flag_inv(op, FLAG_IS_A_TEMPLATE);
     }
 
+    /* if the item is identified, ensure we got the correct face */
+    if (QUERY_FLAG(op, FLAG_IDENTIFIED))
+        object_give_identified_properties(op);
+
     /* Here we'll handle custom monsters. In order to handle them correctly, especially in the fix_object
      * method, we'll create a new temporary archetype containing defined values.
      * Of course this doesn't apply when loading archetypes or artifacts.

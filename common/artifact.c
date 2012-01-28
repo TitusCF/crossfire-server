@@ -267,32 +267,26 @@ int legal_artifact_combination(const object *op, const artifact *art) {
  */
 void add_abilities(object *op, const object *change) {
     int i, tmp;
+    char buf[MAX_BUF];
 
     if (change->face != blank_face) {
 #ifdef TREASURE_VERBOSE
         LOG(llevDebug, "FACE: %d\n", change->face->number);
 #endif
-        op->face = change->face;
-        /* if the face is defined, clean the animation, because else
-         * the face can be lost ; if an animation is defined, it'll be
-         * processed later on */
-        CLEAR_FLAG(op, FLAG_CLIENT_ANIM_RANDOM);
-        CLEAR_FLAG(op, FLAG_CLIENT_ANIM_SYNC);
-        op->anim_speed = 0;
-        op->animation_id = 0;
+
+        object_set_value(op, "identified_face", change->face->name, 1);
     }
-    if (QUERY_FLAG(change, FLAG_CLIENT_ANIM_RANDOM))
-        SET_FLAG(op, FLAG_CLIENT_ANIM_RANDOM);
+    if (QUERY_FLAG(change, FLAG_CLIENT_ANIM_RANDOM)) {
+        object_set_value(op, "identified_anim_random", "1", 1);
+    }
     if (change->anim_speed > 0) {
-        op->anim_speed = change->anim_speed;
-        op->last_anim = 1;
+        snprintf(buf, sizeof(buf), "%d", change->anim_speed);
+        object_set_value(op, "identified_anim_speed", buf, 1);
     }
     if (change->animation_id != 0 && op->arch != NULL) {
         /* op->arch can be NULL when called from artifact_msg(). */
-        op->animation_id = change->animation_id;
-        if (!QUERY_FLAG(op, FLAG_IS_TURNABLE))
-            SET_FLAG(op, FLAG_ANIMATE);
-        animate_object(op, op->facing);
+        snprintf(buf, sizeof(buf),"%d", change->animation_id);
+        object_set_value(op, "identified_animation", buf, 1);
     }
 
     for (i = 0; i < NUM_STATS; i++)
