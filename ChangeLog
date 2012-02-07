@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Hack to make the server work on FreeBSD 9.
+Nicolas Weeger 2012-02-07
+
 Make artifacts hide their properties when not identified.
 Nicolas Weeger 2012-01-28
 
