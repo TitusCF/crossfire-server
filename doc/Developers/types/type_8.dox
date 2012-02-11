@@ -26,6 +26,12 @@ Type defined by:
 		<th>Description</th>
 	</tr>
 	<tr>
+		<td>artifact</td>
+		<td>@ref obj::artifact</td>
+		<td>            If defined, refers to an artifact to get values from.
+		</td>
+	</tr>
+	<tr>
 		<td>block view</td>
 		<td>@ref FLAG_BLOCKSVIEW</td>
 		<td>            If an item is set to block view, players (and monsters) cannot see
@@ -77,6 +83,42 @@ Type defined by:
 		<td>identified</td>
 		<td>@ref FLAG_IDENTIFIED</td>
 		<td>            If an item is identified, the player has full knowledge about it.
+		</td>
+	</tr>
+	<tr>
+		<td>identified animation</td>
+		<td>@ref page_custom_attribute_identified_animation "identified_animation"</td>
+		<td>            If defined, then the object will take this animation when identified.
+		</td>
+	</tr>
+	<tr>
+		<td>identified animation speed</td>
+		<td>@ref page_custom_attribute_identified_anim_speed "identified_anim_speed"</td>
+		<td>            If defined, then the object will have this animation speed when identified.
+		</td>
+	</tr>
+	<tr>
+		<td>identified image</td>
+		<td>@ref page_custom_attribute_identified_face "identified_face"</td>
+		<td>            If defined, then the object will take this appareance when identified.
+		</td>
+	</tr>
+	<tr>
+		<td>identified random animation?</td>
+		<td>@ref page_custom_attribute_identified_anim_random "identified_anim_random"</td>
+		<td>            If defined, then the object's animation is in a random sequence when identified.
+		</td>
+	</tr>
+	<tr>
+		<td>identified_name</td>
+		<td>@ref page_custom_attribute_identified_name "identified_name"</td>
+		<td>            If defined, then the object will take this name when identified.
+		</td>
+	</tr>
+	<tr>
+		<td>identified_name_pl</td>
+		<td>@ref page_custom_attribute_identified_name_pl "identified_name_pl"</td>
+		<td>            If defined, then the object will take this plural name when identified.
 		</td>
 	</tr>
 	<tr>

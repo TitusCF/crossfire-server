@@ -1,5 +1,5 @@
 /**
-@fn page_connected "connection value"
+@page page_connected "connection value"
 @section Use
 <table>
 	<tr>
