@@ -953,7 +953,10 @@ void write_attribute_file(attribute_definition *attribute) {
         fprintf(file, "/**\n@page page_custom_attribute_%s %s", attribute->field, attribute->field);
         fprintf(file, "\nThis is a @ref page_custom_attributes \"custom attribute\".\n");
     } else {
-        fprintf(file, "/**\n@fn ");
+        if (strcmp(attribute->field, "connected") == 0)
+            fprintf(file, "/**\n@page ");
+        else
+            fprintf(file, "/**\n@fn ");
         write_attribute_reference(attribute->field, file);
     }
 
