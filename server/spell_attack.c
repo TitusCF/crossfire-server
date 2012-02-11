@@ -904,7 +904,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 int mood_change(object *op, object *caster, object *spell) {
     object *tmp, *head;
     const object *god;
-    int done_one, range, mflags, level, at, best_at;
+    int done_one, range, mflags, level, at, best_at, immunity_chance = 50;
     sint16 x, y, nx, ny;
     mapstruct *m;
     const char *race;
@@ -915,6 +915,14 @@ int mood_change(object *op, object *caster, object *spell) {
     god = find_god(determine_god(op));
     level = caster_level(caster, spell);
     range = spell->range+SP_level_range_adjust(caster, spell);
+    race = object_get_value(spell, "immunity_chance");
+    if (race != NULL) {
+        immunity_chance = atoi(race);
+        if (immunity_chance < 0 || immunity_chance > 100) {
+            LOG(llevError, "ignoring invalid immunity_chance %d for %s\n", immunity_chance, spell->arch->name);
+            immunity_chance = 50;
+        }
+    }
 
     /* On the bright side, no monster should ever have a race of GOD_...
      * so even if the player doesn't worship a god, if race=GOD_.., it
@@ -990,7 +998,7 @@ int mood_change(object *op, object *caster, object *spell) {
                     continue;
                 if (random_roll(0, 100, caster, PREFER_LOW) >= (20+MIN(50, 2*(level-head->level)))) {
                     /* Additionnally, randomly make the monster immune to that spell. */
-                    if (random_roll(0, 100, caster, PREFER_LOW) >= 50) {
+                    if (random_roll(0, 100, caster, PREFER_HIGH) <= immunity_chance) {
                         object_set_value(head, "no_mood_change", "1", 1);
                     }
                     continue;
