@@ -829,6 +829,13 @@ static const char *custom_attributes[] = {
     "price_adjustment_buy",
     "price_adjustment_sell",
     "casting_requirements",
+    "identified_name",
+    "identified_name_pl",
+    "identified_face",
+    "identified_animation",
+    "identified_anim_speed",
+    "identified_anim_random",
+    "immunity_chance",
     NULL
 };
 
