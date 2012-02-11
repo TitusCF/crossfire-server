@@ -512,14 +512,14 @@ static void init_map_list(struct_map_list *list) {
 static void add_map(struct_map_info *info, struct_map_list *list);
 
 static int is_special_equipment(object *item) {
-    if (item->name == item->arch->clone.name)
+    if (item->name == item->arch->clone.name && item->title == item->arch->clone.title)
         return 0;
     if (QUERY_FLAG(item, FLAG_NO_PICK))
         return 0;
     if (item->move_block == MOVE_ALL)
         return 0;
 
-    if (IS_SHIELD(item) || IS_WEAPON(item) || IS_ARMOR(item) || IS_ARROW(item) || (item->type == ROD) || (item->type == WAND))
+    if (IS_SHIELD(item) || IS_WEAPON(item) || IS_ARMOR(item) || IS_ARROW(item) || (item->type == ROD) || (item->type == WAND) || (item->type == RING) || (item->type == AMULET))
         return 1;
 
     return 0;
@@ -601,23 +601,53 @@ static void add_one_item(object *item, struct_map_info *map) {
     StringBuffer *bf = stringbuffer_new();
     int x, y;
     sstring name, namepl;
+    uint32 nrof;
+    object *base;
 
     x = item->x;
     y = item->y;
     name = item->name;
     namepl = item->name_pl;
+    nrof = item->nrof;
 
-    item->x = item->arch->clone.x;
-    item->y = item->arch->clone.y;
-    item->name = item->arch->clone.name;
-    item->name_pl = item->arch->clone.name_pl;
-    get_ob_diff(bf, item, &item->arch->clone);
+    if (item->artifact != NULL) {
+        const artifact *artifact;
+
+        artifact = find_artifact(item, item->artifact);
+        if (artifact == NULL) {
+            LOG(llevError, "could not find artifact %s [%d] to save data\n", item->artifact, item->type);
+            base = arch_to_object(item->arch);
+        } else {
+            base = arch_to_object(item->arch);
+            give_artifact_abilities(base, artifact->item);
+        }
+    }
+    else {
+        base = arch_to_object(item->arch);
+    }
+
+    item->x = base->x;
+    item->y = base->y;
+    item->name = base->name;
+    item->name_pl = base->name_pl;
+    item->nrof = base->nrof;
+
+    if (QUERY_FLAG(item, FLAG_IDENTIFIED) && !QUERY_FLAG(base, FLAG_IDENTIFIED)) {
+        object_give_identified_properties(base);
+        SET_FLAG(base, FLAG_IDENTIFIED);
+    }
+    if (QUERY_FLAG(item, FLAG_UNPAID))
+        SET_FLAG(base, FLAG_UNPAID);
+    get_ob_diff(bf, item, base);
+    object_free2(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
+
     add->diff = stringbuffer_finish(bf);
 
     item->x = x;
     item->y = y;
     item->name = name;
     item->name_pl = namepl;
+    item->nrof = nrof;
 
     if (add->diff == NULL || strcmp(add->diff, "") == 0) {
         free_equipment(add);
