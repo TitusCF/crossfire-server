@@ -1463,11 +1463,11 @@ static struct_npc_info *create_npc_info(const object *npc) {
 }
 
 /**
- * Link the specified NPC to the specified map.
- * @param map
- * map the NPC is in.
+ * Add the specified NPC to the list.
+ * @param list
+ * where to add the NPC.
  * @param npc
- * NPC to link. Must have a name and message.
+ * NPC to add. Must have a name and message.
  */
 static void add_npc_to_map(struct_npc_list *list, const object *npc) {
     if (list->count == list->allocated) {
