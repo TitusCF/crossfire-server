@@ -855,44 +855,6 @@ static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, siz
         *curlen = maxlen-1;
 }
 
-/* The SAFE versions of these call the safe_strcat function above.
- * Ideally, all functions should use the SAFE functions, but they
- * require some extra support in the calling function to remain as
- * efficient.
- */
-
-/* separated this from the common/item.c file. b.t. Dec 1995 */
-
-#define DESCRIBE_ABILITY(retbuf, variable, name)                   \
-    if (variable) {                                                \
-        int i, j = 0;                                              \
-        strcat(retbuf, "(" name ": ");                             \
-        for (i = 0; i < NROFATTACKS; i++)                          \
-            if (variable&(1<<i)) {                                 \
-                if (j)                                             \
-                    strcat(retbuf, ", ");                          \
-                else                                               \
-                    j = 1;                                         \
-                strcat(retbuf, attacks[i]);                        \
-            }                                                      \
-        strcat(retbuf, ")");                                       \
-    }
-
-#define DESCRIBE_PATH(retbuf, variable, name)                      \
-    if (variable) {                                                \
-        int i, j = 0;                                              \
-        strcat(retbuf, "(" name ": ");                             \
-        for (i = 0; i < NRSPELLPATHS; i++)                         \
-            if (variable&(1<<i)) {                                 \
-                if (j)                                             \
-                    strcat(retbuf, ", ");                          \
-                else                                               \
-                    j = 1;                                         \
-                strcat(retbuf, spellpathnames[i]);                 \
-            }                                                      \
-        strcat(retbuf, ")");                                       \
-    }
-
 /**
  * @defgroup AP_xxx Flags for apply_special().
  *

@@ -359,6 +359,36 @@ void free_all_god(void) {
     first_god = NULL;
 }
 
+#define DESCRIBE_ABILITY(retbuf, variable, name)                   \
+    if (variable) {                                                \
+        int i, j = 0;                                              \
+        strcat(retbuf, "(" name ": ");                             \
+        for (i = 0; i < NROFATTACKS; i++)                          \
+            if (variable&(1<<i)) {                                 \
+                if (j)                                             \
+                    strcat(retbuf, ", ");                          \
+                else                                               \
+                    j = 1;                                         \
+                strcat(retbuf, attacks[i]);                        \
+            }                                                      \
+        strcat(retbuf, ")");                                       \
+    }
+
+#define DESCRIBE_PATH(retbuf, variable, name)                      \
+    if (variable) {                                                \
+        int i, j = 0;                                              \
+        strcat(retbuf, "(" name ": ");                             \
+        for (i = 0; i < NRSPELLPATHS; i++)                         \
+            if (variable&(1<<i)) {                                 \
+                if (j)                                             \
+                    strcat(retbuf, ", ");                          \
+                else                                               \
+                    j = 1;                                         \
+                strcat(retbuf, spellpathnames[i]);                 \
+            }                                                      \
+        strcat(retbuf, ")");                                       \
+    }
+
 /**
  * Prints all gods to stderr.
  *
