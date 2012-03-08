@@ -82,7 +82,6 @@ extern void dump_gods(void);
 /* info.c */
 extern void dump_abilities(void);
 extern void print_monsters(void);
-extern void bitstostring(long bits, int num, char *str);
 /* image.c */
 extern void read_bmap_names(void);
 extern unsigned find_face(const char *name, unsigned error);

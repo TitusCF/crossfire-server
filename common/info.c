@@ -35,6 +35,42 @@
  */
 
 /**
+ * Writes num ones and zeros to the given string based on the
+ * bits variable.
+ *
+ * @param bits
+ * variable to convert to binary string
+ * @param num
+ * number of bits to dump. Values above 32 will be ignored.
+ * @param str
+ * string to write to. Must be long enough.
+ *
+ * @note
+ * no check is done whether str has enough space to write or not.
+ * Final \\0 is appended to str.
+ */
+static void bitstostring(long bits, int num, char *str) {
+    int i, j = 0;
+
+    if (num > 32)
+        num = 32;
+
+    for (i = 0; i < num; i++) {
+        if (i && (i%3) == 0) {
+            str[i+j] = ' ';
+            j++;
+        }
+        if (bits&1)
+            str[i+j] = '1';
+        else
+            str[i+j] = '0';
+        bits >>= 1;
+    }
+    str[i+j] = '\0';
+    return;
+}
+
+/**
  * Dump to standard out the abilities of all monsters.
  */
 void dump_abilities(void) {
@@ -91,40 +127,4 @@ void print_monsters(void) {
         }
         object_free_drop_inventory(op);
     }
-}
-
-/**
- * Writes num ones and zeros to the given string based on the
- * bits variable.
- *
- * @param bits
- * variable to convert to binary string
- * @param num
- * number of bits to dump. Values above 32 will be ignored.
- * @param str
- * string to write to. Must be long enough.
- *
- * @note
- * no check is done whether str has enough space to write or not.
- * Final \\0 is appended to str.
- */
-void bitstostring(long bits, int num, char *str) {
-    int i, j = 0;
-
-    if (num > 32)
-        num = 32;
-
-    for (i = 0; i < num; i++) {
-        if (i && (i%3) == 0) {
-            str[i+j] = ' ';
-            j++;
-        }
-        if (bits&1)
-            str[i+j] = '1';
-        else
-            str[i+j] = '0';
-        bits >>= 1;
-    }
-    str[i+j] = '\0';
-    return;
 }
