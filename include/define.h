@@ -1001,35 +1001,6 @@ static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, siz
 #define WEIGHT(op) (op->nrof ? op->weight : op->weight+op->carrying)
 
 /**
- * @defgroup FASTCAT_xxx Code fastening defines
- *
- * FAST_STRCAT & FAST_STRNCAT will add buf2__ at position pointed by
- * buf__ and increment buf__ position so it will point to the end of buf__.
- * the '\\0' caracter will not be put at end of buf__.
- * use preparefastcat and finishfastcat on buf__ to prepare
- * and clean up the string. (Lots faster than doing each time...)
- * If you use them and have choice between FAST_STRCAT and FAST_STRNCAT,
- * keep in mind FAST_STRNCAT is faster since length of second argument is
- * known in advance.
- */
-/*@{*/
-#define PREPARE_FASTCAT(buf__) buf__+strlen(buf__)
-#define FAST_STRNCAT(buf__, buf2__, size__) { memcpy(buf__, buf2__, size__); buf__ += size__; }
-#define FAST_STRCAT(buf__, buf2__) { memcpy(buf__, buf2__, strlen(buf2__)); buf__ += strlen(buf2__); }
-#define FINISH_FASTCAT(buf__) buf__[0] = '\0';
-
-/* You may uncomment following define to check sanity of code.
- * But use as debug only (loses all speed gained by those macros)
- */
-/*#define FAST_STRNCAT(buf__, buf2__, size__) { \
-    memcpy (buf__, buf2__, size__); \
-    buf__ += size__; \
-    if (size__ != strlen(buf2__)) \
-        LOG(llevError, "Error, bad length for %s\n", buf2__); \
-}*/
-/*@}*/
-
-/**
  * Constructs a loop iterating over the inventory of an object. Example:
  * <pre>
  * FOR_INV_PREPARE(op, inv)
