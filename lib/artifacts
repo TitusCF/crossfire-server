@@ -3181,7 +3181,23 @@ dam -8
 value 6
 end
 #
-Allowed all
+Allowed arrow
+chance 50
+difficulty 6
+Object Paralysis
+attacktype 4097
+type 13
+value 8
+wc 2
+food 80
+msg
+  These missiles have been soaked in some strange liquid which stuns the victim. These missiles also broken much more easily than normal ones.
+endmsg
+animation arrow_paralysis
+face arrow_paralysis.101
+end
+#
+Allowed !arrow
 chance 50
 difficulty 6
 Object Paralysis
