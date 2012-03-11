@@ -538,7 +538,8 @@ static unsigned knowledge_alchemy_face(sstring code) {
  * @return 0 if item is known, 1 else.
  */
 static int knowledge_known(const knowledge_player *current, const char *item, const knowledge_type *kt) {
-    for (int i = 0; i < current->item_count; i++) {
+    int i;
+    for (i = 0; i < current->item_count; i++) {
         if (strcmp(kt->type, current->items[i]->handler->type) == 0 && strcmp(item, current->items[i]->item) == 0) {
             /* already known, bailout */
             return 1;
@@ -734,7 +735,7 @@ static int knowledge_god_validate(const char *item) {
 static int knowledge_god_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type, player *pl) {
     char *dup = strdup_local(item), *pos = strchr(dup, ':');
     StringBuffer *buf;
-    int what;
+    int what, i;
     knowledge_item* check;
 
     if (!pos) {
@@ -746,7 +747,7 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
     *pos = '\0';
     what = atoi(pos + 1);
 
-    for (int i = 0; i < current->item_count; i++) {
+    for (i = 0; i < current->item_count; i++) {
         check = current->items[i];
         if (check->handler != type)
             /* Only consider our own type. */
@@ -875,6 +876,7 @@ static void knowledge_write_player_data(const knowledge_player *kp) {
     FILE *file;
     char write[MAX_BUF], final[MAX_BUF];
     const knowledge_item *item;
+    int i;
 
     snprintf(final, sizeof(final), "%s/%s/%s/%s.knowledge", settings.localdir, settings.playerdir, kp->player_name, kp->player_name);
     snprintf(write, sizeof(write), "%s.new", final);
@@ -886,7 +888,7 @@ static void knowledge_write_player_data(const knowledge_player *kp) {
         return;
     }
 
-    for (int i = 0; i < kp->item_count; i++) {
+    for (i = 0; i < kp->item_count; i++) {
         item = kp->items[i];
         fprintf(file, "%s:%s\n", item->handler->type, item->item);
     }
@@ -1039,14 +1041,14 @@ void knowledge_read(player *pl, object *book) {
 static void knowledge_do_display(object *pl, const knowledge_type *show_only, const char *search) {
     knowledge_player *kp;
     knowledge_item *item;
-    int index = 1, header = 0, show;
+    int header = 0, show, i;
     StringBuffer *summary;
     char *final;
 
     assert(search == NULL || search[0] != '\0');
 
     kp = knowledge_get_or_create(pl->contr);
-    for (int i = 0; i < kp->item_count; i++) {
+    for (i = 0; i < kp->item_count; i++) {
         item = kp->items[i];
         show = 1;
 
@@ -1084,7 +1086,6 @@ static void knowledge_do_display(object *pl, const knowledge_type *show_only, co
         }
 
         free(final);
-        index++;
     }
 
     if (header == 0) {
@@ -1223,8 +1224,9 @@ void command_knowledge(object *pl, const char *params) {
  */
 static void free_knowledge_items(knowledge_player *kp) {
     knowledge_item *item;
+    int i;
 
-    for (int i = 0; i < kp->item_count; i++) {
+    for (i = 0; i < kp->item_count; i++) {
         item = kp->items[i];
         free_string(item->item);
         free(item);
@@ -1308,6 +1310,7 @@ void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
     char item_name[MAX_BUF], *result;
     const char *name;
     StringBuffer *buf = NULL;
+    int i;
 
     if (op->type != PLAYER || op->contr == NULL)
         return;
@@ -1320,7 +1323,7 @@ void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
     } else
         name = item->name;
 
-    for (int i = 0; i < cur->item_count; i++) {
+    for (i = 0; i < cur->item_count; i++) {
         ki = cur->items[i];
         if (ki->handler->use_alchemy != NULL) {
             buf = ki->handler->use_alchemy(ki->item, name, buf, i + 1);
@@ -1407,7 +1410,7 @@ void knowledge_first_player_save(player *pl) {
  * information for players who left.
  */
 void knowledge_process_incremental(void) {
-    int last;
+    int i, last;
     SockList sl;
     size_t size;
     const knowledge_item *item;
@@ -1448,7 +1451,7 @@ void knowledge_process_incremental(void) {
         last = MIN(cur->sent_up_to + 50, cur->item_count);
         SockList_Init(&sl);
         SockList_AddString(&sl, "addknowledge ");
-        for (int i = cur->sent_up_to; i < last; i++) {
+        for (i = cur->sent_up_to; i < last; i++) {
             item = cur->items[i];
 
             buf = stringbuffer_new();
