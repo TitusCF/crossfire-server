@@ -37,7 +37,6 @@ Here is a list of topics:
 - @ref ST_xxx
 - @ref AP_xxx
 - @ref CAN_APPLY_xxx
-- @ref FASTCAT_xxx
 - @ref first_xxx
 - @ref GLOBAL_VARIABLES
 - @ref SCRIPT_FIX_xxx
