@@ -354,7 +354,7 @@ Such Crystals are unfortunately pretty rare, so magicians have to figure by them
 ENDMSG
 MSG G-030
 TITLE The Dark Forest
-CHANCE 100
+CHANCE 1
 QUEST scorn/DarkForest 0>10
 TEXT
 And thus the Glowing Crystal was stolen from Scorn's City Hall.
