@@ -612,7 +612,10 @@ static void knowledge_monster_detail(const char *item, StringBuffer *buf) {
  * @return 0 if invalid, 1 if valid.
  */
 static int knowledge_monster_validate(const char *item) {
-    return try_find_archetype(item) != NULL;
+    const archetype *monster = try_find_archetype(item);
+    if (monster == NULL || monster->clone.type != 0)
+        return 0;
+    return 1;
 }
 
 /**
@@ -1010,7 +1013,9 @@ void knowledge_read(player *pl, object *book) {
     }
 
     none = (current->items == NULL);
-    added = type->add(current, dot, type, pl);
+    if (type->validate(dot)) {
+        added = type->add(current, dot, type, pl);
+    }
     free(copy);
 
     if (added) {
