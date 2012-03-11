@@ -3583,6 +3583,7 @@ path_attuned 257
 path_repelled 128
 path_denied 0
 item_power 1
+face holy_symbol_probity.111
 end
 #
 Allowed holy_symbol
@@ -3595,6 +3596,7 @@ value 25
 path_attuned 8640
 Wis 2
 item_power 4
+face holy_symbol_great_virtue.111
 end
 #
 Allowed holy_symbol
@@ -3607,6 +3609,7 @@ value 25
 path_attuned 393216
 path_denied 256
 item_power 2
+face holy_symbol_dark_path.111
 end
 #
 Allowed holy_symbol
@@ -3618,6 +3621,7 @@ material 256
 value 25
 path_attuned 65536
 item_power 1
+face holy_symbol_turning.111
 end
 #
 Allowed holy_symbol
@@ -3629,6 +3633,7 @@ material 256
 value 5
 path_attuned 64
 path_repelled 256
+face holy_symbol_calling.111
 end
 #
 # DRINK.
