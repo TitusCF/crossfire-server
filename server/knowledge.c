@@ -147,15 +147,15 @@ typedef struct knowledge_type {
 /** One known item for a player. */
 typedef struct knowledge_item {
     sstring item;                   /**< Internal item code. */
-    struct knowledge_item *next;    /**< Next item on the list. */
     const knowledge_type* handler;  /**< How to handle this item. */
 } knowledge_item;
 
 /** Information about a player. */
 typedef struct knowledge_player {
     sstring player_name;            /**< Player's name. */
-    struct knowledge_item *items;   /**< Known knowledge. */
+    struct knowledge_item **items;  /**< Known knowledge. */
     int item_count;                 /**< How many items this players knows. */
+    int item_allocated;             /**< How many items are allocated for items. */
     struct knowledge_player *next;  /**< Next player on the list. */
 } knowledge_player;
 
@@ -535,14 +535,11 @@ static unsigned knowledge_alchemy_face(sstring code) {
  * @return 0 if item is known, 1 else.
  */
 static int knowledge_known(const knowledge_player *current, const char *item, const knowledge_type *kt) {
-    const knowledge_item *check = current->items;
-
-    while (check) {
-        if (strcmp(kt->type, check->handler->type) == 0 && strcmp(item, check->item) == 0) {
+    for (int i = 0; i < current->item_count; i++) {
+        if (strcmp(kt->type, current->items[i]->handler->type) == 0 && strcmp(item, current->items[i]->item) == 0) {
             /* already known, bailout */
             return 1;
         }
-        check = check->next;
     }
     return 0;
 }
@@ -569,18 +566,12 @@ static int knowledge_add(knowledge_player *current, const char *item, const know
     /* keep the knowledge */
     check = calloc(1, sizeof(knowledge_item));
     check->item = add_string(item);
-    check->next = NULL;
     check->handler = kt;
-    if (current->items == NULL) {
-        current->items = check;
-    } else {
-        knowledge_item *last = current->items;
-        while (last->next) {
-            last = last->next;
-        }
-        last->next = check;
+    if (current->item_count >= current->item_allocated) {
+        current->item_allocated += 10;
+        current->items = realloc(current->items, current->item_allocated * sizeof(knowledge_item*));
     }
-
+    current->items[current->item_count] = check;
     current->item_count++;
 
     if (pl->socket.notifications < 2)
@@ -779,7 +770,8 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
     *pos = '\0';
     what = atoi(pos + 1);
 
-    for (check = current->items; check; check = check->next) {
+    for (int i = 0; i < current->item_count; i++) {
+        check = current->items[i];
         if (check->handler != type)
             /* Only consider our own type. */
             continue;
@@ -891,11 +883,9 @@ static void knowledge_write_player_data(const knowledge_player *kp) {
         return;
     }
 
-    item = kp->items;
-
-    while (item) {
+    for (int i = 0; i < kp->item_count; i++) {
+        item = kp->items[i];
         fprintf(file, "%s:%s\n", item->handler->type, item->item);
-        item = item->next;
     }
 
     fclose(file);
@@ -946,9 +936,12 @@ static void knowledge_read_player_data(knowledge_player *kp) {
 
         item = calloc(1, sizeof(knowledge_item));
         item->item = add_string(dot + 1);
-        item->next = kp->items;
         item->handler = type;
-        kp->items = item;
+        if (kp->item_count == kp->item_allocated) {
+            kp->item_allocated += 10;
+            kp->items = realloc(kp->items, kp->item_allocated * sizeof(knowledge_item*));
+        }
+        kp->items[kp->item_count] = item;
         kp->item_count++;
     }
     fclose(file);
@@ -1046,8 +1039,8 @@ static void knowledge_do_display(object *pl, const knowledge_type *show_only, co
     assert(search == NULL || search[0] != '\0');
 
     kp = knowledge_get_or_create(pl->contr);
-    item = kp->items;
-    while (item) {
+    for (int i = 0; i < kp->item_count; i++) {
+        item = kp->items[i];
         show = 1;
 
         summary = stringbuffer_new();
@@ -1084,7 +1077,6 @@ static void knowledge_do_display(object *pl, const knowledge_type *show_only, co
         }
 
         free(final);
-        item = item->next;
         index++;
     }
 
@@ -1136,31 +1128,22 @@ static void knowledge_display(object *pl, const char *params) {
 static void knowledge_show(object *pl, const char *params) {
     knowledge_player *kp;
     knowledge_item *item;
-    int count = atoi(params);
+    int count = atoi(params) - 1;
+    StringBuffer *buf;
+    char *final;
 
-    if (count <= 0) {
+    kp = knowledge_get_or_create(pl->contr);
+    if (count < 0 || count >= kp->item_count) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number");
         return;
     }
 
-    kp = knowledge_get_or_create(pl->contr);
-    item = kp->items;
-    while (item) {
-        if (count == 1) {
-            StringBuffer *buf = stringbuffer_new();
-            char *final;
-
-            item->handler->detail(item->item, buf);
-            final = stringbuffer_finish(buf);
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, final);
-            free(final);
-            return;
-        }
-        item = item->next;
-        count--;
-    }
-
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number");
+    item = kp->items[count];
+    buf = stringbuffer_new();
+    item->handler->detail(item->item, buf);
+    final = stringbuffer_finish(buf);
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, final);
+    free(final);
 }
 
 /**
@@ -1171,29 +1154,20 @@ static void knowledge_show(object *pl, const char *params) {
 static void knowledge_do_attempt(object *pl, const char *params) {
     knowledge_player *kp;
     knowledge_item *item;
-    int count = atoi(params);
+    int count = atoi(params) - 1;
 
-    if (count <= 0) {
+    kp = knowledge_get_or_create(pl->contr);
+    if (count < 0 || count >= kp->item_count) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number");
         return;
     }
 
-    kp = knowledge_get_or_create(pl->contr);
-    item = kp->items;
-    while (item) {
-        if (count == 1) {
-            if (item->handler->attempt_alchemy == NULL) {
-                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You can't do anything with that knowledge.");
-            } else {
-                item->handler->attempt_alchemy(pl->contr, item);
-            }
-            return;
-        }
-        item = item->next;
-        count--;
+    item = kp->items[count];
+    if (item->handler->attempt_alchemy == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You can't do anything with that knowledge.");
+    } else {
+        item->handler->attempt_alchemy(pl->contr, item);
     }
-
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid knowledge number");
 }
 
 /**
@@ -1241,15 +1215,17 @@ void command_knowledge(object *pl, const char *params) {
  * @param kp what to free.
  */
 static void free_knowledge_items(knowledge_player *kp) {
-    knowledge_item *item = kp->items, *next;
+    knowledge_item *item;
 
-    while (item) {
+    for (int i = 0; i < kp->item_count; i++) {
+        item = kp->items[i];
         free_string(item->item);
-        next = item->next;
         free(item);
-        item = next;
     }
+    free(kp->items);
     kp->items = NULL;
+    kp->item_count = 0;
+    kp->item_allocated = 0;
 }
 
 /**
@@ -1317,7 +1293,6 @@ void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
     char item_name[MAX_BUF], *result;
     const char *name;
     StringBuffer *buf = NULL;
-    int index = 1;
 
     if (op->type != PLAYER || op->contr == NULL)
         return;
@@ -1330,11 +1305,11 @@ void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
     } else
         name = item->name;
 
-    for (ki = cur->items; ki; ki = ki->next) {
+    for (int i = 0; i < cur->item_count; i++) {
+        ki = cur->items[i];
         if (ki->handler->use_alchemy != NULL) {
-            buf = ki->handler->use_alchemy(ki->item, name, buf, index);
+            buf = ki->handler->use_alchemy(ki->item, name, buf, i + 1);
         }
-        index++;
     }
 
     if (buf == NULL)
@@ -1385,7 +1360,6 @@ void knowledge_send_known(player *pl) {
     size_t size;
     const knowledge_item *item;
     const knowledge_player *kp;
-    int index = 1;
     StringBuffer *buf;
     char *title;
     unsigned face;
@@ -1397,7 +1371,8 @@ void knowledge_send_known(player *pl) {
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "addknowledge ");
-    for (item = kp->items; item != NULL; item = item->next) {
+    for (int i = 0; i < kp->item_count; i++) {
+        item = kp->items[i];
 
         buf = stringbuffer_new();
         item->handler->summary(item->item, buf);
@@ -1418,7 +1393,7 @@ void knowledge_send_known(player *pl) {
             SockList_AddString(&sl, "addknowledge ");
         }
 
-        SockList_AddInt(&sl, index);
+        SockList_AddInt(&sl, i + 1);
         SockList_AddLen16Data(&sl, item->handler->type, strlen(item->handler->type));
         if ((face != (unsigned)-1) && !(pl->socket.faces_sent[face]&NS_FACESENT_FACE))
             esrv_send_face(&pl->socket, face, 0);
@@ -1426,8 +1401,6 @@ void knowledge_send_known(player *pl) {
         SockList_AddInt(&sl, face);
 
         free(title);
-
-        index++;
     }
 
     Send_With_Handling(&pl->socket, &sl);
