@@ -770,6 +770,33 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
 }
 
 /**
+ * Get the face for a god.
+ * @param code god's code.
+ * @return face, -1 as unsigned if invalid.
+ */
+static unsigned knowledge_god_face(sstring code) {
+    char buf[MAX_BUF];
+    size_t letter;
+    const archetype *altar_arch;
+
+    snprintf(buf, MAX_BUF, "altar_");
+    letter = strlen(buf);
+    strncpy(buf+letter, code, MAX_BUF-letter);
+    for (; letter < strlen(buf); letter++) {
+        if (buf[letter] == ':') {
+            buf[letter] = '\0';
+            break;
+        }
+        buf[letter] = tolower(buf[letter]);
+    }
+    altar_arch = find_archetype(buf);
+    if (altar_arch == NULL)
+        return (unsigned)-1;
+
+    return altar_arch->clone.face->number;
+}
+
+/**
  * Give the title of a message.
  * @param value message internal value.
  * @param buf where to put the information.
@@ -815,7 +842,7 @@ static int knowledge_message_validate(const char *item) {
 static const knowledge_type const knowledges[] = {
     { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_alchemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item, knowledge_alchemy_attempt, "knowledge_recipes.111", knowledge_alchemy_face },
     { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL, NULL, "knowledge_monsters.111", knowledge_monster_face },
-    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL, NULL, "knowledge_gods.111", NULL },
+    { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL, NULL, "knowledge_gods.111", knowledge_god_face },
     { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL, NULL, "knowledge_messages.111", NULL },
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
