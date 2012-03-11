@@ -352,3 +352,19 @@ Thus a magician cast more spells without needing to rest to recover his energy.
 
 Such Crystals are unfortunately pretty rare, so magicians have to figure by themselves how to find some.
 ENDMSG
+MSG G-030
+TITLE The Dark Forest
+CHANCE 100
+QUEST scorn/DarkForest 0>10
+TEXT
+And thus the Glowing Crystal was stolen from Scorn's City Hall.
+
+The thieves fled to the Dark Forest, which is said to be cursed.
+
+According to rumors the Crystal was put at the heart of the Dark Temple, to be used for some religious ceremony.
+
+No one has yet to claim it.
+
+The Forest is a well-known cursed place, located on the road from Scorn to Navar, approximately 50 chains west of Hermes's Inn and 10 chains north of the road.
+
+ENDMSG
