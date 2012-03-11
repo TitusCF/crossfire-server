@@ -55,12 +55,13 @@ A type is linked to various functions for displaying, checking the key value.
 
 During loading, obsolete items (eg formula changed) are discarded.
 
+If the client has notifications support of at least 2, then knowledge information
+is sent as needed, incrementally as to not freeze the server.
 
 
 @todo
 - make knowledge shareable between players
 - more things to keep trace of
-- client/server protocol to query
 */
 
 #include <global.h>
@@ -156,6 +157,8 @@ typedef struct knowledge_player {
     struct knowledge_item **items;  /**< Known knowledge. */
     int item_count;                 /**< How many items this players knows. */
     int item_allocated;             /**< How many items are allocated for items. */
+    int sent_up_to;                 /**< Largest index that was sent to the client with notifications,
+                                     * -1 means the client doesn't want this information. */
     struct knowledge_player *next;  /**< Next player on the list. */
 } knowledge_player;
 
@@ -554,10 +557,6 @@ static int knowledge_known(const knowledge_player *current, const char *item, co
  */
 static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt, player *pl) {
     knowledge_item *check;
-    SockList sl;
-    StringBuffer *buf;
-    char *title;
-    unsigned face;
 
     if (knowledge_known(current, item, kt)) {
         return 0;
@@ -573,32 +572,6 @@ static int knowledge_add(knowledge_player *current, const char *item, const know
     }
     current->items[current->item_count] = check;
     current->item_count++;
-
-    if (pl->socket.notifications < 2)
-        return 1;
-
-    buf = stringbuffer_new();
-    kt->summary(item, buf);
-    title = stringbuffer_finish(buf);
-
-    if (kt->item_face != NULL)
-        face = kt->item_face(item);
-    else
-        face = find_face(kt->face, (unsigned)-1);
-
-    SockList_Init(&sl);
-    SockList_AddString(&sl, "addknowledge ");
-    SockList_AddInt(&sl, current->item_count);
-    SockList_AddLen16Data(&sl, kt->type, strlen(kt->type));
-    if ((face != (unsigned)-1) && !(pl->socket.faces_sent[face]&NS_FACESENT_FACE))
-        esrv_send_face(&pl->socket, face, 0);
-    SockList_AddLen16Data(&sl, title, strlen(title));
-    SockList_AddInt(&sl, face);
-
-    free(title);
-
-    Send_With_Handling(&pl->socket, &sl);
-    SockList_Term(&sl);
 
     return 1;
 }
@@ -970,6 +943,8 @@ static knowledge_player *knowledge_get_or_create(const player *pl) {
     knowledge_global = cur;
     /* read knowledge for this player */
     knowledge_read_player_data(cur);
+    if (pl->socket.notifications < 2)
+        cur->sent_up_to = -1;
     return cur;
 }
 
@@ -1229,6 +1204,16 @@ static void free_knowledge_items(knowledge_player *kp) {
 }
 
 /**
+ * Totally free a knowledge structure, and its items.
+ * @param kp structure to free, becomes invalid.
+ */
+static void free_knowledge_player(knowledge_player *kp) {
+    free_knowledge_items(kp);
+    free_string(kp->player_name);
+    free(kp);
+}
+
+/**
  * Free all knowledge data.
  */
 void free_knowledge(void) {
@@ -1237,9 +1222,7 @@ void free_knowledge(void) {
     kp = knowledge_global;
     while (kp) {
         next = kp->next;
-        free_knowledge_items(kp);
-        free_string(kp->player_name);
-        free(kp);
+        free_knowledge_player(kp);
         kp = next;
     }
     knowledge_global = NULL;
@@ -1356,55 +1339,16 @@ void knowledge_send_info(socket_struct *ns) {
  * @param pl who to send knowledge for.
  */
 void knowledge_send_known(player *pl) {
-    SockList sl;
-    size_t size;
-    const knowledge_item *item;
-    const knowledge_player *kp;
-    StringBuffer *buf;
-    char *title;
-    unsigned face;
+    knowledge_player *kp;
 
     if (pl->socket.notifications < 2)
         return;
 
+    /* merely loading the knowledge will mark it as to be sent through knowledge_process_incremental(),
+     * but we need to reset the sent_up_to field if eg the player was the last one to leave
+     * then joins again - no knowledge processing is done at that point. */
     kp = knowledge_get_or_create(pl);
-
-    SockList_Init(&sl);
-    SockList_AddString(&sl, "addknowledge ");
-    for (int i = 0; i < kp->item_count; i++) {
-        item = kp->items[i];
-
-        buf = stringbuffer_new();
-        item->handler->summary(item->item, buf);
-        title = stringbuffer_finish(buf);
-
-        face = (unsigned)-1;
-        if (item->handler->item_face != NULL)
-            face = item->handler->item_face(item->item);
-
-        if (face == (unsigned)-1)
-            face = find_face(item->handler->face, (unsigned)-1);
-
-        size = 4 + (2 + strlen(item->handler->type)) + (2 + strlen(title)) + 4;
-
-        if (SockList_Avail(&sl) < size) {
-            Send_With_Handling(&pl->socket, &sl);
-            SockList_Reset(&sl);
-            SockList_AddString(&sl, "addknowledge ");
-        }
-
-        SockList_AddInt(&sl, i + 1);
-        SockList_AddLen16Data(&sl, item->handler->type, strlen(item->handler->type));
-        if ((face != (unsigned)-1) && !(pl->socket.faces_sent[face]&NS_FACESENT_FACE))
-            esrv_send_face(&pl->socket, face, 0);
-        SockList_AddLen16Data(&sl, title, strlen(title));
-        SockList_AddInt(&sl, face);
-
-        free(title);
-    }
-
-    Send_With_Handling(&pl->socket, &sl);
-    SockList_Term(&sl);
+    kp->sent_up_to = 0;
 }
 
 /**
@@ -1424,4 +1368,92 @@ void knowledge_first_player_save(player *pl) {
         cur = cur->next;
     }
 
+}
+
+/**
+ * Incrementally send knowledge information to players, and remove
+ * information for players who left.
+ */
+void knowledge_process_incremental(void) {
+    int last;
+    SockList sl;
+    size_t size;
+    const knowledge_item *item;
+    StringBuffer *buf;
+    char *title;
+    unsigned face;
+    knowledge_player *cur = knowledge_global, *prev = NULL;
+    player *pl;
+
+    while (cur) {
+
+        for (pl = first_player; pl != NULL; pl = pl->next) {
+            if (pl->ob->name == cur->player_name) {
+                break;
+            }
+        }
+
+        /* player left, remove knowledge */
+        if (pl == NULL) {
+            if (prev == NULL) {
+                knowledge_global = cur->next;
+            } else {
+                prev->next = cur->next;
+            }
+
+            free_knowledge_player(cur);
+
+            /* wait until next tick to do something else */
+            return;
+        }
+
+        if (cur->sent_up_to == -1 || cur->sent_up_to == cur->item_count) {
+            prev = cur;
+            cur = cur->next;
+            continue;
+        }
+
+        last = MIN(cur->sent_up_to + 50, cur->item_count);
+        SockList_Init(&sl);
+        SockList_AddString(&sl, "addknowledge ");
+        for (int i = cur->sent_up_to; i < last; i++) {
+            item = cur->items[i];
+
+            buf = stringbuffer_new();
+            item->handler->summary(item->item, buf);
+            title = stringbuffer_finish(buf);
+
+            face = (unsigned)-1;
+            if (item->handler->item_face != NULL)
+                face = item->handler->item_face(item->item);
+
+            if (face == (unsigned)-1)
+                face = find_face(item->handler->face, (unsigned)-1);
+
+            size = 4 + (2 + strlen(item->handler->type)) + (2 + strlen(title)) + 4;
+
+            if (SockList_Avail(&sl) < size) {
+                Send_With_Handling(&pl->socket, &sl);
+                SockList_Reset(&sl);
+                SockList_AddString(&sl, "addknowledge ");
+            }
+
+            SockList_AddInt(&sl, i + 1);
+            SockList_AddLen16Data(&sl, item->handler->type, strlen(item->handler->type));
+            if ((face != (unsigned)-1) && !(pl->socket.faces_sent[face]&NS_FACESENT_FACE))
+                esrv_send_face(&pl->socket, face, 0);
+            SockList_AddLen16Data(&sl, title, strlen(title));
+            SockList_AddInt(&sl, face);
+
+            free(title);
+        }
+
+        cur->sent_up_to = last;
+
+        Send_With_Handling(&pl->socket, &sl);
+        SockList_Term(&sl);
+
+        /* don't send more this tick */
+        break;
+    }
 }

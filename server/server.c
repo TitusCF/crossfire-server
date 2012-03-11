@@ -1353,6 +1353,10 @@ extern unsigned long todtick;
  * doing the various things.
  */
 static void do_specials(void) {
+
+    if (!(pticks%10))
+        knowledge_process_incremental();
+
 #ifdef WATCHDOG
     if (!(pticks%503))
         watchdog();
