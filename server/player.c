@@ -2248,6 +2248,9 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
         fix_object(op);
     }
 
+    if (bow->anim_suffix != NULL)
+        apply_anim_suffix(op, bow->anim_suffix);
+
 /*    SET_ANIMATION(arrow, arrow->direction);*/
     object_update_turn_face(arrow);
     arrow->stats.sp = arrow->stats.wc; /* save original wc and dam */
