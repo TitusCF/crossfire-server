@@ -1257,6 +1257,9 @@ void quest_send_initial_states(player *pl) {
     if (pl->socket.notifications < 1)
         return;
 
+    /* ensure quest definitions are loaded */
+    quest_load_definitions();
+
     states = get_or_create_quest(pl);
 
     SockList_Init(&sl);
