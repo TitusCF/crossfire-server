@@ -522,9 +522,13 @@ void CREResourcesWindow::fillQuests()
     myTree->addTopLevelItem(root);
 
     QStringList codes;
+    const New_Face* face;
 
     foreach(Quest* quest, myQuests->quests())
     {
+      face = myResources->face(quest->face());
+      if (face != NULL)
+        quest->setFaceNumber(face->number);
         codes.append(quest->code());
     }
     codes.sort();
@@ -839,4 +843,9 @@ void CREResourcesWindow::addMessage(bool)
     file->setModified();
     myMessages->messages().append(file);
     fillData();
+}
+
+const ResourcesManager* CREResourcesWindow::resourcesManager() const
+{
+  return myResources;
 }

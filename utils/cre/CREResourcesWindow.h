@@ -38,6 +38,9 @@ class CREResourcesWindow : public QWidget
         virtual ~CREResourcesWindow();
 
         void deleteQuest(Quest* quest);
+
+        const ResourcesManager* resourcesManager() const;
+
     public slots:
         void updateFilters();
         void updateReports();

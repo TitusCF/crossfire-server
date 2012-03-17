@@ -43,6 +43,8 @@ class Quest : public QObject
         void setTitle(const QString& title);
         const QString& face() const;
         void setFace(const QString& face);
+        int faceNumber() const;
+        void setFaceNumber(int face);
         const QString& description()const;
         void setDescription(const QString& description);
         bool canRestart() const;
@@ -64,6 +66,8 @@ class Quest : public QObject
         QString myCode;
         QString myTitle;
         QString myFace;
+        // only used for display purposes, filled by CREResourcesWindow::fillQuests().
+        int myFaceNumber;
         QString myDescription;
         bool myCanRestart;
         QList<QuestStep*> mySteps;

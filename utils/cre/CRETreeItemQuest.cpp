@@ -3,6 +3,8 @@
 #include "Quest.h"
 #include <QTreeWidgetItem>
 #include "CREResourcesWindow.h"
+#include "ResourcesManager.h"
+#include "CREPixmap.h"
 
 CRETreeItemQuest::CRETreeItemQuest(Quest* quest, QTreeWidgetItem* item, CREResourcesWindow* window)
 {
@@ -40,6 +42,13 @@ void CRETreeItemQuest::fillPanel(QWidget* panel)
 void CRETreeItemQuest::questModified()
 {
     myItem->setText(0, myQuest->code());
+    myItem->setIcon(0, QIcon());
+    if (!myQuest->face().isEmpty())
+    {
+      const New_Face* face = myWindow->resourcesManager()->face(myQuest->face());
+      if (face != NULL)
+        myItem->setIcon(0, CREPixmap::getIcon(face->number));
+    }
 }
 
 void CRETreeItemQuest::fillContextMenu(QMenu* menu)

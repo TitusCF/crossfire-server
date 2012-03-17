@@ -52,6 +52,7 @@ Quest::Quest()
     myCanRestart = false;
     myModified = false;
     myParent = NULL;
+    myFaceNumber = 0;
 }
 
 Quest::~Quest()
@@ -96,6 +97,16 @@ void Quest::setFace(const QString& face)
         return;
     myFace = face;
     markModified();
+}
+
+int Quest::faceNumber() const
+{
+  return myFaceNumber;
+}
+
+void Quest::setFaceNumber(int face)
+{
+  myFaceNumber = face;
 }
 
 const QString& Quest::description()const
