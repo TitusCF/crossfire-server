@@ -20,6 +20,11 @@
 	</tr>
 	<tr>
 		<td>
+@ref page_type_116
+		</td><td>            If set, then the event happens only once.</td>
+	</tr>
+	<tr>
+		<td>
 @ref page_type_66
 		</td><td>            This flag defines the destined map as "personal unique map". If set,
             there will be a separate version of that map for every player out

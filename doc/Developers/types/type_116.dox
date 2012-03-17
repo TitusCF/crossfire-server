@@ -155,6 +155,12 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>only once</td>
+		<td>@ref FLAG_UNIQUE</td>
+		<td>            If set, then the event happens only once.
+		</td>
+	</tr>
+	<tr>
 		<td>plugin name</td>
 		<td>@ref obj::title</td>
 		<td>            The plugin name specifies the plugin that should execute the script
