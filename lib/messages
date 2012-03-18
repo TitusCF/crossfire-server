@@ -368,3 +368,24 @@ No one has yet to claim it.
 The Forest is a well-known cursed place, located on the road from Scorn to Navar, approximately 50 chains west of Hermes's Inn and 10 chains north of the road.
 
 ENDMSG
+MSG G-031
+TITLE Narcopin
+CHANCE 1
+QUEST quests/Narcopin 0>10
+TEXT
+Once there stood upon the desert, west of Navar, a city called Narcopin, ruled by a dynasty of kings, wise and powerful.
+In time the monarchs grew less wise but more powerful.
+
+The last of their line was Aljwaf the terrible.  His reign was bloody and he made enemies of all
+the neighbouring lands.  His troops put women and children to the sword, he consorted with evil forces.
+It is said he cared for nothing save a single concubine.
+
+He fashioned a necklace for her made of one ruby, two emeralds and three sapphires.
+
+His reign ended when he was stricken with an unknown wasting disease and died horribly after a long illness.
+Some said the illness came from his evil dealings, they were quickly impaled for treason.
+
+Narcopin was razed to the ground by the surrounding kingdoms within six months of his death.
+
+Now only ruins remain, though some say spirits guard the tomb Aljwaf made for himself...
+ENDMSG
