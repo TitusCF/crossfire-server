@@ -35,6 +35,7 @@
 #define YY_DECL int rmap_lex_read(RMParms *RP)
 
 static char *rmap_yval(void);
+static int rmap_lex_read(RMParms *RP);
 
 static int rmap_lex_error;
 
