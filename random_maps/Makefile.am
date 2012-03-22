@@ -24,7 +24,7 @@
 #   The author can be reached via e-mail to mark@pyramid.com
 
 
-pkglib_PROGRAMS = random_map
+pkglibexec_PROGRAMS = random_map
 
 random_map_SOURCES = standalone.c
 
