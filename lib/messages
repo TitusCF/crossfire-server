@@ -42,6 +42,7 @@ ENDMSG
 #
 MSG G-001
 TITLE Fortress of Barad-Dur
+QUEST quests/BaradDur 0>10
 CHANCE 1
 TEXT
 "In the mountains north-west of the great city we found it at last -- the hidden fortress of Barad-Dur.
