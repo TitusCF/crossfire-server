@@ -46,10 +46,6 @@ static void set_pickup_mode(const object *op, int i);
  * Object id parsing functions
  */
 
-/** Simple ::objectlink allocation, fail-safe. */
-#define OBLINKMALLOC(p) if (!((p) = (objectlink *)malloc(sizeof(objectlink)))) \
-                            fatal(OUT_OF_MEMORY);
-
 /**
  * Search from start and through below for what matches best with params.
  * we use object_matches_string above - this gives us consistent behaviour
