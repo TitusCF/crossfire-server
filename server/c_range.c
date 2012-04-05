@@ -312,7 +312,7 @@ int legal_range(object *op, int r) {
  * @param k
  * '+' selects next range, other values previous range.
  */
-void change_spell(object *op, char k) {
+static void change_spell(object *op, char k) {
     char name[MAX_BUF];
 
     do {

@@ -235,7 +235,6 @@ void command_cast(object *op, const char *params);
 void command_prepare(object *op, const char *params);
 void command_cast_spell(object *op, const char *params, char command);
 int legal_range(object *op, int r);
-void change_spell(object *op, char k);
 void command_rotateshoottype(object *op, const char *params);
 /* c_wiz.c */
 void command_loadtest(object *op, const char *params);
