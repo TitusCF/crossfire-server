@@ -452,11 +452,14 @@ static void parse_regions(FILE *fp) {
                 fatal(SEE_LAST_ERROR);
             }
             while (fgets(buf, HUGE_BUF-1, fp) != NULL) {
-                if (!strcmp(buf, "endmsg\n"))
+                key = buf;
+                while (isspace(*key))
+                    key++;
+                if (key && strcmp(key, "endmsg\n"))
                     break;
                 else {
-                    strcpy(msgbuf+msgpos, buf);
-                    msgpos += strlen(buf);
+                    strcpy(msgbuf+msgpos, key);
+                    msgpos += strlen(key);
                 }
             }
             /*
