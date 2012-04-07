@@ -455,7 +455,7 @@ static void parse_regions(FILE *fp) {
                 key = buf;
                 while (isspace(*key))
                     key++;
-                if (key && strcmp(key, "endmsg\n"))
+                if (key && strcmp(key, "endmsg\n") == 0)
                     break;
                 else {
                     strcpy(msgbuf+msgpos, key);
