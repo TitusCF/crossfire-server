@@ -416,8 +416,8 @@ static int monster_move_randomly(object *op) {
  */
 int monster_compute_path(object *source, object *target, int default_dir) {
     unsigned short *distance;
-    int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE];
-    int current = 0, dir, max = 1, size, x, y, check_dir;
+    int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE], dirs[8];
+    int current = 0, dir, max = 1, size, x, y, check_dir, i;
 
     if (target->map != source->map)
         return default_dir;
@@ -437,11 +437,21 @@ int monster_compute_path(object *source, object *target, int default_dir) {
     explore_y[0] = target->y;
 
     while (current < max) {
-        for (check_dir = 0; check_dir < 8; check_dir++) {
+        /* Fisher–Yates shuffle the directions, "inside-out" algorithm
+         * from http://en.wikipedia.org/wiki/Fisher-Yates_shuffle */
+        dirs[0] = 1;
+        for (i = 1; i < 8; i++) {
+            x = RANDOM() % (i+1);
+            dirs[i] = dirs[x];
+            dirs[x] = i+1;
+        }
+
+        for (i = 0; i < 8; i++) {
             int diagonal;
             unsigned short new_distance;
             unsigned short *this_distance;
 
+            check_dir = dirs[i];
             dir = absdir(default_dir+4+check_dir);
             x = explore_x[current]+freearr_x[dir];
             y = explore_y[current]+freearr_y[dir];
