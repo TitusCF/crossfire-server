@@ -24,6 +24,7 @@ class CREAnimationPanel : public CREPanel
         const Animations* myAnimation;
 
         QTreeWidget* myUsing;
+        QTreeWidget* myFaces;
         CREAnimationControl* myDisplay;
 };
 

@@ -24,8 +24,14 @@ CREAnimationPanel::CREAnimationPanel()
     myUsing->sortByColumn(0, Qt::AscendingOrder);
     layout->addWidget(myUsing, 1, 1);
 
+    myFaces = new QTreeWidget(this);
+    myFaces->setColumnCount(1);
+    myFaces->setHeaderLabel(tr("Faces"));
+    myFaces->setIconSize(QSize(32, 32));
+    layout->addWidget(myFaces, 2, 1);
+
     myDisplay = new CREAnimationControl(this);
-    layout->addWidget(myDisplay, 2, 1);
+    layout->addWidget(myDisplay, 3, 1);
 }
 
 void CREAnimationPanel::setAnimation(const Animations* animation)
@@ -75,5 +81,15 @@ void CREAnimationPanel::setAnimation(const Animations* animation)
                 CREUtils::artifactNode(art, root);
             }
         }
+    }
+
+    myFaces->clear();
+    root = CREUtils::faceNode(NULL);
+    myFaces->addTopLevelItem(root);
+    root->setExpanded(true);
+    
+    for (int face = 0; face < animation->num_animations; face++)
+    {
+      CREUtils::faceNode(animation->faces[face], root);
     }
 }
