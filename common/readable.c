@@ -1888,9 +1888,11 @@ static StringBuffer *msgfile_msg(object *book, size_t booksize) {
     if (msg_total_chance > 0) {
         assert(first_msg != NULL);
         msg = first_msg;
-        weight = (RANDOM() % msg_total_chance) - msg->chance;
-        while (weight > 0 && msg) {
+        weight = (RANDOM() % msg_total_chance);
+        while (msg) {
             weight -= msg->chance;
+            if (weight < 0)
+                break;
             msg = msg->next;
         }
         /* if msg is NULL, then something is really wrong in the computation! */
