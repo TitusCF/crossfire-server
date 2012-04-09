@@ -233,7 +233,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     object *the_chest;
     int i, xl, yl;
     treasurelist *tlist;
-    const char *chests[] = { "chest", "chest_green" };
+    const char *chests[] = { "chest", "chest_green", "chest_red", "chest_yellow", "chest_blue", "chest_pink" };
 
     the_chest = create_archetype(chests[RANDOM() % (sizeof(chests)/sizeof(*chests))]);
 
