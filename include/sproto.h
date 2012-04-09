@@ -322,6 +322,7 @@ void knowledge_send_info(socket_struct *ns);
 void knowledge_send_known(player *pl);
 void knowledge_first_player_save(player *pl);
 void knowledge_process_incremental(void);
+void knowledge_show_monster_detail(object *op, const char *name);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name);

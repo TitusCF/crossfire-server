@@ -1492,3 +1492,28 @@ void knowledge_process_incremental(void) {
         break;
     }
 }
+
+/**
+ * Display the details of a monster if the player knows them.
+ * @param op player asking for details.
+ * @param name monster's archetype name.
+ */
+void knowledge_show_monster_detail(object *op, const char *name) {
+    knowledge_player *kp;
+    StringBuffer *buf = NULL;
+    char *result;
+
+    if (op->contr == NULL)
+        return;
+
+    kp = knowledge_get_or_create(op->contr);
+
+    if (!knowledge_known(kp, name, &knowledges[1]))
+        return;
+
+    buf = stringbuffer_new();
+    knowledge_monster_detail(name, buf);
+    result = stringbuffer_finish(buf);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE, result);
+    free(result);
+}

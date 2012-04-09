@@ -1401,6 +1401,10 @@ void examine_monster(object *op, object *tmp, int level) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                       "It looks very ill.");
 
+    if (level < 10)
+        return;
+    knowledge_show_monster_detail(op, mon->arch->name);
+
     if (level < 15)
         return;
 
