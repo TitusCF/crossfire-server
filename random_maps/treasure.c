@@ -236,6 +236,8 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     const char *chests[] = { "chest", "chest_green", "chest_red", "chest_yellow", "chest_blue", "chest_pink" };
 
     the_chest = create_archetype(chests[RANDOM() % (sizeof(chests)/sizeof(*chests))]);
+    if (the_chest == NULL)
+        return NULL;
 
     /* first, find a place to put the chest. */
     i = object_find_first_free_spot(the_chest, map, x, y);
