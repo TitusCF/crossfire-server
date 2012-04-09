@@ -55,11 +55,14 @@ ENDMSG
 #
 MSG G-002
 TITLE Fortress of Ang
+QUEST quests/FortressAng 0>10
 CHANCE 1
 TEXT
-In ancient times past the great fortress of Ang was raised on the western shore. Many inhabitants it has had, but the last known was the most unusual.
+In ancient times past the great fortress of Ang was raised on the eastern shore. Many inhabitants it has had, but the last known was the most unusual.
 
 A titan of rare power is said to live in Ang now. There he serves as guardian of an artifact of unusual might.
+
+The exact location is now lost, but rumors locate it east, north-east of Navar, near the southern shore.
 ENDMSG
 #
 #
