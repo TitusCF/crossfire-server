@@ -393,3 +393,21 @@ Narcopin was razed to the ground by the surrounding kingdoms within six months o
 
 Now only ruins remain, though some say spirits guard the tomb Aljwaf made for himself...
 ENDMSG
+MSG G-032
+TITLE The hunt for Nilplur
+CHANCE 1
+QUEST quests/Nilplur 0>10
+TEXT
+As per your instructions, I've hunted down Nilplur the dragon to its lair.
+
+It is located in a mountain range east of the lake between Scorn and Euthville, but seems heavily guarded.
+
+The cave is richely decorated, adding some weight to the rumours Nilplur accumulated much wealth -- including powerful spells.
+
+I will try to slay the beast, but in case I don't return I thus dispatch this message so others can take over my duty.
+
+Your humble servitor
+
+Kolgar
+
+ENDMSG
