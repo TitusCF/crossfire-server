@@ -90,10 +90,13 @@ static int Player_SetMarkedItem(Crossfire_Player *whoptr, PyObject *value, void 
     Crossfire_Object *ob;
 
     EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "O!", &Crossfire_ObjectType, &ob))
+    if (value == Py_None)
+        cf_player_set_marked_item(whoptr->obj, NULL);
+    else if (!PyArg_Parse(value, "O!", &Crossfire_ObjectType, &ob))
         return -1;
+    else
         cf_player_set_marked_item(whoptr->obj, ob->obj);
-        return 0;
+    return 0;
 }
 
 static PyObject *Crossfire_Player_Message(Crossfire_Player *who, PyObject *args) {
