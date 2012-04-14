@@ -1082,7 +1082,7 @@ static void knowledge_do_display(object *pl, const knowledge_type *show_only, co
                 header = 1;
             }
 
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", i, final);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, "(%3d) %s", i + 1, final);
         }
 
         free(final);
