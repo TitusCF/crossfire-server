@@ -3120,8 +3120,11 @@ void cfapi_object_set_property(int *type, ...) {
                 oparg = va_arg(args, object *);
                 *type = CFAPI_POBJECT;
                 op->contr->mark = oparg;
-                if (oparg)
+                if (oparg) {
                     op->contr->mark_count = oparg->count;
+                } else {
+                    op->contr->mark_count = 0;
+                }
             }
             break;
 
