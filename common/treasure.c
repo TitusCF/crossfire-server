@@ -169,8 +169,10 @@ static treasure *load_treasure(FILE *fp, int *line) {
             cp++;
 
         if (sscanf(cp, "arch %s", variable)) {
-            if ((t->item = find_archetype(variable)) == NULL)
+            if ((t->item = find_archetype(variable)) == NULL) {
                 LOG(llevError, "Treasure lacks archetype: %s\n", variable);
+                fatal(SEE_LAST_ERROR);
+            }
         } else if (sscanf(cp, "list %s", variable))
             t->name = add_string(variable);
         else if (sscanf(cp, "change_name %s", variable))
@@ -198,6 +200,7 @@ static treasure *load_treasure(FILE *fp, int *line) {
             LOG(llevError, "Unknown treasure-command: '%s', last entry %s, line %d\n", cp, t->name ? t->name : "null", *line);
     }
     LOG(llevError, "treasure lacks 'end'.\n");
+    fatal(SEE_LAST_ERROR);
     return t;
 }
 
