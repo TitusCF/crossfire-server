@@ -423,6 +423,10 @@ int pick_lock(object *pl, int dir, object *skill) {
                       "There is no lock there.");
         return 0;
     }
+
+    if (execute_event(tmp, EVENT_TRIGGER, pl, skill, NULL, SCRIPT_FIX_ALL) != 0)
+        return 0;
+
     if (tmp->type == LOCKED_DOOR) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "You can't pick that lock!");
