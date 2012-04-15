@@ -64,7 +64,8 @@
 /*******************************************************************************/
 #define EVENT_NONE      0  /**< No event. This exists only to reserve the "0". */
 #define EVENT_APPLY     1  /**< Object applied-unapplied.                      */
-#define EVENT_ATTACK    2  /**< Monster attacked or Scripted Weapon used.      */
+#define EVENT_ATTACK    2  /**< Object attacked, with weapon or spell.         */
+#define EVENT_ATTACKS   33 /**< Weapon or arrow hitting something.             */
 #define EVENT_DEATH     3  /**< Player or monster dead.                        */
 #define EVENT_DROP      4  /**< Object dropped on the floor.                   */
 #define EVENT_PICKUP    5  /**< Object picked up.                              */
@@ -98,7 +99,7 @@
 #define EVENT_KICK      28 /**< A player was Kicked by a DM                    */
 #define EVENT_MAPUNLOAD 29 /**< A map is freed (includes swapping out)         */
 #define EVENT_MAPLOAD   30 /**< A map is loaded                                */
-#define NR_EVENTS 33
+#define NR_EVENTS 34
 
 #include <stdarg.h>
 

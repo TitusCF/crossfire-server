@@ -724,17 +724,13 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     if (get_attack_mode(&op, &hitter, &simple_attack))
         return 1;
 
-    /* Lauwenmark: Handle for plugin attack event */
-    if (execute_event(op, EVENT_ATTACK, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
-        return 0;
-
     /* Lauwenmark: This is used to handle script_weapons with weapons.
      * Only used for players.
      */
     if (hitter->type == PLAYER) {
         if (hitter->current_weapon != NULL) {
             /* Lauwenmark: Handle for plugin attack event */
-            if (execute_event(hitter->current_weapon, EVENT_ATTACK,
+            if (execute_event(hitter->current_weapon, EVENT_ATTACKS,
                               hitter, op, NULL, SCRIPT_FIX_ALL) != 0)
                 return 0;
             if (hitter->current_weapon->anim_suffix)
@@ -960,7 +956,7 @@ object *hit_with_arrow(object *op, object *victim) {
        items, but there is no information about the fact it was
        thrown
     */
-    if (execute_event(op, EVENT_ATTACK, hitter, victim, NULL, SCRIPT_FIX_ALL) == 0) {
+    if (execute_event(op, EVENT_ATTACKS, hitter, victim, NULL, SCRIPT_FIX_ALL) == 0) {
         /*
          * temporary set the hitter's skill to the one associated with the
          * throw wrapper. This is needed to that thrower gets it's xp at the
@@ -1824,6 +1820,14 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     int rtn_kill = 0;
     int friendlyfire;
     object *owner;
+
+    /* Lauwenmark: Handle for plugin attack event */
+    if (execute_event(op, EVENT_ATTACK, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
+        return 0;
+    FOR_INV_PREPARE(op, inv)
+        if (execute_event(inv, EVENT_ATTACK, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
+            return 0;
+    FOR_INV_FINISH();
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
         return 0;

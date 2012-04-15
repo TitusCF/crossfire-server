@@ -682,7 +682,7 @@ resist_physical 1
 msg
   The Ancient School of Occidental Mages created that weapon during the Empire Wars, charging it with their Chaotic Powers.
 endmsg
-arch event_attack
+arch event_attacks
 title Python
 slaying /python/items/weapon_occidental_mages.py
 end
