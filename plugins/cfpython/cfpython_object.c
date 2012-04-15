@@ -801,6 +801,11 @@ static PyObject *Object_GetArchetype(Crossfire_Object *whoptr, void *closure) {
     return Crossfire_Archetype_wrap(cf_object_get_archetype_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCHETYPE));
 }
 
+static PyObject *Object_GetOtherArchetype(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Crossfire_Archetype_wrap(cf_object_get_archetype_property(whoptr->obj, CFAPI_OBJECT_PROP_OTHER_ARCH));
+}
+
 static PyObject *Object_GetNoSave(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_NO_SAVE));

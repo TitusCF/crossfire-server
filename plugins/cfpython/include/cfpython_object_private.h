@@ -133,6 +133,7 @@ static PyObject *Object_GetSubtype(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetValue(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetArchName(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetArchetype(Crossfire_Object *whoptr, void *closure);
+static PyObject *Object_GetOtherArchetype(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetNoSave(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetExists(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetEnv(Crossfire_Object *whoptr, void *closure);
@@ -406,6 +407,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Value",          (getter)Object_GetValue,        (setter)Object_SetValue, NULL, NULL },
     { "ArchName",       (getter)Object_GetArchName,     NULL, NULL, NULL },
     { "Archetype",      (getter)Object_GetArchetype,    NULL, NULL, NULL },
+    { "OtherArchetype", (getter)Object_GetOtherArchetype,NULL, NULL, NULL },
     { "Exists",         (getter)Object_GetExists,       NULL, NULL, NULL },
     { "NoSave",         (getter)Object_GetNoSave,       (setter)Object_SetNoSave, NULL, NULL },
     { "Env",            (getter)Object_GetEnv,          NULL, NULL, NULL },
