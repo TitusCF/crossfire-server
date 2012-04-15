@@ -197,6 +197,7 @@ static int Object_SetLastGrace(Crossfire_Object *whoptr, PyObject *value, void *
 static int Object_SetLastEat(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetAttackType(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetIdentified(Crossfire_Object *whoptr, PyObject *value, void *closure);
+static int Object_SetAlive(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetUnaggressive(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetPickable(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetInvisible(Crossfire_Object *whoptr, PyObject *value, void *closure);
@@ -241,6 +242,12 @@ static int Object_SetGlowRadius(Crossfire_Object *whoptr, PyObject *value, void 
 static int Object_SetAnimated(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetNoDamage(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetRandomMovement(Crossfire_Object *whoptr, PyObject *value, void *closure);
+static int Object_SetMoveType(Crossfire_Object *whoptr, PyObject *value, void *closure);
+static int Object_SetMoveBlock(Crossfire_Object *whoptr, PyObject *value, void *closure);
+static int Object_SetMoveAllow(Crossfire_Object *whoptr, PyObject *value, void *closure);
+static int Object_SetMoveOn(Crossfire_Object *whoptr, PyObject *value, void *closure);
+static int Object_SetMoveOff(Crossfire_Object *whoptr, PyObject *value, void *closure);
+static int Object_SetMoveSlow(Crossfire_Object *whoptr, PyObject *value, void *closure);
 
 static PyObject *Crossfire_Object_Remove(Crossfire_Object *who, PyObject *args);
 static PyObject *Crossfire_Object_Apply(Crossfire_Object *who, PyObject *args);
@@ -350,7 +357,7 @@ static PyGetSetDef Object_getseters[] = {
     { "AttackType",     (getter)Object_GetAttackType,   (setter)Object_SetAttackType, NULL, NULL },
     { "BeenApplied",    (getter)Object_GetBeenApplied,  NULL, NULL, NULL },
     { "Identified",     (getter)Object_GetIdentified,   (setter)Object_SetIdentified, NULL, NULL },
-    { "Alive",          (getter)Object_GetAlive,        NULL, NULL, NULL },
+    { "Alive",          (getter)Object_GetAlive,        (setter)Object_SetAlive, NULL, NULL },
     { "DungeonMaster",  (getter)Object_GetDM,           NULL, NULL, NULL },
     { "WasDungeonMaster", (getter)Object_GetWasDM,      NULL, NULL, NULL },
     { "Applied",        (getter)Object_GetApplied,      (setter)Object_SetApplied, NULL, NULL },
@@ -402,12 +409,12 @@ static PyGetSetDef Object_getseters[] = {
     { "Exists",         (getter)Object_GetExists,       NULL, NULL, NULL },
     { "NoSave",         (getter)Object_GetNoSave,       (setter)Object_SetNoSave, NULL, NULL },
     { "Env",            (getter)Object_GetEnv,          NULL, NULL, NULL },
-    { "MoveType",       (getter)Object_GetMoveType,     NULL, NULL, NULL },
-    { "MoveBlock",      (getter)Object_GetMoveBlock,    NULL, NULL, NULL },
-    { "MoveAllow",      (getter)Object_GetMoveAllow,    NULL, NULL, NULL },
-    { "MoveOn",         (getter)Object_GetMoveOn,       NULL, NULL, NULL },
-    { "MoveOff",        (getter)Object_GetMoveOff,      NULL, NULL, NULL },
-    { "MoveSlow",       (getter)Object_GetMoveSlow,     NULL, NULL, NULL },
+    { "MoveType",       (getter)Object_GetMoveType,     (setter)Object_SetMoveType, NULL, NULL },
+    { "MoveBlock",      (getter)Object_GetMoveBlock,    (setter)Object_SetMoveBlock, NULL, NULL },
+    { "MoveAllow",      (getter)Object_GetMoveAllow,    (setter)Object_SetMoveAllow, NULL, NULL },
+    { "MoveOn",         (getter)Object_GetMoveOn,       (setter)Object_SetMoveOn, NULL, NULL },
+    { "MoveOff",        (getter)Object_GetMoveOff,      (setter)Object_SetMoveOff, NULL, NULL },
+    { "MoveSlow",       (getter)Object_GetMoveSlow,     (setter)Object_SetMoveSlow, NULL, NULL },
     { "MoveSlowPenalty", (getter)Object_GetMoveSlowPenalty, NULL, NULL, NULL },
     { "Owner",          (getter)Object_GetOwner,        (setter)Object_SetOwner, NULL, NULL },
     { "Enemy",          (getter)Object_GetEnemy,        (setter)Object_SetEnemy, NULL, NULL },

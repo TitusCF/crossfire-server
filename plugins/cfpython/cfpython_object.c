@@ -1480,6 +1480,17 @@ static int Object_SetIdentified(Crossfire_Object *whoptr, PyObject *value, void 
     return 0;
 }
 
+static int Object_SetAlive(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &val))
+        return -1;
+
+    cf_object_set_flag(whoptr->obj, FLAG_ALIVE, val);
+    return 0;
+}
+
 static int Object_SetUnaggressive(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     int val;
 
@@ -1938,6 +1949,67 @@ static int Object_SetAnimated(Crossfire_Object *whoptr, PyObject *value, void *c
     cf_object_set_flag(whoptr->obj, FLAG_ANIMATE, val);
     return 0;
 }
+
+static int Object_SetMoveType(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    MoveType move;
+    
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "B", &move))
+        return -1;
+    cf_object_set_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_TYPE, (MoveType)(move & MOVE_ALL));
+    return 0;
+}
+
+static int Object_SetMoveBlock(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    MoveType move;
+    
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "B", &move))
+        return -1;
+    cf_object_set_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_BLOCK, move);
+    return 0;
+}
+
+static int Object_SetMoveAllow(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    MoveType move;
+    
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "B", &move))
+        return -1;
+    cf_object_set_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ALLOW, move);
+    return 0;
+}
+
+static int Object_SetMoveOn(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    MoveType move;
+    
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "B", &move))
+        return -1;
+    cf_object_set_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ON, move);
+    return 0;
+}
+
+static int Object_SetMoveOff(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    MoveType move;
+    
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "B", &move))
+        return -1;
+    cf_object_set_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_OFF, move);
+    return 0;
+}
+
+static int Object_SetMoveSlow(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    MoveType move;
+    
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "B", &move))
+        return -1;
+    cf_object_set_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW, move);
+    return 0;
+}
+
 
 /* Methods. */
 
