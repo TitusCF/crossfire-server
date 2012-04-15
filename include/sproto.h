@@ -20,7 +20,6 @@ void account_char_save(const char *account, Account_Char *chars);
 Account_Char *account_char_add(Account_Char *chars, player *pl);
 Account_Char *account_char_remove(Account_Char *chars, const char *pl_name);
 void account_char_free(Account_Char *chars);
-void account_char_init(void);
 /* alchemy.c */
 int use_alchemy(object *op);
 /* apply.c */

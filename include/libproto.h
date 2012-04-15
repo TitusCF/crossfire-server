@@ -36,7 +36,7 @@ extern int legal_artifact_combination(const object *op, const artifact *art);
 extern void add_abilities(object *op, const object *change);
 extern void init_artifacts(void);
 extern const artifactlist *find_artifactlist(int type);
-const artifact *find_artifact(const object *op, const char *name);
+extern const artifact *find_artifact(const object *op, const char *name);
 extern void dump_artifacts(void);
 extern unsigned artifact_get_face(const artifact *art);
 /* button.c */
@@ -116,12 +116,12 @@ extern int need_identify(const object *op);
 extern void object_give_identified_properties(object *op);
 extern object *identify(object *op);
 /* languages.c */
-const char *i18n(const object *who, const char *code);
+extern int get_language(object *op);
+extern const char *i18n(const object *who, const char *code);
+extern int i18n_find_language_by_code(const char *code);
 extern int i18n_get_language_by_code(const char *code);
-int i18n_find_language_by_code(const char *code);
 extern sstring i18n_get_language_code(int language);
 extern void i18n_list_languages(object *who);
-extern int get_language(object *op);
 extern void i18n_init(void);
 extern void i18n_free(void);
 /* links.c */
@@ -413,7 +413,7 @@ extern void set_abs_magic(object *op, int magic);
 extern void fix_generated_item(object *op, object *creator, int difficulty, int max_magic, int flags);
 extern void dump_monster_treasure(const char *name);
 extern void free_all_treasures(void);
-extern objectlink * treasurelist_find_matching_type(const treasurelist *randomitems, int type, int traverse);
+extern objectlink *treasurelist_find_matching_type(const treasurelist *randomitems, int type, int traverse);
 /* utils.c */
 extern int random_roll(int min, int max, const object *op, int goodbad);
 extern sint64 random_roll64(sint64 min, sint64 max, const object *op, int goodbad);
