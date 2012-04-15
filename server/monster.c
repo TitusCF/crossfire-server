@@ -395,6 +395,7 @@ static int monster_move_randomly(object *op) {
     return 0;
 }
 
+/** Maximum map size to consider when finding a path in monster_compute_path(). */
 #define MAX_EXPLORE 5000
 
 /**
@@ -2248,15 +2249,17 @@ static int monster_talk_to_npc(object *npc, talk_info *info) {
     return monster_do_talk_npc(npc, info);
 }
 
-/* monster_find_throw_ob() - modeled on find_throw_ob
+/**
+ * Find an item for the monster to throw.
+ * Modeled on find_throw_ob().
  * This is probably overly simplistic as it is now - We want
  * monsters to throw things like chairs and other pieces of
  * furniture, even if they are not good throwable objects.
  * Probably better to have the monster throw a throwable object
  * first, then throw any non equipped weapon.
  *
- * @note
- * find_throw_ob() has been renamed to monster_find_throw_ob()
+ * @param op monster to find an item to throw for.
+ * @return item, NULL if none suitable.
  */
 object *monster_find_throw_ob(object *op) {
     /* New throw code: look through the inventory. Grap the first legal is_thrown
@@ -2282,17 +2285,20 @@ object *monster_find_throw_ob(object *op) {
     return NULL;
 }
 
-/* determine if we can 'detect' the enemy. Check for walls blocking the
+/**
+ * Determine if we can 'detect' the enemy. Check for walls blocking the
  * los. Also, just because its hidden/invisible, we may be sensitive/smart
  * enough (based on Wis & Int) to figure out where the enemy is. -b.t.
- * modified by MSW to use the get_rangevector so that map tiling works
+ *
+ * Modified by MSW to use the get_rangevector so that map tiling works
  * properly.  I also so odd code in place that checked for x distance
  * OR y distance being within some range - that seemed wrong - both should
  * be within the valid range. MSW 2001-08-05
- * Returns 0 if enemy can not be detected, 1 if it is detected
  *
- * @note
- * can_detect_enemy() has been renamed to monster_can_detect_enemy()
+ * @param op who should detect.
+ * @param enemy what to detect.
+ * @param rv if the function returns 1, contains the range vector towards enemy.
+ * @return 0 if enemy can not be detected, 1 if it is detected
  */
 int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
     int radius = MIN_MON_RADIUS, hide_discovery;
@@ -2425,13 +2431,14 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
     return 0;
 }
 
-/* determine if op stands in a lighted square. This is not a very
+/**
+ * Determine if op stands in a lighted square. This is not a very
  * intellegent algorithm. For one thing, we ignore los here, SO it
  * is possible for a bright light to illuminate a player on the
  * other side of a wall (!).
  *
- * @note
- * stand_in_light() has been renamed to monster_stand_in_light()
+ * @param op who to check.
+ * @return 1 if op is in lighe, 0 else.
  */
 int monster_stand_in_light(object *op) {
     sint16 nx, ny;
@@ -2467,11 +2474,14 @@ int monster_stand_in_light(object *op) {
     return 0;
 }
 
-/*
- * assuming no walls/barriers, lets check to see if its *possible*
+/**
+ * Assuming no walls/barriers, lets check to see if its *possible*
  * to see an enemy. Note, "detection" is different from "seeing".
  * See monster_can_detect_enemy() for more details. -b.t.
- * return 0 if can't be seen, 1 if can be
+ *
+ * @param op who is trying to see enemy.
+ * @param enemy victim op is trying to see.
+ * @return 0 if can't be seen, 1 if can be
  */
 int monster_can_see_enemy(object *op, object *enemy) {
     object *looker = HEAD(op);
