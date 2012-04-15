@@ -28,8 +28,30 @@
 /*****************************************************************************/
 
 #include <cfpython.h>
-#include <cfpython_object_private.h>
 #include <hashtable.h>
+
+#define EXISTCHECK(ob) { \
+    if (!ob || !ob->obj || (object_was_destroyed(ob->obj, ob->obj->count))) { \
+        PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
+        return NULL; \
+    } }
+
+/**
+ * This is meant to be used for parameters where you don't know if the type of
+ * the object is correct. It should NOT be used for the self pointer, since that
+ * will always be a compatible type.
+ */
+#define TYPEEXISTCHECK(ob) { \
+    if (!ob || !PyObject_TypeCheck((PyObject*)ob, &Crossfire_ObjectType) || !ob->obj || (object_was_destroyed(ob->obj, ob->obj->count))) { \
+        PyErr_SetString(PyExc_ReferenceError, "Not a Crossfire object or Crossfire object no longer exists"); \
+        return NULL; \
+    } }
+
+#define EXISTCHECK_INT(ob) { \
+    if (!ob || !ob->obj || (object_was_destroyed(ob->obj, ob->obj->count))) { \
+        PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
+        return -1; \
+    } }
 
 /* Table for keeping track of which PyObject goes with with Crossfire object */
 static ptr_assoc_table object_assoc_table;
@@ -2583,25 +2605,251 @@ static PyObject *Crossfire_Object_Int(PyObject *obj) {
 }
 #endif
 
-/**
- * Python initialized.
- **/
+/* Python binding */
+static PyGetSetDef Object_getseters[] = {
+    { "Name",           (getter)Object_GetName,         (setter)Object_SetName, NULL, NULL },
+    { "NamePl",         (getter)Object_GetNamePl,       (setter)Object_SetNamePl, NULL, NULL },
+    { "Title",          (getter)Object_GetTitle,        (setter)Object_SetTitle, NULL, NULL },
+    { "Race",           (getter)Object_GetRace,         (setter)Object_SetRace, NULL, NULL },
+    { "Skill",          (getter)Object_GetSkill,        (setter)Object_SetSkill, NULL, NULL },
+    { "Map",            (getter)Object_GetMap,          (setter)Object_SetMap, NULL, NULL },
+    { "Cha",            (getter)Object_GetCha,          (setter)Object_SetCha, NULL, NULL },
+    { "Con",            (getter)Object_GetCon,          (setter)Object_SetCon, NULL, NULL },
+    { "Dex",            (getter)Object_GetDex,          (setter)Object_SetDex, NULL, NULL },
+    { "Int",            (getter)Object_GetInt,          (setter)Object_SetInt, NULL, NULL },
+    { "Pow",            (getter)Object_GetPow,          (setter)Object_SetPow, NULL, NULL },
+    { "Str",            (getter)Object_GetStr,          (setter)Object_SetStr, NULL, NULL },
+    { "Wis",            (getter)Object_GetWis,          (setter)Object_SetWis, NULL, NULL },
+    { "HP",             (getter)Object_GetHP,           (setter)Object_SetHP, NULL, NULL },
+    { "MaxHP",          (getter)Object_GetMaxHP,        (setter)Object_SetMaxHP, NULL, NULL },
+    { "SP",             (getter)Object_GetSP,           (setter)Object_SetSP, NULL, NULL },
+    { "MaxSP",          (getter)Object_GetMaxSP,        (setter)Object_SetMaxSP, NULL, NULL },
+    { "Grace",          (getter)Object_GetGrace,        (setter)Object_SetGrace, NULL, NULL },
+    { "MaxGrace",       (getter)Object_GetMaxGrace,     (setter)Object_SetMaxGrace, NULL, NULL },
+    { "Food",           (getter)Object_GetFood,         (setter)Object_SetFood, NULL, NULL },
+    { "AC",             (getter)Object_GetAC,           (setter)Object_SetAC, NULL, NULL },
+    { "WC",             (getter)Object_GetWC,           (setter)Object_SetWC, NULL, NULL },
+    { "Dam",            (getter)Object_GetDam,          (setter)Object_SetDam, NULL, NULL },
+    { "Luck",           (getter)Object_GetLuck,         NULL, NULL, NULL },
+    { "Exp",            (getter)Object_GetExp,          (setter)Object_SetExp, NULL, NULL },
+    { "ExpMul",         (getter)Object_GetExpMul,       NULL, NULL, NULL },
+    { "PermExp",        (getter)Object_GetPermExp,      NULL, NULL, NULL },
+    { "Message",        (getter)Object_GetMessage,      (setter)Object_SetMessage, NULL, NULL },
+    { "Slaying",        (getter)Object_GetSlaying,      (setter)Object_SetSlaying, NULL, NULL },
+    { "Cursed",         (getter)Object_GetCursed,       (setter)Object_SetCursed, NULL, NULL },
+    { "Damned",         (getter)Object_GetDamned,       (setter)Object_SetDamned, NULL, NULL },
+    { "Weight",         (getter)Object_GetWeight,       (setter)Object_SetWeight, NULL, NULL },
+    { "WeightLimit",    (getter)Object_GetWeightLimit,  (setter)Object_SetWeightLimit, NULL, NULL },
+    { "Above",          (getter)Object_GetAbove,        NULL, NULL, NULL },
+    { "Below",          (getter)Object_GetBelow,        NULL, NULL, NULL },
+    { "Inventory",      (getter)Object_GetInventory,    NULL, NULL, NULL },
+    { "X",              (getter)Object_GetX,            NULL, NULL, NULL },
+    { "Y",              (getter)Object_GetY,            NULL, NULL, NULL },
+    { "Direction",      (getter)Object_GetDirection,    (setter)Object_SetDirection, NULL, NULL },
+    { "Facing",         (getter)Object_GetFacing,       (setter)Object_SetFacing, NULL, NULL },
+    { "Unaggressive",   (getter)Object_GetUnaggressive, (setter)Object_SetUnaggressive, NULL, NULL },
+    { "God",            (getter)Object_GetGod,          (setter)Object_SetGod, NULL, NULL },
+    { "Pickable",       (getter)Object_GetPickable,     (setter)Object_SetPickable, NULL, NULL },
+    { "Quantity",       (getter)Object_GetQuantity,     (setter)Object_SetQuantity, NULL, NULL },
+    { "Invisible",      (getter)Object_GetInvisible,    (setter)Object_SetInvisible, NULL, NULL },
+    { "Speed",          (getter)Object_GetSpeed,        (setter)Object_SetSpeed, NULL, NULL },
+    { "SpeedLeft",      (getter)Object_GetSpeedLeft,    (setter)Object_SetSpeedLeft, NULL, NULL },
+    { "LastSP",         (getter)Object_GetLastSP,       (setter)Object_SetLastSP, NULL, NULL },
+    { "LastGrace",      (getter)Object_GetLastGrace,    (setter)Object_SetLastGrace, NULL, NULL },
+    { "LastEat",        (getter)Object_GetLastEat,      (setter)Object_SetLastEat, NULL, NULL },
+    { "Level",          (getter)Object_GetLevel,        NULL, NULL, NULL },
+    { "Face",           (getter)Object_GetFace,         (setter)Object_SetFace, NULL, NULL },
+    { "Anim",           (getter)Object_GetAnim,         (setter)Object_SetAnim, NULL, NULL },
+    { "AnimSpeed",      (getter)Object_GetAnimSpeed,    (setter)Object_SetAnimSpeed, NULL, NULL },
+    { "AttackType",     (getter)Object_GetAttackType,   (setter)Object_SetAttackType, NULL, NULL },
+    { "BeenApplied",    (getter)Object_GetBeenApplied,  NULL, NULL, NULL },
+    { "Identified",     (getter)Object_GetIdentified,   (setter)Object_SetIdentified, NULL, NULL },
+    { "Alive",          (getter)Object_GetAlive,        (setter)Object_SetAlive, NULL, NULL },
+    { "DungeonMaster",  (getter)Object_GetDM,           NULL, NULL, NULL },
+    { "WasDungeonMaster", (getter)Object_GetWasDM,      NULL, NULL, NULL },
+    { "Applied",        (getter)Object_GetApplied,      (setter)Object_SetApplied, NULL, NULL },
+    { "Unpaid",         (getter)Object_GetUnpaid,       (setter)Object_SetUnpaid, NULL, NULL },
+    { "Monster",        (getter)Object_GetMonster,      NULL, NULL, NULL },
+    { "Friendly",       (getter)Object_GetFriendly,     (setter)Object_SetFriendly, NULL, NULL },
+    { "Generator",      (getter)Object_GetGenerator,    NULL, NULL, NULL },
+    { "Thrown",         (getter)Object_GetThrown,       NULL, NULL, NULL },
+    { "CanSeeInvisible", (getter)Object_GetCanSeeInvisible, (setter)Object_SetCanSeeInvisible, NULL, NULL },
+    { "Rollable",       (getter)Object_GetRollable,     (setter)Object_SetRollable, NULL, NULL },
+    { "Turnable",       (getter)Object_GetTurnable,     (setter)Object_SetTurnable, NULL, NULL },
+    { "UsedUp",         (getter)Object_GetUsedUp,       (setter)Object_SetUsedUp, NULL, NULL },
+    { "Splitting",      (getter)Object_GetSplitting,    NULL, NULL, NULL },
+    { "Blind",          (getter)Object_GetBlind,        (setter)Object_SetBlind, NULL, NULL },
+    { "CanUseSkill",    (getter)Object_GetCanUseSkill,  NULL, NULL, NULL },
+    { "KnownCursed",    (getter)Object_GetKnownCursed,  (setter)Object_SetKnownCursed, NULL, NULL },
+    { "Stealthy",       (getter)Object_GetStealthy,     (setter)Object_SetStealthy, NULL, NULL },
+    { "Confused",       (getter)Object_GetConfused,     (setter)Object_SetConfused, NULL, NULL },
+    { "Sleeping",       (getter)Object_GetSleeping,     (setter)Object_SetSleeping, NULL, NULL },
+    { "Lifesaver",      (getter)Object_GetLifesaver,    (setter)Object_SetLifesaver, NULL, NULL },
+    { "Floor",          (getter)Object_GetFloor,        NULL, NULL, NULL },
+    { "HasXRays",       (getter)Object_GetHasXRays,     (setter)Object_SetHasXRays, NULL, NULL },
+    { "CanUseRing",     (getter)Object_GetCanUseRing,   NULL, NULL, NULL },
+    { "CanUseBow",      (getter)Object_GetCanUseBow,    NULL, NULL, NULL },
+    { "CanUseWand",     (getter)Object_GetCanUseWand,   NULL, NULL, NULL },
+    { "CanSeeInDark",   (getter)Object_GetCanSeeInDark, (setter)Object_SetCanSeeInDark, NULL, NULL },
+    { "KnownMagical",   (getter)Object_GetKnownMagical, (setter)Object_SetKnownMagical, NULL, NULL },
+    { "CanUseWeapon",   (getter)Object_GetCanUseWeapon, NULL, NULL, NULL },
+    { "CanUseArmour",   (getter)Object_GetCanUseArmour, NULL, NULL, NULL },
+    { "CanUseScroll",   (getter)Object_GetCanUseScroll, NULL, NULL, NULL },
+    { "CanCastSpell",   (getter)Object_GetCanCastSpell, NULL, NULL, NULL },
+    { "ReflectSpells",  (getter)Object_GetReflectSpells, (setter)Object_SetReflectSpells, NULL, NULL },
+    { "ReflectMissiles", (getter)Object_GetReflectMissiles, (setter)Object_SetReflectMissiles, NULL, NULL },
+    { "Unique",         (getter)Object_GetUnique,       (setter)Object_SetUnique, NULL, NULL },
+    { "RunAway",        (getter)Object_GetRunAway,      (setter)Object_SetRunAway, NULL, NULL },
+    { "Scared",         (getter)Object_GetScared,       (setter)Object_SetScared, NULL, NULL },
+    { "Undead",         (getter)Object_GetUndead,       (setter)Object_SetUndead, NULL, NULL },
+    { "BlocksView",     (getter)Object_GetBlocksView,   (setter)Object_SetBlocksView, NULL, NULL },
+    { "HitBack",        (getter)Object_GetHitBack,      (setter)Object_SetHitBack, NULL, NULL },
+    { "StandStill",     (getter)Object_GetStandStill,   (setter)Object_SetStandStill, NULL, NULL },
+    { "OnlyAttack",     (getter)Object_GetOnlyAttack,   (setter)Object_SetOnlyAttack, NULL, NULL },
+    { "MakeInvisible",  (getter)Object_GetMakeInvisible, (setter)Object_SetMakeInvisible, NULL, NULL },
+    { "Money",          (getter)Object_GetMoney,        NULL, NULL, NULL },
+    { "Type",           (getter)Object_GetType,         NULL, NULL, NULL },
+    { "Subtype",        (getter)Object_GetSubtype,      NULL, NULL, NULL },
+    { "Value",          (getter)Object_GetValue,        (setter)Object_SetValue, NULL, NULL },
+    { "ArchName",       (getter)Object_GetArchName,     NULL, NULL, NULL },
+    { "Archetype",      (getter)Object_GetArchetype,    NULL, NULL, NULL },
+    { "OtherArchetype", (getter)Object_GetOtherArchetype,NULL, NULL, NULL },
+    { "Exists",         (getter)Object_GetExists,       NULL, NULL, NULL },
+    { "NoSave",         (getter)Object_GetNoSave,       (setter)Object_SetNoSave, NULL, NULL },
+    { "Env",            (getter)Object_GetEnv,          NULL, NULL, NULL },
+    { "MoveType",       (getter)Object_GetMoveType,     (setter)Object_SetMoveType, NULL, NULL },
+    { "MoveBlock",      (getter)Object_GetMoveBlock,    (setter)Object_SetMoveBlock, NULL, NULL },
+    { "MoveAllow",      (getter)Object_GetMoveAllow,    (setter)Object_SetMoveAllow, NULL, NULL },
+    { "MoveOn",         (getter)Object_GetMoveOn,       (setter)Object_SetMoveOn, NULL, NULL },
+    { "MoveOff",        (getter)Object_GetMoveOff,      (setter)Object_SetMoveOff, NULL, NULL },
+    { "MoveSlow",       (getter)Object_GetMoveSlow,     (setter)Object_SetMoveSlow, NULL, NULL },
+    { "MoveSlowPenalty", (getter)Object_GetMoveSlowPenalty, NULL, NULL, NULL },
+    { "Owner",          (getter)Object_GetOwner,        (setter)Object_SetOwner, NULL, NULL },
+    { "Enemy",          (getter)Object_GetEnemy,        (setter)Object_SetEnemy, NULL, NULL },
+    { "Count",          (getter)Object_GetCount,        NULL, NULL, NULL },
+    { "GodGiven",       (getter)Object_GetGodGiven,     (setter)Object_SetGodGiven, NULL, NULL },
+    { "IsPet",          (getter)Object_GetIsPet,        (setter)Object_SetIsPet, NULL, NULL },
+    { "AttackMovement", (getter)Object_GetAttackMovement, (setter)Object_SetAttackMovement, NULL, NULL },
+    { "Duration",       (getter)Object_GetDuration,     (setter)Object_SetDuration, NULL, NULL },
+    { "GlowRadius",     (getter)Object_GetGlowRadius,   (setter)Object_SetGlowRadius, NULL, NULL },
+    { "Animated",       (getter)Object_GetAnimated,     (setter)Object_SetAnimated, NULL, NULL },
+    { "NoDamage",       (getter)Object_GetNoDamage,     (setter)Object_SetNoDamage, NULL, NULL },
+    { "RandomMovement", (getter)Object_GetRandomMovement, (setter)Object_SetRandomMovement, NULL, NULL },
+    { "Material",       (getter)Object_GetMaterial,     NULL, NULL, NULL },
+    { NULL, NULL, NULL, NULL, NULL }
+};
+
+static PyMethodDef ObjectMethods[] = {
+    { "Remove",         (PyCFunction)Crossfire_Object_Remove,       METH_NOARGS,  NULL },
+    { "Apply",          (PyCFunction)Crossfire_Object_Apply,        METH_VARARGS, NULL },
+    { "Drop",           (PyCFunction)Crossfire_Object_Drop,         METH_O,       NULL },
+    { "Clone",           (PyCFunction)Crossfire_Object_Clone,       METH_VARARGS, NULL },
+    { "Split",           (PyCFunction)Crossfire_Object_Split,       METH_VARARGS, NULL },
+    { "Fix",            (PyCFunction)Crossfire_Object_Fix,          METH_NOARGS,  NULL },
+    { "Say",            (PyCFunction)Crossfire_Object_Say,          METH_VARARGS, NULL },
+    { "Speak",          (PyCFunction)Crossfire_Object_Say,          METH_VARARGS, NULL },
+    { "Take",           (PyCFunction)Crossfire_Object_Take,         METH_O,       NULL },
+    { "Teleport",       (PyCFunction)Crossfire_Object_Teleport,     METH_VARARGS, NULL },
+    { "Reposition",     (PyCFunction)Crossfire_Object_Reposition,   METH_VARARGS, NULL },
+    { "QueryName",      (PyCFunction)Crossfire_Object_QueryName,    METH_NOARGS,  NULL },
+    { "GetResist",      (PyCFunction)Crossfire_Object_GetResist,    METH_VARARGS, NULL },
+    { "SetResist",      (PyCFunction)Crossfire_Object_SetResist,    METH_VARARGS, NULL },
+    { "ActivateRune",   (PyCFunction)Crossfire_Object_ActivateRune, METH_O,       NULL },
+    { "CheckTrigger",   (PyCFunction)Crossfire_Object_CheckTrigger, METH_O,       NULL },
+    { "QueryCost",      (PyCFunction)Crossfire_Object_QueryCost,    METH_VARARGS, NULL },
+    { "Cast",           (PyCFunction)Crossfire_Object_Cast,         METH_VARARGS, NULL },
+    { "LearnSpell",     (PyCFunction)Crossfire_Object_LearnSpell,   METH_O,       NULL },
+    { "ForgetSpell",    (PyCFunction)Crossfire_Object_ForgetSpell,  METH_O,       NULL },
+    { "KnowSpell",      (PyCFunction)Crossfire_Object_KnowSpell,    METH_VARARGS, NULL },
+    { "CastAbility",    (PyCFunction)Crossfire_Object_CastAbility,  METH_VARARGS, NULL },
+    { "PayAmount",      (PyCFunction)Crossfire_Object_PayAmount,    METH_VARARGS, NULL },
+    { "Pay",            (PyCFunction)Crossfire_Object_Pay,          METH_O,       NULL },
+    { "CheckInventory", (PyCFunction)Crossfire_Object_CheckInventory, METH_VARARGS, NULL },
+    { "CheckArchInventory", (PyCFunction)Crossfire_Object_CheckArchInventory, METH_VARARGS, NULL },
+    { "OutOfMap",       (PyCFunction)Crossfire_Object_GetOutOfMap,  METH_VARARGS, NULL },
+    { "CreateObject",   (PyCFunction)Crossfire_Object_CreateInside, METH_VARARGS, NULL },
+    { "InsertInto",     (PyCFunction)Crossfire_Object_InsertInto,   METH_O,       NULL },
+    { "ReadKey",        (PyCFunction)Crossfire_Object_ReadKey,      METH_VARARGS, NULL },
+    { "WriteKey",       (PyCFunction)Crossfire_Object_WriteKey,     METH_VARARGS, NULL },
+    { "CreateTimer",    (PyCFunction)Crossfire_Object_CreateTimer,  METH_VARARGS, NULL },
+    { "AddExp",         (PyCFunction)Crossfire_Object_AddExp,       METH_VARARGS, NULL },
+    { "Move",           (PyCFunction)Crossfire_Object_Move,         METH_VARARGS, NULL },
+    { "ChangeAbil",     (PyCFunction)Crossfire_Object_ChangeAbil,   METH_O,       NULL },
+    { "Event",          (PyCFunction)Crossfire_Object_Event,        METH_VARARGS, NULL },
+    { "RemoveDepletion",(PyCFunction)Crossfire_Object_RemoveDepletion,    METH_VARARGS, NULL },
+    { "Arrest",         (PyCFunction)Crossfire_Object_Arrest,    METH_VARARGS, NULL },
+    { NULL, NULL, 0, NULL }
+};
+
+static PyNumberMethods ObjectConvert = {
+    NULL,            /* binaryfunc nb_add; */        /* __add__ */
+    NULL,            /* binaryfunc nb_subtract; */   /* __sub__ */
+    NULL,            /* binaryfunc nb_multiply; */   /* __mul__ */
+#ifndef IS_PY3K
+    NULL,            /* binaryfunc nb_divide; */     /* __div__ */
+#endif
+    NULL,            /* binaryfunc nb_remainder; */  /* __mod__ */
+    NULL,            /* binaryfunc nb_divmod; */     /* __divmod__ */
+    NULL,            /* ternaryfunc nb_power; */     /* __pow__ */
+    NULL,            /* unaryfunc nb_negative; */    /* __neg__ */
+    NULL,            /* unaryfunc nb_positive; */    /* __pos__ */
+    NULL,            /* unaryfunc nb_absolute; */    /* __abs__ */
+#ifdef IS_PY3K
+    NULL,            /* inquiry nb_bool; */          /* __bool__ */
+#else
+    NULL,            /* inquiry nb_nonzero; */       /* __nonzero__ */
+#endif
+    NULL,            /* unaryfunc nb_invert; */      /* __invert__ */
+    NULL,            /* binaryfunc nb_lshift; */     /* __lshift__ */
+    NULL,            /* binaryfunc nb_rshift; */     /* __rshift__ */
+    NULL,            /* binaryfunc nb_and; */        /* __and__ */
+    NULL,            /* binaryfunc nb_xor; */        /* __xor__ */
+    NULL,            /* binaryfunc nb_or; */         /* __or__ */
+#ifndef IS_PY3K
+    NULL,            /* coercion nb_coerce; */       /* __coerce__ */
+#endif
+#ifdef IS_PY3K
+    /* This is not a typo. For Py3k it should be Crossfire_Object_Long
+     * and NOT Crossfire_Object_Int.
+     */
+    Crossfire_Object_Long, /* unaryfunc nb_int; */    /* __int__ */
+    NULL,                  /* void *nb_reserved; */
+#else
+    Crossfire_Object_Int, /* unaryfunc nb_int; */    /* __int__ */
+    Crossfire_Object_Long, /* unaryfunc nb_long; */  /* __long__ */
+#endif
+    NULL,            /* unaryfunc nb_float; */       /* __float__ */
+#ifndef IS_PY3K
+    NULL,            /* unaryfunc nb_oct; */         /* __oct__ */
+    NULL,            /* unaryfunc nb_hex; */         /* __hex__ */
+#endif
+    NULL,            /* binaryfunc nb_inplace_add; */
+    NULL,            /* binaryfunc nb_inplace_subtract; */
+    NULL,            /* binaryfunc nb_inplace_multiply; */
+#ifndef IS_PY3K
+    NULL,            /* binaryfunc nb_inplace_divide; */
+#endif
+    NULL,            /* binaryfunc nb_inplace_remainder; */
+    NULL,            /* ternaryfunc nb_inplace_power; */
+    NULL,            /* binaryfunc nb_inplace_lshift; */
+    NULL,            /* binaryfunc nb_inplace_rshift; */
+    NULL,            /* binaryfunc nb_inplace_and; */
+    NULL,            /* binaryfunc nb_inplace_xor; */
+    NULL,            /* binaryfunc nb_inplace_or; */
+
+    NULL,            /* binaryfunc nb_floor_divide; */
+    NULL,            /* binaryfunc nb_true_divide; */
+    NULL,            /* binaryfunc nb_inplace_floor_divide; */
+    NULL,            /* binaryfunc nb_inplace_true_divide; */
+#if defined(IS_PY25) || defined(IS_PY3K)
+    NULL             /* unaryfunc nb_index; */
+#endif
+};
+
 static PyObject *Crossfire_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     Crossfire_Object *self;
 
     self = (Crossfire_Object *)type->tp_alloc(type, 0);
-    if (self) {
-        self->obj = NULL;
-        self->count = 0;
-    }
-
-    return (PyObject *)self;
-}
-
-static PyObject *Crossfire_Player_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
-    Crossfire_Player *self;
-
-    self = (Crossfire_Player *)type->tp_alloc(type, 0);
     if (self) {
         self->obj = NULL;
         self->count = 0;
@@ -2622,6 +2870,18 @@ static void Crossfire_Object_dealloc(PyObject *obj) {
     }
 }
 
+static PyObject *Crossfire_Player_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
+    Crossfire_Player *self;
+
+    self = (Crossfire_Player *)type->tp_alloc(type, 0);
+    if (self) {
+        self->obj = NULL;
+        self->count = 0;
+    }
+
+    return (PyObject *)self;
+}
+
 static void Crossfire_Player_dealloc(PyObject *obj) {
     Crossfire_Player *self;
 
@@ -2634,6 +2894,149 @@ static void Crossfire_Player_dealloc(PyObject *obj) {
     }
 }
 
+/* Our actual Python ObjectType */
+PyTypeObject Crossfire_ObjectType = {
+#ifdef IS_PY3K
+    /* See http://bugs.python.org/issue4385 */
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                         /* ob_size*/
+#endif
+    "Crossfire.Object",        /* tp_name*/
+    sizeof(Crossfire_Object),  /* tp_basicsize*/
+    0,                         /* tp_itemsize*/
+    Crossfire_Object_dealloc,  /* tp_dealloc*/
+    NULL,                      /* tp_print*/
+    NULL,                      /* tp_getattr*/
+    NULL,                      /* tp_setattr*/
+#ifdef IS_PY3K
+    NULL,                      /* tp_reserved */
+#else
+    (cmpfunc)Crossfire_Object_InternalCompare, /* tp_compare*/
+#endif
+    NULL,                      /* tp_repr*/
+    &ObjectConvert,            /* tp_as_number*/
+    NULL,                      /* tp_as_sequence*/
+    NULL,                      /* tp_as_mapping*/
+    PyObject_HashNotImplemented, /* tp_hash */
+    NULL,                      /* tp_call*/
+    NULL,                      /* tp_str*/
+    PyObject_GenericGetAttr,   /* tp_getattro*/
+    PyObject_GenericSetAttr,   /* tp_setattro*/
+    NULL,                      /* tp_as_buffer*/
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE, /* tp_flags*/
+    "Crossfire objects",       /* tp_doc */
+    NULL,                      /* tp_traverse */
+    NULL,                      /* tp_clear */
+    (richcmpfunc)Crossfire_Object_RichCompare, /* tp_richcompare */
+    0,                         /* tp_weaklistoffset */
+    NULL,                      /* tp_iter */
+    NULL,                      /* tp_iternext */
+    ObjectMethods,             /* tp_methods */
+    NULL,                      /* tp_members */
+    Object_getseters,          /* tp_getset */
+    NULL,                      /* tp_base */
+    NULL,                      /* tp_dict */
+    NULL,                      /* tp_descr_get */
+    NULL,                      /* tp_descr_set */
+    0,                         /* tp_dictoffset */
+    NULL,                      /* tp_init */
+    NULL,                      /* tp_alloc */
+    Crossfire_Object_new,      /* tp_new */
+    NULL,                      /* tp_free */
+    NULL,                      /* tp_is_gc */
+    NULL,                      /* tp_bases */
+    NULL,                      /* tp_mro */
+    NULL,                      /* tp_cache */
+    NULL,                      /* tp_subclasses */
+    NULL,                      /* tp_weaklist */
+    NULL,                      /* tp_del */
+};
+
+static PyGetSetDef Player_getseters[] = {
+    { "Title",         (getter)Player_GetTitle,         (setter)Player_SetTitle, NULL, NULL },
+    { "IP",            (getter)Player_GetIP,            NULL, NULL, NULL },
+    { "MarkedItem",    (getter)Player_GetMarkedItem,    (setter)Player_SetMarkedItem, NULL, NULL },
+    { "Party",         (getter)Player_GetParty,         (setter)Player_SetParty,      NULL, NULL },
+    { "BedMap",        (getter)Player_GetBedMap,        (setter)Player_SetBedMap, NULL, NULL },
+    { "BedX",          (getter)Player_GetBedX,          (setter)Player_SetBedX, NULL, NULL },
+    { "BedY",          (getter)Player_GetBedY,          (setter)Player_SetBedY, NULL, NULL },
+    { NULL, NULL, NULL, NULL, NULL }
+};
+
+static PyMethodDef PlayerMethods[] = {
+    { "Message",        (PyCFunction)Crossfire_Player_Message, METH_VARARGS, NULL },
+    { "Write",          (PyCFunction)Crossfire_Player_Message, METH_VARARGS, NULL },
+    { "CanPay",         (PyCFunction)Crossfire_Player_CanPay,  METH_NOARGS,  NULL },
+    { "QuestStart",     (PyCFunction)Player_QuestStart,        METH_VARARGS,  NULL },
+    { "QuestGetState",  (PyCFunction)Player_QuestGetState,     METH_VARARGS,  NULL },
+    { "QuestSetState",  (PyCFunction)Player_QuestSetState,     METH_VARARGS,  NULL },
+    { "QuestWasCompleted",  (PyCFunction)Player_QuestWasCompleted, METH_VARARGS,  NULL },
+    { "KnowledgeKnown",  (PyCFunction)Player_KnowledgeKnown, METH_VARARGS,  NULL },
+    { NULL, NULL, 0, NULL }
+};
+
+/* Our actual Python ObjectPlayerType */
+PyTypeObject Crossfire_PlayerType = {
+#ifdef IS_PY3K
+    /* See http://bugs.python.org/issue4385 */
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
+    PyObject_HEAD_INIT(NULL)
+    0,                         /* ob_size*/
+#endif
+    "Crossfire.Player",        /* tp_name*/
+    sizeof(Crossfire_Player),  /* tp_basicsize*/
+    0,                         /* tp_itemsize*/
+    Crossfire_Player_dealloc,  /* tp_dealloc*/
+    NULL,                      /* tp_print*/
+    NULL,                      /* tp_getattr*/
+    NULL,                      /* tp_setattr*/
+    NULL,                      /* tp_compare*/
+    NULL,                      /* tp_repr*/
+    NULL,                      /* tp_as_number*/
+    NULL,                      /* tp_as_sequence*/
+    NULL,                      /* tp_as_mapping*/
+    /* Should be NULL to inherit tp_richcompare and tp_compare from Crossfire_ObjectType. */
+    NULL,                      /* tp_hash */
+    NULL,                      /* tp_call*/
+    NULL,                      /* tp_str*/
+    PyObject_GenericGetAttr,   /* tp_getattro*/
+    PyObject_GenericSetAttr,   /* tp_setattro*/
+    NULL,                      /* tp_as_buffer*/
+    Py_TPFLAGS_DEFAULT,        /* tp_flags*/
+    "Crossfire player",        /* tp_doc */
+    NULL,                      /* tp_traverse */
+    NULL,                      /* tp_clear */
+    NULL,                      /* tp_richcompare */
+    0,                         /* tp_weaklistoffset */
+    NULL,                      /* tp_iter */
+    NULL,                      /* tp_iternext */
+    PlayerMethods,             /* tp_methods */
+    NULL,                      /* tp_members */
+    Player_getseters,          /* tp_getset */
+    &Crossfire_ObjectType,     /* tp_base */
+    NULL,                      /* tp_dict */
+    NULL,                      /* tp_descr_get */
+    NULL,                      /* tp_descr_set */
+    0,                         /* tp_dictoffset */
+    NULL,                      /* tp_init */
+    NULL,                      /* tp_alloc */
+    Crossfire_Player_new,      /* tp_new */
+    NULL,                      /* tp_free */
+    NULL,                      /* tp_is_gc */
+    NULL,                      /* tp_bases */
+    NULL,                      /* tp_mro */
+    NULL,                      /* tp_cache */
+    NULL,                      /* tp_subclasses */
+    NULL,                      /* tp_weaklist */
+    NULL,                      /* tp_del */
+};
+
+/**
+ * Python initialized.
+ **/
 PyObject *Crossfire_Object_wrap(object *what) {
     Crossfire_Object *wrapper;
     Crossfire_Player *plwrap;
