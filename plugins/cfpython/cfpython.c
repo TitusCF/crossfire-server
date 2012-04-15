@@ -1275,7 +1275,7 @@ static void initConstants(PyObject *module) {
 
     static const CFConstant cstEventType[] = {
         { "APPLY", EVENT_APPLY },
-        { "ATTACK", EVENT_ATTACK },
+        { "ATTACK", EVENT_ATTACKED },
         { "ATTACKS", EVENT_ATTACKS },
         { "DEATH", EVENT_DEATH },
         { "DROP", EVENT_DROP },

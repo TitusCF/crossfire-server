@@ -1822,10 +1822,10 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     object *owner;
 
     /* Lauwenmark: Handle for plugin attack event */
-    if (execute_event(op, EVENT_ATTACK, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
+    if (execute_event(op, EVENT_ATTACKED, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
         return 0;
     FOR_INV_PREPARE(op, inv)
-        if (execute_event(inv, EVENT_ATTACK, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
+        if (execute_event(inv, EVENT_ATTACKED, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
             return 0;
     FOR_INV_FINISH();
 

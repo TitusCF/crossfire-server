@@ -64,7 +64,7 @@
 /*******************************************************************************/
 #define EVENT_NONE      0  /**< No event. This exists only to reserve the "0". */
 #define EVENT_APPLY     1  /**< Object applied-unapplied.                      */
-#define EVENT_ATTACK    2  /**< Object attacked, with weapon or spell.         */
+#define EVENT_ATTACKED  2  /**< Object attacked, with weapon or spell.         */
 #define EVENT_ATTACKS   33 /**< Weapon or arrow hitting something.             */
 #define EVENT_DEATH     3  /**< Player or monster dead.                        */
 #define EVENT_DROP      4  /**< Object dropped on the floor.                   */
