@@ -93,56 +93,7 @@ static PythonCmd CustomCommand[NR_CUSTOM_CMD];
 /** Cached compiled scripts. */
 static pycode_cache_entry pycode_cache[PYTHON_CACHE_SIZE];
 
-static void set_exception(const char *fmt, ...);
-static PyObject *createCFObject(PyObject *self, PyObject *args);
-static PyObject *createCFObjectByName(PyObject *self, PyObject *args);
-static PyObject *getCFPythonVersion(PyObject *self, PyObject *args);
-static PyObject *getReturnValue(PyObject *self, PyObject *args);
-static PyObject *setReturnValue(PyObject *self, PyObject *args);
-static PyObject *matchString(PyObject *self, PyObject *args);
-static PyObject *findPlayer(PyObject *self, PyObject *args);
-static PyObject *readyMap(PyObject *self, PyObject *args);
-static PyObject *createMap(PyObject *self, PyObject *args);
-static PyObject *getMapDirectory(PyObject *self, PyObject *args);
-static PyObject *getUniqueDirectory(PyObject *self, PyObject *args);
-static PyObject *getTempDirectory(PyObject *self, PyObject *args);
-static PyObject *getConfigDirectory(PyObject *self, PyObject *args);
-static PyObject *getLocalDirectory(PyObject *self, PyObject *args);
-static PyObject *getPlayerDirectory(PyObject *self, PyObject *args);
-static PyObject *getDataDirectory(PyObject *self, PyObject *args);
-static PyObject *getWhoAmI(PyObject *self, PyObject *args);
-static PyObject *getWhoIsActivator(PyObject *self, PyObject *args);
-static PyObject *getWhoIsThird(PyObject *self, PyObject *args);
-static PyObject *getWhatIsMessage(PyObject *self, PyObject *args);
-static PyObject *getScriptName(PyObject *self, PyObject *args);
-static PyObject *getScriptParameters(PyObject *self, PyObject *args);
-static PyObject *getEvent(PyObject *self, PyObject *args);
-static PyObject *getPrivateDictionary(PyObject *self, PyObject *args);
-static PyObject *getSharedDictionary(PyObject *self, PyObject *args);
-static PyObject *getArchetypes(PyObject *self, PyObject *args);
-static PyObject *getPlayers(PyObject *self, PyObject *args);
-static PyObject *getMaps(PyObject *self, PyObject *args);
-static PyObject *getParties(PyObject *self, PyObject *args);
-static PyObject *getRegions(PyObject *self, PyObject *args);
-static PyObject *getFriendlyList(PyObject *self, PyObject *args);
-static PyObject *registerCommand(PyObject *self, PyObject *args);
-static PyObject *registerGEvent(PyObject *self, PyObject *args);
-static PyObject *unregisterGEvent(PyObject *self, PyObject *args);
 static PyObject *CFPythonError;
-static PyObject *getTime(PyObject *self, PyObject *args);
-static PyObject *destroyTimer(PyObject *self, PyObject *args);
-static PyObject *getMapHasBeenLoaded(PyObject *self, PyObject *args);
-static PyObject *findAnimation(PyObject *self, PyObject *args);
-static PyObject *log_message(PyObject *self, PyObject *args);
-static PyObject *findFace(PyObject *self, PyObject *args);
-static PyObject *getSeasonName(PyObject *self, PyObject *args);
-static PyObject *getMonthName(PyObject *self, PyObject *args);
-static PyObject *getWeekdayName(PyObject *self, PyObject *args);
-static PyObject *getPeriodofdayName(PyObject *self, PyObject *args);
-static PyObject *addReply(PyObject *self, PyObject *args);
-static PyObject *setPlayerMessage(PyObject *self, PyObject *args);
-static PyObject *npcSay(PyObject *self, PyObject *args);
-static PyObject *costStringFromValue(PyObject *self, PyObject *args);
 
 /** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...) {
@@ -155,58 +106,6 @@ static void set_exception(const char *fmt, ...) {
 
     PyErr_SetString(PyExc_ValueError, buf);
 }
-
-static PyMethodDef CFPythonMethods[] = {
-    { "WhoAmI",              getWhoAmI,              METH_NOARGS,  NULL },
-    { "WhoIsActivator",      getWhoIsActivator,      METH_NOARGS,  NULL },
-    { "WhoIsOther",          getWhoIsThird,          METH_NOARGS,  NULL },
-    { "WhatIsMessage",       getWhatIsMessage,       METH_NOARGS,  NULL },
-    { "ScriptName",          getScriptName,          METH_NOARGS,  NULL },
-    { "ScriptParameters",    getScriptParameters,    METH_NOARGS,  NULL },
-    { "WhatIsEvent",         getEvent,               METH_NOARGS,  NULL },
-    { "MapDirectory",        getMapDirectory,        METH_NOARGS,  NULL },
-    { "UniqueDirectory",     getUniqueDirectory,     METH_NOARGS,  NULL },
-    { "TempDirectory",       getTempDirectory,       METH_NOARGS,  NULL },
-    { "ConfigDirectory",     getConfigDirectory,     METH_NOARGS,  NULL },
-    { "LocalDirectory",      getLocalDirectory,      METH_NOARGS,  NULL },
-    { "PlayerDirectory",     getPlayerDirectory,     METH_NOARGS,  NULL },
-    { "DataDirectory",       getDataDirectory,       METH_NOARGS,  NULL },
-    { "ReadyMap",            readyMap,               METH_VARARGS, NULL },
-    { "CreateMap",           createMap,              METH_VARARGS, NULL },
-    { "FindPlayer",          findPlayer,             METH_VARARGS, NULL },
-    { "MatchString",         matchString,            METH_VARARGS, NULL },
-    { "GetReturnValue",      getReturnValue,         METH_NOARGS,  NULL },
-    { "SetReturnValue",      setReturnValue,         METH_VARARGS, NULL },
-    { "PluginVersion",       getCFPythonVersion,     METH_NOARGS,  NULL },
-    { "CreateObject",        createCFObject,         METH_NOARGS,  NULL },
-    { "CreateObjectByName",  createCFObjectByName,   METH_VARARGS, NULL },
-    { "GetPrivateDictionary", getPrivateDictionary,  METH_NOARGS,  NULL },
-    { "GetSharedDictionary", getSharedDictionary,    METH_NOARGS,  NULL },
-    { "GetPlayers",          getPlayers,             METH_NOARGS,  NULL },
-    { "GetArchetypes",       getArchetypes,          METH_NOARGS,  NULL },
-    { "GetMaps",             getMaps,                METH_NOARGS,  NULL },
-    { "GetParties",          getParties,             METH_NOARGS,  NULL },
-    { "GetRegions",          getRegions,             METH_NOARGS,  NULL },
-    { "GetFriendlyList",     getFriendlyList,        METH_NOARGS,  NULL },
-    { "RegisterCommand",     registerCommand,        METH_VARARGS, NULL },
-    { "RegisterGlobalEvent", registerGEvent,         METH_VARARGS, NULL },
-    { "UnregisterGlobalEvent", unregisterGEvent,     METH_VARARGS, NULL },
-    { "GetTime",             getTime,                METH_NOARGS,  NULL },
-    { "DestroyTimer",        destroyTimer,           METH_VARARGS, NULL },
-    { "MapHasBeenLoaded",    getMapHasBeenLoaded,    METH_VARARGS, NULL },
-    { "Log",                 log_message,            METH_VARARGS, NULL },
-    { "FindFace",            findFace,               METH_VARARGS, NULL },
-    { "FindAnimation",       findAnimation,          METH_VARARGS, NULL },
-    { "GetSeasonName",       getSeasonName,          METH_VARARGS, NULL },
-    { "GetMonthName",        getMonthName,           METH_VARARGS, NULL },
-    { "GetWeekdayName",      getWeekdayName,         METH_VARARGS, NULL },
-    { "GetPeriodofdayName",  getPeriodofdayName,     METH_VARARGS, NULL },
-    { "AddReply",            addReply,               METH_VARARGS, NULL },
-    { "SetPlayerMessage",    setPlayerMessage,       METH_VARARGS, NULL },
-    { "NPCSay",              npcSay,                 METH_VARARGS, NULL },
-    { "CostStringFromValue", costStringFromValue,    METH_VARARGS, NULL },
-    { NULL, NULL, 0, NULL }
-};
 
 CFPContext *context_stack;
 
@@ -762,6 +661,58 @@ static PyObject *costStringFromValue(PyObject *self, PyObject *args) {
     cf_cost_string_from_value(value, largest_coin, buf, sizeof(buf));
     return Py_BuildValue("s", buf);
 }
+
+static PyMethodDef CFPythonMethods[] = {
+    { "WhoAmI",              getWhoAmI,              METH_NOARGS,  NULL },
+    { "WhoIsActivator",      getWhoIsActivator,      METH_NOARGS,  NULL },
+    { "WhoIsOther",          getWhoIsThird,          METH_NOARGS,  NULL },
+    { "WhatIsMessage",       getWhatIsMessage,       METH_NOARGS,  NULL },
+    { "ScriptName",          getScriptName,          METH_NOARGS,  NULL },
+    { "ScriptParameters",    getScriptParameters,    METH_NOARGS,  NULL },
+    { "WhatIsEvent",         getEvent,               METH_NOARGS,  NULL },
+    { "MapDirectory",        getMapDirectory,        METH_NOARGS,  NULL },
+    { "UniqueDirectory",     getUniqueDirectory,     METH_NOARGS,  NULL },
+    { "TempDirectory",       getTempDirectory,       METH_NOARGS,  NULL },
+    { "ConfigDirectory",     getConfigDirectory,     METH_NOARGS,  NULL },
+    { "LocalDirectory",      getLocalDirectory,      METH_NOARGS,  NULL },
+    { "PlayerDirectory",     getPlayerDirectory,     METH_NOARGS,  NULL },
+    { "DataDirectory",       getDataDirectory,       METH_NOARGS,  NULL },
+    { "ReadyMap",            readyMap,               METH_VARARGS, NULL },
+    { "CreateMap",           createMap,              METH_VARARGS, NULL },
+    { "FindPlayer",          findPlayer,             METH_VARARGS, NULL },
+    { "MatchString",         matchString,            METH_VARARGS, NULL },
+    { "GetReturnValue",      getReturnValue,         METH_NOARGS,  NULL },
+    { "SetReturnValue",      setReturnValue,         METH_VARARGS, NULL },
+    { "PluginVersion",       getCFPythonVersion,     METH_NOARGS,  NULL },
+    { "CreateObject",        createCFObject,         METH_NOARGS,  NULL },
+    { "CreateObjectByName",  createCFObjectByName,   METH_VARARGS, NULL },
+    { "GetPrivateDictionary", getPrivateDictionary,  METH_NOARGS,  NULL },
+    { "GetSharedDictionary", getSharedDictionary,    METH_NOARGS,  NULL },
+    { "GetPlayers",          getPlayers,             METH_NOARGS,  NULL },
+    { "GetArchetypes",       getArchetypes,          METH_NOARGS,  NULL },
+    { "GetMaps",             getMaps,                METH_NOARGS,  NULL },
+    { "GetParties",          getParties,             METH_NOARGS,  NULL },
+    { "GetRegions",          getRegions,             METH_NOARGS,  NULL },
+    { "GetFriendlyList",     getFriendlyList,        METH_NOARGS,  NULL },
+    { "RegisterCommand",     registerCommand,        METH_VARARGS, NULL },
+    { "RegisterGlobalEvent", registerGEvent,         METH_VARARGS, NULL },
+    { "UnregisterGlobalEvent", unregisterGEvent,     METH_VARARGS, NULL },
+    { "GetTime",             getTime,                METH_NOARGS,  NULL },
+    { "DestroyTimer",        destroyTimer,           METH_VARARGS, NULL },
+    { "MapHasBeenLoaded",    getMapHasBeenLoaded,    METH_VARARGS, NULL },
+    { "Log",                 log_message,            METH_VARARGS, NULL },
+    { "FindFace",            findFace,               METH_VARARGS, NULL },
+    { "FindAnimation",       findAnimation,          METH_VARARGS, NULL },
+    { "GetSeasonName",       getSeasonName,          METH_VARARGS, NULL },
+    { "GetMonthName",        getMonthName,           METH_VARARGS, NULL },
+    { "GetWeekdayName",      getWeekdayName,         METH_VARARGS, NULL },
+    { "GetPeriodofdayName",  getPeriodofdayName,     METH_VARARGS, NULL },
+    { "AddReply",            addReply,               METH_VARARGS, NULL },
+    { "SetPlayerMessage",    setPlayerMessage,       METH_VARARGS, NULL },
+    { "NPCSay",              npcSay,                 METH_VARARGS, NULL },
+    { "CostStringFromValue", costStringFromValue,    METH_VARARGS, NULL },
+    { NULL, NULL, 0, NULL }
+};
 
 static void initContextStack(void) {
     current_context = NULL;
