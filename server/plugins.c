@@ -378,7 +378,7 @@ static int do_execute_event(object *op, int eventcode, object *activator, object
                     int rvt = 0;
                     int rv;
 
-                    rv = plugin->eventfunc(&rvt, op, /*eventcode, */ activator, third, message, fix, /*tmp->slaying, tmp->name*/ tmp, talk);
+                    rv = plugin->eventfunc(&rvt, op, activator, third, message, fix, tmp, talk);
                     if (QUERY_FLAG(tmp, FLAG_UNIQUE)) {
 #ifdef PLUGIN_DEBUG
                         LOG(llevDebug, "Removing unique event %s\n", tmp->slaying);
