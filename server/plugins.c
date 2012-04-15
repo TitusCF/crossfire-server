@@ -2584,6 +2584,7 @@ void cfapi_object_set_property(int *type, ...) {
     sint64 s64arg;
     partylist *partyarg;
     float farg;
+    MoveType *move; /* MoveType can't be used through va_arg so use MoveType * */
 
     va_start(args, type);
     op = va_arg(args, object *);
@@ -3158,6 +3159,48 @@ void cfapi_object_set_property(int *type, ...) {
             sarg = va_arg(args, char *);
             *type = CFAPI_STRING;
             player_set_own_title(op->contr, sarg);
+            break;
+
+        case CFAPI_OBJECT_PROP_MOVE_TYPE:
+            move = va_arg(args, MoveType *);
+            op->move_type = *move & MOVE_ALL;
+            object_update(op, UP_OBJ_INSERT);
+            *type = CFAPI_MOVETYPE;
+            break;
+
+        case CFAPI_OBJECT_PROP_MOVE_BLOCK:
+            move = va_arg(args, MoveType *);
+            op->move_block = *move & MOVE_ALL;
+            object_update(op, UP_OBJ_INSERT);
+            *type = CFAPI_MOVETYPE;
+            break;
+
+        case CFAPI_OBJECT_PROP_MOVE_ALLOW:
+            move = va_arg(args, MoveType *);
+            op->move_allow = *move & MOVE_ALL;
+            object_update(op, UP_OBJ_INSERT);
+            *type = CFAPI_MOVETYPE;
+            break;
+
+        case CFAPI_OBJECT_PROP_MOVE_ON:
+            move = va_arg(args, MoveType *);
+            op->move_on = *move & MOVE_ALL;
+            object_update(op, UP_OBJ_INSERT);
+            *type = CFAPI_MOVETYPE;
+            break;
+
+        case CFAPI_OBJECT_PROP_MOVE_OFF:
+            move = va_arg(args, MoveType *);
+            op->move_off = *move & MOVE_ALL;
+            object_update(op, UP_OBJ_INSERT);
+            *type = CFAPI_MOVETYPE;
+            break;
+
+        case CFAPI_OBJECT_PROP_MOVE_SLOW:
+            move = va_arg(args, MoveType *);
+            op->move_type = *move & MOVE_ALL;
+            object_update(op, UP_OBJ_INSERT);
+            *type = CFAPI_MOVETYPE;
             break;
 
         default:

@@ -336,7 +336,8 @@ long cf_object_get_long_property(object *op, long propcode) {
 void cf_object_set_movetype_property(object *op, int propcode, MoveType value) {
     int type;
 
-    cfapiObject_set_property(&type, op, propcode, value);
+    /* note: MoveType can't be used through va_arg, so use MoveType * */
+    cfapiObject_set_property(&type, op, propcode, &value);
     assert(type == CFAPI_MOVETYPE);
 }
 MoveType cf_object_get_movetype_property(object *op, int propcode) {
