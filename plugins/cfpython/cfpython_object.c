@@ -941,6 +941,10 @@ static PyObject *Object_GetMaterial(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Py_BuildValue("{s:s,s:i}", "Name", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_MATERIAL_NAME), "Number", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MATERIAL));
 }
+static PyObject *Object_GetContainer(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_CONTAINER));
+}
 /** Setters */
 static int Object_SetMessage(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *val;
@@ -2736,6 +2740,7 @@ static PyGetSetDef Object_getseters[] = {
     { "NoDamage",       (getter)Object_GetNoDamage,     (setter)Object_SetNoDamage, NULL, NULL },
     { "RandomMovement", (getter)Object_GetRandomMovement, (setter)Object_SetRandomMovement, NULL, NULL },
     { "Material",       (getter)Object_GetMaterial,     NULL, NULL, NULL },
+    { "Container",      (getter)Object_GetContainer,    NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
