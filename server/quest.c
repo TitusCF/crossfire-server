@@ -492,16 +492,7 @@ static void quest_read_player_data(quest_player *pq) {
         if (sscanf(read, "quest %s\n", data)) {
             qs = get_new_quest_state();
             qs->code = add_string(data);
-            if (prev == NULL) {
-                pq->quests = qs;
-            } else {
-                prev->next = qs;
-            }
-            prev = qs;
             quest = quest_get_by_code(qs->code);
-            if (quest == NULL) {
-                LOG(llevDebug, "Unknown quest %s in quest file %s", qs->code, final);
-            }
             continue;
         }
 
@@ -525,6 +516,17 @@ static void quest_read_player_data(quest_player *pq) {
             continue;
         }
         if (strcmp(read, "end_quest\n") == 0) {
+            if (quest == NULL) {
+                LOG(llevDebug, "Unknown quest %s in quest file %s", qs->code, final);
+                free(qs);
+            } else {
+                if (prev == NULL) {
+                    pq->quests = qs;
+                } else {
+                    prev->next = qs;
+                }
+                prev = qs;
+            }
             qs = NULL;
             continue;
         }
