@@ -54,7 +54,7 @@ static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_
 static int monster_hitrun_att(int dir, object *ob, object *enemy);
 static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
 static int monster_disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-static int monster_wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int monster_wait_att2(int dir, rv_vector *rv);
 static void monster_circ1_move(object *ob);
 static void monster_circ2_move(object *ob);
 static void monster_pace_movev(object *ob);
@@ -788,7 +788,7 @@ int monster_move(object *op) {
             break;
 
         case WAIT2:
-            dir = monster_wait_att2(dir, op, enemy, part, &rv);
+            dir = monster_wait_att2(dir, &rv);
             break;
 
         default:
@@ -1866,13 +1866,10 @@ static int monster_disthit_att(int dir, object *ob, object *enemy, object *part,
 /**
  * Return the next direction the monster should move for a specific movement type.
  * @param dir direction the monster is currently facing.
- * @param ob unused.
- * @param enemy target of the monster.
- * @param part monster's part we're considering.
  * @param rv vector to enemy.
  * @return direction to go into.
  */
-static int monster_wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
+static int monster_wait_att2(int dir, rv_vector *rv) {
     if (rv->distance < 9)
         return absdir(dir+4);
     return 0;
