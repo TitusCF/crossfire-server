@@ -924,15 +924,13 @@ static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv) {
  * then disease might not be as bad. Likewise, if the monster is damaged,
  * the right type of healing spell could be useful.
  *
- * @param monster
- * monster trying to cast a spell.
  * @param spell_ob
  * spell considered.
  * @return
  * 1 is monster should cast spell sp, 0 else.
  * @todo improve logic, take enemy into consideration.
  */
-static int monster_should_cast_spell(object *monster, object *spell_ob) {
+static int monster_should_cast_spell(object *spell_ob) {
     if (spell_ob->subtype == SP_BOLT
     || spell_ob->subtype == SP_BULLET
     || spell_ob->subtype == SP_EXPLOSION
@@ -979,7 +977,7 @@ static object *monster_choose_random_spell(object *monster) {
              * If its a spellbook, the spell is actually the inventory item.
              * if it is a spell, then it is just the object itself.
              */
-            if (monster_should_cast_spell(monster, tmp->type == SPELLBOOK ? tmp->inv : tmp)) {
+            if (monster_should_cast_spell(tmp->type == SPELLBOOK ? tmp->inv : tmp)) {
                 altern[i++] = tmp;
                 if (i == MAX_KNOWN_SPELLS)
                     break;
@@ -1127,7 +1125,7 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir, r
 
     scroll = NULL;
     FOR_INV_PREPARE(head, tmp)
-        if (tmp->type == SCROLL && monster_should_cast_spell(head, tmp->inv)) {
+        if (tmp->type == SCROLL && monster_should_cast_spell(tmp->inv)) {
             scroll = tmp;
             break;
         }
@@ -1684,7 +1682,7 @@ void monster_check_apply(object *mon, object *item) {
     else if (item->type == SCROLL && QUERY_FLAG(mon, FLAG_USE_SCROLL)) {
         if (!item->inv)
             LOG(llevDebug, "Monster %d having scroll %d with empty inventory!\n", mon->count, item->count);
-        else if (monster_should_cast_spell(mon, item->inv))
+        else if (monster_should_cast_spell(item->inv))
             SET_FLAG(mon, FLAG_READY_SCROLL);
         /* Don't use it right now */
         return;
