@@ -49,7 +49,7 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir);
 static void monster_check_pickup(object *monster);
 static int monster_can_pick(object *monster, object *item);
 static void monster_apply_below(object *monster);
-static int monster_dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int monster_dist_att(int dir, object *enemy, object *part, rv_vector *rv);
 static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
 static int monster_hitrun_att(int dir, object *ob, object *enemy);
 static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
@@ -764,7 +764,7 @@ int monster_move(object *op) {
     if ((op->attack_movement&LO4) && !QUERY_FLAG(op, FLAG_SCARED)) {
         switch (op->attack_movement&LO4) {
         case DISTATT:
-            dir = monster_dist_att(dir, op, enemy, part, &rv);
+            dir = monster_dist_att(dir, enemy, part, &rv);
             break;
 
         case RUNATT:
@@ -1767,13 +1767,12 @@ void monster_npc_call_help(object *op) {
 /**
  * Return the direction the monster should move or look to attack an enemy.
  * @param dir direction the monster is currently facing.
- * @param ob unused.
  * @param enemy target of the monster.
  * @param part monster's part we're considering.
  * @param rv vector to enemy.
  * @return direction to go into.
  */
-static int monster_dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
+static int monster_dist_att(int dir, object *enemy, object *part, rv_vector *rv) {
     if (monster_can_hit(part, enemy, rv))
         return dir;
     if (rv->distance < 10)
@@ -1861,7 +1860,7 @@ static int monster_disthit_att(int dir, object *ob, object *enemy, object *part,
      */
     if (ob->stats.maxhp && (ob->stats.hp*100)/ob->stats.maxhp < ob->run_away)
         return absdir(dir+4);
-    return monster_dist_att(dir, ob, enemy, part, rv);
+    return monster_dist_att(dir, enemy, part, rv);
 }
 
 /**
