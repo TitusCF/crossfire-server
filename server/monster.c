@@ -42,7 +42,7 @@
 
 static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv);
 static int monster_cast_spell(object *head, object *part, object *pl, int dir);
-static int monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv);
+static int monster_use_scroll(object *head, object *part, object *pl, int dir);
 static int monster_use_skill(object *head, object *part, object *pl, int dir);
 static int monster_use_range(object *head, object *part, object *pl, int dir);
 static int monster_use_bow(object *head, object *part, object *pl, int dir);
@@ -728,7 +728,7 @@ int monster_move(object *op) {
         }
 
         if (QUERY_FLAG(op, FLAG_READY_SCROLL) && !(RANDOM()%3)) {
-            if (monster_use_scroll(op, rv.part, enemy, dir, &rv))
+            if (monster_use_scroll(op, rv.part, enemy, dir))
                 return 0;
         }
 
@@ -1088,12 +1088,10 @@ static int monster_cast_spell(object *head, object *part, object *pl, int dir) {
  * target.
  * @param dir
  * direction to cast.
- * @param rv
- * vector describing where the enemy is.
  * @return
  * 1 if monster applied a scroll, 0 else.
  */
-static int monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv) {
+static int monster_use_scroll(object *head, object *part, object *pl, int dir) {
     object *scroll;
     object *owner;
     rv_vector rv1;
