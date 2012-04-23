@@ -64,7 +64,8 @@ static void monster_pace2_moveh(object *ob);
 static void monster_rand_move(object *ob);
 static int monster_talk_to_npc(object *npc, talk_info *info);
 
-#define MIN_MON_RADIUS 3 /* minimum monster detection radius */
+/** Minimum monster detection radius. */
+#define MIN_MON_RADIUS 3
 
 /**
  * Checks npc->enemy and returns that enemy if still valid,
@@ -79,9 +80,6 @@ static int monster_talk_to_npc(object *npc, talk_info *info);
  * will contain vector to go to enemy if function returns not NULL.
  * @return
  * valid enemy for npc.
- *
- * @note
- * check_enemy() has been renamed to monster_check_enemy()
  */
 object *monster_check_enemy(object *npc, rv_vector *rv) {
     object *owner;
@@ -97,7 +95,7 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
             object_set_enemy(npc, owner->enemy);
     }
 
-    /* periodically, a monster mayu change its target.  Also, if the object
+    /* periodically, a monster may change its target.  Also, if the object
      * has been destroyed, etc, clear the enemy.
      * TODO: this should be changed, because it invokes to attack forced or
      * attacked monsters to leave the attacker alone, before it is destroyed
@@ -163,9 +161,6 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
  * monster to consider
  * @return
  * living creature, or NULL if none found.
- *
- * @note
- * find_nearest_living_creature() has been renamed to monster_find_nearest_living_creature()
  */
 object *monster_find_nearest_living_creature(object *npc) {
     int i, mflags;
@@ -223,9 +218,6 @@ object *monster_find_nearest_living_creature(object *npc) {
  * vector that will contain how to reach the target. Must not be NULL.
  * @return
  * enemy npc wants to attack, or NULL if nont found.
- *
- * @note
- * find_enemy() has been renamed to monster_find_enemy()
  */
 static object *monster_find_enemy(object *npc, rv_vector *rv) {
     object *attacker, *tmp = NULL;
@@ -313,9 +305,6 @@ static object *monster_find_enemy(object *npc, rv_vector *rv) {
  * 1 if the monster should wake up, 0 otherwise.
  * @note
  * will return 0 if enemy is NULL.
- *
- * @note
- * check_wakeup() has been renamed to monster_check_wakeup()
  */
 static int monster_check_wakeup(object *op, object *enemy, rv_vector *rv) {
     int radius = MAX(op->stats.Wis, MIN_MON_RADIUS);
@@ -411,9 +400,6 @@ static int monster_move_randomly(object *op) {
  * @return
  * direction to go into. Will be default_dir if no path found.
  * @todo cache path, smart ajustment and such things to not compute all the time ; try directions randomly.
- *
- * @note
- * compute_path() has been renamed to monster_compute_path()
  */
 int monster_compute_path(object *source, object *target, int default_dir) {
     unsigned short *distance;
@@ -636,9 +622,6 @@ static int monster_move_no_enemy(object *op) {
  * monster to process.
  * @return
  * 1 if the object has been freed, otherwise 0.
- *
- * @note
- * move_monster() has been renamed to monster_move()
  */
 int monster_move(object *op) {
     int dir, diff;
@@ -903,9 +886,6 @@ int monster_move(object *op) {
  * 1 if ob1 is adjacent to ob2, 0 else.
  * @todo
  * rename to something more clear (is_adjacent?).
- *
- * @note
- * can_hit() has been renamed to monster_can_hit()
  */
 static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv) {
     object *more;
@@ -1174,7 +1154,8 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir, r
 }
 
 /**
- * monster_use_skill()-implemented 95-04-28 to allow monster skill use.
+ * A monster attempts using a skill.
+ * Implemented 95-04-28 to allow monster skill use.
  * Note that monsters do not need the skills SK_MELEE_WEAPON and
  * SK_MISSILE_WEAPON to make those respective attacks, if we
  * required that we would drastically increase the memory
@@ -1415,9 +1396,6 @@ static int monster_get_weapon_quality(const object *item) {
  * item to check.
  * @return
  * 1 if item is a better object, 0 else.
- *
- * @note
- * check_good_weapon() has been renamed to monster_check_good_weapon()
  */
 static int monster_check_good_weapon(object *who, object *item) {
     object *other_weap;
@@ -1465,9 +1443,6 @@ static int monster_get_armour_quality(const object *item) {
  * item to check.
  * @return
  * 1 if item is a better object, 0 else.
- *
- * @note
- * check_good_armour() has been renamed to monster_check_good_armour()
  */
 static int monster_check_good_armour(object *who, object *item) {
     object *other_armour;
@@ -1655,7 +1630,7 @@ static void monster_apply_below(object *monster) {
 }
 
 /**
- * Calls #monster_check_apply() for all inventory objects.
+ * Calls monster_check_apply() for all inventory objects.
  * @param monster the monster to operate on
  */
 void monster_check_apply_all(object *monster) {
@@ -1772,8 +1747,6 @@ void monster_check_apply(object *mon, object *item) {
 /**
  * A monster calls for help against its enemy.
  * @param op monster calling for help.
- * @note
- * npc_call_help() has been renamed to monster_npc_call_help()
  */
 void monster_npc_call_help(object *op) {
     int x, y, mflags;
@@ -1798,8 +1771,13 @@ void monster_npc_call_help(object *op) {
 }
 
 /**
- * @note
- * dist_att() has been renamed to monster_dist_att()
+ * Return the direction the monster should move or look to attack an enemy.
+ * @param dir direction the monster is currently facing.
+ * @param ob unused.
+ * @param enemy target of the monster.
+ * @param part monster's part we're considering.
+ * @param rv vector to enemy.
+ * @return direction to go into.
  */
 static int monster_dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     if (monster_can_hit(part, enemy, rv))
@@ -1812,8 +1790,13 @@ static int monster_dist_att(int dir, object *ob, object *enemy, object *part, rv
 }
 
 /**
- * @note
- * run_att() has been renamed to monster_run_att()
+ * Return the next direction the monster should move for a specific movement type.
+ * @param dir direction the monster is currently facing.
+ * @param ob unused.
+ * @param enemy target of the monster.
+ * @param part monster's part we're considering.
+ * @param rv vector to enemy.
+ * @return direction to go into.
  */
 static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     if ((monster_can_hit(part, enemy, rv) && ob->move_status < 20) || ob->move_status < 20) {
@@ -1825,8 +1808,11 @@ static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_
 }
 
 /**
- * @note
- * hitrun_att() has been renamed to monster_hitrun_att()
+ * Return the next direction the monster should move for a specific movement type.
+ * @param dir direction the monster is currently facing.
+ * @param ob unused.
+ * @param enemy target of the monster.
+ * @return direction to go into.
  */
 static int monster_hitrun_att(int dir, object *ob, object *enemy) {
     if (ob->move_status++ < 25)
@@ -1838,8 +1824,13 @@ static int monster_hitrun_att(int dir, object *ob, object *enemy) {
 }
 
 /**
- * @note
- * wait_att() has been renamed to monster_wait_att()
+ * Return the next direction the monster should move for a specific movement type.
+ * @param dir direction the monster is currently facing.
+ * @param ob unused.
+ * @param enemy target of the monster.
+ * @param part monster's part we're considering.
+ * @param rv vector to enemy.
+ * @return direction to go into.
  */
 static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     int inrange = monster_can_hit(part, enemy, rv);
@@ -1858,8 +1849,13 @@ static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv
 }
 
 /**
- * @note
- * disthit_att() has been renamed to monster_disthit_att()
+ * Return the next direction the monster should move for a specific movement type.
+ * @param dir direction the monster is currently facing.
+ * @param ob unused.
+ * @param enemy target of the monster.
+ * @param part monster's part we're considering.
+ * @param rv vector to enemy.
+ * @return direction to go into.
  */
 static int monster_disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     /* The logic below here looked plain wrong before.  Basically, what should
@@ -1875,8 +1871,13 @@ static int monster_disthit_att(int dir, object *ob, object *enemy, object *part,
 }
 
 /**
- * @note
- * wait_att2() has been renamed to monster_wait_att2()
+ * Return the next direction the monster should move for a specific movement type.
+ * @param dir direction the monster is currently facing.
+ * @param ob unused.
+ * @param enemy target of the monster.
+ * @param part monster's part we're considering.
+ * @param rv vector to enemy.
+ * @return direction to go into.
  */
 static int monster_wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv) {
     if (rv->distance < 9)
@@ -1885,8 +1886,8 @@ static int monster_wait_att2(int dir, object *ob, object *enemy, object *part, r
 }
 
 /**
- * @note
- * circ1_move() has been renamed to monster_circ1_move()
+ * Move the monster in a specified movement pattern.
+ * @param ob monster.
  */
 static void monster_circ1_move(object *ob) {
     static const int circle [12] = { 3, 3, 4, 5, 5, 6, 7, 7, 8, 1, 1, 2 };
@@ -1898,8 +1899,8 @@ static void monster_circ1_move(object *ob) {
 }
 
 /**
- * @note
- * circ2_move() has been renamed to monster_circ2_move()
+ * Move the monster in a specified movement pattern.
+ * @param ob monster.
  */
 static void monster_circ2_move(object *ob) {
     static const int circle[20] = { 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 7, 7, 7, 8, 8, 1, 1, 1, 2, 2 };
@@ -1911,8 +1912,8 @@ static void monster_circ2_move(object *ob) {
 }
 
 /**
- * @note
- * pace_movev() has been renamed to monster_pace_movev()
+ * Move the monster in a specified movement pattern.
+ * @param ob monster.
  */
 static void monster_pace_movev(object *ob) {
     if (ob->move_status++ > 6)
@@ -1924,8 +1925,8 @@ static void monster_pace_movev(object *ob) {
 }
 
 /**
- * @note
- * pace_moveh() has been renamed to monster_pace_moveh()
+ * Move the monster in a specified movement pattern.
+ * @param ob monster.
  */
 static void monster_pace_moveh(object *ob) {
     if (ob->move_status++ > 6)
@@ -1937,8 +1938,8 @@ static void monster_pace_moveh(object *ob) {
 }
 
 /**
- * @note
- * pace2_movev() has been renamed to monster_pace2_movev()
+ * Move the monster in a specified movement pattern.
+ * @param ob monster.
  */
 static void monster_pace2_movev(object *ob) {
     if (ob->move_status++ > 16)
@@ -1952,8 +1953,8 @@ static void monster_pace2_movev(object *ob) {
 }
 
 /**
- * @note
- * pace2_moveh() has been renamed to monster_pace2_moveh()
+ * Move the monster in a specified movement pattern.
+ * @param ob monster.
  */
 static void monster_pace2_moveh(object *ob) {
     if (ob->move_status++ > 16)
@@ -1967,8 +1968,8 @@ static void monster_pace2_moveh(object *ob) {
 }
 
 /**
- * @note
- * rand_move() has been renamed to monster_rand_move()
+ * Move the monster in a specified movement pattern.
+ * @param ob monster.
  */
 static void monster_rand_move(object *ob) {
     int i;
@@ -1984,8 +1985,11 @@ static void monster_rand_move(object *ob) {
 }
 
 /**
- * @note
- * check_earthwalls() has been renamed to monster_check_earthwalls()
+ * Living creature attempts to hit an earthwall.
+ * @param op creature to consider.
+ * @param m map to consider.
+ * @param x coordinate.
+ * @param y coordinate.
  */
 void monster_check_earthwalls(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_PREPARE(m, x, y, tmp)
@@ -1997,8 +2001,11 @@ void monster_check_earthwalls(object *op, mapstruct *m, int x, int y) {
 }
 
 /**
- * @note
- * check_doors() has been renamed to monster_check_doors()
+ * Living creature attempts to open a door.
+ * @param op creature to consider.
+ * @param m map to consider.
+ * @param x coordinate.
+ * @param y coordinate.
  */
 void monster_check_doors(object *op, mapstruct *m, int x, int y) {
     FOR_MAP_PREPARE(m, x, y, tmp)
