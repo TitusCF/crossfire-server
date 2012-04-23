@@ -41,7 +41,7 @@
 #endif
 
 static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv);
-static int monster_cast_spell(object *head, object *part, object *pl, int dir, rv_vector *rv);
+static int monster_cast_spell(object *head, object *part, object *pl, int dir);
 static int monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv);
 static int monster_use_skill(object *head, object *part, object *pl, int dir);
 static int monster_use_range(object *head, object *part, object *pl, int dir);
@@ -723,7 +723,7 @@ int monster_move(object *op) {
             dir = get_randomized_dir(dir);
 
         if (QUERY_FLAG(op, FLAG_CAST_SPELL) && !(RANDOM()%3)) {
-            if (monster_cast_spell(op, rv.part, enemy, dir, &rv))
+            if (monster_cast_spell(op, rv.part, enemy, dir))
                 return 0;
         }
 
@@ -1002,12 +1002,10 @@ static object *monster_choose_random_spell(object *monster) {
  * target.
  * @param dir
  * direction to cast.
- * @param rv
- * vector describing where the enemy is.
  * @return
  * 1 if monster casted a spell, 0 else.
  */
-static int monster_cast_spell(object *head, object *part, object *pl, int dir, rv_vector *rv) {
+static int monster_cast_spell(object *head, object *part, object *pl, int dir) {
     object *spell_item;
     object *owner;
     rv_vector rv1;
