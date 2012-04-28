@@ -214,6 +214,319 @@ static const char *const scorn_archs[] = {
     "sage",
     "woman"
 };
+
+/*@}*/
+/**
+ * @defgroup citylife_darcap darcap parameters
+ * Parameters for the @ref plugin_citylife "City life" plugin for Darcap.
+ *
+ * The city is triangluar, so we will try 3 rectangles that exclude the inn and docks.
+ * @ingroup plugin_citylife
+ */
+/*@{*/
+/** Zones for map 116_102. */
+static const spawn_zone darcap_zones[] = {
+    { 19, 24, 32, 33 },
+    { 19, 35, 30, 44 },
+    { 31, 14, 41, 25 }
+};
+
+/** Points for map 116_102. */
+static const spawn_point darcap_points[] = {
+    { 23, 25 },
+    { 19, 27 },
+    { 28, 25 },
+    { 28, 30 },
+    { 26, 33 },
+    { 28, 35 },
+    { 19, 37 },
+    { 25, 37 },
+    { 19, 43 },
+    { 32, 44 },
+    { 25, 43 },
+    { 31, 16 },
+    { 31, 18 },
+    { 31, 20 },
+    { 41, 16 },
+    { 41, 18 },
+    { 41, 20 },
+    { 34, 17 },
+    { 37, 22 }
+};
+
+
+/** Archetypes to spawn in Darcap. */
+static const char *const darcap_archs[] = {
+    "c_man",
+    "c_woman",
+    "child",
+    "farmer",
+    "fatman",
+    "fatwoman",
+    "guard",
+    "knight",
+    "man",
+    "nun",
+    "sage",
+    "woman"
+};
+
+
+/*@}*/
+/**
+ * @defgroup citylife_navar Navar parameters
+ * Parameters for the @ref plugin_citylife "City life" plugin for navar.
+ *
+ * The city is lumpy with some internal walls and divisions so we need a bunch oa zones.
+ * @ingroup plugin_citylife
+ */
+/*@{*/
+/** Zones for map 121_116. */
+static const spawn_zone navar_nw_zones[] = {
+    { 38, 29, 48, 35 },
+    { 36, 38, 49, 44 },
+    { 39, 45, 49, 49 },
+    { 36, 48, 38, 49 }
+};
+
+/** Points for map 121_116. */
+static const spawn_point navar_nw_points[] = {
+    { 39, 29 },
+    { 41, 31 },
+    { 48, 29 },
+    { 38, 35 },
+    { 43, 39 },
+    { 38, 46 },
+    { 36, 48 },
+    { 45, 47 }
+};
+
+/** Zones for map 122_116. */
+static const spawn_zone navar_ne_zones[] = {
+    { 0, 33, 7, 49 },
+    { 10, 38, 19, 44},
+    { 11, 45, 19, 49}
+};
+
+/** Points for map 122_116. */
+static const spawn_point navar_ne_points[] = {
+    { 4, 34 },
+    { 2, 39 },
+    { 2, 45 },
+    { 8, 46 },
+    { 13, 47 },
+    { 21, 42 }
+};
+
+/** Zones for map 121_117. */
+static const spawn_zone navar_sw_zones[] = {
+    { 36, 0, 49, 5 },
+    { 39, 6, 49, 15}
+};
+
+/** Points for map 121_117. */
+static const spawn_point navar_sw_points[] = {
+    { 42, 7 },
+    { 37, 4 },
+    { 46, 11 }
+};
+
+/** Zones for map 122_117. */
+static const spawn_zone navar_se_zones[] = {
+    { 0, 0, 8, 15 },
+    { 4, 16, 13, 18},
+    { 9, 4, 18, 14},
+    { 10, 0, 18, 1}
+};
+
+/** Points for map 122_117. */
+static const spawn_point navar_se_points[] = {
+    { 3, 0 },
+    { 1, 1 },
+    { 3, 9 },
+    { 5, 16 },
+    { 18, 14 },
+    { 12, 11 },
+    { 14, 4 },
+    { 12, 0 }
+};
+
+/** Archetypes to spawn in Navar. */
+static const char *const navar_archs[] = {
+    "c_man",
+    "c_woman",
+    "child",
+    "elf_man",
+    "courier",
+    "fatwoman",
+    "guard",
+    "knight",
+    "dwarf_wiz",
+    "clown",
+    "sage",
+    "woman",
+    "fighter",
+    "halfling",
+    "sailor"
+};
+
+
+/*@}*/
+/**
+ * @defgroup citylife_port_joseph Port Joseph parameters
+ * Parameters for the @ref plugin_citylife "City life" plugin for Port Joseph.
+ *
+ * The city is pretty small, so one zone ought to do it.
+ * @ingroup plugin_citylife
+ */
+/*@{*/
+/** Zones for map 101_114. */
+static const spawn_zone port_joseph_zones[] = {
+    { 10, 27, 19, 43 }
+};
+
+/** Points for map 101_114. */
+static const spawn_point port_joseph_points[] = {
+    { 14, 31 },
+    { 17, 32 },
+    { 13, 35 },
+    { 17, 42 },
+    { 13, 38 },
+    { 17, 36 }
+};
+
+
+/** Archetypes to spawn in Port Joseph. */
+static const char *const port_joseph_archs[] = {
+    "c_man",
+    "c_woman",
+    "pirate",
+    "fatman",
+    "fatwoman",
+    "man",
+    "sailor",
+    "woman3"
+};
+
+/*@}*/
+/**
+ * @defgroup citylife_stoneville stoneville parameters
+ * Parameters for the @ref plugin_citylife "City life" plugin for stoneville.
+ *
+ * The city does not have a wall or small boundries, but one zone ought to do it.
+ * @ingroup plugin_citylife
+ */
+/*@{*/
+/** Zones for map 103_127. */
+static const spawn_zone stoneville_zones[] = {
+    { 0, 8, 14, 23 }
+};
+
+/** Points for map 103_127. */
+static const spawn_point stoneville_points[] = {
+    { 3, 9 },
+    { 8, 15 },
+    { 1, 21 },
+    { 2, 17 },
+    { 12, 9 }
+};
+
+
+/** Archetypes to spawn in stoneville. */
+static const char *const stoneville_archs[] = {
+    "c_man",
+    "c_woman",
+    "pirate",
+    "fatman",
+    "fatwoman",
+    "man",
+    "sailor",
+    "woman3"
+};
+
+
+/*@}*/
+/**
+ * @defgroup citylife_wolfsburg Wolfsburg parameters
+ * Parameters for the @ref plugin_citylife "City life" plugin for Wolfsburg.
+ *
+ * The city is a big rectangle, so one zone ought to do it.
+ * @ingroup plugin_citylife
+ */
+/*@{*/
+/** Zones for map 128_109. */
+static const spawn_zone wolfsburg_zones[] = {
+    { 13, 1, 45, 17 }
+};
+
+/** Points for map 128_109. */
+static const spawn_point wolfsburg_points[] = {
+    { 15, 1 },
+    { 19, 7 },
+    { 22, 10 },
+    { 29, 7 },
+    { 42, 2 },
+    { 35, 1 },
+    { 43, 8 },
+    { 33, 11 }
+};
+
+
+/** Archetypes to spawn in wolfsburg. */
+static const char *const wolfsburg_archs[] = {
+    "c_man",
+    "c_woman",
+    "prisoner",
+    "fatman",
+    "fatwoman",
+    "man",
+    "sailor",
+    "woman3",
+    "merchant"
+};
+
+
+/*@}*/
+/**
+ * @defgroup citylife_santo_dominion Santo Dominion parameters
+ * Parameters for the @ref plugin_citylife "City life" plugin for Santo Dominion.
+ *
+ * The city is a big rectangle, so one zone ought to do it.
+ * @ingroup plugin_citylife
+ */
+/*@{*/
+/** Zones for map 102_108. */
+static const spawn_zone santo_dominion_zones[] = {
+    { 9, 14, 25, 20 },
+    { 15, 6, 23, 13 }
+};
+
+/** Points for map 102_108. */
+static const spawn_point santo_dominion_points[] = {
+    { 15, 6 },
+    { 18, 5 },
+    { 14, 9 },
+    { 15, 16 },
+    { 31, 15 },
+    { 22, 20 },
+    { 11, 19 },
+    { 26, 11 }
+};
+
+
+/** Archetypes to spawn in santo_dominion. */
+static const char *const santo_dominion_archs[] = {
+    "c_man",
+    "c_woman",
+    "prisoner",
+    "fatman",
+    "fatwoman",
+    "man",
+    "sailor",
+    "woman3",
+    "merchant"
+};
+
 /*@}*/
 
 /** @ingroup  plugin_citylife
@@ -226,6 +539,15 @@ static const mapzone available_zones[] = {
     { scorn_ne_points, 1, scorn_ne_zones, 1, 5, "/world/world_105_115", scorn_archs, 12 },
     { scorn_sw_points, 3, scorn_sw_zones, 1, 5, "/world/world_104_116", scorn_archs, 12 },
     { scorn_se_points, 1, scorn_se_zones, 1, 5, "/world/world_105_116", scorn_archs, 12 },
+    { darcap_points, 19, darcap_zones, 3, 4, "/world/world_116_102", darcap_archs, 12},
+    { navar_nw_points, 8, navar_nw_zones, 4, 2, "/world/world_121_116", navar_archs, 15 },
+    { navar_ne_points, 6, navar_ne_zones, 3, 5, "/world/world_122_116", navar_archs, 15 },
+    { navar_sw_points, 3, navar_sw_zones, 2, 3, "/world/world_121_117", navar_archs, 15 },
+    { navar_se_points, 8, navar_se_zones, 4, 5, "/world/world_122_117", navar_archs, 15 },
+    { port_joseph_points, 6, port_joseph_zones, 1, 3, "/world/world_101_114", port_joseph_archs, 8 },
+    { stoneville_points, 5, stoneville_zones, 1, 2, "/world/world_103_127", stoneville_archs, 8 },
+    { wolfsburg_points, 8, wolfsburg_zones, 1, 4, "/world/world_128_109", wolfsburg_archs, 9 },
+    { santo_dominion_points, 8, santo_dominion_zones, 2, 3, "/world/world_102_108", santo_dominion_archs, 9 },
     { NULL, -1, NULL, -1, 1, "", NULL, 0 },
 };
 
@@ -265,7 +587,7 @@ static object *get_npc(const mapzone *zone) {
     }
 
     cf_object_set_flag(npc, FLAG_RANDOM_MOVE, 1);
-    /* Prevent disease spreading in Scorn, mostly rabies. */
+    /* Prevent disease spreading in cities, mostly rabies. */
     cf_object_set_flag(npc, FLAG_UNDEAD, 1);
     /* add a key so NPC will not disappear in the house it came from */
     cf_object_set_key(npc, FIRST_MOVE_KEY, "1", 1);
