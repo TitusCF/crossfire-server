@@ -967,9 +967,14 @@ static void print_shop_string(mapstruct *m, char *output_string, int size) {
             if (m->shopitems[i].strength) {
                 snprintf(tmp, sizeof(tmp), "*:%d;", m->shopitems[i].strength);
             } else
-                snprintf(tmp, sizeof(tmp), "*");
+                snprintf(tmp, sizeof(tmp), "*;");
         }
         snprintf(output_string+strlen(output_string), size-strlen(output_string), "%s", tmp);
+    }
+
+    /* erase final ; else parsing back will lead to issues */
+    if (strlen(output_string) > 0) {
+        output_string[strlen(output_string) - 1] = '\0';
     }
 }
 
