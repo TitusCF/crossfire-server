@@ -2637,3 +2637,21 @@ void map_remove_unique_files(const mapstruct *map) {
         unlink(path);
     }
 }
+
+/**
+ * Return the map path on which the specified item is.
+ * @param item what to return the map path for.
+ * @return path, map's name, or error string, never NULL.
+ */
+const char *map_get_path(const object *item) {
+    if (item->map != NULL) {
+        if (item->map->path != NULL)
+            return item->map->path;
+        return item->map->name ? item->map->name : "(empty path and name)";
+    }
+
+    if (item->env != NULL)
+        return map_get_path(item->env);
+
+    return "(no map and no env!)";
+}

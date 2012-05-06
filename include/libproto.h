@@ -210,6 +210,7 @@ extern int get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const
 extern int on_same_map(const object *op1, const object *op2);
 extern object *map_find_by_flag(mapstruct *map, int x, int y, int flag);
 extern void map_remove_unique_files(const mapstruct *map);
+extern const char *map_get_path(const object *item);
 /* ob_methods.c */
 extern method_ret ob_apply(object *op, object *applier, int aflags);
 extern method_ret ob_process(object *op);
