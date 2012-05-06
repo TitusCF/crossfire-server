@@ -872,10 +872,12 @@ mapstruct *get_empty_map(int sizex, int sizey) {
  *
  * @param input_string
  * shop item line.
+ * @param map
+ * map for which to parse the string, in case of warning.
  * @return
  * new array that should be freed by the caller.
  */
-static shopitems *parse_shop_string(const char *input_string) {
+static shopitems *parse_shop_string(const char *input_string, const mapstruct *map) {
     char *shop_string, *p, *q, *next_semicolon, *next_colon;
     shopitems *items = NULL;
     int i = 0, number_of_entries = 0;
@@ -926,7 +928,7 @@ static shopitems *parse_shop_string(const char *input_string) {
             } else { /* oh uh, something's wrong, let's free up this one, and try
                     * the next entry while we're at it, better print a warning
                     */
-                LOG(llevError, "invalid type %s defined in shopitems in string %s\n", p, input_string);
+                LOG(llevError, "invalid type %s defined in shopitems for %s in string %s\n", p, map->path ? map->path : map->name, input_string);
             }
         }
         items[i].index = number_of_entries;
@@ -1115,7 +1117,7 @@ static int load_map_header(FILE *fp, mapstruct *m) {
         } else if (!strcmp(key, "region")) {
             m->region = get_region_by_name(value);
         } else if (!strcmp(key, "shopitems")) {
-            m->shopitems = parse_shop_string(value);
+            m->shopitems = parse_shop_string(value, m);
         } else if (!strcmp(key, "shopgreed")) {
             m->shopgreed = atof(value);
         } else if (!strcmp(key, "shopmin")) {
