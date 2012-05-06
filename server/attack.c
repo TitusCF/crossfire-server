@@ -1540,8 +1540,13 @@ static int kill_object(object *op, int dam, object *hitter) {
             draw_ext_info_format(NDI_UNIQUE, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_DIED,
                                  "Your pet, the %s, is killed by %s.",
                                  op->name, hitter->name);
-        } else
+        }
+        /*
+         * there can be items both friendly and without any owner, for instance
+         * in various maps, so this isn't an error.
+        else
             LOG(llevError, "BUG: hit_player(): Encountered golem without owner.\n");
+         */
 
         object_remove(op);
         object_free_drop_inventory(op);
