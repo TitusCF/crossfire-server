@@ -474,20 +474,16 @@ void esrv_update_item(int flags, object *pl, object *op) {
         char item_n[MAX_BUF];
 
         if (!op->custom_name) {
-            query_base_name(op, 0, item_n, MAX_BUF);
-            len = strlen(item_n);
-            query_base_name(op, 1, item_p, MAX_BUF);
+            query_base_name(op, 0, item_n, sizeof(item_n)-1);
+            query_base_name(op, 1, item_p, sizeof(item_p));
         } else {
-            strncpy(item_n, op->custom_name, MAX_BUF-1);
-            item_n[MAX_BUF-1] = 0;
-            len = strlen(item_n);
-            strncpy(item_p, op->custom_name, MAX_BUF-1);
-            item_p[MAX_BUF-1] = 0;
+            snprintf(item_n, sizeof(item_n)-1, "%s", op->custom_name);
+            snprintf(item_p, sizeof(item_p), "%s", op->custom_name);
         }
 
-        strncpy(item_n+len+1, item_p, 127);
-        item_n[254] = 0;
-        len += strlen(item_n+1+len)+1;
+        len = strlen(item_n)+1;
+        snprintf(item_n+len, sizeof(item_n)-len, "%s", item_p);
+        len += strlen(item_n+len);
         SockList_AddLen8Data(&sl, item_n, len);
     }
     if (flags&UPD_ANIM)
