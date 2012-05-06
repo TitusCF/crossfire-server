@@ -705,7 +705,7 @@ static void enter_unique_map(object *op, object *exit_ob) {
  * @param op what to move, must not be NULL and must be a player.
  */
 static void enter_maplevel_exit(object *op) {
-    int flags = 0;
+    int flags = 0, x = op->x, y = op->y;
     mapstruct *newmap;
 
     assert(op != NULL);
@@ -736,7 +736,13 @@ static void enter_maplevel_exit(object *op) {
             abort();
         }
     }
-    enter_map(op, newmap, op->x, op->y);
+    /* as a special case, if coordinates are (-1, -1), then the item should
+     * be put at the default location. Used for loginmethod 0 (old clients). */
+    if (x == -1 && y == -1) {
+        x = MAP_ENTER_X(newmap);
+        y = MAP_ENTER_Y(newmap);
+    }
+    enter_map(op, newmap, x, y);
 }
 
 /**
