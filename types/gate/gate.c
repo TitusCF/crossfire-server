@@ -55,7 +55,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
         StringBuffer *sb;
         char *diff;
 
-        LOG(llevError, "Gate error: animation was %d, max=%d\n", op->stats.wc, NUM_ANIMATIONS(op));
+        LOG(llevError, "Gate error: animation was %d, max=%d, on %s (%d, %d)\n", op->stats.wc, NUM_ANIMATIONS(op), map_get_path(op), op->x, op->y);
         sb = stringbuffer_new();
         object_dump(op, sb);
         diff = stringbuffer_finish(sb);
