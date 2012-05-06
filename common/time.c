@@ -311,15 +311,12 @@ static void print_tod(object *op) {
     timeofday_t tod;
     const char *suf;
     int day;
+    char buf1[128];
 
     get_tod(&tod);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "It is %d minute%s past %d o'clock %s, on %s",
-                         tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-                         ((tod.hour%14 == 0) ? 14 : ((tod.hour)%14)),
-                         ((tod.hour >= 14) ? "pm" : "am"),
-                         weekdays[tod.dayofweek]);
+        "It is %s, on %s", time_format_time(&tod, buf1, sizeof(buf1)), weekdays[tod.dayofweek]);
 
     day = tod.day+1;
     if (day == 1 || ((day%10) == 1 && day > 20))
@@ -409,4 +406,29 @@ long seconds(void) {
 
     (void)GETTIMEOFDAY(&now);
     return now.tv_sec;
+}
+
+/**
+ * Formats a timestamp in Crossfire time.
+ *
+ * @param tod
+ * the timestamp to format
+ *
+ * @param buf
+ * the buffer to fill
+ *
+ * @param bufsize
+ * the size of buf in bytes
+ *
+ * @return
+ * buf
+ */
+const char *time_format_time(const timeofday_t *tod, char *buf, size_t bufsize)
+{
+    snprintf(buf, bufsize, "%d minute%s past %d o'clock %s",
+        tod->minute+1,
+        tod->minute+1 < 2 ? "" : "s",
+        tod->hour%14 == 0 ? 14 : tod->hour%14,
+        tod->hour >= 14 ? "pm" : "am");
+    return buf;
 }

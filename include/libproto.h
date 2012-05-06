@@ -404,6 +404,7 @@ extern void set_max_time(long t);
 extern void get_tod(timeofday_t *tod);
 extern void time_info(object *op);
 extern long seconds(void);
+extern const char *time_format_time(const timeofday_t *tod, char *buf, size_t bufsize);
 /* treasure.c */
 extern void init_archetype_pointers(void);
 extern void load_treasures(void);
