@@ -2033,6 +2033,9 @@ void tailor_readable_ob(object *book, int msg_type) {
      * 4) you may want separate authour/book name arrays in read.h
      */
 
+    if (msg_type >= (int)arraysize(max_titles))
+        msg_type = 0;
+
     msg_type = msg_type > 0 ? msg_type : RANDOM()%6;
     switch (msg_type) {
     case MSGTYPE_MONSTER:
