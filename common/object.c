@@ -562,22 +562,10 @@ void object_free_all_data(void) {
  * freed and are now reused.  If this is detected, the owner is
  * set to NULL, and NULL is returned.
  *
- * Changed 2004-02-12 - if the player is setting at the play again
- * prompt, he is removed, and we don't want to treat him as an owner of
- * anything, so check removed flag.  I don't expect that this should break
- * anything - once an object is removed, it is basically dead anyways.
- *
  * @param op
  * item to search owner of.
  * @return
  * owner, or NULL if not found.
- *
- * @todo
- * a side effect of this function is to clean owner chain for not existing anymore owner.
- * This is not the place to do such a cleaning
- *
- * @note
- * get_owner() has been renamed to object_get_owner()
  */
 object *object_get_owner(object *op) {
     if (op->owner == NULL)
@@ -588,7 +576,6 @@ object *object_get_owner(object *op) {
     && op->owner->count == op->ownercount)
         return op->owner;
 
-    LOG(llevError, "I had to clean an owner when in object_get_owner, this isn't my job.\n");
     object_clear_owner(op);
     return NULL;
 }
