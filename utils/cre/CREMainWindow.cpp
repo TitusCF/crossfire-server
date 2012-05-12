@@ -914,17 +914,67 @@ void CREMainWindow::onReportSummon()
     show.exec();
 }
 
+static QString buildShopReport(const QString& title, const QStringList& types, const QList<CREMapInformation*>& maps, QStringList& items)
+{
+  QString report("<h2>" + title + "</h2>");
+  report += "<table border=\"1\">\n<thead>\n";
+  report += "<tr>";
+  report += "<th>Shop</th>";
+  report += "<th>Greed</th>";
+  report += "<th>Race</th>";
+  report += "<th>Min</th>";
+  report += "<th>Max</th>";
+  foreach (QString item, types)
+  {
+    report += "<th>" + item + "</th>";  
+    items.removeAll(item);
+  }
+  report += "</tr>\n</thead><tbody>";
+
+  foreach(const CREMapInformation* map, maps)
+  {
+    QString line;
+    bool keep = false;
+
+    if (map->shopItems().size() == 0)
+        continue;
+
+    line += "<tr>";
+
+    line += "<td>" + map->name() + " " + map->path() + "</td>";
+    line += "<td>" + QString::number(map->shopGreed()) + "</td>";
+    line += "<td>" + map->shopRace() + "</td>";
+    line += "<td>" + (map->shopMin() != 0 ? QString::number(map->shopMin()) : "") + "</td>";
+    line += "<td>" + (map->shopMax() != 0 ? QString::number(map->shopMax()) : "") + "</td>";
+
+    foreach(const QString item, types)
+    {
+        if (map->shopItems()[item] == 0)
+        {
+          if (map->shopItems()["*"] == 0)
+            line += "<td></td>";
+          else
+            line += "<td>" + QString::number(map->shopItems()["*"]) + "</td>";
+          continue;
+        }
+        keep = true;
+        line += "<td>" + QString::number(map->shopItems()[item]) + "</td>";
+    }
+
+    line += "</tr>";
+    if (keep)
+      report += line;
+  }
+
+  report += "</tbody></table>";
+  return report;
+}
+
 void CREMainWindow::onReportShops()
 {
-    QString report(tr("<h1>Shop information</h1>\n"));
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-    report += "<table border=\"1\">\n<thead>\n";
-    report += "<tr>";
-    report += "<th>Shop</th>";
-    report += "<th>Greed</th>";
-    report += "<th>Race</th>";
-    report += "<th>Min</th>";
-    report += "<th>Max</th>";
+    QString report(tr("<h1>Shop information</h1>\n"));
 
     QList<CREMapInformation*> maps = myMapManager->allMaps();
     QStringList items;
@@ -939,37 +989,28 @@ void CREMainWindow::onReportShops()
     }
     qSort(items);
 
-    foreach(QString item, items)
+    QStringList part;
+
+    part << "weapon" << "weapon improver" << "bow" << "arrow";
+    report += buildShopReport("Weapons", part, maps, items);
+
+    part.clear();
+    part << "armour" << "armour improver" << "boots" << "bracers" << "cloak" << "girdle" << "gloves" << "helmet" << "shield";
+    report += buildShopReport("Armour", part, maps, items);
+
+    part.clear();
+    part << "amulet" << "potion" << "power_crystal" << "ring" << "rod" << "scroll" << "skillscroll" << "spellbook" << "wand";
+    report += buildShopReport("Magical", part, maps, items);
+
+    part.clear();
+    part << "container" << "food" << "key" << "lamp" << "skill tool" << "special key";
+    report += buildShopReport("Equipment", part, maps, items);
+
+    if (!items.isEmpty())
     {
-        report += "<th>" + item + "</th>";
-    }
-
-    report += "</tr>\n";
-
-    foreach(const CREMapInformation* map, maps)
-    {
-        if (map->shopItems().size() == 0)
-            continue;
-
-        report += "<tr>";
-
-        report += "<td>" + map->name() + " " + map->path() + "</td>";
-        report += "<td>" + QString::number(map->shopGreed()) + "</td>";
-        report += "<td>" + map->shopRace() + "</td>";
-        report += "<td>" + (map->shopMin() != 0 ? QString::number(map->shopMin()) : "") + "</td>";
-        report += "<td>" + (map->shopMax() != 0 ? QString::number(map->shopMax()) : "") + "</td>";
-
-        foreach(const QString item, items)
-        {
-            if (map->shopItems()[item] == 0)
-            {
-                report += "<td></td>";
-                continue;
-            }
-            report += "<td>" + QString::number(map->shopItems()[item]) + "</td>";
-        }
-
-        report += "</tr>";
+     
+      part = items;
+      report += buildShopReport("Others", part, maps, items);
     }
 
     CREReportDisplay show(report);
