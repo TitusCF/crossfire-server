@@ -922,6 +922,9 @@ void CREMainWindow::onReportShops()
     report += "<tr>";
     report += "<th>Shop</th>";
     report += "<th>Greed</th>";
+    report += "<th>Race</th>";
+    report += "<th>Min</th>";
+    report += "<th>Max</th>";
 
     QList<CREMapInformation*> maps = myMapManager->allMaps();
     QStringList items;
@@ -952,6 +955,9 @@ void CREMainWindow::onReportShops()
 
         report += "<td>" + map->name() + " " + map->path() + "</td>";
         report += "<td>" + QString::number(map->shopGreed()) + "</td>";
+        report += "<td>" + map->shopRace() + "</td>";
+        report += "<td>" + (map->shopMin() != 0 ? QString::number(map->shopMin()) : "") + "</td>";
+        report += "<td>" + (map->shopMax() != 0 ? QString::number(map->shopMax()) : "") + "</td>";
 
         foreach(const QString item, items)
         {
