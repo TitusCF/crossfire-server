@@ -102,6 +102,10 @@ void CREMapInformationManager::process(const QString& path2)
             information->shopItems().insert(QString(m->shopitems[i].name == NULL ? "*" : m->shopitems[i].name), m->shopitems[i].strength);
         }
     }
+    if (m->shoprace != NULL)
+      information->setShopRace(m->shoprace);
+    information->setShopMin(m->shopmin);
+    information->setShopMax(m->shopmax);
 
     char exit_path[500];
     quint64 exp = 0;
@@ -411,6 +415,20 @@ void CREMapInformationManager::loadCache()
             double greed = reader.readElementText().toDouble();
             map->setShopGreed(greed);
         }
+        if (reader.isStartElement() && reader.name() == "shopRace")
+        {
+            map->setShopRace(reader.readElementText());
+        }
+        if (reader.isStartElement() && reader.name() == "shopMin")
+        {
+            quint64 min = reader.readElementText().toULongLong();
+            map->setShopMin(min);
+        }
+        if (reader.isStartElement() && reader.name() == "shopMax")
+        {
+            quint64 max = reader.readElementText().toULongLong();
+            map->setShopMax(max);
+        }
         if (reader.isEndElement() && reader.name() == "map")
         {
             map = NULL;
@@ -475,6 +493,18 @@ void CREMapInformationManager::storeCache()
         if (map->shopGreed() != 0)
         {
             writer.writeTextElement("shopGreed", QString::number(map->shopGreed()));
+        }
+        if (!map->shopRace().isEmpty())
+        {
+          writer.writeTextElement("shopRace", map->shopRace());
+        }
+        if (map->shopMin() != 0)
+        {
+          writer.writeTextElement("shopMin", QString::number(map->shopMin()));
+        }
+        if (map->shopMax() != 0)
+        {
+          writer.writeTextElement("shopMax", QString::number(map->shopMax()));
         }
         writer.writeEndElement();
     }

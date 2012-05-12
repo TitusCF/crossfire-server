@@ -60,6 +60,12 @@ class CREMapInformation : public QObject
 
         double shopGreed() const;
         void setShopGreed(double greed);
+        const QString& shopRace() const;
+        void setShopRace(const QString& race);
+        quint64 shopMin() const;
+        void setShopMin(quint64 min);
+        quint64 shopMax() const;
+        void setShopMax(quint64 max);
 
     protected:
         QString myPath;
@@ -75,6 +81,8 @@ class CREMapInformation : public QObject
         QStringList myQuests;
         QHash<QString, int> myShopItems;
         double myShopGreed;
+        QString myShopRace;
+        quint64 myShopMin, myShopMax;
 
         void copy(const CREMapInformation& other);
 };

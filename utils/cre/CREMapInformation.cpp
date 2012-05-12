@@ -5,6 +5,8 @@ CREMapInformation::CREMapInformation()
     myLevel = 0;
     myExperience = 0;
     myShopGreed = 0;
+    myShopMin = 0;
+    myShopMax = 0;
 }
 
 CREMapInformation::CREMapInformation(const QString& path)
@@ -13,6 +15,8 @@ CREMapInformation::CREMapInformation(const QString& path)
     myLevel = 0;
     myExperience = 0;
     myShopGreed = 0;
+    myShopMin = 0;
+    myShopMax = 0;
 }
 
 CREMapInformation* CREMapInformation::clone() const
@@ -35,6 +39,9 @@ void CREMapInformation::copy(const CREMapInformation& other)
     setRegion(other.region());
     myShopItems = other.shopItems();
     myShopGreed = other.shopGreed();
+    myShopRace = other.shopRace();
+    myShopMin = other.shopMin();
+    myShopMax = other.shopMax();
 }
 
 const QString& CREMapInformation::path() const
@@ -169,4 +176,34 @@ double CREMapInformation::shopGreed() const
 void CREMapInformation::setShopGreed(double greed)
 {
     myShopGreed = greed;
+}
+
+const QString& CREMapInformation::shopRace() const
+{
+  return myShopRace;
+}
+
+void CREMapInformation::setShopRace(const QString& race)
+{
+  myShopRace = race;
+}
+
+quint64 CREMapInformation::shopMin() const
+{
+  return myShopMin;
+}
+
+void CREMapInformation::setShopMin(quint64 min)
+{
+  myShopMin = min;
+}
+
+quint64 CREMapInformation::shopMax() const
+{
+  return myShopMax;
+}
+
+void CREMapInformation::setShopMax(quint64 max)
+{
+  myShopMax = max;
 }
