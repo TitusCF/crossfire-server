@@ -505,7 +505,9 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
 static unsigned knowledge_alchemy_face(sstring code) {
     const recipe *rp = knowledge_alchemy_get_recipe(code);
     const artifact *art;
-    const archetype *arch;
+    archetype *arch;
+    object *item;
+    unsigned face;
 
     if (!rp) {
         LOG(llevError, "knowledge: couldn't find recipe for %s", code);
@@ -524,10 +526,15 @@ static unsigned knowledge_alchemy_face(sstring code) {
     if (art == NULL)
         return arch->clone.face->number;
 
-    if (art->item->face != blank_face && art->item->face != NULL)
-        return art->item->face->number;
+    face = arch->clone.face->number;
+    item = arch_to_object(arch);
+    give_artifact_abilities(item, art->item);
+    object_give_identified_properties(item);
+    if (item->face != NULL && item->face != blank_face)
+        face = item->face->number;
+    object_free2(item, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
 
-    return arch->clone.face->number;
+    return face;
 }
 
 /**
