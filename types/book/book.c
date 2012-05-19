@@ -60,12 +60,6 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
             "You are unable to read while blind.");
         return METHOD_OK;
     }
-    if (op->msg == NULL) {
-        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-            "You open the %s and find it empty.",
-            op->name);
-        return METHOD_OK;
-    }
 
     /* need a literacy skill to read stuff! */
     skill_ob = find_skill_by_name(applier, op->skill);
@@ -97,11 +91,11 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
         return METHOD_OK;
     }
 
-    /* Lauwenmark: Handle for plugin book event */
-    /*printf("Book apply: %s\n", tmp->name);
-    execute_event(tmp, EVENT_APPLY, op, NULL, SCRIPT_FIX_ALL);
-    printf("Book applied: %s\n", tmp->name);*/
-    {
+    if (op->msg == NULL) {
+        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            "You open the %s and find it empty.",
+            op->name);
+    } else {
         char desc[MAX_BUF];
         const readable_message_type *msgType = get_readable_message_type(op);
 
