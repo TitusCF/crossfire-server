@@ -879,6 +879,11 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
     change_abil(tmp, force);     /* Mostly to display any messages */
     object_insert_in_ob(force, tmp);
     fix_object(tmp);
+
+    if (spell_ob->other_arch != NULL && tmp->map != NULL) {
+        object_insert_in_map_at(arch_to_object(spell_ob->other_arch), tmp->map, NULL, INS_ON_TOP, tmp->x, tmp->y);
+    }
+
     return 1;
 }
 

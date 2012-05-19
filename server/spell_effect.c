@@ -2088,6 +2088,10 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
     object_insert_in_ob(force, tmp);
     SET_FLAG(force, FLAG_APPLIED);
     change_abil(tmp, force); /* To display any messages, will call fix_object() */
+
+    if (spell_ob->other_arch != NULL && tmp->map != NULL) {
+        object_insert_in_map_at(arch_to_object(spell_ob->other_arch), tmp->map, NULL, INS_ON_TOP, tmp->x, tmp->y);
+    }
     return 1;
 }
 
