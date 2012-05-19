@@ -268,6 +268,7 @@ int legal_artifact_combination(const object *op, const artifact *art) {
 void add_abilities(object *op, const object *change) {
     int i, tmp;
     char buf[MAX_BUF];
+    sstring key;
 
     if (change->face != blank_face) {
 #ifdef TREASURE_VERBOSE
@@ -287,6 +288,13 @@ void add_abilities(object *op, const object *change) {
         /* op->arch can be NULL when called from artifact_msg(). */
         snprintf(buf, sizeof(buf),"%d", change->animation_id);
         object_set_value(op, "identified_animation", buf, 1);
+    } else if (op->animation_id != 0 && (key = object_get_value(change, "animation_suffix")) != NULL) {
+        snprintf(buf, sizeof(buf), "%s_%s", animations[op->animation_id].name, key);
+        i = try_find_animation(buf);
+        if (i != 0) {
+            snprintf(buf, sizeof(buf),"%d", i);
+            object_set_value(op, "identified_animation", buf, 1);
+        }
     }
 
     for (i = 0; i < NUM_STATS; i++)
