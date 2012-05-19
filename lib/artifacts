@@ -56,6 +56,9 @@
 # 'face' if defined replaces the item's face.
 #
 # 'animation' if defined replaces the item's animation.
+# If 'animation_suffix' is defined, the artifact will have the
+# '<base item's animation>_<animation suffix>' animation if it exists, else no
+# change is done.
 #
 #	items in inventory (through an "arch xxx", like in maps)
 #	will be copied into the item's inventory.
