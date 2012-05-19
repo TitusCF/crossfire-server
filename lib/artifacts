@@ -3100,47 +3100,27 @@ dam -8
 food 50
 end
 #
-Allowed arrow
+Allowed all
 chance 100
 Object Fire
 attacktype 4
 type 13
 dam -8
 value 6
-animation arrow_fire
-face arrow_fire.101
+animation_suffix fire
 end
 #
-Allowed !arrow
-chance 100
-Object Fire
-attacktype 4
-type 13
-dam -8
-value 6
-end
-#
-Allowed arrow
+Allowed all
 chance 100
 Object Frost
 attacktype 16
 type 13
 dam -8
 value 6
-animation arrow_frost
-face arrow_frost.101
+animation_suffix frost
 end
 #
-Allowed !arrow
-chance 100
-Object Frost
-attacktype 16
-type 13
-dam -8
-value 6
-end
-#
-Allowed arrow
+Allowed all
 chance 100
 difficulty 6
 Object Poison
@@ -3149,42 +3129,20 @@ type 13
 dam -8
 value 6
 magic 1
-animation arrow_poison
-face arrow_poison.101
+animation_suffix poison
 end
 #
-Allowed !arrow
-chance 100
-difficulty 6
-Object Poison
-attacktype 1025
-type 13
-dam -8
-value 6
-magic 1
-end
-#
-Allowed arrow
+Allowed all
 chance 100
 Object Lightning
 attacktype 8
 type 13
 dam -8
 value 6
-animation arrow_lightning
-face arrow_lightning.101
+animation_suffix lightning
 end
 #
-Allowed !arrow
-chance 100
-Object Lightning
-attacktype 8
-type 13
-dam -8
-value 6
-end
-#
-Allowed arrow
+Allowed all
 chance 50
 difficulty 6
 Object Paralysis
@@ -3196,22 +3154,7 @@ food 80
 msg
   These missiles have been soaked in some strange liquid which stuns the victim. These missiles also broken much more easily than normal ones.
 endmsg
-animation arrow_paralysis
-face arrow_paralysis.101
-end
-#
-Allowed !arrow
-chance 50
-difficulty 6
-Object Paralysis
-attacktype 4097
-type 13
-value 8
-wc 2
-food 80
-msg
-  These missiles have been soaked in some strange liquid which stuns the victim. These missiles also broken much more easily than normal ones.
-endmsg
+animation_suffix paralysis
 end
 #
 Allowed all
