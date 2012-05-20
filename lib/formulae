@@ -3033,6 +3033,19 @@ ingred talisman of evocation,3 figurine of a clenched hand,3 balm of traveling
 # Holy Symbols
 # -------------------
 #
+# exp is maybe high, but demon's icor can't be stored, and messenger's head are rare,
+# so that should be ok
+# chance is 0 because this recipe is given as a quest reward
+Object NONE
+arch holy_symbol
+chance 0
+diff 7
+exp 20000
+yield 1
+skill thaumaturgy
+cauldron thaumaturg_desk
+ingred demon's icor,messenger's head
+#
 Object Probity
 arch holy_symbol
 chance 7
