@@ -988,19 +988,16 @@ static knowledge_player *knowledge_get_or_create(const player *pl) {
 }
 
 /**
- * Player is reading a book, give knowledge if needed, warn player, and such.
- * @param pl who is reading.
- * @param book what is read.
+ * Give a knowledge item from its code.
+ * @param pl who to give the knowldge to.
+ * @param marker knowledge's code.
+ * @param book optional item containing the knowledge code.
  */
-void knowledge_read(player *pl, object *book) {
-    sstring marker = object_get_value(book, "knowledge_marker");
+void knowledge_give(player *pl, const char *marker, const object *book) {
     char *dot, *copy;
     const knowledge_type *type;
     int none, added = 0;
     knowledge_player *current = knowledge_get_or_create(pl);
-
-    if (!marker)
-        return;
 
     /* process marker, find if already known */
     dot = strchr(marker, ':');
@@ -1016,7 +1013,7 @@ void knowledge_read(player *pl, object *book) {
 
     type = knowledge_find(copy);
     if (!type) {
-        LOG(llevError, "knowledge: invalid marker type %s in %s\n", copy, book->name);
+        LOG(llevError, "knowledge: invalid marker type %s in %s\n", copy, book == NULL ? "(null)" : book->name);
         free(copy);
         return;
     }
@@ -1037,6 +1034,17 @@ void knowledge_read(player *pl, object *book) {
 
     if (pl->has_directory)
         knowledge_write_player_data(current);
+}
+
+/**
+ * Player is reading a book, give knowledge if needed, warn player, and such.
+ * @param pl who is reading.
+ * @param book what is read.
+ */
+void knowledge_read(player *pl, object *book) {
+    sstring marker = object_get_value(book, "knowledge_marker");
+    if (marker != NULL)
+        knowledge_give(pl, marker, book);
 }
 
 /**

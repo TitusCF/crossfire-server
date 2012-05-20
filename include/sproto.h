@@ -312,6 +312,7 @@ void init(int argc, char **argv);
 void free_server(void);
 racelink *find_racelink(const char *name);
 /* knowledge.c */
+void knowledge_give(player *pl, const char *marker, const object *book);
 void knowledge_read(player *pl, object *book);
 void command_knowledge(object *pl, const char *params);
 void free_knowledge(void);

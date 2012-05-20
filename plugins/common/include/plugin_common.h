@@ -198,6 +198,7 @@ extern partylist   *cf_player_get_party(object *op);
 extern void         cf_player_set_party(object *op, partylist *party);
 extern int          cf_player_can_pay(object *op);
 extern int          cf_player_knowledge_has(object *op, const char *knowledge);
+extern void         cf_player_knowledge_give(object *op, const char *knowledge);
 extern int          cf_player_arrest(object *who);
 
 /* Archetypes */

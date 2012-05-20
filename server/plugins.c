@@ -4352,6 +4352,15 @@ static void cfapi_player_knowledge(int *type, ...) {
             *rint = knowledge_player_knows(pl->contr, knowledge);
             break;
 
+        case 2:
+            pl = va_arg(args, object *);
+            knowledge = va_arg(args, const char *);
+            *type = CFAPI_NONE;
+            if (pl->contr != NULL)
+                knowledge_give(pl->contr, knowledge, NULL);
+
+            break;
+
         default:
             LOG(llevError, "cfapi_player_knowledge: invalid what %d", what);
     }

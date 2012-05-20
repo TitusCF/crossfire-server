@@ -144,6 +144,19 @@ static PyObject *Player_KnowledgeKnown(Crossfire_Player *who, PyObject *args) {
     return Py_BuildValue("i", cf_player_knowledge_has(who->obj, knowledge));
 }
 
+static PyObject *Player_GiveKnowledge(Crossfire_Player *who, PyObject *args) {
+    const char *knowledge;
+
+    EXISTCHECK(who);
+    if (!PyArg_ParseTuple(args, "s", &knowledge))
+        return NULL;
+
+    cf_player_knowledge_give(who->obj, knowledge);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static PyObject *Player_GetParty(Crossfire_Player *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Crossfire_Party_wrap(cf_player_get_party(whoptr->obj));
@@ -2979,6 +2992,7 @@ static PyMethodDef PlayerMethods[] = {
     { "QuestSetState",  (PyCFunction)Player_QuestSetState,     METH_VARARGS,  NULL },
     { "QuestWasCompleted",  (PyCFunction)Player_QuestWasCompleted, METH_VARARGS,  NULL },
     { "KnowledgeKnown",  (PyCFunction)Player_KnowledgeKnown, METH_VARARGS,  NULL },
+    { "GiveKnowledge",  (PyCFunction)Player_GiveKnowledge, METH_VARARGS,  NULL },
     { NULL, NULL, 0, NULL }
 };
 

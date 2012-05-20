@@ -890,6 +890,18 @@ int cf_player_knowledge_has(object *op, const char *knowledge) {
 }
 
 /**
+ * Wrapper for knowledge_give();
+ * @param op who to give knowledge to.
+ * @param knowledge knowledge to give, internal value.
+ */
+void cf_player_knowledge_give(object *op, const char *knowledge) {
+    int type;
+
+    cfapiPlayer_knowledge(&type, 2, op, knowledge);
+    assert(type == CFAPI_NONE);
+}
+
+/**
  * Wrapper for player_arrest().
  * @copydoc player_arrest()
  */
