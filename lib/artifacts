@@ -3236,6 +3236,7 @@ msg
   These magical arrows are very powerful weapon.
 endmsg
 food 90
+animation_suffix magic
 end
 #
 Allowed bolt
