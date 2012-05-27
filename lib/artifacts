@@ -3221,6 +3221,7 @@ value 5
 slaying dragon
 dam -12
 food 10
+animation_suffix slay_dragon
 end
 #
 Allowed arrow,bolt
