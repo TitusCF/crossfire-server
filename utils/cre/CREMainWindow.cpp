@@ -532,6 +532,7 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     object* obfirst = object_create_arch(find_archetype("dwarf_player"));
     obfirst->level = level;
     obfirst->contr = &pl;
+    pl.ob = obfirst;
     object* obskill = object_create_arch(skill);
     obskill->level = level;
     SET_FLAG(obskill, FLAG_APPLIED);
