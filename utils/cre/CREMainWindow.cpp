@@ -12,6 +12,7 @@
 #include "CREHPBarMaker.h"
 #include "ResourcesManager.h"
 #include "CRECombatSimulator.h"
+#include "Quest.h"
 
 extern "C" {
 #include "global.h"
@@ -145,6 +146,12 @@ void CREMainWindow::createActions()
     myReportShops->setEnabled(false);
     connect(myReportShops, SIGNAL(triggered()), this, SLOT(onReportShops()));
 
+    myReportQuests = new QAction(tr("Quest solved by players"), this);
+    myReportQuests->setStatusTip(tr("Display quests the players have solved."));
+    // can't use that while map browsing is running ; will be enabled in browsingFinished()
+    myReportQuests->setEnabled(false);
+    connect(myReportQuests, SIGNAL(triggered()), this, SLOT(onReportQuests()));
+
     myToolSmooth = new QAction(tr("Generate smooth face base"), this);
     myToolSmooth->setStatusTip(tr("Generate the basic smoothed picture for a face."));
     connect(myToolSmooth, SIGNAL(triggered()), this, SLOT(onToolSmooth()));
@@ -189,6 +196,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportPlayer);
     reportMenu->addAction(myReportSummon);
     reportMenu->addAction(myReportShops);
+    reportMenu->addAction(myReportQuests);
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
     toolsMenu->addAction(myToolSmooth);
@@ -292,6 +300,7 @@ void CREMainWindow::browsingFinished()
     myMapBrowseStatus->setVisible(false);
     myReportPlayer->setEnabled(true);
     myReportShops->setEnabled(true);
+    myReportQuests->setEnabled(true);
 }
 
 void CREMainWindow::onFiltersModified()
@@ -1017,6 +1026,112 @@ void CREMainWindow::onReportShops()
     CREReportDisplay show(report);
     QApplication::restoreOverrideCursor();
     show.exec();
+}
+
+void readDirectory(const QString& path, QHash<QString, QHash<QString, bool> >& states)
+{
+  QDir dir(path);
+  QStringList subdirs = dir.entryList(QStringList("*"), QDir::Dirs | QDir::NoDotAndDotDot);
+  foreach(QString subdir, subdirs)
+  {
+    readDirectory(path + QDir::separator() + subdir, states);
+  }
+
+  QStringList quests = dir.entryList(QStringList("*.quest"), QDir::Files);
+  foreach(QString file, quests)
+  {
+    qDebug() << "read quest:" << path << file;
+    QString name = file.left(file.length() - 6);
+    QFile read(path + QDir::separator() + file);
+    read.open(QFile::ReadOnly);
+    QTextStream stream(&read);
+    QString line, code;
+    bool completed;
+    while (!(line = stream.readLine(0)).isNull())
+    {
+      if (line.startsWith("quest "))
+      {
+        code = line.mid(6);
+        completed = false;
+        continue;
+      }
+      if (code.isEmpty())
+        continue;
+      if (line == "end_quest")
+      {
+        states[code][name] = completed;
+        code.clear();
+        continue;
+      }
+      if (line.startsWith("state "))
+        continue;
+      if (line == "completed 1")
+        completed = true;
+    }
+  }
+}
+
+void CREMainWindow::onReportQuests()
+{
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+  QHash<QString, QHash<QString, bool> > states;
+  QString directory(settings.localdir);
+  directory += QDir::separator();
+  directory += settings.playerdir;
+  readDirectory(directory, states);
+
+  QStringList codes;
+  foreach(const Quest* quest, myQuestManager->quests())
+  {
+    codes.append(quest->code());
+  }
+
+  QString report("<html><body>\n<h1>Quests</h1>\n");
+
+  QStringList keys = states.keys();
+  keys.sort();
+
+  foreach(QString key, keys)
+  {
+    codes.removeAll(key);
+    Quest* quest = myQuestManager->findByCode(key);
+    report += "<h2>Quest: " + (quest != NULL ? quest->title() : (key + " ???")) + "</h2>\n";
+    report += "<ul>\n";
+    QHash<QString, bool> done = states[key];
+    QStringList players = done.keys();
+    players.sort();
+    int completed = 0;
+    foreach(QString player, players)
+    {
+      report += "<li>" + player;
+      if (done[player])
+      {
+        completed++;
+        report += " (*)";
+      }
+      report += "</li>\n";
+    }
+    report += "</ul>\n";
+    report += "<p>" + tr("%1 completed out of %2").arg(completed).arg(players.size()) + "</p>\n";
+  }
+
+  if (codes.length() > 0)
+  {
+    report += "<h2>Quests never done</h2>\n<ul>\n";
+    foreach(QString code, codes)
+    {
+      Quest* quest = myQuestManager->findByCode(code);
+      report += "<li>" + (quest != NULL ? quest->title() : (code + " ???")) + "</li>\n";
+    }
+    report += "</ul>\n";
+  }
+
+  report += "</body>\n</html>\n";
+
+  CREReportDisplay show(report);
+  QApplication::restoreOverrideCursor();
+  show.exec();
 }
 
 void CREMainWindow::onToolSmooth()
