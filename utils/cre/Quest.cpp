@@ -23,7 +23,7 @@ const QString& QuestStep::description() const
 
 void QuestStep::setDescription(const QString& description)
 {
-    myDescription = description;
+    myDescription = description.trimmed();
 }
 
 bool QuestStep::isCompletion() const
@@ -80,9 +80,9 @@ const QString& Quest::title() const
 
 void Quest::setTitle(const QString& title)
 {
-    if (title == myTitle)
+    if (title.trimmed() == myTitle)
         return;
-    myTitle = title;
+    myTitle = title.trimmed();
     markModified();
 }
 
@@ -116,9 +116,9 @@ const QString& Quest::description()const
 
 void Quest::setDescription(const QString& description)
 {
-    if (description == myDescription)
+    if (description.trimmed() == myDescription)
         return;
-    myDescription = description;
+    myDescription = description.trimmed();
     markModified();
 }
 
