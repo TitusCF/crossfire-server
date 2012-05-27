@@ -622,8 +622,12 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
                 return;
             FOR_MAP_PREPARE(map, hitter->x, hitter->y, next)
                 if (next->type == SPELL_EFFECT
-                && (next->subtype == SP_EXPLOSION || next->subtype == SP_BULLET || next->subtype == SP_CONE))
+                && (next->subtype == SP_EXPLOSION || next->subtype == SP_BULLET || next->subtype == SP_CONE)) {
                     i *= 3;
+                    if (i > 10000)
+                        /* no need to test more, and avoid overflows */
+                        break;
+                }
             FOR_MAP_FINISH();
             if (i < 0)
                 return;
