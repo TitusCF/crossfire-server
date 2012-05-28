@@ -99,6 +99,14 @@ typedef struct account_struct {
 static account_struct *accounts=NULL;
 
 /**
+ * Whether the account information was loaded or not.
+ * Because accounts_save() is called in cleanup(), we don't want
+ * programs using this library to erase the server's account information,
+ * since it is NOT loaded by default.
+ */
+static int accounts_loaded = 0;
+
+/**
  * Name of the accounts file.  I can not ever see a reason why this
  * name would not work, but may as well still make it easy to change it.
  */
@@ -111,6 +119,7 @@ static account_struct *accounts=NULL;
  */
 void clear_accounts(void) {
     accounts = NULL;
+    accounts_loaded = 0;
 }
 
 /**
@@ -232,6 +241,7 @@ void account_load_entries(void)
 
     }
     fclose(fp);
+    accounts_loaded = 1;
 }
 
 /**
@@ -269,6 +279,9 @@ void accounts_save(void)
     char fname[MAX_BUF], fname1[MAX_BUF];
     FILE *fp;
     account_struct *ac;
+
+    if (accounts_loaded == 0)
+        return;
 
     snprintf(fname, MAX_BUF,"%s/%s.new", settings.localdir, ACCOUNT_FILE);
 
