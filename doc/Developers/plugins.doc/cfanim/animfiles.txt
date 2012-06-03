@@ -68,3 +68,4 @@ wizard			yes or no				Can or not walk through walls and monster (dungeon master)
 teleport		x y mapname				Teleport object ot mapname at position x,y
 notice			noticewhat				Put a beautifull text (noticewhat) in Navy in the console of player
 moveto                  x y                                     Will make the object move towards the specified point in its map
+trigger     connection      Trigger the specified connection on the map the victim is
