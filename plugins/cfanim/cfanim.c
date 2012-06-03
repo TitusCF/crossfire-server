@@ -774,7 +774,7 @@ static int start_animation(object *who, object *activator, object *event, const 
     enum    time_enum timetype;
     int     errors_allowed = 0;
     int     verbose = 0;
-    const char *animationitem;
+    const char *animationitem = NULL;
     char    buffer[HUGE_BUF];
     char    *variable;
     char    *value;
@@ -901,6 +901,10 @@ static int start_animation(object *who, object *activator, object *event, const 
         if (animationitem)
             cf_free_string(animationitem);
         cf_log(llevError, "CFAnim: Errors occurred during the parsing of %s\n", file);
+        return 0;
+    }
+    if (!animationitem) {
+        cf_log(llevError, "CFAnim: no animation specified when using %s\n", file);
         return 0;
     }
     if (!victim) {
