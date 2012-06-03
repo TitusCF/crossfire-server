@@ -460,6 +460,50 @@ static anim_move_result runmessage(struct CFanimation_struct *animation, long in
     return mr_finished;
 }
 
+static long int inittrigger(const char *name, char *parameters, struct CFmovement_struct *move_entity) {
+    long int connection;
+
+    move_entity->parameters = NULL;
+    if (sscanf(parameters, "%ld", &connection) != 1 || connection <= 0) {
+        cf_log(llevError, "CFAnim: invalid connection %s\n", parameters);
+        return 0;
+    }
+    return connection;
+}
+
+static anim_move_result runtrigger(struct CFanimation_struct *animation, long int id, void *parameters) {
+    oblinkpt *olp;
+    mapstruct *map;
+    objectlink *ol = NULL;
+
+    if (animation->victim == NULL || animation->victim->map == NULL) {
+        cf_log(llevError, "CFAnim: trigger for victim not on map or NULL.\n");
+        return mr_finished;
+    }
+
+    map = animation->victim->map;
+
+    /* locate objectlink for this connected value */
+    if (!map->buttons) {
+        cf_log(llevError, "Map %s called for trigger on connected %d but there ain't any button list for that map!\n", cf_map_get_sstring_property(map, CFAPI_MAP_PROP_PATH), id);
+        return mr_finished;
+    }
+    for (olp = map->buttons; olp; olp = olp->next) {
+        if (olp->value == id) {
+            ol = olp->link;
+            break;
+        }
+    }
+    if (ol == NULL) {
+        cf_log(llevError, "Map %s called for trigger on connected %d but there ain't any button list for that map!\n", cf_map_get_sstring_property(map, CFAPI_MAP_PROP_PATH), id);
+        return mr_finished;
+    }
+    /* run the object link */
+    cf_map_trigger_connected(ol, NULL, 1);
+
+    return mr_finished;
+}
+
 /** Available animation commands. */
 CFanimationHook animationbox[] = {
     { "north", initmovement, runmovement },
@@ -507,7 +551,8 @@ CFanimationHook animationbox[] = {
     { "notice", initnotice, runnotice },
     { "stop", initstop, runstop },
     { "moveto", initmoveto, runmoveto },
-    { "message", initmessage, runmessage }
+    { "message", initmessage, runmessage },
+    { "trigger", inittrigger, runtrigger }
 };
 
 int animationcount = sizeof(animationbox)/sizeof(CFanimationHook);
