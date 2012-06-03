@@ -288,12 +288,6 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define F_NOPICK        0x4000
 #define F_LOCKED        0x8000
 #define F_BLESSED       0x0100
-
-#define CF_FACE_NONE    0
-#define CF_FACE_BITMAP  1
-#define CF_FACE_XPM     2
-#define CF_FACE_PNG     3
-#define CF_FACE_CACHE   0x10
 /*@}*/
 
 /**
