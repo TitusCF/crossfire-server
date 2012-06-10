@@ -331,3 +331,12 @@ special_break_map TRUE
 # This is mostly intended for development purposes, to not have to 'make install'
 # all the time.
 ignore_plugin_compatibility FALSE
+
+# By default anyone can connect to the server and create an account.
+# When enabled, only clients connecting from the host defined by
+# account_trusted_host can create an account.
+account_block_create FALSE
+
+# When account_block_create is enabled, only the IP address given here
+# can create accounts. If not defined, defaults to 127.0.0.1.
+account_trusted_host 127.0.0.1

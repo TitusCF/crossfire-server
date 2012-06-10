@@ -117,6 +117,8 @@ struct Settings settings = {
     1,     /* special_break_map, 1 for historical reasons */
     NULL,  /* disabled_plugins */
     0,      /* ignore_plugin_compatibility */
+    FALSE,  /* account_block_create */
+    NULL,     /* Trusted host for account creation. */
 };
 
 struct Statistics statistics;

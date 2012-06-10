@@ -422,6 +422,8 @@ typedef struct Settings {
     uint8   special_break_map;        /**< If set, then submaps in random maps can break the walls. */
     linked_char *disabled_plugins;    /**< List of disabled plugins, 'All' means all. */
     uint8   ignore_plugin_compatibility;    /**< If set, don't check plugin version. */
+    uint8   account_block_create;           /** Block account creation for untrusted hosts. */
+    char*   account_trusted_host;     /**< Trusted host for account creation, defaults to 127.0.0.1. */
 } Settings;
 
 /**

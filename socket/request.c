@@ -2110,6 +2110,39 @@ void account_login_cmd(char *buf, int len, socket_struct *ns) {
 }
 
 /**
+ * Checks if account creation is blocked for this connection.
+ *
+ * @param ns
+ * pointer to socket structure.
+ * @retval 0 Account creation is not blocked.
+ * @retval 1 Account creation is blocked for this connection.
+ */
+int account_block_create(const socket_struct *ns) {
+    /* Check if account creation is blocked. */
+    if(!settings.account_block_create) {
+        /* Account creation is allowed for everyone. */
+        return 0;
+    }
+
+    /* Has the trusted host been defined? */
+    if(settings.account_trusted_host == NULL) {
+      /* No, allocate it and set it to localhost now. */
+      settings.account_trusted_host = strdup_local("127.0.0.1");
+    }
+
+    /* Return false if the client connected from the trusted host. */
+    if(strcmp(ns->host, settings.account_trusted_host) == 0){
+      return 0;
+    }
+
+    /*
+     * If we are here, then we are blocking account create and we do
+     * not trust this client's IP address.
+     */
+    return 1;
+}
+
+/**
  * Handles the account creation  This function shares a fair amount of
  * the same logic as account_login_cmd() above.
  *
@@ -2128,6 +2161,15 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
     SockList_Init(&sl);
 
     status = decode_name_password(buf, &len, name, password);
+
+    if (account_block_create(ns)) {
+        LOG(llevInfo, "Account create blocked from %s\n", ns->host);
+        SockList_AddString(&sl, "failure accountnew Account creation is disabled");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
     if (status == 1) {
         SockList_AddString(&sl, "failure accountnew Name is too long");
         Send_With_Handling(ns, &sl);

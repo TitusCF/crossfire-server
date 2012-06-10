@@ -900,6 +900,17 @@ static void load_settings(void) {
             } else {
                 LOG(llevError, "load_settings: unknown value for ignore_plugin_compatibility: %s\n", cp);
             }
+        } else if (!strcasecmp(buf, "account_block_create")) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.account_block_create = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.account_block_create = FALSE;
+            } else {
+                LOG(llevError, "load_settings: unknown value for account_block_create: %s\n", cp);
+            }
+        } else if (!strcasecmp(buf, "account_trusted_host")) {
+            free(settings.account_trusted_host);
+            settings.account_trusted_host = strdup_local(cp);
         } else {
             LOG(llevError, "Unknown value in settings file: %s\n", buf);
         }
