@@ -58,73 +58,96 @@ static void fatal_signal(int make_core);
 /** Filename when in daemon mode. */
 static char default_daemon_log[] = "logfile";
 
+/**
+ * Command line option: set logfile name.
+ * @param val new name.
+ */
 static void set_logfile(char *val) {
     settings.logfilename = val;
 }
 
+/** Command line option: show version. */
 static void call_version(void) {
     version(NULL);
     exit(0);
 }
 
+/** Command line option: show hiscore. */
 static void showscores(void) {
     hiscore_display(NULL, 9999, "");
     exit(0);
 }
 
+/** Command line option: debug flag. */
 static void set_debug(void) {
     settings.debug = llevDebug;
 }
 
+/** Command line option: unset debug flag. */
 static void unset_debug(void) {
     settings.debug = llevInfo;
 }
 
+/** Command line option: monster debug flag. */
 static void set_mondebug(void) {
     settings.debug = llevMonster;
 }
 
+/** Command line option: dump monsters. */
 static void set_dumpmon1(void) {
     settings.dumpvalues = 1;
 }
 
+/** Command line option: dump abilities. */
 static void set_dumpmon2(void) {
     settings.dumpvalues = 2;
 }
 
+/** Command line option: dump artifacts. */
 static void set_dumpmon3(void) {
     settings.dumpvalues = 3;
 }
 
+/** Command line option: dump spells. */
 static void set_dumpmon4(void) {
     settings.dumpvalues = 4;
 }
 
+/** Command line option: ? */
 static void set_dumpmon5(void) {
     settings.dumpvalues = 5;
 }
 
+/** Command line option: dump races. */
 static void set_dumpmon6(void) {
     settings.dumpvalues = 6;
 }
 
+/** Command line option: dump alchemy. */
 static void set_dumpmon7(void) {
     settings.dumpvalues = 7;
 }
 
+/** Command line option: dump gods. */
 static void set_dumpmon8(void) {
     settings.dumpvalues = 8;
 }
 
+/** Command line option: dump alchemy costs. */
 static void set_dumpmon9(void) {
     settings.dumpvalues = 9;
 }
 
+/**
+ * Command line option: dump monster treasures.
+ * @param name monster's name to dump treasure for.
+ */
 static void set_dumpmont(const char *name) {
     settings.dumpvalues = 10;
     settings.dumparg = name;
 }
 
+/** Command line option: set deamon mode. */
 static void set_daemon(void) {
     settings.daemonmode = 1;
     if (settings.logfilename[0] == '\0') {
@@ -132,46 +155,90 @@ static void set_daemon(void) {
     }
 }
 
+/**
+ * Command line option: set data path.
+ * @param path new path.
+ */
 static void set_datadir(const char *path) {
     settings.datadir = path;
 }
 
+/**
+ * Command line option: set configuration path.
+ * @param path new path.
+ */
 static void set_confdir(const char *path) {
     settings.confdir = path;
 }
 
+/**
+ * Command line option: set local path.
+ * @param path new path.
+ */
 static void set_localdir(const char *path) {
     settings.localdir = path;
 }
 
+/**
+ * Command line option: set map path.
+ * @param path new path.
+ */
 static void set_mapdir(const char *path) {
     settings.mapdir = path;
 }
 
+/**
+ * Command line option: set archetypes file name.
+ * @param path new name.
+ */
 static void set_archetypes(const char *path) {
     settings.archetypes = path;
 }
 
+/**
+ * Command line option: set regions file name.
+ * @param path new name.
+ */
 static void set_regions(const char *path) {
     settings.regions = path;
 }
 
+/**
+ * Command line option: set treasures file name.
+ * @param path new name.
+ */
 static void set_treasures(const char *path) {
     settings.treasures = path;
 }
 
+/**
+ * Command line option: set unique path.
+ * @param path new path.
+ */
 static void set_uniquedir(const char *path) {
     settings.uniquedir = path;
 }
 
+/**
+ * Command line option: set template path.
+ * @param path new path.
+ */
 static void set_templatedir(const char *path) {
     settings.templatedir = path;
 }
 
+/**
+ * Command line option: set player path.
+ * @param path new path.
+ */
 static void set_playerdir(const char *path) {
     settings.playerdir = path;
 }
 
+/**
+ * Command line option: set temporary file path.
+ * @param path new path.
+ */
 static void set_tmpdir(const char *path) {
     settings.tmpdir = path;
 }
@@ -180,6 +247,10 @@ static void free_races(void);
 
 static void free_materials(void);
 
+/**
+ * Command line option: display score for matching players.
+ * @param data name to match.
+ */
 static void showscoresparm(const char *data) {
     hiscore_display(NULL, 9999, data);
     exit(0);
@@ -999,10 +1070,16 @@ void free_server(void) {
     }
 }
 
+/**
+ * Generic usage command.
+ */
 static void usage(void) {
     (void)fprintf(logfile, "Usage: crossfire [-h] [-<flags>]...\n");
 }
 
+/**
+ * Display the command line options and exits.
+ */
 static void help(void) {
     /* The information in usage is redundant with what is given below, so why call it? */
     /*    usage();*/
@@ -1050,6 +1127,10 @@ static void help(void) {
     exit(0);
 }
 
+/**
+ * Called before the server starts listening to connections, processes various
+ * dump-related options.
+ */
 static void init_beforeplay(void) {
     init_archetypes(); /* If not called before, reads all archetypes from file */
     init_artifacts();  /* If not called before, reads all artifacts from file */
