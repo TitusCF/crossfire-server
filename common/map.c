@@ -58,8 +58,8 @@ const char *const map_layer_name[MAP_LAYERS] = {
 
 /** Information about a layer. */
 typedef struct Map_Layer_Info {
-    uint8 high_layer;
-    uint8 honor_visibility;
+    uint8 high_layer;       /**< Highest layer for this group. */
+    uint8 honor_visibility; /**< If 0 then don't reorder items, else allow. */
 } Map_Layer_Info;
 
 /**
