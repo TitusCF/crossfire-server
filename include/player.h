@@ -35,52 +35,52 @@
 #define PLAYER_H
 
 /**
- * What range is currntly selected by the player.
+ * What range is currently selected by the player.
  *
  * Wand/rod/horn rolled into range_misc.  They all use the same body location
  * anyways.
  */
 typedef enum rangetype {
-    range_bottom    = -1,
-    range_none      = 0,
-    range_bow       = 1,
-    range_magic     = 2,
-    range_misc      = 3,
-    range_golem     = 4,
-    range_skill     = 5,
-    range_builder   = 6,
-    range_size      = 7
+    range_bottom    = -1, /**< Minimum, exclusive, value. */
+    range_none      = 0,  /**< No range selected. */
+    range_bow       = 1,  /**< Bow. */
+    range_magic     = 2,  /**< Spells. */
+    range_misc      = 3,  /**< Misc items. */
+    range_golem     = 4,  /**< Control golem. */
+    range_skill     = 5,  /**< Use skill. */
+    range_builder   = 6,  /**< Map builder. */
+    range_size      = 7   /**< Maximum, exclusive, value. */
 } rangetype;
 
-/** Bow firing mode. @todo document. */
+/** Bow firing mode.*/
 typedef enum _bowtype {
-    bow_normal = 0,
-    bow_threewide = 1,
-    bow_spreadshot = 2,
-    bow_n = 3, /* must stay at 3 */
-    bow_ne = 4,
-    bow_e = 5,
-    bow_se = 6,
-    bow_s = 7,
-    bow_sw = 8,
-    bow_w = 9,
-    bow_nw = 10, /* must stay at 10 */
-    bow_bestarrow = 11
+    bow_normal = 0, /**< Standard mode, one random arrow. */
+    bow_threewide = 1,  /**< Fire three arrows in the same direction. */
+    bow_spreadshot = 2, /**< Fire three arrows in a cone. */
+    bow_n = 3,          /**< Fire north whatever the facing direction. Must stay at 3. */
+    bow_ne = 4,         /**< Fire north-east whatever the facing direction. */
+    bow_e = 5,          /**< Fire east whatever the facing direction. */
+    bow_se = 6,         /**< Fire south-east whatever the facing direction. */
+    bow_s = 7,          /**< Fire south whatever the facing direction. */
+    bow_sw = 8,         /**< Fire south-west whatever the facing direction. */
+    bow_w = 9,          /**< Fire west whatever the facing direction. */
+    bow_nw = 10,        /**< Fire north-west whatever the facing direction. */
+    bow_bestarrow = 11  /**< Try to find an arrow matching the target. */
 } bowtype_t;
 
-/** Petmode. @todo document. */
+/** Petmode. */
 typedef enum _petmode {
-    pet_normal = 0,
-    pet_sad = 1,
-    pet_defend = 2,
-    pet_arena = 3
+    pet_normal = 0, /**< Standard mode/ */
+    pet_sad = 1,    /**< Try to find enemies. */
+    pet_defend = 2, /**< Stay close to the owner. */
+    pet_arena = 3   /**< Attack other players in arena. */
 } petmode_t;
 
-/** How to use keys. @todo document. */
+/** How to use keys. */
 typedef enum usekeytype {
-    key_inventory = 0,
-    keyrings = 1,
-    containers = 2
+    key_inventory = 0,  /**< Only use keys in inventory. */
+    keyrings = 1,       /**< Use keys in inventory and active key rings. */
+    containers = 2      /**< Use keys in inventory and active containers. */
 } usekeytype;
 
 /**
@@ -100,11 +100,11 @@ typedef enum unapplymode {
  * This stores, for a spell a player knows, the last sp/gr/dam information sent to client.
  */
 typedef struct client_spell {
-    object *spell;
-    sint16 last_sp;
-    sint16 last_grace;
-    sint16 last_dam;
-    struct client_spell *next;
+    object *spell;              /**< Spell object this structure is about. */
+    sint16 last_sp;             /**< Last spell cost. */
+    sint16 last_grace;          /**< Last grace cost. */
+    sint16 last_dam;            /**< Last damage. */
+    struct client_spell *next;  /**< Next spell information. */
 } client_spell;
 
 /**
@@ -239,8 +239,8 @@ typedef struct pl {
  */
 /*@{*/
 
-#define FIND_PLAYER_PARTIAL_NAME    0x1
-#define FIND_PLAYER_NO_HIDDEN_DM    0x2
+#define FIND_PLAYER_PARTIAL_NAME    0x1 /**< Find on partial name. */
+#define FIND_PLAYER_NO_HIDDEN_DM    0x2 /**< Don't find hidden DMs. */
 
 /*@}*/
 
@@ -249,9 +249,9 @@ typedef struct pl {
  * to control behavior
  */
 /*@{*/
-#define ADD_PLAYER_NEW              0x1 /** Name/password provided, so skip to roll stats */
-#define ADD_PLAYER_NO_MAP           0x2 /** Do not set the first map */
-#define ADD_PLAYER_NO_STATS_ROLL    0x4 /** Stats provided from client */
+#define ADD_PLAYER_NEW              0x1 /**< Name/password provided, so skip to roll stats */
+#define ADD_PLAYER_NO_MAP           0x2 /**< Do not set the first map */
+#define ADD_PLAYER_NO_STATS_ROLL    0x4 /**< Stats provided from client */
 /*@}*/
 
 #endif /* PLAYER_H */
