@@ -37,8 +37,8 @@
 
 /** Timezone structure, for gettimeofday(). */
 struct timezone {
-    int tz_minuteswest;
-    int tz_dsttime;
+    int tz_minuteswest; /**< Timezone. */
+    int tz_dsttime; /**< Current time. */
 };
 
 /**
@@ -201,7 +201,9 @@ int bRunning;
 
 #ifndef PYTHON_PLUGIN_EXPORTS
 
+/** Status when the server is started as a service. */
 SERVICE_STATUS m_ServiceStatus;
+/** Handle to the service the server is started as. */
 SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
 /** Internal name of the service. */
 #define SERVICE_NAME        "Crossfire"

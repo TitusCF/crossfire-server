@@ -45,49 +45,49 @@
  * to denote improperly set objects.
  */
 /*@{*/
-#define SK_LOCKPICKING          1
-#define SK_HIDING               2
-#define SK_SMITHERY             3
-#define SK_BOWYER               4
-#define SK_JEWELER              5
-#define SK_ALCHEMY              6
-#define SK_STEALING             7
-#define SK_LITERACY             8
-#define SK_BARGAINING           9
-#define SK_JUMPING              10
-#define SK_DET_MAGIC            11
-#define SK_ORATORY              12
-#define SK_SINGING              13
-#define SK_DET_CURSE            14
-#define SK_FIND_TRAPS           15
-#define SK_MEDITATION           16
-#define SK_PUNCHING             17
-#define SK_FLAME_TOUCH          18
-#define SK_KARATE               19
-#define SK_CLIMBING             20
-#define SK_WOODSMAN             21
-#define SK_INSCRIPTION          22
-#define SK_ONE_HANDED_WEAPON    23
-#define SK_MISSILE_WEAPON       24
-#define SK_THROWING             25
-#define SK_USE_MAGIC_ITEM       26
-#define SK_DISARM_TRAPS         27
-#define SK_SET_TRAP             28
-#define SK_THAUMATURGY          29
-#define SK_PRAYING              30
-#define SK_CLAWING              31
-#define SK_LEVITATION           32
-#define SK_SUMMONING            33
-#define SK_PYROMANCY            34
-#define SK_EVOCATION            35
-#define SK_SORCERY              36
-#define SK_TWO_HANDED_WEAPON    37
-#define SK_WRAITH_FEED          38
-#define SK_HARVESTING           39
-#define SK_AIR_MAGIC            40
-#define SK_EARTH_MAGIC          41
-#define SK_WATER_MAGIC          42
-#define SK_FIRE_MAGIC           43
+#define SK_LOCKPICKING          1   /**< Lockpicking. */
+#define SK_HIDING               2   /**< Hiding. */
+#define SK_SMITHERY             3   /**< Smithery. */
+#define SK_BOWYER               4   /**< Bowyer. */
+#define SK_JEWELER              5   /**< Jeweler. */
+#define SK_ALCHEMY              6   /**< Alchemy. */
+#define SK_STEALING             7   /**< Stealing. */
+#define SK_LITERACY             8   /**< Literacy. */
+#define SK_BARGAINING           9   /**< Bargaining. */
+#define SK_JUMPING              10  /**< Jumping. */
+#define SK_DET_MAGIC            11  /**< Detect magic. */
+#define SK_ORATORY              12  /**< Oratory. */
+#define SK_SINGING              13  /**< Singing. */
+#define SK_DET_CURSE            14  /**< Detect curse. */
+#define SK_FIND_TRAPS           15  /**< Find traps. */
+#define SK_MEDITATION           16  /**< Meditation. */
+#define SK_PUNCHING             17  /**< Punching. */
+#define SK_FLAME_TOUCH          18  /**< Flame-touch. */
+#define SK_KARATE               19  /**< Karate. */
+#define SK_CLIMBING             20  /**< Climbing. */
+#define SK_WOODSMAN             21  /**< Woodsman. */
+#define SK_INSCRIPTION          22  /**< Inscription.*/
+#define SK_ONE_HANDED_WEAPON    23  /**< One handed weapon. */
+#define SK_MISSILE_WEAPON       24  /**< Missile weapon. */
+#define SK_THROWING             25  /**< Throwing. */
+#define SK_USE_MAGIC_ITEM       26  /**< Use magic item. */
+#define SK_DISARM_TRAPS         27  /**< Disarm traps. */
+#define SK_SET_TRAP             28  /**< Set traps, unused. */
+#define SK_THAUMATURGY          29  /**< Thaumaturgy. */
+#define SK_PRAYING              30  /**< Praying. */
+#define SK_CLAWING              31  /**< Clawing. */
+#define SK_LEVITATION           32  /**< Levitation. */
+#define SK_SUMMONING            33  /**< Summoning. */
+#define SK_PYROMANCY            34  /**< Pyromancy. */
+#define SK_EVOCATION            35  /**< Evocation. */
+#define SK_SORCERY              36  /**< Sorcery. */
+#define SK_TWO_HANDED_WEAPON    37  /**< Two handed weapons. */
+#define SK_WRAITH_FEED          38  /**< Wraith feed. */
+#define SK_HARVESTING           39  /**< Harvesting. */
+#define SK_AIR_MAGIC            40  /**< Air magic, unused. */
+#define SK_EARTH_MAGIC          41  /**< Earth magic, unused. */
+#define SK_WATER_MAGIC          42  /**< Water magic, unused. */
+#define SK_FIRE_MAGIC           43  /**< Fire magic, unused. */
 
 /*@}*/
 

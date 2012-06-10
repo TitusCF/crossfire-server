@@ -82,12 +82,19 @@
 /** How many times to try to generate a unique name for a book. */
 #define MAX_TITLE_CHECK 20
 
+/** Message from the lib/messages file. */
 #define MSGTYPE_LIB 0
+/** Monster-related information. */
 #define MSGTYPE_MONSTER 1
+/** Artifact-related information. */
 #define MSGTYPE_ARTIFACT 2
+/** Spellpath-related information. */
 #define MSGTYPE_SPELLPATH 3
+/** Alchemy-related information. */
 #define MSGTYPE_ALCHEMY 4
+/** God-related information. */
 #define MSGTYPE_GODS 5
+/** Message from the lib/messages file. */
 #define MSGTYPE_MSGFILE 6
 
 /**
@@ -101,7 +108,10 @@
  * are not needed anyplace else, so why have them globally declared?
  */
 
-/** 'title' and 'titlelist' are used by the readable code */
+/**
+ * Information on one title.
+ * 'title' and 'titlelist' are used by the readable code
+ */
 typedef struct titlestruct {
     const char *name;      /**< the name of the book */
     const char *authour;   /**< the name of the book authour */
@@ -109,9 +119,12 @@ typedef struct titlestruct {
     int level;             /**< level of difficulty of this message */
     size_t size;           /**< size of the book message */
     int msg_index;         /**< an index value derived from book message */
-    struct titlestruct *next;
+    struct titlestruct *next;   /**< next item in the list */
 } title;
 
+/**
+ * Titles for one message type.
+ */
 typedef struct titleliststruct {
     int number;       /**< number of items in the list */
     struct titlestruct *first_book;     /**< pointer to first book in this list */
@@ -140,19 +153,16 @@ struct GeneralMessage {
 static void add_book(title *book, int type, const char *fname, int lineno);
 
 /**
- * booklist is the buffer of books read in from the bookarch file. It's element
+ * Buffer of books read in from the bookarch file. It's element
  * size does not exceed arraysize(max_titles).
  */
 static titlelist *booklist = NULL;
 
-/** Information on monsters */
+/** Information on monsters. */
 static objectlink *first_mon_info = NULL;
 
-/**
- * these are needed for creation of a linked list of
- * pointers to all (hostile) monster objects
- */
-static int nrofmon = 0, need_to_write_bookarchive = 0;
+static int nrofmon = 0, /**< Number of monsters in the ::first_mon_info list. */
+    need_to_write_bookarchive = 0; /**< If set then we have information to save. */
 
 /**
  * First message from data read from the messages file.
@@ -167,7 +177,7 @@ static GeneralMessage *first_msg = NULL;
 static int msg_total_chance = 0;
 
 /**
- * Spellpath information
+ * Spellpath information.
  */
 static const uint32 spellpathdef[NRSPELLPATHS] = {
     PATH_PROT,
@@ -201,7 +211,7 @@ static const char *const path_book_name[] = {
     "treatise"
 };
 
-/** Used by spellpath texts */
+/** Used by spellpath texts. */
 static const char *const path_author[] = {
     "aether",
     "astral byways",
@@ -289,7 +299,7 @@ static const char *const mon_book_name[] = {
     "volume"
 };
 
-/** Used by monster beastuary texts */
+/** Used by monster beastuary texts. */
 static const char *const mon_author[] = {
     "beasts",
     "creatures",
@@ -307,7 +317,7 @@ static const char *const mon_author[] = {
 };
 
 /**
- * God book information
+ * God book information.
  */
 static const char *const gods_book_name[] = {
     "devotional",
@@ -322,7 +332,7 @@ static const char *const gods_book_name[] = {
     "transcript"
 };
 
-/** Used by gods texts */
+/** Used by gods texts. */
 static const char *const gods_author[] = {
     "cults",
     "joy",
@@ -339,7 +349,7 @@ static const char *const gods_author[] = {
 };
 
 /**
- * Alchemy (formula) information
+ * Alchemy (formula) information.
  */
 static const char *const formula_book_name[] = {
     "cookbook",
@@ -352,7 +362,7 @@ static const char *const formula_book_name[] = {
     "design notes"
 };
 
-/** This isn't used except for empty books */
+/** This isn't used except for empty books. */
 static const char *const formula_author[] = {
     "Albertus Magnus",
     "alchemy",
@@ -374,7 +384,7 @@ static const char *const formula_author[] = {
  * Generic book information
  */
 
-/** Used by msg file and 'generic' books */
+/** Used by msg file and 'generic' books. */
 static const char *const light_book_name[] = {
     "calendar",
     "datebook",
@@ -404,7 +414,7 @@ static const char *const heavy_book_name[] = {
     "work"
 };
 
-/** Used by 'generic' books */
+/** Used by 'generic' books. */
 static const char *const book_author[] = {
     "Abdulah",
     "Al'hezred",
@@ -473,7 +483,7 @@ static const char *const book_descrpt[] = {
 };
 
 /**
- * Each line of this array is a readable subtype
+ * Each line of this array is a readable subtype.
  * Be careful to keep the order. If you add readable subtype, add them
  * at the bottom of the list. Never delete a subtype because index is used as
  * subtype parameter in arch files!
@@ -541,7 +551,7 @@ static const readable_message_type readable_message_types[] = {
                     { MSG_TYPE_SIGN, MSG_TYPE_SIGN_MAGIC_MOUTH }
 };
 
-/** Number of elements in ::readable_message_types */
+/** Number of elements in ::readable_message_types. */
 static const int last_readable_subtype = arraysize(readable_message_types);
 
 /** Number of titles for different name lists. */
@@ -2083,6 +2093,9 @@ void tailor_readable_ob(object *book, int msg_type) {
  *
  *****************************************************************************/
 
+/**
+ * Free all readable-related information.
+ */
 void free_all_readable(void) {
     titlelist *tlist, *tnext;
     title *title1, *titlenext;

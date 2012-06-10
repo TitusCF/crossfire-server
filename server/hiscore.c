@@ -45,8 +45,10 @@ typedef struct scr {
     char killer[BIG_NAME];    /**< Name (+ title) or "left". */
     sint64 exp;               /**< Experience. */
     char maplevel[BIG_NAME];  /**< Killed on what level. */
-    int maxhp, maxsp, maxgrace; /**< Max hp, sp, grace when killed. */
-    int position;             /**< Position in the highscore list. */
+    int maxhp,      /**< Max hp when killed. */
+        maxsp,      /**< Max sp when killed. */
+        maxgrace;   /**< Max grace when killed. */
+    int position;   /**< Position in the highscore list. */
 } score;
 
 /**
