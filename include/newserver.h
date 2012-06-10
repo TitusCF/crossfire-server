@@ -57,9 +57,8 @@
 
 /** One map cell, as sent to the client. */
 struct map_cell_struct {
-    uint16 faces[MAP_LAYERS];
-    uint16 smooth[MAP_LAYERS];
-    int darkness;
+    uint16 faces[MAP_LAYERS];   /**< Face numbers. */
+    int darkness;               /**< Cell's darkness. */
 };
 
 /**
