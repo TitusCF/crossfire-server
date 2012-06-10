@@ -2117,7 +2117,7 @@ void account_login_cmd(char *buf, int len, socket_struct *ns) {
  * @retval 0 Account creation is not blocked.
  * @retval 1 Account creation is blocked for this connection.
  */
-int account_block_create(const socket_struct *ns) {
+static int account_block_create(const socket_struct *ns) {
     /* Check if account creation is blocked. */
     if(!settings.account_block_create) {
         /* Account creation is allowed for everyone. */
