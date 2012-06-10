@@ -456,6 +456,9 @@ int account_add_account(const char *account_name, const char *account_password)
     ac->next = accounts;
     accounts = ac;
 
+    /* mark that accounts should be saved through accounts_save(). */
+    accounts_loaded = 1;
+
     return 0;
 }
 
