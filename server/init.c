@@ -1006,6 +1006,8 @@ static void load_settings(void) {
  * This is the main server initialisation function.
  *
  * Called only once, when starting the program.
+ * @param argc argument count.
+ * @param argv arguments on the command line.
  */
 void init(int argc, char **argv) {
     init_done = 0;  /* Must be done before init_signal() */
