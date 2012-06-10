@@ -154,8 +154,6 @@ typedef struct _crossfire_plugin {
     struct _crossfire_plugin *prev;     /**< Previous plugin in list           */
 } crossfire_plugin;
 
-extern crossfire_plugin *plugins_list;
-
 #ifdef WIN32
 
 #define plugins_dlopen(fname) LoadLibrary(fname)
