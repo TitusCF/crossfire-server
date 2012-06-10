@@ -820,7 +820,9 @@ static int calc_alch_danger(object *caster, object *cauldron, const recipe *rp) 
 
     /* Ingredients. */
     FOR_INV_PREPARE(cauldron, item) {
-        danger += item->weight / 100;
+        /* Nicolas Weeger: no reason why this is the case.
+         danger += item->weight / 100;
+         */
         danger++;
         if (QUERY_FLAG(item, FLAG_CURSED) || QUERY_FLAG(item, FLAG_DAMNED))
             danger += 5;
