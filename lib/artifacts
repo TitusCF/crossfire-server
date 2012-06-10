@@ -2476,7 +2476,7 @@ weight 95
 resist_acid 65
 material 8320
 materialname astolare
-face cloak_black.111
+face cloak_acid_proofing.111
 stand_still 1
 item_power 3
 end
