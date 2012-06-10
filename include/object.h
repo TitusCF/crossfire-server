@@ -64,9 +64,9 @@ extern body_locations_struct body_locations[NUM_BODY_LOCATIONS];
  * Exception is if you want to walk this list for some reason.
  */
 typedef struct _key_value {
-    const char *key;
-    const char *value;
-    struct _key_value *next;
+    const char *key;          /**< Name of the key. */
+    const char *value;        /**< Key's value. */
+    struct _key_value *next;  /**< Next key in the list. */
 } key_value;
 
 /**
@@ -75,11 +75,11 @@ typedef struct _key_value {
  * Those flags correspond to the object::will_apply field.
  */
 /*@{*/
-#define WILL_APPLY_HANDLE       0x1
-#define WILL_APPLY_TREASURE     0x2
-#define WILL_APPLY_EARTHWALL    0x4
-#define WILL_APPLY_DOOR         0x8
-#define WILL_APPLY_FOOD         0x10
+#define WILL_APPLY_HANDLE       0x1   /**< Apply handles and triggers. */
+#define WILL_APPLY_TREASURE     0x2   /**< Open chests. */
+#define WILL_APPLY_EARTHWALL    0x4   /**< Destroy earthwalls. */
+#define WILL_APPLY_DOOR         0x8   /**< Open non-locked doors. */
+#define WILL_APPLY_FOOD         0x10  /**< Eat food (not drinks). */
 /*@}*/
 
 /**
@@ -105,7 +105,17 @@ typedef struct _key_value {
  * fast operation.
  */
 #define SPELL_TAG_SIZE 16
+/**
+ * Get the hash on an object for a specified count.
+ * @param op what to check.
+ * @param count item to check the hash for.
+ */
 #define OB_SPELL_TAG_HASH(op, count)    (op->spell_tags[count&0xf])
+/**
+ * Check whether a tag matches in the tags.
+ * @param op item to check against.
+ * @param count tag to check.
+ */
 #define OB_SPELL_TAG_MATCH(op, count)   (op->spell_tags[count&0xf] == count)
 
 /**
@@ -260,7 +270,7 @@ typedef struct obj {
     uint8       range_modifier; /**< How going up in level effects range  */
     uint8       dam_modifier;   /**< How going up in level effects damage */
     struct obj  *spell;         /**< Spell that was being cast */
-    char        *spellarg;
+    char        *spellarg;      /**< Optional argument when casting obj::spell. */
 
     /* Following are values used by any object */
     struct archt *arch;         /**< Pointer to archetype */
@@ -288,25 +298,25 @@ typedef struct obj {
     key_value   *key_values;    /**< Fields not explictly known by the loader. */
 
     sint16      *discrete_damage; /**< damage values, based on each attacktype. */
-    tag_t       *spell_tags;
+    tag_t       *spell_tags;      /**< Tags used for spell effect merging. */
 } object;
 
 /**
  * Used to link together several objects
  */
 typedef struct oblnk {
-    object *ob;
-    struct oblnk *next;
-    tag_t id;
+    object *ob;         /**< Item to link to. */
+    struct oblnk *next; /**< Next item to link to. */
+    tag_t id;           /**< ob's tag, in case it is removed. */
 } objectlink;
 
 /**
  * Used to link together several object links
  */
 typedef struct oblinkpt {
-    struct oblnk *link;
+    struct oblnk *link;   /**< Items for this value. */
     long value;           /**< Used as connected value in buttons/gates */
-    struct oblinkpt *next;
+    struct oblinkpt *next;/**< Next value in the list. */
 } oblinkpt;
 
 /**
@@ -399,12 +409,12 @@ extern int nroffreeobjects;
  * in future revisions of the code.
  */
 /*@{*/
-#define INS_NO_MERGE            0x0001
-#define INS_ABOVE_FLOOR_ONLY    0x0002
-#define INS_NO_WALK_ON          0x0004
-#define INS_ON_TOP              0x0008
-#define INS_BELOW_ORIGINATOR    0x0010
-#define INS_MAP_LOAD            0x0020
+#define INS_NO_MERGE            0x0001  /**< Don't try to merge with other items. */
+#define INS_ABOVE_FLOOR_ONLY    0x0002  /**< Put object immediatly above the floor. */
+#define INS_NO_WALK_ON          0x0004  /**< Don't call check_walk_on against the originator. */
+#define INS_ON_TOP              0x0008  /**< Always put object on top. */
+#define INS_BELOW_ORIGINATOR    0x0010  /**< Insert new object immediately below originator. */
+#define INS_MAP_LOAD            0x0020  /**< Disable lots of checkings. */
 /*@}*/
 
 #define ARCH_SINGULARITY        "singularity"   /**< Archetype for singularity. */
