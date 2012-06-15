@@ -2686,10 +2686,10 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         /* In thise case, old login method */
         if (!pl)
             pl = add_player(ns, ADD_PLAYER_NEW);
-
+/* already done by add_player
         roll_again(pl->ob);
         pl->state = ST_ROLL_STAT;
-        set_first_map(pl->ob);
+        set_first_map(pl->ob);*/
     }
 
     /* add_player does a lot of the work, but there are a few
