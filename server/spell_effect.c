@@ -1907,6 +1907,11 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
             force->duration = duration;
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                           "You recast the spell while in effect.");
+
+            if (spell_ob->other_arch != NULL && tmp->map != NULL) {
+                object_insert_in_map_at(arch_to_object(spell_ob->other_arch), tmp->map, NULL, INS_ON_TOP, tmp->x, tmp->y);
+            }
+
         } else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                           "Recasting the spell had no effect.");
@@ -1978,6 +1983,10 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
     object_insert_in_ob(force, tmp);
     CLEAR_FLAG(tmp, FLAG_NO_FIX_PLAYER);
     change_abil(tmp, force); /* Display any relevant messages, and call fix_object to update the player */
+
+    if (spell_ob->other_arch != NULL && tmp->map != NULL) {
+        object_insert_in_map_at(arch_to_object(spell_ob->other_arch), tmp->map, NULL, INS_ON_TOP, tmp->x, tmp->y);
+    }
 
     return 1;
 }
