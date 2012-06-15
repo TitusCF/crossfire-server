@@ -235,6 +235,9 @@ void CRESubItemQuest::setData(const QStringList& data)
 void CRESubItemQuest::selectedQuestChanged(int index)
 {
     myFirstStep->clear();
+    if (myIsPre)
+        myFirstStep->addItem("(not started)", "0");
+
     if (mySecondStep)
         mySecondStep->clear();
 
