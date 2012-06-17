@@ -177,8 +177,8 @@ void send_exp_table(socket_struct *ns, char *params) {
  */
 static void send_arch_info(SockList *sl, const object *op)
 {
-    SockList_AddString(sl, "name ");
     if (op->name) {
+        SockList_AddString(sl, "name ");
         SockList_AddLen8Data(sl, op->name, strlen(op->name));
     }
 
