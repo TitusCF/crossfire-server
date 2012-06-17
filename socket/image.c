@@ -59,12 +59,15 @@ void send_face_cmd(char *buff, int len, socket_struct *ns) {
 }
 
 /**
- * Sends a face to a client if they are in pixmap mode
+ * Sends a face to a client if they are in pixmap mode,
  * nothing gets sent in bitmap mode.
  * If nocache is true (nonzero), ignore the cache setting from the client -
  * this is needed for the askface, in which we really do want to send the
  * face (and askface is the only place that should be setting it).  Otherwise,
  * we look at the facecache, and if set, send the image name.
+ * @param ns socket to send the date to.
+ * @param face_num face number to send.
+ * @param nocache if 1 then send a 'image2', else depending on client cache setting.
  */
 void esrv_send_face(socket_struct *ns, uint16 face_num, int nocache) {
     SockList sl;
