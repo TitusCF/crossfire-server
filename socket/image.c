@@ -52,7 +52,7 @@
 
 void send_face_cmd(char *buff, int len, socket_struct *ns) {
     long tmpnum = atoi(buff);
-    short facenum = tmpnum&0xffff;
+    uint16 facenum = tmpnum&0xffff;
 
     if (facenum != 0)
         esrv_send_face(ns, facenum, 1);
@@ -66,11 +66,11 @@ void send_face_cmd(char *buff, int len, socket_struct *ns) {
  * face (and askface is the only place that should be setting it).  Otherwise,
  * we look at the facecache, and if set, send the image name.
  */
-void esrv_send_face(socket_struct *ns, short face_num, int nocache) {
+void esrv_send_face(socket_struct *ns, uint16 face_num, int nocache) {
     SockList sl;
     int fallback;
 
-    if (face_num <= 0 || face_num >= nrofpixmaps) {
+    if (face_num == 0 || face_num >= nrofpixmaps) {
         LOG(llevError, "esrv_send_face (%d) out of bounds??\n", face_num);
         return;
     }
