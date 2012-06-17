@@ -252,6 +252,7 @@ command_array_struct WizCommands [] = {
     { "remove", command_remove,                  0.0 },
     { "reset", command_reset,                    0.0 },
     { "set_god", command_setgod,                 0.0 },
+    { "settings", command_settings,              0.0 },
     { "server_speed", command_speed,             0.0 },
     { "shutdown", command_shutdown,              0.0 },
     { "ssdumptable", command_ssdumptable,        0.0 },

@@ -152,3 +152,24 @@ Your pets have been killed.|Vos familiers ont été tués.
 Killed %d pets.|Tué %d familiers.
 Couldn't find any suitable pets to kill.|Aucun familier ne correspond.
 Password change.\nPlease enter your current password, or empty string to cancel.|Modification de mot de passe.\nEntrez votre mot de passe actuel, ou une ligne vide pour annuler.
+Server settings:|Paramètres serveur :
+ * item power factor: %2f| * facteur de puissance d'arme : %2f
+ * death is not permanent| * mort non permanente
+ * permanent death, resurrection is enabled| * mort permanente mais résurrection possible
+ * permanent death, resurrection is NOT enabled| * mort permanente et pas de résurrection possible
+ * players can set their title| * les joueurs peuvent définir leur titre
+ * players can't set their title| * les joueurs ne peuvent pas définir leur titre
+ * too much equipment can lead to spell failure and ill effects| * trop d'équipement encourt un risque d'échec de sort et de contrecoup
+ * too much equipment can lead to spell failure but no ill effects| * trop d'équipement encourt un risque d'échec de sort, mais pas de contrecoup
+ * too much equipment can't lead to spell failure| * trop d'équipement n'entraîne pas d'échec de sort
+ * casting takes time| * l'invocation de sort prend du temps
+ * casting is immediate| * l'invocation de sort est immédiate
+ * permanent experience: %d%%| * expérience permanente : %d%%
+ * death penalty %d%% or %d levels| * pénalité de mort : %d%% ou %d niveaux
+ * friendly fire: %d%%| * dégâts amicaux : %d%%
+ * players can't steal from other players| * impossible de voler d'un autre joueur
+ * players can steal from other players| * possibilité de voler d'un autre joueur
+ * players can create portals from their apartments| * possibilité de créer des portails dans son appartement
+ * players can't create portals from their apartments| * impossibilité de créer des portails dans son appartement
+ * players can write spells they are denied| * les joueurs peuvent écrire des sorts qu'ils ne peuvent lancer
+ * players can't write spells they are denied| * les joueurs ne peuvent pas écrire de sort qu'ils ne peuvent pas lancer
