@@ -4,6 +4,7 @@
 
 extern "C" {
 #include "global.h"
+#include "image.h"
 }
 
 CRESmoothFaceMaker::CRESmoothFaceMaker()
@@ -19,7 +20,6 @@ CRESmoothFaceMaker::CRESmoothFaceMaker()
     layout->addWidget(new QLabel(tr("Face to use:"), this), line, 0);
     myFace = new QComboBox(this);
     layout->addWidget(myFace, line++, 1, 1, 2);
-    extern unsigned int nrofpixmaps;
     for (unsigned int face = 1; face < nrofpixmaps; face++)
         myFace->addItem(CREPixmap::getIcon(face), new_faces[face].name, face);
 

@@ -50,6 +50,8 @@ typedef struct {
 
 extern face_sets facesets[MAX_FACE_SETS];
 
+extern unsigned int nrofpixmaps;
+
 #define MAX_IMAGE_SIZE 10000
 
 #endif /* IMAGE_H */

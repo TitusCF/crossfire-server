@@ -226,8 +226,6 @@
 
 static gdImagePtr *gdfaces;
 
-extern int nrofpixmaps; /* Found in common/image.c */
-
 /** Information about a NPC with a custom message. */
 typedef struct struct_npc_info {
     const char *name;       /**< NPC's name. */

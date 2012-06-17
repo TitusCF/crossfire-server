@@ -56,7 +56,7 @@
 #include <arpa/inet.h>
 #endif
 #include <newserver.h>
-#include <loader.h>
+#include <image.h>
 
 /** Socket information. */
 Socket_Info socket_info;

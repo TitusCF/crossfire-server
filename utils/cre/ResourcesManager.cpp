@@ -9,6 +9,7 @@ extern "C" {
 #include "global.h"
 #include "libproto.h"
 #include "recipe.h"
+#include "image.h"
 }
 
 ResourcesManager::ResourcesManager()
@@ -56,8 +57,6 @@ void ResourcesManager::load()
         }
         myRecipes.append(recipes);
     }
-
-    extern unsigned int nrofpixmaps;
 
     for (unsigned int f = 0; f < nrofpixmaps; f++)
     {

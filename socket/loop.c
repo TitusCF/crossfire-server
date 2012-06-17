@@ -59,7 +59,7 @@
 #include <arpa/inet.h>
 #endif
 
-#include <loader.h>
+#include <image.h>
 #include <newserver.h>
 
 /*****************************************************************************

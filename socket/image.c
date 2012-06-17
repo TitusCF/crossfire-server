@@ -42,7 +42,6 @@
 
 #include <shared/newclient.h>
 #include <newserver.h>
-#include <loader.h>
 #include <image.h>
 
 /**

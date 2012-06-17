@@ -13,11 +13,12 @@
 #include "ResourcesManager.h"
 #include "CRECombatSimulator.h"
 #include "Quest.h"
+#include "CREHPBarMaker.h"
 
 extern "C" {
 #include "global.h"
 #include "sproto.h"
-#include "CREHPBarMaker.h"
+#include "image.h"
 }
 
 CREMainWindow::CREMainWindow()
@@ -535,7 +536,6 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     strncpy(pl.savebed_map, "/HallOfSelection", MAX_BUF);
     pl.bed_x = 5;
     pl.bed_y = 5;
-    extern unsigned int nrofpixmaps;
     pl.socket.faces_sent = (uint8*)calloc(sizeof(uint8), nrofpixmaps);
 
     object* obfirst = object_create_arch(find_archetype("dwarf_player"));
