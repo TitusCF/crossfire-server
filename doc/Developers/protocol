@@ -779,12 +779,12 @@ S->C addspell <tag1> <level1> <casting time1> <mana1> <grace1> <damage1> <skill>
 	<skill> (1 byte, unsigned int)
 		The skill that the spell uses to be cast, if zero, no skill is
 		used in the casting of this spell.
-		The numbers are the same as for request_info skill_info
+		The numbers are the same as for requestinfo skill_info
 
 	<path>  (4 bytes, unsigned integer)
 		The path that the spell belongs to.
 		The client should determine the effect of this by comparing
-		these values to both the spell_paths request_info data and the
+		these values to both the spell_paths requestinfo data and the
 		stats info concerning attunement/repulsion, etc.
 
 	<face>  (4 bytes, signed int)
