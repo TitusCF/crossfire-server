@@ -2452,8 +2452,10 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
 
 #define MAX_CHOICES 100
 /**
- * We have received an accountplay command.
- * try to log in and play the character.
+ * We have received a createplayer command.
+ * @param buf received command.
+ * @param len length of buf.
+ * @param ns socket to communicate with the client.
  */
 void create_player_cmd(char *buf, int len, socket_struct *ns)
 {
