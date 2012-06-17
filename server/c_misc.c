@@ -1648,6 +1648,49 @@ static void show_commands(object *op, int what) {
 }
 
 /**
+ * Find an appropriate help file. Will search regular commands, and wizard ones
+ * if asked for. Specified language is tried, as well as English.
+ * 'path' is altered whatever the return value.
+ * @param name command name.
+ * @param language player language.
+ * @param wiz if 1 the wizard-related files are searched, else no.
+ * @param path buffer to contain the found help file.
+ * @param length length of path.
+ * @return 1 if a file was found in which case path contains the path, else 0.
+ */
+static int find_help_file(const char *name, const char *language, int wiz, char *path, int length) {
+    struct stat st;
+
+    snprintf(path, length, "%s/help/%s.%s", settings.datadir, name, language);
+    if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
+        return 1;
+    }
+
+    if (strcmp(language, "en")) {
+        snprintf(path, length, "%s/help/%s.en", settings.datadir, name);
+        if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
+            return 1;
+        }
+    }
+
+    if (!wiz)
+        return 0;
+
+    snprintf(path, length, "%s/wizhelp/%s.%s", settings.datadir, name, language);
+    if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
+        return 1;
+    }
+    if (strcmp(language, "en")) {
+        snprintf(path, length, "%s/wizhelp/%s.en", settings.datadir, name);
+        if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+/**
  * Player is asking for some help.
  *
  * @param op
@@ -1656,13 +1699,10 @@ static void show_commands(object *op, int what) {
  * what kind of help to ask for.
  */
 void command_help(object *op, const char *params) {
-    struct stat st;
     FILE *fp;
     char filename[MAX_BUF], line[MAX_BUF];
     int len;
     const char *language;
-
-    language = i18n_get_language_code(op->contr->language);
 
     /*
      * Main help page?
@@ -1719,19 +1759,13 @@ void command_help(object *op, const char *params) {
         return;
     }
 
-    snprintf(filename, sizeof(filename), "%s/mischelp/%s.%s", settings.datadir, params, language);
-    if (stat(filename, &st) || !S_ISREG(st.st_mode)) {
-        if (op) {
-            snprintf(filename, sizeof(filename), "%s/help/%s.%s", settings.datadir, params, language);
-            if (stat(filename, &st) || !S_ISREG(st.st_mode)) {
-                if (QUERY_FLAG(op, FLAG_WIZ)) {
-                    snprintf(filename, sizeof(filename), "%s/wizhelp/%s.%s", settings.datadir, params, language);
-                    if (stat(filename, &st) || !S_ISREG(st.st_mode))
-                        goto nohelp;
-                } else
-                    goto nohelp;
-            }
-        }
+    language = i18n_get_language_code(op->contr->language);
+
+    if (!find_help_file(params, language, QUERY_FLAG(op, FLAG_WIZ), filename, sizeof(filename))) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                            i18n(op, "No help available on '%s'"),
+                            params);
+        return;
     }
 
     /*
@@ -1754,16 +1788,6 @@ void command_help(object *op, const char *params) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
     }
     fclose(fp);
-    return;
-
-    /*
-     * No_help -escape
-     */
-
-nohelp:
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         i18n(op, "No help available on '%s'"),
-                         params);
 }
 
 /**
