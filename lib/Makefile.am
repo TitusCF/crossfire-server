@@ -36,75 +36,10 @@ VAR_FILES = highscore banish_file bookarch temp.maps clockdata
 EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures.bld
 
 helpdir=$(pkgdatadir)/help
-dist_help_DATA = help/apply.en help/applymode.en \
-	help/bind.en help/bowmode.en help/brace.en \
-	help/cast.en help/chat.en help/drop.en help/dropall.en \
-	help/empty.en \
-	help/fire.en help/fire_stop.en \
-	help/golem.en help/invoke.en \
-	help/keys.en help/killpets.en \
-	help/listen.en help/maps.en \
-	help/mark.en help/melee.en help/mode.en \
-	help/motd.en help/mouse.en help/move.en \
-	help/news.en \
-	help/party.en help/party_rejoin.en help/peaceful.en \
-	help/petmode.en help/pickup.en \
-	help/quit.en help/range.en help/rename.en \
-	help/rules.en \
-	help/save.en help/shout.en help/showpets.en \
-	help/skills.en \
-	help/sort_inventory.en help/sound.en help/spells.en \
-	help/statistics.en help/take.en help/traps.en \
-	help/title.en help/unarmed_skill.en \
-	help/unbind.en help/use.en help/usekeys.en \
-	help/whereabouts.en \
-	help/wimpy.en \
-	help/apply.fr \
-	help/bowmode.fr \
-	help/dropall.fr \
-	help/killpets.fr \
-	help/knowledge.fr help/knowledge.en \
-	help/mark.fr \
-	help/applymode.fr \
-	help/brace.fr \
-	help/drop.fr \
-	help/listen.fr \
-	help/melee.fr \
-	help/bind.fr \
-	help/cast.fr \
-	help/empty.fr \
-	help/maps.fr \
-	help/mode.fr \
-	help/quest.fr help/quest.en
+dist_help_DATA = help/*.en help/*.fr
 
 wizhelpdir=$(pkgdatadir)/wizhelp
-dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \
-	wizhelp/banish \
-	wizhelp/create wizhelp/debug \
-	wizhelp/dump wizhelp/dumpallarchtypes \
-	wizhelp/dumpallmaps wizhelp/dumpallobjects \
-	wizhelp/dumpbelow wizhelp/dumpfriendlyobjects \
-	wizhelp/forget_spell wizhelp/free \
-	wizhelp/goto wizhelp/hide wizhelp/insert_into \
-	wizhelp/invisible \
-	wizhelp/kick wizhelp/learn_special_prayer \
-	wizhelp/learn_spell wizhelp/mon_aggr \
-	wizhelp/nodm \
-	wizhelp/nowiz wizhelp/overlay_save \
-	wizhelp/patch wizhelp/plugin \
-	wizhelp/pluglist wizhelp/plugout \
-	wizhelp/purge_quest_state \
-	wizhelp/purge_quests \
-	wizhelp/possess \
-	wizhelp/printlos wizhelp/remove \
-	wizhelp/reset wizhelp/set_god \
-	wizhelp/shutdown wizhelp/server_speed \
-	wizhelp/spellreset wizhelp/ssdumptable wizhelp/stats \
-	wizhelp/style_info wizhelp/summon \
-	wizhelp/teleport wizhelp/time \
-	wizhelp/toggle_shout \
-	wizhelp/who wizhelp/wizcast wizhelp/wizhelp \
-	wizhelp/wizpass
+dist_wizhelp_DATA = wizhelp/*.en wizhelp/*.fr
 
 admdir=$(pkgdatadir)/adm
 dist_adm_SCRIPTS =  \
