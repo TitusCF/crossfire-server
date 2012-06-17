@@ -1,11 +1,11 @@
 Apply applique un objet.
 
-Si aucune option n'est donnée, cette commande applique l'objet sur lequel votre personnage se trouve.
+Si aucune option n'est donnÃ©e, cette commande applique l'objet sur lequel votre personnage se trouve.
 
-Si le nom d'un objet est donné, il applique ou désapplique celui-ci.
+Si le nom d'un objet est donnÃ©, il applique ou dÃ©sapplique celui-ci.
 
-Options supplémentaires:
+Options supplÃ©mentaires:
 
     -a: toujours appliquer l'objet;
-    -u: toujours désappliquer l'objet;
+    -u: toujours dÃ©sappliquer l'objet;
     -b: appliquer un objet au sol ou dans le conteneur actif.
