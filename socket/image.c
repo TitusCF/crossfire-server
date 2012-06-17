@@ -109,9 +109,9 @@ void esrv_send_face(socket_struct *ns, uint16 face_num, int nocache) {
  * Sends the number of images, checksum of the face file,
  * and the image_info file information.  See the doc/Developers/protocol
  * if you want further detail.
+ * @param ns socket to send data to.
  */
-
-void send_image_info(socket_struct *ns, char *params) {
+void send_image_info(socket_struct *ns) {
     SockList sl;
     int i;
 

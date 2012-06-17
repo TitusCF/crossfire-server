@@ -166,7 +166,7 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
             break;
         }
     if (!strcmp(buf, "image_info"))
-        send_image_info(ns, params);
+        send_image_info(ns);
     else if (!strcmp(buf, "image_sums"))
         send_image_sums(ns, params);
     else if (!strcmp(buf, "skill_info"))

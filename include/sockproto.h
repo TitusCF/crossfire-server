@@ -3,7 +3,7 @@ int is_valid_faceset(int fsn);
 void set_face_mode_cmd(char *buf, int len, socket_struct *ns);
 void send_face_cmd(char *buff, int len, socket_struct *ns);
 void esrv_send_face(socket_struct *ns, uint16 face_num, int nocache);
-void send_image_info(socket_struct *ns, char *params);
+void send_image_info(socket_struct *ns);
 void send_image_sums(socket_struct *ns, char *params);
 /* info.c */
 void print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, const char *message);
