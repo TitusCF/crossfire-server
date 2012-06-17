@@ -28,8 +28,8 @@
 
 /**
  * \file
- * \date 2003-12-02
  * Meta-server related functions.
+ * \date 2003-12-02
  */
 
 #include <global.h>
@@ -94,7 +94,7 @@ void metaserver_update(void) {
     pthread_mutex_unlock(&ms2_info_mutex);
 }
 
-/**
+/*
  * Start of metaserver2 logic
  * Note: All static structures in this file should be treated as strictly
  * private.  The metaserver2 update logic runs in its own thread,
@@ -106,12 +106,12 @@ void metaserver_update(void) {
  * This is a linked list of all the metaservers -
  * never really know how many we have.
  */
-
 typedef struct _MetaServer2 {
-    char *hostname;
-    struct _MetaServer2 *next;
+    char *hostname;             /**< Hostname to contact. */
+    struct _MetaServer2 *next;  /**< Next element in the list. */
 } MetaServer2;
 
+/** Metaservers to send information to. */
 static MetaServer2 *metaserver2;
 
 /**
@@ -123,22 +123,24 @@ static MetaServer2 *metaserver2;
  * or something)
  */
 typedef struct _LocalMeta2Info {
-    int     notification;  /* if true, do updates to metaservers */
-    char    *hostname;     /* Hostname of this server */
-    int     portnumber;    /* Portnumber of this server */
-    char    *html_comment; /* html comment to send to metaservers */
-    char    *text_comment; /* text comment to send to metaservers */
-    char    *archbase;     /* Different sources for arches, maps */
-    char    *mapbase;      /* and server */
+    int     notification;  /**< If true, do updates to metaservers. */
+    char    *hostname;     /**< Hostname of this server. */
+    int     portnumber;    /**< Portnumber of this server. */
+    char    *html_comment; /**< html comment to send to metaservers. */
+    char    *text_comment; /**< text comment to send to metaservers. */
+    char    *archbase;     /**< Different sources for arches, maps */
+    char    *mapbase;      /**< and server. */
     char    *codebase;
-    char    *flags;        /* Short flags to send to metaserver */
+    char    *flags;        /**< Short flags to send to metaserver. */
 } LocalMeta2Info;
 
+/** Non volatile information on the server. */
 static LocalMeta2Info local_info;
 
-/* These two are globals, but we declare them here. */
+/** Mutex to protect access to ::metaserver2_updateinfo. */
 pthread_mutex_t ms2_info_mutex;
 
+/** Statistics on players and such sent to the metaserver2. */
 MetaServer2_UpdateInfo metaserver2_updateinfo;
 
 /**
@@ -146,6 +148,7 @@ MetaServer2_UpdateInfo metaserver2_updateinfo;
  * including the pointer itself.  Caller is responsible for updating
  * pointers (ms->next) - really only used when wanting to free
  * all data.
+ * @param ms data to free, pointer becomes invalid.
  */
 static void free_metaserver2(MetaServer2 *ms) {
     free(ms->hostname);
@@ -340,6 +343,11 @@ int metaserver2_init(void) {
  * We treat the data as a string.  We should really pay attention to the
  * header data, and do something clever if we get 404 codes
  * or the like.
+ * @param ptr actual data.
+ * @param size size of the data.
+ * @param nmemb number of elements.
+ * @param data user-provided data, unused.
+ * @return number of bytes processed, always the full size.
  */
 static size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *data) {
     size_t realsize = size*nmemb;
@@ -496,6 +504,7 @@ static void metaserver2_updates(void) {
  * do a time() call and see how long the update takes,
  * and sleep according to that.
  *
+ * @param junk unused.
  * @return
  * This function should never return/exit.
  */

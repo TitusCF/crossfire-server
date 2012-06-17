@@ -36,7 +36,7 @@
 #ifndef METASERVER2_H
 #define METASERVER2_H
 
-/**
+/*
  * The current implementation of crossfire is not very thread
  * friendly/safe - in fact, metaserver2 is the first part to
  * use an extra thread.
@@ -56,11 +56,12 @@
 
 extern pthread_mutex_t ms2_info_mutex;
 
+/** Structure containing information sent to the metaserver2 */
 typedef struct _MetaServer2_UpdateInfo {
-    int     num_players;        /* Number of players */
-    int     in_bytes;           /* Number of bytes received */
-    int     out_bytes;          /* Number of bytes sent */
-    time_t  uptime;             /* How long server has been up */
+    int     num_players;        /**< Number of players */
+    int     in_bytes;           /**< Number of bytes received */
+    int     out_bytes;          /**< Number of bytes sent */
+    time_t  uptime;             /**< How long server has been up */
 } MetaServer2_UpdateInfo;
 
 extern MetaServer2_UpdateInfo metaserver2_updateinfo;
