@@ -196,6 +196,11 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
         SET_FLAG(force, FLAG_APPLIED);
         change_abil(applier, force);
         object_decrease_nrof_by_one(potion);
+
+        if (potion->other_arch != NULL && applier->map != NULL) {
+            object_insert_in_map_at(arch_to_object(potion->other_arch), applier->map, NULL, INS_ON_TOP, applier->x, applier->y);
+        }
+
         return METHOD_OK;
     }
 
