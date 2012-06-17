@@ -518,11 +518,11 @@ void send_new_char_info(socket_struct *ns) {
              settings.starting_stat_min, settings.starting_stat_max);
     SockList_AddLen8Data(&sl, buf, strlen(buf) + 1);
 
-    snprintf(buf, MAX_BUF, "V statname ");
+    snprintf(buf, MAX_BUF, "V statname");
     len = strlen(buf);
     for (i=0; i<NUM_STATS; i++) {
-        safe_strcat(buf, short_stat_name[i], &len, MAX_BUF);
         safe_strcat(buf, " ", &len, MAX_BUF);
+        safe_strcat(buf, short_stat_name[i], &len, MAX_BUF);
     }
 
     SockList_AddLen8Data(&sl, buf, strlen(buf) + 1);
