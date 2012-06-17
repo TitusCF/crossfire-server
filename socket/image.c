@@ -48,8 +48,10 @@
  * Client has requested pixmap that it somehow missed getting.
  * This will be called often if the client is
  * caching images.
+ * @param buff data received from the client.
+ * @param len length of buff, ignored.
+ * @param ns socket to send data to.
  */
-
 void send_face_cmd(char *buff, int len, socket_struct *ns) {
     long tmpnum = atoi(buff);
     uint16 facenum = tmpnum&0xffff;
