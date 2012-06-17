@@ -143,6 +143,9 @@ static const struct client_cmd_mapping client_commands[] = {
  * request_info_cmd is sort of a meta command. There is some specific
  * request of information, but we call other functions to provide
  * that information.
+ * @param buf buffer containing the information requested.
+ * @param len length of buf, ignored.
+ * @param ns socket to write data to.
  */
 void request_info_cmd(char *buf, int len, socket_struct *ns) {
     char *params = NULL, *cp;
@@ -318,7 +321,9 @@ void watchdog(void) {
 
 extern unsigned long todtick;
 
-/** Waits for new connection */
+/**
+ * Waits for new connection when there is no one connected.
+ */
 static void block_until_new_connection(void) {
     struct timeval Timeout;
     fd_set readfs;
@@ -389,6 +394,10 @@ static int is_fd_valid(int fd) {
 #endif
 }
 
+/**
+ * Handle a new connection from a client.
+ * @param listen_fd file descriptor the request came from.
+ */
 static void new_connection(int listen_fd) {
     int newsocknum = -1, j;
 #ifdef HAVE_GETNAMEINFO
