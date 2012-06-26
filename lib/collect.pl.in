@@ -13,6 +13,20 @@ if ($#ARGV >= 0) {
     }
 }
 
+# mkdir is nice because it is an atomic operation - if 2 programs
+# try to do it at the same time, one will fail.  Do a -e/create
+# file check has a chance of race condition.
+if (!mkdir("collect.lock",0)) {
+    print "Collect is already running.  If you think this is an error,\n";
+    print "rmdir collect.lock\n";
+    # exit with a non zero code - in that way make errors out and
+    # won't try to build the next target - the images.  If another
+    # process is running on the archetypes, that will make a new bmaps.paths
+    # requiring new images at that time.
+    exit(1);
+}
+
+
 # archonly is used to only build the archetypes.  I find this
 # very handy if I know I've only changed .arc files - I don't want
 # to rebuild the other files, because now cvs tries to do diffs
@@ -66,7 +80,8 @@ $attacktype{ 'lifestealing' } = ( 1 << 24 );
 $attacktype{ 'disease' } = ( 1 << 25 );
 
 &info("writing ...$archetypes");
-open(ARCH,">".$archetypes) || &die("cannot open ".$archetypes);
+open(ARCH,">".$archetypes) || &my_die("cannot open ".$archetypes);
+
 binmode(ARCH);
 &archsOut($root);
 close(ARCH);
@@ -74,24 +89,24 @@ close(ARCH);
 
 if (!$archonly) {
     &info("$bmaps");
-    open(BMAPS,">".$bmaps) || &die("cannot open ".$bmaps);
+    open(BMAPS,">".$bmaps) || &my_die("cannot open ".$bmaps);
 	binmode(BMAPS);
     &bmapsOut;
     close(BMAPS);
 
-    open(BMAPS,">".$paths) || &die("cannot open ".$paths);
+    open(BMAPS,">".$paths) || &my_die("cannot open ".$paths);
 	binmode(BMAPS);
     &pathsOut;
     close(BMAPS);
 
     &info("$faces");
-    open(FACES,">".$faces) || &die("cannot open ".$faces);
+    open(FACES,">".$faces) || &my_die("cannot open ".$faces);
 	binmode(FACES);
     &facesOut;
     close(FACES);
 
     &info("$smooths");
-    open(SMOOTHS,">".$smooths) || &die("cannot open ".$smooths);
+    open(SMOOTHS,">".$smooths) || &my_die("cannot open ".$smooths);
 	binmode(SMOOTHS);
     &smoothOut;
     close(SMOOTHS);
@@ -99,7 +114,7 @@ if (!$archonly) {
     &info("$treasures");
     # We still support the old consolidated treasure information
     # so copy it over.
-    open(TREASURES,">".$treasures) || &die("cannot open ".$treasures);
+    open(TREASURES,">".$treasures) || &my_die("cannot open ".$treasures);
 	binmode(TREASURES);
     print TREASURES "#
 # Do not modify this file - any changes will get overwritten.
@@ -110,7 +125,7 @@ if (!$archonly) {
     close(TREASURES);
 
     &info("$animations");
-    open(ANIM,">".$animations) || &die("cannot open ".$animations);
+    open(ANIM,">".$animations) || &my_die("cannot open ".$animations);
 	binmode(ANIM);
     &animOut;
     close(ANIM);
@@ -118,6 +133,7 @@ if (!$archonly) {
 
 
 &stats;
+rmdir("collect.lock");
 exit 0;
 
 sub traverse {
@@ -125,7 +141,7 @@ sub traverse {
     local($file,$name);
     local( $tfile);
 
-    opendir(THISDIR, $dir) || die "couldn't open $dir";
+    opendir(THISDIR, $dir) || my_die("couldn't open $dir");
     local(@allfiles) = readdir(THISDIR);
     closedir(THISDIR);
 
@@ -223,7 +239,7 @@ sub archsOut {
 	    &warn("cannot determine editor_folder from arch '$arch'");
 	    $pathto = "";
 	}
-	open(ARC,$arch) || &die("cannot open ".$arch);
+	open(ARC,$arch) || &my_die("cannot open ".$arch);
 line:	while(<ARC>) {
 	    chop;
 	    ($var,@values) = split;
@@ -375,7 +391,7 @@ sub pathsOut {
 
 sub treasuresOut {
     foreach $treasure (@treasure_files) {
-	open(TREAS, $treasure) || &die("cannot open ".$treasure);
+	open(TREAS, $treasure) || &my_die("cannot open ".$treasure);
 	while(<TREAS>) {
 	    if (! /^\s*$/) {
 		print TREASURES $_;
@@ -387,7 +403,7 @@ sub treasuresOut {
 
 sub facesOut {
     foreach $face (@face_files) {
-	open(FACE, $face) || &die("cannot open ".$face);
+	open(FACE, $face) || &my_die("cannot open ".$face);
 	while(<FACE>) {
 	    chop;
 	    local ($var, @values) = split;
@@ -490,4 +506,11 @@ sub stats {
     &info(Trash.":\t".$trashNum);
     &info(Smooths.":\t".$smoothNum);
     &info("Comment lines:\t".$commentNum);
+}
+
+# This is a simple function to clean up the collect lock
+# and then call die.
+sub my_die {
+    rmdir("collect.lock");
+    die(@_);
 }

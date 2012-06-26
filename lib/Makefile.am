@@ -68,19 +68,8 @@ collect:
 archonly:
 	$(PERL) -I$(srcdir) collect.pl $(builddir)/arch ARCHONLY
 
-archetypes: .collect-stamp
-	$(MAKE) collect
-
-faces: .collect-stamp
-	$(MAKE) collect
-
-animations: .collect-stamp
-	$(MAKE) collect
-
-bmaps.paths bmaps: .collect-stamp
-	$(MAKE) collect
-
-smooth: .collect-stamp
+archetypes faces animations bmaps.paths bmaps smooth: .collect-stamp
+	touch .collect-stamp
 	$(MAKE) collect
 
 install-data-local: archetypes crossfire.0 faces animations smooth collect.pl util.pl
