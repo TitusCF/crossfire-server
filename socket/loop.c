@@ -214,11 +214,21 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
  * player associated to the socket. If NULL, only commands in client_cmd_mapping will be checked.
  */
 void handle_client(socket_struct *ns, player *pl) {
-    int len, i;
+    int len, i, command_count;
     unsigned char *data;
 
     /* Loop through this - maybe we have several complete packets here. */
-    while (1) {
+    /* Command_count is used to limit the number of requests from
+     * clients that have not logged in - we do not want an unauthenticated
+     * connection to spew us with hundreds of requests.  As such,
+     * this counter is only increased in the case of socket level commands.
+     * Note that this also has the effect of throttling down face and other
+     * socket commands from the client.  As such, if we have a player attached,
+     * we will process more of these, as getting a fair number when entering
+     * a map may not be uncommon.
+     */
+    command_count=0;
+    while ((pl && command_count < 25) || command_count < 5) {
         /* If it is a player, and they don't have any speed left, we
          * return, and will read in the data when they do have time.
          */
@@ -258,7 +268,8 @@ void handle_client(socket_struct *ns, player *pl) {
             if (strcmp((char *)ns->inbuf.buf+2, client_commands[i].cmdname) == 0) {
                 client_commands[i].cmdproc((char *)data, len, ns);
                 SockList_ResetRead(&ns->inbuf);
-                return;
+                command_count++;
+                continue;
             }
         }
         /* Player must be in the playing state or the flag on the
@@ -280,9 +291,11 @@ void handle_client(socket_struct *ns, player *pl) {
         /* If we get here, we didn't find a valid command.  Logging
          * this might be questionable, because a broken client/malicious
          * user could certainly send a whole bunch of invalid commands.
+         * limit number of these we read per tick also.
          */
         LOG(llevDebug, "Bad command from client (%s)\n", ns->inbuf.buf+2);
         SockList_ResetRead(&ns->inbuf);
+        command_count++;
     }
 }
 
