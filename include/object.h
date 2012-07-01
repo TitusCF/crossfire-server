@@ -248,7 +248,7 @@ typedef struct obj {
     uint8       run_away;          /**< Monster runs away if it's hp goes below this percentage. */
     struct treasureliststruct *randomitems; /**< Items to be generated */
     struct obj  *chosen_skill;  /**< The skill chosen to use */
-    uint32      hide;           /**< The object is hidden, not invisible */
+    uint8      hide;           /**< The object is hidden, not invisible */
     /* changes made by kholland@sunlab.cit.cornell.edu */
     /* allows different movement patterns for attackers */
     sint32      move_status;    /**< What stage in attack mode */
