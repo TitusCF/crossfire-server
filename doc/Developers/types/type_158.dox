@@ -130,7 +130,7 @@ Type defined by:
 	</tr>
 	<tr>
 		<td>elevation</td>
-		<td>@ref obj::elevation</td>
+		<td>@ref page_custom_attribute_elevation "elevation"</td>
 		<td>            The elevation (height above sea level) of this square. It is used
             for weather calculations and should be in the range -32000..32000.
             The elevation of a tile must be set in the bottom-most game object;

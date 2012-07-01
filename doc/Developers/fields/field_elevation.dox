@@ -1,5 +1,7 @@
 /**
-@fn obj::elevation
+@page page_custom_attribute_elevation elevation
+This is a @ref page_custom_attributes "custom attribute".
+
 @section Use
 <table>
 	<tr>
