@@ -736,11 +736,14 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
         if (spell->subtype != SP_MAGIC_MISSILE && spell->subtype != SP_MOVING_BALL)
             LOG(llevError, "Unexpected object subtype %d in fire_arch_from_position for %s\n", spell->subtype, spell->name);
 
-        if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
-            if (caster->type == PLAYER)
-                /* If caster is not player, it's for instance a swarm, so don't say there's an issue. */
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                              "You can't cast the spell on top of a wall!");
+        /*
+         * Things like firewalls and such can fire even if blocked, since the
+         * origin is themselves which block things...
+         * This fixes bug #3536508.
+         */
+        if (caster->type == PLAYER && OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                "You can't cast the spell on top of a wall!");
             object_free_drop_inventory(tmp);
             return 0;
         }
