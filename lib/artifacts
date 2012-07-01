@@ -3043,6 +3043,7 @@ type 122
 value 100
 race throwing
 Str 80
+food -15
 end
 #
 Allowed quiver
