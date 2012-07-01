@@ -184,8 +184,6 @@ typedef struct pl {
     sint16      last_golem_hp;       /**< Last golem hp value sent to the client. */
     sint16      last_golem_maxhp;    /**< Last golem max hp value sent to the client. */
     object      *ob;                 /**< The object representing the player. */
-    object      *last_used;          /**< Pointer to object last picked or applied. */
-    uint32      last_used_id;        /**< Safety measures to be sure it's the same. */
     sint8       blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y]; /**< Array showing what spaces
                                                           * the player can see.  For maps smaller than
                                                           * MAP_CLIENT_.., the upper left is used. */

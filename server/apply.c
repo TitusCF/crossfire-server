@@ -598,9 +598,6 @@ int apply_by_living(object *pl, object *op, int aflag, int quiet) {
         return 1;
     }
 
-    pl->contr->last_used = op;
-    pl->contr->last_used_id = op->count;
-
     tmp = apply_manual(pl, op, aflag);
     if (!quiet) {
         if (tmp == METHOD_UNHANDLED) {

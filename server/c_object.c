@@ -942,22 +942,6 @@ void drop(object *op, object *tmp) {
         return;
     }
 
-    if (op->type == PLAYER) {
-        if (op->contr->last_used == tmp && op->contr->last_used_id == tmp->count) {
-            object *n = NULL;
-
-            if (tmp->below != NULL)
-                n = tmp->below;
-            else if (tmp->above != NULL)
-                n = tmp->above;
-            op->contr->last_used = n;
-            if (n != NULL)
-                op->contr->last_used_id = n->count;
-            else
-                op->contr->last_used_id = 0;
-        }
-    };
-
     if (op->container) {
         if (op->type == PLAYER) {
             put_object_in_sack(op, op->container, tmp, op->contr->count);
