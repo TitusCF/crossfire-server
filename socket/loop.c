@@ -269,9 +269,12 @@ void handle_client(socket_struct *ns, player *pl) {
                 client_commands[i].cmdproc((char *)data, len, ns);
                 SockList_ResetRead(&ns->inbuf);
                 command_count++;
-                continue;
+                break;
             }
         }
+        if (client_commands[i].cmdname != NULL)
+            /* handle another command, up to 25 */
+            continue;
         /* Player must be in the playing state or the flag on the
          * the command must be zero for the user to use the command -
          * otherwise, a player cam save, be in the play_again state, and
