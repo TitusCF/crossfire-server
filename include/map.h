@@ -293,7 +293,7 @@ typedef struct MapSpace {
     MoveType    move_slow;      /**< What movement types this space slows. */
     MoveType    move_on;        /**< What movement types are activated. */
     MoveType    move_off;       /**< What movement types are activated. */
-    object      *pl;            /* Player that is on this space */
+    object      *pl;            /**< Player who is on this space, may be NULL. */
 } MapSpace;
 
 /**
