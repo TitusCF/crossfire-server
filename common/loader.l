@@ -1068,7 +1068,6 @@ A       .+
 ^can_dam_armour{S}  { }
 ^weapontype{S}      op->weapontype = IVAL;
 ^casting_time{S}    op->casting_time = FVAL;
-^elevation{S}       op->elevation = IVAL;
 ^smoothlevel{S}     op->smoothlevel = IVAL;
 ^map_layer{S}       {
                         if (IVAL)
@@ -1648,9 +1647,6 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
 
     if (op->weapontype && op->weapontype != op2->weapontype) {
         FAST_SAVE_LONG(sb, "weapontype ", op->weapontype);
-    }
-    if (op->elevation && op->elevation != op2->elevation) {
-        FAST_SAVE_LONG(sb, "elevation ", op->elevation);
     }
     if (op->client_type && op->client_type != op2->client_type) {
         FAST_SAVE_LONG(sb, "client_type ", op->client_type);

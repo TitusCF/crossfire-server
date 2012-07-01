@@ -282,7 +282,6 @@ typedef struct obj {
     uint8       last_anim;      /**< Last sequence used to draw face */
     uint16      temp_animation_id; /**< An index into the temporary animation array */
     uint8       temp_anim_speed; /**< Ticks between temporary animation-frames */
-    sint32      elevation;      /**< Elevation of this terrain - used in weather code */
     uint8       smoothlevel;    /**< how to smooth this square around*/
     uint8       map_layer;      /**< What level to draw this on the map */
 

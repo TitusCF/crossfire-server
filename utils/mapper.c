@@ -835,6 +835,7 @@ static int get_elevation_color(int elevation, gdImagePtr elevationmap) {
 static void do_exit_map(mapstruct *map) {
     int tx, ty, x, y;
     object *test;
+    sstring selevation;
 
     if (sscanf(map->path, "/world/world_%d_%d", &x, &y) != 2)
         return;
@@ -861,10 +862,12 @@ static void do_exit_map(mapstruct *map) {
                 } else if (test->move_slow != 0)
                     gdImageSetPixel(infomap, x*50+tx, y*50+ty, color_slowing);
 
-                if (item->elevation) {
-                    elevation_min = MIN(elevation_min, item->elevation);
-                    elevation_max = MAX(elevation_max, item->elevation);
-                    elevation_info[x*50+tx][y*50+ty] = item->elevation;
+                selevation = object_get_value(item, "elevation");
+                if (selevation) {
+                    sint32 elevation = atoi(selevation);
+                    elevation_min = MIN(elevation_min, elevation);
+                    elevation_max = MAX(elevation_max, elevation);
+                    elevation_info[x*50+tx][y*50+ty] = elevation;
                 }
             } FOR_MAP_FINISH();
         }
