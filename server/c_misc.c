@@ -2089,6 +2089,13 @@ void command_wimpy(object *op, const char *params) {
         return;
     }
 
+    if (i < 0 || i > 100) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                            i18n(op, "Wimpy level should be between 1 and 100."),
+                            i);
+        return;
+    }
+
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                          i18n(op, "Your new wimpy level is %d."),
                          i);

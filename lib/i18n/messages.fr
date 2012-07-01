@@ -173,3 +173,4 @@ Server settings:|Paramètres serveur :
  * players can't create portals from their apartments| * impossibilité de créer des portails dans son appartement
  * players can write spells they are denied| * les joueurs peuvent écrire des sorts qu'ils ne peuvent lancer
  * players can't write spells they are denied| * les joueurs ne peuvent pas écrire de sort qu'ils ne peuvent pas lancer
+Wimpy level should be between 1 and 100.|Le niveau wimpy doit être entre 1 et 100.
