@@ -54,6 +54,11 @@
 	</tr>
 	<tr>
 		<td>
+@ref page_type_43
+		</td><td>(no description)</td>
+	</tr>
+	<tr>
+		<td>
 @ref page_type_4
 		</td><td>            The &lt;quality level&gt; will be used for the quality of the
             generated treasure instead of the map difficulty (as was done with

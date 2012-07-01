@@ -115,7 +115,9 @@ This page lists all attributes.
 - @ref obj::move_slow_penalty
 - @ref FLAG_IS_WOODED
 - @ref FLAG_ALIVE
+- @ref obj::resist
 - @ref FLAG_SLEEP
+- @ref obj::attack_movement
 - @ref FLAG_CAST_SPELL
 - @ref FLAG_USE_ARMOUR
 - @ref FLAG_USE_BOW

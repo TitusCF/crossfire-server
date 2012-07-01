@@ -51,6 +51,12 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>attack movement</td>
+		<td>@ref obj::attack_movement</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
 		<td>attack type</td>
 		<td>@ref obj::attacktype</td>
 		<td>                This number is a bitmask, specifying the monster's attack types
@@ -530,6 +536,132 @@ Type defined by:
 		<td>@ref obj::path_repelled</td>
 		<td>                Click on the &lt;repelled paths&gt; button to select spellpaths.
                 The creature will get repelled to the specified spellpaths.
+		</td>
+	</tr>
+	<tr>
+		<td>resist acid %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist blinding %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist chaos %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist cold %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist confusion %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist death-attack %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist depletion %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist draining %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist electricity %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist fear %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist fire %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist ghosthit %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist godpower %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist holy power %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist magic %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist paralyze %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist physical %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist poison %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist slow %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist turn undead %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
+		<td>resist weaponmagic %</td>
+		<td>@ref obj::resist</td>
+		<td>(no description)
 		</td>
 	</tr>
 	<tr>

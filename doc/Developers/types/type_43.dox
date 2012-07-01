@@ -79,6 +79,12 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>experience</td>
+		<td>@ref liv::exp</td>
+		<td>(no description)
+		</td>
+	</tr>
+	<tr>
 		<td>glow radius</td>
 		<td>@ref obj::glow_radius</td>
 		<td>            If &lt;glow radius&gt; is set to a value greater zero, the object
@@ -151,6 +157,12 @@ Type defined by:
             object is placed in the inventory of a monster (or player). If it is
             set, the monster or player knows the skill natively, which means he
             does not need a skill tool to use it.
+		</td>
+	</tr>
+	<tr>
+		<td>level</td>
+		<td>@ref obj::level</td>
+		<td>(no description)
 		</td>
 	</tr>
 	<tr>
