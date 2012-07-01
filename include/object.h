@@ -245,7 +245,7 @@ typedef struct obj {
     struct obj  *enemy;         /**< Monster/player to follow even if not closest */
     struct obj  *attacked_by;   /**< This object start to attack us! only player & monster */
     tag_t       attacked_by_count; /**< The tag of attacker, so we can be sure */
-    uint16      run_away;          /**< Monster runs away if it's hp goes below this percentage. */
+    uint8       run_away;          /**< Monster runs away if it's hp goes below this percentage. */
     struct treasureliststruct *randomitems; /**< Items to be generated */
     struct obj  *chosen_skill;  /**< The skill chosen to use */
     uint32      hide;           /**< The object is hidden, not invisible */
