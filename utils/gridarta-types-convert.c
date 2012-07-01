@@ -947,6 +947,29 @@ void write_type_index(void) {
     fclose(index);
 }
 
+/** Write the index of all attributes. */
+void write_attribute_index(void) {
+    FILE *index;
+    int attribute;
+    char buf[200];
+
+    snprintf(buf, 200, "%s/%s/fields.dox", destination_dir, field_dir);
+    index = fopen(buf, "w+");
+    fprintf(index, "/**\n@page field_index Field index\n");
+
+    fprintf(index, "This page lists all attributes.\n\n");
+
+    for (attribute = 0; attribute < attribute_count; attribute++) {
+        fprintf(index, "- @ref ");
+        write_attribute_reference(attributes[attribute]->field, index);
+        fprintf(index, "\n");
+    }
+
+    fprintf(index, "*/\n");
+
+    fclose(index);
+}
+
 /** Write the description of a field. */
 void write_attribute_file(attribute_definition *attribute) {
     FILE *file;
@@ -1106,6 +1129,7 @@ int main(int argc, char **argv) {
         write_type_file(types[number]);
     write_type_file(fallback_type);
 
+    write_attribute_index();
     for (attr = 0; attr < attribute_count; attr++)
         write_attribute_file(attributes[attr]);
 
