@@ -605,8 +605,6 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
         }
 
         if (strstr(buf, "<attribute") != NULL) {
-            if (strstr(buf, "/>") != NULL)
-                continue;
             find = strstr(buf, "arch");
             if (!find)
                 continue;
@@ -620,9 +618,11 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
             strncpy(tmp, find+1, end-find-1);
             /*printf(" => attr %s\n", tmp);*/
 
-            attr = get_attribute_for_type(type, tmp, 1);
-
             find = strstr(buf, "editor");
+            if (find == NULL)
+                /* fixed or other, ignore */
+                continue;
+            attr = get_attribute_for_type(type, tmp, 1);
             find = strchr(find, '"');
             end = strchr(find+1, '"');
             tmp[end-find-1] = '\0';
@@ -630,7 +630,7 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
             attr->name = strdup(tmp);
 
             /* Description can be empty, with end tag on the same line. */
-            if (strstr(buf, "</attribute>") == NULL) {
+            if (strstr(buf, "</attribute>") == NULL && strstr(buf, "/>") == NULL) {
                 while (read_line(buf, 200, file)) {
                     if (strstr(buf, "<![CDATA[<html>") != NULL)
                         /* some data is in HTML, that's ok */
