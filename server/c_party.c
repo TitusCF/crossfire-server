@@ -329,7 +329,7 @@ void command_party(object *op, const char *params) {
     party_help(op);
 }
 
-/** Valid modes for 'party_rejoin'. @todo document that */
+/** Valid modes for 'party_rejoin', indexed by ::party_rejoin_mode. */
 static const char *rejoin_modes[] = {
     "no",
     "if_exists",
