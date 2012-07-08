@@ -238,14 +238,17 @@ static anim_move_result runapplyobject(struct CFanimation_struct *animation, lon
 }
 
 static long int initdropobject(const char *name, char *parameters, struct CFmovement_struct *move_entity) {
-    move_entity->parameters = parameters ? cf_strdup_local(parameters) : NULL;
+    move_entity->parameters = parameters ? cf_add_string(parameters) : NULL;
     return 1;
 }
 
 static anim_move_result rundropobject(struct CFanimation_struct *animation, long int id, void *parameters) {
+    object *what;
     if (!parameters)
         return mr_finished;
-    cf_object_drop(animation->victim, parameters);
+    what = cf_object_find_by_name(animation->victim, parameters);
+    if (what != NULL)
+        cf_object_drop(what, animation->victim);
     cf_free_string(parameters);
     return mr_finished;
 }
