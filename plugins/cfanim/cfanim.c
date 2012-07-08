@@ -631,11 +631,10 @@ static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE 
                 parameters = NULL;
         }
         animationhook = get_command(name);
-        if (parent->verbose) {
-            if (!animationhook)
-                cf_log(llevError, "CFAnim: %s - Unknown animation command\n", name);
-            else
-                cf_log(llevDebug, "CFAnim: Parsed %s -> %p\n", name, animationhook);
+        if (!animationhook)
+            cf_log(llevError, "CFAnim: %s - Unknown animation command\n", name);
+        else if (parent->verbose) {
+            cf_log(llevDebug, "CFAnim: Parsed %s -> %p\n", name, animationhook);
         }
         if (!animationhook) {
             if (parent->errors_allowed)
