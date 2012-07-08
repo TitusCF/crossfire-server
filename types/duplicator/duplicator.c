@@ -51,7 +51,7 @@ void init_type_duplicator(void) {
  * @param op
  * duplicator.
  */
-void move_duplicator(object *op) {
+static void move_duplicator(object *op) {
     object *tmp;
 
     if (!op->other_arch) {

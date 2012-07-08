@@ -58,7 +58,7 @@ void init_type_marker(void) {
  * @param op
  * marker to move. Can be removed if it reached its marking limit.
  */
-void move_marker(object *op) {
+static void move_marker(object *op) {
     object *tmp, *tmp2;
 
     /*

@@ -32,7 +32,6 @@ void init_type_director(void);
 void init_type_dragon_focus(void);
 /* duplicator/duplicator.c */
 void init_type_duplicator(void);
-void move_duplicator(object *op);
 /* exit/exit.c */
 void init_type_exit(void);
 /* food/food.c */
@@ -49,7 +48,6 @@ void init_type_lamp(void);
 void init_type_lighter(void);
 /* marker/marker.c */
 void init_type_marker(void);
-void move_marker(object *op);
 /* mood_floor/mood_floor.c */
 void init_type_mood_floor(void);
 /* peacemaker/peacemaker.c */
