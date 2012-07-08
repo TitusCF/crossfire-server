@@ -2533,6 +2533,15 @@ static PyObject *Crossfire_Object_Move(Crossfire_Object *who, PyObject *args) {
     return Py_BuildValue("i", cf_object_move(who->obj, dir, who->obj));
 }
 
+static PyObject *Crossfire_Object_MoveTo(Crossfire_Object *who, PyObject *args) {
+    int x,y;
+
+    if (!PyArg_ParseTuple(args, "ii", &x, &y))
+        return NULL;
+    EXISTCHECK(who);
+    return Py_BuildValue("i", cf_object_move_to(who->obj, x, y));
+}
+
 static PyObject *Crossfire_Object_Event(Crossfire_Object *who, PyObject *args) {
     int fix;
     const char *message = NULL;
@@ -2792,6 +2801,7 @@ static PyMethodDef ObjectMethods[] = {
     { "CreateTimer",    (PyCFunction)Crossfire_Object_CreateTimer,  METH_VARARGS, NULL },
     { "AddExp",         (PyCFunction)Crossfire_Object_AddExp,       METH_VARARGS, NULL },
     { "Move",           (PyCFunction)Crossfire_Object_Move,         METH_VARARGS, NULL },
+    { "MoveTo",         (PyCFunction)Crossfire_Object_MoveTo,       METH_VARARGS, NULL },
     { "ChangeAbil",     (PyCFunction)Crossfire_Object_ChangeAbil,   METH_O,       NULL },
     { "Event",          (PyCFunction)Crossfire_Object_Event,        METH_VARARGS, NULL },
     { "RemoveDepletion",(PyCFunction)Crossfire_Object_RemoveDepletion,    METH_VARARGS, NULL },
