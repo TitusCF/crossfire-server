@@ -338,7 +338,7 @@ int save_player(object *op, int flag) {
     fprintf(fp, "Cha %d\n", pl->orig_stats.Cha);
 
     fprintf(fp, "lev_array %d\n", MIN(op->level, 10));
-    for (i = 1; i <= pl->last_level && i <= 10; i++) {
+    for (i = 1; i <= MIN(op->level, 10) && i <= 10; i++) {
         fprintf(fp, "%d\n", pl->levhp[i]);
         fprintf(fp, "%d\n", pl->levsp[i]);
         fprintf(fp, "%d\n", pl->levgrace[i]);
@@ -707,10 +707,22 @@ void check_login(object *op, int check_pass) {
                 int j;
 
                 fscanf(fp, "%d\n", &j);
+                if (j < 3)
+                    j = 3;
+                else if (j > 9)
+                    j = 9;
                 pl->levhp[i] = j;
                 fscanf(fp, "%d\n", &j);
+                if (j < 2)
+                    j = 2;
+                else if (j > 6)
+                    j = 6;
                 pl->levsp[i] = j;
                 fscanf(fp, "%d\n", &j);
+                if (j < 1)
+                    j = 1;
+                else if (j > 3)
+                    j = 3;
                 pl->levgrace[i] = j;
             }
         } else if (!strcmp(buf, "party_rejoin_mode"))
