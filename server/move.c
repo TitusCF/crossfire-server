@@ -565,12 +565,15 @@ int move_to(object *op, int x, int y) {
     if (direction == -1)
         return 2;
 
-    /* this shouldn't fail, as the direction computing takes into account the blocked state... */
-    move_ob(op, direction, op);
-
+    op->direction = direction;
     op->facing = direction;
     if (op->animation_id)
         animate_object(op, op->direction);
+
+    /* can fail, as the direction computing takes into account the blocked state,
+     * except for the final spot... */
+    if (move_ob(op, direction, op) == 0)
+        return 2;
 
     return 1;
 }
