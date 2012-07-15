@@ -1097,34 +1097,43 @@ void CREMainWindow::onReportQuests()
     codes.removeAll(key);
     Quest* quest = myQuestManager->findByCode(key);
     report += "<h2>Quest: " + (quest != NULL ? quest->title() : (key + " ???")) + "</h2>\n";
-    report += "<ul>\n";
+    report += "<p>";
     QHash<QString, bool> done = states[key];
     QStringList players = done.keys();
     players.sort();
     int completed = 0;
+    QString sep;
     foreach(QString player, players)
     {
-      report += "<li>" + player;
+      report += sep;
+      sep = ", ";
       if (done[player])
       {
         completed++;
-        report += " (*)";
+        report += "<strong>" + player + "</strong>";
       }
-      report += "</li>\n";
+      else
+      {
+        report += player;
+      }
     }
-    report += "</ul>\n";
-    report += "<p>" + tr("%1 completed out of %2").arg(completed).arg(players.size()) + "</p>\n";
+    report += "</p>\n";
+    report += "<p>" + tr("%1 completed out of %2 (%3%)").arg(completed).arg(players.size()).arg(completed * 100 / players.size()) + "</p>\n";
   }
 
   if (codes.length() > 0)
   {
-    report += "<h2>Quests never done</h2>\n<ul>\n";
+    codes.sort();
+    QString sep;
+    report += "<h2>Quests never done</h2>\n<p>\n";
     foreach(QString code, codes)
     {
+      report += sep;
+      sep = ", ";
       Quest* quest = myQuestManager->findByCode(code);
-      report += "<li>" + (quest != NULL ? quest->title() : (code + " ???")) + "</li>\n";
+      report += (quest != NULL ? quest->title() : (code + " ???"));
     }
-    report += "</ul>\n";
+    report += "</p>\n";
   }
 
   report += "</body>\n</html>\n";
