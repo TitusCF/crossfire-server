@@ -27,13 +27,7 @@ worldmaptilesizey  How big is each tile?  50.
 The above defines a worldmap starting at world_100_100 and ending at
 world_129_129, each a 50x50 map. (900 files)
 
-dynamiclevel  How dynamic do you want the world?
-	0: Not dynamic at all.
-	1: Weather.
-	2: Weather, with visible effects, and player effects.
-	3: above + minor changes, such as new growth on the map.
-	4+ The higher it gets.. the more the weather re-arranges the maps
-	   for you.
+dynamiclevel  Obsolete. This setting has been removed.
 
 fastclock Make the timeclock run ultra-fast.  Debugging use usually.
 
