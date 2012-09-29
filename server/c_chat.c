@@ -661,7 +661,7 @@ static void basic_emote(object *op, const char *params, int emotion) {
     if (*params == '\0') {
         if (emotion > EMOTE_FIRST && emotion < EMOTE_LAST && single_emotes[emotion - 1][0] != NULL) {
             snprintf(buf, sizeof(buf), single_emotes[emotion - 1][0], op->name);
-            snprintf(buf2, sizeof(buf2), single_emotes[emotion - 1][1]);
+            snprintf(buf2, sizeof(buf2), "%s", single_emotes[emotion - 1][1]);
         } else {
             snprintf(buf, sizeof(buf), "You are a nut.");
             snprintf(buf2, sizeof(buf2), "%s dances with glee.", op->name);
@@ -686,7 +686,7 @@ static void basic_emote(object *op, const char *params, int emotion) {
     if (pl->ob == op) {
         /* Player doing self-emote. */
         if (emotion > EMOTE_FIRST && emotion < EMOTE_LAST && self_emotes[emotion - 1][0] != NULL) {
-            snprintf(buf, sizeof(buf), self_emotes[emotion - 1][0]);
+            snprintf(buf, sizeof(buf), "%s", self_emotes[emotion - 1][0]);
             snprintf(buf2, sizeof(buf2), self_emotes[emotion - 1][1], op->name);
         } else {
             snprintf(buf, sizeof(buf), "My god! is that LEGAL?");
