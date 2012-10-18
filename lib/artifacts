@@ -1641,7 +1641,9 @@ end
 Allowed all
 chance 13
 Object Magic
-face ring.117
+face ring_magic.111
+animation ring_magic
+client_anim_random 1
 type 70
 value 80
 sp 1
@@ -1656,7 +1658,9 @@ end
 Allowed all
 chance 7
 Object Ancient Magic
-face ring.117
+face ring_ancient_magic.111
+animation ring_ancient_magic
+client_anim_random 1
 type 70
 value 150
 sp 2
@@ -1669,7 +1673,9 @@ end
 Allowed all
 chance 4
 Object High Magic
-face ring.117
+face ring_high_magic.111
+animation ring_high_magic
+client_anim_random 1
 type 70
 value 250
 sp 2
