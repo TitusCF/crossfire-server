@@ -1484,6 +1484,7 @@ value 80
 type 70
 face ring_thieves.111
 animation ring_thieves
+client_anim_random 1
 exp 5
 Dex 3
 stealth 1
@@ -1624,6 +1625,7 @@ chance 40
 Object Storm
 face ring_storm.111
 animation ring_storm
+client_anim_random 1
 type 70
 value 25
 resist_electricity 30
