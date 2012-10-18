@@ -1621,7 +1621,8 @@ end
 Allowed all
 chance 40
 Object Storm
-face ring.117
+face ring_storm.111
+animation ring_storm
 type 70
 value 25
 resist_electricity 30
