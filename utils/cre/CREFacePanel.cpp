@@ -71,10 +71,12 @@ void CREFacePanel::setFace(const New_Face* face)
     QTreeWidgetItem* root = NULL;
 
     const archt* arch;
+    sstring key;
 
     for (arch = first_archetype; arch; arch = arch->more ? arch->more : arch->next)
     {
-        if (arch->clone.face == myFace)
+      key = object_get_value(&arch->clone, "identified_face");
+        if (arch->clone.face == myFace || (key && strcmp(face->name, key) == 0))
         {
             if (root == NULL)
             {

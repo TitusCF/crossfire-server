@@ -46,10 +46,12 @@ void CREAnimationPanel::setAnimation(const Animations* animation)
     QTreeWidgetItem* root = NULL;
 
     const archt* arch;
+    sstring key;
 
     for (arch = first_archetype; arch; arch = (arch->more ? arch->more : arch->next))
     {
-        if (arch->clone.animation_id == myAnimation->num)
+      key = object_get_value(&arch->clone, "identified_animation");
+        if (arch->clone.animation_id == myAnimation->num || (key && strcmp(animation->name, key) == 0))
         {
             if (root == NULL)
             {
