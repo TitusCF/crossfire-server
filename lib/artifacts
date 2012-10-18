@@ -1482,7 +1482,8 @@ chance 20
 Object Thieves
 value 80
 type 70
-face ring.117
+face ring_thieves.111
+animation ring_thieves
 exp 5
 Dex 3
 stealth 1
