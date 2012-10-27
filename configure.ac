@@ -223,7 +223,7 @@ AC_DEFINE_UNQUOTED(BUNZIP,"${BUNZIP}",[Path to the bunzip binary])
 
 #############################################
 # Plugin configuration
-AC_CHECK_LIB(dl, dlopen,[ cf_have_libdl=yes ])
+AC_SEARCH_LIBS(dlopen, [dl], [ cf_have_libdl=yes ])
 AM_CONDITIONAL(HAVE_LIBDL,test "x$cf_have_libdl" = "xyes")
 
 
