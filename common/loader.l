@@ -542,11 +542,13 @@ static void add_key_value(object *op) {
  * Handles the different move types an object can have.
  *
  * @param mt
- * field for which we are computing the value.
+ * field for which we are computing the value, will be set to the result of parsing.
  * @param params
- * string containing the definition of the move type.
+ * string containing the definition of the move type to parse.
+ * @param prefix
+ * string to be displayed in case the move type is invalid, must not be NULL.
  */
-static void set_move(MoveType *mt, char *params) {
+static void set_move(MoveType *mt, char *params, const char *prefix) {
     char *str;
     int i, negate;
 
@@ -585,7 +587,7 @@ static void set_move(MoveType *mt, char *params) {
                             *mt |= MOVE_FLYING;
                         }
                     } else {
-                        LOG(llevDebug, "common/loader.l: set_move - unknown move string '%s'\n", str);
+                        LOG(llevDebug, "common/loader.l: set_move(%s) - unknown move string '%s'\n", prefix, str);
                     }
                 }
             } /* Else not all move types */
@@ -899,12 +901,12 @@ A       .+
 
 %{ /* These are the new values */
 %}
-^move_block{S}      set_move(&op->move_block, yval());
-^move_allow{S}      set_move(&op->move_allow, yval());
-^move_type{S}       set_move(&op->move_type, yval());
-^move_on{S}         set_move(&op->move_on, yval());
-^move_off{S}        set_move(&op->move_off, yval());
-^move_slow{S}       set_move(&op->move_slow, yval());
+^move_block{S}      set_move(&op->move_block, yval(), "block");
+^move_allow{S}      set_move(&op->move_allow, yval(), "allow");
+^move_type{S}       set_move(&op->move_type, yval(), "type");
+^move_on{S}         set_move(&op->move_on, yval(), "on");
+^move_off{S}        set_move(&op->move_off, yval(), "off");
+^move_slow{S}       set_move(&op->move_slow, yval(), "slow");
 ^move_slow_penalty{S} op->move_slow_penalty = FVAL;
 
 
