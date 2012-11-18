@@ -117,6 +117,7 @@ static const char *const coins[] = {
  * @param flag
  * combination of @ref BS_xxx "BS_xxx" flags.
  * @return
+ * item value, in silver coins.
  */
 uint64 query_cost(const object *tmp, object *who, int flag) {
     uint64 val;
