@@ -65,6 +65,7 @@ typedef struct quest_player {
 /** Player quest state. */
 static quest_player *player_states = NULL;
 
+/** One condition to automatically move to a quest step. */
 typedef struct quest_condition {
     sstring quest_code;          /**< The quest that triggers the condition */
     int minstep;                  /**< The earliest step in the quest that triggers the condition,
