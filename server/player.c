@@ -2324,6 +2324,34 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
 }
 
 /**
+ * Is direction a similar to direction b? Find out in this exciting function
+ * below.
+ *
+ * @param a
+ * @param b
+ * directions to compare.
+ * @return
+ * 1 if similar, 0 if not.
+ */
+static int similar_direction(int a, int b) {
+    /* shortcut the obvious */
+    if (a == b)
+        return 1;
+
+    switch (a) {
+    case 1: if (b <= 2 || b == 8) return 1; break;
+    case 2: if (b > 0 && b < 4) return 1; break;
+    case 3: if (b > 1 && b < 5) return 1; break;
+    case 4: if (b > 2 && b < 6) return 1; break;
+    case 5: if (b > 3 && b < 7) return 1; break;
+    case 6: if (b > 4 && b < 8) return 1; break;
+    case 7: if (b > 5) return 1; break;
+    case 8: if (b > 6 || b == 1) return 1; break;
+    }
+    return 0;
+}
+
+/**
  * Special fire code for players - this takes into
  * account the special fire modes players can have
  * but monsters can't.  Putting that code here

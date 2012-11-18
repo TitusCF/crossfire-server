@@ -622,7 +622,6 @@ void cftimer_init(void);
 /* weather.c */
 void set_darkness_map(mapstruct *m);
 void tick_the_clock(void);
-int similar_direction(int a, int b);
 /* server.c */
 void version(object *op);
 void start_info(object *op);
