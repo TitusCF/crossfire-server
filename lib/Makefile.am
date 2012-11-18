@@ -28,7 +28,7 @@ pkgconfdir = @pkgconfdir@
 
 dist_noinst_SCRIPTS = collect.pl util.pl checkarch.pl
 dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
-	animations archetypes  bmaps bmaps.paths crossfire.0 \
+	animations archetypes  bmaps.paths crossfire.0 \
 	crossfire.1 faces attackmess image_info materials
 
 CONF_FILES = settings metaserver2 motd dm_file forbid ban_file exp_table news rules stat_bonus
@@ -50,7 +50,7 @@ i18ndir=$(pkgdatadir)/i18n
 dist_i18n_DATA = i18n/messages.en \
 	i18n/messages.fr
 
-MAINTAINERCLEANFILES = archetypes bmaps faces .collect-stamp \
+MAINTAINERCLEANFILES = archetypes faces .collect-stamp \
 	animations smooth treasures.bld bmaps.paths crossfire.0 crossfire.1
 
 PERL = @PERL@
@@ -68,7 +68,7 @@ collect:
 archonly:
 	$(PERL) -I$(srcdir) collect.pl $(builddir)/arch ARCHONLY
 
-archetypes faces animations bmaps.paths bmaps smooth: .collect-stamp
+archetypes faces animations bmaps.paths smooth: .collect-stamp
 	touch .collect-stamp
 	$(MAKE) collect
 
