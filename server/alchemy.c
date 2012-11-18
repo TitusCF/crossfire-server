@@ -218,7 +218,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
             /* determine value of ingredients */
             value_ingredients = 0;
             FOR_INV_PREPARE(cauldron, tmp)
-                value_ingredients += query_cost(tmp, NULL, F_TRUE);
+                value_ingredients += query_cost(tmp, NULL, BS_TRUE);
             FOR_INV_FINISH();
 
             attempt_shadow_alchemy = !is_defined_recipe(rp, cauldron, caster);
@@ -232,7 +232,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
                 LOG(llevDebug, "percent success chance =  %f ab%d / diff%d*lev%d\n", success_chance, ability, rp->diff, item->level);
 #endif
 
-                value_item = query_cost(item, NULL, F_TRUE|F_IDENTIFIED|F_NOT_CURSED);
+                value_item = query_cost(item, NULL, BS_TRUE|BS_IDENTIFIED|BS_NOT_CURSED);
                 if (attempt_shadow_alchemy && value_item > value_ingredients) {
 #ifdef ALCHEMY_DEBUG
 #ifndef WIN32

@@ -69,7 +69,7 @@ START_TEST(test_query_cost) {
             player->stats.Cha = player_charisma;
             for (map_reset_time = 0; map_reset_time < 1000; map_reset_time++) {
                 map->reset_time = map_reset_time;
-                cost = query_cost(tosell, player, F_SELL|F_SHOP);
+                cost = query_cost(tosell, player, BS_SELL|BS_SHOP);
                 fail_unless(cost < 18446744073710, "mega price %" FMT64U " for charisma %d reset_time %d!", cost, player_charisma, map_reset_time);
             }
         }

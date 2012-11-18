@@ -714,18 +714,18 @@ typedef unsigned char MoveType;
 #define MAX_WEAPON_ITEM_POWER   100
 
 /**
- * @defgroup F_xxx Buy/sell flags.
+ * @defgroup BS_xxx Buy/sell flags.
  * Those flags are mostly used for query_cost() and similar functions.
  */
 /*@{*/
-#define F_BUY           0   /**< Item is being bought by player. */
-#define F_SELL          1   /**< Item is being sold by player. */
-#define F_TRUE          2   /**< True value of item, unadjusted. */
-#define F_NO_BARGAIN    4   /**< Combine with ::F_BUY or ::F_SELL to disable bargaining calc. */
-#define F_IDENTIFIED    8   /**< Flag to calculate value of identified item. */
-#define F_NOT_CURSED    16  /**< Flag to calculate value of uncursed item. */
-#define F_APPROX        32  /**< Flag to give a guess of item value. */
-#define F_SHOP          64  /**< Consider the effect that the shop that the player is in has. */
+#define BS_BUY          0   /**< Item is being bought by player. */
+#define BS_SELL         1   /**< Item is being sold by player. */
+#define BS_TRUE         2   /**< True value of item, unadjusted. */
+#define BS_NO_BARGAIN   4   /**< Combine with ::BS_BUY or ::BS_SELL to disable bargaining calc. */
+#define BS_IDENTIFIED   8   /**< Flag to calculate value of identified item. */
+#define BS_NOT_CURSED   16  /**< Flag to calculate value of uncursed item. */
+#define BS_APPROX       32  /**< Flag to give a guess of item value. */
+#define BS_SHOP         64  /**< Consider the effect that the shop that the player is in has. */
 /*@}*/
 
 #define DIRX(xyz)       freearr_x[(xyz)->direction]

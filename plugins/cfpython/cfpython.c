@@ -1155,12 +1155,12 @@ static void initConstants(PyObject *module) {
     };
 
     static const CFConstant cstCostFlag[] = {
-        { "TRUE", F_TRUE },
-        { "BUY", F_BUY },
-        { "SELL", F_SELL },
-        { "NOBARGAIN", F_NO_BARGAIN },
-        { "IDENTIFIED", F_IDENTIFIED },
-        { "NOTCURSED", F_NOT_CURSED },
+        { "TRUE", BS_TRUE },
+        { "BUY", BS_BUY },
+        { "SELL", BS_SELL },
+        { "NOBARGAIN", BS_NO_BARGAIN },
+        { "IDENTIFIED", BS_IDENTIFIED },
+        { "NOTCURSED", BS_NOT_CURSED },
         { NULL, 0 }
     };
 

@@ -85,8 +85,8 @@ static const char *const coins[] = {
  * Price will vary based on the shop's specialization ration, the player's
  * approval rate, ...
  *
- * Added F_TRUE flag to define.h to mean that the price should not
- * be adjusted by players charisma. With F_TRUE, it returns the amount
+ * Added BS_TRUE flag to define.h to mean that the price should not
+ * be adjusted by players charisma. With BS_TRUE, it returns the amount
  * that the item is worth, if it was sold, but unadjusted by charisma.
  * This is needed for alchemy, to to determine what value of gold nuggets
  * should be given (the gold nuggets, when sold, will have the adjustment
@@ -94,10 +94,10 @@ static const char *const coins[] = {
  * who parameter, but then the adjustment for expensive items (>10000)
  * would not be done.
  *
- * Added F_APPROX flag, which means that the price returned should be
+ * Added BS_APPROX flag, which means that the price returned should be
  * wrong by an amount related to the player's bargaining skill.
  *
- * Added F_SHOP flag to mean that the specialisation of the shop on the
+ * Added BS_SHOP flag to mean that the specialisation of the shop on the
  * player's current map should be taken into account when determining
  * the price. Shops that specialise in what is being traded will give
  * better prices than those that do not.
@@ -115,7 +115,7 @@ static const char *const coins[] = {
  * @param who
  * who is inquiring. Can be NULL, only meaningful if player.
  * @param flag
- * combination of @ref F_xxx "F_xxx" flags.
+ * combination of @ref BS_xxx "BS_xxx" flags.
  * @return
  */
 uint64 query_cost(const object *tmp, object *who, int flag) {
@@ -130,12 +130,12 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     float ratio;
     const char *key;
 
-    no_bargain = flag&F_NO_BARGAIN;
-    identified = flag&F_IDENTIFIED;
-    not_cursed = flag&F_NOT_CURSED;
-    approximate = flag&F_APPROX;
-    shop = flag&F_SHOP;
-    flag &= ~(F_NO_BARGAIN|F_IDENTIFIED|F_NOT_CURSED|F_APPROX|F_SHOP);
+    no_bargain = flag&BS_NO_BARGAIN;
+    identified = flag&BS_IDENTIFIED;
+    not_cursed = flag&BS_NOT_CURSED;
+    approximate = flag&BS_APPROX;
+    shop = flag&BS_SHOP;
+    flag &= ~(BS_NO_BARGAIN|BS_IDENTIFIED|BS_NOT_CURSED|BS_APPROX|BS_SHOP);
 
     number = tmp->nrof;
     if (number == 0)
@@ -145,11 +145,11 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
         ratio = atof(key);
         return tmp->value*number*ratio;
     }
-    if ((flag == F_BUY) && ((key = object_get_value(tmp, "price_adjustment_buy")) != NULL)) {
+    if ((flag == BS_BUY) && ((key = object_get_value(tmp, "price_adjustment_buy")) != NULL)) {
         ratio = atof(key);
         return tmp->value*number*ratio;
     }
-    if ((flag == F_SELL) && ((key = object_get_value(tmp, "price_adjustment_sell")) != NULL)) {
+    if ((flag == BS_SELL) && ((key = object_get_value(tmp, "price_adjustment_sell")) != NULL)) {
         ratio = atof(key);
         return tmp->value*number*ratio;
     }
@@ -157,11 +157,11 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     if (tmp->type == MONEY)
         return (tmp->nrof*tmp->value);
     if (tmp->type == GEM) {
-        if (flag == F_TRUE)
+        if (flag == BS_TRUE)
             return number*tmp->value;
-        if (flag == F_BUY)
+        if (flag == BS_BUY)
             return (1.03*tmp->nrof*tmp->value);
-        if (flag == F_SELL)
+        if (flag == BS_SELL)
             return (0.97*tmp->nrof*tmp->value);
         LOG(llevError, "Query_cost: Gem type with unknown flag : %d\n", flag);
         return 0;
@@ -177,7 +177,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     /* This area deals with objects that are not identified, but can be */
     } else {
         if (tmp->arch != NULL) {
-            if (flag == F_BUY) {
+            if (flag == BS_BUY) {
                 LOG(llevError, "Asking for buy-value of unidentified object.\n");
                 val = tmp->arch->clone.value*50*number;
             } else {     /* Trying to sell something, or get true value */
@@ -195,7 +195,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
             }
         } else { /* No archetype with this object */
             LOG(llevDebug, "In sell item: Have object with no archetype: %s\n", tmp->name);
-            if (flag == F_BUY) {
+            if (flag == BS_BUY) {
                 LOG(llevError, "Asking for buy-value of unidentified object without arch.\n");
                 val = number*tmp->value*10;
             } else
@@ -238,7 +238,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     }
 
     /* Limit amount of money you can get for really great items. */
-    if (flag == F_TRUE || flag == F_SELL)
+    if (flag == BS_TRUE || flag == BS_SELL)
         val = value_limit(val, number, who, shop);
 
     /* we need to multiply these by 4.0 to keep buy costs roughly the same
@@ -295,9 +295,9 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
         /* Diff is now a float between 0.2 and 0.8 */
         diff += ratio * ((float)get_cha_bonus(who->stats.Cha)/100.0);
 
-        if (flag == F_BUY)
+        if (flag == BS_BUY)
             val = (val*(long)(1000*(1+diff)))/1000;
-        else if (flag == F_SELL)
+        else if (flag == BS_SELL)
             val = (val*(long)(1000*(1-diff)))/1000;
 
         /* If we are approximating, then the value returned should
@@ -327,7 +327,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
      * does is force players to sell the itm in smaller blocks, which
      * doesn't make much sense.
      */
-    if (flag == F_SELL
+    if (flag == BS_SELL
     && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
     && need_identify(tmp)
     && !identified) {
@@ -336,10 +336,10 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
 
     /* if in a shop, check how the type of shop should affect the price */
     if (shop && who) {
-        if (flag == F_SELL)
+        if (flag == BS_SELL)
             val = (sint64)val*shop_specialisation_ratio(tmp, who->map)
                 *shopkeeper_approval(who->map, who)/shop_greed(who->map);
-        else if (flag == F_BUY) {
+        else if (flag == BS_BUY) {
             /*
              * When buying, if the item was sold by another player, it is
              * ok to let the item be sold cheaper, according to the
@@ -534,7 +534,7 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
  * @param who
  * who is getting the price.
  * @param flag
- * combination of @ref F_xxx "F_xxx" values.
+ * combination of @ref BS_xxx "BS_xxx" values.
  * @param buf
  * buffer to append to. If NULL, a newly allocated one will be used and returned.
  * @return
@@ -565,7 +565,7 @@ StringBuffer *query_cost_string(const object *tmp, object *who, int flag, String
      * 2) there either is no id skill(s) for the item, or we don't have them
      * 3) we don't have bargaining skill either
      */
-    if (flag&F_APPROX) {
+    if (flag&BS_APPROX) {
         if (!idskill1 || !find_skill_by_number(who, idskill1)) {
             if (!idskill2 || !find_skill_by_number(who, idskill2)) {
                 if (!find_skill_by_number(who, SK_BARGAINING)) {
@@ -681,7 +681,7 @@ int pay_for_amount(uint64 to_pay, object *pl) {
  * @todo check if pl is a player, as query_money() expects a player.
  */
 int pay_for_item(object *op, object *pl) {
-    uint64 to_pay = query_cost(op, pl, F_BUY|F_SHOP);
+    uint64 to_pay = query_cost(op, pl, BS_BUY|BS_SHOP);
     uint64 saved_money;
 
     if (to_pay == 0)
@@ -693,7 +693,7 @@ int pay_for_item(object *op, object *pl) {
      * without bargaining skill.
      * This determins the amount of exp (if any) gained for bargaining.
      */
-    saved_money = query_cost(op, pl, F_BUY|F_NO_BARGAIN|F_SHOP)-to_pay;
+    saved_money = query_cost(op, pl, BS_BUY|BS_NO_BARGAIN|BS_SHOP)-to_pay;
 
     if (saved_money > 0)
         change_exp(pl, saved_money, "bargaining", SK_EXP_NONE);
@@ -937,7 +937,7 @@ static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64 *un
     FOR_OB_AND_BELOW_PREPARE(item) {
         if QUERY_FLAG(item, FLAG_UNPAID) {
             (*unpaid_count)++;
-            (*unpaid_price) += query_cost(item, pl, F_BUY|F_SHOP);
+            (*unpaid_price) += query_cost(item, pl, BS_BUY|BS_SHOP);
         }
         /* Merely converting the player's monetary wealth won't do.
          * If we did that, we could print the wrong numbers for the
@@ -1037,7 +1037,7 @@ int get_payment(object *pl, object *op) {
 
     if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID)) {
         if (!pay_for_item(op, pl)) {
-            uint64 i = query_cost(op, pl, F_BUY|F_SHOP)-query_money(pl);
+            uint64 i = query_cost(op, pl, BS_BUY|BS_SHOP)-query_money(pl);
             char *missing = stringbuffer_finish(cost_string_from_value(i, LARGEST_COIN_GIVEN, NULL));
 
             CLEAR_FLAG(op, FLAG_UNPAID);
@@ -1051,7 +1051,7 @@ int get_payment(object *pl, object *op) {
             return 0;
         } else {
             object *tmp;
-            char *value = stringbuffer_finish(query_cost_string(op, pl, F_BUY|F_SHOP, NULL));
+            char *value = stringbuffer_finish(query_cost_string(op, pl, BS_BUY|BS_SHOP, NULL));
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
@@ -1085,7 +1085,7 @@ int get_payment(object *pl, object *op) {
  * player. Shouldn't be NULL or non player.
  */
 void sell_item(object *op, object *pl) {
-    uint64 i = query_cost(op, pl, F_SELL|F_SHOP);
+    uint64 i = query_cost(op, pl, BS_SELL|BS_SHOP);
     sint64 extra_gain;
     int count;
     object *tmp;
@@ -1126,7 +1126,7 @@ void sell_item(object *op, object *pl) {
      * This determins the amount of exp (if any) gained for bargaining.
      * exp/10 -> 1 for each gold coin
      */
-    extra_gain = i-query_cost(op, pl, F_SELL|F_NO_BARGAIN|F_SHOP);
+    extra_gain = i-query_cost(op, pl, BS_SELL|BS_NO_BARGAIN|BS_SHOP);
 
     if (extra_gain > 0)
         change_exp(pl, extra_gain/10, "bargaining", SK_EXP_NONE);
@@ -1180,7 +1180,7 @@ void sell_item(object *op, object *pl) {
 #endif
 
     query_name(op, name_op, MAX_BUF);
-    value = stringbuffer_finish(query_cost_string(op, pl, F_SELL|F_SHOP, NULL));
+    value = stringbuffer_finish(query_cost_string(op, pl, BS_SELL|BS_SHOP, NULL));
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
                          "You receive %s for %s.",

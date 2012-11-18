@@ -2146,7 +2146,7 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
  * the weight of the object.
  */
 static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int *large_nuggets, int *weight) {
-    uint64 value = query_cost(obj, NULL, F_TRUE);
+    uint64 value = query_cost(obj, NULL, BS_TRUE);
     uint64 small_value, large_value; /**< Value of nuggets. */
 
     /* Multiply the value of the object by value_adj, which should range
@@ -2157,8 +2157,8 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
     else
         value *= value_adj;
 
-    small_value = query_cost(&find_archetype(SMALL_NUGGET)->clone, NULL, F_TRUE);
-    large_value = query_cost(&find_archetype(LARGE_NUGGET)->clone, NULL, F_TRUE);
+    small_value = query_cost(&find_archetype(SMALL_NUGGET)->clone, NULL, BS_TRUE);
+    large_value = query_cost(&find_archetype(LARGE_NUGGET)->clone, NULL, BS_TRUE);
 
     /* Give half of what value_adj says when we alchemy money (This should
      * hopefully make it so that it isn't worth it to alchemy money, sell

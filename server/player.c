@@ -1742,7 +1742,7 @@ int check_pick(object *op) {
             default:
                 /* use value density */
                 if (!QUERY_FLAG(tmp, FLAG_UNPAID)
-                && (query_cost(tmp, op, F_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1))) >= op->contr->mode)
+                && (query_cost(tmp, op, BS_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1))) >= op->contr->mode)
                     pick_up(op, tmp);
             }
         } else { /* old model */
@@ -1752,7 +1752,7 @@ int check_pick(object *op) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                                      "item name: %s    item type: %d    weight/value: %d",
                                      tmp->name ? tmp->name : tmp->arch->name, tmp->type,
-                                     (int)(query_cost(tmp, op, F_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1))));
+                                     (int)(query_cost(tmp, op, BS_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1))));
 
 
                 snprintf(putstring, sizeof(putstring), "...flags: ");
@@ -1968,7 +1968,7 @@ int check_pick(object *op) {
                  * >=7 is the old standard setting.  Now we take the last 4 bits
                  * and multiply them by 5, giving 0..15*5== 5..75 */
                 wvratio = (op->contr->mode&PU_RATIO)*5;
-                current_ratio = query_cost(tmp, op, F_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1));
+                current_ratio = query_cost(tmp, op, BS_TRUE)*100/(tmp->weight*MAX(tmp->nrof, 1));
                 if (current_ratio >= wvratio) {
                     pick_up(op, tmp);
                     continue;

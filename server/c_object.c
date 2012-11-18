@@ -396,7 +396,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     query_name(tmp, name, MAX_BUF);
 
     if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
-        char *value = stringbuffer_finish(query_cost_string(tmp, pl, F_BUY|F_SHOP, NULL));
+        char *value = stringbuffer_finish(query_cost_string(tmp, pl, BS_BUY|BS_SHOP, NULL));
         snprintf(buf, sizeof(buf), "%s will cost you %s.", name, value);
         free(value);
     } else
@@ -1603,18 +1603,18 @@ void examine(object *op, object *tmp) {
     in_shop = is_in_shop(op);
 
     if (tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
-        char *value = stringbuffer_finish(query_cost_string(tmp, op, F_SELL|F_APPROX, NULL));
+        char *value = stringbuffer_finish(query_cost_string(tmp, op, BS_SELL|BS_APPROX, NULL));
         snprintf(buf, sizeof(buf), "You reckon %s worth %s.", tmp->nrof > 1 ? "they are" : "it is", value);
         free(value);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                       buf);
         if (in_shop) {
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
-                value = stringbuffer_finish(query_cost_string(tmp, op, F_BUY|F_SHOP, NULL));
+                value = stringbuffer_finish(query_cost_string(tmp, op, BS_BUY|BS_SHOP, NULL));
                 snprintf(buf, sizeof(buf), "%s would cost you %s.", tmp->nrof > 1 ? "They" : "It", value);
                 free(value);
             } else {
-                value = stringbuffer_finish(query_cost_string(tmp, op, F_SELL|F_SHOP, NULL));
+                value = stringbuffer_finish(query_cost_string(tmp, op, BS_SELL|BS_SHOP, NULL));
                 snprintf(buf, sizeof(buf), "You are offered %s for %s.", value, tmp->nrof > 1 ? "them" : "it");
                 free(value);
             }
