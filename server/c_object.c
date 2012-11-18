@@ -1653,7 +1653,9 @@ void examine(object *op, object *tmp) {
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                   " "); /* Blank line */
 
-    knowledge_item_can_be_used_alchemy(op, tmp);
+    if (!need_identify(tmp) || QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
+        knowledge_item_can_be_used_alchemy(op, tmp);
+    }
 }
 
 /**
