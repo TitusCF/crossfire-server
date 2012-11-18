@@ -147,7 +147,7 @@ int cftimer_destroy(int id) {
  * Finds a free ID for a new timer.
  * @retval ::TIMER_ERR_ID
  * no free ID available.
- * @retval >0
+ * @retval >=0
  * an available ID.
  */
 int cftimer_find_free_id(void) {
