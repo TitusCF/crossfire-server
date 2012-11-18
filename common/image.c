@@ -189,17 +189,16 @@ static void read_face_data(void) {
  * will call exit() if file doesn't exist, and abort() in case of memory error.
  */
 void read_bmap_names(void) {
-    char buf[MAX_BUF], *p, *q;
+    char buf[MAX_BUF], *p;
     FILE *fp;
-    int value;
     unsigned int i;
     size_t l;
 
     bmaps_checksum = 0;
-    snprintf(buf, sizeof(buf), "%s/bmaps", settings.datadir);
+    snprintf(buf, sizeof(buf), "%s/bmaps.paths", settings.datadir);
     LOG(llevDebug, "Reading bmaps from %s...\n", buf);
     if ((fp = fopen(buf, "r")) == NULL) {
-        LOG(llevError, "Cannot open bmaps file: %s\n", strerror_local(errno, buf, sizeof(buf)));
+        LOG(llevError, "Cannot open bmaps.paths file: %s\n", strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
 
@@ -229,13 +228,13 @@ void read_bmap_names(void) {
         if (*buf == '#')
             continue;
 
-        p = (*buf == '\\') ? (buf+1) : buf;
-        if (!(p = strtok(p, " \t")) || !(q = strtok(NULL, " \t\n"))) {
-            LOG(llevDebug, "Warning, syntax error: %s\n", buf);
-            continue;
+        p = strrchr(buf, '/');
+        if ((p == NULL) || (strtok(p, " \t\n") == NULL)) {
+            LOG(llevError, "read_bmap_names: syntax error: %s\n", buf);
+            fatal(SEE_LAST_ERROR);
         }
-        value = atoi(p);
-        new_faces[i].name = strdup_local(q);
+        /* strtok converted the final newline or tab to NULL so all is ok */
+        new_faces[i].name = strdup_local(p + 1);
 
         /* We need to calculate the checksum of the bmaps file
          * name->number mapping to send to the client.  This does not
@@ -245,15 +244,15 @@ void read_bmap_names(void) {
          * the file has the same data or not.
          */
         ROTATE_RIGHT(bmaps_checksum);
-        bmaps_checksum += value&0xff;
+        bmaps_checksum += i&0xff;
         bmaps_checksum &= 0xffffffff;
 
         ROTATE_RIGHT(bmaps_checksum);
-        bmaps_checksum += (value>>8)&0xff;
+        bmaps_checksum += (i>>8)&0xff;
         bmaps_checksum &= 0xffffffff;
-        for (l = 0; l < strlen(q); l++) {
+        for (l = 0; l < strlen(p); l++) {
             ROTATE_RIGHT(bmaps_checksum);
-            bmaps_checksum += q[l];
+            bmaps_checksum += p[l];
             bmaps_checksum &= 0xffffffff;
         }
 
