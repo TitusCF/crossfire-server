@@ -153,12 +153,19 @@ static quest_definition *quest_get_by_code(sstring code) {
     return NULL;
 }
 
-#define QUESTFILE_NEXTQUEST 0
-#define QUESTFILE_QUEST 1
-#define QUESTFILE_QUESTDESC 2
-#define QUESTFILE_STEP 3
-#define QUESTFILE_STEPDESC 4
-#define QUESTFILE_STEPCOND 5
+/**
+ * @defgroup QUESTFILE_xxx Quest file parsing state.
+ *
+ * This is the parsing state when loading a file through load_quests_from_file().
+ */
+/*@{*/
+#define QUESTFILE_NEXTQUEST 0   /**< Waiting for next quest definition. */
+#define QUESTFILE_QUEST 1       /**< In a quest definition. */
+#define QUESTFILE_QUESTDESC 2   /**< In a quest description. */
+#define QUESTFILE_STEP 3        /**< In a quest step. */
+#define QUESTFILE_STEPDESC 4    /**< In a quest step description. */
+#define QUESTFILE_STEPCOND 5    /**< In a quest step conditions. */
+/*@}*/
 
 /**
  * Loads all of the quests which are found in the given file, any global states
@@ -1148,6 +1155,12 @@ void command_quest(object *op, const char *params) {
     quest_help(op->contr);
 }
 
+/**
+ * Dump all defined quests on the logfile. Will call itself recursively.
+ * @param parent only quests with a parent of this value will be displayed.
+ * Use NULL to display top-level quests.
+ * @param level number of '-' to display before the quest's name.
+ */
 static void output_quests(quest_definition *parent, int level) {
     quest_definition *quest;
     quest_step_definition *step;
