@@ -376,7 +376,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
          * to use cos for what is just a simple variation.
          */
         if (who->map->path != NULL && val > 50) {
-            /**
+            /*
              * Fix Nicolas Weeger 2011/03/22, various things:
              * - the " -500" was applied to the result of val*(reset_time%1000),
              * which is definitely not what we want
