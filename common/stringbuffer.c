@@ -28,11 +28,13 @@
 #include "libproto.h"
 #include "stringbuffer.h"
 
-
+/**
+ * A buffer that will be expanded as content is added to it.
+ */
 struct StringBuffer {
     /**
      * The string buffer. The first {@link #pos} bytes contain the collected
-     * string. It's size is at least {@link #size} bytes.
+     * string. Its size is at least {@link #size} bytes.
      */
     char *buf;
 
