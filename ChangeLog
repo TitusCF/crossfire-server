@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/item.c: Add "(glowing)" to rings and amulets' description accordingly.
+Karla Stenger 2012-11-27
+
 Fix for bug #3536508: Broken firewall with missile swarm.
 Nicolas Weeger 2012-07-01
 

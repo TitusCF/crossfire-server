@@ -509,6 +509,8 @@ static StringBuffer *ring_desc(const object *op, StringBuffer *buf) {
         stringbuffer_append_printf(buf, "(reflect missiles)");
     if (QUERY_FLAG(op, FLAG_STEALTH))
         stringbuffer_append_printf(buf, "(stealth)");
+    if (op->glow_radius)
+        stringbuffer_append_string(buf, "(glowing)");
 
     describe_spellpath_attenuation("Attuned", op->path_attuned, buf);
     describe_spellpath_attenuation("Repelled", op->path_repelled, buf);
