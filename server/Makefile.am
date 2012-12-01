@@ -80,14 +80,12 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 	      -DPLUGIN_SUFFIX=\".so\"
 
 if HAVE_LIBDL
-LIBDL=-ldl
 crossfire_server_LDFLAGS=-export-dynamic
 else
-LIBDL=
 crossfire_server_LDFLAGS=
 endif
 crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
-		../socket/libsocket.a ../types/libtypes.a $(LIBDL)
+		../socket/libsocket.a ../types/libtypes.a $(LIBS)
 
 ../common/libcross.a:
 	( cd ../common ; make libcross.a )
