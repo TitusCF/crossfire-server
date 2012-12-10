@@ -269,6 +269,16 @@ void handle_client(socket_struct *ns, player *pl) {
                 client_commands[i].cmdproc((char *)data, len, ns);
                 SockList_ResetRead(&ns->inbuf);
                 command_count++;
+                /* Evil case, and not a nice workaround, but well...
+                 * If we receive eg an accountplay command, the socket is copied
+                 * to the player structure, and its faces_sent is set to NULL.
+                 * This leads to issues when processing the next commands in the queue,
+                 * especially if related to faces...
+                 * So get out of here in this case, which we detect because faces_sent is NULL.
+                 */
+                if (ns->faces_sent == NULL) {
+                    command_count = 6;
+                }
                 break;
             }
         }
