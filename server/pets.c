@@ -762,6 +762,7 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
                 object_set_owner(tmp, owner);
                 tmp->attack_movement = PETMOVE;
                 add_friendly_object(tmp);
+                set_spell_skill(op, caster, spob, tmp);
                 SET_FLAG(tmp, FLAG_FRIENDLY);
             }
         }
