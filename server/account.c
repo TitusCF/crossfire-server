@@ -500,13 +500,13 @@ int account_add_player_to_account(const char *account_name, const char *player_n
 }
 
 /**
- * Adds a player name to an account.  Player corresponds to the names used
+ * Removes a player name from an account.  Player corresponds to the names used
  * in the pl object, not the person sitting at the computer.  This function
  * presumes that the caller has done the work to verify that the player
  * does in fact exist, and does any related work to update the player.  What this
  * function does is simply update the account structure.
  * @param account_name
- * name of the account we are adding this player to.
+ * name of the account we are removing this player from.
  * @param player_name
  * name of this player.
  * @retval 0
