@@ -1609,6 +1609,17 @@ void key_confirm_quit(object *op, char key) {
 
     delete_character(op->name);
 
+    /* Remove player from account list and send back data if needed */
+    if (op->contr->socket.account_chars != NULL) {
+        op->contr->socket.account_chars = account_char_remove(op->contr->socket.account_chars, op->name);
+        account_char_save(op->contr->socket.account_name, op->contr->socket.account_chars);
+        /* char information is reloaded in send_account_players below */
+        account_char_free(op->contr->socket.account_chars);
+        op->contr->socket.account_chars = NULL;
+        account_remove_player_from_account(op->contr->socket.account_name, op->name);
+        send_account_players(&op->contr->socket);
+    }
+
     play_again(op);
 }
 
