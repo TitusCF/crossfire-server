@@ -246,7 +246,7 @@ int apply_container(object *op, object *sack) {
      * We then fall through if appropriate for opening the new
      * container.
      */
-    if (op->container && QUERY_FLAG(sack, FLAG_APPLIED)) {
+    if (op->container && QUERY_FLAG(op->container, FLAG_APPLIED)) {
         tag_t tmp_tag = op->container->count;
 
         if (op->container->env != op) { /* if container is on the ground */
