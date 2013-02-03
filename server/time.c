@@ -201,9 +201,10 @@ static int generate_monster_arch(object *gen) {
         op->x = nx+at->clone.x;
         op->y = ny+at->clone.y;
 
-        if (head != NULL)
-            op->head = head,
+        if (head != NULL) {
+            op->head = head;
             prev->more = op;
+        }
 
         if (rndm(0, 9))
             generate_artifact(op, gen->map->difficulty);
