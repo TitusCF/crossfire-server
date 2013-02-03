@@ -210,8 +210,6 @@ static int generate_monster_arch(object *gen) {
             generate_artifact(op, gen->map->difficulty);
 
         code = object_get_value(gen, "generator_code");
-        if (code)
-            object_set_value(head, "generator_code", code, 1);
 
         object_insert_in_map(op, gen->map, gen, 0);
         /* Did generate a monster, just didn't live very long */
@@ -223,8 +221,12 @@ static int generate_monster_arch(object *gen) {
                 monster_check_apply_all(op);
             }
         }
-        if (head == NULL)
+        if (head == NULL) {
             head = op;
+            if (code) {
+                object_set_value(head, "generator_code", code, 1);
+            }
+        }
         prev = op;
         at = at->more;
     }
