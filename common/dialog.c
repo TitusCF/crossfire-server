@@ -125,6 +125,8 @@ static void parse_dialog_information(object *op) {
     SET_FLAG(op, FLAG_DIALOG_PARSED);
 
     op->dialog_information = (struct_dialog_information *)calloc(1, sizeof(struct_dialog_information));
+    if (op->dialog_information == NULL)
+        fatal(OUT_OF_MEMORY);
 
     if (!op->msg)
         return;
