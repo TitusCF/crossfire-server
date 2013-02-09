@@ -522,6 +522,9 @@ int account_remove_player_from_account(const char *account_name, const char *pla
     account_struct *ac;
     int i, match=0;
 
+    if (account_name == NULL)
+        return 0;
+
     for (ac=accounts; ac; ac=ac->next) {
         if (!strcasecmp(ac->name, account_name)) break;
     }
