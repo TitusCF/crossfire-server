@@ -119,6 +119,10 @@ void CREMainWindow::createActions()
     mySaveMessages->setStatusTip(tr("Save all modified NPC dialogs."));
     connect(mySaveMessages, SIGNAL(triggered()), this, SLOT(onSaveMessages()));
 
+    myReportDuplicate = new QAction(tr("Faces and animations report"), this);
+    myReportDuplicate->setStatusTip(tr("Show faces and animations which are used by multiple archetypes, or not used."));
+    connect(myReportDuplicate, SIGNAL(triggered()), this, SLOT(onReportDuplicate()));
+
     myReportSpellDamage = new QAction(tr("Spell damage"), this);
     myReportSpellDamage->setStatusTip(tr("Display spell damage by level (bullet spells only for now)"));
     connect(myReportSpellDamage, SIGNAL(triggered()), this, SLOT(onReportSpellDamage()));
@@ -191,6 +195,7 @@ void CREMainWindow::createMenus()
     mySaveMenu->addAction(mySaveMessages);
 
     QMenu* reportMenu = menuBar()->addMenu("&Reports");
+    reportMenu->addAction(myReportDuplicate);
     reportMenu->addAction(myReportSpellDamage);
     reportMenu->addAction(myReportAlchemy);
     reportMenu->addAction(myReportSpells);
@@ -312,6 +317,142 @@ void CREMainWindow::onFiltersModified()
 void CREMainWindow::onReportsModified()
 {
     emit updateReports();
+}
+
+/**
+ * @todo
+ * - list animations and faces for artifacts using the 'animation_suffix' and allowed types
+ * - list use for skill-related actions
+ * - list things with classes and such
+ */
+void CREMainWindow::onReportDuplicate()
+{
+    QHash<QString, QStringList> faces, anims;
+
+    // browse all archetypes
+    archetype* arch = first_archetype;
+
+    while (arch != NULL)
+    {
+        // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully)
+        if (arch->clone.animation_id == 0)
+        {
+            faces[QString::fromLatin1(arch->clone.face->name)].append(QString(arch->name) + " (arch)");
+            sstring key = object_get_value(&arch->clone, "identified_face");
+            if (key)
+            {
+                faces[QString(key)].append(QString(arch->name) + " (arch)");
+            }
+        }
+        else
+        {
+            anims[animations[arch->clone.animation_id].name].append(QString(arch->name) + " (arch)");
+            sstring key = object_get_value(&arch->clone, "identified_animation");
+            if (key)
+            {
+                anims[QString(key)].append(QString(arch->name) + " (arch)");
+            }
+        }
+        arch = arch->next;
+    }
+
+    // list faces in animations
+    QStringList allAnims = myResourcesManager->allAnimations();
+    foreach(QString name, allAnims)
+    {
+        QStringList done;
+        const animations_struct* anim = myResourcesManager->animation(name);
+        for (int i = 0; i < anim->num_animations; i++)
+        {
+            // don't list animation twice if they use the same face
+            if (!done.contains(QString::fromLatin1(anim->faces[i]->name)))
+            {
+                faces[QString::fromLatin1(anim->faces[i]->name)].append(QString(anim->name) + " (animation)");
+                done.append(QString::fromLatin1(anim->faces[i]->name));
+            }
+        }
+    }
+
+    // list faces and animations for artifacts
+    artifactlist* list;
+    artifact* art;
+    for (list = first_artifactlist; list != NULL; list = list->next)
+    {
+        for (art = list->items; art != NULL; art = art->next)
+        {
+          if (art->item->animation_id == 0)
+          {
+              faces[QString::fromLatin1(art->item->face->name)].append(QString(art->item->name) + " (art)");
+              sstring key = object_get_value(art->item, "identified_face");
+              if (key)
+              {
+                  faces[QString(key)].append(QString(art->item->name) + " (art)");
+              }
+          }
+          else
+          {
+              anims[animations[art->item->animation_id].name].append(QString(art->item->name) + " (art)");
+              sstring key = object_get_value(art->item, "identified_animation");
+              if (key)
+              {
+                  anims[QString(key)].append(QString(art->item->name) + " (arch)");
+              }
+          }
+        }
+    }
+
+    QString report("<p><strong>Warning:</strong> this list doesn't take into account faces for all artifacts, especially the 'animation_suffix' ones. Also, faces and archetypes defined in maps will not be taken into account in this list.</p><h1>Faces used multiple times:</h1><ul>");
+
+    QStringList keys = faces.keys();
+    keys.sort();
+    foreach(QString name, keys)
+    {
+        if (faces[name].size() <= 1 || name.compare("blank.111") == 0)
+            continue;
+
+        faces[name].sort();
+        report += "<li>" + name + ": ";
+        report += faces[name].join(", ");
+        report += "</li>";
+    }
+
+    report += "</ul>";
+
+    report += "<h1>Unused faces:</h1><ul>";
+    foreach(QString face, myResourcesManager->faces())
+    {
+        if (faces[face].size() > 0)
+            continue;
+        report += "<li>" + face + "</li>";
+    }
+    report += "</ul>";
+
+    report += "<h1>Animations used multiple times:</h1><ul>";
+    keys = anims.keys();
+    keys.sort();
+    foreach(QString name, keys)
+    {
+        if (anims[name].size() <= 1)
+            continue;
+
+        anims[name].sort();
+        report += "<li>" + name + ": ";
+        report += anims[name].join(", ");
+        report += "</li>";
+    }
+    report += "</ul>";
+
+    report += "<h1>Unused animations:</h1><ul>";
+    foreach(QString anim, myResourcesManager->allAnimations())
+    {
+        if (anims[anim].size() > 0 || anim == "###none")
+            continue;
+        report += "<li>" + anim + "</li>";
+    }
+    report += "</ul>";
+
+    CREReportDisplay show(report);
+    show.exec();
 }
 
 void CREMainWindow::onReportSpellDamage()

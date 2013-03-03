@@ -53,6 +53,7 @@ class CREMainWindow : public QMainWindow
         QAction* mySaveFormulae;
         QAction* mySaveQuests;
         QAction* mySaveMessages;
+        QAction* myReportDuplicate;
         QAction* myReportSpellDamage;
         QAction* myReportAlchemy;
         QAction* myReportSpells;
@@ -88,6 +89,7 @@ class CREMainWindow : public QMainWindow
         void onSaveFormulae();
         void onSaveQuests();
         void onSaveMessages();
+        void onReportDuplicate();
         void onReportSpellDamage();
         void onReportAlchemy();
         void onReportSpells();
