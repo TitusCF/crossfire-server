@@ -15,7 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 server/apply.c: Fixed wrong check for applied flag when closing container to
-open another one. 
+open another one.
 Karla Stenger 2013-01-11
 
 common/item.c: Add "(glowing)" to rings and amulets' description accordingly.
