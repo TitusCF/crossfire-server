@@ -61,6 +61,7 @@ void metaserver_update(void) {
     char num_players = 0;
     player *pl;
 
+#ifdef HAVE_CURL_CURL_H
     /* We could use socket_info.nconns, but that is not quite as accurate,
      * as connections in the progress of being established, are listening
      * but don't have a player, etc.  The checks below are basically the
@@ -92,6 +93,7 @@ void metaserver_update(void) {
     metaserver2_updateinfo.out_bytes = cst_tot.obytes;
     metaserver2_updateinfo.uptime  = (long)time(NULL)-cst_tot.time_start;
     pthread_mutex_unlock(&ms2_info_mutex);
+#ENDIF
 }
 
 /*
