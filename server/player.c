@@ -2981,7 +2981,9 @@ static int turn_transport(object *transport, object *captain, int dir) {
     if (object_get_value(transport, "turnable_transport") == NULL) {
         transport->direction = dir;
         transport->facing = dir;
-        animate_object(transport, dir);
+        if (QUERY_FLAG(transport, FLAG_ANIMATE)) {
+            animate_object(transport, dir);
+        }
         captain->direction = dir;
         return 0;
     }
