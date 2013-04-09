@@ -93,7 +93,7 @@ void metaserver_update(void) {
     metaserver2_updateinfo.out_bytes = cst_tot.obytes;
     metaserver2_updateinfo.uptime  = (long)time(NULL)-cst_tot.time_start;
     pthread_mutex_unlock(&ms2_info_mutex);
-#ENDIF
+#endif
 }
 
 /*
