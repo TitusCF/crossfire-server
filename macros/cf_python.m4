@@ -11,7 +11,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 	dir=""
 	suffix=""
 	if test "x$PYTHON_HOME" != "x"; then
-		for suffix in $PYTHON_CHECK_VERSIONS ; do
+		for suffix in "" $PYTHON_CHECK_VERSIONS ; do
 			dir="$PYTHON_HOME/include/python$suffix"
 			AC_CHECK_HEADERS(["$dir/Python.h"],[cf_have_python_h=yes])
 			if test "x$cf_have_python_h" != "x" ; then
@@ -23,7 +23,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 	else
 		AC_CHECK_HEADERS([Python.h],[cf_have_python_h=yes])
 		if test "x$cf_have_python_h" = "x"  ; then
-			for suffix in $PYTHON_CHECK_VERSIONS ; do 
+			for suffix in "" $PYTHON_CHECK_VERSIONS ; do 
 				dir="/usr/include/python$suffix"
 				AC_CHECK_HEADERS(["$dir/Python.h"],[cf_have_python_h=yes])
 				if test "x$cf_have_python_h" != "x" ; then
@@ -74,7 +74,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 			fi
 
 		else
-			for suffix in $PYTHON_CHECK_VERSIONS ; do
+			for suffix in "" $PYTHON_CHECK_VERSIONS ; do
 				lib="python$suffix"
 				AC_CHECK_LIB($lib, PyArg_ParseTuple,[PYTHON_LIB="-l$lib"])
 				if test "x$PYTHON_LIB" != "x" ; then
