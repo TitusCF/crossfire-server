@@ -509,10 +509,7 @@ void CREMainWindow::onReportSpellDamage()
 
 static QString alchemyTable(const QString& skill)
 {
-    bool one = false;
-
-    QString report = QString("<h2>%1</h2><table><thead><tr><th>product</th><th>difficulty</th><th>ingredients count</th><th>experience</th><th>Ingredients</th>").arg(skill);
-    report += "</tr></thead><tbody>";
+    int count = 0;
 
     QHash<int, QStringList> recipes;
 
@@ -555,13 +552,16 @@ static QString alchemyTable(const QString& skill)
                 }
 
                 recipes[recipe->diff].append(QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td></tr>").arg(name).arg(recipe->diff).arg(recipe->ingred_count).arg(recipe->exp).arg(ingredients.join(", ")));
-                one = true;
+                count++;
             }
         }
     }
 
-    if (!one)
+    if (count == 0)
         return QString();
+
+    QString report = QString("<h2>%1 (%2 recipes)</h2><table><thead><tr><th>product</th><th>difficulty</th><th>ingredients count</th><th>experience</th><th>Ingredients</th>").arg(skill).arg(count);
+    report += "</tr></thead><tbody>";
 
     QList<int> difficulties = recipes.keys();
     qSort(difficulties);
