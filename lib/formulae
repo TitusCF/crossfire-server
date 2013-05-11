@@ -3255,3 +3255,61 @@ ingred apple fourth
 chance 0
 combination 1
 tool slicingknife,b_slicingknife
+#
+# gem combos
+Object NONE
+arch raw_diamond_great_value
+yield 1
+ingred 20 diamond
+chance 1
+skill thaumaturgy
+cauldron thaumaturg_desk
+diff 2
+exp 2000
+Object great value
+arch gem
+yield 1
+ingred raw diamond of great value
+chance 1
+skill jeweler
+cauldron jeweler_bench
+diff 2
+exp 2000
+
+Object NONE
+arch raw_diamond_exceptional_beauty
+yield 1
+ingred 20 diamond of great value
+chance 1
+skill thaumaturgy
+cauldron thaumaturg_desk
+diff 6
+exp 6000
+Object exceptional beauty
+arch gem
+yield 1
+ingred raw diamond of exceptional beauty
+chance 1
+skill jeweler
+cauldron jeweler_bench
+diff 6
+exp 6000
+
+Object NONE
+arch raw_diamond_flawless_beauty
+yield 1
+ingred 20 diamond of exceptional beauty
+chance 1
+skill thaumaturgy
+cauldron thaumaturg_desk
+diff 12
+exp 12000
+Object flawless beauty
+arch gem
+yield 1
+ingred raw diamond of flawless beauty
+chance 1
+skill jeweler
+cauldron jeweler_bench
+diff 12
+exp 12000
