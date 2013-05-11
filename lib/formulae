@@ -3370,3 +3370,60 @@ skill jeweler
 cauldron jeweler_bench
 diff 12
 exp 12000
+
+Object NONE
+arch raw_sapphire_great_value
+yield 1
+ingred 20 sapphire
+chance 1
+skill thaumaturgy
+cauldron thaumaturg_desk
+diff 2
+exp 2000
+Object great value
+arch sapphire
+yield 1
+ingred raw sapphire of great value
+chance 1
+skill jeweler
+cauldron jeweler_bench
+diff 2
+exp 2000
+
+Object NONE
+arch raw_sapphire_exceptional_beauty
+yield 1
+ingred 20 sapphire of great value
+chance 1
+skill thaumaturgy
+cauldron thaumaturg_desk
+diff 6
+exp 6000
+Object exceptional beauty
+arch sapphire
+yield 1
+ingred raw sapphire of exceptional beauty
+chance 1
+skill jeweler
+cauldron jeweler_bench
+diff 6
+exp 6000
+
+Object NONE
+arch raw_sapphire_flawless_beauty
+yield 1
+ingred 20 sapphire of exceptional beauty
+chance 1
+skill thaumaturgy
+cauldron thaumaturg_desk
+diff 12
+exp 12000
+Object flawless beauty
+arch sapphire
+yield 1
+ingred raw sapphire of flawless beauty
+chance 1
+skill jeweler
+cauldron jeweler_bench
+diff 12
+exp 12000
