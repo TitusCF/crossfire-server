@@ -226,7 +226,13 @@ void init_library(void) {
     init_clocks();
     init_emergency_mappath();
     init_experience();
-    init_regions(); /* init_dynamic() loads a map, so needs a region */
+
+    /* init_dynamic() loads a map, so needs a region */
+    if (init_regions() != 0) {
+        LOG(llevError, "Please check that your maps are correctly installed.\n");
+        exit(EXIT_FAILURE);
+    }
+
     init_dynamic();
 }
 

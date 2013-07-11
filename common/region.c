@@ -296,25 +296,29 @@ object *get_jail_exit(object *op) {
 
 /**
  * Initialises regions from the regions file.
+ *
+ * @return
+ * @li Returns '0' on success, anything else if failed.
  */
-void init_regions(void) {
+int init_regions(void) {
     FILE *fp;
     char filename[MAX_BUF];
 
     if (first_region != NULL) /* Only do this once */
-        return;
+        return 0;
 
     snprintf(filename, sizeof(filename), "%s/%s/%s", settings.datadir, settings.mapdir, settings.regions);
     LOG(llevDebug, "Reading regions from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
-        LOG(llevError, " Can't open regions file %s in init_regions.\n", filename);
-        return;
+        LOG(llevError, "Couldn't read regions file from \"%s\".\n", filename);
+        return 1;
     }
     parse_regions(fp);
     assign_region_parents();
     LOG(llevDebug, " done\n");
 
     fclose(fp);
+    return 0;
 }
 
 /**

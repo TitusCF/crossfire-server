@@ -371,7 +371,7 @@ extern int region_is_child_of_region(const region *child, const region *r);
 extern const char *get_region_longname(const region *r);
 extern const char *get_region_msg(const region *r);
 extern object *get_jail_exit(object *op);
-extern void init_regions(void);
+extern int init_regions(void);
 extern region *get_region_struct(void);
 /* shstr.c */
 extern void init_hash_table(void);
