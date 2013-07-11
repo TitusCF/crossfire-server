@@ -44,7 +44,6 @@
 #endif
 
 static void help(void);
-static void usage(void);
 static void init_beforeplay(void);
 static void init_startup(void);
 static void compile_info(void);
@@ -418,7 +417,7 @@ static void parse_args(int argc, char *argv[], int pass) {
         }
         if (i == sizeof(options)/sizeof(struct Command_Line_Options)) {
             fprintf(stderr, "Unknown option: %s\n", argv[on_arg]);
-            usage();
+            fprintf(stderr, "Type '%s -h' for usage.\n", argv[0]);
             exit(1);
         }
     }
@@ -1073,19 +1072,12 @@ void free_server(void) {
 }
 
 /**
- * Generic usage command.
- */
-static void usage(void) {
-    (void)fprintf(logfile, "Usage: crossfire [-h] [-<flags>]...\n");
-}
-
-/**
  * Display the command line options and exits.
  */
 static void help(void) {
-    /* The information in usage is redundant with what is given below, so why call it? */
-    /*    usage();*/
-    printf("Flags:\n");
+    printf("usage: crossfire-server [-h] [options]\n\n");
+
+    printf("Options:\n");
     printf(" -csport <port> Specifies the port to use for the new client/server code.\n");
     printf(" -d           Turns on some debugging.\n");
     printf(" +d           Turns off debugging (useful if server compiled with debugging\n");
