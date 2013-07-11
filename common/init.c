@@ -278,7 +278,7 @@ void init_globals(void) {
     if (settings.logfilename[0] == 0) {
         logfile = stderr;
     } else if ((logfile = fopen(settings.logfilename, "a")) == NULL) {
-        fprintf(stderr, "Unable to open %s as the logfile - will use stderr instead\n", settings.logfilename);
+        fprintf(stderr, "Couldn't open \"%s\" for logging; using stderr instead.\n", settings.logfilename);
         logfile = stderr;
     } else {
         setvbuf(logfile, NULL, _IOLBF, 0);
