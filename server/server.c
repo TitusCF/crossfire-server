@@ -1415,9 +1415,10 @@ int server_main(int argc, char **argv) {
 #ifndef WIN32
     /* Here we check that we aren't root or suid */
     if (getuid() == 0 || geteuid() == 0) {
-        fputs("Don't run crossfire as root, it is unsupported.\n", stderr);
-        fputs("Instead run it as a normal unprivileged user.\n", stderr);
-        fputs("Aborting...\n", stderr);
+        fprintf(stderr,
+                "Running crossfire-server as root is a bad idea; aborting!\n"
+                "Please run it again as a normal, unprivileged user.\n"
+                );
         return 1;
     }
 #endif
