@@ -43,7 +43,7 @@ name in the map structure.
 
 'swap_time', was 'value': This controls how many ticks must elapse
     after the map has not been used before it gets swapped out.
-    swapping out is different than reset, as a swapped out map will
+    Swapping out is different than reset, as a swapped out map will
     get loaded back into memory if someone re-visits it before it is due to
     reset.
 
@@ -78,7 +78,7 @@ tile_path_<x> - Used with map tiling.  <x> is a number, 1 is north,
 'shopitems', 'shopgreed', 'shoprace', 'shopmin', 'shopmax' - the type of thing
 	the shop trades in, see doc/Developers/shops for more details
 
-'temp'  - The base temperature in farenhiet for this map.  The temperature
+'temp'  - The base temperature in Farenheit for this map.  The temperature
 	is modified by the season and weather conditions.  In a map without
 	weather effects, this temperature will be used as the static
 	temperature for the entire map.  This can be useful to make an ice

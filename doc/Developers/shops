@@ -10,13 +10,13 @@ this is a semi-colon deliminated list of item types and values.
 each entry is a name of an item type (from the array in common/item.c)
 followed by an optional colon then a value in the range -100 to 100.
 (if this is missing, the default value of 0 is used.
-This value is a measure of how much items of that type are preffered.
+This value is a measure of how much items of that type are preferred.
 Neutrality is represented by 0 (so a theoretical 'general' store would
 have 0 for everything), a positive preference for certain item types
 is a positive value, and negative preference for item types is a negative value.
 
 As a special note, the character * may be used once to set a preference for
-everything not explicitly listed otherwise (this value would in most cases be negative)
+everything not explicitly listed otherwise (this value would in most cases be negative).
 
 for example, a typical magic shop might have the string:
 shopitems amulet:25;ring:40;potion:40;book:35;scroll:40;spellbook:40;skillscroll:50;wand:40;*:-50
