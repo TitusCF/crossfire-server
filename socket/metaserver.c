@@ -440,7 +440,7 @@ static void metaserver2_updates(void) {
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
-    snprintf(buf, sizeof(buf), "%ld", metaserver2_updateinfo.uptime);
+    snprintf(buf, sizeof(buf), "%ld", (long)metaserver2_updateinfo.uptime);
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "uptime",
                  CURLFORM_COPYCONTENTS, buf,
