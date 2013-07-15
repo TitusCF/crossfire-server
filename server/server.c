@@ -119,7 +119,7 @@ void start_info(object *op) {
  * crypted str.
  * @todo make thread-safe?
  */
-char *crypt_string(const char *str, const char *salt) {
+const char *crypt_string(const char *str, const char *salt) {
 #if defined(WIN32) || (defined(__FreeBSD__) && !defined(HAVE_LIBDES))
     return(str);
 #else
