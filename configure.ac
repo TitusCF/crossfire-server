@@ -133,7 +133,7 @@ fi
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h stddef.h stdlib.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h sys/ttycom.h sys/termios.h crypt.h des.h zlib.h pthread.h curl/curl.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h stddef.h stdlib.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h sys/ttycom.h termios.h sys/termios.h crypt.h des.h zlib.h pthread.h curl/curl.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
