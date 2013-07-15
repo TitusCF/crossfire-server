@@ -1002,37 +1002,46 @@ static void load_settings(void) {
 }
 
 /**
- * This is the main server initialisation function.
+ * This is the main server initialization function.
  *
  * Called only once, when starting the program.
  * @param argc argument count.
  * @param argv arguments on the command line.
  */
 void init(int argc, char **argv) {
-    init_done = 0;  /* Must be done before init_signal() */
+    init_done = 0;      /* Must be done before init_signal() */
     logfile = stderr;
-    parse_args(argc, argv, 1); /* First arg pass - right now it does
-     * nothing, but in future specifying the
-     * LibDir in this pass would be reasonable*/
 
-    init_library(); /* Must be called early */
-    load_settings(); /* Load the settings file */
+    /* First argument pass - right now it does nothing, but in the future specifying
+     * the LibDir in this pass would be reasonable. */
+    parse_args(argc, argv, 1);
+
+    init_library();     /* Must be called early */
+    load_settings();    /* Load the settings file */
     load_materials();
     parse_args(argc, argv, 2);
-    fprintf(logfile, "Welcome to CrossFire, v%s\n", FULL_VERSION);
-    fprintf(logfile, "Copyright (C) 1994,2011 Mark Wedel & Crossfire Development Team\n");
-    fprintf(logfile, "Copyright (C) 1992 Frank Tore Johansen.\n");
+
+    fprintf(logfile,
+            "Welcome to Crossfire %s!\n"
+            "Copyright (c) 1994, 2011 Mark Wedel & Crossfire Development Team\n"
+            "Copyright (c) 1992 Frank Tore Johansen\n"
+            "\n"
+            , FULL_VERSION);
 
     if (strcmp(settings.dm_mail, "") != 0) {
-        fprintf(logfile, "Maintained locally by: %s\n", settings.dm_mail);
-        fprintf(logfile, "Questions and bugs should be mailed to above address.\n");
+        fprintf(logfile,
+                "This server is maintained locally by: <%s>\n"
+                "Questions and other concerns should be mailed to the above address.\n"
+                "\n"
+                , settings.dm_mail);
     }
+
     SRANDOM(time(NULL));
 
-    init_startup(); /* Write (C), check shutdown/forbid files */
-    init_signals(); /* Sets up signal interceptions */
-    init_commands(); /* Sort command tables */
-    read_map_log(); /* Load up the old temp map files */
+    init_startup();     /* Check shutdown/forbid files */
+    init_signals();     /* Sets up signal interceptions */
+    init_commands();    /* Sort command tables */
+    read_map_log();     /* Load up the old temp map files */
     init_skills();
     init_ob_methods();
     cftimer_init();
