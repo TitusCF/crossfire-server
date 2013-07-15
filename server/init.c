@@ -1074,7 +1074,7 @@ void free_server(void) {
     free_quest_definitions();
     while (settings.disabled_plugins) {
         linked_char *next = settings.disabled_plugins->next;
-        free(settings.disabled_plugins->name);
+        free((void *)settings.disabled_plugins->name);
         free(settings.disabled_plugins);
         settings.disabled_plugins = next;
     }
