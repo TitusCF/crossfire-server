@@ -22,10 +22,10 @@
 */
 
 /*
- * Little program aimed at giving information to plugin about config of the crossfire server.
- * Simply invoke with the config parameter to get. Only the most common parameters (those
- * that could be needed by an independent configure script) are available. The rest is available
- * in config.h andd should be included in any plugin needing it.
+ * Small program that gives plugins information about the compile-time
+ * configuration of the server. Only the most common parameters (those that
+ * might be needed by an independent configure script) are available. The rest
+ * can be found in 'config.h' and should be included in any plugin needing it.
  */
 
 #include "stdio.h"
@@ -45,48 +45,66 @@ const cf_parameter cf_parameter_list[] = {
     { "PLUGIN_SUFFIX", PLUGIN_SUFFIX },
 };
 
-const int cf_parameter_list_size = sizeof(cf_parameter_list)/sizeof(cf_parameter);
+const int cf_parameter_list_size = 
+    sizeof(cf_parameter_list) / sizeof(cf_parameter);
 
-int main(int argc, char **argv) {
+static void print_usage() {
+    fprintf(stderr,
+        "usage: crossfire-config <parameter>\n"
+        "       crossfire-config [options]\n"
+        "\n"
+        "Options:\n"
+        "    --Dflags            show complete Dflags line from compiler invocation\n"
+        "    --parameter-list    show the list of available parameters\n"
+        "\n"
+    );
+}
+
+int main(int argc, char *argv[]) {
     int i;
 
-    if (argc == 2) {
-        if (!strcmp(argv[1], "--parameter-list")) {
-            printf("parameter maybe one of:\n");
-            printf("\tPLUGININSTALLDIR\n");
-            for (i = 0; i < cf_parameter_list_size; i++) {
-                printf("\t%s\n", cf_parameter_list[i].name);
-            }
-            return 0;
-        }
-        /*Special case, handle plugin installation dir, which is most likeley why
-          user wants to use crossfire-config in a configure script*/
-        if (!strcmp(argv[1], "PLUGININSTALLDIR")) {
-            printf("%s/plugins/\n", LIBDIR);
-            return 0;
-        }
-        if (!strcmp(argv[1], "--Dflags")) {
-            for (i = 0; i < cf_parameter_list_size; i++) {
-                printf("-D%s=\\\"%s\\\" ", cf_parameter_list[i].name, cf_parameter_list[i].value);
-            }
-            /*printf ("-DDATADIR=\\\"%s\\\" -DLIBDIR=\\\"%s\\\" -DLOCALDIR=\\\"%s\\\"\n",
-                    cf_parameter_list[0].value, cf_parameter_list[1].value, cf_parameter_list[2].value);*/
-            printf("\n");
-            return 0;
-        }
+    // Print usage instructions when given invalid command-line arguments.
+    if (argc != 2) {
+        print_usage();
+        exit(EXIT_FAILURE);
+    }
+
+    if (strcmp(argv[1], "--Dflags") == 0) {
         for (i = 0; i < cf_parameter_list_size; i++) {
-            if (!strcmp(argv[1], cf_parameter_list[i].name)) {
-                printf("%s\n", cf_parameter_list[i].value);
-                return 0;
-            }
+            printf("-D%s=\\\"%s\\\" ", cf_parameter_list[i].name,
+                    cf_parameter_list[i].value);
+        }
+
+        printf("\n");
+        exit(EXIT_SUCCESS);
+    }
+
+    // Show a list of available parameters.
+    if (strcmp(argv[1], "--parameter-list") == 0) {
+        printf("Available parameters:\n");
+
+        // PLUGININSTALLDIR is a special parameter handled separately.
+        printf("    PLUGININSTALLDIR\n");
+
+        for (i = 0; i < cf_parameter_list_size; i++) {
+            printf("    %s\n", cf_parameter_list[i].name);
+        }
+
+        exit(EXIT_SUCCESS);
+    }
+
+    // Handle plugin installation directory as a special case.
+    if (strcmp(argv[1], "PLUGININSTALLDIR") == 0) {
+        printf("%s/plugins/\n", LIBDIR);
+        exit(EXIT_SUCCESS);
+    }
+
+    for (i = 0; i < cf_parameter_list_size; i++) {
+        if (!strcmp(argv[1], cf_parameter_list[i].name)) {
+            printf("%s\n", cf_parameter_list[i].value);
+            exit(EXIT_SUCCESS);
         }
     }
-    /* Bad arguments count or invalid ones */
-    printf("usage: crossfire-config --Dflags");
-    printf(" (gives complete Dflags line for compiler invocation)\n");
-    printf("usage: crossfire-config --parameter-list");
-    printf(" (show the list of available parameters)\n");
-    printf("usage: crossfire-config <parameter name>");
-    printf(" (extract a compilation parameter)\n");
-    return -1;
+
+    exit(EXIT_FAILURE);
 }
