@@ -1,4 +1,3 @@
-
 noinst_HEADERS = \
 commands.h     libproto.h     sounds.h	     attack.h       config.h \
 living.h       party.h    \

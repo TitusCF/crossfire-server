@@ -1,4 +1,3 @@
-
 FIG = fig/earrow.gif fig/nearrow.gif fig/sarrow.gif fig/swarrow.gif\
 	fig/narrow.gif fig/nwarrow.gif fig/searrow.gif fig/warrow.gif\
 	fig/screen_dia.gif fig/book.gif fig/stairdown.gif fig/stairup.gif

@@ -1,4 +1,3 @@
-
 noinst_HEADERS = \
 	cfpython.h                    \
 	cfpython_archetype.h          cfpython_party.h \

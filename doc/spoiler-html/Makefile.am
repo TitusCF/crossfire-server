@@ -1,4 +1,3 @@
-
 EXTRA_DIST = spells-extract stats-extract\
 	spoiler.shtml helm-extract mag-extract shield-extract \
 	empty.pbm bow-extract arche-extract weap-extract

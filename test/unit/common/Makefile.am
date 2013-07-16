@@ -1,4 +1,3 @@
-
 include $(top_srcdir)/check-fragment.am
 
 CHECK_ROOT=../../

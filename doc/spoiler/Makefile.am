@@ -1,5 +1,3 @@
-
-
 EXTRA_DIST = monster-extract spells-extract stats-extract arm-extract\
  	helm-extract mag-extract shield-extract items-extract spoiler.tex\
  	sorter empty.pbm bow-extract arche-extract weap-extract
