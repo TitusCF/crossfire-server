@@ -309,52 +309,47 @@ AC_CONFIG_FILES([Makefile
                  test/unit/common/Makefile test/unit/random_maps/Makefile
                  test/unit/server/Makefile test/unit/socket/Makefile])
 AC_OUTPUT
-AC_MSG_NOTICE([])
-AC_MSG_NOTICE([])
-AC_MSG_NOTICE([])
-AC_MSG_NOTICE([Configuration summary....])
+AC_MSG_NOTICE([Configuration Summary ----------------------------------------------])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Paths])
-AC_MSG_NOTICE([    prefix default value                 ${prefix}])
-AC_MSG_NOTICE([    exec_prefix default value            ${exec_prefix}])
+AC_MSG_NOTICE([    Installation prefix                  ${prefix}])
 AC_MSG_NOTICE([    Will put executables in              $bindir])
 AC_MSG_NOTICE([    Will put resources in                $datadir])
 AC_MSG_NOTICE([    Will put config in                   $sysconfdir])
-AC_MSG_NOTICE([    Will put server runtime datas in:    $localstatedir])
+AC_MSG_NOTICE([    Will put server runtime data in      $localstatedir])
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([  Build options])
-AC_MSG_NOTICE([])
-AC_MSG_NOTICE([    Will build metaserver2 support?      $ac_cv_header_curl_curl_h])
-AC_MSG_NOTICE([    Will build plugins?                  $cf_have_libdl])
+AC_MSG_NOTICE([  Options])
+AC_MSG_NOTICE([    Build metaserver2 support?      $ac_cv_header_curl_curl_h])
+AC_MSG_NOTICE([    Build plugins?                  $cf_have_libdl])
 
 if test x"$cf_have_libsqlite" = "xyes" ; then
-AC_MSG_NOTICE([    Will build cflogger?                 $enable_logger])
-AC_MSG_NOTICE([    Will build cfnewspaper?              $enable_newspaper])
+AC_MSG_NOTICE([    Build cflogger?                 $enable_logger])
+AC_MSG_NOTICE([    Build cfnewspaper?              $enable_newspaper])
 fi
 
 if test "x$cf_have_libdl" = "xyes" ; then
-AC_MSG_NOTICE([    Will build python plugin?            $cf_will_build_python])
+AC_MSG_NOTICE([    Build python plugin?            $cf_will_build_python])
 fi
 
 if test "x$enable_cfrhg" = "xyes" ; then
-AC_MSG_NOTICE([    Will build random house plugin?      yes])
+AC_MSG_NOTICE([    Build random house plugin?      yes])
 else
-AC_MSG_NOTICE([    Will build random house plugin?      no])
+AC_MSG_NOTICE([    Build random house plugin?      no])
 fi
 
 if test x"$xsltengine" != "x" ; then
     check_complement=["(will generate report)"]
 fi
 if test "x$have_check" = "xyes" -a x"$enable_check" = "xyes" ; then
-AC_MSG_NOTICE([    Will process unit testing?           yes $check_complement])
+AC_MSG_NOTICE([    Process unit testing?           yes $check_complement])
 AC_MSG_NOTICE([      (run make; make -k check)])
 else
-AC_MSG_NOTICE([    Will process unit testing?           no])
+AC_MSG_NOTICE([    Process unit testing?           no])
 AC_MSG_NOTICE([      If you are a developer, you MUST install the check framework])
 AC_MSG_NOTICE([      and write automated tests for all your add-ons!])
 fi
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([  Build utilities (Not required to build or run the server)])
-AC_MSG_NOTICE([])
-AC_MSG_NOTICE([    Will build crossfire-mapper?         $cf_make_mapper])
-AC_MSG_NOTICE([])
+AC_MSG_NOTICE([  Utilities (not required to build or run the server)])
+AC_MSG_NOTICE([    Build crossfire-mapper?         $cf_make_mapper])
+AC_MSG_NOTICE([--------------------------------------------------------------------])
+AC_MSG_NOTICE([Remember to add a symlink to your 'arch' directory in 'lib/arch'!])
