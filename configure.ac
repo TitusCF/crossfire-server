@@ -1,21 +1,24 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_REVISION($Id$)
 AC_INIT([crossfire], [1.70.trunk], [crossfire-devel@listserv.real-time.com])
-AC_CONFIG_MACRO_DIR([macros])
-AC_CONFIG_AUX_DIR([utils])
+AC_REVISION([$Id$])
 AC_CONFIG_SRCDIR([server/main.c])
-AM_INIT_AUTOMAKE
+AC_CONFIG_AUX_DIR([utils])
+AC_CONFIG_MACRO_DIR([macros])
 AC_CONFIG_HEADERS([include/autoconf.h])
-
-AC_PREFIX_DEFAULT(/usr/games/crossfire)
+AC_PREFIX_DEFAULT([/usr/games/crossfire])
+AM_INIT_AUTOMAKE
 
 # we want a config.h file instead of -D options.
 
 # Checks for programs.
-AC_PROG_LIBTOOL
+AC_PROG_AWK
 AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_LIBTOOL
+AM_PROG_CC_C_O
+AM_PROG_LEX
 
 case "$target" in
   alpha-dec-osf*)
@@ -29,14 +32,7 @@ case "$target" in
     ;;
 esac
 
-
-AC_PROG_CPP
-AM_PROG_LEX
-AM_PROG_CC_C_O
-AC_PROG_AWK
-
 CF_CHECK_VISIBILITY()
-
 
 AC_ARG_ENABLE(dmalloc,
               [AS_HELP_STRING([--enable-dmalloc], [Use the dmalloc library if available, may prevent plugins from working])],,
