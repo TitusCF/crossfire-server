@@ -51,7 +51,7 @@ You are not allowed to use weapons.|Vous ne pouvez pas porter d'arme.
 [fixed]%4d artifactlists    %8d|[fixed]%4d artifactlists       %8d
 [fixed]Total space allocated:%8d|[fixed]Espace total alloué:    %8d
 [fixed]Total space used:     %8d|[fixed]Espace total utilisé:   %8d
-You are in %s. \n %s|Vous êtes dans %s. \n %s
+You are in %s.\n%s|Vous êtes dans %s.\n%s
 players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d|joueurs:%d difficulté:%d taille:%dx%d début:%dx%d timeout %d
 Heap is corrupted.|Le Tas est corrompu.
 Heap checks out OK.|Aucune erreur détectée dans le Tas.

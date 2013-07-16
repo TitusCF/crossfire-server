@@ -361,7 +361,7 @@ void current_region_info(object *op) {
         return;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n(op, "You are in %s. \n %s"),
+                         i18n(op, "You are in %s.\n%s"),
                          get_region_longname(r), get_region_msg(r));
 }
 
