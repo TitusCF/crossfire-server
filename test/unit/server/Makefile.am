@@ -48,8 +48,7 @@ CHECK_FOLDER=unit/server
 CHECK_PARENT_NAME=Unit
 include $(top_srcdir)/check-fragment.am
 
-clean-local:
-	$(RM) .autorun.xml
+DISTCLEANFILES=	.autorun.xml
 
 check-local: check-html
 clean-local: clean-unit

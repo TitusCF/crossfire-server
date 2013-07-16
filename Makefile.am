@@ -22,5 +22,4 @@ proto:
 	(cd plugins; make proto)
 	(cd types; make proto)
 
-clean-local:
-	$(RM) configtest.out configtest.xml configtest.xsl
+CLEANFILES=	configtest.out configtest.xml configtest.xsl

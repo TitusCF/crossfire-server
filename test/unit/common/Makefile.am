@@ -22,8 +22,7 @@ $(top_builddir)/test/toolkit/libtoolkit_common.a:
 
 TESTS= check_arch check_item check_living check_loader check_object check_path check_shstr check_time check_treasure check_utils
 
-clean-local:
-	$(RM) .autorun.xml
+DISTCLEANFILES=	.autorun.xml
 
 check-local: check-html
 clean-local: clean-unit
