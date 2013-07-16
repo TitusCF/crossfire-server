@@ -1,12 +1,11 @@
-# This is the news file
-# it contain news send to players
-# when they connect. Because they
-# are sent in the order they are read
-# from this file, most recent/important
-# news should be put at bottom of file
-# each news has a title on a line
-# starting with %
-%server update
-This server support news and rules files.
+# This file contains news that is displayed whenever a player connects. The
+# most recent news should appear at the bottom of the file. Each news item
+# must start with a '%' sign and should be immediately followed by a title.
+#
+# Only significant newlines should be included; long lines are automatically
+# wrapped on the client side. Comments take up an entire line and should begin
+# with a '#' character.
+%Crossfire Server Successfully Installed!
+If you can see this message, then your Crossfire installation was successful!
 
-Server manager, please update those files located in the crossfire config directory.
+You should take this opportunity to update your server configuration files.
