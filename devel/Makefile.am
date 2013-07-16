@@ -1,7 +1,7 @@
 bin_PROGRAMS = crossfire-config
 
 crossfire_config_SOURCES = \
-	devel.c
+	crossfire-config.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\" \
