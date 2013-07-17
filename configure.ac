@@ -65,18 +65,17 @@ AC_PATH_PROG(TAR, tar)
 AC_PATH_PROG(UNCOMPRESS, uncompress)
 
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
-    echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
+    AC_MSG_NOTICE([Using 'gzip -c' in place of 'gunzip'])
     GUNZIP="$GZIP -c"
 fi;
 
 if test -n "$BZIP" -a -z "$BUNZIP" ; then
-    echo "Found bzip2, but not bunzip2 - setting BUNZIP to bzip2 -c";
+    AC_MSG_NOTICE([Using 'bzip2 -c' in place of 'bunzip'])
     BUNZIP="$BZIP -c"
 fi;
 
 if test -z "$COMPRESS" -a -z "$GZIP" -a -z "$BZIP" ; then
-    echo "Unable to find either compress, bzip2,  or gzip - hope you don't plan on compressing";
-    echo "any files.";
+    AC_MSG_NOTICE([Unable to find compress, gzip, or bzip2; hope you don't plan on compressing any files.])
 fi;
 
 ##############################################################################
