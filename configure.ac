@@ -10,9 +10,41 @@ AC_CONFIG_HEADERS([include/autoconf.h])
 AC_PREFIX_DEFAULT([/usr/games/crossfire])
 AM_INIT_AUTOMAKE
 
-# we want a config.h file instead of -D options.
+##############################################################################
+# Configuration Options
+##############################################################################
+AC_ARG_ENABLE(dmalloc,
+    [AS_HELP_STRING([--enable-dmalloc], [Use the dmalloc library if available, may prevent plugins from working])],
+    [], enable_dmalloc=no)
 
-# Checks for programs.
+AC_ARG_ENABLE(mapper,
+    [AS_HELP_STRING([--enable-mapper], [Whether or not to build the crossfire-mapper utility (default=no; requires libgd)])],
+    [], enable_mapper=no)
+
+# Options for plugins
+AC_ARG_WITH(python,
+    [AS_HELP_STRING([--with-python=dir], [Directory to look for python headers/library (default=standard system location)])], PYTHON_HOME="$withval")
+
+AC_ARG_ENABLE(cfrhg,
+    [AS_HELP_STRING([--enable-cfrhg], [Whether or not to build the random house generator plugin (default=no)])],
+    [], enable_cfrhg=no)
+
+AC_ARG_ENABLE(logger,
+    [AS_HELP_STRING([--disable-logger], [Disable the logger compilation])],
+    [], enable_logger=yes)
+
+AC_ARG_ENABLE(newspaper,
+    [AS_HELP_STRING([--disable-newspaper], [Disable the newspaper plugin compilation])],
+    [], enable_newspaper=yes)
+
+# Unit test configuration
+AC_ARG_ENABLE(check,
+    [AS_HELP_STRING([--disable-check], [Disable the unit tests even if check is available])],
+    [], enable_check=yes)
+
+##############################################################################
+# Program Checks
+##############################################################################
 AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_CPP
@@ -20,56 +52,22 @@ AC_PROG_LIBTOOL
 AM_PROG_CC_C_O
 AM_PROG_LEX
 
-case "$target" in
-  alpha-dec-osf*)
-    # If we are not using gcc, we want the ansi version of cc.
-    if test -z "$GCC"; then
-#      CFLAGS="$CFLAGS -std1 -warnprotos" # Not yet ready for warnprotos...
-      CFLAGS="$CFLAGS -std1"
-    fi
-    ;;
-  *)
-    ;;
-esac
-
-CF_CHECK_VISIBILITY()
-
-AC_ARG_ENABLE(dmalloc,
-              [AS_HELP_STRING([--enable-dmalloc], [Use the dmalloc library if available, may prevent plugins from working])],,
-              enable_dmalloc=no)
-
-AC_ARG_WITH(python,
-            [AS_HELP_STRING([--with-python=dir], [Directory to look for python headers/library (default=standard system location)])],
-            PYTHON_HOME="$withval")
-
-AC_ARG_ENABLE(mapper,
-            [AS_HELP_STRING([--enable-mapper], [Whether or not to build the crossfire-mapper utility (default=no; requires libgd)])],,
-            enable_mapper=no)
-
-AC_ARG_ENABLE(cfrhg,
-            [AS_HELP_STRING([--enable-cfrhg], [Whether or not to build the random house generator plugin (default=no)])],,
-            enable_cfrhg=no)
-
-# check for some other programs
-AC_PATH_PROG(LATEX, latex)
-AC_PATH_PROG(GZIP, gzip)
-AC_PATH_PROG(GUNZIP, gunzip)
-AC_PATH_PROG(TAR, tar)
-AC_PATH_PROG(PERL, perl)
 AC_PATH_PROG(BASENAME, basename)
+AC_PATH_PROG(BUNZIP, bunzip2)
+AC_PATH_PROG(BZIP, bzip2)
+AC_PATH_PROG(COMPRESS, compress)
+AC_PATH_PROG(GUNZIP, gunzip)
+AC_PATH_PROG(GZIP, gzip)
+AC_PATH_PROG(LATEX, latex)
+AC_PATH_PROG(PERL, perl)
+AC_PATH_PROG(SVNVERSION, svnversion)
+AC_PATH_PROG(TAR, tar)
+AC_PATH_PROG(UNCOMPRESS, uncompress)
 
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
     GUNZIP="$GZIP -c"
 fi;
-
-if test -z "$COMPRESS" ; then
-    AC_PATH_PROG(COMPRESS, compress)
-    AC_PATH_PROG(UNCOMPRESS, uncompress)
-fi
-
-AC_PATH_PROG(BZIP, bzip2)
-AC_PATH_PROG(BUNZIP, bunzip2)
 
 if test -n "$BZIP" -a -z "$BUNZIP" ; then
     echo "Found bzip2, but not bunzip2 - setting BUNZIP to bzip2 -c";
@@ -81,9 +79,9 @@ if test -z "$COMPRESS" -a -z "$GZIP" -a -z "$BZIP" ; then
     echo "any files.";
 fi;
 
-# Check if svnversion is avaliable to get the rev number
-AC_PATH_PROG(SVNVERSION, svnversion)
-
+##############################################################################
+# Library Checks
+##############################################################################
 # Check for some library functions
 AC_SEARCH_LIBS([gethostbyname], [nsl])
 AC_SEARCH_LIBS([pow], [m])
@@ -126,6 +124,13 @@ else
     AC_CHECK_LIB(dmalloclp, main)
 fi
 
+# Libraries used for plugins
+AC_SEARCH_LIBS(dlopen, [dl], [ cf_have_libdl=yes ])
+AC_CHECK_LIB(sqlite3, sqlite3_open,[ cf_have_libsqlite=yes ])
+
+##############################################################################
+# Header File, Type, Structure, and Compiler Checks
+##############################################################################
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
@@ -134,31 +139,49 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h stddef.h stdlib.h string
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
+AC_HEADER_STDBOOL
+AC_HEADER_TIME
+AC_STRUCT_TM
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T
 AC_TYPE_INT8_T
 AC_TYPE_OFF_T
 AC_TYPE_PID_T
+AC_TYPE_SIGNAL
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
-AC_STRUCT_TM
-AC_HEADER_STDBOOL
+AC_TYPE_UID_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 AC_TYPE_UINT8_T
-AC_TYPE_UID_T
 
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
 
+case "$target" in
+  alpha-dec-osf*)
+    # If we are not using gcc, we want the ansi version of cc.
+    if test -z "$GCC"; then
+#      CFLAGS="$CFLAGS -std1 -warnprotos" # Not yet ready for warnprotos...
+      CFLAGS="$CFLAGS -std1"
+    fi
+    ;;
+  *)
+    ;;
+esac
+
+CF_CHECK_VISIBILITY()
+
+##############################################################################
+# Library Function Checks
+##############################################################################
 # Checks for library functions.
-AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MEMCMP
 AC_FUNC_SETPGRP
-AC_TYPE_SIGNAL
 AC_FUNC_STRERROR_R
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
+AC_PROG_GCC_TRADITIONAL
+
 AC_CHECK_FUNCS([getdtablesize gettimeofday mkdir mktime rmdir select socket strcasecmp strcspn strerror strncasecmp strspn strstr strtol snprintf setsid srandom srand48 srand sysconf scandir getaddrinfo getnameinfo])
 
 # alphasort can not be added to AC_CHECK_FUNCS because
@@ -170,8 +193,6 @@ AC_MSG_CHECKING(checking if alphasort is defined)
   else
     AC_MSG_RESULT(no)
   fi
-
-
 
 AC_MSG_CHECKING(how many args gettimeofday uses)
 AC_CACHE_VAL(ac_cv_gettimeofday_args,
@@ -210,18 +231,16 @@ AC_SUBST(BASENAME)
 AC_SUBST(pkgstatedir,$localstatedir/$PACKAGE)
 AC_SUBST(pkgconfdir,$sysconfdir/$PACKAGE)
 
+AC_DEFINE_UNQUOTED(BUNZIP,"${BUNZIP}",[Path to the bunzip binary])
+AC_DEFINE_UNQUOTED(BZIP,"${BZIP}",[Path to the bzip binary])
 AC_DEFINE_UNQUOTED(COMPRESS,"${COMPRESS}",[Path to the compress binary])
 AC_DEFINE_UNQUOTED(UNCOMPRESS,"${UNCOMPRESS}",[Path to the uncompress binary])
-AC_DEFINE_UNQUOTED(GZIP,"${GZIP}",[Path to the gzip binary])
 AC_DEFINE_UNQUOTED(GUNZIP,"${GUNZIP}",[Path to the gunzip binary])
-AC_DEFINE_UNQUOTED(BZIP,"${BZIP}",[Path to the bzip binary])
-AC_DEFINE_UNQUOTED(BUNZIP,"${BUNZIP}",[Path to the bunzip binary])
+AC_DEFINE_UNQUOTED(GZIP,"${GZIP}",[Path to the gzip binary])
 
 #############################################
 # Plugin configuration
-AC_SEARCH_LIBS(dlopen, [dl], [ cf_have_libdl=yes ])
 AM_CONDITIONAL(HAVE_LIBDL,test "x$cf_have_libdl" = "xyes")
-
 
 # Test for libdl isn't taken into account for many plugins, don't take into
 # account for Python. Fixes bug #3353920.
@@ -243,25 +262,9 @@ AM_CONDITIONAL(HAVE_LIBDL,test "x$cf_have_libdl" = "xyes")
 AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
 
-########################
-# CFLogger and CFNewsPaper configuration
-
-AC_ARG_ENABLE(logger,
-              [AS_HELP_STRING([--disable-logger], [Disable the logger compilation])],,
-              enable_logger=yes)
-AC_ARG_ENABLE(newspaper,
-              [AS_HELP_STRING([--disable-newspaper], [Disable the newspaper plugin compilation])],,
-              enable_newspaper=yes)
-AC_CHECK_LIB(sqlite3, sqlite3_open,[ cf_have_libsqlite=yes ])
 AM_CONDITIONAL(HAVE_CFLOGGER, [test x"$cf_have_libsqlite" = "xyes" -a x"$enable_logger" = "xyes"])
 AM_CONDITIONAL(HAVE_CFNEWSPAPER, [test x"$cf_have_libsqlite" = "xyes" -a x"$enable_newspaper" = "xyes"])
 
-########################
-# Unit test configuration
-
-AC_ARG_ENABLE(check,
-              [AS_HELP_STRING([--disable-check], [Disable the unit tests even if check is available])],,
-              enable_check=yes)
 AM_PATH_CHECK(,[have_check="yes"],
   AC_MSG_WARN([Check not found; cannot run unit tests!])
   [have_check="no"])
@@ -270,8 +273,9 @@ CF_CHECK_XSLT(xsltengine)
 AM_CONDITIONAL(PROCESS_XSLT,[test x"$have_check" = "xyes" -a x"$enable_check" = "xyes" -a x"$xsltengine" != x])
 AC_SUBST(XSLTENGINE,[$xsltengine])
 
-########################
-# Generate output
+##############################################################################
+# Generate Output
+##############################################################################
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  doc/Developers/Makefile
@@ -309,6 +313,10 @@ AC_CONFIG_FILES([Makefile
                  test/unit/common/Makefile test/unit/random_maps/Makefile
                  test/unit/server/Makefile test/unit/socket/Makefile])
 AC_OUTPUT
+
+##############################################################################
+# Configuration Summary
+##############################################################################
 AC_MSG_NOTICE([Configuration Summary ----------------------------------------------])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Paths])
