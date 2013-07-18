@@ -211,7 +211,7 @@ static void command_tell_all(object *op, const char *params, int pri, int color,
 }
 
 /**
- * 'sbout' command.
+ * 'shout' command.
  * @param op
  * player.
  * @param params
@@ -468,7 +468,7 @@ static const char* single_emotes[EMOTE_LAST - 1][2] = {
     { "You sigh.", "%s sighs loudly." },
     { "You sulk.", "%s sulks in the corner." },
     { NULL, NULL },
-    { "Waaaaaaahhh..", "%s bursts into tears." },
+    { "Waaaaaaahhh...", "%s bursts into tears." },
     { NULL, NULL },
     { NULL, NULL },
     { "You grin evilly.", "%s grins evilly." },
@@ -660,8 +660,8 @@ static void basic_emote(object *op, const char *params, int emotion) {
 
     if (*params == '\0') {
         if (emotion > EMOTE_FIRST && emotion < EMOTE_LAST && single_emotes[emotion - 1][0] != NULL) {
-            snprintf(buf, sizeof(buf), single_emotes[emotion - 1][0], op->name);
-            snprintf(buf2, sizeof(buf2), "%s", single_emotes[emotion - 1][1]);
+            snprintf(buf, sizeof(buf), single_emotes[emotion - 1][0]);
+            snprintf(buf2, sizeof(buf2), single_emotes[emotion - 1][1], op->name);
         } else {
             snprintf(buf, sizeof(buf), "You are a nut.");
             snprintf(buf2, sizeof(buf2), "%s dances with glee.", op->name);
