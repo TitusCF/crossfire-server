@@ -742,60 +742,59 @@ typedef unsigned char MoveType;
  * if your monsters start acting wierd, mail me.
  */
 /*@{*/
-/******************************************************************************/
-/* the following definitions are for the attack_movement variable in monsters */
-/* if the attack_variable movement is left out of the monster archetype, or is*/
-/* set to zero                                                                */
-/* the standard mode of movement from previous versions of crossfire will be  */
-/* used. the upper four bits of movement data are not in effect when the monst*/
-/* er has an enemy. these should only be used for non agressive monsters.     */
-/* to program a monsters movement add the attack movement numbers to the movem*/
-/* ment numbers example a monster that moves in a circle until attacked and   */
-/* then attacks from a distance:                                              */
-/*                                                      CIRCLE1 = 32          */
-/*                                              +       DISTATT = 1           */
-/*                                      -------------------                   */
-/*                      attack_movement = 33                                  */
-/******************************************************************************/
-#define DISTATT  1 /**< Move toward a player if far, but mantain some space,
-                    * attack from a distance - good for missile users only    */
-#define RUNATT   2 /**< Tun but attack if player catches up to object.        */
+/*
+ * The following definitions are for the attack_movement variable in monsters.
+ * If the attack_variable movement is left out of the monster archetype, or is
+ * set to zero, the standard mode of movement from previous versions of
+ * Crossfire will be used. The upper four bits of movement data are not in
+ * effect when the monster has an enemy. These should only be used for non
+ * agressive monsters. To program a monsters movement add the attack movement
+ * numbers to the movement numbers example a monster that moves in a circle
+ * until attacked and then attacks from a distance:
+ *                                                      CIRCLE1 = 32
+ *                                              +       DISTATT = 1
+ *                                      -------------------
+ *                      attack_movement = 33
+ */
+#define DISTATT  1 /**< Move toward a player if far, but maintain some space,
+                    * attack from a distance - good for missile users only.   */
+#define RUNATT   2 /**< Run but attack if player catches up to object.        */
 #define HITRUN   3 /**< Run to then hit player then run away cyclicly.        */
-#define WAITATT  4 /**< Wait for player to approach then hit, move if hit     */
-#define RUSH     5 /**< Rush toward player blindly, similiar to dumb monster  */
-#define ALLRUN   6 /**< Always run never attack good for sim. of weak player  */
-#define DISTHIT  7 /**< Attack from a distance if hit as recommended by Frank */
-#define WAIT2    8 /**< Monster does not try to move towards player if far
-                    * maintains comfortable distance                          */
-#define PETMOVE 16 /**< if the upper four bits of attack_movement
+#define WAITATT  4 /**< Wait for player to approach then hit, move if hit.    */
+#define RUSH     5 /**< Rush toward player blindly, similiar to dumb monster. */
+#define ALLRUN   6 /**< Always run, never attack good for sim. of weak player.*/
+#define DISTHIT  7 /**< Attack from a distance if hit as recommended by Frank.*/
+#define WAIT2    8 /**< Monster does not try to move towards player if far.
+                    * Maintains comfortable distance.                         */
+#define PETMOVE 16 /**< If the upper four bits of attack_movement
                     * are set to this number, the monster follows a player
                     * until the owner calls it back or off
-                    * player followed denoted by 0b->owner
+                    * player followed denoted by ob->owner
                     * the monster will try to attack whatever the player is
                     * attacking, and will continue to do so until the
                     * calls off the monster - a key command will be
-                    * inserted to do so                                       */
+                    * inserted to do so.                                      */
 #define CIRCLE1 32 /**< If the upper four bits of move_type / attack_movement
                     * are set to this number, the monster will move in a
                     * circle until it is attacked, or the enemy field is
-                    * set, this is good for non-aggressive monsters and NPC   */
-#define CIRCLE2 48 /**< Same as ::CIRCLE1 but a larger circle is used         */
-#define PACEH   64 /**< The monster will pace back and forth until attacked
-                    * this is HORIZONTAL movement                             */
+                    * set, this is good for non-aggressive monsters and NPC.  */
+#define CIRCLE2 48 /**< Same as ::CIRCLE1 but a larger circle is used.        */
+#define PACEH   64 /**< The monster will pace back and forth until attacked.
+                    * This is HORIZONTAL movement.                            */
 #define PACEH2  80 /**< The monster will pace as above but the length of the
                     * pace area is longer and the monster stops before
-                    * changing directions
-                    * this is HORIZONTAL movement                             */
+                    * changing directions.
+                    * This is HORIZONTAL movement.                            */
 #define RANDO   96 /**< The monster will go in a random direction until
                     * it is stopped by an obstacle, then it chooses another
                     * direction.                                              */
-#define RANDO2 112 /**< Constantly move in a different random direction       */
-#define PACEV  128 /**< The monster will pace back and forth until attacked
-                    * this is VERTICAL movement                               */
+#define RANDO2 112 /**< Constantly move in a different random direction.      */
+#define PACEV  128 /**< The monster will pace back and forth until attacked.
+                    * This is VERTICAL movement.                              */
 #define PACEV2 144 /**< The monster will pace as above but the length of the
                     * pace area is longer and the monster stops before
-                    * changing directions
-                    * this is VERTICAL movement                               */
+                    * changing directions.
+                    * This is VERTICAL movement.                              */
 #define LO4     15 /**< bitmasks for upper and lower 4 bits from 8 bit fields */
 #define HI4    240
 /*@}*/
