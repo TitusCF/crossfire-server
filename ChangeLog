@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #755: Player 'freezes' after boarded wagon is destroyed 
+server/attack.c: reset player's contr->transport to NULL.
+Nicolas Weeger 2013-07-18
+
 server/apply.c: Fixed wrong check for applied flag when closing container to
 open another one.
 Karla Stenger 2013-01-11

@@ -177,6 +177,28 @@ void save_throw_object(object *op, uint32 type, object *originator) {
         if (op == NULL)
             return;
 
+        /*
+         * If this object is a transport and has players in it, make them disembark.
+         */
+        if (op->type == TRANSPORT && op->inv) {
+            if (op->map == NULL) {
+                LOG(llevError, "Transport %s not on a map but with an item %s in it?\n", op->name, op->inv->name);
+            } else {
+                char name[MAX_BUF];
+                query_name(op, name, sizeof(name));
+                FOR_INV_PREPARE(op, inv) {
+                    if (inv->contr) {
+                        draw_ext_info_format(NDI_UNIQUE, 0, inv, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                            "You are expelled from the %s during its destruction.",
+                            name);
+                        inv->contr->transport = NULL;
+                    }
+                }
+                FOR_INV_FINISH();
+            }
+        }
+
+
         /* Set off runes in the inventory of the object being destroyed. */
         FOR_INV_PREPARE(op, inv)
             if (inv->type == RUNE)
