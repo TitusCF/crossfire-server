@@ -3914,6 +3914,7 @@ end
 Allowed balm_generic
 chance 1
 Object first aid
+face balm_first_aid.111
 type 5
 value 1
 other_arch spell_minor_healing
@@ -3971,6 +3972,7 @@ end
 Allowed balm_generic
 chance 1
 Object aethereality
+face balm_aethereality.111
 type 5
 resist_physical 50
 value 3
@@ -3979,6 +3981,7 @@ end
 Allowed balm_generic
 chance 1
 Object asbestos
+face balm_asbestos.111
 type 5
 resist_fire 50
 value 1
@@ -3987,6 +3990,7 @@ end
 Allowed balm_generic
 chance 1
 Object insulation
+face balm_insulation.111
 type 5
 resist_electricity 50
 value 1
@@ -3995,6 +3999,7 @@ end
 Allowed balm_generic
 chance 1
 Object warmth
+face balm_warmth.111
 type 5
 resist_cold 50
 value 1
@@ -4125,6 +4130,7 @@ end
 Allowed balm_generic
 chance 1
 Object flying
+face balm_flying.111
 type 5
 value 1
 other_arch spell_levitate
@@ -4133,6 +4139,7 @@ end
 Allowed balm_generic
 chance 1
 Object the serpent
+face balm_serpent.111
 type 5
 value 1
 other_arch spell_staff_to_snake
@@ -4141,6 +4148,7 @@ end
 Allowed balm_generic
 chance 1
 Object invisible to undead
+face balm_invisible_undead.111
 type 5
 other_arch spell_invisible_to_undead
 value 1
@@ -4149,6 +4157,7 @@ end
 Allowed balm_generic
 chance 1
 Object transparency
+face balm_transparency.111
 type 5
 other_arch spell_improved_invisibility
 value 1
@@ -4157,6 +4166,7 @@ end
 Allowed balm_generic
 chance 1
 Object return home
+face balm_return_home.111
 type 5
 value 1
 other_arch spell_word_of_recall
