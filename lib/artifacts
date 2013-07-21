@@ -4279,6 +4279,7 @@ end
 Allowed dust_generic
 chance 1
 Object stasis
+face dust_stasis.111
 type 5
 value 1
 other_arch spell_paralyze
@@ -4287,6 +4288,7 @@ end
 Allowed dust_generic
 chance 1
 Object frost
+face dust_frost.111
 type 5
 other_arch spell_icestorm
 value 1
@@ -4295,6 +4297,7 @@ end
 Allowed dust_generic
 chance 1
 Object fright
+face dust_fright.111
 type 5
 value 1
 other_arch spell_fear
@@ -4303,6 +4306,7 @@ end
 Allowed dust_generic
 chance 1
 Object lethargy
+face dust_lethargy.111
 type 5
 value 1
 other_arch spell_slow
@@ -4311,6 +4315,7 @@ end
 Allowed dust_generic
 chance 1
 Object concussion
+face dust_concussion.111
 type 5
 other_arch spell_shockwave
 value 6
@@ -4328,6 +4333,7 @@ end
 Allowed dust_generic
 chance 1
 Object repelling undead
+face dust_repelling_undead.111
 type 5
 other_arch spell_turn_undead
 level -30
@@ -4337,6 +4343,7 @@ end
 Allowed dust_generic
 chance 1
 Object madness
+face dust_madness.111
 type 5
 other_arch spell_mass_confusion
 value 2
@@ -4345,6 +4352,7 @@ end
 Allowed dust_generic
 chance 1
 Object ignition
+face dust_ignition.111
 type 5
 other_arch spell_burning_hands
 value 2
@@ -4353,6 +4361,7 @@ end
 Allowed dust_generic
 chance 1
 Object conflagration
+face dust_conflagration.111
 type 5
 other_arch spell_hellfire
 value 4
@@ -4361,6 +4370,7 @@ end
 Allowed dust_generic
 chance 1
 Object countermagic
+face dust_countermagic.111
 type 5
 other_arch spell_counterspell
 level -30
@@ -4370,6 +4380,7 @@ end
 Allowed dust_generic
 chance 1
 Object the Dead
+face dust_dead.111
 type 5
 other_arch spell_command_undead
 level -30
@@ -4380,6 +4391,7 @@ end
 Allowed dust_generic
 chance 1
 Object consuming wrath
+face dust_consuming_wrath.111
 type 5
 other_arch spell_mana_blast
 value 3
@@ -4389,6 +4401,7 @@ end
 Allowed dust_generic
 chance 1
 Object encompassing rage
+face dust_encompassing_rage.111
 type 5
 other_arch spell_medium_manaball
 value 6
@@ -4398,6 +4411,7 @@ end
 Allowed dust_generic
 chance 1
 Object blizzards
+face dust_blizzards.111
 type 5
 other_arch spell_medium_snowstorm
 value 4
@@ -4408,6 +4422,7 @@ end
 Allowed dust_generic
 chance 1
 Object clairvoyance
+face dust_clairvoyance.111
 type 5
 other_arch spell_magic_mapping
 value 2
@@ -4416,6 +4431,7 @@ end
 Allowed dust_generic
 chance 1
 Object revealing
+face dust_revealing.111
 type 5
 other_arch spell_show_invisible
 level -20
@@ -4425,6 +4441,7 @@ end
 Allowed dust_generic
 chance 1
 Object show enchantment
+face dust_show_enchantment.111
 type 5
 other_arch spell_detect_magic
 value 1
@@ -4433,6 +4450,7 @@ end
 Allowed dust_generic
 chance 1
 Object night vision
+face dust_night_vision.111
 type 5
 value 1
 other_arch spell_dark_vision
@@ -4441,6 +4459,7 @@ end
 Allowed dust_generic
 chance 1
 Object piercing vision
+face dust_piercing_vision.111
 type 5
 other_arch spell_xray
 value 6
@@ -4449,6 +4468,7 @@ end
 Allowed dust_generic
 chance 1
 Object clinging glow
+face dust_clinging_glow.111
 type 5
 other_arch spell_faery_fire
 value 1
@@ -4457,6 +4477,7 @@ end
 Allowed dust_generic
 chance 1
 Object Biren's mist
+face dust_biren_mist.111
 type 5
 other_arch spell_summon_fog
 value 1
@@ -4468,6 +4489,7 @@ end
 Allowed dust_generic
 chance 1
 Object brightness
+face dust_brightness.111
 type 5
 other_arch spell_light
 level -20
@@ -4478,6 +4500,7 @@ end
 Allowed dust_generic
 chance 1
 Object impenatrability
+face dust_impenatrability.111
 type 5
 other_arch spell_darkness
 level -20
