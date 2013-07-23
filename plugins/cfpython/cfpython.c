@@ -1277,6 +1277,27 @@ static void initConstants(PyObject *module) {
         { NULL, 0 }
     };
 
+    static const CFConstant cstAttackMovement[] = {
+        { "DISTATT", DISTATT },
+        { "RUNATT", RUNATT },
+        { "HITRUN", HITRUN },
+        { "WAITATT", WAITATT },
+        { "RUSH", RUSH },
+        { "ALLRUN", ALLRUN },
+        { "DISTHIT", DISTHIT },
+        { "WAIT2", WAIT2 },
+        { "PETMOVE", PETMOVE },
+        { "CIRCLE1", CIRCLE1 },
+        { "CIRCLE2", CIRCLE2 },
+        { "PACEH", PACEH },
+        { "PACEH2", PACEH2 },
+        { "RANDO", RANDO },
+        { "RANDO2", RANDO2 },
+        { "PACEV", PACEV },
+        { "PACEV2", PACEV2 },
+        { NULL, 0 }
+    };
+
     addConstants(module, "Direction", cstDirection);
     addConstants(module, "Type", cstType);
     addConstants(module, "Move", cstMove);
@@ -1287,6 +1308,7 @@ static void initConstants(PyObject *module) {
     addConstants(module, "EventType", cstEventType);
     addSimpleConstants(module, "Time", cstTime);
     addSimpleConstants(module, "ReplyType", cstReplyTypes);
+    addSimpleConstants(module, "AttackMovement", cstAttackMovement);
 }
 
 /*
