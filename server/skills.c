@@ -1,44 +1,27 @@
 /*
- * static char *rcsid_skills_c =
- *   "$Id$";
- */
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2003-2006 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail to crossfire-devel@real-time.com
-*/
-
-/**
- * @file
- * This file contains core skill handling.
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, see the
+ * 'LICENSE' and 'COPYING' files.
+ *
+ * The authors can be reached via e-mail to crossfire-devel@real-time.com
+ *
+ * skills.c -- core skill handling
  */
 
-#include <global.h>
-#include <object.h>
+#include "global.h"
+#include "object.h"
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
-#include <living.h>
-#include <skills.h>
-#include <spells.h>
-#include <book.h>
+#include "living.h"
+#include "skills.h"
+#include "spells.h"
+#include "book.h"
 
 /**
  * Computes stealing chance.
@@ -1448,38 +1431,42 @@ void meditate(object *pl, object *skill) {
 }
 
 /**
- * This routine allows players to inscribe messages in
- * ordinary 'books' (anything that is type BOOK). b.t.
+ * Called by write_on_item() to inscribe a message in an ordinary book.
  *
  * @param pl
- * player writing.
+ * Player attempting to write
  * @param item
- * book to write into.
+ * Book to write the message in
  * @param msg
- * message to write.
- * @param skill
- * writing skill object.
+ * Message to write
  * @return
- * experience gained for writing.
+ * Experience gained from using the skill
  * @todo assert() instead of simple check.
  */
-static int write_note(object *pl, object *item, const char *msg, object *skill) {
+static int write_note(object *pl, object *item, const char *msg) {
     char buf[BOOK_BUF];
     object *newBook = NULL;
 
-    /* a pair of sanity checks */
-    if (!item || item->type != BOOK)
-        return 0;
-
-    if (!msg) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                             "No message to write!\nUsage: use_skill %s <message>",
-                             skill->skill);
+    // The item should exist and be a book, but check it just in case.
+    if (!item || item->type != BOOK) {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                "That was interesting...");
+        // TODO: Print a scary log message.
         return 0;
     }
+
+    // The message should never be NULL, but check it just in case.
+    if (!msg) {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                "Hmm... what was I going to write?");
+        // TODO: Print a scary log message.
+        return 0;
+    }
+
+    // Don't let the player write a reserved keyword.
     if (strcasestr_local(msg, "endmsg")) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "Trying to cheat now are we?");
+                "Trying to cheat now are we?");
         return 0;
     }
 
@@ -1488,12 +1475,19 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
         return strlen(msg);
 
     buf[0] = 0;
-    if (!book_overflow(item->msg, msg, BOOK_BUF)) { /* add msg string to book */
-        if (item->msg)
-            snprintf(buf, sizeof(buf), "%s%s\n", item->msg, msg);
-        else
-            snprintf(buf, sizeof(buf), "%s\n", msg);
 
+    // Write the message in the book if it doesn't overflow the buffer.
+    if (!book_overflow(item->msg, msg, BOOK_BUF)) {
+        // TODO: Garble some characters depending on intelligence/skill.
+
+        // If there was already text, append the new message on the end.
+        if (item->msg) {
+            snprintf(buf, sizeof(buf), "%s%s\n", item->msg, msg);
+        } else {
+            snprintf(buf, sizeof(buf), "%s\n", msg);
+        }
+
+        // If there were multiple items in a stack, unstack one and write.
         if (item->nrof > 1) {
             newBook = object_new();
             object_copy(item, newBook);
@@ -1503,30 +1497,32 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
             newBook = object_insert_in_ob(newBook, pl);
         } else {
             object_set_msg(item, buf);
-            /* This shouldn't be necessary - the object hasn't changed in any
-             * visible way
-             */
-            /*     esrv_send_item(pl, item);*/
-        }
-        query_short_name(item, buf, BOOK_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                             "You write in the %s.",
-                             buf);
-        return strlen(msg);
-    }
 
-    query_short_name(item, buf, BOOK_BUF);
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                         "Your message won't fit in the %s!",
-                         buf);
-    return 0;
+            // This shouldn't be necessary; the object hasn't changed visibly.
+            //esrv_send_item(pl, item);
+        }
+
+        // Tell the player that he/she wrote in the object.
+        query_short_name(item, buf, BOOK_BUF);
+        draw_ext_info_format(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                "You write in the %s.", buf);
+
+        // Give the player experience for writing.
+        return strlen(msg);
+    } else {
+        query_short_name(item, buf, BOOK_BUF);
+        draw_ext_info_format(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                "Your message won't fit in the %s!", buf);
+        return 0;
+    }
 }
 
 /**
- * This routine allows players to inscribe spell scrolls
- * of spells which they know. Backfire effects are possible with the
- * severity of the backlash correlated with the difficulty of the scroll
- * that is attempted. -b.t. thomas@astro.psu.edu
+ * Called by write_on_item() to inscribe spell scrolls that the player can
+ * cast. Backfire effects are possible, varying in severity depending on the
+ * difficulty of the spell being attempted.
  *
  * @param pl
  * player writing a scroll.
@@ -1541,71 +1537,80 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
     int success = 0, confused = 0, grace_cost = 0;
     object *newscroll, *chosen_spell, *tmp;
 
-    /* this is a sanity check */
-    if (scroll->type != SCROLL) {
+    // The item should exist and be a scroll, but check it just in case.
+    if (!scroll || scroll->type != SCROLL) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "A spell can only be inscribed into a scroll!");
+                "A spell must be written on a magic scroll!");
+        // TODO: Print a scary log message.
         return 0;
     }
 
-    /* Check if we are ready to attempt inscription */
+    // The player must have a spell readied to inscribe.
     chosen_spell = pl->contr->ranges[range_magic];
     if (!chosen_spell) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You need a spell readied in order to inscribe!");
+                "You should ready the spell you wish to inscribe.");
         return 0;
     }
-    /* grace can become negative, we don't want a sp spell to block writing. */
+
+    // Make sure the player has enough SP or grace to write the spell.
     grace_cost = SP_level_spellpoint_cost(pl, chosen_spell, SPELL_GRACE);
     if (grace_cost > 0 && grace_cost > pl->stats.grace) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "You don't have enough grace to write a scroll of %s.",
-                             chosen_spell->name);
+        draw_ext_info_format(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                "You don't have enough grace to write a scroll of %s.",
+                chosen_spell->name);
         return 0;
     }
+
     if (SP_level_spellpoint_cost(pl, chosen_spell, SPELL_MANA) > pl->stats.sp) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "You don't have enough mana to write a scroll of %s.",
-                             chosen_spell->name);
+        draw_ext_info_format(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                "You don't have enough mana to write a scroll of %s.",
+                chosen_spell->name);
         return 0;
     }
-    /* Prevent an abuse: write a spell you're denied with, then cast it from the
-     * written scroll - gros, 28th July 2006
-     */
-    if (chosen_spell->path_attuned&pl->path_denied && settings.allow_denied_spells_writing == 0) {
+
+    // Prevent players from writing spells that they are denied.
+    if (chosen_spell->path_attuned & pl->path_denied
+            && settings.allow_denied_spells_writing == 0) {
         char name[MAX_BUF];
 
         query_name(chosen_spell, name, MAX_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                             "The simple idea of writing a scroll of %s makes you sick !",
-                             name);
+        draw_ext_info_format(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                "Just the idea of writing a scroll of %s makes you sick!",
+                name);
         return 0;
     }
 
-    /* if there is a spell already on the scroll then player could easily
-     * accidently read it while trying to write the new one.  give player
-     * a 50% chance to overwrite spell at their own level
-     */
-    if ((scroll->stats.sp || scroll->inv)
-    && random_roll(0, scroll->level*2, pl, PREFER_LOW) > skill->level) {
+    // If the scroll already had a spell written on it, the player could
+    // accidentally read it while trying to write a new one. Give the player
+    // a 50% chance to overwrite a spell at their own level.
+    if ((scroll->stats.sp || scroll->inv) &&
+            random_roll(0, scroll->level*2, pl, PREFER_LOW) > skill->level) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "Oops! You accidently read it while trying to write on it.");
+                "Oops! You accidently read it while trying to write on it.");
         apply_manual(pl, scroll, 0);
         return 0;
     }
 
-    if (execute_event(scroll, EVENT_TRIGGER, pl, chosen_spell, NULL, 0) != 0)
+    if (execute_event(scroll, EVENT_TRIGGER, pl, chosen_spell, NULL, 0) != 0) {
         return 0;
+    }
 
-    /* ok, we are ready to try inscription */
-    if (QUERY_FLAG(pl, FLAG_CONFUSED))
+    // Find out if the player is confused or not.
+    if (QUERY_FLAG(pl, FLAG_CONFUSED)) {
         confused = 1;
+    }
 
-    /* Lost mana/grace no matter what */
+    // Mana or grace is lost no matter if the inscription is successful.
     pl->stats.grace -= SP_level_spellpoint_cost(pl, chosen_spell, SPELL_GRACE);
     pl->stats.sp -= SP_level_spellpoint_cost(pl, chosen_spell, SPELL_MANA);
 
-    if (random_roll(0, chosen_spell->level*4-1, pl, PREFER_LOW) < skill->level) {
+    if (random_roll(0, chosen_spell->level * 4 - 1, pl, PREFER_LOW) <
+            skill->level) {
+        // If there were multiple items in a stack, unstack one.
         if (scroll->nrof > 1) {
             newscroll = object_new();
             object_copy(scroll, newscroll);
@@ -1615,86 +1620,102 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
             newscroll = scroll;
         }
 
+        // Write spell if not confused; otherwise write random spell.
+        newscroll->level = MAX(skill->level, chosen_spell->level);
+
         if (!confused) {
-            newscroll->level = MAX(skill->level, chosen_spell->level);
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                          "You succeed in writing a new scroll.");
+            draw_ext_info(
+                    NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                    "You succeed in writing a new scroll.");
         } else {
             chosen_spell = find_random_spell_in_ob(pl, NULL);
-            if (!chosen_spell)
+            if (!chosen_spell) {
                 return 0;
+            }
 
-            newscroll->level = MAX(skill->level, chosen_spell->level);
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                          "In your confused state, you write down some odd spell.");
+            draw_ext_info(
+                    NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                    "In your confused state, you write down some odd spell.");
         }
 
         if (newscroll->inv) {
             object *ninv;
-
             ninv = newscroll->inv;
             object_remove(ninv);
             object_free2(ninv, FREE_OBJ_NO_DESTROY_CALLBACK);
         }
+
         tmp = object_new();
         object_copy(chosen_spell, tmp);
         object_insert_in_ob(tmp, newscroll);
-        /* This is needed so casting from the scroll correctly works with moving_ball types, which
-           check attunements. */
+
+        // This is needed so casting from the scroll works correctly with
+        // moving_ball types, which checks attunements.
         newscroll->path_attuned = tmp->path_repelled;
 
-        /* Same code as from treasure.c - so they can better merge.
-         * if players want to sell them, so be it.
-         */
-        newscroll->value =  newscroll->arch->clone.value*newscroll->inv->value*(newscroll->level+50)/(newscroll->inv->level+50);
-        newscroll->stats.exp = newscroll->value/5;
+        // Same code as from treasure.c - so they can better merge.
+        // If players want to sell them, so be it.
+        newscroll->value = newscroll->arch->clone.value *
+            newscroll->inv->value * (newscroll->level + 50 ) /
+            (newscroll->inv->level + 50);
+        newscroll->stats.exp = newscroll->value / 5;
 
-        /* wait until finished manipulating the scroll before inserting it */
+        // Finish manipulating the scroll before inserting it.
         if (newscroll == scroll) {
-            /* Remove to correctly merge with other items which may exist in inventory */
+            // Remove object to stack correctly with other items.
             object_remove(newscroll);
         }
+
         newscroll = object_insert_in_ob(newscroll, pl);
         success = calc_skill_exp(pl, newscroll, skill);
-        if (!confused)
+
+        if (!confused) {
             success *= 2;
-        success = success*skill->level;
+        }
+
+        success = success * skill->level;
         return success;
     }
 
-    /* Inscription has failed */
-    if (chosen_spell->level > skill->level || confused) { /*backfire!*/
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "Ouch! Your attempt to write a new scroll strains your mind!");
-        if (random_roll(0, 1, pl, PREFER_LOW) == 1)
+    // Inscription wasn't successful; do something bad to the player.
+    if (chosen_spell->level > skill->level || confused) {
+        draw_ext_info(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                "Ouch! Your attempt to write a new scroll strains your mind!");
+
+        // Either drain a stat or subtract experience.
+        if (random_roll(0, 1, pl, PREFER_LOW) == 1) {
             drain_specific_stat(pl, 4);
-        else {
+        } else {
             confuse_living(pl, pl, 99);
-            return (-30*chosen_spell->level);
+            return -30 * chosen_spell->level;
         }
     } else if (random_roll(0, pl->stats.Int-1, pl, PREFER_HIGH) < 15) {
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "Your attempt to write a new scroll rattles your mind!");
+        draw_ext_info(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                "Your attempt to write a new scroll rattles your mind!");
         confuse_living(pl, pl, 99);
-    } else
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-                      "You fail to write a new scroll.");
+    } else {
+        draw_ext_info(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                "You fail to write a new scroll.");
+    }
+
     return 0;
 }
 
 /**
- * Writing skill handling.
- *
- * Wrapper for write_note() and write_scroll().
+ * Implement the 'inscription' skill, which checks for the required skills and
+ * marked items before running either write_note() or write_scroll().
  *
  * @param pl
- * player writing.
+ * Player attempting to write
  * @param params
- * message to inscribe.
+ * Message to write, blank to write a spell
  * @param skill
- * writing skill.
+ * Writing skill
  * @return
- * experience gained for using the skill.
+ * Experience gained from using the skill
  */
 int write_on_item(object *pl, const char *params, object *skill) {
     object *item;
@@ -1702,65 +1723,74 @@ int write_on_item(object *pl, const char *params, object *skill) {
     int msgtype;
     archetype *skat;
 
-    if (pl->type != PLAYER)
+    // Only players can use the inscription skill.
+    if (pl->type != PLAYER) {
         return 0;
+    }
 
+    // No message was given, so both strings are set to empty.
     if (!params) {
         params = "";
         string = params;
     }
+
+    // You must be able to read before you can write.
     skat = get_archetype_by_type_subtype(SKILL, SK_LITERACY);
 
-    /* Need to be able to read before we can write! */
     if (!find_skill_by_name(pl, skat->clone.skill)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                      "You must learn to read before you can write!");
+                "You must learn to read before you can write!");
         return 0;
     }
 
+    // You must not be blind to write, unless you're a DM.
     if (QUERY_FLAG(pl, FLAG_BLIND) && !QUERY_FLAG(pl, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-            "You are unable to write while blind.");
+                "You are unable to write while blind.");
         return 0;
     }
 
+    // If a message was given, write a book. Otherwise, write a scroll.
+    if (string[0] != '\0') {
+        msgtype = BOOK;
+    } else {
+        msgtype = SCROLL;
+    }
 
-    /* if there is a message then it goes in a book and no message means
-     * write active spell into the scroll
-     */
-    msgtype = (string[0] != '\0') ? BOOK : SCROLL;
-
-    /* find an item of correct type to write on */
+    // Find and attempt to write on the player's marked item.
     item = find_marked_object(pl);
     if (item == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You don't have any marked item to write on.");
+                "You haven't marked any items to write on yet.");
         return 0;
     }
 
+    // Don't let the player write on an unpaid item.
     if (QUERY_FLAG(item, FLAG_UNPAID)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                      "You had better pay for that before you write on it.");
+                "You had better pay for that before you write on it!");
         return 0;
     }
+
+    // Check if the marked item is the type of item we're writing.
     if (msgtype != item->type) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                             "You have no %s to write %s",
-                             msgtype == BOOK ? "book" : "scroll",
-                             msgtype == BOOK ? "on" : "your spell down");
+        draw_ext_info_format(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                "You must mark a %s to write %s.",
+                msgtype == BOOK ? "book" : "magic scroll",
+                msgtype == BOOK ? "your message on" : "your spell down");
         return 0;
     }
 
-    if (msgtype == SCROLL) {
-        return write_scroll(pl, item, skill);
-    }
     if (msgtype == BOOK) {
-        return write_note(pl, item, string, skill);
+        return write_note(pl, item, string);
+    } else if (msgtype == SCROLL) {
+        return write_scroll(pl, item, skill);
+    } else {
+        // This case should never be reached.
+        return 0;
     }
-    return 0;
 }
-
-
 
 /**
  * Find an object to throw.
