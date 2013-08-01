@@ -1,14 +1,11 @@
+# formulae -- herein lie the formulae for alchemical products
 #
-# Herein lie the formulae for alchemical products.
-#
-# The code is designed so that any fancy combination
-# of objects may be combined to comprise a formula. Because
-# the code only requests that the 'names' (see def below)
-# of cauldron ingredients match those listed in the formula
-# you can use *anything* found in the game as a possible
-# ingredient. Legal names include both obj->name and a
-# title field, if it exists. Therefore, it *is* legal to use
-# an artifact like "cloak of protection" as an ingredient.
+# The code is designed so that any combination of objects may be combined to
+# comprise a formula. Because the code only requires that the 'names' (see def
+# below) of cauldron ingredients match those listen in the formula, you can
+# use anything found in the game as a possible ingredient. Legal names include
+# both 'obj->name' and a title field, if it exists. For example, it is legal
+# to use an artifact like a "cloak of protection" as an ingredient.
 #
 # Definitions of fields:
 #
@@ -75,11 +72,11 @@
 #           gets by using this formula.  You should factor difficulty in
 #           when setting exp.  The game does not do this for you.
 #
-#   "diff"  A required integer.  This is the percentage difficulty out of
+#  "diff"  A required integer.  This is the percentage difficulty out of
 #   	    100 of how hard this formula is.  This is the only factor used in
 #           determining success or failure of the creation.
 #
-#   "failure_arch" An optional string, which must be the valid archetype name for an
+#  "failure_arch" An optional string, which must be the valid archetype name for an
 #           archetype. Instead of a random effect, this item will be generated in case
 #           of alchemy failure.
 #
@@ -102,7 +99,7 @@
 #	    It is not enough to construct ad-hoc lists of
 #	    ingredients to make a formula. Playbalance will
 #	    be adversely effected if you make a formula for
-#	    a powerfull artifact (potion of stat raising, for
+#	    a powerful artifact (potion of stat raising, for
 #	    example) that is common, and/or easy to assemble
 #	    the ingredients, and/or has few ingredients. Thus,
 #	    here are some general guidelines for making formulae:
@@ -110,8 +107,8 @@
 #		1) no fewer than 2 ingredients
 #		2) at least one ingredient needs to be found
 #		   in the dungeon, or is rarely appearing in shop.
-#		3) more ingredients for more powerfull stuff.
-#		4) more 'expensive' ingredients for more powerfull
+#		3) more ingredients for more powerful stuff.
+#		4) more 'expensive' ingredients for more powerful
 #		   stuff. 'expensive' here means its harder to get,
 #		   more costly to buy, rarer to find.
 #		5) Run crossfire with the -m9 switch to check your formula -
