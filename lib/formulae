@@ -1787,7 +1787,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred dragon mail,3 dragon's steak,dragon's eye,dragon scale,fire para-elemental's residue
+ingred red dragon mail,3 dragon's steak,dragon's eye,red dragon scale,fire para-elemental's residue
 #
 Object Blazing Fires
 arch scale_mail,b_scale_mail
@@ -1798,7 +1798,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred scale mail,wyvern's steak,dragon scale,fire para-elemental's residue
+ingred scale mail,wyvern's steak,red dragon scale,fire para-elemental's residue
 #
 Object Gaea
 arch leather_armour
