@@ -127,7 +127,7 @@
 # true lead
 Object NONE
 arch true_lead
-yield 2
+yield 3
 chance 5
 diff 20
 exp 100000
@@ -138,7 +138,7 @@ ingred lead,pile of philosophical salt,bottle of philosophical oil,pile of philo
 # fixed mercury
 Object NONE
 arch fix_mercury
-yield 2
+yield 3
 chance 5
 diff 20
 exp 100000
@@ -288,7 +288,8 @@ Object warmth
 arch balm_generic
 chance 25
 diff 16
-exp 9000
+exp 12000
+yield 6
 skill alchemy
 cauldron cauldron
 ingred vampire's heart,water of the wise,icecube
@@ -299,9 +300,10 @@ arch balm_generic
 chance 25
 diff 14
 exp 6000
+yield 3
 skill alchemy
 cauldron cauldron
-ingred vampire's heart,water of the wise,water of pearl
+ingred water of the wise,water of pearl,icecube
 #
 # -- elect prot.
 Object insulation
@@ -364,6 +366,7 @@ diff 9
 exp 4000
 skill alchemy
 cauldron cauldron
+yield 7
 ingred water of the wise,mandrake root
 #
 # -- levitation
@@ -762,6 +765,7 @@ diff 16
 exp 12000
 skill alchemy
 cauldron cauldron
+yield 7
 ingred 3 water of the wise,ogre's arm,pile of philosophical salt
 #
 # -- dex spell
@@ -1008,11 +1012,11 @@ Object NONE
 arch potion_heal
 chance 4
 diff 13
-exp 13000
-yield 4
+exp 26000
+yield 10
 skill alchemy
 cauldron cauldron
-ingred supreme potion of life,mushroom of Healing,red rose
+ingred supreme potion of life,mushroom of Healing
 #
 # -- healing recipe #2
 Object NONE
@@ -2612,7 +2616,7 @@ exp 9000
 yield 1
 skill jeweler
 cauldron jeweler_bench
-ingred amulet,vampire's heart,3 diamond of great value
+ingred amulet,vampire's heart,diamond of great value
 #
 Object Empowerment
 arch amulet
@@ -2622,7 +2626,7 @@ exp 10000
 yield 1
 skill jeweler
 cauldron jeweler_bench
-ingred amulet,3 magic power potion,3 sapphire of great value
+ingred amulet,magic power potion,3 sapphire of great value
 #
 Object Aethereality
 arch amulet
