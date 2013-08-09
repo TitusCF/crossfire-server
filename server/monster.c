@@ -931,6 +931,9 @@ static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv) {
  * @todo improve logic, take enemy into consideration.
  */
 static int monster_should_cast_spell(object *spell_ob) {
+    if (spell_ob == NULL)
+      return 0;
+
     if (spell_ob->subtype == SP_BOLT
     || spell_ob->subtype == SP_BULLET
     || spell_ob->subtype == SP_EXPLOSION
