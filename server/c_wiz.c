@@ -1086,7 +1086,14 @@ void command_create(object *op, const char *params) {
         }
     } /* if cp */
 
-    if ((at->clone.type == ROD || at->clone.type == WAND || at->clone.type == SCROLL || at->clone.type == SPELLBOOK)
+    /* rods and potions can get their spell from the artifact */
+    if ((at->clone.type == ROD || at->clone.type == POTION) && !at_spell && (!art || !art->item->other_arch)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                             "Unable to find spell %s for object that needs it, or it is of wrong type",
+                             cp);
+        return;
+    }
+    if ((at->clone.type == WAND || at->clone.type == SCROLL || at->clone.type == SPELLBOOK)
     && !at_spell) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Unable to find spell %s for object that needs it, or it is of wrong type",
