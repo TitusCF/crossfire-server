@@ -2148,6 +2148,7 @@ hp -30
 maxhp -30
 value 25
 other_arch spell_create_food
+animation_suffix plenty
 end
 #
 Allowed horn,shell horn
@@ -2158,6 +2159,7 @@ other_arch spell_firebolt
 hp -40
 maxhp -40
 value 10
+animation_suffix fire
 end
 #
 Allowed horn,shell horn
@@ -2168,6 +2170,7 @@ other_arch spell_frostbolt
 hp -40
 maxhp -40
 value 10
+animation_suffix frost
 end
 #
 Allowed horn,shell horn
@@ -2179,6 +2182,7 @@ hp -10
 maxhp -10
 value 3
 cursed 1
+animation_suffix aggravation
 end
 #
 Allowed horn,shell horn
@@ -2192,6 +2196,7 @@ value 5
 luck -2
 Int -2
 damned 1
+animation_suffix fools
 end
 #
 Allowed horn,shell horn
@@ -2207,6 +2212,7 @@ maxhp -20
 Cha 2
 Int -2
 value 30
+animation_suffix sirens
 end
 #
 Allowed horn,shell horn
@@ -2218,6 +2224,7 @@ hp -100
 maxhp -100
 value 40
 Cha 1
+animation_suffix eorlingas
 end
 #
 # Cloaks
