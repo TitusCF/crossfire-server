@@ -429,7 +429,6 @@ int monster_compute_path(object *source, object *target, int default_dir) {
             y = explore_y[current]+freearr_y[dir];
 
             if (x == source->x && y == source->y) {
-                //LOG(llevDebug, "monster_compute_path => %d\n", absdir(dir+4));
                 free(distance);
                 return absdir(dir+4);
             }
@@ -916,7 +915,7 @@ static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv) {
  * @todo improve logic, take enemy into consideration.
  */
 static int monster_should_cast_spell(object *spell_ob) {
-    // The caller is responsible for making sure that *spell_ob is defined.
+    /* The caller is responsible for making sure that *spell_ob is defined. */
     assert(spell_ob != NULL);
 
     if (spell_ob->subtype == SP_BOLT
