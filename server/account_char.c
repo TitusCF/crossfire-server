@@ -71,7 +71,7 @@
 #define NUM_ACCOUNT_CHAR_FIELDS 7
 
 /**
- * Name of the accounts file.  I can not ever see a reason why this
+ * Name of the directory containing account information.  I can not ever see a reason why this
  * name would not work, but may as well still make it easy to change it.
  */
 #define ACCOUNT_DIR "account"
