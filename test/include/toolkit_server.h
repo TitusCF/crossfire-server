@@ -1,2 +1,5 @@
 /* toolkit_server.c */
-int blablabla(int bla);
+/**
+ * Clean temporary account-related files, put into /tmp.
+ */
+void clean_test_account_data();

@@ -36,6 +36,7 @@
 #include <toolkit_common.h>
 #include <sproto.h>
 #include <unistd.h>
+#include <toolkit_server.h>
 
 static void setup(void) {
 }
@@ -236,9 +237,7 @@ int main(void) {
      * that file.
      */
     settings.localdir = strdup_local("/tmp/");
-    /** remove files from previous runs. */
-    unlink("/tmp/account/testaccount");
-    unlink("/tmp/accounts");
+    clean_test_account_data();
     init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/unit/server/account.xml");
@@ -246,5 +245,6 @@ int main(void) {
     srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
     nf = srunner_ntests_failed(sr);
     srunner_free(sr);
+    clean_test_account_data();
     return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
