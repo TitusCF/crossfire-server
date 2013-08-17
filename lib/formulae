@@ -1010,24 +1010,24 @@ ingred unicorn horn,3 booze
 # -- healing recipe #1
 Object NONE
 arch potion_heal
-chance 4
-diff 13
-exp 26000
-yield 10
-skill alchemy
 cauldron cauldron
-ingred supreme potion of life,mushroom of Healing
+chance 8
+diff 13
+exp 2600
+skill alchemy
+yield 1
+ingred mushroom of Healing,water of emerald,water of diamond
 #
 # -- healing recipe #2
 Object NONE
 arch potion_heal
-chance 2
+cauldron cauldron
+chance 4
 diff 13
 exp 13000
-yield 5
 skill alchemy
-cauldron cauldron
-ingred unicorn horn,balm of first aid,red rose
+yield 1
+ingred balm of first aid,red rose,unicorn horn
 #
 # -- regeneration
 Object recuperation
