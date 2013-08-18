@@ -808,10 +808,26 @@ int process_object(object *op) {
     if (QUERY_FLAG(op, FLAG_GENERATOR) && !QUERY_FLAG(op, FLAG_FRIENDLY))
         generate_monster(op);
 
+    /* If object can be used up, decrement 'food' and eventually remove it. */
     if (QUERY_FLAG(op, FLAG_IS_USED_UP) && --op->stats.food <= 0) {
-        if (QUERY_FLAG(op, FLAG_APPLIED))
+        if (QUERY_FLAG(op, FLAG_APPLIED)) {
             remove_force(op);
-        else {
+        } else {
+            if (op->env != NULL && op->env->type == PLAYER) {
+                sstring key;
+                key_value *used_up_message;
+
+                key = add_string("used_up_message");
+                used_up_message = object_get_key_value(op, key);
+                free_string(key);
+
+                if (used_up_message != NULL) {
+                    draw_ext_info_format(
+                        NDI_BLACK, 0, op->env, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+                        "The %s %s.", op->name, used_up_message->value);
+                }
+            }
+
             object_remove(op);
             if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
                 make_sure_not_seen(op);
