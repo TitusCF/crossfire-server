@@ -5,10 +5,11 @@ dist_noinst_SCRIPTS = include_html.pl
 dist_man6_MANS = crossfire-server.man crossfire-config.man \
 	crossloop.web.man crossloop.man
 
-EXTRA_DIST = PlayerStats \
-	README RunTimeCommands SurvivalGuide alchemy.doc \
-	experience metaserver multigod plugins skills.doc \
-	spellcasters_guide_to_runes
+EXTRA_DIST = README \
+	alchemy.txt        commands.txt       experience.txt     knowledge.txt \
+	media-tags.txt     metaserver.txt     multigod.txt       plugins.txt   \
+	runes-guide.txt    settings.txt       skills.txt         stats.txt     \
+	style-guide.txt    survival-guide.txt
 
 DTOP=$(top_srcdir)/$(PACKAGE)-doc
 BASENAME = @BASENAME@
