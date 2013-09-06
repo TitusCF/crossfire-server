@@ -413,7 +413,6 @@ static void move_cone(object *op) {
      * degree.
      */
     if (op->weight)
-
         check_spell_knockback(op);
 
     if (object_was_destroyed(op, tag))
@@ -424,6 +423,7 @@ static void move_cone(object *op) {
         object_free_drop_inventory(op);
         return;
     }
+
     /* Object has hit maximum range, so don't have it move
      * any further.  When the duration above expires,
      * then the object will get removed.
