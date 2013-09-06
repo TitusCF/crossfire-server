@@ -1046,7 +1046,7 @@ void CREMainWindow::onReportSummon()
             archetype* holy = determine_holy_arch(&god->clone, summon->clone.race);
             if (holy == NULL)
                 continue;
-            
+
             spells[name] = reportSummon(summon, &holy->clone, name);
         }
     }
@@ -1059,7 +1059,7 @@ void CREMainWindow::onReportSummon()
     }
 
     report += "</tbody>\n</table>\n";
-    
+
     CREReportDisplay show(report);
     QApplication::restoreOverrideCursor();
     show.exec();
@@ -1077,7 +1077,7 @@ static QString buildShopReport(const QString& title, const QStringList& types, c
   report += "<th>Max</th>";
   foreach (QString item, types)
   {
-    report += "<th>" + item + "</th>";  
+    report += "<th>" + item + "</th>";
     items.removeAll(item);
   }
   report += "</tr>\n</thead><tbody>";
@@ -1159,7 +1159,7 @@ void CREMainWindow::onReportShops()
 
     if (!items.isEmpty())
     {
-     
+
       part = items;
       report += buildShopReport("Others", part, maps, items);
     }

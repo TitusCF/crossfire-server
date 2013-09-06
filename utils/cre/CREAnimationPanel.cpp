@@ -89,7 +89,7 @@ void CREAnimationPanel::setAnimation(const Animations* animation)
     root = CREUtils::faceNode(NULL);
     myFaces->addTopLevelItem(root);
     root->setExpanded(true);
-    
+
     for (int face = 0; face < animation->num_animations; face++)
     {
       CREUtils::faceNode(animation->faces[face], root);

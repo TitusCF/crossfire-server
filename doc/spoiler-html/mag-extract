@@ -9,7 +9,7 @@
 
 		printf("<tr><th>%s</th><td>%s</td><td>%d</td><td>%s</td></tr>\n", name, $10, $8, $4);
 	}
-} 
+}
 
 function capitalize(str) {
 	return toupper(substr(str, 1, 1)) substr(str, 2);

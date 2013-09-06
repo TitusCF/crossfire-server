@@ -6,7 +6,7 @@
 
 <center>
 <h1> Crossfire Spoiler </h1>
-<b> 
+<b>
 <!--#include file="version.html"-->
 </b>
 </center>
@@ -19,7 +19,7 @@ monsters or items here before they can be encountered in the game.
 
 <h3>Enchantments</h3>
 Enchanted items are items that is better than the basic type.
-They are identified by the <em> +1</em>, <em> +2</em>, <em> +3</em> or <em> +4</em> at 
+They are identified by the <em> +1</em>, <em> +2</em>, <em> +3</em> or <em> +4</em> at
 the end of the item name.
 Also, the higher the number, the rarer the item is.
 The enchantments affect the value, weight and effect of the item;
@@ -121,9 +121,9 @@ exist several of them...
 </center>
 <p>
 <h1>Armour</h1>
- 
+
 Armour is essential to surviving in Crossfire.
-The basic idea is that the less <em> ac</em> (armour class) you have -- the more 
+The basic idea is that the less <em> ac</em> (armour class) you have -- the more
 difficult you are to hit.
 The <em> armour</em> value represents the reduction in physical damage in percent.
 There are several types of armour in Crossfire.You may only wear <b> one</b>
@@ -171,7 +171,7 @@ The different main types consist of these :
 
 <h1>Magic</h1>
 
-Magic is brought into play by various means.  The only way to actually 
+Magic is brought into play by various means.  The only way to actually
 learn the spells, is to read them from a book. Both scrolls and books
 will disappear after being read (<b> applied</b> actually). Magic that
 comes from quaffing (<b> applying</b>) a potion will stay in effect over

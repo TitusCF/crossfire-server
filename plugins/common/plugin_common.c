@@ -791,7 +791,7 @@ int cf_object_remove_depletion(object *op, int level) {
  * Wrapper for identify().
  * @copydoc identify()
  * @param op
- * @return 
+ * @return
  */
 object *cf_identify(object *op) {
     int type;

@@ -6,7 +6,7 @@ object as 'key/value fields'. The first word on the line is the key, and the
 rest of the line (leading and trailing whitespace is stripped) is the value
 (which may be an empty string!).
 
-These allow arbitrary addition of new fields to the object definition 
+These allow arbitrary addition of new fields to the object definition
 without any changes to the loader/saver, and without any increase in object
 space.  Use these to reduce the overloading of various fields for sets of
 infrequently used objects.

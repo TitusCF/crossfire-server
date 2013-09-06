@@ -3,9 +3,9 @@
 
 # read in the list of player randomitems from randitem
 BEGIN {
-	# yeah, its kludgey, but hey, I've been programming awk for 
+	# yeah, its kludgey, but hey, I've been programming awk for
 	# all of 1 day!
-	
+
 	ignoreitem["ability_fire"] = 1;
 	ignoreitem["magic"] = 1;
 	ignoreitem["more"] = 1;
@@ -27,7 +27,7 @@ BEGIN {
 	newname["cleric_book"] = "prayer book";
 	newname["book"] = "spell book";
 
-       # Read the player treasure types 
+       # Read the player treasure types
 	pl = 0;
         while ((getline buff < eqitems) == 1) {
 		nr = split(buff, line, ",");
@@ -40,24 +40,24 @@ BEGIN {
 }
 
 $1 == "treasure" {
-       	for ( i=0; i < pl ; i++ ) { 
+       	for ( i=0; i < pl ; i++ ) {
 	    	  if ($2 == list[i]) {  # matched players list
 			nrloop=0;
-			do { 
+			do {
 			  getline;
 			  if($1 in ignoreitem) continue;
-			  if($1 == ("yes"||"no")) { 
-				nrloop++; 
+			  if($1 == ("yes"||"no")) {
+				nrloop++;
 				continue;
-			  } else if($1 == "end") { 
-				if(nrloop==0) { break; } else { nrloop--; } 
-				continue; 
-			  } 
+			  } else if($1 == "end") {
+				if(nrloop==0) { break; } else { nrloop--; }
+				continue;
+			  }
 			  if($2 ~ "^skill") continue;
 			  if($2 ~ "force$") continue;
 			  if($2 in ignoreitem) continue;
 			  equip = $2;
-			  if(equip in plural) equip = sprintf("%ss",equip); 
+			  if(equip in plural) equip = sprintf("%ss",equip);
 			  if(equip in newname) equip = newname[equip];
 			  equiplist[i] = sprintf("%s,%s",equiplist[i],equip);
 		        } while ( $1 != ("treasure" || "treasureone" || "list" ) )
@@ -71,7 +71,7 @@ END {
         for(i=0;i<pl;i++) {
                 printf("<tr><td>%s</td><td>",capitalize(player[i]));
                 nr = split(equiplist[i], eq, ",");
-		if(nr==0) { 
+		if(nr==0) {
 	      # hmm. This can happen if 2 or more character classes
 	      # share the same treaure list. Lets find it.
 		   for(j=0;j<pl;j++)

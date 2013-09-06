@@ -1,11 +1,11 @@
 
-# parse the crossfire -m8 output 
+# parse the crossfire -m8 output
 
 BEGIN {
 	crosscmd = crosscmd " 2>&1";
 	god = 0;
 	while (crosscmd | getline buff == 1) {
-	   if(buff ~ /GOD/) { god++; gift[god] =0; name[god] = get_entry(buff,2," "); } 
+	   if(buff ~ /GOD/) { god++; gift[god] =0; name[god] = get_entry(buff,2," "); }
 	   if(!god) continue;
 	   if(buff ~ /enemy:/) enemy[god] = get_entry(buff,2," ");
 	   if(buff ~ /aligned/) aligned[god] = get_entry(buff,2," ");
@@ -32,15 +32,15 @@ BEGIN {
 	  # if(servant[i])	printf("Servant: & %s \\\\ \n ", servant[i]);
 	  if(aligned[i]) 	prt_var("Aligned race(s): ",aligned[i],",",3);
 	  if(erace[i]) 		prt_var("Enemy race(s): ",erace[i],",",3);
-	  if(atype[i]) 		prt_var("Attacktype(s): ",atype[i],",",3); 
-	  if(immune[i]) 	prt_var("Immunity: ",immune[i],",",3); 
-	  if(prot[i]) 	 	prt_var("Protected: ",prot[i],",",3); 
-	  if(vuln[i]) 		prt_var("Vulnerable: ",vuln[i],",",3); 
-	  if(attuned[i])  	prt_var("Attuned: ",attuned[i],",",3); 
-	  if(repelled[i])  	prt_var("Repelled: ",repelled[i],",",3); 
-	  if(denied[i]) 	prt_var("Denied: ",denied[i],",",3); 
+	  if(atype[i]) 		prt_var("Attacktype(s): ",atype[i],",",3);
+	  if(immune[i]) 	prt_var("Immunity: ",immune[i],",",3);
+	  if(prot[i]) 	 	prt_var("Protected: ",prot[i],",",3);
+	  if(vuln[i]) 		prt_var("Vulnerable: ",vuln[i],",",3);
+	  if(attuned[i])  	prt_var("Attuned: ",attuned[i],",",3);
+	  if(repelled[i])  	prt_var("Repelled: ",repelled[i],",",3);
+	  if(denied[i]) 	prt_var("Denied: ",denied[i],",",3);
 	  for(j=1;j<gift[i];j++) {
-	    if(j==1) printf("Added gifts/limits: & \\\\\n");  
+	    if(j==1) printf("Added gifts/limits: & \\\\\n");
 	    printf("& %s \\\\\n",special[i,j]);
 	  }
 	  if(i!=god) printf(" \\hline \n \\sngc\{ \} \\\\ \n \\sngc\{ \} \\\\ \\hline \n");
@@ -59,7 +59,7 @@ function get_entry (str,start,sep) {
             if(var[k]==" ") continue;
 	    break;
 	}
-	while(var[k] ~ /_/ ) { sub("_", " ", var[k]); } 
+	while(var[k] ~ /_/ ) { sub("_", " ", var[k]); }
   	return var[k];
 }
 
@@ -67,7 +67,7 @@ function prtlong (str,sep,max) {
 	nr = split(str, var, sep);
 	printf("\n");
         for(l=1;l<=nr;l++) {
-	    if(var[l] == "(null)") var[l] = "None"; 
+	    if(var[l] == "(null)") var[l] = "None";
 	    if(l==nr) printf("%s \\\\",capitalize(var[l]));
 	    else printf("%s,",capitalize(var[l]));
 	    if(l!=1 && l!=nr && (l % max)==0) printf("\\\\ \n & ");
@@ -77,4 +77,3 @@ function prtlong (str,sep,max) {
 function capitalize(str) {
         return toupper(substr(str, 1, 1)) substr(str, 2);
 }
-

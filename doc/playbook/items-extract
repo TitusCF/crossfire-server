@@ -6,7 +6,7 @@
 
 BEGIN {
 	# These types are always artifacts:
-	# containers, gems, rods, wands 
+	# containers, gems, rods, wands
 	artifact[122] = artifact[60] = artifact[3] = artifact[109] = 1;
 	# money, rings, runes, scrolls
 	artifact[36] = artifact[70] = artifact[154] = artifact[111] = 1;
@@ -38,7 +38,7 @@ BEGIN {
 
 	# earthwall, firewall, spinner, director
   	artifact[45] = artifact[62] = artifact[90] = artifact[112] = 1;
-  	
+
         # skill tools, spells
   	artifact[74] = artifact[101] = 1;
   	force[101] = 1;
@@ -51,12 +51,12 @@ BEGIN {
 	valuable[123] = "prepare";
 	valuable[66] = "guild,shop";
 	valuable[43] = "talisman,holy symbol,lockpicks";
-	
+
 	# throw out all matching names
 	worthless["chalice"] = worthless["acid spit"] = 1;
 	worthless["pyromaniac"] = worthless["rock thrower"] = 1;
 	worthless["a cracked cauldron"] = 1;
-	worthless["small bagpipe"] = worthless["magic_mouth"] = worthless["trap"] = 1; 
+	worthless["small bagpipe"] = worthless["magic_mouth"] = worthless["trap"] = 1;
  	worthless["spikes"] = worthless["stoneblock"] = worthless["cannon"] = 1;
  	worthless["volcano"] = worthless["rock thrower"] = 1;
 	worthless["drop 10 goldcoins"] = 1;
@@ -89,8 +89,8 @@ BEGIN {
 	# but they are in the worthless, we ignore it
 	if (artifact[type] && !worthless[name] && (!invisible || force[type])) {
 
-		if(!valuable[type] || (valuable[type] ~ name)) 
-		   if(keeprepeat[type] || !(oldname ~ name)) 
+		if(!valuable[type] || (valuable[type] ~ name))
+		   if(keeprepeat[type] || !(oldname ~ name))
 			printf("%d &~~%s~~ \n", type, obj);
 		oldname = name;
 

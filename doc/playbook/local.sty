@@ -1,6 +1,6 @@
 % local.sty should give a right format for your thesis.
-% written by T.Bulik and modified by B. Thomas for the playbook 
- 
+% written by T.Bulik and modified by B. Thomas for the playbook
+
 % TEXT DEFINITIONS
 \def\etal{{\it et al.}}
 \def\cf{{\sl Crossfire}}
@@ -28,34 +28,34 @@
 % Define the command \mychapter{<head1>}{<head2>}.  <head1>
 % is the text to put in the chapter head if there is a
 % chapter number; <head2>, if not.
- 
+
 \def\@chapapp{Chapter}
 \def\chapapp{\@chapapp}
- 
+
 \def\mychapter#1#2{
    \def\@chaphead##1{#1}
    \def\@schaphead##1{#2}
 }
- 
+
 \def\@makechapterhead#1{ \vspace*{\chaptopsep} { \parindent 0pt \raggedright
  \ifnum \c@secnumdepth >\m@ne \@chaphead{#1} \else \@schaphead{#1} \fi
  \par \nobreak \vskip \chapaftersep } }
- 
+
 \def\@makeschapterhead#1{ \vspace*{\chaptopsep} { \parindent 0pt \raggedright
  \@schaphead{#1}\par
  \nobreak \vskip \chapaftersep } }
- 
+
 % \chaptopsep is the space between the top of the text page and the
 % chapter head.  \chapaftersep is the space between the chapter
 % head and the text.
- 
+
 \newlength{\chaptopsep}
 \setlength{\chaptopsep}{.1in}
 \newlength{\chapaftersep}
 \setlength{\chapaftersep}{.5in}
- 
+
 % Default chapter headings.
- 
+
 % \mychapter{\LARGE \sc \thechapter. #1}{\LARGE \sc #1}
 % \mychapter{\LARGE \sc . #1}{\LARGE \sc #1}
 %
@@ -66,15 +66,15 @@
 \mychapter{\large\bf Chapter \thechapter . #1 }
         {\large\bf \begin{center} #1 \end{center}}
 
- 
- 
+
+
 % Define the command \mysection{<sec>}{<style>}{<prefix>}.
 % <sec> is the section level--section, subsection, etc.  <style>
 % is the style in which the section head is to be set; e.g.,
 % \large\bf.  <prefix> is what proceeds the head text, usually
 % \the<sec> followed by some putctuation.
- 
- 
+
+
 \def\@startsection#1#2#3#4#5#6{\if@noskipsec \leavevmode \fi
    \par \@tempskipa #4\relax
    \@afterindenttrue
@@ -82,14 +82,14 @@
    \if@nobreak \everypar{}\else
      \addpenalty{\@secpenalty}\addvspace{\@tempskipa}\fi \@ifstar
      {\@ssect{#3}{#4}{#5}{#1}}{\@dblarg{\@sect{#1}{#2}{#3}{#4}{#5}{#6}}}}
- 
- 
+
+
 \def\@sect#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
-     \def\@svsec{}\else 
+     \def\@svsec{}\else
      \refstepcounter{#1}
      \edef\@svsec{\expandafter\relax\csname @pre#1\endcsname}\fi
      \@tempskipa #5\relax
-      \ifdim \@tempskipa>\z@ 
+      \ifdim \@tempskipa>\z@
         \begingroup \expandafter\relax\csname @#1style\endcsname\relax
           \@hangfrom{\hskip #3\relax\@svsec}{\interlinepenalty \@M #8\par}
         \endgroup
@@ -105,49 +105,49 @@
                              \protect\numberline{\csname the#1\endcsname}\fi
                        #7}}\fi
      \@xsect{#5}}
- 
- 
+
+
 \def\@ssect#1#2#3#4#5{\@tempskipa #3\relax
    \ifdim \@tempskipa>\z@
      \begingroup \expandafter\relax\csname @#4style\endcsname\relax
      \@hangfrom{\hskip #1}{\interlinepenalty \@M #5\par}\endgroup
    \else \def\@svsechd{#4\hskip #1\relax #5}\fi
     \@xsect{#3}}
- 
+
 \def\mysection#1#2#3{
      \expandafter\def\csname @#1style\endcsname{#2}
      \expandafter\def\csname @pre#1\endcsname{#3}
 }
- 
+
 % Default section heads.
- 
+
 \mysection{section}{\normalsize\bf}{Section \thesection .~}
 \mysection{subsection}{\normalsize\bf}{\thesubsection.~}
 % Line added by me follows
 \mysection{subsubsection}{\normalsize\bf}{\thesubsubsection.~}
- 
+
 \renewcommand{\listoffigures}{\@restonecolfalse \if@twocolumn
- \@restonecoltrue \onecolumn \fi 
+ \@restonecoltrue \onecolumn \fi
 \chapter*{\listfigurename \@mkboth {\uppercase {\listfigurename }
 \addcontentsline{toc}{chapter}{\listfigurename}}{\uppercase {\listfigurename
  }}\addcontentsline{toc}{chapter}{\listfigurename} }
  \@starttoc{lof}\if@restonecol \twocolumn \fi }
- 
- 
+
+
 \renewcommand{\listoftables}{\@restonecolfalse \if@twocolumn
- \@restonecoltrue \onecolumn \fi 
+ \@restonecoltrue \onecolumn \fi
 \chapter*{\listtablename \@mkboth {\uppercase {\listtablename }
 \addcontentsline{toc}{chapter}{\listtablename}}{\uppercase {\listtablename
  }}\addcontentsline{toc}{chapter}{\listtablename} }
  \@starttoc{lot}\if@restonecol \twocolumn \fi }
- 
- 
+
+
 %----new margins from 12/89
 \advance\textheight by 1.1in
 \advance\voffset by -0.4in
 \advance\textwidth by 0.5in
 \advance\oddsidemargin by -0.05in
- 
+
 %
 % LINE SPACING for single space
 \newcommand{\snglsp}{\baselineskip=14pt plus .1pt}
@@ -163,7 +163,7 @@
 \newcommand{\omc}{\mbox{$\omega_c$}}
 \newcommand{\gray}{\mbox{$\gamma$-ray}}
 \newcommand{\ctg}{\mathop{\rm ctg}\nolimits}
- 
+
 %
 % INPUTTING MONGO FILES:
 % see psfig.tex for more detail .
@@ -175,26 +175,26 @@
 \def\mongovaryboth#1 #2 #3 {\psfig{bbllx=36pt,bblly=36pt,bburx=576pt,bbury=756pt,file=#1,height=#2,width=#3,angle=-90}}
 \def\mongovarybothside#1 #2 #3 {\psfig{bbllx=36pt,bblly=36pt,bburx=576pt,bbury=756pt,file=#1,height=#2,width=#3,angle=0}}
 \def\mongovary5height#1 #2 {\psfig{bbllx=36pt,bblly=36pt,bburx=756pt,bbury=576pt,file=#1,height=#2}}
- 
+
 %
 % This command creates bibliography and adds an entry to the table of
 % contents.
 %
 \def\bibname{References}
 \renewcommand{\thebibliography}[1]
-{\chapter *{\bibname \@mkboth 
+{\chapter *{\bibname \@mkboth
 {\uppercase {\bibname }}{\uppercase {\bibname }}}
 \addcontentsline{toc}{chapter}{\bibname}
 \list {\@biblabel {\arabic {enumiv}}}{\settowidth \labelwidth {\@biblabel {#1}}
-\leftmargin \labelwidth 
-\advance \leftmargin \labelsep 
+\leftmargin \labelwidth
+\advance \leftmargin \labelsep
 \usecounter {enumiv}
-\let \p@enumiv \@empty 
+\let \p@enumiv \@empty
 \def \theenumiv {\arabic {enumiv}}}
 \def \newblock {\hskip .11em plus.33em minus.07em}
-\sloppy \clubpenalty 4000\widowpenalty 4000 
-\sfcode`\.=\@m } 
- 
+\sloppy \clubpenalty 4000\widowpenalty 4000
+\sfcode`\.=\@m }
+
 %
 % STUFF ADDED BY ME, RJT
 %
@@ -206,15 +206,15 @@
 
 \def\plotone#1{\centering \leavevmode
     \epsfxsize=\textwidth \epsfbox{#1}}
- 
+
 \def\plottwo#1#2{\centering \leavevmode
     \epsfxsize=.45\textwidth \epsfbox{#1} \hfil
     \epsfxsize=.45\textwidth \epsfbox{#2}}
- 
+
 \def\plotfiddle#1#2#3#4#5#6#7{\centering \leavevmode
     \vbox to#2{\rule{0pt}{#2}}
     \special{psfile=#1 voffset=#7 hoffset=#6 vscale=#5 hscale=#4 angle=#3}}
- 
+
 
 \newif\if@topcaption \@topcaptiontrue
 \def\topcaption{\@topcaptiontrue\tablecaption}
@@ -232,7 +232,7 @@
 \long\def\@xtablecaption[#1]#2{%
   \long\def\@process@tablecaption{\@stcaption{table}[#1]{#2}}}
 \let\@process@tablecaption\relax
- 
+
 %
 % This is a redefinition of LaTeX's \@caption, \@makecaption is
 % called within a group so as not to return to \normalsize globally.
@@ -247,20 +247,20 @@
         {\protect\numberline{\csname the#1\endcsname}{\ignorespaces #2}}
   \begingroup
     \@parboxrestore
-    \normalsize   
+    \normalsize
     \if@topcaption \vskip -10pt \fi % 'fix'
     \@makecaption{\csname fnum@#1\endcsname}{\ignorespaces #3}\par
     \if@topcaption \vskip 10pt \fi % 'fix'
   \endgroup}
- 
- 
+
+
                              % \tablehead activates the new tabular \cr
                              % commands
 \def\@tablehead{}
 \def\tablehead#1{\gdef\@tablehead{#1}}
 \def\tablefirsthead#1{\gdef\@table@first@head{#1}}
- 
-%+                                                 
+
+%+
 %     If the user uses an extra amount of tabular-data (like \multicolumn)
 %     in \verb=\tabletail= \TeX\ starts looping because of the definition
 %     of \verb=\nextline=. So make \verb=\\= act like just a \verb=\cr=
@@ -273,7 +273,7 @@
                      #1\noalign{\global\let\\=\@savcr}}}
 \def\tablelasttail#1{\gdef\@table@last@tail{#1}}
 
-\newdimen\maxsize            % maximum pagesize  
+\newdimen\maxsize            % maximum pagesize
 \newdimen\actsize            % actual pagesize
 \newdimen\twocolsize         % needed for correct max height if twocolumn
 \newdimen\parboxheight       % height plus depth of a parbox-argument
@@ -304,7 +304,7 @@
                              % command will be called when \\[0pt]
 \def\@syargarraycr#1{\cr\noalign{\vskip #1\global\addspace=#1}\nextline}
 
-         %%%%  Redefine original LaTeX p-arg commands.       %%%%        
+         %%%%  Redefine original LaTeX p-arg commands.       %%%%
          %%%%  New commands get a leading `s'                %%%%
 
                                       % reduce maximum pagesize to have
@@ -324,13 +324,13 @@
                \box\tabparbox\hfil}
 
          %%%%  Here start really new supertabular commands   %%%%
- 
+
                                  % estimate height of normal line
                                  % regarding \array- and \baselinestretch
 \def\calmidlineheight{\midlineheight=\arraystretch \baslineskp
                       \global\advance\midlineheight by 1pt
                       \global\pargcorrection=4\midlineheight}
- 
+
 \def\calpage{\global\actsize=\pagetotal  % where am I on the actual page?
              \twocolsize=\textheight            %  added 06.06.89
              \advance\twocolsize by -\@colroom  %        "
@@ -352,22 +352,22 @@
                                  % but gave error with @{\hspace{..}} !
     \def\tableformat{\string#1} % store preamble
     \global\starfalse % remember this is the normal version
- 
+
                                  % Check if we have to insert a caption
     \if@topcaption\@process@tablecaption
     \fi
- 
+
     \def\baslineskp{\baselineskip}
     \calmidlineheight% estimate height of a normal line
     \calpage         % calculate max. pagesize and startpoint
- 
+
                                  % save old \@tabularcr
     \let\@@tabularcr\@tabularcr%             Added JB 4/2/91
                                 % Now insert the definition of \@stabularcr
-    \let\@tabularcr\@stabularcr  
+    \let\@tabularcr\@stabularcr
                                  % save old \\
     \global\let\@oldcr=\\
- 
+
                                  % activate new parbox algorithm
     \let\@@startpbox=\@sstartpbox
     \let\@@endpbox=\@sendpbox
@@ -384,7 +384,7 @@
                                  % start normal tabular environment
     \begin{tabular}{\tableformat}%
     \@@tablehead}%   Added JB 15/2/91
- 
+
                                  % this is \end{supertabular}
 \def\endsupertabular{%
     \ifx\@table@last@tail\undefined%
@@ -423,22 +423,22 @@
     \def\tableformat{\string#2} % store preamble
     \tabularwidth=#1 % The total width of the tabular
     \global\startrue % remember this is the *-version
- 
+
                                  % Check if we have to insert a caption
     \if@topcaption\@process@tablecaption\fi
- 
+
     \def\baslineskp{\baselineskip}
     \calmidlineheight% estimate height of a normal line
     \calpage         % calculate max. pagesize and startpoint
- 
- 
+
+
                                  % save old \@tabularcr
     \let\@@tabularcr\@tabularcr%              Added JB 4/2/91
                                 % Now insert the definition of \@stabularcr
     \let\@tabularcr\@stabularcr%              Added JB 4/2/91
                                  % save old \\
     \global\let\@oldcr=\\
- 
+
                                  % activate new parbox algorithm
     \let\@@startpbox=\@sstartpbox
     \let\@@endpbox=\@sendpbox
@@ -513,26 +513,26 @@
            \end{tabular*}%
          \else%
            \end{tabular}%
-         \fi  
+         \fi
          \if@twocolumn%                        % added 10.05.89
-            \if@firstcolumn%                   % 
-               \newpage%                       % 
-            \else%                             % 
-               \clearpage%                     % 
-            \fi%                               % 
+            \if@firstcolumn%                   %
+               \newpage%                       %
+            \else%                             %
+               \clearpage%                     %
+            \fi%                               %
             \twocolsize=\textheight%           % added 06.06.89
-            \advance\twocolsize by -\@colroom% %       " 
-            \global\actsize=\twocolsize%       %       " 
-         \else                                 % 
-            \clearpage                         % 
+            \advance\twocolsize by -\@colroom% %       "
+            \global\actsize=\twocolsize%       %       "
+         \else                                 %
+            \clearpage                         %
             \global\actsize=\midlineheight%
-         \fi                                   % 
+         \fi                                   %
          \let\next\@tablehead%                 % Added 15.2.91
          \ifstar%                              % Added 16-10-90
            \begin{tabular*}{\tabularwidth}{\tableformat}%
          \else%
            \begin{tabular}{\tableformat}%
-         \fi% 
+         \fi%
 %removed JB         \noalign{\global\let\\=\@stabularcr}  % added 10.05.89
 %removed JB         \@tablehead%
     \fi\next}%                                % Added \next 15.2.91

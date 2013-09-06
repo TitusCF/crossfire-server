@@ -167,7 +167,7 @@ static void move_bolt(object *op) {
         return;
     }
     hit_map(op, 0, op->attacktype, 1);
-    
+
     if (op->weight)
         check_spell_knockback(op);
 
@@ -369,9 +369,9 @@ static void explosion(object *op) {
 		if (Dx==-1 && Dy==0){
 		  tmp->direction=7;
 		}
-		
+
                 object_insert_in_map_at(tmp, m, op, 0, dx, dy);
-		
+
             }
         }
         /* Reset range so we don't try to propogate anymore.
@@ -390,7 +390,7 @@ static void explosion(object *op) {
 static void move_cone(object *op) {
     int i;
     tag_t tag;
-    
+
     /* if no map then hit_map will crash so just ignore object */
     if (!op->map) {
         LOG(llevError, "Tried to move_cone object %s without a map.\n", op->name ? op->name : "unknown");
@@ -413,7 +413,7 @@ static void move_cone(object *op) {
      * degree.
      */
     if (op->weight)
-	
+
         check_spell_knockback(op);
 
     if (object_was_destroyed(op, tag))
@@ -919,10 +919,10 @@ static void check_spell_knockback(object *op) {
 	    if (op->direction){
 	      move_object(tmp,absdir(op->direction));
 	    }
-	    
+
             else {
 	      (move_object(tmp, absdir(op->stats.sp)));
-	      
+
 	    }
         }
         else{

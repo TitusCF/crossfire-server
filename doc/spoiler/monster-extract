@@ -10,7 +10,7 @@ BEGIN {
 
 {
 
-# Old stuff: 
+# Old stuff:
 #	if ($2 > 25000)	z =  "Ordeal";
 # 	else if ($2 > 10000)	z =  "Mighty";
 # 	else if ($2 > 5000)	z =  "Powerful";

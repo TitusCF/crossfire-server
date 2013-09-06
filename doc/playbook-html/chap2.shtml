@@ -7,7 +7,7 @@
 <H1>About Characters</h1>
 
 <h2><a name="2.1.0">Character Attributes</h2>
- 
+
 Each player interacts in the <em>Crossfire</em> world through the persona of
 a character. In turn, the interaction between the character and the game
 world is mediated by the ``attributes'' of the character.  After all, the
@@ -22,18 +22,18 @@ and ``class''.<p>
 
 <h2><a name="2.1.1">2.1.1. Character Stats</h2>
 
-Character statistics (or ``stats'' for short) can be 
-divided into two types: primary and secondary. What's the difference 
+Character statistics (or ``stats'' for short) can be
+divided into two types: primary and secondary. What's the difference
 between them? Secondary stats are calculated from a number of things
-including the primary stats. But the reverse isn't true, secondary 
-stats never have any influence on the primary stats. In playing the game, the 
-player may find that either of these kinds of stats may be changed 
-for better or worse. In general, the primary stats change much less 
-often than the secondary stats. Equipment, magic, and death are 
-just three examples of the many things which can alter the values of 
-the character stats. The current values of both the primary and 
+including the primary stats. But the reverse isn't true, secondary
+stats never have any influence on the primary stats. In playing the game, the
+player may find that either of these kinds of stats may be changed
+for better or worse. In general, the primary stats change much less
+often than the secondary stats. Equipment, magic, and death are
+just three examples of the many things which can alter the values of
+the character stats. The current values of both the primary and
 secondary stats may be viewed in the stat window. Four important
-secondary stats - food, grace, hitpoints and mana also appear 
+secondary stats - food, grace, hitpoints and mana also appear
 again in the stat-bar window. <p>
 
 
@@ -45,14 +45,14 @@ The seven primary stats are:<p>
 <li><strong>Dexterity</strong> (``DEX'') -measures physical agility and speed.<br>
 <li><strong>Constitution</strong> (``CON'') -
 measures physical health and toughness.<br>
-<li><strong>Intelligence</strong> (``INT'') - 
-measures ability to learn skills and incantations.<br> 
-<li><strong>Wisdom</strong> (``WIS'') - 
+<li><strong>Intelligence</strong> (``INT'') -
+measures ability to learn skills and incantations.<br>
+<li><strong>Wisdom</strong> (``WIS'') -
 measures the ability to learn/use divine magic .<br>
-<li><strong>Power</strong> (``POW'') - 
+<li><strong>Power</strong> (``POW'') -
 measures magical/spiritual potential.<br>
-<li><strong>Charisma</strong> (``CHA'') - 
-measures social and leadership abilities. 
+<li><strong>Charisma</strong> (``CHA'') -
+measures social and leadership abilities.
 </UL>
 <p>
 
@@ -65,7 +65,7 @@ There are plenty of items which give you bonuses to your stats even
 <em>beyond</em> your class limit - swords, armour and rings to name the most
 important. You can also read scrolls or cast spells (incantations or
 prayers) to temporarily raise your stats.  The ultimate maximum value is 30,
-and the player class doesn't matter here. 
+and the player class doesn't matter here.
 
 Some quantitative effects of the primary stats are summarized in the table
 below. The top row in the column header specifies a particular bonus (i.e.
@@ -95,11 +95,11 @@ Selected primary stat bonuses/penalties.</center><p>
 The secondary stats are :<p>
 
 <UL>
-<li><strong>score</strong> - The total accumulated 
-experience of the character. <samp>score</samp> is increased 
-as a reward for appropriate player action and may decrease as a 
-result of a magical attack or character death (see section 
-<a href="chap3.html#3.2.4">death</a> for more about death). The <samp>score</samp> starts at a value 
+<li><strong>score</strong> - The total accumulated
+experience of the character. <samp>score</samp> is increased
+as a reward for appropriate player action and may decrease as a
+result of a magical attack or character death (see section
+<a href="chap3.html#3.2.4">death</a> for more about death). The <samp>score</samp> starts at a value
 of 0. <p>
 
 <li><strong>level</strong> - A rating of overall ability whose value is
@@ -154,9 +154,9 @@ current armour worn. For characters that cannot wear armour, <samp>Ac</samp>
 improves as their level increases (see section
 <a href="chap3.html#3.2.3">statistics calculation</a>).<p>
 
-<li><strong>armour</strong> <samp>("Arm")</strong> - 
-How much damage will be subtracted from successful hits made upon 
-the character. This value ranges between 0 to 99%. Current armour worn 
+<li><strong>armour</strong> <samp>("Arm")</strong> -
+How much damage will be subtracted from successful hits made upon
+the character. This value ranges between 0 to 99%. Current armour worn
 primarily determines <samp>Arm</samp> value.<p>
 
 <li><strong>speed</strong> - How fast the player may move.  The value of
@@ -173,20 +173,20 @@ player may make per unit of time.  Higher values indicate faster attack
 speed. Current weapon and user DEX effect the value of weapon speed. See
 section <a href="chap3.html#3.2.3">statistics calculation</a> for a calculation of weapon speed.<p>
 
-<li><strong>food</strong> - How full the character's stomach is. 
-Ranges between 0 (starving) and 999 (satiated).  At a value of 0 the 
-character begins to die. Some magic can speed up or slow down the 
+<li><strong>food</strong> - How full the character's stomach is.
+Ranges between 0 (starving) and 999 (satiated).  At a value of 0 the
+character begins to die. Some magic can speed up or slow down the
 character digestion. Healing wounds will speed up digestion too.
 </ul><p>
 
 <h2><a name="2.1.2">Character Classes</h2>
 
-Much like the older ``paper and pencil'' role-playing games 
-<em>Crossfire</em> has adopted the idea of character ``class''. 
-Each class is meant to be a template of a particular ``style'' of play; 
-therefore each choice of class modifies both the starting 
-values and sets the natural upper limit on the primary stats. 
-<em>Important note:</em> character class is chosen at the time a 
+Much like the older ``paper and pencil'' role-playing games
+<em>Crossfire</em> has adopted the idea of character ``class''.
+Each class is meant to be a template of a particular ``style'' of play;
+therefore each choice of class modifies both the starting
+values and sets the natural upper limit on the primary stats.
+<em>Important note:</em> character class is chosen at the time a
 character is created and can't be changed later on.<p>
 
 <center>
@@ -198,17 +198,17 @@ character is created and can't be changed later on.<p>
 Table 2.2 <em>Crossfire</em> character classes</em><p>
 </center>
 
-The table shows the various available character classes with 
-the natural stat limits for each. 
+The table shows the various available character classes with
+the natural stat limits for each.
 Under the ``special'' column several bits of information are included. ``<samp>Ac</samp>''
-indicates the base armour class 
+indicates the base armour class
 for the character; ``damage''
-indicates the base <samp>Dam</samp> value. 
-Some character classes have special attack abilities and certain vulnerabilities, 
-protections from, and immunities to various attacktypes. Read section 
+indicates the base <samp>Dam</samp> value.
+Some character classes have special attack abilities and certain vulnerabilities,
+protections from, and immunities to various attacktypes. Read section
 <a href="chap3.html#3.2.1">combat</a> for more information about what effect these can have.<p>
 
-<h4Sizing up the character classes</h4>	
+<h4Sizing up the character classes</h4>
 
 Generally, the titles of the character classes speak for themselves. But you
 can get a better idea of the potential of a class by checking out a few
@@ -249,7 +249,7 @@ Finally, here are some notes concerning a couple of the more ``exotic'' classes:
 <em>Protections:</em> immune: fire, poison; vulnerable: ghosthit, drain, cold<br>
 <em>Special:</em> fly, no armour, no weapons. <samp>Ac</samp> 0<br>
 Fireborns are fire spirits. They're closely in tune with
-magic and learn all types of magic easily. 
+magic and learn all types of magic easily.
 Being fire spirits, they are
 immune to fire and poison, and vulnerable to cold. They are vulnerable to
 ghosthit and drain because being mostly non-physical, anything which strikes
@@ -269,17 +269,17 @@ meditation.<p>
 <em>Protections:</em> immune: fire; vulnerable: paralyze, poison, cold<br>
 <em>Special:</em> no armour, <samp>Ac</samp> 5<br>
 Quetzalcoatls are an odd mixture of magic and combat abilities. They are
-born knowing the spell of burning hands (heh, its their ``dragon breath''). 
-But because of their low natural intelligence/wisdom, they have a very hard 
-time learning new spells. All the same, they may become potent 
-wizards/priests as they have the highest power bonus, and they will 
-typically have a large amount of mana and a fair amount of grace. 
+born knowing the spell of burning hands (heh, its their ``dragon breath'').
+But because of their low natural intelligence/wisdom, they have a very hard
+time learning new spells. All the same, they may become potent
+wizards/priests as they have the highest power bonus, and they will
+typically have a large amount of mana and a fair amount of grace.
 Quetzalcoatls can be very
-devastating fighters at low level. A combination of  their low natural <samp>Ac</samp> 
+devastating fighters at low level. A combination of  their low natural <samp>Ac</samp>
 and high base damage tend to make mincemeat
 out of low-level monsters. However, at mid-level, they really begin to have
 problems because they cannot use armour.<p>
- 
+
 <strong>Wraith</strong><br>
 <em>Attacks:</em> cold, physical<br>
 <em>Protections:</em> immune: drain, ghosthit; protected: physical, cold; vulnerable: fire<br>
@@ -296,10 +296,10 @@ to fire readily. <p>
 When you start up <em>Crossfire</em> , you will be asked for a character name
 followed by a password. If you are playing for the first time, type
 any name you like; this will be your character name for the rest of
-the life of that character. Next, type in any password. 
+the life of that character. Next, type in any password.
 <em>Remember!:</em>
 you will need to type the same password again to play that character
-again! One more note: its not a good idea to use ``real'' passwords 
+again! One more note: its not a good idea to use ``real'' passwords
 to your computer accounts! Doing so may make your system vulnerable
 to unscrupulous <em>Crossfire</em> server administrators. <p>
 
@@ -312,23 +312,23 @@ stats.  <em>Two points:</em> you can never roll a character with better
 stats than an average of straight 15's, and you can't roll higher than 18 in
 a stat. <p>
 
-When you roll your character, the stats displayed are the stats you 
-will get as a human (which are unmodified). 
-When satisfied, you can step through a number 
+When you roll your character, the stats displayed are the stats you
+will get as a human (which are unmodified).
+When satisfied, you can step through a number
 of classes, each with special bonuses in stats.<p>
 
 <a href="#table2.2">Table 2.2</a> shows how your basic stats will
 be changed by choosing a different class.
-The difference between the natural stat limit and 20 indicates the 
-bonus/penalty assigned to rolled primary stats. For example, a 
-barbarian has a maximum strength which is 4 higher than 20-that 
+The difference between the natural stat limit and 20 indicates the
+bonus/penalty assigned to rolled primary stats. For example, a
+barbarian has a maximum strength which is 4 higher than 20-that
 means he will begin with an additional 4 points added to his
 strength roll. On the other hand, a barbarian can never get above 14
 in intelligence.  This means that your rolled character will have 6
 less in intelligence if you choose that class.  It also means that you
 can't be a barbarian if you roll less than 7 in intelligence; the
 poor barbarian would have had a stat below 1.<p>
- 
+
 <h4><a name="2.2.1">Selecting a character</h4>
 
 While each class has its particular strengths and weaknesses, in summary

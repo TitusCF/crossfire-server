@@ -2,7 +2,7 @@
 BEGIN {
         # Read the array data from living.c
         while ((getline buff < living_c) == 1) {
-                if (buff ~ /stat_exp_mult\[/) { 
+                if (buff ~ /stat_exp_mult\[/) {
 			get_values(buff);
 			haf = (tind-1)/2;
 			for(i=1;i<=haf;i++)
@@ -21,11 +21,11 @@ function get_values (buff) {
               break;
            gsub("[ \t]*\"", "", buff);
            nr = split(buff, val, ",");
-           for (i = 1; i<=nr ; i++) { 
-		  if(val[i]!="") { 
-               	     if(val[i] ~ "/") { 
+           for (i = 1; i<=nr ; i++) {
+		  if(val[i]!="") {
+               	     if(val[i] ~ "/") {
            	       nmb = split(val[i], subval, "/");
-		       if(subval[1] ~ " ") 
+		       if(subval[1] ~ " ")
 			  array[tind++]=subval[1];
 		     } else
 			array[tind++]=val[i];

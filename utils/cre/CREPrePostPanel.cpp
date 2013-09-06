@@ -350,7 +350,7 @@ void CRESubItemToken::setData(const QStringList& data)
             myValues->clear();
         if (myValue != NULL)
             myValue->clear();
-        
+
         return;
     }
     copy.removeFirst();

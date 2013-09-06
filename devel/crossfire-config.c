@@ -45,7 +45,7 @@ const cf_parameter cf_parameter_list[] = {
     { "PLUGIN_SUFFIX", PLUGIN_SUFFIX },
 };
 
-const int cf_parameter_list_size = 
+const int cf_parameter_list_size =
     sizeof(cf_parameter_list) / sizeof(cf_parameter);
 
 static void print_usage() {

@@ -125,7 +125,7 @@ void CREHPBarMaker::browse(bool)
 void CREHPBarMaker::adjustColor()
 {
     const QString style("QPushButton { background-color : %1; }");
-    myColorSelect->setStyleSheet(style.arg(myColor.name()));   
+    myColorSelect->setStyleSheet(style.arg(myColor.name()));
 }
 
 void CREHPBarMaker::selectColor(bool)

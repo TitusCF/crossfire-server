@@ -1996,7 +1996,7 @@ static int Object_SetAnimated(Crossfire_Object *whoptr, PyObject *value, void *c
 
 static int Object_SetMoveType(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
         return -1;
@@ -2006,7 +2006,7 @@ static int Object_SetMoveType(Crossfire_Object *whoptr, PyObject *value, void *c
 
 static int Object_SetMoveBlock(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
         return -1;
@@ -2016,7 +2016,7 @@ static int Object_SetMoveBlock(Crossfire_Object *whoptr, PyObject *value, void *
 
 static int Object_SetMoveAllow(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
         return -1;
@@ -2026,7 +2026,7 @@ static int Object_SetMoveAllow(Crossfire_Object *whoptr, PyObject *value, void *
 
 static int Object_SetMoveOn(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
         return -1;
@@ -2036,7 +2036,7 @@ static int Object_SetMoveOn(Crossfire_Object *whoptr, PyObject *value, void *clo
 
 static int Object_SetMoveOff(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
         return -1;
@@ -2046,7 +2046,7 @@ static int Object_SetMoveOff(Crossfire_Object *whoptr, PyObject *value, void *cl
 
 static int Object_SetMoveSlow(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
         return -1;

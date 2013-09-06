@@ -87,7 +87,7 @@ static int *int_bonuses[NUM_INT_BONUSES];
 static const char *int_bonus_names[NUM_INT_BONUSES] = {
     "cha_fear_bonus", "wis_turn_bonus", "wis_cleric_chance", "int_wis_learn_spell",
     "cha_shop_bonus", "dex_bonus", "str_damage_bonus", "str_hit_bonus",
-    "str_weight_limit", 
+    "str_weight_limit",
 };
 
 /**
@@ -917,7 +917,7 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
     if (pl_level < 1)
         pl_level = 1; /* safety, we should always get 1 levels worth of hp! */
 
-    /* 
+    /*
      * We store maxhp as a float to hold any fractional hp bonuses,
      * (eg, 2.5 con bonus).  While it may seem simpler to just
      * do a get_con_bonus() * min(level,10), there is also a 1 hp/level
@@ -2589,9 +2589,9 @@ void init_stats(int reload) {
             LOG(llevError,"Got error reading stat_bonus: %s\n", buf);
 
         if (reload) {
-            for (i=0; i<NUM_INT_BONUSES; i++) 
+            for (i=0; i<NUM_INT_BONUSES; i++)
                 if (new_int_bonuses[i]) FREE_AND_CLEAR(new_int_bonuses[i]);
-            for (i=0; i<NUM_FLOAT_BONUSES; i++) 
+            for (i=0; i<NUM_FLOAT_BONUSES; i++)
                 if (new_float_bonuses[i]) FREE_AND_CLEAR(new_float_bonuses[i]);
             settings.max_stat = oldmax;
         } else {

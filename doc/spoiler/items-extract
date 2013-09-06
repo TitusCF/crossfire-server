@@ -6,7 +6,7 @@
 
 BEGIN {
 	# These stats will be added to the "magik" string according
-	# to the pattern. "%s" should be "%+d", but that isn't 
+	# to the pattern. "%s" should be "%+d", but that isn't
 	# portable.
 	magic["Str"] = "strength %s";
 	magic["Dex"] = "dexterity %s";
@@ -15,7 +15,7 @@ BEGIN {
 	magic["Wis"] = "wisdom %s";
 	magic["Cha"] = "charisma %s";
       magic["Pow"] = "power %s";
-    
+
 	magic["luck"] = "luck %s";
 	magic["exp"] = "speed %s";
 	magic["sp"] = "spell-point regeneration %s";
@@ -65,7 +65,7 @@ BEGIN {
 	att = prot = immune = 0;
 }
 
-$1 in magic { 
+$1 in magic {
 	if ($1 == "sp" && type == 14)
 		ac = $2;
 	else
@@ -117,14 +117,14 @@ $1 in magic {
 			speed = last_sp/10;
 		else if (type in weapons) {
 			# Horrible, I know. Blame vidarl@ifi.uio.no -- Fy Vidar!
-			# I assume the player has max Str and Dex 
+			# I assume the player has max Str and Dex
 			# and speed of 6 here.
 
 			# weapon_speed = (last_sp*2 - magical) / 2;
 			# if (weapon_speed < 0) weapon_speed = 0;
 
-			# M = (300-121)/121.0; 
-			# M2 = 300/100.0; 
+			# M = (300-121)/121.0;
+			# M2 = 300/100.0;
 			# W = weight/20000.0;
 			# s = 2 - weapon_speed/10.0;
 

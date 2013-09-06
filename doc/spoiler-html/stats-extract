@@ -6,7 +6,7 @@
 
 BEGIN {
 	# These stats will be added to the "magik" string according
-	# to the pattern. "%s" should be "%+d", but that isn't 
+	# to the pattern. "%s" should be "%+d", but that isn't
 	# portable.
 	magic["luck"] = "luck %s";
 	magic["exp"] = "speed %s";
@@ -48,7 +48,7 @@ BEGIN {
 	stat["Str"] = stat["Dex"] = stat["Con"] = 0;
 	stat["Int"] = stat["Wis"] = stat["Cha"] = 0;
 	stat["Pow"] = 0;
-	
+
 }
 
 /^Str|^Dex|^Con|^Int|^Wis|^Cha|^Pow/	{ stat[$1] = $2; next }
@@ -73,13 +73,13 @@ $1 in magic	{ add_magik(magic[$1], $2) }
 		if (slay)
 			magik = magik "<br> " capitalize(slay=="wall" ? "excavation" : slay "-slaying");
 
-#		sub("^\\\\newline ", "", magik); 
+#		sub("^\\\\newline ", "", magik);
 		magik = capitalize(magik);
 		name = capitalize(name);
 		sub("_", " ", name);
 		printf("<tr><th>%s</th><td>~~%s~~</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%d</td><td>%s</td></tr>\n",
 		       name, obj,
-		       20+stat["Str"], 20+stat["Dex"], 20+stat["Con"], 
+		       20+stat["Str"], 20+stat["Dex"], 20+stat["Con"],
 		       20+stat["Int"], 20+stat["Wis"], 20+stat["Cha"],
 		       20+stat["Pow"], magik);
 	}
@@ -101,7 +101,7 @@ function attacktype(at, type,   i, str) {
 }
 
 function add_magik(str, val) {
-	str = sprintf(str, val < 0 ? val : "+" val);	
+	str = sprintf(str, val < 0 ? val : "+" val);
 	if (str)
 		magik = magik ? magik ", " str : str;
 }

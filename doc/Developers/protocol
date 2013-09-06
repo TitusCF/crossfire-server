@@ -1454,7 +1454,7 @@ S->C: replyinfo <info_type> [options] <data>
     There could be rare cases where information changes (eg, server
     admin is updating the new file), but these would be rare and
     generally are not something that needs to be designed for.
-    
+
 
 	The following info_types are supported:
 
@@ -1616,7 +1616,7 @@ S->C: replyinfo <info_type> [options] <data>
     race_info <race name>
         Returns information about specified playable race (one from
         race_list above).  Format is:
-        
+
         name <namelen><namedata>
         msg <desc len><description>
         stats <statno1><adj1><statno2><adj2>....0

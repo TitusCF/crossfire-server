@@ -18,9 +18,9 @@ in table <a href="#table_skill_stats">skill statistics</a>. Appendix <a
 href="appB.html">B (skills)</a> contains descriptions for many of the
 skills.  <p>
 
-<em>Note:</em> The skills system is enabled as the default option 
+<em>Note:</em> The skills system is enabled as the default option
 as of version 0.92.0<p>
-<em>Note2:</em> The new skills/experience system is compatible 
+<em>Note2:</em> The new skills/experience system is compatible
 with character files from at least version 0.91.1 onward.
 
 <a name="table_skill_stats">
@@ -36,35 +36,35 @@ Skills</center>
 <h3><a name="5.2.1">Associated and miscellaneous skills</h3>
 
 In <em>Crossfire</em> two types of skills exist; The first kind, ``associated''
-skills, are those skills which are <em>associated with a category of 
+skills, are those skills which are <em>associated with a category of
 experience</em>.  The other kind of skill, ``miscellaneous'' skills,
 are <em>not</em> related to any experience category.
 <p>
-The main difference between these two kinds of skills is in the 
+The main difference between these two kinds of skills is in the
 result of their use.
-When associated skills are used <em>successfully</em> experience is 
-accrued in the experience category <em>associated with that skill</em>. 
+When associated skills are used <em>successfully</em> experience is
+accrued in the experience category <em>associated with that skill</em>.
 In contrast, the use of miscellaneous skills <em>never</em> gains
 the player any experience regardless of the success in using it.
 <p>
 <em>Both</em> miscellaneous and associated skills can <em>fail</em>. This means
-that the attempt to use the skill was unsuccessful. <em>Both</em> 
+that the attempt to use the skill was unsuccessful. <em>Both</em>
 miscellaneous and associated skills <em>can</em> have certain
-primary stats <em>associated</em> with them. These associated stats can help   
+primary stats <em>associated</em> with them. These associated stats can help
 to determine if the use of a skill is successful and to what
-<em>degree</em> it is successful. 
+<em>degree</em> it is successful.
 <p>
-All gained experience is modified by the associated 
-stats for that skill (table <a href="#table_skill_stats">skill statistics</a>) and then the 
+All gained experience is modified by the associated
+stats for that skill (table <a href="#table_skill_stats">skill statistics</a>) and then the
 appropriate experience category automatically updated as needed.
 <p>
 <h3><a name="5.2.2">Restrictions on skills use and gaining experience</h3>
 
 Neither a character's stats nor the character class restricts the
-player from gaining experience in any of the experience 
-categories. Also, there are no inherent 
+player from gaining experience in any of the experience
+categories. Also, there are no inherent
 restrictions on character skill use-any player may
-use any <em>acquired</em> skill. 
+use any <em>acquired</em> skill.
 <p>
 <center>
 <table border=1 cellpadding=5><col align=center>
@@ -82,24 +82,24 @@ How stats associated with a skill modify gained experience<p>
 <p>
 Here we take the view that a player must 'overcome an opponent'
 in order to gain experience. Examples include foes killed in combat,
-finding/disarming a trap, stealing from some being, identifying 
+finding/disarming a trap, stealing from some being, identifying
 an object, etc.
 <p>
-Gained experience is based primarily on the difference in levels 
-between 'opponents', experience point value of a ``vanquished foe'', 
-the values of the associated stats of the skill being used and 
-two factors that are set internally <em>Note:</em> If you want to 
+Gained experience is based primarily on the difference in levels
+between 'opponents', experience point value of a ``vanquished foe'',
+the values of the associated stats of the skill being used and
+two factors that are set internally <em>Note:</em> If you want to
 know more about this, check out the skills_developers.doc.)
 <p>
-Below the algorithm for experience gain is given where player ``pl'' 
+Below the algorithm for experience gain is given where player ``pl''
 that has ``vanquished'' opponent ``op'' using skill ``sk'':<p>
 <quote>
 EXP GAIN = (EXP(op) + EXP(sk)) * lvl_mult * stat_mult<p>
 </quote>
-where EXP(sk) is a constant award based on the skill used, 
+where EXP(sk) is a constant award based on the skill used,
 EXP(op) is the base experience award for `op' which depends
-on what op is (see below), 
-stat_mult is taken from table <a href="#table_exp_stat_mod">experience modification</a>, 
+on what op is (see below),
+stat_mult is taken from table <a href="#table_exp_stat_mod">experience modification</a>,
 and lvl_mult is:
 <p>
 For level(pl) &lt level(op):: <p>
@@ -120,7 +120,7 @@ the skill used by pl.
 <p>
 There are three different cases for how EXP(op) can be computed:
 <ol>
-<li> <strong>op is a living creature</strong>: EXP(op) is just the base 
+<li> <strong>op is a living creature</strong>: EXP(op) is just the base
 experience award given in the <A href="../spoiler-html/spoiler.html">spoiler</a> .
 
 <li><strong>op is a trap</strong>: EXP(op) = 1/(fraction of the time which the
@@ -136,16 +136,16 @@ any <samp>magic</samp> enchantment on the item.
 <h2><a name="5.3.0">How skills are used</h2>
 <centeR>
 <a name="table_skill_cmd">
-<table cellpadding=5 border=1> 
-<tr><td><samp>skills</samp></td><td> This command lists all the player's 
- 		 current known skills, their level   
- 		 of use and the associated experience   
+<table cellpadding=5 border=1>
+<tr><td><samp>skills</samp></td><td> This command lists all the player's
+ 		 current known skills, their level
+ 		 of use and the associated experience
  		 category of each skill.   </td></tr>
-     
+
 <tr><td> <samp>ready_skill &ltskill&gt</samp></td><td> This command changes
 				 the player's current readied skill to
 				 <samp>&ltskill&gt</samp>.  </td></tr>
-    
+
 <tr><Td> <samp>use_skill &ltskill&gt &ltstring&gt</samp></td><td> This
 				 command changes the player's current
 				 readied skill <em>and</em> then executes it
@@ -155,7 +155,7 @@ any <samp>magic</samp> enchantment on the item.
 </table>
 Skills commands<p>
 </center>
- 
+
 Three player commands are related to skills use: <samp>ready_skill</samp>,
 <samp>use_skill</samp>, and <Samp>skills</samp> (see table <a
 href="#table_skill_cmd">skill commands</a>).  Generally, a player will use a
@@ -178,9 +178,9 @@ code to automatically make our current skill <samp>melee weapons</samp>.  As
 another example of this-casting a spell will cause the code to switch the
 current skill to <samp>wizardry</samp> or <samp>praying</samp> (as
 appropriate to the spell type).<p>
- 
+
 It is not possible to use more than one skill at a time.<p>
- 
+
 <h2><a name="5.4.0">Acquiring skills</h2>
 
 Skills may be gained in two ways. In the first, new skills may

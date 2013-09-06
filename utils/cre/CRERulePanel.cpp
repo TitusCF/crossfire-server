@@ -17,7 +17,7 @@ CRERulePanel::CRERulePanel(const MessageManager* manager, const QuestManager* qu
     connect(myMatches, SIGNAL(textChanged()), this, SLOT(onMatchModified()));
     ml->addWidget(myMatches);
     addTab(m, tr("matches"));
-    
+
 
     myPre = new CREPrePostPanel(true, manager->preConditions(), quests, this);
     connect(myPre, SIGNAL(dataModified()), this, SLOT(onPreModified()));

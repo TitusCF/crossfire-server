@@ -2653,7 +2653,7 @@ int cast_detection(object *op, object *caster, object *spell) {
 
                     dx = HEAD(detect)->x;
                     dy = HEAD(detect)->y;
-                    
+
                     detect_ob = object_create_arch(HEAD(detect)->arch);
                     for (part = detect_ob; part != NULL; part = part->more) {
                         if (part->arch->reference_count > 0)

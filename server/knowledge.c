@@ -462,7 +462,7 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
         if (object_was_destroyed(ingredients[index], tag)) {
             draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Hum, some item disappeared, stopping the attempt.");
             return;
-            
+
         }
         if (count == ingredients[index]->nrof && ingredients[index]->env == pl->ob) {
             draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Hum, couldn't drop some items, stopping the attempt.");

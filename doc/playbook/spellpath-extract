@@ -2,12 +2,12 @@
 BEGIN {
         # Read the array data from living.c
         while ((getline buff < living_c) == 1) {
-                if (buff ~ /spellpathnames\[/) { 
+                if (buff ~ /spellpathnames\[/) {
 			get_values(buff);
-			fth = (tind-1)/4; 
+			fth = (tind-1)/4;
 			for(i=1;i<tind;i+=5)
 		           printf("&%s &%s &%s &%s &%s & \\\\\n",array[i],
-				array[i+1],array[i+2],array[i+3],array[i+4]); 
+				array[i+1],array[i+2],array[i+3],array[i+4]);
 			break;
                 }
         }

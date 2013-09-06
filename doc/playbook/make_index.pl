@@ -6,7 +6,7 @@ if ( $#ARGV != 0 ) {
   print "Usage: $0 <idxfilename>\n";
   exit 0;
 }
- 
+
 $idxfile=$ARGV[0];
 
 

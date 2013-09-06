@@ -80,14 +80,14 @@ START_TEST(test_treasurelist_find_matching_type) {
         /* Until new skill system is commited, these do not
          * exist.
          */
-        "skill_missile_weapon_9", 
+        "skill_missile_weapon_9",
         "skill_sword_9", "skill_axe_9", "skill_blunt_weapon_9",
         "skill_spear_9", "skill_unarmed_combat_3", "skill_armor_3",
         "skill_dodge_3", "skill_air_magic_8", "skill_fire_magic_8",
         "skill_water_magic_8", "skill_earth_magic_8", "skill_divine_power_5",
         "skill_trap_5", "skill_thievery_5", "skill_persuasion_6",
         "skill_acrobatics_3", "skill_literacy_4", "skill_weaponsmith_9",
-        "skill_armorer_4", "skill_jeweler_8", "skill_alchemy_8", 
+        "skill_armorer_4", "skill_jeweler_8", "skill_alchemy_8",
         "skill_bowyer_9", "skill_thaumaturgy_8", "skill_woodsman_5",
 #endif
         /* Following are legacy skills */
@@ -117,7 +117,7 @@ START_TEST(test_treasurelist_find_matching_type) {
          */
         for (list_size=0; items[tr][list_size] != NULL; list_size++) ;
 
-        if (list_size) 
+        if (list_size)
             results = calloc (list_size, sizeof(*results));
 
         /* Last parameter is if we traverse treasurelists - that
@@ -126,10 +126,10 @@ START_TEST(test_treasurelist_find_matching_type) {
          */
         ol = treasurelist_find_matching_type(randomitems, types[tr], TRUE);
 
-        fail_if(ol && (list_size == 0), 
+        fail_if(ol && (list_size == 0),
                 "On test %d, should have returned null but did not", tr);
 
-        fail_if((ol == NULL) && (list_size != 0), 
+        fail_if((ol == NULL) && (list_size != 0),
                 "On test %d, should have returned results but returned NULL",
                 tr);
 
@@ -142,7 +142,7 @@ START_TEST(test_treasurelist_find_matching_type) {
             objectlink *oltmp;
 
             for (oltmp = ol; oltmp != NULL; oltmp = oltmp->next) {
-                fail_if(oltmp->ob == NULL, 
+                fail_if(oltmp->ob == NULL,
                         "On test %d, found NULL object on linked list", tr);
 
                 /* We do this loop because treasurelist_find_matching_type()
@@ -157,7 +157,7 @@ START_TEST(test_treasurelist_find_matching_type) {
                 }
 
                 /* Did not find match */
-                fail_if(i == list_size, 
+                fail_if(i == list_size,
                         "On test %d, did not find match for %s", tr,
                         oltmp->ob->arch->name);
             }
