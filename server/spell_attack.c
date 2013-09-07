@@ -418,12 +418,13 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
         if (!tmp->move_on && tmp->stats.dam) {
             LOG(llevDebug, "cast_cone(): arch %s doesn't have move_on set\n", spell->other_arch->name);
         }
-        object_insert_in_map_at(tmp, m, op, 0, sx, sy);
 
         /* This is used for tracking spells so that one effect doesn't hit
          * a single space too many times.
          */
         tmp->stats.maxhp = tmp->count;
+
+        object_insert_in_map_at(tmp, m, op, 0, sx, sy);
 
         if (tmp->other_arch)
             cone_drop(tmp);
