@@ -1206,6 +1206,8 @@ void spell_failure(object *op, int failure, int power, object *skill) {
                 tmp->stats.dam = power; /* nasty recoils! */
 
             tmp->stats.maxhp = tmp->count;
+            if (tmp->stats.maxhp == 0)
+                tmp->stats.maxhp = 1;
             object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
         }
     }

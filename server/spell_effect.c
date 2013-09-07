@@ -68,6 +68,8 @@ void cast_magic_storm(object *op, object *tmp, int lvl) {
         tmp->duration = 40;
     tmp->stats.dam = lvl; /* nasty recoils! */
     tmp->stats.maxhp = tmp->count; /* tract single parent */
+    if (tmp->stats.maxhp == 0)
+        tmp->stats.maxhp = 1;
     object_insert_in_map_at(tmp, op->map, op, 0, op->x, op->y);
 }
 

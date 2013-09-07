@@ -203,6 +203,8 @@ void explode_bullet(object *op) {
      * the count of the parent should work fine.
      */
     tmp->stats.maxhp = op->count;
+    if (tmp->stats.maxhp == 0)
+        tmp->stats.maxhp = 1;
 
     /* Set direction of cone explosion */
     if (tmp->type == SPELL_EFFECT && tmp->subtype == SP_CONE)
@@ -423,6 +425,8 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
          * a single space too many times.
          */
         tmp->stats.maxhp = tmp->count;
+        if (tmp->stats.maxhp == 0)
+            tmp->stats.maxhp = 1;
 
         object_insert_in_map_at(tmp, m, op, 0, sx, sy);
 
@@ -637,6 +641,8 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
          * spells.
          */
         effect->stats.maxhp = spell->count;
+        if (effect->stats.maxhp == 0)
+            effect->stats.maxhp = 1;
     }
 
     object_set_owner(effect, op);
