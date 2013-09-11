@@ -2424,8 +2424,13 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
      * Checkthe sockets for that second case - if so,
      * we don't need to make a new player object, etc.
      */
-    for (pl=first_player; pl; pl=pl->next)
-        if (&pl->socket == ns) break;
+    for (pl=first_player; pl; pl=pl->next) {
+        if (&pl->socket == ns) {
+	  /* The player still in the socket must be saved first. */
+	  save_player(pl->ob, 0);
+	  break;
+	} 
+    }
 
     /* Some of this logic is from add_player()
      * we just don't use add_player() as it does some other work
