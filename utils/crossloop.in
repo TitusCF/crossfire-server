@@ -1,25 +1,58 @@
 #!/bin/sh
-#
-# This is a replacement for the crosserv.pl perl script.,
-# No point in using perl for such a simple task.
+# crossloop -- restart crossfire-server in case of a crash
 
-CMDNAME="BINDIR/crossfire-server"
-maxrestart=500
-logdir="/tmp/crosservlog"
+# Full path to server binary.
+CF_BIN="BINDIR/crossfire-server"
 
+# Additional flags to pass to the server (comment out to disable).
+CF_FLAGS="-disable-plugin cfrhg -disable-plugin cflogger -d"
 
-logcount=0
+# Directory to use for storing temporary runtime files. It is created if it
+# does not exist. It should be dedicated to Crossfire, because it is saved
+# in the event of a server crash.
+CF_TMP="/tmp/crossfire"
 
-rm -rf $logdir
-mkdir $logdir
+# Directory for storing server logs (default $CF_TMP).
+CF_LOGDIR="${CF_TMP}"
 
-while [ ! "$logcount"x = "$maxrestart"x ]; do
-  echo "Starting Crossfire `date` for the $logcount time..." 1>$logdir/$logcount 2>&1
-  $CMDNAME -d 2>>$logdir/$logcount 1>&2
-  if [ -f core ] ; then
-        mv core core.$logcount
-        GZIP core.$logcount
-  fi
-  logcount=`expr $logcount + 1`
-  sleep 50
+# Maximum number of restarts (set to zero to loop infinitely, default 100).
+MAX_RESTART=100
+
+#### END OF CONFIGURATION ####
+
+# The current generation of the server.
+generation=1
+
+while [ ${MAX_RESTART} -ne ${generation} ]; do
+    # Create folder to store temporary files if it doesn't exist.
+    if [ ! -d ${CF_TMP} ]; then
+        mkdir ${CF_TMP}
+        chmod 700 ${CF_TMP}
+    fi
+
+    # Change to the ${CF_TMP} directory.
+    cd ${CF_TMP}
+
+    # Execute server with appropriate flags.
+    echo "===>>> Starting server (generation ${generation})..."
+
+    eval "${CF_BIN}" "${CF_FLAGS}" "-tmpdir ${CF_TMP}" \
+        "-log ${CF_LOGDIR}/crossfire-`date +%Y-%M-%d-%H:%M`.log"
+
+    # If a server crash occurred, save ${CF_TMP}.
+    dump=`ls *core* 2> /dev/null`
+
+    if [ ${?} -eq 0 ]; then
+        echo "===>>> Server crashed; saving crash info and restarting..."
+        cd ..
+        mv ${CF_TMP} "crossfire-`date +%Y-%M-%d-%H:%M`.crash"
+    else
+        echo "===>>> Restarting server (press CTRL-C again to quit)..."
+    fi
+
+    # Increment server generation.
+    generation=`expr ${generation} + 1`
+
+    # Wait for 10 seconds before restarting again.
+    sleep 10
 done
