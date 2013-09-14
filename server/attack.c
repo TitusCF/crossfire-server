@@ -941,7 +941,7 @@ static int stick_arrow(object *op, object *tmp) {
 object *hit_with_arrow(object *op, object *victim) {
     object *container, *hitter;
     int hit_something = 0;
-    tag_t victim_tag, hitter_tag;
+    tag_t victim_tag, hitter_tag, container_tag;
     sint16 victim_x, victim_y;
     mapstruct *victim_map;
     const char *old_skill = NULL;
@@ -969,6 +969,7 @@ object *hit_with_arrow(object *op, object *victim) {
          * might be called until this THROWN_OBJ is either reassembled or
          * removed at the end of this function must be able to deal with empty
          * THROWN_OBJs. */
+	container_tag = container->count;
     }
 
     /* Try to hit victim */
@@ -1023,7 +1024,8 @@ object *hit_with_arrow(object *op, object *victim) {
             if (hitter == NULL)
                 return NULL;
         } else {
-            object_remove(container);
+	    if(!object_was_destroyed(container, container_tag))
+                object_remove(container);
             object_free_drop_inventory(container);
         }
 
