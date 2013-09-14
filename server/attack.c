@@ -1024,9 +1024,10 @@ object *hit_with_arrow(object *op, object *victim) {
             if (hitter == NULL)
                 return NULL;
         } else {
-	    if(!object_was_destroyed(container, container_tag))
+            if(!object_was_destroyed(container, container_tag)) {
                 object_remove(container);
-            object_free_drop_inventory(container);
+                object_free_drop_inventory(container);
+            }
         }
 
         /* Try to stick arrow into victim */
