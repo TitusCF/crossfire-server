@@ -952,8 +952,7 @@ static void addConstants(PyObject *module, const char *name, const CFConstant *c
     PyObject *new;
     PyObject *dict;
 
-    strncpy(tmp, "Crossfire_", sizeof(tmp));
-    strncat(tmp, name, sizeof(tmp)-strlen(tmp));
+    snprintf(tmp, sizeof(tmp), "Crossfire_%s", name);
 
     new = PyModule_New(tmp);
     dict = PyDict_New();
@@ -969,8 +968,7 @@ static void addConstants(PyObject *module, const char *name, const CFConstant *c
     }
     PyDict_SetItemString(PyModule_GetDict(module), name, new);
 
-    strncpy(tmp, name, sizeof(tmp));
-    strncat(tmp, "Name", sizeof(tmp)-strlen(tmp));
+    snprintf(tmp, sizeof(tmp), "%sName", name);
     PyDict_SetItemString(PyModule_GetDict(module), tmp, dict);
     Py_DECREF(dict);
 }
@@ -985,8 +983,7 @@ static void addSimpleConstants(PyObject *module, const char *name, const CFConst
     char tmp[1024];
     PyObject *new;
 
-    strncpy(tmp, "Crossfire_", sizeof(tmp));
-    strncat(tmp, name, sizeof(tmp)-strlen(tmp));
+    snprintf(tmp, sizeof(tmp), "Crossfire_%s", name);
 
     new = PyModule_New(tmp);
 
