@@ -1,4 +1,4 @@
-nodist_bin_SCRIPTS = crossloop.pl crossloop player_dl.pl
+nodist_bin_SCRIPTS = crossloop player_dl.pl
 dist_bin_SCRIPTS = crossloop.web
 nodist_pkglibexec_SCRIPTS =
 dist_pkglibexec_SCRIPTS = mktable.script add_throw.perl metaserver.pl
@@ -7,7 +7,7 @@ dist_noinst_SCRIPTS = ad2c.script mktable.script player_dl.html cfmeta-rrd
 EXTRA_DIST =
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
-CLEANFILES = crossloop.pl crossloop
+CLEANFILES = crossloop
 
 SED = sed
 
@@ -15,9 +15,6 @@ SED = sed
 # in the following entries.  Sun's man page does say $<
 # is legal.  Easy enough to just replace them with real entries
 # however.
-
-crossloop.pl: crossloop.pl.tmpl
-	$(SED) s%BINDIR%$(bindir)%g < crossloop.pl.tmpl > crossloop.pl
 
 crossloop: crossloop.in
 	${SED} -e "s|BINDIR|${bindir}|g" -e "s|GZIP|${GZIP}|g" \
