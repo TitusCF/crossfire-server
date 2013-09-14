@@ -19,8 +19,9 @@ SED = sed
 crossloop.pl: crossloop.pl.tmpl
 	$(SED) s%BINDIR%$(bindir)%g < crossloop.pl.tmpl > crossloop.pl
 
-crossloop: crossloop.tmpl
-	$(SED) s%BINDIR%$(bindir)%g < crossloop.tmpl > crossloop
+crossloop: crossloop.in
+	${SED} -e "s|BINDIR|${bindir}|g" -e "s|GZIP|${GZIP}|g" \
+		crossloop.in > crossloop
 
 if MAPPER
 noinst_PROGRAMS = crossfire-mapper

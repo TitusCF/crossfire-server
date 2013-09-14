@@ -18,7 +18,7 @@ while [ ! "$logcount"x = "$maxrestart"x ]; do
   $CMDNAME -d 2>>$logdir/$logcount 1>&2
   if [ -f core ] ; then
         mv core core.$logcount
-        /bin/gzip core.$logcount
+        GZIP core.$logcount
   fi
   logcount=`expr $logcount + 1`
   sleep 50
