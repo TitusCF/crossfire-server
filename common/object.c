@@ -4285,7 +4285,7 @@ static int object_set_value_s(object *op, const char *canonical_key, const char 
     key_value *field = NULL, *last = NULL;
 
     if (llevDebug <= settings.debug) {
-        static const const char* whitelist[] = {
+        static const char* whitelist[] = {
             "anim_full",
             "animation_suffix",
             "accept_alive",

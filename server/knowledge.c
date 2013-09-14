@@ -850,7 +850,7 @@ static int knowledge_message_validate(const char *item) {
 
 
 /** All handled knowledge items. */
-static const knowledge_type const knowledges[] = {
+static const knowledge_type knowledges[] = {
     { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_alchemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item, knowledge_alchemy_attempt, "knowledge_recipes.111", knowledge_alchemy_face },
     { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL, NULL, "knowledge_monsters.111", knowledge_monster_face },
     { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL, NULL, "knowledge_gods.111", knowledge_god_face },
