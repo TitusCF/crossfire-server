@@ -5,6 +5,7 @@
 # Only significant newlines should be included; long lines are automatically
 # wrapped on the client side. Comments take up an entire line and should begin
 # with a '#' character.
+
 %Crossfire Server Successfully Installed!
 If you can see this message, then your Crossfire installation was successful!
 
