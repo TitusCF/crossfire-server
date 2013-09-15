@@ -806,7 +806,7 @@ static void build_stringlist(const char *str, char ***result_list, size_t *resul
     for (p = strtok(dup, ","); p != NULL; p = strtok(NULL, ","))
         size++;
 
-    *result_list = malloc(size * sizeof(char *));
+    *result_list = malloc(sizeof(**result_list) * size);
     if (*result_list == NULL)
         fatal(OUT_OF_MEMORY);
     *result_size = size;

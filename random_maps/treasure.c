@@ -870,7 +870,7 @@ object **find_doors_in_room(mapstruct *map, int x, int y, RMParms *RP) {
     int i, j;
     int ndoors = 0;
 
-    doorlist = (object **)calloc(sizeof(object *), 256);
+    doorlist = (object **)calloc(sizeof(*doorlist), 256);
 
 
     layout2 = (char **)calloc(sizeof(char *), RP->Xsize);
