@@ -11,21 +11,25 @@
  * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
+/**
+ * @file random_maps/main.c
+ * Command-line interface to the map generator used to test layouts.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include "global.h"
+#include "maze_gen.h"
+#include "random_map.h"
+#include "room_gen.h"
+#include "rproto.h"
+#include "sproto.h"
+
 #define LO_NEWFILE 2
 
-/* the main routine for making a standalone version. */
-
-#include <time.h>
-#include <stdio.h>
-#include <global.h>
-#include <maze_gen.h>
-#include <room_gen.h>
-#include <random_map.h>
-#include <rproto.h>
-#include <sproto.h>
-
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     char InFileName[1024], OutFileName[1024];
     mapstruct *newMap;
     RMParms rp;
@@ -65,8 +69,6 @@ void set_map_timeout(mapstruct *oldmap)
 {
     /* doesn't need to do anything */
 }
-
-#include <global.h>
 
 /* some plagarized code from apply.c--I needed just these two functions
 without all the rest of the junk, so.... */

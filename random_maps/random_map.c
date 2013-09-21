@@ -12,21 +12,24 @@
  */
 
 /**
- * @file
- * random map generation main routines.
+ * @file random_maps/random_map.c
+ * Routines for random map generation.
+ *
  * @todo
- * explain process, layout signs (# C < > ) and such. Use constants/defines for spot types.
+ * Explain process, layout signs (#, C, <, >) and such. Use constants for
+ * common spot types.
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdio.h>
-#include <global.h>
-#include <maze_gen.h>
-#include <room_gen.h>
-#include <random_map.h>
-#include <rproto.h>
-#include <sproto.h>
+
+#include "global.h"
+#include "maze_gen.h"
+#include "random_map.h"
+#include "room_gen.h"
+#include "rproto.h"
+#include "sproto.h"
 
 /**
  * Dumps specified layout using printf().
