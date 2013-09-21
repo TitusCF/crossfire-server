@@ -1,6 +1,6 @@
 pkglibexec_PROGRAMS = random_map
 
-random_map_SOURCES = standalone.c
+random_map_SOURCES = main.c
 
 noinst_LIBRARIES = librandom_map.a
 
@@ -34,7 +34,7 @@ EXTRA_DIST = \
 	random_map.h \
 	room_gen.h \
 	rproto.h \
-	standalone.c
+	main.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
