@@ -1,26 +1,15 @@
 /*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 1994 Mark Wedel
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to mark@pyramid.com
-*/
-
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
+ */
 
 /**
  * @file
@@ -65,7 +54,8 @@ extern int surround_check(char **maze, int i, int j, int xsize, int ysize);
  * @return
  * generated layout.
  */
-char **map_gen_spiral(int xsize, int ysize, int option) {
+char **map_gen_spiral(int xsize, int ysize, int option)
+{
     int i, j;
     float parm = 0;
     float x = 0, y = 0;
@@ -82,8 +72,9 @@ char **map_gen_spiral(int xsize, int ysize, int option) {
 
     /* slightly easier to fill and then cut */
     for (i = 0; i < xsize; i++)
-        for (j = 0; j < ysize; j++)
+        for (j = 0; j < ysize; j++) {
             maze[i][j] = '#';
+        }
 
     ic = xsize/2;
     jc = ysize/2;
@@ -101,10 +92,11 @@ char **map_gen_spiral(int xsize, int ysize, int option) {
        pick one if they're both set. */
     if ((option&REGULAR_SPIRAL) && (option&FIT_SPIRAL)) {
         /* unset REGULAR_SPIRAL half the time */
-        if (RANDOM()%2 && (option&REGULAR_SPIRAL))
+        if (RANDOM()%2 && (option&REGULAR_SPIRAL)) {
             option -= REGULAR_SPIRAL;
-        else
+        } else {
             option -= FIT_SPIRAL;
+        }
     }
 
     xscale = yscale = MAX_FINE;  /* fine spiral */
@@ -117,10 +109,11 @@ char **map_gen_spiral(int xsize, int ysize, int option) {
     }
 
     if ((option&FIT_SPIRAL) && (xsize != ysize)) {
-        if (xsize > ysize)
+        if (xsize > ysize) {
             xscale *= (float)xsize/(float)ysize;
-        else
+        } else {
             yscale *= (float)ysize/(float)xsize;
+        }
     }
 
     if (option&REGULAR_SPIRAL) {
@@ -156,27 +149,32 @@ char **map_gen_spiral(int xsize, int ysize, int option) {
  * @param layout
  * layout to alter.
  */
-void connect_spirals(int xsize, int ysize, int sym, char **layout) {
+void connect_spirals(int xsize, int ysize, int sym, char **layout)
+{
     int i, j, ic = xsize/2, jc = ysize/2;
 
     if (sym == X_SYM) {
         layout[ic][jc] = 0;
         /* go left from map center */
-        for (i = ic-1, j = jc; i > 0 && layout[i][j] == '#'; i--)
+        for (i = ic-1, j = jc; i > 0 && layout[i][j] == '#'; i--) {
             layout[i][j] = 0;
+        }
         /* go right */
-        for (i = ic+1, j = jc; i < xsize-1 && layout[i][j] == '#'; i++)
+        for (i = ic+1, j = jc; i < xsize-1 && layout[i][j] == '#'; i++) {
             layout[i][j] = 0;
+        }
     }
 
     if (sym == Y_SYM) {
         layout[ic][jc] = 0;
         /* go up */
-        for (i = ic, j = jc-1; j > 0 && layout[i][j] == '#'; j--)
+        for (i = ic, j = jc-1; j > 0 && layout[i][j] == '#'; j--) {
             layout[i][j] = 0;
+        }
         /* go down */
-        for (i = ic, j = jc+1; j < ysize-1 && layout[i][j] == '#'; j++)
+        for (i = ic, j = jc+1; j < ysize-1 && layout[i][j] == '#'; j++) {
             layout[i][j] = 0;
+        }
     }
 
     if (sym == XY_SYM) {

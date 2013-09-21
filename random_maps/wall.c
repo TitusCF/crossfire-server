@@ -1,34 +1,14 @@
 /*
- * static char *rcsid_wall_c =
- *   "$Id$";
- */
-
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
-
-/**
- * @file
- * Deals with wall management in random maps.
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
 #include <global.h>
@@ -53,17 +33,22 @@
  * @todo
  * merge with surround_flag2() and friends, check if such a function doesn't exist in other files.
  */
-int surround_flag(char **layout, int i, int j, RMParms *RP) {
+int surround_flag(char **layout, int i, int j, RMParms *RP)
+{
     int surround_index = 0;
 
-    if ((i > 0) && layout[i-1][j] != 0)
+    if ((i > 0) && layout[i-1][j] != 0) {
         surround_index |= 1;
-    if ((i < RP->Xsize-1) && layout[i+1][j] != 0)
+    }
+    if ((i < RP->Xsize-1) && layout[i+1][j] != 0) {
         surround_index |= 2;
-    if ((j > 0) && layout[i][j-1] != 0)
-            surround_index |= 4;
-    if ((j < RP->Ysize-1) && layout[i][j+1] != 0)
-            surround_index |= 8;
+    }
+    if ((j > 0) && layout[i][j-1] != 0) {
+        surround_index |= 4;
+    }
+    if ((j < RP->Ysize-1) && layout[i][j+1] != 0) {
+        surround_index |= 8;
+    }
     return surround_index;
 }
 
@@ -85,17 +70,22 @@ int surround_flag(char **layout, int i, int j, RMParms *RP) {
  * @todo
  * merge with surround_flag() and friends, check if such a function doesn't exist in other files.
  */
-int surround_flag2(char **layout, int i, int j, RMParms *RP) {
+int surround_flag2(char **layout, int i, int j, RMParms *RP)
+{
     int surround_index = 0;
 
-    if ((i > 0) && layout[i-1][j] == '#')
+    if ((i > 0) && layout[i-1][j] == '#') {
         surround_index |= 1;
-    if ((i < RP->Xsize-1) && layout[i+1][j] == '#')
+    }
+    if ((i < RP->Xsize-1) && layout[i+1][j] == '#') {
         surround_index |= 2;
-    if ((j > 0) && layout[i][j-1] == '#')
+    }
+    if ((j > 0) && layout[i][j-1] == '#') {
         surround_index |= 4;
-    if ((j < RP->Ysize-1) && layout[i][j+1] == '#')
+    }
+    if ((j < RP->Ysize-1) && layout[i][j+1] == '#') {
         surround_index |= 8;
+    }
     return surround_index;
 }
 
@@ -117,17 +107,22 @@ int surround_flag2(char **layout, int i, int j, RMParms *RP) {
  * - 4 = blocked on above.
  * - 8 = blocked on below.
  */
-int surround_flag3(mapstruct *map, int i, int j, RMParms *RP) {
+int surround_flag3(mapstruct *map, int i, int j, RMParms *RP)
+{
     int surround_index = 0;
 
-    if ((i > 0) && (GET_MAP_MOVE_BLOCK(map, i-1, j)&~MOVE_BLOCK_DEFAULT))
+    if ((i > 0) && (GET_MAP_MOVE_BLOCK(map, i-1, j)&~MOVE_BLOCK_DEFAULT)) {
         surround_index |= 1;
-    if ((i < RP->Xsize-1) && (GET_MAP_MOVE_BLOCK(map, i+1, j)&~MOVE_BLOCK_DEFAULT))
+    }
+    if ((i < RP->Xsize-1) && (GET_MAP_MOVE_BLOCK(map, i+1, j)&~MOVE_BLOCK_DEFAULT)) {
         surround_index |= 2;
-    if ((j > 0) && (GET_MAP_MOVE_BLOCK(map, i, j-1)&~MOVE_BLOCK_DEFAULT))
+    }
+    if ((j > 0) && (GET_MAP_MOVE_BLOCK(map, i, j-1)&~MOVE_BLOCK_DEFAULT)) {
         surround_index |= 4;
-    if ((j < RP->Ysize-1) && (GET_MAP_MOVE_BLOCK(map, i, j+1)&~MOVE_BLOCK_DEFAULT))
+    }
+    if ((j < RP->Ysize-1) && (GET_MAP_MOVE_BLOCK(map, i, j+1)&~MOVE_BLOCK_DEFAULT)) {
         surround_index |= 8;
+    }
 
     return surround_index;
 }
@@ -150,17 +145,22 @@ int surround_flag3(mapstruct *map, int i, int j, RMParms *RP) {
  * - 4 = blocked on above.
  * - 8 = blocked on below.
  */
-int surround_flag4(mapstruct *map, int i, int j, RMParms *RP) {
+int surround_flag4(mapstruct *map, int i, int j, RMParms *RP)
+{
     int surround_index = 0;
 
-    if ((i > 0) && wall_blocked(map, i-1, j))
+    if ((i > 0) && wall_blocked(map, i-1, j)) {
         surround_index |= 1;
-    if ((i < RP->Xsize-1) && wall_blocked(map, i+1, j))
+    }
+    if ((i < RP->Xsize-1) && wall_blocked(map, i+1, j)) {
         surround_index |= 2;
-    if ((j > 0) && wall_blocked(map, i, j-1))
+    }
+    if ((j > 0) && wall_blocked(map, i, j-1)) {
         surround_index |= 4;
-    if ((j < RP->Ysize-1) && wall_blocked(map, i, j+1))
+    }
+    if ((j < RP->Ysize-1) && wall_blocked(map, i, j+1)) {
         surround_index |= 8;
+    }
 
     return surround_index;
 }
@@ -177,18 +177,21 @@ int surround_flag4(mapstruct *map, int i, int j, RMParms *RP) {
  * @param RP
  * map parameters.
  */
-void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP) {
+void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP)
+{
     char styledirname[256];
     mapstruct *style_map = NULL;
     object *the_wall;
 
     /* get the style map */
-    if (!strcmp(w_style, "none"))
+    if (!strcmp(w_style, "none")) {
         return;
+    }
     snprintf(styledirname, sizeof(styledirname), "%s", "/styles/wallstyles");
     style_map = find_style(styledirname, w_style, -1);
-    if (style_map == NULL)
+    if (style_map == NULL) {
         return;
+    }
 
     /* fill up the map with the given floor style */
     if ((the_wall = pick_random_object(style_map)) != NULL) {
@@ -206,10 +209,11 @@ void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP) {
         for (i = 0; i < RP->Xsize; i++)
             for (j = 0; j < RP->Ysize; j++) {
                 if (layout[i][j] == '#') {
-                    if (joinedwalls)
+                    if (joinedwalls) {
                         thiswall = pick_joined_wall(the_wall, layout, i, j, RP);
-                    else
+                    } else {
                         thiswall = arch_to_object(the_wall->arch);
+                    }
                     thiswall->move_block = MOVE_ALL;
                     thiswall->move_allow = 0;
                     object_insert_in_map_at(thiswall, map, thiswall, INS_NO_MERGE|INS_NO_WALK_ON, i, j);
@@ -234,7 +238,8 @@ void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP) {
  * @todo
  * check if there isn't an equivalent function in the building code, merge?
  */
-object *pick_joined_wall(object *the_wall, char **layout, int i, int j, RMParms *RP) {
+object *pick_joined_wall(object *the_wall, char **layout, int i, int j, RMParms *RP)
+{
     /* 1 = wall to left,
        2 = wall to right,
        4 = wall above
@@ -328,9 +333,9 @@ object *pick_joined_wall(object *the_wall, char **layout, int i, int j, RMParms 
         break;
     }
     wall_arch = try_find_archetype(wall_name);
-    if (wall_arch)
+    if (wall_arch) {
         return arch_to_object(wall_arch);
-    else {
+    } else {
         return arch_to_object(the_wall->arch);
     }
 }
@@ -355,7 +360,8 @@ object *pick_joined_wall(object *the_wall, char **layout, int i, int j, RMParms 
  * @todo
  * merge with pick_joined_wall()?
  */
-object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, RMParms *RP) {
+object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, RMParms *RP)
+{
     /* 1 = wall to left,
      * 2 = wall to right,
      * 4 = wall above
@@ -369,10 +375,10 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
 
     /* first find the wall */
     FOR_MAP_PREPARE(the_map, i, j, tmp)
-        if ((tmp->move_type&MOVE_WALK) && tmp->type != EXIT && tmp->type != TELEPORTER) {
-            the_wall = tmp;
-            break;
-        }
+    if ((tmp->move_type&MOVE_WALK) && tmp->type != EXIT && tmp->type != TELEPORTER) {
+        the_wall = tmp;
+        break;
+    }
     FOR_MAP_FINISH();
 
     /* if what we found is a door, don't remove it, set the_wall to NULL to
@@ -383,10 +389,12 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
         /* if we're not supposed to insert a new wall where there wasn't one,
          * we've gotta leave.
          */
-        if (insert_flag == 0)
+        if (insert_flag == 0) {
             return NULL;
-    } else if (the_wall == NULL)
+        }
+    } else if (the_wall == NULL) {
         return NULL;
+    }
 
     /* canonicalize the wall name */
     for (l = 0; l < 64; l++) {

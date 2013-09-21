@@ -1,30 +1,15 @@
 /*
- * static char *rcsid_special_c =
- *   "$Id$";
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
-
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
 
 /**
  * @file
@@ -67,7 +52,8 @@
  * @param ysize
  * size of zone.
  */
-void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysize) {
+void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysize)
+{
     int i, j;
 
     for (i = xstart; i < xstart+xsize; i++)
@@ -78,7 +64,8 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
                     object_remove(tmp);
                     object_free_drop_inventory(tmp);
                 }
-            } FOR_MAP_FINISH();
+            }
+            FOR_MAP_FINISH();
         }
 }
 
@@ -92,7 +79,8 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
  * @param y
  * coordinates to put in_map to.
  */
-void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int y) {
+void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int y)
+{
     int i, j;
     object *new_ob;
 
@@ -104,16 +92,19 @@ void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int
             FOR_MAP_PREPARE(in_map, i, j, tmp) {
                 /* don't copy things with multiple squares:  must be dealt with
                    specially. */
-                if (tmp->head != NULL)
+                if (tmp->head != NULL) {
                     continue;
+                }
                 new_ob = arch_to_object(tmp->arch);
                 object_copy_with_inv(tmp, new_ob);
-                if (QUERY_FLAG(tmp, FLAG_IS_LINKED))
+                if (QUERY_FLAG(tmp, FLAG_IS_LINKED)) {
                     add_button_link(new_ob, dest_map, tmp->path_attuned);
+                }
                 new_ob->x = i+x;
                 new_ob->y = j+y;
                 insert_multisquare_ob_in_map(new_ob, dest_map);
-            } FOR_MAP_FINISH();
+            }
+            FOR_MAP_FINISH();
         }
 
     /* Copy shop-related information.
@@ -123,12 +114,15 @@ void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int
      * safe than sorry.
      */
 
-    if (in_map->shopgreed)
+    if (in_map->shopgreed) {
         dest_map->shopgreed = in_map->shopgreed;
-    if (in_map->shopmax)
+    }
+    if (in_map->shopmax) {
         dest_map->shopmax = in_map->shopmax;
-    if (in_map->shopmin)
+    }
+    if (in_map->shopmin) {
         dest_map->shopmin = in_map->shopmin;
+    }
     if (in_map->shoprace) {
         FREE_AND_CLEAR(dest_map->shoprace);
         dest_map->shoprace = strdup_local(in_map->shoprace);
@@ -155,7 +149,8 @@ void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int
  * @return
  * 0 if no space found, 1 else.
  */
-int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xsize, int ysize) {
+int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xsize, int ysize)
+{
     int tries;
     int i = 0, j = 0; /* initialization may not be needed but prevents compiler warnings */
     int is_occupied = 0;
@@ -163,8 +158,9 @@ int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xs
 
     /* don't even try to place a submap into a map if the big map isn't
        sufficiently large. */
-    if (2*xsize > MAP_WIDTH(map) || 2*ysize > MAP_HEIGHT(map))
+    if (2*xsize > MAP_WIDTH(map) || 2*ysize > MAP_HEIGHT(map)) {
         return 0;
+    }
 
     tries = 20;
     if (!settings.special_break_map) {
@@ -179,10 +175,12 @@ int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xs
         j = RANDOM()%(MAP_HEIGHT(map)-ysize-2)+1;
         is_occupied = 0;
         for (l = i; l < i+xsize; l++)
-            for (m = j; m < j+ysize; m++)
+            for (m = j; m < j+ysize; m++) {
                 is_occupied |= layout[l][m];
-        if (!is_occupied)
+            }
+        if (!is_occupied) {
             break;
+        }
     }
 
     /* if we failed, relax the restrictions */
@@ -194,12 +192,14 @@ int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xs
             is_occupied = 0;
             for (l = i; l < i+xsize; l++)
                 for (m = j; m < j+ysize; m++)
-                    if (layout[l][m] == 'C' || layout[l][m] == '>' || layout[l][m] == '<')
+                    if (layout[l][m] == 'C' || layout[l][m] == '>' || layout[l][m] == '<') {
                         is_occupied |= 1;
+                    }
         }
     }
-    if (is_occupied)
+    if (is_occupied) {
         return 0;
+    }
     *ix = i;
     *iy = j;
     return 1;
@@ -212,7 +212,8 @@ int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xs
  * @todo
  * change logic to allocate potion only if success?
  */
-void place_fountain_with_specials(mapstruct *map) {
+void place_fountain_with_specials(mapstruct *map)
+{
     int ix, iy, i = -1, tries = 0;
     mapstruct *fountain_style = find_style("/styles/misc", "fountains", -1);
     const archetype *fountain = find_archetype("fountain");
@@ -238,8 +239,9 @@ void place_fountain_with_specials(mapstruct *map) {
     if (QUERY_FLAG(&fountain->clone, FLAG_ANIMATE)) {
         SET_FLAG(potion, FLAG_ANIMATE);
         SET_FLAG(potion, FLAG_CLIENT_ANIM_RANDOM);
-    } else
+    } else {
         CLEAR_FLAG(potion, FLAG_ANIMATE);
+    }
     object_update_speed(potion);
     SET_FLAG(potion, FLAG_NO_PICK);
     SET_FLAG(potion, FLAG_IDENTIFIED);
@@ -259,7 +261,8 @@ void place_fountain_with_specials(mapstruct *map) {
  * @param RP
  * parameters from which map was generated.
  */
-void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
+void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP)
+{
     int ix, iy, i = -1;
     char *buf;
     const char *style, *decor, *mon;
@@ -268,8 +271,9 @@ void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
     object *the_exit;
     RMParms hole;
 
-    if (!exit_style)
+    if (!exit_style) {
         return;
+    }
 
     the_exit = object_new();
 
@@ -281,8 +285,9 @@ void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
         i = object_find_first_free_spot(the_exit, map, ix, iy);
     }
 
-    if (!hole_type)
+    if (!hole_type) {
         hole_type = RANDOM()%NR_OF_HOLE_TYPES+1;
+    }
 
     switch (hole_type) {
     case GLORY_HOLE: { /* treasures */
@@ -321,10 +326,12 @@ void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
     /* Need to be at least this size, otherwise the load
      * code will generate new size values which are too large.
      */
-    if (g_xsize < MIN_RANDOM_MAP_SIZE)
+    if (g_xsize < MIN_RANDOM_MAP_SIZE) {
         g_xsize = MIN_RANDOM_MAP_SIZE;
-    if (g_ysize < MIN_RANDOM_MAP_SIZE)
+    }
+    if (g_ysize < MIN_RANDOM_MAP_SIZE) {
         g_ysize = MIN_RANDOM_MAP_SIZE;
+    }
 
     memset(&hole, 0, sizeof(hole));
     hole.Xsize = g_xsize;
@@ -373,7 +380,8 @@ void place_special_exit(mapstruct *map, int hole_type, const RMParms *RP) {
  * @param RP
  * parameters the map was generated from.
  */
-void place_specials_in_map(mapstruct *map, char **layout, RMParms *RP) {
+void place_specials_in_map(mapstruct *map, char **layout, RMParms *RP)
+{
     mapstruct *special_map;
     int ix, iy;  /* map insertion locatons */
     int special_type; /* type of special to make */
@@ -383,23 +391,25 @@ void place_specials_in_map(mapstruct *map, char **layout, RMParms *RP) {
         /* includes a special map into the random map being made. */
     case SPECIAL_SUBMAP: {
         special_map = find_style("/styles/specialmaps", NULL, RP->difficulty);
-        if (special_map == NULL)
+        if (special_map == NULL) {
             return;
+        }
 
-        if (find_spot_for_submap(map, layout, &ix, &iy, MAP_WIDTH(special_map), MAP_HEIGHT(special_map)))
+        if (find_spot_for_submap(map, layout, &ix, &iy, MAP_WIDTH(special_map), MAP_HEIGHT(special_map))) {
             include_map_in_map(map, special_map, ix, iy);
+        }
         break;
     }
 
-        /* Make a special fountain:  an unpickable potion disguised as
-         * a fountain, or rather, colocated with a fountain.
-         */
+    /* Make a special fountain:  an unpickable potion disguised as
+     * a fountain, or rather, colocated with a fountain.
+     */
     case SPECIAL_FOUNTAIN: {
         place_fountain_with_specials(map);
         break;
     }
 
-        /* Make an exit to another random map, e.g. a gloryhole. */
+    /* Make an exit to another random map, e.g. a gloryhole. */
     case SPECIAL_EXIT: {
         place_special_exit(map, 0, RP);
         break;

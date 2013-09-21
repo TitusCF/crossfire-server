@@ -1,30 +1,15 @@
 /*
- * static char *rcsid_map_c =
- *   "$Id$";
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
-
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
 
 /**
  * @file
@@ -65,14 +50,17 @@ char **map_gen_onion(int xsize, int ysize, int option, int layers);
  * @param cy
  * where to start from, and detected corner.
  */
-void find_top_left_corner(char **maze, int *cx, int *cy) {
+void find_top_left_corner(char **maze, int *cx, int *cy)
+{
     (*cy)--;
     /* find the top wall. */
-    while (maze[*cx][*cy] == 0)
+    while (maze[*cx][*cy] == 0) {
         (*cy)--;
+    }
     /* proceed right until a corner is detected */
-    while (maze[*cx][*cy+1] == 0)
+    while (maze[*cx][*cy+1] == 0) {
         (*cx)++;
+    }
 
     /* cx and cy should now be the top-right corner of the onion layer */
 }
@@ -87,7 +75,8 @@ void find_top_left_corner(char **maze, int *cx, int *cy) {
  * @todo
  * use function in another file for character searching.
  */
-char **make_square_spiral_layout(int xsize, int ysize) {
+char **make_square_spiral_layout(int xsize, int ysize)
+{
     int i, j;
     int cx, cy;
     int tx, ty;
@@ -110,28 +99,32 @@ char **make_square_spiral_layout(int xsize, int ysize) {
     while (1) {
         find_top_left_corner(maze, &tx, &ty);
 
-        if (ty < 2 || tx < 2 || tx > xsize-2 || ty > ysize-2)
+        if (ty < 2 || tx < 2 || tx > xsize-2 || ty > ysize-2) {
             break;
+        }
         make_wall(maze, tx, ty-1, 1);  /* make a vertical wall with a door */
 
         maze[tx][ty-1] = '#'; /* convert the door that make_wall puts here to a wall */
         maze[tx-1][ty] = 'D';/* make a doorway out of this layer */
 
         /* walk left until we find the top-left corner */
-        while ((tx > 2) && maze[tx-1][ty])
+        while ((tx > 2) && maze[tx-1][ty]) {
             tx--;
+        }
 
         make_wall(maze, tx-1, ty, 0);     /* make a horizontal wall with a door */
 
         /* walk down until we find the bottom-left corner */
-        while (((ty+1) < ysize) && maze[tx][ty+1])
+        while (((ty+1) < ysize) && maze[tx][ty+1]) {
             ty++;
+        }
 
         make_wall(maze, tx, ty+1, 1);    /* make a vertical wall with a door */
 
         /* walk rightuntil we find the bottom-right corner */
-        while (((tx+1) < xsize) && maze[tx+1][ty])
+        while (((tx+1) < xsize) && maze[tx+1][ty]) {
             tx++;
+        }
 
         make_wall(maze, tx+1, ty, 0);   /* make a horizontal wall with a door */
         tx++;  /* set up for next layer. */

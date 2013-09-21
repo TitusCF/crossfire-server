@@ -1,30 +1,15 @@
 /*
- * static char *rcsid_style_c =
- *   "$Id$";
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
-
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
 
 /**
  * @file
@@ -50,7 +35,8 @@
  * @return
  * return of strcmp() on pointed strings.
  */
-static int pointer_strcmp(const void *p1, const void *p2) {
+static int pointer_strcmp(const void *p1, const void *p2)
+{
     const char *s1 = *(const char * const *)p1;
     const char *s2 = *(const char * const *)p2;
 
@@ -80,7 +66,8 @@ static int pointer_strcmp(const void *p1, const void *p2) {
  * @return
  * -1 if dir is invalid, number of files else.
  */
-int load_dir(const char *dir, char ***namelist, int skip_dirs) {
+int load_dir(const char *dir, char ***namelist, int skip_dirs)
+{
     DIR *dp;
     struct dirent *d;
     int entries = 0, entry_size = 0;
@@ -88,8 +75,9 @@ int load_dir(const char *dir, char ***namelist, int skip_dirs) {
     struct stat sb;
 
     dp = opendir(dir);
-    if (dp == NULL)
+    if (dp == NULL) {
         return -1;
+    }
 
     while ((d = readdir(dp)) != NULL) {
         if (skip_dirs) {
@@ -113,8 +101,9 @@ int load_dir(const char *dir, char ***namelist, int skip_dirs) {
      * Most likely directory was empty. In theory it could also be due to
      * realloc failing to allocate.
      */
-    if (rn == NULL)
+    if (rn == NULL) {
         return 0;
+    }
 
     qsort(rn, entries, sizeof(char *), pointer_strcmp);
 
@@ -134,26 +123,29 @@ mapstruct *styles = NULL;
  * @return
  * map.
  */
-mapstruct *load_style_map(char *style_name) {
+mapstruct *load_style_map(char *style_name)
+{
     mapstruct *style_map;
 
     /* Given a file.  See if its in memory */
     for (style_map = styles; style_map != NULL; style_map = style_map->next) {
-        if (!strcmp(style_name, style_map->path))
+        if (!strcmp(style_name, style_map->path)) {
             return style_map;
+        }
     }
     style_map = load_original_map(style_name, MAP_STYLE);
     /* Remove it from global list, put it on our local list */
     if (style_map) {
         mapstruct *tmp;
 
-        if (style_map == first_map)
+        if (style_map == first_map) {
             first_map = style_map->next;
-        else {
+        } else {
             for (tmp = first_map; tmp && tmp->next != style_map; tmp = tmp->next)
                 ;
-            if (tmp)
+            if (tmp) {
                 tmp->next = style_map->next;
+            }
         }
         style_map->next = styles;
         styles = style_map;
@@ -180,7 +172,8 @@ mapstruct *load_style_map(char *style_name) {
  * @todo
  * better document.
  */
-mapstruct *find_style(const char *dirname, const char *stylename, int difficulty) {
+mapstruct *find_style(const char *dirname, const char *stylename, int difficulty)
+{
     char style_file_path[256];
     char style_file_full_path[256];
     mapstruct *style_map = NULL;
@@ -188,15 +181,16 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
     int i, only_subdirs = 0;
 
     /* if stylename exists, set style_file_path to that file.*/
-    if (stylename && strlen(stylename) > 0)
+    if (stylename && strlen(stylename) > 0) {
         snprintf(style_file_path, sizeof(style_file_path), "%s/%s", dirname, stylename);
-    else /* otherwise, just use the dirname.  We'll pick a random stylefile.*/
+    } else { /* otherwise, just use the dirname.  We'll pick a random stylefile.*/
         snprintf(style_file_path, sizeof(style_file_path), "%s", dirname);
+    }
 
     /* is what we were given a directory, or a file? */
     snprintf(style_file_full_path, sizeof(style_file_full_path), "%s/maps%s", settings.datadir, style_file_path);
     if (stat(style_file_full_path, &file_stat) == 0
-        && !S_ISDIR(file_stat.st_mode)) {
+            && !S_ISDIR(file_stat.st_mode)) {
         style_map = load_style_map(style_file_path);
     }
     if (style_map == NULL) { /* maybe we were given a directory! */
@@ -216,8 +210,9 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
             only_subdirs = 1;
         }
 
-        if (n <= 0)
-            return NULL; /* nothing to load.  Bye. */
+        if (n <= 0) {
+            return NULL;    /* nothing to load.  Bye. */
+        }
 
         /* Picks a random map.  Note that if this is all directories,
          * we know it won't be able to load, so save a few ticks.
@@ -225,9 +220,9 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
          * it properly.
          */
         if (difficulty == -1) { /* pick a random style from this dir. */
-            if (only_subdirs)
+            if (only_subdirs) {
                 style_map = NULL;
-            else {
+            } else {
                 char *p;
 
                 p = strchr(style_file_path, '\0');
@@ -247,8 +242,9 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
 
                     /*pick one at random to recurse */
                     style_map = find_style(style_file_path, namelist[RANDOM()%n], difficulty);
-                    for (q = 0; q < n; q++)
+                    for (q = 0; q < n; q++) {
                         free(namelist[q]);
+                    }
                     free(namelist);
                     return style_map;
                 } else {
@@ -265,8 +261,9 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
             snprintf(p, style_file_path+sizeof(style_file_path)-p, "/%s", namelist[min_index]);
             style_map = load_style_map(style_file_path);
         }
-        for (i = 0; i < n; i++)
+        for (i = 0; i < n; i++) {
             free(namelist[i]);
+        }
         free(namelist);
     }
     return style_map;
@@ -281,7 +278,8 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
  * @return
  * random object. Can be NULL.
  */
-object *pick_random_object(mapstruct *style) {
+object *pick_random_object(mapstruct *style)
+{
     int x, y, limit = 0;
     object *new_obj;
 
@@ -303,7 +301,8 @@ object *pick_random_object(mapstruct *style) {
 /**
  * Frees cached style maps.
  */
-void free_style_maps(void) {
+void free_style_maps(void)
+{
     mapstruct *next;
     int  style_maps = 0;
 

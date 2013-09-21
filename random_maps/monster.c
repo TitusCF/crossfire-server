@@ -1,30 +1,15 @@
 /*
- * static char *rcsid_monster_c =
- *   "$Id$";
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
-
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
 
 /**
  * @file
@@ -46,7 +31,8 @@
  * @todo
  * there probably is a function in the common library for that, so remove this one.
  */
-void  insert_multisquare_ob_in_map(object *new_obj, mapstruct *map) {
+void  insert_multisquare_ob_in_map(object *new_obj, mapstruct *map)
+{
     int x, y;
     archetype *at;
     object *old_seg;
@@ -86,7 +72,8 @@ void  insert_multisquare_ob_in_map(object *new_obj, mapstruct *map) {
  * @param RP
  * random map parameters.
  */
-void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms *RP) {
+void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms *RP)
+{
     char styledirname[256];
     mapstruct *style_map = NULL;
     int failed_placements;
@@ -96,8 +83,9 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms 
 
     snprintf(styledirname, sizeof(styledirname), "%s", "/styles/monsterstyles");
     style_map = find_style(styledirname, monsterstyle, difficulty);
-    if (style_map == NULL)
+    if (style_map == NULL) {
         return;
+    }
 
     /* fill up the map with random monsters from the monster style*/
 
@@ -105,13 +93,14 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms 
     failed_placements = 0;
     exp_per_sq = 0;
     while (exp_per_sq <= level_exp(difficulty, 1.0)
-    && failed_placements < 100
-    && number_monsters < (RP->Xsize*RP->Ysize)/8) {
+            && failed_placements < 100
+            && number_monsters < (RP->Xsize*RP->Ysize)/8) {
         object *this_monster = pick_random_object(style_map);
         int x, y, freeindex;
 
-        if (this_monster == NULL)
-            return; /* no monster?? */
+        if (this_monster == NULL) {
+            return;    /* no monster?? */
+        }
         x = RANDOM()%RP->Xsize;
         y = RANDOM()%RP->Ysize;
         freeindex = object_find_first_free_spot(this_monster, map, x, y);
@@ -125,8 +114,9 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms 
             new_monster->y = y;
             insert_multisquare_ob_in_map(new_monster, map);
             total_experience += this_monster->stats.exp;
-            for (at = new_monster->arch; at != NULL; at = at->more)
+            for (at = new_monster->arch; at != NULL; at = at->more) {
                 number_monsters++;
+            }
             RP->total_map_hp += new_monster->stats.hp;  /*  a global count */
         } else {
             failed_placements++;

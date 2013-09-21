@@ -1,4 +1,15 @@
-
+/*
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
+ */
 
 /**
  * @file
@@ -17,7 +28,8 @@
  * @return
  * generated layout.
  */
-char **make_snake_layout(int xsize, int ysize) {
+char **make_snake_layout(int xsize, int ysize)
+{
     int i, j;
 
     /* allocate that array, set it up */
@@ -27,14 +39,17 @@ char **make_snake_layout(int xsize, int ysize) {
     }
 
     /* write the outer walls */
-    for (i = 0; i < xsize; i++)
+    for (i = 0; i < xsize; i++) {
         maze[i][0] = maze[i][ysize-1] = '#';
-    for (j = 0; j < ysize; j++)
+    }
+    for (j = 0; j < ysize; j++) {
         maze[0][j] = maze[xsize-1][j] = '#';
+    }
 
     /* Bail out if the size is too small to make a snake. */
-    if (xsize < 8 || ysize < 8)
+    if (xsize < 8 || ysize < 8) {
         return maze;
+    }
 
     /* decide snake orientation--vertical or horizontal , and
        make the walls and place the doors. */

@@ -1,10 +1,14 @@
 /*
- * --------------------------------------------------------------------------
- * $Id$
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
  *
- * ALGORITHM
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
  *
- * ... (TBW)
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
 /**
@@ -36,7 +40,8 @@ static void expand_door(char **newlayout, int i, int j, char **layout, int xsize
  * @return
  * new layout. Must be free()d by caller.
  */
-char **expand2x(char **layout, int xsize, int ysize) {
+char **expand2x(char **layout, int xsize, int ysize)
+{
     int i, j;
     int nxsize = xsize*2-1;
     int nysize = ysize*2-1;
@@ -86,7 +91,8 @@ char **expand2x(char **layout, int xsize, int ysize) {
  * @param layout
  * map layout.
  */
-static void expand_misc(char **newlayout, int i, int j, char **layout) {
+static void expand_misc(char **newlayout, int i, int j, char **layout)
+{
     newlayout[i*2][j*2] = layout[i][j];
     /* (Note: no need to reset rest of 2x2 area to \0 because calloc does that
      * for us.) */
@@ -112,17 +118,21 @@ static void expand_misc(char **newlayout, int i, int j, char **layout) {
  * - 2 means match on (i, j+1).
  * - 4 means match on (i+1, j+1).
  */
-static int calc_pattern(char ch, char **layout, int i, int j, int xsize, int ysize) {
+static int calc_pattern(char ch, char **layout, int i, int j, int xsize, int ysize)
+{
     int pattern = 0;
 
-    if (i+1 < xsize && layout[i+1][j] == ch)
+    if (i+1 < xsize && layout[i+1][j] == ch) {
         pattern |= 1;
+    }
 
     if (j+1 < ysize) {
-        if (layout[i][j+1] == ch)
+        if (layout[i][j+1] == ch) {
             pattern |= 2;
-        if (i+1 < xsize && layout[i+1][j+1] == ch)
+        }
+        if (i+1 < xsize && layout[i+1][j+1] == ch) {
             pattern |= 4;
+        }
     }
 
     return pattern;
@@ -143,7 +153,8 @@ static int calc_pattern(char ch, char **layout, int i, int j, int xsize, int ysi
  * @param ysize
  * sizes of layout.
  */
-static void expand_wall(char **newlayout, int i, int j, char **layout, int xsize, int ysize) {
+static void expand_wall(char **newlayout, int i, int j, char **layout, int xsize, int ysize)
+{
     int wall_pattern = calc_pattern('#', layout, i, j, xsize, ysize);
     int door_pattern = calc_pattern('D', layout, i, j, xsize, ysize);
     int both_pattern = wall_pattern|door_pattern;
@@ -185,7 +196,8 @@ static void expand_wall(char **newlayout, int i, int j, char **layout, int xsize
  * @param ysize
  * size of non expanded layout.
  */
-static void expand_door(char **newlayout, int i, int j, char **layout, int xsize, int ysize) {
+static void expand_door(char **newlayout, int i, int j, char **layout, int xsize, int ysize)
+{
     int wall_pattern = calc_pattern('#', layout, i, j, xsize, ysize);
     int door_pattern = calc_pattern('D', layout, i, j, xsize, ysize);
     int join_pattern;

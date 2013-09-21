@@ -1,30 +1,15 @@
 /*
- * static char *rcsid_exit_c =
- *   "$Id$";
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
-
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
 
 #include <global.h>
 #include <random_map.h>
@@ -55,7 +40,8 @@
  * @param RP
  * maze parameters.
  */
-void find_in_layout(int mode, char target, int *fx, int *fy, char **layout, RMParms *RP) {
+void find_in_layout(int mode, char target, int *fx, int *fy, char **layout, RMParms *RP)
+{
     int M;
     int i, j;
 
@@ -63,10 +49,11 @@ void find_in_layout(int mode, char target, int *fx, int *fy, char **layout, RMPa
     *fy = -1;
 
     /* if a starting mode isn't given, pick one */
-    if (mode < 1 || mode > 4)
+    if (mode < 1 || mode > 4) {
         M = RANDOM()%4+1;
-    else
+    } else {
         M = mode;
+    }
 
     /* four different search starting points and methods so that
        we can do something different for symmetrical maps instead of
@@ -150,7 +137,8 @@ void find_in_layout(int mode, char target, int *fx, int *fy, char **layout, RMPa
  * @todo
  * add orientations 3-6 or fix previous comment.
  */
-void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, RMParms *RP) {
+void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, RMParms *RP)
+{
     char styledirname[256];
     mapstruct *style_map_down = NULL; /* harder maze */
     mapstruct *style_map_up = NULL;   /* easier maze */
@@ -165,12 +153,14 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     int i, j;
 
     if (RP->exit_on_final_map) {
-        if (strstr(RP->exit_on_final_map, "no"))
+        if (strstr(RP->exit_on_final_map, "no")) {
             final_map_exit = 0;
+        }
     }
 
-    if (orientation == 0)
+    if (orientation == 0) {
         orientation = RANDOM()%6+1;
+    }
 
     switch (orientation) {
     case 1: {
@@ -197,9 +187,9 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     }
     }
 
-    if (style_map_up == NULL)
+    if (style_map_up == NULL) {
         the_exit_up = arch_to_object(find_archetype("exit"));
-    else {
+    } else {
         object *tmp;
 
         tmp = pick_random_object(style_map_up);
@@ -208,18 +198,19 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
 
     /* we need a down exit only if we're recursing. */
     if (RP->dungeon_level < RP->dungeon_depth || RP->final_map[0] != 0)
-        if (RP->dungeon_level >= RP->dungeon_depth && RP->final_exit_archetype[0] != 0)
+        if (RP->dungeon_level >= RP->dungeon_depth && RP->final_exit_archetype[0] != 0) {
             the_exit_down = arch_to_object(find_archetype(RP->final_exit_archetype));
-        else if (style_map_down == NULL)
+        } else if (style_map_down == NULL) {
             the_exit_down = arch_to_object(find_archetype("exit"));
-        else {
+        } else {
             object *tmp;
 
             tmp = pick_random_object(style_map_down);
             the_exit_down = arch_to_object(tmp->arch);
         }
-    else
+    else {
         the_exit_down = NULL;
+    }
 
     /* set up the up exit */
     the_exit_up->stats.hp = RP->origin_x;
@@ -235,29 +226,33 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
 
     /* if we didn't find an up, find an empty place far from the center */
     if (upx == -1 && cx != -1) {
-        if (cx > RP->Xsize/2)
+        if (cx > RP->Xsize/2) {
             upx = 1;
-        else
+        } else {
             upx = RP->Xsize-2;
-        if (cy > RP->Ysize/2)
+        }
+        if (cy > RP->Ysize/2) {
             upy = 1;
-        else
+        } else {
             upy = RP->Ysize-2;
+        }
 
         /* find an empty place far from the center */
-        if (upx == 1 && upy == 1)
+        if (upx == 1 && upy == 1) {
             find_in_layout(1, 0, &upx, &upy, maze, RP);
-        else if (upx == 1 && upy > 1)
+        } else if (upx == 1 && upy > 1) {
             find_in_layout(3, 0, &upx, &upy, maze, RP);
-        else if (upx > 1 && upy == 1)
+        } else if (upx > 1 && upy == 1) {
             find_in_layout(2, 0, &upx, &upy, maze, RP);
-        else if (upx > 1 && upy > 1)
+        } else if (upx > 1 && upy > 1) {
             find_in_layout(4, 0, &upx, &upy, maze, RP);
+        }
     }
 
     /* no indication of where to place the exit, so just place it at any empty spot. */
-    if (upx == -1)
+    if (upx == -1) {
         find_in_layout(0, 0, &upx, &upy, maze, RP);
+    }
 
     /* surround the exits with notices that this is a random map. */
     for (j = 1; j < 9; j++) {
@@ -290,28 +285,32 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     /* make the other exit far away from this one if
        there's no center. */
     if (downx == -1) {
-        if (upx > RP->Xsize/2)
+        if (upx > RP->Xsize/2) {
             downx = 1;
-        else
+        } else {
             downx = RP->Xsize-2;
-        if (upy > RP->Ysize/2)
+        }
+        if (upy > RP->Ysize/2) {
             downy = 1;
-        else
+        } else {
             downy = RP->Ysize-2;
+        }
 
         /* find an empty place far from the entrance */
-        if (downx == 1 && downy == 1)
+        if (downx == 1 && downy == 1) {
             find_in_layout(1, 0, &downx, &downy, maze, RP);
-        else if (downx == 1 && downy > 1)
+        } else if (downx == 1 && downy > 1) {
             find_in_layout(3, 0, &downx, &downy, maze, RP);
-        else if (downx > 1 && downy == 1)
+        } else if (downx > 1 && downy == 1) {
             find_in_layout(2, 0, &downx, &downy, maze, RP);
-        else if (downx > 1 && downy > 1)
+        } else if (downx > 1 && downy > 1) {
             find_in_layout(4, 0, &downx, &downy, maze, RP);
+        }
     }
     /* no indication of where to place the down exit, so just place it on an empty spot. */
-    if (downx == -1)
+    if (downx == -1) {
         find_in_layout(0, 0, &downx, &downy, maze, RP);
+    }
     if (the_exit_down) {
         char *buf;
 
@@ -328,8 +327,9 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             object *the_exit_back = arch_to_object(the_exit_up->arch);
 
             /* load it */
-            if ((new_map = ready_map_name(RP->final_map, 0)) == NULL)
+            if ((new_map = ready_map_name(RP->final_map, 0)) == NULL) {
                 return;
+            }
 
             the_exit_down->slaying = add_string(RP->final_map);
             EXIT_X(the_exit_down) = MAP_ENTER_X(new_map);
@@ -337,16 +337,16 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             strncpy(new_map->path, RP->final_map, sizeof(new_map->path));
 
             FOR_MAP_PREPARE(new_map, MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map), tmp)
-                /* Remove exit back to previous random map.  There should only be one
-                 * which is why we break out.  To try to process more than one
-                 * would require keeping a 'next' pointer, as object_free_drop_inventory() kills tmp, which
-                 * breaks the for loop.
-                 */
-                if (tmp->type == EXIT && EXIT_PATH(tmp) && !strncmp(EXIT_PATH(tmp), "/random/", 8)) {
-                    object_remove(tmp);
-                    object_free_drop_inventory(tmp);
-                    break;
-                }
+            /* Remove exit back to previous random map.  There should only be one
+             * which is why we break out.  To try to process more than one
+             * would require keeping a 'next' pointer, as object_free_drop_inventory() kills tmp, which
+             * breaks the for loop.
+             */
+            if (tmp->type == EXIT && EXIT_PATH(tmp) && !strncmp(EXIT_PATH(tmp), "/random/", 8)) {
+                object_remove(tmp);
+                object_free_drop_inventory(tmp);
+                break;
+            }
             FOR_MAP_FINISH();
 
             if (final_map_exit == 1) {
@@ -358,8 +358,9 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             }
 
             set_map_timeout(new_map);   /* So it gets swapped out */
-        } else
+        } else {
             the_exit_down->slaying = add_string("/!");
+        }
 
         /* Block the exit so things don't get dumped on top of it. */
         the_exit_down->move_block = MOVE_ALL;
@@ -379,7 +380,8 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
  * @param RP
  * map generation parameters.
  */
-void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
+void unblock_exits(mapstruct *map, char **maze, RMParms *RP)
+{
     int i = 0, j = 0;
 
     for (i = 0; i < RP->Xsize; i++)
@@ -390,6 +392,7 @@ void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
                         walk->move_block = MOVE_BLOCK_DEFAULT;
                         object_update(walk, UP_OBJ_CHANGE);
                     }
-                } FOR_MAP_FINISH();
+                }
+                FOR_MAP_FINISH();
             }
 }

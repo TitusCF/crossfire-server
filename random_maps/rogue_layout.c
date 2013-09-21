@@ -1,3 +1,16 @@
+/*
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
+ */
+
 /**
  * @file
  * Rogue/nethack-like layout generation
@@ -41,17 +54,22 @@ static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize)
  * @todo
  * there is an equivalent function in another layout, merge them together.
  */
-int surround_check(char **layout, int i, int j, int Xsize, int Ysize) {
+int surround_check(char **layout, int i, int j, int Xsize, int Ysize)
+{
     int surround_index = 0;
 
-    if ((i > 0) && (layout[i-1][j] != 0 && layout[i-1][j] != '.'))
+    if ((i > 0) && (layout[i-1][j] != 0 && layout[i-1][j] != '.')) {
         surround_index += 1;
-    if ((i < Xsize-1) && (layout[i+1][j] != 0 && layout[i+1][j] != '.'))
+    }
+    if ((i < Xsize-1) && (layout[i+1][j] != 0 && layout[i+1][j] != '.')) {
         surround_index += 2;
-    if ((j > 0) && (layout[i][j-1] != 0 && layout[i][j-1] != '.'))
+    }
+    if ((j > 0) && (layout[i][j-1] != 0 && layout[i][j-1] != '.')) {
         surround_index += 4;
-    if ((j < Ysize-1) && (layout[i][j+1] != 0 && layout[i][j+1] != '.'))
+    }
+    if ((j < Ysize-1) && (layout[i][j+1] != 0 && layout[i][j+1] != '.')) {
         surround_index += 8;
+    }
     return surround_index;
 }
 
@@ -66,7 +84,8 @@ int surround_check(char **layout, int i, int j, int Xsize, int Ysize) {
  * @return
  * generated layout.
  */
-char **roguelike_layout_gen(int xsize, int ysize, int options) {
+char **roguelike_layout_gen(int xsize, int ysize, int options)
+{
     int i, j;
     Room *Rooms = NULL;
     Room *walk;
@@ -77,8 +96,9 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
     char **maze = (char **)malloc(sizeof(char *)*xsize);
     for (i = 0; i < xsize; i++) {
         maze[i] = (char *)malloc(sizeof(char)*ysize);
-        for (j = 0; j < ysize; j++)
+        for (j = 0; j < ysize; j++) {
             maze[i][j] = '#';
+        }
     }
 
     /* minimum room size is basically 5x5:  if xsize/ysize is
@@ -87,8 +107,9 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
 
     if (xsize < 11 || ysize < 11) {
         for (i = 1; i < xsize-1; i++)
-            for (j = 1; j < ysize-1; j++)
+            for (j = 1; j < ysize-1; j++) {
                 maze[i][j] = 0;
+            }
         maze[(xsize-1)/2][(ysize-1)/2] = '>';
         maze[(xsize-1)/2][(ysize-1)/2+1] = '<';
         return maze;
@@ -102,16 +123,18 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
     i = 0;
     while (tries < 450 && i < nrooms) {
         /* try to place the room */
-        if (!roguelike_place_room(Rooms, xsize, ysize, nrooms))
+        if (!roguelike_place_room(Rooms, xsize, ysize, nrooms)) {
             tries++;
-        else
+        } else {
             i++;
+        }
     }
 
     if (i == 0) { /* no can do! */
         for (i = 1; i < xsize-1; i++)
-            for (j = 1; j < ysize-1; j++)
+            for (j = 1; j < ysize-1; j++) {
                 maze[i][j] = 0;
+            }
         maze[(xsize-1)/2][(ysize-1)/2] = '>';
         maze[(xsize-1)/2][(ysize-1)/2+1] = '<';
         free(Rooms);
@@ -137,18 +160,21 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
          * other exit one space up/down, depending which is a space
          * and not a wall.
          */
-        if (maze[walk->x][walk->y+1] == '.')
+        if (maze[walk->x][walk->y+1] == '.') {
             maze[walk->x][walk->y+1] = '>';
-        else
+        } else {
             maze[walk->x][walk->y-1] = '>';
-    } else
+        }
+    } else {
         maze[walk->x][walk->y] = '>';
+    }
 
     /* convert all the '.' to 0, we're through with the '.' */
     for (i = 0; i < xsize; i++)
         for (j = 0; j < ysize; j++) {
-            if (maze[i][j] == '.')
+            if (maze[i][j] == '.') {
                 maze[i][j] = 0;
+            }
             if (maze[i][j] == 'D') { /* remove bad door. */
                 int si = surround_check(maze, i, j, xsize, ysize);
 
@@ -177,7 +203,8 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
  * @return
  * 0 if no room could be generated, 1 else.
  */
-static int roguelike_place_room(Room *Rooms, int xsize, int ysize, int nrooms) {
+static int roguelike_place_room(Room *Rooms, int xsize, int ysize, int nrooms)
+{
     int tx, ty;  /* trial center locations */
     int sx, sy;  /* trial sizes */
     int ax, ay;  /* min coords of rect */
@@ -208,22 +235,26 @@ static int roguelike_place_room(Room *Rooms, int xsize, int ysize, int nrooms) {
     zy = ty+sy/2+sy%2;
 
     /* check to see if it's in the map */
-    if (zx > xsize-1 || ax < 1)
+    if (zx > xsize-1 || ax < 1) {
         return 0;
-    if (zy > ysize-1 || ay < 1)
+    }
+    if (zy > ysize-1 || ay < 1) {
         return 0;
+    }
 
     /* no small fish */
-    if (sx < 3 || sy < 3)
+    if (sx < 3 || sy < 3) {
         return 0;
+    }
 
     /* check overlap with existing rooms */
     for (walk = Rooms; walk->x != 0; walk++) {
         int dx = abs(tx-walk->x);
         int dy = abs(ty-walk->y);
 
-        if ((dx < (walk->sx+sx)/2+2) && (dy < (walk->sy+sy)/2+2))
+        if ((dx < (walk->sx+sx)/2+2) && (dy < (walk->sy+sy)/2+2)) {
             return 0;
+        }
     }
 
     /* if we've got here, presumably the room is OK. */
@@ -251,7 +282,8 @@ static int roguelike_place_room(Room *Rooms, int xsize, int ysize, int nrooms) {
  * @param options
  * 2 to have circular rooms, 1 for rectanglar ones, another value for random choice.
  */
-static void roguelike_make_rooms(Room *Rooms, char **maze, int options) {
+static void roguelike_make_rooms(Room *Rooms, char **maze, int options)
+{
     int making_circle = 0;
     int i, j;
     int R;
@@ -273,16 +305,18 @@ static void roguelike_make_rooms(Room *Rooms, char **maze, int options) {
             break;
         }
 
-        if (walk->sx < walk->sy)
+        if (walk->sx < walk->sy) {
             R = walk->sx/2;
-        else
+        } else {
             R = walk->sy/2;
+        }
 
         /* enscribe a rectangle or a circle */
         for (i = walk->ax; i < walk->zx; i++)
             for (j = walk->ay; j < walk->zy; j++) {
-                if (!making_circle || ((int)(0.5+hypot(walk->x-i, walk->y-j))) <= R)
+                if (!making_circle || ((int)(0.5+hypot(walk->x-i, walk->y-j))) <= R) {
                     maze[i][j] = '.';
+                }
             }
     }
 }
@@ -297,13 +331,15 @@ static void roguelike_make_rooms(Room *Rooms, char **maze, int options) {
  * @param ysize
  * maze size.
  */
-static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize) {
+static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize)
+{
     Room *walk;
     int i, j;
 
     /* link each room to the previous room */
-    if (Rooms[1].x == 0)
-        return; /* only 1 room */
+    if (Rooms[1].x == 0) {
+        return;    /* only 1 room */
+    }
 
     for (walk = Rooms+1; walk->x != 0; walk++) {
         int x1 = walk->x;
@@ -332,14 +368,17 @@ static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize)
                 } else if (in_wall && maze[i][j] == '.') {
                     in_wall = 0;
                     maze[i-1][j] = 'D';
-                } else if (maze[i][j] != 'D' && maze[i][j] != '.')
+                } else if (maze[i][j] != 'D' && maze[i][j] != '.') {
                     maze[i][j] = 0;
+                }
             }
             j = MIN(y1, y2);
-            if (maze[i][j] == '.')
+            if (maze[i][j] == '.') {
                 in_wall = 0;
-            if (maze[i][j] == 0 || maze[i][j] == '#')
+            }
+            if (maze[i][j] == 0 || maze[i][j] == '#') {
                 in_wall = 1;
+            }
             for (/* j set already */; j < MAX(y1, y2); j++) {
                 if (in_wall == 0 && maze[i][j] == '#') {
                     in_wall = 1;
@@ -347,8 +386,9 @@ static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize)
                 } else if (in_wall && maze[i][j] == '.') {
                     in_wall = 0;
                     maze[i][j-1] = 'D';
-                } else if (maze[i][j] != 'D' && maze[i][j] != '.')
+                } else if (maze[i][j] != 'D' && maze[i][j] != '.') {
                     maze[i][j] = 0;
+                }
             }
         } else { /* connect in y direction first */
             in_wall = 0;
@@ -369,15 +409,18 @@ static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize)
                 } else if (in_wall && maze[i][j] == '.') {
                     in_wall = 0;
                     maze[i][j-1] = 'D';
-                } else if (maze[i][j] != 'D' && maze[i][j] != '.')
+                } else if (maze[i][j] != 'D' && maze[i][j] != '.') {
                     maze[i][j] = 0;
+                }
             }
 
             i = MIN(x1, x2);
-            if (maze[i][j] == '.')
+            if (maze[i][j] == '.') {
                 in_wall = 0;
-            if (maze[i][j] == 0 || maze[i][j] == '#')
+            }
+            if (maze[i][j] == 0 || maze[i][j] == '#') {
                 in_wall = 1;
+            }
             for (/* i set already */; i < MAX(x1, x2); i++) {
                 if (in_wall == 0 && maze[i][j] == '#') {
                     in_wall = 1;
@@ -385,9 +428,9 @@ static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize)
                 } else if (in_wall && maze[i][j] == '.') {
                     in_wall = 0;
                     maze[i-1][j] = 'D';
-                } else
-                    if (maze[i][j] != 'D' && maze[i][j] != '.')
-                        maze[i][j] = 0;
+                } else if (maze[i][j] != 'D' && maze[i][j] != '.') {
+                    maze[i][j] = 0;
+                }
             }
         }
     }
