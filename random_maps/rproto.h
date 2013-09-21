@@ -1,3 +1,6 @@
+#ifndef _RPROTO_H
+#define _RPROTO_H
+
 /* random_map.c */
 extern void dump_layout(char **layout, RMParms *RP);
 extern mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_layout);
@@ -81,3 +84,5 @@ extern void find_top_left_corner(char **maze, int *cx, int *cy);
 extern char **make_square_spiral_layout(int xsize, int ysize);
 /* expand2x.c */
 extern char **expand2x(char **layout, int xsize, int ysize);
+
+#endif
