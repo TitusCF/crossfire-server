@@ -4,28 +4,37 @@ random_map_SOURCES = standalone.c
 
 noinst_LIBRARIES = librandom_map.a
 
-librandom_map_a_SOURCES = random_map.c \
-	room_gen_onion.c \
-        room_gen_spiral.c \
-	maze_gen.c \
-	reader.l \
-	floor.c \
-	wall.c \
-	monster.c \
-	door.c \
+librandom_map_a_SOURCES = \
 	decor.c \
+	door.c \
 	exit.c \
-	treasure.c \
-	special.c \
-	style.c  \
-	rogue_layout.c \
-        snake.c \
-        square_spiral.c \
 	expand2x.c \
-	maze_gen.h random_map.h room_gen.h
+	floor.c \
+	maze_gen.c \
+	maze_gen.h \
+	monster.c \
+	random_map.c \
+	random_map.h \
+	reader.l \
+	rogue_layout.c \
+	room_gen.h \
+	room_gen_onion.c \
+	room_gen_spiral.c \
+	snake.c \
+	special.c \
+	square_spiral.c \
+	style.c  \
+	treasure.c \
+	wall.c
 
-EXTRA_DIST = maze_gen.h random_map.h room_gen.h\
-	standalone.c rproto.h expand2x.h Notes
+EXTRA_DIST = \
+	README \
+	expand2x.h \
+	maze_gen.h \
+	random_map.h \
+	room_gen.h \
+	rproto.h \
+	standalone.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
