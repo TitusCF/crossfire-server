@@ -2666,7 +2666,7 @@ exp 150000
 yield 1
 skill jeweler
 cauldron jeweler_bench
-ingred amulet of lifesaving,ring of free action,3 potion of resist paralysis,3 sapphire of exceptional beauty
+ingred amulet of lifesaving,ring of Free Action,3 potion of resist paralysis,3 sapphire of exceptional beauty
 #
 Object Holiness
 arch amulet
