@@ -1,32 +1,5 @@
 IMPORTANT MAINTENANCE INFORMATION
 
-The files in this directory (newclient.h in particular) are controlled in the
-server/include/shared directory.  The copy of these files found in the
-client/common/shared directory is the result of use of an svn:externals
-property to allow the client and server to use the same information to help
-assure synchonization.  The GTK-V2 client to interpret data that the server
-sends to it.
-
-If the server/include/shared directory files are modified, for the client to
-get the changes,  the following must be done.
-
-1) Commit the change.
-
-2) Note the revision number of the prior commit.
-
-3) Update the svn:externals property of client/common to specify the new
-   revision number of the server/include/shared commit.  Do so by:
-
-   a. Changing the working directory to the client common' folder.
-   b. Using 'svn propedit svn:externals .'
-   c. Changing the revision number for the server/trunk/include/shared
-      folder.
-   d. Commit the change.
-
-If the client/common/shared directory files are modified and committed from a
-client checkout of the crossfire source tree, in SVN, it is actually the
-server/include/shared files that are changed.  If the svn:externals property of
-client/common is not updated as noted above, upon the next svn update, the
-client/common/shared directory contents will revert and the change in the
-client area of the SVN checkout will be lost.
-
+The files in this directory (particularly "newclient.h") are shared between the
+client and server. Changes should be made to the server's copy of the files,
+located in "server/include/shared" and then copied to the client directory.
