@@ -3779,6 +3779,7 @@ static void kill_player_not_permadeath(object *op) {
  */
 static void kill_player_permadeath(object *op) {
     char buf[MAX_BUF];
+    char ac_buf[MAX_BUF];
     int x, y;
     mapstruct *map;
     object *tmp;
@@ -3841,6 +3842,12 @@ static void kill_player_permadeath(object *op) {
     tmp->level = op->level;
     object_set_msg(tmp, gravestone_text(op, buf, sizeof(buf)));
     SET_FLAG(tmp, FLAG_UNIQUE);
+    /*
+     * Put the account name under slaying.
+     * Does not seem to cause weird effects, but more testing may ensure this.
+     */
+    snprintf(ac_buf, sizeof(ac_buf), "%s", op->contr->socket.account_name);
+    FREE_AND_COPY(tmp->slaying, ac_buf);
     object_insert_in_map_at(tmp, map, NULL, 0, x, y);
 }
 

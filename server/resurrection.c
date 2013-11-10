@@ -54,12 +54,14 @@ static int resurrection_fails(int levelcaster, int leveldead);
  * the name of the player to resurrect.
  * @param spell
  * spell that was used to resurrect.
+ * @param accountname
+ * the account the resurrected player belongs to
  * @retval 0
  * resurrection failed.
  * @retval 1
  * playername is living again.
  */
-static int resurrect_player(object *op, char *playername, object *spell) {
+static int resurrect_player(object *op, char *playername, object *spell, char *accountname) {
     FILE *deadplayer, *liveplayer;
 
     char oldname[MAX_BUF];
@@ -155,7 +157,10 @@ static int resurrect_player(object *op, char *playername, object *spell) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                          "%s lives again!",
                          playername);
-
+    /* Needs to go into the account file and change the player back to isDead = 0 */
+    /* I'm fairly certain the old login did not have the segfault, so just sccount for the new account system */
+    if (accountname)
+	unmake_perma_dead(accountname, playername);
     return 1;
 }
 
@@ -182,9 +187,11 @@ static int resurrect_player(object *op, char *playername, object *spell) {
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg) {
     object *temp, *newob;
     char name_to_resurrect[MAX_BUF];
+    char *corpse_account = NULL;
     int leveldead = 25, mflags, clevel;
     sint16 sx, sy;
     mapstruct *m;
+    int spell_success = 0;
 
     clevel = caster_level(caster, spell);
 
@@ -223,8 +230,13 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
             return 0;
         }
         strcpy(name_to_resurrect, temp->name);
+        /* Only try to copy if dead body is as recent as the patch this is from. */
+        if (temp->slaying){
+            corpse_account = (char *)CALLOC(sizeof(char), MAX_BUF);
+            /* Make sure that the allocation worked. */
+            if (corpse_account) strcpy(corpse_account, temp->slaying);
+        }
     }
-
     /* no matter what, we fry the corpse.  */
     if (temp && temp->map) {
         /* replace corpse object with a burning object */
@@ -244,11 +256,14 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
                 summon_hostile_monsters(op, t->nrof, t->item->name);
             }
         }
-        return 1;
+        spell_success = 1;
     } else {
-        return resurrect_player(op, name_to_resurrect, spell);
+        spell_success = resurrect_player(op, name_to_resurrect, spell, corpse_account);
     }
-    /* Unreachable */
+    /* Reorganized so corpse_account could be deallocated if needed */
+    if (corpse_account)
+        CFREE(corpse_account);
+    return spell_success;
 }
 
 /**
@@ -298,5 +313,10 @@ void dead_player(object *op) {
 
     if (rename(filename, newname) != 0) {
         LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno, path, sizeof(path)));
+    }
+    /* Go into the account file and change isDead for this character to 1. */
+    if (make_perma_dead(op)){
+        /* Make an error message saying that the character could not be changed in the proper account */
+        LOG(llevError, "Could not edit the account to indicate permanent death for %s!\n", op->name);
     }
 }

@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #762: Permadeath segfault on dead character load.
+socket/request.c: do not send dead characters' information to the client
+include/account_char.h: add a flag for dead characters
+server/player.c: add account name to dead player's slaying field
+server/account_char.c: add handling for new flag for dead characters
+server/resurrection.c: make resurrection reset the dead character flag on a successful resurrection
+SilverNexus 2013-11-10
+
 Properly track cast spells. Fixes infrequent server crashes due to 100%
 CPU load.
 Andreas Kirschbaum 2013-09-07

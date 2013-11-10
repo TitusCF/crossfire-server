@@ -68,11 +68,14 @@
 #endif
 
 /** Number of fields in the accounts file.  These are colon seperated */
-#define NUM_ACCOUNT_CHAR_FIELDS 7
+#define NUM_ACCOUNT_CHAR_FIELDS 8
 
 /**
  * Name of the directory containing account information.  I can not ever see a reason why this
  * name would not work, but may as well still make it easy to change it.
+ */
+/**
+ * FixMe: Shouldn't something like this go in the settings file?
  */
 #define ACCOUNT_DIR "account"
 
@@ -112,8 +115,14 @@ Account_Char *account_char_load(const char *account_name)
         if (cp) *cp='\0';
 
         if (split_string(buf, tmp, NUM_ACCOUNT_CHAR_FIELDS, ':') != NUM_ACCOUNT_CHAR_FIELDS) {
-            LOG(llevError,"Corrupt entry in %s: %s\n", fname, buf);
-            continue;
+            if (!tmp[7]){
+                LOG(llevError,"Outdated entry in %s: %s\n", fname, buf);
+                tmp[7] = add_string("0");
+            }
+            else{
+                LOG(llevError,"Corrupt entry in %s: %s\n", fname, buf);
+                continue;
+            }
         }
         ac = malloc(sizeof(Account_Char));
         ac->name = add_string(tmp[0]);
@@ -123,6 +132,7 @@ Account_Char *account_char_load(const char *account_name)
         ac->face = add_string(tmp[4]);
         ac->party = add_string(tmp[5]);
         ac->map = add_string(tmp[6]);
+        ac->isDead = strtoul(tmp[7], (char**)NULL, 10);
 
         ac->next = NULL;
 
@@ -176,9 +186,9 @@ void account_char_save(const char *account, Account_Char *chars)
     fprintf(fp, "# This file should not be edited while the server is running.\n");
     fprintf(fp, "# Otherwise, any changes made may be overwritten by the server\n");
     for (ac=chars; ac; ac=ac->next) {
-        fprintf(fp,"%s:%s:%s:%d:%s:%s:%s\n",
+        fprintf(fp,"%s:%s:%s:%d:%s:%s:%s:%d\n",
                 ac->name, ac->character_class, ac->race, ac->level,
-                ac->face, ac->party, ac->map);
+                ac->face, ac->party, ac->map, ac->isDead);
     }
     fclose(fp);
 
@@ -289,6 +299,8 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
         else
             ap->party = add_string("");
         ap->map = add_string(pl->maplevel);
+        /* The character cannot be dead already */
+        ap->isDead = 0;
 
         ap->next = NULL;
         if (last)
@@ -362,4 +374,68 @@ void account_char_free(Account_Char *chars)
         free_string(ap->map);
         free(ap);
     }
+}
+
+/**
+ * This will edit the character account information so that the character
+ * that just died in permadeath will be listed as such in the accounts file.
+ *
+ * @param op
+ * The player experiencing permadeath.
+ * @return
+ * 0 for success, 1 for failure
+ */
+int make_perma_dead(object *op){
+    player *pl = op->contr;
+    if (!pl){
+        return 1;
+    }
+    /* Is this necessary? I'm not sure. It was in the code I found to use as an example */
+    pl = get_player(pl);
+    /* Make sure there is an account name to do things to */
+    if (!pl->socket.account_name){
+        return 1;
+    }
+    /* Load the appropriate account for the action. */
+    Account_Char *chars = account_char_load(pl->socket.account_name);
+    /* Find the right character. */
+    Account_Char *ac;
+    for(ac = chars; ac; ac->next){
+        if(strcmp(ac->name, op->name) == 0)
+            break;
+    }
+    /* This character is dead */
+    ac->isDead = 1;
+    account_char_save(pl->socket.account_name, chars);
+}
+
+/**
+ * This will edit the character account information so that the character
+ * that was just resurrected in permadeath will be listed as such in the accounts file.
+ *
+ * @param account
+ * The account of the resurrected character.
+ * @param player
+ * The name of the resurrected character.
+ * @return
+ * 0 for success, 1 for failure
+ */
+int unmake_perma_dead(char *account, char *player){
+    /*
+     * If no account name, then there is nothing to do here.
+     * The character was dead before the account was kept track of.
+     */
+    if (!account)
+        return 1;
+    /* Load the appropriate account for the action. */
+    Account_Char *chars = account_char_load(account);
+    /* Find the right character. */
+    Account_Char *ac;
+    for(ac = chars; ac; ac->next){
+        if(strcmp(ac->name, player) == 0)
+            break;
+    }
+    /* This character is alive */
+    ac->isDead = 0;
+    account_char_save(account, chars);
 }
