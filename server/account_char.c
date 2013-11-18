@@ -117,7 +117,7 @@ Account_Char *account_char_load(const char *account_name)
         if (split_string(buf, tmp, NUM_ACCOUNT_CHAR_FIELDS, ':') != NUM_ACCOUNT_CHAR_FIELDS) {
             if (!tmp[7]){
                 LOG(llevError,"Outdated entry in %s: %s\n", fname, buf);
-                tmp[7] = add_string("0");
+                tmp[7] = (char *)add_string("0");
             }
             else{
                 LOG(llevError,"Corrupt entry in %s: %s\n", fname, buf);
@@ -400,13 +400,14 @@ int make_perma_dead(object *op){
     Account_Char *chars = account_char_load(pl->socket.account_name);
     /* Find the right character. */
     Account_Char *ac;
-    for(ac = chars; ac; ac->next){
+    for (ac = chars; ac; ac = ac->next) {
         if(strcmp(ac->name, op->name) == 0)
             break;
     }
     /* This character is dead */
     ac->isDead = 1;
     account_char_save(pl->socket.account_name, chars);
+    return 0;
 }
 
 /**
@@ -431,11 +432,12 @@ int unmake_perma_dead(char *account, char *player){
     Account_Char *chars = account_char_load(account);
     /* Find the right character. */
     Account_Char *ac;
-    for(ac = chars; ac; ac->next){
+    for (ac = chars; ac; ac = ac->next) {
         if(strcmp(ac->name, player) == 0)
             break;
     }
     /* This character is alive */
     ac->isDead = 0;
     account_char_save(account, chars);
+    return 0;
 }
