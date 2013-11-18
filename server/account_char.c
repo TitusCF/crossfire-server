@@ -1,33 +1,18 @@
 /*
- * static char *rcsid_acount_char_c =
- *   "$Id$";
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2013 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2010 Mark Wedel & Crossfire Development Team
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
-
-
 /**
- * @file
+ * @file server/account_char.c
  *
  * This file contains logic of dealing with characters that associated with an
  * account.  The main purpose of this file is to retrieve and store information
@@ -89,19 +74,18 @@
  * @return
  * linked list of the character data.
  */
-Account_Char *account_char_load(const char *account_name)
-{
+Account_Char *account_char_load(const char *account_name) {
     char fname[MAX_BUF], buf[VERY_BIG_BUF];
     FILE *fp;
-    Account_Char *first=NULL, *ac, *last=NULL;
+    Account_Char *first = NULL, *ac, *last = NULL;
 
-    snprintf(fname, MAX_BUF,"%s/%s/%s", settings.localdir, ACCOUNT_DIR, account_name);
-    fp=fopen(fname,"r");
+    snprintf(fname, MAX_BUF, "%s/%s/%s", settings.localdir, ACCOUNT_DIR, account_name);
+    fp = fopen(fname, "r");
     if (!fp) {
         /* This may not in fact be a critical error - for a new account, there
          * may not be any data associated with it.
          */
-        LOG(llevInfo,"Warning: Unable to open %s\n", fname);
+        LOG(llevInfo, "Warning: Unable to open %s\n", fname);
         return NULL;
     }
     while (fgets(buf, VERY_BIG_BUF, fp)) {
@@ -112,27 +96,26 @@ Account_Char *account_char_load(const char *account_name)
 
         /* remove newline */
         cp = strchr(buf, '\n');
-        if (cp) *cp='\0';
+        if (cp) *cp = '\0';
 
         if (split_string(buf, tmp, NUM_ACCOUNT_CHAR_FIELDS, ':') != NUM_ACCOUNT_CHAR_FIELDS) {
-            if (!tmp[7]){
-                LOG(llevError,"Outdated entry in %s: %s\n", fname, buf);
-                tmp[7] = (char *)add_string("0");
-            }
-            else{
-                LOG(llevError,"Corrupt entry in %s: %s\n", fname, buf);
+            if (!tmp[7]) {
+                LOG(llevError, "Outdated entry in %s: %s\n", fname, buf);
+                tmp[7] = (char *) add_string("0");
+            } else {
+                LOG(llevError, "Corrupt entry in %s: %s\n", fname, buf);
                 continue;
             }
         }
-        ac = malloc(sizeof(Account_Char));
+        ac = malloc(sizeof (Account_Char));
         ac->name = add_string(tmp[0]);
         ac->character_class = add_string(tmp[1]);
         ac->race = add_string(tmp[2]);
-        ac->level = strtoul(tmp[3], (char**)NULL, 10);
+        ac->level = strtoul(tmp[3], (char**) NULL, 10);
         ac->face = add_string(tmp[4]);
         ac->party = add_string(tmp[5]);
         ac->map = add_string(tmp[6]);
-        ac->isDead = strtoul(tmp[7], (char**)NULL, 10);
+        ac->isDead = strtoul(tmp[7], (char**) NULL, 10);
 
         ac->next = NULL;
 
@@ -147,7 +130,7 @@ Account_Char *account_char_load(const char *account_name)
 
     }
     fclose(fp);
-    return(first);
+    return (first);
 }
 
 /**
@@ -157,8 +140,7 @@ Account_Char *account_char_load(const char *account_name)
  * @param chars
  * previously loaded/generated list of character information for this account.
  */
-void account_char_save(const char *account, Account_Char *chars)
-{
+void account_char_save(const char *account, Account_Char *chars) {
     char fname[MAX_BUF], fname1[MAX_BUF];
     FILE *fp;
     Account_Char *ac;
@@ -168,25 +150,25 @@ void account_char_save(const char *account, Account_Char *chars)
      * file.
      */
     if (chars == NULL) {
-        snprintf(fname, MAX_BUF,"%s/%s/%s", settings.localdir, ACCOUNT_DIR, account);
+        snprintf(fname, MAX_BUF, "%s/%s/%s", settings.localdir, ACCOUNT_DIR, account);
         unlink(fname);
         return;
     }
 
-    snprintf(fname, MAX_BUF,"%s/%s/%s.new", settings.localdir, ACCOUNT_DIR, account);
-    fp = fopen(fname,"w");
+    snprintf(fname, MAX_BUF, "%s/%s/%s.new", settings.localdir, ACCOUNT_DIR, account);
+    fp = fopen(fname, "w");
     if (fp == NULL) {
         char err[MAX_BUF];
 
         LOG(llevError, "Cannot open accounts file %s: %s\n", fname,
-            strerror_local(errno, err, sizeof(err)));
+                strerror_local(errno, err, sizeof (err)));
         return;
     }
 
     fprintf(fp, "# This file should not be edited while the server is running.\n");
     fprintf(fp, "# Otherwise, any changes made may be overwritten by the server\n");
-    for (ac=chars; ac; ac=ac->next) {
-        fprintf(fp,"%s:%s:%s:%d:%s:%s:%s:%d\n",
+    for (ac = chars; ac; ac = ac->next) {
+        fprintf(fp, "%s:%s:%s:%d:%s:%s:%s:%d\n",
                 ac->name, ac->character_class, ac->race, ac->level,
                 ac->face, ac->party, ac->map, ac->isDead);
     }
@@ -196,7 +178,7 @@ void account_char_save(const char *account, Account_Char *chars)
      * we are not left with a corrupted file.  So now we need to rename it to the
      * file to use.
      */
-    snprintf(fname1, MAX_BUF,"%s/%s/%s", settings.localdir, ACCOUNT_DIR, account);
+    snprintf(fname1, MAX_BUF, "%s/%s/%s", settings.localdir, ACCOUNT_DIR, account);
     unlink(fname1);
     rename(fname, fname1);
 }
@@ -217,12 +199,11 @@ void account_char_save(const char *account, Account_Char *chars)
  * @return
  * Returns new list of characters for account.
  */
-Account_Char *account_char_add(Account_Char *chars, player *pl)
-{
+Account_Char *account_char_add(Account_Char *chars, player *pl) {
 
-    Account_Char *ap, *last=NULL;
+    Account_Char *ap, *last = NULL;
 
-    for (ap=chars; ap; ap=ap->next) {
+    for (ap = chars; ap; ap = ap->next) {
         if (!strcasecmp(ap->name, pl->ob->name)) break;
         last = ap;
     }
@@ -288,7 +269,7 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
         }
     } else {
         /* In this case, we are adding a new entry */
-        ap = malloc(sizeof(Account_Char));
+        ap = malloc(sizeof (Account_Char));
         ap->name = add_string(pl->ob->name);
         ap->character_class = add_string("");
         ap->race = add_string(pl->ob->arch->clone.name);
@@ -306,7 +287,7 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
         if (last)
             last->next = ap;
         else
-            chars=ap;
+            chars = ap;
     }
     return chars;
 }
@@ -322,16 +303,15 @@ Account_Char *account_char_add(Account_Char *chars, player *pl)
  * @return
  * Returns new list of characters for account.
  */
-Account_Char *account_char_remove(Account_Char *chars, const char *pl_name)
-{
-    Account_Char *ap, *last=NULL;
+Account_Char *account_char_remove(Account_Char *chars, const char *pl_name) {
+    Account_Char *ap, *last = NULL;
 
-    for (ap=chars; ap; ap=ap->next) {
+    for (ap = chars; ap; ap = ap->next) {
         if (!strcasecmp(ap->name, pl_name)) break;
         last = ap;
     }
     /* If we didn't find this character, nothing to do */
-    if (!ap) return(chars);
+    if (!ap) return (chars);
 
     /* As per previous notes, these should never be NULL */
     free_string(ap->name);
@@ -348,7 +328,7 @@ Account_Char *account_char_remove(Account_Char *chars, const char *pl_name)
         chars = ap->next;
     }
     free(ap);
-    return(chars);
+    return (chars);
 
 }
 
@@ -359,11 +339,10 @@ Account_Char *account_char_remove(Account_Char *chars, const char *pl_name)
  * Data to free.  The caller should make sure it no longer uses
  * any data in this list.
  */
-void account_char_free(Account_Char *chars)
-{
+void account_char_free(Account_Char *chars) {
     Account_Char *ap, *next;
 
-    for (ap=chars; ap; ap=next) {
+    for (ap = chars; ap; ap = next) {
         next = ap->next;
 
         free_string(ap->name);
@@ -385,15 +364,15 @@ void account_char_free(Account_Char *chars)
  * @return
  * 0 for success, 1 for failure
  */
-int make_perma_dead(object *op){
+int make_perma_dead(object *op) {
     player *pl = op->contr;
-    if (!pl){
+    if (!pl) {
         return 1;
     }
     /* Is this necessary? I'm not sure. It was in the code I found to use as an example */
     pl = get_player(pl);
     /* Make sure there is an account name to do things to */
-    if (!pl->socket.account_name){
+    if (!pl->socket.account_name) {
         return 1;
     }
     /* Load the appropriate account for the action. */
@@ -401,7 +380,7 @@ int make_perma_dead(object *op){
     /* Find the right character. */
     Account_Char *ac;
     for (ac = chars; ac; ac = ac->next) {
-        if(strcmp(ac->name, op->name) == 0)
+        if (strcmp(ac->name, op->name) == 0)
             break;
     }
     /* This character is dead */
@@ -421,7 +400,7 @@ int make_perma_dead(object *op){
  * @return
  * 0 for success, 1 for failure
  */
-int unmake_perma_dead(char *account, char *player){
+int unmake_perma_dead(char *account, char *player) {
     /*
      * If no account name, then there is nothing to do here.
      * The character was dead before the account was kept track of.
@@ -433,7 +412,7 @@ int unmake_perma_dead(char *account, char *player){
     /* Find the right character. */
     Account_Char *ac;
     for (ac = chars; ac; ac = ac->next) {
-        if(strcmp(ac->name, player) == 0)
+        if (strcmp(ac->name, player) == 0)
             break;
     }
     /* This character is alive */
