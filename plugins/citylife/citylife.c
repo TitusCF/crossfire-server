@@ -476,7 +476,7 @@ static const spawn_point wolfsburg_points[] = {
 static const char *const wolfsburg_archs[] = {
     "c_man",
     "c_woman",
-    "prisoner",
+/*  "prisoner", Why? They don't move. They look ridiculous spawning on the main map. */
     "fatman",
     "fatwoman",
     "man",
@@ -518,7 +518,7 @@ static const spawn_point santo_dominion_points[] = {
 static const char *const santo_dominion_archs[] = {
     "c_man",
     "c_woman",
-    "prisoner",
+/*  "prisoner", */
     "fatman",
     "fatwoman",
     "man",
@@ -546,8 +546,8 @@ static const mapzone available_zones[] = {
     { navar_se_points, 8, navar_se_zones, 4, 5, "/world/world_122_117", navar_archs, 15 },
     { port_joseph_points, 6, port_joseph_zones, 1, 3, "/world/world_101_114", port_joseph_archs, 8 },
     { stoneville_points, 5, stoneville_zones, 1, 2, "/world/world_103_127", stoneville_archs, 8 },
-    { wolfsburg_points, 8, wolfsburg_zones, 1, 4, "/world/world_128_109", wolfsburg_archs, 9 },
-    { santo_dominion_points, 8, santo_dominion_zones, 2, 3, "/world/world_102_108", santo_dominion_archs, 9 },
+    { wolfsburg_points, 8, wolfsburg_zones, 1, 4, "/world/world_128_109", wolfsburg_archs, 8 },
+    { santo_dominion_points, 8, santo_dominion_zones, 2, 3, "/world/world_102_108", santo_dominion_archs, 8 },
     { NULL, -1, NULL, -1, 1, "", NULL, 0 },
 };
 
