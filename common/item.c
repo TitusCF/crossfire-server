@@ -89,8 +89,8 @@ static const char *const numbers_10[] = {
 static const char *const levelnumbers[] = {
     "zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh",
     "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
-    "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteen",
-    "nineteen", "twentieth"
+    "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth",
+    "nineteenth", "twentieth"
 };
 
 /** Tens for levels */
