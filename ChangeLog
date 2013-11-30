@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/attack.c: Added damage for when a player burns an equipped item (e.g. with flint and steel). Should help balance the utility of the flint and steel.
+SilverNexus 2013-11-29
+
 Fix for bug #762: Permadeath segfault on dead character load.
 socket/request.c: do not send dead characters' information to the client
 include/account_char.h: add a flag for dead characters
