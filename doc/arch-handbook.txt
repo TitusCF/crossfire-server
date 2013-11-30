@@ -41,12 +41,11 @@ b.t.  thomas@astro.psu.edu
 Player Instructions
 ~~~~~~~~~~~~~~~~~~~
 Using the alchemy code (to make artifacts) is easy. You need the following
-things: 1) be able to cast alchemy spell, 2) have access to a cauldron and
-3) have the right ingredients.
+things: 1) be able to use the alchemy skill, 2) have access to a cauldron,
+and 3) have the right ingredients.
 
-To create an artifact, put ingredients in the cauldron, then cast 'alchemy'
-spell. You might make something :) Backfire effects are possible. In order
-to get better at making stuff, you will need to learn the alchemy skill.
+To create an artifact, put ingredients in the cauldron, then use 'alchemy'
+skill. You might make something :) Backfire effects are possible.
 Books found in shops (and elsewhere) will give you formulae for making
 stuff. Of course, you can always 'experiment' on your own, but this may be
 dangerous.
