@@ -174,7 +174,6 @@ void save_throw_object(object *op, uint32 type, object *originator) {
         mapstruct *m = op->map;
         /* For use with burning off equipped items */
         int weight = op->weight;
-        char item_name[MAX_BUF];
 
         op = stop_item(op);
         if (op == NULL)
@@ -240,10 +239,6 @@ void save_throw_object(object *op, uint32 type, object *originator) {
             fix_stopped_item(op, m, originator);
             return;
         }
-        /* Get the name of the item before it is destroyed.
-         * op->name gave an output of '(null)' past the next block.
-         */
-        query_name(op, item_name, sizeof(item_name));
         if (op->nrof > 1) {
             op = object_decrease_nrof(op, rndm(0, op->nrof-1));
             if (op)
@@ -261,11 +256,11 @@ void save_throw_object(object *op, uint32 type, object *originator) {
                     if (env->resist[ATNR_FIRE] < 100)
                         /* Should the message type be something different? */
                         draw_ext_info_format(NDI_RED, 0, env, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                            "OUCH! You are burnt by your smoldering %s!",
+                            "OUCH! It burns!",
                             item_name);
                     else
                         draw_ext_info_format(NDI_UNIQUE, 0, env, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                            "Your smoldering %s crumbles away!",
+                            "Despite the flame, you feel nothing.",
                             item_name);
                     /* burning off an item causes 1 point of fire damage for every kilogram of mass the item has */
                     int dam = weight / 1000 * (100 - env->resist[ATNR_FIRE]) / 100;
