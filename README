@@ -131,8 +131,8 @@ Reporting Bugs
 First, check the INSTALL file for common problems, and see if yours is
 mentioned.
 
-Bugs should be filed at the sourceforge web site:
-    http//sourceforge.net/tracker/?group_id=13833&atid=113833
+Bugs should be filed in the Crossfire bug tracker on SourceForge:
+http://sourceforge.net/p/crossfire/bugs/
 
 When reporting bugs, make sure you include the following:
 
@@ -165,8 +165,9 @@ http://crossfire.real-time.com/debugging_tips.html
 Submitting Patches
 ~~~~~~~~~~~~~~~~~~
 See the doc/programming_guide file.
-The patches should be submitted to the patch tracker on sourceforge:
-http://sourceforge.net/tracker/?group_id=13833&atid=313833
+
+Patches should be sent to the Crossfire patch tracker on SourceForge:
+http://sourceforge.net/p/crossfire/patches/
 
 Copyright
 ---------
