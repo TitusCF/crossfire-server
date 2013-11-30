@@ -172,6 +172,9 @@ void save_throw_object(object *op, uint32 type, object *originator) {
         object *env = op->env;
         int x = op->x, y = op->y;
         mapstruct *m = op->map;
+        /* For use with burning off equipped items */
+        int weight = op->weight;
+        char item_name[MAX_BUF];
 
         op = stop_item(op);
         if (op == NULL)
@@ -237,6 +240,10 @@ void save_throw_object(object *op, uint32 type, object *originator) {
             fix_stopped_item(op, m, originator);
             return;
         }
+        /* Get the name of the item before it is destroyed.
+         * op->name gave an output of '(null)' past the next block.
+         */
+        query_name(op, item_name, sizeof(item_name));
         if (op->nrof > 1) {
             op = object_decrease_nrof(op, rndm(0, op->nrof-1));
             if (op)
@@ -248,6 +255,31 @@ void save_throw_object(object *op, uint32 type, object *originator) {
         }
         if (type&(AT_FIRE|AT_ELECTRICITY)) {
             if (env) {
+                /* Check to see if the item being burnt is being worn */
+                if (QUERY_FLAG(op, FLAG_APPLIED)) {
+                    /* if the object is applied, it should be safe to assume env is a player or creature. */
+                    if (env->resist[ATNR_FIRE] < 100)
+                        /* Should the message type be something different? */
+                        draw_ext_info_format(NDI_RED, 0, env, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                            "OUCH! You are burnt by your smoldering %s!",
+                            item_name);
+                    else
+                        draw_ext_info_format(NDI_UNIQUE, 0, env, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                            "Your smoldering %s crumbles away!",
+                            item_name);
+                    /* burning off an item causes 1 point of fire damage for every kilogram of mass the item has */
+                    int dam = weight / 1000 * (100 - env->resist[ATNR_FIRE]) / 100;
+                    /* Double the damage on cursed items */
+                    if (QUERY_FLAG(op, FLAG_CURSED))
+                        dam *= 2;
+                    /* Triple the damage on damned items. A cursed and damned item would thus inflict 6x damage. */
+                    if (QUERY_FLAG(op, FLAG_DAMNED))
+                        dam *= 3;
+                    env->stats.hp -= dam;
+                    /* You die at -1, not 0 */
+                    if (env->stats.hp < 0)
+                        kill_player(env, NULL);
+                }
                 op = create_archetype("burnout");
                 op->x = env->x,
                 op->y = env->y;
