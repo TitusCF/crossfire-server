@@ -256,12 +256,10 @@ void save_throw_object(object *op, uint32 type, object *originator) {
                     if (env->resist[ATNR_FIRE] < 100)
                         /* Should the message type be something different? */
                         draw_ext_info_format(NDI_RED, 0, env, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                            "OUCH! It burns!",
-                            item_name);
+                            "OUCH! It burns!");
                     else
                         draw_ext_info_format(NDI_UNIQUE, 0, env, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                            "Despite the flame, you feel nothing.",
-                            item_name);
+                            "Despite the flame, you feel nothing.");
                     /* burning off an item causes 1 point of fire damage for every kilogram of mass the item has */
                     int dam = weight / 1000 * (100 - env->resist[ATNR_FIRE]) / 100;
                     /* Double the damage on cursed items */
