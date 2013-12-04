@@ -79,3 +79,13 @@ qint16 CREWrapperObject::hp() const
 {
     return myObject->stats.hp;
 }
+
+qint32 CREWrapperObject::weight() const
+{
+  return myObject->weight;
+}
+
+QString CREWrapperObject::materialName() const
+{
+  return myObject->materialname;
+}
