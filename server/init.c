@@ -281,6 +281,14 @@ static void set_disable_plugin(const char *name) {
     settings.disabled_plugins = disable;
 }
 
+/**
+ * Dump all animations, then exit.
+ */
+static void server_dump_animations(void) {
+    dump_animations();
+    cleanup();
+}
+
 /** Typedefs used when calling option handlers. */
 /*@{*/
 typedef void (*cmdlinefunc_args0)(void);
@@ -365,6 +373,7 @@ static struct Command_Line_Options options[] = {
     { "-mt", 1, 3, set_dumpmont },
     { "-mexp", 0, 3, dump_experience },
     { "-mq", 0, 3, dump_quests },
+    { "-dump-anims", 0, 3, server_dump_animations },
     { "-s", 0, 3, showscores },
     { "-score", 1, 3, showscoresparm }
 };
@@ -1124,6 +1133,7 @@ static void help(void) {
     printf(" -mt <name>   Dumps out list of treasures for a monster.\n");
     printf(" -mexp        Dumps out the experience table.\n");
     printf(" -mq          Dumps out the list of defined quests.\n");
+    printf(" -dump-anims  Dumps out the animations.\n");
     printf(" -disable-plugin\n"
            "              Disables specified plugin. Use the name without the extension.\n"
            "              Can be specified multiple times. 'All' disables all plugins.\n");

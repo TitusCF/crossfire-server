@@ -324,3 +324,13 @@ void apply_anim_suffix(object *who, sstring suffix) {
         animate_object(orig, orig->facing);
     }
 }
+
+/**
+ * Dump all animations to stderr, for debugging purposes.
+ */
+void dump_animations(void) {
+    fprintf(stderr, "id    name                                               faces\n");
+    for (int a = 0; a < num_animations; a++) {
+        fprintf(stderr, "%5d %50s %5d\n", animations[a].num, animations[a].name, animations[a].num_animations);
+    }
+}
