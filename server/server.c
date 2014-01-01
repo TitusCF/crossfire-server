@@ -152,6 +152,10 @@ const char *crypt_string(const char *str, const char *salt) {
  * 1 if the passwords match, 0 else.
  */
 int check_password(const char *typed, const char *crypted) {
+    /* If crypted is an empty string, crypt_string() will return null, leading to issues with the strcmp. */
+    if (strlen(crypted) == 0) {
+        return strlen(typed) == 0 ? 1 : 0;
+    }
     return !strcmp(crypt_string(typed, crypted), crypted);
 }
 
