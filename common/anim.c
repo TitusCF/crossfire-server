@@ -330,7 +330,8 @@ void apply_anim_suffix(object *who, sstring suffix) {
  */
 void dump_animations(void) {
     fprintf(stderr, "id    name                                               faces\n");
-    for (int a = 0; a < num_animations; a++) {
+    int a;
+    for (a = 0; a < num_animations; a++) {
         fprintf(stderr, "%5d %50s %5d\n", animations[a].num, animations[a].name, animations[a].num_animations);
     }
 }
