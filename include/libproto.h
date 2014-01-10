@@ -444,7 +444,6 @@ extern void yypop_buffer_state(void);
 extern int yyget_lineno(void);
 extern FILE *yyget_in(void);
 extern FILE *yyget_out(void);
-extern int yyget_leng(void);
 extern char *yyget_text(void);
 extern void yyset_lineno(int line_number);
 extern void yyset_in(FILE *in_str);

@@ -337,8 +337,6 @@ typedef struct Settings {
     uint8   dumpvalues;         /**< Set to dump various values/tables */
     const char *dumparg;        /**< Additional argument for some dump functions */
     uint8   daemonmode;         /**< If true, detach and become daemon */
-    int     argc;               /**< Parameters that were passed to the program */
-    char    **argv;             /**< Only used by xio.c, so will go away at some time */
     const char *confdir;        /**< Configuration files */
     const char *datadir;        /**< Read only data files */
     const char *localdir;       /**< Read/write data files */

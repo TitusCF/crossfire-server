@@ -1431,8 +1431,6 @@ int server_main(int argc, char **argv) {
     malloc_debug(DEBUG_MALLOC_LEVEL);
 #endif
 
-    settings.argc = argc;
-    settings.argv = argv;
     init(argc, argv);
     initPlugins();        /* GROS - Init the Plugins */
 #ifdef WIN32
