@@ -87,15 +87,6 @@ provided that will re-run crossfire if it dies for some reason.
 How to host a public server:
 http://wiki.metalforge.net/doku.php/serverhosting:hosting_a_crossfire_server
 
-Public Servers
-~~~~~~~~~~~~~~
-The best way to find a server to play is to run the client.  It will contact
-the metaserver and present a list to choose from.  You can also see a list
-at http://crossfire.real-time.com/metaserver/ or
-http://crossfire.real-time.com/metaserver2/.
-
-NOTE: This section probably belongs in the client README.
-
 Getting Help
 ------------
 Website
