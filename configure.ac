@@ -13,34 +13,34 @@ AM_INIT_AUTOMAKE
 ##############################################################################
 # Configuration Options
 ##############################################################################
-AC_ARG_ENABLE(dmalloc,
-    [AS_HELP_STRING([--enable-dmalloc], [Use the dmalloc library if available, may prevent plugins from working])],
-    [], enable_dmalloc=no)
-
-AC_ARG_ENABLE(mapper,
-    [AS_HELP_STRING([--enable-mapper], [Whether or not to build the crossfire-mapper utility (default=no; requires libgd)])],
-    [], enable_mapper=no)
+AC_ARG_ENABLE(mapper, [AS_HELP_STRING([--enable-mapper],
+              [Build the crossfire-mapper utility (requires libgd)])],
+              [], [enable_mapper=no])
 
 # Options for plugins
-AC_ARG_WITH(python,
-    [AS_HELP_STRING([--with-python=dir], [Directory to look for python headers/library (default=standard system location)])], PYTHON_HOME="$withval")
+AC_ARG_WITH(python, [AS_HELP_STRING([--with-python=dir],
+            [Directory to look for python headers/library])],
+            [PYTHON_HOME="$withval"])
 
-AC_ARG_ENABLE(cfrhg,
-    [AS_HELP_STRING([--enable-cfrhg], [Whether or not to build the random house generator plugin (default=no)])],
-    [], enable_cfrhg=no)
+AC_ARG_ENABLE(cfrhg, [AS_HELP_STRING([--enable-cfrhg],
+              [Build the random house generator plugin])],
+              [], [enable_cfrhg=no])
 
-AC_ARG_ENABLE(logger,
-    [AS_HELP_STRING([--disable-logger], [Disable the logger compilation])],
-    [], enable_logger=yes)
+AC_ARG_ENABLE(logger, [AS_HELP_STRING([--disable-logger],
+              [Disable the SQLite logger plugin])],
+              [], [enable_logger=yes])
 
-AC_ARG_ENABLE(newspaper,
-    [AS_HELP_STRING([--disable-newspaper], [Disable the newspaper plugin compilation])],
-    [], enable_newspaper=yes)
+AC_ARG_ENABLE(newspaper, [AS_HELP_STRING([--disable-newspaper],
+              [Disable the newspaper plugin])],
+              [], [enable_newspaper=yes])
 
 # Unit test configuration
-AC_ARG_ENABLE(check,
-    [AS_HELP_STRING([--disable-check], [Disable the unit tests even if check is available])],
-    [], enable_check=yes)
+AC_ARG_ENABLE(check, [AS_HELP_STRING([--disable-check],
+              [Disable the unit tests even if check is available])],
+              [], [enable_check=yes])
+
+# Add support for dmalloc, if the user wants it.
+AM_WITH_DMALLOC
 
 ##############################################################################
 # Program Checks
@@ -113,15 +113,6 @@ AM_CONDITIONAL(CFRHG_PLUGIN, test "$enable_cfrhg" = "yes")
 
 LIBS="$LIBS $LIBCURL"
 CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
-
-# Gros - Changed this to support some external programs that do not like dmalloc (like Python).
-# If you really need to make some memory debugging, uncomment the dmalloc line and comment out the dmalloclp one.
-
-if test "$enable_dmalloc" = "yes"; then
-    AC_CHECK_LIB(dmalloc, main)
-else
-    AC_CHECK_LIB(dmalloclp, main)
-fi
 
 # Libraries used for plugins
 AC_SEARCH_LIBS(dlopen, [dl], [ cf_have_libdl=yes ])
