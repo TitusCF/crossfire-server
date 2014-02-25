@@ -1,12 +1,10 @@
-#                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([crossfire], [1.70.trunk], [crossfire-devel@listserv.real-time.com])
-AC_REVISION([$Id$])
-AC_CONFIG_SRCDIR([server/main.c])
+AC_INIT([crossfire], [1.70.trunk], [crossfire@metalforge.org])
 AC_CONFIG_AUX_DIR([utils])
-AC_CONFIG_MACRO_DIR([macros])
 AC_CONFIG_HEADERS([include/autoconf.h])
+AC_CONFIG_MACRO_DIR([macros])
+AC_CONFIG_SRCDIR([server/main.c])
 AC_PREFIX_DEFAULT([/usr/games/crossfire])
 AM_INIT_AUTOMAKE
 
@@ -49,34 +47,27 @@ AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_LIBTOOL
-AM_PROG_CC_C_O
 AM_PROG_LEX
 
 AC_PATH_PROG(BASENAME, basename)
-AC_PATH_PROG(BUNZIP, bunzip2)
 AC_PATH_PROG(BZIP, bzip2)
 AC_PATH_PROG(COMPRESS, compress)
-AC_PATH_PROG(GUNZIP, gunzip)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(PERL, perl)
 AC_PATH_PROG(SVNVERSION, svnversion)
 AC_PATH_PROG(TAR, tar)
-AC_PATH_PROG(UNCOMPRESS, uncompress)
 
-if test -n "$GZIP" -a -z "$GUNZIP" ; then
-    AC_MSG_NOTICE([Using 'gzip -c' in place of 'gunzip'])
-    GUNZIP="$GZIP -c"
-fi;
-
-if test -n "$BZIP" -a -z "$BUNZIP" ; then
-    AC_MSG_NOTICE([Using 'bzip2 -c' in place of 'bunzip'])
-    BUNZIP="$BZIP -c"
-fi;
+AC_SUBST(BASENAME)
+AC_SUBST(PERL)
 
 if test -z "$COMPRESS" -a -z "$GZIP" -a -z "$BZIP" ; then
-    AC_MSG_NOTICE([Unable to find compress, gzip, or bzip2; hope you don't plan on compressing any files.])
+    AC_MSG_NOTICE([Unable to find compress, gzip, or bzip2])
 fi;
+
+AC_DEFINE_UNQUOTED(BZIP,"${BZIP}",[Path to the bzip binary])
+AC_DEFINE_UNQUOTED(COMPRESS,"${COMPRESS}",[Path to the compress binary])
+AC_DEFINE_UNQUOTED(GZIP,"${GZIP}",[Path to the gzip binary])
 
 ##############################################################################
 # Library Checks
@@ -92,7 +83,10 @@ AC_CHECK_LIB(des, des_crypt)
 
 AC_CHECK_LIB(z, compress)
 AC_CHECK_LIB(pthread, pthread_create)
+
 LIBCURL_CHECK_CONFIG()
+LIBS="$LIBS $LIBCURL"
+CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
 
 # For utils/mapper
 cf_make_mapper=no
@@ -110,9 +104,6 @@ AM_CONDITIONAL(MAPPER, test "$cf_make_mapper" = "yes")
 
 # Random house generator
 AM_CONDITIONAL(CFRHG_PLUGIN, test "$enable_cfrhg" = "yes")
-
-LIBS="$LIBS $LIBCURL"
-CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
 
 # Libraries used for plugins
 AC_SEARCH_LIBS(dlopen, [dl], [ cf_have_libdl=yes ])
@@ -147,18 +138,6 @@ AC_TYPE_UINT8_T
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
 
-case "$target" in
-  alpha-dec-osf*)
-    # If we are not using gcc, we want the ansi version of cc.
-    if test -z "$GCC"; then
-#      CFLAGS="$CFLAGS -std1 -warnprotos" # Not yet ready for warnprotos...
-      CFLAGS="$CFLAGS -std1"
-    fi
-    ;;
-  *)
-    ;;
-esac
-
 CF_CHECK_VISIBILITY()
 
 ##############################################################################
@@ -170,7 +149,6 @@ AC_FUNC_SETPGRP
 AC_FUNC_STRERROR_R
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
-AC_PROG_GCC_TRADITIONAL
 
 AC_CHECK_FUNCS([getdtablesize gettimeofday mkdir mktime rmdir select socket strcasecmp strcspn strerror strncasecmp strspn strstr strtol snprintf setsid srandom srand48 srand sysconf scandir getaddrinfo getnameinfo])
 
@@ -215,18 +193,8 @@ else
   AC_MSG_RESULT(unknown)
 fi
 
-AC_SUBST(PERL)
-AC_SUBST(BASENAME)
-
 AC_SUBST(pkgstatedir,$localstatedir/$PACKAGE)
 AC_SUBST(pkgconfdir,$sysconfdir/$PACKAGE)
-
-AC_DEFINE_UNQUOTED(BUNZIP,"${BUNZIP}",[Path to the bunzip binary])
-AC_DEFINE_UNQUOTED(BZIP,"${BZIP}",[Path to the bzip binary])
-AC_DEFINE_UNQUOTED(COMPRESS,"${COMPRESS}",[Path to the compress binary])
-AC_DEFINE_UNQUOTED(UNCOMPRESS,"${UNCOMPRESS}",[Path to the uncompress binary])
-AC_DEFINE_UNQUOTED(GUNZIP,"${GUNZIP}",[Path to the gunzip binary])
-AC_DEFINE_UNQUOTED(GZIP,"${GZIP}",[Path to the gzip binary])
 
 #############################################
 # Plugin configuration
