@@ -24,13 +24,13 @@ AC_ARG_ENABLE(cfrhg, [AS_HELP_STRING([--enable-cfrhg],
               [Build the random house generator plugin])],
               [], [enable_cfrhg=no])
 
-AC_ARG_ENABLE(logger, [AS_HELP_STRING([--disable-logger],
-              [Disable the SQLite logger plugin])],
-              [], [enable_logger=yes])
+AC_ARG_ENABLE(logger, [AS_HELP_STRING([--enable-logger],
+              [Build the SQLite logging plugin])],
+              [enable_logger=yes], [enable_logger=no])
 
-AC_ARG_ENABLE(newspaper, [AS_HELP_STRING([--disable-newspaper],
-              [Disable the newspaper plugin])],
-              [], [enable_newspaper=yes])
+AC_ARG_ENABLE(newspaper, [AS_HELP_STRING([--enable-newspaper],
+              [Build the newspaper plugin])],
+              [enable_newspaper=yes], [enable_newspaper=no])
 
 # Unit test configuration
 AC_ARG_ENABLE(check, [AS_HELP_STRING([--disable-check],
