@@ -47,7 +47,7 @@ static void init_attackmess(void);
  * correspond to.
  */
 struct Settings settings = {
-    LOGFILE,   /* Logfile */
+    NULL,      /* Logfile */
     CSPORT,    /* Client/server port */
 
     llevInfo,  /* Debug level */
@@ -277,16 +277,27 @@ static void init_environ(void) {
  *
  * Setups logfile, and such variables.
  */
-void init_globals(void) {
+void init_globals() {
     memset(&statistics, 0, sizeof(struct Statistics));
-    if (settings.logfilename[0] == 0) {
-        logfile = stderr;
-    } else if ((logfile = fopen(settings.logfilename, "a")) == NULL) {
-        fprintf(stderr, "Couldn't open \"%s\" for logging; using stderr instead.\n", settings.logfilename);
-        logfile = stderr;
-    } else {
-        setvbuf(logfile, NULL, _IOLBF, 0);
+
+    /* Log to stderr by default. */
+    logfile = stderr;
+
+    /* Try to open the log file specified on the command-line. */
+    if (settings.logfilename != NULL) {
+        logfile = fopen(settings.logfilename, "a");
+
+        /* If writable, set buffer mode to per-line. */
+        if (logfile != NULL) {
+            setvbuf(logfile, NULL, _IOLBF, 0);
+        } else {
+            logfile = stderr;
+
+            LOG(llevError, "Could not open '%s' for logging.\n",
+                    settings.logfilename);
+        }
     }
+
     exiting = 0;
     first_player = NULL;
     first_friendly_object = NULL;

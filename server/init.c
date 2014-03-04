@@ -54,9 +54,6 @@ static void add_to_racelist(const char *race_name, object *op);
 static racelink *get_racelist(void);
 static void fatal_signal(int make_core);
 
-/** Filename when in daemon mode. */
-static char default_daemon_log[] = "logfile";
-
 /**
  * Command line option: set logfile name.
  * @param val new name.
@@ -146,11 +143,13 @@ static void set_dumpmont(const char *name) {
     settings.dumparg = name;
 }
 
-/** Command line option: set deamon mode. */
+/** Command line option: set daemon mode. */
 static void set_daemon(void) {
     settings.daemonmode = 1;
-    if (settings.logfilename[0] == '\0') {
-        settings.logfilename = default_daemon_log;
+
+    /* Use the default log file if we weren't explicitly given one. */
+    if (settings.logfilename == NULL) {
+        settings.logfilename = LOGFILE;
     }
 }
 
