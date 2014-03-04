@@ -248,7 +248,7 @@ static void do_tell(object *op, const char *params, int adjust_listen) {
     player *pl;
     uint8 original_listen;
 
-    strncpy(name, params, sizeof(name));
+    snprintf(name, sizeof(name), "%s", params);
 
     msg = strchr(name, ' ');
     if (msg) {

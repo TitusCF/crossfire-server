@@ -1293,7 +1293,7 @@ int knowledge_player_knows(const player *pl, const char *knowledge) {
         return 0;
     }
 
-    strncpy(copy, knowledge, MAX_BUF);
+    snprintf(copy, sizeof(copy), "%s", knowledge);
     pos = strchr(copy, ':');
     if (pos == NULL) {
         LOG(llevError, "knowledge_player_knows: invalid knowledge item %s\n", knowledge);
