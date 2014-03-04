@@ -274,7 +274,7 @@ static void hiscore_load(score_table *table) {
             LOG(llevError, "Cannot open highscore file %s: %s\n", table->fname, strerror_local(errno, err, sizeof(err)));
         }
     } else {
-        LOG(llevInfo, "Reading highscore file %s\n", table->fname);
+        LOG(llevDebug, "Reading highscore file %s\n", table->fname);
         while (i < HIGHSCORE_LENGTH) {
             char buf[MAX_BUF];
 

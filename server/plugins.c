@@ -4804,9 +4804,8 @@ void initPlugins(void) {
     size_t l;
     char buf[MAX_BUF];
 
-    LOG(llevInfo, "Initializing plugins\n");
     snprintf(buf, sizeof(buf), "%s/plugins/", LIBDIR);
-    LOG(llevInfo, "Plugins directory is %s\n", buf);
+    LOG(llevInfo, "Loading plugins from '%s'...\n", buf);
 
     plugdir = opendir(buf);
     if (plugdir == NULL)
@@ -4836,7 +4835,7 @@ void initPlugins(void) {
             }
             if (ignore == 0) {
                 snprintf(buf, sizeof(buf), "%s/plugins/%s", LIBDIR, currentfile->d_name);
-                LOG(llevInfo, " -> Loading plugin : %s\n", currentfile->d_name);
+                LOG(llevInfo, " -> Loading plugin: %s\n", currentfile->d_name);
                 plugins_init_plugin(buf);
             }
         }

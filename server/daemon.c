@@ -73,9 +73,11 @@ void become_daemon(void) {
     register int i;
     int forkresult;
 
-    fputs("\n========================\n", logfile);
-    fputs("Begin New Server Session\n", logfile);
-    fputs("========================\n\n", logfile);
+    /* Print a large banner to make different runs visible in the log. */
+    LOG(llevInfo, "========================\n");
+    LOG(llevInfo, "Begin New Server Session\n");
+    LOG(llevInfo, "========================\n");
+
     /*
      * fork so that the process goes into the background automatically. Also
      * has a nice side effect of having the child process get inherited by

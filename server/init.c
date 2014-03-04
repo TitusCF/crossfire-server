@@ -1029,21 +1029,7 @@ void init(int argc, char **argv) {
     load_materials();
     parse_args(argc, argv, 2);
 
-    fprintf(logfile,
-            "Welcome to Crossfire %s!\n"
-            "Copyright (c) 1994, 2011 Mark Wedel & Crossfire Development Team\n"
-            "Copyright (c) 1992 Frank Tore Johansen\n"
-            "\n"
-            , FULL_VERSION);
-
-    if (strcmp(settings.dm_mail, "") != 0) {
-        fprintf(logfile,
-                "This server is maintained locally by: <%s>\n"
-                "Questions and other concerns should be mailed to the above address.\n"
-                "\n"
-                , settings.dm_mail);
-    }
-
+    LOG(llevInfo, "Crossfire %s\n", FULL_VERSION);
     SRANDOM(time(NULL));
 
     init_startup();     /* Check shutdown/forbid files */
