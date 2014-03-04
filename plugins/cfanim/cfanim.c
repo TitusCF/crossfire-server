@@ -843,10 +843,13 @@ static int start_animation(object *who, object *activator, object *event, const 
         errors_found = 1;
         cf_log(llevError, "CFAnim: '%s' has an invalid syntax.\n", buffer);
     }
-    if (feof(fichier))
+    if (feof(fichier)) {
+        fclose(fichier);
         return 0;
+    }
     if (strncmp(buffer, "[Config]", 8)) {
         cf_log(llevError, "CFAnim: Fatal error in %s: [Config] must be the first group defined.\n", file);
+        fclose(fichier);
         return 0;
     }
     while (fgets(buffer, HUGE_BUF, fichier)) {
@@ -948,22 +951,26 @@ static int start_animation(object *who, object *activator, object *event, const 
         if (animationitem)
             cf_free_string(animationitem);
         cf_log(llevError, "CFAnim: Errors occurred during the parsing of %s\n", file);
+        fclose(fichier);
         return 0;
     }
     if (!animationitem) {
         cf_log(llevError, "CFAnim: no animation specified when using %s\n", file);
+        fclose(fichier);
         return 0;
     }
     if (!victim) {
         if (animationitem)
             cf_free_string(animationitem);
         cf_log(llevError,  "CFAnim: Fatal error - victim is NULL");
+        fclose(fichier);
         return 0;
     }
     if (!(current_anim = create_animation())) {
         if (animationitem)
             cf_free_string(animationitem);
         cf_log(llevError, "CFAnim: Fatal error - Not enough memory.\n");
+        fclose(fichier);
         return 0;
     }
     if (always_delete) {
@@ -978,6 +985,8 @@ static int start_animation(object *who, object *activator, object *event, const 
             cf_log(llevError, "CFAnim: No correct victim found or errors found, aborting.\n");
         if (animationitem)
             cf_free_string(animationitem);
+        free(current_anim);
+        fclose(fichier);
         return 0;
     }
     if (unique && !always_delete) {
@@ -1008,6 +1017,7 @@ static int start_animation(object *who, object *activator, object *event, const 
             if (value == NULL) {
                 cf_log(llevError, "CFAnim: no matching animation %s in file.\n", animationitem);
                 cf_free_string(animationitem);
+                fclose(fichier);
                 return 0;
             }
         }
