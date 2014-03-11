@@ -848,7 +848,7 @@ exp 500000
 yield 4
 skill alchemy
 cauldron cauldron
-ingred spectre's ectoplasm,demon's head,7 water of ruby,3 balm of aethereality
+ingred Spectre's ectoplasm,demon's head,7 water of ruby,3 balm of aethereality
 #
 # -- magic immunity (very powerful)
 Object magic resistance
@@ -1494,7 +1494,7 @@ trans 1
 yield 1
 skill woodsman
 cauldron tanbench
-ingred cloak,spectre's ectoplasm,potion of aethereality
+ingred cloak,Spectre's ectoplasm,potion of aethereality
 #
 Object Insulation
 arch cloak
@@ -2780,7 +2780,7 @@ exp 45000
 yield 1
 skill jeweler
 cauldron jeweler_bench
-ingred ring of Ancient Magic,potion of intelligence,potion of power,spectre's ectoplasm,3 diamond of flawless beauty
+ingred ring of Ancient Magic,potion of intelligence,potion of power,Spectre's ectoplasm,3 diamond of flawless beauty
 #
 Object Mithrandir
 arch ring
