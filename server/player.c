@@ -3495,18 +3495,13 @@ void kill_player(object *op, const object *killer) {
         if (tmp != NULL) {
             snprintf(buf, sizeof(buf), "%s's %s", op->name, tmp->name);
             tmp->name = add_string(buf);
-            if (tmp->type == FLESH)
-                snprintf(buf, sizeof(buf), "  This %s has been cut off %s\n"
-                         "  the %s, when he was defeated at\n"
-                         "  level %d by %s.\n",
-                         tmp->name, op->name, op->contr->title,
-                         (int)(op->level), op->contr->killer);
-            else
-                snprintf(buf, sizeof(buf), "  This %s has been taken from %s\n"
-                         "  the %s, when he was defeated at\n"
-                         "  level %d by %s.\n",
-                         tmp->name, op->name, op->contr->title,
-                         (int)(op->level), op->contr->killer);
+
+            snprintf(buf, sizeof(buf),
+                    "This %s was %s %s the %s, who was defeated at level %d by %s.",
+                    tmp->name, tmp->type == FLESH ? "cut off" : "taken from",
+                    op->name, op->contr->title,
+                    (int)(op->level), op->contr->killer);
+
             object_set_msg(tmp, buf);
             tmp->type = 0;
             tmp->value = 0;
