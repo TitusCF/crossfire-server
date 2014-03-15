@@ -4733,15 +4733,27 @@ void object_insert_to_free_spot_or_free(object *op, mapstruct *map, int x, int y
 }
 
 /**
- * Sets the object#msg field of an object.
+ * Set the message field of an object.
  *
  * @param op
  * the object to modify
  * @param msg
  * the new message to set or NULL to clear
+ *
+ * FIXME: Messages must end with a newline or potentially corrupt the object
+ * file by adding an 'endmsg' on the same line.
  */
 void object_set_msg(object *op, const char *msg) {
-    if (op->msg != NULL)
+    /* Look for a trailing newline and complain if not found. */
+    if (strchr(msg, '\n') == NULL) {
+        LOG(llevError, "Setting a message without a trailing newline!\n");
+        LOG(llevError, "** Aborting due to hazardous operation. **\n");
+        abort();
+    }
+
+    if (op->msg != NULL) {
         free_string(op->msg);
+    }
+
     op->msg = msg == NULL ? NULL : add_string(msg);
 }
