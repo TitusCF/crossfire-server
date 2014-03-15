@@ -3495,7 +3495,7 @@ void kill_player(object *op, const object *killer) {
             tmp->name = add_string(buf);
 
             snprintf(buf, sizeof(buf),
-                    "This %s was %s %s the %s, who was defeated at level %d by %s.",
+                    "This %s was %s %s the %s, who was defeated at level %d by %s.\n",
                     tmp->name, tmp->type == FLESH ? "cut off" : "taken from",
                     op->name, op->contr->title,
                     (int)(op->level), op->contr->killer);
