@@ -4745,7 +4745,7 @@ void object_insert_to_free_spot_or_free(object *op, mapstruct *map, int x, int y
  */
 void object_set_msg(object *op, const char *msg) {
     /* Look for a trailing newline and complain if not found. */
-    if ((msg != NULL) && (strchr(msg, '\n') == NULL) {
+    if ((msg != NULL) && (strchr(msg, '\n') == NULL)) {
         LOG(llevError, "Setting a message without a trailing newline!\n");
     }
 
