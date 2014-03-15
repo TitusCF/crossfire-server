@@ -4747,8 +4747,6 @@ void object_set_msg(object *op, const char *msg) {
     /* Look for a trailing newline and complain if not found. */
     if (strchr(msg, '\n') == NULL) {
         LOG(llevError, "Setting a message without a trailing newline!\n");
-        LOG(llevError, "** Aborting due to hazardous operation. **\n");
-        abort();
     }
 
     if (op->msg != NULL) {
