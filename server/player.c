@@ -3433,19 +3433,15 @@ static void loot_object(object *op) {
 }
 
 /**
- * When a player should die (lack of hp, food, etc), we call this.
+ * Handle a player's death.
  *
- * If the player can not be saved (permadeath, no lifesave), this will take care of removing the player file.
- *
- * Will remove diseases, apply death penalties, and so on.
- *
- * Takes battleground into account.
+ * Also deals with lifesaving objects, arena deaths, cleaning disease/poison,
+ * death penalties, and removing the player file in case of permadeath.
  *
  * @param op
- * player in jeopardy.
+ * Player to be killed.
  * @param killer
- * who is trying to kill op, can be NULL.
- * @todo describe battleground.
+ * The object that's trying to kill op, which can be NULL.
  */
 void kill_player(object *op, const object *killer) {
     char buf[MAX_BUF];
@@ -3454,8 +3450,10 @@ void kill_player(object *op, const object *killer) {
     object *tmp;
     archetype *trophy;
 
-    if (save_life(op))
+    /* Don't die if the player's life can be saved. */
+    if (save_life(op)) {
         return;
+    }
 
     /* If player dies on BATTLEGROUND, no stat/exp loss! For Combat-Arenas
      * in cities ONLY!!! It is very important that this doesn't get abused.
@@ -4183,36 +4181,34 @@ static int action_makes_visible(object *op) {
 }
 
 /**
- * Checks if the given object op (usually a player) is standing on a valid battleground-tile.
+ * Check if the given object (usually a player) is standing on a battleground
+ * tile. This is used to handle deaths and special attacks in arenas.
  *
- * Function returns TRUE/FALSE. If true x, y returns the battleground
- * -exit-coord. (and if x, y not NULL)
+ * A battleground tile must have the following attributes set:
+ *  - name "battleground"
+ *  - type 58 (BATTLEGROUND)
+ *  - is_floor 1 (must be the first tile beneath the player's feet)
+ *  - no_pick 1
+ *  - sp / hp > 0 (non-zero exit coordinates)
  *
- * 19 March 2005 - josh@woosworld.net modified to check if the battleground also has slaying, maxhp, and maxsp set
- * and if those are all set and the player has a marker that matches the slaying send them to a different x, y
- * Default is to do the same as before, so only people wanting to have different points need worry about this
+ * If the tile has 'slaying', 'maxhp', and 'maxsp' set, and the player has a
+ * matching marker, send the player to those coordinates instead.
  *
- * 28 July 2008 - Modified to allow other archetypes than fingers as trophies.
- * If other_arch is specified in the battleground floor, then that archetype
- * will be used instead of the default ("finger").  -R.Q.
+ * If the tile has 'other_arch' set, then create that archetype as the trophy
+ * instead of the default ("finger").
  *
  * @param op
- * object to check.
+ * Object to check (usually a player).
  * @param[out] x
  * @param[out] y
- * if not null and if on battleground (return 1), will contain the exit coordinates for the battleground.
+ * If not NULL and standing on a battleground tile, store exit coordinates.
  * @param[out] trophy
- * if not null and if on battleground (return 1), will contain a pointer to the archetype that can be collected by the winner
+ * If not NULL and standing on a battleground tile, store a pointer to the
+ * archetype that can be collected by the winner.
  * @return
- * 1 if op is on battleground, 0 else.
+ * TRUE if op is on a battleground, FALSE if not.
  */
 int op_on_battleground(object *op, int *x, int *y, archetype **trophy) {
-    /* A battleground-tile needs the following attributes to be valid:
-     * is_floor 1 (has to be the FIRST floor beneath the player's feet),
-     * name="battleground", no_pick 1, type=58 (type BATTLEGROUND)
-     * and the exit-coordinates sp/hp must both be > 0.
-     * => The intention here is to prevent abuse of the battleground-
-     * feature (like pickable or hidden battleground tiles). */
     FOR_BELOW_PREPARE(op, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
             if (QUERY_FLAG(tmp, FLAG_NO_PICK)
