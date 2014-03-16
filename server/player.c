@@ -3448,7 +3448,9 @@ void kill_player(object *op, const object *killer) {
     int x, y;
     archetype *at;
     object *tmp;
-    archetype *trophy;
+
+    /* Set to something not NULL so op_on_battleground() fills something in. */
+    archetype *trophy = 0;
 
     /* Don't die if the player's life can be saved. */
     if (save_life(op)) {
@@ -4231,11 +4233,14 @@ int op_on_battleground(object *op, int *x, int *y, archetype **trophy) {
                 if (x != NULL && y != NULL)
                     *x = EXIT_X(tmp),
                     *y = EXIT_Y(tmp);
+
+                /* If 'other_arch' is not specified, give a finger. */
                 if (trophy != NULL) {
-                    if (tmp->other_arch)
-                      *trophy = tmp->other_arch;
-                    else
-                      *trophy = find_archetype("finger");
+                    if (tmp->other_arch) {
+                        *trophy = tmp->other_arch;
+                    } else {
+                        *trophy = find_archetype("finger");
+                    }
                 }
                 return 1;
             }
