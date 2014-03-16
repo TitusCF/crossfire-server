@@ -37,6 +37,7 @@
  * The reading of data is handled in ericserver.c
  */
 
+#include <assert.h>
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -344,6 +345,8 @@ void init_server(void) {
     for (ai_p = ai; ai_p != NULL; ai_p = ai_p->ai_next) {
         listen_socket_count++;
     }
+
+    assert(listen_socket_count > 0);
 #else
     listen_socket_count = 1;
 #endif

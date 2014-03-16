@@ -2174,8 +2174,8 @@ int did_make_save(const object *op, int level, int bonus) {
 }
 
 /**
- * Gives experience to a player/monster, sharing it with party if applicable.  This
- * does bounds checking to make sure we don't overflow the max exp.
+ * Gives experience to a player/monster, sharing it with party if applicable.
+ * This does bounds checking to make sure we don't overflow the max exp.
  *
  * The exp passed is typically not modified much by this function -
  * it is assumed the caller has modified the exp as needed.
@@ -2212,6 +2212,9 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
             shares += (pl->ob->level+4);
         }
     }
+
+    assert(shares > 0);
+
     if (count == 1 || shares > exp)
         change_exp(op, exp, skill, flag);
     else {

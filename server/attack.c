@@ -1114,7 +1114,9 @@ static void tear_down_wall(object *op) {
         }
         return; /* no animations, so nothing more to do */
     }
+    assert(op->stats.maxhp > 0);
     perc = NUM_ANIMATIONS(op)-((int)NUM_ANIMATIONS(op)*op->stats.hp)/op->stats.maxhp;
+
     if (perc >= (int)NUM_ANIMATIONS(op))
         perc = NUM_ANIMATIONS(op)-1;
     else if (perc < 1)

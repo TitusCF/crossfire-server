@@ -31,8 +31,10 @@
  * Handles face-related stuff, including the actual face data.
  */
 
+#include <assert.h>
 #include <global.h>
 #include <stdio.h>
+
 #include "image.h"
 
 /**
@@ -205,12 +207,16 @@ void read_bmap_names(void) {
     nrofpixmaps = 0;
 
     /* First count how many bitmaps we have, so we can allocate correctly */
-    while (fgets(buf, MAX_BUF, fp) != NULL)
-        if (buf[0] != '#' && buf[0] != '\n')
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+        if (buf[0] != '#' && buf[0] != '\n') {
             nrofpixmaps++;
-    rewind(fp);
+        }
+    }
 
+    rewind(fp);
+    assert(nrofpixmaps > 0);
     new_faces = (New_Face *)malloc(sizeof(New_Face)*nrofpixmaps);
+
     if (new_faces == NULL) {
         LOG(llevError, "read_bmap_names: new_faces memory allocation failure.\n");
         abort();

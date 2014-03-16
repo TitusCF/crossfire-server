@@ -31,6 +31,7 @@
  * Ingame time functions.
  */
 
+#include <assert.h>
 #include <global.h>
 #include <tod.h>
 
@@ -383,6 +384,8 @@ void time_info(object *op) {
         if (process_utime_save[i] > max_time)
             long_count++;
     }
+
+    assert(pticks > 0);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "avg time=%dms  max time=%dms  min time=%dms",

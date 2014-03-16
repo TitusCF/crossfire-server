@@ -41,6 +41,7 @@
  * An ingredient is a name, which can contain an initial number for how many are needed.
  */
 
+#include <assert.h>
 #include <stdlib.h>
 #include <global.h>
 #include <object.h>
@@ -806,6 +807,7 @@ static void build_stringlist(const char *str, char ***result_list, size_t *resul
     for (p = strtok(dup, ","); p != NULL; p = strtok(NULL, ","))
         size++;
 
+    assert(size > 0);
     *result_list = malloc(sizeof(**result_list) * size);
     if (*result_list == NULL)
         fatal(OUT_OF_MEMORY);

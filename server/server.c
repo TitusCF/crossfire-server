@@ -783,6 +783,8 @@ void enter_exit(object *op, object *exit_ob) {
         return;
     }
 
+    assert(EXIT_PATH(exit_ob) != NULL);
+
     /* check to see if we make a template map */
     if (EXIT_PATH(exit_ob) && EXIT_PATH(exit_ob)[1] == '@') {
         if (EXIT_PATH(exit_ob)[2] == '!') {

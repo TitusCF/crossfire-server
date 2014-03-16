@@ -102,6 +102,7 @@ void init_anim(void) {
             animations[num_animations].num = num_animations; /* for bsearch */
             animations[num_animations].facings = 1;
         } else if (!strncmp(buf, "mina", 4)) {
+            assert(num_frames > 0);
             animations[num_animations].faces = malloc(sizeof(New_Face*)*num_frames);
             for (i = 0; i < num_frames; i++)
                 animations[num_animations].faces[i] = faces[i];
