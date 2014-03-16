@@ -2189,7 +2189,11 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
         if (*small_nuggets && large_value%small_value)
             (*small_nuggets)--;
     }
-    weight += obj->weight;
+
+    if (weight != NULL) {
+        *weight += obj->weight;
+    }
+
     object_remove(obj);
     object_free2(obj, FREE_OBJ_NO_DESTROY_CALLBACK);
 }
