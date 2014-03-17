@@ -3448,9 +3448,7 @@ void kill_player(object *op, const object *killer) {
     int x, y;
     archetype *at;
     object *tmp;
-
-    /* Set to something not NULL so op_on_battleground() fills something in. */
-    archetype *trophy = 0;
+    archetype *trophy = NULL;
 
     /* Don't die if the player's life can be saved. */
     if (save_life(op)) {
@@ -3462,6 +3460,7 @@ void kill_player(object *op, const object *killer) {
      * Look at op_on_battleground() for more info       --AndreasV
      */
     if (op_on_battleground(op, &x, &y, &trophy)) {
+        assert(trophy != NULL);
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_VICTIM,  MSG_TYPE_VICTIM_DIED,
                       "You have been defeated in combat!\n"
                       "Local medics have saved your life...");
