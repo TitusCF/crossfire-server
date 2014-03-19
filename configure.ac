@@ -13,7 +13,7 @@ AM_INIT_AUTOMAKE
 ##############################################################################
 AC_ARG_ENABLE(mapper, [AS_HELP_STRING([--enable-mapper],
               [Build the crossfire-mapper utility (requires libgd)])],
-              [], [enable_mapper=no])
+              [enable_mapper=yes], [enable_mapper=no])
 
 # Options for plugins
 AC_ARG_WITH(python, [AS_HELP_STRING([--with-python=dir],
@@ -89,18 +89,11 @@ LIBS="$LIBS $LIBCURL"
 CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
 
 # For utils/mapper
-cf_make_mapper=no
 if test "$enable_mapper" = "yes"; then
-    AC_PATH_PROG(GDLIB_CONFIG,gdlib-config)
-    if test -n "$GDLIB_CONFIG"; then
-        GD_LIBS="`$GDLIB_CONFIG --ldflags` `$GDLIB_CONFIG --libs` -lgd"
-        AC_SUBST(GD_LIBS, $GD_LIBS)
-        cf_make_mapper=yes
-    else
-        AC_MSG_WARN([Cannot find gdlib-config; will not build crossfire-mapper.])
-    fi
+    PKG_CHECK_MODULES([GD], [gdlib])
+    AC_SUBST(GD_LIBS, $GD_LIBS)
 fi
-AM_CONDITIONAL(MAPPER, test "$cf_make_mapper" = "yes")
+AM_CONDITIONAL(MAPPER, test "$enable_mapper" = "yes")
 
 # Random house generator
 AM_CONDITIONAL(CFRHG_PLUGIN, test "$enable_cfrhg" = "yes")
@@ -315,6 +308,6 @@ AC_MSG_NOTICE([      and write automated tests for all your add-ons!])
 fi
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Utilities (not required to build or run the server)])
-AC_MSG_NOTICE([    Build crossfire-mapper?         $cf_make_mapper])
+AC_MSG_NOTICE([    Build crossfire-mapper?         $enable_mapper])
 AC_MSG_NOTICE([--------------------------------------------------------------------])
 AC_MSG_NOTICE([Remember to add a symlink to your 'arch' directory in 'lib/arch'!])
