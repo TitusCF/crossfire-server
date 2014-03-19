@@ -35,7 +35,7 @@ AC_ARG_ENABLE(newspaper, [AS_HELP_STRING([--enable-newspaper],
 # Unit test configuration
 AC_ARG_ENABLE(check, [AS_HELP_STRING([--disable-check],
               [Disable the unit tests even if check is available])],
-              [], [enable_check=yes])
+              [enable_check=no], [enable_check=yes])
 
 # Add support for dmalloc, if the user wants it.
 AM_WITH_DMALLOC
@@ -216,13 +216,18 @@ AC_SUBST(PLUGIN_PYTHON)
 AM_CONDITIONAL(HAVE_CFLOGGER, [test "$cf_have_libsqlite" = "yes" -a "$enable_logger" = "yes"])
 AM_CONDITIONAL(HAVE_CFNEWSPAPER, [test "$cf_have_libsqlite" = "yes" -a "$enable_newspaper" = "yes"])
 
-AM_PATH_CHECK(,[have_check="yes"],
-  AC_MSG_WARN([Check not found; cannot run unit tests!])
-  [have_check="no"])
+# Unit tests
+AM_PATH_CHECK([], [have_check="yes"], [have_check="no"])
 AM_CONDITIONAL(HAVE_CHECK, test "$have_check" = "yes" -a "$enable_check" = "yes")
-CF_CHECK_XSLT(xsltengine)
-AM_CONDITIONAL(PROCESS_XSLT,[test "$have_check" = "yes" -a "$enable_check" = "yes" -a -n "$xsltengine"])
-AC_SUBST(XSLTENGINE,[$xsltengine])
+
+if test "$have_check" = "yes"; then
+    CF_CHECK_XSLT(xsltengine)
+    AC_SUBST(XSLTENGINE, ["$xsltengine"])
+else
+    AC_MSG_WARN([Check not found; cannot run unit tests!])
+fi
+
+AM_CONDITIONAL(PROCESS_XSLT, [test -n "$xsltengine"])
 
 ##############################################################################
 # Generate Output
