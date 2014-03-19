@@ -2303,7 +2303,7 @@ diff 10
 exp 10000
 skill smithery
 cauldron forge
-ingred sword,potion of health,bottle of philosophical oil
+ingred sword,healing potion,bottle of philosophical oil
 #
 Object Kragi
 arch hammer
@@ -2314,7 +2314,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred hammer,potion of health,bottle of philosophical oil
+ingred hammer,healing potion,bottle of philosophical oil
 #
 Object Slay Ogre
 arch sword_4
