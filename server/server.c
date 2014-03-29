@@ -728,10 +728,11 @@ static void enter_maplevel_exit(object *op) {
     /* newmap returns the map (if already loaded), or loads it for us. */
     newmap = ready_map_name(op->contr->maplevel, flags);
     if (!newmap) {
-        LOG(llevError, "enter_exit: Pathname to map does not exist! (%s)\n", op->contr->maplevel);
+        LOG(llevError, "enter_exit: Map at '%s' doesn't exist!\n",
+                op->contr->maplevel);
         newmap = ready_map_name(settings.emergency_mapname, 0);
-        op->x = settings.emergency_x;
-        op->y = settings.emergency_y;
+        x = settings.emergency_x;
+        y = settings.emergency_y;
         /* If we can't load the emergency map, something is probably really
          * screwed up, so bail out now.
          */
@@ -739,6 +740,9 @@ static void enter_maplevel_exit(object *op) {
             LOG(llevError, "enter_exit: could not load emergency map? Fatal error\n");
             abort();
         }
+
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_MISC, 0,
+                "You find yourself somewhere unexpected...");
     }
     /* as a special case, if coordinates are (-1, -1), then the item should
      * be put at the default location. Used for loginmethod 0 (old clients). */
