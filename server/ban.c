@@ -1,8 +1,3 @@
-/*
- * static char *rcsid_ban_c =
- *   "$Id$";
- */
-
 /**
  * @file
  * This code was grabbed from the Netrek source and modified to work with
