@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /**
  * @file
  * Path-related function prototypes.
