@@ -17,6 +17,7 @@
  */
 
 #include <assert.h>
+#include "global.h"
 
 #ifdef HAVE_TIME_H
 #include <time.h>
@@ -35,7 +36,6 @@
 #  endif
 #endif
 
-#include "global.h"
 #include "object.h"
 #include "sproto.h"
 #include "tod.h"
