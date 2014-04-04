@@ -1,9 +1,9 @@
 Crossfire Server User Guide
 ===========================
 Crossfire Development Team <crossfire@metalforge.org>
-1.70.0-dev, November 2013
-:disable-javascript:
+1.71.0, April 2014
 :numbered:
+:toc:
 
 NOTE: This README is written for those who wish to run their own server. It is
 not necessary to install the server in order to play Crossfire.

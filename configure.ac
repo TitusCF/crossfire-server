@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([crossfire], [1.70.trunk], [crossfire@metalforge.org])
+AC_INIT([crossfire], [1.71.0], [crossfire@metalforge.org])
 AC_CONFIG_AUX_DIR([utils])
 AC_CONFIG_HEADERS([include/autoconf.h])
 AC_CONFIG_MACRO_DIR([macros])

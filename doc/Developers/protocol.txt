@@ -1,7 +1,7 @@
 Crossfire Protocol Handbook
 ===========================
 Crossfire Development Team <crossfire@metalforge.org>
-1.70.0-dev, January 2014
+1.71.0, April 2014
 :toc:
 :numbered:
 
