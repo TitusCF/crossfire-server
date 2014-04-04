@@ -6,19 +6,17 @@
 #ifndef LIVING_H
 #define LIVING_H
 
-/**
- * @defgroup STATS Object statistics.
- */
-/*@{*/
-#define STR 0       /**< Strength. */
-#define DEX 1       /**< Dexterity. */
-#define CON 2       /**< Constitution. */
-#define WIS 3       /**< Wisdom. */
-#define CHA 4       /**< Charisma. */
-#define INT 5       /**< Intelligence. */
-#define POW 6       /**< Power. */
-#define NUM_STATS 7 /**< Number of statistics. */
-/*@}*/
+/** Object statistics. */
+enum {
+    STR = 0,       /**< Strength. */
+    DEX = 1,       /**< Dexterity. */
+    CON = 2,       /**< Constitution. */
+    WIS = 3,       /**< Wisdom. */
+    CHA = 4,       /**< Charisma. */
+    INT = 5,       /**< Intelligence. */
+    POW = 6,       /**< Power. */
+    NUM_STATS = 7  /**< Number of statistics. */
+};
 
 /** Maximum level a player can reach. */
 #define MAXLEVEL 115
