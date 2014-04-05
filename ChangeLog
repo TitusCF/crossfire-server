@@ -1,58 +1,64 @@
-Changes in top level SVN tree.  A few notes when putting entries in this
-file:
-1) Please include a date in the form yyyy-mm-dd (ISO standard)
-2) You don't need to go into exacting detail of the changes.  This file
-is mostly meant to give an idea to others what has changed - you don't
-need to recreate the code here.  If you change fixes a reported bug
-on the mailing list, please provide a brief description of the bug
-fixed.  But please do try to include a useful description of
-what changed.  Saying something like 'General cleanup - just whitespace
-changes' is much more useful than 'misc edits' or 'code cleanup.'
-3) Please include your name with the changes you make.
-4) Whenever making an update, please update this file, no matter how
-small - this just lets others know that the file has changed if nothing
-else.  With this, include the file(s) that you changed.
-------------------------------------------------------------------------------
+==============================================================================
+Changes for 1.71.0
+==============================================================================
 
-server/attack.c: Added damage for when a player burns an equipped item (e.g. with flint and steel). Should help balance the utility of the flint and steel.
-SilverNexus 2013-11-29
+2014-03-29	Kevin Zheng
+	* server/server.c: Fix emergency map.
 
-Fix for bug #762: Permadeath segfault on dead character load.
-socket/request.c: do not send dead characters' information to the client
-include/account_char.h: add a flag for dead characters
-server/player.c: add account name to dead player's slaying field
-server/account_char.c: add handling for new flag for dead characters
-server/resurrection.c: make resurrection reset the dead character flag on a successful resurrection
-SilverNexus 2013-11-10
+2014-03-17	Kevin Zheng
+	* devel/crossfire-config.c: Retire build parameter dumper.
 
-Properly track cast spells. Fixes infrequent server crashes due to 100%
-CPU load.
-Andreas Kirschbaum 2013-09-07
+2014-03-04	Kevin Zheng
+	* configure.ac: Disable newspaper and logger plugin by default.
+	* server/: Reduce unnecessary startup verbosity.
+	* server/misc.c: Shorten log level messages.
 
-Fix for bug #755: Player 'freezes' after boarded wagon is destroyed
-server/attack.c: reset player's contr->transport to NULL.
-Nicolas Weeger 2013-07-18
+2014-01-01	Nicolas Weeger
+	* common/map.c: Ensure objects are on a valid map position.
 
-server/apply.c: Fixed wrong check for applied flag when closing container to
-open another one.
-Karla Stenger 2013-01-11
+2013-11-29	SilverNexus
+	* server/attack.c: Added damage for when a player burns an equipped
+	item (e.g. with flint and steel). Should help balance the utility of
+	the flint and steel.
 
-common/item.c: Add "(glowing)" to rings and amulets' description accordingly.
-Karla Stenger 2012-11-27
+2013-11-10	SilverNexus
+	Fix for bug #762: Permadeath segfault on dead character load.
 
-Fix for bug #3536508: Broken firewall with missile swarm.
-Nicolas Weeger 2012-07-01
+	* socket/request.c: do not send dead characters' information to the client
+	* include/account_char.h: add a flag for dead characters
+	* server/player.c: add account name to dead player's slaying field
+	* server/account_char.c: add handling for new flag for dead characters
+	* server/resurrection.c: make resurrection reset the dead character
+	flag on a successful resurrection
 
-Modify handle_client() to process more than one socket command per tick.
-This chops about half a second off time spent in negotiate_connection()
-on local client/server - probably bigger difference for remote servers.
-Also, as code was, if using image caching, no further processing would
-happen after first askface, so this should improve performance notably in
-those cases.
-MSW 2012-06-26
+2013-09-07	Andreas Kirschbaum
+	Properly track cast spells. Fixes infrequent server crashes due to 100%
+	CPU load.
 
-Apply patch #3532595: Restrict account creation, by Eddward DeVilla.
-Nicolas Weeger 2012-06-10
+2013-07-18	Nicolas Weeger
+	Fix for bug #755: Player 'freezes' after boarded wagon is destroyed
+	server/attack.c: reset player's contr->transport to NULL.
+
+2013-01-11	Karla Stenger
+	* server/apply.c: Fixed wrong check for applied flag when closing
+	container to open another one.
+
+2012-11-27	Karla Stenger
+	* common/item.c: Add "(glowing)" to rings and amulets' description.
+
+2012-07-01	Nicolas Weeger
+	Fix for bug #3536508: Broken firewall with missile swarm.
+
+2012-06-26	MSW
+	Modify handle_client() to process more than one socket command per tick.
+	This chops about half a second off time spent in negotiate_connection()
+	on local client/server - probably bigger difference for remote servers.
+	Also, as code was, if using image caching, no further processing would
+	happen after first askface, so this should improve performance notably in
+	those cases.
+
+2012-06-10	Nicolas Weeger
+	Apply patch #3532595: Restrict account creation, by Eddward DeVilla.
 
 ==============================================================================
 Changes for 1.70.0
