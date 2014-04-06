@@ -340,18 +340,14 @@ int account_check_name_password(const char *account_name, const char *account_pa
     account_struct *ac;
 
     for (ac=accounts; ac; ac=ac->next) {
-        /* account names must be unique.  So if we get a matching name,
-         * we want to check the password.  If the password is correct,
-         * we have a good match.  If the password doesn't match, there is
-         * no reason to do anymore searching on the list, because we won't
-         * find another matching name.
-         */
+        /* Look for a matching account name and check the password. */
         if (!strcasecmp(ac->name, account_name)) {
-            if (!strcmp(ac->password, crypt_string(account_password, ac->password))) {
-                ac->last_login=time(NULL);
+            if (check_password(account_password, ac->password)) {
+                ac->last_login = time(NULL);
                 return 1;
+            } else {
+                return 0;
             }
-            else return 0;
         }
     }
     return 0;
@@ -682,8 +678,9 @@ int account_change_password(const char *account_name, const char *current_passwo
     }
     if (ac == NULL) return 2;
 
-    if (strcmp(crypt_string(current_password, ac->password), ac->password))
+    if (check_password(current_password, ac->password)) {
         return 3;
+    }
 
     free(ac->password);
     ac->password = strdup_local(crypt_string(new_password, NULL));
