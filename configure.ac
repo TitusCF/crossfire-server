@@ -229,8 +229,17 @@ fi
 
 AM_CONDITIONAL(PROCESS_XSLT, [test -n "$xsltengine"])
 
+# Make sure pre-built archetypes or an 'arch' directory exists.
+AC_CHECK_FILE([lib/archetypes], [], [has_archetypes=no])
+AC_CHECK_FILE([lib/arch], [], [has_arch_dir=no])
+
+AS_IF([test "$has_archetypes" == no -a "$has_arch_dir" == no], [
+       AC_MSG_ERROR([Could not find pre-built or raw archetypes.])
+])
+
+
 ##############################################################################
-# Generate Output
+AS_BOX([Generate Output])
 ##############################################################################
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
@@ -314,5 +323,3 @@ fi
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Utilities (not required to build or run the server)])
 AC_MSG_NOTICE([    Build crossfire-mapper?         $enable_mapper])
-AC_MSG_NOTICE([--------------------------------------------------------------------])
-AC_MSG_NOTICE([Remember to add a symlink to your 'arch' directory in 'lib/arch'!])
