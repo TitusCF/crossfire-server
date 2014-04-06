@@ -48,25 +48,18 @@ static void set_logfile(char *val) {
 }
 
 /** Command line option: show version. */
-static void call_version(void) {
-    version(NULL);
-    exit(0);
-}
-
-/** Command line option: show hiscore. */
-static void showscores(void) {
-    hiscore_display(NULL, 9999, "");
-    exit(0);
+static void call_version() {
+    puts(FULL_VERSION);
+    exit(EXIT_SUCCESS);
 }
 
 /** Command line option: debug flag. */
-static void set_debug(void) {
-    settings.debug = llevDebug;
-}
-
-/** Command line option: unset debug flag. */
-static void unset_debug(void) {
-    settings.debug = llevInfo;
+static void set_debug(const char *toggle) {
+    if (strcmp(toggle, "on") == 0) {
+        settings.debug = llevDebug;
+    } else {
+        settings.debug = llevInfo;
+    }
 }
 
 /** Command line option: monster debug flag. */
@@ -231,15 +224,6 @@ static void free_races(void);
 static void free_materials(void);
 
 /**
- * Command line option: display score for matching players.
- * @param data name to match.
- */
-static void showscoresparm(const char *data) {
-    hiscore_display(NULL, 9999, data);
-    exit(0);
-}
-
-/**
  * Change the server's port. Will exit() if invalid value.
  *
  * @param val
@@ -311,8 +295,7 @@ static struct Command_Line_Options options[] = {
     /* Honor -help also, since it is somewhat common */
     { "-help", 0, 1, help },
     { "-v", 0, 1, call_version },
-    { "-d", 0, 1, set_debug },
-    { "+d", 0, 1, unset_debug },
+    { "-d", 1, 1, set_debug },
     { "-mon", 0, 1, set_mondebug },
     { "-data", 1, 1, set_datadir },
     { "-conf", 1, 1, set_confdir },
@@ -339,7 +322,7 @@ static struct Command_Line_Options options[] = {
     /** Pass 2 functions.  Most of these could probably be in pass 1,
      * as they don't require much of anything to bet set up.
      */
-    { "-csport", 1, 2, set_csport },
+    { "-p", 1, 2, set_csport },
 
     /** Start of pass 3 information. In theory, by pass 3, all data paths
      * and defaults should have been set up.
@@ -358,8 +341,6 @@ static struct Command_Line_Options options[] = {
     { "-mexp", 0, 3, dump_experience },
     { "-mq", 0, 3, dump_quests },
     { "-dump-anims", 0, 3, server_dump_animations },
-    { "-s", 0, 3, showscores },
-    { "-score", 1, 3, showscoresparm }
 };
 
 /**
@@ -1062,52 +1043,46 @@ void free_server(void) {
 /**
  * Display the command line options and exits.
  */
-static void help(void) {
-    printf("usage: crossfire-server [-h] [options]\n\n");
+static void help() {
+    printf("Usage: crossfire-server [options]\n\n");
 
     printf("Options:\n");
-    printf(" -csport <port> Specifies the port to use for the new client/server code.\n");
-    printf(" -d           Turns on some debugging.\n");
-    printf(" +d           Turns off debugging (useful if server compiled with debugging\n");
-    printf("              as default).\n");
-    printf(" -detach      The server will go in the background, closing all\n");
-    printf("              connections to the tty.\n");
-    printf(" -h           Display this information.\n");
-    printf(" -log <file>  Specifies which file to send output to.\n");
-    printf("              Only has meaning if -detach is specified.\n");
-    printf(" -mon         Turns on monster debugging.\n");
-    printf(" -o           Prints out info on what was defined at compile time.\n");
-    printf(" -s           Display the high-score list.\n");
-    printf(" -score <name or class> Displays all high scores with matching name/class.\n");
-    printf(" -v           Print version and developer contact information.\n");
-    printf(" -conf        Sets the configuration dir (settings, motd, etc.)\n");
-    printf(" -data        Sets the lib dir (archetypes, treasures, etc.)\n");
-    printf(" -local       Read/write local data (hiscore, unique items, etc.)\n");
-    printf(" -maps        Sets the directory for maps.\n");
-    printf(" -arch        Sets the archetype file to use.\n");
-    printf(" -regions     Sets the regions file to use.\n");
-    printf(" -playerdir   Sets the directory for the player files.\n");
-    printf(" -templatedir Sets the directory for template generate maps.\n");
-    printf(" -treasures   Sets the treasures file to use.\n");
-    printf(" -uniquedir   Sets the unique items/maps directory.\n");
-    printf(" -tmpdir      Sets the directory for temporary files (mostly maps.)\n");
-    printf(" -m           Lists out suggested experience for all monsters.\n");
-    printf(" -m2          Dumps out abilities.\n");
-    printf(" -m3          Dumps out artifact information.\n");
-    printf(" -m4          Dumps out spell information.\n");
-    printf(" -m5          Dumps out skill information.\n");
-    printf(" -m6          Dumps out race information.\n");
-    printf(" -m7          Dumps out alchemy information.\n");
-    printf(" -m8          Dumps out gods information.\n");
-    printf(" -m9          Dumps out more alchemy information (formula checking).\n");
-    printf(" -mt <name>   Dumps out list of treasures for a monster.\n");
-    printf(" -mexp        Dumps out the experience table.\n");
-    printf(" -mq          Dumps out the list of defined quests.\n");
-    printf(" -dump-anims  Dumps out the animations.\n");
+    printf(" -arch        Set the file with archetype definitions.\n");
+    printf(" -conf        Set the directory to find configuration files.\n");
+    printf(" -d <on|off>  Turn debugging messages on or off.\n");
+    printf(" -data        Set the data (share/) directory (archetypes, treasures, etc).\n");
+    printf(" -detach      Detach from the controlling terminal and run as a daemon.\n");
     printf(" -disable-plugin\n"
            "              Disables specified plugin. Use the name without the extension.\n"
            "              Can be specified multiple times. 'All' disables all plugins.\n");
-    exit(0);
+    printf(" -dump-anims  Dump animations.\n");
+    printf(" -h           Print this help message.\n");
+    printf(" -local       Set the local data (var/) directory.\n");
+    printf(" -log <file>  Write logging information to the given file.\n");
+    printf(" -m           List suggested experience for all monsters.\n");
+    printf(" -m2          Dump monster abilities.\n");
+    printf(" -m3          Dump artifact information.\n");
+    printf(" -m4          Dump spell information.\n");
+    printf(" -m5          Dump skill information.\n");
+    printf(" -m6          Dump race information.\n");
+    printf(" -m7          Dump alchemy information.\n");
+    printf(" -m8          Dump gods information.\n");
+    printf(" -m9          Dump more alchemy information (formula checking).\n");
+    printf(" -maps        Set the map directory.\n");
+    printf(" -mexp        Dump the experience table.\n");
+    printf(" -mon         Turn on monster debugging.\n");
+    printf(" -mq          Dump the quest list.\n");
+    printf(" -mt <name>   Dump a list of treasures for a monster.\n");
+    printf(" -o           Display compile-time defaults.\n");
+    printf(" -p <port>    Specifies the port to listen on for incoming connections.\n");
+    printf(" -playerdir   Set the player files directory.\n");
+    printf(" -regions     Set the region file.\n");
+    printf(" -templatedir Set the template map directory.\n");
+    printf(" -tmpdir      Set the directory for temporary files (mostly maps.)\n");
+    printf(" -treasures   Set the treasures file.\n");
+    printf(" -uniquedir   Set the unique items/maps directory.\n");
+    printf(" -v           Print version information.\n");
+    exit(EXIT_SUCCESS);
 }
 
 /**
