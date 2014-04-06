@@ -1,9 +1,8 @@
 Crossfire Protocol Handbook
 ===========================
 Crossfire Development Team <crossfire@metalforge.org>
-1.71.0, April 2014
-:toc:
 :numbered:
+:toc:
 
 If you were ever curious enough to `telnet` or `netcat` to a Crossfire server,
 chances are you were sorely disappointed. While the protocol may seem to use

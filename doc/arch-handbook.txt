@@ -1,9 +1,8 @@
 Crossfire Architecture Handbook
 ===============================
 Crossfire Development Team <crossfire@metalforge.org>
-1.71.0, April 2014
-:toc:
 :numbered:
+:toc:
 
 Alchemy
 -------
