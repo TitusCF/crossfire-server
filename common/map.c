@@ -180,9 +180,6 @@ static void create_items_path(const char *s, char *buf, size_t size) {
 /**
  * This function checks if a file with the given path exists.
  *
- * It tries out all the compression suffixes listed in the uncomp[] array,
- * except for Windows which checks an exact file.
- *
  * @param name
  * map path to check.
  * @param prepend_dir

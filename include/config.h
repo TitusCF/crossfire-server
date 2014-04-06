@@ -303,26 +303,9 @@
  * SECTION 2 - Machine/Compiler specific stuff.
  *
  * Short list of items:
- * COMPRESS_SUFFIX - selection of compression programs
  * O_NDELAY - If you don't have O_NDELAY, uncomment it.
  *
  ***********************************************************************/
-
-/**
- * If you compress your files to save space, set the COMPRESS_SUFFIX below
- * to the compression suffix you want (.Z, .gz, .bz2).  The autoconf
- * should already find the program to use.  If you set the suffix to
- * something that autoconf did not find, you are likely to have serious
- * problems, so make sure you have the appropriate compression tool installed
- * before you set this.  You can look at the autoconf.h file to see
- * what compression tools it found (search for COMPRESS).
- * Note that this is used when saving files.  Crossfire will search all
- * methods when loading a file to see if it finds a match
- */
-
-#ifndef COMPRESS_SUFFIX
-/* #define COMPRESS_SUFFIX ".Z" */
-#endif
 
 /**
  * If you get a complaint about O_NDELAY not being known/undefined, try

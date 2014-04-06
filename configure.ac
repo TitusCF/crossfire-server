@@ -51,7 +51,6 @@ AM_PROG_LEX
 
 AC_PATH_PROG(BASENAME, basename)
 AC_PATH_PROG(BZIP, bzip2)
-AC_PATH_PROG(COMPRESS, compress)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(PERL, perl)
@@ -59,15 +58,9 @@ AC_PATH_PROG(SVNVERSION, svnversion)
 AC_PATH_PROG(TAR, tar)
 
 AC_SUBST(BASENAME)
+AC_SUBST(BZIP)
+AC_SUBST(GZIP)
 AC_SUBST(PERL)
-
-if test -z "$COMPRESS" -a -z "$GZIP" -a -z "$BZIP" ; then
-    AC_MSG_NOTICE([Unable to find compress, gzip, or bzip2])
-fi;
-
-AC_DEFINE_UNQUOTED(BZIP,"${BZIP}",[Path to the bzip binary])
-AC_DEFINE_UNQUOTED(COMPRESS,"${COMPRESS}",[Path to the compress binary])
-AC_DEFINE_UNQUOTED(GZIP,"${GZIP}",[Path to the gzip binary])
 
 ##############################################################################
 # Library Checks
@@ -81,7 +74,6 @@ AC_SEARCH_LIBS([sqrt], [m])
 AC_SEARCH_LIBS([crypt], [crypt])
 AC_CHECK_LIB(des, des_crypt)
 
-AC_CHECK_LIB(z, compress)
 AC_CHECK_LIB(pthread, pthread_create)
 
 LIBCURL_CHECK_CONFIG()
