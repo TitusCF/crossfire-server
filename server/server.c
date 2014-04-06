@@ -28,14 +28,6 @@
 #  include <sys/types.h>
 #endif
 
-#ifdef HAVE_DES_H
-#include <des.h>
-#else
-#  ifdef HAVE_CRYPT_H
-#  include <crypt.h>
-#  endif
-#endif
-
 #include "object.h"
 #include "sproto.h"
 #include "tod.h"
@@ -103,7 +95,7 @@ void start_info(object *op) {
  * @todo make thread-safe?
  */
 const char *crypt_string(const char *str, const char *salt) {
-#if defined(WIN32) || (defined(__FreeBSD__) && !defined(HAVE_LIBDES))
+#if defined(WIN32) || (defined(__FreeBSD__))
     return(str);
 #else
     static const char *const c = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
@@ -116,10 +108,6 @@ const char *crypt_string(const char *str, const char *salt) {
         s[0] = salt[0],
         s[1] = salt[1];
 
-#  ifdef HAVE_LIBDES
-    return (char *)des_crypt(str, s);
-#  endif
-    /* Default case - just use crypt */
     return (char *)crypt(str, s);
 #endif
 }
