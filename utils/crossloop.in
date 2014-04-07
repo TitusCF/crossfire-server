@@ -5,7 +5,7 @@
 CF_BIN="BINDIR/crossfire-server"
 
 # Additional flags to pass to the server (comment out to disable).
-CF_FLAGS="-disable-plugin cfrhg -disable-plugin cflogger -d"
+CF_FLAGS="-disable-plugin cfrhg -disable-plugin cflogger -d on"
 
 # Directory to use for storing temporary runtime files. It is created if it
 # does not exist. It should be dedicated to Crossfire, because it is saved
