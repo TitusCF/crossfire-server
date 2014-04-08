@@ -54,12 +54,13 @@ static void call_version() {
 }
 
 /** Command line option: debug flag. */
-static void set_debug(const char *toggle) {
-    if (strcmp(toggle, "on") == 0) {
-        settings.debug = llevDebug;
-    } else {
-        settings.debug = llevInfo;
-    }
+static void set_debug() {
+    settings.debug = llevDebug;
+}
+
+/** Command line option: unset debug flag. */
+static void unset_debug() {
+    settings.debug = llevInfo;
 }
 
 /** Command line option: monster debug flag. */
@@ -291,26 +292,25 @@ static struct Command_Line_Options options[] = {
     /** Pass 1 functions - Stuff that can/should be called before we actually
      * initialize any data.
      */
-    { "-h", 0, 1, help },
-    /* Honor -help also, since it is somewhat common */
-    { "-help", 0, 1, help },
-    { "-v", 0, 1, call_version },
-    { "-d", 1, 1, set_debug },
-    { "-mon", 0, 1, set_mondebug },
-    { "-data", 1, 1, set_datadir },
-    { "-conf", 1, 1, set_confdir },
-    { "-local", 1, 1, set_localdir },
-    { "-maps", 1, 1, set_mapdir },
     { "-arch", 1, 1, set_archetypes },
-    { "-regions", 1, 1, set_regions },
-    { "-playerdir", 1, 1, set_playerdir },
-    { "-treasures", 1, 1, set_treasures },
-    { "-uniquedir", 1, 1, set_uniquedir },
-    { "-templatedir", 1, 1, set_templatedir },
-    { "-tmpdir", 1, 1, set_tmpdir },
-    { "-log", 1, 1, set_logfile },
+    { "-conf", 1, 1, set_confdir },
+    { "-d", 0, 1, set_debug },
+    { "-data", 1, 1, set_datadir },
     { "-detach", 0, 1, set_daemon },
     { "-disable-plugin", 1, 1, set_disable_plugin },
+    { "-h", 0, 1, help },
+    { "-local", 1, 1, set_localdir },
+    { "-log", 1, 1, set_logfile },
+    { "-maps", 1, 1, set_mapdir },
+    { "-mon", 0, 1, set_mondebug },
+    { "-n", 0, 1, unset_debug },
+    { "-playerdir", 1, 1, set_playerdir },
+    { "-regions", 1, 1, set_regions },
+    { "-templatedir", 1, 1, set_templatedir },
+    { "-tmpdir", 1, 1, set_tmpdir },
+    { "-treasures", 1, 1, set_treasures },
+    { "-uniquedir", 1, 1, set_uniquedir },
+    { "-v", 0, 1, call_version },
 
 #ifdef WIN32
     /* Windows service stuff */
@@ -1049,7 +1049,7 @@ static void help() {
     printf("Options:\n");
     printf(" -arch        Set the file with archetype definitions.\n");
     printf(" -conf        Set the directory to find configuration files.\n");
-    printf(" -d <on|off>  Turn debugging messages on or off.\n");
+    printf(" -d           Turn on extra debugging messages.\n");
     printf(" -data        Set the data (share/) directory (archetypes, treasures, etc).\n");
     printf(" -detach      Detach from the controlling terminal and run as a daemon.\n");
     printf(" -disable-plugin\n"
@@ -1073,6 +1073,7 @@ static void help() {
     printf(" -mon         Turn on monster debugging.\n");
     printf(" -mq          Dump the quest list.\n");
     printf(" -mt <name>   Dump a list of treasures for a monster.\n");
+    printf(" -n           Turn off debugging messages if on by default.\n");
     printf(" -o           Display compile-time defaults.\n");
     printf(" -p <port>    Specifies the port to listen on for incoming connections.\n");
     printf(" -playerdir   Set the player files directory.\n");
