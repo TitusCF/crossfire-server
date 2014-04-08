@@ -100,6 +100,7 @@ AC_CHECK_LIB(sqlite3, sqlite3_open,[ cf_have_libsqlite=yes ])
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h stddef.h stdlib.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h sys/ttycom.h termios.h sys/termios.h zlib.h pthread.h curl/curl.h])
+AC_CHECK_HEADERS([crypt.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

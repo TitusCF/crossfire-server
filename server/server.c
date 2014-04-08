@@ -28,6 +28,11 @@
 #  include <sys/types.h>
 #endif
 
+/* FIXME: This is required on certain systems to get crypt(3) to work. */
+#ifdef HAVE_CRYPT_H
+#include <crypt.h>
+#endif
+
 #include "object.h"
 #include "sproto.h"
 #include "tod.h"
@@ -98,17 +103,20 @@ const char *crypt_string(const char *str, const char *salt) {
 #if defined(WIN32) || (defined(__FreeBSD__))
     return(str);
 #else
-    static const char *const c = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
+    /* Generate a two-character salt for the DES cipher. */
+    static const char *const c =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
     char s[2];
 
-    if (salt == NULL)
+    if (salt == NULL) {
         s[0] = c[RANDOM()%(int)strlen(c)],
         s[1] = c[RANDOM()%(int)strlen(c)];
-    else
+    } else {
         s[0] = salt[0],
         s[1] = salt[1];
+    }
 
-    return (char *)crypt(str, s);
+    return crypt(str, s);
 #endif
 }
 
