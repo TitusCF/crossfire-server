@@ -1,3 +1,6 @@
+2014-04-07	Kevin Zheng
+	* utils/crossloop.in: Remove flags related to non-default plugins.
+
 2014-04-06	Kevin Zheng
 	* server/init.c: Clean up and sort command-line arguments.
 	* server/move.c: Clean up "start to attack" message.
