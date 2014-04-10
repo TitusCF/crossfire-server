@@ -1633,8 +1633,10 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
             int stat = get_attr_value(&pl->contr->orig_stats, i);
             int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
 
-            if (i == CHA)
+            if (i == CHARISMA) {
                 continue; /* exclude cha from this */
+            }
+
             if (stat < 20+race_bonus) {
                 change_attr_value(&pl->contr->orig_stats, i, 1);
                 excess_stat--;

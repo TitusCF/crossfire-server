@@ -214,31 +214,31 @@ const char *const short_stat_name[NUM_STATS] = {
  */
 void set_attr_value(living *stats, int attr, sint8 value) {
     switch (attr) {
-    case STR:
+    case STRENGTH:
         stats->Str = value;
         break;
 
-    case DEX:
+    case DEXTERITY:
         stats->Dex = value;
         break;
 
-    case CON:
+    case CONSTITUTION:
         stats->Con = value;
         break;
 
-    case WIS:
+    case WISDOM:
         stats->Wis = value;
         break;
 
-    case POW:
+    case POWER:
         stats->Pow = value;
         break;
 
-    case CHA:
+    case CHARISMA:
         stats->Cha = value;
         break;
 
-    case INT:
+    case INTELLIGENCE:
         stats->Int = value;
         break;
     }
@@ -262,31 +262,31 @@ void change_attr_value(living *stats, int attr, sint8 value) {
     if (value == 0)
         return;
     switch (attr) {
-    case STR:
+    case STRENGTH:
         stats->Str += value;
         break;
 
-    case DEX:
+    case DEXTERITY:
         stats->Dex += value;
         break;
 
-    case CON:
+    case CONSTITUTION:
         stats->Con += value;
         break;
 
-    case WIS:
+    case WISDOM:
         stats->Wis += value;
         break;
 
-    case POW:
+    case POWER:
         stats->Pow += value;
         break;
 
-    case CHA:
+    case CHARISMA:
         stats->Cha += value;
             break;
 
-    case INT:
+    case INTELLIGENCE:
         stats->Int += value;
         break;
 
@@ -309,25 +309,25 @@ void change_attr_value(living *stats, int attr, sint8 value) {
  */
 sint8 get_attr_value(const living *stats, int attr) {
     switch (attr) {
-    case STR:
+    case STRENGTH:
         return(stats->Str);
 
-    case DEX:
+    case DEXTERITY:
         return(stats->Dex);
 
-    case CON:
+    case CONSTITUTION:
         return(stats->Con);
 
-    case WIS:
+    case WISDOM:
         return(stats->Wis);
 
-    case CHA:
+    case CHARISMA:
         return(stats->Cha);
 
-    case INT:
+    case INTELLIGENCE:
         return(stats->Int);
 
-    case POW:
+    case POWER:
         return(stats->Pow);
     }
     return 0;

@@ -8,13 +8,13 @@
 
 /** Object statistics. */
 enum {
-    STR = 0,       /**< Strength. */
-    DEX = 1,       /**< Dexterity. */
-    CON = 2,       /**< Constitution. */
-    WIS = 3,       /**< Wisdom. */
-    CHA = 4,       /**< Charisma. */
-    INT = 5,       /**< Intelligence. */
-    POW = 6,       /**< Power. */
+    STRENGTH = 0,
+    DEXTERITY = 1,
+    CONSTITUTION = 2,
+    WISDOM = 3,
+    CHARISMA = 4,
+    INTELLIGENCE = 5,
+    POWER = 6,
     NUM_STATS = 7  /**< Number of statistics. */
 };
 
