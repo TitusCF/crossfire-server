@@ -366,6 +366,8 @@ void account_char_free(Account_Char *chars) {
  */
 int make_perma_dead(object *op) {
     player *pl = op->contr;
+    Account_Char *chars, *ac;
+
     if (!pl) {
         return 1;
     }
@@ -375,14 +377,16 @@ int make_perma_dead(object *op) {
     if (!pl->socket.account_name) {
         return 1;
     }
+
     /* Load the appropriate account for the action. */
-    Account_Char *chars = account_char_load(pl->socket.account_name);
+    chars = account_char_load(pl->socket.account_name);
+
     /* Find the right character. */
-    Account_Char *ac;
     for (ac = chars; ac; ac = ac->next) {
         if (strcmp(ac->name, op->name) == 0)
             break;
     }
+
     /* This character is dead */
     ac->isDead = 1;
     account_char_save(pl->socket.account_name, chars);
@@ -401,20 +405,25 @@ int make_perma_dead(object *op) {
  * 0 for success, 1 for failure
  */
 int unmake_perma_dead(char *account, char *player) {
+    Account_Char *chars, *ac;
+
     /*
      * If no account name, then there is nothing to do here.
      * The character was dead before the account was kept track of.
      */
-    if (!account)
+    if (!account) {
         return 1;
+    }
+
     /* Load the appropriate account for the action. */
-    Account_Char *chars = account_char_load(account);
+    chars = account_char_load(account);
+
     /* Find the right character. */
-    Account_Char *ac;
     for (ac = chars; ac; ac = ac->next) {
         if (strcmp(ac->name, player) == 0)
             break;
     }
+
     /* This character is alive */
     ac->isDead = 0;
     account_char_save(account, chars);

@@ -1916,10 +1916,12 @@ void send_account_players(socket_struct *ns)
 
     /* Now add real character data */
     for (acn = ns->account_chars; acn; acn = acn->next) {
-        /* Ignore a dead character. They don't need to show up. */
-        if (acn->isDead)
-            continue;
         uint16 faceno;
+
+        /* Ignore a dead character. They don't need to show up. */
+        if (acn->isDead) {
+            continue;
+        }
 
         add_char_field(&sl, ACL_NAME, acn->name);
         add_char_field(&sl, ACL_CLASS, acn->character_class);
