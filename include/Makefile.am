@@ -9,7 +9,12 @@ tod.h          god.h          newserver.h    xdir.h         book.h \
 includes.h     object.h       skills.h	    sockproto.h     plugin.h \
 timers.h       typesproto.h   ob_methods.h   ob_types.h     svnversion.h \
 version.h      shared/newclient.h            account_char.h \
-image.h		  metaserver2.h
+image.h		  metaserver2.h \
+random_maps/expand2x.h \
+random_maps/maze_gen.h \
+random_maps/random_map.h \
+random_maps/room_gen.h \
+random_maps/rproto.h
 
 BUILT_SOURCES = svnversion.h
 

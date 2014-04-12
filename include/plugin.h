@@ -45,8 +45,8 @@
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
-#include <../random_maps/random_map.h>
-#include <../random_maps/rproto.h>
+#include "random_maps/random_map.h"
+#include "random_maps/rproto.h"
 
 /*******************************************************************************/
 /* This one does not exist under Win32.                                        */

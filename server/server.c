@@ -38,8 +38,8 @@
 #include "tod.h"
 #include "version.h"
 
-#include "../random_maps/random_map.h"
-#include "../random_maps/rproto.h"
+#include "random_maps/random_map.h"
+#include "random_maps/rproto.h"
 #include "path.h"
 
 /** Ingame days. */

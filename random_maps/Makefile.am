@@ -11,13 +11,10 @@ librandom_map_a_SOURCES = \
 	expand2x.c \
 	floor.c \
 	maze_gen.c \
-	maze_gen.h \
 	monster.c \
 	random_map.c \
-	random_map.h \
 	reader.l \
 	rogue_layout.c \
-	room_gen.h \
 	room_gen_onion.c \
 	room_gen_spiral.c \
 	snake.c \
@@ -29,25 +26,13 @@ librandom_map_a_SOURCES = \
 
 EXTRA_DIST = \
 	README \
-	expand2x.h \
-	maze_gen.h \
-	random_map.h \
-	room_gen.h \
-	rproto.h \
 	main.c
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include -I${top_srcdir}/include/random_maps
 
 LEX_OUTPUT_ROOT = lex.rmap
 AM_LFLAGS = -Prmap -i
 
 random_map_LDADD = ../common/libcross.a librandom_map.a
-
-proto:
-	cproto -e -o rproto.h.bak $(CPPFLAGS) -I. $(AM_CPPFLAGS) \
-		`echo $(librandom_map_a_SOURCES) | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	sed -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" -e "/YY_BUFFER/d" < rproto.h.bak >rproto.h
-	chmod 644 rproto.h
-	rm -f rproto.h.bak
 
 CLEANFILES = reader.c
