@@ -1,7 +1,7 @@
 pkgstatedir = @pkgstatedir@
 pkgconfdir = @pkgconfdir@
 
-dist_noinst_SCRIPTS = collect.pl util.pl checkarch.pl
+dist_noinst_SCRIPTS = collect util.pl checkarch
 dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
 	animations archetypes  bmaps.paths crossfire.0 \
 	crossfire.1 faces attackmess image_info materials
@@ -47,18 +47,18 @@ crossfire.0: bmaps.paths
 .collect-stamp:
 	touch .collect-stamp
 
-collect:
-	$(PERL) -I$(srcdir) collect.pl $(builddir)/arch
+do-collect:
+	$(PERL) -I$(srcdir) collect $(builddir)/arch
 	$(PERL) $(srcdir)/adm/collect_images.pl -src $(srcdir) -png
 
 archonly:
-	$(PERL) -I$(srcdir) collect.pl $(builddir)/arch ARCHONLY
+	$(PERL) -I$(srcdir) collect $(builddir)/arch ARCHONLY
 
 archetypes faces animations bmaps.paths smooth: .collect-stamp
 	touch .collect-stamp
-	$(MAKE) collect
+	$(MAKE) do-collect
 
-install-data-local: archetypes crossfire.0 faces animations smooth collect.pl util.pl
+install-data-local: archetypes crossfire.0 faces animations smooth collect util.pl
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(pkgconfdir)
 	for i in $(CONF_FILES); do \

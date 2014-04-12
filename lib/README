@@ -1,7 +1,7 @@
 Generated files:
 ----------------
 
-The "collect.pl" file is a script to generate the other files in this section.
+The "collect" file is a script to generate the other files in this section.
 To run it, one inserts a symlink to the arch directory in the current directory,
 and then runs "make collect".
 

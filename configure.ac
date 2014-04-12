@@ -251,7 +251,6 @@ AC_CONFIG_FILES([Makefile
                  socket/Makefile
                  types/Makefile
                  utils/Makefile
-                 lib/checkarch.pl lib/collect.pl
                  utils/scores.pl utils/player_dl.pl
                  utils/crossloop.web
                  plugins/Makefile
