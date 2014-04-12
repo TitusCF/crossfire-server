@@ -1,8 +1,6 @@
-nodist_bin_SCRIPTS = crossloop player_dl.pl
-dist_bin_SCRIPTS = crossloop.web
-nodist_pkglibexec_SCRIPTS =
-dist_pkglibexec_SCRIPTS = mktable.script add_throw metaserver
 dist_noinst_SCRIPTS = ad2c.script mktable.script player_dl.html
+nodist_bin_SCRIPTS = crossloop player_dl.pl
+nodist_noinst_SCRIPTS = add_throw crossloop.web metaserver
 
 EXTRA_DIST =
 AM_CPPFLAGS = -I$(top_srcdir)/include
