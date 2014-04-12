@@ -137,6 +137,9 @@ AC_FUNC_VPRINTF
 
 AC_CHECK_FUNCS([getdtablesize gettimeofday mkdir mktime rmdir select socket strcasecmp strcspn strerror strncasecmp strspn strstr strtol snprintf setsid srandom srand48 srand sysconf scandir getaddrinfo getnameinfo])
 
+# Check for better but non-portable functions.
+AC_CHECK_FUNCS([strlcat])
+
 # alphasort can not be added to AC_CHECK_FUNCS because
 AC_MSG_CHECKING(checking if alphasort is defined)
   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <dirent.h>]], [[alphasort;]])],[ac_cv_func_alphasort=yes],[ac_cv_func_alphasort=no])

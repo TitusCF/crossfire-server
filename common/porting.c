@@ -20,7 +20,9 @@
  * calling these functions.
  */
 
+#include <assert.h>
 #include <string.h>
+
 #ifdef WIN32 /* ---win32 exclude/include headers */
 #include "process.h"
 #include <fcntl.h>
@@ -616,6 +618,10 @@ void make_path_to_file(const char *filename) {
  * maximum length of dest buffer.
  */
 void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
+#ifdef HAVE_STRLCAT
+    assert(strlen(orig) < maxlen);
+    *curlen = strlcat(dest, orig, maxlen);
+#else
     if (*curlen == (maxlen-1))
         return;
     strncpy(dest+*curlen, orig, maxlen-*curlen-1);
@@ -623,4 +629,5 @@ void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
     *curlen += strlen(orig);
     if (*curlen > (maxlen-1))
         *curlen = maxlen-1;
+#endif
 }
