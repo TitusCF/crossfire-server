@@ -1,6 +1,4 @@
-#!/usr/bin/perl
-# $Id$
-
+#!/usr/bin/env perl
 # Copyright 2000 by Mark Wedel.
 # This script follows the same license as crossfire (GPL).
 

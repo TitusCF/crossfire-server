@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # mktable - generate:
 #   1. struct     <def-file>_type
 #   2. table      <def-file>_table

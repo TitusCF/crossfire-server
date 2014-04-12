@@ -252,7 +252,7 @@ AC_CONFIG_FILES([Makefile
                  types/Makefile
                  utils/Makefile
                  lib/checkarch.pl lib/collect.pl
-                 utils/add_throw.perl utils/metaserver.pl utils/scores.pl utils/player_dl.pl
+                 utils/scores.pl utils/player_dl.pl
                  utils/crossloop.web
                  plugins/Makefile
                  plugins/cfanim/Makefile plugins/cfanim/include/Makefile

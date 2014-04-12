@@ -1,7 +1,7 @@
 nodist_bin_SCRIPTS = crossloop player_dl.pl
 dist_bin_SCRIPTS = crossloop.web
 nodist_pkglibexec_SCRIPTS =
-dist_pkglibexec_SCRIPTS = mktable.script add_throw.perl metaserver.pl
+dist_pkglibexec_SCRIPTS = mktable.script add_throw metaserver
 dist_noinst_SCRIPTS = ad2c.script mktable.script player_dl.html
 
 EXTRA_DIST =

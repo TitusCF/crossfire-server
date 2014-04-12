@@ -1,4 +1,4 @@
-#!@PERL@
+#!/usr/bin/env perl
 # scores.pl
 # (c) Pertti Karppinen a.k.a roWer <pjka@iki.fi>
 #

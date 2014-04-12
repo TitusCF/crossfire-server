@@ -1,7 +1,6 @@
-#!@PERL@
+#!/usr/bin/env perl
 # Adds the throwing skill to to the old player files.  This script
 # is likely no longer needed, since skills have been around for quite a while.
-#
 
 $end = 0;
 if (!-e $ARGV[0]) {
