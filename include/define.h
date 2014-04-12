@@ -803,28 +803,7 @@ typedef unsigned char MoveType;
 #define PREFER_HIGH     1
 #define PREFER_LOW      0
 
-/**
- * Simple function we use below to keep adding to the same string
- * but also make sure we don't overwrite that string.
- *
- * @param dest
- * string to append to.
- * @param orig
- * string to append.
- * @param[out] curlen
- * current length of dest. Will be updated by this function.
- * @param maxlen
- * maximum length of dest buffer.
- */
-static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
-    if (*curlen == (maxlen-1))
-        return;
-    strncpy(dest+*curlen, orig, maxlen-*curlen-1);
-    dest[maxlen-1] = 0;
-    *curlen += strlen(orig);
-    if (*curlen > (maxlen-1))
-        *curlen = maxlen-1;
-}
+void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen);
 
 /**
  * @defgroup AP_xxx Flags for apply_special().
