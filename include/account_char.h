@@ -3,7 +3,6 @@
  * Characters associated with an account.n
  */
 
-
 #ifndef ACCOUNT_CHAR_H
 #define ACCOUNT_CHAR_H
 
@@ -36,4 +35,8 @@ typedef struct account_char_struct {
     struct account_char_struct  *next;
 } Account_Char;
 
-#endif /* OBJECT_H */
+Account_Char *account_char_remove(Account_Char *chars, const char *pl_name);
+int make_perma_dead(object *op);
+int unmake_perma_dead(char *account, char *player);
+
+#endif
