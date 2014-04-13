@@ -1,9 +1,15 @@
-# This is the rules file.
-# It should contains the rules
-# in effect on your server.
-# The content of this file will
-# be sent to connecting players
-[b]Welcome to crossfire[/b]
+# rules -- server rules
+#
+# These rules are sent to players when they connect. You should change them
+# to reflect the actual rules in effect on your server.
 
-[i]Rule #0[/i]
-The owner of this server has not defined a rules file. Please read the content of [color=green]motd[/color] or go to the [color=green]website[/color] of this server to know what is and what is [b]not[/b] allowed here.
+[i]Behavior[/i]
+Please keep conversations on the shout and chat channels friendly.
+
+[i]Player Killing[/i]
+Player killing is not allowed unless both players agree to it.
+
+[i]Stealing[/i]
+Do not steal items from other players.
+
+[b]All violations are punishable at the discretion of the dungeon master.[/b]

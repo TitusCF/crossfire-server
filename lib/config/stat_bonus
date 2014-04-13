@@ -1,3 +1,5 @@
+# stat_bonus -- list of stat bonuses
+#
 # This file sets the bonus for the various attributes, removing
 # the hard coded values from the server.
 #
@@ -9,7 +11,7 @@
 # table name to fill in
 # opening brace
 # stat values - they are comma separated, but any non digit will
-# act as a seperator when the values are read in.
+# act as a separator when the values are read in.
 # closing brace
 #
 # Repeat for all stats.  If the server has an issue reading them,

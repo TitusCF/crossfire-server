@@ -1,4 +1,4 @@
-# List of artifact modifiers
+# artifacts -- a list of artifact modifiers
 #
 # Note:
 #	Attributes (str, dex, etc) are modifiers to the previous

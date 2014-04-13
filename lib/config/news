@@ -1,3 +1,5 @@
+# news -- server news
+#
 # This file contains news that is displayed whenever a player connects. The
 # most recent news should appear at the bottom of the file. Each news item
 # must start with a '%' sign and should be immediately followed by a title.

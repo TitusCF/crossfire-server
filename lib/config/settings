@@ -1,3 +1,5 @@
+# settings -- crossfire server settings
+#
 # This file is used various system settings.  It removes the need for
 # some config.h files.  Format is:
 # variable<space>value which can have spaces

@@ -1,16 +1,17 @@
-# BANFILE
+# ban_file -- prevent users or sites from playing
+#
 # A file which contains users or sites which are banned from playing.
-# wildcards can be used in the file.  Valid entries are put on seperate lines.
-# For a ban to result, both the user and ip must be true.
-# Note: Crossfire does not do a ip -> dns name, so matches for the
-# second part must be by ip.
+# wildcards can be used in the file.  Valid entries are put on separate lines.
+# For a ban to result, both the user and IP must be true.
+# Note: Crossfire does not do a IP -> DNS name, so matches for the
+# second part must be by IP.
 #
 # Syntax is "user@ip.address".  Note that when actually putting in lines, the
 # double quotes should be ignored.  user can be "*" to match any user.  The
 # line may be prefixed by '~' to allow an entry.  The lines are matched in the
 # given order; the first match is used.
 #
-# The ip address portion is done as a substring and not wildcard
+# The IP address portion is done as a substring and not wildcard
 # match.  Some examples, and results:
 #
 # "mark@tavern.us" - won't work - tavern.us would not match - must be ip

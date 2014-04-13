@@ -1,3 +1,5 @@
+# exp_table -- experience table
+#
 # This table contains the experience values for the different levels.
 # Note the maximum theoretical value for any level is
 # 9223372036854775808 (2 ^ 63).  However, you should put in a cap

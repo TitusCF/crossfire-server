@@ -1,3 +1,4 @@
+# dm_file -- dungeon master access list
 #
 # This file contains authorization for dm access.  There are 3 fields, like
 # this:  name:password:host

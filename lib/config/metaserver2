@@ -1,5 +1,5 @@
-##############################################################################
-# metaserver2 values - the new metaserver logic
+# metaserver2 -- announce to the public metaserver
+#
 # The only thing contained in this file is information related to metaserver2
 # notification.  If you do not want to advertise your server to the world
 # through the metaserver, you do not need to change anything in this file
