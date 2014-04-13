@@ -1392,10 +1392,8 @@ static void do_specials(void) {
  * length of argv.
  * @param argv
  * command-line options.
- * @return
- * 0.
  */
-int server_main(int argc, char **argv) {
+void server_main(int argc, char *argv[]) {
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
     _fmode = _O_BINARY;
     bRunning = 1;
@@ -1408,7 +1406,7 @@ int server_main(int argc, char **argv) {
                 "Running crossfire-server as root is a bad idea; aborting!\n"
                 "Please run it again as a normal, unprivileged user.\n"
                 );
-        return 1;
+        exit(EXIT_FAILURE);
     }
 #endif
 
@@ -1421,7 +1419,7 @@ int server_main(int argc, char **argv) {
 #ifdef WIN32
     while (bRunning) {
 #else
-    for (;;) {
+    while (TRUE) {
 #endif
         nroferrors = 0;
 
@@ -1435,9 +1433,7 @@ int server_main(int argc, char **argv) {
 
         sleep_delta();       /* Sleep proper amount of time before next tick */
     }
-#if 0 /* unreachable */
-    emergency_save(0);
-    cleanup();
-    return 0;
-#endif
+
+    /* This is unreachable. */
+    abort();
 }

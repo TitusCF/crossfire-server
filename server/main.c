@@ -22,6 +22,6 @@
 /**
  * Main entry point.
  */
-int main(int argc, char **argv) {
-    return server_main(argc, argv);
+int main(int argc, char *argv[]) {
+    server_main(argc, argv);
 }
