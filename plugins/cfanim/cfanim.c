@@ -238,7 +238,8 @@ static anim_move_result runapplyobject(struct CFanimation_struct *animation, lon
 }
 
 static long int initdropobject(const char *name, char *parameters, struct CFmovement_struct *move_entity) {
-    move_entity->parameters = parameters ? cf_add_string(parameters) : NULL;
+    move_entity->parameters = parameters ?
+        (void *)cf_add_string(parameters) : NULL;
     return 1;
 }
 
