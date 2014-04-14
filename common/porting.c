@@ -631,3 +631,11 @@ void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
         *curlen = maxlen-1;
 #endif
 }
+
+void safe_strncpy(char *dst, const char *src, size_t size) {
+#ifdef HAVE_STRLCPY
+    strlcpy(dst, src, size);
+#else
+    snprintf(dst, size, "%s", src);
+#endif
+}

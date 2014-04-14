@@ -804,6 +804,7 @@ typedef unsigned char MoveType;
 #define PREFER_LOW      0
 
 void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen);
+void safe_strncpy(char *dst, const char *src, size_t size);
 
 /**
  * @defgroup AP_xxx Flags for apply_special().
