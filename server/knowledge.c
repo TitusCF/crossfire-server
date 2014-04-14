@@ -383,7 +383,7 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
             continue;
 
         if (inv->title == NULL)
-            strncpy(name, inv->name, sizeof(name));
+            safe_strncpy(name, inv->name, sizeof(name));
         else
             snprintf(name, sizeof(name), "%s %s", inv->name, inv->title);
 

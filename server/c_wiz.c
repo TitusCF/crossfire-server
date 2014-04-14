@@ -972,7 +972,7 @@ void command_create(object *op, const char *params) {
                       "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]");
         return;
     }
-    strncpy(cpy, params, sizeof(cpy));
+    safe_strncpy(cpy, params, sizeof(cpy));
     bp = cpy;
 
     /* We need to know where the line ends */

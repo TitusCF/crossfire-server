@@ -101,7 +101,7 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
     /* If the item is destroyed, we don't have a valid pointer to the
      * name object, so make a copy so the message we print out makes
      * some sense. */
-    strncpy(item_name, item->name, sizeof(item_name));
+    safe_strncpy(item_name, item->name, sizeof(item_name));
     if (applier == object_get_player_container(item))
         is_player_env = 1;
 

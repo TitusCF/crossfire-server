@@ -130,7 +130,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_
     theMap = make_map_floor(layout, RP->floorstyle, RP);
 
     /* set the name of the map. */
-    strncpy(theMap->path, OutFileName, sizeof(theMap->path));
+    safe_strncpy(theMap->path, OutFileName, sizeof(theMap->path));
 
     /* set region */
     theMap->region = RP->region;

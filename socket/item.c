@@ -140,7 +140,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
         len = strlen(item_n);
         query_base_name(head, 1, item_p, MAX_BUF);
     } else {
-        strncpy(item_n, head->custom_name, 127);
+        safe_strncpy(item_n, head->custom_name, 127);
         item_n[127] = 0;
         len = strlen(item_n);
         strncpy(item_p, head->custom_name, MAX_BUF);

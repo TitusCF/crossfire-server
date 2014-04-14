@@ -3117,7 +3117,7 @@ static void cfapi_object_set_property(int *type, ...) {
         case CFAPI_PLAYER_PROP_BED_MAP:
             sarg = va_arg(args, char *);
             *type = CFAPI_STRING;
-            strncpy(op->contr->savebed_map, sarg, MAX_BUF);
+            safe_strncpy(op->contr->savebed_map, sarg, MAX_BUF);
             break;
 
         case CFAPI_PLAYER_PROP_BED_X:
