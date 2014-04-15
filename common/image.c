@@ -514,10 +514,12 @@ void read_client_images(void) {
                 abort();
             }
 
-            for ( ; *cp != ' ' && *cp != '\n' && *cp != '\0'; cp++)
-                ;
+            for ( ; *cp != ' ' && *cp != '\n' && *cp != '\0'; cp++) {
+                /* Increment pointer until next token. */
+            }
+
             if (*cp != ' ') {
-                LOG(llevError, "read_client_images: couldn't find name start for %d\n", num);
+                LOG(llevError, "read_client_images: couldn't read name\n");
                 abort();
             }
             cp++;
