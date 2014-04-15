@@ -632,6 +632,9 @@ void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
 #endif
 }
 
+/**
+ * Safer replacement for strncpy(3).
+ */
 void safe_strncpy(char *dst, const char *src, size_t size) {
 #ifdef HAVE_STRLCPY
     strlcpy(dst, src, size);

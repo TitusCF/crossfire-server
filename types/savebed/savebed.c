@@ -85,7 +85,8 @@ static void apply_savebed(object *pl) {
         pl->name);
 
     /* update respawn position */
-    strcpy(pl->contr->savebed_map, pl->map->path);
+    safe_strncpy(pl->contr->savebed_map, pl->map->path,
+            sizeof(pl->contr->savebed_map));
     pl->contr->bed_x = pl->x;
     pl->contr->bed_y = pl->y;
 

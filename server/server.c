@@ -253,7 +253,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     object_set_enemy(op, NULL);
 
     if (op->contr) {
-        strcpy(op->contr->maplevel, newmap->path);
+        safe_strncpy(op->contr->maplevel, newmap->path,
+                sizeof(op->contr->maplevel));
         op->contr->count = 0;
     }
 
@@ -401,7 +402,7 @@ static void enter_random_map(object *pl, object *exit_ob) {
         set_random_map_variable(&rp, exit_ob->msg);
     rp.origin_x = exit_ob->x;
     rp.origin_y = exit_ob->y;
-    strcpy(rp.origin_map, pl->map->path);
+    safe_strncpy(rp.origin_map, pl->map->path, sizeof(rp.origin_map));
 
     /* If we have a final_map, use it as a base name to give some clue
      * as where the player is.  Otherwise, use the origin map.
@@ -587,7 +588,7 @@ static void enter_random_template_map(object *pl, object *exit_ob) {
             set_random_map_variable(&rp, exit_ob->msg);
         rp.origin_x = exit_ob->x;
         rp.origin_y = exit_ob->y;
-        strcpy(rp.origin_map, pl->map->path);
+        safe_strncpy(rp.origin_map, pl->map->path, sizeof(rp.origin_map));
 
         /* now to generate the actual map. */
         new_map = generate_random_map(new_map_name, &rp, NULL);
