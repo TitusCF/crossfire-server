@@ -2521,8 +2521,13 @@ void init_stats(int reload) {
         if (settings.max_stat == 0) {
             LOG(llevError, "Got bonus line or otherwise unknown value before max stat! (%s)\n",
                 buf);
-            if (reload) return;
-            else exit(1);
+            fclose(fp);
+
+            if (reload) {
+                return;
+            } else {
+                exit(1);
+            }
         }
 
         for (i=0; i<NUM_INT_BONUSES; i++) {

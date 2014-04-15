@@ -1227,6 +1227,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     if (load_map_header(fp, m)) {
         LOG(llevError, "Error loading map header for %s, flags=%d\n", filename, flags);
         delete_map(m);
+        fclose(fp);
         return NULL;
     }
 
@@ -1276,6 +1277,7 @@ static int load_temporary_map(mapstruct *m) {
 
     if (load_map_header(fp, m)) {
         LOG(llevError, "Error loading map header for %s (%s)\n", m->path, m->tmpname);
+        fclose(fp);
         return 3;
     }
     allocate_map(m);
@@ -1309,6 +1311,7 @@ static int load_overlay_map(const char *filename, mapstruct *m) {
 
     if (load_map_header(fp, m)) {
         LOG(llevError, "Error loading map header for overlay %s (%s)\n", m->path, pathname);
+        fclose(fp);
         return 1;
     }
     /*allocate_map(m);*/
