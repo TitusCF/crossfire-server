@@ -390,7 +390,7 @@ static char *unclean_path(const char *src, char *newpath, int size) {
  */
 static void enter_random_map(object *pl, object *exit_ob) {
     mapstruct *new_map;
-    char newmap_name[HUGE_BUF], *cp;
+    char newmap_name[HUGE_BUF], buf[HUGE_BUF], *cp;
     static int reference_number = 0;
     RMParms rp;
 
@@ -414,8 +414,6 @@ static void enter_random_map(object *pl, object *exit_ob) {
         if (!cp)
             cp = rp.final_map;
     } else {
-        char buf[HUGE_BUF];
-
         cp = strrchr(rp.origin_map, '/');
         if (!cp)
             cp = rp.origin_map;
