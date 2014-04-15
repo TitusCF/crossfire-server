@@ -394,8 +394,9 @@ void make_list_like(char *input) {
 
     strncpy(tmp, input, MAX_BUF-5);
     /*trim all trailing commas, spaces etc.*/
-    for (i = strlen(tmp); !isalnum(tmp[i]) && i >= 0; i--)
+    for (i = strlen(tmp); i >= 0 && !isalnum(tmp[i]); i--) {
         tmp[i] = '\0';
+    }
     strcat(tmp, ".");
 
     p = strrchr(tmp, ',');

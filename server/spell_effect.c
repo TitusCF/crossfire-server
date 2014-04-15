@@ -17,6 +17,7 @@
  * @todo use the same parameter names/orders.
  */
 
+#include <assert.h>
 #include <global.h>
 #include <object.h>
 #include <living.h>
@@ -3017,8 +3018,10 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
     }
 
     /* if no direction specified, pick one */
-    if (!dir)
+    if (!dir) {
         dir = object_find_free_spot(NULL, op->map, op->x, op->y, 1, 9);
+        assert(dir != -1);
+    }
 
     m = op->map;
     x = op->x+freearr_x[dir];
