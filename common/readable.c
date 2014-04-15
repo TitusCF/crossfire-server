@@ -1489,10 +1489,12 @@ static StringBuffer *mon_info_msg(int level, size_t booksize, object *book) {
         stringbuffer_append_printf(marker, ":%s", tmp->arch->name);
         stringbuffer_append_stringbuffer(desc, mon);
         stringbuffer_delete(mon);
+        mon = NULL;
     }
 
-    if (mon != NULL)
+    if (mon != NULL) {
         stringbuffer_delete(mon);
+    }
 
     final = stringbuffer_finish_shared(marker);
     if (added)
