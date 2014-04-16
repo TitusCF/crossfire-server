@@ -62,7 +62,7 @@ install-data-local: archetypes crossfire.0 faces animations smooth collect util.
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(pkgconfdir)
 	for i in $(CONF_FILES); do \
-	    if [ ! -f $(DESTDIR)$(pkgconfdir)/$$i ]; then \
+	    if [ ! -f $(DESTDIR)$(pkgconfdir)/`basename $$i` ]; then \
 		    echo "Installing $$i"; \
 		    $(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(pkgconfdir); \
 	    fi \
