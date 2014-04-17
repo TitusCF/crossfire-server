@@ -132,7 +132,7 @@ void display_motd(const object *op) {
     char buf[MAX_BUF];
     char motd[HUGE_BUF];
     FILE *fp;
-    int size;
+    size_t size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.motd);
     fp = fopen(buf, "r");
@@ -141,12 +141,13 @@ void display_motd(const object *op) {
     }
     motd[0] = '\0';
     size = 0;
+
     while (fgets(buf, MAX_BUF, fp) != NULL) {
-        if (*buf == '#')
-            continue;
-        strncat(motd+size, buf, HUGE_BUF-size);
-        size += strlen(buf);
+        if (*buf != '#') {
+            safe_strcat(motd, buf, &size, sizeof(motd));
+        }
     }
+
     draw_ext_info(NDI_UNIQUE|NDI_GREEN, 0, op, MSG_TYPE_MOTD, MSG_SUBTYPE_NONE,
                   motd);
     fclose(fp);
@@ -162,7 +163,7 @@ void send_rules(const object *op) {
     char buf[MAX_BUF];
     char rules[HUGE_BUF];
     FILE *fp;
-    int size;
+    size_t size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.rules);
     fp = fopen(buf, "r");
@@ -171,18 +172,20 @@ void send_rules(const object *op) {
     }
     rules[0] = '\0';
     size = 0;
+
     while (fgets(buf, MAX_BUF, fp) != NULL) {
-        if (*buf == '#')
-            continue;
         if (size+strlen(buf) >= HUGE_BUF) {
             LOG(llevDebug, "Warning, rules size is > %d bytes.\n", HUGE_BUF);
             break;
         }
-        strncat(rules+size, buf, HUGE_BUF-size);
-        size += strlen(buf);
+
+        if (*buf != '#') {
+            safe_strcat(rules, buf, &size, sizeof(rules));
+        }
     }
-    draw_ext_info(NDI_UNIQUE|NDI_GREEN, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_RULES,
-                  rules);
+
+    draw_ext_info(NDI_UNIQUE|NDI_GREEN, 0, op, MSG_TYPE_ADMIN,
+            MSG_TYPE_ADMIN_RULES, rules);
     fclose(fp);
 }
 
@@ -197,7 +200,7 @@ void send_news(const object *op) {
     char news[HUGE_BUF];
     char subject[MAX_BUF];
     FILE *fp;
-    int size;
+    size_t size;
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.news);
     fp = fopen(buf, "r");
@@ -224,8 +227,7 @@ void send_news(const object *op) {
                 LOG(llevDebug, "Warning, one news item has size > %d bytes.\n", HUGE_BUF);
                 break;
             }
-            strncat(news+size, buf, HUGE_BUF-size);
-            size += strlen(buf);
+            safe_strcat(news, buf, &size, sizeof(news));
         }
     }
 

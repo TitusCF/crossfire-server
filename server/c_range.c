@@ -159,7 +159,7 @@ void command_cast_spell(object *op, const char *params, char command) {
     char *cp, cpy[MAX_BUF];
     object *spob;
 
-    strncpy(cpy, params, sizeof(cpy));
+    safe_strncpy(cpy, params, sizeof(cpy));
 
     if (command == 'i')
         castnow = 1;

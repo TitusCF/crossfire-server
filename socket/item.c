@@ -143,7 +143,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
         safe_strncpy(item_n, head->custom_name, 127);
         item_n[127] = 0;
         len = strlen(item_n);
-        strncpy(item_p, head->custom_name, MAX_BUF);
+        safe_strncpy(item_p, head->custom_name, sizeof(item_p));
     }
     strncpy(item_n+len+1, item_p, 127);
     /* This is needed because strncpy may not add a ending \0 if the string is long enough. */
