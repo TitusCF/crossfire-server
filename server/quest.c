@@ -394,8 +394,12 @@ static int load_quests_from_file(const char *filename) {
 
     fclose(file);
 
-    if (in != 0)
+    if (in != 0) {
         LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", final, in);
+
+        /* The buffer may not have been freed. */
+        stringbuffer_finish(buf);
+    }
 
     return loaded_quests;
 }

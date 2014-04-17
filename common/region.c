@@ -489,6 +489,7 @@ static void parse_regions(FILE *fp) {
         } else if (!strcmp(key, "nomore")) {
             if (new) {
                 LOG(llevError, "region.c: Last region not properly closed.\n");
+                free(new);
             }
             /* we have reached the end of the region specs....*/
             break;
@@ -497,8 +498,10 @@ static void parse_regions(FILE *fp) {
             LOG(llevError, "Got unknown value in region file: %s %s\n", key, value);
         }
     }
-    if (!key || strcmp(key, "nomore"))
+    if (!key || strcmp(key, "nomore")) {
         LOG(llevError, "Got premature eof on regions file!\n");
+        free(new);
+    }
 }
 
 /**

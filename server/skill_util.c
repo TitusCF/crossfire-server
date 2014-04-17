@@ -228,6 +228,7 @@ object *find_skill_by_name(object *who, const char *name) {
         if ((skill_names[0] = strtok_r(ourname, ",", &lasts)) == NULL) {
             /* This should really never happen */
             LOG(llevError, "find_skill_by_name: strtok_r returned null, but strchr did not?\n");
+            free(ourname);
             return NULL;
         } else {
             skill_tools[0] = NULL;

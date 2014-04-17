@@ -99,6 +99,7 @@ static void test_layout(int width, int height) {
     /*layout = map_gen_onion(width, height, 0, 0);*/
 
     print_map(layout, width, height);
+    free(layout);
 }
 
 /** Print a message stating how to get help. */
