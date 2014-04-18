@@ -1,3 +1,6 @@
+2014-04-17	Kevin Zheng
+	* server/init.c: Remove outdated "-o" flag.
+
 2014-04-12	Kevin Zheng
 	* utils/cfmeta-rrd: Retire since it no longer works with new metaserver.
 	* utils/checkInternalPrototype.sh: Retire in favor of compiler flags.

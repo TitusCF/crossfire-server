@@ -31,7 +31,6 @@
 static void help(void);
 static void init_beforeplay(void);
 static void init_startup(void);
-static void compile_info(void);
 static void init_signals(void);
 static void init_races(void);
 static void dump_races(void);
@@ -327,7 +326,6 @@ static struct Command_Line_Options options[] = {
     /** Start of pass 3 information. In theory, by pass 3, all data paths
      * and defaults should have been set up.
      */
-    { "-o", 0, 3, compile_info },
     { "-m", 0, 3, set_dumpmon1 },
     { "-m2", 0, 3, set_dumpmon2 },
     { "-m3", 0, 3, set_dumpmon3 },
@@ -1074,7 +1072,6 @@ static void help() {
     printf(" -mq          Dump the quest list.\n");
     printf(" -mt <name>   Dump a list of treasures for a monster.\n");
     printf(" -n           Turn off debugging messages if on by default.\n");
-    printf(" -o           Display compile-time defaults.\n");
     printf(" -p <port>    Specifies the port to listen on for incoming connections.\n");
     printf(" -playerdir   Set the player files directory.\n");
     printf(" -regions     Set the region file.\n");
@@ -1166,60 +1163,6 @@ static void init_startup(void) {
         LOG(llevError, "CrossFire: Playing not allowed.\n");
         exit(-1);
     }
-}
-
-/**
- * Dump compilation information, activated with the -o flag.
- *
- * It writes out information on how Imakefile and config.h was configured
- * at compile time.
- */
-static void compile_info(void) {
-    int i = 0;
-    char err[MAX_BUF];
-
-    printf("Non-standard include files:\n");
-#ifdef HAVE_MALLOC_H
-    printf("<malloc.h>\n");
-    i = 1;
-#endif
-#ifdef HAVE_MEMORY_H
-    printf("<memory.h\n");
-    i = 1;
-#endif
-    if (!i)
-        printf("(none)\n");
-    printf("Datadir:\t\t%s\n", settings.datadir);
-    printf("Localdir:\t\t%s\n", settings.localdir);
-#ifdef PERM_FILE
-    printf("Perm file:\t<ETC>/%s\n", PERM_FILE);
-#endif
-#ifdef SHUTDOWN_FILE
-    printf("Shutdown file:\t<ETC>/%s\n", SHUTDOWN_FILE);
-#endif
-    printf("Save player:\t<true>\n");
-    printf("Save mode:\t%4.4o\n", SAVE_MODE);
-    printf("Playerdir:\t<VAR>/%s\n", settings.playerdir);
-    printf("Itemsdir:\t<VAR>/%s\n", settings.uniquedir);
-    printf("Tmpdir:\t\t%s\n", settings.tmpdir);
-    printf("Map max timeout:\t%d\n", MAP_MAXTIMEOUT);
-    printf("Max objects:\t%d\n", MAX_OBJECTS);
-#ifdef USE_CALLOC
-    printf("Use_calloc:\t<true>\n");
-#else
-    printf("Use_calloc:\t<false>\n");
-#endif
-
-    printf("Max_time:\t%d\n", MAX_TIME);
-
-#ifdef WIN32 /* ***win32 compile_info(): remove execl... */
-    printf("Logfilename:\t%s\n", settings.logfilename);
-    exit(0);
-#else
-    execl("/bin/uname", "uname", "-a", NULL);
-    LOG(llevError, "Oops, shouldn't have gotten here: execl(/bin/uname) failed: %s\n", strerror_local(errno, err, sizeof(err)));
-    exit(-1);
-#endif
 }
 
 /* Signal handlers: */
