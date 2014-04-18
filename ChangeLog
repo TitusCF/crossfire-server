@@ -1,3 +1,6 @@
+2014-04-18	Kevin Zheng
+	* utils/crossloop.in: Add crash notification to crossloop.
+
 2014-04-17	Kevin Zheng
 	* server/init.c: Remove outdated "-o" flag.
 
