@@ -1026,6 +1026,8 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
         int wc_increase_rate;
 
         wc_increase_rate = wc_in?atoi(wc_in):5;
+        assert(wc_increase_rate != 0);
+
         (*wc) -= get_thaco_bonus(op->stats.Str);
         (*wc) -= (wc_obj->level-1)/wc_increase_rate;
         op->stats.dam += (wc_obj->level-1)/4;

@@ -2157,6 +2157,7 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
     if ((obj->value > 0) && rndm(0, 29)) {
         int count;
 
+        assert(large_value != 0 && small_value != 0);
         count = value/large_value;
         *large_nuggets += count;
         value -= (uint64)count*large_value;

@@ -16,6 +16,7 @@
  * Rogue/NetHack style room generation.
  */
 
+#include <assert.h>
 #include <math.h>
 
 #include "global.h"
@@ -55,6 +56,8 @@ static int roguelike_place_room(Room *Rooms, int xsize, int ysize, int nrooms) {
     int x_basesize;
     int y_basesize;
     Room *walk;
+
+    assert(nrooms != 0);
 
     /* decide on the base x and y sizes */
 
