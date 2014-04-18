@@ -921,7 +921,7 @@ static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64 *un
     int i;
 
     FOR_OB_AND_BELOW_PREPARE(item) {
-        if QUERY_FLAG(item, FLAG_UNPAID) {
+        if (QUERY_FLAG(item, FLAG_UNPAID)) {
             (*unpaid_count)++;
             (*unpaid_price) += query_cost(item, pl, BS_BUY|BS_SHOP);
         }

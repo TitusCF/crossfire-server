@@ -440,19 +440,10 @@ typedef struct typedata {
  * So there are 18 available flags slots
  */
 /*@{*/
-#define SET_FLAG(xyz, p) \
-    ((xyz)->flags[p/32] |= (1U<<(p%32)))
-#define CLEAR_FLAG(xyz, p) \
-    ((xyz)->flags[p/32] &= ~(1U<<(p%32)))
-#define QUERY_FLAG(xyz, p) \
-    ((xyz)->flags[p/32]&(1U<<(p%32)))
-#define COMPARE_FLAGS(p, q) \
-    (                                                \
-        ((p)->flags[0] == (q)->flags[0]) &&          \
-        ((p)->flags[1] == (q)->flags[1]) &&          \
-        ((p)->flags[2] == (q)->flags[2]) &&          \
-        ((p)->flags[3] == (q)->flags[3])             \
-    )
+#define SET_FLAG(xyz, p) set_flag(xyz, p)
+#define CLEAR_FLAG(xyz, p) clear_flag(xyz, p)
+#define QUERY_FLAG(xyz, p) query_flag(xyz, p)
+#define COMPARE_FLAGS(p, q) compare_flags(p, q)
 
 /* the flags themselves. */
 

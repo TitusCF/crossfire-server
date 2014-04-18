@@ -595,7 +595,7 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
         effect->level = spell->stats.dam+SP_level_dam_adjust(caster, spell);
 
         /* casting death spells at undead isn't a good thing */
-        if QUERY_FLAG(target, FLAG_UNDEAD) {
+        if (QUERY_FLAG(target, FLAG_UNDEAD)) {
             if (random_roll(0, 2, op, PREFER_LOW)) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE, "Idiot! Your spell boomerangs!");
                 effect->x = op->x;

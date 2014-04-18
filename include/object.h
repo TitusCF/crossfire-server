@@ -317,6 +317,11 @@ extern object objarray[STARTMAX];
 extern int nrofallocobjects;
 extern int nroffreeobjects;
 
+extern int compare_flags(const object *p, const object *q);
+extern int query_flag(const object *op, int flag);
+extern void clear_flag(object *op, int flag);
+extern void set_flag(object *op, int flag);
+
 /**
  * This returns TRUE if the object is something that
  * should be displayed in the look window

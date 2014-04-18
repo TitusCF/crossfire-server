@@ -700,7 +700,7 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
  * unused.
  */
 void command_afk(object *op, const char *params) {
-    if QUERY_FLAG(op, FLAG_AFK) {
+    if (QUERY_FLAG(op, FLAG_AFK)) {
         CLEAR_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       i18n(op, "You are no longer AFK"));
