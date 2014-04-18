@@ -72,9 +72,9 @@ char **map_gen_onion(int xsize, int ysize, int option, int layers)
     int i, j;
 
     /* allocate that array, set it up */
-    char **maze = (char **)calloc(sizeof(char *), xsize);
+    char **maze = (char **)calloc(xsize, sizeof(char *));
     for (i = 0; i < xsize; i++) {
-        maze[i] = (char *)calloc(sizeof(char), ysize);
+        maze[i] = (char *)calloc(ysize, sizeof(char));
     }
 
     /* pick some random options if option = 0 */
@@ -154,8 +154,8 @@ void centered_onion(char **maze, int xsize, int ysize, int option, int layers)
     if (layers == 0) {
         layers = (RANDOM()%maxlayers)+1;
     }
-    xlocations = (float *)calloc(sizeof(float), 2*layers);
-    ylocations = (float *)calloc(sizeof(float), 2*layers);
+    xlocations = (float *)calloc(2 * layers, sizeof(float));
+    ylocations = (float *)calloc(2 * layers, sizeof(float));
 
     /* place all the walls */
     if (option&OPT_IRR_SPACE) { /* randomly spaced */
@@ -232,8 +232,8 @@ void bottom_centered_onion(char **maze, int xsize, int ysize, int option, int la
     if (layers == 0) {
         layers = (RANDOM()%maxlayers)+1;
     }
-    xlocations = (float *)calloc(sizeof(float), 2*layers);
-    ylocations = (float *)calloc(sizeof(float), 2*layers);
+    xlocations = (float *)calloc(2 * layers, sizeof(float));
+    ylocations = (float *)calloc(2 * layers, sizeof(float));
 
     /* place all the walls */
     if (option&OPT_IRR_SPACE) { /* randomly spaced */
@@ -483,8 +483,8 @@ void bottom_right_centered_onion(char **maze, int xsize, int ysize, int option, 
     if (layers == 0) {
         layers = (RANDOM()%maxlayers)+1;
     }
-    xlocations = (float *)calloc(sizeof(float), 2*layers);
-    ylocations = (float *)calloc(sizeof(float), 2*layers);
+    xlocations = (float *)calloc(2 * layers, sizeof(float));
+    ylocations = (float *)calloc(2 * layers, sizeof(float));
 
     /* place all the walls */
     if (option&OPT_IRR_SPACE) { /* randomly spaced */
