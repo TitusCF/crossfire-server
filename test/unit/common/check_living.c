@@ -38,7 +38,7 @@
 
 static void setup(void) {
     cctk_setdatadir(BUILD_ROOT "lib");
-    cctk_setconfdir(BUILD_ROOT "lib");
+    cctk_setconfdir(BUILD_ROOT "lib/config");
     cctk_setlog(LOGDIR "/unit/common/living.out");
     cctk_init_std_archetypes();
     init_experience();
