@@ -17,11 +17,10 @@
  */
 
 #include <assert.h>
-#include "global.h"
-
-#ifdef HAVE_TIME_H
+#include <math.h>
 #include <time.h>
-#endif
+
+#include "global.h"
 
 #ifndef WIN32
 #  include <unistd.h>
@@ -1299,6 +1298,45 @@ int forbid_play(void) {
 #endif
 }
 
+/**
+ * Periodically check if we're ready to shut the server down.
+ */
+static void server_check_shutdown() {
+    /* When to remind players of an imminent apocalypse. */
+    const int warn_times[] = {120, 60, 30, 15, 10, 5, 3, 2, 1};
+    static int next_warn = 0;
+
+    time_t time_left;
+    int i;
+
+    /* Zero means that no shutdown is pending. */
+    if (cmd_shutdown_time == 0) {
+        return;
+    }
+
+    /* Remind players about the upcoming shutdown. */
+    time_left = cmd_shutdown_time - time(NULL);
+
+    for (i = next_warn; i < sizeof(warn_times) / sizeof(int); i++) {
+        if (warn_times[i] == (int)ceil(time_left / 60.0)) {
+            draw_ext_info_format(NDI_UNIQUE | NDI_ALL, 0, NULL, MSG_TYPE_ADMIN,
+                    MSG_TYPE_ADMIN_DM,
+                    "Server shutting down in %d minutes.", warn_times[i]);
+            next_warn = i + 1;
+            break;
+        }
+    }
+
+    /* Shutdown time has arrived; bring server down. */
+    if (time_left <= 0) {
+        draw_ext_info(NDI_UNIQUE | NDI_ALL, 5, NULL, MSG_TYPE_ADMIN,
+                MSG_TYPE_ADMIN_DM, "The server has shut down.");
+
+        /* TODO: Kick everyone out and save player files? */
+        cleanup();
+    }
+}
+
 extern unsigned long todtick;
 
 /**
@@ -1315,10 +1353,13 @@ extern unsigned long todtick;
  * I also think this code makes it easier to see how often we really are
  * doing the various things.
  */
-static void do_specials(void) {
-
+static void do_specials() {
     if (!(pticks%10))
         knowledge_process_incremental();
+
+    if (pticks % 51 == 0) {
+        server_check_shutdown();
+    }
 
 #ifdef WATCHDOG
     if (!(pticks%503))

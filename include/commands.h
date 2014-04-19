@@ -44,4 +44,7 @@ extern command_array_struct Commands[], WizCommands[], CommunicationCommands[];
 
 extern const int CommandsSize, WizCommandsSize, CommunicationCommandSize;
 
+/** Time, in seconds from epoch, of server shutdown. */
+extern int cmd_shutdown_time;
+
 #endif /* COMMANDS_H */

@@ -1,3 +1,6 @@
+2014-04-19	Kevin Zheng
+	* server/server.c: Improve server shutdown command.
+
 2014-04-18	Kevin Zheng
 	* utils/crossloop.in: Add crash notification to crossloop.
 

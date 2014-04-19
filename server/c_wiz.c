@@ -35,6 +35,9 @@ enum {
     STACK_FROM_NUMBER  = 3    /**< Item is a number (may be top) */
 };
 
+/** Time, in seconds from epoch, of server shutdown. */
+int cmd_shutdown_time = 0;
+
 /**
  * Enough of the DM functions seem to need this that I broke
  * it out to a seperate function.  name is the person
@@ -662,19 +665,47 @@ void command_toggle_shout(object *op, const char *params) {
  * @param op
  * wizard shutting down the server.
  * @param params
- * ignored.
+ * When to shut down the server.
  */
 void command_shutdown(object *op, const char *params) {
-    /*
-     * We need to give op - command_kick expects it.  however, this means
-     * the op won't get kicked off, so we do it ourselves
-     */
-    command_kick2(op, "");
-    hiscore_check(op, 0); /* Always check score */
-    (void)save_player(op, 0);
-    play_again(op);
-    cleanup();
-    /* not reached */
+    if (strlen(params) == 0) {
+        /* Give DM command help and display current shutdown status. */
+        command_help(op, "shutdown");
+
+        if (cmd_shutdown_time != 0) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
+                    MSG_TYPE_COMMAND_DM, "Server is shutting down soon.");
+        }
+    } else if (strcmp(params, "cancel") == 0) {
+        /* Tell everyone that the server is no longer shutting down. */
+        if (cmd_shutdown_time != 0) {
+            draw_ext_info(NDI_UNIQUE | NDI_ALL, 0, op, MSG_TYPE_ADMIN,
+                    MSG_TYPE_ADMIN_DM, "Server shutdown cancelled.");
+            cmd_shutdown_time = 0;
+        } else {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
+                    MSG_TYPE_COMMAND_ERROR, "No shutdown is pending.");
+        }
+    } else if (strncmp(params, "now", 3) == 0) {
+        /* Announce and shut down immediately. */
+        draw_ext_info(NDI_UNIQUE | NDI_ALL, 0, op, MSG_TYPE_ADMIN,
+                    MSG_TYPE_ADMIN_DM, "Server is shutting down now!");
+        cmd_shutdown_time = time(NULL);
+    } else {
+        /* Schedule (but don't announce) a shutdown. */
+        int minutes = atoi(params);
+
+        if (minutes > 0 && minutes <= 720) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
+                    MSG_TYPE_COMMAND_SUCCESS,
+                    "Server will shut down in %d minutes.", minutes);
+            cmd_shutdown_time = time(NULL) + minutes * 60;
+        } else {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
+                    MSG_TYPE_COMMAND_ERROR,
+                    "Please specify a reasonable time in minutes.");
+        }
+    }
 }
 
 /**
