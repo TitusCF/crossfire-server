@@ -1287,7 +1287,14 @@ void key_change_class(object *op, char key) {
 #ifdef AUTOSAVE
         op->contr->last_save_tick = pticks;
 #endif
-        start_info(op);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN,
+                MSG_TYPE_ADMIN_LOGIN,
+                "Welcome to Crossfire!\n Press `?' for help\n");
+
+        draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, op,
+                MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+                "%s entered the game.", op->name);
+
         CLEAR_FLAG(op, FLAG_WIZ);
         give_initial_items(op, op->randomitems);
         link_player_skills(op);

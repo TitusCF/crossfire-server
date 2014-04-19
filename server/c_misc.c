@@ -995,7 +995,8 @@ void command_printlos(object *op, const char *params) {
  * unused.
  */
 void command_version(object *op, const char *params) {
-    version(op);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN,
+            MSG_TYPE_ADMIN_VERSION, "Crossfire FULL_VERSION");
 }
 
 /**

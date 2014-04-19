@@ -623,8 +623,6 @@ void cftimer_init(void);
 void set_darkness_map(mapstruct *m);
 void tick_the_clock(void);
 /* server.c */
-void version(object *op);
-void start_info(object *op);
 const char *crypt_string(const char *str, const char *salt);
 int check_password(const char *typed, const char *crypted);
 void enter_player_savebed(object *op);

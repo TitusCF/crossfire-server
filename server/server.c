@@ -54,37 +54,6 @@ static const char days[7][4] = {
 };
 
 /**
- * Displays basic game version information.
- *
- * @param op
- * who is requesting the verison information.
- */
-void version(object *op) {
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
-                         "This is Crossfire v%s",
-                         FULL_VERSION);
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
-"The authors can be reached at crossfire@metalforge.org");
-}
-
-/**
- * Gives basic start information to player.
- *
- * @param op
- * player.
- */
-void start_info(object *op) {
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-                         "Welcome to Crossfire, v%s!\nPress `?' for help\n",
-                         VERSION);
-
-    draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, op,
-                         MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                         "%s entered the game.",
-                         op->name);
-}
-
-/**
  * Encrypt a string. Used for password storage on disk.
  *
  * Really, there is no reason to crypt the passwords  any system.  But easier
