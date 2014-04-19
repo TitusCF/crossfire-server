@@ -81,25 +81,6 @@ int freedir[SIZEOFFREE] = {
     1, 2, 2, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8
 };
 
-int compare_flags(const object *p, const object *q) {
-    return ((p)->flags[0] == (q)->flags[0]) &&
-        ((p)->flags[1] == (q)->flags[1]) &&
-        ((p)->flags[2] == (q)->flags[2]) &&
-        ((p)->flags[3] == (q)->flags[3]);
-}
-
-int query_flag(const object *op, int flag) {
-    return op->flags[flag / 32] & (1U << (flag % 32));
-}
-
-void clear_flag(object *op, int flag) {
-    op->flags[flag / 32] &= ~(1U << (flag % 32));
-}
-
-void set_flag(object *op, int flag) {
-    op->flags[flag / 32] |= (1U << (flag % 32));
-}
-
 /**
  * Compares value lists.
  *

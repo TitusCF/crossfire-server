@@ -317,10 +317,24 @@ extern object objarray[STARTMAX];
 extern int nrofallocobjects;
 extern int nroffreeobjects;
 
-extern int compare_flags(const object *p, const object *q);
-extern int query_flag(const object *op, int flag);
-extern void clear_flag(object *op, int flag);
-extern void set_flag(object *op, int flag);
+static inline int compare_flags(const object *p, const object *q) {
+    return ((p)->flags[0] == (q)->flags[0]) &&
+        ((p)->flags[1] == (q)->flags[1]) &&
+        ((p)->flags[2] == (q)->flags[2]) &&
+        ((p)->flags[3] == (q)->flags[3]);
+}
+
+static inline int query_flag(const object *op, int flag) {
+    return op->flags[flag / 32] & (1U << (flag % 32));
+}
+
+static inline void clear_flag(object *op, int flag) {
+    op->flags[flag / 32] &= ~(1U << (flag % 32));
+}
+
+static inline void set_flag(object *op, int flag) {
+    op->flags[flag / 32] |= (1U << (flag % 32));
+}
 
 /**
  * This returns TRUE if the object is something that
