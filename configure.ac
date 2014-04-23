@@ -8,6 +8,8 @@ AC_CONFIG_SRCDIR([server/main.c])
 AC_PREFIX_DEFAULT([/usr/games/crossfire])
 AM_INIT_AUTOMAKE
 
+AM_SILENT_RULES([yes])
+
 ##############################################################################
 # Configuration Options
 ##############################################################################
