@@ -29,6 +29,12 @@
 #endif
 #include <math.h>
 
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#else
+#define UINT32_MAX      4294967295U
+#endif
+
 /**
  * This is a measure of how effective store specialisation is. A general store
  * will offer this proportion of the 'maximum' price, a specialised store will

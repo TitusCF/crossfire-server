@@ -101,7 +101,7 @@ AC_CHECK_LIB(sqlite3, sqlite3_open,[ cf_have_libsqlite=yes ])
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h stddef.h stdlib.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h sys/ttycom.h termios.h sys/termios.h zlib.h pthread.h curl/curl.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h stddef.h stdlib.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h sys/ttycom.h termios.h sys/termios.h zlib.h pthread.h curl/curl.h stdint.h])
 AC_CHECK_HEADERS([crypt.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -112,6 +112,7 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T
+AC_TYPE_INT64_T
 AC_TYPE_INT8_T
 AC_TYPE_OFF_T
 AC_TYPE_PID_T
@@ -120,6 +121,7 @@ AC_TYPE_SIZE_T
 AC_TYPE_UID_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
 AC_CHECK_SIZEOF(long)

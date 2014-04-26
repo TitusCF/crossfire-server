@@ -168,4 +168,31 @@ extern int bRunning;
 /* Win32's Sleep takes milliseconds, not seconds. */
 #define sleep(x) Sleep(x*1000)
 
+/**
+ * Type definitions for fixed-size integer types. This is only required on
+ * Windows when compiling with Visual Studio because autoconf makes sure that
+ * certain types exist.
+ */
+
+typedef signed char     int8_t;
+typedef signed int      int32_t;
+typedef signed short    int16_t;
+typedef unsigned char   uint8_t;
+typedef unsigned int    uint32_t;
+typedef unsigned short  uint16_t;
+
+/* Python plugin stuff defines SIZEOF_LONG_LONG as 8, and besides __int64 is a 64b type on MSVC...
+ * So let's force the typedef */
+typedef unsigned __int64        uint64_t;
+typedef signed __int64          int64_t;
+/* Needed for experience */
+#define atoll   _atoi64
+
+#define FMT64                   "I64d"
+#define FMT64U                  "I64u"
+
+/* To reduce number of warnings */
+#pragma warning(disable: 4244) /* conversion from 'xxx' to 'yyy', possible loss of data */
+#pragma warning(disable: 4305) /* initializing float f = 0.05; instead of f = 0.05f; */
+
 #endif /* WIN32_H */

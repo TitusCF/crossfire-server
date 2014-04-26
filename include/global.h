@@ -1,87 +1,33 @@
 /**
  * @file
- * Global definitions: u/sint8, things like that.
+ * Global type definitions.
  */
 
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+/**
+ * Define external variables. This is used in an ugly hack where EXTERN is
+ * re-defined to "" in 'init.c' in order to resolve missing symbols. Do not
+ * use this macro in new code.
+ */
 #ifndef EXTERN
 #define EXTERN extern
 #endif
 
 #include "includes.h"
 
-/* Type defines for specific signed/unsigned variables of a certain number
- * of bits.  Not really used anyplace, but if a certain number of bits
- * is required, these type defines should then be used.  This will make
- * porting to systems that have different sized data types easier.
- *
- * Note: The type defines should just mean that the data type has at
- * least that many bits.  if a uint16 is actually 32 bits, no big deal,
- * it is just a waste of space.
- *
- * Note2:  When using something that is normally stored in a character
- * (ie strings), don't use the uint8/sint8 typdefs, use 'char' instead.
- * The signedness for char is probably not universal, and using char
- * will probably be more portable than sint8/unit8
- */
-
-typedef unsigned int    uint32_t;
-
-#ifndef UINT32_MAX
-#define UINT32_MAX      4294967295U
-#endif
-
-typedef signed int      int32_t;
-#define INT32_MAX      2147483647
-
-typedef unsigned short  uint16_t;
-#ifndef UINT16_MAX
-#define UINT16_MAX      65535
-#endif
-
-typedef signed short    int16_t;
-#define INT16_MAX      32767
-
-typedef unsigned char   uint8_t;
-#ifndef UINT8_MAX
-#define UINT8_MAX       255
-#endif
-
-typedef signed char     int8_t;
-#define INT8_MAX       127
-
 /** Strings that should be manipulated through add_string() and free_string(). */
 typedef const char *sstring;
 
-#ifdef WIN32
-/* Python plugin stuff defines SIZEOF_LONG_LONG as 8, and besides __int64 is a 64b type on MSVC...
- * So let's force the typedef */
-typedef unsigned __int64        uint64_t;
-typedef signed __int64          int64_t;
-/* Needed for experience */
-#define atoll   _atoi64
-
-#define FMT64                   "I64d"
-#define FMT64U                  "I64u"
-
-/* To reduce number of warnings */
-#pragma warning(disable: 4244) /* conversion from 'xxx' to 'yyy', possible loss of data */
-#pragma warning(disable: 4305) /* initializing float f = 0.05; instead of f = 0.05f; */
-
-#else /* WIN32 */
+#ifndef WIN32
 
 #if SIZEOF_LONG == 8
 
-typedef unsigned long       uint64_t;
-typedef signed long         int64_t;
 #define FMT64               "ld"
 #define FMT64U              "lu"
 
 #elif SIZEOF_LONG_LONG == 8
-typedef unsigned long long      uint64_t;
-typedef signed long long        int64_t;
 #define FMT64                   "lld"
 #define FMT64U                  "llu"
 
