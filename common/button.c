@@ -270,7 +270,7 @@ void animate_turning(object *op) {
 }
 
 #define ARCH_SACRIFICE(xyz) ((xyz)->slaying)
-#define NROF_SACRIFICE(xyz) ((uint32)(xyz)->stats.food)
+#define NROF_SACRIFICE(xyz) ((uint32_t)(xyz)->stats.food)
 
 /**
  * Helper function to check if the item matches altar's requested sacrifice.
@@ -335,7 +335,7 @@ static int matches_sacrifice(const object *altar, const object *sacrifice) {
  */
 int check_altar_sacrifice(const object *altar, const object *sacrifice, int remove_others, int *toremove) {
     int money;
-    uint32 wanted, rest;
+    uint32_t wanted, rest;
 
     if (!matches_sacrifice(altar, sacrifice))
         /* New dropped object doesn't match the altar, other objects already on top are not enough to

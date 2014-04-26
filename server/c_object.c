@@ -250,7 +250,7 @@ void command_apply(object *op, const char *params) {
  * @return
  * 1 if it will fit, 0 if it will not.
  */
-int sack_can_hold(const object *pl, const object *sack, const object *op, uint32 nrof) {
+int sack_can_hold(const object *pl, const object *sack, const object *op, uint32_t nrof) {
     char name[MAX_BUF];
     query_name(sack, name, MAX_BUF);
 
@@ -280,7 +280,7 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
         return 0;
     }
     if (sack->weight_limit) {
-        sint32 new_weight;
+        int32_t new_weight;
 
         new_weight = sack->carrying+(nrof ? nrof : 1)
             *(op->weight+(op->type == CONTAINER ? op->carrying*op->stats.Str : 0))
@@ -314,7 +314,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
      */
     char buf[HUGE_BUF], name[MAX_BUF];
     object *env = tmp->env;
-    uint32 weight, effective_weight_limit;
+    uint32_t weight, effective_weight_limit;
     int tmp_nrof = tmp->nrof ? tmp->nrof : 1;
 
     /* IF the player is flying & trying to take the item out of a container
@@ -658,7 +658,7 @@ void command_take(object *op, const char *params) {
  * @param nrof
  * if non zero, then nrof objects is tried to put into sack, else everything is put.
  */
-void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
+void put_object_in_sack(object *op, object *sack, object *tmp, uint32_t nrof) {
     object *sack2, *orig = sack;
     char name_sack[MAX_BUF], name_tmp[MAX_BUF];
 
@@ -794,7 +794,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
  * object dropped, NULL if it was destroyed.
  * @todo shouldn't tmp be NULL if object_was_destroyed returns true?
  */
-object *drop_object(object *op, object *tmp, uint32 nrof) {
+object *drop_object(object *op, object *tmp, uint32_t nrof) {
     tag_t tmp_tag;
 
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
@@ -1835,7 +1835,7 @@ static void display_new_pickup(const object *op) {
  * @todo trash old pickup mode, merge with new pickup.
  */
 void command_pickup(object *op, const char *params) {
-    uint32 i;
+    uint32_t i;
     static const char *names[] = {
         "debug", "inhibit", "stop", "food", "drink",
         "valuables", "bow", "arrow", "helmet", "shield",
@@ -1844,7 +1844,7 @@ void command_pickup(object *op, const char *params) {
         "skillscroll", "readables", "magicdevice", "notcursed", "jewels",
         "flesh", "container", NULL
     };
-    static const uint32 modes[] = {
+    static const uint32_t modes[] = {
         PU_DEBUG, PU_INHIBIT, PU_STOP, PU_FOOD, PU_DRINK, PU_VALUABLES, PU_BOW, PU_ARROW, PU_HELMET,
         PU_SHIELD, PU_ARMOUR, PU_BOOTS, PU_GLOVES, PU_CLOAK, PU_KEY, PU_MISSILEWEAPON, PU_MELEEWEAPON,
         PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE,

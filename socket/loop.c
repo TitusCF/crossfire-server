@@ -74,7 +74,7 @@ typedef void (*func_uint8_int_pl)(char *, int, player *);
 struct player_cmd_mapping {
     const char *cmdname;             /**< Command name. */
     const func_uint8_int_pl cmdproc; /**< Function to call. */
-    const uint8 flag;                /**< If set, the player must be in the ST_PLAYING state for this command to be available. */
+    const uint8_t flag;                /**< If set, the player must be in the ST_PLAYING state for this command to be available. */
 };
 
 /**
@@ -354,7 +354,7 @@ static void block_until_new_connection(void) {
         FD_ZERO(&readfs);
         for (i = 0; i < socket_info.allocated_sockets && init_sockets[i].listen; i++)
             if (init_sockets[i].status == Ns_Add)
-                FD_SET((uint32)init_sockets[i].fd, &readfs);
+                FD_SET((uint32_t)init_sockets[i].fd, &readfs);
 
         /* If fastclock is set, we need to seriously slow down the updates
          * to the metaserver as well as watchdog.  Do same for flush_old_maps() -
@@ -513,9 +513,9 @@ void do_server(void) {
                 init_sockets[i].status = Ns_Avail;
             }
         } else if (init_sockets[i].status != Ns_Avail) {
-            FD_SET((uint32)init_sockets[i].fd, &tmp_read);
-            FD_SET((uint32)init_sockets[i].fd, &tmp_write);
-            FD_SET((uint32)init_sockets[i].fd, &tmp_exceptions);
+            FD_SET((uint32_t)init_sockets[i].fd, &tmp_read);
+            FD_SET((uint32_t)init_sockets[i].fd, &tmp_write);
+            FD_SET((uint32_t)init_sockets[i].fd, &tmp_exceptions);
             active++;
         }
     }
@@ -537,9 +537,9 @@ void do_server(void) {
             final_free_player(pl);
             pl = npl;
         } else {
-            FD_SET((uint32)pl->socket.fd, &tmp_read);
-            FD_SET((uint32)pl->socket.fd, &tmp_write);
-            FD_SET((uint32)pl->socket.fd, &tmp_exceptions);
+            FD_SET((uint32_t)pl->socket.fd, &tmp_read);
+            FD_SET((uint32_t)pl->socket.fd, &tmp_write);
+            FD_SET((uint32_t)pl->socket.fd, &tmp_exceptions);
             pl = pl->next;
         }
     }

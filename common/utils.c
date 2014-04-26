@@ -68,8 +68,8 @@ int random_roll(int min, int max, const object *op, int goodbad) {
  * This is a 64 bit version of random_roll() above.  This is needed
  * for exp loss calculations for players changing religions.
  */
-sint64 random_roll64(sint64 min, sint64 max, const object *op, int goodbad) {
-    sint64 omin, diff, luck, ran;
+int64_t random_roll64(int64_t min, int64_t max, const object *op, int goodbad) {
+    int64_t omin, diff, luck, ran;
     int base;
 
     omin = min;
@@ -86,7 +86,7 @@ sint64 random_roll64(sint64 min, sint64 max, const object *op, int goodbad) {
      * a little byteshifting.  Do make sure the first one is only
      * 32 bit, so we don't get skewed results
      */
-    ran = (RANDOM()&0xffffffff)|((sint64)RANDOM()<<32);
+    ran = (RANDOM()&0xffffffff)|((int64_t)RANDOM()<<32);
 
     if (op->type != PLAYER)
         return((ran%diff)+min);

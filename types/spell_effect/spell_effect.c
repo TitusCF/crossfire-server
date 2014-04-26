@@ -158,7 +158,7 @@ static method_ret spell_effect_type_process(ob_methods *context, object *op) {
 static void move_bolt(object *op) {
     object *tmp;
     int mflags;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
 
     if (--(op->duration) < 0) {
@@ -260,7 +260,7 @@ static void move_bolt(object *op) {
  * @param op The bullet being moved.
  */
 static void move_bullet(object *op) {
-    sint16 new_x, new_y;
+    int16_t new_x, new_y;
     int mflags;
     mapstruct *m;
 
@@ -329,8 +329,8 @@ static void explosion(object *op) {
 
     if (op->range > 0) {
         for (i = 1; i < 9; i++) {
-            sint16 dx, dy;
-	    sint16 Dx, Dy;
+            int16_t dx, dy;
+	    int16_t Dx, Dy;
             dx = op->x+freearr_x[i];
             dy = op->y+freearr_y[i];
             /* ok_to_put_more already does things like checks for walls,
@@ -434,8 +434,8 @@ static void move_cone(object *op) {
     }
 
     for (i = -1; i < 2; i++) {
-        sint16 x = op->x+freearr_x[absdir(op->stats.sp+i)];
-        sint16 y = op->y+freearr_y[absdir(op->stats.sp+i)];
+        int16_t x = op->x+freearr_x[absdir(op->stats.sp+i)];
+        int16_t y = op->y+freearr_y[absdir(op->stats.sp+i)];
 
         if (ok_to_put_more(op->map, x, y, op, op->attacktype)) {
             object *tmp = object_new();
@@ -511,7 +511,7 @@ static void animate_bomb(object *op) {
  */
 static void move_missile(object *op) {
     int i, mflags;
-    sint16 new_x, new_y;
+    int16_t new_x, new_y;
     mapstruct *m;
 
     if (op->range-- <= 0) {
@@ -584,7 +584,7 @@ static void execute_word_of_recall(object *op) {
  */
 static void move_ball_spell(object *op) {
     int i, j, dam_save, dir, mflags;
-    sint16 nx, ny, hx, hy;
+    int16_t nx, ny, hx, hy;
     object *owner;
     mapstruct *m;
 
@@ -684,7 +684,7 @@ static void move_ball_spell(object *op) {
 static void move_swarm_spell(object *op) {
     static int cardinal_adjust[9] = { -3, -2, -1, 0, 0, 0, 1, 2, 3 };
     static int diagonal_adjust[10] = { -3, -2, -2, -1, 0, 0, 1, 2, 2, 3 };
-    sint16 target_x, target_y, origin_x, origin_y;
+    int16_t target_x, target_y, origin_x, origin_y;
     int basedir, adjustdir;
     mapstruct *m;
     object *owner;
@@ -782,7 +782,7 @@ static void move_aura(object *aura) {
     object_insert_in_map_at(aura, env->map, aura, 0, env->x, env->y);
 
     for (i = 1; i < 9; i++) {
-        sint16 nx, ny;
+        int16_t nx, ny;
 
         nx = aura->x+freearr_x[i];
         ny = aura->y+freearr_y[i];
@@ -819,7 +819,7 @@ static void forklightning(object *op, object *tmp) {
     int new_dir = 1;  /* direction or -1 for left, +1 for right 0 if no new bolt */
     int t_dir; /* stores temporary dir calculation */
     mapstruct *m;
-    sint16 sx, sy;
+    int16_t sx, sy;
     object *new_bolt;
 
     /* pick a fork direction.  tmp->stats.Con is the left bias

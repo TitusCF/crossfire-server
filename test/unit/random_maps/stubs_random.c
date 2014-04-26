@@ -10,7 +10,7 @@
 void apply_auto_fix(mapstruct *m) {
 }
 
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *message) {
+void draw_ext_info(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *message) {
     fprintf(logfile, "%s\n", message);
 }
 

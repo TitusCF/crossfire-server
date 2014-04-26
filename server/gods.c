@@ -30,9 +30,9 @@
 #include <sproto.h>
 #endif
 
-static int worship_forbids_use(object *op, object *exp_obj, uint32 flag, const char *string);
+static int worship_forbids_use(object *op, object *exp_obj, uint32_t flag, const char *string);
 static void stop_using_item(object *op, int type, int number);
-static void update_priest_flag(const object *god, object *exp_ob, uint32 flag);
+static void update_priest_flag(const object *god, object *exp_ob, uint32_t flag);
 static void god_intervention(object *op, const object *god, object *skill, object *altar);
 static int god_examines_priest(object *op, const object *god);
 static int god_examines_item(const object *god, object *item);
@@ -331,7 +331,7 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
         if (((random_roll(0, 399, pl, PREFER_LOW))-bonus) < 0)
             god_intervention(pl, pl_god, skill, altar);
     } else { /* praying to another god! */
-        uint64 loss = 0;
+        uint64_t loss = 0;
         int angry = 1;
 
         /* I believe the logic for detecting opposing gods was completely
@@ -574,11 +574,11 @@ int become_follower(object *op, const object *new_god) {
         && (i == ATNR_FIRE || i == ATNR_COLD || i == ATNR_ELECTRICITY || i == ATNR_POISON))
             skop->resist[i] = 30;
 
-    skop->stats.hp = (sint16)new_god->last_heal;
-    skop->stats.sp = (sint16)new_god->last_sp;
-    skop->stats.grace = (sint16)new_god->last_grace;
-    skop->stats.food = (sint16)new_god->last_eat;
-    skop->stats.luck = (sint8)new_god->stats.luck;
+    skop->stats.hp = (int16_t)new_god->last_heal;
+    skop->stats.sp = (int16_t)new_god->last_sp;
+    skop->stats.grace = (int16_t)new_god->last_grace;
+    skop->stats.food = (int16_t)new_god->last_eat;
+    skop->stats.luck = (int8_t)new_god->stats.luck;
     /* gods may pass on certain flag properties */
     update_priest_flag(new_god, skop, FLAG_SEE_IN_DARK);
     update_priest_flag(new_god, skop, FLAG_REFL_SPELL);
@@ -645,7 +645,7 @@ int become_follower(object *op, const object *new_god) {
  * @return
  * 1 if player was changed, 0 if no change.
  */
-static int worship_forbids_use(object *op, object *exp_obj, uint32 flag, const char *string) {
+static int worship_forbids_use(object *op, object *exp_obj, uint32_t flag, const char *string) {
     if (QUERY_FLAG(&op->arch->clone, flag)) {
         if (QUERY_FLAG(op, flag) != QUERY_FLAG(exp_obj, flag)) {
             update_priest_flag(exp_obj, op, flag);
@@ -698,7 +698,7 @@ static void stop_using_item(object *op, int type, int number) {
  * @param flag
  * flag to consider.
  */
-static void update_priest_flag(const object *god, object *exp_ob, uint32 flag) {
+static void update_priest_flag(const object *god, object *exp_ob, uint32_t flag) {
     if (QUERY_FLAG(god, flag) && !QUERY_FLAG(exp_ob, flag))
         SET_FLAG(exp_ob, flag);
     else if (QUERY_FLAG(exp_ob, flag) && !QUERY_FLAG(god, flag)) {
@@ -878,7 +878,7 @@ static int improve_weapon_magic(object *op, object *tr, object *weapon, object *
 static int god_enchants_weapon(object *op, const object *god, object *tr, object *skill) {
     char buf[MAX_BUF];
     object *weapon;
-    uint32 attacktype;
+    uint32_t attacktype;
 
     weapon = object_find_by_type_applied(op, WEAPON);
     if (weapon == NULL)

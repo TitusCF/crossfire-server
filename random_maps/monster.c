@@ -77,7 +77,7 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms 
     char styledirname[256];
     mapstruct *style_map = NULL;
     int failed_placements;
-    sint64 exp_per_sq, total_experience;
+    int64_t exp_per_sq, total_experience;
     int number_monsters = 0;
     archetype *at;
 

@@ -259,8 +259,8 @@ typedef struct MapSpace {
     object      *bottom;        /**< Lowest object on this space. */
     object      *top;           /**< Highest object on this space. */
     object      *faces_obj[MAP_LAYERS]; /**< Face objects for the layers. */
-    uint8       flags;          /**< Flags about this space (see the P_ values above). */
-    sint8       light;          /**< How much light this space provides. */
+    uint8_t       flags;          /**< Flags about this space (see the P_ values above). */
+    int8_t       light;          /**< How much light this space provides. */
     MoveType    move_block;     /**< What movement types this space blocks. */
     MoveType    move_slow;      /**< What movement types this space slows. */
     MoveType    move_on;        /**< What movement types are activated. */
@@ -291,11 +291,11 @@ typedef struct regiondef {
     char  *longname;             /**< Official title of the region, this might be defined
                                   * to be the same as name*/
     char  *msg;                  /**< The description of the region */
-    uint32      counter;         /**< A generic counter for holding temporary data. */
-    sint8       fallback;        /**< Whether, in the event of a region not existing,
+    uint32_t      counter;         /**< A generic counter for holding temporary data. */
+    int8_t       fallback;        /**< Whether, in the event of a region not existing,
                                   * this should be the one we fall back on as the default. */
     char        *jailmap;        /**< Where a player that is arrested in this region should be imprisoned. */
-    sint16      jailx, jaily;    /**< The coodinates in jailmap to which the player should be sent. */
+    int16_t      jailx, jaily;    /**< The coodinates in jailmap to which the player should be sent. */
 } region;
 
 /**
@@ -306,7 +306,7 @@ typedef struct shopitem {
     const char *name;     /**< Name of the item in question, null if it is the default item. */
     const char *name_pl;  /**< Plural name. */
     int typenum;    /**< Itemtype number we need to match, -1 if it is the default price. */
-    sint8 strength; /**< The degree of specialisation the shop has in this item,
+    int8_t strength; /**< The degree of specialisation the shop has in this item,
                      * as a percentage from -100 to 100. */
     int index;      /**< Being the size of the shopitems array.*/
 } shopitems;
@@ -329,23 +329,23 @@ typedef struct mapdef {
     struct regiondef *region;   /**< What jurisdiction in the game world this map is ruled by
                                  * points to the struct containing all the properties of
                                  * the region. */
-    uint32  reset_time;         /**< When this map should reset. */
-    uint32  reset_timeout;      /**< How many seconds must elapse before this map
+    uint32_t  reset_time;         /**< When this map should reset. */
+    uint32_t  reset_timeout;      /**< How many seconds must elapse before this map
                                  * should be reset. */
-    uint32  fixed_resettime:1;  /**< If true, reset time is not affected by
+    uint32_t  fixed_resettime:1;  /**< If true, reset time is not affected by
                                  * players entering/exiting map. */
-    uint32  unique:1;           /**< If set, this is a per player unique map. */
-    uint32  is_template:1;         /**< If set, this is a template map. */
-    uint32  nosmooth:1;         /**< If set the content of this map has smoothlevel=0 forced. */
-    uint32  outdoor:1;          /**< True if an outdoor map. */
-    sint32  timeout;            /**< Swapout is set to this. */
-    sint32  swap_time;          /**< When it reaches 0, the map will be swapped out. */
-    uint16  difficulty;         /**< What level the player should be to play here. */
-    sint16  players;            /**< How many players are on this level right now. Automatically updated by the object handling functions. */
-    uint32  in_memory;          /**< Combination of @ref IN_MEMORY_xxx "IN_MEMORY_xxx" flags. */
-    uint8   darkness;           /**< Indicates level of darkness of map. */
-    uint16  width, height;      /**< Width and height of map. */
-    sint16  enter_x, enter_y;   /**< Enter_x and enter_y are default entrance
+    uint32_t  unique:1;           /**< If set, this is a per player unique map. */
+    uint32_t  is_template:1;         /**< If set, this is a template map. */
+    uint32_t  nosmooth:1;         /**< If set the content of this map has smoothlevel=0 forced. */
+    uint32_t  outdoor:1;          /**< True if an outdoor map. */
+    int32_t  timeout;            /**< Swapout is set to this. */
+    int32_t  swap_time;          /**< When it reaches 0, the map will be swapped out. */
+    uint16_t  difficulty;         /**< What level the player should be to play here. */
+    int16_t  players;            /**< How many players are on this level right now. Automatically updated by the object handling functions. */
+    uint32_t  in_memory;          /**< Combination of @ref IN_MEMORY_xxx "IN_MEMORY_xxx" flags. */
+    uint8_t   darkness;           /**< Indicates level of darkness of map. */
+    uint16_t  width, height;      /**< Width and height of map. */
+    int16_t  enter_x, enter_y;   /**< Enter_x and enter_y are default entrance
                                  *   coordinates to use for a map such that
                                  *   when an exit specifies hp,sp of -1,-1 for
                                  *   an exit pointing to the map, when the
@@ -356,8 +356,8 @@ typedef struct mapdef {
     struct shopitem *shopitems;     /**< List of item-types the map's shop will trade in. */
     char    *shoprace;          /**< The preffered race of the local shopkeeper. */
     double  shopgreed;          /**< How much our shopkeeper overcharges. */
-    uint64  shopmin;            /**< Minimum price a shop will trade for. */
-    uint64  shopmax;            /**< MMaximum price a shop will offer. */
+    uint64_t  shopmin;            /**< Minimum price a shop will trade for. */
+    uint64_t  shopmax;            /**< MMaximum price a shop will offer. */
     char    *msg;               /**< Message map creator may have left. */
     char    *maplore;           /**< Map lore information. */
     char    *tile_path[4];      /**< Path to adjoining maps. */

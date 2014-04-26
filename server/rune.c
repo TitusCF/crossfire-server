@@ -52,7 +52,7 @@ int write_rune(object *op, object *caster, object *spell, int dir, const char *r
     object *rune_spell, *rune;
     char buf[MAX_BUF];
     mapstruct *m;
-    sint16 nx, ny, gr;
+    int16_t nx, ny, gr;
 
     if (!dir) {
         dir = 1;
@@ -300,7 +300,7 @@ void spring_trap(object *trap, object *victim) {
 int dispel_rune(object *op, object *caster, object *spell, object *skill, int dir) {
     object *rune;
     int mflags;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
 
     x = op->x+freearr_x[dir];

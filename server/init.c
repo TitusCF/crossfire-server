@@ -271,8 +271,8 @@ typedef void (*cmdlinefunc_args2)(const char* arg1, const char* arg2);
  */
 struct Command_Line_Options {
     const char *cmd_option; /**< How it is called on the command line. */
-    uint8 num_args;         /**< Number or args it takes. */
-    uint8 pass;             /**< What pass this should be processed on. @todo describe passes :) */
+    uint8_t num_args;         /**< Number or args it takes. */
+    uint8_t pass;             /**< What pass this should be processed on. @todo describe passes :) */
     void (*func)();         /**< function to call when we match this.
                              * if num_args is true, than that gets passed
                              * to the function, otherwise nothing is passed
@@ -472,7 +472,7 @@ static void load_materials(void) {
                 if ((next = strchr(cp, ',')) != NULL)
                     *(next++) = '\0';
                 sscanf(cp, "%d", &value);
-                mt->save[i] = (sint8)value;
+                mt->save[i] = (int8_t)value;
                 cp = next;
             }
         } else if (!strncmp(cp, "mods", 4)) {
@@ -485,7 +485,7 @@ static void load_materials(void) {
                 if ((next = strchr(cp, ',')) != NULL)
                     *(next++) = '\0';
                 sscanf(cp, "%d", &value);
-                mt->mod[i] = (sint8)value;
+                mt->mod[i] = (int8_t)value;
                 cp = next;
             }
         }
@@ -779,7 +779,7 @@ static void load_settings(void) {
             else
                 settings.item_power_factor = tmp;
         } else if (!strcasecmp(buf, "pk_luck_penalty")) {
-            sint16 val = atoi(cp);
+            int16_t val = atoi(cp);
 
             if (val < -100 || val > 100)
                 LOG(llevError, "load_settings: pk_luck_penalty must be between -100 and 100, %d is invalid\n", val);
@@ -851,7 +851,7 @@ static void load_settings(void) {
                 LOG(llevError, "load_settings: unknown value for personalized_blessings: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "pk_max_experience")) {
-            sint64 pkme = atoll(cp);
+            int64_t pkme = atoll(cp);
             if (pkme < 0)
                 pkme = -1;
             settings.pk_max_experience = pkme;

@@ -650,8 +650,8 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
  * @return
  * experience for the skill use.
  */
-sint64 calc_skill_exp(const object *who, const object *op, const object *skill) {
-    sint64 op_exp;
+int64_t calc_skill_exp(const object *who, const object *op, const object *skill) {
+    int64_t op_exp;
     int op_lvl;
     float base, value, lvl_mult;
 
@@ -687,7 +687,7 @@ sint64 calc_skill_exp(const object *who, const object *op, const object *skill) 
         op_lvl = 1;
 
     if (who->type != PLAYER) {            /* for monsters only */
-        return ((sint64)(op_exp*0.1)+1);  /* we add one to insure positive value is returned */
+        return ((int64_t)(op_exp*0.1)+1);  /* we add one to insure positive value is returned */
     }
 
     /* for players */
@@ -722,7 +722,7 @@ sint64 calc_skill_exp(const object *who, const object *op, const object *skill) 
 #ifdef SKILL_UTIL_DEBUG
     LOG(llevDebug, "calc_skill_exp(): who: %s(lvl:%d)  op:%s(lvl:%d)\n", who->name, skill->level, op->name, op_lvl);
 #endif
-    return ((sint64)value);
+    return ((int64_t)value);
 }
 
 /**
@@ -797,7 +797,7 @@ int learn_skill(object *pl, object *scroll) {
  * value between 0 and 100.
  * @todo Probably belongs in some global utils-type file?
  */
-static int clipped_percent(sint64 a, sint64 b) {
+static int clipped_percent(int64_t a, int64_t b) {
     int rv;
 
     if (b <= 0)
@@ -1223,7 +1223,7 @@ static void do_skill_attack(object *tmp, object *op, const char *string, object 
  * attack skill.
  */
 void skill_attack(object *tmp, object *pl, int dir, const char *string, object *skill) {
-    sint16 tx, ty;
+    int16_t tx, ty;
     mapstruct *m;
     int mflags;
 

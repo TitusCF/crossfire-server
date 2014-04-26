@@ -164,7 +164,7 @@ static int msg_total_chance = 0;
 /**
  * Spellpath information.
  */
-static const uint32 spellpathdef[NRSPELLPATHS] = {
+static const uint32_t spellpathdef[NRSPELLPATHS] = {
     PATH_PROT,
     PATH_FIRE,
     PATH_FROST,
@@ -1700,7 +1700,7 @@ static StringBuffer *artifact_msg(int level, size_t booksize) {
 static StringBuffer *spellpath_msg(int level, size_t booksize, StringBuffer *buf) {
     int path = RANDOM()%NRSPELLPATHS, prayers = RANDOM()%2;
     int did_first_sp = 0;
-    uint32 pnum = spellpathdef[path];
+    uint32_t pnum = spellpathdef[path];
     archetype *at;
 
     if (buf == NULL) {
@@ -2187,7 +2187,7 @@ void write_book_archive(void) {
  * type of the book. Will never be NULL.
  */
 const readable_message_type *get_readable_message_type(object *readable) {
-    uint8 subtype = readable->subtype;
+    uint8_t subtype = readable->subtype;
 
     if (subtype > last_readable_subtype)
         return &readable_message_types[0];

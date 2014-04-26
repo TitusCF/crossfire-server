@@ -599,7 +599,7 @@ static void add_one_item(object *item, struct_map_info *map) {
     StringBuffer *bf = stringbuffer_new();
     int x, y;
     sstring name, namepl;
-    uint32 nrof;
+    uint32_t nrof;
     object *base;
 
     x = item->x;
@@ -864,7 +864,7 @@ static void do_exit_map(mapstruct *map) {
 
                 selevation = object_get_value(item, "elevation");
                 if (selevation) {
-                    sint32 elevation = atoi(selevation);
+                    int32_t elevation = atoi(selevation);
                     elevation_min = MIN(elevation_min, elevation);
                     elevation_max = MAX(elevation_max, elevation);
                     elevation_info[x*50+tx][y*50+ty] = elevation;
@@ -3923,11 +3923,11 @@ void do_auto_apply(mapstruct *m) {
  * Dummy functions to link the library.
  */
 
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt) {
+void draw_ext_info(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *txt) {
     fprintf(logfile, "%s\n", txt);
 }
 
-void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *format, ...) {
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *format, ...) {
     va_list ap;
 
     va_start(ap, format);
@@ -3935,7 +3935,7 @@ void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint
     va_end(ap);
 }
 
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1) {
+void ext_info_map(int color, const mapstruct *map, uint8_t type, uint8_t subtype, const char *str1) {
     fprintf(logfile, "ext_info_map: %s\n", str1);
 }
 

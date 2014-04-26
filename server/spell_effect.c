@@ -274,7 +274,7 @@ static void polymorph_item(object *who, object *op, int level) {
     int max_value, difficulty, tries = 0, choice, charges = op->stats.food, numat = 0;
     object *new_ob;
     mapstruct *m;
-    sint16 x, y;
+    int16_t x, y;
 
     /* We try and limit the maximum value of the changed object. */
     max_value = op->value*2;
@@ -434,7 +434,7 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
     maxrange = spell_ob->range+SP_level_range_adjust(caster, spell_ob);
     level = caster_level(caster, spell_ob);
     for (range = 1; range < maxrange; range++) {
-        sint16 x = op->x+freearr_x[dir]*range, y = op->y+freearr_y[dir]*range;
+        int16_t x = op->x+freearr_x[dir]*range, y = op->y+freearr_y[dir]*range;
         object *image;
 
         m = op->map;
@@ -552,7 +552,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
         missile_plus = -4;
 
     missile->nrof = spell->duration+SP_level_duration_adjust(caster, spell);
-    if (missile->nrof <= 3*(missile_plus+bonus_plus)) {
+    if (missile->nrof <= (uint32_t)3 * (missile_plus + bonus_plus)) {
         object_free2(missile, FREE_OBJ_NO_DESTROY_CALLBACK);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                              "This item is too powerful for you to create!");
@@ -686,7 +686,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir, int level) {
     }
     maxrange = spell_ob->range+SP_level_range_adjust(caster, spell_ob);
     for (r = 1; r < maxrange; r++) {
-        sint16 x = op->x+r*freearr_x[dir], y = op->y+r*freearr_y[dir];
+        int16_t x = op->x+r*freearr_x[dir], y = op->y+r*freearr_y[dir];
 
         m = op->map;
         mflags = get_map_flags(m, &m, x, y, &x, &y);
@@ -843,7 +843,7 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
  */
 int cast_earth_to_dust(object *op, object *caster, object *spell_ob) {
     int range, i, j, mflags;
-    sint16 sx, sy;
+    int16_t sx, sy;
     mapstruct *m;
 
     if (op->type != PLAYER)
@@ -1126,7 +1126,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
     object *dummy, *force, *old_force, *tmp;
     archetype *perm_portal;
     char portal_name [1024], portal_message [1024];
-    sint16 exitx, exity;
+    int16_t exitx, exity;
     mapstruct *exitmap;
     int op_level, x, y;
 
@@ -1416,7 +1416,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
 int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
     object *tmp, *tmp2;
     int i, posblocked, negblocked, maxrange;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
     const char *name;
     archetype *at;
@@ -1567,10 +1567,10 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
  * spell was successful.
  */
 int dimension_door(object *op, object *caster, object *spob, int dir) {
-    uint32 dist, maxdist;
+    uint32_t dist, maxdist;
     int  mflags;
     mapstruct *m;
-    sint16  sx, sy;
+    int16_t  sx, sy;
 
     if (op->type != PLAYER)
         return 0;
@@ -1926,7 +1926,7 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
     if (tmp->type == PLAYER) {
         /* Stat adjustment spells */
         for (i = 0; i < NUM_STATS; i++) {
-            sint8 stat = get_attr_value(&spell_ob->stats, i), k, sm;
+            int8_t stat = get_attr_value(&spell_ob->stats, i), k, sm;
 
             if (stat) {
                 sm = 0;
@@ -2133,8 +2133,8 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
  * the weight of the object.
  */
 static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int *large_nuggets, int *weight) {
-    uint64 value = query_cost(obj, NULL, BS_TRUE);
-    uint64 small_value, large_value; /**< Value of nuggets. */
+    uint64_t value = query_cost(obj, NULL, BS_TRUE);
+    uint64_t small_value, large_value; /**< Value of nuggets. */
 
     /* Multiply the value of the object by value_adj, which should range
      * from 0.05 to 0.40. Set value to 0 instead if unpaid.
@@ -2160,7 +2160,7 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
         assert(large_value != 0 && small_value != 0);
         count = value/large_value;
         *large_nuggets += count;
-        value -= (uint64)count*large_value;
+        value -= (uint64_t)count*large_value;
         count = value/small_value;
         *small_nuggets += count;
     }
@@ -2235,7 +2235,7 @@ static void place_alchemy_objects(object *op, mapstruct *m, int small_nuggets, i
  */
 int alchemy(object *op, object *caster, object *spell_ob) {
     int x, y, weight = 0, weight_max, large_nuggets, small_nuggets, mflags;
-    sint16 nx, ny;
+    int16_t nx, ny;
     float value_adj;
     mapstruct *mp;
 
@@ -2513,7 +2513,7 @@ int cast_detection(object *op, object *caster, object *spell) {
     object *tmp, *last, *detect;
     const object *god;
     int done_one, range, mflags, floor, level;
-    sint16 x, y, nx, ny;
+    int16_t x, y, nx, ny;
     mapstruct *m;
 
     /* We precompute some values here so that we don't have to keep
@@ -2770,7 +2770,7 @@ static void charge_mana_effect(object *victim, int caster_level) {
  */
 int cast_transfer(object *op, object *caster, object *spell, int dir) {
     object *plyr = NULL;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
     int mflags;
 
@@ -2845,7 +2845,7 @@ void counterspell(object *op, int dir) {
     object *head;
     int mflags;
     mapstruct *m;
-    sint16  sx, sy;
+    int16_t  sx, sy;
 
     sx = op->x+freearr_x[dir];
     sy = op->y+freearr_y[dir];
@@ -2997,7 +2997,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
     object *weapon, *tmp;
     char buf[MAX_BUF];
     int a, i;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
     materialtype_t *mt;
 

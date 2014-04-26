@@ -60,7 +60,7 @@ void init_type_lighter(void) {
 static method_ret lighter_type_apply(ob_methods *context, object *lighter, object *applier, int aflags) {
     object *item;
     int is_player_env = 0;
-    uint32 nrof;
+    uint32_t nrof;
     tag_t count;
     char item_name[MAX_BUF];
 

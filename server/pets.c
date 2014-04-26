@@ -53,7 +53,7 @@ static void mark_inventory_as_no_drop(object *ob) {
 object *pets_get_enemy(object *pet, rv_vector *rv) {
     object *owner, *tmp, *attacker, *tmp3;
     int i;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *nm;
     int search_arr[SIZEOFFREE];
     int mflags;
@@ -326,7 +326,7 @@ void pets_follow_owner(object *ob, object *owner) {
 void pets_move(object *ob) {
     int dir, i;
     tag_t tag;
-    sint16 dx, dy;
+    int16_t dx, dy;
     object *owner;
     mapstruct *m;
 
@@ -573,7 +573,7 @@ void pets_move_golem(object *op) {
         return;
 
     for (tmp = op; tmp; tmp = tmp->more) {
-        sint16 x = tmp->x+DIRX(op), y = tmp->y+DIRY(op);
+        int16_t x = tmp->x+DIRX(op), y = tmp->y+DIRY(op);
         object *victim;
         mapstruct *m;
         int mflags;
@@ -930,7 +930,7 @@ static object *choose_cult_monster(object *pl, const object *god, int summon_lev
  * summon_object() has been renamed to pets_summon_object()
  */
 int pets_summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg) {
-    sint16 x, y, nrof = 1, i;
+    int16_t x, y, nrof = 1, i;
     archetype *summon_arch;
     int ndir, mult;
 

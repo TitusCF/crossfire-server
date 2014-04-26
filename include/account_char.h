@@ -27,11 +27,11 @@ typedef struct account_char_struct {
     const char *name;         /**< Name of this character/player */
     const char *character_class;        /**< Class of this character */
     const char *race;         /**< Race of this character */
-    uint8 level;              /**< Level of this character */
+    uint8_t level;              /**< Level of this character */
     const char *face;         /**< Face of this character */
     const char *party;        /**< Character this party belonged to */
     const char *map;          /**< Last map this character was on */
-    uint8 isDead;             /**< Should stay at zero if alive, anything else if dead (hopefully 1, but doesn't have to be) */
+    uint8_t isDead;             /**< Should stay at zero if alive, anything else if dead (hopefully 1, but doesn't have to be) */
     struct account_char_struct  *next;
 } Account_Char;
 

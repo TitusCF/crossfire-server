@@ -13,8 +13,8 @@
  */
 typedef struct artifactstruct {
     object *item;                   /**< Special values of the artifact. Note that this object is malloc() ed. */
-    uint16 chance;                  /**< Chance of the artifact to happen. */
-    uint8 difficulty;               /**< Minimum map difficulty for the artifact to happen. */
+    uint16_t chance;                  /**< Chance of the artifact to happen. */
+    uint8_t difficulty;               /**< Minimum map difficulty for the artifact to happen. */
     struct artifactstruct *next;    /**< Next artifact in the list. */
     linked_char *allowed;           /**< List of archetypes the artifact can affect. */
     int allowed_size;               /**< Length of allowed, for faster computation. */
@@ -24,8 +24,8 @@ typedef struct artifactstruct {
  * This represents all archetypes for one particular object type.
  */
 typedef struct artifactliststruct {
-    uint8 type;                         /**< Object type that this list represents. */
-    uint16 total_chance;                /**< Sum of chance for are artifacts on this list. */
+    uint8_t type;                         /**< Object type that this list represents. */
+    uint16_t total_chance;                /**< Sum of chance for are artifacts on this list. */
     struct artifactliststruct *next;    /**< Next list of artifacts. */
     struct artifactstruct *items;       /**< Artifacts for this type. Will never be NULL. */
 } artifactlist;

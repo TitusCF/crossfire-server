@@ -43,8 +43,8 @@ const char *const map_layer_name[MAP_LAYERS] = {
 
 /** Information about a layer. */
 typedef struct Map_Layer_Info {
-    uint8 high_layer;       /**< Highest layer for this group. */
-    uint8 honor_visibility; /**< If 0 then don't reorder items, else allow. */
+    uint8_t high_layer;       /**< Highest layer for this group. */
+    uint8_t honor_visibility; /**< If 0 then don't reorder items, else allow. */
 } Map_Layer_Info;
 
 /**
@@ -294,8 +294,8 @@ void dump_all_maps(void) {
  * @return
  * flags for specified position, with maybe ::P_OUT_OF_MAP or ::P_NEW_MAP set.
  */
-int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny) {
-    sint16 newx, newy;
+int get_map_flags(mapstruct *oldmap, mapstruct **newmap, int16_t x, int16_t y, int16_t *nx, int16_t *ny) {
+    int16_t newx, newy;
     int retval = 0;
     mapstruct *mp;
 
@@ -480,11 +480,11 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
  * code, we need to have actual object to check its move_type
  * against the move_block values.
  */
-int ob_blocked(const object *ob, mapstruct *m, sint16 x, sint16 y) {
+int ob_blocked(const object *ob, mapstruct *m, int16_t x, int16_t y) {
     archetype *tmp;
     int flag;
     mapstruct *m1;
-    sint16 sx, sy;
+    int16_t sx, sy;
     const object *part;
 
     if (ob == NULL) {
@@ -1891,7 +1891,7 @@ int calculate_difficulty(mapstruct *m) {
     int x, y;
     int diff = 0;
     int i;
-    sint64 exp_pr_sq, total_exp = 0;
+    int64_t exp_pr_sq, total_exp = 0;
 
     if (MAP_DIFFICULTY(m)) {
         return MAP_DIFFICULTY(m);
@@ -2094,7 +2094,7 @@ static inline void add_face_layer(int low_layer, int high_layer, object *ob, obj
  */
 void update_position(mapstruct *m, int x, int y) {
     object *player = NULL;
-    uint8 flags = 0, oldflags, light = 0;
+    uint8_t flags = 0, oldflags, light = 0;
     object *layers[MAP_LAYERS];
 
     MoveType move_block = 0, move_slow = 0, move_on = 0, move_off = 0, move_allow = 0;
@@ -2333,7 +2333,7 @@ int out_of_map(mapstruct *m, int x, int y) {
  * @return
  * map that is at specified location. Will be NULL if not on any map.
  */
-mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y) {
+mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
     /* m should never be null, but if a tiled map fails to load below, it could
      * happen.
      */

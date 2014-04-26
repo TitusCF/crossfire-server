@@ -149,7 +149,7 @@ object *monster_check_enemy(object *npc, rv_vector *rv) {
  */
 object *monster_find_nearest_living_creature(object *npc) {
     int i, mflags;
-    sint16 nx, ny;
+    int16_t nx, ny;
     mapstruct *m;
     int search_arr[SIZEOFFREE];
 
@@ -486,12 +486,12 @@ void monster_do_living(object *op) {
          * #moves the monster makes.  The scaling by 8 is
          * to capture 8th's of a hp fraction regens
          *
-         * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
+         * Cast to int32_t before comparing to maxhp since otherwise an (int16_t)
          * overflow might produce monsters with negative hp.
          */
 
         op->last_heal += (int)((float)(8*op->stats.Con)/FABS(op->speed));
-        op->stats.hp = MIN((sint32)op->stats.hp+op->last_heal/32, op->stats.maxhp); /* causes Con/4 hp/tick */
+        op->stats.hp = MIN((int32_t)op->stats.hp+op->last_heal/32, op->stats.maxhp); /* causes Con/4 hp/tick */
         op->last_heal %= 32;
 
         /* So if the monster has gained enough HP that they are no longer afraid */
@@ -510,7 +510,7 @@ void monster_do_living(object *op) {
          * #moves the monster makes.  The scaling by 8 is
          * to capture 8th's of a sp fraction regens
          *
-         * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
+         * Cast to int32_t before comparing to maxhp since otherwise an (int16_t)
          * overflow might produce monsters with negative sp.
          */
 
@@ -1298,7 +1298,7 @@ static int monster_use_range(object *head, object *part, object *pl, int dir) {
 static int monster_use_bow(object *head, object *part, object *pl, int dir) {
     object *owner;
     rv_vector rv;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *map;
 
     if (!get_rangevector(part, pl, &rv, 1))
@@ -1478,10 +1478,10 @@ static void monster_check_pickup(object *monster) {
     for (part = monster; part != NULL; part = part->more)
         FOR_BELOW_PREPARE(part, tmp) {
             if (monster_can_pick(monster, tmp)) {
-                uint32 nrof;
+                uint32_t nrof;
 
                 if (tmp->weight > 0) {
-                    sint32 weight_limit;
+                    int32_t weight_limit;
 
                     weight_limit = get_weight_limit(monster->stats.Str);
                     if (weight_limit >= monster->weight-monster->carrying)
@@ -1731,7 +1731,7 @@ void monster_check_apply(object *mon, object *item) {
  */
 void monster_npc_call_help(object *op) {
     int x, y, mflags;
-    sint16 sx, sy;
+    int16_t sx, sy;
     mapstruct *m;
 
     for (x = -3; x < 4; x++)
@@ -2082,7 +2082,7 @@ static const char *get_reply_text_other(reply_type rt) {
  */
 void monster_communicate(object *op, const char *txt) {
     int i, mflags;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *mp, *orig_map = op->map;
     char own[MAX_BUF], others[MAX_BUF];
     talk_info info;
@@ -2425,7 +2425,7 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
  * @return 1 if op is in lighe, 0 else.
  */
 int monster_stand_in_light(object *op) {
-    sint16 nx, ny;
+    int16_t nx, ny;
     mapstruct *m;
 
     if (!op)

@@ -218,7 +218,7 @@ static PyObject *Map_Check(Crossfire_Map *map, PyObject *args) {
     char *what;
     int x, y;
     object *foundob;
-    sint16 nx, ny;
+    int16_t nx, ny;
     int mflags;
 
     if (!PyArg_ParseTuple(args, "s(ii)", &what, &x, &y))
@@ -229,7 +229,7 @@ static PyObject *Map_Check(Crossfire_Map *map, PyObject *args) {
     /* make sure the map is swapped in */
     ensure_map_in_memory(map);
 
-    mflags = cf_map_get_flags(map->map, &(map->map), (sint16)x, (sint16)y, &nx, &ny);
+    mflags = cf_map_get_flags(map->map, &(map->map), (int16_t)x, (int16_t)y, &nx, &ny);
     if (mflags&P_OUT_OF_MAP) {
         Py_INCREF(Py_None);
         return Py_None;

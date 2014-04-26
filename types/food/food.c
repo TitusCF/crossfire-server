@@ -155,7 +155,7 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
 static void eat_special_food(object *who, object *food) {
     object *force;
     int i, did_one = 0;
-    sint8 k;
+    int8_t k;
 
     force = create_archetype(FORCE_NAME);
 

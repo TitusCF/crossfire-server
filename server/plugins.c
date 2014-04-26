@@ -765,13 +765,13 @@ void plugins_display_list(object *op) {
 */
 static void cfapi_cost_string_from_value(int *type, ...) {
     StringBuffer *sb;
-    uint64 cost;
+    uint64_t cost;
     char *buffer, *final;
     int length, largest_coin;
     va_list args;
 
     va_start(args, type);
-    cost = va_arg(args, uint64);
+    cost = va_arg(args, uint64_t);
     largest_coin = va_arg(args, int);
     buffer = va_arg(args, char*);
     length = va_arg(args, int);
@@ -1205,7 +1205,7 @@ static void cfapi_map_get_map(int *type, ...) {
     mapstruct **ret;
     int ctype;
     int x, y;
-    sint16 nx, ny;
+    int16_t nx, ny;
     const char *name;
     mapstruct *m;
 
@@ -1312,7 +1312,7 @@ static void cfapi_map_get_map_property(int *type, ...) {
     mapstruct **rmap;
     sstring *rstr;
     region **rreg;
-    sint16 *nx, *ny;
+    int16_t *nx, *ny;
     int x, y;
 
     va_start(args, type);
@@ -1325,8 +1325,8 @@ static void cfapi_map_get_map_property(int *type, ...) {
         rmap = va_arg(args, mapstruct **);
         x = va_arg(args, int);
         y = va_arg(args, int);
-        nx = va_arg(args, sint16 *);
-        ny = va_arg(args, sint16 *);
+        nx = va_arg(args, int16_t *);
+        ny = va_arg(args, int16_t *);
         rint = va_arg(args, int *);
         *rint = get_map_flags(map, rmap, x, y, nx, ny);
         *type = CFAPI_INT;
@@ -1542,7 +1542,7 @@ static void cfapi_map_get_object_at(int *type, ...) {
     va_list args;
     mapstruct *map;
     int x, y;
-    sint16 sx, sy;
+    int16_t sx, sy;
     object **robj;
 
     va_start(args, type);
@@ -1727,7 +1727,7 @@ static void cfapi_object_get_property(int *type, ...) {
     char *rbuffer;
     int rbufsize;
     MoveType *rmove;
-    sint64 *rint64;
+    int64_t *rint64;
     partylist **rparty;
     double *rdouble;
     long *rlong;
@@ -1908,10 +1908,10 @@ static void cfapi_object_get_property(int *type, ...) {
 
     case CFAPI_OBJECT_PROP_RESIST: {
             int idx;
-            sint16 *resist;
+            int16_t *resist;
 
             idx = va_arg(args, int);
-            resist = va_arg(args, sint16 *);
+            resist = va_arg(args, int16_t *);
             *resist = op->resist[idx];
         }
         *type = CFAPI_INT16;
@@ -2044,7 +2044,7 @@ static void cfapi_object_get_property(int *type, ...) {
         break;
 
     case CFAPI_OBJECT_PROP_PERM_EXP:
-        rint64 = va_arg(args, sint64 *);
+        rint64 = va_arg(args, int64_t *);
         *rint64 = op->perm_exp;
         *type = CFAPI_SINT64;
         break;
@@ -2176,7 +2176,7 @@ static void cfapi_object_get_property(int *type, ...) {
         break;
 
     case CFAPI_OBJECT_PROP_EXP:
-        rint64 = va_arg(args, sint64 *);
+        rint64 = va_arg(args, int64_t *);
         *rint64 = op->stats.exp;
         *type = CFAPI_SINT64;
         break;
@@ -2558,7 +2558,7 @@ static void cfapi_object_set_property(int *type, ...) {
     object *oparg;
     object *op;
     int property;
-    sint64 s64arg;
+    int64_t s64arg;
     partylist *partyarg;
     float farg;
     MoveType *move; /* MoveType can't be used through va_arg so use MoveType * */
@@ -2640,9 +2640,9 @@ static void cfapi_object_set_property(int *type, ...) {
             *type = CFAPI_INT;
             if (iarg < 0)
                 iarg = 0;
-            if (op->nrof > (uint32)iarg)
+            if (op->nrof > (uint32_t)iarg)
                 object_decrease_nrof(op, op->nrof-iarg);
-            else if (op->nrof < (uint32)iarg) {
+            else if (op->nrof < (uint32_t)iarg) {
                 object *tmp;
                 player *pl;
 
@@ -2848,7 +2848,7 @@ static void cfapi_object_set_property(int *type, ...) {
             break;
 
         case CFAPI_OBJECT_PROP_PERM_EXP:
-            s64arg = va_arg(args, sint64);
+            s64arg = va_arg(args, int64_t);
             *type = CFAPI_SINT64;
             op->perm_exp = s64arg;
             break;
@@ -2930,7 +2930,7 @@ static void cfapi_object_set_property(int *type, ...) {
             break;
 
         case CFAPI_OBJECT_PROP_EXP:
-            s64arg = va_arg(args, sint64);
+            s64arg = va_arg(args, int64_t);
             *type = CFAPI_SINT64;
             op->stats.exp = s64arg;
             break;
@@ -3977,13 +3977,13 @@ static void cfapi_object_check_spell(int *type, ...) {
  */
 static void cfapi_object_pay_amount(int *type, ...) {
     object *op;
-    uint64 amount;
+    uint64_t amount;
     va_list args;
     int *rint;
 
     va_start(args, type);
     op = va_arg(args, object *);
-    amount = va_arg(args, uint64);
+    amount = va_arg(args, uint64_t);
     rint = va_arg(args, int *);
     va_end(args);
 
@@ -4265,11 +4265,11 @@ static void cfapi_object_change_exp(int *type, ...) {
     int flag;
     object *ob;
     const char *skill;
-    sint64 exp;
+    int64_t exp;
 
     va_start(args, type);
     ob = va_arg(args, object *);
-    exp = va_arg(args, sint64);
+    exp = va_arg(args, int64_t);
     skill = va_arg(args, const char *);
     flag = va_arg(args, int);
     va_end(args);

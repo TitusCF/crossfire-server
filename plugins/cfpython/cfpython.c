@@ -651,7 +651,7 @@ static PyObject *npcSay(PyObject *self, PyObject *args) {
 }
 
 static PyObject *costStringFromValue(PyObject *self, PyObject *args) {
-    uint64 value;
+    uint64_t value;
     char buf[2048];
     int largest_coin = 0;
 

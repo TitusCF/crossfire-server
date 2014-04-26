@@ -785,7 +785,7 @@ object *object_create_arch(archetype *at) {
  * @param type value to check.
  * @return 1 if the type is valid, 0 else.
  */
-int is_type_valid(uint8 type) {
+int is_type_valid(uint8_t type) {
     if (type >= OBJECT_TYPE_MAX)
         return 0;
 

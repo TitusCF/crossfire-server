@@ -45,8 +45,8 @@
 /** Price a shopkeeper will give someone they neither like nor dislike */
 #define NEUTRAL_RATIO 0.8
 
-static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay);
-static uint64 value_limit(uint64 val, int quantity, const object *who, int isshop);
+static uint64_t pay_from_container(object *pl, object *pouch, uint64_t to_pay);
+static uint64_t value_limit(uint64_t val, int quantity, const object *who, int isshop);
 static double shop_specialisation_ratio(const object *item, const mapstruct *map);
 static double shop_greed(const mapstruct *map);
 
@@ -104,8 +104,8 @@ static const char *const coins[] = {
  * @return
  * item value, in silver coins.
  */
-uint64 query_cost(const object *tmp, object *who, int flag) {
-    uint64 val;
+uint64_t query_cost(const object *tmp, object *who, int flag) {
+    uint64_t val;
     int number; /* used to better calculate value */
     int no_bargain;
     int identified;
@@ -297,7 +297,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
          * prevent dividing by zero.)
          */
         if (approximate)
-            val = (sint64)val+(sint64)((sint64)val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
+            val = (int64_t)val+(int64_t)((int64_t)val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
     }
 
     /* I don't think this should really happen - if it does,
@@ -305,7 +305,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
      * happen if we are selling objects - in that case, the person
      * just gets no money.
      */
-    if ((sint64)val < 0)
+    if ((int64_t)val < 0)
         val = 0;
 
     /* Unidentified stuff won't sell for more than 60gp each -
@@ -317,13 +317,13 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
     && need_identify(tmp)
     && !identified) {
-        val = MIN(val, 600 * number);
+        val = MIN(val, (uint64_t)600 * number);
     }
 
     /* if in a shop, check how the type of shop should affect the price */
     if (shop && who) {
         if (flag == BS_SELL)
-            val = (sint64)val*shop_specialisation_ratio(tmp, who->map)
+            val = (int64_t)val*shop_specialisation_ratio(tmp, who->map)
                 *shopkeeper_approval(who->map, who)/shop_greed(who->map);
         else if (flag == BS_BUY) {
             /*
@@ -342,11 +342,11 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
              * sometimes find antiques in a junk shop in real life).
              */
             if (QUERY_FLAG(tmp, FLAG_PLAYER_SOLD))
-                val = (sint64)val*shop_greed(who->map)
+                val = (int64_t)val*shop_greed(who->map)
                     *shop_specialisation_ratio(tmp, who->map)
                     /shopkeeper_approval(who->map, who);
             else
-                val = (sint64)val*shop_greed(who->map)
+                val = (int64_t)val*shop_greed(who->map)
                     /(shop_specialisation_ratio(tmp, who->map)
                       *shopkeeper_approval(who->map, who));
         }
@@ -370,13 +370,13 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
              * - just to be safe, check val won't become negative at the end too
              */
             int variation = ((who->map->reset_time % 1000) - 500);
-            sint64 adjust = ((sint64)val * variation) / 10000;
-            if (adjust > 0 || ((-adjust) < val))
+            int64_t adjust = ((int64_t)val * variation) / 10000;
+            if (adjust > 0 || ((uint64_t) (-adjust) < val))
                 val += adjust;
         }
     }
 
-    if (((sint64)val) < 0)
+    if (((int64_t)val) < 0)
         LOG(llevError, "got a negative price for %s [%s], flags %d, map->reset_time %d\n",
             tmp->name, tmp->arch->name, flag, (who && who->map && who->map->path) ? who->map->reset_time : -1 );
     return val;
@@ -393,7 +393,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
  * @return
  * coin archetype, NULL if none found.
  */
-static archetype *find_next_coin(uint64 c, int *cointype) {
+static archetype *find_next_coin(uint64_t c, int *cointype) {
     archetype *coin;
 
     do {
@@ -403,7 +403,7 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
         if (coin == NULL)
             return NULL;
         *cointype += 1;
-    } while (coin->clone.value > c);
+    } while (coin->clone.value > (int64_t) c);
 
     return coin;
 }
@@ -427,9 +427,9 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
  * @return
  * buffer containing the price, either buf or if NULL a new StringBuffer.
  */
-StringBuffer *cost_string_from_value(uint64 cost, int largest_coin, StringBuffer *buf) {
+StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, StringBuffer *buf) {
     archetype *coin, *next_coin;
-    uint32 num;
+    uint32_t num;
     int cointype = largest_coin;
 
     if (cointype < 0)
@@ -456,7 +456,7 @@ StringBuffer *cost_string_from_value(uint64 cost, int largest_coin, StringBuffer
         return buf;
     }
 
-    cost -= (uint64)num*(uint64)coin->clone.value;
+    cost -= (uint64_t)num*(uint64_t)coin->clone.value;
     if (num == 1)
         stringbuffer_append_printf(buf, "1 %s", coin->clone.name);
     else
@@ -469,7 +469,7 @@ StringBuffer *cost_string_from_value(uint64 cost, int largest_coin, StringBuffer
     do {
         coin = next_coin;
         num = cost/coin->clone.value;
-        cost -= (uint64)num*(uint64)coin->clone.value;
+        cost -= (uint64_t)num*(uint64_t)coin->clone.value;
 
         if (cost == 0)
             next_coin = NULL;
@@ -527,7 +527,7 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
  * buffer containing the price, new if buf was NULL.
  */
 StringBuffer *query_cost_string(const object *tmp, object *who, int flag, StringBuffer *buf) {
-    uint64 real_value = query_cost(tmp, who, flag);
+    uint64_t real_value = query_cost(tmp, who, flag);
     int idskill1 = 0;
     int idskill2 = 0;
     const typedata *tmptype;
@@ -596,8 +596,8 @@ StringBuffer *query_cost_string(const object *tmp, object *who, int flag, String
  * @return
  * total money the player is carrying.
  */
-uint64 query_money(const object *op) {
-    uint64 total = 0;
+uint64_t query_money(const object *op) {
+    uint64_t total = 0;
 
     if (op->type != PLAYER && op->type != CONTAINER) {
         LOG(llevError, "Query money called with non player/container\n");
@@ -605,7 +605,7 @@ uint64 query_money(const object *op) {
     }
     FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == MONEY) {
-            total += (uint64)tmp->nrof*(uint64)tmp->value;
+            total += (uint64_t)tmp->nrof*(uint64_t)tmp->value;
         } else if (tmp->type == CONTAINER
         && QUERY_FLAG(tmp, FLAG_APPLIED)
         && (tmp->race == NULL || strstr(tmp->race, "gold"))) {
@@ -627,7 +627,7 @@ uint64 query_money(const object *op) {
  * 0 if not enough money, in which case nothing is removed, 1 if money was removed.
  * @todo check if pl is a player, as query_money() expects that. Check if fix_object() call is required.
  */
-int pay_for_amount(uint64 to_pay, object *pl) {
+int pay_for_amount(uint64_t to_pay, object *pl) {
     if (to_pay == 0)
         return 1;
     if (to_pay > query_money(pl))
@@ -667,8 +667,8 @@ int pay_for_amount(uint64 to_pay, object *pl) {
  * @todo check if pl is a player, as query_money() expects a player.
  */
 int pay_for_item(object *op, object *pl) {
-    uint64 to_pay = query_cost(op, pl, BS_BUY|BS_SHOP);
-    uint64 saved_money;
+    uint64_t to_pay = query_cost(op, pl, BS_BUY|BS_SHOP);
+    uint64_t saved_money;
 
     if (to_pay == 0)
         return 1;
@@ -715,22 +715,22 @@ int pay_for_item(object *op, object *pl) {
  * @return
  * the value remaining
  */
-static sint64 remove_value(object *coin_objs[], sint64 remain) {
+static int64_t remove_value(object *coin_objs[], int64_t remain) {
     int i;
 
     for (i = 0; i < NUM_COINS; i++) {
         int count;
-        sint64 num_coins;
+        int64_t num_coins;
 
         if (coin_objs[i]->nrof*coin_objs[i]->value > remain) {
             num_coins = remain/coin_objs[i]->value;
-            if ((uint64)num_coins*(uint64)coin_objs[i]->value < remain) {
+            if ((uint64_t)num_coins*(uint64_t)coin_objs[i]->value < (uint64_t) remain) {
                 num_coins++;
             }
         } else {
             num_coins = coin_objs[i]->nrof;
         }
-        remain -= (sint64)num_coins*(sint64)coin_objs[i]->value;
+        remain -= (int64_t)num_coins*(int64_t)coin_objs[i]->value;
         coin_objs[i]->nrof -= num_coins;
         /* Now start making change.  Start at the coin value
          * below the one we just did, and work down to
@@ -756,13 +756,13 @@ static sint64 remove_value(object *coin_objs[], sint64 remain) {
  *
  * @param value the value (in silver coins) to add
  */
-static void add_value(object *coin_objs[], sint64 value) {
+static void add_value(object *coin_objs[], int64_t value) {
     int i;
 
     for (i = NUM_COINS-LARGEST_COIN_GIVEN-1; i >= 0; i--) {
-        uint32 nrof;
+        uint32_t nrof;
 
-        nrof = (uint32)(value/coin_objs[i]->value);
+        nrof = (uint32_t)(value/coin_objs[i]->value);
         value -= nrof*coin_objs[i]->value;
         coin_objs[i]->nrof += nrof;
     }
@@ -811,9 +811,9 @@ static void insert_objects(object *pl, object *container, object *objects[], int
  * @return
  * amount still not paid after using "pouch".
  */
-static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
+static uint64_t pay_from_container(object *pl, object *pouch, uint64_t to_pay) {
     size_t i;
-    sint64 remain;
+    int64_t remain;
     object *coin_objs[NUM_COINS];
     object *other_money[16]; /* collects MONEY objects not matching coins[] */
     size_t other_money_len; /* number of allocated entries in other_money[] */
@@ -876,7 +876,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
 
     /* Now pay from non-standard coins until all is paid. */
     for (i = 0; i < other_money_len && remain > 0; i++) {
-        uint32 nrof;
+        uint32_t nrof;
         object *coin;
 
         coin = other_money[i];
@@ -917,7 +917,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
  * @param coincount
  * array of NUM_COINS size, will contain how many coins of the type the player has.
  */
-static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64 *unpaid_price, uint32 *coincount) {
+static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64_t *unpaid_price, uint32_t *coincount) {
     int i;
 
     FOR_OB_AND_BELOW_PREPARE(item) {
@@ -953,9 +953,9 @@ static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64 *un
  */
 int can_pay(object *pl) {
     int unpaid_count = 0, i;
-    uint64 unpaid_price = 0;
-    uint64 player_wealth = query_money(pl);
-    uint32 coincount[NUM_COINS];
+    uint64_t unpaid_price = 0;
+    uint64_t player_wealth = query_money(pl);
+    uint32_t coincount[NUM_COINS];
 
     if (!pl || pl->type != PLAYER) {
         LOG(llevError, "can_pay(): called against something that isn't a player\n");
@@ -1023,7 +1023,7 @@ int get_payment(object *pl, object *op) {
 
     if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID)) {
         if (!pay_for_item(op, pl)) {
-            uint64 i = query_cost(op, pl, BS_BUY|BS_SHOP)-query_money(pl);
+            uint64_t i = query_cost(op, pl, BS_BUY|BS_SHOP)-query_money(pl);
             char *missing = stringbuffer_finish(cost_string_from_value(i, LARGEST_COIN_GIVEN, NULL));
 
             CLEAR_FLAG(op, FLAG_UNPAID);
@@ -1071,8 +1071,8 @@ int get_payment(object *pl, object *op) {
  * player. Shouldn't be NULL or non player.
  */
 void sell_item(object *op, object *pl) {
-    uint64 i = query_cost(op, pl, BS_SELL|BS_SHOP);
-    sint64 extra_gain;
+    uint64_t i = query_cost(op, pl, BS_SELL|BS_SHOP);
+    int64_t extra_gain;
     int count;
     object *tmp;
     archetype *at;
@@ -1141,7 +1141,7 @@ void sell_item(object *op, object *pl) {
                         tmp = object_new();
                         object_copy(&at->clone, tmp);
                         tmp->nrof = n;
-                        i -= (uint64)tmp->nrof*(uint64)tmp->value;
+                        i -= (uint64_t)tmp->nrof*(uint64_t)tmp->value;
                         tmp = object_insert_in_ob(tmp, pouch);
                         esrv_update_item(UPD_WEIGHT, pl, pl);
                     }
@@ -1151,7 +1151,7 @@ void sell_item(object *op, object *pl) {
                 tmp = object_new();
                 object_copy(&at->clone, tmp);
                 tmp->nrof = i/tmp->value;
-                i -= (uint64)tmp->nrof*(uint64)tmp->value;
+                i -= (uint64_t)tmp->nrof*(uint64_t)tmp->value;
                 tmp = object_insert_in_ob(tmp, pl);
                 esrv_update_item(UPD_WEIGHT, pl, pl);
             }
@@ -1201,7 +1201,7 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
         LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s\n", map->path);
         return 0;
     }
-    if (item->type == (uint8)-1) {
+    if (item->type == (uint8_t)-1) {
         LOG(llevError, "shop_specialisation_ratio: passed an item with an invalid type\n");
         /*
          * I'm not really sure what the /right/ thing to do here is,
@@ -1286,8 +1286,8 @@ double shopkeeper_approval(const mapstruct *map, const object *player) {
  * @return
  * maximum global value.
  */
-static uint64 value_limit(uint64 val, int quantity, const object *who, int isshop) {
-    uint64 newval, unit_price;
+static uint64_t value_limit(uint64_t val, int quantity, const object *who, int isshop) {
+    uint64_t newval, unit_price;
     mapstruct *map;
 
     unit_price = val/quantity;

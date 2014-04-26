@@ -299,7 +299,7 @@ static object *get_dm_object(player *pl, const char **params, int *from) {
  * option, must be "TRUE" for the test to happen.
  */
 void command_loadtest(object *op, const char *params) {
-    uint32 x, y;
+    uint32_t x, y;
     char buf[1024];
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
@@ -988,9 +988,9 @@ void command_teleport(object *op, const char *params) {
  */
 void command_create(object *op, const char *params) {
     object *tmp = NULL;
-    uint32 i;
+    uint32_t i;
     int magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-    uint32 nrof;
+    uint32_t nrof;
     char *cp, *bp, *bp2, *bp3, *endline, cpy[MAX_BUF];
     archetype *at, *at_spell = NULL;
     const artifact *art = NULL;

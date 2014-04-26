@@ -67,7 +67,7 @@ static void move_duplicator(object *op) {
                 object_remove(tmp);
                 object_free_drop_inventory(tmp);
             } else {
-                uint64 new_nrof = (uint64)tmp->nrof*op->level;
+                uint64_t new_nrof = (uint64_t)tmp->nrof*op->level;
 
                 if (new_nrof >= 1UL<<31)
                     new_nrof = 1UL<<31;

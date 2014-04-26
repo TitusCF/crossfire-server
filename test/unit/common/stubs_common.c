@@ -9,11 +9,11 @@
 void apply_auto_fix(mapstruct *m) {
 }
 
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt) {
+void draw_ext_info(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *txt) {
     fprintf(logfile, "%s\n", txt);
 }
 
-void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *format, ...) {
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *format, ...) {
     va_list ap;
 
     va_start(ap, format);
@@ -21,7 +21,7 @@ void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint
     va_end(ap);
 }
 
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1) {
+void ext_info_map(int color, const mapstruct *map, uint8_t type, uint8_t subtype, const char *str1) {
     fprintf(logfile, "ext_info_map: %s\n", str1);
 }
 

@@ -67,13 +67,13 @@ typedef struct treasurestruct {
     struct treasurestruct *next_yes;    /**< If this item was generated, use this link instead of ->next */
     struct treasurestruct *next_no;     /**< If this item was not generated, then continue here */
     struct _change_arch change_arch;    /**< Override default arch values if set in treasure list */
-    uint8 chance;                       /**< Percent chance for this item */
-    uint8 magic;                        /**< Max magic bonus to item
+    uint8_t chance;                       /**< Percent chance for this item */
+    uint8_t magic;                        /**< Max magic bonus to item
                                          * If the entry is a list transition,
                                          * 'magic' contains the difficulty
                                          * required to go to the new list
                                          */
-    uint16 nrof;                        /**< random 1 to nrof items are generated */
+    uint16_t nrof;                        /**< random 1 to nrof items are generated */
 } treasure;
 
 /**
@@ -81,7 +81,7 @@ typedef struct treasurestruct {
  */
 typedef struct treasureliststruct {
     const char *name;                   /**< Usually monster-name/combination */
-    sint16 total_chance;                /**< If non-zero, only 1 item on this
+    int16_t total_chance;                /**< If non-zero, only 1 item on this
                                          * list should be generated.  The
                                          * total_chance contains the sum of
                                          * the chance for this list.

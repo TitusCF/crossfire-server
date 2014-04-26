@@ -124,7 +124,7 @@ void send_spell_paths(socket_struct *ns, char *params) {
 void send_exp_table(socket_struct *ns, char *params) {
     SockList sl;
     int i;
-    extern sint64 *levels;
+    extern int64_t *levels;
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "replyinfo exp_table\n");

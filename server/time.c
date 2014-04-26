@@ -225,8 +225,8 @@ static int generate_monster_arch(object *gen) {
  * generator.
  */
 static void generate_monster(object *gen) {
-    sint8 children, max_children;
-    sint8 x, y;
+    int8_t children, max_children;
+    int8_t x, y;
     const char *code, *value;
     int did_gen = 0;
 
@@ -235,7 +235,7 @@ static void generate_monster(object *gen) {
 
     value = object_get_value(gen, "generator_max_map");
     if (value) {
-        max_children = (sint8)strtol(value, NULL, 10);
+        max_children = (int8_t)strtol(value, NULL, 10);
         if (max_children < 1)
             return;
         code = object_get_value(gen, "generator_code");
@@ -333,7 +333,7 @@ static void remove_force(object *op) {
             object *pl = object_get_player_container(op);
 
             object_remove(inv);
-            inv->weight = (inv->nrof ? (sint32)(op->env->weight/inv->nrof) : op->env->weight);
+            inv->weight = (inv->nrof ? (int32_t)(op->env->weight/inv->nrof) : op->env->weight);
             if (op->env->env) {
                 object_insert_in_ob(inv, op->env->env);
                 if (pl) {
@@ -673,7 +673,7 @@ void move_firewall(object *op) {
  */
 void move_player_mover(object *op) {
     int dir = op->stats.sp;
-    sint16 nx, ny;
+    int16_t nx, ny;
     mapstruct *m;
 
     if (!op->map) {

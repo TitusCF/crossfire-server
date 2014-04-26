@@ -435,7 +435,7 @@ void esrv_update_item(int flags, object *pl, object *op) {
         SockList_AddInt(&sl, query_flags(op));
 
     if (flags&UPD_WEIGHT) {
-        sint32 weight = WEIGHT(op);
+        int32_t weight = WEIGHT(op);
 
         /* TRANSPORTS are odd - they sort of look like containers,
          * yet can't be picked up.  So we don't to send the weight,
@@ -625,7 +625,7 @@ void examine_cmd(char *buf, int len, player *pl) {
 
 /** Client wants to apply some object.  Lets do so. */
 void apply_cmd(char *buf, int len, player *pl) {
-    uint32 tag;
+    uint32_t tag;
     object *op;
 
     if (!buf || len <= 0) {
@@ -664,7 +664,7 @@ void apply_cmd(char *buf, int len, player *pl) {
 }
 
 /** Client wants to apply some object.  Lets do so. */
-void lock_item_cmd(uint8 *data, int len, player *pl) {
+void lock_item_cmd(uint8_t *data, int len, player *pl) {
     int flag, tag;
     object *op;
     object *tmp;
@@ -716,7 +716,7 @@ void lock_item_cmd(uint8 *data, int len, player *pl) {
  * @param pl
  * player.
  */
-void mark_item_cmd(uint8 *data, int len, player *pl) {
+void mark_item_cmd(uint8_t *data, int len, player *pl) {
     int tag;
     object *op;
     char name[MAX_BUF];
@@ -750,7 +750,7 @@ void mark_item_cmd(uint8 *data, int len, player *pl) {
 void look_at(object *op, int dx, int dy) {
     object *tmp;
     int flag = 0;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
     char name[MAX_BUF];
 
@@ -919,8 +919,8 @@ void inscribe_scroll_cmd(char *buf, int len, player *pl) {
             LOG(llevDebug, "Player %s sent an invalid inscribe command.\n", pl->ob->name);
             return;
         }
-        tscroll = GetInt_String((uint8 *)buf+1);
-        tspell = GetInt_String((uint8 *)buf+5);
+        tscroll = GetInt_String((uint8_t *)buf+1);
+        tspell = GetInt_String((uint8_t *)buf+5);
 
         scroll = esrv_get_ob_from_count(pl->ob, tscroll);
         if (!scroll) {

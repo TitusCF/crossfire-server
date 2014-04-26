@@ -119,7 +119,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         /* player is trying to board a transport */
         int pc = 0, p_limit;
         const char *kv;
-        sint16 ox, oy;
+        int16_t ox, oy;
 
         if (aflags&AP_UNAPPLY)
             return 1;

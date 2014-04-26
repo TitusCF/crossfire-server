@@ -73,9 +73,9 @@ typedef enum unapplymode {
  */
 typedef struct client_spell {
     object *spell;              /**< Spell object this structure is about. */
-    sint16 last_sp;             /**< Last spell cost. */
-    sint16 last_grace;          /**< Last grace cost. */
-    sint16 last_dam;            /**< Last damage. */
+    int16_t last_sp;             /**< Last spell cost. */
+    int16_t last_grace;          /**< Last grace cost. */
+    int16_t last_dam;            /**< Last damage. */
     struct client_spell *next;  /**< Next spell information. */
 } client_spell;
 
@@ -95,7 +95,7 @@ typedef struct pl {
                                          * @ref page_connection "the login process" for a description of its use. */
     char        maplevel[MAX_BUF];      /**< On which level is the player? */
     char        savebed_map[MAX_BUF];   /**< Map where player will respawn after death. */
-    sint16      bed_x, bed_y;           /**< x,y - coordinates of respawn (savebed). */
+    int16_t      bed_x, bed_y;           /**< x,y - coordinates of respawn (savebed). */
     rangetype   shoottype;              /**< Which range-attack is being used by player. */
     char        spellparam[MAX_BUF];    /**< What param to add to spells. */
     bowtype_t   bowtype;                /**< Which firemode? */
@@ -103,47 +103,47 @@ typedef struct pl {
     object      *ranges[range_size];    /**< Object for each range.  Set up in fix_object().  Note
                                          * That not all are used, it is just nice to map this 1:1
                                          * With the range names. */
-    uint32      golem_count;            /**< To track the golem. */
+    uint32_t      golem_count;            /**< To track the golem. */
     usekeytype  usekeys;                /**< Method for finding keys for doors. */
     unapplymode unapply;                /**< Method for auto unapply. */
-    uint32      count;                  /**< Any numbers typed before a command. */
-    uint32      mode;                   /**< Mode of player for pickup. */
+    uint32_t      count;                  /**< Any numbers typed before a command. */
+    uint32_t      mode;                   /**< Mode of player for pickup. */
 
-    sint16      digestion;              /**< Any bonuses/penalties to digestion. */
-    sint16      gen_hp;                 /**< Bonuses to regeneration speed of hp. */
-    sint16      gen_sp;                 /**< Bonuses to regeneration speed of sp. */
-    sint16      gen_sp_armour;          /**< Penalty to sp regen from armour. */
-    sint16      gen_grace;              /**< Bonuses to regeneration speed of grace. */
-    sint16      item_power;             /**< Total item power of objects equipped. */
-    uint8       state;                  /**< Input state of the player (name, password, etc). See the page on
+    int16_t      digestion;              /**< Any bonuses/penalties to digestion. */
+    int16_t      gen_hp;                 /**< Bonuses to regeneration speed of hp. */
+    int16_t      gen_sp;                 /**< Bonuses to regeneration speed of sp. */
+    int16_t      gen_sp_armour;          /**< Penalty to sp regen from armour. */
+    int16_t      gen_grace;              /**< Bonuses to regeneration speed of grace. */
+    int16_t      item_power;             /**< Total item power of objects equipped. */
+    uint8_t       state;                  /**< Input state of the player (name, password, etc). See the page on
                                          * @ref page_connection "the login process" for a description of its use. */
-    uint8       listening;              /**< Which priority will be used in info_all. */
-    sint8       last_level;             /**< Last level we sent to client. */
+    uint8_t       listening;              /**< Which priority will be used in info_all. */
+    int8_t       last_level;             /**< Last level we sent to client. */
 
     /* Try to put all the bitfields together - saves some small amount of memory */
-    uint32      braced:1;            /**< Will not move if braced, only attack. */
-    uint32      tmp_invis:1;         /**< Will invis go away when we attack? */
-    uint32      do_los:1;            /**< If true, need to call update_los() in draw(), and clear. */
-    uint32      fire_on:1;           /**< Player should fire object, not move. */
-    uint32      run_on:1;            /**< Player should keep moving in dir until run is off. */
-    uint32      has_hit:1;           /**< If set, weapon_sp instead of speed will count. */
-    uint32      name_changed:1;      /**< If true, the player has set a name. */
-    uint32      peaceful:1;          /**< If set, won't attack friendly creatures. */
-    uint32      hidden:1;            /**< If True, player (DM) is hidden from view. */
-    uint32      no_shout:1;          /**< if True, player is *not *able to use shout command. */
-    uint32      has_directory:1;     /**< If 0, the player was not yet saved, its directory doesn't exist. */
+    uint32_t      braced:1;            /**< Will not move if braced, only attack. */
+    uint32_t      tmp_invis:1;         /**< Will invis go away when we attack? */
+    uint32_t      do_los:1;            /**< If true, need to call update_los() in draw(), and clear. */
+    uint32_t      fire_on:1;           /**< Player should fire object, not move. */
+    uint32_t      run_on:1;            /**< Player should keep moving in dir until run is off. */
+    uint32_t      has_hit:1;           /**< If set, weapon_sp instead of speed will count. */
+    uint32_t      name_changed:1;      /**< If true, the player has set a name. */
+    uint32_t      peaceful:1;          /**< If set, won't attack friendly creatures. */
+    uint32_t      hidden:1;            /**< If True, player (DM) is hidden from view. */
+    uint32_t      no_shout:1;          /**< if True, player is *not *able to use shout command. */
+    uint32_t      has_directory:1;     /**< If 0, the player was not yet saved, its directory doesn't exist. */
     const char  *invis_race;         /**< What race invisible to? */
 
     object      *last_skill_ob[NUM_SKILLS];     /**< Exp objects sent to client. */
-    sint64      last_skill_exp[NUM_SKILLS];     /**< Last exp sent to client. If != exp. obj update client. */
+    int64_t      last_skill_exp[NUM_SKILLS];     /**< Last exp sent to client. If != exp. obj update client. */
 
     float       last_weapon_sp;      /**< if diff than weapon_sp, update client. */
-    uint16      last_flags;          /**< Fire/run on flags for last tick. */
-    sint32      last_weight;         /**< Last weight as sent to client; -1 means do not send weight. */
-    sint32      last_weight_limit;   /**< Last weight limit transmitted to client. */
-    uint32      last_path_attuned;   /**< Last spell attunment sent to client. */
-    uint32      last_path_repelled;  /**< Last spell repelled sent to client. */
-    uint32      last_path_denied;    /**< Last spell denied sent to client. */
+    uint16_t      last_flags;          /**< Fire/run on flags for last tick. */
+    int32_t      last_weight;         /**< Last weight as sent to client; -1 means do not send weight. */
+    int32_t      last_weight_limit;   /**< Last weight limit transmitted to client. */
+    uint32_t      last_path_attuned;   /**< Last spell attunment sent to client. */
+    uint32_t      last_path_repelled;  /**< Last spell repelled sent to client. */
+    uint32_t      last_path_denied;    /**< Last spell denied sent to client. */
     int         swap_first;          /**< First stat player has selected to swap. */
     living      orig_stats;          /**< Permanent real stats of player. */
     living      last_stats;          /**< Last stats as sent to client. */
@@ -152,11 +152,11 @@ typedef struct pl {
     living      applied_stats;       /**< Stat changes due to gear or skills. */
     living      last_applied_stats;  /**< Last applied stats sent to the client. */
     float       last_speed;          /**< Last speed as sent to client. */
-    sint16      last_resist[NROFATTACKS];       /**< last resist values sent to client. */
-    sint16      last_golem_hp;       /**< Last golem hp value sent to the client. */
-    sint16      last_golem_maxhp;    /**< Last golem max hp value sent to the client. */
+    int16_t      last_resist[NROFATTACKS];       /**< last resist values sent to client. */
+    int16_t      last_golem_hp;       /**< Last golem hp value sent to the client. */
+    int16_t      last_golem_maxhp;    /**< Last golem max hp value sent to the client. */
     object      *ob;                 /**< The object representing the player. */
-    sint8       blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y]; /**< Array showing what spaces
+    int8_t       blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y]; /**< Array showing what spaces
                                                           * the player can see.  For maps smaller than
                                                           * MAP_CLIENT_.., the upper left is used. */
 
@@ -164,9 +164,9 @@ typedef struct pl {
                                       * Note that for dragon players, this is filled in for them. */
     char        title[BIG_NAME];     /**< Default title, like fighter, wizard, etc. */
 
-    sint8       levhp[11];           /**< What hp bonus the player gained on that level. */
-    sint8       levsp[11];           /**< What sp bonus the player gained on that level. */
-    sint8       levgrace[11];        /**< What grace bonus the player gained on that level. */
+    int8_t       levhp[11];           /**< What hp bonus the player gained on that level. */
+    int8_t       levsp[11];           /**< What sp bonus the player gained on that level. */
+    int8_t       levgrace[11];        /**< What grace bonus the player gained on that level. */
 
     char        killer[BIG_NAME];    /**< Who killed this player. */
     char        last_tell[MAX_NAME]; /**< last player that told you something [mids 01/14/2002]. */
@@ -176,12 +176,12 @@ typedef struct pl {
     char        password[16];        /**< 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
     char        new_password[16];    /**< 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
 
-    sint16      encumbrance;         /**< How much our player is encumbered. */
+    int16_t      encumbrance;         /**< How much our player is encumbered. */
 #ifdef SAVE_INTERVAL
     time_t      last_save_time;      /**< Last time the player was saved. */
 #endif /* SAVE_INTERVAL */
 #ifdef AUTOSAVE
-    uint32      last_save_tick;      /**< Last tick the player was saved. */
+    uint32_t      last_save_tick;      /**< Last tick the player was saved. */
 #endif
     partylist   *party;              /**< Party this player is part of. */
     partylist   *party_to_join;      /**< Used when player wants to join a party
@@ -190,7 +190,7 @@ typedef struct pl {
                                       * join. */
     party_rejoin_mode rejoin_party;  /**< Whether to rejoin or not party at login. */
     char        search_str[MAX_BUF]; /**< Item we are looking for. */
-    uint32      mark_count;          /**< Count of marked object. */
+    uint32_t      mark_count;          /**< Count of marked object. */
     object      *mark;               /**< Marked object. */
     object      *transport;          /**< Transport the player is in. */
     client_spell *spell_state;       /**< Spell information sent to client. */
@@ -200,7 +200,7 @@ typedef struct pl {
     int         stack_position;      /**< Current stack position, 0 for no item. */
     int         language;            /**< The language the player wishes to use. */
     const char  *unarmed_skill;      /**< Prefered skill to use in unarmed combat */
-    uint32      ticks_played;        /**< How many ticks this player has played */
+    uint32_t      ticks_played;        /**< How many ticks this player has played */
 } player;
 
 /**

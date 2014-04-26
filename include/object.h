@@ -9,7 +9,7 @@
 #define OBJECT_H
 
 /** Object tag, unique during the whole game. */
-typedef uint32 tag_t;
+typedef uint32_t tag_t;
 #define NUM_BODY_LOCATIONS      13  /**< Number of body locations. */
 #define BODY_ARMS               1   /**< This should be the index of the arms. */
 
@@ -159,54 +159,54 @@ typedef struct obj {
     const char  *lore;          /**< Obscure information about this object,
                                  * to get put into books and the like. */
 
-    sint16      x, y;           /**< Position in the map for this object */
-    sint16      ox, oy;         /**< For debugging: Where it was last inserted */
+    int16_t      x, y;           /**< Position in the map for this object */
+    int16_t      ox, oy;         /**< For debugging: Where it was last inserted */
     float       speed;          /**< The overall speed of this object */
     float       speed_left;     /**< How much speed is left to spend this round */
     float       weapon_speed;   /**< The overall speed of this object */
     float       weapon_speed_left; /**< How much speed is left to spend this round */
     const New_Face    *face;    /**< Face with colors */
-    uint32      nrof;           /**< How many of the objects */
-    sint8       direction;      /**< Means the object is moving that way. */
-    sint8       facing;         /**< Object is oriented/facing that way. */
+    uint32_t      nrof;           /**< How many of the objects */
+    int8_t       direction;      /**< Means the object is moving that way. */
+    int8_t       facing;         /**< Object is oriented/facing that way. */
 
     /* This next big block are basically used for monsters and equipment */
-    uint8       type;           /**< PLAYER, BULLET, etc.  See define.h */
-    uint8       subtype;        /**< Subtype of object */
-    uint16      client_type;    /**< Public type information.  see doc/Developers/objects */
-    sint16      resist[NROFATTACKS]; /**< Resistance adjustments for attacks */
-    uint32      attacktype;     /**< Bitmask of attacks this object does */
-    uint32      path_attuned;   /**< Paths the object is attuned to */
-    uint32      path_repelled;  /**< Paths the object is repelled from */
-    uint32      path_denied;    /**< Paths the object is denied access to */
+    uint8_t       type;           /**< PLAYER, BULLET, etc.  See define.h */
+    uint8_t       subtype;        /**< Subtype of object */
+    uint16_t      client_type;    /**< Public type information.  see doc/Developers/objects */
+    int16_t      resist[NROFATTACKS]; /**< Resistance adjustments for attacks */
+    uint32_t      attacktype;     /**< Bitmask of attacks this object does */
+    uint32_t      path_attuned;   /**< Paths the object is attuned to */
+    uint32_t      path_repelled;  /**< Paths the object is repelled from */
+    uint32_t      path_denied;    /**< Paths the object is denied access to */
     const char  *materialname;  /**< Specific material name */
-    uint16      material;       /**< What materials this object consist of */
-    sint8       magic;          /**< Any magical bonuses to this item */
-    uint8       state;          /**< How the object was last drawn (animation) */
-    sint32      value;          /**< How much money it is worth (or contains) */
-    sint16      level;          /**< Level of creature or object */
+    uint16_t      material;       /**< What materials this object consist of */
+    int8_t       magic;          /**< Any magical bonuses to this item */
+    uint8_t       state;          /**< How the object was last drawn (animation) */
+    int32_t      value;          /**< How much money it is worth (or contains) */
+    int16_t      level;          /**< Level of creature or object */
 
     /* Note that the last_.. values are sometimes used for non obvious
      * meanings by some objects, eg, sp penalty, permanent exp.
      */
-    sint32      last_eat;       /**< How long since we last ate */
-    sint32      last_heal;      /**< Last healed. Depends on constitution */
-    sint32      last_sp;        /**< As last_heal, but for spell points */
-    sint16      last_grace;     /**< As last_sp, except for grace */
-    sint16      invisible;      /**< How much longer the object will be invis */
-    uint8       pick_up;        /**< See crossfire.doc */
-    sint8       item_power;     /**< Power rating of the object */
-    sint8       gen_sp_armour;  /**< Sp regen penalty this object has (was last_heal)*/
-    sint8       glow_radius;    /**< indicates the glow radius of the object */
-    sint32      weight;         /**< Attributes of the object */
-    sint32      weight_limit;   /**< Weight-limit of object */
-    sint32      carrying;       /**< How much weight this object contains */
+    int32_t      last_eat;       /**< How long since we last ate */
+    int32_t      last_heal;      /**< Last healed. Depends on constitution */
+    int32_t      last_sp;        /**< As last_heal, but for spell points */
+    int16_t      last_grace;     /**< As last_sp, except for grace */
+    int16_t      invisible;      /**< How much longer the object will be invis */
+    uint8_t       pick_up;        /**< See crossfire.doc */
+    int8_t       item_power;     /**< Power rating of the object */
+    int8_t       gen_sp_armour;  /**< Sp regen penalty this object has (was last_heal)*/
+    int8_t       glow_radius;    /**< indicates the glow radius of the object */
+    int32_t      weight;         /**< Attributes of the object */
+    int32_t      weight_limit;   /**< Weight-limit of object */
+    int32_t      carrying;       /**< How much weight this object contains */
     living      stats;          /**< Str, Con, Dex, etc */
-    sint64      perm_exp;       /**< Permanent exp */
+    int64_t      perm_exp;       /**< Permanent exp */
     struct obj  *current_weapon; /**< Pointer to the weapon currently used */
-    uint32      weapontype;     /**< Type of weapon */
-    sint8       body_info[NUM_BODY_LOCATIONS];  /**< Body info as loaded from the file */
-    sint8       body_used[NUM_BODY_LOCATIONS];  /**< Calculated value based on items equipped */
+    uint32_t      weapontype;     /**< Type of weapon */
+    int8_t       body_info[NUM_BODY_LOCATIONS];  /**< Body info as loaded from the file */
+    int8_t       body_used[NUM_BODY_LOCATIONS];  /**< Calculated value based on items equipped */
                                 /* See the doc/Developers/objects for more info about body locations */
 
     /* Following mostly refers to fields only used for monsters */
@@ -217,16 +217,16 @@ typedef struct obj {
     struct obj  *enemy;         /**< Monster/player to follow even if not closest */
     struct obj  *attacked_by;   /**< This object start to attack us! only player & monster */
     tag_t       attacked_by_count; /**< The tag of attacker, so we can be sure */
-    uint8       run_away;          /**< Monster runs away if it's hp goes below this percentage. */
+    uint8_t       run_away;          /**< Monster runs away if it's hp goes below this percentage. */
     struct treasureliststruct *randomitems; /**< Items to be generated */
     struct obj  *chosen_skill;  /**< The skill chosen to use */
-    uint8      hide;           /**< The object is hidden, not invisible */
+    uint8_t      hide;           /**< The object is hidden, not invisible */
     /* changes made by kholland@sunlab.cit.cornell.edu */
     /* allows different movement patterns for attackers */
-    sint32      move_status;    /**< What stage in attack mode */
-    uint16      attack_movement;/**< What kind of attack movement */
-    uint8       will_apply;     /**< See crossfire.doc and @ref WILL_APPLY_xxx */
-    sint8       sound_chance;   /**< Probability, 0 to 100, of the object emitting a sound. */
+    int32_t      move_status;    /**< What stage in attack mode */
+    uint16_t      attack_movement;/**< What kind of attack movement */
+    uint8_t       will_apply;     /**< See crossfire.doc and @ref WILL_APPLY_xxx */
+    int8_t       sound_chance;   /**< Probability, 0 to 100, of the object emitting a sound. */
     struct obj  *spellitem;     /**< Spell ability monster is choosing to use */
     double      expmul;         /**< needed experience = (calc_exp*expmul) - means some
                                  * races/classes can need less/more exp to gain levels */
@@ -235,12 +235,12 @@ typedef struct obj {
      * Note that other fields are used - these files are basically
      * only used in spells.
      */
-    sint16      casting_time;   /**< Time left before spell goes off */
-    sint16      duration;       /**< How long the spell lasts */
-    uint8       duration_modifier; /**< how level modifies duration */
-    sint8       range;          /**< Range of the spell */
-    uint8       range_modifier; /**< How going up in level effects range  */
-    uint8       dam_modifier;   /**< How going up in level effects damage */
+    int16_t      casting_time;   /**< Time left before spell goes off */
+    int16_t      duration;       /**< How long the spell lasts */
+    uint8_t       duration_modifier; /**< how level modifies duration */
+    int8_t       range;          /**< Range of the spell */
+    uint8_t       range_modifier; /**< How going up in level effects range  */
+    uint8_t       dam_modifier;   /**< How going up in level effects damage */
     struct obj  *spell;         /**< Spell that was being cast */
     char        *spellarg;      /**< Optional argument when casting obj::spell. */
 
@@ -248,14 +248,14 @@ typedef struct obj {
     struct archt *arch;         /**< Pointer to archetype */
     struct archt *other_arch;   /**< Pointer used for various things - mostly used for what
                                  * this objects turns into or what this object creates */
-    uint32      flags[4];       /**< Various flags */
-    uint16      animation_id;   /**< An index into the animation array */
-    uint8       anim_speed;     /**< Ticks between animation-frames */
-    uint8       last_anim;      /**< Last sequence used to draw face */
-    uint16      temp_animation_id; /**< An index into the temporary animation array */
-    uint8       temp_anim_speed; /**< Ticks between temporary animation-frames */
-    uint8       smoothlevel;    /**< how to smooth this square around*/
-    uint8       map_layer;      /**< What level to draw this on the map */
+    uint32_t      flags[4];       /**< Various flags */
+    uint16_t      animation_id;   /**< An index into the animation array */
+    uint8_t       anim_speed;     /**< Ticks between animation-frames */
+    uint8_t       last_anim;      /**< Last sequence used to draw face */
+    uint16_t      temp_animation_id; /**< An index into the temporary animation array */
+    uint8_t       temp_anim_speed; /**< Ticks between temporary animation-frames */
+    uint8_t       smoothlevel;    /**< how to smooth this square around*/
+    uint8_t       map_layer;      /**< What level to draw this on the map */
 
     MoveType    move_type;      /**< Type of movement this object uses */
     MoveType    move_block;     /**< What movement types this blocks */
@@ -268,7 +268,7 @@ typedef struct obj {
     const char  *custom_name;   /**< Custom name assigned by player */
     key_value   *key_values;    /**< Fields not explictly known by the loader. */
 
-    sint16      *discrete_damage; /**< damage values, based on each attacktype. */
+    int16_t      *discrete_damage; /**< damage values, based on each attacktype. */
     tag_t       *spell_tags;      /**< Tags used for spell effect merging. */
 } object;
 
@@ -304,7 +304,7 @@ typedef struct archt {
     struct archt *head;     /**< The main part of a linked object */
     struct archt *more;     /**< Next part of a linked object */
     object clone;           /**< An object from which to do object_copy() */
-    sint8 tail_x, tail_y;   /**< Where the lower right most portion of the object is
+    int8_t tail_x, tail_y;   /**< Where the lower right most portion of the object is
                              * in comparison to the head. */
     int reference_count;    /**< How many times this temporary archetype is used. If 0, "permanent" archetype. */
 } archetype;

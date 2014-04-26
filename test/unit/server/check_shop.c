@@ -47,7 +47,7 @@ START_TEST(test_query_cost) {
     object *tosell, *player;
     int map_reset_time, player_charisma, arch;
     mapstruct* map;
-    uint64 cost;
+    uint64_t cost;
     static const char *sell_archs[] = { "fl_corpse", "Pdragon_mail", NULL };
 
     player = arch_to_object(find_archetype("dwarf_player"));

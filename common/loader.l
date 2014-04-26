@@ -1,36 +1,20 @@
 %{
 /*
- * static char *rcsid_object_c =
- *   "$Id$";
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2014 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
-
-/*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
 
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
    object_sub/add_weight will transcend the environment updating the carrying
    variable. */
-
 
 #include <global.h>
 #include <loader.h>
@@ -306,7 +290,7 @@ const char *const spell_mapping[] = {
  */
 static void set_damage(object *op, int type, int val) {
     if (!op->discrete_damage) {
-        op->discrete_damage = calloc(1, sizeof(sint16)*NROFATTACKS);
+        op->discrete_damage = calloc(1, sizeof(int16_t) * NROFATTACKS);
     }
     op->discrete_damage[type] = val;
 }

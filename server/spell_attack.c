@@ -217,7 +217,7 @@ void check_bullet(object *op) {
     tag_t op_tag = op->count, tmp_tag;
     int dam, mflags;
     mapstruct *m;
-    sint16 sx, sy;
+    int16_t sx, sy;
 
     mflags = get_map_flags(op->map, &m, op->x, op->y, &sx, &sy);
 
@@ -297,7 +297,7 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
     object *tmp;
     int i, success = 0, range_min = -1, range_max = 1;
     mapstruct *m;
-    sint16 sx, sy;
+    int16_t sx, sy;
     MoveType movetype;
 
     if (!spell->other_arch)
@@ -320,7 +320,7 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
     movetype = spell->other_arch->clone.move_type;
 
     for (i = range_min; i <= range_max; i++) {
-        sint16 x, y, d;
+        int16_t x, y, d;
 
         /* We can't use absdir here, because it never returns
          * 0.  If this is a rune, we want to hit the person on top
@@ -446,7 +446,7 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
 int create_bomb(object *op, object *caster, int dir, object *spell) {
     object *tmp;
     int mflags;
-    sint16 dx = op->x+freearr_x[dir], dy = op->y+freearr_y[dir];
+    int16_t dx = op->x+freearr_x[dir], dy = op->y+freearr_y[dir];
     mapstruct *m;
 
     mflags = get_map_flags(op->map, &m, dx, dy, &dx, &dy);
@@ -494,7 +494,7 @@ int create_bomb(object *op, object *caster, int dir, object *spell) {
  */
 static object *get_pointed_target(object *op, int dir, int range, int type) {
     object *target;
-    sint16 x, y;
+    int16_t x, y;
     int dist, mflags;
     mapstruct *mp;
 
@@ -705,7 +705,7 @@ static int make_object_glow(object *op, int radius, int time) {
  */
 int cast_destruction(object *op, object *caster, object *spell_ob) {
     int i, j, range, mflags, friendly = 0, dam, dur;
-    sint16 sx, sy;
+    int16_t sx, sy;
     mapstruct *m;
     object *tmp;
     const char *skill;
@@ -902,7 +902,7 @@ int mood_change(object *op, object *caster, object *spell) {
     object *tmp, *head;
     const object *god;
     int done_one, range, mflags, level, at, best_at, immunity_chance = 50;
-    sint16 x, y, nx, ny;
+    int16_t x, y, nx, ny;
     mapstruct *m;
     const char *race;
 
@@ -1128,7 +1128,7 @@ int fire_swarm(object *op, object *caster, object *spell, int dir) {
  */
 int cast_light(object *op, object *caster, object *spell, int dir) {
     object *target = NULL, *tmp = NULL;
-    sint16 x, y;
+    int16_t x, y;
     int dam, mflags;
     mapstruct *m;
 
@@ -1198,7 +1198,7 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
  * at least one living was affected.
  */
 int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
-    sint16 x, y;
+    int16_t x, y;
     int i, mflags, range, dam_mod, dur_mod;
     object *target_head;
     mapstruct *m;

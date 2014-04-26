@@ -138,7 +138,7 @@ extern int skill_faces[NUM_SKILLS];
  * skill numbers above.
  * This should probably be removed and made a player preferance instead.
  */
-static uint8 unarmed_skills[] = {
+static uint8_t unarmed_skills[] = {
     SK_KARATE,
     SK_CLAWING,
     SK_FLAME_TOUCH,

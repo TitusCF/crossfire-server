@@ -212,7 +212,7 @@ int save_player(object *op, int flag) {
     int i, wiz = QUERY_FLAG(op, FLAG_WIZ);
     long checksum;
 #ifdef BACKUP_SAVE_AT_HOME
-    sint16 backup_x, backup_y;
+    int16_t backup_x, backup_y;
 #endif
 
     if (!op->stats.exp)
@@ -493,7 +493,7 @@ void check_login(object *op, int check_pass) {
     char filename[MAX_BUF];
     char buf[MAX_BUF], bufall[MAX_BUF];
     int i, value;
-    uint32 uvalue;
+    uint32_t uvalue;
     player *pl = op->contr, *pltmp;
     int correct = 0;
     time_t elapsed_save_time = 0;

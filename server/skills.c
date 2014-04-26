@@ -273,7 +273,7 @@ static int attempt_steal(object *op, object *who, object *skill) {
  */
 int steal(object *op, int dir, object *skill) {
     object *tmp;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
     int mflags;
 
@@ -546,7 +546,7 @@ static void stop_jump(object *pl) {
  */
 static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
     int i, dx = freearr_x[dir], dy = freearr_y[dir], mflags;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
 
     /* Jump loop. Go through spaces opject wants to jump. Halt the
@@ -849,8 +849,8 @@ static int do_skill_ident(object *pl, int obj_class, object *skill) {
     }
 
     for (i = 0; i < area; i++) {
-        sint16 x = pl->x+freearr_x[i];
-        sint16 y = pl->y+freearr_y[i];
+        int16_t x = pl->x+freearr_x[i];
+        int16_t y = pl->y+freearr_y[i];
         mapstruct *m = pl->map;
         int mflags;
 
@@ -948,7 +948,7 @@ int skill_ident(object *pl, object *skill) {
  * check if can't be simplified, code looks duplicated.
  */
 int use_oratory(object *pl, int dir, object *skill) {
-    sint16 x = pl->x+freearr_x[dir], y = pl->y+freearr_y[dir];
+    int16_t x = pl->x+freearr_x[dir], y = pl->y+freearr_y[dir];
     int mflags, chance;
     object *tmp;
     mapstruct *m;
@@ -1044,7 +1044,7 @@ int use_oratory(object *pl, int dir, object *skill) {
 
     /* Ok, got a 'sucker' lets try to make them a follower */
     if (chance > 0 && tmp->level < random_roll(0, chance-1, pl, PREFER_HIGH)-1) {
-        sint64 exp;
+        int64_t exp;
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                              "You convince the %s to become your follower.",
@@ -1105,7 +1105,7 @@ int singing(object *pl, int dir, object *skill) {
     int i, exp = 0, chance, mflags;
     object *tmp;
     mapstruct *m;
-    sint16  x, y;
+    int16_t  x, y;
     char name[MAX_BUF];
     const char *value;
 
@@ -1196,7 +1196,7 @@ int singing(object *pl, int dir, object *skill) {
  */
 int find_traps(object *pl, object *skill) {
     int i, expsum = 0, mflags;
-    sint16 x, y;
+    int16_t x, y;
     mapstruct *m;
 
     /* First we search all around us for runes and traps, which are
@@ -1268,7 +1268,7 @@ int find_traps(object *pl, object *skill) {
 int remove_trap(object *op, object *skill) {
     int i, success = 0, mflags;
     mapstruct *m;
-    sint16 x, y;
+    int16_t x, y;
 
     for (i = 0; i < 9; i++) {
         x = op->x+freearr_x[i];
@@ -1948,7 +1948,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     int pause_f, weight_f = 0, mflags;
     float str_factor = 1.0, load_factor = 1.0, item_factor = 1.0;
     mapstruct *m;
-    sint16  sx, sy;
+    int16_t  sx, sy;
     tag_t tag;
     char name[MAX_BUF];
 

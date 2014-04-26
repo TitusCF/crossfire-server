@@ -274,7 +274,7 @@ static void malloc_info(object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
                          i18n(op, "[fixed]%4d animations:      %8d"),
-                         anims, i = (anims*sizeof(uint16)));
+                         anims, i = (anims*sizeof(uint16_t)));
 
     sum_alloc += i;
     sum_used += i;
@@ -479,7 +479,7 @@ static int name_cmp(const chars_names *c1, const chars_names *c2) {
  */
 void list_players(object *op, region *reg, partylist *party) {
     player *pl;
-    uint16 i;
+    uint16_t i;
     char *format;
     int num_players = 0, num_wiz = 0, num_afk = 0, num_bot = 0;
     chars_names *chars = NULL;
@@ -1040,8 +1040,8 @@ void command_listen(object *op, const char *params) {
  */
 void command_statistics(object *pl, const char *params) {
     char buf[MAX_BUF];
-    uint32 hours, minutes;
-    uint64 seconds; /* 64 bit to prevent overflows an intermediate results */
+    uint32_t hours, minutes;
+    uint64_t seconds; /* 64 bit to prevent overflows an intermediate results */
 
     if (!pl->contr)
         return;
@@ -1092,8 +1092,8 @@ void command_statistics(object *pl, const char *params) {
      * the time estimates use the current value.  But I'm presuming that
      * max_time won't change very often.  MSW 2009-12-01
      */
-    seconds = (uint64)pl->contr->ticks_played * (uint64)max_time / 1000000;
-    minutes = (uint32)seconds / 60;
+    seconds = (uint64_t)pl->contr->ticks_played * (uint64_t)max_time / 1000000;
+    minutes = (uint32_t)seconds / 60;
     hours = minutes / 60;
     minutes = minutes % 60;
 
@@ -2176,7 +2176,7 @@ void command_passwd(object *pl, const char *params) {
  * skill being used.
  */
 void do_harvest(object *pl, int dir, object *skill) {
-    sint16 x, y;
+    int16_t x, y;
     int count = 0, proba; /* Probability to get the item, 100 based. */
     int level, exp;
     object *found[10]; /* Found items that can be harvested. */
@@ -2270,7 +2270,7 @@ void do_harvest(object *pl, int dir, object *skill) {
 
     /* Check the new item can fit into inventory.
      * Fixes bug #3060474: fishing puts more fishes into inventory than you can carry. */
-    if (((uint32)(pl->weight + pl->carrying + inv->weight)) > get_weight_limit(pl->stats.Str)) {
+    if (((uint32_t)(pl->weight + pl->carrying + inv->weight)) > get_weight_limit(pl->stats.Str)) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You are carrying too much to %s a %s.", skill->slaying, inv->name);
         return;
     }

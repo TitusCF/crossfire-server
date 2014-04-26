@@ -40,7 +40,7 @@ static int compare_ob_value_lists(const object *, const object *);
 static void expand_objects(void);
 static void permute(int *, int, int);
 static int object_set_value_s(object *, const char *, const char *, int);
-static void object_increase_nrof(object *op, uint32 i);
+static void object_increase_nrof(object *op, uint32_t i);
 
 #ifdef MEMORY_DEBUG
 int nroffreeobjects = 0;  /**< Number of free objects. */
@@ -180,7 +180,7 @@ int object_can_merge(object *ob1, object *ob2) {
         return 0;
 
     /* Do not merge objects if nrof would overflow. We use 1UL<<31 since that
-     * value could not be stored in a sint32 (which unfortunately sometimes is
+     * value could not be stored in a int32_t (which unfortunately sometimes is
      * used to store nrof).
      */
     if (ob1->nrof+ob2->nrof >= 1UL<<31)
@@ -901,8 +901,8 @@ void object_copy(const object *src_ob, object *dest_ob) {
     if (dest_ob->materialname != NULL)
         add_refcount(dest_ob->materialname);
     if (dest_ob->discrete_damage != NULL) {
-        dest_ob->discrete_damage = malloc(sizeof(sint16)*NROFATTACKS);
-        memcpy(dest_ob->discrete_damage, src_ob->discrete_damage, sizeof(sint16)*NROFATTACKS);
+        dest_ob->discrete_damage = malloc(sizeof(int16_t)*NROFATTACKS);
+        memcpy(dest_ob->discrete_damage, src_ob->discrete_damage, sizeof(int16_t)*NROFATTACKS);
     }
 
     if (dest_ob->spell_tags != NULL) {
@@ -1650,7 +1650,7 @@ void object_remove(object *op) {
     tag_t tag;
     int check_walk_off;
     mapstruct *m;
-    sint16 x, y;
+    int16_t x, y;
 
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
         StringBuffer *sb;
@@ -1931,7 +1931,7 @@ object *object_insert_in_map_at(object *op, mapstruct *m, object *originator, in
  * @note
  * merge_spell() has been renamed to object_merge_spell()
  */
-void object_merge_spell(object *op, sint16 x, sint16 y) {
+void object_merge_spell(object *op, int16_t x, int16_t y) {
     int i;
 
     /* We try to do some merging of spell objects - if something has same owner,
@@ -2132,7 +2132,7 @@ void object_merge_spell(object *op, sint16 x, sint16 y) {
  */
 object *object_insert_in_map(object *op, mapstruct *m, object *originator, int flag) {
     object *tmp, *top, *floor = NULL;
-    sint16 x, y;
+    int16_t x, y;
 
     if (QUERY_FLAG(op, FLAG_FREED)) {
         LOG(llevError, "Trying to insert freed object!\n");
@@ -2441,7 +2441,7 @@ void object_replace_insert_in_map(const char *arch_string, object *op) {
  * @note
  * get_split_ob() has been renamed to object_split()
  */
-object *object_split(object *orig_ob, uint32 nr, char *err, size_t size) {
+object *object_split(object *orig_ob, uint32_t nr, char *err, size_t size) {
     object *newob;
 
     if (MAX(1, orig_ob->nrof) < nr) {
@@ -2483,7 +2483,7 @@ object *object_split(object *orig_ob, uint32 nr, char *err, size_t size) {
  * @note
  * decrease_ob_nr() has been renamed to object_decrease_nrof()
  */
-object *object_decrease_nrof(object *op, uint32 i) {
+object *object_decrease_nrof(object *op, uint32_t i) {
     object *tmp;
 
     if (i == 0)   /* objects with op->nrof require this check */
@@ -2569,7 +2569,7 @@ object *object_decrease_nrof(object *op, uint32 i) {
  * @param i
  * number to add.
  */
-static void object_increase_nrof(object *op, uint32 i) {
+static void object_increase_nrof(object *op, uint32_t i) {
     object *tmp;
 
     if (i == 0)   /* objects with op->nrof require this check */
@@ -2952,7 +2952,7 @@ object *map_find_by_archetype(mapstruct *m, int x, int y, const archetype *at) {
  * @note
  * present() has been renamed to map_find_by_type()
  */
-object *map_find_by_type(mapstruct *m, int x, int y, uint8 type) {
+object *map_find_by_type(mapstruct *m, int x, int y, uint8_t type) {
     if (out_of_map(m, x, y)) {
         LOG(llevError, "Present called outside map.\n");
         return NULL;
@@ -2979,7 +2979,7 @@ object *map_find_by_type(mapstruct *m, int x, int y, uint8 type) {
  * @note
  * present_in_ob() has been renamed to object_present_in_ob()
  */
-object *object_present_in_ob(uint8 type, const object *op) {
+object *object_present_in_ob(uint8_t type, const object *op) {
     object *tmp;
 
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
@@ -3246,16 +3246,16 @@ int object_find_multi_free_spot_around(const object *ob, const object *gen, int 
  */
 int object_find_multi_free_spot_within_radius(const object *ob, const object *gen, int *hx, int *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
-    sint8 x, y, radius;
+    int8_t x, y, radius;
     int freecount = 0, freecountstop = 0;
     const char *value;
-    sint8 *x_array;
-    sint8 *y_array;
+    int8_t *x_array;
+    int8_t *y_array;
 
     /* If radius is not set, default to 1 */
     value = object_get_value(gen, "generator_radius");
     if (value) {
-        radius = (sint8)strtol(value, NULL, 10);
+        radius = (int8_t)strtol(value, NULL, 10);
         if (radius < 1) {
             radius = 1;
         }
@@ -3300,8 +3300,8 @@ int object_find_multi_free_spot_within_radius(const object *ob, const object *ge
      */
 
     /* Create arrays large enough to hold free space coordinates */
-    x_array = malloc(sx*sy*sizeof(sint8));
-    y_array = malloc(sx*sy*sizeof(sint8));
+    x_array = malloc(sx*sy*sizeof(int8_t));
+    y_array = malloc(sx*sy*sizeof(int8_t));
 
     /*
      * Loop through the area of possible positions for the head of ob object:
@@ -3514,7 +3514,7 @@ void get_search_arr(int *search_arr) {
  */
 int map_find_dir(mapstruct *m, int x, int y, object *exclude) {
     int i, max = SIZEOFFREE, mflags;
-    sint16 nx, ny;
+    int16_t nx, ny;
     mapstruct *mp;
     MoveType blocked, move_type;
 
@@ -3723,7 +3723,7 @@ static const int reduction_dir[SIZEOFFREE][3] = {
  * better document, can't figure what it does :)
  */
 int can_see_monsterP(mapstruct *m, int x, int y, int dir) {
-    sint16 dx, dy;
+    int16_t dx, dy;
     int mflags;
 
     if (dir < 0)
@@ -3787,7 +3787,7 @@ int object_can_pick(const object *who, const object *item) {
         return 0;
 
     /* Weight limit for monsters */
-    if (who->type != PLAYER && ((uint32)(who->weight+who->carrying+item->weight)) > get_weight_limit(who->stats.Str))
+    if (who->type != PLAYER && ((uint32_t)(who->weight+who->carrying+item->weight)) > get_weight_limit(who->stats.Str))
         return 0;
 
     /* Can not pick up multipart objects */

@@ -1595,7 +1595,7 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
      */
     if (! (limit_stats & AC_PLAYER_STAT_NO_CHANGE)) {
         for (i = 0; i < NUM_STATS; i++) {
-            sint8 stat = get_attr_value(&pl->contr->orig_stats, i);
+            int8_t stat = get_attr_value(&pl->contr->orig_stats, i);
             int race_bonus = get_attr_value(&pl->arch->clone.stats, i);
 
             stat += get_attr_value(&change->stats, i);

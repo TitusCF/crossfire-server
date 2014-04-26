@@ -296,15 +296,15 @@ void cf_map_set_string_property(mapstruct *map, int propcode, const char *value)
 }
 
 /* Should get replaced by tons of more explicit wrappers */
-sint16 cf_object_get_resistance(object *op, int rtype) {
+int16_t cf_object_get_resistance(object *op, int rtype) {
     int type;
-    sint16 resist;
+    int16_t resist;
 
     cfapiObject_get_property(&type, op, CFAPI_OBJECT_PROP_RESIST, rtype, &resist);
     assert(type == CFAPI_INT16);
     return resist;
 }
-void cf_object_set_resistance(object *op, int rtype, sint16 value) {
+void cf_object_set_resistance(object *op, int rtype, int16_t value) {
     int type;
 
     cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_RESIST, rtype, value);
@@ -364,9 +364,9 @@ mapstruct *cf_object_get_map_property(object *op, int propcode) {
     assert(type == CFAPI_PMAP);
     return value;
 }
-sint64 cf_object_get_int64_property(object *op, int propcode) {
+int64_t cf_object_get_int64_property(object *op, int propcode) {
     int type;
-    sint64 value;
+    int64_t value;
 
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_SINT64);
@@ -385,7 +385,7 @@ void cf_object_set_float_property(object *op, int propcode, float value) {
     cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_FLOAT);
 }
-void cf_object_set_int64_property(object *op, int propcode, sint64 value) {
+void cf_object_set_int64_property(object *op, int propcode, int64_t value) {
     int type;
 
     cfapiObject_set_property(&type, op, propcode, value);
@@ -487,7 +487,7 @@ void cf_object_set_object_property(object *op, int propcode, object *value) {
  * Wrapper for change_exp().
  * @copydoc change_exp().
  */
-void cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
+void cf_object_change_exp(object *op, int64_t exp, const char *skill_name, int flag) {
     int type;
 
     cfapiObject_change_exp(&type, op, exp, skill_name && strlen(skill_name) > 0 ? skill_name : NULL, flag);
@@ -666,7 +666,7 @@ object *cf_object_clone(object *op, int clonetype) {
  * Wrapper for object_split().
  * @copydoc object_split().
  */
-object *cf_object_split(object *orig_ob, uint32 nr, char *err, size_t size) {
+object *cf_object_split(object *orig_ob, uint32_t nr, char *err, size_t size) {
     int type;
     object *value;
 
@@ -701,7 +701,7 @@ int cf_object_pay_item(object *op, object *pl) {
  * Wrapper for pay_for_amount().
  * @copydoc pay_for_amount().
  */
-int cf_object_pay_amount(object *pl, uint64 to_pay) {
+int cf_object_pay_amount(object *pl, uint64_t to_pay) {
     int type, value;
 
     cfapiObject_pay_amount(&type, pl, to_pay, &value);
@@ -997,7 +997,7 @@ void cf_object_query_cost_string(const object *tmp, object *who, int flag, char 
 /**
  * Wrapper for cost_string_from_value modified to take a char* and length instead of a StringBuffer.
  */
-void cf_cost_string_from_value(uint64 cost, int largest_coin, char *buffer, int length) {
+void cf_cost_string_from_value(uint64_t cost, int largest_coin, char *buffer, int length) {
     int type;
 
     cfapiCost_string_from_value(&type, cost, largest_coin, buffer, length);
@@ -1472,7 +1472,7 @@ char *cf_strdup_local(const char *str) {
  * Wrapper for get_map_flags().
  * @copydoc get_map_flags()
  */
-int cf_map_get_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny) {
+int cf_map_get_flags(mapstruct *oldmap, mapstruct **newmap, int16_t x, int16_t y, int16_t *nx, int16_t *ny) {
     int type, value;
 
     cfapiMap_get_property(&type, oldmap, CFAPI_MAP_PROP_FLAGS, newmap, x, y, nx, ny, &value);

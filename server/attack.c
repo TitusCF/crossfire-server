@@ -153,7 +153,7 @@ static int did_make_save_item(object *op, int type, object *originator) {
  * @param originator
  * what is attacking.
  */
-void save_throw_object(object *op, uint32 type, object *originator) {
+void save_throw_object(object *op, uint32_t type, object *originator) {
     int dam;
 
     if (!did_make_save_item(op, type, originator)) {
@@ -317,9 +317,9 @@ void save_throw_object(object *op, uint32 type, object *originator) {
  * @return
  * 1 if it hits something, 0 otherwise.
  */
-int hit_map(object *op, int dir, uint32 type, int full_hit) {
+int hit_map(object *op, int dir, uint32_t type, int full_hit) {
     mapstruct *map;
-    sint16 x, y;
+    int16_t x, y;
     int retflag = 0;  /* added this flag..  will return 1 if it hits a monster */
     tag_t op_tag;
 
@@ -757,7 +757,7 @@ static void thrown_item_effect(object *, object *);
  */
 static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_wc) {
     int simple_attack, roll, dam;
-    uint32 type;
+    uint32_t type;
     tag_t op_tag, hitter_tag;
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
@@ -955,7 +955,7 @@ object *hit_with_arrow(object *op, object *victim) {
     object *container, *hitter;
     int hit_something = 0;
     tag_t victim_tag, hitter_tag, container_tag;
-    sint16 victim_x, victim_y;
+    int16_t victim_x, victim_y;
     mapstruct *victim_map;
     const char *old_skill = NULL;
 
@@ -1162,7 +1162,7 @@ static void scare_creature(object *target, object *hitter) {
  * @return
  * damage to actually do.
  */
-static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 attacknum) {
+static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32_t attacknum) {
     int doesnt_slay = 1;
     char name_hitter[MAX_BUF], name_op[MAX_BUF];
 
@@ -1363,7 +1363,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                  */
                 if (!op_on_battleground(hitter, NULL, NULL, NULL) && !QUERY_FLAG(op, FLAG_WAS_WIZ)) {
                     object *owner = object_get_owner(hitter);
-                    sint64 orig_exp = op->stats.exp;
+                    int64_t orig_exp = op->stats.exp;
 
                     change_exp(op, -op->stats.exp/rate, NULL, 0);
 
@@ -1740,7 +1740,7 @@ static int kill_object(object *op, int dam, object *hitter) {
 
     /* If you didn't kill yourself, and your not the wizard */
     if (owner != op && !QUERY_FLAG(op, FLAG_WAS_WIZ)) {
-        sint64 exp;
+        int64_t exp;
 
         exp = calc_skill_exp(owner, op, skop);
 
@@ -1864,7 +1864,7 @@ int friendly_fire(object *op, object *hitter) {
  * @todo
  * rename to something more meaningful.
  */
-int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
+int hit_player(object *op, int dam, object *hitter, uint32_t type, int full_hit) {
     int maxdam = 0, ndam = 0, magic = (type&AT_MAGIC);
     int maxattacktype, attacknum;
     int body_attack = op->head != NULL;   /* Did we hit op's head? */

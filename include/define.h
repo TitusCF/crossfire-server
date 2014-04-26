@@ -628,7 +628,7 @@ typedef struct typedata {
 /**
  * Typdef here to define type large enough to hold bitmask of
  * all movement types.  Make one declaration so easy to update.
- * uint8 is defined yet, so just use what that would define it
+ * uint8_t is defined yet, so just use what that would define it
  * at anyways.
  */
 typedef unsigned char MoveType;

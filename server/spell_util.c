@@ -272,7 +272,7 @@ int caster_level(const object *caster, const object *spell) {
  * @return
  * sp/mana points cost.
  */
-sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags) {
+int16_t SP_level_spellpoint_cost(object *caster, object *spell, int flags) {
     int sp, grace, level = caster_level(caster, spell);
 
     if (settings.spellpoint_level_depend == TRUE) {
@@ -533,7 +533,7 @@ int reflwall(mapstruct *m, int x, int y, object *sp_op) {
  */
 int cast_create_obj(object *op, object *new_op, int dir) {
     mapstruct *m;
-    sint16  sx, sy;
+    int16_t  sx, sy;
 
     if (dir
     && ((get_map_flags(op->map, &m, op->x+freearr_x[dir], op->y+freearr_y[dir], &sx, &sy)&P_OUT_OF_MAP)
@@ -567,7 +567,7 @@ int cast_create_obj(object *op, object *new_op, int dir) {
  * @return
  * 1 if we can add op, 0 else.
  */
-int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, uint32 immune_stop) {
+int ok_to_put_more(mapstruct *m, int16_t x, int16_t y, object *op, uint32_t immune_stop) {
     int mflags;
     mapstruct *mp;
 
@@ -666,7 +666,7 @@ int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, uint32 immune_s
  * @note
  * fire_bullet() has been merged into fire_arch_from_position()
  */
-int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int dir, object *spell) {
+int fire_arch_from_position(object *op, object *caster, int16_t x, int16_t y, int dir, object *spell) {
     object *tmp;
     int mflags;
     mapstruct *m;
@@ -853,7 +853,7 @@ void drain_wand_charge(object *wand) {
 object *find_target_for_friendly_spell(object *op, int dir) {
     object *tmp;
     mapstruct *m;
-    sint16 x, y;
+    int16_t x, y;
     int mflags;
 
     /* I don't really get this block - if op isn't a player or rune,
@@ -925,7 +925,7 @@ object *find_target_for_friendly_spell(object *op, int dir) {
  */
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
     int i;
-    sint16 nx, ny;
+    int16_t nx, ny;
     int owner_type = 0, mflags;
     object *tmp;
     mapstruct *mp;
@@ -1269,7 +1269,7 @@ static void transmute_item_to_flower(object *op) {
     if (QUERY_FLAG(item, FLAG_APPLIED))
         apply_manual(op, item, AP_NOPRINT|AP_IGNORE_CURSE|AP_UNAPPLY);
     object_remove(item);
-    flower->weight = item->nrof ? ((sint32)item->nrof)*item->weight : item->weight;
+    flower->weight = item->nrof ? ((int32_t)item->nrof)*item->weight : item->weight;
     item->weight = 0;
     esrv_del_item(op->contr, item);
     object_insert_in_ob(item, force);
@@ -1355,7 +1355,7 @@ static int spell_consume_items(object *op, const object *spell_ob) {
     char *ingredients[10];
     object *found[10];
     int count, i;
-    uint32 nrof[10];
+    uint32_t nrof[10];
     char name_ob[MAX_BUF];
     const char *name2;
 

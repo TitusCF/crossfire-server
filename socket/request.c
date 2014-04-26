@@ -251,7 +251,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             } else if (tmp > MAX_NUM_LOOK_OBJECTS) {
                 tmp = MAX_NUM_LOOK_OBJECTS;
             }
-            ns->num_look_objects = (uint8)tmp;
+            ns->num_look_objects = (uint8_t)tmp;
             SockList_AddPrintf(&sl, "%d", tmp);
 
             pl = find_player_socket(ns);
@@ -379,8 +379,8 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
  * if we know the client wants it, might as well push it to the
  * client.
  */
-static void send_smooth(socket_struct *ns, uint16 face) {
-    uint16 smoothface;
+static void send_smooth(socket_struct *ns, uint16_t face) {
+    uint16_t smoothface;
     SockList sl;
 
     /* If we can't find a face, return and set it so we won't
@@ -411,7 +411,7 @@ static void send_smooth(socket_struct *ns, uint16 face) {
  * to smooth a picture number given as argument.
  */
 void ask_smooth_cmd(char *buf, int len, socket_struct *ns) {
-    uint16 facenbr;
+    uint16_t facenbr;
 
     facenbr = atoi(buf);
     send_smooth(ns, facenbr);
@@ -429,7 +429,7 @@ void ask_smooth_cmd(char *buf, int len, socket_struct *ns) {
  * @param pl
  * player who issued the command. Mustn't be NULL.
  */
-void new_player_cmd(uint8 *buf, int len, player *pl) {
+void new_player_cmd(uint8_t *buf, int len, player *pl) {
     int time, repeat;
     short packet;
     char command[MAX_BUF];
@@ -659,7 +659,7 @@ void move_cmd(char *buf, int len, player *pl) {
  * Asks the client to query the user. This way, the client knows
  * it needs to send something back (vs just printing out a message)
  */
-void send_query(socket_struct *ns, uint8 flags, const char *text) {
+void send_query(socket_struct *ns, uint8_t flags, const char *text) {
     SockList sl;
 
     SockList_Init(&sl);
@@ -713,8 +713,8 @@ void send_query(socket_struct *ns, uint8 flags, const char *text) {
 void esrv_update_stats(player *pl) {
     SockList sl;
     char buf[MAX_BUF];
-    uint16 flags;
-    uint8 s;
+    uint16_t flags;
+    uint8_t s;
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "stats ");
@@ -735,7 +735,7 @@ void esrv_update_stats(player *pl) {
         AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
     }
     if (pl->socket.extended_stats) {
-        sint16 golem_hp, golem_maxhp;
+        int16_t golem_hp, golem_maxhp;
         AddIfShort(pl->last_orig_stats.Str, pl->orig_stats.Str, CS_STAT_BASE_STR);
         AddIfShort(pl->last_orig_stats.Int, pl->orig_stats.Int, CS_STAT_BASE_INT);
         AddIfShort(pl->last_orig_stats.Pow, pl->orig_stats.Pow, CS_STAT_BASE_POW);
@@ -797,7 +797,7 @@ void esrv_update_stats(player *pl) {
     AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
     AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
     AddIfFloat(pl->last_weapon_sp, pl->ob->weapon_speed, CS_STAT_WEAP_SP);
-    AddIfInt(pl->last_weight_limit, (sint32)get_weight_limit(pl->ob->stats.Str), CS_STAT_WEIGHT_LIM);
+    AddIfInt(pl->last_weight_limit, (int32_t)get_weight_limit(pl->ob->stats.Str), CS_STAT_WEIGHT_LIM);
     flags = 0;
     if (pl->fire_on)
         flags |= SF_FIREON;
@@ -841,7 +841,7 @@ void esrv_update_stats(player *pl) {
 /**
  * Tells the client that here is a player it should start using.
  */
-void esrv_new_player(player *pl, uint32 weight) {
+void esrv_new_player(player *pl, uint32_t weight) {
     SockList sl;
 
     pl->last_weight = weight;
@@ -948,8 +948,8 @@ static const object *heads[MAX_HEAD_POS][MAX_HEAD_POS][MAP_LAYERS];
  *    on the space we have already sent to the client.
  */
 static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl, socket_struct *ns, int *has_obj, int is_head) {
-    uint16 face_num;
-    uint8 nlayer, smoothlevel = 0;
+    uint16_t face_num;
+    uint8_t nlayer, smoothlevel = 0;
     const object *head;
 
     assert(ob != NULL);
@@ -1020,7 +1020,7 @@ static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl
          * speed chances.
          */
         if (ns->lastmap.cells[ax][ay].faces[layer] != face_num) {
-            uint8 len, anim_speed = 0, i;
+            uint8_t len, anim_speed = 0, i;
 
             /* This block takes care of sending the actual face
              * to the client. */
@@ -1191,7 +1191,7 @@ static int check_probe(int ax, int ay, const object *ob, SockList *sl, socket_st
  */
 static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *ns) {
     int layer, got_one = 0, del_one = 0, oldlen, has_obj = 0;
-    uint16 coord;
+    uint16_t coord;
 
     coord = MAP2_COORD_ENCODE(ax, ay, 0);
     oldlen = sl->len;
@@ -1238,9 +1238,9 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
 void draw_client_map2(object *pl) {
     int x, y, ax, ay, d, min_x, max_x, min_y, max_y, oldlen, layer;
     size_t startlen;
-    sint16 nx, ny;
+    int16_t nx, ny;
     SockList sl;
-    uint16 coord;
+    uint16_t coord;
     mapstruct *m;
     object *ob;
 
@@ -1425,7 +1425,7 @@ void draw_client_map2(object *pl) {
  */
 void draw_client_map(object *pl) {
     int i, j;
-    sint16 ax, ay;
+    int16_t ax, ay;
     int mflags;
     mapstruct *m, *pm;
     int min_x, min_y, max_x, max_y;
@@ -1916,7 +1916,7 @@ void send_account_players(socket_struct *ns)
 
     /* Now add real character data */
     for (acn = ns->account_chars; acn; acn = acn->next) {
-        uint16 faceno;
+        uint16_t faceno;
 
         /* Ignore a dead character. They don't need to show up. */
         if (acn->isDead) {

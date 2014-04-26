@@ -21,7 +21,7 @@
 #include <string.h>
 #include <global.h>
 
-sint64 *levels; /**< Number of levels for which we have experience. */
+int64_t *levels; /**< Number of levels for which we have experience. */
 
 #define TRUE 1
 #define FALSE 0
@@ -98,7 +98,7 @@ static const float exp_prot_mult[NROFATTACKS] = {
  * @return
  * experience computed from object's properties.
  */
-sint64 new_exp(const object *ob) {
+int64_t new_exp(const object *ob) {
     double att_mult, prot_mult, spec_mult;
     double exp;
     int i;
@@ -143,7 +143,7 @@ sint64 new_exp(const object *ob) {
     if (QUERY_FLAG(ob, FLAG_STAND_STILL))
         exp /= 2;
 
-    return (sint64)exp;
+    return (int64_t)exp;
 }
 
 /**
@@ -168,7 +168,7 @@ int has_ability(const object *ob) {
 void init_experience(void) {
     char buf[MAX_BUF], *cp;
     int lastlevel = 0;
-    sint64 lastexp = -1, tmpexp;
+    int64_t lastexp = -1, tmpexp;
     FILE *fp;
 
     snprintf(buf, sizeof(buf), "%s/exp_table", settings.confdir);
@@ -200,7 +200,7 @@ void init_experience(void) {
             if (!settings.max_level) {
                 LOG(llevDebug, "Got invalid max_level from exp_table file? %s\n", buf);
             } else {
-                levels = calloc(settings.max_level+1, sizeof(sint64));
+                levels = calloc(settings.max_level+1, sizeof(int64_t));
             }
         }
         while (isdigit(*cp) && *cp != 0) {

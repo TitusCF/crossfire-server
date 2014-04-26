@@ -77,7 +77,7 @@ void stop_projectile(object *op) {
 
 method_ret common_process_projectile(ob_methods *context, object *op) {
     object *tmp;
-    sint16 new_x, new_y;
+    int16_t new_x, new_y;
     int mflags;
     mapstruct *m;
 
@@ -155,7 +155,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
             while (retry < 2) {
                 int left, right, mflags;
                 mapstruct *m1;
-                sint16  x1, y1;
+                int16_t  x1, y1;
 
                 retry++;
 

@@ -857,7 +857,7 @@ START_TEST(test_object_replace_insert_in_map) {
 END_TEST
 
 /** This is the test to check the behaviour of the method
- *  object *object_split(object *orig_ob, uint32 nr);
+ *  object *object_split(object *orig_ob, uint32_t nr);
  */
 START_TEST(test_object_split) {
     object *first = NULL;
@@ -884,7 +884,7 @@ START_TEST(test_object_split) {
 END_TEST
 
 /** This is the test to check the behaviour of the method
- *  object *object_decrease_nrof(object *op, uint32 i);
+ *  object *object_decrease_nrof(object *op, uint32_t i);
  */
 START_TEST(test_object_decrease_nrof) {
     object *first = NULL;

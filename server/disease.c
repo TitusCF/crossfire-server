@@ -266,7 +266,7 @@ static object *find_symptom(object *disease) {
 static void check_infection(object *disease) {
     int x, y, range, mflags;
     mapstruct *map, *map2;
-    sint16 i, j, i2, j2;
+    int16_t i, j, i2, j2;
 
     range = abs(disease->magic);
     if (disease->env) {
@@ -526,7 +526,7 @@ static void do_symptoms(object *disease) {
     if (disease->stats.ac != 0) {
         float scale;
         int i;
-        sint8 cur_stat;
+        int8_t cur_stat;
 
         symptom->value += disease->stats.ac;
         scale = 1.0+symptom->value/100.0;

@@ -319,7 +319,7 @@ int has_carried_lights(const object *op) {
 static void expand_lighted_sight(object *op) {
     int x, y, darklevel, ax, ay, basex, basey, mflags, light, x1, y1;
     mapstruct *m = op->map;
-    sint16 nx, ny;
+    int16_t nx, ny;
 
     darklevel = MAP_DARKNESS(m);
 

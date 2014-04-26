@@ -166,11 +166,11 @@ static treasure *load_treasure(FILE *fp, int *line) {
         else if (sscanf(cp, "change_slaying %s", variable))
             t->change_arch.slaying = add_string(variable);
         else if (sscanf(cp, "chance %d", &value))
-            t->chance = (uint8)value;
+            t->chance = (uint8_t)value;
         else if (sscanf(cp, "nrof %d", &value))
-            t->nrof = (uint16)value;
+            t->nrof = (uint16_t)value;
         else if (sscanf(cp, "magic %d", &value))
-            t->magic = (uint8)value;
+            t->magic = (uint8_t)value;
         else if (!strcmp(cp, "yes"))
             t->next_yes = load_treasure(fp, line);
         else if (!strcmp(cp, "no"))

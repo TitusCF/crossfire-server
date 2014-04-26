@@ -796,7 +796,7 @@ static object **surround_by_doors(mapstruct *map, char **layout, int x, int y, i
         if (!wall_blocked(map, x1, y1)
                 || layout[x1][y1] == '>') {/* place a door */
             object *new_door = create_archetype((freearr_x[i] == 0) ? doors[1] : doors[0]);
-            sint16 nx, ny;
+            int16_t nx, ny;
 
             nx = x+freearr_x[i];
             ny = y+freearr_y[i];

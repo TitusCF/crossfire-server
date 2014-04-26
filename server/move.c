@@ -65,7 +65,7 @@ int move_ob(object *op, int dir, object *originator) {
 
         op_tag = op->count;
         for (part = op; part != NULL; part = part->more) {
-            sint16 x, y;
+            int16_t x, y;
 
             if (get_map_flags(part->map, &m, part->x+freearr_x[dir], part->y+freearr_y[dir], &x, &y)&P_OUT_OF_MAP)
                 continue;
@@ -85,7 +85,7 @@ int move_ob(object *op, int dir, object *originator) {
     }
 
     for (part = op; part != NULL; part = part->more) {
-        sint16 x, y;
+        int16_t x, y;
 
         if (get_map_flags(part->map, &m, part->x+freearr_x[dir], part->y+freearr_y[dir], &x, &y)&P_OUT_OF_MAP)
             return 0;
@@ -182,12 +182,12 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
  * user is still valid, but may have moved or not.
  * @todo fix weird return values.
  */
-int teleport(object *teleporter, uint8 tele_type, object *user) {
+int teleport(object *teleporter, uint8_t tele_type, object *user) {
     object *altern[120]; /* Better use c/malloc here in the future */
     int i, j, k, nrofalt = 0;
     object *other_teleporter, *tmp;
     mapstruct *m;
-    sint16 sx, sy;
+    int16_t sx, sy;
 
     if (user == NULL)
         return 0;
@@ -308,7 +308,7 @@ void recursive_roll(object *op, int dir, object *pusher) {
 
 static int try_fit(object *op, mapstruct *m, int x, int y) {
     object *more;
-    sint16 tx, ty;
+    int16_t tx, ty;
     int mflags;
     mapstruct *m2;
 
@@ -356,7 +356,7 @@ static int try_fit(object *op, mapstruct *m, int x, int y) {
  */
 
 static int roll_ob(object *op, int dir, object *pusher) {
-    sint16 x, y;
+    int16_t x, y;
     int flags;
     mapstruct *m;
     MoveType move_block;

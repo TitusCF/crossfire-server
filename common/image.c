@@ -99,8 +99,8 @@ static int compare_face(const New_Face *a, const New_Face *b) {
  * 0 will actually be black, so there is no
  * way the calling function can tell if an error occurred or not
  */
-static uint8 find_color(const char *name) {
-    uint8 i;
+static uint8_t find_color(const char *name) {
+    uint8_t i;
 
     for (i = 0; i < sizeof(colorname)/sizeof(*colorname); i++)
         if (!strcmp(name, colorname[i]))
@@ -211,7 +211,7 @@ void read_bmap_names(void) {
         new_faces[i].name = NULL;
         new_faces[i].visibility = 0;
         new_faces[i].magicmap = 255;
-        new_faces[i].smoothface = (uint16)-1;
+        new_faces[i].smoothface = (uint16_t)-1;
     }
 
     i = 0;
@@ -378,11 +378,11 @@ int read_smooth(void) {
  *
  * @return 1=smooth face found, 0=no smooth face found
  */
-int find_smooth(uint16 face, uint16 *smoothed) {
+int find_smooth(uint16_t face, uint16_t *smoothed) {
     (*smoothed) = 0;
 
     if (face < nrofpixmaps) {
-        if (new_faces[face].smoothface == ((uint16)-1))
+        if (new_faces[face].smoothface == ((uint16_t)-1))
             return 0;
 
         (*smoothed) = new_faces[face].smoothface;

@@ -171,8 +171,8 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
         /* find the recipe */
         rp = find_recipe(fl, formula, cauldron->inv);
         if (rp != NULL) {
-            uint64 value_ingredients;
-            uint64 value_item;
+            uint64_t value_ingredients;
+            uint64_t value_item;
             int attempt_shadow_alchemy;
 
             /* the caster gets an increase in ability based on thier skill lvl */
@@ -551,7 +551,7 @@ static void alchemy_failure_effect(object *op, object *cauldron, const recipe *r
         if (rndm(0, 2)) { /* slag created */
             object *tmp;
             int weight = 0;
-            uint16 material = M_STONE;
+            uint16_t material = M_STONE;
 
             FOR_INV_PREPARE(cauldron, tmp) { /* slag has coadded ingredient properties */
                 weight += tmp->weight;
@@ -855,7 +855,7 @@ static int calc_alch_danger(object *caster, object *cauldron, const recipe *rp) 
  * 1 if the ingredients match the recipe, 0 if not.
  */
 static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster) {
-    uint32 batches_in_cauldron;
+    uint32_t batches_in_cauldron;
     const linked_char *ingredient;
     int number;
 
@@ -872,7 +872,7 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
     /* check for matching ingredients */
     batches_in_cauldron = 0;
     for (ingredient = rp->ingred; ingredient != NULL; ingredient = ingredient->next) {
-        uint32 nrof;
+        uint32_t nrof;
         const char *name;
         int ok;
 
@@ -903,7 +903,7 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
 
             if (strcmp(name2, name) == 0) {
                 if (ob->nrof%nrof == 0) {
-                    uint32 batches;
+                    uint32_t batches;
 
                     batches = ob->nrof/nrof;
                     if (batches_in_cauldron == 0) {

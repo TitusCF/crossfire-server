@@ -39,7 +39,7 @@
  * make this non static, so other files can use this to send messages to client before
  * player has been added.
  */
-void print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, const char *message) {
+void print_ext_msg(socket_struct *ns, int color, uint8_t type, uint8_t subtype, const char *message) {
     SockList sl;
 
     SockList_Init(&sl);
@@ -77,8 +77,8 @@ void print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, cons
  * @param message The message to send.
  */
 void draw_ext_info(
-    int flags, int pri, const object *pl, uint8 type,
-    uint8 subtype, const char *message) {
+    int flags, int pri, const object *pl, uint8_t type,
+    uint8_t subtype, const char *message) {
 
     if ((flags&NDI_ALL) || (flags&NDI_ALL_DMS)) {
         player *tmppl;
@@ -126,7 +126,7 @@ void draw_ext_info(
  *
  * @param format The message to send, with optional format specifiers.
  */
-void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *format, ...) {
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *format, ...) {
     char buf[HUGE_BUF];
     va_list ap;
 
@@ -140,7 +140,7 @@ void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint
 /**
  * Writes to everyone on the specified map
  */
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1) {
+void ext_info_map(int color, const mapstruct *map, uint8_t type, uint8_t subtype, const char *str1) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
@@ -152,7 +152,7 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
 /**
  * Writes to everyone on the map *except *op.  This is useful for emotions.
  */
-void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, uint8 subtype, const char *str1) {
+void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8_t type, uint8_t subtype, const char *str1) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
@@ -270,7 +270,7 @@ void set_title(const object *pl, char *buf, size_t len) {
  */
 static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py) {
     int x, y, dx, dy, mflags, l;
-    sint16 nx, ny;
+    int16_t nx, ny;
     mapstruct *mp;
     const New_Face *f;
     object *ob;
@@ -333,7 +333,7 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
  */
 void magic_mapping_mark(object *pl, char *map_mark, int strength) {
     int x, y, mflags, l;
-    sint16 nx, ny;
+    int16_t nx, ny;
     mapstruct *mp;
     const New_Face *f;
     object *ob;

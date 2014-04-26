@@ -537,9 +537,9 @@ void init_artifacts(void) {
                 art->allowed_size++;
             } while ((cp = next) != NULL);
         } else if (sscanf(cp, "chance %d", &value))
-            art->chance = (uint16)value;
+            art->chance = (uint16_t)value;
         else if (sscanf(cp, "difficulty %d", &value))
-            art->difficulty = (uint8)value;
+            art->difficulty = (uint8_t)value;
         else if (!strncmp(cp, "Object", 6)) {
             art->item = (object *)calloc(1, sizeof(object));
             if (art->item == NULL) {

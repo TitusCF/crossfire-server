@@ -81,7 +81,7 @@ typedef struct quest_definition {
     sstring quest_description;      /**< Quest longer description. */
     int quest_restart;              /**< If non zero, can be restarted. */
     int face;                       /**< Face associated with this quest. */
-    uint32 client_code;             /**< The code used to communicate with the client, merely a unique index. */
+    uint32_t client_code;             /**< The code used to communicate with the client, merely a unique index. */
     quest_step_definition *steps;   /**< Quest steps. */
     struct quest_definition *parent;/**< Parent for this quest, NULL if it is a 'top-level' quest */
     struct quest_definition *next;  /**< Next quest in the definition list. */

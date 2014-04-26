@@ -39,7 +39,7 @@
  */
 void send_face_cmd(char *buff, int len, socket_struct *ns) {
     long tmpnum = atoi(buff);
-    uint16 facenum = tmpnum&0xffff;
+    uint16_t facenum = tmpnum&0xffff;
 
     if (facenum != 0)
         esrv_send_face(ns, facenum, 1);
@@ -56,7 +56,7 @@ void send_face_cmd(char *buff, int len, socket_struct *ns) {
  * @param face_num face number to send.
  * @param nocache if 1 then send a 'image2', else depending on client cache setting.
  */
-void esrv_send_face(socket_struct *ns, uint16 face_num, int nocache) {
+void esrv_send_face(socket_struct *ns, uint16_t face_num, int nocache) {
     SockList sl;
     int fallback;
 

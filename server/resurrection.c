@@ -55,7 +55,7 @@ static int resurrect_player(object *op, char *playername, object *spell, char *a
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
     const char *race = NULL;
-    sint64 exp;
+    int64_t exp;
     int Con;
 
     /* reincarnation, which changes the race */
@@ -174,7 +174,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
     char name_to_resurrect[MAX_BUF];
     char *corpse_account = NULL;
     int leveldead = 25, mflags, clevel;
-    sint16 sx, sy;
+    int16_t sx, sy;
     mapstruct *m;
     int spell_success = 0;
 

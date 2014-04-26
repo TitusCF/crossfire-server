@@ -95,7 +95,7 @@ static const char *float_bonus_names[NUM_FLOAT_BONUSES] = {
  */
 #define MAX_EXPERIENCE levels[settings.max_level]
 
-extern sint64 *levels;
+extern int64_t *levels;
 
 #define MAX_SAVE_LEVEL 110
 /**
@@ -212,7 +212,7 @@ const char *const short_stat_name[NUM_STATS] = {
  * @todo
  * check if attr is valid? Check whether value is valid or not.
  */
-void set_attr_value(living *stats, int attr, sint8 value) {
+void set_attr_value(living *stats, int attr, int8_t value) {
     switch (attr) {
     case STRENGTH:
         stats->Str = value;
@@ -258,7 +258,7 @@ void set_attr_value(living *stats, int attr, sint8 value) {
  * @todo
  * check if attr is valid? Checks result valus is valid?
  */
-void change_attr_value(living *stats, int attr, sint8 value) {
+void change_attr_value(living *stats, int attr, int8_t value) {
     if (value == 0)
         return;
     switch (attr) {
@@ -307,7 +307,7 @@ void change_attr_value(living *stats, int attr, sint8 value) {
  *
  * @see set_attr_value().
  */
-sint8 get_attr_value(const living *stats, int attr) {
+int8_t get_attr_value(const living *stats, int attr) {
     switch (attr) {
     case STRENGTH:
         return(stats->Str);
@@ -348,7 +348,7 @@ sint8 get_attr_value(const living *stats, int attr) {
  * @param max_stat
  * highest the stat can be
  */
-void check_stat_bounds(living *stats, sint8 min_stat, sint8 max_stat) {
+void check_stat_bounds(living *stats, int8_t min_stat, int8_t max_stat) {
     int i, v;
     for (i = 0; i < NUM_STATS; i++)
         if ((v = get_attr_value(stats, i)) > max_stat)
@@ -1267,7 +1267,7 @@ void fix_object(object *op) {
                     op->contr->ranges[range_misc] = tmp;
 
                 for (i = 0; i < NUM_STATS; i++) {
-                    sint8 value;
+                    int8_t value;
 
                     value = get_attr_value(&(tmp->stats), i);
                     change_attr_value(&(op->stats), i, value);
@@ -1808,7 +1808,7 @@ void player_lvl_adj(object *who, object *op) {
  * @param expmul
  * penality/bonus for experience.
  */
-sint64 level_exp(int level, double expmul) {
+int64_t level_exp(int level, double expmul) {
     if (level > settings.max_level)
         return expmul*levels[settings.max_level];
     return expmul*levels[level];
@@ -1825,7 +1825,7 @@ sint64 level_exp(int level, double expmul) {
  * object to check.
  */
 void calc_perm_exp(object *op) {
-    sint64 p_exp_min;
+    int64_t p_exp_min;
 
     /* Ensure that our permanent experience minimum is met.
      * permenent_exp_ratio is an integer percentage, we divide by 100
@@ -1857,9 +1857,9 @@ void calc_perm_exp(object *op) {
  * @param flag
  * what to do if the player doesn't have the skill. Combination of @ref SK_EXP_xxx "SK_EXP_xxx" flags.
  */
-static void add_player_exp(object *op, sint64 exp, const char *skill_name, int flag) {
+static void add_player_exp(object *op, int64_t exp, const char *skill_name, int flag) {
     object *skill_obj = NULL;
-    sint64 limit, exp_to_add;
+    int64_t limit, exp_to_add;
     int i;
 
     /* prevents some forms of abuse. */
@@ -1940,8 +1940,8 @@ static void add_player_exp(object *op, sint64 exp, const char *skill_name, int f
  * @return
  * the amount of exp object 'op' can in fact lose -
  */
-sint64 check_exp_loss(const object *op, sint64 exp) {
-    sint64 del_exp;
+int64_t check_exp_loss(const object *op, int64_t exp) {
+    int64_t del_exp;
 
     if (exp > op->stats.exp)
         exp = op->stats.exp;
@@ -1965,7 +1965,7 @@ sint64 check_exp_loss(const object *op, sint64 exp) {
  * @return
  * maximum value op can gain or lose (can be positive or negative).
  */
-sint64 check_exp_adjust(const object *op, sint64 exp) {
+int64_t check_exp_adjust(const object *op, int64_t exp) {
     if (exp < 0)
         return check_exp_loss(op, exp);
     else
@@ -1994,9 +1994,9 @@ sint64 check_exp_adjust(const object *op, sint64 exp) {
  * @todo
  * check whether flag is necessary, can't it be only based on skill==null?
  */
-static void subtract_player_exp(object *op, sint64 exp, const char *skill, int flag) {
+static void subtract_player_exp(object *op, int64_t exp, const char *skill, int flag) {
     float fraction = (float)exp/(float)op->stats.exp;
-    sint64 del_exp;
+    int64_t del_exp;
 
     FOR_INV_PREPARE(op, tmp)
         if (tmp->type == SKILL && tmp->stats.exp) {
@@ -2042,7 +2042,7 @@ static void subtract_player_exp(object *op, sint64 exp, const char *skill, int f
  * @li if experience loss, whether to remove from all skills or only specified skill
  * @see share_exp() for a party-aware version.
  */
-void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
+void change_exp(object *op, int64_t exp, const char *skill_name, int flag) {
 #ifdef EXP_DEBUG
     char name[MAX_BUF];
     query_name(op, name, MAX_BUF);
@@ -2103,9 +2103,9 @@ void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
  * victim of the penalty. Must not be NULL.
  */
 void apply_death_exp_penalty(object *op) {
-    sint64 loss;
-    sint64 percentage_loss;  /* defined by the setting 'death_penalty_percent' */
-    sint64 level_loss;   /* defined by the setting 'death_penalty_levels */
+    int64_t loss;
+    int64_t percentage_loss;  /* defined by the setting 'death_penalty_percent' */
+    int64_t level_loss;   /* defined by the setting 'death_penalty_levels */
 
     FOR_INV_PREPARE(op, tmp)
         if (tmp->type == SKILL && tmp->stats.exp) {
@@ -2181,7 +2181,7 @@ int did_make_save(const object *op, int level, int bonus) {
  * @note
  * flag only applies to op, not other players in same party.
  */
-void share_exp(object *op, sint64 exp, const char *skill, int flag) {
+void share_exp(object *op, int64_t exp, const char *skill, int flag) {
     int shares = 0, count = 0;
     player *pl;
     partylist *party;
@@ -2205,7 +2205,7 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
     if (count == 1 || shares > exp)
         change_exp(op, exp, skill, flag);
     else {
-        sint64 share = exp/shares, given = 0, nexp;
+        int64_t share = exp/shares, given = 0, nexp;
         for (pl = first_player; pl != NULL; pl = pl->next) {
             if (party && pl->ob->contr->party == party && on_same_map(pl->ob, op)) {
                 nexp = (pl->ob->level+4)*share;
@@ -2231,7 +2231,7 @@ int get_thaco_bonus(int stat) {
     return int_bonuses[INT_THAC0_BONUS][get_index(stat, settings.max_stat)];
 }
 
-uint32 get_weight_limit(int stat) {
+uint32_t get_weight_limit(int stat) {
     return int_bonuses[INT_WEIGHT_LIMIT][get_index(stat, settings.max_stat)];
 }
 

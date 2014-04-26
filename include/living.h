@@ -32,25 +32,25 @@ extern const char *const lose_msg[NUM_STATS];
  * Various statistics of objects.
  */
 typedef struct liv {
-    sint8         Str, Dex, Con, Wis, Cha, Int, Pow;
-    sint8         wc;         /**< Weapon Class, how skilled, the lower the better. */
-    sint8         ac;         /**< Armour Class, how hard to hit, the lower the better. */
-    sint8         luck;       /**< Affects thaco and ac from time to time */
-    sint16        hp;         /**< Hit Points. */
-    sint16        maxhp;      /**< Max hit points. */
-    sint16        sp;         /**< Spell points.  Used to cast mage spells. */
-    sint16        maxsp;      /**< Max spell points. */
-    sint16        grace;      /**< Grace.  Used to invoke clerical prayers. */
-    sint16        maxgrace;   /**< Maximum grace.  Used to invoke clerical prayers. */
-    sint16        dam;        /**< How much damage this object does when hitting */
-    sint64        exp;        /**< Experience.  Killers gain 1/10. */
-    sint32        food;       /**< How much food in stomach.  0 = starved. */
+    int8_t         Str, Dex, Con, Wis, Cha, Int, Pow;
+    int8_t         wc;         /**< Weapon Class, how skilled, the lower the better. */
+    int8_t         ac;         /**< Armour Class, how hard to hit, the lower the better. */
+    int8_t         luck;       /**< Affects thaco and ac from time to time */
+    int16_t        hp;         /**< Hit Points. */
+    int16_t        maxhp;      /**< Max hit points. */
+    int16_t        sp;         /**< Spell points.  Used to cast mage spells. */
+    int16_t        maxsp;      /**< Max spell points. */
+    int16_t        grace;      /**< Grace.  Used to invoke clerical prayers. */
+    int16_t        maxgrace;   /**< Maximum grace.  Used to invoke clerical prayers. */
+    int16_t        dam;        /**< How much damage this object does when hitting */
+    int64_t        exp;        /**< Experience.  Killers gain 1/10. */
+    int32_t        food;       /**< How much food in stomach.  0 = starved. */
 } living;
 
 int get_cha_bonus(int stat);
 int get_dex_bonus(int stat);
 int get_thaco_bonus(int stat);
-uint32 get_weight_limit(int stat);
+uint32_t get_weight_limit(int stat);
 int get_learn_spell(int stat);
 int get_cleric_chance(int stat);
 int get_turn_bonus(int stat);

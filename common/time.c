@@ -29,18 +29,18 @@
 /**
  * Gloabal variables:
  */
-uint32 max_time = MAX_TIME;
+uint32_t max_time = MAX_TIME;
 struct timeval last_time;
 
 /** Size of history buffer. */
 #define PBUFLEN 100
-static uint32 process_utime_save[PBUFLEN];   /**< Historic data. */
-static uint32 psaveind;                      /**< Index in ::process_utime_save. */
-static uint32 process_max_utime = 0;         /**< Longest cycle time. */
-static uint32 process_min_utime = 999999999; /**< Shortest cycle time. */
-static uint32 process_tot_mtime;             /**< ? */
-uint32 pticks;                               /**< ? */
-static uint32 process_utime_long_count;      /**< ? */
+static uint32_t process_utime_save[PBUFLEN];   /**< Historic data. */
+static uint32_t psaveind;                      /**< Index in ::process_utime_save. */
+static uint32_t process_max_utime = 0;         /**< Longest cycle time. */
+static uint32_t process_min_utime = 999999999; /**< Shortest cycle time. */
+static uint32_t process_tot_mtime;             /**< ? */
+uint32_t pticks;                               /**< ? */
+static uint32_t process_utime_long_count;      /**< ? */
 
 /** Ingame seasons. */
 static const char *const season_name[SEASONS_PER_YEAR+1] = {
@@ -141,7 +141,7 @@ void reset_sleep(void) {
 /**
  * Adds time to our history list.
  */
-static void log_time(uint32 process_utime) {
+static void log_time(uint32_t process_utime) {
     pticks++;
     if (++psaveind >= PBUFLEN)
         psaveind = 0;
@@ -160,7 +160,7 @@ static void log_time(uint32 process_utime) {
  */
 int enough_elapsed_time(void) {
     static struct timeval new_time;
-    uint32 elapsed_utime;
+    uint32_t elapsed_utime;
 
     (void)GETTIMEOFDAY(&new_time);
 
@@ -331,7 +331,7 @@ static void print_tod(object *op) {
  */
 void time_info(object *op) {
     int tot = 0, long_count = 0;
-    uint32 maxt = 0, mint = 99999999, i;
+    uint32_t maxt = 0, mint = 99999999, i;
 
     print_tod(op);
 

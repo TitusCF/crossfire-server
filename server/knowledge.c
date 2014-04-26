@@ -342,7 +342,7 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
     object *cauldron = NULL, *inv;
     object *ingredients[50];
     int index, x, y;
-    uint32 count, counts[50];
+    uint32_t count, counts[50];
     char name[MAX_BUF];
     const char *ingname;
     linked_char *ing;

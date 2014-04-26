@@ -45,8 +45,8 @@ void init_type_shop_inventory(void) {
 typedef struct shopinv {
     char        *item_sort;     /**< Singular name. */
     char        *item_real;     /**< Plural name. */
-    uint16      type;           /**< Item type. */
-    uint32      nrof;           /**< Count of this items. */
+    uint16_t      type;           /**< Item type. */
+    uint32_t      nrof;           /**< Count of this items. */
 } shopinv;
 
 /**

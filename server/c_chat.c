@@ -231,7 +231,7 @@ static void do_tell(object *op, const char *params, int adjust_listen) {
     char buf[MAX_BUF], name[MAX_BUF];
     char *msg = NULL;
     player *pl;
-    uint8 original_listen;
+    uint8_t original_listen;
 
     snprintf(name, sizeof(name), "%s", params);
 

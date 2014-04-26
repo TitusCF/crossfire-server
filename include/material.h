@@ -33,8 +33,8 @@ typedef struct _materialtype {
     const char  *name;            /**< Name of the material. */
     const char  *description;     /**< Description, unused. */
     int         material;         /**< What basic type(s) it is linked to. */
-    sint8       save[NROFATTACKS];/**< Save chances for the attacks. */
-    sint8       mod[NROFATTACKS]; /**< Modification to resistances. */
+    int8_t       save[NROFATTACKS];/**< Save chances for the attacks. */
+    int8_t       mod[NROFATTACKS]; /**< Modification to resistances. */
     struct _materialtype *next;   /**< Next item on the list. */
 } materialtype_t;
 

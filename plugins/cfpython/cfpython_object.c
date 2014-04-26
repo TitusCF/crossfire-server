@@ -1952,7 +1952,7 @@ static int Object_SetAttackMovement(Crossfire_Object *whoptr, PyObject *value, v
 }
 
 static int Object_SetExp(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    sint64 val;
+    int64_t val;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "L", &val))
@@ -2361,7 +2361,7 @@ static PyObject *Crossfire_Object_CastAbility(Crossfire_Object *who, PyObject *a
 }
 
 static PyObject *Crossfire_Object_PayAmount(Crossfire_Object *who, PyObject *args) {
-    uint64 to_pay;
+    uint64_t to_pay;
     int val;
 
     EXISTCHECK(who);
@@ -2512,7 +2512,7 @@ static PyObject *Crossfire_Object_ChangeAbil(Crossfire_Object *who, PyObject *ar
 }
 
 static PyObject *Crossfire_Object_AddExp(Crossfire_Object *who, PyObject *args) {
-    sint64 exp;
+    int64_t exp;
     const char *skill = NULL;
     int arg = 0;
 

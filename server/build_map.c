@@ -332,7 +332,7 @@ static void fix_walls(struct mapdef *map, int x, int y) {
     object *wall;
     char archetype[MAX_BUF];
     char *underscore;
-    uint32 old_flags[4];
+    uint32_t old_flags[4];
     struct archt *new_arch;
     int flag;
     int len;
@@ -703,7 +703,7 @@ static int apply_builder_window(object *pl, object *new_wall_win, short x, short
     char archetype[MAX_BUF];
     struct archt *new_arch;
     object *window;
-    uint32 old_flags[4];
+    uint32_t old_flags[4];
     int flag;
 
     /* Too bad, we never use the window contained in the building material */

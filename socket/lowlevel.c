@@ -101,7 +101,7 @@ void SockList_AddChar(SockList *sl, char data) {
  * @param sl the SockList instance to add to
  * @param data the value to add
  */
-void SockList_AddShort(SockList *sl, uint16 data) {
+void SockList_AddShort(SockList *sl, uint16_t data) {
     SockList_Ensure(sl, 2);
     sl->buf[sl->len++] = (data>>8)&0xff;
     sl->buf[sl->len++] = data&0xff;
@@ -112,7 +112,7 @@ void SockList_AddShort(SockList *sl, uint16 data) {
  * @param sl the SockList instance to add to
  * @param data the value to add
  */
-void SockList_AddInt(SockList *sl, uint32 data) {
+void SockList_AddInt(SockList *sl, uint32_t data) {
     SockList_Ensure(sl, 4);
     sl->buf[sl->len++] = (data>>24)&0xff;
     sl->buf[sl->len++] = (data>>16)&0xff;
@@ -125,7 +125,7 @@ void SockList_AddInt(SockList *sl, uint32 data) {
  * @param sl the SockList instance to add to
  * @param data the value to add
  */
-void SockList_AddInt64(SockList *sl, uint64 data) {
+void SockList_AddInt64(SockList *sl, uint64_t data) {
     SockList_Ensure(sl, 8);
     sl->buf[sl->len++] = (char)((data>>56)&0xff);
     sl->buf[sl->len++] = (char)((data>>48)&0xff);

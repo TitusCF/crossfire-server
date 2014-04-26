@@ -61,7 +61,7 @@ void init_type_converter(void) {
  */
 static int convert_item(object *item, object *converter) {
     int nr = 0;
-    uint32 price_in;
+    uint32_t price_in;
 
     /* We make some assumptions - we assume if it takes money as it type,
      * it wants some amount.  We don't make change (ie, if something costs

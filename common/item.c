@@ -401,7 +401,7 @@ StringBuffer *describe_resistance(const object *op, int newline, StringBuffer *b
  * buffer size.
  */
 void query_weight(const object *op, char *buf, size_t size) {
-    sint32 i = (op->nrof ? op->nrof : 1)*op->weight+op->carrying;
+    int32_t i = (op->nrof ? op->nrof : 1)*op->weight+op->carrying;
 
     if (op->weight < 0)
         snprintf(buf, size, "      ");

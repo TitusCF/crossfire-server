@@ -379,7 +379,7 @@ player *get_player(player *p) {
         p->last_resist[i] = -1;
     }
     p->last_stats.exp = -1;
-    p->last_weight = (uint32)-1;
+    p->last_weight = (uint32_t)-1;
 
     p->socket.update_look = 0;
     p->socket.look_position = 0;
@@ -625,7 +625,7 @@ object *get_nearest_player(object *mon) {
  */
 int path_to_player(object *mon, object *pl, unsigned mindiff) {
     rv_vector rv;
-    sint16  x, y;
+    int16_t  x, y;
     int lastx, lasty, dir, i, diff, firstdir = 0, lastdir, max = MAX_SPACES, mflags, blocked;
     mapstruct *m, *lastmap;
 
@@ -1180,7 +1180,7 @@ static void swap_stat(object *op, int swap_second) {
  */
 void key_roll_stat(object *op, char key) {
     int keynum = key-'0';
-    static const sint8 stat_trans[] = {
+    static const int8_t stat_trans[] = {
         -1,
         STRENGTH,
         DEXTERITY,
@@ -2102,7 +2102,7 @@ static object *pick_arrow_target(object *op, const char *type, int dir) {
     object *tmp = NULL;
     mapstruct *m;
     int i, mflags, found, number;
-    sint16 x, y;
+    int16_t x, y;
 
     if (op->map == NULL)
         return find_arrow(op, type);
@@ -2167,7 +2167,7 @@ static object *pick_arrow_target(object *op, const char *type, int dir) {
  * 1 if bow was actually fired, 0 otherwise.
  * @todo describe player firing modes.
  */
-int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 sy) {
+int fire_bow(object *op, object *arrow, int dir, int wc_mod, int16_t sx, int16_t sy) {
     object *bow;
     tag_t tag;
     int bowspeed, mflags;
@@ -2296,7 +2296,7 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
             plmod = 140-mod;
         else if (plmod+mod < -100)
             plmod = -100-mod;
-        arrow->stats.wc = 20-(sint8)plmod-(sint8)mod;
+        arrow->stats.wc = 20-(int8_t)plmod-(int8_t)mod;
 
         arrow->level = op->chosen_skill ? op->chosen_skill->level : op->level;
     } else {
@@ -2686,7 +2686,7 @@ static int player_attack_door(object *op, object *door) {
  */
 void move_player_attack(object *op, int dir) {
     object *mon, *tpl, *mon_owner;
-    sint16 nx, ny;
+    int16_t nx, ny;
     int on_battleground;
     mapstruct *m;
 
@@ -3957,7 +3957,7 @@ int is_true_undead(object *op) {
  */
 int hideability(object *ob) {
     int i, level = 0, mflag;
-    sint16 x, y;
+    int16_t x, y;
 
     if (!ob || !ob->map)
         return 0;
@@ -4040,7 +4040,7 @@ void do_hidden_move(object *op) {
 int stand_near_hostile(object *who) {
     int i, friendly = 0, player = 0, mflags;
     mapstruct *m;
-    sint16  x, y;
+    int16_t  x, y;
 
     if (!who)
         return 0;
@@ -4428,7 +4428,7 @@ void player_unready_range_ob(player *pl, object *ob) {
  * @param pl who to set state for.
  * @param state new state.
  */
-void player_set_state(player *pl, uint8 state) {
+void player_set_state(player *pl, uint8_t state) {
 
     assert(pl);
     assert(state >= ST_PLAYING && state <= ST_CHANGE_PASSWORD_CONFIRM);

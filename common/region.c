@@ -509,8 +509,8 @@ static void parse_regions(FILE *fp) {
  */
 static void assign_region_parents(void) {
     region *reg;
-    uint32 parent_count = 0;
-    uint32 region_count = 0;
+    uint32_t parent_count = 0;
+    uint32_t region_count = 0;
 
     for (reg = first_region; reg != NULL; reg = reg->next) {
         if (reg->parent_name != NULL) {

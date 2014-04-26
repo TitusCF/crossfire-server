@@ -32,7 +32,7 @@
 
 static method_ret weapon_improver_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 static int check_item(object *op, const char *item);
-static void eat_item(object *op, const char *item, uint32 nrof);
+static void eat_item(object *op, const char *item, uint32_t nrof);
 static int check_sacrifice(object *op, const object *improver);
 static int improve_weapon_stat(object *op, object *improver, object *weapon, signed char *stat, int sacrifice_count, const char *statname);
 static int prepare_weapon(object *op, object *improver, object *weapon);
@@ -133,7 +133,7 @@ static int check_item(object *op, const char *item) {
  * couldn't item be a shared string, and use == instead of strcmp?
  * also, the remove logic is wrong - op->nrof will be 0 after decreat_ob_nr in the 2nd case.
  */
-static void eat_item(object *op, const char *item, uint32 nrof) {
+static void eat_item(object *op, const char *item, uint32_t nrof) {
     object *prev;
 
     prev = op;

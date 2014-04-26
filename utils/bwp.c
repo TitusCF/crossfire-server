@@ -53,7 +53,7 @@ char *monster_attack_row;      /* Attack types table row         */
 char *monster_lore_row;        /* Lore table row                 */
 
 typedef struct string_array {
-    sint16 count;
+    int16_t count;
     char **item;
 } String_Array;
 
@@ -308,7 +308,7 @@ static int sort_archetypes(const void *a, const void *b) {
  *
  */
 void push(String_Array *array, const char *string) {
-    sint16 i = array->count;
+    int16_t i = array->count;
 
     array->item[i] = strdup_local(string);
     array->count++;
@@ -509,7 +509,7 @@ int main(int argc, char *argv[]) {
              * *special_names[] is used because some of the names in
              * define.h are a bit awkward.  Last one is negative to mark end.
                  */
-            const sint8 special_flags[] = { 21, 93, 52, 38, 13, 32, 61, -1 };
+            const int8_t special_flags[] = { 21, 93, 52, 38, 13, 32, 61, -1 };
             const char *special_names[] = {
                 "see invisible",
                 "see in dark",
@@ -792,18 +792,18 @@ void apply_auto_fix(mapstruct *m) {
  * Added as part of glue cleaning.
  * Ryo 2005-07-15
  **/
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt) {
+void draw_ext_info(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *txt) {
     fprintf(logfile, "%s\n", txt);
 }
 
-void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *format, ...) {
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *format, ...) {
     va_list ap;
     va_start(ap, format);
     vfprintf(logfile, format, ap);
     va_end(ap);
 }
 
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1) {
+void ext_info_map(int color, const mapstruct *map, uint8_t type, uint8_t subtype, const char *str1) {
     fprintf(logfile, "ext_info_map: %s\n", str1);
 }
 
