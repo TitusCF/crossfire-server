@@ -29,9 +29,7 @@
 #endif
 #include <math.h>
 
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#else
+#ifndef UINT32_MAX
 #define UINT32_MAX      4294967295U
 #endif
 

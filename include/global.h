@@ -17,6 +17,10 @@
 
 #include "includes.h"
 
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
+
 /** Strings that should be manipulated through add_string() and free_string(). */
 typedef const char *sstring;
 
