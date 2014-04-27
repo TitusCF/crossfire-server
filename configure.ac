@@ -100,8 +100,7 @@ AC_CHECK_LIB(sqlite3, sqlite3_open,[ cf_have_libsqlite=yes ])
 ##############################################################################
 # Checks for header files.
 AC_HEADER_DIRENT
-AC_HEADER_STDC
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h stddef.h stdlib.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h sys/ttycom.h termios.h sys/termios.h zlib.h pthread.h curl/curl.h stdint.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h stddef.h stdlib.h sys/time.h time.h unistd.h sys/ttycom.h termios.h sys/termios.h curl/curl.h])
 AC_CHECK_HEADERS([crypt.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -134,25 +133,12 @@ CF_CHECK_VISIBILITY()
 ##############################################################################
 # Checks for library functions.
 AC_FUNC_MEMCMP
-AC_FUNC_SETPGRP
 AC_FUNC_STRERROR_R
-AC_FUNC_STRFTIME
-AC_FUNC_VPRINTF
 
-AC_CHECK_FUNCS([getdtablesize gettimeofday mkdir mktime rmdir select socket strcasecmp strcspn strerror strncasecmp strspn strstr strtol snprintf setsid srandom srand48 srand sysconf scandir getaddrinfo getnameinfo])
+AC_CHECK_FUNCS([getdtablesize gettimeofday strcasecmp strerror strncasecmp strtol snprintf setsid srandom srand48 srand sysconf getaddrinfo getnameinfo])
 
 # Check for better but non-portable functions.
 AC_CHECK_FUNCS([strlcat strlcpy])
-
-# alphasort can not be added to AC_CHECK_FUNCS because
-AC_MSG_CHECKING(checking if alphasort is defined)
-  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <dirent.h>]], [[alphasort;]])],[ac_cv_func_alphasort=yes],[ac_cv_func_alphasort=no])
-  if test "$ac_cv_func_alphasort" = yes; then
-    AC_DEFINE(HAVE_ALPHASORT, 1, [Define if you have the alphasort() function declaration.])
-    AC_MSG_RESULT(yes)
-  else
-    AC_MSG_RESULT(no)
-  fi
 
 AC_MSG_CHECKING(how many args gettimeofday uses)
 AC_CACHE_VAL(ac_cv_gettimeofday_args,
