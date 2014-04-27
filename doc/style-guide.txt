@@ -50,7 +50,7 @@ please include the function name - this is especially true for errors.
 a unique #define for it - don't use the global DEBUG.  For example,
 NEWCS_DEBUG.
 
-5) Try to use the [s/u]int[8/16/32] whenever possible.  Use the one
+5) Try to use C99 types whenever possible.  Use the one
 of appropriate size/type.  If not sure, go for the next size up.  Do
 not ever write code assuming that any of those will have an exact number
 of bits - those types only mean that you will get at least that many
@@ -77,8 +77,8 @@ This will break on ANSI C compilers that follow the spec strictly
 (gcc does not, even with -strict -ansi)
 
 10) As a followup on 9 above, don't use nonstandard gcc extensions
-(// for comment lines, ability to nest functions, declare arrays with
-variable bounds, etc.)  Likewise, don't use special system functions - don't
+(ability to nest functions, declare arrays with variable bounds, etc.)
+Likewise, don't use special system functions - don't
 assume the target system will be bsd or svr4 - if using a potentially non
 standard function, add checks in the autoconf script and include a version
 of the function in case it is not on that system.  They key word here is
@@ -191,8 +191,8 @@ add to your .emacs
 14) As discussed on irc, the preferred style for expressions is like this:
 
 if (expression) {
-  statement;
-  statement;
+    statement;
+    statement;
 }
 
 if <space> (expression), the space between the if and expression is required.
@@ -201,15 +201,15 @@ NOT like this:
 
 if (expression)
 {
-  statement;
-  statement;
+    statement;
+    statement;
 }
 
 15) The preferred style of formal parameters:
 
 void myFooFunction(param1, param2, param3) {
-  statement;
-  statement;
+    statement;
+    statement;
 }
 
 No space after the left paren, no space before the right paren.
@@ -218,7 +218,7 @@ Comma right after the formal param, space right after the comma.
 
 16) Local variable names. Just a rules of thumb.
 
-This are ok:
+These are ok:
 
   int mylongvarname;
   int my_long_var_name;

@@ -154,7 +154,7 @@ http://crossfire.real-time.com/debugging_tips.html
 
 Submitting Patches
 ~~~~~~~~~~~~~~~~~~
-See the doc/programming_guide file.
+See the 'doc/style-guide.txt' file.
 
 Patches should be sent to the Crossfire patch tracker on SourceForge:
 http://sourceforge.net/p/crossfire/patches/
