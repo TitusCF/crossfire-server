@@ -20,8 +20,8 @@ CREExperienceWindow::CREExperienceWindow()
 
     layout->addWidget(tree);
 
-    extern sint64 *levels;
-    sint64 previous = 0;
+    extern int64_t *levels;
+    int64_t previous = 0;
 
     for (int level = 0; level < settings.max_level + 1; level++)
     {
