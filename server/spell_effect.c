@@ -2956,6 +2956,8 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 }
                 new_altar = arch_to_object(altar_arch);
                 new_altar->level = tmp->level;
+                if (QUERY_FLAG(tmp, FLAG_IS_BUILDABLE))
+                    SET_FLAG(new_altar, FLAG_IS_BUILDABLE);
                 object_insert_in_map_at(new_altar, tmp->map, tmp, INS_BELOW_ORIGINATOR, tmp->x, tmp->y);
                 object_remove(tmp);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
