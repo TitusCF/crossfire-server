@@ -1407,7 +1407,8 @@ void examine_monster(object *op, object *tmp, int level) {
 void examine(object *op, object *tmp) {
     char buf[VERY_BIG_BUF];
     int in_shop;
-    int i, exp = 0;
+    int i, exp = 0, conn;
+    object *tmp_inv;
 
     /* we use this to track how far along we got with trying to identify an item,
      * so that we can give the appropriate message to the player */
@@ -1612,9 +1613,28 @@ void examine(object *op, object *tmp) {
         examine_monster(op, tmp, 0);
 
     /* Is this item buildable? */
-    if (QUERY_FLAG(tmp, FLAG_IS_BUILDABLE))
+    if (QUERY_FLAG(tmp, FLAG_IS_BUILDABLE)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                       "This is a buildable item.");
+        if (QUERY_FLAG(tmp, FLAG_IS_LINKED)){
+            conn = get_button_value(tmp);
+            if (conn) {
+                FOR_INV_PREPARE(op, tmp_inv) {
+                    if (tmp_inv->type == FORCE && tmp_inv->slaying != NULL 
+                        && strcmp(tmp_inv->slaying, op->map->path) == 0
+                        && tmp_inv->msg != NULL
+                        && tmp_inv->path_attuned == conn) {
+
+                        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
+                                  MSG_TYPE_COMMAND_EXAMINE, "Connected with: %s",
+                                  tmp_inv->msg);
+
+                        break;
+                    }
+                } FOR_INV_FINISH();
+            }
+        }
+    }
 
     /* Does the object have a message?  Don't show message for all object
      * types - especially if the first entry is a match
