@@ -1408,7 +1408,6 @@ void examine(object *op, object *tmp) {
     char buf[VERY_BIG_BUF];
     int in_shop;
     int i, exp = 0, conn;
-    object *tmp_inv;
 
     /* we use this to track how far along we got with trying to identify an item,
      * so that we can give the appropriate message to the player */
