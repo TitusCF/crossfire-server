@@ -1,34 +1,26 @@
 /*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2007 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
-
-/** @file savebed.c
- * The implementation of the Savebed class of objects.
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2014 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
-#include <global.h>
-#include <ob_methods.h>
-#include <ob_types.h>
-#include <sounds.h>
-#include <sproto.h>
+
+/**
+ * @file
+ * Implement beds that are applied to save a player to disk.
+ */
+
+#include "global.h"
+#include "ob_methods.h"
+#include "ob_types.h"
+#include "sounds.h"
+#include "sproto.h"
 
 static method_ret savebed_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 static void apply_savebed(object *pl);
@@ -56,20 +48,17 @@ static method_ret savebed_type_apply(ob_methods *context, object *op, object *ap
 }
 
 /**
- * Handle savebed.
+ * Apply a bed to reality.
  *
  * @param pl
  * player who is applying the bed.
  */
 static void apply_savebed(object *pl) {
-
-    /* What is otherwise happening is a brand new character goes to save, it seems to work,
-     * but the character isn't actually saved as save_player() won't save characters
-     * with 0 exp. Warn the player
-     */
+    /* Refuse to save a player without any experience. */
     if (!pl->stats.exp) {
-        draw_ext_info_format(NDI_UNIQUE | NDI_RED, 5, pl, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                             "You need to earn some experience before you can save the character");
+        draw_ext_info_format(NDI_UNIQUE | NDI_RED, 5, pl,
+                MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+                "You must gain a bit of experience before you can save.");
         return;
     }
 
@@ -80,9 +69,9 @@ static void apply_savebed(object *pl) {
     pets_terminate_all(pl);
     object_remove(pl);
     pl->direction = 0;
-    draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, pl, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-        "%s leaves the game.",
-        pl->name);
+    draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, pl,
+            MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+            "%s leaves the game.", pl->name);
 
     /* update respawn position */
     safe_strncpy(pl->contr->savebed_map, pl->map->path,
@@ -92,7 +81,7 @@ static void apply_savebed(object *pl) {
 
     strcpy(pl->contr->killer, "left");
     hiscore_check(pl, 0); /* Always check score */
-    (void)save_player(pl, 0);
+    save_player(pl, 0);
     party_leave(pl);
 #if MAP_MAXTIMEOUT
     MAP_SWAP_TIME(pl->map) = MAP_TIMEOUT(pl->map);
