@@ -13,12 +13,15 @@
 
 /**
  * @file
- * Ingame time functions.
+ * In-game time functions.
  */
 
+#include "global.h"
+
 #include <assert.h>
-#include <global.h>
-#include <tod.h>
+#include <math.h>
+
+#include "tod.h"
 
 #ifndef WIN32 /* ---win32 exclude header */
 #include <stdio.h>
@@ -419,4 +422,11 @@ const char *time_format_time(const timeofday_t *tod, char *buf, size_t bufsize)
         tod->hour%14 == 0 ? 14 : tod->hour%14,
         tod->hour >= 14 ? "pm" : "am");
     return buf;
+}
+
+/**
+ * Calculate the number of ticks that correspond to real time.
+ */
+int tick_length(float seconds) {
+    return (int)ceil(seconds * 1000000 / max_time);
 }

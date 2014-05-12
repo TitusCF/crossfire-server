@@ -613,6 +613,7 @@ int process_object(object *op);
 void legacy_remove_force(object *op);
 void legacy_animate_trigger(object *op);
 void legacy_move_hole(object *op);
+int tick_length(float seconds);
 /* timers.c */
 void cftimer_process_timers(void);
 int cftimer_create(int id, long delay, object *ob, int mode);
