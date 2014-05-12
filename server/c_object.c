@@ -1622,7 +1622,7 @@ void examine(object *op, object *tmp) {
                     if (tmp_inv->type == FORCE && tmp_inv->slaying != NULL 
                         && strcmp(tmp_inv->slaying, op->map->path) == 0
                         && tmp_inv->msg != NULL
-                        && tmp_inv->path_attuned == conn) {
+                        && tmp_inv->path_attuned == (uint32_t) conn) {
 
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
                                   MSG_TYPE_COMMAND_EXAMINE, "Connected with: %s",
