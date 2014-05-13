@@ -1,0 +1,6 @@
+rotateshoottype switches your active attack mode (skill, ranged weapon, or spell).
+
+Usage:
+	rotateshoottype [number]
+
+[number] will rotate through the shoot-types for the designated number of iterations. [number] can be positive or negative to affect the direction of rotation. If [number] is greater than the number of shoot-types available, it will rotate as if [number] was -1. If no [number] is provided, 1 is used as a default.
