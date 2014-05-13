@@ -1,0 +1,3 @@
+The afk command toggles a flag that indicates you are away from your keyboard.
+
+It should be noted, however, that a player can have the afk flag set and still do things; this is likely so player scripts can operate while a physical player is elsewhere. This behavior, though, makes it easy to forget to unset the afk flag after returning to your keyboard.
