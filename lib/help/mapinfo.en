@@ -1,0 +1,8 @@
+mapinfo gives information about the map you are currently on.
+
+Output format:
+<map name> (<map path>) in <map region>
+Created: <date> <developer name> [<developer email>]
+[Modified: <date> <developer name> [<developer email>]]
+
+This information is predominantly used for bug reports and similar development operations.
