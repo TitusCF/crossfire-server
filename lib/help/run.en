@@ -1,0 +1,5 @@
+run causes you to run in a direction until instructed otherwise. If a direction number is provided, you will run starting in the direction indicated. If no direction is given, you will start to run in a direction starting with your next direction command.
+
+Alternatively, "<direction command> r" also can be used like the run command. For example, "northeast r" will cause you to run northeast until another direction is supplied.
+
+Running can be stopped with the run_stop command.
