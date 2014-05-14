@@ -1,0 +1,7 @@
+lock will lock an item in your inventory (it has to be unlocked to be dropped). If the item is already locked, it will unlock it instead.
+
+Usage:
+	lock <item name>
+
+<item name> can be either all or part of an item's name. If multiple items could meet the partial name's criteria, the first one encountered will be selected.
+It should be noted that the first item encountered in inventory may not correspond to the first item listed in the inventory window.
