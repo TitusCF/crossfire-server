@@ -1,0 +1,4 @@
+passwd allows for you to change your password
+
+It prompts you for your current password, your new password, and a confirmation of your new password.
+Leaving any of these prompts blank cancels the password change operation.
