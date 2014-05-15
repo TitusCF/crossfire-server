@@ -1,0 +1,7 @@
+language allows you to change the language of the game.
+
+Usage:
+	language <language abbreviation>
+
+Typing language without a <language abbreviation> will list all available languages and their abbreviations.
+Typing language with a valid <language abbreviation> will switch the current message language to the designated language.
