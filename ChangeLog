@@ -1,3 +1,7 @@
+2014-05-15	SilverNexus
+	* server/c_misc.c: Don't allow account-bound characters to change
+	  character password. It did not affect the account password, anyway.
+
 2014-05-13	SilverNexus
 	* server/c_misc.c: Fix in-game version command. Previous behavior
 	  displayed "Crossfire FULL_VERSION".

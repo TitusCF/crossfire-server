@@ -2162,9 +2162,17 @@ void command_kill_pets(object *op, const char *params) {
  * unused.
  */
 void command_passwd(object *pl, const char *params) {
-    send_query(&pl->contr->socket, CS_QUERY_HIDEINPUT, i18n(pl, "Password change.\nPlease enter your current password, or empty string to cancel."));
+    /* If old client, this is the way you change your password. */
+    if (pl->contr->socket.login_method < 1){
+        send_query(&pl->contr->socket, CS_QUERY_HIDEINPUT, i18n(pl, "Password change.\nPlease enter your current password, or empty string to cancel."));
 
-    player_set_state(pl->contr, ST_CHANGE_PASSWORD_OLD);
+        player_set_state(pl->contr, ST_CHANGE_PASSWORD_OLD);
+    }
+    /* If new client (login_method = 2) or jxclient (login_method = 1), changing the password does nothing anyway, so error out */
+    else{
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                          i18n(pl, "passwd is maintained for older clients that do not support the account system. Please use the 'Password' button in your character selection screen to change your password."));
+    }
 }
 
 /**
