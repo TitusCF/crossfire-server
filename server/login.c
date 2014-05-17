@@ -24,6 +24,8 @@
 #include <loader.h>
 #include <define.h>
 
+#include "output_file.h"
+
 static void copy_file(const char *filename, FILE *fpout);
 
 /**
@@ -206,7 +208,8 @@ void destroy_object(object *op) {
  */
 int save_player(object *op, int flag) {
     FILE *fp;
-    char filename[MAX_BUF], *tmpfilename, backupfile[MAX_BUF];
+    OutputFile of;
+    char filename[MAX_BUF], *tmpfilename;
     object *container = NULL;
     player *pl = op->contr;
     int i, wiz = QUERY_FLAG(op, FLAG_WIZ);
@@ -383,10 +386,8 @@ int save_player(object *op, int flag) {
     }
 
     checksum = 0;
-    snprintf(backupfile, sizeof(backupfile), "%s.tmp", filename);
-    rename(filename, backupfile);
-    fp = fopen(filename, "w");
-    if (!fp) {
+    fp = of_open(&of, filename);
+    if (fp == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
                       "Can't open file for save.");
         unlink(tmpfilename);
@@ -397,13 +398,11 @@ int save_player(object *op, int flag) {
     copy_file(tmpfilename, fp);
     unlink(tmpfilename);
     free(tmpfilename);
-    if (fclose(fp) == EOF) { /* got write error */
+    if (!of_close(&of)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
                       "Can't close file for save.");
-        rename(backupfile, filename); /* Restore the original */
         return 0;
-    } else
-        unlink(backupfile);
+    }
 
     /* Eneq(@csd.uu.se): Reveal the container if we have one. */
     if (flag && container != NULL)

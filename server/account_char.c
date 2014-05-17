@@ -52,6 +52,8 @@
 #include <sproto.h>
 #endif
 
+#include "output_file.h"
+
 /** Number of fields in the accounts file.  These are colon seperated */
 #define NUM_ACCOUNT_CHAR_FIELDS 8
 
@@ -141,29 +143,25 @@ Account_Char *account_char_load(const char *account_name) {
  * previously loaded/generated list of character information for this account.
  */
 void account_char_save(const char *account, Account_Char *chars) {
-    char fname[MAX_BUF], fname1[MAX_BUF];
+    char fname[MAX_BUF];
     FILE *fp;
+    OutputFile of;
     Account_Char *ac;
+
+    snprintf(fname, MAX_BUF, "%s/%s/%s", settings.localdir, ACCOUNT_DIR, account);
 
     /* It is certanly possibly that all characters for an account have
      * been removed/deleted - in that case, we just want to remove this
      * file.
      */
     if (chars == NULL) {
-        snprintf(fname, MAX_BUF, "%s/%s/%s", settings.localdir, ACCOUNT_DIR, account);
         unlink(fname);
         return;
     }
 
-    snprintf(fname, MAX_BUF, "%s/%s/%s.new", settings.localdir, ACCOUNT_DIR, account);
-    fp = fopen(fname, "w");
-    if (fp == NULL) {
-        char err[MAX_BUF];
-
-        LOG(llevError, "Cannot open accounts file %s: %s\n", fname,
-                strerror_local(errno, err, sizeof (err)));
+    fp = of_open(&of, fname);
+    if (fp == NULL)
         return;
-    }
 
     fprintf(fp, "# This file should not be edited while the server is running.\n");
     fprintf(fp, "# Otherwise, any changes made may be overwritten by the server\n");
@@ -172,15 +170,7 @@ void account_char_save(const char *account, Account_Char *chars) {
                 ac->name, ac->character_class, ac->race, ac->level,
                 ac->face, ac->party, ac->map, ac->isDead);
     }
-    fclose(fp);
-
-    /* We write to a new file name - in that way, if we crash while writing the file,
-     * we are not left with a corrupted file.  So now we need to rename it to the
-     * file to use.
-     */
-    snprintf(fname1, MAX_BUF, "%s/%s/%s", settings.localdir, ACCOUNT_DIR, account);
-    unlink(fname1);
-    rename(fname, fname1);
+    of_close(&of);
 }
 
 /**

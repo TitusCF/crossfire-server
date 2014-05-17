@@ -25,6 +25,7 @@
 #include <unistd.h>
 #endif /* win32 */
 
+#include "output_file.h"
 #include "path.h"
 
 extern int nrofallocobjects, nroffreeobjects;
@@ -1408,6 +1409,7 @@ static void load_unique_objects(mapstruct *m) {
 int save_map(mapstruct *m, int flag) {
 #define TEMP_EXT ".savefile"
     FILE *fp, *fp2;
+    OutputFile of, of2;
     char filename[MAX_BUF], buf[MAX_BUF], shop[MAX_BUF], final[MAX_BUF];
     int i, res;
 
@@ -1436,12 +1438,9 @@ int save_map(mapstruct *m, int flag) {
 
     snprintf(final, sizeof(final), "%s", filename);
     snprintf(filename, sizeof(filename), "%s%s", final, TEMP_EXT);
-    fp = fopen(filename, "w");
-
-    if (fp == NULL) {
-        LOG(llevError, "Cannot open regular objects file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
+    fp = of_open(&of, filename);
+    if (fp == NULL)
         return SAVE_ERROR_RCREATION;
-    }
 
     /* legacy */
     fprintf(fp, "arch map\n");
@@ -1518,9 +1517,9 @@ int save_map(mapstruct *m, int flag) {
         create_items_path(m->path, name, MAX_BUF);
         snprintf(final_unique, sizeof(final_unique), "%s.v00", name);
         snprintf(buf, sizeof(buf), "%s%s", final_unique, TEMP_EXT);
-        if ((fp2 = fopen(buf, "w")) == NULL) {
-            LOG(llevError, "Can't open unique items file %s\n", buf);
-            fclose(fp);
+        fp2 = of_open(&of2, buf);
+        if (fp2 == NULL) {
+            of_cancel(&of);
             return SAVE_ERROR_UCREATION;
         }
         if (flag == SAVE_MODE_OVERLAY) {
@@ -1528,8 +1527,8 @@ int save_map(mapstruct *m, int flag) {
             res = save_objects(m, fp, fp2, SAVE_FLAG_NO_REMOVE);
             if (res < 0) {
                 LOG(llevError, "Save error during object save: %d\n", res);
-                fclose(fp);
-                fclose(fp2);
+                of_cancel(&of);
+                of_cancel(&of2);
                 return res;
             }
             m->in_memory = MAP_IN_MEMORY;
@@ -1537,14 +1536,14 @@ int save_map(mapstruct *m, int flag) {
             res = save_objects(m, fp, fp2, 0);
             if (res < 0) {
                 LOG(llevError, "Save error during object save: %d\n", res);
-                fclose(fp);
-                fclose(fp2);
+                of_cancel(&of);
+                of_cancel(&of2);
                 return res;
             }
             free_all_objects(m);
         }
         if (ftell(fp2) == 0) {
-            fclose(fp2);
+            of_cancel(&of2);
             unlink(buf);
             /* If there are no unique items left on the map, we need to
              * unlink the original unique map so that the unique
@@ -1552,12 +1551,14 @@ int save_map(mapstruct *m, int flag) {
              */
             unlink(final_unique);
         } else {
-            fflush(fp2);
-            fclose(fp2);
+            if (!of_close(&of2)) {
+                of_cancel(&of);
+                return SAVE_ERROR_WRITE;
+            }
             unlink(final_unique); /* failure isn't too bad, maybe the file doesn't exist. */
             if (rename(buf, final_unique) == -1) {
                 LOG(llevError, "Couldn't rename unique file %s to %s\n", buf, final_unique);
-                fclose(fp);
+                of_cancel(&of);
                 return SAVE_ERROR_URENAME;
             }
             chmod(final_unique, SAVE_MODE);
@@ -1566,17 +1567,14 @@ int save_map(mapstruct *m, int flag) {
         res = save_objects(m, fp, fp, 0);
         if (res < 0) {
             LOG(llevError, "Save error during object save: %d\n", res);
-            fclose(fp);
+            of_cancel(&of);
             return res;
         }
         free_all_objects(m);
     }
 
-    fflush(fp);
-    if (fclose(fp) != 0) {
-        LOG(llevError, "fclose error!\n");
+    if (!of_close(&of))
         return SAVE_ERROR_CLOSE;
-    }
     unlink(final); /* failure isn't too bad, maybe the file doesn't exist. */
     if (rename(filename, final) == -1) {
         LOG(llevError, "Couldn't rename regular file %s to %s\n", filename, final);

@@ -1,6 +1,6 @@
 noinst_HEADERS = \
 commands.h     libproto.h     sounds.h	     attack.h       config.h \
-living.h       party.h    \
+living.h       party.h        output_file.h  \
 player.h       define.h       dialog.h       loader.h \
 race.h         material.h     spells.h       face.h         logger.h \
 re-cmp.h       sproto.h       artifact.h     map.h          recipe.h \

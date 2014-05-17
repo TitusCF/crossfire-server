@@ -28,6 +28,8 @@
 #include <spells.h>
 #include <errno.h>
 
+#include "output_file.h"
+
 static int resurrection_fails(int levelcaster, int leveldead);
 
 /**
@@ -48,7 +50,7 @@ static int resurrection_fails(int levelcaster, int leveldead);
  */
 static int resurrect_player(object *op, char *playername, object *spell, char *accountname) {
     FILE *deadplayer, *liveplayer;
-
+    OutputFile of;
     char oldname[MAX_BUF];
     char newname[MAX_BUF];
     char path[MAX_BUF];
@@ -105,11 +107,11 @@ static int resurrect_player(object *op, char *playername, object *spell, char *a
         return 0;
     }
 
-    if (!(liveplayer = fopen(newname, "w"))) {
+    liveplayer = of_open(&of, newname);
+    if (liveplayer == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "The soul of %s cannot be re-embodied at the moment.",
                              playername);
-        LOG(llevError, "Cannot write player in resurrect_player!\n");
         fclose(deadplayer);
         return 0;
     }
@@ -136,7 +138,13 @@ static int resurrect_player(object *op, char *playername, object *spell, char *a
         }
         fputs(buf, liveplayer);
     }
-    fclose(liveplayer);
+    if (!of_close(&of)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                             "The soul of %s cannot be re-embodied at the moment.",
+                             playername);
+        fclose(deadplayer);
+        return 0;
+    }
     fclose(deadplayer);
     unlink(oldname);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,

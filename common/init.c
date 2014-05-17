@@ -21,6 +21,8 @@
 #include <global.h>
 #include <object.h>
 
+#include "output_file.h"
+
 static void init_environ(void);
 static void init_defaults(void);
 static void init_dynamic(void);
@@ -438,15 +440,14 @@ unsigned long todtick;
 void write_todclock(void) {
     char filename[MAX_BUF];
     FILE *fp;
+    OutputFile of;
 
     snprintf(filename, sizeof(filename), "%s/clockdata", settings.localdir);
-    fp = fopen(filename, "w");
-    if (fp == NULL) {
-        LOG(llevError, "Cannot open %s for writing\n", filename);
+    fp = of_open(&of, filename);
+    if (fp == NULL)
         return;
-    }
     fprintf(fp, "%lu", todtick);
-    fclose(fp);
+    of_close(&of);
 }
 
 /**

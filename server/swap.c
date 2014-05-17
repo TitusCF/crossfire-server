@@ -22,6 +22,8 @@
 #endif
 #include <object.h>
 
+#include "output_file.h"
+
 /**
  * Writes out information on all the temporary maps.  It is called by
  * swap_map().
@@ -30,15 +32,15 @@
  */
 static void write_map_log(void) {
     FILE *fp;
+    OutputFile of;
     mapstruct *map;
     char buf[MAX_BUF];
     long current_time = time(NULL);
 
     snprintf(buf, sizeof(buf), "%s/temp.maps", settings.localdir);
-    if (!(fp = fopen(buf, "w"))) {
-        LOG(llevError, "Could not open %s for writing\n", buf);
+    fp = of_open(&of, buf);
+    if (fp == NULL)
         return;
-    }
     for (map = first_map; map != NULL; map = map->next) {
         /* If tmpname is null, it is probably a unique player map,
          * so don't save information on it.
@@ -57,7 +59,7 @@ static void write_map_log(void) {
                     map->darkness);
         }
     }
-    fclose(fp);
+    of_close(&of);
 }
 
 /**

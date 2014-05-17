@@ -1,3 +1,8 @@
+2014-05-17  Andreas Kirschbaum
+
+	* For all files being written: add error checks and retain the
+	previous file contents if a write error occurs.
+
 2014-05-15	SilverNexus
 	* server/c_misc.c: Don't allow account-bound characters to change
 	  character password. It did not affect the account password, anyway.

@@ -24,6 +24,7 @@ libcross_a_SOURCES = \
 	ob_methods.c \
 	ob_types.c \
 	object.c\
+	output_file.c \
 	path.c\
 	porting.c\
 	player.c\

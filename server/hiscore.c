@@ -21,6 +21,8 @@
 #include <sproto.h>
 #endif
 
+#include "output_file.h"
+
 /**
  * The score structure is used when treating new high-scores.
  */
@@ -71,16 +73,15 @@ static void put_score(const score *sc, char *buf, size_t size) {
  */
 static void hiscore_save(const score_table *table) {
     FILE *fp;
+    OutputFile of;
     size_t i;
     char buf[MAX_BUF];
 
     LOG(llevDebug, "Writing highscore files %s\n", table->fname);
 
-    fp = fopen(table->fname, "w");
-    if (fp == NULL) {
-        LOG(llevError, "Cannot create highscore file %s: %s\n", table->fname, strerror_local(errno, buf, sizeof(buf)));
+    fp = of_open(&of, table->fname);
+    if (fp == NULL)
         return;
-    }
 
     for (i = 0; i < HIGHSCORE_LENGTH; i++) {
         if (table->entry[i].name[0] == '\0')
@@ -89,12 +90,7 @@ static void hiscore_save(const score_table *table) {
         put_score(&table->entry[i], buf, sizeof(buf));
         fprintf(fp, "%s\n", buf);
     }
-    if (ferror(fp)) {
-        LOG(llevError, "Cannot write to highscore file %s: %s\n", table->fname, strerror_local(errno, buf, sizeof(buf)));
-        fclose(fp);
-    } else if (fclose(fp) != 0) {
-        LOG(llevError, "Cannot write to highscore file %s: %s\n", table->fname, strerror_local(errno, buf, sizeof(buf)));
-    }
+    of_close(&of);
 }
 
 /**

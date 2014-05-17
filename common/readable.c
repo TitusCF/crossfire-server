@@ -29,6 +29,8 @@
 #include <spells.h>
 #include <assert.h>
 
+#include "output_file.h"
+
 /* Define this if you want to archive book titles by contents.
  * This option should enforce UNIQUE combinations of titles,authors and
  * msg contents during and *between *game sessions.
@@ -2134,6 +2136,7 @@ void free_all_readable(void) {
  */
 void write_book_archive(void) {
     FILE *fp;
+    OutputFile of;
     int index;
     char fname[MAX_BUF];
     title *book;
@@ -2146,11 +2149,9 @@ void write_book_archive(void) {
     snprintf(fname, sizeof(fname), "%s/bookarch", settings.localdir);
     LOG(llevDebug, "Updating book archive: %s...\n", fname);
 
-    fp = fopen(fname, "w");
-    if (fp == NULL) {
-        LOG(llevDebug, "Can't open book archive file %s\n", fname);
+    fp = of_open(&of, fname);
+    if (fp == NULL)
         return;
-    }
 
     for (bl = get_titlelist(0), index = 0; bl; bl = bl->next, index++) {
         for (book = bl->first_book; book; book = book->next)
@@ -2166,15 +2167,8 @@ void write_book_archive(void) {
                 fprintf(fp, "end\n");
             }
     }
-    if (ferror(fp)) {
-        LOG(llevError, "Error during book archive save.\n");
-        fclose(fp);
+    if (!of_close(&of))
         return;
-    }
-    if (fclose(fp) != 0) {
-        LOG(llevError, "Error during book archive save.\n");
-        return;
-    }
     chmod(fname, SAVE_MODE);
     need_to_write_bookarchive = 0;
 }

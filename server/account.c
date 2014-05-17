@@ -52,6 +52,8 @@
 #include <sproto.h>
 #endif
 
+#include "output_file.h"
+
 /** Number of fields in the accounts file.  These are colon seperated */
 #define NUM_ACCOUNT_FIELDS 6
 
@@ -261,23 +263,19 @@ static void account_write_entry(FILE *fp, account_struct *ac)
  */
 void accounts_save(void)
 {
-    char fname[MAX_BUF], fname1[MAX_BUF];
+    char fname[MAX_BUF];
     FILE *fp;
+    OutputFile of;
     account_struct *ac;
 
     if (accounts_loaded == 0)
         return;
 
-    snprintf(fname, MAX_BUF,"%s/%s.new", settings.localdir, ACCOUNT_FILE);
+    snprintf(fname, MAX_BUF,"%s/%s", settings.localdir, ACCOUNT_FILE);
 
-    fp = fopen(fname,"w");
-    if (fp == NULL) {
-        char err[MAX_BUF];
-
-        LOG(llevError, "Cannot open accounts file %s: %s\n", fname,
-            strerror_local(errno, err, sizeof(err)));
+    fp = of_open(&of, fname);
+    if (fp == NULL)
         return;
-    }
 
     fprintf(fp, "# This file should not be edited while the server is running.\n");
     fprintf(fp, "# Otherwise, any changes made may be overwritten by the server\n");
@@ -290,15 +288,7 @@ void accounts_save(void)
         if (ac->num_characters || (ac->created > (time(NULL) - 24*60*60)))
             account_write_entry(fp, ac);
     }
-    fclose(fp);
-
-    /* We write to a new file name - in that way, if we crash while writing the file,
-     * we are not left with a corrupted file.  So now we need to rename it to the
-     * file to use.
-     */
-    snprintf(fname1, MAX_BUF,"%s/%s", settings.localdir, ACCOUNT_FILE);
-    unlink(fname1);
-    rename(fname, fname1);
+    of_close(&of);
 }
 
 /**

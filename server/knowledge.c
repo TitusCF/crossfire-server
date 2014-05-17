@@ -61,6 +61,8 @@ is sent as needed, incrementally as to not freeze the server.
 #endif
 #include <assert.h>
 
+#include "output_file.h"
+
 struct knowledge_player;
 struct knowledge_type;
 
@@ -872,16 +874,15 @@ static const knowledge_type *knowledge_find(const char *type) {
  */
 static void knowledge_write_player_data(const knowledge_player *kp) {
     FILE *file;
-    char write[MAX_BUF], final[MAX_BUF];
+    OutputFile of;
+    char fname[MAX_BUF];
     const knowledge_item *item;
     int i;
 
-    snprintf(final, sizeof(final), "%s/%s/%s/%s.knowledge", settings.localdir, settings.playerdir, kp->player_name, kp->player_name);
-    snprintf(write, sizeof(write), "%s.new", final);
+    snprintf(fname, sizeof(fname), "%s/%s/%s/%s.knowledge", settings.localdir, settings.playerdir, kp->player_name, kp->player_name);
 
-    file = fopen(write, "w+");
+    file = of_open(&of, fname);
     if (!file) {
-        LOG(llevError, "knowledge: couldn't open player knowledge file %s!", write);
         draw_ext_info(NDI_UNIQUE | NDI_ALL_DMS, 0, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "File write error on server!");
         return;
     }
@@ -891,10 +892,11 @@ static void knowledge_write_player_data(const knowledge_player *kp) {
         fprintf(file, "%s:%s\n", item->handler->type, item->item);
     }
 
-    fclose(file);
+    if (!of_close(&of)) {
+        draw_ext_info(NDI_UNIQUE | NDI_ALL_DMS, 0, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "File write error on server!");
+        return;
+    }
     /** @todo rename/backup, stuff like that */
-    unlink(final);
-    rename(write, final);
 }
 
 /**
