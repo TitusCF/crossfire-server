@@ -1,5 +1,5 @@
 #ifndef _CRERULEPANEL_H
-#define	_CRERULEPANEL_H
+#define _CRERULEPANEL_H
 
 #include <QObject>
 #include <QtGui>
@@ -46,5 +46,4 @@ class CRERulePanel : public QTabWidget
         void onIncludeModified();
 };
 
-#endif	/* _CRERULEPANEL_H */
-
+#endif /* _CRERULEPANEL_H */

@@ -72,7 +72,7 @@ typedef struct account_struct {
     char  *name;                    /**< Account name */
     char  *password;                /**< Password for this account */
     time_t last_login;              /**< Last time this account was logged in */
-    int	  num_characters;           /**< Number of characters on this account */
+    int   num_characters;           /**< Number of characters on this account */
     char  *character_names[MAX_CHARACTERS_PER_ACCOUNT+1];
                                     /**< Character names associated with this account
                                      +1 added to allow for NULL termination */

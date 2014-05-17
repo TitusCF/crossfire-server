@@ -153,7 +153,7 @@ static int resurrect_player(object *op, char *playername, object *spell, char *a
     /* Needs to go into the account file and change the player back to isDead = 0 */
     /* I'm fairly certain the old login did not have the segfault, so just sccount for the new account system */
     if (accountname)
-	unmake_perma_dead(accountname, playername);
+        unmake_perma_dead(accountname, playername);
     return 1;
 }
 

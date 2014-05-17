@@ -1619,7 +1619,7 @@ void examine(object *op, object *tmp) {
             conn = get_button_value(tmp);
             if (conn) {
                 FOR_INV_PREPARE(op, tmp_inv) {
-                    if (tmp_inv->type == FORCE && tmp_inv->slaying != NULL 
+                    if (tmp_inv->type == FORCE && tmp_inv->slaying != NULL
                         && strcmp(tmp_inv->slaying, op->map->path) == 0
                         && tmp_inv->msg != NULL
                         && tmp_inv->path_attuned == (uint32_t) conn) {

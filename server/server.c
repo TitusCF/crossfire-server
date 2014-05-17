@@ -1027,7 +1027,7 @@ void process_events(void) {
          * The real bug is to try to find out the cause of this - someone
          * is probably calling object_remove() without either an insert_ob or
          * object_free_drop_inventory() afterwards, leaving an object dangling.
-	 * But I'd rather log this and continue on instead of crashing.
+         * But I'd rather log this and continue on instead of crashing.
          * Don't remove players - when a player quits, the object is in
          * sort of a limbo, of removed, but something we want to keep
          * around.

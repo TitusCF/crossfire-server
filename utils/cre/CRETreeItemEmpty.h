@@ -1,5 +1,5 @@
 #ifndef _CRETREEITEMEMPTY_H
-#define	_CRETREEITEMEMPTY_H
+#define _CRETREEITEMEMPTY_H
 
 #include <QObject>
 #include "CRETreeItem.h"
@@ -16,5 +16,4 @@ class CRETreeItemEmpty : public CRETreeItem
         virtual void fillPanel(QWidget*) { }
 };
 
-#endif	/* _CRETREEITEMEMPTY_H */
-
+#endif /* _CRETREEITEMEMPTY_H */

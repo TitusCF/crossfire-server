@@ -1,5 +1,5 @@
 #ifndef _QUESTCONDITIONSCRIPT_H
-#define	_QUESTCONDITIONSCRIPT_H
+#define _QUESTCONDITIONSCRIPT_H
 
 #include <QObject>
 
@@ -19,5 +19,4 @@ class QuestConditionScript : public QObject
         QString myComment;
 };
 
-#endif	/* _QUESTCONDITIONSCRIPT_H */
-
+#endif /* _QUESTCONDITIONSCRIPT_H */

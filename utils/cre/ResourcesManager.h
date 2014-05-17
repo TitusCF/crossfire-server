@@ -1,5 +1,5 @@
 #ifndef RESOURCESMANAGER_H
-#define	RESOURCESMANAGER_H
+#define RESOURCESMANAGER_H
 
 extern "C" {
 #include "global.h"
@@ -37,5 +37,4 @@ class ResourcesManager
         QHash<QString, animations_struct*> myAnimations;
 };
 
-#endif	/* RESOURCESMANAGER_H */
-
+#endif /* RESOURCESMANAGER_H */

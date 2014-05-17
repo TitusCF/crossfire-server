@@ -982,7 +982,7 @@ object *hit_with_arrow(object *op, object *victim) {
          * might be called until this THROWN_OBJ is either reassembled or
          * removed at the end of this function must be able to deal with empty
          * THROWN_OBJs. */
-	container_tag = container->count;
+        container_tag = container->count;
     }
 
     /* Try to hit victim */
@@ -1045,10 +1045,10 @@ object *hit_with_arrow(object *op, object *victim) {
 
         /* Try to stick arrow into victim */
         if (!object_was_destroyed(victim, victim_tag)
-	        && stick_arrow(hitter, victim)) {
-	    object_set_owner(hitter, NULL);
+                && stick_arrow(hitter, victim)) {
+            object_set_owner(hitter, NULL);
             return NULL;
-	}
+        }
 
         /* Else try to put arrow on victim's map square
         * remove check for P_WALL here.  If the arrow got to this
@@ -1059,12 +1059,12 @@ object *hit_with_arrow(object *op, object *victim) {
         */
         if (victim_x != hitter->x || victim_y != hitter->y) {
             object_remove(hitter);
-	    object_set_owner(hitter, NULL);
+            object_set_owner(hitter, NULL);
             object_insert_in_map_at(hitter, victim_map, hitter, 0, victim_x, victim_y);
         } else {
             /* Else leave arrow where it is */
             object_merge(hitter, NULL);
-	    object_set_owner(hitter, NULL);
+            object_set_owner(hitter, NULL);
         }
         return NULL;
     }

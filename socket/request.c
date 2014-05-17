@@ -2416,10 +2416,10 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
      */
     for (pl=first_player; pl; pl=pl->next) {
         if (&pl->socket == ns) {
-	  /* The player still in the socket must be saved first. */
-	  save_player(pl->ob, 0);
-	  break;
-	} 
+            /* The player still in the socket must be saved first. */
+            save_player(pl->ob, 0);
+            break;
+        }
     }
 
     /* Some of this logic is from add_player()
@@ -2531,11 +2531,11 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     for (pl=first_player; pl; pl=pl->next)
       if (&pl->socket == ns) {
         if (pl->ob->name && !strcmp(pl->ob->name, name)) {
-          /* For some reason not only the socket is the same but also 
+          /* For some reason not only the socket is the same but also
            * the player is already playing. If this happens at this
            * point let's assume the character never was able to apply
            * a bet of reality to make a correct first-time save.
-           * So, for safety remove it and start over. 
+           * So, for safety remove it and start over.
            */
           if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
             object_remove(pl->ob);

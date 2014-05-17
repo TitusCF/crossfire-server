@@ -1,5 +1,5 @@
 #ifndef _CREPREPOSTPANEL_H
-#define	_CREPREPOSTPANEL_H
+#define _CREPREPOSTPANEL_H
 
 #include <QWidget>
 #include <QObject>
@@ -189,5 +189,5 @@ class CREPrePostPanel : public QWidget
         void subItemChanged(const QStringList& data);
 };
 
-#endif	/* _CREPREPOSTPANEL_H */
+#endif /* _CREPREPOSTPANEL_H */
 

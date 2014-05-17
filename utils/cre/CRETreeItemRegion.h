@@ -1,5 +1,5 @@
 #ifndef _CRETREEITEMREGION_H
-#define	_CRETREEITEMREGION_H
+#define _CRETREEITEMREGION_H
 
 #include "CRETreeItem.h"
 extern "C"
@@ -21,5 +21,4 @@ class CRETreeItemRegion : public CRETreeItem
         regiondef* myRegion;
 };
 
-#endif	/* _CRETREEITEMREGION_H */
-
+#endif /* _CRETREEITEMREGION_H */

@@ -1,5 +1,5 @@
 #ifndef _CREMAPPANEL_H
-#define	_CREMAPPANEL_H
+#define _CREMAPPANEL_H
 
 #include <QObject>
 #include <QtGui>
@@ -21,4 +21,4 @@ class CREMapPanel : public CREPanel
         QTreeWidget* myExitsFrom;
 };
 
-#endif	/* _CREMAPPANEL_H */
+#endif /* _CREMAPPANEL_H */

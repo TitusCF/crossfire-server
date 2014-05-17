@@ -1,5 +1,5 @@
 #ifndef _CRETREEITEMQUEST_H
-#define	_CRETREEITEMQUEST_H
+#define _CRETREEITEMQUEST_H
 
 #include <QObject>
 #include "CRETreeItem.h"
@@ -29,4 +29,4 @@ class CRETreeItemQuest : public CRETreeItem
         void deleteQuest(bool);
 };
 
-#endif	/* _CRETREEITEMQUEST_H */
+#endif /* _CRETREEITEMQUEST_H */

@@ -1,5 +1,5 @@
 #ifndef _MESSAGEMANAGER_H
-#define	_MESSAGEMANAGER_H
+#define _MESSAGEMANAGER_H
 
 #include <QList>
 class MessageFile;
@@ -32,5 +32,4 @@ class MessageManager
         void findPrePost(const QString directory, QList<QuestConditionScript*>& list);
 };
 
-#endif	/* _MESSAGEMANAGER_H */
-
+#endif /* _MESSAGEMANAGER_H */

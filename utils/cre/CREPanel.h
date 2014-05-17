@@ -1,5 +1,5 @@
 #ifndef _CREPANEL_H
-#define	_CREPANEL_H
+#define _CREPANEL_H
 
 #include <QObject>
 #include <QWidget>
@@ -16,5 +16,4 @@ class CREPanel : public QWidget
     private:
 };
 
-#endif	/* _CREPANEL_H */
-
+#endif /* _CREPANEL_H */

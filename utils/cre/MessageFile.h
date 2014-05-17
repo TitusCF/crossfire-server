@@ -1,5 +1,5 @@
 #ifndef _MESSAGEFILE_H
-#define	_MESSAGEFILE_H
+#define _MESSAGEFILE_H
 
 #include <QObject>
 #include <QStringList>
@@ -77,5 +77,4 @@ class MessageFile : public QObject
         QList<CREMapInformation*> myMaps;
 };
 
-#endif	/* _MESSAGEFILE_H */
-
+#endif /* _MESSAGEFILE_H */

@@ -1,5 +1,5 @@
 #ifndef CRECOMBATSIMULATOR_H
-#define	CRECOMBATSIMULATOR_H
+#define CRECOMBATSIMULATOR_H
 
 #include <QWidget>
 #include <QDialog>
@@ -42,5 +42,4 @@ class CRECombatSimulator : public QDialog
         int mySecondMaxHp;
 };
 
-#endif	/* CRECOMBATSIMULATOR_H */
-
+#endif /* CRECOMBATSIMULATOR_H */

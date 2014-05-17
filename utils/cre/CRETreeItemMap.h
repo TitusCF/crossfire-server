@@ -1,5 +1,5 @@
 #ifndef _CRETREEITEMMAP_H
-#define	_CRETREEITEMMAP_H
+#define _CRETREEITEMMAP_H
 
 class CREMapInformation;
 
@@ -18,5 +18,4 @@ class CRETreeItemMap : public CRETreeItem
         CREMapInformation* myMap;
 };
 
-#endif	/* _CRETREEITEMMAP_H */
-
+#endif /* _CRETREEITEMMAP_H */

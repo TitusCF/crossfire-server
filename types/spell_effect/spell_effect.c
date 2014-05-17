@@ -330,7 +330,7 @@ static void explosion(object *op) {
     if (op->range > 0) {
         for (i = 1; i < 9; i++) {
             int16_t dx, dy;
-	    int16_t Dx, Dy;
+            int16_t Dx, Dy;
             dx = op->x+freearr_x[i];
             dy = op->y+freearr_y[i];
             /* ok_to_put_more already does things like checks for walls,
@@ -343,32 +343,32 @@ static void explosion(object *op) {
                 tmp->speed_left = -0.21;
                 tmp->range--;
                 tmp->value = 0;
-		Dx=dx-op->x;
-		Dy=dy-op->y;
-		if (Dx==-1 && Dy==-1){
-		  tmp->direction=8;
-		}
-		if (Dx==0 && Dy==-1){
-		  tmp->direction=1;
-		}
-		if (Dx==1 && Dy==-1){
-		  tmp->direction=2;
-		}
-		if (Dx==1 && Dy==0){
-		  tmp->direction=3;
-		}
-		if (Dx==1 && Dy==1){
-		  tmp->direction=4;
-		}
-		if (Dx==0 && Dy==1){
-		  tmp->direction=5;
-		}
-		if (Dx==-1 && Dy==-1){
-		  tmp->direction=6;
-		}
-		if (Dx==-1 && Dy==0){
-		  tmp->direction=7;
-		}
+                Dx=dx-op->x;
+                Dy=dy-op->y;
+                if (Dx==-1 && Dy==-1){
+                    tmp->direction=8;
+                }
+                if (Dx==0 && Dy==-1){
+                    tmp->direction=1;
+                }
+                if (Dx==1 && Dy==-1){
+                    tmp->direction=2;
+                }
+                if (Dx==1 && Dy==0){
+                    tmp->direction=3;
+                }
+                if (Dx==1 && Dy==1){
+                    tmp->direction=4;
+                }
+                if (Dx==0 && Dy==1){
+                    tmp->direction=5;
+                }
+                if (Dx==-1 && Dy==-1){
+                    tmp->direction=6;
+                }
+                if (Dx==-1 && Dy==0){
+                    tmp->direction=7;
+                }
 
                 object_insert_in_map_at(tmp, m, op, 0, dx, dy);
 
@@ -915,18 +915,18 @@ static void check_spell_knockback(object *op) {
              * I don't see us doing anything useful with that information
              * right now.
              */
-// 	    LOG(llevDebug, "trying move\n");
-	    if (op->direction){
-	      move_object(tmp,absdir(op->direction));
-	    }
+//             LOG(llevDebug, "trying move\n");
+            if (op->direction){
+                move_object(tmp,absdir(op->direction));
+            }
 
             else {
-	      (move_object(tmp, absdir(op->stats.sp)));
+                (move_object(tmp, absdir(op->stats.sp)));
 
-	    }
+            }
         }
         else{
-// 	  LOG(llevDebug, "did not try move, don't know why\n");
-	}
+//           LOG(llevDebug, "did not try move, don't know why\n");
+        }
     }
 }

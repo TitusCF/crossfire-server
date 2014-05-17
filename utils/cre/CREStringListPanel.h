@@ -1,5 +1,5 @@
 #ifndef _CRESTRINGLISTPANEL_H
-#define	_CRESTRINGLISTPANEL_H
+#define _CRESTRINGLISTPANEL_H
 
 #include <QWidget>
 
@@ -37,4 +37,4 @@ class CREStringListPanel : public QWidget
         void onTextEditChanged();
 };
 
-#endif	/* _CRESTRINGLISTPANEL_H */
+#endif /* _CRESTRINGLISTPANEL_H */

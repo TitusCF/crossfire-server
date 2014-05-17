@@ -1,5 +1,5 @@
 #ifndef CRESMOOTHFACEMAKER_H
-#define	CRESMOOTHFACEMAKER_H
+#define CRESMOOTHFACEMAKER_H
 
 #include <QDialog>
 #include <QObject>
@@ -33,5 +33,4 @@ class CRESmoothFaceMaker : public QDialog
         QComboBox* myFace;
 };
 
-#endif	/* CRESMOOTHFACEMAKER_H */
-
+#endif /* CRESMOOTHFACEMAKER_H */

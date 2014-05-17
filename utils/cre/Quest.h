@@ -1,5 +1,5 @@
 #ifndef _QUEST_H
-#define	_QUEST_H
+#define _QUEST_H
 
 #include <QObject>
 #include <QStringList>
@@ -78,5 +78,4 @@ class Quest : public QObject
         void markModified();
 };
 
-#endif	/* _QUEST_H */
-
+#endif /* _QUEST_H */

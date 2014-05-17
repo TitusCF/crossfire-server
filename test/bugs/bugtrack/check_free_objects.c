@@ -33,9 +33,9 @@
 
 static object *find_arch_at(mapstruct *map, int x, int y, const char *arch_name) {
     FOR_MAP_PREPARE(map, x, y, op) {
-	if (strcmp(op->arch->name, arch_name) == 0) {
-	    return op;
-	}
+        if (strcmp(op->arch->name, arch_name) == 0) {
+            return op;
+        }
     } FOR_MAP_FINISH();
     return NULL;
 }

@@ -1,5 +1,5 @@
 #ifndef _CREMESSAGEPANEL_H
-#define	_CREMESSAGEPANEL_H
+#define _CREMESSAGEPANEL_H
 
 #include <QObject>
 #include <QBrush>
@@ -47,5 +47,4 @@ class CREMessagePanel : public CREPanel
         void onDuplicate(bool);
 };
 
-#endif	/* _CREMESSAGEPANEL_H */
-
+#endif /* _CREMESSAGEPANEL_H */

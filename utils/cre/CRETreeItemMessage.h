@@ -1,5 +1,5 @@
 #ifndef _CRETREEITEMMESSAGE_H
-#define	_CRETREEITEMMESSAGE_H
+#define _CRETREEITEMMESSAGE_H
 
 #include "CRETreeItem.h"
 class MessageFile;
@@ -17,5 +17,4 @@ class CRETreeItemMessage : public CRETreeItem
         MessageFile* myMessage;
 };
 
-#endif	/* _CRETREEITEMMESSAGE_H */
-
+#endif /* _CRETREEITEMMESSAGE_H */

@@ -1,5 +1,5 @@
 #ifndef _QUESTMANAGER_H
-#define	_QUESTMANAGER_H
+#define _QUESTMANAGER_H
 
 #include <QList>
 #include <QHash>
@@ -31,4 +31,4 @@ class QuestManager
         void addQuest(const QString& filename, Quest* quest);
 };
 
-#endif	/* _QUESTMANAGER_H */
+#endif /* _QUESTMANAGER_H */

@@ -1,5 +1,5 @@
 #ifndef _CREREPLYPANEL_H
-#define	_CREREPLYPANEL_H
+#define _CREREPLYPANEL_H
 
 #include <QWidget>
 
@@ -57,4 +57,4 @@ class CREReplyPanel : public QWidget
         void onTypeChanged(int);
 };
 
-#endif	/* _CREREPLYPANEL_H */
+#endif /* _CREREPLYPANEL_H */

@@ -1,5 +1,5 @@
 #ifndef _CREQUESTITEMMODEL_H
-#define	_CREQUESTITEMMODEL_H
+#define _CREQUESTITEMMODEL_H
 
 #include <QObject>
 #include <QAbstractItemModel>
@@ -37,5 +37,4 @@ class CREQuestItemModel : public QAbstractItemModel
         Quest* myQuest;
 };
 
-#endif	/* _CREQUESTITEMMODEL_H */
-
+#endif /* _CREQUESTITEMMODEL_H */

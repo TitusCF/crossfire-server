@@ -1,5 +1,5 @@
 #ifndef CREHPBARMAKER_H
-#define	CREHPBARMAKER_H
+#define CREHPBARMAKER_H
 
 #include <QDialog>
 #include <QObject>
@@ -32,5 +32,4 @@ class CREHPBarMaker : public QDialog
         QPushButton *myColorSelect;
 };
 
-#endif	/* CREHPBARMAKER_H */
-
+#endif /* CREHPBARMAKER_H */

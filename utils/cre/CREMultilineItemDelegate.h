@@ -1,5 +1,5 @@
 #ifndef _CREMULTILINEITEMDELEGATE_H
-#define	_CREMULTILINEITEMDELEGATE_H
+#define _CREMULTILINEITEMDELEGATE_H
 
 class CREMultilineItemDelegate : public QStyledItemDelegate
 {
@@ -14,5 +14,4 @@ class CREMultilineItemDelegate : public QStyledItemDelegate
     private:
 };
 
-#endif	/* _CREMULTILINEITEMDELEGATE_H */
-
+#endif /* _CREMULTILINEITEMDELEGATE_H */

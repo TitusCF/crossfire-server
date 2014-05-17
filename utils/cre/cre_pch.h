@@ -1,7 +1,7 @@
 #ifndef _CRE_PCH_H
-#define	_CRE_PCH_H
+#define _CRE_PCH_H
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -13,7 +13,7 @@ extern "C" {
 #include "object.h"
 #include "treasure.h"
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 
@@ -26,4 +26,4 @@ extern "C" {
 #include <QStringList>
 
 
-#endif	/* _CRE_PCH_H */
+#endif /* _CRE_PCH_H */

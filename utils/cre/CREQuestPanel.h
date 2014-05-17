@@ -1,5 +1,5 @@
 #ifndef _CREQUESTPANEL_H
-#define	_CREQUESTPANEL_H
+#define _CREQUESTPANEL_H
 
 #include <QWidget>
 #include <QtGui>
@@ -49,5 +49,4 @@ class CREQuestPanel : public CREPanel
         void moveDown(bool);
 };
 
-#endif	/* _CREQUESTPANEL_H */
-
+#endif /* _CREQUESTPANEL_H */

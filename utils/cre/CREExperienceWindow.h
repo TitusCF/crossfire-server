@@ -1,5 +1,5 @@
 #ifndef _CREEXPERIENCEWINDOW_H
-#define	_CREEXPERIENCEWINDOW_H
+#define _CREEXPERIENCEWINDOW_H
 
 #include <QWidget>
 
@@ -10,5 +10,4 @@ class CREExperienceWindow : public QWidget
         virtual ~CREExperienceWindow();
 };
 
-#endif	/* _CREEXPERIENCEWINDOW_H */
-
+#endif /* _CREEXPERIENCEWINDOW_H */

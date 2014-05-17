@@ -1,5 +1,5 @@
 #ifndef _CREREGIONPANEL_H
-#define	_CREREGIONPANEL_H
+#define _CREREGIONPANEL_H
 
 #include <QWidget>
 #include "CREPanel.h"
@@ -28,5 +28,4 @@ class CRERegionPanel : public CREPanel
         QLabel* myJailY;
 };
 
-#endif	/* _CREREGIONPANEL_H */
-
+#endif /* _CREREGIONPANEL_H */
