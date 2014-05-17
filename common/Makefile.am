@@ -3,7 +3,7 @@ noinst_LIBRARIES = libcross.a
 libcross_a_SOURCES = \
 	anim.c \
 	arch.c\
-  artifact.c\
+	artifact.c\
 	button.c\
 	dialog.c \
 	exp.c\
