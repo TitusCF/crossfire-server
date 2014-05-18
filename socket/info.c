@@ -207,15 +207,13 @@ void rangetostring(const object *pl, char *obuf, size_t len) {
         break;
 
     case range_magic:
-        if (settings.casting_time == TRUE) {
-            if (pl->casting_time > -1) {
-                if (pl->casting_time == 0)
-                    snprintf(obuf, len, "Range: Holding spell (%s)", pl->spell->name);
-                else
-                    snprintf(obuf, len, "Range: Casting spell (%s)", pl->spell->name);
-            } else
-                snprintf(obuf, len, "Range: spell (%s)", pl->contr->ranges[range_magic]->name);
-        } else
+        if (settings.casting_time == TRUE && pl->casting_time > -1) {
+            if (pl->casting_time == 0)
+                snprintf(obuf, len, "Range: Holding spell (%s)", pl->spell->name);
+            else
+                snprintf(obuf, len, "Range: Casting spell (%s)", pl->spell->name);
+        }
+        else
             snprintf(obuf, len, "Range: spell (%s)", pl->contr->ranges[range_magic]->name);
         break;
 
