@@ -28,8 +28,8 @@ libserver_a_SOURCES = \
 	login.c\
 	monster.c\
 	move.c\
-    ob_methods.c\
-    ob_types.c\
+	ob_methods.c\
+	ob_types.c\
 	party.c\
 	pets.c\
 	player.c\
