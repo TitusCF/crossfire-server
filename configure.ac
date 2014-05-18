@@ -287,11 +287,7 @@ if test "$cf_have_libdl" = "yes" ; then
 AC_MSG_NOTICE([    Build python plugin?            $cf_will_build_python])
 fi
 
-if test "$enable_cfrhg" = "yes" ; then
-AC_MSG_NOTICE([    Build random house plugin?      yes])
-else
-AC_MSG_NOTICE([    Build random house plugin?      no])
-fi
+AC_MSG_NOTICE([    Build random house plugin?      $enable_cfrhg])
 
 if test x"$xsltengine" != "x" ; then
     check_complement=["(will generate report)"]
