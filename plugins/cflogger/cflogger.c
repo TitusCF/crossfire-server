@@ -222,7 +222,7 @@ static void check_tables(void) {
     if (format < 1) {
         cf_log(llevDebug, " [%s] Creating logger database schema (format 1).\n", PLUGIN_NAME);
         if (do_sql("BEGIN EXCLUSIVE TRANSACTION;") != SQLITE_OK) {
-            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to fromat %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
+            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to format %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
             sqlite3_close(database);
             database = NULL;
             return;
@@ -249,7 +249,7 @@ static void check_tables(void) {
     if (format < 2) {
         cf_log(llevDebug, " [%s] Upgrading logger database schema (to format 2).\n", PLUGIN_NAME);
         if (do_sql("BEGIN EXCLUSIVE TRANSACTION;") != SQLITE_OK) {
-            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to fromat %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
+            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to format %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
             sqlite3_close(database);
             database = NULL;
             return;
@@ -294,7 +294,7 @@ static void check_tables(void) {
     if (format < 3) {
         cf_log(llevDebug, " [%s] Upgrading logger database schema (to format 3).\n", PLUGIN_NAME);
         if (do_sql("BEGIN EXCLUSIVE TRANSACTION;") != SQLITE_OK) {
-            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to fromat %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
+            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to format %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
             sqlite3_close(database);
             database = NULL;
             return;
