@@ -29,14 +29,21 @@
 
 
 /**
- * Draws   an extended message on the client.
- * ns      the socket to send message to
- * color   color informations (used mainly if client does not support message type)
- * type,
- * subtype type and subtype of text message
- * intro   Intro message to send with main message if client does not support the message type
- * message The main message
- * make this non static, so other files can use this to send messages to client before
+ * Draws an extended message on the client.
+ *
+ * @param ns The socket to send message to
+ *
+ * @param color Color informations (used mainly if client does not support message type)
+ *
+ * @param type The type of text message
+ *
+ * @param subtype The subtype of text message
+ *
+ * @param intro Intro message to send with main message if client does not support the message type
+ *
+ * @param message The main message
+ *
+ * make this non-static, so other files can use this to send messages to client before
  * player has been added.
  */
 void print_ext_msg(socket_struct *ns, int color, uint8_t type, uint8_t subtype, const char *message) {
@@ -122,7 +129,7 @@ void draw_ext_info(
  *
  * @param type The type MSG_TYPE for the type of message.
  *
- * @param subtype The type MSG_TYPE for the type of message.
+ * @param subtype The type MSG_TYPE for the subtype of message.
  *
  * @param format The message to send, with optional format specifiers.
  */
@@ -370,6 +377,8 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength) {
 
 /**
  * Creates and sends magic map to player.
+ *
+ * @ param pl The player to send the magic map to
  *
  * The following function is a lot messier than it really should be,
  * but there is no real easy solution.
