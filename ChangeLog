@@ -1,4 +1,4 @@
-2014-05-17  Andreas Kirschbaum
+2014-05-17	Andreas Kirschbaum
 
 	* For all files being written: add error checks and retain the
 	previous file contents if a write error occurs.
