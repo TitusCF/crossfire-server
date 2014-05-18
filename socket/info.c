@@ -146,6 +146,16 @@ void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, ui
 
 /**
  * Writes to everyone on the specified map
+ *
+ * @param color The color of the message
+ *
+ * @param map The map where the players receiving the message are located
+ *
+ * @param type The message type
+ *
+ * @param subtype The message subtype
+ *
+ * @param str1 The message to be sent
  */
 void ext_info_map(int color, const mapstruct *map, uint8_t type, uint8_t subtype, const char *str1) {
     player *pl;
@@ -157,7 +167,19 @@ void ext_info_map(int color, const mapstruct *map, uint8_t type, uint8_t subtype
 }
 
 /**
- * Writes to everyone on the map *except *op.  This is useful for emotions.
+ * Writes to everyone on the map except *op.  This is useful for emotions.
+ *
+ * @param color The color of the message
+ *
+ * @param map The map where the players receiving the message are located
+ *
+ * @param op The player object to skip sending the message to on the map
+ *
+ * @param type The message type
+ *
+ * @param subtype The message subtype
+ *
+ * @param str1 The message to be sent
  */
 void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8_t type, uint8_t subtype, const char *str1) {
     player *pl;
@@ -170,6 +192,20 @@ void ext_info_map_except(int color, const mapstruct *map, const object *op, uint
 
 /**
  * Writes to everyone on the map except op1 and op2
+ *
+ * @param color The message color
+ *
+ * @param map The map where the players receiving the message are located
+ *
+ * @param op1 The first player object to skip sending the message to
+ *
+ * @param op2 The second player object to skip sending the message to
+ *
+ * @param type The message type
+ *
+ * @param subtype The message subtype
+ *
+ * @param str1 The message to be sent
  */
 void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2, int type, int subtype, const char *str1) {
     player *pl;
@@ -183,6 +219,12 @@ void ext_info_map_except2(int color, const mapstruct *map, const object *op1, co
 
 /**
  * Get player's current range attack in obuf.
+ *
+ * @param pl The player who is being evaluated
+ *
+ * @param obuf The buffer for the range attack string
+ *
+ * @param len The length of the buffer
  */
 void rangetostring(const object *pl, char *obuf, size_t len) {
     char name[MAX_BUF];
@@ -266,8 +308,14 @@ void set_title(const object *pl, char *buf, size_t len) {
  * Helper for magic map creation.
  *
  * Takes a player, the map_mark array and an x and y starting position.
- * pl is the player.
- * px, py are offsets from the player.
+ *
+ * @param pl The player creating the magic map.
+ *
+ * @param map_mark Holds flags for each tile analyzed
+ *
+ * @param px The x offset from the player to start calculations
+ *
+ * @param py The y offset from the player to start calculations
  *
  * This function examines all the adjacant spaces next to px, py.
  * It updates the map_mark arrow with the color and high bits set
@@ -324,6 +372,14 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
 /**
  * Creates magic map for player.
  *
+ * @param pl The player making the magic map
+ *
+ * @param map_mark Holds flags for each tile analyzed. Should have been
+ * initialized to zero before this function is called.
+ *
+ * @param strength An initial strength*2 rectangular area that we
+ * automatically see in/penetrate through.
+ *
  * Note:  For improved magic mapping display, the space that blocks
  * the view is now marked with value 2.  Any dependencies of map_mark
  * being nonzero have been changed to check for 1.  Also, since
@@ -331,10 +387,7 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
  *
  * This function examines the map the player is on, and determines what
  * is visible.  2 is set for walls or objects that blocks view.  1
- * is for open spaces.  map_mark should already have been initialized
- * to zero before this is called.
- * strength is an initial strength*2 rectangular area that we automatically
- * see in/penetrate through.
+ * is for open spaces.
  */
 void magic_mapping_mark(object *pl, char *map_mark, int strength) {
     int x, y, mflags, l;
