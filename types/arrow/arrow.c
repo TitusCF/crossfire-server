@@ -55,7 +55,7 @@ static method_ret arrow_type_process(ob_methods *context, object *op) {
     }
 
     /* if the arrow is moving too slow.. stop it.  0.5 was chosen as lower
-       values look rediculous. */
+       values look ridiculous. */
     if (op->speed < 0.5 && op->type == ARROW) {
         stop_projectile(op);
         return METHOD_OK;

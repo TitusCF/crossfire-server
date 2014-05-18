@@ -91,9 +91,9 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
             snprintf(buf, sizeof(buf), "You can no longer taste %s, and do not feel less hungry after %s it.", food->name, food->type == DRINK ? "drinking" : "eating");
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 buf);
-            /* usual case - not a wraith or a dgaron: */
+            /* usual case - not a wraith or a dragon: */
         } else {
-            if (applier->stats.food+food->stats.food > 999) {
+            if (applier->stats.food + food->stats.food > 999) {
                 if (food->type == FOOD || food->type == FLESH)
                     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                         "You feel full, but what a waste of food!");
