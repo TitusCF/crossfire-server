@@ -16,9 +16,11 @@
  * Those functions handle the decor in the random maps.
  */
 
-#include <global.h>
-#include <random_map.h>
-#include <rproto.h>
+#include <assert.h>
+
+#include "global.h"
+#include "random_map.h"
+#include "rproto.h"
 
 /** Number of decor styles that can be chosen if none specified. */
 #define NR_DECOR_OPTIONS 1
@@ -76,10 +78,9 @@ void put_decor(mapstruct *map, char **maze, char *decorstyle, int decor_option, 
         decor_option = RANDOM()%NR_DECOR_OPTIONS+1;
     }
 
-    switch (decor_option) {
-    case 0:
-        break;
+    assert(decor_option != 0);
 
+    switch (decor_option) {
     case 1: { /* random placement of decor objects. */
         int number_to_place = RANDOM()%((RP->Xsize*RP->Ysize)/5);
         int failures = 0;

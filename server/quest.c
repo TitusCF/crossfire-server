@@ -12,27 +12,28 @@
  */
 
 /**
-@file
-Quest-related low-level mechanisms.
+ * @file
+ * Quest-related low-level mechanisms.
+ *
+ * You should only need to call the public functions, all that are not static.
+ *
+ * Data is loaded on a need-only basis - when a player quest state is queried
+ * or modified, data is read. Also, free_quest() can be called to release
+ * memory without preventing quest operations after.
+ *
+ * Write is done for each player whenever the state changes, to ensure data
+ * integrity.
+ *
+ * @todo
+ * add protocol commands to send notifications instead of using draw_ext_info()
+ */
 
-You should only need to call the public functions, all that are not static.
+#include "global.h"
 
-Data is loaded on a need-only basis - when a player quest state is queried or modified, data is read.
-Also, free_quest() can be called to release memory without preventing quest operations after.
-
-Write is done for each player whenever the state changes, to ensure data integrity.
-
-@todo
-- add protocol commands to send notifications instead of using draw_ext_info()
-
-*/
-
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include <assert.h>
 
 #include "output_file.h"
+#include "sproto.h"
 
 /** Quest status that indicates a quest was completed and may be restarted. */
 #define QC_CAN_RESTART -1
@@ -400,7 +401,7 @@ static int load_quests_from_file(const char *filename) {
         LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", final, in);
 
         /* The buffer may not have been freed. */
-        stringbuffer_finish(buf);
+        free(stringbuffer_finish(buf));
     }
 
     return loaded_quests;
@@ -476,7 +477,6 @@ static quest_state *get_new_quest_state(void) {
 static void quest_read_player_data(quest_player *pq) {
     FILE *file;
     char final[MAX_BUF], read[MAX_BUF], data[MAX_BUF];
-    StringBuffer *buf = NULL;
     quest_state *qs = NULL, *prev = NULL;
     int warned = 0, state;
     quest_definition *quest = NULL;
@@ -544,8 +544,6 @@ static void quest_read_player_data(quest_player *pq) {
 
     if (qs)
         LOG(llevError, "quest: missing end_quest in %s\n", final);
-    if (buf)
-        free(stringbuffer_finish(buf));
 
     fclose(file);
 }
@@ -804,10 +802,9 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
         }
 
         SockList_AddChar(&sl, (step == NULL || step->is_completion_step) ? 1 : 0);
-        if (step != NULL)
-            SockList_AddLen16Data(&sl, step->step_description, strlen(step->step_description));
-        else
-            SockList_AddShort(&sl, 0);
+        assert(step != NULL);
+        SockList_AddLen16Data(&sl, step->step_description,
+                strlen(step->step_description));
 
         Send_With_Handling(&pl->socket, &sl);
         SockList_Term(&sl);

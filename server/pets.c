@@ -16,10 +16,11 @@
  * Those functions deal with pets.
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
+
+#include <assert.h>
+
+#include "sproto.h"
 
 /**
  * Mark all inventory items as FLAG_NO_DROP.
@@ -189,8 +190,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
                     && tmp2 != owner
                     && monster_can_detect_enemy(pet, tmp2, rv)) {
                         if (!monster_can_see_enemy(pet, tmp2)) {
-                            if (tmp3 != NULL)
-                                tmp3 = tmp2;
+                            assert(tmp3 == NULL);
                         } else {
                             object_set_enemy(pet, tmp2);
                             if (monster_check_enemy(pet, rv) != NULL)

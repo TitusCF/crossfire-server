@@ -898,11 +898,9 @@ static PyCodeObject *compilePython(char *filename) {
         Py_DECREF(scriptfile);
     }
 
-    if (run) {
-        run->used_time = time(NULL);
-        return run->code;
-    } else
-        return NULL;
+    assert(run != NULL);
+    run->used_time = time(NULL);
+    return run->code;
 }
 
 static int do_script(CFPContext *context, int silent) {

@@ -1788,7 +1788,7 @@ int write_on_item(object *pl, const char *params, object *skill) {
         return write_scroll(pl, item, skill);
     } else {
         // This case should never be reached.
-        return 0;
+        abort();
     }
 }
 

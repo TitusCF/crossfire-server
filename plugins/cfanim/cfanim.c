@@ -351,10 +351,7 @@ static long int initteleport(const char *name, char *parameters, struct CFmoveme
     mapx = atoi(parameters);
     mapname++;
     parameters = mapname;
-    if (!parameters) {
-        cf_log(llevError, "CFAnim: Error - not enough parameters for teleport\n");
-        return 0;
-    }
+    assert(parameters != NULL);
     cf_log(llevDebug, ".(%s)\n", parameters);
     mapname = strstr(parameters, " ");
     cf_log(llevDebug, ".\n");
