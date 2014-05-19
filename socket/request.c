@@ -592,18 +592,6 @@ void version_cmd(char *buf, int len, socket_struct *ns) {
  * @todo remove once clients don't try to use this - server closes connection on invalid client.
  */
 
-/** client wants the map resent
- * @todo remove
-*/
-void map_redraw_cmd(char *buf, int len, player *pl) {
-    /* This function is currently disabled; just clearing the
-     * map state results in display errors. It should clear the
-     * cache and send a newmap command. Unfortunately this
-     * solution does not work because some client versions send
-     * a mapredraw command after receiving a newmap command.
-     */
-}
-
 /** Newmap command */
 void map_newmap_cmd(socket_struct *ns) {
     SockList sl;

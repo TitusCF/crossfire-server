@@ -80,7 +80,6 @@ void new_player_cmd(uint8_t *buf, int len, player *pl);
 void reply_cmd(char *buf, int len, player *pl);
 void version_cmd(char *buf, int len, socket_struct *ns);
 void set_sound_cmd(char *buf, int len, socket_struct *ns);
-void map_redraw_cmd(char *buf, int len, player *pl);
 void map_newmap_cmd(socket_struct *ns);
 void move_cmd(char *buf, int len, player *pl);
 void send_query(socket_struct *ns, uint8_t flags, const char *text);

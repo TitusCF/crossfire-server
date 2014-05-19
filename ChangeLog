@@ -1,3 +1,10 @@
+2014-05-19	SilverNexus
+	* socket/loop.c,
+	* socket/request.c,
+	* include/sockproto.h: Retire support for mapredraw command.
+	  It hasn't been used since 1.10.0 client in 2007.
+	  On the server side, its been an empty function since 2005.
+
 2014-05-17	Andreas Kirschbaum
 
 	* For all files being written: add error checks and retain the
