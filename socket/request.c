@@ -96,7 +96,7 @@ static const short atnr_cs_stat[NROFATTACKS] = {
 
 /** This is the Setup cmd - easy first implementation */
 void set_up_cmd(char *buf, int len, socket_struct *ns) {
-    int s;
+    int s = 0;
     char *cmd, *param;
     SockList sl;
 
@@ -111,7 +111,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
     LOG(llevInfo, "Get SetupCmd:: %s\n", buf);
     SockList_Init(&sl);
     SockList_AddString(&sl, "setup");
-    for (s = 0; s < len; ) {
+    while (s < len) {
         cmd = &buf[s];
 
         /* find the next space, and put a null there */
