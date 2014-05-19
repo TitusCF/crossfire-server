@@ -392,7 +392,7 @@ typedef struct typedata {
 #define IS_LIVE(op) \
         ((op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
         (QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
-        !op->type == DOOR)) && (!QUERY_FLAG(op, FLAG_IS_A_TEMPLATE)))
+        !(op->type == DOOR))) && (!QUERY_FLAG(op, FLAG_IS_A_TEMPLATE)))
 
 #define IS_ARROW(op) \
         (op->type == ARROW || \
