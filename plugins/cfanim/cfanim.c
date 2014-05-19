@@ -1221,6 +1221,7 @@ CF_PLUGIN int eventListener(int *type, ...) {
 
     if (query == 1 && strcmp(message, "query_object_is_animated") == 0) {
         rv = is_animated_object(who);
+        va_end(args);
         return rv;
     }
 

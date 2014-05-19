@@ -1659,6 +1659,8 @@ static void cfapi_object_move(int *type, ...) {
         va_end(args);
         *ret = player_arrest(op);
     }
+
+    va_end(args);
     *type = CFAPI_INT;
 }
 
@@ -3377,6 +3379,7 @@ static void cfapi_object_remove(int *type, ...) {
 
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
         LOG(llevError, "Plugin trying to remove removed object %s\n", op->name);
+        va_end(args);
         *type = CFAPI_NONE;
         return;
     }
@@ -3398,6 +3401,7 @@ static void cfapi_object_delete(int *type, ...) {
     if (QUERY_FLAG(op, FLAG_FREED) || !QUERY_FLAG(op, FLAG_REMOVED)) {
         LOG(llevError, "Plugin trying to free freed/non removed object %s\n", op->name);
         *type = CFAPI_NONE;
+        va_end(args);
         return;
     }
 
@@ -4074,6 +4078,7 @@ static void cfapi_object_transfer(int *type, ...) {
         return;
 
     default:
+        va_end(args);
         *type = CFAPI_NONE;
         return;
         break;
@@ -4323,6 +4328,7 @@ static void cfapi_player_knowledge(int *type, ...) {
             if (pl->contr == NULL) {
                 LOG(llevError, "cfapi_player_knowledge: 'has' called for non player object %s", pl->name);
                 *rint = 0;
+                va_end(args);
                 return;
             }
 
@@ -4382,6 +4388,8 @@ static void cfapi_object_teleport(int *type, ...) {
             map_newmap_cmd(&who->contr->socket);
         *res = 0;
     }
+
+    va_end(args);
 }
 
 static void cfapi_object_pickup(int *type, ...) {
