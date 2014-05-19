@@ -224,11 +224,14 @@ extern socket_struct *init_sockets;
 
 #ifdef USE_CALLOC
 # define CALLOC(x, y)   calloc(x, y)
-# define CFREE(x)       free(x)
 #else
 # define CALLOC(x, y)   malloc(x*y)
-# define CFREE(x)       free(x)
 #endif
+/*
+ * In both cases, CFREE is the same, so pull it out of the conditional
+ * to clean up the code better.
+ */
+#define CFREE(x) free(x)
 
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */
 #if HAVE_DIRENT_H
