@@ -1561,7 +1561,11 @@ int save_map(mapstruct *m, int flag) {
                 of_cancel(&of);
                 return SAVE_ERROR_URENAME;
             }
-            chmod(final_unique, SAVE_MODE);
+
+            if (chmod(final_unique, SAVE_MODE) != 0) {
+                LOG(llevError, "Could not set permissions on '%s'\n",
+                        final_unique);
+            }
         }
     } else { /* save same file when not playing, like in editor */
         res = save_objects(m, fp, fp, 0);

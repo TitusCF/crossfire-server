@@ -411,7 +411,9 @@ int save_player(object *op, int flag) {
     if (!flag)
         esrv_send_inventory(op, op);
 
-    chmod(filename, SAVE_MODE);
+    if (chmod(filename, SAVE_MODE) != 0) {
+        LOG(llevError, "Could not set permissions on '%s'\n", filename);
+    }
 
     /* if this is the first player save, quest or knowledge states can be unsaved */
     if (!op->contr->has_directory) {

@@ -2169,7 +2169,11 @@ void write_book_archive(void) {
     }
     if (!of_close(&of))
         return;
-    chmod(fname, SAVE_MODE);
+
+    if (chmod(fname, SAVE_MODE) != 0) {
+        LOG(llevError, "Could not set permissions on '%s'\n", fname);
+    }
+
     need_to_write_bookarchive = 0;
 }
 
