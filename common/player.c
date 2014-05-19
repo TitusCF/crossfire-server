@@ -75,7 +75,7 @@ void free_player(player *pl) {
 
     free(pl->socket.faces_sent);
 
-    CFREE(pl);
+    free(pl);
 }
 
 /**

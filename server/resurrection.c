@@ -255,7 +255,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
     }
     /* Reorganized so corpse_account could be deallocated if needed */
     if (corpse_account)
-        CFREE(corpse_account);
+        free(corpse_account);
     return spell_success;
 }
 
