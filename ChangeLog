@@ -1,4 +1,9 @@
 2014-05-19	SilverNexus
+	* utils/add_throw: Retire add_throw script, skills have been
+	  with the newer system for a while now. I think it may have
+	  been in excess of fifteen years.
+
+2014-05-19	SilverNexus
 	* socket/loop.c,
 	* socket/request.c,
 	* include/sockproto.h: Retire support for mapredraw command.
