@@ -358,9 +358,10 @@ static void check_loaded_object(object *op) {
      * information (appear as just 'hearts' and not 'goblins heart')
      */
     if (op->arch && op->name != op->arch->clone.name && op->name_pl == op->arch->clone.name_pl) {
-        if (op->name_pl)
+        if (op->name_pl) {
             free_string(op->name_pl);
             op->name_pl = NULL;
+        }
     }
     if (!op->name_pl && op->name)
         op->name_pl = add_string(op->name);
