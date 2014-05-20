@@ -1,3 +1,8 @@
+2014-05-20	SilverNexus
+	* debian/cross-edit.files,
+	* debian/control,
+	* debian/rules: Retire crossedit construction from debian files.
+
 2014-05-19	SilverNexus
 	* utils/add_throw: Retire add_throw script, skills have been
 	  with the newer system for a while now. I think it may have

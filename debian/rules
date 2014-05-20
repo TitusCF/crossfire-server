@@ -94,10 +94,6 @@ binary-arch:
 	cd devel && \
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
 
-	cd crossedit && \
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
-	dh_movefiles -pcrossfire-edit
-
 	dh_installlogrotate
 	dh_installinit -r -- defaults 99 01
 	dh_installman
