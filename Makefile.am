@@ -22,4 +22,7 @@ proto:
 	(cd plugins; make proto)
 	(cd types; make proto)
 
+dox:
+	@ doxygen 2>doxygen.err
+
 CLEANFILES=	configtest.out configtest.xml configtest.xsl
