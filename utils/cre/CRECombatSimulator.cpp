@@ -137,14 +137,32 @@ void CRECombatSimulator::fight()
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
     myFirstVictories = 0;
-    myFirstMinHp = 100000;
-    myFirstMaxHp = -1;
     mySecondVictories = 0;
-    mySecondMinHp = 100000;
-    mySecondMaxHp = -1;
 
     const archetype* first = (const archetype*)myFirst->itemData(myFirst->currentIndex()).value<void*>();
     const archetype* second = (const archetype*)mySecond->itemData(mySecond->currentIndex()).value<void*>();
+
+    /*
+     * Set min and max hp here, in case a monster doesn't ever get attacked
+     * Example as of the time of writing is cherub vs. cherub
+     * without this fix, the first cherub had maxhp of 10000 and minhp of -1
+     *
+     * So, temporaily create the objects to then determine what the maxhp is for
+     * each object from the archetypes.
+     */
+    object* obfirst = object_create_arch((archetype*)first);
+    object* obsecond = object_create_arch((archetype*)second);
+
+    myFirstMinHp = obfirst->stats.maxhp;
+    myFirstMaxHp = obfirst->stats.maxhp;
+    mySecondMinHp = obsecond->stats.maxhp;
+    mySecondMaxHp = obsecond->stats.maxhp;
+    
+    /*
+     * Then, free the objects since this is done.
+     */
+    object_free2(obfirst, 0);
+    object_free2(obsecond, 0);
 
     int count = myCombats->value();
     while (count-- > 0)
@@ -152,7 +170,7 @@ void CRECombatSimulator::fight()
         fight(first, second);
     }
 
-    myResult->setText(tr("Draw: %1 fights\n%2 victories: %3 (max hp: %4, min hp: %5)\n%6 victories: %7 (max hp: %8, min hp: %9")
+    myResult->setText(tr("Draw: %1 fights\n%2 victories: %3 (max hp: %4, min hp: %5)\n%6 victories: %7 (max hp: %8, min hp: %9)")
         .arg(myCombats->value() - myFirstVictories - mySecondVictories)
         .arg(first->name).arg(myFirstVictories).arg(myFirstMaxHp).arg(myFirstMinHp)
         .arg(second->name).arg(mySecondVictories).arg(mySecondMaxHp).arg(mySecondMinHp));
