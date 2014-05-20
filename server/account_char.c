@@ -102,7 +102,7 @@ Account_Char *account_char_load(const char *account_name) {
 
         if (split_string(buf, tmp, NUM_ACCOUNT_CHAR_FIELDS, ':') != NUM_ACCOUNT_CHAR_FIELDS) {
             if (!tmp[7]) {
-                LOG(llevError, "Outdated entry in %s: %s\n", fname, buf);
+                LOG(llevInfo, "Outdated entry in %s: %s\n", fname, buf);
                 tmp[7] = (char *) add_string("0");
             } else {
                 LOG(llevError, "Corrupt entry in %s: %s\n", fname, buf);
