@@ -1975,6 +1975,10 @@ SOURCE=..\common\object.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\output_file.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\path.c
 # End Source File
 # Begin Source File
@@ -2774,6 +2778,10 @@ SOURCE=..\include\object.h
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\include\output_file.h
 # End Source File
 # Begin Source File
 
