@@ -629,9 +629,11 @@ int ok_to_put_more(mapstruct *m, int16_t x, int16_t y, object *op, uint32_t immu
                 int i;
 
                 for (i = 0; i < SPELL_TAG_SIZE; i++) {
-                    if (op->spell_tags[i] && op->spell_tags[i] == tmp->spell_tags[i])
+                    if (op->spell_tags[i] &&
+                            op->spell_tags[i] == tmp->spell_tags[i]) {
                         statistics.spell_suppressions++;
-                    return 0;
+                        return 0;
+                    }
                 }
             }
         }
