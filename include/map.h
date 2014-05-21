@@ -165,7 +165,7 @@ extern const char *const map_layer_name[MAP_LAYERS];
 #define SET_MAP_FLAGS(M, X, Y, C) ((M)->spaces[(X)+(M)->width*(Y)].flags = C)
 /** Gets map light. Not multitile aware. */
 #define GET_MAP_LIGHT(M, X, Y)  ((M)->spaces[(X)+(M)->width*(Y)].light)
-/** Sets map lighe. Not multitile aware. */
+/** Sets map light. Not multitile aware. */
 #define SET_MAP_LIGHT(M, X, Y, L) ((M)->spaces[(X)+(M)->width*(Y)].light = L)
 #define GET_MAP_PLAYER(M, X, Y) ((M)->spaces[(X)+(M)->width*(Y)].pl)
 #define SET_MAP_PLAYER(M, X, Y, C) ((M)->spaces[(X)+(M)->width*(Y)].pl = C)
