@@ -510,7 +510,7 @@ int change_abil(object *op, object *tmp) {
              */
             DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
                      "You soar into the air!.",
-                     (op->move_type&MOVE_FLY_LOW ? "You fly lower in the air":
+                     (op->move_type&MOVE_FLY_LOW ? "You glide closer to the ground.":
                       "You float down to the ground."));
         }
         if (tmp->move_type&MOVE_SWIM)
