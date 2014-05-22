@@ -130,7 +130,7 @@ object *pets_get_enemy(object *pet, rv_vector *rv) {
                 && tmp2 != owner
                 && monster_can_detect_enemy(pet, tmp2, rv)) {
                     if (!monster_can_see_enemy(pet, tmp2)) {
-                        if (tmp3 != NULL)
+                        if (tmp3 == NULL)
                             tmp3 = tmp2;
                     } else {
                         object_set_enemy(pet, tmp2);

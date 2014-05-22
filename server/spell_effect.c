@@ -2170,6 +2170,7 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
      * value, take off an extra small_nugget (Assuming small_nuggets!=0)
      */
     if (*small_nuggets*small_value >= large_value) {
+        assert(small_value != 0);
         (*large_nuggets)++;
         *small_nuggets -= large_value/small_value;
         if (*small_nuggets && large_value%small_value)

@@ -1585,7 +1585,10 @@ int save_map(mapstruct *m, int flag) {
         return SAVE_ERROR_RRENAME;
     }
 
-    chmod(final, SAVE_MODE);
+    if (chmod(final, SAVE_MODE) != 0) {
+        LOG(llevError, "Could not set permissions on '%s'\n", final);
+    }
+
     return SAVE_ERROR_OK;
 }
 

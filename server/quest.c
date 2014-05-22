@@ -401,7 +401,9 @@ static int load_quests_from_file(const char *filename) {
         LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", final, in);
 
         /* The buffer may not have been freed. */
-        free(stringbuffer_finish(buf));
+        if (buf != NULL) {
+            stringbuffer_finish(buf);
+        }
     }
 
     return loaded_quests;

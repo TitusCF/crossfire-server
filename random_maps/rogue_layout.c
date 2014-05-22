@@ -57,13 +57,12 @@ static int roguelike_place_room(Room *Rooms, int xsize, int ysize, int nrooms) {
     int y_basesize;
     Room *walk;
 
-    assert(nrooms != 0);
+    int nrooms_sqrt = isqrt(nrooms);
+    assert(nrooms_sqrt != 0);
 
     /* decide on the base x and y sizes */
-
-    x_basesize = xsize/isqrt(nrooms);
-    y_basesize = ysize/isqrt(nrooms);
-
+    x_basesize = xsize / nrooms_sqrt;
+    y_basesize = ysize / nrooms_sqrt;
 
     tx = RANDOM()%xsize;
     ty = RANDOM()%ysize;

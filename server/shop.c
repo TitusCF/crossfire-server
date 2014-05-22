@@ -175,7 +175,7 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
                 val = (uint64_t)tmp->arch->clone.value * 50 * number;
             } else {     /* Trying to sell something, or get true value */
                 if (tmp->type == POTION)
-                    val = number*1000; /* Don't want to give anything away */
+                    val = (uint64_t)number * 1000;
                 else {
                     /* Get 2/3 value for applied objects, 1/3 for totally
                      * unknown objects
@@ -191,9 +191,10 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
             LOG(llevDebug, "In sell item: Have object with no archetype: %s\n", tmp->name);
             if (flag == BS_BUY) {
                 LOG(llevError, "Asking for buy-value of unidentified object without arch.\n");
-                val = number*tmp->value*10;
-            } else
-                val = number*tmp->value/5;
+                val = (uint64_t)number * tmp->value * 10;
+            } else {
+                val = (uint64_t)number * tmp->value / 5;
+            }
         }
     }
 
