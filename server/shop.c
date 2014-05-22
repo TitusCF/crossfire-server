@@ -144,8 +144,10 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
         return tmp->value*number*ratio;
     }
 
-    if (tmp->type == MONEY)
-        return (tmp->nrof*tmp->value);
+    if (tmp->type == MONEY) {
+        return (uint64_t)tmp->nrof * tmp->value;
+    }
+
     if (tmp->type == GEM) {
         if (flag == BS_TRUE)
             return number*tmp->value;
@@ -160,16 +162,17 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
     || !need_identify(tmp)
     || identified) {
         if (!not_cursed
-        && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))
+        && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))) {
             return 0;
-        else
-            val = tmp->value*number;
+        } else {
+            val = (uint64_t)tmp->value * number;
+        }
     /* This area deals with objects that are not identified, but can be */
     } else {
         if (tmp->arch != NULL) {
             if (flag == BS_BUY) {
                 LOG(llevError, "Asking for buy-value of unidentified object.\n");
-                val = tmp->arch->clone.value*50*number;
+                val = (uint64_t)tmp->arch->clone.value * 50 * number;
             } else {     /* Trying to sell something, or get true value */
                 if (tmp->type == POTION)
                     val = number*1000; /* Don't want to give anything away */
@@ -177,10 +180,11 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
                     /* Get 2/3 value for applied objects, 1/3 for totally
                      * unknown objects
                      */
-                    if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
-                        val = number*tmp->arch->clone.value*2/3;
-                    else
-                        val = number*tmp->arch->clone.value/3;
+                    if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) {
+                        val = (uint64_t)number * tmp->arch->clone.value * 2/3;
+                    } else {
+                        val = (uint64_t)number * tmp->arch->clone.value / 3;
+                    }
                 }
             }
         } else { /* No archetype with this object */
@@ -726,7 +730,7 @@ static int64_t remove_value(object *coin_objs[], int64_t remain) {
         int count;
         int64_t num_coins;
 
-        if (coin_objs[i]->nrof*coin_objs[i]->value > remain) {
+        if ((int64_t)coin_objs[i]->nrof * coin_objs[i]->value > remain) {
             num_coins = remain/coin_objs[i]->value;
             if ((uint64_t)num_coins*(uint64_t)coin_objs[i]->value < (uint64_t) remain) {
                 num_coins++;
