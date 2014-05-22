@@ -21,14 +21,15 @@
  * put parameters in the same order, use same name.
  */
 
-#include <global.h>
-#include <object.h>
-#include <living.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
-#include <sounds.h>
+#include "global.h"
+
+#include <assert.h>
+
+#include "object.h"
+#include "living.h"
+#include "sproto.h"
+#include "spells.h"
+#include "sounds.h"
 
 /***************************************************************************
  *
@@ -730,7 +731,9 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
     else
         op->skill = NULL;
 
-    change_skill(op, find_skill_by_name(op, op->skill), 1);
+    object *found_skill = find_skill_by_name(op, op->skill);
+    assert(found_skill != NULL);
+    change_skill(op, found_skill, 1);
 
     for (i = -range; i < range; i++) {
         for (j = -range; j < range; j++) {

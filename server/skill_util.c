@@ -34,14 +34,15 @@
 
 #define WANT_UNARMED_SKILLS
 
-#include <global.h>
-#include <object.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <living.h>     /* for defs of STR,CON,DEX,etc. -b.t.*/
-#include <spells.h>
-#include <skills.h>
+#include "global.h"
+
+#include <assert.h>
+
+#include "object.h"
+#include "sproto.h"
+#include "living.h"
+#include "spells.h"
+#include "skills.h"
 
 static void attack_hth(object *pl, int dir, const char *string, object *skill);
 static void attack_melee_weapon(object *op, int dir, const char *string, object *skill);
@@ -1154,7 +1155,9 @@ static void do_skill_attack(object *tmp, object *op, const char *string, object 
 
             /* Has ready weapon - make sure chosen_skill is set up properly */
             if (!op->chosen_skill || op->current_weapon->skill != op->chosen_skill->skill) {
-                change_skill(op, find_skill_by_name(op, op->current_weapon->skill), 1);
+                object *found_skill = find_skill_by_name(op, op->current_weapon->skill);
+                assert(found_skill != NULL);
+                change_skill(op, found_skill, 1);
             }
         }
     }
