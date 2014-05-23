@@ -708,7 +708,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
     int i, j, range, mflags, friendly = 0, dam, dur;
     int16_t sx, sy;
     mapstruct *m;
-    object *tmp;
+    object *tmp, *found_skill;
     const char *skill;
 
     range = spell_ob->range+SP_level_range_adjust(caster, spell_ob);
@@ -731,7 +731,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
     else
         op->skill = NULL;
 
-    object *found_skill = find_skill_by_name(op, op->skill);
+    found_skill = find_skill_by_name(op, op->skill);
     assert(found_skill != NULL);
     change_skill(op, found_skill, 1);
 
