@@ -1871,7 +1871,19 @@ object *object_merge(object *op, object *top) {
             continue;
         if (object_can_merge(op, top)) {
             object_increase_nrof(top, op->nrof);
-            op->weight = 0; /* Don't want any adjustements now */
+            /* 
+             * Previous behavior set weight to zero here.
+             * This, however, caused the object_sub_weight
+             * call in object_remove to subtract zero weight
+             * when removing the object. Thus, until inventory
+             * weight is next recalculated, the object merged
+             * into another pile added weight in object_increase_nrof
+             * but did not remove the weight from the original
+             * instance of itself in object_remove, essentially
+             * counting for double weight for several minutes.
+             *
+             * SilverNexus 2014-05-27
+             */
             object_remove(op);
             object_free2(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
             return top;

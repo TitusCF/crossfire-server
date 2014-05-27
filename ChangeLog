@@ -1,3 +1,6 @@
+2014-05-27	SilverNexus
+	* common/object.c: Fix inventory weight calculation bug from merging objects.
+
 2014-05-20	SilverNexus
 	* debian/cross-edit.files,
 	* debian/control,
