@@ -262,6 +262,130 @@ skill alchemy
 cauldron cauldron
 ingred 3 pearl,water of the wise
 #
+# Now for basic smithery ingredients -- the bars (made from ores)
+#
+#
+# copper bar
+Object NONE
+arch copperbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 copper ore
+#
+# gold bar
+Object NONE
+arch goldbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 gold ore
+#
+# iron bar
+Object NONE
+arch ironbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 iron ore
+#
+# lead bar
+Object NONE
+arch leadbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 lead ore
+#
+# platinum bar
+Object NONE
+arch platbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 platinum ore
+#
+# silver bar
+Object NONE
+arch silverbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 silver ore
+#
+# tin bar
+Object NONE
+arch tinbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 tin ore
+#
+# uranium bar
+Object NONE
+arch uraniumbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 uranium ore
+#
+# zinc bar
+Object NONE
+arch zincbar
+chance 8
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred 5 zinc ore
+#
+# steel bar
+Object NONE
+arch steelbar
+chance 6
+diff 8
+exp 2000
+skill smithery
+cauldron forge
+ingred 5 iron ore, ashes
+#
+# bronze bar
+Object NONE
+arch bronzebar
+chance 6
+diff 8
+exp 2000
+skill smithery
+cauldron forge
+ingred 4 copper ore, 1 tin ore
+# * in reality, bronze was more 9:1, but I don't feel like making it that convoluted
+#
+# brass bar
+Object NONE
+arch brassbar
+chance 6
+diff 8
+exp 2000
+skill smithery
+cauldron forge
+ingred 3 copper ore, 2 zinc ore
+#
 #
 # --------------
 # Potions     -- incl. balms, figurines, and dusts

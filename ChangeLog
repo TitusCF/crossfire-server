@@ -1,4 +1,7 @@
 2014-05-27	SilverNexus
+	* lib/formulae: Added smithery formulas to smelt ores into bars.
+
+2014-05-27	SilverNexus
 	* common/object.c: Fix inventory weight calculation bug from merging objects.
 
 2014-05-20	SilverNexus
