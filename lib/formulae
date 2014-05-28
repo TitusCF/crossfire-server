@@ -269,8 +269,8 @@ ingred 3 pearl,water of the wise
 Object NONE
 arch copperbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 copper ore
@@ -279,8 +279,8 @@ ingred 5 copper ore
 Object NONE
 arch goldbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 gold ore
@@ -289,8 +289,8 @@ ingred 5 gold ore
 Object NONE
 arch ironbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 iron ore
@@ -299,8 +299,8 @@ ingred 5 iron ore
 Object NONE
 arch leadbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 lead ore
@@ -309,8 +309,8 @@ ingred 5 lead ore
 Object NONE
 arch platbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 platinum ore
@@ -319,8 +319,8 @@ ingred 5 platinum ore
 Object NONE
 arch silverbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 silver ore
@@ -329,8 +329,8 @@ ingred 5 silver ore
 Object NONE
 arch tinbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 tin ore
@@ -339,8 +339,8 @@ ingred 5 tin ore
 Object NONE
 arch uraniumbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 uranium ore
@@ -349,8 +349,8 @@ ingred 5 uranium ore
 Object NONE
 arch zincbar
 chance 8
-diff 5
-exp 1000
+diff 3
+exp 500
 skill smithery
 cauldron forge
 ingred 5 zinc ore
@@ -359,8 +359,8 @@ ingred 5 zinc ore
 Object NONE
 arch steelbar
 chance 6
-diff 8
-exp 2000
+diff 5
+exp 1000
 skill smithery
 cauldron forge
 ingred 5 iron ore, ashes
@@ -369,22 +369,97 @@ ingred 5 iron ore, ashes
 Object NONE
 arch bronzebar
 chance 6
-diff 8
-exp 2000
+diff 5
+exp 1000
 skill smithery
 cauldron forge
-ingred 4 copper ore, 1 tin ore
+ingred 4 copper ore, tin ore
 # * in reality, bronze was more 9:1, but I don't feel like making it that convoluted
 #
 # brass bar
 Object NONE
 arch brassbar
 chance 6
-diff 8
-exp 2000
+diff 5
+exp 1000
 skill smithery
 cauldron forge
 ingred 3 copper ore, 2 zinc ore
+#
+# --------------
+# Basic weaponry
+# --------------
+#
+#
+# iron dagger
+Object NONE
+arch dagger
+chance 5
+diff 7
+exp 1500
+yield 10
+skill smithery
+cauldron forge
+ingred iron bar, brass bar
+# The brass is for the hilt of the dagger
+#
+# bronze dagger
+Object NONE
+arch b_dagger
+chance 6
+diff 6
+exp 1200
+yield 10
+skill smithery
+cauldron forge
+ingred bronze bar, brass bar
+#
+# iron shortsword
+Object NONE
+arch ssword_1
+chance 5
+diff 10
+exp 2000
+yield 3
+skill smithery
+cauldron forge
+ingred 2 iron bar, brass bar
+#
+# bronze shortsword
+Object NONE
+arch b_ssword_1
+chance 6
+diff 9
+exp 1700
+yield 3
+skill smithery
+cauldron forge
+ingred 2 bronze bar, brass bar
+#
+# -----------
+# Basic armor
+# -----------
+#
+#
+# iron scale mail
+Object NONE
+arch scale_mail
+chance 5
+diff 7
+exp 1500
+skill smithery
+cauldron forge
+ingred 2 iron bar
+#
+# bronze scale mail
+Object NONE
+arch b_scale_mail
+chance 6
+diff 6
+exp 1200
+skill smithery
+cauldron forge
+ingred 2 bronze bar
 #
 #
 # --------------
