@@ -416,7 +416,7 @@ ingred bronze bar, brass bar
 #
 # iron shortsword
 Object NONE
-arch ssword_1
+arch shortsword
 chance 5
 diff 10
 exp 2000
