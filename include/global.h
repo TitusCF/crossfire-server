@@ -17,6 +17,13 @@
 
 #include "includes.h"
 
+/* A few compilers refuse to support C99 boolean values. */
+#ifdef HAVE_STDBOOL_H
+#include <stdbool.h>
+#else
+#include "compat_stdbool.h"
+#endif
+
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif
