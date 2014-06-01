@@ -269,7 +269,17 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 ns->extended_stats = extended_stats;
                 SockList_AddPrintf(&sl, "%d", extended_stats);
             }
+        } else if (!strcmp(cmd, "beat")) {
+            int use_beat = atoi(param);
 
+            if (use_beat != 0 && use_beat != 1) {
+                SockList_AddString(&sl, "FALSE");
+            } else {
+                ns->heartbeat = use_beat ? true : false;
+
+                // Send setup command with standard beat interval.
+                SockList_AddPrintf(&sl, "%d", BEAT_INTERVAL);
+            }
         } else if (!strcmp(cmd, "loginmethod")) {
             int loginmethod;
 

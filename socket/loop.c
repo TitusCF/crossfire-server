@@ -109,6 +109,7 @@ static const struct player_cmd_mapping player_commands[] = {
 static const struct client_cmd_mapping client_commands[] = {
     { "addme",               add_me_cmd },
     { "askface",             send_face_cmd },             /* Added: phil */
+    { "beat",                NULL },
     { "requestinfo",         request_info_cmd },
     { "setup",               set_up_cmd },
     { "version",             version_cmd },
@@ -232,6 +233,9 @@ void handle_client(socket_struct *ns, player *pl) {
         if (i == 0)
             return;
 
+        /* Since we have a full packet, reset last tick time. */
+        ns->last_tick = 0;
+
         SockList_NullTerminate(&ns->inbuf); /* Terminate buffer - useful for string data */
 
         /* First, break out beginning word.  There are at least
@@ -249,7 +253,10 @@ void handle_client(socket_struct *ns, player *pl) {
 
         for (i = 0; client_commands[i].cmdname != NULL; i++) {
             if (strcmp((char *)ns->inbuf.buf+2, client_commands[i].cmdname) == 0) {
-                client_commands[i].cmdproc((char *)data, len, ns);
+                if (client_commands[i].cmdproc != NULL) {
+                    client_commands[i].cmdproc((char *)data, len, ns);
+                }
+
                 SockList_ResetRead(&ns->inbuf);
                 command_count++;
                 /* Evil case, and not a nice workaround, but well...
@@ -476,6 +483,25 @@ static void new_connection(int listen_fd) {
 }
 
 /**
+ * Check whether the given socket's connection is alive or not.
+ *
+ * @return True if connection is active, false if not.
+ */
+bool connection_alive(socket_struct socket) {
+    // If the client doesn't send heartbeats, assume it's connected.
+    if (!socket.heartbeat) {
+        return true;
+    }
+
+    // If a client message was received recently, it's connected.
+    if (socket.last_tick < tick_length(BEAT_INTERVAL + 1)) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * This checks the sockets for input and exceptions, does the right thing.
  *
  * A bit of this code is grabbed out of socket.c
@@ -630,6 +656,16 @@ void do_server(void) {
                 leave(pl, 1);
                 final_free_player(pl);
             } else {
+                /* Increment time since last contact only if logged in. */
+                if (pl->state == ST_PLAYING) {
+                    pl->socket.last_tick++;
+
+                    if (!connection_alive(pl->socket)) {
+                        // TODO: Handle a lost client connection.
+                        LOG(llevDebug, "Lost client connection!\n");
+                    }
+                }
+
                 /* Update the players stats once per tick.  More efficient than
                  * sending them whenever they change, and probably just as useful
                  */

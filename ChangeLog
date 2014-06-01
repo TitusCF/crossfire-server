@@ -34,6 +34,9 @@
 	* server/c_misc.c: Fix in-game version command. Previous behavior
 	  displayed "Crossfire FULL_VERSION".
 
+2014-05-10	Kevin Zheng
+	* socket/loop.c: Implement 'heartbeat' to check client connection.
+
 2014-04-19	Kevin Zheng
 	* server/server.c: Improve server shutdown command.
 

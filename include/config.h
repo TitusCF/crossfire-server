@@ -695,4 +695,11 @@
  */
 #define RESET_LOCATION_TIME     3600
 
+/**
+ * Interval between heartbeat requests. If a client hasn't sent a command
+ * within this time period, and heartbeat is enabled, that client lost
+ * connection.
+ */
+#define BEAT_INTERVAL 3
+
 #endif /* CONFIG_H */

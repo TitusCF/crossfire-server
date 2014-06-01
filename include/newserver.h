@@ -121,6 +121,7 @@ typedef struct socket_struct {
     uint32_t      extended_stats:1;       /**< Client wants base and maximum statistics information. */
     uint32_t      monitor_spells;         /**< Client wishes to be informed when their spell list changes. */
     uint32_t      sound;                  /**< Client sound mode. */
+    bool          heartbeat;              /**< Client will send hearbeats. */
     uint32_t      cs_version, sc_version; /**< Versions of the client. */
     uint16_t      look_position;          /**< Start of drawing of look window. */
     uint16_t      container_position;     /**< Start of container contents to send to client. */
@@ -136,8 +137,9 @@ typedef struct socket_struct {
                                              defaults to DEFAULT_NUM_LOOK_OBJECTS. */
     char    *account_name;              /**< Name of the account logged in on this socket */
     Account_Char    *account_chars;     /**< Detailed information on characters on this account */
-    uint8_t   login_method;               /**< Login method this client is using */
-    uint16_t      notifications;          /**< Notifications this client wants to get. */
+    uint8_t login_method;   /**< Login method this client is using */
+    uint16_t notifications; /**< Notifications this client wants to get. */
+    uint32_t last_tick;     /**< Number of ticks since last communication. */
 } socket_struct;
 
 /**
