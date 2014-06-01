@@ -415,7 +415,6 @@ static void new_connection(int listen_fd) {
     struct sockaddr_in addr;
 #endif
     socklen_t addrlen = sizeof(addr);
-    char err[MAX_BUF];
 
 #ifdef ESRV_DEBUG
     LOG(llevDebug, "do_server: New Connection\n");
@@ -449,7 +448,7 @@ static void new_connection(int listen_fd) {
 
     init_sockets[newsocknum].fd = accept(listen_fd, (struct sockaddr *)&addr, &addrlen);
     if (init_sockets[newsocknum].fd == -1) {
-        LOG(llevError, "accept failed: %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "accept failed: %s\n", strerror(errno));
     } else {
         char buf[MAX_BUF];
 #ifndef HAVE_GETNAMEINFO
@@ -484,10 +483,8 @@ static void new_connection(int listen_fd) {
  *
  */
 void do_server(void) {
-    int i, pollret, active = 0;
+    int pollret, active = 0;
     fd_set tmp_read, tmp_exceptions, tmp_write;
-    player *pl, *next;
-    char err[MAX_BUF];
 
 #ifdef CS_LOGSTATS
     if ((time(NULL)-cst_lst.time_start) >= CS_LOGTIME)
@@ -498,7 +495,7 @@ void do_server(void) {
     FD_ZERO(&tmp_write);
     FD_ZERO(&tmp_exceptions);
 
-    for (i = 0; i < socket_info.allocated_sockets; i++) {
+    for (int i = 0; i < socket_info.allocated_sockets; i++) {
         if (init_sockets[i].status == Ns_Add && !is_fd_valid(init_sockets[i].fd)) {
             LOG(llevError, "do_server: invalid waiting fd %d\n", i);
             init_sockets[i].status = Ns_Dead;
@@ -522,7 +519,7 @@ void do_server(void) {
     /* Go through the players.  Let the loop set the next pl value,
      * since we may remove some
      */
-    for (pl = first_player; pl != NULL; ) {
+    for (player *pl = first_player; pl != NULL; ) {
         if (pl->socket.status != Ns_Dead && !is_fd_valid(pl->socket.fd)) {
             LOG(llevError, "do_server: invalid file descriptor for player %s [%s]: %d\n", (pl->ob && pl->ob->name) ? pl->ob->name : "(unnamed player?)", (pl->socket.host) ? pl->socket.host : "(unknown ip?)", pl->socket.fd);
             pl->socket.status = Ns_Dead;
@@ -555,7 +552,7 @@ void do_server(void) {
     pollret = select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, &tmp_exceptions, &socket_info.timeout);
 
     if (pollret == -1) {
-        LOG(llevError, "select failed: %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "select failed: %s\n", strerror(errno));
         return;
     }
 
@@ -564,7 +561,7 @@ void do_server(void) {
 
     /* Check for any exceptions/input on the sockets */
     if (pollret)
-        for (i = 0; i < socket_info.allocated_sockets; i++) {
+        for (int i = 0; i < socket_info.allocated_sockets; i++) {
             /* listen sockets can stay in status Ns_Dead */
             if (init_sockets[i].status != Ns_Add)
                 continue;
@@ -585,7 +582,9 @@ void do_server(void) {
         }
 
     /* This does roughly the same thing, but for the players now */
-    for (pl = first_player; pl != NULL; pl = next) {
+    player *next;
+
+    for (player *pl = first_player; pl != NULL; pl = next) {
         next = pl->next;
         if (pl->socket.status == Ns_Dead)
             continue;
