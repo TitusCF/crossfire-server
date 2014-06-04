@@ -595,6 +595,8 @@ void object_clear_owner(object *op) {
  * set_owner() has been renamed to object_set_owner()
  */
 void object_set_owner(object *op, object *owner) {
+    /* Assign temp to something, so it can't accidentally be NULL */
+    object *tmp = owner;
     if (op == NULL)
         return;
     if (owner == NULL) {
@@ -609,13 +611,14 @@ void object_set_owner(object *op, object *owner) {
      * freed and then another object replacing it.  Since the ownercounts
      * didn't match, this check is valid and I believe that cause is valid.
      */
-    for (;;) {
-        object *tmp;
-
+    /*
+     * if owner is NULL, function will have already returned,
+     * so loop should still function as before.
+     */
+    while (tmp) {
         tmp = object_get_owner(owner);
-        if (tmp == NULL)
-            break;
-        owner = tmp;
+        if (tmp)
+            owner = tmp;
     }
 
     /* must not cause owner cycles */
