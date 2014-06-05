@@ -87,10 +87,19 @@
 /** Compatibility implementations of useful nonstandard functions. */
 void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen);
 
+#ifndef HAVE_STRCASESTR
+char *strcasestr(const char *s, const char *find);
+#endif
+#define strcasestr_local strcasestr
+
+#ifndef HAVE_STRDUP
+char *strdup(const char *str);
+#endif
+#define strdup_local strdup
+
 #ifndef HAVE_STRLCPY
 size_t strlcpy(char *dst, const char *src, size_t size);
 #endif
-
 #define safe_strncpy strlcpy
 
 /** Strings that should be manipulated through add_string() and free_string(). */

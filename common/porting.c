@@ -219,28 +219,24 @@ void remove_directory(const char *path) {
  * String related function
  ****************************************************************************/
 
+#ifndef HAVE_STRDUP
 /**
- * A replacement of strdup(), since it's not defined at some
- * unix variants.
- *
- * @param str
- * string to duplicate.
- * @return
- * copy, needs to be freed by caller. NULL on memory allocation error.
+ * Portable implementation of strdup(3).
  */
-char *strdup_local(const char *str) {
+char *strdup(const char *str) {
     char *c = (char *)malloc(strlen(str)+1);
     if (c != NULL)
         strcpy(c, str);
     return c;
 }
+#endif
 
 /** Converts x to number */
 #define DIGIT(x) (isdigit(x) ? (x)-'0' : \
 islower(x) ? (x)+10-'a' : (x)+10-'A')
 #define MBASE ('z'-'a'+1+10)
 
-#if !defined(HAVE_STRTOL)
+#ifndef HAVE_STRTOL
 /**
  * Converts a string to long.
  *
@@ -319,7 +315,7 @@ long strtol(register char *str, char **ptr, register int base) {
  * @li 0 if s1 equals s2
  * @li 1 if s1 is greater than s2
  */
-#if !defined(HAVE_STRNCASECMP)
+#ifndef HAVE_STRNCASECMP
 int strncasecmp(const char *s1, const char *s2, int n) {
     register int c1, c2;
 
@@ -338,7 +334,7 @@ int strncasecmp(const char *s1, const char *s2, int n) {
 }
 #endif
 
-#if !defined(HAVE_STRCASECMP)
+#ifndef HAVE_STRCASECMP
 /**
  * Case-insensitive comparaison of strings.
  *
@@ -369,6 +365,7 @@ int strcasecmp(const char *s1, const char *s2) {
 }
 #endif
 
+#ifndef HAVE_STRCASESTR
 /**
  * Finds a substring in a string, in a case-insensitive manner.
  *
@@ -379,7 +376,7 @@ int strcasecmp(const char *s1, const char *s2) {
  * @return
  * pointer to first occurrence of find in s, NULL if not found.
  */
-const char *strcasestr_local(const char *s, const char *find) {
+char *strcasestr(const char *s, const char *find) {
     char c, sc;
     size_t len;
 
@@ -396,8 +393,9 @@ const char *strcasestr_local(const char *s, const char *find) {
     }
     return s;
 }
+#endif
 
-#if !defined(HAVE_SNPRINTF)
+#ifndef HAVE_SNPRINTF
 /**
  * Formats to a string, in a size-safe way.
  *
