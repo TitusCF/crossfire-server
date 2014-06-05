@@ -603,9 +603,16 @@ void query_name(const object *op, char *buf, size_t size) {
     size_t len = 0;
 
     buf[0] = '\0';
-
-    query_short_name(op, buf+len, size-len);
-    len += strlen(buf+len);
+    /*
+     * Since len is initialized to zero, but is not changed
+     * up to this point, I see no reason to have buf+len and size-len;
+     * buf and size should suffice, since we're just adding and
+     * subtracting zero here, anyway.
+     *
+     * SilverNexus 2014-06-04
+     */
+    query_short_name(op, buf, size);
+    len = strlen(buf);
 
     if (QUERY_FLAG(op, FLAG_INV_LOCKED))
         safe_strcat(buf, " *", &len, size);
