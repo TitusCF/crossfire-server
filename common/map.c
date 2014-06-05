@@ -83,10 +83,8 @@ mapstruct *has_been_loaded(const char *name) {
 }
 
 /**
- * This makes a path absolute outside the world of Crossfire.
- * In other words, it prepends LIBDIR/MAPDIR/ to the given path
- * and returns the pointer to a static array containing the result.
- * it really should be called create_mapname
+ * Get the full path to a map file. This simply means prepending the correct
+ * map directory to the given path.
  *
  * @param name
  * path of the map.
@@ -1803,17 +1801,12 @@ mapstruct *ready_map_name(const char *name, int flags) {
         }
 
         /* create and load a map */
-        if (flags&MAP_PLAYER_UNIQUE)
-            LOG(llevDebug, "Trying to load map %s.\n", name);
-        else {
-            char fullpath[MAX_BUF];
+        LOG(llevDebug, "Loading map '%s'.\n", name);
+        m = load_original_map(name, (flags&MAP_PLAYER_UNIQUE));
 
-            create_pathname(name, fullpath, MAX_BUF);
-            LOG(llevDebug, "Trying to load map %s.\n", fullpath);
+        if (m == NULL) {
+            return m;
         }
-
-        if (!(m = load_original_map(name, (flags&MAP_PLAYER_UNIQUE))))
-            return (NULL);
 
         /* If a player unique map, no extra unique object file to load.
          * if from the editor, likewise.
