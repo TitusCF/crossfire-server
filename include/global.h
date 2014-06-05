@@ -84,6 +84,15 @@
 #include <inttypes.h>
 #endif
 
+/** Compatibility implementations of useful nonstandard functions. */
+void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen);
+
+#ifndef HAVE_STRLCPY
+size_t strlcpy(char *dst, const char *src, size_t size);
+#endif
+
+#define safe_strncpy strlcpy
+
 /** Strings that should be manipulated through add_string() and free_string(). */
 typedef const char *sstring;
 

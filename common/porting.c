@@ -565,13 +565,13 @@ void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
 #endif
 }
 
+#ifndef HAVE_STRLCPY
 /**
- * Safer replacement for strncpy(3).
+ * Portable implementation of strlcpy(3).
  */
-void safe_strncpy(char *dst, const char *src, size_t size) {
-#ifdef HAVE_STRLCPY
-    strlcpy(dst, src, size);
-#else
-    snprintf(dst, size, "%s", src);
-#endif
+size_t strlcpy(char *dst, const char *src, size_t size) {
+    strncpy(dst, src, size - 1);
+    dst[size - 1] = '\0';
+    return strlen(src);
 }
+#endif
