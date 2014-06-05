@@ -131,8 +131,9 @@ void enter_player_savebed(object *op) {
      * while we're at it.
      */
     if (oldmap == op->map && strcmp(op->contr->savebed_map, oldmap->path)) {
-        LOG(llevDebug, "Player %s savebed location %s is invalid - going to emergency location (%s)\n", settings.emergency_mapname, op->name, op->contr->savebed_map);
-        strcpy(op->contr->savebed_map, settings.emergency_mapname);
+        LOG(llevDebug, "Player %s savebed location %s is invalid - going to emergency location (%s)\n",
+                settings.emergency_mapname, op->name, op->contr->savebed_map);
+        safe_strncpy(op->contr->savebed_map, settings.emergency_mapname, MAX_BUF);
         op->contr->bed_x = settings.emergency_x;
         op->contr->bed_y = settings.emergency_y;
         free_string(op->contr->savebed_map);

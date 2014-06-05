@@ -195,7 +195,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
                                  spell->name);
             return 0;
         }
-        strcpy(name_to_resurrect, arg);
+        safe_strncpy(name_to_resurrect, arg, sizeof(name_to_resurrect));
         temp = NULL;
     } else {
         sx = op->x+freearr_x[dir];
@@ -222,7 +222,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
                           "You need a body for this spell.");
             return 0;
         }
-        strcpy(name_to_resurrect, temp->name);
+        safe_strncpy(name_to_resurrect, temp->name, sizeof(name_to_resurrect));
         /* Only try to copy if dead body is as recent as the patch this is from. */
         if (temp->slaying){
             corpse_account = (char *)CALLOC(sizeof(char), MAX_BUF);

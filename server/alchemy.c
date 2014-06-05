@@ -254,7 +254,7 @@ static int content_recipe_value(object *op) {
 
     FOR_INV_PREPARE(op, tmp) {
         tval = 0;
-        strcpy(name, tmp->name);
+        safe_strncpy(name, tmp->name, sizeof(name));
         if (tmp->title)
             snprintf(name, sizeof(name), "%s %s", tmp->name, tmp->title);
         tval = (strtoint(name)*(tmp->nrof ? tmp->nrof : 1));

@@ -1208,10 +1208,11 @@ CF_PLUGIN int eventListener(int *type, ...) {
     /*third =*/ va_arg(args, object *);
     buf = va_arg(args, char *);
 
-    if (buf != NULL)
-        strcpy(message, buf);
-    else
+    if (buf != NULL) {
+        safe_strncpy(message, buf, MAX_BUF);
+    } else {
         message[0] = '\0';
+    }
 
     query = va_arg(args, int); /* 'fix', ignored */
     event = va_arg(args, object *);

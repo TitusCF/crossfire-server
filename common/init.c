@@ -408,7 +408,8 @@ static void init_dynamic(void) {
     while (at) {
         if (at->clone.type == MAP && at->clone.subtype == MAP_TYPE_LEGACY) {
             if (at->clone.race) {
-                strcpy(first_map_ext_path, at->clone.race);
+                safe_strncpy(first_map_ext_path, at->clone.race,
+                        sizeof(first_map_ext_path));
             }
             if (EXIT_PATH(&at->clone)) {
                 mapstruct *first;

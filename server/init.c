@@ -564,22 +564,22 @@ static void load_settings(void) {
             }
         } else if (!strcasecmp(buf, "metaserver_server")) {
             if (has_val)
-                strcpy(settings.meta_server, cp);
+                safe_strncpy(settings.meta_server, cp, sizeof(settings.meta_server));
             else
                 LOG(llevError, "load_settings: metaserver_server must have a value.\n");
         } else if (!strcasecmp(buf, "motd")) {
             if (has_val)
-                strcpy(settings.motd, cp);
+                safe_strncpy(settings.motd, cp, sizeof(settings.motd));
             else
                 LOG(llevError, "load_settings: motd must have a value.\n");
         } else if (!strcasecmp(buf, "dm_mail")) {
             if (has_val)
-                strcpy(settings.dm_mail, cp);
+                safe_strncpy(settings.dm_mail, cp, sizeof(settings.dm_mail));
             else
                 LOG(llevError, "load_settings: dm_mail must have a value.\n");
         } else if (!strcasecmp(buf, "metaserver_host")) {
             if (has_val)
-                strcpy(settings.meta_host, cp);
+                safe_strncpy(settings.meta_host, cp, sizeof(settings.meta_host));
             else
                 LOG(llevError, "load_settings: metaserver_host must have a value.\n");
         } else if (!strcasecmp(buf, "port")) {
@@ -592,7 +592,7 @@ static void load_settings(void) {
             else
                 settings.meta_port = port;
         } else if (!strcasecmp(buf, "metaserver_comment")) {
-            strcpy(settings.meta_comment, cp);
+            safe_strncpy(settings.meta_comment, cp, sizeof(settings.meta_comment));
         } else if (!strcasecmp(buf, "worldmapstartx")) {
             int size = atoi(cp);
 
@@ -716,10 +716,13 @@ static void load_settings(void) {
             }
         } else if (!strcasecmp(buf, "who_format")) {
             if (has_val)
-                strcpy(settings.who_format, cp);
+                safe_strncpy(settings.who_format, cp,
+                        sizeof(settings.who_format));
         } else if (!strcasecmp(buf, "who_wiz_format")) {
-            if (has_val)
-                strcpy(settings.who_wiz_format, cp);
+            if (has_val) {
+                safe_strncpy(settings.who_wiz_format, cp,
+                        sizeof(settings.who_wiz_format));
+            }
         } else if (!strcasecmp(buf, "spellpoint_level_depend")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
                 settings.spellpoint_level_depend = TRUE;

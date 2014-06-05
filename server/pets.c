@@ -844,7 +844,7 @@ static object *choose_cult_monster(object *pl, const object *god, int summon_lev
 
     /* Determine the number of races available */
     racenr = 0;
-    strcpy(buf, god->race);
+    safe_strncpy(buf, god->race, sizeof(buf));
     race = strtok(buf, ",");
     while (race) {
         racenr++;
@@ -854,7 +854,7 @@ static object *choose_cult_monster(object *pl, const object *god, int summon_lev
     /* next, randomly select a race from the aligned_races string */
     if (racenr > 1) {
         racenr = rndm(0, racenr-1);
-        strcpy(buf, god->race);
+        safe_strncpy(buf, god->race, sizeof(buf));
         race = strtok(buf, ",");
         for (i = 0; i < racenr; i++)
             race = strtok(NULL, ",");

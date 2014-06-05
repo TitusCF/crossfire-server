@@ -520,7 +520,7 @@ void make_path_to_file(const char *filename) {
     if (!filename || !*filename)
         return;
 
-    strcpy(buf, filename);
+    safe_strncpy(buf, filename, sizeof(buf));
     LOG(llevDebug, "make_path_tofile %s...\n", filename);
     while ((cp = strchr(cp+1, (int)'/'))) {
         *cp = '\0';

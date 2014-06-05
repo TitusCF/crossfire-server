@@ -92,7 +92,7 @@ void read_map_log(void) {
             continue;
         }
 
-        strcpy(map->path, tmp[0]);
+        safe_strncpy(map->path, tmp[0], sizeof(map->path));
         map->tmpname = strdup_local(tmp[1]);
 
         /* Lock is left over from the lock items - we just toss it now.

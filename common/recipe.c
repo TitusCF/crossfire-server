@@ -463,9 +463,9 @@ static long find_ingred_cost(const char *name) {
     /* second, try to match an artifact ("arch of something") */
     cp = strstr(name, " of ");
     if (cp != NULL) {
-        strcpy(part1, name);
+        safe_strncpy(part1, name, sizeof(part1));
         part1[cp-name] = '\0';
-        strcpy(part2, cp+4);
+        safe_strncpy(part2, cp + 4, sizeof(part2));
         /* find the first archetype matching the first part of the name */
         for (at = first_archetype; at != NULL; at = at->next)
             if (!strcasecmp(at->clone.name, part1) && at->clone.title == NULL)
@@ -483,9 +483,9 @@ static long find_ingred_cost(const char *name) {
     /* third, try to match a body part ("arch's something") */
     cp = strstr(name, "'s ");
     if (cp != NULL) {
-        strcpy(part1, name);
+        safe_strncpy(part1, name, sizeof(part1));
         part1[cp-name] = '\0';
-        strcpy(part2, cp+3);
+        safe_strncpy(part2, cp + 3, sizeof(part2));
         /* examine all archetypes matching the first part of the name */
         for (at = first_archetype; at != NULL; at = at->next)
             if (!strcasecmp(at->clone.name, part1) && at->clone.title == NULL) {

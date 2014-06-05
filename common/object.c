@@ -4502,7 +4502,8 @@ int object_set_value(object *op, const char *key, const char *value, int add_key
 int object_matches_string(object *pl, object *op, const char *name) {
     char *cp, local_name[MAX_BUF], name_op[MAX_BUF], name_short[HUGE_BUF], bname_s[MAX_BUF], bname_p[MAX_BUF];
     int count, retval = 0;
-    strcpy(local_name, name);   /* strtok is destructive to name */
+    /* strtok is destructive to name */
+    safe_strncpy(local_name, name, sizeof(local_name)); 
 
     for (cp = strtok(local_name, ","); cp; cp = strtok(NULL, ",")) {
         while (cp[0] == ' ')

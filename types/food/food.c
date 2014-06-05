@@ -190,7 +190,8 @@ static void eat_special_food(object *who, object *food) {
     /* check for hp, sp change */
     if (food->stats.hp != 0 && !is_wraith_pl(who)) {
         if (QUERY_FLAG(food, FLAG_CURSED)) {
-            strcpy(who->contr->killer, food->name);
+            safe_strncpy(who->contr->killer, food->name,
+                    sizeof(who->contr->killer));
             hit_player(who, food->stats.hp, food, AT_POISON, 1);
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
                 "Eck!...that was poisonous!");

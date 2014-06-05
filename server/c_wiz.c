@@ -1060,7 +1060,7 @@ void command_create(object *op, const char *params) {
         if (!at_spell || at_spell->clone.type != SPELL)
             at_spell = find_archetype_by_object_name(cp);
         if (!at_spell || at_spell->clone.type != SPELL) {
-            strcpy(spell_name, cp);
+            safe_strncpy(spell_name, cp, sizeof(spell_name));
             fsp = strchr(spell_name, ' ');
             if (fsp) {
                 *fsp = 0;

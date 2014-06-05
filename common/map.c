@@ -1224,7 +1224,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
 
     m = get_linked_map();
 
-    strcpy(m->path, filename);
+    safe_strncpy(m->path, filename, HUGE_BUF);
     if (load_map_header(fp, m)) {
         LOG(llevError, "Error loading map header for %s, flags=%d\n", filename, flags);
         delete_map(m);

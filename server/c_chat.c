@@ -352,7 +352,7 @@ void command_reply(object *op, const char *params) {
     }
 
     /* Update last_tell value */
-    strcpy(pl->last_tell, op->name);
+    safe_strncpy(pl->last_tell, op->name, MAX_NAME);
 
     draw_ext_info_format(NDI_UNIQUE|NDI_ORANGE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
                          "%s tells you: %s",

@@ -57,10 +57,11 @@ void map_info(object *op, const char *search) {
             continue;   /* Skip unwanted maps */
 
         /* Print out the last 18 characters of the map name... */
-        if (strlen(m->path) <= 18)
+        if (strlen(m->path) <= 18) {
             strcpy(map_path, m->path);
-        else
-            strcpy(map_path, m->path+strlen(m->path)-18);
+        } else {
+            safe_strncpy(map_path, m->path + strlen(m->path) - 18, sizeof(map_path));
+        }
 
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
                              i18n(op, "[fixed]%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d"),
@@ -1046,12 +1047,12 @@ void command_statistics(object *pl, const char *params) {
 
     if (!pl->contr)
         return;
-    strcpy(buf, i18n(pl, "[fixed]  Experience: %"));
+    safe_strncpy(buf, i18n(pl, "[fixed]  Experience: %"), sizeof(buf));
     strcat(buf, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
                          buf,
                          pl->stats.exp);
-    strcpy(buf, i18n(pl, "[fixed]  Next Level: %"));
+    safe_strncpy(buf, i18n(pl, "[fixed]  Next Level: %"), sizeof(buf));
     strcat(buf, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
                          buf,
@@ -1939,8 +1940,10 @@ void receive_player_password(object *op) {
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_NEW) {
-        strcpy(op->contr->new_password, crypt_string(op->contr->write_buf+1, NULL));
-        send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n(op, "Please confirm your new password, or blank to cancel:"));
+        safe_strncpy(op->contr->new_password, crypt_string(op->contr->write_buf+1, NULL),
+                sizeof(op->contr->new_password));
+        send_query(&op->contr->socket, CS_QUERY_HIDEINPUT,
+                i18n(op, "Please confirm your new password, or blank to cancel:"));
         player_set_state(op->contr, ST_CHANGE_PASSWORD_CONFIRM);
         return;
     }
@@ -1958,7 +1961,8 @@ void receive_player_password(object *op) {
         return;
     }
 
-    strcpy(op->contr->password, crypt_string(op->contr->write_buf+1, NULL));
+    safe_strncpy(op->contr->password, crypt_string(op->contr->write_buf+1, NULL),
+            sizeof(op->contr->password));
     player_set_state(op->contr, ST_ROLL_STAT);
     check_login(op, TRUE);
 }

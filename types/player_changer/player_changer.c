@@ -79,7 +79,8 @@ static method_ret player_changer_type_process(ob_methods *context, object *op) {
         /* update players death & WoR home-position */
         sscanf(EXIT_PATH(op), "%c", &c);
         if (c == '/') {
-            strcpy(player->contr->savebed_map, EXIT_PATH(op));
+            safe_strncpy(player->contr->savebed_map, EXIT_PATH(op),
+                    sizeof(player->contr->savebed_map));
             player->contr->bed_x = EXIT_X(op);
             player->contr->bed_y = EXIT_Y(op);
         } else

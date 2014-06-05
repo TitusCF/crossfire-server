@@ -218,7 +218,7 @@ void send_news(const object *op) {
                                      MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_NEWS,
                                      "%s:\n%s",
                                      subject, news); /*send previously read news*/
-            strcpy(subject, buf+1);
+            safe_strncpy(subject, buf + 1, sizeof(subject));
             strip_endline(subject);
             size = 0;
             news[0] = '\0';
@@ -3807,7 +3807,8 @@ static void kill_player_permadeath(object *op) {
 
             /* set the location of where the person will reappear when  */
             /* maybe resurrection code should fix map also */
-            strcpy(op->contr->maplevel, settings.emergency_mapname);
+            safe_strncpy(op->contr->maplevel, settings.emergency_mapname,
+                    sizeof(op->contr->maplevel));
             if (op->map != NULL)
                 op->map = NULL;
             op->x = settings.emergency_x;
