@@ -53,9 +53,6 @@
 /* Has to be after above includes so we don't redefine some values */
 #include "global.h"
 
-/** Used to generate temporary unique name. */
-static unsigned int curtmp = 0;
-
 /*****************************************************************************
  * File related functions
  ****************************************************************************/
@@ -73,6 +70,9 @@ static unsigned int curtmp = 0;
  * path to temporary file, or NULL if failure. Must be freed by caller.
  */
 char *tempnam_local(const char *dir, const char *pfx) {
+    /** Used to generate temporary unique name. */
+    static unsigned int curtmp;
+
     char *name;
     pid_t pid = getpid();
 
@@ -133,10 +133,10 @@ FILE *tempnam_secure(const char *dir, const char *pfx, char **filename) {
     int fd;
     int i;
     FILE *file = NULL;
-#define MAXTMPRETRY 10
+    const int maxretry = 10;
 
     /* Limit number of retries to MAXRETRY */
-    for (i = 0; i < MAXTMPRETRY; i++) {
+    for (i = 0; i < maxretry; i++) {
         tempname = tempnam_local(dir, pfx);
         /* tempnam_local only fails for really bad stuff, so lets bail out right
          * away then.
@@ -231,12 +231,10 @@ char *strdup(const char *str) {
 }
 #endif
 
-/** Converts x to number */
-#define DIGIT(x) (isdigit(x) ? (x)-'0' : \
-islower(x) ? (x)+10-'a' : (x)+10-'A')
+#ifndef HAVE_STRTOL
+#define DIGIT(x) (isdigit(x) ? (x)-'0' : islower(x) ? (x)+10-'a' : (x)+10-'A')
 #define MBASE ('z'-'a'+1+10)
 
-#ifndef HAVE_STRTOL
 /**
  * Converts a string to long.
  *
