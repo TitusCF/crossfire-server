@@ -36,17 +36,6 @@
 #include <global.h>
 #include <define.h> /* Needed for OUT_OF_MEMORY. */
 
-/* Unlikely to be needed any more... */
-#ifdef HAVE_MEMORY_H
-#  include <memory.h>
-#endif
-
-/* Get prototype functions to prevent warnings. */
-#if defined(__sun__) && defined(StupidSunHeaders)
-#  include <sys/types.h>
-#  include <sys/time.h>
-#  include "sunos.h"   /* Prototypes for standard libraries, sunos lack those */
-#endif
 
 /*   P r o t o t y p e s
  */
@@ -55,9 +44,6 @@ static Boolean re_cmp_step(const char *, const char *, unsigned, int);
 static void re_init(void);
 static Boolean re_match_token(uchar, selection *);
 static const char *re_get_token(selection *, const char *);
-#ifdef DEBUG2
-static void re_dump_sel(selection *);
-#endif
 
 /*   G l o b a l   v a r i a b l e s
  */
@@ -535,92 +521,3 @@ static const char *re_get_token(selection *sel, const char *regexp) {
     return regexp;
 }
 
-/*   D e b u g   c o d e
- */
-#ifdef DEBUG2 /* compile all with DEBUG also ? hevi@lut.fi */
-/**
- * Dumps specified selection to stdout.
- *
- * @param sel
- * token to dump.
- */
-static void re_dump_sel(selection *sel) {
-    switch (sel->type) {
-    case sel_any:
-        printf(".");
-        break;
-
-    case sel_end:
-        printf("$");
-        break;
-
-    case sel_single:
-        printf("<%c>", sel->u.single);
-        break;
-
-    case sel_range:
-        printf("[%c-%c]", sel->u.range.low, sel->u.range.high);
-        break;
-
-    case sel_array: {
-            int i;
-            printf("[");
-            for (i = 0; i < UCHAR_MAX; i++) {
-                if (sel->u.array[i]) {
-                    printf("%c", i);
-                }
-            }
-            printf("]");
-        }
-        break;
-
-    case sel_not_single:
-        printf("[^%c]", sel->u.single);
-        break;
-
-    case sel_not_range:
-        printf("[^%c-%c]", sel->u.range.low, sel->u.range.high);
-        break;
-
-    default:
-        printf("<UNKNOWN TOKEN!>");
-        break;
-    }
-
-    switch (sel->repeat) {
-    case rep_once:
-        break;
-
-    case rep_null_or_once:
-        printf("?");
-        break;
-
-    case rep_null_or_more:
-        printf("*");
-        break;
-
-    case rep_once_or_more:
-        printf("+");
-        break;
-
-    default:
-        printf("<UNKNOWN REP-TOKEN!>");
-        break;
-    }
-}
-
-int main(int argc, char *argv[]) {
-    char *re, *m;
-    selection sel;
-
-    re = re_get_token(&sel, argv[1]);
-
-    printf("'%s' -> '%s'\n", argv[1], re);
-    re_dump_sel(&sel);
-    printf("\n");
-    m = re_cmp(argv[2], argv[1]);
-    if (m)
-        printf("MATCH! -> '%s'\n", m);
-    return 0;
-}
-#endif
