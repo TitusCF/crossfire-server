@@ -23,9 +23,6 @@
 
 int64_t *levels; /**< Number of levels for which we have experience. */
 
-#define TRUE 1
-#define FALSE 0
-
 static const float exp_att_mult[NROFATTACKS] = {
     0.0,    /* AT_PHYSICAL */
     0.0,    /* AT_MAGIC */

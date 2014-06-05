@@ -1,6 +1,6 @@
 /**
  * @file
- * Global type definitions.
+ * Global type definitions and header inclusions.
  */
 
 #ifndef GLOBAL_H
@@ -15,13 +15,69 @@
 #define EXTERN extern
 #endif
 
-#include "includes.h"
+/* Include this first, because it lets us know what we are missing */
+#ifdef WIN32 /* ---win32 exclude this, config comes from VC ide */
+#include "win32.h"
+#else
+#include <autoconf.h>
+/* socklen_t is defined in this file on some systems, and that type is
+ * used in newserver.h, which is used in all other files
+ */
+#include <sys/socket.h>
+#endif
+
+#include <ctype.h>
+#include <errno.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#ifdef __NetBSD__
+#include <math.h>
+#endif
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
+#if defined(HAVE_TIME_H) && defined(TIME_WITH_SYS_TIME)
+#include <time.h>
+#endif
+
+/* stddef is for offsetof */
+#ifdef HAVE_STDDEF_H
+#include <stddef.h>
+#endif
 
 /* A few compilers refuse to support C99 boolean values. */
 #ifdef HAVE_STDBOOL_H
 #include <stdbool.h>
 #else
 #include "compat_stdbool.h"
+#endif
+
+#ifndef TRUE
+#define TRUE true
+#endif
+
+#ifndef FALSE
+#define FALSE false
 #endif
 
 #ifdef HAVE_INTTYPES_H
@@ -32,22 +88,14 @@
 typedef const char *sstring;
 
 #ifndef WIN32
-
-#if SIZEOF_LONG == 8
-
-#define FMT64               "ld"
-#define FMT64U              "lu"
-
-#elif SIZEOF_LONG_LONG == 8
-#define FMT64                   "lld"
-#define FMT64U                  "llu"
-
-#else
-#error do not know how to get a 64 bit value on this system.
-#error correct and send mail to crossfire-devel on how to do this
+#define FMT64   PRId64
+#define FMT64U  PRIu64
 #endif
 
-#endif
+#include "config.h"
+#include "define.h"
+#include "logger.h"
+#include "shared/newclient.h"
 
 /* This blob, in this order, is needed to actually define maps */
 #include "face.h"
