@@ -923,10 +923,10 @@ static shopitems *parse_shop_string(const char *input_string, const mapstruct *m
                 items[i].name = current_type->name;
                 items[i].typenum = current_type->number;
                 items[i].name_pl = current_type->name_pl;
-            } else { /* oh uh, something's wrong, let's free up this one, and try
-                    * the next entry while we're at it, better print a warning
-                    */
-                LOG(llevError, "invalid type %s defined in shopitems for %s in string %s\n", p, map->path ? map->path : map->name, input_string);
+            } else {
+                /* oh uh, something's wrong, let's free up this one, and try
+                 * the next entry while we're at it, better print a warning */
+                LOG(llevError, "invalid type %s defined in shopitems for %s in string %s\n", p, map->name, input_string);
             }
         }
         items[i].index = number_of_entries;
@@ -2657,8 +2657,10 @@ void map_remove_unique_files(const mapstruct *map) {
  */
 const char *map_get_path(const object *item) {
     if (item->map != NULL) {
-        if (item->map->path != NULL)
+        if (strlen(item->map->path) > 0) {
             return item->map->path;
+        }
+
         return item->map->name ? item->map->name : "(empty path and name)";
     }
 

@@ -152,10 +152,8 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     int final_map_exit = 1;
     int i, j;
 
-    if (RP->exit_on_final_map) {
-        if (strstr(RP->exit_on_final_map, "no")) {
-            final_map_exit = 0;
-        }
+    if (strstr(RP->exit_on_final_map, "no")) {
+        final_map_exit = 0;
     }
 
     if (orientation == 0) {
