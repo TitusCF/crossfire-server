@@ -1209,7 +1209,7 @@ CF_PLUGIN int eventListener(int *type, ...) {
     buf = va_arg(args, char *);
 
     if (buf != NULL) {
-        safe_strncpy(message, buf, MAX_BUF);
+        snprintf(message, sizeof(message), "%s", buf);
     } else {
         message[0] = '\0';
     }
