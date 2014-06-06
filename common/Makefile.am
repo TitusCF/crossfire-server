@@ -8,7 +8,6 @@ libcross_a_SOURCES = \
 	dialog.c \
 	exp.c\
 	friend.c\
-	glue.c\
 	holy.c\
 	info.c\
 	image.c \

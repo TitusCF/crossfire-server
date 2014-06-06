@@ -24,7 +24,9 @@
  */
 
 #include <stdlib.h>
-#include <global.h>
+
+#include "global.h"
+#include "sproto.h"
 
 /**
  * Roll a random number between min and max.  Uses op to determine luck,
@@ -600,4 +602,33 @@ int isqrt(int n) {
         ++result;
     }
     return result;
+}
+
+/**
+ * fatal() is meant to be called whenever a fatal signal is intercepted.
+ * It will call the emergency_save and the clean_tmp_files functions.
+ *
+ * @note
+ * this function never returns, as it calls exit().
+ */
+void fatal(int err) {
+    const char *fatalmsgs[] = {
+        "Failed to allocate memory",
+        "Failed repeatedly to load maps",
+        "Hashtable for archetypes is too small",
+        "Fatal issue in archetype file",
+        "See last error",
+    };
+
+    if (err >= 0 && err < sizeof(fatalmsgs) / sizeof(*fatalmsgs)) {
+        fprintf(logfile, "Fatal error: %s\n", fatalmsgs[err]);
+    } else {
+        fprintf(logfile, "Fatal error, and invalid error code too!\n");
+    }
+
+    fprintf(logfile, "Fatal: %s\n", err < sizeof(fatalmsgs)/sizeof(*fatalmsgs) ? fatalmsgs[(unsigned)err] : "invalid error code");
+    emergency_save(0);
+    clean_tmp_files();
+    fprintf(logfile, "Exiting...\n");
+    exit(err);
 }
