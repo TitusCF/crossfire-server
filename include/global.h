@@ -19,23 +19,11 @@
 #ifdef WIN32 /* ---win32 exclude this, config comes from VC ide */
 #include "win32.h"
 #else
-#include <autoconf.h>
+#include "autoconf.h"
 /* socklen_t is defined in this file on some systems, and that type is
  * used in newserver.h, which is used in all other files
  */
 #include <sys/socket.h>
-#endif
-
-#include <stdio.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
-#ifdef __NetBSD__
-#include <math.h>
-#endif
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
 #endif
 
 #ifdef HAVE_LIBDMALLOC
@@ -46,10 +34,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
-
+#include <stdio.h>
 #include "compat.h"
 
 /** Strings that should be manipulated through add_string() and free_string(). */

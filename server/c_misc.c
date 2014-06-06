@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #undef SS_STATISTICS
 #include "loader.h"

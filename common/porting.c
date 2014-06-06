@@ -36,18 +36,18 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#endif
 
-/* Need to pull in the HAVE_... values somehow */
-/* win32 reminder: always put this in a ifndef win32 block */
-#include <autoconf.h>
+/* Has to be after above includes so we don't redefine some values */
+#include "global.h"
+
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
 #endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-
-/* Has to be after above includes so we don't redefine some values */
-#include "global.h"
 
 /*****************************************************************************
  * File related functions

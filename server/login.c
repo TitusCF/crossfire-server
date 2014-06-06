@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "define.h"
 #include "loader.h"
