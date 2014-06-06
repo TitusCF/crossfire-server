@@ -21,6 +21,11 @@
  */
 
 #include <assert.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef WIN32 /* ---win32 exclude/include headers */
@@ -28,28 +33,19 @@
 #include <fcntl.h>
 #define pid_t int  /* we include it non global, because there is a redefinition in python.h */
 #else
-#include <ctype.h>
-#include <errno.h>
+#include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-
-#include <sys/param.h>
-#include <stdio.h>
 
 /* Need to pull in the HAVE_... values somehow */
 /* win32 reminder: always put this in a ifndef win32 block */
 #include <autoconf.h>
 #endif
 
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
-
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#include <stdarg.h>
 /* Has to be after above includes so we don't redefine some values */
 #include "global.h"
 
@@ -469,35 +465,6 @@ char *strerror_local(int errnum, char *buf, size_t size) {
 # endif
 #endif /* HAVE_STRERROR_R */
     return buf;
-}
-
-/**
- * Computes the square root.
- * Based on (n+1)^2 = n^2 + 2n + 1
- * given that   1^2 = 1, then
- *              2^2 = 1 + (2 + 1) = 1 + 3 = 4
- *              3^2 = 4 + (4 + 1) = 4 + 5 = 1 + 3 + 5 = 9
- *              4^2 = 9 + (6 + 1) = 9 + 7 = 1 + 3 + 5 + 7 = 16
- *              ...
- * In other words, a square number can be express as the sum of the
- * series n^2 = 1 + 3 + ... + (2n-1)
- *
- * @param n
- * number of which to compute the root.
- * @return
- * square root.
- */
-int isqrt(int n) {
-    int result, sum, prev;
-
-    result = 0;
-    prev = sum = 1;
-    while (sum <= n) {
-        prev += 2;
-        sum += prev;
-        ++result;
-    }
-    return result;
 }
 
 /**
