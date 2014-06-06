@@ -65,50 +65,10 @@
 #include <stddef.h>
 #endif
 
-/* A few compilers refuse to support C99 boolean values. */
-#ifdef HAVE_STDBOOL_H
-#include <stdbool.h>
-#else
-#include "compat_stdbool.h"
-#endif
-
-#ifndef TRUE
-#define TRUE true
-#endif
-
-#ifndef FALSE
-#define FALSE false
-#endif
-
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif
-
-/** Compatibility implementations of useful nonstandard functions. */
-void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen);
-
-#ifndef HAVE_STRCASESTR
-char *strcasestr(const char *s, const char *find);
-#endif
-#define strcasestr_local strcasestr
-
-#ifndef HAVE_STRDUP
-char *strdup(const char *str);
-#endif
-#define strdup_local strdup
-
-#ifndef HAVE_STRLCPY
-size_t strlcpy(char *dst, const char *src, size_t size);
-#endif
-#define safe_strncpy strlcpy
+#include "compat.h"
 
 /** Strings that should be manipulated through add_string() and free_string(). */
 typedef const char *sstring;
-
-#ifndef WIN32
-#define FMT64   PRId64
-#define FMT64U  PRIu64
-#endif
 
 #include "config.h"
 #include "define.h"
