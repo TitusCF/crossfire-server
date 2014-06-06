@@ -46,11 +46,15 @@
  * bits of information there.  An example might be dm=1.  But it is there for expansion.
  */
 
-#include <global.h>
-#include <object.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
+
+#include <ctype.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "object.h"
+#include "sproto.h"
 
 #include "output_file.h"
 

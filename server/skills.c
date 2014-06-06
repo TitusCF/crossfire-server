@@ -14,14 +14,16 @@
  */
 
 #include "global.h"
-#include "object.h"
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "book.h"
 #include "living.h"
+#include "object.h"
 #include "skills.h"
 #include "spells.h"
-#include "book.h"
+#include "sproto.h"
 
 /**
  * Computes stealing chance.

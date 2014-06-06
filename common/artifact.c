@@ -17,8 +17,11 @@
  * @see page_treasure_list
  */
 
-#include <stdlib.h>
 #include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
 #include "loader.h"
 
 int artifact_init;  /**< 1 if doing archetypes initialization */

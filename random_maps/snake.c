@@ -16,8 +16,11 @@
  * Snake-like layout generator.
  * @author peterm@langmuir.eecs.berkeley.edu
  */
+
+#include "global.h"
+
 #include <stdio.h>
-#include <global.h>
+#include <stdlib.h>
 #include <time.h>
 
 /**

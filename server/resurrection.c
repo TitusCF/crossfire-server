@@ -21,14 +21,15 @@
 /*  the contents of this file were create solely by peterm@soda.berkeley.edu
     all of the above disclaimers apply.  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
+#include "global.h"
+
 #include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "output_file.h"
+#include "sproto.h"
+#include "spells.h"
 
 static int resurrection_fails(int levelcaster, int leveldead);
 

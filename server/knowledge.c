@@ -55,12 +55,14 @@ is sent as needed, incrementally as to not freeze the server.
 - more things to keep trace of
 */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <assert.h>
+#include "global.h"
 
+#include <assert.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "sproto.h"
 #include "output_file.h"
 
 struct knowledge_player;

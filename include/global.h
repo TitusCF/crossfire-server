@@ -26,13 +26,7 @@
 #include <sys/socket.h>
 #endif
 
-#include <ctype.h>
-#include <errno.h>
-#include <setjmp.h>
-#include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -54,15 +48,6 @@
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#endif
-
-#if defined(HAVE_TIME_H) && defined(TIME_WITH_SYS_TIME)
-#include <time.h>
-#endif
-
-/* stddef is for offsetof */
-#ifdef HAVE_STDDEF_H
-#include <stddef.h>
 #endif
 
 #include "compat.h"

@@ -16,10 +16,12 @@
  * Experience management. reading data from files and such.
  */
 
+#include "global.h"
+
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <global.h>
 
 int64_t *levels; /**< Number of levels for which we have experience. */
 

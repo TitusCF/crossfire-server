@@ -22,14 +22,17 @@
 
 /* laid down initial file - dec 1995. -b.t. thomas@astro.psu.edu */
 
-#include <stdio.h>
-#include <global.h>
-#include <book.h>
-#include <living.h>
-#include <spells.h>
-#include <assert.h>
+#include "global.h"
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "book.h"
+#include "living.h"
 #include "output_file.h"
+#include "spells.h"
 
 /* Define this if you want to archive book titles by contents.
  * This option should enforce UNIQUE combinations of titles,authors and

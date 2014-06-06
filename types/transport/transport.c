@@ -1,36 +1,31 @@
 /*
-    CrossFire, A Multiplayer game for X-windows
+ * Crossfire -- cooperative multi-player graphical RPG and adventure game
+ *
+ * Copyright (c) 1999-2014 Mark Wedel and the Crossfire Development Team
+ * Copyright (c) 1992 Frank Tore Johansen
+ *
+ * Crossfire is free software and comes with ABSOLUTELY NO WARRANTY. You are
+ * welcome to redistribute it under certain conditions. For details, please
+ * see COPYING and LICENSE.
+ *
+ * The authors can be reached via e-mail at <crossfire@metalforge.org>.
+ */
 
-    Copyright (C) 2007 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
-
-/** @file transport.c
+/**
+ * @file
  * The implementation of the Transport class of objects.
  * A transport is basically little more than a container in which players
  * can enter, and that can be moved around on the map.
  */
-#include <global.h>
-#include <ob_methods.h>
-#include <ob_types.h>
-#include <sounds.h>
-#include <sproto.h>
+
+#include "global.h"
+
+#include <stdlib.h>
+
+#include "ob_methods.h"
+#include "ob_types.h"
+#include "sounds.h"
+#include "sproto.h"
 
 static method_ret transport_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 static method_ret transport_type_process(ob_methods *context, object *op);

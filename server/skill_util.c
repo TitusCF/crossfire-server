@@ -37,6 +37,9 @@
 #include "global.h"
 
 #include <assert.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "object.h"
 #include "sproto.h"

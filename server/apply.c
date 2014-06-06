@@ -16,21 +16,19 @@
  * Handles objects being applied, and their effect.
  */
 
-#include <global.h>
-#include <living.h>
-#include <spells.h>
-#include <skills.h>
-#include <tod.h>
-
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-
-/* Want this regardless of rplay. */
-#include <sounds.h>
+#include "global.h"
 
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "living.h"
+#include "skills.h"
+#include "sounds.h"
+#include "spells.h"
+#include "sproto.h"
+#include "tod.h"
 
 static int apply_check_apply_restrictions(object *who, object *op, int aflags);
 static int apply_check_personalized_blessings(object *who, const object *op);

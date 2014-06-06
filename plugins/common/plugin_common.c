@@ -34,8 +34,10 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <plugin_common.h>
 #include <assert.h>
+#include <string.h>
+
+#include "plugin_common.h"
 
 static f_plug_api cfapiSystem_add_string = NULL;
 static f_plug_api cfapiSystem_find_string = NULL;

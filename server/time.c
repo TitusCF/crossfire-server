@@ -17,11 +17,12 @@
  * collected in this file.
  */
 
-#include <global.h>
-#include <spells.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
+
+#include <stdlib.h>
+
+#include "spells.h"
+#include "sproto.h"
 
 /**
  * Remove non locked doors. The functions check to see if similar

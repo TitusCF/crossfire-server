@@ -32,11 +32,14 @@
  * An ingredient is a name, which can contain an initial number for how many are needed.
  */
 
+#include "global.h"
+
 #include <assert.h>
-#include <stdlib.h>
-#include <global.h>
-#include <object.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "object.h"
 
 static void build_stringlist(const char *str, char ***result_list, size_t *result_size);
 static void check_formulae(void);

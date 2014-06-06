@@ -16,12 +16,15 @@
  * God-related common functions.
  */
 
-#include <stdlib.h>
-#include <global.h>
-#include <living.h>
-#include <spells.h>
-#include <libproto.h>
+#include "global.h"
+
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "libproto.h"
+#include "living.h"
+#include "spells.h"
 
 static void add_god_to_list(archetype *god_arch);
 

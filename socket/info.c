@@ -21,12 +21,14 @@
  * client.  Basically, things like sending text strings along
  */
 
-#include <global.h>
-#include <sproto.h>
-#include <stdarg.h>
-#include <spells.h>
-#include <skills.h>
+#include "global.h"
 
+#include <stdarg.h>
+#include <string.h>
+
+#include "skills.h"
+#include "spells.h"
+#include "sproto.h"
 
 /**
  * Draws an extended message on the client.

@@ -16,7 +16,9 @@
  * Functions related to relationship management.
  */
 
-#include <global.h>
+#include "global.h"
+
+#include <stdlib.h>
 
 /**
  * Add a new friendly object to the linked list of friendly objects.

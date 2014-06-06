@@ -20,19 +20,23 @@
    object_sub/add_weight will transcend the environment updating the carrying
    variable. */
 
+#include "global.h"
+
 #include <assert.h>
+#include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <global.h>
+
 #ifndef WIN32 /* ---win32 exclude headers */
-#include <stdio.h>
 #include <sys/types.h>
 #include <sys/uio.h>
 #endif /* win32 */
-#include <object.h>
-#include <skills.h>
-#include <loader.h>
-#include <sproto.h>
+
+#include "loader.h"
+#include "object.h"
+#include "skills.h"
+#include "sproto.h"
 #include "stringbuffer.h"
 
 static int compare_ob_value_lists_one(const object *, const object *);

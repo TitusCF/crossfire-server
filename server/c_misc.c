@@ -19,18 +19,19 @@
 
 #define WANT_UNARMED_SKILLS
 
-#include <global.h>
-#include <loader.h>
+#include "global.h"
+
+#include <assert.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 #undef SS_STATISTICS
-#include <shstr.h>
-
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <assert.h>
-#include <sounds.h>
-#include <version.h>
+#include "loader.h"
+#include "shstr.h"
+#include "sounds.h"
+#include "sproto.h"
+#include "version.h"
 
 /**
  * This is the 'maps' command.

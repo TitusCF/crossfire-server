@@ -11,9 +11,12 @@
  * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
-#include <global.h>
-#include <random_map.h>
-#include <rproto.h>
+#include "global.h"
+
+#include <string.h>
+
+#include "random_map.h"
+#include "rproto.h"
 
 /**
  * Given a layout and a coordinate, tell me which squares up/down/right/left

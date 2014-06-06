@@ -21,14 +21,16 @@
  * Sept 1996 - moved code over to object -oriented gods -b.t.
  */
 
-#include <global.h>
-#include <living.h>
-#include <object.h>
-#include <spells.h>
-#include <sounds.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "living.h"
+#include "object.h"
+#include "sounds.h"
+#include "spells.h"
+#include "sproto.h"
 
 static int worship_forbids_use(object *op, object *exp_obj, uint32_t flag, const char *string);
 static void stop_using_item(object *op, int type, int number);

@@ -12,14 +12,16 @@
  */
 
 /**
- * @file random_maps/rogue_layout.c
+ * @file
  * Rogue/NetHack style room generation.
  */
 
+#include "global.h"
+
 #include <assert.h>
 #include <math.h>
+#include <stdlib.h>
 
-#include "global.h"
 #include "random_map.h"
 
 typedef struct {

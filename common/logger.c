@@ -16,9 +16,12 @@
  * This handles logging, to file or strerr/stdout.
  */
 
+#include "global.h"
+
 #include <stdarg.h>
-#include <global.h>
-#include <sproto.h>
+#include <stdlib.h>
+
+#include "sproto.h"
 
 int reopen_logfile = 0; /* May be set in SIGHUP handler */
 

@@ -17,12 +17,14 @@
  */
 
 #include "global.h"
-#include "sproto.h"
 
+#include <stdlib.h>
+#include <string.h>
+
+#include "sproto.h"
 
 static partylist *firstparty = NULL; /**< Keeps track of first party in list */
 static partylist *lastparty = NULL;  /**< Keeps track of last party in list */
-
 
 /**
  * Forms the party struct for a party called 'partyname'. it is the

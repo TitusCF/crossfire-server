@@ -30,9 +30,12 @@
 /* First let's include the header file needed                                */
 
 #include <assert.h>
-#include <cfanim.h>
 #include <stdarg.h>
-#include <svnversion.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "cfanim.h"
+#include "svnversion.h"
 
 CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 

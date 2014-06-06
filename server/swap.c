@@ -13,16 +13,16 @@
 
 /**
  * @file
- * All those functions deal with swapping maps to disk to claim memory space.
+ * Functions that deal with swapping maps to disk to reclaim memory.
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <object.h>
+#include "global.h"
 
+#include <string.h>
+
+#include "object.h"
 #include "output_file.h"
+#include "sproto.h"
 
 /**
  * Writes out information on all the temporary maps.  It is called by

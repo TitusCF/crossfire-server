@@ -17,6 +17,7 @@
  */
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "global.h"
 #include "random_map.h"

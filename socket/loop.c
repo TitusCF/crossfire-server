@@ -22,11 +22,11 @@
  * The reading of data is handled in lowlevel.c
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#include <sockproto.h>
-#endif
+#include "global.h"
+
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifndef WIN32 /* ---win32 exclude unix headers */
 #include <sys/types.h>
@@ -43,8 +43,10 @@
 #include <arpa/inet.h>
 #endif
 
-#include <image.h>
-#include <newserver.h>
+#include "image.h"
+#include "newserver.h"
+#include "sockproto.h"
+#include "sproto.h"
 
 /*****************************************************************************
  * Start of command dispatch area.

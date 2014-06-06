@@ -16,9 +16,13 @@
  * All player communication commands, except the 'gsay' one.
  */
 
-#include <global.h>
-#include <loader.h>
-#include <sproto.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "loader.h"
+#include "sproto.h"
 
 /**
  * 'say' command.

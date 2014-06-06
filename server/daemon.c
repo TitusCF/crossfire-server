@@ -38,18 +38,15 @@
  * Author:  Keith Packard, MIT X Consortium
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <sys/ioctl.h>
-#ifdef hpux
-#include <sys/ptyio.h>
-#endif
+#include "global.h"
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/file.h>
+#include <sys/ioctl.h>
+
+#include "sproto.h"
 
 /**
  * Starts the server as a daemon.

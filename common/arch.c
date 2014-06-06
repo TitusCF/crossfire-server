@@ -25,8 +25,13 @@
  * make the functions use the same order for parameters (type first, then name, or the opposite).
  */
 
-#include <global.h>
-#include <loader.h>
+#include "global.h"
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "loader.h"
 
 /** If set, does a little timing on the archetype load. */
 #define TIME_ARCH_LOAD 0

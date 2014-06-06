@@ -16,9 +16,13 @@
  * This file contains animation-related code.
  **/
 
-#include <global.h>
-#include <stdio.h>
+#include "global.h"
+
 #include <assert.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * Clears all animation-related memory.

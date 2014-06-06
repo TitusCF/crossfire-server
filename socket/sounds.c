@@ -18,9 +18,13 @@
  * \date 2003-12-02
  */
 
-#include <global.h>
-#include <sproto.h>
-#include <sounds.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "sounds.h"
+#include "sproto.h"
 
 /**
  * Maximum distance a player may hear a sound from.

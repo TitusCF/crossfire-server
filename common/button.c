@@ -16,8 +16,12 @@
  * This handles triggers, buttons, altars and associated objects.
  */
 
-#include <global.h>
-#include <sproto.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "sproto.h"
 
 static objectlink *get_button_links(const object *button);
 

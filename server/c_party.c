@@ -16,11 +16,12 @@
  * Party-related functions and variables.
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
+#include "global.h"
+
+#include <string.h>
+
+#include "sproto.h"
+#include "spells.h"
 
 /**
  * Is the password the player entered to join a party the right one?

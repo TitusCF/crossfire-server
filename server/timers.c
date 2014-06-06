@@ -28,10 +28,10 @@
  * Note that timers are one shot only, they reset after they activate.
  */
 
-#include <timers.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include <string.h>
+
+#include "timers.h"
+#include "sproto.h"
 
 /* Extern in header. */
 cftimer timers_table[MAX_TIMERS];

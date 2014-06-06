@@ -58,12 +58,13 @@
  * See this page for more information.
  */
 
-#include <citylife.h>
 #include <stdarg.h>
-#ifndef __CEXTRACT__
-#include <citylife_proto.h>
-#endif
-#include <svnversion.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "citylife.h"
+#include "citylife_proto.h"
+#include "svnversion.h"
 
 CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 

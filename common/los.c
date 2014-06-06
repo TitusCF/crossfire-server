@@ -16,10 +16,11 @@
  * This handles the "line of sight" for players and monsters.
  */
 
-/* Nov 95 - inserted USE_LIGHTING code stuff in here - b.t. */
+#include "global.h"
 
-#include <global.h>
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * Distance must be less than this for the object to be blocked.

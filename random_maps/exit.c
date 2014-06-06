@@ -11,10 +11,14 @@
  * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
-#include <global.h>
-#include <random_map.h>
-#include <sproto.h>
-#include <rproto.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "random_map.h"
+#include "rproto.h"
+#include "sproto.h"
 
 /**
  * @file

@@ -24,6 +24,8 @@
 #include "global.h"
 
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "object.h"
 #include "living.h"
@@ -32,9 +34,7 @@
 #include "sounds.h"
 
 /***************************************************************************
- *
  * BOLT CODE
- *
  ***************************************************************************/
 
 /**

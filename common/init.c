@@ -18,9 +18,13 @@
 
 #define EXTERN
 #define INIT_C
-#include <global.h>
-#include <object.h>
 
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "object.h"
 #include "output_file.h"
 
 static void init_environ(void);

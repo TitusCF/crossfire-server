@@ -17,27 +17,29 @@
  * @todo describe login/creation functions/cycles.
  */
 
-#include <global.h>
+#include "global.h"
+
 #include <assert.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef WIN32 /* ---win32 remove headers */
 #include <pwd.h>
 #endif
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <sounds.h>
-#include <living.h>
-#include <object.h>
-#include <spells.h>
-#include <skills.h>
-#include <shared/newclient.h>
+
+#include "living.h"
+#include "object.h"
+#include "shared/newclient.h"
+#include "skills.h"
+#include "sounds.h"
+#include "spells.h"
+#include "sproto.h"
 
 static archetype *get_player_archetype(archetype *at);
 
 static void kill_player_not_permadeath(object *op);
-
 static void kill_player_permadeath(object *op);
-
 static int action_makes_visible(object *op);
 
 /**

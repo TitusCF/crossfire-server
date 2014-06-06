@@ -20,12 +20,17 @@
  * @todo document building, forces used to store connection values, ...
  */
 
-#include <global.h>
-#include <living.h>
-#include <spells.h>
-#include <skills.h>
-#include <tod.h>
-#include <sproto.h>
+#include "global.h"
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "living.h"
+#include "skills.h"
+#include "spells.h"
+#include "sproto.h"
+#include "tod.h"
 
 /**
  * Check if objects on a square interfere with building.

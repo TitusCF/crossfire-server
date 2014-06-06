@@ -17,13 +17,15 @@
  * The core function is monster_move().
  */
 
+#include "global.h"
+
 #include <assert.h>
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#include <spells.h>
-#include <skills.h>
-#endif
+#include <stdlib.h>
+#include <string.h>
+
+#include "skills.h"
+#include "spells.h"
+#include "sproto.h"
 
 static int monster_can_hit(object *ob1, object *ob2, rv_vector *rv);
 static int monster_cast_spell(object *head, object *part, object *pl, int dir);

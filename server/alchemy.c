@@ -18,14 +18,17 @@
  * This contains all alchemy-related functions.
  */
 
-#include <global.h>
-#include <object.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <skills.h>
-#include <spells.h>
+#include "global.h"
+
 #include <assert.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "object.h"
+#include "sproto.h"
+#include "skills.h"
+#include "spells.h"
 
 /** define this for some helpful debuging information */
 #if 0

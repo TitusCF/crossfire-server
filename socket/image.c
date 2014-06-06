@@ -22,12 +22,15 @@
  * things like all the structures as globals.
  */
 
-#include <global.h>
-#include <sproto.h>
+#include "global.h"
 
-#include <shared/newclient.h>
-#include <newserver.h>
-#include <image.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "image.h"
+#include "newserver.h"
+#include "shared/newclient.h"
+#include "sproto.h"
 
 /**
  * Client has requested pixmap that it somehow missed getting.

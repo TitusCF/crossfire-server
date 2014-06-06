@@ -30,12 +30,15 @@
 /* TREASURE_VERBOSE enables copious output concerning artifact generation */
 /* #define TREASURE_VERBOSE */
 
-#include <stdlib.h>
-#include <global.h>
-#include <treasure.h>
-#include <loader.h>
-#include <sproto.h>
+#include "global.h"
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "loader.h"
+#include "sproto.h"
+#include "treasure.h"
 
 /**
  * Resistances which can show up on rings and amulets.

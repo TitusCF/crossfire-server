@@ -16,11 +16,13 @@
  * Command-line interface to the map generator used to test layouts.
  */
 
+#include "global.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
-#include "global.h"
 #include "maze_gen.h"
 #include "random_map.h"
 #include "room_gen.h"

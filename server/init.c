@@ -13,20 +13,24 @@
 
 /**
  * @file
- * Server initialisation, settings loading, command-line handling and such.
+ * Server initialization, settings, and command-line handling.
  */
 
-#include <global.h>
-#include <loader.h>
-#include <version.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
+
+#include <errno.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* Needed for strcasecmp(). */
 #ifndef WIN32
 #include <strings.h>
 #endif
+
+#include "loader.h"
+#include "version.h"
+#include "sproto.h"
 
 static void help(void);
 static void init_beforeplay(void);

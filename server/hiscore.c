@@ -16,11 +16,12 @@
  * Hiscore handling functions.
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
 
+#include <errno.h>
+#include <string.h>
+
+#include "sproto.h"
 #include "output_file.h"
 
 /**

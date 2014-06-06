@@ -16,14 +16,16 @@
  * Range related commands (casting, shooting, throwing, etc.).
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
-#include <skills.h>
-#include <shared/newclient.h>
-#include <commands.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "commands.h"
+#include "shared/newclient.h"
+#include "skills.h"
+#include "spells.h"
+#include "sproto.h"
 
 /**
  * 'invoke' command, fires a spell immediately.

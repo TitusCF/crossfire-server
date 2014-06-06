@@ -11,7 +11,11 @@
  * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
-#include <global.h>
+#include "global.h"
+
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * One message.

@@ -16,13 +16,14 @@
    object_sub/add_weight will transcend the environment updating the carrying
    variable. */
 
-#include <global.h>
-#include <loader.h>
-#include <newserver.h>
-#include <sproto.h>
+#include "global.h"
 
+#include <ctype.h>
+
+#include "loader.h"
+#include "newserver.h"
+#include "sproto.h"
 #include "stringbuffer.h"
-
 
 #define YY_DECL int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode)
 

@@ -16,7 +16,9 @@
  * Utility functions for links between objects.
  */
 
-#include <global.h>
+#include "global.h"
+
+#include <stdlib.h>
 
 /**
  * Allocates a new objectlink structure, initialises it, and returns

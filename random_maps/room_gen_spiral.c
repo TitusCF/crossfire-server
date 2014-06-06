@@ -17,8 +17,12 @@
  * @todo
  * Check if MAX_FINE can't be removed.
  */
-#include <global.h>
-#include <random_map.h>
+
+#include "global.h"
+
+#include <stdlib.h>
+
+#include "random_map.h"
 
 /**
  * @defgroup SPIRAL_xxx Random spiral map options

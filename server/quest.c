@@ -31,6 +31,8 @@
 #include "global.h"
 
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "output_file.h"
 #include "sproto.h"

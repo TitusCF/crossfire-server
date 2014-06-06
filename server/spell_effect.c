@@ -17,15 +17,18 @@
  * @todo use the same parameter names/orders.
  */
 
+#include "global.h"
+
 #include <assert.h>
-#include <global.h>
-#include <object.h>
-#include <living.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
-#include <sounds.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "living.h"
+#include "object.h"
+#include "sounds.h"
+#include "spells.h"
+#include "sproto.h"
 
 /**
  * This is really used mostly for spell fumbles and the like.

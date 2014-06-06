@@ -4,18 +4,17 @@
  * Crossfire.
  */
 
-#include <global.h>
-#include <sproto.h>
-#ifndef WIN32 /* ---win32 : remove unix headers */
-#include <sys/ioctl.h>
-#endif /* win32 */
-#ifdef hpux
-#include <sys/ptyio.h>
-#endif
+#include "global.h"
 
-#ifndef WIN32 /* ---win32 : remove unix headers */
+#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
+
+#include "sproto.h"
+
+#ifndef WIN32 /* ---win32 : remove unix headers */
+#include <sys/ioctl.h>
 #include <sys/file.h>
 #endif /* win32 */
 

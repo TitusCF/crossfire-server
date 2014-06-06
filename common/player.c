@@ -16,7 +16,10 @@
  * Player-structure related functions.
  */
 
-#include <global.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * Clears data in player structure.

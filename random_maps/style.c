@@ -18,14 +18,19 @@
  * couldn't load_dir() be merged with a function in common library?
  */
 
-#include <global.h>
-#include <random_map.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef WIN32 /* ---win32 exclude headers */
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include "../include/autoconf.h"
 #endif /* win32 */
+
+#include "random_map.h"
 
 /**
  * Char comparison for sorting purposes.

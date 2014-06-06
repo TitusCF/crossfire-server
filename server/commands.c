@@ -16,12 +16,14 @@
  * Contains the definition for all in-game commands a player can issue.
  */
 
-#include <global.h>
-#include <commands.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
+
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "commands.h"
+#include "sproto.h"
 
 /* Added times to all the commands.  However, this was quickly done,
  * and probably needs more refinements.  All socket and DM commands

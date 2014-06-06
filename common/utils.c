@@ -23,9 +23,12 @@
  * numbers larger (ie, 1d1000 > 500 vs 1d6 > 3)
  */
 
-#include <stdlib.h>
-
 #include "global.h"
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "sproto.h"
 
 /**

@@ -16,11 +16,13 @@
  * This file deals with administrative commands from the client.
  */
 
-#include <global.h>
-#include <commands.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "commands.h"
+#include "sproto.h"
 
 #ifndef tolower
 /** Simple macro to convert a letter to lowercase. */

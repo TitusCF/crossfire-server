@@ -17,7 +17,12 @@
  * \date 2003-12-02
  */
 
-#include <global.h>
+#include "global.h"
+
+#include <ctype.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifndef WIN32 /* ---win32 exclude unix header files */
 #include <sys/types.h>
@@ -27,9 +32,8 @@
 
 #endif /* end win32 */
 
-#include <pthread.h>
-#include <metaserver2.h>
-#include <version.h>
+#include "metaserver2.h"
+#include "version.h"
 
 #ifdef HAVE_CURL_CURL_H
 #include <curl/curl.h>

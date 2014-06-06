@@ -19,11 +19,15 @@
  * put const char *instead of char *when possible.
  */
 
-#include <stdio.h>
+#include "global.h"
+
 #include <assert.h>
-#include <global.h>
-#include <living.h>
-#include <spells.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "living.h"
+#include "spells.h"
 
 /**
  * The ordering of this is actually doesn't make a difference

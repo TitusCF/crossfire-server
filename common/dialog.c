@@ -17,7 +17,9 @@
  * Structures and functions used for the @ref page_dialog "dialog system".
 */
 
+#include <stdlib.h>
 #include <string.h>
+
 #include "global.h"
 #include "define.h"
 #include "object.h"

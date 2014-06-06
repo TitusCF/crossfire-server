@@ -18,17 +18,17 @@
  * clean functions. Are all parameters required? Seems quite a mess to send damage/wc etc in attack_ob_simple().
  */
 
+#include "global.h"
+
 #include <assert.h>
-#include <global.h>
-#include <living.h>
-#include <material.h>
-#include <skills.h>
+#include <stdlib.h>
+#include <string.h>
 
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-
-#include <sounds.h>
+#include "living.h"
+#include "material.h"
+#include "skills.h"
+#include "sounds.h"
+#include "sproto.h"
 
 /*#define ATTACK_DEBUG*/
 

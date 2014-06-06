@@ -17,17 +17,16 @@
  * All rune-related functions.
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
+#include "global.h"
 
+#include <string.h>
+
+#include "sproto.h"
+#include "spells.h"
 
 #ifndef sqr
 #define sqr(x) ((x)*(x))
 #endif
-
 
 /**
  * Player is attempting to write a magical rune.

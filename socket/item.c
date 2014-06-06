@@ -22,11 +22,15 @@
  * the logic for what items should be sent.
  */
 
-#include <global.h>
-#include <object.h> /* LOOK_OBJ */
-#include <shared/newclient.h>
-#include <newserver.h>
-#include <sproto.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "newserver.h"
+#include "object.h"
+#include "shared/newclient.h"
+#include "sproto.h"
 
 /** This is the maximum number of bytes we expect any one item to take up */
 #define MAXITEMLEN  300

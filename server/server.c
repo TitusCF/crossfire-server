@@ -16,11 +16,14 @@
  * Main server functions.
  */
 
-#include <assert.h>
-#include <math.h>
-#include <time.h>
-
 #include "global.h"
+
+#include <assert.h>
+#include <ctype.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #ifndef WIN32
 #  include <unistd.h>

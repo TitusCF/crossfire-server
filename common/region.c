@@ -18,7 +18,11 @@
  * A region is a group of maps. It includes a "parent" region.
  */
 
-#include <global.h>
+#include "global.h"
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifndef WIN32 /* ---win32 exclude header */
 #include <unistd.h>

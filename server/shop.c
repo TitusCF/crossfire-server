@@ -18,20 +18,18 @@
  * isn't there redundance with pay_for_item(), get_payment(), pay_for_amount()?
  */
 
-#include <assert.h>
-#include <global.h>
-#include <spells.h>
-#include <skills.h>
-#include <living.h>
-#include <shared/newclient.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <math.h>
+#include "global.h"
 
-#ifndef UINT32_MAX
-#define UINT32_MAX      4294967295U
-#endif
+#include <assert.h>
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "living.h"
+#include "shared/newclient.h"
+#include "skills.h"
+#include "spells.h"
+#include "sproto.h"
 
 /**
  * This is a measure of how effective store specialisation is. A general store

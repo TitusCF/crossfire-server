@@ -16,15 +16,20 @@
  * Map-related functions.
  */
 
-#include <stdio.h>
-#include <global.h>
-#include <sproto.h>
+#include "global.h"
 
-#include <loader.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef WIN32 /* ---win32 exclude header */
 #include <unistd.h>
 #endif /* win32 */
 
+#include "sproto.h"
+#include "loader.h"
 #include "output_file.h"
 #include "path.h"
 

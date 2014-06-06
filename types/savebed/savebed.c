@@ -17,6 +17,9 @@
  */
 
 #include "global.h"
+
+#include <string.h>
+
 #include "ob_methods.h"
 #include "ob_types.h"
 #include "sounds.h"

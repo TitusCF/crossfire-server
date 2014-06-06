@@ -43,16 +43,16 @@
  * what is really the case is that this account has 10 characters.
  */
 
-#include <assert.h>
-#include <global.h>
-#include <object.h>
-#include <account_char.h>
-#include <stdlib.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
 
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "account_char.h"
+#include "object.h"
 #include "output_file.h"
+#include "sproto.h"
 
 /** Number of fields in the accounts file.  These are colon seperated */
 #define NUM_ACCOUNT_CHAR_FIELDS 8

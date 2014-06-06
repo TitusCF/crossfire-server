@@ -16,14 +16,17 @@
  * @todo clean multiple variations of same stuff (pickup and such), or rename for less confusion.
  */
 
-#include <global.h>
-#include <loader.h>
-#include <skills.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <living.h>
+#include "global.h"
+
+#include <ctype.h>
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "living.h"
+#include "loader.h"
+#include "skills.h"
+#include "sproto.h"
 
 static void set_pickup_mode(const object *op, int i);
 

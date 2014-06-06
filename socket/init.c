@@ -22,11 +22,13 @@
  * The reading of data is handled in ericserver.c
  */
 
+#include "global.h"
+
 #include <assert.h>
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef WIN32 /* ---win32 exclude include files */
 #include <sys/types.h>
 #include <sys/time.h>
@@ -41,8 +43,10 @@
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
 #endif
-#include <newserver.h>
-#include <image.h>
+
+#include "image.h"
+#include "newserver.h"
+#include "sproto.h"
 
 /** Socket information. */
 Socket_Info socket_info;

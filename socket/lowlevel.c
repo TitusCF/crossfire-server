@@ -23,12 +23,16 @@
  * CFCLIENT defined as part of its compile flags.
  */
 
+#include "global.h"
+
 #include <assert.h>
-#include <stdarg.h>
-#include <global.h>
-#include <shared/newclient.h>
-#include <sproto.h>
 #include <errno.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "shared/newclient.h"
+#include "sproto.h"
 
 /***********************************************************************
  *

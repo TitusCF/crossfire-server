@@ -28,15 +28,15 @@
 /* First, the headers. We only include plugin.h, because all other includes  */
 /* are done into it, and plugproto.h (which is used only by this file).      */
 /*****************************************************************************/
-#include <plugin.h>
-#include <svnversion.h>
-
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#include <timers.h>
-#endif
 
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "plugin.h"
+#include "sproto.h"
+#include "svnversion.h"
+#include "timers.h"
 
 /** Number of hooked functions a plugin can call. */
 #define NR_OF_HOOKS (sizeof(plug_hooks)/sizeof(*plug_hooks))

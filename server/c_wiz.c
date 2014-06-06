@@ -17,13 +17,16 @@
  * @todo explain item stack, item specifier for commands.
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
-#include <treasure.h>
-#include <skills.h>
+#include "global.h"
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "sproto.h"
+#include "spells.h"
+#include "treasure.h"
+#include "skills.h"
 
 /* Defines for DM item stack **/
 #define STACK_SIZE         50   /**< Stack size, static */

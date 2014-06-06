@@ -16,9 +16,13 @@
  * Handles face-related stuff, including the actual face data.
  */
 
+#include "global.h"
+
 #include <assert.h>
-#include <global.h>
+#include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "image.h"
 

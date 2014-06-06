@@ -16,9 +16,13 @@
  * Those functions handle placement of fountains, submaps, and so on.
  */
 
-#include <global.h>
-#include <random_map.h>
-#include <rproto.h>
+#include "global.h"
+
+#include <stdlib.h>
+#include <string.h>
+
+#include "random_map.h"
+#include "rproto.h"
 
 /**
  * @defgroup SPECIAL_xxx Special objects in random map

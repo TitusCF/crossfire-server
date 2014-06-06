@@ -16,17 +16,19 @@
  * Spell-related helper functions.
  */
 
-#include <global.h>
-#include <spells.h>
-#include <object.h>
-#include <errno.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <sounds.h>
+#include "global.h"
+
 #include <assert.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "living.h"
+#include "object.h"
+#include "sounds.h"
+#include "spells.h"
+#include "sproto.h"
 
 extern const char *const spell_mapping[];
 

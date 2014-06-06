@@ -110,16 +110,18 @@
  * speed            speed of movement, from DISEASE
  */
 
-#include <global.h>
-#include <object.h>
-#include <living.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
-#include <sounds.h>
-#include <skills.h>
+#include "global.h"
+
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "living.h"
+#include "object.h"
+#include "skills.h"
+#include "sounds.h"
+#include "spells.h"
+#include "sproto.h"
 
 static void remove_symptoms(object *disease);
 static object *find_symptom(object *disease);

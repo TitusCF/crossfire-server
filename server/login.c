@@ -16,15 +16,16 @@
  * Player login/logout/save functions.
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
-#include <spells.h>
-#include <loader.h>
-#include <define.h>
+#include "global.h"
 
+#include <stdlib.h>
+#include <string.h>
+
+#include "define.h"
+#include "loader.h"
 #include "output_file.h"
+#include "spells.h"
+#include "sproto.h"
 
 static void copy_file(const char *filename, FILE *fpout);
 

@@ -16,10 +16,11 @@
  * Those functions handle object moving and pushing.
  */
 
-#include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
+#include "global.h"
+
+#include <stdlib.h>
+
+#include "sproto.h"
 
 static int roll_ob(object *op, int dir, object *pusher);
 

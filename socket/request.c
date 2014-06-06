@@ -39,14 +39,11 @@
  * the server (stats, maps)
  */
 
-#include <assert.h>
-#include <global.h>
-#include <sproto.h>
+#include "global.h"
 
-#include <shared/newclient.h>
-#include <newserver.h>
-#include <living.h>
-#include <commands.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* This block is basically taken from socket.c - I assume if it works there,
  * it should work here.
@@ -67,7 +64,12 @@
 #include <sys/time.h>
 #endif
 
+#include "commands.h"
+#include "living.h"
+#include "newserver.h"
+#include "shared/newclient.h"
 #include "sounds.h"
+#include "sproto.h"
 
 /**
  * This table translates the attack numbers as used within the

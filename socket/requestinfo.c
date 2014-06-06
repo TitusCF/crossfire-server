@@ -23,14 +23,11 @@
  *
  */
 
-#include <assert.h>
-#include <global.h>
-#include <sproto.h>
+#include "global.h"
 
-#include <shared/newclient.h>
-#include <newserver.h>
-#include <living.h>
-#include <commands.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* This block is basically taken from socket.c - I assume if it works there,
  * it should work here.
@@ -43,6 +40,10 @@
 #include <netdb.h>
 #endif /* win32 */
 
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -51,7 +52,12 @@
 #include <sys/time.h>
 #endif
 
+#include "commands.h"
+#include "living.h"
+#include "newserver.h"
+#include "shared/newclient.h"
 #include "sounds.h"
+#include "sproto.h"
 
 /* Note that following protocol commands (was corresponding function)
  * are in image.c and not this file, even though they are requestinfo
