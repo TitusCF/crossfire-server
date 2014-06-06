@@ -51,9 +51,7 @@
 #include <assert.h>
 
 #include <cfrhg.h>
-#ifndef __CEXTRACT__
 #include <cfrhg_proto.h>
-#endif
 #include <svnversion.h>
 
 CF_PLUGIN char SvnRevPlugin[] = SVN_REV;

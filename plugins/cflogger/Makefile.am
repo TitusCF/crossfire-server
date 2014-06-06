@@ -15,7 +15,3 @@ cflogger_la_LIBADD = -lsqlite3
 cflogger_la_LDFLAGS = -module -avoid-version -rdynamic
 AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
-proto:
-	cproto -D__CEXTRACT__ -o include/cflogger_proto.h $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(cflogger_la_CPSOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 include/cflogger_proto.h

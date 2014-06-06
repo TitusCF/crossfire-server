@@ -32,12 +32,9 @@
 #define PLUGIN_NAME    "Animator"
 #define PLUGIN_VERSION "CFAnim Plugin 2.0"
 
-#ifndef __CEXTRACT__
 #include <plugin.h>
 #include <plugin_common.h>
-#endif
 
-#include <plugin_common.h>
 /** Time units the animation can use. @todo add owner's speed unit */
 enum time_enum {
     time_second,    /**< One second. */
@@ -98,8 +95,6 @@ extern CFanimationHook animationbox[];
 
 extern int animationcount;
 
-#ifndef __CEXTRACT__
 #include <cfanim_proto.h>
-#endif
 
 #endif /* PLUGIN_ANIM_H */

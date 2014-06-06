@@ -19,10 +19,7 @@
 #include <global.h>
 #include <ob_methods.h>
 #include <ob_types.h>
-
-#ifndef __CEXTRACT__
 #include <sproto.h>
-#endif
 
 /*
  * The following functions are meant for calling methods. No actual behavoir

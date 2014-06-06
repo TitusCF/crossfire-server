@@ -77,7 +77,3 @@ crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librand
 installcheck-local:
 	$(bindir)/crossfire-server -o
 
-proto:
-	cproto -D__CEXTRACT__ -o ../include/sproto.h $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(libserver_a_SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 ../include/sproto.h

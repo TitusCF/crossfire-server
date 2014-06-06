@@ -31,9 +31,7 @@
 #define PLUGIN_NAME "citylife"
 #define PLUGIN_VERSION "City life version 0.2"
 
-#ifndef __CEXTRACT__
 #include <plugin.h>
-#endif
 
 #undef MODULEAPI
 #ifdef WIN32

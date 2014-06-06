@@ -31,9 +31,7 @@
 #define PLUGIN_NAME    "Template"
 #define PLUGIN_VERSION "Template Plugin 2.0"
 
-#ifndef __CEXTRACT__
 #include <plugin.h>
-#endif
 
 #undef MODULEAPI
 #ifdef WIN32

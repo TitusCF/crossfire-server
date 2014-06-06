@@ -33,9 +33,7 @@
 /** Full name. */
 #define PLUGIN_VERSION "Sqlite Logger Plugin 1.0 alpha"
 
-#ifndef __CEXTRACT__
 #include <plugin.h>
-#endif
 
 #undef MODULEAPI
 #ifdef WIN32

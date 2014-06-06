@@ -31,9 +31,7 @@
 #define PLUGIN_NAME    "Newspaper"
 #define PLUGIN_VERSION "Newspaper Plugin 1.0 alpha"
 
-#ifndef __CEXTRACT__
 #include <plugin.h>
-#endif
 
 #undef MODULEAPI
 #ifdef WIN32

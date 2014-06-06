@@ -19,10 +19,7 @@
 #include <global.h>
 #include <ob_types.h>
 #include <ob_methods.h>
-
-#ifndef __CEXTRACT__
 #include <sproto.h>
-#endif
 
 /** Registered method handlers. */
 ob_methods type_methods[OBJECT_TYPE_MAX];

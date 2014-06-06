@@ -27,8 +27,3 @@ cfpython_la_CPSOURCES = cfpython.c\
 cfpython_la_LIBADD = @PYTHON_LIB@ @PY_LIBS@
 cfpython_la_LDFLAGS = -module -avoid-version -rdynamic
 AM_CPPFLAGS = -I$(srcdir)/include -I$(top_srcdir)/plugins/common/include -I$(top_srcdir)/include @PY_INCLUDES@
-
-proto:
-	cproto -D__CEXTRACT__ -o include/cfpython_proto.h $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(cfpython_la_CPSOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 include/cfpython_proto.h

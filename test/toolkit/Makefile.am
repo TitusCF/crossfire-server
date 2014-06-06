@@ -7,19 +7,3 @@ libtoolkit_socket_a_SOURCES = toolkit_socket.c
 libtoolkit_server_a_SOURCES = toolkit_server.c
 libtoolkit_crossedit_a_SOURCES = toolkit_crossedit.c
 
-proto:
-	cproto -D__CEXTRACT__ -o ../include/toolkit_common.h $(INCLUDES) $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(libtoolkit_common_a_SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 ../include/toolkit_common.h
-	cproto -D__CEXTRACT__ -o ../include/toolkit_random_maps.h $(INCLUDES) $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(libtoolkit_random_maps_a_SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 ../include/toolkit_random_maps.h
-	cproto -D__CEXTRACT__ -o ../include/toolkit_socket.h $(INCLUDES) $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(libtoolkit_socket_a_SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 ../include/toolkit_socket.h
-	cproto -D__CEXTRACT__ -o ../include/toolkit_server.h $(INCLUDES) $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(libtoolkit_server_a_SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 ../include/toolkit_server.h
-	cproto -D__CEXTRACT__ -o ../include/toolkit_crossedit.h $(INCLUDES) $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(libtoolkit_crossedit_a_SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	chmod 644 ../include/toolkit_crossedit.h

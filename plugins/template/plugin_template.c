@@ -30,9 +30,7 @@
 
 #include <plugin_template.h>
 #include <stdarg.h>
-#ifndef __CEXTRACT__
 #include <plugin_template_proto.h>
-#endif
 
 CFPContext *context_stack;
 

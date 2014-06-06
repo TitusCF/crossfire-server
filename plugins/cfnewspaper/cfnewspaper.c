@@ -30,9 +30,7 @@
 
 #include <cfnewspaper.h>
 #include <stdarg.h>
-#ifndef __CEXTRACT__
 #include <cfnewspaper_proto.h>
-#endif
 #include <sqlite3.h>
 #include <svnversion.h>
 

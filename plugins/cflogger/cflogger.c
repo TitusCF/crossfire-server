@@ -46,11 +46,7 @@
  */
 
 #include <cflogger.h>
-#ifndef __CEXTRACT__
 #include <cflogger_proto.h>
-#endif
-/*#include <stdarg.h>*/
-
 #include <sqlite3.h>
 #include <svnversion.h>
 

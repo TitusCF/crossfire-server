@@ -40,9 +40,7 @@
 #define PLUGIN_NAME "cfrhg"
 #define PLUGIN_VERSION "Random house generator plugin version 1.0"
 
-#ifndef __CEXTRACT__
 #include <plugin.h>
-#endif
 
 #undef MODULEAPI
 #ifdef WIN32

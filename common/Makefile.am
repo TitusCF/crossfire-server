@@ -42,11 +42,4 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\"
 AM_LFLAGS = -i
 
-proto:
-	cproto -e -o ../include/libproto.h.bak $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(SOURCES) loader.c " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
-	sed -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" -e "/yy_size_t/d" < ../include/libproto.h.bak > ../include/libproto.h
-	chmod 644 ../include/libproto.h
-	rm -f ../include/libproto.h.bak
-
 CLEANFILES = loader.c

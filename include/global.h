@@ -191,12 +191,10 @@ extern New_Face *smooth_face;
 extern uint32_t max_time; /* loop time */
 extern socket_struct *init_sockets;
 
-#ifndef __CEXTRACT__
 #include "stringbuffer.h"
 #include "libproto.h"
 #include "sockproto.h"
 #include "typesproto.h"
-#endif
 
 /**
  * @note

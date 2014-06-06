@@ -34,9 +34,7 @@
 #include <global.h>
 #include <stdlib.h>
 #include <check.h>
-#ifndef __CEXTRACT__
 #include "../include/toolkit_common.h"
-#endif
 
 #define STATUS_LOGDIR    0x0001
 #define STATUS_DATADIR   0x0002
