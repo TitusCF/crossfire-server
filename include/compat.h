@@ -50,4 +50,9 @@ size_t strlcpy(char *dst, const char *src, size_t size);
 #endif
 #define safe_strncpy strlcpy
 
+#ifndef HAVE_TEMPNAM
+char *tempnam(const char *tmpdir, const char *prefix);
+#endif
+#define tempnam_local tempnam
+
 #endif

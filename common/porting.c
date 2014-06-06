@@ -53,19 +53,13 @@
  * File related functions
  ****************************************************************************/
 
+#ifndef HAVE_TEMPNAM
 /**
- * A replacement for the tempnam() function since it's not defined
- * at some unix variants. Do not use this function for new code, use
- * tempnam_secure() instead.
+ * Portable implementation of tempnam(3).
  *
- * @param dir
- * directory where to create the file. Can be NULL, in which case NULL is returned.
- * @param pfx
- * prefix to create unique name. Can be NULL.
- * @return
- * path to temporary file, or NULL if failure. Must be freed by caller.
+ * Do not use this function for new code, use tempnam_secure() instead.
  */
-char *tempnam_local(const char *dir, const char *pfx) {
+char *tempnam(const char *dir, const char *pfx) {
     /** Used to generate temporary unique name. */
     static unsigned int curtmp;
 
@@ -100,6 +94,7 @@ char *tempnam_local(const char *dir, const char *pfx) {
     }
     return(NULL);
 }
+#endif
 
 /**
  * A replacement for the tempnam_local() function since that one is not very
