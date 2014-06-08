@@ -20,14 +20,14 @@
 
 #include <assert.h>
 #include <ctype.h>
+#include <fcntl.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #ifndef WIN32
-#  include <unistd.h>
-#  include <sys/types.h>
+#include <unistd.h>
 #endif
 
 /* FIXME: This is required on certain systems to get crypt(3) to work. */
