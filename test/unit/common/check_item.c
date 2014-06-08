@@ -112,7 +112,7 @@ START_TEST(test_describe_item) {
         "(slow movement)(undead)(Attacks: physical)(resist cold +50)(resist fear +100)",
         "",
         "",
-        "(normal movement)(see invisible)(spellcaster)(Spell abilities:)(burning hands ability)(medium fireball ability)(fear ability)(Attacks: physical)(resist fire +100)(resist cold -100)(resist confusion -100)(resist fear +100)(resist blindness +50)",
+        "(normal movement)(see invisible)(spellcaster)(Spell abilities:)(breath flame)(medium fireball ability)(fear ability)(Attacks: physical)(resist fire +100)(resist cold -100)(resist confusion -100)(resist fear +100)(resist blindness +50)",
         "(fast movement)(see invisible)(wield weapon)(archer)(wear armour)(wear ring)(read scroll)(fires wand/rod/horn)(spellcaster)(Spell abilities:)(paralyze)(fear ability)(small lightning)(large lightning)(slow ability)(resist magic +50)(resist electricity +100)(resist fear +100)",
         "(speed +6)(item_power +6)(armour +3)",
         "(dam+3)(weapon speed 2)(Attacks: physical)",
