@@ -1,6 +1,6 @@
 noinst_LIBRARIES = libstubs.a
 libstubs_a_SOURCES=stubs_socket.c
-LDADD = ../../../common/libcross.a  ../../../socket/libsocket.a libstubs.a $(LIBDL) @CHECK_LIBS@
+LDADD = ../../../common/libcross.a  ../../../socket/libsocket.a libstubs.a @CHECK_LIBS@
 
 ../../logs/unit/socket:
 	(mkdir ../../logs; mkdir ../../logs/unit; mkdir ../../logs/unit/socket)

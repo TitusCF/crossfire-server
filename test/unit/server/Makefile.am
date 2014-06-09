@@ -1,10 +1,3 @@
-if HAVE_LIBDL
-LIBDL=-ldl
-AM_LDFLAGS=-export-dynamic
-else
-LIBDL=
-AM_LDFLAGS=
-endif
 #note all .a are here twice for compilation problems
 AM_LIBTOOLFLAGS= --preserve-dup-deps
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -19,7 +12,7 @@ LDADD = $(top_builddir)/server/libserver.a \
         $(top_builddir)/socket/libsocket.a \
         $(top_builddir)/types/libtypes.a \
         $(top_builddir)/test/toolkit/libtoolkit_server.a \
-        $(LIBDL) @CHECK_LIBS@
+        @CHECK_LIBS@
 
 ../../../types/libtypes.a:
 	( cd ../../../types ; make libtypes.a )

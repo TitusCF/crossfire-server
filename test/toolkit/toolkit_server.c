@@ -1,4 +1,6 @@
-#include "../include/toolkit_server.h"
+#include <unistd.h>
+
+#include "toolkit_server.h"
 
 void clean_test_account_data() {
     unlink("/tmp/account/testaccount");
