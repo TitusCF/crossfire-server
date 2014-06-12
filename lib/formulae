@@ -363,7 +363,7 @@ diff 5
 exp 1000
 skill smithery
 cauldron forge
-ingred 5 iron ore, ashes
+ingred 5 iron ore,ashes
 #
 # bronze bar
 Object NONE
@@ -373,7 +373,7 @@ diff 5
 exp 1000
 skill smithery
 cauldron forge
-ingred 4 copper ore, tin ore
+ingred 4 copper ore,tin ore
 # * in reality, bronze was more 9:1, but I don't feel like making it that convoluted
 #
 # brass bar
@@ -384,7 +384,7 @@ diff 5
 exp 1000
 skill smithery
 cauldron forge
-ingred 3 copper ore, 2 zinc ore
+ingred 3 copper ore,2 zinc ore
 #
 # --------------
 # Basic weaponry
@@ -400,7 +400,7 @@ exp 1500
 yield 10
 skill smithery
 cauldron forge
-ingred iron bar, brass bar
+ingred iron bar,brass bar
 # The brass is for the hilt of the dagger
 #
 # bronze dagger
@@ -412,7 +412,7 @@ exp 1200
 yield 10
 skill smithery
 cauldron forge
-ingred bronze bar, brass bar
+ingred bronze bar,brass bar
 #
 # iron shortsword
 Object NONE
@@ -423,7 +423,7 @@ exp 2000
 yield 3
 skill smithery
 cauldron forge
-ingred 2 iron bar, brass bar
+ingred 2 iron bar,brass bar
 #
 # bronze shortsword
 Object NONE
@@ -434,7 +434,7 @@ exp 1700
 yield 3
 skill smithery
 cauldron forge
-ingred 2 bronze bar, brass bar
+ingred 2 bronze bar,brass bar
 #
 # -----------
 # Basic armor
