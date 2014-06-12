@@ -8,7 +8,6 @@ Build-Depends: debhelper (>= 4.1.16), libxaw7-dev, xlibs-dev, xutils, flex, auto
 Package: crossfire-server
 Architecture: any
 Depends: crossfire-maps (>=0.95.3), ${shlibs:Depends}
-Suggests: crossfire-edit
 Description: Server for Crossfire Games
  This is the server program for the crossfire client
  .

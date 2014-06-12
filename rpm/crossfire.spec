@@ -119,7 +119,7 @@ touch $RPM_BUILD_ROOT/usr/games/crossfire/var/logs/crossfire.log
 find $RPM_BUILD_ROOT -name \*.orig -print0 | xargs -0 rm -f
 find doc -name \*.orig -print0 | xargs -0 rm -f
 
-(cd $RPM_BUILD_ROOT/%{prefix}/bin; strip crossedit crossfire random_map)
+(cd $RPM_BUILD_ROOT/%{prefix}/bin; strip crossfire random_map)
 
 cd $RPM_BUILD_ROOT/%{prefix}
 for a in `ls share/maps/world/connect.pl`; do
@@ -130,12 +130,6 @@ done
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%post devel
-ln -s /usr/games/crossfire/bin/crossedit /usr/X11R6/bin/crossedit
-
-%preun devel
-rm -f /usr/X11R6/bin/crossedit
 
 %post
 /sbin/chkconfig --add crossfire
@@ -169,11 +163,9 @@ fi
 
 %files devel
 %defattr(-,games,games,0755)
-/usr/games/crossfire/bin/crossedit
 /usr/games/crossfire/bin/collect.pl
 /usr/games/crossfire/bin/xpmtopix.pl
 %attr(0644,games,games)/usr/games/crossfire/bin/util.pl
-/usr/man/man6/crossedit.6*
 /usr/games/crossfire/share/arch
 
 %files maps
@@ -210,6 +202,9 @@ fi
 %attr(-,root,root) /etc/rc.d/init.d/crossfire
 
 %changelog
+* Wed Jun 11 2014 SilverNexus <silvernexus@sourceforge.net>
+- Removed references to obsolete package Crossedit. Equivalent to Gridarta,
+  which is its own separate entity.
 * Mon Feb 12 2001 Bob Tanner <tanner@real-time.com>
 - Split the one rpm into several. Crossfire the server, Crossfire-devel for crossedit
   and associate tools, Crossfire-maps for the maps and Crossfire-doc for the
