@@ -1,3 +1,9 @@
+2014-06-11	SilverNexus
+	* lib/checkarch.pl: Rename old checkarch script, since it isn't
+	part of the build process and isn't dynamically generated, either.
+	* lib/Makefile.am: Remove checkarch script from makefile, since
+	no references are made to it.
+
 2014-05-27	SilverNexus
 	* lib/formulae: Added smithery formulas to smelt ores into bars.
 

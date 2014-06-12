@@ -1,7 +1,7 @@
 pkgstatedir = @pkgstatedir@
 pkgconfdir = @pkgconfdir@
 
-dist_noinst_SCRIPTS = collect util.pl checkarch
+dist_noinst_SCRIPTS = collect util.pl
 dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
 	animations archetypes  bmaps.paths crossfire.0 \
 	crossfire.1 faces attackmess image_info materials
