@@ -3,7 +3,7 @@ Generated files:
 
 The "collect" file is a script to generate the other files in this section.
 To run it, one inserts a symlink to the arch directory in the current directory,
-and then runs "make collect".
+and then runs "make do-collect".
 
 These files are moved into $PREFIX/share/crossfire by default.
 
