@@ -289,7 +289,9 @@ void accounts_save(void)
         /* Don't write out accounts with no characters associated unless the
          * account is at least a day old.
          */
-        if (ac->num_characters || (ac->created > (time(NULL) - 24*60*60)))
+        // 86400 seconds in a day, so no reason to make the game have to recalculate this all the time
+        // SilverNexus 2014-06-12
+        if (ac->num_characters || (ac->created > (time(NULL) - 86400)))
             account_write_entry(fp, ac);
     }
     of_close(&of);
