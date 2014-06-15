@@ -656,8 +656,8 @@ int account_is_logged_in(const char *name)
  * @retval 3
  * current password is invalid.
  */
-int account_change_password(const char *account_name, const char *current_password, const char *new_password)
-{
+int account_change_password(const char *account_name,
+        const char *current_password, const char *new_password) {
     account_struct *ac;
 
     /* We need to check the password because we don't know what crypt_string() will do -
@@ -666,13 +666,22 @@ int account_change_password(const char *account_name, const char *current_passwo
      * algorithm which in fact is putting in invalid characters, there isn not much
      * the players can do about that.
      */
-    if (account_check_string(account_name) || account_check_string(current_password) || account_check_string(new_password))
+    if (account_check_string(account_name) || account_check_string(current_password) ||
+            account_check_string(new_password)) {
         return 1;
-
-    for (ac=accounts; ac; ac=ac->next) {
-        if (!strcasecmp(ac->name, account_name)) break;
     }
-    if (ac == NULL) return 2;
+
+    // Iterate through accounts list until a matching name is found.
+    for (ac = accounts; ac; ac = ac->next) {
+        if (!strcasecmp(ac->name, account_name)) {
+            break;
+        }
+    }
+
+    // Check if the given account actually exists.
+    if (ac == NULL) {
+        return 2;
+    }
 
     // Return an error if the current password does not match.
     if (!check_password(current_password, ac->password)) {

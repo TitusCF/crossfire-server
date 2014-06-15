@@ -2880,12 +2880,15 @@ void account_password(char *buf, int len, socket_struct *ns) {
     status = account_change_password(ns->account_name, old, change);
     if (status != 0) {
         const char *error;
-        if (status == 1)
-            error = "failure accountpw Invalid characters";
-        else if (status == 2)
+
+        if (status == 1) {
+            error = "failure accountpw Illegal characters present";
+        } else if (status == 2) {
             error = "failure accountpw Invalid account";
-        else
-            error = "failure accountpw Invalid password for account";
+        } else {
+            error = "failure accountpw Incorrect current password";
+        }
+
         SockList_AddString(&sl, error);
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);

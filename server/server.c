@@ -92,21 +92,25 @@ const char *crypt_string(const char *str, const char *salt) {
 }
 
 /**
- * Check if 2 passwords match.
- *
+ * Hash a password and compare it to the stored version.
  * @param typed
- * entered password. Not crypted.
+ * Password entered by the user (not hashed).
  * @param crypted
- * password to check against. Must be crypted.
+ * Stored password to check against (hashed).
  * @return
- * 1 if the passwords match, 0 else.
+ * True if the passwords match, false otherwise.
  */
-int check_password(const char *typed, const char *crypted) {
-    /* If crypted is an empty string, crypt_string() will return null, leading to issues with the strcmp. */
+bool check_password(const char *typed, const char *crypted) {
+    // An empty hashed password only matches an empty input password.
     if (strlen(crypted) == 0) {
-        return strlen(typed) == 0 ? 1 : 0;
+        return strlen(typed) == 0 ? true : false;
     }
-    return !strcmp(crypt_string(typed, crypted), crypted);
+
+    if (strcmp(crypt_string(typed, crypted), crypted) == 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**

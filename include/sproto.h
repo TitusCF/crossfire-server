@@ -625,7 +625,7 @@ void set_darkness_map(mapstruct *m);
 void tick_the_clock(void);
 /* server.c */
 const char *crypt_string(const char *str, const char *salt);
-int check_password(const char *typed, const char *crypted);
+bool check_password(const char *typed, const char *crypted);
 void enter_player_savebed(object *op);
 void set_map_timeout(mapstruct *oldmap);
 void enter_exit(object *op, object *exit_ob);
