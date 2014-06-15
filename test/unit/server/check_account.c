@@ -102,24 +102,24 @@ START_TEST(test_account_add_account) {
      * As such, the focus here is not checking valid strings again, but checking
      * duplicate account names, saving them out, etc.
      */
-    i=account_add_account("Some Body", "mypassword");
+    i=account_new("Some Body", "mypassword");
     fail_unless(i == 0, "Could not add valid account, got code %d", i);
 
-    i=account_add_account("Some Body", "mypassword");
+    i=account_new("Some Body", "mypassword");
     fail_unless(i != 0, "Duplicate account successfully added");
 
     /* This is mainly here to have 2 valid accounts */
-    i=account_add_account("No Body", "mypassword");
+    i=account_new("No Body", "mypassword");
     fail_unless(i == 0, "Could not add valid account, got code %d", i);
 
     /* This third account is to have one with no players associated to it */
-    i=account_add_account("Every Body", "hispassword");
+    i=account_new("Every Body", "hispassword");
     fail_unless(i == 0, "Could not add valid account");
 
-    i=account_add_player_to_account("foobar", "foobar");
+    i=account_new("foobar", "foobar");
     fail_unless(i != 0, "Added player to non existent character name");
 
-    i=account_add_player_to_account("Some Body", "foobar");
+    i=account_new("Some Body", "foobar");
     fail_unless(i == 0, "Failed to add player to valid account");
 
     /* The precise number of players per account is not exposed,
@@ -128,7 +128,7 @@ START_TEST(test_account_add_account) {
      */
     for (j=0; j<30; j++) {
         sprintf(names,"char-%02d", j);
-        i |= account_add_player_to_account("No Body", names);
+        i |= account_link("No Body", names);
     }
     fail_unless(i != 0, "Too many players added to account");
 
@@ -151,8 +151,8 @@ START_TEST(test_account_load_entries) {
     char **char_names;
     const char *ae;
 
-    clear_accounts();
-    account_load_entries();
+    accounts_clear();
+    accounts_load();
 
     ae = account_exists("Every Body");
     fail_unless(ae != NULL, "Could not find valid account");
@@ -182,10 +182,10 @@ START_TEST(test_account_load_entries) {
     char_names = account_get_players_for_account("foobar");
     fail_unless(char_names == NULL, "Got non null value for players on account with non existant account");
 
-    i = account_remove_player_from_account("foobar", "1foobar");
+    i = account_remove_player("foobar", "1foobar");
     fail_unless(i!=0, "Got successsful return code on account_remove_player_from_account with non existent account");
 
-    i = account_remove_player_from_account("No Body", "1foobar");
+    i = account_remove_player("No Body", "1foobar");
     fail_unless(i!=0, "Got successsful return code on account_remove_player_from_account with non existent player");
 
     char_names =  account_get_players_for_account("No Body");
@@ -194,7 +194,7 @@ START_TEST(test_account_load_entries) {
         j++;
     }
 
-    i = account_remove_player_from_account("No Body", "char-01");
+    i = account_remove_player("No Body", "char-01");
     fail_unless(i==0, "Got error removing player when it should have worked");
 
     char_names =  account_get_players_for_account("No Body");

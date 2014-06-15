@@ -1612,7 +1612,7 @@ void key_confirm_quit(object *op, char key) {
         /* char information is reloaded in send_account_players below */
         account_char_free(op->contr->socket.account_chars);
         op->contr->socket.account_chars = NULL;
-        account_remove_player_from_account(op->contr->socket.account_name, op->name);
+        account_remove_player(op->contr->socket.account_name, op->name);
         send_account_players(&op->contr->socket);
     }
 

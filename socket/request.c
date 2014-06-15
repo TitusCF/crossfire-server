@@ -2051,7 +2051,7 @@ void account_login_cmd(char *buf, int len, socket_struct *ns) {
         return;
     }
 
-    if (account_check_name_password(name, password)) {
+    if (account_login(name, password)) {
         player *pl;
         socket_struct *tns;
 
@@ -2227,7 +2227,7 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
     /* If we got here, we passed all checks - so now add it */
     if (ns->account_name) free(ns->account_name);
     ns->account_name = strdup_local(name);
-    account_add_account(name, password);
+    account_new(name, password);
     /* save account information */
     accounts_save();
     send_account_players(ns);
@@ -2329,7 +2329,7 @@ void account_add_player_cmd(char *buf, int len, socket_struct *ns) {
      * and the character is not associated with a different account (or
      * force is true).  Now try to add the character to this account.
      */
-    status = account_add_player_to_account(ns->account_name, name);
+    status = account_link(ns->account_name, name);
 
     /* This should never happen, but check for it just in case -
      * if we were able to log in, the account should exist.  but
@@ -2353,7 +2353,7 @@ void account_add_player_cmd(char *buf, int len, socket_struct *ns) {
     if (cp) {
         Account_Char *chars;
 
-        account_remove_player_from_account(cp, name);
+        account_remove_player(cp, name);
         chars = account_char_load(cp);
         chars=account_char_remove(chars, name);
         account_char_save(cp, chars);

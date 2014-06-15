@@ -258,7 +258,7 @@ int save_player(object *op, int flag) {
          * terminated.
          */
         if (!account_get_account_for_char(pl->ob->name))
-            account_add_player_to_account(pl->socket.account_name, pl->ob->name);
+            account_link(pl->socket.account_name, pl->ob->name);
     }
 
 

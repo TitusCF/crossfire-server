@@ -1,13 +1,13 @@
 /* account.c */
-void clear_accounts(void);
-void account_load_entries(void);
+void accounts_clear(void);
+void accounts_load(void);
 void accounts_save(void);
 const char *account_exists(const char *account_name);
-int account_check_name_password(const char *account_name, const char *account_password);
+int account_login(const char *account_name, const char *account_password);
 int account_check_string(const char *str);
-int account_add_account(const char *account_name, const char *account_password);
-int account_add_player_to_account(const char *account_name, const char *player_name);
-int account_remove_player_from_account(const char *account_name, const char *player_name);
+int account_new(const char *account_name, const char *account_password);
+int account_link(const char *account_name, const char *player_name);
+int account_remove_player(const char *account_name, const char *player_name);
 char **account_get_players_for_account(const char *account_name);
 const char *account_get_account_for_char(const char *charname);
 player *account_get_logged_in_player(const char *name);

@@ -108,7 +108,7 @@ static int accounts_loaded = 0;
  * it can then verify that the data is added is loaded back into memory
  * properly.  As such, we don't worry about memory cleanup, etc.
  */
-void clear_accounts(void) {
+void accounts_clear() {
     accounts = NULL;
     accounts_loaded = 0;
 }
@@ -117,8 +117,7 @@ void clear_accounts(void) {
  * This loads all the account entries into memory.  It is presumed to only
  * be called once during the program startup.
  */
-void account_load_entries(void)
-{
+void accounts_load() {
     char fname[MAX_BUF], buf[VERY_BIG_BUF];
     FILE *fp;
     account_struct *ac, *last=NULL;
@@ -317,9 +316,8 @@ const char *account_exists(const char *account_name)
 }
 
 /**
- * Checks if the name and password are valid.  Note that on the return modes,
- * we do not differentiate on non existing account and wrong password -
- * one could use account_exists() if one is checking just for the name.
+ * Check if the given account exists, and whether the password is correct.
+ *
  * Note - if we do get a match, we update the last_login value - it is
  * presumed that if someone knows the right accountname/password, that
  * the account is effectively getting logged in.
@@ -331,8 +329,7 @@ const char *account_exists(const char *account_name)
  * @return
  * 0 if no match/wrong password, 1 if a match is found and password matches.
  */
-int account_check_name_password(const char *account_name, const char *account_password)
-{
+int account_login(const char *account_name, const char *account_password) {
     account_struct *ac;
 
     for (ac=accounts; ac; ac=ac->next) {
@@ -399,8 +396,7 @@ int account_check_string(const char *str)
  * @retval 2
  * account already exists.
  */
-int account_add_account(const char *account_name, const char *account_password)
-{
+int account_new(const char *account_name, const char *account_password) {
     account_struct *ac;
 
     /* We need to check the password because we don't know what crypt_string() will do -
@@ -457,8 +453,7 @@ int account_add_account(const char *account_name, const char *account_password)
  * number of characters on this account has reached a maximum.
  */
 
-int account_add_player_to_account(const char *account_name, const char *player_name)
-{
+int account_link(const char *account_name, const char *player_name) {
     account_struct *ac;
 
     for (ac=accounts; ac; ac=ac->next) {
@@ -494,8 +489,7 @@ int account_add_player_to_account(const char *account_name, const char *player_n
  * player of this name not on account.
  */
 
-int account_remove_player_from_account(const char *account_name, const char *player_name)
-{
+int account_remove_player(const char *account_name, const char *player_name) {
     account_struct *ac;
     int i, match=0;
 

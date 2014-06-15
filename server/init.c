@@ -1022,7 +1022,7 @@ void init(int argc, char **argv) {
     init_beforeplay();
     init_server();
     metaserver2_init();
-    account_load_entries();
+    accounts_load();
     reset_sleep();
     init_done = 1;
 }
