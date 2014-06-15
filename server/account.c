@@ -674,7 +674,8 @@ int account_change_password(const char *account_name, const char *current_passwo
     }
     if (ac == NULL) return 2;
 
-    if (check_password(current_password, ac->password)) {
+    // Return an error if the current password does not match.
+    if (!check_password(current_password, ac->password)) {
         return 3;
     }
 
