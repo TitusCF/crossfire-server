@@ -116,10 +116,10 @@ START_TEST(test_account_add_account) {
     i=account_new("Every Body", "hispassword");
     fail_unless(i == 0, "Could not add valid account");
 
-    i=account_new("foobar", "foobar");
+    i=account_link("foobar", "foobar");
     fail_unless(i != 0, "Added player to non existent character name");
 
-    i=account_new("Some Body", "foobar");
+    i=account_link("Some Body", "foobar");
     fail_unless(i == 0, "Failed to add player to valid account");
 
     /* The precise number of players per account is not exposed,
