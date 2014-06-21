@@ -7,17 +7,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 CLEANFILES = crossloop
 
-SED = sed
-
-# For some reason, Sun's make fails if you try to use $<
-# in the following entries.  Sun's man page does say $<
-# is legal.  Easy enough to just replace them with real entries
-# however.
-
-crossloop: crossloop.in
-	${SED} -e "s|BINDIR|${bindir}|g" -e "s|GZIP|${GZIP}|g" \
-		crossloop.in > crossloop
-
 if MAPPER
 noinst_PROGRAMS = crossfire-mapper
 crossfire_mapper_SOURCES = mapper.c

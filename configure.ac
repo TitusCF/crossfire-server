@@ -242,6 +242,7 @@ AC_CONFIG_FILES([Makefile
                  types/Makefile
                  utils/Makefile
                  utils/scores.pl utils/player_dl.pl
+                 utils/crossloop
                  utils/crossloop.web
                  plugins/Makefile
                  plugins/cfanim/Makefile plugins/cfanim/include/Makefile

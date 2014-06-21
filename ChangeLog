@@ -1,3 +1,7 @@
+2014-06-21	Kevin Zheng
+	* utils/crossloop.in: This script now reads its configuration from a
+	file. Changes should be made in the new file, not in the script itself.
+
 2014-06-11	SilverNexus
 	* lib/checkarch.pl: Rename old checkarch script, since it isn't
 	part of the build process and isn't dynamically generated, either.

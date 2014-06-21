@@ -1,25 +1,41 @@
 #!/bin/sh
 # crossloop -- restart crossfire-server in case of a crash
 
-# Full path to server binary.
-CF_BIN="BINDIR/crossfire-server"
+# You should not edit this script! Instead, place any overrides into one of
+# the configuration files.
 
-# Additional flags to pass to the server (comment out to disable).
-CF_FLAGS="-d"
+# Set paths that are determined by the build system.
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+
+# Read configuration files.
+for config_file in "@sysconfdir@/crossfire/crossloop.conf"; do
+    if [ -r ${config_file} ]; then
+        . ${config_file} && echo "===>>> Loaded '${config_file}'"
+    fi
+done
+
+#### CONFIGURATION ####
+
+# Full path to server binary.
+CF_BIN=${CF_BIN:-"@bindir@/crossfire-server"}
+
+# Additional flags to pass to the server.
+CF_FLAGS=${CF_FLAGS:-"-d"}
 
 # Directory to use for storing temporary runtime files. It is created if it
 # does not exist. It should be dedicated to Crossfire, because it is saved
 # in the event of a server crash.
-CF_TMP="/tmp/crossfire"
+CF_TMP=${CF_TMP:-"/tmp/crossfire"}
 
 # Directory for storing server logs (default $CF_TMP).
-CF_LOGDIR="${CF_TMP}"
+CF_LOGDIR=${CF_LOGDIR:-"${CF_TMP}"}
 
 # Maximum number of restarts (set to zero to loop infinitely, default 100).
-MAX_RESTART=100
+MAX_RESTART=${MAX_RESTART:-"100"}
 
 # Directory for saving crash data.
-CRASH_DIR="`dirname ${CF_TMP}`"
+CRASH_DIR=${CRASH_DIR:-"`dirname ${CF_TMP}`"}
 
 # Send mail to server admins in case of a crash (comment out to disable).
 #CRASH_MAIL="yourname@example.com"
@@ -70,7 +86,7 @@ bug report with the full contents of this crash report.
 EOF
         fi
     else
-        echo "===>>> Restarting server (press CTRL-C to quit)..."
+        echo "===>>> Restarting server (type CTRL-C to quit)..."
     fi
 
     # Increment server generation.
