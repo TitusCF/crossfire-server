@@ -210,14 +210,19 @@
  * - treasure list use
  */
 
-#include <time.h>
+#include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
-/* For strcasecmp(). */
+#include <stdlib.h>
+#include <string.h>
 #include <strings.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
 
-#include <global.h>
-#include <sproto.h>
-#include <image.h>
+#include "global.h"
+#include "sproto.h"
+#include "image.h"
 
 #include <gd.h>
 #include <gdfonts.h>
