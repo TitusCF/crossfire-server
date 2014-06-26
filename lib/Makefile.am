@@ -28,9 +28,7 @@ wizhelpdir=$(pkgdatadir)/wizhelp
 dist_wizhelp_DATA = wizhelp/*.en wizhelp/*.fr
 
 admdir=$(pkgdatadir)/adm
-dist_adm_SCRIPTS =  \
-	adm/map_info adm/map_expand.pl adm/mapslitter.pl adm/archsearch.pl \
-	adm/collect_images.pl
+dist_adm_SCRIPTS = adm/archsearch.pl adm/collect_images.pl
 
 i18ndir=$(pkgdatadir)/i18n
 dist_i18n_DATA = i18n/messages.en \
