@@ -171,7 +171,7 @@ sub traverse {
 	}
 	# ignore a couple of the more common 'junk' files that are not
 	# really junk.
-	elsif (($name ne "README") && ($name ne "CHANGES") && ($name ne "TODO") && ($name ne ".svn")) {
+	elsif (($name ne "README") && ($name ne "ChangeLog") && ($name ne "TODO") && ($name ne ".svn")) {
 	    $trashNum++;
 	    print "Warning: $file might be a junk file\n";
 	}
