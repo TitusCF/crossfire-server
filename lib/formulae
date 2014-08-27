@@ -436,6 +436,17 @@ skill smithery
 cauldron forge
 ingred 2 bronze bar,brass bar
 #
+# steel shortsword
+Object NONE
+arch steel_shortsword
+chance 1
+diff 25
+exp 2500
+yield 3
+skill smithery
+cauldron forge
+ingred 2 steel bar,brass bar
+#
 # -----------
 # Basic armor
 # -----------
@@ -460,6 +471,179 @@ exp 1200
 skill smithery
 cauldron forge
 ingred 2 bronze bar
+#
+# iron small shield
+Object NONE
+arch small_shield
+chance 6
+diff 5
+exp 1000
+skill smithery
+cauldron forge
+ingred iron bar,2 leather strip
+#
+# bronze small shield
+Object NONE
+arch b_small_shield
+chance 6
+diff 4
+exp 800
+skill smithery
+cauldron forge
+ingred bronze bar,2 leather strip
+#
+# iron high shield
+Object NONE
+arch high_shield
+chance 6
+diff 8
+exp 2000
+skill smithery
+cauldron forge
+ingred 2 iron bar,2 leather strip
+#
+# ----------------
+# Tanning
+# ----------------
+#
+#
+# leather -- from small troll
+Object NONE
+arch leather
+chance 3
+diff 4
+exp 850
+skill woodsman
+cauldron tanbench
+ingred small troll's hide
+#
+# leather -- from large troll
+Object NONE
+arch leather
+chance 3
+diff 5
+exp 1000
+yield 5
+skill woodsman
+cauldron tanbench
+ingred troll's hide
+#
+# leather -- from wolf
+Object NONE
+arch leather
+chance 3
+diff 5
+exp 1000
+skill woodsman
+cauldron tanbench
+ingred 2 wolf's hide
+#
+# leather -- from bear
+Object NONE
+arch leather
+chance 3
+diff 5
+exp 1000
+yield 2
+skill woodsman
+cauldron tanbench
+ingred bear's hide
+#
+# white leather -- from sheep
+#Object NONE
+#arch leather_white
+#chance 3
+#diff 7
+#exp 1500
+#skill woodsman
+#cauldron tanbench
+#ingred 2 sheepskin
+#
+# white leather -- from dire wolf
+Object NONE
+arch leather_white
+chance 3
+diff 7
+exp 1500
+skill woodsman
+cauldron tanbench
+ingred 2 dire wolf's hide
+#
+# white leather -- from dire wolf sire
+Object NONE
+arch leather_white
+chance 3
+diff 7
+exp 1500
+skill woodsman
+cauldron tanbench
+ingred dire wolf sire's hide
+#
+# white leather -- from polar bear
+Object NONE
+arch leather_white
+chance 3
+diff 7
+exp 1500
+yield 5
+skill woodsman
+cauldron tanbench
+ingred polar bear's hide
+#
+# black leather -- from behemoth
+Object NONE
+arch leather_black
+yield 14
+chance 3
+diff 7
+exp 1500
+skill woodsman
+cauldron tanbench
+ingred behemoth's hide
+#
+# black leather -- from hellhound
+Object NONE
+arch leather_black
+chance 3
+diff 7
+exp 1500
+skill woodsman
+cauldron tanbench
+ingred 3 hellhound's hide
+#
+# black leather -- from greater hellhound
+Object NONE
+arch leather_black
+chance 3
+diff 7
+exp 1500
+skill woodsman
+cauldron tanbench
+ingred greater hellhound's hide
+#
+# -------------------------
+# Basic recipes for leather
+# -------------------------
+#
+Object NONE
+arch leather_strips
+yield 50
+ingred leather
+chance 0
+combination 1
+tool slicingknife,b_slicingknife
+#
+# Cloak
+Object NONE
+arch cloak
+yield 5
+chance 5
+diff 6
+exp 1200
+skill woodsman
+cauldron tanbench
+# use a leather strip for cloak hood
+ingred leather,leather strip
 #
 #
 # --------------
