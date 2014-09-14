@@ -3070,6 +3070,7 @@ type 122
 value 100
 race crossbow bolts
 Str 80
+face quiver_bolt.111
 end
 #
 Allowed quiver
@@ -3078,6 +3079,7 @@ Object Holding Arrows
 type 122
 value 100
 Str 80
+face quiver_arrow.111
 end
 #
 Allowed !quiver,!cauldron
