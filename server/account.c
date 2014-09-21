@@ -506,7 +506,7 @@ int account_remove_player(const char *account_name, const char *player_name) {
      * always null terminated, so this also makes sure we copy the null down.
      */
     for (i=0; i<ac->num_characters; i++) {
-        if (!strcasecmp(ac->character_names[i], player_name)) {
+        if (!strcmp(ac->character_names[i], player_name)) {
             free(ac->character_names[i]);
             match=1;
         }
@@ -561,7 +561,7 @@ const char *account_get_account_for_char(const char *charname)
 
     for (ac=accounts; ac; ac=ac->next) {
         for (i=0; i<ac->num_characters; i++) {
-            if (!strcasecmp(ac->character_names[i], charname)) {
+            if (!strcmp(ac->character_names[i], charname)) {
                 return ac->name;
             }
         }

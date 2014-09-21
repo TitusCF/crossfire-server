@@ -194,7 +194,7 @@ Account_Char *account_char_add(Account_Char *chars, player *pl) {
     Account_Char *ap, *last = NULL;
 
     for (ap = chars; ap; ap = ap->next) {
-        if (!strcasecmp(ap->name, pl->ob->name)) break;
+        if (!strcmp(ap->name, pl->ob->name)) break;
         last = ap;
     }
     /* If ap is not NULL, it means we found a match.
@@ -297,7 +297,7 @@ Account_Char *account_char_remove(Account_Char *chars, const char *pl_name) {
     Account_Char *ap, *last = NULL;
 
     for (ap = chars; ap; ap = ap->next) {
-        if (!strcasecmp(ap->name, pl_name)) break;
+        if (!strcmp(ap->name, pl_name)) break;
         last = ap;
     }
     /* If we didn't find this character, nothing to do */
