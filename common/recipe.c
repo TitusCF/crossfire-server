@@ -219,6 +219,11 @@ void init_formulae(void) {
                     formula->ingred_count++;
                 }
                 tmp = (linked_char *)malloc(sizeof(linked_char));
+                /* trim the string */
+                while (*cp == ' ')
+                  cp++;
+                while (cp != '\0' && cp[strlen(cp) - 1] == ' ')
+                  cp[strlen(cp) - 1] = '\0';
                 tmp->name = add_string(cp);
                 tmp->next = formula->ingred;
                 formula->ingred = tmp;
