@@ -92,7 +92,7 @@ START_TEST(test_describe_item) {
         NULL };
     static const char *arch_results[] = {
         "",
-        "(food+200)",
+        "(food+600)",
         "(glowing)",
         "",
         "",
@@ -106,7 +106,7 @@ START_TEST(test_describe_item) {
         "(dam+8)(weapon speed 8)(Attacks: physical)",
         "(ac+1)(armour +5)",
         "(food+600)",
-        "(food+100)(slay vial_poison:poison)",
+        "(food+65)(slay vial_poison:poison)",
         "",
         "(extremely fast movement)(undead)(spellcaster)(Spell abilities:)(paralyze)(fear ability)(cause black death)(cause red death)(face of death)(meteor swarm)(hellfire)(burning hands)(large fireball)(mass confusion)(negative energy bolt)(negative energy ball)(slow ability)(Attacks: physical, cold)(armour +75)(resist magic +100)(resist fire +100)(resist electricity +90)(resist cold +100)(resist confusion +100)(resist acid +90)(resist drain +100)(resist weaponmagic +80)(resist ghosthit +100)(resist poison +100)(resist slow +100)(resist paralyzation +100)(resist fear +100)(resist cancellation +65)(resist depletion +100)(resist death +100)(resist chaos +100)(resist counterspell +65)(resist god power +80)(resist blindness +100)",
         "(slow movement)(undead)(Attacks: physical)(resist cold +50)(resist fear +100)",
@@ -150,7 +150,7 @@ START_TEST(test_describe_item) {
         "(wc+1)(dam+2)(Attacks: physical)",
         "",
         "(dam+6)(weapon speed 9)(Attacks: physical)",
-        "(food+200)",
+        "(food+70)",
         "(Con+2)(Cha-1)(dam+10)(item_power +15)(weapon speed 5)(regeneration+1)(Attacks: weaponmagic)(resist drain +100)(resist poison +30)",
         "",
         "",
