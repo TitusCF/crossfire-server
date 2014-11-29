@@ -23,9 +23,6 @@
  *
  * Write is done for each player whenever the state changes, to ensure data
  * integrity.
- *
- * @todo
- * add protocol commands to send notifications instead of using draw_ext_info()
  */
 
 #include "global.h"
