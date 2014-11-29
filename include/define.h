@@ -681,14 +681,16 @@ typedef unsigned char MoveType;
  * Those flags are mostly used for query_cost() and similar functions.
  */
 /*@{*/
-#define BS_BUY          0   /**< Item is being bought by player. */
-#define BS_SELL         1   /**< Item is being sold by player. */
-#define BS_TRUE         2   /**< True value of item, unadjusted. */
-#define BS_NO_BARGAIN   4   /**< Combine with ::BS_BUY or ::BS_SELL to disable bargaining calc. */
-#define BS_IDENTIFIED   8   /**< Flag to calculate value of identified item. */
-#define BS_NOT_CURSED   16  /**< Flag to calculate value of uncursed item. */
-#define BS_APPROX       32  /**< Flag to give a guess of item value. */
-#define BS_SHOP         64  /**< Consider the effect that the shop that the player is in has. */
+enum bs_flag {
+    BS_BUY        = 128, /**< Item is being bought by player. */
+    BS_SELL       = 1,   /**< Item is being sold by player. */
+    BS_TRUE       = 2,   /**< True value of item, unadjusted. */
+    BS_NO_BARGAIN = 4,   /**< Combine with ::BS_BUY or ::BS_SELL to disable bargaining calc. */
+    BS_IDENTIFIED = 8,   /**< Flag to calculate value of identified item. */
+    BS_NOT_CURSED = 16,  /**< Flag to calculate value of uncursed item. */
+    BS_APPROX     = 32,  /**< Flag to give a guess of item value. */
+    BS_SHOP       = 64,  /**< Consider the effect that the shop that the player is in has. */
+};
 /*@}*/
 
 #define DIRX(xyz)       freearr_x[(xyz)->direction]
