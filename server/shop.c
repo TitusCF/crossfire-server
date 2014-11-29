@@ -108,63 +108,60 @@ static const char *const coins[] = {
  * item value, in silver coins.
  */
 uint64_t query_cost(const object *tmp, object *who, int flag) {
-    uint64_t val;
-    int number; /* used to better calculate value */
-    int no_bargain;
-    int identified;
-    int not_cursed;
-    int approximate;
-    int shop;
     float diff;
-    float ratio;
-    const char *key;
+    const char *key;    // Temporary place to hold key values
 
-    no_bargain = flag&BS_NO_BARGAIN;
-    identified = flag&BS_IDENTIFIED;
-    not_cursed = flag&BS_NOT_CURSED;
-    approximate = flag&BS_APPROX;
-    shop = flag&BS_SHOP;
+    // Extract price query flags passed to this function.
+    bool no_bargain = flag & BS_NO_BARGAIN;
+    bool not_cursed = flag & BS_NOT_CURSED;
+    bool approximate = flag & BS_APPROX;
+    bool shop = flag & BS_SHOP;
     flag &= ~(BS_NO_BARGAIN|BS_IDENTIFIED|BS_NOT_CURSED|BS_APPROX|BS_SHOP);
 
-    number = tmp->nrof;
-    if (number == 0)
-        number = 1;
+    // When there are zero objects, there is really one.
+    int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
+    uint64_t val = (uint64_t)tmp->value * number;
 
+    // Look for the identified price, or if identity doesn't matter.
+    bool is_ident = (flag & BS_IDENTIFIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED)
+            || !need_identify(tmp);
+
+    // Objects with price adjustments skip the rest of the calculations.
     if ((key = object_get_value(tmp, "price_adjustment")) != NULL) {
-        ratio = atof(key);
-        return tmp->value*number*ratio;
+        float ratio = atof(key);
+        return val * ratio;
     }
     if ((flag == BS_BUY) && ((key = object_get_value(tmp, "price_adjustment_buy")) != NULL)) {
-        ratio = atof(key);
-        return tmp->value*number*ratio;
+        float ratio = atof(key);
+        return val * ratio;
     }
     if ((flag == BS_SELL) && ((key = object_get_value(tmp, "price_adjustment_sell")) != NULL)) {
-        ratio = atof(key);
-        return tmp->value*number*ratio;
+        float ratio = atof(key);
+        return val * ratio;
     }
 
     if (tmp->type == MONEY) {
-        return (uint64_t)tmp->nrof * tmp->value;
+        return val;
     }
 
     if (tmp->type == GEM) {
-        if (flag == BS_TRUE)
-            return number*tmp->value;
-        if (flag == BS_BUY)
-            return (1.03*tmp->nrof*tmp->value);
-        if (flag == BS_SELL)
-            return (0.97*tmp->nrof*tmp->value);
-        LOG(llevError, "Query_cost: Gem type with unknown flag : %d\n", flag);
-        return 0;
+        if (flag == BS_TRUE) {
+            return val;
+        } else if (flag == BS_BUY) {
+            return 1.03 * val;
+        } else if (flag == BS_SELL) {
+            return 0.97 * val;
+        } else {
+            LOG(llevError, "Query_cost: Gem type with unknown flag : %d\n", flag);
+            return 0;
+        }
     }
-    if (QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-    || !need_identify(tmp)
-    || identified) {
+
+    if (is_ident) {
         if (!not_cursed
         && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))) {
+            // FIXME: Cursed items are NOT worthless!
             return 0;
-        } else {
-            val = (uint64_t)tmp->value * number;
         }
     /* This area deals with objects that are not identified, but can be */
     } else {
@@ -206,7 +203,7 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
      * default magical.  This is because the archetype value should have
      * already figured in that value.
      */
-    if ((QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp) || identified || QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
+    if ((is_ident || QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
     && tmp->magic
     && (tmp->arch == NULL || !tmp->arch->clone.magic)) {
         if (tmp->magic > 0)
@@ -223,9 +220,7 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
          * charges.  the treasure code already sets up the value
          * 50 charges is used as the baseline.
          */
-        if (QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-        || !need_identify(tmp)
-        || identified)
+        if (is_ident)
             val = (val*tmp->stats.food)/50;
         else /* if not identified, presume one charge */
             val /= 50;
@@ -260,7 +255,7 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
          * will come from the basic stat charisma
          * the rest will come from the level in bargaining skill
          */
-        ratio = 0.5;
+        float ratio = 0.5;
         tmptype = get_typedata(tmp->type);
 
         if (find_skill_by_number(who, SK_BARGAINING)) {
@@ -321,10 +316,7 @@ uint64_t query_cost(const object *tmp, object *who, int flag) {
      * does is force players to sell the itm in smaller blocks, which
      * doesn't make much sense.
      */
-    if (flag == BS_SELL
-    && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-    && need_identify(tmp)
-    && !identified) {
+    if (flag == BS_SELL && !is_ident) {
         val = MIN(val, (uint64_t)600 * number);
     }
 
