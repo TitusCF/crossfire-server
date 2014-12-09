@@ -4744,19 +4744,23 @@ void object_insert_to_free_spot_or_free(object *op, mapstruct *map, int x, int y
  * the object to modify
  * @param msg
  * the new message to set or NULL to clear
- *
- * FIXME: Messages must end with a newline or potentially corrupt the object
- * file by adding an 'endmsg' on the same line.
  */
 void object_set_msg(object *op, const char *msg) {
-    /* Look for a trailing newline and complain if not found. */
-    if ((msg != NULL) && (strchr(msg, '\n') == NULL)) {
-        LOG(llevError, "Setting a message without a trailing newline!\n");
-    }
-
     if (op->msg != NULL) {
         free_string(op->msg);
     }
 
-    op->msg = msg == NULL ? NULL : add_string(msg);
+    if (msg != NULL) {
+        // If the message does not have a trailing newline, add one.
+        if (strchr(msg, '\n') == NULL) {
+            StringBuffer *sb = stringbuffer_new();
+            stringbuffer_append_string(sb, msg);
+            stringbuffer_append_string(sb, "\n");
+            op->msg = stringbuffer_finish_shared(sb);
+        } else {
+            op->msg = add_string(msg);
+        }
+    } else {
+        op->msg = NULL;
+    }
 }
