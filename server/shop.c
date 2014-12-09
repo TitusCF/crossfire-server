@@ -104,24 +104,18 @@ uint64_t price_base(const object *tmp, const int flag) {
 
     // Unidentified items are inherently less valuable.
     if (!is_ident) {
+        // Unidentified standard objects are only worth a little less.
         if (tmp->arch != NULL) {
-            if (tmp->type == POTION) {
-                val = (uint64_t)number * 1000;
+            if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) {
+                val = (uint64_t)number * tmp->arch->clone.value * 0.85;
             } else {
-                /* Get 2/3 value for applied objects, 1/3 for totally
-                 * unknown objects
-                 */
-                if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) {
-                    val = (uint64_t)number * tmp->arch->clone.value * 2/3;
-                } else {
-                    val = (uint64_t)number * tmp->arch->clone.value / 3;
-                }
+                val = (uint64_t)number * tmp->arch->clone.value * 0.70;
             }
         } else { /* No archetype with this object */
             if (flag & BS_BUY) {
-                val *= 10;
+                val *= 4;
             } else {
-                val /= 5;
+                val /= 4;
             }
         }
     }
