@@ -4752,7 +4752,7 @@ void object_set_msg(object *op, const char *msg) {
 
     if (msg != NULL) {
         // If the message does not have a trailing newline, add one.
-        if (strchr(msg, '\n') == NULL) {
+        if (*msg != '\0' && strchr(msg, '\0')[-1] != '\n') {
             StringBuffer *sb = stringbuffer_new();
             stringbuffer_append_string(sb, msg);
             stringbuffer_append_string(sb, "\n");
