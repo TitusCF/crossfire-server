@@ -255,15 +255,6 @@ static uint64_t shop_price_adjust(uint64_t val, object *who, const int flag) {
         val /= 2;
     }
 
-    /* I don't think this should really happen - if it does,
-     * it indicates an overflow of diff above.  That should only
-     * happen if we are selling objects - in that case, the person
-     * just gets no money.
-     */
-    if ((int64_t)val < 0) {
-        val = 0;
-    }
-
     return val;
 }
 
