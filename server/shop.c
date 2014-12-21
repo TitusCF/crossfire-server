@@ -156,6 +156,47 @@ static uint64_t price_base(const object *tmp, const int flag) {
 }
 
 /**
+ * Adjust the value of the given item based on the player's skills. This
+ * function should only be used when calculating "you reckon" prices.
+ * @param val Calculated value of an item
+ * @param tmp Item in question
+ * @param who Player trying to judge the value of the item
+ * @return Approximate value of an item
+ */
+static uint64_t price_approximate(uint64_t val, const object *tmp, object *who) {
+    /* If we are approximating, then the value returned should
+     * be allowed to be wrong however merely using a random number
+     * each time will not be sufficient, as then multiple examinations
+     * would give different answers, so we'll use the count instead.
+     * By taking the sine of the count, a value between -1 and 1 is
+     * generated, we then divide by the square root of the bargaining
+     * skill and the appropriate identification skills, so that higher
+     * level players get better estimates. (We need a +1 there to
+     * prevent dividing by zero.)
+     */
+    const typedata *tmptype = get_typedata(tmp->type);
+    int lev_identify = 0;
+
+    if (tmptype) {
+        int idskill1 = tmptype->identifyskill;
+        if (idskill1) {
+            int idskill2 = tmptype->identifyskill2;
+            if (find_skill_by_number(who, idskill1)) {
+                lev_identify = find_skill_by_number(who, idskill1)->level;
+            }
+            if (idskill2 && find_skill_by_number(who, idskill2)) {
+                lev_identify += find_skill_by_number(who, idskill2)->level;
+            }
+        }
+    } else {
+        LOG(llevError, "Query_cost: item %s hasn't got a valid type\n", tmp->name);
+    }
+    val += val * (sin(tmp->count) / sqrt(lev_identify * 3 + 1.0));
+
+    return val;
+}
+
+/**
  * Calculate the buy price multiplier based on a player's charisma.
  * @param charisma Player's charisma
  * @return Buy multiplier between 2 and 0.5
@@ -215,35 +256,8 @@ static uint64_t shop_price_adjust(uint64_t val, const object *tmp, object *who, 
         val /= 2;
     }
 
-    /* If we are approximating, then the value returned should
-     * be allowed to be wrong however merely using a random number
-     * each time will not be sufficient, as then multiple examinations
-     * would give different answers, so we'll use the count instead.
-     * By taking the sine of the count, a value between -1 and 1 is
-     * generated, we then divide by the square root of the bargaining
-     * skill and the appropriate identification skills, so that higher
-     * level players get better estimates. (We need a +1 there to
-     * prevent dividing by zero.)
-     */
     if (approximate) {
-        const typedata *tmptype = get_typedata(tmp->type);
-        int lev_identify = 0;
-
-        if (tmptype) {
-            int idskill1 = tmptype->identifyskill;
-            if (idskill1) {
-                int idskill2 = tmptype->identifyskill2;
-                if (find_skill_by_number(who, idskill1)) {
-                    lev_identify = find_skill_by_number(who, idskill1)->level;
-                }
-                if (idskill2 && find_skill_by_number(who, idskill2)) {
-                    lev_identify += find_skill_by_number(who, idskill2)->level;
-                }
-            }
-        } else {
-            LOG(llevError, "Query_cost: item %s hasn't got a valid type\n", tmp->name);
-        }
-        val += val * (sin(tmp->count) / sqrt(lev_bargain + lev_identify * 2 + 1.0));
+        val = price_approximate(val, tmp, who);
     }
 
     /* I don't think this should really happen - if it does,
