@@ -7,7 +7,7 @@
 #define SKILLS_H
 
 /**
- * @defgroup SK_xxx Skill subtypes
+ * @enum SK Skill subtypes
  *
  * This list is just a subtype <-> skill (code wise) in the
  * server translation.  In theory, the processing of the different
@@ -16,52 +16,51 @@
  * The order of this list has no special meaning.  0 is not used
  * to denote improperly set objects.
  */
-/*@{*/
-#define SK_LOCKPICKING          1   /**< Lockpicking. */
-#define SK_HIDING               2   /**< Hiding. */
-#define SK_SMITHERY             3   /**< Smithery. */
-#define SK_BOWYER               4   /**< Bowyer. */
-#define SK_JEWELER              5   /**< Jeweler. */
-#define SK_ALCHEMY              6   /**< Alchemy. */
-#define SK_STEALING             7   /**< Stealing. */
-#define SK_LITERACY             8   /**< Literacy. */
-#define SK_BARGAINING           9   /**< Bargaining. */
-#define SK_JUMPING              10  /**< Jumping. */
-#define SK_DET_MAGIC            11  /**< Detect magic. */
-#define SK_ORATORY              12  /**< Oratory. */
-#define SK_SINGING              13  /**< Singing. */
-#define SK_DET_CURSE            14  /**< Detect curse. */
-#define SK_FIND_TRAPS           15  /**< Find traps. */
-#define SK_MEDITATION           16  /**< Meditation. */
-#define SK_PUNCHING             17  /**< Punching. */
-#define SK_FLAME_TOUCH          18  /**< Flame-touch. */
-#define SK_KARATE               19  /**< Karate. */
-#define SK_CLIMBING             20  /**< Climbing. */
-#define SK_WOODSMAN             21  /**< Woodsman. */
-#define SK_INSCRIPTION          22  /**< Inscription.*/
-#define SK_ONE_HANDED_WEAPON    23  /**< One handed weapon. */
-#define SK_MISSILE_WEAPON       24  /**< Missile weapon. */
-#define SK_THROWING             25  /**< Throwing. */
-#define SK_USE_MAGIC_ITEM       26  /**< Use magic item. */
-#define SK_DISARM_TRAPS         27  /**< Disarm traps. */
-#define SK_SET_TRAP             28  /**< Set traps, unused. */
-#define SK_THAUMATURGY          29  /**< Thaumaturgy. */
-#define SK_PRAYING              30  /**< Praying. */
-#define SK_CLAWING              31  /**< Clawing. */
-#define SK_LEVITATION           32  /**< Levitation. */
-#define SK_SUMMONING            33  /**< Summoning. */
-#define SK_PYROMANCY            34  /**< Pyromancy. */
-#define SK_EVOCATION            35  /**< Evocation. */
-#define SK_SORCERY              36  /**< Sorcery. */
-#define SK_TWO_HANDED_WEAPON    37  /**< Two handed weapons. */
-#define SK_WRAITH_FEED          38  /**< Wraith feed. */
-#define SK_HARVESTING           39  /**< Harvesting. */
-#define SK_AIR_MAGIC            40  /**< Air magic, unused. */
-#define SK_EARTH_MAGIC          41  /**< Earth magic, unused. */
-#define SK_WATER_MAGIC          42  /**< Water magic, unused. */
-#define SK_FIRE_MAGIC           43  /**< Fire magic, unused. */
-
-/*@}*/
+enum SK {
+    SK_LOCKPICKING           = 1,   /**< Lockpicking. */
+    SK_HIDING                = 2,   /**< Hiding. */
+    SK_SMITHERY              = 3,   /**< Smithery. */
+    SK_BOWYER                = 4,   /**< Bowyer. */
+    SK_JEWELER               = 5,   /**< Jeweler. */
+    SK_ALCHEMY               = 6,   /**< Alchemy. */
+    SK_STEALING              = 7,   /**< Stealing. */
+    SK_LITERACY              = 8,   /**< Literacy. */
+    SK_BARGAINING            = 9,   /**< Bargaining. */
+    SK_JUMPING               = 10,  /**< Jumping. */
+    SK_DET_MAGIC             = 11,  /**< Detect magic. */
+    SK_ORATORY               = 12,  /**< Oratory. */
+    SK_SINGING               = 13,  /**< Singing. */
+    SK_DET_CURSE             = 14,  /**< Detect curse. */
+    SK_FIND_TRAPS            = 15,  /**< Find traps. */
+    SK_MEDITATION            = 16,  /**< Meditation. */
+    SK_PUNCHING              = 17,  /**< Punching. */
+    SK_FLAME_TOUCH           = 18,  /**< Flame-touch. */
+    SK_KARATE                = 19,  /**< Karate. */
+    SK_CLIMBING              = 20,  /**< Climbing. */
+    SK_WOODSMAN              = 21,  /**< Woodsman. */
+    SK_INSCRIPTION           = 22,  /**< Inscription.*/
+    SK_ONE_HANDED_WEAPON     = 23,  /**< One handed weapon. */
+    SK_MISSILE_WEAPON        = 24,  /**< Missile weapon. */
+    SK_THROWING              = 25,  /**< Throwing. */
+    SK_USE_MAGIC_ITEM        = 26,  /**< Use magic item. */
+    SK_DISARM_TRAPS          = 27,  /**< Disarm traps. */
+    SK_SET_TRAP              = 28,  /**< Set traps, unused. */
+    SK_THAUMATURGY           = 29,  /**< Thaumaturgy. */
+    SK_PRAYING               = 30,  /**< Praying. */
+    SK_CLAWING               = 31,  /**< Clawing. */
+    SK_LEVITATION            = 32,  /**< Levitation. */
+    SK_SUMMONING             = 33,  /**< Summoning. */
+    SK_PYROMANCY             = 34,  /**< Pyromancy. */
+    SK_EVOCATION             = 35,  /**< Evocation. */
+    SK_SORCERY               = 36,  /**< Sorcery. */
+    SK_TWO_HANDED_WEAPON     = 37,  /**< Two handed weapons. */
+    SK_WRAITH_FEED           = 38,  /**< Wraith feed. */
+    SK_HARVESTING            = 39,  /**< Harvesting. */
+    SK_AIR_MAGIC             = 40,  /**< Air magic, unused. */
+    SK_EARTH_MAGIC           = 41,  /**< Earth magic, unused. */
+    SK_WATER_MAGIC           = 42,  /**< Water magic, unused. */
+    SK_FIRE_MAGIC            = 43,  /**< Fire magic, unused. */
+};
 
 /**
  * This is the highest number skill in the table +1
