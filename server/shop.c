@@ -232,8 +232,7 @@ static float shop_bargain_multiplier(int lev_bargain) {
  * @param flag Additional flags to use while determining value
  * @return Adjusted value of item
  */
-static uint64_t shop_price_adjust(uint64_t val, const object *tmp, object *who, const int flag) {
-    const bool approximate = flag & BS_APPROX;
+static uint64_t shop_price_adjust(uint64_t val, object *who, const int flag) {
     const bool no_bargain = flag & BS_NO_BARGAIN;
     int lev_bargain;
     float multiplier;
@@ -254,10 +253,6 @@ static uint64_t shop_price_adjust(uint64_t val, const object *tmp, object *who, 
         val *= multiplier > 0.5 ? multiplier : 0.5;
     } else if (flag & BS_SELL) {
         val /= 2;
-    }
-
-    if (approximate) {
-        val = price_approximate(val, tmp, who);
     }
 
     /* I don't think this should really happen - if it does,
@@ -354,7 +349,11 @@ uint64_t query_cost(const object *tmp, object *who, const int flag) {
     val *= 4;
 
     if (who != NULL && who->type == PLAYER) {
-        val = shop_price_adjust(val, tmp, who, flag);
+        if (flag & BS_APPROX) {
+            val = price_approximate(val, tmp, who);
+        } else {
+            val = shop_price_adjust(val, who, flag);
+        }
     }
 
     /* if in a shop, check how the type of shop should affect the price */
