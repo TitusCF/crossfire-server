@@ -327,11 +327,6 @@ uint64_t query_cost(const object *tmp, object *who, const int flag) {
         }
     }
 
-    /* Limit amount of money you can get for really great items. */
-    if (flag & BS_TRUE || flag & BS_SELL) {
-        val = value_limit(val, number, who, shop);
-    }
-
     /* we need to multiply these by 4.0 to keep buy costs roughly the same
      * (otherwise, you could buy a potion of charisma for around 400 pp.
      * Arguable, the costs in the archetypes should be updated to better
@@ -339,12 +334,24 @@ uint64_t query_cost(const object *tmp, object *who, const int flag) {
      */
     val *= 4;
 
+    // At this point we have the true, unadjusted value of an item.
+    if (flag & BS_TRUE) {
+        return val;
+    }
+
     if (who != NULL && who->type == PLAYER) {
         if (flag & BS_APPROX) {
             val = price_approximate(val, tmp, who);
+            return val;
         } else {
+            // Run shop adjustment even if not in shop -- think alchemy.
             val = shop_price_adjust(val, who, flag);
         }
+    }
+
+    /* Limit amount of money you can get for really great items. */
+    if (flag & BS_SELL) {
+        val = value_limit(val, number, who, shop);
     }
 
     /* if in a shop, check how the type of shop should affect the price */
