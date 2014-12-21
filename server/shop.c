@@ -75,17 +75,17 @@ static const char *const coins[] = {
  * @param flag
  * @return
  */
-uint64_t price_base(const object *tmp, const int flag) {
+static uint64_t price_base(const object *tmp, const int flag) {
     const char *key;    // Temporary place to hold key values
 
     // When there are zero objects, there is really one.
     int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
     uint64_t val = (uint64_t)tmp->value * number;
 
-    bool is_ident = (flag & BS_IDENTIFIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-            || !need_identify(tmp);
-    bool is_cursed = !(flag & BS_NOT_CURSED) && (QUERY_FLAG(tmp, FLAG_CURSED)
-            || QUERY_FLAG(tmp, FLAG_DAMNED));
+    const bool is_ident = (flag & BS_IDENTIFIED)
+            || QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
+    const bool is_cursed = !(flag & BS_NOT_CURSED)
+            && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED));
 
     // Objects with price adjustments skip the rest of the calculations.
     if ((key = object_get_value(tmp, "price_adjustment")) != NULL) {
@@ -156,6 +156,33 @@ uint64_t price_base(const object *tmp, const int flag) {
 }
 
 /**
+ * Calculate the buy price multiplier based on a player's charisma.
+ * @param charisma Player's charisma
+ * @return Buy multiplier between 2 and 0.5
+ */
+static float shop_buy_multiplier(int charisma) {
+    float multiplier = 1 / (0.38 * pow(1.06, charisma));
+
+    if (multiplier > 2) {
+        return 2;
+    } else if (multiplier < 0.5) {
+        return 0.5;
+    } else {
+        return multiplier;
+    }
+}
+
+/**
+ * Calculate the buy price multiplier based on a player's bargaining skill.
+ * The reciprocal of this result can be used as a sell multiplier.
+ * @param lev_bargain Player's bargaining level
+ * @return Buy multiplier between 1 and 0.5
+ */
+static float shop_bargain_multiplier(int lev_bargain) {
+    return 1 - 0.5 * lev_bargain / settings.max_level;
+}
+
+/**
  * Adjust the value of an item based on the player's bargaining skill and
  * charisma. This should only be used if the player is in a shop.
  * @param val Base item value
@@ -164,52 +191,29 @@ uint64_t price_base(const object *tmp, const int flag) {
  * @param flag Additional flags to use while determining value
  * @return Adjusted value of item
  */
-uint64_t price_adjust(uint64_t val, const object *tmp, object *who, const int flag) {
-    float diff;
-    int lev_bargain = 0;
-    int lev_identify = 0;
-    int idskill1 = 0;
-    int idskill2 = 0;
-    bool approximate = flag & BS_APPROX;
-    bool no_bargain = flag & BS_NO_BARGAIN;
-
-    /* ratio determines how much of the price modification
-     * will come from the basic stat charisma
-     * the rest will come from the level in bargaining skill
-     */
-    const float ratio = 0.5;
-    const typedata *tmptype = get_typedata(tmp->type);
+static uint64_t shop_price_adjust(uint64_t val, const object *tmp, object *who, const int flag) {
+    const bool approximate = flag & BS_APPROX;
+    const bool no_bargain = flag & BS_NO_BARGAIN;
+    int lev_bargain;
+    float multiplier;
 
     if (find_skill_by_number(who, SK_BARGAINING)) {
         lev_bargain = find_skill_by_number(who, SK_BARGAINING)->level;
     }
-    if (tmptype) {
-        idskill1 = tmptype->identifyskill;
-        if (idskill1) {
-            idskill2 = tmptype->identifyskill2;
-            if (find_skill_by_number(who, idskill1)) {
-                lev_identify = find_skill_by_number(who, idskill1)->level;
-            }
-            if (idskill2 && find_skill_by_number(who, idskill2)) {
-                lev_identify += find_skill_by_number(who, idskill2)->level;
-            }
-        }
-    } else
-        LOG(llevError, "Query_cost: item %s hasn't got a valid type\n", tmp->name);
-    if (!no_bargain && (lev_bargain > 0))
-        diff = (0.8-0.6*((lev_bargain+settings.max_level*0.05)/(settings.max_level*1.05)));
-    else
-        diff = 0.8;
 
-    diff *= 1-ratio;
+    if (!no_bargain && (lev_bargain > 0)) {
+        multiplier = shop_bargain_multiplier(lev_bargain);
+    } else {
+        multiplier = 1;
+    }
 
-    /* Diff is now a float between 0.2 and 0.8 */
-    diff += ratio * ((float)get_cha_bonus(who->stats.Cha)/100.0);
-
-    if (flag & BS_BUY)
-        val = (val*(long)(1000*(1+diff)))/1000;
-    else if (flag & BS_SELL)
-        val = (val*(long)(1000*(1-diff)))/1000;
+    if (flag & BS_BUY) {
+        // Limit buy price multiplier to 0.5, no matter what.
+        multiplier *= shop_buy_multiplier(who->stats.Cha);
+        val *= multiplier > 0.5 ? multiplier : 0.5;
+    } else if (flag & BS_SELL) {
+        val /= 2;
+    }
 
     /* If we are approximating, then the value returned should
      * be allowed to be wrong however merely using a random number
@@ -222,7 +226,24 @@ uint64_t price_adjust(uint64_t val, const object *tmp, object *who, const int fl
      * prevent dividing by zero.)
      */
     if (approximate) {
-        val = (int64_t)val+(int64_t)((int64_t)val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
+        const typedata *tmptype = get_typedata(tmp->type);
+        int lev_identify = 0;
+
+        if (tmptype) {
+            int idskill1 = tmptype->identifyskill;
+            if (idskill1) {
+                int idskill2 = tmptype->identifyskill2;
+                if (find_skill_by_number(who, idskill1)) {
+                    lev_identify = find_skill_by_number(who, idskill1)->level;
+                }
+                if (idskill2 && find_skill_by_number(who, idskill2)) {
+                    lev_identify += find_skill_by_number(who, idskill2)->level;
+                }
+            }
+        } else {
+            LOG(llevError, "Query_cost: item %s hasn't got a valid type\n", tmp->name);
+        }
+        val += val * (sin(tmp->count) / sqrt(lev_bargain + lev_identify * 2 + 1.0));
     }
 
     /* I don't think this should really happen - if it does,
@@ -318,15 +339,8 @@ uint64_t query_cost(const object *tmp, object *who, const int flag) {
      */
     val *= 4;
 
-    /* This modification is for bargaining skill.
-     * Now only players with max level in bargaining
-     * AND Cha = 30 will get optimal price.
-     * Thus charisma will never get useless.
-     * -b.e. edler@heydernet.de
-     */
-
     if (who != NULL && who->type == PLAYER) {
-        val = price_adjust(val, tmp, who, flag);
+        val = shop_price_adjust(val, tmp, who, flag);
     }
 
     /* if in a shop, check how the type of shop should affect the price */
