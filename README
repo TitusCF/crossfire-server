@@ -38,7 +38,7 @@ even more fun. These include:
 * Support for dynamically loaded libraries. Most modern operating systems
 should have it. This is needed for server plugins.
 
-* Python 2.4 or later - this is needed for the Crossfire Python plugin
+* Python 2.6 or later - this is needed for the Crossfire Python plugin
 (CFPython) and is *highly* recommended. Most maps, quests, and NPCs will
 not work without it.
 
