@@ -88,8 +88,8 @@ int of_close(OutputFile *of);
 
 /**
  * Cancels a save process. This closes and deletes the temporary file, leaving
- * the original file contents unmodified. This function (or #on_close()} must
- * be called exactly once for each successful call to #op_open().
+ * the original file contents unmodified. This function (or on_close()} must
+ * be called exactly once for each successful call to op_open().
  *
  * @param of the output file instance to operate on
  */

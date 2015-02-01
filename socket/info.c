@@ -41,8 +41,6 @@
  *
  * @param subtype The subtype of text message
  *
- * @param intro Intro message to send with main message if client does not support the message type
- *
  * @param message The main message
  *
  * make this non-static, so other files can use this to send messages to client before

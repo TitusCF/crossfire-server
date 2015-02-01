@@ -227,7 +227,6 @@ static float shop_bargain_multiplier(int lev_bargain) {
  * Adjust the value of an item based on the player's bargaining skill and
  * charisma. This should only be used if the player is in a shop.
  * @param val Base item value
- * @param tmp Item in question
  * @param who Player buying/selling item
  * @param flag Additional flags to use while determining value
  * @return Adjusted value of item
