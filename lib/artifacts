@@ -3097,6 +3097,7 @@ Object Holding
 type 122
 value 100
 Str 50
+face_suffix holding
 end
 #
 Allowed bag
