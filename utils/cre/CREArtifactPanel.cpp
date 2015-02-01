@@ -7,6 +7,7 @@ extern "C" {
 
 #include "CREArtifactPanel.h"
 #include "CREUtils.h"
+#include "CREAnimationWidget.h"
 
 CREArtifactPanel::CREArtifactPanel()
 {
@@ -41,7 +42,7 @@ CREArtifactPanel::CREArtifactPanel()
     layout->addWidget(myValues, 6, 1, 1, 2);
 
     myArchetypes = new QTreeWidget(this);
-    layout->addWidget(myArchetypes, 7, 1, 2, 1);
+    layout->addWidget(myArchetypes, 7, 1, 3, 1);
     myArchetypes->setHeaderLabel("Allowed/forbidden archetypes");
     myArchetypes->setIconSize(QSize(32, 32));
     myArchetypes->setRootIsDecorated(false);
@@ -50,6 +51,9 @@ CREArtifactPanel::CREArtifactPanel()
     layout->addWidget(new QLabel(tr("Result:"), this), 7, 2);
     myInstance = new QTextEdit(this);
     layout->addWidget(myInstance, 8, 2);
+
+    layout->addWidget(myAnimation = new CREAnimationControl(this), 9, 2);
+    layout->addWidget(myFace = new CREAnimationWidget(this), 9, 2);
 }
 
 void CREArtifactPanel::computeMadeViaAlchemy(const artifact* artifact) const
@@ -182,15 +186,16 @@ void CREArtifactPanel::setArtifact(const artifact* artifact)
 
 void CREArtifactPanel::artifactChanged(QTreeWidgetItem* current, QTreeWidgetItem*)
 {
+    myAnimation->setVisible(false);
+    myFace->setVisible(false);
+    myInstance->clear();
     if (!current || current->data(0, Qt::UserRole).toString().isEmpty())
     {
-        myInstance->clear();
         return;
     }
     archt* arch = try_find_archetype(current->data(0, Qt::UserRole).toString().toUtf8().constData());
     if (!arch)
     {
-        myInstance->clear();
         return;
     }
 
@@ -198,9 +203,24 @@ void CREArtifactPanel::artifactChanged(QTreeWidgetItem* current, QTreeWidgetItem
     object* obj = arch_to_object(arch);
     SET_FLAG(obj, FLAG_IDENTIFIED);
     give_artifact_abilities(obj, myArtifact->item);
+    object_give_identified_properties(obj);
     desc = stringbuffer_finish(describe_item(obj, NULL, NULL));
     myInstance->setText(desc);
     free(desc);
+
+    if (obj->animation_id != 0)
+    {
+      myAnimation->setVisible(true);
+      myAnimation->setAnimation(&animations[obj->animation_id], QUERY_FLAG(obj, FLAG_IS_TURNABLE) ? 8 : -1);
+    }
+    else
+    {
+      myFace->setVisible(true);
+      QList<int> faces;
+      faces.append(obj->face->number);
+      myFace->setAnimation(faces);
+      myFace->step();
+    }
 
     object_free2(obj, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
 }

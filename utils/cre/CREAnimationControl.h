@@ -17,7 +17,13 @@ class CREAnimationControl : public QWidget
 
     public:
         CREAnimationControl(QWidget* parent);
-        void setAnimation(const Animations* animation);
+
+        /**
+         * Define the animation to display.
+         * @param animation what to display, must not be NULL.
+         * @param facings if -1 then uses the facings of the animation, else number of facings to display.
+         */
+        void setAnimation(const Animations* animation, int facings = -1);
 
     protected:
         const Animations* myAnimation;
@@ -25,7 +31,7 @@ class CREAnimationControl : public QWidget
         int myLastStep;
         int myFacings;
 
-        void display(const Animations* animation);
+        void display(const Animations* animation, int facings = -1);
         QList<CREAnimationWidget*> myWidgets;
 
     private slots:

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QtGui>
 #include "CREPanel.h"
+#include "CREAnimationControl.h"
 
 extern "C" {
 #include "global.h"
@@ -27,6 +28,8 @@ class CREArtifactPanel : public CREPanel
         QTreeWidget* myArchetypes;
         QTextEdit* myValues;
         QTextEdit* myInstance;
+        CREAnimationControl* myAnimation;
+        CREAnimationWidget* myFace;
 
         void computeMadeViaAlchemy(const artifact* artifact) const;
 

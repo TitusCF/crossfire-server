@@ -27,15 +27,15 @@ CREAnimationControl::CREAnimationControl(QWidget* parent) : QWidget(parent)
     timer->start(250);
 }
 
-void CREAnimationControl::setAnimation(const Animations* animation)
+void CREAnimationControl::setAnimation(const Animations* animation, int facings)
 {
     myAnimation = animation;
-    display(animation);
+    display(animation, facings);
 }
 
-void CREAnimationControl::display(const Animations* animation)
+void CREAnimationControl::display(const Animations* animation, int facings)
 {
-    myFacings = animation->facings;
+    myFacings = facings == -1 ? animation->facings : facings;
 
     int widget, widgetStep, faceCount, face, faceCurrent;
 
@@ -65,7 +65,7 @@ void CREAnimationControl::display(const Animations* animation)
         faceCount = animation->num_animations / 8;
     }
 
-    face = 0;
+    face = facings == -1 ? 0 : 1;;
     while (widget < 8)
     {
         myWidgets[widget]->setVisible(true);
