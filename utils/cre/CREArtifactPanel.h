@@ -26,13 +26,12 @@ class CREArtifactPanel : public CREPanel
         QLabel* myViaAlchemy;
         QTreeWidget* myArchetypes;
         QTextEdit* myValues;
-        QComboBox* myDisplay;
         QTextEdit* myInstance;
 
         void computeMadeViaAlchemy(const artifact* artifact) const;
 
     protected slots:
-        void displayArchetypeChanged(int index);
+        void artifactChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
 };
 
 #endif // CREARTIFACTPANEL_H

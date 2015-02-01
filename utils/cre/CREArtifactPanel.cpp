@@ -36,22 +36,20 @@ CREArtifactPanel::CREArtifactPanel()
     myViaAlchemy->setWordWrap(true);
     layout->addWidget(myViaAlchemy, 4, 1, 1, 2);
 
+    layout->addWidget(new QLabel(tr("Values:"), this), 5, 1, 1, 2);
+    myValues = new QTextEdit(this);
+    layout->addWidget(myValues, 6, 1, 1, 2);
+
     myArchetypes = new QTreeWidget(this);
-    layout->addWidget(myArchetypes, 5, 1, 1, 2);
+    layout->addWidget(myArchetypes, 7, 1, 2, 1);
     myArchetypes->setHeaderLabel("Allowed/forbidden archetypes");
     myArchetypes->setIconSize(QSize(32, 32));
     myArchetypes->setRootIsDecorated(false);
+    connect(myArchetypes, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(artifactChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 
-    layout->addWidget(new QLabel(tr("Values:"), this), 6, 1, 1, 2);
-    myValues = new QTextEdit(this);
-    layout->addWidget(myValues, 7, 1, 1, 2);
-
-    layout->addWidget(new QLabel(tr("Display result item for:"), this), 8, 1);
-    myDisplay = new QComboBox(this);
-    layout->addWidget(myDisplay, 8, 2);
+    layout->addWidget(new QLabel(tr("Result:"), this), 7, 2);
     myInstance = new QTextEdit(this);
-    layout->addWidget(myInstance, 9, 1, 1, 2);
-    connect(myDisplay, SIGNAL(currentIndexChanged(int)), this, SLOT(displayArchetypeChanged(int)));
+    layout->addWidget(myInstance, 8, 2);
 }
 
 void CREArtifactPanel::computeMadeViaAlchemy(const artifact* artifact) const
@@ -104,6 +102,39 @@ void CREArtifactPanel::computeMadeViaAlchemy(const artifact* artifact) const
     }
 }
 
+/**
+ * Add all possible archetypes for the specified artifact.
+ * @param artifact artifact. Only the type is used.
+ * @param name archetype or object name to allow. If NULL, all items of the correct type are added.
+ * @param check if true then the archetype or object's name must match, else it must not match.
+ * @param root tree to insert items into.
+ */
+static void addArchetypes(const artifact* artifact, const char* name, bool check, QTreeWidget* root)
+{
+    const archt* arch;
+    QTreeWidgetItem* item = NULL;
+    item = NULL;
+    for (arch = first_archetype; arch != NULL; arch = arch->next)
+    {
+        if (arch->clone.type != artifact->item->type)
+        {
+          continue;
+        }
+
+        if (name == NULL || (check && (!strcmp(name, arch->clone.name) || (!strcmp(name, arch->name)))) || (!check && strcmp(name, arch->clone.name) && strcmp(name, arch->name)))
+        {
+            if (item == NULL)
+            {
+                item = new QTreeWidgetItem(root, QStringList(name == NULL ? "(all)" : name));
+                item->setCheckState(0, check ? Qt::Checked : Qt::Unchecked);
+                root->addTopLevelItem(item);
+                item->setExpanded(true);
+            }
+            CREUtils::archetypeNode(arch, item)->setData(0, Qt::UserRole, arch->name);
+        }
+    }
+}
+
 void CREArtifactPanel::setArtifact(const artifact* artifact)
 {
     Q_ASSERT(artifact);
@@ -115,13 +146,13 @@ void CREArtifactPanel::setArtifact(const artifact* artifact)
 
     computeMadeViaAlchemy(artifact);
 
-    const archt* arch;
     const char* name;
-    QTreeWidgetItem* item;
     bool check;
 
     myArchetypes->clear();
+    myInstance->clear();
 
+    /* 'allowed' is either the archetype name or the item's name, so check all archetypes for each word */
     for (const linked_char* allowed = artifact->allowed; allowed; allowed = allowed->next)
     {
         name = allowed->name;
@@ -133,16 +164,13 @@ void CREArtifactPanel::setArtifact(const artifact* artifact)
         else
             check = true;
 
-        arch = try_find_archetype(name);
-        if (!arch)
-            arch = find_archetype_by_object_name(name);
+        addArchetypes(myArtifact, name, check, myArchetypes);
+    }
 
-        if (arch)
-        {
-            item = CREUtils::archetypeNode(arch, NULL);
-            item->setCheckState(0, check ? Qt::Checked : Qt::Unchecked);
-            myArchetypes->addTopLevelItem(item);
-        }
+    /* all items are allowed, so add them */
+    if (artifact->allowed == NULL)
+    {
+        addArchetypes(myArtifact, NULL, true, myArchetypes);
     }
 
     StringBuffer* dump = stringbuffer_new();
@@ -150,33 +178,21 @@ void CREArtifactPanel::setArtifact(const artifact* artifact)
     char* final = stringbuffer_finish(dump);
     myValues->setText(final);
     free(final);
-
-    myDisplay->clear();
-    for (arch = first_archetype; arch != NULL; arch = arch->next)
-    {
-        if (arch->clone.type == artifact->item->type && legal_artifact_combination(&arch->clone, artifact))
-        {
-            myDisplay->addItem(tr("%1 [%2]").arg(arch->clone.name, arch->name));
-            myDisplay->setItemData(myDisplay->count() - 1, arch->name, Qt::UserRole);
-        }
-    }
-    if (myDisplay->count() > 0)
-        displayArchetypeChanged(0);
-    else
-        myInstance->clear();
 }
 
-void CREArtifactPanel::displayArchetypeChanged(int index)
+void CREArtifactPanel::artifactChanged(QTreeWidgetItem* current, QTreeWidgetItem*)
 {
-    if (index < 0 || index >= myDisplay->count())
+    if (!current || current->data(0, Qt::UserRole).toString().isEmpty())
+    {
+        myInstance->clear();
         return;
-
-    QByteArray name = myDisplay->itemData(index, Qt::UserRole).toString().toLatin1();
-    if (name.isEmpty())
+    }
+    archt* arch = try_find_archetype(current->data(0, Qt::UserRole).toString().toUtf8().constData());
+    if (!arch)
+    {
+        myInstance->clear();
         return;
-    archetype* arch = find_archetype(name);
-    if (arch == NULL)
-        return;
+    }
 
     char* desc;
     object* obj = arch_to_object(arch);
