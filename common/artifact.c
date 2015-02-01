@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "loader.h"
 
@@ -250,6 +251,33 @@ int legal_artifact_combination(const object *op, const artifact *art) {
 }
 
 /**
+ * Compute the name of a face with a suffix, taking into account names like '.123' or '.1xx'.
+ * @param buf where to put the resulting name.
+ * @param size length of buf.
+ * @param name base face name.
+ * @param suffix suffix to add to the face name.
+ */
+static void compute_face_name(char* buf, size_t size, const char* name, const char* suffix)
+{
+    const char* dot = name + strlen(name) - 1;
+    while (dot > name && (isdigit(*dot) || (*dot == 'x')))
+    {
+      dot--;
+    }
+
+    if (*dot == '.')
+    {
+        buf[0] = '0';
+        snprintf(buf, dot - name + 1, "%s", name);
+        snprintf(buf + strlen(buf), size - strlen(buf), "_%s%s", suffix, dot);
+    }
+    else
+    {
+        snprintf(buf, sizeof(buf), "%s_%s", name, suffix);
+    }
+}
+
+/**
  * Used in artifact generation.  The bonuses of the first object
  * is modified by the bonuses of the second object.
  */
@@ -264,6 +292,11 @@ void add_abilities(object *op, const object *change) {
 #endif
 
         object_set_value(op, "identified_face", change->face->name, 1);
+    } else if ((key = object_get_value(change, "face_suffix")) != NULL) {
+        New_Face* face;
+        compute_face_name(buf, sizeof(buf), op->face->name, key);
+        face = &new_faces[find_face(buf, op->face->number)];
+        object_set_value(op, "identified_face", face->name, 1);
     }
     if (QUERY_FLAG(change, FLAG_CLIENT_ANIM_RANDOM)) {
         object_set_value(op, "identified_anim_random", "1", 1);

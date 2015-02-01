@@ -54,11 +54,20 @@
 #	item_power replaces the item's value.
 #
 # 'face' if defined replaces the item's face.
+# If 'face_suffix' is defined, the artifact will have the face named
+# '<base item's face>_<face suffix>' if it exists, else no change is done.
+# The suffix is applied taking account the .111 or .1xx suffix for most faces.
+# So 'bag.111' with a 'holding' suffix will give 'bag_holding.111'.
+# In doubt, check compute_face_name() in artifact.c for details.
+# If 'face' is set, 'face_suffix' is ignored.
 #
 # 'animation' if defined replaces the item's animation.
 # If 'animation_suffix' is defined, the artifact will have the
 # '<base item's animation>_<animation suffix>' animation if it exists, else no
 # change is done.
+# If 'animation' is set, 'animation_suffix' is ignored.
+# If an animation with or without suffix is defined and valid for the item,
+# it takes precedences over the face with or without suffix.
 #
 #	items in inventory (through an "arch xxx", like in maps)
 #	will be copied into the item's inventory.
