@@ -727,7 +727,6 @@ void drain_specific_stat(object *op, int deplete_stats) {
 
     at = find_archetype(ARCH_DEPLETION);
     if (!at) {
-        LOG(llevError, "Couldn't find archetype depletion.\n");
         return;
     } else {
         tmp = arch_present_in_ob(at, op);
@@ -755,7 +754,6 @@ int remove_depletion(object *op, int level) {
     int i, count = 0;
 
     if ((at = find_archetype(ARCH_DEPLETION)) == NULL) {
-        LOG(llevError, "Could not find archetype depletion\n");
         return 0;
     }
 
@@ -797,7 +795,7 @@ void change_luck(object *op, int value) {
 
     at = find_archetype("luck");
     if (!at)
-        LOG(llevError, "Couldn't find archetype luck.\n");
+        ;
     else {
         tmp = arch_present_in_ob(at, op);
         if (!tmp) {

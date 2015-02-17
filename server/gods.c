@@ -1125,7 +1125,6 @@ static void god_intervention(object *op, const object *god, object *skill, objec
             int i;
 
             if ((at = find_archetype(ARCH_DEPLETION)) == NULL) {
-                LOG(llevError, "Could not find archetype depletion.\n");
                 continue;
             }
             depl = arch_present_in_ob(at, op);
