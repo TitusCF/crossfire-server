@@ -103,8 +103,6 @@ static void cfapi_object_on_same_map(int *type, ...);
 static void cfapi_object_spring_trap(int *type, ...);
 static void cfapi_object_check_trigger(int *type, ...);
 static void cfapi_map_trigger_connected(int *type, ...);
-static void cfapi_object_query_cost(int *type, ...);
-static void cfapi_object_query_cost_string(int *type, ...);
 static void cfapi_object_query_money(int *type, ...);
 static void cfapi_object_cast(int *type, ...);
 static void cfapi_object_learn_spell(int *type, ...);
@@ -174,7 +172,6 @@ static const hook_entry plug_hooks[] = {
     { cfapi_object_reset,            33, "cfapi_object_reset" },
     { cfapi_object_spring_trap,      35, "cfapi_object_spring_trap" },
     { cfapi_object_check_trigger,    36, "cfapi_object_check_trigger" },
-    { cfapi_object_query_cost,       37, "cfapi_object_query_cost" },
     { cfapi_object_query_money,      38, "cfapi_object_query_money" },
     { cfapi_object_cast,             39, "cfapi_object_cast" },
     { cfapi_object_learn_spell,      40, "cfapi_object_learn_spell" },
@@ -225,7 +222,6 @@ static const hook_entry plug_hooks[] = {
     { cfapi_map_trigger_connected,   86, "cfapi_map_trigger_connected" },
     { cfapi_object_user_event,       87, "cfapi_object_user_event" },
     { cfapi_system_find_string,      88, "cfapi_system_find_string" },
-    { cfapi_object_query_cost_string,89, "cfapi_object_query_cost_string" },
     { cfapi_cost_string_from_value,  90, "cfapi_cost_string_from_value" },
     { cfapi_player_quest,            91, "cfapi_player_quest" },
     { cfapi_object_remove_depletion, 92, "cfapi_object_remove_depletion" },
@@ -3810,65 +3806,6 @@ static void cfapi_map_trigger_connected(int *type, ...) {
     state = va_arg(args, int);
     va_end(args);
     trigger_connected(ol, cause, state);
-    *type = CFAPI_NONE;
-}
-
-/**
- * Wrapper for query_cost().
- * @param type
- * Will be CFAPI_INT.
- */
-static void cfapi_object_query_cost(int *type, ...) {
-    object *op;
-    object *who;
-    int flags;
-    va_list args;
-    int *rint;
-
-    va_start(args, type);
-    op = va_arg(args, object *);
-    who = va_arg(args, object *);
-    flags = va_arg(args, int);
-    rint = va_arg(args, int *);
-    va_end(args);
-
-    *rint = query_cost(op, who, flags);
-    *type = CFAPI_INT;
-}
-
-/**
- * Wrapper for query_cost_string(), slightly modified to take a char* and int instead of a StringBuffer.
- * @param type
- * Will be CFAPI_NONE.
- */
-static void cfapi_object_query_cost_string(int *type, ...) {
-    object *op;
-    object *who;
-    int flags, length;
-    char *buffer, *final;
-    va_list args;
-    StringBuffer *sb;
-
-    va_start(args, type);
-    op = va_arg(args, object *);
-    who = va_arg(args, object *);
-    flags = va_arg(args, int);
-    buffer = va_arg(args, char*);
-    length = va_arg(args, int);
-    va_end(args);
-
-    if (length < 1)
-    {
-        *type = CFAPI_NONE;
-        return;
-    }
-    sb = query_cost_string(op, who, flags, NULL);
-    final = stringbuffer_finish(sb);
-
-    strncpy(buffer, final, strlen(final) - 1);
-    buffer[strlen(final)] = '\0';
-    free(final);
-
     *type = CFAPI_NONE;
 }
 

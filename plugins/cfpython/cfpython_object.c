@@ -2279,17 +2279,6 @@ static PyObject *Crossfire_Object_SetResist(Crossfire_Object *who, PyObject *arg
     return Py_None;
 }
 
-static PyObject *Crossfire_Object_QueryCost(Crossfire_Object *who, PyObject *args) {
-    int flags;
-    Crossfire_Object *pcause;
-
-    if (!PyArg_ParseTuple(args, "O!i", &Crossfire_ObjectType, &pcause, &flags))
-        return NULL;
-    EXISTCHECK(who);
-    EXISTCHECK(pcause);
-    return Py_BuildValue("i", cf_object_query_cost(who->obj, pcause->obj, flags));
-}
-
 static PyObject *Crossfire_Object_Cast(Crossfire_Object *who, PyObject *args) {
     int dir;
     char *op;
@@ -2783,7 +2772,6 @@ static PyMethodDef ObjectMethods[] = {
     { "SetResist",      (PyCFunction)Crossfire_Object_SetResist,    METH_VARARGS, NULL },
     { "ActivateRune",   (PyCFunction)Crossfire_Object_ActivateRune, METH_O,       NULL },
     { "CheckTrigger",   (PyCFunction)Crossfire_Object_CheckTrigger, METH_O,       NULL },
-    { "QueryCost",      (PyCFunction)Crossfire_Object_QueryCost,    METH_VARARGS, NULL },
     { "Cast",           (PyCFunction)Crossfire_Object_Cast,         METH_VARARGS, NULL },
     { "LearnSpell",     (PyCFunction)Crossfire_Object_LearnSpell,   METH_O,       NULL },
     { "ForgetSpell",    (PyCFunction)Crossfire_Object_ForgetSpell,  METH_O,       NULL },

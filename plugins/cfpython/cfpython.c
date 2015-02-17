@@ -1149,16 +1149,6 @@ static void initConstants(PyObject *module) {
         { NULL, 0 }
     };
 
-    static const CFConstant cstCostFlag[] = {
-        { "TRUE", BS_TRUE },
-        { "BUY", BS_BUY },
-        { "SELL", BS_SELL },
-        { "NOBARGAIN", BS_NO_BARGAIN },
-        { "IDENTIFIED", BS_IDENTIFIED },
-        { "NOTCURSED", BS_NOT_CURSED },
-        { NULL, 0 }
-    };
-
     static const CFConstant cstAttackType[] = {
         { "PHYSICAL", AT_PHYSICAL },
         { "MAGIC", AT_MAGIC },
@@ -1297,7 +1287,6 @@ static void initConstants(PyObject *module) {
     addConstants(module, "Type", cstType);
     addConstants(module, "Move", cstMove);
     addConstants(module, "MessageFlag", cstMessageFlag);
-    addConstants(module, "CostFlag", cstCostFlag);
     addConstants(module, "AttackType", cstAttackType);
     addConstants(module, "AttackTypeNumber", cstAttackTypeNumber);
     addConstants(module, "EventType", cstEventType);
