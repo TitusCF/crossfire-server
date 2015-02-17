@@ -67,9 +67,6 @@ extern const char *const spell_mapping[];
  * Initialize global archtype pointers:
  */
 void init_archetype_pointers(void) {
-    int prev_warn = warn_archetypes;
-
-    warn_archetypes = 1;
     if (ring_arch == NULL)
         ring_arch = find_archetype("ring");
     if (amulet_arch == NULL)
@@ -78,7 +75,6 @@ void init_archetype_pointers(void) {
         staff_arch = find_archetype("staff");
     if (crown_arch == NULL)
         crown_arch = find_archetype("crown");
-    warn_archetypes = prev_warn;
 }
 
 /**
