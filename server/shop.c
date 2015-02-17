@@ -419,32 +419,26 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
 }
 
 /**
- * Finds the price of an item.
- *
- * Price will be either an approximate value or the real value.
- * @param tmp
- * object to get the price of.
- * @param who
- * who is getting the price.
- * @param flag
- * combination of @ref BS_xxx "BS_xxx" values.
- * @param buf
- * buffer to append to. If NULL, a newly allocated one will be used and returned.
- * @return
- * buffer containing the price, new if buf was NULL.
+ * Return the textual representation of a cost in a newly-allocated string.
  */
-StringBuffer *query_cost_string(const object *tmp, object *who, int flag, StringBuffer *buf) {
-    uint64_t real_value = query_cost(tmp, who, flag);
+char *cost_str(uint64_t cost) {
+    return stringbuffer_finish(cost_string_from_value(cost, LARGEST_COIN_GIVEN, NULL));
+}
+
+/**
+ * Return a textual cost approximation in a newly-allocated string.
+ */
+char *cost_approx_str(const object *tmp, object *who) {
+    uint64_t approx_val = price_approx(tmp, who);
     int idskill1 = 0;
     int idskill2 = 0;
     const typedata *tmptype;
 
-    if (!buf)
-        buf = stringbuffer_new();
+    StringBuffer *buf = stringbuffer_new();
 
     /* money it's pretty hard to not give the exact price, so skip all logic and just return the real value. */
     if (tmp->type == MONEY) {
-        return real_money_value(tmp, buf);
+        return stringbuffer_finish(real_money_value(tmp, buf));
     }
 
     tmptype = get_typedata(tmp->type);
@@ -458,40 +452,41 @@ StringBuffer *query_cost_string(const object *tmp, object *who, int flag, String
      * 2) there either is no id skill(s) for the item, or we don't have them
      * 3) we don't have bargaining skill either
      */
-    if (flag&BS_APPROX) {
-        if (!idskill1 || !find_skill_by_number(who, idskill1)) {
-            if (!idskill2 || !find_skill_by_number(who, idskill2)) {
-                if (!find_skill_by_number(who, SK_BARGAINING)) {
-                    int num;
-                    int cointype = LARGEST_COIN_GIVEN;
-                    archetype *coin = find_next_coin(real_value, &cointype);
+    if (!idskill1 || !find_skill_by_number(who, idskill1)) {
+        if (!idskill2 || !find_skill_by_number(who, idskill2)) {
+            if (!find_skill_by_number(who, SK_BARGAINING)) {
+                int num;
+                int cointype = LARGEST_COIN_GIVEN;
+                archetype *coin = find_next_coin(approx_val, &cointype);
 
-                    if (coin == NULL) {
-                        stringbuffer_append_string(buf, "nothing");
-                        return buf;
-                    }
-
-                    num = real_value/coin->clone.value;
-                    if (num == 1)
-                        stringbuffer_append_printf(buf, "about one %s", coin->clone.name);
-                    else if (num < 5)
-                        stringbuffer_append_printf(buf, "a few %s", coin->clone.name_pl);
-                    else if (num < 10)
-                        stringbuffer_append_printf(buf, "several %s", coin->clone.name_pl);
-                    else if (num < 25)
-                        stringbuffer_append_printf(buf, "a moderate amount of %s", coin->clone.name_pl);
-                    else if (num < 100)
-                        stringbuffer_append_printf(buf, "lots of %s", coin->clone.name_pl);
-                    else if (num < 1000)
-                        stringbuffer_append_printf(buf, "a great many %s", coin->clone.name_pl);
-                    else
-                        stringbuffer_append_printf(buf, "a vast quantity of %s", coin->clone.name_pl);
-                    return buf;
+                if (coin == NULL) {
+                    stringbuffer_append_string(buf, "nothing");
+                    return stringbuffer_finish(buf);
                 }
+
+                num = approx_val/coin->clone.value;
+                if (num == 1)
+                    stringbuffer_append_printf(buf, "about one %s", coin->clone.name);
+                else if (num < 5)
+                    stringbuffer_append_printf(buf, "a few %s", coin->clone.name_pl);
+                else if (num < 10)
+                    stringbuffer_append_printf(buf, "several %s", coin->clone.name_pl);
+                else if (num < 25)
+                    stringbuffer_append_printf(buf, "a moderate amount of %s", coin->clone.name_pl);
+                else if (num < 100)
+                    stringbuffer_append_printf(buf, "lots of %s", coin->clone.name_pl);
+                else if (num < 1000)
+                    stringbuffer_append_printf(buf, "a great many %s", coin->clone.name_pl);
+                else
+                    stringbuffer_append_printf(buf, "a vast quantity of %s", coin->clone.name_pl);
+                return stringbuffer_finish(buf);
             }
         }
     }
-    return cost_string_from_value(real_value, LARGEST_COIN_GIVEN, buf);
+
+    // If we get here, return the price we guessed.
+    stringbuffer_delete(buf);
+    return cost_str(approx_val);
 }
 
 /**
@@ -877,7 +872,7 @@ int can_pay(object *pl) {
     if (unpaid_price > player_wealth) {
         char buf[MAX_BUF], coinbuf[MAX_BUF];
         int denominations = 0;
-        char *value = stringbuffer_finish(cost_string_from_value(unpaid_price, LARGEST_COIN_GIVEN, NULL));
+        char *value = cost_str(unpaid_price);
 
         snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ", unpaid_count, value);
         free(value);
@@ -929,9 +924,10 @@ int get_payment(object *pl, object *op) {
         return 0;
 
     if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID)) {
+        uint64_t price = shop_price_buy(op, pl);
         if (!pay_for_item(op, pl)) {
-            uint64_t i = shop_price_buy(op, pl) - query_money(pl);
-            char *missing = stringbuffer_finish(cost_string_from_value(i, LARGEST_COIN_GIVEN, NULL));
+            uint64_t i = price - query_money(pl);
+            char *missing = cost_str(i);
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             query_name(op, name_op, MAX_BUF);
@@ -944,7 +940,7 @@ int get_payment(object *pl, object *op) {
             return 0;
         } else {
             object *tmp;
-            char *value = stringbuffer_finish(query_cost_string(op, pl, BS_BUY|BS_SHOP, NULL));
+            char *value = cost_str(price);
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
@@ -1073,7 +1069,7 @@ void sell_item(object *op, object *pl) {
 #endif
 
     query_name(op, name_op, MAX_BUF);
-    value = stringbuffer_finish(query_cost_string(op, pl, BS_SELL|BS_SHOP, NULL));
+    value = cost_str(i);
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
                          "You receive %s for %s.",
@@ -1267,7 +1263,7 @@ int describe_shop(const object *op) {
                       MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, tmp);
 
         if (map->shopmax) {
-            value = stringbuffer_finish(cost_string_from_value(map->shopmax, LARGEST_COIN_GIVEN, NULL));
+            value = cost_str(map->shopmax);
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade for items above %s.",
@@ -1276,7 +1272,7 @@ int describe_shop(const object *op) {
         }
 
         if (map->shopmin) {
-            value = stringbuffer_finish(cost_string_from_value(map->shopmin, LARGEST_COIN_GIVEN, NULL));
+            value = cost_str(map->shopmin);
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade in items worth less than %s.",
