@@ -676,23 +676,6 @@ typedef unsigned char MoveType;
  */
 #define MAX_WEAPON_ITEM_POWER   100
 
-/**
- * @defgroup BS_xxx Buy/sell flags.
- * Those flags are mostly used for query_cost() and similar functions.
- */
-/*@{*/
-enum bs_flag {
-    BS_BUY        = 128, /**< Item is being bought by player. */
-    BS_SELL       = 1,   /**< Item is being sold by player. */
-    BS_TRUE       = 2,   /**< True value of item, unadjusted. */
-    BS_NO_BARGAIN = 4,   /**< Combine with ::BS_BUY or ::BS_SELL to disable bargaining calc. */
-    BS_IDENTIFIED = 8,   /**< Flag to calculate value of identified item. */
-    BS_NOT_CURSED = 16,  /**< Flag to calculate value of uncursed item. */
-    BS_APPROX     = 32,  /**< Flag to give a guess of item value. */
-    BS_SHOP       = 64,  /**< Consider the effect that the shop that the player is in has. */
-};
-/*@}*/
-
 #define DIRX(xyz)       freearr_x[(xyz)->direction]
 #define DIRY(xyz)       freearr_y[(xyz)->direction]
 

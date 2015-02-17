@@ -69,26 +69,18 @@ static const char *const coins[] = {
 
 /**
  * Determine the base (intrinsic) value of an item. This should not include
- * adjustments such as bargaining, charisma, or shop specialization. Base
- * prices for unidentified items are determined here.
+ * adjustments such as bargaining, charisma, or shop specialization.
  * @param tmp
- * @param flag
  * @return
  */
-static uint64_t price_base(const object *tmp, const int flag) {
-    const char *key;    // Temporary place to hold key values
-
+uint64_t price_base(const object *tmp) {
     // When there are zero objects, there is really one.
     int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
     uint64_t val = (uint64_t)tmp->value * number;
 
-    const bool is_ident = (flag & BS_IDENTIFIED)
-            || QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
-    const bool is_cursed = !(flag & BS_NOT_CURSED)
-            && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED));
-
     // Objects with price adjustments skip the rest of the calculations.
-    if ((key = object_get_value(tmp, "price_adjustment")) != NULL) {
+    const char *key = object_get_value(tmp, "price_adjustment");
+    if (key != NULL) {
         float ratio = atof(key);
         return val * ratio;
     }
@@ -97,60 +89,33 @@ static uint64_t price_base(const object *tmp, const int flag) {
         return val;
     }
 
-    if (is_cursed) {
-        // FIXME: Cursed items are NOT worthless!
-        return 0;
+    if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+        val *= 0.8;
     }
 
-    // Unidentified items are inherently less valuable.
-    if (!is_ident) {
-        // Unidentified standard objects are only worth a little less.
-        if (tmp->arch != NULL) {
-            if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) {
-                val = (uint64_t)number * tmp->arch->clone.value * 0.85;
-            } else {
-                val = (uint64_t)number * tmp->arch->clone.value * 0.70;
-            }
-        } else { /* No archetype with this object */
-            if (flag & BS_BUY) {
-                val *= 4;
-            } else {
-                val /= 4;
-            }
-        }
-    }
-
-    /* If the item has been applied or identifed or does not need to be
-     * identified, AND the object is magical and the archetype is non
-     * magical, then change values accordingly.  The tmp->arch==NULL is
-     * really just a check to prevent core dumps for when it checks
-     * tmp->arch->clone.magic for any magic.  The check for archetype
-     * magic is to not give extra money for archetypes that are by
-     * default magical.  This is because the archetype value should have
-     * already figured in that value.
-     */
-    if ((is_ident || QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
-    && tmp->magic && (tmp->arch == NULL || !tmp->arch->clone.magic)) {
+    // If a normally non-magic item is magical, adjust its value accordingly.
+    if (tmp->magic && (tmp->arch == NULL || !tmp->arch->clone.magic)) {
         if (tmp->magic > 0) {
-            val *= (3*tmp->magic*tmp->magic*tmp->magic);
+            val *= 3 * pow(tmp->magic, 3);
         } else {
             /* Note that tmp->magic is negative, so that this
              * will actually be something like val /=2, /=3, etc.
              */
-            val /= (1-tmp->magic);
+            val /= 1 - tmp->magic;
         }
     }
 
+    // FIXME: Is the 'baseline' 50 charges per wand?
     if (tmp->type == WAND) {
-        /* Value of the wand is multiplied by the number of
-         * charges.  the treasure code already sets up the value
-         * 50 charges is used as the baseline.
-         */
-        if (is_ident)
-            val = (val*tmp->stats.food)/50;
-        else /* if not identified, presume one charge */
-            val /= 50;
+        val *= tmp->stats.food / 50.0;
     }
+
+    /* we need to multiply these by 4.0 to keep buy costs roughly the same
+     * (otherwise, you could buy a potion of charisma for around 400 pp.
+     * Arguable, the costs in the archetypes should be updated to better
+     * reflect values (potion charisma list for 1250 gold)
+     */
+    val *= 4;
 
     return val;
 }
@@ -163,7 +128,9 @@ static uint64_t price_base(const object *tmp, const int flag) {
  * @param who Player trying to judge the value of the item
  * @return Approximate value of an item
  */
-static uint64_t price_approximate(uint64_t val, const object *tmp, object *who) {
+uint64_t price_approx(const object *tmp, object *who) {
+    uint64_t val = price_base(tmp);
+
     /* If we are approximating, then the value returned should
      * be allowed to be wrong however merely using a random number
      * each time will not be sufficient, as then multiple examinations
@@ -226,196 +193,99 @@ static float shop_bargain_multiplier(int lev_bargain) {
 /**
  * Adjust the value of an item based on the player's bargaining skill and
  * charisma. This should only be used if the player is in a shop.
- * @param val Base item value
- * @param who Player buying/selling item
- * @param flag Additional flags to use while determining value
- * @return Adjusted value of item
  */
-static uint64_t shop_price_adjust(uint64_t val, object *who, const int flag) {
-    const bool no_bargain = flag & BS_NO_BARGAIN;
-    int lev_bargain;
-    float multiplier;
+uint64_t shop_price_buy(const object *tmp, object *who) {
+    assert(who != NULL && who->type == PLAYER);
+    uint64_t val = price_base(tmp);
 
-    if (find_skill_by_number(who, SK_BARGAINING)) {
-        lev_bargain = find_skill_by_number(who, SK_BARGAINING)->level;
-    }
-
-    if (!no_bargain && (lev_bargain > 0)) {
-        multiplier = shop_bargain_multiplier(lev_bargain);
-    } else {
-        multiplier = 1;
-    }
-
-    if (flag & BS_BUY) {
-        // Limit buy price multiplier to 0.5, no matter what.
-        multiplier *= shop_buy_multiplier(who->stats.Cha);
-        val *= multiplier > 0.5 ? multiplier : 0.5;
-    } else if (flag & BS_SELL) {
-        val /= 2;
-    }
-
-    return val;
-}
-
-/**
- * Return the price of an item for a character.
- *
- * Price will vary based on the shop's specialization ration, the player's
- * approval rate, ...
- *
- * Added BS_TRUE flag to define.h to mean that the price should not
- * be adjusted by players charisma. With BS_TRUE, it returns the amount
- * that the item is worth, if it was sold, but unadjusted by charisma.
- * This is needed for alchemy, to to determine what value of gold nuggets
- * should be given (the gold nuggets, when sold, will have the adjustment
- * by charisma done at that time).  NULL could have been passed as the
- * who parameter, but then the adjustment for expensive items (>10000)
- * would not be done.
- *
- * Added BS_APPROX flag, which means that the price returned should be
- * wrong by an amount related to the player's bargaining skill.
- *
- * Added BS_SHOP flag to mean that the specialisation of the shop on the
- * player's current map should be taken into account when determining
- * the price. Shops that specialise in what is being traded will give
- * better prices than those that do not.
- *
- * CF 0.91.4 - This function got changed around a bit.  Now the
- * number of object is multiplied by the value early on.  This fixes
- * problems with items worth very little.  What happened before is that
- * various divisions took place, the value got rounded to 0 (Being an
- * int), and thus remained 0.
- *
- * Mark Wedel (mwedel@pyramid.com)
- *
- * @param tmp
- * object we're querying the price of.
- * @param who
- * who is inquiring. Can be NULL, only meaningful if player.
- * @param flag
- * combination of @ref BS_xxx "BS_xxx" flags.
- * @return
- * item value, in silver coins.
- */
-uint64_t query_cost(const object *tmp, object *who, const int flag) {
-    const char *key;    // Temporary place to hold key values
-
-    bool shop = flag & BS_SHOP;
-    uint64_t val = price_base(tmp, flag);
-    int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
-
-    if ((flag & BS_BUY) && ((key = object_get_value(tmp, "price_adjustment_buy")) != NULL)) {
-        float ratio = atof(key);
-        return val * ratio;
-    }
-    if ((flag & BS_SELL) && ((key = object_get_value(tmp, "price_adjustment_sell")) != NULL)) {
+    const char *key = object_get_value(tmp, "price_adjustment_buy");
+    if (key != NULL) {
         float ratio = atof(key);
         return val * ratio;
     }
 
     if (tmp->type == GEM) {
-        if (flag & BS_TRUE) {
-            return val;
-        } else if (flag & BS_BUY) {
-            return 1.03 * val;
-        } else if (flag & BS_SELL) {
-            return 0.97 * val;
+        return 1.03 * val;
+    }
+
+    int bargain_level = 0;
+    if (find_skill_by_number(who, SK_BARGAINING)) {
+        bargain_level = find_skill_by_number(who, SK_BARGAINING)->level;
+    }
+
+    float multiplier = shop_bargain_multiplier(bargain_level);
+    multiplier *= shop_buy_multiplier(who->stats.Cha);
+
+    // Limit buy price multiplier to 0.5, no matter what.
+    val *= multiplier > 0.5 ? multiplier : 0.5;
+
+    /*
+        * When buying, if the item was sold by another player, it is
+        * ok to let the item be sold cheaper, according to the
+        * specialisation of the shop. If a player sold an item here,
+        * then his sale price was multiplied by the specialisation
+        * ratio, to do the same to the buy price will not generate
+        * extra money. However, the same is not true of generated
+        * items, these have to /divide/ by the specialisation, so
+        * that the price is never less than what they could
+        * be sold for (otherwise players could camp map resets to
+        * make money).
+        * In game terms, a non-specialist shop might not recognise
+        * the true value of the items it sells (much like how people
+        * sometimes find antiques in a junk shop in real life).
+        */
+    if (QUERY_FLAG(tmp, FLAG_PLAYER_SOLD)) {
+        val = (int64_t)val*shop_greed(who->map)
+            *shop_specialisation_ratio(tmp, who->map)
+            /shopkeeper_approval(who->map, who);
+    } else {
+        val = (int64_t)val*shop_greed(who->map)
+            /(shop_specialisation_ratio(tmp, who->map)
+                *shopkeeper_approval(who->map, who));
+    }
+
+    return val;
+}
+
+uint64_t shop_price_sell(const object *tmp, object *who) {
+    assert(who != NULL && who->type == PLAYER);
+    uint64_t val = price_base(tmp);
+    bool identified = QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
+
+    const char *key = object_get_value(tmp, "price_adjustment_sell");
+    if (key != NULL) {
+        float ratio = atof(key);
+        return val * ratio;
+    }
+
+    if (tmp->type == GEM) {
+        return 0.97 * val;
+    }
+
+    // Shops value unidentified items less.
+    if (!identified) {
+        if (tmp->arch != NULL) {
+            // Unidentified standard objects are only worth a little less.
+            if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) {
+                val *= 0.85;
+            } else {
+                val *= 0.70;
+            }
         } else {
-            LOG(llevError, "Query_cost: Gem type with unknown flag : %d\n", flag);
-            return 0;
+            // No archetype, so probably an artifact.
+            val /= 2;
         }
     }
 
-    /* we need to multiply these by 4.0 to keep buy costs roughly the same
-     * (otherwise, you could buy a potion of charisma for around 400 pp.
-     * Arguable, the costs in the archetypes should be updated to better
-     * reflect values (potion charisma list for 1250 gold)
-     */
-    val *= 4;
-
-    // At this point we have the true, unadjusted value of an item.
-    if (flag & BS_TRUE) {
-        return val;
-    }
-
-    if (who != NULL && who->type == PLAYER) {
-        if (flag & BS_APPROX) {
-            val = price_approximate(val, tmp, who);
-            return val;
-        } else {
-            // Run shop adjustment even if not in shop -- think alchemy.
-            val = shop_price_adjust(val, who, flag);
-        }
-    }
+    // Selling to shops yields roughly 50% of the base price.
+    val /= 2;
 
     /* Limit amount of money you can get for really great items. */
-    if (flag & BS_SELL) {
-        val = value_limit(val, number, who, shop);
-    }
+    int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
+    val = value_limit(val, number, who, 1);
 
-    /* if in a shop, check how the type of shop should affect the price */
-    if (shop && who) {
-        if (flag & BS_SELL) {
-            val = (int64_t)val*shop_specialisation_ratio(tmp, who->map)
-                *shopkeeper_approval(who->map, who)/shop_greed(who->map);
-        } else if (flag & BS_BUY) {
-            /*
-             * When buying, if the item was sold by another player, it is
-             * ok to let the item be sold cheaper, according to the
-             * specialisation of the shop. If a player sold an item here,
-             * then his sale price was multiplied by the specialisation
-             * ratio, to do the same to the buy price will not generate
-             * extra money. However, the same is not true of generated
-             * items, these have to /divide/ by the specialisation, so
-             * that the price is never less than what they could
-             * be sold for (otherwise players could camp map resets to
-             * make money).
-             * In game terms, a non-specialist shop might not recognise
-             * the true value of the items it sells (much like how people
-             * sometimes find antiques in a junk shop in real life).
-             */
-            if (QUERY_FLAG(tmp, FLAG_PLAYER_SOLD)) {
-                val = (int64_t)val*shop_greed(who->map)
-                    *shop_specialisation_ratio(tmp, who->map)
-                    /shopkeeper_approval(who->map, who);
-            } else {
-                val = (int64_t)val*shop_greed(who->map)
-                    /(shop_specialisation_ratio(tmp, who->map)
-                      *shopkeeper_approval(who->map, who));
-            }
-        }
-        /* We will also have an extra +/-5% variation between shops of
-         * the same type for valuable items (below a value of 50 this
-         * effect wouldn't be very meaningful, and could give fun with
-         * rounding.
-         * Change to use map reset time as a semi random but semi
-         * constant value - different maps are going to have different times,
-         * but it means the same shop will give consistent results until
-         * it resets - one can not save/load character hoping to get
-         * better prices.  Also, simplify this - really no reason
-         * to use cos for what is just a simple variation.
-         */
-        if (val > 50) {
-            /*
-             * Fix Nicolas Weeger 2011/03/22, various things:
-             * - the " -500" was applied to the result of val*(reset_time%1000),
-             * which is definitely not what we want
-             * - issues with type conversion, so explicitely using a separate int
-             * - just to be safe, check val won't become negative at the end too
-             */
-            int variation = ((who->map->reset_time % 1000) - 500);
-            int64_t adjust = ((int64_t)val * variation) / 10000;
-            if (adjust > 0 || ((uint64_t) (-adjust) < val))
-                val += adjust;
-        }
-    }
-
-    if ((int64_t)val < 0) {
-        LOG(llevError,
-            "got negative price for %s [%s], flags %d, map->reset_time %d\n",
-            tmp->name, tmp->arch->name, flag,
-            (who && who->map) ? who->map->reset_time : -1 );
-    }
+    val = (int64_t)val*shop_specialisation_ratio(tmp, who->map)*
+            shopkeeper_approval(who->map, who)/shop_greed(who->map);
     return val;
 }
 
@@ -704,7 +574,7 @@ int pay_for_amount(uint64_t to_pay, object *pl) {
  * @todo check if pl is a player, as query_money() expects a player.
  */
 int pay_for_item(object *op, object *pl) {
-    uint64_t to_pay = query_cost(op, pl, BS_BUY|BS_SHOP);
+    uint64_t to_pay = shop_price_buy(op, pl);
     uint64_t saved_money;
 
     if (to_pay == 0)
@@ -716,7 +586,7 @@ int pay_for_item(object *op, object *pl) {
      * without bargaining skill.
      * This determins the amount of exp (if any) gained for bargaining.
      */
-    saved_money = query_cost(op, pl, BS_BUY|BS_NO_BARGAIN|BS_SHOP)-to_pay;
+    saved_money = price_base(op) - to_pay;
 
     if (saved_money > 0)
         change_exp(pl, saved_money, "bargaining", SK_EXP_NONE);
@@ -960,7 +830,7 @@ static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64_t *
     FOR_OB_AND_BELOW_PREPARE(item) {
         if (QUERY_FLAG(item, FLAG_UNPAID)) {
             (*unpaid_count)++;
-            (*unpaid_price) += query_cost(item, pl, BS_BUY|BS_SHOP);
+            (*unpaid_price) += shop_price_buy(item, pl);
         }
         /* Merely converting the player's monetary wealth won't do.
          * If we did that, we could print the wrong numbers for the
@@ -1060,7 +930,7 @@ int get_payment(object *pl, object *op) {
 
     if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID)) {
         if (!pay_for_item(op, pl)) {
-            uint64_t i = query_cost(op, pl, BS_BUY|BS_SHOP)-query_money(pl);
+            uint64_t i = shop_price_buy(op, pl) - query_money(pl);
             char *missing = stringbuffer_finish(cost_string_from_value(i, LARGEST_COIN_GIVEN, NULL));
 
             CLEAR_FLAG(op, FLAG_UNPAID);
@@ -1108,7 +978,7 @@ int get_payment(object *pl, object *op) {
  * player. Shouldn't be NULL or non player.
  */
 void sell_item(object *op, object *pl) {
-    uint64_t i = query_cost(op, pl, BS_SELL|BS_SHOP);
+    uint64_t i = shop_price_sell(op, pl);
     int64_t extra_gain;
     int count;
     object *tmp;
@@ -1149,7 +1019,7 @@ void sell_item(object *op, object *pl) {
      * This determins the amount of exp (if any) gained for bargaining.
      * exp/10 -> 1 for each gold coin
      */
-    extra_gain = i-query_cost(op, pl, BS_SELL|BS_NO_BARGAIN|BS_SHOP);
+    extra_gain = i - price_base(op);
 
     if (extra_gain > 0)
         change_exp(pl, extra_gain/10, "bargaining", SK_EXP_NONE);

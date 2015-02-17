@@ -472,7 +472,10 @@ int trap_see(object *op, object *trap);
 int trap_show(object *trap, object *where);
 int trap_disarm(object *disarmer, object *trap, int risk, object *skill);
 /* shop.c */
-uint64_t query_cost(const object *tmp, object *who, int flag);
+uint64_t price_approx(const object *obj, object *who);
+uint64_t price_base(const object *obj);
+uint64_t shop_price_buy(const object *obj, object *who);
+uint64_t shop_price_sell(const object *obj, object *who);
 StringBuffer *query_cost_string(const object *tmp, object *who, int flag, StringBuffer *buf);
 StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, StringBuffer *buf);
 uint64_t query_money(const object *op);
