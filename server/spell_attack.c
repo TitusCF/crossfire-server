@@ -731,8 +731,8 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
     else
         op->skill = NULL;
 
+    /* The skill may be NULL (if op is not a player but eg a bulletwall), but that's ok because change_skill does what is right. */
     found_skill = find_skill_by_name(op, op->skill);
-    assert(found_skill != NULL);
     change_skill(op, found_skill, 1);
 
     for (i = -range; i < range; i++) {
