@@ -70,8 +70,9 @@ static const char *const coins[] = {
 /**
  * Determine the base (intrinsic) value of an item. This should not include
  * adjustments such as bargaining, charisma, or shop specialization.
- * @param tmp
- * @return
+ *
+ * @param tmp item in question.
+ * @return base price.
  */
 uint64_t price_base(const object *tmp) {
     // When there are zero objects, there is really one.
@@ -123,10 +124,10 @@ uint64_t price_base(const object *tmp) {
 /**
  * Adjust the value of the given item based on the player's skills. This
  * function should only be used when calculating "you reckon" prices.
- * @param val Calculated value of an item
- * @param tmp Item in question
- * @param who Player trying to judge the value of the item
- * @return Approximate value of an item
+ *
+ * @param tmp item in question. Must not be NULL.
+ * @param who player trying to judge the value of the item. Must not be NULL.
+ * @return approximate value of tmp.
  */
 uint64_t price_approx(const object *tmp, object *who) {
     uint64_t val = price_base(tmp);
@@ -165,8 +166,9 @@ uint64_t price_approx(const object *tmp, object *who) {
 
 /**
  * Calculate the buy price multiplier based on a player's charisma.
- * @param charisma Player's charisma
- * @return Buy multiplier between 2 and 0.5
+ *
+ * @param charisma player's charisma.
+ * @return buy multiplier between 2 and 0.5.
  */
 static float shop_buy_multiplier(int charisma) {
     float multiplier = 1 / (0.38 * pow(1.06, charisma));
@@ -183,16 +185,21 @@ static float shop_buy_multiplier(int charisma) {
 /**
  * Calculate the buy price multiplier based on a player's bargaining skill.
  * The reciprocal of this result can be used as a sell multiplier.
- * @param lev_bargain Player's bargaining level
- * @return Buy multiplier between 1 and 0.5
+ *
+ * @param lev_bargain player's bargaining level.
+ * @return buy multiplier between 1 and 0.5.
  */
 static float shop_bargain_multiplier(int lev_bargain) {
     return 1 - 0.5 * lev_bargain / settings.max_level;
 }
 
 /**
- * Adjust the value of an item based on the player's bargaining skill and
+ * Adjust the value of an item to be bought based on the player's bargaining skill and
  * charisma. This should only be used if the player is in a shop.
+ *
+ * @param tmp item in question. Must not be NULL.
+ * @param who player trying to judge the value of the item. Must not be NULL.
+ * @return value of tmp.
  */
 uint64_t shop_price_buy(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
@@ -247,6 +254,14 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
     return val;
 }
 
+/**
+ * Adjust the value of an item to be sold based on the player's bargaining skill and
+ * charisma. This should only be used if the player is in a shop.
+ *
+ * @param tmp item in question. Must not be NULL.
+ * @param who player trying to judge the value of the item. Must not be NULL.
+ * @return value of tmp.
+ */
 uint64_t shop_price_sell(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
     uint64_t val = price_base(tmp);
