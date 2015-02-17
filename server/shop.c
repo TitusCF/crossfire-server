@@ -435,6 +435,9 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
 
 /**
  * Return the textual representation of a cost in a newly-allocated string.
+ *
+ * @param cost value to convert to text.
+ * @return converted value the caller is responsible to free.
  */
 char *cost_str(uint64_t cost) {
     return stringbuffer_finish(cost_string_from_value(cost, LARGEST_COIN_GIVEN, NULL));
@@ -442,6 +445,10 @@ char *cost_str(uint64_t cost) {
 
 /**
  * Return a textual cost approximation in a newly-allocated string.
+ *
+ * @param tmp item to query the price of, must not be NULL.
+ * @param who player asking for the price, must not be NULL.
+ * @return converted value the caller is responsible to free.
  */
 char *cost_approx_str(const object *tmp, object *who) {
     uint64_t approx_val = price_approx(tmp, who);
