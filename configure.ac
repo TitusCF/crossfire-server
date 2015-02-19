@@ -46,8 +46,7 @@ AM_WITH_DMALLOC
 # Program Checks
 ##############################################################################
 AC_PROG_AWK
-AC_PROG_CC
-AC_PROG_CPP
+AC_PROG_CC_C99
 AC_PROG_LIBTOOL
 AM_PROG_LEX
 

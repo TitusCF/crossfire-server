@@ -1,5 +1,6 @@
 2015-02-18	Kevin Zheng
 	* server/shop.c: Prevent shops from claiming 'worthless' sold items
+	* configure.ac: Ask for a C99 compiler
 
 2015-02-17	Kevin Zheng
 	* plugins/: Remove old shop functions from plugin interface
