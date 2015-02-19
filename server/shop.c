@@ -1019,15 +1019,6 @@ void sell_item(object *op, object *pl) {
                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
                              "We're not interested in %s.",
                              obj_name);
-
-        /* Even if the character doesn't get anything for it, it may still be
-         * worth something.  If so, make it unpaid
-         */
-        if (op->value) {
-            SET_FLAG(op, FLAG_UNPAID);
-            SET_FLAG(op, FLAG_PLAYER_SOLD);
-        }
-        identify(op);
         return;
     }
 
