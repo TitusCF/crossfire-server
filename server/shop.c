@@ -996,12 +996,12 @@ int get_payment(object *pl, object *op) {
  * player. Shouldn't be NULL or non player.
  */
 void sell_item(object *op, object *pl) {
-    uint64_t i = shop_price_sell(op, pl);
-    int64_t extra_gain;
-    int count;
+    uint64_t price = shop_price_sell(op, pl);
     object *tmp;
     archetype *at;
-    char name_op[MAX_BUF], *value;
+    char obj_name[MAX_BUF];
+
+    query_name(op, obj_name, MAX_BUF);
 
     if (pl == NULL || pl->type != PLAYER) {
         LOG(llevDebug, "Object other than player tried to sell something.\n");
@@ -1014,12 +1014,11 @@ void sell_item(object *op, object *pl) {
     if (op->custom_name)
         FREE_AND_CLEAR_STR(op->custom_name);
 
-    if (!i) {
-        query_name(op, name_op, MAX_BUF);
+    if (price == 0) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
                              "We're not interested in %s.",
-                             name_op);
+                             obj_name);
 
         /* Even if the character doesn't get anything for it, it may still be
          * worth something.  If so, make it unpaid
@@ -1037,23 +1036,28 @@ void sell_item(object *op, object *pl) {
      * This determins the amount of exp (if any) gained for bargaining.
      * exp/10 -> 1 for each gold coin
      */
-    extra_gain = i - price_base(op);
-
-    if (extra_gain > 0)
+    int64_t extra_gain = price - price_base(op);
+    if (extra_gain > 0) {
         change_exp(pl, extra_gain/10, "bargaining", SK_EXP_NONE);
+    }
 
-    for (count = LARGEST_COIN_GIVEN; coins[count] != NULL; count++) {
+    char *value_str = cost_str(price);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
+            "You receive %s for %s.", value_str, obj_name);
+    free(value_str);
+
+    for (int count = LARGEST_COIN_GIVEN; coins[count] != NULL; count++) {
         at = find_archetype(coins[count]);
         if (at == NULL)
             LOG(llevError, "Could not find %s archetype\n", coins[count]);
-        else if ((i/at->clone.value) > 0) {
+        else if ((price/at->clone.value) > 0) {
             FOR_INV_PREPARE(pl, pouch) {
                 if (pouch->type == CONTAINER
                 && QUERY_FLAG(pouch, FLAG_APPLIED)
                 && pouch->race
                 && strstr(pouch->race, "gold")) {
                     int w = at->clone.weight*(100-pouch->stats.Str)/100;
-                    int n = i/at->clone.value;
+                    int n = price/at->clone.value;
 
                     if (w == 0)
                         w = 1;    /* Prevent divide by zero */
@@ -1066,39 +1070,29 @@ void sell_item(object *op, object *pl) {
                         tmp = object_new();
                         object_copy(&at->clone, tmp);
                         tmp->nrof = n;
-                        i -= (uint64_t)tmp->nrof*(uint64_t)tmp->value;
+                        price -= (uint64_t)tmp->nrof*(uint64_t)tmp->value;
                         tmp = object_insert_in_ob(tmp, pouch);
                         esrv_update_item(UPD_WEIGHT, pl, pl);
                     }
                 }
             } FOR_INV_FINISH();
-            if (i/at->clone.value > 0) {
+            if (price/at->clone.value > 0) {
                 tmp = object_new();
                 object_copy(&at->clone, tmp);
-                tmp->nrof = i/tmp->value;
-                i -= (uint64_t)tmp->nrof*(uint64_t)tmp->value;
+                tmp->nrof = price/tmp->value;
+                price -= (uint64_t)tmp->nrof*(uint64_t)tmp->value;
                 tmp = object_insert_in_ob(tmp, pl);
                 esrv_update_item(UPD_WEIGHT, pl, pl);
             }
         }
     }
 
-    if (i != 0)
+    if (price != 0)
 #ifndef WIN32
-        LOG(llevError, "Warning - payment not zero: %llu\n", i);
+        LOG(llevError, "Warning - payment not zero: %llu\n", price);
 #else
         LOG(llevError, "Warning - payment not zero: %I64u\n", i);
 #endif
-
-    query_name(op, name_op, MAX_BUF);
-    value = cost_str(i);
-
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
-                         "You receive %s for %s.",
-                         value,
-                         name_op);
-
-    free(value);
 
     SET_FLAG(op, FLAG_UNPAID);
     identify(op);
