@@ -25,6 +25,19 @@ QTreeWidgetItem* CREUtils::archetypeNode(const archt* arch, QTreeWidgetItem* par
     return item;
 }
 
+QTreeWidgetItem* CREUtils::objectNode(const object* op, QTreeWidgetItem* parent)
+{
+    char name[500];
+    query_name(op, name, sizeof(name));
+    QString n;
+    if (op->nrof > 1)
+        n.append(QString::number(op->nrof)).append(" ");
+    n.append(name);
+    QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(n));
+    item->setIcon(0, CREPixmap::getIcon(op->face->number));
+    return item;
+}
+
 QTreeWidgetItem* CREUtils::artifactNode(QTreeWidgetItem* parent)
 {
     QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(QTreeWidget::tr("Artifacts")));

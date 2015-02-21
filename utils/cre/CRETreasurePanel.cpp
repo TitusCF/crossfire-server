@@ -16,7 +16,18 @@ CRETreasurePanel::CRETreasurePanel()
     myUsing->setColumnCount(1);
     myUsing->setHeaderLabel(tr("Used by"));
     myUsing->setIconSize(QSize(32, 32));
-    layout->addWidget(myUsing, 1, 1);
+    layout->addWidget(myUsing, 1, 1, 2, 1);
+
+    layout->addWidget(new QLabel("Difficulty:"), 1, 2);
+    layout->addWidget(myDifficulty = new QSpinBox(this), 1, 3);
+    myDifficulty->setRange(0, 150);
+    myDifficulty->setValue(150);
+    QPushButton* generate = new QPushButton("generate", this);
+    connect(generate, SIGNAL(clicked(bool)), this, SLOT(onGenerate(bool)));
+    layout->addWidget(generate, 1, 4);
+    layout->addWidget(myGenerated = new QTreeWidget(this), 2, 2, 1, 3);
+    myGenerated->setHeaderLabel(tr("Generation result"));
+    myGenerated->setIconSize(QSize(32, 32));
 }
 
 void CRETreasurePanel::setTreasure(const treasurelist* treas)
@@ -64,4 +75,24 @@ void CRETreasurePanel::setTreasure(const treasurelist* treas)
             }
         }
     }
+
+    myGenerated->clear();
+}
+
+void CRETreasurePanel::onGenerate(bool)
+{
+    const int difficulty = myDifficulty->value();
+    myGenerated->clear();
+    object* result = object_new(), *item;
+    create_treasure((treasurelist*)myTreasure, result, 0, difficulty, 0);
+    while ((item = result->inv))
+    {
+        identify(result->inv);
+        myGenerated->addTopLevelItem(CREUtils::objectNode(item, NULL));
+
+        object_remove(item);
+        object_free2(item, 0);
+    }
+
+    object_free2(result, 0);
 }

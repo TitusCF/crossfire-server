@@ -19,6 +19,8 @@ class CREUtils
         static QTreeWidgetItem* archetypeNode(QTreeWidgetItem* parent);
         static QTreeWidgetItem* archetypeNode(const archt* arch, QTreeWidgetItem* parent);
 
+        static QTreeWidgetItem* objectNode(const object* op, QTreeWidgetItem* parent);
+
         static QTreeWidgetItem* artifactNode(QTreeWidgetItem* parent);
         static QTreeWidgetItem* artifactNode(const artifact* arti, QTreeWidgetItem* parent);
 

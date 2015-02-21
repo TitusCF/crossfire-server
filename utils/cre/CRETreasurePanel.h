@@ -18,9 +18,15 @@ class CRETreasurePanel : public CREPanel
 
         void setTreasure(const treasurelist* treasure);
 
+    public slots:
+      void onGenerate(bool pressed);
+
     protected:
         const treasurelist* myTreasure;
         QTreeWidget* myUsing;
+        QTreeWidget* myGenerated;
+        QSpinBox* myDifficulty;
+
 };
 
 #endif // CRETREASUREPANEL_H
