@@ -505,10 +505,13 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
 }
 
 /**
+ * Generate a treasure from a list generating a single item.
  * This is similar to the old generate treasure function.  However,
  * it instead takes a treasurelist.  It is really just a wrapper around
  * create_treasure().  We create a dummy object that the treasure gets
  * inserted into, and then return that treasure.
+ *
+ * @warning an error will be LOG()ed if more than one item is generated.
  *
  * @param t
  * treasure list to generate from.
