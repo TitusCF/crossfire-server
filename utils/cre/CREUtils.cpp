@@ -116,6 +116,10 @@ QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, const treasure
     {
         item->setText(0, QTreeWidget::tr("%1 (%2%, %3 chances on %4)").arg(item->text(0)).arg(qRound(100 * treasure->chance / list->total_chance)).arg(treasure->chance).arg(list->total_chance));
     }
+    else
+    {
+        item->setText(0, QTreeWidget::tr("%1 (%2%)").arg(item->text(0)).arg(treasure->chance));
+    }
 
     return item;
 }
