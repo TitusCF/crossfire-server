@@ -14,6 +14,7 @@
 #include "CRECombatSimulator.h"
 #include "Quest.h"
 #include "CREHPBarMaker.h"
+#include "ScriptFileManager.h"
 
 extern "C" {
 #include "global.h"
@@ -44,7 +45,9 @@ CREMainWindow::CREMainWindow()
     myMessageManager = new MessageManager();
     myMessageManager->loadMessages();
 
-    myMapManager = new CREMapInformationManager(this, myMessageManager, myQuestManager);
+    myScriptManager = new ScriptFileManager();
+
+    myMapManager = new CREMapInformationManager(this, myMessageManager, myQuestManager, myScriptManager);
     connect(myMapManager, SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
     connect(myMapManager, SIGNAL(finished()), this, SLOT(browsingFinished()));
     myMapManager->start();
@@ -212,7 +215,7 @@ void CREMainWindow::createMenus()
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
 {
-    QWidget* resources = new CREResourcesWindow(myMapManager, myQuestManager, myMessageManager, myResourcesManager, mode);
+    QWidget* resources = new CREResourcesWindow(myMapManager, myQuestManager, myMessageManager, myResourcesManager, myScriptManager, mode);
     connect(this, SIGNAL(updateFilters()), resources, SLOT(updateFilters()));
     connect(resources, SIGNAL(filtersModified()), this, SLOT(onFiltersModified()));
     connect(this, SIGNAL(updateReports()), resources, SLOT(updateReports()));

@@ -63,7 +63,9 @@ CREPixmap.cpp \
  CREHPBarMaker.cpp \
  CRESmoothFaceMaker.cpp \
  ResourcesManager.cpp \
- CRECombatSimulator.cpp
+ CRECombatSimulator.cpp \
+ ScriptFileManager.cpp \
+ ScriptFile.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -125,7 +127,9 @@ CREPixmap.h \
  CREHPBarMaker.h \
  CRESmoothFaceMaker.h \
  ResourcesManager.h \
- CRECombatSimulator.h
+ CRECombatSimulator.h \
+ ScriptFileManager.h \
+ ScriptFile.h
 LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt -ldl
 
 RESOURCES += cre.qrc

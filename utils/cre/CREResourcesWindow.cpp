@@ -56,7 +56,7 @@ extern "C" {
 #include "ResourcesManager.h"
 }
 
-CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, DisplayMode mode)
+CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, DisplayMode mode)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -70,6 +70,8 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
     myMessages = messages;
     Q_ASSERT(resources);
     myResources = resources;
+    Q_ASSERT(scripts);
+    myScripts = scripts;
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -509,7 +511,7 @@ void CREResourcesWindow::fillMaps()
     }
 
     addPanel("Region", new CRERegionPanel());
-    addPanel("Map", new CREMapPanel());
+    addPanel("Map", new CREMapPanel(myScripts));
 }
 
 void CREResourcesWindow::fillQuests()

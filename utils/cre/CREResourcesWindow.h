@@ -15,6 +15,7 @@ class Quest;
 class QuestManager;
 class MessageManager;
 class ResourcesManager;
+class ScriptFileManager;
 
 enum DisplayMode {
     DisplayAll = 0xFFFF,
@@ -34,7 +35,7 @@ class CREResourcesWindow : public QWidget
     Q_OBJECT
 
     public:
-        CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, DisplayMode mode = DisplayAll);
+        CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, DisplayMode mode = DisplayAll);
         virtual ~CREResourcesWindow();
 
         void deleteQuest(Quest* quest);
@@ -59,6 +60,7 @@ class CREResourcesWindow : public QWidget
         QuestManager* myQuests;
         MessageManager* myMessages;
         ResourcesManager* myResources;
+        ScriptFileManager* myScripts;
         DisplayMode myDisplay;
         CREFilter myFilter;
         QList<QObject*> myDisplayedItems;

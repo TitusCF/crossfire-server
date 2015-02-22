@@ -5,17 +5,58 @@
 #include "MessageFile.h"
 #include "QuestManager.h"
 #include "Quest.h"
+#include "ScriptFileManager.h"
+#include "ScriptFile.h"
 
 extern "C" {
 #include "global.h"
 }
 
-CREMapInformationManager::CREMapInformationManager(QObject* parent, MessageManager* messageManager, QuestManager* questManager) : QObject(parent)
+const char* eventNames[NR_EVENTS] = {
+  "EVENT_NONE",
+  "EVENT_APPLY",
+  "EVENT_ATTACKED",
+  "EVENT_DEATH",
+  "EVENT_DROP",
+  "EVENT_PICKUP",
+  "EVENT_SAY",
+  "EVENT_STOP",
+  "EVENT_TIME",
+  "EVENT_THROW",
+  "EVENT_TRIGGER",
+  "EVENT_CLOSE",
+  "EVENT_TIMER",
+  "EVENT_DESTROY",
+  "EVENT_BORN",
+  "EVENT_CLOCK",
+  "EVENT_CRASH",
+  "EVENT_PLAYER_DEATH",
+  "EVENT_GKILL",
+  "EVENT_LOGIN",
+  "EVENT_LOGOUT",
+  "EVENT_MAPENTER",
+  "EVENT_MAPLEAVE",
+  "EVENT_MAPRESET",
+  "EVENT_REMOVE",
+  "EVENT_SHOUT",
+  "EVENT_TELL",
+  "EVENT_MUZZLE",
+  "EVENT_KICK",
+  "EVENT_MAPUNLOAD",
+  "EVENT_MAPLOAD",
+  "EVENT_USER",
+  "EVENT_SELLING",
+  "EVENT_ATTACKS",
+};
+
+CREMapInformationManager::CREMapInformationManager(QObject* parent, MessageManager* messageManager, QuestManager* questManager, ScriptFileManager* scriptManager) : QObject(parent)
 {
     Q_ASSERT(messageManager != NULL);
     Q_ASSERT(questManager != NULL);
+    Q_ASSERT(scriptManager != NULL);
     myMessageManager = messageManager;
     myQuestManager = questManager;
+    myScriptManager = scriptManager;
 }
 
 CREMapInformationManager::~CREMapInformationManager()
@@ -36,15 +77,15 @@ void CREMapInformationManager::start()
     myWorker = QtConcurrent::run(this, &CREMapInformationManager::browseMaps);
 }
 
-void CREMapInformationManager::checkInventory(const object* item, CREMapInformation* information)
+void CREMapInformationManager::checkInventory(const object* item, CREMapInformation* information, const object* env)
 {
     FOR_INV_PREPARE(item, inv)
     {
         archetype *arch = find_archetype(inv->arch->name);
         addArchetypeUse(arch->name, information);
         information->addArchetype(arch->name);
-        checkEvent(inv, information);
-        checkInventory(inv, information);
+        checkEvent(inv, information, env);
+        checkInventory(inv, information, env);
     } FOR_INV_FINISH();
 }
 
@@ -83,6 +124,9 @@ void CREMapInformationManager::process(const QString& path2)
 //        qDebug() << "skipping " << tmppath;
         return;
     }
+
+    /* remove scripts to avoid duplications */
+    myScriptManager->removeMap(information);
 
     mapstruct *m = ready_map_name(path.toAscii(), 0);
 //    qDebug() << "processing" << path << information->mapTime() << info.lastModified();
@@ -141,7 +185,7 @@ void CREMapInformationManager::process(const QString& path2)
                     information->addArchetype(arch->name);
                 }
 
-                checkInventory(item, information);
+                checkInventory(item, information, item);
 
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
                     char ep[500];
@@ -210,6 +254,11 @@ void CREMapInformationManager::process(const QString& path2)
                             }
                         }
                     }
+                }
+                else if (item->type == EVENT_CONNECTOR && item->subtype > 0 && item->subtype < NR_EVENTS)
+                {
+                    ScriptFile* script = myScriptManager->getFile(item->slaying);
+                    script->addHook(new HookInformation(information, x, y, item->name, item->title, eventNames[item->subtype]));
                 }
 
                 if (QUERY_FLAG(item, FLAG_MONSTER))
@@ -429,6 +478,17 @@ void CREMapInformationManager::loadCache()
             quint64 max = reader.readElementText().toULongLong();
             map->setShopMax(max);
         }
+        if (reader.isStartElement() && reader.name() == "script")
+        {
+            int x = reader.attributes().value("x").toString().toInt();
+            int y = reader.attributes().value("x").toString().toInt();
+            QString item = reader.attributes().value("itemName").toString();
+            QString plugin = reader.attributes().value("pluginName").toString();
+            QString event = reader.attributes().value("eventName").toString();
+            QString script = reader.readElementText();
+            myScriptManager->getFile(script)->addHook(new HookInformation(map, x, y, item, plugin, event));
+        }
+
         if (reader.isEndElement() && reader.name() == "map")
         {
             map = NULL;
@@ -506,6 +566,26 @@ void CREMapInformationManager::storeCache()
         {
           writer.writeTextElement("shopMax", QString::number(map->shopMax()));
         }
+
+        QList<ScriptFile*> scripts = myScriptManager->scriptsForMap(map);
+        foreach(ScriptFile* script, scripts)
+        {
+            foreach(const HookInformation* hook, script->hooks())
+            {
+                if (hook->map() == map)
+                {
+                    writer.writeStartElement("script");
+                    writer.writeAttribute("x", QString::number(hook->x()));
+                    writer.writeAttribute("y", QString::number(hook->y()));
+                    writer.writeAttribute("itemName", hook->itemName());
+                    writer.writeAttribute("pluginName", hook->pluginName());
+                    writer.writeAttribute("eventName", hook->eventName());
+                    writer.writeCharacters(script->path());
+                    writer.writeEndElement();
+                }
+            }
+        }
+
         writer.writeEndElement();
     }
 
@@ -531,12 +611,21 @@ void CREMapInformationManager::addArchetypeUse(const QString& name, CREMapInform
         myArchetypeUse.insert(name, map);
 }
 
-void CREMapInformationManager::checkEvent(const object* item, CREMapInformation* map)
+void CREMapInformationManager::checkEvent(const object* item, CREMapInformation* map, const object* env)
 {
     const QString slaying = "/python/dialog/npc_dialog.py";
     const QString python = "Python";
 
-    if (item->type != EVENT_CONNECTOR || python != item->title)
+    if (item->type != EVENT_CONNECTOR)
+        return;
+
+    if (item->subtype > 0 && item->subtype < NR_EVENTS)
+    {
+        ScriptFile* script = myScriptManager->getFile(item->slaying);
+        script->addHook(new HookInformation(map, env->x, env->y, env->name, item->title, eventNames[item->subtype]));
+    }
+
+    if (python != item->title)
         return;
 
     if (item->subtype == EVENT_SAY && slaying == item->slaying)

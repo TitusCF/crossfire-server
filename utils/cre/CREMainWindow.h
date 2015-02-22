@@ -17,6 +17,7 @@ class CREMapInformationManager;
 class QuestManager;
 class MessageManager;
 class ResourcesManager;
+class ScriptFileManager;
 
 class CREMainWindow : public QMainWindow
 {
@@ -69,6 +70,7 @@ class CREMainWindow : public QMainWindow
         QuestManager* myQuestManager;
         MessageManager* myMessageManager;
         ResourcesManager* myResourcesManager;
+        ScriptFileManager* myScriptManager;
 
     protected:
         void closeEvent(QCloseEvent* event);
