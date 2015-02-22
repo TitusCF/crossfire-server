@@ -153,13 +153,12 @@ void CREMapInformationManager::process(const QString& path2)
 
     char exit_path[500];
     quint64 exp = 0;
-    struct stat stats;
 
     for (int x = 0; x < 4; x++)
         if (m->tile_path[x] != NULL) {
             path_combine_and_normalize(m->path, m->tile_path[x], exit_path, sizeof(exit_path));
             create_pathname(exit_path, tmppath, MAX_BUF);
-            if (stat(tmppath, &stats)) {
+            if (!QFileInfo(tmppath).exists()) {
                 printf("  map %s doesn't exist in map %s, for tile %d.\n", exit_path, m->path, x);
             }
 
@@ -220,8 +219,7 @@ void CREMapInformationManager::process(const QString& path2)
                         if (strlen(ep)) {
                             path_combine_and_normalize(m->path, ep, exit_path, 500);
                             create_pathname(exit_path, tmppath, MAX_BUF);
-                            struct stat stats;
-                            if (stat(tmppath, &stats)) {
+                            if (!QFileInfo(tmppath).exists()) {
                                 printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, m->path, item->x, item->y);
                             } else {
                                 QString exit = exit_path;
@@ -297,14 +295,13 @@ void CREMapInformationManager::browseMaps()
     {
         char path[MAX_BUF], name[MAX_BUF];
         const archetype* arch = first_archetype;
-        struct stat stats;
         while (arch)
         {
             if (arch->clone.type == PLAYER)
             {
                 snprintf(name, sizeof(name), "%s/%s", first_map_ext_path, arch->name);
                 create_pathname(name, path, sizeof(path));
-                if (stat(path, &stats) == 0) {
+                if (QFileInfo(path).exists()) {
                     myToProcess.append(name);
                 }
             }
