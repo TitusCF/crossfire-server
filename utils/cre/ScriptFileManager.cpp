@@ -49,3 +49,8 @@ void ScriptFileManager::removeMap(CREMapInformation* map)
         }
     }
 }
+
+QList<ScriptFile*> ScriptFileManager::scripts() const
+{
+    return myScripts.values();
+}

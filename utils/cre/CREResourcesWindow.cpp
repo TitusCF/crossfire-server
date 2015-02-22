@@ -26,6 +26,7 @@
 #include "CRETreeItemRegion.h"
 #include "CRETreeItemQuest.h"
 #include "CRETreeItemMessage.h"
+#include "CRETreeItemScript.h"
 
 #include "CREAnimationPanel.h"
 #include "CREArchetypePanel.h"
@@ -37,6 +38,7 @@
 #include "CRERegionPanel.h"
 #include "CREQuestPanel.h"
 #include "CREMessagePanel.h"
+#include "CREScriptPanel.h"
 
 #include "CREWrapperObject.h"
 #include "CREWrapperArtifact.h"
@@ -46,6 +48,7 @@
 #include "Quest.h"
 #include "QuestManager.h"
 #include "MessageFile.h"
+#include "ScriptFileManager.h"
 
 #include "CREScriptEngine.h"
 
@@ -54,6 +57,7 @@ extern "C" {
 #include "recipe.h"
 #include "MessageManager.h"
 #include "ResourcesManager.h"
+#include "ScriptFile.h"
 }
 
 CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, DisplayMode mode)
@@ -184,6 +188,11 @@ void CREResourcesWindow::fillData()
     {
         title = tr("NPC dialogs");
         fillMessages();
+    }
+    if (myDisplay & DisplayScripts)
+    {
+        title = tr("Scripts");
+        fillScripts();
     }
 
     if (myDisplay == DisplayAll)
@@ -563,6 +572,33 @@ void CREResourcesWindow::fillMessages()
     }
 
     addPanel("Message", new CREMessagePanel(myMessages, myQuests));
+}
+
+static bool scriptLessThan(const ScriptFile* left, const ScriptFile* right)
+{
+    return left->path().compare(right->path()) < 0;
+}
+
+void CREResourcesWindow::fillScripts()
+{
+    QTreeWidgetItem* item, *root;
+
+    root = CREUtils::scriptsNode();
+    myTreeItems.append(new CRETreeItemEmpty());
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    myTree->addTopLevelItem(root);
+
+    QList<ScriptFile*> scripts = myScripts->scripts();
+    qSort(scripts.begin(), scripts.end(), scriptLessThan);
+
+    foreach(ScriptFile* script, scripts)
+    {
+        item = CREUtils::scriptNode(script, root);
+        myTreeItems.append(new CRETreeItemScript(script));
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    }
+
+    addPanel("Script", new CREScriptPanel());
 }
 
 void CREResourcesWindow::addPanel(QString name, CREPanel* panel)

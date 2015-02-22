@@ -12,6 +12,7 @@ extern "C" {
 class CREMapInformation;
 class Quest;
 class MessageFile;
+class ScriptFile;
 
 class CREUtils
 {
@@ -45,6 +46,9 @@ class CREUtils
 
         static QTreeWidgetItem* messagesNode();
         static QTreeWidgetItem* messageNode(const MessageFile* message, QTreeWidgetItem* parent);
+
+        static QTreeWidgetItem* scriptsNode();
+        static QTreeWidgetItem* scriptNode(const ScriptFile* script, QTreeWidgetItem* parent);
 };
 
 #endif // CREUTILS_H

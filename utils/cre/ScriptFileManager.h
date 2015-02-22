@@ -28,6 +28,8 @@ class ScriptFileManager
          */
         void removeMap(CREMapInformation* map);
 
+        QList<ScriptFile*> scripts() const;
+
     private:
       QHash<QString, ScriptFile*> myScripts;
 };

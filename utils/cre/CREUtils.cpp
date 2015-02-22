@@ -9,6 +9,7 @@ extern "C" {
 #include "global.h"
 #include "recipe.h"
 #include "libproto.h"
+#include "ScriptFile.h"
 }
 
 QTreeWidgetItem* CREUtils::archetypeNode(QTreeWidgetItem* parent)
@@ -229,4 +230,13 @@ QTreeWidgetItem* CREUtils::messagesNode()
 QTreeWidgetItem* CREUtils::messageNode(const MessageFile* message, QTreeWidgetItem* parent)
 {
     return new QTreeWidgetItem(parent, QStringList(message->path()));
+}
+
+QTreeWidgetItem* CREUtils::scriptsNode()
+{
+    return new QTreeWidgetItem(QStringList(QTreeWidget::tr("Scripts")));
+}
+QTreeWidgetItem* CREUtils::scriptNode(const ScriptFile* script, QTreeWidgetItem* parent)
+{
+  return new QTreeWidgetItem(parent, QStringList(script->path()));
 }

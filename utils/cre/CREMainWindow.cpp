@@ -110,6 +110,10 @@ void CREMainWindow::createActions()
     myOpenExperience->setStatusTip(tr("Display the experience table."));
     connect(myOpenExperience, SIGNAL(triggered()), this, SLOT(onOpenExperience()));
 
+    myOpenScripts = new QAction(tr("Scripts"), this);
+    myOpenExperience->setStatusTip(tr("List all scripts references in maps."));
+    connect(myOpenScripts, SIGNAL(triggered()), this, SLOT(onOpenScripts()));
+
     mySaveFormulae = new QAction(tr("Formulae"), this);
     mySaveFormulae->setEnabled(false);
     connect(mySaveFormulae, SIGNAL(triggered()), this, SLOT(onSaveFormulae()));
@@ -187,6 +191,7 @@ void CREMainWindow::createMenus()
     myOpenMenu->addAction(myOpenQuests);
     myOpenMenu->addAction(myOpenMessages);
     myOpenMenu->addAction(myOpenExperience);
+    myOpenMenu->addAction(myOpenScripts);
     myOpenMenu->addSeparator();
     QAction* exit = myOpenMenu->addAction(tr("&Exit"));
     exit->setStatusTip(tr("Close the application."));
@@ -280,6 +285,11 @@ void CREMainWindow::onOpenExperience()
     QWidget* experience = new CREExperienceWindow();
     myArea->addSubWindow(experience);
     experience->show();
+}
+
+void CREMainWindow::onOpenScripts()
+{
+    doResourceWindow(DisplayScripts);
 }
 
 void CREMainWindow::onSaveFormulae()

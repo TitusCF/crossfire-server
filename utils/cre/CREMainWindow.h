@@ -51,6 +51,7 @@ class CREMainWindow : public QMainWindow
         QAction* myOpenExperience;
         QAction* myOpenQuests;
         QAction* myOpenMessages;
+        QAction* myOpenScripts;
         QAction* mySaveFormulae;
         QAction* mySaveQuests;
         QAction* mySaveMessages;
@@ -88,6 +89,7 @@ class CREMainWindow : public QMainWindow
         void onOpenResources();
         void onOpenMessages();
         void onOpenExperience();
+        void onOpenScripts();
         void onSaveFormulae();
         void onSaveQuests();
         void onSaveMessages();
