@@ -319,6 +319,9 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     object *env = tmp->env;
     uint32_t weight, effective_weight_limit;
     int tmp_nrof = tmp->nrof ? tmp->nrof : 1;
+    tag_t tag;
+    mapstruct* map = tmp->map;
+    int16_t x = tmp->x, y = tmp->y;
 
     /* IF the player is flying & trying to take the item out of a container
      * that is in his inventory, let him.  tmp->env points to the container
@@ -391,8 +394,18 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
         snprintf(buf, sizeof(buf), "You pick up the %s.", name);
 
     /* Now item is about to be picked. */
-    if (execute_event(tmp, EVENT_PICKUP, pl, op, NULL, SCRIPT_FIX_ALL) != 0)
+    tag = tmp->count;
+    if (execute_event(tmp, EVENT_PICKUP, pl, op, NULL, SCRIPT_FIX_ALL) != 0) {
+        /* put item back, if it still exists */
+        if (tmp->count == tag && !QUERY_FLAG(tmp, FLAG_FREED)) {
+          if (env != NULL) {
+            object_insert_in_ob(tmp, env);
+          } else {
+            object_insert_in_map_at(tmp, map, NULL, 0, x, y);
+          }
+        }
         return;
+    }
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                   buf);
