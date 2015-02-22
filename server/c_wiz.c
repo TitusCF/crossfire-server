@@ -686,6 +686,7 @@ void command_shutdown(object *op, const char *params) {
             draw_ext_info(NDI_UNIQUE | NDI_ALL, 0, op, MSG_TYPE_ADMIN,
                     MSG_TYPE_ADMIN_DM, "Server shutdown cancelled.");
             cmd_shutdown_time = 0;
+            LOG(llevInfo, "Server shutdown cancelled by %s.\n", op->name);
         } else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
                     MSG_TYPE_COMMAND_ERROR, "No shutdown is pending.");
@@ -695,6 +696,7 @@ void command_shutdown(object *op, const char *params) {
         draw_ext_info(NDI_UNIQUE | NDI_ALL, 0, op, MSG_TYPE_ADMIN,
                     MSG_TYPE_ADMIN_DM, "Server is shutting down now!");
         cmd_shutdown_time = time(NULL);
+        LOG(llevInfo, "Server shutdown initiated by %s.\n", op->name);
     } else {
         /* Schedule (but don't announce) a shutdown. */
         int minutes = atoi(params);
@@ -704,6 +706,7 @@ void command_shutdown(object *op, const char *params) {
                     MSG_TYPE_COMMAND_SUCCESS,
                     "Server will shut down in %d minutes.", minutes);
             cmd_shutdown_time = time(NULL) + minutes * 60;
+            LOG(llevInfo, "Server shutdown initiated by %s in %d minutes.\n", op->name, minutes);
         } else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
                     MSG_TYPE_COMMAND_ERROR,
