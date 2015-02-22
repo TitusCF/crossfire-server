@@ -5,6 +5,7 @@
 
 class CREMapInformation;
 
+/** Information about an event hook, linked to a script file. */
 class HookInformation
 {
     public:
@@ -26,6 +27,7 @@ class HookInformation
         QString myEventName;
 };
 
+/** Information about a script file. */
 class ScriptFile
 {
     public:
@@ -34,6 +36,11 @@ class ScriptFile
 
         void addHook(HookInformation* hook);
         bool forMap(CREMapInformation* map) const;
+        /**
+         * Remove hooks linked to a map.
+         * @param map map to remove scripts of.
+         * @return true if this script has no more hooks, false else.
+         */
         bool removeMap(CREMapInformation* map);
         QList<HookInformation*> hooks() const;
         const QString& path() const;
