@@ -997,37 +997,6 @@ StringBuffer *describe_item(const object *op, const object *owner, StringBuffer 
     case LAMP:
         break; /* just so we get the "glowing" part. */
 
-    case POWER_CRYSTAL:
-        /* Avoid division by zero... */
-        if (op->stats.maxsp == 0) {
-            stringbuffer_append_printf(buf, "(capacity %d).", op->stats.maxsp);
-        } else {
-            if (op->stats.maxsp > 1000) { /*higher capacity crystals*/
-                i = (op->stats.maxsp%1000)/100;
-                if (i)
-                    stringbuffer_append_printf(buf, "(capacity %d.%dk). It is ", op->stats.maxsp/1000, i);
-                else
-                    stringbuffer_append_printf(buf, "(capacity %dk). It is ", op->stats.maxsp/1000);
-            } else
-                stringbuffer_append_printf(buf, "(capacity %d). It is ", op->stats.maxsp);
-            i = (op->stats.sp*10)/op->stats.maxsp;
-            if (op->stats.sp == 0)
-                stringbuffer_append_string(buf, "empty.");
-            else if (i == 0)
-                stringbuffer_append_string(buf, "almost empty.");
-            else if (i < 3)
-                stringbuffer_append_string(buf, "partially filled.");
-            else if (i < 6)
-                stringbuffer_append_string(buf, "half full.");
-            else if (i < 9)
-                stringbuffer_append_string(buf, "well charged.");
-            else if (op->stats.sp == op->stats.maxsp)
-                stringbuffer_append_string(buf, "fully charged.");
-            else
-                stringbuffer_append_string(buf, "almost full.");
-        }
-        break;
-
     case FOOD:
     case FLESH:
     case DRINK:
