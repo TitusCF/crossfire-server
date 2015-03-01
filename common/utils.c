@@ -303,7 +303,7 @@ void set_materialname(object *op) {
     if (op->materialname != NULL)
         return;
 
-    for (mt = materialt; mt != NULL && mt->next != NULL; mt = mt->next) {
+    for (mt = materialt; mt != NULL; mt = mt->next) {
         if (op->material&mt->material) {
             break;
         }
