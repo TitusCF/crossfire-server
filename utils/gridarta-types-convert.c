@@ -4,7 +4,7 @@
  * Files are placed in developer's documentation subdirs by default.
  *
  * To build: <pre>gcc -g -pg -O0 -Wall -pedantic gridarta-types-convert.c -I../include -o gridarta-types-convert</pre>
- * To run: <pre>./gridarta-types-convert ../../gridarta/crossfire/resource/conf/types.xml</pre>
+ * To run: <pre>./gridarta-types-convert ../../gridarta/src/crossfire/src/main/resources/resource/conf/types.xml</pre>
  * (adjust the path according to your setup)
  *
  * Note that someone wishing to tweak this program should know the format of Gridarta's types.xml.
