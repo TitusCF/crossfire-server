@@ -4764,3 +4764,567 @@ void object_set_msg(object *op, const char *msg) {
         op->msg = NULL;
     }
 }
+
+/** Maps the MOVE_* values to names */
+const char *const move_name[] = {
+    "walk",
+    "fly_low",
+    "fly_high",
+    "swim",
+    "boat",
+    NULL
+};
+
+/* This array equates the FLAG_ values with the V_ values.  Use -1 to
+ * put gaps in the array that should not be processed.
+ * The order matches the order of the define values in 'define.h'.
+ */
+/**
+ * This is a list of pointers that correspond to the FLAG_.. values.
+ * This is a simple 1:1 mapping - if FLAG_FRIENDLY is 15, then
+ * the 15'th element of this array should match that name.
+ * If an entry is NULL, that is a flag not to loaded/saved.
+ */
+static const char *const flag_names[NUM_FLAGS+1] = {
+    "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
+    "can_use_shield", "no_pick", "client_anim_sync", "client_anim_random", /* 10 */
+    "is_animated", NULL /* FLAG_DIALOG_PARSED, not saved */,
+    NULL /* flying */, "monster", "friendly", "generator",
+    "is_thrown", "auto_apply", "treasure", "player sold",           /* 20 */
+    "see_invisible", "can_roll", "overlay_floor",
+    "is_turnable", NULL /* walk_off */, NULL /* fly_on */,
+    NULL /*fly_off*/, "is_used_up", "identified", "reflecting",     /* 30 */
+    "changing", "splitting", "hitback", "startequip",
+    "blocksview", "undead", "scared", "unaggressive",
+    "reflect_missile", "reflect_spell",                             /* 40 */
+    "no_magic", "no_fix_player", "is_lightable", "tear_down",
+    "run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/,
+    NULL /*"pick_up"*/, "unique", "no_drop",                        /* 50 */
+    NULL /* wizcast*/, "can_cast_spell", "can_use_scroll", "can_use_range",
+    "can_use_bow",  "can_use_armour", "can_use_weapon",
+    "can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */
+    "xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
+    "stand_still", "random_movement", "only_attack", "confused",    /* 70 */
+    "stealth", NULL, NULL, "cursed", "damned",
+    "see_anywhere", "known_magical", "known_cursed",
+    "can_use_skill", "been_applied",                                /* 80 */
+    "has_ready_scroll", NULL, NULL,
+    NULL, "make_invisible",  "inv_locked", "is_wooded",
+    "is_hilly", "has_ready_skill", "has_ready_weapon",              /* 90 */
+    "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
+    NULL, "no_steal", "one_hit", NULL, "berserk", "neutral",   /* 100 */
+    "no_attack", "no_damage", NULL, NULL, "activate_on_push",
+    "activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable",   /* 110 */
+    NULL, "blessed", "known_blessed"
+};
+
+/**
+ * This returns a string of the integer movement type
+ *
+ * @param sb
+ * buffer that will contain the description. Must not be NULL.
+ * @param mt
+ * move to describe.
+ */
+static void get_string_move_type(StringBuffer *sb, MoveType mt)
+{
+    static char retbuf[MAX_BUF], retbuf_all[MAX_BUF];
+    int i, all_count = 0, count;
+
+    strcpy(retbuf, "");
+    strcpy(retbuf_all, " all");
+
+    /* Quick check, and probably fairly common */
+    if (mt == MOVE_ALL) {
+        stringbuffer_append_string(sb, "all");
+        return;
+    }
+    if (mt == 0) {
+        stringbuffer_append_string(sb, "0");
+        return;
+    }
+
+    /* We basically slide the bits down.  Why look at MOVE_ALL?
+     * because we may want to return a string like 'all -swim',
+     * and if we just looked at mt, we couldn't get that.
+     */
+    for (i = MOVE_ALL, count = 0; i != 0; i >>= 1, count++) {
+        if (mt&(1<<count)) {
+            strcat(retbuf, " ");
+            strcat(retbuf, move_name[count]);
+        } else {
+            strcat(retbuf_all, " -");
+            strcat(retbuf_all, move_name[count]);
+            all_count++;
+        }
+    }
+    /* Basically, if there is a single negation, return it, eg
+     * 'all -swim'.  But more than that, just return the
+     * enumerated values.  It doesn't make sense to return
+     * 'all -walk -fly_low' - it is shorter to return 'fly_high swim'
+     */
+    if (all_count <= 1)
+        stringbuffer_append_string(sb, retbuf_all+1);
+    else
+        stringbuffer_append_string(sb, retbuf+1);
+}
+
+/** Adds a line to the buffer. */
+#define ADD_STRINGLINE_ENTRY(sb__, entryname__, entryvalue__) do {\
+    stringbuffer_append_string(sb__, entryname__);\
+    stringbuffer_append_string(sb__, entryvalue__);\
+    stringbuffer_append_string(sb__, "\n");\
+    } while (0)
+/** Adds a long to the buffer.  entryname__ must have a space at the end. */
+#define FAST_SAVE_LONG(sb__, entryname__, entryvalue__) \
+    stringbuffer_append_printf(sb__, "%s%ld\n", entryname__, (long int)entryvalue__)
+/** Adds a double to the buffer. entryname__ must have a space at the end. */
+#define FAST_SAVE_DOUBLE(sb__, entryname__, entryvalue__) \
+    stringbuffer_append_printf(sb__, "%s%f\n", entryname__, entryvalue__)
+
+/**
+ * Returns a pointer to a static string which contains all variables
+ * which are different in the two given objects.
+ *
+ * This function is typically used to dump objects (op2=empty object), or to save objects
+ *
+ * @param sb
+ * buffer that will contain the difference.
+ * @param op
+ * what object the different values will be taken from.
+ * @param op2
+ * object's original archetype.
+ */
+void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
+    static char buf2[64];
+    int tmp;
+    int i;
+    key_value *my_field;
+    key_value *arch_field;
+
+    /* This saves the key/value lists.  We do it first so that any
+    * keys that match field names will be overwritten by the loader.
+    */
+    for (my_field = op->key_values; my_field != NULL; my_field = my_field->next) {
+        /* Find the field in the opposing member. */
+        arch_field = object_get_key_value(op2, my_field->key);
+
+        /* If there's no partnering field, or it's got a different value, save our field. */
+        if (arch_field == NULL || my_field->value != arch_field->value) {
+            stringbuffer_append_string(sb, my_field->key);
+            stringbuffer_append_string(sb, " ");
+            /* If this is null, then saving it as a space should
+            * cause it to be null again.
+            */
+            if (my_field->value)
+                stringbuffer_append_string(sb, my_field->value);
+            stringbuffer_append_string(sb, "\n");
+        }
+    }
+    /* We don't need to worry about the arch's extra fields - they
+     * will get taken care of the object_copy() function.
+     */
+
+    if (op->name && op->name != op2->name) {
+        ADD_STRINGLINE_ENTRY(sb, "name ", op->name);
+    }
+    if (op->name_pl && op->name_pl != op2->name_pl) {
+        ADD_STRINGLINE_ENTRY(sb, "name_pl ", op->name_pl);
+    }
+    if (op->anim_suffix && op->anim_suffix != op2->anim_suffix) {
+        ADD_STRINGLINE_ENTRY(sb, "anim_suffix ", op->anim_suffix);
+    }
+    if (op->custom_name && op->custom_name != op2->custom_name) {
+        ADD_STRINGLINE_ENTRY(sb, "custom_name ", op->custom_name);
+    }
+    if (op->title && op->title != op2->title) {
+        ADD_STRINGLINE_ENTRY(sb, "title ", op->title);
+    }
+    if (op->race && op->race != op2->race) {
+        ADD_STRINGLINE_ENTRY(sb, "race ", op->race);
+    }
+    if (op->slaying && op->slaying != op2->slaying) {
+        ADD_STRINGLINE_ENTRY(sb, "slaying ", op->slaying);
+    }
+    if (op->skill && op->skill != op2->skill) {
+        ADD_STRINGLINE_ENTRY(sb, "skill ", op->skill);
+    }
+    if (op->msg && op->msg != op2->msg) {
+        stringbuffer_append_string(sb, "msg\n");
+        stringbuffer_append_string(sb, op->msg);
+        stringbuffer_append_string(sb, "endmsg\n");
+    }
+    if (op->lore && op->lore != op2->lore) {
+        stringbuffer_append_string(sb, "lore\n");
+        stringbuffer_append_string(sb, op->lore);
+        stringbuffer_append_string(sb, "endlore\n");
+    }
+    if (op->other_arch != op2->other_arch && op->other_arch != NULL && op->other_arch->name) {
+        ADD_STRINGLINE_ENTRY(sb, "other_arch ", op->other_arch->name);
+    }
+    if (op->face != op2->face) {
+        ADD_STRINGLINE_ENTRY(sb, "face ", op->face->name);
+    }
+
+    if (op->animation_id != op2->animation_id) {
+        if (op->animation_id) {
+            ADD_STRINGLINE_ENTRY(sb, "animation ", animations[GET_ANIM_ID(op)].name);
+            if (!QUERY_FLAG (op, FLAG_ANIMATE)) {
+                stringbuffer_append_string(sb, "is_animated 0\n");
+            }
+        } else {
+            stringbuffer_append_string(sb, "animation NONE\n");
+        }
+    }
+    if (op->stats.Str != op2->stats.Str)
+        FAST_SAVE_LONG(sb, "Str ", op->stats.Str);
+    if (op->stats.Dex != op2->stats.Dex)
+        FAST_SAVE_LONG(sb, "Dex ", op->stats.Dex);
+    if (op->stats.Con != op2->stats.Con)
+        FAST_SAVE_LONG(sb, "Con ", op->stats.Con);
+    if (op->stats.Wis != op2->stats.Wis)
+        FAST_SAVE_LONG(sb, "Wis ", op->stats.Wis);
+    if (op->stats.Pow != op2->stats.Pow)
+        FAST_SAVE_LONG(sb, "Pow ", op->stats.Pow);
+    if (op->stats.Cha != op2->stats.Cha)
+        FAST_SAVE_LONG(sb, "Cha ", op->stats.Cha);
+    if (op->stats.Int != op2->stats.Int)
+        FAST_SAVE_LONG(sb, "Int ", op->stats.Int);
+    if (op->stats.hp != op2->stats.hp)
+        FAST_SAVE_LONG(sb, "hp ", op->stats.hp);
+    if (op->stats.maxhp != op2->stats.maxhp)
+        FAST_SAVE_LONG(sb, "maxhp ", op->stats.maxhp);
+    if (op->stats.sp != op2->stats.sp)
+        FAST_SAVE_LONG(sb, "sp ", op->stats.sp);
+    if (op->stats.maxsp != op2->stats.maxsp)
+        FAST_SAVE_LONG(sb, "maxsp ", op->stats.maxsp);
+    if (op->stats.grace != op2->stats.grace)
+        FAST_SAVE_LONG(sb, "grace ", op->stats.grace);
+    if (op->stats.maxgrace != op2->stats.maxgrace)
+        FAST_SAVE_LONG(sb, "maxgrace ", op->stats.maxgrace);
+
+    if (op->stats.exp != op2->stats.exp) {
+        snprintf(buf2, sizeof(buf2), "%"FMT64, op->stats.exp);
+        ADD_STRINGLINE_ENTRY(sb, "exp ", buf2);
+    }
+
+    if (op->perm_exp != op2->perm_exp) {
+        snprintf(buf2, sizeof(buf2), "%"FMT64, op->perm_exp);
+        ADD_STRINGLINE_ENTRY(sb, "perm_exp ", buf2);
+    }
+
+    if (op->expmul != op2->expmul)
+        FAST_SAVE_DOUBLE(sb, "expmul ", op->expmul);
+    if (op->stats.food != op2->stats.food)
+        FAST_SAVE_LONG(sb, "food ", op->stats.food);
+    if (op->stats.dam != op2->stats.dam)
+        FAST_SAVE_LONG(sb, "dam ", op->stats.dam);
+    if (op->stats.luck != op2->stats.luck)
+        FAST_SAVE_LONG(sb, "luck ", op->stats.luck);
+    if (op->stats.wc != op2->stats.wc)
+        FAST_SAVE_LONG(sb, "wc ", op->stats.wc);
+    if (op->stats.ac != op2->stats.ac)
+        FAST_SAVE_LONG(sb, "ac ", op->stats.ac);
+    if (op->x != op2->x)
+        FAST_SAVE_LONG(sb, "x ", op->x);
+    if (op->y != op2->y)
+        FAST_SAVE_LONG(sb, "y ", op->y);
+    if (op->speed != op2->speed) {
+        FAST_SAVE_DOUBLE(sb, "speed ", op->speed);
+    }
+    if (op->speed > 0 && op->speed_left != op2->speed_left) {
+        FAST_SAVE_DOUBLE(sb, "speed_left ", op->speed_left);
+    }
+    if (op->weapon_speed != op2->weapon_speed) {
+        FAST_SAVE_DOUBLE(sb, "weapon_speed ", op->weapon_speed);
+    }
+    if (op->weapon_speed > 0 && op->weapon_speed_left != op2->weapon_speed_left) {
+        FAST_SAVE_DOUBLE(sb, "weapon_speed_left ", op->weapon_speed_left);
+    }
+    if (op->move_status != op2->move_status)
+        FAST_SAVE_LONG(sb, "move_state ", op->move_status);
+    if (op->attack_movement != op2->attack_movement)
+        FAST_SAVE_LONG(sb, "attack_movement ", op->attack_movement);
+    if (op->nrof != op2->nrof)
+        FAST_SAVE_LONG(sb, "nrof ", op->nrof);
+    if (op->level != op2->level)
+        FAST_SAVE_LONG(sb, "level ", op->level);
+    if (op->direction != op2->direction)
+        FAST_SAVE_LONG(sb, "direction ", op->direction);
+    if (op->type != op2->type)
+        FAST_SAVE_LONG(sb, "type ", op->type);
+    if (op->subtype != op2->subtype)
+        FAST_SAVE_LONG(sb, "subtype ", op->subtype);
+    if (op->attacktype != op2->attacktype)
+        FAST_SAVE_LONG(sb, "attacktype ", op->attacktype);
+
+    for (tmp = 0; tmp < NROFATTACKS; tmp++) {
+        if (op->resist[tmp] != op2->resist[tmp]) {
+            stringbuffer_append_string(sb, "resist_");
+            FAST_SAVE_LONG(sb, resist_save[tmp], op->resist[tmp]);
+        }
+    }
+
+    if (op->path_attuned != op2->path_attuned)
+        FAST_SAVE_LONG(sb, "path_attuned ", op->path_attuned);
+    if (op->path_repelled != op2->path_repelled)
+        FAST_SAVE_LONG(sb, "path_repelled ", op->path_repelled);
+    if (op->path_denied != op2->path_denied)
+        FAST_SAVE_LONG(sb, "path_denied ", op->path_denied);
+    if (op->material != op2->material)
+        FAST_SAVE_LONG(sb, "material ", op->material);
+    if (op->materialname && op->materialname != op2->materialname) {
+        ADD_STRINGLINE_ENTRY(sb, "materialname ", op->materialname);
+    }
+    if (op->value != op2->value)
+        FAST_SAVE_LONG(sb, "value ", op->value);
+    if (op->carrying != op2->carrying)
+        FAST_SAVE_LONG(sb, "carrying ", op->carrying);
+    if (op->weight != op2->weight)
+        FAST_SAVE_LONG(sb, "weight ", op->weight);
+    if (op->invisible != op2->invisible)
+        FAST_SAVE_LONG(sb, "invisible ", op->invisible);
+    if (op->state != op2->state)
+        FAST_SAVE_LONG(sb, "state ", op->state);
+    if (op->magic != op2->magic)
+        FAST_SAVE_LONG(sb, "magic ", op->magic);
+    if (op->last_heal != op2->last_heal)
+        FAST_SAVE_LONG(sb, "last_heal ", op->last_heal);
+    if (op->last_sp != op2->last_sp)
+        FAST_SAVE_LONG(sb, "last_sp ", op->last_sp);
+    if (op->last_grace != op2->last_grace)
+        FAST_SAVE_LONG(sb, "last_grace ", op->last_grace);
+    if (op->last_eat != op2->last_eat)
+        FAST_SAVE_LONG(sb, "last_eat ", op->last_eat);
+    if (QUERY_FLAG(op, FLAG_IS_LINKED) && (tmp = get_button_value(op)))
+        FAST_SAVE_LONG(sb, "connected ", tmp);
+    if (op->glow_radius != op2->glow_radius)
+        FAST_SAVE_LONG(sb, "glow_radius ", op->glow_radius);
+    if (op->randomitems != op2->randomitems) {
+        ADD_STRINGLINE_ENTRY(sb, "randomitems ", op->randomitems ? op->randomitems->name : "none");
+    }
+
+    if (op->run_away != op2->run_away)
+        FAST_SAVE_LONG(sb, "run_away ", op->run_away);
+    if (op->pick_up != op2->pick_up)
+        FAST_SAVE_LONG(sb, "pick_up ", op->pick_up);
+    if (op->weight_limit != op2->weight_limit)
+        FAST_SAVE_LONG(sb, "container ", op->weight_limit);
+    if (op->will_apply != op2->will_apply)
+        FAST_SAVE_LONG(sb, "will_apply ", op->will_apply);
+    if (op->smoothlevel != op2->smoothlevel)
+        FAST_SAVE_LONG(sb, "smoothlevel ", op->smoothlevel);
+
+    if (op->map_layer != op2->map_layer)
+        ADD_STRINGLINE_ENTRY(sb, "map_layer ", map_layer_name[op->map_layer]);
+
+    if (op->weapontype && op->weapontype != op2->weapontype) {
+        FAST_SAVE_LONG(sb, "weapontype ", op->weapontype);
+    }
+    if (op->client_type && op->client_type != op2->client_type) {
+        FAST_SAVE_LONG(sb, "client_type ", op->client_type);
+    }
+
+    if (op->item_power != op2->item_power) {
+        FAST_SAVE_LONG(sb, "item_power ", op->item_power);
+    }
+
+    if (op->duration != op2->duration)
+        FAST_SAVE_LONG(sb, "duration ", op->duration);
+
+    if (op->range != op2->range)
+        FAST_SAVE_LONG(sb, "range ", op->range);
+
+    if (op->range_modifier != op2->range_modifier)
+        FAST_SAVE_LONG(sb, "range_modifier ", op->range_modifier);
+
+    if (op->duration_modifier != op2->duration_modifier)
+        FAST_SAVE_LONG(sb, "duration_modifier ", op->duration_modifier);
+
+    if (op->dam_modifier != op2->dam_modifier)
+        FAST_SAVE_LONG(sb, "dam_modifier ", op->dam_modifier);
+
+    if (op->gen_sp_armour != op2->gen_sp_armour) {
+        FAST_SAVE_LONG(sb, "gen_sp_armour ", op->gen_sp_armour);
+    }
+
+    /* I've kept the old int move type saving code commented out.
+     * In an ideal world, we'd know if we want to do a quick
+     * save (say to a temp map, where we don't care about strings),
+     * or a slower save/dm dump, where printing out strings is handy.
+     */
+    if (op->move_type != op2->move_type) {
+        /*FAST_SAVE_LONG(sb, "move_type ", op->move_type)*/
+        stringbuffer_append_string(sb, "move_type ");
+        get_string_move_type(sb, op->move_type);
+        stringbuffer_append_string(sb, "\n");
+    }
+    if (op->move_block != op2->move_block) {
+        /*FAST_SAVE_LONG(sb, "move_block ", op->move_block)*/
+        stringbuffer_append_string(sb, "move_block ");
+        get_string_move_type(sb, op->move_block);
+        stringbuffer_append_string(sb, "\n");
+    }
+    if (op->move_allow != op2->move_allow) {
+        /*FAST_SAVE_LONG(sb, "move_allow ", op->move_allow);*/
+        stringbuffer_append_string(sb, "move_allow ");
+        get_string_move_type(sb, op->move_allow);
+        stringbuffer_append_string(sb, "\n");
+    }
+    if (op->move_on != op2->move_on) {
+        /*FAST_SAVE_LONG(sb, "move_on ", op->move_on);*/
+        stringbuffer_append_string(sb, "move_on ");
+        get_string_move_type(sb, op->move_on);
+        stringbuffer_append_string(sb, "\n");
+    }
+    if (op->move_off != op2->move_off) {
+        /*FAST_SAVE_LONG(sb, "move_off ", op->move_off);*/
+        stringbuffer_append_string(sb, "move_off ");
+        get_string_move_type(sb, op->move_off);
+        stringbuffer_append_string(sb, "\n");
+    }
+    if (op->move_slow != op2->move_slow) {
+        /*FAST_SAVE_LONG(sb, "move_slow ", op->move_slow);*/
+        stringbuffer_append_string(sb, "move_slow ");
+        get_string_move_type(sb, op->move_slow);
+        stringbuffer_append_string(sb, "\n");
+    }
+
+    if (op->move_slow_penalty != op2->move_slow_penalty) {
+        FAST_SAVE_DOUBLE(sb, "move_slow_penalty ", op->move_slow_penalty);
+    }
+
+    if (!COMPARE_FLAGS(op, op2)) {
+        for (tmp = 0; tmp <= NUM_FLAGS; tmp++) {
+            if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
+                ADD_STRINGLINE_ENTRY(sb, flag_names[tmp], QUERY_FLAG(op, tmp) ? " 1" : " 0");
+            }
+        }
+    }
+
+    /* Save body locations */
+    for (i = 0; i < NUM_BODY_LOCATIONS; i++) {
+        if (op->body_info[i] != op2->body_info[i]) {
+            stringbuffer_append_string(sb, body_locations[i].save_name);
+            FAST_SAVE_LONG(sb, " ", op->body_info[i]);
+        }
+    }
+
+    /* Save discrete damage if applicable
+     * Note that given how the discrete_damage allocation is done, there can't be any case where
+     * op->discrete_damage == NULL && op2->discrete_damage != NULL.
+     */
+    if (op->discrete_damage) {
+        for (i = 0; i < NROFATTACKS; i++) {
+            if (op2->discrete_damage == NULL || op2->discrete_damage[i] != op->discrete_damage[i]) {
+                stringbuffer_append_string(sb, "damage_");
+                FAST_SAVE_LONG(sb, resist_save[i], op->discrete_damage[i]);
+            }
+        }
+    }
+}
+
+/**
+ * Dumps all variables in an object to a file.
+ *
+ * @param fp
+ * file to write to.
+ * @param op
+ * object to save.
+ * @param flag
+ * combination of @ref SAVE_FLAG_xxx "SAVE_FLAG_xxx" flags.
+ * @return
+ * one of @ref SAVE_ERROR_xxx "SAVE_ERROR_xxx" values.
+ */
+int save_object(FILE *fp, object *op, int flag) {
+    archetype *at;
+    char *cp;
+    int res;
+    StringBuffer *sb;
+
+    /* Even if the object does have an owner, it would seem that we should
+     * still save it.
+     */
+    if (object_get_owner(op) != NULL || fp == NULL)
+        return SAVE_ERROR_OK;
+
+    /* If it is unpaid and we don't want to save those, just return. */
+    if (!(flag&SAVE_FLAG_SAVE_UNPAID) && (QUERY_FLAG(op, FLAG_UNPAID))) {
+        return SAVE_ERROR_OK;
+    }
+
+    /* If the object has no_save set, just return */
+    if (QUERY_FLAG(op, FLAG_NO_SAVE))
+        return SAVE_ERROR_OK;
+
+    if ((at = op->arch) == NULL)
+        at = empty_archetype;
+    if (fprintf(fp, "arch %s\n", at->name) < 0)
+        return SAVE_ERROR_WRITE;
+
+    sb = stringbuffer_new();
+
+    if (op->arch->reference_count > 0) {
+        /* The object is a custom item/monster, so we handle its save differently.
+         * We compare the custom archetype to the "original" one, then only save hp/gr/sp
+         * which are the only values we can't recompute later - all others are modified by items in inventory.
+         * Note that hp/gr/sp will appear twice in save, but last value will take precedence.
+         */
+        archetype *original = find_archetype(op->arch->name);
+        if (!original) {
+            LOG(llevError, "could not find original archetype %s for custom monster!\n", op->arch->name);
+            abort();
+        }
+        get_ob_diff(sb, &op->arch->clone, &original->clone);
+        if (op->stats.hp != op->arch->clone.stats.hp)
+            FAST_SAVE_LONG(sb, "hp ", op->stats.hp);
+        if (op->stats.sp != op->arch->clone.stats.sp)
+            FAST_SAVE_LONG(sb, "sp ", op->stats.sp);
+        if (op->stats.grace != op->arch->clone.stats.grace)
+            FAST_SAVE_LONG(sb, "grace ", op->stats.grace);
+        if (op->x != op->arch->clone.x)
+            FAST_SAVE_LONG(sb, "x ", op->x);
+        if (op->y != op->arch->clone.y)
+            FAST_SAVE_LONG(sb, "y ", op->y);
+    }
+    else {
+        /* if op is an artifact, then find the "standard" artifact to use that for the diff */
+        if (op->artifact != NULL) {
+            object *base;
+            const artifact *artifact;
+
+            artifact = find_artifact(op, op->artifact);
+            if (artifact == NULL) {
+                LOG(llevError, "could not find artifact %s [%d] to save data\n", op->artifact, op->type);
+                get_ob_diff(sb, op, &at->clone);
+            } else {
+                stringbuffer_append_printf(sb, "artifact %s\n", op->artifact);
+                base = arch_to_object(at);
+                give_artifact_abilities(base, artifact->item);
+                get_ob_diff(sb, op, base);
+                object_free2(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
+            }
+        } else {
+            get_ob_diff(sb, op, &at->clone);
+        }
+    }
+
+    cp = stringbuffer_finish(sb);
+    if (fputs(cp, fp) == EOF) {
+        free(cp);
+        return SAVE_ERROR_WRITE;
+    }
+    free(cp);
+
+    /* Eneq(@csd.uu.se): Added this to allow containers being saved with contents*/
+
+    FOR_INV_PREPARE(op, tmp)
+        if ((res = save_object(fp, tmp, flag)) != 0)
+            return res;
+    FOR_INV_FINISH();
+
+    if (fprintf(fp, "end\n") < 0)
+        return SAVE_ERROR_WRITE;
+
+    return SAVE_ERROR_OK;
+}

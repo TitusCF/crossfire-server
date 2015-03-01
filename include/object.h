@@ -25,6 +25,8 @@ typedef struct body_locations_struct {
 
 extern body_locations_struct body_locations[NUM_BODY_LOCATIONS];
 
+extern const char *const move_name[];
+
 /**
  * Each object (this also means archetypes!) could have a few of these
  * "dangling" from it; this could also end up containing 'parse errors'.
