@@ -193,7 +193,7 @@ static void init_emergency_mappath(void) {
  * using this library.
  * If you want to lessen the size of the program using the library,
  * you can replace the call to init_library() with init_globals() and
- * init_function_pointers().  Good idea to also call init_vars and
+ * init_function_pointers().  Good idea to also call
  * init_hash_table if you are doing any object loading.
  */
 void init_library(void) {
@@ -205,7 +205,6 @@ void init_library(void) {
     init_hash_table();
     i18n_init();
     init_objects();
-    init_vars();
     init_block();
     read_bmap_names();
     read_smooth();

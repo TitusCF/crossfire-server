@@ -1313,15 +1313,6 @@ static const char *const flag_names[NUM_FLAGS+1] = {
 };
 
 /**
- * Initialises the array of variable-names.  Needed before any
- * objects can be loaded.  Called by init_library().
- * @todo
- * remove as it is empty.
- */
-void init_vars(void) {
-}
-
-/**
  * Frees all memory allocated by the loader.
  */
 void free_loader(void) {

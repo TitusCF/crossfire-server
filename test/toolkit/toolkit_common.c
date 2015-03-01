@@ -88,7 +88,6 @@ void cctk_init_std_archetypes(void) {
     init_hash_table();
     init_stats(FALSE);
     init_objects();
-    init_vars();
     init_block();
     read_bmap_names();
     read_smooth();
