@@ -124,6 +124,7 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->account_chars = NULL;
     ns->login_method = 0;
     ns->notifications = 0;
+    ns->heartbeat = 0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
