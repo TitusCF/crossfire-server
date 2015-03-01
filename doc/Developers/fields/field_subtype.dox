@@ -8,12 +8,12 @@
 	</tr>	<tr>
 		<td>
 @ref page_type_160
-		</td><td>          Whether this builder will add items, or remove items.</td>
+		</td><td>            Whether this builder will add items, or remove items.</td>
 	</tr>
 	<tr>
 		<td>
 @ref page_type_161
-		</td><td>          What kind of building material this is.</td>
+		</td><td>            What kind of building material this is.</td>
 	</tr>
 	<tr>
 		<td>

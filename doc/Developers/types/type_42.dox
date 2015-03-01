@@ -93,25 +93,29 @@ Type defined by:
 	<tr>
 		<td>identified animation</td>
 		<td>@ref page_custom_attribute_identified_animation "identified_animation"</td>
-		<td>            If defined, then the object will take this animation when identified.
+		<td>            If defined, then the object will take this animation when
+            identified.
 		</td>
 	</tr>
 	<tr>
 		<td>identified animation speed</td>
 		<td>@ref page_custom_attribute_identified_anim_speed "identified_anim_speed"</td>
-		<td>            If defined, then the object will have this animation speed when identified.
+		<td>            If defined, then the object will have this animation speed when
+            identified.
 		</td>
 	</tr>
 	<tr>
 		<td>identified image</td>
 		<td>@ref page_custom_attribute_identified_face "identified_face"</td>
-		<td>            If defined, then the object will take this appareance when identified.
+		<td>            If defined, then the object will take this appareance when
+            identified.
 		</td>
 	</tr>
 	<tr>
 		<td>identified random animation?</td>
 		<td>@ref page_custom_attribute_identified_anim_random "identified_anim_random"</td>
-		<td>            If defined, then the object's animation is in a random sequence when identified.
+		<td>            If defined, then the object's animation is in a random sequence when
+            identified.
 		</td>
 	</tr>
 	<tr>
@@ -123,7 +127,8 @@ Type defined by:
 	<tr>
 		<td>identified_name_pl</td>
 		<td>@ref page_custom_attribute_identified_name_pl "identified_name_pl"</td>
-		<td>            If defined, then the object will take this plural name when identified.
+		<td>            If defined, then the object will take this plural name when
+            identified.
 		</td>
 	</tr>
 	<tr>
@@ -173,9 +178,9 @@ Type defined by:
 	<tr>
 		<td>name of creation</td>
 		<td>@ref obj::slaying</td>
-		<td>            The created object will bear the name specified in &lt;name
-            of creation&gt;, and not use any title. If nothing is set, the standard name and title of
-            the archetype are used.
+		<td>            The created object will bear the name specified in &lt;name of
+            creation&gt;, and not use any title. If nothing is set, the standard
+            name and title of the archetype are used.
 		</td>
 	</tr>
 	<tr>

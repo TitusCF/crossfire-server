@@ -30,9 +30,9 @@
 	<tr>
 		<td>
 @ref page_type_42
-		</td><td>            The created object will bear the name specified in &lt;name
-            of creation&gt;, and not use any title. If nothing is set, the standard name and title of
-            the archetype are used.</td>
+		</td><td>            The created object will bear the name specified in &lt;name of
+            creation&gt;, and not use any title. If nothing is set, the standard
+            name and title of the archetype are used.</td>
 	</tr>
 	<tr>
 		<td>

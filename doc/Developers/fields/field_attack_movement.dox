@@ -8,7 +8,40 @@
 	</tr>	<tr>
 		<td>
 @ref page_type_213, @ref page_type_28
-		</td><td>(no description)</td>
+		</td><td>                <![CDATA[
+                Specifies how the NPC or Monster moves:
+                default - Move toward a player.
+                DISTATT - Move toward a player if far, but maintain some space,
+                          attack from a distance - good for missile users only.
+                RUNATT - Run but attack if player catches up to object.
+                HITRUN - Run to then hit player then run away cyclicly.
+                WAITATT - Wait for player to approach then hit, move if hit.
+                RUSH - Rush toward player blindly, similiar to dumb monster.
+                ALLRUN - Always run, never attack good for sim. of weak player.
+                DISTHIT - Attack from a distance if hit as recommended by Frank.
+                WAIT2 - Monster does not try to move towards player if far.
+                        Maintains comfortable distance.
+
+                The second setting specifies the behavior when there is no enemy:
+                default - Stand still.
+                PETMOVE - The monster follows the player until it is called off
+                          and will try to attack whatever the player is attacking.
+                CIRCLE1 - The monster will move in a circle until it is attacked,
+                          or until it finds an enemy. This is good for
+                          non-aggressive monsters and NPC.
+                CIRCLE2 - Same as CIRCLE1 but a larger circle is used.
+                PACEH - The monster will pace back and forth until attacked.
+                        This is HORIZONTAL movement.
+                PACEH2 - The monster will pace as above but the length of the
+                         pace area is longer and the monster stops before
+                         changing directions. This is HORIZONTAL movement.
+                RANDO - The monster will go in a random direction until it is
+                        stopped by an obstacle, then it chooses another direction.
+                RANDO2 - Constantly move in a different random direction.
+                PACEV - The monster will pace back and forth until attacked.
+                        This is VERTICAL movement.
+                PACEV2 - The monster will pace as above but the length of the
+                         pace area is longer and the monster stops before</td>
 	</tr>
 
 */
