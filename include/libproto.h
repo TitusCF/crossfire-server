@@ -352,6 +352,7 @@ extern const readable_message_type *get_readable_message_type(object *readable);
 extern const GeneralMessage *get_message_from_identifier(const char *identifier);
 extern sstring get_message_title(const GeneralMessage *message);
 extern sstring get_message_body(const GeneralMessage *message);
+extern unsigned int get_message_face(const GeneralMessage *message);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
 extern void init_formulae(void);

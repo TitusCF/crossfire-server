@@ -843,13 +843,27 @@ static int knowledge_message_validate(const char *item) {
     return get_message_from_identifier(item) != NULL;
 }
 
+/**
+ * Get the face for a message.
+ * @param code message's code.
+ * @return face, -1 as unsigned if invalid.
+ */
+static unsigned knowledge_message_face(sstring code) {
+    const GeneralMessage *msg = get_message_from_identifier(code);
+
+    if (!msg)
+        /* warn? */
+        return -1;
+
+    return get_message_face(msg);
+}
 
 /** All handled knowledge items. */
 static const knowledge_type knowledges[] = {
     { "alchemy", knowledge_alchemy_summary, knowledge_alchemy_detail, knowledge_alchemy_validate, knowledge_add, "recipes", knowledge_alchemy_can_use_item, knowledge_alchemy_attempt, "knowledge_recipes.111", knowledge_alchemy_face },
     { "monster", knowledge_monster_summary, knowledge_monster_detail, knowledge_monster_validate, knowledge_monster_add, "monsters", NULL, NULL, "knowledge_monsters.111", knowledge_monster_face },
     { "god", knowledge_god_summary, knowledge_god_detail, knowledge_god_validate, knowledge_god_add, "gods", NULL, NULL, "knowledge_gods.111", knowledge_god_face },
-    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL, NULL, "knowledge_messages.111", NULL },
+    { "message", knowledge_message_summary, knowledge_message_detail, knowledge_message_validate, knowledge_add, "messages", NULL, NULL, "knowledge_messages.111", knowledge_message_face },
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL }
 };
 

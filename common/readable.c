@@ -138,6 +138,7 @@ struct GeneralMessage {
     sstring title;          /**< The message's title, only used for knowledge. */
     sstring message;        /**< The message's body. */
     sstring quest_code;     /**< Optional quest code and state this message will start. */
+    unsigned int face;      /**< Face the message displays at in the knowledge dialog, -1 if no face defined. */
     GeneralMessage *next;   /**< Next message in the list. */
 };
 
@@ -785,12 +786,18 @@ static void init_msgfile(void) {
                     tmp->title = add_string(buf + 6);
                 } else if (strncmp(buf, "QUEST ", 6) == 0) {
                     tmp->quest_code = add_string(buf + 6);
+                } else if (strncmp(buf, "FACE ", 5) == 0) {
+                    int face = find_face(buf + 5, (unsigned int)-1);
+                    if (face != (unsigned int)-1) {
+                        tmp->face = face;
+                    }
                 } else if (error_lineno != 0) {
                     LOG(llevInfo, "Warning: unknown line %s, line %d\n", buf, error_lineno);
                 }
             } else if (strncmp(buf, "MSG", 3) == 0) {
                 error_lineno = lineno;
                 tmp = (GeneralMessage *)calloc(1, sizeof(GeneralMessage));
+                tmp->face = -1;
                 strcpy(msgbuf, " ");  /* reset msgbuf for new message */
                 if (buf[3] == ' ') {
                     int i = 4;
@@ -2225,4 +2232,13 @@ sstring get_message_title(const GeneralMessage *message) {
  */
 sstring get_message_body(const GeneralMessage *message) {
     return message->message;
+}
+
+/**
+ * Get a message's face.
+ * @param message message, must not be NULL.
+ * @return face, -1 if not defined.
+ */
+unsigned int get_message_face(const GeneralMessage *message) {
+    return message->face;
 }
