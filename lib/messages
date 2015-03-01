@@ -43,6 +43,7 @@ ENDMSG
 MSG G-001
 TITLE Fortress of Barad-Dur
 QUEST quests/BaradDur 0>10
+FACE tower_a.x11
 CHANCE 1
 TEXT
 "In the mountains north-west of the great city we found it at last -- the hidden fortress of Barad-Dur.
@@ -56,6 +57,7 @@ ENDMSG
 MSG G-002
 TITLE Fortress of Ang
 QUEST quests/FortressAng 0>10
+FACE fort.x11
 CHANCE 1
 TEXT
 In ancient times past the great fortress of Ang was raised on the eastern shore. Many inhabitants it has had, but the last known was the most unusual.
@@ -315,6 +317,7 @@ ENDMSG
 MSG G-027
 TITLE Temple of Justice
 QUEST darcap/TempleJustice 0>10
+FACE quest_darcap_temple_justice.111
 CHANCE 1
 TEXT
 And so the Temple of Justice was founded, to show Valriel's Glory to the whole world!
@@ -332,6 +335,7 @@ ENDMSG
 MSG G-028
 TITLE The Tower of Grukk
 QUEST navar/grukk 0>10
+FACE s_tower1.x11
 CHANCE 1
 TEXT
 Grukk was a rich merchant from Navar, who accumulated wealth by being the right person at the right place.
@@ -360,6 +364,7 @@ MSG G-030
 TITLE The Dark Forest
 CHANCE 1
 QUEST scorn/DarkForest 0>10
+FACE power_crystal.111
 TEXT
 And thus the Glowing Crystal was stolen from Scorn's City Hall.
 
@@ -376,6 +381,7 @@ MSG G-031
 TITLE Narcopin
 CHANCE 1
 QUEST quests/Narcopin 0>10
+FACE ruins.111
 TEXT
 Once there stood upon the desert, west of Navar, a city called Narcopin, ruled by a dynasty of kings, wise and powerful.
 In time the monarchs grew less wise but more powerful.
@@ -397,6 +403,7 @@ MSG G-032
 TITLE The hunt for Nilplur
 CHANCE 1
 QUEST quests/Nilplur 0>10
+FACE dragon.x71
 TEXT
 As per your instructions, I've hunted down Nilplur the dragon to its lair.
 
