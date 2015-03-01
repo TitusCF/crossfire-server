@@ -1537,6 +1537,16 @@ static void fix_flesh_item(object *item, const object *donor) {
         if (donor->attacktype&AT_ACID)
             item->stats.hp = -1*item->stats.food;
         SET_FLAG(item, FLAG_NO_STEAL);
+
+        /* attempt to change the face - will take a face named "donor's arch"_"item's face". We ignore the animation for now */
+        if (item->face != NULL) {
+            unsigned int face;
+            snprintf(tmpbuf, sizeof(tmpbuf), "%s_%s", donor->arch->name, item->face->name);
+            face = find_face(tmpbuf, (unsigned int) -1);
+            if (face != (unsigned int)-1) {
+              item->face = &new_faces[face];
+            }
+        }
     }
 }
 
