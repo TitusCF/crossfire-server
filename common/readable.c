@@ -790,6 +790,8 @@ static void init_msgfile(void) {
                     int face = find_face(buf + 5, (unsigned int)-1);
                     if (face != (unsigned int)-1) {
                         tmp->face = face;
+                    } else {
+                        LOG(llevInfo, "Warning: unknown face %s for message %s, line %d\n", buf + 5, tmp->identifier, error_lineno);
                     }
                 } else if (error_lineno != 0) {
                     LOG(llevInfo, "Warning: unknown line %s, line %d\n", buf, error_lineno);
