@@ -308,27 +308,6 @@ line:	while(<ARC>) {
 	    elsif ($var eq "face") {
 		$lface[$#lface++] = $values[0]
 	    }
-	    elsif ($var eq "anim") {
-		if ($anim{"_$arch"}) {
-		    &warn("_$arch is a duplicate animation name");
-		    $anim{"_$arch"}="";
-		}
-		while (<ARC>) {
-		    chomp;
-		    $var = $_;
-		    last if ($var =~ "mina\s*");
-		    if ($var =~ /facings \S+$/) { }
-		    elsif (! $faces{$var}) {
-			&warn($arch." is missing face ".$var);
-		    }
-		    else {
-			$lface[$#lface++] = $var;
-		    }
-		    $anim{"_$arch"} .= "$var\n";
-		}
-		print ARCH "animation _$arch\n";
-		next line;	# don't want the mina
-	    }
 	    if ($var eq "face" && ! $faces{$values[0]}) {
 		&warn($arch." is missing face ".$values[0])
 	    }
