@@ -3,6 +3,29 @@
 #include "CREMainWindow.h"
 #include "ScriptFileManager.h"
 #include "ScriptFile.h"
+#include "CREPixmap.h"
+
+extern "C" {
+#include "define.h"
+}
+
+static QHash<QString, archetype*> events;
+
+void static fillEvents()
+{
+    if (!events.isEmpty())
+    {
+        return;
+    }
+
+    for (archt* arch = first_archetype; arch != NULL; arch = arch->next)
+    {
+        if (arch->clone.type == EVENT_CONNECTOR)
+        {
+            events.insert(arch->name, arch);
+        }
+    }
+}
 
 CREMapPanel::CREMapPanel(ScriptFileManager* manager)
 {
@@ -24,7 +47,10 @@ CREMapPanel::CREMapPanel(ScriptFileManager* manager)
 
     myScripts = new QTreeWidget(this);
     myScripts->setHeaderLabel(tr("Scripts on this map"));
-    layout->addWidget(myScripts, 3, 0, 1, 2);
+    myScripts->setIconSize(QSize(32, 32));
+   layout->addWidget(myScripts, 3, 0, 1, 2);
+
+    fillEvents();
 }
 
 CREMapPanel::~CREMapPanel()
@@ -50,7 +76,15 @@ void CREMapPanel::setMap(CREMapInformation* map)
         {
             if (hook->map() == map)
             {
-                myScripts->addTopLevelItem(new QTreeWidgetItem(QStringList(QString("%1 [%2, %3], %4, %5, %6").arg(hook->itemName()).arg(hook->x()).arg(hook->y()).arg(hook->eventName()).arg(hook->pluginName()).arg(script->path()))));
+                QTreeWidgetItem* child = new QTreeWidgetItem(QStringList(QString("%1 [%2, %3], %4, %5, %6").arg(hook->itemName()).arg(hook->x()).arg(hook->y()).arg(hook->eventName()).arg(hook->pluginName()).arg(script->path())));
+
+                archt* arch = events[hook->eventName().toLower()];
+                if (arch != NULL && arch->clone.face != NULL)
+                {
+                    child->setIcon(0, CREPixmap::getIcon(arch->clone.face->number));
+                }
+
+                myScripts->addTopLevelItem(child);
             }
         }
     }
