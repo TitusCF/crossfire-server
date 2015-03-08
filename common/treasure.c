@@ -17,8 +17,6 @@
  * @see page_treasure_list
  */
 
-#define ALLOWED_COMBINATION
-
 /**
  * TREASURE_DEBUG does some checking on the treasurelists after loading.
  * It is useful for finding bugs in the treasures file.  Since it only
@@ -26,9 +24,6 @@
  * left on
  */
 #define TREASURE_DEBUG
-
-/* TREASURE_VERBOSE enables copious output concerning artifact generation */
-/* #define TREASURE_VERBOSE */
 
 #include "global.h"
 
