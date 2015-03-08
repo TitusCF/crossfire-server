@@ -162,6 +162,12 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>non blocking</td>
+		<td>@ref liv::luck</td>
+		<td>            If set to 1, then this part of the door is non blocking even when closed.
+		</td>
+	</tr>
+	<tr>
 		<td>non-pickable</td>
 		<td>@ref FLAG_NO_PICK</td>
 		<td>            If set, the object cannot be picked up (Neither by players nor
@@ -253,6 +259,13 @@ Type defined by:
 		<td>            This is the object's title. Once an object is identified the title
             is attached to the name. Typical titles are "of Mostrai", "of xray
             vision" etc.
+		</td>
+	</tr>
+	<tr>
+		<td>transparent</td>
+		<td>@ref liv::ac</td>
+		<td>            If set to 1, then this door has an opening to let the player view
+            through even if closed.
 		</td>
 	</tr>
 	<tr>

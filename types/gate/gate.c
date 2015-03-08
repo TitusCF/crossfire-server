@@ -43,7 +43,7 @@ void init_type_gate(void) {
  * @return METHOD_OK
  */
 static method_ret gate_type_process(ob_methods *context, object *op) {
-    object *tmp;
+    object *tmp, *part;
 
     if (op->stats.wc < 0 || (int)op->stats.wc >= NUM_ANIMATIONS(op)) {
         StringBuffer *sb;
@@ -69,12 +69,15 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
                 object_update_speed(op);
             }
         }
-        if ((int)op->stats.wc < (NUM_ANIMATIONS(op)/2+1)) {
-            op->move_block = 0;
-            CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
-            update_all_los(op->map, op->x, op->y);
+
+        for (part = op; part != NULL; part = part->more) {
+            if ((int)op->stats.wc < (NUM_ANIMATIONS(op)/2+1)) {
+                part->move_block = 0;
+                CLEAR_FLAG(part, FLAG_BLOCKSVIEW);
+                update_all_los(part->map, part->x, part->y);
+            }
+            SET_ANIMATION(part, op->stats.wc);
         }
-        SET_ANIMATION(op, op->stats.wc);
         object_update(op, UP_OBJ_CHANGE);
         return METHOD_OK;
     }
@@ -162,14 +165,21 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
             if (tmp) {
                 op->stats.food = 1;
             } else {
-                op->move_block = MOVE_ALL;
-                if (!op->arch->clone.stats.ac)
-                    SET_FLAG(op, FLAG_BLOCKSVIEW);
-                update_all_los(op->map, op->x, op->y);
+                object* part;
+                for (part = op; part != NULL; part = part->more) {
+                    if (!part->stats.luck)
+                        part->move_block = MOVE_ALL;
+                    if (!part->stats.ac) {
+                        SET_FLAG(part, FLAG_BLOCKSVIEW);
+                        update_all_los(part->map, part->x, part->y);
+                    }
+                }
             }
         } /* gate is halfway up */
 
-        SET_ANIMATION(op, op->stats.wc);
+        for (part = op; part != NULL; part = part->more) {
+            SET_ANIMATION(part, op->stats.wc);
+        }
         object_update(op, UP_OBJ_CHANGE);
     } /* gate is going up */
 

@@ -15,5 +15,10 @@
                 never exceed 3, and such bonus should not be too frequently
                 available.</td>
 	</tr>
+	<tr>
+		<td>
+@ref page_type_91
+		</td><td>            If set to 1, then this part of the door is non blocking even when closed.</td>
+	</tr>
 
 */
