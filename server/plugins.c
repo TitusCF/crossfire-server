@@ -34,6 +34,7 @@
 #include <string.h>
 
 #include "plugin.h"
+#include "shop.h"
 #include "sproto.h"
 #include "svnversion.h"
 #include "timers.h"
@@ -760,7 +761,6 @@ void plugins_display_list(object *op) {
  * will be CFAPI_NONE.
 */
 static void cfapi_cost_string_from_value(int *type, ...) {
-    StringBuffer *sb;
     uint64_t cost;
     char *buffer, *final;
     int length, largest_coin;
@@ -778,8 +778,7 @@ static void cfapi_cost_string_from_value(int *type, ...) {
     if (length < 1)
         return;
 
-    sb = cost_string_from_value(cost, largest_coin, NULL);
-    final = stringbuffer_finish(sb);
+    final = cost_str(cost);
 
     strncpy(buffer, final, length - 1);
     buffer[length - 1] = '\0';

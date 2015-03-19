@@ -26,6 +26,7 @@
 
 #include "living.h"
 #include "object.h"
+#include "shop.h"
 #include "sounds.h"
 #include "spells.h"
 #include "sproto.h"

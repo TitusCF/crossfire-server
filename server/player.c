@@ -31,6 +31,7 @@
 #include "living.h"
 #include "object.h"
 #include "shared/newclient.h"
+#include "shop.h"
 #include "skills.h"
 #include "sounds.h"
 #include "spells.h"

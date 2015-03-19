@@ -26,9 +26,10 @@
 #include <string.h>
 
 #include "object.h"
-#include "sproto.h"
+#include "shop.h"
 #include "skills.h"
 #include "spells.h"
+#include "sproto.h"
 
 /** define this for some helpful debuging information */
 #if 0

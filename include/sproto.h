@@ -471,24 +471,6 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
 int trap_see(object *op, object *trap);
 int trap_show(object *trap, object *where);
 int trap_disarm(object *disarmer, object *trap, int risk, object *skill);
-/* shop.c */
-uint64_t price_approx(const object *obj, object *who);
-uint64_t price_base(const object *obj);
-uint64_t shop_price_buy(const object *obj, object *who);
-uint64_t shop_price_sell(const object *obj, object *who);
-StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, StringBuffer *buf);
-char *cost_str(uint64_t cost);
-char *cost_approx_str(const object *obj, object *who);
-uint64_t query_money(const object *op);
-int pay_for_amount(uint64_t to_pay, object *pl);
-int pay_for_item(object *op, object *pl);
-int can_pay(object *pl);
-int get_payment(object *pl, object *op);
-void sell_item(object *op, object *pl);
-double shopkeeper_approval(const mapstruct *map, const object *player);
-int describe_shop(const object *op);
-int is_in_shop(object *ob);
-int coords_in_shop(mapstruct *map, int x, int y);
 /* skills.c */
 int steal(object *op, int dir, object *skill);
 int pick_lock(object *pl, int dir, object *skill);

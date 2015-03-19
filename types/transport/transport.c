@@ -24,6 +24,7 @@
 
 #include "ob_methods.h"
 #include "ob_types.h"
+#include "shop.h"
 #include "sounds.h"
 #include "sproto.h"
 

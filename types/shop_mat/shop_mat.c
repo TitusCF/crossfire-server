@@ -24,11 +24,12 @@
 /** @file shop_mat.c
  * The implementation of the Shop Mat class of objects.
  */
-#include <global.h>
-#include <ob_methods.h>
-#include <ob_types.h>
-#include <sounds.h>
-#include <sproto.h>
+#include "global.h"
+#include "ob_methods.h"
+#include "ob_types.h"
+#include "shop.h"
+#include "sounds.h"
+#include "sproto.h"
 
 static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 

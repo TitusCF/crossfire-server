@@ -25,6 +25,7 @@
 
 #include "living.h"
 #include "loader.h"
+#include "shop.h"
 #include "skills.h"
 #include "sproto.h"
 

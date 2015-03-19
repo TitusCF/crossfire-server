@@ -28,6 +28,7 @@
 
 #include "living.h"
 #include "shared/newclient.h"
+#include "shop.h"
 #include "skills.h"
 #include "spells.h"
 #include "sproto.h"
@@ -67,13 +68,6 @@ static const char *const coins[] = {
     NULL
 };
 
-/**
- * Determine the base (intrinsic) value of an item. This should not include
- * adjustments such as bargaining, charisma, or shop specialization.
- *
- * @param tmp item in question.
- * @return base price.
- */
 uint64_t price_base(const object *tmp) {
     // When there are zero objects, there is really one.
     int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
@@ -121,14 +115,6 @@ uint64_t price_base(const object *tmp) {
     return val;
 }
 
-/**
- * Adjust the value of the given item based on the player's skills. This
- * function should only be used when calculating "you reckon" prices.
- *
- * @param tmp item in question. Must not be NULL.
- * @param who player trying to judge the value of the item. Must not be NULL.
- * @return approximate value of tmp.
- */
 uint64_t price_approx(const object *tmp, object *who) {
     uint64_t val = price_base(tmp);
 
@@ -193,14 +179,6 @@ static float shop_bargain_multiplier(int lev_bargain) {
     return 1 - 0.5 * lev_bargain / settings.max_level;
 }
 
-/**
- * Adjust the value of an item to be bought based on the player's bargaining skill and
- * charisma. This should only be used if the player is in a shop.
- *
- * @param tmp item in question. Must not be NULL.
- * @param who player trying to judge the value of the item. Must not be NULL.
- * @return value of tmp.
- */
 uint64_t shop_price_buy(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
     uint64_t val = price_base(tmp);
@@ -254,14 +232,6 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
     return val;
 }
 
-/**
- * Adjust the value of an item to be sold based on the player's bargaining skill and
- * charisma. This should only be used if the player is in a shop.
- *
- * @param tmp item in question. Must not be NULL.
- * @param who player trying to judge the value of the item. Must not be NULL.
- * @return value of tmp.
- */
 uint64_t shop_price_sell(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
     uint64_t val = price_base(tmp);
@@ -349,7 +319,7 @@ static archetype *find_next_coin(uint64_t c, int *cointype) {
  * @return
  * buffer containing the price, either buf or if NULL a new StringBuffer.
  */
-StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, StringBuffer *buf) {
+static StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, StringBuffer *buf) {
     archetype *coin, *next_coin;
     uint32_t num;
     int cointype = largest_coin;
@@ -433,23 +403,10 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
     return buf;
 }
 
-/**
- * Return the textual representation of a cost in a newly-allocated string.
- *
- * @param cost value to convert to text.
- * @return converted value the caller is responsible to free.
- */
 char *cost_str(uint64_t cost) {
     return stringbuffer_finish(cost_string_from_value(cost, LARGEST_COIN_GIVEN, NULL));
 }
 
-/**
- * Return a textual cost approximation in a newly-allocated string.
- *
- * @param tmp item to query the price of, must not be NULL.
- * @param who player asking for the price, must not be NULL.
- * @return converted value the caller is responsible to free.
- */
 char *cost_approx_str(const object *tmp, object *who) {
     uint64_t approx_val = price_approx(tmp, who);
     int idskill1 = 0;
@@ -511,15 +468,6 @@ char *cost_approx_str(const object *tmp, object *who) {
     return cost_str(approx_val);
 }
 
-/**
- * Finds out how much money the player is carrying,
- * including what is in containers.
- *
- * @param op
- * item to get money for. Must be a player or a container.
- * @return
- * total money the player is carrying.
- */
 uint64_t query_money(const object *op) {
     uint64_t total = 0;
 
@@ -1327,32 +1275,16 @@ int describe_shop(const object *op) {
 }
 
 /**
- * Check if an object is in a shop.
- *
- * @param ob
- * object to check for.
- * @return
- * 1 if in a shop so, 0 otherwise.
+ * Check if the given map coordinates are in a shop.
  */
-int is_in_shop(object *ob) {
-    if (!ob->map)
-        return 0;
-    return coords_in_shop(ob->map, ob->x, ob->y);
+static bool coords_in_shop(mapstruct *map, int x, int y) {
+    FOR_MAP_PREPARE(map, x, y, floor)
+        if (floor->type == SHOP_FLOOR) return true;
+    FOR_MAP_FINISH();
+    return false;
 }
 
-/**
- * Check if given map coords are in a shop.
- * @param map
- * @param x
- * @param y
- * coordinates to check.
- * @return
- * 1 if coordinates are a shop, 0 otherwise.
- */
-int coords_in_shop(mapstruct *map, int x, int y) {
-    FOR_MAP_PREPARE(map, x, y, floor)
-        if (floor->type == SHOP_FLOOR)
-            return 1;
-    FOR_MAP_FINISH();
-    return 0;
+bool is_in_shop(object *ob) {
+    if (!ob->map) return 0;
+    return coords_in_shop(ob->map, ob->x, ob->y);
 }

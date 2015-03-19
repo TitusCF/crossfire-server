@@ -41,11 +41,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "object.h"
-#include "sproto.h"
 #include "living.h"
-#include "spells.h"
+#include "object.h"
+#include "shop.h"
 #include "skills.h"
+#include "spells.h"
+#include "sproto.h"
 
 static void attack_hth(object *pl, int dir, const char *string, object *skill);
 static void attack_melee_weapon(object *op, int dir, const char *string, object *skill);
