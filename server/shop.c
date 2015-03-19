@@ -88,16 +88,10 @@ uint64_t price_base(const object *tmp) {
         val *= 0.8;
     }
 
-    // If a normally non-magic item is magical, adjust its value accordingly.
-    if (tmp->magic && (tmp->arch == NULL || !tmp->arch->clone.magic)) {
-        if (tmp->magic > 0) {
-            val *= 3 * pow(tmp->magic, 3);
-        } else {
-            /* Note that tmp->magic is negative, so that this
-             * will actually be something like val /=2, /=3, etc.
-             */
-            val /= 1 - tmp->magic;
-        }
+    // If an item has an archetype, compare its base enchantment.
+    if (tmp->arch != NULL) {
+        int diff = tmp->magic - tmp->arch->clone.magic;
+        val *= pow(1.15, diff);
     }
 
     // FIXME: Is the 'baseline' 50 charges per wand?
