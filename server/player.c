@@ -3718,7 +3718,7 @@ static void kill_player_not_permadeath(object *op) {
      * If they are not in a shop, just free the unpaid items instead of
      * putting them back on map.
      */
-    if (is_in_shop(op))
+    if (shop_contains(op))
         remove_unpaid_objects(op->inv, op, 0);
     else
         remove_unpaid_objects(op->inv, op, 1);

@@ -100,8 +100,8 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
          * but there is never a guarantee that the bottom space on the map is
          * actually the shop floor.
          */
-        else if (!rv && !is_in_shop(victim)) {
-            opinion = shopkeeper_approval(victim->map, victim);
+        else if (!rv && !shop_contains(victim)) {
+            opinion = shop_approval(victim->map, victim);
             if (opinion > 0.9)
                 draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                     "The shopkeeper gives you a friendly wave.");

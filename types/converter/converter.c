@@ -134,7 +134,7 @@ static int convert_item(object *item, object *converter) {
         item->nrof = CONV_NR(converter);
     if (nr)
         item->nrof *= nr;
-    if (item->type != MONEY && is_in_shop(converter))
+    if (item->type != MONEY && shop_contains(converter))
         SET_FLAG(item, FLAG_UNPAID);
     else if (price_in < item->nrof*item->value && settings.allow_broken_converters == FALSE) {
         LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d for %s\n", converter->name, converter->map->path, converter->x, converter->y, price_in, item->nrof*item->value, item->name);

@@ -881,7 +881,7 @@ object *drop_object(object *op, object *tmp, uint32_t nrof) {
 
     tmp_tag = tmp->count;
     object_insert_in_map_at(tmp, op->map, op, INS_BELOW_ORIGINATOR, op->x, op->y);
-    if (!object_was_destroyed(tmp, tmp_tag) && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY && is_in_shop(op)) {
+    if (!object_was_destroyed(tmp, tmp_tag) && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY && shop_contains(op)) {
         sell_item(tmp, op);
     }
 
@@ -1602,7 +1602,7 @@ void examine(object *op, object *tmp) {
                       buf);
     }
 
-    in_shop = is_in_shop(op);
+    in_shop = shop_contains(op);
 
     if (tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
         char *value = cost_approx_str(tmp, op);

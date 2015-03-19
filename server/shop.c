@@ -222,11 +222,11 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
     if (QUERY_FLAG(tmp, FLAG_PLAYER_SOLD)) {
         val = (int64_t)val*shop_greed(who->map)
             *shop_specialisation_ratio(tmp, who->map)
-            /shopkeeper_approval(who->map, who);
+            /shop_approval(who->map, who);
     } else {
         val = (int64_t)val*shop_greed(who->map)
             /(shop_specialisation_ratio(tmp, who->map)
-                *shopkeeper_approval(who->map, who));
+                *shop_approval(who->map, who));
     }
 
     return val;
@@ -270,7 +270,7 @@ uint64_t shop_price_sell(const object *tmp, object *who) {
     val = value_limit(val, number, who, 1);
 
     val = (int64_t)val*shop_specialisation_ratio(tmp, who->map)*
-            shopkeeper_approval(who->map, who)/shop_greed(who->map);
+            shop_approval(who->map, who)/shop_greed(who->map);
     return val;
 }
 
@@ -1103,18 +1103,7 @@ static double shop_greed(const mapstruct *map) {
     return greed;
 }
 
-/**
- * Returns a double based on how much the shopkeeper approves of the player.
- * this is based on the race of the shopkeeper and that of the player.
- *
- * @param map
- * shop to get ratio for.
- * @param player
- * player to get ratio of.
- * @return
- * approval ratio.
- */
-double shopkeeper_approval(const mapstruct *map, const object *player) {
+double shop_approval(const mapstruct *map, const object *player) {
     double approval = 1.0;
 
     if (map->shoprace) {
@@ -1173,16 +1162,7 @@ static uint64_t value_limit(uint64_t val, int quantity, const object *who, int i
     return newval;
 }
 
-/**
- * Gives a desciption of the shop on their current map to the player op.
- *
- * @param op
- * player to describe the shop for. Mustn't be NULL.
- * @return
- * 0 if op is not a player, 1 else.
- * @todo is return value meaningful?
- */
-int describe_shop(const object *op) {
+int shop_describe(const object *op) {
     mapstruct *map = op->map;
     /*shopitems *items=map->shopitems;*/
     int pos = 0, i;
@@ -1254,7 +1234,7 @@ int describe_shop(const object *op) {
                               "It tends to undercharge.");
         }
         if (map->shoprace) {
-            opinion = shopkeeper_approval(map, op);
+            opinion = shop_approval(map, op);
             if (opinion > 0.8)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
@@ -1284,7 +1264,7 @@ static bool coords_in_shop(mapstruct *map, int x, int y) {
     return false;
 }
 
-bool is_in_shop(object *ob) {
+bool shop_contains(object *ob) {
     if (!ob->map) return 0;
     return coords_in_shop(ob->map, ob->x, ob->y);
 }

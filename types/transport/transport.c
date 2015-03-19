@@ -132,7 +132,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         if (op->env == applier) {
             old_transport = op;
             /* Don't drop transports in shops. */
-            if (!is_in_shop(applier)) {
+            if (!shop_contains(applier)) {
                 op = drop_object(applier, op, 1);
             } else {
                 draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,

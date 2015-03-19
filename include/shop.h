@@ -73,12 +73,28 @@ int get_payment(object *pl, object *op);
 int pay_for_item(object *op, object *pl);
 void sell_item(object *op, object *pl);
 
-double shopkeeper_approval(const mapstruct *map, const object *player);
-int describe_shop(const object *op);
+/**
+ * Return the approval ratio for a shop for a given player. This is based on
+ * both the race of the shopkeeper and the player.
+ *
+ * @param map Map with a shop
+ * @param player Player in question
+ * @return Approval ratio between 0 and 1
+ */
+double shop_approval(const mapstruct *map, const object *player);
 
 /**
  * Check if an object is in a shop.
  */
-bool is_in_shop(object *ob); 
+bool shop_contains(object *ob);
+
+/**
+ * Give the player a description of the shop on their current map. This is
+ * used for the bargaining skill.
+ *
+ * @param op Non-null player to describe the shop to
+ * @return Zero if the object is not a player, 1 otherwise
+ */
+int shop_describe(const object *op);
 
 #endif
