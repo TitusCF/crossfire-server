@@ -5,7 +5,7 @@
  * Adjust the value of the given item based on the player's skills. This
  * function should only be used when calculating "you reckon" prices.
  *
- * @param tmp item in question. Must not be NULL.
+ * @param obj item in question. Must not be NULL.
  * @param who player trying to judge the value of the item. Must not be NULL.
  * @return approximate value of tmp.
  */
@@ -15,7 +15,7 @@ uint64_t price_approx(const object *obj, object *who);
  * Determine the base (intrinsic) value of an item. This should not include
  * adjustments such as bargaining, charisma, or shop specialization.
  *
- * @param tmp item in question.
+ * @param obj item in question.
  * @return base price.
  */
 uint64_t price_base(const object *obj);
@@ -24,7 +24,7 @@ uint64_t price_base(const object *obj);
  * Adjust the value of an item to be bought based on the player's bargaining skill and
  * charisma. This should only be used if the player is in a shop.
  *
- * @param tmp item in question. Must not be NULL.
+ * @param obj item in question. Must not be NULL.
  * @param who player trying to judge the value of the item. Must not be NULL.
  * @return value of tmp.
  */
@@ -34,7 +34,7 @@ uint64_t shop_price_buy(const object *obj, object *who);
  * Adjust the value of an item to be sold based on the player's bargaining skill and
  * charisma. This should only be used if the player is in a shop.
  *
- * @param tmp item in question. Must not be NULL.
+ * @param obj item in question. Must not be NULL.
  * @param who player trying to judge the value of the item. Must not be NULL.
  * @return value of tmp.
  */
@@ -51,7 +51,7 @@ char *cost_str(uint64_t cost);
 /**
  * Return a textual cost approximation in a newly-allocated string.
  *
- * @param tmp item to query the price of, must not be NULL.
+ * @param obj item to query the price of, must not be NULL.
  * @param who player asking for the price, must not be NULL.
  * @return converted value the caller is responsible to free.
  */
