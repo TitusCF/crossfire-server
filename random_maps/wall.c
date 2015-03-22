@@ -17,6 +17,7 @@
 
 #include "random_map.h"
 #include "rproto.h"
+#include <assert.h>
 
 /**
  * Given a layout and a coordinate, tell me which squares up/down/right/left
@@ -226,6 +227,17 @@ void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP)
 }
 
 /**
+ * Suffix to add to a base wall archetype name to get the joined wall based on the
+ * value returned by surround_flag2().
+ */
+static const char* wall_join[16] = {
+    "_0", "_1_3", "_1_4", "_2_1_2",
+    "_1_2", "_2_2_4", "_2_2_1", "_3_1",
+    "_1_1", "_2_2_3", "_2_2_2", "_3_3",
+    "_2_1_1", "_3_4", "_3_2", "_4"
+};
+
+/**
  * Picks the right wall type for this square, to make it look nice,
  * and have everything nicely joined.  It uses the layout.
  * @param the_wall
@@ -269,72 +281,9 @@ object *pick_joined_wall(object *the_wall, char **layout, int i, int j, RMParms 
     }
 
     surround_index = surround_flag2(layout, i, j, RP);
+    assert(surround_index >= 0 && surround_index < 16);
+    strcat(wall_name, wall_join[surround_index]);
 
-    switch (surround_index) {
-    case 0:
-        strcat(wall_name, "_0");
-        break;
-
-    case 1:
-        strcat(wall_name, "_1_3");
-        break;
-
-    case 2:
-        strcat(wall_name, "_1_4");
-        break;
-
-    case 3:
-        strcat(wall_name, "_2_1_2");
-        break;
-
-    case 4:
-        strcat(wall_name, "_1_2");
-        break;
-
-    case 5:
-        strcat(wall_name, "_2_2_4");
-        break;
-
-    case 6:
-        strcat(wall_name, "_2_2_1");
-        break;
-
-    case 7:
-        strcat(wall_name, "_3_1");
-        break;
-
-    case 8:
-        strcat(wall_name, "_1_1");
-        break;
-
-    case 9:
-        strcat(wall_name, "_2_2_3");
-        break;
-
-    case 10:
-        strcat(wall_name, "_2_2_2");
-        break;
-
-    case 11:
-        strcat(wall_name, "_3_3");
-        break;
-
-    case 12:
-        strcat(wall_name, "_2_1_1");
-        break;
-
-    case 13:
-        strcat(wall_name, "_3_4");
-        break;
-
-    case 14:
-        strcat(wall_name, "_3_2");
-        break;
-
-    case 15:
-        strcat(wall_name, "_4");
-        break;
-    }
     wall_arch = try_find_archetype(wall_name);
     if (wall_arch) {
         return arch_to_object(wall_arch);
@@ -408,74 +357,8 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
     }
 
     surround_index = surround_flag4(the_map, i, j, RP);
-    /* This would be a lot cleaner to just us a lookup table,
-     * eg, wall_suffix[surround_index]
-     */
-    switch (surround_index) {
-    case 0:
-        strcat(RP->wall_name, "_0");
-        break;
-
-    case 1:
-        strcat(RP->wall_name, "_1_3");
-        break;
-
-    case 2:
-        strcat(RP->wall_name, "_1_4");
-        break;
-
-    case 3:
-        strcat(RP->wall_name, "_2_1_2");
-        break;
-
-    case 4:
-        strcat(RP->wall_name, "_1_2");
-        break;
-
-    case 5:
-        strcat(RP->wall_name, "_2_2_4");
-        break;
-
-    case 6:
-        strcat(RP->wall_name, "_2_2_1");
-        break;
-
-    case 7:
-        strcat(RP->wall_name, "_3_1");
-        break;
-
-    case 8:
-        strcat(RP->wall_name, "_1_1");
-        break;
-
-    case 9:
-        strcat(RP->wall_name, "_2_2_3");
-        break;
-
-    case 10:
-        strcat(RP->wall_name, "_2_2_2");
-        break;
-
-    case 11:
-        strcat(RP->wall_name, "_3_3");
-        break;
-
-    case 12:
-        strcat(RP->wall_name, "_2_1_1");
-        break;
-
-    case 13:
-        strcat(RP->wall_name, "_3_4");
-        break;
-
-    case 14:
-        strcat(RP->wall_name, "_3_2");
-        break;
-
-    case 15:
-        strcat(RP->wall_name, "_4");
-        break;
-    }
+    assert(surround_index >= 0 && surround_index < 16);
+    strcat(RP->wall_name, wall_join[surround_index]);
     wall_arch = try_find_archetype(RP->wall_name);
     if (wall_arch != NULL) {
         new_wall = arch_to_object(wall_arch);
