@@ -1,3 +1,7 @@
+2015-03-24	Rick Tanner
+	* lib/config/metaserver2: Add entries for additional metaservers, one
+	in the US and the other in EU.
+
 2015-03-18	Kevin Zheng
 	* server/shop.c: Adjust item enchantment price bonus
 

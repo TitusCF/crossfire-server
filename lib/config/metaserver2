@@ -23,6 +23,8 @@ metaserver2_notification off
 # multiple lines to list multiple servers
 
 metaserver2_server http://crossfire.real-time.com/metaserver2/meta_update.php
+metaserver2_server http://metaserver.eu.cross-fire.org/meta_update.php
+metaserver2_server http://metaserver.us.cross-fire.org/meta_update.php
 #metaserver2_server some other URL
 
 # Use localhostname to set your local host name.  Many
