@@ -90,7 +90,7 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, objec
         rv = teleport(trap, SHOP_MAT, victim);
     /* immediate block below is only used for players */
     } else if (can_pay(victim)) {
-        get_payment(victim, victim->inv);
+        shop_pay_unpaid(victim, victim->inv);
         rv = teleport(trap, SHOP_MAT, victim);
         if (trap->msg) {
             draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,

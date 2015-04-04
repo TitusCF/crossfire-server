@@ -860,29 +860,18 @@ int can_pay(object *pl) {
         return 1;
 }
 
-/**
- * Descends containers looking for unpaid items, and pays for them.
- *
- * @param pl
- * player buying the stuff.
- * @param op
- * object we are examining.  If op has and inventory, we examine that.  IF there are objects
- * below op, we descend down.
- * @retval 0 player still has unpaid items.
- * @retval 1 player has paid for everything.
- */
-int get_payment(object *pl, object *op) {
+int shop_pay_unpaid(object *pl, object *op) {
     char name_op[MAX_BUF];
     int ret = 1;
 
     if (op != NULL && op->inv)
-        ret = get_payment(pl, op->inv);
+        ret = shop_pay_unpaid(pl, op->inv);
 
     if (!ret)
         return 0;
 
     if (op != NULL && op->below)
-        ret = get_payment(pl, op->below);
+        ret = shop_pay_unpaid(pl, op->below);
 
     if (!ret)
         return 0;

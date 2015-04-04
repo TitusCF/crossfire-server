@@ -68,7 +68,18 @@ uint64_t query_money(const object *op);
 
 int pay_for_amount(uint64_t to_pay, object *pl);
 int can_pay(object *pl);
-int get_payment(object *pl, object *op);
+
+/**
+ * Pay for each unpaid item carried by a player, including those inside
+ * containers. It is a good idea to call can_pay() before using this function,
+ * because items are paid for here in no particular order.
+ *
+ * @param pl Player making purchase
+ * @param op Container to examine, usually the same player object
+ * @retval 0 Player still has unpaid items
+ * @retval 1 Player paid for all unpaid items
+ */
+int shop_pay_unpaid(object *pl, object *op);
 
 int pay_for_item(object *op, object *pl);
 void sell_item(object *op, object *pl);
