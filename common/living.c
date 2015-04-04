@@ -1403,8 +1403,7 @@ void fix_object(object *op) {
                     if (weapon_speed < 0)
                         weapon_speed = 0;
                     op->stats.dam += tmp->stats.dam*(1+(op->chosen_skill->level/9));
-                    if (tmp->magic)
-                        op->stats.dam += tmp->magic;
+                    op->stats.dam += tmp->magic;
                 }
                 if (tmp->stats.wc)
                     wc -= (tmp->stats.wc+tmp->magic);
