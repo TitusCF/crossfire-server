@@ -62,27 +62,32 @@ FILE *of_open(OutputFile *of, const char *fname) {
 int of_close(OutputFile *of)
 {
     char tmp[1024];
-    int success = 1;
 
     if (ferror(of->file)) {
         LOG(llevError, "%s: write error\n", of->fname);
         fclose(of->file);
         remove(of->fname_tmp);
-        success = 0;
+        free(of->fname_tmp);
+        free(of->fname);
+        return 0;
     }
     if (fclose(of->file) != 0) {
         LOG(llevError, "%s: %s\n", of->fname, strerror_local(errno, tmp, sizeof(tmp)));
         remove(of->fname_tmp);
-        success = 0;
+        free(of->fname_tmp);
+        free(of->fname);
+        return 0;
     }
     if (rename(of->fname_tmp, of->fname) != 0) {
         LOG(llevError, "%s: cannot rename from %s: %s\n", of->fname, of->fname_tmp, strerror_local(errno, tmp, sizeof(tmp)));
         remove(of->fname_tmp);
-        success = 0;
+        free(of->fname_tmp);
+        free(of->fname);
+        return 0;
     }
     free(of->fname_tmp);
     free(of->fname);
-    return success;
+    return 1;
 }
 
 void of_cancel(OutputFile *of)
