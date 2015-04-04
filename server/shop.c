@@ -534,7 +534,6 @@ int pay_for_amount(uint64_t to_pay, object *pl) {
  */
 int pay_for_item(object *op, object *pl) {
     uint64_t to_pay = shop_price_buy(op, pl);
-    uint64_t saved_money;
 
     if (to_pay == 0)
         return 1;
@@ -545,8 +544,7 @@ int pay_for_item(object *op, object *pl) {
      * without bargaining skill.
      * This determins the amount of exp (if any) gained for bargaining.
      */
-    saved_money = price_base(op) - to_pay;
-
+    int64_t saved_money = price_base(op) - to_pay;
     if (saved_money > 0)
         change_exp(pl, saved_money, "bargaining", SK_EXP_NONE);
 
