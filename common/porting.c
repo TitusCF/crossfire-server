@@ -309,47 +309,10 @@ char *strcasestr(const char *s, const char *find) {
 #endif
 
 /**
- * This takes an err number and returns a string with a description of
- * the error.
- *
- * @param errnum
- * error we want the description of.
- * @param buf
- * buffer to contain the description.
- * @param size
- * buf's length.
- * @return
- * buf.
+ * Crazy mix between strerror(3) and strerror_r(3).
  */
 char *strerror_local(int errnum, char *buf, size_t size) {
-#if defined(HAVE_STRERROR_R)
-    /* Then what flavour of strerror_r... */
-# if defined(STRERROR_R_CHAR_P)
-    char *bbuf;
-
-    buf[0] = 0;
-    bbuf = (char *)strerror_r(errnum, buf, size);
-    if ((buf[0] == 0) && (bbuf != NULL))
-        snprintf(buf, size, "%s", bbuf);
-# else
-    if (strerror_r(errnum, buf, size) != 0) {
-        /* EINVAL and ERANGE are possible errors from this strerror_r */
-        if (errno == ERANGE) {
-            snprintf(buf, size, "Too small buffer.");
-        } else if (errno == EINVAL) {
-            snprintf(buf, size, "Error number invalid.");
-        }
-    }
-# endif /* STRERROR_R_CHAR_P */
-
-#else /* HAVE_STRERROR_R */
-
-# if defined(HAVE_STRERROR)
     snprintf(buf, size, "%s", strerror(errnum));
-# else
-#  error If this is C89 the compiler should have strerror!;
-# endif
-#endif /* HAVE_STRERROR_R */
     return buf;
 }
 

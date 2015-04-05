@@ -132,9 +132,8 @@ CF_CHECK_VISIBILITY()
 ##############################################################################
 # Checks for library functions.
 AC_FUNC_MEMCMP
-AC_FUNC_STRERROR_R
 
-AC_CHECK_FUNCS([getdtablesize gettimeofday strcasecmp strcasestr strdup strerror strncasecmp setsid srandom srand48 srand sysconf tempnam getaddrinfo getnameinfo])
+AC_CHECK_FUNCS([getdtablesize gettimeofday strcasecmp strcasestr strdup strncasecmp setsid srandom srand48 srand sysconf tempnam getaddrinfo getnameinfo])
 
 # Check for better but non-portable functions.
 AC_CHECK_FUNCS([strlcat strlcpy])
