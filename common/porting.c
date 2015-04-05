@@ -24,7 +24,6 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -43,10 +42,6 @@
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
 #endif
 
 /*****************************************************************************
@@ -83,11 +78,7 @@ char *tempnam(const char *dir, const char *pfx) {
         if (!(name = (char *)malloc(MAXPATHLEN)))
             return(NULL);
         do {
-#ifdef HAVE_SNPRINTF
-            (void)snprintf(name, MAXPATHLEN, "%s/%s%x.%u", dir, pfx, (unsigned int)pid, curtmp);
-#else
-            (void)sprintf(name, "%s/%s%x%u", dir, pfx, (unsigned int)pid, curtmp);
-#endif
+            snprintf(name, MAXPATHLEN, "%s/%s%x.%u", dir, pfx, (unsigned int)pid, curtmp);
             curtmp++;
         } while (access(name, F_OK) != -1);
         return(name);
@@ -222,73 +213,7 @@ char *strdup(const char *str) {
 }
 #endif
 
-#ifndef HAVE_STRTOL
-#define DIGIT(x) (isdigit(x) ? (x)-'0' : islower(x) ? (x)+10-'a' : (x)+10-'A')
-#define MBASE ('z'-'a'+1+10)
-
-/**
- * Converts a string to long.
- *
- * A replacement of strtol() since it's not defined at
- * many unix systems.
- *
- * @param str
- * string to convert.
- * @param ptr
- * will point to first invalid character in str.
- * @param base
- * base to consider to convert to long.
- *
- * @todo
- * check weird -+ handling (missing break?)
- */
-long strtol(register char *str, char **ptr, register int base) {
-    register long val;
-    register int c;
-    int xx, neg = 0;
-
-    if (ptr != (char **)0)
-        *ptr = str;         /* in case no number is formed */
-    if (base < 0 || base > MBASE)
-        return (0);         /* base is invalid */
-    if (!isalnum(c = *str)) {
-        while (isspace(c))
-            c = *++str;
-        switch (c) {
-        case '-':
-            neg++;
-        case '+':
-            c = *++str;
-        }
-    }
-    if (base == 0) {
-        if (c != '0')
-            base = 10;
-        else {
-            if (str[1] == 'x' || str[1] == 'X')
-                base = 16;
-            else
-                base = 8;
-        }
-    }
-    /*
-     * For any base > 10, the digits incrementally following
-     * 9 are assumed to be "abc...z" or "ABC...Z"
-     */
-    if (!isalnum(c) || (xx = DIGIT(c)) >= base)
-        return 0;           /* no number formed */
-    if (base == 16 && c == '0' && isxdigit(str[2]) && (str[1] == 'x' || str[1] == 'X'))
-        c = *(str += 2);    /* skip over leading "0x" or "0X" */
-    for (val = -DIGIT(c); isalnum(c = *++str) && (xx = DIGIT(c)) < base; )
-        /* accumulate neg avoids surprises near
-        MAXLONG */
-        val = base*val-xx;
-    if (ptr != (char **)0)
-        *ptr = str;
-    return (neg ? val : -val);
-}
-#endif
-
+#ifndef HAVE_STRNCASECMP
 /**
  * Case-insensitive comparaison of strings.
  *
@@ -304,7 +229,6 @@ long strtol(register char *str, char **ptr, register int base) {
  * @li 0 if s1 equals s2
  * @li 1 if s1 is greater than s2
  */
-#ifndef HAVE_STRNCASECMP
 int strncasecmp(const char *s1, const char *s2, int n) {
     register int c1, c2;
 
@@ -381,39 +305,6 @@ char *strcasestr(const char *s, const char *find) {
         s--;
     }
     return s;
-}
-#endif
-
-#ifndef HAVE_SNPRINTF
-/**
- * Formats to a string, in a size-safe way.
- *
- * @param dest
- * where to write.
- * @param max
- * max length of dest.
- * @param format
- * format specifier, and arguments.
- * @return
- * number of chars written to dest.
- *
- * @warning
- * this function will abort() if there is an overflow.
- *
- * @todo
- * try to do something better than abort()?
- */
-int snprintf(char *dest, int max, const char *format, ...) {
-    va_list var;
-    int ret;
-
-    va_start(var, format);
-    ret = vsprintf(dest, format, var);
-    va_end(var);
-    if (ret > max)
-        abort();
-
-    return ret;
 }
 #endif
 
