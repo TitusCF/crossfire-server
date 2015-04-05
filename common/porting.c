@@ -309,14 +309,6 @@ char *strcasestr(const char *s, const char *find) {
 #endif
 
 /**
- * Crazy mix between strerror(3) and strerror_r(3).
- */
-char *strerror_local(int errnum, char *buf, size_t size) {
-    snprintf(buf, size, "%s", strerror(errnum));
-    return buf;
-}
-
-/**
  * Checks if any directories in the given path doesn't exist, and creates if necessary.
  *
  * @param filename
@@ -339,9 +331,7 @@ void make_path_to_file(const char *filename) {
         if (stat(buf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
             LOG(llevDebug, "Was not dir: %s\n", buf);
             if (mkdir(buf, SAVE_DIR_MODE)) {
-                char err[MAX_BUF];
-
-                LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
+                LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror(errno));
                 return;
             }
         }

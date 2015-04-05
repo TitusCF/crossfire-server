@@ -1700,7 +1700,7 @@ void command_help(object *op, const char *params) {
     if (*params == '\0') {
         snprintf(filename, sizeof(filename), "%s/def_help", settings.datadir);
         if ((fp = fopen(filename, "r")) == NULL) {
-            LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
+            LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror(errno));
             return;
         }
         while (fgets(line, MAX_BUF, fp)) {
@@ -1762,7 +1762,7 @@ void command_help(object *op, const char *params) {
      * Found that. Just cat it to screen.
      */
     if ((fp = fopen(filename, "r")) == NULL) {
-        LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
+        LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror(errno));
         return;
     }
 

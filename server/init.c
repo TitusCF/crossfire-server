@@ -1341,7 +1341,7 @@ static void init_races(void) {
     snprintf(fname, sizeof(fname), "%s/races", settings.datadir);
     LOG(llevDebug, "Reading races from %s...\n", fname);
     if (!(file = fopen(fname, "r"))) {
-        LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror_local(errno, buf, sizeof(buf)));
+        LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror(errno));
         return;
     }
 

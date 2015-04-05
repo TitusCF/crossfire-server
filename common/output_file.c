@@ -30,7 +30,6 @@
 FILE *of_open(OutputFile *of, const char *fname) {
     char *fname_tmp;
     FILE *f;
-    char tmp[1024];
 
     fname_tmp = malloc(strlen(fname)+sizeof(TMP_EXT));
     if (fname_tmp == NULL) {
@@ -42,7 +41,7 @@ FILE *of_open(OutputFile *of, const char *fname) {
     remove(fname_tmp);
     f = fopen(fname_tmp, "w");
     if (f == NULL) {
-        LOG(llevError, "%s: %s\n", fname_tmp, strerror_local(errno, tmp, sizeof(tmp)));
+        LOG(llevError, "%s: %s\n", fname_tmp, strerror(errno));
         free(fname_tmp);
         return NULL;
     }
@@ -59,10 +58,7 @@ FILE *of_open(OutputFile *of, const char *fname) {
     return f;
 }
 
-int of_close(OutputFile *of)
-{
-    char tmp[1024];
-
+int of_close(OutputFile *of) {
     if (ferror(of->file)) {
         LOG(llevError, "%s: write error\n", of->fname);
         fclose(of->file);
@@ -72,14 +68,14 @@ int of_close(OutputFile *of)
         return 0;
     }
     if (fclose(of->file) != 0) {
-        LOG(llevError, "%s: %s\n", of->fname, strerror_local(errno, tmp, sizeof(tmp)));
+        LOG(llevError, "%s: %s\n", of->fname, strerror(errno));
         remove(of->fname_tmp);
         free(of->fname_tmp);
         free(of->fname);
         return 0;
     }
     if (rename(of->fname_tmp, of->fname) != 0) {
-        LOG(llevError, "%s: cannot rename from %s: %s\n", of->fname, of->fname_tmp, strerror_local(errno, tmp, sizeof(tmp)));
+        LOG(llevError, "%s: cannot rename from %s: %s\n", of->fname, of->fname_tmp, strerror(errno));
         remove(of->fname_tmp);
         free(of->fname_tmp);
         free(of->fname);

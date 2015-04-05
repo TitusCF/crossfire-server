@@ -321,7 +321,6 @@ extern char *path_combine_and_normalize(const char *src, const char *dst, char *
 extern char *tempnam_local(const char *dir, const char *pfx);
 extern FILE *tempnam_secure(const char *dir, const char *pfx, char **filename);
 extern void remove_directory(const char *path);
-extern char *strerror_local(int errnum, char *buf, size_t size);
 extern int isqrt(int n);
 extern void make_path_to_file(const char *filename);
 /* player.c */

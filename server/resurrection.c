@@ -306,7 +306,7 @@ void dead_player(object *op) {
     strcat(newname, ".dead");
 
     if (rename(filename, newname) != 0) {
-        LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno, path, sizeof(path)));
+        LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror(errno));
     }
     /* Go into the account file and change isDead for this character to 1. */
     if (make_perma_dead(op)){

@@ -428,7 +428,6 @@ static void new_connection(int listen_fd) {
     struct sockaddr_in addr;
 #endif
     socklen_t addrlen = sizeof(addr);
-    char err[MAX_BUF];
 
 #ifdef ESRV_DEBUG
     LOG(llevDebug, "do_server: New Connection\n");
@@ -462,7 +461,7 @@ static void new_connection(int listen_fd) {
 
     init_sockets[newsocknum].fd = accept(listen_fd, (struct sockaddr *)&addr, &addrlen);
     if (init_sockets[newsocknum].fd == -1) {
-        LOG(llevError, "accept failed: %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "accept failed: %s\n", strerror(errno));
     } else {
         char buf[MAX_BUF];
 #ifndef HAVE_GETNAMEINFO
@@ -519,7 +518,6 @@ void do_server(void) {
     int i, pollret, active = 0;
     fd_set tmp_read, tmp_exceptions, tmp_write;
     player *pl, *next;
-    char err[MAX_BUF];
 
 #ifdef CS_LOGSTATS
     if ((time(NULL)-cst_lst.time_start) >= CS_LOGTIME)
@@ -587,7 +585,7 @@ void do_server(void) {
     pollret = select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, &tmp_exceptions, &socket_info.timeout);
 
     if (pollret == -1) {
-        LOG(llevError, "select failed: %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "select failed: %s\n", strerror(errno));
         return;
     }
 

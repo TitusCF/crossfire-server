@@ -189,7 +189,7 @@ void i18n_init(void) {
 
         snprintf(filename, sizeof(filename), "%s%s", dirname, file->d_name);
         if ((fp = fopen(filename, "r")) == NULL) {
-            LOG(llevError, "Cannot open i18n file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
+            LOG(llevError, "Cannot open i18n file %s: %s\n", filename, strerror(errno));
             fatal(SEE_LAST_ERROR);
         }
 

@@ -180,7 +180,6 @@ void init_connection(socket_struct *ns, const char *from_ip) {
 void init_listening_socket(socket_struct *ns) {
     struct linger linger_opt;
     char buf1[MAX_BUF], buf2[MAX_BUF];
-    char err[MAX_BUF];
 
     if (ns == NULL || ns->listen == NULL) {
         LOG(llevError, "init_listening_socket: missing listen info in socket_struct?!\n");
@@ -191,14 +190,14 @@ void init_listening_socket(socket_struct *ns) {
 
     ns->fd = socket(ns->listen->family, ns->listen->socktype, ns->listen->protocol);
     if (ns->fd == -1) {
-        LOG(llevError, "Cannot create socket: %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "Cannot create socket: %s\n", strerror(errno));
         return;
     }
 
     linger_opt.l_onoff = 0;
     linger_opt.l_linger = 0;
     if (setsockopt(ns->fd, SOL_SOCKET, SO_LINGER, (char *)&linger_opt, sizeof(struct linger))) {
-        LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror(errno));
     }
 /* Would be nice to have an autoconf check for this.  It appears that
  * these functions are both using the same calling syntax, just one
@@ -217,11 +216,11 @@ void init_listening_socket(socket_struct *ns) {
 #endif
 
         if (setsockopt(ns->fd, SOL_SOCKET, SO_REUSEADDR, &tmp, sizeof(tmp))) {
-            LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
+            LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror(errno));
         }
 #ifdef HAVE_GETADDRINFO
         if ((ns->listen->family == AF_INET6) && setsockopt(ns->fd, IPPROTO_IPV6, IPV6_V6ONLY, &tmp, sizeof(tmp))) {
-            LOG(llevError, "Cannot setsockopt(IPV6_V6ONLY): %s\n", strerror_local(errno, err, sizeof(err)));
+            LOG(llevError, "Cannot setsockopt(IPV6_V6ONLY): %s\n", strerror(errno));
         }
 #endif
     }
@@ -243,7 +242,7 @@ void init_listening_socket(socket_struct *ns) {
         snprintf(buf1, sizeof(buf1), "%ld.%ld.%ld.%ld", (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
         snprintf(buf2, sizeof(buf2), "%d", port&65535);
 #endif
-        LOG(llevError, "Cannot bind socket to [%s]:%s: %s\n", buf1, buf2, strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "Cannot bind socket to [%s]:%s: %s\n", buf1, buf2, strerror(errno));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
         shutdown(ns->fd, SD_BOTH);
         closesocket(ns->fd);
@@ -254,7 +253,7 @@ void init_listening_socket(socket_struct *ns) {
         return;
     }
     if (listen(ns->fd, 5) == (-1))  {
-        LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "Cannot listen on socket: %s\n", strerror(errno));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
         shutdown(ns->fd, SD_BOTH);
         closesocket(ns->fd);

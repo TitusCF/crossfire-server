@@ -1220,9 +1220,8 @@ mapstruct *load_original_map(const char *filename, int flags) {
         create_pathname(filename, pathname, MAX_BUF);
 
     if ((fp = fopen(pathname, "r")) == NULL) {
-        char err[MAX_BUF];
-
-        LOG((flags&MAP_PLAYER_UNIQUE) ? llevDebug : llevError, "Can't open %s: %s\n", pathname, strerror_local(errno, err, sizeof(err)));
+        LOG((flags&MAP_PLAYER_UNIQUE) ? llevDebug : llevError,
+                "Can't open %s: %s\n", pathname, strerror(errno));
         return (NULL);
     }
 
@@ -1268,7 +1267,6 @@ mapstruct *load_original_map(const char *filename, int flags) {
  */
 static int load_temporary_map(mapstruct *m) {
     FILE *fp;
-    char buf[MAX_BUF];
 
     if (!m->tmpname) {
         LOG(llevError, "No temporary filename for map %s\n", m->path);
@@ -1276,7 +1274,7 @@ static int load_temporary_map(mapstruct *m) {
     }
 
     if ((fp = fopen(m->tmpname, "r")) == NULL) {
-        LOG(llevError, "Cannot open %s: %s\n", m->tmpname, strerror_local(errno, buf, sizeof(buf)));
+        LOG(llevError, "Cannot open %s: %s\n", m->tmpname, strerror(errno));
         return 2;
     }
 
