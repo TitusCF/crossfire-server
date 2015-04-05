@@ -648,45 +648,45 @@ static void basic_emote(object *op, const char *params, int emotion) {
     player *pl;
 
     if (*params == '\0') {
+        const char *self_reply;
         if (emotion > EMOTE_FIRST && emotion < EMOTE_LAST && single_emotes[emotion - 1][0] != NULL) {
-            snprintf(buf, sizeof(buf), single_emotes[emotion - 1][0]);
+            self_reply = single_emotes[emotion - 1][0];
             snprintf(buf2, sizeof(buf2), single_emotes[emotion - 1][1], op->name);
         } else {
-            snprintf(buf, sizeof(buf), "You are a nut.");
+            self_reply = "You are a nut.";
             snprintf(buf2, sizeof(buf2), "%s dances with glee.", op->name);
-      }
+        }
 
-      ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                          buf2);
-      draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                    buf);
+        draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION,
+                MSG_TYPE_COMMUNICATION_EMOTE, self_reply);
+        ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION,
+                MSG_TYPE_COMMUNICATION_EMOTE, buf2);
         return;
     }
 
     pl = find_player_options(params, FIND_PLAYER_NO_HIDDEN_DM | FIND_PLAYER_PARTIAL_NAME, op->map);
-
     if (pl == NULL) {
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "%s is not around.",
-                             params);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
+                MSG_TYPE_COMMAND_ERROR, "%s is not around.", params);
         return;
     }
 
     if (pl->ob == op) {
         /* Player doing self-emote. */
+        const char *self_reply;
         if (emotion > EMOTE_FIRST && emotion < EMOTE_LAST && self_emotes[emotion - 1][0] != NULL) {
-            snprintf(buf, sizeof(buf), "%s", self_emotes[emotion - 1][0]);
+            self_reply = self_emotes[emotion - 1][0];
             snprintf(buf2, sizeof(buf2), self_emotes[emotion - 1][1], op->name);
         } else {
-            snprintf(buf, sizeof(buf), "My god! is that LEGAL?");
+            self_reply = "My god! is that LEGAL?";
             snprintf(buf2, sizeof(buf2), "You look away from %s.", op->name);
         }
 
-        draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                    buf);
-        ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
-                          buf2);
-      return;
+        draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION,
+                MSG_TYPE_COMMUNICATION_EMOTE, self_reply);
+        ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION,
+                MSG_TYPE_COMMUNICATION_EMOTE, buf2);
+        return;
     }
 
     if (emotion > EMOTE_FIRST && emotion < EMOTE_LAST && other_emotes[emotion - 1][0] != NULL) {
