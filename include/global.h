@@ -197,12 +197,6 @@ extern socket_struct *init_sockets;
 #include "typesproto.h"
 
 /**
- * @note
- * decrease_ob() has been renamed to object_decrease_nrof_by_one()
- */
-#define object_decrease_nrof_by_one(xyz) object_decrease_nrof(xyz, 1)
-
-/**
  * Free the pointer and then set it to NULL.
  * This is generally done as a safety, and having this macro
  * makes the code a bit cleaner when doing so.
@@ -218,16 +212,6 @@ extern socket_struct *init_sockets;
  * Release the shared string if not NULL, and make it a reference to nv.
  */
 #define FREE_AND_COPY(sv, nv) { if (sv) free_string(sv); sv = add_string(nv); }
-
-#ifdef CALLOC
-#undef CALLOC
-#endif
-
-#ifdef USE_CALLOC
-# define CALLOC(x, y)   calloc(x, y)
-#else
-# define CALLOC(x, y)   malloc(x*y)
-#endif
 
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */
 #if HAVE_DIRENT_H

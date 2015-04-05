@@ -33,26 +33,30 @@
 #define FMT64U  PRIu64
 #endif
 
+#define safe_strncpy strlcpy
+#define strcasestr_local strcasestr
+#define strdup_local strdup
+#define tempnam_local tempnam
+
+#define CALLOC(x, y) calloc(x, y)
+#define object_decrease_nrof_by_one(xyz) object_decrease_nrof(xyz, 1)
+
 void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen);
 
 #ifndef HAVE_STRCASESTR
 char *strcasestr(const char *s, const char *find);
 #endif
-#define strcasestr_local strcasestr
 
 #ifndef HAVE_STRDUP
 char *strdup(const char *str);
 #endif
-#define strdup_local strdup
 
 #ifndef HAVE_STRLCPY
 size_t strlcpy(char *dst, const char *src, size_t size);
 #endif
-#define safe_strncpy strlcpy
 
 #ifndef HAVE_TEMPNAM
 char *tempnam(const char *tmpdir, const char *prefix);
 #endif
-#define tempnam_local tempnam
 
 #endif
