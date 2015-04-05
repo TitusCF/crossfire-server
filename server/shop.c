@@ -22,15 +22,10 @@
 
 #include <assert.h>
 #include <math.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "living.h"
-#include "shared/newclient.h"
 #include "shop.h"
-#include "skills.h"
-#include "spells.h"
 #include "sproto.h"
 
 /**
@@ -1007,12 +1002,9 @@ void sell_item(object *op, object *pl) {
         }
     }
 
-    if (price != 0)
-#ifndef WIN32
-        LOG(llevError, "Warning - payment not zero: %llu\n", price);
-#else
-        LOG(llevError, "Warning - payment not zero: %I64u\n", i);
-#endif
+    if (price != 0) {
+        LOG(llevError, "Warning - payment not zero: %" PRIo64 "\n", price);
+    }
 
     SET_FLAG(op, FLAG_UNPAID);
     identify(op);

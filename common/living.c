@@ -2043,16 +2043,6 @@ static void subtract_player_exp(object *op, int64_t exp, const char *skill, int 
  * @see share_exp() for a party-aware version.
  */
 void change_exp(object *op, int64_t exp, const char *skill_name, int flag) {
-#ifdef EXP_DEBUG
-    char name[MAX_BUF];
-    query_name(op, name, MAX_BUF);
-#ifndef WIN32
-    LOG(llevDebug, "change_exp() called for %s, exp = %lld\n", name, exp);
-#else
-    LOG(llevDebug, "change_exp() called for %s, exp = %I64d\n", name, exp);
-#endif
-#endif
-
     /* safety */
     if (!op) {
         LOG(llevError, "change_exp() called for null object!\n");
