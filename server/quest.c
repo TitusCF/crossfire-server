@@ -669,7 +669,7 @@ static quest_player *get_or_create_quest(player *pl) {
 }
 
 /* quest_set_state can call itself through the function update_quests, so it needs to be declared here */
-static void quest_set_state(player *pl, sstring quest_code, int state, int started);
+static void quest_set_state(player* dm, player *pl, sstring quest_code, int state, int started);
 
 /**
  * Checks whether the conditions for a given step are met.
@@ -726,7 +726,7 @@ static void update_quests(player *pl) {
         if (new_step > 0) {
             current_step = quest_get_player_state(pl, quest->quest_code);
             if (new_step > current_step) {
-                quest_set_state(pl, quest->quest_code, new_step, 0);
+                quest_set_state(NULL, pl, quest->quest_code, new_step, 0);
             }
         }
         quest = quest->next;
@@ -735,35 +735,48 @@ static void update_quests(player *pl) {
 
 /**
  * Set the state of a quest for a player.
+ * @param dm if NULL then the player is actually playing, else a DM is changing the quest's state manually.
  * @param pl player to set the state for.
  * @param quest_code quest internal code.
  * @param state new state for the quest, must be greater than 0 else forced to 100 and a warning is emitted.
  * @param started if 1, quest must have been started first or a warning is emitted, else it doesn't matter.
  */
-static void quest_set_state(player *pl, sstring quest_code, int state, int started) {
+static void quest_set_state(player* dm, player *pl, sstring quest_code, int state, int started) {
     quest_player *pq = get_or_create_quest(pl);
     quest_state *qs = get_or_create_state(pq, quest_code);
     quest_definition *quest = quest_get(quest_code);
     quest_step_definition *step;
 
     if (!quest) {
-        LOG(llevError, "quest: asking for set_state of unknown quest %s!\n", quest_code);
+        if (dm) {
+            draw_ext_info_format(NDI_UNIQUE, 0, dm->ob, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_FAILURE, "Unknown quest %s!", quest_code);
+        } else {
+            LOG(llevError, "quest: asking for set_state of unknown quest %s!\n", quest_code);
+        }
         return;
     }
 
     if (state <= 0) {
-        LOG(llevDebug, "quest_set_player_state: warning: called with invalid state %d for quest %s, player %s", state, pl->ob->name, quest_code);
+        if (!dm) {
+            LOG(llevDebug, "quest_set_player_state: warning: called with invalid state %d for quest %s, player %s", state, pl->ob->name, quest_code);
+        }
         state = 100;
     }
 
     step = quest_get_step(quest, state);
     if (!step) {
-        LOG(llevError, "quest_set_player_state: couldn't find state definition %d for quest %s, player %s", state, quest_code, pl->ob->name);
+        if (dm) {
+            draw_ext_info_format(NDI_UNIQUE, 0, dm->ob, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_FAILURE, "Couldn't find state definition %d for quest %s", state, quest_code);
+        } else {
+            LOG(llevError, "quest_set_player_state: couldn't find state definition %d for quest %s, player %s", state, quest_code, pl->ob->name);
+        }
         return;
     }
 
     if (started && qs->state == 0) {
-        LOG(llevDebug, "quest_set_player_state: warning: called for player %s not having started quest %s\n", pl->ob->name, quest_code);
+        if (!dm) {
+            LOG(llevDebug, "quest_set_player_state: warning: called for player %s not having started quest %s\n", pl->ob->name, quest_code);
+        }
     }
 
     qs->state = state;
@@ -825,8 +838,9 @@ static void quest_set_state(player *pl, sstring quest_code, int state, int start
  * @param pl player to display list of quests.
  * @param pq quests to display.
  * @param showall if 0, only shows quests in progress and a summary of completed quests, else shows all quests.
+ * @param name either 'You' or the player's name, if pl is a DM asking about another player.
  */
-static void quest_display(player *pl, quest_player *pq, int showall) {
+static void quest_display(player *pl, quest_player *pq, int showall, const char* name) {
     quest_state *state;
     quest_definition *quest;
     const char *restart;
@@ -851,14 +865,14 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
         if (!showall) {
             if (restart_count > 0)
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                        "You have completed %d quests, of which %d may be restarted", completed_count, restart_count);
+                        "%s completed %d quests, of which %d may be restarted", name, completed_count, restart_count);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                        "You have completed %d quests", completed_count);
+                        "%s completed %d quests", name, completed_count);
             current_count = completed_count;
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                    "You have completed the following quests:");
+                    "%s completed the following quests:", name);
             state = pq->quests;
             while (state) {
                 quest = quest_get(state->code);
@@ -875,8 +889,8 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
         }
     }
     if (total_count > completed_count) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                "You have started the following quests:");
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                "%s started the following quests:", name);
         state = pq->quests;
         while (state) {
             quest = quest_get(state->code);
@@ -894,20 +908,22 @@ static void quest_display(player *pl, quest_player *pq, int showall) {
 
 /**
  * Display current and completed player quests.
- * @param pl player to display for.
+ * @param pl player to display to.
+ * @param who player to display information for.
  * @param showall - whether to show all of the quests in full, just summary information for the completed ones
+ * @param name either 'You' or the player's name, if pl is a DM asking about another player.
  */
-static void quest_list(player *pl, int showall) {
+static void quest_list(player *pl, player *who, int showall, const char* name) {
     quest_player *pq;
 
     /* ensure we load data if not loaded yet */
-    pq = get_or_create_quest(pl);
+    pq = get_or_create_quest(who);
     if (!pq->quests) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "You didn't start any quest.");
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "%s didn't start any quest.", name);
         return;
     }
 
-    quest_display(pl, pq, showall);
+    quest_display(pl, pq, showall, name);
 }
 
 /**
@@ -915,9 +931,17 @@ static void quest_list(player *pl, int showall) {
  * @param pl player to display help for.
  */
 static void quest_help(player *pl) {
-    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest commands:");
-    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - list: displays quests you are currently attempting add 'all' to show completed quests also");
-    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - info: displays information about the specified (by number) quest");
+    if (QUERY_FLAG(pl->ob, FLAG_WIZ)) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "DM Quest commands:");
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - (player name) list: displays quests the player is currently attempting, add 'all' to show completed quests also");
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - (player name) info: displays information about the specified (by number) quest");
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - (player name) set (quest code) (state): set the state of the specified quest");
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Note: (player name) may be a partial name as long as it isn't ambiguous. The player must be online.");
+    } else {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest commands:");
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - list: displays quests you are currently attempting add 'all' to show completed quests also");
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " - info: displays information about the specified (by number) quest");
+    }
 }
 
 /**
@@ -958,13 +982,14 @@ static quest_state *get_quest_by_number(player *pl, int number) {
 /**
  * Give details about a quest.
  * @param pl player to give quest details to.
+ * @param who player to give quest details of.
  * @param qs quest_state to give details about
  * @param level The level of recursion for the quest info that's being provided
  */
-static void quest_info(player *pl, quest_state *qs, int level) {
+static void quest_info(player *pl, player* who, quest_state *qs, int level) {
     quest_definition *quest, *child;
     quest_state *state;
-    quest_player *pq = get_or_create_quest(pl);
+    quest_player *pq = get_or_create_quest(who);
     quest_step_definition *step;
     const char *prefix;
 
@@ -980,6 +1005,12 @@ static void quest_info(player *pl, quest_state *qs, int level) {
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Quest: %s", quest->quest_title);
+    if (QUERY_FLAG(pl->ob, FLAG_WIZ)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Code: %s", quest->quest_code);
+        for (step = quest->steps; step != NULL; step = step->next) {
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, " Step: %d (%s)", step->step, step->step_description);
+        }
+    }
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Description: %s", quest->quest_description);
 
     step = quest_get_step(quest, qs->state);
@@ -1011,7 +1042,7 @@ static void quest_info(player *pl, quest_state *qs, int level) {
     while (state) {
         child = quest_get(state->code);
         if (child->parent == quest)
-            quest_info(pl, state, level+1);
+            quest_info(pl, who, state, level+1);
         state = state->next;
     }
     return;
@@ -1087,7 +1118,7 @@ void quest_start(player *pl, sstring quest_code, int state) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "New quest started: %s", quest->quest_title);
 
-    quest_set_state(pl, quest_code, state, 0);
+    quest_set_state(NULL, pl, quest_code, state, 0);
 
     /* saving state will be done in quest_set_state(). */
 }
@@ -1099,7 +1130,7 @@ void quest_start(player *pl, sstring quest_code, int state) {
  * @param state new state for the quest, must be greater than 0 else forced to 100 and a warning is emitted.
  */
 void quest_set_player_state(player *pl, sstring quest_code, int state) {
-    quest_set_state(pl, quest_code, state, 1);
+    quest_set_state(NULL, pl, quest_code, state, 1);
 }
 
 /**
@@ -1121,6 +1152,10 @@ int quest_was_completed(player *pl, sstring quest_code) {
  * @param params extra parameters for command.
  */
 void command_quest(object *op, const char *params) {
+    /* who to display information about, used when called in DM mode */
+    object *who;
+    const char *name;
+
     if (!op->contr) {
         LOG(llevError, "command_quest called for a non player!\n");
         return;
@@ -1130,19 +1165,71 @@ void command_quest(object *op, const char *params) {
         quest_help(op->contr);
         return;
     }
+
+    if (QUERY_FLAG(op, FLAG_WIZ)) {
+        char* dup = strdup(params);
+        char* space = strchr(dup, ' ');
+        player* other;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_INFO, "Command 'quest' called in DM mode.");
+        if (space == NULL) {
+            free(dup);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_FAILURE, "Please specify a player name.");
+            return;
+        }
+        params = params + (space - dup) + 1;
+        *space = '\0';
+        other = find_player_partial_name(dup);
+        if (other == NULL) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_FAILURE, "%s is not online, or ambiguous name.", dup);
+            free(dup);
+            return;
+        }
+        free(dup);
+        who = other->ob;
+        name = who->name;
+    } else {
+        who = op;
+        name = "You";
+    }
+
     if (strcmp(params, "list all") == 0) {
-        quest_list(op->contr, 1);
+        quest_list(op->contr, who->contr, 1, name);
         return;
     }
 
     if (strcmp(params, "list") == 0) {
-        quest_list(op->contr, 0);
+        quest_list(op->contr, who->contr, 0, name);
         return;
     }
 
     if (strncmp(params, "info ", 5) == 0) {
         int number = atoi(params+5);
-        quest_info(op->contr, get_quest_by_number(op->contr, number), 0);
+        quest_info(op->contr, who->contr, get_quest_by_number(who->contr, number), 0);
+        return;
+    }
+
+    if (QUERY_FLAG(op, FLAG_WIZ) && strncmp(params, "set ", 4) == 0) {
+        char *dup = strdup(params + 4);
+        char *space = strrchr(dup, ' ');
+        int state, number;
+        quest_state* q;
+        if (space == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_FAILURE, "Syntax is: quest (player name) (quest number) (state).");
+            free(dup);
+            return;
+        }
+        *space = '\0';
+        number = atoi(dup);
+        q = get_quest_by_number(who->contr, number);
+        if (q == NULL) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_FAILURE, "Invalid quest number %d.", number);
+            free(dup);
+            return;
+        }
+        state = atoi(space + 1);
+        quest_set_state(op->contr, who->contr, q->code, state, 0);
+        free(dup);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_SUCCESS, "Set changed.");
         return;
     }
 
