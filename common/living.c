@@ -2587,13 +2587,13 @@ void init_stats(int reload) {
          * the live arrays.
          */
         for (i=0; i<NUM_INT_BONUSES; i++) {
-            if (int_bonuses[i]) free(int_bonuses[i]);
+            free(int_bonuses[i]);
             int_bonuses[i] = new_int_bonuses[i];
             new_int_bonuses[i] = NULL;
         }
 
         for (i=0; i<NUM_FLOAT_BONUSES; i++) {
-            if (float_bonuses[i]) free(float_bonuses[i]);
+            free(float_bonuses[i]);
             float_bonuses[i] = new_float_bonuses[i];
             new_float_bonuses[i] = NULL;
         }

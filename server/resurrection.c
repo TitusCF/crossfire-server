@@ -255,8 +255,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
         spell_success = resurrect_player(op, name_to_resurrect, spell, corpse_account);
     }
     /* Reorganized so corpse_account could be deallocated if needed */
-    if (corpse_account)
-        free(corpse_account);
+    free(corpse_account);
     return spell_success;
 }
 
