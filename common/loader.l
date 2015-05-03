@@ -1169,14 +1169,11 @@ static char *yval(void)
  * @li LO_NEWFILE (2): This is the first read from a particular file, so the buffers should be reset.
  * @li LO_NOREAD (3): Reset the buffers, but don't read from it. (op can be null)
  * @param map_flags
- * ?
+ * combination of @ref MAP_xxx flags, though only MAP_STYLE is used.
  * @return
  * @li LL_NORMAL if object was read.
  * @li LL_EOF if an error occured.
  * @li LL_MORE if this is a multipart object.
- *
- * @todo
- * document map_flags
  */
 int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     int retval;
