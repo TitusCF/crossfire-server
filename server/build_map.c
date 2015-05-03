@@ -38,12 +38,12 @@
  * @param map
  * map we're building on.
  * @param new_item
- * item the player is trying to build.
+ * item the player is trying to build, must not be NULL.
  * @param x
  * @param y
  * coordinates where to build.
  * @return
- * 0 if tmp can't be built on the spot, 1 if it can be built.
+ * 0 if new_item can't be built on the spot, 1 if it can be built.
  */
 static int can_build_over(struct mapdef *map, object *new_item, short x, short y) {
     FOR_MAP_PREPARE(map, x, y, tmp) {
