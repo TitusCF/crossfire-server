@@ -106,9 +106,6 @@ AC_TYPE_SIGNAL
 AC_TYPE_SIZE_T
 AC_TYPE_UID_T
 
-AC_CHECK_SIZEOF(long)
-AC_CHECK_SIZEOF(long long)
-
 CF_CHECK_VISIBILITY()
 
 ##############################################################################
@@ -117,7 +114,7 @@ CF_CHECK_VISIBILITY()
 # Checks for library functions.
 AC_FUNC_MEMCMP
 
-AC_CHECK_FUNCS([getdtablesize gettimeofday strcasecmp strcasestr strdup strncasecmp setsid srandom srand48 srand sysconf tempnam getaddrinfo getnameinfo])
+AC_CHECK_FUNCS([getdtablesize strcasecmp strcasestr strdup strncasecmp setsid srandom srand48 srand sysconf tempnam getaddrinfo getnameinfo])
 
 # Check for better but non-portable functions.
 AC_CHECK_FUNCS([strlcat strlcpy])
