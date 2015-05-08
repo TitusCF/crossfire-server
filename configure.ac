@@ -66,15 +66,10 @@ AC_SUBST(PERL)
 ##############################################################################
 AS_BOX([Library Checks])
 ##############################################################################
-# Check for some library functions
-AC_SEARCH_LIBS([gethostbyname], [nsl])
-AC_SEARCH_LIBS([pow], [m])
-AC_SEARCH_LIBS([sqrt], [m])
-
-# Misc libraries.
 AC_SEARCH_LIBS([crypt], [crypt])
-
-AC_CHECK_LIB(pthread, pthread_create)
+AC_SEARCH_LIBS([pow], [m])
+AC_SEARCH_LIBS([pthread_create], [pthread])
+AC_SEARCH_LIBS([sqrt], [m])
 
 LIBCURL_CHECK_CONFIG()
 LIBS="$LIBS $LIBCURL"
@@ -91,8 +86,8 @@ AM_CONDITIONAL(MAPPER, test "$enable_mapper" = "yes")
 AM_CONDITIONAL(CFRHG_PLUGIN, test "$enable_cfrhg" = "yes")
 
 # Libraries used for plugins
-AC_SEARCH_LIBS(dlopen, [dl], [ cf_have_libdl=yes ])
-AC_CHECK_LIB(sqlite3, sqlite3_open,[ cf_have_libsqlite=yes ])
+AC_SEARCH_LIBS([dlopen], [dl], [cf_have_libdl=yes])
+AC_SEARCH_LIBS([sqlite3_open], [sqlite3], [cf_have_libsqlite=yes])
 
 ##############################################################################
 # Header File, Type, Structure, and Compiler Checks
@@ -165,12 +160,6 @@ AC_SUBST(pkgconfdir,$sysconfdir/$PACKAGE)
 # Plugin configuration
 AM_CONDITIONAL(HAVE_LIBDL, test "$cf_have_libdl" = "yes")
 
-# Test for libdl isn't taken into account for many plugins, don't take into
-# account for Python. Fixes bug #3353920.
-# Besides, one can hope modern systems do have that function.
-
-#if test "$cf_have_libdl" = "yes" ; then
-    ###############
     # Python plugin
     CF_CHECK_PYTHON(
         [PLUGIN_PYTHON="cfpython.la"]
@@ -178,10 +167,6 @@ AM_CONDITIONAL(HAVE_LIBDL, test "$cf_have_libdl" = "yes")
         [cf_will_build_python="no"]
         [AC_MSG_NOTICE([No Python found. Python plugin will not be built.])]
     )
-    # *** Put other plugins configuration code here ***
-#else
-#    AC_MSG_NOTICE([No dl library found. Plugins will not be supported.])
-#fi
 AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
 
