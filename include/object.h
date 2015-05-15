@@ -241,8 +241,8 @@ typedef struct obj {
     int16_t      duration;       /**< How long the spell lasts */
     uint8_t       duration_modifier; /**< how level modifies duration */
     int8_t       range;          /**< Range of the spell */
-    uint8_t       range_modifier; /**< How going up in level effects range  */
-    uint8_t       dam_modifier;   /**< How going up in level effects damage */
+    uint8_t       range_modifier; /**< How going up in level affects range  */
+    uint8_t       dam_modifier;   /**< How going up in level affects damage */
     struct obj  *spell;         /**< Spell that was being cast */
     char        *spellarg;      /**< Optional argument when casting obj::spell. */
 
