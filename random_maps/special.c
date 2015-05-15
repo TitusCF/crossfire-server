@@ -252,7 +252,17 @@ void place_fountain_with_specials(mapstruct *map)
     FREE_AND_COPY(potion->name, fountain->clone.name);
     FREE_AND_COPY(potion->name_pl, fountain->clone.name_pl);
     object_set_value(potion, "on_use_yield", fountain->name, 1);
-    potion->material = M_ADAMANT;
+    /*
+     * Giving no material and no materialname makes the fountain
+     * not get destroyed by spells.
+     * -- SilverNexus 2015-05-15
+     */
+    potion->material = 0;
+    // Free the string if it exists
+    if (potion->materialname){
+        FREE_AND_CLEAR_STR(potion->materialname);
+        potion->materialname = 0;
+    }
     object_insert_in_map_at(potion, map, NULL, 0, ix, iy);
 }
 
