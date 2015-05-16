@@ -259,10 +259,8 @@ void place_fountain_with_specials(mapstruct *map)
      */
     potion->material = 0;
     // Free the string if it exists
-    if (potion->materialname){
+    if (potion->materialname)
         FREE_AND_CLEAR_STR(potion->materialname);
-        potion->materialname = 0;
-    }
     object_insert_in_map_at(potion, map, NULL, 0, ix, iy);
 }
 
