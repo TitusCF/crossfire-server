@@ -15,7 +15,7 @@ CRERandomMapPanel::CRERandomMapPanel()
     myInformation->setReadOnly(true);
 }
 
-void CRERandomMapPanel::setRandomMap(const CRERandomMap* map)
+void CRERandomMapPanel::setItem(const CRERandomMap* map)
 {
     StringBuffer* sb = write_map_parameters_to_string(map->parameters());
     char* text = stringbuffer_finish(sb);

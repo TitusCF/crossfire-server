@@ -7,11 +7,11 @@ class CRERandomMap;
 class QTextEdit;
 class QLabel;
 
-class CRERandomMapPanel : public CREPanel
+class CRERandomMapPanel : public CRETPanel<const CRERandomMap>
 {
 public:
   CRERandomMapPanel();
-  void setRandomMap(const CRERandomMap* map);
+  virtual void setItem(const CRERandomMap* map);
 private:
   QLabel* mySource;
   QTextEdit* myInformation;
