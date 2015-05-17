@@ -1085,6 +1085,16 @@ static void animate_one(CFanimation *animation, long int milliseconds) {
 }
 
 /**
+ * Return the number of microseconds between two timespec structures.
+ * This function was copied from common/time.c since linking is too hard.
+ */
+long usec_elapsed(struct timespec first, struct timespec second) {
+    time_t sec_elapsed = second.tv_sec - first.tv_sec;
+    long nsec_elapsed = second.tv_nsec - first.tv_nsec;
+    return (sec_elapsed * 1e6) + (nsec_elapsed / 1e3);
+}
+
+/**
  * Animates all currently running animations.
  */
 static void animate(void) {
