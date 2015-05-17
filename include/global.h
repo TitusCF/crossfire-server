@@ -34,6 +34,8 @@
 #include <unistd.h>
 #endif
 
+#include <inttypes.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include "compat.h"
 
