@@ -920,7 +920,7 @@ void CREResourcesWindow::fillRandomMaps()
     if (myDisplay == DisplayRandomMaps)
     {
         QStringList headers;
-        headers << tr("Random maps");
+        headers << tr("Random maps") << tr("Final map") << tr("Depth");
         myTree->setHeaderLabels(headers);
         myTree->sortByColumn(0, Qt::AscendingOrder);
         full = true;
@@ -936,7 +936,12 @@ void CREResourcesWindow::fillRandomMaps()
     foreach(CRERandomMap* map, maps)
     {
         QString source(tr("from %1 [%2, %3]").arg(map->map()->name()).arg(map->x()).arg(map->y()));
-        QTreeWidgetItem* leaf = new QTreeWidgetItem(root, QStringList(source));
+        QStringList data(source);
+        if (full)
+        {
+            data << map->parameters()->final_map << QString::number(map->parameters()->dungeon_depth);
+        }
+        QTreeWidgetItem* leaf = new QTreeWidgetItem(root, QStringList(data));
         myTreeItems.append(new CRETTreeItem<CRERandomMap>(map, "Random map"));
         leaf->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
