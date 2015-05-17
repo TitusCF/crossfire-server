@@ -1326,6 +1326,7 @@ void CREMainWindow::onToolBarMaker()
 void CREMainWindow::onClearCache()
 {
     QMessageBox confirm;
+    confirm.setWindowTitle(tr("Crossfire Resource Editor"));
     confirm.setText("Really clear map cache?");
     confirm.setInformativeText("This will force cache rebuild at next application start.");
     confirm.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
