@@ -473,6 +473,16 @@ void CREResourcesWindow::fillFaces()
     addPanel("Face", new CREFacePanel());
 }
 
+bool sortMapInformation(const CREMapInformation* left, const CREMapInformation* right)
+{
+    QString leftName(left->name()), rightName(right->name());
+    if (leftName.isEmpty())
+        leftName = left->path();
+    if (rightName.isEmpty())
+        rightName = right->path();
+    return leftName.compare(rightName, Qt::CaseInsensitive) < 0;
+}
+
 void CREResourcesWindow::fillMaps()
 {
     bool full = false;
@@ -492,12 +502,21 @@ void CREResourcesWindow::fillMaps()
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     myTree->addTopLevelItem(root);
 
-    region* reg;
-    for (reg = first_region; reg; reg = reg->next)
+    QHash<QString, region*> regions;
+    for (region* reg = first_region; reg; reg = reg->next)
     {
-        QList<CREMapInformation*> maps = myStore->getMapsForRegion(reg->name);
-        regionNode = CREUtils::regionNode(reg->name, maps.size(), root);
-        myTreeItems.append(new CRETreeItemRegion(reg));
+      regions[reg->name] = reg;
+    }
+
+    QStringList names = regions.keys();
+    names.sort();
+
+    foreach(QString name, names)
+    {
+        QList<CREMapInformation*> maps = myStore->getMapsForRegion(name);
+        qSort(maps.begin(), maps.end(), sortMapInformation);
+        regionNode = CREUtils::regionNode(name, maps.size(), root);
+        myTreeItems.append(new CRETreeItemRegion(regions[name]));
         regionNode->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         foreach(CREMapInformation* map, maps)
         {
