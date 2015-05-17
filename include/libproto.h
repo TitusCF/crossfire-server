@@ -399,7 +399,7 @@ extern const char *get_month_name(const int index);
 extern const char *get_weekday(const int index);
 extern const char *get_season_name(const int index);
 extern void reset_sleep(void);
-extern int enough_elapsed_time(void);
+extern long usec_elapsed(struct timespec first, struct timespec second);
 extern void sleep_delta(void);
 extern void set_max_time(long t);
 extern void get_tod(timeofday_t *tod);

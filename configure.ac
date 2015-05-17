@@ -119,37 +119,6 @@ AC_CHECK_FUNCS([getdtablesize strcasecmp strcasestr strdup strncasecmp setsid sr
 # Check for better but non-portable functions.
 AC_CHECK_FUNCS([strlcat strlcpy])
 
-AC_MSG_CHECKING(how many args gettimeofday uses)
-AC_CACHE_VAL(ac_cv_gettimeofday_args,
- [AC_TRY_COMPILE([#include <sys/time.h>
-	#include <unistd.h>],
-	[struct timeval tv; struct timezone tzp;
-	gettimeofday(&tv, &tzp);],
-	[ac_gettimeofday_args=2],
-		[AC_TRY_COMPILE([#include <sys/time.h>
-		#include <unistd.h>],
-		[struct timeval tv;
-		gettimeofday(&tv, NULL);],
-		[ac_gettimeofday_args=2],
-		[AC_TRY_COMPILE([#include <sys/time.h>
-			#include <unistd.h>],
-			[struct timeval tv; gettimeofday(&tv);],
-			[ac_gettimeofday_args=1],
-			[ac_gettimeofday_args=0])])])
-  ac_cv_gettimeofday_args=$ac_gettimeofday_args])
-
-ac_gettimeofday_args=$ac_cv_gettimeofday_args
-if test $ac_gettimeofday_args = 1 ; then
-  AC_DEFINE(HAVE_GETTIMEOFDAY,[],[Define if gettimeofday is available])
-  AC_MSG_RESULT(one argument)
-elif test $ac_gettimeofday_args = 2 ; then
-  AC_DEFINE(HAVE_GETTIMEOFDAY,[],[Define if gettimeofday is available])
-  AC_DEFINE(GETTIMEOFDAY_TWO_ARGS,[],[Define if gettimeofday takes two arguments])
-  AC_MSG_RESULT(two arguments)
-else
-  AC_MSG_RESULT(unknown)
-fi
-
 AC_SUBST(pkgstatedir,$localstatedir/$PACKAGE)
 AC_SUBST(pkgconfdir,$sysconfdir/$PACKAGE)
 

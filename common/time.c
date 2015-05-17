@@ -33,7 +33,7 @@
  * Gloabal variables:
  */
 uint32_t max_time = MAX_TIME;
-struct timeval last_time;
+static struct timespec game_time;
 
 /** Size of history buffer. */
 #define PBUFLEN 100
@@ -138,7 +138,7 @@ void reset_sleep(void) {
     process_tot_mtime = 0;
     pticks = 0;
 
-    (void)GETTIMEOFDAY(&last_time);
+    clock_gettime(CLOCK_MONOTONIC, &game_time);
 }
 
 /**
@@ -157,81 +157,37 @@ static void log_time(uint32_t process_utime) {
 }
 
 /**
- * Checks elapsed time since last tick.
- *
- * @return true if the time passed since last tick is more than max-time.
+ * Return the number of microseconds between two timespec structures.
  */
-int enough_elapsed_time(void) {
-    static struct timeval new_time;
-    uint32_t elapsed_utime;
-
-    (void)GETTIMEOFDAY(&new_time);
-
-    elapsed_utime = (new_time.tv_sec-last_time.tv_sec)*1000000+new_time.tv_usec-last_time.tv_usec;
-    if (elapsed_utime > max_time) {
-        log_time(elapsed_utime);
-        last_time.tv_sec = new_time.tv_sec;
-        last_time.tv_usec = new_time.tv_usec;
-        return 1;
-    }
-    return 0;
+long usec_elapsed(struct timespec first, struct timespec second) {
+    time_t sec_elapsed = second.tv_sec - first.tv_sec;
+    long nsec_elapsed = second.tv_nsec - first.tv_nsec;
+    return (sec_elapsed * 1e6) + (nsec_elapsed / 1e3);
 }
 
 /**
- * sleep_delta checks how much time has elapsed since last tick.
- * If it is less than max_time, the remaining time is slept with select().
+ * Sleep until the next tick.
  */
 void sleep_delta(void) {
-    static struct timeval new_time;
-    long sleep_sec, sleep_usec;
+    struct timespec real_time;
+    clock_gettime(CLOCK_MONOTONIC, &real_time);
 
-    (void)GETTIMEOFDAY(&new_time);
+    long elapsed = usec_elapsed(game_time, real_time);
+    log_time(elapsed);
 
-    sleep_sec = last_time.tv_sec-new_time.tv_sec;
-    sleep_usec = max_time-(new_time.tv_usec-last_time.tv_usec);
-
-    /* This is very ugly, but probably the fastest for our use: */
-    while (sleep_usec < 0) {
-        sleep_usec += 1000000;
-        sleep_sec -= 1;
-    }
-    while (sleep_usec > 1000000) {
-        sleep_usec -= 1000000;
-        sleep_sec += 1;
-    }
-
-    log_time((new_time.tv_sec-last_time.tv_sec)*1000000+new_time.tv_usec-last_time.tv_usec);
-
-    if (sleep_sec >= 0 && sleep_usec > 0) {
-        static struct timeval sleep_time;
-
-        sleep_time.tv_sec = sleep_sec;
-        sleep_time.tv_usec = sleep_usec;
-
-#ifndef WIN32 /* 'select' doesn't work on Windows, 'Sleep' is used instead */
-        select(0, NULL, NULL, NULL, &sleep_time);
-#else
-        if (sleep_time.tv_sec)
-            Sleep(sleep_time.tv_sec*1000);
-        Sleep((int)(sleep_time.tv_usec/1000.));
-#endif
-    } else
+    long sleep_time = max_time - elapsed;
+    if (sleep_time > 0) {
+        usleep(sleep_time);
+    } else {
         process_utime_long_count++;
-    /*
-     * Set last_time to when we're expected to wake up:
-     */
-    last_time.tv_usec += max_time;
-    while (last_time.tv_usec > 1000000) {
-        last_time.tv_usec -= 1000000;
-        last_time.tv_sec++;
     }
-    /*
-     * Don't do too much catching up:
-     * (Things can still get jerky on a slow/loaded computer)
-     */
-    if ((last_time.tv_sec-new_time.tv_sec)*1000000+(last_time.tv_usec-new_time.tv_usec) < 0) {
-        last_time.tv_sec = new_time.tv_sec;
-        last_time.tv_usec = new_time.tv_usec;
+
+    // Advance game time by one tick.
+    game_time.tv_nsec += max_time * 1e3;
+
+    // If game time is falling too far behind, skip a few ticks.
+    if (usec_elapsed(game_time, real_time) > max_time) {
+        game_time = real_time;
     }
 }
 
@@ -387,15 +343,11 @@ void time_info(object *op) {
 }
 
 /**
- * Gets the seconds.
- *
- * @return
- * seconds.
+ * Return wall clock time in seconds.
  */
 long seconds(void) {
-    struct timeval now;
-
-    (void)GETTIMEOFDAY(&now);
+    struct timespec now;
+    clock_gettime(CLOCK_REALTIME, &now);
     return now.tv_sec;
 }
 

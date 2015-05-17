@@ -1091,20 +1091,20 @@ static void animate(void) {
     CFanimation *current;
     CFanimation *next;
     CFanimation *previous_anim = NULL;
-    struct timeval now;
-    static struct timeval yesterday;
+    struct timespec now;
+    static struct timespec yesterday;
     static int already_passed = 0;
     long int delta_milli;
 
-    (void)GETTIMEOFDAY(&now);
+    clock_gettime(CLOCK_MONOTONIC, &now);
     if (!already_passed) {
         already_passed = 1;
-        memcpy(&yesterday, &now, sizeof(struct timeval));
+        yesterday = now;
         return;
     }
-    delta_milli = (now.tv_sec-yesterday.tv_sec)*1000+(now.tv_usec/1000-yesterday.tv_usec/1000);
+    delta_milli = usec_elapsed(yesterday, now) / 1e3;
     /*printf("Working for %ld milli seconds\n", delta_milli);*/
-    memcpy(&yesterday, &now, sizeof(struct timeval));
+    yesterday = now;
     for (current = first_animation; current; current = current->nextanimation)
         animate_one(current, delta_milli);
     current = first_animation;

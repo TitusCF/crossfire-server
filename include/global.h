@@ -357,20 +357,6 @@ typedef struct Statistics {
  */
 extern Statistics statistics;
 
-/* 0.94.1 - change to GETTIMEOFDAY macro - SNI systems only one one option.
- * rather than have complex #ifdefs throughout the file, lets just figure
- * it out once, here at the top.
- * Have no idea if that is the right symbol to check on for NetBSD,
- * but NetBSD does use 2 params.
- * Move this to global.h from time.c since its also used in arch.c
- */
-
-#ifdef GETTIMEOFDAY_TWO_ARGS
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time, (struct timezone *)NULL);
-#else
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time);
-#endif
-
 /**
  * @defgroup SCRIPT_FIX_xxx For plugin events
  * GROS: Those are used by plugin events (argument fixthem).

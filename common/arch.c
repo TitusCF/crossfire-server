@@ -33,9 +33,6 @@
 
 #include "loader.h"
 
-/** If set, does a little timing on the archetype load. */
-#define TIME_ARCH_LOAD 0
-
 static void add_arch(archetype *at);
 
 static archetype *arch_table[ARCHTABLE];
@@ -537,9 +534,6 @@ static void check_spells(void) {
 static void load_archetypes(void) {
     FILE *fp;
     char filename[MAX_BUF];
-#if TIME_ARCH_LOAD
-    struct timeval tv1, tv2;
-#endif
 
     snprintf(filename, sizeof(filename), "%s/%s", settings.datadir, settings.archetypes);
     LOG(llevDebug, "Reading archetypes from %s...\n", filename);
@@ -549,26 +543,15 @@ static void load_archetypes(void) {
     }
     clear_archetable();
     LOG(llevDebug, " arch-pass 1...\n");
-#if TIME_ARCH_LOAD
-    GETTIMEOFDAY(&tv1);
-#endif
+
+    /* Time how long it takes to load archetypes. */
+    struct timespec time_start, time_end;
+    clock_gettime(CLOCK_MONOTONIC, &time_start);
     first_arch_pass(fp);
-#if TIME_ARCH_LOAD
-    {
-        int sec, usec;
+    clock_gettime(CLOCK_MONOTONIC, &time_end);
+    LOG(llevDebug, "Finished loading in %f seconds.\n",
+            usec_elapsed(time_start, time_end) / 1.0e6);
 
-        GETTIMEOFDAY(&tv2);
-        sec = tv2.tv_sec-tv1.tv_sec;
-        usec = tv2.tv_usec-tv1.tv_usec;
-        if (usec < 0) {
-            usec += 1000000;
-            sec--;
-        }
-        LOG(llevDebug, "Load took %d.%06d seconds\n", sec, usec);
-    }
-#endif
-
-    LOG(llevDebug, " done\n");
     init_archetable();
     warn_archetypes = 1;
 

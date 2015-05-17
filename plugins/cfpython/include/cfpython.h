@@ -80,11 +80,6 @@
 #    define CF_IS_PYSTR(cfpy_obj) (PyString_Check(cfpy_obj) || PyUnicode_Check(cfpy_obj))
 #endif
 
-/* Python can define HAVE_GETTIMEOFDAY, but we have our own later on. */
-#ifdef HAVE_GETTIMEOFDAY
-#undef HAVE_GETTIMEOFDAY
-#endif
-
 /* include compile.h from python. Python.h doesn't pull it in with versions
  * 2.3 and older, and it does have protection from double-imports.
  */

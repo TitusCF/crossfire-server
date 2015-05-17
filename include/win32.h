@@ -57,7 +57,6 @@
 #ifndef HAVE_STDDEF_H
     #define HAVE_STDDEF_H
 #endif
-#define GETTIMEOFDAY_TWO_ARGS
 #define MAXPATHLEN 256
 #define HAVE_STRTOL
 #define HAVE_STRERROR
