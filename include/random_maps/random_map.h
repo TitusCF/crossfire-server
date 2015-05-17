@@ -56,7 +56,7 @@ typedef struct RMParms {
      * an empty string in which case a random one is chosen, or "none".
      */
     char exitstyle[RM_SIZE];
-    /** @todo remove, never non zero */
+    /** Path of the map from which the random map(s) were created. */
     char this_map[RM_SIZE];
     /**
      * If this is "no", then no exit will be made to the final map from the
