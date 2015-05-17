@@ -1,3 +1,7 @@
+2015-05-16	Daniel Hawkins (SilverNexus)
+	* utils/scores.pl.in: Made experience table be dynamically
+	read in from the server's installed exp_table file.
+
 2015-05-15	Daniel Hawkins (SilverNexus)
 	* random_maps/special.c: Fix fountain material to prevent fountains
 	that are actually potions from being destroyed.
