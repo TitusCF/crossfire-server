@@ -175,6 +175,12 @@ void CREMainWindow::createActions()
     myToolCombatSimulator = new QAction(tr("Combat simulator"), this);
     myToolCombatSimulator->setStatusTip(tr("Simulate fighting between two objects."));
     connect(myToolCombatSimulator, SIGNAL(triggered()), this, SLOT(onToolCombatSimulator()));
+
+    myClearMapCache = new QAction(tr("Clear map cache"), this);
+    myClearMapCache->setStatusTip(tr("Force a refresh of all map information at next start."));
+    connect(myClearMapCache, SIGNAL(triggered()), this, SLOT(onClearCache()));
+    /* can't clear map cache while collecting information */
+    myClearMapCache->setEnabled(false);
 }
 
 void CREMainWindow::createMenus()
@@ -216,6 +222,7 @@ void CREMainWindow::createMenus()
     toolsMenu->addAction(myToolSmooth);
     toolsMenu->addAction(myToolHPBar);
     toolsMenu->addAction(myToolCombatSimulator);
+    toolsMenu->addAction(myClearMapCache);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -320,6 +327,7 @@ void CREMainWindow::browsingFinished()
     myReportPlayer->setEnabled(true);
     myReportShops->setEnabled(true);
     myReportQuests->setEnabled(true);
+    myClearMapCache->setEnabled(true);
 }
 
 void CREMainWindow::onFiltersModified()
@@ -1313,4 +1321,18 @@ void CREMainWindow::onToolBarMaker()
 {
     CREHPBarMaker maker;
     maker.exec();
+}
+
+void CREMainWindow::onClearCache()
+{
+    QMessageBox confirm;
+    confirm.setText("Really clear map cache?");
+    confirm.setInformativeText("This will force cache rebuild at next application start.");
+    confirm.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    confirm.setDefaultButton(QMessageBox::No);
+    confirm.setIcon(QMessageBox::Question);
+    if (confirm.exec() == QMessageBox::Yes)
+    {
+        myMapManager->clearCache();
+    }
 }

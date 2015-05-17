@@ -673,3 +673,10 @@ QList<CREMapInformation*> CREMapInformationManager::getMapsForRegion(const QStri
 
     return list;
 }
+
+void CREMapInformationManager::clearCache()
+{
+    CRESettings settings;
+    Q_ASSERT(myWorker.isFinished());
+    QFile::remove(settings.mapCacheDirectory() + QDir::separator() + "maps_cache.xml");
+}

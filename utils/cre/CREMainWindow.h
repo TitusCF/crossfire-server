@@ -66,6 +66,7 @@ class CREMainWindow : public QMainWindow
         QAction* myToolSmooth;
         QAction* myToolHPBar;
         QAction* myToolCombatSimulator;
+        QAction* myClearMapCache;
         QLabel* myMapBrowseStatus;
         CREMapInformationManager* myMapManager;
         QuestManager* myQuestManager;
@@ -108,4 +109,5 @@ class CREMainWindow : public QMainWindow
         void browsingFinished();
         void onFiltersModified();
         void onReportsModified();
+        void onClearCache();
 };

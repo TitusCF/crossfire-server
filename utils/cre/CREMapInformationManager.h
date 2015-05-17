@@ -23,6 +23,7 @@ class CREMapInformationManager : public QObject
         bool browseFinished() const;
         void start();
         void cancel();
+        void clearCache();
 
         QList<CREMapInformation*> allMaps();
         QList<CREMapInformation*> getArchetypeUse(const archetype* arch);
