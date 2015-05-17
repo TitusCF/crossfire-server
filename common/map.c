@@ -813,7 +813,7 @@ mapstruct *get_linked_map(void) {
     MAP_TIMEOUT(map) = 300;
     MAP_ENTER_X(map) = 0;
     MAP_ENTER_Y(map) = 0;
-    map->last_reset_time.tv_sec = 0;
+    map->last_reset_time = 0;
     return map;
 }
 
@@ -1138,7 +1138,7 @@ static int load_map_header(FILE *fp, mapstruct *m) {
         } else if (!strcmp(key, "nosmooth")) {
             m->nosmooth = atoi(value);
         } else if (!strcmp(key, "first_load")) {
-            m->last_reset_time.tv_sec = atoi(value);
+            m->last_reset_time = atoi(value);
         } else if (!strncmp(key, "tile_path_", 10)) {
             int tile = atoi(key+10);
 
@@ -1495,8 +1495,8 @@ int save_map(mapstruct *m, int flag) {
         fprintf(fp, "outdoor %d\n", m->outdoor);
     if (m->nosmooth)
         fprintf(fp, "nosmooth %d\n", m->nosmooth);
-    if (m->last_reset_time.tv_sec)
-        fprintf(fp, "first_load %d\n", (int)m->last_reset_time.tv_sec);
+    if (m->last_reset_time)
+        fprintf(fp, "first_load %ld\n", m->last_reset_time);
     if (m->background_music)
         fprintf(fp, "background_music %s\n", m->background_music);
 
@@ -1866,9 +1866,11 @@ mapstruct *ready_map_name(const char *name, int flags) {
 
     if (m->outdoor)
         set_darkness_map(m);
+
     if (!(flags&(MAP_FLUSH))) {
-        if (m->last_reset_time.tv_sec == 0)
-            gettimeofday(&(m->last_reset_time), NULL);
+        if (m->last_reset_time == 0) {
+            m->last_reset_time = seconds();
+        }
     }
     return m;
 }

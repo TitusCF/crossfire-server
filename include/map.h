@@ -363,7 +363,7 @@ typedef struct mapdef {
     char    *tile_path[4];      /**< Path to adjoining maps. */
     struct mapdef *tile_map[4]; /**< Adjoining maps. */
     char    path[HUGE_BUF];     /**< Filename of the map. */
-    struct timeval last_reset_time; /**< A timestamp of the last original map loading. */
+    long last_reset_time;       /**< A timestamp of the last original map loading. */
     char    *background_music;  /**< Background music to use for this map. */
 } mapstruct;
 

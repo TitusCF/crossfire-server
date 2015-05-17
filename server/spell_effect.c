@@ -1175,7 +1175,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
         dummy->name = add_string(op->map->path);
         EXIT_X(dummy) = op->x;
         EXIT_Y(dummy) = op->y;
-        dummy->weapontype = op->map->last_reset_time.tv_sec;
+        dummy->weapontype = op->map->last_reset_time;
         object_insert_in_ob(dummy, op);
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                       "You fix this place in your mind and feel that you "
@@ -1276,7 +1276,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
         object_remove(force);
         object_free2(force, 0);
         return 1;
-    } else if (exitmap->last_reset_time.tv_sec != force->weapontype) {
+    } else if (exitmap->last_reset_time != force->weapontype) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "The spell effect has expired.");
         object_remove(force);
