@@ -42,6 +42,14 @@ void CREMapInformation::copy(const CREMapInformation& other)
     myShopRace = other.shopRace();
     myShopMin = other.shopMin();
     myShopMax = other.shopMax();
+    /** @todo clone random maps? */
+}
+
+const QString& CREMapInformation::displayName() const
+{
+    if (myName.isEmpty())
+        return myPath;
+    return myName;
 }
 
 const QString& CREMapInformation::path() const
@@ -206,4 +214,14 @@ quint64 CREMapInformation::shopMax() const
 void CREMapInformation::setShopMax(quint64 max)
 {
   myShopMax = max;
+}
+
+QList<CRERandomMap*> CREMapInformation::randomMaps() const
+{
+  return myRandomMaps;
+}
+
+void CREMapInformation::addRandomMap(CRERandomMap* map)
+{
+  myRandomMaps.append(map);
 }

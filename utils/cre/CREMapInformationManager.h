@@ -11,6 +11,7 @@ extern "C" {
 class MessageManager;
 class QuestManager;
 class ScriptFileManager;
+class CRERandomMap;
 
 class CREMapInformationManager : public QObject
 {
@@ -28,6 +29,7 @@ class CREMapInformationManager : public QObject
         QList<CREMapInformation*> allMaps();
         QList<CREMapInformation*> getArchetypeUse(const archetype* arch);
         QList<CREMapInformation*> getMapsForRegion(const QString& region);
+        QList<CRERandomMap*> randomMaps();
 
     signals:
         void browsingMap(const QString& path);

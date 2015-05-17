@@ -7,6 +7,8 @@
 #include <QDateTime>
 #include <QHash>
 
+class CRERandomMap;
+
 class CREMapInformation : public QObject
 {
     Q_OBJECT
@@ -21,6 +23,8 @@ class CREMapInformation : public QObject
         CREMapInformation(const QString& path);
 
         CREMapInformation* clone() const;
+
+        const QString& displayName() const;
 
         const QString& path() const;
         void setPath(const QString& path);
@@ -67,6 +71,9 @@ class CREMapInformation : public QObject
         quint64 shopMax() const;
         void setShopMax(quint64 max);
 
+        QList<CRERandomMap*> randomMaps() const;
+        void addRandomMap(CRERandomMap* map);
+
     protected:
         QString myPath;
         QString myName;
@@ -83,6 +90,7 @@ class CREMapInformation : public QObject
         double myShopGreed;
         QString myShopRace;
         quint64 myShopMin, myShopMax;
+        QList<CRERandomMap*> myRandomMaps;
 
         void copy(const CREMapInformation& other);
 };

@@ -114,6 +114,10 @@ void CREMainWindow::createActions()
     myOpenExperience->setStatusTip(tr("List all scripts references in maps."));
     connect(myOpenScripts, SIGNAL(triggered()), this, SLOT(onOpenScripts()));
 
+    myOpenRandomMaps = new QAction(tr("Random maps"), this);
+    myOpenRandomMaps->setStatusTip(tr("List all random maps."));
+    connect(myOpenRandomMaps, SIGNAL(triggered()), this, SLOT(onOpenRandomMaps()));
+
     mySaveFormulae = new QAction(tr("Formulae"), this);
     mySaveFormulae->setEnabled(false);
     connect(mySaveFormulae, SIGNAL(triggered()), this, SLOT(onSaveFormulae()));
@@ -198,6 +202,7 @@ void CREMainWindow::createMenus()
     myOpenMenu->addAction(myOpenMessages);
     myOpenMenu->addAction(myOpenExperience);
     myOpenMenu->addAction(myOpenScripts);
+    myOpenMenu->addAction(myOpenRandomMaps);
     myOpenMenu->addSeparator();
     QAction* exit = myOpenMenu->addAction(tr("&Exit"));
     exit->setStatusTip(tr("Close the application."));
@@ -297,6 +302,11 @@ void CREMainWindow::onOpenExperience()
 void CREMainWindow::onOpenScripts()
 {
     doResourceWindow(DisplayScripts);
+}
+
+void CREMainWindow::onOpenRandomMaps()
+{
+    doResourceWindow(DisplayRandomMaps);
 }
 
 void CREMainWindow::onSaveFormulae()

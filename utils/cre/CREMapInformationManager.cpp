@@ -7,6 +7,7 @@
 #include "Quest.h"
 #include "ScriptFileManager.h"
 #include "ScriptFile.h"
+#include "CRERandomMap.h"
 
 extern "C" {
 #include "global.h"
@@ -213,6 +214,8 @@ void CREMapInformationManager::process(const QString& path2)
                                     start += strlen("final_map")+2;
                                     strncpy(ep, start, end-start);
                                 }
+
+                                information->addRandomMap(new CRERandomMap(information, x, y, item->msg));
                             }
                         }
 
@@ -485,6 +488,13 @@ void CREMapInformationManager::loadCache()
             QString script = reader.readElementText();
             myScriptManager->getFile(script)->addHook(new HookInformation(map, x, y, item, plugin, event));
         }
+        if (reader.isStartElement() && reader.name() == "random_map")
+        {
+            int x = reader.attributes().value("x").toString().toInt();
+            int y = reader.attributes().value("y").toString().toInt();
+            QString params = reader.attributes().value("params").toString();
+            map->addRandomMap(new CRERandomMap(map, x, y, params.toLatin1().constData()));
+        }
 
         if (reader.isEndElement() && reader.name() == "map")
         {
@@ -583,6 +593,17 @@ void CREMapInformationManager::storeCache()
             }
         }
 
+        foreach(CRERandomMap* random, map->randomMaps())
+        {
+            writer.writeStartElement("random_map");
+            writer.writeAttribute("x", QString::number(random->x()));
+            writer.writeAttribute("y", QString::number(random->y()));
+            StringBuffer* sb = write_map_parameters_to_string(random->parameters());
+            char* params = stringbuffer_finish(sb);
+            writer.writeAttribute("params", params);
+            free(params);
+        }
+
         writer.writeEndElement();
     }
 
@@ -679,4 +700,14 @@ void CREMapInformationManager::clearCache()
     CRESettings settings;
     Q_ASSERT(myWorker.isFinished());
     QFile::remove(settings.mapCacheDirectory() + QDir::separator() + "maps_cache.xml");
+}
+
+QList<CRERandomMap*> CREMapInformationManager::randomMaps()
+{
+    QList<CRERandomMap*> maps;
+    foreach(CREMapInformation* map, myInformation.values())
+    {
+        maps.append(map->randomMaps());
+    }
+    return maps;
 }

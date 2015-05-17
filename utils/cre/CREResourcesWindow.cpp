@@ -52,6 +52,10 @@
 
 #include "CREScriptEngine.h"
 
+#include "CRERandomMap.h"
+#include "CRETreeItemRandomMap.h"
+#include "CRERandomMapPanel.h"
+
 extern "C" {
 #include "global.h"
 #include "recipe.h"
@@ -193,6 +197,11 @@ void CREResourcesWindow::fillData()
     {
         title = tr("Scripts");
         fillScripts();
+    }
+    if (myDisplay & DisplayRandomMaps)
+    {
+        title = tr("Random maps");
+        fillRandomMaps();
     }
 
     if (myDisplay == DisplayAll)
@@ -475,12 +484,7 @@ void CREResourcesWindow::fillFaces()
 
 bool sortMapInformation(const CREMapInformation* left, const CREMapInformation* right)
 {
-    QString leftName(left->name()), rightName(right->name());
-    if (leftName.isEmpty())
-        leftName = left->path();
-    if (rightName.isEmpty())
-        rightName = right->path();
-    return leftName.compare(rightName, Qt::CaseInsensitive) < 0;
+    return left->displayName().compare(right->displayName(), Qt::CaseInsensitive) < 0;
 }
 
 void CREResourcesWindow::fillMaps()
@@ -905,4 +909,56 @@ void CREResourcesWindow::addMessage(bool)
 const ResourcesManager* CREResourcesWindow::resourcesManager() const
 {
   return myResources;
+}
+
+static bool sortRandomMap(const CRERandomMap* left, const CRERandomMap* right)
+{
+    int name = left->map()->displayName().compare(right->map()->displayName(), Qt::CaseInsensitive);
+    if (name == 0)
+    {
+        if (left->x() < right->x())
+            return true;
+        if (left->x() == right->x() && left->y() < right->y())
+            return true;
+        return false;
+    }
+    return name < 0;
+}
+
+void CREResourcesWindow::fillRandomMaps()
+{
+    bool full = false;
+    if (myDisplay == DisplayRandomMaps)
+    {
+        QStringList headers;
+        headers << tr("Random maps");
+        myTree->setHeaderLabels(headers);
+        myTree->sortByColumn(0, Qt::AscendingOrder);
+        full = true;
+    }
+
+    QTreeWidgetItem* root = CREUtils::mapNode(NULL);
+    myTreeItems.append(new CRETreeItemEmpty());
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    myTree->addTopLevelItem(root);
+
+    QList<CRERandomMap*> maps = myStore->randomMaps();
+    qSort(maps.begin(), maps.end(), sortRandomMap);
+    foreach(CRERandomMap* map, maps)
+    {
+        QString source(tr("from %1 [%2, %3]").arg(map->map()->name()).arg(map->x()).arg(map->y()));
+        QTreeWidgetItem* leaf = new QTreeWidgetItem(root, QStringList(source));
+        myTreeItems.append(new CRETreeItemRandomMap(map));
+        leaf->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    }
+
+    root->setText(0, tr("Random maps [%1]").arg(maps.size()));
+
+    if (full)
+    {
+        root->setExpanded(true);
+        myTree->resizeColumnToContents(0);
+    }
+
+    addPanel("Random map", new CRERandomMapPanel());
 }
