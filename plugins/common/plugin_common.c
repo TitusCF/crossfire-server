@@ -2081,21 +2081,3 @@ int cf_quest_was_completed(object *pl, sstring quest_code) {
 
     return ret;
 }
-
-#ifdef WIN32
-int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info) {
-    /* Get the time, if they want it */
-    if (time_Info != NULL) {
-        time_Info->tv_sec = time(NULL);
-        time_Info->tv_usec = timeGetTime()*1000;
-    }
-    /* Get the timezone, if they want it */
-    if (timezone_Info != NULL) {
-        _tzset();
-        timezone_Info->tz_minuteswest = _timezone;
-        timezone_Info->tz_dsttime = _daylight;
-    }
-    /* And return */
-    return 0;
-}
-#endif

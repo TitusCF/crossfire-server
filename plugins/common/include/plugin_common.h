@@ -238,16 +238,4 @@ extern void         cf_quest_start(object *pl, sstring quest_code, int state);
 extern void         cf_quest_set_player_state(object *pl, sstring quest_code, int state);
 extern int          cf_quest_was_completed(object *pl, sstring quest_code);
 
-
-#ifdef WIN32
-struct timezone {
-    int tz_minuteswest;
-    int tz_dsttime;
-};
-
-int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);
-#else
-#include <sys/time.h>
-#endif
-
 #endif /* PLUGIN_COMMON_H */

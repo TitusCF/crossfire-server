@@ -148,7 +148,6 @@ typedef struct {
 #endif
 
 /* Function prototypes */
-extern int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);
 extern DIR *opendir(const char *);
 extern struct dirent *readdir(DIR *);
 extern int closedir(DIR *);

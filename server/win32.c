@@ -26,38 +26,6 @@
 #include <errno.h>
 #include <mmsystem.h>
 
-/** Timezone structure, for gettimeofday(). */
-struct timezone {
-    int tz_minuteswest; /**< Timezone. */
-    int tz_dsttime; /**< Current time. */
-};
-
-/**
- * Gets the time of the day.
- *
- * @param[out] time_Info
- * will receive the time of the day.
- * @param[out] timezone_Info
- * will receive the timezone info.
- * @return
- * 0.
- */
-int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info) {
-    /* Get the time, if they want it */
-    if (time_Info != NULL) {
-        time_Info->tv_sec = time(NULL);
-        time_Info->tv_usec = timeGetTime()*1000;
-    }
-    /* Get the timezone, if they want it */
-    if (timezone_Info != NULL) {
-        _tzset();
-        timezone_Info->tz_minuteswest = _timezone;
-        timezone_Info->tz_dsttime = _daylight;
-    }
-    /* And return */
-    return 0;
-}
-
 /**
  * Opens a directory for reading. The handle should be disposed through closedir().
  *
