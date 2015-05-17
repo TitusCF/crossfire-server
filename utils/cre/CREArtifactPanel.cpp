@@ -20,18 +20,21 @@ CREArtifactPanel::CREArtifactPanel()
     layout->addWidget(label, 1, 1);
     myName = new QLineEdit(this);
     layout->addWidget(myName, 1, 2);
+    myName->setReadOnly(true);
 
     label = new QLabel(this);
     label->setText("Chance:");
     layout->addWidget(label, 2, 1);
     myChance = new QLineEdit(this);
     layout->addWidget(myChance, 2, 2);
+    myChance->setReadOnly(true);
 
     label = new QLabel(this);
     label->setText("Type:");
     layout->addWidget(label, 3, 1);
     myType = new QLineEdit(this);
     layout->addWidget(myType, 3, 2);
+    myType->setReadOnly(true);
 
     myViaAlchemy = new QLabel(this);
     myViaAlchemy->setWordWrap(true);
@@ -40,6 +43,7 @@ CREArtifactPanel::CREArtifactPanel()
     layout->addWidget(new QLabel(tr("Values:"), this), 5, 1, 1, 2);
     myValues = new QTextEdit(this);
     layout->addWidget(myValues, 6, 1, 1, 2);
+    myValues->setReadOnly(true);
 
     myArchetypes = new QTreeWidget(this);
     layout->addWidget(myArchetypes, 7, 1, 3, 1);
@@ -51,6 +55,7 @@ CREArtifactPanel::CREArtifactPanel()
     layout->addWidget(new QLabel(tr("Result:"), this), 7, 2);
     myInstance = new QTextEdit(this);
     layout->addWidget(myInstance, 8, 2);
+    myInstance->setReadOnly(true);
 
     layout->addWidget(myAnimation = new CREAnimationControl(this), 9, 2);
     layout->addWidget(myFace = new CREAnimationWidget(this), 9, 2);
