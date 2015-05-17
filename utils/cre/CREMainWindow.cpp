@@ -464,7 +464,7 @@ void CREMainWindow::onReportDuplicate()
     }
     report += "</ul>";
 
-    CREReportDisplay show(report);
+    CREReportDisplay show(report, "Duplicate and unused faces and animations");
     show.exec();
 }
 
@@ -516,7 +516,7 @@ void CREMainWindow::onReportSpellDamage()
 
     report += "</tbody></table>";
 
-    CREReportDisplay show(report);
+    CREReportDisplay show(report, "Spell damage");
     show.exec();
 }
 
@@ -610,7 +610,7 @@ void CREMainWindow::onReportAlchemy()
         report += alchemyTable(skill);
     }
 
-    CREReportDisplay show(report);
+    CREReportDisplay show(report, "Alchemy formulae");
     show.exec();
 }
 
@@ -669,7 +669,7 @@ void CREMainWindow::onReportSpells()
         report += spellsTable(skill);
     }
 
-    CREReportDisplay show(report);
+    CREReportDisplay show(report, "Spell list");
     show.exec();
 }
 
@@ -956,7 +956,7 @@ void CREMainWindow::onReportPlayer()
 
     report += "</tbody></table>\n";
 
-    CREReportDisplay show(report);
+    CREReportDisplay show(report, "Player vs monsters (hand to hand)");
     QApplication::restoreOverrideCursor();
     show.exec();
 }
@@ -1073,7 +1073,7 @@ void CREMainWindow::onReportSummon()
 
     report += "</tbody>\n</table>\n";
 
-    CREReportDisplay show(report);
+    CREReportDisplay show(report, "Summoned pet statistics");
     QApplication::restoreOverrideCursor();
     show.exec();
 }
@@ -1177,7 +1177,7 @@ void CREMainWindow::onReportShops()
       report += buildShopReport("Others", part, maps, items);
     }
 
-    CREReportDisplay show(report);
+    CREReportDisplay show(report, "Shop information");
     QApplication::restoreOverrideCursor();
     show.exec();
 }
@@ -1292,7 +1292,7 @@ void CREMainWindow::onReportQuests()
 
   report += "</body>\n</html>\n";
 
-  CREReportDisplay show(report);
+  CREReportDisplay show(report, "Quests report");
   QApplication::restoreOverrideCursor();
   show.exec();
 }

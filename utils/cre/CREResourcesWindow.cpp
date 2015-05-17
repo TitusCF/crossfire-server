@@ -816,7 +816,7 @@ void CREResourcesWindow::onReportChange(QObject* object)
     text += "</tbody></table>";
     qDebug() << "report finished";
 
-    CREReportDisplay display(text);
+    CREReportDisplay display(text, tr("Report: '%1'").arg(report->name()));
     display.exec();
 }
 

@@ -9,7 +9,7 @@ class CREReportDisplay : public QDialog
     Q_OBJECT
 
     public:
-        CREReportDisplay(const QString& report);
+        CREReportDisplay(const QString& report, const QString& title);
 
     protected slots:
         void copyClicked(bool);

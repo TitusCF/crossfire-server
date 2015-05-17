@@ -1,9 +1,11 @@
 #include "CREReportDisplay.h"
 #include <QtGui>
 
-CREReportDisplay::CREReportDisplay(const QString& report)
+CREReportDisplay::CREReportDisplay(const QString& report, const QString& title)
 {
     myReport = report;
+
+    setWindowTitle(title);
 
     QVBoxLayout* layout = new QVBoxLayout(this);
 
