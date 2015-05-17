@@ -6,12 +6,12 @@
 
 class ScriptFile;
 
-class CREScriptPanel : public CREPanel
+class CREScriptPanel : public CRETPanel<ScriptFile>
 {
     public:
         CREScriptPanel();
 
-        void setScript(ScriptFile* script);
+        virtual void setItem(ScriptFile* script);
 
     private:
       QTreeWidget* myMaps;

@@ -27,7 +27,7 @@ CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store)
     layout->addWidget(myUsing, 2, 1);
 }
 
-void CREArchetypePanel::setArchetype(const archt* archetype)
+void CREArchetypePanel::setItem(const archt* archetype)
 {
     myArchetype = archetype;
     StringBuffer* dump = stringbuffer_new();

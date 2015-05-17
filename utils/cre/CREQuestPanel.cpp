@@ -115,7 +115,7 @@ CREQuestPanel::~CREQuestPanel()
 {
 }
 
-void CREQuestPanel::setQuest(Quest* quest)
+void CREQuestPanel::setItem(Quest* quest)
 {
     myQuest = quest;
     myCurrentStep = NULL;

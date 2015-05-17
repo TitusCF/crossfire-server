@@ -10,14 +10,14 @@ extern "C" {
 #include "recipe.h"
 }
 
-class CREFormulaePanel : public CREPanel
+class CREFormulaePanel : public CRETPanel<const recipe>
 {
     Q_OBJECT
 
     public:
         CREFormulaePanel();
 
-        void setRecipe(const recipe* recipe);
+        void setItem(const recipe* recipe);
 
     protected:
         const recipe* myRecipe;

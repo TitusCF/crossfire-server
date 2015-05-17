@@ -11,13 +11,13 @@ extern "C"
 #include "map.h"
 }
 
-class CRERegionPanel : public CREPanel
+class CRERegionPanel : public CRETPanel<regiondef>
 {
     public:
         CRERegionPanel();
         virtual ~CRERegionPanel();
 
-        void setRegion(regiondef* region);
+        virtual void setItem(regiondef* region);
 
     protected:
         QLabel* myShortName;

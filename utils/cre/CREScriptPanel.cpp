@@ -39,7 +39,7 @@ CREScriptPanel::CREScriptPanel()
     fillEvents();
 }
 
-void CREScriptPanel::setScript(ScriptFile* script)
+void CREScriptPanel::setItem(ScriptFile* script)
 {
     myMaps->clear();
 

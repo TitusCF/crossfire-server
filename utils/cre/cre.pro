@@ -10,17 +10,11 @@ CREPixmap.cpp \
  CREAnimationWidget.cpp \
  CREResourcesWindow.cpp \
  CRETreeItem.cpp \
- CRETreeItemAnimation.cpp \
  CREAnimationPanel.cpp \
- CRETreeItemTreasure.cpp \
  CRETreasurePanel.cpp \
- CRETreeItemArtifact.cpp \
  CREArtifactPanel.cpp \
  CREFormulaePanel.cpp \
- CRETreeItemFormulae.cpp \
- CRETreeItemFace.cpp \
  CREFacePanel.cpp \
- CRETreeItemArchetype.cpp \
  CREArchetypePanel.cpp \
  CREMapInformation.cpp \
  CREMapInformationManager.cpp \
@@ -38,10 +32,8 @@ CREPixmap.cpp \
  CREFilterDefinitionManager.cpp \
  CREReportDefinition.cpp \
  CREMapPanel.cpp \
- CRETreeItemMap.cpp \
  CREExperienceWindow.cpp \
  CRERegionPanel.cpp \
- CRETreeItemRegion.cpp \
  CREReportDefinitionManager.cpp \
  CREScriptEngine.cpp \
  Quest.cpp \
@@ -52,7 +44,6 @@ CREPixmap.cpp \
  MessageManager.cpp \
  CREMessagePanel.cpp \
  MessageFile.cpp \
- CRETreeItemMessage.cpp \
  CRERulePanel.cpp \
  CREStringListPanel.cpp \
  CREPrePostPanel.cpp \
@@ -66,11 +57,9 @@ CREPixmap.cpp \
  CRECombatSimulator.cpp \
  ScriptFileManager.cpp \
  ScriptFile.cpp \
- CRETreeItemScript.cpp \
  CREScriptPanel.cpp \
  CRERandomMap.cpp \
- CRERandomMapPanel.cpp \
- CRETreeItemRandomMap.cpp
+ CRERandomMapPanel.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -78,17 +67,11 @@ CREPixmap.h \
  CREAnimationWidget.h \
  CREResourcesWindow.h \
  CRETreeItem.h \
- CRETreeItemAnimation.h \
  CREAnimationPanel.h \
- CRETreeItemTreasure.h \
  CRETreasurePanel.h \
- CRETreeItemArtifact.h \
  CREArtifactPanel.h \
  CREFormulaePanel.h \
- CRETreeItemFormulae.h \
- CRETreeItemFace.h \
  CREFacePanel.h \
- CRETreeItemArchetype.h \
  CREArchetypePanel.h \
  CREMapInformation.h \
  CREMapInformationManager.h \
@@ -106,10 +89,8 @@ CREPixmap.h \
  CREFilterDefinitionManager.h \
  CREReportDefinition.h \
  CREMapPanel.h \
- CRETreeItemMap.h \
  CREExperienceWindow.h \
  CRERegionPanel.h \
- CRETreeItemRegion.h \
  CREReportDefinitionManager.h \
  CRETreeItemEmpty.h \
  CREScriptEngine.h \
@@ -121,7 +102,6 @@ CREPixmap.h \
  MessageManager.h \
  CREMessagePanel.h \
  MessageFile.h \
- CRETreeItemMessage.h \
  CRERulePanel.h \
  CREStringListPanel.h \
  CREPrePostPanel.h \
@@ -135,11 +115,9 @@ CREPixmap.h \
  CRECombatSimulator.h \
  ScriptFileManager.h \
  ScriptFile.h \
- CRETreeItemScript.h \
  CREScriptPanel.h \
  CRERandomMap.h \
- CRERandomMapPanel.h \
- CRETreeItemRandomMap.h
+ CRERandomMapPanel.h
 LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt -ldl
 
 RESOURCES += cre.qrc

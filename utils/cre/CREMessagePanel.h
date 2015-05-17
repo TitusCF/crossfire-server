@@ -15,7 +15,7 @@ class CRERulePanel;
 class MessageManager;
 class QuestManager;
 
-class CREMessagePanel : public CREPanel
+class CREMessagePanel : public CRETPanel<MessageFile>
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ class CREMessagePanel : public CREPanel
         CREMessagePanel(const MessageManager* manager, const QuestManager* quests);
         virtual ~CREMessagePanel();
 
-        void setMessage(MessageFile* message);
+        virtual void setItem(MessageFile* message);
         virtual void commitData();
 
     private:

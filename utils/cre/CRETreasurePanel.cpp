@@ -30,7 +30,7 @@ CRETreasurePanel::CRETreasurePanel()
     myGenerated->setIconSize(QSize(32, 32));
 }
 
-void CRETreasurePanel::setTreasure(const treasurelist* treas)
+void CRETreasurePanel::setItem(const treasurelist* treas)
 {
     myUsing->clear();
     myTreasure = treas;

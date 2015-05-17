@@ -14,7 +14,7 @@ class QuestManager;
 class CREQuestItemModel;
 class MessageManager;
 
-class CREQuestPanel : public CREPanel
+class CREQuestPanel : public CRETPanel<Quest>
 {
     Q_OBJECT
 
@@ -24,7 +24,7 @@ class CREQuestPanel : public CREPanel
 
         virtual void commitData();
 
-        void setQuest(Quest* quest);
+        virtual void setItem(Quest* quest);
     private:
         QuestManager* myQuestManager;
         MessageManager* myMessageManager;

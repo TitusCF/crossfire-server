@@ -144,7 +144,7 @@ static void addArchetypes(const artifact* artifact, const char* name, bool check
     }
 }
 
-void CREArtifactPanel::setArtifact(const artifact* artifact)
+void CREArtifactPanel::setItem(const artifact* artifact)
 {
     Q_ASSERT(artifact);
     myArtifact = artifact;

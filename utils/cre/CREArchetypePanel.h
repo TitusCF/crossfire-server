@@ -11,13 +11,13 @@ extern "C" {
 
 class CREMapInformationManager;
 
-class CREArchetypePanel : public CREPanel
+class CREArchetypePanel : public CRETPanel<const archt>
 {
     Q_OBJECT
 
     public:
         CREArchetypePanel(CREMapInformationManager* store);
-        void setArchetype(const archt* archetype);
+        virtual void setItem(const archt* archetype);
 
     protected:
         const archt* myArchetype;

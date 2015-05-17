@@ -61,7 +61,7 @@ CREFacePanel::CREFacePanel()
     connect(smooth, SIGNAL(clicked(bool)), this, SLOT(makeSmooth(bool)));
 }
 
-void CREFacePanel::setFace(const New_Face* face)
+void CREFacePanel::setItem(const New_Face* face)
 {
     Q_ASSERT(face);
     myFace = face;

@@ -16,17 +16,7 @@
 #include "CREReportDefinition.h"
 
 #include "CRETreeItemEmpty.h"
-#include "CRETreeItemAnimation.h"
-#include "CRETreeItemArchetype.h"
-#include "CRETreeItemTreasure.h"
-#include "CRETreeItemArtifact.h"
-#include "CRETreeItemFormulae.h"
-#include "CRETreeItemFace.h"
-#include "CRETreeItemMap.h"
-#include "CRETreeItemRegion.h"
 #include "CRETreeItemQuest.h"
-#include "CRETreeItemMessage.h"
-#include "CRETreeItemScript.h"
 
 #include "CREAnimationPanel.h"
 #include "CREArchetypePanel.h"
@@ -53,7 +43,6 @@
 #include "CREScriptEngine.h"
 
 #include "CRERandomMap.h"
-#include "CRETreeItemRandomMap.h"
 #include "CRERandomMapPanel.h"
 
 extern "C" {
@@ -266,7 +255,7 @@ void CREResourcesWindow::fillAnimations()
     {
         const animations_struct* anim = myResources->animation(name);
         item = CREUtils::animationNode(anim, animationsNode);
-        myTreeItems.append(new CRETreeItemAnimation(anim));
+        myTreeItems.append(new CRETTreeItem<const animations_struct>(anim, "Animation"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
@@ -291,7 +280,7 @@ void CREResourcesWindow::fillTreasures()
         list = myResources->treasureList(name);
         item = CREUtils::treasureNode(list, treasures);
 
-        myTreeItems.append(new CRETreeItemTreasure(list));
+        myTreeItems.append(new CRETTreeItem<const treasurelist>(list, "Treasure"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         //item->setData(0, Qt::UserRole, allTreasures[t]);
         if (list->total_chance != 0)
@@ -302,7 +291,7 @@ void CREResourcesWindow::fillTreasures()
             sub = CREUtils::treasureNode(treasure, list, item);
             if (treasure->chance)
                 sub->setText(1, QString::number(treasure->chance));
-            myTreeItems.append(new CRETreeItemTreasure(list));
+            myTreeItems.append(new CRETTreeItem<const treasurelist>(list, "Treasure"));
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         }
     }
@@ -336,13 +325,13 @@ void CREResourcesWindow::fillArchetypes()
             continue;
 
         item = CREUtils::archetypeNode(arch, root);
-        myTreeItems.append(new CRETreeItemArchetype(arch));
+        myTreeItems.append(new CRETTreeItem<const archt>(arch, "Archetype"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
 
         for (archt* more = arch->more; more; more = more->more)
         {
             sub = CREUtils::archetypeNode(more, item);
-            myTreeItems.append(new CRETreeItemArchetype(more));
+            myTreeItems.append(new CRETTreeItem<const archt>(more, "Archetype"));
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         }
         myDisplayedItems.append(wrapper);
@@ -360,7 +349,7 @@ void CREResourcesWindow::fillArchetypes()
 
 void CREResourcesWindow::fillFormulae()
 {
-    const recipe* recipe;
+    const recipe* r;
     QTreeWidgetItem* root, *form, *sub;
     CREWrapperFormulae* wrapper = NULL;
     int count = 0, added = 0, subCount, subAdded;
@@ -380,17 +369,17 @@ void CREResourcesWindow::fillFormulae()
 
         foreach(QString name, recipes)
         {
-            recipe = myResources->recipe(ing, name);
+            r = myResources->recipe(ing, name);
             subCount++;
             count++;
             if (!wrapper)
                 wrapper = new CREWrapperFormulae();
-            wrapper->setFormulae(recipe);
+            wrapper->setFormulae(r);
             if (!myFilter.showItem(wrapper))
                 continue;
 
-            sub = CREUtils::formulaeNode(recipe, root);
-            myTreeItems.append(new CRETreeItemFormulae(recipe));
+            sub = CREUtils::formulaeNode(r, root);
+            myTreeItems.append(new CRETTreeItem<const recipe>(r, "Formulae"));
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
             myDisplayedItems.append(wrapper);
             wrapper = NULL;
@@ -440,7 +429,7 @@ void CREResourcesWindow::fillArtifacts()
                 continue;
 
             sub = CREUtils::artifactNode(art, item);
-            myTreeItems.append(new CRETreeItemArtifact(art));
+            myTreeItems.append(new CRETTreeItem<artifact>(art, "Artifact"));
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
             added++;
             subAdded++;
@@ -475,7 +464,7 @@ void CREResourcesWindow::fillFaces()
     {
         face = myResources->face(name);
         item = CREUtils::faceNode(face, root);
-        myTreeItems.append(new CRETreeItemFace(face));
+        myTreeItems.append(new CRETTreeItem<const New_Face>(face, "Face"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
@@ -520,12 +509,12 @@ void CREResourcesWindow::fillMaps()
         QList<CREMapInformation*> maps = myStore->getMapsForRegion(name);
         qSort(maps.begin(), maps.end(), sortMapInformation);
         regionNode = CREUtils::regionNode(name, maps.size(), root);
-        myTreeItems.append(new CRETreeItemRegion(regions[name]));
+        myTreeItems.append(new CRETTreeItem<region>(regions[name], "Region"));
         regionNode->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         foreach(CREMapInformation* map, maps)
         {
             leaf = CREUtils::mapNode(map, regionNode);
-            myTreeItems.append(new CRETreeItemMap(map));
+            myTreeItems.append(new CRETTreeItem<CREMapInformation>(map, "Map"));
             leaf->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
             if (full)
                 leaf->setText(1, tr("%1").arg(QString::number(map->experience()), 20));
@@ -590,7 +579,7 @@ void CREResourcesWindow::fillMessages()
     foreach(MessageFile* message, myMessages->messages())
     {
         item = CREUtils::messageNode(message, root);
-        myTreeItems.append(new CRETreeItemMessage(message));
+        myTreeItems.append(new CRETTreeItem<MessageFile>(message, "Message"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
@@ -617,7 +606,7 @@ void CREResourcesWindow::fillScripts()
     foreach(ScriptFile* script, scripts)
     {
         item = CREUtils::scriptNode(script, root);
-        myTreeItems.append(new CRETreeItemScript(script));
+        myTreeItems.append(new CRETTreeItem<ScriptFile>(script, "Script"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
@@ -948,7 +937,7 @@ void CREResourcesWindow::fillRandomMaps()
     {
         QString source(tr("from %1 [%2, %3]").arg(map->map()->name()).arg(map->x()).arg(map->y()));
         QTreeWidgetItem* leaf = new QTreeWidgetItem(root, QStringList(source));
-        myTreeItems.append(new CRETreeItemRandomMap(map));
+        myTreeItems.append(new CRETTreeItem<CRERandomMap>(map, "Random map"));
         leaf->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 

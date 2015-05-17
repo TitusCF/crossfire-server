@@ -12,13 +12,13 @@ extern "C" {
 
 class CREAnimationControl;
 
-class CREAnimationPanel : public CREPanel
+class CREAnimationPanel : public CRETPanel<const Animations>
 {
     Q_OBJECT
 
     public:
         CREAnimationPanel();
-        void setAnimation(const Animations* animation);
+        virtual void setItem(const Animations* animation);
 
     protected:
         const Animations* myAnimation;

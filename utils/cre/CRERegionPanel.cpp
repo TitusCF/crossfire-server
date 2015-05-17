@@ -37,7 +37,7 @@ CRERegionPanel::~CRERegionPanel()
 {
 }
 
-void CRERegionPanel::setRegion(regiondef* region)
+void CRERegionPanel::setItem(regiondef* region)
 {
     myShortName->setText(region->name);
     myName->setText(get_region_longname(region));

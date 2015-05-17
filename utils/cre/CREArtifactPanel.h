@@ -11,13 +11,13 @@ extern "C" {
 #include "artifact.h"
 }
 
-class CREArtifactPanel : public CREPanel
+class CREArtifactPanel : public CRETPanel<const artifact>
 {
     Q_OBJECT
 
     public:
         CREArtifactPanel();
-        void setArtifact(const artifact* artifact);
+        virtual void setItem(const artifact* artifact);
 
     protected:
         const artifact* myArtifact;

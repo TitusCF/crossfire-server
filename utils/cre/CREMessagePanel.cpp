@@ -91,7 +91,7 @@ QString toDisplay(const QList<QStringList>& list)
     return data.join("\n");
 }
 
-void CREMessagePanel::setMessage(MessageFile* message)
+void CREMessagePanel::setItem(MessageFile* message)
 {
     myPath->setText(message->path());
     /* can only change path when new file is created */

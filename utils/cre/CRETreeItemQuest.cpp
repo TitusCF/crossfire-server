@@ -6,16 +6,15 @@
 #include "ResourcesManager.h"
 #include "CREPixmap.h"
 
-CRETreeItemQuest::CRETreeItemQuest(Quest* quest, QTreeWidgetItem* item, CREResourcesWindow* window)
+CRETreeItemQuest::CRETreeItemQuest(Quest* quest, QTreeWidgetItem* item, CREResourcesWindow* window) : CRETTreeItem(quest, "Quest")
 {
-    myQuest = quest;
     Q_ASSERT(item);
-    myItem = item;
+    myTreeItem = item;
     Q_ASSERT(window);
     myWindow = window;
 
-    if (myQuest != NULL)
-        connect(myQuest, SIGNAL(modified()), this, SLOT(questModified()));
+    if (myItem != NULL)
+        connect(myItem, SIGNAL(modified()), this, SLOT(questModified()));
 }
 
 CRETreeItemQuest::~CRETreeItemQuest()
@@ -24,36 +23,34 @@ CRETreeItemQuest::~CRETreeItemQuest()
 
 QString CRETreeItemQuest::getPanelName() const
 {
-    if (myQuest)
+    if (myItem)
         return "Quest";
     return "(dummy)";
 }
 
 void CRETreeItemQuest::fillPanel(QWidget* panel)
 {
-    if (myQuest == NULL)
+    if (myItem == NULL)
         return;
 
-    Q_ASSERT(myQuest);
-    CREQuestPanel* p = static_cast<CREQuestPanel*>(panel);
-    p->setQuest(myQuest);
+    CRETTreeItem::fillPanel(panel);
 }
 
 void CRETreeItemQuest::questModified()
 {
-    myItem->setText(0, myQuest->code());
-    myItem->setIcon(0, QIcon());
-    if (!myQuest->face().isEmpty())
+    myTreeItem->setText(0, myItem->code());
+    myTreeItem->setIcon(0, QIcon());
+    if (!myItem->face().isEmpty())
     {
-      const New_Face* face = myWindow->resourcesManager()->face(myQuest->face());
+      const New_Face* face = myWindow->resourcesManager()->face(myItem->face());
       if (face != NULL)
-        myItem->setIcon(0, CREPixmap::getIcon(face->number));
+        myTreeItem->setIcon(0, CREPixmap::getIcon(face->number));
     }
 }
 
 void CRETreeItemQuest::fillContextMenu(QMenu* menu)
 {
-    if (!myQuest)
+    if (!myItem)
         return;
 
     QAction* del = new QAction("delete quest", menu);
@@ -63,6 +60,6 @@ void CRETreeItemQuest::fillContextMenu(QMenu* menu)
 
 void CRETreeItemQuest::deleteQuest(bool)
 {
-    Q_ASSERT(myQuest);
-    myWindow->deleteQuest(myQuest);
+    Q_ASSERT(myItem);
+    myWindow->deleteQuest(myItem);
 }

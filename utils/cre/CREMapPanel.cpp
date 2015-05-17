@@ -57,7 +57,7 @@ CREMapPanel::~CREMapPanel()
 {
 }
 
-void CREMapPanel::setMap(CREMapInformation* map)
+void CREMapPanel::setItem(CREMapInformation* map)
 {
     myName->setText(map->name());
 

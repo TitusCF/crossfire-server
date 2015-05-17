@@ -16,4 +16,12 @@ class CREPanel : public QWidget
     private:
 };
 
+template<typename T>
+class CRETPanel : public CREPanel
+{
+    public:
+        virtual void setItem(T* item) = 0;
+    private:
+};
+
 #endif /* _CREPANEL_H */

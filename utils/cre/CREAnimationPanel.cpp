@@ -34,7 +34,7 @@ CREAnimationPanel::CREAnimationPanel()
     layout->addWidget(myDisplay, 3, 1);
 }
 
-void CREAnimationPanel::setAnimation(const Animations* animation)
+void CREAnimationPanel::setItem(const Animations* animation)
 {
     Q_ASSERT(animation);
     myAnimation = animation;

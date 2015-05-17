@@ -9,13 +9,13 @@ extern "C" {
 #include "global.h"
 }
 
-class CREFacePanel : public CREPanel
+class CREFacePanel : public CRETPanel<const New_Face>
 {
     Q_OBJECT
 
     public:
         CREFacePanel();
-        void setFace(const New_Face* face);
+        virtual void setItem(const New_Face* face);
 
     protected:
         const New_Face* myFace;

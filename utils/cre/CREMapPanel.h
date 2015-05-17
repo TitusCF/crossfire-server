@@ -8,13 +8,13 @@
 class CREMapInformation;
 class ScriptFileManager;
 
-class CREMapPanel : public CREPanel
+class CREMapPanel : public CRETPanel<CREMapInformation>
 {
     public:
         CREMapPanel(ScriptFileManager* manager);
         virtual ~CREMapPanel();
 
-        void setMap(CREMapInformation* map);
+        virtual void setItem(CREMapInformation* map);
 
     protected:
         ScriptFileManager* myManager;

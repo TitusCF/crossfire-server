@@ -9,14 +9,14 @@ extern "C" {
 #include "global.h"
 }
 
-class CRETreasurePanel : public CREPanel
+class CRETreasurePanel : public CRETPanel<const treasurelist>
 {
     Q_OBJECT
 
     public:
         CRETreasurePanel();
 
-        void setTreasure(const treasurelist* treasure);
+        virtual void setItem(const treasurelist* treasure);
 
     public slots:
       void onGenerate(bool pressed);

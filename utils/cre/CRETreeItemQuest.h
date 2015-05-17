@@ -8,7 +8,7 @@ class Quest;
 class QTreeWidgetItem;
 class CREResourcesWindow;
 
-class CRETreeItemQuest : public CRETreeItem
+class CRETreeItemQuest : public CRETTreeItem<Quest>
 {
     Q_OBJECT
 
@@ -20,8 +20,7 @@ class CRETreeItemQuest : public CRETreeItem
         virtual void fillContextMenu(QMenu* menu);
 
     protected:
-        Quest* myQuest;
-        QTreeWidgetItem* myItem;
+        QTreeWidgetItem* myTreeItem;
         CREResourcesWindow* myWindow;
 
     protected slots:

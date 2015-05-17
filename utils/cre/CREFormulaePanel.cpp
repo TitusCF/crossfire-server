@@ -80,7 +80,7 @@ CREFormulaePanel::CREFormulaePanel()
     connect(myValidate, SIGNAL(clicked(bool)), this, SLOT(validateClicked(bool)));
 }
 
-void CREFormulaePanel::setRecipe(const recipe* recipe)
+void CREFormulaePanel::setItem(const recipe* recipe)
 {
     Q_ASSERT(recipe);
     myRecipe = recipe;
@@ -142,7 +142,7 @@ void CREFormulaePanel::setRecipe(const recipe* recipe)
 
 void CREFormulaePanel::resetClicked(bool)
 {
-    setRecipe(myRecipe);
+    setItem(myRecipe);
 }
 
 void CREFormulaePanel::validateClicked(bool)
