@@ -9,8 +9,6 @@ CREReportDisplay::CREReportDisplay(const QString& report, const QString& title)
 
     QVBoxLayout* layout = new QVBoxLayout(this);
 
-    layout->addWidget(new QLabel(tr("Report:"), this));
-
     QTextEdit* view = new QTextEdit(this);
     view->setReadOnly(true);
     view->setText(report);
