@@ -11,7 +11,7 @@ extern void roomify_layout(char **maze, RMParms *RP);
 extern int can_make_wall(char **maze, int dx, int dy, int dir, RMParms *RP);
 extern int make_wall(char **maze, int x, int y, int dir);
 extern void doorify_layout(char **maze, RMParms *RP);
-extern StringBuffer *write_map_parameters_to_string(RMParms *RP);
+extern StringBuffer *write_map_parameters_to_string(const RMParms *RP);
 /* room_gen_onion.c */
 extern char **map_gen_onion(int xsize, int ysize, int option, int layers);
 extern void centered_onion(char **maze, int xsize, int ysize, int option, int layers);

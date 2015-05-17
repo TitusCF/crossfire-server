@@ -736,7 +736,7 @@ void doorify_layout(char **maze, RMParms *RP)
  * @return
  * new StringBuffer containing the message.
  */
-StringBuffer *write_map_parameters_to_string(RMParms *RP)
+StringBuffer *write_map_parameters_to_string(const RMParms *RP)
 {
     StringBuffer *buf;
 
