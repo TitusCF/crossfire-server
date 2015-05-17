@@ -1,6 +1,17 @@
-This is a basic resource viewer for Crossfire, written in C++/Qt.
+This is a basic resource viewer/editor for Crossfire, written in C++/Qt.
 
-Resources are only readonly, but may become writable at some point.
+The tool does various things:
+- list all archetypes, artifacts, animations, faces, and things like that
+- cross-references maps
+- computes spell damage
+- simulates combat between monsters and a basic player (dwarf with no equipment)
+- and various other reports (in HTML format that may be copied)
+
+Most resources are only readonly, and more may become writable at some point.
+
+What you can edit currently:
+- NPC dialogs
+- quests
 
 Requirements:
 
