@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
 #include "global.h"
 #include "artifact.h"
 #include "face.h"
