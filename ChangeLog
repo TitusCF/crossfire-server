@@ -1,3 +1,7 @@
+2015-05-19	Daniel Hawkins (SilverNexus)
+	* test/toolkit/toolkit_crossedit.c: Retired old crossedit test toolkit.
+	It was never implemented, and crossedit has been gone for years.
+
 2015-05-16	Daniel Hawkins (SilverNexus)
 	* utils/scores.pl.in: Made experience table be dynamically
 	read in from the server's installed exp_table file.
