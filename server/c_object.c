@@ -1661,15 +1661,19 @@ void examine(object *op, object *tmp) {
     && tmp->type != CORPSE
     && !tmp->move_on
     && strncasecmp(tmp->msg, "@match", 6)) {
-        /* This is just a hack so when identifying hte items, we print
+        /* This is just a hack so when identifying the items, we print
          * out the extra message
+         * 
+         * Also, don't print the message for the object unless it has been identified
+         * 		-- SilverNexus 2015-05-20
          */
-        if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+        if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED)){
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                           "The object has a story:");
 
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      tmp->msg);
+		    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+					      tmp->msg);
+        }
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                   " "); /* Blank line */
