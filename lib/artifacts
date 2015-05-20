@@ -460,7 +460,7 @@ Dex -2
 Con -2
 damned 1
 msg
-  Morgul was a Dark Mage who built a tower in the hope of creating a bridge with the skies so that demons could attack heavens. Altough he was defeated, some weapons are still influenced by his dark magic.
+  Morgul was a Dark Mage who built a tower in the hope of creating a bridge with the skies so that demons could attack heavens. Although he was defeated, some weapons are still influenced by his dark magic.
 endmsg
 end
 #
@@ -1096,7 +1096,7 @@ resist_cold 25
 glow_radius 1
 face holyshield.111
 msg
-  Passed down from one of the elder this shield is amazing. Its soft glow hides a deep power which you feel you can almost taste. It soon dawns on you that this must be one of the most prized shields of all the lands.
+  Passed down from one of the elder this shield is amazing. Its soft glow hides a deep power which you can almost taste. It soon dawns on you that this must be one of the most prized shields of all the lands.
 endmsg
 item_power 25
 end
@@ -3182,7 +3182,7 @@ value 8
 wc 2
 food 80
 msg
-  These missiles have been soaked in some strange liquid which stuns the victim. These missiles also broken much more easily than normal ones.
+  These missiles have been soaked in some strange liquid which stuns the victim. These missiles also break much more easily than normal ones.
 endmsg
 animation_suffix paralysis
 end
