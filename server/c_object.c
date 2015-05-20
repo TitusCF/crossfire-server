@@ -279,7 +279,7 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
     }
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "You can't want put the key into %s.",
+                             "You can't put the key into %s.",
                              name);
         return 0;
     }
