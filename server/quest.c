@@ -182,7 +182,7 @@ static int load_quests_from_file(const char *filename) {
     snprintf(final, sizeof(final), "%s/%s/%s", settings.datadir, settings.mapdir, filename);
     file = fopen(final, "r");
     if (!file) {
-        LOG(llevError, "Can't open %s for reading quests", filename);
+        LOG(llevError, "Can't open %s for reading quests\n", filename);
         return -1;
     }
 
@@ -221,7 +221,7 @@ static int load_quests_from_file(const char *filename) {
             } else
                 condition_parsed =1;
             if (!condition_parsed) {
-                LOG(llevError, "Invalid line '%s' in setwhen block for quest %s", read, quest->quest_code);
+                LOG(llevError, "Invalid line '%s' in setwhen block for quest %s=n", read, quest->quest_code);
                 continue;
             }
 
@@ -418,7 +418,7 @@ static void quest_load_definitions(void) {
     if (found >= 0) {
         LOG(llevInfo, "%d quests found.\n", found);
     } else {
-        LOG(llevError, "Quest Loading Failed");
+        LOG(llevError, "Quest Loading Failed\n");
     }
 }
 
@@ -513,7 +513,7 @@ static void quest_read_player_data(quest_player *pq) {
             if (quest != NULL && state != -1) {
                 quest_step_definition *step = quest_get_step(quest, state);
                 if (step == NULL) {
-                    LOG(llevError, "invalid quest step %d for %s in %s", state, quest->quest_code, final);
+                    LOG(llevError, "invalid quest step %d for %s in %s\n", state, quest->quest_code, final);
                 }
                 else if (step->is_completion_step)
                     qs->is_complete = 1;
@@ -522,7 +522,7 @@ static void quest_read_player_data(quest_player *pq) {
         }
         if (strcmp(read, "end_quest\n") == 0) {
             if (quest == NULL) {
-                LOG(llevDebug, "Unknown quest %s in quest file %s", qs->code, final);
+                LOG(llevDebug, "Unknown quest %s in quest file %s\n", qs->code, final);
                 free(qs);
             } else {
                 if (prev == NULL) {
@@ -758,7 +758,7 @@ static void quest_set_state(player* dm, player *pl, sstring quest_code, int stat
 
     if (state <= 0) {
         if (!dm) {
-            LOG(llevDebug, "quest_set_player_state: warning: called with invalid state %d for quest %s, player %s", state, pl->ob->name, quest_code);
+            LOG(llevDebug, "quest_set_player_state: warning: called with invalid state %d for quest %s, player %s\n", state, pl->ob->name, quest_code);
         }
         state = 100;
     }
@@ -768,7 +768,7 @@ static void quest_set_state(player* dm, player *pl, sstring quest_code, int stat
         if (dm) {
             draw_ext_info_format(NDI_UNIQUE, 0, dm->ob, MSG_TYPE_ADMIN_DM, MSG_TYPE_COMMAND_FAILURE, "Couldn't find state definition %d for quest %s", state, quest_code);
         } else {
-            LOG(llevError, "quest_set_player_state: couldn't find state definition %d for quest %s, player %s", state, quest_code, pl->ob->name);
+            LOG(llevError, "quest_set_player_state: couldn't find state definition %d for quest %s, player %s\n", state, quest_code, pl->ob->name);
         }
         return;
     }
