@@ -15,7 +15,6 @@
 #define safe_strncpy strlcpy
 #define strcasestr_local strcasestr
 #define strdup_local strdup
-#define tempnam_local tempnam
 
 #define CALLOC(x, y) calloc(x, y)
 #define object_decrease_nrof_by_one(xyz) object_decrease_nrof(xyz, 1)

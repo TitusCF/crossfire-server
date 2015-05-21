@@ -119,10 +119,7 @@ FILE *tempnam_secure(const char *dir, const char *pfx, char **filename) {
 
     /* Limit number of retries to MAXRETRY */
     for (i = 0; i < maxretry; i++) {
-        tempname = tempnam_local(dir, pfx);
-        /* tempnam_local only fails for really bad stuff, so lets bail out right
-         * away then.
-         */
+        tempname = tempnam(dir, pfx);
         if (!tempname)
             return NULL;
 

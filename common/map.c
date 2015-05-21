@@ -1432,7 +1432,7 @@ int save_map(mapstruct *m, int flag) {
         make_path_to_file(filename);
     } else {
         if (!m->tmpname)
-            m->tmpname = tempnam_local(settings.tmpdir, NULL);
+            m->tmpname = tempnam(settings.tmpdir, NULL);
         snprintf(filename, sizeof(filename), "%s", m->tmpname);
     }
     LOG(llevDebug, "Saving map %s\n", m->path);

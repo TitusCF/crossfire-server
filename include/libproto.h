@@ -318,7 +318,6 @@ extern char *path_combine(const char *src, const char *dst, char *path, size_t s
 extern void path_normalize(char *path);
 extern char *path_combine_and_normalize(const char *src, const char *dst, char *path, size_t size);
 /* porting.c */
-extern char *tempnam_local(const char *dir, const char *pfx);
 extern FILE *tempnam_secure(const char *dir, const char *pfx, char **filename);
 extern void remove_directory(const char *path);
 extern int isqrt(int n);
