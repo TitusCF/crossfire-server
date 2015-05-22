@@ -32,7 +32,12 @@
 <xsl:for-each select="arch">
 <tr bgcolor='#ccf' align='center'>
 <td><xsl:value-of select="object"/></td>
-<td><xsl:value-of select="name"/></td>
+<td>
+    <xsl:value-of select="name"/><br />
+    <xsl:if test="name_pl">
+        <xsl:value-of select="name_pl" />
+    </xsl:if>
+</td>
 <td><xsl:value-of select="face"/></td>
 <td><xsl:value-of select="level"/></td>
 <td><xsl:value-of select="wc"/></td>
