@@ -22,6 +22,7 @@
 <th>pow</th>
 <th>cha</th>
 <th>resistances</th>
+<th>attacktype</th>
 <th>can_use_shield</th>
 <th>can_use_armour</th>
 <th>can_use_weapon</th>
@@ -115,6 +116,7 @@
         holyword: <xsl:value-of select="resist_holyword"/><br />
     </xsl:if>
 </td>
+<td><xsl:value-of select="attacktype"/></td>
 <td><xsl:value-of select="can_use_shield"/></td>
 <td><xsl:value-of select="can_use_armour"/></td>
 <td><xsl:value-of select="can_use_weapon"/></td>

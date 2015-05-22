@@ -2,6 +2,7 @@
 	* utils/cfarches.xsl: Refactored resistances to be displayed in a single
 	  cell for each arch. Also added the rest of the resistances to the
 	  XSL transformation.
+	  Added attacktype to the generated HTML table.
 
 2015-05-21	Daniel Hawkins
 	* utils/arch2xml.py: Tweaked whitespace of tag output.
