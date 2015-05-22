@@ -83,6 +83,9 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
                             xml.write('%s\n' %str)
                     elif len(xp) == 1:
                             tag = string.lower(xp[0])
+                            # if an empty comment line, ignore it
+                            if tag == '#':
+                                continue
                             if tag == 'end':
                                     tag = '     <END />'
                                     # We reached the end of the arch

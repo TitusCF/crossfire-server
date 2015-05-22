@@ -1,8 +1,9 @@
 2015-05-21	Daniel Hawkins
 	* utils/arch2xml.py: Tweaked whitespace of tag output.
 	  Then added HTML/XML escapes for &, <, and > inside comments and messages.
-      Fixed the arch tag writing mechanism to give each object its own arch
-       instead of each file getting its own arch tag.
+	  Fixed the arch tag writing mechanism to give each object its own arch
+	   instead of each file getting its own arch tag.
+	  Made empty comment lines be ignored instead of printed as [#].
 	* utils/cfarches.xsl: Adjusted headings to be actual HTML table headings.
 
 2015-05-20	Daniel Hawkins
