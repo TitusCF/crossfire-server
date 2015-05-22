@@ -73,6 +73,9 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
             contents = arc.read().split('\n')
             xml.write('<arch>\n')
             mess = 0
+            # Need_new_arch is set to 1 when an arch end is found in the middle of a file,
+            # otherwise it is set to 0.
+            need_new_arch = 0
             for line in contents:
                     xp = line.split()
                     if mess == 1 and len(xp)>1:
@@ -82,8 +85,14 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
                             tag = string.lower(xp[0])
                             if tag == 'end':
                                     tag = '     <END />'
+                                    # We reached the end of the arch
+                                    need_new_arch = 1
                             elif tag == 'more':
                                     tag = '     <MORE />'
+                                    # A quick hack to ensure the arch tags
+                                    # don't split up separate parts of the
+                                    # same archetype.
+                                    need_new_arch = 0
                             elif tag =='msg':
                                     tag = '     <message>'
                                     mess = 1
@@ -98,11 +107,24 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
                                     tag = '[%s]'%(tag)
                             xml.write('%s\n' %(tag))
                     elif len(xp)>1:
+			    
                             tag = string.lower(xp[0])
                             if (tag[0] == "#"):
                                 str = string.join(xp)[1:]
                                 xml.write('     <comment>%s</comment>\n' %(escape(str)))
                             else:
+                                # A quick and dirty hack to make multiple independent arches
+                                # in a single .arc file each get their own arch tag.
+                                #
+                                # TODO: Make a couple .arc files that consist entirely
+                                # of comments not receive their own arch tag.
+                                #
+                                # -- SilverNexus 2015-05-21
+                                #
+                                if need_new_arch == 1:
+                                    xml.write('\n</arch>\n<arch>\n')
+                                    need_new_arch = 0
+
                                 str = string.join(xp[1:])
                                 xml.write('     <%s>%s</%s>\n' %(tag,str,tag))
             xml.write('\n</arch>\n')
