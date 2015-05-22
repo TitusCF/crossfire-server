@@ -1,6 +1,7 @@
 2015-05-21	Daniel Hawkins
 	* utils/arch2xml.py: Tweaked whitespace of tag output.
 	  Then added HTML/XML escapes for &, <, and > inside comments and messages.
+	* utils/cfarches.xsl: Adjusted headings to be actual HTML table headings.
 
 2015-05-20	Daniel Hawkins
 	* lib/artifacts: Adjusted several item messages for clarity and grammar.

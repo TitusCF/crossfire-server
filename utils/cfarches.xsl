@@ -5,28 +5,28 @@
 
 <table border="1" bgcolor="#fff">
 <tr bgcolor="#aaf" align ='center'>
-<td>Object</td>
-<td>Name</td>
-<td>Face</td>
-<td>level</td>
-<td>wc</td>
-<td>ac</td>
-<td>dam</td>
-<td>exp</td>
-<td>speed</td>
-<td>str</td>
-<td>dex</td>
-<td>con</td>
-<td>int</td>
-<td>wis</td>
-<td>pow</td>
-<td>cha</td>
-<td>resist_physical</td>
-<td>resist_poison</td>
-<td>can_use_shield</td>
-<td>can_use_armour</td>
-<td>can_use_weapon</td>
-<td>can_see_in_dark</td>
+<th>Object</th>
+<th>Name</th>
+<th>Face</th>
+<th>level</th>
+<th>wc</th>
+<th>ac</th>
+<th>dam</th>
+<th>exp</th>
+<th>speed</th>
+<th>str</th>
+<th>dex</th>
+<th>con</th>
+<th>int</th>
+<th>wis</th>
+<th>pow</th>
+<th>cha</th>
+<th>resist_physical</th>
+<th>resist_poison</th>
+<th>can_use_shield</th>
+<th>can_use_armour</th>
+<th>can_use_weapon</th>
+<th>can_see_in_dark</th>
 </tr>
 
 <xsl:for-each select="arch">
