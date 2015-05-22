@@ -58,22 +58,22 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
                     elif len(xp) == 1:
                             tag = string.lower(xp[0])
                             if tag == 'end':
-                                    tag = '     <END />\n'
+                                    tag = '     <END />'
                             elif tag == 'more':
-                                    tag = '     <MORE />\n'
+                                    tag = '     <MORE />'
                             elif tag =='msg':
-                                    tag = '     <message>\n'
+                                    tag = '     <message>'
                                     mess = 1
                             elif tag =='endmsg':
-                                    tag = '     </message>\n'
+                                    tag = '     </message>'
                                     mess = 0
                             elif tag == 'anim':
-                                    tag = '     <anim>\n'
+                                    tag = '     <anim>'
                             elif tag =='mina':
-                                    tag = '\n     </anim>\n'
+                                    tag = '     </anim>'
                             else:
                                     tag = '[%s]'%(tag)
-                            xml.write('%s' %(tag))
+                            xml.write('%s\n' %(tag))
                     elif len(xp)>1:
                             tag = string.lower(xp[0])
                             if (tag[0] == "#"):

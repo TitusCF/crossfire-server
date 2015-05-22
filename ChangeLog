@@ -1,3 +1,6 @@
+2015-05-21	Daniel Hawkins
+	* utils/arch2xml.py: Tweaked whitespace of tag output.
+
 2015-05-20	Daniel Hawkins
 	* lib/artifacts: Adjusted several item messages for clarity and grammar.
 	* server/c_object.c: Don't show item story (msg) unless it has been
