@@ -40,6 +40,29 @@ def Walk( root, recurse=0, pattern='*', return_folders=0 ):
 
 	return result
 
+	
+#
+# Function escape(string)
+#
+# Creates HTML/XML escaped characters for display in a browser to work correctly
+#
+# @param esc_me
+# The string to escape characters in.
+#
+# @return
+# The equivalent string with escaped versions of important characters.
+#
+# @todo
+# Add more escaped characters as the need arises
+#
+def escape(esc_me):
+    # Converting ampersand must be first, since escaping other characters generates ampersands.
+    esc_me = esc_me.replace('&', '&amp;', 4)
+    esc_me = esc_me.replace('<', '&lt;', 3)
+    esc_me = esc_me.replace('>', '&gt;', 3)
+    return esc_me
+
+
 def arch2xml(root,filename,xsl_file='cfarches.xsl'):
     files = Walk(root, 1, '*.arc', 1)
     print 'searching for arch files in %s' %root
@@ -53,7 +76,7 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
             for line in contents:
                     xp = line.split()
                     if mess == 1 and len(xp)>1:
-                            str = string.join(xp[0:])
+                            str = escape(string.join(xp[0:]))
                             xml.write('%s\n' %str)
                     elif len(xp) == 1:
                             tag = string.lower(xp[0])
@@ -78,7 +101,7 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
                             tag = string.lower(xp[0])
                             if (tag[0] == "#"):
                                 str = string.join(xp)[1:]
-                                xml.write('     <comment>%s</comment>\n' %(str))
+                                xml.write('     <comment>%s</comment>\n' %(escape(str)))
                             else:
                                 str = string.join(xp[1:])
                                 xml.write('     <%s>%s</%s>\n' %(tag,str,tag))
