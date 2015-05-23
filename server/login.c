@@ -776,8 +776,7 @@ void check_login(object *op, int check_pass) {
 
     /* make sure he's a player--needed because of class change. */
     op->type = PLAYER;
-
-    enter_exit(op, NULL);
+    enter_player_maplevel(op);
 
     pl->name_changed = 1;
     player_set_state(pl, ST_PLAYING);

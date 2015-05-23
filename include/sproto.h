@@ -621,3 +621,10 @@ void cleanup(void);
 void leave(player *pl, int draw_exit);
 int forbid_play(void);
 void server_main(int argc, char *argv[]);
+
+/**
+ * Move a player to its stored map level. This function is used to place the
+ * player just after logging in. Since the map may no longer exist, dump the
+ * player to an alternative 'emergency' location if that's the case.
+ */
+void enter_player_maplevel(object *op);

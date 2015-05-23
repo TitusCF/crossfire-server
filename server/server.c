@@ -657,12 +657,7 @@ static void enter_unique_map(object *op, object *exit_ob) {
     }
 }
 
-/**
- * Try to move op to the exit op->maplevel points to.
- * Will abort() if maplevel is invalid and the emergency map is invalid too.
- * @param op what to move, must not be NULL and must be a player.
- */
-static void enter_maplevel_exit(object *op) {
+void enter_player_maplevel(object *op) {
     int flags = 0, x = op->x, y = op->y;
     mapstruct *newmap;
 
@@ -682,35 +677,30 @@ static void enter_maplevel_exit(object *op) {
     /* newmap returns the map (if already loaded), or loads it for us. */
     newmap = ready_map_name(op->contr->maplevel, flags);
     if (!newmap) {
-        LOG(llevError, "enter_exit: Map at '%s' doesn't exist!\n",
-                op->contr->maplevel);
         newmap = ready_map_name(settings.emergency_mapname, 0);
         x = settings.emergency_x;
         y = settings.emergency_y;
-        /* If we can't load the emergency map, something is probably really
-         * screwed up, so bail out now.
-         */
         if (!newmap) {
-            LOG(llevError, "enter_exit: could not load emergency map? Fatal error\n");
+            LOG(llevError, "Fatal: Could not load emergency map!\n");
             abort();
         }
 
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_MISC, 0,
                 "You find yourself somewhere unexpected...");
     }
+
     /* as a special case, if coordinates are (-1, -1), then the item should
      * be put at the default location. Used for loginmethod 0 (old clients). */
     if (x == -1 && y == -1) {
         x = MAP_ENTER_X(newmap);
         y = MAP_ENTER_Y(newmap);
     }
+
     enter_map(op, newmap, x, y);
 }
 
 /**
  * Tries to move 'op' to exit_ob.
- *
- * This is used when loading the player.
  *
  * Largely redone by MSW 2001-01-21 - this function was overly complex
  * and had some obscure bugs.
@@ -720,8 +710,7 @@ static void enter_maplevel_exit(object *op) {
  * @param op
  * character or monster that is using the exit.
  * @param exit_ob
- * exit object (boat, door, teleporter, etc.). if null, then op->contr->maplevel contains that map to
- * move the object to.
+ * exit object (boat, door, teleporter, etc.)
  */
 void enter_exit(object *op, object *exit_ob) {
 #define PORTAL_DESTINATION_NAME "Town portal destination" /* this one should really be in a header file */
@@ -736,11 +725,7 @@ void enter_exit(object *op, object *exit_ob) {
     if (op->contr->transport)
         ob_apply(op->contr->transport, op, AP_UNAPPLY);
 
-    if (!exit_ob) {
-        enter_maplevel_exit(op);
-        return;
-    }
-
+    assert(exit_ob != NULL);
     assert(EXIT_PATH(exit_ob) != NULL);
 
     /* check to see if we make a template map */

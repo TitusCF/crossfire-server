@@ -399,7 +399,7 @@ void set_first_map(object *op) {
     strcpy(op->contr->maplevel, first_map_path);
     op->x = -1;
     op->y = -1;
-    enter_exit(op, NULL);
+    enter_player_maplevel(op);
 }
 
 /**
