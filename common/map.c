@@ -1238,7 +1238,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     allocate_map(m);
 
     m->in_memory = MAP_LOADING;
-    load_objects(m, fp, flags&(MAP_BLOCK|MAP_STYLE));
+    load_objects(m, fp, flags & MAP_STYLE);
     fclose(fp);
     m->in_memory = MAP_IN_MEMORY;
     if (!MAP_DIFFICULTY(m))

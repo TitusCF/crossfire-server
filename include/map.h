@@ -91,12 +91,10 @@ extern const char *const map_layer_name[MAP_LAYERS];
 /**
  * @defgroup MAP_xxx Map loading flags
  * Options passed to ready_map_name() and load_original_map().
- * @todo remove map_block
  */
 /*@{*/
 #define MAP_FLUSH           0x1     /**< Always load map from the map directory, and don't do unique items or the like. */
 #define MAP_PLAYER_UNIQUE   0x2     /**< This map is player-specific. Don't do any more name translation on it. */
-#define MAP_BLOCK           0x4     /**< Unused. */
 #define MAP_STYLE           0x8     /**< Active objects shouldn't be put on active list. */
 #define MAP_OVERLAY         0x10    /**< Map to load is an overlay. Always put items above floor. */
 /*@}*/
