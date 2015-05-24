@@ -339,7 +339,6 @@ int monster_compute_path(object *source, object *target, int default_dir);
 void monster_do_living(object *op);
 int monster_move(object *op);
 void monster_check_apply_all(object *monster);
-void monster_check_apply(object *mon, object *item);
 void monster_npc_call_help(object *op);
 void monster_check_earthwalls(object *op, mapstruct *m, int x, int y);
 void monster_check_doors(object *op, mapstruct *m, int x, int y);

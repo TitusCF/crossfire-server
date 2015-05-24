@@ -1456,6 +1456,111 @@ static int monster_check_good_armour(object *who, object *item) {
 }
 
 /**
+ * Called after an item is inserted in a monster.
+ * Will look if item should be applied to replace another item.
+ * @param mon monster who picked an item.
+ * @param item what was picked up.
+ * @note Sept 96, fixed this so skills will be readied -b.t.
+ */
+static void monster_check_apply(object *mon, object *item) {
+    int flag = 0;
+
+    if (item->type == SPELLBOOK
+    && mon->arch != NULL
+    && (QUERY_FLAG(&mon->arch->clone, FLAG_CAST_SPELL))) {
+        SET_FLAG(mon, FLAG_CAST_SPELL);
+        return;
+    }
+
+    /* If for some reason, this item is already applied, no more work to do */
+    if (QUERY_FLAG(item, FLAG_APPLIED))
+        return;
+
+    /* Might be better not to do this - if the monster can fire a bow,
+     * it is possible in his wanderings, he will find one to use.  In
+     * which case, it would be nice to have ammo for it.
+     */
+    if (QUERY_FLAG(mon, FLAG_USE_BOW) && item->type == ARROW) {
+        /* Check for the right kind of bow */
+        object *bow;
+
+        bow = object_find_by_type_and_race(mon, BOW, item->race);
+        if (bow != NULL) {
+            SET_FLAG(mon, FLAG_READY_BOW);
+            LOG(llevMonster, "Found correct bow for arrows.\n");
+            return;     /* nothing more to do for arrows */
+        }
+    }
+
+    if (item->type == TREASURE && mon->will_apply&WILL_APPLY_TREASURE)
+        flag = 1;
+    /* Eating food gets hp back */
+    else if (item->type == FOOD && mon->will_apply&WILL_APPLY_FOOD)
+        flag = 1;
+    else if (item->type == SCROLL && QUERY_FLAG(mon, FLAG_USE_SCROLL)) {
+        if (!item->inv)
+            LOG(llevDebug, "Monster %d having scroll %d with empty inventory!\n", mon->count, item->count);
+        else if (monster_should_cast_spell(item->inv))
+            SET_FLAG(mon, FLAG_READY_SCROLL);
+        /* Don't use it right now */
+        return;
+    } else if (item->type == WEAPON)
+        flag = monster_check_good_weapon(mon, item);
+    else if (IS_ARMOR(item) || IS_SHIELD(item))
+        flag = monster_check_good_armour(mon, item);
+    /* Should do something more, like make sure this is a better item */
+    else if (item->type == RING)
+        flag = 1;
+    else if (item->type == WAND || item->type == ROD) {
+        /* We never really 'ready' the wand/rod/horn, because that would mean the
+        * weapon would get undone.
+        */
+        if (!(apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK)) {
+            SET_FLAG(mon, FLAG_READY_RANGE);
+            SET_FLAG(item, FLAG_APPLIED);
+        }
+        return;
+    } else if (item->type == BOW) {
+        /* We never really 'ready' the bow, because that would mean the
+        * weapon would get undone.
+        */
+        if (!(apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK))
+            SET_FLAG(mon, FLAG_READY_BOW);
+        return;
+    } else if (item->type == SKILL) {
+        /*
+         * skills are specials: monsters must have the 'FLAG_READY_SKILL' flag set,
+         * else they can't use the skill...
+         * Skills also don't need to get applied, so return now.
+         */
+        SET_FLAG(mon, FLAG_READY_SKILL);
+        return;
+    }
+
+    /* if we don't match one of the above types, return now.
+     * apply_can_apply_object() will say that we can apply things like flesh,
+     * bolts, and whatever else, because it only checks against the
+     * body_info locations.
+     */
+    if (!flag)
+        return;
+
+    /* Check to see if the monster can use this item.  If not, no need
+     * to do further processing.  Note that apply_can_apply_object() already checks
+     * for the CAN_USE flags.
+     */
+    if (apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK)
+        return;
+
+    /* should only be applying this item, not unapplying it.
+     * also, ignore status of curse so they can take off old armour.
+     * monsters have some advantages after all.
+     */
+    apply_manual(mon, item, AP_APPLY|AP_IGNORE_CURSE|AP_NOPRINT);
+    return;
+}
+
+/**
  * Checks for items that monster can pick up.
  *
  * Vick's (vick(at)bern.docs.uu.se) fix 921030 for the sweeper blob.
@@ -1620,111 +1725,6 @@ void monster_check_apply_all(object *monster) {
     FOR_INV_PREPARE(monster, inv)
         monster_check_apply(monster, inv);
     FOR_INV_FINISH();
-}
-
-/**
- * Called after an item is inserted in a monster.
- * Will look if item should be applied to replace another item.
- * @param mon monster who picked an item.
- * @param item what was picked up.
- * @note Sept 96, fixed this so skills will be readied -b.t.
- */
-void monster_check_apply(object *mon, object *item) {
-    int flag = 0;
-
-    if (item->type == SPELLBOOK
-    && mon->arch != NULL
-    && (QUERY_FLAG(&mon->arch->clone, FLAG_CAST_SPELL))) {
-        SET_FLAG(mon, FLAG_CAST_SPELL);
-        return;
-    }
-
-    /* If for some reason, this item is already applied, no more work to do */
-    if (QUERY_FLAG(item, FLAG_APPLIED))
-        return;
-
-    /* Might be better not to do this - if the monster can fire a bow,
-     * it is possible in his wanderings, he will find one to use.  In
-     * which case, it would be nice to have ammo for it.
-     */
-    if (QUERY_FLAG(mon, FLAG_USE_BOW) && item->type == ARROW) {
-        /* Check for the right kind of bow */
-        object *bow;
-
-        bow = object_find_by_type_and_race(mon, BOW, item->race);
-        if (bow != NULL) {
-            SET_FLAG(mon, FLAG_READY_BOW);
-            LOG(llevMonster, "Found correct bow for arrows.\n");
-            return;     /* nothing more to do for arrows */
-        }
-    }
-
-    if (item->type == TREASURE && mon->will_apply&WILL_APPLY_TREASURE)
-        flag = 1;
-    /* Eating food gets hp back */
-    else if (item->type == FOOD && mon->will_apply&WILL_APPLY_FOOD)
-        flag = 1;
-    else if (item->type == SCROLL && QUERY_FLAG(mon, FLAG_USE_SCROLL)) {
-        if (!item->inv)
-            LOG(llevDebug, "Monster %d having scroll %d with empty inventory!\n", mon->count, item->count);
-        else if (monster_should_cast_spell(item->inv))
-            SET_FLAG(mon, FLAG_READY_SCROLL);
-        /* Don't use it right now */
-        return;
-    } else if (item->type == WEAPON)
-        flag = monster_check_good_weapon(mon, item);
-    else if (IS_ARMOR(item) || IS_SHIELD(item))
-        flag = monster_check_good_armour(mon, item);
-    /* Should do something more, like make sure this is a better item */
-    else if (item->type == RING)
-        flag = 1;
-    else if (item->type == WAND || item->type == ROD) {
-        /* We never really 'ready' the wand/rod/horn, because that would mean the
-        * weapon would get undone.
-        */
-        if (!(apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK)) {
-            SET_FLAG(mon, FLAG_READY_RANGE);
-            SET_FLAG(item, FLAG_APPLIED);
-        }
-        return;
-    } else if (item->type == BOW) {
-        /* We never really 'ready' the bow, because that would mean the
-        * weapon would get undone.
-        */
-        if (!(apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK))
-            SET_FLAG(mon, FLAG_READY_BOW);
-        return;
-    } else if (item->type == SKILL) {
-        /*
-         * skills are specials: monsters must have the 'FLAG_READY_SKILL' flag set,
-         * else they can't use the skill...
-         * Skills also don't need to get applied, so return now.
-         */
-        SET_FLAG(mon, FLAG_READY_SKILL);
-        return;
-    }
-
-    /* if we don't match one of the above types, return now.
-     * apply_can_apply_object() will say that we can apply things like flesh,
-     * bolts, and whatever else, because it only checks against the
-     * body_info locations.
-     */
-    if (!flag)
-        return;
-
-    /* Check to see if the monster can use this item.  If not, no need
-     * to do further processing.  Note that apply_can_apply_object() already checks
-     * for the CAN_USE flags.
-     */
-    if (apply_can_apply_object(mon, item)&CAN_APPLY_NOT_MASK)
-        return;
-
-    /* should only be applying this item, not unapplying it.
-     * also, ignore status of curse so they can take off old armour.
-     * monsters have some advantages after all.
-     */
-    apply_manual(mon, item, AP_APPLY|AP_IGNORE_CURSE|AP_NOPRINT);
-    return;
 }
 
 /**
