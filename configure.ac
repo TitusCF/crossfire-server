@@ -48,7 +48,19 @@ AM_WITH_DMALLOC
 AC_PROG_AWK
 AC_PROG_CC_C99
 AC_PROG_LIBTOOL
-AM_PROG_LEX
+AC_PROG_LEX
+
+# If no lexical parser is found, $LEX is set to ":".
+# Check for that so we can exit if lex and flex are not found.
+#
+# -- Daniel Hawkins 2015-05-25
+
+if test $LEX == ':'; then
+    AC_MSG_NOTICE([])
+    AC_MSG_NOTICE([Lexical parser flex is missing.])
+    AC_MSG_NOTICE([Install flex to proceed with configuration.])
+    exit
+fi
 
 AC_PATH_PROG(BASENAME, basename)
 AC_PATH_PROG(BZIP, bzip2)

@@ -1,3 +1,6 @@
+2015-05-25  Daniel Hawkins
+	* configure.ac: Made the configure script exit if lex and flex are not found.
+
 2015-05-24  Daniel Hawkins
 	* common/living.c: Fixed a bug in which the player's experience would
 	  endlessly loop in the level below maxlevel.
