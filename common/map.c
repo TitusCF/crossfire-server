@@ -1201,7 +1201,6 @@ static int load_map_header(FILE *fp, mapstruct *m) {
  * how to interpret the path, and misc information (can be combined):
  * \li ::MAP_PLAYER_UNIQUE: this is a unique map, path isn't changed
  * \li ::MAP_OVERLAY: map is an overlay
- * \li ::MAP_BLOCK: we block on this load.  This happens in all cases, no matter if this flag is set or not.
  * \li ::MAP_STYLE: style map - don't add active objects, don't add to server managed map list.
  * @return
  * loaded map, or NULL if failure.
