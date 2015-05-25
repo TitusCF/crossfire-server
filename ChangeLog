@@ -1,3 +1,7 @@
+2015-05-24  Daniel Hawkins
+	* common/living.c: Fixed a bug in which the player's experience would
+	  endlessly loop in the level below maxlevel.
+
 2015-05-22	Daniel Hawkins
 	* utils/cfarches.xsl: Refactored resistances to be displayed in a single
 	  cell for each arch. Also added the rest of the resistances to the
