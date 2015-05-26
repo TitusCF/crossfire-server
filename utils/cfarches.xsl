@@ -23,9 +23,7 @@
 <th>cha</th>
 <th>resistances</th>
 <th>attacktype</th>
-<th>can_use_shield</th>
-<th>can_use_armour</th>
-<th>can_use_weapon</th>
+<th>can use</th>
 <th>can_see_in_dark</th>
 </tr>
 
@@ -123,9 +121,37 @@
     </xsl:if>
 </td>
 <td><xsl:value-of select="attacktype"/></td>
-<td><xsl:value-of select="can_use_shield"/></td>
-<td><xsl:value-of select="can_use_armour"/></td>
-<td><xsl:value-of select="can_use_weapon"/></td>
+<td>
+    <!-- Also display the different things that can be used by a monster
+         in a compact and readable format. -->
+    <xsl:if test="can_use_shield">
+        shield: <xsl:value-of select="can_use_shield" /><br />
+    </xsl:if>
+    <xsl:if test="can_use_weapon">
+        weapon: <xsl:value-of select="can_use_weapon" /><br />
+    </xsl:if>
+    <xsl:if test="can_use_armour">
+        armour: <xsl:value-of select="can_use_armour" /><br />
+    </xsl:if>
+    <xsl:if test="can_use_scroll">
+        scroll: <xsl:value-of select="can_use_scroll" /><br />
+    </xsl:if>
+    <xsl:if test="can_use_skill">
+        skill: <xsl:value-of select="can_use_skill" /><br />
+    </xsl:if>
+    <xsl:if test="can_cast_spell">
+        spell: <xsl:value-of select="can_cast_spell" /><br />
+    </xsl:if>
+    <xsl:if test="can_use_ring">
+        ring: <xsl:value-of select="can_use_ring" /><br />
+    </xsl:if>
+    <xsl:if test="can_use_bow">
+        bow: <xsl:value-of select="can_use_bow" /><br />
+    </xsl:if>
+    <xsl:if test="can_use_range">
+        range: <xsl:value-of select="can_use_range" /><br />
+    </xsl:if>
+</td>
 <td><xsl:value-of select="can_see_in_dark"/></td>
 
 </tr>
