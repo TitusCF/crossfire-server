@@ -56,10 +56,7 @@ AC_PROG_LEX
 # -- Daniel Hawkins 2015-05-25
 
 if test $LEX == ':'; then
-    AC_MSG_NOTICE([])
-    AC_MSG_NOTICE([Lexical parser flex is missing.])
-    AC_MSG_NOTICE([Install flex to proceed with configuration.])
-    exit
+    AC_MSG_ERROR([Lexical parser flex is missing.])
 fi
 
 AC_PATH_PROG(BASENAME, basename)
