@@ -33,9 +33,10 @@
 <tr bgcolor='#ccf' align='center'>
 <td><xsl:value-of select="object"/></td>
 <td>
-    <xsl:value-of select="name"/><br />
+    <xsl:value-of select="name"/>
+    <!-- If plural name if defined, also show that on its own line. -->
     <xsl:if test="name_pl">
-        <xsl:value-of select="name_pl" />
+        <br /><xsl:value-of select="name_pl" />
     </xsl:if>
 </td>
 <td><xsl:value-of select="face"/></td>
