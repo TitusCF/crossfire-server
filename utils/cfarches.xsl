@@ -25,6 +25,7 @@
 <th>attacktype</th>
 <th>can use</th>
 <th>can_see_in_dark</th>
+<th>body slots</th>
 </tr>
 
 <xsl:for-each select="arch">
@@ -153,6 +154,49 @@
     </xsl:if>
 </td>
 <td><xsl:value-of select="can_see_in_dark"/></td>
+<td>
+    <!-- Give all the body slots a line in the same cell, like has been
+         done for resistances and can_use_xxx. -->
+    <xsl:if test="body_skill">
+        skill: <xsl:value-of select="body_skill" /><br />
+    </xsl:if>
+    <xsl:if test="body_finger">
+        finger: <xsl:value-of select="body_finger" /><br />
+    </xsl:if>
+    <xsl:if test="body_leg">
+        leg: <xsl:value-of select="body_leg" /><br />
+    </xsl:if>
+    <xsl:if test="body_arm">
+        arm: <xsl:value-of select="body_arm" /><br />
+    </xsl:if>
+    <xsl:if test="body_torso">
+        torso: <xsl:value-of select="body_torso" /><br />
+    </xsl:if>
+    <xsl:if test="body_range">
+        range: <xsl:value-of select="body_range" /><br />
+    </xsl:if>
+    <xsl:if test="body_neck">
+        neck: <xsl:value-of select="body_neck" /><br />
+    </xsl:if>
+    <xsl:if test="body_head">
+        head: <xsl:value-of select="body_head" /><br />
+    </xsl:if>
+    <xsl:if test="body_shoulder">
+        shoulder: <xsl:value-of select="body_shoulder" /><br />
+    </xsl:if>
+    <xsl:if test="body_foot">
+        foot: <xsl:value-of select="body_foot" /><br />
+    </xsl:if>
+    <xsl:if test="body_hand">
+        hand: <xsl:value-of select="body_hand" /><br />
+    </xsl:if>
+    <xsl:if test="body_wrist">
+        wrist: <xsl:value-of select="body_wrist" /><br />
+    </xsl:if>
+    <xsl:if test="body_waist">
+        waist: <xsl:value-of select="body_waist" /><br />
+    </xsl:if>
+</td>
 
 </tr>
 </xsl:for-each>
