@@ -4726,7 +4726,7 @@ void initPlugins(void) {
     char buf[MAX_BUF];
 
     snprintf(buf, sizeof(buf), "%s/plugins/", LIBDIR);
-    LOG(llevInfo, "Loading plugins from '%s'...\n", buf);
+    LOG(llevDebug, "plugins: loading from %s\n", buf);
 
     plugdir = opendir(buf);
     if (plugdir == NULL)
@@ -4743,12 +4743,12 @@ void initPlugins(void) {
 
             while (disable) {
                 if (strcmp(disable->name, "All") == 0) {
-                    LOG(llevInfo, " -> Disabling all plugins: %s\n", currentfile->d_name);
+                    LOG(llevInfo, "plugins: disabling (all) %s\n", currentfile->d_name);
                     ignore = 1;
                     break;
                 }
                 if (strncmp(disable->name, currentfile->d_name, strlen(disable->name)) == 0 && strlen(currentfile->d_name) == strlen(PLUGIN_SUFFIX) + strlen(disable->name)) {
-                    LOG(llevInfo, " -> Disabling plugin: %s\n", currentfile->d_name);
+                    LOG(llevInfo, "plugins: disabling %s\n", currentfile->d_name);
                     ignore = 1;
                     break;
                 }
@@ -4756,7 +4756,7 @@ void initPlugins(void) {
             }
             if (ignore == 0) {
                 snprintf(buf, sizeof(buf), "%s/plugins/%s", LIBDIR, currentfile->d_name);
-                LOG(llevInfo, " -> Loading plugin: %s\n", currentfile->d_name);
+                LOG(llevInfo, "plugins: loading %s\n", currentfile->d_name);
                 plugins_init_plugin(buf);
             }
         }

@@ -212,7 +212,7 @@ void clear_archetable(void) {
 static void init_archetable(void) {
     archetype *at;
 
-    LOG(llevDebug, " Setting up archetable...\n");
+    LOG(llevDebug, "arch: setting up archetable\n");
     for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more) {
         if (at->name == NULL) {
             LOG(llevError, "archetype without name? %s\n", at->clone.name ? at->clone.name : "(no clone name)");
@@ -220,7 +220,6 @@ static void init_archetable(void) {
         }
         add_arch(at);
     }
-    LOG(llevDebug, "done\n");
 }
 
 /**
@@ -454,7 +453,6 @@ static void second_arch_pass(FILE *fp) {
             load_object(fp, inv, LO_LINEMODE, 0);
             if (at) {
                 object_insert_in_ob(inv, &at->clone);
-                /*LOG(llevDebug, "Put %s in %s\n", inv->name, at->clone.name);*/
             } else {
                 LOG(llevError, "Got an arch %s not inside an Object.\n", argument);
                 object_free_drop_inventory(inv);
@@ -536,38 +534,27 @@ static void load_archetypes(void) {
     char filename[MAX_BUF];
 
     snprintf(filename, sizeof(filename), "%s/%s", settings.datadir, settings.archetypes);
-    LOG(llevDebug, "Reading archetypes from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, " Can't open archetype file.\n");
         return;
     }
     clear_archetable();
-    LOG(llevDebug, " arch-pass 1...\n");
 
-    /* Time how long it takes to load archetypes. */
-    struct timespec time_start, time_end;
-    clock_gettime(CLOCK_MONOTONIC, &time_start);
+    LOG(llevDebug, "arch: starting pass 1...\n");
     first_arch_pass(fp);
-    clock_gettime(CLOCK_MONOTONIC, &time_end);
-    LOG(llevDebug, "Finished loading in %f seconds.\n",
-            usec_elapsed(time_start, time_end) / 1.0e6);
-
     init_archetable();
     warn_archetypes = 1;
 
     rewind(fp);
 
-    LOG(llevDebug, " loading treasure...\n");
+    LOG(llevDebug, "arch: loading treasures\n");
     load_treasures();
-    LOG(llevDebug, " done\n");
-    LOG(llevDebug, "arch-pass 2...\n");
+    LOG(llevDebug, "arch: starting pass 2...\n");
     second_arch_pass(fp);
-    LOG(llevDebug, " done\n");
     check_generators();
     check_spells();
     check_summoned();
     fclose(fp);
-    LOG(llevDebug, " done\n");
 }
 
 /**

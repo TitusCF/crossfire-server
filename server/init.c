@@ -435,7 +435,6 @@ static void load_materials(void) {
     int i, value;
 
     snprintf(filename, sizeof(filename), "%s/materials", settings.datadir);
-    LOG(llevDebug, "Reading material type data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Cannot open %s for reading\n", filename);
         mt = get_empty_mat();
@@ -496,7 +495,7 @@ static void load_materials(void) {
     }
     free(mt->next);
     mt->next = NULL;
-    LOG(llevDebug, "Done.\n");
+    LOG(llevDebug, "loaded material type data\n");
     fclose(fp);
 }
 
@@ -1339,7 +1338,6 @@ static void init_races(void) {
     first_race = NULL;
 
     snprintf(fname, sizeof(fname), "%s/races", settings.datadir);
-    LOG(llevDebug, "Reading races from %s...\n", fname);
     if (!(file = fopen(fname, "r"))) {
         LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror(errno));
         return;
@@ -1382,7 +1380,7 @@ static void init_races(void) {
             else {
                 if (set_race && (!mon->clone.race || strcmp(mon->clone.race, race))) {
                     if (mon->clone.race) {
-                        LOG(llevDebug, " Resetting race to %s from %s for archetype %s\n", race, mon->clone.race, mon->name);
+                        LOG(llevDebug, "races: Resetting to %s from %s for archetype %s\n", race, mon->clone.race, mon->name);
                         free_string(mon->clone.race);
                     }
                     mon->clone.race = add_string(race);
@@ -1394,7 +1392,7 @@ static void init_races(void) {
         }
     }
     fclose(file);
-    LOG(llevDebug, "done races.\n");
+    LOG(llevDebug, "loaded races\n");
 }
 
 /**

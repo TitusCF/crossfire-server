@@ -127,9 +127,8 @@ static void read_face_data(void) {
     FILE *fp;
 
     snprintf(buf, sizeof(buf), "%s/faces", settings.datadir);
-    LOG(llevDebug, "Reading faces from %s...\n", buf);
     if ((fp = fopen(buf, "r")) == NULL) {
-        LOG(llevError, "Cannot open faces file: %s\n", strerror(errno));
+        LOG(llevError, "faces: couldn't open file: %s\n", strerror(errno));
         exit(-1);
     }
 
@@ -145,14 +144,14 @@ static void read_face_data(void) {
             cp[strlen(cp)-1] = '\0'; /* remove newline */
 
             if ((tmp = find_face(cp, (unsigned)-1)) == (unsigned)-1) {
-                LOG(llevError, "Could not find face %s\n", cp);
+                LOG(llevError, "faces: couldn't find '%s'\n", cp);
                 on_face = NULL;
                 continue;
             }
             on_face = &new_faces[tmp];
             on_face->visibility = 0;
         } else if (on_face == NULL) {
-            LOG(llevError, "Got line with no face set: %s\n", buf);
+            LOG(llevError, "faces: got line with no face set: %s\n", buf);
         } else if (!strncmp(buf, "visibility", 10)) {
             on_face->visibility = atoi(buf+11);
         } else if (!strncmp(buf, "magicmap", 8)) {
@@ -164,9 +163,8 @@ static void read_face_data(void) {
             if (value)
                 on_face->magicmap |= FACE_FLOOR;
         } else
-            LOG(llevDebug, "Got unknown line in faces file: %s\n", buf);
+            LOG(llevDebug, "faces: unknown line in %s\n", buf);
     }
-    LOG(llevDebug, "done\n");
     fclose(fp);
 }
 
@@ -187,9 +185,8 @@ void read_bmap_names(void) {
 
     bmaps_checksum = 0;
     snprintf(buf, sizeof(buf), "%s/bmaps.paths", settings.datadir);
-    LOG(llevDebug, "Reading bmaps from %s...\n", buf);
     if ((fp = fopen(buf, "r")) == NULL) {
-        LOG(llevError, "Cannot open bmaps.paths file: %s\n", strerror(errno));
+        LOG(llevError, "bmaps: couldn't open: %s\n", strerror(errno));
         exit(-1);
     }
 
@@ -205,10 +202,8 @@ void read_bmap_names(void) {
     rewind(fp);
     assert(nrofpixmaps > 0);
     new_faces = (New_Face *)malloc(sizeof(New_Face)*nrofpixmaps);
-
     if (new_faces == NULL) {
-        LOG(llevError, "read_bmap_names: new_faces memory allocation failure.\n");
-        abort();
+        fatal(OUT_OF_MEMORY);
     }
 
     for (i = 0; i < nrofpixmaps; i++) {
@@ -225,7 +220,7 @@ void read_bmap_names(void) {
 
         p = strrchr(buf, '/');
         if ((p == NULL) || (strtok(p, " \t\n") == NULL)) {
-            LOG(llevError, "read_bmap_names: syntax error: %s\n", buf);
+            LOG(llevError, "bmaps: syntax error in %s\n", buf);
             fatal(SEE_LAST_ERROR);
         }
         /* strtok converted the final newline or tab to NULL so all is ok */
@@ -260,7 +255,7 @@ void read_bmap_names(void) {
         fatal(SEE_LAST_ERROR);
     }
 
-    LOG(llevDebug, "done (got %d faces)\n", nrofpixmaps);
+    LOG(llevDebug, "bmaps: loaded %d faces\n", nrofpixmaps);
 
     qsort(new_faces, nrofpixmaps, sizeof(New_Face), (int (*)(const void *, const void *))compare_face);
 
@@ -332,7 +327,6 @@ int read_smooth(void) {
     int nrofsmooth = 0;
 
     snprintf(buf, sizeof(buf), "%s/smooth", settings.datadir);
-    LOG(llevDebug, "Reading smooth from %s...\n", buf);
     if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Cannot open smooth file: %s\n", strerror(errno));
         exit(-1);
@@ -369,7 +363,7 @@ int read_smooth(void) {
     }
     fclose(fp);
 
-    LOG(llevDebug, "done (got %d smooth entries)\n", nrofsmooth);
+    LOG(llevDebug, "smooth: loaded %d entries\n", nrofsmooth);
     return nrofsmooth;
 }
 
@@ -500,7 +494,7 @@ void read_client_images(void) {
         facesets[fileno].faces = calloc(nrofpixmaps, sizeof(face_info));
 
         snprintf(filename, sizeof(filename), "%s/crossfire.%d", settings.datadir, fileno);
-        LOG(llevDebug, "Loading image file %s\n", filename);
+        LOG(llevDebug, "images: loading from %s\n", filename);
 
         if ((infile = fopen(filename, "rb")) == NULL) {
             LOG(llevError, "Unable to open %s\n", filename);

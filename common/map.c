@@ -1210,7 +1210,6 @@ mapstruct *load_original_map(const char *filename, int flags) {
     mapstruct *m;
     char pathname[MAX_BUF];
 
-    LOG(llevDebug, "load_original_map: %s (%x)\n", filename, flags);
     if (flags&MAP_PLAYER_UNIQUE)
         snprintf(pathname, sizeof(pathname), "%s", filename);
     else if (flags&MAP_OVERLAY)
@@ -1804,7 +1803,6 @@ mapstruct *ready_map_name(const char *name, int flags) {
         }
 
         /* create and load a map */
-        LOG(llevDebug, "Loading map '%s'.\n", name);
         m = load_original_map(name, (flags&MAP_PLAYER_UNIQUE));
 
         if (m == NULL) {

@@ -110,7 +110,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
      * The client then must sort this out
      */
 
-    LOG(llevInfo, "Get SetupCmd:: %s\n", buf);
+    LOG(llevDebug, "setup: %s\n", buf);
     SockList_Init(&sl);
     SockList_AddString(&sl, "setup");
     while (s < len) {
@@ -595,7 +595,7 @@ void version_cmd(char *buf, int len, socket_struct *ns) {
     }
     cp = strchr(cp+1, ' ');
     if (cp) {
-        LOG(llevDebug, "CS: connection from client of type <%s>, ip %s\n", cp, ns->host);
+        LOG(llevInfo, "Connection from %s using '%s'\n", ns->host, cp);
     }
 }
 

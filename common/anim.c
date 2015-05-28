@@ -65,7 +65,6 @@ void init_anim(void) {
     animations[0].facings = 0;
 
     snprintf(buf, sizeof(buf), "%s/animations", settings.datadir);
-    LOG(llevDebug, "Reading animations from %s...\n", buf);
     if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Cannot open animations file %s: %s\n", buf, strerror(errno));
         exit(-1);
@@ -97,16 +96,18 @@ void init_anim(void) {
                 animations[num_animations].faces[i] = faces[i];
             animations[num_animations].num_animations = num_frames;
             if (num_frames <= 1) {
-                LOG(llevDebug, "Animation %s has only one or none face!\n", animations[num_animations].name);
+                LOG(llevDebug, "anim: %s has less then two faces\n",
+                        animations[num_animations].name);
             }
             if (num_frames%animations[num_animations].facings) {
-                LOG(llevDebug, "Animation %s frame numbers (%d) is not a multiple of facings (%d)\n",
-                    animations[num_animations].name, num_frames, animations[num_animations].facings);
+                LOG(llevDebug, "anim: %s has %d frames: not a multiple of facings (%d)\n",
+                        animations[num_animations].name, num_frames,
+                        animations[num_animations].facings);
             }
             num_frames = 0;
         } else if (!strncmp(buf, "facings", 7)) {
             if (!(animations[num_animations].facings = atoi(buf+7))) {
-                LOG(llevDebug, "Animation %s has 0 facings, line=%s\n",
+                LOG(llevDebug, "anim: %s has 0 facings (line %s)\n",
                     animations[num_animations].name, buf);
                 animations[num_animations].facings = 1;
             }
@@ -121,7 +122,7 @@ void init_anim(void) {
         }
     }
     fclose(fp);
-    LOG(llevDebug, "done. got (%d)\n", num_animations);
+    LOG(llevDebug, "anim: loaded %d animations\n", num_animations);
 }
 
 /**

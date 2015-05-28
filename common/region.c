@@ -297,14 +297,12 @@ int init_regions(void) {
         return 0;
 
     snprintf(filename, sizeof(filename), "%s/%s/%s", settings.datadir, settings.mapdir, settings.regions);
-    LOG(llevDebug, "Reading regions from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Couldn't read regions file from \"%s\".\n", filename);
         return 1;
     }
     parse_regions(fp);
     assign_region_parents();
-    LOG(llevDebug, " done\n");
 
     fclose(fp);
     return 0;
@@ -526,5 +524,6 @@ static void assign_region_parents(void) {
         }
         region_count++;
     }
-    LOG(llevDebug, "Assigned %u regions with %u parents.\n", region_count, parent_count);
+    LOG(llevDebug, "regions: loaded %u with %u parents\n",
+            region_count, parent_count);
 }

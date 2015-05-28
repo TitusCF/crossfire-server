@@ -322,7 +322,6 @@ void make_path_to_file(const char *filename) {
         return;
 
     safe_strncpy(buf, filename, sizeof(buf));
-    LOG(llevDebug, "make_path_tofile %s...\n", filename);
     while ((cp = strchr(cp+1, (int)'/'))) {
         *cp = '\0';
         if (stat(buf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {

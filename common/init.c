@@ -183,7 +183,9 @@ static void init_emergency_mappath(void) {
         fclose(fp);
         if (online <= 2)
             LOG(llevError, "Online read partial data from %s\n", filename);
-        LOG(llevDebug, "Emergency mappath reset to %s (%d, %d)\n", settings.emergency_mapname, settings.emergency_x, settings.emergency_y);
+        LOG(llevDebug, "emergency map set to %s (%d, %d)\n",
+                settings.emergency_mapname,
+                settings.emergency_x, settings.emergency_y);
     }
 }
 
@@ -469,7 +471,6 @@ static void init_clocks(void) {
         has_been_done = 1;
 
     snprintf(filename, sizeof(filename), "%s/clockdata", settings.localdir);
-    LOG(llevDebug, "Reading clockdata from %s...\n", filename);
     fp = fopen(filename, "r");
     if (fp == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
@@ -479,7 +480,7 @@ static void init_clocks(void) {
     }
     /* Read TOD and default to 0 on failure. */
     if (fscanf(fp, "%lu", &todtick) == 1) {
-        LOG(llevDebug, "todtick=%lu\n", todtick);
+        LOG(llevDebug, "clockdata: todtick is %lu\n", todtick);
         fclose(fp);
     } else {
         LOG(llevError, "Couldn't parse todtick, using default value 0\n");
@@ -510,7 +511,6 @@ static void init_attackmess(void) {
         has_been_done = 1;
 
     snprintf(filename, sizeof(filename), "%s/attackmess", settings.datadir);
-    LOG(llevDebug, "Reading attack messages from %s...\n", filename);
     fp = fopen(filename, "r");
     if (fp == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
@@ -576,6 +576,6 @@ static void init_attackmess(void) {
             continue;
         }
     }
-    LOG(llevDebug, "got %d messages in %d categories.\n", total, mess+1);
+    LOG(llevDebug, "attackmsg: %d messages in %d categories\n", total, mess+1);
     fclose(fp);
 }

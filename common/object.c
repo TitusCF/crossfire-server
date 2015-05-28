@@ -4288,60 +4288,6 @@ const char *object_get_value(const object *op, const char *const key) {
 static int object_set_value_s(object *op, const char *canonical_key, const char *value, int add_key) {
     key_value *field = NULL, *last = NULL;
 
-    if (llevDebug <= settings.debug) {
-        static const char* whitelist[] = {
-            "anim_full",
-            "animation_suffix",
-            "accept_alive",
-            "base_speed",
-            "casting_requirements",
-            "death_animation",
-            "divine_blessing_name",
-            "divine_giver_name",
-            "face_closed",
-            "face_full",
-            "face_opened",
-            "generator_limit",
-            "generator_radius",
-            "harvest_exp",
-            "harvest_level",
-            "harvest_race",
-            "harvest_speed",
-            "harvest_tool",
-            "harvestable",
-            "identified_anim_random",
-            "identified_anim_speed",
-            "identified_animation",
-            "identified_face",
-            "identified_name",
-            "identified_name_pl",
-            "immunity_chance",
-            "item_owner",
-            "item_willpower",
-            "knowledge_marker",
-            "no_mood_change",
-            "on_use_yield",
-            "passenger_limit",
-            "price_adjustment",
-            "price_adjustment_buy",
-            "price_adjustment_sell",
-            "race_restriction",
-            "talked_to",
-            "turnable_transport",
-            "wc_increase_rate",
-            "weight_speed_ratio",
-            NULL };
-        int index = 0;
-        for (index = 0; whitelist[index] != NULL; ++index) {
-            if (strcmp(whitelist[index], canonical_key) == 0) {
-                break;
-            }
-        }
-        if (whitelist[index] == NULL) {
-            LOG(llevDebug, "set_ob_value_s: '%s' '%s' %d\n", canonical_key, value ? value : "null", add_key);
-        }
-    }
-
     for (field = op->key_values; field != NULL; field = field->next) {
         if (field->key != canonical_key) {
             last = field;

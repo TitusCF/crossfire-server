@@ -177,7 +177,7 @@ void i18n_init(void) {
 
     dir = opendir(dirname);
     if (dir == NULL) {
-        LOG(llevError, "couldn't open i18n directory %s\n", dirname);
+        LOG(llevError, "i18n: couldn't open %s\n", dirname);
         fatal(SEE_LAST_ERROR);
     }
 
@@ -189,7 +189,8 @@ void i18n_init(void) {
 
         snprintf(filename, sizeof(filename), "%s%s", dirname, file->d_name);
         if ((fp = fopen(filename, "r")) == NULL) {
-            LOG(llevError, "Cannot open i18n file %s: %s\n", filename, strerror(errno));
+            LOG(llevError, "i18n: couldn't open %s\n",
+                    filename, strerror(errno));
             fatal(SEE_LAST_ERROR);
         }
 
@@ -222,12 +223,13 @@ void i18n_init(void) {
         qsort(i18n_files[i18n_count].messages, i18n_files[i18n_count].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
         found = bsearch(&code, i18n_files[i18n_count].messages, i18n_files[i18n_count].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
         if (found == NULL) {
-            LOG(llevError, "couldn't find language name (LN) for %s\n", filename);
+            LOG(llevError, "i18n: no language set in %s\n", filename);
             fatal(SEE_LAST_ERROR);
         }
 
         i18n_files[i18n_count].name = found->message;
-        LOG(llevDebug, "Read %i strings for language: %s\n", i18n_files[i18n_count].count, found->message);
+        LOG(llevDebug, "i18n: %d strings for %s\n",
+                i18n_files[i18n_count].count, found->message);
 
         if (strcmp(i18n_files[i18n_count].code, "en") == 0)
             i18n_default = i18n_count;
@@ -239,7 +241,7 @@ void i18n_init(void) {
     free_string(code.code);
 
     if (i18n_default == -1) {
-        LOG(llevError, "couldn't find default language en!\n");
+        LOG(llevError, "i18n: couldn't find default language (en)\n");
         fatal(SEE_LAST_ERROR);
     }
 }

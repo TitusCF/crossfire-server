@@ -171,7 +171,6 @@ void init_experience(void) {
     FILE *fp;
 
     snprintf(buf, sizeof(buf), "%s/exp_table", settings.confdir);
-
     if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Fatal error: could not open experience table (%s)\n", buf);
         exit(1);

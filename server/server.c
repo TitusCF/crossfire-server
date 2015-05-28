@@ -820,13 +820,13 @@ void enter_exit(object *op, object *exit_ob) {
             path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob), op->contr->savebed_map, sizeof(op->contr->savebed_map));
             op->contr->bed_x = EXIT_X(exit_ob), op->contr->bed_y = EXIT_Y(exit_ob);
             save_player(op, 1);
-            /* LOG(llevDebug, "enter_exit: Taking damned exit %s to (%d,%d) on map %s\n",
-             *     exit_ob->name ? exit_ob->name : "(none)", exit_ob->x, exit_ob->y,
-             *     path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob))); */
         }
 
         enter_map(op, newmap, x, y);
     }
+
+    LOG(llevDebug, "%s enters %s\n", op->name, EXIT_PATH(exit_ob));
+
     /* For exits that cause damages (like pits) */
     if (exit_ob->stats.dam && op->type == PLAYER)
         hit_player(op, exit_ob->stats.dam, exit_ob, exit_ob->attacktype, 1);
@@ -1192,7 +1192,7 @@ void leave(player *pl, int draw_exit) {
     }
 
     pl->socket.status = Ns_Dead;
-    LOG(llevInfo, "LOGOUT: Player named %s from ip %s\n", pl->ob->name, pl->socket.host);
+    LOG(llevInfo, "logout: %s from %s\n", pl->ob->name, pl->socket.host);
 
     strcpy(pl->ob->contr->killer, "left");
     hiscore_check(pl->ob, 1);
