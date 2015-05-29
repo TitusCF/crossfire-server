@@ -3386,9 +3386,12 @@ void do_some_living(object *op) {
         } /* end not wraith */
     } /* end if player is starving */
 
-    while (op->stats.food < 0 && op->stats.hp > 0)
-        op->stats.food++,
-        op->stats.hp--;
+    if (op->stats.food < 0 && op->stats.hp > 0){
+        // We know food < 0, so we want the absolute value of food
+        int32_t adjust_by = MIN(-(op->stats.food), op->stats.hp);
+        op->stats.food += adjust_by;
+        op->stats.hp -= adjust_by;
+    }
 
     if (!op->contr->state && !QUERY_FLAG(op, FLAG_WIZ) && (op->stats.hp < 0 || op->stats.food < 0))
         kill_player(op, NULL);

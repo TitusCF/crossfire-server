@@ -1,3 +1,6 @@
+2015-05-28  Daniel Hawkins
+	* server/player.c: Tweak the starvation calculation to not use a loop.
+
 2015-05-25  Daniel Hawkins
 	* configure.ac: Made the configure script exit if lex and flex are not found.
 	* utils/cfarches.xsl: Refactored can_use_xxx to be displayed in a single
