@@ -2345,17 +2345,17 @@ static int similar_direction(int a, int b) {
     /* shortcut the obvious */
     if (a == b)
         return 1;
-
-    switch (a) {
-    case 1: if (b <= 2 || b == 8) return 1; break;
-    case 2: if (b > 0 && b < 4) return 1; break;
-    case 3: if (b > 1 && b < 5) return 1; break;
-    case 4: if (b > 2 && b < 6) return 1; break;
-    case 5: if (b > 3 && b < 7) return 1; break;
-    case 6: if (b > 4 && b < 8) return 1; break;
-    case 7: if (b > 5) return 1; break;
-    case 8: if (b > 6 || b == 1) return 1; break;
-    }
+    /*  Made this cleaner using modulus instead of a switch statement
+     *  We only needed the direction and the two adjacent to it
+     *  (8 is adjacent to 1 here) to return true, so a - 1, a, and a + 1
+     *  are the three directions that get "similar" affirmed.
+     *      -- Daniel Hawkins 2015-05-28
+     */
+    // The last one for the offset is added afterwards so we get
+    // 1-8 instead of 0-7 (specifically, 0 becomes 8 without changing
+    // the other values).
+    if ((a % 8) + 1 == b || (a + 6 % 8) + 1 == b)
+        return 1;
     return 0;
 }
 
