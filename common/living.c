@@ -1929,10 +1929,10 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
          * 
          * -- Daniel Hawkins 2015-05-24
          */
-        if (op->level == settings.max_level)
-            limit = levels[op->level] / 2;
+        if (skill_obj->level == settings.max_level)
+            limit = levels[skill_obj->level] / 2;
         else
-            limit = (levels[op->level+1]-levels[op->level])/2;
+            limit = (levels[skill_obj->level+1]-levels[skill_obj->level])/2;
             
         if (exp_to_add > limit)
             exp_to_add = limit;
