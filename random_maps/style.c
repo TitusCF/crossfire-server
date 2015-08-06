@@ -138,7 +138,7 @@ mapstruct *load_style_map(char *style_name)
             return style_map;
         }
     }
-    style_map = load_original_map(style_name, MAP_STYLE);
+    style_map = mapfile_load(style_name, MAP_STYLE);
     /* Remove it from global list, put it on our local list */
     if (style_map) {
         mapstruct *tmp;

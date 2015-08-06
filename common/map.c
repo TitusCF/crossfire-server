@@ -632,7 +632,7 @@ static void link_multipart_objects(mapstruct *m) {
  * @param fp
  * file to read from.
  * @param mapflags
- * the same as we get with load_original_map()
+ * the same as we get with mapfile_load()
  */
 static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
     int i, j, bufstate = LO_NEWFILE;
@@ -1195,27 +1195,25 @@ static int load_map_header(FILE *fp, mapstruct *m) {
  * flags correspond to those in map.h.  Main ones used are
  * ::MAP_PLAYER_UNIQUE, in which case we don't do any name changes, and
  *
- * @param filename
- * map path.
- * @param flags
- * how to interpret the path, and misc information (can be combined):
- * \li ::MAP_PLAYER_UNIQUE: this is a unique map, path isn't changed
+ * @param map Map path
+ * @param flags Additional options for loading the map:
+ * \li ::MAP_PLAYER_UNIQUE: Load from a player-specific directory
  * \li ::MAP_OVERLAY: map is an overlay
  * \li ::MAP_STYLE: style map - don't add active objects, don't add to server managed map list.
  * @return
  * loaded map, or NULL if failure.
  */
-mapstruct *load_original_map(const char *filename, int flags) {
+mapstruct *mapfile_load(const char *map, int flags) {
     FILE *fp;
     mapstruct *m;
     char pathname[MAX_BUF];
 
     if (flags&MAP_PLAYER_UNIQUE)
-        snprintf(pathname, sizeof(pathname), "%s", filename);
+        snprintf(pathname, sizeof(pathname), "%s", map);
     else if (flags&MAP_OVERLAY)
-        create_overlay_pathname(filename, pathname, MAX_BUF);
+        create_overlay_pathname(map, pathname, MAX_BUF);
     else
-        create_pathname(filename, pathname, MAX_BUF);
+        create_pathname(map, pathname, MAX_BUF);
 
     if ((fp = fopen(pathname, "r")) == NULL) {
         LOG((flags&MAP_PLAYER_UNIQUE) ? llevDebug : llevError,
@@ -1225,9 +1223,9 @@ mapstruct *load_original_map(const char *filename, int flags) {
 
     m = get_linked_map();
 
-    safe_strncpy(m->path, filename, HUGE_BUF);
+    safe_strncpy(m->path, map, HUGE_BUF);
     if (load_map_header(fp, m)) {
-        LOG(llevError, "Error loading map header for %s, flags=%d\n", filename, flags);
+        LOG(llevError, "Error loading map header for %s, flags=%d\n", map, flags);
         delete_map(m);
         fclose(fp);
         return NULL;
@@ -1802,12 +1800,8 @@ mapstruct *ready_map_name(const char *name, int flags) {
             delete_map(m);
         }
 
-        /* create and load a map */
-        m = load_original_map(name, (flags&MAP_PLAYER_UNIQUE));
-
-        if (m == NULL) {
-            return m;
-        }
+        m = mapfile_load(name, (flags&MAP_PLAYER_UNIQUE));
+        if (m == NULL) return NULL;
 
         /* If a player unique map, no extra unique object file to load.
          * if from the editor, likewise.
@@ -1818,7 +1812,7 @@ mapstruct *ready_map_name(const char *name, int flags) {
         if (!(flags&(MAP_FLUSH|MAP_PLAYER_UNIQUE|MAP_OVERLAY))) {
             if (load_overlay_map(name, m) != 0) {
                 delete_map(m);
-                m = load_original_map(name, 0);
+                m = mapfile_load(name, 0);
                 if (m == NULL) {
                     /* Really, this map is bad :( */
                     return NULL;
@@ -1834,7 +1828,7 @@ mapstruct *ready_map_name(const char *name, int flags) {
              * load_temporary_map() already logged the error.
              */
             delete_map(m);
-            m = load_original_map(name, 0);
+            m = mapfile_load(name, 0);
             if (m == NULL) {
                 /* Really, this map is bad :( */
                 return NULL;
