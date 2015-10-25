@@ -586,32 +586,29 @@ void reply_cmd(char *buf, int len, player *pl) {
  * problem.
  */
 void version_cmd(char *buf, int len, socket_struct *ns) {
-    char *cp;
+    char *cs_str = strsep(&buf, " ");
+    char *sc_str = strsep(&buf, " ");
 
-    if (!buf) {
-        LOG(llevError, "CS: received corrupted version command\n");
+    if (cs_str == NULL || sc_str == NULL) {
+        LOG(llevError, "%s: sent invalid version string\n", ns->host);
         return;
+    } else {
+        ns->cs_version = atoi(cs_str);
+        ns->sc_version = atoi(sc_str);
     }
 
-    ns->cs_version = atoi(buf);
-    ns->sc_version = ns->cs_version;
+#ifdef ESRV_DEBUG
     if (VERSION_CS != ns->cs_version) {
-#ifdef ESRV_DEBUG
         LOG(llevDebug, "CS: csversion mismatch (%d,%d)\n", VERSION_CS, ns->cs_version);
-#endif
     }
-    cp = strchr(buf+1, ' ');
-    if (!cp)
-        return;
-    ns->sc_version = atoi(cp);
+
     if (VERSION_SC != ns->sc_version) {
-#ifdef ESRV_DEBUG
         LOG(llevDebug, "CS: scversion mismatch (%d,%d)\n", VERSION_SC, ns->sc_version);
-#endif
     }
-    cp = strchr(cp+1, ' ');
-    if (cp) {
-        LOG(llevInfo, "Connection from %s using '%s'\n", ns->host, cp);
+#endif
+
+    if (buf != NULL) {
+        LOG(llevInfo, "%s: connected using '%s'\n", ns->host, buf);
     }
 }
 
