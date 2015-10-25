@@ -24,6 +24,7 @@
 
 #include "global.h"
 
+#include <assert.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -198,20 +199,47 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
     SockList_Term(&sl);
 }
 
+static int
+handle_cmd(socket_struct *ns, player *pl, char *cmd, char *data, int len) {
+    assert(cmd != NULL);
+    for (int i = 0; client_commands[i].cmdname != NULL; i++) {
+        if (strcmp(cmd, client_commands[i].cmdname) == 0) {
+            if (client_commands[i].cmdproc != NULL) {
+                client_commands[i].cmdproc(data, len, ns);
+            }
+            return 0;
+        }
+    }
+    /* Player must be in the playing state or the flag on the
+     * the command must be zero for the user to use the command -
+     * otherwise, a player cam save, be in the play_again state, and
+     * the map they were on getsswapped out, yet things that try to look
+     * at the map causes a crash.  If the command is valid, but
+     * one they can't use, we still swallow it up.
+     */
+    if (pl) {
+        for (int i = 0; player_commands[i].cmdname != NULL; i++) {
+            if (strcmp(cmd, player_commands[i].cmdname) == 0) {
+                if (pl->state == ST_PLAYING || player_commands[i].flag == 0) {
+                    player_commands[i].cmdproc(data, len, pl);
+                }
+                return 1;
+            }
+        }
+    }
+    LOG(llevDebug, "%s: invalid command '%s'\n", ns->host, cmd);
+    return 0;
+}
+
 /**
- * Handle client commands.
+ * Handle commands from a client. This function should only be called when
+ * the socket is readable. If an error occurs, the socket status will be set
+ * to Ns_Dead; it is up to the caller to clean it up.
  *
- * We only get here once there is input, and only do basic connection checking.
- *
- * @param ns
- * socket sending the command. Will be set to Ns_Dead if read error.
- * @param pl
- * player associated to the socket. If NULL, only commands in client_cmd_mapping will be checked.
+ * @param ns Socket sending the command
+ * @param pl Player associated with this socket, or NULL
  */
 void handle_client(socket_struct *ns, player *pl) {
-    int len, i, command_count;
-    unsigned char *data;
-
     /* Loop through this - maybe we have several complete packets here. */
     /* Command_count is used to limit the number of requests from
      * clients that have not logged in - we do not want an unauthenticated
@@ -222,94 +250,53 @@ void handle_client(socket_struct *ns, player *pl) {
      * we will process more of these, as getting a fair number when entering
      * a map may not be uncommon.
      */
-    command_count=0;
-    while ((pl && command_count < 25) || command_count < 5) {
-        /* If it is a player, and they don't have any speed left, we
-         * return, and will read in the data when they do have time.
-         */
+    int command_count = 0;
+    while (command_count < 5 || (pl && command_count < 25)) {
         if (pl && pl->state == ST_PLAYING && pl->ob != NULL && pl->ob->speed_left < 0) {
+            // Skip processing players with no turns left.
             return;
         }
 
-        i = SockList_ReadPacket(ns->fd, &ns->inbuf, sizeof(ns->inbuf.buf)-1);
-        if (i < 0) {
-#ifdef ESRV_DEBUG
-            LOG(llevDebug, "handle_client: Read error on connection player %s\n", (pl ? pl->ob->name : "None"));
-#endif
-            /* Caller will take care of cleaning this up */
-            ns->status = Ns_Dead;
+        int status = SockList_ReadPacket(ns->fd, &ns->inbuf, sizeof(ns->inbuf.buf)-1);
+        if (status != 1) {
+            if (status < 0) {
+                ns->status = Ns_Dead;
+            }
             return;
         }
-        /* Still dont have a full packet */
-        if (i == 0)
-            return;
 
         /* Since we have a full packet, reset last tick time. */
         ns->last_tick = 0;
 
-        SockList_NullTerminate(&ns->inbuf); /* Terminate buffer - useful for string data */
+        SockList_NullTerminate(&ns->inbuf);
+        assert(ns->inbuf.len >= 2);
+        char *data = (char *)ns->inbuf.buf + 2;
+        char *cmd = strsep(&data, " ");
 
-        /* First, break out beginning word.  There are at least
-         * a few commands that do not have any paremeters.  If
-         * we get such a command, don't worry about trying
-         * to break it up.
-         */
-        data = (unsigned char *)strchr((char *)ns->inbuf.buf+2, ' ');
-        if (data) {
-            *data = '\0';
-            data++;
-            len = ns->inbuf.len-(data-ns->inbuf.buf);
-        } else
-            len = 0;
-
-        for (i = 0; client_commands[i].cmdname != NULL; i++) {
-            if (strcmp((char *)ns->inbuf.buf+2, client_commands[i].cmdname) == 0) {
-                if (client_commands[i].cmdproc != NULL) {
-                    client_commands[i].cmdproc((char *)data, len, ns);
-                }
-
-                SockList_ResetRead(&ns->inbuf);
-                command_count++;
-                /* Evil case, and not a nice workaround, but well...
-                 * If we receive eg an accountplay command, the socket is copied
-                 * to the player structure, and its faces_sent is set to NULL.
-                 * This leads to issues when processing the next commands in the queue,
-                 * especially if related to faces...
-                 * So get out of here in this case, which we detect because faces_sent is NULL.
-                 */
-                if (ns->faces_sent == NULL) {
-                    command_count = 6;
-                }
-                break;
-            }
+        int got_player_cmd;
+        if (data != NULL) {
+            int rem = ns->inbuf.len - ((unsigned char *)data - ns->inbuf.buf);
+            got_player_cmd = handle_cmd(ns, pl, cmd, data, rem);
+        } else {
+            got_player_cmd = handle_cmd(ns, pl, cmd, NULL, 0);
         }
-        if (client_commands[i].cmdname != NULL)
-            /* handle another command, up to 25 */
-            continue;
-        /* Player must be in the playing state or the flag on the
-         * the command must be zero for the user to use the command -
-         * otherwise, a player cam save, be in the play_again state, and
-         * the map they were on getsswapped out, yet things that try to look
-         * at the map causes a crash.  If the command is valid, but
-         * one they can't use, we still swallow it up.
-         */
-        if (pl)
-            for (i = 0; player_commands[i].cmdname != NULL; i++) {
-                if (strcmp((char *)ns->inbuf.buf+2, player_commands[i].cmdname) == 0) {
-                    if (pl->state == ST_PLAYING || player_commands[i].flag == 0)
-                        player_commands[i].cmdproc((char *)data, len, pl);
-                    SockList_ResetRead(&ns->inbuf);
-                    return;
-                }
-            }
-        /* If we get here, we didn't find a valid command.  Logging
-         * this might be questionable, because a broken client/malicious
-         * user could certainly send a whole bunch of invalid commands.
-         * limit number of these we read per tick also.
-         */
-        LOG(llevDebug, "Bad command from client (%s)\n", ns->inbuf.buf+2);
+
         SockList_ResetRead(&ns->inbuf);
-        command_count++;
+        if (got_player_cmd) {
+            return;
+        }
+
+        command_count += 1;
+        /* Evil case, and not a nice workaround, but well...
+         * If we receive eg an accountplay command, the socket is copied
+         * to the player structure, and its faces_sent is set to NULL.
+         * This leads to issues when processing the next commands in the queue,
+         * especially if related to faces...
+         * So get out of here in this case, which we detect because faces_sent is NULL.
+         */
+        if (ns->faces_sent == NULL) {
+            command_count = 6;
+        }
     }
 }
 
