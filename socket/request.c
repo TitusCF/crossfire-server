@@ -102,6 +102,11 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
     char *cmd, *param;
     SockList sl;
 
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus set_up_cmd information\n", ns->host);
+        return;
+    }
+
     /* run through the cmds of setup
      * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
      *
@@ -425,6 +430,11 @@ static void send_smooth(socket_struct *ns, uint16_t face) {
 void ask_smooth_cmd(char *buf, int len, socket_struct *ns) {
     uint16_t facenbr;
 
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus ask_smooth_cmd information\n", ns->host);
+        return;
+    }
+
     facenbr = atoi(buf);
     send_smooth(ns, facenbr);
 }
@@ -504,6 +514,12 @@ void new_player_cmd(uint8_t *buf, int len, player *pl) {
 
 /** This is a reply to a previous query. */
 void reply_cmd(char *buf, int len, player *pl) {
+
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "Player '%s' sent bogus reply_cmd information\n", pl->ob->name);
+        return;
+    }
+
     /* This is to synthesize how the data would be stored if it
      * was normally entered. A bit of a hack, and should be cleaned up
      * once all the X11 code is removed from the server.
@@ -628,6 +644,11 @@ void map_newmap_cmd(socket_struct *ns) {
  */
 void move_cmd(char *buf, int len, player *pl) {
     int vals[3], i;
+
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "Player '%s' sent bogus move_cmd information\n", pl->ob->name);
+        return;
+    }
 
     /* A little funky here. We only cycle for 2 records, because
      * we obviously am not going to find a space after the third
@@ -2027,6 +2048,11 @@ void account_login_cmd(char *buf, int len, socket_struct *ns) {
     int status;
     SockList sl;
 
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus add_player_cmd information\n", ns->host);
+        return;
+    }
+
     SockList_Init(&sl);
 
     status = decode_name_password(buf, &len, name, password);
@@ -2148,6 +2174,11 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
     int status;
     SockList sl;
 
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus add_player_cmd information\n", ns->host);
+        return;
+    }
+
     SockList_Init(&sl);
 
     status = decode_name_password(buf, &len, name, password);
@@ -2251,6 +2282,11 @@ void account_add_player_cmd(char *buf, int len, socket_struct *ns) {
     int status, force, nlen;
     SockList sl;
     const char *cp;
+
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus add_player_cmd information\n", ns->host);
+        return;
+    }
 
     SockList_Init(&sl);
 
@@ -2377,6 +2413,11 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
     SockList sl;
     player *pl;
 
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus account_play_cmd information\n", ns->host);
+        return;
+    }
+
     SockList_Init(&sl);
 
     if (!buf[0]) {
@@ -2460,6 +2501,11 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     player *pl;
     archetype *map=NULL, *race_a=NULL, *class_a=NULL;
     living  new_stats;
+
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus create_player_cmd information\n", ns->host);
+        return;
+    }
 
     SockList_Init(&sl);
 
@@ -2826,6 +2872,11 @@ void account_password(char *buf, int len, socket_struct *ns) {
     char old[MAX_BUF], change[MAX_BUF];
     int status;
     SockList sl;
+
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus account_password_cmd information\n", ns->host);
+        return;
+    }
 
     SockList_Init(&sl);
 

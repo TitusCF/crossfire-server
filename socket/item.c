@@ -820,6 +820,11 @@ void look_at_cmd(char *buf, int len, player *pl) {
     int dx, dy;
     char *cp;
 
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "Player '%s' sent bogus look_at_cmd information\n", pl->ob->name);
+        return;
+    }
+
     dx = atoi(buf);
     if (!(cp = strchr(buf, ' '))) {
         return;

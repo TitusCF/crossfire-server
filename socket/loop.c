@@ -142,6 +142,11 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
     /* No match */
     SockList sl;
 
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "IP '%s' sent bogus request_info_cmd information\n", ns->host);
+        return;
+    }
+
     /* Set up replyinfo before we modify any of the buffers - this is used
      * if we don't find a match.
      */

@@ -41,8 +41,16 @@
  * @param ns socket to send data to.
  */
 void send_face_cmd(char *buff, int len, socket_struct *ns) {
-    long tmpnum = atoi(buff);
-    uint16_t facenum = tmpnum&0xffff;
+    long tmpnum;
+    uint16_t facenum;
+
+    if (len <= 0 || !buff) {
+        LOG(llevDebug, "IP '%s' sent bogus send_face_cmd information\n", ns->host);
+        return;
+    }
+
+    tmpnum = atoi(buff);
+    facenum = tmpnum&0xffff;
 
     if (facenum != 0)
         esrv_send_face(ns, facenum, 1);
