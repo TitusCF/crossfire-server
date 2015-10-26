@@ -270,8 +270,8 @@ void handle_client(socket_struct *ns, player *pl) {
 
         SockList_NullTerminate(&ns->inbuf);
         assert(ns->inbuf.len >= 2);
-        char *data = (char *)ns->inbuf.buf + 2;
-        char *cmd = strsep(&data, " ");
+        char *data;
+        char *cmd = strtok_r((char *)ns->inbuf.buf + 2, " ", &data);
 
         int got_player_cmd;
         if (data != NULL) {

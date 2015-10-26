@@ -586,8 +586,9 @@ void reply_cmd(char *buf, int len, player *pl) {
  * problem.
  */
 void version_cmd(char *buf, int len, socket_struct *ns) {
-    char *cs_str = strsep(&buf, " ");
-    char *sc_str = strsep(&buf, " ");
+    char *rest;
+    char *cs_str = strtok_r(buf, " ", &rest);
+    char *sc_str = strtok_r(NULL, " ", &rest);
 
     if (cs_str == NULL || sc_str == NULL) {
         LOG(llevError, "%s: sent invalid version string\n", ns->host);
@@ -607,8 +608,8 @@ void version_cmd(char *buf, int len, socket_struct *ns) {
     }
 #endif
 
-    if (buf != NULL) {
-        LOG(llevInfo, "%s: connected using '%s'\n", ns->host, buf);
+    if (rest != NULL) {
+        LOG(llevInfo, "%s: connected using '%s'\n", ns->host, rest);
     }
 }
 
