@@ -33,6 +33,8 @@ INCDIR = $(top_srcdir)/include
 DTOP = $(top_srcdir)/$(PACKAGE)-doc
 PERL = @PERL@
 
+TREASURES_FILE = ../../lib/treasures.bld
+
 handbook: $(HANDBOOK)
 
 dump_switches:
@@ -76,13 +78,13 @@ stats.html: .bmaps in_stats ../scripts/makeps.pl stats.gif
 	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats archdir=$(pkgdatadir)/archetypes > stats.html
 
 equip.html: in_equip treas2-extract
-	$(AWK) -v eqitems=in_equip -f treas2-extract 	../../lib/treasures > equip.html
+	$(AWK) -v eqitems=in_equip -f treas2-extract 	$(TREASURES_FILE) > equip.html
 
 in_equip: treas1-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f treas1-extract $(pkgdatadir)/archetypes | sort -d > in_equip
 
 skills.html: in_equip skills-extract
-	$(AWK) -v eqitems=in_equip -f skills-extract 	../../lib/treasures > skills.html
+	$(AWK) -v eqitems=in_equip -f skills-extract 	$(TREASURES_FILE) > skills.html
 
 chap3.html: chap3.shtml bows.html br_wall.html dir_spin.html foodone.html 	fr_wall.html gatedoor.html guild.html handbutt.html 	holysymbol.html horns.html keys.html pit.html potions.html 	rods.html savebed.html scrolls.html sign.html corpse.html 	talisman.html wands.html levels.html gravestone.html
 	$(PERL) $(srcdir)/../include_html.pl chap3.shtml chap3.html
