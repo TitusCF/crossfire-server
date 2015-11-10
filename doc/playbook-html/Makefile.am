@@ -127,8 +127,8 @@ keys.html: items sorter
 	egrep -e "^21 " items | $(AWK) -F'&' -f generic-extract | sort > keys.html
 	egrep -e "^24 " items | $(AWK) -F'&' -f generic-extract | sort >> keys.html
 
-levels.html:
-	$(AWK) -v living_c=../../common/living.c 	-f levels-extract > levels.html
+levels.html: ../scripts/levels-extract.pl
+	$(PERL) ../scripts/levels-extract.pl "$(top_srcdir)/lib/config/exp_table" html levels.html
 
 pit.html: items sorter
 	egrep -e "^95 " items | $(AWK) -F'&' -f generic-extract | sort > pit.html
