@@ -487,7 +487,7 @@ static const char* single_emotes[EMOTE_LAST - 1][2] = {
     { "You spit over your left shoulder.", "%s spits over his left shoulder." },
     { "Strut your stuff.", "%s struts proudly." },
     { NULL, NULL },
-    { "%s patiently twiddles his thumbs.", "You patiently twiddle your thumbs." },
+    { "You patiently twiddle your thumbs.", "%s patiently twiddles his thumbs." },
     { "You wave.", "%s waves happily." },
     { "You whistle appreciatively.", "%s whistles appreciatively." },
     { "Have you got something in your eye?", "%s winks suggestively." },
