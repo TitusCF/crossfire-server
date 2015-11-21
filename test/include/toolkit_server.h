@@ -2,4 +2,4 @@
 /**
  * Clean temporary account-related files, put into /tmp.
  */
-void clean_test_account_data();
+void clean_test_account_data(void);
