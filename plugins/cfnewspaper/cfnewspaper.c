@@ -32,6 +32,8 @@
 #include <stdarg.h>
 #include <cfnewspaper_proto.h>
 #include <sqlite3.h>
+#include <stdlib.h>
+#include <string.h>
 #include <svnversion.h>
 
 CF_PLUGIN char SvnRevPlugin[] = SVN_REV;

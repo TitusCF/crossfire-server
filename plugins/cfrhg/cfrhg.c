@@ -49,6 +49,7 @@
 
 #include <stdarg.h>
 #include <assert.h>
+#include <string.h>
 
 #include <cfrhg.h>
 #include <cfrhg_proto.h>
