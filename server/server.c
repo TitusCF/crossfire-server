@@ -1294,7 +1294,7 @@ int forbid_play(void) {
 /**
  * Periodically check if we're ready to shut the server down.
  */
-static void server_check_shutdown() {
+static void server_check_shutdown(void) {
     /* When to remind players of an imminent apocalypse. */
     const int warn_times[] = {120, 60, 30, 15, 10, 5, 3, 2, 1};
     static int next_warn = 0;
@@ -1346,7 +1346,7 @@ extern unsigned long todtick;
  * I also think this code makes it easier to see how often we really are
  * doing the various things.
  */
-static void do_specials() {
+static void do_specials(void) {
     if (!(pticks%10))
         knowledge_process_incremental();
 

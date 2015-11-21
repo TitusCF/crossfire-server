@@ -108,7 +108,7 @@ static int accounts_loaded = 0;
  * it can then verify that the data is added is loaded back into memory
  * properly.  As such, we don't worry about memory cleanup, etc.
  */
-void accounts_clear() {
+void accounts_clear(void) {
     accounts = NULL;
     accounts_loaded = 0;
 }
@@ -117,7 +117,7 @@ void accounts_clear() {
  * This loads all the account entries into memory.  It is presumed to only
  * be called once during the program startup.
  */
-void accounts_load() {
+void accounts_load(void) {
     char fname[MAX_BUF], buf[VERY_BIG_BUF];
     FILE *fp;
     account_struct *ac, *last=NULL;

@@ -51,18 +51,18 @@ static void set_logfile(char *val) {
 }
 
 /** Command line option: show version. */
-static void call_version() {
+static void call_version(void) {
     puts(FULL_VERSION);
     exit(EXIT_SUCCESS);
 }
 
 /** Command line option: debug flag. */
-static void set_debug() {
+static void set_debug(void) {
     settings.debug = llevDebug;
 }
 
 /** Command line option: unset debug flag. */
-static void unset_debug() {
+static void unset_debug(void) {
     settings.debug = llevInfo;
 }
 
@@ -1047,7 +1047,7 @@ void free_server(void) {
 /**
  * Display the command line options and exits.
  */
-static void help() {
+static void help(void) {
     printf("Usage: crossfire-server [options]\n\n");
 
     printf("Options:\n");

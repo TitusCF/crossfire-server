@@ -269,7 +269,7 @@ static void init_environ(void) {
  *
  * Setups logfile, and such variables.
  */
-void init_globals() {
+void init_globals(void) {
     memset(&statistics, 0, sizeof(struct Statistics));
 
     /* Log to stderr by default. */

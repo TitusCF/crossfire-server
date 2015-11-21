@@ -105,12 +105,12 @@ static void test_layout(int width, int height) {
 }
 
 /** Print a message stating how to get help. */
-static void print_quickhelp() {
+static void print_quickhelp(void) {
     fprintf(stderr, "Type 'random_map -h' for usage instructions.\n");
 }
 
 /** Print out usage information. */
-static void print_usage() {
+static void print_usage(void) {
     printf(
         "Usage: random_map [options]\n"
         "\n"
@@ -290,7 +290,7 @@ void move_firewall(object *ob) {
 void emergency_save(int x) {
 }
 
-void clean_tmp_files() {
+void clean_tmp_files(void) {
 }
 
 void esrv_send_item(object *ob, object *obx) {
