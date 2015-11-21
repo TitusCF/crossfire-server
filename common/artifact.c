@@ -273,7 +273,7 @@ static void compute_face_name(char* buf, size_t size, const char* name, const ch
     }
     else
     {
-        snprintf(buf, sizeof(buf), "%s_%s", name, suffix);
+        snprintf(buf, size, "%s_%s", name, suffix);
     }
 }
 

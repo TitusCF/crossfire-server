@@ -1,3 +1,6 @@
+2015-11-21  Andreas Kirschbaum
+	* common/artifact.c: Do not truncate face names.
+
 2015-11-10  Daniel Hawkins
 	* doc/scripts/levels-extract.pl: Created a new level extraction tool
 	  for the documentation that works with modern server code and
