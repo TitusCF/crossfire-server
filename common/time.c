@@ -159,10 +159,19 @@ static void log_time(uint32_t process_utime) {
 /**
  * Return the difference between two timespec's in microseconds.
  */
-long timespec_diff(struct timespec *end, struct timespec *start) {
+static long timespec_diff(struct timespec *end, struct timespec *start) {
     long long sec = (long long)end->tv_sec - (long long)start->tv_sec;
     long nsec = end->tv_nsec - start->tv_nsec;
     return sec * 1e6 + nsec / 1e3;
+}
+
+/**
+ * Add 'usec' microseconds to the given timespec.
+ */
+static void timespec_add(struct timespec *time, long usec) {
+    long nsec_sum = time->tv_nsec + usec * 1e3;
+    time->tv_sec += nsec_sum / 1e9;
+    time->tv_nsec = nsec_sum % (long)1e9;
 }
 
 /**
@@ -181,8 +190,8 @@ void sleep_delta(void) {
         process_utime_long_count++;
     }
 
-    // Store the current time as the time of the last tick.
-    clock_gettime(CLOCK_MONOTONIC, &game_time);
+    // Add one tick length to the last tick time.
+    timespec_add(&game_time, max_time);
 }
 
 /**
