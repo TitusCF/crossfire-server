@@ -157,38 +157,32 @@ static void log_time(uint32_t process_utime) {
 }
 
 /**
- * Return the number of microseconds between two timespec structures.
+ * Return the difference between two timespec's in microseconds.
  */
-long usec_elapsed(struct timespec first, struct timespec second) {
-    time_t sec_elapsed = second.tv_sec - first.tv_sec;
-    long nsec_elapsed = second.tv_nsec - first.tv_nsec;
-    return (sec_elapsed * 1e6) + (nsec_elapsed / 1e3);
+long timespec_diff(struct timespec *end, struct timespec *start) {
+    long long sec = (long long)end->tv_sec - (long long)start->tv_sec;
+    long nsec = end->tv_nsec - start->tv_nsec;
+    return sec * 1e6 + nsec / 1e3;
 }
 
 /**
  * Sleep until the next tick.
  */
 void sleep_delta(void) {
-    struct timespec real_time;
-    clock_gettime(CLOCK_MONOTONIC, &real_time);
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    long time_since_last_sleep = timespec_diff(&now, &game_time);
+    log_time(time_since_last_sleep);
 
-    long elapsed = usec_elapsed(game_time, real_time);
-    log_time(elapsed);
-
-    long sleep_time = max_time - elapsed;
+    long sleep_time = max_time - time_since_last_sleep;
     if (sleep_time > 0) {
         usleep(sleep_time);
     } else {
         process_utime_long_count++;
     }
 
-    // Advance game time by one tick.
-    game_time.tv_nsec += max_time * 1e3;
-
-    // If game time is falling too far behind, skip a few ticks.
-    if (usec_elapsed(game_time, real_time) > max_time) {
-        game_time = real_time;
-    }
+    // Store the current time as the time of the last tick.
+    clock_gettime(CLOCK_MONOTONIC, &game_time);
 }
 
 /**
@@ -297,23 +291,16 @@ void time_info(object *op) {
     if (!QUERY_FLAG(op, FLAG_WIZ))
         return;
 
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                  "Total time:");
+    draw_ext_info_format(
+        NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+        "Statistics for last %d ticks:\n\tmin/avg/max = %d/%d/%d ms per tick",
+        pticks, process_min_utime / 1000, process_tot_mtime / pticks,
+        process_max_utime / 1000);
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "ticks=%d  time=%d.%2d",
-                         pticks, process_tot_mtime/1000, process_tot_mtime%1000);
-
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "avg time=%dms  max time=%dms  min time=%dms",
-                         process_tot_mtime/pticks, process_max_utime/1000,
-                         process_min_utime/1000);
-
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "ticks longer than max time (%dms) = %d (%d%%)",
-                         max_time/1000,
-                         process_utime_long_count, 100*process_utime_long_count/pticks);
-
+    draw_ext_info_format(
+        NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+        "\tticks longer than %d ms = %d (%d%%)", max_time / 1000,
+        process_utime_long_count, 100 * process_utime_long_count / pticks);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "Time last %d ticks:",
