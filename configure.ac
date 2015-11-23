@@ -80,23 +80,30 @@ AC_SEARCH_LIBS([pow], [m])
 AC_SEARCH_LIBS([pthread_create], [pthread])
 AC_SEARCH_LIBS([sqrt], [m])
 
+# Metaserver2
 LIBCURL_CHECK_CONFIG()
 LIBS="$LIBS $LIBCURL"
 CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
 
+# Plugins
+AC_SEARCH_LIBS([dlopen], [dl], [cf_have_libdl=yes])
+AC_SEARCH_LIBS([sqlite3_open], [sqlite3], [cf_have_libsqlite=yes])
+
 # For utils/mapper
-if test "$enable_mapper" = "yes"; then
+AS_IF([test "$enable_mapper" = "yes"], [
     PKG_CHECK_MODULES([GD], [gdlib])
-    AC_SUBST(GD_LIBS, $GD_LIBS)
-fi
+])
 AM_CONDITIONAL(MAPPER, test "$enable_mapper" = "yes")
 
 # Random house generator
 AM_CONDITIONAL(CFRHG_PLUGIN, test "$enable_cfrhg" = "yes")
 
-# Libraries used for plugins
-AC_SEARCH_LIBS([dlopen], [dl], [cf_have_libdl=yes])
-AC_SEARCH_LIBS([sqlite3_open], [sqlite3], [cf_have_libsqlite=yes])
+# Unit tests
+AS_IF([test "$enable_check" = "yes"], [
+    PKG_CHECK_MODULES([CHECK], [check], [have_check="yes"], [have_check="no"])
+], [
+    have_check="no"
+])
 
 ##############################################################################
 # Header File, Type, Structure, and Compiler Checks
@@ -149,7 +156,6 @@ AM_CONDITIONAL(HAVE_CFLOGGER, [test "$cf_have_libsqlite" = "yes" -a "$enable_log
 AM_CONDITIONAL(HAVE_CFNEWSPAPER, [test "$cf_have_libsqlite" = "yes" -a "$enable_newspaper" = "yes"])
 
 # Unit tests
-AM_PATH_CHECK([], [have_check="yes"], [have_check="no"])
 AM_CONDITIONAL(HAVE_CHECK, test "$have_check" = "yes" -a "$enable_check" = "yes")
 
 if test "$have_check" = "yes"; then
