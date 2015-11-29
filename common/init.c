@@ -42,7 +42,7 @@ struct Settings settings = {
     CSPORT,    /* Client/server port */
 
     llevInfo,  /* Debug level */
-    0, NULL, 0,    /* dumpvalues, dumparg, daemonmode */
+    0, NULL,   /* dumpvalues, dumparg */
     CONFDIR,
     DATADIR,
     LOCALDIR,

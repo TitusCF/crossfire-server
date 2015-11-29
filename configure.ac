@@ -107,7 +107,6 @@ AS_IF([test "$enable_check" = "yes"], [
 ##############################################################################
 # Checks for header files.
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS([sys/ttycom.h termios.h sys/termios.h])
 AC_CHECK_HEADERS([crypt.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -120,7 +119,7 @@ CF_CHECK_VISIBILITY()
 # Checks for library functions.
 AC_FUNC_MEMCMP
 
-AC_CHECK_FUNCS([getdtablesize strcasecmp strcasestr strdup strncasecmp setsid srandom srand48 srand sysconf tempnam getaddrinfo getnameinfo])
+AC_CHECK_FUNCS([getdtablesize strcasecmp strcasestr strdup strncasecmp srandom srand48 srand sysconf tempnam getaddrinfo getnameinfo])
 
 # Check for better but non-portable functions.
 AC_CHECK_FUNCS([strlcat strlcpy])

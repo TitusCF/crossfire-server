@@ -1,3 +1,6 @@
+2015-11-25	Kevin Zheng
+	* server/daemon.c: Remove server '-detach' flag
+
 2015-11-21  Andreas Kirschbaum
 	* common/artifact.c: Do not truncate face names.
 

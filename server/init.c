@@ -125,16 +125,6 @@ static void set_dumpmont(const char *name) {
     settings.dumparg = name;
 }
 
-/** Command line option: set daemon mode. */
-static void set_daemon(void) {
-    settings.daemonmode = 1;
-
-    /* Use the default log file if we weren't explicitly given one. */
-    if (settings.logfilename == NULL) {
-        settings.logfilename = LOGFILE;
-    }
-}
-
 /**
  * Command line option: set data path.
  * @param path new path.
@@ -299,7 +289,6 @@ static struct Command_Line_Options options[] = {
     { "-conf", 1, 1, set_confdir },
     { "-d", 0, 1, set_debug },
     { "-data", 1, 1, set_datadir },
-    { "-detach", 0, 1, set_daemon },
     { "-disable-plugin", 1, 1, set_disable_plugin },
     { "-h", 0, 1, help },
     { "-local", 1, 1, set_localdir },
@@ -1013,11 +1002,6 @@ void init(int argc, char **argv) {
 
     parse_args(argc, argv, 3);
 
-#ifndef WIN32 /* ***win32: no become_daemon in windows */
-    if (settings.daemonmode)
-        become_daemon();
-#endif
-
     init_beforeplay();
     init_server();
     metaserver2_init();
@@ -1055,7 +1039,6 @@ static void help(void) {
     printf(" -conf        Set the directory to find configuration files.\n");
     printf(" -d           Turn on extra debugging messages.\n");
     printf(" -data        Set the data (share/) directory (archetypes, treasures, etc).\n");
-    printf(" -detach      Detach from the controlling terminal and run as a daemon.\n");
     printf(" -disable-plugin\n"
            "              Disables specified plugin. Use the name without the extension.\n"
            "              Can be specified multiple times. 'All' disables all plugins.\n");

@@ -289,8 +289,6 @@ void command_dumpbelow(object *op, const char *params);
 void command_settings(object *op, const char *ignored);
 /* commands.c */
 void init_commands(void);
-/* daemon.c */
-void become_daemon(void);
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);

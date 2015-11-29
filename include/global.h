@@ -240,7 +240,6 @@ typedef struct Settings {
     LogLevel debug;             /**< Default debugging level */
     uint8_t   dumpvalues;         /**< Set to dump various values/tables */
     const char *dumparg;        /**< Additional argument for some dump functions */
-    uint8_t   daemonmode;         /**< If true, detach and become daemon */
     const char *confdir;        /**< Configuration files */
     const char *datadir;        /**< Read only data files */
     const char *localdir;       /**< Read/write data files */

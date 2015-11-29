@@ -19,7 +19,6 @@ libserver_a_SOURCES = \
 	c_range.c\
 	c_wiz.c\
 	commands.c\
-	daemon.c\
 	disease.c\
 	hiscore.c\
 	gods.c\
