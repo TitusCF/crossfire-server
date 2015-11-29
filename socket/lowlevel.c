@@ -498,7 +498,7 @@ static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len
         amt = send(ns->fd, pos, len, 0);
 #else
         do {
-            amt = write(ns->fd, pos, len);
+            amt = send(ns->fd, pos, len, MSG_NOSIGNAL);
         } while ((amt < 0) && (errno == EINTR));
 #endif
 
