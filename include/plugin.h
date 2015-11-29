@@ -42,9 +42,7 @@
 #include <object.h>
 #include <logger.h>
 
-#ifdef HAVE_TIME_H
 #include <time.h>
-#endif
 #include "random_maps/random_map.h"
 #include "random_maps/rproto.h"
 

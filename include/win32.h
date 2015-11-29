@@ -43,20 +43,11 @@
 #define __STDC__ 1      /* something odd, CF want this, but don'T include it */
                         /* before the standard includes */
 
-#ifndef HAVE_SNPRINTF
-#define HAVE_SNPRINTF 1
-#endif
 #define snprintf _snprintf
 
 /* include all needed autoconfig.h defines */
 #define CS_LOGSTATS
 #define HAVE_SRAND
-#ifndef HAVE_FCNTL_H
-    #define HAVE_FCNTL_H
-#endif
-#ifndef HAVE_STDDEF_H
-    #define HAVE_STDDEF_H
-#endif
 #define MAXPATHLEN 256
 #define HAVE_STRTOL
 #define HAVE_STRERROR
@@ -151,7 +142,7 @@ extern void service_register();
 extern void service_unregister();
 extern void service_handle();
 
-#define HAVE_CURL_CURL_H
+#define HAVE_LIBCURL
 
 /* For Win32 service */
 extern int bRunning;

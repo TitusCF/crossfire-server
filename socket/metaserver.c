@@ -35,7 +35,7 @@
 #include "metaserver2.h"
 #include "version.h"
 
-#ifdef HAVE_CURL_CURL_H
+#ifdef HAVE_LIBCURL
 #include <curl/curl.h>
 #include <curl/easy.h>
 #endif
@@ -50,7 +50,7 @@ void metaserver_update(void) {
     char num_players = 0;
     player *pl;
 
-#ifdef HAVE_CURL_CURL_H
+#ifdef HAVE_LIBCURL
     /* We could use socket_info.nconns, but that is not quite as accurate,
      * as connections in the progress of being established, are listening
      * but don't have a player, etc.  The checks below are basically the
@@ -169,7 +169,7 @@ int metaserver2_init(void) {
 
     dummy[0] = '\0';
 
-#ifdef HAVE_CURL_CURL_H
+#ifdef HAVE_LIBCURL
     if (!has_init) {
         memset(&local_info, 0, sizeof(LocalMeta2Info));
         memset(&metaserver2_updateinfo, 0, sizeof(MetaServer2_UpdateInfo));
@@ -287,7 +287,7 @@ int metaserver2_init(void) {
     if (!local_info.hostname)
         local_info.notification = 0;
 
-#ifndef HAVE_CURL_CURL_H
+#ifndef HAVE_LIBCURL
     if (local_info.notification) {
         LOG(llevError, "metaserver2 file is set to do notification, but libcurl is not found.\n");
         LOG(llevError, "Either fix your compilation, or turn off metaserver2 notification in \n");
@@ -356,7 +356,7 @@ static size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *dat
  * server
  */
 static void metaserver2_updates(void) {
-#ifdef HAVE_CURL_CURL_H
+#ifdef HAVE_LIBCURL
     MetaServer2 *ms2;
     struct curl_httppost *formpost = NULL;
     struct curl_httppost *lastptr = NULL;

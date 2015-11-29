@@ -24,10 +24,13 @@
 
 #include "global.h"
 
+#include <arpa/inet.h>
 #include <assert.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #ifndef WIN32 /* ---win32 exclude unix headers */
 #include <sys/types.h>
@@ -35,18 +38,6 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #endif /* end win32 */
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
 
 #include "image.h"
 #include "newserver.h"

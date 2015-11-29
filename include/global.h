@@ -30,13 +30,10 @@
 #include <dmalloc.h>
 #endif
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "compat.h"
 
 /** Strings that should be manipulated through add_string() and free_string(). */

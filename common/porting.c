@@ -23,14 +23,13 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
 #ifdef WIN32 /* ---win32 exclude/include headers */
 #include "process.h"
-#include <fcntl.h>
-#define pid_t int  /* we include it non global, because there is a redefinition in python.h */
 #else
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -39,10 +38,6 @@
 
 /* Has to be after above includes so we don't redefine some values */
 #include "global.h"
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
 
 /*****************************************************************************
  * File related functions

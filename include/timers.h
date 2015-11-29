@@ -15,9 +15,7 @@
 #include <global.h>
 #include <object.h>
 
-#ifdef HAVE_TIME_H
 #include <time.h>
-#endif
 
 /*****************************************************************************/
 /* A timer is a kind of "clock" associated with an object. When the counter  */

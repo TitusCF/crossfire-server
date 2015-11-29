@@ -26,8 +26,11 @@
 #include "global.h"
 
 #include <assert.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 /* This block is basically taken from socket.c - I assume if it works there,
  * it should work here.
@@ -39,18 +42,6 @@
 #include <netinet/tcp.h>
 #include <netdb.h>
 #endif /* win32 */
-
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 
 #include "commands.h"
 #include "living.h"
