@@ -112,13 +112,6 @@
 /* Location of changeable single system data (temp maps, hiscore, etc) */
 #define LOCALDIR "var"
 
-#define COMPRESS "/usr/bin/compress"
-#define UNCOMPRESS "/usr/bin/uncompress"
-#define GZIP "/bin/gzip"
-#define GUNZIP "/bin/gunzip"
-#define BZIP "/usr/bin/bzip2"
-#define BUNZIP "/usr/bin/bunzip2"
-
 /* Suffix for libraries */
 #define PLUGIN_SUFFIX ".dll"
 

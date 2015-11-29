@@ -109,10 +109,7 @@ uninstall-local:
 
 # This block makes the archive of the arch directory.
 archive::
-	$(AMTAR) -cvh --exclude=dev --exclude=.svn -f $(PACKAGE)-$(VERSION)-arch.tar arch
-	$(GZIP) -cv9 $(PACKAGE)-$(VERSION)-arch.tar > ../$(PACKAGE)-$(VERSION)-arch.tar.gz
-	$(BZIP) -cv --repetitive-best $(PACKAGE)-$(VERSION)-arch.tar > ../$(PACKAGE)-$(VERSION)-arch.tar.bz2
-	$(RM) $(PACKAGE)-$(VERSION)-arch.tar
+	$(AMTAR) -ch --exclude=dev --exclude=.svn -f ${PACKAGE}-arch-${VERSION}.tar arch
 
 libArch:
 	tar cvf A`perl puredate.pl`.tar arch treasures

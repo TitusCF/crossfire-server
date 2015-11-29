@@ -1,5 +1,4 @@
 # Process this file with autoconf to produce a configure script.
-
 AC_INIT([crossfire], [1.71.dev], [crossfire@metalforge.org])
 AC_CONFIG_AUX_DIR([utils])
 AC_CONFIG_HEADERS([include/autoconf.h])
@@ -60,7 +59,6 @@ if test $LEX == ':'; then
 fi
 
 AC_PATH_PROG(BASENAME, basename)
-AC_PATH_PROG(BZIP, bzip2)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(PERL, perl)
@@ -68,7 +66,6 @@ AC_PATH_PROG(SVNVERSION, svnversion)
 AC_PATH_PROG(TAR, tar)
 
 AC_SUBST(BASENAME)
-AC_SUBST(BZIP)
 AC_SUBST(GZIP)
 AC_SUBST(PERL)
 
