@@ -217,7 +217,7 @@ void init_listening_socket(socket_struct *ns) {
     }
 #else
     if (setsockopt(ns->fd, SOL_SOCKET, SO_REUSEADDR, (char *)NULL, 0)) {
-        LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror(errno));
     }
 #endif
 
