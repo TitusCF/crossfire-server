@@ -1212,30 +1212,6 @@ static void rec_sigquit(int i) {
 #endif
 
 #ifndef DEBUG
-/**
- * SIGPIPE handler.
- *
- * Keep running if we receive a sigpipe.  Crossfire should really be able
- * to handle this signal (at least at some point in the future if not
- * right now).  By causing a dump right when it is received, it is not
- * doing much good.  However, if it core dumps later on, at least it can
- * be looked at later on, and maybe fix the problem that caused it to
- * dump core.  There is no reason that SIGPIPES should be fatal
- *
- * @param i
- * unused.
- */
-static void rec_sigpipe(int i) {
-    LOG(llevError, "\nSIGPIPE--------------\n------------\n--------\n---\n");
-#if 1 && !defined(WIN32) /* ***win32: we don't want send SIGPIPE */
-    LOG(llevInfo, "\nReceived SIGPIPE, ignoring...\n");
-    signal(SIGPIPE, rec_sigpipe);/* hocky-pux clears signal handlers */
-#else
-    LOG(llevError, "\nSIGPIPE received, not ignoring...\n");
-    fatal_signal(1); /*Might consider to uncomment this line */
-#endif
-}
-
 #ifdef SIGBUS
 /**
  * SIGBUS handler.
@@ -1290,11 +1266,10 @@ static void init_signals(void) {
     sa.sa_handler = rec_sighup;
     sigaction(SIGHUP, &sa, NULL);
     signal(SIGINT, rec_sigint);
+    signal(SIGPIPE, SIG_IGN);
 #ifndef DEBUG
     signal(SIGQUIT, rec_sigquit);
     signal(SIGSEGV, rec_sigsegv);
-    LOG(llevInfo, "\n---------registering SIGPIPE\n");
-    signal(SIGPIPE, rec_sigpipe);
 #ifdef SIGBUS
     signal(SIGBUS, rec_sigbus);
 #endif
