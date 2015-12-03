@@ -41,7 +41,6 @@ static void init_races(void);
 static void dump_races(void);
 static void add_to_racelist(const char *race_name, object *op);
 static racelink *get_racelist(void);
-static void fatal_signal(int make_core);
 
 /**
  * Command line option: set logfile name.
@@ -1155,20 +1154,6 @@ static void init_startup(void) {
     }
 }
 
-/* Signal handlers: */
-
-#ifndef DEBUG
-/**
- * SIGSERV handler.
- * @param i
- * unused.
- */
-static void rec_sigsegv(int i) {
-    LOG(llevError, "\nSIGSEGV received.\n");
-    fatal_signal(1);
-}
-#endif
-
 /**
  * Signal handler that begins a normal server shutdown.
  */
@@ -1196,50 +1181,6 @@ static void rec_sighup(int i) {
     }
 }
 
-#ifndef DEBUG
-/**
- * SIGQUIT handler.
- *
- * @param i
- * unused.
- */
-static void rec_sigquit(int i) {
-    LOG(llevInfo, "\nSIGQUIT received\n");
-    fatal_signal(1);
-}
-#endif
-
-#ifndef DEBUG
-#ifdef SIGBUS
-/**
- * SIGBUS handler.
- *
- * @param i
- * unused.
- */
-static void rec_sigbus(int i) {
-    LOG(llevError, "\nSIGBUS received\n");
-    fatal_signal(1);
-}
-#endif
-#endif
-
-/**
- * General signal handling. Will exit() in any case.
- *
- * @param make_core
- * if set abort() instead of exit() to generate a core dump.
- */
-static void fatal_signal(int make_core) {
-    if (init_done) {
-        emergency_save(0);
-        clean_tmp_files();
-    }
-    if (make_core)
-        abort();
-    exit(0);
-}
-
 /**
  * Setup our signal handlers.
  */
@@ -1254,13 +1195,6 @@ static void init_signals(void) {
     sigaction(SIGHUP, &sa, NULL);
     signal(SIGINT, signal_shutdown);
     signal(SIGPIPE, SIG_IGN);
-#ifndef DEBUG
-    signal(SIGQUIT, rec_sigquit);
-    signal(SIGSEGV, rec_sigsegv);
-#ifdef SIGBUS
-    signal(SIGBUS, rec_sigbus);
-#endif
-#endif
 #endif /* win32 */
 }
 
