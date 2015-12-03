@@ -36,24 +36,15 @@
 #endif
 
 #include "object.h"
+#include "path.h"
+#include "random_maps/random_map.h"
+#include "random_maps/rproto.h"
 #include "sproto.h"
 #include "tod.h"
 #include "version.h"
 
-#include "random_maps/random_map.h"
-#include "random_maps/rproto.h"
-#include "path.h"
-
 /** Ingame days. */
-static const char days[7][4] = {
-    "Sun",
-    "Mon",
-    "Tue",
-    "Wed",
-    "Thu",
-    "Fri",
-    "Sat"
-};
+static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
 /**
  * Encrypt a string. Used for password storage on disk.
@@ -1406,8 +1397,7 @@ void server_main(int argc, char *argv[]) {
     if (getuid() == 0 || geteuid() == 0) {
         fprintf(stderr,
                 "Running crossfire-server as root is a bad idea; aborting!\n"
-                "Please run it again as a normal, unprivileged user.\n"
-                );
+                "Please run it again as a normal, unprivileged user.\n");
         exit(EXIT_FAILURE);
     }
 #endif
