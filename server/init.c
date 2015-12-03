@@ -30,6 +30,7 @@
 
 #include "loader.h"
 #include "version.h"
+#include "server.h"
 #include "sproto.h"
 
 static void help(void);
@@ -1169,13 +1170,10 @@ static void rec_sigsegv(int i) {
 #endif
 
 /**
- * SIGINT handler.
- * @param i
- * unused.
+ * Signal handler that begins a normal server shutdown.
  */
-static void rec_sigint(int i) {
-    LOG(llevInfo, "\nSIGINT received.\n");
-    fatal_signal(0);
+static void signal_shutdown() {
+    shutdown_flag += 1;
 }
 
 /**
@@ -1224,17 +1222,6 @@ static void rec_sigbus(int i) {
     fatal_signal(1);
 }
 #endif
-
-/**
- * SIGTERM handler.
- *
- * @param i
- * unused.
- */
-static void rec_sigterm(int i) {
-    LOG(llevInfo, "\nSIGTERM received\n");
-    fatal_signal(0);
-}
 #endif
 
 /**
@@ -1265,7 +1252,7 @@ static void init_signals(void) {
     sa.sa_flags = 0;
     sa.sa_handler = rec_sighup;
     sigaction(SIGHUP, &sa, NULL);
-    signal(SIGINT, rec_sigint);
+    signal(SIGINT, signal_shutdown);
     signal(SIGPIPE, SIG_IGN);
 #ifndef DEBUG
     signal(SIGQUIT, rec_sigquit);
@@ -1273,7 +1260,6 @@ static void init_signals(void) {
 #ifdef SIGBUS
     signal(SIGBUS, rec_sigbus);
 #endif
-    signal(SIGTERM, rec_sigterm);
 #endif
 #endif /* win32 */
 }

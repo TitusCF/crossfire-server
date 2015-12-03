@@ -41,6 +41,7 @@
 
 #include "image.h"
 #include "newserver.h"
+#include "server.h"
 #include "sockproto.h"
 #include "sproto.h"
 
@@ -501,6 +502,12 @@ void do_server(void) {
     int i, pollret, active = 0;
     fd_set tmp_read, tmp_exceptions, tmp_write;
     player *pl, *next;
+
+    if (shutdown_flag == 1) {
+        LOG(llevInfo, "Shutting down...\n");
+        shutdown_flag += 1;
+        cmd_shutdown_time = time(NULL);
+    }
 
 #ifdef CS_LOGSTATS
     if ((time(NULL)-cst_lst.time_start) >= CS_LOGTIME)
