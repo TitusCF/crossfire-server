@@ -1577,6 +1577,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
                     op->casting_time = -1;
                 }
                 op->stats.grace -= random_roll(1, SP_level_spellpoint_cost(caster, spell_ob, SPELL_GRACE), op, PREFER_LOW);
+                cast_create_obj(op, create_archetype(ARCH_SPELL_BUNGLE), 0);
                 return 0;
             } else if (spell_ob->stats.sp) {
                 int failure = random_roll(0, 199, op, PREFER_HIGH)-op->contr->encumbrance+op->level-spell_ob->level+35;
@@ -1589,6 +1590,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
                         spell_failure(op, failure, SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA), skill);
                     op->contr->shoottype = old_shoottype;
                     op->stats.sp -= random_roll(0, SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA), op, PREFER_LOW);
+                    cast_create_obj(op, create_archetype(ARCH_SPELL_BUNGLE), 0);
                     return 0;
                 }
             }
