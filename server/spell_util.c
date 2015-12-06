@@ -521,7 +521,6 @@ int reflwall(mapstruct *m, int x, int y, object *sp_op) {
 
 /**
  * Creates object new_op in direction dir or if that is blocked, beneath the player (op).
- * we pass 'caster', but don't use it for anything.
  * This is really just a simple wrapper function .
  *
  * @param op
@@ -529,7 +528,7 @@ int reflwall(mapstruct *m, int x, int y, object *sp_op) {
  * @param new_op
  * object to insert.
  * @param dir
- * direction to insert into. Can be 0.
+ * direction to insert into. Can be 0 to insert below.
  * @return
  * direction that the object was actually placed in.
  */
