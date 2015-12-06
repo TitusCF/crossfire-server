@@ -1753,14 +1753,21 @@ void inventory(object *op, object *inv) {
  *
  * @param op
  * must be a player.
+ * @param old
+ * previous pickup mode.
  */
-static void display_new_pickup(const object *op) {
+static void display_new_pickup(const object *op, int old) {
     int i = op->contr->mode;
 
     esrv_send_pickup(op->contr);
 
-    if (!(i&PU_NEWMODE) || !(i&PU_DEBUG))
+    if (!(i&PU_NEWMODE) || !(i&PU_DEBUG)) {
+        if ((old & PU_INHIBIT) != (op->contr->mode & PU_INHIBIT)) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                "Pickup is %s.", (old & PU_INHIBIT) ? "active" : "inhibited");
+        }
         return;
+    }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d NEWMODE",
@@ -1894,7 +1901,7 @@ void command_pickup(object *op, const char *params) {
     if (*params == '\0') {
         /* if the new mode is used, just print the settings */
         if (op->contr->mode&PU_NEWMODE) {
-            display_new_pickup(op);
+            display_new_pickup(op, op->contr->mode);
             return;
         }
         if (1)
@@ -1911,6 +1918,7 @@ void command_pickup(object *op, const char *params) {
 
         for (mode = 0; names[mode]; mode++) {
             if (!strcmp(names[mode], params+1)) {
+                int old = op->contr->mode;
                 i = op->contr->mode;
                 if (!(i&PU_NEWMODE))
                     i = PU_NEWMODE;
@@ -1925,7 +1933,7 @@ void command_pickup(object *op, const char *params) {
                         i = i|modes[mode];
                 }
                 op->contr->mode = i;
-                display_new_pickup(op);
+                display_new_pickup(op, old);
                 return;
             }
         }
@@ -1943,7 +1951,7 @@ void command_pickup(object *op, const char *params) {
         return;
     }
     set_pickup_mode(op, i);
-    display_new_pickup(op);
+    display_new_pickup(op, op->contr->mode);
 }
 
 /**
