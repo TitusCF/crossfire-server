@@ -1616,6 +1616,8 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         if (op->type != PLAYER)
             return 0;
 
+        cast_create_obj(op, create_archetype(ARCH_SPELL_BLOCKED), 0);
+
         if ((mflags&P_NO_CLERIC) && spell_ob->stats.grace)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                                  "This ground is unholy!  %s ignores you.",
