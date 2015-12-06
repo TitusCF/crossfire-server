@@ -1275,12 +1275,14 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
                       "Something strange happens. You can't remember where to go!?");
         object_remove(force);
         object_free2(force, 0);
+        cast_create_obj(op, create_archetype(ARCH_PORTAL_FAILED), 0);
         return 1;
     } else if (exitmap->last_reset_time != force->weapontype) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "The spell effect has expired.");
         object_remove(force);
         object_free2(force, 0);
+        cast_create_obj(op, create_archetype(ARCH_PORTAL_FAILED), 0);
         return 1;
     }
 

@@ -414,6 +414,7 @@ static inline void set_flag(object *op, int flag) {
 #define ARCH_DETECT_MAGIC       "detect_magic"  /**< Archetype for detect magic spell. */
 #define ARCH_DEPLETION          "depletion"     /**< Archetype for depletion. */
 #define ARCH_SYMPTOM            "symptom"       /**< Archetype for disease symptom. */
+#define ARCH_PORTAL_FAILED      "town_portal_failed"    /**< Archetype for town portal failure. */
 
 /**
  * Returns the head part of an object. For single-tile objects returns the
