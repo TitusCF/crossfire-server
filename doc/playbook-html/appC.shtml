@@ -9,7 +9,7 @@
 Below in boxes, the gods in your compiled version of <em>Crossfire</em> are shown.
 Use the command <samp>crossfire -m8</samp> to check if the information
 presented here is accurate.<p>
-(Note: you need to have compiled with the <samp>DUMP\_SWITCHES</samp> and
+(Note: you need to have compiled with the <samp>DUMP_SWITCHES</samp> and
 <samp>MULTIPLE_GODS</samp> flags for this to work!) The boxed attributes
 have meaning as follows:<p>
 
