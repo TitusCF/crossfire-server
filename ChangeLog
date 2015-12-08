@@ -1,3 +1,11 @@
+2015-12-07	Daniel Hawkins
+	* doc/scripts/gods-extract.pl: Refactor old gods-extract AWK scripts into a perl script.
+	  While we're here, also reimplement protections, immunities, and vulnerabilities.
+	* doc/playbook-html/Makefile.am: Point to the new gods-extract script.
+	* doc/playbook-html/gods-extract: Removed.
+	* doc/playbook/Makefile.am: Point to the new gods-extract script.
+	* doc/playbook/gods-extract: Removed.
+
 2015-11-25	Kevin Zheng
 	* server/daemon.c: Remove server '-detach' flag
 

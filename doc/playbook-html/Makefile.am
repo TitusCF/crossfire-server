@@ -241,8 +241,8 @@ stats.gif items.gif monsters.gif spells.gif characters.gif:
 appC.html: appC.shtml gods.html
 	$(PERL) $(srcdir)/../include_html.pl appC.shtml appC.html
 
-gods.html: gods-extract $(CROSSBIN)
-	$(AWK) -F, -v crosscmd="$(CROSSBIN) -m8" -f gods-extract > gods.html
+gods.html: ../scripts/gods-extract.pl $(CROSSBIN)
+	$(PERL) ../scripts/gods-extract.pl "$(CROSSBIN) -m8" html gods.html
 
 archive: $(HANDBOOK)
 	$(mkinstalldirs) $(DTOP)/handbook-html/fig

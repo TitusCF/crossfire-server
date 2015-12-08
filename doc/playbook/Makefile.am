@@ -82,8 +82,8 @@ equip.tex: in_equip treas2-extract
 in_equip: treas1-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f treas1-extract $(pkgdatadir)/archetypes | sort -d > in_equip
 
-gods.tex: gods-extract $(CROSSBIN)
-	$(AWK) -F, -v crosscmd="$(CROSSBIN) -m8" -f gods-extract > gods.tex
+gods.tex: ../scripts/gods-extract.pl $(CROSSBIN)
+	$(PERL) ../scripts/gods-extract.pl "$(CROSSBIN) -m8" latex gods.tex
 
 levels.tex: ../scripts/levels-extract.pl
 	$(PERL) ../scripts/levels-extract.pl "$(top_srcdir)/lib/config/exp_table" latex levels.tex
