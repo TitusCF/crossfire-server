@@ -1,3 +1,6 @@
+2015-12-09	Kevin Zheng
+	* socket/info.c: Log messages that are broadcast to all players
+
 2015-12-07	Daniel Hawkins
 	* doc/scripts/gods-extract.pl: Refactor old gods-extract AWK scripts into a perl script.
 	  While we're here, also reimplement protections, immunities, and vulnerabilities.

@@ -96,6 +96,7 @@ void draw_ext_info(
             draw_ext_info((flags&~NDI_ALL&~NDI_ALL_DMS), pri, tmppl->ob, type, subtype, message);
         }
 
+        LOG(llevInfo, "-- %s\n", message);
         return;
     }
 
