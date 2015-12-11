@@ -349,13 +349,13 @@ int account_login(const char *account_name, const char *account_password) {
  * Checks a string to make sure it does not have any invalid characters.
  * We are fairly permissive on character here.
  * String must start with alphanumeric
- * String must not contain :;/'
+ * String must not contain :;/'[
  * String can not end if a space
  * This string will get used for file/directory names, but so long
  * as as characters are not included that are not illegal, one can still
  * manipulate the file/directory by putting it in quotes.  If one starts
  * to block all characters that may get interperted by shells, a large
- * number of characters now get blocked (|*[]()!, etc), and deciding
+ * number of characters now get blocked (|*]()!, etc), and deciding
  * which should be allowed and not just becomes a judgement call, so easier
  * to just allow all and have the user put it in quotes.
  *
@@ -370,15 +370,23 @@ int account_check_string(const char *str)
 
     /* Require first character to be letter or number */
     if (!isalnum(*str)) return 1;
-    for (; *str != '\0'; str++) {
+    for (; *str != '\0'; ++str) {
         if (!isprint(*str)) return 1;
-        if (*str == ':' || *str==';' || *str=='/' || *str=='\'') return 1;
+		switch (*str){
+			case ':':
+			case ';':
+			case '/':
+			case '\'':
+			case '[':
+                return 1;
+		}
     }
     /* Don't allow space characters at end of string. */
     if (isspace(*(str-1))) return 1;
     if ((str - cp) > MAX_NAME) return 2;
     return 0;
 }
+
 
 /**
  * Adds an account.  It does error checking, but the caller might

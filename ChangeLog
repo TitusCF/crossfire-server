@@ -1,3 +1,8 @@
+2015-12-10	Daniel Hawkins
+	* server/account.c: Add [ to the blocked characters.
+	  It causes improper message printing on the client side.
+	  This does not effect existing characters, only new ones.
+
 2015-12-09	Kevin Zheng
 	* socket/info.c: Log messages that are broadcast to all players
 
