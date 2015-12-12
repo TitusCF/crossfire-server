@@ -80,7 +80,7 @@ of the text (particularly section <a href="chap3.html#3.2.3">statistics calculat
 <a name="table_pri_eff">
 <table border=1 cellpadding = 5>
 <tr><th>Stat</th><th>HpB</th><th>MgB&sup1</th><th>AcB</th><th>DmB</th>
-<th>Thac0</th><th>Max Carry</th><th>Speed</th>
+<th>WcB</th><th>Max Carry</th><th>Speed</th>
 <th>%learn&sup2</th><th>Buy/Sell</th></tr>
 <tr><th></th><th>(CON)</th><th></th><th>(DEX)</th><th>(STR)</th><th>(STR)</th>
 <th>(STR)</th><th>(DEX)</th><th></th><th>(CHA)</th></tr>
