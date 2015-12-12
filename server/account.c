@@ -373,13 +373,13 @@ int account_check_string(const char *str)
     for (; *str != '\0'; ++str) {
         if (!isprint(*str)) return 1;
 		switch (*str){
-			case ':':
-			case ';':
-			case '/':
-			case '\'':
-			case '[':
+            case ':':
+            case ';':
+            case '/':
+            case '\'':
+            case '[':
                 return 1;
-		}
+        }
     }
     /* Don't allow space characters at end of string. */
     if (isspace(*(str-1))) return 1;
