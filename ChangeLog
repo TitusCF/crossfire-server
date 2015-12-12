@@ -1,3 +1,12 @@
+2015-12-11	Daniel Hawkins
+	* doc/scripts/bonus-extract.pl: Refactor old bonus-extract,
+	  replacing it with a perl script that gets the bonuses from
+	  stat_bonus.
+	* doc/playbook-html/Makefile.am: Change the bonus.html build target to run the new script.
+	* doc/playbook-html/bonus-extract: Removed.
+	* doc/playbook/Makefile.am: Change the bonus.tex build target to run the new script.
+	* doc/playbook/bonus-extract: Removed.
+
 2015-12-10	Daniel Hawkins
 	* server/account.c: Add [ to the blocked characters.
 	  It causes improper message printing on the client side.

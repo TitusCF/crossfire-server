@@ -67,8 +67,8 @@ items: .bmaps in_items ../scripts/makeps.pl items.ps
 in_items: items-extract $(pkgdatadir)/archetypes
 	$(AWK) -f items-extract $(pkgdatadir)/archetypes > in_items
 
-bonus.tex:
-	$(AWK) -v living_c=$(top_srcdir)/common/living.c 	-f bonus-extract > bonus.tex
+bonus.tex: ../scripts/bonus-extract.pl
+	$(PERL) ../scripts/bonus-extract.pl $(top_srcdir)/lib/config/stat_bonus latex bonus.tex
 
 char.tex: .bmaps in_char ../scripts/makeps.pl characters.ps
 	$(PERL) ../scripts/makeps.pl output=$(OUTPUT) libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.tex

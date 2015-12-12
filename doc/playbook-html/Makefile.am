@@ -62,8 +62,8 @@ handbook.html: version.html handbook.shtml
 chap2.html: bonus.html char.html equip.html skills.html chap2.shtml
 	$(PERL) $(srcdir)/../include_html.pl chap2.shtml chap2.html
 
-bonus.html:
-	$(AWK) -v living_c=../../common/living.c 	-f bonus-extract > bonus.html
+bonus.html: ../scripts/bonus-extract.pl
+	$(PERL) ../scripts/bonus-extract.pl $(top_srcdir)/lib/config/stat_bonus html bonus.html
 
 in_char: char-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f char-extract $(pkgdatadir)/archetypes > in_char
