@@ -20,6 +20,9 @@ spoiler.ps:
 handbook.ps:
 	(cd playbook; $(MAKE) handbook)
 
+spell-docs:
+	(cd spell-docs; $(MAKE) spell-docs)
+
 crosslib.doc:
 	(cd ../common; make doc)
 
@@ -28,7 +31,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(man6dir)/crossfire.6*
 	rm -f $(DESTDIR)$(man6dir)/crossfire-config.6*
 
-archive: spoiler playbook
+archive: spoiler playbook spell-docs
 	$(mkinstalldirs) $(DTOP)
 	cp $(EXTRA_DIST) $(DTOP)
 	cp spoiler.ps handbook.ps $(DTOP)

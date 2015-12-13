@@ -1,3 +1,14 @@
+2015-12-12	Daniel Hawkins
+	* doc/Makefile.am: Add build target for making documentation archive
+	  with new dynamically generated spell lists.
+	* doc/spell-docs/Makefile.am: Add build target for dynamic generation of spell lists.
+	  Also, clean up the EXTRA_DIST declaration.
+	* doc/spell-docs/spell-lists.pl: Added a perl script to dynamically generate spell lists.
+	* doc/spell-docs/README: Updated to mention effort to upgrade docs.
+	* doc/spell-docs/prayer-list.ps: Removed. Now dynamically generated from spell-lists.pl.
+	* doc/spell-docs/prayer-list.txt: Removed. Now dynamically generated from spell-lists.pl.
+	* doc/spell-docs/spell-list.ps: Removed. Now dynamically generated from spell-lists.pl.
+
 2015-12-11	Daniel Hawkins
 	* doc/scripts/bonus-extract.pl: Refactor old bonus-extract,
 	  replacing it with a perl script that gets the bonuses from

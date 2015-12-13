@@ -1,3 +1,10 @@
-EXTRA_DIST = README prayer-list.ps spell-info.ps spell-list.ps \
-	spell-summary.ps tome-of-magic.ps prayer-list.txt spell-info.txt \
-	spell-summary.ps tome-of-magic.txt Makefile.in
+EXTRA_DIST = README spell-info.ps spell-summary.ps \
+	tome-of-magic.ps spell-info.txt	tome-of-magic.txt
+
+PERL=@PERL@
+CROSSBIN=../../server/crossfire-server
+
+CLEANFILES=spell-list.txt spell-list.ps prayer-list.txt prayer-list.ps
+
+spell-docs:
+	$(PERL) spell-lists.pl "$(CROSSBIN) -m4" spell-list prayer-list

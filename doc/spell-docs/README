@@ -2,18 +2,30 @@ FILES
 =====
 
 	spell-info.*	-  basic spell terminology
-	spell-list.*	-  list of wizard spells
-	prayer-list.*	-  list of priest spells
 	spell-summary.*	-  short description of spell effects
 	tome-of-magic.*	-  detailed description of spell effects
 
 "txt" (ascii) and "ps" (PostScript) versions of each file should have
 been included within this archive.
 
-AUTHOR
-======
+Dynamically generated:
+	spell-list.*	-  list of wizard spells
+	prayer-list.*	-  list of priest spells
 
-This archive is maintained by chrisc@cs.odu.edu (Chris Carpinello) -
+Run 'make spell-docs' to generate these files. If enscript is installed,
+they will produce both ps and txt versions. If it isn't, just the txt
+will be generated.
+
+
+AUTHORS
+=======
+
+This archive is in the process of being updated by Daniel Hawkins.
+The 22-year-old listings in here were far from useful anymore, and
+he decided it was time to make these dynamically generated from the
+server, so they don't fall out of date so easily.
+
+This archive was maintained by chrisc@cs.odu.edu (Chris Carpinello) -
 please mail all additions, corrections, comments, and suggestions
 to this address.
 
@@ -22,6 +34,10 @@ spell descriptions.
 
 NOTES
 =====
+
+The archive upgrade by Daniel Hawkins is started December 12, 2015.
+This should lead to the second release of the spell documentation
+in the near future.
 
 This is the first release of the spell documentation.  Please send me
 your comments and tell me what you think!
