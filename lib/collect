@@ -165,7 +165,7 @@ sub traverse {
 	} elsif ( $file =~ /.*\.trs$/) {	# Treasure information file
 	    push(@treasure_files, $file);
 	}
-	elsif ( $file =~ /\.png$/ || $file =~ /\.xpm$/ || $file =~ /\.xcf/ || $file =~ /\.doc$/ || $file =~ /\.txt$/ || $file =~ /$faceExt$/) {
+	elsif ( $file =~ /\.png$/ || $file =~ /\.xpm$/ || $file =~ /\.xcf/ || $file =~ /\.doc$/ || $file =~ /\.txt$/ || $file =~ /$faceExt$/ || $file =~ /\.blend$/ ) {
 	# we cover many files we probably shouldn't, but oh well.
 	# we just don't want complaints about all of these.
 	}
