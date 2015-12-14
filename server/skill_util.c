@@ -1210,6 +1210,7 @@ static void do_skill_attack(object *tmp, object *op, const char *string, object 
                                  MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_MISS,
                                  "You miss %s!",
                                  op_name);
+        }
     }
 }
 
