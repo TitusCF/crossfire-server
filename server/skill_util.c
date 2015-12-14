@@ -1176,33 +1176,40 @@ static void do_skill_attack(object *tmp, object *op, const char *string, object 
     }
 
     success = attack_ob(tmp, op);
+    
+    /*
+     * print appropriate  messages to the player
+     *
+     * If no string, then we aren't dealing with the
+     * skill attack directly, so the message is printed elsewhere.
+     *
+     * Only print hit/miss if we've got a Fire+Attack.
+     * Otherwise, don't print here at all.
+     */
 
-    /* print appropriate  messages to the player */
-
-    if (success && string != NULL && tmp && !QUERY_FLAG(tmp, FLAG_FREED)) {
+    if (string != NULL && tmp && !QUERY_FLAG(tmp, FLAG_FREED)) {
         char op_name[MAX_BUF];
-
-        if (op->type == PLAYER) {
+        if (success){
+            if (op->type == PLAYER) {
+                query_name(tmp, op_name, MAX_BUF);
+                draw_ext_info_format(NDI_UNIQUE, 0, op,
+                                     MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
+                                     "You %s %s!",
+                                     string, op_name);
+            } else if (tmp->type == PLAYER) {
+                query_name(op, op_name, MAX_BUF);
+                draw_ext_info_format(NDI_UNIQUE, 0, tmp,
+                                     MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
+                                     "%s %s you!",
+                                     op_name, string);
+            }
+        }
+        else{
             query_name(tmp, op_name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
-                                 "You %s %s!",
-                                 string, op_name);
-        } else if (tmp->type == PLAYER) {
-            query_name(op, op_name, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, tmp,
-                                 MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
-                                 "%s %s you!",
-                                 op_name, string);
-        }
-    } else if (tmp && !QUERY_FLAG(tmp, FLAG_FREED)) {
-        char op_name[MAX_BUF];
-
-        query_name(tmp, op_name, MAX_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_MISS,
-                             "You miss %s!",
-                             op_name);
+                                 MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_MISS,
+                                 "You miss %s!",
+                                 op_name);
     }
 }
 

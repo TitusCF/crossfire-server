@@ -1,3 +1,6 @@
+2015-12-13  Daniel Hawkins
+    * server/skill_util.c: Fix phantom miss messages that should occur only with [Fire]+attack.
+
 2015-12-12	Daniel Hawkins
 	* doc/Makefile.am: Add build target for making documentation archive
 	  with new dynamically generated spell lists.
