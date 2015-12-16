@@ -1,4 +1,4 @@
-EXTRA_DIST = README spell-summary.ps tome-of-magic.ps
+EXTRA_DIST = README spell-summary.ps
 
 PERL=@PERL@
 CROSSBIN=../../server/crossfire-server

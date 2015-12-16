@@ -6,6 +6,8 @@
 	  accomodate for new script.
 	* doc/spell-docs/spell-info.ps: Removed. Generated from spell-info.txt.
 	* doc/spell-docs/spell-lists.pl: Removed PostScript output.
+	* doc/spell-docs/tome-of-magic.ps: Removed. Generated from
+	  tome-of-magic.txt.
 
 2015-12-13  Daniel Hawkins
 	* server/skill_util.c: Fix phantom miss messages that should occur only with [Fire]+attack.
