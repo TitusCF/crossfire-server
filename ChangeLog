@@ -1,5 +1,14 @@
+2015-12-15  Daniel Hawkins
+	* doc/spell-docs/create_ps.sh: Abstracted the PostScript generation
+	  out of the perl script. Also add spell-info.ps to the generated
+	  documents.
+	* doc/spell-docs/Makefile.am: Adjusted make definitions to
+	  accomodate for new script.
+	* doc/spell-docs/spell-info.ps: Removed. Generated from spell-info.txt.
+	* doc/spell-docs/spell-lists.pl: Removed PostScript output.
+
 2015-12-13  Daniel Hawkins
-    * server/skill_util.c: Fix phantom miss messages that should occur only with [Fire]+attack.
+	* server/skill_util.c: Fix phantom miss messages that should occur only with [Fire]+attack.
 
 2015-12-12	Daniel Hawkins
 	* doc/Makefile.am: Add build target for making documentation archive
