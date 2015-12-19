@@ -110,16 +110,13 @@ AC_HEADER_DIRENT
 AC_CHECK_HEADERS([crypt.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_TYPE_SIZE_T
 CF_CHECK_VISIBILITY()
 
 ##############################################################################
 # Library Function Checks
 ##############################################################################
 # Checks for library functions.
-AC_FUNC_MEMCMP
-
-AC_CHECK_FUNCS([getdtablesize strcasecmp strcasestr strdup strncasecmp srandom srand48 srand sysconf tempnam getaddrinfo getnameinfo])
+AC_CHECK_FUNCS([getdtablesize strcasecmp strcasestr strdup strncasecmp srandom srand48 sysconf tempnam getaddrinfo getnameinfo])
 
 # Check for better but non-portable functions.
 AC_CHECK_FUNCS([strlcat strlcpy])

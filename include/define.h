@@ -871,12 +871,14 @@ typedef unsigned char MoveType;
 #  define RANDOM() lrand48()
 #  define SRANDOM(xyz) srand48(xyz)
 #  else
-#    ifdef HAVE_SRAND
-#      define RANDOM() rand()
-#      define SRANDOM(xyz) srand(xyz)
-#    else
-#      error "Could not find a usable random routine"
-#    endif
+/*
+ * We require C99, which will at least have srand() and rand() defined.
+ * Removed the HAVE_SRAND check due to this.
+ *
+ * Daniel Hawkins 2015-12-18
+ */
+#    define RANDOM() rand()
+#    define SRANDOM(xyz) srand(xyz)
 #  endif
 #endif
 

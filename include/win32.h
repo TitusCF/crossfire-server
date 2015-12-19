@@ -47,7 +47,6 @@
 
 /* include all needed autoconfig.h defines */
 #define CS_LOGSTATS
-#define HAVE_SRAND
 #define MAXPATHLEN 256
 #define HAVE_STRTOL
 #define HAVE_STRERROR
