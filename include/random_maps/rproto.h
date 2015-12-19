@@ -35,7 +35,6 @@ extern void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms
 extern object *pick_joined_wall(object *the_wall, char **layout, int i, int j, RMParms *RP);
 extern object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, RMParms *RP);
 /* monster.c */
-extern void insert_multisquare_ob_in_map(object *new_obj, mapstruct *map);
 extern void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms *RP);
 /* door.c */
 extern int surround_check2(char **layout, int i, int j, int Xsize, int Ysize);

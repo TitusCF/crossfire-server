@@ -99,14 +99,12 @@ void include_map_in_map(mapstruct *dest_map, const mapstruct *in_map, int x, int
                 if (tmp->head != NULL) {
                     continue;
                 }
-                new_ob = arch_to_object(tmp->arch);
+                new_ob = object_create_arch(tmp->arch);
                 object_copy_with_inv(tmp, new_ob);
                 if (QUERY_FLAG(tmp, FLAG_IS_LINKED)) {
                     add_button_link(new_ob, dest_map, tmp->path_attuned);
                 }
-                new_ob->x = i+x;
-                new_ob->y = j+y;
-                insert_multisquare_ob_in_map(new_ob, dest_map);
+                object_insert_in_map_at(new_ob, dest_map, NULL, INS_NO_MERGE|INS_NO_WALK_ON, i + x, j + y);
             }
             FOR_MAP_FINISH();
         }
