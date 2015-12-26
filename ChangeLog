@@ -1,3 +1,6 @@
+2015-12-25  Daniel Hawkins
+	* configure.ac: Add check for librt and link it in if found.
+
 2015-12-18  Daniel Hawkins
 	* doc/spell-docs/spell-summary.ps: Removed. Replaced by a text file for
 	  easier maintenance in the future.
