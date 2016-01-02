@@ -45,6 +45,7 @@ for ($i = 0; $i < $#sorted_spells; ++$i){
 	if ($sorted_spells[$i]){
 		print SPELLS "level $i\n";
 		print SPELLS "==========\n";
+		# Since each array element contains all the spell names for a level, this works.
 		print SPELLS "$sorted_spells[$i]\n";
 	}
 }
@@ -54,6 +55,7 @@ for ($i = 0; $i < $#sorted_prayers; ++$i){
 	if ($sorted_prayers[$i]){
 		print PRAYERS "level $i\n";
 		print PRAYERS "=========\n";
+		# Since each array element contains all the spell names for a level, this works.
 		print PRAYERS "$sorted_prayers[$i]\n";
 	}
 }
@@ -66,11 +68,14 @@ close(PRAYERS);
 # The reference to the array of levels for spells.
 # @param $name
 # The reference to the array of names for spells.
+#
+# @return @level_array
+# The array of spell information, now sorted.
 sub sort{
 	# These are both array references
 	my $level = shift;
 	my $name = shift;
-	# Now, declare the array of array references to sort the spells into.
+	# Now, declare the array to sort the spells into.
 	my @level_array;
 	# Iterate through the spells
 	for ($i = 0; $i < $#$level; ++$i){
