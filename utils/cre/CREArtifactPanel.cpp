@@ -209,7 +209,7 @@ void CREArtifactPanel::artifactChanged(QTreeWidgetItem* current, QTreeWidgetItem
     SET_FLAG(obj, FLAG_IDENTIFIED);
     give_artifact_abilities(obj, myArtifact->item);
     object_give_identified_properties(obj);
-    desc = stringbuffer_finish(describe_item(obj, NULL, NULL));
+    desc = stringbuffer_finish(describe_item(obj, NULL, 0, NULL));
     myInstance->setText(desc);
     free(desc);
 

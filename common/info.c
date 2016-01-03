@@ -82,7 +82,7 @@ void dump_abilities(void) {
             }
         }
 
-        name = stringbuffer_finish(describe_item(&at->clone, NULL, NULL));
+        name = stringbuffer_finish(describe_item(&at->clone, NULL, 0, NULL));
         printf("%-16s|%6"FMT64"|%4d|%3d|%s|%s|%s\n", at->clone.name, at->clone.stats.exp,
                at->clone.stats.hp, at->clone.stats.ac, name, at->name, gen_name);
         free(name);

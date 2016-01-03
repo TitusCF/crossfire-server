@@ -165,7 +165,7 @@ START_TEST(test_describe_item) {
         test = cctk_create_game_object(archs[check]);
         fail_unless(test != NULL, "couldn't create arch %s", archs[check]);
         SET_FLAG(test, FLAG_IDENTIFIED);
-        buf = stringbuffer_finish(describe_item(test, NULL, NULL));
+        buf = stringbuffer_finish(describe_item(test, NULL, 0, NULL));
 
         /* if you're adding items, uncomment that so make finding the good value easier. */
         /*
@@ -187,7 +187,7 @@ START_TEST(test_describe_item) {
         test = generate_treasure(list, 50);
         fail_if(test == NULL, "couldn't create item from treasure list %s", treasures[check]);
         SET_FLAG(test, FLAG_IDENTIFIED);
-        buf = stringbuffer_finish(describe_item(test, NULL, NULL));
+        buf = stringbuffer_finish(describe_item(test, NULL, 0, NULL));
 
         /* if you're adding lists, uncomment that so make finding the good value easier. */
         /*
@@ -385,11 +385,11 @@ START_TEST(test_describe_monster_rewrite) {
         ob->contr = &pl;
 
         old_describe_monster(ob, buf, sizeof(buf));
-        compat = stringbuffer_finish(describe_item(ob, NULL, NULL));
+        compat = stringbuffer_finish(describe_item(ob, NULL, 0, NULL));
         fail_unless(strcmp(buf, compat) == 0, "(compat) description change:\n%s\n  === vs ===\n%s", buf, compat);
         free(compat);
 
-        final = stringbuffer_finish(describe_monster(ob, NULL));
+        final = stringbuffer_finish(describe_monster(ob, 0, NULL));
 
         fail_unless(strcmp(buf, final) == 0, "description change: \"%s\" vs \"%s\"", buf, final);
         free(final);

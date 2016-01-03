@@ -773,6 +773,9 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
  *
  * @param op
  * monster to describe. Must not be NULL, and must have FLAG_MONSTER or be a PLAYER.
+ * @param use_media_tags
+ * if non-zero, then media tags (colors and such) are inserted in the description.
+ * This enables the player to more easily see some things.
  * @param buf
  * buffer that will contain the description. Can be NULL.
  * @return buf, or a new StringBuffer the caller should clear if buf was NULL.
@@ -781,7 +784,7 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
  * Rename to describe_living (or equivalent) since called for player too.
  * Fix weird sustenance logic.
  */
-StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
+StringBuffer *describe_monster(const object *op, int use_media_tags, StringBuffer *buf) {
     int i;
 
     assert(op != NULL);
@@ -912,7 +915,23 @@ StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
     describe_spellpath_attenuation("Denied", op->path_denied, buf);
     for (i = 0; i < NROFATTACKS; i++) {
         if (op->resist[i]) {
+            if (use_media_tags) {
+                if (resist_color[i] != NULL) {
+                    stringbuffer_append_printf(buf, "[color=%s]", resist_color[i]);
+                }
+                if (op->resist[i] == 100 || op->resist[i] == -100) {
+                    stringbuffer_append_string(buf, "[ul]");
+                }
+            }
             stringbuffer_append_printf(buf, "(%s %+d)", resist_plus[i], op->resist[i]);
+            if (use_media_tags) {
+                if (op->resist[i] == 100 || op->resist[i] == -100) {
+                    stringbuffer_append_string(buf, "[/ul]");
+                }
+                if (resist_color[i] != NULL) {
+                    stringbuffer_append_string(buf, "[/color]");
+                }
+            }
         }
     }
 
@@ -945,6 +964,9 @@ StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
  * object to describe. Must not be NULL.
  * @param owner
  * player examining the object.
+ * @param use_media_tags
+ * if non-zero, then media tags (colors and such) are inserted in the description.
+ * This enables the player to more easily see some things.
  * @param buf
  * buffer that will contain the description. Can be NULL.
  * @return buf, or new StringBuffer the caller must free if buf was NULL.
@@ -958,14 +980,14 @@ StringBuffer *describe_monster(const object *op, StringBuffer *buf) {
  * @todo
  * Check whether owner is really needed.
  */
-StringBuffer *describe_item(const object *op, const object *owner, StringBuffer *buf) {
+StringBuffer *describe_item(const object *op, const object *owner, int use_media_tags, StringBuffer *buf) {
     int identified, i;
 
     if (buf == NULL)
         buf = stringbuffer_new();
 
     if (QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER) {
-        return describe_monster(op, buf);
+        return describe_monster(op, use_media_tags, buf);
     }
 
     /* figure this out once, instead of making multiple calls to need_identify.

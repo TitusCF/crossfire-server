@@ -1011,7 +1011,7 @@ int perceive_self(object *op) {
 
     tmp = arch_present_in_ob(at, op);
 
-    cp = stringbuffer_finish(describe_item(op, op, NULL));
+    cp = stringbuffer_finish(describe_item(op, op, 0, NULL));
 
     if (*cp == '\0' && tmp == NULL)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,

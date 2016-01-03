@@ -1434,7 +1434,7 @@ object *get_random_mon(int level) {
 static StringBuffer *mon_desc(const object *mon) {
     StringBuffer *desc = stringbuffer_new();
     stringbuffer_append_printf(desc, "\n---\n *** %s ***\n", mon->name);
-    describe_item(mon, NULL, desc);
+    describe_item(mon, NULL, 0, desc);
     return desc;
 }
 
@@ -1604,7 +1604,7 @@ static StringBuffer *artifact_describe(const artifact *art, const artifactlist *
     add_abilities(tmp, art->item);
     tmp->type = al->type;
     SET_FLAG(tmp, FLAG_IDENTIFIED);
-    sbuf = describe_item(tmp, NULL, NULL);
+    sbuf = describe_item(tmp, NULL, 0, NULL);
     if (stringbuffer_length(sbuf) > 1) {
         stringbuffer_append_string(desc, " Properties of this artifact include:\n ");
         stringbuffer_append_stringbuffer(desc, sbuf);

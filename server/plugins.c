@@ -3271,7 +3271,7 @@ static void cfapi_object_describe(int *type, ...) {
     va_end(args);
 
     *type = CFAPI_STRING;
-    final = stringbuffer_finish(describe_item(op, owner, NULL));
+    final = stringbuffer_finish(describe_item(op, owner, 0, NULL));
     strncpy(desc, final, size);
     desc[size - 1] = '\0';
     free(final);

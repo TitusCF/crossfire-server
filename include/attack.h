@@ -134,6 +134,7 @@ EXTERN attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
 EXTERN Chaos_Attacks ATTACKS[22];
 EXTERN const char *const change_resist_msg[NROFATTACKS];
 EXTERN const char *const resist_plus[NROFATTACKS];
+EXTERN const char *const resist_color[NROFATTACKS];
 EXTERN const char *const attacktype_desc[NROFATTACKS];
 EXTERN const char *const resist_save[NROFATTACKS];
 
@@ -169,6 +170,12 @@ EXTERN const char *const resist_plus[NROFATTACKS] = {
     "resist counterspell", "resist god power", "resist holy word",
     "resist blindness", "resist internal", "resist life stealing",
     "resist diseases"
+};
+
+/** Colors to add to the resistances for media tags. */
+EXTERN const char *const resist_color[NROFATTACKS] = {
+  NULL, NULL, "red", "green", "blue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 };
 
 /**

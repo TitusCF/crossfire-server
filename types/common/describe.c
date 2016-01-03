@@ -41,7 +41,7 @@ void common_ob_describe(const ob_methods *context, const object *op, const objec
     if (op == NULL)
         return;
 
-    desc = stringbuffer_finish(describe_item(op, observer, NULL));
+    desc = stringbuffer_finish(describe_item(op, observer, 0, NULL));
     if (desc[0] != '\0') {
         size_t len;
 
