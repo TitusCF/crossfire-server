@@ -1,3 +1,6 @@
+2016-01-11  Daniel Hawkins
+	* doc/scripts/bonus_extract.pl: Refactor shop bonus to match actual implementation.
+
 2015-12-25  Daniel Hawkins
 	* configure.ac: Add check for librt and link it in if found.
 

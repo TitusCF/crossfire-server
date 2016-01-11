@@ -60,9 +60,15 @@ while(<IN>){
 	elsif (/^wis_pow_grace_bonus/){
 		$cur_ref = \@grace_bonus;
 	}
-	elsif (/^cha_shop_bonus/){
-		$cur_ref = \@shop_bonus;
-	}
+#
+#	Not used in curent implementation of shop buy/sell calculations
+#	Current is r20215 at the time of last inspection.
+#
+#	Daniel Hawkins 2016-01-11
+#
+#	elsif (/^cha_shop_bonus/){
+#		$cur_ref = \@shop_bonus;
+#	}
 	elsif (/^dex_bonus/){
 		$cur_ref = \@dex_bonus;
 	}
@@ -93,24 +99,43 @@ while(<IN>){
 }
 close(IN);
 
-# Now we calculate the buy/sell values
-my @buy, my @sell;
-for (@shop_bonus){
-	push(@buy, $_ + 100);
-	push(@sell, 100 - $_);
+#
+# Current implementation has Cha only affect buy prices
+#
+# # Now we calculate the buy/sell values
+# my @buy, my @sell;
+# for (@shop_bonus){
+#	push(@buy, $_ + 100);
+#	push(@sell, 100 - $_);
+# }
+
+# Do shop buy calculations.
+for (0..$max_stat){
+    # 1.06 and 0.38 are taken from shop_buy_multiplier in server/shop.c
+    my $val = 100.0 / (0.38 * 1.06 ** $_);
+    # shop.c also defines the multiplier limits to be .5 and 2.0
+    if ($val < 50){
+	$val = 50;
+    }
+    elsif ($val > 200){
+	$val = 200;
+    }
+    push(@shop_bonus, $val);
 }
 
 # Proceed to output -- This works since the values in the stat_bonus file have index 0, but it is not needed.
 if ($ARGV[1] eq "html"){
 	for (1..$max_stat){
 		print OUT "<tr><td>$_</td><td>$hp_bonus[$_]</td><td>$sp_bonus[$_]</td><td>$dex_bonus[$_]</td><td>$damage_bonus[$_]</td><td>$hit_bonus[$_]</td>
-		<td>$weight_limit[$_]</td><td>$speed_bonus[$_]</td><td>$learn_spell[$_]</td><td>$buy[$_]%/$sell[$_]%</td></tr>\n";
+		<td>$weight_limit[$_]</td><td>$speed_bonus[$_]</td><td>$learn_spell[$_]</td>"#<td>$buy[$_]%/$sell[$_]%</td></tr>\n";
+		."<td>$shop_bonus[$_]%</td></tr>\n";
 	}
 }
 elsif ($ARGV[1] eq "latex"){
 	for (1..$max_stat){
 		print OUT "$_ & $hp_bonus[$_] & $sp_bonus[$_] & $dex_bonus[$_] & $damage_bonus[$_] & $hit_bonus[$_]
-		& $weight_limit[$_] & $speed_bonus[$_] & $learn_spell[$_] & $buy[$_]\\\%/$sell[$_]\\\% \\\\ \n";
+		& $weight_limit[$_] & $speed_bonus[$_] & $learn_spell[$_] & "#$buy[$_]\\\%/$sell[$_]\\\% \\\\ \n";
+		."$shop_bonus[$_]\\\% \\\\ \n";
 	}
 }
 
