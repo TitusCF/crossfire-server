@@ -143,13 +143,17 @@ typedef struct obj {
                                                            * Valid if FLAG_DIALOG_PARSED is set (but can be NULL). */
 
     /* These get an extra add_refcount(), after having been copied by memcpy().
-     * All fields below this point are automatically copied by memcpy.  If
-     * adding something that needs a refcount updated, make sure you modify
-     * object_copy() to do so.  Everything below here also gets cleared
-     * by object_clear()
+     *
+     * Fields below name (included) are copied by memcpy in object_copy().
+     *
+     * If adding something that needs a refcount updated, make sure you modify
+     * object_copy() to do so.  
+     * Everything below here also gets cleared by object_clear().
      */
-    sstring     artifact;       /**< If set, the item is the artifact with this name and the matching type. */
     const char  *name;          /**< The name of the object, obviously... */
+    /* Place new attributes that should get copied and cleared below name */
+
+    sstring     artifact;       /**< If set, the item is the artifact with this name and the matching type. */
     const char  *name_pl;       /**< The plural name of the object */
     const char  *anim_suffix;   /**< Used to determine combined animations */
     const char  *title;         /**< Of foo, etc */

@@ -874,7 +874,7 @@ void object_copy(const object *src_ob, object *dest_ob) {
     object_free_key_values(dest_ob);
     free_dialog_information(dest_ob);
 
-    /* op is the destination, op2 is the source. */
+    /* Copy all attributes below name (name included). */
     (void)memcpy((void *)((char *)dest_ob+offsetof(object, name)),
                 (void *)((char *)src_ob+offsetof(object, name)),
                 sizeof(object)-offsetof(object, name));
