@@ -104,7 +104,7 @@ extern int get_power_from_ench(int ench);
 extern int calc_item_power(const object *op);
 extern const typedata *get_typedata(int itemtype);
 extern const typedata *get_typedata_by_name(const char *name);
-extern StringBuffer *describe_resistance(const object *op, int newline, StringBuffer *buf);
+extern StringBuffer *describe_resistance(const object *op, int newline, int use_media_tags, StringBuffer *buf);
 extern void query_weight(const object *op, char *buf, size_t size);
 extern void get_levelnumber(int i, char *buf, size_t size);
 extern void query_short_name(const object *op, char *buf, size_t size);

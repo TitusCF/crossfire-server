@@ -221,7 +221,7 @@ int describe_god(const object *god, int what, StringBuffer *buf, size_t maxlen) 
     }
 
     if (what & GOD_BLESSED) {
-        char *cp = stringbuffer_finish(describe_resistance(god, 1, NULL));
+        char *cp = stringbuffer_finish(describe_resistance(god, 1, 1, NULL));
 
         if (*cp) {  /* This god does have protections */
             add = stringbuffer_new();
@@ -265,7 +265,7 @@ int describe_god(const object *god, int what, StringBuffer *buf, size_t maxlen) 
 
     if (what & GOD_RESISTANCES) {
         char *cp;
-        cp = stringbuffer_finish(describe_resistance(god, 1, NULL));
+        cp = stringbuffer_finish(describe_resistance(god, 1, 1, NULL));
 
         if (*cp) {  /* This god does have protections */
             add = stringbuffer_new();
@@ -408,7 +408,7 @@ void dump_gods(void) {
             fprintf(stderr, " servant: NONE\n");
         fprintf(stderr, " aligned_race(s): %s\n", god->race);
         fprintf(stderr, " enemy_race(s): %s\n", (god->slaying ? god->slaying : "none"));
-        final = stringbuffer_finish(describe_resistance(god, 1, NULL));
+        final = stringbuffer_finish(describe_resistance(god, 1, 1, NULL));
         fprintf(stderr, "%s", final);
         free(final);
         snprintf(tmpbuf, sizeof(tmpbuf), " attacktype:");

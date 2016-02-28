@@ -102,7 +102,7 @@ START_TEST(test_describe_item) {
         "(dam+6)(weapon speed 10)(Attacks: physical)",
         "(wc+1)(dam+15)(Attacks: physical)",
         "(Int+2)(Pow+2)(ac+2)(item_power +5)(magic+1)(armour +5)",
-        "(Str+1)(Wis+2)(Cha+2)(dam+15)(item_power +25)(weapon speed 6)(Attacks: weaponmagic, blinding)(resist magic +30)(resist drain +100)",
+        "(Str+1)(Wis+2)(Cha+2)(dam+15)(item_power +25)(weapon speed 6)(Attacks: weaponmagic, blinding)(resist magic +30)[ul](resist drain +100)[/ul]",
         "(dam+8)(weapon speed 8)(Attacks: physical)",
         "(ac+1)(armour +5)",
         "(food+600)",
@@ -123,8 +123,8 @@ START_TEST(test_describe_item) {
         "(ac+5)(Max speed 0.70)(Spell regen penalty 30)(armour +40)",
         "(ac+1)(Max speed 1.20)",
         "(ac+3)(Max speed 0.90)(Spell regen penalty 10)(armour +20)",
-        "(Cha-5)(ac+7)(item_power +10)(reflect spells)(reflect missiles)(armour +15)(resist fire +30)(resist drain +100)(resist ghosthit +80)",
-        "(ac+4)(item_power +6)(armour +10)(resist drain +100)(resist ghosthit +50)",
+        "(Cha-5)(ac+7)(item_power +10)(reflect spells)(reflect missiles)(armour +15)[color=red](resist fire +30)[/color][ul](resist drain +100)[/ul](resist ghosthit +80)",
+        "(ac+4)(item_power +6)(armour +10)[ul](resist drain +100)[/ul](resist ghosthit +50)",
         NULL };
 
     /* if you change the order, the result will quite certainly change, as the generation depends on the value returned
@@ -151,10 +151,10 @@ START_TEST(test_describe_item) {
         "",
         "(dam+6)(weapon speed 9)(Attacks: physical)",
         "(food+70)",
-        "(Con+2)(Cha-1)(dam+10)(item_power +15)(weapon speed 5)(regeneration+1)(Attacks: weaponmagic)(resist drain +100)(resist poison +30)",
+        "(Con+2)(Cha-1)(dam+10)(item_power +15)(weapon speed 5)(regeneration+1)(Attacks: weaponmagic)[ul](resist drain +100)[/ul](resist poison +30)",
         "",
         "",
-        "(Str+1)(dam+9)(item_power +20)(weapon speed 6)(regeneration+1)(Attacks: electricity, drain)(resist magic +30)(resist electricity +30)(resist drain +100)",
+        "(Str+1)(dam+9)(item_power +20)(weapon speed 6)(regeneration+1)(Attacks: electricity, drain)(resist magic +30)[color=green](resist electricity +30)[/color][ul](resist drain +100)[/ul]",
         "",
         "(Str+1)(armour +3)",
         "",

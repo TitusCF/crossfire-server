@@ -373,11 +373,14 @@ const typedata *get_typedata_by_name(const char *name) {
  * @param newline
  * If TRUE, we don't put parens around the description
  * but do put a newline at the end. Useful when dumping to files
+ * @param use_media_tags
+ * if non-zero, then media tags (colors and such) are inserted in the description.
+ * This enables the player to more easily see some things.
  * @param buf
  * buffer that will receive the description. Can be NULL.
  * @return buf, a new StringBuffer the caller should free if buf was NULL.
  */
-StringBuffer *describe_resistance(const object *op, int newline, StringBuffer *buf) {
+StringBuffer *describe_resistance(const object *op, int newline, int use_media_tags, StringBuffer *buf) {
     int tmpvar;
 
     if (buf == NULL)
@@ -385,10 +388,26 @@ StringBuffer *describe_resistance(const object *op, int newline, StringBuffer *b
 
     for (tmpvar = 0; tmpvar < NROFATTACKS; tmpvar++) {
         if (op->resist[tmpvar] && (op->type != FLESH || atnr_is_dragon_enabled(tmpvar) == 1)) {
+            if (use_media_tags) {
+                if (resist_color[tmpvar] != NULL) {
+                    stringbuffer_append_printf(buf, "[color=%s]", resist_color[tmpvar]);
+                }
+                if (op->resist[tmpvar] == 100 || op->resist[tmpvar] == -100) {
+                    stringbuffer_append_string(buf, "[ul]");
+                }
+            }
             if (!newline)
                 stringbuffer_append_printf(buf, "(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
             else
                 stringbuffer_append_printf(buf, "%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
+            if (use_media_tags) {
+                if (op->resist[tmpvar] == 100 || op->resist[tmpvar] == -100) {
+                    stringbuffer_append_string(buf, "[/ul]");
+                }
+                if (resist_color[tmpvar] != NULL) {
+                    stringbuffer_append_string(buf, "[/color]");
+                }
+            }
         }
     }
 
@@ -478,7 +497,7 @@ static StringBuffer *ring_desc(const object *op, StringBuffer *buf) {
     if (op->stats.ac)
         stringbuffer_append_printf(buf, "(ac%+d)", op->stats.ac);
 
-    describe_resistance(op, 0, buf);
+    describe_resistance(op, 0, 1, buf);
 
     if (op->stats.food != 0)
         stringbuffer_append_printf(buf, "(sustenance%+d)", op->stats.food);
@@ -913,27 +932,7 @@ StringBuffer *describe_monster(const object *op, int use_media_tags, StringBuffe
     describe_spellpath_attenuation("Attuned", op->path_attuned &~ op->path_denied, buf);
     describe_spellpath_attenuation("Repelled", op->path_repelled &~ op->path_denied, buf );
     describe_spellpath_attenuation("Denied", op->path_denied, buf);
-    for (i = 0; i < NROFATTACKS; i++) {
-        if (op->resist[i]) {
-            if (use_media_tags) {
-                if (resist_color[i] != NULL) {
-                    stringbuffer_append_printf(buf, "[color=%s]", resist_color[i]);
-                }
-                if (op->resist[i] == 100 || op->resist[i] == -100) {
-                    stringbuffer_append_string(buf, "[ul]");
-                }
-            }
-            stringbuffer_append_printf(buf, "(%s %+d)", resist_plus[i], op->resist[i]);
-            if (use_media_tags) {
-                if (op->resist[i] == 100 || op->resist[i] == -100) {
-                    stringbuffer_append_string(buf, "[/ul]");
-                }
-                if (resist_color[i] != NULL) {
-                    stringbuffer_append_string(buf, "[/color]");
-                }
-            }
-        }
-    }
+    describe_resistance(op, 0, use_media_tags, buf);
 
     return buf;
 }
@@ -1220,7 +1219,7 @@ StringBuffer *describe_item(const object *op, const object *owner, int use_media
          * non flesh, everyone can see its resistances
          */
         if (op->type != FLESH || (owner && is_dragon_pl(owner))) {
-            describe_resistance(op, 0, buf);
+            describe_resistance(op, 0, 1, buf);
         }
         describe_spellpath_attenuation("Attuned", op->path_attuned &~ op->path_denied, buf);
         describe_spellpath_attenuation("Repelled", op->path_repelled &~ op->path_denied, buf);
