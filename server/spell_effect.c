@@ -1814,6 +1814,11 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                       "You feel your belly fill with food");
     }
+
+    if (spell->other_arch != NULL && target->map != NULL) {
+        object_insert_in_map_at(arch_to_object(spell->other_arch), target->map, NULL, INS_ON_TOP, target->x, target->y);
+    }
+
     return success;
 }
 
