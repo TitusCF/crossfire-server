@@ -174,7 +174,7 @@ EXTERN const char *const resist_plus[NROFATTACKS] = {
 
 /** Colors to add to the resistances for media tags. */
 EXTERN const char *const resist_color[NROFATTACKS] = {
-  NULL, NULL, "red", "green", "blue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  "#FF15CD", "#930C76", "red", "blue", "#2CFFFF", NULL, NULL, NULL, NULL, NULL, "green", NULL, NULL,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 };
 
