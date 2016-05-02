@@ -212,13 +212,15 @@ spell: large bullet
 level: 4
 sp cost: 3          speed: 0.50
 range: special      duration: instant
-description: Creates and hurls large magical bullet in a single direction which does 25 points of physical damage upon impact.
+description: Creates and hurls large magical bullet in a single direction which does 25 points of physical damage
+upon impact.
 
 spell: large lightning
 level: 4
 sp cost: 8          speed: 0.60
 range: 24           duration: 16
-description: Creates a single bolt of lightning which does 3 hp electrical damage/rnd.  Lightning will reflect off of walls.
+description: Creates a single bolt of lightning which does 3 hp electrical damage/rnd.
+Lightning will reflect off of walls.
 
 prayer: medium healing
 level: 4
@@ -289,7 +291,8 @@ spell: invisible
 level: 6
 sp cost: 25         speed: 0.50
 range: touch        duration: standard
-description: Recipient becomes invisible and remains so until the spell wears off or until the recipient attacks a creature.
+description: Recipient becomes invisible and remains so until the spell wears off
+or until the recipient attacks a creature.
 
 spell: levitate
 level: 6

@@ -1,6 +1,8 @@
 2016-05-02  Daniel Hawkins
 	* doc/spell-docs/tome-of-magic.txt: Made some manual edits to effects of
 	  spells. Still far from complete.
+	* doc/spell-docs/Makefile.am: Tweaked the cleanfiles so that 'make clean'
+	  cleans up all the generated PostScript files.
 
 2016-01-11  Daniel Hawkins
 	* doc/scripts/bonus_extract.pl: Refactor shop bonus to match actual implementation.
@@ -15,7 +17,7 @@
 	  formerly stored in spell-summary.ps.
 	* doc/spell-docs/create_ps.sh: Add a new command to generate spell-summary.ps.
 	* configure.ac: Removed check for memcmp(), srand(), and size_t.
-	  Thes should all be definied correctly in a C99 compiler, which we require.
+	  These should all be definied correctly in a C99 compiler, which we require.
 	* include/win32.h: Removed reference to HAVE_SRAND macro from autoconfig.h.
 	* include/define.h: Cleaned up RANDOM and SRANDOM macro definitions.
 	  Since we require C99, there should not be a situation where not even srand is found.
