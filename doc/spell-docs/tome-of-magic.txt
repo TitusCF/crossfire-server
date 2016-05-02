@@ -28,8 +28,7 @@ spell: magic missile
 level: 1
 sp cost: 2          speed: 0.50
 range: special      duration: instant
-description: Creates a magical projectile which homes in on enemies causing 4 hp of magical damage upon
-impact.
+description: Creates a magical homing projectile that deals 4 hp of magical damage upon impact.
 
 prayer: minor healing
 level: 1
@@ -48,7 +47,7 @@ spell: slow
 level: 1
 sp cost: 5          speed: 0.30
 range: 5            duration: standard
-description: Causes affected creatures move extremely slow (speed of 0.05).
+description: Causes affected creatures move slower than normal.
 
 spell: small fireball
 level: 1
@@ -60,7 +59,7 @@ spell: small lightning
 level: 1
 sp cost: 5          speed: 0.30
 range: 12           duration: 8
-description: Creates a single bolt of lightning which does 3 hp electrical damage/rnd.  Lightning will reflect
+description: Creates a single bolt of lightning which does 3 hp electrical damage/rnd. Lightning will reflect
 off of walls.
 
 prayer: turn undead
@@ -109,7 +108,7 @@ spell: strength
 level: 2
 sp cost: 10         speed: 2.00
 range: touch        duration: special
-description: Temporarily increases the recipient's Strength (Str.) by at least one point and boots it
+description: Temporarily increases the recipient's Strength (Str.) by at least one point and boosts it
 by one point for every two points their strength is less than 20.  The spell lasts for the standard
 duration or until another change attribute or protection spell is cast upon the recipient.
 
@@ -117,14 +116,15 @@ spell: summon golem
 level: 2
 sp cost: 5          speed: 1.00
 range: 1            duration: special
-description: Summons golem to fight for you.  The golem will remain until it is destroyed or until you summon a type of elemental.
+description: Summons a golem to fight for you.  The golem will remain until it is destroyed or until you summon
+either another golem or a type of elemental.
 
 spell: summon pet monster
 level: 2
 sp cost: 5          speed: 1.00
 range: 1            duration: special
-description: Summons up to five friendly monsters to fight for you.  Monsters remain your friend until either
-they or you are killed.  It is rumored that some summoned creatures temporarily increase the
+description: Summons up to five friendly monsters to fight for you.  Monsters remain friendly until either
+they or you are killed. It is rumored that some summoned creatures temporarily increase the
 summoner's sp.
 
 The types of monsters summoned are:
@@ -142,7 +142,7 @@ spell: charisma
 level: 3
 sp cost: 12         speed: 2.00
 range: touch        duration: special
-description: Temporarily increases the recipient's Charisma (Cha.) by at least one point and boots it by
+description: Temporarily increases the recipient's Charisma (Cha.) by at least one point and boosts it by
 one point for every two points their charisma is less than 20.  The spell lasts for the standard
 duration or until another change attribute or protection spell is cast upon the recipient.
 
@@ -156,7 +156,7 @@ spell: dexterity
 level: 3
 sp cost: 12         speed: 2.00
 range: touch        duration: special
-description: Temporarily increases the recipient's Dexterity (Dex.) by at least one point and boots it by one
+description: Temporarily increases the recipient's Dexterity (Dex.) by at least one point and boosts it by one
 point for every two points their dexterity is less than 20.  The spell lasts for the standard
 duration or until another change attribute or protection spell is cast upon the recipient.
 
@@ -170,7 +170,7 @@ prayer: protection from cold
 level: 3
 sp cost: 15         speed: 1.00
 range: touch        duration: special
-description: Protects recipient from cold so well, that they only take 1/2 damage from cold based attacks.
+description: Protects recipient from cold so well, that they only take 1/2 damage from cold-based attacks.
 
 Level 4
 =========
@@ -179,7 +179,7 @@ spell: constitution
 level: 4
 sp cost: 15         speed: 2.00
 range: touch        duration: special
-description: Temporarily increases the recipient's Constitution (Con.) by at least one point and boots it by
+description: Temporarily increases the recipient's Constitution (Con.) by at least one point and boosts it by
 one point for every two points their constitution is less than 20.  The spell lasts for the
 standard duration or until another change attribute or protection spell is cast upon the recipient.
 
@@ -187,7 +187,7 @@ spell: create earth wall
 level: 4
 sp cost: 6          speed: 1.00
 range: 1            duration: permanent
-description: Creates a destructable earthen wall.
+description: Creates a destructible earthen wall.
 
 spell: fear
 level: 4
@@ -199,7 +199,7 @@ prayer: holy word
 level: 4
 sp cost: 6          speed: 0.30
 range: special      duration: instant
-description: This spell is an improvement of Turn Undead which not only turns undead, but it will also causes
+description: This spell is an improvement of Turn Undead which not only turns undead, but it also inflicts
 3 hp/rnd.  The range of the cone covers (2 + Wisdom bonus) squares.
 
 spell: icestorm
@@ -245,7 +245,7 @@ spell: magic mapping
 level: 5
 sp cost: 15         speed: 1.00
 range: self         duration: instant
-description: Shows complete map of level.
+description: Shows complete, but coarse-detail map of level.
 
 prayer: protection from fire
 level: 5
@@ -355,7 +355,7 @@ prayer: protection from paralysis
 level: 8
 sp cost: 20         speed: 1.00
 range: touch        duration: special
-description: Protects recipient from electricity, giving them a +5 bonus to their
+description: Protects recipient from paralysis, giving them a +5 bonus to their
 saving throw against paralysis attacks.
 
 spell: summon fire elemental
@@ -379,7 +379,7 @@ prayer: protection from draining
 level: 9
 sp cost: 25         speed: 1.00
 range: touch        duration: special
-description: Protects recipient from undead life drain so well, that they lose life at only 1/2 the speed
+description: Protects recipient from life drain so well, that they lose life at only 1/2 the speed
 from such life draining attacks.
 
 Level 10
@@ -389,7 +389,7 @@ spell: cancellation
 level: 10
 sp cost: 30         speed: 1.00
 range: special      duration: permanent
-description: Creates a web of energy which when thrown removes magical bonuses
+description: Creates a web of energy which when thrown removes magical effects
 from objects (weapons, armour) in it's path.
 
 spell: charging
@@ -403,8 +403,8 @@ spell: dimension door
 level: 10
 sp cost: 25         speed: 1.00
 range: 5            duration: caster
-description: Teleports caster several squares, in a direction of
-his choosing.
+description: Teleports the caster several squares, in a direction of his choosing.
+Some solid objects, such as walls, will prevent the caster from passing through.
 
 prayer: heal
 level: 10
@@ -436,7 +436,8 @@ prayer: word of recall
 level: 15
 sp cost: 40         speed: 3.00
 range: self         duration: special
-description: Teleports caster back to starting map shortly after casting.
+description: Teleports caster back to his or her last savebed map or the
+starting map shortly after casting.
 
 Level 18
 =========

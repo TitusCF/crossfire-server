@@ -1,3 +1,7 @@
+2016-05-02  Daniel Hawkins
+	* doc/spell-docs/tome-of-magic.txt: Made some manual edits to effects of
+	  spells. Still far from complete.
+
 2016-01-11  Daniel Hawkins
 	* doc/scripts/bonus_extract.pl: Refactor shop bonus to match actual implementation.
 
