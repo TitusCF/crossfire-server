@@ -1,3 +1,7 @@
+2016-05-07  Daniel Hawkins
+	* configure.ac: Change some of the "#" Comments to "dnl" comments.
+	  They didn't need to go into the generated config file, so they won't be.
+
 2016-05-02  Daniel Hawkins
 	* doc/spell-docs/tome-of-magic.txt: Made some manual edits to effects of
 	  spells. Still far from complete.
