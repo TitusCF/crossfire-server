@@ -1012,19 +1012,19 @@ int get_party_password(object *op, partylist *party) {
  * sum of rolls.
  */
 int roll_stat(void) {
-    int a[4], i, j, k;
+    int roll[4], i, low_index, k;
 
-    for (i = 0; i < 4; i++)
-        a[i] = (int)RANDOM()%6+1;
+    for (i = 0; i < 4; ++i)
+        roll[i] = (int)RANDOM()%6+1;
 
-    for (i = 0, j = 0, k = 7; i < 4; i++)
-        if (a[i] < k)
-            k = a[i],
-            j = i;
+    for (i = 0, low_index = 0, k = 7; i < 4; ++i)
+        if (roll[i] < k)
+            k = roll[i],
+            low_index = i;
 
-    for (i = 0, k = 0; i < 4; i++) {
-        if (i != j)
-            k += a[i];
+    for (i = 0, k = 0; i < 4; ++i) {
+        if (i != low_index)
+            k += roll[i];
     }
     return k;
 }
