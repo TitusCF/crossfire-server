@@ -1,3 +1,6 @@
+2016-05-14  Daniel Hawkins
+	* server/monster.c: Optimizations in monster_compute_path().
+
 2016-05-07  Daniel Hawkins
 	* configure.ac: Change some of the "#" Comments to "dnl" comments.
 	  They didn't need to go into the generated config file, so they won't be.

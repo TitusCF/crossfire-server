@@ -399,28 +399,35 @@ int monster_compute_path(object *source, object *target, int default_dir) {
     /*printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
 
     size = source->map->width*source->map->height;
-    distance = calloc(size, sizeof(*distance));
+    /* We are setting all the values manually anyway,
+     * so there's no reason to use calloc().
+     * malloc() is more efficient here for that reason.
+     */
+    distance = malloc(size * sizeof(*distance));
     if (distance == NULL) {
         fatal(OUT_OF_MEMORY);
     }
-    for (dir = 0; dir < size; dir++) {
+    for (dir = 0; dir < size; ++dir) {
         distance[dir] = 999;
     }
     distance[source->map->height * target->x + target->y] = 0;
     explore_x[0] = target->x;
     explore_y[0] = target->y;
-
-    while (current < max) {
+    
+    /* The first time through, current = 0 and max = 1.
+     * This will evaluate to true, so we might as well use a do-while loop.
+     */
+    do {
         /* Fisher–Yates shuffle the directions, "inside-out" algorithm
          * from http://en.wikipedia.org/wiki/Fisher-Yates_shuffle */
         dirs[0] = 1;
-        for (i = 1; i < 8; i++) {
+        for (i = 1; i < 8; ++i) {
             x = RANDOM() % (i+1);
             dirs[i] = dirs[x];
             dirs[x] = i+1;
         }
 
-        for (i = 0; i < 8; i++) {
+        for (i = 0; i < 8; ++i) {
             int diagonal;
             unsigned short new_distance;
             unsigned short *this_distance;
@@ -456,15 +463,15 @@ int monster_compute_path(object *source, object *target, int default_dir) {
 
                 distance[source->map->height*x+y] = new_distance;
                 /*                printf("explore[%d] => (%d, %d) %u\n", max, x, y, new_distance);*/
-                max++;
+                ++max;
                 if (max == MAX_EXPLORE) {
                     free(distance);
                     return default_dir;
                 }
             }
         }
-        current++;
-    }
+        ++current;
+    } while (current < max);
 
     /*LOG(llevDebug, "no path\n");*/
     free(distance);
