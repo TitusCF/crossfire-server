@@ -24,7 +24,7 @@
 <th>resistances</th>
 <th>attacktype</th>
 <th>can use</th>
-<th>can_see_in_dark</th>
+<th>can see in dark</th>
 <th>body slots</th>
 </tr>
 
