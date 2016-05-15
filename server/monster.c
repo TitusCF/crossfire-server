@@ -507,9 +507,12 @@ void monster_do_living(object *op) {
         if (QUERY_FLAG(op, FLAG_RUN_AWAY)
         && op->stats.hp >= (signed short)(((float)op->run_away/(float)100)*(float)op->stats.maxhp))
             CLEAR_FLAG(op, FLAG_RUN_AWAY);
-
+	/*
+	 * This should already be covered by the MIN() check above.
+	 
         if (op->stats.hp > op->stats.maxhp)
             op->stats.hp = op->stats.maxhp;
+	 */
     }
 
     /* generate sp, if applicable */
