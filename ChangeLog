@@ -1,5 +1,6 @@
 2016-05-14  Daniel Hawkins
 	* server/monster.c: Optimizations in monster_compute_path().
+	* common/object.c: Reimplement the absdir() function to avoid loops.
 
 2016-05-07  Daniel Hawkins
 	* configure.ac: Change some of the "#" Comments to "dnl" comments.

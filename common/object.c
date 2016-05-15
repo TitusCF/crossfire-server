@@ -3635,10 +3635,11 @@ int find_dir_2(int x, int y) {
  * takes care of "overflow" in previous calculations of a direction).
  */
 int absdir(int d) {
-    while (d < 1)
-        d += 8;
-    while (d > 8)
-        d -= 8;
+    // Shortcut for modulus that work becuase we have a power of 2
+    d &= 7;
+    // 0 needs to be 8
+    if (!d)
+	d = 8;
     return d;
 }
 
