@@ -2071,7 +2071,7 @@ int hit_player(object *op, int dam, object *hitter, uint32_t type, int full_hit)
     /* Eneq(@csd.uu.se): Check to see if monster runs away. */
     if (op->stats.hp >= 0
     && (QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER)
-    && op->stats.hp < (signed short)(((float)op->run_away/(float)100)*(float)op->stats.maxhp)) {
+    && op->stats.hp < (int16_t)((int32_t)op->run_away * op->stats.maxhp / 100)) {
         if (QUERY_FLAG(op, FLAG_MONSTER))
             SET_FLAG(op, FLAG_RUN_AWAY);
         else

@@ -1,5 +1,10 @@
 2016-05-15  Daniel Hawkins
 	* server/monster.c: Remove redundant hp value check in monster_do_living().
+	  Adjusted the run_away health check to use integers instead of floats.
+	  This causes a 1-higher threshold for some maxhp values if run_away is
+	  13, 21, 26, 39, 42, 52, 53, 59, 65, 71, 78, or 84.
+	* server/attack.c: Made same adjustment to run_away calc as in monster.c.
+	  In this manner, the rounding change occurs on both set and unset of FLAG_RUN_AWAY.
 
 2016-05-14  Daniel Hawkins
 	* server/monster.c: Optimizations in monster_compute_path().

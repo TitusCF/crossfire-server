@@ -505,7 +505,7 @@ void monster_do_living(object *op) {
 
         /* So if the monster has gained enough HP that they are no longer afraid */
         if (QUERY_FLAG(op, FLAG_RUN_AWAY)
-        && op->stats.hp >= (signed short)(((float)op->run_away/(float)100)*(float)op->stats.maxhp))
+        && op->stats.hp >= (int16_t)((int32_t)op->run_away * op->stats.maxhp / 100))
             CLEAR_FLAG(op, FLAG_RUN_AWAY);
 	/*
 	 * This should already be covered by the MIN() check above.
