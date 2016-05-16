@@ -5,6 +5,7 @@
 	  13, 21, 26, 39, 42, 52, 53, 59, 65, 71, 78, or 84.
 	* server/attack.c: Made same adjustment to run_away calc as in monster.c.
 	  In this manner, the rounding change occurs on both set and unset of FLAG_RUN_AWAY.
+	* server/arch.c: Refactor some comparisons in is_type_valid() to use a switch statement.
 
 2016-05-14  Daniel Hawkins
 	* server/monster.c: Optimizations in monster_compute_path().
