@@ -566,7 +566,11 @@ static int knowledge_add(knowledge_player *current, const char *item, const know
     }
 
     /* keep the knowledge */
-    check = calloc(1, sizeof(knowledge_item));
+    /**
+     * Use malloc instead of calloc here.
+     * We're setting all relevant values, anyway.
+     */
+    check = malloc(sizeof(knowledge_item));
     check->item = add_string(item);
     check->handler = kt;
     if (current->item_count >= current->item_allocated) {
@@ -955,7 +959,7 @@ static void knowledge_read_player_data(knowledge_player *kp) {
             continue;
         }
 
-        item = calloc(1, sizeof(knowledge_item));
+        item = malloc(sizeof(knowledge_item));
         item->item = add_string(dot + 1);
         item->handler = type;
         if (kp->item_count == kp->item_allocated) {
@@ -1012,8 +1016,15 @@ void knowledge_give(player *pl, const char *marker, const object *book) {
     dot = strchr(marker, ':');
     if (dot == NULL)
         return;
-
-    copy = calloc(1, strlen(marker) + 1);
+    
+    /* There will be a null terminator on marker, or strlen will segfault.
+     * So, strncpy() will copy the null terminator.
+     * Therefore, it is more efficient to use malloc than calloc here.
+     */
+    copy = malloc(strlen(marker) + 1);
+    /* Also make sure we've gotten a valid pointer back before we copy. */
+    if (!copy)
+	fatal(OUT_OF_MEMORY);
     strncpy(copy, marker, strlen(marker) + 1);
 
     dot = strchr(copy, ':');

@@ -1,3 +1,7 @@
+2016-05-16  Daniel Hawkins
+	* server/knowledge.c: Use malloc instead of calloc where all struct values
+	  are subsequently set.
+
 2016-05-15  Daniel Hawkins
 	* server/monster.c: Remove redundant hp value check in monster_do_living().
 	  Adjusted the run_away health check to use integers instead of floats.
