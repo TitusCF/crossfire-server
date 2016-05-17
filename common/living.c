@@ -139,7 +139,7 @@ const char *const attacks[NROFATTACKS] = {
 static const char *const drain_msg[NUM_STATS] = {
     "Oh no! You are weakened!",
     "You're feeling clumsy!",
-    "You feel less healthy",
+    "Your health deteriorates!",
     "You suddenly begin to lose your memory!",
     "Your face gets distorted!",
     "Watch out, your mind is going!",
