@@ -1,6 +1,7 @@
 2016-05-17  Daniel Hawkins
 	* common/living.c: Change the depletion message for Con loss to differentiate
 	  it from the permanent stat loss message.
+	* server/monster.c: Additional optimizations in monster_compute_path().
 
 2016-05-16  Daniel Hawkins
 	* server/knowledge.c: Use malloc instead of calloc where all struct values
