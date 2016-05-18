@@ -391,7 +391,7 @@ static int monster_move_randomly(object *op) {
 int monster_compute_path(object *source, object *target, int default_dir) {
     unsigned short *distance;
     int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE], dirs[8];
-    int current = 0, dir, max = 1, size, x, y, check_dir, i;
+    int current = 0, dir, max = 1, size, x, y, i;
 
     if (target->map != source->map)
         return default_dir;
@@ -430,8 +430,10 @@ int monster_compute_path(object *source, object *target, int default_dir) {
         for (i = 0; i < 8; ++i) {
             unsigned short new_distance;
 
-            check_dir = dirs[i];
-            dir = absdir(default_dir+4+check_dir);
+	    /*
+	     * dirs[i] is the direction we wish to check.
+	     */
+            dir = absdir(default_dir+4+dirs[i]);
             x = explore_x[current]+freearr_x[dir];
             y = explore_y[current]+freearr_y[dir];
 
