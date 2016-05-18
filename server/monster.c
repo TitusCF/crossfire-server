@@ -428,7 +428,6 @@ int monster_compute_path(object *source, object *target, int default_dir) {
         }
 
         for (i = 0; i < 8; ++i) {
-            int diagonal;
             unsigned short new_distance;
 
             check_dir = dirs[i];
@@ -449,9 +448,12 @@ int monster_compute_path(object *source, object *target, int default_dir) {
             assert(source->map->height*x+y >= 0);
             assert(source->map->height*x+y < size);
 	    
-	    /* Mod 2 is equivalent to checking only the 1's bit (1 or 0), but & 1 is faster. */
-            diagonal = dir & 1 == 0;
-            new_distance = distance[source->map->height*explore_x[current]+explore_y[current]] + (diagonal ? 3 : 2);
+            new_distance = 
+		distance[source->map->height*explore_x[current]+explore_y[current]]
+	    /* Mod 2 is equivalent to checking only the 1's bit (1 or 0), but & 1 is faster.
+	     * Also, dir & 1 == 0 is true if we have a diagonal dir.
+	     */
+		+ (dir & 1 == 0 ? 3 : 2);
 
             /*LOG(llevDebug, "check %d, %d dist = %d, nd = %d\n", x, y, distance[source->map->height*x+y], new_distance);*/
 
