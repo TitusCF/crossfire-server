@@ -791,18 +791,26 @@ static int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
  */
 mapstruct *get_linked_map(void) {
     mapstruct *map = (mapstruct *)calloc(1, sizeof(mapstruct));
-    mapstruct *mp;
+    /* mapstruct *mp;*/
 
     if (map == NULL)
         fatal(OUT_OF_MEMORY);
-
+    /*
+     * Nothing in the code appears to require we add new maps to the end of the list.
+     * Why not just add them to the front instead? Its faster.
+     *
+     * SilverNexus 2016-05-18
+     *
     for (mp = first_map; mp != NULL && mp->next != NULL; mp = mp->next)
         ;
     if (mp == NULL)
         first_map = map;
     else
         mp->next = map;
-
+    */
+    map->next = first_map;
+    first_map = map;
+    
     map->in_memory = MAP_SWAPPED;
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.
