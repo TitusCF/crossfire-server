@@ -6,6 +6,7 @@
 	  to prevent potential segfaults.
 	  Optimize out newx and newy in get_map_flags(). x and y are already copies.
 	  Optimize out check_dir in compute_monster_path().
+	  Optimize the initialization of distance to use memset() instead of a loop.
 
 2016-05-17  Daniel Hawkins
 	* common/living.c: Change the depletion message for Con loss to differentiate

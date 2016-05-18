@@ -407,9 +407,19 @@ int monster_compute_path(object *source, object *target, int default_dir) {
     if (distance == NULL) {
         fatal(OUT_OF_MEMORY);
     }
+    /*
+     * 999 seems to be an arbitrary intializer.
+     * 65535 can be set more efficiently.
+     *
     for (dir = 0; dir < size; ++dir) {
         distance[dir] = 999;
     }
+     *
+     * To set to 65535 efficiently, though, I need to memset each byte to 255.
+     * each element is two bytes, 
+     */
+    memset(distance, 255, sizeof(*distance) * size);
+    
     distance[source->map->height * target->x + target->y] = 0;
     explore_x[0] = target->x;
     explore_y[0] = target->y;
