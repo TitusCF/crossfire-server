@@ -300,13 +300,14 @@ void dump_all_maps(void) {
  * flags for specified position, with maybe ::P_OUT_OF_MAP or ::P_NEW_MAP set.
  */
 int get_map_flags(mapstruct *oldmap, mapstruct **newmap, int16_t x, int16_t y, int16_t *nx, int16_t *ny) {
-    int16_t newx, newy;
     int retval = 0;
     mapstruct *mp;
 
-    newx = x;
-    newy = y;
-    mp = get_map_from_coord(oldmap, &newx, &newy);
+    /*
+     * Since x and y are copies of the original values, we can directly
+     * mess with them here.
+     */
+    mp = get_map_from_coord(oldmap, &x, &y);
     if (!mp)
         return P_OUT_OF_MAP;
     if (mp != oldmap)
@@ -314,10 +315,10 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, int16_t x, int16_t y, i
     if (newmap)
         *newmap = mp;
     if (nx)
-        *nx = newx;
+        *nx = x;
     if (ny)
-        *ny = newy;
-    retval |= mp->spaces[newx+mp->width*newy].flags;
+        *ny = y;
+    retval |= mp->spaces[x+mp->width*y].flags;
     return retval;
 }
 
