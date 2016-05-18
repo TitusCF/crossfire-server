@@ -906,7 +906,18 @@ static shopitems *parse_shop_string(const char *input_string, const mapstruct *m
     p = shop_string;
     strip_endline(p);
     items = CALLOC(number_of_entries+1, sizeof(shopitems));
+    /*
+     * The memset would always set at least one byte to zero,
+     * so a failed calloc would have segfaulted the program.
+     * Instead, check for a null and fail more gracefully.
+     */
+    if (!items)
+	fatal(OUT_OF_MEMORY);
+    /*
+     * calloc() already sets each byte to zero already
+     *
     memset(items, 0, (sizeof(shopitems)*number_of_entries+1));
+     */
     for (i = 0; i < number_of_entries; i++) {
         if (!p) {
             LOG(llevError, "parse_shop_string: I seem to have run out of string, that shouldn't happen.\n");

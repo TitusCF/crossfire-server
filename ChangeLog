@@ -2,6 +2,8 @@
 	* common/map.c: Add new maps to the front of the mapstruct linked list
 	  since there does not appear to be any order preference in the rest of
 	  the codebase.
+	  Remove a redundant memset to 0 after a calloc(). Also check for null
+	  to prevent potential segfaults.
 
 2016-05-17  Daniel Hawkins
 	* common/living.c: Change the depletion message for Con loss to differentiate
