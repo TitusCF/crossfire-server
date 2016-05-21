@@ -141,10 +141,13 @@ client_spell *get_client_spell_state(player *pl, object *spell) {
             return info;
         info = info->next;
     }
-    info = (client_spell *)malloc(sizeof(client_spell));
+    /*
+     * Why take the time to malloc() and then memset()?
+     * Just calloc and its good to go!
+     */
+    info = (client_spell *)calloc(1, sizeof(client_spell));
     if (info == NULL)
         fatal(OUT_OF_MEMORY);
-    memset(info, 0, sizeof(client_spell));
     info->next = pl->spell_state;
     info->spell = spell;
     pl->spell_state = info;
