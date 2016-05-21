@@ -706,17 +706,25 @@ static int equality_split(char *buffer, char **variable, char **value) {
  * @return 1 if strg was processed, 0 else.
  */
 static int get_boolean(const char *strg, int *bl) {
-    if (!strncmp(strg, "y", 1))
+    /*
+     * We're only parsing the first character, so we
+     * really don't need to call strncmp().
+     * Should future checks need to check multiple characters,
+     * strncmp() would be a good choice. For that reason,
+     * I won't optimize this down to a switch statement.
+     * It makes it clearer how to handle multi-character checks.
+     */
+    if (*strg == 'y')
         *bl = 1;
-    else if (!strncmp(strg, "n", 1))
+    else if (*strg == 'n')
         *bl = 0;
-    else if (!strncmp(strg, "Y", 1))
+    else if (*strg == 'Y')
         *bl = 1;
-    else if (!strncmp(strg, "N", 1))
+    else if (*strg == 'N')
         *bl = 0;
-    else if (!strncmp(strg, "1", 1))
+    else if (*strg == '1')
         *bl = 1;
-    else if (!strncmp(strg, "0", 1))
+    else if (*strg == '0')
         *bl = 0;
     else
         return 0;

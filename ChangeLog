@@ -1,6 +1,8 @@
 2016-05-21  Daniel Hawkins
 	* common/los.c: Refactored set_wall() to recycle a couple variables to
 	  reduce recursion overhead.
+	* plugins/cfanim/cfanim.c: Refactored get_boolean() to not use strncmp(),
+	  since it was only checking the first character anyway.
 
 2016-05-18  Daniel Hawkins
 	* common/map.c: Add new maps to the front of the mapstruct linked list
