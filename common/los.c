@@ -169,24 +169,29 @@ void init_block(void) {
  */
 static void set_wall(object *op, int x, int y) {
     int i;
+    // Get this outside the loop -- now we can recycle x and y in the loop
+    // Trying less dereferencing for better efficiency
+    // Equivalent to &(block[x][y]), but faster.
+    const blocks * const at = block[x] + y;
+    for (i = 0; i < at->index; i++) {
+        int dx = at->x[i], dy = at->y[i];
 
-    for (i = 0; i < block[x][y].index; i++) {
-        int dx = block[x][y].x[i], dy = block[x][y].y[i], ax, ay;
-
-        /* ax, ay are the values as adjusted to be in the
-        * socket look structure.
+        /* x, y are the values as adjusted to be in the
+        * socket look structure. Since the values are copied,
+        * we can safely store this in the x and y passed to the function,
+        * since they were only needed to find the element of the blocks array.
         */
-        ax = dx-(MAP_CLIENT_X-op->contr->socket.mapx)/2;
-        ay = dy-(MAP_CLIENT_Y-op->contr->socket.mapy)/2;
+        x = dx-(MAP_CLIENT_X-op->contr->socket.mapx)/2;
+        y = dy-(MAP_CLIENT_Y-op->contr->socket.mapy)/2;
 
-        if (ax < 0 || ax >= op->contr->socket.mapx
-        || ay < 0 || ay >= op->contr->socket.mapy)
+        if (x < 0 || x >= op->contr->socket.mapx
+        || y < 0 || y >= op->contr->socket.mapy)
             continue;
         /* we need to adjust to the fact that the socket
          * code wants the los to start from the 0,0
          * and not be relative to middle of los array.
          */
-        op->contr->blocked_los[ax][ay] = 100;
+        op->contr->blocked_los[x][y] = 100;
         set_wall(op, dx, dy);
     }
 }

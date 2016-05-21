@@ -1,3 +1,7 @@
+2016-05-21  Daniel Hawkins
+	* common/los.c: Refactored set_wall() to recycle a couple variables to
+	  reduce recursion overhead.
+
 2016-05-18  Daniel Hawkins
 	* common/map.c: Add new maps to the front of the mapstruct linked list
 	  since there does not appear to be any order preference in the rest of
