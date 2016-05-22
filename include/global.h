@@ -218,7 +218,7 @@ extern socket_struct *init_sockets;
 # define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
 # define dirent direct
-# define NAMLEN(dirent) (dirnet)->d_namlen
+# define NAMLEN(dirent) (dirent)->d_namlen
 # if HAVE_SYS_NDIR_H
 #  include <sys/ndir.h>
 # endif
