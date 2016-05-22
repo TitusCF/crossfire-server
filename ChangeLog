@@ -1,3 +1,7 @@
+2016-05-22  Daniel Hawkins
+	* server/server.c: Move the static string reference into the condition
+	  branch, since we only use it on that branch.
+
 2016-05-21  Daniel Hawkins
 	* common/los.c: Refactored set_wall() to recycle a couple variables to
 	  reduce recursion overhead.

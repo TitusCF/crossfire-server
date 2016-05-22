@@ -65,12 +65,14 @@ const char *crypt_string(const char *str, const char *salt) {
 #if defined(WIN32) || (defined(__FreeBSD__))
     return(str);
 #else
-    /* Generate a two-character salt for the DES cipher. */
-    static const char *const c =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
     char s[2];
 
     if (salt == NULL) {
+	/* Generate a two-character salt for the DES cipher.
+	 * We want the salt to be in this character set.
+	 */
+	static const char *const c =
+	    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
         s[0] = c[RANDOM()%(int)strlen(c)],
         s[1] = c[RANDOM()%(int)strlen(c)];
     } else {
