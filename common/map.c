@@ -2275,7 +2275,7 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num) {
  * tiled maps.
  *
  * @param m
- * map to consider.
+ * map to consider. Must not be NULL.
  * @param x
  * @param y
  * coordinates.
@@ -2283,12 +2283,6 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num) {
  * 1 if out of map, 0 else
  */
 int out_of_map(mapstruct *m, int x, int y) {
-    /* If we get passed a null map, this is obviously the
-     * case.  This generally shouldn't happen, but if the
-     * map loads fail below, it could happen.
-     */
-    if (!m)
-        return 0;
 
     /* Simple case - coordinates are within this local
      * map.
@@ -2302,6 +2296,9 @@ int out_of_map(mapstruct *m, int x, int y) {
         if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 3);
         }
+	/* Verify the tile map loaded correctly */
+	if (!m->tile_map[3])
+	    return 0;
         return (out_of_map(m->tile_map[3], x+MAP_WIDTH(m->tile_map[3]), y));
     }
     if (x >= MAP_WIDTH(m)) {
@@ -2310,6 +2307,9 @@ int out_of_map(mapstruct *m, int x, int y) {
         if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 1);
         }
+	/* Verify the tile map loaded correctly */
+	if (!m->tile_map[1])
+	    return 0;
         return (out_of_map(m->tile_map[1], x-MAP_WIDTH(m), y));
     }
     if (y < 0) {
@@ -2318,6 +2318,9 @@ int out_of_map(mapstruct *m, int x, int y) {
         if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 0);
         }
+	/* Verify the tile map loaded correctly */
+	if (!m->tile_map[0])
+	    return 0;
         return (out_of_map(m->tile_map[0], x, y+MAP_HEIGHT(m->tile_map[0])));
     }
     if (y >= MAP_HEIGHT(m)) {
@@ -2326,6 +2329,9 @@ int out_of_map(mapstruct *m, int x, int y) {
         if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 2);
         }
+	/* Verify the tile map loaded correctly */
+	if (!m->tile_map[2])
+	    return 0;
         return (out_of_map(m->tile_map[2], x, y-MAP_HEIGHT(m)));
     }
     return 1;
@@ -2341,7 +2347,7 @@ int out_of_map(mapstruct *m, int x, int y) {
  * and then figuring out what the real map is
  *
  * @param m
- * map we want to look at.
+ * map we want to look at. Must not be NULL.
  * @param x
  * @param y
  * coordinates, which will contain the real position that was checked.
@@ -2349,11 +2355,6 @@ int out_of_map(mapstruct *m, int x, int y) {
  * map that is at specified location. Will be NULL if not on any map.
  */
 mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
-    /* m should never be null, but if a tiled map fails to load below, it could
-     * happen.
-     */
-    if (!m)
-        return NULL;
 
     /* Simple case - coordinates are within this local
      * map.
@@ -2368,6 +2369,9 @@ mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
         if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
             load_and_link_tiled_map(m, 3);
 
+	/* Make sure we loaded properly. */
+	if (!m->tile_map[3])
+	    return NULL;
         *x += MAP_WIDTH(m->tile_map[3]);
         return (get_map_from_coord(m->tile_map[3], x, y));
     }
@@ -2377,6 +2381,9 @@ mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
         if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
             load_and_link_tiled_map(m, 1);
 
+	/* Make sure we loaded properly. */
+	if (!m->tile_map[1])
+	    return NULL;
         *x -= MAP_WIDTH(m);
         return (get_map_from_coord(m->tile_map[1], x, y));
     }
@@ -2386,6 +2393,9 @@ mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
         if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
             load_and_link_tiled_map(m, 0);
 
+	/* Make sure we loaded properly. */
+	if (!m->tile_map[0])
+	    return NULL;
         *y += MAP_HEIGHT(m->tile_map[0]);
         return (get_map_from_coord(m->tile_map[0], x, y));
     }
@@ -2395,6 +2405,9 @@ mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
         if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
             load_and_link_tiled_map(m, 2);
 
+	/* Make sure we loaded properly. */
+	if (!m->tile_map[2])
+	    return NULL;
         *y -= MAP_HEIGHT(m);
         return (get_map_from_coord(m->tile_map[2], x, y));
     }

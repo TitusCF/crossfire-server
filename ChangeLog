@@ -1,3 +1,9 @@
+2016-05-23  Daniel Hawkins
+	* common/map.c: Prevent a potential segfault in get_map_from_coord() and
+	  out_of_map() if load_and_link_tiled_map() returns a null map. It was
+	  used before it was verified in previous behavior. Updated the documentation
+	  for each function to state the initial map passed to it must not be NULL.
+
 2016-05-22  Daniel Hawkins
 	* server/server.c: Move the static string reference into the condition
 	  branch, since we only use it on that branch.
