@@ -2295,10 +2295,10 @@ int out_of_map(mapstruct *m, int x, int y) {
             return 1;
         if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 3);
+	    /* Verify the tile map loaded correctly */
+	    if (!m->tile_map[3])
+		return 0;
         }
-	/* Verify the tile map loaded correctly */
-	if (!m->tile_map[3])
-	    return 0;
         return (out_of_map(m->tile_map[3], x+MAP_WIDTH(m->tile_map[3]), y));
     }
     if (x >= MAP_WIDTH(m)) {
@@ -2306,10 +2306,10 @@ int out_of_map(mapstruct *m, int x, int y) {
             return 1;
         if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 1);
+	    /* Verify the tile map loaded correctly */
+	    if (!m->tile_map[1])
+		return 0;
         }
-	/* Verify the tile map loaded correctly */
-	if (!m->tile_map[1])
-	    return 0;
         return (out_of_map(m->tile_map[1], x-MAP_WIDTH(m), y));
     }
     if (y < 0) {
@@ -2317,10 +2317,10 @@ int out_of_map(mapstruct *m, int x, int y) {
             return 1;
         if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 0);
+	    /* Verify the tile map loaded correctly */
+	    if (!m->tile_map[0])
+		return 0;
         }
-	/* Verify the tile map loaded correctly */
-	if (!m->tile_map[0])
-	    return 0;
         return (out_of_map(m->tile_map[0], x, y+MAP_HEIGHT(m->tile_map[0])));
     }
     if (y >= MAP_HEIGHT(m)) {
@@ -2328,10 +2328,10 @@ int out_of_map(mapstruct *m, int x, int y) {
             return 1;
         if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 2);
+	    /* Verify the tile map loaded correctly */
+	    if (!m->tile_map[2])
+		return 0;
         }
-	/* Verify the tile map loaded correctly */
-	if (!m->tile_map[2])
-	    return 0;
         return (out_of_map(m->tile_map[2], x, y-MAP_HEIGHT(m)));
     }
     return 1;
@@ -2366,48 +2366,48 @@ mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
     if (*x < 0) {
         if (!m->tile_path[3])
             return NULL;
-        if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY){
             load_and_link_tiled_map(m, 3);
-
-	/* Make sure we loaded properly. */
-	if (!m->tile_map[3])
-	    return NULL;
+	    /* Make sure we loaded properly. */
+	    if (!m->tile_map[3])
+		return NULL;
+	}
         *x += MAP_WIDTH(m->tile_map[3]);
         return (get_map_from_coord(m->tile_map[3], x, y));
     }
     if (*x >= MAP_WIDTH(m)) {
         if (!m->tile_path[1])
             return NULL;
-        if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY){
             load_and_link_tiled_map(m, 1);
-
-	/* Make sure we loaded properly. */
-	if (!m->tile_map[1])
-	    return NULL;
+	    /* Make sure we loaded properly. */
+	    if (!m->tile_map[1])
+		return NULL;
+	}
         *x -= MAP_WIDTH(m);
         return (get_map_from_coord(m->tile_map[1], x, y));
     }
     if (*y < 0) {
         if (!m->tile_path[0])
             return NULL;
-        if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY){
             load_and_link_tiled_map(m, 0);
-
-	/* Make sure we loaded properly. */
-	if (!m->tile_map[0])
-	    return NULL;
+	    /* Make sure we loaded properly. */
+	    if (!m->tile_map[0])
+		return NULL;
+	}
         *y += MAP_HEIGHT(m->tile_map[0]);
         return (get_map_from_coord(m->tile_map[0], x, y));
     }
     if (*y >= MAP_HEIGHT(m)) {
         if (!m->tile_path[2])
             return NULL;
-        if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
+        if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY){
             load_and_link_tiled_map(m, 2);
-
-	/* Make sure we loaded properly. */
-	if (!m->tile_map[2])
-	    return NULL;
+	    /* Make sure we loaded properly. */
+	    if (!m->tile_map[2])
+		return NULL;
+	}
         *y -= MAP_HEIGHT(m);
         return (get_map_from_coord(m->tile_map[2], x, y));
     }

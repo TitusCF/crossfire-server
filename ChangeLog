@@ -1,3 +1,7 @@
+2016-06-03  Daniel Hawkins
+	* common/map.c: Only check for null tile map if we tried to load;
+	  if we didn't try to load, tile map was already non-null.
+
 2016-05-23  Daniel Hawkins
 	* common/map.c: Prevent a potential segfault in get_map_from_coord() and
 	  out_of_map() if load_and_link_tiled_map() returns a null map. It was
