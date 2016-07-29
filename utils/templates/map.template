@@ -7,7 +7,7 @@
 <p>Map #MAPNAME#, in region <a href="#REGIONPATH#">#REGIONNAME#</a>. Map level: #MAPLEVEL#.</p>
 <p>Map view:
 <br>
-<a href="#MAPPIC#"><img src="#MAPSMALLPIC#" alt=" "></a>
+<a href="#MAPPIC#"><img src="#MAPSMALLPIC#" alt="#MAPNAME#"></a>
 <br>
 (click for larger view)
 </p>
