@@ -4312,6 +4312,7 @@ static void cfapi_object_teleport(int *type, ...) {
         k = object_find_first_free_spot(who, map, x, y);
         if (k == -1) {
             *res = 1;
+            va_end(args);
             return;
         }
 
