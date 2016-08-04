@@ -544,7 +544,7 @@ int move_to(object *op, int x, int y) {
     if (op->x == x && op->y == y)
         return 0;
 
-    if (GET_MAP_FLAGS(op->map, x, y)&P_OUT_OF_MAP)
+    if (get_map_flags(op->map, NULL, x, y, NULL, NULL)&P_OUT_OF_MAP)
         return 2;
 
     direction = monster_compute_path(op, GET_MAP_OB(op->map, x, y), -1);
