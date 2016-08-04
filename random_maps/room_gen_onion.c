@@ -202,8 +202,6 @@ void centered_onion(char **maze, int xsize, int ysize, int option, int layers)
     /* draw all the onion boxes.  */
     draw_onion(maze, xlocations, ylocations, layers);
     make_doors(maze, xlocations, ylocations, layers, option);
-    free(xlocations);
-    free(ylocations);
 }
 
 /**
@@ -291,8 +289,6 @@ void bottom_centered_onion(char **maze, int xsize, int ysize, int option, int la
     /* draw all the onion boxes.  */
     draw_onion(maze, xlocations, ylocations, layers);
     make_doors(maze, xlocations, ylocations, layers, option);
-    free(xlocations);
-    free(ylocations);
 }
 
 /**
@@ -360,7 +356,7 @@ void make_doors(char **maze, float *xlocations, float *ylocations, int layers, i
         freedoms = 2;
     }
     if (layers <= 0) {
-        return;
+        goto cleanup;
     }
 
     /* pick which wall will have a door. */
@@ -454,6 +450,7 @@ void make_doors(char **maze, float *xlocations, float *ylocations, int layers, i
     y1 = (int)(ylocations[l]+ylocations[2*layers-l-1])/2;
     maze[x1][y1] = 'C';
 
+cleanup:
     /* not needed anymore */
     free(xlocations);
     free(ylocations);
@@ -552,6 +549,4 @@ void bottom_right_centered_onion(char **maze, int xsize, int ysize, int option, 
     /* draw all the onion boxes.  */
     draw_onion(maze, xlocations, ylocations, layers);
     make_doors(maze, xlocations, ylocations, layers, option);
-    free(xlocations);
-    free(ylocations);
 }
