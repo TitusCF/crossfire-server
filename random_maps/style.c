@@ -242,7 +242,7 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
                 int dist;
                 char *mfile_name = strrchr(namelist[i], '_')+1;
 
-                if ((mfile_name-1) == NULL) { /* since there isn't a sequence, */
+                if ((mfile_name-1) == '\0') { /* since there isn't a sequence, */
                     int q;
 
                     /*pick one at random to recurse */
