@@ -851,36 +851,11 @@ typedef unsigned char MoveType;
 /** Cut off point of when an object is put on the active list or not */
 #define MIN_ACTIVE_SPEED        0.00001
 
-/*
- * random() is much better than rand().  If you have random(), use it instead.
- * You shouldn't need to change any of this
- *
- * 0.93.3: It looks like linux has random (previously, it was set below
- * to use rand).  Perhaps old version of linux lack rand?  IF you run into
- * problems, add || defined(__linux__) the #if immediately below.
- *
- * 0.94.2 - you probably shouldn't need to change any of the rand stuff
- * here.
- */
+uint32_t cf_random(void);
+void cf_srandom(unsigned long seed);
 
-#ifdef HAVE_SRANDOM
-#define RANDOM() random()
-#define SRANDOM(xyz) srandom(xyz)
-#else
-#  ifdef HAVE_SRAND48
-#  define RANDOM() lrand48()
-#  define SRANDOM(xyz) srand48(xyz)
-#  else
-/*
- * We require C99, which will at least have srand() and rand() defined.
- * Removed the HAVE_SRAND check due to this.
- *
- * Daniel Hawkins 2015-12-18
- */
-#    define RANDOM() rand()
-#    define SRANDOM(xyz) srand(xyz)
-#  endif
-#endif
+#define RANDOM()        cf_random()
+#define SRANDOM(seed)   cf_srandom(seed)
 
 /**
  * Returns the weight of the given object. Note: it does not take the number of
