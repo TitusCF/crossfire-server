@@ -714,7 +714,7 @@ void check_login(object *op, int check_pass) {
                 pl->levgrace[i] = j;
             }
         } else if (!strcmp(buf, "party_rejoin_mode"))
-            pl->rejoin_party = value;
+            pl->rejoin_party = (enum party_rejoin_mode)value;
         else if (!strcmp(buf, "party_rejoin_name"))
             party_name = strdup_local(val_string);
         else if (!strcmp(buf, "party_rejoin_password")) {
