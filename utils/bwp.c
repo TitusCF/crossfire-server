@@ -521,11 +521,11 @@ int main(int argc, char *argv[]) {
             };
             int j;
 
-            canuse.item = calloc(1, sizeof(const char *)*(CANUSE_LENGTH+1));
-            resist.item = calloc(1, sizeof(const char *)*(NROFATTACKS+1));
-            vulner.item = calloc(1, sizeof(const char *)*(NROFATTACKS+1));
-            attack.item = calloc(1, sizeof(const char *)*(NROFATTACKS+1));
-            special.item = calloc(1, sizeof(const char *)*(NROFATTACKS+1));
+            canuse.item = calloc((CANUSE_LENGTH+1), sizeof(const char *));
+            resist.item = calloc((NROFATTACKS+1), sizeof(const char *));
+            vulner.item = calloc((NROFATTACKS+1), sizeof(const char *));
+            attack.item = calloc((NROFATTACKS+1), sizeof(const char *));
+            special.item = calloc((NROFATTACKS+1), sizeof(const char *));
 
                 /* Do lore row */
             if (at->clone.lore) {

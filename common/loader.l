@@ -281,7 +281,7 @@ const char *const spell_mapping[] = {
  */
 static void set_damage(object *op, int type, int val) {
     if (!op->discrete_damage) {
-        op->discrete_damage = calloc(1, sizeof(int16_t) * NROFATTACKS);
+        op->discrete_damage = calloc(NROFATTACKS, sizeof(int16_t));
     }
     op->discrete_damage[type] = val;
 }

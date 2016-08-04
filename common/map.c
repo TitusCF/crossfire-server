@@ -847,7 +847,7 @@ static void allocate_map(mapstruct *m) {
         free(m->spaces);
     }
 
-    m->spaces = calloc(1, MAP_WIDTH(m)*MAP_HEIGHT(m)*sizeof(MapSpace));
+    m->spaces = calloc(MAP_WIDTH(m) * MAP_HEIGHT(m), sizeof(MapSpace));
 
     if (m->spaces == NULL)
         fatal(OUT_OF_MEMORY);

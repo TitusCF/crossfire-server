@@ -2087,7 +2087,7 @@ void object_merge_spell(object *op, int16_t x, int16_t y) {
                 }
 #endif
                 if (!op->spell_tags)
-                    op->spell_tags = calloc(1, SPELL_TAG_SIZE*sizeof(tag_t));
+                    op->spell_tags = calloc(SPELL_TAG_SIZE, sizeof(tag_t));
 
                 OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) = tmp->stats.maxhp;
             }
