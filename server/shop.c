@@ -920,7 +920,6 @@ int shop_pay_unpaid(object *pl, object *op) {
  * player. Shouldn't be NULL or non player.
  */
 void sell_item(object *op, object *pl) {
-    uint64_t price = shop_price_sell(op, pl);
     object *tmp;
     archetype *at;
     char obj_name[MAX_BUF];
@@ -938,6 +937,7 @@ void sell_item(object *op, object *pl) {
     if (op->custom_name)
         FREE_AND_CLEAR_STR(op->custom_name);
 
+    uint64_t price = shop_price_sell(op, pl);
     if (price == 0) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
