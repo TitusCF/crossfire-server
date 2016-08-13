@@ -93,6 +93,164 @@ typedef struct _key_value {
 #define OB_SPELL_TAG_MATCH(op, count)   (op->spell_tags[count&0xf] == count)
 
 /**
+ * Only add new values to this list if somewhere in the program code, it is
+ * actually needed.  Just because you add a new monster does not mean it has to
+ * have a type defined here.  That only needs to happen if in some .c file, it
+ * needs to do certain special actions based on the monster type, that can not
+ * be handled by any of the numerous flags.  Also, if you add new entries, try
+ * and fill up the holes in this list.  Additionally, when you add a new entry,
+ * include it in the table in common/item.c
+ *
+ * type 0 is undefined and indicates non-valid type information.
+ */
+enum object_type {
+    PLAYER = 1,
+    TRANSPORT = 2, /**< see doc/Developers/objects */
+    ROD = 3,
+    TREASURE = 4,
+    POTION = 5,
+    FOOD = 6,
+    POISON = 7,
+    BOOK = 8,
+    CLOCK = 9,
+    DRAGON_FOCUS = 10, /**< Used during character creation */
+    ARROW = 13,
+    BOW = 14,
+    WEAPON = 15,
+    ARMOUR = 16,
+    PEDESTAL = 17,
+    ALTAR = 18,
+    LOCKED_DOOR = 20,
+    SPECIAL_KEY = 21,
+    MAP = 22,
+    DOOR = 23,
+    KEY = 24,
+    TIMED_GATE = 26,
+    TRIGGER = 27,
+    GRIMREAPER = 28,
+    MAGIC_EAR = 29,
+    TRIGGER_BUTTON = 30,
+    TRIGGER_ALTAR = 31,
+    TRIGGER_PEDESTAL = 32,
+    SHIELD = 33,
+    HELMET = 34,
+    MONEY = 36,
+    CLASS = 37, /**< Object for applying character class modifications to someone */
+    AMULET = 39,
+    PLAYERMOVER = 40,
+    TELEPORTER = 41,
+    CREATOR = 42,
+    SKILL = 43, /**< Also see ::SKILL_TOOL (74) below */
+    EARTHWALL = 45,
+    GOLEM = 46,
+    THROWN_OBJ = 48,
+    BLINDNESS = 49,
+    GOD = 50,
+    DETECTOR = 51,       /**< peterm:  detector is an object
+                                       * which notices the presense of
+                                       * another object and is triggered
+                                       * like buttons. */
+    TRIGGER_MARKER = 52, /**< inserts an invisible, weightless
+                                   * force into a player with a
+                                   * specified string WHEN TRIGGERED. */
+    DEAD_OBJECT = 53,
+    DRINK = 54,
+    MARKER = 55, /**< inserts an invisible, weightless
+                                   * force into a player with a
+                                   * specified string. */
+    HOLY_ALTAR = 56,
+    PLAYER_CHANGER = 57,
+    BATTLEGROUND = 58, /**< battleground, by Andreas Vogl */
+    PEACEMAKER = 59,   /**< Object owned by a player which can
+                                     * convert a monster into a peaceful
+                                     * being incapable of attack.  */
+    GEM = 60,
+    FIREWALL = 62,
+    CHECK_INV = 64,  /**< b.t. thomas@nomad.astro.psu.edu */
+    MOOD_FLOOR = 65, /**< b.t. thomas@nomad.astro.psu.edu
+                                   * values of last_sp set how to
+                                   * change:
+                                   * 0 = furious, all monsters become
+                                   *     aggressive
+                                   * 1 = angry, all but friendly become
+                                   *     aggressive
+                                   * 2 = calm, all aggressive monsters
+                                   *     calm down
+                                   * 3 = sleep, all monsters fall asleep
+                                   * 4 = charm, monsters become pets */
+    EXIT = 66,
+    ENCOUNTER = 67,
+    SHOP_FLOOR = 68,
+    SHOP_MAT = 69,
+    RING = 70,
+    FLOOR = 71,      /**< Floor tile -> native layer 0 */
+    FLESH = 72,      /**< animal 'body parts' -b.t. */
+    INORGANIC = 73,  /**< metals, minerals, dragon scales */
+    SKILL_TOOL = 74, /**< Allows the use of a skill */
+    LIGHTER = 75,
+    WALL = 77,        /**< Wall. Put it always in layer 1 if
+                                        * not set is_floor */
+    MISC_OBJECT = 79, /**< misc. objects are for objects
+                                    * without a function in the engine.
+                                    * Like statues, clocks, chairs...
+                                    *  If perhaps we create a function
+                                    * where we can sit on chairs, we
+                                    * create a new type and remove all
+                                    * chairs from here. */
+    MONSTER = 80,     /**< A real, living creature */
+    LAMP = 82,        /**< Lamp */
+    DUPLICATOR = 83,  /**< Duplicator/multiplier object */
+    SPELLBOOK = 85,
+    CLOAK = 87,
+    SPINNER = 90,
+    GATE = 91,
+    BUTTON = 92,
+    CF_HANDLE = 93,
+    HOLE = 94, /* When open, objects fall through */
+    TRAPDOOR = 95,
+    SIGN = 98,
+    BOOTS = 99,
+    GLOVES = 100,
+    SPELL = 101,
+    SPELL_EFFECT = 102,
+    CONVERTER = 103,
+    BRACERS = 104,
+    POISONING = 105,
+    SAVEBED = 106,
+    WAND = 109,
+    SCROLL = 111,
+    DIRECTOR = 112,
+    GIRDLE = 113,
+    FORCE = 114,
+    POTION_RESIST_EFFECT = 115, /**< A force, holding the effect of a
+                                  * resistance potion */
+    EVENT_CONNECTOR = 116,      /**< Lauwenmark: an invisible object
+                                          * holding a plugin event hook */
+    CLOSE_CON = 121,            /**< Eneq((at)csd.uu.se): Id for
+                                              * close_container archetype. */
+    CONTAINER = 122,
+    ARMOUR_IMPROVER = 123,
+    WEAPON_IMPROVER = 124,
+    SKILLSCROLL = 130, /**< can add a skill to player's
+                                     * inventory -bt.*/
+    DEEP_SWAMP = 138,
+    IDENTIFY_ALTAR = 139,
+    SHOP_INVENTORY = 150, /**< Mark Wedel (mark@pyramid.com) Shop
+                                    * inventories */
+    RUNE = 154,
+    TRAP = 155,
+    POWER_CRYSTAL = 156,
+    CORPSE = 157,
+    DISEASE = 158,
+    SYMPTOM = 159,
+    BUILDER = 160,  /**< Generic item builder, see subtypes
+                                      * below */
+    MATERIAL = 161, /**< Material for building */
+
+    OBJECT_TYPE_MAX = 162, /**< Update if you add new types */
+};
+
+/**
  * Main Crossfire structure, one ingame object.
  *
  * Note that the ordering of this structure is sort of relevent -
