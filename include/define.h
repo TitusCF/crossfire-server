@@ -41,14 +41,13 @@
 /**
  * Fatal variables; used as arguments to fatal().
  */
-/*@{*/
-#define OUT_OF_MEMORY           0
-#define MAP_ERROR               1
-#define ARCHTABLE_TOO_SMALL     2
-#define ARCHETYPE_ISSUE         3
-#define SEE_LAST_ERROR          4
-
-/*@}*/
+enum fatal_error {
+    OUT_OF_MEMORY = 0,
+    MAP_ERROR = 1,
+    ARCHTABLE_TOO_SMALL = 2,
+    ARCHETYPE_ISSUE = 3,
+    SEE_LAST_ERROR = 4,
+};
 
 /**
  * @defgroup TYPE_BUILDER Subtypes for ::BUILDER objects.

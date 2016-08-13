@@ -593,7 +593,7 @@ int isqrt(int n) {
  * @note
  * this function never returns, as it calls exit().
  */
-void fatal(int err) {
+void fatal(enum fatal_error err) {
     const char *fatalmsgs[] = {
         "Failed to allocate memory",
         "Failed repeatedly to load maps",
@@ -602,13 +602,7 @@ void fatal(int err) {
         "See last error",
     };
 
-    if (err >= 0 && err < sizeof(fatalmsgs) / sizeof(*fatalmsgs)) {
-        fprintf(logfile, "Fatal error: %s\n", fatalmsgs[err]);
-    } else {
-        fprintf(logfile, "Fatal error, and invalid error code too!\n");
-    }
-
-    fprintf(logfile, "Fatal: %s\n", err < sizeof(fatalmsgs)/sizeof(*fatalmsgs) ? fatalmsgs[(unsigned)err] : "invalid error code");
+    fprintf(logfile, "Fatal error: %s\n", fatalmsgs[err]);
     emergency_save(0);
     clean_tmp_files();
     fprintf(logfile, "Exiting...\n");

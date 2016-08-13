@@ -72,7 +72,7 @@ extern void dump_friendly_objects(void);
 extern void clean_friendly_list(void);
 extern int is_friendly(const object *op);
 /* glue.c */
-extern void fatal(int err);
+extern void fatal(enum fatal_error err);
 /* holy.c */
 extern void init_gods(void);
 extern godlink *get_rand_god(void);
