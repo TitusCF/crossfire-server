@@ -14,32 +14,12 @@
 #ifndef DEFINE_H
 #define DEFINE_H
 
-/*
- * Crossfire requires ANSI-C, but some compilers "forget" to define it.
- * Thus the prototypes made by cextract don't get included correctly.
- */
-#if !defined(__STDC__)
-/* Removed # from start of following line.  makedepend was picking it up.
- * The following should still hopefully result in an error.
- */
-error - Your ANSI C compiler should be defining __STDC__;
-#endif
-
 #ifndef WIN32 /* ---win32 exclude unix configuration part */
 #include <autoconf.h>
 #endif
 
-/** Decstations have trouble with fabs()... */
-#define FABS(x) ((x) < 0 ? -(x) : (x))
-
 #ifdef __NetBSD__
 #include <sys/param.h>
-#endif
-#ifndef MIN
-#define MIN(x, y) ((x) < (y) ? (x) : (y))
-#endif
-#ifndef MAX
-#define MAX(x, y) ((x) > (y) ? (x) : (y))
 #endif
 
 /** NAME_MAX used by random maps may not be defined on pure ansi systems */
