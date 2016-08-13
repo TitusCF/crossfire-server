@@ -225,7 +225,7 @@ static void malloc_info(object *op) {
 
     for (m = first_map, nrofmaps = 0; m != NULL; m = m->next, nrofmaps++)
         if (m->in_memory == MAP_IN_MEMORY) {
-            mapmem += MAP_WIDTH(m)*MAP_HEIGHT(m)*(sizeof(object *)+sizeof(MapSpace));
+            mapmem += map_size(m) * (sizeof(object *) + sizeof(MapSpace));
             nrm++;
         }
 

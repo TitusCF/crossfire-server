@@ -79,7 +79,7 @@ extern const char *const map_layer_name[MAP_LAYERS];
 /** Map height. */
 #define MAP_HEIGHT(m)           (m)->height
 /** Convenient function - total number of spaces is used in many places. */
-#define MAP_SIZE(m)             ((m)->width*(m)->height)
+#define MAP_SIZE(m)             map_size(m)
 
 /** Default X coordinate for map enter. */
 #define MAP_ENTER_X(m)          (m)->enter_x
@@ -382,5 +382,7 @@ typedef struct rv_vector {
     int     direction;      /**< General direction to the targer. */
     object  *part;          /**< Part we found. */
 } rv_vector;
+
+uint32_t map_size(mapstruct *m);
 
 #endif /* MAP_H */

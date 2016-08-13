@@ -2684,7 +2684,7 @@ void command_style_map_info(object *op, const char *params) {
 
     for (mp = styles; mp != NULL; mp = mp->next) {
         maps_used++;
-        mapmem += MAP_WIDTH(mp)*MAP_HEIGHT(mp)*(sizeof(object *)+sizeof(MapSpace))+sizeof(mapstruct);
+        mapmem += map_size(mp) * (sizeof(object *)+sizeof(MapSpace))+sizeof(mapstruct);
         for (x = 0; x < MAP_WIDTH(mp); x++) {
             for (y = 0; y < MAP_HEIGHT(mp); y++) {
                 FOR_MAP_PREPARE(mp, x, y, tmp)

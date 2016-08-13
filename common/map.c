@@ -826,6 +826,11 @@ mapstruct *get_linked_map(void) {
     return map;
 }
 
+/** Calculate map size without intermediate sign extension. */
+uint32_t map_size(mapstruct *m) {
+    return (uint32_t)m->width * (uint32_t)m->height;
+}
+
 /**
  * This basically allocates the dynamic array of spaces for the
  * map.
@@ -847,7 +852,7 @@ static void allocate_map(mapstruct *m) {
         free(m->spaces);
     }
 
-    m->spaces = calloc(MAP_WIDTH(m) * MAP_HEIGHT(m), sizeof(MapSpace));
+    m->spaces = calloc(map_size(m), sizeof(MapSpace));
 
     if (m->spaces == NULL)
         fatal(OUT_OF_MEMORY);
