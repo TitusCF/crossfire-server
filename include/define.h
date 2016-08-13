@@ -94,21 +94,17 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BOOK                        8
 #define CLOCK                       9
 #define DRAGON_FOCUS                10    /**< Used during character creation */
-/*#define FBALL                     11 */
-/*#define LIGHTNING                 12 */
 #define ARROW                       13
 #define BOW                         14
 #define WEAPON                      15
 #define ARMOUR                      16
 #define PEDESTAL                    17
 #define ALTAR                       18
-/*#define CONFUSION                 19 */
 #define LOCKED_DOOR                 20
 #define SPECIAL_KEY                 21
 #define MAP                         22
 #define DOOR                        23
 #define KEY                         24
-/*#define MMISSILE                  25 */
 #define TIMED_GATE                  26
 #define TRIGGER                     27
 #define GRIMREAPER                  28
@@ -118,11 +114,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TRIGGER_PEDESTAL            32
 #define SHIELD                      33
 #define HELMET                      34
-/*#define HORN                      35    has been merged into ROD */
 #define MONEY                       36
 #define CLASS                       37    /**< Object for applying character class
                                            * modifications to someone */
-/*#define GRAVESTONE                38 */
 #define AMULET                      39
 #define PLAYERMOVER                 40
 #define TELEPORTER                  41
@@ -130,11 +124,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SKILL                       43    /**< Also see ::SKILL_TOOL (74) below */
 #define EARTHWALL                   45
 #define GOLEM                       46
-/*#define BOMB                      47 */
 #define THROWN_OBJ                  48
 #define BLINDNESS                   49
 #define GOD                         50
-
 #define DETECTOR                    51    /**< peterm:  detector is an object
                                            * which notices the presense of
                                            * another object and is triggered
@@ -150,14 +142,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define HOLY_ALTAR                  56
 #define PLAYER_CHANGER              57
 #define BATTLEGROUND                58    /**< battleground, by Andreas Vogl */
-
 #define PEACEMAKER                  59    /**< Object owned by a player which can
                                            * convert a monster into a peaceful
                                            * being incapable of attack.  */
 #define GEM                         60
-/*#define FIRECHEST                 61 */ /* FIRECHEST folded into FIREWALL */
 #define FIREWALL                    62
-/*#define ANVIL                     63 */
 #define CHECK_INV                   64    /**< b.t. thomas@nomad.astro.psu.edu */
 #define MOOD_FLOOR                  65    /**< b.t. thomas@nomad.astro.psu.edu
                                            * values of last_sp set how to
@@ -180,15 +169,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define INORGANIC                   73    /**< metals, minerals, dragon scales */
 #define SKILL_TOOL                  74    /**< Allows the use of a skill */
 #define LIGHTER                     75
-
-/* The trap_part, wall, light_source, misc_object, monster, and spawn_generator
- * types are not used in any archetypes, and should perhaps be removed.
- */
-/*#define TRAP_PART                 76 */ /* Needed by set traps skill -b.t. */
-
 #define WALL                        77    /**< Wall. Put it always in layer 1 if
                                            * not set is_floor */
-/*#define LIGHT_SOURCE              78 */ /* torches, lamps, etc. */
 #define MISC_OBJECT                 79    /**< misc. objects are for objects
                                            * without a function in the engine.
                                            * Like statues, clocks, chairs...
@@ -197,24 +179,16 @@ error - Your ANSI C compiler should be defining __STDC__;
                                            * create a new type and remove all
                                            * chairs from here. */
 #define MONSTER                     80    /**< A real, living creature */
-/*#define SPAWN_GENERATOR           81 */ /* Spawn point or monster generator */
 #define LAMP                        82    /**< Lamp */
 #define DUPLICATOR                  83    /**< Duplicator/multiplier object */
-/*#define TOOL                      84 */ /* Tool for building objects */
 #define SPELLBOOK                   85
-/*#define BUILDFAC                  86 */ /* Facilities for building objects */
 #define CLOAK                       87
-/*#define CONE                      88 */
-/*#define AURA                      89 */ /* Aura spell object */
-
 #define SPINNER                     90
 #define GATE                        91
 #define BUTTON                      92
 #define CF_HANDLE                   93
 #define HOLE                        94    /* When open, objects fall through */
 #define TRAPDOOR                    95
-/*#define WORD_OF_RECALL            96 */
-/*#define PARAIMAGE                 97 */
 #define SIGN                        98
 #define BOOTS                       99
 #define GLOVES                      100
@@ -224,10 +198,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BRACERS                     104
 #define POISONING                   105
 #define SAVEBED                     106
-/*#define POISONCLOUD               107*/
-/*#define FIREHOLES                 108*/
 #define WAND                        109
-/*#define ABILITY                   110*/
 #define SCROLL                      111
 #define DIRECTOR                    112
 #define GIRDLE                      113
@@ -241,29 +212,18 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define CONTAINER                   122
 #define ARMOUR_IMPROVER             123
 #define WEAPON_IMPROVER             124
-
-/* unused: 125 - 129
- * type 125 was MONEY_CHANGER
- */
 #define SKILLSCROLL                 130   /**< can add a skill to player's
                                            * inventory -bt.*/
 #define DEEP_SWAMP                  138
 #define IDENTIFY_ALTAR              139
-/*#define CANCELLATION              141*/ /* not used with new spell code */
 #define SHOP_INVENTORY              150   /**< Mark Wedel (mark@pyramid.com) Shop
                                            * inventories */
-/*#define BALL_LIGHTNING            151*/ /* peterm:  ball lightning and color
-                                           * spray */
-/*#define SWARM_SPELL               153*/
 #define RUNE                        154
 #define TRAP                        155
-
 #define POWER_CRYSTAL               156
 #define CORPSE                      157
-
 #define DISEASE                     158
 #define SYMPTOM                     159
-
 #define BUILDER                     160   /**< Generic item builder, see subtypes
                                            * below */
 #define MATERIAL                    161   /**< Material for building */
