@@ -804,8 +804,6 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
  * Fix weird sustenance logic.
  */
 StringBuffer *describe_monster(const object *op, int use_media_tags, StringBuffer *buf) {
-    int i;
-
     assert(op != NULL);
     assert(QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER);
 
