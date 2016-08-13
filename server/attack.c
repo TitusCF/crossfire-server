@@ -2027,17 +2027,13 @@ int hit_player(object *op, int dam, object *hitter, uint32_t type, int full_hit)
 
     if (!full_hit) {
         archetype *at;
-        int area;
-        int remainder;
-
-        area = 0;
+        unsigned int area = 0;
         for (at = op->arch; at != NULL; at = at->more)
             area++;
-        assert(area > 0);
 
         /* basically: maxdam /= area; we try to "simulate" a float
            value-effect */
-        remainder = 100*(maxdam%area)/area;
+        unsigned int remainder = 100*(maxdam%area)/area;
         maxdam /= area;
         if (RANDOM()%100 < remainder)
             maxdam++;

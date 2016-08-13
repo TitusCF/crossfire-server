@@ -107,7 +107,7 @@ typedef struct titlestruct {
     const char *name;      /**< the name of the book */
     const char *authour;   /**< the name of the book authour */
     const char *archname;  /**< the archetype name of the book */
-    int level;             /**< level of difficulty of this message */
+    unsigned int level;    /**< level of difficulty of this message */
     size_t size;           /**< size of the book message */
     int msg_index;         /**< an index value derived from book message */
     struct titlestruct *next;   /**< next item in the list */
@@ -787,7 +787,7 @@ static void init_msgfile(void) {
                 } else if (strncmp(buf, "QUEST ", 6) == 0) {
                     tmp->quest_code = add_string(buf + 6);
                 } else if (strncmp(buf, "FACE ", 5) == 0) {
-                    int face = find_face(buf + 5, (unsigned int)-1);
+                    unsigned int face = find_face(buf + 5, (unsigned int)-1);
                     if (face != (unsigned int)-1) {
                         tmp->face = face;
                     } else {
@@ -1627,7 +1627,7 @@ static StringBuffer *artifact_describe(const artifact *art, const artifactlist *
  * @return
  * new StringBuffer containing the dsecription.
  */
-static StringBuffer *artifact_msg(int level, size_t booksize) {
+static StringBuffer *artifact_msg(unsigned int level, size_t booksize) {
     const artifactlist *al;
     const artifact *art;
     int i, type, index;

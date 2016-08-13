@@ -2406,7 +2406,7 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
             return 1;
 
         /* hidden or low-quality invisible */
-        if (enemy->hide && rv->distance <= 1 && RANDOM()%100 <= hide_discovery) {
+        if (enemy->hide && rv->distance <= 1 && RANDOM()%100 <= (unsigned int)hide_discovery) {
             make_visible(enemy);
             /* inform players of new status */
             if (enemy->type == PLAYER && player_can_view(enemy, op))
@@ -2422,7 +2422,7 @@ int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
              * can then basically negate the spell.  The spell isn't negated -
              * they just know where you are!
              */
-            if (RANDOM()%50 <= hide_discovery) {
+            if (RANDOM()%50 <= (unsigned int)hide_discovery) {
                 if (enemy->type == PLAYER) {
                     char name[MAX_BUF];
 

@@ -382,8 +382,7 @@ static void change_treasure(treasure *t, object *op) {
 static void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) {
     object *tmp;
 
-
-    if ((int)t->chance >= 100 || (RANDOM()%100+1) < (int)t->chance) {
+    if ((int)t->chance >= 100 || (RANDOM()%100+1) < t->chance) {
         if (t->name) {
             if (strcmp(t->name, "NONE") && difficulty >= t->magic)
                 create_treasure(find_treasurelist(t->name), op, flag, difficulty, tries);

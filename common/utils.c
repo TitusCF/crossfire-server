@@ -57,7 +57,7 @@ int random_roll(int min, int max, const object *op, int goodbad) {
         return((ran%diff)+min);
 
     luck = op->stats.luck;
-    if (RANDOM()%base < MIN(10, abs(luck))) {
+    if (RANDOM()%base < (unsigned int)MIN(10, abs(luck))) {
         /* we have a winner */
         ((luck > 0) ? (luck = 1) : (luck = -1));
         diff -= luck;
@@ -98,7 +98,7 @@ int64_t random_roll64(int64_t min, int64_t max, const object *op, int goodbad) {
         return((ran%diff)+min);
 
     luck = op->stats.luck;
-    if (RANDOM()%base < MIN(10, abs(luck))) {
+    if (RANDOM()%base < (unsigned int)MIN(10, abs(luck))) {
         /* we have a winner */
         ((luck > 0) ? (luck = 1) : (luck = -1));
         diff -= luck;
@@ -134,7 +134,7 @@ int die_roll(int num, int size, const object *op, int goodbad) {
         luck = op->stats.luck;
 
     for (i = 0; i < num; i++) {
-        if (RANDOM()%base < MIN(10, abs(luck)) && !gotlucky) {
+        if (RANDOM()%base < (unsigned int)MIN(10, abs(luck)) && !gotlucky) {
             /* we have a winner */
             gotlucky++;
             ((luck > 0) ? (luck = 1) : (luck = -1));

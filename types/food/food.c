@@ -303,7 +303,7 @@ static int dragon_eat_flesh(object *op, object *meal) {
                 chance = MIN(100., chance*2.);
 
             /* now make the throw and save all winners (Don't insert luck bonus here!) */
-            if (RANDOM()%10000 < (int)(chance*100)) {
+            if (RANDOM()%10000 < (unsigned int)(chance*100)) {
                 atnr_winner[winners] = i;
                 winners++;
             }

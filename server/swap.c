@@ -54,7 +54,7 @@ static void write_map_log(void) {
              * to work.
              */
             fprintf(fp, "%s:%s:%ld:0:0:%d:0:%d\n", map->path, map->tmpname,
-                    (map->reset_time == -1 ? -1 : map->reset_time-current_time),
+                    (map->reset_time == (uint32_t)-1 ? -1 : map->reset_time-current_time),
                     map->difficulty,
                     map->darkness);
         }

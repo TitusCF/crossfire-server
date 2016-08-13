@@ -1293,7 +1293,7 @@ static void server_check_shutdown(void) {
     static int next_warn = 0;
 
     time_t time_left;
-    int i;
+    unsigned int i;
 
     /* Zero means that no shutdown is pending. */
     if (cmd_shutdown_time == 0) {
