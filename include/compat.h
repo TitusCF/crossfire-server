@@ -6,15 +6,12 @@
 #ifndef _COMPAT_H
 #define _COMPAT_H
 
-#include <stdlib.h> // For abs()
-
 // Maintain backward compatibility with original macros.
 #define TRUE true
 #define FALSE false
 #define FMT64   PRId64
 #define FMT64U  PRIu64
 
-#define FABS(x) abs(x)
 
 #ifndef MIN
 #define MIN(x, y) ((x) < (y) ? (x) : (y))

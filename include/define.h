@@ -18,6 +18,9 @@
 #include <autoconf.h>
 #endif
 
+/** Decstations have trouble with fabs()... */
+#define FABS(x) ((x) < 0 ? -(x) : (x))
+
 #ifdef __NetBSD__
 #include <sys/param.h>
 #endif
