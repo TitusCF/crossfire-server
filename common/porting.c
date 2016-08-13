@@ -51,11 +51,11 @@ uint32_t cf_random() {
 
 void cf_srandom(unsigned long seed) {
 #if defined(HAVE_SRANDOM)
-    return srandom(seed);
+    srandom(seed);
 #elif defined(HAVE_SRAND48)
-    return srand48(seed);
+    srand48(seed);
 #else
-    return srand(seed);
+    srand(seed);
 #endif
 }
 
