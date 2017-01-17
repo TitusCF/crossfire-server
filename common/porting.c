@@ -39,26 +39,6 @@
 /* Has to be after above includes so we don't redefine some values */
 #include "global.h"
 
-uint32_t cf_random() {
-#if defined(HAVE_SRANDOM)
-    return random();
-#elif defined(HAVE_SRAND48)
-    return lrand48();
-#else
-    return rand();
-#endif
-}
-
-void cf_srandom(unsigned long seed) {
-#if defined(HAVE_SRANDOM)
-    srandom(seed);
-#elif defined(HAVE_SRAND48)
-    srand48(seed);
-#else
-    srand(seed);
-#endif
-}
-
 /*****************************************************************************
  * File related functions
  ****************************************************************************/

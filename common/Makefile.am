@@ -5,6 +5,7 @@ libcross_a_SOURCES = \
 	arch.c\
 	artifact.c\
 	button.c\
+	cf_random.c \
 	dialog.c \
 	exp.c\
 	friend.c\
