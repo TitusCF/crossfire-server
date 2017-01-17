@@ -3,7 +3,8 @@ plugindir=$(pkglibdir)/plugins
 noinst_HEADERS = include/citylife.h	../common/include/plugin_common.h
 plugin_LTLIBRARIES = citylife.la
 citylife_la_SOURCES = citylife.c\
-	../common/plugin_common.c
+	../common/plugin_common.c \
+	../../common/porting.c
 
 citylife_la_LIBADD =
 citylife_la_LDFLAGS = -module -avoid-version -rdynamic
