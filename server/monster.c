@@ -391,14 +391,14 @@ static int monster_move_randomly(object *op) {
 int monster_compute_path(object *source, object *target, int default_dir) {
     unsigned short *distance;
     int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE], dirs[8];
-    int current = 0, dir, max = 1, size, x, y, i;
+    int current = 0, dir, max = 1, x, y, i;
 
     if (target->map != source->map)
         return default_dir;
 
     /*printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
 
-    size = source->map->width*source->map->height;
+    const int size = source->map->width*source->map->height;
     /* We are setting all the values manually anyway,
      * so there's no reason to use calloc().
      * malloc() is more efficient here for that reason.
@@ -461,11 +461,11 @@ int monster_compute_path(object *source, object *target, int default_dir) {
             assert(source->map->height*x+y < size);
 	    
             new_distance = 
-		distance[source->map->height*explore_x[current]+explore_y[current]]
-	    /* Mod 2 is equivalent to checking only the 1's bit (1 or 0), but & 1 is faster.
-	     * Also, dir & 1 == 0 is true if we have a diagonal dir.
-	     */
-		+ ((dir & 1) == 0 ? 3 : 2);
+                distance[source->map->height*explore_x[current]+explore_y[current]]
+                /* Mod 2 is equivalent to checking only the 1's bit (1 or 0), but & 1 is faster.
+                 * Also, dir & 1 == 0 is true if we have a diagonal dir.
+                 */
+                + ((dir & 1) == 0 ? 3 : 2);
 
             /*LOG(llevDebug, "check %d, %d dist = %d, nd = %d\n", x, y, distance[source->map->height*x+y], new_distance);*/
 
@@ -726,10 +726,13 @@ int monster_move(object *op) {
     if (!QUERY_FLAG(op, FLAG_SCARED)) {
         dir = rv.direction;
 
-        if (QUERY_FLAG(op, FLAG_RUN_AWAY))
-            dir = absdir(dir+4);
+        /* Was two if statements assigning to the same variable
+         * We can get the same effect by reversing the order and making an else-if
+         */
         if (QUERY_FLAG(op, FLAG_CONFUSED))
             dir = get_randomized_dir(dir);
+        else if (QUERY_FLAG(op, FLAG_RUN_AWAY))
+            dir = absdir(dir+4);
 
         if (QUERY_FLAG(op, FLAG_CAST_SPELL) && !(RANDOM()%3)) {
             if (monster_cast_spell(op, rv.part, enemy, dir))
@@ -762,13 +765,15 @@ int monster_move(object *op) {
     part = rv.part;
     dir = rv.direction;
 
-    if (QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op, FLAG_RUN_AWAY))
+    /* This first clause used to happen after the other two, but would trample dir.
+     * Moved to before them as another check to slightly reduce calls to monster_compute_path
+     */
+    if (QUERY_FLAG(op, FLAG_CONFUSED))
+        dir = get_randomized_dir(dir);
+    else if (QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op, FLAG_RUN_AWAY))
         dir = absdir(dir+4);
     else if (!monster_can_hit(part, enemy, &rv))
         dir = monster_compute_path(op, enemy, rv.direction);
-
-    if (QUERY_FLAG(op, FLAG_CONFUSED))
-        dir = get_randomized_dir(dir);
 
     if ((op->attack_movement&LO4) && !QUERY_FLAG(op, FLAG_SCARED)) {
         switch (op->attack_movement&LO4) {
