@@ -1942,7 +1942,7 @@ void receive_player_password(object *op) {
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_NEW) {
-        safe_strncpy(op->contr->new_password, crypt_string(op->contr->write_buf+1, NULL),
+        safe_strncpy(op->contr->new_password, newhash(op->contr->write_buf+1),
                 sizeof(op->contr->new_password));
         send_query(&op->contr->socket, CS_QUERY_HIDEINPUT,
                 i18n(op, "Please confirm your new password, or blank to cancel:"));
@@ -1951,7 +1951,7 @@ void receive_player_password(object *op) {
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
-        if (strcmp(crypt_string(op->contr->write_buf+1, op->contr->new_password), op->contr->new_password)) {
+        if (!check_password(op->contr->write_buf+1, op->contr->new_password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                           i18n(op, "The new passwords don't match!"));
         } else {
@@ -1963,7 +1963,7 @@ void receive_player_password(object *op) {
         return;
     }
 
-    safe_strncpy(op->contr->password, crypt_string(op->contr->write_buf+1, NULL),
+    safe_strncpy(op->contr->password, newhash(op->contr->write_buf+1),
             sizeof(op->contr->password));
     player_set_state(op->contr, ST_ROLL_STAT);
     check_login(op, TRUE);

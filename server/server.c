@@ -61,7 +61,7 @@ static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
  * crypted str.
  * @todo make thread-safe?
  */
-const char *crypt_string(const char *str, const char *salt) {
+static char const* crypt_string(char const str[static 1], char const* salt) {
 #if defined(WIN32) || (defined(__FreeBSD__))
     return(str);
 #else
@@ -84,6 +84,10 @@ const char *crypt_string(const char *str, const char *salt) {
 #endif
 }
 
+char const* newhash(char const password[static 1]) {
+    return crypt_string(password, NULL);
+}
+
 /**
  * Hash a password and compare it to the stored version.
  * @param typed
@@ -99,11 +103,7 @@ bool check_password(const char *typed, const char *crypted) {
         return strlen(typed) == 0 ? true : false;
     }
 
-    if (strcmp(crypt_string(typed, crypted), crypted) == 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return strcmp(crypt_string(typed, crypted), crypted) == 0;
 }
 
 /**

@@ -40,8 +40,9 @@
  * printable characters.
  * The accounts file is designed to be human readable, even if it is not expected that
  * a human will read it.
- * The passwords are stored in whatever crypt_string() returns.  On some systems, this
- * may be plaintext.
+ * Passwords are hashed using crypt(3) in traditional mode, unless you're on
+ * FreeBSD or Windows in which case passwords are stored in plaintext due to
+ * legacy reasons.
  * expansion (last field) is there for possible expansion.  There may be desire to store
  * bits of information there.  An example might be dm=1.  But it is there for expansion.
  */
@@ -406,12 +407,8 @@ int account_check_string(const char *str)
 int account_new(const char *account_name, const char *account_password) {
     account_struct *ac;
 
-    /* We need to check the password because we don't know what crypt_string() will do -
-     * it may just return the string we pass in.  We should probably check the results
-     * returned from crypt_string(), but the problem there is that if we have a faulty
-     * algorithm which in fact is putting in invalid characters, there isn not much
-     * the players can do about that.
-     */
+    // Check password for invalid characters because newhash() may just
+    // return the string in plaintext.
     if (account_check_string(account_name) || account_check_string(account_password))
         return 1;
 
@@ -419,7 +416,7 @@ int account_new(const char *account_name, const char *account_password) {
 
     ac = malloc(sizeof(account_struct));
     ac->name = strdup_local(account_name);
-    ac->password = strdup_local(crypt_string(account_password, NULL));
+    ac->password = strdup_local(newhash(account_password));
     ac->last_login = time(NULL);
     ac->created = ac->last_login;
     ac->num_characters = 0;
@@ -661,12 +658,7 @@ int account_change_password(const char *account_name,
         const char *current_password, const char *new_password) {
     account_struct *ac;
 
-    /* We need to check the password because we don't know what crypt_string() will do -
-     * it may just return the string we pass in.  We should probably check the results
-     * returned from crypt_string(), but the problem there is that if we have a faulty
-     * algorithm which in fact is putting in invalid characters, there isn not much
-     * the players can do about that.
-     */
+    // Check password for invalid characters as in account_new().
     if (account_check_string(account_name) || account_check_string(current_password) ||
             account_check_string(new_password)) {
         return 1;
@@ -690,7 +682,7 @@ int account_change_password(const char *account_name,
     }
 
     free(ac->password);
-    ac->password = strdup_local(crypt_string(new_password, NULL));
+    ac->password = strdup_local(newhash(new_password));
 
     return 0;
 }

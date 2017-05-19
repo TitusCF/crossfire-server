@@ -2749,7 +2749,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     FREE_AND_COPY(pl->ob->name, name);
     FREE_AND_COPY(pl->ob->name_pl, name);
     pl->name_changed = 1;
-    safe_strncpy(pl->password, crypt_string(password, NULL), sizeof(pl->password));
+    safe_strncpy(pl->password, newhash(password), sizeof(pl->password));
 
     SockList_AddString(&sl, "addme_success");
     Send_With_Handling(ns, &sl);
