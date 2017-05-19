@@ -2179,7 +2179,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
      * In short summary, a throw can take anywhere between speed 5 and
      * speed 0.5
      */
-    op->speed_left -= 50/pause_f;
+    op->speed_left -= 50.0/pause_f;
 
     object_update_speed(throw_ob);
     throw_ob->speed_left = 0;
