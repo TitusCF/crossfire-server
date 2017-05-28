@@ -323,13 +323,9 @@ int init_regions(void) {
  * free those pointers someday? :)
  */
 region *get_region_struct(void) {
-    region *new;
-
-    new = (region *)CALLOC(1, sizeof(region));
+    region *new = (region *)calloc(1, sizeof(region));
     if (new == NULL)
         fatal(OUT_OF_MEMORY);
-
-    memset(new, '\0', sizeof(region));
 
     return new;
 }
