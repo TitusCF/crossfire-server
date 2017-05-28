@@ -20,6 +20,7 @@
 
 #include "global.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -140,3 +141,17 @@ void send_background_music(player *pl, const char *music) {
     Send_With_Handling(&pl->socket, &sl);
     SockList_Term(&sl);
 }
+
+static char const* pick_bg_music(mapstruct map[static 1]) {
+    if (map->background_music != NULL) {
+        return map->background_music;
+    }
+    return map->region->name;
+}
+
+void player_update_bg_music(object player[static 1]) {
+    assert(player->contr);
+    assert(player->type == PLAYER);
+    send_background_music(player->contr, pick_bg_music(player->map));
+}
+

@@ -214,10 +214,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     /* Lauwenmark : Here we handle the MAPENTER global event */
     execute_global_event(EVENT_MAPENTER, op, op->map);
 
-    if (op->contr) {
-        send_background_music(op->contr, newmap->background_music);
-    }
-
     newmap->timeout = 0;
     object_set_enemy(op, NULL);
 
@@ -260,8 +256,10 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     }
     swap_below_max(newmap->path);
 
-    if (op->type == PLAYER)
+    if (op->type == PLAYER) {
         map_newmap_cmd(&op->contr->socket);
+        player_update_bg_music(op);
+    }
 }
 
 /**
@@ -863,6 +861,7 @@ static void process_players1(void) {
                         object_remove(pl->ob);
                         object_insert_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
                         map_newmap_cmd(&pl->socket);
+                        player_update_bg_music(pl);
                     }
                 } else {
                     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", pl->followed_player);

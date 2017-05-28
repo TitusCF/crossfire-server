@@ -117,3 +117,4 @@ void send_map_info(socket_struct *ns);
 void play_sound_player_only(player *pl, int8_t sound_type, object *emitter, int dir, const char *action);
 void play_sound_map(int8_t sound_type, object *emitter, int dir, const char *action);
 void send_background_music(player *pl, const char *music);
+void player_update_bg_music(object player[static 1]);

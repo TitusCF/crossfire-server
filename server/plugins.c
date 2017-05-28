@@ -4321,8 +4321,10 @@ static void cfapi_object_teleport(int *type, ...) {
         }
 
         object_insert_in_map_at(who, map, NULL, 0, x, y);
-        if (who->type == PLAYER)
+        if (who->type == PLAYER) {
             map_newmap_cmd(&who->contr->socket);
+            player_update_bg_music(who);
+        }
         *res = 0;
     }
 

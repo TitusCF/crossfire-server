@@ -156,8 +156,10 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
     op = HEAD(op);
     object_remove(op);
     tmp = object_insert_in_map_at(op, op->map, originator, 0, x+freearr_x[i], y+freearr_y[i]);
-    if (op && op->type == PLAYER)
+    if (op && op->type == PLAYER) {
         map_newmap_cmd(&op->contr->socket);
+        player_update_bg_music(op);
+    }
     if (tmp)
         return 0;
     else
@@ -254,8 +256,10 @@ int teleport(object *teleporter, uint8_t tele_type, object *user) {
     object_remove(user);
 
     tmp = object_insert_in_map_at(user, other_teleporter->map, NULL, 0, other_teleporter->x+freearr_x[k], other_teleporter->y+freearr_y[k]);
-    if (tmp && tmp->type == PLAYER)
+    if (tmp && tmp->type == PLAYER) {
         map_newmap_cmd(&tmp->contr->socket);
+        player_update_bg_music(tmp);
+    }
     return (tmp == NULL);
 }
 
