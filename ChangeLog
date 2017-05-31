@@ -1,3 +1,7 @@
+2017-05-31	Rick Tanner
+	* lib/help/nextkey.en: New help file for nextkey command
+	* lib/help/prevkey.en: New help file for prevkey command
+
 2017-05-20	Kevin Zheng
 	* socket/sounds.c: Play region music if a map doesn't have music
 

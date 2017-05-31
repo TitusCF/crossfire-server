@@ -1,0 +1,7 @@
+This bound key allows you to move back through your previously used commands. This works best if you already have a key bound to the command called prevkey.
+
+You can also edit the command before you run it.
+
+This is just like the down arrow under most command line interfaces (CLI).
+
+See also: prevkey

@@ -1,0 +1,9 @@
+Provides the last command input made and allows you to cycle through numerous previously entered commands. 
+
+So if you wanted to run the second to last command you just ran, just hit this bound key twice and then hit Enter.
+
+You can also edit the command before you run it.
+
+This is just like the up arrow under most command line interfaces (CLI).
+
+See also: nextkey
