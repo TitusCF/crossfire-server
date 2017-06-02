@@ -146,10 +146,7 @@ static char const* pick_bg_music(mapstruct map[static 1]) {
     if (map->background_music != NULL) {
         return map->background_music;
     }
-    if (map->region != NULL) {
-        return map->region->name;
-    }
-    return NULL;
+    return get_name_of_region_for_map(map);
 }
 
 void player_update_bg_music(object player[static 1]) {
