@@ -1611,8 +1611,8 @@ static int kill_object(object *op, int dam, object *hitter) {
     if (op_on_battleground(op, NULL, NULL, NULL))
         battleg = 1;
 
-    /* is this player killing?*/
-    if (op->type == PLAYER && owner->type == PLAYER)
+    /* is this player killing? -- Don't count it if you suicide, though. */
+    if (op->type == PLAYER && owner->type == PLAYER && owner != op)
         pk = 1;
 
     /* Player killed something */
@@ -1668,8 +1668,11 @@ static int kill_object(object *op, int dam, object *hitter) {
          * player that the object belonged to - so if you killed another player
          * with spells, pets, whatever, there was no penalty.
          * Changed to make luck penalty configurable in settings.
+		 *
+		 * Simplified comparison since pk is no longer set to 1 if self-kill
+		 *  -- SilverNexus 2017-06-17+
          */
-        if (op->type == PLAYER && owner != op && !battleg)
+        if (pk == 1 && !battleg)
             change_luck(owner, -settings.pk_luck_penalty);
 
         /* This code below deals with finding the appropriate skill

@@ -1,3 +1,7 @@
+2017-06-17	Daniel Hawkins
+	* server/attack.c: Update display for pk to only show when player kills a
+	  player other than self.
+
 2017-05-31	Rick Tanner
 	* lib/help/nextkey.en: New help file for nextkey command
 	* lib/help/prevkey.en: New help file for prevkey command
