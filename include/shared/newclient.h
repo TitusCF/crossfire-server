@@ -296,12 +296,15 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 /*@}*/
 
 /**
- * @defgroup SOUND_xxx SOUND_xxx constants.
- *
+ * @defgroup Soundtypes Sound types
  */
 /*@{*/
-#define SOUND_NORMAL    0
-#define SOUND_SPELL     1
+#define SOUND_TYPE_LIVING       1
+#define SOUND_TYPE_SPELL        2
+#define SOUND_TYPE_ITEM         3
+#define SOUND_TYPE_GROUND       4
+#define SOUND_TYPE_HIT          5
+#define SOUND_TYPE_HIT_BY       6
 /*@}*/
 
 /**
