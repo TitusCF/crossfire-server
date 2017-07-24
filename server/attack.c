@@ -599,6 +599,17 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         snprintf(buf2, sizeof(buf2), "hits");
     }
 
+    if (dam != 0) {
+        if (hitter->chosen_skill)
+            play_sound_map(SOUND_TYPE_HIT, hitter, 0, hitter->chosen_skill->name);
+        else if (dam < 10)
+            play_sound_map(SOUND_TYPE_HIT, hitter, 0, "low");
+        else if (dam < 20)
+            play_sound_map(SOUND_TYPE_HIT, hitter, 0, "medium");
+        else
+            play_sound_map(SOUND_TYPE_HIT, hitter, 0, "high");
+    }
+
     /* bail out if a monster is casting spells */
     owner = object_get_owner(hitter);
     if (hitter->type != PLAYER && (owner == NULL || owner->type != PLAYER))
@@ -617,16 +628,6 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
             snprintf(buf, sizeof(buf), "%s's %s %s you.", owner->name, hitter->name, buf2);
         else {
             snprintf(buf, sizeof(buf), "%s%s you.", hitter->name, buf2);
-            if (dam != 0) {
-                if (hitter->chosen_skill)
-                    play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, hitter->chosen_skill->name);
-                else if (dam < 10)
-                    play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, "low");
-                else if (dam < 20)
-                    play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, "medium");
-                else
-                    play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, "high");
-            }
         }
         draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT, buf);
     } /* end of player hitting player */
@@ -635,16 +636,6 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     /*if(hitter->type == PLAYER && rndm(0, 2) == 0) {*/
     if (hitter->type == PLAYER) {
         snprintf(buf, sizeof(buf), "You %s.", buf1);
-        if (dam != 0) {
-            if (hitter->chosen_skill)
-                play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, hitter->chosen_skill->name);
-            else if (dam < 10)
-                play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, "low");
-            else if (dam < 20)
-                play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, "medium");
-            else
-                play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, "high");
-        }
         draw_ext_info(NDI_BLACK, 0, hitter, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
                       buf);
     } else if (owner != NULL && owner->type == PLAYER) {
