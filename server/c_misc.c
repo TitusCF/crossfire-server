@@ -1087,6 +1087,21 @@ void command_statistics(object *pl, const char *params) {
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
                          i18n(pl, "\nAttack Mode: %s"),
                          i18n(pl, pl->contr->peaceful ?  "Peaceful" : "Hostile"));
+    /**
+     * Add preliminary damage per second calculations here
+     */
+    float weap_speed = pl->weapon_speed; // This is the number of attacks per tick.
+    if (weap_speed < 0.0f)
+        weap_speed = 0.0f;
+    if (weap_speed > 1.0f)
+        weap_speed = 1.0f;
+    // We will initially calculate the damage if every attack you perform hits.
+    // This will serve as a baseline for future calculations
+    float dps = (1000000.0f / max_time) * weap_speed * pl->stats.dam;
+    // TODO: Account for opposing AC in calculations, make some sort of table/chart.
+    // Then we round the floating-point.
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
+                        i18n(pl, "\n\nDam/Sec: %4d"), (int)(dps + 0.5f));
 
     /* max_time is in microseconds - thus divide by 1000000.
      * Need 64 bit values, as otherwise ticks_played * max_time
