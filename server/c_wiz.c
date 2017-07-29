@@ -2325,10 +2325,11 @@ void command_learn_special_prayer(object *op, const char *params) {
 }
 
 /**
- * Wizard wishes to forget a spell.
+ * Command for players to forget a spell. This command used to be available
+ * only to DMs.
  *
  * @param op
- * wizard.
+ * player
  * @param params
  * spell name to forget.
  */

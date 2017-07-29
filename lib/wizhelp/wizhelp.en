@@ -11,7 +11,6 @@ dumpallmaps
 dumpallobjects
 dumpfriendlyobjects
 dumpmap
-forget_spell <spell name>
 free <tag>
 goto <map>
 invisible

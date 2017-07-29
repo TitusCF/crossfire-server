@@ -8,6 +8,7 @@
 
 2017-07-24	Kevin Zheng
 	* server/attack.c: Play attack sounds on the map
+	* server/commands.c: Allow players to forget spells
 
 2017-06-17	Daniel Hawkins
 	* server/attack.c: Update display for pk to only show when player kills a
