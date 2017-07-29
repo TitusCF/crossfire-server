@@ -1096,12 +1096,16 @@ static int load_map_header(FILE *fp, mapstruct *m) {
             }
         } else if (!strcmp(key, "maplore")) {
             char maplorebuf[HUGE_BUF];
-            int maplorepos = 0;
+            size_t maplorepos = 0;
 
             while (fgets(buf, HUGE_BUF-1, fp) != NULL) {
                 if (!strcmp(buf, "endmaplore\n"))
                     break;
                 else {
+                    if (maplorepos < sizeof(maplorebuf)) {
+                        LOG(llevError, "Map lore exceeds buffer length\n");
+                        return 1;
+                    }
                     snprintf(maplorebuf+maplorepos, sizeof(maplorebuf)-maplorepos, "%s", buf);
                     maplorepos += strlen(buf);
                 }
