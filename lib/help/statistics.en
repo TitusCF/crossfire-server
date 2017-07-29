@@ -7,3 +7,7 @@ Your natural stat is the stat without any items/spells applied.
 Real is what the current value is (same as in the stat window.)
 
 Maximum is the maximum value for your natural stat.
+
+Dam/Sec is a calculation of your character's current Damage per Second (dps) that assumes every attack hits the target or foe and does *not* take in to account partial resistance values, misses or other protection such as Armour and AC.
+
+The command will also display the total amount of time this particular character has been logged in to the server using the internal time tracking of the server (ticks) and also converting the ticks to hours and minutes.
