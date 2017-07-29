@@ -778,7 +778,7 @@ static void cfapi_cost_string_from_value(int *type, ...) {
     if (length < 1)
         return;
 
-    final = cost_str(cost);
+    final = cost_string_from_value(cost, largest_coin);
 
     strncpy(buffer, final, length - 1);
     buffer[length - 1] = '\0';

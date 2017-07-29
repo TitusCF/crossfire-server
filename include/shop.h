@@ -46,6 +46,7 @@ uint64_t shop_price_sell(const object *obj, object *who);
  * @param cost value to convert to text.
  * @return converted value the caller is responsible to free.
  */
+char* cost_string_from_value(uint64_t cost, int largest_coin);
 char *cost_str(uint64_t cost);
 
 /**

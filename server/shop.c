@@ -308,7 +308,7 @@ static archetype *find_next_coin(uint64_t c, int *cointype) {
  * @return
  * buffer containing the price, either buf or if NULL a new StringBuffer.
  */
-static StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, StringBuffer *buf) {
+char* cost_string_from_value(uint64_t cost, int largest_coin) {
     archetype *coin, *next_coin;
     uint32_t num;
     int cointype = largest_coin;
@@ -318,13 +318,11 @@ static StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, Str
     else if (cointype >= NUM_COINS)
         cointype = NUM_COINS - 1;
 
-    if (!buf)
-        buf = stringbuffer_new();
-
+    StringBuffer* buf = stringbuffer_new();
     coin = find_next_coin(cost, &cointype);
     if (coin == NULL) {
         stringbuffer_append_string(buf, "nothing");
-        return buf;
+        goto done;
     }
 
     num = cost/coin->clone.value;
@@ -334,7 +332,7 @@ static StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, Str
      */
     if ((cost/coin->clone.value) > UINT32_MAX) {
         stringbuffer_append_string(buf, "an unimaginable sum of money.");
-        return buf;
+        goto done;
     }
 
     cost -= (uint64_t)num*(uint64_t)coin->clone.value;
@@ -345,7 +343,7 @@ static StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, Str
 
     next_coin = find_next_coin(cost, &cointype);
     if (next_coin == NULL)
-        return buf;
+        goto done;
 
     do {
         coin = next_coin;
@@ -371,7 +369,8 @@ static StringBuffer *cost_string_from_value(uint64_t cost, int largest_coin, Str
             stringbuffer_append_printf(buf, "%u %ss", num, coin->clone.name);
     } while (next_coin);
 
-    return buf;
+done:
+    return stringbuffer_finish(buf);
 }
 
 /**
@@ -393,7 +392,7 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
 }
 
 char *cost_str(uint64_t cost) {
-    return stringbuffer_finish(cost_string_from_value(cost, LARGEST_COIN_GIVEN, NULL));
+    return cost_string_from_value(cost, LARGEST_COIN_GIVEN);
 }
 
 char *cost_approx_str(const object *tmp, object *who) {
