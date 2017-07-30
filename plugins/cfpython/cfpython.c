@@ -1597,8 +1597,9 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
 
     case EVENT_GKILL:
         op = va_arg(args, object *);
+        object* hitter = va_arg(args, object *);
         context->who = Crossfire_Object_wrap(op);
-        context->activator = Crossfire_Object_wrap(op);
+        context->activator = Crossfire_Object_wrap(hitter);
         snprintf(context->options, sizeof(context->options), "gkill");
         break;
 
