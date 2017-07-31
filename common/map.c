@@ -1102,7 +1102,7 @@ static int load_map_header(FILE *fp, mapstruct *m) {
                 if (!strcmp(buf, "endmaplore\n"))
                     break;
                 else {
-                    if (maplorepos < sizeof(maplorebuf)) {
+                    if (maplorepos >= sizeof(maplorebuf)) {
                         LOG(llevError, "Map lore exceeds buffer length\n");
                         return 1;
                     }
