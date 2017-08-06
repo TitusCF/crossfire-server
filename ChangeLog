@@ -2,6 +2,7 @@
     * server/time.c: Make firewalls choose their direction to cast based on direction,
       not sp. Fixes bug #834.
     * common/button.c: Fix rotation of firewalls to also use direction.
+      Fix the animation problem that caused a segfault, too. Solves bug #835.
 
 2017-07-29	Rick Tanner
 	* lib/help/statistics.en: Update statistics help file with information on

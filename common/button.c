@@ -275,7 +275,13 @@ void use_trigger(object *op) {
 void animate_turning(object *op) {
     if (++op->state >= NUM_ANIMATIONS(op)/8)
         op->state = 0;
-    SET_ANIMATION(op, (op->stats.sp-1)*NUM_ANIMATIONS(op)/8+op->state);
+    // Firewalls use direction instead of sp to avoid issues involving the spell transference.
+    if (op->type == FIREWALL){
+        SET_ANIMATION(op, (op->direction-1)*NUM_ANIMATIONS(op)/8+op->state);
+    }
+    else {
+        SET_ANIMATION(op, (op->stats.sp-1)*NUM_ANIMATIONS(op)/8+op->state);
+    }
     object_update(op, UP_OBJ_FACE);
 }
 
