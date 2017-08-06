@@ -637,7 +637,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
  * Move for ::FIREWALL.
  *
  * firewalls fire other spells.
- * The direction of the wall is stored in op->stats.sp.
+ * The direction of the wall is stored in op->direction.
  * walls can have hp, so they can be torn down.
  *
  * @param op
@@ -655,7 +655,7 @@ void move_firewall(object *op) {
         return;
     }
 
-    cast_spell(op, op, op->stats.sp ? op->stats.sp : get_random_dir(), spell, NULL);
+    cast_spell(op, op, op->direction ? op->direction : get_random_dir(), spell, NULL);
 }
 
 
