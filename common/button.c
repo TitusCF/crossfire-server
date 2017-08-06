@@ -121,15 +121,21 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
             break;
 
         case DIRECTOR:
+            if ((tmp->stats.sp += tmp->stats.maxsp) > 8) /* next direction */
+                tmp->stats.sp = ((tmp->stats.sp-1)%8)+1;
+            animate_turning(tmp);
+            break;
         case FIREWALL:
-            if (!QUERY_FLAG(tmp, FLAG_ANIMATE) && tmp->type == FIREWALL)
+            // Since director is broken out, we don't need to check on firewall type now
+            if (!QUERY_FLAG(tmp, FLAG_ANIMATE)/* && tmp->type == FIREWALL*/)
                 move_firewall(tmp);
             else {
-                if ((tmp->stats.sp += tmp->stats.maxsp) > 8) /* next direction */
-                    tmp->stats.sp = ((tmp->stats.sp-1)%8)+1;
+                if ((tmp->direction += tmp->stats.maxsp) > 8) /* next direction */
+                    tmp->direction = ((tmp->direction-1)%8)+1;
                 animate_turning(tmp);
             }
             break;
+
 
         default:
             ob_trigger(tmp, cause, state);
