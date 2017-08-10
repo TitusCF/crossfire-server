@@ -1287,26 +1287,37 @@ void fix_object(object *op) {
                  * spell point recovery and mana point recovery.  Seems sort of an arbitary
                  * list, but other items store other info into stats array.
                  */
-                if ((tmp->type == WEAPON)
-                || (tmp->type == ARMOUR)
-                || (tmp->type == HELMET)
-                || (tmp->type == SHIELD)
-                || (tmp->type == RING)
-                || (tmp->type == BOOTS)
-                || (tmp->type == GLOVES)
-                || (tmp->type == AMULET)
-                || (tmp->type == GIRDLE)
-                || (tmp->type == BRACERS)
-                || (tmp->type == CLOAK)
-                || (tmp->type == DISEASE)
-                || (tmp->type == FORCE)
-                || (tmp->type == SKILL)) {
-                    op->contr->digestion += tmp->stats.food;
-                    op->contr->gen_hp += tmp->stats.hp;
-                    op->contr->gen_sp += tmp->stats.sp;
-                    op->contr->gen_grace += tmp->stats.grace;
-                    op->contr->gen_sp_armour += tmp->gen_sp_armour;
-                    op->contr->item_power += tmp->item_power;
+                switch (tmp->type)
+                {
+                    case WEAPON:
+                    case ARMOUR:
+                    case HELMET:
+                    case SHIELD:
+                    case RING:
+                    case BOOTS:
+                    case GLOVES:
+                    case AMULET:
+                    case GIRDLE:
+                    case BRACERS:
+                    case CLOAK:
+                    case DISEASE:
+                    case FORCE:
+                    case SKILL:
+                        op->contr->digestion += tmp->stats.food;
+                        op->contr->gen_hp += tmp->stats.hp;
+                        op->contr->gen_sp += tmp->stats.sp;
+                        op->contr->gen_grace += tmp->stats.grace;
+                        op->contr->gen_sp_armour += tmp->gen_sp_armour;
+                        /*FALLTHROUGH*/
+
+                    /* Bow and skill utils need to update item_power specifically.
+                     * This should fix bug #648
+                     * Daniel Hawkins 2017-08-09
+                     */
+                    case BOW:
+                    case SKILL_TOOL:
+                        op->contr->item_power += tmp->item_power;
+                        break;
                 }
             } /* if this is a player */
 
