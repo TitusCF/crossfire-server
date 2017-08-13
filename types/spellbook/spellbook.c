@@ -129,15 +129,6 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                     spell->skill);
                 return METHOD_OK;
             }
-            /* TODO: this would be better if it provided more of a flavour text approach */
-            /* old code
-                        if (spell_skill->level < spell->level) {
-                draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                    "You need to be level %d in %s to learn this spell.",
-                    spell->level, spell->skill);
-                return METHOD_OK;
-                */
 
             int skill_lev_diff;
             skill_lev_diff = spell->level - spell_skill->level;
@@ -164,7 +155,6 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             }
         }
 
-
         /* need a literacy skill to learn spells. Also, having a literacy level
          * lower than the spell will make learning the spell more difficult */
         skapplier = find_skill_by_name(applier, book->skill);
@@ -181,14 +171,6 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
         /* blessed books are easier to read */
         if (QUERY_FLAG(book, FLAG_BLESSED))
             read_level += 5;
-
-        /* old code. This did not inform the player how close they were to being able to read and could be confusing
-        *if (spell->level > (read_level+10)) {
-        *    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-        *        "You are unable to decipher the strange symbols.");
-        *    return METHOD_OK;
-        *}
-        */
 
         /* If the players read level is less than 10 levels lower than the spellbook, they can't read it */
         int lev_diff;
