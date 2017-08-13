@@ -417,7 +417,7 @@ void command_setgod(object *op, const char *params) {
 
     if (*params == '\0' || !(str = strchr(params, ' '))) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                      "Usage: setgod object god");
+                      "Usage: set_god player god");
         return;
     }
 

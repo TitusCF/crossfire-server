@@ -1,3 +1,6 @@
+2017-08-13  Daniel Hawkins
+    * server/c_wiz.c: Update error message for set_god.
+
 2017-08-09  Daniel Hawkins
     * common/living.c: Fix incomplete totaling of equipped item power
       in fix_object(). Should fix bug #648.
