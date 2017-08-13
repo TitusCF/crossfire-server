@@ -65,7 +65,6 @@ void init_type_spellbook(void) {
  */
 static method_ret spellbook_type_apply(ob_methods *context, object *book, object *applier, int aflags) {
     object *skapplier, *spell, *spell_skill;
-    int read_level;
     char level[100];
 
     /* Must be applied by a player. */
@@ -75,17 +74,6 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                 "You are unable to read while blind.");
             return METHOD_OK;
         }
-
-        skapplier = find_skill_by_name(applier, book->skill);
-
-        /* need a literacy skill to learn spells. Also, having a literacy level
-         * lower than the spell will make learning the spell more difficult */
-        if (!skapplier) {
-            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                "You can't read! Your attempt fails.");
-            return METHOD_OK;
-        }
-        read_level = skapplier->level;
 
         spell = book->inv;
         if (!spell) {
@@ -125,12 +113,105 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             return METHOD_OK;
         }
 
+        /* This section moved before literacy check */
+        if (check_spell_known(applier, spell->name)) {
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You already know that spell.\n");
+            return METHOD_OK;
+        }
+        /* check they have the right skills to learn the spell in the first place */
+        if (spell->skill) {
+            spell_skill = find_skill_by_name(applier, spell->skill);
+            if (!spell_skill) {
+                draw_ext_info_format(NDI_UNIQUE, 0, applier,
+                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "You lack the skill %s to use this spell",
+                    spell->skill);
+                return METHOD_OK;
+            }
+            /* TODO: this would be better if it provided more of a flavour text approach */
+            /* old code
+                        if (spell_skill->level < spell->level) {
+                draw_ext_info_format(NDI_UNIQUE, 0, applier,
+                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "You need to be level %d in %s to learn this spell.",
+                    spell->level, spell->skill);
+                return METHOD_OK;
+                */
+
+            int skill_lev_diff;
+            skill_lev_diff = spell->level - spell_skill->level;
+            if (skill_lev_diff > 0) {
+                if (skill_lev_diff < 2)
+                    draw_ext_info_format(NDI_UNIQUE, 0, applier,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "The spell described in this book is just beyond your skill in %s.", spell->skill);
+                else if (skill_lev_diff < 3)
+                    draw_ext_info_format(NDI_UNIQUE, 0, applier,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "The spell described in this book is slightly beyond your skill in %s.", spell->skill);
+                else if (skill_lev_diff < 5)
+                    draw_ext_info_format(NDI_UNIQUE, 0, applier,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "The spell described in this book is beyond your skill in %s.", spell->skill);
+                else if (skill_lev_diff < 8)
+                    draw_ext_info_format(NDI_UNIQUE, 0, applier,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "The spell described in this book is quite a bit beyond your skill in %s.", spell->skill);
+                else if (skill_lev_diff < 15)
+                    draw_ext_info_format(NDI_UNIQUE, 0, applier,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "The spell described in this book is way beyond your skill in %s.", spell->skill);
+                else
+                    draw_ext_info_format(NDI_UNIQUE, 0, applier,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "The spell described in this book is totally beyond your skill in %s.", spell->skill);
+                return METHOD_OK;
+            }
+        }
+
+
+        /* need a literacy skill to learn spells. Also, having a literacy level
+         * lower than the spell will make learning the spell more difficult */
+        skapplier = find_skill_by_name(applier, book->skill);
+        if (!skapplier) {
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You can't read! You will need this skill before you can comprehend the ideas written within.");
+            return METHOD_OK;
+        }
+
+        /* We know the player has all the right skills so check how well they can read. */
+        int read_level;
+        read_level = skapplier->level;
+
+        /* blessed books are easier to read */
         if (QUERY_FLAG(book, FLAG_BLESSED))
             read_level += 5;
 
-        if (spell->level > (read_level+10)) {
-            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "You are unable to decipher the strange symbols.");
+        /* old code. This did not inform the player how close they were to being able to read and could be confusing
+        *if (spell->level > (read_level+10)) {
+        *    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+        *        "You are unable to decipher the strange symbols.");
+        *    return METHOD_OK;
+        *}
+        */
+
+        /* If the players read level is less than 10 levels lower than the spellbook, they can't read it */
+        int lev_diff;
+        lev_diff = spell->level - (read_level+10);
+        if (!QUERY_FLAG(applier, FLAG_WIZ) && lev_diff > 0) {
+            if (lev_diff < 2)
+                draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                    "You recognise most of the words but this book is just beyond your comprehension.");
+            else if (lev_diff < 3)
+                draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                    "You recognise many of the words but this book is slightly beyond your comprehension.");
+            else if (lev_diff < 5)
+                draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                    "You recognise some of the words but this book is slightly beyond your comprehension.");
+            else if (lev_diff < 8)
+                draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                    "You recognise some of the words but this book is beyond your comprehension.");
+            else if (lev_diff < 15)
+                draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                    "You recognise a few of the words but this book is beyond your comprehension.");
+            else
+                draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                    "You recognise a few of the words but this book is totally beyond your comprehension.");
             return METHOD_OK;
         }
 
@@ -148,36 +229,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             spell = book->inv;
         }
 
-        /* I removed the check for special_prayer_mark here - it didn't make
-         * a lot of sense - special prayers are not found in spellbooks, and
-         * if the player doesn't know the spell, doesn't make a lot of sense
-         * that they would have a special prayer mark.
-         */
-        if (check_spell_known(applier, spell->name)) {
-            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "You already know that spell.\n");
-            return METHOD_OK;
-        }
-
-        if (spell->skill) {
-            spell_skill = find_skill_by_name(applier, spell->skill);
-            if (!spell_skill) {
-                draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                    "You lack the skill %s to use this spell",
-                    spell->skill);
-                return METHOD_OK;
-            }
-            if (spell_skill->level < spell->level) {
-                draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                    "You need to be level %d in %s to learn this spell.",
-                    spell->level, spell->skill);
-                return METHOD_OK;
-            }
-        }
-
-        /* Logic as follows
+        /* Player has the right skills and enough skill to attempt to learn the spell with the logic as follows:
          *
          *  1- MU spells use Int to learn, Cleric spells use Wisdom
          *
