@@ -1,3 +1,6 @@
+2017-08-15  Daniel Hawkins
+    * server/skills.c: Disallow jumping while in a transport.
+
 2017-08-13  Daniel Hawkins
     * server/c_wiz.c: Update error message for set_god.
 

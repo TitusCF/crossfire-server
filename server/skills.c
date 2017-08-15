@@ -547,6 +547,19 @@ static void stop_jump(object *pl) {
  * 1 if jump was successful, 0 else.
  */
 static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
+    /**
+     * Make sure we aren't in a transport.
+     * This should be set to null if we aren't.
+     */
+    if (pl->contr->transport){
+        char trans_name[MAX_BUF];
+        query_name(pl->contr->transport, trans_name, MAX_BUF);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+            "Your bounce off the walls of %s.", trans_name);
+        // We failed to jump. Return as a failure.
+        return 0;
+    }
+    
     int i, dx = freearr_x[dir], dy = freearr_y[dir], mflags;
     int16_t x, y;
     mapstruct *m;
