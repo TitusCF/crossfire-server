@@ -368,7 +368,10 @@ typedef struct typedata {
 #define FLAG_AFK                 111 /**< Player is AFK */
 #define FLAG_BLESSED             112 /**< Item has a blessing, opposite of cursed/damned. */
 #define FLAG_KNOWN_BLESSED       113 /**< Item is known to be blessed. */
-#define NUM_FLAGS                113 /**< Should always be equal to the last
+#define FLAG_PARALYZED           114 /**< Monster or player is paralyzed.
+                                      * Currently only used to display message to player
+                                      * of paralysis begin and end. */
+#define NUM_FLAGS                114 /**< Should always be equal to the last
                                       * defined flag.  If you change this,
                                       * make sure you update the flag_links
                                       * in common/loader.l

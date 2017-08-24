@@ -2316,6 +2316,20 @@ void paralyze_living(object *op, int dam) {
     max = (100-op->resist[ATNR_PARALYZE])/2;
     if (op->speed_left < -(FABS(op->speed)*max))
         op->speed_left = (float)-(FABS(op->speed)*max);
+    // Set a paralyze flag and print a message to a player if the flag isn't set;
+    // this tells the player that he/she has been hit by a paralysis attack.
+    if (!QUERY_FLAG(op, FLAG_PARALYZED)) {
+        SET_FLAG(op, FLAG_PARALYZED);
+        if (op->type == PLAYER)
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
+                      "You limbs stop moving!");
+    }
+    /* If the flag is already set, then the paralysis is merely extended.
+     * At this point, we do nothing.
+     * It may be worthwhile to give players another message on paralysis extensions.
+     *
+     * Daniel Hawkins 2017-08-22
+     */
 }
 
 /**

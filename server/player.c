@@ -3135,6 +3135,19 @@ int handle_newcs_player(object *op) {
     if (op->speed_left < 0)
         return 0;
 
+    /*
+     * If the player has been paralyzed, we unmark the flag and give a message to the player
+     */
+    if (QUERY_FLAG(op, FLAG_PARALYZED)) {
+        CLEAR_FLAG(op, FLAG_PARALYZED);
+        // TODO: Is this check necessary? We are in player.c, after all.
+        if (op->type == PLAYER)
+        {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+                          "You can stretch your stiff joints once more.");
+        }
+    }
+
     if (op->direction && (op->contr->run_on || op->contr->fire_on)) {
         /* All move commands take 1 tick, at least for now */
         op->speed_left--;
@@ -3360,7 +3373,10 @@ void do_some_living(object *op) {
     if (op->contr->state == ST_PLAYING && op->stats.food < 0 && op->stats.hp >= 0) {
         if (is_wraith_pl(op))
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE, "You feel a hunger for living flesh.");
-        else {
+        /* Only allow eat if not paralyzed. Otherwise our paralyzed player is "moving" to eat.
+         * Daniel Hawkins 2017-08-23
+         */
+        else if (!QUERY_FLAG(op, FLAG_PARALYZED)){
             object *flesh = NULL;
 
             FOR_INV_PREPARE(op, tmp) {
@@ -3383,7 +3399,10 @@ void do_some_living(object *op) {
                               "You blindly grab for a bite of food.");
                 apply_manual(op, flesh, 0);
             }
-        } /* end not wraith */
+        } /* end not wraith and not paralyzed */
+        else { // Print a message for when the player is starving and paralyzed
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE, "Your stomach rumbles, but you can't reach your food.");
+        } /* end not wraith and is paralyzed */
     } /* end if player is starving */
 
     if (op->stats.food < 0 && op->stats.hp > 0){

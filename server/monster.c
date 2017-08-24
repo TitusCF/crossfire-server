@@ -718,6 +718,11 @@ int monster_move(object *op) {
         if (op->animation_id)
             animate_object(op, op->direction);
     }
+    
+    // We are looking at movement -- if monster was paralyzed, they aren't anymore
+    if (QUERY_FLAG(op, FLAG_PARALYZED)) {
+        CLEAR_FLAG(op, FLAG_PARALYZED);
+    }
 
     /* Move the check for scared up here - if the monster was scared,
      * we were not doing any of the logic below, so might as well save
