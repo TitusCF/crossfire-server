@@ -1,3 +1,15 @@
+2017-08-26  Daniel Hawkins
+    * types/spellbook/spellbook.c: Identify spellbooks of spells you already know
+      when applying them. Also make the message name the spell.
+
+2017-08-23  Daniel Hawkins
+    * server/attack.c: Add message and set a new flag for indicating a player is paralyzed.
+    * server/player.c: Add message for end of paralysis and disallow blindly eating
+      while paralyzed.
+    * server/monster.c: Make sure monsters unset paralyze flag when they can move again.
+    * include/define.h: Creation of FLAG_PARALYZED flag.
+    * common/loader.l: Allow for the paralyzed flag to exist in objects saved to file.
+
 2017-08-15  Daniel Hawkins
     * server/skills.c: Disallow jumping while in a transport.
 

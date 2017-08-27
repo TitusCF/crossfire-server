@@ -115,8 +115,17 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
 
         /* This section moved before literacy check */
         if (check_spell_known(applier, spell->name)) {
-            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                "You already know that spell.\n");
+            // If we already know the spell, it makes sense we know what the spell is.
+            if (book && (!QUERY_FLAG(book, FLAG_IDENTIFIED))) {
+                book = identify(book);
+                if (book->env)
+                    esrv_update_item(UPD_FLAGS|UPD_NAME, applier, book);
+                else
+                    applier->contr->socket.update_look = 1;
+            }
+            draw_ext_info_format(NDI_UNIQUE, 0, applier,
+                MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You already know the spell %s.\n", spell->name);
             return METHOD_OK;
         }
         /* check they have the right skills to learn the spell in the first place */
@@ -130,8 +139,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                 return METHOD_OK;
             }
 
-            int skill_lev_diff;
-            skill_lev_diff = spell->level - spell_skill->level;
+            int skill_lev_diff = spell->level - spell_skill->level;
             if (skill_lev_diff > 0) {
                 if (skill_lev_diff < 2)
                     draw_ext_info_format(NDI_UNIQUE, 0, applier,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
