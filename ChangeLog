@@ -1,3 +1,7 @@
+2017-09-02  Daniel Hawkins
+    * random_maps/main.c: Expand test generator options to allow
+      layout choice.
+
 2017-08-26  Daniel Hawkins
     * types/spellbook/spellbook.c: Identify spellbooks of spells you already know
       when applying them. Also make the message name the spell.

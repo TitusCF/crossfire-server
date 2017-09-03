@@ -64,8 +64,8 @@ static void generate_map(char *OutFileName) {
 static void print_map(char **layout, int width, int height) {
     int i, j;
 
-    for (j = 0; j < height; j++) {
-        for (i = 0; i < width; i++) {
+    for (j = 0; j < height; ++j) {
+        for (i = 0; i < width; ++i) {
             char display_char;
             display_char = layout[i][j];
 
@@ -85,20 +85,47 @@ static void print_map(char **layout, int width, int height) {
     }
 }
 
+typedef struct {
+    char *name;
+    char **(*func)(int, int, int, int);
+} layout;
+
+// Always should match the number of generatable layouts available
+#define NUM_LAYOUTS 6
+
+static layout layout_list[] = {
+    // Most of these need to be cast to silence warnings.
+    // The fourth paramter (and sometimes the third) is ignored in most cases.
+    { "rogue",   (char **(*)(int, int, int, int))&roguelike_layout_gen },
+    { "snake",   (char **(*)(int, int, int, int))&make_snake_layout },
+    { "sspiral", (char **(*)(int, int, int, int))&make_square_spiral_layout },
+    { "spiral",  (char **(*)(int, int, int, int))&map_gen_spiral },
+    { "maze",    (char **(*)(int, int, int, int))&maze_gen },
+    //{ "corr",    (char **(*)(int, int, int, int))&room_gen_corridored },
+    { "onion",   &map_gen_onion } // Special case. When pointer is null, we make onion
+};
+
 /**
  * Test the map layout produced by the specified generator.
- * TODO: Select generator based on command-line arguments.
+ *
+ * @param width
+ * Map width
+ *
+ * @param height
+ * Map height
+ *
+ * @param layout_func
+ * The layout method to use.
  */
-static void test_layout(int width, int height) {
+static void test_layout(int width, int height, char **(*layout_func)(int, int, int, int)) {
     char **layout;
     SRANDOM(time(0));
 
-    layout = roguelike_layout_gen(width, height, 0);
-    /*layout = make_snake_layout(width, height, 0); */
-    /*layout = make_square_spiral_layout(width, height, 0); */
-    /*layout = gen_corridor_rooms(width, height, 1); */
-    /*layout = maze_gen(width, height, 0); */
-    /*layout = map_gen_onion(width, height, 0, 0);*/
+    // Bail if no layout -- shouldn't occur, but just to be safe
+    if (layout_func == NULL)
+        return;
+
+    layout = layout_func(width, height, 0, 0);
 
     print_map(layout, width, height);
     free(layout);
@@ -117,18 +144,32 @@ static void print_usage(void) {
         "Options:\n"
         "  -h             display this help message\n"
         "  -g <file>      randomly generate the specified map file\n"
+        "  -l <layout>    layout to use. See Layouts for valid layouts.\n"
+        "                 (overridden by -g)\n"
         "  -t             test map layout (overriden by -g)\n"
         "  -x <width>     specify map width\n"
         "  -y <height>    specify map height\n"
+        "\n"
+        "Layouts:\n"
+        "  rogue   -- roguelike map generator\n"
+        "  snake   -- snake map generator\n"
+        "  sspiral -- square spiral map generator\n"
+        "  spiral  -- spiral map generator\n"
+        "  maze    -- maze map generator\n"
+   //     "  corr    -- corridor map generator\n"
+        "  onion   -- onion map generator\n"
     );
 }
 
 int main(int argc, char *argv[]) {
     int flag, mode = 0, width = 80, height = 23;
     char *filename_out;
+    // Make default behavior be roguelike generation, like old behavior
+    // NOTE: The ugly function pointer cast silences compiler warnings.
+    char **(*func)(int, int, int, int) = (char **(*)(int, int, int, int))&roguelike_layout_gen;
 
     /* Parse command-line arguments. */
-    while ((flag = getopt(argc, argv, "g:htx:y:")) != -1) {
+    while ((flag = getopt(argc, argv, "g:hl:tx:y:")) != -1) {
         switch (flag) {
             case 'g':
                 mode = 2;
@@ -137,6 +178,13 @@ int main(int argc, char *argv[]) {
             case 'h':
                 print_usage();
                 exit(EXIT_SUCCESS);
+                break;
+            case 'l':
+                for (int i = 0; i < NUM_LAYOUTS; ++i)
+                {
+                    if (strcmp(optarg, layout_list[i].name) == 0)
+                        func = layout_list[i].func;
+                }
                 break;
             case 't':
                 mode = 1;
@@ -155,7 +203,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (mode == 1) {
-        test_layout(width, height);
+        test_layout(width, height, func);
         exit(EXIT_SUCCESS);
     } else if (mode == 2) {
         generate_map(filename_out);
