@@ -90,10 +90,7 @@ typedef struct {
     char **(*func)(int, int, int, int);
 } layout;
 
-// Always should match the number of generatable layouts available
-#define NUM_LAYOUTS 6
-
-static layout layout_list[] = {
+static layout layout_list[NROFLAYOUTS] = {
     // Most of these need to be cast to silence warnings.
     // The fourth paramter (and sometimes the third) is ignored in most cases.
     { "rogue",   (char **(*)(int, int, int, int))&roguelike_layout_gen },
@@ -101,7 +98,6 @@ static layout layout_list[] = {
     { "sspiral", (char **(*)(int, int, int, int))&make_square_spiral_layout },
     { "spiral",  (char **(*)(int, int, int, int))&map_gen_spiral },
     { "maze",    (char **(*)(int, int, int, int))&maze_gen },
-    //{ "corr",    (char **(*)(int, int, int, int))&room_gen_corridored },
     { "onion",   &map_gen_onion }
 };
 
@@ -156,7 +152,6 @@ static void print_usage(void) {
         "  sspiral -- square spiral map generator\n"
         "  spiral  -- spiral map generator\n"
         "  maze    -- maze map generator\n"
-   //     "  corr    -- corridor map generator\n"
         "  onion   -- onion map generator\n"
     );
 }
@@ -180,7 +175,7 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_SUCCESS);
                 break;
             case 'l':
-                for (int i = 0; i < NUM_LAYOUTS; ++i)
+                for (int i = 0; i < NROFLAYOUTS; ++i)
                 {
                     if (strcmp(optarg, layout_list[i].name) == 0)
                         func = layout_list[i].func;
