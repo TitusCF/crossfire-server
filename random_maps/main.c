@@ -102,7 +102,7 @@ static layout layout_list[] = {
     { "spiral",  (char **(*)(int, int, int, int))&map_gen_spiral },
     { "maze",    (char **(*)(int, int, int, int))&maze_gen },
     //{ "corr",    (char **(*)(int, int, int, int))&room_gen_corridored },
-    { "onion",   &map_gen_onion } // Special case. When pointer is null, we make onion
+    { "onion",   &map_gen_onion }
 };
 
 /**
