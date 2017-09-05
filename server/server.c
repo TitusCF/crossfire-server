@@ -861,7 +861,7 @@ static void process_players1(void) {
                         object_remove(pl->ob);
                         object_insert_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
                         map_newmap_cmd(&pl->socket);
-                        player_update_bg_music(pl);
+                        player_update_bg_music(pl->ob);
                     }
                 } else {
                     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", pl->followed_player);
