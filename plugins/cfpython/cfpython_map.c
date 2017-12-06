@@ -128,12 +128,12 @@ static PyObject *Map_GetHeight(Crossfire_Map *whoptr, void *closure) {
 
 static PyObject *Map_GetEnterX(Crossfire_Map *whoptr, void *closure) {
     MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_int_property(whoptr->map, CFAPI_MAP_PROP_ENTER_X));
+    return Py_BuildValue("i", cf_map_get_enter_x(whoptr->map));
 }
 
 static PyObject *Map_GetEnterY(Crossfire_Map *whoptr, void *closure) {
     MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_enter_x(whoptr->map));
+    return Py_BuildValue("i", cf_map_get_enter_y(whoptr->map));
 }
 
 static PyObject *Map_GetMessage(Crossfire_Map *whoptr, void *closure) {
