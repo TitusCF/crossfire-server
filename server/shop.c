@@ -67,6 +67,7 @@ uint64_t price_base(const object *tmp) {
     // When there are zero objects, there is really one.
     int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
     uint64_t val = (uint64_t)tmp->value * number;
+    bool identified = QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
 
     // Objects with price adjustments skip the rest of the calculations.
     const char *key = object_get_value(tmp, "price_adjustment");
@@ -75,16 +76,34 @@ uint64_t price_base(const object *tmp) {
         return val * ratio;
     }
 
+    // Money and gems have fixed prices at shops.
     if (tmp->type == MONEY || tmp->type == GEM) {
         return val;
     }
-
-    if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+    
+    // If not identified, assume it is a collection of base items.
+    if (!identified && tmp->arch)
+    {
+        val = tmp->arch->clone.value * number;
+    }
+    
+    /**
+     * If you don't know the item is cursed, would the shopkeeper know?
+     * Only penalize for cursed if it is known cursed.
+     */
+    if (QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))) {
         val *= 0.8;
     }
+    
+    /**
+     * Also, known blessed items should sell for a little more.
+     */
+    if (QUERY_FLAG(tmp, FLAG_KNOWN_BLESSED) && QUERY_FLAG(tmp, FLAG_BLESSED)){
+        val *= 1.15;
+    }
 
-    // If an item has an archetype, compare its base enchantment.
-    if (tmp->arch != NULL) {
+    // If an item has an archetype and is identified, compare its base enchantment.
+    if (tmp->arch != NULL && identified) {
         int diff = tmp->magic - tmp->arch->clone.magic;
         val *= pow(1.15, diff);
     }
@@ -100,7 +119,7 @@ uint64_t price_base(const object *tmp) {
      * reflect values (potion charisma list for 1250 gold)
      */
     val *= 4;
-
+    
     return val;
 }
 

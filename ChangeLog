@@ -1,3 +1,7 @@
+2018-01-02  Daniel Hawkins
+    * server/shop.c: Make shop pricing treat unidentified items as if they were
+      the normal version of the item. Fixes Bug #812.
+
 2017-09-02  Daniel Hawkins
     * random_maps/main.c: Expand test generator options to allow
       layout choice.
