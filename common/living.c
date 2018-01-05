@@ -1756,14 +1756,14 @@ object *give_skill_by_name(object *op, const char *skill_name) {
  * don't really gain levels
  *
  * Will tell the player about changed levels.
+ * A single call will handle mutiple level changes to one object from one effect.
+ * The only difference between this and the recursive version is this cannot handle
+ * a level that both increases and decreases simultaneously.
  *
  * @param who
  * player, must not be NULL.
  * @param op
  * what we are checking to gain the level (eg, skill), can be NULL.
- *
- * @note
- * this function can call itself recursively to check for multiple levels.
  */
 void player_lvl_adj(object *who, object *op) {
     char buf[MAX_BUF];
@@ -1774,39 +1774,40 @@ void player_lvl_adj(object *who, object *op) {
         op = who;
 
     if (op->level < settings.max_level && op->stats.exp >= level_exp(op->level+1, who->expmul)) {
-        op->level++;
+        do{
+            op->level++;
 
-        if (op != NULL && op == who && op->stats.exp > 1 && is_dragon_pl(who))
-            dragon_level_gain(who);
+            if (op != NULL && op == who && op->stats.exp > 1 && is_dragon_pl(who))
+                dragon_level_gain(who);
 
-        /* Only roll these if it is the player (who) that gained the level */
-        if (op == who && (who->level < 11) && who->type == PLAYER) {
-            who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
-            who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
-            who->contr->levgrace[who->level] = die_roll(2, 2, who, PREFER_HIGH)-1;
-        }
+            /* Only roll these if it is the player (who) that gained the level */
+            if (op == who && (who->level < 11) && who->type == PLAYER) {
+                who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
+                who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
+                who->contr->levgrace[who->level] = die_roll(2, 2, who, PREFER_HIGH)-1;
+            }
 
-        fix_object(who);
-        if (op->level > 1) {
+            fix_object(who); // TODO: Call this only once per function call?
+            if (op->level > 1) {
+                if (op->type != PLAYER)
+                    snprintf(buf, sizeof(buf), "You are now level %d in the %s skill.", op->level, op->name);
+                else
+                    snprintf(buf, sizeof(buf), "You are now level %d.", op->level);
+
+                draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf);
+            }
+        } while (op->level < settings.max_level && op->stats.exp >= level_exp(op->level+1, who->expmul)); /* To increase more levels */
+    } else if (op->level > 1 && op->stats.exp < level_exp(op->level, who->expmul)) {
+        do{
+            op->level--;
+            fix_object(who); // TODO: Call this only once per function call?
             if (op->type != PLAYER)
                 snprintf(buf, sizeof(buf), "You are now level %d in the %s skill.", op->level, op->name);
             else
                 snprintf(buf, sizeof(buf), "You are now level %d.", op->level);
 
-            draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf);
-        }
-        player_lvl_adj(who, op); /* To increase more levels */
-    } else if (op->level > 1 && op->stats.exp < level_exp(op->level, who->expmul)) {
-        op->level--;
-        fix_object(who);
-        if (op->type != PLAYER)
-            snprintf(buf, sizeof(buf), "You are now level %d in the %s skill.", op->level, op->name);
-        else
-            snprintf(buf, sizeof(buf), "You are now level %d.", op->level);
-
-        draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_LOSS, buf);
-
-        player_lvl_adj(who, op); /* To decrease more levels */
+            draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_LOSS, buf);
+        } while (op->level > 1 && op->stats.exp < level_exp(op->level, who->expmul)); /* To decrease more levels */
     }
 }
 
