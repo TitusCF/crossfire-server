@@ -324,8 +324,12 @@ void add_abilities(object *op, const object *change) {
      *
      * Daniel Hawkins
      * 2018-01-07
+     *
+     * Add query flags to perform the same treatment for identified items or artifacts that come identified.
+     *
+     * 2018-01-08
      */
-    if (!need_identify(op))
+    if (!need_identify(op) || QUERY_FLAG(change, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_IDENTIFIED))
         object_give_identified_properties(op);
 
     for (i = 0; i < NUM_STATS; i++)

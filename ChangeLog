@@ -1,3 +1,7 @@
+2018-01-08  Daniel Hawkins
+    * common/artifact.c: Expand identified face use of pre-identified items, even
+      if the type otherwise need identifying. This makes gems appear with the correct face.
+
 2018-01-07  Daniel Hawkins
     * common/artifact.c: Make artifacts of items that do not need identifying
       appear using their identified face and animation. In particular, this makes
