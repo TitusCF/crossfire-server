@@ -551,7 +551,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
      * Make sure we aren't in a transport.
      * This should be set to null if we aren't.
      */
-    if (pl->contr->transport){
+    if (pl->contr && pl->contr->transport){
         char trans_name[MAX_BUF];
         query_name(pl->contr->transport, trans_name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
