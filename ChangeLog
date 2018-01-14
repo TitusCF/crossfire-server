@@ -1,3 +1,7 @@
+2018-01-13  Daniel Hawkins
+    * lib/artifacts: Make goblin leaders generate facing forward and animate the
+      artifact monsters so the versions that have animations use the animation frames.
+
 2018-01-08  Daniel Hawkins
     * common/artifact.c: Expand identified face use of pre-identified items, even
       if the type otherwise need identifying. This makes gems appear with the correct face.
