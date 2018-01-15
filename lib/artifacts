@@ -230,6 +230,7 @@ level 2
 resist_physical 40
 dam 15
 face beholder_leader.111
+animation beholder_leader_arc
 end
 #
 Allowed orc
