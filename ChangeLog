@@ -1,3 +1,6 @@
+2018-01-18  Daniel Hawkins
+    * lib/artifacts: Fix boots/gauntlets that should posess a damage value that don't. Fixes bug #832.
+
 2018-01-14  Daniel Hawkins
     * server/skills.c: Fix segfault from check for transport when monster uses
       jumping skill.

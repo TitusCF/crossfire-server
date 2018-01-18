@@ -1155,7 +1155,7 @@ Allowed gloves
 chance 10
 Object Havok
 type 100
-dam 4
+dam -4
 wc 2
 resist_physical 8
 weight 125
@@ -1179,7 +1179,7 @@ chance 20
 Object bladed steel
 type 100
 resist_physical 10
-dam 2
+dam -2
 material 8194
 materialname steel
 weight 125
@@ -1191,7 +1191,7 @@ chance 20
 Object the Titans
 type 100
 resist_physical 10
-dam 8
+dam -8
 weight 2500
 value 40
 end
@@ -2659,7 +2659,7 @@ value 50
 weight 120
 material 8200
 materialname dragonhide
-dam 2
+dam -2
 msg
   These boots have sharpened claws at the tips, which look like they would aid greatly in combat.
 endmsg
