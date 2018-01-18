@@ -984,9 +984,7 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
         grace_bonus = (get_grace_bonus(op->stats.Pow)+2.0*get_grace_bonus(op->stats.Wis)) / 3.0;
 
         for (i = 1; i <= grace_obj->level && i <= 10; i++) {
-            float grace_tmp = 0.0;
-
-            grace_tmp = op->contr->levgrace[i] + grace_bonus;
+            float grace_tmp = op->contr->levgrace[i] + grace_bonus;
 
             /* Got some extra bonus at first level */
             if (i == 1)
