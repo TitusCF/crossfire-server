@@ -521,12 +521,18 @@ static void init_attackmess(void) {
     while (fgets(buf, MAX_BUF, fp) != NULL) {
         if (*buf == '#')
             continue;
+        // Find the end of the line and strip the newline
         cp = strchr(buf, '\n');
         if (cp != NULL)
             *cp = '\0';
-        cp = buf;
-        while (*cp == ' ') /* Skip blanks */
-            cp++;
+        /*
+         * Skip blanks -- strspn is slightly faster than a loop w/ optimization on
+         * Also, note we go from the beginning of the line again, since cp was at the end.
+         * While here, also skip tabs for more complete whitespace handling.
+         *
+         * SilverNexus 2017-01-21
+         */
+        cp = buf + strspn(buf, " \t");
 
         if (strncmp(cp, "TYPE:", 5) == 0) {
             p = strtok(buf, ":");
