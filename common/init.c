@@ -530,7 +530,7 @@ static void init_attackmess(void) {
          * Also, note we go from the beginning of the line again, since cp was at the end.
          * While here, also skip tabs for more complete whitespace handling.
          *
-         * SilverNexus 2017-01-21
+         * SilverNexus 2018-01-21
          */
         cp = buf + strspn(buf, " \t");
 
