@@ -1,6 +1,7 @@
 2018-01-21  Daniel Hawkins
     * common/init.c: Use strspn for finding the first non-whitespace character in attackmess,
       and allow for tabs to be used as whitespace.
+    * socket/request.c: Reorder conditions to prevent segfault if pl is null in esrv_remove_spell.
 
 2018-01-18  Daniel Hawkins
     * lib/artifacts: Fix boots/gauntlets that should posess a damage value that don't. Fixes bug #832.
