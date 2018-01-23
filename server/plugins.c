@@ -1653,9 +1653,12 @@ static void cfapi_object_move(int *type, ...) {
         ret = va_arg(args, int *);
         va_end(args);
         *ret = player_arrest(op);
+        break;
+    
+    default:
+        // Just end the use of variable args. We got a wrong type.
+        va_end(args);
     }
-
-    va_end(args);
     *type = CFAPI_INT;
 }
 
