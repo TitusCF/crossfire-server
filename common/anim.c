@@ -46,6 +46,7 @@ void init_anim(void) {
     FILE *fp;
     int num_frames = 0, i;
     const New_Face *faces[MAX_ANIMATIONS];
+    Animations *alloc_ptr; // Used to temporarily catch the result of realloc, in case of failure.
 
     animations_allocated = 9;
     num_animations = 0;
@@ -81,10 +82,35 @@ void init_anim(void) {
                 LOG(llevError, "Didn't get a mina before %s\n", buf);
                 num_frames = 0;
             }
-            num_animations++;
+            ++num_animations;
             if (num_animations == animations_allocated) {
-                animations = realloc(animations, sizeof(Animations)*(animations_allocated+10));
-                animations_allocated += 10;
+                /*
+                 * We will realloc fewer times if we take larger steps for the realloc size.
+                 * This should prevent some copy operations during bootup, albeit at the expense of some RAM.
+                 * Most implementations of variable-sized things double each realloc for balance between
+                 * space and time efficiency.
+                 * Since animations_allocated is one less than the actual amount,
+                 * we aren't quite doubling the first allocation size.
+                 * Nevertheless, we skip by larger after the first realloc.
+                 * We should have enough animations for this to be worthwhile.
+                 *
+                 * While we are here, handle an allocation failure more gracefully than the inevitable segfault.
+                 *
+                 * Daniel Hawkins 2018-01-23
+                 */
+                alloc_ptr = realloc(animations, sizeof(Animations)*(animations_allocated << 1));
+                if (alloc_ptr)
+                {
+                    animations = alloc_ptr;
+                    animations_allocated <<= 1;
+                }
+                else
+                {
+                    LOG(llevError, "anim: animation array reallocation failed at size %d resizing to %d.\n",
+                        animations_allocated, animations_allocated << 1);
+                    // We will not have our animations, so terminate gracefully.
+                    fatal(OUT_OF_MEMORY);
+                }
             }
             animations[num_animations].name = add_string(buf+5);
             animations[num_animations].num = num_animations; /* for bsearch */

@@ -1,3 +1,6 @@
+2018-01-23  Daniel Hawkins
+    * common/anim.c: Reduce calls to realloc on animation load. Handle failed realloc gracefully.
+
 2018-01-22  Daniel Hawkins
     * server/plugins.c: Fix redundant call to va_end in cfapi_object_move.
 
