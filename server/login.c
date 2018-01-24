@@ -820,7 +820,12 @@ void check_login(object *op, int check_pass) {
                       "Your character was dead last time you played.");
         kill_player(op, NULL);
         if (pl->state != ST_PLAYING)
+        {
+            // Prevent memory leak from strdup-ed party_name.
+            if (party_name)
+                free(party_name);
             return;
+        }
     }
     LOG(llevInfo, "login: %s from %s\n", op->name, op->contr->socket.host);
 

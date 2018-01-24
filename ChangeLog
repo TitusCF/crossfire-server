@@ -1,3 +1,6 @@
+2018-01-24  Daniel Hawkins
+    * server/login.c: Prevent memory leak of party_name on attempted login of a player with negative hp.
+
 2018-01-23  Daniel Hawkins
     * common/anim.c: Reduce calls to realloc on animation load. Handle failed realloc gracefully.
 
