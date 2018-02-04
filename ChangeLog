@@ -1,3 +1,8 @@
+2018-02-03  Daniel Hawkins
+    * server/time.c: Improve change_object to handle multi-tile monster changes.
+    * test/unit/server/check_monster_change.c: Add unit test for changing monsters.
+    * test/unit/server/Makefile.am: Add new unit test to the build instructions.
+
 2018-01-24  Daniel Hawkins
     * server/login.c: Prevent memory leak of party_name on attempted login of a player with negative hp.
 
