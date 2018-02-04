@@ -579,8 +579,12 @@ int free_no_drop(object *op) {
  *
  * @param op
  * object to change. Will be removed and replaced.
+ *
+ * @note Now handles multipart objects!
+ * If it fails to insert a multipart object, it re-inserts the original object.
+ * So, FLAG_FREED and FLAG_REMOVED will not be set in op if it is put back.
  */
-void change_object(object *op) { /* Doesn`t handle linked objs yet */
+void change_object(object *op) {
     object *env;
     int i;
     int friendly;
@@ -605,7 +609,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
     friendly = QUERY_FLAG(op, FLAG_FRIENDLY);
     unaggressive = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
     owner = object_get_owner(op);
-    for (i = 0; i < op->stats.food; i++) { /* This doesn't handle op->more yet */
+    for (i = 0; i < op->stats.food; i++) {
         object *tmp;
 
         tmp = arch_to_object(op->other_arch);
@@ -625,8 +629,36 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
             tmp->x = env->x,
             tmp->y = env->y;
             tmp = object_insert_in_ob(tmp, env);
-        } else
+        }
+        // If there is more to the object, put in the map,
+        // then initiate the process of setting up multipartdom.
+        else if (tmp->arch->more)
+        {
+            tmp->map = op->map;
+            // Get the best free spot for the object
+            // Using the clone of the arch because I do not think that the actual object is ready yet.
+            if (object_find_multi_free_spot_around(&tmp->arch->clone, op, &op->x, &op->y) == 0)
+            {
+                tmp->x = op->x;
+                tmp->y = op->y;
+            }
+            else
+            {
+                LOG(llevInfo, "change_object: Failed to find a spot to put changing multipart object\n");
+                // Put the orignal object back.
+                object_insert_in_map(op, op->map, NULL, INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
+                // Free the failed object
+                object_free_drop_inventory(tmp);
+                // Bail out so we don't break things.
+                return;
+            }
+            object_insert_in_map(tmp, op->map, op, INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
+            object_fix_multipart(tmp);
+        }
+        else{
+            // Single-size objects work here.
             object_insert_to_free_spot_or_free(tmp, op->map, op->x, op->y, 1, SIZEOFFREE1+1, op);
+        }
     }
     if (friendly)
         remove_friendly_object(op);
