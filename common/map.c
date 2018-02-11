@@ -2304,9 +2304,9 @@ int out_of_map(mapstruct *m, int x, int y) {
             return 1;
         if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 3);
-	    /* Verify the tile map loaded correctly */
-	    if (!m->tile_map[3])
-		return 0;
+            /* Verify the tile map loaded correctly */
+            if (!m->tile_map[3])
+                return 0;
         }
         return (out_of_map(m->tile_map[3], x+MAP_WIDTH(m->tile_map[3]), y));
     }
@@ -2315,9 +2315,9 @@ int out_of_map(mapstruct *m, int x, int y) {
             return 1;
         if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 1);
-	    /* Verify the tile map loaded correctly */
-	    if (!m->tile_map[1])
-		return 0;
+            /* Verify the tile map loaded correctly */
+            if (!m->tile_map[1])
+                return 0;
         }
         return (out_of_map(m->tile_map[1], x-MAP_WIDTH(m), y));
     }
@@ -2326,9 +2326,9 @@ int out_of_map(mapstruct *m, int x, int y) {
             return 1;
         if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 0);
-	    /* Verify the tile map loaded correctly */
-	    if (!m->tile_map[0])
-		return 0;
+            /* Verify the tile map loaded correctly */
+            if (!m->tile_map[0])
+                return 0;
         }
         return (out_of_map(m->tile_map[0], x, y+MAP_HEIGHT(m->tile_map[0])));
     }
@@ -2337,9 +2337,9 @@ int out_of_map(mapstruct *m, int x, int y) {
             return 1;
         if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 2);
-	    /* Verify the tile map loaded correctly */
-	    if (!m->tile_map[2])
-		return 0;
+            /* Verify the tile map loaded correctly */
+            if (!m->tile_map[2])
+                return 0;
         }
         return (out_of_map(m->tile_map[2], x, y-MAP_HEIGHT(m)));
     }
@@ -2362,6 +2362,8 @@ int out_of_map(mapstruct *m, int x, int y) {
  * coordinates, which will contain the real position that was checked.
  * @return
  * map that is at specified location. Will be NULL if not on any map.
+ *
+ * @note refactored to remove the recursion. This should help stack space and optimization.
  */
 mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
 
@@ -2372,55 +2374,64 @@ mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
     if (*x >= 0 && *x < MAP_WIDTH(m) && *y >= 0 && *y < MAP_HEIGHT(m))
         return m;
 
-    if (*x < 0) {
-        if (!m->tile_path[3])
-            return NULL;
-        if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY){
-            load_and_link_tiled_map(m, 3);
-	    /* Make sure we loaded properly. */
-	    if (!m->tile_map[3])
-		return NULL;
-	}
-        *x += MAP_WIDTH(m->tile_map[3]);
-        return (get_map_from_coord(m->tile_map[3], x, y));
-    }
-    if (*x >= MAP_WIDTH(m)) {
-        if (!m->tile_path[1])
-            return NULL;
-        if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY){
-            load_and_link_tiled_map(m, 1);
-	    /* Make sure we loaded properly. */
-	    if (!m->tile_map[1])
-		return NULL;
-	}
-        *x -= MAP_WIDTH(m);
-        return (get_map_from_coord(m->tile_map[1], x, y));
-    }
-    if (*y < 0) {
-        if (!m->tile_path[0])
-            return NULL;
-        if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY){
-            load_and_link_tiled_map(m, 0);
-	    /* Make sure we loaded properly. */
-	    if (!m->tile_map[0])
-		return NULL;
-	}
-        *y += MAP_HEIGHT(m->tile_map[0]);
-        return (get_map_from_coord(m->tile_map[0], x, y));
-    }
-    if (*y >= MAP_HEIGHT(m)) {
-        if (!m->tile_path[2])
-            return NULL;
-        if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY){
-            load_and_link_tiled_map(m, 2);
-	    /* Make sure we loaded properly. */
-	    if (!m->tile_map[2])
-		return NULL;
-	}
-        *y -= MAP_HEIGHT(m);
-        return (get_map_from_coord(m->tile_map[2], x, y));
-    }
-    return NULL;    /* Coordinates aren't valid if we got here */
+    do /* With the first case there, we can assume we are out of the map if we get here */
+    {
+        // Figure out what map should be in the direction we are off the map, and then
+        // load that map and look again.
+        if (*x < 0) {
+            if (!m->tile_path[3])
+                return NULL;
+            if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY){
+                load_and_link_tiled_map(m, 3);
+                /* Make sure we loaded properly. */
+                if (!m->tile_map[3])
+                    return NULL;
+            }
+            *x += MAP_WIDTH(m->tile_map[3]);
+            m = m->tile_map[3];
+        }
+        else if (*x >= MAP_WIDTH(m)) {
+            if (!m->tile_path[1])
+                return NULL;
+            if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY){
+                load_and_link_tiled_map(m, 1);
+                /* Make sure we loaded properly. */
+                if (!m->tile_map[1])
+                   return NULL;
+            }
+            *x -= MAP_WIDTH(m);
+            m = m->tile_map[1];
+        }
+        // It is possible that x and y be considered separate compare groups,
+        // But using an else-if here retains the old behavior that recursion produced.
+        else if (*y < 0) {
+            if (!m->tile_path[0])
+                return NULL;
+            if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY){
+                load_and_link_tiled_map(m, 0);
+                /* Make sure we loaded properly. */
+                if (!m->tile_map[0])
+                  return NULL;
+            }
+            *y += MAP_HEIGHT(m->tile_map[0]);
+            m = m->tile_map[0];
+        }
+        else if (*y >= MAP_HEIGHT(m)) {
+            if (!m->tile_path[2])
+                return NULL;
+            if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY){
+                load_and_link_tiled_map(m, 2);
+                /* Make sure we loaded properly. */
+                if (!m->tile_map[2])
+                    return NULL;
+            }
+            *y -= MAP_HEIGHT(m);
+            m = m->tile_map[2];
+        }
+    // The check here is if our single tile is in the map.
+    // That is exactly what the OUT_OF_MAP macro does.
+    } while (OUT_OF_REAL_MAP(m, *x, *y));
+    return m;    /* We have found our map */
 }
 
 /**

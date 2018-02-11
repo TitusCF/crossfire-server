@@ -1,3 +1,6 @@
+2018-02-11  Daniel Hawkins
+    * common/map.c: Refactor get_map_from_coord() to be iterative instead of recursive.
+
 2018-02-03  Daniel Hawkins
     * server/time.c: Improve change_object to handle multi-tile monster changes.
     * test/unit/server/check_monster_change.c: Add unit test for changing monsters.
