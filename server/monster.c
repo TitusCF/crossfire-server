@@ -378,6 +378,8 @@ static int monster_move_randomly(object *op) {
  * Computes a path from source to target. Takes into account walls, other living things, and such.
  * Only works if both items are on same map.
  *
+ * Computes the path from target to source, so that the last direction is the one we need.
+ *
  * @param source
  * what wants to move.
  * @param target
@@ -396,9 +398,13 @@ int monster_compute_path(object *source, object *target, int default_dir) {
     if (target->map != source->map)
         return default_dir;
 
+    // These shouldn't change during the calculation, so store them once to avoid dereferencing.
+    const mapstruct * const cur_map = source->map;
+    const uint16_t map_height = cur_map->height;
     /*printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
 
-    const int size = source->map->width*source->map->height;
+    // Leave width like this because it is used just this once.
+    const int size = cur_map->width * map_height;
     /* We are setting all the values manually anyway,
      * so there's no reason to use calloc().
      * malloc() is more efficient here for that reason.
@@ -420,7 +426,7 @@ int monster_compute_path(object *source, object *target, int default_dir) {
      */
     memset(distance, 255, sizeof(*distance) * size);
     
-    distance[source->map->height * target->x + target->y] = 0;
+    distance[map_height * target->x + target->y] = 0;
     explore_x[0] = target->x;
     explore_y[0] = target->y;
     
@@ -452,36 +458,54 @@ int monster_compute_path(object *source, object *target, int default_dir) {
                 return absdir(dir+4);
             }
 
-            if (OUT_OF_REAL_MAP(source->map, x, y))
+            if (OUT_OF_REAL_MAP(cur_map, x, y))
                 continue;
-            if (ob_blocked(source, source->map, x, y))
-                continue;
-
-            assert(source->map->height*x+y >= 0);
-            assert(source->map->height*x+y < size);
+                
+            // Move these up, so we can reduce calls to ob_blocked with their info.
+            assert(map_height * x + y >= 0);
+            assert(map_height * x + y < size);
 	    
             new_distance = 
-                distance[source->map->height*explore_x[current]+explore_y[current]]
+                distance[map_height * explore_x[current] + explore_y[current]]
                 /* Mod 2 is equivalent to checking only the 1's bit (1 or 0), but & 1 is faster.
                  * Also, dir & 1 == 0 is true if we have a diagonal dir.
                  */
                 + ((dir & 1) == 0 ? 3 : 2);
+                
+            // If already known blocked or arrivable in less distance, we skip
+            if (distance[map_height * x + y] <= new_distance)
+                continue;
+            // If we have a non-default value here, we will have lready done ob_blocked on it.
+            // So, only call ob_blocked if we are staring at 65535.
+            // If we are not looking at an untested space, then we will skip this block and avoid ob_blocked
+            if (distance[map_height * x + y] == 65535 && ob_blocked(source, cur_map, x, y))
+            {
+                // Mark as something we can't otherwise get -- the goal is to cache what spaces are blocked.
+                // At least, this call to monster_compute_path will remember this spot is blocked.
+                // This should cut our calls to ob_blocked some.
+                distance[map_height * x + y] = 1;
+                // The value of 1 also allows for walls to be considered already checked, but since we do not add to the
+                // explore array, this makes them hit the condition above if they are checked again without going through walls.
+                continue;
+            }
 
             /*LOG(llevDebug, "check %d, %d dist = %d, nd = %d\n", x, y, distance[source->map->height*x+y], new_distance);*/
 
-            if (distance[source->map->height*x+y] > new_distance) {
-                assert(max < MAX_EXPLORE);
-                explore_x[max] = x;
-                explore_y[max] = y;
+            /* This condition is now always true, since we bail before we get here if this is false.
+            if (distance[map_height * x + y] > new_distance) {
+            */
+            assert(max < MAX_EXPLORE);
+            explore_x[max] = x;
+            explore_y[max] = y;
 
-                distance[source->map->height*x+y] = new_distance;
-                /*                printf("explore[%d] => (%d, %d) %u\n", max, x, y, new_distance);*/
-                ++max;
-                if (max == MAX_EXPLORE) {
-                    free(distance);
-                    return default_dir;
-                }
+            distance[map_height * x + y] = new_distance;
+            /*                printf("explore[%d] => (%d, %d) %u\n", max, x, y, new_distance);*/
+            ++max;
+            if (max == MAX_EXPLORE) {
+                free(distance);
+                return default_dir;
             }
+            //}
         }
         ++current;
     } while (current < max);
