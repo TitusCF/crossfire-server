@@ -399,12 +399,48 @@ int monster_compute_path(object *source, object *target, int default_dir) {
         return default_dir;
 
     // These shouldn't change during the calculation, so store them once to avoid dereferencing.
-    const mapstruct * const cur_map = source->map;
+    mapstruct * cur_map = source->map; // Not constant to silence some warnings.
     const uint16_t map_height = cur_map->height;
     /*printf("monster_compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
 
     // Leave width like this because it is used just this once.
     const int size = cur_map->width * map_height;
+    
+    /**
+     * Also, do a quick check to make sure our source monster is not completely sandwiched
+     * Do this before we malloc our distance array since we can check this without needing that array.
+     *
+     * TODO: Does this do multitile right?
+     *
+     * It is worth noting that the variables used here are also used later -- their info here is irrelevant there, and vice versa.
+     * Daniel Hawkins 2018-02-12
+     */
+    dir = -1; // Set a sentinel. -1 = no escape, 0 = many ways out, [1, 8] = one way out in dir
+    for (i = 1; i <= 8; ++i)
+    {
+        x = source->x + freearr_x[i];
+        y = source->y + freearr_y[i];
+        if (OUT_OF_REAL_MAP(cur_map, x, y))
+            continue;
+        if (ob_blocked(source, cur_map, x, y))
+            continue;
+        // We have a way out. Make note of it
+        if (dir < 0)
+            dir = i;
+        // We have many ways out -- do the pathing part of the function
+        else
+        {
+            dir = 0;
+            break;
+        }
+    }
+    // If dir > 0, we have our direction to go, as it is our only choice.
+    if (dir > 0)
+        return dir;
+    // If dir < 0, then we have no way to go. Return default_dir.
+    if (dir < 0)
+        return default_dir;
+    
     /* We are setting all the values manually anyway,
      * so there's no reason to use calloc().
      * malloc() is more efficient here for that reason.

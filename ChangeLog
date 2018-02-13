@@ -1,6 +1,8 @@
 2018-02-12  Daniel Hawkins
     * server/monster.c: Refactor to reduce calls to ob_blocked by remembering prior blocked tiles from the same run.
       This causes a small but noticable (~5%) reduction in overall pathing cost.
+      Do a quick check in monster_compute_path to ensure there are multiple ways the monster can move around
+      before attempting to go through the whole pathing algorithm. This yields significant performance improvements.
 
 2018-02-11  Daniel Hawkins
     * common/map.c: Refactor get_map_from_coord() to be iterative instead of recursive.
