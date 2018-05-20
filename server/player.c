@@ -2702,6 +2702,9 @@ void move_player_attack(object *op, int dir) {
 
     on_battleground = op_on_battleground(tpl, NULL, NULL, NULL);
 
+    // Temporarily store the map we are on before movement.
+    mapstruct *bef = tpl->map;
+
     /* If braced, or can't move to the square, and it is not out of the
      * map, attack it.  Note order of if statement is important - don't
      * want to be calling move_ob if braced, because move_ob will move the
@@ -2710,7 +2713,7 @@ void move_player_attack(object *op, int dir) {
      * do nothing at all.  As it is, if we are braced, we go through
      * quite a bit of processing.  However, it probably is less than what
      * move_ob uses.
-     */
+     */     
     if ((op->contr->braced || !move_ob(tpl, dir, tpl)) && !out_of_map(tpl->map, nx, ny)) {
         if (OUT_OF_REAL_MAP(tpl->map, nx, ny)) {
             m = get_map_from_coord(tpl->map, &nx, &ny);
@@ -2849,6 +2852,15 @@ void move_player_attack(object *op, int dir) {
                 make_visible(op);
         }
     } /* if player should attack something */
+    /* If we changed maps, then try to load the new map music.
+     * This is not redundant with transfer_ob's call to player_update_bg_music,
+     * since that call only accounts for teleporters, exits, and such.
+     * This handles entering tiled maps, which the other could not do.
+     */
+    else if (bef != tpl->map)
+    {
+        player_update_bg_music(op);
+    }
 }
 
 /**

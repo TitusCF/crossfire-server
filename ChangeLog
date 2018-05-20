@@ -1,3 +1,6 @@
+2018-05-19  Daniel Hawkins
+    * server/player.c: Load background music when moving through tiled maps.
+
 2018-02-12  Daniel Hawkins
     * server/monster.c: Refactor to reduce calls to ob_blocked by remembering prior blocked tiles from the same run.
       This causes a small but noticable (~5%) reduction in overall pathing cost.
