@@ -1,3 +1,6 @@
+2018-05-21  Daniel Hawkins
+    * server/attack.c: Make death attacks relevant.
+
 2018-05-19  Daniel Hawkins
     * server/player.c: Load background music when moving through tiled maps.
 

@@ -2353,7 +2353,7 @@ void paralyze_living(object *op, int dam) {
  * damage to deal, will contain computed damage or 0 if strike failed.
  */
 static void deathstrike_living(object *op, object *hitter, int *dam) {
-    int atk_lev, def_lev, kill_lev;
+    int atk_lev, def_lev, kill_lev, roll;
 
     if (hitter->slaying) {
         if (!((QUERY_FLAG(op, FLAG_UNDEAD) && strstr(hitter->slaying, undead_name))
@@ -2368,26 +2368,32 @@ static void deathstrike_living(object *op, object *hitter, int *dam) {
         LOG(llevError, "BUG: arch %s, name %s with level < 1\n", op->arch->name, op->name);
         def_lev = 1;
     }
-    atk_lev = (hitter->chosen_skill ? hitter->chosen_skill->level : hitter->level)/2;
+    /*
+     * Redo this calculation -- you could essentially only kill creatures less than half your level,
+     * making death extremely weak at high levels.
+     * Refactoring to use a d20 roll with a fairly high DC (still dependent on level)
+     * Also, toss in a resistance-based hit modifier.
+     * Higher resistance requires higher levels in order to kill with a death attack.
+     *
+     * Daniel Hawkins 2018-05-21
+     */
+    atk_lev = (hitter->chosen_skill ? hitter->chosen_skill->level : hitter->level);
     /* LOG(llevDebug, "Deathstrike - attack level %d, defender level %d\n", atk_lev, def_lev); */
 
-    if (atk_lev >= def_lev) {
-        kill_lev = random_roll(0, atk_lev-1, hitter, PREFER_HIGH);
-
-        /* Note that the below effectively means the ratio of the atk vs
-         * defener level is important - if level 52 character has very little
-         * chance of killing a level 50 monster.  This should probably be
-         * redone.
+    roll = random_roll(1, 20, hitter, PREFER_HIGH);
+    kill_lev = roll - 18 + atk_lev; // Use 19+ as a kill for same level and no resistance;
+    kill_lev = kill_lev * (100 - op->resist[ATNR_DEATH]) / 100; // Do not compress to *= for roundoff reasons.
+    
+    // If we hit, then kill them. Otherwise, damage is 0.
+    if (kill_lev > def_lev) {
+        *dam = op->stats.hp+10; /* take all hp. they can still save for 1/2 */
+        /* I think this doesn't really do much.  Because of
+         * integer rounding, this only makes any difference if the
+         * attack level is double the defender level.
          */
-        if (kill_lev >= def_lev) {
-            *dam = op->stats.hp+10; /* take all hp. they can still save for 1/2 */
-            /* I think this doesn't really do much.  Because of
-             * integer rounding, this only makes any difference if the
-             * attack level is double the defender level.
-             */
-            *dam *= kill_lev/def_lev;
-        }
-    } else {
+        *dam *= kill_lev/def_lev;
+    }
+    else {
         *dam = 0;  /* no harm done */
     }
 }
