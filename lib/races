@@ -11,6 +11,9 @@
 # Any type of archetype may be listed, but monsters
 # should be ordered by inherent level value/exp
 #
+# This appears to be only used for summoning cult monsters.
+# Hence the need for order by level.
+#
 # Prepending a '!' will prevent an item from having its
 # op->race field reset to RACE.
 #

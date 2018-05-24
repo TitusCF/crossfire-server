@@ -1256,9 +1256,15 @@ static void init_races(void) {
             if ((mon = find_archetype(cp)) == NULL)
                 LOG(llevError, "Creature %s in race file lacks archetype\n", cp);
             else {
-                if (set_race && (!mon->clone.race || strcmp(mon->clone.race, race))) {
+                // If the race is specified somewhere in the race field, we are good.
+                // This allows us to specify multiple races on arches that are in the races file.
+                if (set_race && (!mon->clone.race || !strstr(mon->clone.race, race))) {
                     if (mon->clone.race) {
-                        LOG(llevDebug, "races: Resetting to %s from %s for archetype %s\n", race, mon->clone.race, mon->name);
+                        LOG(llevDebug, "races: Appending to %s from %s for archetype %s\n", race, mon->clone.race, mon->name);
+                        // Copy the existing race into the race total list.
+                        strcpy(race+strlen(race), ","); // Arbitrary separator
+                        strncpy(race+strlen(race), mon->clone.race, MAX_BUF - 1 - strlen(race));
+                        // Clear the existing race string so we can add the new one
                         free_string(mon->clone.race);
                     }
                     mon->clone.race = add_string(race);

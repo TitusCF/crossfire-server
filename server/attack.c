@@ -2357,11 +2357,17 @@ static void deathstrike_living(object *op, object *hitter, int *dam) {
 
     if (hitter->slaying) {
         if (!((QUERY_FLAG(op, FLAG_UNDEAD) && strstr(hitter->slaying, undead_name))
-        || (op->race && strstr(hitter->slaying, op->race))))
+        || (op->race && strstr(op->race, hitter->slaying))))
+        {
+            *dam = 0; // Don't do damage if we aren't deathstriking them.
             return;
+        }
     } else
         if (QUERY_FLAG(op, FLAG_UNDEAD))
+        {
+            *dam = 0; // Don't do damage if we aren't deathstriking them.
             return;
+        }
 
     def_lev = op->level;
     if (def_lev < 1) {
