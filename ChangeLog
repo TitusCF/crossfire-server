@@ -2,6 +2,7 @@
     * server/attack.c: Make death attacks do no damage when the monster cannot
       be affected by that death attack. Also make the order of the strstr check
       work for multiple races defined on the creature, and only one on the weapon.
+      Make the strstr reorder on triple-damage calc, too.
     * server/init.c: Change race loading logic so that a race defined in lib/races
       is added to an arch's race field, rather than replace it. This allows for
       "slay vampire" and other slaying fields that aren't a normal race to actually

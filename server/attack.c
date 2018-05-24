@@ -1179,8 +1179,13 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32_t
         return dam;
 
     if (hitter->slaying) {
-        if ((op->race != NULL && strstr(hitter->slaying, op->race))
-        || (op->arch && op->arch->name != NULL && strstr(op->arch->name, hitter->slaying))) {
+        // Look for the race as one of many that can be listed.
+        if ((op->race != NULL && strstr(op->race, hitter->slaying))
+        /*
+         * Since we can do multiple races, we should be able to avoid the arch check.
+         * This gives a more flexible race system, so skeletal mages can be a type of skeleton and such
+        || (op->arch && op->arch->name != NULL && strstr(op->arch->name, hitter->slaying))
+        */) {
             doesnt_slay = 0;
             dam *= 3;
         }
