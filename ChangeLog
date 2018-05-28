@@ -1,3 +1,8 @@
+2018-05-28  Daniel Hawkins
+    * common/living.c: Simplification of bracer/force/armor AC/WC code in fix_object:
+      if we don't replace the best value, don't waste time subtracting and adding the same
+      value to the object.
+
 2018-05-23  Daniel Hawkins
     * server/attack.c: Make death attacks do no damage when the monster cannot
       be affected by that death attack. Also make the order of the strstr check

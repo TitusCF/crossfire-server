@@ -1488,26 +1488,24 @@ void fix_object(object *op) {
 
             case BRACERS:
             case FORCE:
+                // Code simplification to reduce branching -- we don't need to sub/add ac and wc all the time.
+                // Daniel Hawkins 2018-05-28
                 if (tmp->stats.wc) {
                     if (best_wc < tmp->stats.wc) {
                         wc += best_wc;
                         best_wc = tmp->stats.wc;
-                    } else
-                        wc += tmp->stats.wc;
+                        wc -= tmp->stats.wc;
+                    }
                 }
                 if (tmp->stats.ac) {
                     if (best_ac < tmp->stats.ac+tmp->magic) {
                         ac += best_ac; /* Remove last bonus */
                         best_ac = tmp->stats.ac+tmp->magic;
-                    } else /* To nullify the below effect */
-                        ac += tmp->stats.ac+tmp->magic;
+                        ac -= (tmp->stats.ac+tmp->magic);
+                    }
                 }
                 if (tmp->stats.dam && tmp->type == BRACERS)
                     op->stats.dam += (tmp->stats.dam+tmp->magic);
-                if (tmp->stats.wc)
-                    wc -= tmp->stats.wc;
-                if (tmp->stats.ac)
-                    ac -= (tmp->stats.ac+tmp->magic);
                 if (ARMOUR_SPEED(tmp) && ARMOUR_SPEED(tmp)/10.0 < max)
                     max = ARMOUR_SPEED(tmp)/10.0;
                 break;
