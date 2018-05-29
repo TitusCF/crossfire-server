@@ -1491,14 +1491,35 @@ void fix_object(object *op) {
                 // Code simplification to reduce branching -- we don't need to sub/add ac and wc all the time.
                 // Daniel Hawkins 2018-05-28
                 if (tmp->stats.wc) {
-                    if (best_wc < tmp->stats.wc) {
+                    // Since we are alreay here, make sure wc stacking also occurs for serpentman players.
+                    if (tmp->type == BRACERS && op->type == PLAYER && op->arch->name && strcmp(op->arch->name, "serpentman_player") == 0)
+                    {
+                        // Apply ac from bracers directly.
+                        // This also grants the side effect that armor and bracer ac are separate for serpentmen,
+                        // But that should be better than the extra bracers being mostly useless.
+                        wc -= tmp->stats.wc;
+                    }
+                    else if (best_wc < tmp->stats.wc) {
                         wc += best_wc;
                         best_wc = tmp->stats.wc;
                         wc -= tmp->stats.wc;
                     }
                 }
                 if (tmp->stats.ac) {
-                    if (best_ac < tmp->stats.ac+tmp->magic) {
+                    /*
+                     * If we have a serpentman player, then we do bracers differently
+                     * to allow for both bracers they equip to apply to ac, instead of only the best.
+                     *
+                     * Daniel Hawkins 2018-05-28
+                     */
+                    if (tmp->type == BRACERS && op->type == PLAYER && op->arch->name && strcmp(op->arch->name, "serpentman_player") == 0)
+                    {
+                        // Apply ac from bracers directly.
+                        // This also grants the side effect that armor and bracer ac are separate for serpentmen,
+                        // But that should be better than the extra bracers being mostly useless.
+                        ac -= tmp->stats.ac+tmp->magic;
+                    }
+                    else if (best_ac < tmp->stats.ac+tmp->magic) {
                         ac += best_ac; /* Remove last bonus */
                         best_ac = tmp->stats.ac+tmp->magic;
                         ac -= (tmp->stats.ac+tmp->magic);

@@ -2,6 +2,7 @@
     * common/living.c: Simplification of bracer/force/armor AC/WC code in fix_object:
       if we don't replace the best value, don't waste time subtracting and adding the same
       value to the object.
+      Also, fix bug #823 by directly applying bracer ac and wc for serpentmen players.
 
 2018-05-23  Daniel Hawkins
     * server/attack.c: Make death attacks do no damage when the monster cannot
