@@ -3,6 +3,8 @@
       if we don't replace the best value, don't waste time subtracting and adding the same
       value to the object.
       Also, fix bug #823 by directly applying bracer ac and wc for serpentmen players.
+    * server/monster.c: Skip performance shortcuts in monster_compute_path for
+      multitile monsters.
 
 2018-05-23  Daniel Hawkins
     * server/attack.c: Make death attacks do no damage when the monster cannot
