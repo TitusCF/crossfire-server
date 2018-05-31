@@ -1192,7 +1192,13 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32_t
     }
 
     /* Adjust the damage for resistance. Note that neg. values increase damage. */
-    if (op->resist[attacknum]) {
+    /*
+     * Skip lifestealing here, because it undergoes a more specific resistance scaling
+     * in its own section that involves the better of drain/life stealing resistance
+     *
+     * Daniel Hawkins 2018-05-31
+     */
+    if (attacknum != ATNR_LIFE_STEALING && op->resist[attacknum]) {
         /* basically:  dam = dam*(100-op->resist[attacknum])/100;
          * in case 0>dam>1, we try to "simulate" a float value-effect */
         dam *= (100-op->resist[attacknum]);
@@ -2117,7 +2123,7 @@ static void poison_living(object *op, object *hitter, int dam) {
     archetype *at = find_archetype("poisoning");
     object *tmp = arch_present_in_ob(at, op);
     const char *skill;
-
+    
     if (tmp == NULL) {
         tmp = arch_to_object(at);
         if (tmp == NULL)
