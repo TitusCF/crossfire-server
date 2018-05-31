@@ -1,5 +1,6 @@
 2018-05-31  Daniel Hawkins
     * server/attack.c: Fix double application of resistance for life stealing attacktype.
+      Also, add more complex algorithm for slowness to reduce >1 speed sometimes.
 
 2018-05-28  Daniel Hawkins
     * common/living.c: Simplification of bracer/force/armor AC/WC code in fix_object:
