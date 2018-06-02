@@ -2237,7 +2237,7 @@ static void slow_living(object *op, object *hitter, int dam) {
     else if (tmp->stats.exp > -speed_penalty)
     {
         tmp->stats.exp = -speed_penalty;
-        tmp->stats.food -= 5; // But also reduce the duration to compensate.
+        tmp->stats.food -= 3; // But also reduce the duration to compensate.
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
                       "The world moves even faster!");
     }
