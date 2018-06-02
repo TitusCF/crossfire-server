@@ -637,12 +637,7 @@ void change_object(object *op) {
             tmp->map = op->map;
             // Get the best free spot for the object
             // Using the clone of the arch because I do not think that the actual object is ready yet.
-            if (object_find_multi_free_spot_around(&tmp->arch->clone, op, &op->x, &op->y) == 0)
-            {
-                tmp->x = op->x;
-                tmp->y = op->y;
-            }
-            else
+            if (object_find_multi_free_spot_around(&tmp->arch->clone, op, &tmp->x, &tmp->y) != 0)
             {
                 LOG(llevInfo, "change_object: Failed to find a spot to put changing multipart object\n");
                 // Put the orignal object back.

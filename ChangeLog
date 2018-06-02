@@ -1,3 +1,6 @@
+2018-06-02  Daniel Hawkins
+    * server/time.c: Simplify the code for determining the placement of a new object in change_object().
+
 2018-05-31  Daniel Hawkins
     * server/attack.c: Fix double application of resistance for life stealing attacktype.
       Also, add more complex algorithm for slowness to reduce >1 speed sometimes.
