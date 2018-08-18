@@ -28,8 +28,8 @@ CF_FLAGS=${CF_FLAGS:-"-d"}
 # in the event of a server crash.
 CF_TMP=${CF_TMP:-"/tmp/crossfire"}
 
-# Directory for storing server logs (default $CF_TMP).
-CF_LOGDIR=${CF_LOGDIR:-"${CF_TMP}"}
+# Path to server log (default "$CF_TMP/crossfire.log").
+CF_LOG=${CF_LOG:-"${CF_TMP}/crossfire.log"}
 
 # Maximum number of restarts (set to zero to loop infinitely, default 100).
 MAX_RESTART=${MAX_RESTART:-"100"}
@@ -56,8 +56,7 @@ while [ ${MAX_RESTART} -ne ${generation} ]; do
     cd ${CF_TMP}
     echo "===>>> Starting server (generation ${generation})..."
 
-    ${CF_BIN} ${CF_FLAGS} -tmpdir "${CF_TMP}" \
-        -log "${CF_LOGDIR}/crossfire-`date +%Y-%m-%d-%H:%M`.log"
+    ${CF_BIN} ${CF_FLAGS} -tmpdir "${CF_TMP}" -log "${CF_LOG}"
 
     # If the server crashed and CRASH_DIR is set, save CF_TMP.
     if [ ${?} -ne 0 -a -n "${CRASH_DIR}" ]; then
