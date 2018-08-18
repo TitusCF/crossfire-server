@@ -349,16 +349,8 @@ static size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *dat
     return realsize;
 }
 
-
-/**
- * This sends an update to the various metaservers.
- * It generates the form, and then sends it to the
- * server
- */
-static void metaserver2_updates(void) {
 #ifdef HAVE_LIBCURL
-    MetaServer2 *ms2;
-    struct curl_httppost *formpost = NULL;
+static void metaserver2_build_form(struct curl_httppost **formpost) {
     struct curl_httppost *lastptr = NULL;
     char buf[MAX_BUF];
 
@@ -368,43 +360,43 @@ static void metaserver2_updates(void) {
      * The string after CURLFORM_COPYNAME is the name of the POST variable
      * as the
      */
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "hostname",
                  CURLFORM_COPYCONTENTS, local_info.hostname,
                  CURLFORM_END);
 
     snprintf(buf, sizeof(buf), "%d", local_info.portnumber);
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "port",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "html_comment",
                  CURLFORM_COPYCONTENTS, local_info.html_comment,
                  CURLFORM_END);
 
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "text_comment",
                  CURLFORM_COPYCONTENTS, local_info.text_comment,
                  CURLFORM_END);
 
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "archbase",
                  CURLFORM_COPYCONTENTS, local_info.archbase,
                  CURLFORM_END);
 
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "mapbase",
                  CURLFORM_COPYCONTENTS, local_info.mapbase,
                  CURLFORM_END);
 
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "codebase",
                  CURLFORM_COPYCONTENTS, local_info.codebase,
                  CURLFORM_END);
 
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "flags",
                  CURLFORM_COPYCONTENTS, local_info.flags,
                  CURLFORM_END);
@@ -412,25 +404,25 @@ static void metaserver2_updates(void) {
     pthread_mutex_lock(&ms2_info_mutex);
 
     snprintf(buf, sizeof(buf), "%d", metaserver2_updateinfo.num_players);
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "num_players",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
     snprintf(buf, sizeof(buf), "%d", metaserver2_updateinfo.in_bytes);
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "in_bytes",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
     snprintf(buf, sizeof(buf), "%d", metaserver2_updateinfo.out_bytes);
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "out_bytes",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
     snprintf(buf, sizeof(buf), "%ld", (long)metaserver2_updateinfo.uptime);
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "uptime",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
@@ -440,28 +432,37 @@ static void metaserver2_updates(void) {
     /* Following few fields are global variables,
      * but are really defines, so won't ever change.
      */
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "version",
                  CURLFORM_COPYCONTENTS, FULL_VERSION,
                  CURLFORM_END);
 
     snprintf(buf, sizeof(buf), "%d", VERSION_SC);
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "sc_version",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
     snprintf(buf, sizeof(buf), "%d", VERSION_CS);
-    curl_formadd(&formpost, &lastptr,
+    curl_formadd(formpost, &lastptr,
                  CURLFORM_COPYNAME, "cs_version",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
+}
+#endif
 
-    for (ms2 = metaserver2; ms2; ms2 = ms2->next) {
-        CURL *curl;
-        CURLcode res;
+/**
+ * This sends an update to the various metaservers.
+ * It generates the form, and then sends it to the
+ * server
+ */
+static void metaserver2_updates(void) {
+#ifdef HAVE_LIBCURL
+    struct curl_httppost *formpost = NULL;
+    metaserver2_build_form(&formpost);
 
-        curl = curl_easy_init();
+    for (MetaServer2 *ms2 = metaserver2; ms2; ms2 = ms2->next) {
+        CURL *curl = curl_easy_init();
         if (curl) {
             /* what URL that receives this POST */
             curl_easy_setopt(curl, CURLOPT_URL, ms2->hostname);
@@ -472,8 +473,8 @@ static void metaserver2_updates(void) {
              * we want to take care of it ourselves.
              */
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, metaserver2_writer);
-            res = curl_easy_perform(curl);
 
+            CURLcode res = curl_easy_perform(curl);
             if (res)
                 fprintf(stderr, "easy_perform got error %d\n", res);
 
