@@ -471,9 +471,13 @@ static void metaserver2_updates(void) {
              */
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, metaserver2_writer);
 
+            char errbuf[CURL_ERROR_SIZE];
+            curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
+
             CURLcode res = curl_easy_perform(curl);
-            if (res)
-                fprintf(stderr, "easy_perform got error %d\n", res);
+            if (res) {
+                LOG(llevError, "metaserver update failed: %s\n", errbuf);
+            }
 
             /* always cleanup */
             curl_easy_cleanup(curl);
