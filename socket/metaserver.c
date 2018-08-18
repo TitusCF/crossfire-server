@@ -342,10 +342,7 @@ int metaserver2_init(void) {
  */
 static size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *data) {
     size_t realsize = size*nmemb;
-
-    LOG(llevDebug, "metaserver2_writer- Start of text:\n%s\n", (const char*)ptr);
-    LOG(llevDebug, "metaserver2_writer- End of text:\n");
-
+    LOG(llevInfo, "Message from metaserver:\n%s\n", (const char*)ptr);
     return realsize;
 }
 
