@@ -1424,14 +1424,11 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32_t
         break;
 
     case ATNR_COUNTERSPELL:
-        query_name(op, name_op, MAX_BUF);
-        query_name(hitter, name_hitter, MAX_BUF);
-        LOG(llevError, "%s was hit by %s with counterspell attack.\n", name_op, name_hitter);
         dam = 0;
-        /* This should never happen.  Counterspell is handled
-         * seperately and filtered out.  If this does happen,
-         * Counterspell has no effect on anything but spells, so it
-         * does no damage. */
+        /* While counterspell is handled separately and filtered out when it
+         * moves, players can still step on a square that has an active
+         * counterspell. When this happens, do no damage because counterspell
+         * has no effect on anything but spells. */
         break;
 
     case ATNR_HOLYWORD: {
