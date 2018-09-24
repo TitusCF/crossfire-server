@@ -8,6 +8,13 @@ level ChangeLog file.
 should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
+Ob types   : MIMIC
+Events     : pick, apply
+Moved from : nowhere (new type)
+Moved to   : mimic/mimic.c
+Comment    : Added a new type for a mimic monster that waits for you to take it or open it to strike.
+2018-09-24 - Daniel Hawkins
+--
 Ob types   : POISONING
 Events     : process
 Moved from : ../server/time.c, legacy/process.c

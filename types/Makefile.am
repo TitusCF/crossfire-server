@@ -26,6 +26,7 @@ identify_altar/identify_altar.c \
 lamp/lamp.c \
 lighter/lighter.c \
 marker/marker.c \
+mimic/mimic.c \
 mood_floor/mood_floor.c \
 peacemaker/peacemaker.c \
 pedestal/pedestal.c \

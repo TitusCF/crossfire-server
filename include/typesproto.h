@@ -48,6 +48,8 @@ void init_type_lamp(void);
 void init_type_lighter(void);
 /* marker/marker.c */
 void init_type_marker(void);
+/* mimic/mimic.c */
+void init_type_mimic(void);
 /* mood_floor/mood_floor.c */
 void init_type_mood_floor(void);
 /* peacemaker/peacemaker.c */

@@ -1,3 +1,10 @@
+2018-09-24  Daniel Hawkins
+    * types/Makefile.am: Add new mimic type file to build.
+    * server/ob_types.c: Initialize the apply hook for mimics.
+    * include/typesproto.h: Function prototype for apply hook initialization.
+    * include/object.h: Add MIMIC type and update max type number.
+    * types/mimic/mimic.c: Add code for MIMIC type.
+
 2018-06-02  Daniel Hawkins
     * server/time.c: Simplify the code for determining the placement of a new object in change_object().
 

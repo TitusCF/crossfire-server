@@ -56,6 +56,7 @@ void register_all_ob_types(void) {
     init_type_lamp();
     init_type_lighter();
     init_type_marker();
+    init_type_mimic();
     init_type_mood_floor();
     init_type_peacemaker();
     init_type_pedestal();

@@ -246,8 +246,8 @@ enum object_type {
     BUILDER = 160,  /**< Generic item builder, see subtypes
                                       * below */
     MATERIAL = 161, /**< Material for building */
-
-    OBJECT_TYPE_MAX = 162, /**< Update if you add new types */
+    MIMIC = 162,
+    OBJECT_TYPE_MAX = 163, /**< Update if you add new types */
 };
 
 /**
