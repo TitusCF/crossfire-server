@@ -5,6 +5,7 @@
     * include/object.h: Add MIMIC type and update max type number.
     * types/mimic/mimic.c: Add code for MIMIC type.
     * common/item.c: Add new type to the table defined here. Make it like container.
+    * random_maps/treasure.c: Make a very slim chance of a mimic replacing a chest when diffiuclty > 5.
 
 2018-06-02  Daniel Hawkins
     * server/time.c: Simplify the code for determining the placement of a new object in change_object().

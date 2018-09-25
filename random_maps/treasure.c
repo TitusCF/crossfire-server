@@ -236,8 +236,17 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     int i, xl, yl;
     treasurelist *tlist;
     const char *chests[] = { "chest", "chest_green", "chest_red", "chest_yellow", "chest_blue", "chest_pink" };
-
-    the_chest = create_archetype(chests[RANDOM() % (sizeof(chests)/sizeof(*chests))]);
+    
+    // If the difficulty is greater than 5, then there is a chance for there to be a mimic lurking.
+    // It is a slim chance at any rate, so it shouldn't be a problem in any case.
+    if (map->difficulty > 5 && RANDOM() % 1000000 < map->difficulty*map->difficulty*map->difficulty)
+    {
+        the_chest = create_archetype("mimic");
+    }
+    else
+    {
+        the_chest = create_archetype(chests[RANDOM() % (sizeof(chests)/sizeof(*chests))]);
+    }
     if (the_chest == NULL) {
         return NULL;
     }
@@ -256,11 +265,21 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
         object_free_drop_inventory(the_chest);
         return NULL;
     }
-
-    tlist = find_treasurelist("chest");
-    the_chest->randomitems = tlist;
-    the_chest->stats.hp = n_treasures;
-
+    
+    // If normal, then do the old behavior.
+    if (the_chest->type == CONTAINER)
+    {
+        tlist = find_treasurelist("chest");
+        the_chest->randomitems = tlist;
+        the_chest->stats.hp = n_treasures;
+    }
+    // Otherwise, do the mimic treasurelist and don't change hp
+    else if (the_chest->type == MIMIC)
+    {
+        tlist = find_treasurelist("mimic");
+        the_chest->randomitems = tlist;
+        // TODO: Make mimics on higher levels have more treasure
+    }
     /* stick a trap in the chest if required  */
     if (treasureoptions&TRAPPED) {
         mapstruct *trap_map = find_style("/styles/trapstyles", "traps", -1);
