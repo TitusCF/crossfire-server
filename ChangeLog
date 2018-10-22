@@ -1,3 +1,6 @@
+2018-10-22  Daniel Hawkins
+    * random_maps/style.c: Remove superfluous use of buffer and snprintf.
+
 2018-09-24  Daniel Hawkins
     * types/Makefile.am: Add new mimic type file to build.
     * server/ob_types.c: Initialize the apply hook for mimics.

@@ -65,11 +65,8 @@ int obj_count_in_map(mapstruct *map, int x, int y)
 void put_decor(mapstruct *map, char **maze, char *decorstyle, int decor_option, RMParms *RP)
 {
     mapstruct *decor_map;
-    char style_name[256];
 
-    snprintf(style_name, sizeof(style_name), "/styles/decorstyles");
-
-    decor_map = find_style(style_name, decorstyle, -1);
+    decor_map = find_style("/styles/decorstyles", decorstyle, -1);
     if (decor_map == NULL) {
         return;
     }
