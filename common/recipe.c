@@ -75,30 +75,12 @@ static recipelist *init_recipelist(void) {
  * new structure initialized. Never NULL.
  */
 static recipe *get_empty_formula(void) {
-    recipe *t = (recipe *)malloc(sizeof(recipe));
+    // This used to be a malloc followed by setting everything to zero.
+    // So just use calloc to make it faster.
+    // SilverNexus -- 2018-10-22
+    recipe *t = (recipe *)calloc(1, sizeof(recipe));
     if (t == NULL)
         fatal(OUT_OF_MEMORY);
-    t->chance = 0;
-    t->index = 0;
-    t->transmute = 0;
-    t->yield = 0;
-    t->diff = 0;
-    t->exp = 0;
-    t->keycode = NULL;
-    t->title = NULL;
-    t->arch_names = 0;
-    t->arch_name = NULL;
-    t->skill = NULL;
-    t->cauldron = NULL;
-    t->ingred = NULL;
-    t->ingred_count = 0;
-    t->next = NULL;
-    t->failure_arch = NULL;
-    t->failure_message = NULL;
-    t->min_level = 0;
-    t->is_combination = 0;
-    t->tool = NULL;
-    t->tool_size = 0;
     return t;
 }
 

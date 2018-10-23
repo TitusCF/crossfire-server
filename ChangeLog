@@ -4,6 +4,7 @@
       common/loader.l,
       common/init.c,
       common/arch.c: Remove ::warn_archetypes and make loader use try_find_archetype.
+    * common/recipe.c: Refactor recipe creation to use calloc instead of malloc.
 
 2018-09-24  Daniel Hawkins
     * types/Makefile.am: Add new mimic type file to build.
