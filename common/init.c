@@ -298,7 +298,6 @@ void init_globals(void) {
     first_artifactlist = NULL;
     first_archetype = NULL;
     *first_map_ext_path = 0;
-    warn_archetypes = 0;
     nroftreasures = 0;
     nrofartifacts = 0;
     nrofallowedstr = 0;

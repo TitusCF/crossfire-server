@@ -702,7 +702,7 @@ A       .+
                             char *yv = yval();
 
                             tmp = object_new();
-                            tmp->arch = find_archetype(yv);
+                            tmp->arch = try_find_archetype(yv);
                             if (tmp->arch != NULL)
                                 object_copy(&tmp->arch->clone, tmp);
                             else {
@@ -732,7 +732,7 @@ A       .+
                         /* This is the actual archetype definition then */
                             char *yv = yval();
 
-                            op->arch = find_archetype(yv);
+                            op->arch = try_find_archetype(yv);
                             if (op->arch != NULL)
                                 object_copy(&op->arch->clone, op);
                             else if (!arch_init) {
@@ -753,7 +753,7 @@ A       .+
                         }
                     }
 
-^other_arch{S}      op->other_arch = find_archetype(yval());
+^other_arch{S}      op->other_arch = try_find_archetype(yval());
 ^animation{S}       {
                         if (strcmp (yval(), "NONE") == 0) {
                             op->animation_id = 0;

@@ -543,8 +543,6 @@ static void load_archetypes(void) {
     LOG(llevDebug, "arch: starting pass 1...\n");
     first_arch_pass(fp);
     init_archetable();
-    warn_archetypes = 1;
-
     rewind(fp);
 
     LOG(llevDebug, "arch: loading treasures\n");
@@ -572,8 +570,7 @@ object *arch_to_object(archetype *at) {
     object *op;
 
     if (at == NULL) {
-        if (warn_archetypes)
-            LOG(llevError, "Couldn't find archetype.\n");
+        LOG(llevError, "Couldn't find archetype.\n");
         return NULL;
     }
     op = object_new();
@@ -690,7 +687,7 @@ archetype *try_find_archetype(const char *name) {
  * @return
  * pointer to the found archetype, otherwise NULL.
  * @see try_find_archetype
- * @todo replace by try_find_archetype() when suitable and trash ::warn_archetypes.
+ * @todo replace by try_find_archetype()
  */
 archetype *find_archetype(const char *name) {
     archetype *at;
@@ -698,7 +695,7 @@ archetype *find_archetype(const char *name) {
     if (name == NULL)
         return (archetype *)NULL;
     at = try_find_archetype(name);
-    if (at == NULL && warn_archetypes)
+    if (at == NULL)
         LOG(llevError, "Couldn't find archetype %s\n", name);
     return at;
 }
