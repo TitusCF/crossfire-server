@@ -1,5 +1,9 @@
 2018-10-22  Daniel Hawkins
     * random_maps/style.c: Remove superfluous use of buffer and snprintf.
+    * include/global.h,
+      common/loader.l,
+      common/init.c,
+      common/arch.c: Remove ::warn_archetypes and make loader use try_find_archetype.
 
 2018-09-24  Daniel Hawkins
     * types/Makefile.am: Add new mimic type file to build.
