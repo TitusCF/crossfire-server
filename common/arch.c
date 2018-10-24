@@ -687,7 +687,7 @@ archetype *try_find_archetype(const char *name) {
  * @return
  * pointer to the found archetype, otherwise NULL.
  * @see try_find_archetype
- * @todo replace by try_find_archetype()
+ * @todo replace by try_find_archetype() when suitable
  */
 archetype *find_archetype(const char *name) {
     archetype *at;
