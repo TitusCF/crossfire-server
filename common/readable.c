@@ -459,7 +459,7 @@ static const char *const book_descrpt[] = {
     "cryptic",
     "cryptical",
     "dusty",
-    "hiearchical",
+    "hierarchical",
     "grizzled",
     "gold-gilt",
     "great",
