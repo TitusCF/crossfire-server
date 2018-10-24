@@ -1261,6 +1261,7 @@ object *find_marked_object(object *op) {
      * player hasn't dropped the item.  We use count on the off chance that
      * an item got reincarnated at some point.
      */
+     /*
     FOR_INV_PREPARE(op, tmp) {
         if (tmp->invisible)
             continue;
@@ -1274,6 +1275,19 @@ object *find_marked_object(object *op) {
             }
         }
     } FOR_INV_FINISH();
+    */
+    /* Try a different way of doing this
+     * We check the environment of the marked object
+     * to make sure it is still in the player's inventory.
+     * In addition, we ensure there is the correct quantity of that item.
+     *
+     * Daniel Hawkins 2018-10-23
+     */
+    if (op->contr->mark->env == op && op->contr->mark->count == op->contr->mark_count)
+        return op->contr->mark;
+    // Otherwise reset the mark, since it is no longer valid.
+    op->contr->mark = NULL;
+    op->contr->mark_count = 0;
     return NULL;
 }
 
