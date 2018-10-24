@@ -751,12 +751,27 @@ static void init_msgfile(void) {
                 continue;
             cp = strchr(buf, '\n');
             if (cp != NULL) {
+                // Remove trailing whitespace
                 while (cp > buf && (cp[-1] == ' ' || cp[-1] == '\t'))
                     cp--;
-                *cp = '\0';
+                /* If we make sure there is a newline here,
+                 * we can avoid the auto-append of it and make long
+                 * blocks of text not get split.
+                 * But only do that if we are getting the message.
+                 * Everywhere else we do not want the newline.
+                 * Daniel Hawkins 2018-10-24
+                 */
+                if (text)
+                {
+                    *cp = '\n';
+                    // to have found a newline means we have room for a null terminator, too
+                    *(++cp)= '\0';
+                }
+                else
+                    *cp = '\0';
             }
             if (tmp != NULL) {
-                if (text && strcmp(buf, "ENDMSG") == 0) {
+                if (text && strncmp(buf, "ENDMSG", 6) == 0) {
                     if (strlen(msgbuf) > BOOK_BUF) {
                         LOG(llevDebug, "Warning: this string exceeded max book buf size:\n");
                         LOG(llevDebug, "  %s\n", msgbuf);
@@ -774,7 +789,8 @@ static void init_msgfile(void) {
                 } else if (text) {
                     if (!buf_overflow(msgbuf, buf, HUGE_BUF-1)) {
                         strcat(msgbuf, buf);
-                        strcat(msgbuf, "\n");
+                        // If there is a newline in the text, it will be included in the output where it belongs
+                        // We should avoid really long lines of text getting split up this way.
                     } else if (error_lineno != 0) {
                         LOG(llevInfo, "Warning: truncating book at %s, line %d\n", fname, error_lineno);
                     }

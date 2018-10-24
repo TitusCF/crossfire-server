@@ -1,3 +1,6 @@
+2018-10-24  Daniel Hawkins
+    * common/readable.c: Make text from the messages file not get split at buffer boundaries.
+
 2018-10-23  Daniel Hawkins
     * common/readable.c: Add "illuminated text" as a religion book name.
     * server/c_object.c: Refactor a loop through the player's inventory to better use the op->contr->mark pointer.
