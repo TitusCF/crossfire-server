@@ -1,5 +1,7 @@
 2018-10-24  Daniel Hawkins
     * common/readable.c: Make text from the messages file not get split at buffer boundaries.
+    * server/player.c,
+      common/living.c: Make dragon ability gain levels specified in magic field in treasurelist.
 
 2018-10-23  Daniel Hawkins
     * common/readable.c: Add "illuminated text" as a religion book name.

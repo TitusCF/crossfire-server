@@ -4312,7 +4312,8 @@ void dragon_ability_gain(object *who, int atnr, int level) {
     if (trlist == NULL || who->type != PLAYER)
         return;
 
-    for (i = 0, tr = trlist->items; tr != NULL && i < level-1; tr = tr->next, i++)
+    // tr->magic is being used to define what level of the metabolism the ability is gained at.
+    for (tr = trlist->items; tr != NULL && tr->magic != level; tr = tr->next)
         ;
     if (tr == NULL || tr->item == NULL) {
         /* LOG(llevDebug, "-> no more treasure for %s\n", change_resist_msg[atnr]); */

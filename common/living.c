@@ -1699,11 +1699,13 @@ static void dragon_level_gain(object *who) {
      */
     if (who->level > abil->level) {
         /* increase our focused ability */
-        abil->resist[abil->stats.exp]++;
+        int lev = ++(abil->resist[abil->stats.exp]);
 
-        if (abil->resist[abil->stats.exp] > 0 && abil->resist[abil->stats.exp]%5 == 0) {
-            /* time to hand out a new ability-gift */
-            dragon_ability_gain(who, (int)abil->stats.exp, (int)((1+abil->resist[abil->stats.exp])/5.));
+        if (lev > 0) {
+            /* try to hand out a new ability-gift
+             * if not the right level, this will handout nothing.
+             */
+            dragon_ability_gain(who, (int)abil->stats.exp, lev);
         }
 
         if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat)) {
