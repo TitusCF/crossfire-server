@@ -1,3 +1,8 @@
+2018-10-28  Daniel Hawkins
+    * common/living.c,
+      common/artifact.c: Make items that have the confused flag set confuse the wielder.
+    * lib/artifacts: Add a helmet of Confusion to utilize the new item-sourced confusion.
+
 2018-10-24  Daniel Hawkins
     * common/readable.c: Make text from the messages file not get split at buffer boundaries.
     * server/player.c,

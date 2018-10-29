@@ -361,6 +361,8 @@ void add_abilities(object *op, const object *change) {
         SET_FLAG(op, FLAG_XRAYS);
     if (QUERY_FLAG(change, FLAG_BLIND))
         SET_FLAG(op, FLAG_BLIND);
+    if (QUERY_FLAG(change, FLAG_CONFUSED))
+        SET_FLAG(op, FLAG_CONFUSED);
     if (QUERY_FLAG(change, FLAG_SEE_IN_DARK))
         SET_FLAG(op, FLAG_SEE_IN_DARK);
     if (QUERY_FLAG(change, FLAG_REFL_MISSILE))

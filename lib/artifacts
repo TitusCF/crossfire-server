@@ -804,6 +804,18 @@ magic 1
 cursed 1
 end
 #
+Allowed !crown
+chance 1
+Object Confusion
+type 34
+confused 1
+magic 1
+msg
+  You seem to hear whispers coming from this helmet. They are unintelligible, however, without donning it.
+endmsg
+cursed 1
+end
+#
 Allowed full helmet,helmet
 chance 1
 Object Dark Vision

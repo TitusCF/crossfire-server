@@ -1379,6 +1379,10 @@ void fix_object(object *op) {
                 SET_FLAG(op, FLAG_SEE_IN_DARK);
             if (QUERY_FLAG(tmp, FLAG_PROBE))
                 SET_FLAG(op, FLAG_PROBE);
+                
+            // Items can make the wielder confused.
+            if (QUERY_FLAG(tmp, FLAG_CONFUSED))
+                SET_FLAG(op, FLAG_CONFUSED);
 
             if (QUERY_FLAG(tmp, FLAG_UNDEAD) && !QUERY_FLAG(&op->arch->clone, FLAG_UNDEAD))
                 SET_FLAG(op, FLAG_UNDEAD);
