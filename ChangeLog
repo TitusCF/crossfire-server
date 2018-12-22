@@ -1,3 +1,6 @@
+2018-12-23  Daniel Hawkins
+    * server/hiscore.c: Adjust i+1 followed by i++ to be ++i;
+
 2018-10-28  Daniel Hawkins
     * common/living.c,
       common/artifact.c: Make items that have the confused flag set confuse the wielder.
