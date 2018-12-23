@@ -1644,24 +1644,25 @@ void esrv_send_pickup(player *pl) {
  * @retval 3 spell requires a freeform string argument.
  */
 static int spell_client_use(const object *spell) {
-    if (spell->type == SP_RAISE_DEAD)
-        return 3;
-
-    if (spell->type == SP_RUNE && !spell->other_arch)
-        return 1;
-
-    if (spell->type == SP_MAKE_MARK)
-        return 3;
-
-    if (spell->type == SP_CREATE_FOOD)
-        return 2;
-
-    if (spell->type == SP_SUMMON_MONSTER && spell->randomitems != NULL)
-        return 2;
-
-    if (spell->type == SP_CREATE_MISSILE)
-        return 2;
-
+    switch (spell->type)
+    {
+        case SP_RAISE_DEAD:
+        case SP_MAKE_MARK:
+            return 3;
+        case SP_RUNE:
+            if (!spell->other_arch)
+                return 1;
+            break;
+        case SP_CREATE_FOOD:
+        case SP_CREATE_MISSILE:
+            return 2;
+        case SP_SUMMON_MONSTER:
+            if (spell->randomitems != NULL)
+                return 2;
+            /* break; */// If add conditins below, use this break statement
+    }
+    // This is not in the switch statement so that it supports fallthrough logic
+    // on the few spell types that have additional conditions attached.
     return 0;
 }
 

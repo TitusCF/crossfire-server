@@ -1,6 +1,7 @@
 2018-12-23  Daniel Hawkins
     * common/links.c: Better utilize the calloc function to set the dynamic allocated
       lists to 0 as it is allocated.
+    * socket/request.c: Rewrite spell_client_use to use a switch statement instead of ifs.
 
 2018-12-22  Daniel Hawkins
     * server/hiscore.c: Adjust i+1 followed by i++ to be ++i;
