@@ -1,4 +1,8 @@
 2018-12-23  Daniel Hawkins
+    * common/links.c: Better utilize the calloc function to set the dynamic allocated
+      lists to 0 as it is allocated.
+
+2018-12-22  Daniel Hawkins
     * server/hiscore.c: Adjust i+1 followed by i++ to be ++i;
 
 2018-10-28  Daniel Hawkins

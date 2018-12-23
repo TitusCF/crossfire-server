@@ -31,12 +31,10 @@
  * new link object, cleared.
  */
 objectlink *get_objectlink(void) {
-    objectlink *ol = (objectlink *)CALLOC(1, sizeof(objectlink));
+    // Calloc will set these to 0
+    objectlink *ol = (objectlink *)calloc(1, sizeof(objectlink));
     if (!ol)
         fatal(OUT_OF_MEMORY);
-    ol->ob = NULL;
-    ol->next = NULL;
-    ol->id = 0;
     return ol;
 }
 
@@ -51,13 +49,11 @@ objectlink *get_objectlink(void) {
  * new link pointer.
  */
 oblinkpt *get_objectlinkpt(void) {
-    oblinkpt *obp = (oblinkpt *)malloc(sizeof(oblinkpt));
+    // Calloc sets the values to 0 already
+    oblinkpt *obp = (oblinkpt *)calloc(sizeof(oblinkpt));
 
     if (!obp)
         fatal(OUT_OF_MEMORY);
-    obp->link = NULL;
-    obp->next = NULL;
-    obp->value = 0;
     return obp;
 }
 
