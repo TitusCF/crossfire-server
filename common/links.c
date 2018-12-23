@@ -50,7 +50,7 @@ objectlink *get_objectlink(void) {
  */
 oblinkpt *get_objectlinkpt(void) {
     // Calloc sets the values to 0 already
-    oblinkpt *obp = (oblinkpt *)calloc(sizeof(oblinkpt));
+    oblinkpt *obp = (oblinkpt *)calloc(1, sizeof(oblinkpt));
 
     if (!obp)
         fatal(OUT_OF_MEMORY);
