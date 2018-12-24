@@ -851,7 +851,7 @@ object *drop_object(object *op, object *tmp, uint32_t nrof) {
 
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                             "You drop the %s. The gods who lent it to you retrieves it.",
+                             "You drop the %s. The gods who lent it to you retrieve it.",
                              name);
         object_free_drop_inventory(tmp);
 

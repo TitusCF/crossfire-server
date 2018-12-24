@@ -1,3 +1,6 @@
+2018-12-24  Daniel Hawkins
+    * server/c_object.c: Fix "gods...retrieves" to agree in plurality.
+
 2018-12-23  Daniel Hawkins
     * common/links.c: Better utilize the calloc function to set the dynamic allocated
       lists to 0 as it is allocated.
