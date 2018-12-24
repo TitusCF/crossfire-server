@@ -33,10 +33,16 @@ AC_ARG_ENABLE(newspaper, [AS_HELP_STRING([--enable-newspaper],
               [Build the newspaper plugin])],
               [enable_newspaper=yes], [enable_newspaper=no])
 
+AC_ARG_ENABLE(cfcitybell, [AS_HELP_STRING([--disable-cfcitybell],
+              [Build the city bell plugin])],
+              [enable_cfcitybell=no], [enable_cfcitybell=yes])
+
+
 dnl Unit test configuration
 AC_ARG_ENABLE(check, [AS_HELP_STRING([--disable-check],
               [Disable the unit tests even if check is available])],
               [enable_check=no], [enable_check=yes])
+
 
 dnl Add support for dmalloc, if the user wants it.
 AM_WITH_DMALLOC
@@ -95,6 +101,9 @@ AM_CONDITIONAL(MAPPER, test "$enable_mapper" = "yes")
 
 dnl Random house generator
 AM_CONDITIONAL(CFRHG_PLUGIN, test "$enable_cfrhg" = "yes")
+
+dnl City bell
+AM_CONDITIONAL(CFCITYBELL_PLUGIN, test "$enable_cfcitybell" = "yes")
 
 dnl Unit tests
 AS_IF([test "$enable_check" = "yes"], [
@@ -195,6 +204,8 @@ AC_CONFIG_FILES([Makefile
                  plugins/cfrhg/include/Makefile
                  plugins/citylife/Makefile
                  plugins/citylife/include/Makefile
+                 plugins/cfcitybell/Makefile
+                 plugins/cfcitybell/include/Makefile
                  plugins/common/Makefile plugins/common/include/Makefile
                  test/Makefile
                  test/bugs/Makefile test/bugs/bugtrack/Makefile
@@ -230,6 +241,7 @@ AC_MSG_NOTICE([    Build python plugin?            $cf_will_build_python])
 fi
 
 AC_MSG_NOTICE([    Build random house plugin?      $enable_cfrhg])
+AC_MSG_NOTICE([    Build city bell plugin?         $enable_cfcitybell])
 
 if test x"$xsltengine" != "x" ; then
     check_complement=["(will generate report)"]

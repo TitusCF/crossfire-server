@@ -1,5 +1,8 @@
 2018-12-24  Daniel Hawkins
     * server/c_object.c: Fix "gods...retrieves" to agree in plurality.
+    * plugins/cfcitybell/*: Refactor city temple bell event to be its own non-Python unit.
+    * plugins/Makefile.am: Add the new independent citybell plugin to the build tree.
+    * configure.ac: Add config rules to allow for the city bells to be disabled.
 
 2018-12-23  Daniel Hawkins
     * common/links.c: Better utilize the calloc function to set the dynamic allocated
