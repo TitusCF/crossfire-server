@@ -273,7 +273,8 @@ static void hiscore_load(score_table *table) {
 
     while (i < HIGHSCORE_LENGTH) {
         memset(&table->entry[i], 0, sizeof(table->entry[i]));
-        table->entry[i].position = ++i; // Prefix operator increments before assignment
+        table->entry[i].position = i + 1;
+        i++;
     }
 }
 
