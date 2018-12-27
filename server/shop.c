@@ -88,20 +88,18 @@ uint64_t price_base(const object *tmp) {
     }
     
     /**
-     * If you don't know the item is cursed, would the shopkeeper know?
-     * Only penalize for cursed if it is known cursed.
+     * Shopkeepers always know the BUC status of items. Adjust the base price
+     * of items based on their BUC status. Note that later in shop_price_sell,
+     * we further decrease the sell price of cursed and damned items.
      */
-    if (QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))) {
+    if (QUERY_FLAG(tmp, FLAG_BLESSED)){
+        val *= 1.15;
+    } else if (QUERY_FLAG(tmp, FLAG_CURSED)) {
         val *= 0.8;
+    } else if (QUERY_FLAG(tmp, FLAG_DAMNED)) {
+        val *= 0.6;
     }
     
-    /**
-     * Also, known blessed items should sell for a little more.
-     */
-    if (QUERY_FLAG(tmp, FLAG_KNOWN_BLESSED) && QUERY_FLAG(tmp, FLAG_BLESSED)){
-        val *= 1.15;
-    }
-
     // If an item has an archetype and is identified, compare its base enchantment.
     if (tmp->arch != NULL && identified) {
         int diff = tmp->magic - tmp->arch->clone.magic;
@@ -199,6 +197,11 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
 
     if (tmp->type == GEM) {
         return 1.03 * val;
+    }
+
+    // Further reduce the sell price of cursed and damned items.
+    if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+        val *= 0.8;
     }
 
     int bargain_level = 0;
