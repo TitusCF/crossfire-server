@@ -240,9 +240,8 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
 
             for (i = 0; i < n; i++) {
                 int dist;
-                char *mfile_name = strrchr(namelist[i], '_')+1;
-
-                if ((mfile_name-1) == '\0') { /* since there isn't a sequence, */
+                char *mfile_name = strrchr(namelist[i], '_');
+                if (mfile_name == NULL) { /* since there isn't a sequence, */
                     int q;
 
                     /*pick one at random to recurse */
@@ -253,7 +252,7 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
                     free(namelist);
                     return style_map;
                 } else {
-                    dist = abs(difficulty-atoi(mfile_name));
+                    dist = abs(difficulty - atoi(mfile_name + 1));
                     if (dist < min_dist) {
                         min_dist = dist;
                         min_index = i;
