@@ -36,7 +36,7 @@ void init_type_potion(void) {
 }
 
 /**
- * Handles applying a potion.
+ * Handles applying a potion, dust, balm, or figurine.
  * @param context The method context
  * @param potion The potion to apply
  * @param applier The object attempting to apply the potion
