@@ -325,7 +325,7 @@ typedef struct obj {
 
     int16_t      x, y;           /**< Position in the map for this object */
     int16_t      ox, oy;         /**< For debugging: Where it was last inserted */
-    float       speed;          /**< The overall speed of this object */
+    float       speed;          /**< Frequency of object 'moves' relative to server tick rate */
     float       speed_left;     /**< How much speed is left to spend this round */
     float       weapon_speed;   /**< The overall speed of this object */
     float       weapon_speed_left; /**< How much speed is left to spend this round */
@@ -400,7 +400,7 @@ typedef struct obj {
      * only used in spells.
      */
     int16_t      casting_time;   /**< Time left before spell goes off */
-    int16_t      duration;       /**< How long the spell lasts */
+    int16_t      duration;       /**< Number of moves (see 'speed') spell lasts */
     uint8_t       duration_modifier; /**< how level modifies duration */
     int8_t       range;          /**< Range of the spell */
     uint8_t       range_modifier; /**< How going up in level affects range  */
