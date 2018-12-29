@@ -6,6 +6,8 @@
 #ifndef TOD_H
 #define TOD_H
 
+#include "config.h"
+
 #define PTICKS_PER_CLOCK        1500
 
 /* game time */
@@ -43,5 +45,8 @@ typedef struct _timeofday {
 
 /* from common/time.c */
 extern void get_tod(timeofday_t *tod);
+
+/** Speed of an object that gives it one move per second, real time. */
+const static float MOVE_PER_SECOND = MAX_TIME / 1000000.;
 
 #endif /* TOD_H */

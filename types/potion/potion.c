@@ -163,8 +163,8 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
                 force = create_archetype(FORCE_NAME);
             memcpy(force->resist, potion->resist, sizeof(potion->resist));
             force->type = POTION_RESIST_EFFECT;
-            force->speed = 0.2;
-            force->duration = 100;
+            force->speed = MOVE_PER_SECOND;
+            force->duration = 60;
             break;  /* Only need to find one protection since we cappliery entire batch */
         }
     }

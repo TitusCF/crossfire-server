@@ -172,10 +172,10 @@ static void eat_special_food(object *who, object *food) {
         }
     }
     if (did_one) {
-        force->speed = 0.1;
+        force->speed = MOVE_PER_SECOND;
         object_update_speed(force);
         /* bigger morsel of food = longer effect time */
-        force->duration = food->stats.food/5;
+        force->duration = food->stats.food/4;
         SET_FLAG(force, FLAG_IS_USED_UP);
         SET_FLAG(force, FLAG_APPLIED);
         change_abil(who, force);
