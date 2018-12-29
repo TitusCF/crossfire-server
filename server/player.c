@@ -3035,9 +3035,6 @@ int move_player(object *op, int dir) {
 
     op->facing = dir;
 
-    if (!transport && op->hide)
-        do_hidden_move(op);
-
     if (transport) {
         int turn;
 
@@ -3064,6 +3061,10 @@ int move_player(object *op, int dir) {
         if (turn != 0)
             return 0;
     } else {
+        if (op->hide) {
+            do_hidden_move(op);
+        }
+
         /* it is important to change the animation now, as fire or move_player_attack can start a compound animation,
          * and leave us with state = 0, which we don't want to change again. */
         op->state++; /* player moved, so change animation. */
