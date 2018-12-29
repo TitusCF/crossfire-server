@@ -3007,7 +3007,8 @@ static int turn_transport(object *transport, object *captain, int dir) {
 }
 
 /**
- * Player gave us a direction, check whether to move or fire.
+ * Move player in the given direction. Can be called by a client through a
+ * movement command, or by the server for some other reasons.
  *
  * @param op
  * player.
@@ -3017,8 +3018,7 @@ static int turn_transport(object *transport, object *captain, int dir) {
  * 0.
  */
 int move_player(object *op, int dir) {
-    int pick;
-    object *transport = op->contr->transport;
+    object *transport = op->contr->transport; //< Transport player is in
 
     if (!transport && (op->map == NULL || op->map->in_memory != MAP_IN_MEMORY))
         return 0;
@@ -3029,22 +3029,19 @@ int move_player(object *op, int dir) {
         return 0;
     }
 
-    /* peterm:  added following line */
     if (QUERY_FLAG(op, FLAG_CONFUSED) && dir)
         dir = get_randomized_dir(dir);
 
     op->facing = dir;
 
     if (transport) {
-        int turn;
-
         /* transport->contr is set up for the person in charge of the boat.
          * if that isn't this person, he can't steer it, etc
          */
         if (transport->contr != op->contr)
             return 0;
 
-        /* Transport can't move.  But update dir so it at least
+        /* Transport is out of movement.  But update dir so it at least
          * will point in the same direction if player is running.
          */
         if (transport->speed_left < 0.0) {
@@ -3057,7 +3054,7 @@ int move_player(object *op, int dir) {
         if (op->speed_left < 0.0)
             op->speed_left = -0.01;
 
-        turn = turn_transport(transport, op, dir);
+        int turn = turn_transport(transport, op, dir);
         if (turn != 0)
             return 0;
     } else {
@@ -3076,7 +3073,7 @@ int move_player(object *op, int dir) {
     } else
         move_player_attack(op, dir);
 
-    pick = check_pick(op);
+    int pick = check_pick(op);
 
 
     /* Add special check for newcs players and fire on - this way, the
