@@ -273,6 +273,7 @@ static void hiscore_load(score_table *table) {
 
     while (i < HIGHSCORE_LENGTH) {
         memset(&table->entry[i], 0, sizeof(table->entry[i]));
+        // This cannot be ++i due the right-to-left association of assignment.
         table->entry[i].position = i + 1;
         i++;
     }

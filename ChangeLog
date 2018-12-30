@@ -11,6 +11,7 @@
 
 2018-12-22  Daniel Hawkins
     * server/hiscore.c: Adjust i+1 followed by i++ to be ++i;
+        (Reverted due to out-of-bounds error w/ optimization by ryo_saeba on 26 Dec)
 
 2018-10-28  Daniel Hawkins
     * common/living.c,
