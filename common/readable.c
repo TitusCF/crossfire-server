@@ -198,6 +198,7 @@ static const uint32_t spellpathdef[NRSPELLPATHS] = {
 static const char *const path_book_name[] = {
     "codex",
     "compendium",
+    "documentary",
     "exposition",
     "tables",
     "treatise"
@@ -206,6 +207,7 @@ static const char *const path_book_name[] = {
 /** Used by spellpath texts. */
 static const char *const path_author[] = {
     "aether",
+    "arcana",
     "astral byways",
     "connections",
     "the Grey Council",
@@ -269,6 +271,7 @@ static const char *const art_author[] = {
     "items",
     "lost artifacts",
     "the ancients",
+    "treasures",
     "useful things"
 };
 
@@ -352,7 +355,8 @@ static const char *const formula_book_name[] = {
     "recipe book",
     "experiment record",
     "work plan",
-    "design notes"
+    "design notes",
+    "research notes"
 };
 
 /** This isn't used except for empty books. */
@@ -433,6 +437,7 @@ static const char *const book_author[] = {
     "Ichibod",
     "Janus",
     "June",
+    "Laplace",
     "Magnuson",
     "Nandii",
     "Nitfeder",
