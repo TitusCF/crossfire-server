@@ -75,7 +75,8 @@ int random_roll(int min, int max, const object *op, int goodbad) {
  * for exp loss calculations for players changing religions.
  */
 int64_t random_roll64(int64_t min, int64_t max, const object *op, int goodbad) {
-    int64_t omin, diff, luck, ran;
+    int64_t omin, diff, ran;
+    int8_t luck;
     int base;
 
     omin = min;
