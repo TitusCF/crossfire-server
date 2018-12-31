@@ -1937,22 +1937,15 @@ int check_pick(object *op) {
                 }
 
             /* careful: chairs and tables are weapons! */
+            /* Note that tables and chairs have been changed to not be weapons as of 2011. */
             if (op->contr->mode&PU_MELEEWEAPON) {
-                if (tmp->type == WEAPON && tmp->name != NULL) {
-                    if (strstr(tmp->name, "table") == NULL
-                    && strstr(tmp->arch->name, "table") == NULL
-                    && strstr(tmp->name, "chair") == NULL
-                    && strstr(tmp->arch->name, "chair") == NULL) {
-                        pick_up(op, tmp);
-                        continue;
-                    }
-                }
-                if (tmp->type == WEAPON && tmp->name == NULL) {
-                    if (strstr(tmp->arch->name, "table") == NULL
-                    && strstr(tmp->arch->name, "chair") == NULL) {
-                        pick_up(op, tmp);
-                        continue;
-                    }
+                // The code here used to handle avoiding tables and chairs.
+                // Since there have been many server-arch prerequisites since the change,
+                // we should be good not handling them here.
+                // SilverNexus 2018-12-30
+                if (tmp->type == WEAPON) {
+                    pick_up(op, tmp);
+                    continue;
                 }
             }
 
