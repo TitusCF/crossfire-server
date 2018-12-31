@@ -127,7 +127,7 @@ char **map_gen_spiral(int xsize, int ysize, int option)
     }
 
     /* cut out the spiral */
-    while ((abs(x) < SizeX) && (abs(y) < SizeY)) {
+    while ((fabsf(x) < SizeX) && (fabsf(y) < SizeY)) {
         x = parm*cos(parm)*xscale;
         y = parm*sin(parm)*yscale;
         maze[(int)(ic+x)][(int)(jc+y)] = '\0';
