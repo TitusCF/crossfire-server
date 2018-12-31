@@ -276,7 +276,7 @@ extern object *arch_present_in_ob(const archetype *at, const object *op);
 extern void object_set_flag_inv(object *op, int flag);
 extern void object_unset_flag_inv(object *op, int flag);
 extern void object_set_cheat(object *op);
-extern int object_find_multi_free_spot_around(const object *ob, const object *gen, int *hx, int *hy);
+extern int object_find_multi_free_spot_around(const object *ob, const object *gen, int16_t *hx, int16_t *hy);
 extern int object_find_multi_free_spot_within_radius(const object *ob, const object *gen, int *hx, int *hy);
 extern int object_find_free_spot(const object *ob, mapstruct *m, int x, int y, int start, int stop);
 extern int object_find_first_free_spot(const object *ob, mapstruct *m, int x, int y);

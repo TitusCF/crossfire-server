@@ -3144,7 +3144,7 @@ void object_set_cheat(object *op) {
  * @note
  * find_multi_free_spot_around() has been renamed to object_find_multi_free_spot_around()
  */
-int object_find_multi_free_spot_around(const object *ob, const object *gen, int *hx, int *hy) {
+int object_find_multi_free_spot_around(const object *ob, const object *gen, int16_t *hx, int16_t *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
     int freecount = 0;
 
