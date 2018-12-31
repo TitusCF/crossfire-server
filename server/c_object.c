@@ -2311,7 +2311,7 @@ void command_use(object *op, const char *params) {
     /*sstring data;*/
     recipe *transformation;
 
-    if (!op->type == PLAYER)
+    if (!IS_PLAYER(op))
         return;
 
     snprintf(copy, sizeof(copy), "%s", params);

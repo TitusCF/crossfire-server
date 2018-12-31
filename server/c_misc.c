@@ -2219,7 +2219,7 @@ void do_harvest(object *pl, int dir, object *skill) {
     y = pl->y+freearr_y[dir];
     map = pl->map;
 
-    if (!pl->type == PLAYER)
+    if (!IS_PLAYER(pl))
         return;
 
     if (!map)

@@ -1385,7 +1385,7 @@ void knowledge_send_info(socket_struct *ns) {
     SockList sl;
 
     face = find_face("knowledge_generic.111", (unsigned)-1);
-    if (face != (unsigned)-1 && (!ns->faces_sent[face] & NS_FACESENT_FACE))
+    if (face != (unsigned)-1 && (!(ns->faces_sent[face] & NS_FACESENT_FACE)))
         esrv_send_face(ns, face, 0);
 
     SockList_Init(&sl);
@@ -1394,7 +1394,7 @@ void knowledge_send_info(socket_struct *ns) {
 
     for (i = 0; knowledges[i].type != NULL; i++) {
         face = find_face(knowledges[i].face, (unsigned)-1);
-        if (face != (unsigned)-1 && (!ns->faces_sent[face] & NS_FACESENT_FACE))
+        if (face != (unsigned)-1 && (!(ns->faces_sent[face] & NS_FACESENT_FACE)))
             esrv_send_face(ns, face, 0);
 
         SockList_AddPrintf(&sl, "%s:%s:%u:%s\n", knowledges[i].type, knowledges[i].name, face, knowledges[i].attempt_alchemy != NULL ? "1" : "0");

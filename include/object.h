@@ -591,4 +591,8 @@ static inline void set_flag(object *op, int flag) {
  */
 #define HEAD(op) ((op)->head != NULL ? (op)->head : (op))
 
+static inline bool IS_PLAYER(object op[static 1]) {
+    return op->type == PLAYER;
+}
+
 #endif /* OBJECT_H */

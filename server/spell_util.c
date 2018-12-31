@@ -2031,7 +2031,7 @@ void store_spell_expiry(object *spell) {
 void check_spell_expiry(object *spell) {
     const char *key;
 
-    if (!spell->env || !spell->env->type == PLAYER)
+    if (!spell->env || !IS_PLAYER(spell->env))
         return;
 
     key = object_get_value(spell, "spell_expiry_warn_1");

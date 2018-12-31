@@ -961,7 +961,7 @@ void apply_map_builder(object *pl, int dir) {
     object *tmp;
     short x, y;
 
-    if (!pl->type == PLAYER)
+    if (!IS_PLAYER(pl))
         return;
 
     if (dir == 0) {
