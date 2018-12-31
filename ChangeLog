@@ -1,3 +1,7 @@
+2018-12-31  Daniel Hawkins
+    * utils/crossloop.web.in: Make SRCDIR be determined on the fly.
+      This reduces the number of variables that need to be changed before use.
+
 2018-12-30  Daniel Hawkins
     * server/player.c: Simplify melee weapon pickup logic, since tables and chairs
       haven't been weapons since 2011.

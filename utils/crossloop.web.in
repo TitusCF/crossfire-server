@@ -49,7 +49,11 @@ HTMLDIR="$HOME/public_html"
 
 # This is where the source resides on the server.  This is used to
 # get better information on backtraces.
-SRCDIR="/export/home/crossfire/crossfire-CVS"
+# This should be independent of other commands run from this file.
+# So the use of cd to get the the source directory should not conflict with anything else.
+SRCDIR=`cd @top_srcdir@; pwd`;
+# And then we trim off the newline from pwd, since we do not need it.
+chomp($SRCDIR);
 
 
 ulimit -c unlimited
