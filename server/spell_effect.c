@@ -2066,11 +2066,15 @@ int cast_bless(object *op, object *caster, object *spell_ob, int dir) {
                       "Your blessing seems empty.");
     } else {
         /* Only give out good benefits, and put a max on it */
+        const int16_t resist_max = spell_ob->resist[ATNR_GODPOWER];
         for (i = 0; i < NROFATTACKS; i++) {
             if (god->resist[i] > 0) {
-                force->resist[i] = MIN(god->resist[i], spell_ob->resist[ATNR_GODPOWER]);
+                force->resist[i] = MIN(god->resist[i], resist_max);
             }
         }
+        // Also grant appropriate amount of godpower resistance.
+        force->resist[ATNR_GODPOWER] = spell_ob->resist[ATNR_GODPOWER];
+
         force->path_attuned |= god->path_attuned;
         if (spell_ob->attacktype) {
             force->attacktype |= god->attacktype|AT_PHYSICAL;
