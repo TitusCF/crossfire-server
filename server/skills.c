@@ -2001,12 +2001,21 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     }
 
     /* the more we carry, the less we can throw. Limit only on players */
-    /* This logic is basically grabbed right out of fix_object() */
     if (op->type == PLAYER
     && op->carrying > (get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT)
     && (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
-        int extra_weight = op->carrying-get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT;
-        load_factor = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
+        /**
+         * Fixed logic here
+         *
+         * The old code made you have a better factor the more encumbered past the LOAD_PCT
+         * you were. This new way essentially flips the variable to be higher at lower encumbrance.
+         *
+         * It also only encumbers throwing once past the LOAD_PCT, since we have a MIN on load_factor
+         * when we use it, so before the limit it is clipped to 1.0.
+         *
+         * SilverNexus 2019-01-03
+         */
+        load_factor = (1.0+FREE_PLAYER_LOAD_PERCENT) - (float)(op->carrying) / (float)get_weight_limit(op->stats.Str);
     }
 
     /* lighter items are thrown harder, farther, faster */
