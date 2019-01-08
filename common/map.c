@@ -2254,9 +2254,6 @@ void set_map_reset_time(mapstruct *map) {
  * tile to load. Must be between 0 and 3 inclusive.
  * @return
  * linked map, or NULL on failure.
- *
- * @todo
- * check ready_map_name() 's return value, which can be NULL?
  */
 static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num) {
     int dest_tile = (tile_num+2)%4;
@@ -2265,6 +2262,9 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num) {
     path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num], path, sizeof(path));
 
     orig_map->tile_map[tile_num] = ready_map_name(path, 0);
+    if (orig_map->tile_map[tile_num] == NULL) {
+        return NULL;
+    }
 
     /* need to do a strcmp here as the orig_map->path is not a shared string */
     if (orig_map->tile_map[tile_num]->tile_path[dest_tile]
