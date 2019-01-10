@@ -184,6 +184,8 @@ void commands_init(void) {
     RN("southeast", command_southeast,    1.0);
     RN("southwest", command_southwest,    1.0);
     RN("northwest", command_northwest,    1.0);
+    RN("up", command_up,                  1.0);
+    RN("down", command_down,              1.0);
     RN("run", command_run,                1.0);
     RN("run_stop", command_run_stop,      0.0);
     RN("fire", command_fire,              1.0);

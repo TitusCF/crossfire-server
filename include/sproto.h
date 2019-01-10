@@ -185,6 +185,8 @@ void command_southeast(object *op, const char *params);
 void command_southwest(object *op, const char *params);
 void command_west(object *op, const char *params);
 void command_stay(object *op, const char *params);
+void command_up(object *op, const char *params);
+void command_down(object *op, const char *params);
 void do_goto(object *op, const char *name, int x, int y);
 /* c_new.c */
 void command_run(object *op, const char *params);
