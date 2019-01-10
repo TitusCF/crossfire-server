@@ -358,7 +358,7 @@ typedef struct mapdef {
     uint64_t  shopmax;            /**< MMaximum price a shop will offer. */
     char    *msg;               /**< Message map creator may have left. */
     char    *maplore;           /**< Map lore information. */
-    char    *tile_path[4];      /**< Path to adjoining maps. */
+    char    *tile_path[6];      /**< Path to adjoining maps. */
     struct mapdef *tile_map[4]; /**< Adjoining maps. */
     char    path[HUGE_BUF];     /**< Filename of the map. */
     long last_reset_time;       /**< A timestamp of the last original map loading. */
