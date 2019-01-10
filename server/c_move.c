@@ -160,3 +160,50 @@ void do_goto(object *op, const char *name, int x, int y) {
     enter_exit(op, dummy);
     object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
 }
+
+int go_up_or_down(object *op, bool up) {
+    char *dst;
+    if (up) {
+        dst = op->map->tile_path[5-1];
+    } else {
+        dst = op->map->tile_path[6-1];
+    }
+
+    if (dst == NULL) {
+        return 0;
+    }
+    do_goto(op, dst, op->x, op->y);
+    return 1;
+}
+
+void command_up(object *op, const char *params) {
+    if (!op)
+        return;
+
+    if (!QUERY_FLAG(op, FLAG_WIZPASS)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                i18n(op, "You cannot fly."));
+        return;
+    }
+
+    if (!go_up_or_down(op, true)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                i18n(op, "You cannot go any higher."));
+    }
+}
+
+void command_down(object *op, const char *params) {
+    if (!op)
+        return;
+
+    if (!QUERY_FLAG(op, FLAG_WIZPASS)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                i18n(op, "How do you propose to go down?"));
+        return;
+    }
+
+    if (!go_up_or_down(op, false)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                i18n(op, "You cannot go any lower."));
+    }
+}

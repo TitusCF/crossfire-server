@@ -75,6 +75,8 @@ tile_path_<x> - Used with map tiling.  <x> is a number, 1 is north,
 	in that direction.  See the section below for more information about
 	map tiling.
 
+    With extended map tiling, 5 represents up and 6 represents down.
+
 'shopitems', 'shopgreed', 'shoprace', 'shopmin', 'shopmax' - the type of thing
 	the shop trades in, see doc/Developers/shops for more details
 
