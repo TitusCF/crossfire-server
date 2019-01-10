@@ -1168,7 +1168,7 @@ static int load_map_header(FILE *fp, mapstruct *m) {
         } else if (!strncmp(key, "tile_path_", 10)) {
             int tile = atoi(key+10);
 
-            if (tile < 1 || tile > 4) {
+            if (tile < 1 || tile > 6) {
                 LOG(llevError, "load_map_header: tile location %d out of bounds (%s)\n", tile, m->path);
             } else {
                 char path[HUGE_BUF];

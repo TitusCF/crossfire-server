@@ -115,6 +115,8 @@ command_array_struct Commands[] = {
     { "southeast", command_southeast,    1.0 },
     { "southwest", command_southwest,    1.0 },
     { "northwest", command_northwest,    1.0 },
+    { "up",        command_up,           1.0 },
+    { "down",      command_down,         1.0 },
     { "run", command_run,                1.0 },
     { "run_stop", command_run_stop,      0.0 },
     { "fire", command_fire,              1.0 },
