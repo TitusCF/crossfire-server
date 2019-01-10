@@ -1118,8 +1118,10 @@ static int load_map_header(FILE *fp, mapstruct *m) {
             LOG(llevError, "Got '%s' line without parameter in map header\n", key);
         } else if (!strcmp(key, "arch")) {
             /* This is an oddity, but not something we care about much. */
-            if (strcmp(value, "map"))
-                LOG(llevError, "loading map and got a non 'arch map' line(%s %s)?\n", key, value);
+            if (strcmp(value, "map")) {
+                LOG(llevError, "load_map_header: expected 'arch map': check line endings?\n");
+                return 1;
+            }
         } else if (!strcmp(key, "name")) {
             /* When loading eg an overlay, the name is already set, so free() current one. */
             free(m->name);
