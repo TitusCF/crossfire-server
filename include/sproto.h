@@ -607,7 +607,7 @@ void cftimer_init(void);
 void set_darkness_map(mapstruct *m);
 void tick_the_clock(void);
 /* server.c */
-char const* newhash(char const password[static 1]);
+char const* newhash(char const *password);
 bool check_password(const char *typed, const char *crypted);
 void enter_player_savebed(object *op);
 void set_map_timeout(mapstruct *oldmap);
