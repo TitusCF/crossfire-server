@@ -773,6 +773,41 @@ static int apply_builder_window(object *pl, object *new_wall_win, short x, short
 }
 
 /**
+ * Given an exit object, figure out if it goes up or down based on its
+ * attributes. Right now, it just looks at its name. Returns 1 for up, -1 for
+ * down, and 0 otherwise.
+ */
+static int exit_direction(object *ob) {
+    if (strstr(ob->name, "up") != NULL) {
+        return 1;
+    } else if (strstr(ob->name, "down") != NULL) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+
+static int build_linked_exits(object *pl, object *exit_ob, const char *dst, short x, short y) {
+    /* exit to dst using exit_ob */
+    EXIT_PATH(exit_ob) = dst;
+    EXIT_X(exit_ob) = x;
+    EXIT_Y(exit_ob) = y;
+
+    mapstruct *m = ready_map_name(dst, 0); // FIXME: deal with unique
+    object *floor = GET_MAP_OB(m, x, y);
+    object *tmp = floor;
+    FOR_OB_AND_ABOVE_PREPARE(tmp)
+        if (!QUERY_FLAG(tmp, FLAG_IS_BUILDABLE)) {
+            draw_ext_info(
+                NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                "You wouldn't be able to build the stairs coming back down.");
+            return 0;
+        }
+    FOR_OB_AND_ABOVE_FINISH();
+    return 1;
+}
+
+/**
  * Generic item builder.
  *
  * Item must be put on a square with a floor, you can have something under.
@@ -863,6 +898,37 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
         /* Remove marking rune */
         object_remove(con_rune);
         object_free_drop_inventory(con_rune);
+    }
+
+    /* Handle exits going up or down. */
+    if (new_item->type == EXIT) {
+        int dir = exit_direction(new_item);
+        if (dir == 1) {
+            if (pl->map->tile_path[5 - 1] != NULL) {
+                build_linked_exits(pl, new_item, pl->map->tile_path[5 - 1], x, y);
+            } else {
+                draw_ext_info_format(
+                    NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                    i18n(pl, "This is as high as you can build!"));
+                return 0;
+            }
+        } else if (dir == -1) {
+            if (pl->map->tile_path[6 - 1] != NULL) {
+                build_linked_exits(pl, new_item, pl->map->tile_path[6 - 1], x, y);
+            } else {
+                draw_ext_info_format(
+                    NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                    i18n(pl, "This is as low as you can build!"));
+                return 0;
+            }
+        } else {
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY,
+                                 MSG_TYPE_APPLY_FAILURE,
+                                 i18n(pl, "Unsure where your %s will go, you "
+                                          "decide not to build it."),
+                                 name);
+            return 0;
+        }
     }
 
     object_insert_in_map_at(new_item, pl->map, floor, insert_flag, x, y);
