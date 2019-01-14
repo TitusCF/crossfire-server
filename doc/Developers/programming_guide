@@ -72,8 +72,7 @@ Section 2 - Style guide for new additions:
 
 9)  Assume all names use one namespace.  For example, if there is a struct
     called spell, don't make the name of an optional parameter spell.  This
-    will break on ANSI C compilers that follow the spec strictly (gcc does not,
-    even with -strict -ansi)
+    will break on C compilers that follow the spec strictly
 
 10) As a followup on 9 above, don't use nonstandard gcc extensions (// for
     comment lines, ability to nest functions, declare arrays with variable

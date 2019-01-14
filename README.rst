@@ -18,9 +18,10 @@ Installation
 ------------
 Dependencies
 ~~~~~~~~~~~~
-Crossfire should run on any machine with an ANSI C compiler installed. It
-should compile on most POSIX compliant systems. To date, it has been known to
-work on Linux, BSD, Windows, Solaris, and Mac.
+Crossfire should run on any machine with an C compiler supporting the C99
+language standard installed. It should compile on most POSIX compliant
+systems. To date, it has been known to work on Linux, BSD, Windows, Solaris,
+and Mac.
 
 In addition, there are a number of optional dependencies that make the game
 even more fun. These include:
