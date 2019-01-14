@@ -186,6 +186,12 @@ real_wiz true
 
 recycle_tmp_maps false
 
+# Enable HP bars for all living players and monsters, as if the 'probe' spell
+# was always cast on them. Valid settings are "true", "damaged", or "false".
+# "damaged" is like "true", but hides the HP bar for creatures at max health.
+
+always_show_hp false
+
 # spellpoint_level_depend  --  Causes the spellpoint cost
 # of spells to vary with their power.  Spells that become very
 # powerful at high level cost more.  The damage/time of

@@ -706,6 +706,16 @@ static void load_settings(void) {
             } else {
                 LOG(llevError, "load_settings: Unknown value for recycle_tmp_maps: %s\n", cp);
             }
+        } else if (!strcasecmp(buf, "always_show_hp")) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.always_show_hp = 2;
+            } else if (!strcasecmp(cp, "damaged")) {
+                settings.always_show_hp = 1;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.always_show_hp = 0;
+            } else {
+                LOG(llevError, "load_settings: Unknown value for always_show_hp: %s\n", cp);
+            }
         } else if (!strcasecmp(buf, "who_format")) {
             if (has_val)
                 safe_strncpy(settings.who_format, cp,

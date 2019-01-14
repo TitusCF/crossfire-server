@@ -1136,20 +1136,31 @@ static int check_probe(int ax, int ay, const object *ob, SockList *sl, socket_st
     const object *probe;
 
     /* send hp bar if needed */
-    if (!QUERY_FLAG(ob, FLAG_PROBE) || (*alive_layer) != -1 || ob->head)
+    if ((*alive_layer) != -1 || ob->head || !CAN_PROBE(ob))
         return 0;
 
-    probe = object_find_by_type_and_name(ob, FORCE, "probe_force");
-    if (probe == NULL || probe->level < 15) {
-        /* if probe is not null, this is an error, but well */
-        return 0;
-    }
-
-    granularity = (probe->level - 14) / 3;
-    if (granularity <= 0)
-        granularity = 1;
-    else if (granularity > 30)
+    if (settings.always_show_hp == 2) {
+        /* global hp bars are enabled */
         granularity = 30;
+    } else if (settings.always_show_hp == 1 && ob->stats.hp < ob->stats.maxhp) {
+        granularity = 30;
+    } else {
+        /* only give hp bars to monsters that have been probed */
+        if (!QUERY_FLAG(ob, FLAG_PROBE)) {
+            return 0;
+        }
+        probe = object_find_by_type_and_name(ob, FORCE, "probe_force");
+        if (probe == NULL || probe->level < 15) {
+            /* if probe is not null, this is an error, but well */
+            return 0;
+        }
+
+        granularity = (probe->level - 14) / 3;
+        if (granularity <= 0)
+            granularity = 1;
+        else if (granularity > 30)
+            granularity = 30;
+    }
 
     if (ob->stats.maxhp > 0) {
         value = (ob->stats.hp * granularity) / (ob->stats.maxhp);

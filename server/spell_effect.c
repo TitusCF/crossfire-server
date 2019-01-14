@@ -705,7 +705,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir, int level) {
         }
         if (mflags&P_IS_ALIVE) {
             FOR_MAP_PREPARE(m, x, y, tmp)
-                if (QUERY_FLAG(tmp, FLAG_ALIVE) && (tmp->type == PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
+                if (CAN_PROBE(tmp)) {
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                                   "You detect something.");
                     examine_monster(op, HEAD(tmp), level);

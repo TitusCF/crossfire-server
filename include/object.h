@@ -595,4 +595,12 @@ static inline bool IS_PLAYER(object *op) {
     return op->type == PLAYER;
 }
 
+/**
+ * Determine whether the given object can have an HP bar.
+ */
+static inline bool CAN_PROBE(const object *ob) {
+    return QUERY_FLAG(ob, FLAG_ALIVE) &&
+        (ob->type == PLAYER || QUERY_FLAG(ob, FLAG_MONSTER));
+}
+
 #endif /* OBJECT_H */
