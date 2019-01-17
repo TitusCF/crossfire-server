@@ -267,7 +267,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     }
     
     // If normal, then do the old behavior.
-    if (the_chest->type == CONTAINER)
+    if (the_chest->type == TREASURE)
     {
         tlist = find_treasurelist("chest");
         the_chest->randomitems = tlist;
