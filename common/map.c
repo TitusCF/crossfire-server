@@ -1420,6 +1420,10 @@ static void load_unique_objects(mapstruct *m) {
     m->in_memory = MAP_IN_MEMORY;
 }
 
+static bool in_localdir(const char path[static 1]) {
+    return strstr(path, settings.localdir) == path;
+}
+
 /**
  * Saves a map to file.  If flag is SAVE_MODE_INPLACE, it is saved into the same
  * file it was (originally) loaded from.  Otherwise a temporary
@@ -1453,8 +1457,16 @@ int save_map(mapstruct *m, int flag) {
                 create_overlay_pathname(m->path, filename, MAX_BUF);
             else
                 create_pathname(m->path, filename, MAX_BUF);
-        } else
+        } else {
+            if (!in_localdir(m->path)) {
+                LOG(llevError,
+                    "Cannot save unique map '%s' outside of LOCALDIR. Check "
+                    "that all exits to '%s' have FLAG_UNIQUE set correctly.\n",
+                    m->path, m->path);
+                return SAVE_ERROR_UCREATION;
+            }
             snprintf(filename, sizeof(filename), "%s", m->path);
+        }
 
         make_path_to_file(filename);
     } else {
