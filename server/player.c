@@ -3701,8 +3701,8 @@ static void kill_player_not_permadeath(object *op) {
     else
         remove_unpaid_objects(op->inv, op, 1);
 
-    /* Move player to his current respawn-position (usually last savebed) */
-    enter_player_savebed(op);
+    /* Move player to the map after dying. */
+    do_goto(op, "/death", 5, 5);
 
     /* Save the player before inserting the force to reduce chance of abuse. */
     op->contr->braced = 0;
@@ -3745,7 +3745,7 @@ static void kill_player_not_permadeath(object *op) {
 
     /* Tell the player they have died */
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_DIED,
-        "YOU HAVE DIED.");
+        "YOU HAVE DIED!");
 }
 
 /**
