@@ -445,10 +445,10 @@ void write_socket_buffer(socket_struct *ns) {
         if (amt < 0) { /* We got an error */
 #ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
             if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK) {
-                LOG(llevError, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
+                LOG(llevInfo, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
 #else
             if (errno != EWOULDBLOCK) {
-                LOG(llevError, "New socket write failed (wsb): %s\n", strerror(errno));
+                LOG(llevInfo, "New socket write failed (wsb): %s\n", strerror(errno));
 #endif
                 ns->status = Ns_Dead;
                 return;
