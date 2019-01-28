@@ -348,3 +348,10 @@ account_block_create FALSE
 # When account_block_create is enabled, only the IP address given here
 # can create accounts. If not defined, defaults to 127.0.0.1.
 account_trusted_host 127.0.0.1
+
+# How to use crypt(3) to hash passwords. 0 (default if left unset) is legacy
+# mode, which uses crypt(3) on all systems but Windows and FreeBSD, where no
+# hashing is used. 1 (set as the default for new installations) is to always
+# use crypt(3). If crypt_mode is changed after player or account files are
+# created, some or all passwords may need to be reset.
+crypt_mode 1

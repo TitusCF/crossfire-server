@@ -63,8 +63,11 @@ static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
  */
 static char const* crypt_string(char const str[static 1], char const* salt) {
 #if defined(WIN32) || (defined(__FreeBSD__))
-    return(str);
-#else
+    // Legacy configuration: use crypt everywhere but on Windows and FreeBSD
+    if (settings.crypt_mode == 0) {
+        return str;
+    }
+#endif
     char s[2];
 
     if (salt == NULL) {
@@ -81,7 +84,6 @@ static char const* crypt_string(char const str[static 1], char const* salt) {
     }
 
     return crypt(str, s);
-#endif
 }
 
 char const* newhash(char const password[static 1]) {

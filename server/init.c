@@ -958,6 +958,13 @@ static void load_settings(void) {
         } else if (!strcasecmp(buf, "account_trusted_host")) {
             free(settings.account_trusted_host);
             settings.account_trusted_host = strdup_local(cp);
+        } else if (!strcasecmp(buf, "crypt_mode")) {
+            int val = atoi(cp);
+            if (val != 0 && val != 1) {
+                LOG(llevError, "load_settings: crypt_mode must be 0 or 1\n");
+            } else {
+                settings.crypt_mode = val;
+            }
         } else {
             LOG(llevError, "Unknown value in settings file: %s\n", buf);
         }

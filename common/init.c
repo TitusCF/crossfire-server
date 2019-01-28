@@ -109,6 +109,7 @@ struct Settings settings = {
     0,      /* ignore_plugin_compatibility */
     FALSE,  /* account_block_create */
     NULL,     /* Trusted host for account creation. */
+    0,      /* Unless explicitly set, use legacy crypt mode */
 };
 
 struct Statistics statistics;
