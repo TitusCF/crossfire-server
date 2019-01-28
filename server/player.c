@@ -3515,10 +3515,24 @@ void kill_player(object *op, const object *killer) {
     }
     play_sound_player_only(op->contr, SOUND_TYPE_LIVING, op, 0, "death");
 
-    if (settings.not_permadeth == TRUE) {
-        kill_player_not_permadeath(op);
-    } else {
-        kill_player_permadeath(op);
+    settings.not_permadeth = 2; // FIXME
+
+    switch(settings.not_permadeth) {
+        case 0:
+            kill_player_permadeath(op);
+            break;
+        case 1:
+            kill_player_not_permadeath(op);
+            break;
+        case 2:
+            if (object_find_by_type_and_slaying(op, FORCE, "permadeth")) {
+                kill_player_permadeath(op);
+            } else {
+                kill_player_not_permadeath(op);
+            }
+            break;
+        default:
+            abort();
     }
 }
 
