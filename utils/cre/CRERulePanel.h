@@ -2,7 +2,7 @@
 #define _CRERULEPANEL_H
 
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 #include <QTabWidget>
 
 class QListWidget;

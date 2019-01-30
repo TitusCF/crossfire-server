@@ -2,7 +2,7 @@
 #define CLASS_CRE_ARCHETYPE_PANEL_H
 
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 #include "CREPanel.h"
 
 extern "C" {

@@ -1,5 +1,5 @@
 #include "CREReportDisplay.h"
-#include <QtGui>
+#include <QtWidgets>
 
 CREReportDisplay::CREReportDisplay(const QString& report, const QString& title)
 {

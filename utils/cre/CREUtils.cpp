@@ -1,4 +1,4 @@
-#include <QtGui>
+#include <QtWidgets>
 #include "CREUtils.h"
 #include "CREPixmap.h"
 #include "CREMapInformation.h"
@@ -128,7 +128,7 @@ QTreeWidgetItem* CREUtils::treasureNode(const treasure* treasure, const treasure
 
     if (list->total_chance != 0)
     {
-        item->setText(0, QTreeWidget::tr("%1 (%2%, %3 chances on %4)").arg(item->text(0)).arg(qRound(100 * treasure->chance / list->total_chance)).arg(treasure->chance).arg(list->total_chance));
+        item->setText(0, QTreeWidget::tr("%1 (%2%, %3 chances on %4)").arg(item->text(0)).arg(qRound((float)100 * treasure->chance / list->total_chance)).arg(treasure->chance).arg(list->total_chance));
     }
     else
     {

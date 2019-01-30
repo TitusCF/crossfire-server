@@ -1,5 +1,5 @@
 #include "CREStringListPanel.h"
-#include <QtGui>
+#include <QtWidgets>
 
 CREStringListPanel::CREStringListPanel(QWidget* parent) : QWidget(parent)
 {

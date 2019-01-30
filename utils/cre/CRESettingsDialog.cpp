@@ -1,6 +1,6 @@
 #include "CRESettingsDialog.h"
 #include "CRESettings.h"
-#include <QtGui>
+#include <QtWidgets>
 
 CRESettingsDialog::CRESettingsDialog(CRESettings* settings)
 {
@@ -14,7 +14,7 @@ CRESettingsDialog::CRESettingsDialog(CRESettings* settings)
     myMapCache = new QLineEdit(this);
     myMapCache->setText(settings->mapCacheDirectory());
     if (myMapCache->text().isEmpty())
-        myMapCache->setText(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
+        myMapCache->setText(QStandardPaths::standardLocations(QStandardPaths::DataLocation)[0]);
     layout->addWidget(myMapCache, line, 1);
 
     line++;

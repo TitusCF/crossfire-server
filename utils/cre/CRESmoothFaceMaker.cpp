@@ -1,6 +1,6 @@
 #include "CRESmoothFaceMaker.h"
 #include "CREPixmap.h"
-#include <QtGui>
+#include <QtWidgets>
 
 extern "C" {
 #include "global.h"

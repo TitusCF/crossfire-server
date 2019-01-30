@@ -2,7 +2,7 @@
 #define CREANIMATIONPANEL_H
 
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 #include "CREPanel.h"
 
 extern "C" {

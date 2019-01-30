@@ -127,4 +127,4 @@ CONFIG += thread
 
 PRECOMPILED_HEADER = cre_pch.h
 
-QT += script
+QT += concurrent script widgets

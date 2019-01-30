@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QDialog>
-#include <QtGui>
+#include <QtWidgets>
 
 
 extern "C" {

@@ -1,6 +1,6 @@
 #include "CREHPBarMaker.h"
 #include "CREPixmap.h"
-#include <QtGui>
+#include <QtWidgets>
 #include <qt4/QtCore/qiodevice.h>
 #include <qt4/QtCore/qfile.h>
 

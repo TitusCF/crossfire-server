@@ -1,7 +1,7 @@
 #ifndef CREPIXMAP_H
 #define CREPIXMAP_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 class CREPixmap
 {

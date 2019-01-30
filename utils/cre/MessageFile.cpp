@@ -349,7 +349,7 @@ void MessageFile::save()
     QString full = QString("%1/%2/%3").arg(settings.datadir, settings.mapdir, myPath);
     QFile file(full);
     file.open(QIODevice::WriteOnly | QIODevice::Truncate);
-    file.write(data.toAscii());
+    file.write(data.toLatin1());
     file.close();
 
     setModified(false);

@@ -2,7 +2,7 @@
 #define CREANIMATIONWIDGET_H_
 
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 
 class CREAnimationWidget : public QWidget
 {

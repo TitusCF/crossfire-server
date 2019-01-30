@@ -17,7 +17,7 @@ Quest* CREQuestItemModel::quest() const
 void CREQuestItemModel::setQuest(Quest* quest)
 {
     myQuest = quest;
-    reset();
+    //reset();
 }
 
 int CREQuestItemModel::columnCount(const QModelIndex& parent) const

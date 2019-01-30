@@ -21,7 +21,7 @@ extern "C" {
 #include <QObject>
 #include <Qt>
 #include <QWidget>
-#include <QtGui>
+#include <QtWidgets>
 #include <QList>
 #include <QHash>
 #include <QStringList>

@@ -1,5 +1,5 @@
 #include <Qt>
-#include <QtGui>
+#include <QtWidgets>
 
 #include "CREResourcesWindow.h"
 #include "CREUtils.h"

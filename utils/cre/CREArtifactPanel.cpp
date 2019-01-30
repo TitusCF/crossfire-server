@@ -1,4 +1,4 @@
-#include <QtGui>
+#include <QtWidgets>
 
 extern "C" {
 #include "global.h"

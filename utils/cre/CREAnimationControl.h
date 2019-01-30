@@ -2,7 +2,7 @@
 #define CREANIMATIONCONTROL_H
 
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 
 extern "C" {
 #include "global.h"

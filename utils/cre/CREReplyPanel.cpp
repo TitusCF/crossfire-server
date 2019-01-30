@@ -1,5 +1,5 @@
 #include "CREReplyPanel.h"
-#include <QtGui>
+#include <QtWidgets>
 
 CREReplyPanel::CREReplyPanel(QWidget* parent) : QWidget(parent)
 {

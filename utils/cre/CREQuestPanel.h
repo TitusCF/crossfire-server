@@ -2,7 +2,7 @@
 #define _CREQUESTPANEL_H
 
 #include <QWidget>
-#include <QtGui>
+#include <QtWidgets>
 
 #include "CREFilterDialog.h"
 #include "CREReportDialog.h"

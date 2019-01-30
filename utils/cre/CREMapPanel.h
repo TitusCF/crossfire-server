@@ -2,7 +2,7 @@
 #define _CREMAPPANEL_H
 
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 #include "CREPanel.h"
 
 class CREMapInformation;

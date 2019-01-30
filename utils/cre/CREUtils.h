@@ -1,7 +1,7 @@
 #ifndef CREUTILS_H
 #define CREUTILS_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 extern "C" {
 #include "global.h"

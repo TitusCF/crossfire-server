@@ -1,7 +1,7 @@
 #include <Qt>
 #include "CRERulePanel.h"
 #include "MessageFile.h"
-#include <QtGui>
+#include <QtWidgets>
 #include "CREStringListPanel.h"
 #include "CREPrePostPanel.h"
 #include "CREReplyPanel.h"

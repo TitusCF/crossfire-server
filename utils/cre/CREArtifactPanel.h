@@ -2,7 +2,7 @@
 #define CREARTIFACTPANEL_H
 
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 #include "CREPanel.h"
 #include "CREAnimationControl.h"
 

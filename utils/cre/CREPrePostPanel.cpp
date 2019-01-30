@@ -1,6 +1,6 @@
 #include "CREPrePostPanel.h"
 #include "CRERulePanel.h"
-#include <QtGui>
+#include <QtWidgets>
 #include "QuestConditionScript.h"
 #include "QuestManager.h"
 #include "Quest.h"

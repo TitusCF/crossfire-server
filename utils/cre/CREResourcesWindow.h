@@ -2,7 +2,7 @@
 #define CRERESOURCESWINDOW_H
 
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 
 #include "CREFilter.h"
 #include "CREFilterDefinitionManager.h"

@@ -1,5 +1,5 @@
 #include <Qt>
-#include <QtGui>
+#include <QtWidgets>
 #include <CREMainWindow.h>
 #include <CREResourcesWindow.h>
 #include "CREMapInformationManager.h"

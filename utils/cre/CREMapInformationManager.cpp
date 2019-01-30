@@ -1,3 +1,5 @@
+#include <QtConcurrent/QtConcurrent>
+
 #include "CREMapInformationManager.h"
 #include "CRESettings.h"
 #include "CREArchetypePanel.h"
@@ -106,7 +108,7 @@ void CREMapInformationManager::process(const QString& path2)
     CREMapInformation* information = getOrCreateMapInformation(path);
 
     char tmppath[MAX_BUF];
-    create_pathname(path.toAscii(), tmppath, MAX_BUF);
+    create_pathname(path.toLatin1(), tmppath, MAX_BUF);
     QFileInfo info(tmppath);
 
     if (!info.exists())
@@ -129,7 +131,7 @@ void CREMapInformationManager::process(const QString& path2)
     /* remove scripts to avoid duplications */
     myScriptManager->removeMap(information);
 
-    mapstruct *m = ready_map_name(path.toAscii(), 0);
+    mapstruct *m = ready_map_name(path.toLatin1(), 0);
 //    qDebug() << "processing" << path << information->mapTime() << info.lastModified();
     information->setName(m->name);
     information->setMapTime(info.lastModified());

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QObject>
-#include <QtGui>
+#include <QtWidgets>
 
 #include "MessageManager.h"
 

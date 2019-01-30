@@ -1,4 +1,4 @@
-#include <QtGui>
+#include <QtWidgets>
 
 #include "CREReportDialog.h"
 #include "CRESettings.h"
