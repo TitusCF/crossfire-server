@@ -678,7 +678,7 @@ void move_firewall(object *op) {
 
     spell = op->inv;
     if (!spell) {
-        LOG(llevError, "move_firewall: no spell specified (%s, %s, %d, %d)\n", op->name, op->map->name, op->x, op->y);
+        LOG(llevError, "firewall '%s' in (%s, %d, %d) has no spell\n", op->name, op->map->path, op->x, op->y);
         return;
     }
 
