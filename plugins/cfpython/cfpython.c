@@ -1512,6 +1512,46 @@ CF_PLUGIN void cfpython_runPluginCommand(object *op, const char *params) {
 /*    printf("Execution complete"); */
 }
 
+static int GECodes[] = {
+    EVENT_BORN,
+    EVENT_CLOCK,
+    EVENT_PLAYER_DEATH,
+    EVENT_GKILL,
+    EVENT_LOGIN,
+    EVENT_LOGOUT,
+    EVENT_MAPENTER,
+    EVENT_MAPLEAVE,
+    EVENT_MAPRESET,
+    EVENT_REMOVE,
+    EVENT_SHOUT,
+    EVENT_TELL,
+    EVENT_MUZZLE,
+    EVENT_KICK,
+    EVENT_MAPUNLOAD,
+    EVENT_MAPLOAD,
+    0  
+};
+
+static const char* GEPaths[] = {
+    "born",
+    "clock",
+    "death",
+    "gkill",
+    "login",
+    "logout",
+    "mapenter",
+    "mapleave",
+    "mapreset",
+    "remove",
+    "shout",
+    "tell",
+    "muzzle",
+    "kick",
+    "mapunload",
+    "mapload",
+    NULL  
+};
+
 CF_PLUGIN int postInitPlugin(void) {
     PyObject *scriptfile;
     char path[1024];
@@ -1519,23 +1559,8 @@ CF_PLUGIN int postInitPlugin(void) {
 
     cf_log(llevDebug, "CFPython 2.0a post init\n");
     initContextStack();
-    cf_system_register_global_event(EVENT_BORN, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_CLOCK, PLUGIN_NAME, cfpython_globalEventListener);
-    /*registerGlobalEvent(NULL, EVENT_CRASH, PLUGIN_NAME, cfpython_globalEventListener);*/
-    cf_system_register_global_event(EVENT_PLAYER_DEATH, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_LOGIN, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_LOGOUT, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPENTER, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLEAVE, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPRESET, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_REMOVE, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_SHOUT, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_TELL, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_MUZZLE, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_KICK, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPUNLOAD, PLUGIN_NAME, cfpython_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLOAD, PLUGIN_NAME, cfpython_globalEventListener);
+    for (i = 0; GECodes[i] != 0; i++)
+        cf_system_register_global_event(GECodes[i], PLUGIN_NAME, cfpython_globalEventListener);
 
     scriptfile = cfpython_openpyfile(cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)));
     if (scriptfile != NULL) {
@@ -1552,6 +1577,14 @@ CF_PLUGIN int postInitPlugin(void) {
     }
 
     return 0;
+}
+
+static const char *getGlobalEventPath(int code) {
+    for (int i = 0; GECodes[i] != 0; i++) {
+        if (GECodes[i] == code)
+            return GEPaths[i];
+    }
+    return "";
 }
 
 CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
@@ -1575,7 +1608,7 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
     context->talk        = NULL;
     rv = context->returnvalue = 0;
     cf_get_maps_directory("python/events/python_event.py", context->script, sizeof(context->script));
-    strcpy(context->options, "");
+    snprintf(context->options, sizeof(context->options), getGlobalEventPath(context->event_code));
     switch (context->event_code) {
     case EVENT_CRASH:
         cf_log(llevDebug, "Unimplemented for now\n");
@@ -1584,7 +1617,6 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
     case EVENT_BORN:
         op = va_arg(args, object *);
         context->activator = Crossfire_Object_wrap(op);
-        snprintf(context->options, sizeof(context->options), "born");
         break;
 
     case EVENT_PLAYER_DEATH:
@@ -1592,7 +1624,6 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         context->who = Crossfire_Object_wrap(op);
         op = va_arg(args, object *);
         context->activator = Crossfire_Object_wrap(op);
-        snprintf(context->options, sizeof(context->options), "death");
         break;
 
     case EVENT_GKILL:
@@ -1600,7 +1631,6 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         object* hitter = va_arg(args, object *);
         context->who = Crossfire_Object_wrap(op);
         context->activator = Crossfire_Object_wrap(hitter);
-        snprintf(context->options, sizeof(context->options), "gkill");
         break;
 
     case EVENT_LOGIN:
@@ -1609,7 +1639,6 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         buf = va_arg(args, char *);
         if (buf != NULL)
             snprintf(context->message, sizeof(context->message), "%s", buf);
-        snprintf(context->options, sizeof(context->options), "login");
         break;
 
     case EVENT_LOGOUT:
@@ -1618,13 +1647,11 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         buf = va_arg(args, char *);
         if (buf != NULL)
             snprintf(context->message, sizeof(context->message), "%s", buf);
-        snprintf(context->options, sizeof(context->options), "logout");
         break;
 
     case EVENT_REMOVE:
         op = va_arg(args, object *);
         context->activator = Crossfire_Object_wrap(op);
-        snprintf(context->options, sizeof(context->options), "remove");
         break;
 
     case EVENT_SHOUT:
@@ -1633,7 +1660,6 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         buf = va_arg(args, char *);
         if (buf != NULL)
             snprintf(context->message, sizeof(context->message), "%s", buf);
-        snprintf(context->options, sizeof(context->options), "shout");
         break;
 
     case EVENT_MUZZLE:
@@ -1642,7 +1668,6 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         buf = va_arg(args, char *);
         if (buf != NULL)
             snprintf(context->message, sizeof(context->message), "%s", buf);
-        snprintf(context->options, sizeof(context->options), "muzzle");
         break;
 
     case EVENT_KICK:
@@ -1651,30 +1676,25 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         buf = va_arg(args, char *);
         if (buf != NULL)
             snprintf(context->message, sizeof(context->message), "%s", buf);
-        snprintf(context->options, sizeof(context->options), "kick");
         break;
 
     case EVENT_MAPENTER:
         op = va_arg(args, object *);
         context->activator = Crossfire_Object_wrap(op);
         context->who = Crossfire_Map_wrap(va_arg(args, mapstruct *));
-        snprintf(context->options, sizeof(context->options), "mapenter");
         break;
 
     case EVENT_MAPLEAVE:
         op = va_arg(args, object *);
         context->activator = Crossfire_Object_wrap(op);
         context->who = Crossfire_Map_wrap(va_arg(args, mapstruct *));
-        snprintf(context->options, sizeof(context->options), "mapleave");
         break;
 
     case EVENT_CLOCK:
-        snprintf(context->options, sizeof(context->options), "clock");
         break;
 
     case EVENT_MAPRESET:
         context->who = Crossfire_Map_wrap(va_arg(args, mapstruct *));
-        snprintf(context->options, sizeof(context->options), "mapreset");
         break;
 
     case EVENT_TELL:
@@ -1685,17 +1705,14 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
             snprintf(context->message, sizeof(context->message), "%s", buf);
         op = va_arg(args, object *);
         context->third = Crossfire_Object_wrap(op);
-        snprintf(context->options, sizeof(context->options), "tell");
         break;
 
     case EVENT_MAPUNLOAD:
         context->who = Crossfire_Map_wrap(va_arg(args, mapstruct *));
-        snprintf(context->options, sizeof(context->options), "mapunload");
         break;
 
     case EVENT_MAPLOAD:
         context->who = Crossfire_Map_wrap(va_arg(args, mapstruct *));
-        snprintf(context->options, sizeof(context->options), "mapload");
         break;
     }
     va_end(args);
