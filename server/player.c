@@ -3693,10 +3693,9 @@ static void kill_player_not_permadeath(object *op) {
      * character may be suffering.*/
     restore_player(op);
 
-    /* Subtract the experience points, if we died cause of food, give
+    /* if we died cause of food, give
      * us food, and reset HP's...
      */
-    apply_death_exp_penalty(op);
     if (op->stats.food < 100)
         op->stats.food = 900;
     op->stats.hp = op->stats.maxhp;
