@@ -294,6 +294,13 @@ extern int arch_init;
 extern int artifact_init;
 
 /**
+ * Keep track of whether we're currently inside an object...end block. This
+ * might have been better designed as a separate start condition, but was
+ * added to give a warning when an object started before the previous ended.
+ */
+static bool seen_object = false;
+
+/**
  * Fills in the body information for one slot.
  *
  * @param op
@@ -637,6 +644,9 @@ A       .+
                             LOG(llevError, "Object lacks name.\n");
                             return LL_IGNORED;
                         }
+                        if (seen_object) {
+                            LOG(llevError, "An object started before the 'end' of object %s.\n", (op->arch && op->arch->name) ? op->arch->name : "(no name)");
+                        }
                         if (!arch_init) {
                             LOG(llevError, "Got object info when not in arch_init (%s)?\n", yv);
                         } else {
@@ -644,6 +654,7 @@ A       .+
                                 op->arch->name = add_string(yv);
                             op->name = add_string(yv);
                         }
+                        seen_object = true;
                     }
 
 ^name{S}            {
@@ -771,6 +782,7 @@ A       .+
                     }
 
 ^end{WS}$           {
+                        seen_object = false;
                         check_loaded_object(op);
                         if (linemode) {
                             /* Linemode is only set for artifact loading. */
