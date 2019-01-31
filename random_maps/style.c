@@ -185,6 +185,10 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
     struct stat file_stat;
     int i, only_subdirs = 0;
 
+    /* Don't allow escaping from the styles directory. */
+    if (strstr(dirname, "..") != NULL || (stylename != NULL && strstr(stylename, "..") != NULL))
+        return NULL;
+
     /* if stylename exists, set style_file_path to that file.*/
     if (stylename && strlen(stylename) > 0) {
         snprintf(style_file_path, sizeof(style_file_path), "%s/%s", dirname, stylename);
