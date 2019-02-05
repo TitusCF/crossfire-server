@@ -23,6 +23,12 @@ Account_Char *account_char_remove(Account_Char *chars, const char *pl_name);
 void account_char_free(Account_Char *chars);
 /* alchemy.c */
 int use_alchemy(object *op);
+/* smithery.c */
+int use_smithery(object *op);
+/* bowery.c */
+int use_bowery(object *op);
+/* jewler.c */
+int use_jeweler(object *op);
 /* apply.c */
 int transport_can_hold(const object *transport, const object *op, int nrof);
 int should_director_abort(const object *op, const object *victim);
@@ -532,6 +538,7 @@ int makes_invisible_to(object *pl, object *mon);
 int cast_invisible(object *op, object *caster, object *spell_ob);
 int cast_earth_to_dust(object *op, object *caster, object *spell_ob);
 int cast_word_of_recall(object *op, object *caster, object *spell_ob);
+int cast_word_of_penalty(object *op, object *caster, object *spell_ob);
 int cast_wonder(object *op, object *caster, int dir, object *spell_ob);
 int perceive_self(object *op);
 int cast_create_town_portal(object *op, object *caster, object *spell);

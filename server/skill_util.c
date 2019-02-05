@@ -531,8 +531,18 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
         break;
 
     case SK_SMITHERY:
+        if (use_smithery(op) == 1)
+            exp = success = skill_ident(op, skill);
+        break;
     case SK_BOWYER:
+        if (use_bowery(op) == 1)
+            exp = success = skill_ident(op, skill);
+        break;
     case SK_JEWELER:
+        if (use_jeweler(op) == 1)
+            exp = success = skill_ident(op, skill);
+        break;
+
     case SK_ALCHEMY:
     case SK_THAUMATURGY:
     case SK_LITERACY:
