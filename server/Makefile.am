@@ -39,6 +39,9 @@ libserver_a_SOURCES = \
 	shop.c\
 	skills.c\
 	skill_util.c\
+	smithery.c\
+	bowery.c\
+	jewler.c\
 	spell_attack.c\
 	spell_effect.c\
 	spell_util.c\
