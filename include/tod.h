@@ -47,6 +47,6 @@ typedef struct _timeofday {
 extern void get_tod(timeofday_t *tod);
 
 /** Speed of an object that gives it one move per second, real time. */
-const static float MOVE_PER_SECOND = MAX_TIME / 1000000.;
+static const float MOVE_PER_SECOND = MAX_TIME / 1000000.;
 
 #endif /* TOD_H */
