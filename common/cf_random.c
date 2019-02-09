@@ -3,7 +3,7 @@
 
 #include "define.h"
 
-uint32_t cf_random() {
+uint32_t cf_random(void) {
 #if defined(HAVE_SRANDOM)
     return random();
 #elif defined(HAVE_SRAND48)

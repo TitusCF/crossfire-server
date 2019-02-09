@@ -138,7 +138,7 @@ static void ring_navar(object *pl)
 /**
  * Ring the city bells for each player.
  */
-static void ring_bell()
+static void ring_bell(void)
 {
     object *pl;
     region *reg;

@@ -1174,7 +1174,7 @@ static void init_startup(void) {
 /**
  * Signal handler that begins a normal server shutdown.
  */
-static void signal_shutdown() {
+static void signal_shutdown(void) {
     shutdown_flag += 1;
 }
 
