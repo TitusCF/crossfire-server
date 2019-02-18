@@ -3506,7 +3506,6 @@ void kill_player(object *op, const object *killer) {
     if (events_execute_object_event(op, EVENT_DEATH, NULL, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return;
 
-    events_execute_global_event(EVENT_PLAYER_DEATH, op, killer);
     if (op->stats.food < 0) {
         snprintf(buf, sizeof(buf), "%s starved to death.", op->name);
         strcpy(op->contr->killer, "starvation");
@@ -3519,6 +3518,7 @@ void kill_player(object *op, const object *killer) {
 
     switch(settings.not_permadeth) {
         case 0:
+            events_execute_global_event(EVENT_PLAYER_DEATH, op, killer);
             kill_player_permadeath(op);
             break;
         case 1:
