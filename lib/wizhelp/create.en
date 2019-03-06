@@ -1,4 +1,4 @@
-Syntax: create <number> <bonus> <archetype> <variable1> <value1> <variable2> <value2> ...
+Syntax: create [<number>] [<bonus>] <archetype> [<variable1> <value1>] [<variable2> <value2>] ... [of <artifact>]
 
 Creating items is rather dangerous and tends to crash the server when creating some items.
 
@@ -6,9 +6,19 @@ The number and bonus attributes may be left off, or the bonus itself may be left
 
 Multipart values such as for an item name must be quoted.
 
-Example:
+Creating artifacts requires placing the artifact definition at the end of the line, as any characters after the "of" are treated as part of the artifact name, regardless of quotes.
+
+Examples:
     create 5 +1 sword name "Spiffy Sword" face chicken.171
 
 This would create 5 +1 longswords named 'Spiffy Sword' that look like chickens.
+
+    create 10 balm_generic of first aid
+
+Note that even when creating artifacts, the actual arch name must be used.
+
+    create staff level 30 food 10 of heal
+
+Note that creating wands/staves/scrolls/etc with specific spells is done in the same manner as an artifact.
 
 See also: patch, dump
