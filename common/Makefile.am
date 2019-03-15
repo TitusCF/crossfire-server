@@ -43,4 +43,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\"
 AM_LFLAGS = -i
 
-CLEANFILES = loader.c
+CLEANFILES = loader.c arch_types_valid.c
+
+arch_types_valid.c: is_valid_types_gen.pl ../include/object.h
+	$(PERL) is_valid_types_gen.pl

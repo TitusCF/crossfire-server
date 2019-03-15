@@ -748,62 +748,10 @@ object *object_create_arch(archetype *at) {
 }
 
 /**
- * Checks if the specified type is a valid one for a Crossfire object.
- * It would be better (not sure how) if it could automatically
- * extract this somehow from define.h .  Otherwise, it will complain
- * if a new type is added, but if a type is removed and this
- * function not updated, that will no be noticed.
- *
- * @param type value to check.
- * @return 1 if the type is valid, 0 else.
+ * Include the generated function for ensuring the arch's type is valid.
+ * The function is built during the build step in a separate file.
+ * To avoid scoping issues, just use #include to substitue it into here, where it used to be.
  */
-int is_type_valid(uint8_t type) {
-    if (type >= OBJECT_TYPE_MAX)
-        return 0;
-    /*
-     * There's no reason to not use a switch statement here.
-     * We don't do anything special, so why take time reloading to registers?
-     *
-     * Just skip doing the ranges, since those might actually be better in their
-     * current form.
-     */
-    switch (type){
-	case 11:
-	case 12:
-	case 19:
-	case 25:
-	case 35:
-	case 38:
-	case 44:
-	case 47:
-	case 61:
-	case 63:
-	case 76:
-	case 78:
-	case 81:
-	case 84:
-	case 86:
-	case 88:
-	case 89:
-	case 96:
-	case 97:
-	case 107:
-	case 108:
-	case 110:
-	    return 0;
-    }
-    if (type >= 117 && type <= 120)
-        return 0;
-    if (type >= 125 && type <= 129)
-        return 0;
-    if (type >= 131 && type <= 137)
-        return 0;
-    if (type >= 140 && type <= 149)
-        return 0;
-    if (type >= 151 && type <= 153)
-        return 0;
-
-    return 1;
-}
+#include <arch_types_valid.c>
 
 /*** end of arch.c ***/

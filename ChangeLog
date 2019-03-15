@@ -1,3 +1,8 @@
+2019-03-15  Daniel Hawkins
+    * common/arch.c: Dynamically generate is_type_valid().
+    * common/is_valid_types_gen.pl: Dynamically generate is_type_valid().
+    * common/Makefile.am: Add build rules to dynamically generate is_type_valid().
+
 2019-01-03  Daniel Hawkins
     * server/skills.c: Fix encumbered throw logic to penalize high encumbrance
       instead of reward it.
