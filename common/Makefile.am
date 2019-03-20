@@ -3,6 +3,7 @@ noinst_LIBRARIES = libcross.a
 libcross_a_SOURCES = \
 	anim.c \
 	arch.c\
+	arch_types_valid.c \
 	artifact.c\
 	button.c\
 	cf_random.c \

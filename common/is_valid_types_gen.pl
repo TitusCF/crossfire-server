@@ -2,7 +2,7 @@
 # is_valid_types_gen.pl
 
 # Dynamically generate the list of valid types from object.h
-# This is triggered to run on build, and the output is then included into the arch.c file.
+# This is triggered to run on build, and the output is then included into the library as a source.
 use strict;
 # First step -- open object.h
 open(my $file, "< ../include/object.h") or die "Failed to load object.h";
@@ -49,11 +49,11 @@ print $outfile " *****************************************/\n";
 print $outfile "\n/**\n";
 print $outfile " * Checks if the specified type is a valid one for a Crossfire object.\n";
 print $outfile " *\n";
-print $outfile " * This code in #included into arch.c during the build process.\n";
-print $outfile " *\n";
 print $outfile ' * @param type value to check.'."\n";
 print $outfile ' * @return 1 if the type is valid, 0 else.'."\n";
 print $outfile " */\n";
+print $outfile "\#include <global.h>\n";
+print $outfile "\#include <libproto.h>\n";
 print $outfile "int is_type_valid(uint8_t type) {\n";
 print $outfile "    if (type >= OBJECT_TYPE_MAX)\n";
 print $outfile "        return 0;\n";

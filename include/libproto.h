@@ -28,6 +28,7 @@ extern object *create_archetype(const char *name);
 extern archetype *try_find_archetype(const char *name);
 extern archetype *find_archetype(const char *name);
 extern object *object_create_arch(archetype *at);
+/* arch_types_valid.c */
 extern int is_type_valid(uint8_t type);
 /* artifact.c */
 extern void free_all_artifacts(void);

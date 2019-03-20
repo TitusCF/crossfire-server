@@ -747,11 +747,4 @@ object *object_create_arch(archetype *at) {
     return (head);
 }
 
-/**
- * Include the generated function for ensuring the arch's type is valid.
- * The function is built during the build step in a separate file.
- * To avoid scoping issues, just use #include to substitue it into here, where it used to be.
- */
-#include <arch_types_valid.c>
-
 /*** end of arch.c ***/
