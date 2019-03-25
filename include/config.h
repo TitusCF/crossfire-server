@@ -416,7 +416,7 @@
 /** Maximum time to reset. */
 #define MAP_MAXRESET    7200
 /** Default time to reset. */
-#define MAP_DEFAULTRESET       7200
+#define MAP_DEFAULTRESET       900
 
 /**
  * Defining MEMORY_DEBUG disables Crossfire's object allocator, which allocates
