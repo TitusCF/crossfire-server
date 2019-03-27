@@ -2690,6 +2690,7 @@ void move_player_attack(object *op, int dir) {
         tpl = op->contr->transport;
     else
         tpl = op;
+    assert(tpl->map != NULL); // op must be on a map in order to move it
     nx = freearr_x[dir]+tpl->x;
     ny = freearr_y[dir]+tpl->y;
 
