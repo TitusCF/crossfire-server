@@ -221,7 +221,7 @@ int apply_container(object *op, object *sack) {
         return 0; /* This might change */
 
     if (sack == NULL || sack->type != CONTAINER) {
-        LOG(llevError, "apply_container: %s is not container!\n", sack ? sack->name : "NULL");
+        LOG(llevError, "apply_container: '%s' tried to apply %s, which is not a container\n", op->name, sack ? sack->name : "(null)");
         return 0;
     }
 

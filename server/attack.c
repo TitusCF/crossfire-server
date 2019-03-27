@@ -2408,7 +2408,7 @@ static void deathstrike_living(object *op, object *hitter, int *dam) {
 
     def_lev = op->level;
     if (def_lev < 1) {
-        LOG(llevError, "BUG: arch %s, name %s with level < 1\n", op->arch->name, op->name);
+        LOG(llevError, "deathstrike_living: arch %s (%s in %s at %d, %d) has level < 1\n", op->arch->name, op->name, op->map->name, op->x, op->y);
         def_lev = 1;
     }
     /*

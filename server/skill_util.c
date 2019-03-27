@@ -114,7 +114,7 @@ void link_player_skills(object *op) {
         if (tmp->type == SKILL) {
             /* This is really a warning, hence no else below */
             if (op->contr->last_skill_ob[tmp->subtype] && op->contr->last_skill_ob[tmp->subtype] != tmp) {
-                LOG(llevError, "Multiple skills with the same subtype? %s, %s\n", op->contr->last_skill_ob[tmp->subtype]->skill, tmp->skill);
+                LOG(llevError, "Multiple skills with the same subtype while loading '%s': %s, %s\n", op->name, op->contr->last_skill_ob[tmp->subtype]->skill, tmp->skill);
             }
             if (tmp->subtype >= NUM_SKILLS) {
                 LOG(llevError, "Invalid subtype number %d (range 0-%d)\n", tmp->subtype, NUM_SKILLS);
