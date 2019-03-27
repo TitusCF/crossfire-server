@@ -1608,7 +1608,7 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
     context->talk        = NULL;
     rv = context->returnvalue = 0;
     cf_get_maps_directory("python/events/python_event.py", context->script, sizeof(context->script));
-    snprintf(context->options, sizeof(context->options), getGlobalEventPath(context->event_code));
+    snprintf(context->options, sizeof(context->options), "%s", getGlobalEventPath(context->event_code));
     switch (context->event_code) {
     case EVENT_CRASH:
         cf_log(llevDebug, "Unimplemented for now\n");
