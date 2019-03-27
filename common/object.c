@@ -3805,6 +3805,9 @@ int object_can_pick(const object *who, const object *item) {
         return 0;
     if (item->invisible)
         return 0;
+    if (item->type == TRANSPORT && item->contr != NULL) {
+        return 0;
+    }
 
     /* Weight limit for monsters */
     if (who->type != PLAYER && ((uint32_t)(who->weight+who->carrying+item->weight)) > get_weight_limit(who->stats.Str))
