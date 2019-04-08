@@ -278,6 +278,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
  * 0 if succees, 1 if failure.
  */
 static int resurrection_fails(int levelcaster, int leveldead) {
+#if 0
     int chance = 9;
 
     chance += levelcaster-leveldead;
@@ -286,6 +287,9 @@ static int resurrection_fails(int levelcaster, int leveldead) {
     if (chance > rndm(0, 19))
         return 0; /* resurrection succeeds */
     return 1;
+#else
+    return 0;
+#endif
 }
 
 /**
