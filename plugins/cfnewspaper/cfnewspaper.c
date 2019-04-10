@@ -378,6 +378,7 @@ CF_PLUGIN int eventListener(int *type, ...) {
     if (event_code != EVENT_APPLY)
         return rv;
 
+    cf_log(llevDebug, "%s giving newspaper\n", PLUGIN_VERSION);
     paper = get_newspaper(event->slaying);
 
     newspaper = cf_create_object_by_name("scroll");
@@ -392,7 +393,7 @@ CF_PLUGIN int eventListener(int *type, ...) {
 
     get_newspaper_content(newspaper, paper, reg);
 
-    cf_object_insert_object(newspaper, who);
+    cf_object_insert_object(newspaper, activator);
 
     return rv;
 }
