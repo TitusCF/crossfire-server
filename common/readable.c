@@ -2075,6 +2075,7 @@ void tailor_readable_ob(object *book, int msg_type) {
 
     msg_type = msg_type > 0 ? msg_type : (int)(RANDOM()%6);
     switch (msg_type) {
+#if 0
     case MSGTYPE_MONSTER:
         message = mon_info_msg(level, book_buf_size, book);
         break;
@@ -2086,6 +2087,7 @@ void tailor_readable_ob(object *book, int msg_type) {
     case MSGTYPE_SPELLPATH: /* grouping incantations/prayers by path */
         message = spellpath_msg(level, book_buf_size, NULL);
         break;
+#endif
 
     case MSGTYPE_ALCHEMY: /* describe an alchemy formula */
         make_formula_book(book, level);
@@ -2093,9 +2095,11 @@ void tailor_readable_ob(object *book, int msg_type) {
         return;
         break;
 
+#if 0
     case MSGTYPE_GODS: /* bits of information about a god */
         message = god_info_msg(level, book_buf_size, book);
         break;
+#endif
 
     case MSGTYPE_LIB: /* use info list in lib/ */
     default:
