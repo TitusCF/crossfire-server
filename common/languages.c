@@ -88,7 +88,7 @@ const char *i18n(const object *who, const char *code) {
 }
 
 /**
- * Attenmpt to find the identifier of a language from its code.
+ * Attempt to find the identifier of a language from its code.
  * @param code language code.
  * @return index, -1 if not found.
  */
