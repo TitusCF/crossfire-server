@@ -3372,7 +3372,7 @@ void do_some_living(object *op) {
  * @param op
  * object to loot.
  */
-static void loot_object(object *op) {
+static void loot_object(object *op, object *container) {
     object *tmp2;
 
     if (op->container) { /* close open sack first */
@@ -3386,18 +3386,18 @@ static void loot_object(object *op) {
         tmp->x = op->x,
         tmp->y = op->y;
         if (tmp->type == CONTAINER) { /* empty container to ground */
-            loot_object(tmp);
+            loot_object(tmp, container);
         }
         if (!QUERY_FLAG(tmp, FLAG_UNIQUE)
         && (QUERY_FLAG(tmp, FLAG_STARTEQUIP) || QUERY_FLAG(tmp, FLAG_NO_DROP) || !(RANDOM()%3))) {
             if (tmp->nrof > 1) {
                 tmp2 = object_split(tmp, 1+RANDOM()%(tmp->nrof-1), NULL, 0);
                 object_free_drop_inventory(tmp2);
-                object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
+                object_insert_in_ob(tmp, container);
             } else
                 object_free_drop_inventory(tmp);
         } else
-            object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
+            object_insert_in_ob(tmp, container);
     } FOR_INV_FINISH();
 }
 
@@ -3795,7 +3795,17 @@ static void kill_player_permadeath(object *op) {
         op->contr->ranges[range_golem] = NULL;
         op->contr->golem_count = 0;
     }
-    loot_object(op); /* Remove some of the items for good */
+
+    /*  peterm:  added to create a corpse at deathsite.  */
+    tmp = arch_to_object(find_archetype("corpse_pl_container"));
+    snprintf(buf, sizeof(buf), "%s", op->name);
+    FREE_AND_COPY(tmp->name, buf);
+    FREE_AND_COPY(tmp->name_pl, buf);
+    tmp->level = op->level;
+    object_set_msg(tmp, gravestone_text(op, buf, sizeof(buf)));
+    SET_FLAG(tmp, FLAG_UNIQUE);
+
+    loot_object(op, tmp); /* Remove some of the items for good */
     object_remove(op);
     op->direction = 0;
 

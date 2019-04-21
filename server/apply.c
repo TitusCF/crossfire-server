@@ -359,7 +359,7 @@ int apply_container(object *op, object *sack, int aflags) {
      * has the equipment to open it.
      */
 
-    if (sack->slaying) { /* it's locked */
+    if (sack->slaying && strcmp(sack->arch->name, "corpse_pl_container") != 0) { /* it's locked */
         tmp = find_key(op, op, sack);
         if (tmp) {
             query_name(tmp, name_tmp, MAX_BUF);
