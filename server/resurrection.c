@@ -211,7 +211,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
             temp = NULL;
             FOR_MAP_PREPARE(m, sx, sy, tmp)
                 /* If it is corpse, this must be what we want to raise */
-                if (tmp->type == CORPSE) {
+                if (tmp->type == CORPSE || strcmp(tmp->arch->name, "corpse_pl_container") == 0) {
                     temp = tmp;
                     break;
                 }
