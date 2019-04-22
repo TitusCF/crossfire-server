@@ -1474,6 +1474,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
     rangetype old_shoottype;
     object *skill = NULL;
     int confusion_effect = 0;
+    float cost_multiplier = 1.0f;
 
     old_shoottype = op->contr ? op->contr->shoottype : range_none;
 
@@ -1706,11 +1707,6 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         }
     }
 
-    if (op->type == PLAYER && op == caster && !QUERY_FLAG(caster, FLAG_WIZ)) {
-        op->stats.grace -= SP_level_spellpoint_cost(caster, spell_ob, SPELL_GRACE);
-        op->stats.sp -= SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA);
-    }
-
     /* We want to try to find the skill to properly credit exp.
      * for spell casting objects, the exp goes to the skill the casting
      * object requires.
@@ -1747,6 +1743,13 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
                              MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "In your confused state, you can't control the magic!");
         handle_spell_confusion(op);
+
+        /* Still subtract full grace and sp. */
+        if (op->type == PLAYER && op == caster && !QUERY_FLAG(caster, FLAG_WIZ)) {
+            op->stats.grace -= SP_level_spellpoint_cost(caster, spell_ob, SPELL_GRACE);
+            op->stats.sp -= SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA);
+        }
+
         return 0;
     }
 
@@ -1878,6 +1881,9 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
 
     case SP_SUMMON_MONSTER:
         success = pets_summon_object(op, caster, spell_ob, dir, stringarg);
+        if (!success) {
+            cost_multiplier = 0.0f;
+        }
         break;
 
     case SP_CHARGING:
@@ -1989,6 +1995,12 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
 
     default:
         LOG(llevError, "cast_spell: Unhandled spell subtype %d\n", spell_ob->subtype);
+    }
+
+    /* Subtract grace and sp. */
+    if (op->type == PLAYER && op == caster && !QUERY_FLAG(caster, FLAG_WIZ)) {
+        op->stats.grace -= (int)(0.5 + cost_multiplier * SP_level_spellpoint_cost(caster, spell_ob, SPELL_GRACE));
+        op->stats.sp -= (int)(0.5 + cost_multiplier * SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA));
     }
 
     /* FIXME - we need some better sound suppport */
