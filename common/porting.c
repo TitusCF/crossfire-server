@@ -344,8 +344,9 @@ void make_path_to_file(const char *filename) {
  * maximum length of dest buffer.
  */
 void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
+    assert(curlen != NULL);
+    assert(*curlen < maxlen);
 #ifdef HAVE_STRLCAT
-    assert(strlen(orig) < maxlen);
     *curlen = strlcat(dest, orig, maxlen);
 #else
     if (*curlen == (maxlen-1))
@@ -353,9 +354,9 @@ void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
     strncpy(dest+*curlen, orig, maxlen-*curlen-1);
     dest[maxlen-1] = 0;
     *curlen += strlen(orig);
+#endif
     if (*curlen > (maxlen-1))
         *curlen = maxlen-1;
-#endif
 }
 
 #ifndef HAVE_STRLCPY
