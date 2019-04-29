@@ -53,6 +53,7 @@
 #include "object.h"
 #include "output_file.h"
 #include "sproto.h"
+#include "player.h"
 
 /** Number of fields in the accounts file.  These are colon seperated */
 #define NUM_ACCOUNT_CHAR_FIELDS 8
@@ -405,8 +406,13 @@ int unmake_perma_dead(char *account, char *player) {
         return 1;
     }
 
-    /* Load the appropriate account for the action. */
-    chars = account_char_load(account);
+    struct pl* pl = account_get_logged_in_player(account);
+    if (pl == NULL) {
+        /* Load the appropriate account for the action. */
+        chars = account_char_load(account);
+    } else {
+        chars = pl->socket.account_chars;
+    }
 
     /* Find the right character. */
     for (ac = chars; ac; ac = ac->next) {
