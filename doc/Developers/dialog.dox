@@ -4,7 +4,7 @@
 
 The dialog system used by NPCs and magic ear works in the following way:
 - the message is stored in the obj::msg field
-- the first time the NPC is talked to, this structure is parser to the
+- the first time the NPC is talked to, this structure is parsed to the
 obj::dialog_information field
 - this field contains all information needed to know what words the NPC reacts too.
 
