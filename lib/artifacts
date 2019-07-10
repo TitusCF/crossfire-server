@@ -3996,7 +3996,7 @@ Object aethereality
 face balm_aethereality.111
 type 5
 resist_physical 50
-value 3
+value 15
 end
 #
 Allowed balm_generic
@@ -4005,7 +4005,7 @@ Object asbestos
 face balm_asbestos.111
 type 5
 resist_fire 50
-value 1
+value 5
 end
 #
 Allowed balm_generic
@@ -4014,7 +4014,7 @@ Object insulation
 face balm_insulation.111
 type 5
 resist_electricity 50
-value 1
+value 5
 end
 #
 Allowed balm_generic
@@ -4023,7 +4023,7 @@ Object warmth
 face balm_warmth.111
 type 5
 resist_cold 50
-value 1
+value 5
 end
 #
 Allowed potion_generic
@@ -4143,7 +4143,7 @@ chance 1
 Object beauty
 type 5
 other_arch spell_charisma
-value 4
+value 20
 end
 #
 # - misc. potions and balms
@@ -4153,7 +4153,7 @@ chance 1
 Object flying
 face balm_flying.111
 type 5
-value 1
+value 5
 other_arch spell_levitate
 end
 #
@@ -4162,7 +4162,7 @@ chance 1
 Object the serpent
 face balm_serpent.111
 type 5
-value 1
+value 5
 other_arch spell_staff_to_snake
 end
 #
@@ -4172,7 +4172,7 @@ Object invisible to undead
 face balm_invisible_undead.111
 type 5
 other_arch spell_invisible_to_undead
-value 1
+value 5
 end
 #
 Allowed balm_generic
@@ -4181,7 +4181,7 @@ Object transparency
 face balm_transparency.111
 type 5
 other_arch spell_improved_invisibility
-value 1
+value 5
 end
 #
 Allowed balm_generic
@@ -4189,7 +4189,7 @@ chance 1
 Object return home
 face balm_return_home.111
 type 5
-value 1
+value 5
 other_arch spell_word_of_recall
 end
 #
