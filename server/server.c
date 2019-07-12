@@ -68,7 +68,7 @@ static char const* crypt_string(char const str[static 1], char const* salt) {
         return str;
     }
 #endif
-    char s[2];
+    char s[3];
 
     if (salt == NULL) {
 	/* Generate a two-character salt for the DES cipher.
@@ -82,6 +82,7 @@ static char const* crypt_string(char const str[static 1], char const* salt) {
         s[0] = salt[0],
         s[1] = salt[1];
     }
+    s[2] = '\0';
 
     return crypt(str, s);
 }
