@@ -55,28 +55,9 @@ Socket_Info socket_info;
  */
 socket_struct *init_sockets;
 
-/**
- * Initializes a connection. Really, it just sets up the data structure,
- * socket setup is handled elsewhere.  We do send a version to the
- * client.
- */
-void init_connection(socket_struct *ns, const char *from_ip) {
-    SockList sl;
-    int bufsize = SOCKETBUFSIZE; /*Supposed absolute upper limit */
+static void set_output_sock_buf(socket_struct *ns, int bufsize) {
     int oldbufsize;
-    socklen_t buflen = sizeof(int);
-
-#ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
-    int temp = 1;
-
-    if (ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
-        LOG(llevError, "init_connection:  Error on ioctlsocket.\n");
-#else
-    if (fcntl(ns->fd, F_SETFL, O_NONBLOCK) == -1) {
-        LOG(llevError, "init_connection:  Error on fcntl.\n");
-    }
-#endif /* end win32 */
-
+    socklen_t buflen = sizeof(oldbufsize);
     if (getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *)&oldbufsize, &buflen) == -1)
         oldbufsize = 0;
     if (oldbufsize < bufsize) {
@@ -92,6 +73,28 @@ void init_connection(socket_struct *ns, const char *from_ip) {
 #ifdef ESRV_DEBUG
     LOG(llevDebug, "Socket buffer size now %d bytes\n", oldbufsize);
 #endif
+}
+
+/**
+ * Initializes a connection. Really, it just sets up the data structure,
+ * socket setup is handled elsewhere.  We do send a version to the
+ * client.
+ */
+void init_connection(socket_struct *ns, const char *from_ip) {
+    SockList sl;
+
+#ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
+    int temp = 1;
+
+    if (ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
+        LOG(llevError, "init_connection:  Error on ioctlsocket.\n");
+#else
+    if (fcntl(ns->fd, F_SETFL, O_NONBLOCK) == -1) {
+        LOG(llevError, "init_connection:  Error on fcntl.\n");
+    }
+#endif /* end win32 */
+
+    set_output_sock_buf(ns, SOCKETBUFSIZE);
 
     ns->faceset = 0;
     ns->facecache = 0;
