@@ -62,7 +62,7 @@ socket_struct *init_sockets;
  */
 void init_connection(socket_struct *ns, const char *from_ip) {
     SockList sl;
-    int bufsize = 65535; /*Supposed absolute upper limit */
+    int bufsize = SOCKETBUFSIZE; /*Supposed absolute upper limit */
     int oldbufsize;
     socklen_t buflen = sizeof(int);
 
@@ -144,9 +144,6 @@ void init_connection(socket_struct *ns, const char *from_ip) {
      */
     ns->faces_sent[0] = NS_FACESENT_FACE;
 
-    ns->outputbuffer.start = 0;
-    ns->outputbuffer.len = 0;
-    ns->can_write = 1;
     ns->password_fails = 0;
 
     ns->host = strdup_local(from_ip);

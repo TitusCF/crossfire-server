@@ -341,8 +341,7 @@
  * MOTD - message of the day - printed each time someone joins the game
  * PERM_FILE - limit play times
  * SHUTDOWN - used when shutting down the server
- * SOCKETBUFSIZE - size of buffer used internally by the server for storing
- *    backlogged messages.
+ * SOCKETBUFSIZE - size of the output socket buffer
  * TMPDIR - directory to use for temp files
  * UNIQUE_DIR - directory to put unique item files into
  * USE_CALLOC for some memory requests
@@ -510,14 +509,10 @@
 #endif
 
 /**
- * SOCKETBUFSIZE is the size of the buffer used internally by the server for
- * storing backlogged messages for the client.  This is not operating system
- * buffers or the like.  This amount is used per connection (client).
- * This buffer is in addition to OS buffers, so it may not need to be very
- * large.  When the OS buffer and this buffer is exhausted, the server
- * will drop the client connection for falling too far behind.  So if
- * you have very slow client connections, a larger value may be
- * warranted.
+ * SOCKETBUFSIZE is the size of the output socket buffer we request from the
+ * operating system. If this buffer is exhausted, the server will drop the
+ * client connection. Increase this if players with large player files are
+ * causing this buffer to fill up.
  */
 #define SOCKETBUFSIZE 256*1024
 

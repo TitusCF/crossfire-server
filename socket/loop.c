@@ -599,9 +599,6 @@ void do_server(void) {
                 else
                     handle_client(&init_sockets[i], NULL);
             }
-            if (FD_ISSET(init_sockets[i].fd, &tmp_write)) {
-                init_sockets[i].can_write = 1;
-            }
         }
 
     /* This does roughly the same thing, but for the players now */
@@ -609,19 +606,6 @@ void do_server(void) {
         next = pl->next;
         if (pl->socket.status == Ns_Dead)
             continue;
-
-        if (FD_ISSET(pl->socket.fd, &tmp_write)) {
-            if (!pl->socket.can_write)  {
-                pl->socket.can_write = 1;
-                write_socket_buffer(&pl->socket);
-            }
-            /* if we get an error on the write_socket buffer, no reason to
-             * continue on this socket.
-             */
-            if (pl->socket.status == Ns_Dead)
-                continue;
-        } else
-            pl->socket.can_write = 0;
 
         if (FD_ISSET(pl->socket.fd, &tmp_exceptions)) {
             save_player(pl->ob, 0);

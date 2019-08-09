@@ -381,156 +381,48 @@ int SockList_ReadPacket(int fd, SockList *sl, int len) {
  ******************************************************************************/
 
 /**
- * Adds data to a socket buffer for whatever reason.
- *
- * ns is the socket we are adding the data to, buf is the start of the
- * data, and len is the number of bytes to add.
- */
-static void add_to_buffer(socket_struct *ns, const unsigned char *buf, int len) {
-    int avail, end;
-
-    if ((len+ns->outputbuffer.len) > SOCKETBUFSIZE) {
-        LOG(llevDebug, "Socket on fd %d has overrun internal buffer - marking as dead\n", ns->fd);
-        ns->status = Ns_Dead;
-        return;
-    }
-
-    /* data + end is where we start putting the new data.  The last byte
-     * currently in use is actually data + end -1
-     */
-
-    end = ns->outputbuffer.start+ns->outputbuffer.len;
-    /* The buffer is already in a wrapped state, so adjust end */
-    if (end >= SOCKETBUFSIZE)
-        end -= SOCKETBUFSIZE;
-    avail = SOCKETBUFSIZE-end;
-
-    /* We can all fit it behind the current data without wrapping */
-    if (avail >= len) {
-        memcpy(ns->outputbuffer.data+end, buf, len);
-    } else {
-        memcpy(ns->outputbuffer.data+end, buf, avail);
-        memcpy(ns->outputbuffer.data, buf+avail, len-avail);
-    }
-    ns->outputbuffer.len += len;
-}
-
-/**
- * Writes data to socket.
- *
- * When the socket is clear to write, and we have backlogged data, this
- * is called to write it out.
- */
-void write_socket_buffer(socket_struct *ns) {
-    int amt, max;
-
-    if (ns->outputbuffer.len == 0) {
-        LOG(llevDebug, "write_socket_buffer called when there is no data, fd=%d\n", ns->fd);
-        return;
-    }
-
-    do {
-        max = SOCKETBUFSIZE-ns->outputbuffer.start;
-        if (ns->outputbuffer.len < max)
-            max = ns->outputbuffer.len;
-
-#ifdef WIN32 /* ***win32 write_socket_buffer: change write() to send() */
-        amt = send(ns->fd, ns->outputbuffer.data+ns->outputbuffer.start, max, 0);
-#else
-        do {
-            amt = write(ns->fd, ns->outputbuffer.data+ns->outputbuffer.start, max);
-        } while ((amt < 0) && (errno == EINTR));
-#endif
-
-        if (amt < 0) { /* We got an error */
-#ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
-            if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK) {
-                LOG(llevInfo, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
-#else
-            if (errno != EWOULDBLOCK) {
-                LOG(llevInfo, "New socket write failed (wsb): %s\n", strerror(errno));
-#endif
-                ns->status = Ns_Dead;
-                return;
-            } else { /* EWOULDBLOCK */
-                /* can't write it, so store it away. */
-                ns->can_write = 0;
-                return;
-            }
-        }
-        ns->outputbuffer.start += amt;
-        /* wrap back to start of buffer */
-        if (ns->outputbuffer.start == SOCKETBUFSIZE)
-            ns->outputbuffer.start = 0;
-        ns->outputbuffer.len -= amt;
-#ifdef CS_LOGSTATS
-        cst_tot.obytes += amt;
-        cst_lst.obytes += amt;
-#endif
-    } while (ns->outputbuffer.len > 0);
-}
-
-/**
  * This writes data to the socket. - It is very low level -
  * all we try and do is write out the data to the socket
  * provided (ns).  buf is the data to write, len is the number
  * of bytes to write.  IT doesn't return anything - rather, it
  * updates the ns structure if we get an  error.
  */
-static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len) {
-    int amt = 0;
-    const unsigned char *pos = buf;
-
+static void Write_To_Socket(socket_struct* ns, const unsigned char* buf, const int len) {
     if (ns->status == Ns_Dead || !buf) {
         LOG(llevDebug, "Write_To_Socket called with dead socket\n");
         return;
     }
 
-#ifndef __GNU__ /* This caused problems on Hurd */
-    if (!ns->can_write) {
-        add_to_buffer(ns, buf, len);
+    const int amt = send(ns->fd, buf, len, 0);
+    if (amt < 0) { /* We got an error */
+#ifdef WIN32       /* ***win32 Write_To_Socket: change error handling */
+        if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK) {
+            LOG(llevError, "New socket write failed WTS (%d).\n",
+                WSAGetLastError());
+#else
+        if (errno != EWOULDBLOCK) {
+            LOG(llevError, "New socket write failed WTS: %s\n",
+                strerror(errno));
+#endif
+            ns->status = Ns_Dead;
+            return;
+        } else { /* EWOULDBLOCK */
+            LOG(llevError,
+                "Write_To_Socket: write would block; disconnecting. Try "
+                "increasing SOCKETBUFSIZE.\n");
+            ns->status = Ns_Dead;
+            return;
+        }
+    } else if (amt != len) {
+        LOG(llevError, "Write_To_Socket: write wrote less than requested; "
+                       "disconnecting. Try increasing SOCKETBUFSIZE.\n");
+        ns->status = Ns_Dead;
         return;
     }
-#endif
-    /* If we manage to write more than we wanted, take it as a bonus */
-    while (len > 0) {
-#ifdef WIN32 /* ***win32 Write_To_Socket: change write() to send() */
-        amt = send(ns->fd, pos, len, 0);
-#else
-        do {
-            amt = write(ns->fd, pos, len);
-        } while ((amt < 0) && (errno == EINTR));
-#endif
-
-        if (amt < 0) { /* We got an error */
-#ifdef WIN32 /* ***win32 Write_To_Socket: change error handling */
-            if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK) {
-                LOG(llevError, "New socket write failed WTS (%d).\n", WSAGetLastError());
-#else
-            if (errno != EWOULDBLOCK) {
-                LOG(llevError, "New socket write failed WTS: %s\n", strerror(errno));
-#endif
-                ns->status = Ns_Dead;
-                return;
-            } else { /* EWOULDBLOCK */
-                /* can't write it, so store it away. */
-                add_to_buffer(ns, pos, len);
-                ns->can_write = 0;
-                return;
-            }
-        /* amt gets set to 0 above in blocking code, so we do this as
-         * an else if to make sure we don't reprocess it.
-         */
-        } else if (amt == 0) {
-            LOG(llevError, "Write_To_Socket: No data written out.\n");
-        }
-        len -= amt;
-        pos += amt;
 #ifdef CS_LOGSTATS
-        cst_tot.obytes += amt;
-        cst_lst.obytes += amt;
+    cst_tot.obytes += amt;
+    cst_lst.obytes += amt;
 #endif
-    }
 }
 
 /**

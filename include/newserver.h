@@ -80,16 +80,6 @@ struct listen_info {
     struct sockaddr *addr;
 };
 
-/**
- * The following is the setup for a ring buffer for storing outbut
- * data that the OS can't handle right away.
- */
-typedef struct buffer_struct {
-    char    data[SOCKETBUFSIZE];
-    int     start;
-    int     len;
-} buffer_struct;
-
 /** How many times we are allowed to give the wrong password before being kicked. */
 #define MAX_PASSWORD_FAILURES 5
 
@@ -108,13 +98,11 @@ typedef struct socket_struct {
     struct statsinfo stats;
     SockList    inbuf;                  /**< If we get an incomplete packet, this is used to hold the data. */
     char        *host;                  /**< Which host it is connected from (ip address). */
-    buffer_struct outputbuffer;         /**< For undeliverable data. */
     uint8_t       password_fails;         /**< How many times the player has failed to give the right password. */
     uint32_t      facecache:1;            /**< If true, client is caching images. */
     uint32_t      darkness:1;             /**< True if client wants darkness information. */
     uint32_t      update_look:1;          /**< If true, we need to send the look window. */
     uint32_t      update_inventory:1;     /**< If true, we need to send the inventory list. */
-    uint32_t      can_write:1;            /**< Can we write to this socket? */
     uint32_t      tick:1;                 /**< Client wishes to get tick commands. */
     uint32_t      is_bot:1;               /**< Client shouldn't be reported to metaserver. */
     uint32_t      want_pickup:1;          /**< Client wants pickup information when logging in. */

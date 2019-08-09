@@ -62,7 +62,6 @@ void SockList_NullTerminate(SockList *sl);
 int GetInt_String(const unsigned char *data);
 short GetShort_String(const unsigned char *data);
 int SockList_ReadPacket(int fd, SockList *sl, int len);
-void write_socket_buffer(socket_struct *ns);
 void Send_With_Handling(socket_struct *ns, SockList *sl);
 void write_cs_stats(void);
 /* metaserver.c */
