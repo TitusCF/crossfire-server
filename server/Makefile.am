@@ -58,7 +58,7 @@ else
 crossfire_server_LDFLAGS=
 endif
 crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
-		../socket/libsocket.a ../types/libtypes.a $(LIBS)
+		../socket/libsocket.a ../types/libtypes.a
 
 ../common/libcross.a:
 	( cd ../common ; make libcross.a )
