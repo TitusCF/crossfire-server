@@ -745,6 +745,7 @@ void check_login(object *op, int check_pass) {
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
+    LOG(llevInfo, "login: %s from %s\n", op->name, op->contr->socket.host);
     strncpy(pl->title, op->arch->clone.name, sizeof(pl->title)-1);
     pl->title[sizeof(pl->title)-1] = '\0';
 
@@ -827,7 +828,6 @@ void check_login(object *op, int check_pass) {
             return;
         }
     }
-    LOG(llevInfo, "login: %s from %s\n", op->name, op->contr->socket.host);
 
     /* Do this after checking for death - no reason sucking up bandwidth if
      * the data isn't needed.
