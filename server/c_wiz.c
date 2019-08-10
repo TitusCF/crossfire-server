@@ -329,6 +329,17 @@ void command_loadtest(object *op, const char *params) {
     }
 }
 
+static void unhide(object* op) {
+    op->contr->hidden = 0;
+    op->invisible = 1;
+    op->map->players++;
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                  "You are no longer hidden from other players");
+    draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
+                         MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+                         "%s has entered the game.", op->name);
+}
+
 /**
  * Actually hides or unhides specified player (obviously a DM).
  *
@@ -339,15 +350,7 @@ void command_loadtest(object *op, const char *params) {
  */
 static void do_wizard_hide(object *op, int silent_dm) {
     if (op->contr->hidden) {
-        op->contr->hidden = 0;
-        op->invisible = 1;
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                      "You are no longer hidden from other players");
-        op->map->players++;
-        draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
-                             MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                             "%s has entered the game.",
-                             op->name);
+        unhide(op);
         if (!silent_dm) {
             draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL,
                           MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
@@ -2002,14 +2005,7 @@ void command_nowiz(object *op, const char *params) { /* 'noadm' is alias */
     if (settings.real_wiz == TRUE)
         CLEAR_FLAG(op, FLAG_WAS_WIZ);
     if (op->contr->hidden) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                      "You are no longer hidden from other players");
-        op->map->players++;
-        draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                             "%s has entered the game.",
-                             op->name);
-        op->contr->hidden = 0;
-        op->invisible = 1;
+        unhide(op);
     } else
         draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                       "The Dungeon Master is gone..");
