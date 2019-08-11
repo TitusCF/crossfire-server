@@ -125,6 +125,7 @@ RESOURCES += cre.qrc
 CONFIG += precompile_header
 CONFIG += thread
 
+PRECOMPILED_DIR = .pch
 PRECOMPILED_HEADER = cre_pch.h
 
 QT += concurrent script widgets

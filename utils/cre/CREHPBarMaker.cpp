@@ -1,8 +1,8 @@
 #include "CREHPBarMaker.h"
 #include "CREPixmap.h"
 #include <QtWidgets>
-#include <qt4/QtCore/qiodevice.h>
-#include <qt4/QtCore/qfile.h>
+#include <QtCore/qiodevice.h>
+#include <QtCore/qfile.h>
 
 extern "C" {
 #include "global.h"
