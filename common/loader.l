@@ -870,7 +870,12 @@ A       .+
                     }
 
 ^value{S}           op->value = IVAL;
-^weight{S}          op->weight = atol(yval());
+^weight{S}          {
+                        op->weight = atol(yval());
+                        if (op->weight == 0) {
+                            SET_FLAG(op, FLAG_NO_PICK);
+                        }
+                    }
 ^carrying{S}        op->carrying = atol(yval());
 ^attacktype{S}      op->attacktype = IVAL;
 ^path_attuned{S}    op->path_attuned = IVAL;
