@@ -669,6 +669,16 @@ cauldron tanbench
 # use a leather strip for cloak hood
 ingred white leather,leather strip
 #
+# leather armour
+Object NONE
+arch leather_armour
+chance 5
+diff 8
+exp 1500
+skill woodsman
+cauldron tanbench
+ingred leather
+#
 # --------------
 # Potions     -- incl. balms, figurines, and dusts
 # --------------

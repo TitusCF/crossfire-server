@@ -271,17 +271,38 @@ void init_formulae(void) {
 static void check_formulae(void) {
     recipelist *fl;
     recipe *check, *formula;
-    int numb = 1;
+    int numb = 1, tool_i, tool_j, tool_match;
 
     LOG(llevDebug, "Checking formulae lists...\n");
 
     for (fl = formulalist; fl != NULL; fl = fl->next) {
         for (formula = fl->items; formula != NULL; formula = formula->next)
             for (check = formula->next; check != NULL; check = check->next)
-                if (check->index == formula->index && strcmp(check->cauldron, formula->cauldron) == 0) {
-                    /* if the recipes don't have the same facility, then no issue anyway. */
-                    LOG(llevError, " ERROR: On %d ingred list:\n", numb);
-                    LOG(llevError, "Formulae [%s] of %s and [%s] of %s have matching index id (%d)\n", formula->arch_name[0], formula->title, check->arch_name[0], check->title, formula->index);
+                /* If one recipe has a tool and another a caudron, we should be able to handle it */
+                if (check->index == formula->index &&
+                        ((check->cauldron && formula->cauldron && strcmp(check->cauldron, formula->cauldron) == 0) ||
+                        (check->tool_size == formula->tool_size && check->tool_size > 0))) {
+                    /* Check the tool list to make sure they have no matches */
+                    if (check->tool && formula->tool)
+                    {
+                        tool_match = 0;
+                        for (tool_i = 0; tool_i < formula->tool_size; ++tool_i)
+                            /* If it turns out these lists are sorted, then we could optimize this better. */
+                            for (tool_j = 0; tool_j < check->tool_size; ++tool_j)
+                                if (strcmp(formula->tool[tool_i], check->tool[tool_j]) == 0) {
+                                    tool_match = 1;
+                                    break; /* TODO: break out of the double loop */
+                                }
+                    }
+                    else
+                        tool_match = 1; /* If we get here, we matched on the cauldron */
+                    /* Check to see if we have a denoted match */
+                    if (tool_match) {
+                        /* if the recipes don't have the same facility, then no issue anyway. */
+                        LOG(llevError, " ERROR: On %d ingred list:\n", numb);
+                        LOG(llevError, "Formulae [%s] of %s and [%s] of %s have matching index id (%d)\n",
+                            formula->arch_name[0], formula->title, check->arch_name[0], check->title, formula->index);
+                    }
                 }
         numb++;
     }
