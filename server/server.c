@@ -964,6 +964,10 @@ static void process_players2(void) {
 
 #define SPEED_DEBUG
 
+static bool object_in_icecube(object *op) {
+    return op->env != NULL && strcmp(op->env->arch->name, "icecube") == 0;
+}
+
 /**
  * Process all active objects.
  */
@@ -1080,15 +1084,20 @@ void process_events(void) {
         }
 
         if (op->speed_left > 0) {
-            --op->speed_left;
+            // Objects in icecubes decay at a slower rate
+            if (object_in_icecube(op)) {
+                op->speed_left -= 10;
+            } else {
+                op->speed_left -= 1;
+            }
             process_object(op);
             if (object_was_destroyed(op, tag))
                 continue;
+        } else {
+            op->speed_left += FABS(op->speed);
         }
         if (settings.casting_time == TRUE && op->casting_time > 0)
             op->casting_time--;
-        if (op->speed_left <= 0)
-            op->speed_left += FABS(op->speed);
     }
 
     /* Remove marker object from active list */
