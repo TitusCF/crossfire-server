@@ -70,6 +70,16 @@ static void cancellation(object *op) {
     }
 }
 
+static void object_get_materialtype(object* op, materialtype_t** mt) {
+    if (op->materialname == NULL) {
+        for (*mt = materialt; *mt != NULL && (*mt)->next != NULL; *mt = (*mt)->next) {
+            if (op->material & (*mt)->material)
+                break;
+        }
+    } else
+        *mt = name_to_material(op->materialname);
+}
+
 /**
  * Checks to make sure the item actually
  * made its saving throw based on the tables.  It does not take
@@ -87,15 +97,8 @@ static void cancellation(object *op) {
  */
 static int did_make_save_item(object *op, int type, object *originator) {
     int i, roll, saves = 0, attacks = 0, number;
-    materialtype_t *mt;
-
-    if (op->materialname == NULL) {
-        for (mt = materialt; mt != NULL && mt->next != NULL; mt = mt->next) {
-            if (op->material&mt->material)
-                break;
-        }
-    } else
-        mt = name_to_material(op->materialname);
+    materialtype_t* mt;
+    object_get_materialtype(op, &mt);
     if (mt == NULL)
         return TRUE;
     roll = rndm(1, 20);
@@ -139,6 +142,31 @@ static int did_make_save_item(object *op, int type, object *originator) {
     if (saves == 0 || rndm(1, attacks) > saves)
         return FALSE;
     return TRUE;
+}
+
+static void put_in_icecube(object* op, object* originator) {
+    archetype* at = find_archetype("icecube");
+    if (at == NULL)
+        return;
+    op = stop_item(op);
+    if (op == NULL)
+        return;
+
+    // Put in existing icecube if one exists, otherwise make one
+    object* tmp = map_find_by_archetype(op->map, op->x, op->y, at);
+    if (tmp == NULL) {
+        tmp = arch_to_object(at);
+        /* This was in the old (pre new movement code) -
+         * icecubes have slow_move set to 1 - don't want
+         * that for ones we create.
+         */
+        tmp->move_slow_penalty = 0;
+        tmp->move_slow = 0;
+        object_insert_in_map_at(tmp, op->map, originator, 0, op->x, op->y);
+    }
+    if (!QUERY_FLAG(op, FLAG_REMOVED))
+        object_remove(op);
+    (void)object_insert_in_ob(op, tmp);
 }
 
 /**
@@ -272,33 +300,9 @@ void save_throw_object(object *op, uint32_t type, object *originator) {
         return;
     }
     /* The value of 50 is arbitrary. */
-    if (type&AT_COLD
-    && (op->resist[ATNR_COLD] < 50)
-    && !QUERY_FLAG(op, FLAG_NO_PICK)
-    && (RANDOM()&2)) {
-        object *tmp;
-        archetype *at = find_archetype("icecube");
-
-        if (at == NULL)
-            return;
-        op = stop_item(op);
-        if (op == NULL)
-            return;
-        tmp = map_find_by_archetype(op->map, op->x, op->y, at);
-        if (tmp == NULL) {
-            tmp = arch_to_object(at);
-            /* This was in the old (pre new movement code) -
-             * icecubes have slow_move set to 1 - don't want
-             * that for ones we create.
-             */
-            tmp->move_slow_penalty = 0;
-            tmp->move_slow = 0;
-            object_insert_in_map_at(tmp, op->map, originator, 0, op->x, op->y);
-        }
-        if (!QUERY_FLAG(op, FLAG_REMOVED))
-            object_remove(op);
-        (void)object_insert_in_ob(op, tmp);
-        return;
+    if (type & AT_COLD && (op->resist[ATNR_COLD] < 50) &&
+        !QUERY_FLAG(op, FLAG_NO_PICK) && (RANDOM() & 2)) {
+        put_in_icecube(op, originator);
     }
 }
 
