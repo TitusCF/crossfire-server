@@ -822,7 +822,7 @@ int process_object(object *op) {
         generate_monster(op);
 
     /* If object can be used up, decrement 'food' and eventually remove it. */
-    if (QUERY_FLAG(op, FLAG_IS_USED_UP) && --op->stats.food <= 0) {
+    if (QUERY_FLAG(op, FLAG_IS_USED_UP) && op->stats.food-- <= 0) {
         if (QUERY_FLAG(op, FLAG_APPLIED)) {
             remove_force(op);
         } else {
