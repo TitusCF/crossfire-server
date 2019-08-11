@@ -2599,6 +2599,24 @@ face cloak_black.111
 stand_still 1
 item_power 5
 end
+# These two are used for alchemy, and thus do not randomly spawn
+Allowed all
+chance 0
+difficulty 2
+Object white leather
+type 87
+face cloak_white.111
+value 3
+end
+#
+Allowed all
+chance 0
+difficulty 2
+Object black leather
+type 87
+face cloak_black.111
+value 3
+end
 #
 #Artifact boots!
 #

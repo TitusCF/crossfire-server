@@ -1,3 +1,7 @@
+2019-08-11  Daniel Hawkins
+    * lib/artifacts: Add artifacts for white/black leather cloaks.
+    * lib/formulae: Add formulae to craft white/black leather cloaks.
+
 2019-04-22 Rick Tanner
    * server/spell_util.c: Patch #357 Balancing changes to the summoning branch 
      Failed summons via Summoning skill no longer cost spell points.
