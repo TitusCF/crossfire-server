@@ -121,8 +121,6 @@ static int did_make_save_item(object *op, int type, object *originator) {
         return TRUE;
     if (roll == 20)
         return TRUE;
-    if (roll == 1)
-        return FALSE;
 
     for (number = 0; number < NROFATTACKS; number++) {
         i = 1<<number;
