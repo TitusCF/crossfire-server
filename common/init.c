@@ -365,9 +365,6 @@ void free_globals(void) {
  * Called by init_library();
  */
 void init_objects(void) {
-#ifndef MEMORY_DEBUG
-    int i;
-#endif
     /* Initialize all objects: */
     objects = NULL;
     active_objects = NULL;
@@ -380,7 +377,7 @@ void init_objects(void) {
     objarray[0].next = &objarray[1],
     SET_FLAG(&objarray[0], FLAG_REMOVED);
     SET_FLAG(&objarray[0], FLAG_FREED);
-    for (i = 1; i < STARTMAX-1; i++) {
+    for (int i = 1; i < STARTMAX-1; i++) {
         objarray[i].next = &objarray[i+1];
         objarray[i].prev = &objarray[i-1];
         SET_FLAG(&objarray[i], FLAG_REMOVED);

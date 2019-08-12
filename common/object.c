@@ -1036,31 +1036,20 @@ static void expand_objects(void) {
  */
 object *object_new(void) {
     object *op;
-
-    if (free_objects == NULL) {
-        expand_objects();
-    }
-    op = free_objects;
 #ifdef MEMORY_DEBUG
-    /* The idea is hopefully by doing a realloc, the memory
-     * debugging program will now use the current stack trace to
-     * report leaks.
-     */
     /* FIXME: However this doesn't work since object_free2() sometimes add
      * objects back to the free_objects linked list, and some functions mess
      * with the object after return of object_free2(). This is bad and should be
      * fixed. But it would need fairly extensive changes and a lot of debugging.
-     * So until that is fixed, skip realloc() here unless MEMORY_DEBUG is set to
-     * a value greater than 1. We do this in order at least make MEMORY_DEBUG
-     * slightly useful.
      */
-#if MEMORY_DEBUG > 1
-    op = realloc(op, sizeof(object));
-#endif
-    SET_FLAG(op, FLAG_REMOVED);
-    SET_FLAG(op, FLAG_FREED);
-#endif
-
+    op = calloc(1, sizeof(object));
+    if (op == NULL)
+        fatal(OUT_OF_MEMORY);
+#else
+    if (free_objects == NULL) {
+        expand_objects();
+    }
+    op = free_objects;
     if (!QUERY_FLAG(op, FLAG_FREED)) {
         LOG(llevError, "Fatal: Getting busy object.\n");
 #ifdef MANY_CORES
@@ -1070,6 +1059,8 @@ object *object_new(void) {
     free_objects = op->next;
     if (free_objects != NULL)
         free_objects->prev = NULL;
+    nroffreeobjects--;
+#endif
     op->count = ++ob_count;
     op->name = NULL;
     op->name_pl = NULL;
@@ -1091,7 +1082,6 @@ object *object_new(void) {
     objects = op;
     object_clear(op);
     SET_FLAG(op, FLAG_REMOVED);
-    nroffreeobjects--;
     return op;
 }
 
@@ -1529,13 +1519,7 @@ void object_free2(object *ob, int flags) {
         }
     }
 
-#if defined(MEMORY_DEBUG) && (MEMORY_DEBUG > 2)
-    /* memset() to clear it then set flags and finally free it. This will
-     * help detect bad use after return.
-     */
-    memset(ob, 0, sizeof(object));
-    SET_FLAG(ob, FLAG_REMOVED);
-    SET_FLAG(ob, FLAG_FREED);
+#ifdef MEMORY_DEBUG
     free(ob);
 #else
     /* Now link it with the free_objects list: */

@@ -437,8 +437,8 @@
  * on how many to define.  If it is too low, maps just get swapped out
  * immediately, causing a performance hit.  If it is too high, the program
  * consumes more memory.  If you have gobs of free memory, a high number
- * might not be a bad idea.  Each object is around 350 bytes right now.
- * 25000 is about 8.5 MB
+ * might not be a bad idea.  Each object is around 656 bytes right now.
+ * 100000 is about 63 MiB
  */
 #define MAX_OBJECTS     100000
 
@@ -467,22 +467,17 @@
 /*#define MAX_OBJECTS_LWM       MAX_OBJECTS/2*/
 
 /**
- * Turning on MEMORY_DEBUG slows down execution, but makes it easier
- * to find memory corruption and leaks.  Currently, the main thing
- * that happens with this activated is that one malloc is done for
- * each object - thus whatever debugging mechanism the malloc library
- * (or other debugging tool provides, like purify), it can track this
- * individual malloc.  Default behaviour when turned off is that
- * enough memory is malloced for a large group of objects so malloc does
- * not need to be called as often.
- * This should only be turned on if some form of memory debugging tool
- * is being used - otherwise, turning this on will cause some performance
- * hit with no useful advantage.
+ * Defining MEMORY_DEBUG disables Crossfire's object allocator, which allocates
+ * OBJ_EXPAND objects at a time and manages its own free list. It is faster at
+ * allocating lots of objects, but defeats memory debuggers and mitigation
+ * techniques by managing its own allocations and enabling use-after-free bugs.
  *
- * Define to 2 for stricter checks (known to currently break).
- * Define to 3 for even stricter checks (known to currently break even more).
+ * Unfortunately, much of the code does not work without use-after-free because
+ * even checking if an object was freed requires looking in the object. Until
+ * these issues are fixed, Crossfire needs MEMORY_DEBUG unset in order to run
+ * without crashing frequently.
  */
-/*#define MEMORY_DEBUG 1*/
+/*#define MEMORY_DEBUG*/
 
 /**
  * If you want to have a Message Of The Day file, define MOTD to be
