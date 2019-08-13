@@ -1110,36 +1110,29 @@ void process_events(void) {
 }
 
 /**
- * Remove temporary map files.
- *
- * @todo check logic, why is file only removed if map is in memory?
+ * Save unique maps and clean up temporary map files unless recycling
+ * temporary maps. The function name is somewhat misleading.
  */
 void clean_tmp_files(void) {
     mapstruct *m, *next;
-
-    LOG(llevInfo, "Cleaning up...\n");
-
-    /* We save the maps - it may not be intuitive why, but if there are unique
-     * items, we need to save the map so they get saved off.  Perhaps we should
-     * just make a special function that only saves the unique items.
-     */
     for (m = first_map; m != NULL; m = next) {
         next = m->next;
         if (m->in_memory == MAP_IN_MEMORY) {
-            /* If we want to reuse the temp maps, swap it out (note that will also
-             * update the log file.  Otherwise, save the map (mostly for unique item
-             * stuff).  Note that the clean_tmp_map is called after the end of
-             * the for loop but is in the #else bracket.  IF we are recycling the maps,
-             * we certainly don't want the temp maps removed.
-             */
-
-            /* XXX The above comment is dead wrong */
-            if (settings.recycle_tmp_maps == TRUE)
+            // Save all maps currently in memory, because they might contain
+            // unique tiles that have not been written to disk.
+            if (settings.recycle_tmp_maps) {
+                // swap_map() also updates the write log.
                 swap_map(m);
-            else {
-                save_map(m, SAVE_MODE_NORMAL); /* note we save here into a overlay map */
+            } else {
+                save_map(m, SAVE_MODE_NORMAL);
+                // FIXME: Unfortunately, save_map() also unnecessarily saves
+                // non-unique tiles to a new temporary file, so we have to 
+                // get rid of it here.
                 clean_tmp_map(m);
             }
+        } else {
+            // Remove the swap file.
+            clean_tmp_map(m);
         }
     }
     write_todclock(); /* lets just write the clock here */
@@ -1147,7 +1140,7 @@ void clean_tmp_files(void) {
 
 /** Clean up everything and exit. */
 void cleanup(void) {
-    LOG(llevDebug, "Cleanup called.  freeing data.\n");
+    LOG(llevInfo, "Cleaning up...\n");
     clean_tmp_files();
     write_book_archive();
     accounts_save();
