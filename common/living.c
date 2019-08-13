@@ -1163,6 +1163,7 @@ void fix_object(object *op) {
     CLEAR_FLAG(op, FLAG_LIFESAVE);
     CLEAR_FLAG(op, FLAG_STEALTH);
     CLEAR_FLAG(op, FLAG_BLIND);
+    CLEAR_FLAG(op, FLAG_CONFUSED);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_REFL_SPELL))
         CLEAR_FLAG(op, FLAG_REFL_SPELL);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_REFL_MISSILE))
