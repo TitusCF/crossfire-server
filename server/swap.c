@@ -187,26 +187,21 @@ int swap_map(mapstruct *map) {
 }
 
 /**
- * Finds maps in memory to reset.
- *
- * @todo
- * The check for MAX_OBJECTS_LWM is wrongly placed, and should be moved elsewhere.
+ * Finds maps in memory to swap.
  */
 void check_active_maps(void) {
     mapstruct *map, *next;
-
     for (map = first_map; map != NULL; map = next) {
         next = map->next;
-        if (map->in_memory != MAP_IN_MEMORY)
-            continue;
-        if (!map->timeout)
-            continue;
-        if (--(map->timeout) > 0)
-            continue;
-        /* If LWM is set, we only swap maps out when we run out of objects */
+        if (map->in_memory == MAP_IN_MEMORY && map->timeout != 0) {
+            map->timeout -= 1;
+            /* If LWM is set, we only swap maps out when we run out of objects */
 #ifndef MAX_OBJECTS_LWM
-        swap_map(map);
+            if (map->timeout == 0) {
+                swap_map(map);
+            }
 #endif
+        }
     }
 }
 
