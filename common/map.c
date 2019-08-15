@@ -34,8 +34,6 @@
 #include "output_file.h"
 #include "path.h"
 
-extern int nrofallocobjects, nroffreeobjects;
-
 static void free_all_objects(mapstruct *m);
 
 /**
