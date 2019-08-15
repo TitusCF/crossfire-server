@@ -475,8 +475,6 @@ typedef struct archt {
 
 extern object *objects;
 extern object *active_objects;
-extern object *free_objects;
-extern object objarray[STARTMAX];
 
 extern int nrofallocobjects;
 extern int nroffreeobjects;

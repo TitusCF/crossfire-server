@@ -52,13 +52,13 @@ int nrofallocobjects = 0; /**< Number of allocated objects. */
 #undef OBJ_EXPAND
 #define OBJ_EXPAND 1
 #else
-object objarray[STARTMAX]; /**< All objects, allocated this way at first */
+static object objarray[STARTMAX]; /**< All objects, allocated this way at first */
 int nroffreeobjects = STARTMAX;  /**< How many OBs allocated and free (free) */
 int nrofallocobjects = STARTMAX; /**< How many OBs allocated (free + used) */
 #endif
 
 object *objects;           /**< Pointer to the list of used objects */
-object *free_objects;      /**< Pointer to the list of unused objects */
+static object *free_objects;      /**< Pointer to the list of unused objects */
 object *active_objects;    /**< List of active objects that need to be processed */
 
 /** X offset when searching around a spot. */
@@ -84,6 +84,37 @@ int freedir[SIZEOFFREE] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 6, 7, 8, 8, 8,
     1, 2, 2, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8
 };
+
+/**
+ * Sets up and initialises the linked list of free and used objects.
+ * Allocates a certain chunk of objects and puts them on the free list.
+ * Called by init_library();
+ */
+void init_objects(void) {
+    /* Initialize all objects: */
+    objects = NULL;
+    active_objects = NULL;
+
+#ifdef MEMORY_DEBUG
+    free_objects = NULL;
+#else
+    free_objects = objarray;
+    objarray[0].prev = NULL,
+    objarray[0].next = &objarray[1],
+    SET_FLAG(&objarray[0], FLAG_REMOVED);
+    SET_FLAG(&objarray[0], FLAG_FREED);
+    for (int i = 1; i < STARTMAX-1; i++) {
+        objarray[i].next = &objarray[i+1];
+        objarray[i].prev = &objarray[i-1];
+        SET_FLAG(&objarray[i], FLAG_REMOVED);
+        SET_FLAG(&objarray[i], FLAG_FREED);
+    }
+    objarray[STARTMAX-1].next = NULL;
+    objarray[STARTMAX-1].prev = &objarray[STARTMAX-2];
+    SET_FLAG(&objarray[STARTMAX-1], FLAG_REMOVED);
+    SET_FLAG(&objarray[STARTMAX-1], FLAG_FREED);
+#endif
+}
 
 /**
  * Compares value lists.
