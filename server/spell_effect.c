@@ -1807,10 +1807,10 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
                       "You feel redeemed with you god!");
     }
-    if (spell->stats.food && target->stats.food < 999) {
+    if (spell->stats.food && target->stats.food < MAX_FOOD) {
         target->stats.food += spell->stats.food;
-        if (target->stats.food > 999)
-            target->stats.food = 999;
+        if (target->stats.food > MAX_FOOD)
+            target->stats.food = MAX_FOOD;
         success = 1;
         /* We could do something a bit better like the messages for healing above */
         draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,

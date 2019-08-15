@@ -40,6 +40,63 @@ void init_type_food(void) {
     register_apply(FLESH, food_type_apply);
 }
 
+static void cursed_food_effects(object *who, object *food) {
+    /* check for hp, sp change */
+    if (food->stats.hp != 0 && !is_wraith_pl(who)) {
+        if (QUERY_FLAG(food, FLAG_CURSED)) {
+            safe_strncpy(who->contr->killer, food->name,
+                    sizeof(who->contr->killer));
+            hit_player(who, food->stats.hp, food, AT_POISON, 1);
+            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+                "Eck!...that was poisonous!");
+        } else {
+            if (food->stats.hp > 0)
+                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                    "You begin to feel better.");
+            else
+                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+                    "Eck!...that was poisonous!");
+            who->stats.hp += food->stats.hp;
+        }
+    }
+    if (food->stats.sp != 0) {
+        if (QUERY_FLAG(food, FLAG_CURSED)) {
+            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+                "You are drained of mana!");
+            who->stats.sp -= food->stats.sp;
+            if (who->stats.sp < 0)
+                who->stats.sp = 0;
+        } else {
+            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You feel a rush of magical energy!");
+            who->stats.sp += food->stats.sp;
+            /* place limit on max sp from food? */
+        }
+    }
+}
+
+static void eat_common(object* applier, object* food) {
+    char buf[MAX_BUF];
+    int capacity_remaining = MAX_FOOD - applier->stats.food;
+    applier->stats.food += food->stats.food;
+    if (capacity_remaining < food->stats.food)
+        applier->stats.hp += capacity_remaining / 50;
+    else
+        applier->stats.hp += food->stats.food / 50;
+    if (applier->stats.hp > applier->stats.maxhp)
+        applier->stats.hp = applier->stats.maxhp;
+    if (applier->stats.food > MAX_FOOD)
+        applier->stats.food = MAX_FOOD;
+    const int wasted_food = food->stats.food - capacity_remaining;
+    if (wasted_food > 0) {
+        snprintf(buf, sizeof(buf), "%s the %s makes you %s full.",
+                 food->type == DRINK ? "Drinking" : "Eating", food->name,
+                 wasted_food > 200 ? "very" : "rather");
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY,
+                      MSG_TYPE_APPLY_FAILURE, buf);
+    }
+}
+
 /**
  * Handles applying food.
  * If player is applying, takes care of messages and dragon special food.
@@ -50,27 +107,29 @@ void init_type_food(void) {
  * @return METHOD_OK unless failure for some reason.
  */
 static method_ret food_type_apply(ob_methods *context, object *food, object *applier, int aflags) {
-    int capacity_remaining;
-
     if (QUERY_FLAG(food, FLAG_NO_PICK)) {
-        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE, "You can't %s that!", food->type == DRINK ? "drink" : "eat");
+        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY,
+                             MSG_TYPE_APPLY_FAILURE, "You can't %s that!",
+                             food->type == DRINK ? "drink" : "eat");
         return METHOD_OK;
     }
 
-    if (applier->type != PLAYER)
+    if (applier->type != PLAYER) {
         applier->stats.hp = applier->stats.maxhp;
-    else {
+    } else {
+        char buf[MAX_BUF];
+        if (food->type == FLESH && is_dragon_pl(applier)) {
             /* check if this is a dragon (player), eating some flesh */
-        if (food->type == FLESH && is_dragon_pl(applier))
-            dragon_eat_flesh(applier, food);
-
+            if (!QUERY_FLAG(food, FLAG_CURSED)) {
+                dragon_eat_flesh(applier, food);
+                eat_common(applier, food);
+            } else {
+                cursed_food_effects(applier, food);
+            }
+        } else if (is_old_wraith_pl(applier)) {
             /* Check for old wraith player, give them the feeding skill */
-        else if (is_old_wraith_pl(applier)) {
             object *skill = give_skill_by_name(applier, "wraith feed");
-
             if (skill) {
-                char buf[MAX_BUF];
-
                 SET_FLAG(skill, FLAG_CAN_USE_SKILL);
                 link_player_skills(applier);
 
@@ -81,54 +140,32 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
                     "and seem to have obtained a taste for living flesh.");
             } else
                 LOG(llevError, "wraith feed skill not found\n");
-            /* Wraith player gets no food from eating. */
         } else if (is_wraith_pl(applier)) {
-            char buf[MAX_BUF];
-
+            /* Wraith player gets no food from eating. */
             snprintf(buf, sizeof(buf), "You can no longer taste %s, and do not feel less hungry after %s it.", food->name, food->type == DRINK ? "drinking" : "eating");
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 buf);
-            /* usual case - not a wraith or a dragon: */
         } else {
-            if (applier->stats.food + food->stats.food > 999) {
-                if (food->type == FOOD || food->type == FLESH)
-                    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                        "You feel full, but what a waste of food!");
-                else
-                    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                        "Most of the drink goes down your face not your throat!");
-            }
-
+            /* usual case - not a wraith or a dragon eating non-flesh */
             if (!QUERY_FLAG(food, FLAG_CURSED)) {
-                char buf[MAX_BUF];
-
                 if (!is_dragon_pl(applier)) {
-                        /* eating message for normal players*/
+                    /* eating message for normal players*/
                     if (food->type == DRINK)
                         snprintf(buf, sizeof(buf), "Ahhh...that %s tasted good.", food->name);
                     else
                         snprintf(buf, sizeof(buf), "The %s tasted %s", food->name, food->type == FLESH ? "terrible!" : "good.");
                 } else {
-                        /* eating message for dragon players*/
+                    /* eating message for dragon players*/
                     snprintf(buf, sizeof(buf), "The %s tasted terrible!", food->name);
                 }
-
-                draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                              buf);
-                capacity_remaining = 999-applier->stats.food;
-                applier->stats.food += food->stats.food;
-                if (capacity_remaining < food->stats.food)
-                    applier->stats.hp += capacity_remaining/50;
-                else
-                    applier->stats.hp += food->stats.food/50;
-                if (applier->stats.hp > applier->stats.maxhp)
-                    applier->stats.hp = applier->stats.maxhp;
-                if (applier->stats.food > 999)
-                    applier->stats.food = 999;
+                draw_ext_info(0, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, buf);
+                eat_common(applier, food);
+            } else {
+                cursed_food_effects(applier, food);
             }
 
-                /* special food hack -b.t. */
-            if (food->title || QUERY_FLAG(food, FLAG_CURSED))
+            /* special food hack -b.t. */
+            if (food->title)
                 eat_special_food(applier, food);
         }
     }
@@ -184,38 +221,6 @@ static void eat_special_food(object *who, object *food) {
         object_free_drop_inventory(force);
     }
 
-    /* check for hp, sp change */
-    if (food->stats.hp != 0 && !is_wraith_pl(who)) {
-        if (QUERY_FLAG(food, FLAG_CURSED)) {
-            safe_strncpy(who->contr->killer, food->name,
-                    sizeof(who->contr->killer));
-            hit_player(who, food->stats.hp, food, AT_POISON, 1);
-            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                "Eck!...that was poisonous!");
-        } else {
-            if (food->stats.hp > 0)
-                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    "You begin to feel better.");
-            else
-                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                    "Eck!...that was poisonous!");
-            who->stats.hp += food->stats.hp;
-        }
-    }
-    if (food->stats.sp != 0) {
-        if (QUERY_FLAG(food, FLAG_CURSED)) {
-            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                "You are drained of mana!");
-            who->stats.sp -= food->stats.sp;
-            if (who->stats.sp < 0)
-                who->stats.sp = 0;
-        } else {
-            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "You feel a rush of magical energy!");
-            who->stats.sp += food->stats.sp;
-            /* place limit on max sp from food? */
-        }
-    }
     fix_object(who);
 }
 
@@ -260,16 +265,6 @@ static int dragon_eat_flesh(object *op, object *meal) {
      */
     if (skin == NULL || abil == NULL)
         return 0;
-
-        /* now start by filling stomache and health, according to food-value */
-    if ((999-op->stats.food) < meal->stats.food)
-        op->stats.hp += (999-op->stats.food)/50;
-    else
-        op->stats.hp += meal->stats.food/50;
-    if (op->stats.hp > op->stats.maxhp)
-        op->stats.hp = op->stats.maxhp;
-
-    op->stats.food = MIN(999, op->stats.food+meal->stats.food);
 
     /*LOG(llevDebug, "-> player: %d, flesh: %d\n", op->level, meal->level);*/
 

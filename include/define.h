@@ -459,6 +459,8 @@ typedef unsigned char MoveType;
  */
 #define MAX_WEAPON_ITEM_POWER   100
 
+const static int32_t MAX_FOOD = 999;
+
 #define DIRX(xyz)       freearr_x[(xyz)->direction]
 #define DIRY(xyz)       freearr_y[(xyz)->direction]
 

@@ -104,8 +104,8 @@ method_ret food_type_apply(ob_methods *context, object *ob, object *pl) {
         char name[MAX_BUF];
         query_name(ob, name, MAX_BUF);
         pl->stats.food += ob->stats.food;
-        if (pl->stats.food > 999)
-            pl->stats.food = 999;
+        if (pl->stats.food > MAX_FOOD)
+            pl->stats.food = MAX_FOOD;
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
              "You eat the %s!",
              "You eat the %s!",

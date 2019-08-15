@@ -3200,7 +3200,7 @@ static int save_life(object *op) {
         if (op->stats.hp < 0)
             op->stats.hp = op->stats.maxhp;
         if (op->stats.food < 0)
-            op->stats.food = 999;
+            op->stats.food = MAX_FOOD;
         fix_object(op);
         return 1;
     }
@@ -3510,7 +3510,7 @@ void kill_player(object *op, const object *killer) {
         cure_disease(op, NULL, NULL);  /* remove any disease */
         op->stats.hp = op->stats.maxhp;
         if (op->stats.food <= 0)
-          op->stats.food = 999;
+          op->stats.food = MAX_FOOD;
 
         /* create a bodypart-trophy to make the winner happy */
         tmp = arch_to_object(trophy);
@@ -3832,7 +3832,7 @@ static void kill_player_permadeath(object *op) {
              * -type spells will work on them nicely
              */
             op->stats.hp = op->stats.maxhp;
-            op->stats.food = 999;
+            op->stats.food = MAX_FOOD;
 
             /* set the location of where the person will reappear when  */
             /* maybe resurrection code should fix map also */

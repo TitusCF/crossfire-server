@@ -1482,8 +1482,8 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32_t
 
             /* Wraith also get food through life stealing */
             if (is_wraith_pl(hitter)) {
-                if (hitter->stats.food+dam >= 999)
-                    hitter->stats.food = 999;
+                if (hitter->stats.food+dam >= MAX_FOOD)
+                    hitter->stats.food = MAX_FOOD;
                 else
                     hitter->stats.food += dam;
                 fix_object(hitter);
