@@ -616,9 +616,13 @@ A       .+
                         /* Just print a warning so we can be reasonably safe
                          * about not overflowing the buffer.
                          */
-                        if (total_msglen > (HUGE_BUF/2))
-                            LOG(llevDebug, "\n\tWarning message length > %d (max allowed=%d): %lu\n>%.80s<\n",
-                                HUGE_BUF/2, HUGE_BUF, (unsigned long)total_msglen, op->msg);
+                        if (total_msglen > (HUGE_BUF / 2))
+                            LOG(llevDebug,
+                                "warning: msg in '%s' on %s is very long (%lu "
+                                "characters)\n",
+                                op->name,
+                                op->map != NULL ? op->map->path : "no map",
+                                (unsigned long)total_msglen);
                     }
 <MESSAGE>.*         {   safe_strcat(msgbuf, yytext, &msglen, HUGE_BUF);
                         safe_strcat(msgbuf, "\n", &msglen, HUGE_BUF);
