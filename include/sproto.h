@@ -43,6 +43,7 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats);
 void legacy_apply_container(object *op, object *sack);
 /* attack.c */
 void save_throw_object(object *op, uint32_t type, object *originator);
+int slow_living_by(object *op, const int speed_penalty);
 int hit_map(object *op, int dir, uint32_t type, int full_hit);
 int attack_ob(object *op, object *hitter);
 object *hit_with_arrow(object *op, object *victim);

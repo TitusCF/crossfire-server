@@ -2188,6 +2188,35 @@ static void poison_living(object *op, object *hitter, int dam) {
         tmp->stats.food++;
 }
 
+int slow_living_by(object *op, const int speed_penalty) {
+    archetype *at = find_archetype("slowness");
+    if (at == NULL) {
+        LOG(llevError, "Can't find slowness archetype.\n");
+        return 0;
+    }
+    object* tmp = arch_present_in_ob(at, op);
+    int ret;
+    if (tmp == NULL) {
+        tmp = arch_to_object(at);
+        tmp->stats.exp = -speed_penalty;
+        tmp = object_insert_in_ob(tmp, op);
+        ret = 1;
+    }
+    // If we are hitting for more intense slowness, override the old one.
+    else if (tmp->stats.exp > -speed_penalty) {
+        tmp->stats.exp = -speed_penalty;
+        tmp->stats.food -= 3; // But also reduce the duration to compensate.
+        ret = 2;
+    } else {
+        tmp->stats.food++;
+        ret = 3;
+    }
+    SET_FLAG(tmp, FLAG_APPLIED);
+    tmp->speed_left = 0;
+    fix_object(op);
+    return ret;
+}
+
 /**
  * Slow a living thing.
  *
@@ -2199,15 +2228,8 @@ static void poison_living(object *op, object *hitter, int dam) {
  * damage to deal.
  */
 static void slow_living(object *op, object *hitter, int dam) {
-    archetype *at = find_archetype("slowness");
-    object *tmp;
     // Used to calculate the speed penalty of the slow attempt
     int speed_penalty;
-
-    if (at == NULL) {
-        LOG(llevError, "Can't find slowness archetype.\n");
-        return; // Bail so we don't segfault
-    }
     
     /**
      * Give slow attacks some oomph -- always speed -1 was REALLY weak
@@ -2223,28 +2245,19 @@ static void slow_living(object *op, object *hitter, int dam) {
         speed_penalty = 1;
     else if (speed_penalty > 30) // Data barrier for stats.exp is 127, but that is huge slowness. Pick something less than that.
         speed_penalty = 30;
-    
-    tmp = arch_present_in_ob(at, op);
-    if (tmp == NULL) {
-        tmp = arch_to_object(at);
-        tmp->stats.exp = -speed_penalty;
-        tmp = object_insert_in_ob(tmp, op);
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
+    switch (slow_living_by(op, speed_penalty)) {
+    case 1:
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE,
+                      MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
                       "The world suddenly moves very fast!");
-    }
-    // If we are hitting for more intense slowness, override the old one.
-    else if (tmp->stats.exp > -speed_penalty)
-    {
-        tmp->stats.exp = -speed_penalty;
-        tmp->stats.food -= 3; // But also reduce the duration to compensate.
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
+        break;
+    case 2:
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE,
+                      MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
                       "The world moves even faster!");
+        break;
+
     }
-    else
-        tmp->stats.food++;
-    SET_FLAG(tmp, FLAG_APPLIED);
-    tmp->speed_left = 0;
-    fix_object(op);
 }
 
 /**
