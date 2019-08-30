@@ -136,7 +136,7 @@ const char *const attacks[NROFATTACKS] = {
 };
 
 /** Message when a player is drained of a stat. */
-static const char *const drain_msg[NUM_STATS] = {
+const char *const drain_msg[NUM_STATS] = {
     "You feel drained of strength.",
     "You feel drained of agility.",
     "You feel drained of health.",

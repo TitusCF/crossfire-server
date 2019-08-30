@@ -3667,7 +3667,7 @@ static void kill_player_not_permadeath(object *op) {
                     change_attr_value(&(dep->stats), i, -1);
                     SET_FLAG(dep, FLAG_APPLIED);
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
-                        lose_msg[i]);
+                        drain_msg[i]);
                     fix_object(op);
                         lost_a_stat = 1;
                 }

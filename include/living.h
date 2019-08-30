@@ -26,6 +26,7 @@ extern const char *const attacks[NROFATTACKS];
 extern const char *const restore_msg[NUM_STATS];
 extern const char *const statname[NUM_STATS];
 extern const char *const short_stat_name[NUM_STATS];
+extern const char *const drain_msg[NUM_STATS];
 extern const char *const lose_msg[NUM_STATS];
 
 /**
