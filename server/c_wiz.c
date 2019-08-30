@@ -727,9 +727,6 @@ void command_shutdown(object *op, const char *params) {
  * map to teleport to. Can be absolute or relative path.
  */
 void command_goto(object *op, const char *params) {
-    const char *name;
-    object *dummy;
-
     if (!op)
         return ;
 
@@ -739,16 +736,7 @@ void command_goto(object *op, const char *params) {
         return;
     }
 
-    name = params;
-    dummy = object_new();
-    dummy->map = op->map;
-    EXIT_PATH(dummy) = add_string(name);
-    EXIT_X(dummy) = -1;
-    EXIT_Y(dummy) = -1;
-    dummy->name = add_string(name);
-
-    enter_exit(op, dummy);
-    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    do_goto(op, params, -1, -1);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "Difficulty: %d.",
                          op->map->difficulty);

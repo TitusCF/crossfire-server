@@ -147,3 +147,16 @@ void command_stay(object *op, const char *params) {
         return;
     fire(op, 0);
 }
+
+void do_goto(object *op, const char *name, int x, int y) {
+    object *dummy;
+    dummy = object_new();
+    dummy->map = op->map;
+    EXIT_PATH(dummy) = add_string(name);
+    EXIT_X(dummy) = x;
+    EXIT_Y(dummy) = y;
+    dummy->name = add_string(name);
+
+    enter_exit(op, dummy);
+    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+}
