@@ -137,13 +137,13 @@ const char *const attacks[NROFATTACKS] = {
 
 /** Message when a player is drained of a stat. */
 static const char *const drain_msg[NUM_STATS] = {
-    "Oh no! You are weakened!",
-    "You're feeling clumsy!",
-    "Your health deteriorates!",
-    "You suddenly begin to lose your memory!",
-    "Your face gets distorted!",
-    "Watch out, your mind is going!",
-    "Your spirit feels drained!"
+    "You feel drained of strength.",
+    "You feel drained of agility.",
+    "You feel drained of health.",
+    "You feel drained of wisdom.",
+    "You feel drained of charisma.",
+    "You feel drained of intelligence.",
+    "You feel drained of power."
 };
 
 /** Message when a player has a stat restored. */
@@ -153,8 +153,8 @@ const char *const restore_msg[NUM_STATS] = {
     "You feel your health return.",
     "You feel your wisdom return.",
     "You feel your charisma return.",
-    "You feel your memory return.",
-    "You feel your spirits return."
+    "You feel your intelligence return.",
+    "You feel your power return."
 };
 
 /** Message when a player increases permanently a stat. */
@@ -173,7 +173,7 @@ const char *const lose_msg[NUM_STATS] = {
     "You feel weaker!",
     "You feel clumsy!",
     "You feel less healthy!",
-    "You lose some of your memory!",
+    "You feel foolish!",
     "You look ugly!",
     "You feel stupid!",
     "You feel less potent!"
