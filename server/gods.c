@@ -1127,27 +1127,10 @@ static void god_intervention(object *op, const object *god, object *skill, objec
         /* Heal depletion */
         if (item->type == BOOK && item->invisible
             && strcmp(item->name, "heal depletion") == 0) {
-            object *depl;
-            archetype *at;
-            int i;
-
-            if ((at = find_archetype(ARCH_DEPLETION)) == NULL) {
-                continue;
+            if (remove_depletion(op, -1)) {
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+                              "Shimmering light surrounds and restores you!");
             }
-            depl = arch_present_in_ob(at, op);
-            if (depl == NULL)
-                continue;
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
-                          "Shimmering light surrounds and restores you!");
-            for (i = 0; i < NUM_STATS; i++)
-                if (get_attr_value(&depl->stats, i))
-                    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE,
-                                  MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                                  restore_msg[i]);
-            object_remove(depl);
-            object_free_drop_inventory(depl);
-            fix_object(op);
-            return;
         }
 
         /* Voices */

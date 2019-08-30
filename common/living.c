@@ -768,7 +768,8 @@ int remove_depletion(object *op, int level) {
     for (i = 0; i < NUM_STATS; i++) {
         if (get_attr_value(&depl->stats, i)) {
             count++;
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_GAIN, restore_msg[i]);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE,
+                          MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END, restore_msg[i]);
         }
     }
 
