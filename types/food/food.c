@@ -89,11 +89,24 @@ static void eat_common(object* applier, object* food) {
         applier->stats.food = MAX_FOOD;
     const int wasted_food = food->stats.food - capacity_remaining;
     if (wasted_food > 0) {
-        snprintf(buf, sizeof(buf), "%s the %s makes you %s full.",
-                 food->type == DRINK ? "Drinking" : "Eating", food->name,
-                 wasted_food > 200 ? "very" : "rather");
-        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY,
-                      MSG_TYPE_APPLY_FAILURE, buf);
+        const int thresh = MAX_FOOD/4;
+        int speed_penalty;
+        if (wasted_food > thresh) {
+            speed_penalty = 10;
+        } else {
+            speed_penalty = 5;
+        }
+
+        if (slow_living_by(applier, speed_penalty)) {
+            snprintf(buf, sizeof(buf),
+                     "%s the %s makes you %s full. You feel yourself moving %s "
+                     "slower.",
+                     food->type == DRINK ? "Drinking" : "Eating", food->name,
+                     wasted_food > thresh ? "very" : "rather",
+                     wasted_food > thresh ? "much" : "somewhat");
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_ATTRIBUTE,
+                          MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START, buf);
+        }
     }
 }
 
