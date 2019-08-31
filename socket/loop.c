@@ -491,6 +491,32 @@ bool connection_alive(socket_struct socket) {
 }
 
 /**
+ * Send updated stats, map, look, and inventory to the player.
+ */
+static void send_updates(player *pl) {
+    /* Update the players stats once per tick.  More efficient than
+     * sending them whenever they change, and probably just as useful
+     */
+    esrv_update_stats(pl);
+    if (pl->last_weight != -1 && pl->last_weight != WEIGHT(pl->ob)) {
+        esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
+        if (pl->last_weight != WEIGHT(pl->ob))
+            LOG(llevError, "esrv_update_item(UPD_WEIGHT) did not set player weight: is %lu, should be %lu\n", (unsigned long)pl->last_weight, (unsigned long)WEIGHT(pl->ob));
+    }
+    /* draw_client_map does sanity checking that map is
+     * valid, so don't do it here.
+     */
+    draw_client_map(pl->ob);
+    if (pl->socket.update_look)
+        esrv_draw_look(pl->ob);
+    if (pl->socket.update_inventory) {
+        if (pl->ob->container != NULL)
+            esrv_send_inventory(pl->ob, pl->ob->container);
+        pl->socket.update_inventory = 0;
+    }
+}
+
+/**
  * This checks the sockets for input and exceptions, does the right thing.
  *
  * A bit of this code is grabbed out of socket.c
@@ -564,8 +590,9 @@ void do_server(void) {
         return;
     }
 
-    /* We need to do some of the processing below regardless */
-    /*    if (!pollret) return;*/
+    if (!pollret) {
+        return;
+    }
 
     /* Check for any exceptions/input on the sockets */
     if (pollret)
@@ -620,39 +647,33 @@ void do_server(void) {
                 leave(pl, 1);
                 final_free_player(pl);
             } else {
-                /* Increment time since last contact only if logged in. */
-                if (pl->state == ST_PLAYING) {
-                    pl->socket.last_tick++;
-
-                    if (!connection_alive(pl->socket)) {
-                        // TODO: Handle a lost client connection.
-                        LOG(llevDebug, "Lost client connection!\n");
-                    }
-                }
-
-                /* Update the players stats once per tick.  More efficient than
-                 * sending them whenever they change, and probably just as useful
-                 */
-                esrv_update_stats(pl);
-                if (pl->last_weight != -1 && pl->last_weight != WEIGHT(pl->ob)) {
-                    esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
-                    if (pl->last_weight != WEIGHT(pl->ob))
-                        LOG(llevError, "esrv_update_item(UPD_WEIGHT) did not set player weight: is %lu, should be %lu\n", (unsigned long)pl->last_weight, (unsigned long)WEIGHT(pl->ob));
-                }
-                /* draw_client_map does sanity checking that map is
-                 * valid, so don't do it here.
-                 */
-                draw_client_map(pl->ob);
-                if (pl->socket.update_look)
-                    esrv_draw_look(pl->ob);
-                if (pl->socket.update_inventory) {
-                    if (pl->ob->container != NULL)
-                        esrv_send_inventory(pl->ob, pl->ob->container);
-                    pl->socket.update_inventory = 0;
-                }
-                if (pl->socket.tick)
-                    send_tick(pl);
+                // TODO: When sleep is merged into select, uncomment this to
+                // update clients immediately.
+                //send_updates(pl);
             }
         }
+    }
+}
+
+/**
+ * Send updates to players. Called once per tick.
+ */
+void update_players() {
+    player *pl, *next;
+    for (pl = first_player; pl != NULL; pl = next) {
+        next = pl->next;
+        send_updates(pl);
+        /* Increment time since last contact only if logged in. */
+        if (pl->state == ST_PLAYING) {
+            pl->socket.last_tick++;
+
+            if (!connection_alive(pl->socket)) {
+                // TODO: Handle a lost client connection.
+                LOG(llevDebug, "Lost client connection!\n");
+            }
+        }
+
+        if (pl->socket.tick)
+            send_tick(pl);
     }
 }

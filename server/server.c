@@ -1445,6 +1445,7 @@ void server_main(int argc, char *argv[]) {
         execute_global_event(EVENT_CLOCK);
         check_active_maps(); /* Removes unused maps after a certain timeout */
         do_specials();       /* Routines called from time to time. */
+        update_players();
 
         sleep_delta();       /* Sleep proper amount of time before next tick */
     }

@@ -42,6 +42,7 @@ void request_info_cmd(char *buf, int len, socket_struct *ns);
 void handle_client(socket_struct *ns, player *pl);
 void watchdog(void);
 void do_server(void);
+void update_players(void);
 /* lowlevel.c */
 void SockList_Init(SockList *sl);
 void SockList_Term(SockList *sl);
