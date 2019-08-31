@@ -229,8 +229,9 @@ handle_cmd(socket_struct *ns, player *pl, char *cmd, char *data, int len) {
  *
  * @param ns Socket sending the command
  * @param pl Player associated with this socket, or NULL
+ * @return If the main loop should continue processing this client.
  */
-void handle_client(socket_struct *ns, player *pl) {
+bool handle_client(socket_struct *ns, player *pl) {
     /* Loop through this - maybe we have several complete packets here. */
     /* Command_count is used to limit the number of requests from
      * clients that have not logged in - we do not want an unauthenticated
@@ -245,7 +246,7 @@ void handle_client(socket_struct *ns, player *pl) {
     while (command_count < 5 || (pl && command_count < 25)) {
         if (pl && pl->state == ST_PLAYING && pl->ob != NULL && pl->ob->speed_left < 0) {
             // Skip processing players with no turns left.
-            return;
+            return false;
         }
 
         int status = SockList_ReadPacket(ns->fd, &ns->inbuf, sizeof(ns->inbuf.buf)-1);
@@ -253,7 +254,7 @@ void handle_client(socket_struct *ns, player *pl) {
             if (status < 0) {
                 ns->status = Ns_Dead;
             }
-            return;
+            return false;
         }
 
         /* Since we have a full packet, reset last tick time. */
@@ -274,7 +275,7 @@ void handle_client(socket_struct *ns, player *pl) {
 
         SockList_ResetRead(&ns->inbuf);
         if (got_player_cmd) {
-            return;
+            return true;
         }
 
         command_count += 1;
@@ -289,6 +290,7 @@ void handle_client(socket_struct *ns, player *pl) {
             command_count = 6;
         }
     }
+    return false;
 }
 
 /*****************************************************************************
@@ -576,30 +578,30 @@ void do_server(void) {
     if (active == 1 && first_player == NULL)
         block_until_new_connection();
 
-    /* Reset timeout each time, since some OS's will change the values on
-     * the return from select.
-     */
-    socket_info.timeout.tv_sec = 0;
-    socket_info.timeout.tv_usec = 0;
-
-    int pollret = select(socket_info.max_filedescriptor, &tmp_read, NULL,
-                         &tmp_exceptions, &socket_info.timeout);
-
-    if (pollret == -1) {
-        LOG(llevError, "select failed: %s\n", strerror(errno));
-        return;
+    long sleep_time = get_sleep_remaining();
+    if (sleep_time < 0) {
+        LOG(llevInfo, "skipping time\n");
+        jump_time();
     }
 
-    if (!pollret) {
-        return;
-    }
+    while (sleep_time > 0) {
+        socket_info.timeout.tv_sec = 0;
+        socket_info.timeout.tv_usec = sleep_time;
+        int pollret = select(socket_info.max_filedescriptor, &tmp_read, NULL,
+                             &tmp_exceptions, &socket_info.timeout);
+        if (pollret == -1) {
+            LOG(llevError, "select failed: %s\n", strerror(errno));
+            return;
+        } else if (!pollret) {
+            return;
+        }
 
-    /* Check for any exceptions/input on the sockets */
-    if (pollret)
+        /* Check for any exceptions/input on the sockets */
         for (int i = 0; i < socket_info.allocated_sockets; i++) {
             /* listen sockets can stay in status Ns_Dead */
-            if (init_sockets[i].status != Ns_Add)
+            if (init_sockets[i].status != Ns_Add) {
                 continue;
+            }
             if (FD_ISSET(init_sockets[i].fd, &tmp_exceptions)) {
                 free_newsocket(&init_sockets[i]);
                 init_sockets[i].status = Ns_Avail;
@@ -613,45 +615,48 @@ void do_server(void) {
             }
         }
 
-    /* This does roughly the same thing, but for the players now */
-    for (pl = first_player; pl != NULL; pl = next) {
-        next = pl->next;
-        if (pl->socket.status == Ns_Dead)
-            continue;
-
-        if (FD_ISSET(pl->socket.fd, &tmp_exceptions)) {
-            save_player(pl->ob, 0);
-            leave(pl, 1);
-            final_free_player(pl);
-        } else {
-            handle_client(&pl->socket, pl);
-
-            /* There seems to be rare cases where next points to a removed/freed player.
-             * My belief is that this player does something (shout, move, whatever)
-             * that causes data to be sent to the next player on the list, but
-             * that player is defunct, so the socket codes removes that player.
-             * End result is that next now points at the removed player, and
-             * that has garbage data so we crash.  So update the next pointer
-             * while pl is still valid.  MSW 2007-04-21
-             */
+        /* This does roughly the same thing, but for the players now */
+        for (pl = first_player; pl != NULL; pl = next) {
             next = pl->next;
+            if (pl->socket.status == Ns_Dead)
+                continue;
 
-
-            /* If the player has left the game, then the socket status
-             * will be set to this be the leave function.  We don't
-             * need to call leave again, as it has already been called
-             * once.
-             */
-            if (pl->socket.status == Ns_Dead) {
+            if (FD_ISSET(pl->socket.fd, &tmp_exceptions)) {
                 save_player(pl->ob, 0);
                 leave(pl, 1);
                 final_free_player(pl);
             } else {
-                // TODO: When sleep is merged into select, uncomment this to
-                // update clients immediately.
-                //send_updates(pl);
+                bool keep_processing = handle_client(&pl->socket, pl);
+                if (!keep_processing) {
+                    FD_CLR(pl->socket.fd, &tmp_read);
+                }
+
+                /* There seems to be rare cases where next points to a removed/freed player.
+                 * My belief is that this player does something (shout, move, whatever)
+                 * that causes data to be sent to the next player on the list, but
+                 * that player is defunct, so the socket codes removes that player.
+                 * End result is that next now points at the removed player, and
+                 * that has garbage data so we crash.  So update the next pointer
+                 * while pl is still valid.  MSW 2007-04-21
+                 */
+                next = pl->next;
+
+
+                /* If the player has left the game, then the socket status
+                 * will be set to this be the leave function.  We don't
+                 * need to call leave again, as it has already been called
+                 * once.
+                 */
+                if (pl->socket.status == Ns_Dead) {
+                    save_player(pl->ob, 0);
+                    leave(pl, 1);
+                    final_free_player(pl);
+                } else {
+                    send_updates(pl);
+                }
             }
         }
+        sleep_time = get_sleep_remaining();
     }
 }
 

@@ -39,7 +39,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 void inscribe_scroll_cmd(char *buf, int len, player *pl);
 /* loop.c */
 void request_info_cmd(char *buf, int len, socket_struct *ns);
-void handle_client(socket_struct *ns, player *pl);
+bool handle_client(socket_struct *ns, player *pl);
 void watchdog(void);
 void do_server(void);
 void update_players(void);

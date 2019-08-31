@@ -189,17 +189,9 @@ long get_sleep_remaining() {
     return max_time - time_since_last_sleep;
 }
 
-/**
- * Sleep until the next tick.
- */
-void sleep_delta(void) {
-    long sleep_time = get_sleep_remaining();
-    if (sleep_time > 0) {
-        usleep(sleep_time);
-    } else {
-        process_utime_long_count++;
-    }
-    tick_game_time();
+void jump_time() {
+    process_utime_long_count++;
+    clock_gettime(CLOCK_MONOTONIC, &game_time);
 }
 
 /**

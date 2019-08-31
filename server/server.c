@@ -1438,6 +1438,7 @@ void server_main(int argc, char *argv[]) {
 #endif
         nroferrors = 0;
 
+        tick_game_time();
         do_server();
         process_events();         /* "do" something with objects with speed */
         cftimer_process_timers(); /* Process the crossfire Timers */
@@ -1446,8 +1447,6 @@ void server_main(int argc, char *argv[]) {
         check_active_maps(); /* Removes unused maps after a certain timeout */
         do_specials();       /* Routines called from time to time. */
         update_players();
-
-        sleep_delta();       /* Sleep proper amount of time before next tick */
     }
 
     /* This is unreachable. */
