@@ -41,7 +41,6 @@
 
 #include "image.h"
 #include "newserver.h"
-#include "server.h"
 #include "sockproto.h"
 #include "sproto.h"
 
@@ -499,26 +498,13 @@ bool connection_alive(socket_struct socket) {
  *
  */
 void do_server(void) {
-    int i, pollret, active = 0;
     fd_set tmp_read, tmp_exceptions, tmp_write;
-    player *pl, *next;
-
-    if (shutdown_flag == 1) {
-        LOG(llevInfo, "Shutting down...\n");
-        shutdown_flag += 1;
-        cmd_shutdown_time = time(NULL);
-    }
-
-#ifdef CS_LOGSTATS
-    if ((time(NULL)-cst_lst.time_start) >= CS_LOGTIME)
-        write_cs_stats();
-#endif
-
+    int active = 0;
     FD_ZERO(&tmp_read);
     FD_ZERO(&tmp_write);
     FD_ZERO(&tmp_exceptions);
 
-    for (i = 0; i < socket_info.allocated_sockets; i++) {
+    for (int i = 0; i < socket_info.allocated_sockets; i++) {
         if (init_sockets[i].status == Ns_Add && !is_fd_valid(init_sockets[i].fd)) {
             LOG(llevError, "do_server: invalid waiting fd %d\n", i);
             init_sockets[i].status = Ns_Dead;
@@ -542,6 +528,7 @@ void do_server(void) {
     /* Go through the players.  Let the loop set the next pl value,
      * since we may remove some
      */
+    player *pl, *next;
     for (pl = first_player; pl != NULL; ) {
         if (pl->socket.status != Ns_Dead && !is_fd_valid(pl->socket.fd)) {
             LOG(llevError, "do_server: invalid file descriptor for player %s [%s]: %d\n", (pl->ob && pl->ob->name) ? pl->ob->name : "(unnamed player?)", (pl->socket.host) ? pl->socket.host : "(unknown ip?)", pl->socket.fd);
@@ -572,7 +559,7 @@ void do_server(void) {
     socket_info.timeout.tv_sec = 0;
     socket_info.timeout.tv_usec = 0;
 
-    pollret = select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, &tmp_exceptions, &socket_info.timeout);
+    int pollret = select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, &tmp_exceptions, &socket_info.timeout);
 
     if (pollret == -1) {
         LOG(llevError, "select failed: %s\n", strerror(errno));
@@ -584,7 +571,7 @@ void do_server(void) {
 
     /* Check for any exceptions/input on the sockets */
     if (pollret)
-        for (i = 0; i < socket_info.allocated_sockets; i++) {
+        for (int i = 0; i < socket_info.allocated_sockets; i++) {
             /* listen sockets can stay in status Ns_Dead */
             if (init_sockets[i].status != Ns_Add)
                 continue;

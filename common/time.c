@@ -43,7 +43,7 @@ static uint32_t process_max_utime = 0;         /**< Longest cycle time. */
 static uint32_t process_min_utime = 999999999; /**< Shortest cycle time. */
 static uint32_t process_tot_mtime;             /**< ? */
 uint32_t pticks;                               /**< ? */
-static uint32_t process_utime_long_count;      /**< ? */
+static uint32_t process_utime_long_count;      /**< Number of times server couldn't keep up with game time (tried to sleep for a negative time) */
 
 /** Ingame seasons. */
 static const char *const season_name[SEASONS_PER_YEAR+1] = {
@@ -174,24 +174,32 @@ static void timespec_add(struct timespec *time, long usec) {
     time->tv_nsec = nsec_sum % (long)1e9;
 }
 
-/**
- * Sleep until the next tick.
+/*
+ * Add one tick length to the last tick time.
  */
-void sleep_delta(void) {
+void tick_game_time() {
+    timespec_add(&game_time, max_time);
+}
+
+long get_sleep_remaining() {
     struct timespec now;
     clock_gettime(CLOCK_MONOTONIC, &now);
     long time_since_last_sleep = timespec_diff(&now, &game_time);
     log_time(time_since_last_sleep);
+    return max_time - time_since_last_sleep;
+}
 
-    long sleep_time = max_time - time_since_last_sleep;
+/**
+ * Sleep until the next tick.
+ */
+void sleep_delta(void) {
+    long sleep_time = get_sleep_remaining();
     if (sleep_time > 0) {
         usleep(sleep_time);
     } else {
         process_utime_long_count++;
     }
-
-    // Add one tick length to the last tick time.
-    timespec_add(&game_time, max_time);
+    tick_game_time();
 }
 
 /**

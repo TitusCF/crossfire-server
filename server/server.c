@@ -42,6 +42,7 @@
 #include "sproto.h"
 #include "tod.h"
 #include "version.h"
+#include "server.h"
 
 /** Ingame days. */
 static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -1344,6 +1345,17 @@ extern unsigned long todtick;
  * doing the various things.
  */
 static void do_specials(void) {
+    if (shutdown_flag == 1) {
+        LOG(llevInfo, "Shutting down...\n");
+        shutdown_flag += 1;
+        cmd_shutdown_time = time(NULL);
+    }
+
+#ifdef CS_LOGSTATS
+    if ((time(NULL)-cst_lst.time_start) >= CS_LOGTIME)
+        write_cs_stats();
+#endif
+
     if (!(pticks%10))
         knowledge_process_incremental();
 
