@@ -3131,14 +3131,6 @@ int handle_newcs_player(object *op) {
         op->contr->golem_count = 0;
     }
 
-    /* call this here - we also will call this in do_ericserver, but
-     * the players time has been increased when doericserver has been
-     * called, so we recheck it here.
-     */
-    handle_client(&op->contr->socket, op->contr);
-    if (op->speed_left < 0)
-        return 0;
-
     /*
      * If the player has been paralyzed, we unmark the flag and give a message to the player
      */
