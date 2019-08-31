@@ -480,7 +480,7 @@ void new_player_cmd(uint8_t *buf, int len, player *pl) {
     }
 
     /* This should not happen anymore. */
-    if (pl->ob->speed_left < -1.0) {
+    if (pl->ob->speed_left < 0) {
         LOG(llevError, "Player has negative time - shouldn't do command.\n");
     }
     /* In c_new.c */

@@ -1085,11 +1085,16 @@ void process_events(void) {
         }
 
         if (op->speed_left > 0) {
-            // Objects in icecubes decay at a slower rate
-            if (object_in_icecube(op)) {
-                op->speed_left -= 10;
-            } else {
-                op->speed_left -= 1;
+            // Players are special because their speed_left has already been
+            // reduced in do_server(). Players effectively process every tick
+            // so long they have non-zero speed left.
+            if (op->type != PLAYER) {
+                // Objects in icecubes decay at a slower rate
+                if (object_in_icecube(op)) {
+                    op->speed_left -= 10;
+                } else {
+                    op->speed_left -= 1;
+                }
             }
             process_object(op);
             if (object_was_destroyed(op, tag))
