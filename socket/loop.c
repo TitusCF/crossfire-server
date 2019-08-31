@@ -498,10 +498,9 @@ bool connection_alive(socket_struct socket) {
  *
  */
 void do_server(void) {
-    fd_set tmp_read, tmp_exceptions, tmp_write;
+    fd_set tmp_read, tmp_exceptions;
     int active = 0;
     FD_ZERO(&tmp_read);
-    FD_ZERO(&tmp_write);
     FD_ZERO(&tmp_exceptions);
 
     for (int i = 0; i < socket_info.allocated_sockets; i++) {
@@ -519,7 +518,6 @@ void do_server(void) {
             }
         } else if (init_sockets[i].status != Ns_Avail) {
             FD_SET((uint32_t)init_sockets[i].fd, &tmp_read);
-            FD_SET((uint32_t)init_sockets[i].fd, &tmp_write);
             FD_SET((uint32_t)init_sockets[i].fd, &tmp_exceptions);
             active++;
         }
@@ -544,7 +542,6 @@ void do_server(void) {
             pl = npl;
         } else {
             FD_SET((uint32_t)pl->socket.fd, &tmp_read);
-            FD_SET((uint32_t)pl->socket.fd, &tmp_write);
             FD_SET((uint32_t)pl->socket.fd, &tmp_exceptions);
             pl = pl->next;
         }
@@ -559,7 +556,8 @@ void do_server(void) {
     socket_info.timeout.tv_sec = 0;
     socket_info.timeout.tv_usec = 0;
 
-    int pollret = select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, &tmp_exceptions, &socket_info.timeout);
+    int pollret = select(socket_info.max_filedescriptor, &tmp_read, NULL,
+                         &tmp_exceptions, &socket_info.timeout);
 
     if (pollret == -1) {
         LOG(llevError, "select failed: %s\n", strerror(errno));
