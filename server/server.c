@@ -107,7 +107,13 @@ bool check_password(const char *typed, const char *crypted) {
         return strlen(typed) == 0 ? true : false;
     }
 
-    return strcmp(crypt_string(typed, crypted), crypted) == 0;
+    const char *typed_hashed = crypt_string(typed, crypted);
+    if (typed_hashed != NULL) {
+        return strcmp(typed_hashed, crypted) == 0;
+    } else {
+        LOG(llevError, "Could not check password with stored hash %s\n", crypted);
+        return false;
+    }
 }
 
 /**
