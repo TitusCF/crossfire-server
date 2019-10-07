@@ -81,14 +81,19 @@ uint64_t price_base(const object *tmp) {
         return val * ratio;
     }
 
-    // Money and gems have fixed prices at shops.
-    if (tmp->type == MONEY || tmp->type == GEM) {
+    // Money is always worth its face value.
+    if (tmp->type == MONEY) {
         return val;
     }
     
     // If unidentified, price item based on its archetype.
-    if (!identified && tmp->arch) {
-        val = tmp->arch->clone.value * number;
+    if (!identified) {
+        if (tmp->arch) {
+            val = tmp->arch->clone.value * number;
+        } else {
+            LOG(llevError, "Trying to price unidentified item without arch\n");
+            val /= 2;
+        }
     }
     
     /**
@@ -116,13 +121,6 @@ uint64_t price_base(const object *tmp) {
         val *= tmp->stats.food / 50.0;
     }
 
-    /* we need to multiply these by 4.0 to keep buy costs roughly the same
-     * (otherwise, you could buy a potion of charisma for around 400 pp.
-     * Arguable, the costs in the archetypes should be updated to better
-     * reflect values (potion charisma list for 1250 gold)
-     */
-    val *= 4; // FIXME
-    
     return val;
 }
 
@@ -168,7 +166,7 @@ uint64_t price_approx(const object *tmp, object *who) {
  * @return buy multiplier between 2 and 0.5.
  */
 static float shop_buy_multiplier(int charisma) {
-    float multiplier = 1 / (0.38 * pow(1.06, charisma));
+    float multiplier = 1.2/pow(1.1, charisma - 1) + 0.8;
 
     if (multiplier > 2) {
         return 2;
@@ -177,6 +175,23 @@ static float shop_buy_multiplier(int charisma) {
     } else {
         return multiplier;
     }
+}
+
+/**
+ * Multiplier on the shop buy price of items based on the item type, shop
+ * specialization, and player.
+ */
+static float buy_ratio(const object *ob, const object *who) {
+    if (ob->type == MONEY) {
+        return 1;
+    }
+    const float max_ratio = 1.025; // never better than 2.5% each way
+    const float shop_mult =
+        shop_greed(who->map) / shop_specialisation_ratio(ob, who->map);
+    const float player_mult =
+        shop_buy_multiplier(who->stats.Cha) / shop_approval(who->map, who);
+    const float mult = shop_mult * player_mult;
+    return MAX(max_ratio, mult);
 }
 
 /**
@@ -190,6 +205,9 @@ static float shop_bargain_multiplier(int lev_bargain) {
     return 1 - 0.5 * lev_bargain / settings.max_level;
 }
 
+/**
+ * Price an item when a player is buying it from a shop.
+ */
 uint64_t shop_price_buy(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
     uint64_t val = price_base(tmp);
@@ -209,49 +227,24 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
         val *= 0.8;
     }
 
+    // Buy price is affected by bargaining
     int bargain_level = 0;
     if (find_skill_by_number(who, SK_BARGAINING)) {
         bargain_level = find_skill_by_number(who, SK_BARGAINING)->level;
     }
-
     float multiplier = shop_bargain_multiplier(bargain_level);
-    multiplier *= shop_buy_multiplier(who->stats.Cha);
+    val *= multiplier > 0.5 ? multiplier : 0.5; // cap at 0.5
 
-    // Limit buy price multiplier to 0.5, no matter what.
-    val *= multiplier > 0.5 ? multiplier : 0.5;
-
-    /*
-        * When buying, if the item was sold by another player, it is
-        * ok to let the item be sold cheaper, according to the
-        * specialisation of the shop. If a player sold an item here,
-        * then his sale price was multiplied by the specialisation
-        * ratio, to do the same to the buy price will not generate
-        * extra money. However, the same is not true of generated
-        * items, these have to /divide/ by the specialisation, so
-        * that the price is never less than what they could
-        * be sold for (otherwise players could camp map resets to
-        * make money).
-        * In game terms, a non-specialist shop might not recognise
-        * the true value of the items it sells (much like how people
-        * sometimes find antiques in a junk shop in real life).
-        */
-    if (QUERY_FLAG(tmp, FLAG_PLAYER_SOLD)) {
-        val = (int64_t)val*shop_greed(who->map)
-            *shop_specialisation_ratio(tmp, who->map)
-            /shop_approval(who->map, who);
-    } else {
-        val = (int64_t)val*shop_greed(who->map)
-            /(shop_specialisation_ratio(tmp, who->map)
-                *shop_approval(who->map, who));
-    }
-
+    val *= buy_ratio(tmp, who);
     return val;
 }
 
+/**
+ * Price an item when a player is selling it to a shop.
+ */
 uint64_t shop_price_sell(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
     uint64_t val = price_base(tmp);
-    bool identified = QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
 
     const char *key = object_get_value(tmp, "price_adjustment_sell");
     if (key != NULL) {
@@ -259,34 +252,11 @@ uint64_t shop_price_sell(const object *tmp, object *who) {
         return val * ratio;
     }
 
-    if (tmp->type == GEM) {
-        return 0.97 * val;
-    }
-
-    // Shops value unidentified items less.
-    if (!identified) {
-        if (tmp->arch != NULL) {
-            // Unidentified standard objects are only worth a little less.
-            if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) {
-                val *= 0.85;
-            } else {
-                val *= 0.70;
-            }
-        } else {
-            // No archetype, so probably an artifact.
-            val /= 2;
-        }
-    }
-
-    // Selling to shops yields roughly 50% of the base price.
-    val /= 2;
-
     /* Limit amount of money you can get for really great items. */
     int number = NROF(tmp);
     val = value_limit(val, number, who, 1);
 
-    val = (int64_t)val*shop_specialisation_ratio(tmp, who->map)*
-            shop_approval(who->map, who)/shop_greed(who->map);
+    val /= buy_ratio(tmp, who);
     return val;
 }
 
