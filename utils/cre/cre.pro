@@ -124,6 +124,7 @@ RESOURCES += cre.qrc
 
 CONFIG += precompile_header
 CONFIG += thread
+CONFIG += c++11
 
 PRECOMPILED_DIR = .pch
 PRECOMPILED_HEADER = cre_pch.h
