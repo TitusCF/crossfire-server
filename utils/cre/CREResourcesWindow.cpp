@@ -738,7 +738,7 @@ void CREResourcesWindow::onReportChange(QObject* object)
     if (report == NULL)
         return;
 
-    QProgressDialog progress(tr("Generating report..."), tr("Abort report"), 0, myDisplayedItems.size() * 2, this);
+    QProgressDialog progress(tr("Generating report..."), tr("Abort report"), 0, myDisplayedItems.size() - 1, this);
     progress.setWindowTitle(tr("Report: '%1'").arg(report->name()));
     progress.setWindowModality(Qt::WindowModal);
 
@@ -762,44 +762,18 @@ void CREResourcesWindow::onReportChange(QObject* object)
 
     sort = "(function(left, right) { return " + sort + "; })";
     QScriptValue sortFun = engine.evaluate(sort);
-    QScriptValueList args;
 
-    QList<QObject*> data;
-    int pos;
-    for (int i = 0; i < myDisplayedItems.size(); i++)
-    {
-        if (progress.wasCanceled())
-            return;
-
-        args.clear();
-
-        QScriptValue left = engine.newQObject(myDisplayedItems[i]);
-        args.append(left);
-//        engine.globalObject().setProperty("left", left);
-
-        pos = 0;
-        while (pos < data.size())
-        {
-            QScriptValue right = engine.newQObject(data[pos]);
-            args.push_back(right);
-            //engine.globalObject().setProperty("right", right);
-            bool still = sortFun.call(QScriptValue(), args).toBoolean();
-            args.pop_back();
-            if (still == false)
-                break;
-            pos++;
-        }
-        if (pos == data.size())
-            data.append(myDisplayedItems[i]);
-        else
-            data.insert(pos, myDisplayedItems[i]);
-
-        progress.setValue(i + 1);
-    }
+    std::vector<QObject*> items(myDisplayedItems.begin(), myDisplayedItems.end());
+    std::sort(items.begin(), items.end(), [&sortFun, &engine](QObject* left, QObject* right) {
+        QScriptValueList args;
+        args.push_back(engine.newQObject(left));
+        args.push_back(engine.newQObject(right));
+        return sortFun.call(QScriptValue(), args).toBoolean();;
+    });
     engine.popContext();
 
     progress.setLabelText(tr("Generating items text..."));
-    foreach(QObject* item, data)
+    foreach(QObject* item, items)
     {
         if (progress.wasCanceled())
             return;
@@ -830,6 +804,7 @@ void CREResourcesWindow::onReportChange(QObject* object)
 
     CREReportDisplay display(text, tr("Report: '%1'").arg(report->name()));
     display.exec();
+    progress.hide();
 }
 
 void CREResourcesWindow::fillItem(const QPoint& pos, QMenu* menu)
