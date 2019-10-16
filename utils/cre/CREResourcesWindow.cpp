@@ -799,7 +799,18 @@ void CREResourcesWindow::onReportChange(QObject* object)
 
         progress.setValue(progress.value() + 1);
     }
-    text += "</tbody></table>";
+    text += "</tbody>";
+    
+    QStringList footers = report->footer().split("\n");
+    text += "<tfoot>";
+
+    foreach(QString footer, footers)
+    {
+        text += "<th>" + footer + "</th>";
+    }
+    text += "</tfoot>";
+
+    text += "</table>";
     qDebug() << "report finished";
 
     CREReportDisplay display(text, tr("Report: '%1'").arg(report->name()));
