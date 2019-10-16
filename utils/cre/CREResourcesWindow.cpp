@@ -1,5 +1,7 @@
 #include <Qt>
 #include <QtWidgets>
+#include <QScriptValue>
+#include <stdexcept>
 
 #include "CREResourcesWindow.h"
 #include "CREUtils.h"
@@ -755,22 +757,42 @@ void CREResourcesWindow::onReportChange(QObject* object)
     text += "</tr></thead><tbody>";
 
     CREScriptEngine engine;
-
-    progress.setLabelText(tr("Sorting items..."));
-
-    engine.pushContext();
-
-    sort = "(function(left, right) { return " + sort + "; })";
-    QScriptValue sortFun = engine.evaluate(sort);
-
     std::vector<QObject*> items(myDisplayedItems.begin(), myDisplayedItems.end());
-    std::sort(items.begin(), items.end(), [&sortFun, &engine](QObject* left, QObject* right) {
-        QScriptValueList args;
-        args.push_back(engine.newQObject(left));
-        args.push_back(engine.newQObject(right));
-        return sortFun.call(QScriptValue(), args).toBoolean();;
-    });
-    engine.popContext();
+
+    if (!sort.isEmpty())
+    {
+        try
+        {
+            progress.setLabelText(tr("Sorting items..."));
+
+            engine.pushContext();
+
+            sort = "(function(left, right) { return " + sort + "; })";
+            QScriptValue sortFun = engine.evaluate(sort);
+            if (!sortFun.isValid() || engine.hasUncaughtException())
+                throw std::runtime_error("A script error happened while compiling the sort criteria:\n" + engine.uncaughtException().toString().toStdString());
+
+            std::sort(items.begin(), items.end(), [&sortFun, &engine](QObject* left, QObject* right) {
+                QScriptValueList args;
+                args.push_back(engine.newQObject(left));
+                args.push_back(engine.newQObject(right));
+                auto ret = sortFun.call(QScriptValue(), args);
+                if (!ret.isValid() || engine.hasUncaughtException())
+                {
+                    throw std::runtime_error("A script error happened while sorting items:\n" + engine.uncaughtException().toString().toStdString());
+                    return false;
+                }
+                return ret.isValid() ? ret.toBoolean() : true;
+            });
+            printf("complete");
+            engine.popContext();
+        }
+        catch (std::runtime_error& ex)
+        {
+            QMessageBox::critical(this, "Script error", ex.what(), QMessageBox::Ok);
+            return;
+        }
+    }
 
     progress.setLabelText(tr("Generating items text..."));
     foreach(QObject* item, items)
@@ -782,6 +804,11 @@ void CREResourcesWindow::onReportChange(QObject* object)
 
         engine.pushContext();
         QScriptValue engineValue = engine.newQObject(item);
+        if (!engineValue.isValid() || engine.hasUncaughtException())
+        {
+            QMessageBox::critical(this, "Script error", "A script error happened while displaying items:\n" + engine.uncaughtException().toString(), QMessageBox::Ok);
+            return;
+        }
         engine.globalObject().setProperty("item", engineValue);
 
         foreach(QString field, fields)
@@ -800,7 +827,7 @@ void CREResourcesWindow::onReportChange(QObject* object)
         progress.setValue(progress.value() + 1);
     }
     text += "</tbody>";
-    
+
     QStringList footers = report->footer().split("\n");
     text += "<tfoot>";
 
