@@ -757,7 +757,9 @@ void CREResourcesWindow::onReportChange(QObject* object)
     text += "</tr></thead><tbody>";
 
     CREScriptEngine engine;
-    std::vector<QObject*> items(myDisplayedItems.begin(), myDisplayedItems.end());
+    std::vector<QScriptValue> items;
+    std::for_each(myDisplayedItems.begin(), myDisplayedItems.end(),
+            [&items, &engine] (QObject* item) { items.push_back(engine.newQObject(item)); });
 
     if (!sort.isEmpty())
     {
@@ -772,10 +774,10 @@ void CREResourcesWindow::onReportChange(QObject* object)
             if (!sortFun.isValid() || engine.hasUncaughtException())
                 throw std::runtime_error("A script error happened while compiling the sort criteria:\n" + engine.uncaughtException().toString().toStdString());
 
-            std::sort(items.begin(), items.end(), [&sortFun, &engine](QObject* left, QObject* right) {
+            std::sort(items.begin(), items.end(), [&sortFun, &engine](QScriptValue left, QScriptValue right) {
                 QScriptValueList args;
-                args.push_back(engine.newQObject(left));
-                args.push_back(engine.newQObject(right));
+                args.push_back(left);
+                args.push_back(right);
                 auto ret = sortFun.call(QScriptValue(), args);
                 if (!ret.isValid() || engine.hasUncaughtException())
                 {
@@ -795,7 +797,7 @@ void CREResourcesWindow::onReportChange(QObject* object)
     }
 
     progress.setLabelText(tr("Generating items text..."));
-    foreach(QObject* item, items)
+    foreach(QScriptValue item, items)
     {
         if (progress.wasCanceled())
             return;
@@ -803,22 +805,18 @@ void CREResourcesWindow::onReportChange(QObject* object)
         text += "<tr>";
 
         engine.pushContext();
-        QScriptValue engineValue = engine.newQObject(item);
-        if (!engineValue.isValid() || engine.hasUncaughtException())
-        {
-            QMessageBox::critical(this, "Script error", "A script error happened while displaying items:\n" + engine.uncaughtException().toString(), QMessageBox::Ok);
-            return;
-        }
-        engine.globalObject().setProperty("item", engineValue);
+        engine.globalObject().setProperty("item", item);
 
         foreach(QString field, fields)
         {
             text += "<td>";
             QString data = engine.evaluate(field).toString();
-            if (!engine.hasUncaughtException())
+            if (engine.hasUncaughtException())
             {
-                text += data;
+                QMessageBox::critical(this, "Script error", "A script error happened while display items:\n" + engine.uncaughtException().toString(), QMessageBox::Ok);
+                return;
             }
+            text += data;
             text += "</td>\n";
         }
         engine.popContext();
