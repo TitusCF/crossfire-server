@@ -33,21 +33,25 @@ CREReportDialog::CREReportDialog()
 
     myHeader = new QTextEdit(this);
     layout->addWidget(myHeader, 3, 2, 1, 3);
+    myHeader->setWhatsThis(tr("Text to display at the top of the report."));
 
     layout->addWidget(new QLabel(tr("Footer:"), this), 4, 2, 1, 3);
 
     myFooter = new QTextEdit(this);
     layout->addWidget(myFooter, 5, 2, 1, 3);
+    myFooter->setWhatsThis(tr("Text to display at the bottom of the report."));
 
     layout->addWidget(new QLabel(tr("Item sort:"), this), 6, 2, 1, 3);
 
     mySort = new QTextEdit(this);
     layout->addWidget(mySort, 7, 2, 1, 3);
+    mySort->setWhatsThis(tr("Expression used to sort items. The items to be compared are 'left' and 'right', and the expression should be true if left < right, false else."));
 
     layout->addWidget(new QLabel(tr("Item display:"), this), 8, 2, 1, 3);
 
     myDisplay = new QTextEdit(this);
     layout->addWidget(myDisplay, 9, 2, 1, 3);
+    myDisplay->setWhatsThis(tr("Expression used to display one item. The current item is 'item', and the expression should be a string value."));
 
     QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Close | QDialogButtonBox::Help, Qt::Horizontal, this);
     connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
@@ -79,7 +83,22 @@ void CREReportDialog::reject()
 
 void CREReportDialog::onHelp()
 {
-    QMessageBox::information(this, tr("Report help"), tr("Enter the script expression with which to Report items in the view. Current item is <b>item</b>, and it has the following properties:<br /><ul><li>for an archetype: name, clone</li><li>for a formulae: title, chance, difficulty, archs</li><li>for an artifact: item, chance, difficulty, allowed</li><li>for an object (for clone and item): type</li></ul><br />An item is shown if the expression evaluates to <i>true</i>.If a property is not defined for the current item, it will not be shown.<br /><br />Examples:<ul><li>items of type 5: <i>item.clone.type == 5</i></li><li>artifact allowed for all items of the type: <i>item.allowed.length == 0</i></il></ul>"));
+    QMessageBox::information(this, tr("Report help"), tr(
+R"(
+This dialog allows to define a report.<br />
+<br />
+A report consists of an optional header, a line for each item of the view optionally sorted, an optional footer.
+<br />
+<br />
+'Item sort' contains an optional script expression used to sort items. The items to be compared are 'left' and 'right', and the expression should be true if left &lt; right, false else.
+<br />
+<b>Example: </b><i>left.name.toLowerCase() &lt; right.name.toLowerCase()</i> will sort by ascending item's name (case unsensitive).
+<br />
+<br />
+'Item display' is the expression used to display one item. The current item is 'item', and the expression should be a string value.
+<br />
+<b>Example: </b><i>item.name + " " + item.level</i> will display for each item its name and level.
+)"));
 }
 
 void CREReportDialog::onAdd()
