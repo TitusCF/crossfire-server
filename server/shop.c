@@ -63,11 +63,16 @@ static const char *const coins[] = {
     NULL
 };
 
+/**
+ * Price an item based on its value or archetype value, type, identification/BUC
+ * status, and other heuristics.
+ */
 uint64_t price_base(const object *tmp) {
     // When there are zero objects, there is really one.
-    int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
+    const int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
+    const bool identified =
+        QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
     uint64_t val = (uint64_t)tmp->value * number;
-    bool identified = QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
 
     // Objects with price adjustments skip the rest of the calculations.
     const char *key = object_get_value(tmp, "price_adjustment");
@@ -81,9 +86,8 @@ uint64_t price_base(const object *tmp) {
         return val;
     }
     
-    // If not identified, assume it is a collection of base items.
-    if (!identified && tmp->arch)
-    {
+    // If unidentified, price item based on its archetype.
+    if (!identified && tmp->arch) {
         val = tmp->arch->clone.value * number;
     }
     
@@ -99,8 +103,9 @@ uint64_t price_base(const object *tmp) {
     } else if (QUERY_FLAG(tmp, FLAG_DAMNED)) {
         val *= 0.6;
     }
-    
-    // If an item has an archetype and is identified, compare its base enchantment.
+
+    // If an item is identified to have an enchantment above its archetype
+    // enchantment, increase price exponentially.
     if (tmp->arch != NULL && identified) {
         int diff = tmp->magic - tmp->arch->clone.magic;
         val *= pow(1.15, diff);
@@ -116,7 +121,7 @@ uint64_t price_base(const object *tmp) {
      * Arguable, the costs in the archetypes should be updated to better
      * reflect values (potion charisma list for 1250 gold)
      */
-    val *= 4;
+    val *= 4; // FIXME
     
     return val;
 }
