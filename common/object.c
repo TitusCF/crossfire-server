@@ -5190,44 +5190,15 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
 }
 
 /**
- * Dumps all variables in an object to a file.
- *
- * @param fp
- * file to write to.
- * @param op
- * object to save.
- * @param flag
- * combination of @ref SAVE_FLAG_xxx "SAVE_FLAG_xxx" flags.
- * @return
- * one of @ref SAVE_ERROR_xxx "SAVE_ERROR_xxx" values.
+ * Store a string representation of op in sb. Suitable for saving an object
+ * to a file.
  */
-int save_object(FILE *fp, object *op, int flag) {
-    archetype *at;
-    char *cp;
-    int res;
-    StringBuffer *sb;
-
-    /* Even if the object does have an owner, it would seem that we should
-     * still save it.
-     */
-    if (object_get_owner(op) != NULL || fp == NULL)
-        return SAVE_ERROR_OK;
-
-    /* If it is unpaid and we don't want to save those, just return. */
-    if (!(flag&SAVE_FLAG_SAVE_UNPAID) && (QUERY_FLAG(op, FLAG_UNPAID))) {
-        return SAVE_ERROR_OK;
-    }
-
-    /* If the object has no_save set, just return */
-    if (QUERY_FLAG(op, FLAG_NO_SAVE))
-        return SAVE_ERROR_OK;
-
-    if ((at = op->arch) == NULL)
+void save_object_in_sb(StringBuffer *sb, const object *op, const int flag) {
+    archetype *at = op->arch;
+    if (at == NULL)
         at = empty_archetype;
-    if (fprintf(fp, "arch %s\n", at->name) < 0)
-        return SAVE_ERROR_WRITE;
 
-    sb = stringbuffer_new();
+    stringbuffer_append_printf(sb, "arch %s\n", at->name);
 
     if (op->arch->reference_count > 0) {
         /* The object is a custom item/monster, so we handle its save differently.
@@ -5274,22 +5245,50 @@ int save_object(FILE *fp, object *op, int flag) {
         }
     }
 
-    cp = stringbuffer_finish(sb);
+    /* Eneq(@csd.uu.se): Added this to allow containers being saved with contents*/
+    FOR_INV_PREPARE(op, tmp)
+        save_object_in_sb(sb, tmp, flag);
+    FOR_INV_FINISH();
+
+    stringbuffer_append_string(sb, "end\n");
+}
+
+/**
+ * Dumps all variables in an object to a file.
+ *
+ * @param fp
+ * file to write to.
+ * @param op
+ * object to save.
+ * @param flag
+ * combination of @ref SAVE_FLAG_xxx "SAVE_FLAG_xxx" flags.
+ * @return
+ * one of @ref SAVE_ERROR_xxx "SAVE_ERROR_xxx" values.
+ */
+int save_object(FILE *fp, object *op, int flag) {
+    /* Even if the object does have an owner, it would seem that we should
+     * still save it.
+     */
+    if (object_get_owner(op) != NULL || fp == NULL)
+        return SAVE_ERROR_OK;
+
+    /* If it is unpaid and we don't want to save those, just return. */
+    if (!(flag&SAVE_FLAG_SAVE_UNPAID) && (QUERY_FLAG(op, FLAG_UNPAID))) {
+        return SAVE_ERROR_OK;
+    }
+
+    /* If the object has no_save set, just return */
+    if (QUERY_FLAG(op, FLAG_NO_SAVE))
+        return SAVE_ERROR_OK;
+
+    StringBuffer *sb = stringbuffer_new();
+    save_object_in_sb(sb, op, flag);
+    char *cp = stringbuffer_finish(sb);
     if (fputs(cp, fp) == EOF) {
         free(cp);
         return SAVE_ERROR_WRITE;
+    } else {
+        free(cp);
+        return SAVE_ERROR_OK;
     }
-    free(cp);
-
-    /* Eneq(@csd.uu.se): Added this to allow containers being saved with contents*/
-
-    FOR_INV_PREPARE(op, tmp)
-        if ((res = save_object(fp, tmp, flag)) != 0)
-            return res;
-    FOR_INV_FINISH();
-
-    if (fprintf(fp, "end\n") < 0)
-        return SAVE_ERROR_WRITE;
-
-    return SAVE_ERROR_OK;
 }
