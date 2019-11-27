@@ -58,6 +58,7 @@
 /* First let's include the header file needed                                */
 
 #include <cfpython.h>
+#include <fcntl.h>
 #include <stdarg.h>
 #include <node.h>
 #include <svnversion.h>
@@ -800,9 +801,17 @@ static void log_python_error(void) {
 
     if (catcher != NULL) {
         PyObject *output = PyObject_GetAttrString(catcher, "value"); //get the stdout and stderr from our catchOutErr object
+#ifdef IS_PY3K
+        PyObject* empty = PyUnicode_FromString("");
+#else
         PyObject* empty = PyString_FromString("");
+#endif
 
+#ifdef IS_PY3K
+        cf_log_plain(llevError, PyBytes_AsString(output));
+#else
         cf_log_plain(llevError, PyString_AsString(output));
+#endif
         Py_DECREF(output);
 
         PyObject_SetAttrString(catcher, "value", empty);
@@ -917,7 +926,11 @@ static int do_script(CFPContext *context, int silent) {
         pushContext(context);
         dict = PyDict_New();
         PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
+#ifdef IS_PY3K
+        ret = PyEval_EvalCode((PyObject *)pycode, dict, NULL);
+#else
         ret = PyEval_EvalCode(pycode, dict, NULL);
+#endif
         if (PyErr_Occurred()) {
             log_python_error();
         }
