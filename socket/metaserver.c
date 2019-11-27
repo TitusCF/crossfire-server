@@ -481,6 +481,8 @@ static void metaserver2_updates(void) {
 
             /* always cleanup */
             curl_easy_cleanup(curl);
+        } else {
+            LOG(llevError, "metaserver: could not initialize curl\n");
         }
     }
     /* then cleanup the formpost chain */
