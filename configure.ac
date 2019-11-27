@@ -17,10 +17,6 @@ AC_ARG_ENABLE(mapper, [AS_HELP_STRING([--enable-mapper],
               [enable_mapper=yes], [enable_mapper=no])
 
 dnl Options for plugins
-AC_ARG_WITH(python, [AS_HELP_STRING([--with-python=dir],
-            [Directory to look for python headers/library])],
-            [PYTHON_HOME="$withval"])
-
 AC_ARG_ENABLE(cfrhg, [AS_HELP_STRING([--enable-cfrhg],
               [Build the random house generator plugin])],
               [], [enable_cfrhg=no])
@@ -138,14 +134,11 @@ dnl############################################
 dnl Plugin configuration
 dnl############################################
 AM_CONDITIONAL(HAVE_LIBDL, test "$cf_have_libdl" = "yes")
-
-    dnl Python plugin
-    CF_CHECK_PYTHON(
-        [PLUGIN_PYTHON="cfpython.la"]
-        [cf_will_build_python="yes"],
-        [cf_will_build_python="no"]
-        [AC_MSG_NOTICE([No Python found. Python plugin will not be built.])]
-    )
+    PKG_CHECK_MODULES([PYTHON], [python2],
+                      [PLUGIN_PYTHON="cfpython.la"]
+                          [cf_will_build_python="yes"],
+                      [cf_will_build_python="no"]
+                          [AC_MSG_NOTICE([No Python found. Python plugin will not be built.])])
 AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
 
