@@ -808,7 +808,7 @@ static void log_python_error(void) {
 #endif
 
 #ifdef IS_PY3K
-        cf_log_plain(llevError, PyBytes_AsString(output));
+        cf_log_plain(llevError, PyUnicode_AsUTF8(output));
 #else
         cf_log_plain(llevError, PyString_AsString(output));
 #endif
