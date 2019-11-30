@@ -1,3 +1,7 @@
+2019-11-29  Daniel Hawkins
+    * lib/artifacts: Remove horn of sirens for artifact list, since it is a god-given item.
+        Fixes Bug #861.
+
 2019-08-11  Daniel Hawkins
     * lib/artifacts: Add artifacts for white/black leather cloaks.
     * lib/formulae: Add formulae to craft white/black leather cloaks and leather armour.
