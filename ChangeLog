@@ -1,3 +1,6 @@
+2019-11-30  Daniel Hawkins
+    * lib/artifacts: Add an artifact for new kite shield arch. Requires r21039.
+
 2019-11-29  Daniel Hawkins
     * lib/artifacts: Remove horn of sirens for artifact list, since it is a god-given item.
         Fixes Bug #861.

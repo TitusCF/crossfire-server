@@ -1078,6 +1078,23 @@ Cha -1
 ac 1
 resist_physical 10
 end
+# A little bit of good-humored puns -- a kite shield of flight.
+Allowed kite_shield
+chance 5
+difficulty 2
+Object Flight
+type 33
+magic 1
+value 100
+exp 2
+weight 40
+msg
+  This winged shield feels markedly light, as if it could float away in a strong breeze.
+  Someone appears to have affixed a string to the base of the shield as a contingency.
+endmsg
+move_type fly_low
+item_power 10
+end
 # This one is amazingly rare, I would be surprised if I ever saw one!
 Allowed high_shield
 chance 1
