@@ -3,6 +3,7 @@
       server/player.c,
       server/c_wiz.c,
       include/libproto.h: Adjust some trivial cases of los calculations to use player structure directly.
+    * socket/loop.c: Add detail to message indicating a tick took too long.
 
 2019-11-30  Daniel Hawkins
     * lib/artifacts: Add an artifact for new kite shield arch. Requires r21039.

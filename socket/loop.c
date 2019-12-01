@@ -580,7 +580,7 @@ void do_server(void) {
 
     long sleep_time = get_sleep_remaining();
     if (sleep_time < 0) {
-        LOG(llevInfo, "skipping time\n");
+        LOG(llevInfo, "skipping time (over by %ld microseconds)\n", -sleep_time);
         jump_time();
     }
 
