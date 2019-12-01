@@ -347,7 +347,7 @@ player *get_player(player *p) {
 
     roll_stats(op);
     player_set_state(p, ST_ROLL_STAT);
-    clear_los(op);
+    clear_los(p);
 
     p->gen_sp_armour = 10;
     p->last_speed = -1;

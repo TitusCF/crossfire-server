@@ -171,7 +171,7 @@ extern void init_stats(int reload);
 extern void LOG(LogLevel logLevel, const char *format, ...);
 /* los.c */
 extern void init_block(void);
-extern void clear_los(object *op);
+extern void clear_los(player *pl);
 extern int has_carried_lights(const object *op);
 extern void update_los(object *op);
 extern void update_all_map_los(mapstruct *map);

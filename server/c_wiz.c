@@ -2089,7 +2089,7 @@ static int do_wizard_dm(object *op, const char *params, int silent) {
          * is probably something like a wiz_force which gives that and any
          * other desired abilities.
          */
-        clear_los(op);
+        clear_los(op->contr);
         op->contr->write_buf[0] = '\0';
 
         if (!silent)

@@ -161,19 +161,18 @@ void init_block(void) {
  * In this way, the chain of visibility is set.
  * Used to initialise the array used by the LOS routines.
  *
- * @param op
+ * @param pl
  * player for which we're computing.
  * @param x
  * @param y
  * indexes into the blocked[][] array.
  */
-static void set_wall(object *op, int x, int y) {
-    int i;
+static void set_wall(player *pl, int x, int y) {
     // Get this outside the loop -- now we can recycle x and y in the loop
     // Trying less dereferencing for better efficiency
     // Equivalent to &(block[x][y]), but faster.
     const blocks * const at = block[x] + y;
-    for (i = 0; i < at->index; i++) {
+    for (int i = 0; i < at->index; i++) {
         int dx = at->x[i], dy = at->y[i];
 
         /* x, y are the values as adjusted to be in the
@@ -181,18 +180,18 @@ static void set_wall(object *op, int x, int y) {
         * we can safely store this in the x and y passed to the function,
         * since they were only needed to find the element of the blocks array.
         */
-        x = dx-(MAP_CLIENT_X-op->contr->socket.mapx)/2;
-        y = dy-(MAP_CLIENT_Y-op->contr->socket.mapy)/2;
+        x = dx-(MAP_CLIENT_X-pl->socket.mapx)/2;
+        y = dy-(MAP_CLIENT_Y-pl->socket.mapy)/2;
 
-        if (x < 0 || x >= op->contr->socket.mapx
-        || y < 0 || y >= op->contr->socket.mapy)
+        if (x < 0 || x >= pl->socket.mapx
+        || y < 0 || y >= pl->socket.mapy)
             continue;
         /* we need to adjust to the fact that the socket
          * code wants the los to start from the 0,0
          * and not be relative to middle of los array.
          */
-        op->contr->blocked_los[x][y] = 100;
-        set_wall(op, dx, dy);
+        pl->blocked_los[x][y] = 100;
+        set_wall(pl, dx, dy);
     }
 }
 
@@ -232,26 +231,23 @@ static void check_wall(object *op, int x, int y) {
 
 
     if (get_map_flags(op->map, NULL, op->x+x-MAP_CLIENT_X/2, op->y+y-MAP_CLIENT_Y/2, NULL, NULL)&(P_BLOCKSVIEW|P_OUT_OF_MAP))
-        set_wall(op, x, y);
+        set_wall(op->contr, x, y);
 }
 
 /**
  * Clears/initialises the los-array associated to the player
  * controlling the object.
  *
- * @param op
- * player's object.
- *
- * @todo
- * use player *instead of object *to show it must be a player?
+ * @param pl
+ * player to clear.
  */
-void clear_los(object *op) {
+void clear_los(player *pl) {
     /* This is safer than using the socket->mapx, mapy because
      * we index the blocked_los as a 2 way array, so clearing
      * the first z spaces may not not cover the spaces we are
      * actually going to use
      */
-    (void)memset((void *)op->contr->blocked_los, 0, MAP_CLIENT_X*MAP_CLIENT_Y);
+    (void)memset((void *)pl->blocked_los, 0, MAP_CLIENT_X*MAP_CLIENT_Y);
 }
 
 /**
@@ -432,17 +428,17 @@ static void expand_lighted_sight(object *op) {
  * odd that you can see yourself (and what your standing on), but
  * really need for any reasonable game play.
  *
- * @param op
- * player's object for which to reset los. Must have a valid contr.
+ * @param pl
+ * player for which to reset los.
  */
-static void blinded_sight(object *op) {
+static void blinded_sight(player *pl) {
     int x, y;
 
-    for (x = 0; x < op->contr->socket.mapx; x++)
-        for (y = 0; y <  op->contr->socket.mapy; y++)
-            op->contr->blocked_los[x][y] = 100;
+    for (x = 0; x < pl->socket.mapx; x++)
+        for (y = 0; y <  pl->socket.mapy; y++)
+            pl->blocked_los[x][y] = 100;
 
-    op->contr->blocked_los[op->contr->socket.mapx/2][op->contr->socket.mapy/2] = 0;
+    pl->blocked_los[pl->socket.mapx/2][pl->socket.mapy/2] = 0;
 }
 
 /**
@@ -474,7 +470,7 @@ void update_los(object *op) {
 
     /* do the los of the player. 3 (potential) cases */
     if (QUERY_FLAG(op, FLAG_BLIND)) /* player is blind */
-        blinded_sight(op);
+        blinded_sight(op->contr);
     else
         expand_sight(op);
 
