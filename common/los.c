@@ -454,7 +454,7 @@ void update_los(object *op) {
     if (QUERY_FLAG(op, FLAG_REMOVED))
         return;
 
-    clear_los(op);
+    clear_los(op->contr);
     if (QUERY_FLAG(op, FLAG_WIZ) /* || XRAYS(op) */)
         return;
 
