@@ -103,13 +103,13 @@ void init_block(void) {
      */
     for (x = 1; x <= MAP_CLIENT_X/2; x++) {
         for (y = 1; y <= MAP_CLIENT_Y/2; y++) {
+            /* center space never blocks */
+            if (x == MAP_CLIENT_X/2 && y == MAP_CLIENT_Y/2)
+                continue;
+
             for (i = 0; i < 3; i++) {
                 dx = x+block_x[i];
                 dy = y+block_y[i];
-
-                /* center space never blocks */
-                if (x == MAP_CLIENT_X/2 && y == MAP_CLIENT_Y/2)
-                    continue;
 
                 /* If its a straight line, its blocked */
                 if ((dx == x && x == MAP_CLIENT_X/2)
