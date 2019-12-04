@@ -1,3 +1,6 @@
+2019-12-03  Daniel Hawkins
+    * common/los.c: Reduce recursion overhead in set_wall() by checking to see if the tile has already been set.
+
 2019-12-01  Daniel Hawkins
     * common/los.c,
       server/player.c,

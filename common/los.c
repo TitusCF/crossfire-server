@@ -172,6 +172,12 @@ static void set_wall(player *pl, int x, int y) {
     // Trying less dereferencing for better efficiency
     // Equivalent to &(block[x][y]), but faster.
     const blocks * const at = block[x] + y;
+    /*
+     * Assume the mapsize will not change mid-drawing. This seemed to work in my testing
+     * Daniel Hawkins 2019-12-03
+     */
+    const int map_sock_x = (MAP_CLIENT_X-pl->socket.mapx)>>1,
+              map_sock_y = (MAP_CLIENT_Y-pl->socket.mapy)>>1;
     for (int i = 0; i < at->index; i++) {
         int dx = at->x[i], dy = at->y[i];
 
@@ -180,11 +186,13 @@ static void set_wall(player *pl, int x, int y) {
         * we can safely store this in the x and y passed to the function,
         * since they were only needed to find the element of the blocks array.
         */
-        x = dx-(MAP_CLIENT_X-pl->socket.mapx)/2;
-        y = dy-(MAP_CLIENT_Y-pl->socket.mapy)/2;
+        x = dx-map_sock_x;
+        y = dy-map_sock_y;
 
         if (x < 0 || x >= pl->socket.mapx
-        || y < 0 || y >= pl->socket.mapy)
+        || y < 0 || y >= pl->socket.mapy
+        /* If already set to 100, we probably hit this space through recursion already. */
+        || pl->blocked_los[x][y] == 100)
             continue;
         /* we need to adjust to the fact that the socket
          * code wants the los to start from the 0,0
