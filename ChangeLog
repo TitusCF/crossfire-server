@@ -1,5 +1,7 @@
 2019-12-03  Daniel Hawkins
     * common/los.c: Reduce recursion overhead in set_wall() by checking to see if the tile has already been set.
+    * include/sockproto.h: Remove draw_client_map2. It was only used in request.c
+    * socket/request.c: Make draw_client_map2 a static function.
 
 2019-12-01  Daniel Hawkins
     * common/los.c,

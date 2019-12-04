@@ -1258,7 +1258,7 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
     }
 }
 
-void draw_client_map2(object *pl) {
+static void draw_client_map2(object *pl) {
     int x, y, ax, ay, d, min_x, max_x, min_y, max_y, oldlen, layer;
     size_t startlen;
     int16_t nx, ny;
