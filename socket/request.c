@@ -1252,7 +1252,8 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
         sl->len = oldlen+2;         /* 2 bytes for coordinate */
         SockList_AddChar(sl, 0);    /* Clear byte */
         SockList_AddChar(sl, 255);  /* Termination byte */
-        map_clearcell(&ns->lastmap.cells[ax][ay], 0, 0);
+        // Reduce defreferences by passing the inner array offset instead of address of value
+        map_clearcell(ns->lastmap.cells[ax] + ay, 0, 0);
     } else {
         SockList_AddChar(sl, 255);  /* Termination byte */
     }
@@ -1336,7 +1337,8 @@ static void draw_client_map2(object *pl) {
                         SockList_AddShort(&sl, coord);
                         SockList_AddChar(&sl, MAP2_TYPE_CLEAR);
                         SockList_AddChar(&sl, 255); /* Termination byte */
-                        map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay], 0, 0);
+                        // Reduce dereferences by passing the inner array offset instead of address of value
+                        map_clearcell(pl->contr->socket.lastmap.cells[ax] + ay, 0, 0);
                     }
                 } else if (d >= MAX_LIGHT_RADII) {
                     /* This block deals with spaces that are not
@@ -1427,7 +1429,8 @@ static void draw_client_map2(object *pl) {
                         sl.len = oldlen+2;          /* 2 bytes for coordinate */
                         SockList_AddChar(&sl, MAP2_TYPE_CLEAR);
                         SockList_AddChar(&sl, 255); /* Termination byte */
-                        map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay], 0, 0);
+                        // Reduce dereferences by passing the inner array offset instead of address of value
+                        map_clearcell(pl->contr->socket.lastmap.cells[ax] + ay, 0, 0);
                     } else {
                         SockList_AddChar(&sl, 255); /* Termination byte */
                     }
