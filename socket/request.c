@@ -1267,16 +1267,18 @@ static void draw_client_map2(object *pl) {
     uint16_t coord;
     mapstruct *m;
     object *ob;
+    // Dereference once. It should not change in the middle of processing.
+    player *plyr = pl->contr;
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "map2 ");
     startlen = sl.len;
 
     /* Handle map scroll */
-    if (pl->contr->socket.map_scroll_x || pl->contr->socket.map_scroll_y) {
-        coord = MAP2_COORD_ENCODE(pl->contr->socket.map_scroll_x, pl->contr->socket.map_scroll_y, 1);
-        pl->contr->socket.map_scroll_x = 0;
-        pl->contr->socket.map_scroll_y = 0;
+    if (plyr->socket.map_scroll_x || plyr->socket.map_scroll_y) {
+        coord = MAP2_COORD_ENCODE(plyr->socket.map_scroll_x, plyr->socket.map_scroll_y, 1);
+        plyr->socket.map_scroll_x = 0;
+        plyr->socket.map_scroll_y = 0;
         SockList_AddShort(&sl, coord);
     }
 
@@ -1286,10 +1288,10 @@ static void draw_client_map2(object *pl) {
     /* We could do this logic as conditionals in the if statement,
      * but that started to get a bit messy to look at.
      */
-    min_x = pl->x-pl->contr->socket.mapx/2;
-    min_y = pl->y-pl->contr->socket.mapy/2;
-    max_x = pl->x+(pl->contr->socket.mapx+1)/2+MAX_HEAD_OFFSET;
-    max_y = pl->y+(pl->contr->socket.mapy+1)/2+MAX_HEAD_OFFSET;
+    min_x = pl->x-plyr->socket.mapx/2;
+    min_y = pl->y-plyr->socket.mapy/2;
+    max_x = pl->x+(plyr->socket.mapx+1)/2+MAX_HEAD_OFFSET;
+    max_y = pl->y+(plyr->socket.mapy+1)/2+MAX_HEAD_OFFSET;
 
     /* x, y are the real map locations. ax, ay are viewport relative
      * locations.
@@ -1303,8 +1305,8 @@ static void draw_client_map2(object *pl) {
              * handle big images - if they extend to a viewable
              * portion, we need to send just the lower right corner.
              */
-            if (ax >= pl->contr->socket.mapx || ay >= pl->contr->socket.mapy) {
-                check_space_for_heads(ax, ay, &sl, &pl->contr->socket);
+            if (ax >= plyr->socket.mapx || ay >= plyr->socket.mapy) {
+                check_space_for_heads(ax, ay, &sl, &plyr->socket);
             } else {
                 /* This space is within the viewport of the client. Due
                  * to walls or darkness, it may still not be visible.
@@ -1317,7 +1319,7 @@ static void draw_client_map2(object *pl) {
                  * you can't see the space (too dark)
                  * 100 - space is blocked from sight.
                  */
-                d = pl->contr->blocked_los[ax][ay];
+                d = plyr->blocked_los[ax][ay];
 
                 /* If the coordinates are not valid, or it is too
                  * dark to see, we tell the client as such
@@ -1333,19 +1335,19 @@ static void draw_client_map2(object *pl) {
                      * If the space is out of the map, it shouldn't
                      * have a head.
                      */
-                    if (pl->contr->socket.lastmap.cells[ax][ay].darkness != 0) {
+                    if (plyr->socket.lastmap.cells[ax][ay].darkness != 0) {
                         SockList_AddShort(&sl, coord);
                         SockList_AddChar(&sl, MAP2_TYPE_CLEAR);
                         SockList_AddChar(&sl, 255); /* Termination byte */
                         // Reduce dereferences by passing the inner array offset instead of address of value
-                        map_clearcell(pl->contr->socket.lastmap.cells[ax] + ay, 0, 0);
+                        map_clearcell(plyr->socket.lastmap.cells[ax] + ay, 0, 0);
                     }
                 } else if (d >= MAX_LIGHT_RADII) {
                     /* This block deals with spaces that are not
                      * visible due to darkness or walls. Still
                      * need to send the heads for this space.
                      */
-                    check_space_for_heads(ax, ay, &sl, &pl->contr->socket);
+                    check_space_for_heads(ax, ay, &sl, &plyr->socket);
                 } else {
                     int have_darkness = 0, has_obj = 0, got_one = 0, del_one = 0, g1, alive_layer = -1, old_got;
 
@@ -1368,9 +1370,9 @@ static void draw_client_map2(object *pl) {
                     SockList_AddShort(&sl, coord);
 
                     /* Darkness changed */
-                    if (pl->contr->socket.lastmap.cells[ax][ay].darkness != d
-                    && pl->contr->socket.darkness) {
-                        pl->contr->socket.lastmap.cells[ax][ay].darkness = d;
+                    if (plyr->socket.lastmap.cells[ax][ay].darkness != d
+                    && plyr->socket.darkness) {
+                        plyr->socket.lastmap.cells[ax][ay].darkness = d;
                         /* Darkness tag & length*/
                         SockList_AddChar(&sl, MAP2_TYPE_DARKNESS|1<<5);
                         SockList_AddChar(&sl, 255-d*(256/MAX_LIGHT_RADII));
@@ -1391,11 +1393,11 @@ static void draw_client_map2(object *pl) {
                         if (ob) {
                             g1 = has_obj;
                             old_got = got_one;
-                            got_one += map2_add_ob(ax, ay, layer, ob, &sl, &pl->contr->socket, &has_obj, 0);
+                            got_one += map2_add_ob(ax, ay, layer, ob, &sl, &plyr->socket, &has_obj, 0);
 
                             /* if we added the face, or it is a monster's head, check probe spell */
                             if (got_one != old_got || (ob->head == NULL && ob->more))
-                                got_one += check_probe(ax, ay, ob, &sl, &pl->contr->socket, &has_obj, &alive_layer);
+                                got_one += check_probe(ax, ay, ob, &sl, &plyr->socket, &has_obj, &alive_layer);
 
                             /* If we are just storing away the head
                              * for future use, then effectively this
@@ -1403,14 +1405,14 @@ static void draw_client_map2(object *pl) {
                              * it if needed.
                              */
                             if (g1 == has_obj) {
-                                del_one += map2_delete_layer(ax, ay, layer, &sl, &pl->contr->socket);
+                                del_one += map2_delete_layer(ax, ay, layer, &sl, &plyr->socket);
                             } else if (ob->head == NULL) {
                                 /* for single-part items */
-                                got_one += check_probe(ax, ay, ob, &sl, &pl->contr->socket, &has_obj, &alive_layer);
+                                got_one += check_probe(ax, ay, ob, &sl, &plyr->socket, &has_obj, &alive_layer);
                             }
                         } else {
                             if (layer != alive_layer)
-                                del_one += map2_delete_layer(ax, ay, layer, &sl, &pl->contr->socket);
+                                del_one += map2_delete_layer(ax, ay, layer, &sl, &plyr->socket);
                         }
                     }
                     /* If nothing to do for this space, we
@@ -1430,7 +1432,7 @@ static void draw_client_map2(object *pl) {
                         SockList_AddChar(&sl, MAP2_TYPE_CLEAR);
                         SockList_AddChar(&sl, 255); /* Termination byte */
                         // Reduce dereferences by passing the inner array offset instead of address of value
-                        map_clearcell(pl->contr->socket.lastmap.cells[ax] + ay, 0, 0);
+                        map_clearcell(plyr->socket.lastmap.cells[ax] + ay, 0, 0);
                     } else {
                         SockList_AddChar(&sl, 255); /* Termination byte */
                     }
@@ -1441,7 +1443,7 @@ static void draw_client_map2(object *pl) {
 
     /* Only send this if there are in fact some differences. */
     if (sl.len > startlen) {
-        Send_With_Handling(&pl->contr->socket, &sl);
+        Send_With_Handling(&plyr->socket, &sl);
     }
     SockList_Term(&sl);
 }
