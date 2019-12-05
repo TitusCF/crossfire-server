@@ -2796,7 +2796,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         }
 
         /* copy information to bed of reality information, in case the player dies */
-        snprintf(pl->savebed_map, sizeof(pl->savebed_map), "%s", pl->ob->map->path);
+        safe_strncpy(pl->savebed_map, pl->ob->map->path, sizeof(pl->savebed_map));
         pl->bed_x = pl->ob->x;
         pl->bed_y = pl->ob->y;
 
