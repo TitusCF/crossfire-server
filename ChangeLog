@@ -1,3 +1,6 @@
+2019-12-05  Daniel Hawkins
+    * server/monster.c: Reduce calls to monster_compute_path.
+
 2019-12-04  Daniel Hawkins
     * socket/request.c: Reduce dereferences in draw_client_map2.
 

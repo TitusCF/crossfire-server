@@ -841,8 +841,31 @@ int monster_move(object *op) {
         dir = get_randomized_dir(dir);
     else if (QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op, FLAG_RUN_AWAY))
         dir = absdir(dir+4);
-    else if (!monster_can_hit(part, enemy, &rv))
+    // Don't compute a path if we aren't going to move anyway.
+    else if (QUERY_FLAG(op, FLAG_STAND_STILL))
+        dir = rv.direction;
+    else if (!monster_can_hit(part, enemy, &rv)) {
+        // if door or earthwall is in direction of player and monster will apply doors or earthwalls, then hit the door.
+        // Don't do a path because the path could move them away from the door.
+        if (op->will_apply&(WILL_APPLY_EARTHWALL|WILL_APPLY_DOOR) && 
+            get_map_flags(op->map, 0, op->x+freearr_x[rv.direction], op->y+freearr_y[rv.direction], 0, 0)&~P_OUT_OF_MAP) {
+                // Note we don't call monster_check_earthwalls because it returns no type
+                FOR_MAP_PREPARE(op->map, op->x+freearr_x[rv.direction], op->y+freearr_y[rv.direction], tmp)
+                    // Ensure the tile in rv.direction is an earthwall
+                    if (tmp->type == EARTHWALL && op->will_apply&WILL_APPLY_EARTHWALL) {
+                        hit_player(tmp, op->stats.dam, op, AT_PHYSICAL, 1);
+                        return 0;
+                    }
+                    // Ensure the tile in rv.direction is a door
+                    if (tmp->type == DOOR && op->will_apply&WILL_APPLY_DOOR) {
+                        hit_player(tmp, op->stats.dam, op, AT_PHYSICAL, 1);
+                        return 0;
+                    }
+                FOR_MAP_FINISH();
+        }
+        // We do fallthrough because it returns from the function if we punch the door.
         dir = monster_compute_path(op, enemy, rv.direction);
+    }
 
     if ((op->attack_movement&LO4) && !QUERY_FLAG(op, FLAG_SCARED)) {
         switch (op->attack_movement&LO4) {
