@@ -590,7 +590,9 @@ void do_server(void) {
         int pollret = select(socket_info.max_filedescriptor, &tmp_read, NULL,
                              &tmp_exceptions, &socket_info.timeout);
         if (pollret == -1) {
-            LOG(llevError, "select failed: %s\n", strerror(errno));
+            if (errno != EINTR) {
+                LOG(llevError, "select failed: %s\n", strerror(errno));
+            }
             return;
         } else if (!pollret) {
             return;
