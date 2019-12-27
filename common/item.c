@@ -574,12 +574,9 @@ void query_short_name(const object *op, char *buf, size_t size) {
     case WAND:
     case ROD:
         if (QUERY_FLAG(op, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
-            if (!op->title) {
+            if (!op->title && (op->inv)) {
                 safe_strcat(buf, " of ", &len, size);
-                if (op->inv)
-                    safe_strcat(buf, op->inv->name, &len, size);
-                else
-                    LOG(llevError, "Spellbook %s lacks inventory\n", op->name);
+                safe_strcat(buf, op->inv->name, &len, size);
             }
             if (op->type != SPELLBOOK) {
                 snprintf(buf+len, size-len, " (lvl %d)", op->level);
