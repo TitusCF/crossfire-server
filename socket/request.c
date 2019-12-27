@@ -393,12 +393,17 @@ static void send_smooth(socket_struct *ns, uint16_t face) {
     uint16_t smoothface;
     SockList sl;
 
-    /* If we can't find a face, return and set it so we won't
-     * try to send this again.
-     */
+    // Try to find a smoothing face, or the default smoothing face. If this
+    // fails, set NS_FACESENT_SMOOTH so we don't try to send it again.
+    //
+    // Failures are usually due to map makers changing the face of a ground
+    // tile, but forgetting to unset smoothlevel.
     if (!find_smooth(face, &smoothface)
     && !find_smooth(smooth_face->number, &smoothface)) {
-        LOG(llevError, "could not findsmooth for %d. Neither default (%s)\n", face, smooth_face->name);
+        LOG(llevDebug,
+            "Could not smooth face %d\n"
+            "Check that this face has a smoothing pixmap, or remove its smoothlevel.\n",
+            face);
         ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
         return;
     }
@@ -1266,7 +1271,6 @@ static void draw_client_map2(object *pl) {
     SockList sl;
     uint16_t coord;
     mapstruct *m;
-    object *ob;
     // Dereference once. It should not change in the middle of processing.
     player *plyr = pl->contr;
 
@@ -1380,7 +1384,7 @@ static void draw_client_map2(object *pl) {
                     }
 
                     for (layer = 0; layer < MAP_LAYERS; layer++) {
-                        ob = GET_MAP_FACE_OBJ(m, nx, ny, layer);
+                        const object *ob = GET_MAP_FACE_OBJ(m, nx, ny, layer);
 
                         /* Special case: send player itself if invisible */
                         if (!ob
