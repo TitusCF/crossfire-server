@@ -1309,7 +1309,7 @@ int apply_special(object *who, object *op, int aflags) {
         }
     }
     if (who->type == PLAYER)
-        esrv_update_item(UPD_NROF|UPD_FLAGS|UPD_WEIGHT, who, op);
+        esrv_update_item(UPD_NAME|UPD_NROF|UPD_FLAGS|UPD_WEIGHT, who, op);
     return 0;
 }
 
