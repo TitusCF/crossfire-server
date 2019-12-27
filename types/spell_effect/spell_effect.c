@@ -168,8 +168,7 @@ static void move_bolt(object *op) {
     }
     hit_map(op, 0, op->attacktype, 1);
 
-    if (op->weight)
-        check_spell_knockback(op);
+    check_spell_knockback(op);
 
     if (!op->direction)
         return;
@@ -324,7 +323,6 @@ static void explosion(object *op) {
         return;
     }
     hit_map(op, 0, op->attacktype, 0);
-//     if (op->weight)
     check_spell_knockback(op);
 
     if (op->range > 0) {
@@ -412,8 +410,7 @@ static void move_cone(object *op) {
      * Spell objects with weight push whatever they encounter to some
      * degree.
      */
-    if (op->weight)
-        check_spell_knockback(op);
+    check_spell_knockback(op);
 
     if (object_was_destroyed(op, tag))
         return;
@@ -871,13 +868,13 @@ static void check_spell_knockback(object *op) {
     int weight_move;
     int frictionmod = 2; /*poor man's physics - multipy targets weight by this amount */
 
-    if (!op->weight) { /*shouldn't happen but if cone object has no weight drop out*/
-        LOG(llevDebug, "DEBUG: arch weighs nothing in check_spell_knockback\n");
+    /* if cone object has no weight drop out */
+    if (!op->weight) {
         return;
-    } else {
-        weight_move = op->weight+(op->weight*op->level)/3;
-        /*LOG(llevDebug, "DEBUG: arch weighs %d and masses %d (%s,level %d)\n", op->weight, weight_move, op->name, op->level);*/
     }
+
+    weight_move = op->weight+(op->weight*op->level)/3;
+    /*LOG(llevDebug, "DEBUG: arch weighs %d and masses %d (%s,level %d)\n", op->weight, weight_move, op->name, op->level);*/
 
     for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
         int num_sections = 1;
