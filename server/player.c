@@ -359,7 +359,7 @@ player *get_player(player *p) {
     p->peaceful = 1;   /* default peaceful */
     p->do_los = 1;
     p->no_shout = 0;   /* default can shout */
-    p->language = 0;
+    p->language = -1;  // find default language
     p->unarmed_skill = NULL;
     p->ticks_played = 0;
 
