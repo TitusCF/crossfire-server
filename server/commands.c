@@ -41,6 +41,7 @@ command_array_struct Commands[] = {
     { "bowmode", command_bowmode,        0.0 },
     { "brace", command_brace,            0.0 },
     { "cast", command_cast,              0.2 },   /* Is this right? */
+    { "delete", command_delete,          0.0 },
     { "disarm", command_disarm,          1.0 },
     { "dm", command_dm,                  0.0 },
     { "dmhide", command_dmhide,          0.0 }, /* Like dm, but don't tell a dm arrived, hide player */

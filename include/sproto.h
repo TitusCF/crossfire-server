@@ -168,6 +168,7 @@ void command_usekeys(object *op, const char *params);
 void command_resistances(object *op, const char *params);
 void command_help(object *op, const char *params);
 int onoff_value(const char *line);
+void command_delete(object *op, const char *params);
 void command_quit(object *op, const char *params);
 void command_sound(object *op, const char *params);
 void receive_player_name(object *op);

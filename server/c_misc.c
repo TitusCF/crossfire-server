@@ -1835,6 +1835,19 @@ int onoff_value(const char *line) {
 }
 
 /**
+ * Tell players to use the 'delete' command. Too many new players have
+ * accidentally deleted their characters because they didn't carefully read
+ * the warning that the original 'quit' command gave.
+ */
+void command_quit(object* op, const char* params) {
+    draw_ext_info(
+        NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+        i18n(op,
+             "To leave the game, sleep in (apply) a bed to reality. To "
+             "permenantly delete your character, use the 'delete' command."));
+}
+
+/**
  * Player wants to totally delete her character.
  *
  * @param op
@@ -1842,7 +1855,7 @@ int onoff_value(const char *line) {
  * @param params
  * unused.
  */
-void command_quit(object *op, const char *params) {
+void command_delete(object *op, const char *params) {
     if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_ADMIN_DM, "Can't quit when in DM mode.");
         return;
