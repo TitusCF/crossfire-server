@@ -418,11 +418,13 @@ void esrv_update_item(int flags, object *pl, object *op) {
          */
     }
     if (!QUERY_FLAG(op, FLAG_CLIENT_SENT)) {
-        /* FLAG_CLIENT_SENT is debug only.  We are using it to see where
-         * this is happening - we can set a breakpoint here in the debugger
-         * and track back the call.
-         */
-        LOG(llevDebug, "We have not sent item %s (%d)\n", op->name, op->count);
+        // Sometimes, we try to update an item that we haven't sent to the
+        // client. Don't! This can happen, for example, when a button under the
+        // floor gets toggled, but objects under floor tiles are generally not
+        // sent. There are some other places where this happens that we haven't
+        // tracked down, but in general, just don't.
+        //LOG(llevDebug, "We have not sent item %s (%d)\n", op->name, op->count);
+        return;
     }
 
     SockList_Init(&sl);

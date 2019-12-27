@@ -343,7 +343,7 @@ typedef struct typedata {
 #define FLAG_ONE_HIT            97 /**< Monster can only hit once before going
                                     * away (replaces ghosthit)
                                     */
-#define FLAG_CLIENT_SENT        98 /**< THIS IS A DEBUG FLAG ONLY.  We use it to
+#define FLAG_CLIENT_SENT        98 /**< We use it to
                                     * detect cases were the server is trying
                                     * to send an upditem when we have not
                                     * actually sent the item.
