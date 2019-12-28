@@ -2562,6 +2562,7 @@ object *object_decrease_nrof(object *op, uint32_t i) {
             object_add_weight(op->env, op->weight * op->nrof);
             if (tmp) {
                 esrv_update_item(UPD_NROF, tmp, op);
+                esrv_update_item(UPD_WEIGHT, tmp, op->env);
                 fix_object(tmp);
             }
         } else {
@@ -2644,6 +2645,7 @@ static void object_increase_nrof(object *op, uint32_t i) {
         object_add_weight(op->env, op->weight * op->nrof);
         if (tmp) {
             esrv_update_item(UPD_NROF, tmp, op);
+            // Why don't we need to update weight of op->env here?
         }
     } else {
         /* On a map. */
