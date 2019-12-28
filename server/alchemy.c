@@ -83,29 +83,43 @@ static const char *cauldron_sound(void) {
 /**
  * Compute the success probability of a recipe.
  *
- * The scale is kind of linear, with 3 steps depending on the level difference between recipe and skill.
+ * Probability of success is a function of the difference between the recipe
+ * difficulty and the player's skill level, adjusted by the cauldron bonus.
+ *
+ * The shape is roughly 1-exp(-x):
+ * ------------+-------------
+ *  Difference | Probability
+ * ------------+-------------
+ *      10     |    0.31
+ *       0     |    0.51
+ *     -10     |    0.71
+ *     -30     |    0.91
+ *  <= -35     |    0.95
+ * ------------+-------------
  *
  * @param rp recipe to attempt.
  * @param skill skill being used.
  * @param cauldron provides the magic of the used device.
  * @return chance between 0.01 and .95.
  */
-static float recipe_chance(const recipe *rp, const object *skill, const object *cauldron) {
-    int cauldron_add_skill;
+static float chance_fn(int diff) {
+    if (diff > 10)
+        return MAX(.01, .3 - (diff - 10) * .03);
 
+    if (diff > -10)
+        return .5 + .02 * (float)(-diff);
+
+    return MIN(.95, .70 + (-diff - 10) * .01);
+}
+
+static float recipe_chance(const recipe *rp, const object *skill, const object *cauldron) {
     assert(rp);
     assert(skill);
     assert(cauldron);
 
-    cauldron_add_skill = (cauldron->magic + 1) / 2;
-
-    if (skill->level + cauldron_add_skill < rp->diff - 10)
-        return MAX(.01, .3 - (rp->diff - 10 - skill->level - cauldron_add_skill) * .03);
-
-    if (skill->level + cauldron_add_skill <= rp->diff + 10)
-        return .5 + .02 * (float)(skill->level + cauldron_add_skill - rp->diff);
-
-    return MIN(.95, .70 + (skill->level + cauldron_add_skill - rp->diff - 10) * .01);
+    const int cauldron_add_skill = (cauldron->magic + 1) / 2;
+    const int eff_skill = skill->level + cauldron_add_skill;
+    return chance_fn(rp->diff - eff_skill);
 }
 
 /**

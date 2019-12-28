@@ -72,9 +72,10 @@
 #           gets by using this formula.  You should factor difficulty in
 #           when setting exp.  The game does not do this for you.
 #
-#  "diff"  A required integer.  This is the percentage difficulty out of
-#   	    100 of how hard this formula is.  This is the only factor used in
-#           determining success or failure of the creation.
+#  "diff"  A required integer. This is the difficulty level of the formula.
+#           A player with skill (after cauldron bonuses) equal to diff
+#           succeeds 51% of the time, maxing out at 95% when the player's
+#           skill is 35 or more than diff.
 #
 #  "failure_arch" An optional string, which must be the valid archetype name for an
 #           archetype. Instead of a random effect, this item will be generated in case
