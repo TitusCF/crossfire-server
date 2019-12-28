@@ -3014,6 +3014,26 @@ ingred dagger,dust of stasis,bottle of mineral oil
 # -------------------
 # Amulets
 # -------------------
+# cast large gold nugget -> amulet
+Object NONE
+arch amulet
+ingred large gold nugget
+yield 1
+skill jeweler
+cauldron forge
+chance 0
+exp 2000
+diff -25
+# melt amulet -> large gold nugget
+Object NONE
+arch largenugget
+ingred amulet
+yield 1
+skill jeweler
+cauldron forge
+chance 0
+exp 400
+diff -35
 #
 Object Shielding
 arch amulet
@@ -3098,6 +3118,26 @@ ingred amulet,2 potion of wisdom,holy symbol,30 pearl
 # -------------------
 # Rings
 # -------------------
+# cast small gold nugget -> ring
+Object NONE
+arch ring
+ingred small gold nugget
+yield 1
+skill jeweler
+cauldron forge
+chance 0
+exp 1000
+diff -30
+# melt ring -> small gold nugget
+Object NONE
+arch smallnugget
+ingred ring
+yield 1
+skill jeweler
+cauldron forge
+chance 0
+exp 200
+diff -35
 #
 Object Thieves
 arch ring
