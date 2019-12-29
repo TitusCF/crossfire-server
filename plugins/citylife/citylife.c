@@ -530,6 +530,38 @@ static const char *const santo_dominion_archs[] = {
 
 /*@}*/
 
+/**
+ * @defgroup
+ * @ingroup plugin_citylife
+ */
+/*@{*/
+static const spawn_zone scorncounty_zones[] = {
+    {24, 27, 27, 35}, // village
+    {25, 12, 27, 18}, // field
+    {34, 12, 36, 16}, // field
+    {38, 0, 45, 2},   // field
+
+};
+
+static const spawn_point scorncounty_points[] = {
+    {24, 27},
+    {26, 27},
+    {24, 29},
+    {27, 29},
+    {24, 31},
+    {24, 34},
+    {34, 32},
+    {41, 1},
+};
+
+static const char *const scorncounty_archs[] = {
+    "child",
+    "farmer",
+    "fatman",
+    "fatwoman",
+};
+/*@}*/
+
 /** @ingroup  plugin_citylife
 @{*/
 /**
@@ -540,6 +572,7 @@ static const mapzone available_zones[] = {
     { scorn_ne_points, 1, scorn_ne_zones, 1, 5, "/world/world_105_115", scorn_archs, 12 },
     { scorn_sw_points, 3, scorn_sw_zones, 1, 5, "/world/world_104_116", scorn_archs, 12 },
     { scorn_se_points, 1, scorn_se_zones, 1, 5, "/world/world_105_116", scorn_archs, 12 },
+    { scorncounty_points, 8, scorncounty_zones, 4, 8, "/world/world_105_116", scorncounty_archs, 4},
     { darcap_points, 19, darcap_zones, 3, 4, "/world/world_116_102", darcap_archs, 12},
     { navar_nw_points, 8, navar_nw_zones, 4, 2, "/world/world_121_116", navar_archs, 15 },
     { navar_ne_points, 6, navar_ne_zones, 3, 5, "/world/world_122_116", navar_archs, 15 },
