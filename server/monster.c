@@ -1852,16 +1852,13 @@ void monster_check_apply_all(object *monster) {
  * @param op monster calling for help.
  */
 void monster_npc_call_help(object *op) {
-    int x, y, mflags;
-    int16_t sx, sy;
-    mapstruct *m;
-
-    for (x = -3; x < 4; x++)
-        for (y = -3; y < 4; y++) {
-            m = op->map;
-            sx = op->x+x;
-            sy = op->y+y;
-            mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
+    const int help_radius = 3;
+    for (int x = -help_radius; x <= help_radius; x++)
+        for (int y = -help_radius; y <= help_radius; y++) {
+            mapstruct *m = op->map;
+            int16_t sx = op->x+x;
+            int16_t sy = op->y+y;
+            int mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
             /* If nothing alive on this space, no need to search the space. */
             if ((mflags&P_OUT_OF_MAP) || !(mflags&P_IS_ALIVE))
                 continue;
