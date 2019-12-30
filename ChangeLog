@@ -1,3 +1,9 @@
+2019-12-29  Daniel Hawkins
+    * common/artifact.c: Reduce severity of artifacts with no chance to debug.
+        There are use cases where no artifact chance makes sense.
+        They can be obsoleted, craftable, quest items, or anything else that shouldn't
+        appear in random loot.
+
 2019-12-05  Daniel Hawkins
     * server/monster.c: Reduce calls to monster_compute_path.
 

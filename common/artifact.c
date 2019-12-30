@@ -624,7 +624,7 @@ void init_artifacts(void) {
     for (al = first_artifactlist; al != NULL; al = al->next) {
         for (art = al->items; art != NULL; art = art->next) {
             if (!art->chance)
-                LOG(llevError, "Warning: artifact with no chance: %s\n", art->item->name);
+                LOG(llevDebug, "Artifact with no chance: %s\n", art->item->name);
             else
                 al->total_chance += art->chance;
         }
