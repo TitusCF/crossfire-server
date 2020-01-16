@@ -192,7 +192,15 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
 
 static int
 handle_cmd(socket_struct *ns, player *pl, char *cmd, char *data, int len) {
-    assert(cmd != NULL);
+    /* Fuzz testing indicated a way to get a null command here
+     * --> make an empty command, but have a length.
+     * So, if we get here with a null command, log it and exit the function.
+     * Daniel Hawkins 2020-01-16
+     */
+    if (cmd == NULL) {
+        LOG(llevDebug, "%s: missing command. Sending garbage?\n", ns->host);
+        return 0;
+    }
     for (int i = 0; client_commands[i].cmdname != NULL; i++) {
         if (strcmp(cmd, client_commands[i].cmdname) == 0) {
             if (client_commands[i].cmdproc != NULL) {

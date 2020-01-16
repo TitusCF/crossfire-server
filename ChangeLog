@@ -1,3 +1,7 @@
+2020-01-16  Daniel Hawkins
+    * socket/loop.c: Replace assertion of nonnull cmd in handle_cmd with a check
+        that rejects the null command but keeps the server running.
+
 2019-12-29  Daniel Hawkins
     * common/artifact.c: Reduce severity of artifacts with no chance to debug.
         There are use cases where no artifact chance makes sense.
