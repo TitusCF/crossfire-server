@@ -1934,7 +1934,7 @@ void tailor_readable_ob(object *book, int msg_type) {
         return;   /* if no level no point in doing any more... */
 
     /* Max text length this book can have. */
-    book_buf_size = BOOKSIZE(book);
+    book_buf_size = BOOK_BUF;
     book_buf_size -= strlen("\n"); /* Keep enough for final \n. */
     assert(book_buf_size < BOOK_BUF);
 
