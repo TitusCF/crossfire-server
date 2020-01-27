@@ -16,15 +16,16 @@
 
 #include "global.h"
 
-#include <stdlib.h>
 #include <string.h>
 
-#include "book.h"
-#include "living.h"
 #include "object.h"
+#ifndef __CEXTRACT__
+#include <sproto.h>
+#endif
+#include "living.h"
 #include "skills.h"
 #include "spells.h"
-#include "sproto.h"
+#include "book.h"
 
 /**
  * Computes stealing chance.
@@ -548,19 +549,6 @@ static void stop_jump(object *pl) {
  * 1 if jump was successful, 0 else.
  */
 static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
-    /**
-     * Make sure we aren't in a transport.
-     * This should be set to null if we aren't.
-     */
-    if (pl->contr && pl->contr->transport){
-        char trans_name[MAX_BUF];
-        query_name(pl->contr->transport, trans_name, MAX_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-            "Your bounce off the walls of %s.", trans_name);
-        // We failed to jump. Return as a failure.
-        return 0;
-    }
-    
     int i, dx = freearr_x[dir], dy = freearr_y[dir], mflags;
     int16_t x, y;
     mapstruct *m;
@@ -1804,7 +1792,7 @@ int write_on_item(object *pl, const char *params, object *skill) {
         return write_scroll(pl, item, skill);
     } else {
         // This case should never be reached.
-        abort();
+        return 0;
     }
 }
 
@@ -2002,26 +1990,12 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     }
 
     /* the more we carry, the less we can throw. Limit only on players */
+    /* This logic is basically grabbed right out of fix_object() */
     if (op->type == PLAYER
     && op->carrying > (get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT)
     && (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
-        /**
-         * Fixed logic here
-         *
-         * The old code made you have a better factor the more encumbered past the LOAD_PCT
-         * you were. This new way essentially flips the variable to be higher at lower encumbrance.
-         *
-         * It also only encumbers throwing once carryng more than FREE_PLAYER_LOAD_PERCENT of our capacity,
-         * since we have a MIN on load_factor when we use it, so before the limit it is clipped to 1.0.
-         *
-         * Also ,use 2.0f since op->carrying/(get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT) = 1 if
-         * they are equal. As op->carrying increases, this slides higher, making the factor lower.
-         *
-         * SilverNexus 2019-01-03
-         */
-        load_factor = 2.0f - (float)(op->carrying) / (float)(get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT);
-        // Only clip to 1.0 if we get in here, since it is 1.0 if we do not get in here.
-        load_factor = MIN(load_factor, 1.0f);
+        int extra_weight = op->carrying-get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT;
+        load_factor = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
     }
 
     /* lighter items are thrown harder, farther, faster */
@@ -2035,7 +2009,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
         return 0;
     }
 
-    eff_str = str*load_factor;
+    eff_str = str*MIN(load_factor, 1.0);
     eff_str = (float)eff_str*item_factor*str_factor;
 
     /* alas, arrays limit us to a value of settings.max_stat (30). Use str_factor to
@@ -2207,7 +2181,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
      * In short summary, a throw can take anywhere between speed 5 and
      * speed 0.5
      */
-    op->speed_left -= 50.0/pause_f;
+    op->speed_left -= 50/pause_f;
 
     object_update_speed(throw_ob);
     throw_ob->speed_left = 0;
