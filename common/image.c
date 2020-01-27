@@ -55,7 +55,11 @@ static const char *const colorname[] = {
     "grey",         /* 9  */
     "brown",        /* 10 */
     "yellow",       /* 11 */
-    "khaki"         /* 12 */
+    "khaki",        /* 12 */
+    "gray",         /* 13 */
+    "light",        /* 14 */
+    "cyan",         /* 15 */
+    "magenta"       /* 16 */
 };
 
 /**
