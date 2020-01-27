@@ -60,6 +60,14 @@ enum SK {
     SK_EARTH_MAGIC           = 41,  /**< Earth magic, unused. */
     SK_WATER_MAGIC           = 42,  /**< Water magic, unused. */
     SK_FIRE_MAGIC            = 43,  /**< Fire magic, unused. */
+    SK_DIGGING               = 44,  /**< Fire magic, unused. */
+    SK_MINING                = 45,  /**< Fire magic, unused. */
+    SK_WOODCUTTING           = 46,  /**< Fire magic, unused. */
+    SK_SAWING                = 47,  /**< Fire magic, unused. */
+
+
+
+
 };
 
 /**
@@ -67,7 +75,7 @@ enum SK {
  * There is no direct mapping to the subtype, as multiple skills may share
  * the same subtype with a different name.
  */
-#define MAX_SKILLS              50
+#define MAX_SKILLS              48
 
 /**
  * @defgroup SK_EXP_xxx Experience flags
