@@ -545,6 +545,7 @@ void do_server(void) {
             init_sockets[i].status = Ns_Dead;
         }
         if (init_sockets[i].status == Ns_Dead) {
+            LOG(llevInfo, "Disconnected from %s\n", init_sockets[i].host);
             if (init_sockets[i].listen) {
                 /* try to reopen the listening socket */
                 init_listening_socket(&init_sockets[i]);

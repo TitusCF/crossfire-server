@@ -604,7 +604,8 @@ void version_cmd(char *buf, int len, socket_struct *ns) {
 #endif
 
     if (rest != NULL) {
-        LOG(llevInfo, "%s: connected using '%s'\n", ns->host, rest);
+        LOG(llevInfo, "Connection from %s (%s), CS %d, SC %d\n",
+            ns->host, rest, ns->cs_version, ns->sc_version);
     }
 }
 
@@ -2088,6 +2089,7 @@ void account_login_cmd(char *buf, int len, socket_struct *ns) {
     }
 
     if (account_login(name, password)) {
+        LOG(llevInfo, "Account login for '%s' from %s\n", name, ns->host);
         player *pl;
         socket_struct *tns;
 
@@ -2127,8 +2129,8 @@ void account_login_cmd(char *buf, int len, socket_struct *ns) {
         ns->account_name = strdup_local(account_exists(name));
 
         send_account_players(ns);
-
     } else {
+        LOG(llevInfo, "Failed account login for '%s' from %s\n", name, ns->host);
         SockList_AddString(&sl, "failure accountlogin Incorrect password for account");
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
