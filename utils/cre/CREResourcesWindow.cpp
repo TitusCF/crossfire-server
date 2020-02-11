@@ -554,7 +554,7 @@ void CREResourcesWindow::fillQuests()
       face = myResources->face(quest->face());
       if (face != NULL)
         quest->setFaceNumber(face->number);
-        codes.append(quest->code());
+      codes.append(quest->code());
     }
     codes.sort();
 
