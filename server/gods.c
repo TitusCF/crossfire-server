@@ -290,6 +290,26 @@ static int god_gives_present(object *op, const object *god, treasure *tr) {
 }
 
 /**
+ * Try to leave a cult. Deducts experience from 'skill' proportional to 'angry'.
+ * Returns true if successful (only when 'angry' is 1) or false otherwise.
+ */
+static bool try_leave_cult(object* pl, object* skill, int angry) {
+    const uint64_t loss = angry * (skill->stats.exp / 10);
+    if (loss)
+        change_exp(pl, -random_roll64(0, loss, pl, PREFER_LOW),
+                   skill ? skill->skill : "none", SK_SUBTRACT_SKILL_EXP);
+
+    /* random chance based on our current level
+     * note it gets harder the higher we get
+     */
+    if ((angry == 1) && !(random_roll(0, skill->level, pl, PREFER_LOW))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
  * Player prays at altar.
  * Checks for god changing, divine intervention, and so on.
  *
@@ -340,7 +360,6 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
         if (((random_roll(0, 399, pl, PREFER_LOW))-bonus) < 0)
             god_intervention(pl, pl_god, skill, altar);
     } else { /* praying to another god! */
-        uint64_t loss = 0;
         int angry = 1;
 
         /* I believe the logic for detecting opposing gods was completely
@@ -372,20 +391,8 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
                                  "Heretic! %s is angered!",
                                  pl_god->name);
 
-        /* whether we will be successfull in defecting or not -
-         * we lose experience from the clerical experience obj
-         */
-
-        loss = angry*(skill->stats.exp/10);
-        if (loss)
-            change_exp(pl, -random_roll64(0, loss, pl, PREFER_LOW), skill ? skill->skill : "none", SK_SUBTRACT_SKILL_EXP);
-
-        /* May switch Gods, but its random chance based on our current level
-         * note it gets harder to swap gods the higher we get
-         */
-        if ((angry == 1) && !(random_roll(0, skill->level, pl, PREFER_LOW))) {
-            if (become_follower(pl, &altar->other_arch->clone))
-                remove_special_prayers(pl, pl_god);
+        if (try_leave_cult(pl, skill, angry)) {
+            become_follower(pl, &altar->other_arch->clone);
         } else {
             /* toss this player off the altar.  He can try again. */
             draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, pl, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
@@ -467,18 +474,9 @@ static void remove_special_prayers(object *op, const object *god) {
  * new god to worship.
  * @return
  * 1 if successfully converted, 0 if the god doesn't like the race, or something else.
- * @todo isn't there duplication with remove_special_prayers() for spell removing?
  * @todo split the check to make this function only actually become follower
  */
 int become_follower(object *op, const object *new_god) {
-    const object *old_god = NULL;                      /* old god */
-    treasure *tr;
-    object *skop;
-    int i, sk_applied;
-    int undeadified = 0; /* Turns to true if changing god can changes the undead
-                          * status of the player.*/
-    old_god = find_god(determine_god(op));
-
     /* take away any special god-characteristic items. */
     FOR_INV_PREPARE(op, item) {
         /* remove all invisible startequip items which are
@@ -496,6 +494,7 @@ int become_follower(object *op, const object *new_god) {
     } FOR_INV_FINISH();
 
     /* remove any items given by the old god */
+    const object *old_god = find_god(determine_god(op));
     if (old_god) {
         /* Changed to use the new "divine_giver_name" key_value
          *   so it can reliably delete enchanted items.  Now it loops
@@ -503,6 +502,7 @@ int become_follower(object *op, const object *new_god) {
          *   treasure list.
          */
         follower_remove_given_items(op, op, old_god);
+        remove_special_prayers(op, old_god);
     }
 
     if (!op || !new_god)
@@ -520,7 +520,7 @@ int become_follower(object *op, const object *new_god) {
     }
 
     /* give the player any special god-characteristic-items. */
-    for (tr = new_god->randomitems->items; tr != NULL; tr = tr->next) {
+    for (treasure *tr = new_god->randomitems->items; tr != NULL; tr = tr->next) {
         if (tr->item
         && tr->item->clone.invisible
         && tr->item->clone.type != SPELLBOOK
@@ -533,7 +533,7 @@ int become_follower(object *op, const object *new_god) {
                          "You become a follower of %s!",
                          new_god->name);
 
-    skop = object_find_by_type_subtype(op, SKILL, SK_PRAYING);
+    object *skop = object_find_by_type_subtype(op, SKILL, SK_PRAYING);
     /* Player has no skill - give them the skill */
     if (!skop) {
         /* The archetype should always be defined - if we crash here because it doesn't,
@@ -543,8 +543,10 @@ int become_follower(object *op, const object *new_god) {
         link_player_skills(op);
     }
 
-    sk_applied = QUERY_FLAG(skop, FLAG_APPLIED); /* save skill status */
+    int sk_applied = QUERY_FLAG(skop, FLAG_APPLIED); /* save skill status */
 
+    int undeadified = 0; /* Turns to true if changing god can changes the undead
+                          * status of the player.*/
     /* Clear the "undead" status. We also need to force a call to change_abil,
      * so I set undeadified for that.
      * - gros, 21th July 2006.
@@ -578,7 +580,7 @@ int become_follower(object *op, const object *new_god) {
     /* make sure that certain immunities do NOT get passed
      * to the follower!
      */
-    for (i = 0; i < NROFATTACKS; i++)
+    for (int i = 0; i < NROFATTACKS; i++)
         if (skop->resist[i] > 30
         && (i == ATNR_FIRE || i == ATNR_COLD || i == ATNR_ELECTRICITY || i == ATNR_POISON))
             skop->resist[i] = 30;
@@ -634,9 +636,6 @@ int become_follower(object *op, const object *new_god) {
     /* return to previous skill status */
     if (!sk_applied)
         CLEAR_FLAG(skop, FLAG_APPLIED);
-
-    // check is now done after converting
-    //remove_special_prayers(op, new_god);
 
     return 1;
 }
@@ -997,9 +996,6 @@ static void god_intervention(object *op, const object *god, object *skill, objec
         LOG(llevError, "BUG: god_intervention(): no god or god without randomitems\n");
         return;
     }
-
-    // removed on 2009-12-12 because the function now removes prayers NOT from god.
-    //remove_special_prayers(op, god);
 
     /* lets do some checks of whether we are kosher with our god */
     if (god_examines_priest(op, god) < 0)
