@@ -369,12 +369,9 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
         if (ns->sc_version < 1027 || ns->cs_version < 1023) {
-            /* The space in the link isn't correct, but in my
-             * quick test with client 1.1.0, it didn't print it
-             * out correctly when done as a single line.
-             */
             print_ext_msg(ns, NDI_RED, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
-                          "Warning: Your client is too old to receive map data. Please update to a new client at http://sourceforge.net/project/showfiles.php ?group_id=13833");
+                          "Warning: Your client is too old to receive map data. Please update to a new client at: "
+                          "https://sourceforge.net/projects/crossfire/");
         }
 
         ns->status = Ns_Avail;
