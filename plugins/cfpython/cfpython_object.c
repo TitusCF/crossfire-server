@@ -1461,6 +1461,17 @@ static int Object_SetLastEat(Crossfire_Object *whoptr, PyObject *value, void *cl
     return 0;
 }
 
+static int Object_SetLevel(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LEVEL, val);
+    return 0;
+}
+
 static int Object_SetFace(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *face;
 
@@ -2672,7 +2683,7 @@ static PyGetSetDef Object_getseters[] = {
     { "LastSP",         (getter)Object_GetLastSP,       (setter)Object_SetLastSP, NULL, NULL },
     { "LastGrace",      (getter)Object_GetLastGrace,    (setter)Object_SetLastGrace, NULL, NULL },
     { "LastEat",        (getter)Object_GetLastEat,      (setter)Object_SetLastEat, NULL, NULL },
-    { "Level",          (getter)Object_GetLevel,        NULL, NULL, NULL },
+    { "Level",          (getter)Object_GetLevel,        (setter)Object_SetLevel, NULL, NULL },
     { "Face",           (getter)Object_GetFace,         (setter)Object_SetFace, NULL, NULL },
     { "Anim",           (getter)Object_GetAnim,         (setter)Object_SetAnim, NULL, NULL },
     { "AnimSpeed",      (getter)Object_GetAnimSpeed,    (setter)Object_SetAnimSpeed, NULL, NULL },

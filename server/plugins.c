@@ -2746,6 +2746,7 @@ static void cfapi_object_set_property(int *type, ...) {
             iarg = va_arg(args, int);
             *type = CFAPI_INT;
             op->level = iarg;
+            send_changed_object(op);
             break;
 
         case CFAPI_OBJECT_PROP_LAST_HEAL:
