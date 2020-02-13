@@ -48,7 +48,7 @@ CREMapPanel::CREMapPanel(ScriptFileManager* manager)
     myScripts = new QTreeWidget(this);
     myScripts->setHeaderLabel(tr("Scripts on this map"));
     myScripts->setIconSize(QSize(32, 32));
-   layout->addWidget(myScripts, 3, 0, 1, 2);
+    layout->addWidget(myScripts, 3, 0, 1, 2);
 
     layout->addWidget(new QLabel(tr("Background music:"), this), 4, 0);
     myBackgroundMusic = new QLabel();
