@@ -22,6 +22,7 @@ class CREMapPanel : public CRETPanel<CREMapInformation>
         QTreeWidget* myExitsTo;
         QTreeWidget* myExitsFrom;
         QTreeWidget* myScripts;
+        QLabel* myBackgroundMusic;
 };
 
 #endif /* _CREMAPPANEL_H */

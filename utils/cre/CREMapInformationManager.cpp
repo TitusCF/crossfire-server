@@ -140,6 +140,8 @@ void CREMapInformationManager::process(const QString& path2)
     else
         information->setRegion("wilderness"); /** @todo get from config */
     information->setLevel(m->difficulty);
+    if (m->background_music)
+        information->setBackgroundMusic(m->background_music);
 
     information->setShopGreed(m->shopgreed);
     if (m->shopitems != NULL)
@@ -497,6 +499,11 @@ void CREMapInformationManager::loadCache()
             QString params = reader.attributes().value("params").toString();
             map->addRandomMap(new CRERandomMap(map, x, y, params.toLatin1().constData()));
         }
+        if (reader.isStartElement() && reader.name() == "background_music")
+        {
+            map->setBackgroundMusic(reader.readElementText());
+            continue;
+        }
 
         if (reader.isEndElement() && reader.name() == "map")
         {
@@ -605,6 +612,11 @@ void CREMapInformationManager::storeCache()
             writer.writeAttribute("params", params);
             free(params);
             writer.writeEndElement();
+        }
+
+        if (!map->backgroundMusic().isEmpty())
+        {
+            writer.writeTextElement("background_music", map->backgroundMusic());
         }
 
         writer.writeEndElement();

@@ -72,6 +72,16 @@ void CREMapInformation::setName(const QString& name)
     myName = name;
 }
 
+const QString& CREMapInformation::backgroundMusic()
+{
+    return myBackgroundMusic;
+}
+
+void CREMapInformation::setBackgroundMusic(const QString& music)
+{
+    myBackgroundMusic = music;
+}
+
 QStringList CREMapInformation::archetypes() const
 {
     return myArchetypes;

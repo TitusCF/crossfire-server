@@ -50,6 +50,10 @@ CREMapPanel::CREMapPanel(ScriptFileManager* manager)
     myScripts->setIconSize(QSize(32, 32));
    layout->addWidget(myScripts, 3, 0, 1, 2);
 
+    layout->addWidget(new QLabel(tr("Background music:"), this), 4, 0);
+    myBackgroundMusic = new QLabel();
+    layout->addWidget(myBackgroundMusic, 4, 1);
+
     fillEvents();
 }
 
@@ -88,4 +92,6 @@ void CREMapPanel::setItem(CREMapInformation* map)
             }
         }
     }
+
+    myBackgroundMusic->setText(map->backgroundMusic());
 }

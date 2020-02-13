@@ -32,6 +32,9 @@ class CREMapInformation : public QObject
         const QString& name() const;
         void setName(const QString& name);
 
+        const QString& backgroundMusic();
+        void setBackgroundMusic(const QString& music);
+
         QStringList archetypes() const;
         void addArchetype(const QString& archetype);
 
@@ -91,6 +94,7 @@ class CREMapInformation : public QObject
         QString myShopRace;
         quint64 myShopMin, myShopMax;
         QList<CRERandomMap*> myRandomMaps;
+        QString myBackgroundMusic;
 
         void copy(const CREMapInformation& other);
 };
