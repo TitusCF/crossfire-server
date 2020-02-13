@@ -604,6 +604,7 @@ void CREMapInformationManager::storeCache()
             char* params = stringbuffer_finish(sb);
             writer.writeAttribute("params", params);
             free(params);
+            writer.writeEndElement();
         }
 
         writer.writeEndElement();
