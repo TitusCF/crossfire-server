@@ -506,6 +506,8 @@ void CREResourcesWindow::fillMaps()
     QStringList names = regions.keys();
     names.sort();
 
+    int totalMaps = 0;
+
     foreach(QString name, names)
     {
         QList<CREMapInformation*> maps = myStore->getMapsForRegion(name);
@@ -524,6 +526,8 @@ void CREResourcesWindow::fillMaps()
             /** @todo clean at some point - the issue is wrapper's ownership */
             myDisplayedItems.append(map->clone());
         }
+
+        totalMaps += maps.size();
     }
 
     if (full)
@@ -532,6 +536,7 @@ void CREResourcesWindow::fillMaps()
         myTree->resizeColumnToContents(0);
         myTree->resizeColumnToContents(1);
     }
+    root->setText(0, tr("Maps [%1 items]").arg(totalMaps));
 
     addPanel("Region", new CRERegionPanel());
     addPanel("Map", new CREMapPanel(myScripts));
