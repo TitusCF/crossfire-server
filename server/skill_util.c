@@ -440,8 +440,13 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
         object *tmp;
 
         tmp = object_find_by_type_and_skill(op, SKILL, skill->skill);
-        if (!tmp)
+        if (!tmp) {
             tmp = give_skill_by_name(op, skill->skill);
+            if (!tmp) {
+                LOG(llevError, "do_skill: asked for skill %s but couldn't find matching SKILL archetype.\n", skill->skill);
+                return 0;
+            }
+        }
         skill = tmp;
     }
 
