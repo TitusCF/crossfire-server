@@ -131,6 +131,25 @@ void command_rskill(object *pl, const char *params) {
     change_skill(pl, skill, 0);
 }
 
+/**
+ * Attempt to use a skill from its subtype. If multiple skills share the same,
+ * the first found is used.
+ * @param op who is applying a skill.
+ * @param skill_subtype skill subtype.
+ * @param params additional parameters to the skill.
+ * @param missing_message message to display if op doesn't know the skill.
+ */
+static void do_skill_by_number(object *op, int skill_subtype, const char *params,
+                               const char *missing_message) {
+    object *skop = find_skill_by_number(op, skill_subtype);
+    if (skop) {
+        do_skill(op, op, skop, op->facing, *params == '\0' ? NULL : params);
+        return;
+    }
+
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+                  missing_message);
+}
 
 /* These functions (command_search, command_disarm) are really juse wrappers for
  * things like 'use_skill ...').  In fact, they should really be obsoleted
@@ -145,7 +164,7 @@ void command_rskill(object *pl, const char *params) {
  * unused.
  */
 void command_search(object *op, const char *params) {
-    use_skill(op, skill_names[SK_FIND_TRAPS]);
+    do_skill_by_number(op, SK_FIND_TRAPS, params, "You don't know how to search for unusual things.");
 }
 
 /**
@@ -157,7 +176,7 @@ void command_search(object *op, const char *params) {
  * unused.
  */
 void command_disarm(object *op, const char *params) {
-    use_skill(op, skill_names[SK_DISARM_TRAPS]);
+    do_skill_by_number(op, SK_DISARM_TRAPS, params, "You don't know how to disarm traps.");
 }
 
 /**
@@ -172,16 +191,7 @@ void command_disarm(object *op, const char *params) {
  * what to throw.
  */
 void command_throw(object *op, const char *params) {
-    object *skop;
-
-    skop = find_skill_by_name(op, skill_names[SK_THROWING]);
-    if (skop) {
-        do_skill(op, op, skop, op->facing, *params == '\0' ? NULL : params);
-        return;
-    }
-
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-                  "You have no knowledge of the skill throwing.");
+    do_skill_by_number(op, SK_THROWING, params, "You have no knowledge of the skill throwing.");
 }
 
 /**
