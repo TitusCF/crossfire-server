@@ -336,6 +336,7 @@ extern void player_get_title(const struct pl *pl, char *buf, size_t bufsize);
 extern int player_has_own_title(const struct pl *pl);
 extern const char *player_get_own_title(const struct pl *pl);
 extern void player_set_own_title(struct pl *pl, const char *title);
+extern void link_player_skills(object *op);
 /* re-cmp.c */
 extern const char *re_cmp(const char *str, const char *regexp);
 /* readable.c */

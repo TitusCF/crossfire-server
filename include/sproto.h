@@ -490,7 +490,6 @@ int write_on_item(object *pl, const char *params, object *skill);
 int skill_throw(object *op, object *part, int dir, object *skill);
 /* skill_util.c */
 void init_skills(void);
-void link_player_skills(object *op);
 object *find_skill_by_name(object *who, const char *name);
 object *find_skill_by_number(object *who, int skillno);
 int change_skill(object *who, object *new_skill, int flag);

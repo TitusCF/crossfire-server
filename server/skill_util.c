@@ -101,32 +101,6 @@ void init_skills(void) {
 }
 
 /**
- * This function goes through the player inventory and sets
- * up the last_skills[] array in the player object.
- * The last_skills[] is used to more quickly lookup skills -
- * mostly used for sending exp.
- *
- * @param op
- * player to link skills for. Must be a player.
- */
-void link_player_skills(object *op) {
-    FOR_INV_PREPARE(op, tmp) {
-        if (tmp->type == SKILL) {
-            /* This is really a warning, hence no else below */
-            if (op->contr->last_skill_ob[tmp->subtype] && op->contr->last_skill_ob[tmp->subtype] != tmp) {
-                LOG(llevError, "Multiple skills with the same subtype while loading '%s': %s, %s\n", op->name, op->contr->last_skill_ob[tmp->subtype]->skill, tmp->skill);
-            }
-            if (tmp->subtype >= NUM_SKILLS) {
-                LOG(llevError, "Invalid subtype number %d (range 0-%d)\n", tmp->subtype, NUM_SKILLS);
-            } else {
-                op->contr->last_skill_ob[tmp->subtype] = tmp;
-                op->contr->last_skill_exp[tmp->subtype] = -1;
-            }
-        }
-    } FOR_INV_FINISH();
-}
-
-/**
  * This returns specified skill if it can be used, potentially using tool to help.
  *
  * Skill and tool can't be NULL at the same time.
