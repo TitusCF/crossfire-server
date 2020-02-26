@@ -291,6 +291,13 @@ static float shop_bargain_multiplier(int lev_bargain) {
  */
 uint64_t shop_price_buy(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
+
+    // Price set by players in a private shop overrides automatic pricing.
+    const char *pshop_price = object_get_value(tmp, "pshop_price");
+    if (pshop_price != NULL) {
+        return atol(pshop_price);
+    }
+
     uint64_t val = price_base(tmp);
 
     const char *key = object_get_value(tmp, "price_adjustment_buy");
@@ -974,6 +981,13 @@ int shop_pay_unpaid(object *pl, object *op) {
                 return 0;
             object *tmp;
             char *value = cost_str(price);
+
+            const char *pshop_seller = object_get_value(op, "pshop_seller");
+            if (pshop_seller != NULL) {
+                // TODO: Pay seller price
+            }
+            // Remove pshop_price if it exists
+            object_set_value(op, "pshop_price", NULL, 0);
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
