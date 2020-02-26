@@ -435,6 +435,7 @@ static void enter_random_map(object *pl, object *exit_ob) {
 static void enter_fixed_template_map(object *pl, object *exit_ob) {
     mapstruct *new_map;
     char tmpnum[32], exitpath[HUGE_BUF], resultname[HUGE_BUF], tmpstring[HUGE_BUF], *sourcemap;
+    char sourcemap_buf[HUGE_BUF];
     char new_map_name[MAX_BUF];
 
     /* Split the exit path string into two parts, one
@@ -460,9 +461,8 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
      */
     if (!exit_ob->map->is_template) {
         /* We can't use exitpath directly, as sourcemap points there. */
-        path_combine_and_normalize(exit_ob->map->path, sourcemap, tmpstring, sizeof(tmpstring));
-        snprintf(exitpath, sizeof(exitpath), "%s", tmpstring);
-        sourcemap = exitpath;
+        path_combine_and_normalize(exit_ob->map->path, sourcemap, sourcemap_buf, sizeof(sourcemap_buf));
+        sourcemap = sourcemap_buf;
     }
 
     /* Do replacement of %x, %y, and %n to the x coord of the exit, the y coord
