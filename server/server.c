@@ -449,8 +449,6 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                              "The %s is closed.",
                              exit_ob->name);
-        /* Should only occur when no source map is set.
-         */
         LOG(llevError, "enter_fixed_template_map: Exit %s (%d,%d) on map %s has no source template.\n", exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
         return;
     }
@@ -493,27 +491,27 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
     new_map = ready_map_name(new_map_name, MAP_PLAYER_UNIQUE);
     if (!new_map) {
         char path[MAX_BUF];
-
         create_pathname(sourcemap, path, MAX_BUF);
         new_map = mapfile_load(path, MAP_PLAYER_UNIQUE);
+        if (!new_map) {
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND,
+                                 MSG_TYPE_COMMAND_FAILURE, "The %s is closed.",
+                                 exit_ob->name);
+            LOG(llevError,
+                "Template exit in '%s' (%d, %d) does not reference a valid "
+                "template. Make sure a template exists at '%s'.\n",
+                exit_ob->map->path, exit_ob->x, exit_ob->y, path);
+            return;
+        }
     }
 
-    if (new_map) {
-        /* set the path of the map to where it should be
-         * so we don't just save over the source map.
-         */
-        snprintf(new_map->path, sizeof(new_map->path), "%s", new_map_name);
-        new_map->is_template = 1;
-        enter_map(pl, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
-    } else {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                             MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                             "The %s is closed.",
-                             exit_ob->name);
-        /* Should only occur when an invalid source map is set.
-         */
-        LOG(llevDebug, "enter_fixed_template_map: Exit %s (%d,%d) on map %s leads no where.\n", exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
-    }
+    assert(new_map);
+    /* set the path of the map to where it should be
+     * so we don't just save over the source map.
+     */
+    snprintf(new_map->path, sizeof(new_map->path), "%s", new_map_name);
+    new_map->is_template = 1;
+    enter_map(pl, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
 }
 
 /**
@@ -729,7 +727,13 @@ void enter_exit(object *op, object *exit_ob) {
     assert(exit_ob != NULL);
     assert(EXIT_PATH(exit_ob) != NULL);
 
-    /* check to see if we make a template map */
+    /* check to see if we make a template map
+     * Template maps have an EXIT_PATH in the form:
+     * /@[!]<MAP_NAME>!<TEMPLATE_PATH>
+     *
+     * <MAP_NAME> is the name of the destination map, which is saved in LOCALDIR/template-maps/.
+     * <TEMPLATE_PATH> is the path to a template map, used when <MAP_NAME> does not exist.
+     */
     if (EXIT_PATH(exit_ob) && EXIT_PATH(exit_ob)[1] == '@') {
         if (EXIT_PATH(exit_ob)[2] == '!') {
             /* generate a template map randomly */
