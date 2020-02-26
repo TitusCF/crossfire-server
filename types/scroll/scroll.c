@@ -81,7 +81,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
         /* hard code literacy - scroll->skill points to where the exp
          * should go for anything killed by the spell.
          */
-        skapplier = find_skill_by_name(applier, skill_names[SK_LITERACY]);
+        skapplier = find_skill_by_number(applier, SK_LITERACY);
 
         if (!skapplier) {
             draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
