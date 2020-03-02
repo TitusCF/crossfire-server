@@ -116,10 +116,10 @@ void check_spells(void) {
     for (at = first_archetype; at; at = at->next) {
         if (at->clone.type == SPELL) {
             if (at->clone.skill) {
-                for (i = 1; i < NUM_SKILLS; i++)
+                for (i = 0; i < MAX_SKILLS && skill_names[i]; i++)
                     if (!strcmp(skill_names[i], at->clone.skill))
                         break;
-                if (i == NUM_SKILLS) {
+                if (i == MAX_SKILLS || !skill_names[i]) {
                     LOG(llevError, "Spell %s has improper associated skill %s\n", at->name, at->clone.skill);
                 }
             }
@@ -237,7 +237,7 @@ int caster_level(const object *caster, const object *spell) {
     if (caster->type == PLAYER && spell->skill) {
         int i;
 
-        for (i = 0; i < NUM_SKILLS; i++)
+        for (i = 0; i < MAX_SKILLS; i++)
             if (caster->contr->last_skill_ob[i]
             && caster->contr->last_skill_ob[i]->skill == spell->skill) {
                 level = caster->contr->last_skill_ob[i]->level;

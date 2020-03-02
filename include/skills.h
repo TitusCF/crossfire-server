@@ -63,12 +63,11 @@ enum SK {
 };
 
 /**
- * This is the highest number skill in the table +1
- * This is used to store pointers to the actual skills -
- * to make life easier, we use the value above as index,
- * eg, SK_EVOCATION (35) will be in last_skills[35].
+ * This is the maximum number of skills the game may handle.
+ * There is no direct mapping to the subtype, as multiple skills may share
+ * the same subtype with a different name.
  */
-#define NUM_SKILLS              44
+#define MAX_SKILLS              50
 
 /**
  * @defgroup SK_EXP_xxx Experience flags
@@ -121,8 +120,10 @@ enum SK {
 #define IS_GRACE_SKILL(num) \
     (num == SK_PRAYING)
 
-extern const char *skill_names[NUM_SKILLS];
-extern int skill_faces[NUM_SKILLS];
+extern const char *skill_names[MAX_SKILLS];
+extern int skill_faces[MAX_SKILLS];
+
+extern int get_skill_client_code(const char *skill_name);
 
 #ifdef WANT_UNARMED_SKILLS
 /** Table of unarmed attack skills.  Terminated by 0.  This

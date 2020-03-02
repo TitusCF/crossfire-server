@@ -70,7 +70,7 @@ void send_skill_info(socket_struct *ns, char *params) {
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "replyinfo skill_info\n");
-    for (i = 1; i < NUM_SKILLS; i++) {
+    for (i = 0; i < MAX_SKILLS && skill_names[i]; i++) {
         size_t len;
 
         len = 16+strlen(skill_names[i]); /* upper bound for length */

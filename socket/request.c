@@ -792,13 +792,13 @@ void esrv_update_stats(player *pl) {
         AddIfShort(pl->last_golem_hp, golem_hp, CS_STAT_GOLEM_HP);
     }
 
-    for (s = 0; s < NUM_SKILLS; s++) {
+    for (s = 0; s < MAX_SKILLS; s++) {
         if (pl->last_skill_ob[s]
         && pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
             /* Always send along the level if exp changes. This
              * is only 1 extra byte, but keeps processing simpler.
              */
-            SockList_AddChar(&sl, (char)(s+CS_STAT_SKILLINFO));
+            SockList_AddChar(&sl, (char)(get_skill_client_code(pl->last_skill_ob[s]->name)+CS_STAT_SKILLINFO));
             SockList_AddChar(&sl, (char)pl->last_skill_ob[s]->level);
             SockList_AddInt64(&sl, pl->last_skill_ob[s]->stats.exp);
             pl->last_skill_exp[s] = pl->last_skill_ob[s]->stats.exp;
@@ -1712,7 +1712,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
 
     /* figure out which skill it uses, if it uses one */
     if (spell->skill) {
-        for (i = 1; i < NUM_SKILLS; i++)
+        for (i = 0; i < MAX_SKILLS && skill_names[i]; i++)
             if (!strcmp(spell->skill, skill_names[i])) {
                 skill = i+CS_STAT_SKILLINFO;
                 break;

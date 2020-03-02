@@ -54,11 +54,11 @@ static void attack_melee_weapon(object *op, int dir, const char *string, object 
 /**
  * Will contain a number-name mapping for skills, initialized by init_skills().
  */
-const char *skill_names[NUM_SKILLS];
+const char *skill_names[MAX_SKILLS];
 /**
  * Will contain the face numbers for the skills, initialized by init_skill().
  */
-int skill_faces[NUM_SKILLS];
+int skill_faces[MAX_SKILLS];
 
 /**
  * This just sets up the ::skill_names table above. The index into the array is set up by the
@@ -68,36 +68,40 @@ void init_skills(void) {
     int i;
     archetype *at;
 
-    for (i = 0; i < NUM_SKILLS; i++) {
+    for (i = 0; i < MAX_SKILLS; i++) {
         skill_names[i] = NULL;
         skill_faces[i] = -1;
     }
+    i = 0;
 
     for (at = first_archetype; at != NULL; at = at->next) {
         if (at->clone.type == SKILL) {
-            if (at->clone.subtype >= sizeof(skill_names)/sizeof(*skill_names)) {
-                LOG(llevError, "init_skills: invalid skill subtype %d for skill %s\n", at->clone.subtype, at->clone.skill);
-            } else if (skill_names[at->clone.subtype] != NULL) {
-                LOG(llevError, "init_skills: multiple skill using same subtype %d, %s, %s\n",
-                    at->clone.subtype, skill_names[at->clone.subtype], at->clone.skill);
-            } else {
-                skill_names[at->clone.subtype] = add_refcount(at->clone.skill);
-                if (at->clone.face != NULL)
-                    skill_faces[at->clone.subtype] = at->clone.face->number;
+            if (i == MAX_SKILLS) {
+                LOG(llevError, "init_skills: too many skills, increase MAX_SKILLS and rebuild server!");
+                fatal(SEE_LAST_ERROR);
             }
+            skill_names[i] = add_refcount(at->clone.skill);
+            if (at->clone.face != NULL)
+                skill_faces[i] = at->clone.face->number;
+            i++;
         }
     }
+}
 
-    /* This isn't really an error if there is no skill subtype set, but
-     * checking for this may catch some user errors.
-     * On the other hand, it'll crash later on, which is not nice. Thus giving a dummy name.
-     */
-    for (i = 1; i < NUM_SKILLS; i++) {
-        if (!skill_names[i]) {
-            LOG(llevError, "init_skills: skill subtype %d doesn't have a name?\n", i);
-            skill_names[i] = add_string("dummy skill");
-        }
-    }
+/**
+ * Return the code of the skill for a client, the index in the skill_names array.
+ * @param skill_name skill name.
+ * @return code, 0 if invalid and asserts.
+ */
+int get_skill_client_code(const char *skill_name)
+{
+    int index;
+    for (index = 0; index < MAX_SKILLS && skill_names[index] != NULL; index++)
+        if (strcmp(skill_names[index], skill_name) == 0)
+            return index;
+
+    assert("invalid skill!");
+    return 0;
 }
 
 /**
@@ -185,8 +189,8 @@ static object *adjust_skill_tool(object *who, object *skill, object *skill_tool)
  *
  */
 object *find_skill_by_name(object *who, const char *name) {
-    object *skill = NULL, *skills[NUM_SKILLS], *skill_tools[NUM_SKILLS];
-    const char *skill_names[NUM_SKILLS];
+    object *skill = NULL, *skills[MAX_SKILLS], *skill_tools[MAX_SKILLS];
+    const char *skill_names[MAX_SKILLS];
     char *ourname=NULL;
     int num_names, highest_level_skill=0, i;
 
@@ -285,9 +289,6 @@ object *find_skill_by_name(object *who, const char *name) {
  */
 object *find_skill_by_number(object *who, int skillno) {
     object *skill = NULL, *skill_tool = NULL;
-
-    if (skillno < 1 || skillno >= NUM_SKILLS)
-        return NULL;
 
     FOR_INV_PREPARE(who, tmp) {
         if (tmp->type == SKILL && tmp->subtype == skillno)
@@ -817,7 +818,7 @@ void show_skills(object *op, const char *search) {
     int i, num_skills_found = 0;
     static const char *const periods = "........................................";
     /* Need to have a pointer and use strdup for qsort to work properly */
-    char skills[NUM_SKILLS][MAX_BUF];
+    char skills[MAX_SKILLS][MAX_BUF];
 
     FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == SKILL) {
@@ -847,7 +848,7 @@ void show_skills(object *op, const char *search) {
              * it so it doesn't crash the server - otherwise, one character may
              * crash the server numerous times.
              */
-            if (num_skills_found >= NUM_SKILLS) {
+            if (num_skills_found >= MAX_SKILLS) {
                 draw_ext_info(NDI_RED, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                               "Your character has too many skills. "
                               "Something isn't right - contact the server admin");

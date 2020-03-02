@@ -271,22 +271,26 @@ void player_set_own_title(struct pl *pl, const char *title) {
  * up the last_skills[] array in the player object.
  * The last_skills[] is used to more quickly lookup skills -
  * mostly used for sending exp.
+ * This function should be called anytime the player gains a skill.
  *
  * @param op
  * player to link skills for. Must be a player.
  */
 void link_player_skills(object *op) {
+    int skill;
     FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == SKILL) {
-            /* This is really a warning, hence no else below */
-            if (op->contr->last_skill_ob[tmp->subtype] && op->contr->last_skill_ob[tmp->subtype] != tmp) {
-                LOG(llevError, "Multiple skills with the same subtype while loading '%s': %s, %s\n", op->name, op->contr->last_skill_ob[tmp->subtype]->skill, tmp->skill);
-            }
-            if (tmp->subtype >= NUM_SKILLS) {
-                LOG(llevError, "Invalid subtype number %d (range 0-%d)\n", tmp->subtype, NUM_SKILLS);
-            } else {
-                op->contr->last_skill_ob[tmp->subtype] = tmp;
-                op->contr->last_skill_exp[tmp->subtype] = -1;
+            for (skill = 0; skill < MAX_SKILLS; skill++) {
+                if (op->contr->last_skill_ob[skill] == NULL) {
+                    /* Didn't find the skill, so add it */
+                    op->contr->last_skill_ob[skill] = tmp;
+                    op->contr->last_skill_exp[skill] = -1;
+                    break;
+                }
+                if (op->contr->last_skill_ob[skill] == tmp) {
+                    /* Skill already linked, nothing to do */
+                    break;
+                }
             }
         }
     } FOR_INV_FINISH();

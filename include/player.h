@@ -134,8 +134,8 @@ typedef struct pl {
     uint32_t      has_directory:1;     /**< If 0, the player was not yet saved, its directory doesn't exist. */
     const char  *invis_race;         /**< What race invisible to? */
 
-    object      *last_skill_ob[NUM_SKILLS];     /**< Exp objects sent to client. */
-    int64_t      last_skill_exp[NUM_SKILLS];     /**< Last exp sent to client. If != exp. obj update client. */
+    object      *last_skill_ob[MAX_SKILLS];     /**< Exp objects sent to client. */
+    int64_t      last_skill_exp[MAX_SKILLS];     /**< Last exp sent to client. If != exp. obj update client. */
 
     float       last_weapon_sp;      /**< if diff than weapon_sp, update client. */
     uint16_t      last_flags;          /**< Fire/run on flags for last tick. */

@@ -1697,7 +1697,7 @@ static int kill_object(object *op, int dam, object *hitter) {
         if ((!skop || skop->type != SKILL) && skill) {
             int i;
 
-            for (i = 0; i < NUM_SKILLS; i++)
+            for (i = 0; i < MAX_SKILLS; i++)
                 if (owner->contr->last_skill_ob[i]
                 && !strcmp(owner->contr->last_skill_ob[i]->skill, skill)) {
                     skop = owner->contr->last_skill_ob[i];

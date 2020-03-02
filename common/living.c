@@ -1913,7 +1913,7 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
         && !strcmp(skill_name, op->chosen_skill->skill))
             skill_obj = op->chosen_skill;
         else {
-            for (i = 0; i < NUM_SKILLS; i++)
+            for (i = 0; i < MAX_SKILLS; i++)
                 if (op->contr->last_skill_ob[i]
                 && !strcmp(op->contr->last_skill_ob[i]->skill, skill_name)) {
                     skill_obj = op->contr->last_skill_ob[i];

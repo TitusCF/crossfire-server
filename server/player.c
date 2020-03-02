@@ -374,7 +374,7 @@ player *get_player(player *p) {
      * send new values to the client, as things like exp start
      * at zero.
      */
-    for (i = 0; i < NUM_SKILLS; i++) {
+    for (i = 0; i < MAX_SKILLS; i++) {
         p->last_skill_exp[i] = -1;
         p->last_skill_ob[i] = NULL;
     }
