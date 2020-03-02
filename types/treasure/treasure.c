@@ -51,7 +51,7 @@ void init_type_treasure(void) {
 static method_ret treasure_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     object *treas;
     tag_t op_tag = op->count, applier_tag = applier->count;
-    char name[MAX_BUF];
+    char name[MAX_BUF], container_name[MAX_BUF];
 
     if (applier->type == PLAYER) {
          /* Nice side effect of new treasure creation method is that the
@@ -60,6 +60,8 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
          * burns up, the items still exist.  Also prevents people from
          * moving chests to more difficult maps to get better treasure
          */
+
+        query_name(op, container_name, MAX_BUF);
 
         treas = op->inv;
         if (treas == NULL) {
@@ -76,8 +78,8 @@ static method_ret treasure_type_apply(ob_methods *context, object *op, object *a
             if (!treas->invisible) {
                 query_name(treas, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                        "You find %s in the chest.",
-                        name);
+                        "You find %s in the %s.",
+                        name, container_name);
             }
 
             treas = object_insert_in_map_at(treas, applier->map, applier, INS_BELOW_ORIGINATOR, applier->x, applier->y);
