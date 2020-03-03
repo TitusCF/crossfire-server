@@ -2,9 +2,16 @@ pkgstatedir = @pkgstatedir@
 pkgconfdir = @pkgconfdir@
 
 dist_noinst_SCRIPTS = collect util.pl
-dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
-	animations archetypes  bmaps.paths crossfire.0 \
-	crossfire.1 faces attackmess image_info materials
+dist_pkgdata_DATA = \
+	arch/artifacts \
+	arch/attackmess \
+	arch/formulae \
+	arch/image_info \
+	arch/materials \
+	arch/messages \
+	arch/races \
+	def_help \
+	animations archetypes bmaps.paths crossfire.0 crossfire.1 faces smooth
 
 CONF_FILES = \
 	config/ban_file \

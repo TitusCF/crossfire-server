@@ -40,7 +40,7 @@ if ($ARGV[0] eq "-archive") {
     die("$0: unable to mkdir $DESTDIR: $1\n") if (!mkdir($DESTDIR, 0755));
 }
 
-open(IMAGEINFO,"$src_path/image_info") || die("Can't open image_info file: $!\n");
+open(IMAGEINFO,"$src_path/arch/image_info") || die("Can't open image_info file: $!\n");
 binmode(IMAGEINFO);
 while (<IMAGEINFO>) {
     # Ignore lines that start with comments or just empty lines
