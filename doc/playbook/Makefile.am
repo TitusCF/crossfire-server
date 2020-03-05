@@ -7,8 +7,8 @@ TEX   =	handbook.tex title.tex chap1.tex chap2.tex chap3.tex chap4.tex\
 
 dist_noinst_SCRIPTS = make_index.pl
 
-EXTRA_DIST = Makefile.in bonus-extract char-extract items-extract generic-extract\
- 	gods-extract levels-extract local.sty skills-extract skills2-extract\
+EXTRA_DIST = char-extract items-extract generic-extract\
+ 	local.sty skills-extract skills2-extract\
 	spellpath-extract statskmod-extract treas1-extract treas2-extract \
 	$(TEX) handbook.idx sorter empty.pbm fig/screen_dia.ps
 

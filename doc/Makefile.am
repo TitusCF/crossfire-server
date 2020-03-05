@@ -6,9 +6,9 @@ dist_man6_MANS = crossfire-server.man \
 	crossloop.web.man crossloop.man
 
 EXTRA_DIST = README \
-	alchemy.txt        commands.txt       experience.txt     knowledge.txt \
-	media-tags.txt     metaserver.txt     multigod.txt       plugins.txt   \
-	runes-guide.txt    settings.txt       skills.txt         stats.txt     \
+	commands.txt       \
+	media-tags.txt     plugins.txt   \
+	runes-guide.txt    skills.txt         stats.txt     \
 	style-guide.txt    survival-guide.txt
 
 DTOP=$(top_srcdir)/$(PACKAGE)-doc
@@ -25,10 +25,6 @@ spell-docs:
 
 crosslib.doc:
 	(cd ../common; make doc)
-
-# workaround for bug in automake 1.6.2 & 1.6.3 (& probably others)
-uninstall-local:
-	rm -f $(DESTDIR)$(man6dir)/crossfire.6*
 
 archive: spoiler playbook spell-docs
 	$(mkinstalldirs) $(DTOP)

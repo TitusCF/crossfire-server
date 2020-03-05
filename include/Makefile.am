@@ -14,7 +14,10 @@ random_maps/expand2x.h \
 random_maps/maze_gen.h \
 random_maps/random_map.h \
 random_maps/room_gen.h \
-random_maps/rproto.h
+random_maps/rproto.h \
+compat.h \
+shop.h \
+server.h
 
 BUILT_SOURCES = svnversion.h
 

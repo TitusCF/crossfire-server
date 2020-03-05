@@ -71,8 +71,3 @@ crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librand
 
 ../types/libtypes.a:
 	( cd ../types ; make libtypes.a )
-
-# Check if everything is installed as it should
-installcheck-local:
-	$(bindir)/crossfire-server -o
-

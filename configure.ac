@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([crossfire], [1.71.dev], [crossfire@metalforge.org])
+AC_INIT([crossfire-server], [1.71.dev], [crossfire@metalforge.org])
 AC_CONFIG_AUX_DIR([utils])
 AC_CONFIG_HEADERS([include/autoconf.h])
 AC_CONFIG_MACRO_DIR([macros])
@@ -158,8 +158,8 @@ fi
 AM_CONDITIONAL(PROCESS_XSLT, [test -n "$xsltengine"])
 
 dnl Make sure pre-built archetypes or an 'arch' directory exists.
-AC_CHECK_FILE([lib/archetypes], [], [has_archetypes=no])
-AC_CHECK_FILE([lib/arch], [], [has_arch_dir=no])
+AC_CHECK_FILE([$srcdir/lib/archetypes], [], [has_archetypes=no])
+AC_CHECK_FILE([$srcdir/lib/arch], [], [has_arch_dir=no])
 
 AS_IF([test "$has_archetypes" == no -a "$has_arch_dir" == no], [
        AC_MSG_ERROR([Could not find pre-built or raw archetypes.])

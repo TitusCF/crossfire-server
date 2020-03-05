@@ -39,7 +39,7 @@ libcross_a_SOURCES = \
 	treasure.c\
 	utils.c
 
-EXTRA_DIST = README
+EXTRA_DIST = README is_valid_types_gen.pl
 AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\"
 AM_LFLAGS = -i

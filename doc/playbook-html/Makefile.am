@@ -4,10 +4,10 @@ FIG = fig/earrow.gif fig/nearrow.gif fig/sarrow.gif fig/swarrow.gif\
 
 EXTRA_DIST = handbook.shtml chap1.html chap2.shtml chap3.shtml\
 	chap4.shtml chap5.shtml chap6.shtml chap7.html appA.html appB.html\
- 	appC.shtml bonus-extract char-extract spellpath-extract\
+ 	appC.shtml char-extract spellpath-extract\
 	skills2-extract empty.pbm statskmod-extract treas1-extract\
 	treas2-extract skills-extract items-extract generic-extract\
-	sorter levels-extract gods-extract $(FIG)
+	sorter $(FIG)
 #
 # This are automatically generated files
 #
