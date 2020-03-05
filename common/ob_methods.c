@@ -31,7 +31,9 @@
  */
 
 /**
- * Applies an object.
+ * Apply an object by running an event hook or an object method. Consider
+ * using apply_manual() instead of this function if the applier should check
+ * for apply restrictions.
  * @param op The object to apply
  * @param applier The object that executes the apply action
  * @param aflags Special (always apply/unapply) flags
@@ -42,6 +44,10 @@
 method_ret ob_apply(object *op, object *applier, int aflags) {
     method_ret ret;
     ob_methods *methods;
+
+    /* Lauwenmark: Handle for plugin apply event */
+    if (execute_event(op, EVENT_APPLY, applier, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+        return METHOD_OK;
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->apply) {

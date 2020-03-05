@@ -522,10 +522,6 @@ int apply_manual(object *op, object *tmp, int aflag) {
     if (!apply_check_race_restrictions(op, tmp))
         return METHOD_SILENT_ERROR;
 
-    /* Lauwenmark: Handle for plugin apply event */
-    if (execute_event(tmp, EVENT_APPLY, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
-        return METHOD_OK;
-
     if (op->contr)
         play_sound_player_only(op->contr, SOUND_TYPE_ITEM, tmp, 0, "apply");
 
