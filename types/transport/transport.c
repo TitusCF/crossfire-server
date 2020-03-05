@@ -48,8 +48,6 @@ void init_type_transport(void) {
  * @param op The Transport to apply
  * @param applier The object attempting to apply the Transport
  * @param aflags Special flags (always apply/unapply)
- * @retval 0 If the applier was not a player
- * @retval 1 If the applier was a player
  */
 static method_ret transport_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     object *old_transport = applier->contr->transport;
@@ -58,7 +56,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
 
     /* Only players can use transports right now */
     if (applier->type != PLAYER)
-        return 0;
+        return METHOD_UNHANDLED;
 
     query_name(op, name_op, MAX_BUF);
 
@@ -71,7 +69,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You must exit %s before you can board %s.",
             name_old, name_op);
-        return 1;
+        return METHOD_SILENT_ERROR;
     }
 
     /* player is currently on a transport.  This must mean he
@@ -110,7 +108,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
                 "%s has disembarked.  You are now the captain of %s",
                 applier->name, name_old);
         }
-        return 1;
+        return METHOD_OK;
     } else {
         /* player is trying to board a transport */
         int pc = 0, p_limit;
@@ -125,7 +123,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "The %s is unable to hold your weight!",
                 name_op);
-            return 1;
+            return METHOD_SILENT_ERROR;
         }
 
         /* If the player is holding the transport, drop it. */
@@ -138,14 +136,14 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
                 draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                     "You cannot drop the %s in a shop to use it.",
                     name_old);
-                return 1;
+                return METHOD_SILENT_ERROR;
             }
             /* Did it fail to drop? */
             if (!op) {
                 draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                     "You need to drop the %s to use it.",
                     name_old);
-                return 1;
+                return METHOD_SILENT_ERROR;
             }
         }
 
@@ -164,7 +162,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "The %s does not have space for any more people",
                 name_op);
-            return 1;
+            return METHOD_SILENT_ERROR;
         }
 
         /* Everything checks out OK - player can get on the transport */
@@ -229,7 +227,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
                 op->speed = 1.0;
         }
     } /* else if player is boarding the transport */
-    return 1;
+    return METHOD_OK;
 }
 
 /**
