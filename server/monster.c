@@ -1252,7 +1252,7 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir) {
     if (head->animation_id)
         animate_object(head, head->direction);
 
-    ob_apply(scroll, part, 0);
+    apply_manual(part, scroll, 0);
     return 1;
 }
 
