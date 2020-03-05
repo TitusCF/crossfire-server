@@ -6,7 +6,6 @@ AC_CONFIG_MACRO_DIR([macros])
 AC_CONFIG_SRCDIR([server/main.c])
 AC_PREFIX_DEFAULT([/usr/games/crossfire])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
-
 AM_SILENT_RULES([yes])
 
 dnl#############################################################################
@@ -33,12 +32,10 @@ AC_ARG_ENABLE(cfcitybell, [AS_HELP_STRING([--disable-cfcitybell],
               [Build the city bell plugin])],
               [enable_cfcitybell=no], [enable_cfcitybell=yes])
 
-
 dnl Unit test configuration
 AC_ARG_ENABLE(check, [AS_HELP_STRING([--disable-check],
               [Disable the unit tests even if check is available])],
               [enable_check=no], [enable_check=yes])
-
 
 dnl Add support for dmalloc, if the user wants it.
 AM_WITH_DMALLOC
@@ -155,7 +152,6 @@ AC_CHECK_FILE([$srcdir/lib/arch], [], [has_arch_dir=no])
 AS_IF([test "$has_archetypes" == no -a "$has_arch_dir" == no], [
        AC_MSG_ERROR([Could not find pre-built or raw archetypes.])
 ])
-
 
 dnl#############################################################################
 AS_BOX([Generate Output])
