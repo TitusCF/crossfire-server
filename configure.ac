@@ -49,16 +49,7 @@ dnl#############################################################################
 AC_PROG_AWK
 AC_PROG_CC_C99
 AC_PROG_LIBTOOL
-AC_PROG_LEX
-
-dnl If no lexical parser is found, $LEX is set to ":".
-dnl Check for that so we can exit if lex and flex are not found.
-dnl
-dnl -- Daniel Hawkins 2015-05-25
-
-if test $LEX == ':'; then
-    AC_MSG_ERROR([Lexical parser flex is missing.])
-fi
+AM_PROG_LEX
 
 AC_PATH_PROG(BASENAME, basename)
 AC_PATH_PROG(GZIP, gzip)
