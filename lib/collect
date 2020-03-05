@@ -8,7 +8,7 @@ if ($#ARGV >= 0) {
 	     "\nWhere ARCHDIR is the directory where you stored the ".
 	     "raw archetypes.\n".
 	     "This script will then create these files:\n".
-	     "archetypes,bmaps.paths,faces,treasures.bld,animations.\n"
+	     "archetypes,bmaps.paths,faces,treasures,animations.\n"
 	)
     }
 }
@@ -41,7 +41,7 @@ if ($#ARGV >= 1) {
 $root = $ARGV[0];
 $archetypes = "archetypes";
 $faces = "faces";
-$treasures = "treasures.bld";
+$treasures = "treasures";
 $animations = "animations";
 $paths = "bmaps.paths";
 $faceExt = "\\.[a-zA-Z0-9][A-Z0-9][A-Z0-9]";

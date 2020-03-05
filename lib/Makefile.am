@@ -11,7 +11,7 @@ dist_pkgdata_DATA = \
 	arch/messages \
 	arch/races \
 	def_help \
-	animations archetypes bmaps.paths crossfire.0 crossfire.1 faces smooth
+	animations archetypes bmaps.paths crossfire.0 crossfire.1 faces smooth treasures
 
 CONF_FILES = \
 	config/ban_file \
@@ -26,7 +26,7 @@ CONF_FILES = \
 	config/stat_bonus
 
 VAR_FILES = highscore banish_file bookarch temp.maps clockdata
-EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures.bld
+EXTRA_DIST = README .collect-stamp $(CONF_FILES)
 
 helpdir=$(pkgdatadir)/help
 dist_help_DATA = help/*.en help/*.fr
@@ -42,7 +42,7 @@ dist_i18n_DATA = i18n/messages.en \
 	i18n/messages.fr
 
 MAINTAINERCLEANFILES = archetypes faces .collect-stamp \
-	animations smooth treasures.bld bmaps.paths crossfire.0 crossfire.1
+	animations smooth treasures bmaps.paths crossfire.0 crossfire.1
 
 PERL = @PERL@
 
@@ -84,13 +84,6 @@ install-data-local: archetypes crossfire.0 faces animations smooth collect util.
 		$(mkinstalldirs) $(DESTDIR)$(pkgstatedir)/$$i; \
 	    fi; \
 	done
-# Special case above because the name we install to is different
-# than the name of the file
-	if [ ! -d $(DESTDIR)$(pkgdatadir)/$$i ]; then \
-		echo "Creating directory $(pkgdatadir)/$$i"; \
-		$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/$$i; \
-	fi; \
-	$(INSTALL_DATA) $(builddir)/treasures.bld $(DESTDIR)$(pkgdatadir)/treasures
 
 
 # Uninstall unchanged config/var files so make distcheck is happy
