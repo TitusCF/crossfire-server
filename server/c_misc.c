@@ -52,7 +52,7 @@ void map_info(object *op, const char *search) {
                          (sec%86400)/3600, (sec%3600)/60, sec%60);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                  i18n(op, "[fixed]Path               Pl PlM IM   TO Dif Reset"));
+                  i18n(op, "[fixed]Path               Pl IM   TO Dif Reset"));
 
     for (m = first_map; m != NULL; m = m->next) {
         if (*search != '\0' && strstr(m->path, search) == NULL)
@@ -66,8 +66,8 @@ void map_info(object *op, const char *search) {
         }
 
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                             i18n(op, "[fixed]%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d"),
-                             map_path, m->players, players_on_map(m, FALSE),
+                             i18n(op, "[fixed]%-18.18s %2d  %1d %4d %3d %02d:%02d:%02d"),
+                             map_path, m->players,
                              m->in_memory, m->timeout, m->difficulty,
                              (MAP_WHEN_RESET(m)%86400)/3600, (MAP_WHEN_RESET(m)%3600)/60,
                              MAP_WHEN_RESET(m)%60);
