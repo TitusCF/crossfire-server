@@ -234,20 +234,42 @@ static void malloc_info(object *op) {
                          sizeof(object), sizeof(player), sizeof(mapstruct));
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d used objects:    %8d"),
-                         ob_used, i = (ob_used*sizeof(object)));
+                         i18n(op, "[fixed]Objects:"));
 
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n(op, "[fixed]%6d used (%.2f%% of %d max)"),
+                         ob_used, (float)ob_used / MAX_OBJECTS * 100, MAX_OBJECTS);
+
+    if (ob_used != nrofallocobjects - nroffreeobjects) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                             i18n(op, "[fixed]      (used list mismatch: %d)"),
+                             nrofallocobjects - nroffreeobjects);
+    }
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n(op, "[fixed]%6d free (%.2f%% of %d allocated)"),
+                         ob_free, (float)ob_free / nrofallocobjects * 100, nrofallocobjects);
+
+    if (ob_free != nroffreeobjects) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                             i18n(op, "[fixed]      (free list mismatch: %d)"),
+                             nroffreeobjects);
+    }
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n(op, "[fixed]%6d on active list"),
+                         object_count_active());
+
+    i = (ob_used*sizeof(object));
     sum_used += i;
     sum_alloc += i;
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d free objects:    %8d"),
-                         ob_free, i = (ob_free*sizeof(object)));
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d active objects:  %8d"),
-                         object_count_active(), 0);
+                         i18n(op, "[fixed]     object total: %11d"), i);
 
+    i = (ob_free*sizeof(object));
     sum_alloc += i;
+
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
                          i18n(op, "[fixed]%4d players:         %8d"),
                          players, i = (players*sizeof(player)));
