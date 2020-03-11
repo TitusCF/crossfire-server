@@ -159,7 +159,7 @@ static void log_time(uint32_t process_utime) {
 /**
  * Return the difference between two timespec's in microseconds.
  */
-static long timespec_diff(struct timespec *end, struct timespec *start) {
+long timespec_diff(struct timespec *end, struct timespec *start) {
     long long sec = (long long)end->tv_sec - (long long)start->tv_sec;
     long nsec = end->tv_nsec - start->tv_nsec;
     return sec * 1e6 + nsec / 1e3;
