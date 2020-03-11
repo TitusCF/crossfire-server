@@ -28,7 +28,7 @@ static const char *const colorname[] = {
 };
 
 
-CREFacePanel::CREFacePanel()
+CREFacePanel::CREFacePanel(QWidget* parent) : CRETPanel(parent)
 {
     myFace = 0;
 

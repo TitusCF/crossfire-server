@@ -27,7 +27,7 @@ void static fillEvents()
     }
 }
 
-CREScriptPanel::CREScriptPanel()
+CREScriptPanel::CREScriptPanel(QWidget* parent) : CRETPanel(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
     myMaps = new QTreeWidget(this);

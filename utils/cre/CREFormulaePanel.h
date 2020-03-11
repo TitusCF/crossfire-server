@@ -15,7 +15,7 @@ class CREFormulaePanel : public CRETPanel<const recipe>
     Q_OBJECT
 
     public:
-        CREFormulaePanel();
+        CREFormulaePanel(QWidget* parent);
 
         void setItem(const recipe* recipe);
 

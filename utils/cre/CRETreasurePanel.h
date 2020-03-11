@@ -14,7 +14,7 @@ class CRETreasurePanel : public CRETPanel<const treasurelist>
     Q_OBJECT
 
     public:
-        CRETreasurePanel();
+        CRETreasurePanel(QWidget* parent);
 
         virtual void setItem(const treasurelist* treasure);
 

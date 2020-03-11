@@ -10,7 +10,7 @@
 #include "CREMessagePanel.h"
 #include "MessageFile.h"
 
-CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManager)
+CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManager, QWidget* parent) : CRETPanel(parent)
 {
     Q_ASSERT(manager);
     Q_ASSERT(messageManager);

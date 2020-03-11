@@ -2,7 +2,7 @@
 
 #include "CRERegionPanel.h"
 
-CRERegionPanel::CRERegionPanel()
+CRERegionPanel::CRERegionPanel(QWidget* parent) : CRETPanel(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
 

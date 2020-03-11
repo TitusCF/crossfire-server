@@ -19,7 +19,7 @@ class CREQuestPanel : public CRETPanel<Quest>
     Q_OBJECT
 
     public:
-        CREQuestPanel(QuestManager* manager, MessageManager* messageManager);
+        CREQuestPanel(QuestManager* manager, MessageManager* messageManager, QWidget* parent);
         virtual ~CREQuestPanel();
 
         virtual void commitData();

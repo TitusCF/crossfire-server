@@ -10,7 +10,7 @@ class QLabel;
 class CRERandomMapPanel : public CRETPanel<const CRERandomMap>
 {
 public:
-  CRERandomMapPanel();
+  CRERandomMapPanel(QWidget* parent);
   virtual void setItem(const CRERandomMap* map);
 private:
   QLabel* mySource;

@@ -20,7 +20,7 @@ class CREMessagePanel : public CRETPanel<MessageFile>
     Q_OBJECT
 
     public:
-        CREMessagePanel(const MessageManager* manager, const QuestManager* quests);
+        CREMessagePanel(const MessageManager* manager, const QuestManager* quests, QWidget* parent);
         virtual ~CREMessagePanel();
 
         virtual void setItem(MessageFile* message);

@@ -8,7 +8,7 @@ extern "C" {
 #include "CRETreasurePanel.h"
 #include "CREUtils.h"
 
-CRETreasurePanel::CRETreasurePanel()
+CRETreasurePanel::CRETreasurePanel(QWidget* parent) : CRETPanel(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
 

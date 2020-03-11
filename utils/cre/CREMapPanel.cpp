@@ -27,7 +27,7 @@ void static fillEvents()
     }
 }
 
-CREMapPanel::CREMapPanel(ScriptFileManager* manager)
+CREMapPanel::CREMapPanel(ScriptFileManager* manager, QWidget* parent) : CRETPanel(parent)
 {
     Q_ASSERT(manager != NULL);
     myManager = manager;

@@ -9,7 +9,7 @@ extern "C" {
 #include "CREArchetypePanel.h"
 #include "CREUtils.h"
 
-CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store)
+CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store, QWidget* parent) : CRETPanel(parent)
 {
     Q_ASSERT(store);
     myStore = store;

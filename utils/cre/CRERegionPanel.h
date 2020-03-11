@@ -14,7 +14,7 @@ extern "C"
 class CRERegionPanel : public CRETPanel<regiondef>
 {
     public:
-        CRERegionPanel();
+        CRERegionPanel(QWidget* parent);
         virtual ~CRERegionPanel();
 
         virtual void setItem(regiondef* region);

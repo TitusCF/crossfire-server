@@ -5,7 +5,7 @@
 #include "CRERandomMap.h"
 #include "CREMapInformation.h"
 
-CRERandomMapPanel::CRERandomMapPanel()
+CRERandomMapPanel::CRERandomMapPanel(QWidget* parent) : CRETPanel(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
     layout->addWidget(new QLabel(tr("Source map:"), this), 0, 0);

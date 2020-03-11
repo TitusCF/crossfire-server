@@ -30,6 +30,7 @@ class CREWrapperObject : public QObject
 
     public:
         CREWrapperObject();
+        virtual ~CREWrapperObject();
 
         void setObject(const object* obj);
 

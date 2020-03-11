@@ -9,7 +9,7 @@ extern "C" {
 #include "CREUtils.h"
 #include "CREAnimationWidget.h"
 
-CREArtifactPanel::CREArtifactPanel()
+CREArtifactPanel::CREArtifactPanel(QWidget* parent) : CRETPanel(parent)
 {
     myArtifact = NULL;
 

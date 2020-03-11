@@ -17,7 +17,7 @@ class CREAnimationPanel : public CRETPanel<const Animations>
     Q_OBJECT
 
     public:
-        CREAnimationPanel();
+        CREAnimationPanel(QWidget* parent);
         virtual void setItem(const Animations* animation);
 
     protected:

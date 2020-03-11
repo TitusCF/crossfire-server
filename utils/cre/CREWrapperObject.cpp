@@ -6,6 +6,11 @@ CREWrapperObject::CREWrapperObject()
     myArchetype = NULL;
 }
 
+CREWrapperObject::~CREWrapperObject()
+{
+    delete myArchetype;
+}
+
 void CREWrapperObject::setObject(const object* obj)
 {
     myObject = obj;

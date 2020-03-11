@@ -14,7 +14,7 @@ class CREFacePanel : public CRETPanel<const New_Face>
     Q_OBJECT
 
     public:
-        CREFacePanel();
+        CREFacePanel(QWidget* parent);
         virtual void setItem(const New_Face* face);
 
     protected:

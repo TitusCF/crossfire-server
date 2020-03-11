@@ -9,7 +9,7 @@ extern "C" {
 #include "CREFormulaePanel.h"
 #include "CREUtils.h"
 
-CREFormulaePanel::CREFormulaePanel()
+CREFormulaePanel::CREFormulaePanel(QWidget* parent) : CRETPanel(parent)
 {
     myRecipe = NULL;
 

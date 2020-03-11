@@ -103,7 +103,7 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
     connect(myTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(tree_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 
     /* dummy panel to display for empty items */
-    CREPanel* dummy = new CREPanel();
+    CREPanel* dummy = new CREPanel(this);
     QVBoxLayout* dl = new QVBoxLayout(dummy);
     dl->addWidget(new QLabel(tr("No details available."), dummy));
     addPanel("(dummy)", dummy);
@@ -126,6 +126,7 @@ CREResourcesWindow::~CREResourcesWindow()
     myTreeItems.clear();
     qDeleteAll(myDisplayedItems);
     myDisplayedItems.clear();
+    qDeleteAll(myPanels);
 }
 
 void CREResourcesWindow::fillData()
@@ -261,7 +262,7 @@ void CREResourcesWindow::fillAnimations()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
-    addPanel("Animation", new CREAnimationPanel());
+    addPanel("Animation", new CREAnimationPanel(this));
 }
 
 void CREResourcesWindow::fillTreasures()
@@ -298,7 +299,7 @@ void CREResourcesWindow::fillTreasures()
         }
     }
 
-    addPanel("Treasure", new CRETreasurePanel());
+    addPanel("Treasure", new CRETreasurePanel(this));
 }
 
 void CREResourcesWindow::fillArchetypes()
@@ -342,7 +343,7 @@ void CREResourcesWindow::fillArchetypes()
     }
 
     delete wrapper;
-    addPanel("Archetype", new CREArchetypePanel(myStore));
+    addPanel("Archetype", new CREArchetypePanel(myStore, this));
     if (added == count)
         root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(count));
     else
@@ -395,7 +396,7 @@ void CREResourcesWindow::fillFormulae()
     }
 
     delete wrapper;
-    addPanel("Formulae", new CREFormulaePanel());
+    addPanel("Formulae", new CREFormulaePanel(this));
     if (added == count)
         form->setText(0, tr("%1 [%2 items]").arg(form->text(0)).arg(count));
     else
@@ -443,7 +444,7 @@ void CREResourcesWindow::fillArtifacts()
             item->setText(0, tr("%1 [%2 items out of %3]").arg(item->text(0)).arg(subAdded).arg(subCount));
     }
 
-    addPanel("Artifact", new CREArtifactPanel());
+    addPanel("Artifact", new CREArtifactPanel(this));
     if (added == count)
         root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(count));
     else
@@ -470,7 +471,7 @@ void CREResourcesWindow::fillFaces()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
-    addPanel("Face", new CREFacePanel());
+    addPanel("Face", new CREFacePanel(this));
 }
 
 bool sortMapInformation(const CREMapInformation* left, const CREMapInformation* right)
@@ -538,8 +539,8 @@ void CREResourcesWindow::fillMaps()
     }
     root->setText(0, tr("Maps [%1 items]").arg(totalMaps));
 
-    addPanel("Region", new CRERegionPanel());
-    addPanel("Map", new CREMapPanel(myScripts));
+    addPanel("Region", new CRERegionPanel(this));
+    addPanel("Map", new CREMapPanel(myScripts, this));
 }
 
 void CREResourcesWindow::fillQuests()
@@ -571,7 +572,7 @@ void CREResourcesWindow::fillQuests()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
-    addPanel("Quest", new CREQuestPanel(myQuests, myMessages));
+    addPanel("Quest", new CREQuestPanel(myQuests, myMessages, this));
 }
 
 void CREResourcesWindow::fillMessages()
@@ -590,7 +591,7 @@ void CREResourcesWindow::fillMessages()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
-    addPanel("Message", new CREMessagePanel(myMessages, myQuests));
+    addPanel("Message", new CREMessagePanel(myMessages, myQuests, this));
 }
 
 static bool scriptLessThan(const ScriptFile* left, const ScriptFile* right)
@@ -617,7 +618,7 @@ void CREResourcesWindow::fillScripts()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
-    addPanel("Script", new CREScriptPanel());
+    addPanel("Script", new CREScriptPanel(this));
 }
 
 void CREResourcesWindow::addPanel(QString name, CREPanel* panel)
@@ -970,5 +971,5 @@ void CREResourcesWindow::fillRandomMaps()
         myTree->resizeColumnToContents(0);
     }
 
-    addPanel("Random map", new CRERandomMapPanel());
+    addPanel("Random map", new CRERandomMapPanel(this));
 }

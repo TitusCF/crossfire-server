@@ -7,7 +7,7 @@
 #include "CREMapInformation.h"
 #include "MessageManager.h"
 
-CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManager* quests)
+CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManager* quests, QWidget* parent) : CRETPanel(parent)
 {
     Q_ASSERT(manager != NULL);
     myMessageManager = manager;

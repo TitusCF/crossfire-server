@@ -11,7 +11,7 @@ extern "C" {
 #include "CREAnimationControl.h"
 #include "CREUtils.h"
 
-CREAnimationPanel::CREAnimationPanel()
+CREAnimationPanel::CREAnimationPanel(QWidget* parent) : CRETPanel(parent)
 {
     myAnimation = 0;
 

@@ -16,7 +16,7 @@ class CREArchetypePanel : public CRETPanel<const archt>
     Q_OBJECT
 
     public:
-        CREArchetypePanel(CREMapInformationManager* store);
+        CREArchetypePanel(CREMapInformationManager* store, QWidget* parent);
         virtual void setItem(const archt* archetype);
 
     protected:

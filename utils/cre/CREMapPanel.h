@@ -11,7 +11,7 @@ class ScriptFileManager;
 class CREMapPanel : public CRETPanel<CREMapInformation>
 {
     public:
-        CREMapPanel(ScriptFileManager* manager);
+        CREMapPanel(ScriptFileManager* manager, QWidget* parent);
         virtual ~CREMapPanel();
 
         virtual void setItem(CREMapInformation* map);

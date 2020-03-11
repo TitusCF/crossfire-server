@@ -9,7 +9,7 @@ class ScriptFile;
 class CREScriptPanel : public CRETPanel<ScriptFile>
 {
     public:
-        CREScriptPanel();
+        CREScriptPanel(QWidget* parent);
 
         virtual void setItem(ScriptFile* script);
 

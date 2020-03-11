@@ -9,7 +9,7 @@ class CREPanel : public QWidget
     Q_OBJECT
 
     public:
-        CREPanel();
+        CREPanel(QWidget* parent);
         virtual ~CREPanel();
 
         virtual void commitData();
@@ -20,6 +20,7 @@ template<typename T>
 class CRETPanel : public CREPanel
 {
     public:
+        CRETPanel(QWidget* parent) : CREPanel(parent) {};
         virtual void setItem(T* item) = 0;
     private:
 };
