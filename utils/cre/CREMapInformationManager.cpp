@@ -64,7 +64,7 @@ CREMapInformationManager::CREMapInformationManager(QObject* parent, MessageManag
 
 CREMapInformationManager::~CREMapInformationManager()
 {
-    qDeleteAll(myInformation.values());
+    qDeleteAll(myInformation);
 }
 
 bool CREMapInformationManager::browseFinished() const
@@ -286,8 +286,7 @@ void CREMapInformationManager::process(const QString& path2)
 
 void CREMapInformationManager::browseMaps()
 {
-    /** @todo clear memory */
-    myInformation.clear();
+    qDeleteAll(myInformation);
     myArchetypeUse.clear();
 
     loadCache();

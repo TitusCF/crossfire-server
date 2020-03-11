@@ -37,7 +37,7 @@ class CREResourcesWindow : public QWidget
     Q_OBJECT
 
     public:
-        CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, DisplayMode mode = DisplayAll);
+        CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, QWidget* parent, DisplayMode mode = DisplayAll);
         virtual ~CREResourcesWindow();
 
         void deleteQuest(Quest* quest);

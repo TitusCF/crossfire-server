@@ -55,7 +55,7 @@ extern "C" {
 #include "ScriptFile.h"
 }
 
-CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, DisplayMode mode)
+CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, QWidget* parent, DisplayMode mode) : QWidget(parent)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
