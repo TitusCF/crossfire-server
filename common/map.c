@@ -1237,6 +1237,9 @@ mapstruct *mapfile_load(const char *map, int flags) {
     mapstruct *m;
     char pathname[MAX_BUF];
 
+    struct timespec begin, end;
+    clock_gettime(CLOCK_MONOTONIC, &begin);
+
     if (flags&MAP_PLAYER_UNIQUE)
         snprintf(pathname, sizeof(pathname), "%s", map);
     else if (flags&MAP_OVERLAY)
@@ -1278,6 +1281,10 @@ mapstruct *mapfile_load(const char *map, int flags) {
 
     if (!(flags & MAP_STYLE))
         apply_auto_fix(m); /* Chests which open as default */
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    long diff = timespec_diff(&end, &begin);
+    LOG(llevDebug, "mapfile_load on %s" " took %ld us\n", map, diff);
 
     return (m);
 }
@@ -1449,6 +1456,9 @@ int save_map(mapstruct *m, int flag) {
         return SAVE_ERROR_NO_PATH;
     }
 
+    struct timespec begin, end;
+    clock_gettime(CLOCK_MONOTONIC, &begin);
+
     if (flag != SAVE_MODE_NORMAL || (m->unique) || (m->is_template)) {
         if (!m->unique && !m->is_template) { /* flag is set */
             if (flag == SAVE_MODE_OVERLAY)
@@ -1472,7 +1482,6 @@ int save_map(mapstruct *m, int flag) {
             m->tmpname = tempnam(settings.tmpdir, NULL);
         snprintf(filename, sizeof(filename), "%s", m->tmpname);
     }
-    LOG(llevDebug, "Saving map %s\n", m->path);
     m->in_memory = MAP_SAVING;
 
     snprintf(final, sizeof(final), "%s", filename);
@@ -1627,6 +1636,10 @@ int save_map(mapstruct *m, int flag) {
     if (chmod(final, SAVE_MODE) != 0) {
         LOG(llevError, "Could not set permissions on '%s'\n", final);
     }
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    long diff = timespec_diff(&end, &begin);
+    LOG(llevDebug, "save_map on %s" " took %ld us\n", m->path, diff);
 
     return SAVE_ERROR_OK;
 }
