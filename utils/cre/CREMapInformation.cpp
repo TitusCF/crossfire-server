@@ -19,6 +19,11 @@ CREMapInformation::CREMapInformation(const QString& path)
     myShopMax = 0;
 }
 
+CREMapInformation::~CREMapInformation()
+{
+    qDeleteAll(myRandomMaps);
+}
+
 CREMapInformation* CREMapInformation::clone() const
 {
     CREMapInformation* clone = new CREMapInformation();

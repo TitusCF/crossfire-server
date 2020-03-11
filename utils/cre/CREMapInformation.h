@@ -21,6 +21,7 @@ class CREMapInformation : public QObject
     public:
         CREMapInformation();
         CREMapInformation(const QString& path);
+        virtual ~CREMapInformation();
 
         CREMapInformation* clone() const;
 
