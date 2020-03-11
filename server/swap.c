@@ -195,63 +195,10 @@ void check_active_maps(void) {
         next = map->next;
         if (map->in_memory == MAP_IN_MEMORY && map->timeout != 0) {
             map->timeout -= 1;
-            /* If LWM is set, we only swap maps out when we run out of objects */
-#ifndef MAX_OBJECTS_LWM
             if (map->timeout == 0) {
                 swap_map(map);
             }
-#endif
         }
-    }
-}
-
-/**
- * Returns the map with the lowest timeout variable (not 0).
- *
- * @param except_level
- * path of map to ignore for reset. Musn't be NULL.
- * @return
- * map, or NULL if no map is ready for reset.
- */
-static mapstruct *map_least_timeout(const char *except_level) {
-    mapstruct *map, *chosen = NULL;
-    int timeout = MAP_MAXTIMEOUT+1;
-
-    for (map = first_map; map != NULL; map = map->next)
-        if (map->in_memory == MAP_IN_MEMORY
-        && strcmp(map->path, except_level)
-        && map->timeout
-        && map->timeout < timeout)
-            chosen = map, timeout = map->timeout;
-    return chosen;
-}
-
-/**
- * Tries to swap out maps which are still in memory, because
- * of MAP_TIMEOUT until used objects is below MAX_OBJECTS or there are
- * no more maps to swap.
- *
- * @param except_level
- * path of map to ignore for reset. Musn't be NULL.
- */
-void swap_below_max(const char *except_level) {
-    mapstruct *map;
-
-    if (nrofallocobjects-nroffreeobjects < MAX_OBJECTS)
-        return;
-    for (;;) {
-#ifdef MAX_OBJECTS_LWM
-        if (nrofallocobjects-nroffreeobjects < MAX_OBJECTS_LWM)
-            return;
-#else
-        if (nrofallocobjects-nroffreeobjects < MAX_OBJECTS)
-            return;
-#endif
-        if ((map = map_least_timeout(except_level)) == NULL)
-            return;
-        LOG(llevDebug, "Trying to swap out %s before its time.\n", map->path);
-        map->timeout = 0;
-        swap_map(map);
     }
 }
 

@@ -581,7 +581,6 @@ void rod_adjust(object *rod);
 void read_map_log(void);
 int swap_map(mapstruct *map);
 void check_active_maps(void);
-void swap_below_max(const char *except_level);
 int players_on_map(mapstruct *m, int show_all);
 void flush_old_maps(void);
 /* time.c */

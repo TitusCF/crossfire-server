@@ -237,8 +237,7 @@ static void malloc_info(object *op) {
                          i18n(op, "[fixed]Objects:"));
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%6d used (%.2f%% of %d max)"),
-                         ob_used, (float)ob_used / MAX_OBJECTS * 100, MAX_OBJECTS);
+                         i18n(op, "[fixed]%6d used"), ob_used);
 
     if (ob_used != nrofallocobjects - nroffreeobjects) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,

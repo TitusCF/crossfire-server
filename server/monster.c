@@ -2207,7 +2207,7 @@ void monster_communicate(object *op, const char *txt) {
         FOR_MAP_PREPARE(mp, x, y, npc) {
             monster_talk_to_npc(npc, &info);
             if (orig_map != op->map) {
-                LOG(llevDebug, "Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
+                LOG(llevDebug, "Warning: Forced to swap out very recent map\n");
                 return;
             }
         } FOR_MAP_FINISH();

@@ -264,7 +264,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
                 set_map_timeout(oldmap);
         }
     }
-    swap_below_max(newmap->path);
 
     if (op->type == PLAYER) {
         map_newmap_cmd(&op->contr->socket);

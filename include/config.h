@@ -336,8 +336,6 @@
  * DMFILE - file with dm/wizard access lists
  * LOGFILE - where to log if using -daemon option
  * MAP_ - various map timeout and swapping parameters
- * MAX_OBJECTS - how many objects to keep in memory.
- * MAX_OBJECTS_LWM - only swap maps out if below that value
  * MOTD - message of the day - printed each time someone joins the game
  * PERM_FILE - limit play times
  * SHUTDOWN - used when shutting down the server
@@ -426,45 +424,6 @@
 #define MAP_MAXRESET    7200
 /** Default time to reset. */
 #define MAP_DEFAULTRESET       7200
-
-/**
- * MAX_OBJECTS is no hard limit.  If this limit is exceeded, Crossfire
- * will look for maps which are already scheldued for swapping, and
- * promptly swap them out before new maps are being loaded.
- * If playing only by yourself, this number can probably be as low as
- * 3000.  If in server mode, probably figure about 1000-2000 objects per
- * active player (if they typically play on different maps), for some guess
- * on how many to define.  If it is too low, maps just get swapped out
- * immediately, causing a performance hit.  If it is too high, the program
- * consumes more memory.  If you have gobs of free memory, a high number
- * might not be a bad idea.  Each object is around 656 bytes right now.
- * 100000 is about 63 MiB
- */
-#define MAX_OBJECTS     100000
-
-/**
- * Max objects low water mark (lwm).  If defined, the map swapping strategy
- * is a bit different:
- * 1) We only start swapping maps if the number of objects in use is
- *    greater than MAX_OBJECTS above.
- * 2) We keep swapping maps until there are no more maps to swap or the number
- *    of used objects drop below this low water mark value.
- *
- * If this is not defined, maps are swapped out on the timeout value above,
- * or if the number of objects used is greater than MAX_OBJECTS above.
- *
- * Note:  While this will prevent the pauses noticed when saving maps, there
- * can instead be cpu performance penalties - any objects in memory get
- * processed.  So if there are 4000 objects in memory, and 1000 of them
- * are living objects, the system will process all 1000 objects each tick.
- * With swapping enable, maybe 600 of the objects would have gotten swapped
- * out.  This is less likely a problem with a smaller number of MAX_OBJECTS
- * than if it is very large.
- * Also, the pauses you do get can be worse, as if you enter a map with
- * a lot of new objects and go above MAX_OBJECTS, it may have to swap out
- * many maps to get below the low water mark.
- */
-/*#define MAX_OBJECTS_LWM       MAX_OBJECTS/2*/
 
 /**
  * Defining MEMORY_DEBUG disables Crossfire's object allocator, which allocates
