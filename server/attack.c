@@ -1698,10 +1698,13 @@ static int kill_object(object *op, int dam, object *hitter) {
             int i;
 
             for (i = 0; i < MAX_SKILLS; i++)
-                if (owner->contr->last_skill_ob[i]
-                && !strcmp(owner->contr->last_skill_ob[i]->skill, skill)) {
-                    skop = owner->contr->last_skill_ob[i];
-                    break;
+                if (owner->contr->last_skill_ob[i]) {
+                    if (owner->contr->last_skill_ob[i]->skill == NULL) {
+                        LOG(llevError, "%s's %s does not have a skill\n", owner->name, owner->contr->last_skill_ob[i]);
+                    } else if (!strcmp(owner->contr->last_skill_ob[i]->skill, skill)) {
+                        skop = owner->contr->last_skill_ob[i];
+                        break;
+                    }
                 }
         }
     } /* Was it a player that hit somethign */
