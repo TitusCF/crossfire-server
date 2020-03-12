@@ -190,13 +190,20 @@ int swap_map(mapstruct *map) {
  * Finds maps in memory to swap.
  */
 void check_active_maps(void) {
+    /* Swapping can take many tens of milliseconds. Swapping too many maps in
+     * one tick can cause enough latency for the server to skip time. */
+    int num_to_swap = 1;
+
     mapstruct *map, *next;
     for (map = first_map; map != NULL; map = next) {
         next = map->next;
-        if (map->in_memory == MAP_IN_MEMORY && map->timeout != 0) {
-            map->timeout -= 1;
-            if (map->timeout == 0) {
+        if (map->in_memory == MAP_IN_MEMORY) {
+            // map->timeout == 0 means to never swap
+            if (map->timeout > 1) {
+                map->timeout -= 1;
+            } else if (num_to_swap > 0 && map->timeout == 1) {
                 swap_map(map);
+                num_to_swap -= 1;
             }
         }
     }
