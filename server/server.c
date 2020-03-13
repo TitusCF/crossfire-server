@@ -214,17 +214,9 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      */
     if (!QUERY_FLAG(op, FLAG_REMOVED))
         object_remove(op);
-    if (op->map != NULL) {
-        /* Lauwenmark : Here we handle the MAPLEAVE global event */
-        execute_global_event(EVENT_MAPLEAVE, op, op->map);
-    }
     /* object_remove clears these so they must be reset after the object_remove() call */
     object_insert_in_map_at(op, newmap, NULL, INS_NO_WALK_ON, x, y);
 
-    /* Lauwenmark : Here we handle the MAPENTER global event */
-    execute_global_event(EVENT_MAPENTER, op, op->map);
-
-    newmap->timeout = 0;
     object_set_enemy(op, NULL);
 
     if (op->contr) {
@@ -259,16 +251,28 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      * old map does not work.
      */
     if (oldmap != newmap) {
-        if (oldmap) { /* adjust old map */
-            if (oldmap->players <= 0) /* can be less than zero due to errors in tracking this */
-                set_map_timeout(oldmap);
+        player_map_change_common(op, oldmap, newmap);
+    }
+
+    map_newmap_cmd(&op->contr->socket);
+}
+
+void player_map_change_common(object* op, mapstruct* const oldmap,
+                              mapstruct* const newmap) {
+    if (oldmap != NULL) {
+        /* Lauwenmark : Here we handle the MAPLEAVE global event */
+        execute_global_event(EVENT_MAPLEAVE, op, oldmap);
+
+        /* can be less than zero due to errors in tracking this */
+        if (oldmap->players <= 0) {
+            set_map_timeout(oldmap);
         }
     }
 
-    if (op->type == PLAYER) {
-        map_newmap_cmd(&op->contr->socket);
-        player_update_bg_music(op);
-    }
+    /* Lauwenmark : Here we handle the MAPENTER global event */
+    execute_global_event(EVENT_MAPENTER, op, newmap);
+    newmap->timeout = 0;
+    player_update_bg_music(op);
 }
 
 /**

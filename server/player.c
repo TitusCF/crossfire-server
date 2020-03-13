@@ -28,6 +28,7 @@
 #include <pwd.h>
 #endif
 
+#include "server.h"
 #include "living.h"
 #include "object.h"
 #include "shared/newclient.h"
@@ -2846,14 +2847,8 @@ void move_player_attack(object *op, int dir) {
                 make_visible(op);
         }
     } /* if player should attack something */
-    /* If we changed maps, then try to load the new map music.
-     * This is not redundant with transfer_ob's call to player_update_bg_music,
-     * since that call only accounts for teleporters, exits, and such.
-     * This handles entering tiled maps, which the other could not do.
-     */
-    else if (bef != tpl->map)
-    {
-        player_update_bg_music(op);
+    else if (bef != tpl->map) {
+        player_map_change_common(op, bef, tpl->map);
     }
 }
 
