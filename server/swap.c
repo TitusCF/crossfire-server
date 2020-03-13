@@ -178,6 +178,7 @@ int swap_map(mapstruct *map) {
         return res;
     }
 
+    map->timeout = 0;
     free_map(map);
 
     if (settings.recycle_tmp_maps == TRUE)
