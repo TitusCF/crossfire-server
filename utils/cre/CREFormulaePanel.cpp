@@ -90,15 +90,18 @@ void CREFormulaePanel::setItem(const recipe* recipe)
     if (recipe->arch_names > 0)
     {
         archetype* arch = find_archetype(recipe->arch_name[0]);
-        const artifactlist* at = find_artifactlist(arch->clone.type);
-        if (at != NULL)
+        if (arch)
         {
-            artifact* art = at->items;
-            while (art)
+            const artifactlist* at = find_artifactlist(arch->clone.type);
+            if (at != NULL)
             {
-                if (art->item != NULL && art->item->name != NULL)
-                    myTitle->addItem(art->item->name);
-                art = art->next;
+                artifact* art = at->items;
+                while (art)
+                {
+                    if (art->item != NULL && art->item->name != NULL)
+                        myTitle->addItem(art->item->name);
+                    art = art->next;
+                }
             }
         }
     }
@@ -129,7 +132,10 @@ void CREFormulaePanel::setItem(const recipe* recipe)
     for (size_t a = 0; a < recipe->arch_names; a++)
     {
         arch = find_archetype(recipe->arch_name[a]);
-        myArchetypes->addTopLevelItem(CREUtils::archetypeNode(arch, NULL));
+        if (arch)
+        {
+            myArchetypes->addTopLevelItem(CREUtils::archetypeNode(arch, NULL));
+        }
     }
 
     QStringList list;

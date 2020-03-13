@@ -2123,6 +2123,9 @@ int hit_player(object *op, int dam, object *hitter, uint32_t type, int full_hit)
  */
 static void poison_living(object *op, object *hitter, int dam) {
     archetype *at = find_archetype("poisoning");
+    if (at == NULL) {
+        return;
+    }
     object *tmp = arch_present_in_ob(at, op);
     const char *skill;
     
@@ -2194,7 +2197,6 @@ static void poison_living(object *op, object *hitter, int dam) {
 int slow_living_by(object *op, const int speed_penalty) {
     archetype *at = find_archetype("slowness");
     if (at == NULL) {
-        LOG(llevError, "Can't find slowness archetype.\n");
         return 0;
     }
     object* tmp = arch_present_in_ob(at, op);

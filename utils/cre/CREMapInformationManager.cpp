@@ -85,8 +85,10 @@ void CREMapInformationManager::checkInventory(const object* item, CREMapInformat
     FOR_INV_PREPARE(item, inv)
     {
         archetype *arch = find_archetype(inv->arch->name);
-        addArchetypeUse(arch->name, information);
-        information->addArchetype(arch->name);
+        if (arch != NULL) {
+            addArchetypeUse(arch->name, information);
+            information->addArchetype(arch->name);
+        }
         checkEvent(inv, information, env);
         checkInventory(inv, information, env);
     } FOR_INV_FINISH();
@@ -185,8 +187,10 @@ void CREMapInformationManager::process(const QString& path2)
             {
                 {
                     archetype *arch = find_archetype(item->arch->name);
-                    addArchetypeUse(arch->name, information);
-                    information->addArchetype(arch->name);
+                    if (arch != NULL) {
+                        addArchetypeUse(arch->name, information);
+                        information->addArchetype(arch->name);
+                    }
                 }
 
                 checkInventory(item, information, item);

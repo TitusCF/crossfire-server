@@ -749,8 +749,9 @@ static uint64_t pay_from_container(object *pl, object *pouch, uint64_t to_pay) {
     for (i = 0; i < NUM_COINS; i++)
         if (coin_objs[i] == NULL) {
             at = find_archetype(coins[NUM_COINS-1-i]);
-            if (at == NULL)
-                LOG(llevError, "Could not find %s archetype\n", coins[NUM_COINS-1-i]);
+            if (at == NULL) {
+                return;
+            }
             coin_objs[i] = object_new();
             object_copy(&at->clone, coin_objs[i]);
             coin_objs[i]->nrof = 0;
@@ -864,8 +865,12 @@ int can_pay(object *pl) {
                 if (denominations == 0)
                     snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "but you only have");
                 denominations++;
-                snprintf(coinbuf, sizeof(coinbuf), " %u %s,", coincount[i], find_archetype(coins[i])->clone.name_pl);
-                snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "%s", coinbuf);
+                archetype *arch = find_archetype(coins[i]);
+                if (arch != NULL) 
+                {
+                    snprintf(coinbuf, sizeof(coinbuf), " %u %s,", coincount[i], arch->clone.name_pl);
+                    snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "%s", coinbuf);
+                }
             }
         }
         if (denominations == 0)

@@ -2054,7 +2054,7 @@ static void process_map(struct_map_info *info) {
                     archetype *arch = find_archetype(item->arch->name);
 
                     add_monster(item, info);
-                    if ((QUERY_FLAG(item, FLAG_UNAGGRESSIVE) || QUERY_FLAG(item, FLAG_FRIENDLY)) && (item->msg != arch->clone.msg) && (item->msg != NULL))
+                    if (arch != NULL && (QUERY_FLAG(item, FLAG_UNAGGRESSIVE) || QUERY_FLAG(item, FLAG_FRIENDLY)) && (item->msg != arch->clone.msg) && (item->msg != NULL))
                         add_npc_to_map(&info->npcs, item);
                 } else if ((item->type == SIGN || item->type == BOOK) && (item->msg != item->arch->clone.msg) && (item->msg != NULL)) {
                     add_npc_to_map(&info->readable, item);

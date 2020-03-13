@@ -3477,21 +3477,25 @@ void kill_player(object *op, const object *killer) {
 
         /* restore player */
         at = find_archetype("poisoning");
-        tmp = arch_present_in_ob(at, op);
-        if (tmp) {
-            object_remove(tmp);
-            object_free_drop_inventory(tmp);
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                          "Your body feels cleansed");
+        if (at != NULL) {
+            tmp = arch_present_in_ob(at, op);
+            if (tmp) {
+                object_remove(tmp);
+                object_free_drop_inventory(tmp);
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+                              "Your body feels cleansed");
+            }
         }
 
         at = find_archetype("confusion");
-        tmp = arch_present_in_ob(at, op);
-        if (tmp) {
-            object_remove(tmp);
-            object_free_drop_inventory(tmp);
-            draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                          "Your mind feels clearer");
+        if (at != NULL) {
+            tmp = arch_present_in_ob(at, op);
+            if (tmp) {
+                object_remove(tmp);
+                object_free_drop_inventory(tmp);
+                draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+                              "Your mind feels clearer");
+            }
         }
 
         cure_disease(op, NULL, NULL);  /* remove any disease */
@@ -3603,6 +3607,9 @@ static void kill_player_not_permadeath(object *op) {
         } else {
             /* deplete a stat */
             archetype *deparch = find_archetype(ARCH_DEPLETION);
+            if (deparch == NULL) {
+                continue;
+            }
             object *dep;
             int lose_this_stat;
             int i;
@@ -3680,37 +3687,44 @@ static void kill_player_not_permadeath(object *op) {
     /* Put a gravestone up where the character 'almost' died.  List the
      * exp loss on the stone.
      */
-    tmp = arch_to_object(find_archetype("gravestone"));
-    snprintf(buf, sizeof(buf), "%s's gravestone", op->name);
-    FREE_AND_COPY(tmp->name, buf);
-    snprintf(buf, sizeof(buf), "%s's gravestones", op->name);
-    FREE_AND_COPY(tmp->name_pl, buf);
-    snprintf(buf, sizeof(buf), "RIP\nHere rests the hero %s the %s,\n"
-        "who was killed\n"
-        "by %s.\n",
-        op->name, op->contr->title,
-        op->contr->killer);
-    object_set_msg(tmp, buf);
-    object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
+    at = find_archetype("gravestone");
+    if (at != NULL) {
+        tmp = arch_to_object(at);
+        snprintf(buf, sizeof(buf), "%s's gravestone", op->name);
+        FREE_AND_COPY(tmp->name, buf);
+        snprintf(buf, sizeof(buf), "%s's gravestones", op->name);
+        FREE_AND_COPY(tmp->name_pl, buf);
+        snprintf(buf, sizeof(buf), "RIP\nHere rests the hero %s the %s,\n"
+            "who was killed\n"
+            "by %s.\n",
+            op->name, op->contr->title,
+            op->contr->killer);
+        object_set_msg(tmp, buf);
+        object_insert_in_map_at(tmp, op->map, NULL, 0, op->x, op->y);
+    }
 
     /* restore player: remove any poisoning, disease and confusion the
      * character may be suffering.*/
     at = find_archetype("poisoning");
-    tmp = arch_present_in_ob(at, op);
-    if (tmp) {
-        object_remove(tmp);
-        object_free_drop_inventory(tmp);
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-            "Your body feels cleansed");
+    if (at != NULL) {
+        tmp = arch_present_in_ob(at, op);
+        if (tmp) {
+            object_remove(tmp);
+            object_free_drop_inventory(tmp);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+                "Your body feels cleansed");
+        }
     }
 
     at = find_archetype("confusion");
-    tmp = arch_present_in_ob(at, op);
-    if (tmp) {
-        object_remove(tmp);
-        object_free_drop_inventory(tmp);
-        draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-            "Your mind feels clearer");
+    if (at != NULL) {
+        tmp = arch_present_in_ob(at, op);
+        if (tmp) {
+            object_remove(tmp);
+            object_free_drop_inventory(tmp);
+            draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+                "Your mind feels clearer");
+        }
     }
     cure_disease(op, NULL, NULL);  /* remove any disease */
 
@@ -3787,6 +3801,7 @@ static void kill_player_permadeath(object *op) {
     int x, y;
     mapstruct *map;
     object *tmp;
+    archetype *at;
 
     /*  save the map location for corpse, gravestone*/
     x = op->x;
@@ -3840,20 +3855,23 @@ static void kill_player_permadeath(object *op) {
     play_again(op);
 
     /*  peterm:  added to create a corpse at deathsite.  */
-    tmp = arch_to_object(find_archetype("corpse_pl"));
-    strlcpy(buf, op->name, sizeof(buf));
-    FREE_AND_COPY(tmp->name, buf);
-    FREE_AND_COPY(tmp->name_pl, buf);
-    tmp->level = op->level;
-    object_set_msg(tmp, gravestone_text(op, buf, sizeof(buf)));
-    SET_FLAG(tmp, FLAG_UNIQUE);
-    /*
-     * Put the account name under slaying.
-     * Does not seem to cause weird effects, but more testing may ensure this.
-     */
-    strlcpy(ac_buf, op->contr->socket.account_name, sizeof(ac_buf));
-    FREE_AND_COPY(tmp->slaying, ac_buf);
-    object_insert_in_map_at(tmp, map, NULL, 0, x, y);
+    at = find_archetype("corpse_pl");
+    if (at != NULL) {
+        tmp = arch_to_object(at);
+        snprintf(buf, sizeof(buf), "%s", op->name);
+        FREE_AND_COPY(tmp->name, buf);
+        FREE_AND_COPY(tmp->name_pl, buf);
+        tmp->level = op->level;
+        object_set_msg(tmp, gravestone_text(op, buf, sizeof(buf)));
+        SET_FLAG(tmp, FLAG_UNIQUE);
+        /*
+         * Put the account name under slaying.
+         * Does not seem to cause weird effects, but more testing may ensure this.
+         */
+        snprintf(ac_buf, sizeof(ac_buf), "%s", op->contr->socket.account_name);
+        FREE_AND_COPY(tmp->slaying, ac_buf);
+        object_insert_in_map_at(tmp, map, NULL, 0, x, y);
+    }
 }
 
 /**

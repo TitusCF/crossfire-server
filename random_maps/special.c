@@ -219,6 +219,9 @@ void place_fountain_with_specials(mapstruct *map)
     int ix, iy, i = -1, tries = 0;
     mapstruct *fountain_style = find_style("/styles/misc", "fountains", -1);
     const archetype *fountain = find_archetype("fountain");
+    if (fountain == NULL) {
+        return;
+    }
     object *potion = object_new();
 
     object_copy_with_inv(pick_random_object(fountain_style), potion);

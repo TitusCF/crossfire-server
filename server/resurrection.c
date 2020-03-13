@@ -234,9 +234,12 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
     /* no matter what, we fry the corpse.  */
     if (temp && temp->map) {
         /* replace corpse object with a burning object */
-        newob = arch_to_object(find_archetype("burnout"));
-        if (newob != NULL)
-            object_insert_in_map_at(newob, temp->map, op, 0, temp->x, temp->y);
+        archetype *arch = find_archetype("burnout");
+        if (arch != NULL) {
+            newob = arch_to_object(arch);
+            if (newob != NULL)
+                object_insert_in_map_at(newob, temp->map, op, 0, temp->x, temp->y);
+        }
         leveldead = temp->level;
         object_remove(temp);
         object_free_drop_inventory(temp);

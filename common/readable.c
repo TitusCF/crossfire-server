@@ -1944,9 +1944,12 @@ static StringBuffer *msgfile_msg(object *book, size_t booksize) {
         }
         if (msg->quest_code) {
             /* add a 'apply' hook to launch the quest */
-            object *event = object_create_arch(find_archetype("quest_advance_apply"));
-            FREE_AND_COPY(event->name, msg->quest_code);
-            object_insert_in_ob(event, book);
+            archetype *at = find_archetype("quest_advance_apply");
+            if (at != NULL) {
+                object *event = object_create_arch(at);
+                FREE_AND_COPY(event->name, msg->quest_code);
+                object_insert_in_ob(event, book);
+            }
         }
     } else
         stringbuffer_append_string(ret, "\n <undecipherable text>");

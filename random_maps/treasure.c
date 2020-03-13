@@ -743,11 +743,14 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy, RMParms *RP)
     }
 
     /* give up and return the closest free spot. */
-    i = object_find_first_free_spot(&find_archetype("chest")->clone, map, x, y);
-    if (i != -1 && i <= SIZEOFFREE1) {
-        *cx = x+freearr_x[i];
-        *cy = y+freearr_y[i];
-        return;
+    archetype *arch = find_archetype("chest");
+    if (arch != NULL) {
+        i = object_find_first_free_spot(&arch->clone, map, x, y);
+        if (i != -1 && i <= SIZEOFFREE1) {
+            *cx = x+freearr_x[i];
+            *cy = y+freearr_y[i];
+            return;
+        }
     }
     /* indicate failure */
     *cx = *cy = -1;

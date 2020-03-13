@@ -995,6 +995,9 @@ int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
 int perceive_self(object *op) {
     char *cp, buf[MAX_BUF];
     archetype *at = find_archetype(ARCH_DEPLETION);
+    if (at == NULL) {
+        return 1;
+    }
     object *tmp;
     const object *god;
     int i;
@@ -1209,6 +1212,11 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
         return 0;
     }
     perm_portal = find_archetype(spell->slaying);
+    if (perm_portal == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                      "Oops, program error!");
+        return 0;
+    }
 
     /* To kill a town portal, we go trough the player's inventory,
      * for each marked portal in player's inventory,
@@ -1238,14 +1246,17 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
             FOR_OB_AND_ABOVE_FINISH();
 
             /* kill any opening animation there is */
-            tmp = map_find_by_archetype(exitmap, exitx, exity, find_archetype("town_portal_open"));
-            FOR_OB_AND_ABOVE_PREPARE(tmp)
-                if (tmp->name == old_force->name) {
-                object_remove(tmp);
-                object_free2(tmp, FREE_OBJ_FREE_INVENTORY);
-                break;
+            archetype *arch = find_archetype("town_portal_open");
+            if (arch != NULL) {
+                tmp = map_find_by_archetype(exitmap, exitx, exity, arch);
+                FOR_OB_AND_ABOVE_PREPARE(tmp)
+                    if (tmp->name == old_force->name) {
+                        object_remove(tmp);
+                        object_free2(tmp, FREE_OBJ_FREE_INVENTORY);
+                        break;
+                    }
+                FOR_OB_AND_ABOVE_FINISH();
             }
-            FOR_OB_AND_ABOVE_FINISH();
         }
         object_remove(old_force);
         object_free2(old_force, 0);
@@ -1764,12 +1775,14 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
 
     if (spell->attacktype&AT_POISON) {
         at = find_archetype("poisoning");
-        poison = arch_present_in_ob(at, target);
-        if (poison) {
-            success = 1;
-            draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                          "Your body feels cleansed");
-            poison->stats.food = 1;
+        if (at != NULL) {
+            poison = arch_present_in_ob(at, target);
+            if (poison) {
+                success = 1;
+                draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+                              "Your body feels cleansed");
+                poison->stats.food = 1;
+            }
         }
     }
     if (spell->attacktype&AT_CONFUSION) {
@@ -1783,12 +1796,14 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
     }
     if (spell->attacktype&AT_BLIND) {
         at = find_archetype("blindness");
-        poison = arch_present_in_ob(at, target);
-        if (poison) {
-            success = 1;
-            draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
-                          "Your vision begins to return.");
-            poison->stats.food = 1;
+        if (at != NULL) {
+            poison = arch_present_in_ob(at, target);
+            if (poison) {
+                success = 1;
+                draw_ext_info(NDI_UNIQUE, 0, target, MSG_TYPE_SPELL, MSG_TYPE_SPELL_HEAL,
+                              "Your vision begins to return.");
+                poison->stats.food = 1;
+            }
         }
     }
     if (spell->last_sp && target->stats.sp < target->stats.maxsp) {
@@ -2161,8 +2176,16 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
     else
         value *= value_adj;
 
-    small_value = price_base(&find_archetype(SMALL_NUGGET)->clone);
-    large_value = price_base(&find_archetype(LARGE_NUGGET)->clone);
+    archetype *small_nugget_arch = find_archetype(SMALL_NUGGET);
+    if (small_nugget_arch == NULL) {
+        return;
+    }
+    small_value = price_base(&small_nugget_arch->clone);
+    archetype *large_nugget_arch = find_archetype(LARGE_NUGGET);
+    if (large_nugget_arch == NULL) {
+        return;
+    }
+    large_value = price_base(&large_nugget_arch->clone);
 
     /* Give half of what value_adj says when we alchemy money (This should
      * hopefully make it so that it isn't worth it to alchemy money, sell

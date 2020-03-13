@@ -150,7 +150,11 @@ QTreeWidgetItem* CREUtils::formulaeNode(const recipe* recipe, QTreeWidgetItem* p
     else
     {
         base = find_archetype(recipe->arch_name[0]);
-        if (strcmp(recipe->title, "NONE") == 0)
+        if (!base)
+        {
+            title = QString("%1 (no archetype?)").arg(recipe->title);
+        }
+        else if (strcmp(recipe->title, "NONE") == 0)
         {
             title = base->clone.name;
         }

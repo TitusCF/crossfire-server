@@ -562,6 +562,9 @@ static QString alchemyTable(const QString& skill)
                     continue;
 
                 const archetype* arch = find_archetype(recipe->arch_name[0]);
+                if (arch == NULL) {
+                    continue;
+                }
 
                 QString name;
                 if (strcmp(recipe->title, "NONE") == 0)
@@ -710,7 +713,12 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     pl.bed_y = 5;
     pl.socket.faces_sent = (uint8_t*)calloc(sizeof(uint8_t), nrofpixmaps);
 
-    object* obfirst = object_create_arch(find_archetype("dwarf_player"));
+    archetype *dwarf_player_arch = find_archetype("dwarf_player");
+    if (dwarf_player_arch == NULL) {
+        free(pl.socket.faces_sent);
+        return 0;
+    }
+    object* obfirst = object_create_arch(dwarf_player_arch);
     obfirst->level = level;
     obfirst->contr = &pl;
     pl.ob = obfirst;
@@ -718,7 +726,12 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     obskill->level = level;
     SET_FLAG(obskill, FLAG_APPLIED);
     object_insert_in_ob(obskill, obfirst);
-    object* sword = object_create_arch(find_archetype((skill->clone.subtype == SK_TWO_HANDED_WEAPON) ? "sword_3" : "sword"));
+    archetype *skill_arch = find_archetype((skill->clone.subtype == SK_TWO_HANDED_WEAPON) ? "sword_3" : "sword");
+    if (skill_arch == NULL) {
+        free(pl.socket.faces_sent);
+        return 0;
+    }
+    object* sword = object_create_arch(skill_arch);
     SET_FLAG(sword, FLAG_APPLIED);
     object_insert_in_ob(sword, obfirst);
     fix_object(obfirst);

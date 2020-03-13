@@ -18,6 +18,10 @@ QString CREWrapperFormulae::fullname() const
     }
 
     const archetype* base = find_archetype(myFormulae->arch_name[0]);
+    if (!base)
+    {
+        return QString("%1 (no archetype?)").arg(myFormulae->title);
+    }
     if (strcmp(myFormulae->title, "NONE") == 0)
     {
         return base->clone.name;

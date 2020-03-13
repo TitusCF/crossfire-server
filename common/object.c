@@ -2439,6 +2439,7 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
  */
 void object_replace_insert_in_map(const char *arch_string, object *op) {
     object *tmp1;
+    archetype *at;
 
     /* first search for itself and remove any old instances */
     FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
@@ -2448,7 +2449,11 @@ void object_replace_insert_in_map(const char *arch_string, object *op) {
         }
     } FOR_MAP_FINISH();
 
-    tmp1 = arch_to_object(find_archetype(arch_string));
+    at = find_archetype(arch_string);
+    if (at == NULL) {
+        return;
+    }
+    tmp1 = arch_to_object(at);
     object_insert_in_map_at(tmp1, op->map, op, INS_BELOW_ORIGINATOR, op->x, op->y);
 }
 

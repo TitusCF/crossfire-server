@@ -513,6 +513,9 @@ static unsigned knowledge_alchemy_face(sstring code) {
         return (unsigned)-1;
 
     arch = find_archetype(rp->arch_name[0]);
+    if (arch == NULL) {
+        return -1;
+    }
     if (strcmp(rp->title, "NONE") == 0) {
         return arch->clone.face->number;
     }
