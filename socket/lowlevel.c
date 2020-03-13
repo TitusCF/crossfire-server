@@ -95,7 +95,7 @@ static void SockList_Ensure(const SockList *sl, size_t size) {
  * @param sl the SockList instance to add to
  * @param data the value to add
  */
-void SockList_AddChar(SockList *sl, char data) {
+void SockList_AddChar(SockList *sl, unsigned char data) {
     SockList_Ensure(sl, 1);
     sl->buf[sl->len++] = data;
 }

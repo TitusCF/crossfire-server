@@ -48,7 +48,7 @@ void SockList_Init(SockList *sl);
 void SockList_Term(SockList *sl);
 void SockList_Reset(SockList *sl);
 void SockList_ResetRead(SockList *sl);
-void SockList_AddChar(SockList *sl, char c);
+void SockList_AddChar(SockList *sl, unsigned char c);
 void SockList_AddShort(SockList *sl, uint16_t data);
 void SockList_AddInt(SockList *sl, uint32_t data);
 void SockList_AddInt64(SockList *sl, uint64_t data);
