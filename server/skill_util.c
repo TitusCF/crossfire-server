@@ -290,6 +290,10 @@ object *find_skill_by_name(object *who, const char *name) {
 object *find_skill_by_number(object *who, int skillno) {
     object *skill = NULL, *skill_tool = NULL;
 
+    if (skillno <= 0 || skillno > MAX_SKILLS) {
+        return NULL;
+    }
+
     FOR_INV_PREPARE(who, tmp) {
         if (tmp->type == SKILL && tmp->subtype == skillno)
             skill = tmp;
