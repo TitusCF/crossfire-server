@@ -1668,7 +1668,7 @@ generally are not something that needs to be designed for.
        	way, new skills can be added in the server, and the client can
        	use this new skill information with no changes to the code.
 
-        All data below is in text format. If the additional value if empty then format is:
+        All data below is in text format. If the additional value is empty then format is:
 
         stat number:skill name
 
