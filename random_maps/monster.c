@@ -37,14 +37,13 @@
  */
 void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms *RP)
 {
-    char styledirname[256];
     mapstruct *style_map = NULL;
     int failed_placements;
     int64_t exp_per_sq, total_experience;
     int number_monsters = 0;
     archetype *at;
 
-    snprintf(styledirname, sizeof(styledirname), "%s", "/styles/monsterstyles");
+    const char *styledirname = "/styles/monsterstyles";
     style_map = find_style(styledirname, monsterstyle, difficulty);
     if (style_map == NULL) {
         return;

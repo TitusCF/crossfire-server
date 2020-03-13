@@ -342,7 +342,7 @@ void dump_alchemy(void) {
                         if (strcmp(formula->title, "NONE"))
                             snprintf(buf, sizeof(buf), "%s of %s", string, formula->title);
                         else
-                            snprintf(buf, sizeof(buf), "%s", string);
+                            strlcpy(buf, string, sizeof(buf));
                         fprintf(logfile, "%-30s(%d) bookchance %3d  ", buf, formula->index, formula->chance);
                         fprintf(logfile, "skill %s", formula->skill);
                         fprintf(logfile, "\n");
@@ -546,7 +546,7 @@ void dump_alchemy_costs(void) {
                         LOG(llevError, "Formula %s has no artifact\n", formula->title);
                     else {
                         if (!strcmp(formula->title, "NONE"))
-                            snprintf(buf, sizeof(buf), "%s", string);
+                            strlcpy(buf, string, sizeof(buf));
                         else
                             snprintf(buf, sizeof(buf), "%s of %s", string, formula->title);
                         fprintf(logfile, "\n%-40s bookchance %3d  skill %s\n", buf, formula->chance, formula->skill);

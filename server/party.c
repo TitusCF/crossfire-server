@@ -41,7 +41,7 @@ partylist *party_form(object *op, const char *partyname) {
     partylist *party;
     char buf[MAX_BUF];
 
-    snprintf(buf, sizeof(buf), "%s", partyname);
+    strlcpy(buf, partyname, sizeof(buf));
     replace_unprintable_chars(buf);
 
     if (party_find(buf) != NULL)
@@ -273,7 +273,7 @@ const char *party_get_password(const partylist *party) {
  * the new password to set
  */
 void party_set_password(partylist *party, const char *password) {
-    snprintf(party->passwd, sizeof(party->passwd), "%s", password);
+    strlcpy(party->passwd, password, sizeof(party->passwd));
     replace_unprintable_chars(party->passwd);
 }
 

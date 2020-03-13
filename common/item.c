@@ -450,11 +450,11 @@ void get_levelnumber(int i, char *buf, size_t size) {
         return;
     }
     if (i < 21) {
-        snprintf(buf, size, "%s", levelnumbers[i]);
+        strlcpy(buf, levelnumbers[i], size);
         return;
     }
     if (!(i%10)) {
-        snprintf(buf, size, "%s", levelnumbers_10[i/10]);
+        strlcpy(buf, levelnumbers_10[i/10], size);
         return;
     }
     snprintf(buf, size, "%s%s", numbers_10[i/10], levelnumbers[i%10]);
@@ -553,7 +553,7 @@ void query_short_name(const object *op, char *buf, size_t size) {
         return;
     }
     if (!op->nrof && !op->weight && !op->title && !is_magical(op)) {
-        snprintf(buf, size, "%s", op->name); /* To speed things up (or make things slower?) */
+        strlcpy(buf, op->name, size); /* To speed things up (or make things slower?) */
         return;
     }
     buf[0] = '\0';
@@ -733,7 +733,7 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
 
     buf[0] = '\0';
 
-    snprintf(buf, size, "%s", plural ? op->name_pl : op->name);
+    strlcpy(buf, plural ? op->name_pl : op->name, size);
     len = strlen(buf);
 
     if (op->title && QUERY_FLAG(op, FLAG_IDENTIFIED)) {

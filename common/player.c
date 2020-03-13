@@ -225,7 +225,7 @@ void player_get_title(const struct pl *pl, char *buf, size_t bufsize) {
     if (pl->own_title[0] == '\0')
         snprintf(buf, bufsize, "the %s", pl->title);
     else
-        snprintf(buf, bufsize, "%s", pl->own_title);
+        strlcpy(buf, pl->own_title, bufsize);
 }
 
 /**
@@ -262,7 +262,7 @@ const char *player_get_own_title(const struct pl *pl) {
  * the new title to set; empty string to unset
  */
 void player_set_own_title(struct pl *pl, const char *title) {
-    snprintf(pl->own_title, sizeof(pl->own_title), "%s", title);
+    strlcpy(pl->own_title, title, sizeof(pl->own_title));
     replace_unprintable_chars(pl->own_title);
 }
 

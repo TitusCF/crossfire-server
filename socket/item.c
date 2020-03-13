@@ -468,8 +468,8 @@ void esrv_update_item(int flags, object *pl, object *op) {
             query_base_name(op, 0, item_n, sizeof(item_n)-1);
             query_base_name(op, 1, item_p, sizeof(item_p));
         } else {
-            snprintf(item_n, sizeof(item_n)-1, "%s", op->custom_name);
-            snprintf(item_p, sizeof(item_p), "%s", op->custom_name);
+            strlcpy(item_n, op->custom_name, sizeof(item_n)-1);
+            strlcpy(item_p, op->custom_name, sizeof(item_p));
         }
 
         len = strlen(item_n)+1;

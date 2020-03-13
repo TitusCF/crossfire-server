@@ -1448,7 +1448,7 @@ static void cfapi_map_set_map_property(int *type, ...) {
     switch (property) {
     case CFAPI_MAP_PROP_PATH:
         buf = va_arg(args, const char *);
-        snprintf(map->path, sizeof(map->path), "%s", buf);
+        strlcpy(map->path, buf, sizeof(map->path));
         *type = CFAPI_STRING;
         break;
 
@@ -2483,7 +2483,7 @@ static void cfapi_object_get_property(int *type, ...) {
     case CFAPI_PLAYER_PROP_BED_MAP:
         rbuffer = va_arg(args, char *);
         rbufsize = va_arg(args, int);
-        snprintf(rbuffer, rbufsize, "%s", op->contr->savebed_map);
+        strlcpy(rbuffer, op->contr->savebed_map, rbufsize);
         *type = CFAPI_STRING;
         break;
 

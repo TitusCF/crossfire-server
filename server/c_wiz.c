@@ -1831,7 +1831,7 @@ void command_reset(object *op, const char *params) {
 
     /* Use the DM's map if the current map was given. */
     if (strcmp(params, ".") == 0) {
-        snprintf(path, sizeof(path), "%s", op->map->path);
+        strlcpy(path, op->map->path, sizeof(path));
     } else {
         path_combine_and_normalize(op->map->path, params, path, sizeof(path));
     }
@@ -1869,7 +1869,7 @@ void command_reset(object *op, const char *params) {
         return;
     }
 
-    snprintf(path, sizeof(path), "%s", m->path);
+    strlcpy(path, m->path, sizeof(path));
 
     if (m->in_memory != MAP_SWAPPED) {
         if (m->in_memory != MAP_IN_MEMORY) {

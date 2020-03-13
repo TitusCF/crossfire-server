@@ -183,7 +183,6 @@ int surround_flag4(mapstruct *map, int i, int j, RMParms *RP)
  */
 void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP)
 {
-    char styledirname[256];
     mapstruct *style_map = NULL;
     object *the_wall;
 
@@ -191,7 +190,7 @@ void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP)
     if (!strcmp(w_style, "none")) {
         return;
     }
-    snprintf(styledirname, sizeof(styledirname), "%s", "/styles/wallstyles");
+    const char *styledirname = "/styles/wallstyles";
     style_map = find_style(styledirname, w_style, -1);
     if (style_map == NULL) {
         return;
@@ -204,7 +203,7 @@ void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP)
         int joinedwalls = 0;
         object *thiswall;
 
-        snprintf(RP->wall_name, sizeof(RP->wall_name), "%s", the_wall->arch->name);
+        strlcpy(RP->wall_name, the_wall->arch->name, sizeof(RP->wall_name));
         if ((cp = strchr(RP->wall_name, '_')) != NULL) {
             *cp = 0;
             joinedwalls = 1;

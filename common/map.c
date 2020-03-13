@@ -208,7 +208,7 @@ int check_path(const char *name, int prepend_dir) {
     if (prepend_dir)
         create_pathname(name, buf, MAX_BUF);
     else
-        snprintf(buf, sizeof(buf), "%s", name);
+        strlcpy(buf, name, sizeof(buf));
 #ifdef WIN32 /* ***win32: check this sucker in windows style. */
     return(_access(buf, 0));
 #else
@@ -1184,7 +1184,7 @@ static int load_map_header(FILE *fp, mapstruct *m) {
 
                 if (check_path(value, 1) != -1) {
                     /* The unadorned path works. */
-                    snprintf(path, sizeof(path), "%s", value);
+                    strlcpy(path, value, sizeof(path));
                 } else {
                     /* Try again; it could be a relative exit. */
                     path_combine_and_normalize(m->path, value, path, sizeof(path));
@@ -1241,7 +1241,7 @@ mapstruct *mapfile_load(const char *map, int flags) {
     clock_gettime(CLOCK_MONOTONIC, &begin);
 
     if (flags&MAP_PLAYER_UNIQUE)
-        snprintf(pathname, sizeof(pathname), "%s", map);
+        strlcpy(pathname, map, sizeof(pathname));
     else if (flags&MAP_OVERLAY)
         create_overlay_pathname(map, pathname, MAX_BUF);
     else
@@ -1473,18 +1473,18 @@ int save_map(mapstruct *m, int flag) {
                     m->path, m->path);
                 return SAVE_ERROR_UCREATION;
             }
-            snprintf(filename, sizeof(filename), "%s", m->path);
+            strlcpy(filename, m->path, sizeof(filename));
         }
 
         make_path_to_file(filename);
     } else {
         if (!m->tmpname)
             m->tmpname = tempnam(settings.tmpdir, NULL);
-        snprintf(filename, sizeof(filename), "%s", m->tmpname);
+        strlcpy(filename, m->tmpname, sizeof(filename));
     }
     m->in_memory = MAP_SAVING;
 
-    snprintf(final, sizeof(final), "%s", filename);
+    strlcpy(final, filename, sizeof(final));
     snprintf(filename, sizeof(filename), "%s%s", final, TEMP_EXT);
     fp = of_open(&of, filename);
     if (fp == NULL)

@@ -53,10 +53,10 @@ char *path_combine(const char *src, const char *dst, char *path, size_t size) {
 
     if (*dst == '/') {
         /* absolute destination path => ignore source path */
-        snprintf(path, size, "%s", dst);
+        strlcpy(path, dst, size);
     } else {
         /* relative destination path => add after last '/' of source */
-        snprintf(path, size, "%s", src);
+        strlcpy(path, src, size);
         p = strrchr(path, '/');
         if (p != NULL) {
             p++;
@@ -65,7 +65,7 @@ char *path_combine(const char *src, const char *dst, char *path, size_t size) {
             if (*src == '/')
                 *p++ = '/';
         }
-        snprintf(p, size-(p-path), "%s", dst);
+        strlcpy(p, dst, size-(p-path));
     }
 
 #if defined(DEBUG_PATH)

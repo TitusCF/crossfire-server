@@ -268,7 +268,7 @@ static void compute_face_name(char* buf, size_t size, const char* name, const ch
     if (*dot == '.')
     {
         buf[0] = '0';
-        snprintf(buf, dot - name + 1, "%s", name);
+        strlcpy(buf, name, dot - name + 1);
         snprintf(buf + strlen(buf), size - strlen(buf), "_%s%s", suffix, dot);
     }
     else

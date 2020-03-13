@@ -193,7 +193,7 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
     if (stylename && strlen(stylename) > 0) {
         snprintf(style_file_path, sizeof(style_file_path), "%s/%s", dirname, stylename);
     } else { /* otherwise, just use the dirname.  We'll pick a random stylefile.*/
-        snprintf(style_file_path, sizeof(style_file_path), "%s", dirname);
+        strlcpy(style_file_path, dirname, sizeof(style_file_path));
     }
 
     /* is what we were given a directory, or a file? */

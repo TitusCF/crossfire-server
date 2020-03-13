@@ -237,7 +237,7 @@ static void do_tell(object *op, const char *params, int adjust_listen) {
     player *pl;
     uint8_t original_listen;
 
-    snprintf(name, sizeof(name), "%s", params);
+    strlcpy(name, params, sizeof(name));
 
     msg = strchr(name, ' ');
     if (msg) {
@@ -280,7 +280,7 @@ static void do_tell(object *op, const char *params, int adjust_listen) {
             pl->listening = original_listen;
 
         /* Update last_tell value [mids 01/14/2002] */
-        snprintf(pl->last_tell, sizeof(pl->last_tell), "%s", op->name);
+        strlcpy(pl->last_tell, op->name, sizeof(pl->last_tell));
 
         /* Hidden DMs get the message, but player should think DM isn't online. */
         if (!pl->hidden || QUERY_FLAG(op, FLAG_WIZ)) {

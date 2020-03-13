@@ -386,7 +386,7 @@ static void init_dynamic(void) {
             if (EXIT_PATH(&at->clone)) {
                 mapstruct *first;
 
-                snprintf(first_map_path, sizeof(first_map_path), "%s", EXIT_PATH(&at->clone));
+                strlcpy(first_map_path, EXIT_PATH(&at->clone), sizeof(first_map_path));
                 first = ready_map_name(first_map_path, 0);
                 if (!first) {
                     LOG(llevError, "Initial map %s can't be found! Please ensure maps are correctly installed.\n", first_map_path);

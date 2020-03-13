@@ -313,7 +313,7 @@ void set_map_timeout(mapstruct *oldmap) {
 static char *clean_path(const char *file, char *newpath, int size) {
     char *cp;
 
-    snprintf(newpath, size, "%s", file);
+    strlcpy(newpath, file, size);
     for (cp = newpath; *cp != '\0'; cp++) {
         if (*cp == '/')
             *cp = '_';
@@ -343,9 +343,9 @@ static char *unclean_path(const char *src, char *newpath, int size) {
 
     cp = strrchr(src, '/');
     if (cp)
-        snprintf(newpath, size, "%s", cp+1);
+        strlcpy(newpath, cp+1, size);
     else
-        snprintf(newpath, size, "%s", src);
+        strlcpy(newpath, src, size);
 
     for (cp = newpath; *cp != '\0'; cp++) {
         if (*cp == '_')
@@ -394,7 +394,7 @@ static void enter_random_map(object *pl, object *exit_ob) {
         if (!cp)
             cp = rp.origin_map;
         /* Need to strip of any trailing digits, if it has them */
-        snprintf(buf, sizeof(buf), "%s", cp);
+        strlcpy(buf, cp, sizeof(buf));
         while (isdigit(buf[strlen(buf)-1]))
             buf[strlen(buf)-1] = 0;
         cp = buf;
@@ -417,7 +417,7 @@ static void enter_random_map(object *pl, object *exit_ob) {
         x = EXIT_X(exit_ob) = MAP_ENTER_X(new_map);
         y = EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
         EXIT_PATH(exit_ob) = add_string(newmap_name);
-        snprintf(new_map->path, sizeof(new_map->path), "%s", newmap_name);
+        strlcpy(new_map->path, newmap_name, sizeof(new_map->path));
         enter_map(pl, new_map, x, y);
     }
 }
@@ -441,7 +441,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
      * for where to store the map, and one for were
      * to generate the map from.
      */
-    snprintf(exitpath, sizeof(exitpath), "%s", EXIT_PATH(exit_ob)+2);
+    strlcpy(exitpath, EXIT_PATH(exit_ob)+2, sizeof(exitpath));
     sourcemap = strchr(exitpath, '!');
     if (!sourcemap) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
@@ -469,10 +469,10 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
     replace(exitpath, "%x", tmpnum, resultname,  sizeof(resultname));
 
     snprintf(tmpnum, sizeof(tmpnum), "%d", exit_ob->y);
-    snprintf(tmpstring, sizeof(tmpstring), "%s", resultname);
+    strlcpy(tmpstring, resultname, sizeof(tmpstring));
     replace(tmpstring, "%y", tmpnum, resultname,  sizeof(resultname));
 
-    snprintf(tmpstring, sizeof(tmpstring), "%s", resultname);
+    strlcpy(tmpstring, resultname, sizeof(tmpstring));
     replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
 
     /* If we are coming from another template map, use reletive paths unless
@@ -508,7 +508,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
     /* set the path of the map to where it should be
      * so we don't just save over the source map.
      */
-    snprintf(new_map->path, sizeof(new_map->path), "%s", new_map_name);
+    strlcpy(new_map->path, new_map_name, sizeof(new_map->path));
     new_map->is_template = 1;
     enter_map(pl, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
 }
@@ -535,10 +535,10 @@ static void enter_random_template_map(object *pl, object *exit_ob) {
     replace(EXIT_PATH(exit_ob)+3, "%x", tmpnum, resultname,  sizeof(resultname));
 
     snprintf(tmpnum, sizeof(tmpnum), "%d", exit_ob->y);
-    snprintf(tmpstring, sizeof(tmpstring), "%s", resultname);
+    strlcpy(tmpstring, resultname, sizeof(tmpstring));
     replace(tmpstring, "%y", tmpnum, resultname,  sizeof(resultname));
 
-    snprintf(tmpstring, sizeof(tmpstring), "%s", resultname);
+    strlcpy(tmpstring, resultname, sizeof(tmpstring));
     replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
 
     /* If we are coming from another template map, use reletive paths unless
@@ -637,7 +637,7 @@ static void enter_unique_map(object *op, object *exit_ob) {
     }
 
     if (newmap) {
-        snprintf(newmap->path, sizeof(newmap->path), "%s", apartment);
+        strlcpy(newmap->path, apartment, sizeof(newmap->path));
         newmap->unique = 1;
         enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob));
     } else {

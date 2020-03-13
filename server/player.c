@@ -1326,7 +1326,7 @@ void key_change_class(object *op, char key) {
                 /* map exists, update bed of reality location, in case player dies */
                 op->contr->bed_x = op->x;
                 op->contr->bed_y = op->y;
-                snprintf(op->contr->savebed_map, sizeof(op->contr->savebed_map), "%s", mapname);
+                strlcpy(op->contr->savebed_map, mapname, sizeof(op->contr->savebed_map));
             }
 
             object_free_drop_inventory(tmp);
@@ -1471,7 +1471,7 @@ int apply_race_and_class(object *op, archetype *race, archetype *opclass, living
     free_string(op->name_pl);
     op->name_pl = add_string(name);
     SET_ANIMATION(op, 2);    /* So player faces south */
-    snprintf(op->contr->title, sizeof(op->contr->title), "%s", op->arch->clone.name);
+    strlcpy(op->contr->title, op->arch->clone.name, sizeof(op->contr->title));
 
     if (stats) {
         /* Copy over the stats.  Use this instead a memcpy because
@@ -3846,7 +3846,7 @@ static void kill_player_permadeath(object *op) {
 
     /*  peterm:  added to create a corpse at deathsite.  */
     tmp = arch_to_object(find_archetype("corpse_pl"));
-    snprintf(buf, sizeof(buf), "%s", op->name);
+    strlcpy(buf, op->name, sizeof(buf));
     FREE_AND_COPY(tmp->name, buf);
     FREE_AND_COPY(tmp->name_pl, buf);
     tmp->level = op->level;
@@ -3856,7 +3856,7 @@ static void kill_player_permadeath(object *op) {
      * Put the account name under slaying.
      * Does not seem to cause weird effects, but more testing may ensure this.
      */
-    snprintf(ac_buf, sizeof(ac_buf), "%s", op->contr->socket.account_name);
+    strlcpy(ac_buf, op->contr->socket.account_name, sizeof(ac_buf));
     FREE_AND_COPY(tmp->slaying, ac_buf);
     object_insert_in_map_at(tmp, map, NULL, 0, x, y);
 }

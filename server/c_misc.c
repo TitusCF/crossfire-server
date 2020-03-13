@@ -651,7 +651,7 @@ void display_who_entry(object *op, player *pl, const char *format) {
 void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl) {
     switch (letter) {
     case 'N':
-        snprintf(return_val, size, "%s", pl->ob->name);
+        strlcpy(return_val, pl->ob->name, size);
         break;
 
     case 't':
@@ -667,7 +667,7 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
         break;
 
     case 'h':
-        snprintf(return_val, size, "%s", pl->peaceful ? "" : " <Hostile>");
+        strlcpy(return_val, pl->peaceful ? "" : " <Hostile>", size);
         break;
 
     case 'l':
@@ -675,35 +675,35 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
         break;
 
     case 'd':
-        snprintf(return_val, size, "%s", (QUERY_FLAG(pl->ob, FLAG_WIZ) ? " <WIZ>" : ""));
+        strlcpy(return_val, (QUERY_FLAG(pl->ob, FLAG_WIZ) ? " <WIZ>" : ""), size);
         break;
 
     case 'a':
-        snprintf(return_val, size, "%s", (QUERY_FLAG(pl->ob, FLAG_AFK) ? " <AFK>" : ""));
+        strlcpy(return_val, (QUERY_FLAG(pl->ob, FLAG_AFK) ? " <AFK>" : ""), size);
         break;
 
     case 'b':
-        snprintf(return_val, size, "%s", (pl->socket.is_bot == 1) ? " <BOT>" : "");
+        strlcpy(return_val, (pl->socket.is_bot == 1) ? " <BOT>" : "", size);
         break;
 
     case 'm':
-        snprintf(return_val, size, "%s", pl->ob->map->path);
+        strlcpy(return_val, pl->ob->map->path, size);
         break;
 
     case 'M':
-        snprintf(return_val, size, "%s", pl->ob->map->name ? pl->ob->map->name : "Untitled");
+        strlcpy(return_val, pl->ob->map->name ? pl->ob->map->name : "Untitled", size);
         break;
 
     case 'r':
-        snprintf(return_val, size, "%s", get_name_of_region_for_map(pl->ob->map));
+        strlcpy(return_val, get_name_of_region_for_map(pl->ob->map), size);
             break;
 
     case 'R':
-        snprintf(return_val, size, "%s", get_region_longname(get_region_by_map(pl->ob->map)));
+        strlcpy(return_val, get_region_longname(get_region_by_map(pl->ob->map)), size);
         break;
 
     case 'i':
-        snprintf(return_val, size, "%s", pl->socket.host);
+        strlcpy(return_val, pl->socket.host, size);
         break;
 
     case '%':

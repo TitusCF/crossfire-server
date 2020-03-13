@@ -2324,7 +2324,7 @@ void command_use(object *op, const char *params) {
     if (!IS_PLAYER(op))
         return;
 
-    snprintf(copy, sizeof(copy), "%s", params);
+    strlcpy(copy, params, sizeof(copy));
     with = strstr(copy, " with ");
     if (!with) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Syntax is use <item> with <item>.");

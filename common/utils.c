@@ -357,7 +357,7 @@ void replace(const char *src, const char *key, const char *replacement, char *re
 
     /* special case to prevent infinite loop if key==replacement=="" */
     if (strcmp(key, replacement) == 0) {
-        snprintf(result, resultsize, "%s", src);
+        strlcpy(result, src, resultsize);
         return;
     }
 

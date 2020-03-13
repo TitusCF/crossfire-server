@@ -651,9 +651,9 @@ void check_login(object *op, int check_pass) {
             pl->mode = uvalue;
         }
         else if (!strcmp(buf, "map"))
-            snprintf(pl->maplevel, sizeof(pl->maplevel), "%s", val_string);
+            strlcpy(pl->maplevel, val_string, sizeof(pl->maplevel));
         else if (!strcmp(buf, "savebed_map"))
-            snprintf(pl->savebed_map, sizeof(pl->savebed_map), "%s", val_string);
+            strlcpy(pl->savebed_map, val_string, sizeof(pl->savebed_map));
         else if (!strcmp(buf, "bed_x"))
             pl->bed_x = value;
         else if (!strcmp(buf, "bed_y"))
