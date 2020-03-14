@@ -4840,19 +4840,19 @@ static void get_string_move_type(StringBuffer *sb, MoveType mt)
 }
 
 /** Adds a line to the buffer. */
-static void ADD_STRINGLINE_ENTRY(StringBuffer *sb, const char *name, const char *value) {
+static inline void ADD_STRINGLINE_ENTRY(StringBuffer *sb, const char *name, const char *value) {
     stringbuffer_append_string(sb, name);
     stringbuffer_append_string(sb, value);
     stringbuffer_append_string(sb, "\n");
 }
 
 /** Adds a long to the buffer.  name must have a space at the end. */
-static void FAST_SAVE_LONG(StringBuffer *sb, const char *name, const long value) {
+static inline void FAST_SAVE_LONG(StringBuffer *sb, const char *name, const long value) {
     stringbuffer_append_printf(sb, "%s%ld\n", name, (long int)value);
 }
 
 /** Adds a double to the buffer. name must have a space at the end. */
-static void FAST_SAVE_DOUBLE(StringBuffer *sb, const char *name, const double value) {
+static inline void FAST_SAVE_DOUBLE(StringBuffer *sb, const char *name, const double value) {
     stringbuffer_append_printf(sb, "%s%f\n", name, value);
 }
 
