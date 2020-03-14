@@ -2135,7 +2135,6 @@ void object_merge_spell(object *op, int16_t x, int16_t y) {
 
 static object *find_insert_pos(object *op, const int flag) {
     object *floor = NULL;
-    object *top;
     /*
      * If there are multiple objects on this space, we do some trickier handling.
      * We've already dealt with merging if appropriate.
@@ -2148,6 +2147,9 @@ static object *find_insert_pos(object *op, const int flag) {
      * when lots of spells are cast in one area.  Currently, it is presumed
      * that flying non pickable objects are spell objects.
      */
+    if (flag&INS_ON_TOP) {
+        return GET_MAP_TOP(op->map, op->x, op->y);
+    }
     object *last = NULL;
     FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)
@@ -2162,13 +2164,9 @@ static object *find_insert_pos(object *op, const int flag) {
         }
         last = tmp;
     } FOR_MAP_FINISH();
-    top = last;
-
-    if (flag&INS_MAP_LOAD)
-        top = GET_MAP_TOP(op->map, op->x, op->y);
     if (flag&INS_ABOVE_FLOOR_ONLY)
-        top = floor;
-    return top;
+        return floor;
+    return last;
 }
 
 /**
