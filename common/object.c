@@ -5227,27 +5227,24 @@ void save_object_in_sb(StringBuffer *sb, const object *op, const int flag) {
             FAST_SAVE_LONG(sb, "x ", op->x);
         if (op->y != op->arch->clone.y)
             FAST_SAVE_LONG(sb, "y ", op->y);
-    }
-    else {
-        /* if op is an artifact, then find the "standard" artifact to use that for the diff */
-        if (op->artifact != NULL) {
-            object *base;
-            const artifact *artifact;
+    } else if (op->artifact != NULL) {
+    /* if op is an artifact, then find the "standard" artifact to use that for the diff */
+        object *base;
+        const artifact *artifact;
 
-            artifact = find_artifact(op, op->artifact);
-            if (artifact == NULL) {
-                LOG(llevError, "could not find artifact %s [%d] to save data\n", op->artifact, op->type);
-                get_ob_diff(sb, op, &at->clone);
-            } else {
-                stringbuffer_append_printf(sb, "artifact %s\n", op->artifact);
-                base = arch_to_object(at);
-                give_artifact_abilities(base, artifact->item);
-                get_ob_diff(sb, op, base);
-                object_free2(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
-            }
-        } else {
+        artifact = find_artifact(op, op->artifact);
+        if (artifact == NULL) {
+            LOG(llevError, "could not find artifact %s [%d] to save data\n", op->artifact, op->type);
             get_ob_diff(sb, op, &at->clone);
+        } else {
+            stringbuffer_append_printf(sb, "artifact %s\n", op->artifact);
+            base = arch_to_object(at);
+            give_artifact_abilities(base, artifact->item);
+            get_ob_diff(sb, op, base);
+            object_free2(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
         }
+    } else {
+        get_ob_diff(sb, op, &at->clone);
     }
 
     /* Eneq(@csd.uu.se): Added this to allow containers being saved with contents*/
