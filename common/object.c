@@ -4840,17 +4840,21 @@ static void get_string_move_type(StringBuffer *sb, MoveType mt)
 }
 
 /** Adds a line to the buffer. */
-#define ADD_STRINGLINE_ENTRY(sb__, entryname__, entryvalue__) do {\
-    stringbuffer_append_string(sb__, entryname__);\
-    stringbuffer_append_string(sb__, entryvalue__);\
-    stringbuffer_append_string(sb__, "\n");\
-    } while (0)
-/** Adds a long to the buffer.  entryname__ must have a space at the end. */
-#define FAST_SAVE_LONG(sb__, entryname__, entryvalue__) \
-    stringbuffer_append_printf(sb__, "%s%ld\n", entryname__, (long int)entryvalue__)
-/** Adds a double to the buffer. entryname__ must have a space at the end. */
-#define FAST_SAVE_DOUBLE(sb__, entryname__, entryvalue__) \
-    stringbuffer_append_printf(sb__, "%s%f\n", entryname__, entryvalue__)
+static void ADD_STRINGLINE_ENTRY(StringBuffer *sb, const char *name, const char *value) {
+    stringbuffer_append_string(sb, name);
+    stringbuffer_append_string(sb, value);
+    stringbuffer_append_string(sb, "\n");
+}
+
+/** Adds a long to the buffer.  name must have a space at the end. */
+static void FAST_SAVE_LONG(StringBuffer *sb, const char *name, const long value) {
+    stringbuffer_append_printf(sb, "%s%ld\n", name, (long int)value);
+}
+
+/** Adds a double to the buffer. name must have a space at the end. */
+static void FAST_SAVE_DOUBLE(StringBuffer *sb, const char *name, const double value) {
+    stringbuffer_append_printf(sb, "%s%f\n", name, value);
+}
 
 /**
  * Returns a pointer to a static string which contains all variables
