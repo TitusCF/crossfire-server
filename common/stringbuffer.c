@@ -62,7 +62,7 @@ StringBuffer *stringbuffer_new(void) {
         fatal(OUT_OF_MEMORY);
     }
 
-    sb->size = 256;
+    sb->size = 512;
     sb->buf = malloc(sb->size);
     sb->pos = 0;
     return sb;
@@ -134,21 +134,29 @@ void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2)
     sb->pos += sb2->pos;
 }
 
+/**
+ * Ensure sb can hold at least len more characters, growing the sb if not.
+ */
 static void stringbuffer_ensure(StringBuffer *sb, size_t len) {
     char *tmp;
-    size_t new_size;
-
-    if (sb->pos+len <= sb->size) {
+    const size_t newlen = sb->pos+len;
+    if (newlen <= sb->size) {
         return;
     }
 
-    new_size = sb->pos+len+256;
-    tmp = realloc(sb->buf, new_size);
+#if 0
+    putchar('.');
+    fflush(stdout);
+#endif
+
+    do {
+        sb->size *= 1.5;
+    } while (newlen > sb->size);
+    tmp = realloc(sb->buf, sb->size);
     if (tmp == NULL) {
         fatal(OUT_OF_MEMORY);
     }
     sb->buf = tmp;
-    sb->size = new_size;
 }
 
 size_t stringbuffer_length(StringBuffer *sb) {
