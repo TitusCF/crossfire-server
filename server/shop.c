@@ -750,7 +750,7 @@ static uint64_t pay_from_container(object *pl, object *pouch, uint64_t to_pay) {
         if (coin_objs[i] == NULL) {
             at = find_archetype(coins[NUM_COINS-1-i]);
             if (at == NULL) {
-                return;
+                continue;
             }
             coin_objs[i] = object_new();
             object_copy(&at->clone, coin_objs[i]);
