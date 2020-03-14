@@ -600,6 +600,7 @@ object *create_singularity(const char *name) {
 
     snprintf(buf, sizeof(buf), "%s (%s)", ARCH_SINGULARITY, name);
     op = object_new();
+    op->arch = empty_archetype;
     op->name = add_string(buf);
     op->name_pl = add_string(buf);
     SET_FLAG(op, FLAG_NO_PICK);
