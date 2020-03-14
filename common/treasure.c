@@ -66,8 +66,6 @@ void init_archetype_pointers(void) {
         ring_arch = find_archetype("ring");
     if (amulet_arch == NULL)
         amulet_arch = find_archetype("amulet");
-    if (staff_arch == NULL)
-        staff_arch = find_archetype("staff");
     if (crown_arch == NULL)
         crown_arch = find_archetype("crown");
 }

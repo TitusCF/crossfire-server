@@ -305,7 +305,6 @@ void init_globals(void) {
     nrofallowedstr = 0;
     ring_arch = NULL;
     amulet_arch = NULL;
-    staff_arch = NULL;
     undead_name = add_string("undead");
     trying_emergency_save = 0;
     num_animations = 0;

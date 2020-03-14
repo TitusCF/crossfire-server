@@ -157,7 +157,7 @@ EXTERN long ob_count;
 /*
  * Used in treasure.c
  */
-EXTERN archetype *ring_arch, *amulet_arch, *staff_arch, *crown_arch;
+EXTERN archetype *ring_arch, *amulet_arch, *crown_arch;
 EXTERN const char *undead_name; /* Used in hit_player() in main.c */
 
 EXTERN Animations *animations;
