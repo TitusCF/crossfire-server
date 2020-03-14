@@ -2368,37 +2368,37 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
             SET_MAP_TOP(op->map, op->x, op->y, op);
     } /* else not INS_BELOW_ORIGINATOR */
 
-    if (op->type == PLAYER)
-        op->contr->do_los = 1;
-
-    /* If we have a floor, we know the player, if any, will be above
-     * it, so save a few ticks and start from there.
-     */
     if (!(flag&INS_MAP_LOAD)) {
+        if (op->type == PLAYER)
+            op->contr->do_los = 1;
+
+        /* If we have a floor, we know the player, if any, will be above
+         * it, so save a few ticks and start from there.
+         */
         tmp = floor ? floor : GET_MAP_OB(op->map, op->x, op->y);
         FOR_OB_AND_ABOVE_PREPARE(tmp)
             if (tmp->type == PLAYER)
                 tmp->contr->socket.update_look = 1;
         FOR_OB_AND_ABOVE_FINISH();
-    }
 
-    /* If this object glows, it may affect lighting conditions that are
-     * visible to others on this map.  But update_all_los is really
-     * an inefficient way to do this, as it means los for all players
-     * on the map will get recalculated.  The players could very well
-     * be far away from this change and not affected in any way -
-     * this should get redone to only look for players within range,
-     * or just updating the P_NEED_UPDATE for spaces within this area
-     * of effect may be sufficient.
-     */
-    if (MAP_DARKNESS(op->map) && (op->glow_radius != 0))
-        update_all_los(op->map, op->x, op->y);
+        /* If this object glows, it may affect lighting conditions that are
+         * visible to others on this map.  But update_all_los is really
+         * an inefficient way to do this, as it means los for all players
+         * on the map will get recalculated.  The players could very well
+         * be far away from this change and not affected in any way -
+         * this should get redone to only look for players within range,
+         * or just updating the P_NEED_UPDATE for spaces within this area
+         * of effect may be sufficient.
+         */
+        if (MAP_DARKNESS(op->map) && (op->glow_radius != 0))
+            update_all_los(op->map, op->x, op->y);
+
+        if (op->contr && !op->contr->hidden)
+            op->map->players++;
+    }
 
     /* updates flags (blocked, alive, no magic, etc) for this map space */
     object_update(op, UP_OBJ_INSERT);
-
-    if (op->contr && !op->contr->hidden)
-        op->map->players++;
 
     /* Don't know if moving this to the end will break anything.  However,
      * we want to have update_look set above before calling this.
