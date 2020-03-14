@@ -1583,7 +1583,8 @@ static void cfapi_map_find_by_archetype_name(int *type, ...) {
 
     va_end(args);
 
-    *robj = map_find_by_archetype(map, x, y, try_find_archetype(msg));
+    archetype *at = try_find_archetype(msg);
+    *robj = at == NULL ? NULL : map_find_by_archetype(map, x, y, at);
     *type = CFAPI_POBJECT;
 }
 
@@ -4044,7 +4045,8 @@ static void cfapi_object_find_archetype_inside(int *type, ...) {
 
     str = va_arg(args, char *);
     robj = va_arg(args, object **);
-    *robj = arch_present_in_ob(try_find_archetype(str), op);
+    archetype *at = try_find_archetype(str);
+    *robj = at == NULL ? NULL : arch_present_in_ob(at, op);
     if (*robj == NULL) {
         char name[MAX_BUF];
 
