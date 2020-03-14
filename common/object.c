@@ -2133,6 +2133,44 @@ void object_merge_spell(object *op, int16_t x, int16_t y) {
     } FOR_MAP_FINISH();
 }
 
+static object *find_insert_pos(object *op, const int flag) {
+    object *floor = NULL;
+    object *top;
+    /*
+     * If there are multiple objects on this space, we do some trickier handling.
+     * We've already dealt with merging if appropriate.
+     * Generally, we want to put the new object on top. But if
+     * flag contains INS_ABOVE_FLOOR_ONLY, once we find the last
+     * floor, we want to insert above that and no further.
+     * Also, if there are spell objects on this space, we stop processing
+     * once we get to them.  This reduces the need to traverse over all of
+     * them when adding another one - this saves quite a bit of cpu time
+     * when lots of spells are cast in one area.  Currently, it is presumed
+     * that flying non pickable objects are spell objects.
+     */
+    object *last = NULL;
+    FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
+        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)
+        || QUERY_FLAG(tmp, FLAG_OVERLAY_FLOOR))
+            floor = tmp;
+
+        if (QUERY_FLAG(tmp, FLAG_NO_PICK)
+        && (tmp->move_type&(MOVE_FLY_LOW|MOVE_FLY_HIGH))
+        && !QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
+            /* We insert above tmp, so we want this object below this */
+            break;
+        }
+        last = tmp;
+    } FOR_MAP_FINISH();
+    top = last;
+
+    if (flag&INS_MAP_LOAD)
+        top = GET_MAP_TOP(op->map, op->x, op->y);
+    if (flag&INS_ABOVE_FLOOR_ONLY)
+        top = floor;
+    return top;
+}
+
 /**
  * This function inserts the object in the two-way linked list
  * which represents what is on a map.
@@ -2309,46 +2347,8 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
         /* since *below *originator, no need to update top */
         originator->below = op;
     } else {
-        /* If there are other objects, then */
-        /* This test is incorrect i think, as ins_above_floor_only needs the floor variable
-        if ((!(flag&INS_MAP_LOAD)) && ((top = GET_MAP_OB(op->map, op->x, op->y)) != NULL)) {
-        */
-        object *last;
-
-        /*
-         * If there are multiple objects on this space, we do some trickier handling.
-         * We've already dealt with merging if appropriate.
-         * Generally, we want to put the new object on top. But if
-         * flag contains INS_ABOVE_FLOOR_ONLY, once we find the last
-         * floor, we want to insert above that and no further.
-         * Also, if there are spell objects on this space, we stop processing
-         * once we get to them.  This reduces the need to traverse over all of
-         * them when adding another one - this saves quite a bit of cpu time
-         * when lots of spells are cast in one area.  Currently, it is presumed
-         * that flying non pickable objects are spell objects.
-         */
-        last = NULL;
-        FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
-            if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)
-            || QUERY_FLAG(tmp, FLAG_OVERLAY_FLOOR))
-                floor = tmp;
-
-            if (QUERY_FLAG(tmp, FLAG_NO_PICK)
-            && (tmp->move_type&(MOVE_FLY_LOW|MOVE_FLY_HIGH))
-            && !QUERY_FLAG(tmp, FLAG_IS_FLOOR)) {
-                /* We insert above tmp, so we want this object below this */
-                break;
-            }
-            last = tmp;
-        } FOR_MAP_FINISH();
-        top = last;
-
-        if (flag&INS_MAP_LOAD)
-            top = GET_MAP_TOP(op->map, op->x, op->y);
-        if (flag&INS_ABOVE_FLOOR_ONLY)
-            top = floor;
-
         /* Top is the object that our object (op) is going to get inserted above. */
+        top = find_insert_pos(op, flag);
 
         /* First object on this space */
         if (!top) {
