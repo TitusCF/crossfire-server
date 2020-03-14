@@ -186,6 +186,8 @@ void init_archetypes(void) {
     load_archetypes();
     arch_init = 0;
     empty_archetype = find_archetype("empty_archetype");
+    if (empty_archetype == NULL)
+        fatal(SEE_LAST_ERROR);
     /*  init_blocksview();*/
 }
 
