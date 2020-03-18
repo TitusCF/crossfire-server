@@ -190,7 +190,6 @@ extern void dump_all_maps(void);
 extern int get_map_flags(mapstruct *oldmap, mapstruct **newmap, int16_t x, int16_t y, int16_t *nx, int16_t *ny);
 extern int blocked_link(object *ob, mapstruct *m, int sx, int sy);
 extern int ob_blocked(const object *ob, mapstruct *m, int16_t x, int16_t y);
-extern void fix_container(object *container);
 extern mapstruct *get_linked_map(void);
 extern mapstruct *get_empty_map(int sizex, int sizey);
 extern mapstruct *mapfile_load(const char *map, int flags);

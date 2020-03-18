@@ -540,31 +540,6 @@ int ob_blocked(const object *ob, mapstruct *m, int16_t x, int16_t y) {
 }
 
 /**
- * When the map is loaded, load_object() does not actually insert objects
- * into inventory, but just links them.  What this does is go through
- * and insert them properly.
- * @param container
- * object that contains the inventory. This is needed so that we can update the containers weight.
- *
- * @todo
- * This is unusued, should it be used somewhere?
- */
-void fix_container(object *container) {
-    object *tmp = container->inv;
-
-    container->inv = NULL;
-    FOR_OB_AND_BELOW_PREPARE(tmp) {
-        if (tmp->inv)
-            fix_container(tmp);
-        (void)object_insert_in_ob(tmp, container);
-    } FOR_OB_AND_BELOW_FINISH();
-    /* object_sum_weight will go through and calculate what all the containers are
-     * carrying.
-     */
-    object_sum_weight(container);
-}
-
-/**
  * Go through all the objects in a container (recursively) looking
  * for objects whose arch says they are multipart yet according to the
  * info we have, they only have the head (as would be expected when
