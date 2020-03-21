@@ -182,6 +182,9 @@ static method_ret food_type_apply(ob_methods *context, object *food, object *app
                 eat_special_food(applier, food);
         }
     }
+    if (food->type == DRINK) {
+        play_sound_map(SOUND_TYPE_ITEM, applier, 0, "drink");
+    }
     apply_handle_yield(food);
     object_decrease_nrof_by_one(food);
     return METHOD_OK;

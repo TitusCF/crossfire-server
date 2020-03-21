@@ -51,6 +51,7 @@ static method_ret button_type_move_on(ob_methods *context, object *trap, object 
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     update_button(trap);
+    play_sound_map(SOUND_TYPE_GROUND, trap, 0, "button click");
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;
 }

@@ -79,6 +79,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
             SET_ANIMATION(part, op->stats.wc);
         }
         object_update(op, UP_OBJ_CHANGE);
+        play_sound_map(SOUND_TYPE_GROUND, op, 0, "gate moving");
         return METHOD_OK;
     }
 
@@ -181,6 +182,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
             SET_ANIMATION(part, op->stats.wc);
         }
         object_update(op, UP_OBJ_CHANGE);
+        play_sound_map(SOUND_TYPE_GROUND, op, 0, "gate moving");
     } /* gate is going up */
 
     return METHOD_OK;
