@@ -63,9 +63,6 @@ void play_sound_player_only(player *pl, int8_t sound_type, object *emitter, int 
 
     source = emitter->map ? emitter : emitter->env;
 
-    if ((RANDOM()%100) >= emitter->sound_chance)
-        return;
-
     pl->socket.sounds_this_tick = 0;
 
     name = emitter->type == PLAYER ? emitter->race : emitter->name;
@@ -101,9 +98,6 @@ void play_sound_player_only(player *pl, int8_t sound_type, object *emitter, int 
 void play_sound_map(int8_t sound_type, object *emitter, int dir, const char *action) {
     player *pl;
     object *source;
-
-    if ((RANDOM()%100) >= emitter->sound_chance)
-        return;
 
     if (!emitter->map && !(emitter->env && emitter->env->map))
         return;
