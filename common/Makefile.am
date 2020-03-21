@@ -42,7 +42,7 @@ libcross_a_SOURCES = \
 EXTRA_DIST = README is_valid_types_gen.pl
 AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\"
-AM_LFLAGS = -i
+AM_LFLAGS = -i -B
 
 CLEANFILES = loader.c arch_types_valid.c
 
