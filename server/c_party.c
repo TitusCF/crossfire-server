@@ -297,13 +297,6 @@ void command_party(object *op, const char *params) {
             return;
         }
 
-        if (op->contr->party == party) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "You are already a member of party: %s",
-                                 party->partyname);
-            return;
-        }
-
         if (get_party_password(op, party)) {
             return;
         }

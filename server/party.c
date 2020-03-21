@@ -74,7 +74,8 @@ partylist *party_form(object *op, const char *partyname) {
 }
 
 /**
- * Makes a player join a party. Leaves the a former party if necessary.
+ * Makes a player join a party. Leaves the former party if necessary.
+ * Does nothing if the player already is a member of the party.
  *
  * @param op
  * the player
@@ -83,6 +84,13 @@ partylist *party_form(object *op, const char *partyname) {
  */
 void party_join(object *op, partylist *party) {
     char buf[MAX_BUF];
+
+    if (op->contr->party == party) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                             "You are already a member of party: %s",
+                             party->partyname);
+        return;
+    }
 
     party_leave(op);
 
