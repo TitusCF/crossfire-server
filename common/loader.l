@@ -1215,8 +1215,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
         yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE));
         if (bufstate == LO_NOREAD)
             return LL_NORMAL;
-    }
-    if (bufstate == LO_LINEMODE) {
+    } else if (bufstate == LO_LINEMODE) {
         YY_BUFFER_STATE yybufstate;
         yy_delete_buffer(YY_CURRENT_BUFFER);
         while (fgets(inbuf, MAX_BUF-3, fp)) {
