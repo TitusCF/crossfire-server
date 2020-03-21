@@ -103,6 +103,17 @@ void party_join(object *op, partylist *party) {
 }
 
 /**
+ * Remove party if it has no players.
+ */
+static void remove_if_unused(partylist *party) {
+    for (player *pl = first_player; pl != NULL; pl = pl->next) {
+        if (pl->party == party)
+            return;
+    }
+    party_remove(party);
+}
+
+/**
  * Makes a player leave his party. Does nothing if the player is not member of
  * a party.
  *
@@ -112,36 +123,18 @@ void party_join(object *op, partylist *party) {
 void party_leave(object *op) {
     char buf[MAX_BUF];
 
-    if (op->contr->party == NULL) {
+    partylist *party = op->contr->party;
+    if (party == NULL) {
         return;
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                          "You leave party %s.",
-                         op->contr->party->partyname);
-    snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
+                         party->partyname);
+    snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, party->partyname);
     party_send_message(op, buf);
-
-    /*
-     * The player might have previously been a member of a party, if so, he will be leaving
-     * it, so check if there are any other members and if not, delete the party
-     */
-    if (op->contr->party != NULL) {
-        int party_found;
-        player *pl;
-
-        party_found = 0;
-        for (pl = first_player; pl != NULL; pl = pl->next) {
-            if (pl != op->contr && pl->party == op->contr->party) {
-                party_found = 1;
-                break;
-            }
-        }
-        if (!party_found)
-            party_remove(op->contr->party);
-    }
-
     op->contr->party = NULL;
+    remove_if_unused(party);
 }
 
 /**
@@ -239,24 +232,14 @@ partylist *party_get_next(const partylist *party) {
 }
 
 /**
- * Remove unused parties (no players), this could be made to scale a lot better.
+ * Remove unused parties (no players).
  */
 void party_obsolete_parties(void) {
-    int player_count;
-    player *pl;
     partylist *party;
-    partylist *next = NULL;
-
-    if (!firstparty)
-        return; /* we can't obsolete parties if there aren't any */
+    partylist *next;
     for (party = firstparty; party != NULL; party = next) {
         next = party->next;
-        player_count = 0;
-        for (pl = first_player; pl != NULL; pl = pl->next)
-            if (pl->party == party)
-                player_count++;
-        if (player_count == 0)
-            party_remove(party);
+        remove_if_unused(party);
     }
 }
 
