@@ -43,34 +43,38 @@
  * optional substring to search for.
  */
 void map_info(object *op, const char *search) {
-    mapstruct *m;
-    char map_path[MAX_BUF];
-    long sec = seconds();
+    if (QUERY_FLAG(op, FLAG_WIZ)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+                      i18n(op, "[fixed]Path             Reset In (HH:MM:SS) Pl IM   TO"));
+    } else {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+                      i18n(op, "[fixed]Path             Reset In (HH:MM)"));
+    }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                         i18n(op, "Current time is: %02ld:%02ld:%02ld."),
-                         (sec%86400)/3600, (sec%3600)/60, sec%60);
-
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                  i18n(op, "[fixed]Path               Pl IM   TO Dif Reset"));
-
-    for (m = first_map; m != NULL; m = m->next) {
+    for (mapstruct *m = first_map; m != NULL; m = m->next) {
         if (*search != '\0' && strstr(m->path, search) == NULL)
             continue;   /* Skip unwanted maps */
 
-        /* Print out the last 18 characters of the map name... */
-        if (strlen(m->path) <= 18) {
+        /* Print out the last 26 characters of the map name... */
+        char map_path[MAX_BUF];
+        if (strlen(m->path) <= 26) {
             strcpy(map_path, m->path);
         } else {
-            safe_strncpy(map_path, m->path + strlen(m->path) - 18, sizeof(map_path));
+            safe_strncpy(map_path, m->path + strlen(m->path) - 26, sizeof(map_path));
         }
 
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                             i18n(op, "[fixed]%-18.18s %2d  %1d %4d %3d %02d:%02d:%02d"),
-                             map_path, m->players,
-                             m->in_memory, m->timeout, m->difficulty,
-                             (MAP_WHEN_RESET(m)%86400)/3600, (MAP_WHEN_RESET(m)%3600)/60,
-                             MAP_WHEN_RESET(m)%60);
+        const uint32_t ttr = MAP_WHEN_RESET(m) - seconds();
+        const uint32_t hh = (ttr%86400)/3600, mm = (ttr%3600)/60, ss = ttr%60;
+        if (QUERY_FLAG(op, FLAG_WIZ)) {
+            draw_ext_info_format(
+                NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+                i18n(op, "[fixed]%-26.26s %02d:%02d:%02d  %2d %2d %4d"),
+                map_path, hh, mm, ss, m->players, m->in_memory, m->timeout);
+        } else {
+            draw_ext_info_format(
+                NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+                i18n(op, "[fixed]%-26.26s %02d:%02d"), map_path, hh, mm);
+        }
     }
 }
 
