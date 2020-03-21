@@ -1657,9 +1657,6 @@ static int kill_object(object *op, int dam, object *hitter) {
                                      "You killed %s.",
                                      killed);
             }
-            /* Only play sounds for melee kills */
-            if (hitter->type == PLAYER)
-                play_sound_map(SOUND_TYPE_HIT, owner, 0, "kill");
         }
 
         /* If a player kills another player, not on
@@ -1743,6 +1740,7 @@ static int kill_object(object *op, int dam, object *hitter) {
 
     draw_ext_info(NDI_ALL, op->type == PLAYER ? 1 : 10, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                   kill_message);
+    play_sound_map(SOUND_TYPE_HIT, op, 0, "kill");
 
 
     /* If you didn't kill yourself, and your not the wizard */
