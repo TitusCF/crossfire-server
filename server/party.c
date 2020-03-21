@@ -294,10 +294,11 @@ int party_confirm_password(const partylist *party, const char *password) {
  * should be moved to player.c?
  */
 void party_send_message(object *op, const char *message) {
-    player *pl;
+    player * const self = op->contr;
+    partylist * const party = self->party;
 
-    for (pl = first_player; pl != NULL; pl = pl->next)
-        if (pl->ob->contr->party == op->contr->party && pl->ob != op)
+    for (player *pl = first_player; pl != NULL; pl = pl->next)
+        if (pl->party == party && pl != self)
             draw_ext_info(NDI_WHITE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_PARTY,
                           message);
 }
