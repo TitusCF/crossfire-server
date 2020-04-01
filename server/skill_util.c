@@ -61,8 +61,8 @@ const char *skill_names[MAX_SKILLS];
 int skill_faces[MAX_SKILLS];
 
 /**
- * This just sets up the ::skill_names table above. The index into the array is set up by the
- * subtypes.
+ * This just sets up the ::skill_names table above. The index into the array 
+ * is simply the order the skill is found.
  */
 void init_skills(void) {
     int i;
