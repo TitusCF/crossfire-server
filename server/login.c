@@ -27,6 +27,7 @@
 #include "output_file.h"
 #include "spells.h"
 #include "sproto.h"
+#include "server.h"
 
 static void copy_file(const char *filename, FILE *fpout);
 
@@ -806,6 +807,7 @@ void check_login(object *op, int check_pass) {
                          MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                          "%s has entered the game.",
                          pl->ob->name);
+    login_check_shutdown(op);
 
     /* Lauwenmark : Here we handle the LOGIN global event */
     execute_global_event(EVENT_LOGIN, pl, pl->socket.host);

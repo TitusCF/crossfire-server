@@ -44,6 +44,9 @@
 #include "version.h"
 #include "server.h"
 
+/** How many minutes before a shutdown to warn players, in reverse order. */
+const static int shutdown_warn_times[] = {120, 90, 60, 45, 30, 15, 10, 5, 4, 3, 2, 1};
+
 /** Ingame days. */
 static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
@@ -1307,42 +1310,62 @@ int forbid_play(void) {
 #endif
 }
 
+static void do_shutdown(void) {
+    draw_ext_info(NDI_UNIQUE | NDI_ALL, 5, NULL, MSG_TYPE_ADMIN,
+            MSG_TYPE_ADMIN_DM, "The server has shut down.");
+
+    /* TODO: Kick everyone out and save player files? */
+    cleanup();
+}
+
 /**
- * Periodically check if we're ready to shut the server down.
+ * Check if we're ready to shut the server down.
  */
-static void server_check_shutdown(void) {
-    /* When to remind players of an imminent apocalypse. */
-    const int warn_times[] = {120, 60, 30, 15, 10, 5, 3, 2, 1};
-    static int next_warn = 0;
+static bool check_shutdown(void) {
+    if (shutdown_flag == 1) {
+        LOG(llevInfo, "Received SIGINT; shutting down...\n");
+        return true;
+    }
 
-    time_t time_left;
-    unsigned int i;
+    /* Zero means that no timed shutdown is pending. */
+    if (cmd_shutdown_time == 0) {
+        return false;
+    }
 
-    /* Zero means that no shutdown is pending. */
+    /* If a timed shutdown is coming, remind players periodically. */
+    static int next_warn = 0; // FIXME: next_warn not reset if shutdown cancelled
+    time_t time_left = cmd_shutdown_time - time(NULL);
+
+    for (unsigned int i = next_warn; i < sizeof(shutdown_warn_times) / sizeof(int); i++) {
+        if (shutdown_warn_times[i] == (int)ceil(time_left / 60.0)) {
+            draw_ext_info_format(NDI_UNIQUE | NDI_ALL, 0, NULL, MSG_TYPE_ADMIN,
+                    MSG_TYPE_ADMIN_DM,
+                    "Server shutting down in %d minutes.", shutdown_warn_times[i]);
+            next_warn = i + 1;
+            return false;
+        }
+    }
+
+    if (time_left <= 0) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Warn op if a server shutdown is scheduled. Used to inform players about
+ * scheduled shutdowns when they log in.
+ */
+void login_check_shutdown(object* const op) {
     if (cmd_shutdown_time == 0) {
         return;
     }
 
-    /* Remind players about the upcoming shutdown. */
-    time_left = cmd_shutdown_time - time(NULL);
-
-    for (i = next_warn; i < sizeof(warn_times) / sizeof(int); i++) {
-        if (warn_times[i] == (int)ceil(time_left / 60.0)) {
-            draw_ext_info_format(NDI_UNIQUE | NDI_ALL, 0, NULL, MSG_TYPE_ADMIN,
-                    MSG_TYPE_ADMIN_DM,
-                    "Server shutting down in %d minutes.", warn_times[i]);
-            next_warn = i + 1;
-            break;
-        }
-    }
-
-    /* Shutdown time has arrived; bring server down. */
-    if (time_left <= 0) {
-        draw_ext_info(NDI_UNIQUE | NDI_ALL, 5, NULL, MSG_TYPE_ADMIN,
-                MSG_TYPE_ADMIN_DM, "The server has shut down.");
-
-        /* TODO: Kick everyone out and save player files? */
-        cleanup();
+    time_t time_left = cmd_shutdown_time - time(NULL);
+    if (time_left <= 60*shutdown_warn_times[0]) {
+        draw_ext_info_format(
+            NDI_UNIQUE | NDI_ALL, 0, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
+            i18n(op, "Server shutting down in %d minutes."), time_left / 60);
     }
 }
 
@@ -1363,10 +1386,8 @@ extern unsigned long todtick;
  * doing the various things.
  */
 static void do_specials(void) {
-    if (shutdown_flag == 1) {
-        LOG(llevInfo, "Shutting down...\n");
-        shutdown_flag += 1;
-        cmd_shutdown_time = time(NULL);
+    if (check_shutdown()) {
+        do_shutdown();
     }
 
 #ifdef CS_LOGSTATS
@@ -1376,10 +1397,6 @@ static void do_specials(void) {
 
     if (!(pticks%10))
         knowledge_process_incremental();
-
-    if (pticks % 51 == 0) {
-        server_check_shutdown();
-    }
 
 #ifdef WATCHDOG
     if (!(pticks%503))
