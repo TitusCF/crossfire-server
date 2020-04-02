@@ -491,6 +491,7 @@ int skill_throw(object *op, object *part, int dir, object *skill);
 /* skill_util.c */
 void init_skills(void);
 object *find_skill_by_name(object *who, const char *name);
+object *find_applied_skill_by_name(const object* op, const char* name);
 object *find_skill_by_number(object *who, int skillno);
 int change_skill(object *who, object *new_skill, int flag);
 void clear_skill(object *who);

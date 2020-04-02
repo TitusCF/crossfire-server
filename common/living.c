@@ -1878,6 +1878,29 @@ void calc_perm_exp(object *op) {
         op->perm_exp = MAX_EXPERIENCE;
 }
 
+/**
+ * Find a skill by name using the last_skill_ob list. Assume last_skill_ob
+ * was correctly updated before.
+ *
+ * This is defined here rather than server/skill_util.c because things
+ * defined in libserver.a are not available when libcommon.a is linked.
+ */
+object* find_applied_skill_by_name(const object* op, const char* name) {
+    for (int i = 0; i < MAX_SKILLS; i++) {
+        if (op->contr->last_skill_ob[i] != NULL) {
+            if (op->contr->last_skill_ob[i]->skill != NULL) {
+                if (!strcmp(op->contr->last_skill_ob[i]->skill, name)) {
+                    return op->contr->last_skill_ob[i];
+                }
+            } else {
+                LOG(llevError,
+                    "%s's skill object %s does not have a skill name\n",
+                    op->name, op->contr->last_skill_ob[i]->name);
+            }
+        }
+    }
+    return NULL;
+}
 
 /**
  * Add experience to a player - exp should only be positive.
@@ -1896,7 +1919,6 @@ void calc_perm_exp(object *op) {
 static void add_player_exp(object *op, int64_t exp, const char *skill_name, int flag) {
     object *skill_obj = NULL;
     int64_t limit, exp_to_add;
-    int i;
 
     /* prevents some forms of abuse. */
     if (op->contr->braced)
@@ -1913,12 +1935,7 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
         && !strcmp(skill_name, op->chosen_skill->skill))
             skill_obj = op->chosen_skill;
         else {
-            for (i = 0; i < MAX_SKILLS; i++)
-                if (op->contr->last_skill_ob[i]
-                && !strcmp(op->contr->last_skill_ob[i]->skill, skill_name)) {
-                    skill_obj = op->contr->last_skill_ob[i];
-                    break;
-                }
+            skill_obj = find_applied_skill_by_name(op, skill_name);
 
             /* Player doesn't have the skill.  Check to see what to do, and give
                 * it to the player if necessary

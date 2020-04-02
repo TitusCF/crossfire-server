@@ -235,14 +235,12 @@ int caster_level(const object *caster, const object *spell) {
 
     /* If this is a player, try to find the matching skill */
     if (caster->type == PLAYER && spell->skill) {
-        int i;
-
-        for (i = 0; i < MAX_SKILLS; i++)
-            if (caster->contr->last_skill_ob[i]
-            && caster->contr->last_skill_ob[i]->skill == spell->skill) {
-                level = caster->contr->last_skill_ob[i]->level;
-                break;
-            }
+        object* skill = find_applied_skill_by_name(caster, spell->skill);
+        if (skill != NULL) {
+            level = skill->level;
+        } else {
+            level = 0;
+        }
     }
     /* Got valid caster level.  Now adjust for attunement */
     level += ((caster->path_repelled&spell->path_attuned) ? -2 : 0)
