@@ -1888,6 +1888,14 @@ void calc_perm_exp(object *op) {
 object* find_applied_skill_by_name(const object* op, const char* name) {
     for (int i = 0; i < MAX_SKILLS; i++) {
         if (op->contr->last_skill_ob[i] != NULL) {
+            // Skill objects can be removed without updating last_skill_ob. Clean
+            // them up here if that's the case.
+            if (QUERY_FLAG(op->contr->last_skill_ob[i], FLAG_REMOVED)) {
+                LOG(llevDebug, "pruning removed object from last_skill_ob\n");
+                op->contr->last_skill_ob[i] = NULL;
+                continue;
+            }
+
             if (op->contr->last_skill_ob[i]->skill != NULL) {
                 if (!strcmp(op->contr->last_skill_ob[i]->skill, name)) {
                     return op->contr->last_skill_ob[i];

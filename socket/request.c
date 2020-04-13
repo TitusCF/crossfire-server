@@ -793,15 +793,24 @@ void esrv_update_stats(player *pl) {
     }
 
     for (s = 0; s < MAX_SKILLS; s++) {
-        if (pl->last_skill_ob[s]
-        && pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
-            /* Always send along the level if exp changes. This
-             * is only 1 extra byte, but keeps processing simpler.
-             */
-            SockList_AddChar(&sl, (char)(get_skill_client_code(pl->last_skill_ob[s]->name)+CS_STAT_SKILLINFO));
-            SockList_AddChar(&sl, (char)pl->last_skill_ob[s]->level);
-            SockList_AddInt64(&sl, pl->last_skill_ob[s]->stats.exp);
-            pl->last_skill_exp[s] = pl->last_skill_ob[s]->stats.exp;
+        if (pl->last_skill_ob[s]) {
+            // Skill objects can be removed without updating last_skill_ob.
+            // Clean them up here if that's the case.
+            if (QUERY_FLAG(pl->last_skill_ob[s], FLAG_REMOVED)) {
+                LOG(llevDebug, "pruning removed object from last_skill_ob\n");
+                pl->last_skill_ob[s] = NULL;
+                continue;
+            }
+
+            if (pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
+                /* Always send along the level if exp changes. This
+                 * is only 1 extra byte, but keeps processing simpler.
+                 */
+                SockList_AddChar(&sl, (char)(get_skill_client_code(pl->last_skill_ob[s]->name) + CS_STAT_SKILLINFO));
+                SockList_AddChar(&sl, (char)pl->last_skill_ob[s]->level);
+                SockList_AddInt64(&sl, pl->last_skill_ob[s]->stats.exp);
+                pl->last_skill_exp[s] = pl->last_skill_ob[s]->stats.exp;
+            }
         }
     }
     AddIfInt64(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP64);
