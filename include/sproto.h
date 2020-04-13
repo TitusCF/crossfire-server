@@ -288,6 +288,7 @@ void command_style_map_info(object *op, const char *params);
 void command_follow(object *op, const char *params);
 void command_purge_quest(object *op, const char *param);
 void command_purge_quest_definitions(object *op, const char *param);
+void command_dumpabove(object *op, const char *params);
 void command_dumpbelow(object *op, const char *params);
 void command_settings(object *op, const char *ignored);
 /* commands.c */
