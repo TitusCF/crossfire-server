@@ -379,6 +379,12 @@ int save_player(object *op, int flag) {
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     if (!flag) {
+        // Clear last_skill_ob before removing inventory. This prevents us
+        // from accessing removed skill objects during cleanup.
+        for (int i = 0; i < MAX_SKILLS; i++) {
+            op->contr->last_skill_ob[i] = NULL;
+        }
+
         while (op->inv != NULL)
             destroy_object(op->inv);
 
