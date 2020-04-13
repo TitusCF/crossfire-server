@@ -152,7 +152,7 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
                             tdiv = 2;    /* this symmetry uses a divisor of 2*/
                         }
                         /* don't put a chest on an exit. */
-                        chest = place_chest(treasureoptions, i, j, map, style_map, num_treasures/tdiv, RP);
+                        chest = place_chest(treasureoptions, i, j, map, num_treasures/tdiv, RP);
                         if (!chest) {
                             continue;    /* if no chest was placed NEXT */
                         }
@@ -182,7 +182,7 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
                 }
                 tries++;
             }
-            chest = place_chest(treasureoptions, i, j, map, style_map, num_treasures, RP);
+            chest = place_chest(treasureoptions, i, j, map, num_treasures, RP);
             if (!chest) {
                 return;
             }
@@ -201,7 +201,7 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
         for (ti = 0; ti < num_treasures; ti++) {
             i = RANDOM()%(RP->Xsize-2)+1;
             j = RANDOM()%(RP->Ysize-2)+1;
-            place_chest(treasureoptions, i, j, map, style_map, 1, RP);
+            place_chest(treasureoptions, i, j, map, 1, RP);
         }
     }
 }
@@ -218,8 +218,6 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
  * around which spot to put treasure.
  * @param map
  * map to put on.
- * @param style_map
- * unused.
  * @param n_treasures
  * ?
  * @param RP
@@ -229,7 +227,7 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
  * @todo
  * document treasureoptions. Clean parameters. Check meaning of chest hp's field.
  */
-object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct *style_map, int n_treasures, RMParms *RP)
+object *place_chest(int treasureoptions, int x, int y, mapstruct *map, int n_treasures, RMParms *RP)
 {
     object *the_chest;
     int i, xl, yl;
