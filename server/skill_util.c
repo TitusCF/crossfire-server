@@ -270,7 +270,7 @@ object *find_skill_by_name(object *who, const char *name) {
 }
 
 /**
- * This returns the skill pointer of the given name (the
+ * This returns the first skill pointer of the given subtype (the
  * one that accumulates exp, has the level, etc).
  *
  * It is presumed that the player will be needing to actually
@@ -278,7 +278,11 @@ object *find_skill_by_name(object *who, const char *name) {
  * to benefit from its bonuses.
  *
  * This code is basically the same as find_skill_by_name() above,
- * but instead of a skill name, we search by matching number.
+ * but instead of a skill name, we search by matching subtype.
+ *
+ * Warning: skill subtypes are not unique to skills, various skills (eg
+ * harvesting-like) will share the same subtype, so this function should
+ * only be used if the skill's subtype is known to be used only by one skill.
  *
  * @param who
  * player applying a skill.
