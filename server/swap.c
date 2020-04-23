@@ -146,6 +146,7 @@ int swap_map(mapstruct *map) {
 
     if (pl != NULL) {
         LOG(llevDebug, "Wanted to swap out map with player.\n");
+        map->timeout = 0;
         return SAVE_ERROR_PLAYER;
     }
     pets_remove_all(); /* Give them a chance to follow */
