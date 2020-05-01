@@ -122,12 +122,12 @@ void CRECombatSimulator::fight(const archetype* first, const archetype* second)
     if (!object_was_destroyed(obfirst, tagfirst))
     {
         object_remove(obfirst);
-        object_free2(obfirst, 0);
+        object_free(obfirst, 0);
     }
     if (!object_was_destroyed(obsecond, tagsecond))
     {
         object_remove(obsecond);
-        object_free2(obsecond, 0);
+        object_free(obsecond, 0);
     }
     free_map(test_map);
 }
@@ -161,8 +161,8 @@ void CRECombatSimulator::fight()
     /*
      * Then, free the objects since this is done.
      */
-    object_free2(obfirst, 0);
-    object_free2(obsecond, 0);
+    object_free(obfirst, 0);
+    object_free(obsecond, 0);
 
     int count = myCombats->value();
     while (count-- > 0)

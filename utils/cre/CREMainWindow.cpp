@@ -794,12 +794,12 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     if (!object_was_destroyed(obfirst, tagfirst))
     {
         object_remove(obfirst);
-        object_free2(obfirst, FREE_OBJ_FREE_INVENTORY);
+        object_free(obfirst, FREE_OBJ_FREE_INVENTORY);
     }
     if (!object_was_destroyed(obsecond, tagsecond))
     {
         object_remove(obsecond);
-        object_free2(obsecond, FREE_OBJ_FREE_INVENTORY);
+        object_free(obsecond, FREE_OBJ_FREE_INVENTORY);
     }
     delete_map(test_map);
 

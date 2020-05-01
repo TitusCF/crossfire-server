@@ -1657,7 +1657,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
             object *ninv;
             ninv = newscroll->inv;
             object_remove(ninv);
-            object_free2(ninv, FREE_OBJ_NO_DESTROY_CALLBACK);
+            object_free(ninv, FREE_OBJ_NO_DESTROY_CALLBACK);
         }
 
         tmp = object_new();

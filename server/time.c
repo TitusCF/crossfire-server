@@ -566,7 +566,7 @@ int free_no_drop(object *op) {
         object_remove(op);
     }
 
-    object_free2(op, FREE_OBJ_FREE_INVENTORY);
+    object_free(op, FREE_OBJ_FREE_INVENTORY);
     return 1;
 }
 
@@ -844,7 +844,7 @@ int process_object(object *op) {
             object_remove(op);
             if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
                 make_sure_not_seen(op);
-            object_free2(op, FREE_OBJ_DROP_ABOVE_FLOOR);
+            object_free(op, FREE_OBJ_DROP_ABOVE_FLOOR);
         }
         return 1;
     }

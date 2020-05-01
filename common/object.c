@@ -1068,9 +1068,9 @@ static void expand_objects(void) {
 object *object_new(void) {
     object *op;
 #ifdef MEMORY_DEBUG
-    /* FIXME: However this doesn't work since object_free2() sometimes add
+    /* FIXME: However this doesn't work since object_free() sometimes add
      * objects back to the free_objects linked list, and some functions mess
-     * with the object after return of object_free2(). This is bad and should be
+     * with the object after return of object_free(). This is bad and should be
      * fixed. But it would need fairly extensive changes and a lot of debugging.
      */
     op = calloc(1, sizeof(object));
@@ -1387,7 +1387,7 @@ void object_update(object *op, int action) {
  * free_object() has been renamed to object_free_drop_inventory()
  */
 void object_free_drop_inventory(object *ob) {
-    object_free2(ob, 0);
+    object_free(ob, 0);
 }
 
 /**
@@ -1405,11 +1405,8 @@ void object_free_drop_inventory(object *ob) {
  *
  * @warning
  * the object's archetype should be a valid pointer, or NULL.
- *
- * @note
- * free_object2() has been renamed to object_free2()
  */
-void object_free2(object *ob, int flags) {
+void object_free(object *ob, int flags) {
     if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
         StringBuffer *sb;
         char *diff;
@@ -1456,14 +1453,14 @@ void object_free2(object *ob, int flags) {
         || (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) {
             FOR_INV_PREPARE(ob, op) {
                 object_remove(op);
-                object_free2(op, flags);
+                object_free(op, flags);
             } FOR_INV_FINISH();
         } else { /* Put objects in inventory onto this space */
             FOR_INV_PREPARE(ob, op) {
                 object_remove(op);
                 /* No drop means no drop, including its inventory */
                 if (QUERY_FLAG(op, FLAG_NO_DROP))
-                    object_free2(op, FREE_OBJ_FREE_INVENTORY);
+                    object_free(op, FREE_OBJ_FREE_INVENTORY);
                 else if (QUERY_FLAG(op, FLAG_STARTEQUIP)
                         || QUERY_FLAG(op, FLAG_NO_DROP)
                         || op->type == RUNE
@@ -1503,7 +1500,7 @@ void object_free2(object *ob, int flags) {
     }
 
     if (ob->more != NULL) {
-        object_free2(ob->more, flags);
+        object_free(ob->more, flags);
         ob->more = NULL;
     }
 
@@ -1907,7 +1904,7 @@ object *object_merge(object *op, object *top) {
              * SilverNexus 2014-05-27
              */
             object_remove(op);
-            object_free2(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
+            object_free(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
             return top;
         }
     } FOR_OB_AND_BELOW_FINISH();
@@ -2293,7 +2290,7 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
             if (object_can_merge(op, tmp)) {
                 op->nrof += tmp->nrof;
                 object_remove(tmp);
-                object_free2(tmp, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
+                object_free(tmp, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
             }
         } FOR_MAP_FINISH();
     } else if (op->type == SPELL_EFFECT
@@ -2494,7 +2491,7 @@ object *object_split(object *orig_ob, uint32_t nr, char *err, size_t size) {
         if (!QUERY_FLAG(orig_ob, FLAG_REMOVED)) {
             object_remove(orig_ob);
         }
-        object_free2(orig_ob, FREE_OBJ_FREE_INVENTORY);
+        object_free(orig_ob, FREE_OBJ_FREE_INVENTORY);
     } else {
         newob->nrof = nr;
         object_decrease_nrof(orig_ob, nr);
@@ -2750,7 +2747,7 @@ object *object_insert_in_ob(object *op, object *where) {
                  * (client needs the original object) */
                 object_increase_nrof(tmp, op->nrof);
                 SET_FLAG(op, FLAG_REMOVED);
-                object_free2(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK); /* free the inserted object */
+                object_free(op, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK); /* free the inserted object */
                 return tmp;
             }
         FOR_INV_FINISH();
@@ -5245,7 +5242,7 @@ void save_object_in_sb(StringBuffer *sb, const object *op, const int flag) {
             base = arch_to_object(at);
             give_artifact_abilities(base, artifact->item);
             get_ob_diff(sb, op, base);
-            object_free2(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
+            object_free(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
         }
     } else {
         get_ob_diff(sb, op, &at->clone);

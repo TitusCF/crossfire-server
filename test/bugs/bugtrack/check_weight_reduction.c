@@ -84,10 +84,10 @@ START_TEST(test_weight_reduction) {
                     fail_unless(container->carrying == carrying, "invalid weight %d instead of %d for %s in %s reduction %d after adding %d!", container->carrying, carrying, items[i], archs[a], reduction[red], add[nrof]);
                 }
                 object_remove(item);
-                object_free2(item, 0);
+                object_free(item, 0);
                 fail_unless(container->carrying == 0, "container %s is still carrying %d from %s instead of 0!", archs[a], container->carrying, items[i]);
             }
-            object_free2(container, 0);
+            object_free(container, 0);
         }
     }
 }

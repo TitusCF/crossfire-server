@@ -642,7 +642,7 @@ static void add_one_item(object *item, struct_map_info *map) {
     if (QUERY_FLAG(item, FLAG_UNPAID))
         SET_FLAG(base, FLAG_UNPAID);
     get_ob_diff(bf, item, base);
-    object_free2(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
+    object_free(base, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
 
     add->diff = stringbuffer_finish(bf);
 

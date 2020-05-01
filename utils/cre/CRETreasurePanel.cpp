@@ -91,8 +91,8 @@ void CRETreasurePanel::onGenerate(bool)
         myGenerated->addTopLevelItem(CREUtils::objectNode(item, NULL));
 
         object_remove(item);
-        object_free2(item, 0);
+        object_free(item, 0);
     }
 
-    object_free2(result, 0);
+    object_free(result, 0);
 }

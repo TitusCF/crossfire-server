@@ -158,5 +158,5 @@ void do_goto(object *op, const char *name, int x, int y) {
     dummy->name = add_string(name);
 
     enter_exit(op, dummy);
-    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
 }

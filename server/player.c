@@ -1463,7 +1463,7 @@ int apply_race_and_class(object *op, archetype *race, archetype *opclass, living
     while (op->inv) {
         inv = op->inv;
         object_remove(inv);
-        object_free2(inv, 0);
+        object_free(inv, 0);
     }
 
     object_copy(&race->clone, op);

@@ -259,7 +259,7 @@ START_TEST(test_fix_object) {
             fail_unless(ob->stats.ac == ac[i][test], "ac: got %d instead of %d", ob->stats.ac, ac[i][test]);
 #endif
         }
-        object_free2(ob, FREE_OBJ_FREE_INVENTORY);
+        object_free(ob, FREE_OBJ_FREE_INVENTORY);
 
 #if GENERATE
         stringbuffer_append_string(swc, "}\n\t");

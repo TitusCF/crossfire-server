@@ -393,7 +393,7 @@ START_TEST(test_describe_monster_rewrite) {
 
         fail_unless(strcmp(buf, final) == 0, "description change: \"%s\" vs \"%s\"", buf, final);
         free(final);
-        object_free2(ob, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
+        object_free(ob, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
     }
 
 } END_TEST

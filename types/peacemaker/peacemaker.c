@@ -54,7 +54,7 @@ static method_ret peacemaker_type_process(ob_methods *context, object *op) {
     if (owner == NULL) {
         LOG(llevError, "peacemaker_type_process: peacemaker object %s has no owner\n", op->name);
         object_remove(op);
-        object_free2(op, 1);
+        object_free(op, 1);
         return METHOD_OK;
     }
 

@@ -47,7 +47,7 @@ void stop_projectile(object *op) {
     if (object_was_destroyed(event, tag)) {
         if (event != op) {
             object_remove(op);
-            object_free2(op, FREE_OBJ_FREE_INVENTORY);
+            object_free(op, FREE_OBJ_FREE_INVENTORY);
         }
         return;
     }

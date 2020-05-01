@@ -155,7 +155,7 @@ void enter_player_savebed(object *op) {
         EXIT_Y(tmp) = op->contr->bed_y;
         enter_exit(op, tmp);
     }
-    object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
 }
 
 /**
@@ -825,7 +825,7 @@ void enter_exit(object *op, object *exit_ob) {
             tmp = object_find_by_type_and_slaying(op, FORCE, PORTAL_DESTINATION_NAME);
             if (tmp) {
                 object_remove(tmp);
-                object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+                object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
             }
 
             path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob), op->contr->savebed_map, sizeof(op->contr->savebed_map));
@@ -1054,7 +1054,7 @@ void process_events(void) {
             diff = stringbuffer_finish(sb);
             LOG(llevError, "%s\n", diff);
             free(diff);
-            object_free2(op, FREE_OBJ_NO_DESTROY_CALLBACK);
+            object_free(op, FREE_OBJ_NO_DESTROY_CALLBACK);
             continue;
         }
 

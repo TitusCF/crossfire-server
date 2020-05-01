@@ -335,19 +335,19 @@ static int do_execute_event(object *op, int eventcode, object *activator, object
                 object *env = object_get_env_recursive(tmp);
                 LOG(llevError, "Event object without title at %d/%d in map %s\n", env->x, env->y, env->map->name);
                 object_remove(tmp);
-                object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+                object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
             } else if (tmp->slaying == NULL) {
                 object *env = object_get_env_recursive(tmp);
                 LOG(llevError, "Event object without slaying at %d/%d in map %s\n", env->x, env->y, env->map->name);
                 object_remove(tmp);
-                object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+                object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
             } else {
                 plugin = plugins_find_plugin(tmp->title);
                 if (plugin == NULL) {
                     object *env = object_get_env_recursive(tmp);
                     LOG(llevError, "The requested plugin doesn't exist: %s at %d/%d in map %s\n", tmp->title, env->x, env->y, env->map->name);
                     object_remove(tmp);
-                    object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+                    object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
                 } else {
                     int rvt = 0;
                     int rv;
@@ -362,7 +362,7 @@ static int do_execute_event(object *op, int eventcode, object *activator, object
                         LOG(llevDebug, "Removing unique event %s\n", tmp->slaying);
 #endif
                         object_remove(tmp);
-                        object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+                        object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
                     }
                     return rv;
                 }
@@ -3530,7 +3530,7 @@ static void cfapi_object_insert(int *type, ...) {
         robj = va_arg(args, object **);
         if (!map) {
             LOG(llevError, "cfapi_object_insert (0): called with NULL map, object %s!\n", op->name);
-            object_free2(op, FREE_OBJ_NO_DESTROY_CALLBACK);
+            object_free(op, FREE_OBJ_NO_DESTROY_CALLBACK);
             *robj = NULL;
         } else
             *robj = object_insert_in_map_at(op, map, orig, flag, x, y);
@@ -3544,7 +3544,7 @@ static void cfapi_object_insert(int *type, ...) {
         robj = va_arg(args, object **);
         if (!map) {
             LOG(llevError, "cfapi_object_insert (1): called with NULL map, object %s!\n", op->name);
-            object_free2(op, FREE_OBJ_NO_DESTROY_CALLBACK);
+            object_free(op, FREE_OBJ_NO_DESTROY_CALLBACK);
             *robj = NULL;
         } else
             *robj = object_insert_in_map_at(op, map, orig, flag, op->x, op->y);
@@ -3560,7 +3560,7 @@ static void cfapi_object_insert(int *type, ...) {
         robj = va_arg(args, object **);
         if (!map) {
             LOG(llevError, "cfapi_object_insert (0): called with NULL map, object %s!\n", op->name);
-            object_free2(op, FREE_OBJ_NO_DESTROY_CALLBACK);
+            object_free(op, FREE_OBJ_NO_DESTROY_CALLBACK);
             *robj = NULL;
         } else {
             int dir = object_find_free_spot(op, map, x, y, 0, SIZEOFFREE);
@@ -3579,7 +3579,7 @@ static void cfapi_object_insert(int *type, ...) {
         robj = va_arg(args, object **);
         if (!orig) {
             LOG(llevError, "cfapi_object_insert (3): called with NULL orig, object %s!\n", op->name);
-            object_free2(op, FREE_OBJ_NO_DESTROY_CALLBACK);
+            object_free(op, FREE_OBJ_NO_DESTROY_CALLBACK);
             *robj = NULL;
         } else
             *robj = object_insert_in_ob(op, orig);
@@ -3588,7 +3588,7 @@ static void cfapi_object_insert(int *type, ...) {
 
     default:
         LOG(llevError, "cfapi_object_insert (1): called with itype %d which is not valid, object %s!\n", itype, op->name);
-        object_free2(op, FREE_OBJ_NO_DESTROY_CALLBACK);
+        object_free(op, FREE_OBJ_NO_DESTROY_CALLBACK);
         *type = CFAPI_NONE;
         break;
     }

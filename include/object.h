@@ -522,7 +522,7 @@ static inline void set_flag(object *op, int flag) {
 /**
  * @defgroup FREE_OBJ_xxx Object free flags
  *
- * Used by object_free2() to specify options.
+ * Used by object_free() to specify options.
  */
 /*@{*/
 #define FREE_OBJ_FREE_INVENTORY      1 /**< Free inventory objects; if not set, drop inventory. */

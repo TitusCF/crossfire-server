@@ -810,7 +810,7 @@ int player_arrest(object *who) {
     x = who->x;
     y = who->y;
     enter_exit(who, dummy);
-    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
 
     if (cur == who->map && x == who->x && y == who->y)
         return -2;
@@ -901,7 +901,7 @@ void command_summon(object *op, const char *params) {
     EXIT_X(dummy) = op->x+freearr_x[i];
     EXIT_Y(dummy) = op->y+freearr_y[i];
     enter_exit(pl->ob, dummy);
-    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
     draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                   "You are summoned.");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
@@ -951,7 +951,7 @@ void command_teleport(object *op, const char *params) {
     EXIT_X(dummy) = pl->ob->x+freearr_x[i];
     EXIT_Y(dummy) = pl->ob->y+freearr_y[i];
     enter_exit(op, dummy);
-    object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
     if (!op->contr->hidden)
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                       "You see a portal open.");
@@ -1274,10 +1274,10 @@ void command_create(object *op, const char *params) {
             if (out_of_map(op->map, head->x+size_x, head->y+size_y)) {
                 if (head->x < size_x || head->y < size_y) {
                     dm_stack_pop(op->contr);
-                    object_free2(head, FREE_OBJ_NO_DESTROY_CALLBACK);
+                    object_free(head, FREE_OBJ_NO_DESTROY_CALLBACK);
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                   "Object too big to insert in map, or wrong position.");
-                    object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+                    object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
                     return;
                 }
 
@@ -1308,7 +1308,7 @@ void command_create(object *op, const char *params) {
     }
 
     /* free the one we used to copy */
-    object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
 }
 
 /*
@@ -1915,7 +1915,7 @@ void command_reset(object *op, const char *params) {
         /* Need to re-insert player if swap failed for some reason */
         if (tmp) {
             object_insert_in_map_at(op, m, NULL, 0, op->x, op->y);
-            object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+            object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
         }
 
         if (res < 0 && res != SAVE_ERROR_PLAYER)
@@ -1964,7 +1964,7 @@ void command_reset(object *op, const char *params) {
 
     if (tmp) {
         enter_exit(tmp, dummy);
-        object_free2(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+        object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
     }
 
     /* Remind the DM how to fully reset the map. */
@@ -2281,7 +2281,7 @@ static void command_learn_spell_or_prayer(object *op, const char *params, int sp
     }
 
     do_learn_spell(op, tmp, special_prayer);
-    object_free2(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
 }
 
 /**

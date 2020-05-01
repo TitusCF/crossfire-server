@@ -273,7 +273,7 @@ static int god_gives_present(object *op, const object *god, treasure *tr) {
 
     /* And just in case nothing was put and something is needed, bail out. */
     if ((tmp->type == ROD || tmp->type == WAND) && (tmp->inv == NULL)) {
-        object_free2(tmp, 0);
+        object_free(tmp, 0);
         return 0;
     }
 

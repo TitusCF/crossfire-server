@@ -530,7 +530,7 @@ static unsigned knowledge_alchemy_face(sstring code) {
     object_give_identified_properties(item);
     if (item->face != NULL && item->face != blank_face)
         face = item->face->number;
-    object_free2(item, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(item, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
 
     return face;
 }

@@ -227,5 +227,5 @@ void CREArtifactPanel::artifactChanged(QTreeWidgetItem* current, QTreeWidgetItem
       myFace->step();
     }
 
-    object_free2(obj, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
+    object_free(obj, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
 }
