@@ -1682,10 +1682,6 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
 
 }
 
-void legacy_apply_container(object *op, object *sack) {
-    apply_container(op, sack);
-}
-
 /**
  * Checks for general apply restrictions (no body, prohibited by god, conflicts
  * with other items, etc.)
