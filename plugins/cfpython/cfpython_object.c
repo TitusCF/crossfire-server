@@ -958,6 +958,10 @@ static PyObject *Object_GetContainer(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_CONTAINER));
 }
+static PyObject *Object_GetItemPower(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ITEM_POWER));
+}
 /** Setters */
 static int Object_SetMessage(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *val;
@@ -2065,6 +2069,16 @@ static int Object_SetMoveSlow(Crossfire_Object *whoptr, PyObject *value, void *c
     return 0;
 }
 
+static int Object_SetItemPower(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    int item_power;
+    
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &item_power))
+        return -1;
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ITEM_POWER, item_power);
+    return 0;
+}
+
 
 /* Methods. */
 
@@ -2763,6 +2777,7 @@ static PyGetSetDef Object_getseters[] = {
     { "RandomMovement", (getter)Object_GetRandomMovement, (setter)Object_SetRandomMovement, NULL, NULL },
     { "Material",       (getter)Object_GetMaterial,     NULL, NULL, NULL },
     { "Container",      (getter)Object_GetContainer,    NULL, NULL, NULL },
+    { "ItemPower",      (getter)Object_GetItemPower,    (setter)Object_SetItemPower, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

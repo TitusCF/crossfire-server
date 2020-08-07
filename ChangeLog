@@ -1,3 +1,6 @@
+2020-08-06  Daniel Hawkins
+    * plugins/cfpython/cfpython_object.c: Expose item_power to the python API as a R/W value.
+
 2020-01-16  Daniel Hawkins
     * socket/loop.c: Replace assertion of nonnull cmd in handle_cmd with a check
         that rejects the null command but keeps the server running.
