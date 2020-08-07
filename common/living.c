@@ -2141,7 +2141,7 @@ void change_exp(object *op, int64_t exp, const char *skill_name, int flag) {
      * the exp they have - the monsters exp represents what its
      * worth.
      */
-    if (op->type != PLAYER) {
+    if (op->type != PLAYER && op->type != WEAPON) {
         /* Sanity check */
         if (!QUERY_FLAG(op, FLAG_ALIVE))
             return;
@@ -2157,6 +2157,26 @@ void change_exp(object *op, int64_t exp, const char *skill_name, int flag) {
         }
 
         op->stats.exp += exp;
+    } else if (op->type == WEAPON) { /* Weapons -- this allows us to make magic weapons that get stronger the more they are used. */
+        // Handle adding exp -- Don't use level because other stuff already uses that.
+        if (exp > 0) {
+            int amt = settings.permanent_exp_ratio*exp/100;
+            if (op->perm_exp > (MAX_EXPERIENCE-amt)) {
+                amt = MAX_EXPERIENCE-op->perm_exp;
+            }
+            op->perm_exp += amt;
+            // Check for a level-up
+            while (level_exp(op->item_power+1, 1) < op->perm_exp) {
+                ++(op->item_power);
+            }
+        } else { /* Removing exp allows for the weapon's power to be reset if needed. */
+            // Since exp is negative, we add it to the total to subtract exp.
+            op->perm_exp += exp;
+            // Recalculate level
+            while (level_exp(op->item_power, 1) > op->perm_exp) {
+                --(op->item_power);
+            }
+        }
     } else {   /* Players only */
         if (exp > 0)
             add_player_exp(op, exp, skill_name, flag);

@@ -1,5 +1,6 @@
 2020-08-06  Daniel Hawkins
     * plugins/cfpython/cfpython_object.c: Expose item_power to the python API as a R/W value.
+    * common/living.c: Add code to handle giving experience to weapons, so that we can handle weapons that get stronger over time.
 
 2020-01-16  Daniel Hawkins
     * socket/loop.c: Replace assertion of nonnull cmd in handle_cmd with a check
