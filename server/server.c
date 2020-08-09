@@ -50,6 +50,8 @@ const static int shutdown_warn_times[] = {120, 90, 60, 45, 30, 15, 10, 5, 4, 3, 
 /** Ingame days. */
 static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
+volatile sig_atomic_t shutdown_flag;
+
 /**
  * Encrypt a string. Used for password storage on disk.
  *
