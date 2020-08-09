@@ -34,82 +34,65 @@ static void init_clocks(void);
 static void init_attackmess(void);
 
 /*
- * You unforunately need to looking in include/global.h to see what these
- * correspond to.
+ * Anything with non-zero defaults in include/global.h must be set here.
  */
 struct Settings settings = {
-    NULL,      /* Logfile */
-    CSPORT,    /* Client/server port */
-
-    llevInfo,  /* Debug level */
-    0, NULL,   /* dumpvalues, dumparg */
-    CONFDIR,
-    DATADIR,
-    LOCALDIR,
-    PLAYERDIR, MAPDIR, ARCHETYPES, REGIONS, TREASURES,
-    UNIQUE_DIR, TEMPLATE_DIR,
-    TMPDIR,
-    STAT_LOSS_ON_DEATH,
-    PK_LUCK_PENALTY,
-    PERMANENT_EXPERIENCE_RATIO,
-    DEATH_PENALTY_RATIO,
-    DEATH_PENALTY_LEVEL,
-    BALANCED_STAT_LOSS,
-    NOT_PERMADETH,
-    SIMPLE_EXP,
-    RESET_LOCATION_TIME,
-    SET_TITLE,
-    RESURRECTION,
-    SEARCH_ITEMS,
-    SPELL_ENCUMBRANCE,
-    SPELL_FAILURE_EFFECTS,
-    CASTING_TIME,
-    REAL_WIZ,
-    RECYCLE_TMP_MAPS,
-    ALWAYS_SHOW_HP,
-    SPELLPOINT_LEVEL_DEPEND,
-    SET_FRIENDLY_FIRE,
-    "", /* Who format specifier */
-    "", /* who wiz format specifier */
-    MOTD,
-    "rules",
-    "news",
-    "",  /* DM_MAIL */
-    0,  /* This and the next 3 values are metaserver values */
-    "",
-    "",
-    0,
-    "",
-    0, 0, 0, 0, 0, 0, 0,  /* worldmap settings*/
-    NULL, EMERGENCY_X, EMERGENCY_Y,
-    0,
-    1.0,
+    .csport = CSPORT,
+    .debug = llevInfo,
+    .confdir = CONFDIR,
+    .datadir = DATADIR,
+    .localdir = LOCALDIR,
+    .playerdir = PLAYERDIR,
+    .mapdir = MAPDIR,
+    .archetypes = ARCHETYPES,
+    .regions = REGIONS,
+    .treasures = TREASURES,
+    .uniquedir = UNIQUE_DIR,
+    .templatedir = TEMPLATE_DIR,
+    .tmpdir = TMPDIR,
+    .stat_loss_on_death = STAT_LOSS_ON_DEATH,
+    .pk_luck_penalty = PK_LUCK_PENALTY,
+    .permanent_exp_ratio = PERMANENT_EXPERIENCE_RATIO,
+    .death_penalty_ratio = DEATH_PENALTY_RATIO,
+    .death_penalty_level = DEATH_PENALTY_LEVEL,
+    .balanced_stat_loss = BALANCED_STAT_LOSS,
+    .not_permadeth = NOT_PERMADETH,
+    .simple_exp = SIMPLE_EXP,
+    .reset_loc_time = RESET_LOCATION_TIME,
+    .set_title = SET_TITLE,
+    .resurrection = RESURRECTION,
+    .search_items = SEARCH_ITEMS,
+    .spell_encumbrance = SPELL_ENCUMBRANCE,
+    .spell_failure_effects = SPELL_FAILURE_EFFECTS,
+    .casting_time = CASTING_TIME,
+    .real_wiz = REAL_WIZ,
+    .recycle_tmp_maps = RECYCLE_TMP_MAPS,
+    .always_show_hp = ALWAYS_SHOW_HP,
+    .spellpoint_level_depend = SPELLPOINT_LEVEL_DEPEND,
+    .set_friendly_fire = SET_FRIENDLY_FIRE,
+    .motd = MOTD,
+    .rules = "rules",
+    .news = "news",
+    .emergency_x = EMERGENCY_X,
+    .emergency_y = EMERGENCY_Y,
+    .item_power_factor = 1.0,
     /* Armor enchantment stuff */
-    ARMOR_MAX_ENCHANT,
-    ARMOR_WEIGHT_REDUCTION,
-    ARMOR_WEIGHT_LINEAR,
-    ARMOR_SPEED_IMPROVEMENT,
-    ARMOR_SPEED_LINEAR,
-    1, /* no_player_stealing */
-    0, /* create_home_portals */
-    1, /* personalized_blessings */
-    5000000, /* pk_max_experience */
-    10, /* pk_max_experience_percent */
-    0, /* allow_denied_spells_writing */
-    0, /* allow_broken_converters */
-    0, /* log_timestamp */
-    NULL, /* log_timestamp_format */
-    3,      /* starting_stat_min */
-    18,     /* starting_stat_max */
-    85,     /* starting_stat_points */
-    115,    /* roll_stat_points */
-    0,     /* max_stat - will be loaded from stats file */
-    1,     /* special_break_map, 1 for historical reasons */
-    NULL,  /* disabled_plugins */
-    0,      /* ignore_plugin_compatibility */
-    FALSE,  /* account_block_create */
-    NULL,     /* Trusted host for account creation. */
-    0,      /* Unless explicitly set, use legacy crypt mode */
+    .armor_max_enchant = ARMOR_MAX_ENCHANT,
+    .armor_weight_reduction = ARMOR_WEIGHT_REDUCTION,
+    .armor_weight_linear = ARMOR_WEIGHT_LINEAR,
+    .armor_speed_improvement = ARMOR_SPEED_IMPROVEMENT,
+    .armor_speed_linear = ARMOR_SPEED_LINEAR,
+    .no_player_stealing = 1,
+    .create_home_portals = 0,
+    .personalized_blessings = 1,
+    .pk_max_experience = 5000000,
+    .pk_max_experience_percent = 10,
+    .starting_stat_min = 3,
+    .starting_stat_max = 18,
+    .starting_stat_points = 85,
+    .roll_stat_points = 115,
+    .max_stat = 0,     /* max_stat - will be loaded from stats file */
+    .special_break_map = 1,     /* special_break_map, 1 for historical reasons */
 };
 
 struct Statistics statistics;
