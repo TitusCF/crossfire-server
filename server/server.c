@@ -1118,7 +1118,10 @@ void process_events(void) {
             if (object_was_destroyed(op, tag))
                 continue;
         } else {
-            op->speed_left += FABS(op->speed);
+            // We now make op->speed positive at the load, so we should be
+            // able to avoid calling FABS() here.
+            op->speed_left += op->speed;
+            if (op->speed < 0) LOG(llevError, "BUG: process_events: negative speed found: %f\n", op->speed);
         }
         if (settings.casting_time == TRUE && op->casting_time > 0)
             op->casting_time--;

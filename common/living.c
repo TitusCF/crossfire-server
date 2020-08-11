@@ -1573,6 +1573,25 @@ void fix_object(object *op) {
      */
     if (op->speed < 0.05 && op->type == PLAYER)
         op->speed = 0.05;
+    /*
+     * A lower limit should also apply to monsters. By ensuring speeds are
+     * loaded in as positive, we can properly do this. Otherwise, slow effects
+     * either push the monster's speed to be more negative (if we leave the input
+     * speed as negative) or can reduce the speed by more than the monster's speed,
+     * making it turn negative (if we load speeds as positive always).
+     *
+     * For whatever reason, op->type is 0 for some monsters, making FLAG_MONSTER
+     * the useful information that indicates whether it is a monster or not.
+     *
+     * MIN_ACTIVE_SPEED is super low, so make our speed threshold be about .005 instead
+     */
+    if (op->speed < MIN_ACTIVE_SPEED*500 && QUERY_FLAG(op, FLAG_MONSTER)) {
+        // If added_speed is less than zero, we're probably working with a slow effect.
+        if (added_speed >= 0)
+            LOG(llevInfo, "fix_object: Monster %s has negative speed of %f.\n",
+                op->name ? op->name : "(null)", op->speed);
+        op->speed = MIN_ACTIVE_SPEED*500;
+    }
 
     /* I want to limit the power of small monsters with big weapons: */
     if (op->type != PLAYER

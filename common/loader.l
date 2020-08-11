@@ -807,8 +807,10 @@ A       .+
 ^speed{S}           {
                         op->speed = FVAL;
                         if (!(map_flags&MAP_STYLE)) {
-                            if (op->speed < 0)
+                            if (op->speed < 0) {
                                 op->speed_left = op->speed_left-RANDOM()%100/100.0;
+                                op->speed = -op->speed; // Make this always positive
+                            }
                             object_update_speed(op);
                         }
                     }

@@ -1,3 +1,9 @@
+2020-08-11  Daniel Hawkins
+    * common/living.c,
+      server/server.c,
+      common/loader.l: Load speed as positive number, and then set a minimum speed
+        for monsters. Fixes bug #854.
+
 2020-08-06  Daniel Hawkins
     * plugins/cfpython/cfpython_object.c: Expose item_power to the python API as a R/W value.
     * common/living.c: Add code to handle giving experience to weapons, so that we can handle weapons that get stronger over time.
