@@ -652,6 +652,21 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
             continue;
         }
 
+        /*
+         * Generators normally start with a speed_left of -0.1.  They
+         * trigger as soon as they go positive, then get 1 subtracted from
+         * their speed_left.  If asked to randomize the times to avoid
+         * waves of monsters from identical generators, we set the
+         * speed_left to a random value between -0.6 and +0.4, so the
+         * average is still the same.
+         *
+         * Note the comparison is tricky, as it has to be cast exactly the
+         * same way it's set in arch.c:first_arch_pass()
+         */
+        if ( settings.generator_init_time_random && QUERY_FLAG(op, FLAG_GENERATOR) && op->speed_left == (float)-0.1 ) {
+            op->speed_left = (cf_random() % 100000) / 100000. - 0.6;
+        }
+
         /* don't use out_of_map because we don't want to consider tiling properties, we're loading a single map */
         if (op->x < 0 || op->y < 0 || op->x >= MAP_WIDTH(m) || op->y >= MAP_HEIGHT(m)) {
             LOG(llevError, " object %s not on valid map position %s:%d:%d\n", op->name ? op->name : "(null)", m->path, op->x, op->y);
@@ -2250,6 +2265,7 @@ void set_map_reset_time(mapstruct *map) {
         timeout = MAP_DEFAULTRESET;
     if (timeout >= MAP_MAXRESET)
         timeout = MAP_MAXRESET;
+    MAP_RESET_TIMEOUT(map) = timeout;
     MAP_WHEN_RESET(map) = seconds()+timeout;
 }
 

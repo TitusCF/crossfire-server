@@ -63,17 +63,24 @@ void map_info(object *op, const char *search) {
             safe_strncpy(map_path, m->path + strlen(m->path) - 26, sizeof(map_path));
         }
 
-        const uint32_t ttr = MAP_WHEN_RESET(m) - seconds();
-        const uint32_t hh = (ttr%86400)/3600, mm = (ttr%3600)/60, ss = ttr%60;
+        uint32_t ttr = MAP_WHEN_RESET(m) - seconds() > 0 ? MAP_WHEN_RESET(m) - seconds() : 0;
+        if (m->players) {
+            ttr = m->reset_timeout + 300;
+        }
+        else if (m->timeout) {
+            ttr = m->reset_timeout + m->timeout;
+        }
+        const uint32_t hh = ttr/3600, mm = (ttr%3600)/60, ss = ttr%60;
         if (QUERY_FLAG(op, FLAG_WIZ)) {
             draw_ext_info_format(
                 NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                i18n(op, "[fixed]%-26.26s %02d:%02d:%02d  %2d %2d %4d"),
+                i18n(op, "[fixed]%-26.26s %2d:%02d:%02d  %2d %2d %4d"),
                 map_path, hh, mm, ss, m->players, m->in_memory, m->timeout);
         } else {
             draw_ext_info_format(
                 NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                i18n(op, "[fixed]%-26.26s %02d:%02d"), map_path, hh, mm);
+                i18n(op, "[fixed]%-26.26s %2d:%02d%s"), map_path, hh, mm,
+                m->players ? " (in use)" : "");
         }
     }
 }
