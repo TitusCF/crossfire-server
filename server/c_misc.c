@@ -391,9 +391,20 @@ void current_map_info(object *op) {
     if (!m)
         return;
 
+    char *p = m->path;
+    // Don't expose local file system paths
+    if ( strncmp(p,settings.localdir,strlen(settings.localdir)) == 0 )
+    {
+        p += strlen(settings.localdir);
+        if ( *p == '/' ) ++p;
+        if ( strncmp(p,settings.playerdir,strlen(settings.playerdir)) == 0 )
+        {
+            p += strlen(settings.playerdir);
+        }
+    }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                          "%s (%s) in %s",
-                         m->name, m->path, get_region_longname(get_region_by_map(m)));
+                         m->name, p, get_region_longname(get_region_by_map(m)));
 
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
@@ -691,7 +702,20 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
         break;
 
     case 'm':
-        strlcpy(return_val, pl->ob->map->path, size);
+        // If path starts with .../var/crossfire/players/ then strip off the path
+        {
+            char *p = pl->ob->map->path;
+            if ( strncmp(p,settings.localdir,strlen(settings.localdir)) == 0 )
+            {
+                p += strlen(settings.localdir);
+                if ( *p == '/' ) ++p;
+                if ( strncmp(p,settings.playerdir,strlen(settings.playerdir)) == 0 )
+                {
+                    p += strlen(settings.playerdir);
+                }
+            }
+            strlcpy(return_val, p, size);
+        }
         break;
 
     case 'M':
