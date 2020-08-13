@@ -276,7 +276,7 @@
  *
  * A few thoughts on these default value (by MSW)
  * gain ratio is pretty much meaningless until exp has been lost, as until
- * that poin, the value in the settings file will be used.
+ * that point, the value in the settings file will be used.
  * It is also impossible for the exp to actually be reduced to the permanent
  * exp ratio - since the loss ratio is .5, it will just get closer and
  * closer.  However, after about half a dozen hits, pretty much all the
