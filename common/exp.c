@@ -183,12 +183,13 @@ void init_experience(void) {
         if ((cp = strrchr(buf, '\n')) != NULL)
             *cp = '\0';
 
-        /* Skip over empty lines */
-        if (buf[0] == 0)
-            continue;
+        /* Skip over empty lines and whitespace */
         cp = buf;
         while (isspace(*cp) && *cp != 0)
             cp++;
+        if ( *cp == 0 ) continue;
+
+        /* Set max_level */
         if (!strncasecmp(cp, "max_level", 9)) {
             if (settings.max_level) {
                 LOG(llevDebug, "Got more than one max_level value from exp_table file?\n");
