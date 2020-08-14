@@ -65,10 +65,10 @@ void map_info(object *op, const char *search) {
 
         uint32_t ttr = MAP_WHEN_RESET(m) - seconds() > 0 ? MAP_WHEN_RESET(m) - seconds() : 0;
         if (m->players) {
-            ttr = m->reset_timeout + 300;
+            ttr = (m->unique ? 0 : m->reset_timeout) + 300;
         }
         else if (m->timeout) {
-            ttr = m->reset_timeout + m->timeout;
+            ttr = (m->unique ? 0 : m->reset_timeout) + m->timeout;
         }
         const uint32_t hh = ttr/3600, mm = (ttr%3600)/60, ss = ttr%60;
         if (QUERY_FLAG(op, FLAG_WIZ)) {
