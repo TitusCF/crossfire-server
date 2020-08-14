@@ -1,3 +1,7 @@
+2020-08-14  Daniel Hawkins
+    * server/server.c: Partially revert fix, since assumption that all speeds would
+        be positive did not hold for custom creatures on random maps.
+
 2020-08-11  Daniel Hawkins
     * common/living.c,
       server/server.c,
