@@ -1,3 +1,7 @@
+2020-08-15  Daniel Hawkins
+    * socket/sounds.c: Adjust sound volume based on proximity to player.
+        This makes things like the bullet squares in random maps more bearable.
+
 2020-08-14  Daniel Hawkins
     * server/server.c: Partially revert fix, since assumption that all speeds would
         be positive did not hold for custom creatures on random maps.

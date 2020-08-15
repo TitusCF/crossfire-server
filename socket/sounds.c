@@ -62,6 +62,15 @@ void play_sound_player_only(player *pl, int8_t sound_type, object *emitter, int 
         return;
 
     source = emitter->map ? emitter : emitter->env;
+    
+    // Approximate the distance to the emitter from the source
+    int dx = FABS(source->x-pl->ob->x),
+        dy = FABS(source->y-pl->ob->y);
+    int distance = (MIN(dx, dy) * 3 + FABS(dx-dy) * 2) / 2;
+    // Make the sound dissipation more gradual.
+    distance >>= 1;
+    // Downscale the volume by distance
+    volume = distance ? volume / distance : volume;
 
     pl->socket.sounds_this_tick = 0;
 
