@@ -50,6 +50,7 @@ static const int shutdown_warn_times[] = {120, 90, 60, 45, 30, 15, 10, 5, 4, 3, 
 /** Ingame days. */
 static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
+sqlite3* server_db;
 volatile sig_atomic_t shutdown_flag;
 
 /**
@@ -1232,6 +1233,7 @@ void cleanup(void) {
     clean_tmp_files();
     write_book_archive();
     accounts_save();
+    sqlite3_close(server_db);
 
     close_modules();
 

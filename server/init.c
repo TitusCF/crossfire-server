@@ -1098,6 +1098,19 @@ void add_server_collect_hooks() {
     settings.hooks_count++;
 }
 
+static void init_db() {
+    char path[MAX_BUF];
+    snprintf(path, sizeof(path), "%s/%s", settings.localdir, "server.db");
+    int ret = sqlite3_open(path, &server_db);
+    if (ret != SQLITE_OK) {
+        LOG(llevError, "Could not open database %s: %s\n", path,
+            sqlite3_errmsg(server_db));
+        fatal(SEE_LAST_ERROR);
+    }
+
+    sqlite3_exec(server_db, "CREATE TABLE IF NOT EXISTS schema ('table' TEXT PRIMARY KEY, 'version' INT);", NULL, NULL, NULL);
+}
+
 /**
  * This is the main server initialization function.
  *
@@ -1125,6 +1138,7 @@ void init(int argc, char **argv) {
     init_startup();     /* Check shutdown/forbid files */
     init_signals();     /* Sets up signal interceptions */
     commands_init();    /* Sort command tables */
+    init_db();
     read_map_log();     /* Load up the old temp map files */
     init_skills();
     init_ob_methods();

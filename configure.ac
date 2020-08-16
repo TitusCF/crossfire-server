@@ -111,6 +111,8 @@ AC_CHECK_FUNCS([strlcat strlcpy])
 AC_SUBST(pkgstatedir,$localstatedir/$PACKAGE)
 AC_SUBST(pkgconfdir,$sysconfdir/$PACKAGE)
 
+PKG_CHECK_MODULES([SQLITE], [sqlite3], [], AC_MSG_ERROR([Could not find SQLite3]))
+
 dnl############################################
 dnl Plugin configuration
 dnl############################################
