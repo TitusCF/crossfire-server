@@ -60,7 +60,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 crossfire_server_LDFLAGS=$(LIBDL_LDFLAGS)
 
 crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
-		../socket/libsocket.a ../types/libtypes.a
+		../socket/libsocket.a ../types/libtypes.a @SQLITE_LIBS@
 
 ../common/libcross.a:
 	( cd ../common ; make libcross.a )
