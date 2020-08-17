@@ -323,10 +323,11 @@ int SockList_ReadPacket(int fd, SockList *sl, int len) {
          * shouldn't hurt.
          */
 #ifdef WIN32 /* ***win32 SockList_ReadPacket: change read() to recv() */
-        recv(fd, sl->buf+2, 100, 0);
+        stat = recv(fd, sl->buf+2, 100, 0);
 #else
-        read(fd, sl->buf+2, 100);
+        stat = read(fd, sl->buf+2, 100);
 #endif /* end win32 */
+        (void) stat; // Don't care how much we read; avoid complier warnings
 
         /* return error so the socket is closed */
         return -1;
