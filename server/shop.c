@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "server.h"
 #include "shop.h"
 #include "sproto.h"
 
@@ -62,6 +63,34 @@ static const char *const coins[] = {
     "silvercoin",
     NULL
 };
+
+sqlite3_stmt *stmt_record_sale;
+
+void shop_transactions_init() {
+    sqlite3_exec(server_db, "CREATE TABLE IF NOT EXISTS shop_transactions (map TEXT, region TEXT, time INT, name TEXT, arch TEXT, quantity INT, price INT);", NULL, NULL, NULL);
+    sqlite3_exec(server_db, "INSERT OR REPLACE INTO schema VALUES ('shop_transactions', 1);", NULL, NULL, NULL);
+    sqlite3_prepare_v2(server_db, "INSERT INTO shop_transactions VALUES (?, ?, ?, ?, ?, ?, ?)", -1, &stmt_record_sale, NULL);
+}
+
+/**
+ * Record a shop transaction. Positive quantity is when players buy an item
+ * from a shop; negative quantity is when players sell. Total price should
+ * always be positive.
+ */
+static void record_transaction(const char* path, const char* region, const char* name, const char* arch, const int quantity, const int total_price) {
+    sqlite3_bind_text(stmt_record_sale, 1, path, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt_record_sale, 2, region, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt_record_sale, 3, time(NULL));
+    sqlite3_bind_text(stmt_record_sale, 4, name, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt_record_sale, 5, arch, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt_record_sale, 6, quantity);
+    sqlite3_bind_int(stmt_record_sale, 7, total_price);
+    int ret = sqlite3_step(stmt_record_sale);
+    if (ret != SQLITE_DONE) {
+        LOG(llevError, "record_transaction: could not record sale: %s\n");
+    }
+    sqlite3_reset(stmt_record_sale);
+}
 
 /**
  * Price an item based on its value or archetype value, type, identification/BUC
@@ -539,6 +568,7 @@ int pay_for_item(object *op, object *pl) {
     if (saved_money > 0)
         change_exp(pl, saved_money, "bargaining", SK_EXP_NONE);
 
+    record_transaction(pl->map->path, pl->map->region->name, op->name, op->arch->name, NROF(op), to_pay);
     to_pay = pay_from_container(pl, pl, to_pay);
 
     FOR_INV_PREPARE(pl, pouch) {
@@ -961,6 +991,8 @@ void sell_item(object *op, object *pl) {
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
             "You receive %s for %s.", value_str, obj_name);
     free(value_str);
+
+    record_transaction(pl->map->path, pl->map->region->name, op->name, op->arch->name, -NROF(op), price);
 
     for (int count = LARGEST_COIN_GIVEN; coins[count] != NULL; count++) {
         at = find_archetype(coins[count]);
