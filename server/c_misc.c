@@ -43,6 +43,10 @@
  * optional substring to search for.
  */
 void map_info(object *op, const char *search) {
+    if ( *search != 0 ) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+                      i18n(op, "Maps matching search: '%s'"), search);
+    }
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
                       i18n(op, "[fixed]Path             Reset In (HH:MM:SS) Pl IM   TO"));
@@ -51,9 +55,32 @@ void map_info(object *op, const char *search) {
                       i18n(op, "[fixed]Path             Reset In (HH:MM)"));
     }
 
+    /* Allow a comma-separate list of search strings; more complicated because of the const */
+    char *to_be_freed;
+    char *search_array[64];
+    int search_array_count;
+    if ( search[0] ) {
+        to_be_freed = strdup(search);
+        if ( !to_be_freed ) {
+            search_array[0] = to_be_freed;
+            search_array_count = 1;
+        } else {
+            search_array_count = split_string(to_be_freed,search_array,64,',');
+        }
+    }
+    
     for (mapstruct *m = first_map; m != NULL; m = m->next) {
-        if (*search != '\0' && strstr(m->path, search) == NULL)
-            continue;   /* Skip unwanted maps */
+        bool match = TRUE;
+        if ( search_array_count ) {
+            match = FALSE;
+            for (int i=0; i<search_array_count; ++i) {
+                if ( strstr(m->path,search_array[i]) ) {
+                    match=TRUE;
+                    break;
+                }
+            }
+        }
+        if ( !match ) continue;   /* Skip unwanted maps */
 
         /* Print out the last 26 characters of the map name... */
         char map_path[MAX_BUF];
@@ -84,6 +111,7 @@ void map_info(object *op, const char *search) {
                 m->players ? " (in use)" : "");
         }
     }
+    if ( to_be_freed ) free( to_be_freed );
 }
 
 /**
