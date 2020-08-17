@@ -1019,16 +1019,10 @@ void knowledge_give(player *pl, const char *marker, const object *book) {
     dot = strchr(marker, ':');
     if (dot == NULL)
         return;
-    
-    /* There will be a null terminator on marker, or strlen will segfault.
-     * So, strncpy() will copy the null terminator.
-     * Therefore, it is more efficient to use malloc than calloc here.
-     */
-    copy = malloc(strlen(marker) + 1);
-    /* Also make sure we've gotten a valid pointer back before we copy. */
+
+    copy = strdup(marker);
     if (!copy)
 	fatal(OUT_OF_MEMORY);
-    strncpy(copy, marker, strlen(marker) + 1);
 
     dot = strchr(copy, ':');
     *dot = '\0';
