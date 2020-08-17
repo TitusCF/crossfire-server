@@ -1109,6 +1109,7 @@ static void init_db() {
     }
 
     sqlite3_exec(server_db, "CREATE TABLE IF NOT EXISTS schema ('table' TEXT PRIMARY KEY, 'version' INT);", NULL, NULL, NULL);
+    shop_transactions_init();
 }
 
 /**
