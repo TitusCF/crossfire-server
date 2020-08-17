@@ -56,7 +56,7 @@ void map_info(object *op, const char *search) {
     }
 
     /* Allow a comma-separate list of search strings; more complicated because of the const */
-    char *to_be_freed;
+    char *to_be_freed = NULL;
     char *search_array[64];
     int search_array_count;
     if ( search[0] ) {
