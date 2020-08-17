@@ -12,6 +12,7 @@
  *
  * skills.c -- core skill handling
  */
+#define _GNU_SOURCE // strcasestr() is a GNU extension in string.h
 
 #include "global.h"
 

@@ -16,6 +16,7 @@
  * Various spell effects, non attacks.
  * @todo use the same parameter names/orders.
  */
+#define _GNU_SOURCE // strcasestr() is a GNU extension in string.h
 
 #include "global.h"
 
