@@ -563,7 +563,9 @@ void check_login(object *op, int check_pass) {
 
     if (fgets(bufall, MAX_BUF, fp) != NULL) {
         if (!strncmp(bufall, "checksum ", 9)) {
-            (void)fgets(bufall, MAX_BUF, fp);
+            if ( fgets(bufall, MAX_BUF, fp) == NULL ) {
+                bufall[0]=0; /* should never happen */
+            }
         }
         if (sscanf(bufall, "password %s\n", buf)) {
             /* New password scheme: */
@@ -700,20 +702,24 @@ void check_login(object *op, int check_pass) {
         } else if (!strcmp(buf, "lev_array")) {
             for (i = 1; i <= value; i++) {
                 int j;
+                int count=0;
 
-                fscanf(fp, "%d\n", &j);
+                count = fscanf(fp, "%d\n", &j);
+                if ( !count ) j=0; // sanity; should never happen
                 if (j < 3)
                     j = 3;
                 else if (j > 9)
                     j = 9;
                 pl->levhp[i] = j;
-                fscanf(fp, "%d\n", &j);
+                count = fscanf(fp, "%d\n", &j);
+                if ( !count ) j=0; // sanity; should never happen
                 if (j < 2)
                     j = 2;
                 else if (j > 6)
                     j = 6;
                 pl->levsp[i] = j;
-                fscanf(fp, "%d\n", &j);
+                count = fscanf(fp, "%d\n", &j);
+                if ( !count ) j=0; // sanity; should never happen
                 if (j < 1)
                     j = 1;
                 else if (j > 3)
