@@ -12,6 +12,7 @@
 #include "loader.h"
 #include "sproto.h"
 #include "toolkit_common.h"
+#include "toolkit_server.h"
 
 static void setup(void) {
 }
