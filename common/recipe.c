@@ -204,7 +204,7 @@ void init_formulae(void) {
                 /* trim the string */
                 while (*cp == ' ')
                   cp++;
-                while (cp != '\0' && cp[strlen(cp) - 1] == ' ')
+                while (*cp != '\0' && cp[strlen(cp) - 1] == ' ')
                   cp[strlen(cp) - 1] = '\0';
                 tmp->name = add_string(cp);
                 tmp->next = formula->ingred;
