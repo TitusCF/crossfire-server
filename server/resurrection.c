@@ -118,7 +118,7 @@ static int resurrect_player(object *op, char *playername, object *spell, char *a
     }
 
     while (!feof(deadplayer)) {
-        fgets(buf, 255, deadplayer);
+        if ( fgets(buf, 255, deadplayer) == NULL ) break; /* should never fail */
         sscanf(buf, "%s", buf2);
         if (!(strcmp(buf2, "exp"))) {
             sscanf(buf, "%s %"FMT64, buf2, &exp);
