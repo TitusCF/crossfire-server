@@ -92,6 +92,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
 
         applier->contr->transport = NULL;
         object_insert_in_map_at(applier, old_transport->map, applier, 0, old_transport->x, old_transport->y);
+        if ( applier->map ) applier->map->players--; // Incremented player count incorrectly; adjust to correct
         object_sum_weight(old_transport);
 
         /* Possible for more than one player to be using a transport.
@@ -179,6 +180,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
             op->contr = applier->contr;
         }
 
+        if ( applier->map ) applier->map->players++; // About to subtract the player incorrectly
         object_remove(applier);
         /* object_insert_in_ob clear applier->x and applier->y, so store them away */
         ox = applier->x;
