@@ -163,8 +163,8 @@ static char *draw_one_high_score(const score *sc, char *buf, size_t size) {
         s1 = "was killed by";
         s2 = sc->killer;
     }
-    snprintf(buf, size, "[fixed]%3d %10"FMT64"[print] %s %s %s %s on map %s <%d><%d><%d>.",
-        sc->position, sc->exp, sc->name, sc->title, s1, s2, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
+    snprintf(buf, size, "[fixed]%3d %10"FMT64"[print] %s%s%s %s %s on map %s <%d><%d><%d>.",
+             sc->position, sc->exp, sc->name, sc->title[0]==',' ? "" : " ", sc->title, s1, s2, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
     return buf;
 }
 
