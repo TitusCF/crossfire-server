@@ -31,9 +31,12 @@
  * @return
  * generated layout.
  */
-char **make_snake_layout(int xsize, int ysize)
+char **make_snake_layout(int xsize, int ysize, int _unused_option, int _unused_layers)
 {
     int i, j;
+
+    (void)_unused_option;
+    (void)_unused_layers;
 
     /* allocate that array, set it up */
     char **maze = (char **)calloc(sizeof(char *), xsize);

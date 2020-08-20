@@ -93,11 +93,12 @@ typedef struct {
 static layout layout_list[NROFLAYOUTS] = {
     // Most of these need to be cast to silence warnings.
     // The fourth paramter (and sometimes the third) is ignored in most cases.
-    { "rogue",   (char **(*)(int, int, int, int))&roguelike_layout_gen },
-    { "snake",   (char **(*)(int, int, int, int))&make_snake_layout },
-    { "sspiral", (char **(*)(int, int, int, int))&make_square_spiral_layout },
-    { "spiral",  (char **(*)(int, int, int, int))&map_gen_spiral },
-    { "maze",    (char **(*)(int, int, int, int))&maze_gen },
+    // xsize,ysize,option,layers
+    { "rogue",   &roguelike_layout_gen },
+    { "snake",   &make_snake_layout },
+    { "sspiral", &make_square_spiral_layout },
+    { "spiral",  &map_gen_spiral },
+    { "maze",    &maze_gen },
     { "onion",   &map_gen_onion }
 };
 
@@ -158,7 +159,7 @@ static void print_usage(void) {
 
 int main(int argc, char *argv[]) {
     int flag, mode = 0, width = 80, height = 23;
-    char *filename_out;
+    char *filename_out=NULL;
     // Make default behavior be roguelike generation, like old behavior
     // NOTE: The ugly function pointer cast silences compiler warnings.
     char **(*func)(int, int, int, int) = (char **(*)(int, int, int, int))&roguelike_layout_gen;

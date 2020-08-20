@@ -75,11 +75,14 @@ void find_top_left_corner(char **maze, int *cx, int *cy)
  * @todo
  * use function in another file for character searching.
  */
-char **make_square_spiral_layout(int xsize, int ysize)
+char **make_square_spiral_layout(int xsize, int ysize, int _unused_option, int _unused_layers)
 {
     int i, j;
     int cx, cy;
     int tx, ty;
+
+    (void)_unused_option;
+    (void)_unused_layers;
 
     /* generate and allocate a doorless, centered onion */
     char **maze = map_gen_onion(xsize, ysize, OPT_CENTERED|OPT_NO_DOORS, 0);

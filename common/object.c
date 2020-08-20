@@ -4095,7 +4095,7 @@ object *object_find_by_type_and_skill(const object *who, int type, const char *s
     object *tmp;
 
     for (tmp = who->inv; tmp != NULL; tmp = tmp->below)
-        if (tmp->type == SKILL && tmp->skill != NULL && strcmp(tmp->skill, skill) == 0)
+        if (tmp->type == type && tmp->skill != NULL && strcmp(tmp->skill, skill) == 0)
             return tmp;
 
     return NULL;

@@ -45,7 +45,7 @@
 #include "server.h"
 
 /** How many minutes before a shutdown to warn players, in reverse order. */
-const static int shutdown_warn_times[] = {120, 90, 60, 45, 30, 15, 10, 5, 4, 3, 2, 1};
+static const int shutdown_warn_times[] = {120, 90, 60, 45, 30, 15, 10, 5, 4, 3, 2, 1};
 
 /** Ingame days. */
 static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};

@@ -55,10 +55,12 @@ static int find_free_point(char **maze, int *x, int *y, int xc, int yc, int xsiz
  * a char value of 0 represents a blank space:  a '#' is
  * a wall.
 */
-char **maze_gen(int xsize, int ysize, int option)
+char **maze_gen(int xsize, int ysize, int option, int _unused_layers)
 {
     int i, j;
     struct free_walls_struct free_walls;
+
+    (void)_unused_layers;
 
     /* allocate that array, set it up */
     char **maze = (char **)calloc(sizeof(char *), xsize);

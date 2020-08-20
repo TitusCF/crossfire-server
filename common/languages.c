@@ -166,7 +166,7 @@ static void convert_newline(char *line) {
  * If there is an error, calls fatal().
  */
 void i18n_init(void) {
-    char dirname[MAX_BUF], filename[MAX_BUF], line[HUGE_BUF];
+    char dirname[MAX_BUF], filename[MAX_BUF*2], line[HUGE_BUF];
     FILE *fp;
     char *token;
     DIR *dir;

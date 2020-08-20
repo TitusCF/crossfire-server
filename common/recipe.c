@@ -271,7 +271,8 @@ void init_formulae(void) {
 static void check_formulae(void) {
     recipelist *fl;
     recipe *check, *formula;
-    int numb = 1, tool_i, tool_j, tool_match;
+    int numb = 1, tool_match;
+    size_t tool_i,tool_j;
 
     LOG(llevDebug, "Checking formulae lists...\n");
 

@@ -2611,6 +2611,7 @@ int get_rangevector(object *op1, const object *op2, rv_vector *retval, int flags
  * 1=ok; 0=the objects are not on the same map
  */
 int get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const object *op2, rv_vector *retval, int flags) {
+    (void)flags; // unused [avoid compiler warning]
     if (!adjacent_map(m, op2->map, &retval->distance_x, &retval->distance_y)) {
         /* be conservative and fill in _some_ data */
         retval->distance = 100000;

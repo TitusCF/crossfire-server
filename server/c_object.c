@@ -1580,7 +1580,7 @@ void examine(object *op, object *tmp) {
         } else
             if (tmp->weight_limit && tmp->stats.Str < 100)
                 snprintf(buf, sizeof(buf), "Its weight limit is %.1f kg.", tmp->weight_limit/(10.0*(100-tmp->stats.Str)));
-            break;
+        break;
 
     case WAND:
         if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))

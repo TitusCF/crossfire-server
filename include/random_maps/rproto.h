@@ -20,10 +20,10 @@ extern void draw_onion(char **maze, float *xlocations, float *ylocations, int la
 extern void make_doors(char **maze, float *xlocations, float *ylocations, int layers, int options);
 extern void bottom_right_centered_onion(char **maze, int xsize, int ysize, int option, int layers);
 /* room_gen_spiral.c */
-extern char **map_gen_spiral(int xsize, int ysize, int option);
+extern char **map_gen_spiral(int xsize, int ysize, int option, int _unused_layers);
 extern void connect_spirals(int xsize, int ysize, int sym, char **layout);
 /* maze_gen.c */
-extern char **maze_gen(int xsize, int ysize, int option);
+extern char **maze_gen(int xsize, int ysize, int option, int _unused_layers);
 /* floor.c */
 extern mapstruct *make_map_floor(char **layout, char *floorstyle, RMParms *RP);
 /* wall.c */
@@ -75,12 +75,12 @@ extern object *pick_random_object(mapstruct *style);
 extern void free_style_maps(void);
 /* rogue_layout.c */
 extern int surround_check(char **layout, int i, int j, int Xsize, int Ysize);
-extern char **roguelike_layout_gen(int xsize, int ysize, int options);
+extern char **roguelike_layout_gen(int xsize, int ysize, int options, int _unused_layers);
 /* snake.c */
-extern char **make_snake_layout(int xsize, int ysize);
+extern char **make_snake_layout(int xsize, int ysize, int _unused_options, int _unused_layers);
 /* square_spiral.c */
 extern void find_top_left_corner(char **maze, int *cx, int *cy);
-extern char **make_square_spiral_layout(int xsize, int ysize);
+extern char **make_square_spiral_layout(int xsize, int ysize, int _unused_options, int _unused_layers);
 /* expand2x.c */
 extern char **expand2x(char **layout, int xsize, int ysize);
 

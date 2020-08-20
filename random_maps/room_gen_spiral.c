@@ -58,7 +58,7 @@ extern int surround_check(char **maze, int i, int j, int xsize, int ysize);
  * @return
  * generated layout.
  */
-char **map_gen_spiral(int xsize, int ysize, int option)
+char **map_gen_spiral(int xsize, int ysize, int option, int _unused_layers)
 {
     int i, j;
     float parm = 0;
@@ -66,6 +66,8 @@ char **map_gen_spiral(int xsize, int ysize, int option)
     int ic, jc;
     float SizeX, SizeY;
     float xscale, yscale;
+
+    (void)_unused_layers;
 
     /* allocate that array, set it up */
     char **maze = (char **)calloc(sizeof(char *), xsize);

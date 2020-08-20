@@ -137,8 +137,8 @@ void send_image_info(socket_struct *ns) {
  *  - name
  */
 void send_image_sums(socket_struct *ns, char *params) {
-    int start, stop;
-    short i;
+    unsigned int start, stop;
+    unsigned short i;
     char *cp;
     SockList sl;
 

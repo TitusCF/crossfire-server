@@ -1449,6 +1449,7 @@ void fix_object(object *op) {
             case SHIELD:
                 if (settings.spell_encumbrance == TRUE && op->type == PLAYER)
                     op->contr->encumbrance += (int)tmp->weight/2000;
+                /* fall through */
             case RING:
             case AMULET:
             case GIRDLE:
@@ -1491,7 +1492,7 @@ void fix_object(object *op) {
                     op->contr->encumbrance += (int)tmp->weight/1000;
 
                 /* ARMOUR falls through to here */
-
+                /* fall through */
             case BRACERS:
             case FORCE:
                 // Code simplification to reduce branching -- we don't need to sub/add ac and wc all the time.

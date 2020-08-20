@@ -176,7 +176,7 @@ static int load_quests_from_file(const char *filename) {
     quest_step_definition *step = NULL;
     char final[MAX_BUF], read[MAX_BUF];
     FILE *file;
-    StringBuffer *buf;
+    StringBuffer *buf=NULL;
 
     int loaded_quests =0, found =0;
     snprintf(final, sizeof(final), "%s/%s/%s", settings.datadir, settings.mapdir, filename);

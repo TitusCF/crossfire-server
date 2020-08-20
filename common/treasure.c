@@ -1244,8 +1244,9 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
             }
 
         case AMULET:
-                if (op->arch == amulet_arch)
-                    op->value *= 5; /* Since it's not just decoration */
+            if (op->arch == amulet_arch)
+                op->value *= 5; /* Since it's not just decoration */
+            /* fall through */
         case RING:
             if (op->arch == NULL) {
                 object_remove(op);

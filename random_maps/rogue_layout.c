@@ -329,12 +329,14 @@ int surround_check(char **layout, int i, int j, int Xsize, int Ysize) {
  * @return
  * generated layout.
  */
-char **roguelike_layout_gen(int xsize, int ysize, int options) {
+char **roguelike_layout_gen(int xsize, int ysize, int options, int _unused_layers) {
     int i, j;
     Room *Rooms = NULL;
     Room *walk;
     int nrooms = 0;
     int tries = 0;
+
+    (void)_unused_layers;
 
     /* allocate that array, write walls everywhere up */
     char **maze = (char **)malloc(sizeof(char *)*xsize);

@@ -796,7 +796,7 @@ static int do_skill_detect_magic(object *pl, object *skill) {
  */
 int identify_object_with_skill(object *tmp, object *pl, object *skill, int print_on_success) {
     int success = 0, chance, ip;
-    int skill_value = skill->level*pl->stats.Int ? pl->stats.Int : 10;
+    int skill_value = (skill->level && pl->stats.Int) ? pl->stats.Int : 10;
 
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)
     && !QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT)
@@ -910,7 +910,7 @@ int skill_ident(object *pl, object *skill) {
         if (success)
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                           "...and discover cursed items!");
-            break;
+        break;
 
     case SK_DET_MAGIC:
         success = do_skill_detect_magic(pl, skill);

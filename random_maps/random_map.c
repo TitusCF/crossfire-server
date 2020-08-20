@@ -273,14 +273,14 @@ char **layoutgen(RMParms *RP)
         break;
 
     case MAZE_LAYOUT:
-        maze = maze_gen(RP->Xsize, RP->Ysize, RANDOM()%2);
+        maze = maze_gen(RP->Xsize, RP->Ysize, RANDOM()%2,/* unused: */0);
         if (!(RANDOM()%2)) {
             doorify_layout(maze, RP);
         }
         break;
 
     case SPIRAL_LAYOUT:
-        maze = map_gen_spiral(RP->Xsize, RP->Ysize, RP->layoutoptions1);
+        maze = map_gen_spiral(RP->Xsize, RP->Ysize, RP->layoutoptions1,/* unused: */0);
         if (!(RANDOM()%2)) {
             doorify_layout(maze, RP);
         }
@@ -297,19 +297,19 @@ char **layoutgen(RMParms *RP)
         RP->symmetry_used = NO_SYM;
         RP->Ysize = oysize;
         RP->Xsize = oxsize;
-        maze = roguelike_layout_gen(RP->Xsize, RP->Ysize, RP->layoutoptions1);
+        maze = roguelike_layout_gen(RP->Xsize, RP->Ysize, RP->layoutoptions1, 0/*unused*/);
         /* no doorifying...  done already */
         break;
 
     case SNAKE_LAYOUT:
-        maze = make_snake_layout(RP->Xsize, RP->Ysize);
+        maze = make_snake_layout(RP->Xsize, RP->Ysize,/* unused: */0,0);
         if (RANDOM()%2) {
             roomify_layout(maze, RP);
         }
         break;
 
     case SQUARE_SPIRAL_LAYOUT:
-        maze = make_square_spiral_layout(RP->Xsize, RP->Ysize);
+        maze = make_square_spiral_layout(RP->Xsize, RP->Ysize,/* unused: */0,0);
         if (RANDOM()%2) {
             roomify_layout(maze, RP);
         }
