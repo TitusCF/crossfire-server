@@ -55,11 +55,13 @@ static void move_duplicator(object *op) {
 
     if (op->above == NULL)
         return;
+    int count = op->nrof;
     for (tmp = op->above; tmp != NULL; tmp = tmp->above) {
         if (strcmp(op->other_arch->name, tmp->arch->name) == 0) {
             if (op->level <= 0) {
                 object_remove(tmp);
                 object_free_drop_inventory(tmp);
+                tmp = op; // Old tmp was removed, so we can't follow that linked list
             } else {
                 uint64_t new_nrof = (uint64_t)tmp->nrof*op->level;
 
@@ -67,7 +69,8 @@ static void move_duplicator(object *op) {
                     new_nrof = 1UL<<31;
                 tmp->nrof = new_nrof;
             }
-            break;
+            if ( count <= 1 ) break;
+            --count;
         }
     }
 }
