@@ -18,6 +18,7 @@
 #include "global.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "ob_methods.h"
 #include "ob_types.h"
@@ -33,8 +34,40 @@
 #define CONV_TO(xyz)    xyz->other_arch
 #define CONV_NR(xyz)    (unsigned char)xyz->stats.sp
 #define CONV_NEED(xyz)  (unsigned long)xyz->stats.food
+#define CONV_FROM_MATCH(xyz,_match) (CONV_FROM(xyz) == (_match) || (strchr(CONV_FROM(xyz),'*')) && wildcard_match(CONV_FROM(xyz),(_match)))
 
 static int convert_item(object *item, object *converter);
+
+/**
+ * Wildcard match where 'string' contains a '*' at the start, end, or both
+ */
+static int wildcard_match(const char *string,const char *candidate)
+{
+   bool head=FALSE,tail=FALSE;
+   char *str;
+   char *m;
+   bool ret;
+
+   if ( string[0]=='*' && string[1]==0 ) return 1; // Trivial match-all case
+   if ( string[0] == '*' ) head=TRUE;
+   if ( string[strlen(string)-1] == '*' ) tail=TRUE;
+   str=strdup(&string[head?1:0]);
+   if ( !str ) return FALSE;
+   if ( tail ) str[strlen(str)-1]=0;
+   /* 'str' is now the text to match without the wildcard */
+   ret=FALSE;
+   if ( head && tail ) {
+      m=strstr(str,candidate);
+      if ( m ) ret=TRUE;
+   } else if ( tail ) {
+      if ( strncmp(str,candidate,strlen(str)) == 0 ) ret=TRUE;
+   } else {
+      if ( strlen(candidate) >= strlen(str) &&
+           strcmp(&candidate[strlen(candidate)-strlen(str)],str) == 0 ) ret=TRUE;
+   }
+   free(str);
+   return ret;
+}
 
 static method_ret converter_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
@@ -81,7 +114,7 @@ static int convert_item(object *item, object *converter) {
         price_in = cost*item->value;
     } else {
         if (item->type == PLAYER
-        || CONV_FROM(converter) != item->arch->name
+        || !CONV_FROM_MATCH(converter,item->arch->name)
         || (CONV_NEED(converter) && CONV_NEED(converter) > item->nrof))
             return 0;
 
