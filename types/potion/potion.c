@@ -110,7 +110,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             if (got_one) {
                 fix_object(applier);
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                              "The Gods smile upon you and remake you a little more in their image."
+                              "The Gods smile upon you and remake you a little more in their image. "
                               "You feel a little more perfect.");
             } else
                 draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
