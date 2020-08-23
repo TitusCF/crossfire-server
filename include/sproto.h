@@ -598,7 +598,7 @@ int process_object(object *op);
 void legacy_remove_force(object *op);
 void legacy_animate_trigger(object *op);
 void legacy_move_hole(object *op);
-int tick_length(float seconds);
+unsigned int tick_length(float seconds);
 long timespec_diff(struct timespec *end, struct timespec *start);
 /* timers.c */
 void cftimer_process_timers(void);

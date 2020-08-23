@@ -375,6 +375,6 @@ const char *time_format_time(const timeofday_t *tod, char *buf, size_t bufsize)
 /**
  * Calculate the number of ticks that correspond to real time.
  */
-int tick_length(float seconds) {
+unsigned int tick_length(float seconds) {
     return (int)ceil(seconds * 1000000 / max_time);
 }
