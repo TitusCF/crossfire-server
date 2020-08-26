@@ -69,7 +69,7 @@ static const char *const coins[] = {
  */
 uint64_t price_base(const object *tmp) {
     // When there are zero objects, there is really one.
-    const int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
+    const int number = NROF(tmp);
     const bool identified =
         QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
     uint64_t val = (uint64_t)tmp->value * number;
@@ -282,7 +282,7 @@ uint64_t shop_price_sell(const object *tmp, object *who) {
     val /= 2;
 
     /* Limit amount of money you can get for really great items. */
-    int number = (tmp->nrof == 0) ? 1 : tmp->nrof;
+    int number = NROF(tmp);
     val = value_limit(val, number, who, 1);
 
     val = (int64_t)val*shop_specialisation_ratio(tmp, who->map)*

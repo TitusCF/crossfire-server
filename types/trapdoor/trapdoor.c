@@ -57,7 +57,7 @@ static method_ret trapdoor_type_move_on(ob_methods *context, object *trap, objec
 
         for (ab = trap->above, tot = 0; ab != NULL; ab = ab->above)
             if ((ab->move_type && trap->move_on) || ab->move_type == 0)
-                tot += (ab->nrof ? ab->nrof : 1)*ab->weight+ab->carrying;
+                tot += NROF(ab)*ab->weight+ab->carrying;
 
         if (!(trap->value = (tot > trap->weight) ? 1 : 0)) {
             common_post_ob_move_on(trap, victim, originator);

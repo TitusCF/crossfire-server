@@ -346,7 +346,7 @@ signed long object_sum_weight(object *op) {
     FOR_INV_PREPARE(op, inv) {
         if (inv->inv)
             object_sum_weight(inv);
-        sum += inv->carrying+inv->weight*(inv->nrof ? inv->nrof : 1);
+        sum += inv->carrying+inv->weight*NROF(inv);
     } FOR_INV_FINISH();
     if (op->type == CONTAINER && op->stats.Str)
         sum = (sum*(100-op->stats.Str))/100;
@@ -2481,9 +2481,9 @@ object *object_split(object *orig_ob, uint32_t nr, char *err, size_t size) {
     if (MAX(1, orig_ob->nrof) < nr) {
         /* If err is set, the caller knows that nr can be wrong (player trying to drop items), thus don't log that. */
         if (err)
-            snprintf(err, size, "There are only %u %ss.", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
+            snprintf(err, size, "There are only %u %ss.", NROF(orig_ob), orig_ob->name);
         else
-            LOG(llevDebug, "There are only %u %ss.\n", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
+            LOG(llevDebug, "There are only %u %ss.\n", NROF(orig_ob), orig_ob->name);
         return NULL;
     }
     newob = object_create_clone(orig_ob);

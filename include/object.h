@@ -330,7 +330,8 @@ typedef struct obj {
     float       weapon_speed;   /**< The overall speed of this object */
     float       weapon_speed_left; /**< How much speed is left to spend this round */
     const New_Face    *face;    /**< Face with colors */
-    uint32_t      nrof;           /**< How many of the objects */
+    uint32_t      nrof;          /**< Number of objects. Consider accessing
+                                      with NROF() macro. */
     int8_t       direction;      /**< Means the object is moving that way. */
     int8_t       facing;         /**< Object is oriented/facing that way. */
 
@@ -599,6 +600,14 @@ static inline bool IS_PLAYER(object *op) {
 static inline bool CAN_PROBE(const object *ob) {
     return QUERY_FLAG(ob, FLAG_ALIVE) &&
         (ob->type == PLAYER || QUERY_FLAG(ob, FLAG_MONSTER));
+}
+
+/**
+ * Returns ob->nrof, unless it is 0, in which case return 1. Most of the code
+ * assumes that nrof=0 is the same as nrof=1.
+ */
+static inline uint32_t NROF(const object * const ob) {
+    return ob->nrof ? ob->nrof : 1;
 }
 
 #endif /* OBJECT_H */

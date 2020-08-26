@@ -329,7 +329,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     char buf[HUGE_BUF], name[MAX_BUF];
     object *env = tmp->env;
     uint32_t weight, effective_weight_limit;
-    int tmp_nrof = tmp->nrof ? tmp->nrof : 1;
+    const int tmp_nrof = NROF(tmp);
     tag_t tag;
     mapstruct* map = tmp->map;
     int16_t x = tmp->x, y = tmp->y;

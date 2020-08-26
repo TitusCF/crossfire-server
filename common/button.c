@@ -194,7 +194,7 @@ void update_button(object *op) {
                  * that are only triggered by flying objects.
                  */
                 if ((ab->move_type&tmp->move_on) || ab->move_type == 0)
-                    tot += ab->weight*(ab->nrof ? ab->nrof : 1)+ab->carrying;
+                    tot += ab->weight*NROF(ab)+ab->carrying;
             FOR_ABOVE_FINISH();
 
             tmp->value = (tot >= tmp->weight) ? 1 : 0;
@@ -376,7 +376,7 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
         return 1;
     }
 
-    if (!money && NROF_SACRIFICE(altar) <= (sacrifice->nrof ? sacrifice->nrof : 1)) {
+    if (!money && NROF_SACRIFICE(altar) <= NROF(sacrifice)) {
         if (toremove)
             *toremove = NROF_SACRIFICE(altar);
         return 1;
@@ -385,7 +385,7 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
     if (money) {
         wanted = NROF_SACRIFICE(altar)-sacrifice->nrof*sacrifice->value;
     } else {
-        wanted = NROF_SACRIFICE(altar)-(sacrifice->nrof ? sacrifice->nrof : 1);
+        wanted = NROF_SACRIFICE(altar)-NROF(sacrifice);
     }
     rest = wanted;
 
@@ -400,7 +400,7 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
         if (money)
             wanted -= tmp->nrof*tmp->value;
         else
-            wanted -= (tmp->nrof ? tmp->nrof : 1);
+            wanted -= NROF(tmp);
     } FOR_ABOVE_FINISH();
 
     if (wanted > 0)
@@ -411,7 +411,7 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
 
     /* Last dropped object will be totally eaten in any case. */
     if (toremove)
-        *toremove = sacrifice->nrof ? sacrifice->nrof : 1;
+        *toremove = NROF(sacrifice);
 
     if (!remove_others)
         return 1;
@@ -435,8 +435,8 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
                 return 1;
             }
         } else
-            if (rest > (tmp->nrof ? tmp->nrof : 1)) {
-                rest -= (tmp->nrof ? tmp->nrof : 1);
+            if (rest > NROF(tmp)) {
+                rest -= NROF(tmp);
                 object_remove(tmp);
             } else {
                 object_decrease_nrof(tmp, rest);
@@ -537,7 +537,7 @@ int check_trigger(object *op, object *cause) {
                      * that are only triggered by flying objects.
                      */
                     if ((tmp->move_type&op->move_on) || tmp->move_type == 0) {
-                        tot += tmp->weight*(tmp->nrof ? tmp->nrof : 1)+tmp->carrying;
+                        tot += tmp->weight*NROF(tmp)+tmp->carrying;
                     }
                 FOR_ABOVE_FINISH();
                 if (tot >= op->weight)

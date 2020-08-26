@@ -275,9 +275,9 @@ static int content_recipe_value(object *op) {
         safe_strncpy(name, tmp->name, sizeof(name));
         if (tmp->title)
             snprintf(name, sizeof(name), "%s %s", tmp->name, tmp->title);
-        tval = (strtoint(name)*(tmp->nrof ? tmp->nrof : 1));
+        tval = (strtoint(name)*NROF(tmp));
 #ifdef ALCHEMY_DEBUG
-        LOG(llevDebug, "Got ingredient %d %s(%d)\n", tmp->nrof ? tmp->nrof : 1, name, tval);
+        LOG(llevDebug, "Got ingredient %d %s(%d)\n", NROF(tmp), name, tval);
 #endif
         formula += tval;
     } FOR_INV_FINISH();
@@ -438,7 +438,7 @@ static object *make_item_from_recipe(object *cauldron, const recipe *rp) {
 
     /* If item is already in container, we need to remove its weight, since it can change later on. */
     if (item->env != NULL)
-        object_sub_weight(cauldron, item->weight*(item->nrof != 0 ? item->nrof : 1));
+        object_sub_weight(cauldron, item->weight*NROF(item));
 
     /* Find the appropriate artifact template...*/
     if (strcmp(rp->title, "NONE")) {
@@ -455,7 +455,7 @@ static object *make_item_from_recipe(object *cauldron, const recipe *rp) {
         }
     }
     if (item->env != NULL)
-        object_add_weight(cauldron, item->weight*(item->nrof != 0 ? item->nrof : 1));
+        object_add_weight(cauldron, item->weight*NROF(item));
 
     if (QUERY_FLAG(cauldron, FLAG_CURSED))
         SET_FLAG(item, FLAG_CURSED);
