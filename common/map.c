@@ -736,7 +736,9 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
  */
 static int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
     int i, j = 0, unique = 0, res = 0;
+    unsigned int count = 0;
 
+    PROFILE_BEGIN();
     /* first pass - save one-part objects */
     for (i = 0; i < MAP_WIDTH(m); i++)
         for (j = 0; j < MAP_HEIGHT(m); j++) {
@@ -753,18 +755,22 @@ static int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
                 if (op->head || object_get_owner(op) != NULL)
                     continue;
 
-                if (unique || QUERY_FLAG(op, FLAG_UNIQUE))
+                if (unique || QUERY_FLAG(op, FLAG_UNIQUE)) {
                     res = save_object(fp2, op, SAVE_FLAG_SAVE_UNPAID|SAVE_FLAG_NO_REMOVE);
-                else
-                    if (flag == 0
-                    || (flag == SAVE_FLAG_NO_REMOVE && (!QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) && !QUERY_FLAG(op, FLAG_UNPAID))))
+                    count++ ;
+                } else if (flag == 0
+                    || (flag == SAVE_FLAG_NO_REMOVE && (!QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) && !QUERY_FLAG(op, FLAG_UNPAID)))) {
                         res = save_object(fp, op, SAVE_FLAG_SAVE_UNPAID|SAVE_FLAG_NO_REMOVE);
+                        count++;
+                }
 
                 if (res != 0)
                     return res;
             } FOR_MAP_FINISH(); /* for this space */
         } /* for this j */
 
+    PROFILE_END(diff,
+            LOG(llevDebug, "save_objects on %s took %ld us (%u objects = %f us each)\n", m->path, diff, count, (double)diff/count));
     return 0;
 }
 
