@@ -687,9 +687,9 @@ void update_players() {
                 // TODO: Handle a lost client connection.
                 LOG(llevDebug, "Lost client connection!\n");
             }
-        }
 
-        if (pl->socket.tick)
-            send_tick(pl);
+            if (pl->socket.tick)
+                send_tick(pl);
+        }
     }
 }
