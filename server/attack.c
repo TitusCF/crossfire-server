@@ -646,7 +646,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         && (hitter->subtype == SP_EXPLOSION || hitter->subtype == SP_BULLET || hitter->subtype == SP_CONE)) {
             i = 4;
             map = hitter->map;
-            if (out_of_map(map, hitter->x, hitter->y))
+            if (OUT_OF_REAL_MAP(map, hitter->x, hitter->y))
                 return;
             FOR_MAP_PREPARE(map, hitter->x, hitter->y, next)
                 if (next->type == SPELL_EFFECT

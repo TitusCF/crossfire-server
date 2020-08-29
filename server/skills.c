@@ -394,7 +394,7 @@ int pick_lock(object *pl, int dir, object *skill) {
         dir = pl->facing;
 
     /* For all the stacked objects at this point find a door*/
-    if (out_of_map(pl->map, x, y)) {
+    if (OUT_OF_REAL_MAP(pl->map, x, y)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "There is no lock there.");
         return 0;
