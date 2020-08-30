@@ -65,11 +65,13 @@ static const char *const coins[] = {
 };
 
 sqlite3_stmt *stmt_record_sale;
+sqlite3_stmt *stmt_query_supplydemand;
 
 void shop_transactions_init() {
     sqlite3_exec(server_db, "CREATE TABLE IF NOT EXISTS shop_transactions (map TEXT, region TEXT, time INT, name TEXT, arch TEXT, quantity INT, price INT);", NULL, NULL, NULL);
     sqlite3_exec(server_db, "INSERT OR REPLACE INTO schema VALUES ('shop_transactions', 1);", NULL, NULL, NULL);
     sqlite3_prepare_v2(server_db, "INSERT INTO shop_transactions VALUES (?, ?, ?, ?, ?, ?, ?)", -1, &stmt_record_sale, NULL);
+    sqlite3_prepare_v2(server_db, "SELECT SUM(ABS(quantity)), SUM(quantity) FROM shop_transactions WHERE arch=? AND map=?;", -1, &stmt_query_supplydemand, NULL);
 }
 
 /**
@@ -78,6 +80,10 @@ void shop_transactions_init() {
  * always be positive.
  */
 static void record_transaction(const char* path, const char* region, const char* name, const char* arch, const int quantity, const int total_price) {
+    assert(path != NULL);
+    assert(region != NULL);
+    assert(name != NULL);
+    assert(arch != NULL);
     sqlite3_bind_text(stmt_record_sale, 1, path, -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt_record_sale, 2, region, -1, SQLITE_STATIC);
     sqlite3_bind_int(stmt_record_sale, 3, time(NULL));
@@ -87,9 +93,56 @@ static void record_transaction(const char* path, const char* region, const char*
     sqlite3_bind_int(stmt_record_sale, 7, total_price);
     int ret = sqlite3_step(stmt_record_sale);
     if (ret != SQLITE_DONE) {
-        LOG(llevError, "record_transaction: could not record sale: %s\n");
+        LOG(llevError, "record_transaction: could not record sale: %s\n", sqlite3_errmsg(server_db));
     }
     sqlite3_reset(stmt_record_sale);
+}
+
+/**
+ * Based on recent shop supply/demand, compute a supply demand factor for a
+ * given 'ob' on a shop located at 'path' in the given 'region'. Returns
+ * 'supply/demand factor', a float between 0 and 10. A factor of one indicates
+ * that supply equals demand, while factors less than one indicate that supply
+ * exceeds demand. Shops can adjust prices simply by multiplying by 'factor'.
+ */
+static float shop_supplydemand_factor(const char* path, const char* region, const object *ob) {
+    assert(path != NULL);
+    assert(region != NULL);
+    assert(ob->arch != NULL);
+    assert(ob->arch->name != NULL);
+    sqlite3_bind_text(stmt_query_supplydemand, 1, ob->arch->name, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt_query_supplydemand, 2, path, -1, SQLITE_STATIC);
+    int ret = sqlite3_step(stmt_query_supplydemand);
+    if (ret != SQLITE_ROW) {
+        LOG(llevError, "shop_supplydemand_factor: could not query: %s\n", sqlite3_errmsg(server_db));
+        return 1.0;
+    }
+    int volume = sqlite3_column_int(stmt_query_supplydemand, 0);
+    int quantity = sqlite3_column_int(stmt_query_supplydemand, 1);
+    sqlite3_reset(stmt_query_supplydemand);
+    if (volume < 1) {
+        // Not enough information to make a decision.
+        return 1.0;
+    }
+
+    float qty_norm = fabsf((float)quantity/volume);
+    if (qty_norm > 1) {
+        // This should never happen, because quantity can never exceed volume.
+        return 1.0;
+    }
+
+    float net_qty = quantity*qty_norm;
+    int shop_size = 100; // TODO: Number of shop squares
+    float max_net_qty = (float)shop_size/10; // Maximum net quantity to stock
+    float factor = (max_net_qty + net_qty) / max_net_qty;
+    if (factor > 10) {
+        factor = 10;
+    } else if (factor < 0) {
+        factor = 0;
+    }
+
+    LOG(llevDebug, "shop_supplydemand_factor: %s: %d of %d net %.1f max %.1f = factor %.2f\n", ob->arch->name, quantity, volume, net_qty, max_net_qty, factor);
+    return factor;
 }
 
 /**
@@ -264,6 +317,7 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
     val *= multiplier > 0.5 ? multiplier : 0.5; // cap at 0.5
 
     val *= buy_ratio(tmp, who);
+    val *= shop_supplydemand_factor(who->map->path, who->map->region->name, tmp);
     return val;
 }
 
@@ -285,6 +339,7 @@ uint64_t shop_price_sell(const object *tmp, object *who) {
     val = value_limit(val, number, who, 1);
 
     val /= buy_ratio(tmp, who);
+    val *= shop_supplydemand_factor(who->map->path, who->map->region->name, tmp);
     return val;
 }
 
