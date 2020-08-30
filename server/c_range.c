@@ -92,11 +92,11 @@ static void show_matching_spells(object *op, const char *params) {
         && (*params == '\0' || !strncmp(params, spell->name, strlen(params)))) {
             if (spell->path_attuned&op->path_denied) {
                 snprintf(spell_sort[num_found++], sizeof(spell_sort[0]),
-                         "%s:%-22s %3s %3s", spell->skill ? spell->skill : "generic",
+                         "%s:%-30s %3s %3s", spell->skill ? spell->skill : "generic",
                          spell->name, "den", "den");
             } else {
                 snprintf(spell_sort[num_found++], sizeof(spell_sort[0]),
-                         "%s:%-22s %3d %3d", spell->skill ? spell->skill : "generic",
+                         "%s:%-30s %3d %3d", spell->skill ? spell->skill : "generic",
                          spell->name, spell->level,
                          SP_level_spellpoint_cost(op, spell, SPELL_HIGHEST));
             }
@@ -136,7 +136,7 @@ static void show_matching_spells(object *op, const char *params) {
 
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                  "\n[fixed]%s spells %.*s <lvl> <sp>",
-                                 tmp, (int)(12-strlen(tmp)), "              ");
+                                 tmp, (int)(20-strlen(tmp)), "              ");
         }
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "[fixed]%s",
