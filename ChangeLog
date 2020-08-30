@@ -1,4 +1,8 @@
 2020-08-30  Preston Crow
+    * server/skill_util.c: 'skills' command output is fixed-width format
+      with a '-l' option for long display with full perm exp information.
+
+2020-08-30  Preston Crow
     * types/teleporter/teleporter.c: Use subtype or other_arch to restrict
       teleporters to specific object types.
 

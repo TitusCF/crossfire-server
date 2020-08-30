@@ -149,6 +149,7 @@ extern void set_dragon_name(object *pl, const object *abil, const object *skin);
 extern object *give_skill_by_name(object *op, const char *skill_name);
 extern void player_lvl_adj(object *who, object *op);
 extern int64_t level_exp(int level, double expmul);
+extern int exp_level(int64_t exp);
 extern void calc_perm_exp(object *op);
 extern int64_t check_exp_loss(const object *op, int64_t exp);
 extern int64_t check_exp_adjust(const object *op, int64_t exp);

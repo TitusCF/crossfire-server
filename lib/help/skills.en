@@ -7,3 +7,10 @@ The skill level.
 The current experience.
 The experience needed to level up.
 The permanent experience ratio relative to current experience. You'll never fall below permanent experience even if you die over and over.
+
+You can optionally add a parameter of '-l' for a longer display with more details on permanent experience.
+
+You can optionally add a search string to only show skills that include the match text.
+
+Example:
+  skills -l traps

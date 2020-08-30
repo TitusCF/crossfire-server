@@ -1872,6 +1872,19 @@ int64_t level_exp(int level, double expmul) {
 }
 
 /**
+ * Returns the level for a given exp.
+ *
+ * @param exp
+ * experince points to look up in the level table
+ */
+int exp_level(int64_t exp) {
+    int level = 1;
+    while ( level < settings.max_level && levels[level+1] <= exp )
+        ++level;
+    return level;
+}
+
+/**
  * Ensure that the permanent experience requirements in an exp object are met.
  * This really just checks 'op to make sure the perm_exp value is within
  * proper range.  Note that the checking of what is passed through

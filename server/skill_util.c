@@ -40,6 +40,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "living.h"
 #include "object.h"
@@ -805,6 +806,20 @@ static int clipped_percent(int64_t a, int64_t b) {
     return rv;
 }
 
+
+/**
+ * Gives the number of digits that %ld will print for a long int
+ *
+ * @param num
+ * any integer (negative values not supported)
+ * @return
+ * number of characters to expect
+ */
+static int digits_in_long(int64_t num)
+{
+    return num == 0 ? 1 : floor( log10( labs(num) ) ) + 1;
+}
+
 /**
  * Displays a player's skill list, and some other non skill related info (god,
  * max weapon improvements, item power).
@@ -818,35 +833,50 @@ static int clipped_percent(int64_t a, int64_t b) {
  *
  * @param op
  * player wanting to examine skills.
- * @param search
- * optional string to restrict skills to show.
+ * @param parms
+ * optional parameters, usually a string to restrict skills to show.
  */
-void show_skills(object *op, const char *search) {
+void show_skills(object *op, const char *parms) {
     const char *cp;
     int i, num_skills_found = 0;
-    static const char *const periods = "........................................";
     /* Need to have a pointer and use strdup for qsort to work properly */
     char skills[MAX_SKILLS][MAX_BUF];
+    const char *search = parms;
+    bool long_format = false;
 
+    if ( parms && strncmp(parms,"-l",2) == 0 ) {
+       long_format = true;
+       search += 2;
+       while ( *search && *search != ' ' ) ++search; /* move past other parameters */
+       while ( *search == ' ' ) ++search;
+    }
     FOR_INV_PREPARE(op, tmp) {
         if (tmp->type == SKILL) {
-            char buf[MAX_BUF];
-
             if (search && strstr(tmp->name, search) == NULL)
                 continue;
-            /* Basically want to fill this out to 40 spaces with periods */
-            snprintf(buf, sizeof(buf), "%s%s", tmp->name, periods);
-            buf[40] = 0;
 
             if (settings.permanent_exp_ratio) {
-                snprintf(skills[num_skills_found++], MAX_BUF, "%slvl:%3d (xp:%"FMT64"/%"FMT64"/%d%%)",
-                         buf, tmp->level,
-                         tmp->stats.exp,
-                         level_exp(tmp->level+1, op->expmul),
-                         clipped_percent(PERM_EXP(tmp->total_exp), tmp->stats.exp));
+                if ( long_format ) {
+                    int perm_level = exp_level(tmp->total_exp * settings.permanent_exp_ratio / 100);
+                    snprintf(skills[num_skills_found++], MAX_BUF, "[fixed]%-20slvl:%3d (xp:%"FMT64"/%"FMT64")%-*sperm lvl:%3d (xp:%"FMT64"/%"FMT64") ",
+                             tmp->name, tmp->level,
+                             tmp->stats.exp,
+                             level_exp(tmp->level+1, op->expmul),
+                             1+2*digits_in_long(op->stats.exp)-digits_in_long(tmp->stats.exp)-digits_in_long(level_exp(tmp->level+1, op->expmul)),
+                             "",
+                             perm_level,
+                             tmp->total_exp * settings.permanent_exp_ratio / 100,
+                             level_exp(perm_level+1, op->expmul));
+                } else {
+                    snprintf(skills[num_skills_found++], MAX_BUF, "[fixed]%-20slvl:%3d (xp:%"FMT64"/%"FMT64"/%d%%)",
+                             tmp->name, tmp->level,
+                             tmp->stats.exp,
+                             level_exp(tmp->level+1, op->expmul),
+                             clipped_percent(PERM_EXP(tmp->total_exp), tmp->stats.exp));
+                }
             } else {
-                snprintf(skills[num_skills_found++], MAX_BUF, "%slvl:%3d (xp:%"FMT64"/%"FMT64")",
-                         buf, tmp->level,
+                snprintf(skills[num_skills_found++], MAX_BUF, "[fixed]%-20slvl:%3d (xp:%"FMT64"/%"FMT64")",
+                         tmp->name, tmp->level,
                          tmp->stats.exp,
                          level_exp(tmp->level+1, op->expmul));
             }
@@ -858,15 +888,20 @@ void show_skills(object *op, const char *search) {
              */
             if (num_skills_found >= MAX_SKILLS) {
                 draw_ext_info(NDI_RED, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-                              "Your character has too many skills. "
+                              "Your character has too many skills.\n"
                               "Something isn't right - contact the server admin");
                 break;
             }
         }
     } FOR_INV_FINISH();
 
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
-                  "Player skills:");
+    if ( search && *search ) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
+                             "Player skills%s: (matching '%s')", long_format ? " (long format)":"",search);
+    } else {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
+                             "Player skills%s:", long_format ? " (long format)":"");
+    }
 
     if (num_skills_found > 1)
         qsort(skills, num_skills_found, MAX_BUF, (int (*)(const void *, const void *))strcmp);
@@ -876,19 +911,16 @@ void show_skills(object *op, const char *search) {
                       skills[i]);
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
-                         "You can handle %d weapon improvements.",
-                         op->level/5+5);
-
     cp = determine_god(op);
     if (strcmp(cp, "none") == 0)
         cp = NULL;
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
-                         "You worship %s.",
-                         cp ? cp : "no god at current time");
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
+                         "You can handle %d weapon improvements.\n"
+                         "You worship %s.\n"
                          "Your equipped item power is %d out of %d\n",
+                         op->level/5+5,
+                         cp ? cp : "no god at current time",
                          op->contr->item_power, op->level);
 }
 
