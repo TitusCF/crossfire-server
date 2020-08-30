@@ -3755,6 +3755,8 @@ static void kill_player_not_permadeath(object *op) {
 
     /* Save the player before inserting the force to reduce chance of abuse. */
     op->contr->braced = 0;
+    op->contr->mode = 0; /* don't pick up in apartment */
+    if ( op->contr->search_str[0] ) command_search_items(op,NULL); /* turn off search-items */
     save_player(op, 1);
 
     /* it is possible that the player has blown something up
