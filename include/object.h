@@ -366,8 +366,9 @@ typedef struct obj {
     int32_t      weight;         /**< Attributes of the object */
     int32_t      weight_limit;   /**< Weight-limit of object */
     int32_t      carrying;       /**< How much weight this object contains */
-    living      stats;          /**< Str, Con, Dex, etc */
-    int64_t      perm_exp;       /**< Permanent exp */
+    living       stats;          /**< Str, Con, Dex, etc */
+  //int64_t      perm_exp;       /**< Permanent exp */
+    int64_t      total_exp;      /**< All exp ever earned (used to calc perm_exp) */
     struct obj  *current_weapon; /**< Pointer to the weapon currently used */
     uint32_t      weapontype;     /**< Type of weapon */
     int8_t       body_info[NUM_BODY_LOCATIONS];  /**< Body info as loaded from the file */

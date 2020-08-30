@@ -37,9 +37,10 @@ static size_t get_index(int stat, size_t max_index);
 /**
  * Handy little macro that adds exp and keeps it within bounds.  Since
  * we are now using 64 bit values, I'm not all concerned about overflow issues
- * with exptotal wrapping.  exptotal is typically op->exp, or op->perm_exp
+ * with exptotal wrapping.  exptotal is typically op->exp, or op->total_exp
  */
-#define ADD_EXP(exptotal, exp) { exptotal += exp; if (exptotal > MAX_EXPERIENCE) exptotal = MAX_EXPERIENCE; }
+#define ADD_EXP(exptotal, exp) do { exptotal += exp; if (exptotal > MAX_EXPERIENCE) exptotal = MAX_EXPERIENCE; } while (0)
+#define ADD_TOTALEXP(exptotal, exp) do { exptotal += exp; if (exptotal > MAX_TOTAL_EXPERIENCE) exptotal = MAX_TOTAL_EXPERIENCE; } while(0)
 
 /**
  * The definitions below are indexes into the bonuses[] array.
@@ -1881,21 +1882,14 @@ int64_t level_exp(int level, double expmul) {
  * object to check.
  */
 void calc_perm_exp(object *op) {
-    int64_t p_exp_min;
-
-    /* Ensure that our permanent experience minimum is met.
-     * permenent_exp_ratio is an integer percentage, we divide by 100
-     * to get the fraction   */
-    p_exp_min = settings.permanent_exp_ratio*op->stats.exp/100;
-
-    if (op->perm_exp < p_exp_min)
-        op->perm_exp = p_exp_min;
+    if (op->total_exp < op->stats.exp)
+        op->total_exp = op->stats.exp;
 
     /* Cap permanent experience. */
-    if (op->perm_exp < 0)
-        op->perm_exp = 0;
-    else if (op->perm_exp > MAX_EXPERIENCE)
-        op->perm_exp = MAX_EXPERIENCE;
+    if (op->total_exp < 0)
+        op->total_exp = 0;
+    else if (op->total_exp > MAX_EXPERIENCE * 100 / settings.permanent_exp_ratio)
+        op->total_exp = MAX_EXPERIENCE * 100 / settings.permanent_exp_ratio;
 }
 
 /**
@@ -1947,6 +1941,7 @@ object* find_applied_skill_by_name(const object* op, const char* name) {
 static void add_player_exp(object *op, int64_t exp, const char *skill_name, int flag) {
     object *skill_obj = NULL;
     int64_t limit, exp_to_add;
+    int64_t added_skill_exp, added_skill_total_exp;
 
     /* prevents some forms of abuse. */
     if (op->contr->braced)
@@ -1995,13 +1990,6 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
     if (exp_to_add > limit)
         exp_to_add = limit;
 
-    ADD_EXP(op->stats.exp, (float)exp_to_add*(skill_obj ? skill_obj->expmul : 1));
-    if (settings.permanent_exp_ratio) {
-        ADD_EXP(op->perm_exp, (float)exp_to_add*PERM_EXP_GAIN_RATIO*(skill_obj ? skill_obj->expmul : 1));
-        calc_perm_exp(op);
-    }
-
-    player_lvl_adj(op, NULL);
     if (skill_obj) {
         exp_to_add = exp;
         /*
@@ -2017,13 +2005,28 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
             
         if (exp_to_add > limit)
             exp_to_add = limit;
+        added_skill_exp = skill_obj->stats.exp;
         ADD_EXP(skill_obj->stats.exp, exp_to_add);
+        added_skill_exp = skill_obj->stats.exp - added_skill_exp;
         if (settings.permanent_exp_ratio) {
-            skill_obj->perm_exp += exp_to_add*PERM_EXP_GAIN_RATIO;
+            added_skill_total_exp = skill_obj->total_exp;
+            ADD_TOTALEXP(skill_obj->total_exp, exp_to_add);
+            added_skill_total_exp = skill_obj->total_exp - added_skill_total_exp;
             calc_perm_exp(skill_obj);
         }
         player_lvl_adj(op, skill_obj);
     }
+    else {
+        added_skill_exp = added_skill_total_exp = exp_to_add;
+    }
+
+    ADD_EXP(op->stats.exp, (float)added_skill_exp*(skill_obj ? skill_obj->expmul : 1));
+    if (settings.permanent_exp_ratio) {
+        ADD_TOTALEXP(op->total_exp, (float)added_skill_total_exp*(skill_obj ? skill_obj->expmul : 1));
+        calc_perm_exp(op);
+    }
+
+    player_lvl_adj(op, NULL);
 }
 
 /**
@@ -2035,7 +2038,7 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
  * amount that should get subtract from the player.
  *
  * @param op
- * object to which to substract.
+ * object from which to subtract.
  * @param exp
  * experience to lose.
  * @return
@@ -2047,7 +2050,7 @@ int64_t check_exp_loss(const object *op, int64_t exp) {
     if (exp > op->stats.exp)
         exp = op->stats.exp;
     if (settings.permanent_exp_ratio) {
-        del_exp = (op->stats.exp-op->perm_exp)*PERM_EXP_MAX_LOSS_RATIO;
+        del_exp = (op->stats.exp-PERM_EXP(op->total_exp))*PERM_EXP_MAX_LOSS_RATIO;
         if (del_exp < 0)
             del_exp = 0;
         if (exp > del_exp)
@@ -2179,21 +2182,15 @@ void change_exp(object *op, int64_t exp, const char *skill_name, int flag) {
         op->stats.exp += exp;
     } else if (op->type == WEAPON) { /* Weapons -- this allows us to make magic weapons that get stronger the more they are used. */
         // Handle adding exp -- Don't use level because other stuff already uses that.
+        ADD_TOTALEXP(op->total_exp,exp);
         if (exp > 0) {
-            int amt = settings.permanent_exp_ratio*exp/100;
-            if (op->perm_exp > (MAX_EXPERIENCE-amt)) {
-                amt = MAX_EXPERIENCE-op->perm_exp;
-            }
-            op->perm_exp += amt;
             // Check for a level-up
-            while (level_exp(op->item_power+1, 1) < op->perm_exp) {
+            while (level_exp(op->item_power+1, 1) < PERM_EXP(op->total_exp)) {
                 ++(op->item_power);
             }
         } else { /* Removing exp allows for the weapon's power to be reset if needed. */
-            // Since exp is negative, we add it to the total to subtract exp.
-            op->perm_exp += exp;
             // Recalculate level
-            while (level_exp(op->item_power, 1) > op->perm_exp) {
+            while (level_exp(op->item_power, 1) > PERM_EXP(op->total_exp)) {
                 --(op->item_power);
             }
         }

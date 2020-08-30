@@ -853,7 +853,8 @@ A       .+
 ^grace{S}           op->stats.grace = IVAL;
 ^maxgrace{S}        op->stats.maxgrace = IVAL;
 ^exp{S}             op->stats.exp = atoll(yval());
-^perm_exp{S}        op->perm_exp = atoll(yval());
+^total_exp{S}       op->total_exp = atoll(yval());
+^perm_exp{S}        op->total_exp = (atoll(yval()) * 100 / settings.permanent_exp_ratio);
 ^food{S}            op->stats.food = IVAL;
 ^dam{S}             op->stats.dam = IVAL;
 ^wc{S}              op->stats.wc = IVAL;

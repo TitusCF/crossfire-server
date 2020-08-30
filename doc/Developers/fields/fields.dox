@@ -154,7 +154,7 @@ This page lists all attributes.
 - @ref FLAG_AUTO_APPLY
 - @ref obj::expmul
 - @ref page_custom_attribute_wc_increase_rate "wc_increase_rate"
-- @ref obj::perm_exp
+- @ref obj::total_exp
 - @ref obj::skill
 - @ref obj::casting_time
 - @ref page_custom_attribute_casting_requirements "casting_requirements"

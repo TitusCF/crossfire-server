@@ -1,3 +1,13 @@
+2020-08-30  Preston Crow
+    * common/living.c,
+      common/loader.l,
+      common/object.c,
+      include/global.h,
+      include/object.h,
+      server/plugins.c,
+      server/skill_util.c: Change from tracking perm_exp to total_exp, so any
+	rounding is done when it is used, not as it is accumulated.
+
 2020-08-15  Daniel Hawkins
     * socket/sounds.c: Adjust sound volume based on proximity to player.
         This makes things like the bullet squares in random maps more bearable.

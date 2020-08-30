@@ -2050,7 +2050,7 @@ static void cfapi_object_get_property(int *type, ...) {
 
     case CFAPI_OBJECT_PROP_PERM_EXP:
         rint64 = va_arg(args, int64_t *);
-        *rint64 = op->perm_exp;
+        *rint64 = PERM_EXP(op->total_exp);
         *type = CFAPI_SINT64;
         break;
 
@@ -2856,7 +2856,7 @@ static void cfapi_object_set_property(int *type, ...) {
         case CFAPI_OBJECT_PROP_PERM_EXP:
             s64arg = va_arg(args, int64_t);
             *type = CFAPI_SINT64;
-            op->perm_exp = s64arg;
+            op->total_exp = s64arg * 100 / settings.permanent_exp_ratio;
             break;
 
         case CFAPI_OBJECT_PROP_ENEMY:

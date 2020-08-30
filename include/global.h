@@ -230,6 +230,12 @@ extern socket_struct *init_sockets;
 #endif
 
 /**
+ * Convert saved total experience into permanent experience
+ */
+#define PERM_EXP(exptotal) (exptotal * settings.permanent_exp_ratio / 100 )
+#define MAX_TOTAL_EXPERIENCE (settings.permanent_exp_ratio ? (MAX_EXPERIENCE * 100 / settings.permanent_exp_ratio) : 0)
+
+/**
  * Server settings.
  */
 typedef struct Settings {

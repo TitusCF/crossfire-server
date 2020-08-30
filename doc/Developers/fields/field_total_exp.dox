@@ -1,0 +1,17 @@
+/**
+@fn obj::total_exp
+@section Use
+<table>
+	<tr>
+		<th>Type(s)</th>
+		<th>Description</th>
+	</tr>	<tr>
+		<td>
+@ref page_type_43
+		</td><td>            &lt;Total experience&gt; is all the experience the player gained,
+            disregarding &lt;experience&gt; lost from death or draining.  Permanent experience is
+            computed from this using the server's permanent experience ratio.  A character's
+            &lt;experience&gt; will not fall below &lt;permanent experience&gt;.</td>
+	</tr>
+
+*/

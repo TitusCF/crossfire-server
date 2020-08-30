@@ -843,7 +843,7 @@ void show_skills(object *op, const char *search) {
                          buf, tmp->level,
                          tmp->stats.exp,
                          level_exp(tmp->level+1, op->expmul),
-                         clipped_percent(tmp->perm_exp, tmp->stats.exp));
+                         clipped_percent(PERM_EXP(tmp->total_exp), tmp->stats.exp));
             } else {
                 snprintf(skills[num_skills_found++], MAX_BUF, "%slvl:%3d (xp:%"FMT64"/%"FMT64")",
                          buf, tmp->level,

@@ -4978,9 +4978,9 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
         ADD_STRINGLINE_ENTRY(sb, "exp ", buf2);
     }
 
-    if (op->perm_exp != op2->perm_exp) {
-        snprintf(buf2, sizeof(buf2), "%"FMT64, op->perm_exp);
-        ADD_STRINGLINE_ENTRY(sb, "perm_exp ", buf2);
+    if (op->total_exp != op2->total_exp) {
+        snprintf(buf2, sizeof(buf2), "%"FMT64, op->total_exp);
+        ADD_STRINGLINE_ENTRY(sb, "total_exp ", buf2);
     }
 
     if (op->expmul != op2->expmul)
