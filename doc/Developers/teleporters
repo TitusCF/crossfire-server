@@ -19,7 +19,8 @@ has a speed of 0.05, it would teleport something once very 20 ticks.
 will teleport the player to the new map.
 
    2. Destination coordinates, but no maps supplied.  In this case, it will
-teleport the object to the same map, new coordinates.
+teleport the object to the same map, new coordinates.  (New coordinates must not
+be 0,0.)
 
    3. No coordinates or map supplied.
 
@@ -57,3 +58,17 @@ someplace.
 have an exit path set.  This means that it must be moving the objects
 between the same map.  Even if the exit path is set to this same map, the
 teleporter will not work properly for transporting objects.
+
+   You can restrict what a teleporter will act on by setting the 'subtype' field.
+It is a bitmask field indicating what to ignore.  Normally the teleporter will act
+on the first non-floor object above it, but use the following values to ignore other
+object types:
+   1  -- ignore non-player objects
+   2  -- ignore player objects
+   4  -- ignore non-mosters
+   8  -- ignore monsters
+   16 -- ignore no_pick objects
+
+   You can also restrict a teleporter to a specific arch type by specifying the
+'other_arch' field.  If this is set, the teleporter will only act on the matching
+arch type regardless of what else is above it.

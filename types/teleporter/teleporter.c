@@ -30,6 +30,7 @@
 #include <ob_types.h>
 #include <sounds.h>
 #include <sproto.h>
+#include <string.h>
 
 static method_ret teleporter_type_process(ob_methods *context, object *op);
 static method_ret teleporter_type_trigger(ob_methods *context, object *op, object *cause, int state);
@@ -62,13 +63,33 @@ static void move_teleporter(object *op) {
         move_teleporter(op->more);
 
     head = HEAD(op);
-    for (tmp = op->above; tmp != NULL; tmp = tmp->above)
-        if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))
-            break;
+    for (tmp = op->above; tmp != NULL; tmp = tmp->above) {
+        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)) continue; /* Ignore floors */
+        if (op->other_arch && strcmp(op->other_arch->name,tmp->name) != 0 ) continue; /* Ignore if other_arch doesn't match */
+        if (QUERY_FLAG(tmp, FLAG_WIZPASS)) continue; /* Don't teleport the DM */
+        /*
+         * Use the subtype as a bitmask to specify types of objects to *ignore*:
+         *  1 -- non-player
+         *  2 -- players
+         *  4 -- non-monster
+         *  8 -- monsters
+         *  16 -- no-pick objects
+         *  ... -- add more as needed
+         *
+         * For most purposes, restricting players/non-players is the big win here.
+         * For objects, use the other_arch field to restrict it to the particular object.
+         */
+        if ( (op->subtype & 1) && tmp->type != PLAYER ) continue; /* If flagged for player only */
+        if ( (op->subtype & 2) && tmp->type == PLAYER ) continue; /* If flagged for non-player only */
+        if ( (op->subtype & 4) && !QUERY_FLAG(tmp, FLAG_MONSTER) ) continue; /* If flagged for monster only */
+        if ( (op->subtype & 8) && QUERY_FLAG(tmp, FLAG_MONSTER) ) continue; /* If flagged for non-monster only */
+        if ( (op->subtype & 16) && QUERY_FLAG(tmp, FLAG_NO_PICK) ) continue; /* If flagged skip non-pickupable objects */
+        /* ... */
+        break;
+    }
 
     /* If nothing above us to move, nothing to do */
-    if (!tmp || QUERY_FLAG(tmp, FLAG_WIZPASS))
-        return;
+    if (!tmp) return;
 
     if (EXIT_PATH(head)) {
         if (tmp->type == PLAYER) {

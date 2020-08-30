@@ -1,4 +1,8 @@
 2020-08-30  Preston Crow
+    * types/teleporter/teleporter.c: Use subtype or other_arch to restrict
+      teleporters to specific object types.
+
+2020-08-30  Preston Crow
     * common/living.c,
       common/loader.l,
       common/object.c,
