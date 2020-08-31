@@ -325,7 +325,7 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
     val *= multiplier > 0.5 ? multiplier : 0.5; // cap at 0.5
 
     val *= buy_ratio(tmp, who);
-    val *= shop_supplydemand_factor(who->map->path, who->map->region->name, tmp);
+    val *= shop_supplydemand_factor(who->map->path, "(no region)", tmp);
     return val;
 }
 
@@ -347,7 +347,7 @@ uint64_t shop_price_sell(const object *tmp, object *who) {
     val = value_limit(val, number, who, 1);
 
     val /= buy_ratio(tmp, who);
-    val *= shop_supplydemand_factor(who->map->path, who->map->region->name, tmp);
+    val *= shop_supplydemand_factor(who->map->path, "(no region)", tmp);
     return val;
 }
 
@@ -630,7 +630,7 @@ int pay_for_item(object *op, object *pl) {
     if (saved_money > 0)
         change_exp(pl, saved_money, "bargaining", SK_EXP_NONE);
 
-    record_transaction(pl->map->path, pl->map->region->name, op->name, op->arch->name, NROF(op), to_pay);
+    record_transaction(pl->map->path, "(no region)", op->name, op->arch->name, NROF(op), to_pay);
     to_pay = pay_from_container(pl, pl, to_pay);
 
     FOR_INV_PREPARE(pl, pouch) {
@@ -1061,7 +1061,7 @@ void sell_item(object *op, object *pl) {
             "You receive %s for %s.", value_str, obj_name);
     free(value_str);
 
-    record_transaction(pl->map->path, pl->map->region->name, op->name, op->arch->name, -NROF(op), price);
+    record_transaction(pl->map->path, "(no region)", op->name, op->arch->name, -NROF(op), price);
 
     for (int count = LARGEST_COIN_GIVEN; coins[count] != NULL; count++) {
         at = find_archetype(coins[count]);
