@@ -314,7 +314,7 @@ uint64_t shop_price_sell(const object *tmp, object *who) {
     val = value_limit(val, number, who, 1);
 
     val /= buy_ratio(tmp, who);
-    val *= shop_supplydemand_factor(who->map->path, who->map->region->name, tmp);
+    val *= shop_supplydemand_factor(who->map->path, "(no region)", tmp);
     return val;
 }
 
