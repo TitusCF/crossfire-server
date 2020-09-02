@@ -981,6 +981,7 @@ int shop_pay_unpaid(object *pl, object *op) {
             // TODO: Figure out how to pass in the shop owner for player shops.
             if (execute_event(op, EVENT_BOUGHT, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
                 return 0;
+            pl->map->shoptill += price;
             object *tmp;
             char *value = cost_str(price);
 
@@ -1047,6 +1048,17 @@ void sell_item(object *op, object *pl) {
         return;
     }
 
+    // Check if shop can afford this.
+    if (op->map->shoptill - (int)price < 0) {
+        draw_ext_info_format(NDI_UNIQUE, 0, pl,
+                             MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
+                             "The shop cannot afford to buy %s now.",
+                             obj_name);
+        return;
+    } else {
+        op->map->shoptill -= price;
+    }
+
     /* We compare the price with the one for a player
      * without bargaining skill.
      * This determins the amount of exp (if any) gained for bargaining.
@@ -1060,6 +1072,11 @@ void sell_item(object *op, object *pl) {
     char *value_str = cost_str(price);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
             "You receive %s for %s.", value_str, obj_name);
+    free(value_str);
+
+    value_str = cost_str(pl->map->shoptill);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
+            "The shop has %s remaining in its till.", value_str);
     free(value_str);
 
     record_transaction(pl->map->path, "(no region)", op->name, op->arch->name, -NROF(op), price);
