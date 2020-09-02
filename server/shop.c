@@ -978,6 +978,7 @@ int shop_pay_unpaid(object *pl, object *op) {
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
         } else {
+            pl->map->shoptill += price;
             object *tmp;
             char *value = cost_str(price);
 
