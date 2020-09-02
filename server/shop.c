@@ -979,6 +979,7 @@ int shop_pay_unpaid(object *pl, object *op) {
             // TODO: Figure out how to pass in the shop owner for player shops.
             if (execute_event(op, EVENT_BOUGHT, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
                 return 0;
+            pl->map->shoptill += price;
             object *tmp;
             char *value = cost_str(price);
 
