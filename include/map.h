@@ -356,7 +356,8 @@ typedef struct mapdef {
     char    *shoprace;          /**< The preffered race of the local shopkeeper. */
     double  shopgreed;          /**< How much our shopkeeper overcharges. */
     uint64_t  shopmin;            /**< Minimum price a shop will trade for. */
-    uint64_t  shopmax;            /**< MMaximum price a shop will offer. */
+    uint64_t  shopmax;            /**< Maximum price a shop will offer. */
+    int       shoptill;           /**< Money, in silver, shop can use to make purchases. */
     char    *msg;               /**< Message map creator may have left. */
     char    *maplore;           /**< Map lore information. */
     char    *tile_path[6];      /**< Path to adjoining maps. */
