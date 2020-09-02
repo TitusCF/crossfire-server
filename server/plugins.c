@@ -133,6 +133,7 @@ static void cfapi_set_random_map_variable(int *type, ...);
 static void cfapi_generate_random_map(int *type, ...);
 static void cfapi_object_user_event(int *type, ...);
 static void cfapi_player_quest(int *type, ...);
+static void cfapi_object_perm_exp(int *type, ...);
 
 /**
  * All hooked functions plugins can call.
@@ -228,7 +229,8 @@ static const hook_entry plug_hooks[] = {
     { cfapi_object_remove_depletion, 92, "cfapi_object_remove_depletion" },
     { cfapi_object_find_by_arch_name, 93, "cfapi_object_find_by_arch_name" },
     { cfapi_object_find_by_name,     94, "cfapi_object_find_by_name" },
-    { cfapi_player_knowledge,       95, "cfapi_player_knowledge" }
+    { cfapi_player_knowledge,        95, "cfapi_player_knowledge" },
+    { cfapi_object_perm_exp,         96, "cfapi_object_perm_exp" },
 };
 
 /** Linked list of loaded plugins. */
@@ -2048,9 +2050,9 @@ static void cfapi_object_get_property(int *type, ...) {
         *type = CFAPI_INT;
         break;
 
-    case CFAPI_OBJECT_PROP_PERM_EXP:
+    case CFAPI_OBJECT_PROP_TOTAL_EXP:
         rint64 = va_arg(args, int64_t *);
-        *rint64 = PERM_EXP(op->total_exp);
+        *rint64 = op->total_exp;
         *type = CFAPI_SINT64;
         break;
 
@@ -2853,10 +2855,10 @@ static void cfapi_object_set_property(int *type, ...) {
             }
             break;
 
-        case CFAPI_OBJECT_PROP_PERM_EXP:
+        case CFAPI_OBJECT_PROP_TOTAL_EXP:
             s64arg = va_arg(args, int64_t);
             *type = CFAPI_SINT64;
-            op->total_exp = s64arg * 100 / settings.permanent_exp_ratio;
+            op->total_exp = s64arg;
             break;
 
         case CFAPI_OBJECT_PROP_ENEMY:
@@ -4204,6 +4206,25 @@ static void cfapi_player_message(int *type, ...) {
     draw_ext_info(flags, pri, pl, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
                   buf);
     *type = CFAPI_NONE;
+}
+
+/**
+ * Wrapper for permanent experience calculation.
+ * This is because the settings struct is not visible inside the plugin.
+ * @param type
+ * will be CFAPI_SINT64.
+ */
+static void cfapi_object_perm_exp(int *type, ...) {
+    va_list args;
+    object *op;
+    int64_t *rlong;
+
+    va_start(args, type);
+    op = va_arg(args, object *);
+    va_end(args);
+    
+    *type = CFAPI_SINT64;
+    *rlong = PERM_EXP(op->total_exp);
 }
 
 /**

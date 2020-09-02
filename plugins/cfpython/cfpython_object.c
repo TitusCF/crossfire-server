@@ -425,9 +425,9 @@ static PyObject *Object_GetExp(Crossfire_Object *whoptr, void *closure) {
     return Py_BuildValue("L", cf_object_get_int64_property(whoptr->obj, CFAPI_OBJECT_PROP_EXP));
 }
 
-static PyObject *Object_GetPermExp(Crossfire_Object *whoptr, void *closure) {
+static PyObject *Object_GetTotalExp(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("L", cf_object_get_int64_property(whoptr->obj, CFAPI_OBJECT_PROP_PERM_EXP));
+    return Py_BuildValue("L", cf_object_get_int64_property(whoptr->obj, CFAPI_OBJECT_PROP_TOTAL_EXP));
 }
 
 static PyObject *Object_GetExpMul(Crossfire_Object *whoptr, void *closure) {
@@ -2538,6 +2538,11 @@ static PyObject *Crossfire_Object_AddExp(Crossfire_Object *who, PyObject *args) 
     return Py_None;
 }
 
+static PyObject *Crossfire_Object_PermExp(Crossfire_Object *who, PyObject *args) {
+    EXISTCHECK(who);
+    return Py_BuildValue("l", cf_object_perm_exp(who->obj));
+}
+
 static PyObject *Crossfire_Object_Move(Crossfire_Object *who, PyObject *args) {
     int dir;
 
@@ -2673,7 +2678,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Luck",           (getter)Object_GetLuck,         NULL, NULL, NULL },
     { "Exp",            (getter)Object_GetExp,          (setter)Object_SetExp, NULL, NULL },
     { "ExpMul",         (getter)Object_GetExpMul,       NULL, NULL, NULL },
-    { "PermExp",        (getter)Object_GetPermExp,      NULL, NULL, NULL },
+    { "TotalExp",       (getter)Object_GetTotalExp,     NULL, NULL, NULL },
     { "Message",        (getter)Object_GetMessage,      (setter)Object_SetMessage, NULL, NULL },
     { "Slaying",        (getter)Object_GetSlaying,      (setter)Object_SetSlaying, NULL, NULL },
     { "Cursed",         (getter)Object_GetCursed,       (setter)Object_SetCursed, NULL, NULL },
@@ -2820,6 +2825,7 @@ static PyMethodDef ObjectMethods[] = {
     { "Event",          (PyCFunction)Crossfire_Object_Event,        METH_VARARGS, NULL },
     { "RemoveDepletion",(PyCFunction)Crossfire_Object_RemoveDepletion,    METH_VARARGS, NULL },
     { "Arrest",         (PyCFunction)Crossfire_Object_Arrest,    METH_VARARGS, NULL },
+    { "PermExp",        (PyCFunction)Crossfire_Object_PermExp,	  METH_NOARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 

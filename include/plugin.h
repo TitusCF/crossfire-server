@@ -218,7 +218,7 @@ typedef struct _crossfire_plugin {
 #define CFAPI_OBJECT_PROP_WEIGHT_LIMIT      49
 #define CFAPI_OBJECT_PROP_CARRYING          50
 #define CFAPI_OBJECT_PROP_GLOW_RADIUS       51
-#define CFAPI_OBJECT_PROP_PERM_EXP          52
+#define CFAPI_OBJECT_PROP_TOTAL_EXP         52
 #define CFAPI_OBJECT_PROP_CURRENT_WEAPON    53
 #define CFAPI_OBJECT_PROP_ENEMY             54
 #define CFAPI_OBJECT_PROP_ATTACKED_BY       55

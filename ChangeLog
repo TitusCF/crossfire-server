@@ -1,3 +1,11 @@
+2020-09-01  Daniel Hawkins
+    * server/plugins.c,
+      plugins/common/plugin_common.c,
+      plugins/common/include/plugin_common.h,
+      plugins/cfpython/cfpython_object.c,
+      include/plugin.h: Move a reference to settings struct instance into plugins.c,
+          since it could not be seen on the plugin-side (at least when using GCC 9)
+
 2020-08-30  Preston Crow
     * server/skill_util.c: 'skills' command output is fixed-width format
       with a '-l' option for long display with full perm exp information.

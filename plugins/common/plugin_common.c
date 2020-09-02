@@ -126,6 +126,7 @@ static f_plug_api cfapiCost_string_from_value = NULL;
 static f_plug_api cfapiPlayer_quest = NULL;
 static f_plug_api cfapiObject_remove_depletion = NULL;
 static f_plug_api cfapiPlayer_knowledge = NULL;
+static f_plug_api cfapiObject_perm_exp = NULL;
 
 #define GET_HOOK(x, y, z) { \
     getHooks(&z, 1, y, &x); \
@@ -226,6 +227,7 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiObject_find_by_arch_name, "cfapi_object_find_by_arch_name", z);
     GET_HOOK(cfapiObject_find_by_name, "cfapi_object_find_by_name", z);
     GET_HOOK(cfapiPlayer_knowledge, "cfapi_player_knowledge", z);
+    GET_HOOK(cfapiObject_perm_exp, "cfapi_object_perm_exp", z);
     return 1;
 }
 
@@ -491,6 +493,19 @@ void cf_object_change_exp(object *op, int64_t exp, const char *skill_name, int f
     cfapiObject_change_exp(&type, op, exp, skill_name && strlen(skill_name) > 0 ? skill_name : NULL, flag);
     assert(type == CFAPI_NONE);
 }
+
+/**
+ * Wrapper for PERM_EXP macro.
+ * @return The amount of total experience that is permanent experience
+ */
+int64_t cf_object_perm_exp(object *op) {
+    int type, ret;
+
+    cfapiObject_perm_exp(&type, op, &ret);
+    assert(type == CFAPI_SINT64);
+    return ret;
+}
+
 int cf_player_move(player *pl, int dir) {
     int type, ret;
 

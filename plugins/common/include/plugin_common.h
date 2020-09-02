@@ -148,6 +148,7 @@ extern object      *cf_object_clone(object *op, int clonetype);
 extern int          cf_object_set_face(object *op, const char *face);
 extern int          cf_object_set_animation(object *op, const char *animation);
 extern object      *cf_identify(object *op);
+extern int64_t      cf_object_perm_exp(object *op);
 /* Maps */
 /*extern void        *cf_map_get_property(mapstruct *map, int propcode);*/
 extern sstring cf_map_get_sstring_property(mapstruct *map, int propcode);
