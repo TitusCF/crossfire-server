@@ -324,7 +324,9 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
     val *= multiplier > 0.5 ? multiplier : 0.5; // cap at 0.5
 
     val *= buy_ratio(tmp, who);
-    val *= shop_supplydemand_factor(who->map->path, "(no region)", tmp);
+
+    // Even if there is a supply glut, do not give away items for free.
+    val *= MIN(0.1, shop_supplydemand_factor(who->map->path, "(no region)", tmp));
     return val;
 }
 
