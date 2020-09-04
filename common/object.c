@@ -300,7 +300,9 @@ int object_can_merge(object *ob1, object *ob2) {
             /* One has fields, but the other one doesn't. */
             return 0;
         } else {
-            return compare_ob_value_lists(ob1, ob2);
+            if (!compare_ob_value_lists(ob1, ob2)) {
+                return 0;
+            }
         }
     }
 
