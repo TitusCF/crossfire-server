@@ -3932,6 +3932,38 @@ object *object_find_by_type(const object *who, int type) {
 }
 
 /**
+ * Find an object in inventory that does not have any of the provided flags set.
+ *
+ * @param who
+ * where to search.
+ * @param type
+ * what to search.
+ * @param flags
+ * Array of integers corresponding to the set of flags that cannot have any set on the found item.
+ * @param num_flags
+ * The size of the array flags above
+ * @return
+ * first object in inventory that matches type and lacks any of the specified flags
+ */
+object *object_find_by_type_without_flags(const object *who, int type, int *flags, int num_flags) {
+    int flag_okay;
+    for (object *tmp = who->inv; tmp; tmp = tmp->below)
+        if (tmp->type == type) {
+            flag_okay = 1;
+            for (int i = 0; i < num_flags; ++i) {
+                if (QUERY_FLAG(tmp, flags[i])) {
+                    flag_okay = 0; // A flag we didn't want set was set. Skip this item.
+                    break;
+                }
+            }
+            if (flag_okay) // If flag_okay == 1, then the flags specified were not set
+                return tmp; // If we reach here, none of the flags specified were set. Just like we wanted.
+        }
+
+    return NULL;
+}
+
+/**
  * Find object in inventory.
  *
  * @param who

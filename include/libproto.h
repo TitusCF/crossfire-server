@@ -292,6 +292,7 @@ extern int object_can_pick(const object *who, const object *item);
 extern object *object_create_clone(object *asrc);
 extern object *object_find_by_name(const object *who, const char *name);
 extern object *object_find_by_type(const object *who, int type);
+extern object *object_find_by_type_without_flags(const object *who, int type, int *flags, int num_flags);
 extern object *object_find_by_type2(const object *who, int type1, int type2);
 extern object *object_find_by_tag(const object *who, tag_t tag);
 extern object *object_find_by_type_applied(const object *who, int type);

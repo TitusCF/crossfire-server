@@ -2539,7 +2539,8 @@ object *find_key(object *pl, object *container, object *door) {
     /* First, lets try to find a key in the top level inventory */
     tmp = NULL;
     if (door->type == DOOR) {
-        tmp = object_find_by_type(container, KEY);
+        int flag = FLAG_UNPAID;
+        tmp = object_find_by_type_without_flags(container, KEY, &flag, 1);
     }
     /* For sanity, we should really check door type, but other stuff
      * (like containers) can be locked with special keys
