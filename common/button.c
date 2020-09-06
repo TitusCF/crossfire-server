@@ -773,6 +773,7 @@ int get_button_value(const object *button) {
  *              race = match object archetype name flag
  *              hp = match object type (excpt type '0'== PLAYER)
  *      title = match object title
+ *              unpaid = 1 -> match only unpaid, 0 -> match only not unpaid
  * Searching by title only is not recommended, as it can be a rather slow
  * operation; use it in combination with archetype or type.
 
@@ -790,7 +791,8 @@ object *check_inv_recursive(object *op, const object *trig) {
     if ((!trig->stats.hp || (op->type == trig->stats.hp))
     && (!trig->slaying || (op->slaying == trig->slaying))
     && (!trig->race || (op->arch->name == trig->race))
-    && (!trig->title || (op->title == trig->title)))
+    && (!trig->title || (op->title == trig->title))
+    && (QUERY_FLAG(op, FLAG_UNPAID) == QUERY_FLAG(trig, FLAG_UNPAID)))
         return op;
 
     FOR_INV_PREPARE(op, tmp) {
@@ -801,12 +803,14 @@ object *check_inv_recursive(object *op, const object *trig) {
         } else if ((!trig->stats.hp || (tmp->type == trig->stats.hp))
         && (!trig->slaying || (tmp->slaying == trig->slaying))
         && (!trig->race || (tmp->arch->name == trig->race))
-        && (!trig->title || (tmp->title == trig->title)))
+        && (!trig->title || (tmp->title == trig->title))
+        && (QUERY_FLAG(tmp, FLAG_UNPAID) == QUERY_FLAG(trig, FLAG_UNPAID)))
             return tmp;
     } FOR_INV_FINISH();
 
     return NULL;
 }
+
 
 /**
  * Function to search the inventory,
