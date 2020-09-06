@@ -1,3 +1,7 @@
-Syntax: shutdown <now|time|cancel>
+syntax: shutdown <now|time|cancel>
 
 Shut down 'now', in 'time' minutes, or 'cancel' a pending shutdown.
+
+When using the time option in-game players will receive a notice or warning about the pending shutdown at the following time intervals (in seconds): 120, 90, 60, 45, 30, 15, 10, 5, 4, 3, 2, 1
+
+New players logging in during the shutdown time window will also receive a notice of the pending shutdown.
