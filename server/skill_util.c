@@ -240,7 +240,7 @@ object *find_skill_by_name(object *who, const char *name) {
         * in length than the passed string. Eg, if we have a skill called
         * 'hi', we don't want to match if the user passed 'high'
         */
-        if (tmp->type == SKILL || tmp->type == SKILL_TOOL) {
+        if (tmp->type == SKILL || (tmp->type == SKILL_TOOL && !QUERY_FLAG(tmp, FLAG_UNPAID))) {
             for (i = 0; i<num_names; i++) {
                 if (!strncasecmp(skill_names[i], tmp->skill, strlen(skill_names[i])) &&
                     strlen(tmp->skill) >= strlen(skill_names[i])) {

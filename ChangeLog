@@ -1,4 +1,8 @@
 2020-09-05  Daniel Hawkins
+    * server/skill_util.c: Add check for not unpaid when searching an inventory for a skill tool.
+        This makes it behave like it would it it were manually applied: it does not apply.
+
+2020-09-05  Daniel Hawkins
     * server/player.c,
       include/libproto.h,
       common/object.c: Add a function to retrieve an item from inventory that is not unpaid.
