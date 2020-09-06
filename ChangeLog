@@ -1,3 +1,7 @@
+2020-09-06  Daniel Hawkins
+    * server/plugins.c: Fix invalid pointer dereference when calculating perm_exp.
+        Turns out the other end of the plugin was expecting this, but I didn't do it right here.
+
 2020-09-05  Daniel Hawkins
     * server/skill_util.c: Add check for not unpaid when searching an inventory for a skill tool.
         This makes it behave like it would it it were manually applied: it does not apply.

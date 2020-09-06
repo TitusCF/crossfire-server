@@ -4221,6 +4221,7 @@ static void cfapi_object_perm_exp(int *type, ...) {
 
     va_start(args, type);
     op = va_arg(args, object *);
+    rlong = va_arg(args, int64_t *);
     va_end(args);
     
     *type = CFAPI_SINT64;
