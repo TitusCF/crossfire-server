@@ -2343,7 +2343,7 @@ void share_exp(object *op, int64_t exp, const char *skill, int flag) {
 info:
     if (exp > 0) {
         char buf[MAX_BUF];
-        snprintf(buf, sizeof(buf), "You gain %ld experience.", exp);
+        snprintf(buf, sizeof(buf), "You gain %ld experience in %s.", exp, skill);
         draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf);
     }
 }
