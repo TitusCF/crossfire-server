@@ -844,6 +844,11 @@ Patch by Kevin Zheng, slightly adjusted.
           unpaid items from the search.
 
 2020-09-06  Daniel Hawkins
+    * common/button.c: Add check for an unpaid flag that matches the check_inv trigger's unpaid flag.
+          This allows for us to optionally look exclusively for unapid items, but by default exclude
+          unpaid items from the search.
+
+2020-09-06  Daniel Hawkins
     * server/plugins.c: Fix invalid pointer dereference when calculating perm_exp.
         Turns out the other end of the plugin was expecting this, but I didn't do it right here.
 
