@@ -668,6 +668,10 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
                              "Your %s%s %s.",
                              hitter->name, buf2, op->name);
     }
+
+    snprintf(buf, sizeof(buf), "You deal %d damage.", dam);
+    draw_ext_info(NDI_BLACK, 0, hitter, MSG_TYPE_ATTACK,
+            MSG_TYPE_ATTACK_DID_HIT, buf);
 }
 
 /**
@@ -2042,6 +2046,9 @@ int hit_player(object *op, int dam, object *hitter, uint32_t type, int full_hit)
     if (owner != NULL) {
         if (op->enemy != hitter)
             object_set_enemy(op, owner);
+        if (owner->type == PLAYER) {
+            // send client message
+        }
     } else if (QUERY_FLAG(hitter, FLAG_ALIVE))
         if (op->enemy == NULL || rndm(1, 20) == 0)
             object_set_enemy(op, hitter);
