@@ -2316,7 +2316,7 @@ void share_exp(object *op, int64_t exp, const char *skill, int flag) {
 
     if (op->type != PLAYER || op->contr->party == NULL) {
         change_exp(op, exp, skill, 0);
-        return;
+        goto info;
     }
 
     party = op->contr->party;
@@ -2344,6 +2344,13 @@ void share_exp(object *op, int64_t exp, const char *skill, int flag) {
         exp -= given;
         /* give any remainder to the player */
         change_exp(op, exp, skill, flag);
+    }
+
+info:
+    if (exp > 0) {
+        char buf[MAX_BUF];
+        snprintf(buf, sizeof(buf), "You gain %ld experience in %s.", exp, skill);
+        draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf);
     }
 }
 
