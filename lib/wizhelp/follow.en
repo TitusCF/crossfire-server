@@ -1,0 +1,3 @@
+Syntax: follow <playername>
+
+This command allows a DM to follow a specified player and keeps the DM at four (4) or fewer squares away from a player (works better when hidden). To end following, just type the command 'follow' again.
