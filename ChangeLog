@@ -1,3 +1,8 @@
+2020-09-07  Daniel Hawkins
+    * server/monster.c: Don't allow monsters to pick up items that are on their spaces while being thrown.
+        This fixes an occasional "Thrown object had no map" error that resulted from monsters picking
+        thrown items mid-flight and the item not being transitioned back to it's non-thrown form.
+
 2020-09-06  Daniel Hawkins
     * common/button.c: Add check for an unpaid flag that matches the check_inv trigger's unpaid flag.
           This allows for us to optionally look exclusively for unapid items, but by default exclude

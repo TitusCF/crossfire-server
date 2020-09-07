@@ -1681,7 +1681,13 @@ static void monster_check_pickup(object *monster) {
 
     for (part = monster; part != NULL; part = part->more)
         FOR_BELOW_PREPARE(part, tmp) {
-            if (monster_can_pick(monster, tmp)) {
+            /* Don't try to pick items that are in the process of being thrown.
+             * It is fairly likely that an ally threw it past monster to hit player.
+             * IDEA: Maybe have a dex save to catch player-thrown projectiles?
+             *
+             * Daniel Hawkins 2020-09-07
+             */
+            if (tmp->type != THROWN_OBJ && monster_can_pick(monster, tmp)) {
                 uint32_t nrof;
 
                 if (tmp->weight > 0) {
