@@ -1651,19 +1651,12 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
     /* first, look for the force object banning changing the
      * face.  Certain races never change face with class.
      */
-    if (object_find_by_name(pl, "NOCLASSFACECHANGE") == NULL) {
-        pl->animation_id = GET_ANIM_ID(change);
-        pl->face = change->face;
-
-        if (QUERY_FLAG(change, FLAG_ANIMATE))
-            SET_FLAG(pl, FLAG_ANIMATE);
-        else
-            CLEAR_FLAG(pl, FLAG_ANIMATE);
-    }
+    int has_noclassfacechange = (object_find_by_name(pl, "NOCLASSFACECHANGE") != NULL);
+    // Assume 0 is not a valid animation.
+    int anim = 0;
 
     if (change->anim_suffix) {
         char buf[MAX_BUF];
-        int anim;
 
         snprintf(buf, MAX_BUF, "%s_%s", animations[pl->animation_id].name, change->anim_suffix);
         anim = try_find_animation(buf);
@@ -1674,6 +1667,21 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
             animate_object(pl, pl->facing);
         }
     }
+    /* Check for anim == -1 so that we can override specific class faces for races.
+     * This allows us to have custom class faces on the races that lack noclassfacechange
+     *
+     * Daniel Hawkins 2020-09-08
+     */
+    if ((!has_noclassfacechange) && anim == 0) {
+        pl->animation_id = GET_ANIM_ID(change);
+        pl->face = change->face;
+
+        if (QUERY_FLAG(change, FLAG_ANIMATE))
+            SET_FLAG(pl, FLAG_ANIMATE);
+        else
+            CLEAR_FLAG(pl, FLAG_ANIMATE);
+    }
+
     /* Hard coding in class name is a horrible idea - lets
      * use the supported mechanism for this
      */
