@@ -1545,7 +1545,7 @@ void examine(object *op, object *tmp) {
         } else snprintf(prefix, MAX_BUF, "%s:",  tmp->nrof <= 1?"That is":"Those are");
     }
     /* now we need to get the rest of the object description */
-    ob_describe(tmp, op, buf, sizeof(buf));
+    ob_describe(tmp, op, 1, buf, sizeof(buf));
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                                             "%s %s", prefix, buf);

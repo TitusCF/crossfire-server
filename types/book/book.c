@@ -101,7 +101,7 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
 
         draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, applier, msgType->message_type, msgType->message_subtype,
             "You open the %s and start reading.\n%s",
-            ob_describe(op, applier, desc, sizeof(desc)), op->msg);
+            ob_describe(op, applier, 0, desc, sizeof(desc)), op->msg);
         if (applier->contr)
             knowledge_read(applier->contr, op);
     }

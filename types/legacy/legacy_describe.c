@@ -32,10 +32,11 @@
  * @param context The method context
  * @param op The object to describe
  * @param observer The object to make the description to
+ * @param use_media_tags If non zero then use media tags in the description.
  * @param buf Buffer that will contain the description
  * @param size buf's size.
  */
-void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, size_t size) {
+void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
     buf[0] = '\0';
     if (op == NULL)
         return;
@@ -60,7 +61,7 @@ void legacy_ob_describe(const ob_methods *context, const object *op, const objec
     case FLESH:
     case SKILL_TOOL:
     case LAMP:
-        common_ob_describe(context, op, observer, buf, size);
+        common_ob_describe(context, op, observer, use_media_tags, buf, size);
         return;
 
     default:

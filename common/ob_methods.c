@@ -83,17 +83,18 @@ method_ret ob_process(object *op) {
  * Returns the description of an object, as seen by the given observer.
  * @param op The object to describe
  * @param observer The object to which the description is made
+ * @param use_media_tags whether to add media tags or not on the description
  * @param buf Buffer that will contain the description
  * @param size Size of buf
  * @return
  * buf.
  */
-char *ob_describe(const object *op, const object *observer, char *buf, size_t size) {
+char *ob_describe(const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
     ob_methods *methods;
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->describe) {
-            methods->describe(methods, op, observer, buf, size);
+            methods->describe(methods, op, observer, use_media_tags, buf, size);
             return buf;
         }
     }

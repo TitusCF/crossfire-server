@@ -802,7 +802,7 @@ int identify_object_with_skill(object *tmp, object *pl, object *skill, int print
 
                 draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                                      "You identify %s.",
-                                     ob_describe(tmp, pl, desc, sizeof(desc)));
+                                     ob_describe(tmp, pl, 1, desc, sizeof(desc)));
                 if (tmp->msg) {
                     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                          "The item has a story:\n%s",

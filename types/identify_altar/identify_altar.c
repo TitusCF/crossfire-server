@@ -77,7 +77,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
             marked = identify(marked);
             draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "You have %s.",
-                ob_describe(marked, originator, desc, sizeof(desc)));
+                ob_describe(marked, originator, 1, desc, sizeof(desc)));
 
             if (marked->msg) {
                 draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
@@ -97,7 +97,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
             if (operate_altar(altar, &money)) {
                 id = identify(id);
                 draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    "You have %s.", ob_describe(id, originator, desc, sizeof(desc)));
+                    "You have %s.", ob_describe(id, originator, 1, desc, sizeof(desc)));
                 if (id->msg) {
                     draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                         "The item has a story:");
