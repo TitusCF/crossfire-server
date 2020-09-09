@@ -7,7 +7,7 @@
  *
  * @param obj item in question. Must not be NULL.
  * @param who player trying to judge the value of the item. Must not be NULL.
- * @return approximate value of tmp.
+ * @return approximate value of obj.
  */
 uint64_t price_approx(const object *obj, object *who);
 
@@ -26,7 +26,7 @@ uint64_t price_base(const object *obj);
  *
  * @param obj item in question. Must not be NULL.
  * @param who player trying to judge the value of the item. Must not be NULL.
- * @return value of tmp.
+ * @return value of obj.
  */
 uint64_t shop_price_buy(const object *obj, object *who);
 
@@ -36,15 +36,26 @@ uint64_t shop_price_buy(const object *obj, object *who);
  *
  * @param obj item in question. Must not be NULL.
  * @param who player trying to judge the value of the item. Must not be NULL.
- * @return value of tmp.
+ * @return value of obj.
  */
 uint64_t shop_price_sell(const object *obj, object *who);
 
 /**
- * Return the textual representation of a cost in a newly-allocated string.
+ * Converts a price to number of coins.
  *
- * @param cost value to convert to text.
- * @return converted value the caller is responsible to free.
+ * While cost is 64 bit, the number of any coin is still really
+ * limited to 32 bit (size of nrof field).  If it turns out players
+ * have so much money that they have more than 2 billion platinum
+ * coins, there are certainly issues - the easiest fix at that
+ * time is to add a higher denomination (mithril piece with
+ * 10,000 silver or something)
+ *
+ * @param cost
+ * value to transform to currency.
+ * @param largest_coin
+ * maximum coin to give the price into, should be between 0 and NUM_COINS - 1.
+ * @return
+ * converted value the caller is responsible to free.
  */
 char* cost_string_from_value(uint64_t cost, int largest_coin);
 char *cost_str(uint64_t cost);
