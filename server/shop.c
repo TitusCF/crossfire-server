@@ -67,28 +67,28 @@ static const char *const coins[] = {
  * Price an item based on its value or archetype value, type, identification/BUC
  * status, and other heuristics.
  */
-uint64_t price_base(const object *tmp) {
+uint64_t price_base(const object *obj) {
     // When there are zero objects, there is really one.
-    const int number = NROF(tmp);
+    const int number = NROF(obj);
     const bool identified =
-        QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
-    uint64_t val = (uint64_t)tmp->value * number;
+        QUERY_FLAG(obj, FLAG_IDENTIFIED) || !need_identify(obj);
+    uint64_t val = (uint64_t)obj->value * number;
 
     // Objects with price adjustments skip the rest of the calculations.
-    const char *key = object_get_value(tmp, "price_adjustment");
+    const char *key = object_get_value(obj, "price_adjustment");
     if (key != NULL) {
         float ratio = atof(key);
         return val * ratio;
     }
 
     // Money and gems have fixed prices at shops.
-    if (tmp->type == MONEY || tmp->type == GEM) {
+    if (obj->type == MONEY || obj->type == GEM) {
         return val;
     }
     
     // If unidentified, price item based on its archetype.
-    if (!identified && tmp->arch) {
-        val = tmp->arch->clone.value * number;
+    if (!identified && obj->arch) {
+        val = obj->arch->clone.value * number;
     }
     
     /**
@@ -96,24 +96,24 @@ uint64_t price_base(const object *tmp) {
      * of items based on their BUC status. Note that later in shop_price_sell,
      * we further decrease the sell price of cursed and damned items.
      */
-    if (QUERY_FLAG(tmp, FLAG_BLESSED)){
+    if (QUERY_FLAG(obj, FLAG_BLESSED)){
         val *= 1.15;
-    } else if (QUERY_FLAG(tmp, FLAG_CURSED)) {
+    } else if (QUERY_FLAG(obj, FLAG_CURSED)) {
         val *= 0.8;
-    } else if (QUERY_FLAG(tmp, FLAG_DAMNED)) {
+    } else if (QUERY_FLAG(obj, FLAG_DAMNED)) {
         val *= 0.6;
     }
 
     // If an item is identified to have an enchantment above its archetype
     // enchantment, increase price exponentially.
-    if (tmp->arch != NULL && identified) {
-        int diff = tmp->magic - tmp->arch->clone.magic;
+    if (obj->arch != NULL && identified) {
+        int diff = obj->magic - obj->arch->clone.magic;
         val *= pow(1.15, diff);
     }
 
     // FIXME: Is the 'baseline' 50 charges per wand?
-    if (tmp->type == WAND) {
-        val *= tmp->stats.food / 50.0;
+    if (obj->type == WAND) {
+        val *= obj->stats.food / 50.0;
     }
 
     /* we need to multiply these by 4.0 to keep buy costs roughly the same
@@ -330,10 +330,8 @@ static archetype *find_next_coin(uint64_t c, int *cointype) {
  * value to transform to currency.
  * @param largest_coin
  * maximum coin to give the price into, should be between 0 and NUM_COINS - 1.
- * @param buf
- * buffer to append to, if NULL a new one is returned.
  * @return
- * buffer containing the price, either buf or if NULL a new StringBuffer.
+ * converted value the caller is responsible to free.
  */
 char* cost_string_from_value(uint64_t cost, int largest_coin) {
     archetype *coin, *next_coin;

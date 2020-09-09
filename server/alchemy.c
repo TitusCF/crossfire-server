@@ -81,6 +81,22 @@ static const char *cauldron_sound(void) {
 }
 
 /**
+ * Compute a success probability, between .01 and .95, based on the
+ * level difference.
+ * @param diff level difference.
+ * @return success probability.
+ */
+static float chance_fn(int diff) {
+    if (diff > 10)
+        return MAX(.01, .3 - (diff - 10) * .03);
+
+    if (diff > -10)
+        return .5 + .02 * (float)(-diff);
+
+    return MIN(.95, .70 + (-diff - 10) * .01);
+}
+
+/**
  * Compute the success probability of a recipe.
  *
  * Probability of success is a function of the difference between the recipe
@@ -102,16 +118,6 @@ static const char *cauldron_sound(void) {
  * @param cauldron provides the magic of the used device.
  * @return chance between 0.01 and .95.
  */
-static float chance_fn(int diff) {
-    if (diff > 10)
-        return MAX(.01, .3 - (diff - 10) * .03);
-
-    if (diff > -10)
-        return .5 + .02 * (float)(-diff);
-
-    return MIN(.95, .70 + (-diff - 10) * .01);
-}
-
 static float recipe_chance(const recipe *rp, const object *skill, const object *cauldron) {
     assert(rp);
     assert(skill);
