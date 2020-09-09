@@ -531,7 +531,8 @@ static const char *const santo_dominion_archs[] = {
 /*@}*/
 
 /**
- * @defgroup
+ * @defgroup citylife_scorn_county Scorn County parameters.
+ * Parameters for the @ref plugin_citylife "City life" plugin for Scorn County.
  * @ingroup plugin_citylife
  */
 /*@{*/
