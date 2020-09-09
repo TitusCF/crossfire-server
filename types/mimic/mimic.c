@@ -56,7 +56,7 @@ void init_type_mimic(void) {
 static method_ret mimic_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     if (applier->type == PLAYER) {
         
-        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, "Ah! Its alive!");
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, "Ah! It's alive!");
         /* We become a monster */
         op->type = MONSTER;
         /* We are animated, too, assuming we have a face right now. */
