@@ -18,12 +18,12 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                If set to non-zero, the monster cannot be hurt by attacking it.</td>
 	</tr>
 	<tr>
 		<td>
-@ref page_type_215
+@ref page_type_216
 		</td><td>            If set to non-zero, the wall cannot be destroyed by attacking it.</td>
 	</tr>
 

@@ -63,7 +63,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_212, @ref page_type_67, @ref page_type_60
+@ref page_type_213, @ref page_type_67, @ref page_type_60
 		</td><td>            This text may describe the object.</td>
 	</tr>
 	<tr>
@@ -112,7 +112,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>            This text field contains the keyword-matching-syntax. The text
             should have the following format: "@match &lt;keyword1&gt;|&lt;keyword2&gt;|...
             ". Any number of keywords from one to infinite is allowed. Make sure

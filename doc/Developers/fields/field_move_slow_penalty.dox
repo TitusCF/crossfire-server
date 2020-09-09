@@ -7,7 +7,7 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_212, @ref page_type_67
+@ref page_type_213, @ref page_type_67
 		</td><td>                If &lt;slow movement&gt; is set to a value greater zero, all
                 creatures moving over this spot will be slower than normal.
 

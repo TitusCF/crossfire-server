@@ -7,7 +7,7 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                When &lt;monster behavior&gt; is enabled, this object will
                 behave like a monster: It can move and attack enemies (which are
                 typically players). This flag should be set for all monsters

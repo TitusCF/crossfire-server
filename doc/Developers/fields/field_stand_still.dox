@@ -7,7 +7,7 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                Monsters which &lt;stand still&gt; won't move to leave their
                 position. When aggressive, they will attack all enemies who get
                 close to them. This behavior is commonly known from castle

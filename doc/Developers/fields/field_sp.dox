@@ -48,14 +48,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_62
-		</td><td>            The magic wall will cast it's spells always in the specified &lt;direction&gt;.
-            A magic wall with direction set to &lt;none&gt; will always fire in
-            a random direction.</td>
-	</tr>
-	<tr>
-		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                Like players, monsters need &lt;spellpoints&gt; to do magic.
                 Monsters use them for both wizard- and prayer-spells. However,
                 this value defines only the amount of *initial* spellpoints the
@@ -136,6 +129,19 @@
             two-square radius of the destination coordinates. If the destination
             square becomes blocked, the trapdoor will act like being filled up
             and not work anymore!</td>
+	</tr>
+	<tr>
+		<td>
+@ref page_type_4
+		</td><td>            Type of readable item. Used only when the generated item is
+            readable.
+            0 for random,
+            1 for monster information,
+            2 for artifact information,
+            3 for spell path information,
+            4 for recipes,
+            5 for god information,
+            and 6 for library (from lib/messages)</td>
 	</tr>
 
 */

@@ -41,7 +41,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                Monsters of low &lt;armor class&gt; are less likely to get hit
                 from their opponent. &lt;armor class&gt; can be considered the
                 "counter piece" to &lt;weapon class&gt;. Values typically range
@@ -49,7 +49,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_215
+@ref page_type_216
 		</td><td>            Weak walls of high &lt;armor class&gt; are less likely to get hit.
             &lt;armor class&gt; can be considered the "counter piece" to &lt;weapon
             class&gt;.</td>

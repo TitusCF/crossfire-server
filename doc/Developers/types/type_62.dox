@@ -87,8 +87,8 @@ Type defined by:
 	</tr>
 	<tr>
 		<td>direction</td>
-		<td>@ref liv::sp</td>
-		<td>            The magic wall will cast it's spells always in the specified &lt;direction&gt;.
+		<td>@ref obj::direction</td>
+		<td>            The magic wall will always cast its spells in the specified &lt;direction&gt;.
             A magic wall with direction set to &lt;none&gt; will always fire in
             a random direction.
 		</td>
@@ -187,6 +187,13 @@ Type defined by:
 		<td>                Walls with &lt;is destroyable&gt; enabled can be attacked and
                 (eventually) destroyed by the player. If disabled, all other
                 attributes on this tab, as well as resistances, are meaningless.
+		</td>
+	</tr>
+	<tr>
+		<td>is used up</td>
+		<td>@ref FLAG_IS_USED_UP</td>
+		<td>            If set, decrement the &lt;food&gt; field at &lt;speed&gt;. When &lt;food&gt;
+            reaches zero, remove the object.
 		</td>
 	</tr>
 	<tr>
