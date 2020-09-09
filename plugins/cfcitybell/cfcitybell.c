@@ -26,7 +26,7 @@
 /*****************************************************************************/
 
 /**
- * @defgroup plugin_citybell
+ * @defgroup plugin_citybell City bell plugin
  * Plugin to control the temple bells in the main cities.
  * Ported out of python in an attempt to make it more efficient.
  *
