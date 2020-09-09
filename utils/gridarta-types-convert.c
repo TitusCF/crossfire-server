@@ -26,6 +26,7 @@
 #include <string.h>
 #include <assert.h>
 
+#include "global.h"
 #include "define.h"
 
 const char *destination_dir = "../doc/Developers"; /**< Root destination dir. */
