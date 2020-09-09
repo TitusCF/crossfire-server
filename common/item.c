@@ -465,12 +465,15 @@ void get_levelnumber(int i, char *buf, size_t size) {
  * Describes a ring or amulet, or a skill.
  * @param op
  * item to describe, must be RING, AMULET or SKILL.
+ * @param use_media_tags
+ * if non-zero, then media tags (colors and such) are inserted in the description.
+ * This enables the player to more easily see some things.
  * @param buf
  * buffer that will contain the description. If NULL a new one is created.
  * @return buf, or a new StringBuffer the caller should free if buf was NULL.
  * @todo why does this also describe a SKILL?
  */
-static StringBuffer *ring_desc(const object *op, StringBuffer *buf) {
+static StringBuffer *ring_desc(const object *op, int use_media_tags, StringBuffer *buf) {
     int attr, val;
     size_t len;
 
@@ -498,7 +501,7 @@ static StringBuffer *ring_desc(const object *op, StringBuffer *buf) {
     if (op->stats.ac)
         stringbuffer_append_printf(buf, "(ac%+d)", op->stats.ac);
 
-    describe_resistance(op, 0, 1, buf);
+    describe_resistance(op, 0, use_media_tags, buf);
 
     if (op->stats.food != 0)
         stringbuffer_append_printf(buf, "(sustenance%+d)", op->stats.food);
@@ -592,7 +595,7 @@ void query_short_name(const object *op, char *buf, size_t size) {
             /* If ring has a title, full description isn't so useful */
             char* desc;
 
-            desc = stringbuffer_finish(ring_desc(op, NULL));
+            desc = stringbuffer_finish(ring_desc(op, 0, NULL));
             if (desc[0]) {
                 safe_strcat(buf, " ", &len, size);
                 safe_strcat(buf, desc, &len, size);
@@ -765,7 +768,7 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
             /* If ring has a title, full description isn't so useful */
             char* s;
 
-            s = stringbuffer_finish(ring_desc(op, NULL));
+            s = stringbuffer_finish(ring_desc(op, 0, NULL));
             if (s[0]) {
                 safe_strcat(buf, " ", &len, size);
                 safe_strcat(buf, s, &len, size);
@@ -1041,9 +1044,7 @@ StringBuffer *describe_item(const object *op, const object *owner, int use_media
         if (op->item_power) {
             stringbuffer_append_printf(buf, "(item_power %+d)", op->item_power);
         }
-        if (op->title) {
-            ring_desc(op, buf);
-        }
+        ring_desc(op, use_media_tags, buf);
         return buf;
 
     default:

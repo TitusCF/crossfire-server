@@ -245,7 +245,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             if (spell->msg != NULL) {
                 draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, applier, msgType->message_type, msgType->message_subtype,
                 "You open the %s and start reading.\n%s",
-                ob_describe(book, applier, desc, sizeof(desc)), spell->msg);
+                ob_describe(book, applier, 0, desc, sizeof(desc)), spell->msg);
             }
             do_learn_spell(applier, spell, 0);
 

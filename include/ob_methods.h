@@ -38,7 +38,7 @@ typedef char method_ret;
 typedef struct ob_methods ob_methods;
 typedef method_ret (*apply_func)(ob_methods *, object *, object *, int);
 typedef method_ret (*process_func)(ob_methods *, object *);
-typedef void (*describe_func)(const ob_methods *, const object *, const object *, char *buf, size_t size);
+typedef void (*describe_func)(const ob_methods *, const object *, const object *, int use_media_tags, char *buf, size_t size);
 typedef method_ret (*move_on_func)(ob_methods *, object *, object *, object *);
 typedef method_ret (*trigger_func)(ob_methods *, object *, object *, int);
 

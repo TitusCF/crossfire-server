@@ -2489,7 +2489,7 @@ int cast_identify(object *op, object *caster, object *spell) {
             if (op->type == PLAYER) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                      "You have %s.",
-                                     ob_describe(tmp, op, desc, sizeof(desc)));
+                                     ob_describe(tmp, op, 1, desc, sizeof(desc)));
                 if (tmp->msg) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                          "The item has a story:\n%s",
@@ -2515,7 +2515,7 @@ int cast_identify(object *op, object *caster, object *spell) {
                 if (op->type == PLAYER) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                          "On the ground is %s.",
-                                         ob_describe(tmp, op, desc, sizeof(desc)));
+                                         ob_describe(tmp, op, 1, desc, sizeof(desc)));
                     if (tmp->msg) {
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                              "The item has a story:\n%s",
