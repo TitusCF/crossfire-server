@@ -22,7 +22,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                This number is a bitmask, specifying the monster's attack types
                 for melee damage. Attack types are: physical, magical, fire,
                 cold.. etc. Strong monsters often have more than just physical

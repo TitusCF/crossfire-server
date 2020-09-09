@@ -7,7 +7,7 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>            This only takes effect if &lt;multiply&gt; is enabled. The monster
             will create a new monster every once in a while by duplicating it's
             inventory. In this case, the &lt;breed monster&gt; value is never

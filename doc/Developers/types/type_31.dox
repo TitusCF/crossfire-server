@@ -177,6 +177,13 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>is used up</td>
+		<td>@ref FLAG_IS_USED_UP</td>
+		<td>            If set, decrement the &lt;food&gt; field at &lt;speed&gt;. When &lt;food&gt;
+            reaches zero, remove the object.
+		</td>
+	</tr>
+	<tr>
 		<td>match item name</td>
 		<td>@ref obj::slaying</td>
 		<td>            This string specifies the item that must be put on the altar to

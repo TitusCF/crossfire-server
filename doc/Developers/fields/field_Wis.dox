@@ -25,7 +25,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                &lt;sensing range&gt; determines how close a player needs to be
                 before the creature wakes up. This is done as a square, for
                 reasons of speed. Thus, if the &lt;sensing range&gt; is 11, any

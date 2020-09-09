@@ -30,7 +30,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>            When a player kills this monster, he will get exactly this amount of
             &lt;experience&gt;. The experience will flow into the skill-category
             the player used for the kill.
@@ -56,15 +56,6 @@
 		<td>
 @ref page_type_43
 		</td><td>(no description)</td>
-	</tr>
-	<tr>
-		<td>
-@ref page_type_4
-		</td><td>            The &lt;quality level&gt; will be used for the quality of the
-            generated treasure instead of the map difficulty (as was done with
-            shops). If zero/unset, the map difficulty will instead be used.
-            (Example for comparison: Shop floors generate treasure of &lt;quality
-            level&gt; 5 per default).</td>
 	</tr>
 
 */

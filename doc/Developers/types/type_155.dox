@@ -168,6 +168,13 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>is used up</td>
+		<td>@ref FLAG_IS_USED_UP</td>
+		<td>            If set, decrement the &lt;food&gt; field at &lt;speed&gt;. When &lt;food&gt;
+            reaches zero, remove the object.
+		</td>
+	</tr>
+	<tr>
 		<td>name</td>
 		<td>@ref obj::name</td>
 		<td>            This is the name of the object, displayed to the player.

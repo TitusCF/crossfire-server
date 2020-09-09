@@ -165,6 +165,13 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>is used up</td>
+		<td>@ref FLAG_IS_USED_UP</td>
+		<td>            If set, decrement the &lt;food&gt; field at &lt;speed&gt;. When &lt;food&gt;
+            reaches zero, remove the object.
+		</td>
+	</tr>
+	<tr>
 		<td>level</td>
 		<td>@ref obj::level</td>
 		<td>(no description)
@@ -214,11 +221,10 @@ Type defined by:
 	</tr>
 	<tr>
 		<td>permanent experience</td>
-		<td>@ref obj::total_exp</td>
-		<td>            &lt;Total experience&gt; is all the experience the player gained,
-            disregarding &lt;experience&gt; lost from death or draining.  Permanent experience is
-            computed from this using the server's permanent experience ratio.  A character's
-            &lt;experience&gt; will not fall below &lt;permanent experience&gt;.
+		<td>@ref obj::perm_exp</td>
+		<td>            &lt;Permanent experience&gt; is the experience the player gained
+            permanently. Even if a player dies multiple times or gets drained,
+            his &lt;experience&gt; will not fall below &lt;permanent experience&gt;.
 		</td>
 	</tr>
 	<tr>

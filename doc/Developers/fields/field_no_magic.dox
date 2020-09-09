@@ -7,7 +7,7 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_212, @ref page_type_67, @ref page_type_88, @ref page_type_65, @ref page_type_138
+@ref page_type_213, @ref page_type_67, @ref page_type_88, @ref page_type_65, @ref page_type_138
 		</td><td>            If enabled, it is impossible for players to use (wizard-) spells on
             that spot.</td>
 	</tr>
@@ -26,7 +26,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_214
+@ref page_type_215
 		</td><td>            This takes effect only with &lt;blocksview&gt; disabled. Restricting
             the use of spells to pass this wall.</td>
 	</tr>

@@ -14,7 +14,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                &lt;max spellpoints&gt; is the maximum number of spellpoints a
                 monster can hold. Setting this to high values has little effect
                 unless the monster has a decent &lt;spellpoint regen.&gt;, or

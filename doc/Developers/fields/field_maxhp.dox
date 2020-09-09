@@ -31,7 +31,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                &lt;max health&gt; is the maximum amount of &lt;health points&gt;
                 this monster can have.</td>
 	</tr>
@@ -51,7 +51,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_215
+@ref page_type_216
 		</td><td>            &lt;max health&gt; is the maximum amount of &lt;health points&gt;
             this weak wall can have. Since walls generally don't heal, I doubt
             this has much real effect.</td>

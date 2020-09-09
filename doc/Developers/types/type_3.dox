@@ -159,6 +159,13 @@ Type defined by:
 		</td>
 	</tr>
 	<tr>
+		<td>is used up</td>
+		<td>@ref FLAG_IS_USED_UP</td>
+		<td>            If set, decrement the &lt;food&gt; field at &lt;speed&gt;. When &lt;food&gt;
+            reaches zero, remove the object.
+		</td>
+	</tr>
+	<tr>
 		<td>material</td>
 		<td>@ref obj::material</td>
 		<td>            This bitmask-value informs the player of which material(s) the

@@ -25,7 +25,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                The &lt;detect hidden&gt; value gives monsters the ability to
                 find hidden/invisible creatures. Higher values make for better
                 detection-skills. Enabling &lt;see invisible&gt; makes this

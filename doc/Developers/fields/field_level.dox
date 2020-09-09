@@ -81,7 +81,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>            A monster's &lt;level&gt; is the most important attribute. &lt;level&gt;
             affects the power of a monster in various ways.</td>
 	</tr>
@@ -151,13 +151,23 @@
 	</tr>
 	<tr>
 		<td>
+@ref page_type_4
+		</td><td>            The maximum level of the generated item. Higher levels are better,
+            but the specific behavior of &lt;level&gt; depends on the type
+            of the item being generated.
+            If zero/unset, the map difficulty will instead be used.
+            (Example for comparison: Shop floors generate treasure of &lt;quality
+            level&gt; 5 per default).</td>
+	</tr>
+	<tr>
+		<td>
 @ref page_type_109
 		</td><td>            The &lt;casting level&gt; of the wand determines it's power. An
             average level for wands in shops is about 10.</td>
 	</tr>
 	<tr>
 		<td>
-@ref page_type_215
+@ref page_type_216
 		</td><td>            The &lt;level&gt; of a weak wall works similar to monster levels.
             Due to the fact that weak walls cannot attack, the level is much
             less important though.</td>

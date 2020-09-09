@@ -7,7 +7,7 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_18, @ref page_type_31, @ref page_type_58, @ref page_type_66, @ref page_type_212, @ref page_type_67, @ref page_type_88, @ref page_type_56, @ref page_type_62, @ref page_type_214
+@ref page_type_18, @ref page_type_31, @ref page_type_58, @ref page_type_66, @ref page_type_213, @ref page_type_67, @ref page_type_88, @ref page_type_56, @ref page_type_62, @ref page_type_215
 		</td><td>            If set, the object cannot be passed by players nor monsters.</td>
 	</tr>
 	<tr>

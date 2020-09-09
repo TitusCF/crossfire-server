@@ -20,6 +20,7 @@ This page lists all attributes.
 - @ref page_custom_attribute_identified_name_pl "identified_name_pl"
 - @ref obj::face
 - @ref obj::invisible
+- @ref FLAG_IS_USED_UP
 - @ref obj::slaying
 - @ref obj::material
 - @ref obj::msg
@@ -114,6 +115,7 @@ This page lists all attributes.
 - @ref obj::move_slow
 - @ref obj::move_slow_penalty
 - @ref FLAG_IS_WOODED
+- @ref obj::direction
 - @ref FLAG_ALIVE
 - @ref obj::resist
 - @ref FLAG_SLEEP
@@ -154,7 +156,7 @@ This page lists all attributes.
 - @ref FLAG_AUTO_APPLY
 - @ref obj::expmul
 - @ref page_custom_attribute_wc_increase_rate "wc_increase_rate"
-- @ref obj::total_exp
+- @ref obj::perm_exp
 - @ref obj::skill
 - @ref obj::casting_time
 - @ref page_custom_attribute_casting_requirements "casting_requirements"

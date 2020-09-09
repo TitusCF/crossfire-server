@@ -64,7 +64,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>            This only takes effect if &lt;multiply&gt; is enabled. The monster
             will create a &lt;breed monster&gt; every once in a while. &lt;breed
             monster&gt; can be set to any valid arch-name of a monster.</td>

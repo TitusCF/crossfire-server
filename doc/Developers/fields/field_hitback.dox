@@ -7,7 +7,7 @@
 		<th>Description</th>
 	</tr>	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                Monsters with &lt;hitback&gt; enabled hurt the attacker in
                 proportion to the amount of damage the *attacker* inflicted.
                 This damage is additional to the regular melee damage of the

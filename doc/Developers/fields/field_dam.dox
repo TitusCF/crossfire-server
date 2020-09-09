@@ -26,7 +26,7 @@
 	</tr>
 	<tr>
 		<td>
-@ref page_type_213, @ref page_type_28
+@ref page_type_214, @ref page_type_28
 		</td><td>                Among other parameters, &lt;damage&gt; affects how much melee
                 damage a monster inflicts. &lt;damage&gt; is used as base value
                 for damage per hit. &lt;level&gt;, &lt;speed&gt;, &lt;weapon
