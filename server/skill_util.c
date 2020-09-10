@@ -525,7 +525,8 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
     case SK_JEWELER:
     case SK_ALCHEMY:
     case SK_THAUMATURGY:
-    case SK_LITERACY:    case SK_WOODSMAN:
+    case SK_LITERACY:
+    case SK_WOODSMAN:
         if (use_alchemy(op) == 0)
             exp = success = skill_ident(op, skill);
         break;
