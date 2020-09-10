@@ -240,7 +240,7 @@ object *find_skill_by_name(object *who, const char *name) {
         * in length than the passed string. Eg, if we have a skill called
         * 'hi', we don't want to match if the user passed 'high'
         */
-        if (tmp->type == SKILL || tmp->type == SKILL_TOOL) {
+        if (tmp->type == SKILL || (tmp->type == SKILL_TOOL && !QUERY_FLAG(tmp, FLAG_UNPAID))) {
             for (i = 0; i<num_names; i++) {
                 if (!strncasecmp(skill_names[i], tmp->skill, strlen(skill_names[i])) &&
                     strlen(tmp->skill) >= strlen(skill_names[i])) {
@@ -525,7 +525,8 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
     case SK_JEWELER:
     case SK_ALCHEMY:
     case SK_THAUMATURGY:
-    case SK_LITERACY:    case SK_WOODSMAN:
+    case SK_LITERACY:
+    case SK_WOODSMAN:
         if (use_alchemy(op) == 0)
             exp = success = skill_ident(op, skill);
         break;
