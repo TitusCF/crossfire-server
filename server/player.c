@@ -795,7 +795,7 @@ void give_initial_items(object *pl, treasurelist *items) {
 
             found = 0;
             FOR_BELOW_PREPARE(op, tmp)
-                if (tmp->type == op->type && tmp->name == op->name) {
+                if (object_can_merge(op, tmp)) {
                     found = 1;
                     break;
                 }
@@ -2709,7 +2709,7 @@ void move_player_attack(object *op, int dir) {
      * do nothing at all.  As it is, if we are braced, we go through
      * quite a bit of processing.  However, it probably is less than what
      * move_ob uses.
-     */     
+     */
     if ((op->contr->braced || !move_ob(tpl, dir, tpl)) && !out_of_map(tpl->map, nx, ny)) {
         if (OUT_OF_REAL_MAP(tpl->map, nx, ny)) {
             m = get_map_from_coord(tpl->map, &nx, &ny);

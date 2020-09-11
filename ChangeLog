@@ -1,3 +1,11 @@
+2020-09-10  Rebecca Kelly
+    * server/player.c: use object_can_merge() to deduplicate starting inventory.
+        This fixes an issue where all spellbooks of a given school were
+        considered equivalent by the deduplicator, resulting in most caster
+        characters only getting one spellbook when they should have gotten 2-3.
+        Note that players may still get fewer spellbooks if multiple books were
+        generated holding the same spell.
+
 2020-09-08  Daniel Hawkins
     * server/apply.c: Refactor class face apply to allow for custom class faces on races that
         lack noclassfacechange.
