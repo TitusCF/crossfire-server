@@ -66,12 +66,11 @@ void cctk_setlog(const char *logfile) {
 }
 
 void cctk_setdatadir(const char *datadir) {
+    static char confdir[1024];
+    snprintf(confdir, sizeof(confdir), "%s/config", datadir);
     settings.datadir = datadir;
-    SET_TKFLAG(STATUS_DATADIR);
-}
-
-void cctk_setconfdir(const char *confdir) {
     settings.confdir = confdir;
+    SET_TKFLAG(STATUS_DATADIR);
     SET_TKFLAG(STATUS_CONFDIR);
 }
 
