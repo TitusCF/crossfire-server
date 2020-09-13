@@ -317,7 +317,7 @@ void add_abilities(object *op, const object *change) {
             object_set_value(op, "identified_animation", buf, 1);
         }
     }
-    
+
     /**
      * For items that do not need identifying, use their identified face/animation
      * immediately. This should make seas of generated creatures look more interesting.

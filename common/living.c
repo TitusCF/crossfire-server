@@ -1382,7 +1382,7 @@ void fix_object(object *op) {
                 SET_FLAG(op, FLAG_SEE_IN_DARK);
             if (QUERY_FLAG(tmp, FLAG_PROBE))
                 SET_FLAG(op, FLAG_PROBE);
-                
+
             // Items can make the wielder confused.
             if (QUERY_FLAG(tmp, FLAG_CONFUSED))
                 SET_FLAG(op, FLAG_CONFUSED);
@@ -1992,14 +1992,14 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
     /*
      * Make sure we aren't trying to go backwards when we hit maximum level,
      * but make sure we can still add to our permanent experience.
-     * 
+     *
      * -- Daniel Hawkins 2015-05-24
      */
     if (op->level == settings.max_level)
         limit = levels[op->level] / 2;
     else
         limit = (levels[op->level+1]-levels[op->level])/2;
-        
+
     if (exp_to_add > limit)
         exp_to_add = limit;
 
@@ -2008,14 +2008,14 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
         /*
          * Make sure we aren't trying to go backwards when we hit maximum level,
          * but make sure we can still add to our permanent experience.
-         * 
+         *
          * -- Daniel Hawkins 2015-05-24
          */
         if (skill_obj->level == settings.max_level)
             limit = levels[skill_obj->level] / 2;
         else
             limit = (levels[skill_obj->level+1]-levels[skill_obj->level])/2;
-            
+
         if (exp_to_add > limit)
             exp_to_add = limit;
         added_skill_exp = skill_obj->stats.exp;

@@ -62,7 +62,7 @@ void play_sound_player_only(player *pl, int8_t sound_type, object *emitter, int 
         return;
 
     source = emitter->map ? emitter : emitter->env;
-    
+
     // Approximate the distance to the emitter from the source
     int dx = FABS(source->x-pl->ob->x),
         dy = FABS(source->y-pl->ob->y);
