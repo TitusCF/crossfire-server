@@ -240,13 +240,13 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             scroll_failure(applier, 0-random_roll(0, spell->level, applier, PREFER_LOW), MAX(spell->stats.sp, spell->stats.grace));
         } else if (QUERY_FLAG(book, FLAG_STARTEQUIP)
         || (random_roll(0, 100, applier, PREFER_LOW)-(5*read_level)) < get_learn_spell(spell->stats.grace ? applier->stats.Wis : applier->stats.Int)) {
-            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "You succeed in learning the spell!");
             if (spell->msg != NULL) {
                 draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, applier, msgType->message_type, msgType->message_subtype,
                 "You open the %s and start reading.\n%s",
                 ob_describe(book, applier, 0, desc, sizeof(desc)), spell->msg);
             }
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You succeed in learning the spell!");
             do_learn_spell(applier, spell, 0);
 
             /* xp gain to literacy for spell learning */
