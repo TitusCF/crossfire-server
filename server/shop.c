@@ -70,8 +70,7 @@ static const char *const coins[] = {
 uint64_t price_base(const object *obj) {
     // When there are zero objects, there is really one.
     const int number = NROF(obj);
-    const bool identified =
-        QUERY_FLAG(obj, FLAG_IDENTIFIED) || !need_identify(obj);
+    const bool identified = is_identified(obj);
     uint64_t val = (uint64_t)obj->value * number;
 
     // Objects with price adjustments skip the rest of the calculations.
@@ -251,7 +250,6 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
 uint64_t shop_price_sell(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
     uint64_t val = price_base(tmp);
-    bool identified = QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp);
 
     const char *key = object_get_value(tmp, "price_adjustment_sell");
     if (key != NULL) {
@@ -264,7 +262,7 @@ uint64_t shop_price_sell(const object *tmp, object *who) {
     }
 
     // Shops value unidentified items less.
-    if (!identified) {
+    if (!is_identified(tmp)) {
         if (tmp->arch != NULL) {
             // Unidentified standard objects are only worth a little less.
             if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) {

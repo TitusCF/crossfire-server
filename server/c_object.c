@@ -1686,12 +1686,15 @@ void examine(object *op, object *tmp) {
     && !tmp->move_on
     && strncasecmp(tmp->msg, "@match", 6)) {
         /* This is just a hack so when identifying the items, we print
-         * out the extra message
-         * 
+         * out the extra message. Do this only for "identifiable types", e.g.
+         * we don't want to print this message when the player looks at a
+         * locked door (where msg is used to store the message they get when
+         * trying to force it open).
+         *
          * Also, don't print the message for the object unless it has been identified
          * 		-- SilverNexus 2015-05-20
          */
-        if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED)){
+        if (is_identifiable_type(tmp) && is_identified(tmp)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                           "The object has a story:");
 
@@ -1702,7 +1705,7 @@ void examine(object *op, object *tmp) {
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                   " "); /* Blank line */
 
-    if (!need_identify(tmp) || QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
+    if (is_identified(tmp)) {
         knowledge_item_can_be_used_alchemy(op, tmp);
     }
 }

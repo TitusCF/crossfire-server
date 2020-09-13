@@ -818,7 +818,7 @@ void give_initial_items(object *pl, treasurelist *items) {
          * items.  Just don't identify gold or silver, or it won't be
          * merged properly.
          */
-        if (need_identify(op)) {
+        if (!is_identifiable_type(op)) {
             SET_FLAG(op, FLAG_IDENTIFIED);
             CLEAR_FLAG(op, FLAG_CURSED);
             CLEAR_FLAG(op, FLAG_DAMNED);

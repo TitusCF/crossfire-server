@@ -70,9 +70,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
     /* if the player has a marked item, identify that if it needs to be
      * identified.  IF it doesn't, then go through the player inventory.
      */
-    if (marked
-    && !QUERY_FLAG(marked, FLAG_IDENTIFIED)
-    && need_identify(marked)) {
+    if (marked && !is_identified(marked)) {
         if (operate_altar(altar, &money)) {
             marked = identify(marked);
             draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
@@ -91,9 +89,7 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
     }
 
     FOR_INV_PREPARE(originator, id) {
-        if (!QUERY_FLAG(id, FLAG_IDENTIFIED)
-        && !id->invisible
-        && need_identify(id)) {
+        if (!id->invisible && !is_identified(id)) {
             if (operate_altar(altar, &money)) {
                 id = identify(id);
                 draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,

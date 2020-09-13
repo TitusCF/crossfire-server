@@ -455,7 +455,7 @@ static object *make_item_from_recipe(object *cauldron, const recipe *rp) {
         }
         transmute_materialname(item, art->item);
         give_artifact_abilities(item, art->item);
-        if (need_identify(item) && QUERY_FLAG(item, FLAG_IDENTIFIED)) {
+        if (is_identified(item)) {
             /* artifacts are generated unidentified, so if the item is identified we must give it its real properties. */
             object_give_identified_properties(item);
         }

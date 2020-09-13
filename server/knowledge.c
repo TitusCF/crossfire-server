@@ -383,7 +383,7 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
     }
     for (inv = pl->ob->inv; inv != NULL; inv = inv->below) {
 
-        if (QUERY_FLAG(inv, FLAG_INV_LOCKED) || QUERY_FLAG(inv, FLAG_STARTEQUIP) /*|| (need_identify(inv) && !QUERY_FLAG(inv, FLAG_IDENTIFIED))*/)
+        if (QUERY_FLAG(inv, FLAG_INV_LOCKED) || QUERY_FLAG(inv, FLAG_STARTEQUIP))
             continue;
 
         if (inv->title == NULL)

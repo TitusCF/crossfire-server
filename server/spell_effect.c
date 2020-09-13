@@ -2484,7 +2484,7 @@ int cast_identify(object *op, object *caster, object *spell) {
         num_ident = 1;
 
     FOR_INV_PREPARE(op, tmp)
-        if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !tmp->invisible &&  need_identify(tmp)) {
+        if (!tmp->invisible && !is_identified(tmp)) {
             tmp = identify(tmp);
             if (op->type == PLAYER) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
@@ -2508,9 +2508,7 @@ int cast_identify(object *op, object *caster, object *spell) {
      */
     if (num_ident) {
         FOR_MAP_PREPARE(op->map, op->x, op->y, tmp)
-            if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-            && !tmp->invisible
-            && need_identify(tmp)) {
+            if (!tmp->invisible && !is_identified(tmp)) {
                 tmp = identify(tmp);
                 if (op->type == PLAYER) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
