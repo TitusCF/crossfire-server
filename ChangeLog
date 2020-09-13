@@ -1,3 +1,7 @@
+2020-09-13 Rebecca Kelly
+    * types/spellbook/spellbook.c: change the order of the messages when you
+        successfully read a spellbook to make them read a bit better.
+
 2020-09-10  Rebecca Kelly
     * server/player.c: use object_can_merge() to deduplicate starting inventory.
         This fixes an issue where all spellbooks of a given school were
@@ -120,7 +124,7 @@
       another using a tool and both use the same ingredients.
 
 2019-04-22 Rick Tanner
-   * server/spell_util.c: Patch #357 Balancing changes to the summoning branch 
+   * server/spell_util.c: Patch #357 Balancing changes to the summoning branch
      Failed summons via Summoning skill no longer cost spell points.
 
 2019-03-15  Daniel Hawkins
@@ -494,7 +498,7 @@
 
 2015-05-28  Daniel Hawkins
 	* server/player.c: Tweak the starvation calculation to not use a loop.
-	  Tweak the similar_direction calculation to use modulus instead of 
+	  Tweak the similar_direction calculation to use modulus instead of
 	  a switch statement.
 
 2015-05-25  Daniel Hawkins
