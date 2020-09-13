@@ -330,7 +330,7 @@ void add_abilities(object *op, const object *change) {
      *
      * 2018-01-08
      */
-    if (op->arch && (!need_identify(op) || QUERY_FLAG(change, FLAG_IDENTIFIED) || QUERY_FLAG(op, FLAG_IDENTIFIED)))
+    if (op->arch && (is_identified(op) || QUERY_FLAG(change, FLAG_IDENTIFIED)))
         object_give_identified_properties(op);
 
     for (i = 0; i < NUM_STATS; i++)

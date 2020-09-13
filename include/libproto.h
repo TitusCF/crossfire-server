@@ -114,7 +114,8 @@ extern void query_base_name(const object *op, int plural, char *buf, size_t size
 extern StringBuffer *describe_monster(const object *op, int use_media_tags, StringBuffer *buf);
 extern StringBuffer *describe_item(const object *op, const object *owner, int use_media_tags, StringBuffer *buf);
 extern int is_magical(const object *op);
-extern int need_identify(const object *op);
+extern int is_identifiable_type(const object *op);
+extern int is_identified(const object *op);
 extern void object_give_identified_properties(object *op);
 extern object *identify(object *op);
 /* languages.c */

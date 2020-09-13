@@ -786,10 +786,7 @@ int identify_object_with_skill(object *tmp, object *pl, object *skill, int print
     int success = 0, chance, ip;
     int skill_value = (skill->level && pl->stats.Int) ? pl->stats.Int : 10;
 
-    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)
-    && !QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT)
-    && need_identify(tmp)
-    && !tmp->invisible) {
+    if (!tmp->invisible && !QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT) && !is_identified(tmp)) {
         ip = tmp->magic;
         if (tmp->item_power > ip)
             ip = tmp->item_power;

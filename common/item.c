@@ -188,7 +188,7 @@ static const typedata item_types[] = {
     { GIRDLE, "girdle", "girdles", SK_SMITHERY, 0 },
     { FORCE, "force", "forces", 0, 0 },
     { POTION_RESIST_EFFECT, "potion effect", "potion effects", 0, 0 },
-    { CLOSE_CON, "closed container", "closed container", 0, 0 },
+    { CLOSE_CON, "closed container", "closed container", SK_ALCHEMY, 0 },
     { CONTAINER, "container", "containers", SK_ALCHEMY, 0 },
     { ARMOUR_IMPROVER, "armour improver", "armour improvers", SK_LITERACY, 0 },
     { WEAPON_IMPROVER, "weapon improver", "weapon improvers", SK_LITERACY, 0 },
@@ -198,7 +198,7 @@ static const typedata item_types[] = {
     { SHOP_INVENTORY, "inventory list", "inventory lists", 0, 0 },
     { RUNE, "rune", "runes", 0, 0 },
     { TRAP, "trap", "traps", 0, 0 },
-    { POWER_CRYSTAL, "power_crystal", "power_crystals", 0, 0 },
+    { POWER_CRYSTAL, "power_crystal", "power_crystals", SK_THAUMATURGY, 0 },
     { CORPSE, "corpse", "corpses", 0, 0 },
     { DISEASE, "disease", "diseases", 0, 0 },
     { SYMPTOM, "symptom", "symptoms", 0, 0 },
@@ -606,7 +606,7 @@ void query_short_name(const object *op, char *buf, size_t size) {
 
     default:
         if (op->magic
-        && ((QUERY_FLAG(op, FLAG_BEEN_APPLIED) && need_identify(op)) || QUERY_FLAG(op, FLAG_IDENTIFIED))) {
+        && (QUERY_FLAG(op, FLAG_BEEN_APPLIED) || is_identified(op))) {
             snprintf(buf+len, size-len, " %+d", op->magic);
             len += strlen(buf+len);
         }
@@ -779,7 +779,7 @@ void query_base_name(const object *op, int plural, char *buf, size_t size) {
 
     default:
         if (op->magic
-        && ((QUERY_FLAG(op, FLAG_BEEN_APPLIED) && need_identify(op)) || QUERY_FLAG(op, FLAG_IDENTIFIED))) {
+        && (QUERY_FLAG(op, FLAG_BEEN_APPLIED) || is_identified(op))) {
             snprintf(buf+strlen(buf), size-strlen(buf), " %+d", op->magic);
         }
     }
@@ -985,12 +985,12 @@ StringBuffer *describe_item(const object *op, const object *owner, int use_media
         return describe_monster(op, use_media_tags, buf);
     }
 
-    /* figure this out once, instead of making multiple calls to need_identify.
+    /* figure this out once, instead of making multiple calls to is_identified.
      * also makes the code easier to read.
      */
-    if (!need_identify(op) || QUERY_FLAG(op, FLAG_IDENTIFIED))
+    if (is_identified(op)) {
         identified = 1;
-    else {
+    } else {
         stringbuffer_append_string(buf, "(unidentified)");
         identified = 0;
     }
@@ -1314,54 +1314,46 @@ int is_magical(const object *op) {
 }
 
 /**
- * This function really should not exist - by default, any item not identified
- * should need it.
+ * Return true if this item's type is one that cares about whether or not it's
+ * been identified -- e.g. money and walls don't care (they are considered to
+ * be "always identified" no matter what FLAG_IDENTIFIED says) but weapons and
+ * scrolls do.
+ * In practice, this means anything with at least one identifyskill in the
+ * typedata, or skill tools (which have no identifyskill, but can still be IDed
+ * using magic).
  *
  * @param op
- * item to check.
+ * Object to check.
  * @return
- * true if the item should be identified.
+ * True if the object can be identified.
  * @todo
- * either remove this function, or fix comment above :)
+ * Ideally, this distinction would be meaningless and we'd just always check
+ * FLAG_IDENTIFIED, and assume that items that shouldn't ever need to be
+ * identified will always have the flag set. In practice we can't reliably
+ * make that assumption.
  */
-int need_identify(const object *op) {
-    switch (op->type) {
-    case RING:
-    case WAND:
-    case ROD:
-    case SCROLL:
-    case SKILL:
-    case SKILLSCROLL:
-    case SPELLBOOK:
-    case FOOD:
-    case POTION:
-    case BOW:
-    case ARROW:
-    case WEAPON:
-    case ARMOUR:
-    case SHIELD:
-    case HELMET:
-    case AMULET:
-    case BOOTS:
-    case GLOVES:
-    case BRACERS:
-    case GIRDLE:
-    case CONTAINER:
-    case DRINK:
-    case FLESH:
-    case INORGANIC:
-    case CLOSE_CON:
-    case CLOAK:
-    case GEM:
-    case POWER_CRYSTAL:
-    case POISON:
-    case BOOK:
-    case SKILL_TOOL:
-    case ARMOUR_IMPROVER:
-    case WEAPON_IMPROVER:
-        return 1;
-    }
-    return 0;
+int is_identifiable_type(const object *op) {
+    /* Special case -- skill tools don't have an associated identification
+     * skill but still need IDing. TODO: we should probably have per-tool ID
+     * skills, e.g. thievery for lockpicks and thaumaturgy for talismans, but
+     * currently there's no good way to do this because the identifyskill is
+     * tied to the itemtype rather than to the arch. */
+    return op->type == SKILL_TOOL || get_typedata(op->type)->identifyskill;
+}
+
+/**
+ * Return true if the item is identified, either because it is of a type that
+ * doesn't ever need identification (e.g. money), or because it has
+ * FLAG_IDENTIFIED set.
+ * Uses is_identifiable_type() to distinguish between the two cases.
+ *
+ * @param op
+ * Object to check.
+ * @return
+ * true if the item has been identified, or doesn't need identification.
+ */
+int is_identified(const object *op) {
+    return !is_identifiable_type(op) || QUERY_FLAG(op, FLAG_IDENTIFIED);
 }
 
 /**
