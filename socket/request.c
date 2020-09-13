@@ -1629,7 +1629,7 @@ void esrv_update_spells(player *pl) {
 
 void esrv_remove_spell(player *pl, object *spell) {
     SockList sl;
-    
+
     if (!pl || !spell || spell->env != pl->ob) {
         LOG(llevError, "Invalid call to esrv_remove_spell\n");
         return;

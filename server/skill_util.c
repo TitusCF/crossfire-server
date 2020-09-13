@@ -62,7 +62,7 @@ const char *skill_names[MAX_SKILLS];
 int skill_faces[MAX_SKILLS];
 
 /**
- * This just sets up the ::skill_names table above. The index into the array 
+ * This just sets up the ::skill_names table above. The index into the array
  * is simply the order the skill is found.
  */
 void init_skills(void) {
@@ -1195,7 +1195,7 @@ static void do_skill_attack(object *tmp, object *op, const char *string, object 
     }
 
     success = attack_ob(tmp, op);
-    
+
     /*
      * print appropriate  messages to the player
      *

@@ -405,7 +405,7 @@ int monster_compute_path(object *source, object *target, int default_dir) {
 
     // Leave width like this because it is used just this once.
     const int size = cur_map->width * map_height;
-    
+
     /**
      * Also, do a quick check to make sure our source monster is not completely sandwiched
      * Do this before we malloc our distance array since we can check this without needing that array.
@@ -444,7 +444,7 @@ int monster_compute_path(object *source, object *target, int default_dir) {
         if (dir < 0)
             return default_dir;
     }
-    
+
     /* We are setting all the values manually anyway,
      * so there's no reason to use calloc().
      * malloc() is more efficient here for that reason.
@@ -462,14 +462,14 @@ int monster_compute_path(object *source, object *target, int default_dir) {
     }
      *
      * To set to 65535 efficiently, though, I need to memset each byte to 255.
-     * each element is two bytes, 
+     * each element is two bytes,
      */
     memset(distance, 255, sizeof(*distance) * size);
-    
+
     distance[map_height * target->x + target->y] = 0;
     explore_x[0] = target->x;
     explore_y[0] = target->y;
-    
+
     /* The first time through, current = 0 and max = 1.
      * This will evaluate to true, so we might as well use a do-while loop.
      */
@@ -500,18 +500,18 @@ int monster_compute_path(object *source, object *target, int default_dir) {
 
             if (OUT_OF_REAL_MAP(cur_map, x, y))
                 continue;
-                
+
             // Move these up, so we can reduce calls to ob_blocked with their info.
             assert(map_height * x + y >= 0);
             assert(map_height * x + y < size);
-	    
-            new_distance = 
+
+            new_distance =
                 distance[map_height * explore_x[current] + explore_y[current]]
                 /* Mod 2 is equivalent to checking only the 1's bit (1 or 0), but & 1 is faster.
                  * Also, dir & 1 == 0 is true if we have a diagonal dir.
                  */
                 + ((dir & 1) == 0 ? 3 : 2);
-                
+
             // If already known blocked or arrivable in less distance, we skip
             if (distance[map_height * x + y] <= new_distance)
                 continue;
@@ -586,7 +586,7 @@ void monster_do_living(object *op) {
             CLEAR_FLAG(op, FLAG_RUN_AWAY);
 	/*
 	 * This should already be covered by the MIN() check above.
-	 
+
         if (op->stats.hp > op->stats.maxhp)
             op->stats.hp = op->stats.maxhp;
 	 */
@@ -782,7 +782,7 @@ int monster_move(object *op) {
         if (op->animation_id)
             animate_object(op, op->direction);
     }
-    
+
     // We are looking at movement -- if monster was paralyzed, they aren't anymore
     if (QUERY_FLAG(op, FLAG_PARALYZED)) {
         CLEAR_FLAG(op, FLAG_PARALYZED);

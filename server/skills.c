@@ -560,7 +560,7 @@ static int attempt_jump(object *pl, int dir, int spaces, object *skill) {
         // We failed to jump. Return as a failure.
         return 0;
     }
-    
+
     int i, dx = freearr_x[dir], dy = freearr_y[dir], mflags;
     int16_t x, y;
     mapstruct *m;

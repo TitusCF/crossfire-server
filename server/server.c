@@ -1151,7 +1151,7 @@ void clean_tmp_files(void) {
             } else {
                 save_map(m, SAVE_MODE_NORMAL);
                 // FIXME: Unfortunately, save_map() also unnecessarily saves
-                // non-unique tiles to a new temporary file, so we have to 
+                // non-unique tiles to a new temporary file, so we have to
                 // get rid of it here.
                 clean_tmp_map(m);
             }

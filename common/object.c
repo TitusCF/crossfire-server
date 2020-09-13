@@ -1892,7 +1892,7 @@ object *object_merge(object *op, object *top) {
             continue;
         if (object_can_merge(op, top)) {
             object_increase_nrof(top, op->nrof);
-            /* 
+            /*
              * Previous behavior set weight to zero here.
              * This, however, caused the object_sub_weight
              * call in object_remove to subtract zero weight
@@ -4507,7 +4507,7 @@ int object_matches_string(object *pl, object *op, const char *name) {
     char *cp, local_name[MAX_BUF], name_op[MAX_BUF], name_short[HUGE_BUF], bname_s[MAX_BUF], bname_p[MAX_BUF];
     int count, retval = 0;
     /* strtok is destructive to name */
-    safe_strncpy(local_name, name, sizeof(local_name)); 
+    safe_strncpy(local_name, name, sizeof(local_name));
 
     for (cp = strtok(local_name, ","); cp; cp = strtok(NULL, ",")) {
         while (cp[0] == ' ')

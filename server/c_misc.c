@@ -68,7 +68,7 @@ void map_info(object *op, const char *search) {
             search_array_count = split_string(to_be_freed,search_array,64,',');
         }
     }
-    
+
     for (mapstruct *m = first_map; m != NULL; m = m->next) {
         bool match = TRUE;
         if ( search_array_count ) {

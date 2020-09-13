@@ -84,12 +84,12 @@ uint64_t price_base(const object *obj) {
     if (obj->type == MONEY || obj->type == GEM) {
         return val;
     }
-    
+
     // If unidentified, price item based on its archetype.
     if (!identified && obj->arch) {
         val = obj->arch->clone.value * number;
     }
-    
+
     /**
      * Shopkeepers always know the BUC status of items. Adjust the base price
      * of items based on their BUC status. Note that later in shop_price_sell,
@@ -121,7 +121,7 @@ uint64_t price_base(const object *obj) {
      * reflect values (potion charisma list for 1250 gold)
      */
     val *= 4; // FIXME
-    
+
     return val;
 }
 
@@ -862,7 +862,7 @@ int can_pay(object *pl) {
                     snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "but you only have");
                 denominations++;
                 archetype *arch = find_archetype(coins[i]);
-                if (arch != NULL) 
+                if (arch != NULL)
                 {
                     snprintf(coinbuf, sizeof(coinbuf), " %u %s,", coincount[i], arch->clone.name_pl);
                     snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "%s", coinbuf);

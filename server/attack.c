@@ -2116,7 +2116,7 @@ static void poison_living(object *op, object *hitter, int dam) {
     }
     object *tmp = arch_present_in_ob(at, op);
     const char *skill;
-    
+
     if (tmp == NULL) {
         tmp = arch_to_object(at);
         if (tmp == NULL)
@@ -2223,7 +2223,7 @@ int slow_living_by(object *op, const int speed_penalty) {
 static void slow_living(object *op, object *hitter, int dam) {
     // Used to calculate the speed penalty of the slow attempt
     int speed_penalty;
-    
+
     /**
      * Give slow attacks some oomph -- always speed -1 was REALLY weak
      *
@@ -2434,7 +2434,7 @@ static void deathstrike_living(object *op, object *hitter, int *dam) {
     roll = random_roll(1, 20, hitter, PREFER_HIGH);
     kill_lev = roll - 18 + atk_lev; // Use 19+ as a kill for same level and no resistance;
     kill_lev = kill_lev * (100 - op->resist[ATNR_DEATH]) / 100; // Do not compress to *= for roundoff reasons.
-    
+
     // If we hit, then kill them. Otherwise, damage is 0.
     if (kill_lev > def_lev) {
         *dam = op->stats.hp+10; /* take all hp. they can still save for 1/2 */

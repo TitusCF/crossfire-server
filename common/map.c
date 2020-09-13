@@ -806,7 +806,7 @@ mapstruct *get_linked_map(void) {
     */
     map->next = first_map;
     first_map = map;
-    
+
     map->in_memory = MAP_SWAPPED;
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.

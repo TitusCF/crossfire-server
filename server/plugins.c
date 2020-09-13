@@ -1661,7 +1661,7 @@ static void cfapi_object_move(int *type, ...) {
         va_end(args);
         *ret = player_arrest(op);
         break;
-    
+
     default:
         // Just end the use of variable args. We got a wrong type.
         va_end(args);
@@ -4223,7 +4223,7 @@ static void cfapi_object_perm_exp(int *type, ...) {
     op = va_arg(args, object *);
     rlong = va_arg(args, int64_t *);
     va_end(args);
-    
+
     *type = CFAPI_SINT64;
     *rlong = PERM_EXP(op->total_exp);
 }
