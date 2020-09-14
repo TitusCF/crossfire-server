@@ -1338,7 +1338,11 @@ int is_identifiable_type(const object *op) {
      * skills, e.g. thievery for lockpicks and thaumaturgy for talismans, but
      * currently there's no good way to do this because the identifyskill is
      * tied to the itemtype rather than to the arch. */
-    return op->type == SKILL_TOOL || get_typedata(op->type)->identifyskill;
+    if (op->type == SKILL_TOOL) return true;
+
+    /* Sometimes an itemtype has no associated typedata?! */
+    const typedata *td = get_typedata(op->type);
+    return td && td->identifyskill;
 }
 
 /**
