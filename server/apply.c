@@ -150,6 +150,9 @@ int set_object_face_main(object *op) {
     int newface = op->arch->clone.face->number;
     sstring saved = object_get_value(op, "face_closed");
 
+    if (op->more)
+        set_object_face_main(op->more);
+
     if (saved)
         newface = find_face(saved, newface);
     if (newface && op->face != &new_faces[newface]) {
@@ -173,16 +176,20 @@ int set_object_face_main(object *op) {
 static int set_object_face_other(object *op) {
     sstring custom;
     int newface = 0;
+    object *head = op->head ? op->head : op;
 
-    if (op->face && op->other_arch && op->other_arch->clone.face)
-        newface = op->other_arch->clone.face->number;
+    if (op->more)
+        set_object_face_other(op->more);
+
+    if (head->face && head->other_arch && head->other_arch->clone.face)
+        newface = head->other_arch->clone.face->number;
 
     if (op->face != op->arch->clone.face) {
         /* object has a custom face, save it so it gets correctly restored later. */
         object_set_value(op, "face_closed", op->face->name, 1);
     }
 
-    custom = object_get_value(op, "face_opened");
+    custom = object_get_value(head, "face_opened");
     if (custom)
         newface = find_face(custom, newface);
     if (newface && op->face->number != newface) {
@@ -225,6 +232,9 @@ int apply_container(object *op, object *sack) {
         return 0;
     }
 
+    if (sack->head)
+        sack = sack->head;
+
     /* If we have a currently open container, then it needs
      * to be closed in all cases if we are opening this one up.
      * We then fall through if appropriate for opening the new
@@ -234,7 +244,11 @@ int apply_container(object *op, object *sack) {
         tag_t tmp_tag = op->container->count;
 
         if (op->container->env != op) { /* if container is on the ground */
-            op->container->move_off = 0;
+            object *part = op->container->head ? op->container->head : op->container;
+            while (part) {
+                part->move_off = 0;
+                part = part->more;
+            }
         }
 
         /* Query name before the close event, as the container could be destroyed. */
@@ -323,7 +337,13 @@ int apply_container(object *op, object *sack) {
         }
 
         /* set it so when the player walks off, we can unapply the sack */
-        sack->move_off = MOVE_ALL;      /* trying force closing it */
+        {
+            object *part = sack->head ? sack->head : sack;
+            while (part) {
+                part->move_off = MOVE_ALL;
+                part = part->more;
+            }
+        }
 
         CLEAR_FLAG(sack, FLAG_APPLIED);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
