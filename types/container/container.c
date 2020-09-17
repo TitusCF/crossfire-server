@@ -50,7 +50,7 @@ static method_ret container_type_move_on(ob_methods *context, object *trap, obje
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     if (victim->type == PLAYER)
-        (void)apply_container(victim, trap);
+        (void)apply_container(victim, trap, AP_NULL);
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;
 }

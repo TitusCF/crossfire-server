@@ -3418,7 +3418,7 @@ static void loot_object(object *op) {
     object *tmp2;
 
     if (op->container) { /* close open sack first */
-        apply_container(op, op->container);
+        apply_container(op, op->container, AP_NULL);
     }
 
     FOR_INV_PREPARE(op, tmp) {

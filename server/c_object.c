@@ -222,6 +222,10 @@ void command_apply(object *op, const char *params) {
         aflag = AP_UNAPPLY;
         params += 3;
     }
+    if (!strncmp(params, "-o ", 3)) {
+        aflag = AP_OPEN;
+        params += 3;
+    }
     if (!strncmp(params, "-b ", 3)) {
         params += 3;
         if (op->container)

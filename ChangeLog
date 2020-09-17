@@ -1,4 +1,9 @@
 2020-09-17 Preston Crow
+    * server/apply.c: Apply command: Pass through and honor '-a' and '-u'
+	flags for containers and add a new flag '-o' to fully open a container
+	in your inventory.
+
+2020-09-17 Preston Crow
     * include/global.h,lib/config/settings,server/init.c,socket/request.c:
         Add a config option MIN_NAME to restrict very short account and
 	character names.  It defaults to 1, and doesn't impact existing
