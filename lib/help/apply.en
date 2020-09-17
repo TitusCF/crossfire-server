@@ -8,6 +8,7 @@ Apply options:
 
 -a: Always apply an object and never unapply it when already applied.
 -u: Always unapply an object and never apply it when already unapplied.
+-o: Always open a container regardless of previous state.
 -b: Apply an item on the ground or in the active container, but not one in the characters main inventory.
 
 As -a and -u do not toggle the applied status of an item, they are useful for making keybinds that work even when the current state of the object is unknown.

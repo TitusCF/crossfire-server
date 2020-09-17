@@ -27,7 +27,7 @@ int transport_can_hold(const object *transport, const object *op, int nrof);
 int should_director_abort(const object *op, const object *victim);
 void apply_handle_yield(object *tmp);
 int set_object_face_main(object *op);
-int apply_container(object *op, object *sack);
+int apply_container(object *op, object *sack, int aflags);
 void do_learn_spell(object *op, object *spell, int special_prayer);
 void do_forget_spell(object *op, const char *spell);
 int apply_manual(object *op, object *tmp, int aflag);

@@ -574,6 +574,7 @@ static const int32_t MAX_FOOD = 999;
 #define AP_NULL         0   /**< Nothing specific. */
 #define AP_APPLY        1   /**< Item is to be applied. */
 #define AP_UNAPPLY      2   /**< Item is to be remvoed. */
+#define AP_OPEN         3   /**< Item is a container to be fully opened. */
 
 #define AP_BASIC_FLAGS  15
 

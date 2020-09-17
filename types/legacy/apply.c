@@ -51,12 +51,12 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int
         /* Eneq(at)(csd.uu.se): Handle apply on containers. */
     case CLOSE_CON:
         if (applier->type == PLAYER)
-            (void)apply_container(applier, op->env);
+            (void)apply_container(applier, op->env, aflags);
         return METHOD_OK;
 
     case CONTAINER:
         if (applier->type == PLAYER)
-            (void)apply_container(applier, op);
+            (void)apply_container(applier, op, aflags);
         return METHOD_OK;
 
     case WEAPON:
