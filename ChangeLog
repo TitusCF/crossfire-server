@@ -1,3 +1,7 @@
+2020-09-17 Daniel Hawkins
+    * server/build_map.c: Disallow use of unpaid building materials.
+          Mentioned by Titus on the Discord/IRC a few weeks back.
+
 2020-09-17 Preston Crow
     * server/apply.c: Apply command: Pass through and honor '-a' and '-u'
 	flags for containers and add a new flag '-o' to fully open a container
