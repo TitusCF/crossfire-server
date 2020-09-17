@@ -965,6 +965,14 @@ static void load_settings(void) {
             } else {
                 settings.crypt_mode = val;
             }
+        } else if (!strcasecmp(buf, "min_name")) {
+            int val = atoi(cp);
+
+            if (val < 1 || val > MAX_NAME )
+                LOG(llevError, "load_settings: min_name (%d) need to be within %d-%d\n",
+                    val, 1, MAX_NAME);
+            else
+                settings.min_name = val;
         } else {
             LOG(llevError, "Unknown value in settings file: %s\n", buf);
         }

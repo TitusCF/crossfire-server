@@ -2228,6 +2228,12 @@ void account_new_cmd(char *buf, int len, socket_struct *ns) {
      * client will send the same password for character for which there is a
      * 2 character minimum size. Thus an account with a one character password
      * won't be able to create a character. */
+    if (strlen(name)<settings.min_name) {
+        SockList_AddString(&sl, "failure accountnew Name is too short");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
     if (strlen(password)<2) {
         SockList_AddString(&sl, "failure accountnew Password is too short");
         Send_With_Handling(ns, &sl);
@@ -2534,6 +2540,14 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     status = decode_name_password(buf, &nlen, name, password);
     if (status == 1) {
         SockList_AddString(&sl, "failure createplayer Name is too long");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
+    /* Minimum character name limit (if set) */
+    if (strlen(name)<settings.min_name) {
+        SockList_AddString(&sl, "failure createplayer Name is too short");
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
         return;
