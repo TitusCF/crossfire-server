@@ -355,3 +355,7 @@ account_trusted_host 127.0.0.1
 # use crypt(3). If crypt_mode is changed after player or account files are
 # created, some or all passwords may need to be reset.
 crypt_mode 1
+
+# Set a minimum length for account and player names
+# This only applies to new characters or new accounts.
+min_name 1

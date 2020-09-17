@@ -1,3 +1,10 @@
+2020-09-17 Preston Crow
+    * include/global.h,lib/config/settings,server/init.c,socket/request.c:
+        Add a config option MIN_NAME to restrict very short account and
+	character names.  It defaults to 1, and doesn't impact existing
+	accounts or characters, so it can be changed on existing servers
+	with no negative impacts.
+
 2020-09-13 Rebecca Kelly
     * types/spellbook/spellbook.c: change the order of the messages when you
         successfully read a spellbook to make them read a bit better.

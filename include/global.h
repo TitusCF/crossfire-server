@@ -331,6 +331,7 @@ typedef struct Settings {
     uint8_t   account_block_create;           /** Block account creation for untrusted hosts. */
     char*   account_trusted_host;     /**< Trusted host for account creation, defaults to 127.0.0.1. */
     uint8_t crypt_mode;               /**< 0 for legacy behavior, 1 for always Traditional */
+    uint8_t min_name;                         /**< Minimum characters for an account or player name */
 } Settings;
 
 /**
