@@ -20,6 +20,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "commands.h"
 #include "sproto.h"
@@ -207,4 +208,40 @@ void command_fire(object *op, const char *params) {
  */
 void command_fire_stop(object *op, const char *params) {
     op->contr->fire_on = 0;
+}
+
+/**
+ * Player wants to face a given direction.
+ *
+ * @param op
+ * player.
+ * @param params
+ * additional parameters.
+ */
+void command_face(object *op, const char *params) {
+    int dir;
+
+    if ( !isdigit(*params) ) {
+        if ( strcmp(params,"stay") == 0 || strcmp(params,"down") == 0 ) dir=0;
+        else if ( strcmp(params,"north") == 0 || strcmp(params,"n") == 0 ) dir=1;
+        else if ( strcmp(params,"northeast") == 0 || strcmp(params,"ne") == 0 ) dir=2;
+        else if ( strcmp(params,"east") == 0 || strcmp(params,"e") == 0 ) dir=3;
+        else if ( strcmp(params,"southeast") == 0 || strcmp(params,"se") == 0 ) dir=4;
+        else if ( strcmp(params,"south") == 0 || strcmp(params,"s") == 0 ) dir=5;
+        else if ( strcmp(params,"southwest") == 0 || strcmp(params,"sw") == 0 ) dir=6;
+        else if ( strcmp(params,"west") == 0 || strcmp(params,"w") == 0 ) dir=7;
+        else if ( strcmp(params,"northwest") == 0 || strcmp(params,"nw") == 0 ) dir=8;
+        else {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                                 "Unknown direction to face: %s",params);
+            return;
+        }
+    }
+    else dir = atoi(params);
+    if (dir < 0 || dir >= 9) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Can't face to a non adjacent square.");
+        return;
+    }
+    face_player(op, dir);
 }

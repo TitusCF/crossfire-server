@@ -3065,11 +3065,67 @@ int move_player(object *op, int dir) {
 
     int pick = check_pick(op);
 
-
     /* Add special check for newcs players and fire on - this way, the
      * server can handle repeat firing.
      */
     if (op->contr->fire_on || (op->contr->run_on && pick != 0)) {
+        op->direction = dir;
+    } else {
+        op->direction = 0;
+    }
+    return 0;
+}
+
+/**
+ * Face player in the given direction.
+ *
+ * @param op
+ * player.
+ * @param dir
+ * direction to face
+ * @return
+ * 0.
+ */
+int face_player(object *op, int dir) {
+    object *transport = op->contr->transport; //< Transport player is in
+
+    if (!transport && (op->map == NULL || op->map->in_memory != MAP_IN_MEMORY))
+        return 0;
+
+    /* Sanity check: make sure dir is valid */
+    if ((dir < 0) || (dir >= 9)) {
+        LOG(llevError, "move_player: invalid direction %d\n", dir);
+        return 0;
+    }
+
+    if (QUERY_FLAG(op, FLAG_CONFUSED) && dir)
+        dir = get_randomized_dir(dir);
+
+    op->facing = dir;
+
+    if (transport) {
+        /* transport->contr is set up for the person in charge of the boat.
+         * if that isn't this person, he can't steer it, etc
+         */
+        if (transport->contr != op->contr)
+            return 0;
+
+        turn_transport(transport, op, dir);
+    } else {
+        if (op->hide) {
+            do_hidden_move(op);
+        }
+
+        /* it is important to change the animation now, as fire or move_player_attack can start a compound animation,
+         * and leave us with state = 0, which we don't want to change again. */
+        op->state++; /* player moved, so change animation. */
+        animate_object(op, op->facing);
+    }
+
+    /* Add special check for newcs players and fire on - this way, the
+     * server can handle repeat firing.
+     */
+    if (op->contr->fire_on || op->contr->run_on) {
         op->direction = dir;
     } else {
         op->direction = 0;
