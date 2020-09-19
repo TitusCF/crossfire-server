@@ -1,3 +1,7 @@
+2020-09-19 Preston Crow
+    * server/commands.c,server/player.c: Add 'face' command to have the
+	player face a given direction without taking any action.
+
 2020-09-17 Daniel Hawkins
     * server/build_map.c: Disallow use of unpaid building materials.
           Mentioned by Titus on the Discord/IRC a few weeks back.

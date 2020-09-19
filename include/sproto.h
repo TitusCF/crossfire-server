@@ -199,6 +199,7 @@ void command_run(object *op, const char *params);
 void command_run_stop(object *op, const char *params);
 void command_fire(object *op, const char *params);
 void command_fire_stop(object *op, const char *params);
+void command_face(object *op, const char *params);
 /* c_object.c */
 void command_uskill(object *pl, const char *params);
 void command_rskill(object *pl, const char *params);
@@ -424,6 +425,7 @@ void fire(object *op, int dir);
 object *find_key(object *pl, object *container, object *door);
 void move_player_attack(object *op, int dir);
 int move_player(object *op, int dir);
+int face_player(object *op, int dir);
 int handle_newcs_player(object *op);
 void remove_unpaid_objects(object *op, object *env, int free_items);
 void do_some_living(object *op);
