@@ -532,6 +532,7 @@ int hide(object *op, object *skill) {
 static void stop_jump(object *pl) {
     fix_object(pl);
     object_insert_in_map_at(pl, pl->map, pl, 0, pl->x, pl->y);
+    check_pick(pl);
 }
 
 /**
