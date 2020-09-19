@@ -512,12 +512,28 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
     else if (!strcmp(missile_name, "crossbow bolts"))
         missile_name = "bolt";
 
+    /* Check if the type (bolt/arrow) was specified with the spell */
+    if ( stringarg && strncmp(stringarg,"of ",3)==0 ) stringarg +=3;
+    if ( stringarg && strncmp(stringarg,"bolt",4)==0 ) {
+        missile_name = "bolt";
+        stringarg += 4;
+        while ( isalpha(*stringarg) ) ++stringarg;
+        while ( *stringarg==' ' ) ++stringarg;
+    }
+    if ( stringarg && strncmp(stringarg,"arrow",5)==0 ) {
+        missile_name = "arrow";
+        stringarg += 5;
+        while ( isalpha(*stringarg) ) ++stringarg;
+        while ( *stringarg==' ' ) ++stringarg;
+    }
+    
     if (find_archetype(missile_name) == NULL) {
         LOG(llevDebug, "Cast create_missile: could not find archetype %s\n", missile_name);
         return 0;
     }
     missile = create_archetype(missile_name);
 
+    if ( stringarg && strncmp(stringarg,"of ",3)==0 ) stringarg +=3;
     if (stringarg) {
         /* If it starts with a letter, presume it is a description */
         if (isalpha(*stringarg)) {
