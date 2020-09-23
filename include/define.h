@@ -720,7 +720,7 @@ void cf_srandom(unsigned long seed);
  */
 #define FOR_MAP_PREPARE(map_, mx_, my_, it_)                    \
     do {                                                        \
-        object *it_ = GET_MAP_OB((map_), (mx_), (my_));         \
+        object *it_ = get_map_ob((map_), (mx_), (my_));         \
         FOR_OB_AND_ABOVE_PREPARE(it_);
 /**
  * Finishes #FOR_MAP_PREPARE().

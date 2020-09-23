@@ -170,6 +170,10 @@ extern const char *const map_layer_name[MAP_LAYERS];
 
 /** Gets the bottom object on a map. Not multitile aware. */
 #define GET_MAP_OB(M, X, Y)     ((M)->spaces[(X)+(M)->width*(Y)].bottom)
+
+/** Strongly consider using get_map_ob() instead of GET_MAP_OB. */
+extern object* get_map_ob(struct mapdef *m, short x, short y);
+
 /** Gets the top object on a map. Not multitile aware. */
 #define GET_MAP_TOP(M, X, Y)    ((M)->spaces[(X)+(M)->width*(Y)].top)
 
