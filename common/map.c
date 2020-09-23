@@ -2464,6 +2464,17 @@ mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
 }
 
 /**
+ * Replacement for GET_MAP_OB macro that is multi-tile aware.
+ */
+object* get_map_ob(struct mapdef *m, short x, short y) {
+    m = get_map_from_coord(m, &x, &y);
+    if (m == NULL) {
+        return NULL;
+    }
+    return GET_MAP_OB(m, x, y);
+}
+
+/**
  * Return whether map2 is adjacent to map1. If so, store the distance from
  * map1 to map2 in dx/dy.
  *
