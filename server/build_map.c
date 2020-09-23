@@ -370,13 +370,13 @@ static void fix_walls(struct mapdef *map, int x, int y) {
 
     connect = 0;
 
-    if ((x > 0) && get_wall(map, x-1, y))
+    if (get_wall(map, x-1, y))
         connect |= 1;
-    if ((x < MAP_WIDTH(map)-1) && get_wall(map, x+1, y))
+    if (get_wall(map, x+1, y))
         connect |= 2;
-    if ((y > 0) && get_wall(map, x, y-1))
+    if (get_wall(map, x, y-1))
         connect |= 4;
-    if ((y < MAP_HEIGHT(map)-1) && get_wall(map, x, y+1))
+    if (get_wall(map, x, y+1))
         connect |= 8;
 
     switch (connect) {
@@ -570,7 +570,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
 
         xt = x+freearr_x[i];
         yt = y+freearr_y[i];
-        tmp = GET_MAP_OB(pl->map, xt, yt);
+        tmp = get_map_ob(pl->map, xt, yt);
         if (!tmp) {
             /* Must insert floor & wall */
 
@@ -597,7 +597,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
      */
     for (xt = x-2; xt <= x+2; xt++)
         for (yt = y-2; yt <= y+2; yt++) {
-            if (!OUT_OF_REAL_MAP(pl->map, xt, yt))
+            if (!out_of_map(pl->map, xt, yt))
                 fix_walls(pl->map, xt, yt);
         }
 
@@ -675,7 +675,7 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
         object_insert_in_map_at(new_wall, pl->map, NULL, INS_ABOVE_FLOOR_ONLY, x, y);
         for (xt = x-1; xt <= x+1; xt++)
             for (yt = y-1; yt <= y+1; yt++) {
-                if (OUT_OF_REAL_MAP(pl->map, xt, yt))
+                if (out_of_map(pl->map, xt, yt))
                     continue;
 
                 fix_walls(pl->map, xt, yt);
@@ -794,7 +794,7 @@ static int build_linked_exits(object *pl, object *exit_ob, const char *dst, shor
     EXIT_Y(exit_ob) = y;
 
     mapstruct *m = ready_map_name(dst, 0); // FIXME: deal with unique
-    object *floor = GET_MAP_OB(m, x, y);
+    object *floor = get_map_ob(m, x, y);
     object *tmp = floor;
     FOR_OB_AND_ABOVE_PREPARE(tmp)
         if (!QUERY_FLAG(tmp, FLAG_IS_BUILDABLE)) {
@@ -836,7 +836,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
     char name[MAX_BUF];
 
     /* Find floor */
-    floor = GET_MAP_OB(pl->map, x, y);
+    floor = get_map_ob(pl->map, x, y);
     if (!floor) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "Invalid square.");
         object_free_drop_inventory(new_item);
@@ -961,7 +961,7 @@ void apply_builder_remove(object *pl, int dir) {
     y = pl->y+freearr_y[dir];
 
     /* Check square */
-    item = GET_MAP_OB(pl->map, x, y);
+    item = get_map_ob(pl->map, x, y);
     if (!item) {
         /* Should not happen with previous tests, but we never know */
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
@@ -1039,13 +1039,6 @@ void apply_map_builder(object *pl, int dir) {
     x = pl->x+freearr_x[dir];
     y = pl->y+freearr_y[dir];
 
-    if ((1 > x) || (1 > y)
-    || ((MAP_WIDTH(pl->map)-2) < x) || ((MAP_HEIGHT(pl->map)-2) < y)) {
-        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                      "Can't build on map edge.");
-        return;
-    }
-
     /*
      * Check specified square
      * The square must have only buildable items
@@ -1053,7 +1046,7 @@ void apply_map_builder(object *pl, int dir) {
      * since they are used for special things like connecting doors / buttons
      */
 
-    tmp = GET_MAP_OB(pl->map, x, y);
+    tmp = get_map_ob(pl->map, x, y);
     if (!tmp) {
         /* Nothing, meaning player is standing next to an undefined square. */
         LOG(llevError, "apply_map_builder: undefined square at (%d, %d, %s)\n", x, y, pl->map->path);
