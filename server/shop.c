@@ -133,7 +133,7 @@ static float shop_supplydemand_factor(const char* path, const char* region, cons
 
     float net_qty = quantity*qty_norm;
     int shop_size = 100; // TODO: Number of shop squares
-    float max_net_qty = (float)shop_size/10; // Maximum net quantity to stock
+    float max_net_qty = (float)shop_size/2; // Maximum net quantity to stock
     float factor = (max_net_qty + net_qty) / max_net_qty;
     if (factor > 10) {
         factor = 10;
