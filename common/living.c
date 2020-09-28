@@ -2195,15 +2195,16 @@ void change_exp(object *op, int64_t exp, const char *skill_name, int flag) {
         op->stats.exp += exp;
     } else if (op->type == WEAPON) { /* Weapons -- this allows us to make magic weapons that get stronger the more they are used. */
         // Handle adding exp -- Don't use level because other stuff already uses that.
-        ADD_TOTALEXP(op->total_exp,exp);
+        // The caller should determine what percentage of base exp this is.
+        ADD_TOTALEXP(op->total_exp, exp);
         if (exp > 0) {
             // Check for a level-up
-            while (level_exp(op->item_power+1, 1) < PERM_EXP(op->total_exp)) {
+            while (level_exp(op->item_power+1, 1) < op->total_exp) {
                 ++(op->item_power);
             }
         } else { /* Removing exp allows for the weapon's power to be reset if needed. */
             // Recalculate level
-            while (level_exp(op->item_power, 1) > PERM_EXP(op->total_exp)) {
+            while (level_exp(op->item_power, 1) > op->total_exp) {
                 --(op->item_power);
             }
         }
