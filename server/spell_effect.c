@@ -3176,7 +3176,11 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
     /* if no direction specified, pick one */
     if (!dir) {
         dir = object_find_free_spot(NULL, op->map, op->x, op->y, 1, 9);
-        assert(dir != -1);
+        if ( dir == -1 ) {
+           draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                         "There is something in the way.");
+           return 0;
+        }
     }
 
     m = op->map;
