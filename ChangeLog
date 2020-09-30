@@ -1,3 +1,7 @@
+2020-09-30 Daniel Hawkins
+    * server/player.c: Prevent check_pick() from processing on a non-player.
+    * server/skills.c: Prevent stop_jump() from calling check_pick() for non-players.
+
 2020-09-19 Preston Crow
     * server/commands.c,server/player.c: Add 'face' command to have the
 	player face a given direction without taking any action.
@@ -5905,13 +5909,13 @@ Fix buffer overflows in get_ob_diff(), dump_object(), and dump_arch().
 Introduce a new module stringbuffer which implements a buffer that can hold
 variable-sized strings.
  Makefile.am
- common/anim.c arch.c loader.l object.c
+ common/anim.c arch.c loader.l object.c
  include/global.h libproto.h Makefile.am
  server/c_misc.c c_wiz.c server.c
- types/gate/gate.c
+ types/gate/gate.c
 Added files:
  common/stringbuffer.c
- include/stringbuffer.h
+ include/stringbuffer.h
 Andreas Kirschbaum 2008-01-12
 
 Added more French help translations.
@@ -6348,15 +6352,15 @@ that make object unusable.
 
 Adds basical i18n support for help and "static" server strings.
 Modified files:
- common/init.c Makefile.am
+ common/init.c Makefile.am
  include/includes.h libproto.h sproto.h
  lib/Makefile.am
  server/c_misc.c commands.c
 Added files:
  server/trunk/common/languages.c
- include/languages.h
- lib/help/*.en
- lib/i18n/messages.fr messages.en
+ include/languages.h
+ lib/help/*.en
+ lib/i18n/messages.fr messages.en
 Removed files:
  lib/help/* (old help files)
 Yann Chachkoff (gros) 2007-11-17
