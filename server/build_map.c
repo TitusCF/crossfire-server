@@ -1097,6 +1097,12 @@ void apply_map_builder(object *pl, int dir) {
             return;
         }
 
+        // Prevent use of unpaid materials.
+        if (QUERY_FLAG(material, FLAG_UNPAID)) {
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You should pay for it first.");
+            return;
+        }
+
         /* create a new object from the raw materials */
         new_arch = find_archetype(material->slaying);
         if (!new_arch) {
