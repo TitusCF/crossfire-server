@@ -68,7 +68,7 @@ void map_info(object *op, const char *search) {
             search_array_count = split_string(to_be_freed,search_array,64,',');
         }
     }
-    
+
     for (mapstruct *m = first_map; m != NULL; m = m->next) {
         bool match = TRUE;
         if ( search_array_count ) {
@@ -2306,10 +2306,10 @@ void command_passwd(object *pl, const char *params) {
 void do_harvest(object *pl, int dir, object *skill) {
     int16_t x, y;
     int count = 0, proba; /* Probability to get the item, 100 based. */
-    int level, exp;
+    int level, exp, check_exhaust = 0;
     object *found[10]; /* Found items that can be harvested. */
     mapstruct *map;
-    object *item, *inv;
+    object *item, *inv, *harvested;
     sstring trace, ttool, tspeed, race, tool, slevel, sexp;
     float speed;
 
@@ -2365,6 +2365,8 @@ void do_harvest(object *pl, int dir, object *skill) {
 
     inv = found[rndm(0, count-1)];
     assert(inv);
+    item = inv->env;
+    assert(item);
 
     slevel = object_get_value(inv, "harvest_level");
     sexp = object_get_value(inv, "harvest_exp");
@@ -2404,26 +2406,48 @@ void do_harvest(object *pl, int dir, object *skill) {
     }
 
     /* Ok, got it. */
-    item = object_new();
-    object_copy_with_inv(inv, item);
-    object_set_value(item, "harvestable", NULL, 0);
-    if (QUERY_FLAG(item, FLAG_MONSTER)) {
-        int spot = object_find_free_spot(item, pl->map, pl->x, pl->y, 0, SIZEOFFREE);
+    if (inv->nrof == 0) {
+        harvested = object_new();
+        object_copy_with_inv(inv, harvested);
+    } else {
+        if (count == 1 && inv->nrof == 1) {
+            check_exhaust = 1;
+        }
+        harvested = object_split(inv, 1, NULL, 0);
+    }
+    object_set_value(harvested, "harvestable", NULL, 0);
+    if (QUERY_FLAG(harvested, FLAG_MONSTER)) {
+        int spot = object_find_free_spot(harvested, pl->map, pl->x, pl->y, 0, SIZEOFFREE);
         if (spot == -1) {
             /* Better luck next time...*/
-            object_remove(item);
+            object_remove(harvested);
             draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", skill->slaying);
             return;
         }
-        object_insert_in_map_at(item, pl->map, NULL, 0, pl->x+freearr_x[spot], pl->y+freearr_y[spot]);
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s a %s!", skill->slaying, item->name);
+        object_insert_in_map_at(harvested, pl->map, NULL, 0, pl->x+freearr_x[spot], pl->y+freearr_y[spot]);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s a %s!", skill->slaying, harvested->name);
     } else {
-        item = object_insert_in_ob(item, pl);
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s some %s", skill->slaying, item->name);
+        harvested = object_insert_in_ob(harvested, pl);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s some %s", skill->slaying, harvested->name);
     }
 
     /* Get exp */
     change_exp(pl, exp, skill->name, SK_EXP_ADD_SKILL);
+
+    if (check_exhaust) {
+        sstring replacement = object_get_value(item, "harvest_exhaust_replacement");
+        if (replacement) {
+            if (replacement[0] != '-') {
+                archetype *other = find_archetype(replacement);
+                if (other) {
+                    object *final = object_create_arch(other);
+                    object_insert_in_map_at(final, map, item, INS_BELOW_ORIGINATOR, item->x, item->y);
+                }
+            }
+            object_remove(item);
+            object_free(item, FREE_OBJ_FREE_INVENTORY);
+        }
+    }
 
     return;
 }
