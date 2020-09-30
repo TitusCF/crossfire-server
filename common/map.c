@@ -2399,6 +2399,7 @@ mapstruct *get_map_from_coord(mapstruct *m, int16_t *x, int16_t *y) {
      * map.
      */
 
+    if ( !m ) return NULL;
     if (*x >= 0 && *x < MAP_WIDTH(m) && *y >= 0 && *y < MAP_HEIGHT(m))
         return m;
 
