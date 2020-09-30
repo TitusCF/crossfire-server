@@ -1695,6 +1695,10 @@ int check_pick(object *op) {
     /* if you're flying, you can't pick up anything */
     if (op->move_type&MOVE_FLYING)
         return 1;
+    /* If not a player, don't check anything. */
+    if (!op->contr) {
+        return 1;
+    }
 
     op_tag = op->count;
 
