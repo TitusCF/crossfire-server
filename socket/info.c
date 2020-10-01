@@ -326,7 +326,7 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
     int x, y, dx, dy, mflags, l;
     int16_t nx, ny;
     mapstruct *mp;
-    const New_Face *f;
+    const Face *f;
     object *ob;
 
     for (dx = -1; dx <= 1; dx++) {
@@ -394,7 +394,7 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength) {
     int x, y, mflags, l;
     int16_t nx, ny;
     mapstruct *mp;
-    const New_Face *f;
+    const Face *f;
     object *ob;
 
     for (x = -strength; x < strength; x++) {

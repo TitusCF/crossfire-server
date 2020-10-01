@@ -82,7 +82,7 @@ typedef struct quest_definition {
     sstring quest_title;            /**< Quest title for player. */
     sstring quest_description;      /**< Quest longer description. */
     int quest_restart;              /**< If non zero, can be restarted. */
-    int face;                       /**< Face associated with this quest. */
+    const Face *face;           /**< Face associated with this quest. */
     uint32_t client_code;             /**< The code used to communicate with the client, merely a unique index. */
     quest_step_definition *steps;   /**< Quest steps. */
     struct quest_definition *parent;/**< Parent for this quest, NULL if it is a 'top-level' quest */
@@ -341,10 +341,10 @@ static int load_quests_from_file(const char *filename) {
             }
 
             if (strncmp(read, "face ", 5) == 0) {
-                int face;
+                const Face *face;
                 read[strlen(read) - 1] = '\0';
-                face = find_face(read + 5, 0);
-                if (face == 0) {
+                face = find_face(read + 5, NULL);
+                if (face == NULL) {
                     LOG(llevError, "Quest %s has invalid face %s.\n", quest->quest_code, read + 5);
                 } else {
                     quest->face = face;
@@ -808,9 +808,9 @@ static void quest_set_state(player* dm, player *pl, sstring quest_code, int stat
         SockList_AddInt(&sl, quest->client_code);
         if (qs->sent_to_client == 0) {
             SockList_AddLen16Data(&sl, quest->quest_title, strlen(quest->quest_title));
-            if (quest->face && !(pl->socket.faces_sent[quest->face]&NS_FACESENT_FACE))
+            if (quest->face && !(pl->socket.faces_sent[quest->face->number]&NS_FACESENT_FACE))
                 esrv_send_face(&pl->socket, quest->face, 0);
-            SockList_AddInt(&sl, quest->face);
+            SockList_AddInt(&sl, quest->face ? quest->face->number : 0);
             SockList_AddChar(&sl, quest->quest_restart ? 1 : 0);
             SockList_AddInt(&sl, quest->parent ? quest->parent->client_code : 0);
         }
@@ -1379,9 +1379,9 @@ void quest_send_initial_states(player *pl) {
 
         SockList_AddInt(&sl, quest->client_code);
         SockList_AddLen16Data(&sl, quest->quest_title, strlen(quest->quest_title));
-        if (quest->face && !(pl->socket.faces_sent[quest->face]&NS_FACESENT_FACE))
+        if (quest->face && !(pl->socket.faces_sent[quest->face->number]&NS_FACESENT_FACE))
             esrv_send_face(&pl->socket, quest->face, 0);
-        SockList_AddInt(&sl, quest->face);
+        SockList_AddInt(&sl, quest->face ? quest->face->number : 0);
         SockList_AddChar(&sl, quest->quest_restart ? 1 : 0);
         SockList_AddInt(&sl, quest->parent ? quest->parent->client_code : 0);
         SockList_AddChar(&sl, (step == NULL || step->is_completion_step) ? 1 : 0);

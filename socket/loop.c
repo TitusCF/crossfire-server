@@ -440,8 +440,8 @@ static void new_connection(int listen_fd) {
         newsocknum = socket_info.allocated_sockets;
         socket_info.allocated_sockets++;
         init_sockets[newsocknum].listen = NULL;
-        init_sockets[newsocknum].faces_sent_len = nrofpixmaps;
-        init_sockets[newsocknum].faces_sent = calloc(nrofpixmaps, sizeof(*init_sockets[newsocknum].faces_sent));
+        init_sockets[newsocknum].faces_sent_len = get_faces_count();
+        init_sockets[newsocknum].faces_sent = calloc(get_faces_count(), sizeof(*init_sockets[newsocknum].faces_sent));
         if (!init_sockets[newsocknum].faces_sent)
             fatal(OUT_OF_MEMORY);
         init_sockets[newsocknum].status = Ns_Avail;

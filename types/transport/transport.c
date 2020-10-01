@@ -202,7 +202,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
 
             str = object_get_value(op, "face_full");
             if (str)
-                op->face = &new_faces[find_face(str, op->face->number)];
+                op->face = find_face(str, op->face);
             str = object_get_value(op, "anim_full");
             if (str)
                 op->animation_id = find_animation(str);

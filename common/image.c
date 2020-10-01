@@ -30,19 +30,19 @@
  * Contains face information, with names, numbers, magicmap color and such.
  * It is sorted by alphabetical order.
  */
-New_Face *new_faces;
+Face *new_faces;
 
 /**
  * Following can just as easily be pointers, but
  * it is easier to keep them like this.
  */
-New_Face *blank_face, *empty_face, *smooth_face;
+const Face *blank_face, *empty_face, *smooth_face;
 
 
 /**
  * Number of bitmaps loaded from the "bmaps" file.
  */
-unsigned int nrofpixmaps = 0;
+static unsigned int nrofpixmaps = 0;
 
 face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
 
@@ -84,7 +84,7 @@ static const char *const colorname[] = {
  * @retval 0 if a == b
  * @retval 1 if a > b
  */
-static int compare_face(const New_Face *a, const New_Face *b) {
+static int compare_face(const Face *a, const Face *b) {
     if (strcmp(a->name, "bug.111") == 0) {
         if (strcmp(b->name, "bug.111") == 0)
             return 0;
@@ -92,6 +92,22 @@ static int compare_face(const New_Face *a, const New_Face *b) {
     } else if (strcmp(b->name, "bug.111") == 0)
         return 1;
     return strcmp(a->name, b->name);
+}
+
+/**
+ * This returns the face with 'name'.
+ *
+ * @param name
+ * face to search for.
+ * @return matching face, NULL if not found.
+ */
+static Face *internal_find_face(const char *name) {
+    Face *bp, tmp;
+
+    tmp.name = name;
+    bp = (Face *)bsearch(&tmp, new_faces, nrofpixmaps, sizeof(Face), (int (*)(const void *, const void *))compare_face);
+
+    return bp;
 }
 
 /**
@@ -127,7 +143,7 @@ static uint8_t find_color(const char *name) {
  */
 static void read_face_data(void) {
     char buf[MAX_BUF], *cp;
-    New_Face *on_face = NULL;
+    Face *on_face = NULL;
     FILE *fp;
 
     snprintf(buf, sizeof(buf), "%s/faces", settings.datadir);
@@ -142,17 +158,17 @@ static void read_face_data(void) {
         if (!strncmp(buf, "end", 3)) {
             on_face = NULL;
         } else if (!strncmp(buf, "face", 4)) {
-            unsigned tmp;
+            Face *tmp;
 
             cp = buf+5;
             cp[strlen(cp)-1] = '\0'; /* remove newline */
 
-            if ((tmp = find_face(cp, (unsigned)-1)) == (unsigned)-1) {
+            if ((tmp = internal_find_face(cp)) == NULL) {
                 LOG(llevError, "faces: couldn't find '%s'\n", cp);
                 on_face = NULL;
                 continue;
             }
-            on_face = &new_faces[tmp];
+            on_face = tmp;
             on_face->visibility = 0;
         } else if (on_face == NULL) {
             LOG(llevError, "faces: got line with no face set: %s\n", buf);
@@ -205,7 +221,7 @@ void read_bmap_names(void) {
 
     rewind(fp);
     assert(nrofpixmaps > 0);
-    new_faces = (New_Face *)malloc(sizeof(New_Face)*nrofpixmaps);
+    new_faces = (Face *)malloc(sizeof(Face)*nrofpixmaps);
     if (new_faces == NULL) {
         fatal(OUT_OF_MEMORY);
     }
@@ -214,7 +230,7 @@ void read_bmap_names(void) {
         new_faces[i].name = NULL;
         new_faces[i].visibility = 0;
         new_faces[i].magicmap = 255;
-        new_faces[i].smoothface = (uint16_t)-1;
+        new_faces[i].smoothface = NULL;
     }
 
     i = 0;
@@ -261,7 +277,7 @@ void read_bmap_names(void) {
 
     LOG(llevDebug, "bmaps: loaded %d faces\n", nrofpixmaps);
 
-    qsort(new_faces, nrofpixmaps, sizeof(New_Face), (int (*)(const void *, const void *))compare_face);
+    qsort(new_faces, nrofpixmaps, sizeof(Face), (int (*)(const void *, const void *))compare_face);
 
     for (i = 0; i < nrofpixmaps; i++) {
         new_faces[i].number = i;
@@ -277,40 +293,33 @@ void read_bmap_names(void) {
     /* Actually forcefully setting the colors here probably should not
      * be done - it could easily create confusion.
      */
-    blank_face = &new_faces[find_face(BLANK_FACE_NAME, 0)];
-    blank_face->magicmap = find_color("khaki")|FACE_FLOOR;
+    blank_face = internal_find_face(BLANK_FACE_NAME);
+    ((Face*)blank_face)->magicmap = find_color("khaki")|FACE_FLOOR; // TODO: doh :(
 
-    empty_face = &new_faces[find_face(EMPTY_FACE_NAME, 0)];
+    empty_face = internal_find_face(EMPTY_FACE_NAME);
 
-    smooth_face = &new_faces[find_face(SMOOTH_FACE_NAME, 0)];
+    smooth_face = internal_find_face(SMOOTH_FACE_NAME);
 }
 
 /**
- * This returns an the face number of face 'name'.  Number is constant
- * during an invocation, but not necessarily between versions (this
- * is because the faces are arranged in alphabetical order, so
- * if a face is removed or added, all faces after that will now
- * have a different number.
+ * This returns the face with 'name'.
  *
  * @param name
- * face to search for
+ * face to search for.
  * @param error
  * value to return if face was not found.
+ * @return found face, or error.
  *
  * @note
  * If a face is not found, then error is returned.  This can be useful if
- * you want some default face used, or can be set to negative
+ * you want some default face used, or can be set to NULL
  * so that it will be known that the face could not be found
  * (needed in client, so that it will know to request that image
  * from the server)
  */
-unsigned find_face(const char *name, unsigned error) {
-    New_Face *bp, tmp;
-
-    tmp.name = name;
-    bp = (New_Face *)bsearch(&tmp, new_faces, nrofpixmaps, sizeof(New_Face), (int (*)(const void *, const void *))compare_face);
-
-    return bp ? bp->number : error;
+const Face *find_face(const char *name, const Face *error) {
+    const Face *bp = internal_find_face(name);
+    return bp ? bp : error;
 }
 
 /**
@@ -327,7 +336,7 @@ unsigned find_face(const char *name, unsigned error) {
 int read_smooth(void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
-    unsigned regular, smoothed;
+    Face *regular, *smoothed;
     int nrofsmooth = 0;
 
     snprintf(buf, sizeof(buf), "%s/smooth", settings.datadir);
@@ -349,19 +358,19 @@ int read_smooth(void) {
 
         *p = '\0';
         q = buf;
-        regular = find_face(q, (unsigned)-1);
-        if (regular == (unsigned)-1) {
+        regular = internal_find_face(q);
+        if (regular == NULL) {
             LOG(llevError, "invalid regular face: %s\n", q);
             continue;
         }
         q = p+1;
-        smoothed = find_face(q, (unsigned)-1);
-        if (smoothed == (unsigned)-1) {
+        smoothed = internal_find_face(q);
+        if (smoothed == NULL) {
             LOG(llevError, "invalid smoothed face: %s\n", q);
             continue;
         }
 
-        new_faces[regular].smoothface = smoothed;
+        regular->smoothface = smoothed;
 
         nrofsmooth++;
     }
@@ -380,14 +389,11 @@ int read_smooth(void) {
  *
  * @return 1=smooth face found, 0=no smooth face found
  */
-int find_smooth(uint16_t face, uint16_t *smoothed) {
-    (*smoothed) = 0;
+int find_smooth(const Face *face, const Face **smoothed) {
+    (*smoothed) = NULL;
 
-    if (face < nrofpixmaps) {
-        if (new_faces[face].smoothface == ((uint16_t)-1))
-            return 0;
-
-        (*smoothed) = new_faces[face].smoothface;
+    if (face && face->smoothface) {
+        (*smoothed) = face->smoothface;
         return 1;
     }
 
@@ -456,6 +462,7 @@ void read_client_images(void) {
     FILE *infile;
     int len, fileno, i;
     unsigned int num;
+    const Face *face;
 
     memset(facesets, 0, sizeof(facesets));
     snprintf(filename, sizeof(filename), "%s/image_info", settings.datadir);
@@ -533,11 +540,12 @@ void read_client_images(void) {
                 cp[strlen(cp) - 1] = '\0';
 
             /* cp points to the start of the picture name itself */
-            num = find_face(cp, (unsigned)-1);
-            if (num == (unsigned)-1) {
+            face = find_face(cp, NULL);
+            if (face == NULL) {
                 LOG(llevError, "read_client_images: couldn't find picture %s\n", cp);
                 abort();
             }
+            num = face->number;
             if (num >= nrofpixmaps) {
                 LOG(llevError, "read_client_images: invalid picture number %d for %s\n", num, cp);
                 abort();
@@ -620,4 +628,36 @@ int get_face_fallback(int faceset, int imageno) {
     if (facesets[faceset].faces[imageno].data)
         return faceset;
     return get_face_fallback(facesets[faceset].fallback, imageno);
+}
+
+/**
+ * Return the number of faces, including the "bug" one.
+ * @return number of faces.
+ */
+unsigned int get_faces_count() {
+    return nrofpixmaps;
+}
+
+/**
+ * Return the face at the specified index.
+ * @param index index, between 0 and get_faces_count() excluded.
+ * @return face, NULL if the index is invalid.
+ */
+const Face *get_face_by_index(int index) {
+    if (index < 0 || index >= nrofpixmaps)
+        return NULL;
+    return &new_faces[index];
+}
+
+/**
+ * Get a face from its unique identifier.
+ * @param id face identifier.
+ * @return matching face, NULL if no face with this identifier.
+ */
+const Face *get_face_by_id(uint16_t id) {
+    for (int f = 0; f < nrofpixmaps; f++) {
+        if (new_faces[f].number == id)
+            return &new_faces[f];
+    }
+    return NULL;
 }

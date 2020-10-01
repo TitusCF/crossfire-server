@@ -330,7 +330,7 @@ typedef struct obj {
     float       speed_left;     /**< How much speed is left to spend this round */
     float       weapon_speed;   /**< The overall speed of this object */
     float       weapon_speed_left; /**< How much speed is left to spend this round */
-    const New_Face    *face;    /**< Face with colors */
+    const Face    *face;    /**< Face with colors */
     uint32_t      nrof;          /**< Number of objects. Consider accessing
                                       with NROF() macro. */
     int8_t       direction;      /**< Means the object is moving that way. */

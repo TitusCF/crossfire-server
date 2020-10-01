@@ -32,7 +32,7 @@ class CREUtils
         static QTreeWidgetItem* formulaeNode(const recipe* recipe, QTreeWidgetItem* parent);
 
         static QTreeWidgetItem* faceNode(QTreeWidgetItem* parent);
-        static QTreeWidgetItem* faceNode(const New_Face* face, QTreeWidgetItem* parent);
+        static QTreeWidgetItem* faceNode(const Face* face, QTreeWidgetItem* parent);
 
         static QTreeWidgetItem* animationNode(QTreeWidgetItem* parent);
         static QTreeWidgetItem* animationNode(const Animations* anim, QTreeWidgetItem* parent);

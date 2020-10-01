@@ -9,16 +9,16 @@ extern "C" {
 #include "global.h"
 }
 
-class CREFacePanel : public CRETPanel<const New_Face>
+class CREFacePanel : public CRETPanel<const Face>
 {
     Q_OBJECT
 
     public:
         CREFacePanel(QWidget* parent);
-        virtual void setItem(const New_Face* face);
+        virtual void setItem(const Face* face);
 
     protected:
-        const New_Face* myFace;
+        const Face* myFace;
 
         QTreeWidget* myUsing;
         QComboBox* myColor;

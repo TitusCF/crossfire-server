@@ -442,8 +442,8 @@ END_TEST
  */
 START_TEST(test_object_update_turn_face) {
     object *ob1;
-    const New_Face *face1;
-    const New_Face *face2;
+    const Face *face1;
+    const Face *face2;
 
     ob1 = cctk_create_game_object("arrow");
     ob1->direction = 1;

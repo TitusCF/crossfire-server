@@ -42,7 +42,7 @@
  */
 void send_face_cmd(char *buff, int len, socket_struct *ns) {
     long tmpnum;
-    uint16_t facenum;
+    uint16_t faceid;
 
     if (len <= 0 || !buff) {
         LOG(llevDebug, "IP '%s' sent bogus send_face_cmd information\n", ns->host);
@@ -50,10 +50,10 @@ void send_face_cmd(char *buff, int len, socket_struct *ns) {
     }
 
     tmpnum = atoi(buff);
-    facenum = tmpnum&0xffff;
+    faceid = tmpnum&0xffff;
 
-    if (facenum != 0)
-        esrv_send_face(ns, facenum, 1);
+    if (faceid != 0)
+        esrv_send_face(ns, get_face_by_id(faceid), 1);
 }
 
 /**
@@ -64,42 +64,42 @@ void send_face_cmd(char *buff, int len, socket_struct *ns) {
  * face (and askface is the only place that should be setting it).  Otherwise,
  * we look at the facecache, and if set, send the image name.
  * @param ns socket to send the date to.
- * @param face_num face number to send.
+ * @param face face to send.
  * @param nocache if 1 then send a 'image2', else depending on client cache setting.
  */
-void esrv_send_face(socket_struct *ns, uint16_t face_num, int nocache) {
+void esrv_send_face(socket_struct *ns, const Face *face, int nocache) {
     SockList sl;
     int fallback;
 
-    if (face_num == 0 || face_num >= nrofpixmaps) {
-        LOG(llevError, "esrv_send_face (%d) out of bounds??\n", face_num);
+    if (face == NULL) {
+        LOG(llevError, "esrv_send_face NULL??\n");
         return;
     }
 
     SockList_Init(&sl);
-    fallback = get_face_fallback(ns->faceset, face_num);
+    fallback = get_face_fallback(ns->faceset, face->number);
 
-    if (facesets[fallback].faces[face_num].data == NULL) {
-        LOG(llevError, "esrv_send_face: faces[%d].data == NULL\n", face_num);
+    if (facesets[fallback].faces[face->number].data == NULL) {
+        LOG(llevError, "esrv_send_face: faces[%d].data == NULL\n", face->number);
         return;
     }
 
     if (ns->facecache && !nocache) {
         SockList_AddString(&sl, "face2 ");
-        SockList_AddShort(&sl, face_num);
+        SockList_AddShort(&sl, face->number);
         SockList_AddChar(&sl, fallback);
-        SockList_AddInt(&sl, facesets[fallback].faces[face_num].checksum);
-        SockList_AddString(&sl, new_faces[face_num].name);
+        SockList_AddInt(&sl, facesets[fallback].faces[face->number].checksum);
+        SockList_AddString(&sl, face->name);
         Send_With_Handling(ns, &sl);
     } else {
         SockList_AddString(&sl, "image2 ");
-        SockList_AddInt(&sl, face_num);
+        SockList_AddInt(&sl, face->number);
         SockList_AddChar(&sl, fallback);
-        SockList_AddInt(&sl, facesets[fallback].faces[face_num].datalen);
-        SockList_AddData(&sl, facesets[fallback].faces[face_num].data, facesets[fallback].faces[face_num].datalen);
+        SockList_AddInt(&sl, facesets[fallback].faces[face->number].datalen);
+        SockList_AddData(&sl, facesets[fallback].faces[face->number].data, facesets[fallback].faces[face->number].datalen);
         Send_With_Handling(ns, &sl);
     }
-    ns->faces_sent[face_num] |= NS_FACESENT_FACE;
+    ns->faces_sent[face->number] |= NS_FACESENT_FACE;
     SockList_Term(&sl);
 }
 
@@ -114,7 +114,7 @@ void send_image_info(socket_struct *ns) {
     int i;
 
     SockList_Init(&sl);
-    SockList_AddPrintf(&sl, "replyinfo image_info\n%d\n%d\n", nrofpixmaps-1, bmaps_checksum);
+    SockList_AddPrintf(&sl, "replyinfo image_info\n%d\n%d\n", get_faces_count()-1, bmaps_checksum);
     for (i = 0; i < MAX_FACE_SETS; i++) {
         if (facesets[i].prefix) {
             SockList_AddPrintf(&sl, "%d:%s:%s:%d:%s:%s:%s",
@@ -153,7 +153,7 @@ void send_image_sums(socket_struct *ns, char *params) {
     if (stop < start
     || *cp == '\0'
     || (stop-start) > 1000
-    || stop >= nrofpixmaps) {
+    || stop >= get_faces_count()) {
         SockList_AddPrintf(&sl, "replyinfo image_sums %d %d", start, stop);
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
@@ -163,8 +163,9 @@ void send_image_sums(socket_struct *ns, char *params) {
 
     for (i = start; i <= stop; i++) {
         int faceset;
+        const Face *face = get_face_by_index(i);
 
-        if (SockList_Avail(&sl) < 2+4+1+1+strlen(new_faces[i].name)+1) {
+        if (SockList_Avail(&sl) < 2+4+1+1+strlen(face->name)+1) {
             LOG(llevError, "send_image_sums: buffer overflow, rejecting range %d..%d\n", start, stop);
             SockList_Reset(&sl);
             SockList_AddPrintf(&sl, "replyinfo image_sums %d %d", start, stop);
@@ -174,12 +175,12 @@ void send_image_sums(socket_struct *ns, char *params) {
         }
 
         SockList_AddShort(&sl, i);
-        ns->faces_sent[i] |= NS_FACESENT_FACE;
+        ns->faces_sent[face->number] |= NS_FACESENT_FACE;
 
         faceset = get_face_fallback(ns->faceset, i);
         SockList_AddInt(&sl, facesets[faceset].faces[i].checksum);
         SockList_AddChar(&sl, faceset);
-        SockList_AddLen8Data(&sl, new_faces[i].name, strlen(new_faces[i].name)+1);
+        SockList_AddLen8Data(&sl, face->name, strlen(face->name)+1);
     }
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

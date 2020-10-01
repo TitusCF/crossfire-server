@@ -147,7 +147,7 @@ void apply_handle_yield(object *tmp) {
  * @return TRUE if face changed
  */
 int set_object_face_main(object *op) {
-    int newface = op->arch->clone.face->number;
+    const Face *newface = op->arch->clone.face;
     sstring saved = object_get_value(op, "face_closed");
 
     if (op->more)
@@ -155,8 +155,8 @@ int set_object_face_main(object *op) {
 
     if (saved)
         newface = find_face(saved, newface);
-    if (newface && op->face != &new_faces[newface]) {
-        op->face = &new_faces[newface];
+    if (newface && op->face != newface) {
+        op->face = newface;
         return TRUE;
     }
     return FALSE;
@@ -175,14 +175,14 @@ int set_object_face_main(object *op) {
  */
 static int set_object_face_other(object *op) {
     sstring custom;
-    int newface = 0;
+    const Face *newface = NULL;
     object *head = op->head ? op->head : op;
 
     if (op->more)
         set_object_face_other(op->more);
 
     if (head->face && head->other_arch && head->other_arch->clone.face)
-        newface = head->other_arch->clone.face->number;
+        newface = head->other_arch->clone.face;
 
     if (op->face != op->arch->clone.face) {
         /* object has a custom face, save it so it gets correctly restored later. */
@@ -192,8 +192,8 @@ static int set_object_face_other(object *op) {
     custom = object_get_value(head, "face_opened");
     if (custom)
         newface = find_face(custom, newface);
-    if (newface && op->face->number != newface) {
-        op->face = &new_faces[newface];
+    if (newface && op->face != newface) {
+        op->face = newface;
         return TRUE;
     }
     return FALSE;

@@ -1533,11 +1533,11 @@ static void fix_flesh_item(object *item, const object *donor) {
 
         /* attempt to change the face - will take a face named "donor's arch"_"item's face". We ignore the animation for now */
         if (item->face != NULL) {
-            unsigned int face;
+            const Face *face;
             snprintf(tmpbuf, sizeof(tmpbuf), "%s_%s", donor->arch->name, item->face->name);
-            face = find_face(tmpbuf, (unsigned int) -1);
-            if (face != (unsigned int)-1) {
-              item->face = &new_faces[face];
+            face = find_face(tmpbuf, NULL);
+            if (face != NULL) {
+              item->face = face;
             }
         }
     }

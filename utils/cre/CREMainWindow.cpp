@@ -711,7 +711,7 @@ static int monsterFight(archetype* monster, archetype* skill, int level)
     strncpy(pl.savebed_map, "/HallOfSelection", MAX_BUF);
     pl.bed_x = 5;
     pl.bed_y = 5;
-    pl.socket.faces_sent = (uint8_t*)calloc(sizeof(uint8_t), nrofpixmaps);
+    pl.socket.faces_sent = (uint8_t*)calloc(sizeof(uint8_t), get_faces_count());
 
     archetype *dwarf_player_arch = find_archetype("dwarf_player");
     if (dwarf_player_arch == NULL) {

@@ -86,14 +86,17 @@ extern void dump_abilities(void);
 extern void print_monsters(void);
 /* image.c */
 extern void read_bmap_names(void);
-extern unsigned find_face(const char *name, unsigned error);
+extern const Face *find_face(const char *name, const Face *error);
 extern int read_smooth(void);
-extern int find_smooth(uint16_t face, uint16_t *smoothed);
+extern int find_smooth(const Face *face, const Face **smoothed);
 extern void free_all_images(void);
 extern void read_client_images(void);
 extern int is_valid_faceset(int fsn);
 extern void free_socket_images(void);
 extern int get_face_fallback(int faceset, int imageno);
+extern unsigned int get_faces_count(void);
+extern const Face *get_face_by_index(int index);
+extern const Face *get_face_by_id(uint16_t id);
 /* init.c */
 extern void init_library(void);
 extern void init_globals(void);
@@ -354,7 +357,7 @@ extern const readable_message_type *get_readable_message_type(object *readable);
 extern const GeneralMessage *get_message_from_identifier(const char *identifier);
 extern sstring get_message_title(const GeneralMessage *message);
 extern sstring get_message_body(const GeneralMessage *message);
-extern unsigned int get_message_face(const GeneralMessage *message);
+extern const Face *get_message_face(const GeneralMessage *message);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
 extern void init_formulae(void);

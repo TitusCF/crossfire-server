@@ -80,9 +80,9 @@ void send_skill_info(socket_struct *ns, char *params) {
         }
 
         if (params != NULL && *params == '1') {
-            if ((skill_faces[i] != -1) && !(ns->faces_sent[skill_faces[i]]&NS_FACESENT_FACE))
+            if ((skill_faces[i] != NULL) && !(ns->faces_sent[skill_faces[i]->number]&NS_FACESENT_FACE))
                 esrv_send_face(ns, skill_faces[i], 0);
-            SockList_AddPrintf(&sl, "%d:%s:%d\n", i+CS_STAT_SKILLINFO, skill_names[i], skill_faces[i]);
+            SockList_AddPrintf(&sl, "%d:%s:%d\n", i+CS_STAT_SKILLINFO, skill_names[i], skill_faces[i] ? skill_faces[i]->number : 0);
         } else
             SockList_AddPrintf(&sl, "%d:%s\n", i+CS_STAT_SKILLINFO, skill_names[i]);
     }

@@ -3692,7 +3692,7 @@ int main(int argc, char **argv) {
     }
 
     create_destination();
-    gdfaces = calloc(nrofpixmaps, sizeof(gdImagePtr));
+    gdfaces = calloc(get_faces_count(), sizeof(gdImagePtr));
 
     read_template("templates/map.template", &map_template);
     read_template("templates/map_no_exit.template", &map_no_exit_template);

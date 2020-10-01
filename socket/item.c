@@ -123,7 +123,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
         flags |= F_NOPICK;
 
     if (!(ns->faces_sent[head->face->number]&NS_FACESENT_FACE))
-        esrv_send_face(ns, head->face->number, 0);
+        esrv_send_face(ns, head->face, 0);
 
     if (QUERY_FLAG(head, FLAG_ANIMATE)) {
         if (head->animation_id == 0) {
@@ -219,7 +219,7 @@ void esrv_draw_look(object *pl) {
     SockList_AddInt(&sl, 0);
 
     if (!(pl->contr->socket.faces_sent[empty_face->number]&NS_FACESENT_FACE))
-        esrv_send_face(&pl->contr->socket, empty_face->number, 0);
+        esrv_send_face(&pl->contr->socket, empty_face, 0);
 
     if (pl->contr->socket.look_position) {
         int overhead = 1+(pl->contr->transport != NULL);
@@ -456,7 +456,7 @@ void esrv_update_item(int flags, object *pl, object *op) {
 
     if (flags&UPD_FACE) {
         if (!(pl->contr->socket.faces_sent[op->face->number]&NS_FACESENT_FACE))
-            esrv_send_face(&pl->contr->socket, op->face->number, 0);
+            esrv_send_face(&pl->contr->socket, op->face, 0);
         SockList_AddInt(&sl, op->face->number);
     }
     if (flags&UPD_NAME) {
