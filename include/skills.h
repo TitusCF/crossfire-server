@@ -121,7 +121,7 @@ enum SK {
     (num == SK_PRAYING)
 
 extern const char *skill_names[MAX_SKILLS];
-extern int skill_faces[MAX_SKILLS];
+extern const Face *skill_faces[MAX_SKILLS];
 
 extern int get_skill_client_code(const char *skill_name);
 

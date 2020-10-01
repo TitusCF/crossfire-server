@@ -24,7 +24,7 @@ class ResourcesManager
         const recipestruct* recipe(int ingredients, const QString& name) const;
 
         QStringList faces() const;
-        const New_Face* face(const QString& name) const;
+        const Face* face(const QString& name) const;
 
         QStringList allAnimations() const;
         const animations_struct* animation(const QString& name) const;
@@ -33,7 +33,7 @@ class ResourcesManager
         QHash<QString, archt*> myArchetypes;
         QHash<QString, treasurelist*> myTreasures;
         QList<QHash<QString, recipestruct*> > myRecipes;
-        QHash<QString, New_Face*> myFaces;
+        QHash<QString, const Face*> myFaces;
         QHash<QString, animations_struct*> myAnimations;
 };
 

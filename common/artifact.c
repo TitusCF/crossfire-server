@@ -293,9 +293,9 @@ void add_abilities(object *op, const object *change) {
 
         object_set_value(op, "identified_face", change->face->name, 1);
     } else if ((key = object_get_value(change, "face_suffix")) != NULL) {
-        New_Face* face;
+        const Face* face;
         compute_face_name(buf, sizeof(buf), op->face->name, key);
-        face = &new_faces[find_face(buf, op->face->number)];
+        face = find_face(buf, op->face);
         object_set_value(op, "identified_face", face->name, 1);
     }
     if (QUERY_FLAG(change, FLAG_CLIENT_ANIM_RANDOM)) {

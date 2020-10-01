@@ -385,9 +385,11 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
  * a piece of data from us that we know the client wants. So
  * if we know the client wants it, might as well push it to the
  * client.
+ * @param ns where to send smooth information.
+ * @param face face to send smooth face of.
  */
-static void send_smooth(socket_struct *ns, uint16_t face) {
-    uint16_t smoothface;
+static void send_smooth(socket_struct *ns, const Face *face) {
+    const Face *smoothface;
     SockList sl;
 
     // Try to find a smoothing face, or the default smoothing face. If this
@@ -396,24 +398,24 @@ static void send_smooth(socket_struct *ns, uint16_t face) {
     // Failures are usually due to map makers changing the face of a ground
     // tile, but forgetting to unset smoothlevel.
     if (!find_smooth(face, &smoothface)
-    && !find_smooth(smooth_face->number, &smoothface)) {
+    && !find_smooth(smooth_face, &smoothface)) {
         LOG(llevDebug,
             "Could not smooth face %d\n"
             "Check that this face has a smoothing pixmap, or remove its smoothlevel.\n",
             face);
-        ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
+        ns->faces_sent[face->number] |= NS_FACESENT_SMOOTH;
         return;
     }
 
-    if (!(ns->faces_sent[smoothface]&NS_FACESENT_FACE))
+    if (!(ns->faces_sent[smoothface->number]&NS_FACESENT_FACE))
         esrv_send_face(ns, smoothface, 0);
 
-    ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
+    ns->faces_sent[face->number] |= NS_FACESENT_SMOOTH;
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "smooth ");
-    SockList_AddShort(&sl, face);
-    SockList_AddShort(&sl, smoothface);
+    SockList_AddShort(&sl, face->number);
+    SockList_AddShort(&sl, smoothface->number);
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
 }
@@ -423,15 +425,15 @@ static void send_smooth(socket_struct *ns, uint16_t face) {
  * to smooth a picture number given as argument.
  */
 void ask_smooth_cmd(char *buf, int len, socket_struct *ns) {
-    uint16_t facenbr;
+    uint16_t facenid;
 
     if (len <= 0 || !buf) {
         LOG(llevDebug, "IP '%s' sent bogus ask_smooth_cmd information\n", ns->host);
         return;
     }
 
-    facenbr = atoi(buf);
-    send_smooth(ns, facenbr);
+    facenid = atoi(buf);
+    send_smooth(ns, get_face_by_id(facenid));
 }
 
 /**
@@ -871,7 +873,7 @@ void esrv_new_player(player *pl, uint32_t weight) {
     pl->last_weight = weight;
 
     if (!(pl->socket.faces_sent[pl->ob->face->number]&NS_FACESENT_FACE))
-        esrv_send_face(&pl->socket, pl->ob->face->number, 0);
+        esrv_send_face(&pl->socket, pl->ob->face, 0);
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "player ");
@@ -914,7 +916,7 @@ void esrv_send_animation(socket_struct *ns, short anim_num) {
      */
     for (i = 0; i < animations[anim_num].num_animations; i++) {
         if (!(ns->faces_sent[animations[anim_num].faces[i]->number]&NS_FACESENT_FACE))
-            esrv_send_face(ns, animations[anim_num].faces[i]->number, 0);
+            esrv_send_face(ns, animations[anim_num].faces[i], 0);
         /* flags - not used right now */
         SockList_AddShort(&sl, animations[anim_num].faces[i]->number);
     }
@@ -972,14 +974,13 @@ static const object *heads[MAX_HEAD_POS][MAX_HEAD_POS][MAP_LAYERS];
  *    on the space we have already sent to the client.
  */
 static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl, socket_struct *ns, int *has_obj, int is_head) {
-    uint16_t face_num;
     uint8_t nlayer, smoothlevel = 0;
     const object *head;
 
     assert(ob != NULL);
 
     head = HEAD(ob);
-    face_num = ob->face->number;
+    const Face *face = ob->face;
 
     /* This is a multipart object, and we are not at the lower
      * right corner. So we need to store away the lower right corner.
@@ -1005,7 +1006,7 @@ static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl
          */
         if (bx < ax || by < ay) {
             LOG(llevError, "map2_add_ob: bx (%d) or by (%d) is less than ax (%d) or ay (%d)\n", bx, by, ax, ay);
-            face_num = 0;
+            face = NULL;
         }
         /* the target position must be within +/-1 of our current
          * layer as the layers are defined. We are basically checking
@@ -1029,6 +1030,7 @@ static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl
         return 0;
         /* Ok - All done storing away the head for future use */
     } else {
+        uint16_t face_num = face ? face->number : 0;
         (*has_obj)++;
         if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_SYNC)
         || QUERY_FLAG(ob, FLAG_CLIENT_ANIM_RANDOM)) {
@@ -1086,16 +1088,16 @@ static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl
                 if (smoothlevel) {
                     for (i = 0; i < NUM_ANIMATIONS(ob); i++) {
                         if (!(ns->faces_sent[animations[ob->animation_id].faces[i]->number]&NS_FACESENT_SMOOTH))
-                            send_smooth(ns, animations[ob->animation_id].faces[i]->number);
+                            send_smooth(ns, animations[ob->animation_id].faces[i]);
                     }
                 }
             } else if (!(ns->faces_sent[face_num]&NS_FACESENT_FACE)) {
-                esrv_send_face(ns, face_num, 0);
+                esrv_send_face(ns, face, 0);
             }
 
             if (smoothlevel
             && !(ns->faces_sent[ob->face->number]&NS_FACESENT_SMOOTH))
-                send_smooth(ns, ob->face->number);
+                send_smooth(ns, ob->face);
 
             /* Length of packet */
             nlayer |= len<<5;
@@ -1704,7 +1706,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
     }
 
     if (spell->face && !(pl->socket.faces_sent[spell->face->number]&NS_FACESENT_FACE))
-        esrv_send_face(&pl->socket, spell->face->number, 0);
+        esrv_send_face(&pl->socket, spell->face, 0);
 
     spell_info = get_client_spell_state(pl, spell);
     SockList_AddInt(sl, spell->count);
@@ -1957,7 +1959,7 @@ void send_account_players(socket_struct *ns)
 
     /* Now add real character data */
     for (acn = ns->account_chars; acn; acn = acn->next) {
-        uint16_t faceno;
+        uint16_t faceno = 0;
 
         /* Ignore a dead character. They don't need to show up. */
         if (acn->isDead) {
@@ -1969,15 +1971,15 @@ void send_account_players(socket_struct *ns)
         add_char_field(&sl, ACL_RACE, acn->race);
         add_char_field(&sl, ACL_FACE, acn->face);
         if (acn->face[0] != 0 ) {
-            faceno = find_face(acn->face, 0);
+            const Face *face = find_face(acn->face, 0);
 
-            if (faceno != 0) {
-                if (!(ns->faces_sent[faceno]&NS_FACESENT_FACE)) {
-                    esrv_send_face(ns, faceno, 0);
+            if (face != NULL) {
+                if (!(ns->faces_sent[face->number]&NS_FACESENT_FACE)) {
+                    esrv_send_face(ns, face, 0);
                 }
+                faceno = face->number;
             }
-        } else
-            faceno=0;
+        }
 
         add_char_field(&sl, ACL_PARTY, acn->party);
         add_char_field(&sl, ACL_MAP, acn->map);

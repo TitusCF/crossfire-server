@@ -820,6 +820,7 @@ static void cfapi_system_find_face(int *type, ...) {
     const char *face;
     int error;
     int *num;
+    const Face *f;
 
     va_start(args, type);
     face = va_arg(args, const char *);
@@ -827,7 +828,8 @@ static void cfapi_system_find_face(int *type, ...) {
     num = va_arg(args, int *);
     va_end(args);
 
-    *num = find_face(face, error);
+    f = find_face(face, get_face_by_id(error));
+    (*num) = f ? f->number : 0;
     *type = CFAPI_INT;
 }
 
@@ -3071,15 +3073,18 @@ static void cfapi_object_set_property(int *type, ...) {
             break;
 
         case CFAPI_OBJECT_PROP_FACE: {
+            const Face *face;
             sarg = va_arg(args, char *);
             ret = va_arg(args, int *);
             *type = CFAPI_INT;
-            *ret = find_face(sarg, 0);
-            if (*ret != 0) {
-                op->face = &new_faces[*ret];
+            face = find_face(sarg, 0);
+            if (face != NULL) {
+                op->face = face;
                 op->state = 0;
                 object_update(op, UP_OBJ_FACE);
-            }
+                (*ret) = face->number;
+            } else
+                (*ret) = 0;
             break;
         }
 

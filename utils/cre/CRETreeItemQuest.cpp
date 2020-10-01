@@ -42,7 +42,7 @@ void CRETreeItemQuest::questModified()
     myTreeItem->setIcon(0, QIcon());
     if (!myItem->face().isEmpty())
     {
-      const New_Face* face = myWindow->resourcesManager()->face(myItem->face());
+      const Face* face = myWindow->resourcesManager()->face(myItem->face());
       if (face != NULL)
         myTreeItem->setIcon(0, CREPixmap::getIcon(face->number));
     }

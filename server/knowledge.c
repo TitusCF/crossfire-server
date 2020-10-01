@@ -112,9 +112,9 @@ typedef StringBuffer* (*knowledge_can_use_alchemy)(sstring code, const char *ite
 /**
  * Get the face for a knowledge item.
  * @param code knowledge internal code.
- * @return face number, -1 (as unsigned) for invalid.
+ * @return face number, NULL for invalid.
  */
-typedef unsigned (*knowledge_face)(sstring code);
+typedef const Face *(*knowledge_face)(sstring code);
 
 struct knowledge_item;
 
@@ -495,41 +495,41 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
 /**
  * Try to get a face for an alchemy recipe.
  * @param code alchemy code.
- * @return face, -1 as unsigned if none could be found.
+ * @return face, NULL if none could be found.
  */
-static unsigned knowledge_alchemy_face(sstring code) {
+static const Face *knowledge_alchemy_face(sstring code) {
     const recipe *rp = knowledge_alchemy_get_recipe(code);
     const artifact *art;
     archetype *arch;
     object *item;
-    unsigned face;
+    const Face *face;
 
     if (!rp) {
         LOG(llevError, "knowledge: couldn't find recipe for %s", code);
-        return (unsigned)-1;
+        return NULL;
     }
 
     if (rp->arch_names == 0)
-        return (unsigned)-1;
+        return NULL;
 
     arch = find_archetype(rp->arch_name[0]);
     if (arch == NULL) {
-        return -1;
+        return NULL;
     }
     if (strcmp(rp->title, "NONE") == 0) {
-        return arch->clone.face->number;
+        return arch->clone.face;
     }
 
     art = locate_recipe_artifact(rp, 0);
     if (art == NULL)
-        return arch->clone.face->number;
+        return arch->clone.face;
 
-    face = arch->clone.face->number;
+    face = arch->clone.face;
     item = arch_to_object(arch);
     give_artifact_abilities(item, art->item);
     object_give_identified_properties(item);
     if (item->face != NULL && item->face != blank_face)
-        face = item->face->number;
+        face = item->face;
     object_free(item, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
 
     return face;
@@ -656,15 +656,15 @@ static int knowledge_monster_add(struct knowledge_player *current, const char *i
 /**
  * Get the face for a monster.
  * @param code monster's code.
- * @return face, -1 as unsigned if invalid.
+ * @return face, NULL if invalid.
  */
-static unsigned knowledge_monster_face(sstring code) {
+static const Face *knowledge_monster_face(sstring code) {
     const archetype *monster = find_archetype(code);
 
     if (!monster || monster->clone.face == blank_face || monster->clone.face == NULL)
-        return (unsigned)-1;
+        return NULL;
 
-    return monster->clone.face->number;
+    return monster->clone.face;
 }
 
 /**
@@ -785,9 +785,9 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
 /**
  * Get the face for a god.
  * @param code god's code.
- * @return face, -1 as unsigned if invalid.
+ * @return face, NULL if invalid.
  */
-static unsigned knowledge_god_face(sstring code) {
+static const Face *knowledge_god_face(sstring code) {
     char buf[MAX_BUF];
     size_t letter;
     const archetype *altar_arch;
@@ -804,9 +804,9 @@ static unsigned knowledge_god_face(sstring code) {
     }
     altar_arch = find_archetype(buf);
     if (altar_arch == NULL)
-        return (unsigned)-1;
+        return NULL;
 
-    return altar_arch->clone.face->number;
+    return altar_arch->clone.face;
 }
 
 /**
@@ -853,14 +853,14 @@ static int knowledge_message_validate(const char *item) {
 /**
  * Get the face for a message.
  * @param code message's code.
- * @return face, -1 as unsigned if invalid.
+ * @return face, NULL if invalid.
  */
-static unsigned knowledge_message_face(sstring code) {
+static const Face *knowledge_message_face(sstring code) {
     const GeneralMessage *msg = get_message_from_identifier(code);
 
     if (!msg)
         /* warn? */
-        return -1;
+        return NULL;
 
     return get_message_face(msg);
 }
@@ -1378,23 +1378,23 @@ void knowledge_item_can_be_used_alchemy(object *op, const object *item) {
  */
 void knowledge_send_info(socket_struct *ns) {
     int i;
-    unsigned face;
+    const Face *face;
     SockList sl;
 
-    face = find_face("knowledge_generic.111", (unsigned)-1);
-    if (face != (unsigned)-1 && (!(ns->faces_sent[face] & NS_FACESENT_FACE)))
+    face = find_face("knowledge_generic.111", NULL);
+    if (face != NULL && (!(ns->faces_sent[face->number] & NS_FACESENT_FACE)))
         esrv_send_face(ns, face, 0);
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "replyinfo knowledge_info\n");
-    SockList_AddPrintf(&sl, "::%u:0\n", face);
+    SockList_AddPrintf(&sl, "::%u:0\n", face->number);
 
     for (i = 0; knowledges[i].type != NULL; i++) {
-        face = find_face(knowledges[i].face, (unsigned)-1);
-        if (face != (unsigned)-1 && (!(ns->faces_sent[face] & NS_FACESENT_FACE)))
+        face = find_face(knowledges[i].face, NULL);
+        if (face != NULL && (!(ns->faces_sent[face->number] & NS_FACESENT_FACE)))
             esrv_send_face(ns, face, 0);
 
-        SockList_AddPrintf(&sl, "%s:%s:%u:%s\n", knowledges[i].type, knowledges[i].name, face, knowledges[i].attempt_alchemy != NULL ? "1" : "0");
+        SockList_AddPrintf(&sl, "%s:%s:%u:%s\n", knowledges[i].type, knowledges[i].name, face ? face->number : 0, knowledges[i].attempt_alchemy != NULL ? "1" : "0");
     }
 
     Send_With_Handling(ns, &sl);
@@ -1448,7 +1448,7 @@ void knowledge_process_incremental(void) {
     const knowledge_item *item;
     StringBuffer *buf;
     char *title;
-    unsigned face;
+    const Face *face;
     knowledge_player *cur = knowledge_global, *prev = NULL;
     player *pl;
 
@@ -1490,12 +1490,12 @@ void knowledge_process_incremental(void) {
             item->handler->summary(item->item, buf);
             title = stringbuffer_finish(buf);
 
-            face = (unsigned)-1;
+            face = NULL;
             if (item->handler->item_face != NULL)
                 face = item->handler->item_face(item->item);
 
-            if (face == (unsigned)-1)
-                face = find_face(item->handler->face, (unsigned)-1);
+            if (face == NULL)
+                face = find_face(item->handler->face, NULL);
 
             size = 4 + (2 + strlen(item->handler->type)) + (2 + strlen(title)) + 4;
 
@@ -1507,10 +1507,10 @@ void knowledge_process_incremental(void) {
 
             SockList_AddInt(&sl, i + 1);
             SockList_AddLen16Data(&sl, item->handler->type, strlen(item->handler->type));
-            if ((face != (unsigned)-1) && !(pl->socket.faces_sent[face]&NS_FACESENT_FACE))
+            if (face != NULL && !(pl->socket.faces_sent[face->number]&NS_FACESENT_FACE))
                 esrv_send_face(&pl->socket, face, 0);
             SockList_AddLen16Data(&sl, title, strlen(title));
-            SockList_AddInt(&sl, face);
+            SockList_AddInt(&sl, face ? face->number : 0);
 
             free(title);
         }

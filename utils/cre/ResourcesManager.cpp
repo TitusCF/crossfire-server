@@ -58,9 +58,10 @@ void ResourcesManager::load()
         myRecipes.append(recipes);
     }
 
-    for (unsigned int f = 0; f < nrofpixmaps; f++)
+    for (unsigned int f = 0; f < get_faces_count(); f++)
     {
-        myFaces[new_faces[f].name] = &new_faces[f];
+        const Face *face = get_face_by_index(f);
+        myFaces[face->name] = face;
     }
 
     // There is the "bug" animation to consider
@@ -125,7 +126,7 @@ QStringList ResourcesManager::faces() const
     return keys;
 }
 
-const New_Face* ResourcesManager::face(const QString& name) const
+const Face* ResourcesManager::face(const QString& name) const
 {
     return myFaces[name];
 }

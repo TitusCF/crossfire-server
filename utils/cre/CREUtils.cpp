@@ -176,7 +176,7 @@ QTreeWidgetItem* CREUtils::faceNode(QTreeWidgetItem* parent)
     return item;
 }
 
-QTreeWidgetItem* CREUtils::faceNode(const New_Face* face, QTreeWidgetItem* parent)
+QTreeWidgetItem* CREUtils::faceNode(const Face* face, QTreeWidgetItem* parent)
 {
     QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(face->name));
     item->setIcon(0, CREPixmap::getIcon(face->number));

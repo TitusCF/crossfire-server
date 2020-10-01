@@ -59,7 +59,7 @@ const char *skill_names[MAX_SKILLS];
 /**
  * Will contain the face numbers for the skills, initialized by init_skill().
  */
-int skill_faces[MAX_SKILLS];
+const Face *skill_faces[MAX_SKILLS];
 
 /**
  * This just sets up the ::skill_names table above. The index into the array
@@ -71,7 +71,7 @@ void init_skills(void) {
 
     for (i = 0; i < MAX_SKILLS; i++) {
         skill_names[i] = NULL;
-        skill_faces[i] = -1;
+        skill_faces[i] = NULL;
     }
     i = 0;
 
@@ -83,7 +83,7 @@ void init_skills(void) {
             }
             skill_names[i] = add_refcount(at->clone.skill);
             if (at->clone.face != NULL)
-                skill_faces[i] = at->clone.face->number;
+                skill_faces[i] = at->clone.face;
             i++;
         }
     }

@@ -45,7 +45,7 @@ void init_anim(void) {
     char buf[MAX_BUF];
     FILE *fp;
     int num_frames = 0, i;
-    const New_Face *faces[MAX_ANIMATIONS];
+    const Face *faces[MAX_ANIMATIONS];
     Animations *alloc_ptr; // Used to temporarily catch the result of realloc, in case of failure.
 
     animations_allocated = 9;
@@ -62,8 +62,8 @@ void init_anim(void) {
     animations[0].name = add_string("###none");
     animations[0].num_animations = 1;
     animations[0].num = 0;
-    animations[0].faces = malloc(sizeof(New_Face*));
-    animations[0].faces[0] = &new_faces[find_face("bug.111", 0)];
+    animations[0].faces = malloc(sizeof(Face*));
+    animations[0].faces[0] = find_face("bug.111", NULL);
     animations[0].facings = 0;
 
     snprintf(buf, sizeof(buf), "%s/animations", settings.datadir);
@@ -118,7 +118,7 @@ void init_anim(void) {
             animations[num_animations].facings = 1;
         } else if (!strncmp(buf, "mina", 4)) {
             assert(num_frames > 0);
-            animations[num_animations].faces = malloc(sizeof(New_Face*)*num_frames);
+            animations[num_animations].faces = malloc(sizeof(Face*)*num_frames);
             for (i = 0; i < num_frames; i++)
                 animations[num_animations].faces[i] = faces[i];
             animations[num_animations].num_animations = num_frames;
@@ -139,13 +139,13 @@ void init_anim(void) {
                 animations[num_animations].facings = 1;
             }
         } else {
-            unsigned face = find_face(buf, (unsigned)-1);
-            if (face == (unsigned)-1) {
+            const Face *face = find_face(buf, NULL);
+            if (face == NULL) {
                 LOG(llevError, "Could not find face %s for animation %s\n",
                     buf, animations[num_animations].name);
-                face = find_face("bug.111", 0);
+                face = find_face("bug.111", NULL);
             }
-            faces[num_frames++] = &new_faces[face];
+            faces[num_frames++] = face;
         }
     }
     fclose(fp);

@@ -834,9 +834,8 @@ A       .+
 
 ^face{S}            {
                         const char *name = yval();
-                        int face = find_face(yval(), 0);
-                        op->face = &new_faces[face];
-                        if (face == 0)
+                        op->face = find_face(yval(), NULL);
+                        if (op->face == NULL)
                             LOG(llevError, "couldn't find face %s for %s\n", name, op->arch ? op->arch->name : op->name);
                     }
 ^str{S}             op->stats.Str = IVAL;

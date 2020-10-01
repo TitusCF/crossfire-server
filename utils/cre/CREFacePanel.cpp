@@ -61,7 +61,7 @@ CREFacePanel::CREFacePanel(QWidget* parent) : CRETPanel(parent)
     connect(smooth, SIGNAL(clicked(bool)), this, SLOT(makeSmooth(bool)));
 }
 
-void CREFacePanel::setItem(const New_Face* face)
+void CREFacePanel::setItem(const Face* face)
 {
     Q_ASSERT(face);
     myFace = face;
