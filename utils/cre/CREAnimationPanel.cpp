@@ -51,7 +51,7 @@ void CREAnimationPanel::setItem(const Animations* animation)
     for (arch = first_archetype; arch; arch = (arch->more ? arch->more : arch->next))
     {
       key = object_get_value(&arch->clone, "identified_animation");
-        if (arch->clone.animation_id == myAnimation->num || (key && strcmp(animation->name, key) == 0))
+        if (arch->clone.animation == myAnimation || (key && strcmp(animation->name, key) == 0))
         {
             if (root == NULL)
             {
@@ -72,7 +72,7 @@ void CREAnimationPanel::setItem(const Animations* animation)
     {
         for (art = list->items; art; art = art->next)
         {
-            if (art->item->animation_id == myAnimation->num)
+            if (art->item->animation == myAnimation)
             {
                 if (root == NULL)
                 {

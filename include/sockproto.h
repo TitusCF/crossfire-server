@@ -85,7 +85,7 @@ void move_cmd(char *buf, int len, player *pl);
 void send_query(socket_struct *ns, uint8_t flags, const char *text);
 void esrv_update_stats(player *pl);
 void esrv_new_player(player *pl, uint32_t weight);
-void esrv_send_animation(socket_struct *ns, short anim_num);
+void esrv_send_animation(socket_struct *ns, const Animations *anim);
 void draw_client_map(object *pl);
 void esrv_map_scroll(socket_struct *ns, int dx, int dy);
 void send_plugin_custom_message(object *pl, char *buf);

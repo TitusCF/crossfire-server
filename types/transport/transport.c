@@ -102,7 +102,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
         inv = object_find_by_type(old_transport, PLAYER);
         if (!inv) {
             old_transport->face = old_transport->arch->clone.face;
-            old_transport->animation_id = old_transport->arch->clone.animation_id;
+            old_transport->animation = old_transport->arch->clone.animation;
         } else {
             old_transport->contr = inv->contr;
             draw_ext_info_format(NDI_UNIQUE, 0, inv, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
@@ -205,7 +205,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
                 op->face = find_face(str, op->face);
             str = object_get_value(op, "anim_full");
             if (str)
-                op->animation_id = find_animation(str);
+                op->animation = find_animation(str);
         }
 
         /* Does speed of this object change based on weight? */

@@ -272,7 +272,7 @@ int object_can_merge(object *ob1, object *ob2) {
     || (ob1->slaying != ob2->slaying)
     || (ob1->skill != ob2->skill)
     || (ob1->value != ob2->value)
-    || (ob1->animation_id != ob2->animation_id)
+    || (ob1->animation != ob2->animation)
     || (ob1->client_type != ob2->client_type)
     || (ob1->materialname != ob2->materialname)
     || (ob1->lore != ob2->lore)
@@ -1130,7 +1130,7 @@ object *object_new(void) {
  * update_turn_face() has been renamed to object_update_turn_face()
  */
 void object_update_turn_face(object *op) {
-    if (op->animation_id == 0 || !QUERY_FLAG(op, FLAG_IS_TURNABLE))
+    if (op->animation == 0 || !QUERY_FLAG(op, FLAG_IS_TURNABLE))
         return;
     animate_object(op, op->direction);
 }
@@ -4970,8 +4970,8 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
         ADD_STRINGLINE_ENTRY(sb, "face ", op->face->name);
     }
 
-    if (op->animation_id != op2->animation_id) {
-        if (op->animation_id) {
+    if (op->animation != op2->animation) {
+        if (op->animation) {
             ADD_STRINGLINE_ENTRY(sb, "animation ", animations[GET_ANIM_ID(op)].name);
             if (!QUERY_FLAG (op, FLAG_ANIMATE)) {
                 stringbuffer_append_string(sb, "is_animated 0\n");

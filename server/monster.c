@@ -779,7 +779,7 @@ int monster_move(object *op) {
     if (op->direction != rv.direction) {
         op->direction = rv.direction;
         op->facing = op->direction;
-        if (op->animation_id)
+        if (op->animation)
             animate_object(op, op->direction);
     }
 
@@ -1226,7 +1226,7 @@ static int monster_use_scroll(object *head, object *part, object *pl, int dir) {
     /* Face the direction that we want to cast. */
     head->direction = dir;
     head->facing = head->direction;
-    if (head->animation_id)
+    if (head->animation)
         animate_object(head, head->direction);
 
     apply_manual(part, scroll, 0);

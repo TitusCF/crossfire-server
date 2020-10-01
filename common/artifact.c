@@ -305,16 +305,15 @@ void add_abilities(object *op, const object *change) {
         snprintf(buf, sizeof(buf), "%d", change->anim_speed);
         object_set_value(op, "identified_anim_speed", buf, 1);
     }
-    if (change->animation_id != 0 && op->arch != NULL) {
+    if (change->animation != NULL && op->arch != NULL) {
         /* op->arch can be NULL when called from artifact_msg(). */
-        snprintf(buf, sizeof(buf),"%d", change->animation_id);
-        object_set_value(op, "identified_animation", buf, 1);
-    } else if (op->animation_id != 0 && (key = object_get_value(change, "animation_suffix")) != NULL) {
-        snprintf(buf, sizeof(buf), "%s_%s", animations[op->animation_id].name, key);
-        i = try_find_animation(buf);
-        if (i != 0) {
-            snprintf(buf, sizeof(buf),"%d", i);
-            object_set_value(op, "identified_animation", buf, 1);
+        object_set_value(op, "identified_animation", change->animation->name, 1);
+    } else if (op->animation != NULL && (key = object_get_value(change, "animation_suffix")) != NULL) {
+        const Animations *anim;
+        snprintf(buf, sizeof(buf), "%s_%s", op->animation->name, key);
+        anim = try_find_animation(buf);
+        if (anim != NULL) {
+            object_set_value(op, "identified_animation", anim->name, 1);
         }
     }
 

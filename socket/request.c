@@ -893,36 +893,35 @@ void esrv_new_player(player *pl, uint32_t weight) {
  * sent them the face yet (this can become quite costly in terms of
  * how much we are sending - on the other hand, this should only happen
  * when the player logs in and picks stuff up.
+ *
+ * @param ns where to send the animation.
+ * @param anim animation to send.
  */
-void esrv_send_animation(socket_struct *ns, short anim_num) {
+void esrv_send_animation(socket_struct *ns, const Animations *anim) {
     SockList sl;
     int i;
 
-    /* Do some checking on the anim_num we got. Note that the animations
-     * are added in contigous order, so if the number is in the valid
-     * range, it must be a valid animation.
-     */
-    if (anim_num < 0 || anim_num > num_animations) {
-        LOG(llevError, "esrv_send_anim (%d) out of bounds??\n", anim_num);
+    if (anim == NULL) {
+        LOG(llevError, "esrv_send_anim NULL??\n");
         return;
     }
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "anim ");
-    SockList_AddShort(&sl, anim_num);
+    SockList_AddShort(&sl, anim->num);
     SockList_AddShort(&sl, 0); /* flags - not used right now */
     /* Build up the list of faces. Also, send any information (ie, the
      * the face itself) down to the client.
      */
-    for (i = 0; i < animations[anim_num].num_animations; i++) {
-        if (!(ns->faces_sent[animations[anim_num].faces[i]->number]&NS_FACESENT_FACE))
-            esrv_send_face(ns, animations[anim_num].faces[i], 0);
+    for (i = 0; i < anim->num_animations; i++) {
+        if (!(ns->faces_sent[anim->faces[i]->number]&NS_FACESENT_FACE))
+            esrv_send_face(ns, anim->faces[i], 0);
         /* flags - not used right now */
-        SockList_AddShort(&sl, animations[anim_num].faces[i]->number);
+        SockList_AddShort(&sl, anim->faces[i]->number);
     }
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
-    ns->anims_sent[anim_num] = 1;
+    ns->anims_sent[anim->num] = 1;
 }
 
 /****************************************************************************
@@ -1034,7 +1033,7 @@ static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl
         (*has_obj)++;
         if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_SYNC)
         || QUERY_FLAG(ob, FLAG_CLIENT_ANIM_RANDOM)) {
-            face_num = ob->animation_id|(1<<15);
+            face_num = (ob->animation ? ob->animation->num : 0)|(1<<15);
             if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_SYNC))
                 face_num |= ANIM_SYNC;
             else if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_RANDOM))
@@ -1077,8 +1076,8 @@ static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl
                 else
                     anim_speed = (int)(1.0/FABS(ob->speed));
 
-                if (!ns->anims_sent[ob->animation_id])
-                    esrv_send_animation(ns, ob->animation_id);
+                if (ob->animation && !ns->anims_sent[ob->animation->num])
+                    esrv_send_animation(ns, ob->animation);
 
                 /* If smoothing, need to send smoothing information
                  * for all faces in the animation sequence. Since
@@ -1087,8 +1086,8 @@ static int map2_add_ob(int ax, int ay, int layer, const object *ob, SockList *sl
                  */
                 if (smoothlevel) {
                     for (i = 0; i < NUM_ANIMATIONS(ob); i++) {
-                        if (!(ns->faces_sent[animations[ob->animation_id].faces[i]->number]&NS_FACESENT_SMOOTH))
-                            send_smooth(ns, animations[ob->animation_id].faces[i]);
+                        if (!(ns->faces_sent[ob->animation->faces[i]->number]&NS_FACESENT_SMOOTH))
+                            send_smooth(ns, ob->animation->faces[i]);
                     }
                 }
             } else if (!(ns->faces_sent[face_num]&NS_FACESENT_FACE)) {

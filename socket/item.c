@@ -126,11 +126,11 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
         esrv_send_face(ns, head->face, 0);
 
     if (QUERY_FLAG(head, FLAG_ANIMATE)) {
-        if (head->animation_id == 0) {
+        if (head->animation == NULL) {
             LOG(llevError, "Item %s in %s (%d,%d) has FLAG_ANIMATE but animation_id 0\n", head->name, (head->env ? head->env->name : (head->map ? head->map->path : "???")), head->x, head->y);
             CLEAR_FLAG(head, FLAG_ANIMATE);
-        } else if (!ns->anims_sent[head->animation_id])
-            esrv_send_animation(ns, head->animation_id);
+        } else if (!ns->anims_sent[head->animation->num])
+            esrv_send_animation(ns, head->animation);
     }
 
     SockList_AddInt(sl, head->count);
@@ -155,7 +155,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     len += strlen(item_n+1+len)+1;
     SockList_AddLen8Data(sl, item_n, len);
 
-    SockList_AddShort(sl, head->animation_id);
+    SockList_AddShort(sl, head->animation ? head->animation->num : 0);
     anim_speed = 0;
     if (QUERY_FLAG(head, FLAG_ANIMATE)) {
         if (head->anim_speed)
@@ -478,7 +478,7 @@ void esrv_update_item(int flags, object *pl, object *op) {
         SockList_AddLen8Data(&sl, item_n, len);
     }
     if (flags&UPD_ANIM)
-        SockList_AddShort(&sl, op->animation_id);
+        SockList_AddShort(&sl, op->animation ? op->animation->num : 0);
 
     if (flags&UPD_ANIMSPEED) {
         int anim_speed = 0;

@@ -3248,7 +3248,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
         tmp->name = add_string(buf);
 
         tmp->face = weapon->face;
-        tmp->animation_id = weapon->animation_id;
+        tmp->animation = weapon->animation;
         tmp->anim_speed = weapon->anim_speed;
         tmp->last_anim = weapon->last_anim;
         tmp->state = weapon->state;

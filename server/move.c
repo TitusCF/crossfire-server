@@ -557,7 +557,7 @@ int move_to(object *op, int x, int y) {
 
     op->direction = direction;
     op->facing = direction;
-    if (op->animation_id)
+    if (op->animation)
         animate_object(op, op->direction);
 
     /* can fail, as the direction computing takes into account the blocked state,

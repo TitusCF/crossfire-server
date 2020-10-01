@@ -68,7 +68,7 @@ static method_ret mimic_type_apply(ob_methods *context, object *op, object *appl
             // Remove the .11x from the end of the face name.
             anim_name_buf[anim_name_len-4] = '\0';
             strncat(anim_name_buf, "_mimic", 128-anim_name_len+4);
-            op->animation_id = find_animation(anim_name_buf);
+            op->animation = find_animation(anim_name_buf);
             SET_FLAG(op, FLAG_ANIMATE);
         }
         SET_FLAG(op, FLAG_ALIVE);

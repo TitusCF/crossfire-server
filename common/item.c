@@ -1376,7 +1376,7 @@ void object_give_identified_properties(object *op) {
         CLEAR_FLAG(op, FLAG_CLIENT_ANIM_RANDOM);
         CLEAR_FLAG(op, FLAG_CLIENT_ANIM_SYNC);
         op->anim_speed = 0;
-        op->animation_id = 0;
+        op->animation = 0;
         object_set_value(op, "identified_face", NULL, 0);
     }
 
@@ -1394,7 +1394,7 @@ void object_give_identified_properties(object *op) {
 
     key = object_get_value(op, "identified_animation");
     if (key != NULL) {
-        op->animation_id = atoi(key);
+        op->animation = find_animation(key);
         if (!QUERY_FLAG(op, FLAG_IS_TURNABLE))
             SET_FLAG(op, FLAG_ANIMATE);
         animate_object(op, op->facing);

@@ -4431,9 +4431,9 @@ void dragon_ability_gain(object *who, int atnr, int level) {
                                   item->msg);
 
                 /* Give player new face */
-                if (item->animation_id) {
+                if (item->animation) {
                     who->face = skop->face;
-                    who->animation_id = item->animation_id;
+                    who->animation = item->animation;
                     who->anim_speed = item->anim_speed;
                     who->last_anim = 0;
                     who->state = 0;

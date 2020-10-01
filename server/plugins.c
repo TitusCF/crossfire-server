@@ -798,15 +798,17 @@ static void cfapi_cost_string_from_value(int *type, ...) {
  */
 static void cfapi_system_find_animation(int *type, ...) {
     va_list args;
-    const char *anim;
+    const char *name;
     int *num;
+    const Animations *anim;
 
     va_start(args, type);
-    anim = va_arg(args, const char *);
+    name = va_arg(args, const char *);
     num = va_arg(args, int *);
     va_end(args);
 
-    *num = find_animation(anim);
+    anim = try_find_animation(name);
+    (*num) = anim ? anim->num : 0;
     *type = CFAPI_INT;
 }
 
@@ -2398,8 +2400,8 @@ static void cfapi_object_get_property(int *type, ...) {
         rbuffer = va_arg(args, char *);
         rbufsize = va_arg(args, int);
         if (rbufsize > 0) {
-            if (op->animation_id != 0) {
-                strncpy(rbuffer, animations[op->animation_id].name, rbufsize);
+            if (op->animation != NULL) {
+                strncpy(rbuffer, op->animation->name, rbufsize);
                 rbuffer[rbufsize - 1] = '\0';
             }
             else
@@ -3088,17 +3090,22 @@ static void cfapi_object_set_property(int *type, ...) {
             break;
         }
 
-        case CFAPI_OBJECT_PROP_ANIMATION:
+        case CFAPI_OBJECT_PROP_ANIMATION: {
+            const Animations *anim;
             sarg = va_arg(args, char *);
             ret = va_arg(args, int *);
             *type = CFAPI_INT;
-            *ret = try_find_animation(sarg);
-            if (*ret != 0) {
-                op->animation_id = *ret;
+            anim = try_find_animation(sarg);
+            if (anim != NULL) {
+                op->animation = anim;
                 SET_ANIMATION(op, 0);
                 object_update(op, UP_OBJ_FACE);
+                (*ret) = anim->num;
+            } else {
+                (*ret) = 0;
             }
             break;
+        }
 
         case CFAPI_OBJECT_PROP_DURATION:
             iarg = va_arg(args, int);
