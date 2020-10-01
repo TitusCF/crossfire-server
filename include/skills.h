@@ -60,10 +60,10 @@ enum SK {
     SK_EARTH_MAGIC           = 41,  /**< Earth magic, unused. */
     SK_WATER_MAGIC           = 42,  /**< Water magic, unused. */
     SK_FIRE_MAGIC            = 43,  /**< Fire magic, unused. */
-    SK_DIGGING               = 44,  /**< Fire magic, unused. */
-    SK_MINING                = 45,  /**< Fire magic, unused. */
-    SK_WOODCUTTING           = 46,  /**< Fire magic, unused. */
-    SK_SAWING                = 47,  /**< Fire magic, unused. */
+    SK_DIGGING               = 44,  /**< Digging */
+    SK_MINING                = 45,  /**< Mining */
+    SK_WOODCUTTING           = 46,  /**< Woodcutting */
+    SK_FARMING               = 47,  /**< Farming */
 
 
 
