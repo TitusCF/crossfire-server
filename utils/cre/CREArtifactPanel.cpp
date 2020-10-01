@@ -213,10 +213,10 @@ void CREArtifactPanel::artifactChanged(QTreeWidgetItem* current, QTreeWidgetItem
     myInstance->setText(desc);
     free(desc);
 
-    if (obj->animation_id != 0)
+    if (obj->animation != 0)
     {
       myAnimation->setVisible(true);
-      myAnimation->setAnimation(&animations[obj->animation_id], QUERY_FLAG(obj, FLAG_IS_TURNABLE) ? 8 : -1);
+      myAnimation->setAnimation(obj->animation, QUERY_FLAG(obj, FLAG_IS_TURNABLE) ? 8 : -1);
     }
     else
     {

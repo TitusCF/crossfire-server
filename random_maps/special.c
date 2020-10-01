@@ -240,7 +240,7 @@ void place_fountain_with_specials(mapstruct *map)
     potion->speed = fountain->clone.speed;
     potion->face = fountain->clone.face;
     potion->anim_speed = fountain->clone.anim_speed;
-    potion->animation_id = fountain->clone.animation_id;
+    potion->animation = fountain->clone.animation;
     if (QUERY_FLAG(&fountain->clone, FLAG_ANIMATE)) {
         SET_FLAG(potion, FLAG_ANIMATE);
         SET_FLAG(potion, FLAG_CLIENT_ANIM_RANDOM);

@@ -416,10 +416,10 @@ typedef struct obj {
     struct archt *other_arch;   /**< Pointer used for various things - mostly used for what
                                  * this objects turns into or what this object creates */
     uint32_t      flags[4];       /**< Various flags */
-    uint16_t      animation_id;   /**< An index into the animation array */
+    const Animations *animation;   /**< Animation of this item, NULL if not animated. */
     uint8_t       anim_speed;     /**< Ticks between animation-frames */
     uint8_t       last_anim;      /**< Last sequence used to draw face */
-    uint16_t      temp_animation_id; /**< An index into the temporary animation array */
+    const Animations *temp_animation; /**< A temporary animation. */
     uint8_t       temp_anim_speed; /**< Ticks between temporary animation-frames */
     uint8_t       smoothlevel;    /**< how to smooth this square around*/
     uint8_t       map_layer;      /**< What level to draw this on the map */

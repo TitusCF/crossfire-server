@@ -72,8 +72,8 @@ static method_ret dragon_focus_type_apply(ob_methods *context, object *focus, ob
         /* It only makes sense to change the animation if the
          * face is also changing.
          */
-        if (focus->animation_id)
-            applier->animation_id = focus->animation_id;
+        if (focus->animation)
+            applier->animation = focus->animation;
     }
     if (focus->title) {
         if (applier->title) free_string(applier->title);

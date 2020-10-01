@@ -366,7 +366,7 @@ void CREMainWindow::onReportDuplicate()
     while (arch != NULL)
     {
         // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully)
-        if (arch->clone.animation_id == 0)
+        if (arch->clone.animation == NULL)
         {
             faces[QString::fromLatin1(arch->clone.face->name)].append(QString(arch->name) + " (arch)");
             sstring key = object_get_value(&arch->clone, "identified_face");
@@ -377,7 +377,7 @@ void CREMainWindow::onReportDuplicate()
         }
         else
         {
-            anims[animations[arch->clone.animation_id].name].append(QString(arch->name) + " (arch)");
+            anims[arch->clone.animation->name].append(QString(arch->name) + " (arch)");
             sstring key = object_get_value(&arch->clone, "identified_animation");
             if (key)
             {
@@ -411,7 +411,7 @@ void CREMainWindow::onReportDuplicate()
     {
         for (art = list->items; art != NULL; art = art->next)
         {
-          if (art->item->animation_id == 0)
+          if (art->item->animation == 0)
           {
               faces[QString::fromLatin1(art->item->face->name)].append(QString(art->item->name) + " (art)");
               sstring key = object_get_value(art->item, "identified_face");
@@ -422,7 +422,7 @@ void CREMainWindow::onReportDuplicate()
           }
           else
           {
-              anims[animations[art->item->animation_id].name].append(QString(art->item->name) + " (art)");
+              anims[art->item->animation->name].append(QString(art->item->name) + " (art)");
               sstring key = object_get_value(art->item, "identified_animation");
               if (key)
               {

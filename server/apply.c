@@ -1747,16 +1747,15 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
      * face.  Certain races never change face with class.
      */
     int has_noclassfacechange = (object_find_by_name(pl, "NOCLASSFACECHANGE") != NULL);
-    // Assume 0 is not a valid animation.
-    int anim = 0;
+    const Animations *anim = NULL;
 
     if (change->anim_suffix) {
         char buf[MAX_BUF];
 
-        snprintf(buf, MAX_BUF, "%s_%s", animations[pl->animation_id].name, change->anim_suffix);
+        snprintf(buf, MAX_BUF, "%s_%s", pl->animation->name, change->anim_suffix);
         anim = try_find_animation(buf);
         if (anim) {
-            pl->animation_id = anim;
+            pl->animation = anim;
             pl->anim_speed = -1;
             CLEAR_FLAG(pl, FLAG_ANIMATE);
             animate_object(pl, pl->facing);
@@ -1768,7 +1767,7 @@ void apply_changes_to_player(object *pl, object *change, int limit_stats) {
      * Daniel Hawkins 2020-09-08
      */
     if ((!has_noclassfacechange) && anim == 0) {
-        pl->animation_id = GET_ANIM_ID(change);
+        pl->animation = GET_ANIM(change);
         pl->face = change->face;
 
         if (QUERY_FLAG(change, FLAG_ANIMATE))

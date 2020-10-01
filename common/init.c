@@ -292,7 +292,6 @@ void init_globals(void) {
     trying_emergency_save = 0;
     num_animations = 0;
     animations = NULL;
-    animations_allocated = 0;
     init_defaults();
 }
 

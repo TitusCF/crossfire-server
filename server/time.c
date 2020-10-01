@@ -804,7 +804,7 @@ int process_object(object *op) {
             return 1;
 
     if ((QUERY_FLAG(op, FLAG_ANIMATE) && op->anim_speed == 0)
-    || (op->temp_animation_id && op->temp_anim_speed == 0)) {
+    || (op->temp_animation && op->temp_anim_speed == 0)) {
         op->state++;
         if (op->type == PLAYER)
             animate_object(op, op->facing);

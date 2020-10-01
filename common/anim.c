@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+static int animations_allocated = 0;
+
 /**
  * Clears all animation-related memory.
  **/
@@ -161,39 +163,36 @@ static int anim_compare(const Animations *a, const Animations *b) {
 }
 
 /**
- * Finds the animation id that matches name. Will LOG() an error if not found.
+ * Finds the animation that matches name. Will LOG() an error if not found.
  * @param name
  * the animation's name.
  * @return
- * animation number, or 0 if no match found (animation 0 is initialized as the 'bug' face).
+ * animation, or the "###none" animation if no match found.
  * @see try_find_animation
  */
-int find_animation(const char *name) {
-    int face = try_find_animation(name);
-    if (!face)
+const Animations *find_animation(const char *name) {
+    const Animations *anim = try_find_animation(name);
+    if (!anim)
         LOG(llevError, "Unable to find animation %s\n", name);
-    return face;
+    return anim ? anim : &animations[0];
 }
 
 /**
- * Tries to find the animation id that matches name, don't LOG() an error if not found.
+ * Tries to find the animation that matches name, don't LOG() an error if not found.
  * @param name
  * the animation's name.
  * @return
- * animation number, or 0 if no match found (animation 0 is initialized as the 'bug' face).
+ * animation, or NULL if no match found.
  * @see find_animation
  */
-int try_find_animation(const char *name) {
+const Animations *try_find_animation(const char *name) {
     Animations search, *match;
 
     search.name = name;
 
     match = (Animations *)bsearch(&search, animations, (num_animations+1), sizeof(Animations), (int (*)(const void *, const void *))anim_compare);
 
-
-    if (match)
-        return match->num;
-    return 0;
+    return match;
 }
 
 /**
@@ -215,7 +214,7 @@ void animate_object(object *op, int dir) {
     int base_state; /* starting index # to draw from */
     int oldface = op->face->number;
 
-    if (!op->animation_id || !NUM_ANIMATIONS(op)) {
+    if (!op->animation || !NUM_ANIMATIONS(op)) {
         StringBuffer *sb;
         char *diff;
 
@@ -271,8 +270,8 @@ void animate_object(object *op, int dir) {
     /* If beyond drawable states, reset */
     if (op->state >= max_state) {
         op->state = 0;
-        if (op->temp_animation_id) {
-            op->temp_animation_id = 0;
+        if (op->temp_animation) {
+            op->temp_animation = 0;
             animate_object(op, dir);
             return;
         }
@@ -317,25 +316,25 @@ void animate_object(object *op, int dir) {
  * animation suffix to apply. Must not be NULL.
  */
 void apply_anim_suffix(object *who, sstring suffix) {
-    int anim;
+    const Animations *anim;
     object *head, *orig;
     char buf[MAX_BUF];
 
     assert(who);
     assert(suffix);
 
-    if (who->temp_animation_id != 0)
+    if (who->temp_animation)
         /* don't overlap animation, let the current one finish. */
         return;
 
     head = HEAD(who);
     orig = head;
-    snprintf(buf, MAX_BUF, "%s_%s", animations[head->animation_id].name, suffix);
+    snprintf(buf, MAX_BUF, "%s_%s", (head->animation ? head->animation->name : ""), suffix);
     anim = try_find_animation(buf);
     if (anim) {
         for (; head != NULL; head = head->more) {
-            head->temp_animation_id = anim;
-            head->temp_anim_speed = animations[anim].num_animations/animations[anim].facings;
+            head->temp_animation = anim;
+            head->temp_anim_speed = anim->num_animations / anim->facings;
             head->last_anim = 0;
             head->state = 0;
         }
