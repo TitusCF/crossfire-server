@@ -1,3 +1,8 @@
+2020-10-02 Daniel Hawkins
+    * plugins/cfpython/cfpython.c: Set context->event to NULL when running python-based commands.
+        It was possible to segfault from it not being a valid address if malloc used
+        recycled memory.
+
 2020-09-30 Daniel Hawkins
     * server/player.c: Prevent check_pick() from processing on a non-player.
     * server/skills.c: Prevent stop_jump() from calling check_pick() for non-players.

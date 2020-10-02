@@ -1507,6 +1507,8 @@ CF_PLUGIN void cfpython_runPluginCommand(object *op, const char *params) {
     context->activator   = NULL;
     context->third       = NULL;
     context->fix         = 0;
+    /* We are not running from an event, so set it to NULL to avoid segfaults. */
+    context->event       = NULL;
     snprintf(context->script, sizeof(context->script), "%s", buf);
     if (params)
         snprintf(context->options, sizeof(context->options), "%s", params);
