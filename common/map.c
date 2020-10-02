@@ -2321,7 +2321,7 @@ int out_of_map(mapstruct *m, int x, int y) {
     if (x < 0) {
         if (!m->tile_path[3])
             return 1;
-        if (m->tile_map[3]->in_memory != MAP_IN_MEMORY) {
+        if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 3);
             /* Verify the tile map loaded correctly */
             if (!m->tile_map[3])
@@ -2331,7 +2331,7 @@ int out_of_map(mapstruct *m, int x, int y) {
     } else if (x >= MAP_WIDTH(m)) {
         if (!m->tile_path[1])
             return 1;
-        if (m->tile_map[1]->in_memory != MAP_IN_MEMORY) {
+        if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 1);
             /* Verify the tile map loaded correctly */
             if (!m->tile_map[1])
@@ -2343,7 +2343,7 @@ int out_of_map(mapstruct *m, int x, int y) {
     if (y < 0) {
         if (!m->tile_path[0])
             return 1;
-        if (m->tile_map[0]->in_memory != MAP_IN_MEMORY) {
+        if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 0);
             /* Verify the tile map loaded correctly */
             if (!m->tile_map[0])
@@ -2353,7 +2353,7 @@ int out_of_map(mapstruct *m, int x, int y) {
     } else if (y >= MAP_HEIGHT(m)) {
         if (!m->tile_path[2])
             return 1;
-        if (m->tile_map[2]->in_memory != MAP_IN_MEMORY) {
+        if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY) {
             load_and_link_tiled_map(m, 2);
             /* Verify the tile map loaded correctly */
             if (!m->tile_map[2])
