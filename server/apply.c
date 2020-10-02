@@ -235,6 +235,8 @@ int apply_container(object *op, object *sack, int aflags) {
     if (sack->head)
         sack = sack->head;
 
+    query_name(sack, name_sack, MAX_BUF);
+
     if ( aflags == AP_APPLY || aflags == AP_UNAPPLY || aflags == AP_OPEN ) {
         // What if the container isn't in the player's inventory?
         if ( sack->env != op ) {
@@ -353,8 +355,6 @@ int apply_container(object *op, object *sack, int aflags) {
         if (tmp == sack)
             return 1;
     }
-
-    query_name(sack, name_sack, MAX_BUF);
 
     /* If the player is trying to open it (which he must be doing
      * if we got here), and it is locked, check to see if player
