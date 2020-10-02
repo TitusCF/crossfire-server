@@ -771,10 +771,10 @@ A       .+
 ^other_arch{S}      op->other_arch = try_find_archetype(yval());
 ^animation{S}       {
                         if (strcmp (yval(), "NONE") == 0) {
-                            op->animation_id = 0;
+                            op->animation = NULL;
                             CLEAR_FLAG (op, FLAG_ANIMATE);
                         } else {
-                            op->animation_id = find_animation (yval());
+                            op->animation = find_animation (yval());
                             SET_FLAG (op, FLAG_ANIMATE);
                         }
                     }
