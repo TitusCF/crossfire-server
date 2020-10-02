@@ -813,6 +813,7 @@ void check_login(object *op, int check_pass) {
         set_dragon_name(op, abil, skin);
     }
 
+    display_motd(op);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
                   "Welcome Back!");
     draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
