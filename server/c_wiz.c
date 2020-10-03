@@ -2369,9 +2369,7 @@ void command_loadplugin(object *op, const char *params) {
         return;
     }
 
-    strcpy(buf, LIBDIR);
-    strcat(buf, "/plugins/");
-    strcat(buf, params);
+    snprintf(buf, sizeof(buf), LIBDIR"/plugins/%s", params);
     LOG(llevDebug, "Requested plugin file is %s\n", buf);
     if (plugins_init_plugin(buf) == 0) {
         LOG(llevInfo, "DM %s loaded plugin %s\n", op->name, params);
