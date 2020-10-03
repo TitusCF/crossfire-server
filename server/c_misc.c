@@ -1337,7 +1337,6 @@ void command_bowmode(object *op, const char *params) {
         "firenw",
         "bestarrow"
     };
-    char buf[MAX_BUF];
     int i, found;
 
     if (*params == '\0') {
@@ -1355,16 +1354,19 @@ void command_bowmode(object *op, const char *params) {
         }
     }
     if (!found) {
-        snprintf(buf, sizeof(buf), "bowmode: Unknown options %s, valid options are:", params);
+        StringBuffer *buf = stringbuffer_new();
+        stringbuffer_append_printf(buf, "bowmode: Unknown options %s, valid options are:", params);
         for (i = 0; i <= bow_bestarrow; i++) {
-            strcat(buf, " ");
-            strcat(buf, types[i]);
+            stringbuffer_append_string(buf, " ");
+            stringbuffer_append_string(buf, types[i]);
             if (i < bow_nw)
-                strcat(buf, ",");
+                stringbuffer_append_string(buf, ",");
             else
-                strcat(buf, ".");
+                stringbuffer_append_string(buf, ".");
         }
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG, buf);
+        char *result = stringbuffer_finish(buf);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG, result);
+        free(result);
         return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,

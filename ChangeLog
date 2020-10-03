@@ -1,5 +1,6 @@
 2020-10-03 Daniel Hawkins
     * server/c_wiz.c: Don't interpret blank lines in dm_file as malformed entries.
+    * server/c_misc.c: Use StringBuffer to fix buffer overflow from malicious/malformed bowmode command.
 
 2020-10-02 Daniel Hawkins
     * plugins/cfpython/cfpython.c: Set context->event to NULL when running python-based commands.
