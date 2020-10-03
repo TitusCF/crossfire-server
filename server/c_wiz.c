@@ -2037,7 +2037,8 @@ static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const
     }
 
     while (fgets(line_buf, 160, dmfile) != NULL) {
-        if (line_buf[0] == '#')
+        // Skip empty lines as well as commented ones.
+        if (line_buf[0] == '#' || line_buf[0] == '\n')
             continue;
         if (sscanf(line_buf, "%[^:]:%[^:]:%s\n", name, passwd, host) != 3) {
             LOG(llevError, "Warning - malformed dm file entry: %s\n", line_buf);
