@@ -1,3 +1,6 @@
+2020-10-03 Daniel Hawkins
+    * server/c_wiz.c: Don't interpret blank lines in dm_file as malformed entries.
+
 2020-10-02 Daniel Hawkins
     * plugins/cfpython/cfpython.c: Set context->event to NULL when running python-based commands.
         It was possible to segfault from it not being a valid address if malloc used
