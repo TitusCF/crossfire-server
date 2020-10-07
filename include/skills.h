@@ -64,10 +64,7 @@ enum SK {
     SK_MINING                = 45,  /**< Mining */
     SK_WOODCUTTING           = 46,  /**< Woodcutting */
     SK_FARMING               = 47,  /**< Farming */
-
-
-
-
+    SK_ARTIFICER             = 48,  /**< Farming */
 };
 
 /**
@@ -75,7 +72,7 @@ enum SK {
  * There is no direct mapping to the subtype, as multiple skills may share
  * the same subtype with a different name.
  */
-#define MAX_SKILLS              48
+#define MAX_SKILLS              49
 
 /**
  * @defgroup SK_EXP_xxx Experience flags

@@ -3,6 +3,7 @@ bin_PROGRAMS = crossfire-server
 noinst_LIBRARIES = libserver.a
 crossfire_server_SOURCES = main.c
 libserver_a_SOURCES = \
+	artificer.c\
 	account.c\
 	account_char.c\
 	alchemy.c\
