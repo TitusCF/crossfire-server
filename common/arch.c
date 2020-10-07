@@ -56,18 +56,19 @@ static void load_archetypes(void);
  */
 archetype *find_archetype_by_object_name(const char *name) {
     archetype *at;
-    const char *tmp;
+    sstring tmp;
 
     if (name == NULL)
         return (archetype *)NULL;
-    tmp = add_string(name);
+    tmp = find_string(name);
+    if (!tmp)
+        return NULL;
+
     for (at = first_archetype; at != NULL; at = at->next) {
         if (at->clone.name == tmp) {
-            free_string(tmp);
             return at;
         }
     }
-    free_string(tmp);
     return NULL;
 }
 
