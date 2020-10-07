@@ -83,7 +83,7 @@ typedef struct account_struct {
                                      +1 added to allow for NULL termination */
     time_t  created;                /**< When character was created */
     struct account_struct *next;    /**< Next in list */
- account_struct;
+} account_struct;
 
 /**
  * list of all accounts.
