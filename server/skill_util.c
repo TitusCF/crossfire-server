@@ -531,6 +531,11 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
             exp = success = skill_ident(op, skill);
         break;
 
+    case SK_ARTIFICER:
+        if (use_artificer(op) == 0)
+            exp = success = skill_ident(op, skill);
+        break;
+
     case SK_DET_MAGIC:
     case SK_DET_CURSE:
         exp = success = skill_ident(op, skill);
