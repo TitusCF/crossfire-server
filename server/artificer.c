@@ -85,9 +85,6 @@ int use_artificer(object *op) {
     int did_artificer = 0;
     char name[MAX_BUF];
 
-    if (QUERY_FLAG(op, FLAG_WIZ))
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, "Note: artificer in wizard-mode.\n");
-
     FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
         if (QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
@@ -120,16 +117,29 @@ int use_artificer(object *op) {
     return did_artificer; // returns 1 on success for generating xp
 }
 
+static bool merge_should_succeed(const object* op, const object* base,
+                                 const object* secondary, const int level) {
+    if (QUERY_FLAG(op, FLAG_WIZ)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+                      "Note: Merging items as DM always succeeds.");
+        return true;
+    }
+
+    if (rndm(0, 100) <= level) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 /* 
 takes a list of items in the cauldron and changes it to a single
 item either good or bad
 */ 
 void attempt_do_artificer(object *caster, object *cauldron) {
     int stat_improve[] = {0, 3, 12, 27, 48, 75, 108, 147, 192, 243, 300, 363, 432, 507, 588, 675, 768, 867, 972, 1083, 1200, 1323, 1452, 1587, 1728, 1875, 2028, 2187, 2352, 2523, 2700};
-    int success_chance;
     int success = FALSE;
     int atmpt_bonus = 0; // how much of a bonus we are attempting.
-    int merge_success = FALSE;
     object *base_item; // base item for crafting.
     object *merge_item = NULL; // merge item for merging. init NULL to avoid cppcheck errors
     object *potion; // the potion item we are using to craft
@@ -295,17 +305,10 @@ void attempt_do_artificer(object *caster, object *cauldron) {
             }
         }
 
+        assert(merge_item != NULL);
+
         // we have a merge item. merge the merge_item and base_item stats.
-        // run the success and bonus formula
-        success_chance = k - (atmpt_bonus * 2);
-        if(rndm(0, 100) <= success_chance) {
-            // do nothing
-        } 
-        else {
-            atmpt_bonus = atmpt_bonus * -1; // flip to a negative bonus, caster recieves items either way.
-        }
-        // on failure flip all stats to negative.
-        if(merge_item != NULL){
+        if (merge_should_succeed(caster, base_item, merge_item, j)) {
             base_item->stats.Str += merge_item->stats.Str;
             base_item->stats.Dex += merge_item->stats.Dex;
             base_item->stats.Con += merge_item->stats.Con;
@@ -326,30 +329,16 @@ void attempt_do_artificer(object *caster, object *cauldron) {
                 // merge resists
                 base_item->resist[l] += merge_item->resist[l]; 
             }
-            if(atmpt_bonus < 0)
-            {
-                base_item->stats.Str = base_item->stats.Str * -1;
-                base_item->stats.Con = base_item->stats.Con * -1;
-                base_item->stats.Wis = base_item->stats.Wis * -1;
-                base_item->stats.Cha = base_item->stats.Cha * -1;
-                base_item->stats.Int = base_item->stats.Int * -1;
-                base_item->stats.Pow = base_item->stats.Pow * -1;
-                base_item->stats.ac = base_item->stats.ac * -1;
-                base_item->stats.luck = base_item->stats.luck * -1;
-                base_item->stats.hp = base_item->stats.hp * -1;
-                base_item->stats.maxhp = base_item->stats.maxhp * -1;
-                base_item->stats.grace = base_item->stats.grace * -1;
-                base_item->stats.maxgrace = base_item->stats.maxgrace * -1;
-                int m = 0;
-                for( m = 0; m < NROFATTACKS; m++)
-                    {
-                        // negative resists as well
-                        base_item->resist[m] = merge_item->resist[m] * -1; 
-                    }
 
-            }
-            merge_success = TRUE;
+            draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                            "You successfully merged the items.");
+        } else {
+            draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                            "Your items failed to merge and items were destroyed in the process.");
         }
+
+        object_decrease_nrof(merge_item, 1); // decrease the stack size.
+        SET_FLAG(cauldron, FLAG_APPLIED); // not sure we need this but i don't think it hurts.
     }
     else
     {
@@ -369,7 +358,7 @@ void attempt_do_artificer(object *caster, object *cauldron) {
                 break; // once we hit our max atmpt_bonus we can break out.
             }
         }
-        success_chance = k - (atmpt_bonus * 2);
+        int success_chance = k - (atmpt_bonus * 2);
         if(rndm(0, 100) <= success_chance) {
             // do nothing
         } 
@@ -558,24 +547,6 @@ void attempt_do_artificer(object *caster, object *cauldron) {
         {
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                             "You failed to craft the item.");
-        }
-        return;
-    }
-
-    if(merge_success)
-    {
-        // remove merge item, we should have edited the base item.
-        object_decrease_nrof(merge_item, 1); // decrease the stack size.
-        SET_FLAG(cauldron, FLAG_APPLIED); // not sure we need this but i don't think it hurts.
-        if(atmpt_bonus > 0) { 
-            draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                            "You successfully merged the items.");
-        }
-        //we created it but it failed.
-        else 
-        {
-            draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                            "Your items failed to merge and items were destroyed in the process.");
         }
         return;
     }
