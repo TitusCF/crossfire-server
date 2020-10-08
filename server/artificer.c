@@ -153,9 +153,12 @@ void attempt_do_artificer(object *caster, object *cauldron) {
                     if (base_item == NULL) { /* failure--no type found */
                         base_item = object_find_by_type(cauldron, BOW);
                         if (base_item == NULL) { /* failure--no type found */
+                            base_item = object_find_by_type(cauldron, HELMET);
+                        if (base_item == NULL) { /* failure--no type found */
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                         "You need to put in a base item to use artificer on this forge.");
             return;
+                        }
                         }
                     }
                 }
@@ -263,6 +266,22 @@ void attempt_do_artificer(object *caster, object *cauldron) {
         {
             for (tmp = cauldron->inv; tmp; tmp = tmp->below) {
                 if (tmp->type == SHIELD) {
+                    if(tmp != base_item) {
+                        merge_item = tmp;
+                        break;
+                    }
+                }
+            }
+            if (merge_item == NULL) { /* failure--no type found */
+                draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                        "You need two base items of the same type to merge.");
+                return;
+            }
+        }
+        else if(base_item->type == HELMET)
+        {
+            for (tmp = cauldron->inv; tmp; tmp = tmp->below) {
+                if (tmp->type == HELMET) {
                     if(tmp != base_item) {
                         merge_item = tmp;
                         break;
