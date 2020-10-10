@@ -99,14 +99,21 @@ static object* find_secondary(const object* cauldron, const object* base_item) {
 }
 
 static bool merge_should_succeed(const object* op, const object* base,
-                                 const object* secondary, const int level) {
+                                 const object* result, const object* secondary,
+                                 const int level) {
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                       "Note: Merging items as DM always succeeds.");
         return true;
     }
 
-    if (rndm(0, 100) <= level) {
+    int result_item_power = calc_item_power(result);
+    float chance = (1.0*level * result_item_power) / base->item_power;
+    int chance_int = chance * 100;
+    chance_int = MIN(MAX(chance_int, 5), 60); // min 5, max 60
+    LOG(llevDebug, "merge: result %d, level %d, chance %f gives: %d%\n",
+        result_item_power, level, chance, chance_int);
+    if (rndm(0, 100) <= chance_int) {
         return true;
     } else {
         return false;
@@ -123,9 +130,33 @@ static int attempt_merge(const object* caster, object* cauldron,
         return 0;
     }
 
+    // Create merged result. Merged result is needed to determine if the merge
+    // actually succeeds or not.
+    object* merge_result = object_new();
+    object_copy(base_item, merge_result);
+
+    merge_result->stats.Str += merge_item->stats.Str;
+    merge_result->stats.Dex += merge_item->stats.Dex;
+    merge_result->stats.Con += merge_item->stats.Con;
+    merge_result->stats.Wis += merge_item->stats.Wis;
+    merge_result->stats.Cha += merge_item->stats.Cha;
+    merge_result->stats.Int += merge_item->stats.Int;
+    merge_result->stats.Pow += merge_item->stats.Pow;
+    merge_result->stats.ac += merge_item->stats.ac;
+    merge_result->stats.luck += merge_item->stats.luck;
+    merge_result->stats.hp += merge_item->stats.hp;
+    merge_result->stats.maxhp += merge_item->stats.maxhp;
+    merge_result->stats.grace += merge_item->stats.grace;
+    merge_result->stats.maxgrace += merge_item->stats.maxgrace;
+    int l = 0;
+
+    for (l = 0; l < NROFATTACKS; l++) {
+        // merge resists
+        merge_result->resist[l] += merge_item->resist[l];
+    }
+
     bool success = false;
-    // we have a merge item. merge the merge_item and base_item stats.
-    if (merge_should_succeed(caster, base_item, merge_item, level)) {
+    if (merge_should_succeed(caster, base_item, merge_result, merge_item, level)) {
         base_item->stats.Str += merge_item->stats.Str;
         base_item->stats.Dex += merge_item->stats.Dex;
         base_item->stats.Con += merge_item->stats.Con;
@@ -166,9 +197,9 @@ static int attempt_merge(const object* caster, object* cauldron,
                       "Your items failed to merge and items were destroyed in the process.");
     }
 
+    object_decrease_nrof(merge_result, 1);
     object_decrease_nrof(merge_item, 1); // decrease the stack size.
-    SET_FLAG(cauldron,
-             FLAG_APPLIED); // not sure we need this but i don't think it hurts.
+    SET_FLAG(cauldron, FLAG_APPLIED); // caller uses this to send client update
 
     if (success) {
         return 1;
