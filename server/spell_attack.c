@@ -1018,10 +1018,17 @@ int mood_change(object *op, object *caster, object *spell) {
             /* aggravation */
             if (QUERY_FLAG(spell, FLAG_MONSTER)) {
                 CLEAR_FLAG(head, FLAG_SLEEP);
+                // Make sure unaggressive monsters also go to attack
+                CLEAR_FLAG(head, FLAG_UNAGGRESSIVE);
                 if (QUERY_FLAG(head, FLAG_FRIENDLY))
                     remove_friendly_object(head);
 
                 done_one = 1;
+                // Prevent three-player abuse w/ two casting aggravation at a distance and the last punishing the
+                // monsters who can't decide who to attack.
+                // Also prevents aggravation -> singing -> aggravation loops
+                object_set_value(head, "no_mood_change", "1", 1);
+                // They big mad
                 object_set_enemy(head, op);
             }
 
