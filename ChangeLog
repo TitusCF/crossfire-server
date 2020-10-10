@@ -1,3 +1,7 @@
+2020-10-10 Daniel Hawkins
+    * server/spell_attack.c: Adjust handling of aggravation to prevent shenanigans and prepare it for
+        use as a legitimate spell.
+
 2020-10-03 Daniel Hawkins
     * server/c_wiz.c: Don't interpret blank lines in dm_file as malformed entries.
         Prevent buffer overrun in `plugin command.
