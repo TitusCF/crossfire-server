@@ -319,7 +319,8 @@ typedef struct obj {
     const char  *slaying;       /**< Which race to do double damage to.
                                  * If this is an exit, this is the filename */
     const char  *skill;         /**< Name of the skill this object uses/grants */
-    const char  *msg;           /**< If this is a book/sign/magic mouth/etc */
+    const char* msg;            /**< If this is a book/sign/magic mouth/etc. Modify with
+                                     object_set_msg() to preserve invariants. */
     const char  *lore;          /**< Obscure information about this object,
                                  * to get put into books and the like. */
 
