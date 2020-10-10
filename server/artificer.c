@@ -146,6 +146,12 @@ static int attempt_merge(const object* caster, object* cauldron,
             base_item->resist[l] += merge_item->resist[l];
         }
 
+        // Make custom base item name merged object's new name.
+        if (base_item->custom_name != NULL) {
+            FREE_AND_COPY(base_item->name, base_item->custom_name);
+            FREE_AND_CLEAR_STR(base_item->custom_name);
+        }
+
         draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
                       MSG_TYPE_SKILL_SUCCESS,
                       "You successfully merged the items.");
