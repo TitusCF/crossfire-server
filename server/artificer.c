@@ -152,6 +152,10 @@ static int attempt_merge(const object* caster, object* cauldron,
             FREE_AND_CLEAR_STR(base_item->custom_name);
         }
 
+        char buf[MAX_BUF];
+        snprintf(buf, sizeof(buf), "This artifact %s was made by %s.", base_item->name, caster->name);
+        object_set_msg(base_item, buf);
+
         draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
                       MSG_TYPE_SKILL_SUCCESS,
                       "You successfully merged the items.");
