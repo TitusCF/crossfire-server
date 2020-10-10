@@ -78,7 +78,7 @@ CON: potioncon, demon_head, emerald
 #include <spells.h>
 
 static object* find_base(const object* cauldron) {
-    enum object_type bases[] = {AMULET, RING, WEAPON, ARMOUR, SHIELD, BOW, HELMET};
+    enum object_type bases[] = {AMULET, RING, WEAPON, ARMOUR, SHIELD, BOW, HELMET, CLOAK};
     for (int i = 0; i < sizeof(bases)/sizeof(enum object_type); i++) {
         object* base_item = object_find_by_type(cauldron, bases[i]);
         if (base_item != NULL) {
