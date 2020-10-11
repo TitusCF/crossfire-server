@@ -1855,7 +1855,7 @@ static void make_formula_book(object *book, int level) {
         stringbuffer_append_printf(title, "%s: %s of %s", formula_book_name[RANDOM()%arraysize(formula_book_name)], op_name, formula->title);
     } else {
         stringbuffer_append_printf(text, "The %s", op_name);
-        stringbuffer_append_printf(title, formula_book_name[RANDOM()%arraysize(formula_book_name)], op_name);
+        stringbuffer_append_printf(title, "%s: %s", formula_book_name[RANDOM()%arraysize(formula_book_name)], op_name);
         if (at->clone.title) {
             stringbuffer_append_printf(text, " %s", at->clone.title);
             stringbuffer_append_printf(title, " %s", at->clone.title);
