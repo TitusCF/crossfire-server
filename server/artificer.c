@@ -107,13 +107,14 @@ static bool merge_should_succeed(const object* op, const object* base,
         return true;
     }
 
-    int result_item_power = calc_item_power(result);
-    float chance = (1.0*level * result_item_power) / base->item_power;
-    int chance_int = chance * 100;
-    chance_int = MIN(MAX(chance_int, 5), 60); // min 5, max 60
-    LOG(llevDebug, "merge: result %d, level %d, chance %f gives: %d%\n",
-        result_item_power, level, chance, chance_int);
-    if (rndm(0, 100) <= chance_int) {
+    //[(INT/10) * (SKILL + 10)]  /  (DIP - SIP) + (DIP + SIP)
+
+    int dip = calc_item_power(result);
+    int sip = base->item_power;
+    float chance = (op->stats.Int/10.0 * (level + 10)) / ((dip - sip) + (dip + sip));
+    chance = MIN(MAX(chance, 5), 60); // min 5, max 60
+    LOG(llevDebug, "merge: sip %d dip %d: chance %f\n", sip, dip, chance);
+    if (rndm(0, 100) <= chance) {
         return true;
     } else {
         return false;
