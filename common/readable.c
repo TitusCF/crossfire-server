@@ -259,6 +259,7 @@ static const char *const art_book_name[] = {
     "inventory",
     "list",
     "listing",
+    "omnibus",
     "record",
     "record book"
 };
@@ -289,6 +290,7 @@ static const char *const mon_book_name[] = {
     "list",
     "manual",
     "notes",
+    "omnibus",
     "record",
     "register",
     "volume"
@@ -356,7 +358,8 @@ static const char *const formula_book_name[] = {
     "experiment record",
     "work plan",
     "design notes",
-    "research notes"
+    "research notes",
+    "crafting manual"
 };
 
 /** This isn't used except for empty books. */
@@ -386,12 +389,14 @@ static const char *const light_book_name[] = {
     "calendar",
     "datebook",
     "diary",
+    "essay",
     "guidebook",
     "handbook",
     "ledger",
     "notes",
     "notebook",
     "octavo",
+    "opuscule",
     "pamphlet",
     "practicum",
     "script",
@@ -402,6 +407,7 @@ static const char *const light_book_name[] = {
 static const char *const heavy_book_name[] = {
     "catalog",
     "compendium",
+    "dissertation",
     "guide",
     "manual",
     "opus",
