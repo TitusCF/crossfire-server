@@ -664,8 +664,6 @@ int ok_to_put_more(mapstruct *m, int16_t x, int16_t y, object *op, uint32_t immu
  * @return
  * 0 on failure, 1 on success.
  * @todo check the note?
- * @note
- * fire_bullet() has been merged into fire_arch_from_position()
  */
 int fire_arch_from_position(object *op, object *caster, int16_t x, int16_t y, int dir, object *spell) {
     object *tmp;

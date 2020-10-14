@@ -297,9 +297,6 @@ void hiscore_init(void) {
  * If set, don't print anything out - used for periodic updates during game
  * play or when player unexpected quits - don't need to print anything
  * in those cases
- *
- * @note
- * check_score() has been renamed to hiscore_check()
  */
 void hiscore_check(object *op, int quiet) {
     score new_score;
@@ -381,9 +378,6 @@ void hiscore_check(object *op, int quiet) {
  * maximum number of scores to display.
  * @param match
  * if non-empty, will only print players with name or title containing the string (non case-sensitive).
- *
- * @note
- * display_high_score() has been renamed to hiscore_display()
  */
 void hiscore_display(object *op, int max, const char *match) {
     int printed_entries;
