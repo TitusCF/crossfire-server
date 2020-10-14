@@ -193,9 +193,6 @@ static int compare_ob_value_lists(const object *ob1, const object *ob2) {
  * @return
  * TRUE if they can be merged, FALSE else.
  *
- * @note
- * can_merge() has been renamed to object_can_merge()
- *
  * @todo
  * check the function at places marked.
  */
@@ -336,9 +333,6 @@ int object_can_merge(object *ob1, object *ob2) {
  *
  * @note
  * The object's carrying field is updated.
- *
- * @note
- * sum_weight() has been renamed to object_sum_weight()
  */
 /* TODO should check call this this are made a place where we really need reevaluaton of whole tree */
 signed long object_sum_weight(object *op) {
@@ -379,9 +373,6 @@ object *object_get_env_recursive(object *op) {
  *
  * @todo
  * this function is badly named. Fix patching on the fly.
- *
- * @note
- * get_player_container() has been renamed to object_get_player_container()
  */
 object *object_get_player_container(object *op) {
     for (; op != NULL && op->type != PLAYER; op = op->env)
@@ -420,9 +411,6 @@ static const object *object_get_owner_const(const object *op) {
  * object to dump. Can be NULL.
  * @param sb
  * buffer that will contain object information. Must not be NULL.
- *
- * @note
- * dump_object() has been renamed to object_dump()
  */
 void object_dump(const object *op, StringBuffer *sb) {
     if (op == NULL) {
@@ -476,9 +464,6 @@ void object_dump(const object *op, StringBuffer *sb) {
  * This is really verbose...Can be triggered by the dumpallobjects command while in DM mode.
  *
  * All objects are dumped to stderr (or alternate logfile, if in server-mode)
- *
- * @note
- * dump_all_objects() has been renamed to object_dump_all()
  */
 void object_dump_all(void) {
     object *op;
@@ -502,9 +487,6 @@ void object_dump_all(void) {
  * tag.
  * @return
  * matching object, NULL if not found.
- *
- * @note
- * find_object() has been renamed to object_find_by_tag_global()
  */
 object *object_find_by_tag_global(tag_t i) {
     object *op;
@@ -525,9 +507,6 @@ object *object_find_by_tag_global(tag_t i) {
  * name to search for. Must not be allocated by add_string().
  * @return
  * the first object which has a name equal to the argument.
- *
- * @note
- * find_object_name() has been renamed to object_find_by_name_global()
  */
 object *object_find_by_name_global(const char *str) {
     const char *name = add_string(str);
@@ -548,9 +527,6 @@ object *object_find_by_name_global(const char *str) {
  *
  * @warning
  * this should be the last method called.
- *
- * @note
- * free_all_object_data() has been renamed to object_free_object_data()
  */
 void object_free_all_data(void) {
 #ifdef MEMORY_DEBUG
@@ -607,9 +583,6 @@ object *object_get_owner(object *op) {
  *
  * @param op
  * object we want to clear the owner of. Can be NULL.
- *
- * @note
- * clear_owner() has been renamed to object_clear_owner()
  */
 void object_clear_owner(object *op) {
     if (!op)
@@ -627,9 +600,6 @@ void object_clear_owner(object *op) {
  * object of which to set the owner
  * @param owner
  * new owner for object. Can be NULL, in which case it's equivalent of calling object_clear_owner(op)
- *
- * @note
- * set_owner() has been renamed to object_set_owner()
  */
 void object_set_owner(object *op, object *owner) {
     /* Assign temp to something, so it can't accidentally be NULL */
@@ -683,9 +653,6 @@ void object_set_owner(object *op, object *owner) {
  * object to update.
  * @param clone
  * object from which to get the owner.
- *
- * @note
- * copy_owner() has been renamed to object_copy_owner()
  */
 void object_copy_owner(object *op, object *clone) {
     object *owner = object_get_owner(clone);
@@ -723,16 +690,10 @@ void object_set_enemy(object *op, object *enemy) {
 }
 
 /**
- * Sets to 0 vital variables in an object.
+ * Totally resets the specified object, without freeing associated memory.
  *
  * @param op
  * object to reset.
- *
- * @note
- * this doesn't free associated memory for object.
- *
- * @note
- * reset_object() has been renamed to object_reset()
  */
 void object_reset(object *op) {
     op->name = NULL;
@@ -753,9 +714,6 @@ void object_reset(object *op) {
  *
  * @param op
  * object to clear.
- *
- * @note
- * free_key_values() has been renamed to object_free_key_values()
  */
 void object_free_key_values(object *op) {
     key_value *i;
@@ -785,9 +743,6 @@ void object_free_key_values(object *op) {
  *
  * @param op
  * object to clear
- *
- * @note
- * clear_object() has been renamed to object_clear()
  */
 void object_clear(object *op) {
     /*TODO this comment must be investigated*/
@@ -994,16 +949,13 @@ void object_copy(const object *src_ob, object *dest_ob) {
 }
 
 /**
- * copy an object with an inventory...  i.e., duplicate the inv too.
+ * Copy an object with an inventory, duplicate the inv too.
  * @param src_ob
  * object to copy.
  * @param dest_ob
  * where to copy.
  * @todo
  * replace with a function in common library (there is certainly one).
- *
- * @note
- * copy_object_with_inv() has been renamed to object_copy_with_inv()
  */
 void object_copy_with_inv(const object *src_ob, object *dest_ob) {
     object_copy(src_ob, dest_ob);
@@ -1063,9 +1015,6 @@ static void expand_objects(void) {
  *
  * @note
  * will never fail, as expand_objects() will fatal() if memory allocation error.
- *
- * @note
- * get_object() has been renamed to object_new()
  */
 object *object_new(void) {
     object *op;
@@ -1125,9 +1074,6 @@ object *object_new(void) {
  *
  * @param op
  * object to update.
- *
- * @note
- * update_turn_face() has been renamed to object_update_turn_face()
  */
 void object_update_turn_face(object *op) {
     if (op->animation == 0 || !QUERY_FLAG(op, FLAG_IS_TURNABLE))
@@ -1145,9 +1091,6 @@ void object_update_turn_face(object *op) {
  *
  * @todo
  * check fixme & todo
- *
- * @note
- * update_ob_speed() has been renamed to object_update_speed()
  */
 void object_update_speed(object *op) {
     /* FIXME what the hell is this crappy hack?*/
@@ -1210,9 +1153,6 @@ void object_update_speed(object *op) {
  *
  * @param op
  * object to remove.
- *
- * @note
- * remove_from_active_list() has been renamed to object_remove_from_active_list()
  */
 void object_remove_from_active_list(object *op) {
     /* If not on the active list, nothing needs to be done */
@@ -1255,9 +1195,6 @@ void object_remove_from_active_list(object *op) {
  * @todo
  * this function should be renamed to something like object_update_map, object_update is a too general term
  * Also it might be worth moving it to map.c
- *
- * @note
- * update_object() has been renamed to object_update()
  */
 void object_update(object *op, int action) {
     int update_now = 0, flags;
@@ -1384,9 +1321,6 @@ void object_update(object *op, int action) {
  *
  * @param ob
  * object to free. Will become invalid when function returns.
- *
- * @note
- * free_object() has been renamed to object_free_drop_inventory()
  */
 void object_free_drop_inventory(object *ob) {
     object_free(ob, 0);
@@ -1567,9 +1501,6 @@ void object_free(object *ob, int flags) {
  *
  * @return
  * number of objects on the list of free objects.
- *
- * @note
- * count_free() has been renamed to object_count_free()
  */
 int object_count_free(void) {
     int i = 0;
@@ -1586,9 +1517,6 @@ int object_count_free(void) {
  *
  * @return
  * number of objects on the list of used objects.
- *
- * @note
- * count_used() has been renamed to object_count_used()
  */
 int object_count_used(void) {
     int i = 0;
@@ -1605,9 +1533,6 @@ int object_count_used(void) {
  *
  * @return
  * number of objects on the list of active objects.
- *
- * @note
- * count_active() has been renamed to object_count_active()
  */
 int object_count_active(void) {
     int i = 0;
@@ -1632,9 +1557,6 @@ int object_count_active(void) {
  *
  * @todo
  * check if not mergeable with object_add_weight().
- *
- * @note
- * sub_weight() has been renamed to object_sub_weight()
  */
 void object_sub_weight(object *op, signed long weight) {
     while (op != NULL) {
@@ -1661,9 +1583,6 @@ void object_sub_weight(object *op, signed long weight) {
  * @todo
  * this function is a piece of overbloated crap or at lest
  * look like need cleanup it does to much different things.
- *
- * @note
- * remove_ob() has been renamed to object_remove()
  */
 void object_remove(object *op) {
     object *last = NULL;
@@ -1876,9 +1795,6 @@ void object_remove(object *op) {
  * from which item to merge. If NULL, it is calculated.
  * @return
  * pointer to object if it succeded in the merge, otherwise NULL
- *
- * @note
- * merge_ob() has been renamed to object_merge()
  */
 object *object_merge(object *op, object *top) {
     if (!op->nrof)
@@ -1928,9 +1844,6 @@ object *object_merge(object *op, object *top) {
  * @param x
  * @param y
  * coordinates to insert at.
- *
- * @note
- * insert_ob_in_map_at() has been renamed to object_insert_in_map_at()
  */
 object *object_insert_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y) {
     object *tmp;
@@ -1960,9 +1873,6 @@ object *object_insert_in_map_at(object *op, mapstruct *m, object *originator, in
  * @param x
  * @param y
  * coordinates to look at for merging.
- *
- * @note
- * merge_spell() has been renamed to object_merge_spell()
  */
 void object_merge_spell(object *op, int16_t x, int16_t y) {
     int i;
@@ -2195,9 +2105,6 @@ static object *find_insert_pos(object *op, const int flag) {
  *
  * @todo
  * this function is a mess, and should be cleaned.
- *
- * @note
- * insert_ob_in_map() has been renamed to object_insert_in_map()
  */
 object *object_insert_in_map(object *op, mapstruct *m, object *originator, int flag) {
     object *tmp, *top, *floor = NULL;
@@ -2430,9 +2337,6 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
  * object's archetype to insert.
  * @param op
  * object to insert it under:  supplies x and the map.
- *
- * @note
- * replace_insert_ob_in_map() has been renamed to object_replace_insert_in_map()
  */
 void object_replace_insert_in_map(const char *arch_string, object *op) {
     object *tmp1;
@@ -2473,9 +2377,6 @@ void object_replace_insert_in_map(const char *arch_string, object *op) {
  * err's size
  * @return
  * split object, or NULL on failure.
- *
- * @note
- * get_split_ob() has been renamed to object_split()
  */
 object *object_split(object *orig_ob, uint32_t nr, char *err, size_t size) {
     object *newob;
@@ -2515,9 +2416,6 @@ object *object_split(object *orig_ob, uint32_t nr, char *err, size_t size) {
  * number to remove.
  * @return
  * 'op' if something is left, NULL if the amount reached 0.
- *
- * @note
- * decrease_ob_nr() has been renamed to object_decrease_nrof()
  */
 object *object_decrease_nrof(object *op, uint32_t i) {
     object *tmp;
@@ -2675,9 +2573,6 @@ static void object_increase_nrof(object *op, uint32_t i) {
  *
  * @todo
  * check if mergeable with object_sub_weight().
- *
- * @note
- * add_weight() has been renamed to object_add_weight()
  */
 void object_add_weight(object *op, signed long weight) {
     while (op != NULL) {
@@ -2702,9 +2597,6 @@ void object_add_weight(object *op, signed long weight) {
  * object to insert into. Must not be NULL. Should be the head part.
  * @return
  * pointer to inserted item, which will be different than op if object was merged.
- *
- * @note
- * insert_ob_in_ob() has been renamed to object_insert_in_ob()
  */
 object *object_insert_in_ob(object *op, object *where) {
     object *otmp;
@@ -2847,9 +2739,6 @@ object *object_insert_in_ob(object *op, object *where) {
  * into 'map'.  May be NULL.
  * @return
  * 1 if 'op' was destroyed, 0 otherwise.
- *
- * @note
- * check_move_on() has been renamed to object_check_move_on()
  */
 int object_check_move_on(object *op, object *originator) {
     object *tmp;
@@ -2956,9 +2845,6 @@ int object_check_move_on(object *op, object *originator) {
  * archetype to search for.
  * @return
  * first matching object, or NULL if none matches.
- *
- * @note
- * present_arch() has been renamed to map_find_by_archetype()
  */
 object *map_find_by_archetype(mapstruct *m, int x, int y, const archetype *at) {
     if (m == NULL || OUT_OF_REAL_MAP(m, x, y)) {
@@ -2986,9 +2872,6 @@ object *map_find_by_archetype(mapstruct *m, int x, int y, const archetype *at) {
  * type to get.
  * @return
  * first matching object, or NULL if none matches.
- *
- * @note
- * present() has been renamed to map_find_by_type()
  */
 object *map_find_by_type(mapstruct *m, int x, int y, uint8_t type) {
     if (OUT_OF_REAL_MAP(m, x, y)) {
@@ -3012,9 +2895,6 @@ object *map_find_by_type(mapstruct *m, int x, int y, uint8_t type) {
  * object to search into.
  * @return
  * first matching object, or NULL if none matches.
- *
- * @note
- * present_in_ob() has been renamed to object_present_in_ob()
  */
 object *object_present_in_ob(uint8_t type, const object *op) {
     object *tmp;
@@ -3050,9 +2930,6 @@ object *object_present_in_ob(uint8_t type, const object *op) {
  *
  * @todo
  * use add_string() hack to avoid the strcmp?
- *
- * @note
- * present_in_ob_by_name() has been renamed to object_present_in_ob_by_name()
  */
 object *object_present_in_ob_by_name(int type, const char *str, const object *op) {
     object *tmp;
@@ -3072,9 +2949,6 @@ object *object_present_in_ob_by_name(int type, const char *str, const object *op
  * @param op
  * where to search.
  * @return first matching object, or NULL if none matches.
- *
- * @note
- * present_arch_in_ob() has been renamed to arch_present_in_ob()
  */
 object *arch_present_in_ob(const archetype *at, const object *op)  {
     object *tmp;
@@ -3092,9 +2966,6 @@ object *arch_present_in_ob(const archetype *at, const object *op)  {
  * object to recurse. Can have an empty inventory.
  * @param flag
  * flag to set.
- *
- * @note
- * flag_inv() has been renamed to object_set_flag_inv()
  */
 void object_set_flag_inv(object*op, int flag) {
     object *tmp;
@@ -3112,9 +2983,6 @@ void object_set_flag_inv(object*op, int flag) {
  * object to recurse. Can have an empty inventory.
  * @param flag
  * flag to unset.
- *
- * @note
- * unflag_inv() has been renamed to object_unset_flag_inv()
  */
 void object_unset_flag_inv(object*op, int flag) {
     object *tmp;
@@ -3133,9 +3001,6 @@ void object_unset_flag_inv(object*op, int flag) {
  *
  * @param op
  * object for which to set the flag.
- *
- * @note
- * set_cheat() has been renamed to object_set_cheat()
  */
 void object_set_cheat(object *op) {
     SET_FLAG(op, FLAG_WAS_WIZ);
@@ -3158,9 +3023,6 @@ void object_set_cheat(object *op) {
  *
  * @note
  * This function assumes that multi-tile objects are rectangular.
- *
- * @note
- * find_multi_free_spot_around() has been renamed to object_find_multi_free_spot_around()
  */
 int object_find_multi_free_spot_around(const object *ob, const object *gen, int16_t *hx, int16_t *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
@@ -3277,9 +3139,6 @@ int object_find_multi_free_spot_around(const object *ob, const object *gen, int1
  *
  * @note
  * This function assumes that multi-tile objects are rectangular.
- *
- * @note
- * find_multi_free_spot_within_radius() has been renamed to object_find_multi_free_spot_within_radius()
  */
 int object_find_multi_free_spot_within_radius(const object *ob, const object *gen, int *hx, int *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
@@ -3427,8 +3286,6 @@ int object_find_multi_free_spot_within_radius(const object *ob, const object *ge
  * to know if the space in question will block the object.  We can't use
  * the archetype because that isn't correct if the monster has been
  * customized, changed states, etc.
- * @note
- * find_free_spot() has been renamed to object_find_free_spot()
  */
 int object_find_free_spot(const object *ob, mapstruct *m, int x, int y, int start, int stop) {
     int i, index = 0, flag;
@@ -3469,9 +3326,6 @@ int object_find_free_spot(const object *ob, mapstruct *m, int x, int y, int star
  * where to insert the object.
  * @return
  * index into ::freearr_x and ::freearr_y, -1 if no spot available (dir 0 = x,y)
- *
- * @note
- * find_first_free_spot() has been renamed to object_find_first_free_spot()
  */
 int object_find_first_free_spot(const object *ob, mapstruct *m, int x, int y) {
     int i;
@@ -3545,9 +3399,6 @@ void get_search_arr(int *search_arr) {
  * is actually want is going to try and move there.  We need this info
  * because we have to know what movement the thing looking to move
  * there is capable of.
- *
- * @note
- * find_dir() has been renamed to map_find_dir()
  */
 int map_find_dir(mapstruct *m, int x, int y, object *exclude) {
     int i, max = SIZEOFFREE, mflags;
@@ -3595,9 +3446,6 @@ int map_find_dir(mapstruct *m, int x, int y, object *exclude) {
  * @param ob1
  * @param ob2
  * objects we want to compute the distance of.
- *
- * @note
- * distance() has been renamed to object_distance()
  */
 int object_distance(const object *ob1, const object *ob2) {
     int i;
@@ -3804,9 +3652,6 @@ int can_see_monsterP(mapstruct *m, int x, int y, int dir) {
  *
  * @note
  * this introduces a weight limitation for monsters.
- *
- * @note
- * can_pick() has been renamed to object_can_pick()
  */
 int object_can_pick(const object *who, const object *item) {
     /* I re-wrote this as a series of if statements
@@ -4241,9 +4086,6 @@ object *object_find_by_type_and_arch_name(const object *who, int type, const cha
  *
  * @note
  * will not search in inventory of items in inventory.
- *
- * @note
- * find_obj_by_type_subtype() has been renamed to object_find_by_type_subtype()
  */
 object *object_find_by_type_subtype(const object *who, int type, int subtype) {
     object *tmp;
@@ -4264,9 +4106,6 @@ object *object_find_by_type_subtype(const object *who, int type, int subtype) {
  * key to search. Must be a passed in shared string - otherwise, this won't do the desired thing.
  * @return
  * the link from the list if ob has a field named key, otherwise NULL.
- *
- * @note
- * get_ob_key_link() has been renamed to object_get_key_value()
  */
 key_value *object_get_key_value(const object *ob, const char *key) {
     key_value *link;
@@ -4292,9 +4131,6 @@ key_value *object_get_key_value(const object *ob, const char *key) {
  *
  * @note
  * The returned string is shared.
- *
- * @note
- * get_ob_key_value() has been renamed to object_get_value()
  */
 const char *object_get_value(const object *op, const char *const key) {
     key_value *link;
@@ -4335,9 +4171,6 @@ const char *object_get_value(const object *op, const char *const key) {
  * if 0, will not add the key if it doesn't exist in op.
  * @return
  * TRUE if key was updated or added, FALSE else.
- *
- * @note
- * set_ob_key_value_s() has been renamed to object_set_value_s()
  */
 static int object_set_value_s(object *op, const char *canonical_key, const char *value, int add_key) {
     key_value *field = NULL, *last = NULL;
@@ -4421,9 +4254,6 @@ static int object_set_value_s(object *op, const char *canonical_key, const char 
  *
  * @note
  * In general, should be little reason FALSE is ever passed in for add_key
- *
- * @note
- * set_ob_key_value() has been renamed to object_set_value()
 */
 int object_set_value(object *op, const char *key, const char *value, int add_key) {
     const char *canonical_key = NULL;
@@ -4499,9 +4329,6 @@ int object_set_value(object *op, const char *key, const char *value, int add_key
  *
  * @todo
  * is the player->contr->count hack used?? Try to reduce buffers/calls to query_ functions.
- *
- * @note
- * item_matched_string() has been renamed to object_matches_string()
  */
 int object_matches_string(object *pl, object *op, const char *name) {
     char *cp, local_name[MAX_BUF], name_op[MAX_BUF], name_short[HUGE_BUF], bname_s[MAX_BUF], bname_p[MAX_BUF];
@@ -4610,9 +4437,6 @@ int object_matches_string(object *pl, object *op, const char *name) {
  *
  * @param tmp
  * object we want to fix. Must be on a map.
- *
- * @note
- * fix_multipart_object() has been renamed to object_fix_multipart()
  */
 void object_fix_multipart(object *tmp) {
     archetype *at;
@@ -4672,9 +4496,6 @@ void object_fix_multipart(object *tmp) {
  *
  * @todo
  * either check for sx/sy everywhere or remove the check :)
- *
- * @note
- * get_multi_size() has been renamed to object_get_multi_size()
  */
 void object_get_multi_size(const object *ob, int *sx, int *sy, int *hx, int *hy) {
     archetype *part;
