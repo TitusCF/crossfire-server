@@ -1,3 +1,7 @@
+2020-10-14 Daniel Hawkins
+    * server/shop.c: Add an event hook for when an item is bought.
+    * include/plugin.h: Add an event descriptor for the new buying event.
+
 2020-10-10 Daniel Hawkins
     * common/readable.c: Fix generation of book names for recipes whose product lack a title.
         While here, add some more book name combinations.

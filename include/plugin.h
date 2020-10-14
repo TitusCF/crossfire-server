@@ -77,6 +77,7 @@
 #define EVENT_DESTROY   13 /**< Object destroyed (includes map reset/swapout)  */
 #define EVENT_USER      31 /**< User-defined event.                            */
 #define EVENT_SELLING   32 /**< Object is being sold by another one.           */
+#define EVENT_BUYING    34 /**< Object is being bought by player.              */
 /*******************************************************************************/
 /* Global events. Those are never linked to a specific object.                 */
 /*******************************************************************************/
@@ -97,7 +98,7 @@
 #define EVENT_KICK      28 /**< A player was Kicked by a DM                    */
 #define EVENT_MAPUNLOAD 29 /**< A map is freed (includes swapping out)         */
 #define EVENT_MAPLOAD   30 /**< A map is loaded                                */
-#define NR_EVENTS 34
+#define NR_EVENTS 35
 
 #include <stdarg.h>
 
