@@ -914,7 +914,7 @@ int shop_pay_unpaid(object *pl, object *op) {
         } else {
             // Event hook for buying an item.
             // TODO: Figure out how to pass in the shop owner for player shops.
-            if (execute_event(op, EVENT_BUYING, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+            if (execute_event(op, EVENT_BOUGHT, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
                 return 0;
             object *tmp;
             char *value = cost_str(price);

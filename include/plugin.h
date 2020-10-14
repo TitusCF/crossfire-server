@@ -77,7 +77,7 @@
 #define EVENT_DESTROY   13 /**< Object destroyed (includes map reset/swapout)  */
 #define EVENT_USER      31 /**< User-defined event.                            */
 #define EVENT_SELLING   32 /**< Object is being sold by another one.           */
-#define EVENT_BUYING    34 /**< Object is being bought by player.              */
+#define EVENT_BOUGHT    34 /**< Object is being bought by player.              */
 /*******************************************************************************/
 /* Global events. Those are never linked to a specific object.                 */
 /*******************************************************************************/
