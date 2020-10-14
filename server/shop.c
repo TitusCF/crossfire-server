@@ -603,10 +603,9 @@ int pay_for_amount(uint64_t to_pay, object *pl) {
 }
 
 /**
- * DAMN: This is now a wrapper for pay_from_container, which is
- * called for the player, then for each active container that can hold
- * money until op is paid for.  Change will be left wherever the last
- * of the price was paid from.
+ * Player attemps to buy an item, if she has enough money then remove coins as
+ * needed from active containers.
+ * Also handles bargaining experience.
  *
  * @param op
  * object to buy.
@@ -746,10 +745,7 @@ static void insert_objects(object *pl, object *container, object *objects[], int
 
 /**
  * This pays for the item, and takes the proper amount of money off
- * the player.
- *
- * DAMN: This function is used for the player, then for any active
- * containers that can hold money.
+ * the specified container (pouch or player), without recursing opened containers.
  *
  * @param pl
  * player paying.
@@ -852,12 +848,10 @@ static uint64_t pay_from_container(object *pl, object *pouch, uint64_t to_pay) {
 }
 
 /**
- * Helper function for can_pay(). Checks all items from item and
- * item->below, and recurse if inventory found.
- * coincount is supposed to be of size NUM_COINS. Parameters can't be NULL.
+ * Sum the amount to pay for all unpaid items and find available money.
  *
  * @param pl
- * player.
+ * player we're checking for, used for buying price with bargaining.
  * @param item
  * item to check for.
  * @param[out] unpaid_count
@@ -948,6 +942,12 @@ int can_pay(object *pl) {
         return 1;
 }
 
+/**
+ * Pay as many unpaid items as possible, recursing on op->inv and op->below.
+ * @param pl player who is buying items.
+ * @param op first potentially unpaid item.
+ * @return 0 if some items were unpaid, 1 if all unpaid items (if any) were paid.
+ */
 int shop_pay_unpaid(object *pl, object *op) {
     char name_op[MAX_BUF];
     int ret = 1;
@@ -1012,10 +1012,8 @@ int shop_pay_unpaid(object *pl, object *op) {
 /**
  * Player is selling an item. Give money, print appropriate messages.
  *
- * This function uses the coins[] array to know what coins are available.
- *
- * Modified to fill available race: gold containers before dumping
- * remaining coins in character's inventory.
+ * Will fill applied money containers before dumping remaining coins in
+ * character's inventory.
  *
  * @param op
  * object to sell.
@@ -1132,10 +1130,10 @@ void sell_item(object *op, object *pl) {
 }
 
 /**
- * returns a double that is the ratio of the price that a shop will offer for
+ * Returns a double that is the ratio of the price that a shop will offer for
  * item based on the shops specialisation. Does not take account of greed,
  * returned value is between (2*SPECIALISATION_EFFECT-1) and 1 and in any
- * event is never less than 0.1 (calling functions divide by it)
+ * event is never less than 0.1 (calling functions divide by it).
  *
  * @param item
  * item to get ratio of.
@@ -1256,6 +1254,11 @@ static uint64_t value_limit(uint64_t val, int quantity, const object *who, int i
     return newval;
 }
 
+/**
+ * A player is examining a shop, so describe it.
+ * @param op who is examining the shop.
+ * @return 0 if op is not a player, 1 else.
+ */
 int shop_describe(const object *op) {
     mapstruct *map = op->map;
     /*shopitems *items=map->shopitems;*/
