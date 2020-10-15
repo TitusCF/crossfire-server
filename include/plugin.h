@@ -64,40 +64,40 @@
 #define EVENT_APPLY     1  /**< Object applied-unapplied.                      */
 #define EVENT_ATTACKED  2  /**< Object attacked, with weapon or spell.         */
 #define EVENT_ATTACKS   33 /**< Weapon or arrow hitting something.             */
+#define EVENT_BOUGHT    34 /**< Object is being bought by player.              */
+#define EVENT_CLOSE     11 /**< Container closed.                              */
 #define EVENT_DEATH     3  /**< Player or monster dead.                        */
+#define EVENT_DESTROY   13 /**< Object destroyed (includes map reset/swapout)  */
 #define EVENT_DROP      4  /**< Object dropped on the floor.                   */
 #define EVENT_PICKUP    5  /**< Object picked up.                              */
 #define EVENT_SAY       6  /**< Someone speaks.                                */
+#define EVENT_SELLING   32 /**< Object is being sold by another one.           */
 #define EVENT_STOP      7  /**< Thrown object stopped.                         */
 #define EVENT_TIME      8  /**< Triggered each time the object can react/move. */
 #define EVENT_THROW     9  /**< Object is thrown.                              */
 #define EVENT_TRIGGER   10 /**< Button pushed, lever pulled, etc.              */
-#define EVENT_CLOSE     11 /**< Container closed.                              */
 #define EVENT_TIMER     12 /**< Timer connected triggered it.                  */
-#define EVENT_DESTROY   13 /**< Object destroyed (includes map reset/swapout)  */
 #define EVENT_USER      31 /**< User-defined event.                            */
-#define EVENT_SELLING   32 /**< Object is being sold by another one.           */
-#define EVENT_BOUGHT    34 /**< Object is being bought by player.              */
 /*******************************************************************************/
 /* Global events. Those are never linked to a specific object.                 */
 /*******************************************************************************/
 #define EVENT_BORN      14 /**< A new character has been created.              */
 #define EVENT_CLOCK     15 /**< Global time event.                             */
 #define EVENT_CRASH     16 /**< Triggered when the server crashes. Not recursive */
-#define EVENT_PLAYER_DEATH  17 /**< Global Death event                         */
 #define EVENT_GKILL     18 /**< Triggered when anything got killed by anyone.  */
+#define EVENT_KICK      28 /**< A player was Kicked by a DM                    */
 #define EVENT_LOGIN     19 /**< Player login.                                  */
 #define EVENT_LOGOUT    20 /**< Player logout.                                 */
 #define EVENT_MAPENTER  21 /**< A player entered a map.                        */
 #define EVENT_MAPLEAVE  22 /**< A player left a map.                           */
+#define EVENT_MAPLOAD   30 /**< A map is loaded                                */
 #define EVENT_MAPRESET  23 /**< A map is resetting.                            */
+#define EVENT_MAPUNLOAD 29 /**< A map is freed (includes swapping out)         */
+#define EVENT_MUZZLE    27 /**< A player was Muzzled (no_shout set).           */
+#define EVENT_PLAYER_DEATH  17 /**< Global Death event                         */
 #define EVENT_REMOVE    24 /**< A Player character has been removed.           */
 #define EVENT_SHOUT     25 /**< A player 'shout' something.                    */
 #define EVENT_TELL      26 /**< A player 'tell' something.                     */
-#define EVENT_MUZZLE    27 /**< A player was Muzzled (no_shout set).           */
-#define EVENT_KICK      28 /**< A player was Kicked by a DM                    */
-#define EVENT_MAPUNLOAD 29 /**< A map is freed (includes swapping out)         */
-#define EVENT_MAPLOAD   30 /**< A map is loaded                                */
 #define NR_EVENTS 35
 
 #include <stdarg.h>
