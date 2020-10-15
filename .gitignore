@@ -102,6 +102,7 @@ common/arch_types_valid.c
 /lib/bmaps
 /lib/animations
 /lib/arch
+/lib/treasures
 
 # /macros/
 /macros/libtool.m4
