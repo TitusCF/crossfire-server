@@ -168,131 +168,34 @@ common/arch_types_valid.c
 /socket/libsocket.a
 
 # /test/
+/test/logs
 /test/**/*.a
 /test/**/.autorun.xml
-/test/logs
-
-# /test/bugs/
 
 # /test/bugs/bugtrack/
-/test/bugs/bugtrack/check_1727944
-
-# /test/include/
-
-# /test/templates/
-
-# /test/toolkit/
-
-# /test/unit/
+/test/bugs/bugtrack/*
+!/test/bugs/bugtrack/Makefile.am
+!/test/bugs/bugtrack/*.c
 
 # /test/unit/common/
-/test/unit/common/check_anim
-/test/unit/common/check_arch
-/test/unit/common/check_button
-/test/unit/common/check_exp
-/test/unit/common/check_friend
-/test/unit/common/check_glue
-/test/unit/common/check_holy
-/test/unit/common/check_image
-/test/unit/common/check_info
-/test/unit/common/check_init
-/test/unit/common/check_item
-/test/unit/common/check_links
-/test/unit/common/check_living
-/test/unit/common/check_loader
-/test/unit/common/check_logger
-/test/unit/common/check_los
-/test/unit/common/check_map
-/test/unit/common/check_object
-/test/unit/common/check_path
-/test/unit/common/check_player
-/test/unit/common/check_porting
-/test/unit/common/check_quest
-/test/unit/common/check_re-cmp
-/test/unit/common/check_readable
-/test/unit/common/check_recipe
-/test/unit/common/check_region
-/test/unit/common/check_shstr
-/test/unit/common/check_time
-/test/unit/common/check_treasure
-/test/unit/common/check_utils
+/test/unit/common/*
+!/test/unit/common/Makefile.am
+!/test/unit/common/*.c
 
 # /test/unit/random_maps/
-/test/unit/random_maps/check_decor
-/test/unit/random_maps/check_door
-/test/unit/random_maps/check_exit
-/test/unit/random_maps/check_expand2x
-/test/unit/random_maps/check_floor
-/test/unit/random_maps/check_maze_gen
-/test/unit/random_maps/check_monster
-/test/unit/random_maps/check_random_map
-/test/unit/random_maps/check_reader
-/test/unit/random_maps/check_rogue_layout
-/test/unit/random_maps/check_room_gen_onion
-/test/unit/random_maps/check_room_gen_spiral
-/test/unit/random_maps/check_snake
-/test/unit/random_maps/check_special
-/test/unit/random_maps/check_square_spiral
-/test/unit/random_maps/check_standalone
-/test/unit/random_maps/check_style
-/test/unit/random_maps/check_test
-/test/unit/random_maps/check_treasure
-/test/unit/random_maps/check_wall
+/test/unit/random_maps/*
+!/test/unit/random_maps/Makefile.am
+!/test/unit/random_maps/*.c
 
 # /test/unit/server/
-/test/unit/server/check_alchemy
-/test/unit/server/check_apply
-/test/unit/server/check_attack
-/test/unit/server/check_ban
-/test/unit/server/check_build_map
-/test/unit/server/check_c_chat
-/test/unit/server/check_c_misc
-/test/unit/server/check_c_move
-/test/unit/server/check_c_new
-/test/unit/server/check_c_object
-/test/unit/server/check_c_party
-/test/unit/server/check_c_range
-/test/unit/server/check_c_wiz
-/test/unit/server/check_commands
-/test/unit/server/check_daemon
-/test/unit/server/check_disease
-/test/unit/server/check_egoitem
-/test/unit/server/check_gods
-/test/unit/server/check_hiscore
-/test/unit/server/check_init
-/test/unit/server/check_login
-/test/unit/server/check_main
-/test/unit/server/check_monster
-/test/unit/server/check_move
-/test/unit/server/check_pets
-/test/unit/server/check_player
-/test/unit/server/check_plugins
-/test/unit/server/check_resurrection
-/test/unit/server/check_rune
-/test/unit/server/check_shop
-/test/unit/server/check_skill_util
-/test/unit/server/check_skills
-/test/unit/server/check_spell_attack
-/test/unit/server/check_spell_effect
-/test/unit/server/check_spell_util
-/test/unit/server/check_swamp
-/test/unit/server/check_swap
-/test/unit/server/check_time
-/test/unit/server/check_timers
-/test/unit/server/check_weather
-/test/unit/server/check_win32
-/test/unit/server/comet_perf
+/test/unit/server/*
+!/test/unit/server/Makefile.am
+!/test/unit/server/*.c
 
 # /test/unit/socket/
-/test/unit/socket/check_image
-/test/unit/socket/check_info
-/test/unit/socket/check_init
-/test/unit/socket/check_item
-/test/unit/socket/check_loop
-/test/unit/socket/check_lowlevel
-/test/unit/socket/check_metaserver
-/test/unit/socket/check_request
-/test/unit/socket/check_sounds
+/test/unit/socket/*
+!/test/unit/socket/Makefile.am
+!/test/unit/socket/*.c
 
 # /types/
 /types/libtypes.a
