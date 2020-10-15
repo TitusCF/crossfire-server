@@ -1223,38 +1223,43 @@ static void initConstants(PyObject *module) {
     };
 
     static const CFConstant cstEventType[] = {
+        /** Object_specific events. */
         { "APPLY", EVENT_APPLY },
         { "ATTACK", EVENT_ATTACKED },
         { "ATTACKS", EVENT_ATTACKS },
+        { "BOUGHT", EVENT_BOUGHT },
+        { "CLOSE", EVENT_CLOSE },
         { "DEATH", EVENT_DEATH },
+        { "DESTROY", EVENT_DESTROY },
         { "DROP", EVENT_DROP },
         { "PICKUP", EVENT_PICKUP },
         { "SAY", EVENT_SAY },
+        { "SELLING", EVENT_SELLING },
         { "STOP", EVENT_STOP },
         { "TIME", EVENT_TIME },
         { "THROW", EVENT_THROW },
         { "TRIGGER", EVENT_TRIGGER },
-        { "CLOSE", EVENT_CLOSE },
         { "TIMER", EVENT_TIMER },
-        { "DESTROY", EVENT_DESTROY },
+        { "USER", EVENT_USER },
+
+        /** Global events. */
         { "BORN", EVENT_BORN },
         { "CLOCK", EVENT_CLOCK },
         { "CRASH", EVENT_CRASH },
-        { "PLAYER_DEATH", EVENT_PLAYER_DEATH },
         { "GKILL", EVENT_GKILL },
+        { "KICK", EVENT_KICK },
         { "LOGIN", EVENT_LOGIN },
         { "LOGOUT", EVENT_LOGOUT },
         { "MAPENTER", EVENT_MAPENTER },
         { "MAPLEAVE", EVENT_MAPLEAVE },
+        { "MAPLOAD", EVENT_MAPLOAD },
         { "MAPRESET", EVENT_MAPRESET },
+        { "MAPUNLOAD", EVENT_MAPUNLOAD },
+        { "MUZZLE", EVENT_MUZZLE },
+        { "PLAYER_DEATH", EVENT_PLAYER_DEATH },
         { "REMOVE", EVENT_REMOVE },
         { "SHOUT", EVENT_SHOUT },
         { "TELL", EVENT_TELL },
-        { "MUZZLE", EVENT_MUZZLE },
-        { "KICK", EVENT_KICK },
-        { "MAPUNLOAD", EVENT_MAPUNLOAD },
-        { "MAPLOAD", EVENT_MAPLOAD },
-        { "USER", EVENT_USER },
         { NULL, 0 }
     };
 
