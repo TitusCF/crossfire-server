@@ -1,7 +1,50 @@
+# General
+
+
+*.o
+*.lo
+*.la
+
+tags
+*.swp
+*.core
+
+utils/crossfire-mapper
+
+include/autoconf.h.in
+macros/ltoptions.m4
+macros/ltsugar.m4
+macros/ltversion.m4
+macros/lt~obsolete.m4
+macros/pkg.m4
+utils/test-driver
+cscope.*
+
+include/autoconf.h.in~
+*.html
+*.kdev4
+
+cov-int/
+.dirstamp
+
+.deps/
+.libs/
+Makefile.in
+Makefile
+
+common/arch_types_valid.c
+
+.qmake.stash
+.pch/
+
+.vs/
+
+
+
+# Specific paths
+
 
 # /
-/Makefile
-/Makefile.in
 /aclocal.m4
 /autom4te.cache/
 /config.cache
@@ -20,53 +63,28 @@
 
 # /common/
 /common/libcross.a
-/common/Makefile.in
 /common/loader.c
-/common/Makefile
-/common/.deps
 
 # /devel/
-/devel/.deps
-/devel/.libs
-/devel/Makefile
-/devel/Makefile.in
 /devel/crossfire-config
 
 # /doc/
-/doc/Makefile
-/doc/Makefile.in
 
 # /doc/Developers/
-/doc/Developers/Makefile
-/doc/Developers/Makefile.in
 
 # /doc/playbook/
-/doc/playbook/Makefile
-/doc/playbook/Makefile.in
 
 # /doc/playbook-html/
-/doc/playbook-html/Makefile
-/doc/playbook-html/Makefile.in
 
 # /doc/scripts/
-/doc/scripts/Makefile
-/doc/scripts/Makefile.in
 
 # /doc/spell-docs/
-/doc/spell-docs/Makefile
-/doc/spell-docs/Makefile.in
 
 # /doc/spoiler/
-/doc/spoiler/Makefile
-/doc/spoiler/Makefile.in
 
 # /doc/spoiler-html/
-/doc/spoiler-html/Makefile
-/doc/spoiler-html/Makefile.in
 
 # /include/
-/include/Makefile
-/include/Makefile.in
 /include/autoconf.h
 /include/stamp-h1
 /include/svnversion.h
@@ -74,11 +92,9 @@
 # /lib/
 /lib/smooth
 /lib/.collect-stamp
-/lib/Makefile
 /lib/checkarch.pl
 /lib/collect.pl
 /lib/faces
-/lib/Makefile.in
 /lib/crossfire.*
 /lib/archetypes
 /lib/treasures.bld
@@ -104,212 +120,82 @@
 /make_win32/CrossfireServerBigworldMaps.exe
 
 # /plugins/
-/plugins/.deps
-/plugins/.libs
-/plugins/Makefile
-/plugins/*.la
-/plugins/*.lo
-/plugins/Makefile.in
 
 # /plugins/cfanim/
-/plugins/cfanim/.deps
-/plugins/cfanim/.libs
-/plugins/cfanim/Makefile
-/plugins/cfanim/*.la
-/plugins/cfanim/*.lo
-/plugins/cfanim/Makefile.in
 
 # /plugins/cfanim/include/
-/plugins/cfanim/include/.deps
-/plugins/cfanim/include/.libs
-/plugins/cfanim/include/Makefile
-/plugins/cfanim/include/*.la
-/plugins/cfanim/include/*.lo
-/plugins/cfanim/include/Makefile.in
 
 # /plugins/cflogger/
-/plugins/cflogger/.deps
-/plugins/cflogger/.libs
-/plugins/cflogger/Makefile
-/plugins/cflogger/*.la
-/plugins/cflogger/*.lo
-/plugins/cflogger/Makefile.in
 
 # /plugins/cflogger/include/
-/plugins/cflogger/include/.deps
-/plugins/cflogger/include/.libs
-/plugins/cflogger/include/Makefile
-/plugins/cflogger/include/*.la
-/plugins/cflogger/include/*.lo
-/plugins/cflogger/include/Makefile.in
 
 # /plugins/cfnewspaper/
-/plugins/cfnewspaper/.deps
-/plugins/cfnewspaper/.libs
-/plugins/cfnewspaper/Makefile
-/plugins/cfnewspaper/*.la
-/plugins/cfnewspaper/*.lo
-/plugins/cfnewspaper/Makefile.in
 
 # /plugins/cfnewspaper/include/
-/plugins/cfnewspaper/include/.deps
-/plugins/cfnewspaper/include/.libs
-/plugins/cfnewspaper/include/Makefile
-/plugins/cfnewspaper/include/*.la
-/plugins/cfnewspaper/include/*.lo
-/plugins/cfnewspaper/include/Makefile.in
 
 # /plugins/cfpython/
-/plugins/cfpython/.deps
-/plugins/cfpython/.libs
-/plugins/cfpython/Makefile
-/plugins/cfpython/*.la
-/plugins/cfpython/*.lo
-/plugins/cfpython/Makefile.in
 
 # /plugins/cfpython/include/
-/plugins/cfpython/include/.deps
-/plugins/cfpython/include/.libs
-/plugins/cfpython/include/Makefile
-/plugins/cfpython/include/*.la
-/plugins/cfpython/include/*.lo
-/plugins/cfpython/include/Makefile.in
 
 # /plugins/cfrhg/
-/plugins/cfrhg/Makefile.in
-/plugins/cfrhg/Makefile
-/plugins/cfrhg/.deps
-/plugins/cfrhg/.libs
 
 # /plugins/cfrhg/include/
-/plugins/cfrhg/include/Makefile.in
-/plugins/cfrhg/include/Makefile
-/plugins/cfrhg/include/.deps
-/plugins/cfrhg/include/.libs
 
 # /plugins/citylife/
-/plugins/citylife/.deps
-/plugins/citylife/.libs
-/plugins/citylife/Makefile
-/plugins/citylife/Makefile.in
 
 # /plugins/citylife/include/
-/plugins/citylife/include/Makefile.in
-/plugins/citylife/include/Makefile
-/plugins/citylife/include/.deps
-/plugins/citylife/include/.libs
 
 # /plugins/common/
-/plugins/common/.deps
-/plugins/common/.libs
-/plugins/common/Makefile
-/plugins/common/*.la
-/plugins/common/*.lo
-/plugins/common/Makefile.in
 
 # /plugins/common/include/
-/plugins/common/include/.deps
-/plugins/common/include/.libs
-/plugins/common/include/Makefile
-/plugins/common/include/*.la
-/plugins/common/include/*.lo
-/plugins/common/include/Makefile.in
 
 # /plugins/template/
-/plugins/template/.deps
-/plugins/template/.libs
-/plugins/template/Makefile
-/plugins/template/*.la
-/plugins/template/*.lo
-/plugins/template/Makefile.in
 
 # /plugins/template/include/
-/plugins/template/include/.deps
-/plugins/template/include/.libs
-/plugins/template/include/Makefile
-/plugins/template/include/*.la
-/plugins/template/include/*.lo
-/plugins/template/include/Makefile.in
 
 # /random_maps/
-/random_maps/.deps
-/random_maps/.libs
-/random_maps/Makefile
 /random_maps/random_map
-/random_maps/Makefile.in
 /random_maps/librandom_map.a
 /random_maps/reader.c
 
 # /server/
-/server/.deps
-/server/.libs
-/server/Makefile
 /server/crossfire
 /server/crossfire-server
-/server/Makefile.in
 /server/libserver.a
 
 # /socket/
-/socket/Makefile.in
 /socket/libsocket.a
-/socket/.deps
-/socket/Makefile
 
 # /test/
-/test/.deps
-/test/Makefile
 /test/.autorun.xml
-/test/Makefile.in
 /test/*.a
 /test/logs
 
 # /test/bugs/
 /test/bugs/.autorun.xml
-/test/bugs/Makefile
-/test/bugs/Makefile.in
 
 # /test/bugs/bugtrack/
 /test/bugs/bugtrack/.autorun.xml
-/test/bugs/bugtrack/.deps
-/test/bugs/bugtrack/.libs
-/test/bugs/bugtrack/Makefile
-/test/bugs/bugtrack/Makefile.in
 /test/bugs/bugtrack/check_1727944
 
 # /test/include/
-/test/include/.deps
-/test/include/Makefile
 /test/include/.autorun.xml
-/test/include/Makefile.in
 /test/include/*.a
 
 # /test/templates/
-/test/templates/.deps
-/test/templates/Makefile
 /test/templates/.autorun.xml
-/test/templates/Makefile.in
 /test/templates/*.a
 
 # /test/toolkit/
-/test/toolkit/.deps
-/test/toolkit/Makefile
 /test/toolkit/.autorun.xml
-/test/toolkit/Makefile.in
 /test/toolkit/*.a
 
 # /test/unit/
-/test/unit/.deps
-/test/unit/Makefile
 /test/unit/.autorun.xml
-/test/unit/Makefile.in
 /test/unit/*.a
 
 # /test/unit/common/
-/test/unit/common/.deps
-/test/unit/common/.libs
-/test/unit/common/Makefile
 /test/unit/common/.autorun.xml
-/test/unit/common/Makefile.in
 /test/unit/common/*.a
 /test/unit/common/check_anim
 /test/unit/common/check_arch
@@ -343,12 +229,8 @@
 /test/unit/common/check_utils
 
 # /test/unit/random_maps/
-/test/unit/random_maps/.deps
-/test/unit/random_maps/Makefile
 /test/unit/random_maps/.autorun.xml
-/test/unit/random_maps/Makefile.in
 /test/unit/random_maps/*.a
-/test/unit/random_maps/.libs
 /test/unit/random_maps/check_decor
 /test/unit/random_maps/check_door
 /test/unit/random_maps/check_exit
@@ -371,12 +253,8 @@
 /test/unit/random_maps/check_wall
 
 # /test/unit/server/
-/test/unit/server/.deps
-/test/unit/server/Makefile
 /test/unit/server/.autorun.xml
-/test/unit/server/Makefile.in
 /test/unit/server/*.a
-/test/unit/server/.libs
 /test/unit/server/check_alchemy
 /test/unit/server/check_apply
 /test/unit/server/check_attack
@@ -421,12 +299,8 @@
 /test/unit/server/comet_perf
 
 # /test/unit/socket/
-/test/unit/socket/.deps
-/test/unit/socket/Makefile
 /test/unit/socket/.autorun.xml
-/test/unit/socket/Makefile.in
 /test/unit/socket/*.a
-/test/unit/socket/.libs
 /test/unit/socket/check_image
 /test/unit/socket/check_info
 /test/unit/socket/check_init
@@ -438,251 +312,125 @@
 /test/unit/socket/check_sounds
 
 # /types/
-/types/.dirstamp
-/types/.deps
-/types/Makefile.in
-/types/Makefile
 /types/libtypes.a
 
 # /types/altar/
-/types/altar/.dirstamp
-/types/altar/.deps
 
 # /types/armour_improver/
-/types/armour_improver/.dirstamp
-/types/armour_improver/.deps
-/types/armour_improver/Makefile.in
-/types/armour_improver/Makefile
 /types/armour_improver/libtypes.a
 
 # /types/arrow/
-/types/arrow/.dirstamp
-/types/arrow/.deps
 
 # /types/blindness/
-/types/blindness/.dirstamp
-/types/blindness/.deps
 
 # /types/book/
-/types/book/.dirstamp
-/types/book/.deps
 
 # /types/button/
-/types/button/.dirstamp
-/types/button/.deps
 
 # /types/cf_handle/
-/types/cf_handle/.dirstamp
-/types/cf_handle/.deps
 
 # /types/check_inv/
-/types/check_inv/.dirstamp
-/types/check_inv/.deps
 
 # /types/clock/
-/types/clock/.dirstamp
-/types/clock/.deps
 
 # /types/common/
-/types/common/.dirstamp
-/types/common/.deps
 
 # /types/container/
-/types/container/.dirstamp
-/types/container/.deps
 
 # /types/converter/
-/types/converter/.dirstamp
-/types/converter/.deps
 
 # /types/creator/
-/types/creator/.dirstamp
-/types/creator/.deps
 
 # /types/deep_swamp/
-/types/deep_swamp/.dirstamp
-/types/deep_swamp/.deps
 
 # /types/detector/
-/types/detector/.dirstamp
-/types/detector/.deps
 
 # /types/director/
-/types/director/.dirstamp
-/types/director/.deps
 
 # /types/dragon_focus/
-/types/dragon_focus/.deps
-/types/dragon_focus/.dirstamp
 
 # /types/duplicator/
-/types/duplicator/.dirstamp
-/types/duplicator/.deps
 
 # /types/exit/
-/types/exit/.dirstamp
-/types/exit/.deps
 
 # /types/food/
-/types/food/.dirstamp
-/types/food/.deps
 
 # /types/gate/
-/types/gate/.dirstamp
-/types/gate/.deps
 
 # /types/hole/
-/types/hole/.dirstamp
-/types/hole/.deps
 
 # /types/identify_altar/
-/types/identify_altar/.dirstamp
-/types/identify_altar/.deps
 
 # /types/lamp/
-/types/lamp/.dirstamp
-/types/lamp/.deps
-/types/lamp/Makefile.in
-/types/lamp/Makefile
 /types/lamp/libtypes.a
 
 # /types/legacy/
-/types/legacy/.dirstamp
-/types/legacy/.deps
 
 # /types/lighter/
-/types/lighter/.dirstamp
-/types/lighter/.deps
-/types/lighter/Makefile.in
-/types/lighter/Makefile
 /types/lighter/libtypes.a
 
 # /types/marker/
-/types/marker/.dirstamp
-/types/marker/.deps
 
 # /types/mood_floor/
-/types/mood_floor/.dirstamp
-/types/mood_floor/.deps
 
 # /types/peacemaker/
-/types/peacemaker/.dirstamp
-/types/peacemaker/.deps
 
 # /types/pedestal/
-/types/pedestal/.dirstamp
-/types/pedestal/.deps
 
 # /types/player_changer/
-/types/player_changer/.dirstamp
-/types/player_changer/.deps
 
 # /types/player_mover/
-/types/player_mover/.dirstamp
-/types/player_mover/.deps
 
 # /types/poison/
-/types/poison/.dirstamp
-/types/poison/.deps
 
 # /types/poisoning/
-/types/poisoning/.dirstamp
-/types/poisoning/.deps
 
 # /types/potion/
-/types/potion/.dirstamp
-/types/potion/.deps
 
 # /types/power_crystal/
-/types/power_crystal/.dirstamp
-/types/power_crystal/.deps
 
 # /types/savebed/
-/types/savebed/.dirstamp
-/types/savebed/.deps
 
 # /types/scroll/
-/types/scroll/.dirstamp
-/types/scroll/.deps
 
 # /types/shop_inventory/
-/types/shop_inventory/.dirstamp
-/types/shop_inventory/.deps
-/types/shop_inventory/Makefile.in
-/types/shop_inventory/Makefile
 /types/shop_inventory/libtypes.a
 
 # /types/shop_mat/
-/types/shop_mat/.dirstamp
-/types/shop_mat/.deps
 
 # /types/sign/
-/types/sign/.dirstamp
-/types/sign/.deps
 
 # /types/skillscroll/
-/types/skillscroll/.dirstamp
-/types/skillscroll/.deps
 
 # /types/spell_effect/
-/types/spell_effect/.dirstamp
-/types/spell_effect/.deps
 
 # /types/spellbook/
-/types/spellbook/.dirstamp
-/types/spellbook/.deps
 
 # /types/spinner/
-/types/spinner/.dirstamp
-/types/spinner/.deps
 
 # /types/teleporter/
-/types/teleporter/.dirstamp
-/types/teleporter/.deps
 
 # /types/thrown_object/
-/types/thrown_object/.dirstamp
-/types/thrown_object/.deps
 
 # /types/transport/
-/types/transport/.dirstamp
-/types/transport/.deps
 
 # /types/trap/
-/types/trap/.dirstamp
-/types/trap/.deps
 
 # /types/trapdoor/
-/types/trapdoor/.dirstamp
-/types/trapdoor/.deps
 
 # /types/treasure/
-/types/treasure/.dirstamp
-/types/treasure/.deps
 
 # /types/trigger/
-/types/trigger/.dirstamp
-/types/trigger/.deps
 
 # /types/trigger_altar/
-/types/trigger_altar/.dirstamp
-/types/trigger_altar/.deps
 
 # /types/trigger_button/
-/types/trigger_button/.dirstamp
-/types/trigger_button/.deps
 
 # /types/trigger_pedestal/
-/types/trigger_pedestal/.dirstamp
-/types/trigger_pedestal/.deps
 
 # /types/weapon_improver/
-/types/weapon_improver/.dirstamp
-/types/weapon_improver/.deps
 
 # /utils/
-/utils/Makefile
-/utils/Makefile.in
 /utils/add_throw.perl
 /utils/crossloop
 /utils/crossloop.pl
@@ -702,52 +450,10 @@
 /utils/mkinstalldirs
 /utils/missing
 /utils/install-sh
-/utils/.deps
-/utils/.libs
 
 # /utils/cre/
 /utils/cre/moc_*
 /utils/cre/qrc_cre.cpp
-/utils/cre/*.o
-/utils/cre/Makefile
 /utils/cre/cre
 /utils/cre/.git
 /utils/cre/.gitignore
-
-*.o
-*.lo
-*.la
-
-tags
-*.swp
-*.core
-
-utils/crossfire-mapper
-
-include/autoconf.h.in
-macros/ltoptions.m4
-macros/ltsugar.m4
-macros/ltversion.m4
-macros/lt~obsolete.m4
-macros/pkg.m4
-utils/test-driver
-cscope.*
-
-include/autoconf.h.in~
-*.html
-*.kdev4
-
-cov-int/
-.dirstamp
-
-.deps/
-.libs/
-Makefile
-Makefile.in
-
-common/arch_types_valid.c
-
-.qmake.stash
-.pch/
-
-.vs/
