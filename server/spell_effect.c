@@ -1311,8 +1311,8 @@ static int town_portal_destroy_existing(object* op, object* spell) {
  * @retval 1
  * spell worked.
  */
-int cast_create_town_portal(object *op, object *caster, object *spell) {
-    object *dummy, *force, *tmp;
+int cast_create_town_portal(object *op, object *caster, object *spell, int dir, bool new_town_portal) {
+    object *force, *tmp;
     char portal_name [1024], portal_message [1024];
     mapstruct *exitmap;
     int op_level, x, y;
@@ -1336,9 +1336,32 @@ int cast_create_town_portal(object *op, object *caster, object *spell) {
         return 0;
     }
 
-    force = town_portal_find_force(op, spell);
-    if (force == NULL) {
-        return 1;
+    if (new_town_portal) {
+        const char *dest = object_get_value(op, "town_portal_dest_map");
+        if (dest == NULL) {
+            draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                          "You do not have a town portal attuned.");
+            return 1;
+        }
+
+        force = arch_to_object(spell->other_arch);
+        if (force == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                          "Oops, program error!");
+            LOG(llevError, "object_new failed (force in cast_create_town_portal for %s!\n", op->name);
+            return 1;
+        }
+
+        FREE_AND_COPY(force->name, dest);
+        EXIT_X(force) = atol(object_get_value(op, "town_portal_dest_x"));
+        EXIT_Y(force) = atol(object_get_value(op, "town_portal_dest_y"));
+        force->weapontype = 0; // not set with new_town_portal
+        object_insert_in_ob(force, op);
+    } else {
+        force = town_portal_find_force(op, spell);
+        if (force == NULL) {
+            return 1;
+        }
     }
 
     /* Here we know where the town portal should go to
@@ -1384,7 +1407,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell) {
         object_free(force, 0);
         cast_create_obj(op, create_archetype(ARCH_PORTAL_FAILED), 0);
         return 1;
-    } else if (exitmap->last_reset_time != force->weapontype) {
+    } else if (!new_town_portal && exitmap->last_reset_time != force->weapontype) {
         draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                       "The spell effect has expired.");
         object_remove(force);
@@ -1409,7 +1432,7 @@ int cast_create_town_portal(object *op, object *caster, object *spell) {
      */
 
     snprintf(portal_name, 1024, "%s's portal to %s", op->name, force->name);
-    dummy = create_archetype(spell->slaying); /*The portal*/
+    object* dummy = create_archetype(spell->slaying); /*The portal*/
     if (dummy == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                       "Oops, program error!");
