@@ -1936,7 +1936,11 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         break;
 
     case SP_TOWN_PORTAL:
-        success = cast_create_town_portal(op, caster, spell_ob);
+        success = cast_create_town_portal(op, caster, spell_ob, dir, true);
+        break;
+
+    case SP_PORTAL:
+        success = cast_create_town_portal(op, caster, spell_ob, dir, false);
         break;
 
     case SP_ITEM_CURSE_BLESS:
