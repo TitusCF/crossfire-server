@@ -1256,7 +1256,6 @@ static int town_portal_destroy_existing(object* op, object* spell) {
         }
         object_remove(old_force);
         object_free(old_force, 0);
-        LOG(llevDebug, "\n");
     }
     object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
     return 0;
@@ -1375,13 +1374,13 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
 
     op_level = caster_level(caster, spell);
     if (op_level < 15)
-        snprintf(portal_message, 1024, "\nThe air moves around you and\na huge smell of ammonia surrounds you as you pass through %s's tiny portal\nPouah!\n", op->name);
+        snprintf(portal_message, 1024, "The air moves around you and a huge smell of ammonia surrounds you as you pass through %s's tiny portal. Pouah!", op->name);
     else if (op_level < 30)
-        snprintf(portal_message, 1024, "\n%s's portal smells of ozone.\nYou do a lot of movements and finally pass through the small hole in the air\n", op->name);
+        snprintf(portal_message, 1024, "%s's portal smells of ozone. You do a lot of movements and finally pass through the small hole in the air.", op->name);
     else if (op_level < 60)
-        snprintf(portal_message, 1024, "\nA shining door opens in the air in front of you, showing you the path to another place.\n");
+        snprintf(portal_message, 1024, "A shining door opens in the air in front of you, showing you the path to another place.");
     else
-        snprintf(portal_message, 1024, "\nAs you walk through %s's portal, flowers come out from the ground around you.\nYou feel awed.\n", op->name);
+        snprintf(portal_message, 1024, "As you walk through %s's portal, flowers come out from the ground around you. You feel awed.", op->name);
 
     /* Create a portal in front of player
      * dummy contain the portal and
