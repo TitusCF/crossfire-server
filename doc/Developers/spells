@@ -1001,6 +1001,10 @@ SP_AURA (46)/SP_ELEM_SHIELD(50):
 
 
 SP_TOWN_PORTAL (47):
+    See SP_PORTAL, but one side of the portal has to be set with a portal
+    attunement object.
+
+SP_PORTAL (52):
     This creates two linked portals which the player can use to get
     back and forth quickly.
 
