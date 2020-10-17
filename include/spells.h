@@ -123,6 +123,7 @@ extern const char *const spellpathnames[NRSPELLPATHS];
 #define SP_ITEM_CURSE_BLESS 49
 #define SP_ELEM_SHIELD      50
 #define SP_WORD_OF_PENALTY   51
+#define SP_PORTAL           52
 /*@}*/
 
 /**

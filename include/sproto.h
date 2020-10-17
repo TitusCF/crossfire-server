@@ -534,7 +534,7 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob);
 int cast_word_of_penalty(object *op, object *caster, object *spell_ob);
 int cast_wonder(object *op, object *caster, int dir, object *spell_ob);
 int perceive_self(object *op);
-int cast_create_town_portal(object *op, object *caster, object *spell, int dir);
+int cast_create_town_portal(object *op, object *caster, object *spell, int dir, bool new_town_portal);
 int magic_wall(object *op, object *caster, int dir, object *spell_ob);
 int dimension_door(object *op, object *caster, object *spob, int dir);
 int cast_heal(object *op, object *caster, object *spell, int dir);
