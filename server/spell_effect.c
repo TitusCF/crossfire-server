@@ -1157,6 +1157,111 @@ int perceive_self(object *op) {
     return 1;
 }
 
+static object* town_portal_find_force(object* op, object* spell) {
+    object *dummy, *force;
+
+    /* The first thing to do is to check if we have a marked destination
+     * dummy is used to make a check inventory for the force
+     */
+    dummy = arch_to_object(spell->other_arch);
+    if (dummy == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                      "Oops, program error!");
+        LOG(llevError, "object_new failed (force in cast_create_town_portal for %s!\n", op->name);
+        return NULL;
+    }
+
+    force = check_inv_recursive(op, dummy);
+    if (force == NULL) {
+        /* Here we know there is no destination marked up.
+         * We have 2 things to do:
+         * 1. Mark the destination in the player inventory.
+         * 2. Let the player know it worked.
+         */
+        free_string(dummy->name);
+        dummy->name = add_string(op->map->path);
+        EXIT_X(dummy) = op->x;
+        EXIT_Y(dummy) = op->y;
+        dummy->weapontype = op->map->last_reset_time;
+        object_insert_in_ob(dummy, op);
+        draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+                      "You fix this place in your mind and feel that you "
+                      "can come here from anywhere.");
+    } else {
+        object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    }
+    return force;
+}
+
+/**
+ * Remove op's existing town portals. Returns 0 on success.
+ */
+static int town_portal_destroy_existing(object* op, object* spell) {
+    object* dummy = create_archetype(spell->race);
+    object* old_force;
+    if (dummy == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                      "Oops, program error!");
+        LOG(llevError, "object_new failed (force) in cast_create_town_portal for %s!\n", op->name);
+        return 0;
+    }
+    archetype *perm_portal;
+    perm_portal = find_archetype(spell->slaying);
+    if (perm_portal == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                      "Oops, program error!");
+        return 0;
+    }
+
+    /* To kill a town portal, we go trough the player's inventory,
+     * for each marked portal in player's inventory,
+     *   -We try load the associated map (if impossible, consider the portal destructed)
+     *   -We find any portal in the specified location.
+     *      If it has the good name, we destruct it.
+     *   -We destruct the force indicating that portal.
+     */
+    while ((old_force = check_inv_recursive(op, dummy))) {
+        int16_t exitx = EXIT_X(old_force);
+        int16_t exity = EXIT_Y(old_force);
+        LOG(llevDebug, "Trying to kill a portal in %s (%d,%d)\n", old_force->race, exitx, exity);
+
+        mapstruct *exitmap;
+        if (!strncmp(old_force->race, settings.localdir, strlen(settings.localdir)))
+            exitmap = ready_map_name(old_force->race, MAP_PLAYER_UNIQUE);
+        else
+            exitmap = ready_map_name(old_force->race, 0);
+
+        if (exitmap) {
+            object* tmp = map_find_by_archetype(exitmap, exitx, exity, perm_portal);
+            FOR_OB_AND_ABOVE_PREPARE(tmp)
+                if (tmp->name == old_force->name) {
+                    object_remove(tmp);
+                    object_free(tmp, 0);
+                    break;
+                }
+            FOR_OB_AND_ABOVE_FINISH();
+
+            /* kill any opening animation there is */
+            archetype *arch = find_archetype("town_portal_open");
+            if (arch != NULL) {
+                tmp = map_find_by_archetype(exitmap, exitx, exity, arch);
+                FOR_OB_AND_ABOVE_PREPARE(tmp)
+                    if (tmp->name == old_force->name) {
+                        object_remove(tmp);
+                        object_free(tmp, FREE_OBJ_FREE_INVENTORY);
+                        break;
+                    }
+                FOR_OB_AND_ABOVE_FINISH();
+            }
+        }
+        object_remove(old_force);
+        object_free(old_force, 0);
+        LOG(llevDebug, "\n");
+    }
+    object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
+    return 0;
+}
+
 /**
  * This function cast the spell of town portal for op.
  *
@@ -1187,10 +1292,8 @@ int perceive_self(object *op) {
  * spell worked.
  */
 int cast_create_town_portal(object *op, object *caster, object *spell, int dir) {
-    object *dummy, *force, *old_force, *tmp;
-    archetype *perm_portal;
+    object *dummy, *force, *tmp;
     char portal_name [1024], portal_message [1024];
-    int16_t exitx, exity;
     mapstruct *exitmap;
     int op_level, x, y;
 
@@ -1213,36 +1316,10 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
         return 0;
     }
 
-    /* The first thing to do is to check if we have a marked destination
-     * dummy is used to make a check inventory for the force
-     */
-    dummy = arch_to_object(spell->other_arch);
-    if (dummy == NULL) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!");
-        LOG(llevError, "object_new failed (force in cast_create_town_portal for %s!\n", op->name);
-        return 0;
-    }
-    force = check_inv_recursive(op, dummy);
-
+    force = town_portal_find_force(op, spell);
     if (force == NULL) {
-        /* Here we know there is no destination marked up.
-         * We have 2 things to do:
-         * 1. Mark the destination in the player inventory.
-         * 2. Let the player know it worked.
-         */
-        free_string(dummy->name);
-        dummy->name = add_string(op->map->path);
-        EXIT_X(dummy) = op->x;
-        EXIT_Y(dummy) = op->y;
-        dummy->weapontype = op->map->last_reset_time;
-        object_insert_in_ob(dummy, op);
-        draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-                      "You fix this place in your mind and feel that you "
-                      "can come here from anywhere.");
         return 1;
     }
-    object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
 
     /* Here we know where the town portal should go to
      * We should kill any existing portal associated with the player.
@@ -1259,67 +1336,9 @@ int cast_create_town_portal(object *op, object *caster, object *spell, int dir) 
      *   name   : name of the portal
      *   race   : map the portal is in
      */
-
-    /* First step: killing existing town portals */
-    dummy = create_archetype(spell->race);
-    if (dummy == NULL) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!");
-        LOG(llevError, "object_new failed (force) in cast_create_town_portal for %s!\n", op->name);
-        return 0;
+    if (town_portal_destroy_existing(op, spell) != 0) {
+        return 1;
     }
-    perm_portal = find_archetype(spell->slaying);
-    if (perm_portal == NULL) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                      "Oops, program error!");
-        return 0;
-    }
-
-    /* To kill a town portal, we go trough the player's inventory,
-     * for each marked portal in player's inventory,
-     *   -We try load the associated map (if impossible, consider the portal destructed)
-     *   -We find any portal in the specified location.
-     *      If it has the good name, we destruct it.
-     *   -We destruct the force indicating that portal.
-     */
-    while ((old_force = check_inv_recursive(op, dummy))) {
-        exitx = EXIT_X(old_force);
-        exity = EXIT_Y(old_force);
-        LOG(llevDebug, "Trying to kill a portal in %s (%d,%d)\n", old_force->race, exitx, exity);
-
-        if (!strncmp(old_force->race, settings.localdir, strlen(settings.localdir)))
-            exitmap = ready_map_name(old_force->race, MAP_PLAYER_UNIQUE);
-        else
-            exitmap = ready_map_name(old_force->race, 0);
-
-        if (exitmap) {
-            tmp = map_find_by_archetype(exitmap, exitx, exity, perm_portal);
-            FOR_OB_AND_ABOVE_PREPARE(tmp)
-                if (tmp->name == old_force->name) {
-                    object_remove(tmp);
-                    object_free(tmp, 0);
-                    break;
-                }
-            FOR_OB_AND_ABOVE_FINISH();
-
-            /* kill any opening animation there is */
-            archetype *arch = find_archetype("town_portal_open");
-            if (arch != NULL) {
-                tmp = map_find_by_archetype(exitmap, exitx, exity, arch);
-                FOR_OB_AND_ABOVE_PREPARE(tmp)
-                    if (tmp->name == old_force->name) {
-                        object_remove(tmp);
-                        object_free(tmp, FREE_OBJ_FREE_INVENTORY);
-                        break;
-                    }
-                FOR_OB_AND_ABOVE_FINISH();
-            }
-        }
-        object_remove(old_force);
-        object_free(old_force, 0);
-        LOG(llevDebug, "\n");
-    }
-    object_free(dummy, FREE_OBJ_NO_DESTROY_CALLBACK);
 
     /* Creating the portals.
      * The very first thing to do is to ensure
