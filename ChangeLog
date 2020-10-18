@@ -1,3 +1,6 @@
+2020-10-18 Daniel Hawkins
+    * server/server.c: Add a message stating when initialization finishes.
+
 2020-10-14 Daniel Hawkins
     * server/shop.c: Add an event hook for when an item is bought.
     * include/plugin.h: Add an event descriptor for the new buying event.

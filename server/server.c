@@ -1464,6 +1464,8 @@ void server_main(int argc, char *argv[]) {
 
     init(argc, argv);
     initPlugins();        /* GROS - Init the Plugins */
+    // Give feedback that loading is complete. This prevents confusion on when it is done loading.
+    LOG(llevInfo, "Initialization complete. Waiting for connections.\n");
 #ifdef WIN32
     while (bRunning) {
 #else
