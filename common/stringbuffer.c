@@ -162,3 +162,9 @@ static void stringbuffer_ensure(StringBuffer *sb, size_t len) {
 size_t stringbuffer_length(StringBuffer *sb) {
     return sb->pos;
 }
+
+void stringbuffer_trim_whitespace(StringBuffer *sb) {
+    while (sb->pos > 0 && isspace(sb->buf[sb->pos-1])) {
+        sb->pos--;
+    }
+}
