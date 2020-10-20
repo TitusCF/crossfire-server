@@ -1,4 +1,11 @@
 2020-10-20 Rebecca Kelly
+    * types/spellbook/spellbook.c, server/c_object.c: display the description of
+        a spell or skill when examining an object that contains it such as a
+        wand, spellbook, or skillscroll. These descriptions are sent with the
+        SPELL_INFO message type so that clients can differentiate them from
+        their surroundings when colourizing.
+
+2020-10-20 Rebecca Kelly
     * types/spellbook/spellbook.c: spellbooks will now list their spell level,
         casting skill, and paths in the detailed object name, e.g. "grimoire of
         poison cloud (a fourth level sorcery) (paths: Missiles)", in much the

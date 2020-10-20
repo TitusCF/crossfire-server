@@ -22,6 +22,8 @@
 #ifndef STRING_BUFFER_H
 #define STRING_BUFFER_H
 
+#include <ctype.h>
+
 #include "global.h"
 
 
@@ -103,5 +105,13 @@ void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2)
  * @return current length of sb.
  */
 size_t stringbuffer_length(StringBuffer *sb);
+
+/**
+ * Trim trailing whitespace from a stringbuffer.
+ *
+ * @param sb
+ * The stringbuffer.
+ */
+void stringbuffer_trim_whitespace(StringBuffer *sb);
 
 #endif

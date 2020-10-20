@@ -1561,6 +1561,56 @@ void examine(object *op, object *tmp) {
     }
 
     switch (tmp->type) {
+    case SKILLSCROLL:
+    case SKILL_TOOL:
+        // Embedded skills are stored as an archetype name and don't get reified
+        // until the player actually reads/equips the object, so we need to
+        // handle it differently from spells, which are stored in the inv.
+        if (!tmp->skill) break;  // Blank skill scroll, somehow.
+        archetype *skill = get_archetype_by_skill_name(tmp->skill, SKILL);
+        if (!skill) {
+            // Skill name doesn't correspond to any actual skill.
+            draw_ext_info(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+                "Unfortunately the scroll is damaged and unreadable.");
+            break;
+        }
+        StringBuffer *sb = stringbuffer_new();
+        stringbuffer_append_string(sb, skill->clone.msg);
+        stringbuffer_trim_whitespace(sb);
+        char *const fluff = stringbuffer_finish(sb);
+        // SPELL_INFO is not a perfect match here, but it should display in the
+        // same manner as the spell descriptions below and there's no SKILL_INFO
+        // message type.
+        draw_ext_info(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO, fluff);
+        free(fluff);
+        break;
+
+    case SPELLBOOK:
+    case SCROLL:
+    case WAND:
+    case ROD:
+    case POTION:
+        if (tmp->inv && tmp->inv->msg) {
+            // If the embedded spell has a msg, display it here so that the
+            // player knows what it does before they actually read/use the item.
+            // Strip trailing newlines so that the output of examine() is
+            // contiguous.
+            // TODO: It might be better to strip the newlines in object_set_msg
+            // and append them at print time, rather than ensuring that the msg
+            // is newline-terminated and stripping off the newlines when we don't
+            // want them; C string handling makes the latter a lot less convenient.
+            StringBuffer *sb = stringbuffer_new();
+            stringbuffer_append_string(sb, tmp->inv->msg);
+            stringbuffer_trim_whitespace(sb);
+            char *const fluff = stringbuffer_finish(sb);
+            draw_ext_info(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO, fluff);
+            free(fluff);
+        }
+        if (tmp->type == WAND && is_identified(tmp)) {
+            snprintf(buf, sizeof(buf), "It has %d charges left.", tmp->stats.food);
+        }
+        break;
+
     case BOOK:
         if (tmp->msg != NULL)
             snprintf(buf, sizeof(buf), "Something is written in it.");
@@ -1575,11 +1625,6 @@ void examine(object *op, object *tmp) {
         } else
             if (tmp->weight_limit && tmp->stats.Str < 100)
                 snprintf(buf, sizeof(buf), "Its weight limit is %.1f kg.", tmp->weight_limit/(10.0*(100-tmp->stats.Str)));
-        break;
-
-    case WAND:
-        if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-            snprintf(buf, sizeof(buf), "It has %d charges left.", tmp->stats.food);
         break;
     }
 
