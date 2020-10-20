@@ -30,23 +30,157 @@
 #include <ob_types.h>
 #include <sounds.h>
 #include <sproto.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "living.h"
 
-static method_ret spellbook_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
+static method_ret spellbook_type_apply(ob_methods *context, object *book, object *applier, int aflags);
+static void spellbook_type_describe(
+    const ob_methods *context, const object *book, const object *observer,
+    const int use_media_tags, char *buf, const size_t size);
 
 /**
  * Initializer for the SPELLBOOK object type.
  */
 void init_type_spellbook(void) {
     register_apply(SPELLBOOK, spellbook_type_apply);
+    register_describe(SPELLBOOK, spellbook_type_describe);
+}
+
+/** Tens */
+static const char *const numbers_10[] = {
+    "zero", "ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy",
+    "eighty", "ninety"
+};
+
+/** Levels as a full name and not a number. */
+static const char *const ordinals[] = {
+    "zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh",
+    "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
+    "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth",
+    "nineteenth", "twentieth"
+};
+
+/** Tens for levels */
+static const char *const ordinals_10[] = {
+    "zeroth", "tenth", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth",
+    "seventieth", "eightieth", "ninetieth"
+};
+
+/**
+ * Turns a cardinal number (e.g. 7) into an ordinal number (e.g. "seventh") and
+ * appends it to a caller-supplied StringBuffer.
+ * Works only on numbers 0 <= n < 100; outside that range just returns the
+ * cardinal number as a string.
+ *
+ * @param sb
+ * StringBuffer to append the result to.
+ * @param size
+ * Max size of the buffer
+ * @param n
+ * Number to ordinalize.
+ */
+void stringbuffer_append_ordinal(StringBuffer *sb, const int n) {
+    if (n > 99 || n < 0) {
+        stringbuffer_append_printf(sb, "%d.", n);
+    } else if (n <= 20) {
+        stringbuffer_append_string(sb, ordinals[n]);
+    } else if (n % 10 == 0) {
+        stringbuffer_append_string(sb, ordinals_10[n]);
+    } else {
+        stringbuffer_append_printf(sb, "%s%s", ordinals_10[n/10], ordinals[n%10]);
+    }
+}
+
+
+/**
+ * Append a terse description of the spell's name, level, discipline, and paths
+ * to a stringbuffer. What comes out is something like:
+ *   "medium fireball (a third level pyromancy) (paths: Fire)"
+ * this is used in both spellbook_type_describe() to generate the one-line
+ * description for a spellbook, and in spellbook_type_apply to summarize what
+ * the spellbook contains if you don't ID it until you start reading it.
+ *
+ * @param sb
+ * The StringBuffer to append to
+ * @param spell
+ * The spell to describe
+ */
+static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell) {
+    stringbuffer_append_string(sb, "(a ");
+    stringbuffer_append_ordinal(sb, spell->level);
+    stringbuffer_append_string(sb, " level ");
+
+    if (!spell->skill) {
+        /* Can this even happen? */
+        stringbuffer_append_string(sb, "mystery");
+    } else if (spell->stats.grace) {
+        /* Otherwise we get "a second level praying" when it should be "a second
+         * level prayer". */
+        stringbuffer_append_string(sb, "prayer");
+    } else {
+        stringbuffer_append_string(sb, spell->skill);
+    }
+
+    if (spell->path_attuned) {
+        stringbuffer_append_string(sb, ") ");
+        describe_spellpath_attenuation("paths", spell->path_attuned, sb);
+    } else {
+        stringbuffer_append_string(sb, ")");
+    }
+}
+
+/**
+ * Describe a spellbook.
+ *
+ * If identified, displays the level and description of the spell inside it.
+ *
+ * @param context
+ * method context.
+ * @param book
+ * Spellbook to describe
+ * @param looker
+ * Player examining the spellbook
+ * @param use_media_tags
+ * True if we should use mediatags in the output
+ * @param buf
+ * Output buffer to append description to
+ * @param size
+ * Total output buffer size
+ * @return
+ * METHOD_OK always.
+ */
+static void spellbook_type_describe(
+        const ob_methods *context, const object *book, const object *observer,
+        const int use_media_tags, char *buf, size_t size) {
+    if (!is_identified(book)) return;
+
+    size_t len;
+    /* TODO check if this generates the "of foo" so we don't end up with
+    "spellbook of medium fireball of medium fireball" I think it probably does */
+    common_ob_describe(context, book, observer, use_media_tags, buf, size);
+    len = strlen(buf);
+
+    const object *spell = book->inv;
+    if (!spell) {
+        snprintf(buf+len, size-len, " (blank)");
+        return;
+    }
+
+    StringBuffer *sb = stringbuffer_new();
+    stringbuffer_append_string(sb, " ");
+    stringbuffer_append_spelldesc(sb, spell);
+    char *const desc = stringbuffer_finish(sb);
+    safe_strcat(buf, desc, &len, size);
+    free(desc);
 }
 
 /**
  * Applies a spellbook.
  * Checks whether player has knowledge of required skill, doesn't
  * already know the spell, stuff like that. Random learning failure too.
-
+ *
  * @param context
  * method context.
  * @param book
@@ -205,11 +339,6 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             return METHOD_OK;
         }
 
-        get_levelnumber(spell->level, level, sizeof(level));
-        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-            "The spellbook contains the %s level spell %s.",
-            level, spell->name);
-
         if (!QUERY_FLAG(book, FLAG_IDENTIFIED)) {
             book = identify(book);
             if (book->env)
@@ -217,6 +346,16 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             else
                 applier->contr->socket.update_look = 1;
             spell = book->inv;
+
+            /* If they hadn't previously IDed the book, they didn't know what
+             * spell it contained, so tell them here.
+             */
+            StringBuffer *sb = stringbuffer_new();
+            stringbuffer_append_spelldesc(sb, spell);
+            char *const desc = stringbuffer_finish(sb);
+            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "The spellbook contains %s %s.", spell->name, desc);
+            free(desc);
         }
 
         /* Player has the right skills and enough skill to attempt to learn the spell with the logic as follows:

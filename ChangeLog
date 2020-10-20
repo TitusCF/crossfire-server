@@ -1,3 +1,12 @@
+2020-10-20 Rebecca Kelly
+    * types/spellbook/spellbook.c: spellbooks will now list their spell level,
+        casting skill, and paths in the detailed object name, e.g. "grimoire of
+        poison cloud (a fourth level sorcery) (paths: Missiles)", in much the
+        same way equipment will list its stats.
+        Since this information is now available in the object name, the message
+        telling you what spell a spellbook contains when you successfully read
+        it will appear only if you identified the book in the process of reading.
+
 2020-10-18 Daniel Hawkins
     * server/server.c: Add a message stating when initialization finishes.
 
