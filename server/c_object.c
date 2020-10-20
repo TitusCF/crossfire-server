@@ -1561,15 +1561,6 @@ void examine(object *op, object *tmp) {
     }
 
     switch (tmp->type) {
-    case SPELLBOOK:
-        if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->inv) {
-            char level[100];
-
-            get_levelnumber(tmp->inv->level, level, 100);
-            snprintf(buf, sizeof(buf), "%s is a %s level %s spell", tmp->inv->name, level, tmp->inv->skill);
-        }
-        break;
-
     case BOOK:
         if (tmp->msg != NULL)
             snprintf(buf, sizeof(buf), "Something is written in it.");
@@ -1596,6 +1587,9 @@ void examine(object *op, object *tmp) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                       buf);
 
+    // TODO: combine with weight and properly pluralize, so you get:
+    // It is made of stone and weighs 15.0 kg.
+    // They are made of paper and weigh 3 kg.
     if (tmp->materialname != NULL && !tmp->msg) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                              "It is made of: %s.",

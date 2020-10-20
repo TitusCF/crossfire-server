@@ -68,26 +68,6 @@ body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
     /*{"body_dragon_torso", "your body", "a dragon's body"} */
 };
 
-/** Tens */
-static const char *const numbers_10[] = {
-    "zero", "ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy",
-    "eighty", "ninety"
-};
-
-/** Levels as a full name and not a number. */
-static const char *const levelnumbers[] = {
-    "zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh",
-    "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
-    "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth",
-    "nineteenth", "twentieth"
-};
-
-/** Tens for levels */
-static const char *const levelnumbers_10[] = {
-    "zeroth", "tenth", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth",
-    "seventieth", "eightieth", "ninetieth"
-};
-
 /**
  * The following is a large table of item types, the fields are:
  * item number, item name, item name (plural), and two numbers that are the skills
@@ -433,32 +413,6 @@ void query_weight(const object *op, char *buf, size_t size) {
         snprintf(buf, size, "%6.1f", i/1000.0);
     else
         snprintf(buf, size, "%4d  ", i/1000);
-}
-
-/**
- * Formats a level.
- * @param i
- * level to format.
- * @param[out] buf
- * buffer which will contain the level.
- * @param size
- * size of the buffer.
- */
-void get_levelnumber(int i, char *buf, size_t size) {
-    if (i > 99 || i < 0) {
-        snprintf(buf, size, "%d.", i);
-        return;
-    }
-    if (i < 21) {
-        strlcpy(buf, levelnumbers[i], size);
-        return;
-    }
-    if (!(i%10)) {
-        strlcpy(buf, levelnumbers_10[i/10], size);
-        return;
-    }
-    snprintf(buf, size, "%s%s", numbers_10[i/10], levelnumbers[i%10]);
-    return;
 }
 
 /**
