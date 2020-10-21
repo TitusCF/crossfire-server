@@ -1,3 +1,7 @@
+2020-10-21 Daniel Hawkins
+    * socket/request.c: Make sure to remove player's object if they send
+        createplayer for a character with a different name than the current one.
+
 2020-10-20 Rebecca Kelly
     * types/spellbook/spellbook.c, server/c_object.c: display the description of
         a spell or skill when examining an object that contains it such as a
