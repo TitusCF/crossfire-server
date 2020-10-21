@@ -1574,15 +1574,17 @@ void examine(object *op, object *tmp) {
                 "Unfortunately the scroll is damaged and unreadable.");
             break;
         }
-        StringBuffer *sb = stringbuffer_new();
-        stringbuffer_append_string(sb, skill->clone.msg);
-        stringbuffer_trim_whitespace(sb);
-        char *const fluff = stringbuffer_finish(sb);
-        // SPELL_INFO is not a perfect match here, but it should display in the
-        // same manner as the spell descriptions below and there's no SKILL_INFO
-        // message type.
-        draw_ext_info(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO, fluff);
-        free(fluff);
+        if (skill->clone.msg) {
+            StringBuffer *sb = stringbuffer_new();
+            stringbuffer_append_string(sb, skill->clone.msg);
+            stringbuffer_trim_whitespace(sb);
+            char *const fluff = stringbuffer_finish(sb);
+            // SPELL_INFO is not a perfect match here, but it should display in the
+            // same manner as the spell descriptions below and there's no SKILL_INFO
+            // message type.
+            draw_ext_info(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO, fluff);
+            free(fluff);
+        }
         break;
 
     case SPELLBOOK:
