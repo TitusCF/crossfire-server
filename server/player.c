@@ -3504,6 +3504,43 @@ static void loot_object(object *op, object *container) {
 }
 
 /**
+ * Remove confusion, disease, and poison on death.
+ * Used in battleground not-death and non-perma-death
+ *
+ * Abstracted out to its own function to de-spaghettify the death code a little
+ *
+ * @param op
+ * The player object being killed.
+ * Assumes that the object is a player, but does not check
+ */
+static void restore_player(object *op) {
+    object *tmp;
+    archetype *at = find_archetype("poisoning");
+    if (at != NULL) {
+        tmp = arch_present_in_ob(at, op);
+        if (tmp) {
+            object_remove(tmp);
+            object_free_drop_inventory(tmp);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+                          "Your body feels cleansed");
+        }
+    }
+
+    at = find_archetype("confusion");
+    if (at != NULL) {
+        tmp = arch_present_in_ob(at, op);
+        if (tmp) {
+            object_remove(tmp);
+            object_free_drop_inventory(tmp);
+            draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+                          "Your mind feels clearer");
+        }
+    }
+
+    cure_disease(op, NULL, NULL);  /* remove any disease */
+}
+
+/**
  * Handle a player's death.
  *
  * Also deals with lifesaving objects, arena deaths, cleaning disease/poison,
@@ -3517,7 +3554,6 @@ static void loot_object(object *op, object *container) {
 void kill_player(object *op, const object *killer) {
     char buf[MAX_BUF];
     int x, y;
-    archetype *at;
     object *tmp;
     archetype *trophy = NULL;
 
@@ -3537,29 +3573,8 @@ void kill_player(object *op, const object *killer) {
                       "Local medics have saved your life...");
 
         /* restore player */
-        at = find_archetype("poisoning");
-        if (at != NULL) {
-            tmp = arch_present_in_ob(at, op);
-            if (tmp) {
-                object_remove(tmp);
-                object_free_drop_inventory(tmp);
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                              "Your body feels cleansed");
-            }
-        }
+        restore_player(op);
 
-        at = find_archetype("confusion");
-        if (at != NULL) {
-            tmp = arch_present_in_ob(at, op);
-            if (tmp) {
-                object_remove(tmp);
-                object_free_drop_inventory(tmp);
-                draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                              "Your mind feels clearer");
-            }
-        }
-
-        cure_disease(op, NULL, NULL);  /* remove any disease */
         op->stats.hp = op->stats.maxhp;
         if (op->stats.food <= 0)
           op->stats.food = MAX_FOOD;
@@ -3779,28 +3794,7 @@ static void kill_player_not_permadeath(object *op) {
 
     /* restore player: remove any poisoning, disease and confusion the
      * character may be suffering.*/
-    at = find_archetype("poisoning");
-    if (at != NULL) {
-        tmp = arch_present_in_ob(at, op);
-        if (tmp) {
-            object_remove(tmp);
-            object_free_drop_inventory(tmp);
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                "Your body feels cleansed");
-        }
-    }
-
-    at = find_archetype("confusion");
-    if (at != NULL) {
-        tmp = arch_present_in_ob(at, op);
-        if (tmp) {
-            object_remove(tmp);
-            object_free_drop_inventory(tmp);
-            draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                "Your mind feels clearer");
-        }
-    }
-    cure_disease(op, NULL, NULL);  /* remove any disease */
+    restore_player(op);
 
     /* if we died cause of food, give
      * us food, and reset HP's...
