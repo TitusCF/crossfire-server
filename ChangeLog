@@ -1,3 +1,7 @@
+2020-10-22 Daniel Hawkins
+    * server/player.c: Refactor code to remove confusion, poison, and disease on death
+        into its own function.
+
 2020-10-21 Daniel Hawkins
     * socket/request.c: Make sure to remove player's object if they send
         createplayer for a character with a different name than the current one.
