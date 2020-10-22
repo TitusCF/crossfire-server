@@ -2613,6 +2613,18 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     for (pl=first_player; pl; pl=pl->next)
       if (&pl->socket == ns) {
         if (pl->ob->name) {
+          if (ns->login_method >= 2) {
+              /* If we have the newer login type, then disallow createplayer
+               * when already on a map. I don't think players can be on a map
+               * when disconnected when using this method.
+               */
+              if (pl->ob->map) {
+                  SockList_AddString(&sl, "failure createplayer You are already playing!");
+                  Send_With_Handling(ns, &sl);
+                  SockList_Term(&sl);
+                  return;
+              }
+          }
           if (!strcmp(pl->ob->name, name)) {
               /* For some reason not only the socket is the same but also
                * the player is already playing. If this happens at this

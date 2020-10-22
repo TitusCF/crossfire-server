@@ -1,6 +1,8 @@
 2020-10-21 Daniel Hawkins
     * socket/request.c: Make sure to remove player's object if they send
         createplayer for a character with a different name than the current one.
+        Also make sure loginmethod 2 sockets reject createplayer command from
+        sockets whose players are already playing on a map.
     * server/c_object.c: Fix a nullpointer dereference when a skill tool lacks a
         skill message.
 
