@@ -1511,6 +1511,51 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         return 0;
     }
 
+
+    mflags = get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL);
+
+    /* See if we can cast a spell here.  If the caster and op are
+     * not alive, then this would mean that the mapmaker put the
+     * objects on the space - presume that they know what they are
+     * doing.
+     */
+    if (spell_ob->type == SPELL
+    && caster->type != POTION
+    && !QUERY_FLAG(op, FLAG_WIZCAST)
+    && (QUERY_FLAG(caster, FLAG_ALIVE) || QUERY_FLAG(op, FLAG_ALIVE))
+    && !QUERY_FLAG(op, FLAG_MONSTER)
+    && (((mflags&P_NO_MAGIC) && spell_ob->stats.sp) || ((mflags&P_NO_CLERIC) && spell_ob->stats.grace))) {
+        if (op->type != PLAYER)
+            return 0;
+
+        cast_create_obj(op, create_archetype(ARCH_SPELL_BLOCKED), 0);
+
+        if ((mflags&P_NO_CLERIC) && spell_ob->stats.grace)
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                                 "This ground is unholy!  %s ignores you.",
+                                 godname);
+        else
+            switch (op->contr->shoottype) {
+            case range_magic:
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                              "Something blocks your spellcasting.");
+                break;
+
+            case range_misc:
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                              "Something blocks the magic of your item.");
+                break;
+            case range_golem:
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                              "Something blocks the magic of your scroll.");
+                break;
+
+            default:
+                break;
+            }
+        return 0;
+    }
+
     /* if it is a player casting the spell, and they are really casting it
      * (vs it coming from a wand, scroll, or whatever else), do some
      * checks.  We let monsters do special things - eg, they
@@ -1607,50 +1652,6 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
                 /* already warned by the function */
                 return 0;
         }
-    }
-
-    mflags = get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL);
-
-    /* See if we can cast a spell here.  If the caster and op are
-     * not alive, then this would mean that the mapmaker put the
-     * objects on the space - presume that they know what they are
-     * doing.
-     */
-    if (spell_ob->type == SPELL
-    && caster->type != POTION
-    && !QUERY_FLAG(op, FLAG_WIZCAST)
-    && (QUERY_FLAG(caster, FLAG_ALIVE) || QUERY_FLAG(op, FLAG_ALIVE))
-    && !QUERY_FLAG(op, FLAG_MONSTER)
-    && (((mflags&P_NO_MAGIC) && spell_ob->stats.sp) || ((mflags&P_NO_CLERIC) && spell_ob->stats.grace))) {
-        if (op->type != PLAYER)
-            return 0;
-
-        cast_create_obj(op, create_archetype(ARCH_SPELL_BLOCKED), 0);
-
-        if ((mflags&P_NO_CLERIC) && spell_ob->stats.grace)
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                                 "This ground is unholy!  %s ignores you.",
-                                 godname);
-        else
-            switch (op->contr->shoottype) {
-            case range_magic:
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-                              "Something blocks your spellcasting.");
-                break;
-
-            case range_misc:
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                              "Something blocks the magic of your item.");
-                break;
-            case range_golem:
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                              "Something blocks the magic of your scroll.");
-                break;
-
-            default:
-                break;
-            }
-        return 0;
     }
 
     if (caster == op && caster->type ==PLAYER && settings.casting_time == TRUE && spell_ob->type == SPELL) {
