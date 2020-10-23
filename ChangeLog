@@ -1,3 +1,6 @@
+2020-10-23 Daniel Hawkins
+    * server/spell_util.c: Make no-magic tiles block magic before spells can be bungled.
+
 2020-10-22 Daniel Hawkins
     * server/player.c: Refactor code to remove confusion, poison, and disease on death
         into its own function.
