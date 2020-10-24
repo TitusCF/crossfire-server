@@ -219,19 +219,31 @@ int attempt_do_artificer(object* caster, object* cauldron, object* base_item, in
     object *potion; // the potion item we are using to craft
     object *inorganic; // the inorganic item we are using to craft
     object *flesh; // the flesh item we are using to craft
+
     // now that we have our base_item set we need to pick a stat to improve depending on the
     // type of inorganic in the cauldron (forge)
     potion = object_find_by_type(cauldron, POTION);
-    inorganic = object_find_by_type(cauldron, INORGANIC);
-    flesh = object_find_by_type(cauldron, FLESH);
-
-    // do a string search to see what type of stat is being improved.
-    if (potion == NULL || inorganic == NULL ||
-        flesh == NULL) { /* failure--no type found */
+    if (potion == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
-                      MSG_TYPE_SKILL_ERROR,
-                      "No potion, inorganic, or flesh.");
+                      MSG_TYPE_SKILL_ERROR, "Missing potion.");
         return 0;
+    }
+
+    flesh = object_find_by_type(cauldron, FLESH);
+    if (flesh == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
+                      MSG_TYPE_SKILL_ERROR, "Missing flesh.");
+        return 0;
+    }
+
+    inorganic = object_find_by_type(cauldron, INORGANIC);
+    if (inorganic == NULL) {
+        inorganic = object_find_by_type(cauldron, GEM);
+        if (inorganic == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
+                          MSG_TYPE_SKILL_ERROR, "Missing organic.");
+            return 0;
+        }
     }
 
     // level zero is +0, start at +1 bonus
