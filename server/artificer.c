@@ -359,7 +359,7 @@ void attempt_do_artificer(object *caster, object *cauldron) {
         }
 
         // have all the ingredients necessary. 
-        if((strcmp("potionstr", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("ruby", inorganic->name))==0)) {
+        if((strcmp("potionstr", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("ruby", inorganic->name)==0)) {
             base_item->stats.Str = atmpt_bonus;
             success = TRUE; 
             }
