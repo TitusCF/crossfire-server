@@ -78,7 +78,7 @@ CON: potioncon, demon_head, emerald
 #include <spells.h>
 
 static object* find_base(const object* cauldron) {
-    enum object_type bases[] = {AMULET, RING, WEAPON, ARMOUR, SHIELD, BOW, HELMET, CLOAK, BOOTS, GLOVES, BRACERS, GIRDLE};
+    enum object_type bases[] = {AMULET, RING, WEAPON, ARMOUR, SHIELD, BOW, HELMET};
     for (int i = 0; i < sizeof(bases)/sizeof(enum object_type); i++) {
         object* base_item = object_find_by_type(cauldron, bases[i]);
         if (base_item != NULL) {
@@ -99,22 +99,14 @@ static object* find_secondary(const object* cauldron, const object* base_item) {
 }
 
 static bool merge_should_succeed(const object* op, const object* base,
-                                 const object* result, const object* secondary,
-                                 const int level) {
+                                 const object* secondary, const int level) {
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                       "Note: Merging items as DM always succeeds.");
         return true;
     }
 
-    //[(INT/10) * (SKILL + 10)]  /  (DIP - SIP) + (DIP + SIP)
-
-    int dip = calc_item_power(result);
-    int sip = base->item_power;
-    float chance = (op->stats.Int/10.0 * (level + 10)) / ((dip - sip) + (dip + sip));
-    chance = MIN(MAX(chance, 5), 60); // min 5, max 60
-    LOG(llevDebug, "merge: sip %d dip %d: chance %f\n", sip, dip, chance);
-    if (rndm(0, 100) <= chance) {
+    if (rndm(0, 100) <= level) {
         return true;
     } else {
         return false;
@@ -131,33 +123,9 @@ static int attempt_merge(const object* caster, object* cauldron,
         return 0;
     }
 
-    // Create merged result. Merged result is needed to determine if the merge
-    // actually succeeds or not.
-    object* merge_result = object_new();
-    object_copy(base_item, merge_result);
-
-    merge_result->stats.Str += merge_item->stats.Str;
-    merge_result->stats.Dex += merge_item->stats.Dex;
-    merge_result->stats.Con += merge_item->stats.Con;
-    merge_result->stats.Wis += merge_item->stats.Wis;
-    merge_result->stats.Cha += merge_item->stats.Cha;
-    merge_result->stats.Int += merge_item->stats.Int;
-    merge_result->stats.Pow += merge_item->stats.Pow;
-    merge_result->stats.ac += merge_item->stats.ac;
-    merge_result->stats.luck += merge_item->stats.luck;
-    merge_result->stats.hp += merge_item->stats.hp;
-    merge_result->stats.maxhp += merge_item->stats.maxhp;
-    merge_result->stats.grace += merge_item->stats.grace;
-    merge_result->stats.maxgrace += merge_item->stats.maxgrace;
-    int l = 0;
-
-    for (l = 0; l < NROFATTACKS; l++) {
-        // merge resists
-        merge_result->resist[l] += merge_item->resist[l];
-    }
-
     bool success = false;
-    if (merge_should_succeed(caster, base_item, merge_result, merge_item, level)) {
+    // we have a merge item. merge the merge_item and base_item stats.
+    if (merge_should_succeed(caster, base_item, merge_item, level)) {
         base_item->stats.Str += merge_item->stats.Str;
         base_item->stats.Dex += merge_item->stats.Dex;
         base_item->stats.Con += merge_item->stats.Con;
@@ -178,16 +146,6 @@ static int attempt_merge(const object* caster, object* cauldron,
             base_item->resist[l] += merge_item->resist[l];
         }
 
-        // Make custom base item name merged object's new name.
-        if (base_item->custom_name != NULL) {
-            FREE_AND_COPY(base_item->name, base_item->custom_name);
-            FREE_AND_CLEAR_STR(base_item->custom_name);
-        }
-
-        char buf[MAX_BUF];
-        snprintf(buf, sizeof(buf), "This artifact %s was made by %s.", base_item->name, caster->name);
-        object_set_msg(base_item, buf);
-
         draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
                       MSG_TYPE_SKILL_SUCCESS,
                       "You successfully merged the items.");
@@ -198,9 +156,9 @@ static int attempt_merge(const object* caster, object* cauldron,
                       "Your items failed to merge and items were destroyed in the process.");
     }
 
-    object_decrease_nrof(merge_result, 1);
     object_decrease_nrof(merge_item, 1); // decrease the stack size.
-    SET_FLAG(cauldron, FLAG_APPLIED); // caller uses this to send client update
+    SET_FLAG(cauldron,
+             FLAG_APPLIED); // not sure we need this but i don't think it hurts.
 
     if (success) {
         return 1;
@@ -219,31 +177,19 @@ int attempt_do_artificer(object* caster, object* cauldron, object* base_item, in
     object *potion; // the potion item we are using to craft
     object *inorganic; // the inorganic item we are using to craft
     object *flesh; // the flesh item we are using to craft
-
     // now that we have our base_item set we need to pick a stat to improve depending on the
     // type of inorganic in the cauldron (forge)
     potion = object_find_by_type(cauldron, POTION);
-    if (potion == NULL) {
-        draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
-                      MSG_TYPE_SKILL_ERROR, "Missing potion.");
-        return 0;
-    }
-
-    flesh = object_find_by_type(cauldron, FLESH);
-    if (flesh == NULL) {
-        draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
-                      MSG_TYPE_SKILL_ERROR, "Missing flesh.");
-        return 0;
-    }
-
     inorganic = object_find_by_type(cauldron, INORGANIC);
-    if (inorganic == NULL) {
-        inorganic = object_find_by_type(cauldron, GEM);
-        if (inorganic == NULL) {
-            draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
-                          MSG_TYPE_SKILL_ERROR, "Missing organic.");
-            return 0;
-        }
+    flesh = object_find_by_type(cauldron, FLESH);
+
+    // do a string search to see what type of stat is being improved.
+    if (potion == NULL || inorganic == NULL ||
+        flesh == NULL) { /* failure--no type found */
+        draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
+                      MSG_TYPE_SKILL_ERROR,
+                      "No potion, inorganic, or flesh.");
+        return 0;
     }
 
     // level zero is +0, start at +1 bonus
@@ -299,10 +245,176 @@ int attempt_do_artificer(object* caster, object* cauldron, object* base_item, in
         base_item->stats.Con = atmpt_bonus;
         success = TRUE; 
         }
+<<<<<<< HEAD
+
+        // have all the ingredients necessary. 
+        if((strcmp("potionstr", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("ruby", inorganic->name)==0)) {
+            base_item->stats.Str = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potiondex", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("sapphire", inorganic->name)==0)) {
+            base_item->stats.Dex = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potionpow", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("amethyst", inorganic->name)==0)) {
+            base_item->stats.Pow = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potionint", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("mithril", inorganic->name)==0)) {
+            base_item->stats.Int = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potionwis", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("diamond", inorganic->name)==0)) {
+            base_item->stats.Wis = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potioncha", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("smallnugget", inorganic->name)==0)) {
+            base_item->stats.Cha = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potioncon", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("emerald", inorganic->name)==0)) {
+            base_item->stats.Con = atmpt_bonus;
+            success = TRUE; 
+            }
+        // end base stats part.
+        else if((strcmp("vial_yellow", potion->name)==0) && (strcmp("bat_wing", flesh->name)==0) && (strcmp("phil_salt", inorganic->name)==0)) {
+            base_item->stats.ac = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_yellow", potion->name)==0) && (strcmp("hand", flesh->name)==0) && (strcmp("phil_salt", inorganic->name)==0)) {
+             base_item->stats.wc = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_yellow", potion->name)==0) && (strcmp("insect_stinger", flesh->name)==0) && (strcmp("phil_salt", inorganic->name)==0)) {
+            base_item->stats.dam = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_green", potion->name)==0) && (strcmp("serp_skin", flesh->name)==0) && (strcmp("phil_salt", inorganic->name)==0)) {
+            base_item->stats.luck = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_red", potion->name)==0) && (strcmp("heart", flesh->name)==0) && (strcmp("phil_salt", inorganic->name)==0)) {
+            base_item->stats.hp = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_red", potion->name)==0) && (strcmp("heart", flesh->name)==0) && (strcmp("phil_sulpher", inorganic->name)==0)) {
+            base_item->stats.maxhp = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_magenta", potion->name)==0) && (strcmp("brain", flesh->name)==0) && (strcmp("phil_salt", inorganic->name)==0)) {
+            base_item->stats.sp = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_magenta", potion->name)==0) && (strcmp("brain", flesh->name)==0) && (strcmp("phil_sulpher", inorganic->name)==0)) {
+            base_item->stats.maxsp = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_magenta", potion->name)==0) && (strcmp("dragon_eye", flesh->name)==0) && (strcmp("phil_dust", inorganic->name)==0)) {
+            base_item->stats.grace = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_magenta", potion->name)==0) && (strcmp("dragon_eye", flesh->name)==0) && (strcmp("phil_sulpher", inorganic->name)==0)) {
+            base_item->stats.maxgrace = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_improve", potion->name)==0) && (strcmp("eyes", flesh->name)==0) && (strcmp("phil_salt", inorganic->name)==0)) {
+            base_item->stats.exp = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("water", potion->name)==0) && (strcmp("tongue", flesh->name)==0) && (strcmp("phil_salt", inorganic->name)==0)) {
+            base_item->stats.food = atmpt_bonus;
+            success = TRUE; 
+            }
+        // Start resistances 
+        else if((strcmp("potion_shielding", potion->name)==0) && (strcmp("dragon_eye", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->stats.ac = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_magic", potion->name)==0) && (strcmp("dragon_eye", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[1] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_fire", potion->name)==0) && (strcmp("hide_black", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[2] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_heroism", potion->name)==0) && (strcmp("hand", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[3] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_heroism", potion->name)==0) && (strcmp("hide", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[4] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_cold2", potion->name)==0) && (strcmp("hide_white", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[5] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("minor_potion_restoration", potion->name)==0) && (strcmp("brain", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[6] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_yellow", potion->name)==0) && (strcmp("icor", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[7] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_red", potion->name)==0) && (strcmp("heart", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[9] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_aethereality", potion->name)==0) && (strcmp("ectoplasm", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[10] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_green", potion->name)==0) && (strcmp("liver", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[11] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_water", potion->name)==0) && (strcmp("foot", flesh->name)==0) && (strcmp("river_stone", inorganic->name)==0)) {
+            base_item->resist[12] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_green", potion->name)==0) && (strcmp("insect_stinger", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[13] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_red", potion->name)==0) && (strcmp("tooth", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[14] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_heroism", potion->name)==0) && (strcmp("demon_head", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[14] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_empty", potion->name)==0) && (strcmp("heart", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[16] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_red", potion->name)==0) && (strcmp("head", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[17] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_water", potion->name)==0) && (strcmp("bat_wing", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[21] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("potion_empty", potion->name)==0) && (strcmp("eye", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[22] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_green", potion->name)==0) && (strcmp("skin", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[24] = atmpt_bonus;
+            success = TRUE; 
+            }
+        else if((strcmp("vial_green", potion->name)==0) && (strcmp("residue", flesh->name)==0) && (strcmp("uraniumpile", inorganic->name)==0)) {
+            base_item->resist[25] = atmpt_bonus;
+            success = TRUE; 
+=======
     // end base stats part.
     else if(strcmp("vial_yellow", potion->name) && strcmp("bat_wing", flesh->name) && strcmp("phil_salt", inorganic->name)) {
         base_item->stats.ac = atmpt_bonus;
         success = TRUE; 
+>>>>>>> Rewrite artificer skill
         }
     else if(strcmp("vial_yellow", potion->name) && strcmp("hand", flesh->name) && strcmp("phil_salt", inorganic->name)) {
          base_item->stats.wc = atmpt_bonus;
