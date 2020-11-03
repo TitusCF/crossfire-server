@@ -786,21 +786,20 @@ CF_PLUGIN int eventListener(int *type, ...) {
     va_arg(args, talk_info *); /* ignored for now */
     va_end(args);
 
-    /* should our npc disappear? */
-    if (RANDOM()%100 < 30) {
+    object *inv;
+    value = cf_object_get_key(who, FIRST_MOVE_KEY);
+    // Set the flag regardless of whether we tried to move through an exit
+    if (strcmp(value, "1") == 0) {
+        cf_object_set_key(who, FIRST_MOVE_KEY, "0", 1);
+
+        /* must set inventory as no drop, else it'll just drop on the ground */
+        for (inv = cf_object_get_object_property(who, CFAPI_OBJECT_PROP_INVENTORY); inv; inv = cf_object_get_object_property(inv, CFAPI_OBJECT_PROP_OB_BELOW))
+            cf_object_set_flag(inv, FLAG_NO_DROP, 1);
+    }
+    /* should our npc disappear? -- Only attempt this if not first move */
+    else if (RANDOM()%100 < 30) {
         for (ground = cf_map_get_object_at(who->map, who->x, who->y); ground; ground = cf_object_get_object_property(ground, CFAPI_OBJECT_PROP_OB_ABOVE)) {
             if (ground->type == EXIT) {
-                object *inv;
-
-                value = cf_object_get_key(who, FIRST_MOVE_KEY);
-                if (strcmp(value, "1") == 0) {
-                    cf_object_set_key(who, FIRST_MOVE_KEY, "0", 1);
-                    break;
-                }
-
-                /* must set inventory as no drop, else it'll just drop on the ground */
-                for (inv = cf_object_get_object_property(who, CFAPI_OBJECT_PROP_INVENTORY); inv; inv = cf_object_get_object_property(inv, CFAPI_OBJECT_PROP_OB_BELOW))
-                    cf_object_set_flag(inv, FLAG_NO_DROP, 1);
 
                 cf_object_remove(who);
                 cf_object_free_drop_inventory(who);

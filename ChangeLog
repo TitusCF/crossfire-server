@@ -1,6 +1,7 @@
 2020-11-02 Daniel Hawkins
     * plugins/citylife/citylife.c: Fix an off-by-one in the number of NPCs to spawn on
         map load, and fix the location and inclusion of spawn points in northern Scorn.
+        Fixed NPCs loaded on map load from having their inventory drop when killed.
 
 2020-10-23 Daniel Hawkins
     * server/spell_util.c: Make no-magic tiles block magic before spells can be bungled.
