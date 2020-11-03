@@ -154,7 +154,7 @@ static const spawn_zone scorn_nw_zones[] = {
 
 /** Points for map 104_115. */
 static const spawn_point scorn_nw_points[] = {
-    { 41, 37 },
+    { 41, 39 },
     { 48, 35 },
     { 49, 40 },
     { 47, 22 },
@@ -169,7 +169,7 @@ static const spawn_zone scorn_ne_zones[] = {
 /** Points for map 105_115. */
 static const spawn_point scorn_ne_points[] = {
     { 15, 42 },
-    { 9, 35 },
+    { 10, 34 },
     { 15, 29 },
     { 1, 25 },
     { 1, 29 }
@@ -570,9 +570,9 @@ static const char *const scorncounty_archs[] = {
  */
 static const mapzone available_zones[] = {
     { scorn_nw_points, 5, scorn_nw_zones, 1, 2, "/world/world_104_115", scorn_archs, 12 },
-    { scorn_ne_points, 1, scorn_ne_zones, 1, 5, "/world/world_105_115", scorn_archs, 12 },
+    { scorn_ne_points, 5, scorn_ne_zones, 1, 5, "/world/world_105_115", scorn_archs, 12 },
     { scorn_sw_points, 3, scorn_sw_zones, 1, 5, "/world/world_104_116", scorn_archs, 12 },
-    { scorn_se_points, 1, scorn_se_zones, 1, 5, "/world/world_105_116", scorn_archs, 12 },
+    { scorn_se_points, 4, scorn_se_zones, 1, 5, "/world/world_105_116", scorn_archs, 12 },
     { scorncounty_points, 8, scorncounty_zones, 4, 8, "/world/world_105_116", scorncounty_archs, 4},
     { darcap_points, 19, darcap_zones, 3, 4, "/world/world_116_102", darcap_archs, 12},
     { navar_nw_points, 8, navar_nw_zones, 4, 2, "/world/world_121_116", navar_archs, 15 },
@@ -686,7 +686,7 @@ static void add_npcs_to_map(mapstruct *map) {
     add = 1+RANDOM()%zone->population;
     cf_log(llevDebug, PLUGIN_NAME ": adding %d NPC to map %s.\n", add, map->path);
 
-    while (add-- >= 0) {
+    while (--add >= 0) {
         add_npc_to_zone(zone, map);
     }
 }
