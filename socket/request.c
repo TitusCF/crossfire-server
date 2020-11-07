@@ -2644,7 +2644,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
                * only one of them is controlled by the player.
                */
               if (pl->ob->contr == pl) {
-                  pl->ob->contr == NULL;
+                  pl->ob->contr = NULL;
                   if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
                       object_remove(pl->ob);
               }
