@@ -1210,6 +1210,18 @@ static int check_probe(int ax, int ay, const object *ob, SockList *sl, socket_st
     return got_one;
 }
 
+static int annotate_ob(int ax, int ay, const object *ob, SockList *sl, socket_struct *ns, int *has_obj, int *alive_layer) {
+    int got_one = check_probe(ax, ay, ob, sl, ns, has_obj, alive_layer);
+    if (QUERY_FLAG(ob, FLAG_ALIVE) && ob->msg != NULL && ob->type != PLAYER) {
+        archetype *dummy = try_find_archetype("speechbubble");
+        if (dummy != NULL) {
+            got_one += map2_add_ob(ax, ay, MAP_LAYER_FLY2, &dummy->clone, sl, ns, has_obj, 0);
+            (*alive_layer) = MAP_LAYER_FLY2;
+        }
+    }
+    return got_one;
+}
+
 /*
  * This function is used to check a space (ax, ay) whose only
  * data we may care about are any heads. Basically, this
@@ -1409,7 +1421,7 @@ static void draw_client_map2(object *pl) {
 
                             /* if we added the face, or it is a monster's head, check probe spell */
                             if (got_one != old_got || (ob->head == NULL && ob->more))
-                                got_one += check_probe(ax, ay, ob, &sl, &plyr->socket, &has_obj, &alive_layer);
+                                got_one += annotate_ob(ax, ay, ob, &sl, &plyr->socket, &has_obj, &alive_layer);
 
                             /* If we are just storing away the head
                              * for future use, then effectively this
@@ -1420,7 +1432,7 @@ static void draw_client_map2(object *pl) {
                                 del_one += map2_delete_layer(ax, ay, layer, &sl, &plyr->socket);
                             } else if (ob->head == NULL) {
                                 /* for single-part items */
-                                got_one += check_probe(ax, ay, ob, &sl, &plyr->socket, &has_obj, &alive_layer);
+                                got_one += annotate_ob(ax, ay, ob, &sl, &plyr->socket, &has_obj, &alive_layer);
                             }
                         } else {
                             if (layer != alive_layer)
