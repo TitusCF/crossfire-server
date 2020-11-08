@@ -410,7 +410,12 @@ int trap_show(object *trap, object *where) {
     if (where == NULL)
         return 0;
     tmp2 = create_archetype("runedet");
-    tmp2->face = GET_ANIMATION(trap, 0);
+    // Custom-made traps can have no animation.
+    // The GET_ANIMATION macro does not handle this scenario
+    if (trap->animation || trap->temp_animation)
+        tmp2->face = GET_ANIMATION(trap, 0);
+    else
+        tmp2->face = trap->face;
     object_insert_in_map_at(tmp2, where->map, NULL, 0, where->x, where->y);
     return 1;
 }
