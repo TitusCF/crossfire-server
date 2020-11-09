@@ -1293,7 +1293,7 @@ object *find_marked_object(object *op) {
     /* Try a different way of doing this
      * We check the environment of the marked object
      * to make sure it is still in the player's inventory.
-     * In addition, we ensure there is the correct quantity of that item.
+     * In addition, we ensure there is the correct tag for that item.
      *
      * Daniel Hawkins 2018-10-23
      */
