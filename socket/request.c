@@ -373,8 +373,6 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
                           "Warning: Your client is too old to receive map data. Please update to a new client at: "
                           "https://sourceforge.net/projects/crossfire/");
         }
-
-        ns->status = Ns_Avail;
     }
     settings = oldsettings;
 }
@@ -2448,6 +2446,13 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
 
     SockList_Init(&sl);
 
+    if (ns->status != Ns_Add) {
+        SockList_AddString(&sl, "failure accountplay Not allowed right now");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
     if (!buf[0]) {
         SockList_AddString(&sl, "failure accountplay Malformed character name");
         Send_With_Handling(ns, &sl);
@@ -2497,6 +2502,7 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
      */
     if (!pl) {
         pl = get_player(NULL);
+        ns->status = Ns_Avail;
         memcpy(&pl->socket, ns, sizeof(socket_struct));
         ns->faces_sent = NULL;
         SockList_ResetRead(&pl->socket.inbuf);
@@ -2510,8 +2516,6 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
     SockList_AddString(&sl, "addme_success");
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
-
-    ns->status = Ns_Avail;
 }
 
 #define MAX_CHOICES 100
@@ -2536,6 +2540,13 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     }
 
     SockList_Init(&sl);
+
+    if (ns->status != Ns_Add) {
+        SockList_AddString(&sl, "failure createplayer Not allowed right now");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
 
     nlen = len;
     status = decode_name_password(buf, &nlen, name, password);
@@ -2613,18 +2624,6 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
     for (pl=first_player; pl; pl=pl->next)
       if (&pl->socket == ns) {
         if (pl->ob->name) {
-          if (ns->login_method >= 2) {
-              /* If we have the newer login type, then disallow createplayer
-               * when already on a map. I don't think players can be on a map
-               * when disconnected when using this method.
-               */
-              if (pl->ob->map) {
-                  SockList_AddString(&sl, "failure createplayer You are already playing!");
-                  Send_With_Handling(ns, &sl);
-                  SockList_Term(&sl);
-                  return;
-              }
-          }
           if (!strcmp(pl->ob->name, name)) {
               /* For some reason not only the socket is the same but also
                * the player is already playing. If this happens at this
@@ -2644,7 +2643,6 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
                * only one of them is controlled by the player.
                */
               if (pl->ob->contr == pl) {
-                  pl->ob->contr = NULL;
                   if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
                       object_remove(pl->ob);
               }
@@ -2798,6 +2796,10 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
 
         if (!pl)
             pl = add_player(ns, ADD_PLAYER_NEW | ADD_PLAYER_NO_MAP | ADD_PLAYER_NO_STATS_ROLL);
+        // If we already have a player, we a replaying on the same connection.
+        // Since add_player normally sets ns->status, we still need that to happen.
+        else
+            ns->status = Ns_Avail;
 
         apply_race_and_class(pl->ob, race_a, class_a, &new_stats);
 
@@ -2805,6 +2807,10 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         /* In thise case, old login method */
         if (!pl)
             pl = add_player(ns, ADD_PLAYER_NEW);
+        // If we already have a player, we a replaying on the same connection.
+        // Since add_player normally sets ns->status, we still need that to happen.
+        else
+            ns->status = Ns_Avail;
 /* already done by add_player
         roll_again(pl->ob);
         pl->state = ST_ROLL_STAT;
@@ -2919,7 +2925,6 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
             ob_apply(op, pl->ob, 0);
     }
 
-    ns->status = Ns_Avail;
     LOG(llevInfo, "new character %s from %s\n", pl->ob->name, pl->ob->contr->socket.host);
     draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
                          MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
