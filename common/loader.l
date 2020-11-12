@@ -700,15 +700,17 @@ A       .+
                         if (op->arch) {
                           /*
                            Here an object must be inserted into another object,
-                           during archetypes or artifact loading.
+                           during archetypes, artifact or map loading.
 
-                           The logic is a follow:
+                           The logic is as follow:
                                - in linemode, we are loading artifacts, so just
                                  increase depth, next calls will work on object
-                                 in inventory, and linking done in the "end"
-                                 part
-                               - when not in linemode, we are loading archetypes,
-                                 so discard the object, it'll be handled by second_arch_pass()
+                                 in inventory, and insertion in previous object done
+                                 in the "end" part
+                               - when not in linemode, two cases:
+                                - arch_init is not set, then we are loading a map
+                                - arch_init is set, we are loading archetypes,
+                                  discard the object, it'll be handled in a second pass
                             */
                             object *tmp;
                             char *yv = yval();
@@ -733,15 +735,18 @@ A       .+
                                 lex_load(depth, items, maxdepth, map_flags, linemode);
                                 (*depth)--;
                                 if (tmp->arch && (arch_init == 0)) {
+                                    /* Map loading, object into another object*/
                                     object_insert_in_ob(tmp, op);
                                 } else {
+                                    /* Archetypes loading or invalid object in a map */
                                     if (arch_init == 0)
                                         LOG(llevDebug, "Discarding object without arch: %s\n", tmp->name ? tmp->name : "(null)");
                                     object_free_drop_inventory(tmp);
                                 }
                             }
                         } else {
-                            /* Here we are loading an object in a map */
+                            /* Here we are loading an object in a map, on a spot, not
+                             * in another object's inventory */
                             char *yv = yval();
 
                             op->arch = try_find_archetype(yv);
@@ -788,6 +793,7 @@ A       .+
                         if (linemode) {
                             /* Linemode is only set for artifact loading. */
                             if ((*depth) > 0) {
+                                /* Object we finished is in another object's inventory */
                                 object_insert_in_ob(items[*depth], items[(*depth)-1]);
                             }
                             return LL_NORMAL;
