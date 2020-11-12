@@ -697,21 +697,18 @@ A       .+
 ^race{S}            FREE_AND_COPY(op->race, yval());
 ^slaying{S}         FREE_AND_COPY(op->slaying, yval());
 ^arch{S}            {
-                        /* If op->arch has been set, then this new object
-                         * must be part of the inventory.  So process
-                         * appropriately.
-                         */
                         if (op->arch) {
-                            /* The logic is a follow:
+                          /*
+                           Here an object must be inserted into another object,
+                           during archetypes or artifact loading.
+
+                           The logic is a follow:
                                - in linemode, we are loading artifacts, so just
-                                 increase depth, next calls with work on object
+                                 increase depth, next calls will work on object
                                  in inventory, and linking done in the "end"
                                  part
-                               - when not in linemode, we are loading an
-                                 archetype, or a map
-                               - if archetype loading, discard the object,
-                                 it'll be handled by second_arch_pass()
-                               - else put object like usual
+                               - when not in linemode, we are loading archetypes,
+                                 so discard the object, it'll be handled by second_arch_pass()
                             */
                             object *tmp;
                             char *yv = yval();
@@ -744,7 +741,7 @@ A       .+
                                 }
                             }
                         } else {
-                        /* This is the actual archetype definition then */
+                            /* Here we are loading an object in a map */
                             char *yv = yval();
 
                             op->arch = try_find_archetype(yv);
