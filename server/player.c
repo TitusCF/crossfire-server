@@ -455,6 +455,7 @@ player *add_player(socket_struct *ns, int flags) {
     player *p;
 
     p = get_player(NULL);
+    ns->status = Ns_Avail;
     set_player_socket(p, ns);
 
     CLEAR_FLAG(p->ob, FLAG_FRIENDLY);
@@ -879,6 +880,7 @@ void get_password(object *op) {
 void play_again(object *op) {
     SockList sl;
 
+    op->contr->socket.status = Ns_Add;
     player_set_state(op->contr, ST_PLAY_AGAIN);
     op->chosen_skill = NULL;
 
