@@ -308,6 +308,11 @@ static PyObject *Object_GetTitle(Crossfire_Object *whoptr, void *closure) {
     return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_TITLE));
 }
 
+static PyObject *Object_GetCustomName(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_CUSTOM_NAME));
+}
+
 static PyObject *Object_GetRace(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_RACE));
@@ -1037,6 +1042,17 @@ static int Object_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *clos
         return -1;
 
     cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_TITLE, val);
+    return 0;
+}
+
+static int Object_SetCustomName(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    char *val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "s", &val))
+        return -1;
+
+    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_CUSTOM_NAME, val);
     return 0;
 }
 
@@ -2655,6 +2671,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Name",           (getter)Object_GetName,         (setter)Object_SetName, NULL, NULL },
     { "NamePl",         (getter)Object_GetNamePl,       (setter)Object_SetNamePl, NULL, NULL },
     { "Title",          (getter)Object_GetTitle,        (setter)Object_SetTitle, NULL, NULL },
+    { "CustomName",     (getter)Object_GetCustomName,   (setter)Object_SetCustomName, NULL, NULL },
     { "Race",           (getter)Object_GetRace,         (setter)Object_SetRace, NULL, NULL },
     { "Skill",          (getter)Object_GetSkill,        (setter)Object_SetSkill, NULL, NULL },
     { "Map",            (getter)Object_GetMap,          (setter)Object_SetMap, NULL, NULL },
