@@ -870,21 +870,30 @@ static void process_players1(void) {
              */
             if (!flag) pl->ticks_played++;
 
-            /** Handle DM follow command */
+            /** Handle follow command */
             if (pl->followed_player) {
                 player *followed = find_player_partial_name(pl->followed_player);
                 if (followed && followed->ob && followed->ob->map) {
-                    rv_vector rv;
-
-                    if (!get_rangevector(pl->ob, followed->ob, &rv, 0) || rv.distance > 4) {
-                        int space = object_find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
-                        if (space == -1)
-                            /** This is a DM, just teleport on the top of player. */
-                            space = 0;
-                        object_remove(pl->ob);
-                        object_insert_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
-                        map_newmap_cmd(&pl->socket);
-                        player_update_bg_music(pl->ob);
+                    if (query_flag(pl->ob, FLAG_WIZ)) {
+                        rv_vector rv;
+                        if (!get_rangevector(pl->ob, followed->ob, &rv, 0) || rv.distance > 4) {
+                            int space = object_find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
+                            if (space == -1)
+                                /** This is a DM, just teleport on the top of player. */
+                                space = 0;
+                            object_remove(pl->ob);
+                            object_insert_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
+                            map_newmap_cmd(&pl->socket);
+                            player_update_bg_music(pl->ob);
+                        }
+                    } else {
+                        rv_vector rv;
+                        get_rangevector(pl->ob, followed->ob, &rv, 0);
+                        move_object(pl->ob, rv.direction);
+                        pl->ob->direction = rv.direction;
+                        pl->ob->facing = rv.direction;
+                        if (pl->ob->animation)
+                            animate_object(pl->ob, pl->ob->direction);
                     }
                 } else {
                     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", pl->followed_player);
