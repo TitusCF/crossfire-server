@@ -32,6 +32,15 @@
 #include "sproto.h"
 #include "tod.h"
 
+static bool is_build_owner(object *pl, object *item) {
+    const char* owner = object_get_value(item, "build_owner");
+    if (owner != NULL) {
+        return (strcmp(owner, pl->name) == 0);
+    } else {
+        return true;
+    }
+}
+
 /**
  * Check if objects on a square interfere with building.
  *
@@ -45,11 +54,15 @@
  * @return
  * 0 if new_item can't be built on the spot, 1 if it can be built.
  */
-static int can_build_over(struct mapdef *map, object *new_item, short x, short y) {
+static int can_build_over(object *pl, object *new_item, short x, short y) {
+    struct mapdef *map = pl->map;
     FOR_MAP_PREPARE(map, x, y, tmp) {
         object *ob;
 
         ob = HEAD(tmp);
+        if (!is_build_owner(pl, ob)) {
+            return 0;
+        }
         if (strcmp(ob->arch->name, "rune_mark") == 0)
             /* you can always build on marking runes, used for connected building things. */
             continue;
@@ -84,7 +97,7 @@ static int can_build_over(struct mapdef *map, object *new_item, short x, short y
 
     /* If item being built is multi-tile, need to check other parts too. */
     if (new_item->more)
-        return can_build_over(map, new_item->more, x+new_item->more->arch->clone.x-new_item->arch->clone.x, y+new_item->more->arch->clone.y-new_item->arch->clone.y);
+        return can_build_over(pl, new_item->more, x+new_item->more->arch->clone.x-new_item->arch->clone.x, y+new_item->more->arch->clone.y-new_item->arch->clone.y);
 
     return 1;
 }
@@ -979,6 +992,12 @@ void apply_builder_remove(object *pl, int dir) {
         return;
     }
 
+    if (!is_build_owner(pl, item)) {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                      "Can't destroy something you didn't build.");
+        return;
+    }
+
     /* Now remove object, with special cases (buttons & such) */
     switch (item->type) {
     case WALL:
@@ -1120,7 +1139,7 @@ void apply_map_builder(object *pl, int dir) {
         new_item = object_create_arch(new_arch);
         SET_FLAG(new_item, FLAG_IS_BUILDABLE);
 
-        if (!can_build_over(pl->map, new_item, x, y)) {
+        if (!can_build_over(pl, new_item, x, y)) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
                           "You can't build here.");
             return;
@@ -1150,8 +1169,11 @@ void apply_map_builder(object *pl, int dir) {
             LOG(llevError, "apply_map_builder: invalid material subtype %d\n", material->subtype);
             break;
         }
-        if (built)
+        if (built) {
             object_decrease_nrof_by_one(material);
+            // set owner name
+            object_set_value(new_item, "build_owner", pl->name, 1);
+        }
         return;
     }
 
