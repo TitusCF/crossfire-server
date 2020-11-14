@@ -870,13 +870,13 @@ static void process_players1(void) {
              */
             if (!flag) pl->ticks_played++;
 
-            /** Handle DM follow command */
+            /** Handle follow command */
             if (pl->followed_player) {
                 player *followed = find_player_partial_name(pl->followed_player);
                 if (followed && followed->ob && followed->ob->map) {
                     rv_vector rv;
 
-                    if (!get_rangevector(pl->ob, followed->ob, &rv, 0) || rv.distance > 4) {
+                    if (!get_rangevector(pl->ob, followed->ob, &rv, 0) || rv.distance > 2) {
                         int space = object_find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
                         if (space == -1)
                             /** This is a DM, just teleport on the top of player. */
