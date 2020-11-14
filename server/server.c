@@ -838,6 +838,86 @@ void enter_exit(object *op, object *exit_ob) {
     /* For exits that cause damages (like pits) */
     if (exit_ob->stats.dam && op->type == PLAYER)
         hit_player(op, exit_ob->stats.dam, exit_ob, exit_ob->attacktype, 1);
+
+    if (op->contr) {
+        object* exit_copy = object_new();
+        object_copy(exit_ob, exit_copy);
+        exit_copy->map = exit_ob->map; // hack to set map without actually inserting
+        if (op->contr->last_exit) {
+            object_free(op->contr->last_exit, FREE_OBJ_NO_DESTROY_CALLBACK);
+        }
+        op->contr->last_exit = exit_copy;
+    }
+}
+
+/**
+ * Move 'ob' in the direction of 'towards' (without any pathfinding) if the
+ * two objects are farther than 'mindist' apart. Used to implement do_follow().
+ * @return Direction to move in, or zero if cannot move.
+ */
+static int move_towards(object *ob, object *towards, int mindist) {
+    rv_vector rv;
+    get_rangevector(ob, towards, &rv, 0);
+    if (rv.direction != 0 && rv.distance > mindist && ob->speed_left > 0) {
+        move_player(ob, rv.direction);
+    }
+    return rv.direction;
+}
+
+/**
+ * Return true if the player object is on the given exit. This is required
+ * because some multi-tile exits are unpassable from a certain direction.
+ */
+static bool object_on_exit(object* ob, object* exit) {
+    int x = exit->x;
+    int y = exit->y;
+    int sx, sy, sx2, sy2;
+    object_get_multi_size(exit, &sx, &sy, &sx2, &sy2);
+    return (ob->x >= x+sx2) && (ob->x <= x+sx) && (ob->y >= y+sy2) && (ob->y <= y+sy);
+}
+
+/**
+ * Called from process_players1() to move a player who is following someone.
+ */
+static void do_follow(player *pl) {
+    assert(pl->followed_player != NULL);
+    player *followed = find_player_partial_name(pl->followed_player);
+    if (followed && followed->ob && followed->ob->map) {
+        if (query_flag(pl->ob, FLAG_WIZ)) {
+            rv_vector rv;
+            if (!get_rangevector(pl->ob, followed->ob, &rv, 0) || rv.distance > 4) {
+                int space = object_find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
+                if (space == -1) {
+                    /** This is a DM, just teleport on the top of player. */
+                    space = 0;
+                }
+                object_remove(pl->ob);
+                object_insert_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
+                map_newmap_cmd(&pl->socket);
+                player_update_bg_music(pl->ob);
+            }
+        } else {
+            if (!can_follow(pl->ob, followed)) {
+                draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                        "%s stops letting you follow them.", pl->followed_player);
+                FREE_AND_CLEAR_STR(pl->followed_player);
+                return;
+            }
+            if (move_towards(pl->ob, followed->ob, 1)== 0 && followed->ob->contr->last_exit != NULL) {
+                // Move to and apply exit
+                object* exit = followed->ob->contr->last_exit;
+                if (!object_on_exit(pl->ob, exit)) {
+                    move_towards(pl->ob, exit, 0);
+                } else {
+                    enter_exit(pl->ob, exit);
+                }
+            }
+        }
+    } else {
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                "You stop following %s.", pl->followed_player);
+        FREE_AND_CLEAR_STR(pl->followed_player);
+    }
 }
 
 /**
@@ -864,27 +944,9 @@ static void process_players1(void) {
              */
             if (!flag) pl->ticks_played++;
 
-            /** Handle DM follow command */
             if (pl->followed_player) {
-                player *followed = find_player_partial_name(pl->followed_player);
-                if (followed && followed->ob && followed->ob->map) {
-                    rv_vector rv;
-
-                    if (!get_rangevector(pl->ob, followed->ob, &rv, 0) || rv.distance > 4) {
-                        int space = object_find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
-                        if (space == -1)
-                            /** This is a DM, just teleport on the top of player. */
-                            space = 0;
-                        object_remove(pl->ob);
-                        object_insert_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
-                        map_newmap_cmd(&pl->socket);
-                        player_update_bg_music(pl->ob);
-                    }
-                } else {
-                    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", pl->followed_player);
-                    FREE_AND_CLEAR_STR(pl->followed_player);
-                }
-            } /** End of follow */
+                do_follow(pl);
+            }
 
             if (pl->ob->speed_left > 0) {
                 if (handle_newcs_player(pl->ob))

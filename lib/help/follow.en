@@ -1,0 +1,3 @@
+syntax: follow <player name>
+
+Follow another player, including through exits and into permanent apartments. The player you are following must be in the same party as you. You can only start following another player if they are adjacent to you. To stop following, type 'follow' without any arguments.

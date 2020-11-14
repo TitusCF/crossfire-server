@@ -2012,8 +2012,6 @@ void command_nowiz(object *op, const char *params) { /* 'noadm' is alias */
     CLEAR_FLAG(op, FLAG_WIZ);
     CLEAR_FLAG(op, FLAG_WIZPASS);
     CLEAR_FLAG(op, FLAG_WIZCAST);
-    if (op->contr->followed_player)
-        FREE_AND_CLEAR_STR(op->contr->followed_player);
 
     if (settings.real_wiz == TRUE)
         CLEAR_FLAG(op, FLAG_WAS_WIZ);
@@ -2719,11 +2717,16 @@ void command_style_map_info(object *op, const char *params) {
                          (unsigned long)(objects_used*sizeof(object)));
 }
 
+bool can_follow(object* op, player* other) {
+    // Only allow follow from same party.
+    return (other->ob->contr->party != NULL) && (op->contr->party == other->ob->contr->party);
+}
+
 /**
- * DM wants to follow a player, or stop following a player.
+ * Follow a player, or stop following a player.
  *
  * @param op
- * wizard.
+ * Player follower
  * @param params
  * player to follow. If NULL, stop following player.
  */
@@ -2732,7 +2735,7 @@ void command_follow(object *op, const char *params) {
 
     if (*params == '\0') {
         if (op->contr->followed_player != NULL) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You stop following %s.", op->contr->followed_player);
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS, "You stop following %s.", op->contr->followed_player);
             FREE_AND_CLEAR_STR(op->contr->followed_player);
         }
         return;
@@ -2740,19 +2743,35 @@ void command_follow(object *op, const char *params) {
 
     other = find_player_partial_name(params);
     if (!other) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "No such player or ambiguous name.");
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No such player or ambiguous name.");
         return;
     }
     if (other == op->contr) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You can't follow yourself.");
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "You can't follow yourself.");
         return;
+    }
+
+    // Players trying to 'follow' are subject to additional checks.
+    if (!QUERY_FLAG(op, FLAG_WIZ)) {
+        if (!can_follow(op, other)) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
+                          MSG_TYPE_COMMAND_FAILURE,
+                          "You can only follow members in the same party.");
+            return;
+        }
+        rv_vector rv;
+        if (!get_rangevector(op, other->ob, &rv, 0) || rv.distance > 1) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "You need to go to them first!");
+            return;
+        }
+        draw_ext_info_format(NDI_UNIQUE, 0, other->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_PARTY, "%s follows you.", op->name);
     }
 
     if (op->contr->followed_player)
         FREE_AND_CLEAR_STR(op->contr->followed_player);
 
     op->contr->followed_player = add_string(other->ob->name);
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Following %s.", op->contr->followed_player);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS, "Following %s.", op->contr->followed_player);
 }
 
 void command_purge_quest(object *op, const char * param) {
