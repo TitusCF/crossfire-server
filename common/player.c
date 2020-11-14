@@ -53,6 +53,10 @@ void clear_player(player *pl) {
     FREE_AND_CLEAR(pl->delayed_buffers);
     pl->delayed_buffers_allocated = 0;
     pl->delayed_buffers_used = 0;
+    if (pl->last_exit != NULL) {
+        object_free(pl->last_exit, FREE_OBJ_NO_DESTROY_CALLBACK);
+        pl->last_exit = NULL;
+    }
 }
 
 /**

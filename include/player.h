@@ -188,6 +188,8 @@ typedef struct pl {
                                       * but we will have to get password first
                                       * so we have to remember which party to
                                       * join. */
+    struct obj *last_exit;           /**< Last exit used by player or NULL */
+
     party_rejoin_mode rejoin_party;  /**< Whether to rejoin or not party at login. */
     char        search_str[MAX_BUF]; /**< Item we are looking for. */
     uint32_t      mark_count;          /**< Count of marked object. */
