@@ -751,3 +751,18 @@ common/arch_types_valid.c
 .pch/
 
 .vs/
+*.png
+*.arc
+*.txt
+*.xs
+*.trs
+*.xcf
+
+arch/
+map-scripts/
+maps/
+lib/
+Jeweler Docs/
+new rules and news/
+metaserver2
+settings
