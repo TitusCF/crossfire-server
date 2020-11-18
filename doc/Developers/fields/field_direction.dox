@@ -1,0 +1,16 @@
+/**
+@fn obj::direction
+@section Use
+<table>
+	<tr>
+		<th>Type(s)</th>
+		<th>Description</th>
+	</tr>	<tr>
+		<td>
+@ref page_type_62
+		</td><td>            The magic wall will always cast its spells in the specified &lt;direction&gt;.
+            A magic wall with direction set to &lt;none&gt; will always fire in
+            a random direction.</td>
+	</tr>
+
+*/
