@@ -193,7 +193,7 @@ extern int check_path(const char *name, int prepend_dir);
 extern void dump_map(const mapstruct *m);
 extern void dump_all_maps(void);
 extern int get_map_flags(mapstruct *oldmap, mapstruct **newmap, int16_t x, int16_t y, int16_t *nx, int16_t *ny);
-extern int blocked_link(object *ob, mapstruct *m, int sx, int sy);
+extern int blocked_link(object *ob, mapstruct *m, int16_t sx, int16_t sy);
 extern int ob_blocked(const object *ob, mapstruct *m, int16_t x, int16_t y);
 extern mapstruct *get_linked_map(void);
 extern mapstruct *get_empty_map(int sizex, int sizey);

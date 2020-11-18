@@ -351,7 +351,7 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, int16_t x, int16_t y, i
  * the coordinates & map passed in should have been updated for tiling
  * by the caller.
  */
-int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
+int blocked_link(object *ob, mapstruct *m, int16_t sx, int16_t sy) {
     object *tmp_head;
     int mflags, blocked;
 
