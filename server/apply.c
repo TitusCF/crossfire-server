@@ -212,6 +212,8 @@ static int set_object_face_other(object *op) {
  * player.
  * @param sack
  * container the player is opening or closing.
+ * @param aflags
+ * combination of @ref AP_xxx flags.
  * @return
  * 1 if an object is applied somehow or another, 0 if error/no apply
  *
