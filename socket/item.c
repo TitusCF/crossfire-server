@@ -674,6 +674,7 @@ void lock_item_cmd(uint8_t *data, int len, player *pl) {
     int flag, tag;
     object *op;
     object *tmp;
+    char name[HUGE_BUF];
 
     if (len != 5) {
         LOG(llevDebug, "Player '%s' sent bogus lock_item_cmd information\n", pl->ob->name);
@@ -700,10 +701,16 @@ void lock_item_cmd(uint8_t *data, int len, player *pl) {
         return;
     }
 
-    if (!flag)
+    query_short_name(op, name, HUGE_BUF);
+    if (!flag) {
         CLEAR_FLAG(op, FLAG_INV_LOCKED);
-    else
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                             "Unlocked %s.", name);
+    } else {
         SET_FLAG(op, FLAG_INV_LOCKED);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                             "Locked %s.", name);
+    }
 
     tmp = object_merge(op, NULL);
     if (tmp == NULL) {
