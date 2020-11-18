@@ -1738,6 +1738,13 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
     va_end(args);
     context->returnvalue = 0;
 
+    if (context->event_code == EVENT_CLOCK) {
+        // Ignore EVENT_CLOCK. It is not being used in maps, but nevertheless
+        // runs python_init.py several times per second even while idling.
+        freeContext(context);
+        return rv;
+    }
+
     if (!do_script(context, 1)) {
         freeContext(context);
         return rv;
