@@ -76,8 +76,6 @@ static const char *const ordinals_10[] = {
  *
  * @param sb
  * StringBuffer to append the result to.
- * @param size
- * Max size of the buffer
  * @param n
  * Number to ordinalize.
  */
@@ -140,7 +138,7 @@ static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell)
  * method context.
  * @param book
  * Spellbook to describe
- * @param looker
+ * @param observer
  * Player examining the spellbook
  * @param use_media_tags
  * True if we should use mediatags in the output
@@ -148,8 +146,6 @@ static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell)
  * Output buffer to append description to
  * @param size
  * Total output buffer size
- * @return
- * METHOD_OK always.
  */
 static void spellbook_type_describe(
         const ob_methods *context, const object *book, const object *observer,
