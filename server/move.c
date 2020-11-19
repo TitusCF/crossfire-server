@@ -91,7 +91,7 @@ int move_ob(object *op, int dir, object *originator) {
         if (get_map_flags(part->map, &m, part->x+freearr_x[dir], part->y+freearr_y[dir], &x, &y)&P_OUT_OF_MAP)
             return 0;
 
-        if (!QUERY_FLAG(op, FLAG_WIZPASS) && blocked_link(op, m, x, y))
+        if (!QUERY_FLAG(op, FLAG_WIZPASS) && blocked_link(op->type == TRANSPORT ? part : op, m, x, y))
             return 0;
     }
 
