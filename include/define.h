@@ -433,7 +433,6 @@ typedef unsigned char MoveType;
     ((type != 0) && (ob1->move_type&type) == ob1->move_type)
 /*@}*/
 
-#define SET_GENERATE_TYPE(xyz, va) (xyz)->stats.sp = (va)
 #define GENERATE_TYPE(xyz)      ((xyz)->stats.sp)
 #define GENERATE_SPEED(xyz)     ((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */
 
