@@ -771,7 +771,7 @@ CF_PLUGIN int eventListener(int *type, ...) {
     int rv = 1;
     va_list args;
     /*char *buf;*/
-    object *ground, *who/*, *activator, *third, *event*/;
+    object *ground, *who/*, *activator, *third*/, *event;
     /*int fix;*/
     const char *value;
 
@@ -782,12 +782,24 @@ CF_PLUGIN int eventListener(int *type, ...) {
     /*third =*/ va_arg(args, object *);
     /*buf =*/ va_arg(args, char *);
     /*fix =*/ va_arg(args, int);
-    /*event =*/ va_arg(args, object *);
+    event = va_arg(args, object *);
     va_arg(args, talk_info *); /* ignored for now */
     va_end(args);
 
     object *inv;
     value = cf_object_get_key(who, FIRST_MOVE_KEY);
+    if (!value) {
+        /**
+         * If the key doesn't exist, it means 'who' wasn't created by us,
+         * since we do set the key each time.
+         * So play it safe and totally remove the event.
+         */
+        if (event) {
+            cf_log(llevInfo, "citylife: removing event from object which we didn't generate\n");
+            cf_object_remove(event);
+        }
+        return rv;
+    }
     // Set the flag regardless of whether we tried to move through an exit
     if (strcmp(value, "1") == 0) {
         cf_object_set_key(who, FIRST_MOVE_KEY, "0", 1);
