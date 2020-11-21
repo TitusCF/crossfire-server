@@ -1245,6 +1245,7 @@ static void initConstants(PyObject *module) {
         /** Global events. */
         { "BORN", EVENT_BORN },
         { "CLOCK", EVENT_CLOCK },
+        { "SERVER_SHUTDOWN", EVENT_SERVER_SHUTDOWN },
         { "CRASH", EVENT_CRASH },
         { "GKILL", EVENT_GKILL },
         { "KICK", EVENT_KICK },
@@ -1535,6 +1536,7 @@ CF_PLUGIN void cfpython_runPluginCommand(object *op, const char *params) {
 static int GECodes[] = {
     EVENT_BORN,
     EVENT_CLOCK,
+    EVENT_SERVER_SHUTDOWN,
     EVENT_PLAYER_DEATH,
     EVENT_GKILL,
     EVENT_LOGIN,
@@ -1555,6 +1557,7 @@ static int GECodes[] = {
 static const char* GEPaths[] = {
     "born",
     "clock",
+    "server_shutdown",
     "death",
     "gkill",
     "login",
@@ -1711,6 +1714,9 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         break;
 
     case EVENT_CLOCK:
+        break;
+
+    case EVENT_SERVER_SHUTDOWN:
         break;
 
     case EVENT_MAPRESET:

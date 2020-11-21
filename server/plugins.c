@@ -415,6 +415,14 @@ int execute_global_event(int eventcode, ...) {
         }
         break;
 
+    case EVENT_SERVER_SHUTDOWN:
+        /*SERVER_SHUTDOWN: -*/
+        for (cp = plugins_list; cp != NULL; cp = cp->next) {
+            if (cp->gevent[eventcode] != NULL)
+                cp->gevent[eventcode](&rt, eventcode);
+        }
+        break;
+
     case EVENT_CRASH:
         for (cp = plugins_list; cp != NULL; cp = cp->next) {
             if (cp->gevent[eventcode] != NULL)
