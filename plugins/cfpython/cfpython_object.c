@@ -861,6 +861,11 @@ static PyObject *Object_GetExists(Crossfire_Object *whoptr, void *closure) {
     }
 }
 
+static PyObject *Object_GetRemoved(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_REMOVED));
+}
+
 static PyObject *Object_GetEnv(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_ENVIRONMENT));
@@ -2777,6 +2782,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Archetype",      (getter)Object_GetArchetype,    NULL, NULL, NULL },
     { "OtherArchetype", (getter)Object_GetOtherArchetype,NULL, NULL, NULL },
     { "Exists",         (getter)Object_GetExists,       NULL, NULL, NULL },
+    { "Removed",        (getter)Object_GetRemoved,      NULL, NULL, NULL },
     { "NoSave",         (getter)Object_GetNoSave,       (setter)Object_SetNoSave, NULL, NULL },
     { "Env",            (getter)Object_GetEnv,          NULL, NULL, NULL },
     { "MoveType",       (getter)Object_GetMoveType,     (setter)Object_SetMoveType, NULL, NULL },
