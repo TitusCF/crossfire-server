@@ -1359,6 +1359,7 @@ int forbid_play(void) {
 }
 
 static void do_shutdown(void) {
+    execute_global_event(EVENT_SERVER_SHUTDOWN);
     draw_ext_info(NDI_UNIQUE | NDI_ALL, 5, NULL, MSG_TYPE_ADMIN,
             MSG_TYPE_ADMIN_DM, "The server has shut down.");
 

@@ -83,6 +83,7 @@
 /*******************************************************************************/
 #define EVENT_BORN      14 /**< A new character has been created.              */
 #define EVENT_CLOCK     15 /**< Global time event.                             */
+#define EVENT_SERVER_SHUTDOWN 35 /**< Server shutdown.                         */
 #define EVENT_CRASH     16 /**< Triggered when the server crashes. Not recursive */
 #define EVENT_GKILL     18 /**< Triggered when anything got killed by anyone.  */
 #define EVENT_KICK      28 /**< A player was Kicked by a DM                    */
@@ -98,7 +99,7 @@
 #define EVENT_REMOVE    24 /**< A Player character has been removed.           */
 #define EVENT_SHOUT     25 /**< A player 'shout' something.                    */
 #define EVENT_TELL      26 /**< A player 'tell' something.                     */
-#define NR_EVENTS 35
+#define NR_EVENTS 36
 
 #include <stdarg.h>
 
