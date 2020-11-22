@@ -155,6 +155,7 @@ mapstruct *load_style_map(char *style_name)
         style_map->next = styles;
         styles = style_map;
     }
+    execute_global_event(EVENT_MAPLOAD, style_map);
     return style_map;
 }
 

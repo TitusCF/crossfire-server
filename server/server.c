@@ -520,6 +520,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
      */
     strlcpy(new_map->path, new_map_name, sizeof(new_map->path));
     new_map->is_template = 1;
+    execute_global_event(EVENT_MAPLOAD, new_map);
     enter_map(pl, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
 }
 
@@ -595,6 +596,8 @@ static void enter_random_template_map(object *pl, object *exit_ob) {
 /**
  * Player is entering a unique map.
  *
+ * Note: This function is messy.
+ *
  * @param op
  * player.
  * @param exit_ob
@@ -610,6 +613,7 @@ static void enter_unique_map(object *op, object *exit_ob) {
         if (!newmap) {
             create_pathname(EXIT_PATH(exit_ob), path, sizeof(path));
             newmap = mapfile_load(path, MAP_PLAYER_UNIQUE);
+            execute_global_event(EVENT_MAPLOAD, newmap);
         }
     } else { /* relative directory */
         char reldir[HUGE_BUF], tmpc[HUGE_BUF], *cp;
@@ -629,6 +633,7 @@ static void enter_unique_map(object *op, object *exit_ob) {
             if (!newmap) {
                 create_pathname(path_combine_and_normalize(reldir, EXIT_PATH(exit_ob), tmpc, sizeof(tmpc)), path, sizeof(path));
                 newmap = mapfile_load(path, MAP_PLAYER_UNIQUE);
+                execute_global_event(EVENT_MAPLOAD, newmap);
             }
         } else {
             /* The exit is unique, but the map we are coming from is not unique.  So
