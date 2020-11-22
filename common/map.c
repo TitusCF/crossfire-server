@@ -1281,9 +1281,6 @@ mapstruct *mapfile_load(const char *map, int flags) {
     /* In case other objects press some buttons down */
     update_buttons(m);
 
-    /* Handle for map load event */
-    execute_global_event(EVENT_MAPLOAD, m);
-
     if (!(flags & MAP_STYLE))
         apply_auto_fix(m); /* Chests which open as default */
 
@@ -1930,6 +1927,9 @@ mapstruct *ready_map_name(const char *name, int flags) {
             m->last_reset_time = seconds();
         }
     }
+
+    execute_global_event(EVENT_MAPLOAD, m);
+
     return m;
 }
 
