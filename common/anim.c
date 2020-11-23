@@ -315,7 +315,7 @@ void animate_object(object *op, int dir) {
  * @param suffix
  * animation suffix to apply. Must not be NULL.
  */
-void apply_anim_suffix(object *who, sstring suffix) {
+void apply_anim_suffix(object *who, const char *suffix) {
     const Animations *anim;
     object *head, *orig;
     char buf[MAX_BUF];
