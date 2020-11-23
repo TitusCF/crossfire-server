@@ -752,6 +752,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     int simple_attack, roll, dam;
     uint32_t type;
     tag_t op_tag, hitter_tag;
+    const char *anim_suffix = NULL;
 
     if (get_attack_mode(&op, &hitter, &simple_attack))
         return 1;
@@ -765,12 +766,21 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             if (execute_event(hitter->current_weapon, EVENT_ATTACKS,
                               hitter, op, NULL, SCRIPT_FIX_ALL) != 0)
                 return 0;
-            if (hitter->current_weapon->anim_suffix)
-                apply_anim_suffix(hitter, hitter->current_weapon->anim_suffix);
-        } else if (hitter->chosen_skill &&  hitter->chosen_skill->anim_suffix)
-            /* if no weapon, then skill (karate, wraith feed) attack */
-            apply_anim_suffix(hitter, hitter->chosen_skill->anim_suffix);
+        }
     }
+
+    if (hitter->current_weapon) {
+        anim_suffix = hitter->current_weapon->anim_suffix;
+    } else if (hitter->chosen_skill) {
+        anim_suffix = hitter->chosen_skill->anim_suffix;
+    }
+
+    if (!anim_suffix) {
+        anim_suffix = "attack";
+    }
+    apply_anim_suffix(hitter, anim_suffix);
+    
+
     op_tag = op->count;
     hitter_tag = hitter->count;
     /*
