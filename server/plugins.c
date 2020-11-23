@@ -567,6 +567,15 @@ int execute_global_event(int eventcode, ...) {
                 cp->gevent[eventcode](&rt, eventcode, map);
         }
         break;
+
+    case EVENT_FREE_OBJECTS:
+        /*FREE_OBJECTS: map*/
+        map = va_arg(args, mapstruct *);
+        for (cp = plugins_list; cp != NULL; cp = cp->next) {
+            if (cp->gevent[eventcode] != NULL)
+                cp->gevent[eventcode](&rt, eventcode, map);
+        }
+        break;
     }
     va_end(args);
     return 0;
