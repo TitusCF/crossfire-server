@@ -99,7 +99,8 @@
 #define EVENT_REMOVE    24 /**< A Player character has been removed.           */
 #define EVENT_SHOUT     25 /**< A player 'shout' something.                    */
 #define EVENT_TELL      26 /**< A player 'tell' something.                     */
-#define NR_EVENTS 36
+#define EVENT_FREE_OBJECTS  36 /**< free_all_objects(map)                      */
+#define NR_EVENTS 37
 
 #include <stdarg.h>
 

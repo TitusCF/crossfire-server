@@ -1261,6 +1261,7 @@ static void initConstants(PyObject *module) {
         { "REMOVE", EVENT_REMOVE },
         { "SHOUT", EVENT_SHOUT },
         { "TELL", EVENT_TELL },
+        { "FREE_OBJECTS", EVENT_FREE_OBJECTS },
         { NULL, 0 }
     };
 
@@ -1551,6 +1552,7 @@ static int GECodes[] = {
     EVENT_KICK,
     EVENT_MAPUNLOAD,
     EVENT_MAPLOAD,
+    EVENT_FREE_OBJECTS,
     0  
 };
 
@@ -1572,6 +1574,7 @@ static const char* GEPaths[] = {
     "kick",
     "mapunload",
     "mapload",
+    "free_objects",
     NULL  
 };
 
@@ -1738,6 +1741,10 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         break;
 
     case EVENT_MAPLOAD:
+        context->who = Crossfire_Map_wrap(va_arg(args, mapstruct *));
+        break;
+
+    case EVENT_FREE_OBJECTS:
         context->who = Crossfire_Map_wrap(va_arg(args, mapstruct *));
         break;
     }

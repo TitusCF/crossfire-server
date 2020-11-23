@@ -1673,6 +1673,15 @@ static void free_all_objects(mapstruct *m) {
     int i, j;
     object *op;
 
+    /* I came up with this event as a way to gather a reference from objects
+     * right before they are freed from the map (context was the creation of a
+     * tracking system for unique objects through a plugin).  EVENT_MAPUNLOAD
+     * and EVENT_MAPRESET would not do, because when the map is reset, these
+     * events are fired after the freeing of objects (an unecessary side-effect
+     * of using the save_map function).
+     */
+    execute_global_event(EVENT_FREE_OBJECTS, m);
+
     for (i = 0; i < MAP_WIDTH(m); i++)
         for (j = 0; j < MAP_HEIGHT(m); j++) {
             object *previous_obj = NULL;
