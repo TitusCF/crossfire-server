@@ -1,5 +1,7 @@
 2020-11-23 Nicolas Weeger
     * common/anim.c: change function prototype.
+    * server/attack.c: use a default "attack" anim_suffix for attacks. Apply
+        anim_suffix to monsters too.
 
 2020-11-11 Daniel Hawkins and Kevin Zheng
     * socket/request.c,
