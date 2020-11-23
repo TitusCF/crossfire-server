@@ -1,3 +1,6 @@
+2020-11-23 Nicolas Weeger
+    * common/anim.c: change function prototype.
+
 2020-11-11 Daniel Hawkins and Kevin Zheng
     * socket/request.c,
       server/player.c: Make the handling to prevent createplayer command abuse

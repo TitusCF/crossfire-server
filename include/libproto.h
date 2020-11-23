@@ -4,7 +4,7 @@ extern void init_anim(void);
 extern const Animations *find_animation(const char *name);
 extern const Animations *try_find_animation(const char *name);
 extern void animate_object(object *op, int dir);
-extern void apply_anim_suffix(object *who, sstring suffix);
+extern void apply_anim_suffix(object *who, const char *suffix);
 extern void dump_animations(void);
 /* arch.c */
 extern archetype *find_archetype_by_object_name(const char *name);
