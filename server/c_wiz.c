@@ -2724,6 +2724,14 @@ void command_follow(object *op, const char *params) {
 
     // Players trying to 'follow' are subject to additional checks.
     if (!QUERY_FLAG(op, FLAG_WIZ)) {
+        // Only allow follow from same party.
+        if (other->ob->contr->party == NULL ||
+            op->contr->party != other->ob->contr->party) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
+                          MSG_TYPE_COMMAND_FAILURE,
+                          "You can only follow members in the same party.");
+            return;
+        }
         rv_vector rv;
         if (!get_rangevector(op, other->ob, &rv, 0) || rv.distance > 1) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "You need to go to them first!");
