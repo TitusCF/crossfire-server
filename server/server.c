@@ -708,6 +708,33 @@ void enter_player_maplevel(object *op) {
 }
 
 /**
+ * Make op's followers follow them through 'exit'.
+ */
+static void move_followers(object *op, object *exit) {
+    player *pl, *plnext;
+    for (pl = first_player; pl != NULL; pl = plnext) {
+        plnext = pl->next;
+        if (pl->ob == NULL)
+            continue;
+
+        if (op == pl->ob) {
+            // Ignore self.
+            continue;
+        }
+
+        if (pl->followed_player) {
+            player *target = find_player_partial_name(pl->followed_player);
+            if (target && target->ob && target->ob->map && strcmp(target->ob->name, op->name) == 0) {
+                enter_exit(pl->ob, exit);
+            } else {
+                draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", pl->followed_player);
+                FREE_AND_CLEAR_STR(pl->followed_player);
+            }
+        }
+    }
+}
+
+/**
  * Tries to move 'op' to exit_ob.
  *
  * Largely redone by MSW 2001-01-21 - this function was overly complex
@@ -844,6 +871,8 @@ void enter_exit(object *op, object *exit_ob) {
     /* For exits that cause damages (like pits) */
     if (exit_ob->stats.dam && op->type == PLAYER)
         hit_player(op, exit_ob->stats.dam, exit_ob, exit_ob->attacktype, 1);
+
+    move_followers(op, exit_ob);
 }
 
 /**
