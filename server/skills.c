@@ -360,11 +360,13 @@ static int attempt_pick_lock(object *door, object *pl, object *skill) {
      * the map level difficulty.
      */
     number = (die_roll(2, 40, pl, PREFER_LOW)-2)/2;
+    // Spring traps even if the lock is picked.
+    if (door->inv && (door->inv->type == RUNE || door->inv->type == TRAP)) {  /* set off any traps? */
+        spring_trap(door->inv, pl);
+    }
     if (number < pl->stats.Dex + skill->level*2 - difficulty ) {
         remove_door(door);
         success = difficulty;
-    } else if (door->inv && (door->inv->type == RUNE || door->inv->type == TRAP)) {  /* set off any traps? */
-        spring_trap(door->inv, pl);
     }
     return success;
 }
