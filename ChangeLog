@@ -1,3 +1,9 @@
+2020-11-28 Daniel Hawkins
+    * types/spellbook/spellbook.c: Make sure an unidentified spellbook at least tells you
+        what you can already see in the viewport, rather than "That is: " without a name.
+    * server/c_object.c: Prevent the flavor text for magic to appear when the item is not
+        yet identified.
+
 2020-11-27 Daniel Hawkins
     * server/skills.c: Make trapped doors detonate traps when lockpicked on the first attempt.
 

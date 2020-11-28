@@ -1574,7 +1574,8 @@ void examine(object *op, object *tmp) {
                 "Unfortunately the scroll is damaged and unreadable.");
             break;
         }
-        if (skill->clone.msg) {
+        // Only print the flavor text once we have identified.
+        if (is_identified(tmp) && skill->clone.msg) {
             StringBuffer *sb = stringbuffer_new();
             stringbuffer_append_string(sb, skill->clone.msg);
             stringbuffer_trim_whitespace(sb);
@@ -1592,7 +1593,8 @@ void examine(object *op, object *tmp) {
     case WAND:
     case ROD:
     case POTION:
-        if (tmp->inv && tmp->inv->msg) {
+        // Only print the flavor text once we have identified.
+        if (is_identified(tmp) && tmp->inv && tmp->inv->msg) {
             // If the embedded spell has a msg, display it here so that the
             // player knows what it does before they actually read/use the item.
             // Strip trailing newlines so that the output of examine() is
@@ -1644,24 +1646,22 @@ void examine(object *op, object *tmp) {
     }
     /* Where to wear this item */
     for (i = 0; i < NUM_BODY_LOCATIONS; i++) {
-        if (tmp->body_info[i] < -1) {
-            if (op->body_info[i])
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                                     "It goes %s (%d)",
+        if (tmp->body_info[i]) {
+            if (op->body_info[i]) {
+                if (tmp->body_info[i] < -1) {
+                    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+                                     "%s %s (%d)", tmp->nrof > 1 ? "They go" : "It goes",
                                      body_locations[i].use_name, -tmp->body_info[i]);
-            else
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                                     "It goes %s",
-                                     body_locations[i].nonuse_name);
-        } else if (tmp->body_info[i]) {
-            if (op->body_info[i])
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                                     "It goes %s",
+                } else {
+                    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+                                     "%s %s", tmp->nrof > 1 ? "They go" : "It goes",
                                      body_locations[i].use_name);
-            else
+                }
+            } else {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                                     "It goes %s",
+                                     "%s %s", tmp->nrof > 1 ? "They go" : "It goes",
                                      body_locations[i].nonuse_name);
+            }
         }
     }
 
