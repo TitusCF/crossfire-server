@@ -150,7 +150,16 @@ static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell)
 static void spellbook_type_describe(
         const ob_methods *context, const object *book, const object *observer,
         const int use_media_tags, char *buf, size_t size) {
-    if (!is_identified(book)) return;
+    if (!is_identified(book)) {
+        /* Without querying the name, spellbooks end up examining
+         * as "That is:", with no name at all
+         * This should tell the player just as little as the inventory view.
+         *
+         * SilverNexus 2020-11-28
+         */
+        query_name(book, buf, size-1);
+        return;
+    }
 
     size_t len;
     /* TODO check if this generates the "of foo" so we don't end up with
