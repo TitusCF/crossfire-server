@@ -2039,12 +2039,18 @@ static void add_player_exp(object *op, int64_t exp, const char *skill_name, int 
         added_skill_exp = added_skill_total_exp = exp_to_add;
     }
 
-    ADD_EXP(op->stats.exp, (float)added_skill_exp*(skill_obj ? skill_obj->expmul : 1));
+    const float added_exp = (float)added_skill_exp*(skill_obj ? skill_obj->expmul : 1);
+    ADD_EXP(op->stats.exp, added_exp);
     if (settings.permanent_exp_ratio) {
-        ADD_TOTALEXP(op->total_exp, (float)added_skill_total_exp*(skill_obj ? skill_obj->expmul : 1));
+        ADD_TOTALEXP(op->total_exp, added_exp);
         calc_perm_exp(op);
     }
 
+    if (exp > 0) {
+        char buf[MAX_BUF];
+        snprintf(buf, sizeof(buf), "You gain %d experience in %s.", (int)added_exp, skill_obj->name);
+        draw_ext_info(NDI_BLACK, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN, buf);
+    }
     player_lvl_adj(op, NULL);
 }
 
