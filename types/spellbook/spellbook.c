@@ -85,7 +85,7 @@ void stringbuffer_append_ordinal(StringBuffer *sb, const int n) {
     } else if (n <= 20) {
         stringbuffer_append_string(sb, ordinals[n]);
     } else if (n % 10 == 0) {
-        stringbuffer_append_string(sb, ordinals_10[n]);
+        stringbuffer_append_string(sb, ordinals_10[n / 10]);
     } else {
         stringbuffer_append_printf(sb, "%s%s", ordinals_10[n/10], ordinals[n%10]);
     }
