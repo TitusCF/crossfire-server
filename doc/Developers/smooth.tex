@@ -88,7 +88,7 @@ you want to add this ability to mountains. Let's imagine has a smoothlevel
 of 10 and trees have a smoothlevel 100 (just imagine, at time writing
 this doc, nothing fixed yet). Now let's say you want the moutains
 above the grass but, for graphical reasons, you want the trees above
-the mountains. You Choose a value between 10 and 100, not included.
+the mountains. You choose a value between 10 and 100, not included.
 But mountains is a thing that goes above a lot of thing (grass, hills,
 swamps, brush, rocks, desert,\ldots). So to keep the place for adding
 new elements in the future, you rather choose a high value for mountains
@@ -118,31 +118,26 @@ line is corner related transitions. Here is an example picture for
 grass (yeah really need someone to rework it):
 
 \begin{flushleft}\includegraphics[%
-  width=1.0\columnwidth]{img/sgrass.base.111.eps}\end{flushleft}
+  width=1.0\columnwidth]{img/sgrass.eps}\end{flushleft}
 
-The picture is named sgrass.base.111.png and located in the ground/smooth/grasslike
+The picture is named sgrass.base.111.png and located in the ground/smooth/
 directory of archetype. Ok, now you have a picture for smoothing grass,
 you have a smoothlevel for grass. There is only one last thing to
 do:
 
 \begin{flushright}\textbf{Final Rule}\end{flushright}
 
-Tell the server which picture to send the client. There is, in the
-server CVS directory a file named lib/smooth. This file is where you
-set this information. Each line in the file beginning with \emph{\#}
-is a comment. Other line should be made of 2 elements:
+In the archetype of the grass, you need to add a line
+
+\texttt{smoothface grass.111 sgrass.111}
 
 The first is the picture you want to smooth (here it is grass.111%
 \footnote{Please note we suppressed the .png and the .base.\ elements of grass.base.111.png
 filename. Since what the server needs is the internal names. Take
 care of this. If the new picture you drawn didn't appear on the GUI,
-this is perhaps due to error in this file. And don't forget to copy
-this file, afterwards, to the install directory of server, using a
-make~install.%
+this is perhaps due to error in this file. And don't forget to run make~do-collect
+and make~install from the lib directory.%
 }) the second is the 512x64 picture drawn at rule 2 and used when smoothing.
-And example line might be as follow:
-
-\texttt{grass.111 sgrass.111}
 
 The entry default\_smoothed.111 is used when the server can not find
 an appropriate entry for an object. This correspond to the black canvas
