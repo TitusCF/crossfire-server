@@ -135,6 +135,24 @@ void CREFacePanel::setItem(const Face* face)
         }
     }
 
+    root = NULL;
+    for (unsigned int f_index = 0; f_index < get_faces_count(); f_index++)
+    {
+        const Face *face = get_face_by_index(f_index);
+        if (face->smoothface == myFace)
+        {
+            if (!root)
+            {
+                root = CREUtils::faceNode(NULL);
+                root->setText(0, root->text(0) + " (as smoothed face)");
+                myUsing->addTopLevelItem(root);
+                root->setExpanded(true);
+            }
+
+            CREUtils::faceNode(face, root);
+        }
+    }
+
     myColor->setCurrentIndex(myFace->magicmap);
 }
 void CREFacePanel::saveClicked(bool)
