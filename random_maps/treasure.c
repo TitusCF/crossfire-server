@@ -91,8 +91,6 @@ int wall_blocked(mapstruct *m, int x, int y)
  */
 void place_treasure(mapstruct *map, char **layout, char *treasure_style, int treasureoptions, RMParms *RP)
 {
-    char stylefilepath[256];
-    mapstruct *style_map = NULL;
     int num_treasures;
 
     /* bail out if treasure isn't wanted. */
@@ -125,11 +123,6 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
     if (num_treasures <= 0) {
         return;
     }
-
-    /* get the style map */
-    const char *styledirname = "/styles/treasurestyles";
-    snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s", styledirname, treasure_style);
-    style_map = find_style(styledirname, treasure_style, -1);
 
     /* all the treasure at one spot in the map. */
     if (treasureoptions&CONCENTRATED) {
