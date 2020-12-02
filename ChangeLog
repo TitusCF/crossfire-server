@@ -1,3 +1,6 @@
+2020-12-02 Nicolas Weeger
+    * random_maps/treasure.c: remove unused code.
+
 2020-12-01 Nicolas Weeger
     * types/spellbook/spellbook.c: Fix invalid array indice leading to crash.
 
