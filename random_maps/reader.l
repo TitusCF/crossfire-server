@@ -85,6 +85,7 @@ WS      [ \t]*
 ^layoutstyle{S}          strncpy(RP->layoutstyle, rmap_yval(), RM_SIZE);
 ^doorstyle{S}            strncpy(RP->doorstyle, rmap_yval(), RM_SIZE);
 ^decorstyle{S}           strncpy(RP->decorstyle, rmap_yval(), RM_SIZE);
+^cheststyle{S}           strncpy(RP->cheststyle, rmap_yval(), RM_SIZE);
 ^xsize{S}                RP->Xsize = IVAL;
 ^ysize{S}                RP->Ysize = IVAL;
 ^expand2x{S}             RP->expand2x = IVAL;

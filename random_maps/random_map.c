@@ -771,6 +771,10 @@ StringBuffer *write_map_parameters_to_string(const RMParms *RP)
         stringbuffer_append_printf(buf, "exitstyle %s\n", RP->exitstyle);
     }
 
+    if (RP->cheststyle[0]) {
+        stringbuffer_append_printf(buf, "cheststyle %s\n", RP->cheststyle);
+    }
+
     if (RP->final_map[0]) {
         stringbuffer_append_printf(buf, "final_map %s\n", RP->final_map);
     }

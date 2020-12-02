@@ -46,6 +46,11 @@ typedef struct RMParms {
      * string in which case a random one is chosen, or "none".
      */
     char decorstyle[RM_SIZE];
+    /**
+    * Name of the chests style file, in /styles/cheststyles, can be an empty
+    * string in which case a random one is chosen.
+    */
+    char cheststyle[RM_SIZE];
     /** Path to the map this random map is generated from, to make an exit back. */
     char origin_map[RM_SIZE];
     /** If not empty, the path of the final map this whole maze leads to. */
