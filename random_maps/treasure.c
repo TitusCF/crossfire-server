@@ -222,10 +222,9 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
  */
 object *place_chest(int treasureoptions, int x, int y, mapstruct *map, int n_treasures, RMParms *RP)
 {
-    object *the_chest;
+    object *the_chest = NULL;
     int i, xl, yl;
     treasurelist *tlist;
-    const char *chests[] = { "chest", "chest_green", "chest_red", "chest_yellow", "chest_blue", "chest_pink" };
     
     // If the difficulty is greater than 5, then there is a chance for there to be a mimic lurking.
     // It is a slim chance at any rate, so it shouldn't be a problem in any case.
@@ -235,7 +234,14 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, int n_tre
     }
     else
     {
-        the_chest = create_archetype(chests[RANDOM() % (sizeof(chests)/sizeof(*chests))]);
+        mapstruct *chests_map = find_style("/styles/cheststyles", RP->cheststyle, map->difficulty);
+        if (chests_map) {
+            object *item = pick_random_object(chests_map);
+            if (item) {
+                the_chest = object_new();
+                object_copy_with_inv(item, the_chest);
+            }
+        }
     }
     if (the_chest == NULL) {
         return NULL;

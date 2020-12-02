@@ -1,5 +1,9 @@
 2020-12-02 Nicolas Weeger
     * random_maps/treasure.c: remove unused code.
+    * random_maps/treasure.c,
+    * include/random_maps/random_map.h,
+    * random_maps/random_map.c,
+    * random_maps/reader.l: allow style maps for chests found in random maps.
 
 2020-12-01 Nicolas Weeger
     * types/spellbook/spellbook.c: Fix invalid array indice leading to crash.
