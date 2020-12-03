@@ -99,6 +99,14 @@ static int did_make_save_item(object *op, int type, object *originator) {
     int i, roll, saves = 0, attacks = 0, number;
     materialtype_t* mt;
     object_get_materialtype(op, &mt);
+	
+/* Check item is unpaid. If so make the save / CHRIS */
+    if (QUERY_FLAG(op, FLAG_UNPAID))
+    {
+        return TRUE;
+    }
+    // end unpaid
+	
     if (mt == NULL)
         return TRUE;
     roll = rndm(1, 20);
