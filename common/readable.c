@@ -828,7 +828,7 @@ static void init_msgfile(void) {
                 error_lineno = lineno;
                 tmp = (GeneralMessage *)calloc(1, sizeof(GeneralMessage));
                 tmp->face = NULL;
-                strcpy(msgbuf, " ");  /* reset msgbuf for new message */
+                strcpy(msgbuf, "");  /* reset msgbuf for new message */
                 if (buf[3] == ' ') {
                     int i = 4;
                     while (buf[i] == ' ' && buf[i] != '\0')
