@@ -1166,7 +1166,7 @@ static char *yval(void)
  */
 int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     int retval;
-    char inbuf[MAX_BUF];
+    char inbuf[VERY_BIG_BUF];
 #define MAXDEPTH 10
     object *items[MAXDEPTH];
     int depth = 0;
@@ -1185,7 +1185,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     } else if (bufstate == LO_LINEMODE) {
         YY_BUFFER_STATE yybufstate;
         yy_delete_buffer(YY_CURRENT_BUFFER);
-        while (fgets(inbuf, MAX_BUF-3, fp)) {
+        while (fgets(inbuf, VERY_BIG_BUF-3, fp)) {
             yybufstate = yy_scan_string(inbuf);
             retval = lex_load(&depth, items, MAXDEPTH, map_flags, 1);
             yy_delete_buffer(yybufstate);

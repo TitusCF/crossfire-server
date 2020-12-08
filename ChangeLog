@@ -4,6 +4,7 @@
       common/object.c,
       include/object.h
       server/attack.c: remove 'discrete_damage', unused.
+    * common/loader.l: use a larger buffer when loading artifacts to not wrap long messages.
 
 2020-12-02 Nicolas Weeger
     * random_maps/treasure.c: remove unused code.
