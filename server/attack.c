@@ -1180,11 +1180,6 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32_t
         return 0;
     }
 
-    if (hitter->current_weapon && hitter->current_weapon->discrete_damage != NULL)
-        dam = hitter->current_weapon->discrete_damage[attacknum];
-    else if (hitter->discrete_damage != NULL)
-        dam = hitter->discrete_damage[attacknum];
-
     /* AT_INTERNAL is supposed to do exactly dam.  Put a case here so
      * people can't mess with that or it otherwise get confused.  */
     if (attacknum == ATNR_INTERNAL)

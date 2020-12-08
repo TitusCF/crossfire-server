@@ -435,7 +435,6 @@ typedef struct obj {
     const char  *custom_name;   /**< Custom name assigned by player */
     key_value   *key_values;    /**< Fields not explictly known by the loader. */
 
-    int16_t      *discrete_damage; /**< damage values, based on each attacktype. */
     tag_t       *spell_tags;      /**< Tags used for spell effect merging. */
 } object;
 

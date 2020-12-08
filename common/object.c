@@ -775,8 +775,6 @@ void object_clear(object *op) {
         FREE_AND_CLEAR_STR(op->lore);
     if (op->materialname != NULL)
         FREE_AND_CLEAR_STR(op->materialname);
-    if (op->discrete_damage != NULL)
-        FREE_AND_CLEAR(op->discrete_damage);
 
     /* Remove object from friendly list if needed. */
     if (QUERY_FLAG(op, FLAG_FRIENDLY))
@@ -852,8 +850,6 @@ void object_copy(const object *src_ob, object *dest_ob) {
         free_string(dest_ob->materialname);
     if (dest_ob->custom_name != NULL)
         free_string(dest_ob->custom_name);
-    if (dest_ob->discrete_damage != NULL)
-        FREE_AND_CLEAR(dest_ob->discrete_damage);
     if (dest_ob->spell_tags != NULL)
         FREE_AND_CLEAR(dest_ob->spell_tags);
 
@@ -895,10 +891,6 @@ void object_copy(const object *src_ob, object *dest_ob) {
         add_refcount(dest_ob->custom_name);
     if (dest_ob->materialname != NULL)
         add_refcount(dest_ob->materialname);
-    if (dest_ob->discrete_damage != NULL) {
-        dest_ob->discrete_damage = malloc(sizeof(int16_t)*NROFATTACKS);
-        memcpy(dest_ob->discrete_damage, src_ob->discrete_damage, sizeof(int16_t)*NROFATTACKS);
-    }
 
     if (dest_ob->spell_tags != NULL) {
         dest_ob->spell_tags = malloc(sizeof(tag_t)*SPELL_TAG_SIZE);
@@ -1057,7 +1049,6 @@ object *object_new(void) {
     op->prev = NULL;
     op->active_next = NULL;
     op->active_prev = NULL;
-    op->discrete_damage = NULL;
     op->spell_tags = NULL;
     if (objects != NULL)
         objects->prev = op;
@@ -1468,7 +1459,6 @@ void object_free(object *ob, int flags) {
     if (ob->lore != NULL) FREE_AND_CLEAR_STR(ob->lore);
     if (ob->msg != NULL) FREE_AND_CLEAR_STR(ob->msg);
     if (ob->materialname != NULL) FREE_AND_CLEAR_STR(ob->materialname);
-    if (ob->discrete_damage != NULL) FREE_AND_CLEAR(ob->discrete_damage);
     if (ob->spell_tags) FREE_AND_CLEAR(ob->spell_tags);
 
     /* Why aren't events freed? */
@@ -5035,18 +5025,6 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
         }
     }
 
-    /* Save discrete damage if applicable
-     * Note that given how the discrete_damage allocation is done, there can't be any case where
-     * op->discrete_damage == NULL && op2->discrete_damage != NULL.
-     */
-    if (op->discrete_damage) {
-        for (i = 0; i < NROFATTACKS; i++) {
-            if (op2->discrete_damage == NULL || op2->discrete_damage[i] != op->discrete_damage[i]) {
-                stringbuffer_append_string(sb, "damage_");
-                FAST_SAVE_LONG(sb, resist_save[i], op->discrete_damage[i]);
-            }
-        }
-    }
 }
 
 /**

@@ -1,3 +1,10 @@
+2020-12-08 Nicolas Weeger
+    * common/arch.c,
+      common/loader.l,
+      common/object.c,
+      include/object.h
+      server/attack.c: remove 'discrete_damage', unused.
+
 2020-12-02 Nicolas Weeger
     * random_maps/treasure.c: remove unused code.
     * random_maps/treasure.c,
