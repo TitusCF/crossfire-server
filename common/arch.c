@@ -278,7 +278,6 @@ void free_arch(archetype *at) {
         free_string(at->clone.slaying);
     if (at->clone.msg)
         free_string(at->clone.msg);
-    free(at->clone.discrete_damage);
     object_free_key_values(&at->clone);
     free(at);
 }
