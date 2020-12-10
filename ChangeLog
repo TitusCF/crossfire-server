@@ -1,3 +1,7 @@
+2020-12-10 Nicolas Weeger
+    * socket/request.c: add speech bubble to NPCs.
+Patch by Kevin Zheng, slightly adjusted.
+
 2020-12-08 Nicolas Weeger
     * common/arch.c,
       common/loader.l,
