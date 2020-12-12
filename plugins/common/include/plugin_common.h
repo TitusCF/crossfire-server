@@ -110,7 +110,6 @@ extern int          cf_object_cast_spell(object *op, object *caster, int dir, ob
 extern void         cf_object_learn_spell(object *op, object *spell, int special_prayer);
 extern void         cf_object_forget_spell(object *op, object *sp);
 extern object      *cf_object_check_for_spell(object *op, const char *name);
-extern int          cf_object_cast_ability(object *caster, object *ctoo, int dir, object *sp, char *flags);
 extern int          cf_object_pay_amount(object *pl, uint64_t to_pay);
 extern int          cf_object_pay_item(object *op, object *pl);
 extern void         cf_object_set_long_property(object *op, int propcode, long value);
