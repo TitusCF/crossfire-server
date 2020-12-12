@@ -495,7 +495,8 @@ static object *find_transmution_ob(object *first_ingred, const recipe *rp, size_
             size_t i;
 
             for (i = 0; i < rp->arch_names; i++) {
-                if (strcmp(item->arch->name, rp->arch_name[i]) == 0) {
+                /* Items with titles are skipped to avoid shadow alchemy ability stacking. */
+                if (strcmp(item->arch->name, rp->arch_name[i]) == 0 && !(item->title)) {
                     *rp_arch_index = i;
                     break;
                 }
