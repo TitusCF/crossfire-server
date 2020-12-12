@@ -277,6 +277,10 @@ static void compute_face_name(char* buf, size_t size, const char* name, const ch
     }
 }
 
+/* Keys used for artifact stuff, not copied */
+#define KEY_FACE_SUFFIX         "face_suffix"
+#define KEY_ANIMATION_SUFFIX    "animation_suffix"
+
 /**
  * Used in artifact generation.  The bonuses of the first object
  * is modified by the bonuses of the second object.
@@ -286,13 +290,14 @@ void add_abilities(object *op, const object *change) {
     char buf[MAX_BUF];
     sstring key;
 
+
     if (change->face != blank_face) {
 #ifdef TREASURE_VERBOSE
         LOG(llevDebug, "FACE: %d\n", change->face->number);
 #endif
 
         object_set_value(op, "identified_face", change->face->name, 1);
-    } else if ((key = object_get_value(change, "face_suffix")) != NULL) {
+    } else if ((key = object_get_value(change, KEY_FACE_SUFFIX)) != NULL) {
         const Face* face;
         compute_face_name(buf, sizeof(buf), op->face->name, key);
         face = find_face(buf, op->face);
@@ -308,7 +313,7 @@ void add_abilities(object *op, const object *change) {
     if (change->animation != NULL && op->arch != NULL) {
         /* op->arch can be NULL when called from artifact_msg(). */
         object_set_value(op, "identified_animation", change->animation->name, 1);
-    } else if (op->animation != NULL && (key = object_get_value(change, "animation_suffix")) != NULL) {
+    } else if (op->animation != NULL && (key = object_get_value(change, KEY_ANIMATION_SUFFIX)) != NULL) {
         const Animations *anim;
         snprintf(buf, sizeof(buf), "%s_%s", op->animation->name, key);
         anim = try_find_animation(buf);
@@ -493,6 +498,16 @@ void add_abilities(object *op, const object *change) {
     }
     if (change->msg)
         object_set_msg(op, change->msg);
+
+    if (change->key_values) {
+        const key_value *kv = change->key_values;
+        while (kv) {
+            if (strcmp(kv->key, KEY_FACE_SUFFIX) != 0 && strcmp(kv->key, KEY_ANIMATION_SUFFIX) != 0) {
+                object_set_value(op, kv->key, kv->value, 1);
+            }
+            kv = kv->next;
+        }
+    }
 
     if (change->inv) {
         object *copy;

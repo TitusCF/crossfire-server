@@ -1,3 +1,6 @@
+2020-12-12 Nicolas Weeger
+    * common/artifact.c: Copy key-values from artifact to object.
+
 2020-12-10 Nicolas Weeger
     * socket/request.c: add speech bubble to NPCs.
 Patch by Kevin Zheng, slightly adjusted.
