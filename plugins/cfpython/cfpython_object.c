@@ -2368,7 +2368,8 @@ static PyObject *Crossfire_Object_CastAbility(Crossfire_Object *who, PyObject *a
     EXISTCHECK(who);
     EXISTCHECK(pspell);
 
-    cf_object_cast_ability(who->obj, who->obj, dir, pspell->obj, str);
+    cf_log_plain(llevError, "CastAbility is deprecated and will be removed, use 'Cast'.\n");
+    cf_object_cast_spell(who->obj, who->obj, dir, pspell->obj, str);
 
     Py_INCREF(Py_None);
     return Py_None;

@@ -2,6 +2,8 @@
     * common/artifact.c: Copy key-values from artifact to object.
     * server/alchemy.c: Apply patch https://sourceforge.net/p/crossfire/patches/349/
       by Daniel Ziem.
+    * plugins/cfpython/cfpython_object.c, plugins/common/include/plugin_common.h,
+      plugins/common/plugin_common.c: Mark 'CastAbility' as obsolete.
 
 2020-12-10 Nicolas Weeger
     * socket/request.c: add speech bubble to NPCs.

@@ -733,18 +733,6 @@ int cf_object_cast_spell(object *op, object *caster, int dir, object *spell_ob, 
     assert(type == CFAPI_INT);
     return value;
 }
-/**
- * Should there be a difference nowadays between that and cast_spell ?
- * @todo
- * either totally remove or replace by cf_object_cast_spell().
- */
-int cf_object_cast_ability(object *caster, object *ctoo, int dir, object *sp, char *flags) {
-    int type, value;
-
-    cfapiObject_cast(&type, caster, ctoo, dir, sp, flags, &value);
-    assert(type == CFAPI_INT);
-    return value;
-}
 
 /**
  * Wrapper for do_learn_spell().
