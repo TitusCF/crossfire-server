@@ -1,3 +1,9 @@
+2020-12-13 Nicolas Weeger
+    * server/monster.c,
+      test/bugs/bugtrack/Makefile.am,
+      test/bugs/bugtrack/check_883.c: Fix bug https://sourceforge.net/p/crossfire/bugs/883/
+      "Monsters will not apply weapons in their inventory", add relevant unit test.
+
 2020-12-12 Nicolas Weeger
     * common/artifact.c: Copy key-values from artifact to object.
     * server/alchemy.c: Apply patch https://sourceforge.net/p/crossfire/patches/349/

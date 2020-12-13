@@ -1825,6 +1825,7 @@ static void monster_apply_below(object *monster) {
  * @param monster the monster to operate on
  */
 void monster_check_apply_all(object *monster) {
+    fix_object(monster); // Needed to correctly fill various body fields.
     FOR_INV_PREPARE(monster, inv)
         monster_check_apply(monster, inv);
     FOR_INV_FINISH();
