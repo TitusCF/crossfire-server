@@ -1244,8 +1244,9 @@ mapstruct *mapfile_load(const char *map, int flags) {
 
     PROFILE_BEGIN();
 
-    if (flags&MAP_PLAYER_UNIQUE)
-        strlcpy(pathname, map, sizeof(pathname));
+    if (flags&MAP_PLAYER_UNIQUE) {
+        snprintf(pathname, sizeof(pathname), "%s/%s/%s", settings.localdir, settings.playerdir, map+1);
+    }
     else if (flags&MAP_OVERLAY)
         create_overlay_pathname(map, pathname, MAX_BUF);
     else
@@ -1428,10 +1429,6 @@ static void load_unique_objects(mapstruct *m) {
     m->in_memory = MAP_IN_MEMORY;
 }
 
-static bool in_localdir(const char path[static 1]) {
-    return strstr(path, settings.localdir) == path;
-}
-
 /**
  * Saves a map to file.  If flag is SAVE_MODE_INPLACE, it is saved into the same
  * file it was (originally) loaded from.  Otherwise a temporary
@@ -1468,14 +1465,14 @@ int save_map(mapstruct *m, int flag) {
             else
                 create_pathname(m->path, filename, MAX_BUF);
         } else {
-            if (!in_localdir(m->path)) {
+            if (m->path[0] != '~') {
                 LOG(llevError,
                     "Cannot save unique map '%s' outside of LOCALDIR. Check "
                     "that all exits to '%s' have FLAG_UNIQUE set correctly.\n",
                     m->path, m->path);
                 return SAVE_ERROR_UCREATION;
             }
-            strlcpy(filename, m->path, sizeof(filename));
+            snprintf(filename, sizeof(filename), "%s/%s/%s", settings.localdir, settings.playerdir, m->path+1);
         }
 
         make_path_to_file(filename);
@@ -1840,6 +1837,19 @@ mapstruct *ready_map_name(const char *name, int flags) {
     /* Map is good to go, so just return it */
     if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY)) {
         return m;
+    }
+
+    /* Rewrite old paths starting with LOCALDIR/PLAYERDIR to new '~' paths. */
+    char buf[MAX_BUF], buf2[MAX_BUF];
+    snprintf(buf, sizeof(buf), "%s/%s", settings.localdir, settings.playerdir);
+    if (strncmp(name, buf, strlen(buf)) == 0) {
+        snprintf(buf2, sizeof(buf2), "~%s", name+strlen(buf)+1);
+        name = buf2;
+    }
+
+    /* Paths starting with '~' are unique. */
+    if (name[0] == '~') {
+        flags |= MAP_PLAYER_UNIQUE;
     }
 
     /* unique maps always get loaded from their original location, and never
