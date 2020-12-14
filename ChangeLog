@@ -1,3 +1,10 @@
+2020-12-14 Nicolas Weeger
+    * common/map.c,
+      common/path.c,
+      server/c_misc.c,
+      server/server.c: Use tilde (~) for player-unique map paths.
+      Patch https://sourceforge.net/p/crossfire/patches/384/ by Kevin Zheng.
+
 2020-12-13 Nicolas Weeger
     * server/monster.c,
       test/bugs/bugtrack/Makefile.am,
