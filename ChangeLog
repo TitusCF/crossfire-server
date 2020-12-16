@@ -1,5 +1,6 @@
 2020-12-15 Nicolas Weeger
     * server/monster.c: Fix invalid call to fix_object.
+    * server/player.c: Fix reset of pickup mode at player death.
 
 2020-12-14 Nicolas Weeger
     * common/map.c,
