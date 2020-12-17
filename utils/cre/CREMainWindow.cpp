@@ -365,7 +365,7 @@ void CREMainWindow::onReportDuplicate()
 
     while (arch != NULL)
     {
-        // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully)
+        // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully, see lower for report on that)
         if (arch->clone.animation == NULL)
         {
             faces[QString::fromLatin1(arch->clone.face->name)].append(QString(arch->name) + " (arch)");
@@ -482,7 +482,31 @@ void CREMainWindow::onReportDuplicate()
     }
     report += "</ul>";
 
-    CREReportDisplay show(report, "Duplicate and unused faces and animations");
+    // Find faces used for an object having an animation not including this face
+    report += "<h1>Objects having a face not part of their animation:</h1><ul>";
+
+    arch = first_archetype;
+
+    while (arch != NULL) {
+        // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully)
+        if (arch->clone.animation == NULL || arch->clone.face == NULL) {
+            arch = arch->next;
+            continue;
+        }
+        bool included = false;
+        for (int f = 0; f < arch->clone.animation->num_animations && !included; f++) {
+            if (arch->clone.animation->faces[f] == arch->clone.face) {
+                included = true;
+            }
+        }
+        if (!included) {
+            report += QString("<li>%1 (%2) has face %3 not in animation %4</li>\n").arg(arch->name, arch->clone.name, arch->clone.face->name, arch->clone.animation->name);
+        }
+
+        arch = arch->next;
+    }
+
+    CREReportDisplay show(report, "Faces and animations report");
     show.exec();
 }
 
