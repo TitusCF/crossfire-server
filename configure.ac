@@ -122,7 +122,7 @@ dnl############################################
 dnl Plugin configuration
 dnl############################################
 AM_CONDITIONAL(HAVE_LIBDL, test "$cf_have_libdl" = "yes")
-    PKG_CHECK_MODULES([PYTHON], [python2],
+    PKG_CHECK_MODULES([PYTHON], [python3],
                       [PLUGIN_PYTHON="cfpython.la"]
                           [cf_will_build_python="yes"],
 			    [PKG_CHECK_MODULES([PYTHON], [python-2.7],
