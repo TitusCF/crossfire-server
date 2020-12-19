@@ -737,9 +737,6 @@ void command_goto(object *op, const char *params) {
     }
 
     do_goto(op, params, -1, -1);
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "Difficulty: %d.",
-                         op->map->difficulty);
 }
 
 /**
