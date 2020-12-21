@@ -27,6 +27,9 @@ def main():
             files = sys.argv[1:]
 
     for path in files:
+        if not os.path.exists(path):
+            print(path, "does not exist, skipping")
+            continue
         if not need_convert(path):
             print(path, "does not need to be converted, skipping")
             continue
