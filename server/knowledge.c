@@ -1010,7 +1010,7 @@ static knowledge_player *knowledge_get_or_create(const player *pl) {
  * @param book optional item containing the knowledge code.
  */
 void knowledge_give(player *pl, const char *marker, const object *book) {
-    char *dot, *copy;
+    char *dot, *copy, *code;
     const knowledge_type *type;
     int none, added = 0;
     knowledge_player *current = knowledge_get_or_create(pl);
@@ -1036,9 +1036,20 @@ void knowledge_give(player *pl, const char *marker, const object *book) {
     }
 
     none = (current->items == NULL);
-    if (type->validate(dot)) {
-        added = type->add(current, dot, type, pl);
+
+    code = dot;
+    while (code && code[0] != '\0') {
+        dot = strchr(code, ':');
+        if (dot) {
+            *dot = '\0';
+            dot++;
+        }
+        if (type->validate(code)) {
+            added += type->add(current, code, type, pl);
+        }
+        code = dot;
     }
+
     free(copy);
 
     if (added) {
