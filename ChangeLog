@@ -1,5 +1,6 @@
 2020-12-21 Nicolas Weeger
-    * server/knowledge.c: Fix monster knowledge not correctly saved.
+    * common/readable.c,
+      server/knowledge.c: Fix monster knowledge not correctly saved.
 
 2020-12-15 Nicolas Weeger
     * server/monster.c: Fix invalid call to fix_object.

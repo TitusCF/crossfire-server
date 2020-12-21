@@ -1510,6 +1510,7 @@ static StringBuffer *mon_info_msg(int level, size_t booksize, object *book) {
     StringBuffer *marker = stringbuffer_new(), *desc = stringbuffer_new(), *mon = NULL;
     int added = 0;
     sstring final;
+    const char *sep = ":";
 
     /*preamble */
     stringbuffer_append_string(desc, "This beastiary contains:");
@@ -1529,7 +1530,8 @@ static StringBuffer *mon_info_msg(int level, size_t booksize, object *book) {
         if (stringbuffer_length(desc) + stringbuffer_length(mon) >= booksize)
             break;
         added++;
-        stringbuffer_append_printf(marker, ":%s", tmp->arch->name);
+        stringbuffer_append_printf(marker, "%s%s", sep, tmp->arch->name);
+        sep = "/";
         stringbuffer_append_stringbuffer(desc, mon);
         stringbuffer_delete(mon);
         mon = NULL;

@@ -1039,7 +1039,7 @@ void knowledge_give(player *pl, const char *marker, const object *book) {
 
     code = dot;
     while (code && code[0] != '\0') {
-        dot = strchr(code, ':');
+        dot = strchr(code, '/');
         if (dot) {
             *dot = '\0';
             dot++;
