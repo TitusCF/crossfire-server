@@ -4,7 +4,7 @@ if HAVE_CHECK
   UNIT_TEST = test
 endif
 
-SUBDIRS = include common random_maps socket types server lib utils doc plugins $(UNIT_TEST)
+SUBDIRS = include common random_maps socket types server lib utils doc plugins $(UNIT_TEST) test/performance
 
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL README.rst autogen.sh
 

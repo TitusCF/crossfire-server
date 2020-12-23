@@ -534,5 +534,6 @@ macros/lt~obsolete.m4
 macros/pkg.m4
 tags
 test/performance/perf_mapload
+test/performance/perf_mapsave
 utils/crossfire-mapper
 utils/test-driver
