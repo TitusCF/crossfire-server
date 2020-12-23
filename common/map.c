@@ -1171,31 +1171,11 @@ static int load_map_header(FILE *fp, mapstruct *m) {
             if (tile < 1 || tile > 4) {
                 LOG(llevError, "load_map_header: tile location %d out of bounds (%s)\n", tile, m->path);
             } else {
-                char path[HUGE_BUF];
-
                 if (m->tile_path[tile-1]) {
                     LOG(llevError, "load_map_header: tile location %d duplicated (%s)\n", tile, m->path);
                     free(m->tile_path[tile-1]);
-                    m->tile_path[tile-1] = NULL;
                 }
-
-                if (check_path(value, 1) != -1) {
-                    /* The unadorned path works. */
-                    strlcpy(path, value, sizeof(path));
-                } else {
-                    /* Try again; it could be a relative exit. */
-                    path_combine_and_normalize(m->path, value, path, sizeof(path));
-
-                    if (check_path(path, 1) == -1) {
-                        LOG(llevError, "get_map_header: Bad tile path %s %s\n", m->path, value);
-                        path[0] = '\0';
-                    }
-                }
-
-                if (*path != '\0') {
-                    /* Use the normalized value. */
-                    m->tile_path[tile-1] = strdup_local(path);
-                }
+                m->tile_path[tile-1] = strdup_local(value);
             } /* end if tile direction (in)valid */
         } else  if (!strcmp(key, "background_music")) {
             m->background_music = strdup_local(value);
@@ -2292,6 +2272,9 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num) {
 
     orig_map->tile_map[tile_num] = ready_map_name(path, 0);
     if (orig_map->tile_map[tile_num] == NULL) {
+        LOG(llevError, "%s has invalid tiled map %s\n", orig_map->path, path);
+        free(orig_map->tile_path[tile_num]);
+        orig_map->tile_path[tile_num] = NULL;
         return NULL;
     }
 
