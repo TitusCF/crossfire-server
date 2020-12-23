@@ -95,6 +95,7 @@ dnl#############################################################################
 dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS([crypt.h])
+AC_CHECK_HEADERS([gperftools/profiler.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 CF_CHECK_VISIBILITY()
@@ -177,6 +178,7 @@ AC_CONFIG_FILES([Makefile
                  plugins/cfpython/Makefile plugins/cfpython/include/Makefile
                  plugins/common/Makefile plugins/common/include/Makefile
                  test/Makefile
+                 test/performance/Makefile
                  test/bugs/Makefile test/bugs/bugtrack/Makefile
                  test/include/Makefile test/templates/Makefile test/toolkit/Makefile
                  test/unit/Makefile
