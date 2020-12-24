@@ -214,6 +214,16 @@ int get_power_from_ench(int ench) {
     return enc_to_item_power[ench];
 }
 
+static int bits_set(uint32_t x, int start, int end) {
+    int enc = 0;
+    for (int i = start; i < end; i++) {
+        if (x&(1<<i)) {
+            enc++;
+        }
+    }
+    return enc;
+}
+
 /**
  * This takes an object 'op' and figures out what its item_power
  * rating should be.  This should only really be used by the treasure
@@ -252,9 +262,7 @@ int calc_item_power(const object *op) {
      * physical doesn't count against total.
      */
     if (op->type == WEAPON) {
-        for (i = 1; i < NROFATTACKS; i++)
-            if (op->attacktype&(1<<i))
-                enc++;
+        enc += bits_set(op->attacktype, 1, NROFATTACKS);
         if (op->slaying)
             enc += 2;     /* What it slays is probably more relevent */
     }
@@ -279,14 +287,9 @@ int calc_item_power(const object *op) {
     enc += op->stats.luck;
 
     /* Do spell paths now */
-    for (i = 1; i < NRSPELLPATHS; i++) {
-        if (op->path_attuned&(1<<i))
-            enc++;
-        else if (op->path_denied&(1<<i))
-            enc -= 2;
-        else if (op->path_repelled&(1<<i))
-            enc--;
-    }
+    enc += bits_set(op->path_attuned, 1, NRSPELLPATHS);
+    enc -= bits_set(op->path_repelled, 1, NRSPELLPATHS);
+    enc -= 2*bits_set(op->path_denied, 1, NRSPELLPATHS);
 
     if (QUERY_FLAG(op, FLAG_LIFESAVE))
         enc += 5;
