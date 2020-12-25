@@ -160,53 +160,31 @@ partylist *party_find(const char *partyname) {
  *
  * @param party
  * the party to remove
- *
- * @todo clean/simplify the mess.
  */
 void party_remove(partylist *party) {
-    partylist *tmpparty;
     partylist *previousparty;
-    partylist *nextparty;
+    partylist **walk;
+    player *pl;
 
-    if (firstparty == NULL) {
-        LOG(llevError, "party_remove: I was asked to remove party %s, but no parties are defined\n",
-            party->partyname);
-        return;
-    }
-
-    /* special case-ism for parties at the beginning and end of the list */
-    if (party == firstparty) {
-        if (lastparty == party)
-            lastparty = NULL;
-        firstparty = firstparty->next;
-        free(party->partyleader);
-        free(party->partyname);
-        free(party);
-        return;
-    } else if (party == lastparty) {
-        for (tmpparty = firstparty; tmpparty->next != NULL; tmpparty = tmpparty->next) {
-            if (tmpparty->next == party) {
-                lastparty = tmpparty;
-                free(party->partyleader);
-                free(party->partyname);
-                free(party);
-                lastparty->next = NULL;
-                return;
+    previousparty = NULL;
+    for (walk = &firstparty; *walk != NULL; walk = &(*walk)->next) {
+        if (*walk == party) {
+            if (party == lastparty)
+                lastparty = previousparty;
+            *walk = party->next;
+            for (pl = first_player; pl != NULL; pl = pl->next) {
+                if (pl->party == party)
+                    pl->party = NULL;
             }
-        }
-    }
-    for (tmpparty = firstparty; tmpparty->next != NULL; tmpparty = tmpparty->next)
-        if (tmpparty->next == party) {
-            previousparty = tmpparty;
-            nextparty = tmpparty->next->next;
-            /* this should be safe, because we already dealt with the lastparty case */
-
-            previousparty->next = nextparty;
             free(party->partyleader);
             free(party->partyname);
             free(party);
             return;
         }
+        previousparty = *walk;
+    }
+    LOG(llevError, "party_remove: I was asked to remove party %s, but it could not be found.\n",
+        party->partyname);
 }
 
 /**
