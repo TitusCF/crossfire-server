@@ -2693,8 +2693,10 @@ void map_remove_unique_files(const mapstruct *map) {
     int count;
 
     if (map->unique) {
-        /* Unique maps have their full path already set. */
-        unlink(map->path);
+        snprintf(path, sizeof(path), "%s/%s/%s", settings.localdir, settings.playerdir, map->path+1);
+        if (unlink(path) != 0) {
+            LOG(llevError, "Could not delete %s: %s\n", path, strerror(errno));
+        }
         return;
     }
 
