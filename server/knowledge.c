@@ -1398,7 +1398,7 @@ void knowledge_send_info(socket_struct *ns) {
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "replyinfo knowledge_info\n");
-    SockList_AddPrintf(&sl, "::%u:0\n", face->number);
+    SockList_AddPrintf(&sl, "::%u:0\n", face ? face->number : 0);
 
     for (i = 0; knowledges[i].type != NULL; i++) {
         face = find_face(knowledges[i].face, NULL);
