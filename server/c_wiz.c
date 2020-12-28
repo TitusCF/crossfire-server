@@ -1841,7 +1841,7 @@ void command_reset(object *op, const char *params) {
     }
 
     if (confirmation) {
-        if (strcmp(params, ".") == 0 && m->unique) {
+        if (m->unique && (op->map == m)) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
                     MSG_TYPE_COMMAND_ERROR,
                     "Cannot reset a unique player map while on it. Use "
