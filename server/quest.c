@@ -1208,6 +1208,29 @@ void command_quest(object *op, const char *params) {
         return;
     }
 
+    /* 
+     * Quest display for clients using the quest system, similar to 'info' above
+     * but using the (shared) quest's client_code instead of the (player unique) index.
+     */
+    if (strncmp(params, "info_c ", 7) == 0) {
+        int number = atoi(params+7);
+        quest_player *qp = get_quest(who->contr);
+        quest_state *qs = qp ? qp->quests : NULL;
+        while (qs) {
+            quest_definition *q = quest_get_by_code(qs->code);
+            if (q && q->client_code == number) {
+                break;
+            }
+            qs = qs->next;
+        }
+        if (qs) {
+            quest_info(op->contr, who->contr, qs, 0);
+            return;
+        }
+        draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "Invalid quest number");
+        return;
+    }
+
     if (QUERY_FLAG(op, FLAG_WIZ) && strncmp(params, "set ", 4) == 0) {
         char *dup = strdup(params + 4);
         char *space = strrchr(dup, ' ');
