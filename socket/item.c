@@ -155,7 +155,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     len += strlen(item_n+1+len)+1;
     SockList_AddLen8Data(sl, item_n, len);
 
-    SockList_AddShort(sl, head->animation ? head->animation->num : 0);
+    SockList_AddShort(sl, (QUERY_FLAG(head, FLAG_ANIMATE) && head->animation) ? head->animation->num : 0);
     anim_speed = 0;
     if (QUERY_FLAG(head, FLAG_ANIMATE)) {
         if (head->anim_speed)
