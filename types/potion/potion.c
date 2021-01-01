@@ -53,6 +53,7 @@ static method_ret potion_type_apply(ob_methods *context, object *potion,
             potion = identify(potion);
     }
 
+    play_sound_map(SOUND_TYPE_ITEM, applier, 0, "drink");
     apply_handle_yield(potion);
 
     /* Potion of restoration - only for players */
