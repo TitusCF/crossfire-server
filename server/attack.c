@@ -893,6 +893,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
             return 0;
         }
     } else {/* end of if hitter hit op */
+        play_sound_map(SOUND_TYPE_HIT, hitter, 0, "miss");
         dam = 0; /* if we missed, dam=0 */
     }
 
