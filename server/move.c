@@ -95,6 +95,12 @@ int move_ob(object *op, int dir, object *originator) {
             return 0;
     }
 
+    if (QUERY_FLAG(op, FLAG_ALIVE) && op->move_type == MOVE_WALK && op->weight >= 100) {
+        if (!op->hide) {
+            play_sound_map(SOUND_TYPE_GROUND, op, 0, "step");
+        }
+    }
+
     object_remove(op);
     object_insert_in_map_at(op, op->map, originator, 0, op->x+freearr_x[dir], op->y+freearr_y[dir]);
 
