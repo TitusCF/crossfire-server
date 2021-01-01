@@ -601,15 +601,9 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         snprintf(buf2, sizeof(buf2), "hits");
     }
 
-    if (dam != 0) {
+    if (dam > 0) {
         if (hitter->chosen_skill)
             play_sound_map(SOUND_TYPE_HIT, hitter, 0, hitter->chosen_skill->name);
-        else if (dam < 10)
-            play_sound_map(SOUND_TYPE_HIT, hitter, 0, "low");
-        else if (dam < 20)
-            play_sound_map(SOUND_TYPE_HIT, hitter, 0, "medium");
-        else
-            play_sound_map(SOUND_TYPE_HIT, hitter, 0, "high");
     }
 
     /* bail out if a monster is casting spells */
