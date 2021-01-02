@@ -1,3 +1,6 @@
+2021-01-02 Nicolas Weeger
+    * plugins/cfcitybell/cfcitybell.c: Add the bell of Valkyrie's temple.
+
 2020-12-29 Nicolas Weeger
     * socket/item.c: Don't send item's animation if FLAG_ANIMATE isn't set.
     * server/quest.c: Add a client specific command to display quest information.
