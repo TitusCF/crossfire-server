@@ -1,5 +1,6 @@
 2021-01-02 Nicolas Weeger
     * plugins/cfcitybell/cfcitybell.c: Add the bell of Valkyrie's temple.
+    * server/player.c: Change message type for keys from 'attack' to 'item'.
 
 2020-12-29 Nicolas Weeger
     * socket/item.c: Don't send item's animation if FLAG_ANIMATE isn't set.
