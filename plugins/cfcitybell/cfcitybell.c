@@ -115,6 +115,7 @@ static void ring_navar(object *pl)
     if (!strcmp(god_name, "Gorokh") ||
         !strcmp(god_name, "Ruggilli") ||
         !strcmp(god_name, "Sorig") ||
+        !strcmp(god_name, "Valkyrie") ||
         !strcmp(god_name, "Valriel"))
     {
             char buf[MAX_BUF];
