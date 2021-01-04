@@ -2530,6 +2530,9 @@ static void cfapi_object_get_property(int *type, ...) {
 static void copy_message(object *op, const char *msg) {
     /* need to reset parsed dialog information */
     free_dialog_information(op);
+    if (strlen(msg) == 0) {
+        msg = NULL;
+    }
     object_set_msg(op, msg);
 }
 
