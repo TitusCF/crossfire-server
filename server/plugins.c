@@ -2520,7 +2520,7 @@ static void cfapi_object_get_property(int *type, ...) {
 }
 
 /**
- * Utility function to copy the string to op->msg and ensure there is a final newline.
+ * Utility function to copy the string to op->msg.
  *
  * @param op
  * object to copy to.
@@ -2528,28 +2528,9 @@ static void cfapi_object_get_property(int *type, ...) {
  * message to copy.
  */
 static void copy_message(object *op, const char *msg) {
-    char *temp;
-    int size;
-
-    if (!msg)
-        return;
-
     /* need to reset parsed dialog information */
     free_dialog_information(op);
-
-    size = strlen(msg);
-
-    if (msg[0] != 0 && msg[size-1] == '\n') {
-        object_set_msg(op, msg);
-        return;
-    }
-
-    temp = malloc(size+2);
-    if (!temp)
-        fatal(OUT_OF_MEMORY);
-    snprintf(temp, size+2, "%s\n", msg);
-    object_set_msg(op, temp);
-    free(temp);
+    object_set_msg(op, msg);
 }
 
 /**
