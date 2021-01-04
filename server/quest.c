@@ -89,7 +89,7 @@ typedef struct quest_definition {
     struct quest_definition *next;  /**< Next quest in the definition list. */
 } quest_definition;
 
-static int quests_loaded = 0;           /**< Did we already read the 'default.quests' file? */
+static int quests_loaded = 0;           /**< Number of quests loaded. If zero, quests not yet loaded. */
 static quest_definition *quests = NULL; /**< All known quests. */
 
 /**
@@ -410,13 +410,12 @@ static int load_quests_from_file(const char *filename) {
 
 /** Load all quest definitions. Can be called multiple times, will be ignored. */
 static void quest_load_definitions(void) {
-    int found = 0;
     if (quests_loaded)
         return;
-    quests_loaded = 1;
-    found = load_quests_from_file("world.quests");
+    int found = load_quests_from_file("world.quests");
     if (found >= 0) {
         LOG(llevInfo, "%d quests found.\n", found);
+        quests_loaded = found;
     } else {
         LOG(llevError, "Quest Loading Failed\n");
     }
@@ -865,7 +864,7 @@ static void quest_display(player *pl, quest_player *pq, int showall, const char*
         if (!showall) {
             if (restart_count > 0)
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-                        "%s completed %d quests, of which %d may be restarted", name, completed_count, restart_count);
+                        "%s completed %d out of %d quests, of which %d may be restarted", name, completed_count, quests_loaded, restart_count);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
                         "%s completed %d quests", name, completed_count);
