@@ -300,6 +300,7 @@ void CREResourcesWindow::fillTreasures()
     }
 
     addPanel("Treasure", new CRETreasurePanel(this));
+    treasures->setText(0, tr("%1 [%2 items]").arg(treasures->text(0)).arg((names.size())));
 }
 
 void CREResourcesWindow::fillArchetypes()
