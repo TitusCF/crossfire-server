@@ -1,3 +1,6 @@
+2021-01-06 Daniel Hawkins
+    * server/skill_util.c: Disallow use of unapid skill tools in use_skill()
+
 2021-01-02 Nicolas Weeger
     * plugins/cfcitybell/cfcitybell.c: Add the bell of Valkyrie's temple.
     * server/player.c: Change message type for keys from 'attack' to 'item'.

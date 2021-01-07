@@ -955,6 +955,7 @@ int use_skill(object *op, const char *string) {
             skop = tmp;
             break;
         } else if (tmp->type == SKILL_TOOL
+        && !QUERY_FLAG(tmp, FLAG_UNPAID) /* Holy symbols could be used unpaid w/o this */
         && !strncasecmp(string, tmp->skill, MIN(strlen(string), strlen(tmp->skill)))) {
             skop = tmp;
             break;
