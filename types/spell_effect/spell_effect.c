@@ -564,6 +564,10 @@ static void execute_word_of_recall(object *op) {
         op = op->env;
 
     if (op != NULL) {
+        // Drop any unpaid items that would be carried.
+        // This prevents abuse of balms of return home in shops.
+        remove_unpaid_objects(op->inv, op, 0);
+
         enter_exit(op, wor);
     }
     object_remove(wor);
