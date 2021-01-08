@@ -1,3 +1,6 @@
+2020-01-08 Nicolas Weeger
+    * server/quest.c: Use media tags for quest information.
+
 2021-01-07 Daniel Hawkins
     * types/spell_effect/spell_effect.c: Drop unpaid items when word of recall triggers.
         This prevents abuse of balms of return home in shops.

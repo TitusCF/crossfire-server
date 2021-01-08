@@ -34,6 +34,10 @@
 #include "output_file.h"
 #include "sproto.h"
 
+/* Media tags for information messages prefix. */
+#define TAG_START   "[color=#aa55ff]"
+#define TAG_END     "[/color]"
+
 /** Quest status that indicates a quest was completed and may be restarted. */
 #define QC_CAN_RESTART -1
 
@@ -1003,21 +1007,21 @@ static void quest_info(player *pl, player* who, quest_state *qs, int level) {
         return;
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Quest: %s", quest->quest_title);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, TAG_START "Quest:" TAG_END " %s", quest->quest_title);
     if (QUERY_FLAG(pl->ob, FLAG_WIZ)) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Code: %s", quest->quest_code);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, TAG_START "Code:" TAG_END " %s", quest->quest_code);
         for (step = quest->steps; step != NULL; step = step->next) {
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " Step: %d (%s)", step->step, step->step_description);
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " " TAG_START "Step:" TAG_END " %d (%s)", step->step, step->step_description);
         }
     }
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Description: %s", quest->quest_description);
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, TAG_START "Description:" TAG_END " %s", quest->quest_description);
 
     step = quest_get_step(quest, qs->state);
     if (qs->state == QC_CAN_RESTART || qs->is_complete) {
         const char *restart = "";
         if (quest->quest_restart)
             restart = " (can be replayed)";
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "This quest has been completed%s.", restart);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, TAG_START "This quest has been completed%s.[/color]", restart);
     }
     prefix = "";
     if (qs->state != QC_CAN_RESTART) {
@@ -1033,7 +1037,7 @@ static void quest_info(player *pl, player* who, quest_state *qs, int level) {
             prefix = "Outcome";
         else
             prefix = "Current Status";
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " \n%s: %s", prefix, step->step_description);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " \n" TAG_START "%s:" TAG_END " %s", prefix, step->step_description);
     }
 
     /* ok, now check all of the player's other quests for any children, and print those in order */
