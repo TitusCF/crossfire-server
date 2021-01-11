@@ -715,7 +715,7 @@ void CREMainWindow::onReportAlchemyGraph()
     foreach (const recipe* rec, recipes) {
         for (linked_char* ing = rec->ingred; ing; ing = ing->next) {
             const char* name = ing->name;
-            if (isdigit(name[0])) {
+            if (isdigit(name[0]) && strchr(name, ' ')) {
                 name = strchr(name, ' ') + 1;
             }
             QHash<QString, QVector<const recipe*> >::iterator item = products.find(name);
