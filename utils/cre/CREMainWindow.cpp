@@ -142,6 +142,10 @@ void CREMainWindow::createActions()
     myReportAlchemy->setStatusTip(tr("Display alchemy formulae, in a table."));
     connect(myReportAlchemy, SIGNAL(triggered()), this, SLOT(onReportAlchemy()));
 
+    myReportAlchemyGraph = new QAction(tr("Alchemy graph"), this);
+    myReportAlchemyGraph->setStatusTip(tr("Export alchemy relationship as a DOT file."));
+    connect(myReportAlchemyGraph, SIGNAL(triggered()), this, SLOT(onReportAlchemyGraph()));
+
     myReportSpells = new QAction(tr("Spells"), this);
     myReportSpells->setStatusTip(tr("Display all spells, in a table."));
     connect(myReportSpells, SIGNAL(triggered()), this, SLOT(onReportSpells()));
@@ -217,6 +221,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportDuplicate);
     reportMenu->addAction(myReportSpellDamage);
     reportMenu->addAction(myReportAlchemy);
+    reportMenu->addAction(myReportAlchemyGraph);
     reportMenu->addAction(myReportSpells);
     reportMenu->addAction(myReportPlayer);
     reportMenu->addAction(myReportSummon);
@@ -657,6 +662,89 @@ void CREMainWindow::onReportAlchemy()
 
     CREReportDisplay show(report, "Alchemy formulae");
     show.exec();
+}
+
+void CREMainWindow::onReportAlchemyGraph()
+{
+    QString output = QFileDialog::getSaveFileName(this, tr("Destination file"), "", tr("Dot files (*.dot);;All files (*.*)"));
+    if (output.isEmpty()) {
+        return;
+    }
+
+    QFile file(output);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Write error", tr("Unable to write to %1").arg(output));
+        return;
+    }
+    QTextStream out(&file);
+
+    out << "digraph alchemy {\n";
+
+    QVector<const recipe*> recipes;
+    QHash<const recipe*, QString> names;
+    QHash<QString, QVector<const recipe*> > products;
+
+    for (int ing = 1; ; ing++)
+    {
+        const recipelist* list = get_formulalist(ing);
+        if (!list)
+            break;
+
+        for (const recipe* recipe = list->items; recipe; recipe = recipe->next)
+        {
+            QString product("???");
+            for (size_t idx = 0; idx < recipe->arch_names; idx++) {
+                auto arch = myResourcesManager->archetype(recipe->arch_name[idx]);
+                if (recipe->title && strcmp(recipe->title, "NONE")) {
+                    product = tr("%1 of %2").arg(arch->clone.name, recipe->title);
+                } else {
+                    product = arch->clone.name;
+                }
+                products[product].append(recipe);
+            }
+            names[recipe] = product;
+            recipes.append(recipe);
+        }
+    }
+
+    QHash<const recipe*, bool> added;
+
+    foreach (const recipe* rec, recipes) {
+        for (linked_char* ing = rec->ingred; ing; ing = ing->next) {
+            const char* name = ing->name;
+            if (isdigit(name[0])) {
+                name = strchr(name, ' ') + 1;
+            }
+            QHash<QString, QVector<const recipe*> >::iterator item = products.find(name);
+            if (item != products.end()) {
+                if (!added[rec]) {
+                    out << tr("alchemy_%1 [label=\"%2\"]\n").arg(recipes.indexOf(rec)).arg(names[rec]);
+                    added[rec] = true;
+                }
+                for (auto r = item->begin(); r != item->end(); r++) {
+                    if (!added[*r]) {
+                        out << tr("alchemy_%1 [label=\"%2\"]\n").arg(recipes.indexOf(*r)).arg(names[*r]);
+                        added[*r] = true;
+                    }
+                    out << tr("alchemy_%1 -> alchemy_%2\n").arg(recipes.indexOf(*r)).arg(recipes.indexOf(rec));
+                }
+            }
+        }
+    }
+
+    int ignored = 0;
+    foreach (const recipe* rec, recipes) {
+        if (!added[rec]) {
+            ignored++;
+        }
+    }
+    out << "graph [labelloc=\"b\" labeljust=\"c\" label=\"Alchemy graph, formulae producing ingredients of other formulae";
+    if (ignored) {
+        out << tr(" (%1 formulae not displayed)").arg(ignored);
+    }
+    out << "\"]\n";
+
+    out << "}\n";
 }
 
 static QString spellsTable(const QString& skill)
