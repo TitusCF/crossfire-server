@@ -1,3 +1,6 @@
+2020-01-11 Nicolas weeger
+    * utils/cre/CREMainWindow.{h,cpp}: Add export of alchemy relationship to .dot file.
+
 2020-01-08 Nicolas Weeger
     * server/quest.c: Use media tags for quest information.
 

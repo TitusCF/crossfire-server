@@ -59,6 +59,7 @@ class CREMainWindow : public QMainWindow
         QAction* myReportDuplicate;
         QAction* myReportSpellDamage;
         QAction* myReportAlchemy;
+        QAction* myReportAlchemyGraph;
         QAction* myReportSpells;
         QAction* myReportPlayer;
         QAction* myReportSummon;
@@ -99,6 +100,7 @@ class CREMainWindow : public QMainWindow
         void onReportDuplicate();
         void onReportSpellDamage();
         void onReportAlchemy();
+        void onReportAlchemyGraph();
         void onReportSpells();
         void onReportPlayer();
         void onReportSummon();
