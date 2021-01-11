@@ -695,6 +695,9 @@ void CREMainWindow::onReportAlchemyGraph()
             QString product("???");
             for (size_t idx = 0; idx < recipe->arch_names; idx++) {
                 auto arch = myResourcesManager->archetype(recipe->arch_name[idx]);
+                if (!arch) {
+                    continue;
+                }
                 if (recipe->title && strcmp(recipe->title, "NONE")) {
                     product = tr("%1 of %2").arg(arch->clone.name, recipe->title);
                 } else {
