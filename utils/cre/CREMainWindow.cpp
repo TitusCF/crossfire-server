@@ -21,6 +21,8 @@ extern "C" {
 #include "sproto.h"
 #include "image.h"
 }
+#include "assets.h"
+#include "AssetsManager.h"
 
 CREMainWindow::CREMainWindow()
 {
@@ -366,18 +368,20 @@ void CREMainWindow::onReportDuplicate()
     QHash<QString, QStringList> faces, anims;
 
     // browse all archetypes
-    archetype* arch = first_archetype;
+    archetype* arch = get_next_archetype(NULL);
 
     while (arch != NULL)
     {
         // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully, see lower for report on that)
         if (arch->clone.animation == NULL)
         {
-            faces[QString::fromLatin1(arch->clone.face->name)].append(QString(arch->name) + " (arch)");
-            sstring key = object_get_value(&arch->clone, "identified_face");
-            if (key)
-            {
-                faces[QString(key)].append(QString(arch->name) + " (arch)");
+            if (arch->clone.face) {
+                faces[QString::fromLatin1(arch->clone.face->name)].append(QString(arch->name) + " (arch)");
+                sstring key = object_get_value(&arch->clone, "identified_face");
+                if (key)
+                {
+                    faces[QString(key)].append(QString(arch->name) + " (arch)");
+                }
             }
         }
         else
@@ -389,7 +393,7 @@ void CREMainWindow::onReportDuplicate()
                 anims[QString(key)].append(QString(arch->name) + " (arch)");
             }
         }
-        arch = arch->next;
+        arch = get_next_archetype(arch);
     }
 
     // list faces in animations
@@ -418,11 +422,13 @@ void CREMainWindow::onReportDuplicate()
         {
           if (art->item->animation == 0)
           {
-              faces[QString::fromLatin1(art->item->face->name)].append(QString(art->item->name) + " (art)");
-              sstring key = object_get_value(art->item, "identified_face");
-              if (key)
-              {
-                  faces[QString(key)].append(QString(art->item->name) + " (art)");
+              if (art->item->face) {
+                faces[QString::fromLatin1(art->item->face->name)].append(QString(art->item->name) + " (art)");
+                sstring key = object_get_value(art->item, "identified_face");
+                if (key)
+                {
+                    faces[QString(key)].append(QString(art->item->name) + " (art)");
+                }
               }
           }
           else
@@ -490,13 +496,10 @@ void CREMainWindow::onReportDuplicate()
     // Find faces used for an object having an animation not including this face
     report += "<h1>Objects having a face not part of their animation:</h1><ul>";
 
-    arch = first_archetype;
-
-    while (arch != NULL) {
+    getManager()->archetypes()->each([&report] (archetype *arch) {
         // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully)
         if (arch->clone.animation == NULL || arch->clone.face == NULL) {
-            arch = arch->next;
-            continue;
+            return;
         }
         bool included = false;
         for (int f = 0; f < arch->clone.animation->num_animations && !included; f++) {
@@ -507,9 +510,7 @@ void CREMainWindow::onReportDuplicate()
         if (!included) {
             report += QString("<li>%1 (%2) has face %3 not in animation %4</li>\n").arg(arch->name, arch->clone.name, arch->clone.face->name, arch->clone.animation->name);
         }
-
-        arch = arch->next;
-    }
+    });
 
     CREReportDisplay show(report, "Faces and animations report");
     show.exec();
@@ -520,7 +521,7 @@ void CREMainWindow::onReportSpellDamage()
     QStringList spell;
     QList<QStringList> damage;
 
-    archetype* arch = first_archetype;
+    archetype* arch = get_next_archetype(NULL);
     object* caster = create_archetype("orc");
     int dm, cost;
 
@@ -540,7 +541,7 @@ void CREMainWindow::onReportSpellDamage()
             damage.append(dam);
         }
 
-        arch = arch->next;
+        arch = get_next_archetype(arch);
     }
     object_free_drop_inventory(caster);
 
@@ -590,7 +591,7 @@ static QString alchemyTable(const QString& skill)
                     // hu?
                     continue;
 
-                const archetype* arch = find_archetype(recipe->arch_name[0]);
+                archetype* arch = find_archetype(recipe->arch_name[0]);
                 if (arch == NULL) {
                     continue;
                 }
@@ -644,8 +645,8 @@ void CREMainWindow::onReportAlchemy()
 {
     QStringList skills;
 
-    const archt* arch = first_archetype;
-    for (; arch; arch = arch->next)
+    archt* arch = get_next_archetype(NULL);
+    for (; arch; arch = get_next_archetype(arch))
     {
         if (arch->clone.type == SKILL)
             skills.append(arch->clone.name);
@@ -759,9 +760,9 @@ static QString spellsTable(const QString& skill)
 
     QHash<int, QStringList> spells;
 
-    const archetype* spell;
+    archetype* spell;
 
-    for (spell = first_archetype; spell; spell = spell->next)
+    for (spell = get_next_archetype(NULL); spell; spell = get_next_archetype(spell))
     {
         if (spell->clone.type == SPELL && spell->clone.skill == skill)
         {
@@ -789,8 +790,8 @@ void CREMainWindow::onReportSpells()
 {
     QStringList skills;
 
-    const archt* arch = first_archetype;
-    for (; arch; arch = arch->next)
+    archt* arch = get_next_archetype(NULL);
+    for (; arch; arch = get_next_archetype(arch))
     {
         if (arch->clone.type == SKILL)
             skills.append(arch->clone.name);
@@ -1043,8 +1044,8 @@ void CREMainWindow::onReportPlayer()
     QMap<QString, archetype*> monsters;
     QList<archetype*> skills;
 
-    archt* arch = first_archetype;
-    for (; arch; arch = arch->next)
+    archt* arch = get_next_archetype(NULL);
+    for (; arch; arch = get_next_archetype(arch))
     {
         if (QUERY_FLAG(&arch->clone, FLAG_MONSTER) && arch->clone.stats.hp > 0 && arch->head == NULL)
         {
@@ -1185,7 +1186,7 @@ void CREMainWindow::onReportSummon()
 
     QMap<QString, QString> spells;
 
-    for (const archetype* summon = first_archetype; summon; summon = summon->next)
+    for (archetype* summon = get_next_archetype(NULL); summon; summon = get_next_archetype(summon))
     {
         if (summon->clone.type != SPELL || summon->clone.subtype != SP_SUMMON_GOLEM)
             continue;
@@ -1196,7 +1197,7 @@ void CREMainWindow::onReportSummon()
         }
 
         // god-based summoning
-        for (const archetype* god = first_archetype; god; god = god->next)
+        for (archetype* god = get_next_archetype(NULL); god; god = get_next_archetype(god))
         {
             if (god->clone.type != GOD)
                 continue;

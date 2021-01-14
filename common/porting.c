@@ -43,6 +43,7 @@
  * File related functions
  ****************************************************************************/
 
+#if 0
 #ifndef HAVE_TEMPNAM
 /**
  * Portable implementation of tempnam(3).
@@ -80,6 +81,7 @@ char *tempnam(const char *dir, const char *pfx) {
     }
     return(NULL);
 }
+#endif
 #endif
 
 /**
@@ -193,6 +195,7 @@ void remove_directory(const char *path) {
  * String related function
  ****************************************************************************/
 
+#if 0
 #ifndef HAVE_STRDUP
 /**
  * Portable implementation of strdup(3).
@@ -298,6 +301,7 @@ char *strcasestr(const char *s, const char *find) {
     }
     return s;
 }
+#endif
 #endif
 
 /**

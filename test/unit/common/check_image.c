@@ -6,8 +6,7 @@
 /*
  * CrossFire, A Multiplayer game for X-windows
  *
- * Copyright (C) 2002 Mark Wedel & Crossfire Development Team
- * Copyright (C) 1992 Frank Tore Johansen
+ * Copyright (C) 2020 Crossfire Development Team
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +31,34 @@
 
 #include <stdlib.h>
 #include <check.h>
+#include "global.h"
+#include <toolkit_common.h>
+#include "image.h"
+#include "assets.h"
 
 void setup(void) {
-    /* put any initialisation steps here, they will be run before each testcase */
+    cctk_setdatadir(BUILD_ROOT "lib");
+    cctk_setlog(LOGDIR "/unit/common/image.out");
+    cctk_init_std_archetypes();
 }
 
 void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST(test_empty) {
-    /*TESTME test not yet developped*/
+static void test_faceset(const face_sets *fs) {
+    for (size_t idx = 0; idx < get_faces_count(); idx++) {
+        const Face *face = get_face_by_id(idx);
+        int fs_id = get_face_fallback(fs->id, idx);
+        const face_sets *actual = find_faceset(fs_id);
+        fail_unless(actual != NULL, "couldn't find faceset %d", fs_id);
+        fail_unless(idx < actual->allocated, "found face id %d but allocated %d!", idx, actual->allocated);
+        fail_unless(actual->faces[idx].datalen > 0, "empty face %d (%s) for faceset %d", idx, face ? face->name : "(null)", fs_id);
+    }
+}
+
+START_TEST(test_all_faces_have_data) {
+    facesets_for_each(test_faceset);
 }
 END_TEST
 
@@ -54,7 +70,7 @@ Suite *image_suite(void) {
     tcase_add_checked_fixture(tc_core, setup, teardown);
 
     suite_add_tcase(s, tc_core);
-    tcase_add_test(tc_core, test_empty);
+    tcase_add_test(tc_core, test_all_faces_have_data);
 
     return s;
 }
@@ -63,6 +79,8 @@ int main(void) {
     int nf;
     Suite *s = image_suite();
     SRunner *sr = srunner_create(s);
+
+    srunner_set_fork_status(sr, CK_NOFORK);
 
     srunner_set_xml(sr, LOGDIR "/unit/common/image.xml");
     srunner_set_log(sr, LOGDIR "/unit/common/image.out");

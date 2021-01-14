@@ -19,7 +19,7 @@ CRECombatSimulator::CRECombatSimulator()
     mySecond = new QComboBox(this);
     layout->addWidget(mySecond, line++, 1);
 
-    const archetype* arch = first_archetype;
+    archetype* arch = get_next_archetype(NULL);
     while (arch)
     {
         if (arch->head == NULL && QUERY_FLAG(&arch->clone, FLAG_MONSTER))
@@ -27,7 +27,7 @@ CRECombatSimulator::CRECombatSimulator()
             myFirst->addItem(CREPixmap::getIcon(arch->clone.face->number), arch->name, qVariantFromValue((void*)arch));
             mySecond->addItem(CREPixmap::getIcon(arch->clone.face->number), arch->name, qVariantFromValue((void*)arch));
         }
-        arch = arch->next;
+        arch = get_next_archetype(arch);
     }
 
     layout->addWidget(new QLabel(tr("Number of fights:"), this), line, 0);

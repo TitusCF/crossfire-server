@@ -313,7 +313,6 @@ int tailor_god_spell(object *spellop, object *caster);
 /* init.c */
 void init(int argc, char **argv);
 void free_server(void);
-racelink *find_racelink(const char *name);
 /* knowledge.c */
 void knowledge_give(player *pl, const char *marker, const object *book);
 void knowledge_read(player *pl, object *book);
@@ -623,6 +622,19 @@ void cleanup(void);
 void leave(player *pl, int draw_exit);
 int forbid_play(void);
 void server_main(int argc, char *argv[]);
+/* race.cpp */
+#ifdef __cplusplus
+extern "C" {
+#endif
+void load_races(FILE *file, const char *filename);
+racelink *find_racelink(const char *name);
+void finish_races();
+void dump_races(void);
+void free_races(void);
+#ifdef __cplusplus
+}
+#endif
+
 
 /**
  * Move a player to its stored map level. This function is used to place the

@@ -71,243 +71,6 @@ void init_archetype_pointers(void) {
 }
 
 /**
- * Allocate and return the pointer to an empty treasurelist structure.
- *
- * @return
- * new structure, blanked, never NULL.
- *
- * @note
- * will call fatal() if memory allocation error.
- * @ingroup page_treasure_list
- */
-static treasurelist *get_empty_treasurelist(void) {
-    treasurelist *tl = (treasurelist *)malloc(sizeof(treasurelist));
-    if (tl == NULL)
-        fatal(OUT_OF_MEMORY);
-    memset(tl, 0, sizeof(treasurelist));
-    return tl;
-}
-
-/**
- * Allocate and return the pointer to an empty treasure structure.
- *
- * @return
- * new structure, blanked, never NULL.
- *
- * @note
- * will call fatal() if memory allocation error.
- * @ingroup page_treasure_list
- */
-static treasure *get_empty_treasure(void) {
-    treasure *t = (treasure *)calloc(1, sizeof(treasure));
-    if (t == NULL)
-        fatal(OUT_OF_MEMORY);
-    t->item = NULL;
-    t->name = NULL;
-    t->next = NULL;
-    t->next_yes = NULL;
-    t->next_no = NULL;
-    t->chance = 100;
-    t->magic = 0;
-    t->nrof = 0;
-    return t;
-}
-
-/**
- * Reads one treasure from the file, including the 'yes', 'no' and 'more' options.
- *
- * @param fp
- * file to read from.
- * @param[out] line
- * position in file.
- * @return
- * read structure, never NULL.
- *
- * @todo
- * check if change_name is still used, and remove it if no.
- * @ingroup page_treasure_list
- */
-static treasure *load_treasure(FILE *fp, int *line) {
-    char buf[MAX_BUF], *cp, variable[MAX_BUF];
-    treasure *t = get_empty_treasure();
-    int value;
-
-    nroftreasures++;
-    while (fgets(buf, MAX_BUF, fp) != NULL) {
-        (*line)++;
-
-        if (*buf == '#')
-            continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
-        cp = buf;
-        while (isspace(*cp)) /* Skip blanks */
-            cp++;
-
-        if (sscanf(cp, "arch %s", variable)) {
-            if ((t->item = find_archetype(variable)) == NULL) {
-                LOG(llevError, "Treasure lacks archetype: %s\n", variable);
-                fatal(SEE_LAST_ERROR);
-            }
-        } else if (sscanf(cp, "list %s", variable))
-            t->name = add_string(variable);
-        else if (sscanf(cp, "change_name %s", variable))
-            t->change_arch.name = add_string(variable);
-        else if (sscanf(cp, "change_title %s", variable))
-            t->change_arch.title = add_string(variable);
-        else if (sscanf(cp, "change_slaying %s", variable))
-            t->change_arch.slaying = add_string(variable);
-        else if (sscanf(cp, "chance %d", &value))
-            t->chance = (uint8_t)value;
-        else if (sscanf(cp, "nrof %d", &value))
-            t->nrof = (uint16_t)value;
-        else if (sscanf(cp, "magic %d", &value))
-            t->magic = (uint8_t)value;
-        else if (!strcmp(cp, "yes"))
-            t->next_yes = load_treasure(fp, line);
-        else if (!strcmp(cp, "no"))
-            t->next_no = load_treasure(fp, line);
-        else if (!strcmp(cp, "end"))
-            return t;
-        else if (!strcmp(cp, "more")) {
-            t->next = load_treasure(fp, line);
-            return t;
-        } else
-            LOG(llevError, "Unknown treasure-command: '%s', last entry %s, line %d\n", cp, t->name ? t->name : "null", *line);
-    }
-    LOG(llevError, "treasure lacks 'end'.\n");
-    fatal(SEE_LAST_ERROR);
-    return t;
-}
-
-#ifdef TREASURE_DEBUG
-/**
- * Checks if a treasure if valid. Will also check its yes and no options.
- *
- * Will LOG() to error.
- *
- * @param t
- * treasure to check.
- * @param tl
- * needed only so that the treasure name can be printed out.
- * @ingroup page_treasure_list
- */
-static void check_treasurelist(const treasure *t, const treasurelist *tl) {
-    if (t->item == NULL && t->name == NULL)
-        LOG(llevError, "Treasurelist %s has element with no name or archetype\n", tl->name);
-    if (t->chance >= 100 && t->next_yes && (t->next || t->next_no))
-        LOG(llevError, "Treasurelist %s has element that has 100%% generation, next_yes field as well as next or next_no\n", tl->name);
-    /* find_treasurelist will print out its own error message */
-    if (t->name && strcmp(t->name, "NONE"))
-        find_treasurelist(t->name);
-    if (t->next)
-        check_treasurelist(t->next, tl);
-    if (t->next_yes)
-        check_treasurelist(t->next_yes, tl);
-    if (t->next_no)
-        check_treasurelist(t->next_no, tl);
-}
-#endif
-
-/**
- * Opens LIBDIR/treasure and reads all treasure-declarations from it.
- * Each treasure is parsed with the help of load_treasure().
- *
- * Will LOG() if file can't be accessed.
- * @ingroup page_treasure_list
- */
-void load_treasures(void) {
-    FILE *fp;
-    char filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
-    treasurelist *previous = NULL;
-    treasure *t;
-    int line = 0;
-
-    snprintf(filename, sizeof(filename), "%s/%s", settings.datadir, settings.treasures);
-    if ((fp = fopen(filename, "r")) == NULL) {
-        LOG(llevError, "Can't open treasure file.\n");
-        return;
-    }
-    while (fgets(buf, MAX_BUF, fp) != NULL) {
-        line++;
-        if (*buf == '#')
-            continue;
-
-        if (sscanf(buf, "treasureone %s\n", name) || sscanf(buf, "treasure %s\n", name)) {
-            treasurelist *tl = get_empty_treasurelist();
-
-            tl->name = add_string(name);
-            if (previous == NULL)
-                first_treasurelist = tl;
-            else
-                previous->next = tl;
-            previous = tl;
-            tl->items = load_treasure(fp, &line);
-
-            /* This is a one of the many items on the list should be generated.
-             * Add up the chance total, and check to make sure the yes & no
-             * fields of the treasures are not being used.
-             */
-            if (!strncmp(buf, "treasureone", 11)) {
-                for (t = tl->items; t != NULL; t = t->next) {
-#ifdef TREASURE_DEBUG
-                    if (t->next_yes || t->next_no) {
-                        LOG(llevError, "Treasure %s is one item, but on treasure %s\n", tl->name, t->item ? t->item->name : t->name);
-                        LOG(llevError, "  the next_yes or next_no field is set\n");
-                    }
-#endif
-                    tl->total_chance += t->chance;
-                }
-            }
-        } else
-            LOG(llevError, "Treasure-list didn't understand: %s, line %d\n", buf, line);
-    }
-    fclose(fp);
-
-#ifdef TREASURE_DEBUG
-    /* Perform some checks on how valid the treasure data actually is.
-     * verify that list transitions work (ie, the list that it is supposed
-     * to transition to exists).  Also, verify that at least the name
-     * or archetype is set for each treasure element.
-     */
-    for (previous = first_treasurelist; previous != NULL; previous = previous->next)
-        check_treasurelist(previous->items, previous);
-#endif
-}
-
-/**
- * Searches for the given treasurelist in the globally linked list
- * of treasurelists which has been built by load_treasures().
- *
- * Will LOG() to error if not found.
- *
- * @param name
- * treasure list to search.
- * @return
- * match, or NULL if treasurelist doesn't exist or is 'none'.
- * @ingroup page_treasure_list
- */
-treasurelist *find_treasurelist(const char *name) {
-    const char *tmp = find_string(name);
-    treasurelist *tl;
-
-    /* Special cases - randomitems of none is to override default.  If
-     * first_treasurelist is null, it means we are on the first pass of
-     * of loading archetyps, so for now, just return - second pass will
-     * init these values.
-     */
-    if (!strcmp(name, "none") || (!first_treasurelist))
-        return NULL;
-    if (tmp != NULL)
-        for (tl = first_treasurelist; tl != NULL; tl = tl->next)
-            if (tmp == tl->name)
-                return tl;
-    LOG(llevError, "Couldn't find treasurelist %s\n", name);
-    return NULL;
-}
-
-
-/**
  * Inserts generated treasure where it should go.
  *
  * @param op
@@ -1451,7 +1214,7 @@ void dump_monster_treasure(const char *name) {
 
     found = 0;
     fprintf(logfile, "\n");
-    for (at = first_archetype; at != NULL; at = at->next)
+    for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at))
         if (!strcasecmp(at->clone.name, name) && at->clone.title == NULL) {
             fprintf(logfile, "treasures for %s (arch: %s)\n", at->clone.name, at->name);
             if (at->clone.randomitems != NULL)
@@ -1461,6 +1224,7 @@ void dump_monster_treasure(const char *name) {
             fprintf(logfile, "\n");
             found++;
         }
+
     if (found == 0)
         fprintf(logfile, "No objects have the name %s!\n\n", name);
 }
@@ -1535,10 +1299,7 @@ static void fix_flesh_item(object *item, const object *donor) {
         if (item->face != NULL) {
             const Face *face;
             snprintf(tmpbuf, sizeof(tmpbuf), "%s_%s", donor->arch->name, item->face->name);
-            face = find_face(tmpbuf, NULL);
-            if (face != NULL) {
-              item->face = face;
-            }
+            item->face = try_find_face(tmpbuf, item->face);
         }
     }
 }
@@ -1571,39 +1332,6 @@ static int special_potion(object *op) {
             return 1;
 
     return 0;
-}
-
-/**
- * Frees a treasure, including its yes, no and next items.
- *
- * @param t
- * treasure to free. Pointer is free()d too, so becomes invalid.
- */
-static void free_treasurestruct(treasure *t) {
-    if (t->next)
-        free_treasurestruct(t->next);
-    if (t->next_yes)
-        free_treasurestruct(t->next_yes);
-    if (t->next_no)
-        free_treasurestruct(t->next_no);
-    free(t);
-}
-
-
-/**
- * Free all treasure-related memory.
- */
-void free_all_treasures(void) {
-    treasurelist *tl, *next;
-
-    for (tl = first_treasurelist; tl != NULL; tl = next) {
-        next = tl->next;
-        if (tl->name)
-            free_string(tl->name);
-        if (tl->items)
-            free_treasurestruct(tl->items);
-        free(tl);
-    }
 }
 
 /**

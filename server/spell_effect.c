@@ -31,6 +31,7 @@
 #include "sounds.h"
 #include "spells.h"
 #include "sproto.h"
+#include "assets.h"
 
 /**
  * This is really used mostly for spell fumbles and the like.
@@ -174,11 +175,12 @@ static void polymorph_living(object *op, int level) {
     object_remove(op);
 
     /* First, count up the number of legal matches */
-    for (at = first_archetype; at != NULL; at = at->next)
+    for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at))
         if ((QUERY_FLAG((&at->clone), FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER))
         && (object_find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
             numat++;
         }
+
     if (!numat) {
         object_insert_in_map_at(op, map, NULL, 0, x, y);
         return; /* no valid matches? if so, return */
@@ -186,7 +188,7 @@ static void polymorph_living(object *op, int level) {
 
     /* Next make a choice, and loop through until we get to it */
     choice = rndm(0, numat-1);
-    for (at = first_archetype; at != NULL; at = at->next)
+    for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at))
         if ((QUERY_FLAG((&at->clone), FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER)) && (object_find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
             if (!choice)
                 break;
@@ -290,7 +292,7 @@ static void polymorph_item(object *who, object *op, int level) {
      * invisible.  Also, if the value is too high now, it would almost
      * certainly be too high below.
      */
-    for (at = first_archetype; at != NULL; at = at->next) {
+    for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at)) {
         if (at->clone.type == op->type
         && !at->clone.invisible
         && at->clone.value > 0
@@ -309,7 +311,7 @@ static void polymorph_item(object *who, object *op, int level) {
     new_ob = object_new();
     do {
         choice = rndm(0, numat-1);
-        for (at = first_archetype; at != NULL; at = at->next) {
+        for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at)) {
             if (at->clone.type == op->type
             && !at->clone.invisible
             && at->clone.value > 0
@@ -322,6 +324,7 @@ static void polymorph_item(object *who, object *op, int level) {
                     choice--;
             }
         }
+
         object_copy(&(at->clone), new_ob);
         fix_generated_item(new_ob, op, difficulty, FABS(op->magic), GT_ENVIRONMENT);
         ++tries;
@@ -527,7 +530,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
         while ( *stringarg==' ' ) ++stringarg;
     }
     
-    if (find_archetype(missile_name) == NULL) {
+    if (try_find_archetype(missile_name) == NULL) {
         LOG(llevDebug, "Cast create_missile: could not find archetype %s\n", missile_name);
         return 0;
     }
@@ -598,6 +601,20 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
     return 1;
 }
 
+/** @todo ugly :( */
+static archetype *food_choice;
+static int food_value_choice;
+static void food_each(archetype *arch) {
+    if (arch->clone.type == FOOD || arch->clone.type == DRINK) {
+        /* Basically, if the food value is something that is creatable
+         * under the limits of the spell and it is higher than
+         * the item we have now, take it instead.
+         */
+        if (arch->clone.stats.food <= food_value_choice
+        && (!food_choice || arch->clone.stats.food > food_choice->clone.stats.food))
+            food_choice = arch;
+    }
+}
 
 /**
  * Create food.
@@ -635,8 +652,6 @@ int cast_create_food(object *op, object *caster, object *spell_ob, int dir, cons
     }
 
     if (!stringarg) {
-        archetype *at_tmp;
-
         /* We try to find the archetype with the maximum food value.
          * This removes the dependency of hard coded food values in this
          * function, and addition of new food types is automatically added.
@@ -644,18 +659,10 @@ int cast_create_food(object *op, object *caster, object *spell_ob, int dir, cons
          * to be altered from the donor.
          */
 
-        /* We assume the food items don't have multiple parts */
-        for (at_tmp = first_archetype; at_tmp != NULL; at_tmp = at_tmp->next) {
-            if (at_tmp->clone.type == FOOD || at_tmp->clone.type == DRINK) {
-                /* Basically, if the food value is something that is creatable
-                 * under the limits of the spell and it is higher than
-                 * the item we have now, take it instead.
-                 */
-                if (at_tmp->clone.stats.food <= food_value
-                && (!at || at_tmp->clone.stats.food > at->clone.stats.food))
-                    at = at_tmp;
-            }
-        }
+        food_choice = at;
+        food_value_choice = food_value;
+        archetypes_for_each(food_each);
+        at = food_choice;
     }
     /* Pretty unlikely (there are some very low food items), but you never
      * know
@@ -1011,7 +1018,7 @@ int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
  */
 int perceive_self(object *op) {
     char *cp, buf[MAX_BUF];
-    archetype *at = find_archetype(ARCH_DEPLETION);
+    archetype *at = try_find_archetype(ARCH_DEPLETION);
     if (at == NULL) {
         return 1;
     }
@@ -1166,7 +1173,7 @@ static int town_portal_destroy_existing(object* op, object* spell) {
         return 0;
     }
     archetype *perm_portal;
-    perm_portal = find_archetype(spell->slaying);
+    perm_portal = try_find_archetype(spell->slaying);
     if (perm_portal == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
                       "Oops, program error!");
@@ -1202,7 +1209,7 @@ static int town_portal_destroy_existing(object* op, object* spell) {
             FOR_OB_AND_ABOVE_FINISH();
 
             /* kill any opening animation there is */
-            archetype *arch = find_archetype("town_portal_open");
+            archetype *arch = try_find_archetype("town_portal_open");
             if (arch != NULL) {
                 tmp = map_find_by_archetype(exitmap, exitx, exity, arch);
                 FOR_OB_AND_ABOVE_PREPARE(tmp)
@@ -1496,7 +1503,7 @@ int magic_wall(object *op, object *caster, int dir, object *spell_ob) {
         char buf1[MAX_BUF];
 
         snprintf(buf1, sizeof(buf1), spell_ob->race, dir);
-        at = find_archetype(buf1);
+        at = try_find_archetype(buf1);
         if (!at) {
             LOG(llevError, "summon_wall: Unable to find archetype %s\n", buf1);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
@@ -1809,7 +1816,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
             success = 1;
 
     if (spell->attacktype&AT_POISON) {
-        at = find_archetype("poisoning");
+        at = try_find_archetype("poisoning");
         if (at != NULL) {
             poison = arch_present_in_ob(at, target);
             if (poison) {
@@ -1830,7 +1837,7 @@ int cast_heal(object *op, object *caster, object *spell, int dir) {
         }
     }
     if (spell->attacktype&AT_BLIND) {
-        at = find_archetype("blindness");
+        at = try_find_archetype("blindness");
         if (at != NULL) {
             poison = arch_present_in_ob(at, target);
             if (poison) {
@@ -2211,12 +2218,12 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets, int
     else
         value *= value_adj;
 
-    archetype *small_nugget_arch = find_archetype(SMALL_NUGGET);
+    archetype *small_nugget_arch = try_find_archetype(SMALL_NUGGET);
     if (small_nugget_arch == NULL) {
         return;
     }
     small_value = price_base(&small_nugget_arch->clone);
-    archetype *large_nugget_arch = find_archetype(LARGE_NUGGET);
+    archetype *large_nugget_arch = try_find_archetype(LARGE_NUGGET);
     if (large_nugget_arch == NULL) {
         return;
     }
@@ -3021,7 +3028,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 strncpy(buf+letter, god->name, MAX_BUF-letter);
                 for (; letter < strlen(buf); letter++)
                     buf[letter] = tolower(buf[letter]);
-                altar_arch = find_archetype(buf);
+                altar_arch = try_find_archetype(buf);
                 if (!altar_arch) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                                          "You fail to consecrate the altar.");

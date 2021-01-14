@@ -115,9 +115,7 @@ typedef struct linked_char {
 EXTERN player *first_player;                /**< First player. */
 EXTERN mapstruct *first_map;                /**< First map. */
 EXTERN region *first_region;                /**< First region. */
-EXTERN treasurelist *first_treasurelist;    /**< First treasure. */
 EXTERN artifactlist *first_artifactlist;    /**< First artifact. */
-EXTERN archetype *first_archetype;          /**< First archetype. */
 EXTERN objectlink *first_friendly_object;   /**< Objects monsters will go after. */
 EXTERN godlink *first_god;                  /**< God list. */
 EXTERN racelink *first_race;                /**< Race list. */
@@ -140,7 +138,6 @@ extern uint32_t pticks;              /**< Used by various function to determine
 EXTERN FILE *logfile;                    /**< Used by server/daemon.c */
 extern int reopen_logfile;
 EXTERN int exiting;                      /**< True if the game is about to exit. */
-EXTERN long nroftreasures;               /**< Only used in malloc_info(). */
 EXTERN long nrofartifacts;               /**< Only used in malloc_info(). */
 EXTERN long nrofallowedstr;              /**< Only used in malloc_info(). */
 
@@ -157,9 +154,6 @@ EXTERN long ob_count;
  */
 EXTERN archetype *ring_arch, *amulet_arch, *crown_arch;
 EXTERN const char *undead_name; /* Used in hit_player() in main.c */
-
-EXTERN Animations *animations;
-EXTERN int num_animations, bmaps_checksum;
 
 /* Rotate right from bsd sum. This is used in various places for checksumming */
 #define ROTATE_RIGHT(c) if ((c)&01) (c) = ((c)>>1)+0x80000000; else (c) >>= 1;
@@ -204,10 +198,13 @@ extern socket_struct *init_sockets;
  */
 #define FREE_AND_CLEAR_STR(xyz) { free_string(xyz); xyz = NULL; }
 
+#define FREE_AND_CLEAR_STR_IF(xyz) { if (xyz) { free_string(xyz); xyz = NULL; } }
 /**
  * Release the shared string if not NULL, and make it a reference to nv.
  */
 #define FREE_AND_COPY(sv, nv) { if (sv) free_string(sv); sv = add_string(nv); }
+
+#define FREE_AND_COPY_IF(sv, nv) { if (sv) free_string(sv); sv = nv ? add_string(nv) : NULL; }
 
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */
 #if HAVE_DIRENT_H
@@ -233,6 +230,8 @@ extern socket_struct *init_sockets;
  */
 #define PERM_EXP(exptotal) (exptotal * settings.permanent_exp_ratio / 100 )
 #define MAX_TOTAL_EXPERIENCE (settings.permanent_exp_ratio ? (MAX_EXPERIENCE * 100 / settings.permanent_exp_ratio) : 0)
+
+typedef void(*collectorHook)(FILE *, const char *);
 
 /**
  * Server settings.
@@ -331,6 +330,10 @@ typedef struct Settings {
     char*   account_trusted_host;     /**< Trusted host for account creation, defaults to 127.0.0.1. */
     uint8_t crypt_mode;               /**< 0 for legacy behavior, 1 for always Traditional */
     uint8_t min_name;                         /**< Minimum characters for an account or player name */
+    uint8_t hooks_count;              /**< Number of items in hooks_filename and hooks. */
+    const char *hooks_filename[20];   /**< Filenames to process for each hook. */
+    collectorHook hooks[20];          /**< Collect hooks, called when the filename matches. */
+    int     ignore_assets_errors;     /**< If set then go on running even if there are errors in assets. */
 } Settings;
 
 /**

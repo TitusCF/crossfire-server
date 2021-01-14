@@ -9,6 +9,10 @@ extern "C" {
 #include "CREArchetypePanel.h"
 #include "CREUtils.h"
 
+#include "assets.h"
+#include "AssetsManager.h"
+#include "Archetypes.h"
+
 CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store, QWidget* parent) : CRETPanel(parent)
 {
     Q_ASSERT(store);
@@ -39,10 +43,7 @@ void CREArchetypePanel::setItem(const archt* archetype)
     myUsing->clear();
     QTreeWidgetItem* root = NULL;
 
-    const archt* arch;
-
-    for (arch = first_archetype; arch; arch = (arch->more ? arch->more : arch->next))
-    {
+    getManager()->archetypes()->each([this, &root] (archt *arch) {
         if (arch->clone.other_arch == myArchetype)
         {
             if (root == NULL)
@@ -53,16 +54,12 @@ void CREArchetypePanel::setItem(const archt* archetype)
             }
             CREUtils::archetypeNode(arch, root);
         }
-    }
+    });
 
     root = NULL;
 
-    const treasurelist* list;
-    const treasure* t;
-
-    for (list = first_treasurelist; list; list = list->next)
-    {
-        for (t = list->items; t; t = t->next)
+    getManager()->treasures()->each([this, &root] (treasurelist *list) {
+        for (auto t = list->items; t; t = t->next)
         {
             if (t->item == myArchetype)
             {
@@ -75,7 +72,7 @@ void CREArchetypePanel::setItem(const archt* archetype)
                 CREUtils::treasureNode(list, root);
             }
         }
-    }
+    });
 
     QList<CREMapInformation*> mapuse = myStore->getArchetypeUse(myArchetype);
     if (mapuse.size() > 0)

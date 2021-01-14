@@ -130,3 +130,5 @@ PRECOMPILED_DIR = .pch
 PRECOMPILED_HEADER = cre_pch.h
 
 QT += concurrent script widgets
+
+CONFIG += c++14

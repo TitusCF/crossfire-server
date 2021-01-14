@@ -8,7 +8,7 @@ class CREPixmap
     public:
         static void init();
 
-        static int faceset;
+        static face_sets *faceset;
         static QIcon getIcon(int faceNumber);
 
         static QIcon getTreasureIcon();

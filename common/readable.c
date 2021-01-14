@@ -34,6 +34,7 @@
 #include "living.h"
 #include "output_file.h"
 #include "spells.h"
+#include "assets.h"
 
 /* Define this if you want to archive book titles by contents.
  * This option should enforce UNIQUE combinations of titles,authors and
@@ -128,20 +129,6 @@ typedef struct namebytype {
     int type;          /**< matching type */
 } arttypename;
 
-/**
- * One general message, from the lib/messages file.
- */
-struct GeneralMessage {
-    int chance;             /**< Relative chance of the message appearing
-                              randomly. If 0 will never appear. */
-    sstring identifier;     /**< Message identifier, can be NULL. */
-    sstring title;          /**< The message's title, only used for knowledge. */
-    sstring message;        /**< The message's body. */
-    sstring quest_code;     /**< Optional quest code and state this message will start. */
-    const Face *face;   /**< Face the message displays at in the knowledge dialog, NULL if no face defined. */
-    GeneralMessage *next;   /**< Next message in the list. */
-};
-
 static void add_book(title *book, int type, const char *fname, int lineno);
 
 /**
@@ -155,18 +142,6 @@ static objectlink *first_mon_info = NULL;
 
 static int nrofmon = 0, /**< Number of monsters in the ::first_mon_info list. */
     need_to_write_bookarchive = 0; /**< If set then we have information to save. */
-
-/**
- * First message from data read from the messages file.
- * Note that this points to the last message in the file,
- * as messages are added to the start of the list.
- */
-static GeneralMessage *first_msg = NULL;
-
-/**
- * Total chance of messages (GeneralMessage), to randomly select one.
- */
-static int msg_total_chance = 0;
 
 /**
  * Spellpath information.
@@ -735,130 +710,6 @@ int book_overflow(const char *buf1, const char *buf2, size_t booksize) {
 /**
  * If not called before, initialize the info list.
  *
- * Reads the messages file into the list pointed to by first_msg
- */
-static void init_msgfile(void) {
-    FILE *fp;
-    char buf[MAX_BUF], msgbuf[HUGE_BUF], fname[MAX_BUF], *cp;
-    int text = 0, nrofmsg = 0;
-    static int did_init_msgfile = 0;
-
-    if (did_init_msgfile)
-        return;
-    did_init_msgfile = 1;
-
-    snprintf(fname, sizeof(fname), "%s/messages", settings.datadir);
-    LOG(llevDebug, "Reading messages from %s...\n", fname);
-
-    fp = fopen(fname, "r");
-    if (fp != NULL) {
-        GeneralMessage *tmp = NULL;
-        int lineno;
-        int error_lineno;
-
-        error_lineno = 0;
-        for (lineno = 1; fgets(buf, MAX_BUF, fp) != NULL; lineno++) {
-            if (*buf == '#')
-                continue;
-            cp = strchr(buf, '\n');
-            if (cp != NULL) {
-                // Remove trailing whitespace
-                while (cp > buf && (cp[-1] == ' ' || cp[-1] == '\t'))
-                    cp--;
-                /* If we make sure there is a newline here,
-                 * we can avoid the auto-append of it and make long
-                 * blocks of text not get split.
-                 * But only do that if we are getting the message.
-                 * Everywhere else we do not want the newline.
-                 * Daniel Hawkins 2018-10-24
-                 */
-                if (text)
-                {
-                    *cp = '\n';
-                    // to have found a newline means we have room for a null terminator, too
-                    *(++cp)= '\0';
-                }
-                else
-                    *cp = '\0';
-            }
-            if (tmp != NULL) {
-                if (text && strncmp(buf, "ENDMSG", 6) == 0) {
-                    if (strlen(msgbuf) > BOOK_BUF) {
-                        LOG(llevDebug, "Warning: this string exceeded max book buf size:\n");
-                        LOG(llevDebug, "  %s\n", msgbuf);
-                    }
-                    tmp->message = add_string(msgbuf);
-                    tmp->next = first_msg;
-                    first_msg = tmp;
-                    nrofmsg++;
-                    if (tmp->identifier != NULL && tmp->title == NULL) {
-                        LOG(llevError, "Error: message can't have identifier without title, on line %d\n", error_lineno);
-                        fatal(SEE_LAST_ERROR);
-                    }
-                    tmp = NULL;
-                    text = 0;
-                } else if (text) {
-                    if (!buf_overflow(msgbuf, buf, HUGE_BUF-1)) {
-                        strcat(msgbuf, buf);
-                        // If there is a newline in the text, it will be included in the output where it belongs
-                        // We should avoid really long lines of text getting split up this way.
-                    } else if (error_lineno != 0) {
-                        LOG(llevInfo, "Warning: truncating book at %s, line %d\n", fname, error_lineno);
-                    }
-                } else if (strcmp(buf, "TEXT") == 0) {
-                    text = 1;
-                } else if (strncmp(buf, "CHANCE ", 7) == 0) {
-                    tmp->chance = atoi(buf + 7);
-                    msg_total_chance += tmp->chance;
-                } else if (strncmp(buf, "TITLE ", 6) == 0) {
-                    tmp->title = add_string(buf + 6);
-                } else if (strncmp(buf, "QUEST ", 6) == 0) {
-                    tmp->quest_code = add_string(buf + 6);
-                } else if (strncmp(buf, "FACE ", 5) == 0) {
-                    const Face *face = find_face(buf + 5, NULL);
-                    if (face != NULL) {
-                        tmp->face = face;
-                    } else {
-                        LOG(llevInfo, "Warning: unknown face %s for message %s, line %d\n", buf + 5, tmp->identifier, error_lineno);
-                    }
-                } else if (error_lineno != 0) {
-                    LOG(llevInfo, "Warning: unknown line %s, line %d\n", buf, error_lineno);
-                }
-            } else if (strncmp(buf, "MSG", 3) == 0) {
-                error_lineno = lineno;
-                tmp = (GeneralMessage *)calloc(1, sizeof(GeneralMessage));
-                tmp->face = NULL;
-                strcpy(msgbuf, "");  /* reset msgbuf for new message */
-                if (buf[3] == ' ') {
-                    int i = 4;
-                    while (buf[i] == ' ' && buf[i] != '\0')
-                        i++;
-                    if (buf[i] != '\0') {
-                        tmp->identifier = add_string(buf + i);
-                        if (get_message_from_identifier(buf + i)) {
-                            LOG(llevError, "Duplicated message identifier %s at line %d\n", buf + i, error_lineno);
-                            fatal(SEE_LAST_ERROR);
-                        }
-                    }
-                }
-            } else {
-                LOG(llevInfo, "Warning: syntax error at %s, line %d\n", fname, lineno);
-            }
-        }
-        fclose(fp);
-
-        if (tmp != NULL) {
-            LOG(llevError, "Invalid file %s", fname);
-            fatal(SEE_LAST_ERROR);
-        }
-    }
-
-    LOG(llevDebug, "done messages, found %d for total chance %d.\n", nrofmsg, msg_total_chance);
-}
-
-/**
- * If not called before, initialize the info list.
- *
  * This reads in the bookarch file into memory. bookarch is the file
  * created and updated across multiple runs of the program.
  */
@@ -994,33 +845,35 @@ static void add_book(title *book, int type, const char *fname, int lineno) {
     bl->number++;
 }
 
+static void do_monster(archetype *at) {
+    if (QUERY_FLAG(&at->clone, FLAG_MONSTER) && (!at->head)
+    && (!QUERY_FLAG(&at->clone, FLAG_CHANGING) || QUERY_FLAG(&at->clone, FLAG_UNAGGRESSIVE))) {
+        objectlink *mon = (objectlink *)malloc(sizeof(objectlink));
+        if (!mon) {
+            LOG(llevError, "init_mon_info: malloc failed!\n");
+            abort();
+        }
+        mon->ob = &at->clone;
+        mon->id = nrofmon;
+        mon->next = first_mon_info;
+        first_mon_info = mon;
+        nrofmon++;
+    }
+}
+
 /**
  * Creates the linked list of pointers to
  * monster archetype objects if not called previously.
  */
 static void init_mon_info(void) {
-    archetype *at;
     static int did_init_mon_info = 0;
 
     if (did_init_mon_info)
         return;
     did_init_mon_info = 1;
 
-    for (at = first_archetype; at != NULL; at = at->next) {
-        if (QUERY_FLAG(&at->clone, FLAG_MONSTER)
-        && (!QUERY_FLAG(&at->clone, FLAG_CHANGING) || QUERY_FLAG(&at->clone, FLAG_UNAGGRESSIVE))) {
-            objectlink *mon = (objectlink *)malloc(sizeof(objectlink));
-            if (!mon) {
-                LOG(llevError, "init_mon_info: malloc failed!\n");
-                abort();
-            }
-            mon->ob = &at->clone;
-            mon->id = nrofmon;
-            mon->next = first_mon_info;
-            first_mon_info = mon;
-            nrofmon++;
-        }
-    }
+    archetypes_for_each(do_monster);
+
     LOG(llevDebug, "init_mon_info() got %d monsters\n", nrofmon);
 }
 
@@ -1038,7 +891,6 @@ void init_readable(void) {
     did_this = 1;
 
     LOG(llevDebug, "Initializing reading data...\n");
-    init_msgfile();
     init_book_archive();
     init_mon_info();
     LOG(llevDebug, " done reading data\n");
@@ -1729,6 +1581,39 @@ static StringBuffer *artifact_msg(unsigned int level, size_t booksize) {
  * Spellpath message generation
  *****************************************************************************/
 
+/** @todo remove when C++ & lambdas */
+static struct {
+    int prayers;
+    int did_first_sp;
+    uint32_t pnum;
+    int level;
+    size_t booksize;
+    StringBuffer *buf;
+    int done;
+} sp_params;
+
+/** Callback to write spells in messages */
+static void do_spellpath_msg(archetype *at) {
+    /* Determine if this is an appropriate spell.  Must
+     * be of matching path, must be of appropriate type (prayer
+     * or not), and must be within the valid level range.
+     */
+    if (at->clone.type == SPELL
+    && at->clone.path_attuned & sp_params.pnum
+    && ((at->clone.stats.grace && sp_params.prayers) || (at->clone.stats.sp && !sp_params.prayers))
+    && at->clone.level < sp_params.level*8) {
+        if (strlen(at->clone.name) + stringbuffer_length(sp_params.buf) >= sp_params.booksize) {
+            sp_params.done = 1;
+            return;
+        }
+
+        if (sp_params.did_first_sp)
+            stringbuffer_append_string(sp_params.buf, ",\n ");
+        sp_params.did_first_sp = 1;
+        stringbuffer_append_string(sp_params.buf,at->clone.name);
+    }
+}
+
 /**
  * Generate a message detailing the member incantations/prayers (and some of their
  * properties) belonging to a random spellpath.
@@ -1743,39 +1628,26 @@ static StringBuffer *artifact_msg(unsigned int level, size_t booksize) {
  * buf, newly allocated StringBuffer if buf is NULL.
  */
 static StringBuffer *spellpath_msg(int level, size_t booksize, StringBuffer *buf) {
-    int path = RANDOM()%NRSPELLPATHS, prayers = RANDOM()%2;
-    int did_first_sp = 0;
-    uint32_t pnum = spellpathdef[path];
-    archetype *at;
+    int path = RANDOM()%NRSPELLPATHS;
+    sp_params.prayers = RANDOM()%2;
+    sp_params.did_first_sp = 0;
+    sp_params.pnum = spellpathdef[path];
+    sp_params.done = 0;
 
     if (buf == NULL) {
         buf = stringbuffer_new();
         /* Preamble */
-        stringbuffer_append_printf(buf, "Herein are detailed the names of %s", prayers ? "prayers" : "incantations");
+        stringbuffer_append_printf(buf, "Herein are detailed the names of %s", sp_params.prayers ? "prayers" : "incantations");
         stringbuffer_append_printf(buf, " belonging to the path of %s:\n ", spellpathnames[path]);
     }
+    sp_params.level = level;
+    sp_params.booksize = booksize;
+    sp_params.buf = buf;
 
-    for (at = first_archetype; at != NULL; at = at->next) {
-        /* Determine if this is an appropriate spell.  Must
-         * be of matching path, must be of appropriate type (prayer
-         * or not), and must be within the valid level range.
-         */
-        if (at->clone.type == SPELL
-        && at->clone.path_attuned&pnum
-        && ((at->clone.stats.grace && prayers) || (at->clone.stats.sp && !prayers))
-        && at->clone.level < level*8) {
-            if (strlen(at->clone.name) + stringbuffer_length(buf) >= booksize)
-                break;
-
-            if (did_first_sp)
-                stringbuffer_append_string(buf, ",\n ");
-            did_first_sp = 1;
-            stringbuffer_append_string(buf,at->clone.name);
-        }
-    }
+    archetypes_for_each(do_spellpath_msg);
 
     /* Geez, no spells were generated. */
-    if (!did_first_sp) {
+    if (!sp_params.did_first_sp) {
         if (RANDOM()%4) {  /* usually, lets make a recursive call... */
             return spellpath_msg(level, booksize, buf);
         }
@@ -1923,23 +1795,9 @@ static void make_formula_book(object *book, int level) {
  */
 static StringBuffer *msgfile_msg(object *book, size_t booksize) {
     int weight;
-    GeneralMessage *msg = NULL;
     StringBuffer *ret = stringbuffer_new();
 
-    /* get a random message for the 'book' from linked list */
-    if (msg_total_chance > 0) {
-        assert(first_msg != NULL);
-        msg = first_msg;
-        weight = (RANDOM() % msg_total_chance);
-        while (msg) {
-            weight -= msg->chance;
-            if (weight < 0)
-                break;
-            msg = msg->next;
-        }
-        /* if msg is NULL, then something is really wrong in the computation! */
-        assert(msg != NULL);
-    }
+    GeneralMessage *msg = get_random_message();
 
     if (msg && strlen(msg->message) <= booksize) {
         stringbuffer_append_string(ret, msg->message);
@@ -2153,18 +2011,6 @@ void free_all_readable(void) {
         }
         free(tlist);
     }
-    for (lmsg = first_msg; lmsg; lmsg = nextmsg) {
-        nextmsg = lmsg->next;
-        if (lmsg->identifier)
-            free_string(lmsg->identifier);
-        if (lmsg->title)
-            free_string(lmsg->title);
-        if (lmsg->message)
-            free_string(lmsg->message);
-        if (lmsg->quest_code)
-            free_string(lmsg->quest_code);
-        free(lmsg);
-    }
     for (monlink = first_mon_info; monlink; monlink = nextmon) {
         nextmon = monlink->next;
         free(monlink);
@@ -2236,19 +2082,6 @@ const readable_message_type *get_readable_message_type(object *readable) {
     if (subtype > last_readable_subtype)
         return &readable_message_types[0];
     return &readable_message_types[subtype];
-}
-
-/**
- * Find the message from its identifier.
- * @param identifier message's identifier.
- * @return corresponding message, NULL if no such message.
- */
-const GeneralMessage *get_message_from_identifier(const char *identifier) {
-    GeneralMessage *msg = first_msg;
-    while (msg && ((msg->identifier == 0) || (strcmp(msg->identifier, identifier) != 0)))
-        msg = msg->next;
-
-    return msg;
 }
 
 /**

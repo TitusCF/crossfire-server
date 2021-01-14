@@ -1,4 +1,10 @@
 2020-01-14 Nicolas Weeger
+Introduce C++14.
+Allow the server to run without collecting files in "arch". It can
+now directly run with the "arch" directory along the "maps" one.
+Rewrite the collect mechanism to use the server itself and not an external script.
+
+2020-01-14 Nicolas Weeger
     * include/config.h,
       server/c_misc.c,
       server/hiscore.c: Apply hiscore patch by Preston Crow, slightly modified by myself.

@@ -498,10 +498,10 @@ static archetype *get_player_archetype(archetype *at) {
     archetype *start = at;
 
     for (;;) {
-        if (at == NULL || at->next == NULL)
-            at = first_archetype;
-        else
-            at = at->next;
+        at = get_next_archetype(at);
+        if (at == NULL) {
+            at = get_next_archetype(at);
+        }
         if (at->clone.type == PLAYER)
             return at;
         if (at == start) {

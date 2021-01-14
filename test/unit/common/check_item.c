@@ -41,7 +41,6 @@ static void setup(void) {
     cctk_setlog(LOGDIR "/unit/common/item.out");
     cctk_init_std_archetypes();
     init_gods();
-    init_formulae();
 }
 
 static void teardown(void) {
@@ -376,7 +375,7 @@ START_TEST(test_describe_monster_rewrite) {
 
     memset(&pl, 0, sizeof(pl));
 
-    for (arch = first_archetype; arch; arch = arch->next) {
+    for (arch = get_next_archetype(NULL); arch; arch = get_next_archetype(arch)) {
 
         if (!QUERY_FLAG(&arch->clone, FLAG_MONSTER) && arch->clone.type != PLAYER)
             continue;

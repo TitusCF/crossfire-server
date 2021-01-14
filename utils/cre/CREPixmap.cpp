@@ -7,12 +7,15 @@ extern "C" {
 #include "image.h"
 }
 
+#include "assets.h"
+#include "AssetsManager.h"
+
 QHash<int, QIcon> CREPixmap::allFaces;
 QIcon* CREPixmap::myTreasureIcon;
 QIcon* CREPixmap::myTreasureOneIcon;
 QIcon* CREPixmap::myTreasureYesIcon;
 QIcon* CREPixmap::myTreasureNoIcon;
-int CREPixmap::faceset;
+face_sets *CREPixmap::faceset;
 
 void CREPixmap::init()
 {
@@ -21,7 +24,7 @@ void CREPixmap::init()
     myTreasureYesIcon = new QIcon(":resources/treasure_yes.png");
     myTreasureNoIcon = new QIcon(":resources/treasure_no.png");
 
-    faceset = 0;
+    faceset = getManager()->facesets()->get("base");
 }
 
 QIcon CREPixmap::getIcon(int faceNumber)
@@ -30,9 +33,9 @@ QIcon CREPixmap::getIcon(int faceNumber)
     {
         QPixmap face;
 
-        if (facesets[faceset].faces[faceNumber].datalen > 0)
+        if (faceset->allocated >= faceNumber && faceset->faces[faceNumber].datalen > 0)
         {
-            if (face.loadFromData((uchar*)facesets[faceset].faces[faceNumber].data, facesets[faceset].faces[faceNumber].datalen))
+            if (face.loadFromData((uchar*)faceset->faces[faceNumber].data, faceset->faces[faceNumber].datalen))
             {
                 QIcon icon(face.scaled(32, 32, Qt::KeepAspectRatio));
                 allFaces[faceNumber] = icon;

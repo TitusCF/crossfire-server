@@ -7,7 +7,7 @@
  * Please direct all suggestions or corrections to aaron@baugher.biz (or
  * Mhoram on #crossfire).
  *
- * Compile command: gcc -g -O0 bwp.c -I../include ../common/libcross.a ../socket/libsocket.a -o bwp -lz -lcrypt -lm
+ * Compile command: gcc -g -O0 bwp.c -I../include ../common/libcross.a ../socket/libsocket.a ../server/libserver.a ../types/libtypes.a -o bwp -lz -lcrypt -lm -lstdc++
  */
 
 /*
@@ -41,6 +41,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <global.h>
+#include <sys/stat.h>
 
 char *monster_page_head;       /* Head of wiki page of monsters  */
 char *monster_page_foot;       /* Foot of wiki page of monsters  */
@@ -379,9 +380,6 @@ int main(int argc, char *argv[]) {
 
     init_globals();
     init_library();
-    init_archetypes();
-    init_artifacts();
-    init_formulae();
     init_readable();
 
     init_gods();
@@ -413,7 +411,7 @@ int main(int argc, char *argv[]) {
     }
 
         /* Pick out the monster archetypes and sort them into an array */
-    for (at = first_archetype; at != NULL; at = at->next) {
+    for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at)) {
         if (QUERY_FLAG(&at->clone, FLAG_MONSTER)
         && QUERY_FLAG(&at->clone, FLAG_ALIVE)) {
             monster[archnum++] = at;

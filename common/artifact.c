@@ -290,8 +290,7 @@ void add_abilities(object *op, const object *change) {
     char buf[MAX_BUF];
     sstring key;
 
-
-    if (change->face != blank_face) {
+    if (change->face != NULL && change->face != blank_face) {
 #ifdef TREASURE_VERBOSE
         LOG(llevDebug, "FACE: %d\n", change->face->number);
 #endif
@@ -300,7 +299,7 @@ void add_abilities(object *op, const object *change) {
     } else if ((key = object_get_value(change, KEY_FACE_SUFFIX)) != NULL) {
         const Face* face;
         compute_face_name(buf, sizeof(buf), op->face->name, key);
-        face = find_face(buf, op->face);
+        face = try_find_face(buf, op->face);
         object_set_value(op, "identified_face", face->name, 1);
     }
     if (QUERY_FLAG(change, FLAG_CLIENT_ANIM_RANDOM)) {
@@ -541,10 +540,8 @@ static artifactlist *find_artifactlist_internal(int type) {
  * Builds up the lists of artifacts from the file in the libdir.
  * Can be called multiple times without ill effects.
  */
-void init_artifacts(void) {
-    static int has_been_inited = 0;
-    FILE *fp;
-    char filename[MAX_BUF], buf[HUGE_BUF], *cp, *next;
+void init_artifacts(FILE *file, const char *filename) {
+    char buf[HUGE_BUF], *cp, *next;
     artifact *art = NULL;
     linked_char *tmp;
     int value;
@@ -553,21 +550,9 @@ void init_artifacts(void) {
 
     memset(&dummy_archetype, 0, sizeof(archetype));
 
-    if (has_been_inited)
-        return;
-    else
-        has_been_inited = 1;
-
     artifact_init = 1;
 
-    snprintf(filename, sizeof(filename), "%s/artifacts", settings.datadir);
-    LOG(llevDebug, "Reading artifacts from %s...\n", filename);
-    if ((fp = fopen(filename, "r")) == NULL) {
-        LOG(llevError, "Can't open %s.\n", filename);
-        return;
-    }
-
-    while (fgets(buf, HUGE_BUF, fp) != NULL) {
+    while (fgets(buf, HUGE_BUF, file) != NULL) {
         if (*buf == '#')
             continue;
         if ((cp = strchr(buf, '\n')) != NULL)
@@ -615,7 +600,7 @@ void init_artifacts(void) {
             }
             object_reset(art->item);
             art->item->arch = &dummy_archetype;
-            if (!load_object(fp, art->item, LO_LINEMODE, MAP_STYLE))
+            if (!load_object(file, art->item, LO_LINEMODE, MAP_STYLE))
                 LOG(llevError, "Init_Artifacts: Could not load object.\n");
             art->item->arch = NULL;
             art->item->name = add_string((strchr(cp, ' ')+1));
@@ -630,12 +615,11 @@ void init_artifacts(void) {
             al->items = art;
             art = NULL;
         } else
-            LOG(llevError, "Unknown input in artifact file: %s\n", buf);
+            LOG(llevError, "Unknown input in artifact file %s: %s\n", filename, buf);
     }
 
-    fclose(fp);
-
     for (al = first_artifactlist; al != NULL; al = al->next) {
+        al->total_chance = 0;
         for (art = al->items; art != NULL; art = art->next) {
             if (!art->chance)
                 LOG(llevDebug, "Artifact with no chance: %s\n", art->item->name);
@@ -647,7 +631,6 @@ void init_artifacts(void) {
 #endif
     }
 
-    LOG(llevDebug, "done artifacts.\n");
     artifact_init = 0;
 }
 
@@ -721,7 +704,7 @@ void dump_artifacts(void) {
  * @return face, -1 as unsigned if none could be found.
  */
 unsigned artifact_get_face(const artifact *art) {
-    const archetype *arch = first_archetype;
+    archetype *arch = get_next_archetype(NULL);
 
     if (art->item->face != blank_face && art->item->face != NULL)
         return art->item->face->number;
@@ -731,7 +714,7 @@ unsigned artifact_get_face(const artifact *art) {
             linked_char *allowed;
             while (arch) {
                 if (arch->clone.type != art->item->type)
-                    arch = arch->next;
+                    arch = get_next_archetype(arch);
 
                 for (allowed = art->allowed; allowed != NULL; allowed = allowed->next) {
                     if (strcmp(arch->name, allowed->name + 1) == 0) {
@@ -758,7 +741,7 @@ unsigned artifact_get_face(const artifact *art) {
         if (arch->clone.type == art->item->type && arch->clone.face != NULL)
             return arch->clone.face->number;
 
-        arch = arch->next;
+        arch = get_next_archetype(arch);
     }
     return (unsigned)-1;
 }

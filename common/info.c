@@ -64,7 +64,7 @@ void dump_abilities(void) {
     archetype *at;
     char *name;
 
-    for (at = first_archetype; at; at = at->next) {
+    for (at = get_next_archetype(NULL); at; at = get_next_archetype(at)) {
         const char *gen_name = "";
         archetype *gen;
 
@@ -75,7 +75,7 @@ void dump_abilities(void) {
         if (QUERY_FLAG(&at->clone, FLAG_CHANGING))
             continue;
 
-        for (gen = first_archetype; gen; gen = gen->next) {
+        for (gen = get_next_archetype(NULL); gen; gen = get_next_archetype(gen)) {
             if (gen->clone.other_arch && gen->clone.other_arch == at) {
                 gen_name = gen->name;
                 break;
@@ -101,7 +101,7 @@ void print_monsters(void) {
     printf("               |     |   |    |    |      attack       |                        resistances                                                                       |\n");
     printf("monster        | hp  |dam| ac | wc |pmf ecw adw gpd ptf|phy mag fir ele cld cfs acd drn wmg ght poi slo par tud fer cnc dep dth chs csp gpw hwd bln int |  exp   | new exp |\n");
     printf("---------------------------------------------------------------------------------------------------------------------------------------------------\n");
-    for (at = first_archetype; at != NULL; at = at->next) {
+    for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at)) {
         op = arch_to_object(at);
         if (QUERY_FLAG(op, FLAG_MONSTER)) {
             bitstostring((long)op->attacktype, NROFATTACKS, attbuf);

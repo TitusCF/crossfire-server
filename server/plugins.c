@@ -830,7 +830,7 @@ static void cfapi_system_find_face(int *type, ...) {
     num = va_arg(args, int *);
     va_end(args);
 
-    f = find_face(face, get_face_by_id(error));
+    f = try_find_face(face, get_face_by_id(error));
     (*num) = f ? f->number : 0;
     *type = CFAPI_INT;
 }
@@ -3063,7 +3063,7 @@ static void cfapi_object_set_property(int *type, ...) {
             sarg = va_arg(args, char *);
             ret = va_arg(args, int *);
             *type = CFAPI_INT;
-            face = find_face(sarg, 0);
+            face = try_find_face(sarg, 0);
             if (face != NULL) {
                 op->face = face;
                 op->state = 0;
@@ -4395,7 +4395,7 @@ static void cfapi_archetype_get_property(int *type, ...) {
     case CFAPI_ARCH_PROP_NEXT:
         *type = CFAPI_PARCH;
         rarch = va_arg(args, archetype **);
-        *rarch = arch ? arch->next : first_archetype;
+        *rarch = get_next_archetype(arch);
         break;
 
     case CFAPI_ARCH_PROP_HEAD:

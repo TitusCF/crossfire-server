@@ -42,7 +42,6 @@
 #include "object.h"
 
 static void build_stringlist(const char *str, char ***result_list, size_t *result_size);
-static void check_formulae(void);
 
 /** Pointer to first recipelist. */
 static recipelist *formulalist;
@@ -121,7 +120,7 @@ static int check_recipe(const recipe *rp) {
 
     result = 1;
     for (i = 0; i < rp->arch_names; i++) {
-        if (find_archetype(rp->arch_name[i]) != NULL) {
+        if (try_find_archetype(rp->arch_name[i]) != NULL) {
             const artifact *art = locate_recipe_artifact(rp, i);
 
             if (!art && strcmp(rp->title, "NONE") != 0) {
@@ -140,32 +139,18 @@ static int check_recipe(const recipe *rp) {
 /**
  * Builds up the lists of formula from the file in  the libdir. -b.t.
  */
-void init_formulae(void) {
-    static int has_been_done = 0;
-    FILE *fp;
-    char filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
+void init_formulae(FILE *file, const char *filename) {
+    char buf[MAX_BUF], *cp, *next;
     recipe *formula = NULL;
-    recipelist *fl = init_recipelist();
+    recipelist *fl;
     linked_char *tmp;
     int value;
 
     if (!formulalist)
-        formulalist = fl;
+        formulalist = init_recipelist();
 
-    if (has_been_done)
-        return;
-    else
-        has_been_done = 1;
-
-    snprintf(filename, sizeof(filename), "%s/formulae", settings.datadir);
-    LOG(llevDebug, "Reading alchemical formulae from %s...\n", filename);
-    if ((fp = fopen(filename, "r")) == NULL) {
-        LOG(llevError, "Can't open %s.\n", filename);
-        return;
-    }
-
-    while (fgets(buf, MAX_BUF, fp) != NULL) {
-        if (*buf == '#')
+    while (fgets(buf, MAX_BUF, file) != NULL) {
+        if (*buf == '#' || *buf == '\n')
             continue;
         if ((cp = strchr(buf, '\n')) != NULL)
             *cp = '\0';
@@ -177,7 +162,7 @@ void init_formulae(void) {
             formula = get_empty_formula();
             formula->title = add_string(strchr(cp, ' ')+1);
         } else if (formula == NULL) {
-            LOG(llevError, "recipe.c: First key in formulae file is not \"Object\".\n");
+            LOG(llevError, "recipe.c: First key in formulae file %s is not \"Object\".\n", filename);
             fatal(SEE_LAST_ERROR);
         } else if (!strncmp(cp, "keycode", 7)) {
             formula->keycode = add_string(strchr(cp, ' ')+1);
@@ -230,7 +215,6 @@ void init_formulae(void) {
             fl->items = formula;
         } else if (!strncmp(cp, "arch", 4)) {
             build_stringlist(strchr(cp, ' ')+1, &formula->arch_name, &formula->arch_names);
-            check_recipe(formula);
         } else if (!strncmp(cp, "skill", 5)) {
             formula->skill = add_string(strchr(cp, ' ')+1);
         } else if (!strncmp(cp, "cauldron", 8)) {
@@ -249,9 +233,6 @@ void init_formulae(void) {
             LOG(llevError, "Unknown input in file %s: %s\n", filename, buf);
     }
     LOG(llevDebug, "done.\n");
-    fclose(fp);
-    /* Lastly, lets check for problems in formula we got */
-    check_formulae();
 }
 
 /**
@@ -268,7 +249,7 @@ void init_formulae(void) {
  *
  * @todo check archetypes exist, check coherence (skill present, cauldron ok, and such things), set chance to 0 for combinations
  */
-static void check_formulae(void) {
+void check_formulae(void) {
     recipelist *fl;
     recipe *check, *formula;
     int numb = 1, tool_match;
@@ -335,7 +316,7 @@ void dump_alchemy(void) {
             for (i = 0; i < formula->arch_names; i++) {
                 const char *string = formula->arch_name[i];
 
-                if (find_archetype(string) != NULL) {
+                if (try_find_archetype(string) != NULL) {
                     art = locate_recipe_artifact(formula, i);
                     if (!art && strcmp(formula->title, "NONE"))
                         LOG(llevError, "Formula %s has no artifact\n", formula->title);
@@ -462,7 +443,7 @@ static long find_ingred_cost(const char *name) {
     else
         mult = 1;
     /* first, try to match the name of an archetype */
-    for (at = first_archetype; at != NULL; at = at->next) {
+    for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at)) {
         if (at->clone.title != NULL) {
             /* inefficient, but who cares? */
             snprintf(part1, sizeof(part1), "%s %s", at->clone.name, at->clone.title);
@@ -472,6 +453,7 @@ static long find_ingred_cost(const char *name) {
         if (!strcasecmp(at->clone.name, name))
             return mult*at->clone.value;
     }
+
     /* second, try to match an artifact ("arch of something") */
     cp = strstr(name, " of ");
     if (cp != NULL) {
@@ -479,9 +461,10 @@ static long find_ingred_cost(const char *name) {
         part1[cp-name] = '\0';
         safe_strncpy(part2, cp + 4, sizeof(part2));
         /* find the first archetype matching the first part of the name */
-        for (at = first_archetype; at != NULL; at = at->next)
+        for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at))
             if (!strcasecmp(at->clone.name, part1) && at->clone.title == NULL)
                 break;
+
         if (at != NULL) {
             /* find the first artifact derived from that archetype (same type) */
             for (al = first_artifactlist; al != NULL; al = al->next)
@@ -499,7 +482,7 @@ static long find_ingred_cost(const char *name) {
         part1[cp-name] = '\0';
         safe_strncpy(part2, cp + 3, sizeof(part2));
         /* examine all archetypes matching the first part of the name */
-        for (at = first_archetype; at != NULL; at = at->next)
+        for (at = get_next_archetype(NULL); at != NULL; at = get_next_archetype(at))
             if (!strcasecmp(at->clone.name, part1) && at->clone.title == NULL) {
                 if (at->clone.randomitems != NULL) {
                     at2 = find_treasure_by_name(at->clone.randomitems->items, part2, 0);
@@ -541,7 +524,7 @@ void dump_alchemy_costs(void) {
             for (i = 0; i < formula->arch_names; i++) {
                 const char *string = formula->arch_name[i];
 
-                if ((at = find_archetype(string)) != NULL) {
+                if ((at = try_find_archetype(string)) != NULL) {
                     art = locate_recipe_artifact(formula, i);
                     if (!art && strcmp(formula->title, "NONE"))
                         LOG(llevError, "Formula %s has no artifact\n", formula->title);

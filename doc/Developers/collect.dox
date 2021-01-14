@@ -18,21 +18,26 @@ The following files will be collected.
 	</tr>
 	<tr>
 		<td>arc</td>
-		<td>archetypes</td>
+		<td>crossfire.arc</td>
 		<td>archetype definition</td>
 	</tr>
 	<tr>
 		<td>trs</td>
-		<td>treasures.bld</td>
+		<td>crossfire.trs</td>
 		<td>treasure definition</td>
 	</tr>
 	<tr>
 		<td>face</td>
-		<td>faces</td>
+		<td>crossfire.face</td>
 		<td>face and animation definition</td>
 	</tr>
+	<tr>
+		<td>png</td>
+		<td>crossfire.tar</td>
+		<td>image displayed by the client</td>
+	</tr>
 </table>
-
-The collect process is handled by the lib/collect.pl script, which accepts as parameter the path to the archetypes tree.
+ 
+The collect process is handled by the server binary itself, through the <code>-pack-assets</code> option.
 
 */

@@ -31,6 +31,7 @@
 #include "newserver.h"
 #include "shared/newclient.h"
 #include "sproto.h"
+#include "assets.h"
 
 /**
  * Client has requested pixmap that it somehow missed getting.
@@ -69,7 +70,6 @@ void send_face_cmd(char *buff, int len, socket_struct *ns) {
  */
 void esrv_send_face(socket_struct *ns, const Face *face, int nocache) {
     SockList sl;
-    int fallback;
 
     if (face == NULL) {
         LOG(llevError, "esrv_send_face NULL??\n");
@@ -77,9 +77,9 @@ void esrv_send_face(socket_struct *ns, const Face *face, int nocache) {
     }
 
     SockList_Init(&sl);
-    fallback = get_face_fallback(ns->faceset, face->number);
+    face_sets *fs = find_faceset(get_face_fallback(ns->faceset, face->number));
 
-    if (facesets[fallback].faces[face->number].data == NULL) {
+    if (!fs || fs->faces[face->number].data == NULL) {
         LOG(llevError, "esrv_send_face: faces[%d].data == NULL\n", face->number);
         return;
     }
@@ -87,20 +87,29 @@ void esrv_send_face(socket_struct *ns, const Face *face, int nocache) {
     if (ns->facecache && !nocache) {
         SockList_AddString(&sl, "face2 ");
         SockList_AddShort(&sl, face->number);
-        SockList_AddChar(&sl, fallback);
-        SockList_AddInt(&sl, facesets[fallback].faces[face->number].checksum);
+        SockList_AddChar(&sl, fs->id);
+        SockList_AddInt(&sl, fs->faces[face->number].checksum);
         SockList_AddString(&sl, face->name);
         Send_With_Handling(ns, &sl);
     } else {
         SockList_AddString(&sl, "image2 ");
         SockList_AddInt(&sl, face->number);
-        SockList_AddChar(&sl, fallback);
-        SockList_AddInt(&sl, facesets[fallback].faces[face->number].datalen);
-        SockList_AddData(&sl, facesets[fallback].faces[face->number].data, facesets[fallback].faces[face->number].datalen);
+        SockList_AddChar(&sl, fs->id);
+        SockList_AddInt(&sl, fs->faces[face->number].datalen);
+        SockList_AddData(&sl, fs->faces[face->number].data, fs->faces[face->number].datalen);
         Send_With_Handling(ns, &sl);
     }
     ns->faces_sent[face->number] |= NS_FACESENT_FACE;
     SockList_Term(&sl);
+}
+
+/** @todo remove */
+static SockList *ugly;
+static void do_faceset(const face_sets *fs) {
+    SockList_AddPrintf(ugly, "%d:%s:%s:%d:%s:%s:%s\n",
+             fs->id, fs->prefix, fs->fullname,
+             fs->fallback ? fs->fallback->id : 0, fs->size,
+             fs->extension, fs->comment);
 }
 
 /**
@@ -114,15 +123,10 @@ void send_image_info(socket_struct *ns) {
     int i;
 
     SockList_Init(&sl);
-    SockList_AddPrintf(&sl, "replyinfo image_info\n%d\n%d\n", get_faces_count()-1, bmaps_checksum);
-    for (i = 0; i < MAX_FACE_SETS; i++) {
-        if (facesets[i].prefix) {
-            SockList_AddPrintf(&sl, "%d:%s:%s:%d:%s:%s:%s",
-                     i, facesets[i].prefix, facesets[i].fullname,
-                     facesets[i].fallback, facesets[i].size,
-                     facesets[i].extension, facesets[i].comment);
-        }
-    }
+
+    ugly = &sl;
+    SockList_AddPrintf(&sl, "replyinfo image_info\n%d\n%d\n", get_faces_count()-1, get_bitmap_checksum());
+    facesets_for_each(do_faceset);
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
 }
@@ -163,7 +167,7 @@ void send_image_sums(socket_struct *ns, char *params) {
 
     for (i = start; i <= stop; i++) {
         int faceset;
-        const Face *face = get_face_by_index(i);
+        const Face *face = get_face_by_id(i);
 
         if (SockList_Avail(&sl) < 2+4+1+1+strlen(face->name)+1) {
             LOG(llevError, "send_image_sums: buffer overflow, rejecting range %d..%d\n", start, stop);
@@ -177,9 +181,9 @@ void send_image_sums(socket_struct *ns, char *params) {
         SockList_AddShort(&sl, i);
         ns->faces_sent[face->number] |= NS_FACESENT_FACE;
 
-        faceset = get_face_fallback(ns->faceset, i);
-        SockList_AddInt(&sl, facesets[faceset].faces[i].checksum);
-        SockList_AddChar(&sl, faceset);
+        face_sets *fs = find_faceset(get_face_fallback(ns->faceset, i));
+        SockList_AddInt(&sl, fs->faces[i].checksum);
+        SockList_AddChar(&sl, fs->id);
         SockList_AddLen8Data(&sl, face->name, strlen(face->name)+1);
     }
     Send_With_Handling(ns, &sl);

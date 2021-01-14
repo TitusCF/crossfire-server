@@ -47,20 +47,6 @@ static int i18n_message_compare_code(const i18n_message *a, const i18n_message *
 }
 
 /**
- * Returns the i18n language index associated with the given object.
- * This only has a meaning for players.
- * @param op The player object to get the language of
- * @return The language numerical code. If none is associated, get_language returns 0
- */
-int get_language(object *op) {
-    if (!op->contr)
-        return 0;
-    if (op->contr->language < 0 || op->contr->language >= i18n_count)
-        return 0;
-    return op->contr->language;
-}
-
-/**
  * Translate a message in the appropriate language.
  * @param who who to translate for.
  * @param code string to translate, usually the English version.

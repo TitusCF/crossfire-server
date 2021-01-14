@@ -641,13 +641,9 @@ A       .+
                         if (seen_object) {
                             LOG(llevError, "An object started before the 'end' of object %s.\n", (op->arch && op->arch->name) ? op->arch->name : "(no name)");
                         }
-                        if (!arch_init) {
-                            LOG(llevError, "Got object info when not in arch_init (%s)?\n", yv);
-                        } else {
-                            if (op->arch != NULL)
-                                op->arch->name = add_string(yv);
-                            op->name = add_string(yv);
-                        }
+                        if (op->arch != NULL)
+                            op->arch->name = add_string(yv);
+                        op->name = add_string(yv);
                         seen_object = true;
                     }
 
@@ -706,15 +702,8 @@ A       .+
                             char *yv = yval();
 
                             tmp = object_new();
-                            tmp->arch = try_find_archetype(yv);
-                            if (tmp->arch != NULL)
-                                object_copy(&tmp->arch->clone, tmp);
-                            else {
-                                if (tmp->name)
-                                    free_string(tmp->name);
-                                /* record the name of the broken object */
-                                tmp->name = add_string(yv);
-                            }
+                            tmp->arch = find_archetype(yv);
+                            object_copy(&tmp->arch->clone, tmp);
                             strcpy(msgbuf, "");
                             strcpy(lorebuf, "");
                             msglen = 0;
@@ -724,30 +713,15 @@ A       .+
                             if (linemode == 0) {
                                 lex_load(depth, items, maxdepth, map_flags, linemode);
                                 (*depth)--;
-                                if (tmp->arch && (arch_init == 0)) {
-                                    /* Map loading, object into another object*/
-                                    object_insert_in_ob(tmp, op);
-                                } else {
-                                    /* Archetypes loading or invalid object in a map */
-                                    if (arch_init == 0)
-                                        LOG(llevDebug, "Discarding object without arch: %s\n", tmp->name ? tmp->name : "(null)");
-                                    object_free_drop_inventory(tmp);
-                                }
+                                object_insert_in_ob(tmp, op);
                             }
                         } else {
                             /* Here we are loading an object in a map, on a spot, not
                              * in another object's inventory */
                             char *yv = yval();
 
-                            op->arch = try_find_archetype(yv);
-                            if (op->arch != NULL)
-                                object_copy(&op->arch->clone, op);
-                            else if (!arch_init) {
-                                if (op->name)
-                                    free_string(op->name);
-                                /* record the name of the broken object */
-                                op->name = add_string(yv);
-                            }
+                            op->arch = find_archetype(yv);
+                            object_copy(&op->arch->clone, op);
                         }
                     }
 ^artifact{S}        {
@@ -760,7 +734,7 @@ A       .+
                         }
                     }
 
-^other_arch{S}      op->other_arch = try_find_archetype(yval());
+^other_arch{S}      op->other_arch = find_archetype(yval());
 ^animation{S}       {
                         if (strcmp (yval(), "NONE") == 0) {
                             op->animation = NULL;
@@ -827,9 +801,7 @@ A       .+
 
 ^face{S}            {
                         const char *name = yval();
-                        op->face = find_face(yval(), NULL);
-                        if (op->face == NULL)
-                            LOG(llevError, "couldn't find face %s for %s\n", name, op->arch ? op->arch->name : op->name);
+                        op->face = find_face(yval());
                     }
 ^str{S}             op->stats.Str = IVAL;
 ^dex{S}             op->stats.Dex = IVAL;
@@ -909,7 +881,7 @@ A       .+
 ^friendly{S}        {
                         if (IVAL) {
                             SET_FLAG(op, FLAG_FRIENDLY);
-                            if (op->type != PLAYER) {
+                            if (op->type != PLAYER && !arch_init) {
                                 LOG(llevDebug, " Adding friendly object %s.\n", op->name);
                                 add_friendly_object(op);
                             }
@@ -1063,6 +1035,17 @@ A       .+
 ^weapontype{S}      op->weapontype = IVAL;
 ^casting_time{S}    op->casting_time = FVAL;
 ^smoothlevel{S}     op->smoothlevel = IVAL;
+^smoothface{S}      {
+                        /** @todo fix evil const cast */
+                        char *p = strchr(yval(), ' ');
+                        if (!p)
+                            continue;
+
+                        *p = '\0';
+                        Face *regular = find_face(yval());
+                        Face *smoothed = find_face(p + 1);
+                        regular->smoothface = smoothed;
+                    }
 ^map_layer{S}       {
                         if (IVAL)
                             op->map_layer = IVAL;

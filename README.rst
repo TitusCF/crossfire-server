@@ -41,12 +41,7 @@ even more fun. These include:
 
 Support Files
 ~~~~~~~~~~~~~
-In order to build the server, a copy of the game archetypes must be unpacked
-or linked in the "lib/arch" directory. This can be deleted once the build is
-finished, but keeping a copy around won't hurt. Perl is required to generate
-the final archetype files, but is not needed after the build is complete.
-
-In order to run the server, a copy of the game maps is also required.
+In order to run the server, a copy of the game maps as well as the archetypes is also required.
 
 Compiling
 ~~~~~~~~~
@@ -65,6 +60,7 @@ Final Steps
 ~~~~~~~~~~~
 - Configure your server (see *$PREFIX/etc/crossfire/*)
 - Make maps available in *$PREFIX/share/crossfire/maps/*
+- Make archetypes available in *$PREFIX/share/crossfire/anything-you-want/*
 
 
 Usage

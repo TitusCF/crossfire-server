@@ -1318,6 +1318,18 @@ void object_free_drop_inventory(object *ob) {
 }
 
 /**
+ * Frees the inventory of an object, without any callback.
+ * @param ob object to free the inventory of.
+ */
+void object_free_inventory(object *ob) {
+    while (ob->inv) {
+        object *inv = ob->inv;
+        object_remove(inv);
+        object_free(inv, FREE_OBJ_NO_DESTROY_CALLBACK | FREE_OBJ_FREE_INVENTORY);
+    }
+}
+
+/**
  * Frees everything allocated by an object, removes
  * it from the list of used objects, and puts it on the list of
  * free objects.  The IS_FREED() flag is set in the object.
@@ -4783,7 +4795,7 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
 
     if (op->animation != op2->animation) {
         if (op->animation) {
-            ADD_STRINGLINE_ENTRY(sb, "animation ", animations[GET_ANIM_ID(op)].name);
+            ADD_STRINGLINE_ENTRY(sb, "animation ", op->animation->name);
             if (!QUERY_FLAG (op, FLAG_ANIMATE)) {
                 stringbuffer_append_string(sb, "is_animated 0\n");
             }

@@ -321,6 +321,9 @@ void CREResourcesWindow::fillArchetypes()
     foreach(QString name, archs)
     {
         arch = myResources->archetype(name);
+        if (arch->head) {
+            continue;
+        }
         count++;
         if (!wrapper)
             wrapper = new CREWrapperObject();

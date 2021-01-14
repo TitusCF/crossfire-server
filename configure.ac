@@ -43,10 +43,13 @@ AM_WITH_DMALLOC
 dnl#############################################################################
 dnl Program Checks
 dnl#############################################################################
+AC_LANG([C++])
 AC_PROG_AWK
 AC_PROG_CC_C99
 AC_PROG_LIBTOOL
 AM_PROG_LEX
+AC_PROG_CXX
+AC_PROG_CXXCPP
 
 AC_PATH_PROG(BASENAME, basename)
 AC_PATH_PROG(GZIP, gzip)
@@ -58,6 +61,9 @@ AC_PATH_PROG(TAR, tar)
 AC_SUBST(BASENAME)
 AC_SUBST(GZIP)
 AC_SUBST(PERL)
+
+LIBS="$LIBS -lstdc++ -lm"
+CXXFLAGS="$CXXFLAGS -std=c++14"
 
 dnl#############################################################################
 AS_BOX([Library Checks])
@@ -147,14 +153,6 @@ else
 fi
 
 AM_CONDITIONAL(PROCESS_XSLT, [test -n "$xsltengine"])
-
-dnl Make sure pre-built archetypes or an 'arch' directory exists.
-AC_CHECK_FILE([$srcdir/lib/archetypes], [], [has_archetypes=no])
-AC_CHECK_FILE([$srcdir/lib/arch], [], [has_arch_dir=no])
-
-AS_IF([test "$has_archetypes" == no -a "$has_arch_dir" == no], [
-       AC_MSG_ERROR([Could not find pre-built or raw archetypes.])
-])
 
 dnl#############################################################################
 AS_BOX([Generate Output])

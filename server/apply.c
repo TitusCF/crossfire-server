@@ -151,7 +151,7 @@ int set_object_face_main(object *op) {
         set_object_face_main(op->more);
 
     if (saved)
-        newface = find_face(saved, newface);
+        newface = try_find_face(saved, newface);
     if (newface && op->face != newface) {
         op->face = newface;
         return TRUE;
@@ -188,7 +188,7 @@ static int set_object_face_other(object *op) {
 
     custom = object_get_value(head, "face_opened");
     if (custom)
-        newface = find_face(custom, newface);
+        newface = try_find_face(custom, newface);
     if (newface && op->face != newface) {
         op->face = newface;
         return TRUE;
