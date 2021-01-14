@@ -49,13 +49,28 @@ MAINTAINERCLEANFILES = .collect-stamp \
 
 PERL = @PERL@
 
+# This target is used to prevent collecting a second time after things have
+# already been collected. To force a re-collect, use 'do-collect' target.
 .collect-stamp:
 	touch .collect-stamp
 
 do-collect:
+	rm -f .collect-stamp
+	make collect
+
+# This target is just used for making do-collect actually force a re-collect.
+collect: crossfire.arc crossfire.face crossfire.trs crossfire.tar
+
+crossfire.arc: .collect-stamp
 	../server/crossfire-server -data . -pack-assets archs crossfire.arc
+
+crossfire.face: .collect-stamp
 	../server/crossfire-server -data . -pack-assets faces crossfire.face
+
+crossfire.trs: .collect-stamp
 	../server/crossfire-server -data . -pack-assets treasures crossfire.trs
+
+crossfire.tar: .collect-stamp
 	../server/crossfire-server -data . -pack-assets images crossfire.tar
 
 install-data-local: util.pl
