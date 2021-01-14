@@ -256,7 +256,7 @@ static void hiscore_load(score_table *table) {
     fp = fopen(table->fname, "r");
     if (fp == NULL) {
         if (errno == ENOENT) {
-            LOG(llevInfo, "Highscore file %s does not exist\n", table->fname);
+            LOG(llevDebug, "Highscore file %s does not exist\n", table->fname);
         } else {
             LOG(llevError, "Cannot open highscore file %s: %s\n", table->fname, strerror(errno));
         }
