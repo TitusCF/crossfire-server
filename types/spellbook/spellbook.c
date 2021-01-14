@@ -204,7 +204,6 @@ static void spellbook_type_describe(
  */
 static method_ret spellbook_type_apply(ob_methods *context, object *book, object *applier, int aflags) {
     object *skapplier, *spell, *spell_skill;
-    char level[100];
 
     /* Must be applied by a player. */
     if (applier->type == PLAYER) {
