@@ -874,7 +874,7 @@ void command_archs(object *op, const char *params) {
  * @param op
  * player asking for information.
  * @param params
- * unused.
+ * options for the hiscore command (typically a match for the names)
  */
 void command_hiscore(object *op, const char *params) {
     hiscore_display(op, op == NULL ? 9999 : 50, params);

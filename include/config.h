@@ -515,7 +515,8 @@
 #define TEMPLATE_DIR    "template-maps"
 #define ARCHETYPES      "archetypes"
 #define REGIONS         "regions.reg"
-#define HIGHSCORE       "highscore"
+#define OLD_HIGHSCORE   "highscore"
+#define HIGHSCORE_DIR   "highscores"
 #define TREASURES       "treasures"
 #define BANISHFILE      "banish_file"
 
