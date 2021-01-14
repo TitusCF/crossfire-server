@@ -147,7 +147,7 @@ void dump_spells(void) {
     archetype *at;
     int banner = 0;
 
-    for (at = first_archetype; at; at = at->next) {
+    for (at = get_next_archetype(NULL); at; at = get_next_archetype(at)) {
         if (at->clone.type == SPELL) {
             fprintf(stderr, "%s:%s:%s:%s:%d\n", at->clone.name ? at->clone.name : "null",
                     at->name, at->clone.other_arch ? at->clone.other_arch->name : "null",
@@ -155,7 +155,7 @@ void dump_spells(void) {
         }
     }
 
-    for (at = first_archetype; at; at = at->next) {
+    for (at = get_next_archetype(NULL); at; at = get_next_archetype(at)) {
         if (at->clone.type == SPELL && at->clone.path_attuned == 0) {
             if (banner == 0) {
                 banner = 1;
@@ -980,7 +980,7 @@ static int put_a_monster(object *op, const char *monstername) {
     int dir;
 
     /* Handle cases where we are passed a bogus mosntername */
-    at = find_archetype(monstername);
+    at = try_find_archetype(monstername);
     if (at == NULL)
         return 0;
 

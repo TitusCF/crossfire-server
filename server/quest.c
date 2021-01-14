@@ -345,14 +345,8 @@ static int load_quests_from_file(const char *filename) {
             }
 
             if (strncmp(read, "face ", 5) == 0) {
-                const Face *face;
                 read[strlen(read) - 1] = '\0';
-                face = find_face(read + 5, NULL);
-                if (face == NULL) {
-                    LOG(llevError, "Quest %s has invalid face %s.\n", quest->quest_code, read + 5);
-                } else {
-                    quest->face = face;
-                }
+                quest->face = find_face(read + 5);
                 continue;
             }
         }
@@ -368,7 +362,7 @@ static int load_quests_from_file(const char *filename) {
                 LOG(llevError, "Quest %s is listed in file %s, but this quest has already been defined\n", quest->quest_code, filename);
             }
             /* Set a default face, which will be overwritten if a face is defined. */
-            quest->face = find_face("quest_generic.111", 0);
+            quest->face = find_face("quest_generic.111");
             quest->next = quests;
             if (quests != NULL)
                 quest->client_code = quests->client_code + 1;

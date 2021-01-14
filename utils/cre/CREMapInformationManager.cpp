@@ -304,7 +304,7 @@ void CREMapInformationManager::browseMaps()
     if (first_map_ext_path[0] != 0)
     {
         char path[MAX_BUF], name[MAX_BUF];
-        const archetype* arch = first_archetype;
+        archetype* arch = get_next_archetype(NULL);
         while (arch)
         {
             if (arch->clone.type == PLAYER)
@@ -315,7 +315,7 @@ void CREMapInformationManager::browseMaps()
                     myToProcess.append(name);
                 }
             }
-            arch = arch->next;
+            arch = get_next_archetype(arch);
         }
     }
 

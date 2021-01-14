@@ -48,6 +48,7 @@
 #include "skills.h"
 #include "spells.h"
 #include "sproto.h"
+#include "assets.h"
 
 static void attack_hth(object *pl, int dir, const char *string, object *skill);
 static void attack_melee_weapon(object *op, int dir, const char *string, object *skill);
@@ -61,32 +62,41 @@ const char *skill_names[MAX_SKILLS];
  */
 const Face *skill_faces[MAX_SKILLS];
 
+static int free_skill_index() {
+    int i;
+    for (i = 0; i < MAX_SKILLS; i++) {
+        if (skill_names[i] == NULL && skill_faces[i] == NULL) {
+            break;
+        }
+    }
+    return i;
+}
+static void do_each_skill(archetype *at) {
+    if (at->clone.type == SKILL) {
+        int i = free_skill_index();
+        if (i == MAX_SKILLS) {
+            LOG(llevError, "init_skills: too many skills, increase MAX_SKILLS and rebuild server!");
+            fatal(SEE_LAST_ERROR);
+        }
+        skill_names[i] = add_refcount(at->clone.skill);
+        if (at->clone.face != NULL)
+            skill_faces[i] = at->clone.face;
+    }
+}
+
 /**
  * This just sets up the ::skill_names table above. The index into the array
  * is simply the order the skill is found.
  */
 void init_skills(void) {
     int i;
-    archetype *at;
 
     for (i = 0; i < MAX_SKILLS; i++) {
         skill_names[i] = NULL;
         skill_faces[i] = NULL;
     }
-    i = 0;
 
-    for (at = first_archetype; at != NULL; at = at->next) {
-        if (at->clone.type == SKILL) {
-            if (i == MAX_SKILLS) {
-                LOG(llevError, "init_skills: too many skills, increase MAX_SKILLS and rebuild server!");
-                fatal(SEE_LAST_ERROR);
-            }
-            skill_names[i] = add_refcount(at->clone.skill);
-            if (at->clone.face != NULL)
-                skill_faces[i] = at->clone.face;
-            i++;
-        }
-    }
+    archetypes_for_each(do_each_skill);
 }
 
 /**

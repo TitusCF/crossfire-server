@@ -2,9 +2,34 @@ noinst_LIBRARIES = libcross.a
 
 libcross_a_SOURCES = \
 	anim.c \
-	arch.c\
+	arch.cpp\
 	arch_types_valid.c \
 	artifact.c\
+	assets/AnimationWriter.cpp \
+	assets/Animations.cpp \
+	assets/ArchetypeLoader.cpp \
+	assets/ArchetypeWriter.cpp \
+	assets/Archetypes.cpp \
+	assets/ArtifactWriter.cpp \
+	assets/AssetCollector.cpp \
+	assets/AssetsManager.cpp \
+	assets/FaceLoader.cpp \
+	assets/FaceWriter.cpp \
+	assets/Faces.cpp \
+	assets/FacesetLoader.cpp \
+	assets/FacesetWriter.cpp \
+	assets/Facesets.cpp \
+	assets/FormulaeWriter.cpp \
+	assets/MessageLoader.cpp \
+	assets/MessageWriter.cpp \
+	assets/Messages.cpp \
+	assets/microtar.c \
+	assets/PngLoader.cpp \
+	assets/TreasureLoader.cpp \
+	assets/TreasureWriter.cpp \
+	assets/Treasures.cpp \
+	assets/Utils.cpp \
+	assets/assets.cpp\
 	button.c\
 	cf_random.c \
 	dialog.c \

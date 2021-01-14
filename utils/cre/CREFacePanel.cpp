@@ -9,6 +9,8 @@ extern "C" {
 #include "CREFacePanel.h"
 #include "CREUtils.h"
 #include "CRESmoothFaceMaker.h"
+#include "assets.h"
+#include "AssetsManager.h"
 
 /** @todo duplication with common/image */
 static const char *const colorname[] = {
@@ -70,13 +72,10 @@ void CREFacePanel::setItem(const Face* face)
 
     QTreeWidgetItem* root = NULL;
 
-    const archt* arch;
-    sstring key;
-
-    for (arch = first_archetype; arch; arch = arch->more ? arch->more : arch->next)
+    getManager()->archetypes()->each([this, &root] (archetype *arch)
     {
-      key = object_get_value(&arch->clone, "identified_face");
-        if (arch->clone.face == myFace || (key && strcmp(face->name, key) == 0))
+      auto key = object_get_value(&arch->clone, "identified_face");
+        if (arch->clone.face == myFace || (key && strcmp(myFace->name, key) == 0))
         {
             if (root == NULL)
             {
@@ -86,16 +85,12 @@ void CREFacePanel::setItem(const Face* face)
             }
             CREUtils::archetypeNode(arch, root);
         }
-    }
+    });
 
     root = NULL;
 
-    const Animations* anim;
-
-    // "bug" animation is zero, don't forget that shift
-    for (int a = 0; a <= num_animations; a++)
+    getManager()->animations()->each([this, &root] (Animations *anim)
     {
-        anim = &animations[a];
         for (int face = 0; face < anim->num_animations; face++)
         {
             if (anim->faces[face] == myFace)
@@ -110,7 +105,7 @@ void CREFacePanel::setItem(const Face* face)
                 break;
             }
         }
-    }
+    });
 
     root = NULL;
 
@@ -138,7 +133,7 @@ void CREFacePanel::setItem(const Face* face)
     root = NULL;
     for (unsigned int f_index = 0; f_index < get_faces_count(); f_index++)
     {
-        const Face *face = get_face_by_index(f_index);
+        const Face *face = getManager()->faces()->findByIndex(f_index);
         if (face->smoothface == myFace)
         {
             if (!root)

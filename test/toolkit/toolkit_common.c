@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <check.h>
 #include "../include/toolkit_common.h"
+#include <assets.h>
 
 #define STATUS_LOGDIR    0x0001
 #define STATUS_DATADIR   0x0002
@@ -86,12 +87,13 @@ void cctk_init_std_archetypes(void) {
     init_globals();
     init_hash_table();
     init_stats(FALSE);
+    assets_init();
+
     init_objects();
     init_block();
-    read_bmap_names();
-    read_smooth();
-    init_anim();
-    init_archetypes();
+
+    assets_collect(settings.datadir);
+
     SET_TKFLAG(STATUS_GLOBALS|STATUS_HASHTABLE|STATUS_OBJECTS|STATUS_VARS|STATUS_BLOCK|STATUS_BMAP|STATUS_ANIM|STATUS_ARCH);
 }
 

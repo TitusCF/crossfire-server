@@ -11,6 +11,8 @@ extern "C" {
 #include "recipe.h"
 #include "image.h"
 }
+#include "assets.h"
+#include "AssetsManager.h"
 
 ResourcesManager::ResourcesManager()
 {
@@ -26,20 +28,15 @@ void ResourcesManager::load()
 
     init_globals();
     init_library();
-    read_client_images();
-    init_artifacts();
-    init_formulae();
-    load_treasures();
 
-    for (archt* arch = first_archetype; arch; arch = arch->next)
+    for (archt* arch = get_next_archetype(NULL); arch; arch = get_next_archetype(arch))
     {
         myArchetypes[arch->name] = arch;
     }
 
-    for (treasurelist* list = first_treasurelist; list; list = list->next)
-    {
+    getManager()->treasures()->each([this] (treasurelist *list) {
         myTreasures[list->name] = list;
-    }
+    });
 
     QString key;
 
@@ -58,17 +55,13 @@ void ResourcesManager::load()
         myRecipes.append(recipes);
     }
 
-    for (unsigned int f = 0; f < get_faces_count(); f++)
-    {
-        const Face *face = get_face_by_index(f);
+    getManager()->faces()->each([this] (auto face) {
         myFaces[face->name] = face;
-    }
+    });
 
-    // There is the "bug" animation to consider
-    for (int anim = 0; anim <= num_animations; anim++)
-    {
-        myAnimations[animations[anim].name] = &animations[anim];
-    }
+    getManager()->animations()->each([this] (auto anim) {
+        myAnimations[anim->name] = anim;
+    });
 }
 
 QStringList ResourcesManager::archetypes() const

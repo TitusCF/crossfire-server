@@ -463,7 +463,7 @@ static void fix_walls(struct mapdef *map, int x, int y) {
      * Before anything, make sure the archetype does exist...
      * If not, prolly an error...
      */
-    new_arch = find_archetype(archetype);
+    new_arch = try_find_archetype(archetype);
     if (!new_arch)
         return;
 

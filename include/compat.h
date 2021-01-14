@@ -29,6 +29,7 @@
 
 void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen);
 
+#if 0
 #ifndef HAVE_STRCASESTR
 char *strcasestr(const char *s, const char *find);
 #endif
@@ -36,13 +37,16 @@ char *strcasestr(const char *s, const char *find);
 #ifndef HAVE_STRDUP
 char *strdup(const char *str);
 #endif
+#endif
 
 #ifndef HAVE_STRLCPY
 size_t strlcpy(char *dst, const char *src, size_t size);
 #endif
 
+#if 0
 #ifndef HAVE_TEMPNAM
 char *tempnam(const char *tmpdir, const char *prefix);
+#endif
 #endif
 
 #endif

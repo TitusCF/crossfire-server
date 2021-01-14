@@ -23,13 +23,14 @@ int main(int argc, char **argv) {
     qRegisterMetaTypeStreamOperators<CREReportDefinition>("CREReportDefinition");
     qRegisterMetaTypeStreamOperators<CREReportDefinitionManager>("CREReportDefinitionManager");
 
-    CREPixmap::init();
-
     CRESettings settings;
     if (!settings.ensureOptions())
         return -1;
 
     CREMainWindow win;
+
+    CREPixmap::init();
+
     win.show();
 
     return app.exec();

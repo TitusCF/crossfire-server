@@ -8,6 +8,9 @@ extern "C" {
 #include "CRETreasurePanel.h"
 #include "CREUtils.h"
 
+#include "assets.h"
+#include "AssetsManager.h"
+
 CRETreasurePanel::CRETreasurePanel(QWidget* parent) : CRETPanel(parent)
 {
     QGridLayout* layout = new QGridLayout(this);
@@ -35,12 +38,12 @@ void CRETreasurePanel::setItem(const treasurelist* treas)
     myUsing->clear();
     myTreasure = treas;
 
-    const archt* arch;
+    archt* arch;
     QTreeWidgetItem* root = NULL;
 
     QString name = myTreasure->name;
 
-    for (arch = first_archetype; arch; arch = arch->more ? arch->more : arch->next)
+    for (arch = get_next_archetype(NULL); arch; arch = get_next_archetype(arch))
     {
         if (arch->clone.randomitems && name == arch->clone.randomitems->name)
         {
@@ -56,12 +59,8 @@ void CRETreasurePanel::setItem(const treasurelist* treas)
 
     root = NULL;
 
-    const treasurelist* list;
-    const treasure* t;
-
-    for (list = first_treasurelist; list; list = list->next)
-    {
-        for (t = list->items; t; t = t->next)
+    getManager()->treasures()->each([this, &root, &name] (treasurelist *list) {
+        for (const treasure *t = list->items; t; t = t->next)
         {
             if (t->name == name)
             {
@@ -74,7 +73,7 @@ void CRETreasurePanel::setItem(const treasurelist* treas)
                 CREUtils::treasureNode(list, root);
             }
         }
-    }
+    });
 
     myGenerated->clear();
 }

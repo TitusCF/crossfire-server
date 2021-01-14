@@ -151,30 +151,12 @@ START_TEST(test_init_archetypes) {
 }
 END_TEST
 
-START_TEST(test_clear_archetable) {
-    clear_archetable(); /*should just not fail :p*/
-}
-END_TEST
-
-START_TEST(test_free_all_archs) {
-    archetype *arch;
-
-    free_all_archs();
-    arch = find_archetype("empty_archetype");
-    fail_unless(arch == NULL, "init_archetype should not have an 'empty_archetype' loaded after call to free_all_archs");
-    init_archetypes();
-    arch = find_archetype("empty_archetype");
-    fail_unless(arch != NULL, "init_archetype should have an 'empty_archetype' loaded");
-}
-END_TEST
-
 START_TEST(test_get_archetype_struct) {
     archetype *arch = get_archetype_struct();
 
     fail_unless(arch != NULL, "get_archetype_struct should not return NULL");
     fail_unless(arch->name == NULL, "arch->name of get_archetype_struct should be inited to NULL");
     fail_unless(arch->head == NULL, "arch->head of get_archetype_struct should be inited to NULL");
-    fail_unless(arch->next == NULL, "arch->next of get_archetype_struct should be inited to NULL");
     fail_unless(arch->more == NULL, "arch->more of get_archetype_struct should be inited to NULL");
     fail_unless(arch->clone.other_arch == NULL, "arch->clone.other_arch of get_archetype_struct should be inited to NULL");
     fail_unless(arch->clone.contr == NULL, "arch->clone.contr of get_archetype_struct should be inited to NULL");
@@ -250,7 +232,7 @@ START_TEST(test_find_archetype) {
     arch = find_archetype("elvenboots");
     fail_unless(arch != NULL, "find_archetype(\"elvenboots\") should not return null");
     arch = find_archetype("AA1234567890");
-    fail_unless(arch == NULL, "find_archetype(\"AA1234567890\") should return null");
+    fail_unless(arch != NULL, "find_archetype(\"AA1234567890\") should not return null");
 }
 END_TEST
 
@@ -269,6 +251,7 @@ END_TEST
 static Suite *arch_suite(void) {
     Suite *s = suite_create("arch");
     TCase *tc_core = tcase_create("Core");
+    tcase_set_timeout(tc_core, 60);
 
     /*setup and teardown will be called before each test in testcase 'tc_core' */
     tcase_add_checked_fixture(tc_core, setup, teardown);
@@ -280,8 +263,6 @@ static Suite *arch_suite(void) {
     tcase_add_test(tc_core, test_get_archetype_by_type_subtype);
     tcase_add_test(tc_core, test_create_archetype_by_object_name);
     tcase_add_test(tc_core, test_init_archetypes);
-    tcase_add_test(tc_core, test_clear_archetable);
-    tcase_add_test(tc_core, test_free_all_archs);
     tcase_add_test(tc_core, test_get_archetype_struct);
     tcase_add_test(tc_core, test_arch_to_object);
     tcase_add_test(tc_core, test_create_singularity);

@@ -11,6 +11,10 @@ extern "C" {
 #include "CREAnimationControl.h"
 #include "CREUtils.h"
 
+#include "assets.h"
+#include "AssetsManager.h"
+#include "Archetypes.h"
+
 CREAnimationPanel::CREAnimationPanel(QWidget* parent) : CRETPanel(parent)
 {
     myAnimation = 0;
@@ -45,13 +49,9 @@ void CREAnimationPanel::setItem(const Animations* animation)
 
     QTreeWidgetItem* root = NULL;
 
-    const archt* arch;
-    sstring key;
-
-    for (arch = first_archetype; arch; arch = (arch->more ? arch->more : arch->next))
-    {
-      key = object_get_value(&arch->clone, "identified_animation");
-        if (arch->clone.animation == myAnimation || (key && strcmp(animation->name, key) == 0))
+    getManager()->archetypes()->each([this, &root] (archetype *arch) {
+      sstring key = object_get_value(&arch->clone, "identified_animation");
+        if (arch->clone.animation == myAnimation || (key && strcmp(myAnimation->name, key) == 0))
         {
             if (root == NULL)
             {
@@ -61,7 +61,7 @@ void CREAnimationPanel::setItem(const Animations* animation)
             }
             CREUtils::archetypeNode(arch, root);
         }
-    }
+    });
 
     root = NULL;
 

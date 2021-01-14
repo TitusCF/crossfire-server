@@ -9,6 +9,10 @@ extern "C" {
 #include "CREUtils.h"
 #include "CREAnimationWidget.h"
 
+#include "assets.h"
+#include "AssetsManager.h"
+#include "Archetypes.h"
+
 CREArtifactPanel::CREArtifactPanel(QWidget* parent) : CRETPanel(parent)
 {
     myArtifact = NULL;
@@ -120,14 +124,14 @@ void CREArtifactPanel::computeMadeViaAlchemy(const artifact* artifact) const
  */
 static void addArchetypes(const artifact* artifact, const char* name, bool check, QTreeWidget* root)
 {
-    const archt* arch;
     QTreeWidgetItem* item = NULL;
     item = NULL;
-    for (arch = first_archetype; arch != NULL; arch = arch->next)
+
+    getManager()->archetypes()->each([&artifact, &name, &check, &root, &item] (archetype *arch)
     {
-        if (arch->clone.type != artifact->item->type)
+        if (arch->head || arch->clone.type != artifact->item->type)
         {
-          continue;
+          return;
         }
 
         if (name == NULL || (check && (!strcmp(name, arch->clone.name) || (!strcmp(name, arch->name)))) || (!check && strcmp(name, arch->clone.name) && strcmp(name, arch->name)))
@@ -141,7 +145,7 @@ static void addArchetypes(const artifact* artifact, const char* name, bool check
             }
             CREUtils::archetypeNode(arch, item)->setData(0, Qt::UserRole, arch->name);
         }
-    }
+    });
 }
 
 void CREArtifactPanel::setItem(const artifact* artifact)

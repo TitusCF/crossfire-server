@@ -18,7 +18,7 @@ void static fillEvents()
         return;
     }
 
-    for (archt* arch = first_archetype; arch != NULL; arch = arch->next)
+    for (archt* arch = get_next_archetype(NULL); arch != NULL; arch = get_next_archetype(arch))
     {
         if (arch->clone.type == EVENT_CONNECTOR)
         {

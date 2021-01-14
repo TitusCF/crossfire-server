@@ -86,7 +86,6 @@ typedef struct treasureliststruct {
                                          * total_chance contains the sum of
                                          * the chance for this list.
                                          */
-    struct treasureliststruct *next;    /**< Next treasure-item in linked list */
     struct treasurestruct *items;       /**< Items in this list, linked */
 } treasurelist;
 

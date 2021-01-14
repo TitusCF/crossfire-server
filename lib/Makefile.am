@@ -11,7 +11,10 @@ dist_pkgdata_DATA = \
 	arch/messages \
 	arch/races \
 	def_help \
-	animations archetypes bmaps.paths crossfire.0 crossfire.1 faces smooth treasures
+	crossfire.arc \
+	crossfire.trs \
+	crossfire.face \
+	crossfire.tar
 
 CONF_FILES = \
 	config/ban_file \
@@ -41,29 +44,21 @@ i18ndir=$(pkgdatadir)/i18n
 dist_i18n_DATA = i18n/messages.en \
 	i18n/messages.fr
 
-MAINTAINERCLEANFILES = archetypes faces .collect-stamp \
-	animations smooth treasures bmaps.paths crossfire.0 crossfire.1
+MAINTAINERCLEANFILES = .collect-stamp \
+	crossfire.arc crossfire.trs crossfire.face crossfire.tar
 
 PERL = @PERL@
-
-crossfire.0: bmaps.paths
-	$(PERL) $(srcdir)/adm/collect_images.pl -src $(srcdir) -png
 
 .collect-stamp:
 	touch .collect-stamp
 
 do-collect:
-	$(PERL) -I$(srcdir) collect $(builddir)/arch
-	$(PERL) $(srcdir)/adm/collect_images.pl -src $(srcdir) -png
+	../server/crossfire-server -data . -pack-assets archs crossfire.arc
+	../server/crossfire-server -data . -pack-assets faces crossfire.face
+	../server/crossfire-server -data . -pack-assets treasures crossfire.trs
+	../server/crossfire-server -data . -pack-assets images crossfire.tar
 
-archonly:
-	$(PERL) -I$(srcdir) collect $(builddir)/arch ARCHONLY
-
-archetypes faces animations bmaps.paths smooth: .collect-stamp
-	touch .collect-stamp
-	$(MAKE) do-collect
-
-install-data-local: archetypes crossfire.0 faces animations smooth collect util.pl
+install-data-local: util.pl
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(pkgconfdir)
 	for i in $(CONF_FILES); do \

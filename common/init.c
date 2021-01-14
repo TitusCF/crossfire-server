@@ -26,12 +26,12 @@
 
 #include "object.h"
 #include "output_file.h"
+#include "assets.h"
 
 static void init_environ(void);
 static void init_defaults(void);
 static void init_dynamic(void);
 static void init_clocks(void);
-static void init_attackmess(void);
 
 /*
  * Anything with non-zero defaults in include/global.h must be set here.
@@ -93,6 +93,8 @@ struct Settings settings = {
     .roll_stat_points = 115,
     .max_stat = 0,     /* max_stat - will be loaded from stats file */
     .special_break_map = 1,     /* special_break_map, 1 for historical reasons */
+    .hooks_count = 0,
+    .ignore_assets_errors = 0,
 };
 
 struct Statistics statistics;
@@ -189,18 +191,36 @@ void init_library(void) {
     init_stats(FALSE);   /* Needs to be fairly early, since the loader will check
                           * against the settings.max_stat value
                           */
+
+    for (int mess = 0; mess < MAXATTACKMESS; mess++) {
+        for (int level = 0; level < MAXATTACKMESS; level++) {
+            attack_mess[mess][level].level = -1;
+            attack_mess[mess][level].buf1 = NULL;
+            attack_mess[mess][level].buf2 = NULL;
+            attack_mess[mess][level].buf3 = NULL;
+        }
+    }
+
+    assets_init();
     init_hash_table();
     i18n_init();
     init_objects();
     init_block();
-    read_bmap_names();
-    read_smooth();
-    init_anim();    /* Must be after we read in the bitmaps */
-    init_archetypes(); /* Reads all archetypes from file */
-    init_attackmess();
+
+    assets_collect(settings.datadir);
+    assets_end_load();
+
+    check_formulae();
+
+
     init_clocks();
     init_emergency_mappath();
     init_experience();
+
+    if (assets_dump_undefined() > 0 && !settings.ignore_assets_errors) {
+        LOG(llevError, "Assets errors, please fix and restart.\n");
+        exit(EXIT_FAILURE);
+    }
 
     /* init_dynamic() loads a map, so needs a region */
     if (init_regions() != 0) {
@@ -279,19 +299,14 @@ void init_globals(void) {
     first_player = NULL;
     first_friendly_object = NULL;
     first_map = NULL;
-    first_treasurelist = NULL;
     first_artifactlist = NULL;
-    first_archetype = NULL;
     *first_map_ext_path = 0;
-    nroftreasures = 0;
     nrofartifacts = 0;
     nrofallowedstr = 0;
     ring_arch = NULL;
     amulet_arch = NULL;
     undead_name = add_string("undead");
     trying_emergency_save = 0;
-    num_animations = 0;
-    animations = NULL;
     init_defaults();
 }
 
@@ -338,6 +353,8 @@ void free_globals(void) {
         FREE_AND_CLEAR(first_region);
         first_region = reg;
     }
+
+    assets_free();
 }
 
 /**
@@ -346,6 +363,34 @@ void free_globals(void) {
  */
 static void init_defaults(void) {
     nroferrors = 0;
+}
+
+static int found_map = 0;
+
+static void do_dynamic(archetype *at) {
+    if (found_map) {
+        return;
+    }
+
+    if (at->clone.type == MAP && at->clone.subtype == MAP_TYPE_LEGACY) {
+        if (at->clone.race) {
+            safe_strncpy(first_map_ext_path, at->clone.race,
+                    sizeof(first_map_ext_path));
+        }
+        if (EXIT_PATH(&at->clone)) {
+            mapstruct *first;
+
+            strlcpy(first_map_path, EXIT_PATH(&at->clone), sizeof(first_map_path));
+            first = ready_map_name(first_map_path, 0);
+            if (!first) {
+                LOG(llevError, "Initial map %s can't be found! Please ensure maps are correctly installed.\n", first_map_path);
+                LOG(llevError, "Unable to continue without initial map.\n");
+                abort();
+            }
+            delete_map(first);
+            found_map = 1;
+        }
+    }
 }
 
 /**
@@ -357,29 +402,12 @@ static void init_defaults(void) {
  * will call exit() if no MAP archetype was found.
  */
 static void init_dynamic(void) {
-    archetype *at = first_archetype;
-    while (at) {
-        if (at->clone.type == MAP && at->clone.subtype == MAP_TYPE_LEGACY) {
-            if (at->clone.race) {
-                safe_strncpy(first_map_ext_path, at->clone.race,
-                        sizeof(first_map_ext_path));
-            }
-            if (EXIT_PATH(&at->clone)) {
-                mapstruct *first;
+    archetypes_for_each(do_dynamic);
 
-                strlcpy(first_map_path, EXIT_PATH(&at->clone), sizeof(first_map_path));
-                first = ready_map_name(first_map_path, 0);
-                if (!first) {
-                    LOG(llevError, "Initial map %s can't be found! Please ensure maps are correctly installed.\n", first_map_path);
-                    LOG(llevError, "Unable to continue without initial map.\n");
-                    abort();
-                }
-                delete_map(first);
-                return;
-            }
-        }
-        at = at->next;
+    if (found_map) {
+        return;
     }
+
     LOG(llevError, "You need a archetype called 'map' and it have to contain start map\n");
     exit(-1);
 }
@@ -444,29 +472,14 @@ static void init_clocks(void) {
  *
  * Memory will be cleared by free_globals().
  */
-static void init_attackmess(void) {
+void init_attackmess(FILE *file, const char *filename) {
     char buf[MAX_BUF];
-    char filename[MAX_BUF];
     char *cp, *p;
-    FILE *fp;
-    static int has_been_done = 0;
     int mess = -1, level;
     int mode = 0, total = 0;
 
-    if (has_been_done)
-        return;
-    else
-        has_been_done = 1;
-
-    snprintf(filename, sizeof(filename), "%s/attackmess", settings.datadir);
-    fp = fopen(filename, "r");
-    if (fp == NULL) {
-        LOG(llevError, "Can't open %s.\n", filename);
-        return;
-    }
-
     level = 0;
-    while (fgets(buf, MAX_BUF, fp) != NULL) {
+    while (fgets(buf, MAX_BUF, file) != NULL) {
         if (*buf == '#')
             continue;
         // Find the end of the line and strip the newline
@@ -487,6 +500,9 @@ static void init_attackmess(void) {
             p = strtok(NULL, ":");
             if (mode == 1) {
                 attack_mess[mess][level].level = -1;
+                free(attack_mess[mess][level].buf1);
+                free(attack_mess[mess][level].buf2);
+                free(attack_mess[mess][level].buf3);
                 attack_mess[mess][level].buf1 = NULL;
                 attack_mess[mess][level].buf2 = NULL;
                 attack_mess[mess][level].buf3 = NULL;
@@ -500,6 +516,7 @@ static void init_attackmess(void) {
             p = strtok(buf, "=");
             attack_mess[mess][level].level = atoi(buf);
             p = strtok(NULL, "=");
+            free(attack_mess[mess][level].buf1);
             if (p != NULL)
                 attack_mess[mess][level].buf1 = strdup_local(p);
             else
@@ -510,6 +527,7 @@ static void init_attackmess(void) {
             p = strtok(buf, "=");
             attack_mess[mess][level].level = atoi(buf);
             p = strtok(NULL, "=");
+            free(attack_mess[mess][level].buf2);
             if (p != NULL)
                 attack_mess[mess][level].buf2 = strdup_local(p);
             else
@@ -520,6 +538,7 @@ static void init_attackmess(void) {
             p = strtok(buf, "=");
             attack_mess[mess][level].level = atoi(buf);
             p = strtok(NULL, "=");
+            free(attack_mess[mess][level].buf3);
             if (p != NULL)
                 attack_mess[mess][level].buf3 = strdup_local(p);
             else
@@ -530,6 +549,5 @@ static void init_attackmess(void) {
             continue;
         }
     }
-    LOG(llevDebug, "attackmsg: %d messages in %d categories\n", total, mess+1);
-    fclose(fp);
+    LOG(llevDebug, "attackmsg %s: %d messages in %d categories\n", filename, total, mess+1);
 }

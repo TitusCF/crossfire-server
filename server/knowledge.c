@@ -212,7 +212,7 @@ static void knowledge_alchemy_summary(const char *value, StringBuffer *buf) {
         /* warn? */
         return;
 
-    arch = find_archetype(rec->arch_name[RANDOM()%rec->arch_names]);
+    arch = try_find_archetype(rec->arch_name[RANDOM()%rec->arch_names]);
     if (!arch)
         /* not supposed to happen */
         return;
@@ -245,7 +245,7 @@ static void knowledge_alchemy_detail(const char *value, StringBuffer *buf) {
         /* warn? */
         return;
 
-    arch = find_archetype(rec->arch_name[RANDOM()%rec->arch_names]);
+    arch = try_find_archetype(rec->arch_name[RANDOM()%rec->arch_names]);
     if (!arch)
         /* not supposed to happen */
         return;
@@ -260,7 +260,7 @@ static void knowledge_alchemy_detail(const char *value, StringBuffer *buf) {
             stringbuffer_append_printf(buf, "The %s", arch->clone.name);
     }
 
-    arch = find_archetype(rec->cauldron);
+    arch = try_find_archetype(rec->cauldron);
     if (arch)
         query_name(&arch->clone, name, MAX_BUF);
     else
@@ -301,7 +301,7 @@ static StringBuffer* knowledge_alchemy_can_use_item(sstring code, const char *it
         /* warn? */
         return buf;
 
-    arch = find_archetype(rec->arch_name[RANDOM()%rec->arch_names]);
+    arch = try_find_archetype(rec->arch_name[RANDOM()%rec->arch_names]);
     if (!arch)
         /* not supposed to happen */
         return buf;
@@ -512,7 +512,7 @@ static const Face *knowledge_alchemy_face(sstring code) {
     if (rp->arch_names == 0)
         return NULL;
 
-    arch = find_archetype(rp->arch_name[0]);
+    arch = try_find_archetype(rp->arch_name[0]);
     if (arch == NULL) {
         return NULL;
     }
@@ -593,7 +593,7 @@ static int knowledge_add(knowledge_player *current, const char *item, const know
  * @todo merge with stuff in readable.c
  */
 static void knowledge_monster_summary(const char *item, StringBuffer *buf) {
-    archetype *monster = find_archetype(item);
+    archetype *monster = try_find_archetype(item);
     if (!monster)
         return;
 
@@ -607,7 +607,7 @@ static void knowledge_monster_summary(const char *item, StringBuffer *buf) {
  * @todo merge with stuff in readable.c
  */
 static void knowledge_monster_detail(const char *item, StringBuffer *buf) {
-    archetype *monster = find_archetype(item);
+    archetype *monster = try_find_archetype(item);
 
     if (!monster)
         return;
@@ -623,7 +623,7 @@ static void knowledge_monster_detail(const char *item, StringBuffer *buf) {
  */
 static int knowledge_monster_validate(const char *item) {
     const archetype *monster = try_find_archetype(item);
-    if (monster == NULL || monster->clone.type != 0)
+    if (monster == NULL || monster->clone.type != 0 || monster->head)
         return 0;
     return 1;
 }
@@ -659,7 +659,7 @@ static int knowledge_monster_add(struct knowledge_player *current, const char *i
  * @return face, NULL if invalid.
  */
 static const Face *knowledge_monster_face(sstring code) {
-    const archetype *monster = find_archetype(code);
+    const archetype *monster = try_find_archetype(code);
 
     if (!monster || monster->clone.face == blank_face || monster->clone.face == NULL)
         return NULL;
@@ -802,7 +802,7 @@ static const Face *knowledge_god_face(sstring code) {
         }
         buf[letter] = tolower(buf[letter]);
     }
-    altar_arch = find_archetype(buf);
+    altar_arch = try_find_archetype(buf);
     if (altar_arch == NULL)
         return NULL;
 
@@ -1392,7 +1392,7 @@ void knowledge_send_info(socket_struct *ns) {
     const Face *face;
     SockList sl;
 
-    face = find_face("knowledge_generic.111", NULL);
+    face = try_find_face("knowledge_generic.111", NULL);
     if (face != NULL && (!(ns->faces_sent[face->number] & NS_FACESENT_FACE)))
         esrv_send_face(ns, face, 0);
 
@@ -1401,7 +1401,7 @@ void knowledge_send_info(socket_struct *ns) {
     SockList_AddPrintf(&sl, "::%u:0\n", face ? face->number : 0);
 
     for (i = 0; knowledges[i].type != NULL; i++) {
-        face = find_face(knowledges[i].face, NULL);
+        face = try_find_face(knowledges[i].face, NULL);
         if (face != NULL && (!(ns->faces_sent[face->number] & NS_FACESENT_FACE)))
             esrv_send_face(ns, face, 0);
 
@@ -1506,7 +1506,7 @@ void knowledge_process_incremental(void) {
                 face = item->handler->item_face(item->item);
 
             if (face == NULL)
-                face = find_face(item->handler->face, NULL);
+                face = try_find_face(item->handler->face, NULL);
 
             size = 4 + (2 + strlen(item->handler->type)) + (2 + strlen(title)) + 4;
 

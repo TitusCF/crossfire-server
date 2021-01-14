@@ -35,6 +35,7 @@ libserver_a_SOURCES = \
 	player.c\
 	plugins.c\
 	quest.c\
+	races.cpp \
 	resurrection.c\
 	rune.c\
 	shop.c\

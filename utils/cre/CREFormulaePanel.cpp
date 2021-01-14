@@ -46,9 +46,11 @@ CREFormulaePanel::CREFormulaePanel(QWidget* parent) : CRETPanel(parent)
 
     mySkill->addItem(tr("(none)"), 0);
     myCauldron->addItem(tr("(none)"), 0);
-    const archt* arch = first_archetype;
-    for (; arch; arch = arch->next)
+    archt* arch = get_next_archetype(NULL);
+    for (; arch; arch = get_next_archetype(arch))
     {
+        if (arch->head)
+            continue;
         if (arch->clone.type == SKILL)
             mySkill->addItem(arch->clone.name);
         if (QUERY_FLAG(&arch->clone, FLAG_IS_CAULDRON))

@@ -32,15 +32,12 @@
 #include "version.h"
 #include "server.h"
 #include "sproto.h"
+#include "assets.h"
 
 static void help(void);
 static void init_beforeplay(void);
 static void init_startup(void);
 static void init_signals(void);
-static void init_races(void);
-static void dump_races(void);
-static void add_to_racelist(const char *race_name, object *op);
-static racelink *get_racelist(void);
 
 /**
  * Command line option: set logfile name.
@@ -213,7 +210,17 @@ static void set_tmpdir(const char *path) {
     settings.tmpdir = path;
 }
 
-static void free_races(void);
+/**
+ * Command line option: ignore assets errors.
+ */
+static void set_ignore_assets_errors() {
+    settings.ignore_assets_errors = 1;
+}
+
+static void server_pack_assets(const char *assets, const char *filename) {
+    assets_pack(assets, filename);
+    cleanup();
+}
 
 static void free_materials(void);
 
@@ -248,6 +255,14 @@ static void set_disable_plugin(const char *name) {
  */
 static void server_dump_animations(void) {
     dump_animations();
+    cleanup();
+}
+
+/**
+ * Dump all faces, then exit.
+ */
+static void server_dump_faces(void) {
+    dump_faces();
     cleanup();
 }
 
@@ -291,6 +306,7 @@ static struct Command_Line_Options options[] = {
     { "-data", 1, 1, set_datadir },
     { "-disable-plugin", 1, 1, set_disable_plugin },
     { "-h", 0, 1, help },
+    { "-ignore-assets-errors", 0, 1, set_ignore_assets_errors },
     { "-local", 1, 1, set_localdir },
     { "-log", 1, 1, set_logfile },
     { "-maps", 1, 1, set_mapdir },
@@ -332,6 +348,8 @@ static struct Command_Line_Options options[] = {
     { "-mexp", 0, 3, dump_experience },
     { "-mq", 0, 3, dump_quests },
     { "-dump-anims", 0, 3, server_dump_animations },
+    { "-dump-faces", 0, 3, server_dump_faces },
+    { "-pack-assets", 2, 3, server_pack_assets },
 };
 
 /**
@@ -417,23 +435,23 @@ static materialtype_t *get_empty_mat(void) {
  * Loads the materials.
  * @todo describe materials and such.
  */
-static void load_materials(void) {
-    char buf[MAX_BUF], filename[MAX_BUF], *cp, *next;
-    FILE *fp;
+static void load_materials(FILE *file, const char *filename) {
+    char buf[MAX_BUF], *cp, *next;
     materialtype_t *mt;
     int i, value;
 
-    snprintf(filename, sizeof(filename), "%s/materials", settings.datadir);
-    if ((fp = fopen(filename, "r")) == NULL) {
-        LOG(llevError, "Cannot open %s for reading\n", filename);
-        mt = get_empty_mat();
-        mt->next = NULL;
-        materialt = mt;
-        return;
-    }
     mt = get_empty_mat();
-    materialt = mt;
-    while (fgets(buf, MAX_BUF, fp) != NULL) {
+    if (!materialt) {
+        materialt = mt;
+    } else {
+        materialtype_t *a = materialt;
+        while (a->next != NULL) {
+            a = a->next;
+        }
+        a->next = mt;
+    }
+
+    while (fgets(buf, MAX_BUF, file) != NULL) {
         if (*buf == '#')
             continue;
         if ((cp = strchr(buf, '\n')) != NULL)
@@ -485,7 +503,6 @@ static void load_materials(void) {
     free(mt->next);
     mt->next = NULL;
     LOG(llevDebug, "loaded material type data\n");
-    fclose(fp);
 }
 
 /**
@@ -1017,14 +1034,20 @@ static void init_db() {
 void init(int argc, char **argv) {
     init_done = 0;      /* Must be done before init_signal() */
     logfile = stderr;
+    first_race = NULL;
 
     /* First argument pass - right now it does nothing, but in the future specifying
      * the LibDir in this pass would be reasonable. */
     parse_args(argc, argv, 1);
 
+    settings.hooks_count = 2;
+    settings.hooks_filename[0] = "/materials";
+    settings.hooks[0] = load_materials;
+    settings.hooks_filename[1] = "/races";
+    settings.hooks[1] = load_races;
+
     init_library();     /* Must be called early */
     load_settings();    /* Load the settings file */
-    load_materials();
     parse_args(argc, argv, 2);
 
     LOG(llevInfo, "Crossfire %s\n", FULL_VERSION);
@@ -1084,6 +1107,9 @@ static void help(void) {
            "              Can be specified multiple times. 'All' disables all plugins.\n");
     printf(" -dump-anims  Dump animations.\n");
     printf(" -h           Print this help message.\n");
+    printf(" -ignore-assets-errors\n");
+    printf("               Allow going on even if there are errors in assets.\n");
+    printf("               Warning: this may lead to strange behaviour.\n");
     printf(" -local       Set the local data (var/) directory.\n");
     printf(" -log <file>  Write logging information to the given file.\n");
     printf(" -m           List suggested experience for all monsters.\n");
@@ -1102,6 +1128,9 @@ static void help(void) {
     printf(" -mt <name>   Dump a list of treasures for a monster.\n");
     printf(" -n           Turn off debugging messages if on by default.\n");
     printf(" -p <port>    Specifies the port to listen on for incoming connections.\n");
+    printf(" -pack-assets <type> <filename>\n");
+    printf("              Packs specified assets type to the specified filename.\n");
+    printf("              Valid assets type are: archs, treasures, faces, messages, facesets, artifacts, formulae, images\n");
     printf(" -playerdir   Set the player files directory.\n");
     printf(" -regions     Set the region file.\n");
     printf(" -templatedir Set the template map directory.\n");
@@ -1117,15 +1146,13 @@ static void help(void) {
  * dump-related options.
  */
 static void init_beforeplay(void) {
-    init_archetypes(); /* If not called before, reads all archetypes from file */
-    init_artifacts();  /* If not called before, reads all artifacts from file */
     check_spells();     /* If not called before, links archtypes used by spells */
     init_regions();    /* If not called before, reads all regions from file */
     init_archetype_pointers(); /* Setup global pointers to archetypes */
-    init_races();    /* overwrite race designations using entries in lib/races file */
+    finish_races();    /* overwrite race designations using entries in lib/races file */
+    assets_finish_archetypes_for_play();
     init_gods(); /* init linked list of gods from archs*/
     init_readable(); /* inits useful arrays for readable texts */
-    init_formulae();  /* If not called before, reads formulae from file */
 
     switch (settings.dumpvalues) {
     case 1:
@@ -1237,194 +1264,4 @@ static void init_signals(void) {
     signal(SIGINT, signal_shutdown);
     signal(SIGPIPE, SIG_IGN);
 #endif /* win32 */
-}
-
-/**
- * Reads the races file in the lib/ directory, then
- * overwrites old 'race' entries. This routine allow us to quickly
- * re-configure the 'alignment' of monsters, objects. Useful for
- * putting together lists of creatures, etc that belong to gods.
- */
-static void init_races(void) {
-    FILE *file;
-    char race[MAX_BUF], fname[MAX_BUF], buf[MAX_BUF], *cp, variable[MAX_BUF];
-    archetype *mon = NULL;
-    static int init_done = 0;
-
-    if (init_done)
-        return;
-    init_done = 1;
-    first_race = NULL;
-
-    snprintf(fname, sizeof(fname), "%s/races", settings.datadir);
-    if (!(file = fopen(fname, "r"))) {
-        LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror(errno));
-        return;
-    }
-
-    while (fgets(buf, MAX_BUF, file) != NULL) {
-        int set_race = 1, set_list = 1;
-        if (*buf == '#')
-            continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
-        cp = buf;
-        while (*cp == ' ' || *cp == '!' || *cp == '@') {
-            if (*cp == '!')
-                set_race = 0;
-            if (*cp == '@')
-                set_list = 0;
-            cp++;
-        }
-        if (sscanf(cp, "RACE %s", variable)) { /* set new race value */
-            strcpy(race, variable);
-        } else {
-            char *cp1;
-
-            /* Take out beginning spaces */
-            for (cp1 = cp; *cp1 == ' '; cp1++)
-                ;
-            /* Remove newline and trailing spaces */
-            for (cp1 = cp+strlen(cp)-1; *cp1 == '\n' || *cp1 == ' '; cp1--) {
-                *cp1 = '\0';
-                if (cp == cp1)
-                    break;
-            }
-
-            if (cp[strlen(cp)-1] == '\n')
-                cp[strlen(cp)-1] = '\0';
-            /* set creature race to race value */
-            if ((mon = find_archetype(cp)) == NULL)
-                LOG(llevError, "Creature %s in race file lacks archetype\n", cp);
-            else {
-                // If the race is specified somewhere in the race field, we are good.
-                // This allows us to specify multiple races on arches that are in the races file.
-                if (set_race && (!mon->clone.race || !strstr(mon->clone.race, race))) {
-                    if (mon->clone.race) {
-                        LOG(llevDebug, "races: Appending to %s from %s for archetype %s\n", race, mon->clone.race, mon->name);
-                        // Copy the existing race into the race total list.
-                        strcpy(race+strlen(race), ","); // Arbitrary separator
-                        strncpy(race+strlen(race), mon->clone.race, MAX_BUF - 1 - strlen(race));
-                        // Clear the existing race string so we can add the new one
-                        free_string(mon->clone.race);
-                    }
-                    mon->clone.race = add_string(race);
-                }
-                /* if the arch is a monster, add it to the race list */
-                if (set_list && QUERY_FLAG(&mon->clone, FLAG_MONSTER))
-                    add_to_racelist(race, &mon->clone);
-            }
-        }
-    }
-    fclose(file);
-    LOG(llevDebug, "loaded races\n");
-}
-
-/**
- * Dumps all race information to stderr.
- */
-static void dump_races(void) {
-    racelink *list;
-    objectlink *tmp;
-
-    for (list = first_race; list; list = list->next) {
-        fprintf(stderr, "\nRACE %s:\t", list->name);
-        for (tmp = list->member; tmp; tmp = tmp->next)
-            fprintf(stderr, "%s(%d), ", tmp->ob->arch->name, tmp->ob->level);
-    }
-    fprintf(stderr, "\n");
-}
-
-/**
- * Frees all race-related information.
- */
-static void free_races(void) {
-    racelink *race;
-    objectlink *link;
-
-    LOG(llevDebug, "Freeing race information.\n");
-    while (first_race) {
-        race = first_race->next;
-        while (first_race->member) {
-            link = first_race->member->next;
-            free(first_race->member);
-            first_race->member = link;
-        }
-        free_string(first_race->name);
-        free(first_race);
-        first_race = race;
-    }
-}
-
-/**
- * Add an object to the racelist.
- *
- * @param race_name
- * race name.
- * @param op
- * what object to add to the race.
- */
-static void add_to_racelist(const char *race_name, object *op) {
-    racelink *race;
-
-    if (!op || !race_name)
-        return;
-    race = find_racelink(race_name);
-
-    if (!race) { /* add in a new race list */
-        race = get_racelist();
-        race->next = first_race;
-        first_race = race;
-        race->name = add_string(race_name);
-    }
-
-    if (race->member->ob) {
-        objectlink *tmp = get_objectlink();
-
-        tmp->next = race->member;
-        race->member = tmp;
-    }
-    race->nrof++;
-    race->member->ob = op;
-}
-
-/**
- * Create a new ::racelink structure.
- *
- * @note
- * will call fatal() in case of memory allocation failure.
- * @return
- * empty structure.
- */
-static racelink *get_racelist(void) {
-    racelink *list;
-
-    list = (racelink *)malloc(sizeof(racelink));
-    if (!list)
-        fatal(OUT_OF_MEMORY);
-    list->name = NULL;
-    list->nrof = 0;
-    list->member = get_objectlink();
-    list->next = NULL;
-
-    return list;
-}
-
-/**
- * Find the race information for the specified name.
- *
- * @param name
- * race to search for.
- * @return
- * race structure, NULL if not found.
- */
-racelink *find_racelink(const char *name) {
-    racelink *test = NULL;
-
-    if (name && first_race)
-        for (test = first_race; test && test != test->next; test = test->next)
-            if (!test->name || !strcmp(name, test->name))
-                break;
-
-    return test;
 }

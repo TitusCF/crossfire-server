@@ -34,6 +34,8 @@
 #include "sproto.h"
 #include "version.h"
 
+#include "assets.h"
+
 /**
  * This is the 'maps' command.
  *
@@ -242,23 +244,19 @@ void command_news(object *op, const char *params) {
  */
 static void malloc_info(object *op) {
     int ob_used = object_count_used(), ob_free = object_count_free(), players, nrofmaps;
-    int nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, tlnr, alnr;
+    int nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, alnr;
     treasurelist *tl;
     player *pl;
     mapstruct *m;
     archetype *at;
     artifactlist *al;
 
-    for (tl = first_treasurelist, tlnr = 0; tl != NULL; tl = tl->next, tlnr++)
-        ;
     for (al = first_artifactlist, alnr = 0; al != NULL; al = al->next, alnr++)
         ;
 
-    for (at = first_archetype, anr = 0, anims = 0; at != NULL; at = at->more == NULL ? at->next : at->more, anr++)
-        ;
+    anr = assets_number_of_archetypes();
 
-    for (i = 1; i < num_animations; i++)
-        anims += animations[i].num_animations;
+    anims = assets_number_of_animations();
 
     for (pl = first_player, players = 0; pl != NULL; pl = pl->next, players++)
         ;
@@ -346,14 +344,14 @@ static void malloc_info(object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
                          i18n(op, "[fixed]%4d treasurelists    %8d"),
-                         tlnr, i = (tlnr*sizeof(treasurelist)));
+                         assets_number_of_treasurelists(), i = (assets_number_of_treasurelists() * sizeof(treasurelist)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
                          i18n(op, "[fixed]%4ld treasures        %8d"),
-                         nroftreasures, i = (nroftreasures*sizeof(treasure)));
+                         assets_number_of_treasures(), i = (assets_number_of_treasures() *sizeof(treasure)));
 
     sum_alloc += i;
     sum_used += i;
@@ -854,18 +852,6 @@ void command_strings(object *op, const char *params) {
  */
 void command_time(object *op, const char *params) {
     time_info(op);
-}
-
-/**
- * Archetype-related statistics. Wizard 'archs' command.
- *
- * @param op
- * player asking for information.
- * @param params
- * unused.
- */
-void command_archs(object *op, const char *params) {
-    arch_info(op);
 }
 
 /**
@@ -2416,7 +2402,7 @@ void do_harvest(object *pl, int dir, object *skill) {
         sstring replacement = object_get_value(item, "harvest_exhaust_replacement");
         if (replacement) {
             if (replacement[0] != '-') {
-                archetype *other = find_archetype(replacement);
+                archetype *other = try_find_archetype(replacement);
                 if (other) {
                     object *final = object_create_arch(other);
                     object_insert_in_map_at(final, map, item, INS_BELOW_ORIGINATOR, item->x, item->y);

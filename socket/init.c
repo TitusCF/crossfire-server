@@ -381,8 +381,6 @@ void init_server(void) {
         LOG(llevError, "init_server: can't open any listening socket\n");
         fatal(SEE_LAST_ERROR);
     }
-
-    read_client_images();
 }
 
 /*******************************************************************************
@@ -395,7 +393,6 @@ void init_server(void) {
 void free_all_newserver(void) {
     int i;
     LOG(llevDebug, "Freeing all new client/server information.\n");
-    free_socket_images();
     for (i = 0; i < socket_info.allocated_sockets && init_sockets[i].listen; i++) {
         free(init_sockets[i].listen->addr);
         free(init_sockets[i].listen);

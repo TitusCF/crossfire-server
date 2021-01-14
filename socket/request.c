@@ -1980,7 +1980,7 @@ void send_account_players(socket_struct *ns)
         add_char_field(&sl, ACL_RACE, acn->race);
         add_char_field(&sl, ACL_FACE, acn->face);
         if (acn->face[0] != 0 ) {
-            const Face *face = find_face(acn->face, 0);
+            const Face *face = try_find_face(acn->face, NULL);
 
             if (face != NULL) {
                 if (!(ns->faces_sent[face->number]&NS_FACESENT_FACE)) {

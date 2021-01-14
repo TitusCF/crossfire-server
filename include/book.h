@@ -41,6 +41,15 @@ typedef struct {
 /**
  * One general message, from the lib/messages file.
  */
-typedef struct GeneralMessage GeneralMessage;
+typedef struct GeneralMessage {
+    int chance;             /**< Relative chance of the message appearing
+                              randomly. If 0 will never appear. */
+    sstring identifier;     /**< Message identifier, can be NULL. */
+    sstring title;          /**< The message's title, only used for knowledge. */
+    sstring message;        /**< The message's body. */
+    sstring quest_code;     /**< Optional quest code and state this message will start. */
+    const Face *face;   /**< Face the message displays at in the knowledge dialog, NULL if no face defined. */
+    struct GeneralMessage *next;   /**< Next message in the list. */
+} GeneralMessage;
 
 #endif /* BOOK_H */

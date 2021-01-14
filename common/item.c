@@ -1326,7 +1326,7 @@ void object_give_identified_properties(object *op) {
 
     key = object_get_value(op, "identified_face");
     if (key != NULL) {
-        op->face = find_face(key, op->face);
+        op->face = try_find_face(key, op->face);
         /* if the face is defined, clean the animation, because else
          * the face can be lost ; if an animation is defined, it'll be
          * processed later on */

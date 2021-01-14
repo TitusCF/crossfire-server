@@ -26,7 +26,7 @@
 #include "living.h"
 #include "spells.h"
 
-static void add_god_to_list(archetype *god_arch);
+#include "assets.h"
 
 /**
  * Initializes a god structure.
@@ -47,22 +47,7 @@ static godlink *init_godslist(void) {
 }
 
 /**
- * This takes a look at all of the archetypes to find
- * the objects which correspond to the GODS (type GOD)
- */
-void init_gods(void) {
-    archetype *at = NULL;
-
-    LOG(llevDebug, "Initializing gods...\n");
-    for (at = first_archetype; at != NULL; at = at->next)
-        if (at->clone.type == GOD)
-            add_god_to_list(at);
-
-    LOG(llevDebug, "done.\n");
-}
-
-/**
- * Adds specified god to linked list, gives it an id.
+ * Adds specified god to linked list if god, gives it an id.
  *
  * @param god_arch
  * God to add. If NULL, will log an error.
@@ -72,6 +57,9 @@ static void add_god_to_list(archetype *god_arch) {
 
     if (!god_arch) {
         LOG(llevError, "ERROR: Tried to add null god to list!\n");
+        return;
+    }
+    if (!(god_arch->clone.type == GOD)) {
         return;
     }
 
@@ -90,6 +78,19 @@ static void add_god_to_list(archetype *god_arch) {
 #ifdef DEBUG_GODS
     LOG(llevDebug, "Adding god %s (%d) to list\n", god->name, god->id);
 #endif
+}
+/**
+ * This takes a look at all of the archetypes to find
+ * the objects which correspond to the GODS (type GOD)
+ */
+void init_gods(void) {
+    archetype *at = NULL;
+
+    LOG(llevDebug, "Initializing gods...\n");
+
+    archetypes_for_each(add_god_to_list);
+
+    LOG(llevDebug, "done.\n");
 }
 
 /**

@@ -2067,9 +2067,9 @@ static void process_map(struct_map_info *info) {
                     int sx, sy, hx, hy;
 
                     if (gdfaces[item->face->number] == NULL) {
-                        int set = get_face_fallback(tileset, item->face->number);
+                        face_sets *fs = find_faceset(get_face_fallback(tileset, item->face->number));
 
-                        gdfaces[item->face->number] = gdImageCreateFromPngPtr(facesets[set].faces[item->face->number].datalen, facesets[set].faces[item->face->number].data);
+                        gdfaces[item->face->number] = gdImageCreateFromPngPtr(fs->faces[item->face->number].datalen, fs->faces[item->face->number].data);
                         pics_allocated++;
                     }
                     if (item->head || item->more) {
@@ -3666,14 +3666,10 @@ int main(int argc, char **argv) {
 
     init_globals();
     init_library();
-    init_archetypes();
-    init_artifacts();
-    init_formulae();
     init_readable();
     init_regions();
 
     init_gods();
-    read_client_images();
 
     /* Add a dummy region so unlinked maps can be identified. */
     dummy = get_region_struct();
@@ -3758,7 +3754,7 @@ int main(int argc, char **argv) {
     printf("  generate world map:                  %s\n", yesno(world_map));
     printf("  generate exit map:                   %s\n", yesno(world_exit_info));
     printf("  generate regions link file:          %s\n", yesno(do_regions_link));
-    printf("  tileset:                             %s\n", facesets[tileset].fullname);
+    printf("  tileset:                             %s\n", find_faceset(tileset)->fullname);
     printf("\n");
 
     if (list_unused_maps) {

@@ -45,9 +45,6 @@ static void generate_map(char *OutFileName) {
     /* Initialize Crossfire library. */
     init_globals();
     init_library();
-    init_archetypes();
-    init_artifacts();
-    init_formulae();
     init_readable();
     init_gods();
 

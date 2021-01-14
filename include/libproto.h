@@ -1,33 +1,35 @@
 /* anim.c */
-extern void free_all_anim(void);
-extern void init_anim(void);
-extern const Animations *find_animation(const char *name);
-extern const Animations *try_find_animation(const char *name);
+extern Animations *find_animation(const char *name);
+extern Animations *try_find_animation(const char *name);
 extern void animate_object(object *op, int dir);
 extern void apply_anim_suffix(object *who, const char *suffix);
 extern void dump_animations(void);
+extern void animation_load_block(FILE *file, const char *full_path, const char *animation_name);
+extern int get_animations_count();
 /* arch.c */
-extern archetype *find_archetype_by_object_name(const char *name);
-extern archetype *find_archetype_by_object_type_name(int type, const char *name);
-extern archetype *get_archetype_by_skill_name(const char *skill, int type);
-extern archetype *get_archetype_by_type_subtype(int type, int subtype);
-extern object *create_archetype_by_object_name(const char *name);
-extern void init_archetypes(void);
-extern void arch_info(object *op);
-extern void clear_archetable(void);
-extern void dump_arch(archetype *at, StringBuffer *sb);
-extern void dump_all_archetypes(void);
-extern void free_arch(archetype *at);
-extern void free_all_archs(void);
-extern archetype *get_archetype_struct(void);
-extern void check_generators(void);
-extern void check_summoned(void);
-extern object *arch_to_object(archetype *at);
-extern object *create_singularity(const char *name);
-extern object *create_archetype(const char *name);
-extern archetype *try_find_archetype(const char *name);
-extern archetype *find_archetype(const char *name);
-extern object *object_create_arch(archetype *at);
+#ifdef __cplusplus
+extern "C" {
+#endif
+archetype *find_archetype_by_object_name(const char *name);
+archetype *find_archetype_by_object_type_name(int type, const char *name);
+archetype *get_archetype_by_skill_name(const char *skill, int type);
+archetype *get_archetype_by_type_subtype(int type, int subtype);
+object *create_archetype_by_object_name(const char *name);
+void dump_arch(archetype *at, StringBuffer *sb);
+void dump_all_archetypes(void);
+void free_arch(archetype *at);
+archetype *get_archetype_struct(void);
+object *arch_to_object(archetype *at);
+object *create_singularity(const char *name);
+object *create_archetype(const char *name);
+archetype *try_find_archetype(const char *name);
+archetype *find_archetype(const char *name);
+object *object_create_arch(archetype *at);
+archetype *get_next_archetype(archetype *current);
+void first_arch_pass(FILE *fp, const char *filename);
+#ifdef __cplusplus
+}
+#endif
 /* arch_types_valid.c */
 extern int is_type_valid(uint8_t type);
 /* artifact.c */
@@ -36,7 +38,7 @@ extern void generate_artifact(object *op, int difficulty);
 extern void give_artifact_abilities(object *op, const object *artifact);
 extern int legal_artifact_combination(const object *op, const artifact *art);
 extern void add_abilities(object *op, const object *change);
-extern void init_artifacts(void);
+extern void init_artifacts(FILE *file, const char *filename);
 extern const artifactlist *find_artifactlist(int type);
 extern const artifact *find_artifact(const object *op, const char *name);
 extern void dump_artifacts(void);
@@ -85,24 +87,27 @@ extern void dump_gods(void);
 extern void dump_abilities(void);
 extern void print_monsters(void);
 /* image.c */
-extern void read_bmap_names(void);
-extern const Face *find_face(const char *name, const Face *error);
-extern int read_smooth(void);
 extern int find_smooth(const Face *face, const Face **smoothed);
-extern void free_all_images(void);
-extern void read_client_images(void);
 extern int is_valid_faceset(int fsn);
-extern void free_socket_images(void);
 extern int get_face_fallback(int faceset, int imageno);
-extern unsigned int get_faces_count(void);
-extern const Face *get_face_by_index(int index);
+extern size_t get_faces_count(void);
 extern const Face *get_face_by_id(uint16_t id);
+extern int load_face_file(FILE *file, const char *full_path);
+extern int load_png_file(FILE *file, const char *full_path);
+extern void load_image_info(FILE *file, const char *filename);
+extern const Face *find_face(const char *name);
+extern const Face *try_find_face(const char *name, const Face *error);
+extern uint8_t find_color(const char *name);
+extern const char *get_colorname(uint8_t index);
+extern void dump_faces(void);
+extern int get_bitmap_checksum();
 /* init.c */
 extern void init_library(void);
 extern void init_globals(void);
 extern void free_globals(void);
 extern void init_objects(void);
 extern void write_todclock(void);
+extern void init_attackmess(FILE *file, const char *filename);
 /* item.c */
 extern int get_power_from_ench(int ench);
 extern int calc_item_power(const object *op);
@@ -122,7 +127,6 @@ extern int is_identified(const object *op);
 extern void object_give_identified_properties(object *op);
 extern object *identify(object *op);
 /* languages.c */
-extern int get_language(object *op);
 extern const char *i18n(const object *who, const char *code);
 extern int i18n_find_language_by_code(const char *code);
 extern int i18n_get_language_by_code(const char *code);
@@ -257,6 +261,7 @@ extern void object_update_speed(object *op);
 extern void object_remove_from_active_list(object *op);
 extern void object_update(object *op, int action);
 extern void object_free_drop_inventory(object *ob);
+extern void object_free_inventory(object *ob);
 extern void object_free(object *ob, int flags);
 extern int object_count_free(void);
 extern int object_count_used(void);
@@ -358,9 +363,10 @@ extern const GeneralMessage *get_message_from_identifier(const char *identifier)
 extern sstring get_message_title(const GeneralMessage *message);
 extern sstring get_message_body(const GeneralMessage *message);
 extern const Face *get_message_face(const GeneralMessage *message);
+extern void init_msgfile(FILE *file, const char *filename);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
-extern void init_formulae(void);
+extern void init_formulae(FILE *file, const char *filename);
 extern void dump_alchemy(void);
 extern archetype *find_treasure_by_name(const treasure *t, const char *name, int depth);
 extern void dump_alchemy_costs(void);
@@ -369,6 +375,7 @@ extern const artifact *locate_recipe_artifact(const recipe *rp, size_t idx);
 extern recipe *get_random_recipe(recipelist *rpl);
 extern void free_all_recipes(void);
 extern recipe *find_recipe_for_tool(const char *tool, recipe *from);
+extern void check_formulae(void);
 /* region.c */
 extern region *get_region_by_name(const char *region_name);
 extern region *get_region_by_map(mapstruct *m);
@@ -423,7 +430,6 @@ extern object *generate_treasure(treasurelist *t, int difficulty);
 extern void set_abs_magic(object *op, int magic);
 extern void fix_generated_item(object *op, object *creator, int difficulty, int max_magic, int flags);
 extern void dump_monster_treasure(const char *name);
-extern void free_all_treasures(void);
 extern objectlink *treasurelist_find_matching_type(const treasurelist *randomitems, int type, int traverse);
 /* utils.c */
 extern int random_roll(int min, int max, const object *op, int goodbad);

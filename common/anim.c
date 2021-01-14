@@ -24,176 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int animations_allocated = 0;
-
-/**
- * Clears all animation-related memory.
- **/
-void free_all_anim(void) {
-    int i;
-
-    for (i = 0; i <= num_animations; i++) {
-        free_string(animations[i].name);
-        free(animations[i].faces);
-    }
-    free(animations);
-}
-
-/**
- * Loads the lib/animations file.
- * Can be called multiple times without ill effects.
- **/
-void init_anim(void) {
-    char buf[MAX_BUF];
-    FILE *fp;
-    int num_frames = 0, i;
-    const Face *faces[MAX_ANIMATIONS];
-    Animations *alloc_ptr; // Used to temporarily catch the result of realloc, in case of failure.
-
-    animations_allocated = 9;
-    num_animations = 0;
-    /* Make a default.  New animations start at one, so if something
-     * thinks it is animated but hasn't set the animation_id properly,
-     * it will have a default value that should be pretty obvious.
-     */
-    animations = malloc(10*sizeof(Animations));
-    /* set the name so we don't try to dereferance null.
-     * Put # at start so it will be first in alphabetical
-     * order.
-     */
-    animations[0].name = add_string("###none");
-    animations[0].num_animations = 1;
-    animations[0].num = 0;
-    animations[0].faces = malloc(sizeof(Face*));
-    animations[0].faces[0] = find_face("bug.111", NULL);
-    animations[0].facings = 0;
-
-    snprintf(buf, sizeof(buf), "%s/animations", settings.datadir);
-    if ((fp = fopen(buf, "r")) == NULL) {
-        LOG(llevError, "Cannot open animations file %s: %s\n", buf, strerror(errno));
-        exit(-1);
-    }
-    while (fgets(buf, MAX_BUF-1, fp) != NULL) {
-        if (*buf == '#')
-            continue;
-        if (strlen(buf) == 0)
-            break;
-        /* Kill the newline */
-        buf[strlen(buf)-1] = '\0';
-        if (!strncmp(buf, "anim ", 5)) {
-            if (num_frames) {
-                LOG(llevError, "Didn't get a mina before %s\n", buf);
-                num_frames = 0;
-            }
-            ++num_animations;
-            if (num_animations == animations_allocated) {
-                /*
-                 * We will realloc fewer times if we take larger steps for the realloc size.
-                 * This should prevent some copy operations during bootup, albeit at the expense of some RAM.
-                 * Most implementations of variable-sized things double each realloc for balance between
-                 * space and time efficiency.
-                 * Since animations_allocated is one less than the actual amount,
-                 * we aren't quite doubling the first allocation size.
-                 * Nevertheless, we skip by larger after the first realloc.
-                 * We should have enough animations for this to be worthwhile.
-                 *
-                 * While we are here, handle an allocation failure more gracefully than the inevitable segfault.
-                 *
-                 * Daniel Hawkins 2018-01-23
-                 */
-                alloc_ptr = realloc(animations, sizeof(Animations)*(animations_allocated << 1));
-                if (alloc_ptr)
-                {
-                    animations = alloc_ptr;
-                    animations_allocated <<= 1;
-                }
-                else
-                {
-                    LOG(llevError, "anim: animation array reallocation failed at size %d resizing to %d.\n",
-                        animations_allocated, animations_allocated << 1);
-                    // We will not have our animations, so terminate gracefully.
-                    fatal(OUT_OF_MEMORY);
-                }
-            }
-            animations[num_animations].name = add_string(buf+5);
-            animations[num_animations].num = num_animations; /* for bsearch */
-            animations[num_animations].facings = 1;
-        } else if (!strncmp(buf, "mina", 4)) {
-            assert(num_frames > 0);
-            animations[num_animations].faces = malloc(sizeof(Face*)*num_frames);
-            for (i = 0; i < num_frames; i++)
-                animations[num_animations].faces[i] = faces[i];
-            animations[num_animations].num_animations = num_frames;
-            if (num_frames <= 1) {
-                LOG(llevDebug, "anim: %s has less then two faces\n",
-                        animations[num_animations].name);
-            }
-            if (num_frames%animations[num_animations].facings) {
-                LOG(llevDebug, "anim: %s has %d frames: not a multiple of facings (%d)\n",
-                        animations[num_animations].name, num_frames,
-                        animations[num_animations].facings);
-            }
-            num_frames = 0;
-        } else if (!strncmp(buf, "facings", 7)) {
-            if (!(animations[num_animations].facings = atoi(buf+7))) {
-                LOG(llevDebug, "anim: %s has 0 facings (line %s)\n",
-                    animations[num_animations].name, buf);
-                animations[num_animations].facings = 1;
-            }
-        } else {
-            const Face *face = find_face(buf, NULL);
-            if (face == NULL) {
-                LOG(llevError, "Could not find face %s for animation %s\n",
-                    buf, animations[num_animations].name);
-                face = find_face("bug.111", NULL);
-            }
-            faces[num_frames++] = face;
-        }
-    }
-    fclose(fp);
-    LOG(llevDebug, "anim: loaded %d animations\n", num_animations);
-}
-
-/**
- * Utility function to compare 2 animations based on their name.
- * Used for sorting/searching.
- */
-static int anim_compare(const Animations *a, const Animations *b) {
-    return strcmp(a->name, b->name);
-}
-
-/**
- * Finds the animation that matches name. Will LOG() an error if not found.
- * @param name
- * the animation's name.
- * @return
- * animation, or the "###none" animation if no match found.
- * @see try_find_animation
- */
-const Animations *find_animation(const char *name) {
-    const Animations *anim = try_find_animation(name);
-    if (!anim)
-        LOG(llevError, "Unable to find animation %s\n", name);
-    return anim ? anim : &animations[0];
-}
-
-/**
- * Tries to find the animation that matches name, don't LOG() an error if not found.
- * @param name
- * the animation's name.
- * @return
- * animation, or NULL if no match found.
- * @see find_animation
- */
-const Animations *try_find_animation(const char *name) {
-    Animations search, *match;
-
-    search.name = name;
-
-    match = (Animations *)bsearch(&search, animations, (num_animations+1), sizeof(Animations), (int (*)(const void *, const void *))anim_compare);
-
-    return match;
-}
+#include "assets.h"
 
 /**
  * Updates the face-variable of an object.
@@ -342,13 +173,15 @@ void apply_anim_suffix(object *who, const char *suffix) {
     }
 }
 
+static void do_anim(const Animations *anim) {
+    fprintf(stderr, "%5d %50s %5d\n", anim->num, anim->name, anim->num_animations);
+}
+
 /**
  * Dump all animations to stderr, for debugging purposes.
  */
 void dump_animations(void) {
-    int a;
+    Animations *anim;
     fprintf(stderr, "id    name                                               faces\n");
-    for (a = 0; a < num_animations; a++) {
-        fprintf(stderr, "%5d %50s %5d\n", animations[a].num, animations[a].name, animations[a].num_animations);
-    }
+    animations_for_each(do_anim);
 }

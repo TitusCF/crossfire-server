@@ -2162,7 +2162,7 @@ static object *get_spell_by_name(object *op, const char *spell_name) {
     /* First check for full name matches. */
     conflict_found = 0;
     found = NULL;
-    for (ar = first_archetype; ar != NULL; ar = ar->next) {
+    for (ar = get_next_archetype(NULL); ar != NULL; ar = get_next_archetype(ar)) {
         if (ar->clone.type != SPELL)
             continue;
 
@@ -2203,7 +2203,8 @@ static object *get_spell_by_name(object *op, const char *spell_name) {
     spell_name_length = strlen(spell_name);
     conflict_found = 0;
     found = NULL;
-    for (ar = first_archetype; ar != NULL; ar = ar->next) {
+
+    for (ar = get_next_archetype(NULL); ar != NULL; ar = get_next_archetype(ar)) {
         if (ar->clone.type != SPELL)
             continue;
 

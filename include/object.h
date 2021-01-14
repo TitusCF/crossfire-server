@@ -466,7 +466,6 @@ typedef struct oblinkpt {
  */
 typedef struct archt {
     const char *name;       /**< More definite name, like "generate_kobold" */
-    struct archt *next;     /**< Next archetype in a linked list */
     struct archt *head;     /**< The main part of a linked object */
     struct archt *more;     /**< Next part of a linked object */
     object clone;           /**< An object from which to do object_copy() */
