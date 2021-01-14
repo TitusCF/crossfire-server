@@ -21,6 +21,8 @@
 
 #include <errno.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "sproto.h"
 #include "output_file.h"
@@ -45,13 +47,14 @@ typedef struct scr {
  */
 typedef struct {
     char fname[MAX_BUF];      /**< Filename of the backing file. */
+    char skill_name[MAX_BUF]; /**< The name of the skill or "Overall". */
     score entry[HIGHSCORE_LENGTH]; /**< The entries in decreasing exp order. */
 } score_table;
 
 /**
  * The highscore table. Unused entries are set to zero (except for position).
  */
-static score_table hiscore_table;
+static score_table hiscore_tables[MAX_SKILLS + 1]; // One for each skill, plus one for overall
 
 /**
  * Writes the given score structure to specified buffer.
@@ -159,6 +162,9 @@ static char *draw_one_high_score(const score *sc, char *buf, size_t size) {
     if (strcmp(sc->killer, "quit") == 0 || strcmp(sc->killer, "left") == 0) {
         s1 = sc->killer;
         s2 = "the game";
+    } else if (strcmp(sc->killer,"a dungeon collapse") == 0) {
+        s1 = "was last";
+        s2 = "seen";
     } else {
         s1 = "was killed by";
         s2 = sc->killer;
@@ -282,10 +288,47 @@ static void hiscore_load(score_table *table) {
 
 /**
  * Initializes the module.
+ *
+ * @note
+ * There is one table per skill, as well as the "Overall" table, each saved in a file
+ * in .../var/crossfire/hiscores/[skill_name] or as configured in config.h.
  */
 void hiscore_init(void) {
-    snprintf(hiscore_table.fname, sizeof(hiscore_table.fname), "%s/%s", settings.localdir, HIGHSCORE);
-    hiscore_load(&hiscore_table);
+    char dirname[MAX_BUF];
+
+    snprintf(dirname, sizeof(dirname), "%s/%s", settings.localdir, HIGHSCORE_DIR);
+    mkdir(dirname,0755);
+    memset(hiscore_tables,0,sizeof(hiscore_tables));
+    for (int i =- 1; i < MAX_SKILLS; ++i) {
+        const char *name;
+        int subtype;
+
+        /*
+         * This gets complicated because the skills are defined internally by the subtype in
+         * the skill object, but our list of skill names is in the order the skills are
+         * initialized in.
+         */
+        if (i == -1) {
+            name = "Overall";
+            subtype = 0;
+        } else {
+            name = skill_names[i];
+            if (!name || !*name) continue; // No such skill
+            subtype = get_skill_client_code(name) + 1;
+        }
+        snprintf(hiscore_tables[subtype].fname, sizeof(hiscore_tables[subtype].fname), "%s/%s/%s", settings.localdir, HIGHSCORE_DIR,name);
+        for ( char *c = hiscore_tables[subtype].fname; *c; ++c ) {
+            if (*c == ' ')
+                *c = '_'; /* avoid spaces in file names */
+        }
+        strncpy(hiscore_tables[subtype].skill_name, name, sizeof(hiscore_tables[subtype].skill_name));
+        hiscore_load(&hiscore_tables[subtype]);
+    }
+    /* Load legacy highscore file if new one was blank */
+    if (hiscore_tables[0].entry[0].exp == 0) {
+        snprintf(hiscore_tables[0].fname, sizeof(hiscore_tables[0].fname), "%s/%s", settings.localdir, OLD_HIGHSCORE);
+        hiscore_load(&hiscore_tables[0]);
+    }
 }
 
 /**
@@ -325,20 +368,38 @@ void hiscore_check(object *op, int quiet) {
     new_score.name[BIG_NAME-1] = '\0';
     player_get_title(op->contr, new_score.title, sizeof(new_score.title));
     strncpy(new_score.killer, op->contr->killer, BIG_NAME);
-    if (new_score.killer[0] == '\0')
+    if (new_score.killer[0] == '\0') {
         strcpy(new_score.killer, "a dungeon collapse");
+    }
     new_score.killer[BIG_NAME-1] = '\0';
-    new_score.exp = op->stats.exp;
-    if (op->map == NULL)
+    if (op->map == NULL) {
         *new_score.maplevel = '\0';
-    else {
+    } else {
         strncpy(new_score.maplevel, op->map->name ? op->map->name : op->map->path, BIG_NAME-1);
         new_score.maplevel[BIG_NAME-1] = '\0';
     }
     new_score.maxhp = (int)op->stats.maxhp;
     new_score.maxsp = (int)op->stats.maxsp;
     new_score.maxgrace = (int)op->stats.maxgrace;
-    add_score(&hiscore_table, &new_score, &old_score);
+    FOR_INV_PREPARE(op, tmp) {
+        if (tmp->type != SKILL) continue;
+        if (!tmp->stats.exp) continue;
+        new_score.exp = tmp->stats.exp;
+        add_score(&hiscore_tables[get_skill_client_code(tmp->name) + 1], &new_score, &old_score);
+#if 0
+        if (!quiet && new_score.exp > old_score.exp) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+                                 "You improved your rating in %s: %" FMT64, tmp->name, new_score.exp);
+            if (old_score.position != -1)
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+                              draw_one_high_score(&old_score, bufscore, sizeof(bufscore)));
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+                          draw_one_high_score(&new_score, bufscore, sizeof(bufscore)));
+        }
+#endif
+    } FOR_INV_FINISH();
+    new_score.exp = op->stats.exp;
+    add_score(&hiscore_tables[0], &new_score, &old_score); // overall
 
     /* Everything below here is just related to print messages
      * to the player.  If quiet is set, we can just return
@@ -378,29 +439,93 @@ void hiscore_check(object *op, int quiet) {
  * maximum number of scores to display.
  * @param match
  * if non-empty, will only print players with name or title containing the string (non case-sensitive).
+ * Other options: -s:[name] -- show the table for the skill 'name' instead of overall
+ *                -s -- show a short list for each skill
  */
 void hiscore_display(object *op, int max, const char *match) {
     int printed_entries;
     size_t j;
+    int skill_match = 0;
+    int skill_min,skill_max;
+    int len;
 
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-                  "[fixed]Nr    Score   [print] Who <max hp><max sp><max grace>");
+    /* check for per-skill instead of overall report */
+    if (match && strncmp(match, "-s", 2) == 0 ) {
+        match += 2;
+        if (*match == ':') {
+            ++match;
+            if (strchr(match,' ')) {
+                len = strchr(match, ' ') - match;
+            } else {
+                len = strlen(match);
+            }
+            for (int i = 1; i < MAX_SKILLS; ++i) {
+                if (strncmp(match,hiscore_tables[i].skill_name, len) == 0) {
+                    skill_match = i;
+                    break;
+                }
+            }
+            if (!skill_match) {
+                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+                                     "Could not match '%.*s' to a skill", len, match);
+                return;
+            }
+            match += len;
+        }
+        else {
+            skill_match = -1; // flag to show all skills
+            if ( max < 100 && max > 10 ) max = 10; // Less output per skill
+        }
+    }
+    while (*match == ' ') ++match;
 
-    printed_entries = 0;
-    for (j = 0; j < HIGHSCORE_LENGTH && hiscore_table.entry[j].name[0] != '\0' && printed_entries < max; j++) {
-        char scorebuf[MAX_BUF];
+    skill_min = skill_max = skill_match;
+    if (skill_match == -1) {
+        skill_min = 1;
+        skill_max = MAX_SKILLS;
+    }
 
-        if (*match != '\0'
-        && !strcasestr_local(hiscore_table.entry[j].name, match)
-        && !strcasestr_local(hiscore_table.entry[j].title, match))
-            continue;
+    /*
+     * Check all skills in skill_names[] order (which should be alphabetical)
+     */
+    for (int s = -1; s <= MAX_SKILLS; ++s) {
+        int skill = s + 1;
 
-        draw_one_high_score(&hiscore_table.entry[j], scorebuf, sizeof(scorebuf));
-        printed_entries++;
+        if (skill < skill_min || skill > skill_max) continue;
 
-        if (op == NULL)
-            LOG(llevDebug, "%s\n", scorebuf);
-        else
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf);
+        if (hiscore_tables[skill].skill_name[0] == 0) {
+            continue; // No such skill
+        }
+        if (hiscore_tables[skill].entry[0].exp == 0) {
+            continue; // No entries for this skill
+        }
+        if (skill == 0) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+                          "Overall high scores:");
+        } else {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+                                 "High scores for the skill [color=red]%s[/color]:", hiscore_tables[skill].skill_name);
+        }
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+                      "[fixed]Rank     Score [print]Who <max hp><max sp><max grace>");
+
+        printed_entries = 0;
+        for (j = 0; j < HIGHSCORE_LENGTH && hiscore_tables[skill].entry[j].name[0] != '\0' && printed_entries < max; j++) {
+            char scorebuf[MAX_BUF];
+
+            if (*match != '\0'
+                && !strcasestr_local(hiscore_tables[skill].entry[j].name, match)
+                && !strcasestr_local(hiscore_tables[skill].entry[j].title, match))
+                continue;
+
+            draw_one_high_score(&hiscore_tables[skill].entry[j], scorebuf, sizeof(scorebuf));
+            printed_entries++;
+
+            if (op == NULL) {
+                LOG(llevDebug, "%s\n", scorebuf);
+            } else {
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf);
+            }
+        }
     }
 }

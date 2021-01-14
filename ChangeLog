@@ -1,3 +1,8 @@
+2020-01-14 Nicolas Weeger
+    * include/config.h,
+      server/c_misc.c,
+      server/hiscore.c: Apply hiscore patch by Preston Crow, slightly modified by myself.
+
 2020-01-11 Nicolas weeger
     * utils/cre/CREMainWindow.{h,cpp}: Add export of alchemy relationship to .dot file.
 
