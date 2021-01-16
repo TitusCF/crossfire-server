@@ -49,6 +49,8 @@ void assets_pack(const char *type, const char *filename);
 
 void assets_finish_archetypes_for_play();
 
+long recipe_find_ingredient_cost(const char *name);
+
 #ifdef __cplusplus
 }
 
