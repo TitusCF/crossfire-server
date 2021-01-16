@@ -1,3 +1,8 @@
+2020-01-16 Nicolas Weeger
+    * common/assets/assets.cpp,
+    * common/recipe.c,
+    * include/assets.h: Optimize alchemy cost dump.
+
 2020-01-14 Nicolas Weeger
 Introduce C++14.
 Allow the server to run without collecting files in "arch". It can
