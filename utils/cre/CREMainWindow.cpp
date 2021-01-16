@@ -568,7 +568,7 @@ void CREMainWindow::onReportSpellDamage()
     show.exec();
 }
 
-static QString alchemyTable(const QString& skill)
+static QString alchemyTable(const QString& skill, QStringList& noChance)
 {
     int count = 0;
 
@@ -617,6 +617,10 @@ static QString alchemyTable(const QString& skill)
 
                 recipes[recipe->diff].append(QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td></tr>").arg(name).arg(recipe->diff).arg(recipe->ingred_count).arg(recipe->exp).arg(ingredients.join(", ")));
                 count++;
+
+                if (recipe->chance == 0) {
+                    noChance.append(name);
+                }
             }
         }
     }
@@ -655,11 +659,20 @@ void CREMainWindow::onReportAlchemy()
     skills.sort();
 
     QString report("<h1>Alchemy formulae</h1>");
+    QStringList noChance;
 
     foreach(const QString skill, skills)
     {
-        report += alchemyTable(skill);
+        report += alchemyTable(skill, noChance);
     }
+
+    qSort(noChance);
+    report += tr("<h1>Formulae with chance of 0</h1>");
+    report += "<table><th>";
+    foreach(const QString& name, noChance) {
+        report += "<tr><td>" + name + "</td></tr>";
+    }
+    report += "</th></table>";
 
     CREReportDisplay show(report, "Alchemy formulae");
     show.exec();
