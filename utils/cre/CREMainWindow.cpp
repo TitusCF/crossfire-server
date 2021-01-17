@@ -568,7 +568,7 @@ void CREMainWindow::onReportSpellDamage()
     show.exec();
 }
 
-static QString alchemyTable(const QString& skill, QStringList& noChance)
+static QString alchemyTable(const QString& skill, QStringList& noChance, QStringList& allIngredients)
 {
     int count = 0;
 
@@ -613,6 +613,13 @@ static QString alchemyTable(const QString& skill, QStringList& noChance)
                 for (const linked_char* ingred = recipe->ingred; ingred != NULL; ingred = ingred->next)
                 {
                     ingredients.append(ingred->name);
+                    const char* name = ingred->name;
+                    if (isdigit(ingred->name[0])) {
+                        name = strchr(ingred->name, ' ') + 1;
+                    }
+                    if (!allIngredients.contains(name)) {
+                        allIngredients.append(name);
+                    }
                 }
 
                 recipes[recipe->diff].append(QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td></tr>").arg(name).arg(recipe->diff).arg(recipe->ingred_count).arg(recipe->exp).arg(ingredients.join(", ")));
@@ -659,11 +666,11 @@ void CREMainWindow::onReportAlchemy()
     skills.sort();
 
     QString report("<h1>Alchemy formulae</h1>");
-    QStringList noChance;
+    QStringList noChance, allIngredients;
 
     foreach(const QString skill, skills)
     {
-        report += alchemyTable(skill, noChance);
+        report += alchemyTable(skill, noChance, allIngredients);
     }
 
     qSort(noChance);
@@ -673,6 +680,16 @@ void CREMainWindow::onReportAlchemy()
         report += "<tr><td>" + name + "</td></tr>";
     }
     report += "</th></table>";
+
+    qSort(allIngredients.begin(), allIngredients.end(), [] (const QString &s1, const QString &s2) {
+        return s1.toLower() < s2.toLower();
+    });
+    report += tr("<h1>All items used as ingredients</h1>");
+    report += "<ul>";
+    foreach(const QString& name, allIngredients) {
+        report += "<li>" + name + "</li>";
+    }
+    report += "</ul>";
 
     CREReportDisplay show(report, "Alchemy formulae");
     show.exec();
