@@ -28,7 +28,7 @@ class CREFormulaePanel : public CRETPanel<const recipe>
         QLineEdit* myDifficulty;
         QComboBox* mySkill;
         QComboBox* myCauldron;
-        QLabel* myIndex;
+        QLineEdit* myIndex;
         QTreeWidget* myArchetypes;
         QTextEdit* myIngredients;
         QPushButton* myValidate;

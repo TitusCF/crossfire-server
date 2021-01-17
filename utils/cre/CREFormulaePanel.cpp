@@ -58,7 +58,8 @@ CREFormulaePanel::CREFormulaePanel(QWidget* parent) : CRETPanel(parent)
     }
 
     layout->addWidget(new QLabel(tr("Index:"), this), 8, 1);
-    myIndex = new QLabel(this);
+    myIndex = new QLineEdit(this);
+    myIndex->setReadOnly(true);
     layout->addWidget(myIndex, 8, 2);
 
     myArchetypes = new QTreeWidget(this);
