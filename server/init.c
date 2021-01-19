@@ -39,6 +39,9 @@ static void init_beforeplay(void);
 static void init_startup(void);
 static void init_signals(void);
 
+/** If set after command line argument parsing, then the server will exit. */
+static int should_exit = 0;
+
 /**
  * Command line option: set logfile name.
  * @param val new name.
@@ -219,7 +222,7 @@ static void set_ignore_assets_errors() {
 
 static void server_pack_assets(const char *assets, const char *filename) {
     assets_pack(assets, filename);
-    cleanup();
+    should_exit = 1;
 }
 
 static void free_materials(void);
@@ -403,6 +406,10 @@ static void parse_args(int argc, char *argv[], int pass) {
             fprintf(stderr, "Type '%s -h' for usage.\n", argv[0]);
             exit(1);
         }
+    }
+
+    if (should_exit) {
+        cleanup();
     }
 }
 
@@ -1116,6 +1123,7 @@ static void help(void) {
     printf(" -pack-assets <type> <filename>\n");
     printf("              Packs specified assets type to the specified filename.\n");
     printf("              Valid assets type are: archs, treasures, faces, messages, facesets, artifacts, formulae, images\n");
+    printf("              This command may be specified multiple times.\n");
     printf(" -playerdir   Set the player files directory.\n");
     printf(" -regions     Set the region file.\n");
     printf(" -templatedir Set the template map directory.\n");

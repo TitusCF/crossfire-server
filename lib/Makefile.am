@@ -59,19 +59,21 @@ do-collect:
 	make collect
 
 # This target is just used for making do-collect actually force a re-collect.
-collect: crossfire.arc crossfire.face crossfire.trs crossfire.tar
+collect: crossfire.arc
 
 crossfire.arc: .collect-stamp
-	../server/crossfire-server -data . -pack-assets archs crossfire.arc
+	rm -f crossfire.arc crossfire.face crossfire.trs crossfire.tar
+	../server/crossfire-server -data . \
+	  -pack-assets archs crossfire.arc \
+	  -pack-assets faces crossfire.face \
+	  -pack-assets treasures crossfire.trs \
+	  -pack-assets images crossfire.tar
 
-crossfire.face: .collect-stamp
-	../server/crossfire-server -data . -pack-assets faces crossfire.face
+crossfire.trs: crossfire.arc
 
-crossfire.trs: .collect-stamp
-	../server/crossfire-server -data . -pack-assets treasures crossfire.trs
+crossfire.face: crossfire.arc
 
-crossfire.tar: .collect-stamp
-	../server/crossfire-server -data . -pack-assets images crossfire.tar
+crossfire.tar: crossfire.arc
 
 install-data-local: util.pl
 	@$(NORMAL_INSTALL)
