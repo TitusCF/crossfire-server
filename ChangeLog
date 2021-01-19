@@ -5,6 +5,9 @@
 2020-01-19 Daniel Hawkins
     * server/player.c: Modify how flags are set in order for skills to match
         in object_can_merge on character creation.
+    * common/treasure.c: Make weight and speed-cap reductions on +/- x items
+        use the settings values for improvement scrolls for those effects.
+        Should not affect default settings.
 
 2020-01-16 Nicolas Weeger
     * common/assets/assets.cpp,
