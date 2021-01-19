@@ -1,3 +1,7 @@
+2020-01-19 Daniel Hawkins
+    * server/player.c: Modify how flags are set in order for skills to match
+        in object_can_merge on character creation.
+
 2020-01-16 Nicolas Weeger
     * common/assets/assets.cpp,
     * common/recipe.c,

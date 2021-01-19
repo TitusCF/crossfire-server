@@ -795,6 +795,16 @@ void give_initial_items(object *pl, treasurelist *items) {
             int found;
 
             found = 0;
+            // Make sure we set flags that are checked by object_can_merge
+            // *before* we run object_can_merge. Otherwise, we can get two
+            // entries of the same skill.
+            if (op->type == SKILL)  {
+                SET_FLAG(op, FLAG_CAN_USE_SKILL);
+                op->stats.exp = 0;
+                op->level = 1;
+                // Since this also happens to the invisible skills, we need this so that the flags match.
+                SET_FLAG(op, FLAG_INV_LOCKED);
+            }
             FOR_BELOW_PREPARE(op, tmp)
                 if (object_can_merge(op, tmp)) {
                     found = 1;
@@ -823,11 +833,6 @@ void give_initial_items(object *pl, treasurelist *items) {
             SET_FLAG(op, FLAG_IDENTIFIED);
             CLEAR_FLAG(op, FLAG_CURSED);
             CLEAR_FLAG(op, FLAG_DAMNED);
-        }
-        if (op->type == SKILL)  {
-            SET_FLAG(op, FLAG_CAN_USE_SKILL);
-            op->stats.exp = 0;
-            op->level = 1;
         }
         /* lock all 'normal items by default */
         else
