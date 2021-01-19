@@ -30,6 +30,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "loader.h"
 #include "sproto.h"
@@ -589,30 +590,46 @@ static int magic_from_difficulty(int difficulty) {
  * This function doesn't work properly, should add use of archetypes
  * to make it truly absolute.
  *
+ * Patched to utilize settings values for the speed/weight adjustments,
+ * rather than hardcoded ones.
+ * Daniel Hawkins 2021-01-19
+ *
  * @param op
  * object we're modifying.
  * @param magic
  * magic modifier.
  */
 void set_abs_magic(object *op, int magic) {
+    int32_t base_weight, base_speed;
     if (!magic)
         return;
 
     op->magic = magic;
     if (op->arch) {
-        if (op->type == ARMOUR)
-            ARMOUR_SPEED(op) = (ARMOUR_SPEED(&op->arch->clone)*(100+magic*10))/100;
-
-        if (magic < 0 && !(RANDOM()%3)) /* You can't just check the weight always */
-            magic = (-magic);
-        op->weight = (op->arch->clone.weight*(100-magic*10))/100;
-    } else {
-        if (op->type == ARMOUR)
-            ARMOUR_SPEED(op) = (ARMOUR_SPEED(op)*(100+magic*10))/100;
-        if (magic < 0 && !(RANDOM()%3)) /* You can't just check the weight always */
-            magic = (-magic);
-        op->weight = (op->weight*(100-magic*10))/100;
+        base_weight = op->arch->clone.weight;
+        base_speed = ARMOUR_SPEED(&op->arch->clone);
     }
+    else {
+        base_weight = op->weight;
+        base_speed = ARMOUR_SPEED(op);
+    }
+    // Now we do the calculations
+    if (op->type == ARMOUR) {
+        if (settings.armor_speed_linear)
+            ARMOUR_SPEED(op) = base_speed*(100+magic*settings.armor_speed_improvement)/100;
+        else
+            // This could have been done with a loop, but that seems to be less scalable.
+            // This will introduce less roundoff error than a loop, anyway
+            ARMOUR_SPEED(op) = (int32_t)(base_speed * pow(((float)(100+settings.armor_speed_improvement))/100, magic));
+    }
+    // Prepare for handling the weight. Sometimes cursed ones will have low weight like good ones.
+    if (magic < 0 && !(RANDOM()%3)) /* You can't just check the weight always */
+        magic = (-magic);
+    if (settings.armor_weight_linear)
+        op->weight = (base_weight*(100-magic*settings.armor_weight_reduction))/100;
+    else
+        op->weight = (int32_t)(base_weight * pow(((float)(100-settings.armor_weight_reduction))/100, magic));
+
 }
 
 /**
