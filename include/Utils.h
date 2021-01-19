@@ -19,6 +19,7 @@ public:
 
     /**
      * Write a list of strings as ' a,b,c' (leading space).
+     * The items are inserted last-to-first, because loading inverts their order.
      * @param list items to write.
      * @param buf where to write.
      */
