@@ -100,30 +100,12 @@ static void improve_armour(object *op, object *improver, object *armour) {
 
     armour->magic++;
 
-    if (!settings.armor_speed_linear) {
-        int base = 100;
-        int pow = 0;
-
-        while (pow < armour->magic) {
-            base = base-(base*settings.armor_speed_improvement)/100;
-            pow++;
-        }
-
-        ARMOUR_SPEED(armour) = (ARMOUR_SPEED(&armour->arch->clone)*base)/100;
-    } else
-        ARMOUR_SPEED(armour) = (ARMOUR_SPEED(&armour->arch->clone)*(100+armour->magic*settings.armor_speed_improvement))/100;
-
-    if (!settings.armor_weight_linear) {
-        int base = 100;
-        int pow = 0;
-
-        while (pow < armour->magic) {
-            base = base-(base*settings.armor_weight_reduction)/100;
-            pow++;
-        }
-        armour->weight = (armour->arch->clone.weight*base)/100;
-    } else
-        armour->weight = (armour->arch->clone.weight*(100-armour->magic*settings.armor_weight_reduction))/100;
+    // set_abs_magic handles the weight and speed reductions, and the settings.
+    // It is also used for when item +X is spawned, but it will work fine here.
+    // There is one caveat -- if the armor was corroded and then this occurs,
+    // the weight may actually increase; haven't tested but I believe it to be
+    // the case.  -- Daniel Hawkins 2021-01-19
+    set_abs_magic(armour, armour->magic);
 
     if (armour->weight <= 0) {
         LOG(llevInfo, "Warning: enchanted armours can have negative weight\n.");
