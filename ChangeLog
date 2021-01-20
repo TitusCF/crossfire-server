@@ -1,11 +1,11 @@
 2021-01-20 Nicolas Weeger
     * server/knowledge.c: Display the skill for the recipe.
 
-2020-01-19 Nicolas Weeger
+2021-01-19 Nicolas Weeger
     * lib/Makefile.am: Collect all assets in one run, remove files before.
     * server/init.c: Allow multiple -pack-assets switches.
 
-2020-01-19 Daniel Hawkins
+2021-01-19 Daniel Hawkins
     * server/player.c: Modify how flags are set in order for skills to match
         in object_can_merge on character creation.
     * common/treasure.c: Make weight and speed-cap reductions on +/- x items
@@ -14,26 +14,26 @@
     * types/armour_improver/armour_improver.c: Use function in treasure.c
         to perform the calculations.
 
-2020-01-16 Nicolas Weeger
+2021-01-16 Nicolas Weeger
     * common/assets/assets.cpp,
     * common/recipe.c,
     * include/assets.h: Optimize alchemy cost dump.
 
-2020-01-14 Nicolas Weeger
+2021-01-14 Nicolas Weeger
 Introduce C++14.
 Allow the server to run without collecting files in "arch". It can
 now directly run with the "arch" directory along the "maps" one.
 Rewrite the collect mechanism to use the server itself and not an external script.
 
-2020-01-14 Nicolas Weeger
+2021-01-14 Nicolas Weeger
     * include/config.h,
       server/c_misc.c,
       server/hiscore.c: Apply hiscore patch by Preston Crow, slightly modified by myself.
 
-2020-01-11 Nicolas weeger
+2021-01-11 Nicolas weeger
     * utils/cre/CREMainWindow.{h,cpp}: Add export of alchemy relationship to .dot file.
 
-2020-01-08 Nicolas Weeger
+2021-01-08 Nicolas Weeger
     * server/quest.c: Use media tags for quest information.
 
 2021-01-07 Daniel Hawkins
