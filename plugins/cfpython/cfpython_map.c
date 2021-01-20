@@ -560,7 +560,7 @@ PyTypeObject Crossfire_MapType = {
     sizeof(Crossfire_Map),     /* tp_basicsize*/
     0,                         /* tp_itemsize*/
     Crossfire_Map_dealloc,     /* tp_dealloc*/
-    NULL,                      /* tp_print*/
+    (long int)NULL,            /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
 #ifdef IS_PY3K
