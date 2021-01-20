@@ -8,6 +8,8 @@
     * common/treasure.c: Make weight and speed-cap reductions on +/- x items
         use the settings values for improvement scrolls for those effects.
         Should not affect default settings.
+    * types/armour_improver/armour_improver.c: Use function in treasure.c
+        to perform the calculations.
 
 2020-01-16 Nicolas Weeger
     * common/assets/assets.cpp,
