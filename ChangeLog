@@ -1,3 +1,6 @@
+2021-01-20 Daniel Hawkins
+    * plugins/cfpython/cfpython_*.c: Fix implicit cast compiler warnings.
+
 2021-01-20 Nicolas Weeger
     * server/knowledge.c: Display the skill for the recipe.
 

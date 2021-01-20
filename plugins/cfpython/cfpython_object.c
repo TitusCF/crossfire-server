@@ -2071,7 +2071,7 @@ static int Object_SetMoveSlow(Crossfire_Object *whoptr, PyObject *value, void *c
 
 static int Object_SetItemPower(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     int item_power;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "i", &item_power))
         return -1;
@@ -2956,7 +2956,7 @@ PyTypeObject Crossfire_ObjectType = {
     sizeof(Crossfire_Object),  /* tp_basicsize*/
     0,                         /* tp_itemsize*/
     Crossfire_Object_dealloc,  /* tp_dealloc*/
-    NULL,                      /* tp_print*/
+    (long int)NULL,            /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
 #ifdef IS_PY3K
@@ -3040,7 +3040,7 @@ PyTypeObject Crossfire_PlayerType = {
     sizeof(Crossfire_Player),  /* tp_basicsize*/
     0,                         /* tp_itemsize*/
     Crossfire_Player_dealloc,  /* tp_dealloc*/
-    NULL,                      /* tp_print*/
+    (long int)NULL,            /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
     NULL,                      /* tp_compare*/

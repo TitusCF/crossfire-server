@@ -143,7 +143,7 @@ PyTypeObject Crossfire_RegionType = {
     sizeof(Crossfire_Region),  /* tp_basicsize*/
     0,                         /* tp_itemsize*/
     NULL,                      /* tp_dealloc*/
-    NULL,                      /* tp_print*/
+    (long int)NULL,            /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
 #ifdef IS_PY3K
