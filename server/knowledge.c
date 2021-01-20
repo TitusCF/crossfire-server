@@ -266,7 +266,7 @@ static void knowledge_alchemy_detail(const char *value, StringBuffer *buf) {
     else
         snprintf(name, sizeof(name), "an unknown place");
 
-    stringbuffer_append_printf(buf, " is made at %s and uses the following ingredients:", name);
+    stringbuffer_append_printf(buf, " is made with %s at %s and uses the following ingredients:", rec->skill ? rec->skill : "an unknown skill", name);
 
     for (next = rec->ingred; next != NULL; next = next->next) {
         stringbuffer_append_printf(buf, "\n - %s", next->name);
