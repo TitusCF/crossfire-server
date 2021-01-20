@@ -577,6 +577,7 @@ void CREResourcesWindow::fillQuests()
     }
 
     addPanel("Quest", new CREQuestPanel(myQuests, myMessages, this));
+    root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(codes.size()));
 }
 
 void CREResourcesWindow::fillMessages()
