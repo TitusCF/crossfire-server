@@ -131,9 +131,7 @@ void CREFacePanel::setItem(const Face* face)
     }
 
     root = NULL;
-    for (unsigned int f_index = 0; f_index < get_faces_count(); f_index++)
-    {
-        const Face *face = getManager()->faces()->findByIndex(f_index);
+    getManager()->faces()->each([this, &root] (const Face *face) {
         if (face->smoothface == myFace)
         {
             if (!root)
@@ -146,7 +144,7 @@ void CREFacePanel::setItem(const Face* face)
 
             CREUtils::faceNode(face, root);
         }
-    }
+    });
 
     myColor->setCurrentIndex(myFace->magicmap);
 }
