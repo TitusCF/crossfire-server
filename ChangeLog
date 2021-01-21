@@ -1,6 +1,7 @@
 2021-01-21 Nicolas Weeger
     * utils/cre/CREFacePanel.cpp,
       utils/cre/CRETreasurePanel.cpp: Fix performance issues.
+    * utils/cre/CREResourcesWindow.cpp: Fix displayed formula count.
 
 2021-01-20 Daniel Hawkins
     * plugins/cfpython/cfpython_*.c: Fix implicit cast compiler warnings.

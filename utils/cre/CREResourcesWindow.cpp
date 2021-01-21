@@ -396,7 +396,7 @@ void CREResourcesWindow::fillFormulae()
         if (subCount == subAdded)
             root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(subCount));
         else
-            root->setText(0, tr("%1 [%2 items out of %3]").arg(root->text(0)).arg(added).arg(subCount));
+            root->setText(0, tr("%1 [%2 items out of %3]").arg(root->text(0)).arg(subAdded).arg(subCount));
     }
 
     delete wrapper;
