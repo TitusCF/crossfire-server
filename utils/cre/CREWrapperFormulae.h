@@ -21,6 +21,9 @@ class CREWrapperFormulae : public QObject
     Q_PROPERTY(int experience READ experience)
     Q_PROPERTY(QStringList archs READ archs)
     Q_PROPERTY(QStringList ingredients READ ingredients)
+    Q_PROPERTY(bool transmute READ transmute)
+    Q_PROPERTY(int minLevel READ minLevel)
+    Q_PROPERTY(QString keycode READ keycode)
 
     public:
         CREWrapperFormulae();
@@ -34,6 +37,9 @@ class CREWrapperFormulae : public QObject
         int experience() const;
         QStringList archs() const;
         QStringList ingredients() const;
+        bool transmute() const;
+        int minLevel() const;
+        QString keycode() const;
 
     protected:
         const recipe* myFormulae;

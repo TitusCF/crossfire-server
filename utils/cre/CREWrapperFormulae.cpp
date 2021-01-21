@@ -69,3 +69,18 @@ QStringList CREWrapperFormulae::ingredients() const
     }
     return ingredients;
 }
+
+bool CREWrapperFormulae::transmute() const
+{
+    return myFormulae->transmute != 0;
+}
+
+int CREWrapperFormulae::minLevel() const
+{
+    return myFormulae->min_level;
+}
+
+QString CREWrapperFormulae::keycode() const
+{
+    return myFormulae->keycode;
+}
