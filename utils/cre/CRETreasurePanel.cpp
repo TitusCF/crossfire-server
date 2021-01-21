@@ -38,13 +38,11 @@ void CRETreasurePanel::setItem(const treasurelist* treas)
     myUsing->clear();
     myTreasure = treas;
 
-    archt* arch;
     QTreeWidgetItem* root = NULL;
 
     QString name = myTreasure->name;
 
-    for (arch = get_next_archetype(NULL); arch; arch = get_next_archetype(arch))
-    {
+    getManager()->archetypes()->each([this, &root, &name] (const archetype *arch) {
         if (arch->clone.randomitems && name == arch->clone.randomitems->name)
         {
             if (root == NULL)
@@ -55,7 +53,7 @@ void CRETreasurePanel::setItem(const treasurelist* treas)
             }
             CREUtils::archetypeNode(arch, root);
         }
-    }
+    });
 
     root = NULL;
 
