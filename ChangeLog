@@ -1,3 +1,9 @@
+2021-01-21 Daniel Hawkins
+    * server/c_object.c: Correctly handle icecubes when calculating available
+         weight for a container. This solves a bug where one icecube of any size
+         fit into a container as long as the container had enough room for the
+         15kg icecube.
+
 2021-01-21 Nicolas Weeger
     * utils/cre/CREFacePanel.cpp,
       utils/cre/CRETreasurePanel.cpp: Fix performance issues.
