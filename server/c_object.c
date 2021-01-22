@@ -301,7 +301,11 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
         int32_t new_weight;
 
         new_weight = sack->carrying+(nrof ? nrof : 1)
-            *(op->weight+(op->type == CONTAINER ? op->carrying*op->stats.Str : 0))
+            /* Most non-containers should have op->carrying == 0. Icecubes, however, will not,
+             * and we need to handle those.
+             * Daniel Hawkins 2021-01-21
+             */
+            *(op->weight+(op->type == CONTAINER ? op->carrying*op->stats.Str : op->carrying))
             *(100-sack->stats.Str)/100;
         if (new_weight > sack->weight_limit) {
             draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
