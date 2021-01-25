@@ -36,6 +36,11 @@
 
 #include "assets.h"
 
+/* Static declarations where needed (when ordering would be an issue) */
+static void display_who_entry(object *op, player *pl, const char *format);
+static void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl);
+static int onoff_value(const char *line);
+
 /**
  * This is the 'maps' command.
  *
@@ -44,7 +49,7 @@
  * @param search
  * optional substring to search for.
  */
-void map_info(object *op, const char *search) {
+static void map_info(object *op, const char *search) {
     if ( *search != 0 ) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
                       i18n(op, "Maps matching search: '%s'"), search);
@@ -397,7 +402,7 @@ static void malloc_info(object *op) {
  * @param op
  * player wanting information.
  */
-void current_region_info(object *op) {
+static void current_region_info(object *op) {
     /*
      * Ok I /suppose/ I should write a seperate function for this, but it isn't
      * going to be /that/ slow, and won't get called much
@@ -419,7 +424,7 @@ void current_region_info(object *op) {
  * @param op
  * player requesting the information.
  */
-void current_map_info(object *op) {
+static void current_map_info(object *op) {
     mapstruct *m = op->map;
 
     if (!m)
@@ -630,7 +635,7 @@ void command_who(object *op, const char *params) {
  * @param format
  * format to display.
  */
-void display_who_entry(object *op, player *pl, const char *format) {
+static void display_who_entry(object *op, player *pl, const char *format) {
     char tmpbuf[MAX_BUF];
     char outbuf[MAX_BUF];
     size_t i;
@@ -686,7 +691,7 @@ void display_who_entry(object *op, player *pl, const char *format) {
  * @param pl
  * player to get information for.
  */
-void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl) {
+static void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl) {
     switch (letter) {
     case 'N':
         strlcpy(return_val, pl->ob->name, size);
@@ -1854,7 +1859,7 @@ void command_help(object *op, const char *params) {
  * @retval 0
  * other value.
  */
-int onoff_value(const char *line) {
+static int onoff_value(const char *line) {
     int i;
 
     if (sscanf(line, "%d", &i))
