@@ -1,3 +1,9 @@
+2021-01-25 Daniel Hawkins
+    * include/sproto.h: Remove function declarations that could be made static.
+    * server/c_misc.c: Change several functions only referenced in this file
+         to be static. A few were given forward declarations at the top when
+         declaration/use ordering would have been an issue.
+
 2021-01-21 Daniel Hawkins
     * server/c_object.c: Correctly handle icecubes when calculating available
          weight for a container. This solves a bug where one icecube of any size
