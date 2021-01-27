@@ -230,9 +230,9 @@ static void eat_special_food(object *who, object *food) {
         /* bigger morsel of food = longer effect time */
         force->duration = food->stats.food/4;
         SET_FLAG(force, FLAG_IS_USED_UP);
+        object_insert_in_ob(force, who);
         SET_FLAG(force, FLAG_APPLIED);
         change_abil(who, force);
-        object_insert_in_ob(force, who);
     } else {
         object_free_drop_inventory(force);
     }
