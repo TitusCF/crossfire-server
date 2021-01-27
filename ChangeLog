@@ -1,3 +1,6 @@
+2021-01-27 Nicolas Weeger
+    * server/spell_util.c: Change spell expiry message type to match those in change_abil().
+
 2021-01-25 Daniel Hawkins
     * include/sproto.h: Remove function declarations that could be made static.
     * server/c_misc.c: Change several functions only referenced in this file
