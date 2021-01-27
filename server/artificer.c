@@ -98,6 +98,31 @@ static object* find_secondary(const object* cauldron, const object* base_item) {
     return NULL;
 }
 
+static int normalized_modifier_quality(const object* op) {
+    int modifier = 0;
+
+    // resistances x1
+    for (int i = 1; i < NROFATTACKS; i++) {
+        modifier += op->resist[i];
+    }
+
+    // str, con, etc x3
+    for (int i = 0; i < NUM_STATS; i++) {
+        modifier += 3*get_attr_value(&op->stats, i);
+    }
+
+    // TODO dam x5
+
+    // TODO sustenance x10
+
+    // regen, magic x3
+    modifier += 3*op->magic;
+
+    // TODO ac, wc, speed x2
+
+    return modifier;
+}
+
 static bool merge_should_succeed(const object* op, const object* base,
                                  const object* result, const object* secondary,
                                  const int level) {
@@ -107,18 +132,14 @@ static bool merge_should_succeed(const object* op, const object* base,
         return true;
     }
 
-    //[(INT/10) * (SKILL + 10)]  /  (DIP - SIP) + (DIP + SIP)
+    int modifiers_before = calc_item_power(base);
+    int modifiers_after = calc_item_power(result);
 
-    int dip = calc_item_power(result);
-    int sip = base->item_power;
-    float chance = (op->stats.Int/10.0 * (level + 10)) / ((dip - sip) + (dip + sip));
-    chance = MIN(MAX(chance, 5), 60); // min 5, max 60
-    LOG(llevDebug, "merge: sip %d dip %d: chance %f\n", sip, dip, chance);
-    if (rndm(0, 100) <= chance) {
-        return true;
-    } else {
-        return false;
-    }
+    LOG(llevDebug, "merge: before %d after %d normalized %d\n",
+            modifiers_before, modifiers_after, normalized_modifier_quality);
+
+    return (4*level^2 + (op->stats.Int)^2 + rndm(0, 100))
+        > (modifiers_before^2) + (modifiers_after^2) + (normalized_modifier_quality(result)^2);
 }
 
 static int attempt_merge(const object* caster, object* cauldron,
