@@ -2064,7 +2064,7 @@ void check_spell_expiry(object *spell) {
     key = object_get_value(spell, "spell_expiry_warn_1");
     if (key != NULL) {
         if (spell->duration == atoi(key)) {
-            draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, spell->env, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+            draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, spell->env, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
                                  "The effects of your %s are draining out.", spell->name);
             return;
         }
@@ -2072,7 +2072,7 @@ void check_spell_expiry(object *spell) {
     key = object_get_value(spell, "spell_expiry_warn_2");
     if (key != NULL) {
         if (spell->duration == atoi(key)) {
-            draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, spell->env, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+            draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, spell->env, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
                                  "The effects of your %s are about to expire.", spell->name);
             return;
         }
