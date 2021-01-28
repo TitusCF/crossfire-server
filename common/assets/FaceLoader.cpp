@@ -100,8 +100,8 @@ void FaceLoader::processFile(FILE *file, const std::string& filename) {
                 LOG(llevError, "'face' within a 'face' in %s\n", filename.c_str());
                 if (on_face->name) {
                     free_string(on_face->name);
-                    free(on_face);
                 }
+                free(on_face);
             }
             on_face = static_cast<Face *>(calloc(1, sizeof(Face)));
             on_face->name = add_string(cp);
