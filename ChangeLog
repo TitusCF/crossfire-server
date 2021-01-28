@@ -1,4 +1,5 @@
 2021-07-28 Nicolas Weeger
+    * common/assets/FaceLoader.cpp: Fix wrong condition in malformed files.
     * types/food/food.c: Allow a spell effect when applying a special food, like potions.
 
 2021-01-27 Nicolas Weeger
