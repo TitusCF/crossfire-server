@@ -233,6 +233,9 @@ static void eat_special_food(object *who, object *food) {
         object_insert_in_ob(force, who);
         SET_FLAG(force, FLAG_APPLIED);
         change_abil(who, force);
+        if (food->other_arch != NULL && who->map != NULL) {
+            object_insert_in_map_at(arch_to_object(food->other_arch), who->map, NULL, INS_ON_TOP, who->x, who->y);
+        }
     } else {
         object_free_drop_inventory(force);
     }

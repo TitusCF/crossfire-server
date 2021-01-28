@@ -1,3 +1,6 @@
+2021-07-28 Nicolas Weeger
+    * types/food/food.c: Allow a spell effect when applying a special food, like potions.
+
 2021-01-27 Nicolas Weeger
     * server/spell_util.c: Change spell expiry message type to match those in change_abil().
     * types/food/food.c: Correctly display resistance changes when eating a special food.
