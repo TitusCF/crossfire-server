@@ -111,14 +111,17 @@ static int normalized_modifier_quality(const object* op) {
         modifier += 3*get_attr_value(&op->stats, i);
     }
 
-    // TODO dam x5
+    // dam x5
+    modifier += 5*op->stats.dam;
 
-    // TODO sustenance x10
+    // sustenance x10
+    modifier += 10*op->stats.food;
 
     // regen, magic x3
     modifier += 3*op->magic;
 
-    // TODO ac, wc, speed x2
+    // ac, wc, speed x2
+    modifier += 3*(op->stats.ac + op->stats.wc + op->speed);
 
     return modifier;
 }
