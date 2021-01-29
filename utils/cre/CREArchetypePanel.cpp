@@ -44,7 +44,8 @@ void CREArchetypePanel::setItem(const archt* archetype)
     QTreeWidgetItem* root = NULL;
 
     getManager()->archetypes()->each([this, &root] (archt *arch) {
-        if (arch->clone.other_arch == myArchetype)
+        sstring death_anim = NULL;
+        if (arch->clone.other_arch == myArchetype || ((death_anim = object_get_value(&arch->clone, "death_animation")) && strcmp(death_anim, myArchetype->name) == 0))
         {
             if (root == NULL)
             {
@@ -52,7 +53,10 @@ void CREArchetypePanel::setItem(const archt* archetype)
                 myUsing->addTopLevelItem(root);
                 root->setExpanded(true);
             }
-            CREUtils::archetypeNode(arch, root);
+            auto node = CREUtils::archetypeNode(arch, root);
+            if (death_anim) {
+                node->setText(0, node->text(0) + " (as death animation)");
+            }
         }
     });
 
