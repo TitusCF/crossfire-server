@@ -19,7 +19,7 @@
  */
 
 /**
- * @file mapper.c
+ * @file mapper.cpp
  * This program generates map browsing web pages.
  *
  * Quick run: without arguments, will make sensible choices.
@@ -220,6 +220,7 @@
 #include <sys/types.h>
 #include <time.h>
 
+extern "C" {
 #include "global.h"
 #include "sproto.h"
 #include "image.h"
@@ -229,6 +230,7 @@
 #include <gdfonts.h>
 #include <gdfontl.h>
 #include <gdfontg.h>
+}
 
 static gdImagePtr *gdfaces;
 
@@ -356,7 +358,7 @@ static void add_race_to_list(struct_race *race, struct_race_list *list, int chec
 
     if (list->allocated == list->count) {
         list->allocated += 50;
-        list->races = realloc(list->races, sizeof(struct_race *)*list->allocated);
+        list->races = (struct_race **)realloc(list->races, sizeof(struct_race *)*list->allocated);
     }
     list->races[list->count] = race;
     list->count++;
@@ -540,7 +542,7 @@ static int is_special_equipment(object *item) {
  * new item.
  */
 static struct_equipment *get_equipment(void) {
-    struct_equipment *add = calloc(1, sizeof(struct_equipment));
+    struct_equipment *add = (struct_equipment *)calloc(1, sizeof(struct_equipment));
 
     init_map_list(&add->origin);
     return add;
@@ -588,7 +590,7 @@ static struct_equipment *ensure_unique(struct_equipment *item) {
 
     if (equipment_count == equipment_allocated) {
         equipment_allocated += 50;
-        special_equipment = realloc(special_equipment, sizeof(struct_equipment *)*equipment_allocated);
+        special_equipment = (struct_equipment **)realloc(special_equipment, sizeof(struct_equipment *)*equipment_allocated);
     }
     special_equipment[equipment_count] = item;
     equipment_count++;
@@ -725,7 +727,7 @@ static struct_race *get_race(const char *name) {
         }
     }
 
-    item = calloc(1, sizeof(struct_race));
+    item = (struct_race *)calloc(1, sizeof(struct_race));
     item->name = strdup(name);
     item->count = 1;
     init_map_list(&item->origin);
@@ -914,7 +916,7 @@ static int sortbyname(const void *a, const void *b) {
 static char *cat_template(char *source, char *add) {
     if (!source)
         return add;
-    source = realloc(source, strlen(source)+strlen(add)+1);
+    source = (char *)realloc(source, strlen(source)+strlen(add)+1);
     strcat(source, add);
     free(add);
     return source;
@@ -939,7 +941,7 @@ static void read_template(const char *name, char **buffer) {
         exit(1);
     }
 
-    (*buffer) = calloc(1, info.st_size+1);
+    (*buffer) = (char *)calloc(1, info.st_size+1);
     if (!(*buffer)) {
         printf("Template %s calloc failed!\n", name);
         exit(1);
@@ -982,9 +984,9 @@ static void read_template(const char *name, char **buffer) {
  * @note
  * returned string will be a memory block larger than required, for performance reasons.
  */
-static char *do_template(const char *template, const char **vars, const char **values) {
+static char *do_template(const char *contents, const char **vars, const char **values) {
     int count = 0;
-    const char *sharp = template;
+    const char *sharp = contents;
     int maxlen = 0;
     int var = 0;
     char *result;
@@ -996,10 +998,10 @@ static char *do_template(const char *template, const char **vars, const char **v
         count++;
     }
     if (!count)
-        return strdup(template);
+        return strdup(contents);
     if (count%2) {
         printf("Malformed template, mismatched #!\n");
-        return strdup(template);
+        return strdup(contents);
     }
 
     while (vars[var] != NULL) {
@@ -1007,15 +1009,15 @@ static char *do_template(const char *template, const char **vars, const char **v
             maxlen = strlen(values[var]);
         var++;
     }
-    result = calloc(1, strlen(template)+maxlen*(count/2)+1);
+    result = (char *)calloc(1, strlen(contents)+maxlen*(count/2)+1);
     if (!result)
         return NULL;
     current_result = result;
 
-    sharp = template;
+    sharp = contents;
     while ((sharp = strchr(sharp, '#')) != NULL) {
         end = strchr(sharp+1, '#');
-        strncpy(current_result, template, sharp-template);
+        strncpy(current_result, contents, sharp-contents);
         if (end == sharp+1) {
             strcat(current_result, "#");
         }
@@ -1032,9 +1034,9 @@ static char *do_template(const char *template, const char **vars, const char **v
         }
         current_result = current_result+strlen(current_result);
         sharp = end+1;
-        template = sharp;
+        contents = sharp;
     }
-    strcat(current_result, template);
+    strcat(current_result, contents);
     return result;
 }
 
@@ -1216,7 +1218,7 @@ static void init_struct_map_in_quest_list(struct_map_in_quest_list *list) {
 static void add_to_struct_map_in_quest_list(struct_map_in_quest_list *list, struct_map_in_quest *item) {
     if (list->count == list->allocated) {
         list->allocated += 10;
-        list->list = realloc(list->list, sizeof(struct_map_in_quest *)*list->allocated);
+        list->list = (struct_map_in_quest **)realloc(list->list, sizeof(struct_map_in_quest *)*list->allocated);
     }
     list->list[list->count++] = item;
 }
@@ -1251,9 +1253,9 @@ static struct_quest *get_quest_info(const char *name) {
 
     if (quests_count == quests_allocated) {
         quests_allocated += 10;
-        quests = realloc(quests, sizeof(struct_quest *)*quests_allocated);
+        quests = (struct_quest **)realloc(quests, sizeof(struct_quest *)*quests_allocated);
     }
-    add = calloc(1, sizeof(struct_quest));
+    add = (struct_quest *)calloc(1, sizeof(struct_quest));
     add->name = strdup(name);
     add->number = quests_count;
     init_struct_map_in_quest_list(&add->maps);
@@ -1276,7 +1278,7 @@ static void add_map_to_quest(struct_map_info *map, const char *name, const char 
     struct_map_in_quest *add;
     struct_quest *quest = get_quest_info(name);
 
-    add = calloc(1, sizeof(struct_map_in_quest));
+    add = (struct_map_in_quest *)calloc(1, sizeof(struct_map_in_quest));
     add->map = map;
     add->quest = quest;
     add->description = strdup(description);
@@ -1505,7 +1507,7 @@ static void init_npc_list(struct_npc_list *list) {
  * structure with info.
  */
 static struct_npc_info *create_npc_info(const object *npc) {
-    struct_npc_info *info = calloc(1, sizeof(struct_npc_info));
+    struct_npc_info *info = (struct_npc_info *)calloc(1, sizeof(struct_npc_info));
 
     info->name = strdup(npc->name);
     info->message = strdup(npc->msg);
@@ -1525,7 +1527,7 @@ static struct_npc_info *create_npc_info(const object *npc) {
 static void add_npc_to_map(struct_npc_list *list, const object *npc) {
     if (list->count == list->allocated) {
         list->allocated += 50;
-        list->npc = realloc(list->npc, list->allocated*sizeof(struct_npc_info *));
+        list->npc = (struct_npc_info **)realloc(list->npc, list->allocated*sizeof(struct_npc_info *));
     }
 
     list->npc[list->count] = create_npc_info(npc);
@@ -1553,7 +1555,7 @@ static void add_map(struct_map_info *info, struct_map_list *list) {
 
     if (list->count == list->allocated) {
         list->allocated += 50;
-        list->maps = realloc(list->maps, list->allocated*sizeof(struct_map_info *));
+        list->maps = (struct_map_info **)realloc(list->maps, list->allocated*sizeof(struct_map_info *));
     }
     list->maps[list->count] = info;
     list->count++;
@@ -1566,7 +1568,7 @@ static void add_map(struct_map_info *info, struct_map_list *list) {
  * new struct_map_info.
  */
 static struct_map_info *create_map_info(void) {
-    struct_map_info *add = calloc(1, sizeof(struct_map_info));
+    struct_map_info *add = (struct_map_info *)calloc(1, sizeof(struct_map_info));
 
     add->min_monster = 2000;
     init_map_list(&add->exits_to);
@@ -1651,7 +1653,7 @@ static struct_map_info *get_map_info(const char *path) {
 
     add = create_map_info();
     add->path = strdup(path);
-    tmp = strrchr(path, '/');
+    tmp = strrchr((char *)path, '/');
     if (tmp)
         add->filename = strdup(tmp+1);
     else
@@ -1701,8 +1703,8 @@ static void add_map_to_region(struct_map_info *map, region *reg) {
     if (test == region_count) {
         if (test == region_allocated) {
             region_allocated++;
-            regions = realloc(regions, sizeof(struct_region_info *)*region_allocated);
-            regions[test] = calloc(1, sizeof(struct_region_info));
+            regions = (struct_region_info **)realloc(regions, sizeof(struct_region_info *)*region_allocated);
+            regions[test] = (struct_region_info *)calloc(1, sizeof(struct_region_info));
         }
         region_count++;
         regions[test]->reg = reg;
@@ -1762,7 +1764,7 @@ static void add_region_link(mapstruct *source, mapstruct *dest, const char *link
 
     if (regions_link_count == regions_link_allocated) {
         regions_link_allocated += 10;
-        regions_link = realloc(regions_link, sizeof(const char *)*regions_link_allocated);
+        regions_link = (char **)realloc(regions_link, sizeof(const char *)*regions_link_allocated);
     }
     regions_link[regions_link_count] = strdup(entry);
     regions_link_count++;
@@ -2025,7 +2027,7 @@ static void process_map(struct_map_info *info) {
                                     /* Message start is final_map, nice */
                                     start = item->msg;
                                 if (start) {
-                                    char *end = strchr(start+1, '\n');
+                                    char *end = strchr((char *)start+1, '\n');
 
                                     start += strlen("final_map")+2;
                                     strncpy(ep, start, end-start);
@@ -2176,12 +2178,12 @@ static char *do_map_index(const char *dest, struct_map_list *maps_list,
     else
         basevalues = 0;
 
-    idx_vars = malloc(sizeof(char *)*(basevalues+VARSADD));
+    idx_vars = (const char **)malloc(sizeof(char *)*(basevalues+VARSADD));
     idx_vars[0] = "MAPCOUNT";
     memcpy(&idx_vars[1], vars, sizeof(char *)*basevalues);
     idx_vars[basevalues+VARSADD-1] = NULL;
 
-    idx_values = malloc(sizeof(char *)*(basevalues+VARSADD-1));
+    idx_values = (const char **)malloc(sizeof(char *)*(basevalues+VARSADD-1));
     memcpy(&idx_values[1], values, sizeof(char *)*basevalues);
 
     string = NULL;
@@ -3270,7 +3272,7 @@ static void find_maps(const char *from) {
             }
             if (found_maps_count == found_maps_allocated) {
                 found_maps_allocated += 50;
-                found_maps = realloc(found_maps, found_maps_allocated*sizeof(char *));
+                found_maps = (char **)realloc(found_maps, found_maps_allocated*sizeof(char *));
             }
             snprintf(full, sizeof(full), "%s/%s", from, file->d_name);
             found_maps[found_maps_count++] = strdup(full);
@@ -3766,7 +3768,7 @@ int main(int argc, char **argv) {
 
     printf("Initializing Crossfire data...\n");
 
-    settings.debug = 0;
+    settings.debug = llevError;
 
     init_globals();
     init_library();
@@ -3792,7 +3794,7 @@ int main(int argc, char **argv) {
     }
 
     create_destination();
-    gdfaces = calloc(get_faces_count(), sizeof(gdImagePtr));
+    gdfaces = (gdImagePtr *)calloc(get_faces_count(), sizeof(gdImagePtr));
 
     read_template("templates/map.template", &map_template);
     read_template("templates/map_no_exit.template", &map_no_exit_template);
@@ -3877,9 +3879,9 @@ int main(int argc, char **argv) {
     color_road = gdImageColorResolve(infomap, 0, 255, 0);
     color_blocking = gdImageColorResolve(infomap, 0, 0, 255);
     color_slowing = gdImageColorResolve(infomap, 0, 0, 127);
-    elevation_info = calloc(50*30, sizeof(int *));
+    elevation_info = (int **)calloc(50*30, sizeof(int *));
     for (i = 0; i < 50*30; i++)
-        elevation_info[i] = calloc(50*30, sizeof(int));
+        elevation_info[i] = (int *)calloc(50*30, sizeof(int));
     elevation_min = 0;
     elevation_max = 0;
 
