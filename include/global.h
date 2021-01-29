@@ -125,7 +125,6 @@ EXTERN racelink *first_race;                /**< Race list. */
  * Variables set by different flags (see init.c):
  */
 
-EXTERN long init_done;             /**< Ignores signals until init_done is true. */
 EXTERN long trying_emergency_save; /**< True when emergency_save() is reached. */
 EXTERN long nroferrors;            /**< If it exceeds MAX_ERRORS, call fatal() */
 

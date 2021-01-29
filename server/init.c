@@ -1039,7 +1039,6 @@ static void init_db() {
  * @param argv arguments on the command line.
  */
 void init(int argc, char **argv) {
-    init_done = 0;      /* Must be done before init_signal() */
     logfile = stderr;
     first_race = NULL;
 
@@ -1077,7 +1076,6 @@ void init(int argc, char **argv) {
     metaserver2_init();
     accounts_load();
     reset_sleep();
-    init_done = 1;
 }
 
 /**
