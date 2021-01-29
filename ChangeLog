@@ -1,4 +1,8 @@
-2021-07-28 Nicolas Weeger
+2021-01-29 Nicolas Weeger
+    * include/global.h,
+    * server/init.c: Remove unused variable.
+
+2021-01-28 Nicolas Weeger
     * common/assets/FaceLoader.cpp: Fix wrong condition in malformed files.
     * types/food/food.c: Allow a spell effect when applying a special food, like potions.
 
