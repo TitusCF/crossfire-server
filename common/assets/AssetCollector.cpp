@@ -106,7 +106,10 @@ void AssetCollector::processTar(const std::string& file) {
     mtar_t tar;
     mtar_header_t h;
 
-    mtar_open(&tar, file.c_str(), "r");
+    if (mtar_open(&tar, file.c_str(), "r") != MTAR_ESUCCESS) {
+        LOG(llevError, "Failed to open tar file %s\n", file.c_str());
+        return;
+    }
 
     while ((mtar_read_header(&tar, &h)) != MTAR_ENULLRECORD) {
         for (auto loader : m_loaders) {
