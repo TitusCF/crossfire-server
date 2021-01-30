@@ -15,6 +15,7 @@
 #include "Quest.h"
 #include "CREHPBarMaker.h"
 #include "ScriptFileManager.h"
+#include "FaceMakerDialog.h"
 
 extern "C" {
 #include "global.h"
@@ -186,6 +187,10 @@ void CREMainWindow::createActions()
     myToolCombatSimulator->setStatusTip(tr("Simulate fighting between two objects."));
     connect(myToolCombatSimulator, SIGNAL(triggered()), this, SLOT(onToolCombatSimulator()));
 
+    myToolFaceMaker = new QAction(tr("Generate face variants"), this);
+    myToolFaceMaker->setStatusTip(tr("Generate faces by changing colors of existing faces."));
+    connect(myToolFaceMaker, SIGNAL(triggered()), this, SLOT(onToolFaceMaker()));
+
     myClearMapCache = new QAction(tr("Clear map cache"), this);
     myClearMapCache->setStatusTip(tr("Force a refresh of all map information at next start."));
     connect(myClearMapCache, SIGNAL(triggered()), this, SLOT(onClearCache()));
@@ -234,6 +239,7 @@ void CREMainWindow::createMenus()
     toolsMenu->addAction(myToolSmooth);
     toolsMenu->addAction(myToolHPBar);
     toolsMenu->addAction(myToolCombatSimulator);
+    toolsMenu->addAction(myToolFaceMaker);
     toolsMenu->addAction(myClearMapCache);
 }
 
@@ -1489,6 +1495,12 @@ void CREMainWindow::onToolCombatSimulator()
 void CREMainWindow::onToolBarMaker()
 {
     CREHPBarMaker maker;
+    maker.exec();
+}
+
+void CREMainWindow::onToolFaceMaker()
+{
+    FaceMakerDialog maker(this, myResourcesManager);
     maker.exec();
 }
 
