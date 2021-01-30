@@ -1,5 +1,9 @@
 2021-01-30 Nicolas Weeger
     * common/assets/AssetCollector.cpp: Correctly handle invalid tar files.
+    * common/object.c,
+    * include/libproto.h,
+    * server/attack.c,
+    * server/time.c: Display death animation for used up generators too.
 
 2021-01-29 Nicolas Weeger
     * include/global.h,

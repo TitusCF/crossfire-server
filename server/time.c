@@ -23,6 +23,7 @@
 
 #include "spells.h"
 #include "sproto.h"
+#include "object.h"
 
 /**
  * Remove non locked doors. The functions check to see if similar
@@ -293,6 +294,7 @@ static void generate_monster(object *gen) {
             num_generated = atoi(value);
 
         if (num_generated++ >= limit) {
+            object_handle_death_animation(gen);
             object_remove(gen);
             object_free_drop_inventory(gen);
         } else {

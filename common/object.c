@@ -5139,3 +5139,16 @@ int save_object(FILE *fp, object *op, int flag) {
         return SAVE_ERROR_OK;
     }
 }
+
+void object_handle_death_animation(object *op) {
+    if (op->map) {
+        sstring death_animation = object_get_value(op, "death_animation");
+        if (death_animation != NULL) {
+            object *death = create_archetype(death_animation);
+
+            if (death != NULL) {
+                object_insert_in_map_at(death, op->map, op, 0, op->x, op->y);
+            }
+        }
+    }
+}
