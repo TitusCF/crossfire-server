@@ -156,6 +156,12 @@ fi
 
 AM_CONDITIONAL(PROCESS_XSLT, [test -n "$xsltengine"])
 
+dnl Make sure 'arch' and 'maps' directories exist.
+AC_CHECK_FILE([$srcdir/lib/arch], [],
+              [AC_MSG_ERROR([Could not find lib/arch directory.])])
+AC_CHECK_FILE([$srcdir/lib/maps], [],
+              [AC_MSG_ERROR([Could not find lib/maps directory.])])
+
 dnl#############################################################################
 AS_BOX([Generate Output])
 dnl#############################################################################
