@@ -28,7 +28,6 @@ void ArchetypeLoader::processFile(FILE *file, const std::string &filename) {
     int i, first = LO_NEWFILE;
 
     at = get_archetype_struct();
-    CLEAR_FLAG(&at->clone, FLAG_REMOVED);
 
     arch_init = 1;
 
@@ -76,7 +75,6 @@ void ArchetypeLoader::processFile(FILE *file, const std::string &filename) {
         }
 
         at = get_archetype_struct();
-        CLEAR_FLAG(&at->clone, FLAG_REMOVED);
     }
     at->clone.arch = NULL; /* arch is checked for temporary archetypes if not NULL. */
     free(at);
