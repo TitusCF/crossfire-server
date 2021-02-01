@@ -309,6 +309,7 @@ int tailor_god_spell(object *spellop, object *caster);
 /* init.c */
 void init(int argc, char **argv);
 void free_server(void);
+void add_server_collect_hooks();
 /* knowledge.c */
 void knowledge_give(player *pl, const char *marker, const object *book);
 void knowledge_read(player *pl, object *book);

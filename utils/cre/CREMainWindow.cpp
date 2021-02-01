@@ -176,6 +176,10 @@ void CREMainWindow::createActions()
     myReportQuests->setEnabled(false);
     connect(myReportQuests, SIGNAL(triggered()), this, SLOT(onReportQuests()));
 
+    myReportMaterials = new QAction(tr("Materials"), this);
+    myReportMaterials->setStatusTip(tr("Display all materials with their properties."));
+    connect(myReportMaterials, SIGNAL(triggered()), this, SLOT(onReportMaterials()));
+
     myToolEditMonsters = new QAction(tr("Edit monsters"), this);
     myToolEditMonsters->setStatusTip(tr("Edit monsters in a table."));
     connect(myToolEditMonsters, SIGNAL(triggered()), this, SLOT(onToolEditMonsters()));
@@ -239,6 +243,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportSummon);
     reportMenu->addAction(myReportShops);
     reportMenu->addAction(myReportQuests);
+    reportMenu->addAction(myReportMaterials);
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
     toolsMenu->addAction(myToolEditMonsters);
@@ -1482,6 +1487,51 @@ void CREMainWindow::onReportQuests()
   report += "</body>\n</html>\n";
 
   CREReportDisplay show(report, "Quests report");
+  QApplication::restoreOverrideCursor();
+  show.exec();
+}
+
+void CREMainWindow::onReportMaterials()
+{
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+  QString report;
+  report += "<html>";
+
+  report += "<h1>Materials</h1>";
+  report += "<table><tr><th>Name</th><th>Description</th></tr>";
+  auto mat = materialt;
+  while (mat) {
+      report += tr("<tr><td>%1</td><td>%2</td></tr>").arg(mat->name, mat->description);
+      mat = mat->next;
+  }
+  report += "</table>";
+
+  for (int s = 0; s < 2; s++) {
+      QString name(s == 0 ? "Saves" : "Resistances");
+        report += tr("<h1>%1</h1>").arg(name);
+        report += tr("<tr><th rowspan='2'>Name</th><th colspan='%1'>%2</th></tr>").arg(NROFATTACKS).arg(name);
+        report += "<tr>";
+        for (int r = 0; r < NROFATTACKS; r++) {
+            report += "<th>" + QString(attacktype_desc[r]) + "</th>";
+        }
+        report += "</tr>";
+
+        mat = materialt;
+        while (mat) {
+            report += tr("<tr><td>%1</td>").arg(mat->name);
+              for (int r = 0; r < NROFATTACKS; r++) {
+                  report += tr("<td>%1</td>").arg(s == 0 ? mat->save[r] : mat->mod[r]);
+              }
+            report += "</tr>";
+            mat = mat->next;
+        }
+      report += "</table>";
+  }
+
+  report += "</html>";
+
+  CREReportDisplay show(report, "Materials report");
   QApplication::restoreOverrideCursor();
   show.exec();
 }
