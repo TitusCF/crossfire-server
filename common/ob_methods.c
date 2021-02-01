@@ -45,8 +45,7 @@ method_ret ob_apply(object *op, object *applier, int aflags) {
     method_ret ret;
     ob_methods *methods;
 
-    /* Lauwenmark: Handle for plugin apply event */
-    if (execute_event(op, EVENT_APPLY, applier, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(op, EVENT_APPLY, applier, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return METHOD_OK;
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {

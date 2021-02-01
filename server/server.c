@@ -266,8 +266,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 void player_map_change_common(object* op, mapstruct* const oldmap,
                               mapstruct* const newmap) {
     if (oldmap != NULL) {
-        /* Lauwenmark : Here we handle the MAPLEAVE global event */
-        execute_global_event(EVENT_MAPLEAVE, op, oldmap);
+        events_execute_global_event(EVENT_MAPLEAVE, op, oldmap);
 
         /* can be less than zero due to errors in tracking this */
         if (oldmap->players <= 0) {
@@ -275,8 +274,7 @@ void player_map_change_common(object* op, mapstruct* const oldmap,
         }
     }
 
-    /* Lauwenmark : Here we handle the MAPENTER global event */
-    execute_global_event(EVENT_MAPENTER, op, newmap);
+    events_execute_global_event(EVENT_MAPENTER, op, newmap);
     newmap->timeout = 0;
     player_update_bg_music(op);
 }
@@ -1466,8 +1464,7 @@ void server_main(int argc, char *argv[]) {
         do_server();
         process_events();         /* "do" something with objects with speed */
         cftimer_process_timers(); /* Process the crossfire Timers */
-        /* Lauwenmark : Here we handle the CLOCK global event */
-        execute_global_event(EVENT_CLOCK);
+        events_execute_global_event(EVENT_CLOCK);
         check_active_maps(); /* Removes unused maps after a certain timeout */
         do_specials();       /* Routines called from time to time. */
         update_players();

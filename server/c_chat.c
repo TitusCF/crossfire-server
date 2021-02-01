@@ -195,8 +195,7 @@ static void command_tell_all(object *op, const char *params, int pri, int color,
                          "%s %s: %s",
                          op->name, desc, params);
 
-    /* Lauwenmark : Here we handle the SHOUT global event */
-    execute_global_event(EVENT_SHOUT, op, params, pri);
+    events_execute_global_event(EVENT_SHOUT, op, params, pri);
 }
 
 /**
@@ -271,7 +270,7 @@ static void do_tell(object *op, const char *params, int adjust_listen) {
             original_listen = 0;
         }
 
-        execute_global_event(EVENT_TELL, op, msg, pl->ob);
+        events_execute_global_event(EVENT_TELL, op, msg, pl->ob);
 
         draw_ext_info(NDI_UNIQUE|NDI_ORANGE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
                       buf);

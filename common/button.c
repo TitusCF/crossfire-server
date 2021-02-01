@@ -66,12 +66,7 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
         if (!state && !QUERY_FLAG(tmp, FLAG_ACTIVATE_ON_RELEASE))
             continue;
 
-        /*
-         * (tchize) call the triggers of the activated object.
-         * tmp = activated object
-         * op is activator (aka button)
-         */
-        if (execute_event(tmp, EVENT_TRIGGER, cause, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+        if (events_execute_object_event(tmp, EVENT_TRIGGER, cause, NULL, NULL, SCRIPT_FIX_ALL) != 0)
             continue;
 
         switch (tmp->type) {

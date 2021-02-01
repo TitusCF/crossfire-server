@@ -162,8 +162,7 @@ int swap_map(mapstruct *map) {
         mapstruct *oldmap = map;
 
         LOG(llevDebug, "Resetting map %s.\n", map->path);
-        /* Lauwenmark : Here we handle the MAPRESET global event */
-        execute_global_event(EVENT_MAPRESET, map);
+        events_execute_global_event(EVENT_MAPRESET, map);
         map = map->next;
         delete_map(oldmap);
         return SAVE_ERROR_OK;
@@ -279,8 +278,7 @@ void flush_old_maps(void) {
             m = m->next;
         } else {
             LOG(llevDebug, "Resetting map %s.\n", m->path);
-            /* Lauwenmark : Here we handle the MAPRESET global event */
-            execute_global_event(EVENT_MAPRESET, m);
+            events_execute_global_event(EVENT_MAPRESET, m);
             clean_tmp_map(m);
             oldmap = m;
             m = m->next;

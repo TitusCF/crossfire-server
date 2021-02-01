@@ -833,11 +833,4 @@ void esrv_del_item(player *pl, object *ob) {
 void esrv_update_spells(player *pl) {
 }
 
-int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
-    return 0;
-}
-
-int execute_global_event(int eventcode, ...) {
-    return 0;
-}
 #endif /* dummy DOXYGEN_SHOULD_SKIP_THIS */

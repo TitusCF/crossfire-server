@@ -437,10 +437,6 @@ void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
 void player_set_state(player *pl, uint8_t state);
 /* plugins.c */
-int user_event(object *op, object *activator, object *third, const char *message, int fix);
-int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);
-int plugin_event_say(object *npc, talk_info *talk);
-int execute_global_event(int eventcode, ...);
 int plugins_init_plugin(const char *libfile);
 int plugins_remove_plugin(const char *id);
 void plugins_display_list(object *op);

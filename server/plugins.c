@@ -307,263 +307,6 @@ static void send_changed_object(object *op) {
     }
 }
 
-int user_event(object *op, object *activator, object *third, const char *message, int fix) {
-    return execute_event(op, EVENT_USER, activator, third, message, fix);
-}
-
-static int do_execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix, talk_info *talk) {
-    crossfire_plugin *plugin;
-    int rv = 0;
-
-    FOR_INV_PREPARE(op, tmp) {
-        if (tmp->type == EVENT_CONNECTOR && tmp->subtype == eventcode) {
-#ifdef PLUGIN_DEBUG
-            LOG(llevDebug, "********** EVENT HANDLER **********\n");
-            LOG(llevDebug, " - Who am I      :%s\n", op->name);
-            if (activator != NULL)
-                LOG(llevDebug, " - Activator     :%s\n", activator->name);
-            if (third != NULL)
-                LOG(llevDebug, " - Other object  :%s\n", third->name);
-            LOG(llevDebug, " - Event code    :%d\n", tmp->subtype);
-            if (tmp->title != NULL)
-                LOG(llevDebug, " - Event plugin  :%s\n", tmp->title);
-            if (tmp->slaying != NULL)
-                LOG(llevDebug, " - Event hook    :%s\n", tmp->slaying);
-            if (tmp->name != NULL)
-                LOG(llevDebug, " - Event options :%s\n", tmp->name);
-#endif
-
-            if (tmp->title == NULL) {
-                object *env = object_get_env_recursive(tmp);
-                LOG(llevError, "Event object without title at %d/%d in map %s\n", env->x, env->y, env->map->name);
-                object_remove(tmp);
-                object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
-            } else if (tmp->slaying == NULL) {
-                object *env = object_get_env_recursive(tmp);
-                LOG(llevError, "Event object without slaying at %d/%d in map %s\n", env->x, env->y, env->map->name);
-                object_remove(tmp);
-                object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
-            } else {
-                plugin = plugins_find_plugin(tmp->title);
-                if (plugin == NULL) {
-                    object *env = object_get_env_recursive(tmp);
-                    LOG(llevError, "The requested plugin doesn't exist: %s at %d/%d in map %s\n", tmp->title, env->x, env->y, env->map->name);
-                    object_remove(tmp);
-                    object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
-                } else {
-                    int rvt = 0;
-                    int rv;
-
-                    tag_t oldtag = op->count;
-                    rv = plugin->eventfunc(&rvt, op, activator, third, message, fix, tmp, talk);
-                    if (object_was_destroyed(op, oldtag)) {
-                        return rv;
-                    }
-                    if (QUERY_FLAG(tmp, FLAG_UNIQUE)) {
-#ifdef PLUGIN_DEBUG
-                        LOG(llevDebug, "Removing unique event %s\n", tmp->slaying);
-#endif
-                        object_remove(tmp);
-                        object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
-                    }
-                    return rv;
-                }
-            }
-        }
-    } FOR_INV_FINISH();
-    return rv;
-}
-
-int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
-    return do_execute_event(op, eventcode, activator, third, message, fix, NULL);
-}
-
-int plugin_event_say(object *npc, talk_info *talk) {
-    return do_execute_event(npc, EVENT_SAY, talk->who, NULL, talk->text, SCRIPT_FIX_ALL, talk);
-}
-
-int execute_global_event(int eventcode, ...) {
-    va_list args;
-    mapstruct *map;
-    object *op;
-    object *op2;
-    player *pl;
-    const char *buf;
-    int i, rt;
-    crossfire_plugin *cp;
-
-    if (plugins_list == NULL)
-        return -1;
-
-    va_start(args, eventcode);
-
-    switch (eventcode) {
-    case EVENT_BORN:
-        /*BORN: op*/
-        op = va_arg(args, object *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op);
-        }
-        break;
-
-    case EVENT_CLOCK:
-        /*CLOCK: -*/
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode);
-        }
-        break;
-
-    case EVENT_CRASH:
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode);
-        }
-        break;
-
-    case EVENT_PLAYER_DEATH:
-        /*PLAYER_DEATH: op*/
-        op = va_arg(args, object *);
-        op2 = va_arg(args, object *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, op2);
-        }
-        break;
-
-    case EVENT_GKILL:
-        /*GKILL: op, hitter*/
-        op = va_arg(args, object *);
-        op2 = va_arg(args, object *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, op2);
-        }
-        break;
-
-    case EVENT_LOGIN:
-        /*LOGIN: pl, pl->socket.host*/
-        pl = va_arg(args, player *);
-        buf = va_arg(args, char *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, pl, buf);
-        }
-        break;
-
-    case EVENT_LOGOUT:
-        /*LOGOUT: pl, pl->socket.host*/
-        pl = va_arg(args, player *);
-        buf = va_arg(args, char *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, pl, buf);
-        }
-        break;
-
-    case EVENT_MAPENTER:
-        /*MAPENTER: op, map*/
-        op = va_arg(args, object *);
-        map = va_arg(args, mapstruct *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, map);
-        }
-        break;
-
-    case EVENT_MAPLEAVE:
-        /*MAPLEAVE: op, map*/
-        op = va_arg(args, object *);
-        map = va_arg(args, mapstruct *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, map);
-        }
-        break;
-
-    case EVENT_MAPRESET:
-        /*MAPRESET: map*/
-        map = va_arg(args, mapstruct *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, map);
-        }
-        break;
-
-    case EVENT_REMOVE:
-        /*REMOVE: op*/
-        op = va_arg(args, object *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op);
-        }
-        break;
-
-    case EVENT_SHOUT:
-        /*SHOUT: op, parms, priority*/
-        op = va_arg(args, object *);
-        buf = va_arg(args, char *);
-        i = va_arg(args, int);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, buf, i);
-        }
-        break;
-
-    case EVENT_TELL:
-        /* Tell: who, what, to who */
-        op = va_arg(args, object *);
-        buf = va_arg(args, const char *);
-        op2 = va_arg(args, object *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, buf, op2);
-        }
-        break;
-
-    case EVENT_MUZZLE:
-        /*MUZZLE: op, parms*/
-        op = va_arg(args, object *);
-        buf = va_arg(args, char *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, buf);
-        }
-        break;
-
-    case EVENT_KICK:
-        /*KICK: op, parms*/
-        op = va_arg(args, object *);
-        buf = va_arg(args, char *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, buf);
-        }
-        break;
-
-    case EVENT_MAPUNLOAD:
-        /*MAPUNLOAD: map*/
-        map = va_arg(args, mapstruct *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, map);
-        }
-        break;
-
-    case EVENT_MAPLOAD:
-        /*MAPLOAD: map*/
-        map = va_arg(args, mapstruct *);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, map);
-        }
-        break;
-    }
-    va_end(args);
-    return 0;
-}
-
 static void cfapi_get_hooks(int *type, ...) {
     va_list args;
     int request_type;
@@ -674,13 +417,13 @@ int plugins_init_plugin(const char *libfile) {
     i = initfunc("2.0", cfapi_get_hooks);
     cp = malloc(sizeof(crossfire_plugin));
     for (i = 0; i < NR_EVENTS; i++)
-        cp->gevent[i] = NULL;
-    cp->eventfunc = eventfunc;
+        cp->global_registration[i] = 0;
     cp->propfunc = propfunc;
     cp->closefunc = closefunc;
     cp->libptr = ptr;
     propfunc(&i, "Identification", cp->id, sizeof(cp->id));
     propfunc(&i, "FullName", cp->fullname, sizeof(cp->fullname));
+    events_register_object_handler(cp->id, eventfunc);
     cp->next = NULL;
     cp->prev = NULL;
     if (plugins_list == NULL) {
@@ -711,6 +454,13 @@ int plugins_remove_plugin(const char *id) {
         if (!strcmp(id, cp->id)) {
             crossfire_plugin *n;
             crossfire_plugin *p;
+
+            for (int eventcode = 0; eventcode < NR_EVENTS; eventcode++) {
+                if (cp->global_registration[eventcode]) {
+                    events_unregister_global_handler(eventcode, cp->global_registration[eventcode]);
+                }
+            }
+            events_unregister_object_handler(cp->id);
 
             n = cp->next;
             p = cp->prev;
@@ -870,7 +620,9 @@ static void cfapi_system_register_global_event(int *type, ...) {
     *type = CFAPI_NONE;
 
     cp = plugins_find_plugin(pname);
-    cp->gevent[eventcode] = hook;
+    if (!cp->global_registration[eventcode]) {
+        cp->global_registration[eventcode] = events_register_global_handler(eventcode, hook);
+    }
 }
 
 static void cfapi_system_unregister_global_event(int *type, ...) {
@@ -887,7 +639,10 @@ static void cfapi_system_unregister_global_event(int *type, ...) {
     *type = CFAPI_NONE;
 
     cp = plugins_find_plugin(pname);
-    cp->gevent[eventcode] = NULL;
+    if (cp->global_registration[eventcode]) {
+        events_unregister_global_handler(eventcode, cp->global_registration[eventcode]);
+        cp->global_registration[eventcode] = 0;
+    }
 }
 
 /**
@@ -4656,7 +4411,7 @@ static void cfapi_object_user_event(int *type, ...) {
     ret = va_arg(args, int *);
     va_end(args);
 
-    *ret = user_event(op, activator, third, message, fix);
+    *ret = events_execute_object_user(op, activator, third, message, fix);
     *type = CFAPI_INT;
 }
 

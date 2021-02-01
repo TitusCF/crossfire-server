@@ -473,8 +473,7 @@ static void command_kick2(object *op, const char *params) {
 
             op = pl->ob;
             if (!QUERY_FLAG(op, FLAG_REMOVED)) {
-                /* Avion : Here we handle the KICK global event */
-                execute_global_event(EVENT_KICK, op, *params == '\0' ? NULL : params);
+                events_execute_global_event(EVENT_KICK, op, *params == '\0' ? NULL : params);
                 object_remove(op);
                 removed = 1;
             }
@@ -652,8 +651,7 @@ void command_toggle_shout(object *op, const char *params) {
                              "You muzzle %s.",
                              pl->ob->name);
 
-        /* Avion : Here we handle the MUZZLE global event */
-        execute_global_event(EVENT_MUZZLE, pl->ob, params);
+        events_execute_global_event(EVENT_MUZZLE, pl->ob, params);
 
         return;
     }

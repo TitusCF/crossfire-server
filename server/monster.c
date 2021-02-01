@@ -2322,15 +2322,14 @@ void monster_npc_say(object *npc, const char *cp) {
  * @return 0 if text was handled by a plugin or not handled, 1 if handled internally by the server.
  */
 static int monster_talk_to_npc(object *npc, talk_info *info) {
-    /* Move this commone area up here - shouldn't cost much extra cpu
-     * time, and makes the function more readable */
-    /* Lauwenmark: Handle for plugin say event */
-    if (plugin_event_say(npc, info) != 0)
+
+    if (events_execute_object_say(npc, info) != 0)
         return 0;
-    /* Lauwenmark - Here we let the objects inside inventories hear and answer, too. */
+
+    /* Here we let the objects inside inventories hear and answer, too. */
     /* This allows the existence of "intelligent" weapons you can discuss with */
     FOR_INV_PREPARE(npc, cobj)
-        if (plugin_event_say(cobj, info) != 0)
+        if (events_execute_object_say(cobj, info) != 0)
             return 0;
     FOR_INV_FINISH();
     if (info->who == npc)
