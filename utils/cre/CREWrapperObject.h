@@ -18,6 +18,7 @@ class CREWrapperObject : public QObject
     Q_PROPERTY(int level READ level)
     Q_PROPERTY(bool isMonster READ isMonster)
     Q_PROPERTY(bool isAlive READ isAlive)
+    Q_PROPERTY(bool isGenerator READ isGenerator)
     Q_PROPERTY(qint64 experience READ experience)
     Q_PROPERTY(quint32 attacktype READ attacktype)
     Q_PROPERTY(qint8 ac READ ac)
@@ -41,6 +42,7 @@ class CREWrapperObject : public QObject
         int level() const;
         bool isMonster() const;
         bool isAlive() const;
+        bool isGenerator() const { return QUERY_FLAG(myObject, FLAG_GENERATOR); }
         qint64 experience() const;
         quint32 attacktype() const;
         qint8 ac() const;

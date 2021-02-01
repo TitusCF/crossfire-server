@@ -133,4 +133,6 @@ PRECOMPILED_HEADER = cre_pch.h
 
 QT += concurrent script widgets
 
+CONFIG += debug
+
 CONFIG += c++14
