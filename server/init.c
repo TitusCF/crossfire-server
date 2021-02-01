@@ -1017,6 +1017,14 @@ static void load_settings(void) {
         strcpy(settings.who_wiz_format, "%N_%T%t%h%d%b%nLevel %l <%m>(@%i)(%c)");
 }
 
+void add_server_collect_hooks() {
+    settings.hooks_count = 2;
+    settings.hooks_filename[0] = "/materials";
+    settings.hooks[0] = load_materials;
+    settings.hooks_filename[1] = "/races";
+    settings.hooks[1] = load_races;
+}
+
 /**
  * This is the main server initialization function.
  *
@@ -1032,11 +1040,7 @@ void init(int argc, char **argv) {
      * the LibDir in this pass would be reasonable. */
     parse_args(argc, argv, 1);
 
-    settings.hooks_count = 2;
-    settings.hooks_filename[0] = "/materials";
-    settings.hooks[0] = load_materials;
-    settings.hooks_filename[1] = "/races";
-    settings.hooks[1] = load_races;
+    add_server_collect_hooks();
 
     init_library();     /* Must be called early */
     load_settings();    /* Load the settings file */

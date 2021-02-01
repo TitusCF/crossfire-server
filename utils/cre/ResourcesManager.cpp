@@ -10,6 +10,7 @@ extern "C" {
 #include "libproto.h"
 #include "recipe.h"
 #include "image.h"
+#include "sproto.h"
 }
 #include "assets.h"
 #include "AssetsManager.h"
@@ -27,7 +28,7 @@ void ResourcesManager::load()
     setlocale(LC_NUMERIC, "C");
 
     settings.archetypes_tracker = this;
-
+    add_server_collect_hooks();
     init_globals();
     init_library();
 

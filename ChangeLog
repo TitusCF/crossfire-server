@@ -1,4 +1,9 @@
 2021-02-01 Nicolas Weeger
+    * include/sproto.h,
+    * server/init.c: Extract function.
+    * utils/cre/*: Add report on materials.
+
+2021-02-01 Nicolas Weeger
     * common/assets/ArchetypeLoader.cpp,
     * common/assets/assets.cpp,
     * common/init.c,
