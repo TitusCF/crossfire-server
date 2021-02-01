@@ -333,6 +333,7 @@ typedef struct Settings {
     const char *hooks_filename[20];   /**< Filenames to process for each hook. */
     collectorHook hooks[20];          /**< Collect hooks, called when the filename matches. */
     int     ignore_assets_errors;     /**< If set then go on running even if there are errors in assets. */
+    void    *archetypes_tracker;      /**< Must be a pointer to a AssetsTracker<archetype> if not NULL. */
 } Settings;
 
 /**

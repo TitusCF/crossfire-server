@@ -26,6 +26,8 @@ void ResourcesManager::load()
 {
     setlocale(LC_NUMERIC, "C");
 
+    settings.archetypes_tracker = this;
+
     init_globals();
     init_library();
 
@@ -134,4 +136,11 @@ QStringList ResourcesManager::allAnimations() const
 const animations_struct* ResourcesManager::animation(const QString& name) const
 {
     return myAnimations[name];
+}
+
+void ResourcesManager::assetDefined(const archt *arch, const std::string &filename) {
+    for (auto it = myOrigins.begin(); it != myOrigins.end(); it++) {
+        it.value().removeAll(arch);
+    }
+    myOrigins[filename.c_str()].append(arch);
 }

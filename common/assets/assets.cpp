@@ -115,7 +115,11 @@ void assets_collect(const char* datadir) {
 
     AssetCollector collector;
     collector.addLoader(new TreasureLoader(manager->treasures(), manager->archetypes()));
-    collector.addLoader(new ArchetypeLoader(manager->archetypes()));
+    auto al = new ArchetypeLoader(manager->archetypes());
+    if (settings.archetypes_tracker) {
+        al->setTracker(static_cast<AssetsTracker<archetype>*>(settings.archetypes_tracker));
+    }
+    collector.addLoader(al);
     collector.addLoader(new PngLoader(manager->faces()));
     collector.addLoader(new FacesetLoader());
     collector.addLoader(new FaceLoader(manager->faces(), manager->animations()));

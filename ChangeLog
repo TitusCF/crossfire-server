@@ -1,4 +1,13 @@
 2021-02-01 Nicolas Weeger
+    * common/assets/ArchetypeLoader.cpp,
+    * common/assets/assets.cpp,
+    * common/init.c,
+    * include/ArchetypeLoader.h,
+    * include/AssetLoader.h,
+    * include/global.h: Add asset tracking.
+    * utils/cre/*: Allow mass edition of monsters.
+
+2021-02-01 Nicolas Weeger
     * common/Makefile.am,
     * common/button.c,
     * common/events.cpp,
