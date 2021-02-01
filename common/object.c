@@ -1377,8 +1377,7 @@ void object_free(object *ob, int flags) {
     }
 
     if ((flags & FREE_OBJ_NO_DESTROY_CALLBACK) == 0) {
-        /* Handle for plugin destroy event */
-        execute_event(ob, EVENT_DESTROY, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+        events_execute_object_event(ob, EVENT_DESTROY, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
     }
 
     if (ob->inv) {

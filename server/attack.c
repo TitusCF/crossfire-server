@@ -751,13 +751,10 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     if (get_attack_mode(&op, &hitter, &simple_attack))
         return 1;
 
-    /* Lauwenmark: This is used to handle script_weapons with weapons.
-     * Only used for players.
-     */
+    /* This is used to handle script_weapons with weapons, only for players. */
     if (hitter->type == PLAYER) {
         if (hitter->current_weapon != NULL) {
-            /* Lauwenmark: Handle for plugin attack event */
-            if (execute_event(hitter->current_weapon, EVENT_ATTACKS,
+            if (events_execute_object_event(hitter->current_weapon, EVENT_ATTACKS,
                               hitter, op, NULL, SCRIPT_FIX_ALL) != 0)
                 return 0;
         }
@@ -989,12 +986,11 @@ object *hit_with_arrow(object *op, object *victim) {
     victim_map = victim->map;
     victim_tag = victim->count;
     hitter_tag = hitter->count;
-    /* Lauwenmark: Handling plugin attack event for thrown items */
     /* FIXME provide also to script the skill? hitter is the throwed
        items, but there is no information about the fact it was
        thrown
     */
-    if (execute_event(op, EVENT_ATTACKS, hitter, victim, NULL, SCRIPT_FIX_ALL) == 0) {
+    if (events_execute_object_event(op, EVENT_ATTACKS, hitter, victim, NULL, SCRIPT_FIX_ALL) == 0) {
         /*
          * temporary set the hitter's skill to the one associated with the
          * throw wrapper. This is needed to that thrower gets it's xp at the
@@ -1540,11 +1536,9 @@ static int kill_object(object *op, int dam, object *hitter) {
     if (op->stats.hp >= 0)
         return -1;
 
-    /* Lauwenmark: Handle for plugin death event */
-    if (execute_event(op, EVENT_DEATH, hitter, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(op, EVENT_DEATH, hitter, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return 0;
-    /* Lauwenmark: Handle for the global kill event */
-    execute_global_event(EVENT_GKILL, op, hitter);
+    events_execute_global_event(EVENT_GKILL, op, hitter);
 
     object_handle_death_animation(op);
 
@@ -1860,11 +1854,10 @@ int hit_player(object *op, int dam, object *hitter, uint32_t type, int full_hit)
     int friendlyfire;
     object *owner;
 
-    /* Lauwenmark: Handle for plugin attack event */
-    if (execute_event(op, EVENT_ATTACKED, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(op, EVENT_ATTACKED, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
         return 0;
     FOR_INV_PREPARE(op, inv)
-        if (execute_event(inv, EVENT_ATTACKED, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
+        if (events_execute_object_event(inv, EVENT_ATTACKED, hitter, hitter->current_weapon ? hitter->current_weapon : hitter, NULL, SCRIPT_FIX_ALL) != 0)
             return 0;
     FOR_INV_FINISH();
 

@@ -414,7 +414,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
 
     /* Now item is about to be picked. */
     tag = tmp->count;
-    if (execute_event(tmp, EVENT_PICKUP, pl, op, NULL, SCRIPT_FIX_ALL) != 0) {
+    if (events_execute_object_event(tmp, EVENT_PICKUP, pl, op, NULL, SCRIPT_FIX_ALL) != 0) {
         /* put item back, if it still exists */
         if (tmp->count == tag && !QUERY_FLAG(tmp, FLAG_FREED)) {
           if (env != NULL) {
@@ -841,8 +841,7 @@ object *drop_object(object *op, object *tmp, uint32_t nrof) {
             return NULL;  /* can't unapply it */
     }
 
-    /* Lauwenmark: Handle for plugin drop event */
-    if (execute_event(tmp, EVENT_DROP, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(tmp, EVENT_DROP, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return NULL;
 
     /* ensure the plugin didn't destroy the object */

@@ -34,7 +34,6 @@
  * @param op The arrow or thrown object that is stopping.
  */
 void stop_projectile(object *op) {
-    /* Lauwenmark: Handle for plugin stop event */
     object *event = op;
     tag_t tag;
 
@@ -42,7 +41,7 @@ void stop_projectile(object *op) {
         event = op->inv;
 
     tag = event->count;
-    execute_event(event, EVENT_STOP, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+    events_execute_object_event(event, EVENT_STOP, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
 
     if (object_was_destroyed(event, tag)) {
         if (event != op) {

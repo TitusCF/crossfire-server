@@ -1280,11 +1280,11 @@ void key_change_class(object *op, char key) {
         esrv_new_player(op->contr, op->weight+op->carrying);
         create_treasure(find_treasurelist("starting_wealth"), op, 0, 0, 0);
 
-        /* Lauwenmark : Here we handle the BORN global event */
-        execute_global_event(EVENT_BORN, op);
+        /* Here we handle the BORN global event */
+        events_execute_global_event(EVENT_BORN, op);
 
-        /* Lauwenmark : We then generate a LOGIN event */
-        execute_global_event(EVENT_LOGIN, op->contr, op->contr->socket.host);
+        /* We then generate a LOGIN event */
+        events_execute_global_event(EVENT_LOGIN, op->contr, op->contr->socket.host);
         player_set_state(op->contr, ST_PLAYING);
 
         object_set_msg(op, NULL);
@@ -1530,11 +1530,11 @@ int apply_race_and_class(object *op, archetype *race, archetype *opclass, living
         if (!allowed_class(op)) return 2;
     }
 
-    /* Lauwenmark : Here we handle the BORN global event */
-    execute_global_event(EVENT_BORN, op);
+    /* Here we handle the BORN global event */
+    events_execute_global_event(EVENT_BORN, op);
 
-    /* Lauwenmark : We then generate a LOGIN event */
-    execute_global_event(EVENT_LOGIN, op->contr, op->contr->socket.host);
+    /* We then generate a LOGIN event */
+    events_execute_global_event(EVENT_LOGIN, op->contr, op->contr->socket.host);
 
     object_set_msg(op, NULL);
 
@@ -1585,8 +1585,7 @@ void key_confirm_quit(object *op, char key) {
         return;
     }
 
-    /* Lauwenmark : Here we handle the REMOVE global event */
-    execute_global_event(EVENT_REMOVE, op);
+    events_execute_global_event(EVENT_REMOVE, op);
     pets_terminate_all(op);
     object_remove(op);
     op->direction = 0;
@@ -3612,12 +3611,10 @@ void kill_player(object *op, const object *killer) {
         return;
     }
 
-    /* Lauwenmark: Handle for plugin death event */
-    if (execute_event(op, EVENT_DEATH, NULL, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(op, EVENT_DEATH, NULL, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return;
 
-    /* Lauwenmark: Handle for the global death event */
-    execute_global_event(EVENT_PLAYER_DEATH, op, killer);
+    events_execute_global_event(EVENT_PLAYER_DEATH, op, killer);
     if (op->stats.food < 0) {
         snprintf(buf, sizeof(buf), "%s starved to death.", op->name);
         strcpy(op->contr->killer, "starvation");

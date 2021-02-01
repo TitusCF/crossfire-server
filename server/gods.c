@@ -323,8 +323,7 @@ static bool try_leave_cult(object* pl, object* skill, int angry) {
 void pray_at_altar(object *pl, object *altar, object *skill) {
     const object *pl_god = find_god(determine_god(pl));
 
-    /* Lauwenmark: Handle for plugin altar-praying (apply) event */
-    if (execute_event(altar, EVENT_APPLY, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(altar, EVENT_APPLY, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return;
 
     /* If non consecrate altar, don't do anything */

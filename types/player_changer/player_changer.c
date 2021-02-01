@@ -57,8 +57,7 @@ static method_ret player_changer_type_process(ob_methods *context, object *op) {
     * needs to be on top.
     */
     if (op->above->type == PLAYER) {
-        /* Lauwenmark: Handle for plugin TRIGGER event */
-        if (execute_event(op, EVENT_TRIGGER, op->above, NULL, NULL, SCRIPT_FIX_NOTHING) != 0)
+        if (events_execute_object_event(op, EVENT_TRIGGER, op->above, NULL, NULL, SCRIPT_FIX_NOTHING) != 0)
             return METHOD_OK;
         player = op->above;
         FOR_INV_PREPARE(op, walk)

@@ -412,7 +412,7 @@ int pick_lock(object *pl, int dir, object *skill) {
         return 0;
     }
 
-    if (execute_event(tmp, EVENT_TRIGGER, pl, skill, NULL, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(tmp, EVENT_TRIGGER, pl, skill, NULL, SCRIPT_FIX_ALL) != 0)
         return 0;
 
     if (tmp->type == LOCKED_DOOR) {
@@ -1488,8 +1488,7 @@ static int write_note(object *pl, object *item, const char *msg) {
         return 0;
     }
 
-    /* Lauwenmark: Handle for plugin book writing (trigger) event */
-    if (execute_event(item, EVENT_TRIGGER, pl, NULL, msg, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(item, EVENT_TRIGGER, pl, NULL, msg, SCRIPT_FIX_ALL) != 0)
         return strlen(msg);
 
     buf[0] = 0;
@@ -1613,7 +1612,7 @@ static int write_scroll(object *pl, object *scroll, object *skill) {
         return 0;
     }
 
-    if (execute_event(scroll, EVENT_TRIGGER, pl, chosen_spell, NULL, 0) != 0) {
+    if (events_execute_object_event(scroll, EVENT_TRIGGER, pl, chosen_spell, NULL, 0) != 0) {
         return 0;
     }
 
@@ -1985,9 +1984,8 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
         return 0;
     }
 
-    /* Lauwenmark - Now we can call the associated script_throw event (if any) */
     tag = throw_ob->count;
-    execute_event(throw_ob, EVENT_THROW, op, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+    events_execute_object_event(throw_ob, EVENT_THROW, op, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
     if (object_was_destroyed(throw_ob, tag)) {
         return 1;
     }

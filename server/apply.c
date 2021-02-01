@@ -330,8 +330,7 @@ int apply_container(object *op, object *sack, int aflags) {
         /* Query name before the close event, as the container could be destroyed. */
         query_name(op->container, name_tmp, MAX_BUF);
 
-        /* Lauwenmark: Handle for plugin close event */
-        if (execute_event(tmp, EVENT_CLOSE, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+        if (events_execute_object_event(tmp, EVENT_CLOSE, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
             return 1;
 
         draw_ext_info_format(NDI_UNIQUE, 0, op,

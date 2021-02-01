@@ -76,8 +76,7 @@ method_ret common_pre_ob_move_on(object *trap, object *victim, object *originato
     ob_move_on_recursion_depth++;
     trap = HEAD(trap);
 
-    /* Lauwenmark: Handle for plugin trigger event */
-    if (execute_event(trap, EVENT_TRIGGER, originator, victim, NULL, SCRIPT_FIX_ALL) != 0) {
+    if (events_execute_object_event(trap, EVENT_TRIGGER, originator, victim, NULL, SCRIPT_FIX_ALL) != 0) {
         ob_move_on_recursion_depth--;
         return METHOD_ERROR;
     }

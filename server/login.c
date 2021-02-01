@@ -821,8 +821,7 @@ void check_login(object *op, int check_pass) {
                          pl->ob->name);
     login_check_shutdown(op);
 
-    /* Lauwenmark : Here we handle the LOGIN global event */
-    execute_global_event(EVENT_LOGIN, pl, pl->socket.host);
+    events_execute_global_event(EVENT_LOGIN, pl, pl->socket.host);
     op->contr->socket.update_look = 1;
     /* If the player should be dead, call kill_player for them
      * Only check for hp - if player lacks food, let the normal

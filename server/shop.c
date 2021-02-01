@@ -912,9 +912,8 @@ int shop_pay_unpaid(object *pl, object *op) {
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
         } else {
-            // Event hook for buying an item.
             // TODO: Figure out how to pass in the shop owner for player shops.
-            if (execute_event(op, EVENT_BOUGHT, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+            if (events_execute_object_event(op, EVENT_BOUGHT, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
                 return 0;
             object *tmp;
             char *value = cost_str(price);
@@ -960,7 +959,7 @@ void sell_item(object *op, object *pl) {
         return;
     }
 
-    if (execute_event(op, EVENT_SELLING, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+    if (events_execute_object_event(op, EVENT_SELLING, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return;
 
     if (op->custom_name)

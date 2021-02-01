@@ -3974,13 +3974,6 @@ void esrv_update_spells(player *pl) {
 void rod_adjust(object *rod) {
 }
 
-int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
-    return 0;
-}
-
-int execute_global_event(int eventcode, ...) {
-    return 0;
-}
 /*
  * This a modified version of apply_auto: BOOK are not generated, so they don't pollute
  * the readable list.

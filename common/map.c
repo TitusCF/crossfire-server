@@ -1253,8 +1253,7 @@ mapstruct *mapfile_load(const char *map, int flags) {
     /* In case other objects press some buttons down */
     update_buttons(m);
 
-    /* Handle for map load event */
-    execute_global_event(EVENT_MAPLOAD, m);
+    events_execute_global_event(EVENT_MAPLOAD, m);
 
     if (!(flags & MAP_STYLE))
         apply_auto_fix(m); /* Chests which open as default */
@@ -1694,8 +1693,7 @@ void free_map(mapstruct *m) {
         return;
     }
 
-    /* Handle for plugin map unload event. */
-    execute_global_event(EVENT_MAPUNLOAD, m);
+    events_execute_global_event(EVENT_MAPUNLOAD, m);
 
     if (m->spaces)
         free_all_objects(m);

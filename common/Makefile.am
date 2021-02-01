@@ -33,6 +33,7 @@ libcross_a_SOURCES = \
 	button.c\
 	cf_random.c \
 	dialog.c \
+	events.cpp \
 	exp.c\
 	friend.c\
 	holy.c\
