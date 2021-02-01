@@ -3,9 +3,11 @@
 
 extern "C" {
 #include "global.h"
+#include "object.h"
 }
+#include "AssetsTracker.h"
 
-class ResourcesManager
+class ResourcesManager : public AssetsTracker<archt>
 {
     public:
         ResourcesManager();
@@ -29,8 +31,13 @@ class ResourcesManager
         QStringList allAnimations() const;
         const animations_struct* animation(const QString& name) const;
 
+        virtual void assetDefined(const archt *arch, const std::string &filename);
+
+        const QHash<QString, QList<const archt*> >& origins() const { return myOrigins; }
+
     protected:
         QHash<QString, archt*> myArchetypes;
+        QHash<QString, QList<const archt*> > myOrigins;
         QHash<QString, treasurelist*> myTreasures;
         QList<QHash<QString, recipestruct*> > myRecipes;
         QHash<QString, const Face*> myFaces;

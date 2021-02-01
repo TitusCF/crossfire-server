@@ -20,7 +20,7 @@ extern "C" {
 
 int arch_init;  /**< True if doing arch initialization @todo remove */
 
-ArchetypeLoader::ArchetypeLoader(Archetypes *archetypes) : m_archetypes(archetypes) {
+ArchetypeLoader::ArchetypeLoader(Archetypes *archetypes) : m_archetypes(archetypes), m_tracker(nullptr) {
 }
 
 void ArchetypeLoader::processFile(FILE *file, const std::string &filename) {
@@ -35,6 +35,10 @@ void ArchetypeLoader::processFile(FILE *file, const std::string &filename) {
         first = 0;
         at->clone.speed_left = (float)(-0.1);
         at = m_archetypes->define(at->name, at);
+
+        if (m_tracker) {
+            m_tracker->assetDefined(at, filename);
+        }
 
         switch (i) {
         case LL_NORMAL: /* A new archetype, just link it with the previous */

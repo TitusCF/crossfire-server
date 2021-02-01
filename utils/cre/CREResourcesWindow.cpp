@@ -50,10 +50,11 @@
 extern "C" {
 #include "global.h"
 #include "recipe.h"
+}
+
 #include "MessageManager.h"
 #include "ResourcesManager.h"
 #include "ScriptFile.h"
-}
 
 CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, QWidget* parent, DisplayMode mode) : QWidget(parent)
 {

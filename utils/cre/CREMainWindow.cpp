@@ -16,6 +16,7 @@
 #include "CREHPBarMaker.h"
 #include "ScriptFileManager.h"
 #include "FaceMakerDialog.h"
+#include "EditMonstersDialog.h"
 
 extern "C" {
 #include "global.h"
@@ -175,6 +176,10 @@ void CREMainWindow::createActions()
     myReportQuests->setEnabled(false);
     connect(myReportQuests, SIGNAL(triggered()), this, SLOT(onReportQuests()));
 
+    myToolEditMonsters = new QAction(tr("Edit monsters"), this);
+    myToolEditMonsters->setStatusTip(tr("Edit monsters in a table."));
+    connect(myToolEditMonsters, SIGNAL(triggered()), this, SLOT(onToolEditMonsters()));
+
     myToolSmooth = new QAction(tr("Generate smooth face base"), this);
     myToolSmooth->setStatusTip(tr("Generate the basic smoothed picture for a face."));
     connect(myToolSmooth, SIGNAL(triggered()), this, SLOT(onToolSmooth()));
@@ -236,6 +241,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportQuests);
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
+    toolsMenu->addAction(myToolEditMonsters);
     toolsMenu->addAction(myToolSmooth);
     toolsMenu->addAction(myToolHPBar);
     toolsMenu->addAction(myToolCombatSimulator);
@@ -1478,6 +1484,12 @@ void CREMainWindow::onReportQuests()
   CREReportDisplay show(report, "Quests report");
   QApplication::restoreOverrideCursor();
   show.exec();
+}
+
+void CREMainWindow::onToolEditMonsters()
+{
+    EditMonstersDialog edit(myResourcesManager);
+    edit.exec();
 }
 
 void CREMainWindow::onToolSmooth()

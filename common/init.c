@@ -95,6 +95,7 @@ struct Settings settings = {
     .special_break_map = 1,     /* special_break_map, 1 for historical reasons */
     .hooks_count = 0,
     .ignore_assets_errors = 0,
+    .archetypes_tracker = NULL,
 };
 
 struct Statistics statistics;

@@ -2,6 +2,7 @@
 #define ASSETLOADER_H
 
 #include <string>
+#include "AssetsTracker.h"
 
 /**
  * Abstract file handler for files during the collect process.
