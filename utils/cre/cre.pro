@@ -62,6 +62,7 @@ CREPixmap.cpp \
  CRERandomMapPanel.cpp \
  FaceMakerDialog.cpp \
  EditMonstersDialog.cpp \
+ ArchetypesModel.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
