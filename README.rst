@@ -29,7 +29,7 @@ even more fun. These include:
 * Support for dynamically loaded libraries. Most modern operating systems
   should have it. This is needed for server plugins.
 
-* Python 2.6 or later - this is needed for the Crossfire Python plugin
+* Python 3 - this is needed for the Crossfire Python plugin
   (CFPython) and is *highly* recommended. Most maps, quests, and NPCs will
   not work without it.
 
@@ -55,6 +55,11 @@ Generic instructions for using autoconf/automake are in `INSTALL <INSTALL>`_.
 
 An older, step-by-step guide is available on the wiki:
 http://wiki.metalforge.net/doku.php/server:server_compiling
+
+To build the Crossfire Resource Editor (CRE), first build the server, and then
+run:
+
+  $ cd utils/cre && qmake && make
 
 Final Steps
 ~~~~~~~~~~~
