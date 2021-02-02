@@ -1,3 +1,6 @@
+2021-02-02 Nicolas Weeger
+    * common/assets/Archetypes.cpp: Correctly clear 'removed' flag before archetype update.
+
 2021-02-01 Nicolas Weeger
     * include/sproto.h,
     * server/init.c: Extract function.
