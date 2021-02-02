@@ -44,6 +44,19 @@ void Archetypes::recursive_update(object *item, archetype *updated) {
     recursive_update(item->inv, updated);
 }
 
+/**
+ * Recursively mark all items in inventory as not removed.
+ * @param item what to start from.
+ */
+static void mark_inv_not_removed(object *item) {
+    auto inv = item->inv;
+    while (inv) {
+        CLEAR_FLAG(inv, FLAG_REMOVED);
+        mark_inv_not_removed(inv);
+        inv = inv->below;
+    }
+}
+
 void Archetypes::replace(archetype *existing, archetype *update) {
     for (auto arch : m_assets) {
         recursive_update(arch.second->clone.inv, update);
@@ -52,9 +65,14 @@ void Archetypes::replace(archetype *existing, archetype *update) {
         m_updateListener(existing, update);
     }
 
+    // We need to mark items as not removed before calling object_free_inventory().
+    // The flag is set at object initialisation but never cleared since an
+    // archetype's object is never inserted anywhere.
+    mark_inv_not_removed(&existing->clone);
     object_free_inventory(&existing->clone);
     object_copy_with_inv(&update->clone, &existing->clone);
     existing->clone.arch = existing;
+    mark_inv_not_removed(&update->clone);
     object_free_inventory(&update->clone);
     free_arch(update);
 }
