@@ -103,6 +103,7 @@ static void power_crystal_describe(const ob_methods *context, const object *op, 
     buf[0] = '\0';
     query_name(op, buf, size-1);
     buf[size-1] = 0;
+    stringbuffer_append_string(sb, " ");
 
     /* Avoid division by zero... */
     if (op->stats.maxsp == 0) {
