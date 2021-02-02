@@ -4,6 +4,7 @@
 
 2021-02-02 Nicolas Weeger
     * common/assets/Archetypes.cpp: Correctly clear 'removed' flag before archetype update.
+    * types/power_crystal/power_crystal.c: Add space before the parenthesis in description.
 
 2021-02-01 Nicolas Weeger
     * include/sproto.h,
