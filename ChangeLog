@@ -1,3 +1,7 @@
+2021-02-02 Daniel Hawkins
+    * server/apply.c: Remove dubious call to object_free in scroll_failure
+        when spell failure effects are enabled.
+
 2021-02-02 Nicolas Weeger
     * common/assets/Archetypes.cpp: Correctly clear 'removed' flag before archetype update.
 

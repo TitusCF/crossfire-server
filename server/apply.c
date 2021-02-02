@@ -243,7 +243,7 @@ int apply_container(object *op, object *sack, int aflags) {
                                  "Not in your inventory: %s",
                                  name_sack);
             return 0;
-        }        
+        }
     }
     if ( aflags == AP_APPLY ) {
         // What if the container is open?  Make it just ready!
@@ -308,7 +308,7 @@ int apply_container(object *op, object *sack, int aflags) {
         // open; same as no special flags
         aflags = AP_NULL;
     }
-    
+
     /* If we have a currently open container, then it needs
      * to be closed in all cases if we are opening this one up.
      * We then fall through if appropriate for opening the new
@@ -318,7 +318,7 @@ int apply_container(object *op, object *sack, int aflags) {
         (QUERY_FLAG(sack, FLAG_APPLIED) || sack->env != op) )
     {
         tag_t tmp_tag = op->container->count;
-   
+
         if (op->container->env != op) { /* if container is on the ground */
             object *part = op->container->head ? op->container->head : op->container;
             while (part) {
@@ -1620,8 +1620,7 @@ void scroll_failure(object *op, int failure, int power) {
             tmp = create_archetype(LOOSE_MANA);
             cast_magic_storm(op, tmp, power);
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "You unlease uncontrolled mana!");
-            object_free(tmp, FREE_OBJ_NO_DESTROY_CALLBACK);
+                          "You unleash uncontrolled mana!");
             return;
         }
     }
