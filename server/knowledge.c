@@ -383,7 +383,7 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
     }
     for (inv = pl->ob->inv; inv != NULL; inv = inv->below) {
 
-        if (QUERY_FLAG(inv, FLAG_INV_LOCKED) || QUERY_FLAG(inv, FLAG_STARTEQUIP))
+        if (inv->invisible || QUERY_FLAG(inv, FLAG_INV_LOCKED) || QUERY_FLAG(inv, FLAG_STARTEQUIP))
             continue;
 
         if (inv->title == NULL)
@@ -412,7 +412,9 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
 
             if (strcmp(name, ingname) == 0 && ((inv->nrof == 0 && count == 1) || (inv->nrof >= count))) {
                 ingredients[index] = inv;
-                counts[index] = count;
+                // If nrof is 0, we want to keep a count of 0 so put_object_in_sack() later doesn't call
+                // object_split() which would destroy tmp and mess up our tags.
+                counts[index] = inv->nrof == 0 ? 0 : count;
                 break;
             }
 
