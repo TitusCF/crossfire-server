@@ -1,5 +1,7 @@
 2021-02-03 Nicolas Weeger
     * common/events.cpp: Disable logging by default.
+    * server/knowledge.c: Fix alchemy attempt not working with items having nrof 0 (like icecubes).
+      Also don't consider invisible items as ingredients.
 
 2021-02-02 Daniel Hawkins
     * server/apply.c: Remove dubious call to object_free in scroll_failure
