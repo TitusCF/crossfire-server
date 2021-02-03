@@ -6,7 +6,7 @@ extern "C" {
 #include <map>
 
 // If set then dump information about found event connectors
-#define EVENTS_DEBUG
+//#define EVENTS_DEBUG
 
 static std::map<event_registration, f_plug_event> global_handlers[NR_EVENTS];
 static event_registration next_event_registration = 1;
