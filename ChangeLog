@@ -1,3 +1,6 @@
+2021-02-04 Daniel Hawkins
+    * doc/Developers/images: Apply patch #386. Docs now reference correct location for image_info.
+
 2021-02-03 Nicolas Weeger
     * common/events.cpp: Disable logging by default.
     * server/knowledge.c: Fix alchemy attempt not working with items having nrof 0 (like icecubes).
