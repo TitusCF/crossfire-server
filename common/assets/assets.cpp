@@ -405,19 +405,6 @@ static void pack_images(const char *filename) {
     mtar_close(&tar);
 }
 
-/**
- * Write smoothing information to the specified StringBuffer.
- * Used when packing archetypes, since smooth is there...
- * @param buf where to add information.
- */
-static void add_smooth(StringBuffer *buf) {
-    manager->faces()->each([&buf] (const auto face) {
-       if (face->smoothface) {
-           stringbuffer_append_printf(buf, "smoothface %s %s\n", face->name, face->smoothface->name);
-       }
-    });
-}
-
 void assets_pack(const char *type, const char *filename) {
     StringBuffer *buf = stringbuffer_new();
     if (strcmp(type, "treasures") == 0) {
@@ -427,7 +414,6 @@ void assets_pack(const char *type, const char *filename) {
         do_pack(new AnimationWriter(), manager->animations(), buf);
     } else if (strcmp(type, "archs") == 0) {
         do_pack(new ArchetypeWriter(), manager->archetypes(), buf);
-        add_smooth(buf);
     } else if (strcmp(type, "messages") == 0) {
         do_pack(new MessageWriter(), manager->messages(), buf);
     } else if (strcmp(type, "facesets") == 0) {
