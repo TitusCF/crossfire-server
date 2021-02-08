@@ -501,12 +501,12 @@ void CREMainWindow::onReportDuplicate()
     report += "</ul>";
 
     report += "<h1>Unused animations:</h1><ul>";
-    foreach(QString anim, myResourcesManager->allAnimations())
+    getManager()->animations()->each([&anims, &report] (const auto anim)
     {
-        if (anims[anim].size() > 0 || anim == "###none")
-            continue;
-        report += "<li>" + anim + "</li>";
-    }
+        if (anims[anim->name].size() > 0 || !strcmp(anim->name, "###none"))
+            return;
+        report += QString("<li>") + anim->name + "</li>";
+    });
     report += "</ul>";
 
     // Find faces used for an object having an animation not including this face
