@@ -93,6 +93,24 @@ void FaceLoader::processFile(FILE *file, const std::string& filename) {
             continue;
         }
 
+        if (!strncmp(buf, "smoothface ", 11)) {
+            if (on_face) {
+                on_face->smoothface = m_faces->get(buf + 11);
+            } else {
+                char *space = strchr(buf + 11, ' ');
+                if (!space) {
+                    LOG(llevError, "Invalid 'smoothface' %s in %s\n", buf, filename.c_str());
+                } else {
+                    (*space) = '\0';
+                    space++;
+                    auto original = m_faces->get(buf + 11);
+                    auto smoothed = m_faces->get(space);
+                    original->smoothface = smoothed;
+                }
+            }
+            continue;
+        }
+
         if (!strncmp(buf, "face ", 5)) {
             cp = buf+5;
 
