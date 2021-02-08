@@ -1159,6 +1159,7 @@ static void init_beforeplay(void) {
     assets_finish_archetypes_for_play();
     init_gods(); /* init linked list of gods from archs*/
     init_readable(); /* inits useful arrays for readable texts */
+    quest_load_definitions();
 
     switch (settings.dumpvalues) {
     case 1:
