@@ -10,6 +10,8 @@
 extern "C" {
 #include "global.h"
 }
+#include "assets.h"
+#include "AssetsManager.h"
 
 FaceMakerDialog::FaceMakerDialog(QWidget* parent, ResourcesManager* manager) : QDialog(parent), myManager(manager)
 {    
@@ -179,7 +181,7 @@ void FaceMakerDialog::makeFaces()
 
         QString anim(tr("animation %1\n").arg(archName));
 
-        int faceNumber = myManager->face(face)->number;
+        int faceNumber = getManager()->faces()->get(face.toLocal8Bit().data())->number;
 
         for (int var = 1; var <= variants; var++) {
             QImage image;
