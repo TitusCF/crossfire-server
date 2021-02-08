@@ -477,12 +477,12 @@ void CREMainWindow::onReportDuplicate()
     report += "</ul>";
 
     report += "<h1>Unused faces:</h1><ul>";
-    foreach(QString face, myResourcesManager->faces())
+    getManager()->faces()->each([&faces, &report] (const auto face)
     {
-        if (faces[face].size() > 0)
-            continue;
-        report += "<li>" + face + "</li>";
-    }
+        if (faces[face->name].size() > 0)
+            return;
+        report += QString("<li>") + face->name + "</li>";
+    });
     report += "</ul>";
 
     report += "<h1>Animations used multiple times:</h1><ul>";

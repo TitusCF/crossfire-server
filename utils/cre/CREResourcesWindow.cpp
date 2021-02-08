@@ -460,23 +460,19 @@ void CREResourcesWindow::fillArtifacts()
 
 void CREResourcesWindow::fillFaces()
 {
-    QTreeWidgetItem* item, *root;
-    const Face* face;
+    QTreeWidgetItem* root;
 
     root = CREUtils::faceNode(NULL);
     myTreeItems.append(new CRETreeItemEmpty());
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     myTree->addTopLevelItem(root);
 
-    QStringList faces = myResources->faces();
-
-    foreach(QString name, faces)
+    getManager()->faces()->each([this, &root] (const auto face)
     {
-        face = myResources->face(name);
-        item = CREUtils::faceNode(face, root);
+        auto item = CREUtils::faceNode(face, root);
         myTreeItems.append(new CRETTreeItem<const Face>(face, "Face"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
-    }
+    });
 
     addPanel("Face", new CREFacePanel(this));
 }
@@ -564,7 +560,7 @@ void CREResourcesWindow::fillQuests()
 
     foreach(Quest* quest, myQuests->quests())
     {
-      face = myResources->face(quest->face());
+      face = getManager()->faces()->find(quest->face().toLocal8Bit().data());
       if (face != NULL)
         quest->setFaceNumber(face->number);
       codes.append(quest->code());

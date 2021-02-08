@@ -54,10 +54,6 @@ void ResourcesManager::load()
         myRecipes.append(recipes);
     }
 
-    getManager()->faces()->each([this] (auto face) {
-        myFaces[face->name] = face;
-    });
-
     getManager()->animations()->each([this] (auto anim) {
         myAnimations[anim->name] = anim;
     });
@@ -98,18 +94,6 @@ const recipe* ResourcesManager::recipe(int ingredients, const QString& name) con
     return myRecipes[ingredients - 1][name];
 }
 
-
-QStringList ResourcesManager::faces() const
-{
-    QStringList keys = myFaces.keys();
-    qSort(keys);
-    return keys;
-}
-
-const Face* ResourcesManager::face(const QString& name) const
-{
-    return myFaces[name];
-}
 
 QStringList ResourcesManager::allAnimations() const
 {

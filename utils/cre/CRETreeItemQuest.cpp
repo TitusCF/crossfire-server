@@ -5,6 +5,8 @@
 #include "CREResourcesWindow.h"
 #include "ResourcesManager.h"
 #include "CREPixmap.h"
+#include "assets.h"
+#include "AssetsManager.h"
 
 CRETreeItemQuest::CRETreeItemQuest(Quest* quest, QTreeWidgetItem* item, CREResourcesWindow* window) : CRETTreeItem(quest, "Quest")
 {
@@ -42,7 +44,7 @@ void CRETreeItemQuest::questModified()
     myTreeItem->setIcon(0, QIcon());
     if (!myItem->face().isEmpty())
     {
-      const Face* face = myWindow->resourcesManager()->face(myItem->face());
+      const Face* face = getManager()->faces()->get(myItem->face().toLocal8Bit().data());
       if (face != NULL)
         myTreeItem->setIcon(0, CREPixmap::getIcon(face->number));
     }
