@@ -385,9 +385,7 @@ void CREMainWindow::onReportDuplicate()
     QHash<QString, QStringList> faces, anims;
 
     // browse all archetypes
-    archetype* arch = get_next_archetype(NULL);
-
-    while (arch != NULL)
+    getManager()->archetypes()->each([&faces, &anims] (const auto arch)
     {
         // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully, see lower for report on that)
         if (arch->clone.animation == NULL)
@@ -410,15 +408,12 @@ void CREMainWindow::onReportDuplicate()
                 anims[QString(key)].append(QString(arch->name) + " (arch)");
             }
         }
-        arch = get_next_archetype(arch);
-    }
+    });
 
     // list faces in animations
-    QStringList allAnims = myResourcesManager->allAnimations();
-    foreach(QString name, allAnims)
+    getManager()->animations()->each([&faces] (const auto anim)
     {
         QStringList done;
-        const animations_struct* anim = myResourcesManager->animation(name);
         for (int i = 0; i < anim->num_animations; i++)
         {
             // don't list animation twice if they use the same face
@@ -428,7 +423,7 @@ void CREMainWindow::onReportDuplicate()
                 done.append(QString::fromLatin1(anim->faces[i]->name));
             }
         }
-    }
+    });
 
     // list faces and animations for artifacts
     artifactlist* list;
