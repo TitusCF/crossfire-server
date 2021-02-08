@@ -254,17 +254,12 @@ void CREResourcesWindow::fillAnimations()
     animationsNode->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     myTree->addTopLevelItem(animationsNode);
 
-    QTreeWidgetItem* item;
-
-    QStringList animations = myResources->allAnimations();
-    // There is the "bug" animation to consider
-    foreach(QString name, animations)
+    getManager()->animations()->each([this, &animationsNode] (const auto anim)
     {
-        const animations_struct* anim = myResources->animation(name);
-        item = CREUtils::animationNode(anim, animationsNode);
+        auto item = CREUtils::animationNode(anim, animationsNode);
         myTreeItems.append(new CRETTreeItem<const animations_struct>(anim, "Animation"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
-    }
+    });
 
     addPanel("Animation", new CREAnimationPanel(this));
 }

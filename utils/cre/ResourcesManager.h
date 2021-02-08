@@ -22,9 +22,6 @@ class ResourcesManager : public AssetsTracker<archt>
         QStringList recipes(int count) const;
         const recipestruct* recipe(int ingredients, const QString& name) const;
 
-        QStringList allAnimations() const;
-        const animations_struct* animation(const QString& name) const;
-
         virtual void assetDefined(const archt *arch, const std::string &filename);
 
         const QHash<QString, QList<const archt*> >& origins() const { return myOrigins; }
@@ -33,7 +30,6 @@ class ResourcesManager : public AssetsTracker<archt>
         QHash<QString, archt*> myArchetypes;
         QHash<QString, QList<const archt*> > myOrigins;
         QList<QHash<QString, recipestruct*> > myRecipes;
-        QHash<QString, animations_struct*> myAnimations;
 };
 
 #endif /* RESOURCESMANAGER_H */

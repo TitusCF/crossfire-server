@@ -53,10 +53,6 @@ void ResourcesManager::load()
         }
         myRecipes.append(recipes);
     }
-
-    getManager()->animations()->each([this] (auto anim) {
-        myAnimations[anim->name] = anim;
-    });
 }
 
 QStringList ResourcesManager::archetypes() const
@@ -94,18 +90,6 @@ const recipe* ResourcesManager::recipe(int ingredients, const QString& name) con
     return myRecipes[ingredients - 1][name];
 }
 
-
-QStringList ResourcesManager::allAnimations() const
-{
-    QStringList keys = myAnimations.keys();
-    qSort(keys);
-    return keys;
-}
-
-const animations_struct* ResourcesManager::animation(const QString& name) const
-{
-    return myAnimations[name];
-}
 
 void ResourcesManager::assetDefined(const archt *arch, const std::string &filename) {
     for (auto it = myOrigins.begin(); it != myOrigins.end(); it++) {
