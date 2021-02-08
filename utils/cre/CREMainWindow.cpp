@@ -741,7 +741,7 @@ void CREMainWindow::onReportAlchemyGraph()
         {
             QString product("???");
             for (size_t idx = 0; idx < recipe->arch_names; idx++) {
-                auto arch = myResourcesManager->archetype(recipe->arch_name[idx]);
+                auto arch = getManager()->archetypes()->find(recipe->arch_name[idx]);
                 if (!arch) {
                     continue;
                 }
