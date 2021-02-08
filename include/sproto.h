@@ -444,6 +444,7 @@ void initPlugins(void);
 void cleanupPlugins(void);
 /* quest.c */
 int quest_get_player_state(player *pl, sstring quest_code);
+void quest_load_definitions(void);
 void quest_start(player *pl, sstring quest_code, int state);
 void quest_set_player_state(player *pl, sstring quest_code, int state);
 int quest_was_completed(player *pl, sstring quest_code);

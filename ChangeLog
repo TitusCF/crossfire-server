@@ -1,4 +1,9 @@
 2021-02-08 Nicolas Weeger
+    * include/sproto.h,
+    * server/init.c,
+    * server/quest.c: Load quest definitions at startup instead of waiting for a player.
+
+2021-02-08 Nicolas Weeger
     * common/assets/FaceLoader.cpp: Allow 'smoothface' in .face files.
     * common/assets/FaceWriter.cpp,
     * common/assets/assets.cpp: Write 'smoothface' in .face packed file instead of .arc.

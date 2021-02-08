@@ -407,7 +407,7 @@ static int load_quests_from_file(const char *filename) {
 }
 
 /** Load all quest definitions. Can be called multiple times, will be ignored. */
-static void quest_load_definitions(void) {
+void quest_load_definitions(void) {
     if (quests_loaded)
         return;
     int found = load_quests_from_file("world.quests");
@@ -447,8 +447,6 @@ static quest_step_definition *quest_get_step(quest_definition *quest, int step) 
 static quest_definition *quest_get(sstring code) {
     quest_definition *quest;
 
-    quest_load_definitions();
-
     quest = quest_get_by_code(code);
     if (!quest) {
         LOG(llevError, "quest %s required but not found!\n", code);
@@ -478,9 +476,6 @@ static void quest_read_player_data(quest_player *pq) {
     quest_state *qs = NULL, *prev = NULL;
     int warned = 0, state;
     quest_definition *quest = NULL;
-
-    /* needed, so we can check ending steps. */
-    quest_load_definitions();
 
     snprintf(final, sizeof(final), "%s/%s/%s/%s.quest", settings.localdir, settings.playerdir, pq->player_name, pq->player_name);
 
@@ -1298,7 +1293,6 @@ static void output_quests(quest_definition *parent, int level) {
  * quests are set up and recognised correctly.
  */
 void dump_quests(void) {
-    quest_load_definitions();
     output_quests(NULL, 0);
     exit(0);
 }
@@ -1373,9 +1367,6 @@ void quest_send_initial_states(player *pl) {
 
     if (pl->socket.notifications < 1)
         return;
-
-    /* ensure quest definitions are loaded */
-    quest_load_definitions();
 
     states = get_or_create_quest(pl);
 
