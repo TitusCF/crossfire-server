@@ -35,6 +35,7 @@
 #include "CREWrapperObject.h"
 #include "CREWrapperArtifact.h"
 #include "CREWrapperFormulae.h"
+#include "CREWrapperTreasure.h"
 
 #include "CREMapInformationManager.h"
 #include "Quest.h"
@@ -282,6 +283,11 @@ void CREResourcesWindow::fillTreasures()
     foreach(QString name, names)
     {
         list = myResources->treasureList(name);
+        auto wrapper = new CREWrapperTreasureList(list);
+        if (!myFilter.showItem(wrapper)) {
+            delete wrapper;
+            continue;
+        }
         item = CREUtils::treasureNode(list, treasures);
 
         myTreeItems.append(new CRETTreeItem<const treasurelist>(list, "Treasure"));
@@ -298,6 +304,7 @@ void CREResourcesWindow::fillTreasures()
             myTreeItems.append(new CRETTreeItem<const treasurelist>(list, "Treasure"));
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         }
+        myDisplayedItems.append(wrapper);
     }
 
     addPanel("Treasure", new CRETreasurePanel(this));
