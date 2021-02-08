@@ -32,11 +32,6 @@ void ResourcesManager::load()
     init_globals();
     init_library();
 
-    for (archt* arch = get_next_archetype(NULL); arch; arch = get_next_archetype(arch))
-    {
-        myArchetypes[arch->name] = arch;
-    }
-
     QString key;
 
     for (int ing = 1; ; ing++)
@@ -53,18 +48,6 @@ void ResourcesManager::load()
         }
         myRecipes.append(recipes);
     }
-}
-
-QStringList ResourcesManager::archetypes() const
-{
-    QStringList keys = myArchetypes.keys();
-    qSort(keys);
-    return keys;
-}
-
-const archetype* ResourcesManager::archetype(const QString& name) const
-{
-    return myArchetypes[name];
 }
 
 int ResourcesManager::recipeMaxIngredients() const

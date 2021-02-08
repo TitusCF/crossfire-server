@@ -303,8 +303,7 @@ void CREResourcesWindow::fillTreasures()
 
 void CREResourcesWindow::fillArchetypes()
 {
-    QTreeWidgetItem* item, *root, *sub;
-    const archt* arch;
+    QTreeWidgetItem* root;
     int added = 0, count = 0;
 
     root = CREUtils::archetypeNode(NULL);
@@ -314,35 +313,32 @@ void CREResourcesWindow::fillArchetypes()
 
     CREWrapperObject* wrapper = NULL;
 
-    QStringList archs = myResources->archetypes();
-
-    foreach(QString name, archs)
+    getManager()->archetypes()->each([this, &wrapper, &root, &added, &count] (const auto arch)
     {
-        arch = myResources->archetype(name);
         if (arch->head) {
-            continue;
+            return;
         }
         count++;
         if (!wrapper)
             wrapper = new CREWrapperObject();
         wrapper->setObject(&arch->clone);
         if (!myFilter.showItem(wrapper))
-            continue;
+            return;
 
-        item = CREUtils::archetypeNode(arch, root);
+        auto item = CREUtils::archetypeNode(arch, root);
         myTreeItems.append(new CRETTreeItem<const archt>(arch, "Archetype"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
 
         for (archt* more = arch->more; more; more = more->more)
         {
-            sub = CREUtils::archetypeNode(more, item);
+            auto sub = CREUtils::archetypeNode(more, item);
             myTreeItems.append(new CRETTreeItem<const archt>(more, "Archetype"));
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         }
         myDisplayedItems.append(wrapper);
         wrapper = NULL;
         added++;
-    }
+    });
 
     delete wrapper;
     addPanel("Archetype", new CREArchetypePanel(myStore, this));

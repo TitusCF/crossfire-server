@@ -15,9 +15,6 @@ class ResourcesManager : public AssetsTracker<archt>
 
         void load();
 
-        QStringList archetypes() const;
-        const archt* archetype(const QString& name) const;
-
         int recipeMaxIngredients() const;
         QStringList recipes(int count) const;
         const recipestruct* recipe(int ingredients, const QString& name) const;
@@ -27,7 +24,6 @@ class ResourcesManager : public AssetsTracker<archt>
         const QHash<QString, QList<const archt*> >& origins() const { return myOrigins; }
 
     protected:
-        QHash<QString, archt*> myArchetypes;
         QHash<QString, QList<const archt*> > myOrigins;
         QList<QHash<QString, recipestruct*> > myRecipes;
 };
