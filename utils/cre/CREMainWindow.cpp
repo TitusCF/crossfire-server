@@ -387,6 +387,10 @@ void CREMainWindow::onReportDuplicate()
     // browse all archetypes
     getManager()->archetypes()->each([&faces, &anims] (const auto arch)
     {
+        if (arch->head)
+        {
+            return;
+        }
         // if there is an animation, don't consider the face, since it's part of the animation anyway (hopefully, see lower for report on that)
         if (arch->clone.animation == NULL)
         {
