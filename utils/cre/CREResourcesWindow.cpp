@@ -52,6 +52,8 @@ extern "C" {
 #include "global.h"
 #include "recipe.h"
 }
+#include "assets.h"
+#include "AssetsManager.h"
 
 #include "MessageManager.h"
 #include "ResourcesManager.h"
@@ -269,26 +271,19 @@ void CREResourcesWindow::fillAnimations()
 
 void CREResourcesWindow::fillTreasures()
 {
-    QTreeWidgetItem* item, *sub;
-    const treasurelist* list;
-    const treasure* treasure;
-
     QTreeWidgetItem* treasures = CREUtils::treasureNode(NULL);
     myTreeItems.append(new CRETreeItemEmpty());
     treasures->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     myTree->addTopLevelItem(treasures);
 
-    QStringList names = myResources->treasureLists();
-
-    foreach(QString name, names)
+    getManager()->treasures()->each([this, &treasures] (const auto list)
     {
-        list = myResources->treasureList(name);
         auto wrapper = new CREWrapperTreasureList(list);
         if (!myFilter.showItem(wrapper)) {
             delete wrapper;
-            continue;
+            return;
         }
-        item = CREUtils::treasureNode(list, treasures);
+        auto item = CREUtils::treasureNode(list, treasures);
 
         myTreeItems.append(new CRETTreeItem<const treasurelist>(list, "Treasure"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
@@ -296,19 +291,19 @@ void CREResourcesWindow::fillTreasures()
         if (list->total_chance != 0)
             item->setText(1, QString::number(list->total_chance));
 
-        for (treasure = list->items; treasure; treasure = treasure->next)
+        for (auto treasure = list->items; treasure; treasure = treasure->next)
         {
-            sub = CREUtils::treasureNode(treasure, list, item);
+            auto sub = CREUtils::treasureNode(treasure, list, item);
             if (treasure->chance)
                 sub->setText(1, QString::number(treasure->chance));
             myTreeItems.append(new CRETTreeItem<const treasurelist>(list, "Treasure"));
             sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         }
         myDisplayedItems.append(wrapper);
-    }
+    });
 
     addPanel("Treasure", new CRETreasurePanel(this));
-    treasures->setText(0, tr("%1 [%2 items]").arg(treasures->text(0)).arg((names.size())));
+    treasures->setText(0, tr("%1 [%2 items]").arg(treasures->text(0)).arg((getManager()->treasures()->count())));
 }
 
 void CREResourcesWindow::fillArchetypes()
