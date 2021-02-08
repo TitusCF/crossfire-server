@@ -15,6 +15,9 @@
 void FaceWriter::write(const Face *face, StringBuffer *buf) {
     /* No need to write faces with no specific information */
     if (face->visibility == 0 && face->magicmap == 0) {
+        if (face->smoothface) {
+            stringbuffer_append_printf(buf, "smoothface %s %s\n", face->name, face->smoothface->name);
+        }
         return;
     }
     stringbuffer_append_printf(buf, "face %s\n", face->name);
@@ -26,6 +29,9 @@ void FaceWriter::write(const Face *face, StringBuffer *buf) {
     }
     if (face->magicmap & (~FACE_FLOOR)) {
         stringbuffer_append_printf(buf, "magicmap %s\n", get_colorname(face->magicmap & (~FACE_FLOOR)));
+    }
+    if (face->smoothface) {
+        stringbuffer_append_printf(buf, "smoothface %s\n", face->smoothface->name);
     }
     stringbuffer_append_string(buf, "end\n");
 }

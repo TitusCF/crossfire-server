@@ -1,3 +1,9 @@
+2021-02-08 Nicolas Weeger
+    * common/assets/FaceLoader.cpp: Allow 'smoothface' in .face files.
+    * common/assets/FaceWriter.cpp,
+    * common/assets/assets.cpp: Write 'smoothface' in .face packed file instead of .arc.
+
+
 2021-02-04 Daniel Hawkins
     * doc/Developers/images: Apply patch #386. Docs now reference correct location for image_info.
 
