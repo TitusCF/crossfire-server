@@ -37,10 +37,6 @@ void ResourcesManager::load()
         myArchetypes[arch->name] = arch;
     }
 
-    getManager()->treasures()->each([this] (treasurelist *list) {
-        myTreasures[list->name] = list;
-    });
-
     QString key;
 
     for (int ing = 1; ; ing++)
@@ -77,18 +73,6 @@ QStringList ResourcesManager::archetypes() const
 const archetype* ResourcesManager::archetype(const QString& name) const
 {
     return myArchetypes[name];
-}
-
-QStringList ResourcesManager::treasureLists() const
-{
-    QStringList keys = myTreasures.keys();
-    qSort(keys);
-    return keys;
-}
-
-const treasurelist* ResourcesManager::treasureList(const QString& name)
-{
-    return myTreasures[name];
 }
 
 int ResourcesManager::recipeMaxIngredients() const
