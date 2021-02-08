@@ -62,7 +62,8 @@ CREPixmap.cpp \
  CRERandomMapPanel.cpp \
  FaceMakerDialog.cpp \
  EditMonstersDialog.cpp \
- ArchetypesModel.cpp
+ ArchetypesModel.cpp \
+ CREWrapperTreasure.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -123,7 +124,8 @@ CREPixmap.h \
  CRERandomMapPanel.h \
  FaceMakerDialog.h \
  EditMonstersDialog.h \
- ArchetypesModel.h
+ ArchetypesModel.h \
+ CREWrapperTreasure.h
 LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt -ldl
 
 RESOURCES += cre.qrc
