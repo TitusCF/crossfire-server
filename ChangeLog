@@ -1,4 +1,7 @@
 2021-02-09 Nicolas Weeger
+    * server/knowledge.c: Fix comment.
+
+2021-02-09 Nicolas Weeger
     * include/sproto.h,
     * server/attack.c,
     * server/spell_util.c: Remove useless parameter of shuffle_attack().
