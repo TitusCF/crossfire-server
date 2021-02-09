@@ -565,7 +565,7 @@ void drain_wand_charge(object *wand);
 object *find_target_for_friendly_spell(object *op, int dir);
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude);
 int summon_hostile_monsters(object *op, int n, const char *monstername);
-void shuffle_attack(object *op, int change_face);
+void shuffle_attack(object *op);
 void spell_failure(object *op, int failure, int power, object *skill);
 int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stringarg);
 void store_spell_expiry(object *spell);

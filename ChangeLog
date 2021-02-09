@@ -1,4 +1,9 @@
 2021-02-09 Nicolas Weeger
+    * include/sproto.h,
+    * server/attack.c,
+    * server/spell_util.c: Remove useless parameter of shuffle_attack().
+
+2021-02-09 Nicolas Weeger
     * server/skills.c: Display skill used to try to identify items.
 
 2021-02-08 Nicolas Weeger
