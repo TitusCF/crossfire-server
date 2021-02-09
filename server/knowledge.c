@@ -474,8 +474,8 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
     /* do alchemy */
     use_alchemy(pl->ob);
 
-    /* don't forget to slow the player: 1 for alchemy, 1 for each ingredient put,
-     * ingrediants taken are handler when picking */
+    /* don't forget to slow the player: 1 for alchemy itself, 1 for each ingredient put,
+     * ingredients taken are handled by command_take() */
     pl->ob->speed_left -= 1.0 * (rp->ingred_count + 1);
 
     /* safety: ensure cauldron is still there, and player is still above */
