@@ -2420,7 +2420,7 @@ static PyObject *Crossfire_Object_WriteKey(Crossfire_Object *who, PyObject *args
     int add_key = 0;
 
     EXISTCHECK(who);
-    if (!PyArg_ParseTuple(args, "ss|i", &keyname, &value, &add_key))
+    if (!PyArg_ParseTuple(args, "sz|i", &keyname, &value, &add_key))
         return NULL;
 
     return Py_BuildValue("i", cf_object_set_key(who->obj, keyname, value, add_key));
