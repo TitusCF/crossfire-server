@@ -1056,32 +1056,24 @@ int summon_hostile_monsters(object *op, int n, const char *monstername) {
  * chooses a face appropriate to the attack that is
  * being committed by that square at the moment.
  *
- * right now it's being used by color spray and create pool of
- * chaos.
+ * It's being used by color spray and create pool of chaos.
  *
+ * @note
  * This could really be a better implementation - the
  * faces and attacktypes above are hardcoded, which is never
  * good.  The faces refer to faces in the animation sequence.
  * Not sure how to do better - but not having it hardcoded
  * would be nice.
  *
- * I also fixed a bug here in that attacktype was |= -
- * to me, that would be that it would quickly get all
- * attacktypes, which probably wasn't the intent.  MSW 2003-06-03
- *
  * @param op
  * object to change.
- * @param change_face
- * if set, also changes the face, else only changes the attacktype.
  */
-void shuffle_attack(object *op, int change_face) {
+void shuffle_attack(object *op) {
     int i;
 
     i = rndm(0, 21);
     op->attacktype = ATTACKS[i].attacktype|AT_MAGIC;
-    if (change_face) {
-        SET_ANIMATION(op, ATTACKS[i].face);
-    }
+    SET_ANIMATION(op, ATTACKS[i].face);
 }
 
 

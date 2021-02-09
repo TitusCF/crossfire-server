@@ -366,7 +366,7 @@ int hit_map(object *op, int dir, uint32_t type, int full_hit) {
     }
 
     if (type&AT_CHAOS) {
-        shuffle_attack(op, 1);  /*1 flag tells it to change the face */
+        shuffle_attack(op);
         object_update(op, UP_OBJ_FACE);
         type &= ~AT_CHAOS;
     }
