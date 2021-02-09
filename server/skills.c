@@ -891,8 +891,8 @@ int skill_ident(object *pl, object *skill) {
     if (pl->type != PLAYER)
         return 0; /* only players will skill-identify */
 
-    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                  "You look at the objects nearby...");
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                  "You look at the objects nearby with your %s skill...", skill->name);
 
     switch (skill->subtype) {
     case SK_DET_CURSE:
