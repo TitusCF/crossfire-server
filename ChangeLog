@@ -1,3 +1,8 @@
+2021-02-09 Daniel Hawkins
+    * test/bugs/bugtrack/check_duplicate_skills.c: Add test to ensure we don't get duplicate skills
+        from character creation in the future.
+    * test/bugs/bugtrack/Makefile.am: Add new test to list.
+
 2021-02-09 Nicolas Weeger
     * server/knowledge.c: Fix comment.
 
