@@ -1,3 +1,6 @@
+2021-02-09 Nicolas Weeger
+    * plugins/cfpython/cfpython_object.c: Allow specifying 'None' for Object.WriteKey().
+
 2021-02-09 Daniel Hawkins
     * test/bugs/bugtrack/check_duplicate_skills.c: Add test to ensure we don't get duplicate skills
         from character creation in the future.
