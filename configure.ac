@@ -128,14 +128,12 @@ dnl############################################
 dnl Plugin configuration
 dnl############################################
 AM_CONDITIONAL(HAVE_LIBDL, test "$cf_have_libdl" = "yes")
-    PKG_CHECK_MODULES([PYTHON], [python3-embed],
-                      [PLUGIN_PYTHON="cfpython.la"]
-                          [cf_will_build_python="yes"],
-			    [PKG_CHECK_MODULES([PYTHON], [python-2.7],
-                      	      [PLUGIN_PYTHON="cfpython.la"]
-                                [cf_will_build_python="yes"],
-                      [cf_will_build_python="no"]
-                          [AC_MSG_NOTICE([No Python found. Python plugin will not be built.])])])
+PKG_CHECK_MODULES([PYTHON], [python3-embed],
+                  [PLUGIN_PYTHON="cfpython.la"] [cf_will_build_python="yes"],
+                  [PKG_CHECK_MODULES([PYTHON], [python3],
+                                     [PLUGIN_PYTHON="cfpython.la"] [cf_will_build_python="yes"],
+                                     [cf_will_build_python="no"]
+                                     [AC_MSG_NOTICE([No Python found. Python plugin will not be built.])])])
 AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
 
