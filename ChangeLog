@@ -1,3 +1,10 @@
+2021-02-10 Nicolas Weeger
+    * plugins/cfpython/cfpython.c,
+    * plugins/cfpython/cfpython_archetype.c,
+    * plugins/cfpython/cfpython_map.c,
+    * plugins/cfpython/cfpython_object.c,
+    * plugins/cfpython/cfpython_party.c: Remove Python2 specific parts.
+
 2021-02-10 Daniel Hawkins
     * configure.ac: Change python3 check to use python3-embed.
 

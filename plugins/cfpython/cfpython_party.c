@@ -121,13 +121,8 @@ static PyMethodDef PartyMethods[] = {
 
 /* Our actual Python ArchetypeType */
 PyTypeObject Crossfire_PartyType = {
-#ifdef IS_PY3K
     /* See http://bugs.python.org/issue4385 */
     PyVarObject_HEAD_INIT(NULL, 0)
-#else
-    PyObject_HEAD_INIT(NULL)
-    0,                         /* ob_size*/
-#endif
     "Crossfire.Party",         /* tp_name*/
     sizeof(Crossfire_Party),   /* tp_basicsize*/
     0,                         /* tp_itemsize*/
@@ -135,11 +130,7 @@ PyTypeObject Crossfire_PartyType = {
     (long int)NULL,            /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
-#ifdef IS_PY3K
     NULL,                      /* tp_reserved */
-#else
-    (cmpfunc)Crossfire_Party_InternalCompare, /* tp_compare*/
-#endif
     NULL,                      /* tp_repr*/
     NULL,                      /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/

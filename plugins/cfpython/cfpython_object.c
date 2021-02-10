@@ -2645,12 +2645,6 @@ static PyObject *Crossfire_Object_Long(PyObject *obj) {
     return Py_BuildValue("l", ((Crossfire_Object *)obj)->obj);
 }
 
-#ifndef IS_PY3K
-static PyObject *Crossfire_Object_Int(PyObject *obj) {
-    return Py_BuildValue("i", ((Crossfire_Object *)obj)->obj);
-}
-#endif
-
 /* Python binding */
 static PyGetSetDef Object_getseters[] = {
     { "Name",           (getter)Object_GetName,         (setter)Object_SetName, NULL, NULL },
@@ -2834,50 +2828,28 @@ static PyNumberMethods ObjectConvert = {
     NULL,            /* binaryfunc nb_add; */        /* __add__ */
     NULL,            /* binaryfunc nb_subtract; */   /* __sub__ */
     NULL,            /* binaryfunc nb_multiply; */   /* __mul__ */
-#ifndef IS_PY3K
-    NULL,            /* binaryfunc nb_divide; */     /* __div__ */
-#endif
     NULL,            /* binaryfunc nb_remainder; */  /* __mod__ */
     NULL,            /* binaryfunc nb_divmod; */     /* __divmod__ */
     NULL,            /* ternaryfunc nb_power; */     /* __pow__ */
     NULL,            /* unaryfunc nb_negative; */    /* __neg__ */
     NULL,            /* unaryfunc nb_positive; */    /* __pos__ */
     NULL,            /* unaryfunc nb_absolute; */    /* __abs__ */
-#ifdef IS_PY3K
     NULL,            /* inquiry nb_bool; */          /* __bool__ */
-#else
-    NULL,            /* inquiry nb_nonzero; */       /* __nonzero__ */
-#endif
     NULL,            /* unaryfunc nb_invert; */      /* __invert__ */
     NULL,            /* binaryfunc nb_lshift; */     /* __lshift__ */
     NULL,            /* binaryfunc nb_rshift; */     /* __rshift__ */
     NULL,            /* binaryfunc nb_and; */        /* __and__ */
     NULL,            /* binaryfunc nb_xor; */        /* __xor__ */
     NULL,            /* binaryfunc nb_or; */         /* __or__ */
-#ifndef IS_PY3K
-    NULL,            /* coercion nb_coerce; */       /* __coerce__ */
-#endif
-#ifdef IS_PY3K
     /* This is not a typo. For Py3k it should be Crossfire_Object_Long
      * and NOT Crossfire_Object_Int.
      */
     Crossfire_Object_Long, /* unaryfunc nb_int; */    /* __int__ */
     NULL,                  /* void *nb_reserved; */
-#else
-    Crossfire_Object_Int, /* unaryfunc nb_int; */    /* __int__ */
-    Crossfire_Object_Long, /* unaryfunc nb_long; */  /* __long__ */
-#endif
     NULL,            /* unaryfunc nb_float; */       /* __float__ */
-#ifndef IS_PY3K
-    NULL,            /* unaryfunc nb_oct; */         /* __oct__ */
-    NULL,            /* unaryfunc nb_hex; */         /* __hex__ */
-#endif
     NULL,            /* binaryfunc nb_inplace_add; */
     NULL,            /* binaryfunc nb_inplace_subtract; */
     NULL,            /* binaryfunc nb_inplace_multiply; */
-#ifndef IS_PY3K
-    NULL,            /* binaryfunc nb_inplace_divide; */
-#endif
     NULL,            /* binaryfunc nb_inplace_remainder; */
     NULL,            /* ternaryfunc nb_inplace_power; */
     NULL,            /* binaryfunc nb_inplace_lshift; */
@@ -2890,9 +2862,7 @@ static PyNumberMethods ObjectConvert = {
     NULL,            /* binaryfunc nb_true_divide; */
     NULL,            /* binaryfunc nb_inplace_floor_divide; */
     NULL,            /* binaryfunc nb_inplace_true_divide; */
-#if defined(IS_PY25) || defined(IS_PY3K)
     NULL             /* unaryfunc nb_index; */
-#endif
 };
 
 static PyObject *Crossfire_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
@@ -2945,13 +2915,8 @@ static void Crossfire_Player_dealloc(PyObject *obj) {
 
 /* Our actual Python ObjectType */
 PyTypeObject Crossfire_ObjectType = {
-#ifdef IS_PY3K
     /* See http://bugs.python.org/issue4385 */
     PyVarObject_HEAD_INIT(NULL, 0)
-#else
-    PyObject_HEAD_INIT(NULL)
-    0,                         /* ob_size*/
-#endif
     "Crossfire.Object",        /* tp_name*/
     sizeof(Crossfire_Object),  /* tp_basicsize*/
     0,                         /* tp_itemsize*/
@@ -2959,11 +2924,7 @@ PyTypeObject Crossfire_ObjectType = {
     (long int)NULL,            /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
-#ifdef IS_PY3K
     NULL,                      /* tp_reserved */
-#else
-    (cmpfunc)Crossfire_Object_InternalCompare, /* tp_compare*/
-#endif
     NULL,                      /* tp_repr*/
     &ObjectConvert,            /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
@@ -3029,13 +2990,8 @@ static PyMethodDef PlayerMethods[] = {
 
 /* Our actual Python ObjectPlayerType */
 PyTypeObject Crossfire_PlayerType = {
-#ifdef IS_PY3K
     /* See http://bugs.python.org/issue4385 */
     PyVarObject_HEAD_INIT(NULL, 0)
-#else
-    PyObject_HEAD_INIT(NULL)
-    0,                         /* ob_size*/
-#endif
     "Crossfire.Player",        /* tp_name*/
     sizeof(Crossfire_Player),  /* tp_basicsize*/
     0,                         /* tp_itemsize*/
