@@ -122,13 +122,8 @@ static PyMethodDef ArchetypeMethods[] = {
 
 /* Our actual Python ArchetypeType */
 PyTypeObject Crossfire_ArchetypeType = {
-#ifdef IS_PY3K
     /* See http://bugs.python.org/issue4385 */
     PyVarObject_HEAD_INIT(NULL, 0)
-#else
-    PyObject_HEAD_INIT(NULL)
-    0,                         /* ob_size*/
-#endif
     "Crossfire.Archetype",     /* tp_name*/
     sizeof(Crossfire_Archetype), /* tp_basicsize*/
     0,                         /* tp_itemsize*/
@@ -136,11 +131,7 @@ PyTypeObject Crossfire_ArchetypeType = {
     (long int)NULL,            /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
-#ifdef IS_PY3K
     NULL,                      /* tp_reserved */
-#else
-    (cmpfunc)Crossfire_Archetype_InternalCompare, /* tp_compare*/
-#endif
     NULL,                      /* tp_repr*/
     NULL,                      /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/

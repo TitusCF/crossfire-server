@@ -755,19 +755,11 @@ static void freeContext(CFPContext *context) {
  */
 static PyObject* cfpython_openpyfile(char *filename) {
     PyObject *scriptfile;
-#ifdef IS_PY3K
-    {
-        int fd;
-        fd = open(filename, O_RDONLY);
-        if (fd == -1)
-            return NULL;
-        scriptfile = PyFile_FromFd(fd, filename, "r", -1, NULL, NULL, NULL, 1);
-    }
-#else
-    if (!(scriptfile = PyFile_FromString(filename, "r"))) {
+    int fd;
+    fd = open(filename, O_RDONLY);
+    if (fd == -1)
         return NULL;
-    }
-#endif
+    scriptfile = PyFile_FromFd(fd, filename, "r", -1, NULL, NULL, NULL, 1);
     return scriptfile;
 }
 
@@ -776,11 +768,7 @@ static PyObject* cfpython_openpyfile(char *filename) {
  * postInitPlugin())
  */
 static FILE* cfpython_pyfile_asfile(PyObject* obj) {
-#ifdef IS_PY3K
     return fdopen(PyObject_AsFileDescriptor(obj), "r");
-#else
-    return PyFile_AsFile(obj);
-#endif
 }
 
 /**
@@ -801,17 +789,9 @@ static void log_python_error(void) {
 
     if (catcher != NULL) {
         PyObject *output = PyObject_GetAttrString(catcher, "value"); //get the stdout and stderr from our catchOutErr object
-#ifdef IS_PY3K
         PyObject* empty = PyUnicode_FromString("");
-#else
-        PyObject* empty = PyString_FromString("");
-#endif
 
-#ifdef IS_PY3K
         cf_log_plain(llevError, PyUnicode_AsUTF8(output));
-#else
-        cf_log_plain(llevError, PyString_AsString(output));
-#endif
         Py_DECREF(output);
 
         PyObject_SetAttrString(catcher, "value", empty);
@@ -926,11 +906,7 @@ static int do_script(CFPContext *context, int silent) {
         pushContext(context);
         dict = PyDict_New();
         PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
-#ifdef IS_PY3K
         ret = PyEval_EvalCode((PyObject *)pycode, dict, NULL);
-#else
-        ret = PyEval_EvalCode(pycode, dict, NULL);
-#endif
         if (PyErr_Occurred()) {
             log_python_error();
         }
@@ -970,11 +946,7 @@ static void addConstants(PyObject *module, const char *name, const CFConstant *c
 
     while (constants[i].name != NULL) {
         PyModule_AddIntConstant(new, (char *)constants[i].name, constants[i].value);
-#ifdef IS_PY3K
         PyDict_SetItem(dict, PyLong_FromLong(constants[i].value), PyUnicode_FromString(constants[i].name));
-#else
-        PyDict_SetItem(dict, PyLong_FromLong(constants[i].value), PyString_FromString(constants[i].name));
-#endif
         i++;
     }
     PyDict_SetItemString(PyModule_GetDict(module), name, new);
@@ -1360,13 +1332,8 @@ static void cfpython_init_types(PyObject* m) {
     PyDict_SetItemString(d, "error", CFPythonError);
 }
 
-#ifdef IS_PY3K
 extern PyObject* PyInit_cjson(void);
-#else
-extern PyMODINIT_FUNC initcjson(void);
-#endif
 
-#ifdef IS_PY3K
 static PyModuleDef CrossfireModule = {
     PyModuleDef_HEAD_INIT,
     "Crossfire",       /* m_name     */
@@ -1385,7 +1352,6 @@ static PyObject* PyInit_Crossfire(void)
     Py_INCREF(m);
     return m;
 }
-#endif
 
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     PyObject *m;
@@ -1409,22 +1375,12 @@ sys.stderr = catchOutErr\n\
     init_object_assoc_table();
     init_map_assoc_table();
 
-#ifdef IS_PY26
-    Py_Py3kWarningFlag++;
-#endif
-
-#ifdef IS_PY3K
     PyImport_AppendInittab("Crossfire", &PyInit_Crossfire);
     PyImport_AppendInittab("cjson", &PyInit_cjson);
-#endif
 
     Py_Initialize();
 
-#ifdef IS_PY3K
     m = PyImport_ImportModule("Crossfire");
-#else
-    m = Py_InitModule("Crossfire", CFPythonMethods);
-#endif
 
     cfpython_init_types(m);
 
@@ -1443,10 +1399,6 @@ sys.stderr = catchOutErr\n\
     PyRun_SimpleString(stdOutErr);
     catcher = PyObject_GetAttrString(m, "catchOutErr");
 
-#ifndef IS_PY3K
-    /* add cjson module*/
-    initcjson();
-#endif
     return 0;
 }
 
