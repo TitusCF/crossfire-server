@@ -66,6 +66,7 @@ class CREMainWindow : public QMainWindow
         QAction* myReportShops;
         QAction *myReportQuests;
         QAction* myReportMaterials;
+        QAction* myReportArchetypes;
         QAction* myToolEditMonsters;
         QAction* myToolSmooth;
         QAction* myToolHPBar;
@@ -110,6 +111,7 @@ class CREMainWindow : public QMainWindow
         void onReportShops();
         void onReportQuests();
         void onReportMaterials();
+        void onReportArchetypes();
         void onToolEditMonsters();
         void onToolSmooth();
         void onToolCombatSimulator();

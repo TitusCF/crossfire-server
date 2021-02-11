@@ -8,6 +8,7 @@ extern "C" {
 
 #include "CREArchetypePanel.h"
 #include "CREUtils.h"
+#include "ResourcesManager.h"
 
 #include "assets.h"
 #include "AssetsManager.h"
@@ -41,52 +42,57 @@ void CREArchetypePanel::setItem(const archt* archetype)
     free(final);
 
     myUsing->clear();
-    QTreeWidgetItem* root = NULL;
 
-    getManager()->archetypes()->each([this, &root] (archt *arch) {
-        sstring death_anim = NULL;
-        if (arch->clone.other_arch == myArchetype || ((death_anim = object_get_value(&arch->clone, "death_animation")) && strcmp(death_anim, myArchetype->name) == 0))
+    QTreeWidgetItem* rootArch = nullptr, *rootTreasure = nullptr, *rootMap = nullptr, *rootCrafting = nullptr;
+
+    ResourcesManager::archetypeUse(myArchetype, myStore,
+            [this, &rootArch, &rootTreasure, &rootMap, &rootCrafting]
+            (const archt* arch, bool deathAnim, const treasurelist* list, const CREMapInformation* map, const recipe* rec) -> bool
+    {
+        if (arch)
         {
-            if (root == NULL)
+            if (rootArch == NULL)
             {
-                root = CREUtils::archetypeNode(NULL);
-                myUsing->addTopLevelItem(root);
-                root->setExpanded(true);
+                rootArch = CREUtils::archetypeNode(NULL);
+                myUsing->addTopLevelItem(rootArch);
+                rootArch->setExpanded(true);
             }
-            auto node = CREUtils::archetypeNode(arch, root);
-            if (death_anim) {
+            auto node = CREUtils::archetypeNode(arch, rootArch);
+            if (deathAnim) {
                 node->setText(0, node->text(0) + " (as death animation)");
             }
         }
-    });
-
-    root = NULL;
-
-    getManager()->treasures()->each([this, &root] (treasurelist *list) {
-        for (auto t = list->items; t; t = t->next)
+        if (list)
         {
-            if (t->item == myArchetype)
+            if (rootTreasure == NULL)
             {
-                if (root == NULL)
-                {
-                    root = CREUtils::treasureNode(NULL);
-                    myUsing->addTopLevelItem(root);
-                    root->setExpanded(true);
-                }
-                CREUtils::treasureNode(list, root);
+                rootTreasure = CREUtils::treasureNode(NULL);
+                myUsing->addTopLevelItem(rootTreasure);
+                rootTreasure->setExpanded(true);
             }
+            CREUtils::treasureNode(list, rootTreasure);
         }
-    });
-
-    QList<CREMapInformation*> mapuse = myStore->getArchetypeUse(myArchetype);
-    if (mapuse.size() > 0)
-    {
-        root = new QTreeWidgetItem(myUsing, QStringList(QTreeWidget::tr("Maps [%1]").arg(mapuse.size())));
-        root->setExpanded(true);
-
-        foreach(CREMapInformation* information, mapuse)
+        if (map)
         {
-            CREUtils::mapNode(information, root);
+            if (rootMap == nullptr)
+            {
+                rootMap = new QTreeWidgetItem(myUsing, QStringList("Maps"));
+                rootMap->setExpanded(true);
+            }
+
+            CREUtils::mapNode(map, rootMap);
         }
-    }
+        if (rec)
+        {
+            if (rootCrafting == nullptr)
+            {
+                rootCrafting = new QTreeWidgetItem(myUsing, QStringList("Alchemy product"));
+                myUsing->addTopLevelItem(rootCrafting);
+                rootCrafting->setExpanded(true);
+            }
+            CREUtils::formulaeNode(rec, rootCrafting);
+        }
+
+        return true;
+    });
 }
