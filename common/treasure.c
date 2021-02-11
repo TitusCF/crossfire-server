@@ -254,6 +254,10 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
         LOG(llevDebug, "createtreasure: tries exceeded 100, returning without making treasure\n");
         return;
     }
+    if (!t->items) {
+        LOG(llevError, "Empty treasure list %s\n", t->name);
+        return;
+    }
     if (t->total_chance)
         create_one_treasure(t, op, flag, difficulty, tries);
     else
