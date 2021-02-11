@@ -133,7 +133,7 @@ void CREMapInformationManager::process(const QString& path2)
     /* remove scripts to avoid duplications */
     myScriptManager->removeMap(information);
 
-    mapstruct *m = ready_map_name(path.toLatin1(), 0);
+    mapstruct *m = mapfile_load(path.toLatin1(), MAP_STYLE);
 //    qDebug() << "processing" << path << information->mapTime() << info.lastModified();
     information->setName(m->name);
     information->setMapTime(info.lastModified());
@@ -318,6 +318,9 @@ void CREMapInformationManager::browseMaps()
             arch = get_next_archetype(arch);
         }
     }
+
+    /* Add style maps */
+    recurseStyleDirectory("styles");
 
     while (myCurrentMap < myToProcess.size())
     {
@@ -728,4 +731,25 @@ QList<CRERandomMap*> CREMapInformationManager::randomMaps()
         maps.append(map->randomMaps());
     }
     return maps;
+}
+
+void CREMapInformationManager::recurseStyleDirectory(const QString& from)
+{
+    char full[MAX_BUF];
+    create_pathname(from.toLatin1(), full, sizeof(full));
+
+    QDir dir(full);
+    QFileInfoList items = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
+    foreach(QFileInfo info, items)
+    {
+        QString relative(from + QDir::separator() + info.baseName());
+        if (info.isDir())
+        {
+            recurseStyleDirectory(relative);
+        }
+        else
+        {
+            myToProcess.append(relative);
+        }
+    }
 }

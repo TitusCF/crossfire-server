@@ -56,6 +56,7 @@ class CREMapInformationManager : public QObject
         CREMapInformation* getOrCreateMapInformation(const QString& path);
         void addArchetypeUse(const QString& name, CREMapInformation* map);
         void checkEvent(const object* item, CREMapInformation* map, const object* env);
+        void recurseStyleDirectory(const QString& from);
 };
 
 #endif // CLASS_CRE_MAP_INFORMATION_MANAGER_H
