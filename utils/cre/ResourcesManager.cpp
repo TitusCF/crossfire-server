@@ -14,6 +14,7 @@ extern "C" {
 }
 #include "assets.h"
 #include "AssetsManager.h"
+#include "CREMapInformationManager.h"
 
 ResourcesManager::ResourcesManager()
 {
@@ -79,4 +80,59 @@ void ResourcesManager::assetDefined(const archt *arch, const std::string &filena
         it.value().removeAll(arch);
     }
     myOrigins[filename.c_str()].append(arch);
+}
+
+void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager* store, AssetUseCallback callback)
+{
+    bool goOn = true;
+    getManager()->archetypes()->each([&item, &callback, &goOn] (archt *arch) {
+        if (!goOn)
+            return;
+        sstring death_anim = NULL;
+        if (arch->clone.other_arch == item || ((death_anim = object_get_value(&arch->clone, "death_animation")) && strcmp(death_anim, item->name) == 0))
+        {
+            goOn = callback(arch, death_anim != NULL, nullptr, nullptr, nullptr);
+        }
+    });
+
+    getManager()->treasures()->each([&item, callback, &goOn] (treasurelist *list) {
+        if (!goOn)
+            return;
+        for (auto t = list->items; t; t = t->next)
+        {
+            if (t->item == item)
+            {
+                goOn = callback(nullptr, false, list, nullptr, nullptr);
+            }
+        }
+    });
+
+    QList<CREMapInformation*> mapuse = store->getArchetypeUse(item);
+    foreach(CREMapInformation* information, mapuse)
+    {
+        if (!goOn)
+            continue;
+        goOn = callback(nullptr, false, nullptr, information, nullptr);
+    }
+
+    int count = 1;
+    recipelist* list;
+    while ((list = get_formulalist(count++)))
+    {
+        if (!goOn)
+            break;
+        recipestruct* rec = list->items;
+        while (goOn && rec)
+        {
+            for (size_t ing = 0; ing < rec->arch_names; ing++)
+            {
+                if (strcmp(rec->arch_name[ing], item->name) == 0)
+                {
+                    goOn = callback(nullptr, false, nullptr, nullptr, rec);
+                    break;
+                }
+            }
+            rec = rec->next;
+        }
+    }
 }

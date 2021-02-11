@@ -180,6 +180,11 @@ void CREMainWindow::createActions()
     myReportMaterials->setStatusTip(tr("Display all materials with their properties."));
     connect(myReportMaterials, SIGNAL(triggered()), this, SLOT(onReportMaterials()));
 
+    myReportArchetypes = new QAction(tr("Unused archetypes"), this);
+    myReportArchetypes->setStatusTip(tr("Display all archetypes which seem unused."));
+    myReportArchetypes->setEnabled(false);
+    connect(myReportArchetypes, SIGNAL(triggered()), this, SLOT(onReportArchetypes()));
+
     myToolEditMonsters = new QAction(tr("Edit monsters"), this);
     myToolEditMonsters->setStatusTip(tr("Edit monsters in a table."));
     connect(myToolEditMonsters, SIGNAL(triggered()), this, SLOT(onToolEditMonsters()));
@@ -244,6 +249,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportShops);
     reportMenu->addAction(myReportQuests);
     reportMenu->addAction(myReportMaterials);
+    reportMenu->addAction(myReportArchetypes);
 
     QMenu* toolsMenu = menuBar()->addMenu("&Tools");
     toolsMenu->addAction(myToolEditMonsters);
@@ -361,6 +367,7 @@ void CREMainWindow::browsingFinished()
     myReportPlayer->setEnabled(true);
     myReportShops->setEnabled(true);
     myReportQuests->setEnabled(true);
+    myReportArchetypes->setEnabled(true);
     myClearMapCache->setEnabled(true);
 }
 
@@ -1531,6 +1538,50 @@ void CREMainWindow::onReportMaterials()
   report += "</html>";
 
   CREReportDisplay show(report, "Materials report");
+  QApplication::restoreOverrideCursor();
+  show.exec();
+}
+
+void CREMainWindow::onReportArchetypes()
+{
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+  QString report;
+  report += "<html>";
+
+  report += "<h1>Apparently unused archetypes</h1>";
+  report += "<h3>Warning: this list contains skills, items on style maps, and other things which are actually used.</h3>";
+  report += "<table>";
+  report += "<tr><th>Image</th><th>Archetype name</th><th>Item name</th>";
+
+  getManager()->archetypes()->each([this, &report] (const archt* arch)
+  {
+      if (arch->head || arch->clone.type == PLAYER)
+          return;
+
+      bool used = false;
+      ResourcesManager::archetypeUse(arch, myMapManager, [&used]
+        (const archt*, bool, const treasurelist*, const CREMapInformation*, const recipe*) -> bool
+      {
+          used = true;
+          return false;
+      });
+
+      if (!used)
+      {
+        QImage image(CREPixmap::getIcon(arch->clone.face->number).pixmap(32,32).toImage());
+        QByteArray byteArray;
+        QBuffer buffer(&byteArray);
+        image.save(&buffer, "PNG");
+        QString iconBase64 = QString::fromLatin1(byteArray.toBase64().data());
+        report += tr("<tr><td><img src='data:image/png;base64,%1'></td><td>%2</td><td>%3</td></tr>").arg(iconBase64, arch->name, arch->clone.name);
+      }
+  });
+
+  report += "</table>";
+  report += "</html>";
+
+  CREReportDisplay show(report, "Unused archetypes report");
   QApplication::restoreOverrideCursor();
   show.exec();
 }
