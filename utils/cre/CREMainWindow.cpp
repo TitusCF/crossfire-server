@@ -1552,11 +1552,13 @@ void CREMainWindow::onReportArchetypes()
   report += "<h1>Apparently unused archetypes</h1>";
   report += "<h3>Warning: this list contains skills, items on style maps, and other things which are actually used.</h3>";
   report += "<table>";
-  report += "<tr><th>Image</th><th>Archetype name</th><th>Item name</th>";
+  report += "<tr><th>Image</th><th>Archetype name</th><th>Item name</th><th>Type</th></tr>";
 
   getManager()->archetypes()->each([this, &report] (const archt* arch)
   {
-      if (arch->head || arch->clone.type == PLAYER)
+      if (arch->head || arch->clone.type == PLAYER || arch->clone.type == MAP || arch->clone.type == EVENT_CONNECTOR)
+          return;
+      if (strstr(arch->name, "hpbar") != nullptr)
           return;
 
       bool used = false;
@@ -1574,7 +1576,9 @@ void CREMainWindow::onReportArchetypes()
         QBuffer buffer(&byteArray);
         image.save(&buffer, "PNG");
         QString iconBase64 = QString::fromLatin1(byteArray.toBase64().data());
-        report += tr("<tr><td><img src='data:image/png;base64,%1'></td><td>%2</td><td>%3</td></tr>").arg(iconBase64, arch->name, arch->clone.name);
+        auto td = get_typedata(arch->clone.type);
+        report += tr("<tr><td><img src='data:image/png;base64,%1'></td><td>%2</td><td>%3</td><td>%4</td></tr>")
+                .arg(iconBase64, arch->name, arch->clone.name, td ? td->name : tr("unknown: %1").arg(arch->clone.type));
       }
   });
 
