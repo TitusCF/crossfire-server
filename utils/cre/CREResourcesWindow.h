@@ -30,6 +30,7 @@ enum DisplayMode {
     DisplayMessage = 256,
     DisplayScripts = 512,
     DisplayRandomMaps = 1024,
+    DisplayGeneralMessages = 2048,
 };
 
 class CREResourcesWindow : public QWidget
@@ -87,6 +88,7 @@ class CREResourcesWindow : public QWidget
         void fillMessages();
         void fillScripts();
         void fillRandomMaps();
+        void fillGeneralMessages();
         void addPanel(QString name, CREPanel* panel);
         void fillItem(const QPoint& pos, QMenu* menu);
 
