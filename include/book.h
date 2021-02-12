@@ -49,7 +49,6 @@ typedef struct GeneralMessage {
     sstring message;        /**< The message's body. */
     sstring quest_code;     /**< Optional quest code and state this message will start. */
     const Face *face;   /**< Face the message displays at in the knowledge dialog, NULL if no face defined. */
-    struct GeneralMessage *next;   /**< Next message in the list. */
 } GeneralMessage;
 
 #endif /* BOOK_H */

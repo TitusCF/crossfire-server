@@ -1,4 +1,5 @@
 2021-02-12 Nicolas Weeger
+    * include/book.h: Remove unused field.
     * socket/request.c: Correctly display face name when smoothing failure. Change log level to info.
 
 2021-02-11 Nicolas Weeger
