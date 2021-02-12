@@ -31,6 +31,7 @@
 #include "CREQuestPanel.h"
 #include "CREMessagePanel.h"
 #include "CREScriptPanel.h"
+#include "CREGeneralMessagePanel.h"
 
 #include "CREWrapperObject.h"
 #include "CREWrapperArtifact.h"
@@ -198,6 +199,11 @@ void CREResourcesWindow::fillData()
     {
         title = tr("Random maps");
         fillRandomMaps();
+    }
+    if (myDisplay & DisplayGeneralMessages)
+    {
+        title = tr("General messages");
+        fillGeneralMessages();
     }
 
     if (myDisplay == DisplayAll)
@@ -614,6 +620,25 @@ void CREResourcesWindow::fillScripts()
     }
 
     addPanel("Script", new CREScriptPanel(this));
+}
+
+void CREResourcesWindow::fillGeneralMessages()
+{
+    QTreeWidgetItem* root;
+
+    root = CREUtils::generalMessageNode();
+    myTreeItems.append(new CRETreeItemEmpty());
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    myTree->addTopLevelItem(root);
+
+    getManager()->messages()->each([this, &root] (const GeneralMessage* message)
+    {
+        auto item = CREUtils::generalMessageNode(message, root);
+        myTreeItems.append(new CRETTreeItem<const GeneralMessage>(message, "GeneralMessage"));
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    });
+
+    addPanel("GeneralMessage", new CREGeneralMessagePanel(this));
 }
 
 void CREResourcesWindow::addPanel(QString name, CREPanel* panel)

@@ -49,6 +49,9 @@ class CREUtils
 
         static QTreeWidgetItem* scriptsNode();
         static QTreeWidgetItem* scriptNode(const ScriptFile* script, QTreeWidgetItem* parent);
+
+        static QTreeWidgetItem* generalMessageNode();
+        static QTreeWidgetItem* generalMessageNode(const GeneralMessage* message, QTreeWidgetItem* parent);
 };
 
 #endif // CREUTILS_H

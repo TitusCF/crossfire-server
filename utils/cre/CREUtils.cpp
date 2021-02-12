@@ -244,3 +244,21 @@ QTreeWidgetItem* CREUtils::scriptNode(const ScriptFile* script, QTreeWidgetItem*
 {
   return new QTreeWidgetItem(parent, QStringList(script->path()));
 }
+
+QTreeWidgetItem* CREUtils::generalMessageNode()
+{
+    return new QTreeWidgetItem(QStringList(QTreeWidget::tr("Messages")));
+}
+QTreeWidgetItem* CREUtils::generalMessageNode(const GeneralMessage* message, QTreeWidgetItem* parent)
+{
+    QString title;
+    if (message->identifier && message->identifier[0] == '\n')
+        title = "General message";
+    else
+        title = message->title;
+
+    QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(title));
+    if (message->face != nullptr)
+        item->setIcon(0, CREPixmap::getIcon(message->face->number));
+    return item;
+}
