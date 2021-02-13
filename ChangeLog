@@ -1,3 +1,6 @@
+2021-02-13 Nicolas Weeger
+    * common/living.c: Don't display stat change message if stat is already max/min.
+
 2021-02-12 Nicolas Weeger
     * include/book.h: Remove unused field.
     * socket/request.c: Correctly display face name when smoothing failure. Change log level to info.
