@@ -694,8 +694,12 @@ int change_abil(object *op, object *tmp) {
     if (!potion_max) {
         for (j = 0; j < NUM_STATS; j++) {
             if ((i = get_attr_value(&(tmp->stats), j)) != 0) {
-                success = 1;
-                DIFF_MSG(i*flag, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS, gain_msg[j], lose_msg[j]);
+                /* Check that the attribute value isn't already min or max value. */
+                int curr_val = get_attr_value(&op->stats, j);
+                if ((curr_val > MIN_STAT && i < 0) || (curr_val < settings.max_stat && i > 0)) {
+                    success = 1;
+                    DIFF_MSG(i*flag, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS, gain_msg[j], lose_msg[j]);
+                }
             }
         }
     }
