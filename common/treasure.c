@@ -306,12 +306,10 @@ object *generate_treasure(treasurelist *t, int difficulty) {
  * item we're trying to get the level of
  * @param difficulty
  * map difficulty.
- * @param retmult
- * if 1, return the multiplier, not the level, for computing value
  * @return
  * generated level, 0 if invalid item.
  */
-static int level_for_item(const object *op, int difficulty, int retmult) {
+static int level_for_item(const object *op, int difficulty) {
     int level, mult, olevel;
 
     if (!op->inv) {
@@ -332,9 +330,6 @@ static int level_for_item(const object *op, int difficulty, int retmult) {
 
     if (mult == 0)
         mult = 5;
-
-    if (retmult)
-        return mult;
 
     olevel = mult*rndm(0, difficulty)+level;
     if (olevel > MAX_SPELLITEM_LEVEL)
@@ -1128,7 +1123,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
             if (op->inv->duration_modifier
             || op->inv->dam_modifier
             || op->inv->range_modifier) {
-                op->level = level_for_item(op, difficulty, 0);
+                op->level = level_for_item(op, difficulty);
                 op->value = op->value*op->inv->value*(op->level+50)/(op->inv->level+50);
             } else {
                 op->level = op->inv->level;
@@ -1137,12 +1132,12 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
             break;
 
         case ROD:
-            op->level = level_for_item(op, difficulty, 0);
+            op->level = level_for_item(op, difficulty);
             rod_adjust(op);
             break;
 
         case SCROLL:
-            op->level = level_for_item(op, difficulty, 0);
+            op->level = level_for_item(op, difficulty);
             op->value = op->value*op->inv->value*(op->level+50)/(op->inv->level+50);
             /* add exp so reading them properly gives xp */
             op->stats.exp = op->value/5;
