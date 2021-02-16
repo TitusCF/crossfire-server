@@ -1,3 +1,6 @@
+2021-02-16 Nicolas Weeger
+    * common/treasure.c: Remove unused parameter.
+
 2021-02-13 Nicolas Weeger
     * common/living.c: Don't display stat change message if stat is already max/min.
 
