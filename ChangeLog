@@ -1,3 +1,6 @@
+2021-02-17 Nicolas Weeger
+    * utils/mapper.c: Fix build instructions.
+
 2021-02-16 Nicolas Weeger
     * common/treasure.c: Remove unused parameter.
 

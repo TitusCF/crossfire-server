@@ -196,8 +196,8 @@
  *  - MAPNAME: map name.
  *  - MAPTEXT: description associated.
  *
- * To build this program, from the utils directory:
- *  <pre>gcc mapper.c -I../include ../common/libcross.a -o mapper -lm -lgd</pre>
+ * To build this program, add the '--enable-mapper' flag to 'configure' then run
+ * 'make' at the server root.
  *
  * @todo
  * - split this file in multiple ones for easier maintenance
