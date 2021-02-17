@@ -1573,7 +1573,7 @@ void CREMainWindow::onReportArchetypes()
 
       bool used = false;
       ResourcesManager::archetypeUse(arch, myMapManager, [&used]
-        (const archt*, bool, const treasurelist*, const CREMapInformation*, const recipe*) -> bool
+        (ArchetypeUse, const archt*, const treasurelist*, const CREMapInformation*, const recipe*) -> bool
       {
           used = true;
           return false;

@@ -47,9 +47,9 @@ void CREArchetypePanel::setItem(const archt* archetype)
 
     ResourcesManager::archetypeUse(myArchetype, myStore,
             [this, &rootArch, &rootTreasure, &rootMap, &rootCrafting]
-            (const archt* arch, bool deathAnim, const treasurelist* list, const CREMapInformation* map, const recipe* rec) -> bool
+            (ArchetypeUse use, const archt* arch, const treasurelist* list, const CREMapInformation* map, const recipe* rec) -> bool
     {
-        if (arch)
+        if (use == OTHER_ARCH || use == DEATH_ANIM)
         {
             if (rootArch == NULL)
             {
@@ -58,11 +58,11 @@ void CREArchetypePanel::setItem(const archt* archetype)
                 rootArch->setExpanded(true);
             }
             auto node = CREUtils::archetypeNode(arch, rootArch);
-            if (deathAnim) {
+            if (use == DEATH_ANIM) {
                 node->setText(0, node->text(0) + " (as death animation)");
             }
         }
-        if (list)
+        if (use == TREASURE_USE)
         {
             if (rootTreasure == NULL)
             {
@@ -72,7 +72,7 @@ void CREArchetypePanel::setItem(const archt* archetype)
             }
             CREUtils::treasureNode(list, rootTreasure);
         }
-        if (map)
+        if (use == MAP_USE || use == RANDOM_MAP_FINAL_EXIT)
         {
             if (rootMap == nullptr)
             {
@@ -80,9 +80,13 @@ void CREArchetypePanel::setItem(const archt* archetype)
                 rootMap->setExpanded(true);
             }
 
-            CREUtils::mapNode(map, rootMap);
+            auto node = CREUtils::mapNode(map, rootMap);
+            if (use == RANDOM_MAP_FINAL_EXIT)
+            {
+                node->setText(0, node->text(0) + " (final exit of random map)");
+            }
         }
-        if (rec)
+        if (use == ALCHEMY_PRODUCT)
         {
             if (rootCrafting == nullptr)
             {
