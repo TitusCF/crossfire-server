@@ -44,6 +44,10 @@ CREFormulaePanel::CREFormulaePanel(QWidget* parent) : CRETPanel(parent)
     myDifficulty = new QLineEdit(this);
     layout->addWidget(myDifficulty, 7, 2);
 
+    myIsTransmute = new QCheckBox(tr("Transmutation"), this);
+    myIsTransmute->setEnabled(false);
+    layout->addWidget(myIsTransmute, 8, 1, 1, 2);
+
     mySkill->addItem(tr("(none)"), 0);
     myCauldron->addItem(tr("(none)"), 0);
     archt* arch = get_next_archetype(NULL);
@@ -57,27 +61,27 @@ CREFormulaePanel::CREFormulaePanel(QWidget* parent) : CRETPanel(parent)
             myCauldron->addItem(arch->name);
     }
 
-    layout->addWidget(new QLabel(tr("Index:"), this), 8, 1);
+    layout->addWidget(new QLabel(tr("Index:"), this), 9, 1);
     myIndex = new QLineEdit(this);
     myIndex->setReadOnly(true);
-    layout->addWidget(myIndex, 8, 2);
+    layout->addWidget(myIndex, 9, 2);
 
     myArchetypes = new QTreeWidget(this);
     myArchetypes->setHeaderLabel(tr("Archetypes:"));
     myArchetypes->setRootIsDecorated(false);
     myArchetypes->setIconSize(QSize(32, 32));
-    layout->addWidget(myArchetypes, 9, 1, 1, 2);
+    layout->addWidget(myArchetypes, 10, 1, 1, 2);
 
-    layout->addWidget(new QLabel(tr("Ingredients:"), this), 10, 1, 1, 2);
+    layout->addWidget(new QLabel(tr("Ingredients:"), this), 11, 1, 1, 2);
     myIngredients = new QTextEdit(this);
-    layout->addWidget(myIngredients, 11, 1, 1, 2);
+    layout->addWidget(myIngredients, 12, 1, 1, 2);
 
     QHBoxLayout* buttons = new QHBoxLayout;
     myValidate = new QPushButton(tr("&Validate"));
     buttons->addWidget(myValidate);
     myReset = new QPushButton(tr("&Reset"));
     buttons->addWidget(myReset);
-    layout->addLayout(buttons, 12, 1, 1, 2);
+    layout->addLayout(buttons, 13, 1, 1, 2);
 
     connect(myReset, SIGNAL(clicked(bool)), this, SLOT(resetClicked(bool)));
     connect(myValidate, SIGNAL(clicked(bool)), this, SLOT(validateClicked(bool)));
@@ -117,6 +121,7 @@ void CREFormulaePanel::setItem(const recipe* recipe)
     myChance->setText(QString::number(recipe->chance));
     myExperience->setText(QString::number(recipe->exp));
     myDifficulty->setText(QString::number(recipe->diff));
+    myIsTransmute->setChecked(recipe->transmute);
     myIndex->setText(QString::number(recipe->index));
 
     index = mySkill->findText(recipe->skill);
