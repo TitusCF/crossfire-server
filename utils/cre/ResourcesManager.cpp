@@ -15,6 +15,7 @@ extern "C" {
 #include "assets.h"
 #include "AssetsManager.h"
 #include "CREMapInformationManager.h"
+#include "CRERandomMap.h"
 
 ResourcesManager::ResourcesManager()
 {
@@ -88,10 +89,16 @@ void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager*
     getManager()->archetypes()->each([&item, &callback, &goOn] (archt *arch) {
         if (!goOn)
             return;
-        sstring death_anim = NULL;
-        if (arch->clone.other_arch == item || ((death_anim = object_get_value(&arch->clone, "death_animation")) && strcmp(death_anim, item->name) == 0))
+
+        if (arch->clone.other_arch == item)
         {
-            goOn = callback(arch, death_anim != NULL, nullptr, nullptr, nullptr);
+            goOn = callback(OTHER_ARCH, arch, nullptr, nullptr, nullptr);
+        }
+
+        sstring death_anim = NULL;
+        if (goOn && (death_anim = object_get_value(&arch->clone, "death_animation")) && strcmp(death_anim, item->name) == 0)
+        {
+            goOn = callback(DEATH_ANIM, arch, nullptr, nullptr, nullptr);
         }
     });
 
@@ -102,7 +109,7 @@ void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager*
         {
             if (t->item == item)
             {
-                goOn = callback(nullptr, false, list, nullptr, nullptr);
+                goOn = callback(TREASURE_USE, nullptr, list, nullptr, nullptr);
             }
         }
     });
@@ -112,7 +119,22 @@ void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager*
     {
         if (!goOn)
             continue;
-        goOn = callback(nullptr, false, nullptr, information, nullptr);
+        goOn = callback(MAP_USE, nullptr, nullptr, information, nullptr);
+    }
+    auto allMaps = store->allMaps();
+    foreach(CREMapInformation *information, allMaps)
+    {
+        if (!goOn)
+            return;
+        foreach(CRERandomMap* rm, information->randomMaps())
+        {
+            if (!goOn)
+                return;
+            if (strcmp(item->name, rm->parameters()->final_exit_archetype) == 0)
+            {
+                goOn = callback(RANDOM_MAP_FINAL_EXIT, nullptr, nullptr, information, nullptr);
+            }
+        }
     }
 
     int count = 1;
@@ -128,7 +150,7 @@ void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager*
             {
                 if (strcmp(rec->arch_name[ing], item->name) == 0)
                 {
-                    goOn = callback(nullptr, false, nullptr, nullptr, rec);
+                    goOn = callback(ALCHEMY_PRODUCT, nullptr, nullptr, nullptr, rec);
                     break;
                 }
             }

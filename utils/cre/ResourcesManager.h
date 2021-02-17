@@ -10,7 +10,16 @@ extern "C" {
 class CREMapInformation;
 class CREMapInformationManager;
 
-typedef std::function<bool(const archt*, bool deathAnim, const treasurelist*, const CREMapInformation*, recipe*)> AssetUseCallback;
+enum ArchetypeUse {
+  OTHER_ARCH,
+  DEATH_ANIM,
+  TREASURE_USE,
+  MAP_USE,
+  RANDOM_MAP_FINAL_EXIT,
+  ALCHEMY_PRODUCT,
+};
+
+typedef std::function<bool(ArchetypeUse use, const archt*, const treasurelist*, const CREMapInformation*, recipe*)> AssetUseCallback;
 
 class ResourcesManager : public AssetsTracker<archt>
 {
