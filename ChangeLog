@@ -1,3 +1,7 @@
+2021-02-18 Daniel Hawkins
+    * include/metaserver2.h,
+      socket/metaserver.c: Make ms2_info_mutex static and visible only in metaserver.c.
+
 2021-02-17 Nicolas Weeger
     * utils/mapper.c: Fix build instructions.
 

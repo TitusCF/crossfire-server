@@ -27,8 +27,6 @@
  * to do its updates.
  */
 
-extern pthread_mutex_t ms2_info_mutex;
-
 /** Structure containing information sent to the metaserver2 */
 typedef struct _MetaServer2_UpdateInfo {
     int     num_players;        /**< Number of players */

@@ -40,6 +40,9 @@
 #include <curl/easy.h>
 #endif
 
+/** Mutex to protect access to ::metaserver2_updateinfo. */
+pthread_mutex_t ms2_info_mutex;
+
 /**
  * Updates our info in the metaserver
  * Note that this is used for both metaserver1 and metaserver2 -
@@ -127,9 +130,6 @@ typedef struct _LocalMeta2Info {
 
 /** Non volatile information on the server. */
 static LocalMeta2Info local_info;
-
-/** Mutex to protect access to ::metaserver2_updateinfo. */
-pthread_mutex_t ms2_info_mutex;
 
 /** Statistics on players and such sent to the metaserver2. */
 MetaServer2_UpdateInfo metaserver2_updateinfo;
