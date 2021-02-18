@@ -41,7 +41,7 @@
 #endif
 
 /** Mutex to protect access to ::metaserver2_updateinfo. */
-pthread_mutex_t ms2_info_mutex;
+static pthread_mutex_t ms2_info_mutex;
 
 /**
  * Updates our info in the metaserver
