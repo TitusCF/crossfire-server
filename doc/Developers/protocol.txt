@@ -927,8 +927,8 @@ current step's description, can be an empty string (length 0).
 This updates some quest (of tag) with new values, if notifications is 1 or
 greater.
 
-Only one quest can be updated with the `updspell` command. A `addquest`
-command should have been sent by the server before an `addspell` command is
+Only one quest can be updated with the `updquest` command. A `addquest`
+command should have been sent by the server before an `updquest` command is
 set with the same ID.
 
 addknowledge
