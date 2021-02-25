@@ -1,3 +1,6 @@
+2021-02-25 Nicolas Weeger
+    * server/c_object.c: Fix crash when a player using 'search-items' is killed.
+
 2021-02-18 Daniel Hawkins
     * include/metaserver2.h,
       socket/metaserver.c: Make ms2_info_mutex static and visible only in metaserver.c.

@@ -2094,7 +2094,7 @@ void command_search_items(object *op, const char *params) {
     if (settings.search_items == FALSE)
         return;
 
-    if (*params == '\0') {
+    if (!params || *params == '\0') {
         if (op->contr->search_str[0] == '\0') {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                           "Example: search magic+1 "
