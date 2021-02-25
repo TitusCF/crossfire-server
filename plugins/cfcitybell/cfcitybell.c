@@ -96,9 +96,13 @@ static void ring_darcap(object *pl)
     {
         cf_player_message(pl, "You hear the glorious bell of St. Andreas.", NDI_UNIQUE|NDI_ORANGE);
     }
+    else if (!strcmp(god_name, "Valkyrie"))
+    {
+        cf_player_message(pl, "You hear the bells of the glorious church of Valkyrie.", NDI_UNIQUE|NDI_ORANGE);
+    }
     else
     {
-        cf_player_message(pl, "You hear the bell of St. Andreas.", NDI_UNIQUE|NDI_ORANGE);
+        cf_player_message(pl, "You hear the bells of St. Andreas and another church.", NDI_UNIQUE|NDI_ORANGE);
     }
 }
 
