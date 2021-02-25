@@ -1042,8 +1042,8 @@ A       .+
                             continue;
 
                         *p = '\0';
-                        Face *regular = find_face(yval());
-                        Face *smoothed = find_face(p + 1);
+                        Face *regular = (Face *)find_face(yval());
+                        Face *smoothed = (Face *)find_face(p + 1);
                         regular->smoothface = smoothed;
                     }
 ^map_layer{S}       {

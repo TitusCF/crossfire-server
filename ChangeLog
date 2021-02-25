@@ -1,3 +1,6 @@
+2021-02-25 Daniel Hawkins
+    * common/loader.l: Silence const qualifier warnings.
+
 2021-02-25 Nicolas Weeger
     * plugins/cfcitybell/cfcitybell.c: Add church of Valkyrie to Darcap.
     * server/c_object.c: Fix crash when a player using 'search-items' is killed.
