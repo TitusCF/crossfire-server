@@ -1,4 +1,5 @@
 2021-02-25 Nicolas Weeger
+    * plugins/cfcitybell/cfcitybell.c: Add church of Valkyrie to Darcap.
     * server/c_object.c: Fix crash when a player using 'search-items' is killed.
 
 2021-02-18 Daniel Hawkins
