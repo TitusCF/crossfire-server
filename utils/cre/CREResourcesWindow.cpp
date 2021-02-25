@@ -485,7 +485,7 @@ void CREResourcesWindow::fillMaps()
     if (myDisplay == DisplayMaps)
     {
         QStringList headers;
-        headers << tr("Maps") << tr("Experience");
+        headers << tr("Maps") << tr("Experience") << tr("Difficulty");
         myTree->setHeaderLabels(headers);
         myTree->sortByColumn(0, Qt::AscendingOrder);
         full = true;
@@ -507,10 +507,11 @@ void CREResourcesWindow::fillMaps()
     QStringList names = regions.keys();
     names.sort();
 
-    int totalMaps = 0;
+    int totalMaps = 0, totalAdded = 0;
 
     foreach(QString name, names)
     {
+        int added = 0;
         QList<CREMapInformation*> maps = myStore->getMapsForRegion(name);
         qSort(maps.begin(), maps.end(), sortMapInformation);
         regionNode = CREUtils::regionNode(name, maps.size(), root);
@@ -518,17 +519,31 @@ void CREResourcesWindow::fillMaps()
         regionNode->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
         foreach(CREMapInformation* map, maps)
         {
+            if (!myFilter.showItem(map)) {
+                continue;
+            }
+            added++;
+
             leaf = CREUtils::mapNode(map, regionNode);
             myTreeItems.append(new CRETTreeItem<CREMapInformation>(map, "Map"));
             leaf->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
             if (full)
+            {
                 leaf->setText(1, tr("%1").arg(QString::number(map->experience()), 20));
+                leaf->setText(2, tr("%1").arg(QString::number(map->level()), 20));
+            }
 
             /** @todo clean at some point - the issue is wrapper's ownership */
             myDisplayedItems.append(map->clone());
+
         }
 
         totalMaps += maps.size();
+        totalAdded += added;
+        if (added != maps.size())
+        {
+            regionNode->setText(0, tr("%1 - %2 maps out of %3").arg(name).arg(added).arg(maps.size()));
+        }
     }
 
     if (full)
@@ -537,7 +552,10 @@ void CREResourcesWindow::fillMaps()
         myTree->resizeColumnToContents(0);
         myTree->resizeColumnToContents(1);
     }
-    root->setText(0, tr("Maps [%1 items]").arg(totalMaps));
+    if (totalMaps == totalAdded)
+        root->setText(0, tr("Maps [%1 items]").arg(totalMaps));
+    else
+        root->setText(0, tr("Maps - [%1 out of %2]").arg(totalAdded).arg(totalMaps));
 
     addPanel("Region", new CRERegionPanel(this));
     addPanel("Map", new CREMapPanel(myScripts, this));
