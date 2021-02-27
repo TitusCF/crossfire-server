@@ -485,8 +485,11 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
 
     /* get back the result */
     while (cauldron->inv) {
+        /* Examining may lead to identifying part of items and thus introducing
+         * extra items in the cauldron. Therefore we'll set inv only after examining,
+         * even if that means that potentially the player will examine twice some items. */
+        examine(pl->ob, cauldron->inv);
         inv = cauldron->inv;
-        examine(pl->ob, inv);
         command_take(pl->ob, "");
         pl->ob->speed_left -= 1.0;
         if (inv == cauldron->inv)

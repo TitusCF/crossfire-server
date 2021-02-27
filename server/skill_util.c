@@ -644,6 +644,8 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
  * in the amount you get just because you are now equal level vs lower
  * level
  *
+ * Note that the experience is calculated for one "instance" of op, whatever its count.
+ *
  * @param who
  * player/creature that used the skill.
  * @param op

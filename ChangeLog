@@ -1,4 +1,10 @@
 2021-02-27 Nicolas Weeger
+    * server/knowledge.c,
+    * server/skill_util.c,
+    * server/skills.c: Attempt skill-based identification as many times as there are items in a pile.
+See https://sourceforge.net/p/crossfire/feature-requests/244/ for more details.
+
+2021-02-27 Nicolas Weeger
     * include/shop.h,
     * server/plugins.c,
     * server/shop.c: Rework bargaining experience. See https://sourceforge.net/p/crossfire/feature-requests/258/ .
