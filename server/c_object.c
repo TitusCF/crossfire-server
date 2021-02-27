@@ -29,6 +29,51 @@
 #include "skills.h"
 #include "sproto.h"
 
+/** Valid names for pickup types. */
+static const char *pickup_names[] = {
+    "debug", "inhibit", "stop", "food", "drink",
+    "valuables", "bow", "arrow", "helmet", "shield",
+    "armour", "boots", "gloves", "cloak", "key",
+    "missile", "melee", "magical", "potion", "spellbook",
+    "skillscroll", "readables", "magicdevice", "notcursed", "jewels",
+    "flesh", "container", NULL
+};
+
+/** Value in @ref PU_xxx associated with @ref pickup_names.*/
+static const uint32_t pickup_modes[] = {
+    PU_DEBUG, PU_INHIBIT, PU_STOP, PU_FOOD, PU_DRINK, PU_VALUABLES, PU_BOW, PU_ARROW, PU_HELMET,
+    PU_SHIELD, PU_ARMOUR, PU_BOOTS, PU_GLOVES, PU_CLOAK, PU_KEY, PU_MISSILEWEAPON, PU_MELEEWEAPON,
+    PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE,
+    PU_NOT_CURSED, PU_JEWELS, PU_FLESH, PU_CONTAINER, 0
+};
+
+/**
+ * Return the pickup index in @ref pickup_names and @ref pickup_modes
+ * associated with the specified name.
+ * The name may be the start of a mode if no ambiguity exists,
+ * that is 'me' means 'melee', but 'm' will not match anything.
+ * @param name mode to get the index of.
+ * @return index, -1 if the name is invalid.
+ */
+static int get_pickup_mode_index(const char *name) {
+    int best = -1, len = strlen(name);
+    for (int mode = 0; pickup_names[mode]; mode++) {
+        if (!strcmp(pickup_names[mode], name)) {
+            return mode;
+        }
+        if (len < strlen(pickup_names[mode]) && strncmp(name, pickup_names[mode], len) == 0) {
+            if (best != -2) {
+                if (best != -1) {
+                    best = -2;
+                } else {
+                    best = mode;
+                }
+            }
+        }
+    }
+    return best != -2 ? best : -1;
+}
+
 static void set_pickup_mode(const object *op, int i);
 
 /*
@@ -593,7 +638,192 @@ void pick_up(object *op, object *alt) {
 }
 
 /**
- * This takes (picks up) and item.
+ * Checks if an item matches a specific pickup mode.
+ * @param item item to check.
+ * @param mode one value of @ref PU_xxx, not a combination of modes.
+ * @return 0 if the item doesn't match, a non-zero value if it matches.
+ */
+int object_matches_pickup_mode(const object *item, int mode) {
+    switch(mode) {
+        case PU_FOOD:
+            return item->type == FOOD;
+        case PU_DRINK:
+            return item->type == DRINK || (item->type == POISON && !QUERY_FLAG(item, FLAG_KNOWN_CURSED));
+        case PU_FLESH:
+            return item->type == FLESH;
+        case PU_POTION:
+            return item->type == POTION;
+        case PU_SPELLBOOK:
+            return item->type == SPELLBOOK;
+        case PU_SKILLSCROLL:
+            return item->type == SKILLSCROLL;
+        case PU_READABLES:
+            return item->type == BOOK || item->type == SCROLL;
+        case PU_MAGIC_DEVICE:
+            return item->type == WAND || item->type == ROD || item->type == WEAPON_IMPROVER || item->type == ARMOUR_IMPROVER || item->type == SKILL_TOOL;
+        case PU_MAGICAL:
+            return QUERY_FLAG(item, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(item, FLAG_KNOWN_CURSED);
+        case PU_VALUABLES:
+            return item->type == MONEY || item->type == GEM;
+        case PU_JEWELS:
+            return item->type == RING || item->type == AMULET;
+        case PU_BOW:
+            return item->type == BOW;
+        case PU_ARROW:
+            return item->type == ARROW;
+        case PU_ARMOUR:
+            return item->type == ARMOUR;
+        case PU_HELMET:
+            return item->type == HELMET;
+        case PU_SHIELD:
+            return item->type == SHIELD;
+        case PU_BOOTS:
+            return item->type == BOOTS;
+        case PU_GLOVES:
+            return item->type == GLOVES;
+        case PU_CLOAK:
+            return item->type == CLOAK;
+        case PU_MISSILEWEAPON:
+            return item->type == WEAPON && QUERY_FLAG(item, FLAG_IS_THROWN);
+        case PU_MELEEWEAPON:
+            return item->type == WEAPON;
+        case PU_KEY:
+            return item->type == KEY || item->type == SPECIAL_KEY;
+        case PU_CONTAINER:
+            return item->type == CONTAINER;
+    }
+    return 0;
+}
+
+/** Matching parameters. */
+typedef struct {
+    union {
+        struct {
+            int item_to_pick;   /**< Index of the item to pick, 1-based. */
+            int item_number;    /**< Index of the checked item, 1-based. */
+            int item_must_be_pickable;  /**< If non zero, then the item number is increased only if the item is pickable. */
+        };
+        char name[100];         /**< Name to match for. */
+        int pickup_type;        /**< Value in @ref PU_xxx to match against. */
+    };
+    int missed;                 /**< How many items were missed when matching. */
+} matcher_params;
+
+/**
+ * Prototype for a function checking if an object matches some parameters.
+ * @param who object wanting to match another object.
+ * @param params what to match against.
+ * @param item object to check for a match.
+ * @return 0 if the object does not match, 1 if matches.
+ */
+typedef int (*item_matcher)(object *who, matcher_params *params, object *item);
+
+/**
+ * Function allowing all objects.
+ * @param who unused.
+ * @param params unused.
+ * @param item unused.
+ * @return 1.
+ */
+static int matcher_all(object *who, matcher_params *params, object *item) {
+    (void)who;
+    (void)params;
+    (void)item;
+    return 1;
+}
+
+/**
+ * Check if an item is the one at the desired position.
+ * @param who unused.
+ * @param params what to match against.
+ * @param item unused.
+ * @return 0 if the object does not match, 1 if matches.
+ */
+static int matcher_number(object *who, matcher_params *params, object *item) {
+    if (params->item_must_be_pickable == 0 || object_can_pick(who, item)) {
+        params->item_number++;
+    }
+    if (params->item_to_pick == params->item_number) {
+        /* Since we don't always increase item_number, multiple items may have the same index,
+         including unpickable ones, so to avoid failure messages just ensure no other item can be picked. */
+        params->item_to_pick = 0;
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * Check if an item matches a string.
+ * @param who object wanting to match another object.
+ * @param params what to match against.
+ * @param item object to check for a match.
+ * @return 0 if the object does not match, 1 if matches.
+ */
+static int matcher_name(object *who, matcher_params *params, object *item) {
+    int ival = object_matches_string(who, item, params->name);
+    if (ival > 0) {
+        if (ival <= 2 && !object_can_pick(who, item)) {
+            if (!QUERY_FLAG(item, FLAG_IS_FLOOR))/* don't count floor tiles */
+                params->missed++;
+            return 0;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+/**
+ * Check if an item matches a pickup type.
+ * @param who object wanting to match another object.
+ * @param params what to match against.
+ * @param item object to check for a match.
+ * @return 0 if the object does not match, 1 if matches.
+ */
+static int matcher_pickup_type(object *who, matcher_params *params, object *item) {
+    (void)who;
+    return object_matches_pickup_mode(item, params->pickup_type);
+}
+
+/**
+ * Parse parameters and sets up an item matcher based on them.
+ * @param who object wanting to match another object.
+ * @param params matching parameters.
+ * @param[out] mp parsed parameters.
+ * @return NULL if error in parameters, else an item matcher pointer.
+ */
+static item_matcher make_matcher(object *who, const char *params, matcher_params *mp) {
+    memset(mp, 0, sizeof(*mp));
+    if (params[0] == '\0') {
+        mp->item_to_pick = 1;
+        mp->item_must_be_pickable = 1;
+        return &matcher_number;
+    }
+    if (params[0] == '#') {
+        mp->item_to_pick = atoi(params + 1);
+        if (mp->item_to_pick == 0) {
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR, "Invalid item index");
+            return NULL;
+        }
+        return &matcher_number;
+    }
+    if (params[0] == '*') {
+        if (params[1] == '\0') {
+            return &matcher_all;
+        }
+        int idx = get_pickup_mode_index(params + 1);
+        if (idx == -1) {
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR, "Invalid items %s", params + 1);
+            return NULL;
+        }
+        mp->pickup_type = pickup_modes[idx];
+        return &matcher_pickup_type;
+    }
+    strncpy(mp->name, params, sizeof(mp->name) - 1);
+    return &matcher_name;
+}
+
+/**
+ * This takes (picks up) an item.
  *
  * @param op
  * player who issued the command.
@@ -602,8 +832,7 @@ void pick_up(object *op, object *alt) {
  */
 void command_take(object *op, const char *params) {
     object *tmp;
-    int ival;
-    int missed = 0;
+    int did_one = 0;
 
     if (op->container)
         tmp = op->container->inv;
@@ -623,35 +852,26 @@ void command_take(object *op, const char *params) {
         return;
     }
 
-    /* Makes processing easier */
-    if (*params == '\0')
-        params = NULL;
+    matcher_params mp;
+    item_matcher matcher = make_matcher(op, params, &mp);
+    if (!matcher) {
+        return; // Player already informed of failure.
+    }
+
+    SET_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     FOR_OB_AND_BELOW_PREPARE(tmp) {
         if (tmp->invisible) {
             continue;
         }
-        /* This following two if and else if could be merged into line
-         * but that probably will make it more difficult to read, and
-         * not make it any more efficient
-         */
-        if (params) {
-            ival = object_matches_string(op, tmp, params);
-            if (ival > 0) {
-                if (ival <= 2 && !object_can_pick(op, tmp)) {
-                    if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))/* don't count floor tiles */
-                        missed++;
-                } else
-                    pick_up(op, tmp);
-            }
-        } else {
-            if (object_can_pick(op, tmp)) {
-                pick_up(op, tmp);
-                break;
-            }
+        if ((*matcher)(op, &mp, tmp)) {
+            pick_up(op, tmp);
+            did_one = 1;
         }
     } FOR_OB_AND_BELOW_FINISH();
-    if (!params && !tmp) {
+
+    /* Nothing picked up, check if unable to pick or nothing to pick. */
+    if (params[0] == '\0' && !did_one) {
         int found = 0;
         FOR_BELOW_PREPARE(op, tmp)
             if (!tmp->invisible) {
@@ -666,13 +886,22 @@ void command_take(object *op, const char *params) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "There is nothing to pick up.");
     }
-    if (missed == 1)
+
+    if (mp.missed == 1)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You were unable to take one of the items.");
-    else if (missed > 1)
+    else if (mp.missed > 1)
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                              "You were unable to take %d of the items.",
-                             missed);
+                             mp.missed);
+
+    /* Now update player and send information. */
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+    fix_object(op);
+    if (op->type == PLAYER) {
+        op->contr->count = 0;
+        esrv_update_item(UPD_WEIGHT, op, op);
+    }
 }
 
 /**
@@ -1119,38 +1348,45 @@ void command_drop(object *op, const char *params) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Drop what?");
         return;
-    } else {
-        FOR_INV_PREPARE(op, tmp) {
-            if (QUERY_FLAG(tmp, FLAG_NO_DROP) || tmp->invisible)
-                continue;
-            ival = object_matches_string(op, tmp, params);
-            if (ival > 0) {
-                if (QUERY_FLAG(tmp, FLAG_INV_LOCKED) && (ival == 1 || ival == 2))
-                    missed++;
-                else
-                    drop(op, tmp);
-                did_one = 1;
-            }
-        } FOR_INV_FINISH();
-        if (!did_one)
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "Nothing to drop.");
-        if (missed == 1)
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                          "One item couldn't be dropped because it was locked.");
-        else if (missed > 1)
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                                 "%d items couldn't be dropped because they were locked.",
-                                 missed);
     }
+
+    matcher_params mp;
+    item_matcher matcher = make_matcher(op, params, &mp);
+    if (!matcher) {
+        return;
+    }
+
+    SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+
+    FOR_INV_PREPARE(op, tmp) {
+        if (QUERY_FLAG(tmp, FLAG_NO_DROP) || tmp->invisible)
+            continue;
+        if ((*matcher)(op, &mp, tmp)) {
+            if (QUERY_FLAG(tmp, FLAG_INV_LOCKED)) {
+                missed++;
+            } else {
+                drop(op, tmp);
+            }
+            did_one = 1;
+        }
+    } FOR_INV_FINISH();
+    if (!did_one)
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Nothing to drop.");
+    if (missed == 1)
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "One item couldn't be dropped because it was locked.");
+    else if (missed > 1)
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                             "%d items couldn't be dropped because they were locked.",
+                             missed);
+
+    /* Now update player and send information. */
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+    fix_object(op);
     if (op->type == PLAYER) {
         op->contr->count = 0;
-        /*
-         * Don't force a whole look update, items were transferred during their move.
-         * Also this would send a 'delinv 0' to the client, which would make it appear
-         * an opened container was closed.
-         */
-        /*op->contr->socket.update_look = 1;*/
+        esrv_update_item(UPD_WEIGHT, op, op);
     }
 }
 
@@ -1958,20 +2194,6 @@ static void display_new_pickup(const object *op, int old) {
  */
 void command_pickup(object *op, const char *params) {
     uint32_t i;
-    static const char *names[] = {
-        "debug", "inhibit", "stop", "food", "drink",
-        "valuables", "bow", "arrow", "helmet", "shield",
-        "armour", "boots", "gloves", "cloak", "key",
-        "missile", "melee", "magical", "potion", "spellbook",
-        "skillscroll", "readables", "magicdevice", "notcursed", "jewels",
-        "flesh", "container", NULL
-    };
-    static const uint32_t modes[] = {
-        PU_DEBUG, PU_INHIBIT, PU_STOP, PU_FOOD, PU_DRINK, PU_VALUABLES, PU_BOW, PU_ARROW, PU_HELMET,
-        PU_SHIELD, PU_ARMOUR, PU_BOOTS, PU_GLOVES, PU_CLOAK, PU_KEY, PU_MISSILEWEAPON, PU_MELEEWEAPON,
-        PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE,
-        PU_NOT_CURSED, PU_JEWELS, PU_FLESH, PU_CONTAINER, 0
-    };
 
     if (*params == '\0') {
         /* if the new mode is used, just print the settings */
@@ -1989,28 +2211,26 @@ void command_pickup(object *op, const char *params) {
         params++;
 
     if (*params == '+' || *params == '-' || *params == '!') {
-        int mode;
+        int index = get_pickup_mode_index(params + 1);
 
-        for (mode = 0; names[mode]; mode++) {
-            if (!strcmp(names[mode], params+1)) {
-                int old = op->contr->mode;
-                i = op->contr->mode;
-                if (!(i&PU_NEWMODE))
-                    i = PU_NEWMODE;
-                if (*params == '+')
-                    i = i|modes[mode];
-                else if (*params == '-')
-                    i = i&~modes[mode];
-                else {
-                    if (i&modes[mode])
-                        i = i&~modes[mode];
-                    else
-                        i = i|modes[mode];
-                }
-                op->contr->mode = i;
-                display_new_pickup(op, old);
-                return;
+        if (index != -1) {
+            int old = op->contr->mode;
+            i = op->contr->mode;
+            if (!(i&PU_NEWMODE))
+                i = PU_NEWMODE;
+            if (*params == '+')
+                i = i|pickup_modes[index];
+            else if (*params == '-')
+                i = i&~pickup_modes[index];
+            else {
+                if (i&pickup_modes[index])
+                    i = i&~pickup_modes[index];
+                else
+                    i = i|pickup_modes[index];
             }
+            op->contr->mode = i;
+            display_new_pickup(op, old);
+            return;
         }
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Pickup: invalid item %s\n",

@@ -1,7 +1,12 @@
-The take commands take object(s) on the space the player is standing on, and inserts them into the players inventory.
+The "take" command takes object(s) on the space the player is standing on, and inserts them into the players inventory.
 
 If no parameter is given, take will get the top object that can be taken and put it in the players inventory. If no object can be taken, that will be stated.
 
-A parameter can be given to take. In this case, all object that have names that match the parameter will be picked up. Thus, if there is a 'sword of WOE', and 'sword +1' and a 'sword -3' on the ground, 'take sword' will pick all of them up.
+A parameter can be given to filter items to take. In this case, all object that match the parameter will be picked up.
+
+Parameters format are:
+- [color=blue]"take #<index>"[/color]: takes the index-th item in the pile.
+- [color=blue]"take *<type>"[/color]: takes all items of a specific type. Types are the same as the "pickup" command.
+- [color=blue]"take (optional number) <name>"[/color]: takes all items which name matchs "name". Thus, if there is a 'sword of WOE', and 'sword +1' and a 'sword -3' on the ground, 'take sword' will pick all of them up. If "number" is specified, at least that number of items will be picked from the same stack.
 
 By default, take is bound to the comma key, with no parameters. To change this, look at the bind command.

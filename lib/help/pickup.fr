@@ -6,13 +6,47 @@ Usage:
 
 Signification des modes:
 
-0: Ne rien prendre;
-1: Prendre un seul objet;
-2: Prendre un seul objet et stopper;
-3: S'arrêter avant de prendre les objets;
-4: Tout prendre;
-5: Tout prendre et stopper;
-6: Prendre tous les objets magiques;
-7: Prendre toutes les pièces et gemmes;
-au-delà de 7: prendre les objets avec une densité de valeur plus haute que le mode spécifié. Cette densité est le rapport valeur en or/poids en kilos;
+[color=#ff5500]0[/color] : Ne rien prendre;
+[color=#ff5500]1[/color] : Prendre un seul objet;
+[color=#ff5500]2[/color] : Prendre un seul objet et stopper;
+[color=#ff5500]3[/color] : S'arrêter avant de prendre les objets;
+[color=#ff5500]4[/color] : Tout prendre;
+[color=#ff5500]5[/color] : Tout prendre et stopper;
+[color=#ff5500]6[/color] : Prendre tous les objets magiques;
+[color=#ff5500]7[/color] : Prendre toutes les pièces et gemmes;
+[color=#ff5500]au-delà de 7[/color] : prendre les objets avec une densité de valeur plus haute que le mode spécifié. Cette densité est le rapport valeur en or/poids en kilos;
 10: Prendre l'or, l'argent, les anneaux, baguettes, livres, parchemins et artéfacts.
+
+Il est également possible de ramasser des objets par type.
+
+La syntaxe est dans ce cas 'pickup +<type>' pour ajouter le type d'objet à ce que vous ramassez.
+
+Les types d'objets possibles sont :
+- [color=#ff5500]debug[/color] : utilisé uniquement en cas de souci
+- [color=#ff5500]inhibit[/color] : si choisi, aucun objet ne sera jamais ramassé
+- [color=#ff5500]stop[/color] : si choisi, vous vous arrêter de courir au lieu de ramasser un objet
+- [color=#ff5500]food[/color]
+- [color=#ff5500]drink[/color]
+- [color=#ff5500]valuables[/color]
+- [color=#ff5500]bow[/color]
+- [color=#ff5500]arrow[/color]
+- [color=#ff5500]helmet[/color]
+- [color=#ff5500]shield[/color]
+- [color=#ff5500]armour[/color]
+- [color=#ff5500]boots[/color]
+- [color=#ff5500]gloves[/color]
+- [color=#ff5500]cloak[/color]
+- [color=#ff5500]key[/color]
+- [color=#ff5500]missile[/color]
+- [color=#ff5500]allweapon[/color]
+- [color=#ff5500]magical[/color]
+- [color=#ff5500]potion[/color]
+- [color=#ff5500]spellbook[/color]
+- [color=#ff5500]skillscroll[/color]
+- [color=#ff5500]readables[/color]
+- [color=#ff5500]magicdevice[/color]
+- [color=#ff5500]notcursed[/color]
+- [color=#ff5500]jewels[/color]
+- [color=#ff5500]flesh[/color]
+
+Le premier caractère peut être [color=#ff5500]+[/color] pour ajouter ce type d'objet à ce que vous ramassez, [color=#ff5500]-[/color] pour retirer le type, et [color=#ff5500]![/color] pour inverser le ramassage de ce type d'objet.

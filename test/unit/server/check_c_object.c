@@ -171,6 +171,148 @@ START_TEST(test_put_object_in_sack) {
 }
 END_TEST
 
+#define TEST_ITEMS_COUNT    11
+static char *test_items[TEST_ITEMS_COUNT] = {
+    "sword",
+    "broadsword",
+    "power_crystal",
+    "plate_mail",
+    "full_helmet",
+    "ring",
+    "amulet",
+    "rod_light",
+    "platinacoin",
+    "gem",
+    "dungeon_magic" // Keep last to have contiguous indexes in checks - never picked up
+};
+
+#define DO_TAKE 1
+#define DO_DROP 2
+
+/**
+ * Actual testing function.
+ * It creates all items in @ref test_items, puts them on map or in inventory,
+ * and either takes or drops with the specified parameter.
+ * After "param", there should be 2 integer lists finished by -1,
+ * specifying first the index of items to lock, then the index of items
+ * that should be picked/dropped by the commant.
+ * @param do_what either DO_TAKE or DO_DROP.
+ * @param param parameter to the take or drop command.
+ * @param ... items to lock, then items that should be non pickable, then items which should be taken/dropped.
+ */
+static void do_test(const int do_what, const char *param, ...) {
+    mapstruct *test_map;
+    object *items[TEST_ITEMS_COUNT], *monster;
+    int check[TEST_ITEMS_COUNT];
+    const char *action = do_what == DO_TAKE ? "picked" : "dropped";
+
+    test_map = get_empty_map(1, 1);
+    fail_unless(test_map != NULL, "couldn't create map");
+    monster = create_archetype("kobold");
+    fail_unless(monster != NULL, "couldn't create kobold");
+
+    object_insert_in_map_at(monster, test_map, NULL, 0, 0, 0);
+
+    object *top = monster;
+    for (int i = 0; i < TEST_ITEMS_COUNT; i++) {
+        archetype *arch = try_find_archetype(test_items[i]);
+        fail_unless(arch != NULL, "couldn't find arch %s", test_items[i]);
+        items[i] = arch_to_object(arch);
+        fail_unless(items[i] != NULL, "couldn't create %s", test_items[i]);
+        if (do_what == DO_TAKE) {
+            object_insert_in_map_at(items[i], test_map, top, INS_BELOW_ORIGINATOR, 0, 0);
+        } else {
+            object_insert_in_ob(items[i], monster);
+        }
+        top = items[i];
+    }
+
+    va_list args;
+    va_start(args, param);
+    int idx;
+    while ((idx = va_arg(args, int)) != -1) {
+        SET_FLAG(items[idx], FLAG_INV_LOCKED);
+    }
+    while ((idx = va_arg(args, int)) != -1) {
+        SET_FLAG(items[idx], FLAG_NO_PICK);
+    }
+
+    if (do_what == DO_TAKE) {
+        command_take(monster, param);
+    } else {
+        command_drop(monster, param);
+    }
+
+    memset(check, do_what == DO_TAKE ? 0 : 1, sizeof(check));
+    while ((idx = va_arg(args, int)) != -1) {
+        check[idx] = do_what == DO_TAKE ? 1 : 0;
+    }
+    for (int i = 0; i < TEST_ITEMS_COUNT; i++) {
+        if (do_what == DO_TAKE) {
+            if (check[i]) {
+                fail_unless(items[i]->env == monster, "%s wasn't %s up with %s!", test_items[i], action, param);
+            } else {
+                fail_unless(items[i]->env == NULL && items[i]->map == test_map, "%s was %s up with %s!", test_items[i], action, param);
+            }
+        } else {
+            if (!check[i]) {
+                fail_unless(items[i]->env == NULL && items[i]->map == test_map, "%s wasn't %s up with %s!", test_items[i], action, param);
+            } else {
+                fail_unless(items[i]->env == monster, "%s was %s up with %s!", test_items[i], action, param);
+            }
+        }
+    }
+}
+
+START_TEST(test_command_take) {
+    do_test(DO_TAKE, "", -1, -1, 0, -1); // First item below
+    do_test(DO_TAKE, "", -1, 0, -1, 1, -1); // First pickable item below
+    do_test(DO_TAKE, "azer", -1, -1, -1); // Nothing
+    do_test(DO_TAKE, "swo", -1, -1, 0, 1, -1);
+    do_test(DO_TAKE, "broad", -1, -1, 1, -1);
+    do_test(DO_TAKE, "glow", -1, -1, 2, -1);
+    do_test(DO_TAKE, "plate", -1, -1, 3, -1);
+    do_test(DO_TAKE, "full", -1, -1, 4, -1);
+    do_test(DO_TAKE, "rod", -1, -1, 7, -1);
+    do_test(DO_TAKE, "ing", -1, -1, 2, 5, -1);
+    do_test(DO_TAKE, "coin", -1, -1, 8, -1);
+    do_test(DO_TAKE, "all", -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1); // Special versions
+    do_test(DO_TAKE, "*", -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1); // Special versions
+
+    // By index
+    do_test(DO_TAKE, "#aze", -1, -1, -1);
+    do_test(DO_TAKE, "#0", -1, -1, -1);
+    do_test(DO_TAKE, "#-7", -1, -1, -1);
+    do_test(DO_TAKE, "#3", -1, -1, 2, -1);
+
+    // By item type
+    do_test(DO_TAKE, "*melee", -1, -1, 0, 1, -1);
+    do_test(DO_TAKE, "*armour", -1, -1, 3, -1);
+    do_test(DO_TAKE, "*valuables", -1, -1, 8, 9, -1);
+    do_test(DO_TAKE, "*jewels", -1, -1, 5, 6, -1);
+}
+END_TEST
+
+START_TEST(test_command_drop) {
+    do_test(DO_DROP, "", -1, -1, -1);
+    do_test(DO_DROP, "azer", -1, -1, -1);
+    do_test(DO_DROP, "sword", 1, -1, -1, 0, -1);
+
+    // By index: items are inserted in reverse order, and invisible ones (dungeon_magic) aren't counted
+    do_test(DO_DROP, "#aze", -1, -1, -1);
+    do_test(DO_DROP, "#0", -1, -1, -1);
+    do_test(DO_DROP, "#-7", -1, -1, -1);
+    do_test(DO_DROP, "#8", -1, -1, 2, -1);
+
+    // By item type
+    do_test(DO_DROP, "*melee", 0, -1, -1, 1, -1);
+    do_test(DO_DROP, "*melee", 0, 1, -1, -1, -1);
+    do_test(DO_DROP, "*armour", -1, -1, 3, -1);
+    do_test(DO_DROP, "*valuables", 9, -1, -1, 8, -1);
+    do_test(DO_DROP, "*jewels", -1, -1, 5, 6, -1);
+}
+END_TEST
+
 static Suite *c_object_suite(void) {
     Suite *s = suite_create("c_object");
     TCase *tc_core = tcase_create("Core");
@@ -181,6 +323,8 @@ static Suite *c_object_suite(void) {
     suite_add_tcase(s, tc_core);
     tcase_add_test(tc_core, test_find_best_apply_object_match);
     tcase_add_test(tc_core, test_put_object_in_sack);
+    tcase_add_test(tc_core, test_command_take);
+    tcase_add_test(tc_core, test_command_drop);
 
     return s;
 }
@@ -194,7 +338,7 @@ int main(void) {
     settings.logfilename = "c_object.out";
     init(0, NULL);
 
-    /* srunner_set_fork_status (sr, CK_NOFORK); */
+    srunner_set_fork_status (sr, CK_NOFORK);
 
     srunner_set_xml(sr, LOGDIR "/unit/server/c_object.xml");
     srunner_set_log(sr, LOGDIR "/unit/server/c_object.out");
