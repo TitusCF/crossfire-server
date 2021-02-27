@@ -1,15 +1,15 @@
 'pickup' changes how you pick up items when you step on them. To pickup an item manually, use the ',' key.
 
-Mode 0: Don't pick up items.
-Mode 1: Pick up one item
-Mode 2: Pickup up one item and stop
-Mode 3: Stop before picking up items
-Mode 4: Pick up all items
-Mode 5: Pick up all items and stop
-Mode 6: Pick up all magical items
-Mode 7: Pick up all coins and gems
+[color=#ff5500]Mode 0[/color]: Don't pick up items.
+[color=#ff5500]Mode 1[/color]: Pick up one item
+[color=#ff5500]Mode 2[/color]: Pickup up one item and stop
+[color=#ff5500]Mode 3[/color]: Stop before picking up items
+[color=#ff5500]Mode 4[/color]: Pick up all items
+[color=#ff5500]Mode 5[/color]: Pick up all items and stop
+[color=#ff5500]Mode 6[/color]: Pick up all magical items
+[color=#ff5500]Mode 7[/color]: Pick up all coins and gems
 
-Modes above 7: Pickup items with a value density greater than the pickup mode.
+[color=#ff5500]Modes above 7[/color]: Pickup items with a value density greater than the pickup mode.
 
 Value density is value in gold/weight in kilograms.
 
@@ -22,31 +22,31 @@ Density 10 will pickup silver, gold, rings, wands, books, and scrolls. Artifacts
 You can also use the syntax 'pickup +<type>' to just add the specified type to what you pickup.
 
 Valid types are:
-- debug
-- inhibit
-- stop
-- food
-- drink
-- valuables
-- bow
-- arrow
-- helmet
-- shield
-- armour
-- boots
-- gloves
-- cloak
-- key
-- missile
-- allweapon
-- magical
-- potion
-- spellbook
-- skillscroll
-- readables
-- magicdevice
-- notcursed
-- jewels
-- flesh
+- [color=#ff5500]debug[/color]: used in case of troubles only
+- [color=#ff5500]inhibit[/color]: if chosen, then no object is ever picked up
+- [color=#ff5500]stop[/color]: if chosen, you will stop moving instead of picking up items
+- [color=#ff5500]food[/color]
+- [color=#ff5500]drink[/color]
+- [color=#ff5500]valuables[/color]
+- [color=#ff5500]bow[/color]
+- [color=#ff5500]arrow[/color]
+- [color=#ff5500]helmet[/color]
+- [color=#ff5500]shield[/color]
+- [color=#ff5500]armour[/color]
+- [color=#ff5500]boots[/color]
+- [color=#ff5500]gloves[/color]
+- [color=#ff5500]cloak[/color]
+- [color=#ff5500]key[/color]
+- [color=#ff5500]missile[/color]
+- [color=#ff5500]allweapon[/color]
+- [color=#ff5500]magical[/color]
+- [color=#ff5500]potion[/color]
+- [color=#ff5500]spellbook[/color]
+- [color=#ff5500]skillscroll[/color]
+- [color=#ff5500]readables[/color]
+- [color=#ff5500]magicdevice[/color]
+- [color=#ff5500]notcursed[/color]
+- [color=#ff5500]jewels[/color]
+- [color=#ff5500]flesh[/color]
 
-Three options are possible for the first character: + will make you pick the item type, - will make you stop picking the item type and ! will toggle the pick mode.
+Three options are possible for the first character: [color=#ff5500]+[/color] will make you pick the item type, [color=#ff5500]-[/color] will make you stop picking the item type and [color=#ff5500]![/color] will toggle the pick mode.

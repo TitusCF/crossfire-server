@@ -1,9 +1,11 @@
 La commande take fait prendre au joueur les objets qui se trouve sur la case qu'il occupe et les place dans son inventaire.
 
-Usage:
+Si aucun paramètre n'est spécifié, cette commande prendra l'objet le plus haut dans la pile qui peut être pris et le placera dans l'inventaire du joueur. Si aucun objet ne peut être pris, un message d'erreur sera renvoyé.
 
-    take <match>
+Si un paramètres est spécifié, tous les objets correspondent à ce paramètre seront pris.
 
-Si <match> est omis, cette commande prendra l'objet le plus haut dans la pile qui peut être pris et le placera dans l'inventaire du joueur. Si aucun objet ne peut être pris, un message d'erreur sera renvoyé.
+Plusieurs formats sont possibles :
+- [color=blue]"take #<index>"[/color] : prend l'objet à l'index spécifié, 1 étant l'objet le plus haut d'une pile.
+- [color=blue]"take *<type>"[/color] : prend tous les objets du type spécifié. Les types disponibles sont les même que pour la commande "pickup".
+- [color=blue]"take (nombre optionnel) <nom>"[/color] : prend les objets dont le nom contient "nom". Par exemple, si une "épée de faiblesse", une "épée +1" et une "épée de Valriel" se trouvent sur le sol, "take épée" les ramasserait toutes les trois. Si "nombre" est spécifié, au plus ce nombre d'objets est ramassé d'un tas.
 
-Si <match> est spécifié, tous les objets dont les noms correspondent à <match> seront pris. Par exemple, si une "épée de faiblesse", une "épée +1" et une "épée de Valriel" se trouvent sur le sol, "take épée" les ramasserait toutes les trois.

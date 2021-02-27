@@ -1,16 +1,26 @@
-Drop permet de dÈposer un ou plusieurs objets de votre inventaire sur le sol ou dans un conteneur ouvert.
+Drop permet de d√©poser un ou plusieurs objets de votre inventaire sur le sol ou dans un conteneur ouvert.
 
-Usage:
+Plusieurs formats sont possibles.
 
-    drop <nombre> nom
+[color=blue]drop <nombre> nom[/color]
 
-nom: nom de ou des objet(s) ‡ dÈposer. la vÈrification de nom est insensible ‡ la casse et se fait en partant du dÈbut de votre inventaire. Il existe quelques valeurs particuliËres pour le champ nom:
+[color=#aa007f]nom[/color] : nom de ou des objet(s) √† d√©poser. La v√©rification de nom est insensible √† la casse et se fait en partant du d√©but de votre inventaire.
 
-    all: n'importe quel objet
-    unpaid: n'importe quel objet non payÈ
-    cursed: n'importe quel objet maudit ou damnÈ
-    unlocked: n'importe quel objet non verrouillÈ
+Il existe quelques valeurs particuli√®res pour le champ nom :
 
-nombre: paramËtre optionnel indiquant la quantitÈ d'objets ‡ dÈposer. Si une quantitÈ infÈrieure ‡ celle demandÈe est disponible, les objets ne seront pas dÈposÈs.
+    [color=#ff5500]all[/color] : n'importe quel objet
+    [color=#ff5500]unpaid[/color] : n'importe quel objet non pay√©
+    [color=#ff5500]cursed[/color] : n'importe quel objet maudit ou damn√©
+    [color=#ff5500]unlocked[/color] : n'importe quel objet non verrouill√©
 
-Voir aussi: dropall, comment utiliser la souris pour dÈposer des objets.
+[color=#aa007f]nombre[/color] : param√®tre optionnel indiquant la quantit√© d'objets √† d√©poser. Si une quantit√© inf√©rieure √† celle demand√©e est disponible, les objets ne seront pas d√©pos√©s.
+
+[color=blue]drop *<type d'objet>[/color]
+
+D√©pose tous les objets du type sp√©cifi√©. Les types sont les m√™mes que pour la commande "pickup".
+
+[color=blue]drop #<index d'objet>[/color]
+
+D√©pose l'objet situ√© √† l'index sp√©cifi√©. L'index 1 est le dernier objet pris, et ainsi de suite.
+
+[color=green]Voir aussi[/color] : dropall, comment utiliser la souris pour d√©poser des objets.

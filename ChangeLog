@@ -1,4 +1,19 @@
 2021-02-27 Nicolas Weeger
+    * include/libproto.h,
+    * lib/help/drop.en,
+    * lib/help/drop.fr,
+    * lib/help/pickup.en,
+    * lib/help/pickup.fr,
+    * lib/help/take.en,
+    * lib/help/take.fr,
+    * server/c_object.c,
+    * server/player.c,
+    * test/unit/server/check_c_object.c: Rework get/take.
+See https://sourceforge.net/p/crossfire/patches/385/ for details.
+Commands can now accept "#1" for index-based operation, or "*melee" for multiple items.
+Help texts updated in consequence.
+
+2021-02-27 Nicolas Weeger
     * server/knowledge.c,
     * server/skill_util.c,
     * server/skills.c: Attempt skill-based identification as many times as there are items in a pile.

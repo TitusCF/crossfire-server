@@ -325,6 +325,7 @@ extern void object_set_msg(object *op, const char *msg);
 extern void get_ob_diff(StringBuffer *sb, const object *op, const object *op2);
 extern int save_object(FILE *fp, object *op, int flag);
 extern void object_handle_death_animation(object *op);
+extern int object_matches_pickup_mode(const object *item, int mode);
 /* path.c */
 extern char *path_combine(const char *src, const char *dst, char *path, size_t size);
 extern void path_normalize(char *path);

@@ -1827,148 +1827,41 @@ int check_pick(object *op) {
             if (QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && op->contr->mode&PU_NOT_CURSED)
                 continue;
 
-            /* all food and drink if desired */
-            /* question: don't pick up known-poisonous stuff? */
-            if (op->contr->mode&PU_FOOD)
-                if (tmp->type == FOOD) {
+            static int checks[] = {
+                PU_FOOD,
+                PU_DRINK,
+                PU_FLESH,
+                PU_POTION,
+                PU_SPELLBOOK,
+                PU_SKILLSCROLL,
+                PU_READABLES,
+                PU_MAGIC_DEVICE,
+                PU_MAGICAL,
+                PU_VALUABLES,
+                PU_JEWELS,
+                PU_BOW,
+                PU_ARROW,
+                PU_ARMOUR,
+                PU_HELMET,
+                PU_SHIELD,
+                PU_BOOTS,
+                PU_GLOVES,
+                PU_CLOAK,
+                PU_MISSILEWEAPON,
+                PU_MELEEWEAPON,
+                PU_KEY,
+                PU_CONTAINER,
+                0
+            };
+            int found = 0;
+            for (int m = 0; checks[m] != 0; m++) {
+                if (op->contr->mode & checks[m] && object_matches_pickup_mode(tmp, checks[m])) {
                     pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_DRINK)
-                if (tmp->type == DRINK || (tmp->type == POISON && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            /* we don't forget dragon food */
-            if (op->contr->mode&PU_FLESH)
-                if (tmp->type == FLESH) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_POTION)
-                if (tmp->type == POTION) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            /* spellbooks, skillscrolls and normal books/scrolls */
-            if (op->contr->mode&PU_SPELLBOOK)
-                if (tmp->type == SPELLBOOK) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_SKILLSCROLL)
-                if (tmp->type == SKILLSCROLL) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_READABLES)
-                if (tmp->type == BOOK || tmp->type == SCROLL) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            /* wands/staves/rods/horns/skill tools */
-            if (op->contr->mode&PU_MAGIC_DEVICE)
-                if (tmp->type == WAND || tmp->type == ROD || tmp->type == WEAPON_IMPROVER || tmp->type == ARMOUR_IMPROVER || tmp->type == SKILL_TOOL) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            /* pick up all magical items */
-            if (op->contr->mode&PU_MAGICAL)
-                if (QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            if (op->contr->mode&PU_VALUABLES) {
-                if (tmp->type == MONEY || tmp->type == GEM) {
-                    pick_up(op, tmp);
-                    continue;
+                    found = 1;
+                    break;
                 }
             }
-
-            /* rings & amulets - talismans seems to be typed AMULET */
-            if (op->contr->mode&PU_JEWELS)
-                if (tmp->type == RING || tmp->type == AMULET) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            /* bows and arrows. Bows are good for selling! */
-            if (op->contr->mode&PU_BOW)
-                if (tmp->type == BOW) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_ARROW)
-                if (tmp->type == ARROW) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            /* all kinds of armor etc. */
-            if (op->contr->mode&PU_ARMOUR)
-                if (tmp->type == ARMOUR) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_HELMET)
-                if (tmp->type == HELMET) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_SHIELD)
-                if (tmp->type == SHIELD) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_BOOTS)
-                if (tmp->type == BOOTS) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_GLOVES)
-                if (tmp->type == GLOVES) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            if (op->contr->mode&PU_CLOAK)
-                if (tmp->type == CLOAK) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            /* hoping to catch throwing daggers here */
-            if (op->contr->mode&PU_MISSILEWEAPON)
-                if (tmp->type == WEAPON && QUERY_FLAG(tmp, FLAG_IS_THROWN)) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            /* careful: chairs and tables are weapons! */
-            /* Note that tables and chairs have been changed to not be weapons as of 2011. */
-            if (op->contr->mode&PU_MELEEWEAPON) {
-                // The code here used to handle avoiding tables and chairs.
-                // Since there have been many server-arch prerequisites since the change,
-                // we should be good not handling them here.
-                // SilverNexus 2018-12-30
-                if (tmp->type == WEAPON) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-            }
-
-            /* misc stuff that's useful */
-            if (op->contr->mode&PU_KEY)
-                if (tmp->type == KEY || tmp->type == SPECIAL_KEY) {
-                    pick_up(op, tmp);
-                    continue;
-                }
-
-            if (op->contr->mode&PU_CONTAINER && tmp->type == CONTAINER) {
-                pick_up(op, tmp);
+            if (found) {
                 continue;
             }
 

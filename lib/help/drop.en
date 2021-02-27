@@ -1,16 +1,26 @@
-Drop usage:
+The "drop" removes objets from the player's inventory and puts them on the floor or in an opened container.
 
-drop [number] name
+Multiple formats are possible.
 
-name is the name of the item(s) to drop. It may match multiple items. The name is matched against the start of the objects in your inventory. The name matching is case insensitive.
+[color=blue]drop [number] name[/color]
+
+[color=#aa007f]name[/color] is the name of the item(s) to drop. It may match multiple items. The name is matched against the start of the objects in your inventory. The name matching is case insensitive.
 
 There are a few special name values:
 
-    all: matches any item.
-    unpaid: matches unpaid items
-    cursed: drops items known to be cursed or damned.
-    unlocked: drops items not locked in your inventory
+    [color=#ff5500]all[/color]: matches any item.
+    [color=#ff5500]unpaid[/color]: matches unpaid items
+    [color=#ff5500]cursed[/color]: drops items known to be cursed or damned.
+    [color=#ff5500]unlocked[/color]: drops items not locked in your inventory
 
-number is optional. This acts as the number of the object to drop. The objects number must be at least the number for it to be dropped. For example, if you do 'drop 10 scroll', only groupings of 10 or more scrolls will be dropped. A collection of 5 scrolls will not be dropped.
+[color=#aa007f]number[/color] is optional. This acts as the number of the object to drop. The objects number must be at least the number for it to be dropped. For example, if you do 'drop 10 scroll', only groupings of 10 or more scrolls will be dropped. A collection of 5 scrolls will not be dropped.
+
+[color=blue]drop *<item type>[/color]
+
+Drop all items of the specified type. Types are the same as the "pickup" command.
+
+[color=blue]drop #<item index>[/color]
+
+Drop the item at the specified index. Index 1 is the last item taken, and so on.
 
 See also 'dropall' and mouse button control within client for dropping objects.
