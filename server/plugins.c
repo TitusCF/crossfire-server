@@ -3711,7 +3711,7 @@ static void cfapi_object_pay_item(int *type, ...) {
     rint = va_arg(args, int *);
     va_end(args);
 
-    *rint = pay_for_item(tobuy, op);
+    *rint = pay_for_item(tobuy, op, 0);
     *type = CFAPI_INT;
 }
 

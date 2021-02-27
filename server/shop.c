@@ -44,6 +44,11 @@
 /** Price a shopkeeper will give someone they neither like nor dislike */
 #define NEUTRAL_RATIO 0.8
 
+/** Maximum price reduction when buying an item with bargaining skill. */
+#define MAX_BUY_REDUCTION   0.1f
+/** Maximum price increase when selling an item with bargaining skill. */
+#define MAX_SELL_EXTRA      0.1f
+
 static uint64_t pay_from_container(object *pl, object *pouch, uint64_t to_pay);
 static uint64_t value_limit(uint64_t val, int quantity, const object *who, int isshop);
 static double shop_specialisation_ratio(const object *item, const mapstruct *map);
@@ -178,17 +183,6 @@ static float shop_buy_multiplier(int charisma) {
     }
 }
 
-/**
- * Calculate the buy price multiplier based on a player's bargaining skill.
- * The reciprocal of this result can be used as a sell multiplier.
- *
- * @param lev_bargain player's bargaining level.
- * @return buy multiplier between 1 and 0.5.
- */
-static float shop_bargain_multiplier(int lev_bargain) {
-    return 1 - 0.5 * lev_bargain / settings.max_level;
-}
-
 uint64_t shop_price_buy(const object *tmp, object *who) {
     assert(who != NULL && who->type == PLAYER);
     uint64_t val = price_base(tmp);
@@ -213,8 +207,7 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
         bargain_level = find_skill_by_number(who, SK_BARGAINING)->level;
     }
 
-    float multiplier = shop_bargain_multiplier(bargain_level);
-    multiplier *= shop_buy_multiplier(who->stats.Cha);
+    float multiplier = shop_buy_multiplier(who->stats.Cha);
 
     // Limit buy price multiplier to 0.5, no matter what.
     val *= multiplier > 0.5 ? multiplier : 0.5;
@@ -544,25 +537,21 @@ int pay_for_amount(uint64_t to_pay, object *pl) {
  * object to buy.
  * @param pl
  * player buying.
+ * @param reduction
+ * positive or null price reduction, must be below the price of the item.
  * @return
  * 1 if object was bought, 0 else.
  * @todo check if pl is a player, as query_money() expects a player.
  */
-int pay_for_item(object *op, object *pl) {
+int pay_for_item(object *op, object *pl, uint64_t reduction) {
     uint64_t to_pay = shop_price_buy(op, pl);
+    assert(to_pay >= reduction);
+    to_pay -= reduction;
 
     if (to_pay == 0)
         return 1;
     if (to_pay > query_money(pl))
         return 0;
-
-    /* We compare the paid price with the one for a player
-     * without bargaining skill.
-     * This determins the amount of exp (if any) gained for bargaining.
-     */
-    int64_t saved_money = price_base(op) - to_pay;
-    if (saved_money > 0)
-        change_exp(pl, saved_money, "bargaining", SK_EXP_NONE);
 
     to_pay = pay_from_container(pl, pl, to_pay);
 
@@ -816,6 +805,22 @@ static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64_t *
 }
 
 /**
+ * Compute a percent of the price which will be used as extra or reduction.
+ * This will be 0 if the player doesn't have the bargaining skill.
+ * @param pl player to compute for.
+ * @param price base price.
+ * @param max_variation maximum variation, 1 means 100%.
+ * @return price variation, always 0 or positive.
+ */
+static uint64_t compute_price_variation_with_bargaining(object *pl, uint64_t price, float max_variation) {
+    object *skill = find_skill_by_number(pl, SK_BARGAINING);
+    if (skill && skill->level > 0) {
+        return rndm(0, price * (max_variation * skill->level / settings.max_level));
+    }
+    return 0;
+}
+
+/**
  * Checks all unpaid items in op's inventory, adds up all the money they
  * have, and checks that they can actually afford what they want to buy.
  * Prints appropriate messages to the player.
@@ -898,7 +903,8 @@ int shop_pay_unpaid(object *pl, object *op) {
 
     if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID)) {
         uint64_t price = shop_price_buy(op, pl);
-        if (!pay_for_item(op, pl)) {
+        uint64_t reduction = compute_price_variation_with_bargaining(pl, price, MAX_BUY_REDUCTION);
+        if (!pay_for_item(op, pl, reduction)) {
             uint64_t i = price - query_money(pl);
             char *missing = cost_str(i);
 
@@ -916,15 +922,26 @@ int shop_pay_unpaid(object *pl, object *op) {
             if (events_execute_object_event(op, EVENT_BOUGHT, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
                 return 0;
             object *tmp;
-            char *value = cost_str(price);
+            char *value = cost_str(price - reduction);
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
             query_name(op, name_op, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
-                                 "You paid %s for %s.",
-                                 value, name_op);
+
+            if (reduction > 0) {
+                char *reduction_str = cost_str(reduction);
+                draw_ext_info_format(NDI_UNIQUE, 0, pl,
+                                     MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
+                                     "You paid %s for %s after bargaining a reduction of %s.",
+                                     value, name_op, reduction_str);
+                change_exp(pl, reduction, "bargaining", SK_EXP_NONE);
+                free(reduction_str);
+            } else {
+                draw_ext_info_format(NDI_UNIQUE, 0, pl,
+                                     MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
+                                     "You paid %s for %s.",
+                                     value, name_op);
+            }
             free(value);
             tmp = object_merge(op, NULL);
             if (pl->type == PLAYER && !tmp) {
@@ -974,19 +991,20 @@ void sell_item(object *op, object *pl) {
         return;
     }
 
-    /* We compare the price with the one for a player
-     * without bargaining skill.
-     * This determins the amount of exp (if any) gained for bargaining.
-     * exp/10 -> 1 for each gold coin
-     */
-    int64_t extra_gain = price - price_base(op);
-    if (extra_gain > 0) {
-        change_exp(pl, extra_gain/10, "bargaining", SK_EXP_NONE);
-    }
+    int64_t extra_gain = compute_price_variation_with_bargaining(pl, price, MAX_SELL_EXTRA);
+    char *value_str = cost_str(price + extra_gain);
 
-    char *value_str = cost_str(price);
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
-            "You receive %s for %s.", value_str, obj_name);
+    if (extra_gain > 0) {
+        change_exp(pl, extra_gain, "bargaining", SK_EXP_NONE);
+        char *extra_str = cost_str(extra_gain);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
+                "You receive %s for %s, after bargaining for %s more than proposed.", value_str, obj_name, extra_str);
+        free(extra_str);
+        price += extra_gain;
+    } else {
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
+                "You receive %s for %s.", value_str, obj_name);
+    }
     free(value_str);
 
     for (int count = LARGEST_COIN_GIVEN; coins[count] != NULL; count++) {

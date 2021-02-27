@@ -1,3 +1,8 @@
+2021-02-27 Nicolas Weeger
+    * include/shop.h,
+    * server/plugins.c,
+    * server/shop.c: Rework bargaining experience. See https://sourceforge.net/p/crossfire/feature-requests/258/ .
+
 2021-02-26 Daniel Hawkins
     * common/events.cpp: include <string> for compilers that don't do that automagically.
         Pointy had to mtdew for pointing out the error on IRC.
