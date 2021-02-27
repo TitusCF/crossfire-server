@@ -692,7 +692,7 @@ int detect_curse_on_item(object *pl, object *tmp, object *skill) {
             && tmp->item_power < skill->level) {
         SET_FLAG(tmp, FLAG_KNOWN_CURSED);
         esrv_update_item(UPD_FLAGS, pl, tmp);
-        return calc_skill_exp(pl, tmp, skill);
+        return NROF(tmp) * calc_skill_exp(pl, tmp, skill);
     }
     return 0;
 }
@@ -740,7 +740,7 @@ int detect_magic_on_item(object *pl, object *tmp, object *skill) {
             && (is_magical(tmp)) && tmp->item_power < skill->level) {
         SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
         esrv_update_item(UPD_FLAGS, pl, tmp);
-        return calc_skill_exp(pl, tmp, skill);
+        return NROF(tmp) * calc_skill_exp(pl, tmp, skill);
     }
     return 0;
 }
@@ -776,6 +776,12 @@ static int do_skill_detect_magic(object *pl, object *skill) {
  * Helper function for do_skill_ident, so that we can loop
  * over inventory AND objects on the ground conveniently.
  *
+ * Identification will be attempted as many times as NROF(tmp), and tmp will be split
+ * if needed. This is to allow players to maximise experience for identification without
+ * having to resort to picking one item, moving, attempting identification of the item, and such.
+ *
+ * See https://sourceforge.net/p/crossfire/feature-requests/244/
+ *
  * @param tmp
  * object to try to identify.
  * @param pl
@@ -796,24 +802,49 @@ int identify_object_with_skill(object *tmp, object *pl, object *skill, int print
         if (tmp->item_power > ip)
             ip = tmp->item_power;
 
-        chance = die_roll(3, 10, pl, PREFER_LOW)-3+rndm(0, (tmp->magic ? tmp->magic*5 : 1)-1);
-        if (skill_value >= chance) {
-            tmp = identify(tmp);
-            if (pl->type == PLAYER && print_on_success) {
-                char desc[MAX_BUF];
-
-                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-                                     "You identify %s.",
-                                     ob_describe(tmp, pl, 1, desc, sizeof(desc)));
-                if (tmp->msg) {
-                    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
-                                         "The item has a story:\n%s",
-                                         tmp->msg);
-                }
+        uint32_t identified = 0;
+        for (uint32_t i = 0; i < NROF(tmp); i++) {
+            chance = die_roll(3, 10, pl, PREFER_LOW)-3+rndm(0, (tmp->magic ? tmp->magic*5 : 1)-1);
+            if (skill_value >= chance) {
+                identified++;
             }
-            success += calc_skill_exp(pl, tmp, skill);
-        } else
+        }
+
+        if (identified == 0) {
             SET_FLAG(tmp, FLAG_NO_SKILL_IDENT);
+            object_merge(tmp, NULL);
+            return 0;
+        }
+
+        if (identified < NROF(tmp)) {
+            object *left = tmp;
+            tmp = object_split(tmp, identified, NULL, 0);
+            SET_FLAG(left, FLAG_NO_SKILL_IDENT); // Will prevent tmp to be merged right back.
+            // It may happen that tmp is merged while inserting.
+            // It should not be the case because it means somewhere items were not merged correctly.
+            // In this case the player will identify all items but get exp only for "identified" items.
+            if (left->env) {
+                tmp = object_insert_in_ob(tmp, left->env);
+            } else {
+                tmp = object_insert_in_map_at(tmp, left->map, left, INS_BELOW_ORIGINATOR, left->x, left->y);
+            }
+            object_merge(left, NULL);
+        }
+
+        tmp = identify(tmp);
+        if (pl->type == PLAYER && print_on_success) {
+            char desc[MAX_BUF];
+
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                                 "You identify %s.",
+                                 ob_describe(tmp, pl, 1, desc, sizeof(desc)));
+            if (tmp->msg) {
+                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
+                                     "The item has a story:\n%s",
+                                     tmp->msg);
+            }
+        }
+        success += identified * calc_skill_exp(pl, tmp, skill);
     }
     return success;
 }
