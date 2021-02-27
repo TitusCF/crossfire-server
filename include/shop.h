@@ -93,7 +93,7 @@ int can_pay(object *pl);
  */
 int shop_pay_unpaid(object *pl, object *op);
 
-int pay_for_item(object *op, object *pl);
+int pay_for_item(object *op, object *pl, uint64_t reduction);
 void sell_item(object *op, object *pl);
 
 /**
