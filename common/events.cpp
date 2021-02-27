@@ -4,6 +4,7 @@ extern "C" {
 }
 #include "events.h"
 #include <map>
+#include <string>
 
 // If set then dump information about found event connectors
 //#define EVENTS_DEBUG

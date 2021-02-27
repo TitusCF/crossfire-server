@@ -1,3 +1,6 @@
+2021-02-26 Daniel Hawkins
+    * common/events.cpp: include <string> for compilers that don't do that automagically.
+
 2021-02-25 Daniel Hawkins
     * common/loader.l: Silence const qualifier warnings.
 
