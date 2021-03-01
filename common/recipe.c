@@ -259,7 +259,7 @@ void check_formulae(void) {
     LOG(llevDebug, "Checking formulae lists...\n");
 
     for (fl = formulalist; fl != NULL; fl = fl->next) {
-        for (formula = fl->items; formula != NULL; formula = formula->next)
+        for (formula = fl->items; formula != NULL; formula = formula->next) {
             for (check = formula->next; check != NULL; check = check->next)
                 /* If one recipe has a tool and another a caudron, we should be able to handle it */
                 if (check->index == formula->index &&
@@ -287,6 +287,13 @@ void check_formulae(void) {
                             formula->arch_name[0], formula->title, check->arch_name[0], check->title, formula->index);
                     }
                 }
+            for (size_t idx = 0; idx < formula->arch_names; idx++) {
+                if (try_find_archetype(formula->arch_name[idx]) == NULL) {
+                    LOG(llevError, "Formulae %s of %s (%d ingredients) references non existent archetype %s\n",
+                        formula->arch_name[0], formula->title, numb, formula->arch_name[idx]);
+                }
+            }
+        }
         numb++;
     }
 

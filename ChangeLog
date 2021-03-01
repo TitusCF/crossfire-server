@@ -1,3 +1,6 @@
+2021-03-01 Nicolas Weeger
+    * common/recipe.c: Log an error if a recipe references a non existing archetype.
+
 2021-02-27 Nicolas Weeger
     * include/libproto.h,
     * lib/help/drop.en,
