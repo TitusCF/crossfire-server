@@ -448,13 +448,21 @@ static object *make_item_from_recipe(object *cauldron, const recipe *rp) {
 
     /* Find the appropriate artifact template...*/
     if (strcmp(rp->title, "NONE")) {
+        int item_power_delta = 0;
         if ((art = locate_recipe_artifact(rp, rp_arch_index)) == NULL) {
             LOG(llevError, "make_alchemy_item(): failed to locate recipe artifact.\n");
             LOG(llevDebug, "  --requested recipe: %s of %s.\n", rp->arch_name[0], rp->title);
             return (object *)NULL;
         }
         transmute_materialname(item, art->item);
+        if (rp->transmute) {
+            /* If we change an item, then we must keep the item power.
+             * Else this allows for instance using a helmet+5 (item power 5) for a
+             * helmet of Xebinon, giving a helmet of Xebinon+5 with item power 0. */
+            item_power_delta = item->item_power - item->arch->clone.item_power;
+        }
         give_artifact_abilities(item, art->item);
+        item->item_power += item_power_delta;
         if (is_identified(item)) {
             /* artifacts are generated unidentified, so if the item is identified we must give it its real properties. */
             object_give_identified_properties(item);

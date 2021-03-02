@@ -1,4 +1,5 @@
 2021-03-02 Nicolas Weeger
+    * server/alchemy.c: Fix exploit with item power during alchemy.
     * types/weapon_improver/weapon_improver.c: Fix wrong condition allowing a weapon
         to be improved as much as wanted.
 
