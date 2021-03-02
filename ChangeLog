@@ -1,3 +1,7 @@
+2021-03-02 Nicolas Weeger
+    * types/weapon_improver/weapon_improver.c: Fix wrong condition allowing a weapon
+        to be improved as much as wanted.
+
 2021-03-01 Nicolas Weeger
     * common/recipe.c: Log an error if a recipe references a non existing archetype.
 
