@@ -342,7 +342,7 @@ static int improve_weapon(object *op, object *improver, object *weapon) {
         return 0;
     }
 
-    if (weapon->level == weapon->last_eat && weapon->item_power >= MAX_WEAPON_ITEM_POWER) {
+    if (weapon->level == weapon->last_eat || weapon->item_power >= MAX_WEAPON_ITEM_POWER) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "This weapon cannot be improved any more.");
         return 0;
