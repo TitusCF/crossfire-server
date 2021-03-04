@@ -1934,15 +1934,29 @@ int calculate_difficulty(mapstruct *m) {
                     total_exp += op->stats.exp;
                 if (QUERY_FLAG(op, FLAG_GENERATOR)) {
                     total_exp += op->stats.exp;
-                    at = get_archetype_by_type_subtype(GENERATE_TYPE(op), -1);
-                    if (at != NULL)
-                        total_exp += at->clone.stats.exp*8;
+                    // If we have an other_arch on our generator, just use that.
+                    // FIXME: Figure out what to do if we are doing template generation from inventory.
+                    at = op->other_arch ? op->other_arch : NULL;
+                    if (at != NULL) {
+                        int lim = atoi(object_get_value(op, "generator_limit"));
+                        // We assume, on average, the generator will generate half its contents.
+                        if (!lim || lim >= 16)
+                            total_exp += at->clone.stats.exp*8;
+                        else
+                            total_exp += at->clone.stats.exp*(lim/2);
+                    }
                 }
             } FOR_MAP_FINISH();
-
-    exp_pr_sq = ((double)1000*total_exp)/(MAP_WIDTH(m)*MAP_HEIGHT(m)+1);
-    diff = 20;
-    for (i = 1; i < 20; i++)
+    // Used to be multiplied by 1000, but this undershot horribly
+    // once I fixed the calculation for generators.
+    // I'm trying out some exponentiation, since linear scaling
+    // seems to overshoot low-level maps and undershoot high-level maps.
+    // I also feel comfortable, knowing that generators return
+    // sensible values, to up the max diff this calculates from 20 to 25.
+    // - Daniel Hawkins 2021-03-04
+    exp_pr_sq = (pow(total_exp, 1.75))/(MAP_WIDTH(m)*MAP_HEIGHT(m)+1);
+    diff = 25;
+    for (i = 1; i < 25; i++)
         if (exp_pr_sq <= level_exp(i, 1.0)) {
             diff = i;
             break;

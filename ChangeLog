@@ -1,3 +1,11 @@
+2021-03-04 Daniel Hawkins
+    * common/map.c: Adjust auto-map difficulty calculation to not count a generated item
+        more times than it can be generated. Make sure we use the exp of the generated monster
+        rather than an archangel while we're doing it.
+        And most importantly, refactor the weighting for exp/tile calculation to use a
+        nonlinear formula, which rewards high exp monsters more than low-exp monsters for increasing
+        difficulty.
+
 2021-03-02 Nicolas Weeger
     * server/alchemy.c: Fix exploit with item power during alchemy.
     * types/weapon_improver/weapon_improver.c: Fix wrong condition allowing a weapon
