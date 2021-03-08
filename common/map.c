@@ -1246,7 +1246,7 @@ mapstruct *mapfile_load(const char *map, int flags) {
     load_objects(m, fp, flags & MAP_STYLE);
     fclose(fp);
     m->in_memory = MAP_IN_MEMORY;
-    if (!MAP_DIFFICULTY(m))
+    if (!MAP_DIFFICULTY(m) && (!(flags & MAP_NO_DIFFICULTY)))
         MAP_DIFFICULTY(m) = calculate_difficulty(m);
     set_map_reset_time(m);
 

@@ -1,3 +1,12 @@
+2021-03-08 Nicolas Weeger
+    * common/map.c,
+    * include/map.h,
+    * utils/cre/CREMapInformation.cpp,
+    * utils/cre/CREMapInformation.h,
+    * utils/cre/CREMapInformationManager.cpp,
+    * utils/cre/CREResourcesWindow.cpp: Allow getting the map without a computed difficulty.
+        Display computed difficulty in CRE.
+
 2021-03-08 Daniel Hawkins
     * common/map.c: Prevent possible null pointer dereference in calculate_difficulty when
         a generator does not have generator_limit set.

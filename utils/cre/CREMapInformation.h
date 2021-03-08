@@ -16,6 +16,7 @@ class CREMapInformation : public QObject
     Q_PROPERTY(QString path READ path)
     Q_PROPERTY(QString name READ name)
     Q_PROPERTY(int level READ level)
+    Q_PROPERTY(int computedDifficulty READ computedDifficulty)
     Q_PROPERTY(qint64 experience READ experience)
 
     public:
@@ -50,6 +51,9 @@ class CREMapInformation : public QObject
 
         int level() const;
         void setLevel(int level);
+
+        int computedDifficulty() const;
+        void setComputedDifficulty(int computed);
 
         qint64 experience() const;
         void setExperience(qint64 experience);
@@ -86,6 +90,7 @@ class CREMapInformation : public QObject
         QStringList myExitsTo;
         QStringList myAccessedFrom;
         int myLevel;
+        int myComputedDifficulty;
         qint64 myExperience;
         QString myRegion;
         QStringList myMessages;
