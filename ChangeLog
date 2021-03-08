@@ -1,3 +1,7 @@
+2021-03-08 Daniel Hawkins
+    * common/map.c: Prevent possible null pointer dereference in calculate_difficulty when
+        a generator does not have generator_limit set.
+
 2021-03-07 Daniel Hawkins
     * common/readable.c: Fix an issue in spellbook generation that occurred when
         a spell type/path had no spells and it tried again to generate without clearing

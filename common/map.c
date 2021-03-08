@@ -1938,7 +1938,9 @@ int calculate_difficulty(mapstruct *m) {
                     // FIXME: Figure out what to do if we are doing template generation from inventory.
                     at = op->other_arch ? op->other_arch : NULL;
                     if (at != NULL) {
-                        int lim = atoi(object_get_value(op, "generator_limit"));
+                        // Make sure we can't set off a null pointer dereference in atoi().
+                        const char *val = object_get_value(op, "generator_limit");
+                        int lim = atoi(val ? val : "0");
                         // We assume, on average, the generator will generate half its contents.
                         if (!lim || lim >= 16)
                             total_exp += at->clone.stats.exp*8;
