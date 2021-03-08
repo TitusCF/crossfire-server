@@ -2,7 +2,7 @@
 
 CREMapInformation::CREMapInformation()
 {
-    myLevel = 0;
+    myDifficulty = 0;
     myComputedDifficulty = 0;
     myExperience = 0;
     myShopGreed = 0;
@@ -13,7 +13,7 @@ CREMapInformation::CREMapInformation()
 CREMapInformation::CREMapInformation(const QString& path)
 {
     myPath = path;
-    myLevel = 0;
+    myDifficulty = 0;
     myComputedDifficulty = 0;
     myExperience = 0;
     myShopGreed = 0;
@@ -41,7 +41,7 @@ void CREMapInformation::copy(const CREMapInformation& other)
     setMapTime(other.mapTime());
     myExitsTo.append(other.exitsTo());
     myAccessedFrom.append(other.accessedFrom());
-    setLevel(other.level());
+    setDifficulty(other.difficulty());
     setComputedDifficulty(other.computedDifficulty());
     setExperience(other.experience());
     setRegion(other.region());
@@ -133,14 +133,14 @@ void CREMapInformation::addAccessedFrom(const QString& path)
         myAccessedFrom.append(path);
 }
 
-int CREMapInformation::level() const
+int CREMapInformation::difficulty() const
 {
-    return myLevel;
+    return myDifficulty;
 }
 
-void CREMapInformation::setLevel(int level)
+void CREMapInformation::setDifficulty(int difficulty)
 {
-    myLevel = level;
+    myDifficulty = difficulty;
 }
 
 int CREMapInformation::computedDifficulty() const

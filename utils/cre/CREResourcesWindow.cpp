@@ -530,7 +530,7 @@ void CREResourcesWindow::fillMaps()
             if (full)
             {
                 leaf->setText(1, tr("%1").arg(QString::number(map->experience()), 20));
-                leaf->setText(2, tr("%1").arg(QString::number(map->level()), 20));
+                leaf->setText(2, tr("%1").arg(QString::number(map->difficulty()), 20));
                 leaf->setText(3, tr("%1").arg(QString::number(map->computedDifficulty()), 20));
             }
 

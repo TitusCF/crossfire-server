@@ -141,10 +141,10 @@ void CREMapInformationManager::process(const QString& path2)
         information->setRegion(m->region->name);
     else
         information->setRegion("wilderness"); /** @todo get from config */
-    information->setLevel(m->difficulty);
+    information->setDifficulty(m->difficulty);
     m->difficulty = 0;
     information->setComputedDifficulty(calculate_difficulty(m));
-    m->difficulty = information->level();
+    m->difficulty = information->difficulty();
     if (m->background_music)
         information->setBackgroundMusic(m->background_music);
 
@@ -417,9 +417,9 @@ void CREMapInformationManager::loadCache()
             map->setMapTime(QDateTime::fromString(date, Qt::ISODate));
             continue;
         }
-        if (reader.isStartElement() && reader.name() == "level")
+        if (reader.isStartElement() && reader.name() == "difficulty")
         {
-            map->setLevel(reader.readElementText().toInt());
+            map->setDifficulty(reader.readElementText().toInt());
         }
         if (reader.isStartElement() && reader.name() == "computedDifficulty")
         {
@@ -549,7 +549,7 @@ void CREMapInformationManager::storeCache()
         writer.writeTextElement("path", map->path());
         writer.writeTextElement("name", map->name());
         writer.writeTextElement("lastModified", map->mapTime().toString(Qt::ISODate));
-        writer.writeTextElement("level", QString::number(map->level()));
+        writer.writeTextElement("difficulty", QString::number(map->difficulty()));
         writer.writeTextElement("computedDifficulty", QString::number(map->computedDifficulty()));
         writer.writeTextElement("experience", QString::number(map->experience()));
         writer.writeTextElement("region", map->region());

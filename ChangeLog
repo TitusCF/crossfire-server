@@ -1,4 +1,10 @@
 2021-03-08 Nicolas Weeger
+    * utils/cre/CREMapInformation.cpp,
+    * utils/cre/CREMapInformation.h,
+    * utils/cre/CREMapInformationManager.cpp,
+    * utils/cre/CREResourcesWindow.cpp: Rename map's 'level' to 'difficulty' for consistency.
+
+2021-03-08 Nicolas Weeger
     * common/map.c,
     * include/map.h,
     * utils/cre/CREMapInformation.cpp,
