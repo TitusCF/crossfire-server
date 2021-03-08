@@ -1,4 +1,7 @@
 2021-03-08 Nicolas Weeger
+    * common/map.c: Fix compilation warning by adding header include.
+
+2021-03-08 Nicolas Weeger
     * utils/cre/CREMapInformation.cpp,
     * utils/cre/CREMapInformation.h,
     * utils/cre/CREMapInformationManager.cpp,
