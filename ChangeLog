@@ -1,3 +1,8 @@
+2021-03-07 Daniel Hawkins
+    * common/readable.c: Fix an issue in spellbook generation that occurred when
+        a spell type/path had no spells and it tried again to generate without clearing
+        the stale type/path.
+
 2021-03-04 Daniel Hawkins
     * common/map.c: Adjust auto-map difficulty calculation to not count a generated item
         more times than it can be generated. Make sure we use the exp of the generated monster

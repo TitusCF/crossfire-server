@@ -1649,7 +1649,9 @@ static StringBuffer *spellpath_msg(int level, size_t booksize, StringBuffer *buf
     /* Geez, no spells were generated. */
     if (!sp_params.did_first_sp) {
         if (RANDOM()%4) {  /* usually, lets make a recursive call... */
-            return spellpath_msg(level, booksize, buf);
+            // If we do a recursive call, we reset the spell path, so we will want to reset our text as well.
+            stringbuffer_delete(buf);
+            return spellpath_msg(level, booksize, NULL);
         }
         /* give up, cause knowing no spells exist for path is info too. need the header too. */
         stringbuffer_append_string(buf, "- no known spells exist -\n");
