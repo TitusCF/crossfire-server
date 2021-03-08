@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <math.h>
 
 #ifndef WIN32 /* ---win32 exclude header */
 #include <unistd.h>
