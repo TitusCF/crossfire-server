@@ -485,7 +485,7 @@ void CREResourcesWindow::fillMaps()
     if (myDisplay == DisplayMaps)
     {
         QStringList headers;
-        headers << tr("Maps") << tr("Experience") << tr("Difficulty");
+        headers << tr("Maps") << tr("Experience") << tr("Difficulty") << tr("Computed difficulty");
         myTree->setHeaderLabels(headers);
         myTree->sortByColumn(0, Qt::AscendingOrder);
         full = true;
@@ -531,6 +531,7 @@ void CREResourcesWindow::fillMaps()
             {
                 leaf->setText(1, tr("%1").arg(QString::number(map->experience()), 20));
                 leaf->setText(2, tr("%1").arg(QString::number(map->level()), 20));
+                leaf->setText(3, tr("%1").arg(QString::number(map->computedDifficulty()), 20));
             }
 
             /** @todo clean at some point - the issue is wrapper's ownership */
