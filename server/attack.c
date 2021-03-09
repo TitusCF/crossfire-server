@@ -233,6 +233,7 @@ void save_throw_object(object *op, uint32_t type, object *originator) {
         && op->other_arch
         && QUERY_FLAG(op, FLAG_IS_LIGHTABLE)) {
             const char *arch = op->other_arch->name;
+            int no_pick = QUERY_FLAG(op, FLAG_NO_PICK);
 
             op = object_decrease_nrof(op, 1);
             if (op)
@@ -243,8 +244,12 @@ void save_throw_object(object *op, uint32_t type, object *originator) {
                     op->x = env->x,
                     op->y = env->y;
                     object_insert_in_ob(op, env);
-                } else
+                } else {
+                    if (no_pick) {
+                        SET_FLAG(op, FLAG_NO_PICK);
+                    }
                     object_insert_in_map_at(op, m, originator, 0, x, y);
+                }
             }
             return;
         }
