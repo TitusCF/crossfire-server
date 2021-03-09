@@ -326,6 +326,10 @@
     * test/unit/server/check_attack.c: Fix confusion disappearing when fix_object() is called.
 
 2021-03-09 Nicolas Weeger
+    * server/attack.c,
+    * test/unit/server/check_attack.c: Fix confusion disappearing when fix_object() is called.
+
+2021-03-09 Nicolas Weeger
     * server/attack.c: Set no_pick on lighted objects if set on initial object.
         This prevents using lightning to light up a non-pickable lantern then
         picking up the lighted one.
