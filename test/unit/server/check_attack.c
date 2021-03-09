@@ -97,6 +97,24 @@ START_TEST(test_hit_player) {
 }
 END_TEST
 
+START_TEST(test_fix_object_confused) {
+    player *pl = calloc(1, sizeof(player));
+    object *ob = create_archetype("human_player");
+    fail_unless(ob, "wrong archetype human_player");
+    fail_unless(ob->type == PLAYER, "archetype isn't a player");
+    ob->contr = pl;
+
+    confuse_living(ob, NULL, 0);
+    fail_unless(QUERY_FLAG(ob, FLAG_CONFUSED), "player should be confused after confuse_living");
+
+    fix_object(ob);
+    fail_unless(QUERY_FLAG(ob, FLAG_CONFUSED), "player should be confused after fix_object");
+
+    object_free(ob, FREE_OBJ_NO_DESTROY_CALLBACK);
+    free(pl);
+}
+END_TEST
+
 static Suite *attack_suite(void) {
     Suite *s = suite_create("attack");
     TCase *tc_core = tcase_create("Core");
@@ -106,6 +124,7 @@ static Suite *attack_suite(void) {
 
     suite_add_tcase(s, tc_core);
     tcase_add_test(tc_core, test_hit_player);
+    tcase_add_test(tc_core, test_fix_object_confused);
 
     return s;
 }

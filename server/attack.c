@@ -2268,6 +2268,8 @@ void confuse_living(object *op, object *hitter, int dam) {
         tmp = create_archetype(FORCE_NAME);
         tmp = object_insert_in_ob(tmp, op);
     }
+    SET_FLAG(tmp, FLAG_APPLIED);
+    SET_FLAG(tmp, FLAG_CONFUSED);
 
     /* Duration added per hit and max. duration of confusion both depend
      *  on the player's resistance
