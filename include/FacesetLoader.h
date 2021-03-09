@@ -20,11 +20,11 @@ class FacesetLoader : public AssetLoader {
 public:
   FacesetLoader();
 
-  virtual bool willProcess(const std::string &filename) {
+  virtual bool willLoad(const std::string &filename) override {
     return Utils::endsWith(filename, "/image_info");
   }
 
-  virtual void processFile(FILE *file, const std::string &filename);
+  virtual void load(BufferReader *reader, const std::string &filename) override;
 };
 
 #endif /* FACESETLOADER_H */

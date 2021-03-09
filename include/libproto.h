@@ -1,3 +1,4 @@
+#include "bufferreader.h"
 /* anim.c */
 extern Animations *find_animation(const char *name);
 extern Animations *try_find_animation(const char *name);
@@ -38,7 +39,7 @@ extern void generate_artifact(object *op, int difficulty);
 extern void give_artifact_abilities(object *op, const object *artifact);
 extern int legal_artifact_combination(const object *op, const artifact *art);
 extern void add_abilities(object *op, const object *change);
-extern void init_artifacts(FILE *file, const char *filename);
+extern void init_artifacts(BufferReader *reader, const char *filename);
 extern const artifactlist *find_artifactlist(int type);
 extern const artifact *find_artifact(const object *op, const char *name);
 extern void dump_artifacts(void);
@@ -107,7 +108,7 @@ extern void init_globals(void);
 extern void free_globals(void);
 extern void init_objects(void);
 extern void write_todclock(void);
-extern void init_attackmess(FILE *file, const char *filename);
+extern void init_attackmess(BufferReader *reader, const char *filename);
 /* item.c */
 extern int get_power_from_ench(int ench);
 extern int calc_item_power(const object *op);
@@ -368,7 +369,7 @@ extern const Face *get_message_face(const GeneralMessage *message);
 extern void init_msgfile(FILE *file, const char *filename);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
-extern void init_formulae(FILE *file, const char *filename);
+extern void init_formulae(BufferReader *reader, const char *filename);
 extern void dump_alchemy(void);
 extern archetype *find_treasure_by_name(const treasure *t, const char *name, int depth);
 extern void dump_alchemy_costs(void);
@@ -454,7 +455,6 @@ extern size_t split_string(char *str, char *array[], size_t array_size, char sep
 extern StringBuffer *describe_spellpath_attenuation(const char *attenuation, int value, StringBuffer *buf);
 extern StringBuffer *describe_attacktype(const char *attack, int value, StringBuffer *buf);
 /* loader.c */
-extern int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode);
 extern void yyrestart(FILE *input_file);
 extern void yypop_buffer_state(void);
 extern int yyget_lineno(void);
@@ -469,5 +469,6 @@ extern void yyset_debug(int bdebug);
 extern int yylex_destroy(void);
 extern void yyfree(void *ptr);
 extern int load_object(FILE *fp, object *op, int bufstate, int map_flags);
+extern int load_object_from_reader(BufferReader *reader, object *op, int map_flags);
 extern int set_variable(object *op, const char *buf);
 extern void free_loader(void);

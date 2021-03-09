@@ -442,8 +442,8 @@ static materialtype_t *get_empty_mat(void) {
  * Loads the materials.
  * @todo describe materials and such.
  */
-static void load_materials(FILE *file, const char *filename) {
-    char buf[MAX_BUF], *cp, *next;
+static void load_materials(BufferReader *reader, const char *filename) {
+    char *buf, *cp, *next;
     materialtype_t *mt;
     int i, value;
 
@@ -458,11 +458,9 @@ static void load_materials(FILE *file, const char *filename) {
         a->next = mt;
     }
 
-    while (fgets(buf, MAX_BUF, file) != NULL) {
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
         if (*buf == '#')
             continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
         cp = buf;
         while (*cp == ' ') /* Skip blanks */
             cp++;
@@ -1135,8 +1133,10 @@ static void help(void) {
     printf(" -p <port>    Specifies the port to listen on for incoming connections.\n");
     printf(" -pack-assets <type> <filename>\n");
     printf("              Packs specified assets type to the specified filename.\n");
-    printf("              Valid assets type are: archs, treasures, faces, messages, facesets, artifacts, formulae, images\n");
-    printf("              This command may be specified multiple times.\n");
+    printf("              Valid assets type are: archs, treasures, faces, messages, facesets, artifacts, formulae, images.\n");
+    printf("              The file format will be tar ('images') or text (everything else).\n");
+    printf("              It is possible to combine multiple assets by using '+', for instance 'faces+messages+artifacts'.\n");
+    printf("                In this case the file will be in tar format.\n");
     printf(" -playerdir   Set the player files directory.\n");
     printf(" -regions     Set the region file.\n");
     printf(" -templatedir Set the template map directory.\n");

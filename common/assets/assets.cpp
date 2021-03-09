@@ -57,6 +57,7 @@ extern "C" {
 #include "FormulaeWriter.h"
 
 #include "microtar.h"
+#include "TarLoader.h"
 
 static AssetsManager *manager = nullptr;
 
@@ -130,6 +131,7 @@ void assets_collect(const char* datadir) {
     for (uint8_t hook = 0; hook < settings.hooks_count; hook++) {
         collector.addLoader(new WrapperLoader(settings.hooks_filename[hook], settings.hooks[hook]));
     }
+    collector.addLoader(new TarLoader(&collector));
     collector.collect(datadir);
 
     LOG(llevInfo, "Finished collecting assets from %s\n", datadir);
@@ -380,72 +382,135 @@ static void build_filename(const char *name, const char *prefix, char *dest, siz
     strncat(dest, ".png", max);
 }
 
-static void pack_images(const char *filename) {
-    auto now = time(NULL);
-    mtar_t tar;
-    mtar_open(&tar, filename, "w");
-    manager->faces()->each([&tar, &now] (const auto face) {
-        manager->facesets()->each([&tar, &now, &face] (const auto fs) {
+/**
+ * Add a file to a .tar file.
+ * @param tar where to add the file.
+ * @param data file content.
+ * @param len length of data.
+ * @param filename name in the .tar file.
+ */
+static void add_to_tar(mtar_t *tar, void *data, size_t len, const char *filename) {
+    mtar_header_t h;
+    memset(&h, 0, sizeof(h));
+    strncpy(h.name, filename, sizeof(h.name));
+    h.size = len;
+    h.type = MTAR_TREG;
+    h.mode = 0664;
+    h.mtime = time(NULL);
+    /* Build raw header and write */
+    if (MTAR_ESUCCESS != mtar_write_header(tar, &h)) {
+        LOG(llevError, "Failed to write tar header for %s\n", filename);
+        fatal(SEE_LAST_ERROR);
+    }
+    if (MTAR_ESUCCESS != mtar_write_data(tar, data, len)) {
+        LOG(llevError, "Failed to write tar data for %s\n", filename);
+        fatal(SEE_LAST_ERROR);
+    }
+}
+
+/**
+ * Pack all client-side images in the specified tar file.
+ * @param tar where to pack images.
+ */
+static void pack_images(mtar_t *tar) {
+    manager->faces()->each([&tar] (const auto face) {
+        manager->facesets()->each([&tar, &face] (const auto fs) {
             if (!fs->prefix || fs->allocated <= face->number || !fs->faces[face->number].datalen) {
                 return;
             }
-            mtar_header_t h;
-            memset(&h, 0, sizeof(h));
-            build_filename(face->name, fs->prefix, h.name, sizeof(h.name));
-            h.size = fs->faces[face->number].datalen;
-            h.type = MTAR_TREG;
-            h.mode = 0664;
-            h.mtime = now;
-            /* Build raw header and write */
-            mtar_write_header(&tar, &h);
-            mtar_write_data(&tar, fs->faces[face->number].data, fs->faces[face->number].datalen);
+            char filename[500];
+            build_filename(face->name, fs->prefix, filename, sizeof(filename));
+            add_to_tar(tar, fs->faces[face->number].data, fs->faces[face->number].datalen, filename);
         });
     });
-    mtar_finalize(&tar);
-    mtar_close(&tar);
 }
 
-void assets_pack(const char *type, const char *filename) {
-    StringBuffer *buf = stringbuffer_new();
-    if (strcmp(type, "treasures") == 0) {
-        do_pack(new TreasureWriter(), manager->treasures(), buf);
-    } else if (strcmp(type, "faces") == 0) {
-        do_pack(new FaceWriter(), manager->faces(), buf);
-        do_pack(new AnimationWriter(), manager->animations(), buf);
-    } else if (strcmp(type, "archs") == 0) {
-        do_pack(new ArchetypeWriter(), manager->archetypes(), buf);
-    } else if (strcmp(type, "messages") == 0) {
-        do_pack(new MessageWriter(), manager->messages(), buf);
-    } else if (strcmp(type, "facesets") == 0) {
-        do_pack(new FacesetWriter(), manager->facesets(), buf);
-    } else if (strcmp(type, "artifacts") == 0) {
-        pack_artifacts(buf);
-    } else if (strcmp(type, "formulae") == 0) {
-        pack_formulae(buf);
-    } else if (strcmp(type, "images") == 0) {
-        pack_images(filename);
-        stringbuffer_delete(buf);
-        return;
-    } else {
-        LOG(llevError, "Invalid asset type '%s'\n", type);
+void assets_pack(const char *what, const char *filename) {
+#define MAX_PACK    100
+    char *split[MAX_PACK];
+    char *dup = strdup_local(what);
+    size_t count = split_string(dup, split, MAX_PACK, '+');
+    if (count == 0) {
+        LOG(llevError, "Invalid pack type %s\n", what);
         fatal(SEE_LAST_ERROR);
+    }
+    bool isTar = (count > 1) || (strcmp(split[0], "images") == 0);
+    mtar_t tar;
+    if (isTar) {
+        if (MTAR_ESUCCESS != mtar_open(&tar, filename, "w")) {
+            LOG(llevError, "Failed to open tar file %s\n", filename);
+            fatal(SEE_LAST_ERROR);
+        }
     }
 
-    size_t length = stringbuffer_length(buf);
-    char *data = stringbuffer_finish(buf);
+    for (size_t t = 0; t < count; t++) {
+        const char *type = split[t];
+        const char *name = nullptr;
 
-    FILE *out = fopen(filename, "w+");
-    if (!out) {
-        LOG(llevError, "Failed to open file '%s'\n", filename);
-        fatal(SEE_LAST_ERROR);
+        StringBuffer *buf = stringbuffer_new();
+        if (strcmp(type, "treasures") == 0) {
+            do_pack(new TreasureWriter(), manager->treasures(), buf);
+            name = "crossfire.trs";
+        } else if (strcmp(type, "faces") == 0) {
+            do_pack(new FaceWriter(), manager->faces(), buf);
+            do_pack(new AnimationWriter(), manager->animations(), buf);
+            name = "crossfire.face";
+        } else if (strcmp(type, "archs") == 0) {
+            do_pack(new ArchetypeWriter(), manager->archetypes(), buf);
+            name = "crossfire.arc";
+        } else if (strcmp(type, "messages") == 0) {
+            do_pack(new MessageWriter(), manager->messages(), buf);
+            name = "messages";
+        } else if (strcmp(type, "facesets") == 0) {
+            do_pack(new FacesetWriter(), manager->facesets(), buf);
+            name = "image_info";
+        } else if (strcmp(type, "artifacts") == 0) {
+            pack_artifacts(buf);
+            name = "artifacts";
+        } else if (strcmp(type, "formulae") == 0) {
+            pack_formulae(buf);
+            name = "formulae";
+        } else if (strcmp(type, "images") == 0) {
+            pack_images(&tar);
+            stringbuffer_delete(buf);
+            continue;   // Already stored in tar.
+        } else {
+            LOG(llevError, "Invalid asset type '%s'\n", type);
+            fatal(SEE_LAST_ERROR);
+        }
+
+        size_t length = stringbuffer_length(buf);
+        char *data = stringbuffer_finish(buf);
+
+        if (isTar) {
+            add_to_tar(&tar, data, length, name);
+        } else {
+            FILE *out = fopen(filename, "w+");
+            if (!out) {
+                LOG(llevError, "Failed to open file '%s'\n", filename);
+                fatal(SEE_LAST_ERROR);
+            }
+            if (fwrite(static_cast<void*>(data), 1, length, out) != length) {
+                LOG(llevError, "Failed to write all data!\n", filename);
+                fclose(out);
+                fatal(SEE_LAST_ERROR);
+            }
+            fclose(out);
+        }
+        free(data);
     }
-    if (fwrite(static_cast<void*>(data), 1, length, out) != length) {
-        LOG(llevError, "Failed to write all data!\n", filename);
-        fclose(out);
-        fatal(SEE_LAST_ERROR);
+
+    if (isTar) {
+        if (MTAR_ESUCCESS != mtar_finalize(&tar)) {
+            LOG(llevError, "Failed to finalize tar file %s\n", filename);
+            fatal(SEE_LAST_ERROR);
+        }
+        if (MTAR_ESUCCESS != mtar_close(&tar)) {
+            LOG(llevError, "Failed to closed tar file %s\n", filename);
+            fatal(SEE_LAST_ERROR);
+        }
     }
-    free(data);
-    fclose(out);
+    free(dup);
 }
 
 void assets_finish_archetypes_for_play() {

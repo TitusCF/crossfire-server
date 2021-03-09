@@ -621,7 +621,7 @@ void server_main(int argc, char *argv[]);
 #ifdef __cplusplus
 extern "C" {
 #endif
-void load_races(FILE *file, const char *filename);
+void load_races(BufferReader *reader, const char *filename);
 racelink *find_racelink(const char *name);
 void finish_races();
 void dump_races(void);

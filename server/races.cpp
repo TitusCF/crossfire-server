@@ -95,15 +95,13 @@ static void add_to_racelist(const char *race_name, object *op) {
  * re-configure the 'alignment' of monsters, objects. Useful for
  * putting together lists of creatures, etc that belong to gods.
  */
-void load_races(FILE *file, const char *) {
-    char race[MAX_BUF], buf[MAX_BUF], *cp, variable[MAX_BUF];
+void load_races(BufferReader *reader, const char *) {
+    char race[MAX_BUF], *buf, *cp, variable[MAX_BUF];
 
-    while (fgets(buf, MAX_BUF, file) != NULL) {
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
         int set_race = 1, set_list = 1;
         if (*buf == '#')
             continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
         cp = buf;
         while (*cp == ' ' || *cp == '!' || *cp == '@') {
             if (*cp == '!')

@@ -68,19 +68,16 @@ extern size_t nroftreasures;
  * @ingroup page_treasure_list
  */
 
-treasure *TreasureLoader::loadTreasure(FILE *fp, int *line) {
-    char buf[MAX_BUF], *cp, variable[MAX_BUF];
+treasure *TreasureLoader::loadTreasure(BufferReader *reader, const std::string &filename) {
+    char *buf, *cp, variable[MAX_BUF];
     treasure *t = get_empty_treasure();
     int value;
 
     nroftreasures++;
-    while (fgets(buf, MAX_BUF, fp) != NULL) {
-        (*line)++;
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
 
         if (*buf == '#')
             continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
         cp = buf;
         while (isspace(*cp)) /* Skip blanks */
             cp++;
@@ -102,41 +99,39 @@ treasure *TreasureLoader::loadTreasure(FILE *fp, int *line) {
         else if (sscanf(cp, "magic %d", &value))
             t->magic = (uint8_t)value;
         else if (!strcmp(cp, "yes"))
-            t->next_yes = loadTreasure(fp, line);
+            t->next_yes = loadTreasure(reader, filename);
         else if (!strcmp(cp, "no"))
-            t->next_no = loadTreasure(fp, line);
+            t->next_no = loadTreasure(reader, filename);
         else if (!strcmp(cp, "end"))
             return t;
         else if (!strcmp(cp, "more")) {
-            t->next = loadTreasure(fp, line);
+            t->next = loadTreasure(reader, filename);
             return t;
         } else
-            LOG(llevError, "Unknown treasure-command: '%s', last entry %s, line %d\n", cp, t->name ? t->name : "null", *line);
+            LOG(llevError, "Unknown treasure-command: '%s', last entry %s, line %d\n", cp, t->name ? t->name : "null", bufferreader_current_line(reader));
     }
-    LOG(llevError, "treasure lacks 'end'.\n");
+    LOG(llevError, "treasure lacks 'end' in %s at line %d.\n", filename.c_str(), bufferreader_current_line(reader));
     fatal(SEE_LAST_ERROR);
     return t;
 }
 
 /**
- * Load all treasures from a file.
- * @param file where to read from.
+ * Load all treasures from a buffer.
+ * @param buffer where to read from.
  * @param filename full path of the file for logging purposes.
  */
-void TreasureLoader::processFile(FILE *file, const std::string& filename) {
-    char buf[MAX_BUF], name[MAX_BUF];
+void TreasureLoader::load(BufferReader *reader, const std::string& filename) {
+    char *buf, name[MAX_BUF];
     treasure *t;
-    int line = 0;
 
-    while (fgets(buf, MAX_BUF, file) != NULL) {
-        line++;
-        if (*buf == '#' || *buf == '\n')
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
+        if (*buf == '#' || *buf == '\0')
             continue;
 
-        if (sscanf(buf, "treasureone %s\n", name) || sscanf(buf, "treasure %s\n", name)) {
+        if (sscanf(buf, "treasureone %s", name) || sscanf(buf, "treasure %s", name)) {
             treasurelist *tl = (treasurelist *)calloc(1, sizeof(treasurelist));
             tl->name = add_string(name);
-            tl->items = loadTreasure(file, &line);
+            tl->items = loadTreasure(reader, filename);
 
             /* This is a one of the many items on the list should be generated.
              * Add up the chance total, and check to make sure the yes & no
@@ -154,6 +149,6 @@ void TreasureLoader::processFile(FILE *file, const std::string& filename) {
 
             m_treasures->define(tl->name, tl);
         } else
-            LOG(llevError, "Treasure-list didn't understand: %s, file %s line %d\n", buf, filename.c_str(), line);
+            LOG(llevError, "Treasure-list didn't understand: %s, file %s line %d\n", buf, filename.c_str(), bufferreader_current_line(reader));
     }
 }

@@ -28,17 +28,17 @@ class TreasureLoader : public AssetLoader {
 public:
   TreasureLoader(Treasures *treasures, Archetypes *archetypes);
 
-  virtual bool willProcess(const std::string &filename) {
+  virtual bool willLoad(const std::string &filename) override {
       return Utils::endsWith(filename, ".trs");
   }
 
-  virtual void processFile(FILE *file, const std::string &filename);
+  virtual void load(BufferReader *reader, const std::string &filename) override;
 
 private:
     Treasures *m_treasures;
     Archetypes *m_archetypes;
 
-    treasure *loadTreasure(FILE *fp, int *line);
+    treasure *loadTreasure(BufferReader *reader, const std::string &filename);
 };
 
 #endif /* TREASURELOADER_H */

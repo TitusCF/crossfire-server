@@ -19,8 +19,9 @@
 
 /**
  * Assets collector, recursing in directories and calling loaders on found files.
+ * It inherits AssetLoader to be used with TarLoader.
  */
-class AssetCollector {
+class AssetCollector : public AssetLoader {
 public:
     /**
      * Constructor.
@@ -44,16 +45,21 @@ public:
      */
     void collect(const std::string& directory);
 
+    virtual bool willLoad(const std::string &) override {
+        return true;
+    };
+
+    virtual void load(BufferReader *reader, const std::string &filename) override;
+
 protected:
     std::vector<AssetLoader *> m_loaders;   /**< Registered loaders. */
+    BufferReader *m_reader;                 /**< Reader used to load files. */
 
     /**
      * Process a list of files.
      * @param files full path of files to process.
      */
     void processFiles(const std::vector<std::string> &files);
-
-    void processTar(const std::string &file);
 };
 
 #endif /* ASSETCOLLECTOR_H */

@@ -30,36 +30,29 @@ extern "C" {
 #include <algorithm>
 
 AssetCollector::AssetCollector() {
+    m_reader = bufferreader_create();
 }
 
 AssetCollector::~AssetCollector() {
     for (auto loader : m_loaders) {
         delete loader;
     }
+    bufferreader_destroy(m_reader);
 }
 
 void AssetCollector::processFiles(const std::vector<std::string>& files) {
     for (const auto &file : files) {
-
-        if (Utils::endsWith(file, ".tar")) {
-            processTar(file);
-        }
-
-        FILE *opened = NULL;
-
         for (auto loader : m_loaders) {
-            if (loader->willProcess(file)) {
+            if (loader->willLoad(file)) {
+                FILE *opened = fopen(file.c_str(), "rb");
                 if (!opened) {
-                    opened = fopen(file.c_str(), "rb");
-                } else {
-                    fseek(opened, 0, SEEK_SET);
+                    LOG(llevError, "unable to open file %s\n", file.c_str());
+                    continue;
                 }
-                loader->processFile(opened, file);
+                bufferreader_init_from_file(m_reader, opened);
+                fclose(opened);
+                loader->load(m_reader, file);
             }
-        }
-
-        if (opened) {
-            fclose(opened);
         }
     }
 }
@@ -102,35 +95,10 @@ void AssetCollector::collect(const std::string& directory) {
     }
 }
 
-void AssetCollector::processTar(const std::string& file) {
-    mtar_t tar;
-    mtar_header_t h;
-
-    if (mtar_open(&tar, file.c_str(), "r") != MTAR_ESUCCESS) {
-        LOG(llevError, "Failed to open tar file %s\n", file.c_str());
-        return;
-    }
-
-    while ((mtar_read_header(&tar, &h)) != MTAR_ENULLRECORD) {
-        for (auto loader : m_loaders) {
-            if (loader->willProcess(h.name)) {
-                PngLoader *png = dynamic_cast<PngLoader *>(loader);
-                if (!png) {
-                    continue;
-                }
-
-                uint8_t *data = static_cast<uint8_t *>(malloc(h.size));
-                if (!data) {
-                    LOG(llevError, "Failed to allocate %ul bytes!\n", h.size);
-                    fatal(SEE_LAST_ERROR);
-                }
-                mtar_read_data(&tar, static_cast<void *>(data), h.size);
-
-                png->processData(data, h.size, h.name);
-            }
+void AssetCollector::load(BufferReader *reader, const std::string &filename) {
+    for (AssetLoader *loader : m_loaders) {
+        if (loader->willLoad(filename)) {
+            loader->load(reader, filename);
         }
-        mtar_next(&tar);
     }
-
-    mtar_close(&tar);
 }

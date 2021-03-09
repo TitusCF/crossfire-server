@@ -22,13 +22,11 @@ class PngLoader : public AssetLoader {
 public:
   PngLoader(Faces *faces);
 
-  virtual bool willProcess(const std::string &filename) {
+  virtual bool willLoad(const std::string &filename) override {
     return Utils::endsWith(filename, ".png");
   }
 
-  virtual void processFile(FILE *file, const std::string &filename);
-
-  void processData(uint8_t *data, size_t len, const std::string &filename);
+  virtual void load(BufferReader *reader, const std::string &filename) override;
 protected:
     Faces *m_faces;
 };

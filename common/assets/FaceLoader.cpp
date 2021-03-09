@@ -25,8 +25,8 @@ FaceLoader::FaceLoader(Faces *faces, AllAnimations *animations)
 {
 }
 
-void FaceLoader::loadAnimationBlock(FILE *file, const std::string &full_path, const char *animation_name) {
-    char buf[MAX_BUF];
+void FaceLoader::loadAnimationBlock(BufferReader *reader, const std::string &full_path, const char *animation_name) {
+    char *buf;
     int num_frames = 0, i;
     const Face *faces[MAX_ANIMATIONS];
     Animations *anim;
@@ -37,13 +37,11 @@ void FaceLoader::loadAnimationBlock(FILE *file, const std::string &full_path, co
     anim->facings = 1;
     anim->num_animations = 0;
 
-    while (fgets(buf, MAX_BUF-1, file) != NULL) {
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
         if (*buf == '#')
             continue;
         if (strlen(buf) == 0)
             continue;
-        /* Kill the newline */
-        buf[strlen(buf)-1] = '\0';
 
         if (!strncmp(buf, "mina", 4)) {
             anim->faces = static_cast<const Face **>(malloc(sizeof(Face*)*num_frames));
@@ -74,22 +72,18 @@ void FaceLoader::loadAnimationBlock(FILE *file, const std::string &full_path, co
     }
 }
 
-void FaceLoader::processFile(FILE *file, const std::string& filename) {
-    char buf[MAX_BUF], *cp;
+void FaceLoader::load(BufferReader *buffer, const std::string& filename) {
+    char *buf, *cp;
     Face *on_face = NULL;
 
-    while (fgets(buf, MAX_BUF, file) != NULL) {
-        if (*buf == '#' || *buf == '\n')
+    while ((buf = bufferreader_next_line(buffer)) != NULL) {
+        if (*buf == '#' || *buf == '\0')
             continue;
         if (!strncmp(buf, "end", 3)) {
             if (on_face) {
                 m_faces->define(on_face->name, on_face);
                 on_face = NULL;
             }
-            continue;
-        }
-        buf[strlen(buf)-1] = '\0';
-        if (buf[0] == '\0') {
             continue;
         }
 
@@ -129,7 +123,7 @@ void FaceLoader::processFile(FILE *file, const std::string& filename) {
         }
 
         if (!strncmp(buf, "animation ", 10)) {
-            loadAnimationBlock(file, filename, buf + 10);
+            loadAnimationBlock(buffer, filename, buf + 10);
             continue;
         }
 
