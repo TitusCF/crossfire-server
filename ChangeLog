@@ -1,3 +1,37 @@
+2021-03-03 Nicolas Weeger
+ common/Makefile.am,
+ common/artifact.c,
+ common/assets/ArchetypeLoader.cpp,
+ common/assets/AssetCollector.cpp,
+ common/assets/FaceLoader.cpp,
+ common/assets/FacesetLoader.cpp,
+ common/assets/MessageLoader.cpp,
+ common/assets/PngLoader.cpp,
+ common/assets/TarLoader.cpp
+ common/assets/TreasureLoader.cpp
+ common/assets/assets.cpp
+ common/bufferreader.c
+ common/init.c
+ common/loader.l
+ common/recipe.c
+ include/ArchetypeLoader.h
+ include/AssetCollector.h
+ include/AssetLoader.h
+ include/FaceLoader.h
+ include/FacesetLoader.h
+ include/MessageLoader.h
+ include/PngLoader.h
+ include/TarLoader.h
+ include/TreasureLoader.h
+ include/WrapperLoader.h
+ include/bufferreader.h
+ include/global.h
+ include/libproto.h
+ {common/assets => include}/microtar.h
+ include/sproto.h,
+ server/init.c,
+ server/races.cpp: Use a memory buffer to read data instead of directly using a FILE.
+
 2021-03-09 Nicolas Weeger
     * server/attack.c,
     * test/unit/server/check_attack.c: Fix confusion disappearing when fix_object() is called.

@@ -23,16 +23,15 @@ int arch_init;  /**< True if doing arch initialization @todo remove */
 ArchetypeLoader::ArchetypeLoader(Archetypes *archetypes) : m_archetypes(archetypes), m_tracker(nullptr) {
 }
 
-void ArchetypeLoader::processFile(FILE *file, const std::string &filename) {
+void ArchetypeLoader::load(BufferReader *reader, const std::string &filename) {
     archetype *at, *head = NULL, *last_more = NULL;
-    int i, first = LO_NEWFILE;
+    int i;
 
     at = get_archetype_struct();
 
     arch_init = 1;
 
-    while ((i = load_object(file, &at->clone, first, MAP_STYLE))) {
-        first = 0;
+    while ((i = load_object_from_reader(reader, &at->clone, MAP_STYLE))) {
         at->clone.speed_left = (float)(-0.1);
         at = m_archetypes->define(at->name, at);
 

@@ -25,7 +25,7 @@
 #include "sproto.h"
 #include "stringbuffer.h"
 
-#define YY_DECL int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode)
+#define YY_DECL int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode, int *ismore)
 
 static char *yval(void);
 
@@ -593,8 +593,6 @@ A       .+
 
 %{
 /* Declare some local variables */
-    int ismore = 0;
-
     object *op = items[*depth];
     lex_error = 0;
 
@@ -711,7 +709,7 @@ A       .+
                             (*depth)++;
                             items[*depth] = tmp;
                             if (linemode == 0) {
-                                lex_load(depth, items, maxdepth, map_flags, linemode);
+                                lex_load(depth, items, maxdepth, map_flags, linemode, ismore);
                                 (*depth)--;
                                 object_insert_in_ob(tmp, op);
                             }
@@ -748,7 +746,10 @@ A       .+
 ^more{WS}$          { /* We need to record that this is a multipart object,
                        * so the calling function can glue things back together
                        */
-                        ismore = 1;
+                        if ((*depth) > 0) {
+                            LOG(llevError, "Got 'more' in depth %d (object %s)\n", *depth, items[*depth]->name);
+                        }
+                        (*ismore) = 1;
                     }
 
 ^end{WS}$           {
@@ -762,7 +763,7 @@ A       .+
                             }
                             return LL_NORMAL;
                         }
-                        if (ismore)
+                        if (*ismore)
                             return LL_MORE;
                         else
                             return LL_NORMAL;
@@ -1152,7 +1153,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     char inbuf[VERY_BIG_BUF];
 #define MAXDEPTH 10
     object *items[MAXDEPTH];
-    int depth = 0;
+    int depth = 0, ismore = 0;
 
     items[0] = op,
     strcpy(msgbuf, "");
@@ -1170,7 +1171,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
         yy_delete_buffer(YY_CURRENT_BUFFER);
         while (fgets(inbuf, VERY_BIG_BUF-3, fp)) {
             yybufstate = yy_scan_string(inbuf);
-            retval = lex_load(&depth, items, MAXDEPTH, map_flags, 1);
+            retval = lex_load(&depth, items, MAXDEPTH, map_flags, 1, &ismore);
             yy_delete_buffer(yybufstate);
             if (retval == LL_NORMAL) {
                 if (depth == 0)
@@ -1183,10 +1184,53 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
         return LL_EOF;
     }
 
-    retval = lex_load(&depth, items, MAXDEPTH, map_flags, 0);
+    retval = lex_load(&depth, items, MAXDEPTH, map_flags, 0, &ismore);
 
 /*    LOG(llevDebug, " load completed, object=%s\n", op->name);*/
     return retval;
+}
+
+/**
+ * Load an object from the specified reader, stopping when the object is complete.
+ * @param reader where to read from.
+ * @param op object to read.
+ * @param map_flags one or more @ref MAP_xxx "map loading flags".
+ * @return LL_NORMAL or LL_MORE if no error, LL_EOF if end of file, will LOG an error if unexpected.
+ * @todo loading is inefficient because of bufferreader_get_line(), check use of yy_scan_buffer().
+ */
+int load_object_from_reader(BufferReader *reader, object *op, int map_flags) {
+    int retval;
+    object *items[MAXDEPTH];
+    int depth = 0, ismore = 0;
+    char buf[HUGE_BUF];
+
+    items[0] = op,
+    strcpy(msgbuf, "");
+    msglen = 0;
+    total_msglen = 0;
+    strcpy(lorebuf, "");
+
+    YY_BUFFER_STATE yybufstate;
+    yy_delete_buffer(YY_CURRENT_BUFFER);
+    yy_push_state(INITIAL);
+
+    while (bufferreader_get_line(reader, buf, sizeof(buf)) != NULL) {
+        yybufstate = yy_scan_string(buf);
+        retval = lex_load(&depth, items, MAXDEPTH, map_flags, 1, &ismore);
+        yy_delete_buffer(yybufstate);
+        if (retval == LL_NORMAL || retval == LL_MORE) {
+            if (depth == 0) {
+                yy_pop_state();
+                return ismore ? LL_MORE : LL_NORMAL;
+            } else
+                depth--;
+        }
+    }
+    if (depth > 0) {
+        LOG(llevError, "Got eof while scanning strings\n");
+    }
+    yy_pop_state();
+    return LL_EOF;
 }
 
 /**
@@ -1207,7 +1251,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
  */
 int set_variable(object *op, const char *buf) {
     YY_BUFFER_STATE yybufstate, yycurbuf = YY_CURRENT_BUFFER;
-    int retval, depth;
+    int retval, depth, ismore = 0;
     object *items[MAXDEPTH];
 
     strcpy(msgbuf, "");
@@ -1218,8 +1262,10 @@ int set_variable(object *op, const char *buf) {
     depth = 0;
     yy_push_state(INITIAL);
     yybufstate = yy_scan_string(buf);
-    retval = lex_load(&depth, items, MAXDEPTH, 0, 0);
-    yy_switch_to_buffer(yycurbuf);
+    retval = lex_load(&depth, items, MAXDEPTH, 0, 0, &ismore);
+    if (yycurbuf) {
+        yy_switch_to_buffer(yycurbuf);
+    }
     yy_delete_buffer(yybufstate);
     yy_pop_state();
     return retval;

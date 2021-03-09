@@ -23,14 +23,13 @@ extern "C" {
 FacesetLoader::FacesetLoader() {
 }
 
-void FacesetLoader::processFile(FILE *file, const std::string& filename) {
-    char buf[HUGE_BUF];
+void FacesetLoader::load(BufferReader *reader, const std::string& filename) {
+    char *buf;
     char *cps[7+1];
 
-    while (fgets(buf, HUGE_BUF-1, file) != NULL) {
-        if (buf[0] == '#' || buf[0] == '\n' || buf[0] == '\0')
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
+        if (buf[0] == '#' || buf[0] == '\0')
             continue;
-        buf[strlen(buf) - 1] = '\0';
         if (split_string(buf, cps, sizeof(cps)/sizeof(*cps), ':') != 6)
             LOG(llevError, "Bad line in image_info file %s, ignoring line:\n  %s", filename.c_str(), buf);
         else {

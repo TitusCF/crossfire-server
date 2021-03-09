@@ -17,29 +17,32 @@
 #include "Utils.h"
 #include <functional>
 #include <string>
+extern "C" {
+#include "global.h"
+}
 
 /**
- * Loader calling a function for files matching a specific name.
+ * Loader calling a function for files ending with a specific string.
  */
 class WrapperLoader : public AssetLoader {
 public:
     /** Wrapper to the function to call for each file. */
-    typedef std::function<void(FILE *, const char *)> wrapped;
+    typedef std::function<void(BufferReader *, const char *)> wrapped;
 
     /**
-     * Standard constructor.
-     * @param name filename to match, should probably start with a '/'.
-     * @param fct function to call for matching files.
+     * Standard construction.
+     * @param name suffix to match to load the file.
+     * @param fct function to call to load the file.
      */
     WrapperLoader(const std::string& name, wrapped fct) : m_name(name), m_function(fct) {
     };
 
-    virtual bool willProcess(const std::string &filename) {
+    virtual bool willLoad(const std::string &filename) override {
         return Utils::endsWith(filename, m_name);
     }
 
-    virtual void processFile(FILE *file, const std::string &filename) {
-        m_function(file, filename.c_str());
+    virtual void load(BufferReader *reader, const std::string &filename) override {
+      m_function(reader, filename.c_str());
     }
 
 private:

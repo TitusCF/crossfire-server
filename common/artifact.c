@@ -540,8 +540,8 @@ static artifactlist *find_artifactlist_internal(int type) {
  * Builds up the lists of artifacts from the file in the libdir.
  * Can be called multiple times without ill effects.
  */
-void init_artifacts(FILE *file, const char *filename) {
-    char buf[HUGE_BUF], *cp, *next;
+void init_artifacts(BufferReader *reader, const char *filename) {
+    char *buf, *cp, *next;
     artifact *art = NULL;
     linked_char *tmp;
     int value;
@@ -552,11 +552,9 @@ void init_artifacts(FILE *file, const char *filename) {
 
     artifact_init = 1;
 
-    while (fgets(buf, HUGE_BUF, file) != NULL) {
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
         if (*buf == '#')
             continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
         cp = buf;
         while (*cp == ' ') /* Skip blanks */
             cp++;
@@ -600,7 +598,7 @@ void init_artifacts(FILE *file, const char *filename) {
             }
             object_reset(art->item);
             art->item->arch = &dummy_archetype;
-            if (!load_object(file, art->item, LO_LINEMODE, MAP_STYLE))
+            if (!load_object_from_reader(reader, art->item, MAP_STYLE))
                 LOG(llevError, "Init_Artifacts: Could not load object.\n");
             art->item->arch = NULL;
             art->item->name = add_string((strchr(cp, ' ')+1));

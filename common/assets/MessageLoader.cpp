@@ -22,41 +22,26 @@ extern "C" {
 MessageLoader::MessageLoader(Messages* messages) : m_messages(messages) {
 }
 
-void MessageLoader::processFile(FILE *file, const std::string &filename) {
-    char buf[MAX_BUF], msgbuf[HUGE_BUF], *cp;
+void MessageLoader::load(BufferReader *reader, const std::string &filename) {
+    char *buf, msgbuf[HUGE_BUF], *cp;
     int text = 0, nrofmsg = 0;
 
     LOG(llevDebug, "Reading messages from %s...\n", filename.c_str());
 
     GeneralMessage *tmp = NULL;
-    int lineno;
-    int error_lineno;
 
-    error_lineno = 0;
-    for (lineno = 1; fgets(buf, MAX_BUF, file) != NULL; lineno++) {
-        if (*buf == '#')
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
+        if (*buf == '#' || (*buf == '\0' && !text))
             continue;
-        cp = strchr(buf, '\n');
-        if (cp != NULL) {
-            // Remove trailing whitespace
-            while (cp > buf && (cp[-1] == ' ' || cp[-1] == '\t'))
-                cp--;
-            /* If we make sure there is a newline here,
-             * we can avoid the auto-append of it and make long
-             * blocks of text not get split.
-             * But only do that if we are getting the message.
-             * Everywhere else we do not want the newline.
-             * Daniel Hawkins 2018-10-24
-             */
-            if (text)
-            {
-                *cp = '\n';
-                // to have found a newline means we have room for a null terminator, too
-                *(++cp)= '\0';
-            }
-            else
-                *cp = '\0';
+
+        // Remove trailing whitespace
+        cp = buf + strlen(buf);
+        while (cp > buf && (cp[-1] == ' ' || cp[-1] == '\t'))
+            cp--;
+        if (cp > buf) {
+            *cp = '\0';
         }
+
         if (tmp != NULL) {
             if (text && strncmp(buf, "ENDMSG", 6) == 0) {
                 if (strlen(msgbuf) > BOOK_BUF) {
@@ -65,7 +50,7 @@ void MessageLoader::processFile(FILE *file, const std::string &filename) {
                 }
                 tmp->message = add_string(msgbuf);
                 if (tmp->identifier[0] != '\n' && tmp->title == NULL) {
-                    LOG(llevError, "Error: message can't have identifier without title, file %s on line %d\n", filename.c_str(), error_lineno);
+                    LOG(llevError, "Error: message can't have identifier without title, file %s on line %ld\n", filename.c_str(), bufferreader_current_line(reader));
                 }
                 m_messages->define(tmp->identifier, tmp);
                 nrofmsg++;
@@ -74,10 +59,9 @@ void MessageLoader::processFile(FILE *file, const std::string &filename) {
             } else if (text) {
                 if (!buf_overflow(msgbuf, buf, HUGE_BUF-1)) {
                     strcat(msgbuf, buf);
-                    // If there is a newline in the text, it will be included in the output where it belongs
-                    // We should avoid really long lines of text getting split up this way.
-                } else if (error_lineno != 0) {
-                    LOG(llevInfo, "Warning: truncating book at %s, line %d\n", filename.c_str(), error_lineno);
+                    strcat(msgbuf, "\n");
+                } else {
+                    LOG(llevInfo, "Warning: truncating book at %s, line %ld\n", filename.c_str(), bufferreader_current_line(reader));
                 }
             } else if (strcmp(buf, "TEXT") == 0) {
                 text = 1;
@@ -90,11 +74,10 @@ void MessageLoader::processFile(FILE *file, const std::string &filename) {
             } else if (strncmp(buf, "FACE ", 5) == 0) {
                 const Face *face = find_face(buf + 5);
                 tmp->face = face;
-            } else if (error_lineno != 0) {
-                LOG(llevInfo, "Warning: unknown line %s, in file %s line %d\n", buf, filename.c_str(), error_lineno);
+            } else {
+                LOG(llevInfo, "Warning: unknown line %s, in file %s line %ld\n", buf, filename.c_str(), bufferreader_current_line(reader));
             }
         } else if (strncmp(buf, "MSG", 3) == 0) {
-            error_lineno = lineno;
             tmp = (GeneralMessage *)calloc(1, sizeof(GeneralMessage));
             tmp->face = NULL;
             if (buf[3] == ' ') {
@@ -107,12 +90,12 @@ void MessageLoader::processFile(FILE *file, const std::string &filename) {
             }
             /* We need an identifier, so generate one from filename and line, that should be unique enough! */
             if (!tmp->identifier) {
-                snprintf(msgbuf, sizeof(msgbuf), "\n%s\n%d", filename.c_str(), lineno);
+                snprintf(msgbuf, sizeof(msgbuf), "\n%s\n%ld", filename.c_str(), bufferreader_current_line(reader));
                 tmp->identifier = add_string(msgbuf);
             }
             strcpy(msgbuf, ""); /* reset msgbuf for new message */
         } else {
-            LOG(llevInfo, "Warning: syntax error at %s, line %d\n", filename.c_str(), lineno);
+            LOG(llevInfo, "Warning: syntax error at %s, line %ld\n", filename.c_str(), bufferreader_current_line(reader));
         }
     }
 

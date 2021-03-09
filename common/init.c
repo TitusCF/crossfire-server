@@ -473,20 +473,16 @@ static void init_clocks(void) {
  *
  * Memory will be cleared by free_globals().
  */
-void init_attackmess(FILE *file, const char *filename) {
-    char buf[MAX_BUF];
+void init_attackmess(BufferReader *reader, const char *filename) {
+    char *buf;
     char *cp, *p;
     int mess = -1, level;
     int mode = 0, total = 0;
 
     level = 0;
-    while (fgets(buf, MAX_BUF, file) != NULL) {
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
         if (*buf == '#')
             continue;
-        // Find the end of the line and strip the newline
-        cp = strchr(buf, '\n');
-        if (cp != NULL)
-            *cp = '\0';
         /*
          * Skip blanks -- strspn is slightly faster than a loop w/ optimization on
          * Also, note we go from the beginning of the line again, since cp was at the end.

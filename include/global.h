@@ -230,7 +230,7 @@ extern socket_struct *init_sockets;
 #define PERM_EXP(exptotal) (exptotal * settings.permanent_exp_ratio / 100 )
 #define MAX_TOTAL_EXPERIENCE (settings.permanent_exp_ratio ? (MAX_EXPERIENCE * 100 / settings.permanent_exp_ratio) : 0)
 
-typedef void(*collectorHook)(FILE *, const char *);
+typedef void(*collectorHook)(BufferReader *, const char *);
 
 /**
  * Server settings.

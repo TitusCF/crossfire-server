@@ -140,8 +140,8 @@ static int check_recipe(const recipe *rp) {
 /**
  * Builds up the lists of formula from the file in  the libdir. -b.t.
  */
-void init_formulae(FILE *file, const char *filename) {
-    char buf[MAX_BUF], *cp, *next;
+void init_formulae(BufferReader *reader, const char *filename) {
+    char *buf, *cp, *next;
     recipe *formula = NULL;
     recipelist *fl;
     linked_char *tmp;
@@ -150,11 +150,9 @@ void init_formulae(FILE *file, const char *filename) {
     if (!formulalist)
         formulalist = init_recipelist();
 
-    while (fgets(buf, MAX_BUF, file) != NULL) {
-        if (*buf == '#' || *buf == '\n')
+    while ((buf = bufferreader_next_line(reader)) != NULL) {
+        if (*buf == '#' || *buf == '\0')
             continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
         cp = buf;
         while (*cp == ' ') /* Skip blanks */
             cp++;
