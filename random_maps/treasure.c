@@ -225,12 +225,16 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, int n_tre
     object *the_chest = NULL;
     int i, xl, yl;
     treasurelist *tlist;
-    
-    // If the difficulty is greater than 5, then there is a chance for there to be a mimic lurking.
+
+    // Since we scale the stats of the mimic based on the level of the dungeon,
+    // we can have no floor to generation difficulty.
     // It is a slim chance at any rate, so it shouldn't be a problem in any case.
-    if (map->difficulty > 5 && RANDOM() % 1000000 < map->difficulty*map->difficulty*map->difficulty)
+    if (RANDOM() % 1000000 < map->difficulty*map->difficulty*map->difficulty)
     {
         the_chest = create_archetype("mimic");
+        // Set the level for the mimic so that it can be given apporpriate stats.
+        if (the_chest)
+            the_chest->level = map->difficulty;
     }
     else
     {
@@ -261,7 +265,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, int n_tre
         object_free_drop_inventory(the_chest);
         return NULL;
     }
-    
+
     // If normal, then do the old behavior.
     if (the_chest->type == TREASURE)
     {

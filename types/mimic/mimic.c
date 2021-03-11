@@ -33,6 +33,7 @@
 #include <sounds.h>
 #include <sproto.h>
 #include <string.h>
+#include <stdlib.h>
 
 static method_ret mimic_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 
@@ -41,6 +42,11 @@ static method_ret mimic_type_apply(ob_methods *context, object *op, object *appl
  */
 void init_type_mimic(void) {
     register_apply(MIMIC, mimic_type_apply);
+}
+
+static inline const char *object_try_get_value(object *op, const char *key) {
+    const char *val = object_get_value(op, key);
+    return val ? val : "0";
 }
 
 /**
@@ -55,7 +61,7 @@ void init_type_mimic(void) {
  */
 static method_ret mimic_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     if (applier->type == PLAYER) {
-        
+
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, "Ah! It's alive!");
         /* We become a monster */
         op->type = MONSTER;
@@ -73,6 +79,18 @@ static method_ret mimic_type_apply(ob_methods *context, object *op, object *appl
         }
         SET_FLAG(op, FLAG_ALIVE);
         SET_FLAG(op, FLAG_MONSTER);
+        // If we don't have a level set, use the map difficulty
+        if (!op->level)
+            op->level = op->map ? op->map->difficulty : 0;
+        // Set the scalable stats based off the level given to the mimic at load.
+        int level = op->level;
+        op->stats.hp = op->stats.maxhp = op->stats.maxhp + (int16_t)(atof(object_try_get_value(op, "hp_per_level")) * level);
+        op->stats.dam = op->stats.dam + (int16_t)(atof(object_try_get_value(op, "dam_per_level")) * level);
+        op->stats.ac = op->stats.ac + (int8_t)(atof(object_try_get_value(op, "ac_per_level")) * level);
+        op->stats.wc = op->stats.wc + (int8_t)(atof(object_try_get_value(op, "wc_per_level")) * level);
+        op->stats.exp = op->stats.exp + (int64_t)(atof(object_try_get_value(op, "xp_per_level")) * level);
+        op->speed = FABS(op->speed) + atof(object_try_get_value(op, "speed_per_level")) * level;
+        // Set enemy to the triggerer.
         op->enemy = applier;
         // TODO: Should this be able to be set dynamically?
         FREE_AND_COPY(op->name, "mimic");
