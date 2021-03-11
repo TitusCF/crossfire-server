@@ -1,3 +1,10 @@
+2021-03-11 Daniel Hawkins
+    * random_maps/treasure.c: Set the level of a mimic based on map difficulty.
+    * types/mimic/mimic.c: Allow for linear scaling of mimic difficulty
+        based on the level of the mimic. Is calculated dynamically for use
+        with random maps (avoids having to define multiple arches for different
+        difficulty of mimics.
+
 2021-03-03 Nicolas Weeger
  common/Makefile.am,
  common/artifact.c,
