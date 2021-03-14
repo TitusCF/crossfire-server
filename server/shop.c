@@ -157,41 +157,6 @@ uint64_t price_base(const object *obj) {
     return val;
 }
 
-uint64_t price_approx(const object *tmp, object *who) {
-    uint64_t val = price_base(tmp);
-
-    /* If we are approximating, then the value returned should
-     * be allowed to be wrong however merely using a random number
-     * each time will not be sufficient, as then multiple examinations
-     * would give different answers, so we'll use the count instead.
-     * By taking the sine of the count, a value between -1 and 1 is
-     * generated, we then divide by the square root of the bargaining
-     * skill and the appropriate identification skills, so that higher
-     * level players get better estimates. (We need a +1 there to
-     * prevent dividing by zero.)
-     */
-    const typedata *tmptype = get_typedata(tmp->type);
-    int lev_identify = 0;
-
-    if (tmptype) {
-        int idskill1 = tmptype->identifyskill;
-        if (idskill1) {
-            int idskill2 = tmptype->identifyskill2;
-            if (find_skill_by_number(who, idskill1)) {
-                lev_identify = find_skill_by_number(who, idskill1)->level;
-            }
-            if (idskill2 && find_skill_by_number(who, idskill2)) {
-                lev_identify += find_skill_by_number(who, idskill2)->level;
-            }
-        }
-    } else {
-        LOG(llevError, "Query_cost: item %s hasn't got a valid type\n", tmp->name);
-    }
-    val += val * (sin(tmp->count) / sqrt(lev_identify * 3 + 1.0));
-
-    return val;
-}
-
 /**
  * Calculate the buy price multiplier based on a player's charisma.
  *
@@ -443,67 +408,6 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
 
 char *cost_str(uint64_t cost) {
     return cost_string_from_value(cost, LARGEST_COIN_GIVEN);
-}
-
-char *cost_approx_str(const object *tmp, object *who) {
-    uint64_t approx_val = price_approx(tmp, who);
-    int idskill1 = 0;
-    int idskill2 = 0;
-    const typedata *tmptype;
-
-    StringBuffer *buf = stringbuffer_new();
-
-    /* money it's pretty hard to not give the exact price, so skip all logic and just return the real value. */
-    if (tmp->type == MONEY) {
-        return stringbuffer_finish(real_money_value(tmp, buf));
-    }
-
-    tmptype = get_typedata(tmp->type);
-    if (tmptype) {
-        idskill1 = tmptype->identifyskill;
-        idskill2 = tmptype->identifyskill2;
-    }
-
-    /* we show an approximate price if
-     * 1) we are approximating
-     * 2) there either is no id skill(s) for the item, or we don't have them
-     * 3) we don't have bargaining skill either
-     */
-    if (!idskill1 || !find_skill_by_number(who, idskill1)) {
-        if (!idskill2 || !find_skill_by_number(who, idskill2)) {
-            if (!find_skill_by_number(who, SK_BARGAINING)) {
-                int num;
-                int cointype = LARGEST_COIN_GIVEN;
-                archetype *coin = find_next_coin(approx_val, &cointype);
-
-                if (coin == NULL) {
-                    stringbuffer_append_string(buf, "nothing");
-                    return stringbuffer_finish(buf);
-                }
-
-                num = approx_val/coin->clone.value;
-                if (num == 1)
-                    stringbuffer_append_printf(buf, "about one %s", coin->clone.name);
-                else if (num < 5)
-                    stringbuffer_append_printf(buf, "a few %s", coin->clone.name_pl);
-                else if (num < 10)
-                    stringbuffer_append_printf(buf, "several %s", coin->clone.name_pl);
-                else if (num < 25)
-                    stringbuffer_append_printf(buf, "a moderate amount of %s", coin->clone.name_pl);
-                else if (num < 100)
-                    stringbuffer_append_printf(buf, "lots of %s", coin->clone.name_pl);
-                else if (num < 1000)
-                    stringbuffer_append_printf(buf, "a great many %s", coin->clone.name_pl);
-                else
-                    stringbuffer_append_printf(buf, "a vast quantity of %s", coin->clone.name_pl);
-                return stringbuffer_finish(buf);
-            }
-        }
-    }
-
-    // If we get here, return the price we guessed.
-    stringbuffer_delete(buf);
-    return cost_str(approx_val);
 }
 
 uint64_t query_money(const object *op) {

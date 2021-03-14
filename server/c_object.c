@@ -1924,12 +1924,8 @@ void examine(object *op, object *tmp) {
     in_shop = shop_contains(op);
 
     if (tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
-        char *value = cost_approx_str(tmp, op);
-        snprintf(buf, sizeof(buf), "You reckon %s worth %s.", tmp->nrof > 1 ? "they are" : "it is", value);
-        free(value);
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-                      buf);
         if (in_shop) {
+            char *value;
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
                 value = cost_str(shop_price_buy(tmp, op));
                 snprintf(buf, sizeof(buf), "%s would cost you %s.", tmp->nrof > 1 ? "They" : "It", value);
