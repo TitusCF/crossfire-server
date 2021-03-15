@@ -6,7 +6,6 @@ extern void animate_object(object *op, int dir);
 extern void apply_anim_suffix(object *who, const char *suffix);
 extern void dump_animations(void);
 extern void animation_load_block(FILE *file, const char *full_path, const char *animation_name);
-extern int get_animations_count();
 /* arch.c */
 #ifdef __cplusplus
 extern "C" {

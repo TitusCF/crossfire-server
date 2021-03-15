@@ -1,3 +1,7 @@
+2021-03-15 Nicolas Weeger
+    * common/assets/assets.cpp,
+    * include/libproto.h: Remove unused function.
+
 2021-03-11 Daniel Hawkins
     * random_maps/treasure.c: Set the level of a mimic based on map difficulty.
     * types/mimic/mimic.c: Allow for linear scaling of mimic difficulty
