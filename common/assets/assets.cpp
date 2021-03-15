@@ -258,10 +258,6 @@ archetype *try_find_archetype(const char *name) {
     return manager->archetypes()->find(name);
 }
 
-int get_animations_count() {
-    return manager->animations()->count();
-}
-
 size_t assets_number_of_animations() {
     return manager->animations()->count();
 }
