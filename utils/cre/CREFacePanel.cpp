@@ -146,6 +146,22 @@ void CREFacePanel::setItem(const Face* face)
         }
     });
 
+    root = NULL;
+    getManager()->messages()->each([this, &root] (const GeneralMessage *message)
+    {
+       if (myFace == message->face)
+       {
+           if (!root)
+           {
+               root = CREUtils::generalMessageNode();
+               myUsing->addTopLevelItem(root);
+               root->setExpanded(true);
+           }
+
+           CREUtils::generalMessageNode(message, root);
+       }
+    });
+
     myColor->setCurrentIndex(myFace->magicmap);
 }
 void CREFacePanel::saveClicked(bool)
