@@ -174,3 +174,5 @@ Server settings:|Paramètres serveur :
  * players can write spells they are denied| * les joueurs peuvent écrire des sorts qu'ils ne peuvent lancer
  * players can't write spells they are denied| * les joueurs ne peuvent pas écrire de sort qu'ils ne peuvent pas lancer
 Wimpy level should be between 1 and 100.|Le niveau wimpy doit être entre 1 et 100.
+You keep that in mind for future reference.|Vous gardez cela en mémoire pour utilisation ultérieure.
+Use the 'knowledge' command to see what you keep in mind (this message will not appear anymore).|Utilisez la commande 'knowledge' pour lister ce que vous avez gardé en mémoire (ce message n'apparaîtra plus ultérieurement).

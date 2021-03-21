@@ -1,3 +1,8 @@
+2021-03-21 Nicolas Weeger
+    * lib/i18n/messages.fr,
+    * server/knowledge.c: Remove reference to 'writing' for knowledge, players don't need to know how to write.
+        Add color to messages. Add French translation.
+
 2021-03-15 Nicolas Weeger
     * common/assets/assets.cpp,
     * include/libproto.h: Remove unused function.
