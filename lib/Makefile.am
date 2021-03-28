@@ -32,17 +32,17 @@ VAR_FILES = highscore banish_file bookarch temp.maps clockdata
 EXTRA_DIST = README .collect-stamp $(CONF_FILES)
 
 helpdir=$(pkgdatadir)/help
-dist_help_DATA = help/*.en help/*.fr
+dist_help_DATA = $(srcdir)/help/*.en $(srcdir)/help/*.fr
 
 wizhelpdir=$(pkgdatadir)/wizhelp
-dist_wizhelp_DATA = wizhelp/*.en wizhelp/*.fr
+dist_wizhelp_DATA = $(srcdir)/wizhelp/*.en $(srcdir)/wizhelp/*.fr
 
 admdir=$(pkgdatadir)/adm
-dist_adm_SCRIPTS = adm/archsearch.pl adm/collect_images.pl
+dist_adm_SCRIPTS = $(srcdir)/adm/archsearch.pl $(srcdir)/adm/collect_images.pl
 
 i18ndir=$(pkgdatadir)/i18n
-dist_i18n_DATA = i18n/messages.en \
-	i18n/messages.fr
+dist_i18n_DATA = $(srcdir)/i18n/messages.en \
+	$(srcdir)/i18n/messages.fr
 
 MAINTAINERCLEANFILES = .collect-stamp \
 	crossfire.arc crossfire.trs crossfire.face crossfire.tar
@@ -63,7 +63,7 @@ collect: crossfire.arc
 
 crossfire.arc: .collect-stamp
 	rm -f crossfire.arc crossfire.face crossfire.trs crossfire.tar
-	../server/crossfire-server -data . \
+	../server/crossfire-server -data $(srcdir) -conf $(srcdir)/config \
 	  -pack-assets archs crossfire.arc \
 	  -pack-assets faces crossfire.face \
 	  -pack-assets treasures crossfire.trs \

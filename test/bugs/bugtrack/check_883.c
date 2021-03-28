@@ -30,6 +30,7 @@
 #include <check.h>
 #include <global.h>
 #include <sproto.h>
+#include <toolkit_common.h>
 
 static void setup(void) {
 }
@@ -72,6 +73,7 @@ int main(void) {
     SRunner *sr = srunner_create(s);
 
     srunner_set_fork_status(sr, CK_NOFORK);
+    cctk_setdatadir(SOURCE_ROOT "lib");
     init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/bugs/bugtrack/883.xml");

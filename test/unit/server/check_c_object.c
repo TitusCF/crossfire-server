@@ -336,6 +336,7 @@ int main(void) {
 
     settings.debug = 0;
     settings.logfilename = "c_object.out";
+    cctk_setdatadir(SOURCE_ROOT "lib");
     init(0, NULL);
 
     srunner_set_fork_status (sr, CK_NOFORK);

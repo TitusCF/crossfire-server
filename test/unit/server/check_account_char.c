@@ -153,6 +153,7 @@ int main(void) {
      * that file.
      */
     settings.localdir = strdup_local("/tmp/");
+    cctk_setdatadir(SOURCE_ROOT "lib");
     clean_test_account_data();
     init(0, NULL);
 

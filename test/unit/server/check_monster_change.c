@@ -51,7 +51,7 @@ START_TEST(test_monster_change) {
     object *floor = NULL;
     mapstruct *map = NULL;
     int x, y;
-    
+
     map = get_empty_map(5, 5);
     // Fill the floor
     for (x = 0; x < 5; ++x)
@@ -173,11 +173,12 @@ int main(void) {
     int nf;
     Suite *s = change_suite();
     SRunner *sr= srunner_create(s);
-    
+
     /* If you wish to debug the program, uncomment this line. */
     srunner_set_fork_status (sr, CK_NOFORK);
 
     settings.debug = 0;
+    cctk_setdatadir(SOURCE_ROOT "lib");
     init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/unit/server/monster_change.xml");

@@ -5,7 +5,7 @@
 # This is triggered to run on build, and the output is then included into the library as a source.
 use strict;
 # First step -- open object.h
-open(my $file, "< ../include/object.h") or die "Failed to load object.h";
+open(my $file, "<", $ARGV[1]) or die "Failed to load object.h";
 my $tmp;
 my @arr;
 my $max = 0;
@@ -21,7 +21,7 @@ OUT: while(<$file>)
         {
             # If not the end of the enum
             last OUT if not (/^((?!.*};).*)$/);
-            
+
             $tmp = $1; # Store the captured text.
             # Run it through a filter to get the data we want
             if ($tmp =~ /^\W*(\w+)\s*\=\s*(\d+)\,?.*$/)
@@ -33,7 +33,7 @@ OUT: while(<$file>)
                 }
             }
         }
-    }   
+    }
 }
 close($file);
 

@@ -74,5 +74,5 @@ AM_LFLAGS = -i -B
 
 CLEANFILES = loader.c arch_types_valid.c
 
-arch_types_valid.c: is_valid_types_gen.pl ../include/object.h
-	$(PERL) is_valid_types_gen.pl
+arch_types_valid.c: is_valid_types_gen.pl $(top_srcdir)/include/object.h
+	$(PERL) $(top_srcdir)/common/is_valid_types_gen.pl $(top_srcdir)/include/object.h

@@ -38,7 +38,7 @@
 #include <toolkit_common.h>
 
 static void setup(void) {
-    cctk_setdatadir(BUILD_ROOT "lib");
+    cctk_setdatadir(SOURCE_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/readable.out");
 /*    printf("set log to %s\n", LOGDIR"/unit/common/readable.out");*/
     cctk_init_std_archetypes();
