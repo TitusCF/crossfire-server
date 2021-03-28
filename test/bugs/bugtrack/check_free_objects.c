@@ -30,6 +30,7 @@
 #include <sproto.h>
 #include <stdlib.h>
 #include <string.h>
+#include <toolkit_common.h>
 
 static object *find_arch_at(mapstruct *map, int x, int y, const char *arch_name) {
     FOR_MAP_PREPARE(map, x, y, op) {
@@ -119,6 +120,7 @@ int main(void) {
     SRunner *sr = srunner_create(s);
 
     srunner_set_fork_status(sr, CK_NOFORK);
+    cctk_setdatadir(SOURCE_ROOT "lib");
     init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/bugs/bugtrack/free_objects.xml");

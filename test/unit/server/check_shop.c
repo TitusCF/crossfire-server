@@ -34,6 +34,7 @@
 #include <check.h>
 #include <global.h>
 #include <sproto.h>
+#include <toolkit_common.h>
 #include "shop.h"
 
 static void setup(void) {
@@ -102,6 +103,7 @@ int main(void) {
     srunner_set_fork_status(sr, CK_NOFORK);
 
     /* Only want to run this once, so don't put it in setup() */
+    cctk_setdatadir(SOURCE_ROOT "lib");
     init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/unit/server/shop.xml");

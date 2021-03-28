@@ -18,7 +18,7 @@
 #ifndef WIN32 /* ---win32 exclude headers */
 #include <dirent.h>
 #include <sys/stat.h>
-#include "../../include/autoconf.h"
+#include "autoconf.h"
 #endif
 
 extern "C" {

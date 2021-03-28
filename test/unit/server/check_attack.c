@@ -138,6 +138,7 @@ int main(void) {
     /*srunner_set_fork_status (sr, CK_NOFORK); */
 
     settings.debug = 0;
+    cctk_setdatadir(SOURCE_ROOT "lib");
     init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/unit/server/attack.xml");

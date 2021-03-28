@@ -49,6 +49,7 @@
 
 #include <global.h>
 #include <sproto.h>
+#include <toolkit_common.h>
 
 #define TEST_MAP_SIZE    40
 #define NUM_TICKS_TO_RUN    500
@@ -303,6 +304,7 @@ int main(void) {
     srunner_set_fork_status(sr, CK_NOFORK);
 
     /* Only want to run this once, so don't put it in setup() */
+    cctk_setdatadir(SOURCE_ROOT "lib");
     init(0, NULL);
 
     srunner_set_xml(sr, LOGDIR "/unit/server/comet.xml");
