@@ -75,6 +75,9 @@ void play_sound_player_only(player *pl, int8_t sound_type, object *emitter, int 
     pl->socket.sounds_this_tick = 0;
 
     name = emitter->type == PLAYER ? emitter->race : emitter->name;
+    if (name == NULL) {
+        return;
+    }
     if (!source)
         source = emitter;
 
