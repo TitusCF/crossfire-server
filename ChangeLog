@@ -1,3 +1,7 @@
+2021-04-06 Nicolas Weeger
+    * common/assets/Faces.cpp,
+    * include/Faces.h: Remove unused function.
+
 2021-04-05 Daniel Hawkins
     * common/item.c,
       socket/item.c,

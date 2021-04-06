@@ -22,7 +22,6 @@ class Faces : public AssetsCollection<Face> {
 public:
   Faces();
 
-  const Face *findByIndex(int index);
   const Face *findById(uint16_t id);
 
   int checksum() const { return m_checksum; }

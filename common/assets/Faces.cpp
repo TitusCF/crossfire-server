@@ -40,15 +40,6 @@ void Faces::replace(Face *existing, Face *update) {
     destroy(update);
 }
 
-const Face *Faces::findByIndex(int index) {
-    auto face = m_assets.begin();
-    while (index > 0 && face != m_assets.end()) {
-        index--;
-        face++;
-    }
-    return face == m_assets.end() ? NULL : face->second;
-}
-
 const Face *Faces::findById(uint16_t id) {
     auto face = std::find_if(m_assets.begin(), m_assets.end(), [&id] (auto& face) {
         return face.second->number == id;
