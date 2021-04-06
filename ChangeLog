@@ -1,3 +1,12 @@
+2021-04-05 Daniel Hawkins
+    * common/item.c,
+      socket/item.c,
+      include/shared/newclient.h,
+      types/book/book.c: Include support to display when a book has been read for experience.
+          The annotation "(read)" is appended when examining an item, and the client is given
+          a new flag to denote when the book has been read, so that it can properly show that
+          in the inventory and look windows.
+
 2021-03-21 Nicolas Weeger
     * lib/i18n/messages.fr,
     * server/knowledge.c: Remove reference to 'writing' for knowledge, players don't need to know how to write.

@@ -656,6 +656,10 @@ void query_name(const object *op, char *buf, size_t size) {
             safe_strcat(buf, " (applied)", &len, size);
         }
     }
+    // NO_SKILL_IDENT is set when identification fails or when the book is read. So the book is read only when it is
+    // both identified and NO_SKILL_IDENT.
+    if (QUERY_FLAG(op, FLAG_IDENTIFIED) && QUERY_FLAG(op, FLAG_NO_SKILL_IDENT) && op->type == BOOK)
+        safe_strcat(buf, " (read)", &len, size);
     if (QUERY_FLAG(op, FLAG_UNPAID))
         safe_strcat(buf, " (unpaid)", &len, size);
 }

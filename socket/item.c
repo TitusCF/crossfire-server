@@ -105,6 +105,11 @@ static unsigned int query_flags(const object *op) {
         flags |= F_LOCKED;
     if (QUERY_FLAG(op, FLAG_KNOWN_BLESSED) && QUERY_FLAG(op, FLAG_BLESSED))
         flags |= F_BLESSED;
+    // Denote when a book has been read. This gives GUI feedback in the inventory window if the client handles the flag.
+    // NO_SKILL_IDENT is set when identification fails or when the book is read. So the book is read only when it is
+    // both identified and NO_SKILL_IDENT.
+    if (QUERY_FLAG(op, FLAG_IDENTIFIED) && QUERY_FLAG(op, FLAG_NO_SKILL_IDENT) && op->type == BOOK)
+        flags |= F_READ;
 
     return flags;
 }

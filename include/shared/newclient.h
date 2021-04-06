@@ -260,6 +260,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define F_NOPICK        0x4000
 #define F_LOCKED        0x8000
 #define F_BLESSED       0x0100
+#define F_READ          0x0020
 /*@}*/
 
 /**
