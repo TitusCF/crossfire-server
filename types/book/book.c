@@ -114,15 +114,17 @@ static method_ret book_type_apply(ob_methods *context, object *op, object *appli
         if (!QUERY_FLAG(op, FLAG_IDENTIFIED)) {
             /*exp_gain *= 2; because they just identified it too */
             SET_FLAG(op, FLAG_IDENTIFIED);
-            /* If in a container, update how it looks */
-            if (op->env)
-                esrv_update_item(UPD_FLAGS|UPD_NAME, applier, op);
-            else
-                applier->contr->socket.update_look = 1;
         }
         change_exp(applier, exp_gain, skill_ob->skill, 0);
         /* so no more xp gained from this book */
         SET_FLAG(op, FLAG_NO_SKILL_IDENT);
+        // Since we now send info to the client on whether a book is read or not,
+        // we must update the item regardless of whether it was identified or not.
+        /* If in a container, update how it looks */
+        if (op->env)
+            esrv_update_item(UPD_FLAGS|UPD_NAME, applier, op);
+        else
+            applier->contr->socket.update_look = 1;
     }
     return METHOD_OK;
 }
