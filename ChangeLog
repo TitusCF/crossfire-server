@@ -1,3 +1,6 @@
+2021-04-07 Nicolas Weeger
+    * plugins/common/plugin_common.c: Fix variable type.
+
 2021-04-06 Nicolas Weeger
     * common/assets/Faces.cpp,
     * include/Faces.h: Remove unused function.

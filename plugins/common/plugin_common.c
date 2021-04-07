@@ -499,7 +499,8 @@ void cf_object_change_exp(object *op, int64_t exp, const char *skill_name, int f
  * @return The amount of total experience that is permanent experience
  */
 int64_t cf_object_perm_exp(object *op) {
-    int type, ret;
+    int type;
+    int64_t ret;
 
     cfapiObject_perm_exp(&type, op, &ret);
     assert(type == CFAPI_SINT64);
