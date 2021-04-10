@@ -275,7 +275,6 @@ typedef struct Settings {
     char    motd[MAX_BUF];      /**< Name of the motd file */
     const char *rules;          /**< Name of rules file*/
     const char *news;           /**< Name of news file*/
-    char    dm_mail[MAX_BUF];   /**< DM's Email address */
 
     /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.

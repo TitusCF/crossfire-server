@@ -568,11 +568,6 @@ static void load_settings(void) {
                 safe_strncpy(settings.motd, cp, sizeof(settings.motd));
             else
                 LOG(llevError, "load_settings: motd must have a value.\n");
-        } else if (!strcasecmp(buf, "dm_mail")) {
-            if (has_val)
-                safe_strncpy(settings.dm_mail, cp, sizeof(settings.dm_mail));
-            else
-                LOG(llevError, "load_settings: dm_mail must have a value.\n");
         } else if (!strcasecmp(buf, "metaserver_host")) {
             if (has_val)
                 safe_strncpy(settings.meta_host, cp, sizeof(settings.meta_host));
