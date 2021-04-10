@@ -244,6 +244,11 @@
     * server/init.c: Remove unused 'dm_mail' settings.
 
 2021-04-10 Nicolas Weeger
+    * include/global.h,
+    * lib/config/settings,
+    * server/init.c: Remove unused 'dm_mail' settings.
+
+2021-04-10 Nicolas Weeger
     * common/init.c,
     * include/config.h,
     * include/global.h,
