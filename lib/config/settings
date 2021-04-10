@@ -92,8 +92,6 @@ who_wiz_format %N %t%h%d%a%b%nLevel %l <%m>(@%i)(%c)
 
 # See notes for most of these in include/config.h
 
-# dm_mail your_email@addr.here
-
 # Makes death non permanent.  If enabled and you die, you lose a bunch of
 # exp, a random stat, and go back to starting town.
 # If not defined, if you die, you are dead.  If an a multiplayer server,
