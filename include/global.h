@@ -246,9 +246,7 @@ typedef struct Settings {
     const char *localdir;       /**< Read/write data files */
     const char *playerdir;      /**< Where the player files are */
     const char *mapdir;         /**< Where the map files are */
-    const char *archetypes;     /**< Name of the archetypes file - libdir is prepended */
     const char *regions;        /**< Name of the regions file - libdir is prepended */
-    const char *treasures;      /**< Location of the treasures file. */
     const char *uniquedir;      /**< Directory for the unique items */
     const char *templatedir;    /**< Directory for the template map */
     const char *tmpdir;         /**< Directory to use for temporary files */

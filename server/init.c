@@ -158,27 +158,11 @@ static void set_mapdir(const char *path) {
 }
 
 /**
- * Command line option: set archetypes file name.
- * @param path new name.
- */
-static void set_archetypes(const char *path) {
-    settings.archetypes = path;
-}
-
-/**
  * Command line option: set regions file name.
  * @param path new name.
  */
 static void set_regions(const char *path) {
     settings.regions = path;
-}
-
-/**
- * Command line option: set treasures file name.
- * @param path new name.
- */
-static void set_treasures(const char *path) {
-    settings.treasures = path;
 }
 
 /**
@@ -303,7 +287,6 @@ static struct Command_Line_Options options[] = {
     /** Pass 1 functions - Stuff that can/should be called before we actually
      * initialize any data.
      */
-    { "-arch", 1, 1, set_archetypes },
     { "-conf", 1, 1, set_confdir },
     { "-d", 0, 1, set_debug },
     { "-data", 1, 1, set_datadir },
@@ -319,7 +302,6 @@ static struct Command_Line_Options options[] = {
     { "-regions", 1, 1, set_regions },
     { "-templatedir", 1, 1, set_templatedir },
     { "-tmpdir", 1, 1, set_tmpdir },
-    { "-treasures", 1, 1, set_treasures },
     { "-uniquedir", 1, 1, set_uniquedir },
     { "-v", 0, 1, call_version },
 
@@ -1101,7 +1083,6 @@ static void help(void) {
     printf("Usage: crossfire-server [options]\n\n");
 
     printf("Options:\n");
-    printf(" -arch        Set the file with archetype definitions.\n");
     printf(" -conf        Set the directory to find configuration files.\n");
     printf(" -d           Turn on extra debugging messages.\n");
     printf(" -data        Set the data (share/) directory (archetypes, treasures, etc).\n");
@@ -1141,7 +1122,6 @@ static void help(void) {
     printf(" -regions     Set the region file.\n");
     printf(" -templatedir Set the template map directory.\n");
     printf(" -tmpdir      Set the directory for temporary files (mostly maps.)\n");
-    printf(" -treasures   Set the treasures file.\n");
     printf(" -uniquedir   Set the unique items/maps directory.\n");
     printf(" -v           Print version information.\n");
     exit(EXIT_SUCCESS);

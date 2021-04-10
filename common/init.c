@@ -44,9 +44,7 @@ struct Settings settings = {
     .localdir = LOCALDIR,
     .playerdir = PLAYERDIR,
     .mapdir = MAPDIR,
-    .archetypes = ARCHETYPES,
     .regions = REGIONS,
-    .treasures = TREASURES,
     .uniquedir = UNIQUE_DIR,
     .templatedir = TEMPLATE_DIR,
     .tmpdir = TMPDIR,
@@ -252,12 +250,6 @@ static void init_environ(void) {
     cp = getenv("CROSSFIRE_MAPDIR");
     if (cp)
         settings.mapdir = cp;
-    cp = getenv("CROSSFIRE_ARCHETYPES");
-    if (cp)
-        settings.archetypes = cp;
-    cp = getenv("CROSSFIRE_TREASURES");
-    if (cp)
-        settings.treasures = cp;
     cp = getenv("CROSSFIRE_UNIQUEDIR");
     if (cp)
         settings.uniquedir = cp;

@@ -1,3 +1,10 @@
+2021-04-10 Nicolas Weeger
+    * common/init.c,
+    * include/config.h,
+    * include/global.h,
+    * server/init.c,
+    * test/toolkit/toolkit_common.c: Removed unused 'archetypes' and 'treasures' settings.
+
 2021-04-07 Nicolas Weeger
     * plugins/common/plugin_common.c: Fix variable type.
 

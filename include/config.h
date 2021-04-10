@@ -509,15 +509,13 @@
 
 /**
  * These defines tells where, relative to LIBDIR, the maps, the map-index,
- * archetypes highscore and treaures files and directories can be found.
+ * highscore files and directories can be found.
  */
 #define MAPDIR          "maps"
 #define TEMPLATE_DIR    "template-maps"
-#define ARCHETYPES      "archetypes"
 #define REGIONS         "regions.reg"
 #define OLD_HIGHSCORE   "highscore"
 #define HIGHSCORE_DIR   "highscores"
-#define TREASURES       "treasures"
 #define BANISHFILE      "banish_file"
 
 #define MAX_ERRORS      25      /**< Bail out if more are received during tick. */

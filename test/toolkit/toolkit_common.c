@@ -82,8 +82,6 @@ void cctk_setdatadir(const char *datadir) {
  */
 void cctk_init_std_archetypes(void) {
     CCTK_ASSERT((STATUS_LOGDIR|STATUS_DATADIR));
-    settings.archetypes = "archetypes";
-    settings.treasures = "treasures";
     init_globals();
     init_hash_table();
     init_stats(FALSE);
