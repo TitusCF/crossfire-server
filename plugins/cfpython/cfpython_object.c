@@ -2541,7 +2541,7 @@ static PyObject *Crossfire_Object_AddExp(Crossfire_Object *who, PyObject *args) 
 
 static PyObject *Crossfire_Object_PermExp(Crossfire_Object *who, PyObject *args) {
     EXISTCHECK(who);
-    return Py_BuildValue("l", cf_object_perm_exp(who->obj));
+    return Py_BuildValue("L", cf_object_perm_exp(who->obj));
 }
 
 static PyObject *Crossfire_Object_Move(Crossfire_Object *who, PyObject *args) {
