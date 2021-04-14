@@ -1,3 +1,6 @@
+2021-04-14 Nicolas Weeger
+    * include/global.h: Remove unused variable.
+
 2021-04-13 Nicolas Weeger
     * plugins/cfpython/cfpython_object.c: Fix permanent experience format string.
 
