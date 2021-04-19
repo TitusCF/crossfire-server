@@ -120,7 +120,6 @@ static void do_faceset(const face_sets *fs) {
  */
 void send_image_info(socket_struct *ns) {
     SockList sl;
-    int i;
 
     SockList_Init(&sl);
 
@@ -166,7 +165,6 @@ void send_image_sums(socket_struct *ns, char *params) {
     SockList_AddPrintf(&sl, "replyinfo image_sums %d %d ", start, stop);
 
     for (i = start; i <= stop; i++) {
-        int faceset;
         const Face *face = get_face_by_id(i);
 
         if (SockList_Avail(&sl) < 2+4+1+1+strlen(face->name)+1) {

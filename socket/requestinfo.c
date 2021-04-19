@@ -279,8 +279,6 @@ static void do_race_list(archetype *race) {
  * suitable reply.
  */
 static void build_race_list_reply(SockList *sl) {
-    archetype *race;
-
     SockList_AddString(sl, "replyinfo race_list ");
 
     ugly = sl;
@@ -348,8 +346,6 @@ static void do_class_list(archetype *cl) {
  * reply.
  */
 static void build_class_list_reply(SockList *sl) {
-    archetype *cl;
-
     SockList_Reset(sl);
     SockList_AddString(sl, "replyinfo class_list ");
 
@@ -430,7 +426,6 @@ static void do_map_info(archetype *m) {
  * where to send.
  */
 void send_map_info(socket_struct *ns) {
-    archetype *m;
     SockList sl;
 
     SockList_Init(&sl);

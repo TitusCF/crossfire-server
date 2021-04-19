@@ -160,7 +160,6 @@ static void do_face(const Face *face) {
  * Dump all faces to stderr, for debugging purposes.
  */
 void dump_faces(void) {
-    Face *face;
     fprintf(stderr, "id    name                                               smooth\n");
     faces_for_each(do_face);
 }

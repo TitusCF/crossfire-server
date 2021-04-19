@@ -250,10 +250,8 @@ void command_news(object *op, const char *params) {
 static void malloc_info(object *op) {
     int ob_used = object_count_used(), ob_free = object_count_free(), players, nrofmaps;
     int nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, alnr;
-    treasurelist *tl;
     player *pl;
     mapstruct *m;
-    archetype *at;
     artifactlist *al;
 
     for (al = first_artifactlist, alnr = 0; al != NULL; al = al->next, alnr++)

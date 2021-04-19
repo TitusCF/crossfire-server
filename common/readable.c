@@ -1796,7 +1796,6 @@ static void make_formula_book(object *book, int level) {
  * message to put into book, newly allocated StringBuffer the caller should free.
  */
 static StringBuffer *msgfile_msg(object *book, size_t booksize) {
-    int weight;
     StringBuffer *ret = stringbuffer_new();
 
     GeneralMessage *msg = get_random_message();
@@ -1994,7 +1993,6 @@ void tailor_readable_ob(object *book, int msg_type) {
 void free_all_readable(void) {
     titlelist *tlist, *tnext;
     title *title1, *titlenext;
-    GeneralMessage *lmsg, *nextmsg;
     objectlink *monlink, *nextmon;
 
     LOG(llevDebug, "freeing all book information\n");

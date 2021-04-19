@@ -84,8 +84,6 @@ static void add_god_to_list(archetype *god_arch) {
  * the objects which correspond to the GODS (type GOD)
  */
 void init_gods(void) {
-    archetype *at = NULL;
-
     LOG(llevDebug, "Initializing gods...\n");
 
     archetypes_for_each(add_god_to_list);

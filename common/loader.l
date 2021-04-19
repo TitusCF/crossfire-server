@@ -801,7 +801,6 @@ A       .+
                     }
 
 ^face{S}            {
-                        const char *name = yval();
                         op->face = find_face(yval());
                     }
 ^str{S}             op->stats.Str = IVAL;

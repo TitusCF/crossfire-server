@@ -48,12 +48,6 @@ void init_type_spellbook(void) {
     register_describe(SPELLBOOK, spellbook_type_describe);
 }
 
-/** Tens */
-static const char *const numbers_10[] = {
-    "zero", "ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy",
-    "eighty", "ninety"
-};
-
 /** Levels as a full name and not a number. */
 static const char *const ordinals[] = {
     "zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh",

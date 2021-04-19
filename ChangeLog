@@ -1,3 +1,17 @@
+2021-04-19 Nicolas Weeger
+    * common/anim.c,
+    * common/holy.c,
+    * common/image.c,
+    * common/loader.l,
+    * common/readable.c,
+    * common/treasure.c,
+    * types/spellbook/spellbook.c,
+    * server/c_misc.c,
+    * server/c_object.c,
+    * server/shop.c,
+    * socket/image.c,
+    * socket/requestinfo.c: Remove unused variables.
+
 2021-04-14 Nicolas Weeger
     * include/global.h: Remove unused variable.
 

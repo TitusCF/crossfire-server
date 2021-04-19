@@ -202,11 +202,6 @@ uint64_t shop_price_buy(const object *tmp, object *who) {
         val *= 0.8;
     }
 
-    int bargain_level = 0;
-    if (find_skill_by_number(who, SK_BARGAINING)) {
-        bargain_level = find_skill_by_number(who, SK_BARGAINING)->level;
-    }
-
     float multiplier = shop_buy_multiplier(who->stats.Cha);
 
     // Limit buy price multiplier to 0.5, no matter what.

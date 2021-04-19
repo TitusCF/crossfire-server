@@ -1341,7 +1341,6 @@ void command_dropall(object *op, const char *params) {
  */
 void command_drop(object *op, const char *params) {
     int did_one = 0;
-    int ival = 0;
     int missed = 0;
 
     if (*params == '\0') {

@@ -181,7 +181,6 @@ static void do_anim(const Animations *anim) {
  * Dump all animations to stderr, for debugging purposes.
  */
 void dump_animations(void) {
-    Animations *anim;
     fprintf(stderr, "id    name                                               faces\n");
     animations_for_each(do_anim);
 }
