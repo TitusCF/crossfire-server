@@ -1,4 +1,9 @@
 2021-04-19 Nicolas Weeger
+    * common/treasure.c,
+    * include/libproto.h,
+    * test/unit/common/check_treasure.c: Removed unused function.
+
+2021-04-19 Nicolas Weeger
     * common/anim.c,
     * common/holy.c,
     * common/image.c,

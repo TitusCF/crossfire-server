@@ -432,7 +432,6 @@ extern object *generate_treasure(treasurelist *t, int difficulty);
 extern void set_abs_magic(object *op, int magic);
 extern void fix_generated_item(object *op, object *creator, int difficulty, int max_magic, int flags);
 extern void dump_monster_treasure(const char *name);
-extern objectlink *treasurelist_find_matching_type(const treasurelist *randomitems, int type, int traverse);
 /* utils.c */
 extern int random_roll(int min, int max, const object *op, int goodbad);
 extern int64_t random_roll64(int64_t min, int64_t max, const object *op, int goodbad);
