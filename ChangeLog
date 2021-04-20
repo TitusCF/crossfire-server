@@ -1,3 +1,6 @@
+2021-04-20 Nicolas Weeger
+    * common/recipe.c: Allow erasing previously defined formulae.
+
 2021-04-19 Nicolas Weeger
     * common/treasure.c,
     * include/libproto.h,
