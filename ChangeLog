@@ -1,4 +1,8 @@
 2021-04-20 Nicolas Weeger
+    * server/Makefile.am
+    * server/modules/cfcitybell.{c,cpp}: Use a definition file instead of hardcoding bells.
+
+2021-04-20 Nicolas Weeger
     * configure.ac,
     * include/modules.h,
     * include/sproto.h,
