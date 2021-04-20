@@ -53,6 +53,7 @@ typedef struct {
 /** All built modules. */
 static module_information modules[] = {
     { "citybell", "Ring bells every hour for defined temples", cfcitybell_init, cfcitybell_close },
+    { "citylife", "Add NPCs in towns", citylife_init, citylife_close },
     { NULL, NULL, NULL }
 };
 

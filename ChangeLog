@@ -1,4 +1,16 @@
 2021-04-20 Nicolas Weeger
+    * configure.ac,
+    * include/modules.h,
+    * include/sproto.h,
+    * plugins/Makefile.am,
+    * plugins/citylife/,
+    * server/Makefile.am,
+    * server/init.c,
+    * server/modules/citylife.c,
+    * server/move.c,
+    * server/plugins.c: Convert the 'citylife' plugin to a server 'module'.
+
+2021-04-20 Nicolas Weeger
     * common/init.c,
     * configure.ac,
     * include/global.h,
@@ -13,7 +25,7 @@
     * server/Makefile.am,
     * server/init.c,
     * server/modules/cfcitybell.c,
-    * server/server.c: Convert the 'citylife' plugin to a server 'module'.
+    * server/server.c: Convert the 'citybell' plugin to a server 'module'.
 
 2021-04-20 Nicolas Weeger
     * common/recipe.c: Allow erasing previously defined formulae.

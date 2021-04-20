@@ -48,7 +48,8 @@ libserver_a_SOURCES = \
 	timers.c\
 	weather.c\
 	server.c \
-	modules/cfcitybell.c
+	modules/cfcitybell.c \
+	modules/citylife.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\" \

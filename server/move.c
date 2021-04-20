@@ -573,3 +573,33 @@ int move_to(object *op, int x, int y) {
 
     return 1;
 }
+
+/**
+ * Move the specified object in a free spot around the map's x & y.
+ * @param op object to move, may be REMOVED or not.
+ * @param map map to move op to.
+ * @param x coordinate to move op to.
+ * @param y coordinate to move op to.
+ * @return 1 if op was moved, 0 else.
+ */
+int object_teleport(object *op, mapstruct *map, int x, int y) {
+    if (!out_of_map(map, x, y)) {
+        int k;
+        k = object_find_first_free_spot(op, map, x, y);
+        if (k == -1) {
+            return 0;
+        }
+
+        if (!QUERY_FLAG(op, FLAG_REMOVED)) {
+            object_remove(op);
+        }
+
+        object_insert_in_map_at(op, map, NULL, 0, x, y);
+        if (op->type == PLAYER) {
+            map_newmap_cmd(&op->contr->socket);
+            player_update_bg_music(op);
+        }
+        return 1;
+    }
+    return 0;
+}
