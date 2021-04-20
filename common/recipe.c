@@ -157,6 +157,15 @@ void init_formulae(BufferReader *reader, const char *filename) {
         while (*cp == ' ') /* Skip blanks */
             cp++;
 
+        if (!strncmp(cp, "Remove ", 7)) {
+            if (strcmp(cp + 7, "*") == 0) {
+                free_all_recipes();
+                formulalist = init_recipelist();
+            } else {
+                LOG(llevError, "Recipes: only '*' is accepted for 'Remove' at %s:%d\n", filename, bufferreader_current_line(reader));
+            }
+            continue;
+        }
         if (!strncmp(cp, "Object", 6)) {
             formula = get_empty_formula();
             formula->title = add_string(strchr(cp, ' ')+1);
