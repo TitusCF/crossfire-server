@@ -33,6 +33,7 @@
 #include "server.h"
 #include "sproto.h"
 #include "assets.h"
+#include "modules.h"
 
 static void help(void);
 static void init_beforeplay(void);
@@ -41,6 +42,73 @@ static void init_signals(void);
 
 /** If set after command line argument parsing, then the server will exit. */
 static int should_exit = 0;
+
+typedef struct {
+    const char *name;           /**< Module name, without space. */
+    char const *description;    /**< Module long description. */
+    void (*init)();             /**< Initialisation function. */
+    void (*close)();            /**< Cleanup function. */
+} module_information;
+
+/** All built modules. */
+static module_information modules[] = {
+    { "citybell", "Ring bells every hour for defined temples", cfcitybell_init, cfcitybell_close },
+    { NULL, NULL, NULL }
+};
+
+/**
+ * Check whether a module is disabled or not.
+ * @param settings game settings.
+ * @param name module name.
+ * @return 1 if module is disabled, 0 else.
+ */
+static int module_disabled(const Settings *settings, const char *name) {
+    for (linked_char *disabled = settings->disabled_modules; disabled != NULL; disabled = disabled->next) {
+        if (strcmp(disabled->name, "All") == 0 || strcmp(disabled->name, name) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/**
+ * Init all modules which are not disabled.
+ */
+void init_modules() {
+    LOG(llevInfo, "Initializing modules\n");
+    for (int module = 0; modules[module].name != NULL; module++) {
+        if (module_disabled(&settings, modules[module].name)) {
+            LOG(llevInfo, "  %s (%s): disabled\n", modules[module].name, modules[module].description);
+        } else {
+            modules[module].init(&settings);
+            LOG(llevInfo, "  %s (%s): activated\n", modules[module].name, modules[module].description);
+        }
+    }
+}
+
+/**
+ * Clean up all modules which are not disabled.
+ */
+void close_modules() {
+    LOG(llevInfo, "Cleaning modules\n");
+    for (int module = 0; modules[module].name != NULL; module++) {
+        if (!module_disabled(&settings, modules[module].name)) {
+            modules[module].close(&settings);
+            LOG(llevInfo, "  %s (%s): closed\n", modules[module].name, modules[module].description);
+        }
+    }
+}
+
+/**
+ * List all modules, then exit.
+ */
+static void list_modules() {
+    LOG(llevInfo, "Built-in modules:\n");
+    for (int module = 0; modules[module].name != NULL; module++) {
+        LOG(llevInfo, " %s: %s\n", modules[module].name, modules[module].description);
+    }
+    should_exit = 1;
+}
 
 /**
  * Command line option: set logfile name.
@@ -238,6 +306,17 @@ static void set_disable_plugin(const char *name) {
 }
 
 /**
+ * Disable a module.
+ * @param name module's name.
+ */
+static void set_disable_module(const char *name) {
+    linked_char *disable = calloc(1, sizeof(linked_char));
+    disable->next = settings.disabled_modules;
+    disable->name = strdup(name);
+    settings.disabled_modules = disable;
+}
+
+/**
  * Dump all animations, then exit.
  */
 static void server_dump_animations(void) {
@@ -291,6 +370,8 @@ static struct Command_Line_Options options[] = {
     { "-d", 0, 1, set_debug },
     { "-data", 1, 1, set_datadir },
     { "-disable-plugin", 1, 1, set_disable_plugin },
+    { "-disable-module", 1, 1, set_disable_module },
+    { "-list-modules", 0, 1, list_modules },
     { "-h", 0, 1, help },
     { "-ignore-assets-errors", 0, 1, set_ignore_assets_errors },
     { "-local", 1, 1, set_localdir },
@@ -1016,6 +1097,7 @@ void init(int argc, char **argv) {
     parse_args(argc, argv, 1);
 
     add_server_collect_hooks();
+    init_modules();
 
     init_library();     /* Must be called early */
     load_settings();    /* Load the settings file */
@@ -1070,6 +1152,9 @@ static void help(void) {
     printf(" -conf        Set the directory to find configuration files.\n");
     printf(" -d           Turn on extra debugging messages.\n");
     printf(" -data        Set the data (share/) directory (archetypes, treasures, etc).\n");
+    printf(" -disable-module\n"
+           "              Disable specified module, by its name\n"
+           "              Can be specified multiple times. 'All' disables all modules.\n");
     printf(" -disable-plugin\n"
            "              Disables specified plugin. Use the name without the extension.\n"
            "              Can be specified multiple times. 'All' disables all plugins.\n");
@@ -1078,6 +1163,8 @@ static void help(void) {
     printf(" -ignore-assets-errors\n");
     printf("               Allow going on even if there are errors in assets.\n");
     printf("               Warning: this may lead to strange behaviour.\n");
+    printf(" -list-modules\n"
+           "              List built-in modules and exit.\n");
     printf(" -local       Set the local data (var/) directory.\n");
     printf(" -log <file>  Write logging information to the given file.\n");
     printf(" -m           List suggested experience for all monsters.\n");

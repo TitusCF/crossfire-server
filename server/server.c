@@ -1156,6 +1156,8 @@ void cleanup(void) {
     write_book_archive();
     accounts_save();
 
+    close_modules();
+
 #ifdef MEMORY_DEBUG
     free_all_maps();
     free_style_maps();

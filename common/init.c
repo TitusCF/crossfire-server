@@ -94,6 +94,7 @@ struct Settings settings = {
     .hooks_count = 0,
     .ignore_assets_errors = 0,
     .archetypes_tracker = NULL,
+    .disabled_modules = NULL,
 };
 
 struct Statistics statistics;
