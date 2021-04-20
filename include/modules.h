@@ -25,6 +25,8 @@ extern "C" {
 void cfcitybell_init(Settings *settings);
 void cfcitybell_close();
 
+void citylife_init(Settings *settings);
+void citylife_close();
 
 #ifdef __cplusplus
 }

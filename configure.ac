@@ -182,8 +182,6 @@ AC_CONFIG_FILES([Makefile
                  plugins/cfpython/Makefile plugins/cfpython/include/Makefile
                  plugins/cfrhg/Makefile
                  plugins/cfrhg/include/Makefile
-                 plugins/citylife/Makefile
-                 plugins/citylife/include/Makefile
                  plugins/common/Makefile plugins/common/include/Makefile
                  test/Makefile
                  test/bugs/Makefile test/bugs/bugtrack/Makefile

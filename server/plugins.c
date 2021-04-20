@@ -4088,30 +4088,10 @@ static void cfapi_object_teleport(int *type, ...) {
     x = va_arg(args, int);
     y = va_arg(args, int);
     res = va_arg(args, int *);
-    *type = CFAPI_INT;
-
-    if (!out_of_map(map, x, y)) {
-        int k;
-        k = object_find_first_free_spot(who, map, x, y);
-        if (k == -1) {
-            *res = 1;
-            va_end(args);
-            return;
-        }
-
-        if (!QUERY_FLAG(who, FLAG_REMOVED)) {
-            object_remove(who);
-        }
-
-        object_insert_in_map_at(who, map, NULL, 0, x, y);
-        if (who->type == PLAYER) {
-            map_newmap_cmd(&who->contr->socket);
-            player_update_bg_music(who);
-        }
-        *res = 0;
-    }
-
     va_end(args);
+
+    *type = CFAPI_INT;
+    *res = object_teleport(who, map, x, y);
 }
 
 static void cfapi_object_pickup(int *type, ...) {

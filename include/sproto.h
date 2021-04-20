@@ -356,6 +356,7 @@ int teleport(object *teleporter, uint8_t tele_type, object *user);
 void recursive_roll(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
 int move_to(object *op, int x, int y);
+int object_teleport(object *op, mapstruct *map, int x, int y);
 /* ob_methods.c */
 void init_ob_methods(void);
 /* ob_types.c */
