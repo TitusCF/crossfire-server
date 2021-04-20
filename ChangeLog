@@ -145,6 +145,9 @@
     * server/modules/citylife.cpp: Fix compilation on some systems.
 
 2021-04-20 Nicolas Weeger
+    * server/modules/citylife.cpp: Fix compilation on some systems.
+
+2021-04-20 Nicolas Weeger
     * server/Makefile.am,
     * server/modules/citylife.{c,cpp}: Use a definition file instead of hardcoding positions and NPCs.
 
