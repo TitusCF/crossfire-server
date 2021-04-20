@@ -1158,6 +1158,8 @@ void cleanup(void) {
     accounts_save();
     sqlite3_close(server_db);
 
+    close_modules();
+
 #ifdef MEMORY_DEBUG
     free_all_maps();
     free_style_maps();
