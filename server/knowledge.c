@@ -508,40 +508,13 @@ static void knowledge_alchemy_attempt(player *pl, const knowledge_item *item) {
  */
 static const Face *knowledge_alchemy_face(sstring code) {
     const recipe *rp = knowledge_alchemy_get_recipe(code);
-    const artifact *art;
-    archetype *arch;
-    object *item;
-    const Face *face;
 
     if (!rp) {
         LOG(llevError, "knowledge: couldn't find recipe for %s", code);
         return NULL;
     }
 
-    if (rp->arch_names == 0)
-        return NULL;
-
-    arch = try_find_archetype(rp->arch_name[0]);
-    if (arch == NULL) {
-        return NULL;
-    }
-    if (strcmp(rp->title, "NONE") == 0) {
-        return arch->clone.face;
-    }
-
-    art = locate_recipe_artifact(rp, 0);
-    if (art == NULL)
-        return arch->clone.face;
-
-    face = arch->clone.face;
-    item = arch_to_object(arch);
-    give_artifact_abilities(item, art->item);
-    object_give_identified_properties(item);
-    if (item->face != NULL && item->face != blank_face)
-        face = item->face;
-    object_free(item, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
-
-    return face;
+    return recipe_get_face(rp);
 }
 
 /**
