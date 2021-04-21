@@ -164,7 +164,10 @@ QTreeWidgetItem* CREUtils::formulaeNode(const recipe* recipe, QTreeWidgetItem* p
         }
         else if (strcmp(recipe->title, "NONE") == 0)
         {
-            title = base->clone.name;
+            if (base->clone.title)
+                title = QString("%1 %2").arg(base->clone.name, base->clone.title);
+            else
+                title = base->clone.name;
         }
         else
         {
@@ -172,8 +175,13 @@ QTreeWidgetItem* CREUtils::formulaeNode(const recipe* recipe, QTreeWidgetItem* p
         }
     }
     QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(title));
-    if (base != NULL && base->clone.face != 0)
-        item->setIcon(0, CREPixmap::getIcon(base->clone.face->number));
+    const Face *face = recipe_get_face(recipe);
+    if (!face && base != NULL)
+    {
+        face = base->clone.face;
+    }
+    if (face)
+        item->setIcon(0, CREPixmap::getIcon(face->number));
 
     return item;
 }

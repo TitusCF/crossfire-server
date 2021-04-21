@@ -755,3 +755,40 @@ recipe *find_recipe_for_tool(const char *tool, recipe *from) {
 
     return NULL;
 }
+
+/**
+ * Return the best face associated with a recipe.
+ * @param rp recipe to get the face of.
+ * @return best face, may be NULL if none applicable.
+ */
+const Face *recipe_get_face(const recipe *rp) {
+    const artifact *art;
+    archetype *arch;
+    object *item;
+    const Face *face;
+
+    if (rp->arch_names == 0)
+        return NULL;
+
+    arch = try_find_archetype(rp->arch_name[0]);
+    if (arch == NULL) {
+        return NULL;
+    }
+    if (strcmp(rp->title, "NONE") == 0) {
+        return arch->clone.face;
+    }
+
+    art = locate_recipe_artifact(rp, 0);
+    if (art == NULL)
+        return arch->clone.face;
+
+    face = arch->clone.face;
+    item = arch_to_object(arch);
+    give_artifact_abilities(item, art->item);
+    object_give_identified_properties(item);
+    if (item->face != NULL && item->face != blank_face)
+        face = item->face;
+    object_free(item, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
+
+    return face;
+}

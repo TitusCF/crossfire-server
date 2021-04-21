@@ -1,3 +1,9 @@
+2021-04-21 Nicolas Weeger
+    * common/recipe.c,
+    * include/libproto.h,
+    * server/knowledge.c: Extract function.
+    * utils/cre/CREUtils.cpp: Fix icon and title of formulae nodes.
+
 2021-04-20 Nicolas Weeger
     * server/modules/citylife.cpp: Fix compilation on some systems.
 

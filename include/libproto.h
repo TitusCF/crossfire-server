@@ -378,6 +378,7 @@ extern recipe *get_random_recipe(recipelist *rpl);
 extern void free_all_recipes(void);
 extern recipe *find_recipe_for_tool(const char *tool, recipe *from);
 extern void check_formulae(void);
+extern const Face *recipe_get_face(const recipe *rp);
 /* region.c */
 extern region *get_region_by_name(const char *region_name);
 extern region *get_region_by_map(mapstruct *m);
