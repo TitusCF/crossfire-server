@@ -1,3 +1,13 @@
+2021-04-21 Daniel Hawkins
+    * include/shared/newclient.h,
+      server/c_misc.c,
+      server/c_wiz.c,
+      server/knowledge.c,
+      server/server.c,
+      socket/info.c: Make draw_ext_info() and draw_ext_info_format() do i18n translation inside them, instead of
+          relying on the caller to do it. This makes adding strings to translations in the future significantly easier.
+    * server/player.c: Make calls to send_query() use a translatable string.
+
 2021-04-21 Nicolas Weeger
     * common/recipe.c,
     * include/libproto.h,

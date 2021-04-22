@@ -1355,7 +1355,7 @@ void login_check_shutdown(object* const op) {
     if (time_left <= 60*shutdown_warn_times[0]) {
         draw_ext_info_format(
             NDI_UNIQUE | NDI_ALL, 0, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-            i18n(op, "Server shutting down in %d minutes."), time_left / 60);
+            "Server shutting down in %d minutes.", time_left / 60);
     }
 }
 

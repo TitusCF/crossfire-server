@@ -52,14 +52,14 @@ static int onoff_value(const char *line);
 static void map_info(object *op, const char *search) {
     if ( *search != 0 ) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                      i18n(op, "Maps matching search: '%s'"), search);
+                      "Maps matching search: '%s'", search);
     }
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                      i18n(op, "[fixed]Path             Reset In (HH:MM:SS) Pl IM   TO"));
+                      "[fixed]Path             Reset In (HH:MM:SS) Pl IM   TO");
     } else {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                      i18n(op, "[fixed]Path             Reset In (HH:MM)"));
+                      "[fixed]Path             Reset In (HH:MM)");
     }
 
     /* Allow a comma-separate list of search strings; more complicated because of the const */
@@ -109,12 +109,12 @@ static void map_info(object *op, const char *search) {
         if (QUERY_FLAG(op, FLAG_WIZ)) {
             draw_ext_info_format(
                 NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                i18n(op, "[fixed]%-26.26s %2d:%02d:%02d  %2d %2d %4d"),
+                "[fixed]%-26.26s %2d:%02d:%02d  %2d %2d %4d",
                 map_path, hh, mm, ss, m->players, m->in_memory, m->timeout);
         } else {
             draw_ext_info_format(
                 NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                i18n(op, "[fixed]%-26.26s %2d:%02d%s"), map_path, hh, mm,
+                "[fixed]%-26.26s %2d:%02d%s", map_path, hh, mm,
                 m->players ? " (in use)" : "");
         }
     }
@@ -137,9 +137,9 @@ void command_language(object *op, const char *params) {
 
     if (*params == '\0' || (!strcmp(params, ""))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n(op, "Your current language is set to: English."));
+                             "Your current language is set to: English.");
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n(op, "Available languages:"));
+                             "Available languages:");
         i18n_list_languages(op);
         return;
     }
@@ -149,14 +149,14 @@ void command_language(object *op, const char *params) {
     /* Error out if unknown language. */
     if (language == -1) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "Unknown language."));
+                      "Unknown language.");
         return;
     }
 
     op->contr->language = language;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n(op, "Your current language is set to English."));
+                         "Your current language is set to English.");
 }
 
 /**
@@ -179,13 +179,13 @@ void command_body(object *op, const char *params) {
      * give a description.
      */
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n(op, "The first column is the name of the body location."));
+                  "The first column is the name of the body location.");
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n(op, "The second column is how many of those locations your body has."));
+                  "The second column is how many of those locations your body has.");
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n(op, "The third column is how many slots in that location are available."));
+                  "The third column is how many slots in that location are available.");
 
     for (i = 0; i < NUM_BODY_LOCATIONS; i++) {
         /* really debugging - normally body_used should not be set to anything
@@ -193,16 +193,16 @@ void command_body(object *op, const char *params) {
          */
         if (op->body_info[i] || op->body_used[i]) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                                 i18n(op, "[fixed]%-30s %5d %5d"),
+                                 "[fixed]%-30s %5d %5d",
                                  i18n(op, body_locations[i].use_name), op->body_info[i], op->body_used[i]);
         }
     }
     if (!QUERY_FLAG(op, FLAG_USE_ARMOUR))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                      i18n(op, "You are not allowed to wear armor."));
+                      "You are not allowed to wear armor.");
     if (!QUERY_FLAG(op, FLAG_USE_WEAPON))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                      i18n(op, "You are not allowed to use weapons."));
+                      "You are not allowed to use weapons.");
 }
 
 /**
@@ -271,33 +271,33 @@ static void malloc_info(object *op) {
         }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "Sizeof: object=%d  player=%d  map=%d"),
+                         "Sizeof: object=%d  player=%d  map=%d",
                          sizeof(object), sizeof(player), sizeof(mapstruct));
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]Objects:"));
+                         "[fixed]Objects:");
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%6d used"), ob_used);
+                         "[fixed]%6d used", ob_used);
 
     if (ob_used != nrofallocobjects - nroffreeobjects) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                             i18n(op, "[fixed]      (used list mismatch: %d)"),
+                             "[fixed]      (used list mismatch: %d)",
                              nrofallocobjects - nroffreeobjects);
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%6d free (%.2f%% of %d allocated)"),
+                         "[fixed]%6d free (%.2f%% of %d allocated)",
                          ob_free, (float)ob_free / nrofallocobjects * 100, nrofallocobjects);
 
     if (ob_free != nroffreeobjects) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                             i18n(op, "[fixed]      (free list mismatch: %d)"),
+                             "[fixed]      (free list mismatch: %d)",
                              nroffreeobjects);
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%6d on active list"),
+                         "[fixed]%6d on active list",
                          object_count_active());
 
     i = (ob_used*sizeof(object));
@@ -305,87 +305,87 @@ static void malloc_info(object *op) {
     sum_alloc += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]     object total: %11d"), i);
+                         "[fixed]     object total: %11d", i);
 
     i = (ob_free*sizeof(object));
     sum_alloc += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d players:         %8d"),
+                         "[fixed]%4d players:         %8d",
                          players, i = (players*sizeof(player)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d maps allocated:  %8d"),
+                         "[fixed]%4d maps allocated:  %8d",
                          nrofmaps, i = (nrofmaps*sizeof(mapstruct)));
 
     sum_alloc += i;
     sum_used += nrm*sizeof(mapstruct);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d maps in memory:  %8d"),
+                         "[fixed]%4d maps in memory:  %8d",
                          nrm, mapmem);
 
     sum_alloc += mapmem;
     sum_used += mapmem;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d archetypes:      %8d"),
+                         "[fixed]%4d archetypes:      %8d",
                          anr, i = (anr*sizeof(archetype)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d animations:      %8d"),
+                         "[fixed]%4d animations:      %8d",
                          anims, i = (anims*sizeof(uint16_t)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d treasurelists    %8d"),
+                         "[fixed]%4d treasurelists    %8d",
                          assets_number_of_treasurelists(), i = (assets_number_of_treasurelists() * sizeof(treasurelist)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4ld treasures        %8d"),
+                         "[fixed]%4ld treasures        %8d",
                          assets_number_of_treasures(), i = (assets_number_of_treasures() *sizeof(treasure)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4ld artifacts        %8d"),
+                         "[fixed]%4ld artifacts        %8d",
                          nrofartifacts, i = (nrofartifacts*sizeof(artifact)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4ld artifacts strngs %8d"),
+                         "[fixed]%4ld artifacts strngs %8d",
                          nrofallowedstr, i = (nrofallowedstr*sizeof(linked_char)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]%4d artifactlists    %8d"),
+                         "[fixed]%4d artifactlists    %8d",
                          alnr, i = (alnr*sizeof(artifactlist)));
 
     sum_alloc += i;
     sum_used += i;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]Total space allocated:%8d"),
+                         "[fixed]Total space allocated:%8d",
                          sum_alloc);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n(op, "[fixed]Total space used:     %8d"),
+                         "[fixed]Total space used:     %8d",
                          sum_used);
 }
 
@@ -412,7 +412,7 @@ static void current_region_info(object *op) {
         return;
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n(op, "You are in %s.\n%s"),
+                         "You are in %s.\n%s",
                          get_region_longname(r), get_region_msg(r));
 }
 
@@ -434,7 +434,7 @@ static void current_map_info(object *op) {
 
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n(op, "players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d"),
+                             "players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d",
                              m->players, m->difficulty,
                              MAP_WIDTH(m), MAP_HEIGHT(m),
                              MAP_ENTER_X(m), MAP_ENTER_Y(m),
@@ -458,10 +458,10 @@ void command_malloc_verify(object *op, char *parms) {
 
     if (!malloc_verify())
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "Heap is corrupted."));
+                      "Heap is corrupted.");
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "Heap checks out OK."));
+                      "Heap checks out OK.");
 
     return 1;
 }
@@ -504,12 +504,12 @@ void command_whereabouts(object *op, const char *params) {
         }
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                  i18n(op, "In the world currently there are:"));
+                  "In the world currently there are:");
 
     for (reg = first_region; reg != NULL; reg = reg->next)
         if (reg->counter > 0) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                 i18n(op, "%u players in %s"),
+                                 "%u players in %s",
                                  reg->counter, get_region_longname(reg));
         }
 }
@@ -571,7 +571,7 @@ void list_players(object *op, region *reg, partylist *party) {
             chars = (chars_names *)realloc(chars, num_players*sizeof(chars_names));
             if (chars == NULL) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                              i18n(op, "who failed - out of memory!"));
+                              "who failed - out of memory!");
                 return;
             }
             sprintf(chars[num_players-1].namebuf, "%s", pl->ob->name);
@@ -591,15 +591,15 @@ void list_players(object *op, region *reg, partylist *party) {
     if (first_player != (player *)NULL) {
         if (reg == NULL && party == NULL)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n(op, "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)"),
+                                 "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
                                  num_players, num_wiz, num_afk, num_bot);
         else if (party == NULL)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n(op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)"),
+                                 "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
                                  reg->longname ? reg->longname : reg->name, num_players, num_wiz, num_afk, num_bot);
         else
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n(op, "Total Players in party %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)"),
+                                 "Total Players in party %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
                                  party->partyname, num_players, num_wiz, num_afk, num_bot);
     }
     qsort(chars, num_players, sizeof(chars_names), (int (*)(const void *, const void *))name_cmp);
@@ -769,11 +769,11 @@ void command_afk(object *op, const char *params) {
     if (QUERY_FLAG(op, FLAG_AFK)) {
         CLEAR_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You are no longer AFK"));
+                      "You are no longer AFK");
     } else {
         SET_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You are now AFK"));
+                      "You are now AFK");
     }
 }
 
@@ -882,13 +882,13 @@ void command_debug(object *op, const char *params) {
 
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n(op, "Global debug level is %d."),
+                             "Global debug level is %d.",
                              settings.debug);
         return;
     }
     settings.debug = (enum LogLevel)FABS(i);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n(op, "Debug level set to %d."),
+                         "Debug level set to %d.",
                          i);
 }
 
@@ -914,11 +914,11 @@ void command_wizpass(object *op, const char *params) {
 
     if (i) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You will now walk through walls."));
+                      "You will now walk through walls.");
         SET_FLAG(op, FLAG_WIZPASS);
     } else {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You will now be stopped by walls."));
+                      "You will now be stopped by walls.");
         CLEAR_FLAG(op, FLAG_WIZPASS);
     }
 }
@@ -944,11 +944,11 @@ void command_wizcast(object *op, const char *params) {
 
     if (i) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You can now cast spells anywhere."));
+                      "You can now cast spells anywhere.");
         SET_FLAG(op, FLAG_WIZCAST);
     } else {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You now cannot cast spells in no-magic areas."));
+                      "You now cannot cast spells in no-magic areas.");
         CLEAR_FLAG(op, FLAG_WIZCAST);
     }
 }
@@ -1066,18 +1066,18 @@ void command_listen(object *op, const char *params) {
 
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n(op, "Set listen to what (presently %d)?"),
+                             "Set listen to what (presently %d)?",
                              op->contr->listening);
         return;
     }
     if (i < 0) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n(op, "Verbose level should be positive."));
+                             "Verbose level should be positive.");
         return;
     }
     op->contr->listening = (char)i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n(op, "Your verbose level is now %d."),
+                         "Your verbose level is now %d.",
                          i);
 }
 
@@ -1111,31 +1111,31 @@ void command_statistics(object *pl, const char *params) {
                          level_exp(pl->level+1, pl->expmul));
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                  i18n(pl, "[fixed]\nStat       Nat/Real/Max"));
+                  "[fixed]\nStat       Nat/Real/Max");
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n(pl, "[fixed]Str         %2d/ %3d/%3d"),
+                         "[fixed]Str         %2d/ %3d/%3d",
                          pl->contr->orig_stats.Str, pl->stats.Str, 20+pl->arch->clone.stats.Str);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n(pl, "[fixed]Dex         %2d/ %3d/%3d"),
+                         "[fixed]Dex         %2d/ %3d/%3d",
                          pl->contr->orig_stats.Dex, pl->stats.Dex, 20+pl->arch->clone.stats.Dex);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n(pl, "[fixed]Con         %2d/ %3d/%3d"),
+                         "[fixed]Con         %2d/ %3d/%3d",
                          pl->contr->orig_stats.Con, pl->stats.Con, 20+pl->arch->clone.stats.Con);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n(pl, "[fixed]Int         %2d/ %3d/%3d"),
+                         "[fixed]Int         %2d/ %3d/%3d",
                          pl->contr->orig_stats.Int, pl->stats.Int, 20+pl->arch->clone.stats.Int);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n(pl, "[fixed]Wis         %2d/ %3d/%3d"),
+                         "[fixed]Wis         %2d/ %3d/%3d",
                          pl->contr->orig_stats.Wis, pl->stats.Wis, 20+pl->arch->clone.stats.Wis);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n(pl, "[fixed]Pow         %2d/ %3d/%3d"),
+                         "[fixed]Pow         %2d/ %3d/%3d",
                          pl->contr->orig_stats.Pow, pl->stats.Pow, 20+pl->arch->clone.stats.Pow);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n(pl, "[fixed]Cha         %2d/ %3d/%3d"),
+                         "[fixed]Cha         %2d/ %3d/%3d",
                          pl->contr->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n(pl, "\nAttack Mode: %s"),
+                         "\nAttack Mode: %s",
                          i18n(pl, pl->contr->peaceful ?  "Peaceful" : "Hostile"));
     /**
      * Add preliminary damage per second calculations here
@@ -1151,7 +1151,7 @@ void command_statistics(object *pl, const char *params) {
     // TODO: Account for opposing AC in calculations, make some sort of table/chart.
     // Then we round the floating-point.
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                        i18n(pl, "\n\nDam/Sec: %4d"), (int)(dps + 0.5f));
+                        "\n\nDam/Sec: %4d", (int)(dps + 0.5f));
 
     /* max_time is in microseconds - thus divide by 1000000.
      * Need 64 bit values, as otherwise ticks_played * max_time
@@ -1221,7 +1221,7 @@ void command_players(object *op, const char *params) {
                         struct tm *tm = localtime(&st.st_mtime);
 
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                             i18n(op, "[fixed]%s\t%04d %02d %02d %02d %02d %02d"),
+                                             "[fixed]%s\t%04d %02d %02d %02d %02d %02d",
                                              entry->d_name,
                                              1900+tm->tm_year,
                                              1+tm->tm_mon,
@@ -1255,7 +1255,7 @@ void command_applymode(object *op, const char *params) {
 
     if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n(op, "applymode is set to %s"),
+                             "applymode is set to %s",
                              types[op->contr->unapply]);
         return;
     }
@@ -1268,12 +1268,12 @@ void command_applymode(object *op, const char *params) {
         op->contr->unapply = unapply_always;
     else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n(op, "applymode: Unknown options %s, valid options are nochoice, never, always"),
+                             "applymode: Unknown options %s, valid options are nochoice, never, always",
                              params);
         return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n(op, "applymode%s set to %s"),
+                         "applymode%s set to %s",
                          (unapply == op->contr->unapply ? "" : " now"),
                          types[op->contr->unapply]);
 }
@@ -1306,7 +1306,7 @@ void command_bowmode(object *op, const char *params) {
 
     if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n(op, "bowmode is set to %s"),
+                             "bowmode is set to %s",
                              types[op->contr->bowtype]);
         return;
     }
@@ -1335,7 +1335,7 @@ void command_bowmode(object *op, const char *params) {
         return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n(op, "bowmode%s set to %s"),
+                         "bowmode%s set to %s",
                          (oldtype == op->contr->bowtype ? "" : " now"),
                          types[op->contr->bowtype]);
     return;
@@ -1416,7 +1416,7 @@ void command_petmode(object *op, const char *params) {
 
     if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n(op, "petmode is set to %s"),
+                             "petmode is set to %s",
                              types[op->contr->petmode]);
         return;
     }
@@ -1431,12 +1431,12 @@ void command_petmode(object *op, const char *params) {
         op->contr->petmode = pet_arena;
     else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n(op, "petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena"),
+                             "petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena",
                              params);
         return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n(op, "petmode%s set to %s"),
+                         "petmode%s set to %s",
                          (oldtype == op->contr->petmode ? "" : " now"),
                          types[op->contr->petmode]);
 }
@@ -1464,42 +1464,42 @@ void command_showpets(object *op, const char *params) {
             if (target == 0) {
                 if (counter == 0)
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                  i18n(op, "Pets:"));
+                                  "Pets:");
                 draw_ext_info_format(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "%d  %s - level %d"),
+                                     "%d  %s - level %d",
                                      ++counter, ob->name, ob->level);
             } else if (!have_shown_pet && ++counter == target) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]level %d %s"),
+                                     "[fixed]level %d %s",
                                      ob->level, ob->name);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]%d/%d HP, %d/%d SP"),
+                                     "[fixed]%d/%d HP, %d/%d SP",
                                      ob->stats.hp, ob->stats.maxhp, ob->stats.sp, ob->stats.maxsp);
 
                 /* this is not a nice way to do this, it should be made to be more like the statistics command */
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]Str %d"),
+                                     "[fixed]Str %d",
                                      ob->stats.Str);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]Dex %d"),
+                                     "[fixed]Dex %d",
                                      ob->stats.Dex);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]Con %d"),
+                                     "[fixed]Con %d",
                                      ob->stats.Con);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]Int %d"),
+                                     "[fixed]Int %d",
                                      ob->stats.Int);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]Wis %d"),
+                                     "[fixed]Wis %d",
                                      ob->stats.Wis);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]Cha %d"),
+                                     "[fixed]Cha %d",
                                      ob->stats.Cha);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]Pow %d"),
+                                     "[fixed]Pow %d",
                                      ob->stats.Pow);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n(op, "[fixed]wc %d  damage %d ac %d"),
+                                     "[fixed]wc %d  damage %d ac %d",
                                      ob->stats.wc, ob->stats.dam, ob->stats.ac);
                 have_shown_pet = 1;
             }
@@ -1507,10 +1507,10 @@ void command_showpets(object *op, const char *params) {
     }
     if (counter == 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You have no pets."));
+                      "You have no pets.");
     else if (target != 0 && have_shown_pet == 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "No such pet."));
+                      "No such pet.");
 }
 
 /**
@@ -1531,7 +1531,7 @@ void command_usekeys(object *op, const char *params) {
 
     if (*params == '\0') {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n(op, "usekeys is set to %s"),
+                             "usekeys is set to %s",
                              types[op->contr->usekeys]);
         return;
     }
@@ -1544,12 +1544,12 @@ void command_usekeys(object *op, const char *params) {
         op->contr->usekeys = containers;
     else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n(op, "usekeys: Unknown option %s, valid options are inventory, keyrings, containers"),
+                             "usekeys: Unknown option %s, valid options are inventory, keyrings, containers",
                              params);
         return;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n(op, "usekeys%s set to %s"),
+                         "usekeys%s set to %s",
                          (oldtype == op->contr->usekeys ? "" : " now"),
                          types[op->contr->usekeys]);
 }
@@ -1572,7 +1572,7 @@ void command_resistances(object *op, const char *params) {
             continue;
 
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                             i18n(op, "[fixed]%-20s %+5d"),
+                             "[fixed]%-20s %+5d",
                              attacktype_desc[i], op->resist[i]);
     }
 
@@ -1584,12 +1584,12 @@ void command_resistances(object *op, const char *params) {
         tmp = object_find_by_type_and_arch_name(op, FORCE, "dragon_skin_force");
         if (tmp != NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                          i18n(op, "\nNatural skin resistances:"));
+                          "\nNatural skin resistances:");
 
             for (attack = 0; attack < NROFATTACKS; attack++) {
                 if (atnr_is_dragon_enabled(attack)) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                                         i18n(op, "%s: %d"),
+                                         "%s: %d",
                                          change_resist_msg[attack], tmp->resist[attack]);
                 }
             }
@@ -1622,19 +1622,19 @@ static void help_topics(object *op, int what) {
     case 1:
         snprintf(filename, sizeof(filename), "%s/wizhelp", settings.datadir);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      i18n(op, "      Wiz commands:"));
+                      "      Wiz commands:");
         break;
 
     case 3:
         snprintf(filename, sizeof(filename), "%s/mischelp", settings.datadir);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      i18n(op, "      Misc help:"));
+                      "      Misc help:");
         break;
 
     default:
         snprintf(filename, sizeof(filename), "%s/help", settings.datadir);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      i18n(op, "      Commands:"));
+                      "      Commands:");
         break;
     }
     if (!(dirp = opendir(filename)))
@@ -1678,21 +1678,21 @@ static void show_commands(object *op, int what) {
         ap = WizCommands;
         size = WizCommandsSize;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      i18n(op, "      Wiz commands:"));
+                      "      Wiz commands:");
         break;
 
     case 2:
         ap = CommunicationCommands;
         size = CommunicationCommandSize;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      i18n(op, "      Communication commands:"));
+                      "      Communication commands:");
         break;
 
     default:
         ap = Commands;
         size = CommandsSize;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      i18n(op, "      Commands:"));
+                      "      Commands:");
         break;
     }
 
@@ -1811,7 +1811,7 @@ void command_help(object *op, const char *params) {
      */
     if (strchr(params, '.') || strchr(params, ' ') || strchr(params, '/')) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                             i18n(op, "Illegal characters in '%s'"),
+                             "Illegal characters in '%s'",
                              params);
         return;
     }
@@ -1820,7 +1820,7 @@ void command_help(object *op, const char *params) {
 
     if (!find_help_file(params, language, QUERY_FLAG(op, FLAG_WIZ), filename, sizeof(filename))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                            i18n(op, "No help available on '%s'"),
+                            "No help available on '%s'",
                             params);
         return;
     }
@@ -1834,7 +1834,7 @@ void command_help(object *op, const char *params) {
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         i18n(op, "Help about '%s'"),
+                         "Help about '%s'",
                          params);
 
     while (fgets(line, MAX_BUF, fp)) {
@@ -1894,9 +1894,8 @@ static int onoff_value(const char *line) {
 void command_quit(object* op, const char* params) {
     draw_ext_info(
         NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-        i18n(op,
              "To leave the game, sleep in (apply) a bed to reality. To "
-             "permenantly delete your character, use the 'delete' command."));
+             "permenantly delete your character, use the 'delete' command.");
 }
 
 /**
@@ -1931,11 +1930,11 @@ void command_sound(object *op, const char *params) {
     if (!(op->contr->socket.sound&SND_MUTE)) {
         op->contr->socket.sound = op->contr->socket.sound|SND_MUTE;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "Sounds are turned off."));
+                      "Sounds are turned off.");
     } else {
         op->contr->socket.sound = op->contr->socket.sound&~SND_MUTE;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "The sounds are enabled."));
+                      "The sounds are enabled.");
     }
     return;
 }
@@ -1975,7 +1974,7 @@ void receive_player_password(object *op) {
         || op->contr->state == ST_CHANGE_PASSWORD_NEW
         || op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(op, "Password changed cancelled."));
+                          "Password changed cancelled.");
             player_set_state(op->contr, ST_PLAYING);
         } else
             get_name(op);
@@ -1988,7 +1987,7 @@ void receive_player_password(object *op) {
     if (checkbanned(op->name, op->contr->socket.host)) {
         LOG(llevInfo, "Banned player tried to add: [%s@%s]\n", op->name, op->contr->socket.host);
         draw_ext_info(NDI_UNIQUE|NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You are not allowed to play."));
+                      "You are not allowed to play.");
         get_name(op);
         return;
     }
@@ -1996,14 +1995,14 @@ void receive_player_password(object *op) {
     if (op->contr->state == ST_CONFIRM_PASSWORD) {
         if (!check_password(op->contr->write_buf+1, op->contr->password)) {
             draw_ext_info(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(op, "The passwords did not match."));
+                          "The passwords did not match.");
             get_name(op);
             return;
         }
         LOG(llevInfo, "LOGIN: New player named %s from ip %s\n", op->name, op->contr->socket.host);
         display_motd(op);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "\nWelcome, Brave New Warrior!\n"));
+                      "\nWelcome, Brave New Warrior!\n");
         roll_again(op);
         player_set_state(op->contr, ST_ROLL_STAT);
         return;
@@ -2012,7 +2011,7 @@ void receive_player_password(object *op) {
     if (op->contr->state == ST_CHANGE_PASSWORD_OLD) {
         if (!check_password(op->contr->write_buf+1, op->contr->password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(op, "You entered the wrong current password."));
+                          "You entered the wrong current password.");
             player_set_state(op->contr, ST_PLAYING);
         } else {
             send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n(op, "Please enter your new password, or blank to cancel:"));
@@ -2033,10 +2032,10 @@ void receive_player_password(object *op) {
     if (op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
         if (!check_password(op->contr->write_buf+1, op->contr->new_password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(op, "The new passwords don't match!"));
+                          "The new passwords don't match!");
         } else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(op, "Password changed."));
+                          "Password changed.");
             strncpy(op->contr->password, op->contr->new_password, 13);
         }
         player_set_state(op->contr, ST_PLAYING);
@@ -2064,14 +2063,14 @@ void command_title(object *op, const char *params) {
 
     if (settings.set_title == FALSE) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n(op, "You cannot change your title."));
+                      "You cannot change your title.");
         return;
     }
 
     /* dragon players cannot change titles */
     if (is_dragon_pl(op)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n(op, "Dragons cannot change titles."));
+                      "Dragons cannot change titles.");
         return;
     }
 
@@ -2079,24 +2078,24 @@ void command_title(object *op, const char *params) {
         char tmp[MAX_BUF];
 
         player_get_title(op->contr, tmp, sizeof(tmp));
-        snprintf(buf, sizeof(buf), i18n(op, "Your title is '%s'."), tmp);
+        snprintf(buf, sizeof(buf), "Your title is '%s'.", tmp);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG, buf);
         return;
     }
     if (strcmp(params, "clear") == 0 || strcmp(params, "default") == 0) {
         if (!player_has_own_title(op->contr))
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                          i18n(op, "Your title is the default title."));
+                          "Your title is the default title.");
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                          i18n(op, "Title set to default."));
+                          "Title set to default.");
         player_set_own_title(op->contr, "");
         return;
     }
 
     if ((int)strlen(params) >= MAX_NAME) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n(op, "Title too long."));
+                      "Title too long.");
         return;
     }
     player_set_own_title(op->contr, params);
@@ -2113,17 +2112,17 @@ void command_title(object *op, const char *params) {
 void command_save(object *op, const char *params) {
     if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL)&P_NO_CLERIC) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You can not save on unholy ground."));
+                      "You can not save on unholy ground.");
     } else if (!op->stats.exp) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You don't deserve to save yet."));
+                      "You don't deserve to save yet.");
     } else {
         if (save_player(op, 1))
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(op, "You have been saved."));
+                          "You have been saved.");
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(op, "SAVE FAILED!"));
+                          "SAVE FAILED!");
     }
 }
 
@@ -2138,10 +2137,10 @@ void command_save(object *op, const char *params) {
 void command_peaceful(object *op, const char *params) {
     if ((op->contr->peaceful = !op->contr->peaceful))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n(op, "You will not attack other players."));
+                      "You will not attack other players.");
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n(op, "You will attack other players."));
+                      "You will attack other players.");
 }
 
 /**
@@ -2157,20 +2156,20 @@ void command_wimpy(object *op, const char *params) {
 
     if (*params == '\0' || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n(op, "Your current wimpy level is %d."),
+                             "Your current wimpy level is %d.",
                              op->run_away);
         return;
     }
 
     if (i < 0 || i > 100) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                            i18n(op, "Wimpy level should be between 1 and 100."),
+                            "Wimpy level should be between 1 and 100.",
                             i);
         return;
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n(op, "Your new wimpy level is %d."),
+                         "Your new wimpy level is %d.",
                          i);
     op->run_away = i;
 }
@@ -2191,10 +2190,10 @@ void command_brace(object *op, const char *params) {
 
     if (op->contr->braced)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "You are braced."));
+                      "You are braced.");
     else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "Not braced."));
+                      "Not braced.");
 
     fix_object(op);
 }
@@ -2214,7 +2213,7 @@ void command_kill_pets(object *op, const char *params) {
     if (*params == '\0') {
         pets_terminate_all(op);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n(op, "Your pets have been killed."));
+                      "Your pets have been killed.");
     } else {
         int target = atoi(params);
         for (obl = first_friendly_object; obl != NULL; obl = next) {
@@ -2231,11 +2230,11 @@ void command_kill_pets(object *op, const char *params) {
         }
         if (removecount != 0)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                 i18n(op, "Killed %d pets."),
+                                 "Killed %d pets.",
                                  removecount);
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(op, "Couldn't find any suitable pets to kill."));
+                          "Couldn't find any suitable pets to kill.");
     }
 }
 
@@ -2257,7 +2256,7 @@ void command_passwd(object *pl, const char *params) {
     /* If new client (login_method = 2) or jxclient (login_method = 1), changing the password does nothing anyway, so error out */
     else{
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n(pl, "passwd is maintained for older clients that do not support the account system. Please use the 'Password' button in your character selection screen to change your password."));
+                          "passwd is maintained for older clients that do not support the account system. Please use the 'Password' button in your character selection screen to change your password.");
     }
 }
 

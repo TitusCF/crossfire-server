@@ -861,7 +861,7 @@ void give_initial_items(object *pl, treasurelist *items) {
 void get_name(object *op) {
     op->contr->write_buf[0] = '\0';
     player_set_state(op->contr, ST_GET_NAME);
-    send_query(&op->contr->socket, 0, "What is your name?\n:");
+    send_query(&op->contr->socket, 0, i18n(op, "What is your name?\n:"));
 }
 
 /**
@@ -873,7 +873,7 @@ void get_name(object *op) {
 void get_password(object *op) {
     op->contr->write_buf[0] = '\0';
     player_set_state(op->contr, ST_GET_PASSWORD);
-    send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is your password?\n:");
+    send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n(op, "What is your password?\n:"));
 }
 
 /**
@@ -894,7 +894,7 @@ void play_again(object *op) {
      * For clients with account support, just return to character seletion (see below).
      */
     if (op->contr->socket.login_method == 0) {
-        send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
+        send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, i18n(op, "Do you want to play again (a/q)?"));
     }
     /* a bit of a hack, but there are various places early in th
      * player creation process that a user can quit (eg, roll
@@ -988,7 +988,7 @@ void receive_play_again(object *op, char key) {
 void confirm_password(object *op) {
     op->contr->write_buf[0] = '\0';
     player_set_state(op->contr, ST_CONFIRM_PASSWORD);
-    send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
+    send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n(op, "Please type your password again.\n:"));
 }
 
 /**
@@ -1009,7 +1009,7 @@ int get_party_password(object *op, partylist *party) {
     op->contr->write_buf[0] = '\0';
     player_set_state(op->contr, ST_GET_PARTY_PASSWORD);
     op->contr->party_to_join = party;
-    send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
+    send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n(op, "What is the password?\n:"));
     return 1;
 }
 
@@ -1119,7 +1119,7 @@ void roll_stats(object *op) {
  */
 void roll_again(object *op) {
     esrv_new_player(op->contr, 0);
-    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "<y> to roll new stats <n> to use stats\n<1-7> <1-7> to swap stats.\nRoll again (y/n/1-7)?  ");
+    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, i18n(op, "<y> to roll new stats <n> to use stats\n<1-7> <1-7> to swap stats.\nRoll again (y/n/1-7)?  "));
 }
 
 /**
@@ -1226,7 +1226,7 @@ void key_roll_stat(object *op, char key) {
         SET_ANIMATION(op, 2);     /* So player faces south */
         /* Enter exit adds a player otherwise */
         add_statbonus(op);
-        send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Now choose a character.\nPress any key to change outlook.\nPress `d' when you're pleased.\n");
+        send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, i18n(op, "Now choose a character.\nPress any key to change outlook.\nPress `d' when you're pleased.\n"));
         player_set_state(op->contr, ST_CHANGE_CLASS);
         if (op->msg)
             draw_ext_info(NDI_BLUE, 0, op,
@@ -1246,7 +1246,7 @@ void key_roll_stat(object *op, char key) {
         return;
 
     default:
-        send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Yes, No, Quit or 1-6.  Roll again?");
+        send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, i18n(op, "Yes, No, Quit or 1-6.  Roll again?"));
         return;
     }
     return;
@@ -1381,7 +1381,7 @@ void key_change_class(object *op, char key) {
     if (op->msg)
         draw_ext_info(NDI_BLUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
                       op->msg);
-    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Press any key for the next race.\nPress `d' to play this race.\n");
+    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, i18n(op, "Press any key for the next race.\nPress `d' to play this race.\n"));
 }
 
 /**

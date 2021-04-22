@@ -2783,60 +2783,60 @@ void command_dumpabove(object *op, const char *params) {
  * @param ignored ignored additional text.
  */
 void command_settings(object *op, const char *ignored) {
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, "Server settings:"));
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Server settings:");
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * item power factor: %2f"), settings.item_power_factor);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * item power factor: %2f", settings.item_power_factor);
 
     if (settings.not_permadeth) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * death is not permanent"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * death is not permanent");
     } else if (settings.resurrection) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * permanent death, resurrection is enabled"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * permanent death, resurrection is enabled");
     } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * permanent death, resurrection is NOT enabled"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * permanent death, resurrection is NOT enabled");
     }
 
     if (settings.set_title) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * players can set their title"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * players can set their title");
     } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * players can't set their title"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * players can't set their title");
     }
 
     if (settings.spell_encumbrance) {
         if (settings.spell_failure_effects) {
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * too much equipment can lead to spell failure and ill effects"));
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * too much equipment can lead to spell failure and ill effects");
         } else {
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * too much equipment can lead to spell failure but no ill effects"));
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * too much equipment can lead to spell failure but no ill effects");
         }
     } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * too much equipment can't lead to spell failure"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * too much equipment can't lead to spell failure");
     }
 
     if (settings.casting_time) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * casting takes time"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * casting takes time");
     } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * casting is immediate"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * casting is immediate");
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * permanent experience: %d%%"), settings.permanent_exp_ratio);
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * death penalty %d%% or %d levels"), settings.death_penalty_ratio, settings.death_penalty_level);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * permanent experience: %d%%", settings.permanent_exp_ratio);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * death penalty %d%% or %d levels", settings.death_penalty_ratio, settings.death_penalty_level);
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * friendly fire: %d%%"), settings.set_friendly_fire);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * friendly fire: %d%%", settings.set_friendly_fire);
 
     if (settings.no_player_stealing) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * players can't steal from other players"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * players can't steal from other players");
     } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * players can steal from other players"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * players can steal from other players");
     }
 
     if (settings.create_home_portals) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * players can create portals from their apartments"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * players can create portals from their apartments");
     } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * players can't create portals from their apartments"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * players can't create portals from their apartments");
     }
 
     if (settings.allow_denied_spells_writing) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * players can write spells they are denied"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * players can write spells they are denied");
     } else {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, i18n(op, " * players can't write spells they are denied"));
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * players can't write spells they are denied");
     }
 }
