@@ -218,30 +218,33 @@
  * be implicitly specified.
  */
 /*@{*/
-#define NDI_BLACK       0
-#define NDI_WHITE       1
-#define NDI_NAVY        2
-#define NDI_RED         3
-#define NDI_ORANGE      4
-#define NDI_BLUE        5       /**< Actually, it is Dodger Blue */
-#define NDI_DK_ORANGE   6       /**< DarkOrange2 */
-#define NDI_GREEN       7       /**< SeaGreen */
-#define NDI_LT_GREEN    8       /**< DarkSeaGreen, which is actually paler
-                                 *   than seagreen - also background color. */
-#define NDI_GREY        9
-#define NDI_BROWN       10      /**< Sienna. */
-#define NDI_GOLD        11
-#define NDI_TAN         12      /**< Khaki. */
-#define NDI_MAX_COLOR   12      /**< Last value in. */
+#define NDI_BLACK        0
+#define NDI_WHITE        1
+#define NDI_NAVY         2
+#define NDI_RED          3
+#define NDI_ORANGE       4
+#define NDI_BLUE         5       /**< Actually, it is Dodger Blue */
+#define NDI_DK_ORANGE    6       /**< DarkOrange2 */
+#define NDI_GREEN        7       /**< SeaGreen */
+#define NDI_LT_GREEN     8       /**< DarkSeaGreen, which is actually paler
+                                  *   than seagreen - also background color. */
+#define NDI_GREY         9
+#define NDI_BROWN        10      /**< Sienna. */
+#define NDI_GOLD         11
+#define NDI_TAN          12      /**< Khaki. */
+#define NDI_MAX_COLOR    12      /**< Last value in. */
 
-#define NDI_COLOR_MASK  0xff    /**< Gives lots of room for expansion - we are
-                                 *   using an int anyways, so we have the
-                                 *   space to still do all the flags.
-                                 */
-#define NDI_UNIQUE      0x100   /**< Print immediately, don't buffer. */
-#define NDI_ALL         0x200   /**< Inform all players of this message. */
-#define NDI_ALL_DMS     0x400   /**< Inform all logged in DMs. Used in case of
-                                 *   errors. Overrides NDI_ALL. */
+#define NDI_COLOR_MASK   0xff    /**< Gives lots of room for expansion - we are
+                                  *   using an int anyways, so we have the
+                                  *   space to still do all the flags.
+                                  */
+#define NDI_UNIQUE       0x100   /**< Print immediately, don't buffer. */
+#define NDI_ALL          0x200   /**< Inform all players of this message. */
+#define NDI_ALL_DMS      0x400   /**< Inform all logged in DMs. Used in case of
+                                  *   errors. Overrides NDI_ALL. */
+#define NDI_NO_TRANSLATE 0x800   /**< Do not attempt to translate.
+                                  *   Either it has been already translated or
+                                  *   will not be translatable (e.g. say/chat/shout) */
 /*@}*/
 
 /**

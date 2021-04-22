@@ -1035,10 +1035,10 @@ void knowledge_give(player *pl, const char *marker, const object *book) {
     free(copy);
 
     if (added) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, TAG_START "%s" TAG_END, i18n(pl->ob, "You keep that in mind for future reference."));
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, TAG_START "%s" TAG_END, "You keep that in mind for future reference.");
         if (none) {
             /* first information ever written down, be nice and give hint to recover it. */
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, TAG_START "%s" TAG_END, i18n(pl->ob, "Use the 'knowledge' command to see what you keep in mind (this message will not appear anymore)."));
+            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_MISC, MSG_TYPE_CLIENT_NOTICE, TAG_START "%s" TAG_END, "Use the 'knowledge' command to see what you keep in mind (this message will not appear anymore).");
         }
     }
 

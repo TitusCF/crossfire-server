@@ -95,8 +95,10 @@ void draw_ext_info(
                 continue;
             draw_ext_info((flags&~NDI_ALL&~NDI_ALL_DMS), pri, tmppl->ob, type, subtype, message);
         }
-
-        LOG(llevInfo, "-- %s\n", message);
+        // If NDI_NO_TRANSLATE is set, we assume the message was already printed to the log.
+        // So we skip it in that case. Otherwise we print it.
+        if ((~flags)&NDI_NO_TRANSLATE)
+            LOG(llevInfo, "-- %s\n", message);
         return;
     }
 
@@ -107,7 +109,7 @@ void draw_ext_info(
     if (pri >= pl->contr->listening)
         return;
 
-    print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, message);
+    print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, flags&NDI_NO_TRANSLATE ? message : i18n(pl, message));
 }
 
 /**
@@ -138,11 +140,25 @@ void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, ui
     char buf[HUGE_BUF];
     va_list ap;
 
-    va_start(ap, format);
-    vsnprintf(buf, HUGE_BUF, format, ap);
-    va_end(ap);
+    // Make sure the buf starts with \0.
+    // We will check for this when we attempt to print the translated string to buffer.
+    *buf = '\0';
 
-    draw_ext_info(flags, pri, pl, type, subtype, buf);
+    va_start(ap, format);
+    // If NDI_ALL or NDI_ALL_DM, first do the buffer for the untranslated message to the log file,
+    if ((flags&NDI_ALL) || (flags&NDI_ALL_DMS)) {
+        vsnprintf(buf, HUGE_BUF, format, ap);
+        LOG(llevInfo, "-- %s\n", buf);
+    }
+    // Then, if we need to translate, attempt to do so.
+    if ((~flags)&NDI_NO_TRANSLATE)
+        vsnprintf(buf, HUGE_BUF, i18n(pl, format), ap);
+    // Otherwise, print only to an empty string, because we already did if it is not empty.
+    else if (*buf == '\0')
+        vsnprintf(buf, HUGE_BUF, format, ap);
+    va_end(ap);
+    // Since we already translated, we do not need to do so again.
+    draw_ext_info(flags|NDI_NO_TRANSLATE, pri, pl, type, subtype, buf);
 }
 
 /**
