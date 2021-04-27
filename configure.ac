@@ -16,9 +16,6 @@ AC_ARG_ENABLE(mapper, [AS_HELP_STRING([--enable-mapper],
               [enable_mapper=yes], [enable_mapper=no])
 
 dnl Options for plugins
-AC_ARG_ENABLE(cfrhg, [AS_HELP_STRING([--enable-cfrhg],
-              [Build the random house generator plugin])],
-              [], [enable_cfrhg=no])
 
 AC_ARG_ENABLE(logger, [AS_HELP_STRING([--enable-logger],
               [Build the SQLite logging plugin])],
@@ -84,9 +81,6 @@ AS_IF([test "$enable_mapper" = "yes"], [
     PKG_CHECK_MODULES([GD], [gdlib])
 ])
 AM_CONDITIONAL(MAPPER, test "$enable_mapper" = "yes")
-
-dnl Random house generator
-AM_CONDITIONAL(CFRHG_PLUGIN, test "$enable_cfrhg" = "yes")
 
 dnl Unit tests
 AS_IF([test "$enable_check" = "yes"], [
@@ -180,8 +174,6 @@ AC_CONFIG_FILES([Makefile
                  plugins/cfnewspaper/Makefile
                  plugins/cfnewspaper/include/Makefile
                  plugins/cfpython/Makefile plugins/cfpython/include/Makefile
-                 plugins/cfrhg/Makefile
-                 plugins/cfrhg/include/Makefile
                  plugins/common/Makefile plugins/common/include/Makefile
                  test/Makefile
                  test/bugs/Makefile test/bugs/bugtrack/Makefile
@@ -215,8 +207,6 @@ fi
 if test "$cf_have_libdl" = "yes" ; then
 AC_MSG_NOTICE([    Build python plugin?            $cf_will_build_python])
 fi
-
-AC_MSG_NOTICE([    Build random house plugin?      $enable_cfrhg])
 
 if test x"$xsltengine" != "x" ; then
     check_complement=["(will generate report)"]

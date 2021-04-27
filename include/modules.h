@@ -28,6 +28,9 @@ void cfcitybell_close();
 void citylife_init(Settings *settings);
 void citylife_close();
 
+void random_house_generator_init(Settings *settings);
+void random_house_generator_close();
+
 #ifdef __cplusplus
 }
 #endif
