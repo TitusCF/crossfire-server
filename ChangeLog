@@ -121,6 +121,10 @@
     * server/modules/citylife.cpp: Correctly unregister event listeners at close.
 
 2021-04-27 Nicolas Weeger
+    * server/modules/cfcitybell.cpp,
+    * server/modules/citylife.cpp: Correctly unregister event listeners at close.
+
+2021-04-27 Nicolas Weeger
     * common/init.c,
     * include/global.h,
     * server/init.c: Allow modules to be enabled or disabled by default.
