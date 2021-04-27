@@ -407,10 +407,12 @@ static void load_citylife(BufferReader *reader, const char *filename) {
     }
 }
 
+static event_registration c, m;
+
 extern "C"
 void citylife_init(Settings *settings) {
-    events_register_global_handler(EVENT_CLOCK, citylife_globalEventListener);
-    events_register_global_handler(EVENT_MAPLOAD, citylife_globalEventListener);
+    c = events_register_global_handler(EVENT_CLOCK, citylife_globalEventListener);
+    m = events_register_global_handler(EVENT_MAPLOAD, citylife_globalEventListener);
     events_register_object_handler(CITYLIFE_NAME, eventListener);
 
     settings->hooks_filename[settings->hooks_count] = ".citylife";
@@ -426,6 +428,9 @@ void citylife_init(Settings *settings) {
 
 extern "C"
 void citylife_close() {
+    events_unregister_global_handler(EVENT_CLOCK, c);
+    events_unregister_global_handler(EVENT_MAPLOAD, m);
+    events_unregister_object_handler(CITYLIFE_NAME);
     for (auto map : maps) {
         delete map.second;
     }
