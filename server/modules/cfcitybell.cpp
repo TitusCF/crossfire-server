@@ -145,6 +145,8 @@ static int clock_listener(int *type, ...) {
     return 0;
 }
 
+static event_registration global_handler;
+
 /**
  * Citybells module initialisation.
  * @param settings server settings.
@@ -154,7 +156,7 @@ void cfcitybell_init(Settings *settings) {
     timeofday_t tod;
     get_tod(&tod);
     last_hr = tod.hour;
-    events_register_global_handler(EVENT_CLOCK, clock_listener);
+    global_handler = events_register_global_handler(EVENT_CLOCK, clock_listener);
 
     settings->hooks_filename[settings->hooks_count] = ".bells";
     settings->hooks[settings->hooks_count] = load_bells;
@@ -169,6 +171,7 @@ void cfcitybell_init(Settings *settings) {
 
 extern "C"
 void cfcitybell_close() {
+    events_unregister_global_handler(EVENT_CLOCK, global_handler);
     for (auto reg : regions) {
         delete reg.second;
     }
