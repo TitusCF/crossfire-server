@@ -1,3 +1,8 @@
+2021-04-27 Nicolas Weeger
+    * common/init.c,
+    * include/global.h,
+    * server/init.c: Allow modules to be enabled or disabled by default.
+
 2021-04-21 Daniel Hawkins
     * include/shared/newclient.h,
       server/c_misc.c,

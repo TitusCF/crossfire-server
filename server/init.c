@@ -43,34 +43,20 @@ static void init_signals(void);
 /** If set after command line argument parsing, then the server will exit. */
 static int should_exit = 0;
 
-typedef struct {
+typedef struct module_information {
     const char *name;           /**< Module name, without space. */
     char const *description;    /**< Module long description. */
+    bool enabled;               /**< Whether the module is enabled or not. */
     void (*init)();             /**< Initialisation function. */
     void (*close)();            /**< Cleanup function. */
 } module_information;
 
 /** All built modules. */
 static module_information modules[] = {
-    { "citybell", "Ring bells every hour for defined temples", cfcitybell_init, cfcitybell_close },
-    { "citylife", "Add NPCs in towns", citylife_init, citylife_close },
+    { "citybell", "Ring bells every hour for defined temples", true, cfcitybell_init, cfcitybell_close },
+    { "citylife", "Add NPCs in towns", true, citylife_init, citylife_close },
     { NULL, NULL, NULL }
 };
-
-/**
- * Check whether a module is disabled or not.
- * @param settings game settings.
- * @param name module name.
- * @return 1 if module is disabled, 0 else.
- */
-static int module_disabled(const Settings *settings, const char *name) {
-    for (linked_char *disabled = settings->disabled_modules; disabled != NULL; disabled = disabled->next) {
-        if (strcmp(disabled->name, "All") == 0 || strcmp(disabled->name, name) == 0) {
-            return 1;
-        }
-    }
-    return 0;
-}
 
 /**
  * Init all modules which are not disabled.
@@ -78,11 +64,12 @@ static int module_disabled(const Settings *settings, const char *name) {
 void init_modules() {
     LOG(llevInfo, "Initializing modules\n");
     for (int module = 0; modules[module].name != NULL; module++) {
-        if (module_disabled(&settings, modules[module].name)) {
-            LOG(llevInfo, "  %s (%s): disabled\n", modules[module].name, modules[module].description);
+        module_information *mod = &modules[module];
+        if (!mod->enabled) {
+            LOG(llevInfo, "  %s (%s): disabled\n", mod->name, mod->description);
         } else {
-            modules[module].init(&settings);
-            LOG(llevInfo, "  %s (%s): activated\n", modules[module].name, modules[module].description);
+            mod->init(&settings);
+            LOG(llevInfo, "  %s (%s): activated\n", mod->name, mod->description);
         }
     }
 }
@@ -93,9 +80,10 @@ void init_modules() {
 void close_modules() {
     LOG(llevInfo, "Cleaning modules\n");
     for (int module = 0; modules[module].name != NULL; module++) {
-        if (!module_disabled(&settings, modules[module].name)) {
-            modules[module].close(&settings);
-            LOG(llevInfo, "  %s (%s): closed\n", modules[module].name, modules[module].description);
+        module_information *mod = &modules[module];
+        if (mod->enabled) {
+            mod->close(&settings);
+            LOG(llevInfo, "  %s (%s): closed\n", mod->name, mod->description);
         }
     }
 }
@@ -106,7 +94,7 @@ void close_modules() {
 static void list_modules() {
     LOG(llevInfo, "Built-in modules:\n");
     for (int module = 0; modules[module].name != NULL; module++) {
-        LOG(llevInfo, " %s: %s\n", modules[module].name, modules[module].description);
+        LOG(llevInfo, " %s: %s -> %s\n", modules[module].name, modules[module].description, modules[module].enabled ? "enabled" : "disabled");
     }
     should_exit = 1;
 }
@@ -307,14 +295,39 @@ static void set_disable_plugin(const char *name) {
 }
 
 /**
+ * Change the 'enabled' flag of a module.
+ * @param name module's name, or 'All'.
+ * @param enabled new value of the 'enabled' flag.
+ * @note will fatal() if the module name is invalid.
+ */
+static void do_module(const char *name, bool enabled) {
+    bool one = false;
+    for (int module = 0; modules[module].name; module++) {
+        if (strcmp("All", name) == 0 || strcmp(modules[module].name, name) == 0) {
+            modules[module].enabled = enabled;
+            one = true;
+        }
+    }
+    if (!one) {
+        LOG(llevError, "Invalid module name %s\n", name);
+        fatal(SEE_LAST_ERROR);
+    }
+}
+
+/**
  * Disable a module.
- * @param name module's name.
+ * @param name module's name, or 'All'.
  */
 static void set_disable_module(const char *name) {
-    linked_char *disable = calloc(1, sizeof(linked_char));
-    disable->next = settings.disabled_modules;
-    disable->name = strdup(name);
-    settings.disabled_modules = disable;
+    do_module(name, false);
+}
+
+/**
+ * Enable a module.
+ * @param name module's name, or 'All'.
+ */
+static void set_enable_module(const char *name) {
+    do_module(name, true);
 }
 
 /**
@@ -372,6 +385,7 @@ static struct Command_Line_Options options[] = {
     { "-data", 1, 1, set_datadir },
     { "-disable-plugin", 1, 1, set_disable_plugin },
     { "-disable-module", 1, 1, set_disable_module },
+    { "-enable-module", 1, 1, set_enable_module },
     { "-list-modules", 0, 1, list_modules },
     { "-h", 0, 1, help },
     { "-ignore-assets-errors", 0, 1, set_ignore_assets_errors },
@@ -1156,6 +1170,9 @@ static void help(void) {
     printf(" -disable-module\n"
            "              Disable specified module, by its name\n"
            "              Can be specified multiple times. 'All' disables all modules.\n");
+    printf(" -enable-module\n"
+           "              Enable specified module, by its name\n"
+           "              Can be specified multiple times. 'All' enables all modules.\n");
     printf(" -disable-plugin\n"
            "              Disables specified plugin. Use the name without the extension.\n"
            "              Can be specified multiple times. 'All' disables all plugins.\n");
