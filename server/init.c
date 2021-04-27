@@ -55,6 +55,7 @@ typedef struct module_information {
 static module_information modules[] = {
     { "citybell", "Ring bells every hour for defined temples", true, cfcitybell_init, cfcitybell_close },
     { "citylife", "Add NPCs in towns", true, citylife_init, citylife_close },
+    { "rhg", "Add random maps to exits in towns", false, random_house_generator_init, random_house_generator_close },
     { NULL, NULL, NULL }
 };
 

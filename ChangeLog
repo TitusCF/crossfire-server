@@ -1,4 +1,19 @@
 2021-04-27 Nicolas Weeger
+    * configure.ac,
+    * include/modules.h,
+    * plugins/Makefile.am,
+    * plugins/cfrhg,
+    * plugins/cfrhg/Makefile.am,
+    * plugins/cfrhg/cfrhg.c,
+    * plugins/cfrhg/include,
+    * plugins/cfrhg/include/Makefile.am,
+    * plugins/cfrhg/include/cfrhg.h,
+    * plugins/cfrhg/include/cfrhg_proto.h,
+    * server/Makefile.am,
+    * server/init.c,
+    * server/modules/random_house_generator.c: Convert the 'random house generator' plugin to a module, disabled by default.
+
+2021-04-27 Nicolas Weeger
     * server/modules/cfcitybell.cpp,
     * server/modules/citylife.cpp: Correctly unregister event listeners at close.
 
