@@ -8,6 +8,8 @@
 extern "C" {
 #include "define.h"
 }
+#include "assets.h"
+#include "AssetsManager.h"
 
 static QHash<QString, archetype*> events;
 
@@ -18,13 +20,13 @@ void static fillEvents()
         return;
     }
 
-    for (archt* arch = get_next_archetype(NULL); arch != NULL; arch = get_next_archetype(arch))
+    getManager()->archetypes()->each([] (archetype *arch)
     {
         if (arch->clone.type == EVENT_CONNECTOR)
         {
             events.insert(arch->name, arch);
         }
-    }
+    });
 }
 
 CREMapPanel::CREMapPanel(ScriptFileManager* manager, QWidget* parent) : CRETPanel(parent)

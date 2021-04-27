@@ -5,6 +5,8 @@ extern "C" {
 #include "global.h"
 #include "recipe.h"
 }
+#include "assets.h"
+#include "AssetsManager.h"
 
 #include "CREFormulaePanel.h"
 #include "CREUtils.h"
@@ -50,16 +52,15 @@ CREFormulaePanel::CREFormulaePanel(QWidget* parent) : CRETPanel(parent)
 
     mySkill->addItem(tr("(none)"), 0);
     myCauldron->addItem(tr("(none)"), 0);
-    archt* arch = get_next_archetype(NULL);
-    for (; arch; arch = get_next_archetype(arch))
+    getManager()->archetypes()->each([this] (archetype *arch)
     {
         if (arch->head)
-            continue;
+            return;
         if (arch->clone.type == SKILL)
             mySkill->addItem(arch->clone.name);
         if (QUERY_FLAG(&arch->clone, FLAG_IS_CAULDRON))
             myCauldron->addItem(arch->name);
-    }
+    });
 
     layout->addWidget(new QLabel(tr("Index:"), this), 9, 1);
     myIndex = new QLineEdit(this);
