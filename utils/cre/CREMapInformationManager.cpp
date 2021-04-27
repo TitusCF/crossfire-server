@@ -14,6 +14,8 @@
 extern "C" {
 #include "global.h"
 }
+#include "assets.h"
+#include "AssetsManager.h"
 
 const char* eventNames[NR_EVENTS] = {
   "EVENT_NONE",
@@ -306,20 +308,18 @@ void CREMapInformationManager::browseMaps()
     /* try to find race-specific start maps */
     if (first_map_ext_path[0] != 0)
     {
-        char path[MAX_BUF], name[MAX_BUF];
-        archetype* arch = get_next_archetype(NULL);
-        while (arch)
+        getManager()->archetypes()->each([this] (archetype *arch)
         {
             if (arch->clone.type == PLAYER)
             {
+                char path[MAX_BUF], name[MAX_BUF];
                 snprintf(name, sizeof(name), "%s/%s", first_map_ext_path, arch->name);
                 create_pathname(name, path, sizeof(path));
                 if (QFileInfo(path).exists()) {
                     myToProcess.append(name);
                 }
             }
-            arch = get_next_archetype(arch);
-        }
+        });
     }
 
     /* Add style maps */

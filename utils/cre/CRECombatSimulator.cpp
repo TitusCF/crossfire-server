@@ -5,6 +5,8 @@ extern "C" {
 #include <global.h>
 #include <sproto.h>
 }
+#include "assets.h"
+#include "AssetsManager.h"
 
 CRECombatSimulator::CRECombatSimulator()
 {
@@ -19,16 +21,14 @@ CRECombatSimulator::CRECombatSimulator()
     mySecond = new QComboBox(this);
     layout->addWidget(mySecond, line++, 1);
 
-    archetype* arch = get_next_archetype(NULL);
-    while (arch)
+    getManager()->archetypes()->each([this] (archetype *arch)
     {
         if (arch->head == NULL && QUERY_FLAG(&arch->clone, FLAG_MONSTER))
         {
             myFirst->addItem(CREPixmap::getIcon(arch->clone.face->number), arch->name, qVariantFromValue((void*)arch));
             mySecond->addItem(CREPixmap::getIcon(arch->clone.face->number), arch->name, qVariantFromValue((void*)arch));
         }
-        arch = get_next_archetype(arch);
-    }
+    });
 
     layout->addWidget(new QLabel(tr("Number of fights:"), this), line, 0);
     myCombats = new QSpinBox(this);

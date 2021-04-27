@@ -554,11 +554,9 @@ void CREMainWindow::onReportSpellDamage()
     QStringList spell;
     QList<QStringList> damage;
 
-    archetype* arch = get_next_archetype(NULL);
     object* caster = create_archetype("orc");
-    int dm, cost;
 
-    while (arch != NULL)
+    getManager()->archetypes()->each([&caster, &spell, &damage] (archetype *arch)
     {
         if (arch->clone.type == SPELL && arch->clone.subtype == SP_BULLET && arch->clone.skill && strcmp(arch->clone.skill, "praying") == 0)
         {
@@ -567,15 +565,14 @@ void CREMainWindow::onReportSpellDamage()
             for (int l = 0; l < settings.max_level; l++)
             {
                 caster->level = l;
-                dm = arch->clone.stats.dam + SP_level_dam_adjust(caster, &arch->clone);
-                cost = SP_level_spellpoint_cost(caster, &arch->clone, SPELL_GRACE);
+                int dm = arch->clone.stats.dam + SP_level_dam_adjust(caster, &arch->clone);
+                int cost = SP_level_spellpoint_cost(caster, &arch->clone, SPELL_GRACE);
                 dam.append(tr("%1 [%2]").arg(dm).arg(cost));
             }
             damage.append(dam);
         }
+    });
 
-        arch = get_next_archetype(arch);
-    }
     object_free_drop_inventory(caster);
 
     QString report("<table><thead><tr><th>level</th>");
@@ -689,13 +686,11 @@ void CREMainWindow::onReportAlchemy()
 {
     QStringList skills;
 
-    archt* arch = get_next_archetype(NULL);
-    for (; arch; arch = get_next_archetype(arch))
+    getManager()->archetypes()->each([&skills] (const auto arch)
     {
         if (arch->clone.type == SKILL)
             skills.append(arch->clone.name);
-    }
-
+    });
     skills.sort();
 
     QString report("<h1>Alchemy formulae</h1>");
@@ -823,16 +818,13 @@ static QString spellsTable(const QString& skill)
 
     QHash<int, QStringList> spells;
 
-    archetype* spell;
-
-    for (spell = get_next_archetype(NULL); spell; spell = get_next_archetype(spell))
-    {
+    getManager()->archetypes()->each([&skill, &spells, &one] (const archetype *spell) {
         if (spell->clone.type == SPELL && spell->clone.skill == skill)
         {
             spells[spell->clone.level].append(QString("<tr><td>%1</td><td>%2</td></tr>").arg(spell->clone.name).arg(spell->clone.level));
             one = true;
         }
-    }
+    });
 
     if (!one)
         return QString();
@@ -841,6 +833,7 @@ static QString spellsTable(const QString& skill)
     qSort(levels);
     foreach(int level, levels)
     {
+        spells[level].sort();
         report += spells[level].join("\n");
     }
 
@@ -853,12 +846,11 @@ void CREMainWindow::onReportSpells()
 {
     QStringList skills;
 
-    archt* arch = get_next_archetype(NULL);
-    for (; arch; arch = get_next_archetype(arch))
+    getManager()->archetypes()->each([&skills] (const archt *arch)
     {
         if (arch->clone.type == SKILL)
             skills.append(arch->clone.name);
-    }
+    });
 
     skills.sort();
 
@@ -1107,8 +1099,7 @@ void CREMainWindow::onReportPlayer()
     QMap<QString, archetype*> monsters;
     QList<archetype*> skills;
 
-    archt* arch = get_next_archetype(NULL);
-    for (; arch; arch = get_next_archetype(arch))
+    getManager()->archetypes()->each([&names, &monsters, &skills] (archetype *arch)
     {
         if (QUERY_FLAG(&arch->clone, FLAG_MONSTER) && arch->clone.stats.hp > 0 && arch->head == NULL)
         {
@@ -1128,10 +1119,10 @@ void CREMainWindow::onReportPlayer()
         if (arch->clone.type == SKILL && IS_COMBAT_SKILL(arch->clone.subtype))
         {
             if (strcmp(arch->name, "skill_missile_weapon") == 0 || strcmp(arch->name, "skill_throwing") == 0)
-                continue;
+                return;
             skills.append(arch);
         }
-    }
+    });
 
     names = monsters.keys();
     names.sort();
@@ -1249,30 +1240,30 @@ void CREMainWindow::onReportSummon()
 
     QMap<QString, QString> spells;
 
-    for (archetype* summon = get_next_archetype(NULL); summon; summon = get_next_archetype(summon))
+    getManager()->archetypes()->each([&spells] (archetype *summon)
     {
         if (summon->clone.type != SPELL || summon->clone.subtype != SP_SUMMON_GOLEM)
-            continue;
+            return;
         if (summon->clone.other_arch != NULL)
         {
             spells[summon->clone.name] = reportSummon(summon, &summon->clone.other_arch->clone, QString(summon->clone.name));
-            continue;
+            return;
         }
 
         // god-based summoning
-        for (archetype* god = get_next_archetype(NULL); god; god = get_next_archetype(god))
+        getManager()->archetypes()->each([&summon, &spells] (archetype *god)
         {
             if (god->clone.type != GOD)
-                continue;
+                return;
 
             QString name(QString(summon->clone.name) + " (" + QString(god->name) + ")");
             archetype* holy = determine_holy_arch(&god->clone, summon->clone.race);
             if (holy == NULL)
-                continue;
+                return;
 
             spells[name] = reportSummon(summon, &holy->clone, name);
-        }
-    }
+        });
+    });
 
     QStringList keys = spells.keys();
     keys.sort();
