@@ -1,3 +1,110 @@
+2021-05-01 Nicolas Weeger
+    * common/readable.c,
+    * test/unit/common/Makefile.am,
+    * test/unit/common/check_readable.c: Clean extra space in list with eg god descriptions.
+
+2021-04-27 Nicolas Weeger
+    * configure.ac,
+    * include/modules.h,
+    * plugins/Makefile.am,
+    * plugins/cfrhg,
+    * plugins/cfrhg/Makefile.am,
+    * plugins/cfrhg/cfrhg.c,
+    * plugins/cfrhg/include,
+    * plugins/cfrhg/include/Makefile.am,
+    * plugins/cfrhg/include/cfrhg.h,
+    * plugins/cfrhg/include/cfrhg_proto.h,
+    * server/Makefile.am,
+    * server/init.c,
+    * server/modules/random_house_generator.c: Convert the 'random house generator' plugin to a module, disabled by default.
+
+2021-04-27 Nicolas Weeger
+    * server/modules/cfcitybell.cpp,
+    * server/modules/citylife.cpp: Correctly unregister event listeners at close.
+
+2021-04-27 Nicolas Weeger
+    * common/init.c,
+    * include/global.h,
+    * server/init.c: Allow modules to be enabled or disabled by default.
+
+2021-04-21 Daniel Hawkins
+    * include/shared/newclient.h,
+      server/c_misc.c,
+      server/c_wiz.c,
+      server/knowledge.c,
+      server/server.c,
+      socket/info.c: Make draw_ext_info() and draw_ext_info_format() do i18n translation inside them, instead of
+          relying on the caller to do it. This makes adding strings to translations in the future significantly easier.
+    * server/player.c: Make calls to send_query() use a translatable string.
+
+2021-04-21 Nicolas Weeger
+    * common/recipe.c,
+    * include/libproto.h,
+    * server/knowledge.c: Extract function.
+    * utils/cre/CREUtils.cpp: Fix icon and title of formulae nodes.
+
+2021-04-20 Nicolas Weeger
+    * server/modules/citylife.cpp: Fix compilation on some systems.
+
+2021-04-20 Nicolas Weeger
+    * server/Makefile.am,
+    * server/modules/citylife.{c,cpp}: Use a definition file instead of hardcoding positions and NPCs.
+
+2021-04-20 Nicolas Weeger
+    * server/Makefile.am,
+    * server/modules/cfcitybell.{c,cpp}: Use a definition file instead of hardcoding bells.
+
+2021-04-20 Nicolas Weeger
+    * configure.ac,
+    * include/modules.h,
+    * include/sproto.h,
+    * plugins/Makefile.am,
+    * plugins/citylife/,
+    * server/Makefile.am,
+    * server/init.c,
+    * server/modules/citylife.c,
+    * server/move.c,
+    * server/plugins.c: Convert the 'citylife' plugin to a server 'module'.
+
+2021-04-20 Nicolas Weeger
+    * common/init.c,
+    * configure.ac,
+    * include/global.h,
+    * include/modules.h,
+    * include/sproto.h,
+    * plugins/Makefile.am,
+    * plugins/cfcitybell/Makefile.am,
+    * plugins/cfcitybell/cfcitybell.c,
+    * plugins/cfcitybell/include/Makefile.am,
+    * plugins/cfcitybell/include/cfcitybell.h,
+    * plugins/cfcitybell/include/cfcitybell_proto.h,
+    * server/Makefile.am,
+    * server/init.c,
+    * server/modules/cfcitybell.c,
+    * server/server.c: Convert the 'citybell' plugin to a server 'module'.
+
+2021-04-20 Nicolas Weeger
+    * common/recipe.c: Allow erasing previously defined formulae.
+
+2021-04-19 Nicolas Weeger
+    * common/treasure.c,
+    * include/libproto.h,
+    * test/unit/common/check_treasure.c: Removed unused function.
+
+2021-04-19 Nicolas Weeger
+    * common/anim.c,
+    * common/holy.c,
+    * common/image.c,
+    * common/loader.l,
+    * common/readable.c,
+    * common/treasure.c,
+    * types/spellbook/spellbook.c,
+    * server/c_misc.c,
+    * server/c_object.c,
+    * server/shop.c,
+    * socket/image.c,
+    * socket/requestinfo.c: Remove unused variables.
+
 2021-04-14 Nicolas Weeger
     * include/global.h: Remove unused variable.
 
