@@ -649,6 +649,18 @@ int nstrtok(const char *buf1, const char *buf2) {
 }
 
 /**
+ * Return buf without its leading spaces.
+ * @param buf what to trim.
+ * @return trimmed buf.
+ */
+const char *trim(const char *buf) {
+    while ((*buf) == ' ') {
+        buf++;
+    }
+    return buf;
+}
+
+/**
  * Takes a string in buf1 and separates it into
  * a list of strings delimited by buf2. Then returns a comma
  * separated string w/ decent punctuation.
@@ -672,7 +684,7 @@ char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, size_t size)
     strlcpy(buf, buf1, sizeof(buf));
     snprintf(retbuf, size, " ");
     for (tbuf = strtok(buf, buf2); tbuf && i > 0; tbuf = strtok(NULL, buf2)) {
-        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "%s", tbuf);
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "%s", trim(tbuf));
         i--;
         if (i == 1 && maxi > 1)
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), " and ");

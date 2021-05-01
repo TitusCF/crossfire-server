@@ -49,6 +49,19 @@ static void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
+START_TEST(test_strtoktolin) {
+    char buf[MAX_BUF];
+
+#define C(w, e) \
+    strtoktolin(w, ",", buf, sizeof(buf)); \
+    fail_unless(strcmp(buf, e) == 0, "got %s instead of %s", buf, e);
+
+    C("single", " single.");
+    C("one, two", " one and two.");
+    C("one, two, three", " one, two and three.");
+}
+END_TEST
+
 static Suite *readable_suite(void) {
     Suite *s = suite_create("readable");
     TCase *tc_core = tcase_create("Core");
@@ -57,6 +70,7 @@ static Suite *readable_suite(void) {
     tcase_add_checked_fixture(tc_core, setup, teardown);
 
     suite_add_tcase(s, tc_core);
+    tcase_add_test(tc_core, test_strtoktolin);
 
     return s;
 }
