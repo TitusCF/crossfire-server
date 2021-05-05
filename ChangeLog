@@ -1,3 +1,6 @@
+2021-05-05 Nicolas Weeger
+    * socket/info.c: Fix va_list not being reinitialized after formatting.
+
 2021-05-01 Nicolas Weeger
     * common/readable.c,
     * test/unit/common/Makefile.am,

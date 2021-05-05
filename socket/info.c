@@ -149,6 +149,7 @@ void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, ui
     if ((flags&NDI_ALL) || (flags&NDI_ALL_DMS)) {
         vsnprintf(buf, HUGE_BUF, format, ap);
         LOG(llevInfo, "-- %s\n", buf);
+        va_start(ap, format);
     }
     // Then, if we need to translate, attempt to do so.
     if ((~flags)&NDI_NO_TRANSLATE)
