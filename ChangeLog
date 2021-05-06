@@ -1,3 +1,6 @@
+2021-05-06 Nicolas Weeger
+    * server/c_misc.c: Remove line length limit for help files.
+
 2021-05-05 Nicolas Weeger
     * socket/info.c: Fix va_list not being reinitialized after formatting.
 
