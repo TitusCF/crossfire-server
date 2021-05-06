@@ -54,7 +54,7 @@ while [ ${MAX_RESTART} -ne ${generation} ]; do
 
     # Change to the ${CF_TMP} directory and start server.
     cd ${CF_TMP}
-    echo "===>>> Starting server (generation ${generation})..."
+    echo "===>>> Starting server (generation ${generation} on `date +%Y-%m-%d-%H:%M`)..."
 
     ${CF_BIN} ${CF_FLAGS} -tmpdir "${CF_TMP}" -log "${CF_LOG}"
 
