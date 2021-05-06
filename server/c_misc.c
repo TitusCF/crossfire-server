@@ -1748,6 +1748,34 @@ static int find_help_file(const char *name, const char *language, int wiz, char 
 }
 
 /**
+ * Attempt to send the contents of the specified file to the player.
+ * If the file does not exist, then an error is logged to the server, and
+ * nothing is sent to the player.
+ * @param op who to send the file to.
+ * @param filename full help filename.
+ */
+static void display_help_file(object *op, const char *filename) {
+    FILE *fp;
+    BufferReader *br;
+    const char *line;
+
+    if ((fp = fopen(filename, "r")) == NULL) {
+        LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror(errno));
+        return;
+    }
+
+    br = bufferreader_create();
+    bufferreader_init_from_file(br, fp);
+    fclose(fp);
+
+    while (line = bufferreader_next_line(br)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
+    }
+
+    bufferreader_destroy(br);
+}
+
+/**
  * Player is asking for some help.
  *
  * @param op
@@ -1756,9 +1784,7 @@ static int find_help_file(const char *name, const char *language, int wiz, char 
  * what kind of help to ask for.
  */
 void command_help(object *op, const char *params) {
-    FILE *fp;
-    char filename[MAX_BUF], line[MAX_BUF];
-    int len;
+    char filename[MAX_BUF];
     const char *language;
 
     /*
@@ -1766,18 +1792,7 @@ void command_help(object *op, const char *params) {
      */
     if (*params == '\0') {
         snprintf(filename, sizeof(filename), "%s/def_help", settings.datadir);
-        if ((fp = fopen(filename, "r")) == NULL) {
-            LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror(errno));
-            return;
-        }
-        while (fgets(line, MAX_BUF, fp)) {
-            line[MAX_BUF-1] = '\0';
-            len = strlen(line)-1;
-            if (line[len] == '\n')
-                line[len] = '\0';
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
-        }
-        fclose(fp);
+        display_help_file(op, filename);
         return;
     }
 
@@ -1828,23 +1843,7 @@ void command_help(object *op, const char *params) {
     /*
      * Found that. Just cat it to screen.
      */
-    if ((fp = fopen(filename, "r")) == NULL) {
-        LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror(errno));
-        return;
-    }
-
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         "Help about '%s'",
-                         params);
-
-    while (fgets(line, MAX_BUF, fp)) {
-        line[MAX_BUF-1] = '\0';
-        len = strlen(line)-1;
-        if (line[len] == '\n')
-            line[len] = '\0';
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
-    }
-    fclose(fp);
+    display_help_file(op, filename);
 }
 
 /**
