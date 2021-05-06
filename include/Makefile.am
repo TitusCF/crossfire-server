@@ -30,8 +30,8 @@ svnversion.h: FORCE
 	else \
 		echo_n() { echo -n $${1+"$$@"}; } \
 	fi; \
-	if test -n "$(SVNVERSION)" -a -d "$(top_srcdir)/.svn"; \
-	then OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo_n '#define SVN_REV "'; $(SVNVERSION) -n "$(top_srcdir)"`'"'; \
+	if test -n "$(GIT)" -a -d "$(top_srcdir)/.git"; \
+	then OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo_n '#define SVN_REV "'; cd "$(top_srcdir)" && $(GIT) describe --tags`'"'; \
 	else OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo '#define SVN_REV "unknown"'`; \
 	fi; \
 	if test ! -e svnversion.h; then \
