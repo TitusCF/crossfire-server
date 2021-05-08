@@ -48,44 +48,6 @@ void init_type_spellbook(void) {
     register_describe(SPELLBOOK, spellbook_type_describe);
 }
 
-/** Levels as a full name and not a number. */
-static const char *const ordinals[] = {
-    "zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh",
-    "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
-    "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth",
-    "nineteenth", "twentieth"
-};
-
-/** Tens for levels */
-static const char *const ordinals_10[] = {
-    "zeroth", "tenth", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth",
-    "seventieth", "eightieth", "ninetieth"
-};
-
-/**
- * Turns a cardinal number (e.g. 7) into an ordinal number (e.g. "seventh") and
- * appends it to a caller-supplied StringBuffer.
- * Works only on numbers 0 <= n < 100; outside that range just returns the
- * cardinal number as a string.
- *
- * @param sb
- * StringBuffer to append the result to.
- * @param n
- * Number to ordinalize.
- */
-void stringbuffer_append_ordinal(StringBuffer *sb, const int n) {
-    if (n > 99 || n < 0) {
-        stringbuffer_append_printf(sb, "%d.", n);
-    } else if (n <= 20) {
-        stringbuffer_append_string(sb, ordinals[n]);
-    } else if (n % 10 == 0) {
-        stringbuffer_append_string(sb, ordinals_10[n / 10]);
-    } else {
-        stringbuffer_append_printf(sb, "%s%s", ordinals_10[n/10], ordinals[n%10]);
-    }
-}
-
-
 /**
  * Append a terse description of the spell's name, level, discipline, and paths
  * to a stringbuffer. What comes out is something like:
@@ -100,13 +62,10 @@ void stringbuffer_append_ordinal(StringBuffer *sb, const int n) {
  * The spell to describe
  */
 static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell) {
-    stringbuffer_append_string(sb, "(a ");
-    stringbuffer_append_ordinal(sb, spell->level);
-    stringbuffer_append_string(sb, " level ");
+    stringbuffer_append_string(sb, "(");
 
     if (!spell->skill) {
-        /* Can this even happen? */
-        stringbuffer_append_string(sb, "mystery");
+        // Nothing
     } else if (spell->stats.grace) {
         /* Otherwise we get "a second level praying" when it should be "a second
          * level prayer". */
@@ -114,6 +73,8 @@ static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell)
     } else {
         stringbuffer_append_string(sb, spell->skill);
     }
+
+    stringbuffer_append_printf(sb, " level %d", spell->level);
 
     if (spell->path_attuned) {
         stringbuffer_append_string(sb, ") ");
