@@ -1,3 +1,6 @@
+2021-05-11 Nicolas Weeger
+    * include/global.h: Remove unused variables.
+
 2021-05-06 Nicolas Weeger
     * utils/crossloop.in: Display server start date in console.
 
