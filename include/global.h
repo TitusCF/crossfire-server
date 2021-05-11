@@ -170,8 +170,6 @@ EXTERN const char *undead_name; /* Used in hit_player() in main.c */
 
 extern short freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
 extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];
-extern int rightof_x[9], rightof_y[9];
-extern int leftof_x[9], leftof_y[9];
 
 extern const Face *blank_face, *empty_face;
 extern const Face *smooth_face;
