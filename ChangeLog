@@ -1,5 +1,5 @@
 2021-05-06 Nicolas Weeger
-    * utils/crossloop.in: Display server start date in console
+    * utils/crossloop.in: Display server start date in console.
 
 2021-05-06 Nicolas Weeger
     * server/c_misc.c: Remove line length limit for help files.
