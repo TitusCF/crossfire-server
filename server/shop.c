@@ -882,68 +882,69 @@ int can_pay(object *pl) {
  */
 int shop_pay_unpaid(object *pl, object *op) {
     char name_op[MAX_BUF];
-    int ret = 1;
 
-    if (op != NULL && op->inv)
-        ret = shop_pay_unpaid(pl, op->inv);
+    if (!op) {
+        return 1;
+    }
 
-    if (!ret)
-        return 0;
-
-    if (op != NULL && op->below)
-        ret = shop_pay_unpaid(pl, op->below);
-
-    if (!ret)
-        return 0;
-
-    if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID)) {
-        uint64_t price = shop_price_buy(op, pl);
-        uint64_t reduction = compute_price_variation_with_bargaining(pl, price, MAX_BUY_REDUCTION);
-        if (!pay_for_item(op, pl, reduction)) {
-            uint64_t i = price - query_money(pl);
-            char *missing = cost_str(i);
-
-            CLEAR_FLAG(op, FLAG_UNPAID);
-            query_name(op, name_op, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
-                                 "You lack %s to buy %s.",
-                                 missing, name_op);
-            free(missing);
-            SET_FLAG(op, FLAG_UNPAID);
+    if (op->inv)
+        if (!shop_pay_unpaid(pl, op->inv))
             return 0;
-        } else {
-            // TODO: Figure out how to pass in the shop owner for player shops.
-            if (events_execute_object_event(op, EVENT_BOUGHT, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+
+    while (op) {
+        object *below = op->below;
+
+        if (QUERY_FLAG(op, FLAG_UNPAID)) {
+            uint64_t price = shop_price_buy(op, pl);
+            uint64_t reduction = compute_price_variation_with_bargaining(pl, price, MAX_BUY_REDUCTION);
+            if (!pay_for_item(op, pl, reduction)) {
+                uint64_t i = price - query_money(pl);
+                char *missing = cost_str(i);
+
+                CLEAR_FLAG(op, FLAG_UNPAID);
+                query_name(op, name_op, MAX_BUF);
+                draw_ext_info_format(NDI_UNIQUE, 0, pl,
+                                     MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
+                                     "You lack %s to buy %s.",
+                                     missing, name_op);
+                free(missing);
+                SET_FLAG(op, FLAG_UNPAID);
                 return 0;
-            object *tmp;
-            char *value = cost_str(price - reduction);
-
-            CLEAR_FLAG(op, FLAG_UNPAID);
-            CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
-            query_name(op, name_op, MAX_BUF);
-
-            if (reduction > 0) {
-                char *reduction_str = cost_str(reduction);
-                draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                     MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
-                                     "You paid %s for %s after bargaining a reduction of %s.",
-                                     value, name_op, reduction_str);
-                change_exp(pl, reduction, "bargaining", SK_EXP_NONE);
-                free(reduction_str);
             } else {
-                draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                     MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
-                                     "You paid %s for %s.",
-                                     value, name_op);
-            }
-            free(value);
-            tmp = object_merge(op, NULL);
-            if (pl->type == PLAYER && !tmp) {
-                /* If item wasn't merged we update it. If merged, object_merge() handled everything for us. */
-                esrv_update_item(UPD_FLAGS|UPD_NAME, pl, op);
+                // TODO: Figure out how to pass in the shop owner for player shops.
+                if (events_execute_object_event(op, EVENT_BOUGHT, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+                    return 0;
+                object *tmp;
+                char *value = cost_str(price - reduction);
+
+                CLEAR_FLAG(op, FLAG_UNPAID);
+                CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
+                query_name(op, name_op, MAX_BUF);
+
+                if (reduction > 0) {
+                    char *reduction_str = cost_str(reduction);
+                    draw_ext_info_format(NDI_UNIQUE, 0, pl,
+                                         MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
+                                         "You paid %s for %s after bargaining a reduction of %s.",
+                                         value, name_op, reduction_str);
+                    change_exp(pl, reduction, "bargaining", SK_EXP_NONE);
+                    free(reduction_str);
+                } else {
+                    draw_ext_info_format(NDI_UNIQUE, 0, pl,
+                                         MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
+                                         "You paid %s for %s.",
+                                         value, name_op);
+                }
+                free(value);
+                tmp = object_merge(op, NULL);
+                if (pl->type == PLAYER && !tmp) {
+                    /* If item wasn't merged we update it. If merged, object_merge() handled everything for us. */
+                    esrv_update_item(UPD_FLAGS|UPD_NAME, pl, op);
+                }
             }
         }
+
+        op = below;
     }
     return 1;
 }
