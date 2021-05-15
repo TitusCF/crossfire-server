@@ -1355,10 +1355,13 @@ void object_give_identified_properties(object *op) {
 
     key = object_get_value(op, "identified_animation");
     if (key != NULL) {
-        op->animation = find_animation(key);
-        if (!QUERY_FLAG(op, FLAG_IS_TURNABLE))
-            SET_FLAG(op, FLAG_ANIMATE);
-        animate_object(op, op->facing);
+        Animations *anim = try_find_animation(key);
+        if (anim) {
+            op->animation = anim;
+            if (!QUERY_FLAG(op, FLAG_IS_TURNABLE))
+                SET_FLAG(op, FLAG_ANIMATE);
+            animate_object(op, op->facing);
+        }
         object_set_value(op, "identified_animation", NULL, 0);
     }
 
