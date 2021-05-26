@@ -2,7 +2,11 @@ Affiche la liste des éléments importants connus par le personnage.
 
 Sans argument, affiche cette aide.
 
-Sous la forme "knowledge list", affiche tous les éléments connus, avec leur numéro. Un paramètre supplémentaire permet de restreindre l'affichage à un certain type. Utiliser un type invalide liste les types valides.
+Sous la forme "knowledge list", affiche tous les éléments connus, avec leur numéro. Un paramètre supplémentaire permet de restreindre l'affichage à un certain type, les types valides sont :
+- alchemy
+- god
+- message
+- monster
 
 Sous la forme "knowledge show <numéro>", affiche les détails de l'élément spécifié.
 
