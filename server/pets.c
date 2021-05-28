@@ -811,14 +811,12 @@ int pets_summon_golem(object *op, object *caster, int dir, object *spob) {
  * @param summon_level
  * summoning level.
  * @return
- * suitable monster, or NULL if no match found.
+ * suitable monster, or NULL if no match found, after informing the player.
  */
 static object *choose_cult_monster(object *pl, const object *god, int summon_level) {
     char buf[MAX_BUF];
     const char *race;
-    int racenr, mon_nr, i;
-    racelink *list;
-    objectlink *tobl;
+    int racenr, i;
     object *otmp;
 
     /* Determine the number of races available */
@@ -840,51 +838,14 @@ static object *choose_cult_monster(object *pl, const object *god, int summon_lev
     } else
         race = god->race;
 
-
-    /* see if a we can match a race list of monsters.  This should not
-     * happen, so graceful recovery isn't really needed, but this sanity
-     * checking is good for cases where the god archetypes mismatch the
-     * race file
-     */
-    list = find_racelink(race);
-    if (list == NULL) {
+    otmp = races_get_random_monster(race, summon_level);
+    if (!otmp) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "The spell fails! %s's creatures are beyond the range of your summons",
                              god->name);
-        LOG(llevDebug, "choose_cult_monster() requested non-existent aligned race!\n");
-        return NULL;
     }
-
-    /* search for an apprplritate monster on this race list */
-    mon_nr = 0;
-    for (tobl = list->member; tobl; tobl = tobl->next) {
-        otmp = tobl->ob;
-        if (otmp == NULL || !QUERY_FLAG(otmp, FLAG_MONSTER))
-            continue;
-        if (otmp->level <= summon_level)
-            mon_nr++;
-    }
-
-    /* If this god has multiple race entries, we should really choose another.
-     * But then we either need to track which ones we have tried, or just
-     * make so many calls to this function, and if we get so many without
-     * a valid entry, assuming nothing is available and quit.
-     */
-    if (!mon_nr)
-        return NULL;
-
-    mon_nr = rndm(0, mon_nr-1);
-    for (tobl = list->member; tobl; tobl = tobl->next) {
-        otmp = tobl->ob;
-        if (otmp == NULL || !QUERY_FLAG(otmp, FLAG_MONSTER))
-            continue;
-        if (otmp->level <= summon_level && !mon_nr--)
-            return otmp;
-    }
-    /* This should not happen */
-    LOG(llevDebug, "choose_cult_monster() mon_nr was set, but did not find a monster\n");
-    return NULL;
+    return otmp;
 }
 
 /**

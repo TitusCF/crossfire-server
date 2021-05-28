@@ -621,10 +621,10 @@ void server_main(int argc, char *argv[]);
 extern "C" {
 #endif
 void load_races(BufferReader *reader, const char *filename);
-racelink *find_racelink(const char *name);
 void finish_races();
 void dump_races(void);
 void free_races(void);
+object *races_get_random_monster(const char *race, int level);
 #ifdef __cplusplus
 }
 #endif
