@@ -13,7 +13,6 @@ extern "C" {
 #include "AssetsManager.h"
 #include "Archetypes.h"
 
-std::map<std::string, std::vector<std::string> > addRaces;
 std::map<std::string, std::vector<std::string> > addToRace;
 
 /**
@@ -99,15 +98,10 @@ void load_races(BufferReader *reader, const char *) {
     char race[MAX_BUF], *buf, *cp, variable[MAX_BUF];
 
     while ((buf = bufferreader_next_line(reader)) != NULL) {
-        int set_race = 1, set_list = 1;
         if (*buf == '#')
             continue;
         cp = buf;
-        while (*cp == ' ' || *cp == '!' || *cp == '@') {
-            if (*cp == '!')
-                set_race = 0;
-            if (*cp == '@')
-                set_list = 0;
+        while (*cp == ' ') {
             cp++;
         }
         if (sscanf(cp, "RACE %s", variable)) { /* set new race value */
@@ -127,12 +121,7 @@ void load_races(BufferReader *reader, const char *) {
 
             if (cp[strlen(cp)-1] == '\n')
                 cp[strlen(cp)-1] = '\0';
-            if (set_race) {
-                addRaces[race].push_back(cp);
-            }
-            if (set_list) {
-                addToRace[race].push_back(cp);
-            }
+            addToRace[race].push_back(cp);
         }
     }
     LOG(llevDebug, "loaded races\n");
@@ -175,30 +164,10 @@ void free_races(void) {
 }
 
 void finish_races() {
-    for (const auto& add : addRaces) {
-        for (const auto& name : add.second) {
-            auto mon = getManager()->archetypes()->get(name);
-            std::string race(add.first);
-            if (!mon->clone.race || !strstr(mon->clone.race, race.c_str())) {
-                if (mon->clone.race) {
-                    LOG(llevDebug, "races: Appending to %s from %s for archetype %s\n", race.c_str(), mon->clone.race, mon->name);
-                    race.append(",");
-                    race.append(mon->clone.race);
-                    // Clear the existing race string so we can add the new one
-                    free_string(mon->clone.race);
-                } else {
-                    LOG(llevDebug, "races: setting race to %s for %s\n", race.c_str(), mon->name);
-                }
-                mon->clone.race = add_string(race.c_str());
-            }
-        }
-    }
-    addRaces.clear();
-
     for (const auto& add : addToRace) {
         for (const auto& name : add.second) {
-            auto mon = getManager()->archetypes()->get(name);
-            if (QUERY_FLAG(&mon->clone, FLAG_MONSTER)) {
+            auto mon = getManager()->archetypes()->find(name);
+            if (mon && QUERY_FLAG(&mon->clone, FLAG_MONSTER)) {
                 add_to_racelist(add.first.c_str(), &mon->clone);
             }
         }
