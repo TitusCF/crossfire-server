@@ -80,29 +80,6 @@ void command_gsay(object *op, const char *params) {
 }
 
 /**
- * Give help for party commands.
- *
- * @param op
- * player.
- */
-static void party_help(object *op) {
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_HELP,
-                  "To form a party type: party form <partyname>. "
-                  "To join a party type: party join <partyname> "
-                  "If the party has a passwd, it will you prompt you for it. "
-                  "For a list of current parties type: party list. "
-                  "To leave a party type: party leave "
-                  "To change a passwd for a party type: party passwd <password> "
-                  "There is an 8 character maximum password length. "
-                  "To talk to party members type: party say <msg> "
-                  "To see who is in your party: party who "
-#ifdef PARTY_KILL_LOG
-                  "To see what you've killed, type: party kills"
-#endif
-                 );
-}
-
-/**
  * 'party' command, subdivided in different sub commands.
  *
  * @param op
@@ -128,7 +105,7 @@ void command_party(object *op, const char *params) {
         return;
     }
     if (strcmp(params, "help") == 0) {
-        party_help(op);
+        command_help(op, "party");
         return;
     }
 #ifdef PARTY_KILL_LOG
@@ -304,7 +281,7 @@ void command_party(object *op, const char *params) {
         return;
     } /* join */
 
-    party_help(op);
+    command_help(op, "party");
 }
 
 /** Valid modes for 'party_rejoin', indexed by ::party_rejoin_mode. */
