@@ -1015,7 +1015,6 @@ static void init_db() {
  */
 void init(int argc, char **argv) {
     logfile = stderr;
-    first_race = NULL;
 
     /* First argument pass - right now it does nothing, but in the future specifying
      * the LibDir in this pass would be reasonable. */

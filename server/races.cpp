@@ -14,78 +14,31 @@ extern "C" {
 #include "Archetypes.h"
 
 std::map<std::string, std::vector<std::string> > addToRace;
+std::map<std::string, std::vector<object *> > races;
 
 /**
- * Find the race information for the specified name.
- *
- * @param name
- * race to search for.
- * @return
- * race structure, NULL if not found.
+ * Get a random monster of specified race and level at most the specified one.
+ * @param race race, must not be NULL. If invalid, then logs as an error.
+ * @param level maximum number, included.
+ * @return random monster, NULL if none available for the level.
  */
-racelink *find_racelink(const char *name) {
-    racelink *test = NULL;
-
-    if (name && first_race)
-        for (test = first_race; test && test != test->next; test = test->next)
-            if (!test->name || !strcmp(name, test->name))
-                break;
-
-    return test;
-}
-
-/**
- * Create a new ::racelink structure.
- *
- * @note
- * will call fatal() in case of memory allocation failure.
- * @return
- * empty structure.
- */
-static racelink *get_racelist(void) {
-    racelink *list;
-
-    list = (racelink *)malloc(sizeof(racelink));
-    if (!list)
-        fatal(OUT_OF_MEMORY);
-    list->name = NULL;
-    list->nrof = 0;
-    list->member = get_objectlink();
-    list->next = NULL;
-
-    return list;
-}
-
-/**
- * Add an object to the racelist.
- *
- * @param race_name
- * race name.
- * @param op
- * what object to add to the race.
- */
-static void add_to_racelist(const char *race_name, object *op) {
-    racelink *race;
-
-    if (!op || !race_name)
-        return;
-    race = find_racelink(race_name);
-
-    if (!race) { /* add in a new race list */
-        race = get_racelist();
-        race->next = first_race;
-        first_race = race;
-        race->name = add_string(race_name);
+object *races_get_random_monster(const char *race, int level) {
+    auto r = races.find(race);
+    if (r == races.end()) {
+        LOG(llevError, "races_get_random_monster: requested non-existent aligned race %s!\n", race);
+        return NULL;
     }
 
-    if (race->member->ob) {
-        objectlink *tmp = get_objectlink();
-
-        tmp->next = race->member;
-        race->member = tmp;
+    std::vector<object *> valid;
+    for (auto it = (*r).second.begin(); it != (*r).second.end(); it++) {
+        if ((*it)->level <= level) {
+            valid.push_back(*it);
+        }
     }
-    race->nrof++;
-    race->member->ob = op;
+    if (valid.empty()) {
+        return NULL;
+    }
+    return valid[rndm(0, valid.size() - 1)];
 }
 
 /**
@@ -131,36 +84,20 @@ void load_races(BufferReader *reader, const char *) {
  * Dumps all race information to stderr.
  */
 void dump_races(void) {
-    racelink *list;
-    objectlink *tmp;
-
-    for (list = first_race; list; list = list->next) {
-        fprintf(stderr, "\nRACE %s:\t", list->name);
-        for (tmp = list->member; tmp; tmp = tmp->next)
-            fprintf(stderr, "%s (%d), ", tmp->ob->arch->name, tmp->ob->level);
+    for (auto race = races.cbegin(); race != races.cend(); race++) {
+        fprintf(stderr, "\nRACE %s:\t", (*race).first.c_str());
+        for (auto mon = (*race).second.cbegin(); mon != (*race).second.cend(); mon++) {
+            fprintf(stderr, "%s (%d), ", (*mon)->arch->name, (*mon)->level);
+        }
     }
-    fprintf(stderr, "\n");
 }
 
 /**
  * Frees all race-related information.
  */
 void free_races(void) {
-    racelink *race;
-    objectlink *link;
-
+    races.clear();
     LOG(llevDebug, "Freeing race information.\n");
-    while (first_race) {
-        race = first_race->next;
-        while (first_race->member) {
-            link = first_race->member->next;
-            free(first_race->member);
-            first_race->member = link;
-        }
-        free_string(first_race->name);
-        free(first_race);
-        first_race = race;
-    }
 }
 
 void finish_races() {
@@ -168,7 +105,7 @@ void finish_races() {
         for (const auto& name : add.second) {
             auto mon = getManager()->archetypes()->find(name);
             if (mon && QUERY_FLAG(&mon->clone, FLAG_MONSTER)) {
-                add_to_racelist(add.first.c_str(), &mon->clone);
+                races[add.first].push_back(&mon->clone);
             } else {
                 LOG(llevError, "races: %s %s\n", name.c_str(), mon ? "is not a monster" : "does not exist");
             }
