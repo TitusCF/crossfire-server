@@ -4,11 +4,13 @@ CREWrapperObject::CREWrapperObject()
 {
     myObject = NULL;
     myArchetype = NULL;
+    myTreasure = nullptr;
 }
 
 CREWrapperObject::~CREWrapperObject()
 {
     delete myArchetype;
+    delete myTreasure;
 }
 
 void CREWrapperObject::setObject(const object* obj)
@@ -18,6 +20,8 @@ void CREWrapperObject::setObject(const object* obj)
         myArchetype = new CREWrapperArchetype(this, obj->arch);
     else
         myArchetype->setArchetype(obj->arch);
+    delete myTreasure;
+    myTreasure = nullptr;
 }
 
 CREWrapperArchetype* CREWrapperObject::arch()
@@ -93,4 +97,14 @@ qint32 CREWrapperObject::weight() const
 QString CREWrapperObject::materialName() const
 {
   return myObject->materialname;
+}
+
+CREWrapperTreasureList *CREWrapperObject::randomItems() {
+    if (!myObject->randomitems) {
+        return nullptr;
+    }
+    if (!myTreasure) {
+        myTreasure = new CREWrapperTreasureList(myObject->randomitems);
+    }
+    return myTreasure;
 }
