@@ -65,15 +65,13 @@ void load_races(BufferReader *reader, const char *) {
             /* Take out beginning spaces */
             for (cp1 = cp; *cp1 == ' '; cp1++)
                 ;
-            /* Remove newline and trailing spaces */
-            for (cp1 = cp+strlen(cp)-1; *cp1 == '\n' || *cp1 == ' '; cp1--) {
+            /* Remove trailing spaces */
+            for (cp1 = cp+strlen(cp)-1; *cp1 == ' '; cp1--) {
                 *cp1 = '\0';
                 if (cp == cp1)
                     break;
             }
 
-            if (cp[strlen(cp)-1] == '\n')
-                cp[strlen(cp)-1] = '\0';
             addToRace[race].push_back(cp);
         }
     }
