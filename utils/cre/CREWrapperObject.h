@@ -7,6 +7,7 @@ extern "C" {
 
 #include <QObject>
 #include "CREWrapperArchetype.h"
+#include "CREWrapperTreasure.h"
 
 class CREWrapperObject : public QObject
 {
@@ -28,6 +29,7 @@ class CREWrapperObject : public QObject
     Q_PROPERTY(qint16 hp READ hp)
     Q_PROPERTY(qint32 weight READ weight)
     Q_PROPERTY(QString materialName READ materialName)
+    Q_PROPERTY(QObject* randomItems READ randomItems)
 
     public:
         CREWrapperObject();
@@ -51,10 +53,12 @@ class CREWrapperObject : public QObject
         qint16 hp() const;
         qint32 weight() const;
         QString materialName() const;
+        CREWrapperTreasureList *randomItems();
 
     protected:
         const object* myObject;
         CREWrapperArchetype* myArchetype;
+        CREWrapperTreasureList *myTreasure;
 };
 
 #endif // CRE_WRAPPER_OBJECT_h
