@@ -169,6 +169,8 @@ void finish_races() {
             auto mon = getManager()->archetypes()->find(name);
             if (mon && QUERY_FLAG(&mon->clone, FLAG_MONSTER)) {
                 add_to_racelist(add.first.c_str(), &mon->clone);
+            } else {
+                LOG(llevError, "races: %s %s\n", name.c_str(), mon ? "is not a monster" : "does not exist");
             }
         }
     }
