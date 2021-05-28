@@ -1,5 +1,7 @@
-La commande party permet de gérer les groupes d'aventuriers.
-Un groupe d'aventuriers partage l'expérience reçue entre tous ses membres et dispose d'un canal de communication privé. Vous ne pouvez pas faire partie de plus d'un groupe à la fois. Notez qu'un groupe n'est pas une guilde: l'appartenance à un groupe n'est pas enregistrée de manière permanente d'une session de jeu à l'autre, par exemple.
+La commande 'party' permet de gérer les groupes d'aventuriers.
+Un groupe d'aventuriers partage l'expérience reçue entre tous ses membres et dispose d'un canal de communication privé. Vous ne pouvez pas faire partie de plus d'un groupe à la fois. Notez qu'un groupe n'est pas une guilde.
+
+L'appartenance à un groupe n'est pas enregistrée de manière permanente d'une session de jeu à l'autre par défaut, mais vous pouvez changer ce comportement via la commande 'party_rejoin'.
 
 Usages:
 
