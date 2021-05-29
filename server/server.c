@@ -611,6 +611,14 @@ static void enter_unique_map(object *op, object *exit_ob) {
         char reldir[HUGE_BUF], tmpc[HUGE_BUF], *cp;
 
         if (exit_ob->map->unique) {
+            // Use player's current map path to construct base of relative path in 'src'
+            char* src = strdup(op->map->path);
+            char* slash = strrchr(src, '/');
+            if (slash == NULL) {
+                abort();
+            }
+            *slash = '\0';
+
             unclean_path(exit_ob->map->path, reldir, sizeof(reldir));
 
             /* Need to copy this over, as clean_path only has one static return buffer */
@@ -619,7 +627,7 @@ static void enter_unique_map(object *op, object *exit_ob) {
             if ((cp = strrchr(tmpc, '_')) != NULL)
                 *cp = 0;
 
-            snprintf(apartment, sizeof(apartment), "~%s/%s_%s", op->name, tmpc, clean_path(EXIT_PATH(exit_ob), path, sizeof(path)));
+            snprintf(apartment, sizeof(apartment), "%s/%s_%s", src, tmpc, clean_path(EXIT_PATH(exit_ob), path, sizeof(path)));
 
             newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
             if (!newmap) {
