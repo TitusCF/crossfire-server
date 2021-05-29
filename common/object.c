@@ -900,8 +900,10 @@ void object_copy(const object *src_ob, object *dest_ob) {
     /* If archetype is a temporary one, we need to update reference count, because
      * that archetype will be freed by object_free_drop_inventory() when the last object is removed.
      */
-    if (dest_ob->arch->reference_count > 0)
-        dest_ob->arch->reference_count++;
+    if (dest_ob->arch != NULL) {
+        if (dest_ob->arch->reference_count > 0)
+            dest_ob->arch->reference_count++;
+    }
 
     if (src_ob->speed < 0)
         dest_ob->speed_left = src_ob->speed_left-RANDOM()%200/100.0;
