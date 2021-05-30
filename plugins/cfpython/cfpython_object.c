@@ -1891,6 +1891,17 @@ static int Object_SetNoSave(Crossfire_Object *whoptr, PyObject *value, void *clo
     return 0;
 }
 
+static int Object_SetDM(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &val))
+        return -1;
+
+    cf_object_set_flag(whoptr->obj, FLAG_WIZ, val);
+    return 0;
+}
+
 static int Object_SetOwner(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     Crossfire_Object *ob;
 
@@ -2705,7 +2716,7 @@ static PyGetSetDef Object_getseters[] = {
     { "BeenApplied",    (getter)Object_GetBeenApplied,  NULL, NULL, NULL },
     { "Identified",     (getter)Object_GetIdentified,   (setter)Object_SetIdentified, NULL, NULL },
     { "Alive",          (getter)Object_GetAlive,        (setter)Object_SetAlive, NULL, NULL },
-    { "DungeonMaster",  (getter)Object_GetDM,           NULL, NULL, NULL },
+    { "DungeonMaster",  (getter)Object_GetDM,           (setter)Object_SetDM, NULL, NULL },
     { "WasDungeonMaster", (getter)Object_GetWasDM,      NULL, NULL, NULL },
     { "Applied",        (getter)Object_GetApplied,      (setter)Object_SetApplied, NULL, NULL },
     { "Unpaid",         (getter)Object_GetUnpaid,       (setter)Object_SetUnpaid, NULL, NULL },
