@@ -83,10 +83,17 @@ treasure *TreasureLoader::loadTreasure(BufferReader *reader, const std::string &
             cp++;
 
         if (sscanf(cp, "arch %s", variable)) {
+            if (t->item) {
+                LOG(llevError, "treasure: duplicate 'arch' in %s:%d\n", filename.c_str(), bufferreader_current_line(reader));
+            }
             t->item = m_archetypes->get(variable);
-        } else if (sscanf(cp, "list %s", variable))
+        } else if (sscanf(cp, "list %s", variable)) {
+            if (t->name) {
+                LOG(llevError, "treasure: duplicate 'name' in %s:%d\n", filename.c_str(), bufferreader_current_line(reader));
+                free_string(t->name);
+            }
             t->name = add_string(variable);
-        else if (sscanf(cp, "change_name %s", variable))
+        } else if (sscanf(cp, "change_name %s", variable))
             t->change_arch.name = add_string(variable);
         else if (sscanf(cp, "change_title %s", variable))
             t->change_arch.title = add_string(variable);
