@@ -84,6 +84,9 @@ static void apply_sign(object *sign, object *op, int autoapply) {
     msgType = get_readable_message_type(sign);
     draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, msgType->message_type, msgType->message_subtype,
         sign->msg);
+    if (op->contr) {
+        knowledge_read(op->contr, sign);
+    }
 }
 
 /**
