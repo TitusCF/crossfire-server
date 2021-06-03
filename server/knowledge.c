@@ -605,7 +605,7 @@ static void knowledge_monster_detail(const char *item, StringBuffer *buf) {
  */
 static int knowledge_monster_validate(const char *item) {
     const archetype *monster = try_find_archetype(item);
-    if (monster == NULL || monster->clone.type != 0 || monster->head)
+    if (monster == NULL || monster->clone.type != 0 || monster->head || object_get_value(&monster->clone, MONSTER_EXCLUDE_FROM_READABLE_KEY) != NULL)
         return 0;
     return 1;
 }
