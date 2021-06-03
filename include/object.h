@@ -571,7 +571,6 @@ static inline void set_flag(object *op, int flag) {
 /*@}*/
 
 #define ARCH_SINGULARITY        "singularity"   /**< Archetype for singularity. */
-#define ARCH_SINGULARITY_LEN    11              /**< Length of ::ARCH_SINGULARITY. */
 #define ARCH_DETECT_MAGIC       "detect_magic"  /**< Archetype for detect magic spell. */
 #define ARCH_DEPLETION          "depletion"     /**< Archetype for depletion. */
 #define ARCH_SYMPTOM            "symptom"       /**< Archetype for disease symptom. */
