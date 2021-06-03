@@ -1,3 +1,9 @@
+2021-06-03 Nicolas Weeger
+    * common/readable.c,
+    * include/object.h,
+    * server/knowledge.c: Allow monsters to be excluded from books and knowledge.
+       This enables eg god avatars to not be listed, and may be used to exclude big bosses.
+
 2021-05-11 Nicolas Weeger
     * include/global.h: Remove unused variables.
 

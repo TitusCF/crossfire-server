@@ -579,6 +579,8 @@ static inline void set_flag(object *op, int flag) {
 #define ARCH_SPELL_BLOCKED      "spell_blocked" /**< Archetype when a spell is blocked (unholy ground or non magic). */
 #define ARCH_SPELL_BUNGLE       "spell_bungle"  /**< Archetype when player bungles a spell. */
 
+#define MONSTER_EXCLUDE_FROM_READABLE_KEY  "exclude_from_readable"  /**< If set (any value), then monster is not listed in books. */
+
 /**
  * Returns the head part of an object. For single-tile objects returns the
  * object itself.

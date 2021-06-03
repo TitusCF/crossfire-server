@@ -859,6 +859,7 @@ static void add_book(title *book, int type, const char *fname, int lineno) {
 
 static void do_monster(archetype *at) {
     if (QUERY_FLAG(&at->clone, FLAG_MONSTER) && (!at->head)
+    && (object_get_value(&at->clone, MONSTER_EXCLUDE_FROM_READABLE_KEY) == NULL)
     && (!QUERY_FLAG(&at->clone, FLAG_CHANGING) || QUERY_FLAG(&at->clone, FLAG_UNAGGRESSIVE))) {
         objectlink *mon = (objectlink *)malloc(sizeof(objectlink));
         if (!mon) {
