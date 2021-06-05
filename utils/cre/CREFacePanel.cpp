@@ -63,6 +63,41 @@ CREFacePanel::CREFacePanel(QWidget* parent) : CRETPanel(parent)
     connect(smooth, SIGNAL(clicked(bool)), this, SLOT(makeSmooth(bool)));
 }
 
+static bool treasureContains(const treasure *t, const archetype *arch)
+{
+    while (t)
+    {
+        if (t->item == arch)
+            return true;
+        if (t->next_yes && treasureContains(t->next_yes, arch))
+            return true;
+        if (t->next_no && treasureContains(t->next_no, arch))
+            return true;
+        t = t->next;
+    }
+    return false;
+}
+
+static bool isValidArchFlesh(const archetype *arch, const Face *fleshFace)
+{
+    if (!arch || !arch->clone.randomitems)
+        return false;
+
+    std::vector<const archetype *> sources;
+    getManager()->archetypes()->each([&sources, &fleshFace] (const archetype *candidate) {
+        if (candidate->clone.face == fleshFace)
+            sources.push_back(candidate);
+    });
+
+    for (auto source : sources)
+    {
+        if (treasureContains(arch->clone.randomitems->items, source))
+            return true;
+    }
+
+    return false;
+}
+
 void CREFacePanel::setItem(const Face* face)
 {
     Q_ASSERT(face);
@@ -86,6 +121,26 @@ void CREFacePanel::setItem(const Face* face)
             CREUtils::archetypeNode(arch, root);
         }
     });
+
+    size_t pos = 0;
+    std::string name(face->name);
+    while ((pos = name.find('_', pos)) != std::string::npos)
+    {
+        auto arch = getManager()->archetypes()->find(name.substr(0, pos));
+        auto flesh = getManager()->faces()->find(name.substr(pos + 1));
+        if (isValidArchFlesh(arch, flesh))
+        {
+            if (root == NULL)
+            {
+                root = CREUtils::archetypeNode(NULL);
+                myUsing->addTopLevelItem(root);
+                root->setExpanded(true);
+            }
+            auto node = CREUtils::archetypeNode(arch, root);
+            node->setText(0, node->text(0) + " (flesh face)");
+        }
+        pos++;
+    }
 
     root = NULL;
 
