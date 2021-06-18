@@ -72,6 +72,6 @@ Troubleshooting
 If something goes wrong, report your troubles to:
 * Crossfire's messageboard: http://www.metalforge.net/cfmb/index.php
 * Crossfire's mailing list: see http://crossfire.real-time.com for instructions on how to join it
-* #crossfire on irc.freenode.org
+* #crossfire on irc.libera.chat
 
 Also check Crossfire's bugs page at http://sourceforge.net/tracker/?group_id=13833&atid=113833
