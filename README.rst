@@ -90,7 +90,7 @@ http://sourceforge.net/projects/crossfire/files/
 IRC
 ~~~
 It's possible to link up with a small community of Crossfire players and
-developers on irc.freenode.net in the #crossfire channel. Though activity
+developers on irc.libera.chat in the #crossfire channel. Though activity
 waxes and wanes, it's often possible to get live help there.
 
 Mailing Lists
