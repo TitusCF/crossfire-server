@@ -1,3 +1,7 @@
+2021-06-29 Daniel Hawkins
+    * common/is_valid_types_gen.pl: Fix attempt to load from nonexistant argument, causing all types
+        to be considered valid.
+
 2021-06-03 Nicolas Weeger
     * common/readable.c,
     * include/object.h,

@@ -5,7 +5,7 @@
 # This is triggered to run on build, and the output is then included into the library as a source.
 use strict;
 # First step -- open object.h
-open(my $file, "<", $ARGV[1]) or die "Failed to load object.h";
+open(my $file, "<", $ARGV[0]) or die "Failed to load object.h";
 my $tmp;
 my @arr;
 my $max = 0;
