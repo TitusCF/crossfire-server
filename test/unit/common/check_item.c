@@ -194,7 +194,7 @@ START_TEST(test_describe_item) {
             printf("Item %d describe_item(treasure %s) returned \"%s\" instead of \"%s\"\n", check, treasures[check], buf, treasure_results[check]);
         */
 
-        fail_unless(strcmp(buf, treasure_results[check]) == 0, "describe_item(treasure %s) returned \"%s\" instead of \"%s\"", treasures[check], buf, treasure_results[check]);
+        fail_unless(strcmp(buf, treasure_results[check]) == 0, "describe_item(treasure %s) returned \"%s\" instead of \"%s\" for item %s", treasures[check], buf, treasure_results[check], test->arch->name);
 
         free(buf);
         object_free_drop_inventory(test);
