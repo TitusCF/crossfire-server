@@ -116,8 +116,8 @@ START_TEST(test_describe_item) {
         "(speed +6)(item_power +6)[color=#FF15CD](armour +3)[/color]",
         "(dam+3)(weapon speed 2)(Attacks: physical)",
         "(Con+2)(item_power +1)",
-        "(Str+2)(Dex-1)(dam+3)(item_power +2)[color=#FF15CD](armour +3)[/color]",
-        "(Str+2)(dam+3)(item_power +1)[color=#FF15CD](armour +3)[/color]",
+        "(Str+2)(Dex-1)(dam+3)(item_power +2)[color=#FF15CD](armour +5)[/color]",
+        "(Str+2)(dam+3)(item_power +1)[color=#FF15CD](armour +5)[/color]",
         "(Cha+1)(ac+1)(Spell regen penalty 4)[color=#FF15CD](armour +4)[/color](resist blindness +1)",
         "(ac+5)(Max speed 0.70)(Spell regen penalty 30)[color=#FF15CD](armour +40)[/color]",
         "(ac+1)(Max speed 1.20)",
@@ -155,7 +155,7 @@ START_TEST(test_describe_item) {
         "of adornment",
         "(Str+1)(dam+9)(item_power +20)(weapon speed 6)(regeneration+1)(Attacks: electricity, drain)[color=#930C76](resist magic +30)[/color][color=blue](resist electricity +30)[/color][ul](resist drain +100)[/ul]",
         "of adornment",
-        "(Str+1)[color=#FF15CD](armour +3)[/color]",
+        "(Str+1)[color=#FF15CD](armour +5)[/color]",
         "",
         NULL
     };
