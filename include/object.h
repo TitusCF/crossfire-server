@@ -308,20 +308,20 @@ typedef struct obj {
      * object_copy() to do so.  
      * Everything below here also gets cleared by object_clear().
      */
-    const char  *name;          /**< The name of the object, obviously... */
+    sstring     name;           /**< The name of the object, obviously... */
     /* Place new attributes that should get copied and cleared below name */
 
     sstring     artifact;       /**< If set, the item is the artifact with this name and the matching type. */
-    const char  *name_pl;       /**< The plural name of the object */
+    sstring     name_pl;        /**< The plural name of the object */
     const char  *anim_suffix;   /**< Used to determine combined animations */
-    const char  *title;         /**< Of foo, etc */
-    const char  *race;          /**< Human, goblin, dragon, etc */
-    const char  *slaying;       /**< Which race to do double damage to.
+    sstring     title;          /**< Of foo, etc */
+    sstring     race;           /**< Human, goblin, dragon, etc */
+    sstring     slaying;        /**< Which race to do double damage to.
                                  * If this is an exit, this is the filename */
-    const char  *skill;         /**< Name of the skill this object uses/grants */
-    const char* msg;            /**< If this is a book/sign/magic mouth/etc. Modify with
+    sstring     skill;          /**< Name of the skill this object uses/grants */
+    sstring     msg;            /**< If this is a book/sign/magic mouth/etc. Modify with
                                      object_set_msg() to preserve invariants. */
-    const char  *lore;          /**< Obscure information about this object,
+    sstring     lore;           /**< Obscure information about this object,
                                  * to get put into books and the like. */
 
     int16_t      x, y;           /**< Position in the map for this object */
@@ -465,7 +465,7 @@ typedef struct oblinkpt {
  * by the object structure
  */
 typedef struct archt {
-    const char *name;       /**< More definite name, like "generate_kobold" */
+    sstring name;           /**< More definite name, like "generate_kobold" */
     struct archt *head;     /**< The main part of a linked object */
     struct archt *more;     /**< Next part of a linked object */
     object clone;           /**< An object from which to do object_copy() */
