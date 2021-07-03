@@ -1,3 +1,8 @@
+2021-07-03 Daniel Hawkins
+    * socket/request.c: Set the name of the player object before calling apply_race_and_class(),
+        so that the call to esrv_new_player() in apply_race_and_class() uses the new player's name
+        instead of the previous player's name (or "dwarf" if no previous player).
+
 2021-06-29 Daniel Hawkins
     * common/is_valid_types_gen.pl: Fix attempt to load from nonexistant argument, causing all types
         to be considered valid.
