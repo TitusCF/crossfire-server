@@ -2813,6 +2813,10 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         else
             ns->status = Ns_Avail;
 
+        // We need to copy the name in before apply_race_and_class() because it
+        // tells the client our character name. If we don't update it, they get the old one.
+        FREE_AND_COPY(pl->ob->name, name);
+
         apply_race_and_class(pl->ob, race_a, class_a, &new_stats);
 
     }  else {
@@ -2823,6 +2827,9 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         // Since add_player normally sets ns->status, we still need that to happen.
         else
             ns->status = Ns_Avail;
+
+        // Make sure to do this on both code branches.
+        FREE_AND_COPY(pl->ob->name, name);
 /* already done by add_player
         roll_again(pl->ob);
         pl->state = ST_ROLL_STAT;
@@ -2837,7 +2844,6 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
      * applying the race/class will use this
      * name information.
      */
-    FREE_AND_COPY(pl->ob->name, name);
     FREE_AND_COPY(pl->ob->name_pl, name);
     pl->name_changed = 1;
     safe_strncpy(pl->password, newhash(password), sizeof(pl->password));
