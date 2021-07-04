@@ -246,13 +246,6 @@
 #define MAX_TIME        120000
 
 /**
- * Polymorph as it currently stands is unbalancing, so by default
- * we have it disabled.  It can be enabled and it works, but
- * it can be abused in various ways.
- */
-#define NO_POLYMORPH
-
-/**
  * This determine how many entries are stored in the kill log.  You
  * can see this information with the 'party kills' command.  More entries
  * mean slower performance and more memory.  IF this is not defined, then
@@ -525,8 +518,6 @@
 #define HIGHSCORE_LENGTH 1000   /**< How many entries there are room for. */
 
 #define MAXSTRING 20
-
-#define COMMAND_HASH_SIZE 107   /**< If you change this, delete all characters :) */
 
 /***********************************************************************
  * Section 4 - save player options.
