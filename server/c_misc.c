@@ -2289,7 +2289,7 @@ void do_harvest(object *pl, int dir, object *skill) {
         return;
 
     if (get_map_flags(map, &map, x, y, &x, &y)&P_OUT_OF_MAP) {
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", skill->slaying);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, i18n(pl, "You cannot %s here."), skill->slaying);
         return;
     }
 
@@ -2300,7 +2300,7 @@ void do_harvest(object *pl, int dir, object *skill) {
     ttool = object_get_value(pl->chosen_skill, "harvest_tool");
     tspeed = object_get_value(pl->chosen_skill, "harvest_speed");
     if (!trace || strcmp(trace, "") == 0 || !ttool || strcmp(ttool, "") == 0 || !tspeed || strcmp(tspeed, "") == 0) {
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", skill->slaying);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, i18n(pl, "You start to %s, but change your mind."), skill->slaying);
         LOG(llevError, "do_harvest: tool %s without harvest_[race|tool|speed]\n", pl->chosen_skill->name);
         return;
     }
@@ -2324,7 +2324,7 @@ void do_harvest(object *pl, int dir, object *skill) {
         item = item->above;
     }
     if (count == 0) {
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", skill->slaying);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, i18n(pl, "You find nothing to %s here."), skill->slaying);
         return;
     }
 
@@ -2346,7 +2346,7 @@ void do_harvest(object *pl, int dir, object *skill) {
 
     /* Now we found something to harvest, randomly try to get it. */
     if (level > skill->level+10) {
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", skill->slaying);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, i18n(pl, "You find something, but it is too difficult for you to %s."), skill->slaying);
         return;
     }
 
@@ -2359,7 +2359,7 @@ void do_harvest(object *pl, int dir, object *skill) {
         proba = 30;
 
     if (proba <= random_roll(0, 100, pl, 1)) {
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", skill->slaying);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, i18n(pl, "You find something, but fail to %s it."), skill->slaying);
         return;
     }
 
@@ -2393,7 +2393,7 @@ void do_harvest(object *pl, int dir, object *skill) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s a %s!", skill->slaying, harvested->name);
     } else {
         harvested = object_insert_in_ob(harvested, pl);
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s some %s", skill->slaying, harvested->name);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s some %s.", skill->slaying, harvested->name);
     }
 
     /* Get exp */
