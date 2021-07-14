@@ -1,3 +1,9 @@
+2021-07-14 Daniel Hawkins
+    * common/artifact.c: Handle the reflecting flag from the artifacts file to allow for items that reflect
+      off walls when used, (e.g. a throwing hammer that bounces off walls)
+    * server/skills.c: Copy the reflecting flag from a thrown item to its in-flight counterpart.
+    * types/common/projectile.c: Fix the common projectile code to correctly reflect projectiles off walls.
+
 2021-07-03 Daniel Hawkins
     * socket/request.c: Set the name of the player object before calling apply_race_and_class(),
         so that the call to esrv_new_player() in apply_race_and_class() uses the new player's name
