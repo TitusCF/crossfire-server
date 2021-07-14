@@ -372,6 +372,8 @@ void add_abilities(object *op, const object *change) {
         SET_FLAG(op, FLAG_REFL_MISSILE);
     if (QUERY_FLAG(change, FLAG_MAKE_INVIS))
         SET_FLAG(op, FLAG_MAKE_INVIS);
+    if (QUERY_FLAG(change, FLAG_REFLECTING))
+        SET_FLAG(op, FLAG_REFLECTING);
 
     if (QUERY_FLAG(change, FLAG_STAND_STILL)) {
         CLEAR_FLAG(op, FLAG_ANIMATE);

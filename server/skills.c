@@ -2152,6 +2152,13 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     object_set_owner(throw_ob->inv, op);
     throw_ob->direction = dir;
 
+    /* If the thrown item has reflecting flag, it can ricochet off walls.
+     * Make sure this gets copied to the thrown object.
+     * The common projectile code should then handle the reflection from there.
+     */
+    if (QUERY_FLAG(throw_ob->inv, FLAG_REFLECTING))
+        SET_FLAG(throw_ob, FLAG_REFLECTING);
+
     /* the damage bonus from the force of the throw */
     dam = str_factor*get_dam_bonus(eff_str);
 

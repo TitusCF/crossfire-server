@@ -142,11 +142,6 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
             stop_projectile(op);
             return METHOD_OK;
         } else {
-            /* If one of the major directions (n,s,e,w), just reverse it */
-            if (op->direction&1) {
-                op->direction = absdir(op->direction+4);
-                retry = 1;
-            }
             /* There were two blocks with identical code -
              * use this retry here to make this one block
              * that did the same thing.
@@ -182,8 +177,11 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
                  * don't need to retry again.
                  */
                 if (!(mflags&P_OUT_OF_MAP)
-                && !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m1, x1, y1)))
+                && !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m1, x1, y1))) {
+                    // Assign the results to the new location
+                    new_x = x1, new_y = y1;
                     break;
+                }
             }
             /* Couldn't find a direction to move the arrow to - just
              * top it from moving.
