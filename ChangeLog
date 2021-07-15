@@ -1,3 +1,6 @@
+2021-07-15 Daniel Hawkins
+    * common/item.c: Make describe_item() indicate when a weapon will bounce off walls when thrown.
+
 2021-07-14 Daniel Hawkins
     * common/artifact.c: Handle the reflecting flag from the artifacts file to allow for items that reflect
       off walls when used, (e.g. a throwing hammer that bounces off walls)
