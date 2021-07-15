@@ -1136,6 +1136,10 @@ StringBuffer *describe_item(const object *op, const object *owner, int use_media
                 i = 0;
 
             stringbuffer_append_printf(buf, "(weapon speed %d)", i);
+            /* If the reflecting flag is set, the weapon will bounce off walls when thrown. */
+            if (QUERY_FLAG(op, FLAG_REFLECTING)) {
+                stringbuffer_append_string(buf, "(ricochet)");
+            }
             more_info = 1;
             break;
         }
