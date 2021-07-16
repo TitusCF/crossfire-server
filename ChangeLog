@@ -1,3 +1,9 @@
+2021-07-16 Daniel Hawkins
+    * types/gate/gate.c: Allow for unmoveable objects at the top of the tile with moveable objects below
+        to be handled correctly. Before it would fail to push a moveable boulder if there was rain above it,
+        for example. This change allows for the boulder to be moved despite not being the top tile, because
+        it is still the topmost moveable object.
+
 2021-07-15 Daniel Hawkins
     * common/item.c: Make describe_item() indicate when a weapon will bounce off walls when thrown.
 
