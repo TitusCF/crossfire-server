@@ -141,17 +141,25 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
                     /* If the object is not alive, and the object either can
                      * be picked up or the object rolls, move the object
                      * off the gate.
+                     *
+                     * If the top item is not interactable, then check items below it
+                     * instead. This allows us to use gates with translucent roofs
+                     * or ambient weather effects on the map that end up above the other items.
                      */
-                    if (!QUERY_FLAG(tmp, FLAG_ALIVE)
-                    && (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))) {
-                    /* If it has speed, it should move itself, otherwise: */
-                        int i = object_find_free_spot(tmp, op->map, op->x, op->y, 1, 9);
+                    while (tmp != op) {
+                        if (!QUERY_FLAG(tmp, FLAG_ALIVE)
+                        && (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))) {
+                            /* If it has speed, it should move itself, otherwise: */
+                            int i = object_find_free_spot(tmp, op->map, op->x, op->y, 1, 9);
 
-                        /* If there is a free spot, move the object someplace */
-                        if (i != -1) {
-                            object_remove(tmp);
-                            object_insert_in_map_at(tmp, op->map, op, 0, op->x+freearr_x[i], op->y+freearr_y[i]);
+                            /* If there is a free spot, move the object someplace */
+                            if (i != -1) {
+                                object_remove(tmp);
+                                object_insert_in_map_at(tmp, op->map, op, 0, op->x+freearr_x[i], op->y+freearr_y[i]);
+                            }
+                            break;
                         }
+                        tmp = tmp->below;
                     }
             }
 
