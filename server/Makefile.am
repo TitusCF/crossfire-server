@@ -56,11 +56,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\" \
 	      -DPLUGIN_SUFFIX=\".so\"
 
-if HAVE_LIBDL
-crossfire_server_LDFLAGS=-export-dynamic
-else
-crossfire_server_LDFLAGS=
-endif
+crossfire_server_LDFLAGS=$(LIBDL_LDFLAGS)
+
 crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
 		../socket/libsocket.a ../types/libtypes.a
 
