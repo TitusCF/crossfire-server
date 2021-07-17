@@ -13,7 +13,6 @@ eval '$'.$1.'$2;' while $ARGV[0] =~ /^([A-Za-z_0-9]+=)(.*)/ && shift;
 # Variables passed when invoked:
 #   living_c - filename where the array attacks is defined.
 
-$[ = 1;			# set array base to 1
 
 # These stats will be added to the "magik" string according
 # to the pattern. "%s" should be "%+d", but that isn't
@@ -48,7 +47,7 @@ while ((($buff = &Getline3($living_c),$getline_ok)) == 1) {
 	    }
 	    $s = "[ \t]*\"", $buff =~ s/$s//g;
 	    $nr = (@arr = split(/,/, $buff, 9999));
-	    for ($i = 1; $i <= $nr && $arr[$i]; $i++) {
+	    for ($i = 0; $i <= $nr && $arr[$i]; $i++) {
 		$attack{++$att} = $arr[$i];
 	    }
 	}
@@ -79,52 +78,52 @@ while (<>) {
     }
 
     if (defined $magic{$Fld[1]}) {
-	if ($Fld[1] eq 'sp' && $type == 14) {
-	    $ac = $Fld[2];
+	if ($Fld[0] eq 'sp' && $type == 14) {
+	    $ac = $Fld[1];
 	}
 	else {
-	    &add_magik($magic{$Fld[1]}, $Fld[2]);
+	    &add_magik($magic{$Fld[0]}, $Fld[1]);
 	}
     }
 
     if (/^type/) {
-	$type = $Fld[2];
+	$type = $Fld[1];
     }
     if (/^last_sp/) {
-	$last_sp = $Fld[2];
+	$last_sp = $Fld[1];
     }
     if (/^dam/) {
-	$dam = $Fld[2];
+	$dam = $Fld[1];
     }
     if (/^ac/) {
-	$ac = $Fld[2];
+	$ac = $Fld[1];
     }
     if (/^armour/) {
-	$armour = $Fld[2];
+	$armour = $Fld[1];
     }
     if (/^resist_physical/) {
-	$armour = $Fld[2];
+	$armour = $Fld[1];
     }
     if (/^weight/) {
-	$weight = $Fld[2];
+	$weight = $Fld[1];
     }
     if (/^attacktype/) {
-	$att = $Fld[2];
+	$att = $Fld[1];
     }
     if (/^immune/) {
-	$immune = $Fld[2];
+	$immune = $Fld[1];
     }
     if (/^vulnerable/) {
-	$vulnerable = $Fld[2];
+	$vulnerable = $Fld[1];
     }
     if (/^slaying/) {
-	$slay = $Fld[2];
+	$slay = $Fld[1];
     }
     if (/^magic/) {
-	$magical = $Fld[2];
+	$magical = $Fld[1];
     }
     if (/^name /) {
-	$name = substr($_, 6, 999999);
+	$name = substr($_, 5, 999999);
     }
     if (/^resist_([a-z]+) (-*\d+)/) {
 	if ($1 ne "physical") {
@@ -236,9 +235,9 @@ sub add_magik {
 
 sub capitalize {
     local($str) = @_;
-    $a = substr($str, 1, 1);
+    $a = substr($str, 0, 0);
     $a =~ tr/a-z/A-Z/;
-    $_ = $a .  substr($str, 2, 999999);
+    $_ = $a .  substr($str, 1, 999999);
 
 }
 

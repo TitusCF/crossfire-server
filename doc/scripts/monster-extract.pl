@@ -7,7 +7,6 @@ eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
 eval '$'.$1.'$2;' while $ARGV[0] =~ /^([A-Za-z_0-9]+=)(.*)/ && shift;
 			# process any FOO=bar switches
 
-$[ = 1;			# set array base to 1
 
 
 # special is a list of what special things we should look for.
@@ -35,7 +34,7 @@ while (<>) {
       '<tr><th>%s</th><td>~~%s~~</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>',
 	    $name, $Fld6, $Fld7 ? '~~' . $Fld7 . '~~' : '', $Fld2, $Fld3, $Fld4;
 
-    for ($i = 1; $i < $#field; $i++) {
+    for ($i = 0; $i < $#field-1; $i++) {
 	next if ($field[$i] eq "" );
 
 	if (defined $special{$field[$i]}) {
