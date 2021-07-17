@@ -30,7 +30,7 @@ archive: spoiler playbook spell-docs
 	$(mkinstalldirs) $(DTOP)
 	cp $(EXTRA_DIST) $(DTOP)
 	cp spoiler.ps handbook.ps $(DTOP)
-	cp spell-docs/*.txt spell-docs/*.ps $(DTOP)
+	cp `find spell-docs/*.txt` `find spell-docs/*.ps` $(DTOP)
 	(cd spoiler-html ; make archive )
 	(cd playbook-html ; make archive )
 	(cd $(DTOP)/..; gtar --exclude=CVS -cvhzf $(PACKAGE)-$(VERSION).doc.tar.gz `$(BASENAME) $(DTOP)`)
