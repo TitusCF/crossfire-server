@@ -1210,11 +1210,13 @@ static int check_probe(int ax, int ay, const object *ob, SockList *sl, socket_st
 
 static int annotate_ob(int ax, int ay, const object *ob, SockList *sl, socket_struct *ns, int *has_obj, int *alive_layer) {
     int got_one = check_probe(ax, ay, ob, sl, ns, has_obj, alive_layer);
-    if (QUERY_FLAG(ob, FLAG_ALIVE) && (QUERY_FLAG(ob, FLAG_UNAGGRESSIVE) || QUERY_FLAG(ob, FLAG_FRIENDLY)) && ob->msg != NULL && ob->type != PLAYER) {
-        archetype *dummy = try_find_archetype("speechbubble");
-        if (dummy != NULL) {
-            got_one += map2_add_ob(ax, ay, MAP_LAYER_FLY2, &dummy->clone, sl, ns, has_obj, 0);
-            (*alive_layer) = MAP_LAYER_FLY2;
+    if (QUERY_FLAG(ob, FLAG_ALIVE) && (QUERY_FLAG(ob, FLAG_UNAGGRESSIVE) || QUERY_FLAG(ob, FLAG_FRIENDLY)) && ob->type != PLAYER) {
+        if (ob->msg != NULL || object_find_by_arch_name(ob, "npc_dialog")) {
+            archetype *dummy = try_find_archetype("speechbubble");
+            if (dummy != NULL) {
+                got_one += map2_add_ob(ax, ay, MAP_LAYER_FLY2, &dummy->clone, sl, ns, has_obj, 0);
+                (*alive_layer) = MAP_LAYER_FLY2;
+            }
         }
     }
     return got_one;
