@@ -13,7 +13,6 @@ eval '$'.$1.'$2;' while $ARGV[0] =~ /^([A-Za-z_0-9]+=)(.*)/ && shift;
 #   archdir - root of crossfire-src, with a trailing slash
 #   libdir  - where archetypes etc. is found
 
-$[ = 1;			# set array base to 1
 $, = ' ';		# set output field separator
 $\ = "\n";		# set output record separator
 
@@ -67,7 +66,7 @@ open(IN,"<".$input) || die("can not open $input\n");
 while (<IN>) {
     @flds = split(/~~/);
     $work_todo = 1;
-    $i = 2;
+    $i = 1;
     while ($flds[$i] ne "") {
 	        $makeps{$flds[$i]} = 0;
 		$i += 2;
@@ -80,8 +79,8 @@ if ($output ne "png") {
     # A 4x8 bitmap will be reduced to 60% of its full size.
     if ($work_todo) {
 	$size_mul{1} = 1;
-	for ($i = 2; $i <= 12; $i++) {# Max input is 12x12, a *large* bitmap ;-)
-	    $size_mul{$i} = $size_mul{$i - 1} * 0.9;
+	for ($i = 1; $i <= 11; $i++) {# Max input is 12x12, a *large* bitmap ;-)
+	    $size_mul{$i} = $size_mul{$i} * 0.9;
         }
     }
 }
@@ -93,7 +92,7 @@ open(IN,"<".$inarch) || die("could not open $inarch\n");
 line: while (<IN>) {
     chomp;	# strip record separator
     @Fld = split(/ /, $_, 2);
-    if ($Fld[1] eq 'Object') {
+    if ($Fld[0] eq 'Object') {
 	if ($interesting) {
 	    $faces{$X, $Y} = $face;
 	    if (!$More && $makeps{$obj} != 1) {
@@ -104,7 +103,7 @@ line: while (<IN>) {
 	# Get ready for next archetype
 	if (!$More) {
 	    $xmin = $xmax = $ymin = $ymax = 0;
-	    $obj = $Fld[2];
+	    $obj = $Fld[1];
 	    $interesting = defined $makeps{$obj};
 	}
 	$X = $Y = 0;
@@ -112,10 +111,10 @@ line: while (<IN>) {
     }
 
     if ($Fld[1] eq 'face') {
-	$face = $Fld[2];
+	$face = $Fld[1];
     }
-    if ($Fld[1] eq 'x') {
-	$X = $Fld[2];
+    if ($Fld[0] eq 'x') {
+	$X = $Fld[1];
 	if ($X > $xmax) {	#???
 	    $xmax = $X;
 	}
@@ -123,8 +122,8 @@ line: while (<IN>) {
 	    $xmin = $X;
 	}
     }
-    if ($Fld[1] eq 'y') {
-	$Y = $Fld[2];
+    if ($Fld[0] eq 'y') {
+	$Y = $Fld[1];
 	if ($Y > $ymax) {	#???
 	    $ymax = $Y;
 	}
@@ -132,15 +131,15 @@ line: while (<IN>) {
 	    $ymin = $Y;
 	}
     }
-    if ($Fld[1] eq 'More') {
+    if ($Fld[0] eq 'More') {
 	$More = 1;
     }
-    if ($Fld[1] eq 'msg') {
+    if ($Fld[0] eq 'msg') {
 	do {
 	    $_ = <IN>;
 	    @Fld = split;
 	}
-	while ($Fld[1] ne 'endmsg');
+	while ($Fld[0] ne 'endmsg');
     }
 }
 close(IN);
@@ -165,7 +164,7 @@ open(IN,"<".$input);
 while (<IN>) {
     @Fld = split(/~~/);
     if ($#Fld > 1) {
-	for ($i = 2; $i <= $#Fld; $i += 2) {
+	for ($i = 1; $i <= $#Fld-1; $i += 2) {
 	    if (defined $makeps{$Fld[$i]}) {
     			$Fld[$i] = $makeps{$Fld[$i]};
 	    }
