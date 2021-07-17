@@ -116,7 +116,8 @@ PKG_CHECK_MODULES([SQLITE], [sqlite3], [], AC_MSG_ERROR([Could not find SQLite3]
 dnl############################################
 dnl Plugin configuration
 dnl############################################
-AM_CONDITIONAL(HAVE_LIBDL, test "$cf_have_libdl" = "yes")
+AS_IF([test "$cf_have_libdl" = "yes"], [
+    AC_SUBST([LIBDL_LDFLAGS], ["-export-dynamic"])])
 PKG_CHECK_MODULES([PYTHON], [python3-embed],
                   [PLUGIN_PYTHON="cfpython.la"] [cf_will_build_python="yes"],
                   [PKG_CHECK_MODULES([PYTHON], [python3],
