@@ -2272,7 +2272,7 @@ static int monster_do_talk_npc(object *npc, talk_info *info) {
     }
 
     if (npc->type == MAGIC_EAR) {
-        ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_EAR, message->message);
+        ext_info_map(NDI_NAVY|NDI_UNIQUE|NDI_DELAYED, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_EAR, message->message);
         use_trigger(npc);
     } else {
         char value[2];
