@@ -31,6 +31,19 @@
 #include "sproto.h"
 
 /**
+ * Fill a socket buffer with an extended message.
+ * @param sl Buffer to write to, will be reinitialized.
+ * @param color Color informations (used mainly if client does not support message type).
+ * @param type The type of text message.
+ * @param subtype The subtype of text message.
+ * @param message The main message.
+ */
+static void do_print_ext(SockList *sl, int color, uint8_t type, uint8_t subtype, const char *message) {
+    SockList_Init(sl);
+    SockList_AddPrintf(sl, "drawextinfo %d %hhu %hhu %s", color, type, subtype, message);
+}
+
+/**
  * Draws an extended message on the client.
  *
  * @param ns The socket to send message to
@@ -48,9 +61,7 @@
  */
 void print_ext_msg(socket_struct *ns, int color, uint8_t type, uint8_t subtype, const char *message) {
     SockList sl;
-
-    SockList_Init(&sl);
-    SockList_AddPrintf(&sl, "drawextinfo %d %hhu %hhu %s", color, type, subtype, message);
+    do_print_ext(&sl, color, type, subtype, message);
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
 }
@@ -109,7 +120,12 @@ void draw_ext_info(
     if (pri >= pl->contr->listening)
         return;
 
-    print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, flags&NDI_NO_TRANSLATE ? message : i18n(pl, message));
+    if (flags & NDI_DELAYED) {
+        SockList *sl = player_get_delayed_buffer(pl->contr);
+        do_print_ext(sl, flags & NDI_COLOR_MASK, type, subtype, flags&NDI_NO_TRANSLATE ? message : i18n(pl, message));
+    } else {
+        print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, flags&NDI_NO_TRANSLATE ? message : i18n(pl, message));
+    }
 }
 
 /**

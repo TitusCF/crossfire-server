@@ -4455,3 +4455,29 @@ void player_set_state(player *pl, uint8_t state) {
     assert(state >= ST_PLAYING && state <= ST_CHANGE_PASSWORD_CONFIRM);
     pl->state = state;
 }
+
+/**
+ * Get a delayed socket buffer, that will be sent after the player's tick is complete.
+ * Will fatal() if memory error.
+ * @param pl player to get a buffer for.
+ * @return buffer, never NULL.
+ */
+SockList *player_get_delayed_buffer(player *pl) {
+    SockList *sl;
+    assert(pl);
+    if (pl->delayed_buffers_used == pl->delayed_buffers_allocated) {
+        pl->delayed_buffers_allocated += 5;
+        pl->delayed_buffers = realloc(pl->delayed_buffers, pl->delayed_buffers_allocated * sizeof(pl->delayed_buffers[0]));
+        if (!pl->delayed_buffers) {
+            LOG(llevError, "Unable to allocated %d delayed buffers, aborting\n", pl->delayed_buffers_allocated);
+            fatal(OUT_OF_MEMORY);
+        }
+        for (uint8_t s = pl->delayed_buffers_allocated - 5; s < pl->delayed_buffers_allocated; s++) {
+            pl->delayed_buffers[s] = calloc(1, sizeof(SockList));
+        }
+    }
+    sl = pl->delayed_buffers[pl->delayed_buffers_used];
+    pl->delayed_buffers_used++;
+    SockList_Init(sl);
+    return sl;
+}

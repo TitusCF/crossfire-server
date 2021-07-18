@@ -440,6 +440,7 @@ int op_on_battleground(object *op, int *x, int *y, archetype **trophy);
 void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
 void player_set_state(player *pl, uint8_t state);
+SockList *player_get_delayed_buffer(player *pl);
 /* plugins.c */
 int plugins_init_plugin(const char *libfile);
 int plugins_remove_plugin(const char *id);

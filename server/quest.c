@@ -778,7 +778,7 @@ static void quest_set_state(player* dm, player *pl, sstring quest_code, int stat
     if (step->is_completion_step) {
         /* don't send an update note if the quest was already completed, this is just to show the outcome afterwards. */
         if (!qs->is_complete)
-            draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Quest %s completed.", quest->quest_title);
+            draw_ext_info_format(NDI_UNIQUE|NDI_DELAYED, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Quest %s completed.", quest->quest_title);
         qs->was_completed = 1;
         if (quest->quest_restart)
             qs->state = QC_CAN_RESTART;
@@ -786,37 +786,33 @@ static void quest_set_state(player* dm, player *pl, sstring quest_code, int stat
             qs->is_complete =1;
 
     } else {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "New objective for the quest '%s':", quest->quest_title);
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, step->step_description);
+        draw_ext_info_format(NDI_UNIQUE|NDI_DELAYED, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "New objective for the quest '%s':", quest->quest_title);
+        draw_ext_info(NDI_UNIQUE|NDI_DELAYED, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, step->step_description);
     }
 
     if (pl->socket.notifications > 0) {
-        SockList sl;
-        SockList_Init(&sl);
+        SockList *sl = player_get_delayed_buffer(pl);
 
         if (qs->sent_to_client) {
-            SockList_AddString(&sl, "updquest ");
+            SockList_AddString(sl, "updquest ");
         } else {
-            SockList_AddString(&sl, "addquest ");
+            SockList_AddString(sl, "addquest ");
         }
 
-        SockList_AddInt(&sl, quest->client_code);
+        SockList_AddInt(sl, quest->client_code);
         if (qs->sent_to_client == 0) {
-            SockList_AddLen16Data(&sl, quest->quest_title, strlen(quest->quest_title));
+            SockList_AddLen16Data(sl, quest->quest_title, strlen(quest->quest_title));
             if (quest->face && !(pl->socket.faces_sent[quest->face->number]&NS_FACESENT_FACE))
                 esrv_send_face(&pl->socket, quest->face, 0);
-            SockList_AddInt(&sl, quest->face ? quest->face->number : 0);
-            SockList_AddChar(&sl, quest->quest_restart ? 1 : 0);
-            SockList_AddInt(&sl, quest->parent ? quest->parent->client_code : 0);
+            SockList_AddInt(sl, quest->face ? quest->face->number : 0);
+            SockList_AddChar(sl, quest->quest_restart ? 1 : 0);
+            SockList_AddInt(sl, quest->parent ? quest->parent->client_code : 0);
         }
 
-        SockList_AddChar(&sl, (step == NULL || step->is_completion_step) ? 1 : 0);
+        SockList_AddChar(sl, (step == NULL || step->is_completion_step) ? 1 : 0);
         assert(step != NULL);
-        SockList_AddLen16Data(&sl, step->step_description,
+        SockList_AddLen16Data(sl, step->step_description,
                 strlen(step->step_description));
-
-        Send_With_Handling(&pl->socket, &sl);
-        SockList_Term(&sl);
 
         qs->sent_to_client = 1;
     }
