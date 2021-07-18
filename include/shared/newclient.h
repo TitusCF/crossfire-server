@@ -245,6 +245,12 @@
 #define NDI_NO_TRANSLATE 0x800   /**< Do not attempt to translate.
                                   *   Either it has been already translated or
                                   *   will not be translatable (e.g. say/chat/shout) */
+#define NDI_DELAYED      0x1000  /**< If set, then message is sent only after
+                                  * the player's tick completes.
+                                  * This allows sending eg quest information after
+                                  * some dialogue even though quest is processed
+                                  * before. */
+
 /*@}*/
 
 /**

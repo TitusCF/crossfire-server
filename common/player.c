@@ -46,6 +46,13 @@ void clear_player(player *pl) {
     }
     if (pl->unarmed_skill)
         FREE_AND_CLEAR_STR(pl->unarmed_skill);
+
+    for (uint8_t db = 0; db < pl->delayed_buffers_allocated; db++) {
+        free(pl->delayed_buffers[db]);
+    }
+    FREE_AND_CLEAR(pl->delayed_buffers);
+    pl->delayed_buffers_allocated = 0;
+    pl->delayed_buffers_used = 0;
 }
 
 /**
