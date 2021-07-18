@@ -28,35 +28,6 @@ $colour = 0;
 # appropriately.  IT looks much nicer if you can do it.
 $giftrans = 0;
 
-
-$bmaps = $libdir . '/bmaps';
-$bmappaths = $libdir . '/bmaps.paths';
-
-open(BMAPS,"<".$bmappaths) || die("Can't open $bmappaths");
-while (<BMAPS>) {
-    ($f1,$f2) = split;
-    if ($f1 ne '#') {
-	# A bit tricky.  We first substitute the first .
-	# (./arch to ^/arch), so that the second substitute
-	# puts the 'base' portion in the name, and then we
-	# put the first . back in place.
-	$f2 =~ s/\./\^/;
-	$f2 =~ s/\./\.base\./;
-	$f2 =~ s/\^/\./;
-	$bmappath{$f1} = $f2;
-    }
-}
-close(BMAPS);
-
-open(BMAPS,"<".$bmaps);
-while (<BMAPS>) {
-    ($f1,$f2) = split;
-    if (defined $bmappath{("\\".$f1)}) {
-	$bmap{$f2} = $bmappath{("\\".$f1)};
-    }
-}
-close(BMAPS);
-
 # An array listing which archetypes files need fixing, the value
 # is the file where it is used. There must be at least one character
 # between the ~~spec~~'s.
@@ -85,6 +56,10 @@ if ($output ne "png") {
     }
 }
 
+# Make the image directory for storing retrieved arch faces if it does not exist
+unless (-d "images") {
+    `mkdir images`;
+}
 
 $More = 0;
 print STDERR "starting to process $inarch\n";
@@ -94,7 +69,6 @@ line: while (<IN>) {
     @Fld = split(/ /, $_, 2);
     if ($Fld[0] eq 'Object') {
 	if ($interesting) {
-	    $faces{$X, $Y} = $face;
 	    if (!$More && $makeps{$obj} != 1) {
 		$makeps{$obj} = &assemble();
 	    }
@@ -110,7 +84,7 @@ line: while (<IN>) {
 	$More = 0;
     }
 
-    if ($Fld[1] eq 'face') {
+    if ($Fld[0] eq 'face') {
 	$face = $Fld[1];
     }
     if ($Fld[0] eq 'x') {
@@ -146,7 +120,6 @@ close(IN);
 
 # Remember to check the last archetype also...
 if ($interesting) {
-    $faces{$X, $Y} = $face;
     if ($makeps{$obj} != 1) {
 	$makeps{$obj} = &assemble();
     }
@@ -177,13 +150,14 @@ close(IN);
 
 sub assemble {
     local($w, $h, $ppm, $buff, $i, $j, $bmap_file, $ps_file) = @_;
-    my($one_image)=0;
 
-    $bmap_file = $archdir.$bmap{$faces{0,0}}.".png";
-    if ($output eq "tex") {$ps_file = $faces{0, 0} . '.ps';     }
-    elsif ($output eq "png") { $ps_file = $faces{0, 0} . '.png'; }
+    # All the image are big image anymore, so we don't really need to handle split pieces.
+    $face = get_image("../../lib/crossfire.tar", $face);
+    $bmap_file = "images/".$face.".png";
+    if ($output eq "tex") {$ps_file = "images/".$face . '.ps';     }
+    elsif ($output eq "png") { $ps_file = "images/".$face . '.png'; }
     elsif ($output eq "pdf") {
-        $tmp = $faces{0, 0};
+        $tmp = $face;
         $tmp =~ s/\./-/gi;
         $ps_file = $tmp . '.png';
     } else { $ps_file = $faces{0, 0} . '.gif'; }
@@ -205,59 +179,16 @@ sub assemble {
     $w = $xmax - $xmin + 1;
     $h = $ymax - $ymin + 1;
 
-    # with big image support, we don't need to assemble images.  But not all
-    # images are big image - so we do a simple check - see if the face for the
-    # first and last piece are the same - if so, presume this is a big image
-    if ($archdir.$bmap{$faces{0,0}} eq $archdir.$bmap{$faces{$w-1,$h-1}}) { $one_image=1; }
-
     if (! -e $ps_file) {
-	if ((($w == 1) && ($h == 1)) || $one_image) {
-	    # Maybe ln -s instead?
-	    if ($output eq "tex") {
-		if ($colour) {	system("pngtopnm -mix -background $BG $bmap_file | pnmtops -noturn -nosetpage > $ps_file"); }
-		else {	system("pngtopnm -mix -background $BG $bmap_file | pnmdepth 255 | ppmtopgm | pnmtops -noturn -nosetpage> $ps_file"); }
-	    }
-	    elsif ($giftrans) {
-		system("pngtopnm -mix -background $BG $bmap_file | ppmtogif | giftrans -t $BG $ppm > $ps_file");
-	    } else {
-		system("pngtopnm -mix -background $BG $bmap_file | ppmtogif > $ps_file");
-	    }
+	# Maybe ln -s instead?
+	if ($output eq "tex") {
+	    if ($colour) {	system("pngtopnm -mix -background $BG $bmap_file | pnmtops -noturn -nosetpage > $ps_file"); }
+	    else {	system("pngtopnm -mix -background $BG $bmap_file | pnmdepth 255 | ppmtopgm | pnmtops -noturn -nosetpage> $ps_file"); }
 	}
-	else {
-	    $ppm = sprintf('%dx%d.ppm', $w, $h);
-	    print STDERR "$ppm\n";
-	    if (! -e $ppm) {
-		print STDERR
-		      "pnmscale -xsc $w -ysc $h < empty.pbm | pgmtoppm white > $ppm\n";
-
-		system(sprintf('pnmscale -xsc %d -ysc %d < empty.pbm | pgmtoppm white > %s',
-		$w, $h, $ppm));
-	    }
-
-	    system("cp $ppm work.ppm");
-	    $ppm = "work.ppm";
-
-	    for ($i = $xmin; $i <= $xmax; $i++) {
-		for ($j = $ymin; $j <= $ymax; $j++) {
-		    print STDERR
-			 'Processing x ' . $bmap{$faces{$i, $j}};
-		    $valx = ($i - $xmin) * $IMAGE_SIZE;
-		    $valy = ($j - $ymin) * $IMAGE_SIZE;
-#		    print STDERR "pngtopnm -background #ABCD01239876 $archdir$bmap{$faces{$i,$j}}.png > tmp.ppm\n";
-		    system("pngtopnm -mix -background $BG $archdir$bmap{$faces{$i,$j}}.png > tmp.ppm");
-		    system("pnmpaste tmp.ppm $valx $valy $ppm > tmp2.ppm");
-		    rename("tmp2.ppm", $ppm);
-		}
-	    }
-	    if ($output eq "tex") {
-		if ($colour) {	system("pnmtops -noturn $ppm> $ps_file"); }
-		else {	system("pnmdepth 255 $ppm | ppmtopgm | pnmtops -noturn > $ps_file"); }
-	    }
-	    elsif ($giftrans) {
-		system("ppmtogif $ppm | giftrans -t $BG > $ps_file");
-	    } else {
-		system("ppmtogif $ppm > $ps_file");
-	    }
+	elsif ($giftrans) {
+	    system("pngtopnm -mix -background $BG $bmap_file | ppmtogif | giftrans -t $BG $ppm > $ps_file");
+	} else {
+	    system("pngtopnm -mix -background $BG $bmap_file | ppmtogif > $ps_file");
 	}
     }
     $mul = $size_mul{int(sqrt($w * $h))} * $size;
@@ -271,4 +202,15 @@ sub assemble {
 	    $ps = "<img src=$ps_file>";
     }
     $ps;
+}
+
+# Tarball will probably be ../lib/crossfire.tar
+sub get_image {
+    local($tarball, $face) = @_;
+    # Substitute in the base face set into the name.
+    $face =~ s/\./\.base\./;
+    # Next we get the image fire from the tarball and load it.
+    my $output = `tar --extract --file='$tarball' $face.png`;
+    rename("$face.png", "images/$face.png");
+    return $face
 }
