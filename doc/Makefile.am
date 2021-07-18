@@ -33,5 +33,5 @@ archive: spoiler playbook spell-docs
 	cp `find spell-docs/*.txt` `find spell-docs/*.ps` $(DTOP)
 	(cd spoiler-html ; make archive )
 	(cd playbook-html ; make archive )
-	(cd $(DTOP)/..; gtar --exclude=CVS -cvhzf $(PACKAGE)-$(VERSION).doc.tar.gz `$(BASENAME) $(DTOP)`)
+	(cd $(DTOP)/..; tar --exclude=CVS -cvhzf $(PACKAGE)-$(VERSION).doc.tar.gz `$(BASENAME) $(DTOP)`)
 	$(RM) -rf $(DTOP)

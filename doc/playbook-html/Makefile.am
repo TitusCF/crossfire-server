@@ -25,15 +25,15 @@ HTML = gods.html appC.html stats.gif potion.html flesh.html food.html rings.html
 
 HANDBOOK = handbook.html chap1.html chap2.html chap3.html chap4.html chap5.html chap6.html appC.html
 
-CLEANFILES = items .bmaps in_monput in_items in_spells in_stats in_equip \
-	*x*.ppm tmp.ppm work.ppm in_char items *.png $(HTML)
+CLEANFILES = items in_monput in_items in_spells in_stats in_equip \
+	*x*.ppm tmp.ppm work.ppm in_char items images/*.png $(HTML)
 
 CROSSBIN = ../../server/crossfire-server
 INCDIR = $(top_srcdir)/include
 DTOP = $(top_srcdir)/$(PACKAGE)-doc
 PERL = @PERL@
 
-TREASURES_FILE = ../../lib/treasures.bld
+TREASURES_FILE = ../../lib/crossfire.trs
 
 handbook: $(HANDBOOK)
 
@@ -46,11 +46,7 @@ dump_switches:
 check_ok: dump_switches
 	@$(RM) dump_switches
 
-.bmaps: $(pkgdatadir)/archetypes
-	$(RM) *.gif
-	touch .bmaps
-
-items: .bmaps in_items ../scripts/makeps.pl items.gif
+items: $(top_srcdir)/lib/crossfire.tar $(pkgdatadir)/crossfire.arc in_items ../scripts/makeps.pl items.gif
 	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items  inarch=$(pkgdatadir)/archetypes > items
 
 in_items: items-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
@@ -68,19 +64,19 @@ bonus.html: ../scripts/bonus-extract.pl
 in_char: char-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f char-extract $(pkgdatadir)/archetypes > in_char
 
-char.html: .bmaps in_char ../scripts/makeps.pl characters.gif
+char.html: $(top_srcdir)/lib/crossfire.tar $(pkgdatadir)/crossfire.arc in_char ../scripts/makeps.pl characters.gif
 	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.html
 
 in_stats: stats-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f stats-extract $(pkgdatadir)/archetypes > in_stats
 
-stats.html: .bmaps in_stats ../scripts/makeps.pl stats.gif
+stats.html: $(top_srcdir)/lib/crossfire.tar $(pkgdatadir)/crossfire.arc in_stats ../scripts/makeps.pl stats.gif
 	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats archdir=$(pkgdatadir)/archetypes > stats.html
 
 equip.html: in_equip treas2-extract
 	$(AWK) -v eqitems=in_equip -f treas2-extract 	$(TREASURES_FILE) > equip.html
 
-in_equip: treas1-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
+in_equip: treas1-extract $(pkgdatadir)/crossfire.arc $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f treas1-extract $(pkgdatadir)/archetypes | sort -d > in_equip
 
 skills.html: in_equip skills-extract
@@ -200,7 +196,7 @@ skill_stat.html: skills2-extract $(CROSSBIN)
 		$(AWK) -F, -v crosscmd="$(CROSSBIN) -m5" 			-f skills2-extract | sort > skill_stat.html
 
 version.html: $(CROSSBIN)
-	$(CROSSBIN) -v 2>&1 | grep "^This is" | 		cut -d" " -f3- > version.html
+	$(CROSSBIN) -v 2>&1 > version.html
 
 statskmod.html:
 	$(AWK) -v living_c=../../server/skill_util.c 	-f statskmod-extract > statskmod.html

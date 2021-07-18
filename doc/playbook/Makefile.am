@@ -24,7 +24,7 @@ ICONS =	altar.tex arm_mail.tex br_wall.tex books.tex bows.tex cauldron.tex \
 	runeshock.tex runemark.tex runegen.tex savebed.tex scrolls.tex \
 	shops.tex shopmat.tex sign.tex talisman.tex wands.tex
 
-CLEANFILES = $(TABLES) $(ICONS) items .bmaps in_* *.ps *x*.ppm tmp.ppm work.ppm \
+CLEANFILES = $(TABLES) $(ICONS) items  in_* *.ps *x*.ppm tmp.ppm work.ppm \
 	     handbook.toc handbook.lot handbook.dvi handbook.log handbook.aux handbook.idx
 
 CROSSBIN = ../../server/crossfire-server
@@ -53,15 +53,11 @@ $(CROSSBIN):
 check_ok: dump_switches
 	@$(RM) dump_switches
 
-.bmaps: $(top_srcdir)/lib/archetypes
-	$(RM) *.ps
-	touch .bmaps
-
 index.tex handbook.idx: make_index.pl
 	touch handbook.idx
 	$(PERL) make_index.pl handbook.idx > index.tex;
 
-items: .bmaps in_items ../scripts/makeps.pl items.ps
+items: $(top_srcdir)/lib/crossfire.arc $(top_srcdir)/lib/crossfire.tar in_items ../scripts/makeps.pl items.ps
 	$(PERL) ../scripts/makeps.pl output=$(OUTPUT) libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4  input=in_items inarch=$(pkgdatadir)/archetypes > items
 
 in_items: items-extract $(pkgdatadir)/archetypes
@@ -70,7 +66,7 @@ in_items: items-extract $(pkgdatadir)/archetypes
 bonus.tex: ../scripts/bonus-extract.pl
 	$(PERL) ../scripts/bonus-extract.pl $(top_srcdir)/lib/config/stat_bonus latex bonus.tex
 
-char.tex: .bmaps in_char ../scripts/makeps.pl characters.ps
+char.tex: $(top_srcdir)/lib/crossfire.arc $(top_srcdir)/lib/crossfire.tar in_char ../scripts/makeps.pl characters.ps
 	$(PERL) ../scripts/makeps.pl output=$(OUTPUT) libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.tex
 
 in_char: char-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
@@ -79,7 +75,7 @@ in_char: char-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 equip.tex: in_equip treas2-extract
 	$(AWK) -v eqitems=in_equip -f treas2-extract $(top_srcdir)/lib/treasures.bld > equip.tex
 
-in_equip: treas1-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
+in_equip: treas1-extract $(pkgdatadir)/crossfire.arc $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f treas1-extract $(pkgdatadir)/archetypes | sort -d > in_equip
 
 gods.tex: ../scripts/gods-extract.pl $(CROSSBIN)
