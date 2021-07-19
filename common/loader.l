@@ -12,10 +12,6 @@
  * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
-/* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
-   object_sub/add_weight will transcend the environment updating the carrying
-   variable. */
-
 #include "global.h"
 
 #include <ctype.h>
