@@ -84,10 +84,10 @@ line: while (<IN>) {
 	$More = 0;
     }
 
-    if ($Fld[0] eq 'face') {
+    elsif ($Fld[0] eq 'face') {
 	$face = $Fld[1];
     }
-    if ($Fld[0] eq 'x') {
+    elsif ($Fld[0] eq 'x') {
 	$X = $Fld[1];
 	if ($X > $xmax) {	#???
 	    $xmax = $X;
@@ -96,7 +96,7 @@ line: while (<IN>) {
 	    $xmin = $X;
 	}
     }
-    if ($Fld[0] eq 'y') {
+    elsif ($Fld[0] eq 'y') {
 	$Y = $Fld[1];
 	if ($Y > $ymax) {	#???
 	    $ymax = $Y;
@@ -105,10 +105,10 @@ line: while (<IN>) {
 	    $ymin = $Y;
 	}
     }
-    if ($Fld[0] eq 'More') {
+    elsif ($Fld[0] =~ /[mM]ore/) {
 	$More = 1;
     }
-    if ($Fld[0] eq 'msg') {
+    elsif ($Fld[0] eq 'msg') {
 	do {
 	    $_ = <IN>;
 	    @Fld = split;
@@ -160,7 +160,7 @@ sub assemble {
         $tmp = $face;
         $tmp =~ s/\./-/gi;
         $ps_file = $tmp . '.png';
-    } else { $ps_file = $faces{0, 0} . '.gif'; }
+    } else { $ps_file = $face . '.gif'; }
 
     $ps_file =~ s/[_ ]/-/g;
 
