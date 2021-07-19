@@ -258,17 +258,6 @@ const char *const spell_mapping[] = {
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
         { if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
 
-/**
- * SET_RESIST is really only really needed for transition code.  We normally
- * don't care about multiple values overwriting each other, but this is
- * to catch items that have multiple protection/immune/vulnerable.
- * This can be simplified later on to just do the set after all the archs
- * and maps have been updated.
- * We always keep the last value because otherwise the value from the
- * arch may take precedence.
- * Unfortunately, we will report warnings here simply because an object has
- * been modified from the arch.
- */
 #define SET_RESIST(op, type, val) op->resist[type] = val;
 
 
