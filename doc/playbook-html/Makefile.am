@@ -47,10 +47,10 @@ check_ok: dump_switches
 	@$(RM) dump_switches
 
 items: $(top_srcdir)/lib/crossfire.tar $(pkgdatadir)/crossfire.arc in_items ../scripts/makeps.pl items.gif
-	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items  inarch=$(pkgdatadir)/archetypes > items
+	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items  inarch=$(pkgdatadir)/crossfire.arc > items
 
-in_items: items-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
-	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f items-extract $(pkgdatadir)/archetypes > in_items
+in_items: items-extract $(pkgdatadir)/crossfire.arc $(top_srcdir)/common/living.c
+	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f items-extract $(pkgdatadir)/crossfire.arc > in_items
 
 handbook.html: version.html handbook.shtml
 	$(PERL) $(srcdir)/../include_html.pl handbook.shtml handbook.html
@@ -61,23 +61,23 @@ chap2.html: bonus.html char.html equip.html skills.html chap2.shtml
 bonus.html: ../scripts/bonus-extract.pl
 	$(PERL) ../scripts/bonus-extract.pl $(top_srcdir)/lib/config/stat_bonus html bonus.html
 
-in_char: char-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
-	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f char-extract $(pkgdatadir)/archetypes > in_char
+in_char: char-extract $(pkgdatadir)/crossfire.arc $(top_srcdir)/common/living.c
+	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f char-extract $(pkgdatadir)/crossfire.arc > in_char
 
 char.html: $(top_srcdir)/lib/crossfire.tar $(pkgdatadir)/crossfire.arc in_char ../scripts/makeps.pl characters.gif
-	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.html
+	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/crossfire.arc > char.html
 
-in_stats: stats-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
-	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f stats-extract $(pkgdatadir)/archetypes > in_stats
+in_stats: stats-extract $(pkgdatadir)/crossfire.arc $(top_srcdir)/common/living.c
+	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f stats-extract $(pkgdatadir)/crossfire.arc > in_stats
 
 stats.html: $(top_srcdir)/lib/crossfire.tar $(pkgdatadir)/crossfire.arc in_stats ../scripts/makeps.pl stats.gif
-	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats archdir=$(pkgdatadir)/archetypes > stats.html
+	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats archdir=$(pkgdatadir)/crossfire.arc > stats.html
 
 equip.html: in_equip treas2-extract
 	$(AWK) -v eqitems=in_equip -f treas2-extract 	$(TREASURES_FILE) > equip.html
 
 in_equip: treas1-extract $(pkgdatadir)/crossfire.arc $(top_srcdir)/common/living.c
-	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f treas1-extract $(pkgdatadir)/archetypes | sort -d > in_equip
+	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f treas1-extract $(pkgdatadir)/crossfire.arc | sort -d > in_equip
 
 skills.html: in_equip skills-extract
 	$(AWK) -v eqitems=in_equip -f skills-extract 	$(TREASURES_FILE) > skills.html
@@ -196,7 +196,7 @@ skill_stat.html: skills2-extract $(CROSSBIN)
 		$(AWK) -F, -v crosscmd="$(CROSSBIN) -m5" 			-f skills2-extract | sort > skill_stat.html
 
 version.html: $(CROSSBIN)
-	$(CROSSBIN) -v 2>&1 > version.html
+	$(CROSSBIN) -v > version.html
 
 statskmod.html:
 	$(AWK) -v living_c=../../server/skill_util.c 	-f statskmod-extract > statskmod.html
