@@ -375,7 +375,7 @@ static void check_loaded_object(object *op) {
     if ((QUERY_FLAG(op, FLAG_GENERATOR) && QUERY_FLAG(op, FLAG_CONTENT_ON_GEN))
     || op->type == CREATOR
     || op->type == CONVERTER) {
-        /* Object will duplicate it's content as part of the
+        /* Object will duplicate its content as part of the
          * generation process. To do this, we must flag inventory
          * so it remains unevaluated concerning the randomitems and
          * the living (a demonlord shouldn't cast from inside generator!)
