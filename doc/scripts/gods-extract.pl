@@ -70,7 +70,7 @@ for (@lines){
 		if ($3 lt "0"){
 			push(@tmp_vuln, $1);
 		}
-		elsif ($3 lt "100"){
+		elsif ($3 < 100){
 			push(@tmp_prot, $1);
 		}
 		elsif ($3 eq "100"){
@@ -143,7 +143,7 @@ elsif($output_type eq "latex"){
 }
 close(OUTFILE);
 
-sub finish_god {	
+sub finish_god {
 	# Put immunities, vulnerabilities, and protections into the correct arrays.
 	$immune[$god] = ucfirst join(", ", @tmp_immune);
 	$prot[$god] = ucfirst join(", ", @tmp_prot);
