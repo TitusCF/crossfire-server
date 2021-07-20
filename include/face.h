@@ -16,7 +16,7 @@ typedef struct Face {
     uint8_t visibility;
     uint8_t magicmap;             /**< Color to show this in magic map */
     struct Face *smoothface;  /**< Smoothed face for this, NULL for none. */
-    const char *name;             /**< Face name, as used by archetypes and such. */
+    sstring name;             /**< Face name, as used by archetypes and such. */
 } Face;
 
 /**
