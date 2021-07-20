@@ -205,6 +205,7 @@ const int CommunicationCommandSize = sizeof(CommunicationCommands)/sizeof(comman
 /** Wizard commands. */
 command_array_struct WizCommands [] = {
     { "abil", command_abil,                      0.0 },
+    { "accountpasswd", command_accountpasswd,    0.0 },
     { "addexp", command_addexp,                  0.0 },
     { "arrest", command_arrest,                  0.0 },
     { "banish", command_banish,                  0.0 },

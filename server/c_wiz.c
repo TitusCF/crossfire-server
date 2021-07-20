@@ -1588,6 +1588,36 @@ void command_free(object *op, const char *params) {
     object_free_drop_inventory(tmp);
 }
 
+void command_accountpasswd(object *op, const char *params) {
+    char account_name[MAX_BUF], newpw[MAX_BUF];
+    // Password may contain spaces, so use %[^\n] format string.
+    if (sscanf(params, "%s %[^\n]", account_name, newpw) != 2) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Usage: accountpasswd ACCOUNT PASSWORD");
+        return;
+    }
+
+    int ret = account_change_password(account_name, NULL, newpw);
+    switch (ret) {
+    case 0:
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Updated account password.");
+        return;
+    case 1:
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Invalid characters in new password.");
+        return;
+    case 2:
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Invalid characters in new password.");
+        return;
+    default:
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Error changing password.");
+        return;
+    }
+}
+
 /**
  * This adds exp to a player.  We now allow adding to a specific skill.
  *
