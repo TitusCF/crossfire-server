@@ -642,8 +642,8 @@ int account_is_logged_in(const char *name)
  * @param account_name
  * account name we are changing
  * @param current_password
- * current password for the account. This is the unencrypted password (password as entered
- * by user)
+ * current password for the account or NULL. This is the unencrypted password (password as entered
+ * by user). If NULL, the current password is not checked, suitable for resetting lost passwords.
  * @param new_password
  * new password to set, unencrypted.
  * @retval 0
@@ -660,7 +660,8 @@ int account_change_password(const char *account_name,
     account_struct *ac;
 
     // Check password for invalid characters as in account_new().
-    if (account_check_string(account_name) || account_check_string(current_password) ||
+    if (account_check_string(account_name) ||
+            (current_password != NULL && account_check_string(current_password)) ||
             account_check_string(new_password)) {
         return 1;
     }
@@ -678,7 +679,7 @@ int account_change_password(const char *account_name,
     }
 
     // Return an error if the current password does not match.
-    if (!check_password(current_password, ac->password)) {
+    if (current_password != NULL && !check_password(current_password, ac->password)) {
         return 3;
     }
 
