@@ -61,7 +61,8 @@ BEGIN {
 /^Object/ {
         slay = magik = "";
         name = obj = $2;
-        x = y = 0;
+        if (More == 0)
+            x = y = 0;
         xmin = xmax = ymin = ymax = 0;
         More = 0;
         dam = type = magical = ac = armour = weight = last_sp = 0;
@@ -81,15 +82,19 @@ BEGIN {
 /^magic/        { magical = $2 }
 /^name/         { name = substr($0, 6) }
 /^invisible/	{ invisible = $2 }
+/^x /           { x = $2; }
+/^y /           { y = $2; }
+/^[Mm]ore/      { More = 1; }
 /^end/ {
 	# but they are in the worthless, we ignore it
 	if (artifact[type] && !worthless[name] && !invisible) {
-
+	    # If x or y is not 0, it is part of a multipart object. Skip printing
+	    if (x == 0 && y == 0) {
 		if(!valuable[type] || (valuable[type] ~ name))
 		   if(keeprepeat[type] || !(oldname ~ name))
 			printf("%d &~~%s~~ \n", type, obj);
 		oldname = name;
-
+	    }
 	}
 }
 
