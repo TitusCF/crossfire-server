@@ -1,3 +1,6 @@
+2021-07-20 Daniel Hawkins
+    * socket/request.c: Prevent segfault from asksmooth commands asking for out-of-bounds faces.
+
 2021-07-16 Daniel Hawkins
     * types/gate/gate.c: Allow for unmoveable objects at the top of the tile with moveable objects below
         to be handled correctly. Before it would fail to push a moveable boulder if there was rain above it,
