@@ -175,6 +175,9 @@ int swap_map(mapstruct *map) {
                              "Failed to swap map %s!", map->path);
         /* Map is *not *swapped. */
         map->in_memory = MAP_IN_MEMORY;
+
+        // Add random delay to avoid repeated failing attempts at swapping.
+        map->timeout = 60 + rndm(0, 30);
         return res;
     }
 
