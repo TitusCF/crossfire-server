@@ -390,6 +390,14 @@ static void send_smooth(socket_struct *ns, const Face *face) {
     const Face *smoothface;
     SockList sl;
 
+    // A malicious client can send bogus asksmooth commands that don't
+    // translate to any face. Catch those here before the message below
+    // in order to avoid a segfault.
+    if (!face) {
+        LOG(llevError, "Tried to smooth null face.\n");
+        return;
+    }
+
     // Try to find a smoothing face, or the default smoothing face. If this
     // fails, set NS_FACESENT_SMOOTH so we don't try to send it again.
     //
