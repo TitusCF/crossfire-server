@@ -24,14 +24,14 @@
  * One character account.
  */
 typedef struct account_char_struct {
-    const char *name;         /**< Name of this character/player */
-    const char *character_class;        /**< Class of this character */
-    const char *race;         /**< Race of this character */
-    uint8_t level;              /**< Level of this character */
-    const char *face;         /**< Face of this character */
-    const char *party;        /**< Character this party belonged to */
-    const char *map;          /**< Last map this character was on */
-    uint8_t isDead;             /**< Should stay at zero if alive, anything else if dead (hopefully 1, but doesn't have to be) */
+    sstring *name;            /** < Name of this character/player */
+    sstring *character_class; /** < Class of this character */
+    sstring *race;            /** < Race of this character */
+    uint8_t level;            /** < Level of this character */
+    sstring *face;            /** < Face of this character */
+    sstring *party;           /** < Character this party belonged to */
+    sstring *map;             /** < Last map this character was on */
+    uint8_t isDead;           /** < Should stay at zero if alive, anything else if dead (hopefully 1, but doesn't have to be) */
     struct account_char_struct  *next;
 } Account_Char;
 
