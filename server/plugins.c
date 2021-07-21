@@ -379,7 +379,7 @@ int plugins_init_plugin(const char *libfile) {
         return -1;
     }
     if (settings.ignore_plugin_compatibility == 0 && strcmp(svn_rev, SVN_REV)) {
-        LOG(llevError, "SVN Version mismatch in in %s (%s != %s)\n", libfile, svn_rev, SVN_REV);
+        LOG(llevError, "Version mismatch in in %s (%s != %s)\n", libfile, svn_rev, SVN_REV);
         plugins_dlclose(ptr);
         return -1;
     }
