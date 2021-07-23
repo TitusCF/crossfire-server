@@ -62,8 +62,8 @@ while (<>) {
 
 sub capitalize {
     local($str) = @_;
-    $a = substr($str, 1, 1);
+    $a = substr($str, 0, 1);
     $a =~ tr/a-z/A-Z/;
-    $_ = $a .  substr($str, 2, 999999);
+    $_ = $a .  substr($str, 1, 999999);
 
 }
