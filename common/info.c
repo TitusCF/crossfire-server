@@ -75,6 +75,12 @@ void dump_abilities(void) {
         if (QUERY_FLAG(&at->clone, FLAG_CHANGING))
             continue;
 
+        /* Dont print a row for each piece of a multipart object
+         * Doing so confounds the documentation generators that use the -m2 flag.
+         */
+        if (HEAD(&at->clone) != &at->clone)
+            continue;
+
         for (gen = get_next_archetype(NULL); gen; gen = get_next_archetype(gen)) {
             if (gen->clone.other_arch && gen->clone.other_arch == at) {
                 gen_name = gen->name;
