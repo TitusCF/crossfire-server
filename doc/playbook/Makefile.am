@@ -58,25 +58,25 @@ index.tex handbook.idx: make_index.pl
 	$(PERL) make_index.pl handbook.idx > index.tex;
 
 items: $(top_srcdir)/lib/crossfire.arc $(top_srcdir)/lib/crossfire.tar in_items ../scripts/makeps.pl items.ps
-	$(PERL) ../scripts/makeps.pl output=$(OUTPUT) libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4  input=in_items inarch=$(pkgdatadir)/archetypes > items
+	$(PERL) ../scripts/makeps.pl output=$(OUTPUT) libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4  input=in_items inarch=$(pkgdatadir)/crossfire.arc > items
 
-in_items: items-extract $(pkgdatadir)/archetypes
-	$(AWK) -f items-extract $(pkgdatadir)/archetypes > in_items
+in_items: items-extract $(pkgdatadir)/crossfire.arc
+	$(AWK) -f items-extract $(pkgdatadir)/crossfire.arc > in_items
 
 bonus.tex: ../scripts/bonus-extract.pl
 	$(PERL) ../scripts/bonus-extract.pl $(top_srcdir)/lib/config/stat_bonus latex bonus.tex
 
 char.tex: $(top_srcdir)/lib/crossfire.arc $(top_srcdir)/lib/crossfire.tar in_char ../scripts/makeps.pl characters.ps
-	$(PERL) ../scripts/makeps.pl output=$(OUTPUT) libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.tex
+	$(PERL) ../scripts/makeps.pl output=$(OUTPUT) libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/crossfire.arc > char.tex
 
-in_char: char-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
-	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f char-extract $(pkgdatadir)/archetypes > in_char
+in_char: char-extract $(pkgdatadir)/crossfire.arc $(top_srcdir)/common/living.c
+	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f char-extract $(pkgdatadir)/crossfire.arc > in_char
 
 equip.tex: in_equip treas2-extract
-	$(AWK) -v eqitems=in_equip -f treas2-extract $(top_srcdir)/lib/treasures.bld > equip.tex
+	$(AWK) -v eqitems=in_equip -f treas2-extract $(top_srcdir)/lib/crossfire.trs > equip.tex
 
 in_equip: treas1-extract $(pkgdatadir)/crossfire.arc $(top_srcdir)/common/living.c
-	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f treas1-extract $(pkgdatadir)/archetypes | sort -d > in_equip
+	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f treas1-extract $(pkgdatadir)/crossfire.arc | sort -d > in_equip
 
 gods.tex: ../scripts/gods-extract.pl $(CROSSBIN)
 	$(PERL) ../scripts/gods-extract.pl "$(CROSSBIN) -m8" latex gods.tex
@@ -85,7 +85,7 @@ levels.tex: ../scripts/levels-extract.pl
 	$(PERL) ../scripts/levels-extract.pl "$(top_srcdir)/lib/config/exp_table" latex levels.tex
 
 skills.tex: in_equip skills-extract
-	$(AWK) -v eqitems=in_equip -f skills-extract $(top_srcdir)/lib/treasures.bld > skills.tex
+	$(AWK) -v eqitems=in_equip -f skills-extract $(top_srcdir)/lib/crossfire.trs > skills.tex
 
 skill_stat.tex: skills2-extract $(CROSSBIN)
 		$(AWK) -F, -v crosscmd="$(CROSSBIN) -m5" 			-f skills2-extract | sort -u > skill_stat.tex
