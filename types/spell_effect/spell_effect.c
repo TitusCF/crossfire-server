@@ -749,7 +749,7 @@ static void move_swarm_spell(object *op) {
  * @param aura The spell effect.
  */
 static void move_aura(object *aura) {
-    int i, mflags;
+    int i, j, mflags;
     object *env;
     mapstruct *m;
 
@@ -778,31 +778,42 @@ static void move_aura(object *aura) {
      */
     object_insert_in_map_at(aura, env->map, aura, 0, env->x, env->y);
 
-    int16_t range_amt = (aura->range * 2 + 1) * (aura->range * 2 + 1);
-    // Cap range distance at 49 for now, which is three spaces out
-    // If we want to go farther, we'd need to no longer use freearr_x/y
-    if (range_amt > SIZEOFFREE)
-        range_amt = SIZEOFFREE;
+    for (i = -aura->range; i <= aura->range; i++) {
+        for (j = -aura->range; j <= aura->range; ++j) {
+            int16_t nx, ny;
 
-    for (i = 1; i < range_amt; i++) {
-        int16_t nx, ny;
+            // Don't put the aura on yourself.
+            if (i == 0 && j == 0) {
+                continue;
+            }
 
-        nx = aura->x+freearr_x[i];
-        ny = aura->y+freearr_y[i];
-        mflags = get_map_flags(env->map, &m, nx, ny, &nx, &ny);
+            // Env should be the starting location for the aura, so use
+            // it as the base positioning instead of the aura.
+            // This allows us to be less hacky when handling the long-range aura.
+            nx = env->x+i;
+            ny = env->y+j;
+            mflags = get_map_flags(env->map, &m, nx, ny, &nx, &ny);
 
-        /* Consider the movement type of the person with the aura as
-         * movement type of the aura.  Eg, if the player is flying, the aura
-         * is flying also, if player is walking, it is on the ground, etc.
-         */
-        if (!(mflags&P_OUT_OF_MAP) && !(OB_TYPE_MOVE_BLOCK(env, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
-            hit_map(aura, i, aura->attacktype, 0);
+            /* Consider the movement type of the person with the aura as
+             * movement type of the aura.  Eg, if the player is flying, the aura
+             * is flying also, if player is walking, it is on the ground, etc.
+             */
+            if (!(mflags&P_OUT_OF_MAP) && !(OB_TYPE_MOVE_BLOCK(env, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
+                // HACK: Instead of using freearr in hit_map, be stupid and move the aura around,
+                // and then call hit_map with direction 0. This allows us to have range > 3.
+                // EXTRA HACK: By assigning to x, y, and map directly, we can avoid the aura being
+                // on the space it tries to attack. This is relevant for counterspell attacktype.
+                aura->map = m;
+                aura->x = nx;
+                aura->y = ny;
+                hit_map(aura, 0, aura->attacktype, 0);
 
-            if (aura->other_arch) {
-                object *new_ob;
+                if (aura->other_arch) {
+                    object *new_ob;
 
-                new_ob = arch_to_object(aura->other_arch);
-                object_insert_in_map_at(new_ob, m, aura, 0, nx, ny);
+                    new_ob = arch_to_object(aura->other_arch);
+                    object_insert_in_map_at(new_ob, m, aura, 0, nx, ny);
+                }
             }
         }
     }
