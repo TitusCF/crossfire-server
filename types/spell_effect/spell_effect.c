@@ -773,11 +773,6 @@ static void move_aura(object *aura) {
         return;
     }
 
-    /* we need to jump out of the inventory for a bit
-     * in order to hit the map conveniently.
-     */
-    object_insert_in_map_at(aura, env->map, aura, 0, env->x, env->y);
-
     for (i = -aura->range; i <= aura->range; i++) {
         for (j = -aura->range; j <= aura->range; ++j) {
             int16_t nx, ny;
@@ -799,27 +794,51 @@ static void move_aura(object *aura) {
              * is flying also, if player is walking, it is on the ground, etc.
              */
             if (!(mflags&P_OUT_OF_MAP) && !(OB_TYPE_MOVE_BLOCK(env, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
-                // HACK: Instead of using freearr in hit_map, be stupid and move the aura around,
-                // and then call hit_map with direction 0. This allows us to have range > 3.
-                // EXTRA HACK: By assigning to x, y, and map directly, we can avoid the aura being
-                // on the space it tries to attack. This is relevant for counterspell attacktype.
-                aura->map = m;
-                aura->x = nx;
-                aura->y = ny;
-                hit_map(aura, 0, aura->attacktype, 0);
+                // If the aura has no attacktype, don't try to hit the map with it.
+                // Chances are, it is casting it's own spell instead.
+                if (aura->attacktype != 0) {
+                    // Instead of using freearr in hit_map, be move the aura around,
+                    // and then call hit_map with direction 0. This allows us to have range > 3.
+
+                    /* we need to jump out of the inventory for a bit
+                     * in order to hit the map conveniently.
+                     */
+                    if (!QUERY_FLAG(aura, FLAG_REMOVED))
+                        object_remove(aura);
+                    object_insert_in_map_at(aura, m, aura, 0, nx, ny);
+                    hit_map(aura, 0, aura->attacktype, 0);
+                    object_remove(aura);
+                }
 
                 if (aura->other_arch) {
                     object *new_ob;
 
                     new_ob = arch_to_object(aura->other_arch);
-                    object_insert_in_map_at(new_ob, m, aura, 0, nx, ny);
+                    // If the aura contains a spell, we attempt to cast the spell on every tile we affect.
+                    if (new_ob->type != SPELL) {
+                        object_insert_in_map_at(new_ob, m, aura, 0, nx, ny);
+                    }
+                    else {
+                        object *tmp;
+                        // Find a living creature that is on the same side as the caster.
+                        FOR_MAP_PREPARE(m, nx, ny, tmp) {
+                            // If the entity is living and aligned with the caster, then cast the spell at them.
+                            // Allow auras to be cast by enemies, too. In that case, they only affect their allies.
+                            if (QUERY_FLAG(tmp, FLAG_ALIVE) &&
+                                ((QUERY_FLAG(tmp, FLAG_FRIENDLY) || QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)) ==
+                                 (QUERY_FLAG(env, FLAG_FRIENDLY) || env->contr))){
+                                  cast_spell(tmp, aura, 0, new_ob, NULL);
+                            }
+                        } FOR_MAP_FINISH();
+                    }
                 }
             }
         }
     }
 
     /* put the aura back in the player's inventory */
-    object_remove(aura);
+    if (!QUERY_FLAG(aura, FLAG_REMOVED))
+        object_remove(aura);
     object_insert_in_ob(aura, env);
     check_spell_expiry(aura);
 }
