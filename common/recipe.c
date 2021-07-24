@@ -122,19 +122,43 @@ static int check_recipe(const recipe *rp) {
     result = 1;
     for (i = 0; i < rp->arch_names; i++) {
         if (try_find_archetype(rp->arch_name[i]) != NULL) {
-            const artifact *art = locate_recipe_artifact(rp, i);
+            if (strcmp(rp->title, "NONE")) {
+                const artifact *art = locate_recipe_artifact(rp, i);
 
-            if (!art && strcmp(rp->title, "NONE") != 0) {
-                LOG(llevError, "\nWARNING: Formula %s of %s has no artifact.\n", rp->arch_name[i], rp->title);
-                result = 0;
+                if (!art) {
+                    LOG(llevError, "Formula %s of %s has no artifact.\n", rp->arch_name[i], rp->title);
+                    result = 0;
+                }
             }
         } else {
-            LOG(llevError, "\nWARNING: Can't find archetype %s for formula %s\n", rp->arch_name[i], rp->title);
+            LOG(llevError, "Can't find archetype %s for formula %s\n", rp->arch_name[i], rp->title);
             result = 0;
         }
     }
 
     return result;
+}
+
+/**
+ * Ensure that all recipes have a valid artifact, and that archetypes are correct.
+ * Will call fatal() if any error is found.
+ */
+void check_recipes() {
+    const recipelist *rl = formulalist;
+    int abort = 0;
+    while (rl) {
+        const recipe *rp = rl->items;
+        while (rp) {
+            if (!check_recipe(rp)) {
+                abort = 1;
+            }
+            rp = rp->next;
+        }
+        rl = rl->next;
+    }
+    if (abort) {
+        fatal(SEE_LAST_ERROR);
+    }
 }
 
 /**

@@ -215,6 +215,7 @@ void assets_end_load() {
             check_treasurelist(list->items, list);
         }
     });
+    check_recipes();
 }
 
 /**
