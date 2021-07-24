@@ -778,7 +778,13 @@ static void move_aura(object *aura) {
      */
     object_insert_in_map_at(aura, env->map, aura, 0, env->x, env->y);
 
-    for (i = 1; i < 9; i++) {
+    int16_t range_amt = (aura->range * 2 + 1) * (aura->range * 2 + 1);
+    // Cap range distance at 49 for now, which is three spaces out
+    // If we want to go farther, we'd need to no longer use freearr_x/y
+    if (range_amt > SIZEOFFREE)
+        range_amt = SIZEOFFREE;
+
+    for (i = 1; i < range_amt; i++) {
         int16_t nx, ny;
 
         nx = aura->x+freearr_x[i];

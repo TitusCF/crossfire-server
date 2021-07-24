@@ -1,3 +1,9 @@
+2021-07-24 Daniel Hawkins
+    * types/spell_effect/spell_effect.c,
+      server/spell_effect.c,
+      doc/Developers/spells: Allow for auras to have a radius larger than 1.
+          Current implementation only allows for a radius up to three due to use of freearr_x/y.
+
 2021-07-20 Daniel Hawkins
     * socket/request.c: Prevent segfault from asksmooth commands asking for out-of-bounds faces.
 

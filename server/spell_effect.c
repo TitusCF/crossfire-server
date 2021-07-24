@@ -529,7 +529,7 @@ int cast_create_missile(object *op, object *caster, object *spell, int dir, cons
         while ( isalpha(*stringarg) ) ++stringarg;
         while ( *stringarg==' ' ) ++stringarg;
     }
-    
+
     if (try_find_archetype(missile_name) == NULL) {
         LOG(llevDebug, "Cast create_missile: could not find archetype %s\n", missile_name);
         return 0;
@@ -3434,6 +3434,12 @@ int create_aura(object *op, object *caster, object *spell) {
         store_spell_expiry(new_aura);
 
     new_aura->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
+
+    new_aura->range = spell->range+SP_level_range_adjust(caster, spell);
+    // If the range is zero, it's not an aura. Plain and simple.
+    // Also provides backward compatability on existing auras to be range 1
+    if (new_aura->range == 0)
+        new_aura->range = 1;
 
     object_set_owner(new_aura, op);
     set_spell_skill(op, caster, spell, new_aura);
