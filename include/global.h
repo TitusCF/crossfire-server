@@ -144,6 +144,8 @@ EXTERN char first_map_path[MAX_BUF];     /**< The start-level. */
 EXTERN char first_map_ext_path[MAX_BUF]; /**< Path used for per-race start maps. */
 
 EXTERN long ob_count;
+#define SPELL_MAPPINGS  206
+extern const char *const spell_mapping[SPELL_MAPPINGS];
 /*@}*/
 
 /*

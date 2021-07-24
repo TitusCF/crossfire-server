@@ -549,7 +549,6 @@ int write_mark(object *op, object *spell, const char *msg);
 /* spell_util.c */
 object *find_random_spell_in_ob(object *ob, const char *skill);
 void set_spell_skill(object *op, object *caster, object *spob, object *dest);
-void check_spells(void);
 void dump_spells(void);
 void spell_effect(object *spob, int x, int y, mapstruct *map, object *originator);
 int min_casting_level(const object *caster, const object *spell);

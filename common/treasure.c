@@ -57,8 +57,6 @@ static void change_treasure(treasure *t, object *op); /* overrule default values
 static int special_potion(object *op);
 static void fix_flesh_item(object *item, const object *donor);
 
-extern const char *const spell_mapping[];
-
 /**
  * Initialize global archtype pointers:
  */
@@ -965,9 +963,10 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
             /* Handle healing and magic power potions */
             if (op->stats.sp && !op->randomitems) {
                 object *tmp;
-
-                tmp = create_archetype(spell_mapping[op->stats.sp]);
-                object_insert_in_ob(tmp, op);
+                if (spell_mapping[op->stats.sp]) {
+                    tmp = create_archetype(spell_mapping[op->stats.sp]);
+                    object_insert_in_ob(tmp, op);
+                }
                 op->stats.sp = 0;
             }
     } else if (!op->title) { /* Only modify object if not special */

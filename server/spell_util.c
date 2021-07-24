@@ -30,8 +30,6 @@
 #include "spells.h"
 #include "sproto.h"
 
-extern const char *const spell_mapping[];
-
 /**
  * This returns a random spell from 'ob'.  If skill is set, then
  * the spell must be of this skill, it can be NULL in which case all
@@ -98,44 +96,6 @@ void set_spell_skill(object *op, object *caster, object *spob, object *dest) {
         dest->skill = add_refcount(spob->skill);
     else if (caster->skill)
         dest->skill = add_refcount(caster->skill);
-}
-
-/**
- * It goes through the spells looking for any
- * obvious errors.  This was most useful in debugging when re-doing
- * all the spells to catch simple errors.  To use it all the time
- * will result in it spitting out messages that aren't really errors.
- */
-void check_spells(void) {
-#ifdef SPELL_DEBUG
-    int i;
-    archetype *at;
-
-    LOG(llevDebug, "Checking spells...\n");
-
-    for (at = first_archetype; at; at = at->next) {
-        if (at->clone.type == SPELL) {
-            if (at->clone.skill) {
-                for (i = 0; i < MAX_SKILLS && skill_names[i]; i++)
-                    if (!strcmp(skill_names[i], at->clone.skill))
-                        break;
-                if (i == MAX_SKILLS || !skill_names[i]) {
-                    LOG(llevError, "Spell %s has improper associated skill %s\n", at->name, at->clone.skill);
-                }
-            }
-            /* other_arch is already checked for in the loader */
-        }
-    }
-
-    i = 0;
-    while (spell_mapping[i]) {
-        if (!find_archetype(spell_mapping[i])) {
-            LOG(llevError, "Unable to find spell mapping %s (%i)\n", spell_mapping[i], i);
-        }
-        i++;
-    }
-    LOG(llevDebug, "Checking spells completed.\n");
-#endif
 }
 
 /**

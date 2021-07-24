@@ -179,17 +179,32 @@ void check_summoned(void) {
 }
 
 /**
- * This ensures all spells have a skill defined, calling fatal() if any error was found.
+ * This ensures:
+ *  - all spells have a valid skill defined
+ *  - spell_mapping contains valid spells
+ * fatal() is called if any error was found.
  */
 static void check_spells(void) {
     int abort = 0;
 
     manager->archetypes()->each([&abort] (const auto& arch) {
-        if (arch->clone.type == SPELL && arch->clone.skill == NULL) {
-            LOG(llevError, "Spell archetype %s [%s] has no skill defined!\n", arch->name, arch->clone.name);
-            abort = 1;
+        if (arch->clone.type == SPELL && arch->clone.skill) {
+            auto skill = manager->archetypes()->first([&arch] (const archetype *skill) {
+                return skill->clone.type == SKILL && arch->clone.skill == skill->clone.name;
+            });
+            if (!skill) {
+                LOG(llevError, "Spell %s has improper associated skill %s\n", arch->name, arch->clone.skill);
+                abort = 1;
+            }
         }
     });
+
+    for (size_t i = 0; i < sizeof(spell_mapping) / sizeof(spell_mapping[0]); i++) {
+        if (spell_mapping[i] && !try_find_archetype(spell_mapping[i])) {
+            LOG(llevError, "Unable to find spell mapping %s (%i)\n", spell_mapping[i], i);
+            abort = 1;
+        }
+    }
 
     if (abort)
         fatal(SEE_LAST_ERROR);
