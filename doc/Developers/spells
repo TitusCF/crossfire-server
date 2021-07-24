@@ -991,6 +991,7 @@ SP_AURA (46)/SP_ELEM_SHIELD(50):
     inserting a bunch of objects onto the map, instead the aura itself
     (from the player arch) causes the damage.
 
+    range: the radius of the aura, or 1 if not provided
     other_arch: aura type to insert
     duration: How long the aura lasts for.  For this spell, each
 	duration_modifier is 10 ticks.
