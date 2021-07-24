@@ -188,6 +188,12 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_
 
     theMap->msg = buf;
 
+    if (theMap->outdoor) {
+        set_darkness_map(theMap);
+    } else {
+        change_map_light(theMap, RP->darkness);
+    }
+
     /* We set the reset time at this, so town portal works on the map. */
     theMap->last_reset_time = seconds();
     return theMap;
@@ -851,6 +857,14 @@ StringBuffer *write_map_parameters_to_string(const RMParms *RP)
 
     if (RP->multiple_floors) {
         stringbuffer_append_printf(buf, "multiple_floors %d\n", RP->multiple_floors);
+    }
+
+    if (RP->darkness) {
+        stringbuffer_append_printf(buf, "darkness %d\n", RP->darkness);
+    }
+
+    if (RP->outdoor) {
+        stringbuffer_append_printf(buf, "outdoor 1\n");
     }
 
     return buf;
