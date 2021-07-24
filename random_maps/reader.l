@@ -109,6 +109,8 @@ WS      [ \t]*
 ^treasureoptions{S}      RP->treasureoptions = IVAL;
 ^exit_on_final_map{S}    strncpy(RP->exit_on_final_map, rmap_yval(), RM_SIZE);
 ^multiple_floors{S}      RP->multiple_floors = IVAL;
+^darkness{S}             RP->darkness = IVAL;
+^outdoor{S}              RP->outdoor = IVAL;
 
 <*>(^{WS}$)|\n           {/* ignore empty lines, newlines we don't do above */}
 #.*\n                    { }

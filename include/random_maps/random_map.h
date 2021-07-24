@@ -99,6 +99,8 @@ typedef struct RMParms {
      * floor will be used.
      */
     int multiple_floors;
+    int darkness; /**< Map darkness. */
+    int outdoor;  /**< Whether generated map is outdoor or not. */
 } RMParms;
 
 int load_parameters(FILE *fp, int bufstate, RMParms *RP);
