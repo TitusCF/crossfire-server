@@ -3435,11 +3435,9 @@ int create_aura(object *op, object *caster, object *spell) {
 
     new_aura->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
 
-    new_aura->range = spell->range+SP_level_range_adjust(caster, spell);
-    // If the range is zero, it's not an aura. Plain and simple.
+    // If the range is zero, it's not an aura. Plain and simple. Minimum is one.
     // Also provides backward compatability on existing auras to be range 1
-    if (new_aura->range == 0)
-        new_aura->range = 1;
+    new_aura->range = MAX(1, spell->range+SP_level_range_adjust(caster, spell));
 
     object_set_owner(new_aura, op);
     set_spell_skill(op, caster, spell, new_aura);
