@@ -1221,7 +1221,6 @@ static void help(void) {
  * dump-related options.
  */
 static void init_beforeplay(void) {
-    check_spells();     /* If not called before, links archtypes used by spells */
     init_regions();    /* If not called before, reads all regions from file */
     init_archetype_pointers(); /* Setup global pointers to archetypes */
     finish_races();    /* overwrite race designations using entries in lib/races file */

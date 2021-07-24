@@ -184,9 +184,6 @@ static void do_run(void) {
 extern int artifact_init;
 extern int arch_init;
 
-/* Copied from loader.l */
-extern const char *const spell_mapping[];
-
 static void local_check_loaded_object(object *op) {
     int ip;
 

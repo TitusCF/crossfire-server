@@ -137,6 +137,16 @@ class AssetsCollection {
         }
 
         /**
+         * Find the first asset matching some condition.
+         * @param op function which must return true if the asset matches, false else.
+         * @return nullptr if no asset matches, else the first matching asset.
+         */
+        T *first(std::function<bool(const T *)> op) {
+            auto found = std::find_if(m_assets.begin(), m_assets.end(), [&op] (auto item) { return op(item.second); });
+            return found == m_assets.end() ? nullptr : found->second;
+        }
+
+        /**
          * Return the list of undefined assets, that is assets requested through
          * get() but not defined through define().
          * @return list of undefined names.
