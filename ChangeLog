@@ -1,3 +1,6 @@
+2021-07-25  Andreas Kirschbaum
+    * doc/Developers/objects: Update section "NPC's Speak out".
+
 2021-07-24 Daniel Hawkins
     * types/spell_effect/spell_effect.c,
       server/spell_effect.c,
