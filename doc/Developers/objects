@@ -556,12 +556,11 @@ is typically not useful to set this in maps or in archetypes.
 J. NPC's Speak out
 ==================
 
-The message structure in a monster may contain:
+The message structure in a monster may contain multiple of the following blocks:
 @match <key>|<key>[...]
+[text]
 [@reply value message] (multiple possible)
 [@question value message] (multiple possible)
-  [text]
-[...]
 
 This identifies what the monster will say if talked to with a text that matches
 any keys.  They keys are processed as primitive regular expressions, so some
@@ -573,7 +572,7 @@ The 'value' is a text that should correspond to a @match, and 'message' is what 
 will actually say when saying the 'value'. If using '@reply', the server will display 'player replies: message',
 with '@question' it will be 'player asks: message'.
 Note that the order of @reply and @question is non significant, they can be mixed, and can probably be
-in the middle of the message's text (though easier to put'em at top).
+in the middle of the message's text (though easier to put'em at bottom).
 Also, 'value' can't contain spaces.
 
 An example of usage:
@@ -583,9 +582,9 @@ Welcome, good friend!
 @match bye
 Goodbye!
 @match sss
+Whasssamatter?  You got a lisssp or sssomething?
 @reply yes Yes, isn't it a shame?
 @question no No, why?
-Whasssamatter?  You got a lisssp or sssomething?
 @match yes
 Sssorry, me too.
 @match ^no$
@@ -606,8 +605,7 @@ a. Wildcard Character
                  function correctly.  On the other hand, do use it in expected
                  regular notation form, and do fix the server code bug.
 
-   http://sf.net/tracker/index.php?func=detail&aid=1778380&group_id=13833&atid=
-   113833
+   http://sf.net/tracker/index.php?func=detail&aid=1778380&group_id=13833&atid=113833
    ----------------------------------------------------------------------------
 
 If a message does not contain an '@match *', then the first key that contains
