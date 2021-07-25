@@ -748,11 +748,21 @@ static void quest_set_state(player* dm, player *pl, sstring quest_code, int stat
         return;
     }
 
-    if (state <= 0) {
-        if (!dm) {
-            LOG(llevDebug, "quest_set_player_state: warning: called with invalid state %d for quest %s, player %s\n", state, pl->ob->name, quest_code);
-        }
+    if (!dm && state <= 0) {
+        LOG(llevDebug, "quest_set_player_state: warning: called with invalid state %d for quest %s, player %s\n", state, pl->ob->name, quest_code);
         state = 100;
+    }
+
+    if (started && qs->state == 0) {
+        if (!dm) {
+            LOG(llevDebug, "quest_set_player_state: warning: called for player %s not having started quest %s\n", pl->ob->name, quest_code);
+        }
+    }
+
+    qs->state = state;
+    if (state == 0) {
+        qs->is_complete = 0;
+        return;
     }
 
     step = quest_get_step(quest, state);
@@ -765,13 +775,6 @@ static void quest_set_state(player* dm, player *pl, sstring quest_code, int stat
         return;
     }
 
-    if (started && qs->state == 0) {
-        if (!dm) {
-            LOG(llevDebug, "quest_set_player_state: warning: called for player %s not having started quest %s\n", pl->ob->name, quest_code);
-        }
-    }
-
-    qs->state = state;
     if (step->is_completion_step) {
         /* don't send an update note if the quest was already completed, this is just to show the outcome afterwards. */
         if (!qs->is_complete)
