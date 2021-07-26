@@ -110,12 +110,29 @@ void delete_character(const char *name) {
 int verify_player(const char *name, char *password) {
     char buf[MAX_BUF];
     FILE *fp;
+    player *pltmp;
 
     if (strpbrk(name, "/.\\") != NULL) {
         LOG(llevError, "Username contains illegal characters: %s\n", name);
         return 1;
     }
 
+    /* Make sure we don't have a character that has just been loaded into the game with this name.
+     * It is possible for that character to not have been saved yet, and yet a character exists
+     * with that name.
+     * Creating a second character of the same name makes the game *really* confused, so don't
+     * let that happen.
+     *
+     * Daniel Hawkins 2021-07-26
+     */
+    for (pltmp = first_player; pltmp != NULL; pltmp = pltmp->next) {
+        if (pltmp->ob->name != NULL && !strcmp(pltmp->ob->name, name)) {
+            // If we find a player already playing with that name, then disallow it.
+            return 2;
+        }
+    }
+
+    // There is no unsaved player with that name, check the files
     snprintf(buf, sizeof(buf), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, name, name);
     if (strlen(buf) >= sizeof(buf)-1) {
         LOG(llevError, "Username too long: %s\n", name);
