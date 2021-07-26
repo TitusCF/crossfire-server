@@ -1,3 +1,7 @@
+2021-07-26  Daniel Hawkins
+    * server/login.c: Don't allow a player to be created with a given name if there's an
+        unsaved player with that name already in the game.
+
 2021-07-25  Andreas Kirschbaum
     * doc/Developers/objects: Update section "NPC's Speak out".
 
