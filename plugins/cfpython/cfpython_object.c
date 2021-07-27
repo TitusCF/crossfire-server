@@ -291,6 +291,40 @@ static PyObject *Player_QuestWasCompleted(Crossfire_Player *whoptr, PyObject *ar
 }
 
 /* Object properties. Get and maybe set. */
+static PyObject *Object_GetStringProperty(Crossfire_Object *whoptr, void *closure) {
+    char buf[MAX_BUF];
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, (int)(intptr_t)closure, buf, sizeof(buf)));
+}
+
+static PyObject *Object_GetSStringProperty(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, (int)(intptr_t)closure));
+}
+
+static PyObject *Object_GetIntProperty(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, (int)(intptr_t)closure));
+}
+
+static PyObject *Object_GetFloatProperty(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("f", cf_object_get_float_property(whoptr->obj, (int)(intptr_t)closure));
+}
+
+static PyObject *Object_GetFlagProperty(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, (int)(intptr_t)closure));
+}
+
+static PyObject *Object_GetObjectProperty(Crossfire_Object *whoptr, void *closure) {
+    object *op;
+
+    EXISTCHECK(whoptr);
+    op = cf_object_get_object_property(whoptr->obj, (int)(intptr_t)closure);
+    return Crossfire_Object_wrap(op);
+}
+
 static PyObject *Object_GetName(Crossfire_Object *whoptr, void *closure) {
     char name[200];
 
@@ -303,121 +337,12 @@ static PyObject *Object_GetNamePl(Crossfire_Object *whoptr, void *closure) {
     return Py_BuildValue("s", (char *)cf_query_name_pl(whoptr->obj));
 }
 
-static PyObject *Object_GetTitle(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_TITLE));
-}
-
-static PyObject *Object_GetRace(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_RACE));
-}
-
 static PyObject *Object_GetMap(Crossfire_Object *whoptr, void *closure) {
     mapstruct *m;
 
     EXISTCHECK(whoptr);
     m = cf_object_get_map_property(whoptr->obj, CFAPI_OBJECT_PROP_MAP);
     return Crossfire_Map_wrap(m);
-}
-
-static PyObject *Object_GetCha(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_CHA));
-}
-
-static PyObject *Object_GetCon(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_CON));
-}
-
-static PyObject *Object_GetDex(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DEX));
-}
-
-static PyObject *Object_GetInt(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_INT));
-}
-
-static PyObject *Object_GetPow(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_POW));
-}
-
-static PyObject *Object_GetStr(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_STR));
-}
-
-static PyObject *Object_GetWis(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WIS));
-}
-
-static PyObject *Object_GetHP(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_HP));
-}
-
-static PyObject *Object_GetMaxHP(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXHP));
-}
-
-static PyObject *Object_GetSP(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_SP));
-}
-
-static PyObject *Object_GetMaxSP(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXSP));
-}
-
-static PyObject *Object_GetGrace(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_GP));
-}
-
-static PyObject *Object_GetMaxGrace(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXGP));
-}
-
-static PyObject *Object_GetFood(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FP));
-}
-
-static PyObject *Object_GetAC(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_AC));
-}
-
-static PyObject *Object_GetWC(Crossfire_Object *whoptr, void *closure) {
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WC));
-}
-
-static PyObject *Object_GetDam(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DAM));
-}
-
-static PyObject *Object_GetLuck(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LUCK));
-}
-
-static PyObject *Object_GetMessage(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_MESSAGE));
-}
-
-static PyObject *Object_GetSkill(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_SKILL));
 }
 
 static PyObject *Object_GetExp(Crossfire_Object *whoptr, void *closure) {
@@ -435,375 +360,9 @@ static PyObject *Object_GetExpMul(Crossfire_Object *whoptr, void *closure) {
     return Py_BuildValue("d", cf_object_get_double_property(whoptr->obj, CFAPI_OBJECT_PROP_EXP_MULTIPLIER));
 }
 
-static PyObject *Object_GetSlaying(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_SLAYING));
-}
-
-static PyObject *Object_GetCursed(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_CURSED));
-}
-
-static PyObject *Object_GetDamned(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_DAMNED));
-}
-
-static PyObject *Object_GetWeight(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT));
-}
-
-static PyObject *Object_GetWeightLimit(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT_LIMIT));
-}
-
-static PyObject *Object_GetAbove(Crossfire_Object *whoptr, void *closure) {
-    object *op;
-
-    EXISTCHECK(whoptr);
-    op = cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_OB_ABOVE);
-    return Crossfire_Object_wrap(op);
-}
-
-static PyObject *Object_GetBelow(Crossfire_Object *whoptr, void *closure) {
-    object *op;
-
-    EXISTCHECK(whoptr);
-    op = cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_OB_BELOW);
-    return Crossfire_Object_wrap(op);
-}
-
-static PyObject *Object_GetInventory(Crossfire_Object *whoptr, void *closure) {
-    object *op;
-
-    EXISTCHECK(whoptr);
-    op = cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_INVENTORY);
-    return Crossfire_Object_wrap(op);
-}
-
-static PyObject *Object_GetX(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_X));
-}
-
-static PyObject *Object_GetY(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_Y));
-}
-
-static PyObject *Object_GetDirection(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DIRECTION));
-}
-
-static PyObject *Object_GetFacing(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACING));
-}
-
-static PyObject *Object_GetUnaggressive(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_UNAGGRESSIVE));
-}
-
-static PyObject *Object_GetGod(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_GOD));
-}
-
 static PyObject *Object_GetPickable(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", !cf_object_get_flag(whoptr->obj, FLAG_NO_PICK));
-}
-
-static PyObject *Object_GetQuantity(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_NROF));
-}
-
-static PyObject *Object_GetInvisible(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_INVISIBLE));
-}
-
-static PyObject *Object_GetSpeed(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("f", cf_object_get_float_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED));
-}
-
-static PyObject *Object_GetSpeedLeft(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("f", cf_object_get_float_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED_LEFT));
-}
-
-static PyObject *Object_GetLastSP(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_SP));
-}
-
-static PyObject *Object_GetLastGrace(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_GRACE));
-}
-
-static PyObject *Object_GetLastEat(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_EAT));
-}
-
-static PyObject *Object_GetLevel(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LEVEL));
-}
-
-static PyObject *Object_GetFace(Crossfire_Object *whoptr, void *closure) {
-    char buf[200];
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE, buf, sizeof(buf)));
-}
-
-static PyObject *Object_GetAnim(Crossfire_Object *whoptr, void *closure) {
-    char buf[200];
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIMATION, buf, sizeof(buf)));
-}
-
-static PyObject *Object_GetAnimSpeed(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIM_SPEED));
-}
-
-static PyObject *Object_GetAttackType(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_TYPE));
-}
-
-static PyObject *Object_GetBeenApplied(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_BEEN_APPLIED));
-}
-
-static PyObject *Object_GetIdentified(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_IDENTIFIED));
-}
-
-static PyObject *Object_GetAlive(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_ALIVE));
-}
-
-static PyObject *Object_GetDM(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_WIZ));
-}
-
-static PyObject *Object_GetWasDM(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_WAS_WIZ));
-}
-
-static PyObject *Object_GetApplied(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_APPLIED));
-}
-
-static PyObject *Object_GetUnpaid(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_UNPAID));
-}
-
-static PyObject *Object_GetMonster(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_MONSTER));
-}
-
-static PyObject *Object_GetFriendly(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_FRIENDLY));
-}
-
-static PyObject *Object_GetGenerator(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_GENERATOR));
-}
-
-static PyObject *Object_GetThrown(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_IS_THROWN));
-}
-
-static PyObject *Object_GetCanSeeInvisible(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_SEE_INVISIBLE));
-}
-
-static PyObject *Object_GetRollable(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_CAN_ROLL));
-}
-
-static PyObject *Object_GetTurnable(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_IS_TURNABLE));
-}
-
-static PyObject *Object_GetUsedUp(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_IS_USED_UP));
-}
-
-static PyObject *Object_GetSplitting(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_SPLITTING));
-}
-
-static PyObject *Object_GetBlind(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_BLIND));
-}
-
-static PyObject *Object_GetCanUseSkill(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_CAN_USE_SKILL));
-}
-
-static PyObject *Object_GetKnownCursed(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_KNOWN_CURSED));
-}
-
-static PyObject *Object_GetStealthy(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_STEALTH));
-}
-
-static PyObject *Object_GetConfused(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_CONFUSED));
-}
-
-static PyObject *Object_GetSleeping(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_SLEEP));
-}
-
-static PyObject *Object_GetLifesaver(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_LIFESAVE));
-}
-
-static PyObject *Object_GetFloor(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_IS_FLOOR));
-}
-
-static PyObject *Object_GetHasXRays(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_XRAYS));
-}
-
-static PyObject *Object_GetCanUseRing(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_USE_RING));
-}
-
-static PyObject *Object_GetCanUseBow(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_USE_BOW));
-}
-
-static PyObject *Object_GetCanUseWand(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_USE_RANGE));
-}
-
-static PyObject *Object_GetCanSeeInDark(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_SEE_IN_DARK));
-}
-
-static PyObject *Object_GetKnownMagical(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_KNOWN_MAGICAL));
-}
-
-static PyObject *Object_GetCanUseWeapon(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_USE_WEAPON));
-}
-
-static PyObject *Object_GetCanUseArmour(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_USE_ARMOUR));
-}
-
-static PyObject *Object_GetCanUseScroll(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_USE_SCROLL));
-}
-
-static PyObject *Object_GetCanCastSpell(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_CAST_SPELL));
-}
-
-static PyObject *Object_GetReflectSpells(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_REFL_SPELL));
-}
-
-static PyObject *Object_GetReflectMissiles(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_REFL_MISSILE));
-}
-
-static PyObject *Object_GetUnique(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_UNIQUE));
-}
-
-static PyObject *Object_GetRunAway(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_RUN_AWAY));
-}
-
-static PyObject *Object_GetScared(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_SCARED));
-}
-
-static PyObject *Object_GetUndead(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_UNDEAD));
-}
-
-static PyObject *Object_GetBlocksView(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_BLOCKSVIEW));
-}
-
-static PyObject *Object_GetHitBack(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_HITBACK));
-}
-
-static PyObject *Object_GetStandStill(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_STAND_STILL));
-}
-
-static PyObject *Object_GetOnlyAttack(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_ONLY_ATTACK));
-}
-
-static PyObject *Object_GetMakeInvisible(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_MAKE_INVIS));
 }
 
 static PyObject *Object_GetMoney(Crossfire_Object *whoptr, void *closure) {
@@ -811,24 +370,9 @@ static PyObject *Object_GetMoney(Crossfire_Object *whoptr, void *closure) {
     return Py_BuildValue("i", cf_object_query_money(whoptr->obj));
 }
 
-static PyObject *Object_GetType(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_TYPE));
-}
-
-static PyObject *Object_GetSubtype(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_SUBTYPE));
-}
-
 static PyObject *Object_GetValue(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Py_BuildValue("l", cf_object_get_long_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE));
-}
-
-static PyObject *Object_GetArchName(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCH_NAME));
 }
 
 static PyObject *Object_GetArchetype(Crossfire_Object *whoptr, void *closure) {
@@ -841,11 +385,6 @@ static PyObject *Object_GetOtherArchetype(Crossfire_Object *whoptr, void *closur
     return Crossfire_Archetype_wrap(cf_object_get_archetype_property(whoptr->obj, CFAPI_OBJECT_PROP_OTHER_ARCH));
 }
 
-static PyObject *Object_GetNoSave(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_NO_SAVE));
-}
-
 static PyObject *Object_GetExists(Crossfire_Object *whoptr, void *closure) {
     if (!object_was_destroyed(whoptr->obj, whoptr->obj->count)) {
         Py_INCREF(Py_True);
@@ -854,11 +393,6 @@ static PyObject *Object_GetExists(Crossfire_Object *whoptr, void *closure) {
         Py_INCREF(Py_False);
         return Py_False;
     }
-}
-
-static PyObject *Object_GetEnv(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_ENVIRONMENT));
 }
 
 static PyObject *Object_GetMoveType(Crossfire_Object *whoptr, void *closure) {
@@ -891,94 +425,80 @@ static PyObject *Object_GetMoveSlow(Crossfire_Object *whoptr, void *closure) {
     return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW));
 }
 
-static PyObject *Object_GetMoveSlowPenalty(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("f", cf_object_get_float_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY));
-}
-
-static PyObject *Object_GetOwner(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_OWNER));
-}
-
-static PyObject *Object_GetEnemy(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_ENEMY));
-}
-
-static PyObject *Object_GetCount(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_COUNT));
-}
-
-static PyObject *Object_GetGodGiven(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_STARTEQUIP));
-}
-
-static PyObject *Object_GetNoDamage(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_NO_DAMAGE));
-}
-
-static PyObject *Object_GetRandomMovement(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_RANDOM_MOVE));
-}
-
-static PyObject *Object_GetIsPet(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FRIENDLY));
-}
-
-static PyObject *Object_GetAttackMovement(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_MOVEMENT));
-}
-
-static PyObject *Object_GetDuration(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DURATION));
-}
-
-static PyObject *Object_GetGlowRadius(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_GLOW_RADIUS));
-}
-
-static PyObject *Object_GetAnimated(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_ANIMATE));
-}
 static PyObject *Object_GetMaterial(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Py_BuildValue("{s:s,s:i}", "Name", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_MATERIAL_NAME), "Number", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MATERIAL));
 }
-static PyObject *Object_GetContainer(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_CONTAINER));
-}
-static PyObject *Object_GetItemPower(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ITEM_POWER));
-}
+
 /** Setters */
-static int Object_SetMessage(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+static int Object_SetStringProperty(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *val;
 
     EXISTCHECK_INT(whoptr);
     if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete the Message attribute");
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the attribute");
         return -1;
     }
     if (!CF_IS_PYSTR(value)) {
-        PyErr_SetString(PyExc_TypeError, "The Message attribute must be a string");
+        PyErr_SetString(PyExc_TypeError, "The attribute must be a string");
         return -1;
     }
     if (!PyArg_Parse(value, "s", &val))
         return -1;
 
-    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_MESSAGE, val);
+    cf_object_set_string_property(whoptr->obj, (int)(intptr_t)closure, val);
+    return 0;
+}
+
+static int Object_SetSStringProperty(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    char *val;
+
+    EXISTCHECK_INT(whoptr);
+    if (value == NULL) {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete attribute");
+        return -1;
+    }
+    if (!CF_IS_PYSTR(value)) {
+        PyErr_SetString(PyExc_TypeError, "The attribute must be a string");
+        return -1;
+    }
+    if (!PyArg_Parse(value, "s", &val))
+        return -1;
+
+    cf_object_set_string_property(whoptr->obj, (int)(intptr_t)closure, val);
+    return 0;
+}
+
+static int Object_SetIntProperty(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, (int)(intptr_t)closure, val);
+    return 0;
+}
+
+static int Object_SetFloatProperty(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    float val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "f", &val))
+        return -1;
+
+    cf_object_set_float_property(whoptr->obj, (int)(intptr_t)closure, val);
+    return 0;
+}
+
+static int Object_SetFlagProperty(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &val))
+        return -1;
+
+    cf_object_set_flag(whoptr->obj, (int)(intptr_t)closure, val);
     return 0;
 }
 
@@ -1021,41 +541,14 @@ static int Object_SetNamePl(Crossfire_Object *whoptr, PyObject *value, void *clo
     return 0;
 }
 
-static int Object_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    char *val;
+static int Object_SetPickable(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    int val;
 
     EXISTCHECK_INT(whoptr);
-    if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete the Title attribute");
-        return -1;
-    }
-    if (!CF_IS_PYSTR(value)) {
-        PyErr_SetString(PyExc_TypeError, "The Title attribute must be a string");
-        return -1;
-    }
-    if (!PyArg_Parse(value, "s", &val))
+    if (!PyArg_Parse(value, "i", &val))
         return -1;
 
-    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_TITLE, val);
-    return 0;
-}
-
-static int Object_SetRace(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    char *val;
-
-    EXISTCHECK_INT(whoptr);
-    if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete the Race attribute");
-        return -1;
-    }
-    if (!CF_IS_PYSTR(value)) {
-        PyErr_SetString(PyExc_TypeError, "The Race attribute must be a string");
-        return -1;
-    }
-    if (!PyArg_Parse(value, "s", &val))
-        return -1;
-
-    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_RACE, val);
+    cf_object_set_flag(whoptr->obj, FLAG_NO_PICK, !val);
     return 0;
 }
 
@@ -1067,350 +560,6 @@ static int Object_SetMap(Crossfire_Object *whoptr, PyObject *value, void *closur
         return -1;
 
     cf_object_change_map(whoptr->obj, val->map, NULL, 0, -1, -1);
-    return 0;
-}
-
-static int Object_SetSlaying(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    char *val;
-
-    EXISTCHECK_INT(whoptr);
-    if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete the Slaying attribute");
-        return -1;
-    }
-    if (!CF_IS_PYSTR(value)) {
-        PyErr_SetString(PyExc_TypeError, "The Slaying attribute must be a string");
-        return -1;
-    }
-    if (!PyArg_Parse(value, "s", &val))
-        return -1;
-
-    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_SLAYING, val);
-    return 0;
-}
-
-static int Object_SetSkill(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    char *val;
-
-    EXISTCHECK_INT(whoptr);
-    if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete the Skill attribute");
-        return -1;
-    }
-    if (!CF_IS_PYSTR(value)) {
-        PyErr_SetString(PyExc_TypeError, "The Skill attribute must be a string");
-        return -1;
-    }
-    if (!PyArg_Parse(value, "s", &val))
-        return -1;
-
-    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_SKILL, val);
-    return 0;
-}
-
-static int Object_SetCursed(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_CURSED, val);
-    return 0;
-}
-
-static int Object_SetDamned(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_DAMNED, val);
-    return 0;
-}
-
-static int Object_SetApplied(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_APPLIED, val);
-    return 0;
-}
-
-static int Object_SetStr(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_STR, val);
-/*    cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetDex(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DEX, val);
-    /*cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetCon(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_CON, val);
-    /*cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetInt(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_INT, val);
-    /*cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetPow(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_POW, val);
-    /*cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetWis(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WIS, val);
-    /*cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetCha(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_CHA, val);
-    /*cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetHP(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_HP, val);
-    return 0;
-}
-
-static int Object_SetMaxHP(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXHP, val);
-    return 0;
-}
-
-static int Object_SetSP(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_SP, val);
-    return 0;
-}
-
-static int Object_SetMaxSP(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXSP, val);
-    return 0;
-}
-
-static int Object_SetGrace(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_GP, val);
-    return 0;
-}
-
-static int Object_SetMaxGrace(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXGP, val);
-    return 0;
-}
-
-static int Object_SetAC(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_AC, val);
-    return 0;
-}
-
-static int Object_SetWC(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WC, val);
-    return 0;
-}
-
-static int Object_SetDam(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DAM, val);
-    return 0;
-}
-
-static int Object_SetFood(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FP, val);
-    return 0;
-}
-
-static int Object_SetWeight(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT, val);
-    return 0;
-}
-
-static int Object_SetWeightLimit(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, val);
-    return 0;
-}
-
-static int Object_SetDirection(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DIRECTION, val);
-    return 0;
-}
-
-static int Object_SetFacing(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACING, val);
-    return 0;
-}
-
-static int Object_SetGod(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    char *val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "s", &val))
-        return -1;
-
-    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_GOD, val);
-    return 0;
-}
-
-static int Object_SetSpeed(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    float val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "f", &val))
-        return -1;
-
-    cf_object_set_float_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED, val);
-/*    cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetSpeedLeft(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    float val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "f", &val))
-        return -1;
-
-    cf_object_set_float_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED_LEFT, val);
-/*    cf_fix_object(whoptr->obj);*/
     return 0;
 }
 
@@ -1427,52 +576,6 @@ static int Object_SetQuantity(Crossfire_Object *whoptr, PyObject *value, void *c
     }
 
 /*    cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetLastSP(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_SP, val);
-/*    cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetLastGrace(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_GRACE, val);
-/*    cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetLastEat(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_EAT, val);
-    return 0;
-}
-
-static int Object_SetLevel(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LEVEL, val);
     return 0;
 }
 
@@ -1505,370 +608,6 @@ static int Object_SetAnim(Crossfire_Object *whoptr, PyObject *value, void *closu
     return 0;
 }
 
-static int Object_SetAnimSpeed(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIM_SPEED, val);
-    return 0;
-}
-
-static int Object_SetAttackType(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_TYPE, val);
-/*    cf_fix_object(whoptr->obj);*/
-    return 0;
-}
-
-static int Object_SetIdentified(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_IDENTIFIED, val);
-    return 0;
-}
-
-static int Object_SetAlive(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_ALIVE, val);
-    return 0;
-}
-
-static int Object_SetUnaggressive(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_UNAGGRESSIVE, val);
-    return 0;
-}
-
-static int Object_SetPickable(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_NO_PICK, !val);
-    return 0;
-}
-
-static int Object_SetInvisible(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_ParseTuple(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_INVISIBLE, val);
-    return 0;
-}
-
-static int Object_SetUnpaid(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_UNPAID, val);
-    return 0;
-}
-
-static int Object_SetFriendly(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_FRIENDLY, val);
-    return 0;
-}
-
-static int Object_SetCanSeeInvisible(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_SEE_INVISIBLE, val);
-    return 0;
-}
-
-static int Object_SetRollable(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_CAN_ROLL, val);
-    return 0;
-}
-
-static int Object_SetTurnable(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_IS_TURNABLE, val);
-    return 0;
-}
-
-static int Object_SetUsedUp(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_IS_USED_UP, val);
-    return 0;
-}
-
-static int Object_SetBlind(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_BLIND, val);
-    return 0;
-}
-
-static int Object_SetKnownCursed(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_KNOWN_CURSED, val);
-    return 0;
-}
-
-static int Object_SetStealthy(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_STEALTH, val);
-    return 0;
-}
-
-static int Object_SetConfused(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_CONFUSED, val);
-    return 0;
-}
-
-static int Object_SetSleeping(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_SLEEP, val);
-    return 0;
-}
-
-static int Object_SetLifesaver(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_LIFESAVE, val);
-    return 0;
-}
-
-static int Object_SetHasXRays(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_XRAYS, val);
-    return 0;
-}
-
-static int Object_SetCanSeeInDark(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_SEE_IN_DARK, val);
-    return 0;
-}
-
-static int Object_SetKnownMagical(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_KNOWN_MAGICAL, val);
-    return 0;
-}
-
-static int Object_SetReflectSpells(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_REFL_SPELL, val);
-    return 0;
-}
-
-static int Object_SetReflectMissiles(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_REFL_MISSILE, val);
-    return 0;
-}
-
-static int Object_SetUnique(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_UNIQUE, val);
-    return 0;
-}
-
-static int Object_SetRunAway(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_RUN_AWAY, val);
-    return 0;
-}
-
-static int Object_SetScared(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_SCARED, val);
-    return 0;
-}
-
-static int Object_SetUndead(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_UNDEAD, val);
-    return 0;
-}
-
-static int Object_SetBlocksView(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_BLOCKSVIEW, val);
-    return 0;
-}
-
-static int Object_SetHitBack(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_HITBACK, val);
-    return 0;
-}
-
-static int Object_SetStandStill(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_STAND_STILL, val);
-    return 0;
-}
-
-static int Object_SetOnlyAttack(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_ONLY_ATTACK, val);
-    return 0;
-}
-
-static int Object_SetMakeInvisible(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_MAKE_INVIS, val);
-    return 0;
-}
-
 static int Object_SetValue(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     long val;
 
@@ -1877,28 +616,6 @@ static int Object_SetValue(Crossfire_Object *whoptr, PyObject *value, void *clos
         return -1;
 
     cf_object_set_long_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE, val);
-    return 0;
-}
-
-static int Object_SetNoSave(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    long val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_NO_SAVE, val);
-    return 0;
-}
-
-static int Object_SetDM(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_WIZ, val);
     return 0;
 }
 
@@ -1922,61 +639,6 @@ static int Object_SetEnemy(Crossfire_Object *whoptr, PyObject *value, void *clos
     return 0;
 }
 
-static int Object_SetGodGiven(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_STARTEQUIP, val);
-    return 0;
-}
-
-static int Object_SetNoDamage(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_NO_DAMAGE, val);
-    return 0;
-}
-
-static int Object_SetRandomMovement(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_flag(whoptr->obj, FLAG_RANDOM_MOVE, val);
-    return 0;
-}
-
-static int Object_SetIsPet(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FRIENDLY, val);
-    return 0;
-}
-
-static int Object_SetAttackMovement(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_MOVEMENT, val);
-    return 0;
-}
-
 static int Object_SetExp(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     int64_t val;
 
@@ -1985,38 +647,6 @@ static int Object_SetExp(Crossfire_Object *whoptr, PyObject *value, void *closur
         return -1;
 
     cf_object_set_int64_property(whoptr->obj, CFAPI_OBJECT_PROP_EXP, val);
-    return 0;
-}
-
-static int Object_SetDuration(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DURATION, val);
-    return 0;
-}
-
-static int Object_SetGlowRadius(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_GLOW_RADIUS, val);
-    return 0;
-}
-
-static int Object_SetAnimated(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int val;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &val))
-        return -1;
-    cf_object_set_flag(whoptr->obj, FLAG_ANIMATE, val);
     return 0;
 }
 
@@ -2079,17 +709,6 @@ static int Object_SetMoveSlow(Crossfire_Object *whoptr, PyObject *value, void *c
     cf_object_set_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW, move);
     return 0;
 }
-
-static int Object_SetItemPower(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    int item_power;
-
-    EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "i", &item_power))
-        return -1;
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ITEM_POWER, item_power);
-    return 0;
-}
-
 
 /* Methods. */
 
@@ -2660,135 +1279,135 @@ static PyObject *Crossfire_Object_Long(PyObject *obj) {
 static PyGetSetDef Object_getseters[] = {
     { "Name",           (getter)Object_GetName,         (setter)Object_SetName, NULL, NULL },
     { "NamePl",         (getter)Object_GetNamePl,       (setter)Object_SetNamePl, NULL, NULL },
-    { "Title",          (getter)Object_GetTitle,        (setter)Object_SetTitle, NULL, NULL },
-    { "Race",           (getter)Object_GetRace,         (setter)Object_SetRace, NULL, NULL },
-    { "Skill",          (getter)Object_GetSkill,        (setter)Object_SetSkill, NULL, NULL },
+    { "Title",          (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_TITLE },
+    { "Race",           (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_RACE },
+    { "Skill",          (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_SKILL },
     { "Map",            (getter)Object_GetMap,          (setter)Object_SetMap, NULL, NULL },
-    { "Cha",            (getter)Object_GetCha,          (setter)Object_SetCha, NULL, NULL },
-    { "Con",            (getter)Object_GetCon,          (setter)Object_SetCon, NULL, NULL },
-    { "Dex",            (getter)Object_GetDex,          (setter)Object_SetDex, NULL, NULL },
-    { "Int",            (getter)Object_GetInt,          (setter)Object_SetInt, NULL, NULL },
-    { "Pow",            (getter)Object_GetPow,          (setter)Object_SetPow, NULL, NULL },
-    { "Str",            (getter)Object_GetStr,          (setter)Object_SetStr, NULL, NULL },
-    { "Wis",            (getter)Object_GetWis,          (setter)Object_SetWis, NULL, NULL },
-    { "HP",             (getter)Object_GetHP,           (setter)Object_SetHP, NULL, NULL },
-    { "MaxHP",          (getter)Object_GetMaxHP,        (setter)Object_SetMaxHP, NULL, NULL },
-    { "SP",             (getter)Object_GetSP,           (setter)Object_SetSP, NULL, NULL },
-    { "MaxSP",          (getter)Object_GetMaxSP,        (setter)Object_SetMaxSP, NULL, NULL },
-    { "Grace",          (getter)Object_GetGrace,        (setter)Object_SetGrace, NULL, NULL },
-    { "MaxGrace",       (getter)Object_GetMaxGrace,     (setter)Object_SetMaxGrace, NULL, NULL },
-    { "Food",           (getter)Object_GetFood,         (setter)Object_SetFood, NULL, NULL },
-    { "AC",             (getter)Object_GetAC,           (setter)Object_SetAC, NULL, NULL },
-    { "WC",             (getter)Object_GetWC,           (setter)Object_SetWC, NULL, NULL },
-    { "Dam",            (getter)Object_GetDam,          (setter)Object_SetDam, NULL, NULL },
-    { "Luck",           (getter)Object_GetLuck,         NULL, NULL, NULL },
+    { "Cha",            (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_CHA },
+    { "Con",            (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_CON },
+    { "Dex",            (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_DEX },
+    { "Int",            (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_INT },
+    { "Pow",            (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_POW },
+    { "Str",            (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_STR },
+    { "Wis",            (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_WIS },
+    { "HP",             (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_HP },
+    { "MaxHP",          (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_MAXHP },
+    { "SP",             (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_SP },
+    { "MaxSP",          (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_MAXSP },
+    { "Grace",          (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_GP },
+    { "MaxGrace",       (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_MAXGP },
+    { "Food",           (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_FP },
+    { "AC",             (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_AC },
+    { "WC",             (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_WC },
+    { "Dam",            (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_DAM },
+    { "Luck",           (getter)Object_GetIntProperty,  NULL, NULL, (void*)CFAPI_OBJECT_PROP_LUCK },
     { "Exp",            (getter)Object_GetExp,          (setter)Object_SetExp, NULL, NULL },
     { "ExpMul",         (getter)Object_GetExpMul,       NULL, NULL, NULL },
     { "TotalExp",       (getter)Object_GetTotalExp,     NULL, NULL, NULL },
-    { "Message",        (getter)Object_GetMessage,      (setter)Object_SetMessage, NULL, NULL },
-    { "Slaying",        (getter)Object_GetSlaying,      (setter)Object_SetSlaying, NULL, NULL },
-    { "Cursed",         (getter)Object_GetCursed,       (setter)Object_SetCursed, NULL, NULL },
-    { "Damned",         (getter)Object_GetDamned,       (setter)Object_SetDamned, NULL, NULL },
-    { "Weight",         (getter)Object_GetWeight,       (setter)Object_SetWeight, NULL, NULL },
-    { "WeightLimit",    (getter)Object_GetWeightLimit,  (setter)Object_SetWeightLimit, NULL, NULL },
-    { "Above",          (getter)Object_GetAbove,        NULL, NULL, NULL },
-    { "Below",          (getter)Object_GetBelow,        NULL, NULL, NULL },
-    { "Inventory",      (getter)Object_GetInventory,    NULL, NULL, NULL },
-    { "X",              (getter)Object_GetX,            NULL, NULL, NULL },
-    { "Y",              (getter)Object_GetY,            NULL, NULL, NULL },
-    { "Direction",      (getter)Object_GetDirection,    (setter)Object_SetDirection, NULL, NULL },
-    { "Facing",         (getter)Object_GetFacing,       (setter)Object_SetFacing, NULL, NULL },
-    { "Unaggressive",   (getter)Object_GetUnaggressive, (setter)Object_SetUnaggressive, NULL, NULL },
-    { "God",            (getter)Object_GetGod,          (setter)Object_SetGod, NULL, NULL },
+    { "Message",        (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_MESSAGE },
+    { "Slaying",        (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_SLAYING },
+    { "Cursed",         (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_CURSED },
+    { "Damned",         (getter)Object_GetFlagProperty,       (setter)Object_SetFlagProperty, NULL, (void*)FLAG_DAMNED },
+    { "Weight",         (getter)Object_GetIntProperty,       (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_WEIGHT },
+    { "WeightLimit",    (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_WEIGHT_LIMIT },
+    { "Above",          (getter)Object_GetObjectProperty,        NULL, NULL, (void*)CFAPI_OBJECT_PROP_OB_ABOVE },
+    { "Below",          (getter)Object_GetObjectProperty,        NULL, NULL, (void*)CFAPI_OBJECT_PROP_OB_BELOW },
+    { "Inventory",      (getter)Object_GetObjectProperty,    NULL, NULL, (void*)CFAPI_OBJECT_PROP_INVENTORY },
+    { "X",              (getter)Object_GetIntProperty,            NULL, NULL, (void*)CFAPI_OBJECT_PROP_X },
+    { "Y",              (getter)Object_GetIntProperty,            NULL, NULL, (void*)CFAPI_OBJECT_PROP_Y },
+    { "Direction",      (getter)Object_GetIntProperty,    (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_DIRECTION },
+    { "Facing",         (getter)Object_GetIntProperty,       (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_FACING },
+    { "Unaggressive",   (getter)Object_GetFlagProperty, (setter)Object_SetFlagProperty, NULL, (void*)FLAG_UNAGGRESSIVE },
+    { "God",            (getter)Object_GetSStringProperty,          (setter)Object_SetFlagProperty, NULL, (void*)CFAPI_OBJECT_PROP_GOD },
     { "Pickable",       (getter)Object_GetPickable,     (setter)Object_SetPickable, NULL, NULL },
-    { "Quantity",       (getter)Object_GetQuantity,     (setter)Object_SetQuantity, NULL, NULL },
-    { "Invisible",      (getter)Object_GetInvisible,    (setter)Object_SetInvisible, NULL, NULL },
-    { "Speed",          (getter)Object_GetSpeed,        (setter)Object_SetSpeed, NULL, NULL },
-    { "SpeedLeft",      (getter)Object_GetSpeedLeft,    (setter)Object_SetSpeedLeft, NULL, NULL },
-    { "LastSP",         (getter)Object_GetLastSP,       (setter)Object_SetLastSP, NULL, NULL },
-    { "LastGrace",      (getter)Object_GetLastGrace,    (setter)Object_SetLastGrace, NULL, NULL },
-    { "LastEat",        (getter)Object_GetLastEat,      (setter)Object_SetLastEat, NULL, NULL },
-    { "Level",          (getter)Object_GetLevel,        (setter)Object_SetLevel, NULL, NULL },
-    { "Face",           (getter)Object_GetFace,         (setter)Object_SetFace, NULL, NULL },
-    { "Anim",           (getter)Object_GetAnim,         (setter)Object_SetAnim, NULL, NULL },
-    { "AnimSpeed",      (getter)Object_GetAnimSpeed,    (setter)Object_SetAnimSpeed, NULL, NULL },
-    { "AttackType",     (getter)Object_GetAttackType,   (setter)Object_SetAttackType, NULL, NULL },
-    { "BeenApplied",    (getter)Object_GetBeenApplied,  NULL, NULL, NULL },
-    { "Identified",     (getter)Object_GetIdentified,   (setter)Object_SetIdentified, NULL, NULL },
-    { "Alive",          (getter)Object_GetAlive,        (setter)Object_SetAlive, NULL, NULL },
-    { "DungeonMaster",  (getter)Object_GetDM,           (setter)Object_SetDM, NULL, NULL },
-    { "WasDungeonMaster", (getter)Object_GetWasDM,      NULL, NULL, NULL },
-    { "Applied",        (getter)Object_GetApplied,      (setter)Object_SetApplied, NULL, NULL },
-    { "Unpaid",         (getter)Object_GetUnpaid,       (setter)Object_SetUnpaid, NULL, NULL },
-    { "Monster",        (getter)Object_GetMonster,      NULL, NULL, NULL },
-    { "Friendly",       (getter)Object_GetFriendly,     (setter)Object_SetFriendly, NULL, NULL },
-    { "Generator",      (getter)Object_GetGenerator,    NULL, NULL, NULL },
-    { "Thrown",         (getter)Object_GetThrown,       NULL, NULL, NULL },
-    { "CanSeeInvisible", (getter)Object_GetCanSeeInvisible, (setter)Object_SetCanSeeInvisible, NULL, NULL },
-    { "Rollable",       (getter)Object_GetRollable,     (setter)Object_SetRollable, NULL, NULL },
-    { "Turnable",       (getter)Object_GetTurnable,     (setter)Object_SetTurnable, NULL, NULL },
-    { "UsedUp",         (getter)Object_GetUsedUp,       (setter)Object_SetUsedUp, NULL, NULL },
-    { "Splitting",      (getter)Object_GetSplitting,    NULL, NULL, NULL },
-    { "Blind",          (getter)Object_GetBlind,        (setter)Object_SetBlind, NULL, NULL },
-    { "CanUseSkill",    (getter)Object_GetCanUseSkill,  NULL, NULL, NULL },
-    { "KnownCursed",    (getter)Object_GetKnownCursed,  (setter)Object_SetKnownCursed, NULL, NULL },
-    { "Stealthy",       (getter)Object_GetStealthy,     (setter)Object_SetStealthy, NULL, NULL },
-    { "Confused",       (getter)Object_GetConfused,     (setter)Object_SetConfused, NULL, NULL },
-    { "Sleeping",       (getter)Object_GetSleeping,     (setter)Object_SetSleeping, NULL, NULL },
-    { "Lifesaver",      (getter)Object_GetLifesaver,    (setter)Object_SetLifesaver, NULL, NULL },
-    { "Floor",          (getter)Object_GetFloor,        NULL, NULL, NULL },
-    { "HasXRays",       (getter)Object_GetHasXRays,     (setter)Object_SetHasXRays, NULL, NULL },
-    { "CanUseRing",     (getter)Object_GetCanUseRing,   NULL, NULL, NULL },
-    { "CanUseBow",      (getter)Object_GetCanUseBow,    NULL, NULL, NULL },
-    { "CanUseWand",     (getter)Object_GetCanUseWand,   NULL, NULL, NULL },
-    { "CanSeeInDark",   (getter)Object_GetCanSeeInDark, (setter)Object_SetCanSeeInDark, NULL, NULL },
-    { "KnownMagical",   (getter)Object_GetKnownMagical, (setter)Object_SetKnownMagical, NULL, NULL },
-    { "CanUseWeapon",   (getter)Object_GetCanUseWeapon, NULL, NULL, NULL },
-    { "CanUseArmour",   (getter)Object_GetCanUseArmour, NULL, NULL, NULL },
-    { "CanUseScroll",   (getter)Object_GetCanUseScroll, NULL, NULL, NULL },
-    { "CanCastSpell",   (getter)Object_GetCanCastSpell, NULL, NULL, NULL },
-    { "ReflectSpells",  (getter)Object_GetReflectSpells, (setter)Object_SetReflectSpells, NULL, NULL },
-    { "ReflectMissiles", (getter)Object_GetReflectMissiles, (setter)Object_SetReflectMissiles, NULL, NULL },
-    { "Unique",         (getter)Object_GetUnique,       (setter)Object_SetUnique, NULL, NULL },
-    { "RunAway",        (getter)Object_GetRunAway,      (setter)Object_SetRunAway, NULL, NULL },
-    { "Scared",         (getter)Object_GetScared,       (setter)Object_SetScared, NULL, NULL },
-    { "Undead",         (getter)Object_GetUndead,       (setter)Object_SetUndead, NULL, NULL },
-    { "BlocksView",     (getter)Object_GetBlocksView,   (setter)Object_SetBlocksView, NULL, NULL },
-    { "HitBack",        (getter)Object_GetHitBack,      (setter)Object_SetHitBack, NULL, NULL },
-    { "StandStill",     (getter)Object_GetStandStill,   (setter)Object_SetStandStill, NULL, NULL },
-    { "OnlyAttack",     (getter)Object_GetOnlyAttack,   (setter)Object_SetOnlyAttack, NULL, NULL },
-    { "MakeInvisible",  (getter)Object_GetMakeInvisible, (setter)Object_SetMakeInvisible, NULL, NULL },
+    { "Quantity",       (getter)Object_GetIntProperty,     (setter)Object_SetQuantity, NULL, (void*)CFAPI_OBJECT_PROP_NROF },
+    { "Invisible",      (getter)Object_GetIntProperty,    (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_INVISIBLE },
+    { "Speed",          (getter)Object_GetFloatProperty,        (setter)Object_SetFloatProperty, NULL, (void*)CFAPI_OBJECT_PROP_SPEED },
+    { "SpeedLeft",      (getter)Object_GetFloatProperty,    (setter)Object_SetFloatProperty, NULL, (void*)CFAPI_OBJECT_PROP_SPEED_LEFT },
+    { "LastSP",         (getter)Object_GetIntProperty,       (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_LAST_SP },
+    { "LastGrace",      (getter)Object_GetIntProperty,    (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_LAST_GRACE },
+    { "LastEat",        (getter)Object_GetIntProperty,      (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_LAST_EAT },
+    { "Level",          (getter)Object_GetIntProperty,        (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_LEVEL },
+    { "Face",           (getter)Object_GetSStringProperty,   (setter)Object_SetFace, NULL, (void*)CFAPI_OBJECT_PROP_FACE },
+    { "Anim",           (getter)Object_GetSStringProperty,   (setter)Object_SetAnim, NULL, (void*)CFAPI_OBJECT_PROP_ANIMATION },
+    { "AnimSpeed",      (getter)Object_GetIntProperty,    (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_ANIM_SPEED },
+    { "AttackType",     (getter)Object_GetIntProperty,   (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_ATTACK_TYPE },
+    { "BeenApplied",    (getter)Object_GetFlagProperty,  NULL, NULL, NULL },
+    { "Identified",     (getter)Object_GetFlagProperty,   (setter)Object_SetFlagProperty, NULL, (void*)FLAG_BEEN_APPLIED },
+    { "Alive",          (getter)Object_GetFlagProperty,        (setter)Object_SetFlagProperty, NULL, (void*)FLAG_ALIVE },
+    { "DungeonMaster",  (getter)Object_GetFlagProperty,         (setter)Object_SetFlagProperty, NULL, (void*)FLAG_WIZ },
+    { "WasDungeonMaster", (getter)Object_GetFlagProperty,      (setter)Object_SetFlagProperty, NULL, (void*)FLAG_WAS_WIZ },
+    { "Applied",        (getter)Object_GetFlagProperty,      (setter)Object_SetFlagProperty, NULL, (void*)FLAG_APPLIED },
+    { "Unpaid",         (getter)Object_GetFlagProperty,       (setter)Object_SetFlagProperty, NULL, (void*)FLAG_UNPAID },
+    { "Monster",        (getter)Object_GetFlagProperty,      NULL, NULL, (void*)FLAG_MONSTER },
+    { "Friendly",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_FRIENDLY },
+    { "Generator",      (getter)Object_GetFlagProperty,    NULL, NULL, (void*)FLAG_GENERATOR },
+    { "Thrown",         (getter)Object_GetFlagProperty,       NULL, NULL, (void*)FLAG_IS_THROWN },
+    { "CanSeeInvisible", (getter)Object_GetFlagProperty, (setter)Object_SetFlagProperty, NULL, (void*)FLAG_SEE_INVISIBLE },
+    { "Rollable",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_CAN_ROLL },
+    { "Turnable",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_IS_TURNABLE },
+    { "UsedUp",         (getter)Object_GetFlagProperty,       (setter)Object_SetFlagProperty, NULL, (void*)FLAG_IS_USED_UP },
+    { "Splitting",      (getter)Object_GetFlagProperty,    NULL, NULL, (void*)FLAG_SPLITTING },
+    { "Blind",          (getter)Object_GetFlagProperty,        (setter)Object_SetFlagProperty, NULL, (void*)FLAG_BLIND },
+    { "CanUseSkill",    (getter)Object_GetFlagProperty,  NULL, NULL, (void*)FLAG_CAN_USE_SKILL },
+    { "KnownCursed",    (getter)Object_GetFlagProperty,  (setter)Object_SetFlagProperty, NULL, (void*)FLAG_KNOWN_CURSED },
+    { "Stealthy",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_STEALTH },
+    { "Confused",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_CONFUSED },
+    { "Sleeping",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_SLEEP },
+    { "Lifesaver",      (getter)Object_GetFlagProperty,    (setter)Object_SetFlagProperty, NULL, (void*)FLAG_LIFESAVE },
+    { "Floor",          (getter)Object_GetFlagProperty,        NULL, NULL, (void*)FLAG_IS_FLOOR },
+    { "HasXRays",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_XRAYS },
+    { "CanUseRing",     (getter)Object_GetFlagProperty,   NULL, NULL, (void*)FLAG_USE_RING },
+    { "CanUseBow",      (getter)Object_GetFlagProperty,    NULL, NULL, (void*)FLAG_USE_BOW },
+    { "CanUseWand",     (getter)Object_GetFlagProperty,   NULL, NULL, (void*)FLAG_USE_RANGE },
+    { "CanSeeInDark",   (getter)Object_GetFlagProperty, (setter)Object_SetFlagProperty, NULL, (void*)FLAG_SEE_IN_DARK },
+    { "KnownMagical",   (getter)Object_GetFlagProperty, (setter)Object_SetFlagProperty, NULL, (void*)FLAG_KNOWN_MAGICAL },
+    { "CanUseWeapon",   (getter)Object_GetFlagProperty, NULL, NULL, (void*)FLAG_USE_WEAPON },
+    { "CanUseArmour",   (getter)Object_GetFlagProperty, NULL, NULL, (void*)FLAG_USE_ARMOUR },
+    { "CanUseScroll",   (getter)Object_GetFlagProperty, NULL, NULL, (void*)FLAG_USE_SCROLL },
+    { "CanCastSpell",   (getter)Object_GetFlagProperty, NULL, NULL, (void*)FLAG_CAST_SPELL },
+    { "ReflectSpells",  (getter)Object_GetFlagProperty, (setter)Object_SetFlagProperty, NULL, (void*)FLAG_REFL_SPELL },
+    { "ReflectMissiles", (getter)Object_GetFlagProperty, (setter)Object_SetFlagProperty, NULL, (void*)FLAG_REFL_MISSILE },
+    { "Unique",         (getter)Object_GetFlagProperty,       (setter)Object_SetFlagProperty, NULL, (void*)FLAG_UNIQUE },
+    { "RunAway",        (getter)Object_GetFlagProperty,      (setter)Object_SetFlagProperty, NULL, (void*)FLAG_RUN_AWAY },
+    { "Scared",         (getter)Object_GetFlagProperty,       (setter)Object_SetFlagProperty, NULL, (void*)FLAG_SCARED },
+    { "Undead",         (getter)Object_GetFlagProperty,       (setter)Object_SetFlagProperty, NULL, (void*)FLAG_UNDEAD },
+    { "BlocksView",     (getter)Object_GetFlagProperty,   (setter)Object_SetFlagProperty, NULL, (void*)FLAG_BLOCKSVIEW },
+    { "HitBack",        (getter)Object_GetFlagProperty,      (setter)Object_SetFlagProperty, NULL, (void*)FLAG_HITBACK },
+    { "StandStill",     (getter)Object_GetFlagProperty,   (setter)Object_SetFlagProperty, NULL, (void*)FLAG_STAND_STILL },
+    { "OnlyAttack",     (getter)Object_GetFlagProperty,   (setter)Object_SetFlagProperty, NULL, (void*)FLAG_ONLY_ATTACK },
+    { "MakeInvisible",  (getter)Object_GetFlagProperty, (setter)Object_SetFlagProperty, NULL, (void*)FLAG_MAKE_INVIS },
     { "Money",          (getter)Object_GetMoney,        NULL, NULL, NULL },
-    { "Type",           (getter)Object_GetType,         NULL, NULL, NULL },
-    { "Subtype",        (getter)Object_GetSubtype,      NULL, NULL, NULL },
+    { "Type",           (getter)Object_GetIntProperty,         NULL, NULL, (void*)CFAPI_OBJECT_PROP_TYPE },
+    { "Subtype",        (getter)Object_GetIntProperty,      NULL, NULL, (void*)CFAPI_OBJECT_PROP_SUBTYPE },
     { "Value",          (getter)Object_GetValue,        (setter)Object_SetValue, NULL, NULL },
-    { "ArchName",       (getter)Object_GetArchName,     NULL, NULL, NULL },
+    { "ArchName",       (getter)Object_GetSStringProperty,  NULL, NULL, (void*)CFAPI_OBJECT_PROP_ARCH_NAME },
     { "Archetype",      (getter)Object_GetArchetype,    NULL, NULL, NULL },
     { "OtherArchetype", (getter)Object_GetOtherArchetype,NULL, NULL, NULL },
     { "Exists",         (getter)Object_GetExists,       NULL, NULL, NULL },
-    { "NoSave",         (getter)Object_GetNoSave,       (setter)Object_SetNoSave, NULL, NULL },
-    { "Env",            (getter)Object_GetEnv,          NULL, NULL, NULL },
+    { "NoSave",         (getter)Object_GetFlagProperty,       (setter)Object_SetFlagProperty, NULL, (void*)FLAG_NO_SAVE },
+    { "Env",            (getter)Object_GetObjectProperty,          NULL, NULL, (void*)CFAPI_OBJECT_PROP_ENVIRONMENT },
     { "MoveType",       (getter)Object_GetMoveType,     (setter)Object_SetMoveType, NULL, NULL },
     { "MoveBlock",      (getter)Object_GetMoveBlock,    (setter)Object_SetMoveBlock, NULL, NULL },
     { "MoveAllow",      (getter)Object_GetMoveAllow,    (setter)Object_SetMoveAllow, NULL, NULL },
     { "MoveOn",         (getter)Object_GetMoveOn,       (setter)Object_SetMoveOn, NULL, NULL },
     { "MoveOff",        (getter)Object_GetMoveOff,      (setter)Object_SetMoveOff, NULL, NULL },
     { "MoveSlow",       (getter)Object_GetMoveSlow,     (setter)Object_SetMoveSlow, NULL, NULL },
-    { "MoveSlowPenalty", (getter)Object_GetMoveSlowPenalty, NULL, NULL, NULL },
-    { "Owner",          (getter)Object_GetOwner,        (setter)Object_SetOwner, NULL, NULL },
-    { "Enemy",          (getter)Object_GetEnemy,        (setter)Object_SetEnemy, NULL, NULL },
-    { "Count",          (getter)Object_GetCount,        NULL, NULL, NULL },
-    { "GodGiven",       (getter)Object_GetGodGiven,     (setter)Object_SetGodGiven, NULL, NULL },
-    { "IsPet",          (getter)Object_GetIsPet,        (setter)Object_SetIsPet, NULL, NULL },
-    { "AttackMovement", (getter)Object_GetAttackMovement, (setter)Object_SetAttackMovement, NULL, NULL },
-    { "Duration",       (getter)Object_GetDuration,     (setter)Object_SetDuration, NULL, NULL },
-    { "GlowRadius",     (getter)Object_GetGlowRadius,   (setter)Object_SetGlowRadius, NULL, NULL },
-    { "Animated",       (getter)Object_GetAnimated,     (setter)Object_SetAnimated, NULL, NULL },
-    { "NoDamage",       (getter)Object_GetNoDamage,     (setter)Object_SetNoDamage, NULL, NULL },
-    { "RandomMovement", (getter)Object_GetRandomMovement, (setter)Object_SetRandomMovement, NULL, NULL },
+    { "MoveSlowPenalty", (getter)Object_GetFloatProperty, NULL, NULL, (void*)CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY },
+    { "Owner",          (getter)Object_GetObjectProperty,        (setter)Object_SetOwner, NULL, (void*)CFAPI_OBJECT_PROP_OWNER },
+    { "Enemy",          (getter)Object_GetObjectProperty,        (setter)Object_SetEnemy, NULL, (void*)CFAPI_OBJECT_PROP_ENEMY },
+    { "Count",          (getter)Object_GetIntProperty,  NULL, NULL, (void*)CFAPI_OBJECT_PROP_COUNT },
+    { "GodGiven",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_STARTEQUIP },
+    { "IsPet",          (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_FRIENDLY },
+    { "AttackMovement", (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_ATTACK_MOVEMENT },
+    { "Duration",       (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_DURATION },
+    { "GlowRadius",     (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_GLOW_RADIUS },
+    { "Animated",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_ANIMATE },
+    { "NoDamage",       (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_NO_DAMAGE },
+    { "RandomMovement", (getter)Object_GetFlagProperty, (setter)Object_SetFlagProperty, NULL, (void*)FLAG_RANDOM_MOVE },
     { "Material",       (getter)Object_GetMaterial,     NULL, NULL, NULL },
-    { "Container",      (getter)Object_GetContainer,    NULL, NULL, NULL },
-    { "ItemPower",      (getter)Object_GetItemPower,    (setter)Object_SetItemPower, NULL, NULL },
+    { "Container",      (getter)Object_GetObjectProperty,    NULL, NULL, (void*)CFAPI_OBJECT_PROP_CONTAINER },
+    { "ItemPower",      (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_ITEM_POWER },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
