@@ -2200,6 +2200,12 @@ static void cfapi_object_get_property(int *type, ...) {
         *type = CFAPI_STRING;
         break;
 
+    case CFAPI_PLAYER_PROP_TRANSPORT:
+        robject = va_arg(args, object **);
+        *robject = op->contr->transport;
+        *type = CFAPI_POBJECT;
+        break;
+
     case CFAPI_OBJECT_PROP_MOVE_TYPE:
         rmove = va_arg(args, MoveType *);
         *rmove = op->move_type;

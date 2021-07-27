@@ -1543,6 +1543,12 @@ static void Crossfire_Player_dealloc(PyObject *obj) {
     }
 }
 
+static PyObject *Player_GetObjectProperty(Crossfire_Player *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    object *ob = cf_object_get_object_property(whoptr->obj, (int)(intptr_t)closure);
+    return Crossfire_Object_wrap(ob);
+}
+
 /* Our actual Python ObjectType */
 PyTypeObject Crossfire_ObjectType = {
     /* See http://bugs.python.org/issue4385 */
@@ -1602,6 +1608,7 @@ static PyGetSetDef Player_getseters[] = {
     { "BedMap",        (getter)Player_GetBedMap,        (setter)Player_SetBedMap, NULL, NULL },
     { "BedX",          (getter)Player_GetBedX,          (setter)Player_SetBedX, NULL, NULL },
     { "BedY",          (getter)Player_GetBedY,          (setter)Player_SetBedY, NULL, NULL },
+    { "Transport",     (getter)Player_GetObjectProperty,NULL, NULL, (void*)CFAPI_PLAYER_PROP_TRANSPORT},
     { NULL, NULL, NULL, NULL, NULL }
 };
 
