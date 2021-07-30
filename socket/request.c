@@ -2587,6 +2587,13 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
         return;
     }
 
+    if (playername_ok(name) == 0) {
+        SockList_AddString(&sl, "failure createplayer Player name contains invalid characters");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
+        return;
+    }
+
     /* 2 characters minimum for password */
     if (strlen(password)<2) {
         SockList_AddString(&sl, "failure createplayer Password is too short");
