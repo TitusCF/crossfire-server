@@ -819,7 +819,6 @@ static void move_aura(object *aura) {
                         object_insert_in_map_at(new_ob, m, aura, 0, nx, ny);
                     }
                     else {
-                        object *tmp;
                         // Find a living creature that is on the same side as the caster.
                         FOR_MAP_PREPARE(m, nx, ny, tmp) {
                             // If the entity is living and aligned with the caster, then cast the spell at them.
