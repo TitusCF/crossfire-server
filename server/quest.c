@@ -1107,7 +1107,7 @@ void quest_start(player *pl, sstring quest_code, int state) {
         LOG(llevDebug, "quest_start: warning: player %s has already started quest %s\n", pl->ob->name, quest_code);
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "New quest started: %s", quest->quest_title);
+    draw_ext_info_format(NDI_UNIQUE | NDI_DELAYED, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "New quest started: %s", quest->quest_title);
 
     quest_set_state(NULL, pl, quest_code, state, 0);
 
