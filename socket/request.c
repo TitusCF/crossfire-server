@@ -2875,16 +2875,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
          */
         if (!map)
             map = get_archetype_by_type_subtype(MAP, MAP_TYPE_DEFAULT);
-
-        if (!map) {
-            /* This should never happen - its not something that can
-             * be easily worked around without other weird issues,
-             * like having 2 classes.
-             */
-            LOG(llevError, "Can not find object of type MAP subtype MAP_TYPE_DEFAULT.\n");
-            LOG(llevError, "Are the archetype files up to date?  Can not continue.\n");
-            abort();
-        }
+        assert(map); // Existence checked in init_dynamic()
 
         enter_exit(pl->ob, &map->clone);
 

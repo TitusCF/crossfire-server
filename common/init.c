@@ -359,12 +359,13 @@ static void init_defaults(void) {
 }
 
 /**
- * Initializes first_map_path from the archetype collection.
+ * Initializes first_map_path from the archetype collection, and check that
+ * some required archetype actually exist.
  *
  * Must be called after archetypes have been initialized.
  *
  * @note
- * will call exit() if no MAP archetype was found.
+ * will call exit() in case of error.
  */
 static void init_dynamic(void) {
     archetype *at = get_archetype_by_type_subtype(MAP, MAP_TYPE_LEGACY);
@@ -385,6 +386,12 @@ static void init_dynamic(void) {
         delete_map(first);
     } else {
         LOG(llevError, "Legacy map must have a 'slaying' field!\n");
+        fatal(SEE_LAST_ERROR);
+    }
+
+    if (!get_archetype_by_type_subtype(MAP, MAP_TYPE_DEFAULT)) {
+        LOG(llevError, "Can not find object of type MAP subtype MAP_TYPE_DEFAULT.\n");
+        LOG(llevError, "Are the archetype files up to date? Can not continue.\n");
         fatal(SEE_LAST_ERROR);
     }
 }
