@@ -62,8 +62,10 @@
  */
 
 /**
- * This sends the skill number to name mapping. We ignore
- * the params - we always send the same info no matter what.
+ * This sends the skill number to name mapping.
+ *
+ * @param ns where to write the information.
+ * @param params if '1', then send the face along the skill, else just send the skill name.
  */
 void send_skill_info(socket_struct *ns, char *params) {
     SockList sl;
@@ -92,8 +94,10 @@ void send_skill_info(socket_struct *ns, char *params) {
 }
 
 /**
- * This sends the spell path to name mapping. We ignore
- * the params - we always send the same info no matter what.
+ * This sends the spell path to name mapping.
+ *
+ * @param ns where to write the information.
+ * @param params ignored.
  */
 void send_spell_paths(socket_struct *ns, char *params) {
     SockList sl;
@@ -117,7 +121,10 @@ void send_spell_paths(socket_struct *ns, char *params) {
 }
 
 /**
- * This sends the experience table the sever is using
+ * This sends the experience table the sever is using.
+ *
+ * @param ns where to write the information.
+ * @param params ignored.
  */
 void send_exp_table(socket_struct *ns, char *params) {
     SockList sl;
@@ -148,7 +155,8 @@ void send_exp_table(socket_struct *ns, char *params) {
         SockList_AddShort(sl, New); \
         }
 
-/** This sends information about object op to client - used
+/**
+ * This sends information about object op to client - used
  * in response to requestinfo.  This function is used by
  * both race & class transmissions, and could perhaps be used
  * by future requestinfo types.
@@ -266,6 +274,10 @@ static void send_arch_info(SockList *sl, const object *op)
 /** @todo remove when C++ and lambdas... */
 static SockList *ugly;
 
+/**
+ * Callback used to write race archetypes to the socket.
+ * @param race archetype to process.
+ */
 static void do_race_list(archetype *race) {
     if (race->clone.type == PLAYER) {
         SockList_AddPrintf(ugly, "|%s", race->name);
@@ -405,6 +417,11 @@ void send_class_info(socket_struct *ns, char *params) {
     SockList_Term(&sl);
 }
 
+/**
+ * Callback function sending start map information, used by send_map_info().
+ *
+ * @param m archetype.
+ */
 static void do_map_info(archetype *m) {
     if (m->clone.type == MAP && m->clone.subtype == MAP_TYPE_CHOICE) {
         SockList_AddChar(ugly, INFO_MAP_ARCH_NAME);
@@ -424,7 +441,7 @@ static void do_map_info(archetype *m) {
 }
 
 /**
- * Send information on the specified class.
+ * Send information on available start maps.
  *
  * @param ns
  * where to send.
