@@ -313,7 +313,7 @@ typedef struct obj {
 
     sstring     artifact;       /**< If set, the item is the artifact with this name and the matching type. */
     sstring     name_pl;        /**< The plural name of the object */
-    const char  *anim_suffix;   /**< Used to determine combined animations */
+    sstring     anim_suffix;    /**< Used to determine combined animations */
     sstring     title;          /**< Of foo, etc */
     sstring     race;           /**< Human, goblin, dragon, etc */
     sstring     slaying;        /**< Which race to do double damage to.
@@ -345,7 +345,7 @@ typedef struct obj {
     uint32_t      path_attuned;   /**< Paths the object is attuned to */
     uint32_t      path_repelled;  /**< Paths the object is repelled from */
     uint32_t      path_denied;    /**< Paths the object is denied access to */
-    const char  *materialname;  /**< Specific material name */
+    sstring       materialname;   /**< Specific material name */
     uint16_t      material;       /**< What materials this object consist of */
     int8_t       magic;          /**< Any magical bonuses to this item */
     uint8_t       state;          /**< How the object was last drawn (animation) */
@@ -432,7 +432,7 @@ typedef struct obj {
     MoveType    move_slow;      /**< Movement types this slows down */
     float       move_slow_penalty; /**< How much this slows down the object */
 
-    const char  *custom_name;   /**< Custom name assigned by player */
+    sstring     custom_name;    /**< Custom name assigned by player */
     key_value   *key_values;    /**< Fields not explictly known by the loader. */
 
     tag_t       *spell_tags;      /**< Tags used for spell effect merging. */

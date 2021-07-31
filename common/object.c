@@ -1696,6 +1696,7 @@ void object_free(object *ob, int flags) {
     if (ob->msg != NULL) FREE_AND_CLEAR_STR(ob->msg);
     if (ob->materialname != NULL) FREE_AND_CLEAR_STR(ob->materialname);
     if (ob->spell_tags) FREE_AND_CLEAR(ob->spell_tags);
+    FREE_AND_CLEAR_STR_IF(ob->anim_suffix);
 
     /* Why aren't events freed? */
     object_free_key_values(ob);
