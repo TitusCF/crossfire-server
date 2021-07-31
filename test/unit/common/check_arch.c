@@ -119,8 +119,7 @@ START_TEST(test_get_archetype_by_type_subtype) {
     arch = get_archetype_by_type_subtype(-1, -1);
     fail_unless(arch != NULL, "Should be able to find arch of type unknown, subtype unknown, despite this being useless");
     arch = get_archetype_by_type_subtype(OBJECT_TYPE_MAX+1, -1);
-    if (arch != NULL)
-        fail("Should be not able to find arch of inexistant type but got %p (%s)", arch, arch->name);
+    fail_unless(arch == NULL, "Should be not able to find arch of inexistant type but got %p (%s)", arch, arch->name);
 }
 END_TEST
 
