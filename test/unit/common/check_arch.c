@@ -81,6 +81,8 @@ START_TEST(test_find_archetype_by_object_type_name) {
     fail_unless(arch == NULL, "Searching for an inexistant arch name (Cloak of Magic Resistanc) should return NULL");
     arch = find_archetype_by_object_type_name(88, "Cloak of Magic Resistance");
     fail_unless(arch == NULL, "Searching for an existing arch name (Cloak of Magic Resistance) but with wrong type (88) should return NULL");
+    arch = find_archetype_by_object_type_name(66, NULL);
+    fail_unless(arch == NULL, "Searching for type with NULL name should return NULL");
 }
 END_TEST
 
