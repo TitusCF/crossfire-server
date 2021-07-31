@@ -28,12 +28,12 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManag
     myPath = new QLineEdit(this);
     layout->addWidget(myPath, line++, 1);
 
-    layout->addWidget(new QLabel(tr("Location:"), this), line, 0, 1, 2);
+    layout->addWidget(new QLabel(tr("Location:"), this), line, 0);
     myLocation = new QLineEdit(this);
-    layout->addWidget(myLocation, line++, 1, 1, 2);
+    layout->addWidget(myLocation, line++, 1);
 
     QGroupBox* box = new QGroupBox(tr("Rules"));
-    layout->addWidget(box, line++, 0, 1, 4);
+    layout->addWidget(box, line++, 0, 1, 2);
 
     QGridLayout* rules = new QGridLayout();
     box->setLayout(rules);
