@@ -358,34 +358,6 @@ static void init_defaults(void) {
     nroferrors = 0;
 }
 
-static int found_map = 0;
-
-static void do_dynamic(archetype *at) {
-    if (found_map) {
-        return;
-    }
-
-    if (at->clone.type == MAP && at->clone.subtype == MAP_TYPE_LEGACY) {
-        if (at->clone.race) {
-            safe_strncpy(first_map_ext_path, at->clone.race,
-                    sizeof(first_map_ext_path));
-        }
-        if (EXIT_PATH(&at->clone)) {
-            mapstruct *first;
-
-            strlcpy(first_map_path, EXIT_PATH(&at->clone), sizeof(first_map_path));
-            first = ready_map_name(first_map_path, 0);
-            if (!first) {
-                LOG(llevError, "Initial map %s can't be found! Please ensure maps are correctly installed.\n", first_map_path);
-                LOG(llevError, "Unable to continue without initial map.\n");
-                abort();
-            }
-            delete_map(first);
-            found_map = 1;
-        }
-    }
-}
-
 /**
  * Initializes first_map_path from the archetype collection.
  *
@@ -395,14 +367,26 @@ static void do_dynamic(archetype *at) {
  * will call exit() if no MAP archetype was found.
  */
 static void init_dynamic(void) {
-    archetypes_for_each(do_dynamic);
-
-    if (found_map) {
-        return;
+    archetype *at = get_archetype_by_type_subtype(MAP, MAP_TYPE_LEGACY);
+    if (!at) {
+        LOG(llevError, "You need a archetype for a legacy map, with type %d and subtype %d\n", MAP, MAP_TYPE_LEGACY);
+        exit(-1);
     }
+    if (EXIT_PATH(&at->clone)) {
+        mapstruct *first;
 
-    LOG(llevError, "You need a archetype called 'map' and it have to contain start map\n");
-    exit(-1);
+        strlcpy(first_map_path, EXIT_PATH(&at->clone), sizeof(first_map_path));
+        first = ready_map_name(first_map_path, 0);
+        if (!first) {
+            LOG(llevError, "Initial map %s can't be found! Please ensure maps are correctly installed.\n", first_map_path);
+            LOG(llevError, "Unable to continue without initial map.\n");
+            fatal(SEE_LAST_ERROR);
+        }
+        delete_map(first);
+    } else {
+        LOG(llevError, "Legacy map must have a 'slaying' field!\n");
+        fatal(SEE_LAST_ERROR);
+    }
 }
 
 /** Ingame time */
