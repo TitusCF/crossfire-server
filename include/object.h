@@ -480,11 +480,12 @@ extern object *active_objects;
 extern int nrofallocobjects;
 extern int nroffreeobjects;
 
-static inline int compare_flags(const object *p, const object *q) {
-    return ((p)->flags[0] == (q)->flags[0]) &&
-        ((p)->flags[1] == (q)->flags[1]) &&
-        ((p)->flags[2] == (q)->flags[2]) &&
-        ((p)->flags[3] == (q)->flags[3]);
+static inline uint32_t * compare_flags(const object *p, const object *q) {
+    static uint32_t ret[4];
+    for (int i = 0; i < 4; i++) {
+        ret[i] = p->flags[i] ^ q->flags[i];
+    }
+    return ret;
 }
 
 static inline int query_flag(const object *op, int flag) {

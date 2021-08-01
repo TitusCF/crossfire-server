@@ -223,7 +223,6 @@ typedef struct typedata {
 #define SET_FLAG(xyz, p) set_flag(xyz, p)
 #define CLEAR_FLAG(xyz, p) clear_flag(xyz, p)
 #define QUERY_FLAG(xyz, p) query_flag(xyz, p)
-#define COMPARE_FLAGS(p, q) compare_flags(p, q)
 
 /* the flags themselves. */
 

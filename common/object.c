@@ -5246,11 +5246,11 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
         FAST_SAVE_DOUBLE(sb, "move_slow_penalty ", op->move_slow_penalty);
     }
 
-    if (!COMPARE_FLAGS(op, op2)) {
-        for (tmp = 0; tmp <= NUM_FLAGS; tmp++) {
-            if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
-                ADD_STRINGLINE_ENTRY(sb, flag_names[tmp], QUERY_FLAG(op, tmp) ? " 1" : " 0");
-            }
+    uint32_t *diff_flags = compare_flags(op, op2);
+    for (int flag = 0; flag <= NUM_FLAGS; flag++) {
+        bool flag_different = diff_flags[flag / 32] & (1U << (flag % 32));
+        if (flag_names[flag] && flag_different) {
+            ADD_STRINGLINE_ENTRY(sb, flag_names[flag], QUERY_FLAG(op, flag) ? " 1" : " 0");
         }
     }
 
