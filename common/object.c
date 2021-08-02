@@ -5269,6 +5269,11 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
  * to a file.
  */
 void save_object_in_sb(StringBuffer *sb, const object *op, const int flag) {
+    /* If the object has no_save set, just return */
+    if (QUERY_FLAG(op, FLAG_NO_SAVE)) {
+        return;
+    }
+
     archetype *at = op->arch;
     if (at == NULL)
         at = empty_archetype;
@@ -5348,10 +5353,6 @@ int save_object(FILE *fp, object *op, int flag) {
     if (!(flag&SAVE_FLAG_SAVE_UNPAID) && (QUERY_FLAG(op, FLAG_UNPAID))) {
         return SAVE_ERROR_OK;
     }
-
-    /* If the object has no_save set, just return */
-    if (QUERY_FLAG(op, FLAG_NO_SAVE))
-        return SAVE_ERROR_OK;
 
     StringBuffer *sb = stringbuffer_new();
     save_object_in_sb(sb, op, flag);
