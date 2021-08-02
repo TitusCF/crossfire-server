@@ -5278,7 +5278,7 @@ void save_object_in_sb(StringBuffer *sb, const object *op, const int flag) {
     if (at == NULL)
         at = empty_archetype;
 
-    stringbuffer_append_printf(sb, "arch %s\n", at->name);
+    ADD_STRINGLINE_ENTRY(sb, "arch ", at->name);
 
     if (op->arch->reference_count > 0) {
         /* The object is a custom item/monster, so we handle its save differently.
@@ -5312,7 +5312,7 @@ void save_object_in_sb(StringBuffer *sb, const object *op, const int flag) {
             LOG(llevError, "could not find artifact %s [%d] to save data\n", op->artifact, op->type);
             get_ob_diff(sb, op, &at->clone);
         } else {
-            stringbuffer_append_printf(sb, "artifact %s\n", op->artifact);
+            ADD_STRINGLINE_ENTRY(sb, "artifact ", op->artifact);
             base = arch_to_object(at);
             give_artifact_abilities(base, artifact->item);
             get_ob_diff(sb, op, base);
