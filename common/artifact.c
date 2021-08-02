@@ -516,6 +516,7 @@ void add_abilities(object *op, const object *change) {
         FOR_INV_PREPARE(change, inv) {
             copy = object_new();
             object_copy(inv, copy);
+            SET_FLAG(copy, FLAG_NO_SAVE);
             object_insert_in_ob(copy, op);
         } FOR_INV_FINISH();
     }
