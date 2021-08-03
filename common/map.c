@@ -627,7 +627,7 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
     op = object_new();
     op->map = m; /* To handle buttons correctly */
 
-    PROFILE_BEGIN(long cum_body_time = 0;);
+    PROFILE_BEGIN();
     while ((i = load_object(fp, op, bufstate, mapflags))) {
         /* Since the loading of the map header does not load an object
          * anymore, we need to pass LO_NEWFILE for the first object loaded,
@@ -668,7 +668,6 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
             }
         }
 
-        PROFILE_BEGIN();
         switch (i) {
         case LL_NORMAL:
             /* if we are loading an overlay, put the floors on the bottom */
@@ -695,13 +694,11 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
         if (mapflags&MAP_STYLE) {
             object_remove_from_active_list(op);
         }
-        PROFILE_END(diff, cum_body_time += diff);
         op = object_new();
         op->map = m;
     }
     PROFILE_END(diff, LOG(llevDebug,
-                          "load_objects: while loop took %ld, body took %ld\n",
-                          diff, cum_body_time));
+                          "load_objects on %s took %ld us\n", m->path, diff));
     for (i = 0; i < m->width; i++) {
         for (j = 0; j < m->height; j++) {
             unique = 0;
