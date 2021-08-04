@@ -1,3 +1,8 @@
+2021-08-03  Daniel Hawkins
+    * plugins/cfpython/cfpython_object.c: Fix incorrect flag in setter for Identified attribute.
+        This fixes indefinite experience exploits with the dip command, since the resulting
+        water would be unidentified.
+
 2021-07-26  Daniel Hawkins
     * server/login.c: Don't allow a player to be created with a given name if there's an
         unsaved player with that name already in the game.
