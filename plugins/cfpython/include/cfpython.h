@@ -55,21 +55,9 @@
 #    endif
 #endif
 
-/* Python 2.5 or older doesn't define these. */
-#ifndef Py_SIZE
-#    define Py_SIZE(ob)         (((PyVarObject*)(ob))->ob_size)
-#endif
-#ifndef Py_TYPE
-#    define Py_TYPE(ob)         (((PyObject*)(ob))->ob_type)
-#endif
-
 /* Handle Bytes vs. String */
 #define CF_IS_PYSTR(cfpy_obj) (PyUnicode_Check(cfpy_obj))
 
-/* include compile.h from python. Python.h doesn't pull it in with versions
- * 2.3 and older, and it does have protection from double-imports.
- */
-#include <compile.h>
 #include <plugin.h>
 
 #undef MODULEAPI
