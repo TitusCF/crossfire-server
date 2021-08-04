@@ -1079,9 +1079,14 @@ static PyObject *JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs) {
 
     if (PyUnicode_Check(string)) {
         // PyUnicode_EncodeRawUnicodeEscape() is deprecated as of Python 3.3, scheduled for removal in Python 3.11
+#ifndef IS_PY3K3
         /* HACK: Workaround for crash bug in Python3's PyUnicode_AsRawUnicodeEscapeString... */
         str = PyUnicode_EncodeRawUnicodeEscape(PyUnicode_AS_UNICODE(string),
                                                PyUnicode_GET_SIZE(string));
+#else
+        // The Python docs recommend using PyUnicode_AsRawUnicodeEscapeString() or PyUnicode_AsEncodedString() over PyUnicode_EncodeRawUnicodeEscape().
+        str = PyUnicode_AsRawUnicodeEscapeString(string);
+#endif
         if (str == NULL) {
             return NULL;
         }
