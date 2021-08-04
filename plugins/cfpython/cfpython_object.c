@@ -1557,7 +1557,12 @@ PyTypeObject Crossfire_ObjectType = {
     sizeof(Crossfire_Object),  /* tp_basicsize*/
     0,                         /* tp_itemsize*/
     Crossfire_Object_dealloc,  /* tp_dealloc*/
+    // Python 3.8+ expects a long int. Earlier Python expects a pointer reference.
+#ifdef IS_PY3K8
     (long int)NULL,            /* tp_print*/
+#else
+    NULL,                      /* tp_print */
+#endif
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
     NULL,                      /* tp_reserved */
@@ -1633,7 +1638,12 @@ PyTypeObject Crossfire_PlayerType = {
     sizeof(Crossfire_Player),  /* tp_basicsize*/
     0,                         /* tp_itemsize*/
     Crossfire_Player_dealloc,  /* tp_dealloc*/
+    // Python 3.8+ expects a long int. Earlier Python expects a pointer reference.
+#ifdef IS_PY3K8
     (long int)NULL,            /* tp_print*/
+#else
+    NULL,                      /* tp_print */
+#endif
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
     NULL,                      /* tp_compare*/
