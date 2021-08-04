@@ -1,3 +1,9 @@
+2021-08-04  Daniel Hawkins
+    * plugins/cfpython/cjson.c,
+      plugins/cfpython/include/cfpython.h,
+      plugins/cfpython/cfpython_region.c: Clean up remaining Python 2.x/3 shims, and stand up
+          some infrastructure to do some 3.x shims.
+
 2021-08-03  Daniel Hawkins
     * plugins/cfpython/cfpython_object.c: Fix incorrect flag in setter for Identified attribute.
         This fixes indefinite experience exploits with the dip command, since the resulting

@@ -13,28 +13,6 @@
 #include <ctype.h>
 #include <math.h>
 
-#if defined(IS_PY26)
-#    include <bytesobject.h>
-#elif !defined(IS_PY3K)
-/* Python versions 2.5 or older doesn't have bytesobject.h */
-#    define PyBytesObject PyStringObject
-
-#    define PyBytes_Check PyString_Check
-#    define PyBytes_AS_STRING PyString_AS_STRING
-#    define PyBytes_GET_SIZE PyString_GET_SIZE
-
-#    define PyBytes_FromStringAndSize PyString_FromStringAndSize
-#    define PyBytes_FromString PyString_FromString
-#    define PyBytes_Size PyString_Size
-#    define PyBytes_AsString PyString_AsString
-#    define PyBytes_Concat PyString_Concat
-#    define PyBytes_ConcatAndDel PyString_ConcatAndDel
-#    define _PyBytes_Resize _PyString_Resize
-#    define PyBytes_DecodeEscape PyString_DecodeEscape
-#    define _PyBytes_Join _PyString_Join
-#    define PyBytes_AsStringAndSize PyString_AsStringAndSize
-#endif
-
 typedef struct JSONData {
     char *str; /* the actual json string */
     char *end; /* pointer to the string end */
@@ -93,7 +71,6 @@ typedef int Py_ssize_t;
 
 /* ------------------------------ Utility ----------------------------- */
 
-#ifdef IS_PY3K
 /** Same as PyObject_Str but return a UTF-8 encoded Bytes object instead. */
 static PyObject* cjson_PyObject_Str(PyObject* obj) {
     PyObject *tmp_str, *result;
@@ -104,9 +81,6 @@ static PyObject* cjson_PyObject_Str(PyObject* obj) {
     Py_DECREF(tmp_str);
     return result;
 }
-#else
-#  define cjson_PyObject_Str PyObject_Str
-#endif
 
 /* ------------------------------ Decoding ----------------------------- */
 
@@ -232,14 +206,12 @@ static PyObject *decode_string(JSONData *jsondata) {
                 int row, col;
 
                 reason = PyObject_GetAttrString(value, "reason");
-#ifdef IS_PY3K
                 /* If we are using Python3 we need to convert to bytes here. */
                 if (reason && PyUnicode_Check(reason)) {
                     PyObject * bytes_reason = PyUnicode_AsUTF8String(reason);
                     Py_DECREF(reason);
                     reason = bytes_reason;
                 }
-#endif
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError, "cannot decode string starting" " at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F"): %s",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col,
@@ -355,17 +327,9 @@ static PyObject *decode_number(JSONData *jsondata) {
         return NULL;
 
     if (is_float) {
-#ifdef IS_PY3K
         object = PyFloat_FromString(str);
-#else
-        object = PyFloat_FromString(str, NULL);
-#endif
     } else {
-#ifdef IS_PY3K
         object = PyLong_FromString(PyBytes_AS_STRING(str), NULL, 10);
-#else
-        object = PyInt_FromString(PyBytes_AS_STRING(str), NULL, 10);
-#endif
     }
 
     Py_DECREF(str);
@@ -684,7 +648,6 @@ static PyObject *encode_string(PyObject *string) {
  * - it uses \u00hh instead of \xhh in output.
  * - it also quotes \b and \f
  */
-#if defined(IS_PY26) || defined(IS_PY3K)
 static PyObject *encode_unicode(PyObject *unicode) {
     PyObject *repr;
     Py_UNICODE *s;
@@ -818,141 +781,6 @@ static PyObject *encode_unicode(PyObject *unicode) {
         return result;
     }
 }
-#else
-static PyObject *encode_unicode(PyObject *unicode) {
-    PyObject *repr;
-    Py_UNICODE *s;
-    Py_ssize_t size;
-    char *p;
-    static const char *hexdigit = "0123456789abcdef";
-#ifdef Py_UNICODE_WIDE
-    static const Py_ssize_t expandsize = 10;
-#else
-    static const Py_ssize_t expandsize = 6;
-#endif
-
-    s = PyUnicode_AS_UNICODE(unicode);
-    size = PyUnicode_GET_SIZE(unicode);
-
-    if (size > (PY_SSIZE_T_MAX-2-1)/expandsize) {
-        PyErr_SetString(PyExc_OverflowError, "unicode object is too large to make repr");
-        return NULL;
-    }
-
-    repr = PyString_FromStringAndSize(NULL, 2+expandsize*size+1);
-    if (repr == NULL)
-        return NULL;
-
-    p = PyString_AS_STRING(repr);
-
-    *p++ = '"';
-
-    while (size-- > 0) {
-        Py_UNICODE ch = *s++;
-
-        /* Escape quotes */
-        if ((ch == (Py_UNICODE)PyString_AS_STRING(repr)[0] || ch == '\\')) {
-            *p++ = '\\';
-            *p++ = (char)ch;
-            continue;
-        }
-#ifdef Py_UNICODE_WIDE
-        /* Map 21-bit characters to '\U00xxxxxx' */
-        else if (ch >= 0x10000) {
-            int offset = p-PyString_AS_STRING(repr);
-
-            /* Resize the string if necessary */
-            if (offset+12 > PyString_GET_SIZE(repr)) {
-                if (_PyString_Resize(&repr, PyString_GET_SIZE(repr)+100))
-                    return NULL;
-                p = PyString_AS_STRING(repr)+offset;
-            }
-
-            *p++ = '\\';
-            *p++ = 'U';
-            *p++ = hexdigit[(ch>>28)&0x0000000F];
-            *p++ = hexdigit[(ch>>24)&0x0000000F];
-            *p++ = hexdigit[(ch>>20)&0x0000000F];
-            *p++ = hexdigit[(ch>>16)&0x0000000F];
-            *p++ = hexdigit[(ch>>12)&0x0000000F];
-            *p++ = hexdigit[(ch>>8)&0x0000000F];
-            *p++ = hexdigit[(ch>>4)&0x0000000F];
-            *p++ = hexdigit[ch&0x0000000F];
-            continue;
-        }
-#endif
-        /* Map UTF-16 surrogate pairs to Unicode \UXXXXXXXX escapes */
-        else if (ch >= 0xD800 && ch < 0xDC00) {
-            Py_UNICODE ch2;
-            Py_UCS4 ucs;
-
-            ch2 = *s++;
-            size--;
-            if (ch2 >= 0xDC00 && ch2 <= 0xDFFF) {
-                ucs = (((ch&0x03FF)<<10)|(ch2&0x03FF))+0x00010000;
-                *p++ = '\\';
-                *p++ = 'U';
-                *p++ = hexdigit[(ucs>>28)&0x0000000F];
-                *p++ = hexdigit[(ucs>>24)&0x0000000F];
-                *p++ = hexdigit[(ucs>>20)&0x0000000F];
-                *p++ = hexdigit[(ucs>>16)&0x0000000F];
-                *p++ = hexdigit[(ucs>>12)&0x0000000F];
-                *p++ = hexdigit[(ucs>>8)&0x0000000F];
-                *p++ = hexdigit[(ucs>>4)&0x0000000F];
-                *p++ = hexdigit[ucs&0x0000000F];
-                continue;
-            }
-            /* Fall through: isolated surrogates are copied as-is */
-            s--;
-            size++;
-        /* Map 16-bit characters to '\uxxxx' */
-        } if (ch >= 256) {
-            *p++ = '\\';
-            *p++ = 'u';
-            *p++ = hexdigit[(ch>>12)&0x000F];
-            *p++ = hexdigit[(ch>>8)&0x000F];
-            *p++ = hexdigit[(ch>>4)&0x000F];
-            *p++ = hexdigit[ch&0x000F];
-        /* Map special whitespace to '\t', \n', '\r', '\f', '\b' */
-        } else if (ch == '\t') {
-            *p++ = '\\';
-            *p++ = 't';
-        } else if (ch == '\n') {
-            *p++ = '\\';
-            *p++ = 'n';
-        } else if (ch == '\r') {
-            *p++ = '\\';
-            *p++ = 'r';
-        } else if (ch == '\f') {
-            *p++ = '\\';
-            *p++ = 'f';
-        } else if (ch == '\b') {
-            *p++ = '\\';
-            *p++ = 'b';
-        }
-
-        /* Map non-printable US ASCII to '\u00hh' */
-        else if (ch < ' ' || ch >= 0x7F) {
-            *p++ = '\\';
-            *p++ = 'u';
-            *p++ = '0';
-            *p++ = '0';
-            *p++ = hexdigit[(ch>>4)&0x000F];
-            *p++ = hexdigit[ch&0x000F];
-        }
-
-        /* Copy everything else as-is */
-        else
-            *p++ = (char)ch;
-    }
-
-    *p++ = PyString_AS_STRING(repr)[0];
-
-    *p = '\0';
-    _PyString_Resize(&repr, p-PyString_AS_STRING(repr));
-    return repr;
-}
-#endif
 
 /*
  * This function is an almost verbatim copy of tuplerepr() from
@@ -1217,15 +1045,9 @@ static PyObject *encode_object(PyObject *object) {
             return cjson_PyObject_Str(object);
         }
     }
-#ifdef IS_PY3K
     else if (PyLong_Check(object)) {
         return cjson_PyObject_Str(object);
     }
-#else
-    else if (PyInt_Check(object) || PyLong_Check(object)) {
-        return cjson_PyObject_Str(object);
-    }
-#endif
     else if (PyList_Check(object)) {
         return encode_list(object);
     } else if (PyTuple_Check(object)) {
@@ -1248,11 +1070,7 @@ static PyObject *JSON_encode(PyObject *self, PyObject *object) {
 
 static PyObject *JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs) {
     static char *kwlist[] = { "json", "all_unicode", NULL };
-#ifdef IS_PY3K
     int all_unicode = True; /* by default return unicode always */
-#else
-    int all_unicode = False; /* by default return unicode only when needed */
-#endif
     PyObject *object, *string, *str;
     JSONData jsondata;
 
@@ -1260,13 +1078,10 @@ static PyObject *JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs) {
         return NULL;
 
     if (PyUnicode_Check(string)) {
-#ifdef IS_PY3K
+        // PyUnicode_EncodeRawUnicodeEscape() is deprecated as of Python 3.3, scheduled for removal in Python 3.11
         /* HACK: Workaround for crash bug in Python3's PyUnicode_AsRawUnicodeEscapeString... */
         str = PyUnicode_EncodeRawUnicodeEscape(PyUnicode_AS_UNICODE(string),
                                                PyUnicode_GET_SIZE(string));
-#else
-        str = PyUnicode_AsRawUnicodeEscapeString(string);
-#endif
         if (str == NULL) {
             return NULL;
         }
@@ -1309,7 +1124,6 @@ static PyMethodDef cjson_methods[] = {
 
 /* On Python 3.x we normally want Unicode. */
     { "decode", (PyCFunction)JSON_decode,  METH_VARARGS|METH_KEYWORDS,
-#ifdef IS_PY3K
     PyDoc_STR("decode(string, all_unicode=True) -> parse the JSON representation into\n"
               "python objects. The optional argument `all_unicode', specifies how to\n"
               "convert the strings in the JSON representation into python objects.\n"
@@ -1317,15 +1131,6 @@ static PyMethodDef cjson_methods[] = {
               "everywhere possible and unicode objects only where necessary, else\n"
               "it will return unicode objects everywhere (this is slower, but default\n"
               "on Python 3.x).")
-#else
-    PyDoc_STR("decode(string, all_unicode=False) -> parse the JSON representation into\n"
-              "python objects. The optional argument `all_unicode', specifies how to\n"
-              "convert the strings in the JSON representation into python objects.\n"
-              "If it is False (default on Python 2.x), it will return strings/bytes\n"
-              "everywhere possible and unicode objects only where necessary, else\n"
-              "it will return unicode objects everywhere (this is slower, but default\n"
-              "on Python 3.x).")
-#endif
     },
     { NULL, NULL, 0, NULL }  /* sentinel */
 };
@@ -1358,7 +1163,6 @@ static void initcjson_shared(PyObject *m) {
 }
 
 
-#ifdef IS_PY3K
 static PyModuleDef cjsonModule = {
     PyModuleDef_HEAD_INIT,
     "cjson",           /* m_name     */
@@ -1384,16 +1188,3 @@ PyObject* PyInit_cjson(void)
 
     return m;
 }
-#else
-/* Initialization function for the module (*must *be called initcjson) */
-PyMODINIT_FUNC initcjson(void) {
-    PyObject *m;
-
-    m = Py_InitModule3("cjson", cjson_methods, module_doc);
-
-    if (m == NULL)
-        return;
-
-    initcjson_shared(m);
-}
-#endif

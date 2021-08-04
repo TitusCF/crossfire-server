@@ -42,19 +42,16 @@
     #include <Python.h>
 #endif
 
-/* This is for allowing both python 3 and python 2.
- * We also use some warnings and such with python 2.6 (and later 2.x).
+/* This is for allowing specific features of Python 3
+ * For example, Python 3.8 changes the typecasting on some stuff we use,
+ * so make a check for that.
  */
 #if PY_MAJOR_VERSION >= 3
-#    define IS_PY3K
-#else /* Python 2.x */
-#    if PY_MINOR_VERSION >= 6 /* 2.6 or later */
-#        define IS_PY26
-#    else
-#        define IS_PY_LEGACY  /* Pre-2.6 lack forward compat. changes for Py3 */
+#    if PY_MINOR_VERSION >= 3
+#        define IS_PY3K3
 #    endif
-#    if PY_MINOR_VERSION >= 5 /* PyNumberMethods changed in 2.5 */
-#        define IS_PY25
+#    if PY_MINOR_VERSION >= 8
+#        define IS_PY3K8
 #    endif
 #endif
 
@@ -66,19 +63,8 @@
 #    define Py_TYPE(ob)         (((PyObject*)(ob))->ob_type)
 #endif
 
-/* Python 2.6 and later use PyObject_HashNotImplemented to indicate no support
- * for hash.
- */
-#ifdef IS_PY_LEGACY
-#  define PyObject_HashNotImplemented NULL
-#endif
-
 /* Handle Bytes vs. String */
-#ifdef IS_PY3K
-#    define CF_IS_PYSTR(cfpy_obj) (PyUnicode_Check(cfpy_obj))
-#else
-#    define CF_IS_PYSTR(cfpy_obj) (PyString_Check(cfpy_obj) || PyUnicode_Check(cfpy_obj))
-#endif
+#define CF_IS_PYSTR(cfpy_obj) (PyUnicode_Check(cfpy_obj))
 
 /* include compile.h from python. Python.h doesn't pull it in with versions
  * 2.3 and older, and it does have protection from double-imports.
