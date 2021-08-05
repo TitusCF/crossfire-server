@@ -181,7 +181,7 @@ void accounts_load(void) {
 
     while ((buf = bufferreader_next_line(br))) {
         char *tmp[NUM_ACCOUNT_FIELDS], *cp;
-        int result, i;
+        int i;
 
         /* Ignore any comment lines */
         if (buf[0] == '#') continue;
@@ -213,14 +213,7 @@ void accounts_load(void) {
             }
             ensure_available_characters(ac, ac->num_characters);
 
-            result = split_string(tmp[3], ac->character_names, ac->num_characters, ';');
-            /* This should never happen, but check for it.  Even if we do get it, not necessarily
-             * a critical error - this is why we use calloc above.
-             */
-            if (result != ac->num_characters) {
-                LOG(llevError, "account_load_entries: split_string found different number of characters: %d != %d\n",
-                    result, ac->num_characters);
-            }
+            split_string(tmp[3], ac->character_names, ac->num_characters, ';');
 
             /* The string data that the names are stored in is currently temporary data
              * that will go away, so we need to allocate some permanent data now */
