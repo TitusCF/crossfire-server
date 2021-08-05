@@ -78,8 +78,8 @@ typedef struct account_struct {
     char  *password;                /**< Password for this account */
     time_t last_login;              /**< Last time this account was logged in */
     int   num_characters;           /**< Number of characters on this account */
-    char  *character_names[MAX_CHARACTERS_PER_ACCOUNT+1];
-                                    /**< Character names associated with this account
+    int   allocated_characters;     /**< Number of allocated items in character_names */
+    char  **character_names;        /**< Character names associated with this account,
                                      +1 added to allow for NULL termination */
     time_t  created;                /**< When character was created */
     struct account_struct *next;    /**< Next in list */
@@ -103,6 +103,43 @@ static int accounts_loaded = 0;
  * name would not work, but may as well still make it easy to change it.
  */
 #define ACCOUNT_FILE "accounts"
+
+/**
+ * Ensure an account can handle at least the specified count of character names.
+ * @param account account to check.
+ * @param count number of names to handle.
+ */
+static void ensure_available_characters(account_struct *account, int count) {
+    if (count >= account->allocated_characters) { // The list is NULL-terminated
+        const int pa = account->allocated_characters;
+        account->allocated_characters = count + 1;
+        account->character_names = realloc(account->character_names, account->allocated_characters * sizeof(account->character_names[0]));
+        if (!account->character_names) {
+            LOG(llevError, "Unable to allocate %d characters names!", account->allocated_characters);
+            fatal(OUT_OF_MEMORY);
+        }
+        for (int i = pa; i < account->allocated_characters; i++) {
+            account->character_names[i] = NULL;
+        }
+    }
+}
+
+/**
+ * Allocate a new account_struct item.
+ * Will fatal() if memory error.
+ * @return item, never NULL.
+ */
+static account_struct *account_alloc() {
+    account_struct *ac = (account_struct *)calloc(1, sizeof(account_struct));
+    if (!ac) {
+        LOG(llevError, "Unable to allocate an account_struct!\n");
+        fatal(OUT_OF_MEMORY);
+    }
+    ac->last_login = time(NULL);
+    ac->created = ac->last_login;
+    ensure_available_characters(ac, 0);
+    return ac;
+}
 
 /**
  * This is used purely by the test harness - by clearing the accounts,
@@ -151,7 +188,7 @@ void accounts_load(void) {
 
         fields = split_string(buf, tmp, NUM_ACCOUNT_FIELDS, ':');
 
-        ac = malloc(sizeof(account_struct));
+        ac = account_alloc();
         ac->name = strdup_local(tmp[0]);
         ac->password = strdup_local(tmp[1]);
         ac->last_login = strtoul(tmp[2], (char**)NULL, 10);
@@ -164,14 +201,8 @@ void accounts_load(void) {
         else
             ac->created = ac->last_login;
 
-        ac->next = NULL;
-
         /* If this is a blank field, nothing to do */
-        if (tmp[3][0] == 0) {
-            ac->num_characters = 0;
-            for (i=0; i <= MAX_CHARACTERS_PER_ACCOUNT; i++)
-                ac->character_names[i] = NULL;
-        } else {
+        if (tmp[3][0]) {
             /* count up how many semicolons - this is the character
              * seperator.  We start at one, because these are seperators,
              * so there will be one more name than seperators.
@@ -180,6 +211,7 @@ void accounts_load(void) {
             for (cp = tmp[3]; *cp != '\0'; cp++) {
                 if (*cp == ';') ac->num_characters++;
             }
+            ensure_available_characters(ac, ac->num_characters);
 
             result = split_string(tmp[3], ac->character_names, ac->num_characters, ';');
             /* This should never happen, but check for it.  Even if we do get it, not necessarily
@@ -190,34 +222,10 @@ void accounts_load(void) {
                     result, ac->num_characters);
             }
 
-            if (ac->num_characters > MAX_CHARACTERS_PER_ACCOUNT) {
-                LOG(llevError,"account_load_entries: Too many characters set for account %s - truncating to %d\n",
-                    ac->name, MAX_CHARACTERS_PER_ACCOUNT);
-                    ac->num_characters = MAX_CHARACTERS_PER_ACCOUNT;
-            }
-
             /* The string data that the names are stored in is currently temporary data
-             * that will go away, so we need to allocate some permanent data
-             * now.  Also, if we have a NULL value, means we got the error above -
-             * NULL values would only be at the end of the split, so just reduce
-             * the character count.
-             */
+             * that will go away, so we need to allocate some permanent data now */
             for (i=0; i<ac->num_characters; i++) {
-                if (ac->character_names[i] != NULL) {
-                    ac->character_names[i] = strdup_local(ac->character_names[i]);
-                } else {
-                    ac->num_characters = i;
-                    break;
-                }
-            }
-            /* NULL terminate - in that way, we can just return ac->character_names to
-             * callers that want to know all characters associated with an account,
-             * and it can just iterate until it gets the NULL terminator.
-             * For safety, just set all remaining values to NULL
-             */
-            while (i <= MAX_CHARACTERS_PER_ACCOUNT) {
-                ac->character_names[i] = NULL;
-                i++;
+                ac->character_names[i] = strdup_local(ac->character_names[i]);
             }
         }
 
@@ -417,14 +425,9 @@ int account_new(const char *account_name, const char *account_password) {
 
     if (account_exists(account_name)) return 2;
 
-    ac = malloc(sizeof(account_struct));
+    ac = account_alloc();
     ac->name = strdup_local(account_name);
     ac->password = strdup_local(newhash(account_password));
-    ac->last_login = time(NULL);
-    ac->created = ac->last_login;
-    ac->num_characters = 0;
-
-    memset(ac->character_names, 0, MAX_CHARACTERS_PER_ACCOUNT+1 * sizeof(char*));
 
     /* We put this at the top of the list.  This means recent accounts will be at
      * the top of the file, which is likely a good thing.
@@ -456,8 +459,6 @@ int account_new(const char *account_name, const char *account_password) {
  * player name added successfully.
  * @retval 1
  * could not find account of that name.
- * @retval 2
- * number of characters on this account has reached a maximum.
  */
 
 int account_link(const char *account_name, const char *player_name) {
@@ -468,13 +469,9 @@ int account_link(const char *account_name, const char *player_name) {
     }
     if (ac == NULL) return 1;
 
-    if (ac->num_characters >= MAX_CHARACTERS_PER_ACCOUNT) return 2;
-
+    ensure_available_characters(ac, ac->num_characters + 1);
     ac->character_names[ac->num_characters] = strdup_local(player_name);
     ac->num_characters++;
-    /* NULL terminate, as per notes above.  In theory not necessary since data
-     * is all set to NULL */
-    ac->character_names[ac->num_characters] = NULL;
     return 0;
 }
 
