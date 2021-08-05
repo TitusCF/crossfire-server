@@ -1661,52 +1661,6 @@ static void help_topics(object *op, int what) {
 }
 
 /**
- * Helper function to display commands.
- *
- * @param op
- * player asking for information.
- * @param what
- * - 1: display wizard commands.
- * - 2: display communication commands.
- * - other: display regular commands.
- */
-static void show_commands(object *op, int what) {
-    char line[HUGE_BUF];
-    int i, size;
-    command_array_struct *ap;
-
-    switch (what) {
-    case 1:
-        ap = WizCommands;
-        size = WizCommandsSize;
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      "      Wiz commands:");
-        break;
-
-    case 2:
-        ap = CommunicationCommands;
-        size = CommunicationCommandSize;
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      "      Communication commands:");
-        break;
-
-    default:
-        ap = Commands;
-        size = CommandsSize;
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                      "      Commands:");
-        break;
-    }
-
-    line[0] = '\0';
-    for (i = 0; i < size; i++) {
-        strcat(line, ap[i].name);
-        strcat(line, " ");
-    }
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
-}
-
-/**
  * Find an appropriate help file. Will search regular commands, and wizard ones
  * if asked for. Specified language is tried, as well as English.
  * 'path' is altered whatever the return value.
@@ -1813,13 +1767,7 @@ void command_help(object *op, const char *params) {
      * Commands list
      */
     if (!strcmp(params, "commands")) {
-        show_commands(op, 0);
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n");
-        show_commands(op, 2); /* show comm commands */
-        if (QUERY_FLAG(op, FLAG_WIZ)) {
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n");
-            show_commands(op, 1);
-        }
+        command_list(op, QUERY_FLAG(op, FLAG_WIZ));
         return;
     }
 

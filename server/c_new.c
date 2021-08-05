@@ -31,47 +31,6 @@
 #endif
 
 /**
- * Compare function for commands.
- *
- * @param a
- * @param b
- * commands to compare.
- * @retval -1
- * a is less then b.
- * @retval 0
- * a and b are equals.
- * @retval 1
- * a is greater than b.
- */
-static int compare_A(const void *a, const void *b) {
-    return strcmp(((const command_array_struct *)a)->name,
-                  ((const command_array_struct *)b)->name);
-}
-
-/**
- * Finds the specified command in the command array. Utility function.
- *
- * @param cmd
- * command to find. Will be put to lowercase.
- * @param commarray
- * commands to search into.
- * @param commsize
- * length of commarray.
- * @return
- * matching command, NULL for no match.
- */
-static command_array_struct *find_command_element(const char *cmd, command_array_struct *commarray, int commsize) {
-    command_array_struct *asp, dummy;
-
-    dummy.name = cmd;
-    asp = (command_array_struct *)bsearch((void *)&dummy,
-                                          (void *)commarray, commsize,
-                                          sizeof(command_array_struct),
-                                          compare_A);
-    return asp;
-}
-
-/**
  * Player issued a command, let's handle it.
  *
  * This function is called from the new client/server code.
@@ -109,12 +68,7 @@ void execute_newserver_command(object *pl, char *command) {
 
     csp = find_plugin_command(command, &sent);
     if (!csp)
-        csp = find_command_element(command, Commands, CommandsSize);
-    if (!csp)
-        csp = find_command_element(command, CommunicationCommands,
-                                   CommunicationCommandSize);
-    if (!csp && QUERY_FLAG(pl, FLAG_WIZ))
-        csp = find_command_element(command, WizCommands, WizCommandsSize);
+        csp = command_find(command, QUERY_FLAG(pl, FLAG_WIZ));
 
     if (csp == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
