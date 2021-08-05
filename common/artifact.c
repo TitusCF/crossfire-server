@@ -69,18 +69,6 @@ static artifact *get_empty_artifact(void) {
 }
 
 /**
- * Frees a link structure and its next items.
- *
- * @param lc
- * item to free. Pointer is free()d too, so becomes invalid.
- */
-static void free_charlinks(linked_char *lc) {
-    if (lc->next)
-        free_charlinks(lc->next);
-    free(lc);
-}
-
-/**
  * Totally frees an artifact, its next items, and such.
  *
  * @param at

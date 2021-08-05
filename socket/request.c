@@ -1911,66 +1911,19 @@ void send_account_players(socket_struct *ns)
 {
     SockList sl;
     Account_Char *acn;
-    int i, num_chars, need_send[MAX_CHARACTERS_PER_ACCOUNT];
-    char **chars;
+    int num_chars;
+    linked_char *extra;
 
     ns->account_chars = account_char_load(ns->account_name);
 
-    /*
-     * The acocunt logic here is a little tricky - account_char_load()
-     * is best source as it has a lot more data.  However, if a user
-     * has just added an player to an account, that will not be filled
-     * in until the player has actually logged in with that character -
-     * to fill the data in at time of adding the character to the account
-     * requires a fair amount of work to check_login(), since the load
-     * of the player file and other initialization is fairly closely
-     * intertwined.  So until that is done, we still at least have
-     * account names we can get and send.
-     * note: chars[] has the last entry NULL terminated - thus,
-     * if there are 2 valid accounts, chars[0], chars[1] will be
-     * set, and chars[2] will be NULL.  chars[3...MAX] will have
-     * undefined values.
-     */
-    chars = account_get_players_for_account(ns->account_name);
+    num_chars = 0;
+    extra = account_get_additional_chars(ns->account_name, ns->account_chars, &num_chars);
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "accountplayers ");
-    num_chars=0;
 
-    /* First, set up an array so we know which character we may
-     * need to send specially.  Only non NULL values would
-     * ever need to get sent.
-     */
-    for (i=0; i<MAX_CHARACTERS_PER_ACCOUNT; i++) {
-        if (chars[i])
-            need_send[i] = 1;
-        else break;
-    }
-    /* This counts up the number of characters.
-     * But also, we look and see if the character exists
-     * in chars[i] - if so, we set need_send[i] to 0.
-     */
     for (acn = ns->account_chars; acn; acn = acn->next) {
         num_chars++;
-        for (i=0; i<MAX_CHARACTERS_PER_ACCOUNT; i++) {
-            /* If this is NULL, we know there will not be
-             * any more entries - so break out.
-             */
-            if (!chars[i]) break;
-
-            if (!strcmp(chars[i], acn->name)) {
-                need_send[i] = 0;
-                break;
-            }
-        }
-    }
-
-    /* total up number with limited information */
-    for (i=0; i< MAX_CHARACTERS_PER_ACCOUNT; i++) {
-        if (!chars[i]) break;
-
-        if (need_send[i])
-            num_chars++;
     }
 
     SockList_AddChar(&sl, num_chars);
@@ -2013,17 +1966,17 @@ void send_account_players(socket_struct *ns)
         SockList_AddChar(&sl, 0);
     }
     /* Now for any characters where we just have the name */
-    for (i=0; i< MAX_CHARACTERS_PER_ACCOUNT; i++) {
-        if (!chars[i]) break;
-
-        if (need_send[i]) {
-            add_char_field(&sl, ACL_NAME, chars[i]);
-            SockList_AddChar(&sl, 0);
-        }
+    for (linked_char *e = extra; e != NULL; e = e->next) {
+        add_char_field(&sl, ACL_NAME, e->name);
+        SockList_AddChar(&sl, 0);
     }
 
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
+
+    if (extra) {
+        free_charlinks(extra);
+    }
 }
 
 /**
