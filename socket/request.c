@@ -2441,13 +2441,14 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
         return;
     }
 
+    /* Make sure a client is not trying to spoof us here */
     chars = account_get_players_for_account(ns->account_name);
 
-    for (i=0; i<MAX_CHARACTERS_PER_ACCOUNT; i++) {
-        if (!chars[i] || !strcmp(chars[i], buf)) break;
+    for (i=0; chars[i]; i++) {
+        if (!!strcmp(chars[i], buf))
+            break;
     }
-    /* Make sure a client is not trying to spoof us here */
-    if (i == MAX_CHARACTERS_PER_ACCOUNT || !chars[i]) {
+    if (!chars[i]) {
         SockList_AddPrintf(&sl,
                            "failure accountplay Character %s is not associated with account %s",
                            buf, ns->account_name);
