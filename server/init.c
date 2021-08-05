@@ -1123,7 +1123,7 @@ void init(int argc, char **argv) {
 
     init_startup();     /* Check shutdown/forbid files */
     init_signals();     /* Sets up signal interceptions */
-    init_commands();    /* Sort command tables */
+    commands_init();    /* Sort command tables */
     read_map_log();     /* Load up the old temp map files */
     init_skills();
     init_ob_methods();

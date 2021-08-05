@@ -282,7 +282,7 @@ static int compare_A(const void *a, const void *b) {
 /**
  * Sorts the command arrays for easy search through bsearch().
  */
-void init_commands(void) {
+void commands_init(void) {
     qsort(Commands, CommandsSize, sizeof(command_array_struct), compare_A);
     qsort(CommunicationCommands, CommunicationCommandSize, sizeof(command_array_struct), compare_A);
     qsort(WizCommands, WizCommandsSize, sizeof(command_array_struct), compare_A);
