@@ -289,7 +289,7 @@ void command_dumpabove(object *op, const char *params);
 void command_dumpbelow(object *op, const char *params);
 void command_settings(object *op, const char *ignored);
 /* commands.c */
-void init_commands(void);
+void commands_init(void);
 command_array_struct *command_find(const char *name, bool is_dm);
 void command_list(object *pl, bool is_dm);
 /* disease.c */
