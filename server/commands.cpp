@@ -16,6 +16,7 @@
  * Contains the definition for all in-game commands a player can issue.
  */
 
+extern "C" {
 #include "global.h"
 
 #include <ctype.h>
@@ -24,6 +25,7 @@
 
 #include "commands.h"
 #include "sproto.h"
+}
 
 /**
  * Normal game commands.

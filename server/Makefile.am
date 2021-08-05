@@ -18,7 +18,7 @@ libserver_a_SOURCES = \
 	c_party.c\
 	c_range.c\
 	c_wiz.c\
-	commands.c\
+	commands.cpp \
 	disease.c\
 	hiscore.c\
 	gods.c\
