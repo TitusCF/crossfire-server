@@ -186,7 +186,6 @@ void command_west(object *op, const char *params);
 void command_stay(object *op, const char *params);
 void do_goto(object *op, const char *name, int x, int y);
 /* c_new.c */
-void execute_newserver_command(object *pl, char *command);
 void command_run(object *op, const char *params);
 void command_run_stop(object *op, const char *params);
 void command_fire(object *op, const char *params);
@@ -288,8 +287,8 @@ void command_dumpbelow(object *op, const char *params);
 void command_settings(object *op, const char *ignored);
 /* commands.c */
 void commands_init(void);
-command_array_struct *command_find(const char *name, bool is_dm);
 void command_list(object *pl, bool is_dm);
+void command_execute(object *pl, char *command);
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);

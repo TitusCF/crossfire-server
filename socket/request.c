@@ -493,8 +493,7 @@ void new_player_cmd(uint8_t *buf, int len, player *pl) {
     if (pl->ob->speed_left < 0) {
         LOG(llevError, "Player has negative time - shouldn't do command.\n");
     }
-    /* In c_new.c */
-    execute_newserver_command(pl->ob, command);
+    command_execute(pl->ob, command);
     /* Perhaps something better should be done with a left over count.
      * Cleaning up the input should probably be done first - all actions
      * for the command that issued the count should be done before
