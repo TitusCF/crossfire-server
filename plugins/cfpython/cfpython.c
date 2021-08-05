@@ -78,18 +78,8 @@ typedef struct {
             used_time;              /**< Last use of this cache entry. */
 } pycode_cache_entry;
 
-/* This structure is used to define one python-implemented crossfire command.*/
-typedef struct PythonCmdStruct {
-    sstring name;   /* The name of the command, as known in the game.         */
-    sstring script; /* The name of the script file to bind.                   */
-    double speed;   /* The speed of the command execution.                    */
-} PythonCmd;
-
-/* This plugin allows up to 1024 custom commands.                            */
-#define NR_CUSTOM_CMD 1024
-
-/** Commands defined by scripts. */
-static PythonCmd CustomCommand[NR_CUSTOM_CMD];
+#define MAX_COMMANDS    1024
+static command_registration registered_commands[MAX_COMMANDS];
 
 /** Cached compiled scripts. */
 static pycode_cache_entry pycode_cache[PYTHON_CACHE_SIZE];
@@ -112,11 +102,13 @@ CFPContext *context_stack;
 
 CFPContext *current_context;
 
-static int current_command = -999;
-
 static PyObject *shared_data = NULL;
 
 static PyObject *private_data = NULL;
+
+static CFPContext *popContext(void);
+static void freeContext(CFPContext *context);
+static int do_script(CFPContext *context, int silent);
 
 static PyObject *registerGEvent(PyObject *self, PyObject *args) {
     int eventcode;
@@ -418,13 +410,44 @@ static PyObject *getFriendlyList(PyObject *self, PyObject *args) {
    return list;
 }
 
+static void python_command_function(object *op, const char *params, const char *script) {
+    char buf[1024], path[1024];
+    CFPContext *context;
+
+    snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(script, path, sizeof(path)));
+
+    context = malloc(sizeof(CFPContext));
+    context->message[0] = 0;
+
+    context->who         = Crossfire_Object_wrap(op);
+    context->activator   = NULL;
+    context->third       = NULL;
+    context->fix         = 0;
+    /* We are not running from an event, so set it to NULL to avoid segfaults. */
+    context->event       = NULL;
+    snprintf(context->script, sizeof(context->script), "%s", buf);
+    if (params)
+        snprintf(context->options, sizeof(context->options), "%s", params);
+    else
+        context->options[0] = 0;
+    context->returnvalue = 1; /* Default is "command successful" */
+
+    if (!do_script(context, 0)) {
+        freeContext(context);
+        return;
+    }
+
+    context = popContext();
+    freeContext(context);
+}
+
 static PyObject *registerCommand(PyObject *self, PyObject *args) {
     char *cmdname;
     char *scriptname;
     double cmdspeed;
-    int i;
+    int type = COMMAND_TYPE_NORMAL, index;
 
-    if (!PyArg_ParseTuple(args, "ssd", &cmdname, &scriptname, &cmdspeed))
+    if (!PyArg_ParseTuple(args, "ssd|d", &cmdname, &scriptname, &cmdspeed, &type))
         return NULL;
 
     if (cmdspeed < 0) {
@@ -432,21 +455,20 @@ static PyObject *registerCommand(PyObject *self, PyObject *args) {
         return NULL;
     }
 
-    for (i = 0; i < NR_CUSTOM_CMD; i++) {
-        if (CustomCommand[i].name != NULL) {
-            if (!strcmp(CustomCommand[i].name, cmdname)) {
-                set_exception("command '%s' is already registered", cmdname);
-                return NULL;
-            }
-        }
-    }
-    for (i = 0; i < NR_CUSTOM_CMD; i++) {
-        if (CustomCommand[i].name == NULL) {
-            CustomCommand[i].name = cf_add_string(cmdname);
-            CustomCommand[i].script = cf_add_string(scriptname);
-            CustomCommand[i].speed = cmdspeed;
+    for (index = 0; index < MAX_COMMANDS; index++) {
+        if (registered_commands[index] == 0) {
             break;
         }
+    }
+    if (index == MAX_COMMANDS) {
+        set_exception("too many registered commands");
+        return NULL;
+    }
+
+    registered_commands[index] = cf_system_register_command_extra(cmdname, scriptname, python_command_function, type, cmdspeed);
+    if (registered_commands[index] == 0) {
+        set_exception("failed to register command (overriding an existing one with a different type?)");
+        return NULL;
     }
 
     Py_INCREF(Py_None);
@@ -1355,7 +1377,6 @@ static PyObject* PyInit_Crossfire(void)
 
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     PyObject *m;
-    int i;
     /* Python code to redirect stdouts/stderr. */
     const char *stdOutErr =
 "import sys\n\
@@ -1368,6 +1389,10 @@ catchOutErr = CatchOutErr()\n\
 sys.stdout = catchOutErr\n\
 sys.stderr = catchOutErr\n\
 ";
+
+    for (int c = 0; c < MAX_COMMANDS; c++) {
+        registered_commands[c] = 0;
+    }
 
     cf_init_plugin(gethooksptr);
     cf_log(llevDebug, "CFPython 2.0a init\n");
@@ -1384,11 +1409,6 @@ sys.stderr = catchOutErr\n\
 
     cfpython_init_types(m);
 
-    for (i = 0; i < NR_CUSTOM_CMD; i++) {
-        CustomCommand[i].name   = NULL;
-        CustomCommand[i].script = NULL;
-        CustomCommand[i].speed  = 0.0;
-    }
     initConstants(m);
     private_data = PyDict_New();
     shared_data = PyDict_New();
@@ -1405,32 +1425,12 @@ sys.stderr = catchOutErr\n\
 CF_PLUGIN void *getPluginProperty(int *type, ...) {
     va_list args;
     const char *propname;
-    int i, size;
-    command_array_struct *rtn_cmd;
+    int size;
     char *buf;
 
     va_start(args, type);
     propname = va_arg(args, const char *);
-
-    if (!strcmp(propname, "command?")) {
-        const char *cmdname;
-        cmdname = va_arg(args, const char *);
-        rtn_cmd = va_arg(args, command_array_struct *);
-        va_end(args);
-
-        for (i = 0; i < NR_CUSTOM_CMD; i++) {
-            if (CustomCommand[i].name != NULL) {
-                if (!strcmp(CustomCommand[i].name, cmdname)) {
-                    rtn_cmd->name = CustomCommand[i].name;
-                    rtn_cmd->time = (float)CustomCommand[i].speed;
-                    rtn_cmd->func = cfpython_runPluginCommand;
-                    current_command = i;
-                    return rtn_cmd;
-                }
-            }
-        }
-        return NULL;
-    } else if (!strcmp(propname, "Identification")) {
+    if (!strcmp(propname, "Identification")) {
         buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
@@ -1445,43 +1445,6 @@ CF_PLUGIN void *getPluginProperty(int *type, ...) {
     }
     va_end(args);
     return NULL;
-}
-
-CF_PLUGIN void cfpython_runPluginCommand(object *op, const char *params) {
-    char buf[1024], path[1024];
-    CFPContext *context;
-
-    if (current_command < 0) {
-        cf_log(llevError, "Illegal call of cfpython_runPluginCommand, call find_plugin_command first.\n");
-        return;
-    }
-    snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].script, path, sizeof(path)));
-
-    context = malloc(sizeof(CFPContext));
-    context->message[0] = 0;
-
-    context->who         = Crossfire_Object_wrap(op);
-    context->activator   = NULL;
-    context->third       = NULL;
-    context->fix         = 0;
-    /* We are not running from an event, so set it to NULL to avoid segfaults. */
-    context->event       = NULL;
-    snprintf(context->script, sizeof(context->script), "%s", buf);
-    if (params)
-        snprintf(context->options, sizeof(context->options), "%s", params);
-    else
-        context->options[0] = 0;
-    context->returnvalue = 1; /* Default is "command successful" */
-
-    current_command = -999;
-    if (!do_script(context, 0)) {
-        freeContext(context);
-        return;
-    }
-
-    context = popContext();
-    freeContext(context);
-/*    printf("Execution complete"); */
 }
 
 static int GECodes[] = {
@@ -1760,11 +1723,10 @@ CF_PLUGIN int   closePlugin(void) {
 
     cf_log(llevDebug, "CFPython 2.0a closing\n");
 
-    for (i = 0; i < NR_CUSTOM_CMD; i++) {
-        if (CustomCommand[i].name != NULL)
-            cf_free_string(CustomCommand[i].name);
-        if (CustomCommand[i].script != NULL)
-            cf_free_string(CustomCommand[i].script);
+    for (int c = 0; c < MAX_COMMANDS; c++) {
+        if (registered_commands[c]) {
+            cf_system_unregister_command(registered_commands[c]);
+        }
     }
 
     for (i = 0; i < PYTHON_CACHE_SIZE; i++) {

@@ -134,6 +134,8 @@ static void cfapi_generate_random_map(int *type, ...);
 static void cfapi_object_user_event(int *type, ...);
 static void cfapi_player_quest(int *type, ...);
 static void cfapi_object_perm_exp(int *type, ...);
+static void cfapi_register_command(int *type, ...);
+static void cfapi_unregister_command(int *type, ...);
 
 /**
  * All hooked functions plugins can call.
@@ -231,6 +233,8 @@ static const hook_entry plug_hooks[] = {
     { cfapi_object_find_by_name,     94, "cfapi_object_find_by_name" },
     { cfapi_player_knowledge,        95, "cfapi_player_knowledge" },
     { cfapi_object_perm_exp,         96, "cfapi_object_perm_exp" },
+    { cfapi_register_command,        97, "cfapi_register_command" },
+    { cfapi_unregister_command,      98, "cfapi_unregister_command" },
 };
 
 /** Linked list of loaded plugins. */
@@ -4454,38 +4458,53 @@ static void cfapi_player_quest(int *type, ...) {
     va_end(args);
 }
 
+static void cfapi_register_command(int *type, ...) {
+    va_list args;
+    const char *name, *extra;
+    float time;
+    command_function func;
+    command_function_extra func_extra;
+    uint8_t register_type, command_type;
+    command_registration *cr;
+
+    va_start(args, type);
+    register_type = va_arg(args, int);
+    name = va_arg(args, const char *);
+    if (register_type == 1) {
+        func = va_arg(args, command_function);
+    } else {
+        extra = va_arg(args, const char *);
+        func_extra = va_arg(args, command_function_extra);
+    }
+    command_type = (uint8_t)va_arg(args, int);
+    time = va_arg(args, double);
+    cr = va_arg(args, command_registration *);
+    va_end(args);
+
+    if (register_type == 1) {
+        (*cr) = command_register(name, command_type, func, time);
+    } else {
+        (*cr) = command_register_extra(name, extra, command_type, func_extra, time);
+    }
+
+    *type = CFAPI_SINT64;
+}
+
+static void cfapi_unregister_command(int *type, ...) {
+    va_list args;
+    command_registration cr;
+
+    va_start(args, type);
+    cr = va_arg(args, command_registration);
+    va_end(args);
+
+    command_unregister(cr);
+}
+
 /*****************************************************************************/
 /* NEW PLUGIN STUFF ENDS HERE                                                */
 /*****************************************************************************/
 
-
-/**
- * Tries to find if a given command is handled by a plugin.
- * Note that this function is called before the internal commands are
- * checked, meaning that you can "overwrite" them.
- * @param cmd
- * command to search for.
- * @param command
- * must be a valid structure pointer, that will be returned if the command is
- * indeed handled by a plugin.
- * @return NULL if the command is not handled by a plugin, else command is returned filled.
- */
-command_array_struct *find_plugin_command(const char *cmd, command_array_struct *command) {
-    int i;
-    crossfire_plugin *cp;
-
-    assert(cmd != NULL);
-    assert(command != NULL);
-
-    if (plugins_list == NULL)
-        return NULL;
-
-    for (cp = plugins_list; cp != NULL; cp = cp->next) {
-        if (cp->propfunc(&i, "command?", cmd, command) != NULL)
-            return command;
-    }
-    return NULL;
-}
 
 /**
  * Plugins initialization. Browses the plugins directory and call

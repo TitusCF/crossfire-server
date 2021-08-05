@@ -32,257 +32,32 @@ extern "C" {
 #include <string>
 #include <algorithm>
 
+/** Represents one command. */
 struct registered_command {
-    command_registration registration;
-    command_array_struct *command;
-    uint8_t type;
+    command_registration registration;                  /**< Identifier for unregistration. */
+    command_function func_std;                          /**< Command function. */
+    command_function_extra func_extra;                  /**< Command function if extra argument. */
+    char *extra;                                        /**< Extra argument, if not NULL then func_extra is used, else fund_std. */
+    float time;                                         /**< How long it takes to execute this command. */
+    uint8_t type;                                       /**< Command type, one of COMMAND_TYPE_xxx. */
 };
 
 static command_registration next_registration = 1;
 static std::map<std::string, std::vector<registered_command *> > registered_commands;
 
 /**
- * Normal game commands.
- */
-static command_array_struct Commands[] = {
-    { "afk", command_afk,                0.0 },
-    { "apply", command_apply,            1.0 },   /* should be variable */
-    { "applymode", command_applymode,    1.0 },   /* should be variable */
-    { "body", command_body,              0.0 },
-    { "bowmode", command_bowmode,        0.0 },
-    { "brace", command_brace,            0.0 },
-    { "cast", command_cast,              0.2 },   /* Is this right? */
-    { "delete", command_delete,          0.0 },
-    { "disarm", command_disarm,          1.0 },
-    { "dm", command_dm,                  0.0 },
-    { "dmhide", command_dmhide,          0.0 }, /* Like dm, but don't tell a dm arrived, hide player */
-    { "drop", command_drop,              1.0 },
-    { "dropall", command_dropall,        1.0 },
-    { "empty", command_empty,            1.0 },
-    { "examine", command_examine,        0.5 },
-    { "fix_me", command_fix_me,          0.0 },
-    { "follow", command_follow,          0.0 },
-    { "forget_spell", command_forget_spell, 0.0 },
-    { "get", command_take,               1.0 },
-    { "help", command_help,              0.0 },
-    { "hiscore", command_hiscore,        0.0 },
-    { "inventory", command_inventory,    0.0 },
-    { "invoke", command_invoke,          1.0 },
-    { "killpets", command_kill_pets,     0.0 },
-    { "language", command_language,      0.0 },
-    { "listen", command_listen,          0.0 },
-    { "lock", command_lock_item,         0.0 },
-    { "maps", command_maps,              0.0 },
-    { "mapinfo", command_mapinfo,        0.0 },
-    { "mark", command_mark,              0.0 },
-    { "motd", command_motd,              0.0 },
-    { "news", command_news,              0.0 },
-    { "party", command_party,            0.0 },
-    { "party_rejoin", command_party_rejoin, 0.0 },
-    { "passwd", command_passwd,          0.0 },
-    { "peaceful", command_peaceful,      0.0 },
-    { "petmode", command_petmode,        0.0 },
-    { "pickup", command_pickup,          1.0 },
-    { "prepare", command_prepare,        1.0 },
-    { "printlos", command_printlos,      0.0 },
-    { "quit", command_quit,              0.0 },
-    { "ready_skill", command_rskill,     1.0 },
-    { "rename", command_rename_item,     0.0 },
-    { "resistances", command_resistances, 0.0 },
-    { "rotateshoottype", command_rotateshoottype, 0.0 },
-    { "rules", command_rules,            0.0 },
-    { "save", command_save,              0.0 },
-    { "skills", command_skills,          0.0 },   /* shows player list of skills */
-    { "use_skill", command_uskill,       1.0 },
-    { "search", command_search,          1.0 },
-    { "search-items", command_search_items, 0.0 },
-    { "showpets", command_showpets,      1.0 },
-    { "sound", command_sound,            0.0 },
-    { "statistics", command_statistics,  0.0 },
-    { "take", command_take,              1.0 },
-    { "throw", command_throw,            1.0 },
-    { "time", command_time,              0.0 },
-    { "title", command_title,            0.0 },
-    { "use", command_use,                1.0 },
-    { "usekeys", command_usekeys,        0.0 },
-    { "whereabouts", command_whereabouts, 0.0 },
-    { "whereami", command_whereami,      0.0 },
-    { "unarmed_skill", command_unarmed_skill, 0.0 },
-#ifdef DEBUG_MALLOC_LEVEL
-    { "verify", command_malloc_verify,   0.0 },
-#endif
-    { "version", command_version,        0.0 },
-    { "wimpy", command_wimpy,            0.0 },
-    { "who", command_who,                0.0 },
-    /*
-     * directional commands
-     */
-    { "stay", command_stay,              1.0 }, /* 1.0 because it is used when using a
-                                               *  skill on yourself */
-    { "north", command_north,            1.0 },
-    { "east", command_east,              1.0 },
-    { "south", command_south,            1.0 },
-    { "west", command_west,              1.0 },
-    { "northeast", command_northeast,    1.0 },
-    { "southeast", command_southeast,    1.0 },
-    { "southwest", command_southwest,    1.0 },
-    { "northwest", command_northwest,    1.0 },
-    { "run", command_run,                1.0 },
-    { "run_stop", command_run_stop,      0.0 },
-    { "fire", command_fire,              1.0 },
-    { "fire_stop", command_fire_stop,    0.0 },
-    { "face", command_face,              0.0 },
-    { "quest", command_quest,            0.0 },
-    { "knowledge", command_knowledge,    0.0 },
-    { NULL, NULL, 0.0 }
-};
-
-/** Chat/shout related commands. */
-static command_array_struct CommunicationCommands [] = {
-    { "tell", command_tell,              0.1 },
-    { "reply", command_reply,            0.0 },
-    { "say", command_say,                0.1 },
-    { "gsay", command_gsay,              1.0 },
-    { "shout", command_shout,            0.1 },
-    { "chat", command_chat,              0.1 },
-    { "me", command_me,                  0.1 },
-    { "cointoss", command_cointoss,      0.0 },
-    { "orcknuckle", command_orcknuckle,  0.0 },
-    /*
-     * begin emotions
-     */
-    { "nod", command_nod,                0.0 },
-    { "dance", command_dance,            0.0 },
-    { "kiss", command_kiss,              0.0 },
-    { "bounce", command_bounce,          0.0 },
-    { "smile", command_smile,            0.0 },
-    { "cackle", command_cackle,          0.0 },
-    { "laugh", command_laugh,            0.0 },
-    { "giggle", command_giggle,          0.0 },
-    { "shake", command_shake,            0.0 },
-    { "puke", command_puke,              0.0 },
-    { "growl", command_growl,            0.0 },
-    { "scream", command_scream,          0.0 },
-    { "sigh", command_sigh,              0.0 },
-    { "sulk", command_sulk,              0.0 },
-    { "hug", command_hug,                0.0 },
-    { "cry", command_cry,                0.0 },
-    { "poke", command_poke,              0.0 },
-    { "accuse", command_accuse,          0.0 },
-    { "grin", command_grin,              0.0 },
-    { "bow", command_bow,                0.0 },
-    { "clap", command_clap,              0.0 },
-    { "blush", command_blush,            0.0 },
-    { "burp", command_burp,              0.0 },
-    { "chuckle", command_chuckle,        0.0 },
-    { "cough", command_cough,            0.0 },
-    { "flip", command_flip,              0.0 },
-    { "frown", command_frown,            0.0 },
-    { "gasp", command_gasp,              0.0 },
-    { "glare", command_glare,            0.0 },
-    { "groan", command_groan,            0.0 },
-    { "hiccup", command_hiccup,          0.0 },
-    { "lick", command_lick,              0.0 },
-    { "pout", command_pout,              0.0 },
-    { "shiver", command_shiver,          0.0 },
-    { "shrug", command_shrug,            0.0 },
-    { "slap", command_slap,              0.0 },
-    { "smirk", command_smirk,            0.0 },
-    { "snap", command_snap,              0.0 },
-    { "sneeze", command_sneeze,          0.0 },
-    { "snicker", command_snicker,        0.0 },
-    { "sniff", command_sniff,            0.0 },
-    { "snore", command_snore,            0.0 },
-    { "spit", command_spit,              0.0 },
-    { "strut", command_strut,            0.0 },
-    { "thank", command_thank,            0.0 },
-    { "twiddle", command_twiddle,        0.0 },
-    { "wave", command_wave,              0.0 },
-    { "whistle", command_whistle,        0.0 },
-    { "wink", command_wink,              0.0 },
-    { "yawn", command_yawn,              0.0 },
-    { "beg", command_beg,                0.0 },
-    { "bleed", command_bleed,            0.0 },
-    { "cringe", command_cringe,          0.0 },
-    { "think", command_think,            0.0 },
-    { NULL, NULL, 0.0 }
-};
-
-/** Wizard commands. */
-static command_array_struct WizCommands [] = {
-    { "abil", command_abil,                      0.0 },
-    { "accountpasswd", command_accountpasswd,    0.0 },
-    { "addexp", command_addexp,                  0.0 },
-    { "arrest", command_arrest,                  0.0 },
-    { "banish", command_banish,                  0.0 },
-    { "create", command_create,                  0.0 },
-    { "debug", command_debug,                    0.0 },
-    { "diff", command_diff,                      0.0 },
-    { "dmtell", command_dmtell,                  0.0 },
-    { "dump", command_dump,                      0.0 },
-    { "dumpabove", command_dumpabove,            0.0 },
-    { "dumpbelow", command_dumpbelow,            0.0 },
-    { "dumpfriendlyobjects", command_dumpfriendlyobjects, 0.0 },
-    { "dumpallarchetypes", command_dumpallarchetypes, 0.0 },
-    { "dumpallmaps", command_dumpallmaps,        0.0 },
-    { "dumpallobjects", command_dumpallobjects,  0.0 },
-    { "dumpmap", command_dumpmap,                0.0 },
-    { "free", command_free,                      0.0 },
-    { "freeze", command_freeze,                  0.0 },
-    { "goto", command_goto,                      0.0 },
-    { "hide", command_hide,                      0.0 },
-    { "insert_into", command_insert_into,        0.0 },
-    { "invisible", command_invisible,            0.0 },
-    { "kick", command_kick,                      0.0 },
-    { "learn_special_prayer", command_learn_special_prayer, 0.0 },
-    { "learn_spell", command_learn_spell,        0.0 },
-    { "malloc", command_malloc,                  0.0 },
-    { "nodm", command_nowiz,                     0.0 },
-    { "nowiz", command_nowiz,                    0.0 },
-    { "patch", command_patch,                    0.0 },
-    { "players", command_players,                0.0 },
-    { "plugin", command_loadplugin,              0.0 },
-    { "pluglist", command_listplugins,           0.0 },
-    { "plugout", command_unloadplugin,           0.0 },
-    { "purge_quest_state", command_purge_quest,  0.0 },
-    { "purge_quests", command_purge_quest_definitions,  0.0 },
-    { "remove", command_remove,                  0.0 },
-    { "reset", command_reset,                    0.0 },
-    { "set_god", command_setgod,                 0.0 },
-    { "settings", command_settings,              0.0 },
-    { "server_speed", command_speed,             0.0 },
-    { "shutdown", command_shutdown,              0.0 },
-    { "ssdumptable", command_ssdumptable,        0.0 },
-    { "stack_clear", command_stack_clear,        0.0 },
-    { "stack_list", command_stack_list,          0.0 },
-    { "stack_pop", command_stack_pop,            0.0 },
-    { "stack_push", command_stack_push,          0.0 },
-    { "stats", command_stats,                    0.0 },
-    { "strings", command_strings,                0.0 },
-    { "style_info", command_style_map_info,      0.0 },        /* Costly command, so make it wiz only */
-    { "summon", command_summon,                  0.0 },
-    { "teleport", command_teleport,              0.0 },
-    { "toggle_shout", command_toggle_shout,      0.0 },
-    { "wizpass", command_wizpass,                0.0 },
-    { "wizcast", command_wizcast,                0.0 },
-    { "overlay_save", command_overlay_save,      0.0 },
-    { "overlay_reset", command_overlay_reset,    0.0 },
-/*    { "possess", command_possess, 0.0 }, */
-    { "mon_aggr", command_mon_aggr,              0.0 },
-    { "loadtest", command_loadtest,              0.0 },
-    { NULL, NULL, 0.0 }
-};
-
-/**
  * Register a player-issued command. The only cause of failure is trying to
  * override an existing command with one having a different type.
+ * If extra is null, then func_std must not be null, else func_extra must not be null.
  * @param name command name.
  * @param type type of the command, one of COMMAND_TYPE_xxx.
- * @param func function to call for the command.
+ * @param func_std function to call for the command.
+ * @param func_extra function to call for the command with an extra argument.
+ * @param extra extra argument to give to func_extra.
  * @param time how long the command takes.
  * @return identifier to unregister the command, 0 if adding failed.
  */
-command_registration command_register(const char *name, uint8_t type, command_function func, float time) {
+static command_registration do_register(const char *name, uint8_t type, command_function func_std, command_function_extra func_extra, const char *extra, float time) {
     auto existing = registered_commands.find(name);
     if (existing != registered_commands.end()) {
         assert(!existing->second.empty());
@@ -295,31 +70,259 @@ command_registration command_register(const char *name, uint8_t type, command_fu
     add->registration = next_registration;
     next_registration++;
     add->type = type;
-    add->command = new command_array_struct();
-    add->command->func = func;
-    add->command->time = time;
+    add->func_std = func_std;
+    add->func_extra = func_extra;
+    add->extra = extra ? strdup(extra) : nullptr;
+    add->time = time;
     registered_commands[name].push_back(add);
     return add->registration;
 }
 
 /**
- * Utility function calling command_register on all commands in the array until the name is NULL.
- * @param commands commands to register.
- * @param type type of the commands.
+ * Register a player-issued command. The only cause of failure is trying to
+ * override an existing command with one having a different type.
+ * @param name command name.
+ * @param type type of the command, one of COMMAND_TYPE_xxx.
+ * @param func function to call for the command.
+ * @param time how long the command takes.
+ * @return identifier to unregister the command, 0 if adding failed.
  */
-static void command_add(command_array_struct *commands, uint8_t type) {
-    for (int i = 0; commands[i].name; i++) {
-        command_register(commands[i].name, type, commands[i].func, commands[i].time);
-    }
+command_registration command_register(const char *name, uint8_t type, command_function func, float time) {
+    return do_register(name, type, func, nullptr, nullptr, time);
 }
 
 /**
  * Init standard commands.
  */
 void commands_init(void) {
-    command_add(Commands, COMMAND_TYPE_NORMAL);
-    command_add(CommunicationCommands, COMMAND_TYPE_COMMUNICATION);
-    command_add(WizCommands, COMMAND_TYPE_WIZARD);
+#define RN(name, func, time) command_register(name, COMMAND_TYPE_NORMAL, func, time)
+#define RC(name, func, time) command_register(name, COMMAND_TYPE_COMMUNICATION, func, time)
+#define RW(name, func, time) command_register(name, COMMAND_TYPE_WIZARD, func, time)
+
+    /* Normal game commands. */
+    RN("afk", command_afk,                0.0);
+    RN("apply", command_apply,            1.0);   /* should be variable */
+    RN("applymode", command_applymode,    1.0);   /* should be variable */
+    RN("body", command_body,              0.0);
+    RN("bowmode", command_bowmode,        0.0);
+    RN("brace", command_brace,            0.0);
+    RN("cast", command_cast,              0.2);   /* Is this right? */
+    RN("delete", command_delete,          0.0);
+    RN("disarm", command_disarm,          1.0);
+    RN("dm", command_dm,                  0.0);
+    RN("dmhide", command_dmhide,          0.0); /* Like dm, but don't tell a dm arrived, hide player */
+    RN("drop", command_drop,              1.0);
+    RN("dropall", command_dropall,        1.0);
+    RN("empty", command_empty,            1.0);
+    RN("examine", command_examine,        0.5);
+    RN("fix_me", command_fix_me,          0.0);
+    RN("follow", command_follow,          0.0);
+    RN("forget_spell", command_forget_spell, 0.0);
+    RN("get", command_take,               1.0);
+    RN("help", command_help,              0.0);
+    RN("hiscore", command_hiscore,        0.0);
+    RN("inventory", command_inventory,    0.0);
+    RN("invoke", command_invoke,          1.0);
+    RN("killpets", command_kill_pets,     0.0);
+    RN("language", command_language,      0.0);
+    RN("listen", command_listen,          0.0);
+    RN("lock", command_lock_item,         0.0);
+    RN("maps", command_maps,              0.0);
+    RN("mapinfo", command_mapinfo,        0.0);
+    RN("mark", command_mark,              0.0);
+    RN("motd", command_motd,              0.0);
+    RN("news", command_news,              0.0);
+    RN("party", command_party,            0.0);
+    RN("party_rejoin", command_party_rejoin, 0.0);
+    RN("passwd", command_passwd,          0.0);
+    RN("peaceful", command_peaceful,      0.0);
+    RN("petmode", command_petmode,        0.0);
+    RN("pickup", command_pickup,          1.0);
+    RN("prepare", command_prepare,        1.0);
+    RN("printlos", command_printlos,      0.0);
+    RN("quit", command_quit,              0.0);
+    RN("ready_skill", command_rskill,     1.0);
+    RN("rename", command_rename_item,     0.0);
+    RN("resistances", command_resistances, 0.0);
+    RN("rotateshoottype", command_rotateshoottype, 0.0);
+    RN("rules", command_rules,            0.0);
+    RN("save", command_save,              0.0);
+    RN("skills", command_skills,          0.0);   /* shows player list of skills */
+    RN("use_skill", command_uskill,       1.0);
+    RN("search", command_search,          1.0);
+    RN("search-items", command_search_items, 0.0);
+    RN("showpets", command_showpets,      1.0);
+    RN("sound", command_sound,            0.0);
+    RN("statistics", command_statistics,  0.0);
+    RN("take", command_take,              1.0);
+    RN("throw", command_throw,            1.0);
+    RN("time", command_time,              0.0);
+    RN("title", command_title,            0.0);
+    RN("use", command_use,                1.0);
+    RN("usekeys", command_usekeys,        0.0);
+    RN("whereabouts", command_whereabouts, 0.0);
+    RN("whereami", command_whereami,      0.0);
+    RN("unarmed_skill", command_unarmed_skill, 0.0);
+#ifdef DEBUG_MALLOC_LEVEL
+    RN("verify", command_malloc_verify,   0.0);
+#endif
+    RN("version", command_version,        0.0);
+    RN("wimpy", command_wimpy,            0.0);
+    RN("who", command_who,                0.0);
+    /*
+     * directional commands
+     */
+    RN("stay", command_stay,              1.0); /* 1.0 because it is used when using a
+                                               *  skill on yourself */
+    RN("north", command_north,            1.0);
+    RN("east", command_east,              1.0);
+    RN("south", command_south,            1.0);
+    RN("west", command_west,              1.0);
+    RN("northeast", command_northeast,    1.0);
+    RN("southeast", command_southeast,    1.0);
+    RN("southwest", command_southwest,    1.0);
+    RN("northwest", command_northwest,    1.0);
+    RN("run", command_run,                1.0);
+    RN("run_stop", command_run_stop,      0.0);
+    RN("fire", command_fire,              1.0);
+    RN("fire_stop", command_fire_stop,    0.0);
+    RN("face", command_face,              0.0);
+    RN("quest", command_quest,            0.0);
+    RN("knowledge", command_knowledge,    0.0);
+
+    /* Chat/shout related commands. */
+    RC("tell", command_tell,              0.1);
+    RC("reply", command_reply,            0.0);
+    RC("say", command_say,                0.1);
+    RC("gsay", command_gsay,              1.0);
+    RC("shout", command_shout,            0.1);
+    RC("chat", command_chat,              0.1);
+    RC("me", command_me,                  0.1);
+    RC("cointoss", command_cointoss,      0.0);
+    RC("orcknuckle", command_orcknuckle,  0.0);
+     /*
+      * begin emotions
+      */
+    RC("nod", command_nod,                0.0);
+    RC("dance", command_dance,            0.0);
+    RC("kiss", command_kiss,              0.0);
+    RC("bounce", command_bounce,          0.0);
+    RC("smile", command_smile,            0.0);
+    RC("cackle", command_cackle,          0.0);
+    RC("laugh", command_laugh,            0.0);
+    RC("giggle", command_giggle,          0.0);
+    RC("shake", command_shake,            0.0);
+    RC("puke", command_puke,              0.0);
+    RC("growl", command_growl,            0.0);
+    RC("scream", command_scream,          0.0);
+    RC("sigh", command_sigh,              0.0);
+    RC("sulk", command_sulk,              0.0);
+    RC("hug", command_hug,                0.0);
+    RC("cry", command_cry,                0.0);
+    RC("poke", command_poke,              0.0);
+    RC("accuse", command_accuse,          0.0);
+    RC("grin", command_grin,              0.0);
+    RC("bow", command_bow,                0.0);
+    RC("clap", command_clap,              0.0);
+    RC("blush", command_blush,            0.0);
+    RC("burp", command_burp,              0.0);
+    RC("chuckle", command_chuckle,        0.0);
+    RC("cough", command_cough,            0.0);
+    RC("flip", command_flip,              0.0);
+    RC("frown", command_frown,            0.0);
+    RC("gasp", command_gasp,              0.0);
+    RC("glare", command_glare,            0.0);
+    RC("groan", command_groan,            0.0);
+    RC("hiccup", command_hiccup,          0.0);
+    RC("lick", command_lick,              0.0);
+    RC("pout", command_pout,              0.0);
+    RC("shiver", command_shiver,          0.0);
+    RC("shrug", command_shrug,            0.0);
+    RC("slap", command_slap,              0.0);
+    RC("smirk", command_smirk,            0.0);
+    RC("snap", command_snap,              0.0);
+    RC("sneeze", command_sneeze,          0.0);
+    RC("snicker", command_snicker,        0.0);
+    RC("sniff", command_sniff,            0.0);
+    RC("snore", command_snore,            0.0);
+    RC("spit", command_spit,              0.0);
+    RC("strut", command_strut,            0.0);
+    RC("thank", command_thank,            0.0);
+    RC("twiddle", command_twiddle,        0.0);
+    RC("wave", command_wave,              0.0);
+    RC("whistle", command_whistle,        0.0);
+    RC("wink", command_wink,              0.0);
+    RC("yawn", command_yawn,              0.0);
+    RC("beg", command_beg,                0.0);
+    RC("bleed", command_bleed,            0.0);
+    RC("cringe", command_cringe,          0.0);
+    RC("think", command_think,            0.0);
+
+    /** Wizard commands. */
+    RW("abil", command_abil,                      0.0);
+    RW("accountpasswd", command_accountpasswd,    0.0);
+    RW("addexp", command_addexp,                  0.0);
+    RW("arrest", command_arrest,                  0.0);
+    RW("banish", command_banish,                  0.0);
+    RW("create", command_create,                  0.0);
+    RW("debug", command_debug,                    0.0);
+    RW("diff", command_diff,                      0.0);
+    RW("dmtell", command_dmtell,                  0.0);
+    RW("dump", command_dump,                      0.0);
+    RW("dumpabove", command_dumpabove,            0.0);
+    RW("dumpbelow", command_dumpbelow,            0.0);
+    RW("dumpfriendlyobjects", command_dumpfriendlyobjects, 0.0);
+    RW("dumpallarchetypes", command_dumpallarchetypes, 0.0);
+    RW("dumpallmaps", command_dumpallmaps,        0.0);
+    RW("dumpallobjects", command_dumpallobjects,  0.0);
+    RW("dumpmap", command_dumpmap,                0.0);
+    RW("free", command_free,                      0.0);
+    RW("freeze", command_freeze,                  0.0);
+    RW("goto", command_goto,                      0.0);
+    RW("hide", command_hide,                      0.0);
+    RW("insert_into", command_insert_into,        0.0);
+    RW("invisible", command_invisible,            0.0);
+    RW("kick", command_kick,                      0.0);
+    RW("learn_special_prayer", command_learn_special_prayer, 0.0);
+    RW("learn_spell", command_learn_spell,        0.0);
+    RW("malloc", command_malloc,                  0.0);
+    RW("nodm", command_nowiz,                     0.0);
+    RW("nowiz", command_nowiz,                    0.0);
+    RW("patch", command_patch,                    0.0);
+    RW("players", command_players,                0.0);
+    RW("plugin", command_loadplugin,              0.0);
+    RW("pluglist", command_listplugins,           0.0);
+    RW("plugout", command_unloadplugin,           0.0);
+    RW("purge_quest_state", command_purge_quest,  0.0);
+    RW("purge_quests", command_purge_quest_definitions,  0.0);
+    RW("remove", command_remove,                  0.0);
+    RW("reset", command_reset,                    0.0);
+    RW("set_god", command_setgod,                 0.0);
+    RW("settings", command_settings,              0.0);
+    RW("server_speed", command_speed,             0.0);
+    RW("shutdown", command_shutdown,              0.0);
+    RW("ssdumptable", command_ssdumptable,        0.0);
+    RW("stack_clear", command_stack_clear,        0.0);
+    RW("stack_list", command_stack_list,          0.0);
+    RW("stack_pop", command_stack_pop,            0.0);
+    RW("stack_push", command_stack_push,          0.0);
+    RW("stats", command_stats,                    0.0);
+    RW("strings", command_strings,                0.0);
+    RW("style_info", command_style_map_info,      0.0);        /* Costly command, so make it wiz only */
+    RW("summon", command_summon,                  0.0);
+    RW("teleport", command_teleport,              0.0);
+    RW("toggle_shout", command_toggle_shout,      0.0);
+    RW("wizpass", command_wizpass,                0.0);
+    RW("wizcast", command_wizcast,                0.0);
+    RW("overlay_save", command_overlay_save,      0.0);
+    RW("overlay_reset", command_overlay_reset,    0.0);
+    /*   RW("possess", command_possess, 0.0); */
+    RW("mon_aggr", command_mon_aggr,              0.0);
+    RW("loadtest", command_loadtest,              0.0);
+
+#undef RN
+#undef RC
+#undef RW
 }
 
 /**
@@ -369,7 +372,7 @@ void command_list(object *pl, bool is_dm) {
  * @param is_dm whether the player is DM or not.
  * @return command, NULL if no match found.
  */
-command_array_struct *command_find(const char *name, bool is_dm) {
+static registered_command *command_find(const char *name, bool is_dm) {
     auto existing = registered_commands.find(name);
     if (existing == registered_commands.end()) {
         return NULL;
@@ -377,7 +380,7 @@ command_array_struct *command_find(const char *name, bool is_dm) {
     if (!is_dm && existing->second.back()->type == COMMAND_TYPE_WIZARD) {
         return NULL;
     }
-    return existing->second.back()->command;
+    return existing->second.back();
 }
 
 /**
@@ -389,7 +392,7 @@ command_array_struct *command_find(const char *name, bool is_dm) {
  * the actual command with its arguments. Will be modified in-place.
  */
 void command_execute(object *pl, char *command) {
-    command_array_struct *csp, sent;
+    registered_command *csp;
     char *cp, *low;
 
     pl->contr->has_hit = 0;
@@ -414,9 +417,7 @@ void command_execute(object *pl, char *command) {
     for (low = command; *low; low++)
         *low = tolower(*low);
 
-    csp = find_plugin_command(command, &sent);
-    if (!csp)
-        csp = command_find(command, QUERY_FLAG(pl, FLAG_WIZ));
+    csp = command_find(command, QUERY_FLAG(pl, FLAG_WIZ));
 
     if (csp == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
@@ -441,5 +442,46 @@ void command_execute(object *pl, char *command) {
     if (csp->time && pl->speed_left < -2.0) {
         LOG(llevDebug, "execute_newclient_command: Player issued command that takes more time than he has left.\n");
     }
-    csp->func(pl, cp);
+    if (csp->extra) {
+        csp->func_extra(pl, cp, csp->extra);
+    } else {
+        csp->func_std(pl, cp);
+    }
+}
+
+/**
+ * Register a player-issued command with an extra parameter.
+ * This allow commands that need a supplemental fixed argument.
+ * The only cause of failure is trying to
+ * override an existing command with one having a different type.
+ * @param name command name.
+ * @param extra extra data to give the command, must not be null.
+ * @param type type of the command, one of COMMAND_TYPE_xxx.
+ * @param func function to call for the command.
+ * @param time how long the command takes.
+ * @return identifier to unregister the command, 0 if adding failed.
+ */
+command_registration command_register_extra(const char *name, const char *extra, uint8_t type, command_function_extra func, float time) {
+    assert(extra);
+    return do_register(name, type, nullptr, func, extra, time);
+}
+
+/**
+ * Unregister a previously registered command.
+ * @param command identifier returned by command_register() or command_register_extra().
+ */
+void command_unregister(command_registration command) {
+    for (auto cmd = registered_commands.begin(); cmd != registered_commands.end(); cmd++) {
+        for (auto h = cmd->second.begin(); h != cmd->second.end(); h++) {
+            if ((*h)->registration == command) {
+                free((*h)->extra);
+                delete (*h);
+                cmd->second.erase(h);
+                if (cmd->second.empty()) {
+                    registered_commands.erase(cmd);
+                }
+                return;
+            }
+        }
+    }
 }

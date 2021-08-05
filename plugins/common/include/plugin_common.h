@@ -46,6 +46,9 @@
 extern int cf_init_plugin(f_plug_api getHooks);
 extern void cf_system_register_global_event(int event, const char *name, f_plug_event hook);
 extern void cf_system_unregister_global_event(int event, const char *name);
+extern command_registration cf_system_register_command(const char *name, command_function func, uint8_t command_type, float time);
+extern command_registration cf_system_register_command_extra(const char *name, const char *extra, command_function_extra func, uint8_t command_type, float time);
+extern void cf_system_unregister_command(command_registration command);
 
 /* General functions */
 extern sstring      cf_add_string(const char *str);

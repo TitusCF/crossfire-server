@@ -127,6 +127,8 @@ static f_plug_api cfapiPlayer_quest = NULL;
 static f_plug_api cfapiObject_remove_depletion = NULL;
 static f_plug_api cfapiPlayer_knowledge = NULL;
 static f_plug_api cfapiObject_perm_exp = NULL;
+static f_plug_api cfapiSystem_register_command = NULL;
+static f_plug_api cfapiSystem_unregister_command = NULL;
 
 #define GET_HOOK(x, y, z) { \
     getHooks(&z, 1, y, &x); \
@@ -228,6 +230,8 @@ int cf_init_plugin(f_plug_api getHooks) {
     GET_HOOK(cfapiObject_find_by_name, "cfapi_object_find_by_name", z);
     GET_HOOK(cfapiPlayer_knowledge, "cfapi_player_knowledge", z);
     GET_HOOK(cfapiObject_perm_exp, "cfapi_object_perm_exp", z);
+    GET_HOOK(cfapiSystem_register_command, "cfapi_register_command", z);
+    GET_HOOK(cfapiSystem_unregister_command, "cfapi_unregister_command", z);
     return 1;
 }
 
@@ -2084,4 +2088,25 @@ int cf_quest_was_completed(object *pl, sstring quest_code) {
     assert(type == CFAPI_INT);
 
     return ret;
+}
+
+command_registration cf_system_register_command(const char *name, command_function func, uint8_t command_type, float time) {
+    int type;
+    command_registration cr;
+    cfapiSystem_register_command(&type, 1, name, func, command_type, time, &cr);
+    assert(type == CFAPI_SINT64);
+    return cr;
+}
+
+command_registration cf_system_register_command_extra(const char *name, const char *extra, command_function_extra func, uint8_t command_type, float time) {
+    int type;
+    command_registration cr;
+    cfapiSystem_register_command(&type, 2, name, extra, func, command_type, time, &cr);
+    assert(type == CFAPI_SINT64);
+    return cr;
+}
+
+void cf_system_unregister_command(command_registration command) {
+    int type;
+    cfapiSystem_unregister_command(&type, command);
 }
