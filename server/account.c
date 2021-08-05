@@ -119,10 +119,11 @@ void accounts_clear(void) {
  * be called once during the program startup.
  */
 void accounts_load(void) {
-    char fname[MAX_BUF], buf[VERY_BIG_BUF];
+    char fname[MAX_BUF], *buf;
     FILE *fp;
     account_struct *ac, *last=NULL;
     int fields=0;
+    BufferReader *br;
 
     if (accounts != NULL) {
         LOG(llevError, "account_load_entries(): Called when accounts has been set.\n");
@@ -137,16 +138,16 @@ void accounts_load(void) {
         LOG(llevInfo,"Warning: Unable to open %s [%s]\n", fname, strerror(errno));
         return;
     }
-    while (fgets(buf, VERY_BIG_BUF, fp)) {
+    br = bufferreader_create();
+    bufferreader_init_from_file(br, fp);
+    fclose(fp);
+
+    while ((buf = bufferreader_next_line(br))) {
         char *tmp[NUM_ACCOUNT_FIELDS], *cp;
         int result, i;
 
         /* Ignore any comment lines */
         if (buf[0] == '#') continue;
-
-        /* remove newline */
-        cp = strchr(buf, '\n');
-        if (cp) *cp='\0';
 
         fields = split_string(buf, tmp, NUM_ACCOUNT_FIELDS, ':');
 
@@ -230,7 +231,8 @@ void accounts_load(void) {
         last = ac;
 
     }
-    fclose(fp);
+
+    bufferreader_destroy(br);
     accounts_loaded = 1;
 }
 
