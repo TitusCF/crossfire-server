@@ -122,15 +122,10 @@ START_TEST(test_account_add_account) {
     i=account_link("Some Body", "foobar");
     fail_unless(i == 0, "Failed to add player to valid account");
 
-    /* The precise number of players per account is not exposed,
-     * but at least as of now, it should be less than 30.  So we try to add
-     * 30 players.  We use |= so that we can just try to add them all.
-     */
     for (j=0; j<30; j++) {
         sprintf(names,"char-%02d", j);
-        i |= account_link("No Body", names);
+        account_link("No Body", names);
     }
-    fail_unless(i != 0, "Too many players added to account");
 
     char_names = account_get_players_for_account("foobar");
     fail_unless(char_names == NULL, "Got non null value for players on account with non existant accoun");
