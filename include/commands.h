@@ -16,6 +16,16 @@
  */
 typedef void (*command_function)(object *op, const char *params);
 
+/** Identifier when registering a command. */
+typedef uint64_t command_registration;
+
+/** Standard commands. */
+#define COMMAND_TYPE_NORMAL         0
+/** Communication commands. */
+#define COMMAND_TYPE_COMMUNICATION  1
+/** Wizard-only commands. */
+#define COMMAND_TYPE_WIZARD         2
+
 /** Represents one command. */
 typedef struct {
     const char *name;         /**< Command name. */

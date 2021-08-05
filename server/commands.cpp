@@ -25,7 +25,21 @@ extern "C" {
 
 #include "commands.h"
 #include "sproto.h"
+#include "assert.h"
 }
+#include <map>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+struct registered_command {
+    command_registration registration;
+    command_array_struct *command;
+    uint8_t type;
+};
+
+static command_registration next_registration = 1;
+static std::map<std::string, std::vector<registered_command *> > registered_commands;
 
 /**
  * Normal game commands.
@@ -119,11 +133,9 @@ static command_array_struct Commands[] = {
     { "fire_stop", command_fire_stop,    0.0 },
     { "face", command_face,              0.0 },
     { "quest", command_quest,            0.0 },
-    { "knowledge", command_knowledge,    0.0 }
+    { "knowledge", command_knowledge,    0.0 },
+    { NULL, NULL, 0.0 }
 };
-
-/** Length of ::Commands array. */
-const int CommandsSize = sizeof(Commands)/sizeof(command_array_struct);
 
 /** Chat/shout related commands. */
 static command_array_struct CommunicationCommands [] = {
@@ -192,11 +204,9 @@ static command_array_struct CommunicationCommands [] = {
     { "beg", command_beg,                0.0 },
     { "bleed", command_bleed,            0.0 },
     { "cringe", command_cringe,          0.0 },
-    { "think", command_think,            0.0 }
+    { "think", command_think,            0.0 },
+    { NULL, NULL, 0.0 }
 };
-
-/** Length of the ::CommunicationCommands array. */
-const int CommunicationCommandSize = sizeof(CommunicationCommands)/sizeof(command_array_struct);
 
 /** Wizard commands. */
 static command_array_struct WizCommands [] = {
@@ -260,34 +270,56 @@ static command_array_struct WizCommands [] = {
 /*    { "possess", command_possess, 0.0 }, */
     { "mon_aggr", command_mon_aggr,              0.0 },
     { "loadtest", command_loadtest,              0.0 },
+    { NULL, NULL, 0.0 }
 };
 
-/** Length of ::WizCommands array. */
-const int WizCommandsSize = sizeof(WizCommands)/sizeof(command_array_struct);
-
 /**
- * Comparison function for 2 command_array_struct.
- * @param a
- * @param b
- * commands to compare.
- * @retval -1
- * a is less than b.
- * @retval 0
- * a equals b.
- * @retval 1
- * a is greater than b.
+ * Register a player-issued command. The only cause of failure is trying to
+ * override an existing command with one having a different type.
+ * @param name command name.
+ * @param type type of the command, one of COMMAND_TYPE_xxx.
+ * @param func function to call for the command.
+ * @param time how long the command takes.
+ * @return identifier to unregister the command, 0 if adding failed.
  */
-static int compare_A(const void *a, const void *b) {
-    return strcmp(((const command_array_struct *)a)->name, ((const command_array_struct *)b)->name);
+command_registration command_register(const char *name, uint8_t type, command_function func, float time) {
+    auto existing = registered_commands.find(name);
+    if (existing != registered_commands.end()) {
+        assert(!existing->second.empty());
+        if (existing->second.back()->type != type) {
+            return 0;
+        }
+    }
+
+    registered_command *add = new registered_command();
+    add->registration = next_registration;
+    next_registration++;
+    add->type = type;
+    add->command = new command_array_struct();
+    add->command->func = func;
+    add->command->time = time;
+    registered_commands[name].push_back(add);
+    return add->registration;
 }
 
 /**
- * Sorts the command arrays for easy search through bsearch().
+ * Utility function calling command_register on all commands in the array until the name is NULL.
+ * @param commands commands to register.
+ * @param type type of the commands.
+ */
+static void command_add(command_array_struct *commands, uint8_t type) {
+    for (int i = 0; commands[i].name; i++) {
+        command_register(commands[i].name, type, commands[i].func, commands[i].time);
+    }
+}
+
+/**
+ * Init standard commands.
  */
 void commands_init(void) {
-    qsort(Commands, CommandsSize, sizeof(command_array_struct), compare_A);
-    qsort(CommunicationCommands, CommunicationCommandSize, sizeof(command_array_struct), compare_A);
-    qsort(WizCommands, WizCommandsSize, sizeof(command_array_struct), compare_A);
+    command_add(Commands, COMMAND_TYPE_NORMAL);
+    command_add(CommunicationCommands, COMMAND_TYPE_COMMUNICATION);
+    command_add(WizCommands, COMMAND_TYPE_WIZARD);
 }
 
 /**
@@ -300,17 +332,18 @@ void commands_init(void) {
  * @param legend
  * banner to print before the commands.
  */
-static void show_commands(object *op, command_array_struct *ap, const char *legend) {
+static void show_commands(object *op, uint8_t type, const char *legend) {
     char line[HUGE_BUF];
-    int i;
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, legend);
 
     line[0] = '\0';
-    for (i = 0; ap[i].name; i++) {
-        strcat(line, ap[i].name);
-        strcat(line, " ");
-    }
+    std::for_each(registered_commands.begin(), registered_commands.end(), [&type, &line] (auto cmd) {
+        if (cmd.second.back()->type == type) {
+            strcat(line, cmd.first.c_str());
+            strcat(line, " ");
+        }
+    });
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
 }
 
@@ -321,36 +354,13 @@ static void show_commands(object *op, command_array_struct *ap, const char *lege
  * @param is_dm true if the player is a DM, false else.
  */
 void command_list(object *pl, bool is_dm) {
-    show_commands(pl, Commands, "      Commands:");
+    show_commands(pl, COMMAND_TYPE_NORMAL, "      Commands:");
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n");
-    show_commands(pl, CommunicationCommands, "      Communication commands:");
+    show_commands(pl, COMMAND_TYPE_COMMUNICATION, "      Communication commands:");
     if (is_dm) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n");
-        show_commands(pl, WizCommands, "      Wiz commands:");
+        show_commands(pl, COMMAND_TYPE_WIZARD, "      Wiz commands:");
     }
-}
-
-/**
- * Finds the specified command in the command array. Utility function.
- *
- * @param cmd
- * command to find.
- * @param commarray
- * commands to search into.
- * @param commsize
- * length of commarray.
- * @return
- * matching command, NULL for no match.
- */
-static command_array_struct *find_command_element(const char *cmd, command_array_struct *commarray, int commsize) {
-    command_array_struct *asp, dummy;
-
-    dummy.name = cmd;
-    asp = (command_array_struct *)bsearch((void *)&dummy,
-                                          (void *)commarray, commsize,
-                                          sizeof(command_array_struct),
-                                          compare_A);
-    return asp;
 }
 
 /**
@@ -360,14 +370,12 @@ static command_array_struct *find_command_element(const char *cmd, command_array
  * @return command, NULL if no match found.
  */
 command_array_struct *command_find(const char *name, bool is_dm) {
-    command_array_struct *csp;
-
-    csp = find_command_element(name, Commands, CommandsSize);
-    if (!csp)
-        csp = find_command_element(name, CommunicationCommands,
-                                   CommunicationCommandSize);
-    if (!csp && is_dm)
-        csp = find_command_element(name, WizCommands, WizCommandsSize);
-
-    return csp;
+    auto existing = registered_commands.find(name);
+    if (existing == registered_commands.end()) {
+        return NULL;
+    }
+    if (!is_dm && existing->second.back()->type == COMMAND_TYPE_WIZARD) {
+        return NULL;
+    }
+    return existing->second.back()->command;
 }
