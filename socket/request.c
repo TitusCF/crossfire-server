@@ -296,8 +296,8 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
 
             notifications = atoi(param);
 
-            ns->notifications = notifications;
-            SockList_AddPrintf(&sl, "%d", notifications);
+            ns->notifications = MIN(notifications, 2);
+            SockList_AddPrintf(&sl, "%d", ns->notifications);
 
         } else if (!strcmp(cmd, "newmapcmd")) {
             /* newmapcmd is deprecated (now standard part), but some
