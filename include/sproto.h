@@ -288,6 +288,8 @@ void command_dumpbelow(object *op, const char *params);
 void command_settings(object *op, const char *ignored);
 /* commands.c */
 void init_commands(void);
+command_array_struct *command_find(const char *name, bool is_dm);
+void command_list(object *pl, bool is_dm);
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);

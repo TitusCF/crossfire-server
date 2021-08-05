@@ -25,15 +25,10 @@
 #include "commands.h"
 #include "sproto.h"
 
-/* Added times to all the commands.  However, this was quickly done,
- * and probably needs more refinements.  All socket and DM commands
- * take 0 time.
- */
-
 /**
  * Normal game commands.
  */
-command_array_struct Commands[] = {
+static command_array_struct Commands[] = {
     { "afk", command_afk,                0.0 },
     { "apply", command_apply,            1.0 },   /* should be variable */
     { "applymode", command_applymode,    1.0 },   /* should be variable */
@@ -129,7 +124,7 @@ command_array_struct Commands[] = {
 const int CommandsSize = sizeof(Commands)/sizeof(command_array_struct);
 
 /** Chat/shout related commands. */
-command_array_struct CommunicationCommands [] = {
+static command_array_struct CommunicationCommands [] = {
     { "tell", command_tell,              0.1 },
     { "reply", command_reply,            0.0 },
     { "say", command_say,                0.1 },
@@ -202,7 +197,7 @@ command_array_struct CommunicationCommands [] = {
 const int CommunicationCommandSize = sizeof(CommunicationCommands)/sizeof(command_array_struct);
 
 /** Wizard commands. */
-command_array_struct WizCommands [] = {
+static command_array_struct WizCommands [] = {
     { "abil", command_abil,                      0.0 },
     { "accountpasswd", command_accountpasswd,    0.0 },
     { "addexp", command_addexp,                  0.0 },
@@ -264,6 +259,7 @@ command_array_struct WizCommands [] = {
     { "mon_aggr", command_mon_aggr,              0.0 },
     { "loadtest", command_loadtest,              0.0 },
 };
+
 /** Length of ::WizCommands array. */
 const int WizCommandsSize = sizeof(WizCommands)/sizeof(command_array_struct);
 
@@ -290,4 +286,86 @@ void init_commands(void) {
     qsort(Commands, CommandsSize, sizeof(command_array_struct), compare_A);
     qsort(CommunicationCommands, CommunicationCommandSize, sizeof(command_array_struct), compare_A);
     qsort(WizCommands, WizCommandsSize, sizeof(command_array_struct), compare_A);
+}
+
+/**
+ * Helper function to display commands.
+ *
+ * @param op
+ * player asking for information.
+ * @param ap
+ * commands to display.
+ * @param legend
+ * banner to print before the commands.
+ */
+static void show_commands(object *op, command_array_struct *ap, const char *legend) {
+    char line[HUGE_BUF];
+    int i;
+
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, legend);
+
+    line[0] = '\0';
+    for (i = 0; ap[i].name; i++) {
+        strcat(line, ap[i].name);
+        strcat(line, " ");
+    }
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
+}
+
+/**
+ * Display the list of commands to a player.
+ *
+ * @param pl player asking for commands.
+ * @param is_dm true if the player is a DM, false else.
+ */
+void command_list(object *pl, bool is_dm) {
+    show_commands(pl, Commands, "      Commands:");
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n");
+    show_commands(pl, CommunicationCommands, "      Communication commands:");
+    if (is_dm) {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n");
+        show_commands(pl, WizCommands, "      Wiz commands:");
+    }
+}
+
+/**
+ * Finds the specified command in the command array. Utility function.
+ *
+ * @param cmd
+ * command to find.
+ * @param commarray
+ * commands to search into.
+ * @param commsize
+ * length of commarray.
+ * @return
+ * matching command, NULL for no match.
+ */
+static command_array_struct *find_command_element(const char *cmd, command_array_struct *commarray, int commsize) {
+    command_array_struct *asp, dummy;
+
+    dummy.name = cmd;
+    asp = (command_array_struct *)bsearch((void *)&dummy,
+                                          (void *)commarray, commsize,
+                                          sizeof(command_array_struct),
+                                          compare_A);
+    return asp;
+}
+
+/**
+ * Find a command by its name.
+ * @param name command name.
+ * @param is_dm whether the player is DM or not.
+ * @return command, NULL if no match found.
+ */
+command_array_struct *command_find(const char *name, bool is_dm) {
+    command_array_struct *csp;
+
+    csp = find_command_element(name, Commands, CommandsSize);
+    if (!csp)
+        csp = find_command_element(name, CommunicationCommands,
+                                   CommunicationCommandSize);
+    if (!csp && is_dm)
+        csp = find_command_element(name, WizCommands, WizCommandsSize);
+
+    return csp;
 }
