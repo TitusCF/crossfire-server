@@ -1235,6 +1235,7 @@ void cleanup(void) {
     free_style_maps();
 #endif
     cleanupPlugins();
+    commands_clear();
 #ifdef MEMORY_DEBUG
     free_all_archs();
     free_all_artifacts();

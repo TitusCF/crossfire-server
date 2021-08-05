@@ -325,6 +325,22 @@ void commands_init(void) {
 }
 
 /**
+ * Clear all registered commands.
+ */
+void commands_clear() {
+    for (auto cmd = registered_commands.begin(); cmd != registered_commands.end(); cmd++) {
+        for (auto h = cmd->second.begin(); h != cmd->second.end(); h++) {
+            free((*h)->extra);
+            delete *h;
+        }
+        cmd->second.clear();
+    }
+    registered_commands.clear();
+
+    next_registration = 1;
+}
+
+/**
  * Helper function to display commands.
  *
  * @param op
