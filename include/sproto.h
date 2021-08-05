@@ -291,6 +291,9 @@ void command_settings(object *op, const char *ignored);
 void commands_init(void);
 void command_list(object *pl, bool is_dm);
 void command_execute(object *pl, char *command);
+command_registration command_register(const char *name, uint8_t type, command_function func, float time);
+command_registration command_register_extra(const char *name, const char *extra, uint8_t type, command_function_extra func, float time);
+void command_unregister(command_registration command);
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);
@@ -446,7 +449,6 @@ SockList *player_get_delayed_buffer(player *pl);
 int plugins_init_plugin(const char *libfile);
 int plugins_remove_plugin(const char *id);
 void plugins_display_list(object *op);
-command_array_struct *find_plugin_command(const char *cmd, command_array_struct *command);
 void initPlugins(void);
 void cleanupPlugins(void);
 /* quest.c */
