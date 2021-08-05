@@ -292,6 +292,7 @@ void command_execute(object *pl, char *command);
 command_registration command_register(const char *name, uint8_t type, command_function func, float time);
 command_registration command_register_extra(const char *name, const char *extra, uint8_t type, command_function_extra func, float time);
 void command_unregister(command_registration command);
+void commands_clear();
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);
