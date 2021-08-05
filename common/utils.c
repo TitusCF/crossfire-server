@@ -609,3 +609,15 @@ void fatal(enum fatal_error err) {
     fprintf(logfile, "Exiting...\n");
     exit(err);
 }
+
+/**
+ * Frees a link structure and its next items.
+ *
+ * @param lc
+ * item to free. Pointer is free()d too, so becomes invalid.
+ */
+void free_charlinks(linked_char *lc) {
+    if (lc->next)
+        free_charlinks(lc->next);
+    free(lc);
+}

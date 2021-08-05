@@ -454,6 +454,7 @@ extern void replace_unprintable_chars(char *buf);
 extern size_t split_string(char *str, char *array[], size_t array_size, char sep);
 extern StringBuffer *describe_spellpath_attenuation(const char *attenuation, int value, StringBuffer *buf);
 extern StringBuffer *describe_attacktype(const char *attack, int value, StringBuffer *buf);
+extern void free_charlinks(linked_char *lc);
 /* loader.c */
 extern void yyrestart(FILE *input_file);
 extern void yypop_buffer_state(void);

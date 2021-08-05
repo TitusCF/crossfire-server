@@ -553,6 +553,51 @@ char **account_get_players_for_account(const char *account_name)
 }
 
 /**
+ * Check if a character name is in a list or not.
+ * @param name character name to check.
+ * @param chars list of names to check.
+ * @return 0 if not in the list, non-zero else.
+ */
+static int char_in_list(const char *name, const Account_Char *chars) {
+    while (chars) {
+        if (strcmp(chars->name, name) == 0) {
+            return 1;
+        }
+        chars = chars->next;
+    }
+    return 0;
+}
+
+/**
+ * Get a list of character names linked to the specified account which are not
+ * listed in chars.
+ * @param account_name account name.
+ * @param chars known character names.
+ * @param[out] count will be incremented by the number of items returned. Not initialized before use.
+ * @return list of character names not in chars, the caller should free it after use.
+ */
+linked_char *account_get_additional_chars(const char *account_name, const Account_Char *chars, int *count) {
+    account_struct *ac;
+    linked_char *ret = NULL;
+
+    for (ac = accounts; ac; ac = ac->next) {
+        if (!strcasecmp(ac->name, account_name)) {
+            for (int i = 0; i < ac->num_characters; i++) {
+                if (!char_in_list(ac->character_names[i], chars)) {
+                    linked_char *lc = (linked_char *)calloc(1, sizeof(linked_char));
+                    lc->next = ret;
+                    lc->name = ac->character_names[i];
+                    ret = lc;
+                    (*count)++;
+                }
+            }
+            return ret;
+        }
+    }
+    return NULL;
+}
+
+/**
  * This looks at all the accounts and sees if charname is associated
  * with any of them.
  *
