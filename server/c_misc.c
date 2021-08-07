@@ -2256,7 +2256,7 @@ void do_harvest(object *pl, int dir, object *skill) {
     item = GET_MAP_OB(map, x, y);
     while (item && count < 10) {
         FOR_INV_PREPARE(item, inv) {
-            if (object_get_value(inv, "harvestable") == NULL)
+            if (object_value_set(inv, "harvestable") == false)
                 continue;
             race = object_get_value(inv, "harvest_race");
             tool = object_get_value(inv, "harvest_tool");

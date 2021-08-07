@@ -4390,7 +4390,7 @@ const char *object_get_value(const object *op, const char *const key) {
  * but also recognizes empty string and "0".
  */
 bool object_value_set(const object *op, const char *const key) {
-    char *ret = object_get_value(op, key);
+    const char *ret = object_get_value(op, key);
     if (ret == NULL || (strcmp(ret, "") == 0) || (strcmp(ret, "0") == 0)) {
         return false;
     }
