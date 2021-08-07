@@ -2445,7 +2445,7 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
     chars = account_get_players_for_account(ns->account_name);
 
     for (i=0; chars[i]; i++) {
-        if (!!strcmp(chars[i], buf))
+        if (strcmp(chars[i], buf) == 0)
             break;
     }
     if (!chars[i]) {
