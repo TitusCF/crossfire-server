@@ -371,7 +371,10 @@ static int pics_allocated;
 static int generate_pics = 1;     /**< Whether to generate the picture or not. */
 static int force_pics = 0;        /**< To force picture regeneration even if map didn't change. */
 static int generate_index = 1;    /**< Whether to do the map index or not. */
-static int size_small = 16;       /**< Tile size for small map */
+static int sizes[] = {32, 16, 8, 4, 2};
+static const int num_sizes = sizeof(sizes)/sizeof(int);
+#define size_large sizes[0]
+#define size_small sizes[1]
 static int map_limit = -1;        /**< Maximum number of maps to browse, -1 for all. */
 static int show_maps = 0;         /**< If set, will generate much information on map loaded. */
 static int world_map = 1;         /**< If set, will generate a world map. */
@@ -1870,7 +1873,7 @@ static void process_map(struct_map_info *info) {
     struct stat statspic;
     char exit_path[500];
     char tmppath[MAX_BUF];
-    char picpath[MAX_BUF], smallpicpath[MAX_BUF];
+    char picpath[num_sizes][MAX_BUF];
     int needpic = 0;
     struct_map_info *link;
 
@@ -1907,24 +1910,23 @@ static void process_map(struct_map_info *info) {
     info->cfregion = get_region_by_map(m);
     add_map_to_region(info, info->cfregion);
 
-    snprintf(picpath, sizeof(picpath), "%s%s%s", root, info->path, output_extensions[output_format]);
-    snprintf(smallpicpath, sizeof(smallpicpath), "%s%s.small%s", root, info->path, output_extensions[output_format]);
+    for (int i = 0; i < num_sizes; i++) {
+        snprintf(picpath[i], sizeof(picpath[i]), "%s%s.x%d%s", root, info->path, i+1, output_extensions[output_format]);
+    }
 
     if (force_pics)
         needpic = 1;
     else if (generate_pics) {
         create_pathname(info->path, tmppath, MAX_BUF);
         stat(tmppath, &stats);
-        if (stat(picpath, &statspic) || (statspic.st_mtime < stats.st_mtime))
-            needpic = 1;
-        else if (stat(smallpicpath, &statspic) || (statspic.st_mtime < stats.st_mtime))
+        if (stat(picpath[0], &statspic) || (statspic.st_mtime < stats.st_mtime))
             needpic = 1;
     }
     else
         needpic = 0;
 
     if (needpic) {
-        pic = gdImageCreateTrueColor(MAP_WIDTH(m)*32, MAP_HEIGHT(m)*32);
+        pic = gdImageCreateTrueColor(MAP_WIDTH(m)*size_large, MAP_HEIGHT(m)*size_large);
         created_pics++;
     }
     else
@@ -2079,28 +2081,28 @@ static void process_map(struct_map_info *info) {
                         hy = 0;
                     }
                     if (gdfaces[item->face->number] != NULL && ((!item->head && !item->more) || (item->arch->clone.x+hx == 0 && item->arch->clone.y+hy == 0))) {
-                        gdImageCopy(pic, gdfaces[item->face->number], x*32, y*32, 0, 0, gdfaces[item->face->number]->sx, gdfaces[item->face->number]->sy);
+                        gdImageCopy(pic, gdfaces[item->face->number], x*size_large, y*size_large, 0, 0, gdfaces[item->face->number]->sx, gdfaces[item->face->number]->sy);
                     }
                 }
             } FOR_MAP_FINISH();
         }
 
     if (needpic) {
-        make_path_to_file(picpath);
-        out = fopen(picpath, "wb+");
+        make_path_to_file(picpath[0]);
+        out = fopen(picpath[0], "wb+");
         save_picture(out, pic);
         fclose(out);
 
-        small = gdImageCreateTrueColor(MAP_WIDTH(m)*size_small, MAP_HEIGHT(m)*size_small);
-        gdImageCopyResampled(small, pic, 0, 0, 0, 0, MAP_WIDTH(m)*size_small, MAP_HEIGHT(m)*size_small, MAP_WIDTH(m)*32, MAP_HEIGHT(m)*32);
-
-        out = fopen(smallpicpath, "wb+");
-        save_picture(out, small);
-        fclose(out);
-        gdImageDestroy(small);
+        for (int i = 1; i < num_sizes; i++) {
+            small = gdImageCreateTrueColor(MAP_WIDTH(m)*sizes[i], MAP_HEIGHT(m)*sizes[i]);
+            gdImageCopyResampled(small, pic, 0, 0, 0, 0, MAP_WIDTH(m)*sizes[i], MAP_HEIGHT(m)*sizes[i], MAP_WIDTH(m)*size_large, MAP_HEIGHT(m)*size_large);
+            out = fopen(picpath[i], "wb+");
+            save_picture(out, small);
+            fclose(out);
+            gdImageDestroy(small);
+        }
 
         gdImageDestroy(pic);
-
         info->pic_was_done = 1;
     }
 
@@ -2420,7 +2422,7 @@ static void write_world_map(void) {
 
             map = cat_template(map, do_template(world_map_template, vars, values));
 
-            snprintf(mappath, sizeof(mappath), "%s/world/%s%s", root, name, output_extensions[output_format]);
+            snprintf(mappath, sizeof(mappath), "%s/world/%s.x1%s", root, name, output_extensions[output_format]);
 
             out = fopen(mappath, "rb");
             if (!out) {
@@ -2570,7 +2572,7 @@ static void write_map_page(struct_map_info *map) {
     }
 
     snprintf(mappic, sizeof(mappic), "%s%s", map->filename, output_extensions[output_format]);
-    snprintf(mapsmallpic, sizeof(mapsmallpic), "%s.small%s", map->filename, output_extensions[output_format]);
+    snprintf(mapsmallpic, sizeof(mapsmallpic), "%s.x2%s", map->filename, output_extensions[output_format]);
 
     snprintf(htmlpath, sizeof(htmlpath), "%s%s.html", root, map->path);
     make_path_to_file(htmlpath);
@@ -2875,7 +2877,7 @@ static int tiled_map_need_pic(struct_map_info *map) {
     if (stat(picpath, &stats))
         return 1;
 
-    snprintf(picpath, sizeof(picpath), "%s%s.small%s", root, map->path, output_extensions[output_format]);
+    snprintf(picpath, sizeof(picpath), "%s%s.x2%s", root, map->path, output_extensions[output_format]);
     if (stat(picpath, &stats))
         return 1;
 
@@ -2974,15 +2976,15 @@ static void do_tiled_map_picture(struct_map_info *map) {
             ymax = map->tiled_maps.maps[tiled]->tiled_y_from+map->tiled_maps.maps[tiled]->height;
     }
 
-    large = gdImageCreateTrueColor(32*(xmax-xmin), 32*(ymax-ymin));
+    large = gdImageCreateTrueColor(size_large*(xmax-xmin), size_large*(ymax-ymin));
     small = gdImageCreateTrueColor(size_small*(xmax-xmin), size_small*(ymax-ymin));
 
     for (tiled = 0; tiled < map->tiled_maps.count; tiled++) {
-        snprintf(picpath, sizeof(picpath), "%s%s%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
+        snprintf(picpath, sizeof(picpath), "%s%s.x1%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
 
         out = fopen(picpath, "rb");
         if (!out) {
-            printf("\n  do_tiled_map_picture: warning: pic file not found for %s (errno=%d)\n", map->tiled_maps.maps[tiled]->path, errno);
+            printf("\n  do_tiled_map_picture: warning: pic file %s not found for %s (errno=%d)\n", picpath, map->tiled_maps.maps[tiled]->path, errno);
             continue;
         }
         if (output_format == OF_PNG)
@@ -2994,10 +2996,10 @@ static void do_tiled_map_picture(struct_map_info *map) {
             printf("\n  do_tiled_map_picture: warning: pic not found for %s\n", map->tiled_maps.maps[tiled]->path);
             continue;
         }
-        gdImageCopy(large, load, 32*(map->tiled_maps.maps[tiled]->tiled_x_from-xmin), 32*(map->tiled_maps.maps[tiled]->tiled_y_from-ymin), 0, 0, load->sx, load->sy);
+        gdImageCopy(large, load, size_large*(map->tiled_maps.maps[tiled]->tiled_x_from-xmin), size_large*(map->tiled_maps.maps[tiled]->tiled_y_from-ymin), 0, 0, load->sx, load->sy);
         gdImageDestroy(load);
 
-        snprintf(picpath, sizeof(picpath), "%s%s.small%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
+        snprintf(picpath, sizeof(picpath), "%s%s.x2%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
         out = fopen(picpath, "rb");
         if (output_format == OF_PNG)
             load = gdImageCreateFromPng(out);
@@ -3017,7 +3019,7 @@ static void do_tiled_map_picture(struct_map_info *map) {
     save_picture(out, large);
     fclose(out);
 
-    snprintf(picpath, sizeof(picpath), "%s%s.small%s", root, map->path, output_extensions[output_format]);
+    snprintf(picpath, sizeof(picpath), "%s%s.x2%s", root, map->path, output_extensions[output_format]);
     out = fopen(picpath, "wb+");
     save_picture(out, small);
     fclose(out);
