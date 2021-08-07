@@ -18,10 +18,20 @@ Installation
 ------------
 Dependencies
 ~~~~~~~~~~~~
-Crossfire should run on any machine with an C compiler supporting the C99
-language standard installed. It should compile on most POSIX compliant
-systems. To date, it has been known to work on Linux, BSD, Windows, Solaris,
-and Mac.
+Crossfire runs on most POSIX-compliant systems, including Linux and BSD.
+Compiling Crossfire requires:
+
+* A C compiler supporting at least C99
+
+* A C++ compiler
+
+* Crossfire archetypes (from a release tarball or Git)
+
+* Crossfire maps (from a release tarball or Git)
+
+If you are building from Git, you also need:
+
+* autoconf/automake
 
 In addition, there are a number of optional dependencies that make the game
 even more fun. These include:
@@ -36,28 +46,30 @@ even more fun. These include:
 * SQLite3 - for cflogger and cfnewspaper. These plugins are still under
   development and aren't very useful at the moment.
 
-* Check - for unit tests. This is required for plugin developers, but mostly
-  useless to normal users.
-
-Support Files
-~~~~~~~~~~~~~
-In order to run the server, a copy of the game maps as well as the archetypes is also required.
+* Check - for unit tests. This is only required for plugin developers.
 
 Compiling
 ~~~~~~~~~
-Crossfire Server uses autoconf/automake. Briefly::
+Symlink the Crossfire archetypes and maps in the source directory::
+
+  $ ln -s /path/to/crossfire-arch lib/arch
+  $ ln -s /path/to/crossfire-maps lib/maps
+
+If you are building from Git, run autoconf::
+
+  $ autoreconf -i
+
+Generic instructions for using autoconf/automake are in `INSTALL <INSTALL>`_. Briefly::
 
   $ ./configure
   $ make
   $ make install
 
-Generic instructions for using autoconf/automake are in `INSTALL <INSTALL>`_.
-
 An older, step-by-step guide is available on the wiki:
 http://wiki.metalforge.net/doku.php/server:server_compiling
 
 To build the Crossfire Resource Editor (CRE), first build the server, and then
-run:
+run::
 
   $ cd utils/cre && qmake && make
 
@@ -65,7 +77,6 @@ Final Steps
 ~~~~~~~~~~~
 - Configure your server (see *$PREFIX/etc/crossfire/*)
 - Make maps available in *$PREFIX/share/crossfire/maps/*
-- Make archetypes available in *$PREFIX/share/crossfire/anything-you-want/*
 
 
 Usage
