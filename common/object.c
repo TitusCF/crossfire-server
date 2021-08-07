@@ -4386,6 +4386,18 @@ const char *object_get_value(const object *op, const char *const key) {
 }
 
 /**
+ * Determine if an extra value is set. Wrapper around object_get_value(),
+ * but also recognizes empty string and "0".
+ */
+bool object_value_set(const object *op, const char *const key) {
+    char *ret = object_get_value(op, key);
+    if (ret == NULL || (strcmp(ret, "") == 0) || (strcmp(ret, "0") == 0)) {
+        return false;
+    }
+    return true;
+}
+
+/**
  * Updates or sets a key value.
  *
  * @param op
