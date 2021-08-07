@@ -234,10 +234,7 @@ void assets_end_load() {
 }
 
 /**
- * Searches for the given treasurelist in the globally linked list
- * of treasurelists which has been built by load_treasures().
- *
- * Will LOG() to error if not found.
+ * Search for the given treasurelist by name.
  *
  * @param name
  * treasure list to search.
