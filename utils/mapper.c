@@ -2764,7 +2764,7 @@ static void fix_tiled_map(void) {
             snprintf(name, sizeof(name), "/");
         else
             *(slash+1) = '\0';
-        strncat(name, tiled_map_list.maps[map]->filename, sizeof(name));
+        strncat(name, tiled_map_list.maps[map]->filename, sizeof(name) - strlen(name) - 1);
         tiled_map_list.maps[map]->path = strdup(name);
     }
 }
@@ -3047,7 +3047,7 @@ static void write_tiled_maps(void) {
     for (map = 0; map < tiled_map_list.count; map++)
         write_tiled_map_page(tiled_map_list.maps[map]);
 
-        printf(" done.\n");
+    printf(" done.\n");
 }
 
 /** Outputs the list of maps sorted by level. */
