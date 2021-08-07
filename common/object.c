@@ -5386,6 +5386,8 @@ void object_handle_death_animation(object *op) {
 
             if (death != NULL) {
                 object_insert_in_map_at(death, op->map, op, 0, op->x, op->y);
+                if (death->arch->more)
+                    object_fix_multipart(death);
             }
         }
     }

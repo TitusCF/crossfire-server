@@ -1,3 +1,6 @@
+2021-08-07  Daniel Hawkins
+    * common/object.c: Correctly handle when multipart objects are created through death_animation key.
+
 2021-08-04  Daniel Hawkins
     * plugins/cfpython/cjson.c,
       plugins/cfpython/include/cfpython.h,
