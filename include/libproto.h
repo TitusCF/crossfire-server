@@ -316,6 +316,7 @@ extern object *object_find_by_type_and_arch_name(const object *who, int type, co
 extern object *object_find_by_type_subtype(const object *who, int type, int subtype);
 extern key_value *object_get_key_value(const object *ob, const char *key);
 extern const char *object_get_value(const object *op, const char *const key);
+extern bool object_value_set(const object *op, const char *const key);
 extern int object_set_value(object *op, const char *key, const char *value, int add_key);
 extern int object_matches_string(object *pl, object *op, const char *name);
 extern void object_fix_multipart(object *tmp);
