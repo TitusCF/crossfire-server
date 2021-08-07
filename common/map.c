@@ -2208,7 +2208,7 @@ void update_position(mapstruct *m, int x, int y) {
             flags |= P_IS_ALIVE;
         if (QUERY_FLAG(tmp, FLAG_NO_MAGIC))
             flags |= P_NO_MAGIC;
-        if (QUERY_FLAG(tmp, FLAG_DAMNED))
+        if (QUERY_FLAG(tmp, FLAG_DAMNED) || object_value_set(tmp, "blocks_prayer"))
             flags |= P_NO_CLERIC;
 
         if (QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
