@@ -980,8 +980,6 @@ int mood_change(object *op, object *caster, object *spell) {
                 if (did_make_save(head, head->level, at))
                     continue;
             } else {   /* spell->attacktype */
-                const char *value;
-
                 /*
                  * Spell has no attacktype (charm&such), so we'll have a specific saving:
                  * if spell level < monster level, no go
@@ -1008,8 +1006,7 @@ int mood_change(object *op, object *caster, object *spell) {
                  * There was no way to ensure immunity, so added a key/value for that.
                  * Nicolas, september 2010.
                  */
-                value = object_get_value(head, "no_mood_change");
-                if (value && strcmp(value, "1") == 0)
+                if (object_value_set(head, "no_mood_change"))
                     continue;
             }
 

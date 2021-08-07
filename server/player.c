@@ -2881,7 +2881,7 @@ static int turn_one_transport(object *transport, object *captain, int dir) {
 static int turn_transport(object *transport, object *captain, int dir) {
     assert(transport->type == TRANSPORT);
 
-    if (object_get_value(transport, "turnable_transport") == NULL) {
+    if (object_value_set(transport, "turnable_transport") == false) {
         transport->direction = dir;
         transport->facing = dir;
         if (QUERY_FLAG(transport, FLAG_ANIMATE)) {

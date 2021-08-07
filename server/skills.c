@@ -1016,8 +1016,7 @@ int use_oratory(object *pl, int dir, object *skill) {
             return 0;
 
         if (QUERY_FLAG(tmp2, FLAG_MONSTER)) {
-            const char *value = object_get_value(tmp2, "no_mood_change");
-            if (value && strcmp(value, "1") == 0)
+            if (object_value_set(tmp2, "no_mood_change"))
                 return 0;
 
             tmp = tmp2;
@@ -1144,7 +1143,6 @@ int singing(object *pl, int dir, object *skill) {
     mapstruct *m;
     int16_t  x, y;
     char name[MAX_BUF];
-    const char *value;
 
     if (pl->type != PLAYER)
         return 0;   /* only players use this skill */
@@ -1194,8 +1192,7 @@ int singing(object *pl, int dir, object *skill) {
              */
             chance = skill->level*2+(pl->stats.Cha-5-tmp->stats.Int)/2;
 
-            value = object_get_value(tmp, "no_mood_change");
-            if (value && strcmp(value, "1") == 0)
+            if (object_value_set(tmp, "no_mood_change"))
                 chance = 0;
 
             if (chance && tmp->level*2 < random_roll(0, chance-1, pl, PREFER_HIGH)) {
