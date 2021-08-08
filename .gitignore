@@ -544,4 +544,6 @@ test/unit/server/check_account
 test/unit/server/check_account_char
 test/unit/server/check_monster_change
 utils/crossfire-mapper
+utils/html
+utils/openseadragon
 utils/test-driver
