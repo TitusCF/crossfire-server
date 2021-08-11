@@ -1459,6 +1459,7 @@ this protocol command or that)
       The following levels are supported:
        1: quest-related notifications ("addquest" and "updquest")
        2: knowledge-related notifications ("addknowledge")
+       3: character status flags (overloaded, blind, ...)
 
 |num_look_objects (int value)|
 	    The maximum number of objects shown in the ground view. If more

@@ -54,7 +54,7 @@ struct Map {
 
 /** Contains the last range/title information sent to client. */
 struct statsinfo {
-    char *range, *title;
+    char *range, *title, *god;
 };
 
 
