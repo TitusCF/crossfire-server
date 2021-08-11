@@ -296,7 +296,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
 
             notifications = atoi(param);
 
-            ns->notifications = MIN(notifications, 2);
+            ns->notifications = MIN(notifications, 3);
             SockList_AddPrintf(&sl, "%d", ns->notifications);
 
         } else if (!strcmp(cmd, "newmapcmd")) {
@@ -690,41 +690,111 @@ void send_query(socket_struct *ns, uint8_t flags, const char *text) {
     SockList_Term(&sl);
 }
 
-#define AddIfInt64(Old, New, Type)                  \
+#define AddIfInt64(Old, New, sl, Type)              \
     if (Old != New) {                               \
         Old = New;                                  \
-        SockList_AddChar(&sl, Type);                \
-        SockList_AddInt64(&sl, New);                \
+        SockList_AddChar(sl, Type);                 \
+        SockList_AddInt64(sl, New);                 \
     }
 
-#define AddIfInt(Old, New, Type)                    \
+#define AddIfInt(Old, New, sl, Type)                \
     if (Old != New) {                               \
         Old = New;                                  \
-        SockList_AddChar(&sl, Type);                \
-        SockList_AddInt(&sl, New);                  \
+        SockList_AddChar(sl, Type);                 \
+        SockList_AddInt(sl, New);                   \
     }
 
-#define AddIfShort(Old, New, Type)                  \
+#define AddIfShort(Old, New, sl, Type)              \
     if (Old != New) {                               \
         Old = New;                                  \
-        SockList_AddChar(&sl, Type);                \
-        SockList_AddShort(&sl, New);                \
+        SockList_AddChar(sl, Type);                 \
+        SockList_AddShort(sl, New);                 \
     }
 
-#define AddIfFloat(Old, New, Type)                  \
+#define AddIfFloat(Old, New, sl, Type)              \
     if (Old != New) {                               \
         Old = New;                                  \
-        SockList_AddChar(&sl, Type);                \
-        SockList_AddInt(&sl, (long)(New*FLOAT_MULTI));\
+        SockList_AddChar(sl, Type);                 \
+        SockList_AddInt(sl, (long)(New*FLOAT_MULTI));\
     }
 
-#define AddIfString(Old, New, Type)                 \
+#define AddIfString(Old, New, sl, Type)             \
     if (Old == NULL || strcmp(Old, New)) {          \
         free(Old);                                  \
         Old = strdup_local(New);                    \
-        SockList_AddChar(&sl, Type);                \
-        SockList_AddLen8Data(&sl, New, strlen(New));\
+        SockList_AddChar(sl, Type);                 \
+        SockList_AddLen8Data(sl, New, strlen(New)); \
     }
+
+/**
+ * Check whether the player is perfect relatively to improvement potions.
+ * @param pl who to check.
+ * @return 1 if perfect, 0 else.
+ */
+static uint8_t is_perfect(const player *pl) {
+    const int16_t until = MIN(11, pl->ob->level);
+    for (int16_t i = 1; i < until; i++) {
+        if (pl->levhp[i] < 9 || pl->levsp[i] < 6 || pl->levgrace[i] < 3) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/**
+ * Send extra stats for the player, if 'notification' is 3.
+ * @param sl buffer to use to send stats.
+ * @param pl player to send stats of.
+ */
+static void send_extra_stats(SockList *sl, player *pl) {
+    uint32_t uflags = 0;
+    const char *god = "none";
+
+    if (pl->socket.notifications < 3) {
+        return;
+    }
+
+    if (!pl->peaceful) {
+        uflags |= CF_HOSTILE;
+    }
+    if (!is_perfect(pl)) {
+        uflags |= CF_NOT_PERFECT;
+    }
+
+#define FIF(F, C) \
+    if (QUERY_FLAG(pl->ob, F)) { \
+        uflags |= C; \
+    }
+    FIF(FLAG_XRAYS, CF_XRAY);
+    FIF(FLAG_CONFUSED, CF_CONFUSED);    // If confused by an item
+    FIF(FLAG_STEALTH, CF_STEALTHY);
+    FIF(FLAG_PARALYZED, CF_PARALYZED);
+    FIF(FLAG_WIZ, CF_WIZARD);
+
+    FOR_INV_PREPARE(pl->ob, item) {
+        if (item->type == DISEASE && !QUERY_FLAG(item, FLAG_STARTEQUIP)) {
+            uflags |= CF_DISEASED;
+        }
+        if (strcmp(item->arch->name, "poisoning") == 0) {
+            uflags |= CF_POISONED;
+        }
+        if (strcmp(item->arch->name, "blindness") == 0) {
+            uflags |= CF_BLIND;
+        }
+        if (item->type == FORCE && strcmp(item->name, "confusion") == 0) {
+            uflags |= CF_CONFUSED;
+        }
+        if (item->type == SKILL && item->subtype == SK_PRAYING && item->title) {
+            god = item->title;
+        }
+    }
+    FOR_INV_FINISH();
+
+    AddIfInt(pl->last_character_flags, uflags, sl, CS_STAT_CHARACTER_FLAGS);
+    AddIfFloat(pl->last_character_load, pl->character_load, sl, CS_STAT_OVERLOAD);
+    AddIfString(pl->socket.stats.god, god, sl, CS_STAT_GOD_NAME);
+    AddIfShort(pl->last_item_power, pl->item_power, sl, CS_STAT_ITEM_POWER);
+}
 
 /**
  * Sends a statistics update. We look at the old values,
@@ -742,44 +812,44 @@ void esrv_update_stats(player *pl) {
     SockList_AddString(&sl, "stats ");
 
     if (pl->ob != NULL) {
-        AddIfShort(pl->last_stats.hp, pl->ob->stats.hp, CS_STAT_HP);
-        AddIfShort(pl->last_stats.maxhp, pl->ob->stats.maxhp, CS_STAT_MAXHP);
-        AddIfShort(pl->last_stats.sp, pl->ob->stats.sp, CS_STAT_SP);
-        AddIfShort(pl->last_stats.maxsp, pl->ob->stats.maxsp, CS_STAT_MAXSP);
-        AddIfShort(pl->last_stats.grace, pl->ob->stats.grace, CS_STAT_GRACE);
-        AddIfShort(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, CS_STAT_MAXGRACE);
-        AddIfShort(pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
-        AddIfShort(pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
-        AddIfShort(pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
-        AddIfShort(pl->last_stats.Wis, pl->ob->stats.Wis, CS_STAT_WIS);
-        AddIfShort(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
-        AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
-        AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
+        AddIfShort(pl->last_stats.hp, pl->ob->stats.hp, &sl, CS_STAT_HP);
+        AddIfShort(pl->last_stats.maxhp, pl->ob->stats.maxhp, &sl, CS_STAT_MAXHP);
+        AddIfShort(pl->last_stats.sp, pl->ob->stats.sp, &sl, CS_STAT_SP);
+        AddIfShort(pl->last_stats.maxsp, pl->ob->stats.maxsp, &sl, CS_STAT_MAXSP);
+        AddIfShort(pl->last_stats.grace, pl->ob->stats.grace, &sl, CS_STAT_GRACE);
+        AddIfShort(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, &sl, CS_STAT_MAXGRACE);
+        AddIfShort(pl->last_stats.Str, pl->ob->stats.Str, &sl, CS_STAT_STR);
+        AddIfShort(pl->last_stats.Int, pl->ob->stats.Int, &sl, CS_STAT_INT);
+        AddIfShort(pl->last_stats.Pow, pl->ob->stats.Pow, &sl, CS_STAT_POW);
+        AddIfShort(pl->last_stats.Wis, pl->ob->stats.Wis, &sl, CS_STAT_WIS);
+        AddIfShort(pl->last_stats.Dex, pl->ob->stats.Dex, &sl, CS_STAT_DEX);
+        AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, &sl, CS_STAT_CON);
+        AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, &sl, CS_STAT_CHA);
     }
     if (pl->socket.extended_stats) {
         int16_t golem_hp, golem_maxhp;
-        AddIfShort(pl->last_orig_stats.Str, pl->orig_stats.Str, CS_STAT_BASE_STR);
-        AddIfShort(pl->last_orig_stats.Int, pl->orig_stats.Int, CS_STAT_BASE_INT);
-        AddIfShort(pl->last_orig_stats.Pow, pl->orig_stats.Pow, CS_STAT_BASE_POW);
-        AddIfShort(pl->last_orig_stats.Wis, pl->orig_stats.Wis, CS_STAT_BASE_WIS);
-        AddIfShort(pl->last_orig_stats.Dex, pl->orig_stats.Dex, CS_STAT_BASE_DEX);
-        AddIfShort(pl->last_orig_stats.Con, pl->orig_stats.Con, CS_STAT_BASE_CON);
-        AddIfShort(pl->last_orig_stats.Cha, pl->orig_stats.Cha, CS_STAT_BASE_CHA);
+        AddIfShort(pl->last_orig_stats.Str, pl->orig_stats.Str, &sl, CS_STAT_BASE_STR);
+        AddIfShort(pl->last_orig_stats.Int, pl->orig_stats.Int, &sl, CS_STAT_BASE_INT);
+        AddIfShort(pl->last_orig_stats.Pow, pl->orig_stats.Pow, &sl, CS_STAT_BASE_POW);
+        AddIfShort(pl->last_orig_stats.Wis, pl->orig_stats.Wis, &sl, CS_STAT_BASE_WIS);
+        AddIfShort(pl->last_orig_stats.Dex, pl->orig_stats.Dex, &sl, CS_STAT_BASE_DEX);
+        AddIfShort(pl->last_orig_stats.Con, pl->orig_stats.Con, &sl, CS_STAT_BASE_CON);
+        AddIfShort(pl->last_orig_stats.Cha, pl->orig_stats.Cha, &sl, CS_STAT_BASE_CHA);
         if (pl->ob != NULL) {
-            AddIfShort(pl->last_race_stats.Str, 20 + pl->ob->arch->clone.stats.Str, CS_STAT_RACE_STR);
-            AddIfShort(pl->last_race_stats.Int, 20 + pl->ob->arch->clone.stats.Int, CS_STAT_RACE_INT);
-            AddIfShort(pl->last_race_stats.Pow, 20 + pl->ob->arch->clone.stats.Pow, CS_STAT_RACE_POW);
-            AddIfShort(pl->last_race_stats.Wis, 20 + pl->ob->arch->clone.stats.Wis, CS_STAT_RACE_WIS);
-            AddIfShort(pl->last_race_stats.Dex, 20 + pl->ob->arch->clone.stats.Dex, CS_STAT_RACE_DEX);
-            AddIfShort(pl->last_race_stats.Con, 20 + pl->ob->arch->clone.stats.Con, CS_STAT_RACE_CON);
-            AddIfShort(pl->last_race_stats.Cha, 20 + pl->ob->arch->clone.stats.Cha, CS_STAT_RACE_CHA);
-            AddIfShort(pl->last_applied_stats.Str, pl->applied_stats.Str, CS_STAT_APPLIED_STR);
-            AddIfShort(pl->last_applied_stats.Int, pl->applied_stats.Int, CS_STAT_APPLIED_INT);
-            AddIfShort(pl->last_applied_stats.Pow, pl->applied_stats.Pow, CS_STAT_APPLIED_POW);
-            AddIfShort(pl->last_applied_stats.Wis, pl->applied_stats.Wis, CS_STAT_APPLIED_WIS);
-            AddIfShort(pl->last_applied_stats.Dex, pl->applied_stats.Dex, CS_STAT_APPLIED_DEX);
-            AddIfShort(pl->last_applied_stats.Con, pl->applied_stats.Con, CS_STAT_APPLIED_CON);
-            AddIfShort(pl->last_applied_stats.Cha, pl->applied_stats.Cha, CS_STAT_APPLIED_CHA);
+            AddIfShort(pl->last_race_stats.Str, 20 + pl->ob->arch->clone.stats.Str, &sl, CS_STAT_RACE_STR);
+            AddIfShort(pl->last_race_stats.Int, 20 + pl->ob->arch->clone.stats.Int, &sl, CS_STAT_RACE_INT);
+            AddIfShort(pl->last_race_stats.Pow, 20 + pl->ob->arch->clone.stats.Pow, &sl, CS_STAT_RACE_POW);
+            AddIfShort(pl->last_race_stats.Wis, 20 + pl->ob->arch->clone.stats.Wis, &sl, CS_STAT_RACE_WIS);
+            AddIfShort(pl->last_race_stats.Dex, 20 + pl->ob->arch->clone.stats.Dex, &sl, CS_STAT_RACE_DEX);
+            AddIfShort(pl->last_race_stats.Con, 20 + pl->ob->arch->clone.stats.Con, &sl, CS_STAT_RACE_CON);
+            AddIfShort(pl->last_race_stats.Cha, 20 + pl->ob->arch->clone.stats.Cha, &sl, CS_STAT_RACE_CHA);
+            AddIfShort(pl->last_applied_stats.Str, pl->applied_stats.Str, &sl, CS_STAT_APPLIED_STR);
+            AddIfShort(pl->last_applied_stats.Int, pl->applied_stats.Int, &sl, CS_STAT_APPLIED_INT);
+            AddIfShort(pl->last_applied_stats.Pow, pl->applied_stats.Pow, &sl, CS_STAT_APPLIED_POW);
+            AddIfShort(pl->last_applied_stats.Wis, pl->applied_stats.Wis, &sl, CS_STAT_APPLIED_WIS);
+            AddIfShort(pl->last_applied_stats.Dex, pl->applied_stats.Dex, &sl, CS_STAT_APPLIED_DEX);
+            AddIfShort(pl->last_applied_stats.Con, pl->applied_stats.Con, &sl, CS_STAT_APPLIED_CON);
+            AddIfShort(pl->last_applied_stats.Cha, pl->applied_stats.Cha, &sl, CS_STAT_APPLIED_CHA);
         }
         if (pl->ranges[range_golem]) {
             object *golem = pl->ranges[range_golem];
@@ -795,8 +865,8 @@ void esrv_update_stats(player *pl) {
             golem_maxhp = 0;
         }
         /* send first the maxhp, so the client can set up the display */
-        AddIfShort(pl->last_golem_maxhp, golem_maxhp, CS_STAT_GOLEM_MAXHP);
-        AddIfShort(pl->last_golem_hp, golem_hp, CS_STAT_GOLEM_HP);
+        AddIfShort(pl->last_golem_maxhp, golem_maxhp, &sl, CS_STAT_GOLEM_MAXHP);
+        AddIfShort(pl->last_golem_hp, golem_hp, &sl, CS_STAT_GOLEM_HP);
     }
 
     for (s = 0; s < MAX_SKILLS; s++) {
@@ -820,24 +890,24 @@ void esrv_update_stats(player *pl) {
             }
         }
     }
-    AddIfInt64(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP64);
-    AddIfShort(pl->last_level, (char)pl->ob->level, CS_STAT_LEVEL);
-    AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
-    AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
-    AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
-    AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
-    AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
-    AddIfFloat(pl->last_weapon_sp, pl->ob->weapon_speed, CS_STAT_WEAP_SP);
-    AddIfInt(pl->last_weight_limit, (int32_t)get_weight_limit(pl->ob->stats.Str), CS_STAT_WEIGHT_LIM);
+    AddIfInt64(pl->last_stats.exp, pl->ob->stats.exp, &sl, CS_STAT_EXP64);
+    AddIfShort(pl->last_level, (char)pl->ob->level, &sl, CS_STAT_LEVEL);
+    AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, &sl, CS_STAT_WC);
+    AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, &sl, CS_STAT_AC);
+    AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, &sl, CS_STAT_DAM);
+    AddIfFloat(pl->last_speed, pl->ob->speed, &sl, CS_STAT_SPEED);
+    AddIfShort(pl->last_stats.food, pl->ob->stats.food, &sl, CS_STAT_FOOD);
+    AddIfFloat(pl->last_weapon_sp, pl->ob->weapon_speed, &sl, CS_STAT_WEAP_SP);
+    AddIfInt(pl->last_weight_limit, (int32_t)get_weight_limit(pl->ob->stats.Str), &sl, CS_STAT_WEIGHT_LIM);
     flags = 0;
     if (pl->fire_on)
         flags |= SF_FIREON;
     if (pl->run_on)
         flags |= SF_RUNON;
 
-    AddIfShort(pl->last_flags, flags, CS_STAT_FLAGS);
+    AddIfShort(pl->last_flags, flags, &sl, CS_STAT_FLAGS);
     if (pl->socket.sc_version < 1025) {
-        AddIfShort(pl->last_resist[ATNR_PHYSICAL], pl->ob->resist[ATNR_PHYSICAL], CS_STAT_ARMOUR);
+        AddIfShort(pl->last_resist[ATNR_PHYSICAL], pl->ob->resist[ATNR_PHYSICAL], &sl, CS_STAT_ARMOUR);
     } else {
         int i;
 
@@ -845,19 +915,21 @@ void esrv_update_stats(player *pl) {
             /* Skip ones we won't send */
             if (atnr_cs_stat[i] == -1)
                 continue;
-            AddIfShort(pl->last_resist[i], pl->ob->resist[i], (char)atnr_cs_stat[i]);
+            AddIfShort(pl->last_resist[i], pl->ob->resist[i], &sl, (char)atnr_cs_stat[i]);
         }
     }
     if (pl->socket.monitor_spells) {
-        AddIfInt(pl->last_path_attuned, pl->ob->path_attuned, CS_STAT_SPELL_ATTUNE);
-        AddIfInt(pl->last_path_repelled, pl->ob->path_repelled, CS_STAT_SPELL_REPEL);
-        AddIfInt(pl->last_path_denied, pl->ob->path_denied, CS_STAT_SPELL_DENY);
+        AddIfInt(pl->last_path_attuned, pl->ob->path_attuned, &sl, CS_STAT_SPELL_ATTUNE);
+        AddIfInt(pl->last_path_repelled, pl->ob->path_repelled, &sl, CS_STAT_SPELL_REPEL);
+        AddIfInt(pl->last_path_denied, pl->ob->path_denied, &sl, CS_STAT_SPELL_DENY);
     }
     /* we want to use the new fire & run system in new client */
     rangetostring(pl->ob, buf, sizeof(buf));
-    AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
+    AddIfString(pl->socket.stats.range, buf, &sl, CS_STAT_RANGE);
     set_title(pl->ob, buf, sizeof(buf));
-    AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
+    AddIfString(pl->socket.stats.title, buf, &sl, CS_STAT_TITLE);
+
+    send_extra_stats(&sl, pl);
 
     /* Only send it away if we have some actual data - 2 bytes for length, 6 for "stats ". */
     if (sl.len > 8) {

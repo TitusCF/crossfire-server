@@ -898,7 +898,7 @@ void add_statbonus(object *op) {
 static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, const object *mana_obj, const object *wc_obj, int weapon_speed, float added_speed)
 {
     int pl_level, i;
-    float character_load = 0.0, maxhp, tmpf;
+    float maxhp, tmpf;
 
     if (op->type != PLAYER)
         return;
@@ -1064,20 +1064,22 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
     && (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
         int extra_weight = op->carrying-get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT;
 
-        character_load = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
+        op->contr->character_load = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
 
         /* character_load is used for weapon speed below, so sanitize value */
-        if (character_load >= 1.0)
-            character_load = 1.0;
+        if (op->contr->character_load >= 1.0)
+            op->contr->character_load = 1.0;
 
         /* If a character is fully loaded, they will always get cut down to min
          * speed no matter what their dex.  Note that magic is below, so
          * still helps out.
          */
         if (op->speed > MAX_PLAYER_SPEED)
-            op->speed -= character_load*(op->speed-MIN_PLAYER_SPEED);
+            op->speed -= op->contr->character_load*(op->speed-MIN_PLAYER_SPEED);
         else
-            op->speed -= character_load*(MAX_PLAYER_SPEED-MIN_PLAYER_SPEED);
+            op->speed -= op->contr->character_load*(MAX_PLAYER_SPEED-MIN_PLAYER_SPEED);
+    } else {
+        op->contr->character_load = 0;
     }
 
     /* This block is for weapon speed */
@@ -1091,7 +1093,7 @@ static void fix_player(object *op, int *ac, int *wc, const object *grace_obj, co
      * by 0.2 for penalty is purely arbitrary, but slows things down without completely
      * stopping them.
      */
-    op->weapon_speed -= character_load*0.2;
+    op->weapon_speed -= op->contr->character_load*0.2;
 
     if (op->weapon_speed < 0.05)
         op->weapon_speed = 0.05;

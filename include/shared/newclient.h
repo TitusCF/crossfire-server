@@ -137,6 +137,10 @@
 #define CS_STAT_APPLIED_POW        52 /**< POW changes from gear or skills. */
 #define CS_STAT_GOLEM_HP           53 /**< Golem's current hp, 0 if no golem. */
 #define CS_STAT_GOLEM_MAXHP        54 /**< Golem's max hp, 0 if no golem. */
+#define CS_STAT_CHARACTER_FLAGS    55 /**< Character flags, like 'confused' and such. */
+#define CS_STAT_GOD_NAME           56 /**< Name of the god the character worships. */
+#define CS_STAT_OVERLOAD           57 /**< How much (0 to 1) the character is overloaded. */
+#define CS_STAT_ITEM_POWER         58 /**< Equipped item power. */
 
 #define CS_STAT_RESIST_START      100 /**< Start of resistances (inclusive) */
 #define CS_STAT_RESIST_END        117 /**< End of resistances (inclusive)   */
@@ -184,6 +188,23 @@
 /*@{*/
 #define SF_FIREON   0x01
 #define SF_RUNON    0x02
+/*@}*/
+
+/**
+ * @defgroup CF_xxx CF_xxx Masks used in conjunction with CS_STAT_CHARACTER_FLAGS.
+ */
+/*@{*/
+// readied skill
+#define CF_CONFUSED       0x01  /**< Confused by a spell or an item. */
+#define CF_POISONED       0x02  /**< Poisoned. */
+#define CF_BLIND          0x04  /**< Blind. */
+#define CF_XRAY           0x08  /**< Has X-ray. */
+#define CF_DISEASED       0x10  /**< Has at least one disease. */
+#define CF_NOT_PERFECT    0x20  /**< Can drink some improvement potions. */
+#define CF_HOSTILE        0x40  /**< 'hostile' flag is set. */
+#define CF_STEALTHY       0x80  /**< Player is stealthy. */
+#define CF_PARALYZED      0x0100  /**< Player is paralyzed. */
+#define CF_WIZARD         0x0200  /**< Player is DM. */
 /*@}*/
 
 /**

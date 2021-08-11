@@ -119,6 +119,8 @@ typedef struct pl {
                                          * @ref page_connection "the login process" for a description of its use. */
     uint8_t       listening;              /**< Which priority will be used in info_all. */
     int8_t       last_level;             /**< Last level we sent to client. */
+    float        character_load;         /**< Value between 0 and 1 indicating how much the character is overloaded. */
+    float        last_character_load;    /**< Last value sent to the client. */
 
     /* Try to put all the bitfields together - saves some small amount of memory */
     uint32_t      braced:1;            /**< Will not move if braced, only attack. */
@@ -144,6 +146,8 @@ typedef struct pl {
     uint32_t      last_path_attuned;   /**< Last spell attunment sent to client. */
     uint32_t      last_path_repelled;  /**< Last spell repelled sent to client. */
     uint32_t      last_path_denied;    /**< Last spell denied sent to client. */
+    uint32_t      last_character_flags; /**< Last character flags (CS_STAT_CHARACTER_FLAGS) sent to client. */
+    uint16_t      last_item_power;      /**< Last value for item_power. */
     int         swap_first;          /**< First stat player has selected to swap. */
     living      orig_stats;          /**< Permanent real stats of player. */
     living      last_stats;          /**< Last stats as sent to client. */
