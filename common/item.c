@@ -185,6 +185,7 @@ static const typedata item_types[] = {
     { BUILDER, "item builder", "item builders", 0, 0 },
     { MATERIAL, "building material", "building materials", 0, 0 },
     { MIMIC, "mimic", "mimics", SK_ALCHEMY, 0 },
+    { LIGHTABLE, "lightable", "lightables", 0, 0 },
 };
 
 /** Number of items in ::item_types array. */

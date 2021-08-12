@@ -1,3 +1,15 @@
+2021-08-11  Daniel Hawkins
+    * types/common/light_object.c,
+      types/lighter/lighter.c: Refactor part of lighter.c into a function so it can be called by lightable.c
+    * types/lightable/lightable.c: New type apply function -- lightable objects can be lit via
+           fire magic, fire weapons, fire skills, or lighter objects. The method finds the appropriate one to use,
+           and allows for marking of the desired tool to override default.
+    * include/object.h,
+      common/item.c: Add the new type to the enum and array, respectively.
+    * include/typesproto.h: Add declarations for new common function and new lightable type apply function.
+    * server/ob_types.c: Initialize lightable type when the other types are all initialized.
+    * types/Makefile.am: Tell autotools to tell make to build the new type files.
+
 2021-08-07  Daniel Hawkins
     * common/object.c: Correctly handle when multipart objects are created through death_animation key.
 

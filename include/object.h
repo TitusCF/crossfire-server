@@ -247,7 +247,8 @@ enum object_type {
                                       * below */
     MATERIAL = 161, /**< Material for building */
     MIMIC = 162,
-    OBJECT_TYPE_MAX = 163, /**< Update if you add new types */
+    LIGHTABLE = 163, /** Try to find a fire/heat source to light this when applied */
+    OBJECT_TYPE_MAX = 164, /**< Update if you add new types */
 };
 
 /**
@@ -305,7 +306,7 @@ typedef struct obj {
      * Fields below name (included) are copied by memcpy in object_copy().
      *
      * If adding something that needs a refcount updated, make sure you modify
-     * object_copy() to do so.  
+     * object_copy() to do so.
      * Everything below here also gets cleared by object_clear().
      */
     sstring     name;           /**< The name of the object, obviously... */

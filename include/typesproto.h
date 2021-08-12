@@ -44,6 +44,8 @@ void init_type_hole(void);
 void init_type_identify_altar(void);
 /* lamp/lamp.c */
 void init_type_lamp(void);
+/* lightable/lightable.c */
+void init_type_lightable(void);
 /* lighter/lighter.c */
 void init_type_lighter(void);
 /* marker/marker.c */
@@ -123,6 +125,8 @@ void common_ob_describe(const ob_methods *context, const object *op, const objec
 void stop_projectile(object *op);
 method_ret common_process_projectile(ob_methods *context, object *op);
 method_ret common_projectile_move_on(ob_methods *context, object *trap, object *victim, object *originator);
+/* common/light_object.c */
+void do_light(object *item, const char *lighter_name, object *applier);
 /* legacy/apply.c */
 method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int aflags);
 /* legacy/legacy_describe.c */
