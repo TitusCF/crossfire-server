@@ -8,6 +8,13 @@ level ChangeLog file.
 should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
+Ob types   : LIGHTABLE
+Events     : apply
+Moved from : nowhere (new type)
+Moved to   : lightable/lightable.c
+Comment    : Add a type for icecubes and torches that allow them to be lit by applying them.
+2021-08-11 - Daniel Hawkins
+--
 Ob types   : MIMIC
 Events     : pick, apply
 Moved from : nowhere (new type)

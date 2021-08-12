@@ -24,6 +24,7 @@ gate/gate.c \
 hole/hole.c \
 identify_altar/identify_altar.c \
 lamp/lamp.c \
+lightable/lightable.c \
 lighter/lighter.c \
 marker/marker.c \
 mimic/mimic.c \
@@ -61,6 +62,7 @@ weapon_improver/weapon_improver.c \
 common/common_apply.c \
 common/describe.c \
 common/projectile.c \
+common/light_object.c \
 legacy/apply.c \
 legacy/legacy_describe.c \
 legacy/process.c

@@ -54,6 +54,7 @@ void register_all_ob_types(void) {
     init_type_hole();
     init_type_identify_altar();
     init_type_lamp();
+    init_type_lightable();
     init_type_lighter();
     init_type_marker();
     init_type_mimic();

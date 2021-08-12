@@ -53,10 +53,6 @@ void init_type_lighter(void) {
  */
 static method_ret lighter_type_apply(ob_methods *context, object *lighter, object *applier, int aflags) {
     object *item;
-    int is_player_env = 0;
-    uint32_t nrof;
-    tag_t count;
-    char item_name[MAX_BUF];
 
     if (applier->type != PLAYER)
         return METHOD_UNHANDLED;
@@ -87,36 +83,7 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
         return METHOD_OK;
     }
 
-    /* Perhaps we should split what we are trying to light on fire?
-     * I can't see many times when you would want to light multiple
-     * objects at once. */
-    nrof = item->nrof;
-    count = item->count;
-    /* If the item is destroyed, we don't have a valid pointer to the
-     * name object, so make a copy so the message we print out makes
-     * some sense. */
-    safe_strncpy(item_name, item->name, sizeof(item_name));
-    if (applier == object_get_player_container(item))
-        is_player_env = 1;
-
-    save_throw_object(item, AT_FIRE, applier);
-
-    /* Change to check count and not freed, since the object pointer
-        * may have gotten recycled */
-    if ((nrof != item->nrof) || (count != item->count)) {
-        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-            "You light the %s with the %s.",
-            item_name, lighter->name);
-
-        /* Need to update the player so that the players glow radius
-         * gets changed. */
-        if (is_player_env)
-            fix_object(applier);
-    } else {
-        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-            "You attempt to light the %s with the %s and fail.",
-            item->name, lighter->name);
-    }
+    do_light(item, lighter->name, applier);
 
     return METHOD_OK;
 }
