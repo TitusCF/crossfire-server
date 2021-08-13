@@ -12,6 +12,7 @@
 
 #include "PngLoader.h"
 #include "Faces.h"
+#include "Facesets.h"
 
 extern "C" {
 #include "string.h"
@@ -19,10 +20,8 @@ extern "C" {
 #include "compat.h"
 #include "image.h"
 }
-#include "assets.h"
-#include "AssetsManager.h"
 
-PngLoader::PngLoader(Faces *faces) : m_faces(faces) {
+PngLoader::PngLoader(Faces *faces, Facesets *facesets) : m_faces(faces), m_facesets(facesets) {
 }
 
 void PngLoader::load(BufferReader *reader, const std::string &filename) {
@@ -48,7 +47,7 @@ void PngLoader::load(BufferReader *reader, const std::string &filename) {
         }
     }
 
-    face_sets *set = getManager()->facesets()->get(split[count - 3]);
+    face_sets *set = m_facesets->get(split[count - 3]);
 
     const Face *face = m_faces->get(buf);
     if (face->number >= set->allocated) {
