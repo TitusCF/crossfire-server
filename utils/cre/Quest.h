@@ -51,6 +51,8 @@ class Quest : public QObject
         void setRestart(bool restart);
         QList<const QuestStep*> steps() const;
         QList<QuestStep*>& steps();
+        const QString& comment() const;
+        void setComment(const QString& comment);
 
         bool isModified() const;
         void setModified(bool modified);
@@ -74,6 +76,7 @@ class Quest : public QObject
         bool myModified;
         Quest* myParent;
         QList<CREMapInformation*> myMaps;
+        QString myComment;
 
         void markModified();
 };

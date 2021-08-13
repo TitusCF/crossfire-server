@@ -66,10 +66,13 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     files.sort();
     myFile->addItems(files);
 
-    layout->addWidget(new QLabel(tr("Description:"), this), line++, 1, 1, 2);
-    myDescription = new QTextEdit();
-    layout->addWidget(myDescription, line++, 1, 1, 2);
+    QTabWidget *dc = new QTabWidget(details);
+    myDescription = new QTextEdit(this);
+    dc->addTab(myDescription, "Player description");
+    myComment = new QPlainTextEdit(this);
+    dc->addTab(myComment, "Developer description");
 
+    layout->addWidget(dc, line++, 1, 1, 2);
 
     layout->addWidget(new QLabel(tr("Steps:"), this), line++, 1, 1, 2);
 
@@ -125,6 +128,7 @@ void CREQuestPanel::setItem(Quest* quest)
     myFace->setText(quest->face());
     myCanRestart->setChecked(quest->canRestart());
     myDescription->setText(quest->description());
+    myComment->setPlainText(quest->comment());
 
     QString file = myQuestManager->getQuestFile(myQuest);
     myFile->setEditText(file);
@@ -193,6 +197,7 @@ void CREQuestPanel::commitData()
     myQuest->setFace(myFace->text());
     myQuest->setRestart(myCanRestart->isChecked());
     myQuest->setDescription(myDescription->toPlainText());
+    myQuest->setComment(myComment->toPlainText().trimmed());
     if (myQuestManager->getQuestFile(myQuest).isEmpty())
         myQuestManager->setQuestFile(myQuest, myFile->currentText());
     if (myParent->currentIndex() == 0)

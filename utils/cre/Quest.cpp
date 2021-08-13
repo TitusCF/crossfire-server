@@ -181,3 +181,17 @@ QList<CREMapInformation*>& Quest::maps()
 {
     return myMaps;
 }
+
+const QString& Quest::comment() const
+{
+    return myComment;
+}
+
+void Quest::setComment(const QString& comment)
+{
+    if (myComment != comment)
+    {
+        markModified();
+        myComment = comment;
+    }
+}
