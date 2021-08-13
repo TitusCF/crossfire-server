@@ -121,8 +121,8 @@ void assets_collect(const char* datadir) {
         al->setTracker(static_cast<AssetsTracker<archetype>*>(settings.archetypes_tracker));
     }
     collector.addLoader(al);
-    collector.addLoader(new PngLoader(manager->faces()));
-    collector.addLoader(new FacesetLoader());
+    collector.addLoader(new PngLoader(manager->faces(), manager->facesets()));
+    collector.addLoader(new FacesetLoader(manager->facesets()));
     collector.addLoader(new FaceLoader(manager->faces(), manager->animations()));
     collector.addLoader(new MessageLoader(manager->messages()));
     collector.addLoader(new WrapperLoader("/artifacts", init_artifacts));

@@ -17,10 +17,9 @@ extern "C" {
 #include "image.h"
 #include "string.h"
 }
-#include "assets.h"
-#include "AssetsManager.h"
+#include "Facesets.h"
 
-FacesetLoader::FacesetLoader() {
+FacesetLoader::FacesetLoader(Facesets *facesets) : m_facesets(facesets) {
 }
 
 void FacesetLoader::load(BufferReader *reader, const std::string& filename) {
@@ -37,13 +36,13 @@ void FacesetLoader::load(BufferReader *reader, const std::string& filename) {
             added->prefix = strdup_local(cps[0]);
             added->fullname = strdup_local(cps[1]);
             if (cps[2][0] != '\0') {
-                added->fallback = getManager()->facesets()->get(cps[2]);
+                added->fallback = m_facesets->get(cps[2]);
             }
             added->size = strdup_local(cps[3]);
             added->extension = strdup_local(cps[4]);
             added->comment = strdup_local(cps[5]);
 
-            getManager()->facesets()->define(added->prefix, added);
+            m_facesets->define(added->prefix, added);
         }
     }
 }

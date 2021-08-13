@@ -17,10 +17,11 @@
 #include "Utils.h"
 
 class Faces;
+class Facesets;
 
 class PngLoader : public AssetLoader {
 public:
-  PngLoader(Faces *faces);
+  PngLoader(Faces *faces, Facesets *facesets);
 
   virtual bool willLoad(const std::string &filename) override {
     return Utils::endsWith(filename, ".png");
@@ -29,6 +30,7 @@ public:
   virtual void load(BufferReader *reader, const std::string &filename) override;
 protected:
     Faces *m_faces;
+    Facesets *m_facesets;
 };
 
 #endif /* PNGLOADER_H */
