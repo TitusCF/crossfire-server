@@ -37,6 +37,7 @@ class CREQuestPanel : public CRETPanel<Quest>
         QCheckBox* myCanRestart;
         QComboBox* myParent;
         QTextEdit* myDescription;
+        QPlainTextEdit* myComment;
         CREQuestItemModel* myStepsModel;
         QTreeView* mySteps;
         QTreeWidget* myUse;

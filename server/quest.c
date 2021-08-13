@@ -161,6 +161,7 @@ static quest_definition *quest_get_by_code(sstring code) {
 #define QUESTFILE_STEP 3        /**< In a quest step. */
 #define QUESTFILE_STEPDESC 4    /**< In a quest step description. */
 #define QUESTFILE_STEPCOND 5    /**< In a quest step conditions. */
+#define QUESTFILE_COMMENT  6    /**< In a quest comment - ignored. */
 /*@}*/
 
 /**
@@ -300,6 +301,14 @@ static int load_quests_from_file(const char *filename) {
             continue;
         }
 
+        if (in == QUESTFILE_COMMENT) {
+            // Quest comment is ignored here, only used in eg CRE.
+            if (strcmp(read, "end_comment\n") == 0) {
+                in = QUESTFILE_QUEST;
+            }
+            continue;
+        }
+
         if (in == QUESTFILE_QUEST) {
             if (strcmp(read, "end_quest\n") == 0) {
                 quest = NULL;
@@ -347,6 +356,11 @@ static int load_quests_from_file(const char *filename) {
             if (strncmp(read, "face ", 5) == 0) {
                 read[strlen(read) - 1] = '\0';
                 quest->face = find_face(read + 5);
+                continue;
+            }
+
+            if (strncmp(read, "comment", 7) == 0) {
+                in = QUESTFILE_COMMENT;
                 continue;
             }
         }

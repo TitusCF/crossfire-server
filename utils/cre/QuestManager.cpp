@@ -33,6 +33,7 @@ void QuestManager::loadQuestFile(const QString& filename)
     char final[MAX_BUF], read[MAX_BUF];
     FILE *file;
     StringBuffer *buf;
+    QString comment;
 
     snprintf(final, sizeof(final), "%s/%s/%s", settings.datadir, settings.mapdir, qPrintable(filename));
     file = fopen(final, "r");
@@ -42,6 +43,15 @@ void QuestManager::loadQuestFile(const QString& filename)
     }
 
     while (fgets(read, sizeof(read), file) != NULL) {
+        if (in == 6) {
+            if (strcmp(read, "end_comment\n") == 0) {
+                quest->setComment(comment.trimmed());
+                in = 1;
+                continue;
+            }
+            comment.append(read);
+            continue;
+        }
         if (in == 5) {
             if (strcmp(read, "end_setwhen\n") == 0) {
                 in = 3;
@@ -149,6 +159,12 @@ void QuestManager::loadQuestFile(const QString& filename)
             if (strncmp(read, "face ", 5) == 0) {
                 read[strlen(read) - 1] = '\0';
                 quest->setFace(read + 5);
+                continue;
+            }
+
+            if (strcmp(read, "comment\n") == 0) {
+                in = 6;
+                comment = "";
                 continue;
             }
         }
@@ -284,6 +300,17 @@ void QuestManager::saveQuestFile(const QString& filename)
             stream << "parent " << quest->parent()->code() << "\n";
         if (quest->canRestart())
             stream << "restart 1\n";
+
+        if (!quest->comment().isEmpty())
+        {
+            QString c(quest->comment());
+            c.replace("end_comment", "end comment");
+            stream << "comment\n";
+            stream << c;
+            if (!c.endsWith("\n"))
+                stream << "\n";
+            stream << "end_comment\n";
+        }
 
         foreach(QuestStep* step, quest->steps())
         {
