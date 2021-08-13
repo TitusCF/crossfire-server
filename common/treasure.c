@@ -17,14 +17,6 @@
  * @see page_treasure_list
  */
 
-/**
- * TREASURE_DEBUG does some checking on the treasurelists after loading.
- * It is useful for finding bugs in the treasures file.  Since it only
- * slows the startup some (and not actual game play), it is by default
- * left on
- */
-#define TREASURE_DEBUG
-
 #include "global.h"
 
 #include <ctype.h>
