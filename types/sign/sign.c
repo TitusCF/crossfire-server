@@ -111,6 +111,13 @@ static method_ret sign_type_apply(ob_methods *context, object *op, object *appli
  * @return METHOD_OK
  */
 static method_ret sign_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (victim->type == TRANSPORT) {
+        // Read sign or magic mouth out for everyone in transport
+        object *inv;
+        FOR_INV_PREPARE(victim, inv) {
+            sign_type_move_on(context, trap, inv, originator);
+        } FOR_INV_FINISH();
+    }
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     if (victim->type != PLAYER && trap->stats.food > 0) {
