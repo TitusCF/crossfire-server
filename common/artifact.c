@@ -75,10 +75,7 @@ static artifact *get_empty_artifact(void) {
  * artifact to free. Pointer is free()d too, so becomes invalid.
  *
  * @note
- * Objects at->item are malloc()ed by init_artifacts(), so can simply be free()d.
- *
- * But artifact inventory is a 'real' object, that may be created for 'old' objects. So should be
- * destroyed through object_free_drop_inventory(). Note that it isn't on the usual item list, so some tweaking is required.
+ * Objects at->item are malloc()ed by init_artifacts(), so can be free()d.
  */
 static void free_artifact(artifact *at) {
     object *next;
@@ -139,6 +136,9 @@ void free_all_artifacts(void) {
  * artifact (means magic, difficulty, and Allowed fields properly).
  * Then calls give_artifact_abilities in order to actually create
  * the artifact.
+ *
+ * @param op object to attempt to transform.
+ * @param difficulty limit for artifact difficulty.
  */
 void generate_artifact(object *op, int difficulty) {
     const artifactlist *al;
@@ -187,6 +187,9 @@ void generate_artifact(object *op, int difficulty) {
 /**
  * Fixes the given object, giving it the abilities and titles
  * it should have due to the second artifact-template.
+ *
+ * @param op object to give properties to.
+ * @param artifact what properties to apply.
  */
 void give_artifact_abilities(object *op, const object *artifact) {
     char new_name[MAX_BUF];
@@ -205,6 +208,10 @@ void give_artifact_abilities(object *op, const object *artifact) {
 
 /**
  * Checks if op can be combined with art.
+ *
+ * @param op object to test.
+ * @param art artifact to test.
+ * @return 1 if 'op' can be 'art', 0 else.
  */
 int legal_artifact_combination(const object *op, const artifact *art) {
     int neg, success = 0;
@@ -270,8 +277,10 @@ static void compute_face_name(char* buf, size_t size, const char* name, const ch
 #define KEY_ANIMATION_SUFFIX    "animation_suffix"
 
 /**
- * Used in artifact generation.  The bonuses of the first object
- * is modified by the bonuses of the second object.
+ * Apply artifact properties to an object.
+ *
+ * @param op object to apply changes to.
+ * @param change changes to apply, with fields handled as described in the artifacts file.
  */
 void add_abilities(object *op, const object *change) {
     int i, tmp;
@@ -517,6 +526,7 @@ void add_abilities(object *op, const object *change) {
  * of objects on it, non-const version of find_artifactlist() used only
  * during artifact loading.
  *
+ * @param type object type to get artifacts for.
  * @return
  * NULL if no suitable list found.
  */
@@ -530,8 +540,10 @@ static artifactlist *find_artifactlist_internal(int type) {
 }
 
 /**
- * Builds up the lists of artifacts from the file in the libdir.
- * Can be called multiple times without ill effects.
+ * Initialize artifacts from the specified reader.
+ *
+ * @param reader data to init from.
+ * @param filename used to display source in case of errors.
  */
 void init_artifacts(BufferReader *reader, const char *filename) {
     char *buf, *cp, *next;
@@ -626,9 +638,9 @@ void init_artifacts(BufferReader *reader, const char *filename) {
 }
 
 /**
- * Searches the artifact lists and returns one that has the same type
- * of objects on it.
+ * Finds the artifact list for a certain item type.
  *
+ * @param type item type to get the artifacts of.
  * @return
  * NULL if no suitable list found.
  */
@@ -637,8 +649,8 @@ const artifactlist *find_artifactlist(int type) {
 }
 
 /**
- * Searches and returns a specific artifact, NULL if not found.
- * @param op item to search for.
+ * Searches and returns a specific artifact compatible with an object, NULL if not found.
+ * @param op item to search the artifact for.
  * @param name artifact name.
  * @return matching artifact, NULL if none matched.
  */
