@@ -1022,6 +1022,7 @@ static void initConstants(PyObject *module) {
         { "POISON", POISON },
         { "BOOK", BOOK },
         { "CLOCK", CLOCK },
+        { "DRAGON_FOCUS", DRAGON_FOCUS },
         { "ARROW", ARROW },
         { "BOW", BOW },
         { "WEAPON", WEAPON },
@@ -1122,6 +1123,8 @@ static void initConstants(PyObject *module) {
         { "SYMPTOM", SYMPTOM },
         { "BUILDER", BUILDER },
         { "MATERIAL", MATERIAL },
+        { "MIMIC", MIMIC },
+        { "LIGHTABLE", LIGHTABLE },
         { NULL, 0 }
     };
 
