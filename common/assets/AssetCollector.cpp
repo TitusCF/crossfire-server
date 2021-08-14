@@ -44,13 +44,9 @@ void AssetCollector::processFiles(const std::vector<std::string>& files) {
     for (const auto &file : files) {
         for (auto loader : m_loaders) {
             if (loader->willLoad(file)) {
-                FILE *opened = fopen(file.c_str(), "rb");
-                if (!opened) {
-                    LOG(llevError, "unable to open file %s\n", file.c_str());
+                if (bufferreader_init_from_file(m_reader, file.c_str(), "Unable to open asset file %s: %s\n", llevError) == NULL) {
                     continue;
                 }
-                bufferreader_init_from_file(m_reader, opened);
-                fclose(opened);
                 loader->load(m_reader, file);
             }
         }

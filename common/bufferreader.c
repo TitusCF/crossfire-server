@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "global.h"
 #include "compat.h"
 #include "bufferreader.h"
@@ -61,7 +62,16 @@ static void bufferreader_init_for_length(BufferReader *br, size_t length) {
     br->line_index = 0;
 }
 
-void bufferreader_init_from_file(BufferReader *br, FILE *file) {
+BufferReader *bufferreader_init_from_file(BufferReader *br, const char *filepath, const char *failureMessage, LogLevel failureLevel) {
+    FILE *file = fopen(filepath, "rb");
+    if (!file) {
+        LOG(failureLevel, failureMessage, filepath, strerror(errno));
+        return NULL;
+    }
+    if (!br) {
+        br = bufferreader_create();
+    }
+
     fseek(file, 0L, SEEK_END);
     bufferreader_init_for_length(br, ftell(file));
     fseek(file, 0, SEEK_SET);
@@ -71,6 +81,8 @@ void bufferreader_init_from_file(BufferReader *br, FILE *file) {
         LOG(llevError, "Expected to read %ld bytes, only read %ld!\n", br->buffer_length, actual);
         br->buffer_length = actual;
     }
+    fclose(file);
+    return br;
 }
 
 void bufferreader_init_from_tar_file(BufferReader *br, mtar_t *tar, mtar_header_t *h) {

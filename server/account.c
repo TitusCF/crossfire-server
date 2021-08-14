@@ -50,7 +50,6 @@
 #include "global.h"
 
 #include <ctype.h>
-#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -157,7 +156,6 @@ void accounts_clear(void) {
  */
 void accounts_load(void) {
     char fname[MAX_BUF], *buf;
-    FILE *fp;
     account_struct *ac, *last=NULL;
     int fields=0;
     BufferReader *br;
@@ -167,17 +165,9 @@ void accounts_load(void) {
         return;
     }
     snprintf(fname, MAX_BUF,"%s/%s", settings.localdir, ACCOUNT_FILE);
-    fp=fopen(fname,"r");
-    if (!fp) {
-        /* This may not in fact be a critical error - on a new server,
-         * the accounts file may not yet exist.
-         */
-        LOG(llevInfo,"Warning: Unable to open %s [%s]\n", fname, strerror(errno));
+    if ((br = bufferreader_init_from_file(NULL, fname, "Warning: Unable to open %s [%s]\n", llevInfo)) == NULL) {
         return;
     }
-    br = bufferreader_create();
-    bufferreader_init_from_file(br, fp);
-    fclose(fp);
 
     while ((buf = bufferreader_next_line(br))) {
         char *tmp[NUM_ACCOUNT_FIELDS], *cp;
