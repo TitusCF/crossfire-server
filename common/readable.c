@@ -2124,7 +2124,7 @@ sstring get_message_body(const GeneralMessage *message) {
 /**
  * Get a message's face.
  * @param message message, must not be NULL.
- * @return face, -1 if not defined.
+ * @return face, NULL if not defined.
  */
 const Face *get_message_face(const GeneralMessage *message) {
     return message->face;

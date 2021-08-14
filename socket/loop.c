@@ -190,6 +190,15 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
     SockList_Term(&sl);
 }
 
+/**
+ * Handle a command, either directly sent by the client, or sent for a player's action.
+ * @param ns socket sending the command, must not be NULL.
+ * @param pl player associated to the socket, may be NULL.
+ * @param cmd command name.
+ * @param data additional data, can be NULL.
+ * @param len length of data.
+ * @return 1 if cmd is a command sent for a player's action, 0 else.
+ */
 static int
 handle_cmd(socket_struct *ns, player *pl, char *cmd, char *data, int len) {
     /* Fuzz testing indicated a way to get a null command here
