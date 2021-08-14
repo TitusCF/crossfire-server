@@ -42,6 +42,7 @@ extern "C" {
 #endif
 
 #include "microtar.h"
+#include "logger.h"
 
 /**
  * The reader state.
@@ -61,12 +62,17 @@ BufferReader *bufferreader_create();
 void bufferreader_destroy(BufferReader *br);
 
 /**
- * Initialize a BufferReader from a file pointer.
+ * Initialize or create a BufferReader from a file path.
  * The whole file is read into memory.
- * @param br buffer to initialize.
- * @param file opened file to load, must be opened in binary mode.
+ * @param br buffer to initialize, if NULL then a new BufferReader is created.
+ * @param filepath path of the file to read.
+ * @param failureMessage message to LOG() in case of open failure.
+ * Must contain 2 placeholders '%s' for the filepath and the error message.
+ * @param failureLevel log level to use in case of failure.
+ * @return BufferReader with the file contents, NULL in case of error, in which case
+ * a LOG() is emitted.
  */
-void bufferreader_init_from_file(BufferReader *br, FILE *file);
+BufferReader *bufferreader_init_from_file(BufferReader *br, const char *filepath, const char *failureMessage, LogLevel failureLevel);
 
 /**
  * Initialize a BufferReader from a tar file entry.

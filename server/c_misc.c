@@ -22,7 +22,6 @@
 #include "global.h"
 
 #include <assert.h>
-#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -1709,18 +1708,12 @@ static int find_help_file(const char *name, const char *language, int wiz, char 
  * @param filename full help filename.
  */
 static void display_help_file(object *op, const char *filename) {
-    FILE *fp;
     BufferReader *br;
     const char *line;
 
-    if ((fp = fopen(filename, "r")) == NULL) {
-        LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror(errno));
+    if ((br = bufferreader_init_from_file(NULL, filename, "Cannot open help file %s: %s\n", llevError)) == NULL) {
         return;
     }
-
-    br = bufferreader_create();
-    bufferreader_init_from_file(br, fp);
-    fclose(fp);
 
     while (line = bufferreader_next_line(br)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
