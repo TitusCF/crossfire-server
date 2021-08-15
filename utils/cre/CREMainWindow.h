@@ -40,21 +40,7 @@ class CREMainWindow : public QMainWindow
         QMenu* myOpenMenu;
         QMenu* mySaveMenu;
 
-        QAction* myOpenArtifacts;
-        QAction* myOpenArchetypes;
-        QAction* myOpenTreasures;
-        QAction* myOpenAnimations;
-        QAction* myOpenFormulae;
-        QAction* myOpenFaces;
-        QAction* myOpenMaps;
-        QAction* myOpenResources;
         QAction* myOpenExperience;
-        QAction* myOpenQuests;
-        QAction* myOpenMessages;
-        QAction* myOpenScripts;
-        QAction* myOpenRandomMaps;
-        QAction* myOpenGeneralMessages;
-        QAction* myOpenFacesets;
         QAction* mySaveFormulae;
         QAction* mySaveQuests;
         QAction* mySaveMessages;
@@ -91,21 +77,8 @@ class CREMainWindow : public QMainWindow
         void fillFacesets();
 
     private slots:
-        void onOpenArtifacts();
-        void onOpenArchetypes();
-        void onOpenTreasures();
-        void onOpenAnimations();
-        void onOpenFormulae();
-        void onOpenFaces();
-        void onOpenMaps();
-        void onOpenQuests();
         void onOpenResources();
-        void onOpenMessages();
         void onOpenExperience();
-        void onOpenScripts();
-        void onOpenRandomMaps();
-        void onOpenGeneralMessages();
-        void onOpenFacesets();
         void onSaveFormulae();
         void onSaveQuests();
         void onSaveMessages();
