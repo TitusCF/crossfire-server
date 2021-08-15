@@ -9,6 +9,7 @@ extern "C" {
 
 #include "assets.h"
 #include "AssetsManager.h"
+#include "CRESettings.h"
 
 QHash<int, QIcon> CREPixmap::allFaces;
 QIcon* CREPixmap::myTreasureIcon;
@@ -16,6 +17,7 @@ QIcon* CREPixmap::myTreasureOneIcon;
 QIcon* CREPixmap::myTreasureYesIcon;
 QIcon* CREPixmap::myTreasureNoIcon;
 face_sets *CREPixmap::faceset;
+bool CREPixmap::myUseFaceFallback = true;
 
 void CREPixmap::init()
 {
@@ -24,10 +26,33 @@ void CREPixmap::init()
     myTreasureYesIcon = new QIcon(":resources/treasure_yes.png");
     myTreasureNoIcon = new QIcon(":resources/treasure_no.png");
 
-    faceset = getManager()->facesets()->get("base");
+    CRESettings settings;
+    faceset = getManager()->facesets()->get(settings.facesetToDisplay().toStdString());
+    myUseFaceFallback = settings.facesetUseFallback();
+}
+
+void CREPixmap::setFaceset(const QString& prefix)
+{
+    faceset = getManager()->facesets()->get(prefix.toStdString());
+    allFaces.clear();
+    CRESettings settings;
+    settings.setFacesetToDisplay(prefix);
+}
+
+void CREPixmap::setUseFacesetFallback(bool use)
+{
+    myUseFaceFallback = use;
+    allFaces.clear();
+    CRESettings settings;
+    settings.setFacesetUseFallback(use);
 }
 
 QIcon CREPixmap::getIcon(int faceNumber)
+{
+    return CREPixmap::getIcon(faceset, faceNumber);
+}
+
+QIcon CREPixmap::getIcon(const face_sets *faceset, int faceNumber)
 {
     if (!allFaces.contains(faceNumber))
     {
@@ -40,6 +65,10 @@ QIcon CREPixmap::getIcon(int faceNumber)
                 QIcon icon(face.scaled(32, 32, Qt::KeepAspectRatio));
                 allFaces[faceNumber] = icon;
             }
+        }
+        else if (myUseFaceFallback && faceset->fallback)
+        {
+            return getIcon(faceset->fallback, faceNumber);
         }
     }
     return allFaces[faceNumber];

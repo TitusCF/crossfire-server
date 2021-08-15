@@ -25,6 +25,7 @@ extern "C" {
 }
 #include "assets.h"
 #include "AssetsManager.h"
+#include "CRESettings.h"
 
 CREMainWindow::CREMainWindow()
 {
@@ -42,6 +43,8 @@ CREMainWindow::CREMainWindow()
 
     myResourcesManager = new ResourcesManager();
     myResourcesManager->load();
+
+    fillFacesets();
 
     myQuestManager = new QuestManager();
     myQuestManager->loadQuests();
@@ -214,6 +217,11 @@ void CREMainWindow::createActions()
     connect(myClearMapCache, SIGNAL(triggered()), this, SLOT(onClearCache()));
     /* can't clear map cache while collecting information */
     myClearMapCache->setEnabled(false);
+
+    myToolFacesetUseFallback = new QAction("Use set fallback for missing faces", this);
+    connect(myToolFacesetUseFallback, SIGNAL(triggered()), this, SLOT(onToolFacesetUseFallback()));
+    myToolFacesetUseFallback->setCheckable(true);
+    myToolFacesetUseFallback->setChecked(true);
 }
 
 void CREMainWindow::createMenus()
@@ -256,13 +264,13 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportMaterials);
     reportMenu->addAction(myReportArchetypes);
 
-    QMenu* toolsMenu = menuBar()->addMenu("&Tools");
-    toolsMenu->addAction(myToolEditMonsters);
-    toolsMenu->addAction(myToolSmooth);
-    toolsMenu->addAction(myToolHPBar);
-    toolsMenu->addAction(myToolCombatSimulator);
-    toolsMenu->addAction(myToolFaceMaker);
-    toolsMenu->addAction(myClearMapCache);
+    myToolsMenu = menuBar()->addMenu("&Tools");
+    myToolsMenu->addAction(myToolEditMonsters);
+    myToolsMenu->addAction(myToolSmooth);
+    myToolsMenu->addAction(myToolHPBar);
+    myToolsMenu->addAction(myToolCombatSimulator);
+    myToolsMenu->addAction(myToolFaceMaker);
+    myToolsMenu->addAction(myClearMapCache);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -275,6 +283,30 @@ void CREMainWindow::doResourceWindow(DisplayMode mode)
     connect(this, SIGNAL(commitData()), resources, SLOT(commitData()));
     myArea->addSubWindow(resources);
     resources->show();
+}
+
+void CREMainWindow::fillFacesets()
+{
+    CRESettings settings;
+    const QString select = settings.facesetToDisplay();
+    const bool use = settings.facesetUseFallback();
+
+    QMenu *fs = myToolsMenu->addMenu("Facesets");
+    myFacesetsGroup = new QActionGroup(this);
+    connect(myFacesetsGroup, SIGNAL(triggered(QAction*)), this, SLOT(onToolFaceset(QAction*)));
+    getManager()->facesets()->each([&fs, &select, this] (face_sets *f)
+    {
+        QAction *a = new QAction(f->fullname, fs);
+        a->setCheckable(true);
+        a->setData(f->prefix);
+        fs->addAction(a);
+        myFacesetsGroup->addAction(a);
+        if (select == f->prefix)
+            a->setChecked(true);
+    });
+    fs->addSeparator();
+    fs->addAction(myToolFacesetUseFallback);
+    myToolFacesetUseFallback->setChecked(use);
 }
 
 void CREMainWindow::onOpenArtifacts()
@@ -1634,4 +1666,14 @@ void CREMainWindow::onClearCache()
     {
         myMapManager->clearCache();
     }
+}
+
+void CREMainWindow::onToolFaceset(QAction* action)
+{
+    CREPixmap::setFaceset(action->data().toString());
+}
+
+void CREMainWindow::onToolFacesetUseFallback()
+{
+    CREPixmap::setUseFacesetFallback(myToolFacesetUseFallback->isChecked());
 }
