@@ -278,3 +278,13 @@ QTreeWidgetItem* CREUtils::generalMessageNode(const GeneralMessage* message, QTr
         item->setIcon(0, CREPixmap::getIcon(message->face->number));
     return item;
 }
+
+QTreeWidgetItem* CREUtils::facesetsNode()
+{
+    return new QTreeWidgetItem(QStringList(QTreeWidget::tr("Facesets")));
+}
+QTreeWidgetItem* CREUtils::facesetsNode(const face_sets* faceset, QTreeWidgetItem* parent)
+{
+    QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(faceset->fullname));
+    return item;
+}

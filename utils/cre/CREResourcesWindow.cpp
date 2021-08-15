@@ -32,6 +32,7 @@
 #include "CREMessagePanel.h"
 #include "CREScriptPanel.h"
 #include "CREGeneralMessagePanel.h"
+#include "CREFacesetsPanel.h"
 
 #include "CREWrapperObject.h"
 #include "CREWrapperArtifact.h"
@@ -204,6 +205,11 @@ void CREResourcesWindow::fillData()
     {
         title = tr("General messages");
         fillGeneralMessages();
+    }
+    if (myDisplay & DisplayFacesets)
+    {
+        title = tr("Facesets");
+        fillFacesets();
     }
 
     if (myDisplay == DisplayAll)
@@ -658,6 +664,25 @@ void CREResourcesWindow::fillGeneralMessages()
     });
 
     addPanel("GeneralMessage", new CREGeneralMessagePanel(this));
+}
+
+void CREResourcesWindow::fillFacesets()
+{
+    QTreeWidgetItem* root;
+
+    root = CREUtils::facesetsNode();
+    myTreeItems.append(new CRETreeItemEmpty());
+    root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    myTree->addTopLevelItem(root);
+
+    getManager()->facesets()->each([this, &root] (const face_sets* faceset)
+    {
+        auto item = CREUtils::facesetsNode(faceset, root);
+        myTreeItems.append(new CRETTreeItem<const face_sets>(faceset, "Faceset"));
+        item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+    });
+
+    addPanel("Faceset", new CREFacesetsPanel(this));
 }
 
 void CREResourcesWindow::addPanel(QString name, CREPanel* panel)

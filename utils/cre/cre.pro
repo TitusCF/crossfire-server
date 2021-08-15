@@ -64,7 +64,8 @@ CREPixmap.cpp \
  EditMonstersDialog.cpp \
  ArchetypesModel.cpp \
  CREWrapperTreasure.cpp \
- CREGeneralMessagePanel.cpp
+ CREGeneralMessagePanel.cpp \
+ CREFacesetsPanel.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -127,7 +128,8 @@ CREPixmap.h \
  EditMonstersDialog.h \
  ArchetypesModel.h \
  CREWrapperTreasure.h \
- CREGeneralMessagePanel.h
+ CREGeneralMessagePanel.h \
+ CREFacesetsPanel.h
 LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt -ldl
 
 RESOURCES += cre.qrc
