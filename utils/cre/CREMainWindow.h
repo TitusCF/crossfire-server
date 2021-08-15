@@ -68,11 +68,14 @@ class CREMainWindow : public QMainWindow
         QAction *myReportQuests;
         QAction* myReportMaterials;
         QAction* myReportArchetypes;
+        QMenu* myToolsMenu;
         QAction* myToolEditMonsters;
         QAction* myToolSmooth;
         QAction* myToolHPBar;
         QAction* myToolCombatSimulator;
         QAction* myToolFaceMaker;
+        QActionGroup *myFacesetsGroup;
+        QAction* myToolFacesetUseFallback;
         QAction* myClearMapCache;
         QLabel* myMapBrowseStatus;
         CREMapInformationManager* myMapManager;
@@ -84,6 +87,7 @@ class CREMainWindow : public QMainWindow
     protected:
         void closeEvent(QCloseEvent* event);
         void doResourceWindow(DisplayMode mode);
+        void fillFacesets();
 
     private slots:
         void onOpenArtifacts();
@@ -119,6 +123,8 @@ class CREMainWindow : public QMainWindow
         void onToolCombatSimulator();
         void onToolBarMaker();
         void onToolFaceMaker();
+        void onToolFaceset(QAction* action);
+        void onToolFacesetUseFallback();
         void browsingMap(const QString& path);
         void browsingFinished();
         void onFiltersModified();

@@ -20,6 +20,11 @@ class CRESettings : protected QSettings
 
         void loadReports(CREReportDefinitionManager& reports);
         void saveReports(const CREReportDefinitionManager& reports);
+
+        QString facesetToDisplay() const;
+        void setFacesetToDisplay(const QString& faceset);
+        bool facesetUseFallback() const;
+        void setFacesetUseFallback(bool use);
 };
 
 #endif // CLASS_CRE_SETTINGS_H
