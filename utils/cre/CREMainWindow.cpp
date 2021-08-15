@@ -129,6 +129,10 @@ void CREMainWindow::createActions()
     myOpenGeneralMessages->setStatusTip(tr("Display all general messages."));
     connect(myOpenGeneralMessages, SIGNAL(triggered()), this, SLOT(onOpenGeneralMessages()));
 
+    myOpenFacesets = new QAction(tr("Facesets"), this);
+    myOpenFacesets->setStatusTip(tr("Display all facesets."));
+    connect(myOpenFacesets, SIGNAL(triggered()), this, SLOT(onOpenFacesets()));
+
     mySaveFormulae = new QAction(tr("Formulae"), this);
     mySaveFormulae->setEnabled(false);
     connect(mySaveFormulae, SIGNAL(triggered()), this, SLOT(onSaveFormulae()));
@@ -241,6 +245,7 @@ void CREMainWindow::createMenus()
     myOpenMenu->addAction(myOpenScripts);
     myOpenMenu->addAction(myOpenRandomMaps);
     myOpenMenu->addAction(myOpenGeneralMessages);
+    myOpenMenu->addAction(myOpenFacesets);
     myOpenMenu->addSeparator();
     QAction* exit = myOpenMenu->addAction(tr("&Exit"));
     exit->setStatusTip(tr("Close the application."));
@@ -379,6 +384,11 @@ void CREMainWindow::onOpenRandomMaps()
 void CREMainWindow::onOpenGeneralMessages()
 {
     doResourceWindow(DisplayGeneralMessages);
+}
+
+void CREMainWindow::onOpenFacesets()
+{
+    doResourceWindow(DisplayFacesets);
 }
 
 void CREMainWindow::onSaveFormulae()

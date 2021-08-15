@@ -7,6 +7,7 @@ extern "C" {
 #include "global.h"
 #include "artifact.h"
 #include "treasure.h"
+#include "image.h"
 }
 
 class CREMapInformation;
@@ -52,6 +53,9 @@ class CREUtils
 
         static QTreeWidgetItem* generalMessageNode();
         static QTreeWidgetItem* generalMessageNode(const GeneralMessage* message, QTreeWidgetItem* parent);
+
+        static QTreeWidgetItem* facesetsNode();
+        static QTreeWidgetItem* facesetsNode(const face_sets* faceset, QTreeWidgetItem* parent);
 };
 
 #endif // CREUTILS_H
