@@ -31,6 +31,10 @@ CRERegionPanel::CRERegionPanel(QWidget* parent) : CRETPanel(parent)
     layout->addWidget(myJail, line++, 1);
     layout->addWidget(myJailX, line++, 1);
     layout->addWidget(myJailY, line++, 1);
+
+    QWidget *bottomFiller = new QWidget(this);
+    bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    layout->addWidget(bottomFiller, line++, 0, 1, 2);
 }
 
 CRERegionPanel::~CRERegionPanel()
