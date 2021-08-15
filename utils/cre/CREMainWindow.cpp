@@ -73,65 +73,9 @@ void CREMainWindow::closeEvent(QCloseEvent* event)
 
 void CREMainWindow::createActions()
 {
-    myOpenArtifacts = new QAction(tr("Artifacts"), this);
-    myOpenArtifacts->setStatusTip(tr("List all defined artifacts."));
-    connect(myOpenArtifacts, SIGNAL(triggered()), this, SLOT(onOpenArtifacts()));
-
-    myOpenArchetypes = new QAction(tr("Archetypes"), this);
-    myOpenArchetypes->setStatusTip(tr("List all defined archetypes."));
-    connect(myOpenArchetypes, SIGNAL(triggered()), this, SLOT(onOpenArchetypes()));
-
-    myOpenTreasures = new QAction(tr("Treasures"), this);
-    myOpenTreasures->setStatusTip(tr("List all defined treasure lists."));
-    connect(myOpenTreasures, SIGNAL(triggered()), this, SLOT(onOpenTreasures()));
-
-    myOpenAnimations = new QAction(tr("Animations"), this);
-    myOpenAnimations->setStatusTip(tr("List all defined animations."));
-    connect(myOpenAnimations, SIGNAL(triggered()), this, SLOT(onOpenAnimations()));
-
-    myOpenFormulae = new QAction(tr("Formulae"), this);
-    myOpenFormulae->setStatusTip(tr("List all defined alchemy recipes."));
-    connect(myOpenFormulae, SIGNAL(triggered()), this, SLOT(onOpenFormulae()));
-
-    myOpenResources = new QAction(tr("Resources"), this);
-    myOpenResources->setStatusTip(tr("List all defined elements, except experience table."));
-    connect(myOpenResources, SIGNAL(triggered()), this, SLOT(onOpenResources()));
-
-    myOpenFaces = new QAction(tr("Faces"), this);
-    myOpenFaces->setStatusTip(tr("List all defined faces."));
-    connect(myOpenFaces, SIGNAL(triggered()), this, SLOT(onOpenFaces()));
-
-    myOpenMaps = new QAction(tr("Maps"), this);
-    myOpenMaps->setStatusTip(tr("List all maps, with their region."));
-    connect(myOpenMaps, SIGNAL(triggered()), this, SLOT(onOpenMaps()));
-
-    myOpenQuests = new QAction(tr("Quests"), this);
-    myOpenQuests->setStatusTip(tr("List all defined quests."));
-    connect(myOpenQuests, SIGNAL(triggered()), this, SLOT(onOpenQuests()));
-
-    myOpenMessages = new QAction(tr("NPC dialogs"), this);
-    myOpenMessages->setStatusTip(tr("List all NPC dialogs in files."));
-    connect(myOpenMessages, SIGNAL(triggered()), this, SLOT(onOpenMessages()));
-
     myOpenExperience = new QAction(tr("Experience"), this);
     myOpenExperience->setStatusTip(tr("Display the experience table."));
     connect(myOpenExperience, SIGNAL(triggered()), this, SLOT(onOpenExperience()));
-
-    myOpenScripts = new QAction(tr("Scripts"), this);
-    myOpenExperience->setStatusTip(tr("List all scripts references in maps."));
-    connect(myOpenScripts, SIGNAL(triggered()), this, SLOT(onOpenScripts()));
-
-    myOpenRandomMaps = new QAction(tr("Random maps"), this);
-    myOpenRandomMaps->setStatusTip(tr("List all random maps."));
-    connect(myOpenRandomMaps, SIGNAL(triggered()), this, SLOT(onOpenRandomMaps()));
-    
-    myOpenGeneralMessages = new QAction(tr("Messages"), this);
-    myOpenGeneralMessages->setStatusTip(tr("Display all general messages."));
-    connect(myOpenGeneralMessages, SIGNAL(triggered()), this, SLOT(onOpenGeneralMessages()));
-
-    myOpenFacesets = new QAction(tr("Facesets"), this);
-    myOpenFacesets->setStatusTip(tr("Display all facesets."));
-    connect(myOpenFacesets, SIGNAL(triggered()), this, SLOT(onOpenFacesets()));
 
     mySaveFormulae = new QAction(tr("Formulae"), this);
     mySaveFormulae->setEnabled(false);
@@ -228,24 +172,75 @@ void CREMainWindow::createActions()
     myToolFacesetUseFallback->setChecked(true);
 }
 
+const DisplayMode displayModes[] = {
+    DisplayAll,
+    DisplayArtifacts,
+    DisplayArchetypes,
+    DisplayTreasures,
+    DisplayAnimations,
+    DisplayFormulae,
+    DisplayFaces,
+    DisplayMaps,
+    DisplayQuests,
+    DisplayMessage,
+    DisplayScripts,
+    DisplayRandomMaps,
+    DisplayGeneralMessages,
+    DisplayFacesets,
+    DisplayAll,
+};
+
+const char* displayNames[] = {
+    "Resources",
+    "Artifacts",
+    "Archetypes",
+    "Treasures",
+    "Animations",
+    "Formulae",
+    "Faces",
+    "Maps",
+    "Quests",
+    "NPC dialogs",
+    "Scripts",
+    "Random maps",
+    "Messages",
+    "Facesets",
+    nullptr,
+};
+
+const char* displayTips[] = {
+    "List all defined elements, except the experience table.",
+    "List all defined artifacts.",
+    "List all defined archetypes.",
+    "List all defined treasure lists.",
+    "List all defined animations.",
+    "List all defined alchemy recipes.",
+    "List all defined faces.",
+    "List all maps, with their region.",
+    "List all defined quests.",
+    "List all NPC dialogs in files.",
+    "List all scripts references in maps.",
+    "List all random maps.",
+    "Display all general messages.",
+    "Display all facesets.",
+    nullptr,
+};
+
 void CREMainWindow::createMenus()
 {
     myOpenMenu = menuBar()->addMenu(tr("&Open"));
-    myOpenMenu->addAction(myOpenResources);
-    myOpenMenu->addAction(myOpenArtifacts);
-    myOpenMenu->addAction(myOpenArchetypes);
-    myOpenMenu->addAction(myOpenTreasures);
-    myOpenMenu->addAction(myOpenAnimations);
-    myOpenMenu->addAction(myOpenFormulae);
-    myOpenMenu->addAction(myOpenFaces);
-    myOpenMenu->addAction(myOpenMaps);
-    myOpenMenu->addAction(myOpenQuests);
-    myOpenMenu->addAction(myOpenMessages);
+    for (int i = 0; displayNames[i] != nullptr; i++)
+    {
+        QAction* action = new QAction(tr(displayNames[i]), this);
+        action->setStatusTip(tr(displayTips[i]));
+        action->setData(static_cast<int>(displayModes[i]));
+        connect(action, SIGNAL(triggered()), this, SLOT(onOpenResources()));
+        myOpenMenu->addAction(action);
+    }
+
     myOpenMenu->addAction(myOpenExperience);
-    myOpenMenu->addAction(myOpenScripts);
-    myOpenMenu->addAction(myOpenRandomMaps);
-    myOpenMenu->addAction(myOpenGeneralMessages);
-    myOpenMenu->addAction(myOpenFacesets);
+
+
     myOpenMenu->addSeparator();
     QAction* exit = myOpenMenu->addAction(tr("&Exit"));
     exit->setStatusTip(tr("Close the application."));
@@ -290,6 +285,13 @@ void CREMainWindow::doResourceWindow(DisplayMode mode)
     resources->show();
 }
 
+void CREMainWindow::onOpenExperience()
+{
+    QWidget* experience = new CREExperienceWindow();
+    myArea->addSubWindow(experience);
+    experience->show();
+}
+
 void CREMainWindow::fillFacesets()
 {
     CRESettings settings;
@@ -314,81 +316,13 @@ void CREMainWindow::fillFacesets()
     myToolFacesetUseFallback->setChecked(use);
 }
 
-void CREMainWindow::onOpenArtifacts()
-{
-    doResourceWindow(DisplayArtifacts);
-}
-
-void CREMainWindow::onOpenArchetypes()
-{
-    doResourceWindow(DisplayArchetypes);
-}
-
-void CREMainWindow::onOpenTreasures()
-{
-    doResourceWindow(DisplayTreasures);
-}
-
-void CREMainWindow::onOpenAnimations()
-{
-    doResourceWindow(DisplayAnimations);
-}
-
-void CREMainWindow::onOpenFormulae()
-{
-    doResourceWindow(DisplayFormulae);
-}
-
-void CREMainWindow::onOpenFaces()
-{
-    doResourceWindow(DisplayFaces);
-}
-
-void CREMainWindow::onOpenMaps()
-{
-    doResourceWindow(DisplayMaps);
-}
-
-void CREMainWindow::onOpenQuests()
-{
-    doResourceWindow(DisplayQuests);
-}
-
-void CREMainWindow::onOpenMessages()
-{
-    doResourceWindow(DisplayMessage);
-}
-
 void CREMainWindow::onOpenResources()
 {
-    doResourceWindow(DisplayAll);
-}
+    QAction* source = qobject_cast<QAction*>(sender());
+    if (!source)
+        return;
 
-void CREMainWindow::onOpenExperience()
-{
-    QWidget* experience = new CREExperienceWindow();
-    myArea->addSubWindow(experience);
-    experience->show();
-}
-
-void CREMainWindow::onOpenScripts()
-{
-    doResourceWindow(DisplayScripts);
-}
-
-void CREMainWindow::onOpenRandomMaps()
-{
-    doResourceWindow(DisplayRandomMaps);
-}
-
-void CREMainWindow::onOpenGeneralMessages()
-{
-    doResourceWindow(DisplayGeneralMessages);
-}
-
-void CREMainWindow::onOpenFacesets()
-{
-    doResourceWindow(DisplayFacesets);
+    doResourceWindow(static_cast<DisplayMode>(source->data().toInt()));
 }
 
 void CREMainWindow::onSaveFormulae()
