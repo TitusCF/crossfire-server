@@ -2129,7 +2129,7 @@ static StringBuffer *monster_format_say(const object* npc, const char *message) 
  * @param rt dialog type.
  * @return verb.
  */
-static const char *get_reply_text_own(reply_type rt) {
+const char *get_reply_text_own(reply_type rt) {
     switch (rt) {
         case rt_say:
             return "say";

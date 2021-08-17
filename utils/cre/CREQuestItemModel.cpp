@@ -81,8 +81,8 @@ QVariant CREQuestItemModel::data(const QModelIndex& index, int role) const
             return step->isCompletion() ? Qt::Checked : Qt::Unchecked;
 
         case 3:
-            /*if (role == Qt::EditRole)
-                return step->setWhen();*/
+            if (role == Qt::EditRole)
+                return step->setWhen();
             return step->setWhen().join("\n");
     }
 
@@ -137,7 +137,7 @@ bool CREQuestItemModel::setData(const QModelIndex& index, const QVariant& value,
     else if (index.column() == 2)
         step->setCompletion(value == Qt::Checked);
     else if (index.column() == 3)
-        step->setWhen() = value.toString().split("\n");
+        step->setWhen() = value.value<QStringList>();
 
     emit dataChanged(index, index);
     myQuest->setModified(true);

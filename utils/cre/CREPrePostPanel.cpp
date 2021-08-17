@@ -1,6 +1,5 @@
-#include "CREPrePostPanel.h"
-#include "CRERulePanel.h"
 #include <QtWidgets>
+#include "CREPrePostPanel.h"
 #include "QuestConditionScript.h"
 #include "QuestManager.h"
 #include "Quest.h"
@@ -10,7 +9,7 @@ CRESubItemList::CRESubItemList(QWidget* parent) : CRESubItemWidget(parent)
     QGridLayout* layout = new QGridLayout(this);
 
     mySubItems = new QListWidget(this);
-    connect(mySubItems, SIGNAL(currentRowChanged(int)), this, SLOT(currentSubItemChanged(int)));
+    mySubItems->setViewMode(QListView::ListMode);
     layout->addWidget(mySubItems, 0, 0, 1, 2);
 
     QPushButton* addSubItem = new QPushButton(tr("add"), this);
@@ -21,34 +20,45 @@ CRESubItemList::CRESubItemList(QWidget* parent) : CRESubItemWidget(parent)
     connect(delSubItem, SIGNAL(clicked(bool)), this, SLOT(onDeleteSubItem(bool)));
     layout->addWidget(delSubItem, 1, 1);
 
-    myItemEdit = new QLineEdit(this);
-    connect(myItemEdit, SIGNAL(textChanged(const QString&)), this, SLOT(subItemChanged(const QString&)));
-    layout->addWidget(myItemEdit, 2, 0, 1, 2);
+    connect(mySubItems->itemDelegate(), SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)), this, SLOT(endEdition(QWidget*, QAbstractItemDelegate::EndEditHint)));
+}
+
+void CRESubItemList::addItem(const QString& item)
+{
+    QListWidgetItem* wi = new QListWidgetItem(item);
+    wi->setFlags(wi->flags() | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+    mySubItems->addItem(wi);
 }
 
 void CRESubItemList::setData(const QStringList& data)
 {
-    myData = data;
-    myData.takeFirst();
+    QStringList d(data);
+    d.takeFirst();
     mySubItems->clear();
-    mySubItems->addItems(myData);
-    myItemEdit->clear();
+    for (const QString& item : d)
+        addItem(item);
 }
 
-void CRESubItemList::currentSubItemChanged(int)
+QStringList CRESubItemList::data() const
 {
-    if (mySubItems->currentItem())
-        myItemEdit->setText(mySubItems->currentItem()->text());
+    QStringList values;
+    for (int i = 0; i < mySubItems->count(); i++)
+        values.append(mySubItems->item(i)->text());
+    return values;
 }
 
+void CRESubItemList::endEdition(QWidget*, QAbstractItemDelegate::EndEditHint)
+{
+    emit dataModified(data());
+}
 
 void CRESubItemList::onAddSubItem(bool)
 {
-    myData.append("(item)");
-    mySubItems->addItem("(item)");
-    mySubItems->setCurrentRow(myData.size() - 1);
+    addItem("(item)");
+    mySubItems->setCurrentRow(mySubItems->count() - 1);
+    mySubItems->editItem(mySubItems->currentItem());
 
-    emit dataModified(myData);
+    emit dataModified(data());
 }
 
 void CRESubItemList::onDeleteSubItem(bool)
@@ -56,20 +66,9 @@ void CRESubItemList::onDeleteSubItem(bool)
     if (mySubItems->currentRow() < 0)
         return;
 
-    myData.removeAt(mySubItems->currentRow());
     delete mySubItems->takeItem(mySubItems->currentRow());
     mySubItems->setCurrentRow(0);
-    emit dataModified(myData);
-}
-
-void CRESubItemList::subItemChanged(const QString& text)
-{
-    if (mySubItems->currentRow() < 0)
-        return;
-
-    myData[mySubItems->currentRow()] = text;
-    mySubItems->currentItem()->setText(text);
-    emit dataModified(myData);
+    emit dataModified(data());
 }
 
 CRESubItemConnection::CRESubItemConnection(QWidget* parent) : CRESubItemWidget(parent)
@@ -384,26 +383,17 @@ void CRESubItemToken::valuesChanged()
     updateData();
 }
 
-
-CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, const QuestManager* quests, QWidget* parent) : QWidget(parent)
+CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, const QuestManager* quests, QWidget* parent) : QDialog(parent)
 {
-    QGridLayout* layout = new QGridLayout(this);
+    setModal(true);
+    setWindowTitle(isPre ? tr("Message pre-condition") : tr("Message post-condition"));
 
-    myItems = new QListWidget(this);
-    connect(myItems, SIGNAL(currentRowChanged(int)), this, SLOT(currentItemChanged(int)));
-    layout->addWidget(myItems, 0, 0, 3, 2);
+    QVBoxLayout* layout = new QVBoxLayout(this);
 
-    QPushButton* addItem = new QPushButton(tr("add"), this);
-    connect(addItem, SIGNAL(clicked(bool)), this, SLOT(onAddItem(bool)));
-    layout->addWidget(addItem, 3, 0);
+    layout->addWidget(new QLabel(tr("Script:"), this));
 
-    QPushButton* delItem = new QPushButton(tr("delete"), this);
-    connect(delItem, SIGNAL(clicked(bool)), this, SLOT(onDeleteItem(bool)));
-    layout->addWidget(delItem, 3, 1);
-
-    layout->addWidget(new QLabel(tr("Script:"), this), 0, 2);
     myChoices = new QComboBox(this);
-    connect(myChoices, SIGNAL(currentIndexChanged(int)), this, SLOT(currentChoiceChanged(int)));
+    layout->addWidget(myChoices);
 
     mySubItemsStack = new QStackedWidget(this);
 
@@ -416,61 +406,29 @@ CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> 
         connect(mySubWidgets.last(), SIGNAL(dataModified(const QStringList&)), this, SLOT(subItemChanged(const QStringList&)));
     }
 
-    layout->addWidget(myChoices, 0, 3);
+    layout->addWidget(mySubItemsStack);
 
-    layout->addWidget(mySubItemsStack, 1, 2, 3, 2);
+    QPushButton* reset = new QPushButton(tr("reset changes"), this);
+    connect(reset, SIGNAL(clicked(bool)), this, SLOT(onReset(bool)));
+    layout->addWidget(reset);
+
+    connect(myChoices, SIGNAL(currentIndexChanged(int)), this, SLOT(currentChoiceChanged(int)));
 }
 
 CREPrePostPanel::~CREPrePostPanel()
 {
 }
 
-QList<QStringList> CREPrePostPanel::getData()
+QStringList CREPrePostPanel::getData()
 {
     return myData;
 }
 
-void CREPrePostPanel::setData(const QList<QStringList> data)
+void CREPrePostPanel::setData(const QStringList& data)
 {
-    myItems->clear();
-
+    myOriginal = data;
     myData = data;
-
-    foreach(QStringList list, data)
-    {
-        if (list.size() > 0)
-            myItems->addItem(list[0]);
-        else
-            myItems->addItem(tr("(empty)"));
-    }
-}
-
-void CREPrePostPanel::onAddItem(bool)
-{
-    myData.append(QStringList("quest"));
-    myItems->addItem("quest");
-    myItems->setCurrentRow(myData.size() - 1);
-    emit dataModified();
-}
-
-void CREPrePostPanel::onDeleteItem(bool)
-{
-    if (myItems->currentRow() < 0 || myItems->currentRow() >= myData.size())
-        return;
-
-    myData.removeAt(myItems->currentRow());
-    delete myItems->takeItem(myItems->currentRow());
-    myItems->setCurrentRow(0);
-    emit dataModified();
-}
-
-void CREPrePostPanel::currentItemChanged(int index)
-{
-    if (index < 0 || index >= myData.size())
-        return;
-
-    QStringList data = myData[index];
-    if (data.size() == 0)
+    if (myData.isEmpty())
         return;
 
     myChoices->setCurrentIndex(myChoices->findText(data[0]));
@@ -480,33 +438,20 @@ void CREPrePostPanel::currentItemChanged(int index)
 
 void CREPrePostPanel::currentChoiceChanged(int)
 {
-    if (myItems->currentRow() < 0 || myItems->currentRow() >= myData.size())
-        return;
-
-    QStringList& data = myData[myItems->currentRow()];
-    if (data.size() == 0)
-        data.append(myChoices->currentText());
+    if (myData.size() == 0)
+        myData.append(myChoices->currentText());
     else
-        data[0] = myChoices->currentText();
-    myItems->currentItem()->setText(data[0]);
+        myData[0] = myChoices->currentText();
 
     mySubItemsStack->setCurrentIndex(myChoices->currentIndex());
-    mySubWidgets[myChoices->currentIndex()]->setData(data);
-
-    emit dataModified();
+    mySubWidgets[myChoices->currentIndex()]->setData(myData);
 }
 
 void CREPrePostPanel::subItemChanged(const QStringList& data)
 {
-    if (myItems->currentRow() < 0 || myItems->currentRow() >= myData.size())
-        return;
-
-    QStringList& item = myData[myItems->currentRow()];
-    while (item.size() > 1)
-        item.removeLast();
-    item.append(data);
-
-    emit dataModified();
+    while (myData.size() > 1)
+        myData.removeLast();
+    myData.append(data);
 }
 
 CRESubItemWidget* CREPrePostPanel::createSubItemWidget(bool isPre, const QuestConditionScript* script, const QuestManager* quests)
@@ -521,4 +466,11 @@ CRESubItemWidget* CREPrePostPanel::createSubItemWidget(bool isPre, const QuestCo
         return new CRESubItemToken(isPre, this);
 
     return new CRESubItemList(this);
+}
+
+void CREPrePostPanel::onReset(bool)
+{
+    if (QMessageBox::question(this, "Confirm reset", "Reset the condition to initial initial values, losing all changes?") != QMessageBox::StandardButton::Yes)
+        return;
+    setData(myOriginal);
 }

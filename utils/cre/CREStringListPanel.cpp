@@ -1,97 +1,79 @@
-#include "CREStringListPanel.h"
 #include <QtWidgets>
+#include "CREStringListPanel.h"
+#include "CREMultilineItemDelegate.h"
 
-CREStringListPanel::CREStringListPanel(QWidget* parent) : QWidget(parent)
+CREStringListPanel::CREStringListPanel(QWidget* parent) : QDialog(parent)
 {
-    QGridLayout* layout = new QGridLayout(this);
+    setModal(true);
+    setWindowTitle(tr("NPC possible messages"));
+
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->addWidget(new QLabel(tr("Messages:"), this));
+
     myItems = new QListWidget(this);
-    connect(myItems, SIGNAL(currentRowChanged(int)), this, SLOT(onCurrentItemChanged(int)));
-    layout->addWidget(new QLabel(tr("Message:"), this), 0, 0, 1, 2);
-    layout->addWidget(myItems, 1, 0, 1, 2);
+    layout->addWidget(myItems);
+    myItems->setItemDelegateForColumn(0, new CREMultilineItemDelegate(myItems, false));
+
+    QHBoxLayout* buttons = new QHBoxLayout();
 
     QPushButton* add = new QPushButton(tr("add"), this);
     connect(add, SIGNAL(clicked(bool)), this, SLOT(onAddItem(bool)));
-    layout->addWidget(add, 2, 0);
+    buttons->addWidget(add);
 
     QPushButton* remove = new QPushButton(tr("remove"), this);
     connect(remove, SIGNAL(clicked(bool)), this, SLOT(onDeleteItem(bool)));
-    layout->addWidget(remove, 2, 1);
+    buttons->addWidget(remove);
 
-    layout->addWidget(new QLabel(tr("Message:"), this), 3, 0);
+    QPushButton* reset = new QPushButton(tr("reset changes"), this);
+    connect(reset, SIGNAL(clicked(bool)), this, SLOT(onReset(bool)));
+    buttons->addWidget(reset);
 
-    myTextEdit = new QTextEdit(this);
-    connect(myTextEdit, SIGNAL(textChanged()), this, SLOT(onTextEditChanged()));
-    layout->addWidget(myTextEdit, 3, 1);
-
-    myCurrentLine = -1;
+    layout->addLayout(buttons);
 }
 
 CREStringListPanel::~CREStringListPanel()
 {
 }
 
-void CREStringListPanel::clearData()
-{
-
-}
-
 void CREStringListPanel::setData(const QStringList& list)
 {
-    myCurrentLine = -1;
     myItems->clear();
-    myItems->addItems(list);
-    if (myTextEdit != NULL)
-        myTextEdit->setText("");
+    for (const QString item : list)
+        createItem(item);
+    myOriginal = list;
 }
 
-QStringList CREStringListPanel::getData() const
+QStringList CREStringListPanel::data() const
 {
     QStringList data;
     for (int i = 0; i < myItems->count(); i++)
-        data.append(myItems->item(i)->text());
+        data.append(myItems->item(i)->text().trimmed());
     return data;
+}
+
+QListWidgetItem* CREStringListPanel::createItem(const QString& text)
+{
+    QListWidgetItem* wi = new QListWidgetItem(text);
+    wi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+    myItems->addItem(wi);
+    return wi;
 }
 
 void CREStringListPanel::onAddItem(bool)
 {
-    myItems->addItem("<item>");
-    emit dataModified();
+    myItems->editItem(createItem("<message>"));
 }
 
 void CREStringListPanel::onDeleteItem(bool)
 {
-    if (myCurrentLine == -1 || myCurrentLine >= myItems->count())
+    if (myItems->currentRow() < 0 || myItems->currentRow() >= myItems->count())
         return;
-
-    delete myItems->takeItem(myCurrentLine);
-    myCurrentLine = -1;
-    if (myTextEdit != NULL)
-        myTextEdit->setText("");
-    emit dataModified();
+    delete myItems->takeItem(myItems->currentRow());
 }
 
-void CREStringListPanel::commitData()
+void CREStringListPanel::onReset(bool)
 {
-    if (myCurrentLine == -1 || myCurrentLine >= myItems->count())
+    if (QMessageBox::question(this, "Confirm reset", "Reset the values, losing all changes?") != QMessageBox::StandardButton::Yes)
         return;
-
-    myItems->item(myCurrentLine)->setText(myTextEdit->toPlainText());
-    emit dataModified();
-}
-
-void CREStringListPanel::onCurrentItemChanged(int currentRow)
-{
-    commitData();
-    if (currentRow == -1)
-        return;
-    myCurrentLine = currentRow;
-    myTextEdit->setText(myItems->item(myCurrentLine)->text());
-}
-
-void CREStringListPanel::onTextEditChanged()
-{
-    if (myCurrentLine == -1)
-        return;
-    myItems->item(myCurrentLine)->setText(myTextEdit->toPlainText());
-    emit dataModified();
+    setData(myOriginal);
 }

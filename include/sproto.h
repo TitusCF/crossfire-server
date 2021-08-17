@@ -355,6 +355,7 @@ object *monster_find_throw_ob(object *op);
 int monster_can_detect_enemy(object *op, object *enemy, rv_vector *rv);
 int monster_stand_in_light(object *op);
 int monster_can_see_enemy(object *op, object *enemy);
+const char *get_reply_text_own(reply_type rt);
 /* move.c */
 int move_object(object *op, int dir);
 int move_ob(object *op, int dir, object *originator);

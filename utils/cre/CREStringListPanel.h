@@ -1,15 +1,14 @@
 #ifndef _CRESTRINGLISTPANEL_H
 #define _CRESTRINGLISTPANEL_H
 
-#include <QWidget>
-
-#include "CREMessagePanel.h"
+#include <QDialog>
 
 class QListWidget;
-class QLineEdit;
-class QTextEdit;
 
-class CREStringListPanel : public QWidget
+/**
+ * Display and allow edition of a list of multiline strings.
+ */
+class CREStringListPanel : public QDialog
 {
     Q_OBJECT
 
@@ -17,24 +16,19 @@ class CREStringListPanel : public QWidget
         CREStringListPanel(QWidget* parent);
         virtual ~CREStringListPanel();
 
-        void clearData();
         void setData(const QStringList& list);
-        QStringList getData() const;
-
-    signals:
-        void dataModified();
+        QStringList data() const;
 
     private:
-        int myCurrentLine;
-        QListWidget* myItems;
-        QTextEdit* myTextEdit;
+        QListWidgetItem* createItem(const QString& text);
 
-        void commitData();
+        QListWidget* myItems;
+        QStringList myOriginal;
+
     protected slots:
         void onAddItem(bool);
         void onDeleteItem(bool);
-        void onCurrentItemChanged(int currentRow);
-        void onTextEditChanged();
+        void onReset(bool);
 };
 
 #endif /* _CRESTRINGLISTPANEL_H */

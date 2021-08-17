@@ -124,6 +124,27 @@ MessageFile::~MessageFile()
     qDeleteAll(myRules);
 }
 
+MessageFile* MessageFile::duplicate() const
+{
+    MessageFile* copy = new MessageFile(myPath);
+    copy->myLocation = myLocation;
+    for (auto rule : myRules)
+        copy->myRules.append(new MessageRule(*rule));
+    copy->myMaps = myMaps;
+    return copy;
+}
+
+void MessageFile::copy(const MessageFile* other)
+{
+    myPath = other->myPath;
+    myLocation = other->myLocation;
+    qDeleteAll(myRules);
+    myRules.clear();
+    for (auto rule : other->myRules)
+        myRules.append(new MessageRule(*rule));
+    myMaps = other->myMaps;
+}
+
 const QString& MessageFile::location() const
 {
     return myLocation;

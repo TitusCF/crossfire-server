@@ -8,13 +8,17 @@
 class MessageFile;
 class MessageRule;
 class QLineEdit;
-class QTreeWidget;
+class QTableView;
 class QTextEdit;
-class QTreeWidgetItem;
+class QTableWidgetItem;
 class CRERulePanel;
 class MessageManager;
 class QuestManager;
+class CREMessageItemModel;
 
+/**
+ * Display information about a NPC message file, and allow edition.
+ */
 class CREMessagePanel : public CRETPanel<MessageFile>
 {
     Q_OBJECT
@@ -26,25 +30,27 @@ class CREMessagePanel : public CRETPanel<MessageFile>
         virtual void setItem(MessageFile* message);
         virtual void commitData();
 
+    protected:
+
     private:
         const MessageManager* myMessageManager;
         MessageFile* myMessage;
+        MessageFile* myOriginal;
         QLineEdit* myPath;
         QLineEdit* myLocation;
-        QTreeWidget* myRules;
+        QTableView* myRules;
+        CREMessageItemModel* myModel;
         QBrush myDefaultBackground;
-        CRERulePanel* myRulePanel;
         QTreeWidget* myUse;
 
-        void fillRuleItem(QTreeWidgetItem* item, MessageRule* rule);
     private slots:
-        void currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
-        void currentRuleModified();
+        void currentRowChanged(const QModelIndex& current, const QModelIndex& previous);
         void onAddRule(bool);
         void onDeleteRule(bool);
         void onMoveUp(bool);
         void onMoveDown(bool);
         void onDuplicate(bool);
+        void onReset(bool);
 };
 
 #endif /* _CREMESSAGEPANEL_H */
