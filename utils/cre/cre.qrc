@@ -4,5 +4,6 @@
         <file>resources/treasureone_list.png</file>
         <file>resources/treasure_yes.png</file>
         <file>resources/treasure_no.png</file>
+        <file>resources/app_icon.png</file>
     </qresource>
 </RCC>

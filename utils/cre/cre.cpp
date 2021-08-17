@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
     QCoreApplication::setOrganizationName("The Legendary Team of Ailesse");
     QCoreApplication::setApplicationName("CRE");
     QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":resources/app_icon.png"));
 
     qRegisterMetaTypeStreamOperators<CREFilterDefinition>("CREFilterDefinition");
     qRegisterMetaTypeStreamOperators<CREFilterDefinitionManager>("CREFilterDefinitionManager");
