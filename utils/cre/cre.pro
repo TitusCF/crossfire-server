@@ -44,7 +44,6 @@ CREPixmap.cpp \
  MessageManager.cpp \
  CREMessagePanel.cpp \
  MessageFile.cpp \
- CRERulePanel.cpp \
  CREStringListPanel.cpp \
  CREPrePostPanel.cpp \
  CREReplyPanel.cpp \
@@ -65,7 +64,13 @@ CREPixmap.cpp \
  ArchetypesModel.cpp \
  CREWrapperTreasure.cpp \
  CREGeneralMessagePanel.cpp \
- CREFacesetsPanel.cpp
+ CREFacesetsPanel.cpp \
+ CREMessageItemModel.cpp \
+ CREPrePostConditionDelegate.cpp \
+ CREPrePostList.cpp \
+ CREPlayerRepliesPanel.cpp \
+ CREPlayerRepliesDelegate.cpp \
+ CREStringListDelegate.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -108,7 +113,6 @@ CREPixmap.h \
  MessageManager.h \
  CREMessagePanel.h \
  MessageFile.h \
- CRERulePanel.h \
  CREStringListPanel.h \
  CREPrePostPanel.h \
  CREReplyPanel.h \
@@ -129,7 +133,13 @@ CREPixmap.h \
  ArchetypesModel.h \
  CREWrapperTreasure.h \
  CREGeneralMessagePanel.h \
- CREFacesetsPanel.h
+ CREFacesetsPanel.h \
+ CREMessageItemModel.h \
+ CREPrePostConditionDelegate.h \
+ CREPrePostList.h \
+ CREPlayerRepliesPanel.h \
+ CREPlayerRepliesDelegate.h \
+ CREStringListDelegate.h
 LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt -ldl
 
 RESOURCES += cre.qrc

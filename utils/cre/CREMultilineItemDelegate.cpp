@@ -4,7 +4,8 @@
 #include "CREQuestItemModel.h"
 #include "Quest.h"
 
-CREMultilineItemDelegate::CREMultilineItemDelegate(QObject* parent) : QStyledItemDelegate(parent)
+CREMultilineItemDelegate::CREMultilineItemDelegate(QObject* parent, bool asStringList, bool trimEmpty)
+: QStyledItemDelegate(parent), myAsStringList(asStringList), myTrimEmpty(trimEmpty)
 {
 }
 
@@ -27,7 +28,21 @@ void CREMultilineItemDelegate::setEditorData(QWidget* editor, const QModelIndex&
     if (edit == NULL)
         return;
 
-    edit->setPlainText(index.model()->data(index, Qt::EditRole).toString());
+    if (myAsStringList)
+        edit->setPlainText(index.model()->data(index, Qt::EditRole).value<QStringList>().join("\n"));
+    else
+        edit->setPlainText(index.model()->data(index, Qt::EditRole).toString());
+}
+
+QStringList convert(const QString& source, bool trimEmpty)
+{
+    QStringList value;
+    for (QString line : source.split("\n"))
+    {
+        if (!line.isEmpty() || !trimEmpty)
+            value.append(line);
+    }
+    return value;
 }
 
 void CREMultilineItemDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
@@ -37,10 +52,9 @@ void CREMultilineItemDelegate::setModelData(QWidget* editor, QAbstractItemModel*
     QTextEdit* edit = qobject_cast<QTextEdit*>(editor);
     if (edit == NULL)
         return;
-    CREQuestItemModel* qim = qobject_cast<CREQuestItemModel*>(model);
-    if (qim == NULL)
-        return;
 
-    QVariant value = edit->toPlainText();
-    qim->setData(index, value);
+    if (myAsStringList)
+        model->setData(index, convert(edit->toPlainText(), myTrimEmpty));
+    else
+        model->setData(index, edit->toPlainText());
 }

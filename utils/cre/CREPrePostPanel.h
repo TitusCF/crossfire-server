@@ -122,24 +122,22 @@ class CRESubItemList : public CRESubItemWidget
         void setData(const QStringList& data);
 
     private:
+        void addItem(const QString& item);
+        QStringList data() const;
+
         /** For one condition, arguments to the script. */
         QListWidget* mySubItems;
-        /** Argument edit zone. */
-        QLineEdit* myItemEdit;
-        /** Current arguments. */
-        QStringList myData;
 
     private slots:
-        void currentSubItemChanged(int);
-        void subItemChanged(const QString& text);
+        void endEdition(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
         void onAddSubItem(bool);
         void onDeleteSubItem(bool);
 };
 
 /**
- * This panel is the 'pre' or 'post' subpanel in the messages panel.
+ * Edition of a single pre- or post- condition for a message.
  */
-class CREPrePostPanel : public QWidget
+class CREPrePostPanel : public QDialog
 {
     Q_OBJECT
 
@@ -153,18 +151,14 @@ class CREPrePostPanel : public QWidget
         CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, const QuestManager* quests, QWidget* parent);
         virtual ~CREPrePostPanel();
 
-        QList<QStringList> getData();
-        void setData(const QList<QStringList> data);
-
-    signals:
-        /** Emitted when the data this panel manages was changed. */
-        void dataModified();
+        QStringList getData();
+        void setData(const QStringList& data);
 
     private:
-        /** Pre- or post- conditions we're working on. */
-        QList<QStringList> myData;
-        /** The first item of each condition. */
-        QListWidget* myItems;
+        /** Pre- or post- condition we're working on. */
+        QStringList myData;
+        /** Original data, to reset the state. */
+        QStringList myOriginal;
         /** Available conditions types. */
         QComboBox* myChoices;
         /** Matching between index of myChoices and the variable subpanels. */
@@ -182,12 +176,9 @@ class CREPrePostPanel : public QWidget
         CRESubItemWidget* createSubItemWidget(bool isPre, const QuestConditionScript* script, const QuestManager* quests);
 
     private slots:
-        void onAddItem(bool);
-        void onDeleteItem(bool);
-        void currentItemChanged(int index);
         void currentChoiceChanged(int index);
         void subItemChanged(const QStringList& data);
+        void onReset(bool);
 };
 
 #endif /* _CREPREPOSTPANEL_H */
-

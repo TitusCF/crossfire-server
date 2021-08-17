@@ -1,11 +1,14 @@
 #include <QtWidgets>
-#include <qdir.h>
 #include "CREMessagePanel.h"
 #include "CREFilterDefinition.h"
 #include "MessageFile.h"
-#include "CRERulePanel.h"
 #include "CREMapInformation.h"
 #include "MessageManager.h"
+#include "CREMessageItemModel.h"
+#include "CREMultilineItemDelegate.h"
+#include "CREPrePostConditionDelegate.h"
+#include "CREPlayerRepliesDelegate.h"
+#include "CREStringListDelegate.h"
 
 CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManager* quests, QWidget* parent) : CRETPanel(parent)
 {
@@ -19,7 +22,6 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManag
     QWidget* details = new QWidget(this);
     tab->addTab(details, tr("Details"));
 
-
     QGridLayout* layout = new QGridLayout(details);
 
     int line = 0;
@@ -32,23 +34,31 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManag
     myLocation = new QLineEdit(this);
     layout->addWidget(myLocation, line++, 1);
 
-    QGroupBox* box = new QGroupBox(tr("Rules"));
-    layout->addWidget(box, line++, 0, 1, 2);
+    layout->addWidget(new QLabel(tr("Message rules (blue: uses token set by current rule as pre-condition, red: rule that sets token for pre-condition of current rule)")), line++, 0, 1, 2);
 
-    QGridLayout* rules = new QGridLayout();
-    box->setLayout(rules);
-
-    myRules = new QTreeWidget();
-    rules->addWidget(myRules, 0, 0, 4, 4);
-    QStringList labels;
-    labels << tr("match") << tr("pre") << tr("message") << tr("post") << tr("replies") << tr("include");
-    myRules->setHeaderLabels(labels);
+    myModel = new CREMessageItemModel(this);
+    myRules = new QTableView();
     myRules->setWordWrap(true);
-    connect(myRules, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+    myRules->setModel(myModel);
+    myRules->setSelectionMode(QAbstractItemView::SingleSelection);
+    myRules->setSelectionBehavior(QAbstractItemView::SelectRows);
+    myRules->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::SelectedClicked);
+    myRules->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    myRules->setItemDelegateForColumn(0, new CREMultilineItemDelegate(myRules, true, true));
+    myRules->setItemDelegateForColumn(1, new CREPrePostConditionDelegate(myRules, true, manager, quests));
+    myRules->setItemDelegateForColumn(2, new CREPlayerRepliesDelegate(myRules));
+    myRules->setItemDelegateForColumn(3, new CREStringListDelegate(myRules));
+    myRules->setItemDelegateForColumn(4, new CREPrePostConditionDelegate(myRules, false, manager, quests));
+    myRules->setItemDelegateForColumn(5, new CREMultilineItemDelegate(myRules, true, true));
+    myRules->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    connect(myRules->selectionModel(), SIGNAL(currentRowChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(currentRowChanged(const QModelIndex&, const QModelIndex&)));
+    layout->addWidget(myRules, line++, 0, 1, 2);
 
     QHBoxLayout* buttons = new QHBoxLayout();
 
-    QPushButton* add = new QPushButton(tr("add rule"), this);
+    QPushButton* add = new QPushButton(tr("insert rule"), this);
     buttons->addWidget(add);
     connect(add, SIGNAL(clicked(bool)), this, SLOT(onAddRule(bool)));
     QPushButton* remove = new QPushButton(tr("remove rule"), this);
@@ -66,29 +76,23 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManag
     buttons->addWidget(copy);
     connect(copy, SIGNAL(clicked(bool)), this, SLOT(onDuplicate(bool)));
 
-    rules->addLayout(buttons, 4, 0, 1, 4);
+    QPushButton* reset = new QPushButton(tr("reset all changes"), this);
+    buttons->addWidget(reset);
+    connect(reset, SIGNAL(clicked(bool)), this, SLOT(onReset(bool)));
 
-    myRulePanel = new CRERulePanel(manager, quests, this);
-    connect(myRulePanel, SIGNAL(currentRuleModified()), this, SLOT(currentRuleModified()));
-    rules->addWidget(myRulePanel, 5, 0, 4, 4);
+    layout->addLayout(buttons, line++, 0, 1, 2);
 
     myUse = new QTreeWidget(this);
     tab->addTab(myUse, tr("Use"));
     myUse->setHeaderLabel(tr("Referenced by..."));
 
-    myMessage = NULL;
+    myMessage = nullptr;
+    myOriginal = nullptr;
 }
 
 CREMessagePanel::~CREMessagePanel()
 {
-}
-
-QString toDisplay(const QList<QStringList>& list)
-{
-    QStringList data;
-    foreach(QStringList item, list)
-        data.append(item.join(" "));
-    return data.join("\n");
+    delete myOriginal;
 }
 
 void CREMessagePanel::setItem(MessageFile* message)
@@ -100,25 +104,8 @@ void CREMessagePanel::setItem(MessageFile* message)
 
     /* so the change handler won't do anything */
     myMessage = NULL;
-    myRules->clear();
+    myModel->setMessage(message);
     myMessage = message;
-
-    foreach(MessageRule* rule, myMessage->rules())
-    {
-        QStringList data;
-        data << rule->match().join("\n");
-        data << toDisplay(rule->preconditions());
-        data << rule->messages().join("\n");
-        data << toDisplay(rule->postconditions());
-        data << toDisplay(rule->replies());
-        data << rule->include();
-        new QTreeWidgetItem(myRules, data);
-    }
-
-    if (myRules->topLevelItemCount() != 0)
-        myDefaultBackground = myRules->topLevelItem(0)->background(0);
-
-    myRulePanel->setMessageRule(NULL);
 
     myUse->clear();
 
@@ -175,140 +162,26 @@ void CREMessagePanel::setItem(MessageFile* message)
         if (got)
             break;
     }
+
+    delete myOriginal;
+    myOriginal = myMessage->duplicate();
 }
 
-void setBackgroundColor(QTreeWidgetItem* item, QBrush color)
+void CREMessagePanel::currentRowChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
 {
-    for (int c = 0; c < item->columnCount(); c++)
-        item->setBackground(c, color);
-}
-
-void CREMessagePanel::currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* /*previous*/)
-{
-    if (!myMessage || myRules->topLevelItemCount() == 0)
-        return;
-
-    for (int r = 0; r < myMessage->rules().size(); r++)
-    {
-        setBackgroundColor(myRules->topLevelItem(r), myDefaultBackground);
-    }
-
-    int index = myRules->indexOfTopLevelItem(current);
-    if (index < 0 || index >= myMessage->rules().size())
-        return;
-
-    MessageRule* rule = myMessage->rules()[index];
-
-    myRulePanel->setMessageRule(rule);
-
-    foreach(QStringList pre, rule->preconditions())
-    {
-        if (pre.size() < 3)
-            continue;
-
-        if (pre[0] != "token" && pre[0] != "npctoken")
-            continue;
-
-        QStringList acceptable = pre;
-        acceptable.removeFirst();
-        acceptable.removeFirst();
-
-        for (int c = 0; c < myMessage->rules().size(); c++)
-        {
-            MessageRule* check = myMessage->rules()[c];
-
-            if (check == rule)
-                continue;
-
-            bool match = false;
-            foreach(QStringList post, check->postconditions())
-            {
-                if (post.size() < 3)
-                    continue;
-                if ((post[0] != "settoken" && post[0] != "setnpctoken") || post[1] != pre[1] || !acceptable.contains(post[2]))
-                    continue;
-                match = true;
-                break;
-            }
-
-            if (match)
-                setBackgroundColor(myRules->topLevelItem(c), Qt::red);
-        }
-    }
-
-    foreach(QStringList post, rule->postconditions())
-    {
-        if (post.size() < 3)
-            continue;
-
-        if (post[0] != "settoken" && post[0] != "setnpctoken")
-            continue;
-
-        for (int c = 0; c < myMessage->rules().size(); c++)
-        {
-            MessageRule* check = myMessage->rules()[c];
-
-            if (check == rule)
-                continue;
-
-            bool match = false;
-            foreach(QStringList pre, check->preconditions())
-            {
-                if (pre.size() < 3)
-                    continue;
-                if ((pre[0] != "token" && pre[0] != "npctoken") || pre[1] != post[1])
-                    continue;
-
-                QStringList acceptable = pre;
-                acceptable.removeFirst();
-                acceptable.removeFirst();
-                if (!acceptable.contains(post[2]))
-                    continue;
-
-                match = true;
-                break;
-            }
-
-            if (match)
-                setBackgroundColor(myRules->topLevelItem(c), Qt::blue);
-        }
-    }
-}
-
-void CREMessagePanel::currentRuleModified()
-{
-    int index = myRules->currentIndex().row();
-    fillRuleItem(myRules->currentItem(), myMessage->rules()[index]);
-    myMessage->rules()[index]->setModified();
-}
-
-void CREMessagePanel::fillRuleItem(QTreeWidgetItem* item, MessageRule* rule)
-{
-    item->setText(0, rule->match().join("\n"));
-    item->setText(1, toDisplay(rule->preconditions()));
-    item->setText(2, rule->messages().join("\n"));
-    item->setText(3, toDisplay(rule->postconditions()));
-    item->setText(4, toDisplay(rule->replies()));
-    item->setText(5, rule->include().join("\n"));
+    myModel->setSelectedRule(current);
 }
 
 void CREMessagePanel::onAddRule(bool)
 {
-    MessageRule* rule = new MessageRule();
-    rule->match().append("*");
-    rule->setModified(true);
-    myMessage->rules().append(rule);
-    new QTreeWidgetItem(myRules, QStringList("*"));
+    int row = myRules->selectionModel()->currentIndex().row() + 1;
+    myModel->insertRows(row, 1);
+    myRules->selectionModel()->select(myModel->index(row, 0, QModelIndex()), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
 
 void CREMessagePanel::onDeleteRule(bool)
 {
-    int index = myRules->currentIndex().row();
-    if (index < 0 || index > myMessage->rules().size())
-        return;
-
-    myMessage->rules().removeAt(index);
-    delete myRules->takeTopLevelItem(index);
+    myModel->removeRows(myRules->selectionModel()->currentIndex().row(), 1);
 }
 
 void CREMessagePanel::commitData()
@@ -323,14 +196,8 @@ void CREMessagePanel::onMoveUp(bool)
     if (index <= 0 || index >= myMessage->rules().size())
         return;
 
-    MessageRule* swap = myMessage->rules()[index - 1];
-    myMessage->rules()[index - 1] = myMessage->rules()[index];
-    myMessage->rules()[index] = swap;
-
-    QTreeWidgetItem* item = myRules->takeTopLevelItem(index - 1);
-    myRules->insertTopLevelItem(index, item);
-
-    myMessage->setModified();
+    myModel->moveUpDown(index, true);
+    myRules->setCurrentIndex(myModel->index(index - 1, 0, QModelIndex()));
 }
 
 void CREMessagePanel::onMoveDown(bool)
@@ -339,25 +206,27 @@ void CREMessagePanel::onMoveDown(bool)
     if (index < 0 || index >= myMessage->rules().size() - 1)
         return;
 
-    MessageRule* swap = myMessage->rules()[index + 1];
-    myMessage->rules()[index + 1] = myMessage->rules()[index];
-    myMessage->rules()[index] = swap;
-
-    QTreeWidgetItem* item = myRules->takeTopLevelItem(index + 1);
-    myRules->insertTopLevelItem(index, item);
-
-    myMessage->setModified();
+    myModel->moveUpDown(index, false);
+    myRules->setCurrentIndex(myModel->index(index + 1, 0, QModelIndex()));
 }
 
 void CREMessagePanel::onDuplicate(bool)
 {
     int index = myRules->currentIndex().row();
-    if (index < 0 || index > myMessage->rules().size())
+    if (index < 0 || index >= myMessage->rules().size())
         return;
 
-    const MessageRule* original = myMessage->rules()[index];
+    myModel->duplicateRow(index);
+    myRules->setCurrentIndex(myModel->index(index + 1, 0, QModelIndex()));
+}
 
-    MessageRule* rule = new MessageRule(*original);
-    myMessage->rules().append(rule);
-    fillRuleItem(new QTreeWidgetItem(myRules, rule->match()), rule);
+void CREMessagePanel::onReset(bool)
+{
+    if (!myMessage)
+        return;
+    if (QMessageBox::question(this, "Confirm reset", "Reset message to its initial values?") != QMessageBox::StandardButton::Yes)
+        return;
+
+    myMessage->copy(myOriginal);
+    setItem(myMessage);
 }

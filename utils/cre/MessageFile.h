@@ -53,6 +53,9 @@ class MessageFile : public QObject
         MessageFile(const QString& path);
         virtual ~MessageFile();
 
+        MessageFile* duplicate() const;
+        void copy(const MessageFile* other);
+
         bool parseFile();
 
         const QString& path() const;
