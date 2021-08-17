@@ -281,7 +281,7 @@ void CREMainWindow::doResourceWindow(DisplayMode mode)
     connect(this, SIGNAL(updateReports()), resources, SLOT(updateReports()));
     connect(resources, SIGNAL(reportsModified()), this, SLOT(onReportsModified()));
     connect(this, SIGNAL(commitData()), resources, SLOT(commitData()));
-    myArea->addSubWindow(resources);
+    myArea->addSubWindow(resources)->setWindowState(Qt::WindowMaximized);
     resources->show();
 }
 
