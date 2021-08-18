@@ -2012,14 +2012,14 @@ static void process_map(struct_map_info *info) {
                     if (!item->slaying) {
                         ep[0] = '\0';
                         if (warn_no_path)
-                            printf(" exit without any path at %d, %d on %s\n", item->x, item->y, info->path);
+                            printf(" exit without any path at %hd, %hd on %s\n", item->x, item->y, info->path);
                     } else {
                         memset(ep, 0, 500);
                         if (strcmp(item->slaying, "/!"))
                             strcpy(ep, EXIT_PATH(item));
                         else {
                             if (!item->msg) {
-                                printf("  random map without message in %s at %d, %d\n", info->path, item->x, item->y);
+                                printf("  random map without message in %s at %hd, %hd\n", info->path, item->x, item->y);
                             } else {
                                 /* Some maps have a 'exit_on_final_map' flag, ignore it. */
                                 start = strstr(item->msg, "\nfinal_map ");
@@ -2039,7 +2039,7 @@ static void process_map(struct_map_info *info) {
                             path_combine_and_normalize(m->path, ep, exit_path, 500);
                             create_pathname(exit_path, tmppath, MAX_BUF);
                             if (stat(tmppath, &stats)) {
-                                printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, info->path, item->x, item->y);
+                                printf("  map %s doesn't exist in map %s, at %hd, %hd.\n", ep, info->path, item->x, item->y);
                             } else {
                                 link = get_map_info(exit_path);
                                 add_map(link, &info->exits_from);
