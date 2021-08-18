@@ -59,9 +59,11 @@ If you are building from Git, run autoconf::
 
   $ autoreconf -i
 
-Generic instructions for using autoconf/automake are in `INSTALL <INSTALL>`_. Briefly::
+Generic instructions for using autoconf/automake are in `INSTALL <INSTALL>`_.
+We recommend building with debugging symbols on (``-g``) and low optimization
+(``-O0``) to assist in debugging crashes. Briefly::
 
-  $ ./configure
+  $ ./configure CFLAGS="-g -O0" CXXFLAGS="-g -O0"
   $ make
   $ make install
 
@@ -148,6 +150,16 @@ a timely fashion.
 
 Further debugging information can be found at
 http://crossfire.real-time.com/debugging_tips.html
+
+Reporting Crashes
+~~~~~~~~~~~~~~~~~
+Your server must be compiled with debugging symbols enabled for your crash
+reports to be useful.
+
+When your server crashes, look for a core dump file. Run the following command
+and include the output in your bug report::
+
+$ gdb /path/to/crossfire-server /path/to/core_dump -batch -ex 'backtrace'
 
 Submitting Patches
 ~~~~~~~~~~~~~~~~~~
