@@ -16,7 +16,6 @@
  */
 
 #ifndef WIN32 /* ---win32 exclude headers */
-#include <dirent.h>
 #include <sys/stat.h>
 #include "autoconf.h"
 #endif
