@@ -1,3 +1,6 @@
+2021-08-18  Andreas Kirschbaum
+    * Do not print an object dump without error message.
+
 2021-08-11  Daniel Hawkins
     * types/common/light_object.c,
       types/lighter/lighter.c: Refactor part of lighter.c into a function so it can be called by lightable.c
