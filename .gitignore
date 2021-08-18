@@ -511,7 +511,6 @@
 /utils/depcomp
 /utils/install-sh
 /utils/ltmain.sh
-/utils/mapper
 /utils/metaserver.pl
 /utils/missing
 /utils/mkinstalldirs
@@ -544,8 +543,8 @@ test/performance/perf_mapsave
 test/unit/server/check_account
 test/unit/server/check_account_char
 test/unit/server/check_monster_change
-utils/crossfire-mapper
-utils/html
+utils/mapper/crossfire-mapper
+utils/mapper/html
 utils/openseadragon
 utils/test-driver
 test/unit/common/check_asset_load_write

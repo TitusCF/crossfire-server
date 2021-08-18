@@ -180,6 +180,7 @@ AC_CONFIG_FILES([Makefile
                  utils/scores.pl utils/player_dl.pl
                  utils/crossloop
                  utils/crossloop.web
+                 utils/mapper/Makefile
                  plugins/Makefile
                  plugins/cfanim/Makefile plugins/cfanim/include/Makefile
                  plugins/cflogger/Makefile
