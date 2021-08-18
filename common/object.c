@@ -1575,7 +1575,7 @@ void object_free(object *ob, int flags) {
         StringBuffer *sb;
         char *diff;
 
-        LOG(llevDebug, "Free object called with non removed object\n");
+        LOG(llevError, "Free object called with non removed object\n");
         sb = stringbuffer_new();
         object_dump(ob, sb);
         diff = stringbuffer_finish(sb);
