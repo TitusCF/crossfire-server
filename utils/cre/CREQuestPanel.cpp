@@ -9,6 +9,8 @@
 #include "MessageManager.h"
 #include "CREMessagePanel.h"
 #include "MessageFile.h"
+#include "assets.h"
+#include "AssetsManager.h"
 
 CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManager, QWidget* parent) : CRETPanel(parent)
 {
@@ -125,7 +127,7 @@ void CREQuestPanel::setItem(Quest* quest)
 
     myCode->setText(quest->code());
     myTitle->setText(quest->title());
-    myFace->setText(quest->face());
+    myFace->setText(quest->face() ? quest->face()->name : "");
     myCanRestart->setChecked(quest->canRestart());
     myDescription->setText(quest->description());
     myComment->setPlainText(quest->comment());
@@ -194,7 +196,7 @@ void CREQuestPanel::commitData()
 
     myQuest->setCode(myCode->text());
     myQuest->setTitle(myTitle->text());
-    myQuest->setFace(myFace->text());
+    myQuest->setFace(getManager()->faces()->find(myFace->text().toStdString()));
     myQuest->setRestart(myCanRestart->isChecked());
     myQuest->setDescription(myDescription->toPlainText());
     myQuest->setComment(myComment->toPlainText().trimmed());

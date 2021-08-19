@@ -578,13 +578,9 @@ void CREResourcesWindow::fillQuests()
     myTree->addTopLevelItem(root);
 
     QStringList codes;
-    const Face* face;
 
     foreach(Quest* quest, myQuests->quests())
     {
-      face = getManager()->faces()->find(quest->face().toLocal8Bit().data());
-      if (face != NULL)
-        quest->setFaceNumber(face->number);
       codes.append(quest->code());
     }
     codes.sort();
