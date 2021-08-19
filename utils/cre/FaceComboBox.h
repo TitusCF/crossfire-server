@@ -3,6 +3,8 @@
 
 #include <QtWidgets>
 
+class Face;
+
 /**
  * Combobox displaying a list of faces, allowing selection and search.
  */
