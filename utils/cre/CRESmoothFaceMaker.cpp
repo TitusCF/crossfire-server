@@ -1,11 +1,15 @@
 #include "CRESmoothFaceMaker.h"
 #include "CREPixmap.h"
 #include <QtWidgets>
+#include "FaceComboBox.h"
 
 extern "C" {
 #include "global.h"
 #include "image.h"
 }
+
+#include "assets.h"
+#include "AssetsManager.h"
 
 CRESmoothFaceMaker::CRESmoothFaceMaker()
 {
@@ -18,10 +22,8 @@ CRESmoothFaceMaker::CRESmoothFaceMaker()
     int line = 0;
 
     layout->addWidget(new QLabel(tr("Face to use:"), this), line, 0);
-    myFace = new QComboBox(this);
+    myFace = new FaceComboBox(this, false);
     layout->addWidget(myFace, line++, 1, 1, 2);
-    for (unsigned int face = 1; face < get_faces_count(); face++)
-        myFace->addItem(CREPixmap::getIcon(face), get_face_by_id(face)->name, face);
 
     layout->addWidget(new QLabel(tr("Path of the picture to create:"), this), line, 0);
     myDestination = new QLineEdit();
@@ -46,16 +48,9 @@ CRESmoothFaceMaker::~CRESmoothFaceMaker()
 {
 }
 
-int CRESmoothFaceMaker::selectedFace() const
+void CRESmoothFaceMaker::setSelectedFace(const Face* face)
 {
-    return myFace->itemData(myFace->currentIndex()).toInt();
-}
-
-void CRESmoothFaceMaker::setSelectedFace(int face)
-{
-    int line = myFace->findData(face);
-    if (line != -1)
-        myFace->setCurrentIndex(line);
+    myFace->setFace(face);
 }
 
 QString CRESmoothFaceMaker::destination() const
@@ -84,7 +79,7 @@ void CRESmoothFaceMaker::makeSmooth()
 
     QPixmap pic(32 * 16, 32 * 2);
     pic.fill(QColor(0, 0, 0, 0));
-    QImage icon = CREPixmap::getIcon(selectedFace()).pixmap(32, 32).toImage();
+    QImage icon = CREPixmap::getIcon(myFace->face()->number).pixmap(32, 32).toImage();
     QPainter device(&pic);
     device.setBackground(QColor(0, 0, 0, 0));
 

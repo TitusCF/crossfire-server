@@ -226,7 +226,7 @@ void CREFacePanel::saveClicked(bool)
 void CREFacePanel::makeSmooth(bool)
 {
     CRESmoothFaceMaker maker;
-    maker.setSelectedFace(myFace->number);
+    maker.setSelectedFace(myFace);
     maker.setAutoClose();
     maker.exec();
 }

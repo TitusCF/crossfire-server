@@ -13,6 +13,7 @@ class QuestStep;
 class QuestManager;
 class CREQuestItemModel;
 class MessageManager;
+class FaceComboBox;
 
 class CREQuestPanel : public CRETPanel<Quest>
 {
@@ -32,7 +33,7 @@ class CREQuestPanel : public CRETPanel<Quest>
         QuestStep* myCurrentStep;
         QLineEdit* myCode;
         QLineEdit* myTitle;
-        QLineEdit* myFace;
+        FaceComboBox* myFace;
         QComboBox* myFile;
         QCheckBox* myCanRestart;
         QComboBox* myParent;

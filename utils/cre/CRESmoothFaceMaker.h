@@ -5,7 +5,7 @@
 #include <QObject>
 
 class QLineEdit;
-class QComboBox;
+class FaceComboBox;
 
 class CRESmoothFaceMaker : public QDialog
 {
@@ -15,8 +15,7 @@ class CRESmoothFaceMaker : public QDialog
         CRESmoothFaceMaker();
         virtual ~CRESmoothFaceMaker();
 
-        int selectedFace() const;
-        void setSelectedFace(int face);
+        void setSelectedFace(const Face* face);
         QString destination() const;
 
         void setAutoClose(bool autoClose = true);
@@ -30,7 +29,7 @@ class CRESmoothFaceMaker : public QDialog
         bool myAutoClose;
         bool myOverwrite;
         QLineEdit* myDestination;
-        QComboBox* myFace;
+        FaceComboBox* myFace;
 };
 
 #endif /* CRESMOOTHFACEMAKER_H */

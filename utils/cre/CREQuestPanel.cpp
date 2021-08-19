@@ -11,6 +11,7 @@
 #include "MessageFile.h"
 #include "assets.h"
 #include "AssetsManager.h"
+#include "FaceComboBox.h"
 
 CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManager, QWidget* parent) : CRETPanel(parent)
 {
@@ -38,7 +39,7 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     layout->addWidget(myTitle, line++, 2);
 
     layout->addWidget(new QLabel(tr("Face:"), this), line, 1);
-    myFace = new QLineEdit();
+    myFace = new FaceComboBox(this, true);
     layout->addWidget(myFace, line++, 2);
 
     myCanRestart = new QCheckBox(tr("this quest can be done multiple times"));
@@ -127,7 +128,7 @@ void CREQuestPanel::setItem(Quest* quest)
 
     myCode->setText(quest->code());
     myTitle->setText(quest->title());
-    myFace->setText(quest->face() ? quest->face()->name : "");
+    myFace->setFace(quest->face());
     myCanRestart->setChecked(quest->canRestart());
     myDescription->setText(quest->description());
     myComment->setPlainText(quest->comment());
@@ -196,7 +197,7 @@ void CREQuestPanel::commitData()
 
     myQuest->setCode(myCode->text());
     myQuest->setTitle(myTitle->text());
-    myQuest->setFace(getManager()->faces()->find(myFace->text().toStdString()));
+    myQuest->setFace(myFace->face());
     myQuest->setRestart(myCanRestart->isChecked());
     myQuest->setDescription(myDescription->toPlainText());
     myQuest->setComment(myComment->toPlainText().trimmed());
