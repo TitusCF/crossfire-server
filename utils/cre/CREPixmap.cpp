@@ -11,7 +11,7 @@ extern "C" {
 #include "AssetsManager.h"
 #include "CRESettings.h"
 
-QHash<int, QIcon> CREPixmap::allFaces;
+QHash<uint16_t, QIcon> CREPixmap::allFaces;
 QIcon* CREPixmap::myTreasureIcon;
 QIcon* CREPixmap::myTreasureOneIcon;
 QIcon* CREPixmap::myTreasureYesIcon;
@@ -47,12 +47,12 @@ void CREPixmap::setUseFacesetFallback(bool use)
     settings.setFacesetUseFallback(use);
 }
 
-QIcon CREPixmap::getIcon(int faceNumber)
+QIcon CREPixmap::getIcon(uint16_t faceNumber)
 {
     return CREPixmap::getIcon(faceset, faceNumber);
 }
 
-QIcon CREPixmap::getIcon(const face_sets *faceset, int faceNumber)
+QIcon CREPixmap::getIcon(const face_sets *faceset, uint16_t faceNumber)
 {
     if (!allFaces.contains(faceNumber))
     {
