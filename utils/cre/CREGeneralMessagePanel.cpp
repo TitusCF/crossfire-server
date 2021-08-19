@@ -2,11 +2,11 @@
 #include <QtWidgets>
 
 #include "CREGeneralMessagePanel.h"
+#include "FaceComboBox.h"
 extern "C" {
 #include "global.h"
 #include "book.h"
 }
-
 
 #define LINE(label, exp) \
     layout->addWidget(new QLabel(tr(label), this), line, 0); \
@@ -23,6 +23,7 @@ CREGeneralMessagePanel::CREGeneralMessagePanel(QWidget* parent) : CRETPanel(pare
     LINE("Identifier:", myIdentifier = new QLineEdit(this));
     LINE("Quest:", myQuest = new QLineEdit(this));
     LINE("Chance:", myChance = new QLineEdit(this));
+    LINE("Face:", myFace = new FaceComboBox(this, true));
 
     layout->addWidget(new QLabel(tr("Message:"), this), line++, 0, 1, 2);
     layout->addWidget(myBody = new QTextEdit(this), line++, 0, 1, 2);
@@ -31,6 +32,7 @@ CREGeneralMessagePanel::CREGeneralMessagePanel(QWidget* parent) : CRETPanel(pare
     myIdentifier->setReadOnly(true);
     myQuest->setReadOnly(true);
     myChance->setReadOnly(true);
+    myFace->setEnabled(false);
     myBody->setReadOnly(true);
 }
 
@@ -40,5 +42,6 @@ void CREGeneralMessagePanel::setItem(const GeneralMessage* message)
     myIdentifier->setText((message->identifier && message->identifier[0] != '\n') ? message->identifier : "");
     myQuest->setText(message->quest_code);
     myChance->setText(QString::number(message->chance));
+    myFace->setFace(message->face);
     myBody->setText(message->message);
 }
