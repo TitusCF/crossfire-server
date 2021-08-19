@@ -14,7 +14,7 @@ class CREPixmap
         static void setFaceset(const QString& prefix);
         static void setUseFacesetFallback(bool use);
 
-        static QIcon getIcon(int faceNumber);
+        static QIcon getIcon(uint16_t faceNumber);
 
         static QIcon getTreasureIcon();
         static QIcon getTreasureOneIcon();
@@ -22,9 +22,9 @@ class CREPixmap
         static QIcon getTreasureNoIcon();
 
     protected:
-        static QIcon getIcon(const face_sets* faceset, int faceNumber);
+        static QIcon getIcon(const face_sets* faceset, uint16_t faceNumber);
 
-        static QHash<int, QIcon> allFaces;
+        static QHash<uint16_t, QIcon> allFaces;
         static QIcon* myTreasureIcon;
         static QIcon* myTreasureOneIcon;
         static QIcon* myTreasureYesIcon;
