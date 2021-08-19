@@ -2,6 +2,9 @@
 #define ARCHETYPESMODEL_H
 
 #include <set>
+#include <QAbstractTableModel>
+
+struct archt;
 
 class ArchetypesModel : public QAbstractTableModel {
 public:
@@ -14,12 +17,12 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const;
   bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
-  const std::set<archetype *>& dirty() const { return myDirty; }
+  const std::set<archt *>& dirty() const { return myDirty; }
   void markClean() { myDirty.clear(); }
 
 private:
-  std::vector<archetype *> myMonsters;
-  std::set<archetype *> myDirty;
+  std::vector<archt *> myMonsters;
+  std::set<archt *> myDirty;
 };
 
 #endif /* ARCHETYPESMODEL_H */

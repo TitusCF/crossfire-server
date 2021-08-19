@@ -1,6 +1,8 @@
 #include "CREPlayerRepliesDelegate.h"
 #include "CREPlayerRepliesPanel.h"
 
+#include <QApplication>
+
 CREPlayerRepliesDelegate::CREPlayerRepliesDelegate(QObject* parent) : QStyledItemDelegate(parent)
 {
 }

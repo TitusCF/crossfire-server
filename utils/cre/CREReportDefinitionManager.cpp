@@ -1,5 +1,6 @@
 #include "CREReportDefinitionManager.h"
 #include "CREReportDefinition.h"
+#include <QDataStream>
 
 CREReportDefinitionManager::CREReportDefinitionManager()
 {

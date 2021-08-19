@@ -2,6 +2,11 @@
 #include <QtWidgets>
 
 #include "CREGeneralMessagePanel.h"
+extern "C" {
+#include "global.h"
+#include "book.h"
+}
+
 
 #define LINE(label, exp) \
     layout->addWidget(new QLabel(tr(label), this), line, 0); \
