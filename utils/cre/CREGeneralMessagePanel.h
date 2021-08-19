@@ -5,6 +5,7 @@
 
 class GeneralMessage;
 class QLineEdit;
+class FaceComboBox;
 
 class CREGeneralMessagePanel : public CRETPanel<const GeneralMessage>
 {
@@ -17,6 +18,7 @@ private:
     QLineEdit* myIdentifier;
     QLineEdit* myQuest;
     QLineEdit* myChance;
+    FaceComboBox* myFace;
     QTextEdit* myBody;
 };
 
