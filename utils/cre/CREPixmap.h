@@ -3,6 +3,8 @@
 
 #include <QtWidgets>
 
+struct face_sets;
+
 class CREPixmap
 {
     public:

@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QObject>
 
+class QTextEdit;
+
 #include "ResourcesManager.h"
 
 class FaceMakerDialog : public QDialog {

@@ -140,19 +140,25 @@ CREPixmap.h \
  CREPlayerRepliesPanel.h \
  CREPlayerRepliesDelegate.h \
  CREStringListDelegate.h
-LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl -lcrypt -ldl
+LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl
+
+linux-* {
+LIBS += -lcrypt -ldl
+CONFIG += precompile_header
+PRECOMPILED_DIR = .pch
+PRECOMPILED_HEADER = cre_pch.h
+CONFIG += debug
+}
+
+win* {
+CONFIG += release
+}
 
 RESOURCES += cre.qrc
 
-CONFIG += precompile_header
 CONFIG += thread
 CONFIG += c++11
 
-PRECOMPILED_DIR = .pch
-PRECOMPILED_HEADER = cre_pch.h
-
 QT += concurrent script widgets
-
-CONFIG += debug
 
 CONFIG += c++14

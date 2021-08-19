@@ -1,5 +1,4 @@
-#include <QLabel>
-#include <QTextEdit>
+#include <QtWidgets>
 
 #include "CRERandomMapPanel.h"
 #include "CRERandomMap.h"

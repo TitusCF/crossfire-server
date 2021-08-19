@@ -5,12 +5,11 @@
 #include <QBrush>
 #include "CREPanel.h"
 
-class MessageFile;
-class MessageRule;
 class QLineEdit;
 class QTableView;
-class QTextEdit;
-class QTableWidgetItem;
+class QTreeWidget;
+class MessageFile;
+class MessageRule;
 class CRERulePanel;
 class MessageManager;
 class QuestManager;

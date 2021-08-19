@@ -4,6 +4,7 @@
 #include <QDialog>
 
 class QListWidget;
+class QListWidgetItem;
 
 /**
  * Display and allow edition of a list of multiline strings.

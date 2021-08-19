@@ -5,6 +5,7 @@
 
 class ArchetypesModel;
 class ResourcesManager;
+struct archt;
 
 class EditMonstersDialog : public QDialog {
     Q_OBJECT

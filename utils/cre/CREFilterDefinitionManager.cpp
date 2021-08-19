@@ -1,5 +1,6 @@
 #include "CREFilterDefinitionManager.h"
 #include "CREFilterDefinition.h"
+#include <QDataStream>
 
 CREFilterDefinitionManager::CREFilterDefinitionManager()
 {

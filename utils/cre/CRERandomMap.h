@@ -3,7 +3,11 @@
 
 #include <QString>
 
+extern "C" {
+#include "global.h"
+#include "random_maps/random_map.h"
 #include "random_maps/rproto.h"
+}
 
 class CREMapInformation;
 
