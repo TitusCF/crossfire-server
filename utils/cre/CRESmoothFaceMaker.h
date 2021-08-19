@@ -6,6 +6,7 @@
 
 class QLineEdit;
 class FaceComboBox;
+class Face;
 
 class CRESmoothFaceMaker : public QDialog
 {
