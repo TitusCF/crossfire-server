@@ -42,11 +42,9 @@ void CRETreeItemQuest::questModified()
 {
     myTreeItem->setText(0, myItem->code());
     myTreeItem->setIcon(0, QIcon());
-    if (!myItem->face().isEmpty())
+    if (myItem->face() != nullptr)
     {
-      const Face* face = getManager()->faces()->get(myItem->face().toLocal8Bit().data());
-      if (face != NULL)
-        myTreeItem->setIcon(0, CREPixmap::getIcon(face->number));
+        myTreeItem->setIcon(0, CREPixmap::getIcon(myItem->face()->number));
     }
 }
 

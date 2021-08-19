@@ -52,7 +52,7 @@ Quest::Quest()
     myCanRestart = false;
     myModified = false;
     myParent = NULL;
-    myFaceNumber = 0;
+    myFace = nullptr;
 }
 
 Quest::~Quest()
@@ -86,27 +86,17 @@ void Quest::setTitle(const QString& title)
     markModified();
 }
 
-const QString& Quest::face() const
+const Face* Quest::face() const
 {
     return myFace;
 }
 
-void Quest::setFace(const QString& face)
+void Quest::setFace(const Face* face)
 {
     if (myFace == face)
         return;
     myFace = face;
     markModified();
-}
-
-int Quest::faceNumber() const
-{
-  return myFaceNumber;
-}
-
-void Quest::setFaceNumber(int face)
-{
-  myFaceNumber = face;
 }
 
 const QString& Quest::description()const

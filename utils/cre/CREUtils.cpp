@@ -237,8 +237,8 @@ QTreeWidgetItem* CREUtils::questsNode()
 QTreeWidgetItem* CREUtils::questNode(const Quest* quest, QTreeWidgetItem* parent)
 {
     QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(quest->code()));
-    if (quest->faceNumber() != 0)
-      item->setIcon(0, CREPixmap::getIcon(quest->faceNumber()));
+    if (quest->face() != nullptr)
+      item->setIcon(0, CREPixmap::getIcon(quest->face()->number));
     return item;
 }
 

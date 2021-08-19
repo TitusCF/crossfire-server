@@ -6,6 +6,9 @@ extern "C" {
 #include <global.h>
 }
 
+#include "assets.h"
+#include "AssetsManager.h"
+
 QuestManager::QuestManager()
 {
 }
@@ -158,7 +161,7 @@ void QuestManager::loadQuestFile(const QString& filename)
 
             if (strncmp(read, "face ", 5) == 0) {
                 read[strlen(read) - 1] = '\0';
-                quest->setFace(read + 5);
+                quest->setFace(getManager()->faces()->find(read + 5));
                 continue;
             }
 
@@ -287,8 +290,8 @@ void QuestManager::saveQuestFile(const QString& filename)
         stream << "quest " << quest->code() << "\n";
         if (!quest->title().isEmpty())
             stream << "title " << quest->title() << "\n";
-        if (!quest->face().isEmpty())
-            stream << "face " << quest->face() << "\n";
+        if (quest->face() != nullptr)
+            stream << "face " << quest->face()->name << "\n";
         if (!quest->description().isEmpty())
         {
             stream << "description\n" << quest->description();

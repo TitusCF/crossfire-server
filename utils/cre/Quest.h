@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QStringList>
 
+class Face;
+
 class CREMapInformation;
 
 class QuestStep : public QObject
@@ -41,10 +43,8 @@ class Quest : public QObject
         void setCode(const QString& code);
         const QString& title() const;
         void setTitle(const QString& title);
-        const QString& face() const;
-        void setFace(const QString& face);
-        int faceNumber() const;
-        void setFaceNumber(int face);
+        const Face* face() const;
+        void setFace(const Face* face);
         const QString& description()const;
         void setDescription(const QString& description);
         bool canRestart() const;
@@ -67,9 +67,7 @@ class Quest : public QObject
     private:
         QString myCode;
         QString myTitle;
-        QString myFace;
-        // only used for display purposes, filled by CREResourcesWindow::fillQuests().
-        int myFaceNumber;
+        const Face* myFace;
         QString myDescription;
         bool myCanRestart;
         QList<QuestStep*> mySteps;
