@@ -6,6 +6,9 @@
 
 class Quest;
 
+/**
+ * Item model for the steps of a quest.
+ */
 class CREQuestItemModel : public QAbstractItemModel
 {
     Q_OBJECT
