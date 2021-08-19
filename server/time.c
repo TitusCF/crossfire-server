@@ -164,8 +164,7 @@ static int generate_monster_inv(object *gen) {
 static int generate_monster_arch(object *gen) {
     int i;
     int nx, ny;
-    object *op, *head = NULL, *prev = NULL;
-    archetype *at = gen->other_arch;
+    object *op;
     const char *code;
 
     if (gen->other_arch == NULL) {
@@ -180,43 +179,27 @@ static int generate_monster_arch(object *gen) {
         LOG(llevError, "Generator (%s) not on a map?\n", gen->name);
         return FALSE;
     }
-    i = object_find_multi_free_spot_within_radius(&at->clone, gen, &nx, &ny);
+    i = object_find_multi_free_spot_within_radius(&gen->other_arch->clone, gen, &nx, &ny);
     if (i == -1)
         return FALSE;
-    while (at != NULL) {
-        op = arch_to_object(at);
-        op->x = nx+at->clone.x;
-        op->y = ny+at->clone.y;
 
-        if (head != NULL) {
-            op->head = head;
-            prev->more = op;
+    op = object_create_clone(&gen->other_arch->clone);
+    if (rndm(0, 9))
+        generate_artifact(op, gen->map->difficulty);
+    op = object_insert_in_map_at(op, gen->map, gen, 0, nx, ny);
+    if (QUERY_FLAG(op, FLAG_FREED))
+        return TRUE;
+    if (HAS_RANDOM_ITEMS(op)) {
+        create_treasure(op->randomitems, op, 0, gen->map->difficulty, 0);
+        if (QUERY_FLAG(op, FLAG_MONSTER)) {
+            monster_check_apply_all(op);
         }
-
-        if (rndm(0, 9))
-            generate_artifact(op, gen->map->difficulty);
-
-        code = object_get_value(gen, "generator_code");
-
-        object_insert_in_map(op, gen->map, gen, 0);
-        /* Did generate a monster, just didn't live very long */
-        if (QUERY_FLAG(op, FLAG_FREED))
-            return TRUE;
-        if (HAS_RANDOM_ITEMS(op)) {
-            create_treasure(op->randomitems, op, 0, gen->map->difficulty, 0);
-            if (QUERY_FLAG(op, FLAG_MONSTER)) {
-                monster_check_apply_all(op);
-            }
-        }
-        if (head == NULL) {
-            head = op;
-            if (code) {
-                object_set_value(head, "generator_code", code, 1);
-            }
-        }
-        prev = op;
-        at = at->more;
     }
+    code = object_get_value(gen, "generator_code");
+    if (code) {
+        object_set_value(op, "generator_code", code, 1);
+    }
+
     return TRUE;
 }
 
