@@ -70,7 +70,8 @@ CREPixmap.cpp \
  CREPrePostList.cpp \
  CREPlayerRepliesPanel.cpp \
  CREPlayerRepliesDelegate.cpp \
- CREStringListDelegate.cpp
+ CREStringListDelegate.cpp \
+ FaceComboBox.cpp
 HEADERS += CREMainWindow.h \
 CREPixmap.h \
  CREUtils.h \
@@ -139,7 +140,8 @@ CREPixmap.h \
  CREPrePostList.h \
  CREPlayerRepliesPanel.h \
  CREPlayerRepliesDelegate.h \
- CREStringListDelegate.h
+ CREStringListDelegate.h \
+ FaceComboBox.h
 LIBS += ../../server/libserver.a ../../common/libcross.a ../../socket/libsocket.a ../../random_maps/librandom_map.a ../../types/libtypes.a -lcurl
 
 linux-* {
