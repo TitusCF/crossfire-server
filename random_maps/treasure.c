@@ -229,7 +229,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, int n_tre
     // Since we scale the stats of the mimic based on the level of the dungeon,
     // we can have no floor to generation difficulty.
     // It is a slim chance at any rate, so it shouldn't be a problem in any case.
-    if (RANDOM() % 1000000 < map->difficulty*map->difficulty*map->difficulty)
+    if ((uint32_t)(RANDOM() % 1000000) < (uint32_t)(map->difficulty*map->difficulty*map->difficulty))
     {
         the_chest = create_archetype("mimic");
         // Set the level for the mimic so that it can be given apporpriate stats.

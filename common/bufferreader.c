@@ -116,7 +116,7 @@ char *bufferreader_get_line(BufferReader *br, char *buffer, size_t length) {
     char *newline = strchr(br->current_line, '\n');
     char *curr = br->current_line;
     if (newline) {
-        size_t cp = MIN(length, newline - curr + 1);
+        size_t cp = MIN(length, (size_t)(newline - curr + 1));
         br->current_line = newline + 1;
         strncpy(buffer, curr, cp);
         buffer[cp] = '\0';

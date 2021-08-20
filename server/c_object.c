@@ -56,8 +56,9 @@ static const uint32_t pickup_modes[] = {
  * @return index, -1 if the name is invalid.
  */
 static int get_pickup_mode_index(const char *name) {
-    int best = -1, len = strlen(name);
-    for (int mode = 0; pickup_names[mode]; mode++) {
+    int best = -1;
+    size_t len = strlen(name);
+    for (size_t mode = 0; pickup_names[mode]; mode++) {
         if (!strcmp(pickup_names[mode], name)) {
             return mode;
         }
