@@ -24,7 +24,7 @@
 #endif
 
 #undef MODULEAPI
-#ifdef WIN32
+#ifdef WIN32__
 # ifdef PYTHON_PLUGIN_EXPORTS
 #  define MODULEAPI __declspec(dllexport)
 # else
@@ -107,7 +107,7 @@ typedef struct _crossfire_plugin {
 
 #ifdef WIN32
 
-#define plugins_dlopen(fname) LoadLibrary(fname)
+#define plugins_dlopen(fname) LoadLibraryA(fname)
 #define plugins_dlclose(lib) FreeLibrary(lib)
 #define plugins_dlsym(lib, name) GetProcAddress(lib, name)
 

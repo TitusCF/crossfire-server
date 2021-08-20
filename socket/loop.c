@@ -24,7 +24,6 @@
 
 #include "global.h"
 
-#include <arpa/inet.h>
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -33,10 +32,13 @@
 #include <unistd.h>
 
 #ifndef WIN32 /* ---win32 exclude unix headers */
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#else
+#include <winsock2.h>
 #endif /* end win32 */
 
 #include "image.h"

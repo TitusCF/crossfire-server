@@ -297,7 +297,11 @@ void hiscore_init(void) {
     char dirname[MAX_BUF];
 
     snprintf(dirname, sizeof(dirname), "%s/%s", settings.localdir, HIGHSCORE_DIR);
+#ifdef WIN32
+    mkdir(dirname);
+#else
     mkdir(dirname,0755);
+#endif
     memset(hiscore_tables,0,sizeof(hiscore_tables));
     for (int i =- 1; i < MAX_SKILLS; ++i) {
         const char *name;

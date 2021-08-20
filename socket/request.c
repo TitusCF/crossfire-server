@@ -55,6 +55,8 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netdb.h>
+#else
+#include <winsock2.h>
 #endif /* win32 */
 
 #include "commands.h"
@@ -1917,7 +1919,11 @@ void esrv_add_spells(player *pl, object *spell) {
  */
 void send_tick(player *pl) {
     SockList sl;
+#ifdef WIN32
+    char tmp;
+#else
     int tmp;
+#endif
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "tick ");

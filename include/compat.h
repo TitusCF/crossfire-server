@@ -7,8 +7,12 @@
 #define _COMPAT_H
 
 // Maintain backward compatibility with original macros.
+#ifndef TRUE
 #define TRUE true
+#endif
+#ifndef FALSE
 #define FALSE false
+#endif
 #define FMT64   PRId64
 #define FMT64U  PRIu64
 
