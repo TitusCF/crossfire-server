@@ -841,6 +841,8 @@ void enter_exit(object *op, object *exit_ob) {
     if (op->contr) {
         object* exit_copy = object_new();
         object_copy(exit_ob, exit_copy);
+        exit_copy->speed = 0;   // Item isn't on map or in inv, but object_copy() may have added it to active list
+        object_update_speed(exit_copy);
         exit_copy->map = exit_ob->map; // hack to set map without actually inserting
         if (op->contr->last_exit) {
             object_free(op->contr->last_exit, FREE_OBJ_NO_DESTROY_CALLBACK);
