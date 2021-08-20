@@ -134,7 +134,7 @@ static void addArchetypes(const artifact* artifact, const char* name, bool check
           return;
         }
 
-        if (name == NULL || (check && (!strcmp(name, arch->clone.name) || (!strcmp(name, arch->name)))) || (!check && strcmp(name, arch->clone.name) && strcmp(name, arch->name)))
+        if (name == NULL || (check && arch->clone.name && (!strcmp(name, arch->clone.name) || (!strcmp(name, arch->name)))) || (!check && (arch->clone.name && strcmp(name, arch->clone.name)) && strcmp(name, arch->name)))
         {
             if (item == NULL)
             {
@@ -217,7 +217,7 @@ void CREArtifactPanel::artifactChanged(QTreeWidgetItem* current, QTreeWidgetItem
     myInstance->setText(desc);
     free(desc);
 
-    if (obj->animation != 0)
+    if (obj->animation != nullptr)
     {
       myAnimation->setVisible(true);
       myAnimation->setAnimation(obj->animation, QUERY_FLAG(obj, FLAG_IS_TURNABLE) ? 8 : -1);
