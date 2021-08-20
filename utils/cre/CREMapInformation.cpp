@@ -1,4 +1,5 @@
 #include "CREMapInformation.h"
+#include "CRERandomMap.h"
 
 CREMapInformation::CREMapInformation()
 {
