@@ -144,10 +144,22 @@ fi
 AM_CONDITIONAL(PROCESS_XSLT, [test -n "$xsltengine"])
 
 dnl Make sure 'arch' and 'maps' directories exist.
-AC_CHECK_FILE([$srcdir/lib/arch], [],
-              [AC_MSG_ERROR([Could not find lib/arch directory.])])
-AC_CHECK_FILE([$srcdir/lib/maps], [],
-              [AC_MSG_ERROR([Could not find lib/maps directory.])])
+if test "$cross_compiling" != "yes"; then
+  AC_CHECK_FILE([$srcdir/lib/arch], [],
+                [AC_MSG_ERROR([Could not find lib/arch directory.])])
+  AC_CHECK_FILE([$srcdir/lib/maps], [],
+                [AC_MSG_ERROR([Could not find lib/maps directory.])])
+fi
+
+case $host in
+  *-*-msdos* | *-*-go32* | *-*-mingw32* | *-*-cygwin* | *-*-windows*)
+    LIBS_WIN32="-lws2_32"
+    ;;
+  *)
+    LIBS_WIN32=""
+    ;;
+esac
+LIBS="$LIBS $LIBS_WIN32"
 
 dnl#############################################################################
 AS_BOX([Generate Output])
