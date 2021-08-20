@@ -33,6 +33,7 @@ class CREAnimationControl : public QWidget
 
         void display(const Animations* animation, int facings = -1);
         QList<CREAnimationWidget*> myWidgets;
+        QTimer* myTimer;
 
     private slots:
         void step();

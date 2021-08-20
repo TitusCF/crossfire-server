@@ -22,15 +22,16 @@ CREAnimationControl::CREAnimationControl(QWidget* parent) : QWidget(parent)
         myWidgets.append(widget);
     }
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(step()));
-    timer->start(250);
+    myTimer = new QTimer(this);
+    connect(myTimer, SIGNAL(timeout()), this, SLOT(step()));
 }
 
 void CREAnimationControl::setAnimation(const Animations* animation, int facings)
 {
+    myTimer->stop();
     myAnimation = animation;
     display(animation, facings);
+    myTimer->start(250);
 }
 
 void CREAnimationControl::display(const Animations* animation, int facings)
