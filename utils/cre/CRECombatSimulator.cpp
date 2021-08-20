@@ -25,8 +25,8 @@ CRECombatSimulator::CRECombatSimulator()
     {
         if (arch->head == NULL && QUERY_FLAG(&arch->clone, FLAG_MONSTER))
         {
-            myFirst->addItem(CREPixmap::getIcon(arch->clone.face->number), arch->name, qVariantFromValue((void*)arch));
-            mySecond->addItem(CREPixmap::getIcon(arch->clone.face->number), arch->name, qVariantFromValue((void*)arch));
+            myFirst->addItem(CREPixmap::getIcon(arch->clone.face->number), arch->name, QVariant::fromValue((void*)arch));
+            mySecond->addItem(CREPixmap::getIcon(arch->clone.face->number), arch->name, QVariant::fromValue((void*)arch));
         }
     });
 
