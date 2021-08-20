@@ -71,10 +71,8 @@ volatile sig_atomic_t shutdown_flag;
 static char const* crypt_string(char const str[static 1], char const* salt) {
 #if defined(WIN32) || (defined(__FreeBSD__))
     // Legacy configuration: use crypt everywhere but on Windows and FreeBSD
-    if (settings.crypt_mode == 0) {
-        return str;
-    }
-#endif
+    return str;
+#else
     char s[3];
 
     if (salt == NULL) {
@@ -92,6 +90,7 @@ static char const* crypt_string(char const str[static 1], char const* salt) {
     s[2] = '\0';
 
     return crypt(str, s);
+#endif
 }
 
 char const* newhash(char const password[static 1]) {
@@ -1507,7 +1506,6 @@ static void do_specials(void) {
 void server_main(int argc, char *argv[]) {
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
     _fmode = _O_BINARY;
-    bRunning = 1;
 #endif
 
 #ifndef WIN32

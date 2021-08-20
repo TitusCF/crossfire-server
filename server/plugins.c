@@ -39,6 +39,10 @@
 #include "svnversion.h"
 #include "timers.h"
 
+#ifdef WIN32
+#include "libloaderapi.h"
+#endif
+
 /** Number of hooked functions a plugin can call. */
 #define NR_OF_HOOKS (sizeof(plug_hooks)/sizeof(*plug_hooks))
 
@@ -264,20 +268,22 @@ static crossfire_plugin *plugins_find_plugin(const char *id) {
 }
 
 #ifdef WIN32
-static const char *plugins_dlerror(void) {
+static const char *plugins_dlerror(void)
+{
     static char buf[256];
     DWORD err;
     char *p;
 
     err = GetLastError();
-    if (FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, 0, buf, sizeof(buf), NULL) == 0)
-        snprintf(buf, sizeof(buf), "error %lu", err);
+    if (FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, 0, buf, sizeof (buf), NULL) == 0)
+        snprintf(buf, sizeof (buf), "error %lu", err);
     p = strchr(buf, '\0');
     while (p > buf && (p[-1] == '\r' || p[-1] == '\n'))
         p--;
     *p = '\0';
     return buf;
 }
+
 #endif /* WIN32 */
 
 /**

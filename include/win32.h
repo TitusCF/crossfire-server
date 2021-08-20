@@ -1,6 +1,66 @@
 #ifndef WIN32_H
 #define WIN32_H
 
+#ifndef UNICODE
+#define UNICODE
+#endif
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <dirent.h>
+#include <time.h>
+#include <direct.h>
+#include <sys/stat.h>   /* somewhat odd, but you don't get stat here with __STDC__ */
+
+#ifndef socklen_t
+#define socklen_t int /* Doesn't exist, just a plain int */
+#endif
+
+#ifndef WIN32
+#define WIN32
+#endif
+
+#define NAMLEN(dirent) strlen((dirent)->d_name)
+
+/* Function prototypes */
+extern DIR *opendir(const char *);
+extern struct dirent *readdir(DIR *);
+extern int closedir(DIR *);
+extern void rewinddir(DIR *);
+extern int strcasecmp(const char *s1, const char *s2);
+extern const char *strcasestr(const char *s, const char *find);
+extern void service_register();
+extern void service_unregister();
+extern void service_handle();
+
+#ifndef S_ISGID
+#define S_ISGID 0002000
+#endif
+#ifndef S_IWOTH
+#define S_IWOTH 0000200
+#endif
+#ifndef S_IWGRP
+#define S_IWGRP 0000020
+#endif
+#ifndef S_IWUSR
+#define S_IWUSR 0000002
+#endif
+#ifndef S_IROTH
+#define S_IROTH 0000400
+#endif
+#ifndef S_IRGRP
+#define S_IRGRP 0000040
+#endif
+#ifndef S_IRUSR
+#define S_IRUSR 0000004
+#endif
+
+/* For Win32 service */
+extern int bRunning;
+
+#if 0
+
 /**
  * @file
  * Structures and types used to implement opendir/readdir/closedir
@@ -29,10 +89,7 @@
 #include <mmsystem.h>
 #include <winsock2.h>
 #include <time.h>
-#include <direct.h>
 #include <math.h>
-
-#include <sys/stat.h>   /* somewhat odd, but you don't get stat here with __STDC__ */
 
 #include <io.h>
 #include <stdio.h>
@@ -69,28 +126,6 @@
 #define S_ISDIR(x) (((x)&S_IFMT) == S_IFDIR)
 #define S_ISREG(x) (((x)&S_IFMT) == S_IFREG)
 
-#ifndef S_ISGID
-#define S_ISGID 0002000
-#endif
-#ifndef S_IWOTH
-#define S_IWOTH 0000200
-#endif
-#ifndef S_IWGRP
-#define S_IWGRP 0000020
-#endif
-#ifndef S_IWUSR
-#define S_IWUSR 0000002
-#endif
-#ifndef S_IROTH
-#define S_IROTH 0000400
-#endif
-#ifndef S_IRGRP
-#define S_IRGRP 0000040
-#endif
-#ifndef S_IRUSR
-#define S_IRUSR 0000004
-#endif
-
 #define WIFEXITED(x) 1
 #define WEXITSTATUS(x) x
 
@@ -116,35 +151,8 @@ typedef struct dirent {
 
 #define NAMLEN(dirent) strlen((dirent)->d_name)
 
-/* typedef DIR - not the same as Unix */
-typedef struct {
-    long handle;                        /* _findfirst/_findnext handle */
-    short offset;                       /* offset into directory */
-    short finished;                     /* 1 if there are not more files */
-    struct _finddata_t fileinfo;        /* from _findfirst/_findnext */
-    char *dir;                          /* the dir we are reading */
-    struct dirent dent;                 /* the dirent to return */
-} DIR;
-
-#ifndef socklen_t
-#define socklen_t int /* Doesn't exist, just a plain int */
-#endif
-
-/* Function prototypes */
-extern DIR *opendir(const char *);
-extern struct dirent *readdir(DIR *);
-extern int closedir(DIR *);
-extern void rewinddir(DIR *);
-extern int strncasecmp(const char *s1, const char *s2, int n);
-extern int strcasecmp(const char *s1, const char *s2);
-extern void service_register();
-extern void service_unregister();
-extern void service_handle();
 
 #define HAVE_LIBCURL
-
-/* For Win32 service */
-extern int bRunning;
 
 /* Win32's Sleep takes milliseconds, not seconds. */
 #define sleep(x) Sleep(x*1000)
@@ -177,3 +185,5 @@ typedef signed __int64          int64_t;
 #pragma warning(disable: 4305) /* initializing float f = 0.05; instead of f = 0.05f; */
 
 #endif /* WIN32_H */
+
+#endif

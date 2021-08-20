@@ -34,6 +34,10 @@
 #include "shared/newclient.h"
 #include "sproto.h"
 
+#ifdef WIN32
+#include <winsock2.h>
+#endif
+
 /***********************************************************************
  *
  * SockList functions/utilities

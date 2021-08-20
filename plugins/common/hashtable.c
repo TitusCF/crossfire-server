@@ -36,7 +36,6 @@
 
 #ifdef WIN32
 #include <global.h>
-typedef UINT_PTR uintptr_t;
 #include <malloc.h>
 #else
 #include <stdint.h>

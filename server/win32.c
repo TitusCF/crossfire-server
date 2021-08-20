@@ -17,6 +17,7 @@
  *
  * This file should probably not be used apart under Windows.
  */
+#ifdef WIN32
 
 #include <global.h>
 
@@ -26,6 +27,7 @@
 #include <errno.h>
 #include <mmsystem.h>
 
+#if 0
 /**
  * Opens a directory for reading. The handle should be disposed through closedir().
  *
@@ -146,30 +148,26 @@ void rewinddir(DIR *dir_Info) {
     dir_Info->handle = handle;
     free(filespec);
 }
+#endif
 
 /* Service-related stuff
 
   Those functions are called while init is still being done, so no logging available.
-
-  Not useful for plugins, though.
-
  */
 
 /** Will be set to FALSE when the server should stop running because the service is turned off. */
 int bRunning;
-
-#ifndef PYTHON_PLUGIN_EXPORTS
 
 /** Status when the server is started as a service. */
 SERVICE_STATUS m_ServiceStatus;
 /** Handle to the service the server is started as. */
 SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
 /** Internal name of the service. */
-#define SERVICE_NAME        "Crossfire"
+#define SERVICE_NAME        L"Crossfire"
 /** Name that will appear in the service list. */
-#define SERVICE_DISPLAY     "Crossfire server"
+#define SERVICE_DISPLAY     L"Crossfire server"
 /** Description of the service. */
-#define SERVICE_DESCRIPTION "Crossfire is a multiplayer online RPG game."
+#define SERVICE_DESCRIPTION L"Crossfire is a multiplayer online RPG game."
 
 #include <winsvc.h>
 
@@ -178,12 +176,12 @@ SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
  * @sa service_unregister().
  */
 void service_register(void) {
-    char strDir[1024];
+    TCHAR strDir[MAX_PATH];
     HANDLE schSCManager, schService;
-    char *strDescription = SERVICE_DESCRIPTION;
+    wchar_t *strDescription = SERVICE_DESCRIPTION;
 
-    GetModuleFileName(NULL, strDir, 1024);
-    strcat(strDir, " -srv");
+    GetModuleFileName(NULL, strDir, MAX_PATH);
+    wcscat(strDir, L" -srv");
 
     schSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 
@@ -304,14 +302,14 @@ extern int main(int argc, char **argv);
  * arguments to the service.
  */
 void WINAPI ServiceMain(DWORD argc, LPTSTR *argv) {
-    char strDir[1024];
-    char *strSlash;
+    TCHAR strDir[1024];
+    wchar_t *strSlash;
 
     GetModuleFileName(NULL, strDir, 1024);
-    strSlash = strrchr(strDir, '\\');
+    strSlash = wcschr(strDir, '\\');
     if (strSlash)
         *strSlash = '\0';
-    chdir(strDir);
+    _wchdir(strDir);
 
     m_ServiceStatus.dwServiceType        = SERVICE_WIN32;
     m_ServiceStatus.dwCurrentState       = SERVICE_START_PENDING;
@@ -348,4 +346,5 @@ void service_handle(void) {
     StartServiceCtrlDispatcher(DispatchTable);
     exit(0);
 }
-#endif /* PYTHON_PLUGIN_EXPORTS */
+
+#endif // WIN32

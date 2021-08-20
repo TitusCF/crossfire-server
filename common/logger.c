@@ -82,9 +82,7 @@ void LOG(LogLevel logLevel, const char *format, ...) {
         }
         fputs(loglevel_names[logLevel], logfile);    /* wrote to file or stdout */
         fputs(buf, logfile);    /* wrote to file or stdout */
-#ifdef DEBUG    /* if we have a debug version, we want see ALL output */
-        fflush(logfile);    /* so flush this! */
-#endif
+        fflush(logfile);    /* always force flushing! */
         if (logfile != stderr) {  /* if was it a logfile wrote it to screen too */
             if (time_buf[0] != 0) {
                 fputs(time_buf, stderr);
@@ -92,6 +90,7 @@ void LOG(LogLevel logLevel, const char *format, ...) {
             }
             fputs(loglevel_names[logLevel], stderr);
             fputs(buf, stderr);
+            fflush(stderr);
         }
 #else /* not WIN32 */
         if (reopen_logfile) {

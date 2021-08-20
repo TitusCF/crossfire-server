@@ -16,7 +16,7 @@
 #endif
 
 /* Include this first, because it lets us know what we are missing */
-#ifdef WIN32 /* ---win32 exclude this, config comes from VC ide */
+#if defined(WIN32) || defined(_WIN32) || defined(WIN64)
 #include "win32.h"
 #else
 #include "autoconf.h"
