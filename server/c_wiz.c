@@ -2428,6 +2428,7 @@ void command_unloadplugin(object *op, const char *params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                              "Plugin %s successfully removed.",
                              params);
+        init_signals(); // Restore our signal handlers, some plugins (Python) mess with them
     } else
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Could not remove plugin %s.",

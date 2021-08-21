@@ -38,7 +38,6 @@
 static void help(void);
 static void init_beforeplay(void);
 static void init_startup(void);
-static void init_signals(void);
 
 /** If set after command line argument parsing, then the server will exit. */
 static int should_exit = 0;
@@ -1327,7 +1326,7 @@ static void rec_sighup(int i) {
 /**
  * Setup our signal handlers.
  */
-static void init_signals(void) {
+void init_signals(void) {
 #ifndef WIN32 /* init_signals() remove signals */
     struct sigaction sa;
 
