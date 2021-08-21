@@ -41,6 +41,7 @@
 /doc/Developers/Makefile.in
 /doc/Makefile
 /doc/Makefile.in
+/doc/crossloop.man
 /doc/playbook-html/Makefile
 /doc/playbook-html/Makefile.in
 /doc/playbook/Makefile
