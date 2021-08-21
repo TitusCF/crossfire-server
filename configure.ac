@@ -171,6 +171,7 @@ AC_CONFIG_FILES([Makefile
                  doc/scripts/Makefile
                  doc/spell-docs/Makefile
                  doc/spoiler/Makefile doc/spoiler-html/Makefile
+                 doc/crossloop.man
                  common/Makefile
                  include/Makefile
                  lib/Makefile
