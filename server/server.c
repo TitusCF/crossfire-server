@@ -69,10 +69,16 @@ volatile sig_atomic_t shutdown_flag;
  * @todo make thread-safe?
  */
 static char const* crypt_string(char const str[static 1], char const* salt) {
-#if defined(WIN32) || (defined(__FreeBSD__))
-    // Legacy configuration: use crypt everywhere but on Windows and FreeBSD
+#if defined(WIN32)
+    // Windows will never attempt to crypt()
     return str;
 #else
+#if (defined(__FreeBSD__))
+    // If legacy mode is enabled, do not crypt() on FreeBSD
+    if (settings.crypt_mode == 0) {
+        return str;
+    }
+#endif
     char s[3];
 
     if (salt == NULL) {
