@@ -36,6 +36,7 @@ class CREQuestPanel : public CRETPanel<Quest>
         FaceComboBox* myFace;
         QComboBox* myFile;
         QCheckBox* myCanRestart;
+        QCheckBox* myIsSystem;
         QComboBox* myParent;
         QTextEdit* myDescription;
         QPlainTextEdit* myComment;
