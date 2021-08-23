@@ -1660,44 +1660,49 @@ static void help_topics(object *op, int what) {
 }
 
 /**
+ * Find a (help) file in the specified subdirectory of data.
+ * @param dir subdirectory to search, 'help' or 'wizhelp'.
+ * @param name file name to look for.
+ * @param language language prefix.
+ * @param[out] path modified to contain the full path of the tested file.
+ * @param length maximum length of path.
+ * @return 1 if file was found, 0 else.
+ */
+static int find_help_file_in(const char *dir, const char *name, const char *language, char *path, int length) {
+    struct stat st;
+
+    snprintf(path, length, "%s/%s/%s.%s", settings.datadir, dir, name, language);
+    if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
+        return 1;
+    }
+    return 0;
+}
+
+/**
  * Find an appropriate help file. Will search regular commands, and wizard ones
  * if asked for. Specified language is tried, as well as English.
  * 'path' is altered whatever the return value.
+ * Wizard help is searched first, to allow a different syntax of a regular command
+ * when run in DM.
  * @param name command name.
  * @param language player language.
  * @param wiz if 1 the wizard-related files are searched, else no.
- * @param path buffer to contain the found help file.
+ * @param[out] path buffer to contain the found help file, modified.
  * @param length length of path.
  * @return 1 if a file was found in which case path contains the path, else 0.
  */
 static int find_help_file(const char *name, const char *language, int wiz, char *path, int length) {
-    struct stat st;
-
-    snprintf(path, length, "%s/help/%s.%s", settings.datadir, name, language);
-    if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
-        return 1;
-    }
-
-    if (strcmp(language, "en")) {
-        snprintf(path, length, "%s/help/%s.en", settings.datadir, name);
-        if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
+    if (wiz) {
+        if (find_help_file_in("wizhelp", name, language, path, length))
             return 1;
-        }
-    }
-
-    if (!wiz)
-        return 0;
-
-    snprintf(path, length, "%s/wizhelp/%s.%s", settings.datadir, name, language);
-    if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
-        return 1;
-    }
-    if (strcmp(language, "en")) {
-        snprintf(path, length, "%s/wizhelp/%s.en", settings.datadir, name);
-        if (stat(path, &st) == 0 && S_ISREG(st.st_mode)) {
+        if (strcmp(language, "en") && find_help_file_in("wizhelp", name, "en", path, length))
             return 1;
-        }
     }
+
+    if (find_help_file_in("help", name, language, path, length))
+        return 1;
+    if (strcmp(language, "en") && find_help_file_in("help", name, "en", path, length))
+        return 1;
 
     return 0;
 }
