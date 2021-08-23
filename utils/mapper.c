@@ -223,6 +223,7 @@
 #include "global.h"
 #include "sproto.h"
 #include "image.h"
+#include "quest.h"
 
 #include <gd.h>
 #include <gdfonts.h>
@@ -380,6 +381,8 @@ static int show_maps = 0;         /**< If set, will generate much information on
 static int world_map = 1;         /**< If set, will generate a world map. */
 static int world_exit_info = 1;   /**< If set, will generate a world map of exits. */
 static int tileset = 0;           /**< Tileset to use to generate pics. */
+static bool detail_quests = false;  /**< Whether to show all quests details or not. */
+static bool list_system_quests = false;     /**< Whether to show 'system' quests or not. */
 
 static char *world_template;               /**< World map template. */
 static char *world_row_template;           /**< One row in the world map. */
@@ -3523,6 +3526,77 @@ static void write_readable_list(void) {
     printf("done.\n");
 }
 
+static size_t system_quests_count = 0;
+static const quest_definition *system_quests[500];
+
+static void quest_callback(const quest_definition *quest, void *user) {
+    if (list_system_quests || !quest->quest_is_system) {
+        system_quests[system_quests_count++] = quest;
+    }
+}
+
+static int sort_system_quest(const void *a, const void *b) {
+    return strcmp((*((quest_definition **)a))->quest_code, (*((quest_definition **)b))->quest_code);
+}
+
+static int sort_system_quest_step(const void *a, const void *b) {
+    return (*((quest_step_definition**)a))->step - (*((quest_step_definition**)b))->step;
+}
+
+static void do_quest_item(const quest_definition *quest, FILE *file) {
+    fprintf(file, "<li>%s (%s)%s\n", quest->quest_title, quest->quest_code, quest->quest_is_system ? " (system quest)": "");
+    if (quest->quest_description)
+        fprintf(file, "<p>%s</p>\n", quest->quest_description);
+
+    if (detail_quests && quest->steps) {
+        quest_step_definition *steps[100];
+        size_t steps_count = 0;
+        quest_step_definition *step = quest->steps;
+        while (step) {
+            steps[steps_count++] = step;
+            step = step->next;
+        }
+        qsort(steps, steps_count, sizeof(quest_step_definition *), sort_system_quest_step);
+
+        fprintf(file, "<ul>\n");
+        for (size_t s = 0; s < steps_count; s++)
+            fprintf(file, "<li>%s%s</li>\n", steps[s]->step_description, steps[s]->is_completion_step ? "(end)" : "");
+        fprintf(file, "</ul>\n");
+    }
+
+    fprintf(file, "</li>\n");
+}
+
+/**
+ * Write the list of quests.
+ */
+static void write_quests_list(void) {
+    FILE *file;
+    char path[MAX_BUF];
+
+    quest_for_each(&quest_callback, NULL);
+    qsort(system_quests, system_quests_count, sizeof(quest_definition *), sort_system_quest);
+
+    printf("Writing defined quests info file...");
+
+    snprintf(path, sizeof(path), "%s/%s", root, "quests_list.html");
+    file = fopen(path, "wb+");
+
+    fprintf(file, "<html>\n<head>\n<title>Defined quests</title>\n</head>\n<body>\n");
+    fprintf(file, "<p>%lu quests are defined%s.</p>\n", system_quests_count, list_system_quests ? " (including system quests)" : "");
+    fprintf(file, "<ul>\n");
+
+    for (size_t q = 0; q < system_quests_count; q++) {
+        do_quest_item(system_quests[q], file);
+    }
+
+    fprintf(file, "</ul>\n");
+    fprintf(file, "</body>\n</html>\n");
+
+    fclose(file);
+    printf("done.\n");
+}
+
 /**
  * Prints usage information, and exit.
  *
@@ -3550,6 +3624,8 @@ static void do_help(const char *program) {
     printf("  -noexitmap          don't generate map of exits.\n");
     printf("  -exitmap            generate map of exits.\n");
     printf("  -tileset=<number>   use specified tileset to generate the pictures. Default 0 (standard).\n");
+    printf("  -details-quests     list all quests steps. Default no.\n");
+    printf("  -list-system-quests include 'system' quests in quest list. Default no.\n");
     printf("\n\n");
     exit(0);
 }
@@ -3615,6 +3691,10 @@ static void do_parameters(int argc, char **argv) {
         else if (strncmp(argv[arg], "-tileset=", 9) == 0) {
             tileset = atoi(argv[arg]+9);
             /* check of validity is done in main() as we need to actually have the sets loaded. */
+        } else if (strcmp(argv[arg], "-detail-quests") == 0) {
+            detail_quests = 1;
+        } else if (strcmp(argv[arg], "-list-system-quests") == 0) {
+            list_system_quests = 1;
         } else
             do_help(argv[0]);
         arg++;
@@ -3757,6 +3837,8 @@ int main(int argc, char **argv) {
     printf("  generate exit map:                   %s\n", yesno(world_exit_info));
     printf("  generate regions link file:          %s\n", yesno(do_regions_link));
     printf("  tileset:                             %s\n", find_faceset(tileset)->fullname);
+    printf("  detail quest steps:                  %s\n", yesno(detail_quests));
+    printf("  list system quests:                  %s\n", yesno(list_system_quests));
     printf("\n");
 
     if (list_unused_maps) {
@@ -3824,6 +3906,7 @@ int main(int argc, char **argv) {
     write_race_index();
     write_npc_list();
     write_readable_list();
+    write_quests_list();
 
     return 0;
 }
@@ -4033,6 +4116,27 @@ int apply_auto(object *op) {
 }
 
 void apply_auto_fix(mapstruct *m) {
+}
+
+SockList *player_get_delayed_buffer(player *pl) {
+    return NULL;
+}
+
+player *find_player_partial_name(const char *name) {
+    return NULL;
+}
+
+Account_Char *account_char_load(const char *account_name) {
+    return NULL;
+}
+
+void account_char_save(const char *account, Account_Char *chars) {
+}
+
+void account_char_free(Account_Char *chars) {
+}
+
+void command_help(object* ob, const char *params) {
 }
 
 #endif /* dummy DOXYGEN_SHOULD_SKIP_THIS */
