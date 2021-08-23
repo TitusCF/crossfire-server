@@ -883,7 +883,7 @@ static void quest_display(player *pl, quest_player *pq, int showall, const char*
         if (!showall) {
             if (restart_count > 0)
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-                        "%s completed %d out of %d quests, of which %d may be restarted", name, completed_count, quests_visible, restart_count);
+                        "%s completed %d out of %d quests, of which %d may be restarted.", name, completed_count, quests_visible, restart_count);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
                         "%s completed %d quests", name, completed_count);
@@ -897,7 +897,7 @@ static void quest_display(player *pl, quest_player *pq, int showall, const char*
                 if (quest->parent == NULL) {
                     if (state->state == QC_CAN_RESTART || state->is_complete) {
 
-                        restart = state->state == QC_CAN_RESTART?" (can be replayed)":"";
+                        restart = state->state == QC_CAN_RESTART ? i18n(pl->ob, " (can be replayed)") : "";
                         draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
                             "(%3d) %s%s", ++current_count, quest->quest_title, restart);
                     }
@@ -942,24 +942,6 @@ static void quest_list(player *pl, player *who, int showall, const char* name) {
     }
 
     quest_display(pl, pq, showall, name);
-}
-
-/**
- * Quest command help.
- * @param pl player to display help for.
- */
-static void quest_help(player *pl) {
-    if (QUERY_FLAG(pl->ob, FLAG_WIZ)) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "DM Quest commands:");
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " - (player name) list: displays quests the player is currently attempting, add 'all' to show completed quests also");
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " - (player name) info: displays information about the specified (by number) quest");
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " - (player name) set (quest code) (state): set the state of the specified quest");
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Note: (player name) may be a partial name as long as it isn't ambiguous. The player must be online.");
-    } else {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Quest commands:");
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " - list: displays quests you are currently attempting add 'all' to show completed quests also");
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, " - info: displays information about the specified (by number) quest");
-    }
 }
 
 /**
@@ -1035,7 +1017,7 @@ static void quest_info(player *pl, player* who, quest_state *qs, int level) {
     if (qs->state == QC_CAN_RESTART || qs->is_complete) {
         const char *restart = "";
         if (quest->quest_restart)
-            restart = " (can be replayed)";
+            restart = i18n(pl->ob, " (can be replayed)");
         draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, TAG_START "This quest has been completed%s.[/color]", restart);
     }
     prefix = "";
@@ -1180,7 +1162,7 @@ void command_quest(object *op, const char *params) {
     }
 
     if (!params || *params == '\0') {
-        quest_help(op->contr);
+        command_help(op, "quest");
         return;
     }
 
@@ -1207,7 +1189,7 @@ void command_quest(object *op, const char *params) {
         name = who->name;
     } else {
         who = op;
-        name = "You";
+        name = i18n(op, "You");
     }
 
     if (strcmp(params, "list all") == 0) {
@@ -1274,7 +1256,7 @@ void command_quest(object *op, const char *params) {
         return;
     }
 
-    quest_help(op->contr);
+    command_help(op, "quest");
 }
 
 /**

@@ -2,5 +2,6 @@ Quest liste les quêtes en cours de votre personnage.
 
 Les sous-commands suivantes sont disponibles :
 
-    list : affiche toutes les quêtes en cours ou terminées
-    info <numéro> : affiche les détails de la quête spécifiée
+    [color=blue]list[/color] : affiche toutes les quêtes en cours
+    [color=blue]list all[/color] : affiche toutes les quêtes que vous avez terminées
+    [color=blue]info <numéro>[/color] : affiche les détails de la quête spécifiée

@@ -1,0 +1,6 @@
+DM Quest commands:
+ - [color=blue](player name) list[/color]: displays quests the player is currently attempting, add 'all' to show completed quests also
+ - [color=blue](player name) info[/color]: displays information about the specified (by number) quest
+ - [color=blue](player name) set (quest number) (state)[/color]: set the state of the specified quest
+
+Note: (player name) may be a partial name as long as it isn't ambiguous. The player must be online.
