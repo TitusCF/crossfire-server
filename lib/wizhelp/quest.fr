@@ -1,0 +1,8 @@
+Quest en mode Wizard permet les opérations suivantes :
+
+ - [color=blue]<nom du joueur> list[/color] : liste les quêtes que le joueur est en train d'entreprendre
+ - [color=blue]<nom du joueur> list all[/color] : liste les quêtes que le joueur a complétées
+ - [color=blue]<nom du joueur> info <numéro de quête>[/color] : affiche des informations détaillées sur la quête spécifiée par son numéro
+ - [color=blue]<nom du joueur> set <numéro de quête> <nouvel état>[/color] : définit l'état de la quête spécifiée par son numéro
+
+Note : <nom du joueur> peut être un nom partiel tant qu'il n'y a pas d'ambiguité. Le joueur doit être connecté.

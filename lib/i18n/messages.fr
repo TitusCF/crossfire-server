@@ -176,3 +176,15 @@ Server settings:|Paramètres serveur :
 Wimpy level should be between 1 and 100.|Le niveau wimpy doit être entre 1 et 100.
 You keep that in mind for future reference.|Vous gardez cela en mémoire pour utilisation ultérieure.
 Use the 'knowledge' command to see what you keep in mind (this message will not appear anymore).|Utilisez la commande 'knowledge' pour lister ce que vous avez gardé en mémoire (ce message n'apparaîtra plus ultérieurement).
+# Quêtes
+You|Vous
+%s completed %d out of %d quests, of which %d may be restarted.|%s avez complété %d quêtes sur %d, dont %d qui peuvent être rejouées.
+%s completed %d quests|%s avez complété %d quêtes.
+%s completed the following quests:|%s avez complété les quêtes suivantes :
+ (can be replayed)| (peut être rejouée)
+%s started the following quests:|%s avez commencé les quêtes suivantes :
+%s didn't start any quest.|%s n'avez commencé aucune quête.
+This quest has been completed%s.[/color]|Cette quête a été terminée%s.[/color]
+Command 'quest' called in DM mode.|Commande 'quête' appelée en mode Wizard.
+Please specify a player name.|Veuillez indiquer le nom d'un joueur.
+%s is not online, or ambiguous name.|%s n'est pas connecté, ou le nom est ambigu.
