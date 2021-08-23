@@ -1,0 +1,18 @@
+{% extends "inc-page.html" %}
+{% block title %}NPCs who have a special message{% endblock %}
+{% block contents %}
+  <h1>This is a list of NPCs having a special message.</h1>
+  <ul>{% set mbn = sort(maps, "name") %}
+    {% for map in mbn %}
+    {% if length(map.npcs) %}
+    <li><a href='{{ link_to_page("map.html", map._key) }}'>{{ map.name }}</a>
+      <ul>
+    {% for npc in map.npcs %}
+        <li>{{ npc.name }} ({{ npc.x }}, {{ npc.y }})<pre>{{ npc.message }}</pre></li>
+    {% endfor %}
+      </ul>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+{% endblock %}

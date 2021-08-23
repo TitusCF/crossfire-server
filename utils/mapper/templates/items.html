@@ -1,0 +1,30 @@
+{% extends "inc-page.html" %}
+{% block title %}Special items found in maps{% endblock %}
+{% block contents %}
+<h1>Special items found in maps</h1>
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>Map(s)</th>
+    <th>Item power</th>
+    <th>Calc item power</th>
+    <th>Description</th>
+  </tr>
+  {% for item in items %}
+  <tr>
+    <td>{{ item.name }}</td>
+    <td>{% if length(item.maps) %}
+      <ul>
+        {% for key in item.maps %}{% set map = get_by_field(maps, "_key", key) %}
+        <li><a href='{{ link_to_page("map.html", key) }}'>{{ map.name }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </td>
+    <td>{{ item.power }}</td>
+    <td>{{ item.calc_power }}</td>
+    <td><pre>{{ item.diff }}</pre></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "inc-page.html" %}
+{% block title %}List of all {{ length(quests) }} in-map quests, by alphabetical order{% endblock %}
+{% block contents %}
+  <h1>List of all {{ length(quests) }} in-map quests, by alphabetical order</h1>
+  <ul>{% set letter = "" %}
+    {% for quest in quests %}
+    {% set n = lower(substr(quest.name, 0, 1)) %}
+    {% if n != letter %}
+    {% if letter != "" %}
+      </ul>
+    </li>{% endif %}
+    {% set letter = n %}
+    <li>{{ letter }}
+      <ul>
+    {% endif %}
+        <li>
+          <a name='quest_{{ quest.number }}'></a>
+          <h2>{{ quest.name }}</h2>
+          <p>{{ quest.description }}</p>
+          {% if length(quest.main_map) > 0 %}{% set map = get_by_field(maps, "_key", quest.main_map) %}<p>Starts in: <a href='{{ link_to_page("map.html", quest.main_map) }}'>{{ map.name }}</a></p>{% endif %}
+          {% if quest.maps %}
+          <p>Linked maps:</p>
+          <ul>
+            {% for qm in quest.maps %}{% set map = get_by_field(maps, "_key", qm.map) %}
+            <li><a href='{{ link_to_page("map.html", qm.map) }}'>{{ map.name }}</a> ({{ qm.description }})</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+    {% endfor %}
+      </ul>
+    </li>
+  </ul>
+{% endblock %}

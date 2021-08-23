@@ -1,0 +1,20 @@
+{% extends "inc-page.html" %}
+{% block title %}List of all {{ length(maps) }} maps, by level{% endblock %}
+{% block contents %}{% set mbl = sort(maps, "level") %}
+<h1>List of all {{ length(maps) }} maps, by level</h1>
+<ul>{% set level = -1 %}
+  {% for map in mbl %}
+  {% if map.level != level %}
+  {% if level != -1 %}
+    </ul>
+  </li>{% endif %}
+  {% set level = map.level %}
+  <li>{{ level }}
+    <ul>
+  {% endif %}
+      <li><a href='{{ link_to_page("map.html", map._key) }}'>{{ map.name }}</a></li>
+  {% endfor %}
+    </ul>
+  </li>
+</ul>
+{% endblock %}

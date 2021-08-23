@@ -1,0 +1,21 @@
+{% extends "inc-page.html" %}
+{% block title %}List of all {{ length(maps) }} maps, by alphabetical order{% endblock %}
+{% block contents %}{% set mbn = sort(maps, "name") %}
+  <h1>List of all {{ length(maps) }} maps, by alphabetical order</h1>
+  <ul>{% set letter = "" %}
+    {% for map in mbn %}
+    {% set n = lower(substr(map.name, 0, 1)) %}
+    {% if n != letter %}
+    {% if letter != "" %}
+      </ul>
+    </li>{% endif %}
+    {% set letter = n %}
+    <li>{{ letter }}
+      <ul>
+    {% endif %}
+        <li><a href='{{ link_to_page("map.html", map._key) }}'>{{ map.name }}</a></li>
+    {% endfor %}
+      </ul>
+    </li>
+  </ul>
+{% endblock %}

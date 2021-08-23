@@ -1,0 +1,21 @@
+{% extends "inc-page.html" %}
+{% block title %}List of all {{ length(regions) }} regions, by alphabetical order{% endblock %}
+{% block contents %}
+  <h1>List of all {{ length(regions) }} regions, by alphabetical order</h1>
+  <ul>{% set letter = "" %}
+    {% for region in regions %}
+    {% set n = lower(substr(region.name, 0, 1)) %}
+    {% if n != letter %}
+    {% if letter != "" %}
+      </ul>
+    </li>{% endif %}
+    {% set letter = n %}
+    <li>{{ letter }}
+      <ul>
+    {% endif %}
+        <li><a href='{{ link_to_page("region.html", region._key) }}'>{{ region.longname }} ({{ region.name }})</a></li>
+    {% endfor %}
+      </ul>
+    </li>
+  </ul>
+{% endblock %}

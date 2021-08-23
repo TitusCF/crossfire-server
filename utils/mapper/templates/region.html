@@ -1,0 +1,25 @@
+{% set region = get_by_field(regions, "_key", param) %}
+{% extends "inc-page.html" %}
+{% block title %}Maps index for {{ region.longname }}{% endblock %}
+{% block contents %}
+  <p><b>Region's longname:</b> {{ region.longname }}</p>
+  <p><b>Region description:</b> {{ region.description }}</p>
+
+  <p>{{ length(region.maps) }} maps found:</p>
+  <ul>
+    {% for m in region.maps %}
+    {% set map = get_by_field(maps, "_key", m) %}
+    <li><a href='{{ link_to_page("map.html", m) }}'>{{ map.name }}</a></li>
+    {% endfor %}
+  </ul>
+  {% if length(region.links) %}
+  <p>This region has exits to the following regions:</p>
+  <ul>
+    {% for l in region.links %}{% set rl = get_by_field(regions, "_key", l) %}
+    <li><a href='{{ link_to_page("region.html", l) }}'>{{ rl.longname }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <a href="maps.html">Back to global map index.</a>
+{% endblock %}

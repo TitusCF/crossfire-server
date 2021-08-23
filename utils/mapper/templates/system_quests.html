@@ -1,0 +1,42 @@
+{% extends "inc-page.html" %}
+{% block title %}List of all {{ length(system_quests) }} quests, by alphabetical order{% endblock %}
+{% block contents %}
+  <h1>List of all {{ length(system_quests) }} quests, by alphabetical order</h1>
+  <ul>{% set letter = "" %}
+    {% for quest in system_quests %}
+    {% set n = lower(substr(quest.code, 0, 1)) %}
+    {% if n != letter %}
+    {% if letter != "" %}
+      </ul>
+    </li>{% endif %}
+    {% set letter = n %}
+    <li>{{ letter }}
+      <ul>
+    {% endif %}
+        <li><h2>{{ quest.title }} ({{ quest.code }})</h2>
+          <p>{{ quest.description }}</p>
+          {% if length(quest.steps) %}
+          <p>Steps:
+            <ul>
+              {% for step in quest.steps %}
+              <li>{{ step.description }}{% if step.is_completion %} (end){% endif %}</li>
+              {% endfor %}
+            </ul>
+          </p>
+          {% endif %}
+          {% if length(quest.maps) %}
+          <p>Linked maps:
+            <ul>
+              {% for m in quest.maps %}{% set map = get_by_field(maps, "_key", m.map) %}
+              <li><a href='{{ link_to_page("map.html", m.map) }}'>{{ map.name }} ({{ m.description }})</a></li>
+              {% endfor %}
+            </ul>
+          </p>
+          {% endif %}
+          {% if quest.replayable %}<p>This quest can be replayed.</p>{% endif %}
+        </li>
+    {% endfor %}
+      </ul>
+    </li>
+  </ul>
+{% endblock %}

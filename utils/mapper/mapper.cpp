@@ -1,7 +1,7 @@
 /*
  * Crossfire map browser generator.
  *
- * Author: Nicolas Weeger <nicolas.weeger@laposte.net>, (C) 2006, 2007, 2008.
+ * Author: Nicolas Weeger <nicolas.weeger@laposte.net>, (C) 2006-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,184 +20,118 @@
 
 /**
  * @file mapper.cpp
- * This program generates map browsing web pages.
+ * This program generates, by default, map browsing web pages (but it can be customized for other things).
  *
  * Quick run: without arguments, will make sensible choices.
  *
  * For help, try the -help option.
  *
- * The following information is generated:
- * - a page per map
- * - a page per region
- * - a global map index
- * - the world map, including regions information
- * - the world map, with exits and blocking zones
- * - the world map, with elevation information.
- *
  * Since this program browses maps from the first map, only maps linked from there will be processed.
+ * A command line parameter, "-addmap=", allows to specify more maps.
  *
  * Maps are generated as the server sees them, that is with weather effects, treasures instead of markers,
  * and things like that.
  *
- * For maps, 2 pictures are generated, one real size and one small-size.
+ * Generated files use "templates", stored (by default) in "templates/" subdirectory.
+ * A list of files to process is specified on the command line (by default "index.html"),
+ * and from there the program will generate all requested pages.
  *
- * Three maps are generated for the world: raw world map, world map with region information, region information only.
+ * Templates use the inja C++ template engine, found at https://github.com/pantor/inja
+ * Provided templates should give much samples of use, see "index.html" for entry point.
  *
- * Maps are always sorted, by the map name (part after the last /).
+ * The following objects exist:
+ * - map: identified by a unique key, the following fields are defined:
+ *  - _key: unique map key
+ *  - name: map name as defined in the map itself
+ *  - path: map path from the map root
+ *  - region: key of the region this map is part of
+ *  - level: map level as defined in the map
+ *  - lore: map lore as defined in the map
+ *  - exits_to: array of map keys that this map contains exits to
+ *  - exits_from: array of map keys that link to this map
+ *  - npcs: array of npc objects that are on this map
+ *  - readables: array of npc objects that represent books on this map
+ *  - monsters: array of monster objects
+ *  - quests: array of quest_in_map objects that this map is part of
+ * - region: identified by a unique key, the following fields are defined:
+ *  - _key: unique region identifier
+ *  - name: region short name
+ *  - longname: region long name
+ *  - description: region description
+ *  - maps: array of map keys that are part of the region
+ *  - links: array of region keys this region has exits to
+ * - item: contains the following fields:
+ *  - name: item name as found on the map
+ *  - power: item power as found on the map
+ *  - calc_power: item power as computed by the game
+ *  - diff: item specific fields, as an (CF) object difference with the archetype
+ *  - maps: array of map keys the item is found on
+ * - monster: contains the following fields:
+ *  - name: monster's name
+ *  - count: how many are found in the world
+ *  - maps: array of map keys the monster is found on
+ * - system_quest: information about a quest, with the following fields:
+ *  - code: unique quest code
+ *  - title: quest title as seen by the player
+ *  - description: long description, as seen by the player
+ *  - steps: only filled if the command-line parameter "-details-quests" is specified, array of steps:
+ *   - description: step description
+ *   - is_completion: true if this step completes the quest, false else
+ * - slaying: information about a key, detector and such, with the following fields:
+ *  - slaying: unique code
+ *  - doors: array of map keys that contain a door with this slaying
+ *  - keys: array of map keys that contain a key with this slaying
+ *  - containers: array of map keys that contain a container with this slaying
+ *  - detectors: array of map keys that contain a detector with this slaying
+ *  - connections: array of map keys that contain a connection with this slaying
+ * - quests: information about a quest as defined in map parameters, with the following fields:
+ *  - _key: unique quest key
+ *  - number: unique quest number
+ *  - name: quest name, may be empty
+ *  - description: quest description, may be empty
+ *  - main_map: key of the main map of the quest, may be empty
+ *  - maps: array of quest_in_map objects
+ * - quest_in_map: information about a link between a map and a quest
+ *  - map: map key
+ *  - description: relationship between the quest and the map
+ *  - quest: quest name
+ *  - number: unique quest number *
+ * - npc: information about a NPC or a readable (book, sign, message...), fields:
+ *  - name: NPC or readable name as defined in the map
+ *  - x: coordinate in the map
+ *  - y: coordinate in the map
+ *  - message: NPC or readable message
+ * - monster: information about a monster, fields:
+ *  - name: monster name
+ *  - count: number on the map
  *
- * Files are generated based on templates, where tags are replaced by their runtime value.
+ * The following variables are available to the templates:
+ * - maps: list of maps
+ * - regions: list of regions
+ * - items: list of special equipment
+ * - monsters: list of monster objects
+ * - system_quests: list of system quest objects
+ * - slaying: list of slaying information objects
+ * - quests: list of quests defined in map objects
  *
- * Templates are recursively included. Here is the list:
- * - map.template: main map template.
- *  - map_no_exit.template: template to use when no exit on the map.
- *  - map_with_exit.template: template to use when there are exits on the map.
- *   - map_exit.template: template to use for each exit on the map.
- *  - map_lore: template to use to insert the map's lore.
- *  - map_no_lore: template when no lore for the map.
- *  - map_no_quest.template: when the map is linked to no quest.
- *  - map_with_quests.template: the map is linked to at least one quest.
- *   - map_one_quest.template: one quest link.
- *  - map_no_monster: used when no monster on map.
- *  - map_monster_before: applied before the monster list.
- *  - map_monster_one: one monster on the map.
- *  - map_monster_between: added after each monster except the last.
- *  - map_monster_after: added after the last monster in the list.
- * - region.template: region page template.
- *  - region_letter: template for one letter
- *   - region_map.template: one map in a region
- * - world.template: world map template
- *  - world_row.template: one row of world maps.
- *   - world_map.template: one map in the template.
- * - index.template: global map index.
- *  - index_letter.template: one letter in the index
- *   - index_map.template: one map in the whole index
- * - index_region.template: region index template.
- *  - index_region_region.template: one region in the index.
- * - level.template: index of maps by level.
- *  - level_value.template: one level.
- *   - level_map.template: one map in the level.
- * - quests.template: quest index.
- *  - quests_quest.template: one quest.
- *   - quests_map.template: one map in a quest.
+ * As well as default callbacks provided by inja, mapper adds the following ones:
+ * - link_to_page(page_name[, param]): process the "page_name" template, and return a link
+ *   to the file. "param" is an optional string that the template will be able to access via the
+ *   "param" variable. Pages with the same "page_name" and "param" are considered equal.
+ * - substr(what, start[, length]): return the substring from "start", of a specified length or
+ *   the end of the string.
+ * - picture(item_key[, size]): return the path to the picture of the specified item. "size" is 1 to 5,
+ *   with 1 real size and 5 the smallest size. Only map keys are allowed for now.
+ * - pad(val, digits): pad "val" to a string of "length" characters, adding 0 in front if needed.
+ * - path_to_root: return the relative path, without final /, to the output root of generated files.
+ * - sort(list, key[, invert[, ignore_case]]): sort the specified list by the value of 'key'. If 'invert'
+ *   is true then invert order. Strings are compared in a case-unsensitive manner unless 'ignore_case' is false.
+ * - get_by_field(list, field, value): return the first item in the list having a field 'field' with value 'value'.
  *
- *
- * Tags must be in the form <code>\#TAG#</code>. To have a # in the code, please put ##. Valid tags are:
- *
- * - map:
- *  - NAME: map relative path
- *  - MAPPATH: full path to currently generated file.
- *  - MAPNAME: name of the map (part of the path after last /).
- *  - MAPPIC: name of full-size pic of the map.
- *  - MAPSMALLPIC: name of reduced-size pic of the map.
- *  - MAPEXIT: text generated by map_with_exit or map_no_exit.
- *  - INDEXPATH: path to index.html file.
- *  - REGIONPATH: path to region's file.
- *  - REGIONNAME: name of map's region.
- *  - REGIONINDEXPATH: path to region index file.
- *  - WORLDMAPPATH: path to world map file.
- *  - MAPLORE: map's lore.
- *  - MAPLEVEL: level as defined in the map.
- *  - MINMONSTER and MAXMONSTER: minimum and maximum level of monsters on the map.
- * - map_no_exit:
- *  - tags for map, except MAPEXIT.
- * - map_with_exit:
- *  - tags for map, except MAPEXIT.
- *  - EXIT: text generated by the map exits.
- * - map_exit:
- *  - map's tags.
- *  - EXITNAME: name of exit (part of the path after /).
- *  - EXITPATH: relative path of exit's page.
- * - map_lore:
- *  - tags for map, except MAPEXIT.
- *  - MAPLORE: map's lore.
- * - map_no_lore:
- *  - tags for map, except MAPEXIT.
- * - map_with_quests:
- *  - tags for map
- *  - QUESTS: result of map_one_quest processing.
- *   - map_one_quest:
- *    - NAME: map's name.
- *    - PATH: path to the quest page from the index.
- *    - TEXT: text associated to the map about the quest.
- * - map_no_quest: not processed.
- * - map_no_monster:
- *  - map's tags
- * - map_monster_before:
- *  - map's tags
- * - map_monster_one:
- *  - NAME: monster's name.
- * - map_monster_between:
- *  - map's tags
- * - map_monster_after:
- *  - map's tags
- * - region:
- *  - MAPCOUNT: count of maps in region.
- *  - LETTERS: text generated by region_letter processing.
- * - region_letter:
- *  - region's tags, except LETTERS.
- *  - MAPNAME: name of the map (part of the path after last /).
- *  - MAPPATH: relative path of the map from the map's root.
- *  - MAPHTML: relative path of HTML file for map.
- * - region_map:
- *  - tags of region_letter.
- *  - MAPNAME: name of the map (part of the path after last /).
- *  - MAPPATH: relative path of the map from the map's root.
- *  - MAPHTML: relative path of HTML file for map.
- * - world:
- *  - MAPS: text generated by world_row processing.
- *  - WORLDMAP: path to world map picture, with regions information.
- *  - WORLDRAW: path to raw world map, without regions information.
- *  - WORLDREGIONS: path to world map picture containing only regions information.
- * - world_row:
- *  - MAPS: text generated by world_map processing.
- * - world_map:
- *  - MAPNAME: name of the map (part of the path after last /).
- *  - MAPPATH: relative path of the map's generated page.
- *  - MAPLEFT, MAPTOP, MAPRIGHT, MAPBOTTOM: coordinates (in pixels) of current map in full world map.
- * - index:
- *  - MAPCOUNT: count of maps.
- *  - LETTERS: text generated by index_letter processing.
- * - index_letter:
- *  - tags of index, except LETTERS.
- *  - MAPS: text generated by index_letter processing.
- *  - LETTER: letter being processed, uppercase.
- *  - LETTERCOUNT: number of maps for current letter.
- * - index_map:
- *  - tags of index_letter.
- *  - MAPNAME: name of the map (part of the path after last /).
- *  - MAPPATH: relative path of the map from the map's root.
- *  - MAPHTML: relative path of HTML file for map.
- * - index_region:
- *  - REGIONCOUNT: total number of regions.
- *  - REGIONS: text generated by index_region_region processing.
- * - index_region_region:
- *  - REGIONFILE: relative path to region page.
- *  - REGIONNAME: region name.
- * - level:
- *  - COUNT: count of different levels.
- *  - LEVELS: result of the sub-level templates.
- * - level_value:
- *  - LEVEL: current level.
- *  - MAPS: result of the level maps templates.
- * - level_map:
- *  - MAPNAME: name of the map.
- *  - MAPPATH: relative path of the map from the index.
- * - quests:
- *  - QUESTS: processing of quest.
- * - quests_quest:
- *  - QUESTNAME: quest name.
- *  - QUESTTEXT: quest description.
- *  - QUESTMAPS: processing of quests_map.
- *  - QUESTID: unique quest identifier, anchor to index page.
- *  - MAINMAPPATH: path to the map defining the quest.
- *  - MAINMAPNAME: name of the map defining the quest.
- * - quests_map:
- *  - MAPPATH: path to the map.
- *  - MAPNAME: map name.
- *  - MAPTEXT: description associated.
+ * For maps, 5 pictures are generated, with sizes of 32, 16, 8, 4 and 2 pixels for tiles.
  *
  * To build this program, add the '--enable-mapper' flag to 'configure' then run
- * 'make' at the server root.
+ * 'make' at the server root. It requires the GD library and its development files.
  *
  * @todo
  * - split this file in multiple ones for easier maintenance
@@ -205,7 +139,6 @@
  * - add command line argument for large / small picture size
  * - add maximum width/height for small picture
  * - add slaying information to maps themselves
- * - make the equipment page use templates
  * - shop catalog
  * - treasure list use
  */
@@ -232,6 +165,10 @@ extern "C" {
 #include <gdfontg.h>
 }
 
+#include "inja.hpp"
+#include <map>
+#include <set>
+
 static gdImagePtr *gdfaces;
 
 /** Information about a NPC with a custom message. */
@@ -244,36 +181,36 @@ typedef struct struct_npc_info {
 /** List of NPCs with a custom message. */
 typedef struct struct_npc_list {
     struct_npc_info **npc;
-    int count;
-    int allocated;
+    size_t count;
+    size_t allocated;
 } struct_npc_list;
 
 /** Collection of races. */
 typedef struct struct_race_list {
     struct struct_race **races; /**< Races on the list. */
-    int count;                  /**< Number of races. */
-    int allocated;              /**< Allocated space. */
+    size_t count;                  /**< Number of races. */
+    size_t allocated;              /**< Allocated space. */
 } struct_race_list;
 
 /** Utility structure to group map-quest link structure. */
 typedef struct {
     struct struct_map_in_quest **list;
-    int count;
-    int allocated;
+    size_t count;
+    size_t allocated;
 } struct_map_in_quest_list;
 
 /** List of maps. */
 typedef struct {
     struct struct_map_info **maps;
-    int count;
-    int allocated;
+    size_t count;
+    size_t allocated;
 } struct_map_list;
 
 /** Map information. */
 typedef struct struct_map_info {
-    char *path;
-    char *name;
-    char *filename;
+    char *path;                                         /**< Full path of the map from the start directory. */
+    char *name;                                         /**< Map's name as defined in the map file. */
+    char *filename;                                     /**< Filename of the map. */
     char *lore;
     region *cfregion;
     int level, pic_was_done, max_monster, min_monster;
@@ -309,11 +246,11 @@ typedef struct struct_equipment {
     struct_map_list origin; /**< Map(s) this item is found in. */
 } struct_equipment;
 
-static struct_equipment **special_equipment = NULL;    /**< Special equipment list. */
+static struct_equipment **special_equipment = NULL;     /**< Special equipment list. */
 
-static int equipment_count = 0;                        /**< Number of items in special_equipment. */
+static size_t equipment_count = 0;                      /**< Number of items in special_equipment. */
 
-static int equipment_allocated = 0;                    /**< Allocated items in special_equipment. */
+static size_t equipment_allocated = 0;                  /**< Allocated items in special_equipment. */
 
 
 /** One monster race in the maps. */
@@ -348,7 +285,7 @@ static void init_race_list(struct_race_list *list) {
  */
 static void add_race_to_list(struct_race *race, struct_race_list *list, int check) {
     if (check) {
-        int test;
+        size_t test;
 
         for (test = 0; test < list->count; test++) {
             if (list->races[test] == race)
@@ -373,7 +310,6 @@ static int pics_allocated;
 /* Options */
 static int generate_pics = 1;     /**< Whether to generate the picture or not. */
 static int force_pics = 0;        /**< To force picture regeneration even if map didn't change. */
-static int generate_index = 1;    /**< Whether to do the map index or not. */
 static int sizes[] = {32, 16, 8, 4, 2};
 static const int num_sizes = sizeof(sizes)/sizeof(int);
 #define size_large sizes[0]
@@ -385,48 +321,7 @@ static int world_exit_info = 1;   /**< If set, will generate a world map of exit
 static int tileset = 0;           /**< Tileset to use to generate pics. */
 static bool detail_quests = false;  /**< Whether to show all quests details or not. */
 static bool list_system_quests = false;     /**< Whether to show 'system' quests or not. */
-
-static char *world_template;               /**< World map template. */
-static char *world_row_template;           /**< One row in the world map. */
-static char *world_map_template;           /**< One map in a row. */
-
-static char *map_template;                 /**< Map template. */
-static char *map_no_exit_template;         /**< World map template: no exit. */
-static char *map_with_exit_template;       /**< Map template: exit template. */
-static char *map_exit_template;            /**< Map template: one exit. */
-static char *map_no_exit_to_template;      /**< World map template: no exit leading to this map. */
-static char *map_with_exit_to_template;    /**< Map template: exits leading to this map. */
-static char *map_exit_to_template;         /**< Map template: one exit leading to this map. */
-static char *map_lore_template;            /**< Map template: lore. */
-static char *map_no_lore_template;         /**< Map template: no lore. */
-static char *map_no_monster_template;      /**< Map template: no monster. */
-static char *map_monster_before_template;  /**< Map template: before the monster list. */
-static char *map_monster_between_template; /**< Map template: between each monster. */
-static char *map_monster_one_template;     /**< Map template: one monster. */
-static char *map_monster_after_template;   /**< Map template: after the monster list. */
-
-static char *index_template;           /**< Index page template. */
-static char *index_letter;             /**< Index page template: one letter, including the maps it contains. */
-static char *index_map;                /**< Index page template: one map. */
-
-static char *region_template;          /**< Region page template. */
-static char *region_letter_template;   /**< One letter for the region. */
-static char *region_map_template;      /**< Region page template: one map. */
-
-static char *index_region_template;        /**< Region index template. */
-static char *index_region_region_template; /**< One region in the region index template. */
-
-static char *level_template;
-static char *level_value_template;
-static char *level_map_template;
-
-static char *index_quest_template;
-static char *quest_template;
-static char *quest_map_template;
-
-static char *map_no_quest_template;
-static char *map_with_quests_template;
-static char *map_one_quest_template;
+static bool display_rendered_template = false;  /**< Whether to display the template to be rendered or not. */
 
 /** Picture statistics. */
 static int created_pics = 0; /**< Total created pics. */
@@ -465,8 +360,8 @@ typedef struct struct_region_info {
 } struct_region_info;
 
 static struct struct_region_info **regions = NULL; /**< Found regions. */
-static int region_count = 0;                /**< Count of regions. */
-static int region_allocated = 0;            /**< Allocated size of regions. */
+static size_t region_count = 0;         /**< Count of regions. */
+static size_t region_allocated = 0;     /**< Allocated size of regions. */
 
 static int list_unused_maps = 0;       /**< If set, program will list maps found in directory but not linked from the first maps. */
 static char **found_maps = NULL;       /**< Maps found in directories. */
@@ -485,11 +380,10 @@ static int **elevation_info;       /**< All elevation spots in the "world_" maps
 static int elevation_min;          /**< Maximal elevation found. */
 static int elevation_max;          /**< Lowest elevation found. */
 
-/* Links between regions */
-static int do_regions_link = 0;
-static char **regions_link;
-static int regions_link_count = 0;
-static int regions_link_allocated = 0;
+/* Whether to compute links between regions or not (expensive). */
+static bool do_regions_link = false;
+/* Links between regions, key is source, value are destinations. */
+static std::map<region *, std::set<region *>> region_links;
 
 /** Connection/slaying information. */
 #define S_DOOR      0
@@ -506,8 +400,8 @@ typedef struct {
 } struct_slaying_info;
 
 static struct_slaying_info **slaying_info = NULL;  /**< Found slaying fields. */
-static int slaying_count = 0;                      /**< Count of items in slaying_info. */
-static int slaying_allocated = 0;                  /**< Allocated size of slaying_info. */
+static size_t slaying_count = 0;                      /**< Count of items in slaying_info. */
+static size_t slaying_allocated = 0;                  /**< Allocated size of slaying_info. */
 
 /**
  * Initialises a list structure.
@@ -569,10 +463,9 @@ static void free_equipment(struct_equipment *equip) {
  * item guaranteed to be unique in the item list.
  */
 static struct_equipment *ensure_unique(struct_equipment *item) {
-    int check;
     struct_equipment *comp;
 
-    for (check = 0; check < equipment_count; check++) {
+    for (size_t check = 0; check < equipment_count; check++) {
         comp = special_equipment[check];
 
         if (strcmp(comp->name, item->name))
@@ -717,7 +610,7 @@ static int sort_equipment(const void *a, const void *b) {
  * race structure.
  */
 static struct_race *get_race(const char *name) {
-    int test;
+    size_t test;
     struct_race *item;
 
     for (test = 0; test < races.count; test++) {
@@ -904,143 +797,6 @@ static int sortbyname(const void *a, const void *b) {
 }
 
 /**
- * Concatenates a string, and free concatenated string.
- *
- * @param source
- * string to append to. Can be NULL.
- * @param add
- * string that is appened. Will be free()d after. Must not be NULL.
- * @return
- * new string that should be free()d by caller.
- */
-static char *cat_template(char *source, char *add) {
-    if (!source)
-        return add;
-    source = (char *)realloc(source, strlen(source)+strlen(add)+1);
-    strcat(source, add);
-    free(add);
-    return source;
-}
-
-/**
- * Reads a file in memory.
- *
- * @param name
- * file path to read.
- * @param buffer
- * where to store. Can be left uninitialized in case of errors.
- * @note
- * will exit() with code 1 if any error occurs or if the file doesn't exist.
- */
-static void read_template(const char *name, char **buffer) {
-    FILE *file;
-    struct stat info;
-
-    if (stat(name, &info)) {
-        printf("Couldn't stat template %s!\n", name);
-        exit(1);
-    }
-
-    (*buffer) = (char *)calloc(1, info.st_size+1);
-    if (!(*buffer)) {
-        printf("Template %s calloc failed!\n", name);
-        exit(1);
-    }
-
-    if (info.st_size == 0) {
-        (*buffer)[0] = '\0';
-        return;
-    }
-
-    file = fopen(name, "rb");
-    if (!file) {
-        printf("Couldn't open template %s!\n", name);
-        free(*buffer);
-        exit(1);
-    }
-    if (fread(*buffer, info.st_size, 1, file) != 1) {
-        printf("Couldn't read template %s!\n", name);
-        free(*buffer);
-        fclose(file);
-        exit(1);
-    }
-    fclose(file);
-}
-
-/**
- * Processes a template.
- *
- * Variables in the form <code>\#VARIABLE#</code> will be substituted for specified values.
- *
- * @param template
- * template to process.
- * @param vars
- * variables to replace. Array must be NULL-terminated.
- * @param values
- * variables to replace by. Must be the same size as vars, no NULL element allowed.
- * @return
- * filled-in template, that must be free()d be caller. NULL if memory allocation error.
- *
- * @note
- * returned string will be a memory block larger than required, for performance reasons.
- */
-static char *do_template(const char *contents, const char **vars, const char **values) {
-    int count = 0;
-    const char *sharp = contents;
-    int maxlen = 0;
-    int var = 0;
-    char *result;
-    char *current_result;
-    const char *end;
-
-    while ((sharp = strchr(sharp, '#')) != NULL) {
-        sharp++;
-        count++;
-    }
-    if (!count)
-        return strdup(contents);
-    if (count%2) {
-        printf("Malformed template, mismatched #!\n");
-        return strdup(contents);
-    }
-
-    while (vars[var] != NULL) {
-        if (strlen(values[var]) > maxlen)
-            maxlen = strlen(values[var]);
-        var++;
-    }
-    result = (char *)calloc(1, strlen(contents)+maxlen*(count/2)+1);
-    if (!result)
-        return NULL;
-    current_result = result;
-
-    sharp = contents;
-    while ((sharp = strchr(sharp, '#')) != NULL) {
-        end = strchr(sharp+1, '#');
-        strncpy(current_result, contents, sharp-contents);
-        if (end == sharp+1) {
-            strcat(current_result, "#");
-        }
-        else {
-        current_result = current_result+strlen(current_result);
-        var = 0;
-        while (vars[var] != NULL && (strncmp(vars[var], sharp+1, end-sharp-1) || (strlen(vars[var]) != end-sharp-1)))
-            /* tag must be the same length, else can take a wrong tag */
-            var++;
-        if (vars[var] == NULL)
-            printf("Wrong tag: %s\n", sharp);
-        else
-            strcpy(current_result, values[var]);
-        }
-        current_result = current_result+strlen(current_result);
-        sharp = end+1;
-        contents = sharp;
-    }
-    strcat(current_result, contents);
-    return result;
-}
-
-/**
  * Computes the shortest path from one file to another.
  *
  * @param from
@@ -1082,34 +838,6 @@ static void relative_path(const char *from, const char *to, char *result) {
 }
 
 /**
- * Sorts the strings according to the last part of the filename (after the last /).
- *
- * @param left
- * first string.
- * @param right
- * second string.
- * @return
- * comparison on last element, and if equal then on whole string.
- */
-static int sort_mapname(const void *left, const void *right) {
-    const char *l = *(const char **)left;
-    const char *r = *(const char **)right;
-    const char *sl = strrchr(l, '/');
-    const char *sr = strrchr(r, '/');
-    int c;
-
-    if (!sl)
-        sl = l;
-    if (!sr)
-        sr = r;
-    c = strcasecmp(sl, sr);
-    if (c)
-        return c;
-
-    return strcasecmp(l, r);
-}
-
-/**
  * Compares struct_map_info according to the map name or the path if equal.
  *
  * @param left
@@ -1147,25 +875,6 @@ static int compare_map_info(const struct_map_info *left, const struct_map_info *
 static int sort_map_info(const void *left, const void *right) {
     const struct_map_info *l = *(const struct_map_info **)left;
     const struct_map_info *r = *(const struct_map_info **)right;
-    return compare_map_info(l, r);
-}
-
-/**
- * Sorts the struct_map_info according to the map's level, and if equal the name or the path.
- *
- * @param left
- * first item.
- * @param right
- * second item.
- * @return
- * comparison on name, and if equal then on whole path.
- */
-static int sort_map_info_by_level(const void *left, const void *right) {
-    const struct_map_info *l = *(const struct_map_info **)left;
-    const struct_map_info *r = *(const struct_map_info **)right;
-    int c = l->level-r->level;
-    if (c)
-        return c;
     return compare_map_info(l, r);
 }
 
@@ -1317,6 +1026,20 @@ static int sort_struct_map_in_quest(const void *left, const void *right) {
 }
 
 /**
+ * Sorts 2 struct_quest, on the map's name or path.
+ * @param left
+ * @param right
+ * items to compare.
+ * @return
+ * -1, 0 or 1.
+ */
+static int sort_struct_quest(const void *left, const void *right) {
+    const struct_quest *l = *(const struct_quest **)left;
+    const struct_quest *r = *(const struct_quest **)right;
+    return strcasecmp(l->name, r->name);
+}
+
+/**
  * Sets the main map for a quest.
  *
  * @param name
@@ -1415,71 +1138,6 @@ static void process_map_lore(struct_map_info *map) {
     }
 }
 
-/**
- * Writes the global quests page.
- */
-static void write_quests_page(void) {
-    int quest, map;
-    FILE *out;
-    char path[500];
-    char mappath[500];
-    char mainmappath[500];
-    char questid[500];
-    const char *map_vars[] = { "MAPPATH", "MAPNAME", "MAPTEXT", NULL };
-    const char *map_vals[] = { mappath, NULL, NULL, NULL };
-    const char *quest_vars[] = { "QUESTNAME", "QUESTTEXT", "QUESTMAPS", "QUESTID", "MAINMAPPATH", "MAINMAPNAME", NULL };
-    const char *quest_vals[] = { NULL, NULL, NULL, questid, mainmappath, NULL, NULL };
-    const char *idx_vars[] = { "QUESTS", NULL };
-    const char *idx_vals[] = { NULL, NULL };
-    char *text_map = NULL;
-    char *text_quest = NULL;
-    char *text_idx = NULL;
-
-    printf("Writing quest index...");
-
-    for (quest = 0; quest < quests_count; quest++) {
-        qsort(quests[quest]->maps.list, quests[quest]->maps.count, sizeof(struct_map_in_quest *), sort_struct_map_in_quest);
-        for (map = 0; map < quests[quest]->maps.count; map++) {
-            snprintf(mappath, sizeof(mappath), "%s.html", quests[quest]->maps.list[map]->map->path+1);
-            map_vals[1] = quests[quest]->maps.list[map]->map->name;
-            map_vals[2] = quests[quest]->maps.list[map]->description ? quests[quest]->maps.list[map]->description : "(no description)";
-            text_map = cat_template(text_map, do_template(quest_map_template, map_vars, map_vals));
-        }
-        if (!text_map)
-            text_map = strdup("");
-
-        quest_vals[0] = quests[quest]->name;
-        quest_vals[1] = quests[quest]->description ? quests[quest]->description : "(main map not processed)";
-        quest_vals[2] = text_map;
-        snprintf(questid, sizeof(questid), "quest_%d", quests[quest]->number);
-        if (quests[quest]->mainmap) {
-            snprintf(mainmappath, sizeof(mainmappath), "%s.html", quests[quest]->mainmap->path+1);
-            quest_vals[5] = quests[quest]->mainmap->name;
-        } else {
-            snprintf(mainmappath, sizeof(mainmappath), "#");
-            quest_vals[5] = "";
-        }
-        text_quest = cat_template(text_quest, do_template(quest_template, quest_vars, quest_vals));
-        free(text_map);
-        text_map = NULL;
-    }
-
-    if (!text_quest)
-        text_quest = strdup("No quest.");
-
-    idx_vals[0] = text_quest;
-    text_idx = do_template(index_quest_template, idx_vars, idx_vals);
-    free(text_quest);
-
-    snprintf(path, sizeof(path), "%s/quests.html", root);
-    out = fopen(path, "w+");
-    fprintf(out, "%s", text_idx);
-    fclose(out);
-    free(text_idx);
-
-    printf(" done.\n");
-}
-
 /************************************
  End of quest-related definitions.
 ************************************/
@@ -1547,7 +1205,7 @@ static void add_npc_to_map(struct_npc_list *list, const object *npc) {
  * will allocate memory and update variables when required.
  */
 static void add_map(struct_map_info *info, struct_map_list *list) {
-    int map;
+    size_t map;
 
     for (map = 0; map < list->count; map++)
         if (list->maps[map] == info)
@@ -1602,13 +1260,11 @@ static struct_map_info *create_tiled_map(void) {
  *
  * @param map
  * the map that being processed has a tiling to a map in another group. Its group will be the final merging group.
- * @param tile
- * the tile index causing the merge
  * @param tiled_map
  * the map tiled to another group. Its group will disappear.
  */
-static void merge_tiled_maps(struct_map_info *map, int tile, struct_map_info *tiled_map) {
-    int g;
+static void merge_tiled_maps(struct_map_info *map, struct_map_info *tiled_map) {
+    size_t g;
     struct_map_info *group = tiled_map->tiled_group;
     struct_map_info *change;
 
@@ -1642,11 +1298,10 @@ static void merge_tiled_maps(struct_map_info *map, int tile, struct_map_info *ti
  * associated structure.
  */
 static struct_map_info *get_map_info(const char *path) {
-    int map;
     struct_map_info *add;
     char *tmp;
 
-    for (map = 0; map < maps_list.count; map++) {
+    for (size_t map = 0; map < maps_list.count; map++) {
         if (strcmp(maps_list.maps[map]->path, path) == 0)
             return maps_list.maps[map];
     }
@@ -1693,7 +1348,7 @@ static void list_map(const char *path) {
  * region to link the map to.
  */
 static void add_map_to_region(struct_map_info *map, region *reg) {
-    int test;
+    size_t test;
     int x, y;
 
     for (test = 0; test < region_count; test++) {
@@ -1742,9 +1397,7 @@ static void save_picture(FILE *file, gdImagePtr pic) {
  * @param linkname
  * name of the link as it should appear. Unused.
  */
-static void add_region_link(mapstruct *source, mapstruct *dest, const char *linkname) {
-    int search = 0;
-    char entry[500];
+static void add_region_link(mapstruct *source, mapstruct *dest, const char */*linkname*/) {
     region *s, *d;
 
     s = get_region_by_map(source);
@@ -1752,22 +1405,7 @@ static void add_region_link(mapstruct *source, mapstruct *dest, const char *link
     if (s == d)
         return;
 
-    if (linkname && 0)
-        snprintf(entry, sizeof(entry), "%s -> %s [ label = \"%s\" ]\n", s->name, d->name, linkname);
-    else
-        snprintf(entry, sizeof(entry), "%s -> %s\n", s->name, d->name);
-
-    for (search = 0; search < regions_link_count; search++) {
-        if (strcmp(regions_link[search], entry) == 0)
-            return;
-    }
-
-    if (regions_link_count == regions_link_allocated) {
-        regions_link_allocated += 10;
-        regions_link = (char **)realloc(regions_link, sizeof(const char *)*regions_link_allocated);
-    }
-    regions_link[regions_link_count] = strdup(entry);
-    regions_link_count++;
+    region_links[s].insert(d);
 }
 
 /**
@@ -1792,10 +1430,7 @@ static int is_slaying(object *item) {
  * structure for slaying. Never NULL.
  */
 static struct_slaying_info *get_slaying_struct(const char *slaying) {
-    struct_slaying_info *add;
-    int l;
-
-    for (l = 0; l < slaying_count; l++) {
+    for (size_t l = 0; l < slaying_count; l++) {
         if (!strcmp(slaying_info[l]->slaying, slaying))
             return slaying_info[l];
     }
@@ -1804,9 +1439,9 @@ static struct_slaying_info *get_slaying_struct(const char *slaying) {
         slaying_info = (struct_slaying_info **)realloc(slaying_info, sizeof(struct_slaying_info *)*slaying_allocated);
     }
 
-    add = (struct_slaying_info *)calloc(1, sizeof(struct_slaying_info));
+    struct_slaying_info *add = (struct_slaying_info *)calloc(1, sizeof(struct_slaying_info));
     add->slaying = strdup(slaying);
-    for (l = 0; l < S_MAX; l++)
+    for (size_t l = 0; l < S_MAX; l++)
         init_map_list(&add->maps[l]);
 
     slaying_info[slaying_count] = add;
@@ -1851,6 +1486,8 @@ static void add_slaying(struct_map_info *map, object *item) {
         add_map_to_slaying(info, S_KEY, map);
     else if (item->type == CONTAINER)
         add_map_to_slaying(info, S_CONTAINER, map);
+    else if (item->type == DETECTOR)
+        add_map_to_slaying(info, S_DETECTOR, map);
     else
         add_map_to_slaying(info, S_CONNECT, map);
 }
@@ -1871,6 +1508,30 @@ static void check_slaying_inventory(struct_map_info *map, object *item) {
     } FOR_INV_FINISH();
 }
 
+static void generate_picture_path(const char *path, size_t pic_size, char *out, size_t len) {
+    snprintf(out, len, "%s%s.x%zu%s", root, path, pic_size + 1, output_extensions[output_format]);
+}
+
+static void write_pictures_from_real_size(const char *path, gdImagePtr real, int width, int height) {
+    char picpath[MAX_BUF];
+
+    generate_picture_path(path, 0, picpath, sizeof(picpath));
+    make_path_to_file(picpath);
+    FILE *out = fopen(picpath, "wb+");
+    save_picture(out, real);
+    fclose(out);
+
+    for (size_t i = 1; i < num_sizes; i++) {
+        generate_picture_path(path, i, picpath, sizeof(picpath));
+        gdImagePtr small = gdImageCreateTrueColor(width*sizes[i], height*sizes[i]);
+        gdImageCopyResampled(small, real, 0, 0, 0, 0, width*sizes[i], height*sizes[i], width*size_large, height*size_large);
+        out = fopen(picpath, "wb+");
+        save_picture(out, small);
+        fclose(out);
+        gdImageDestroy(small);
+    }
+}
+
 /**
  * Processes a map.
  *
@@ -1882,9 +1543,7 @@ static void check_slaying_inventory(struct_map_info *map, object *item) {
 static void process_map(struct_map_info *info) {
     mapstruct *m;
     int x, y, isworld;
-    FILE *out;
-    gdImagePtr pic;
-    gdImagePtr small;
+    gdImagePtr pic = nullptr;
     struct stat stats;
     struct stat statspic;
     char exit_path[500];
@@ -1927,7 +1586,7 @@ static void process_map(struct_map_info *info) {
     add_map_to_region(info, info->cfregion);
 
     for (int i = 0; i < num_sizes; i++) {
-        snprintf(picpath[i], sizeof(picpath[i]), "%s%s.x%d%s", root, info->path, i+1, output_extensions[output_format]);
+        generate_picture_path(info->path, i, picpath[i], sizeof(picpath[i]));
     }
 
     if (force_pics)
@@ -1978,7 +1637,7 @@ static void process_map(struct_map_info *info) {
                 info->tiles[x] = link;
                 if (link->tiled_group) {
                     if (info->tiled_group && link->tiled_group != info->tiled_group) {
-                        merge_tiled_maps(info, x, link);
+                        merge_tiled_maps(info, link);
                         continue;
                     }
                     if (link->tiled_group == info->tiled_group) {
@@ -2012,14 +1671,14 @@ static void process_map(struct_map_info *info) {
                     if (!item->slaying) {
                         ep[0] = '\0';
                         if (warn_no_path)
-                            printf(" exit without any path at %hd, %hd on %s\n", item->x, item->y, info->path);
+                            printf(" exit without any path at %d, %d on %s\n", item->x, item->y, info->path);
                     } else {
                         memset(ep, 0, 500);
                         if (strcmp(item->slaying, "/!"))
                             strcpy(ep, EXIT_PATH(item));
                         else {
                             if (!item->msg) {
-                                printf("  random map without message in %s at %hd, %hd\n", info->path, item->x, item->y);
+                                printf("  random map without message in %s at %d, %d\n", info->path, item->x, item->y);
                             } else {
                                 /* Some maps have a 'exit_on_final_map' flag, ignore it. */
                                 start = strstr(item->msg, "\nfinal_map ");
@@ -2039,7 +1698,7 @@ static void process_map(struct_map_info *info) {
                             path_combine_and_normalize(m->path, ep, exit_path, 500);
                             create_pathname(exit_path, tmppath, MAX_BUF);
                             if (stat(tmppath, &stats)) {
-                                printf("  map %s doesn't exist in map %s, at %hd, %hd.\n", ep, info->path, item->x, item->y);
+                                printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, info->path, item->x, item->y);
                             } else {
                                 link = get_map_info(exit_path);
                                 add_map(link, &info->exits_from);
@@ -2104,20 +1763,7 @@ static void process_map(struct_map_info *info) {
         }
 
     if (needpic) {
-        make_path_to_file(picpath[0]);
-        out = fopen(picpath[0], "wb+");
-        save_picture(out, pic);
-        fclose(out);
-
-        for (int i = 1; i < num_sizes; i++) {
-            small = gdImageCreateTrueColor(MAP_WIDTH(m)*sizes[i], MAP_HEIGHT(m)*sizes[i]);
-            gdImageCopyResampled(small, pic, 0, 0, 0, 0, MAP_WIDTH(m)*sizes[i], MAP_HEIGHT(m)*sizes[i], MAP_WIDTH(m)*size_large, MAP_HEIGHT(m)*size_large);
-            out = fopen(picpath[i], "wb+");
-            save_picture(out, small);
-            fclose(out);
-            gdImageDestroy(small);
-        }
-
+        write_pictures_from_real_size(info->path, pic, MAP_WIDTH(m), MAP_HEIGHT(m));
         gdImageDestroy(pic);
         info->pic_was_done = 1;
     }
@@ -2125,266 +1771,6 @@ static void process_map(struct_map_info *info) {
     m->reset_time = 1;
     m->in_memory = MAP_IN_MEMORY;
     delete_map(m);
-}
-
-/**
- * Creates the page for a map index.
- *
- * @param dest
- * path relative to root where the index will be located, without leading /. Used to compute the map's path relative to the index.
- * @param maps_list
- * maps in the index.
- * @param template_page
- * global page template.
- * @param template_letter
- * template for one letter of the index.
- * @param template_map
- * template for one map.
- * @param vars
- * template variables to give access to.
- * @param values
- * associated values.
- * @return
- * processed template. Should be free() by the caller.
- */
-static char *do_map_index(const char *dest, struct_map_list *maps_list,
-                          const char *template_page, const char *template_letter,
-                          const char *template_map, const char **vars,
-                          const char **values) {
-#define VARSADD 6
-    int map;
-    char *string;
-    char mappath[500];
-    char maphtml[500];
-    char count[50];
-    char lettercount[50];
-    char *tmp;
-    const char **idx_vars;
-    const char **idx_values;
-    char str_letter[2];
-    char last_letter;
-    char index_path[500];
-    char *mapstext = NULL;
-    int byletter;
-    int basevalues, realcount = 0;
-    struct_map_info *last_group = NULL;
-
-    if (!generate_index)
-        return strdup("");
-
-    if (vars)
-        for (basevalues = 0; vars[basevalues] != NULL; basevalues++)
-            ;
-    else
-        basevalues = 0;
-
-    idx_vars = (const char **)malloc(sizeof(char *)*(basevalues+VARSADD));
-    idx_vars[0] = "MAPCOUNT";
-    memcpy(&idx_vars[1], vars, sizeof(char *)*basevalues);
-    idx_vars[basevalues+VARSADD-1] = NULL;
-
-    idx_values = (const char **)malloc(sizeof(char *)*(basevalues+VARSADD-1));
-    memcpy(&idx_values[1], values, sizeof(char *)*basevalues);
-
-    string = NULL;
-
-    idx_values[0] = count;
-    /* wrong value, but in case the template needs to display something... */
-    snprintf(count, sizeof(count), "%d", maps_list->count);
-
-    idx_vars[basevalues+1] = "MAPNAME";
-    idx_vars[basevalues+2] = "MAPPATH";
-    idx_vars[basevalues+3] = "MAPHTML";
-    idx_vars[basevalues+4] = NULL;
-
-    qsort(maps_list->maps, maps_list->count, sizeof(const char *), sort_map_info);
-
-    last_letter = '\0';
-    str_letter[0] = '\0';
-    str_letter[1] = '\0';
-
-    strcpy(index_path, "/");
-    strcat(index_path, dest);
-
-    string = NULL;
-    for (map = 0; map < maps_list->count; map++) {
-        if (tolower(maps_list->maps[map]->name[0]) != last_letter) {
-            if (mapstext != NULL) {
-                idx_vars[basevalues+1] = "MAPS";
-                idx_vars[basevalues+2] = "LETTER";
-                idx_vars[basevalues+3] = "LETTERCOUNT";
-                idx_vars[basevalues+4] = NULL;
-                idx_values[basevalues+1] = mapstext;
-                idx_values[basevalues+2] = str_letter;
-                snprintf(lettercount, sizeof(lettercount), "%d", byletter);
-                idx_values[basevalues+3] = lettercount;
-                string = cat_template(string, do_template(template_letter, idx_vars, idx_values));
-                free(mapstext);
-                mapstext = NULL;
-                idx_values[basevalues+2] = NULL;
-            }
-            last_letter = tolower(maps_list->maps[map]->name[0]);
-            str_letter[0] = last_letter;
-            byletter = 0;
-            last_group = NULL;
-        }
-
-        if (last_group && last_group == maps_list->maps[map]->tiled_group)
-            continue;
-        else
-            last_group = maps_list->maps[map]->tiled_group;
-
-        realcount++;
-        idx_vars[basevalues+1] = "MAPNAME";
-        idx_vars[basevalues+2] = "MAPPATH";
-        idx_vars[basevalues+3] = "MAPHTML";
-        idx_values[basevalues+1] = last_group ? last_group->name : (maps_list->maps[map]->name ? maps_list->maps[map]->name : maps_list->maps[map]->path);
-        relative_path(index_path, last_group ? last_group->path : maps_list->maps[map]->path, mappath);
-        strcpy(maphtml, mappath);
-        strcat(maphtml, ".html");
-        idx_values[basevalues+2] = mappath;
-        idx_values[basevalues+3] = maphtml;
-        mapstext = cat_template(mapstext, do_template(template_map, idx_vars, idx_values));
-        byletter++;
-    }
-    if (last_letter != '\0') {
-        idx_vars[basevalues+1] = "MAPS";
-        idx_vars[basevalues+2] = "LETTER";
-        idx_vars[basevalues+3] = "LETTERCOUNT";
-        idx_vars[basevalues+4] = NULL;
-        idx_values[basevalues+1] = mapstext;
-        idx_values[basevalues+2] = str_letter;
-        snprintf(lettercount, sizeof(lettercount), "%d", byletter);
-        idx_values[basevalues+3] = lettercount;
-        string = cat_template(string, do_template(template_letter, idx_vars, idx_values));
-        free(mapstext);
-        mapstext = NULL;
-        idx_values[basevalues+2] = NULL;
-    }
-
-    snprintf(count, sizeof(count), "%d", realcount);
-    idx_values[basevalues+1] = string;
-    idx_vars[basevalues+1] = "LETTERS";
-    idx_vars[basevalues+2] = NULL;
-    tmp = do_template(template_page, idx_vars, idx_values);
-    free(string);
-    free(idx_vars);
-    free(idx_values);
-    return tmp;
-}
-
-/**
- * Generates the web page for a region.
- *
- * @param reg
- * region/maps for which to generate.
- *
- * @note
- * will sort the maps.
- */
-static void write_region_page(struct_region_info *reg) {
-    char *string;
-    FILE *index;
-    char html[500];
-    const char *vars[] = { "REGIONNAME", "REGIONHTML", "REGIONLONGNAME", "REGIONDESC", NULL };
-    const char *values[] = { reg->reg->name, html, NULL, NULL };
-
-    printf("Generating map index for region %s...", reg->reg->name);
-
-    values[2] = get_region_longname(reg->reg);
-    values[3] = get_region_msg(reg->reg);
-
-    strcpy(html, reg->reg->name);
-    strcat(html, ".html");
-
-    string = do_map_index(html, &reg->maps_list, region_template, region_letter_template, region_map_template, vars, values);
-
-    strcpy(html, root);
-    strcat(html, "/");
-    strcat(html, reg->reg->name);
-    strcat(html, ".html");
-    index = fopen(html, "w+");
-    fprintf(index, "%s", string);
-    fclose(index);
-    free(string);
-
-    printf(" done.\n");
-
-}
-
-/**
- * Generates all map indexes for a region.
- */
-static void write_all_regions(void) {
-    int reg;
-
-    qsort(regions, region_count, sizeof(struct_region_info *), sort_region);
-
-    for (reg = 0; reg < region_count; reg++)
-        write_region_page(regions[reg]);
-}
-
-/**
- * Generates global map index, file maps.html.
- */
-static void write_maps_index(void) {
-    char index_path[500];
-    char *tmp;
-    FILE *index;
-
-    printf("Generating global map index in maps.html...");
-
-    tmp = do_map_index("maps.html", &maps_list, index_template, index_letter, index_map, NULL, NULL);
-
-    strcpy(index_path, root);
-    strcat(index_path, "/maps.html");
-    index = fopen(index_path, "w+");
-    fprintf(index, "%s", tmp);
-    fclose(index);
-    free(tmp);
-
-    printf(" done.\n");
-}
-
-/**
- * Generates region index.
- */
-static void write_region_index(void) {
-    char *txt;
-    char *final;
-    char count[10];
-    struct_region_info *region;
-    int reg;
-    char file[500];
-    const char *vars[] = { "REGIONCOUNT", "REGIONFILE", "REGIONNAME", NULL };
-    const char *values[] = { count, file, NULL };
-    FILE *out;
-
-    printf("Generating regions index in regions.html...");
-
-    snprintf(count, sizeof(count), "%d", region_count);
-    txt = NULL;
-
-    for (reg = 0; reg < region_count; reg++) {
-        region = regions[reg];
-        snprintf(file, sizeof(file), "%s.html", region->reg->name);
-        values[2] = get_region_longname(region->reg);
-        txt = cat_template(txt, do_template(index_region_region_template, vars, values));
-    }
-    vars[1] = "REGIONS";
-    values[1] = txt;
-    vars[2] = NULL;
-    final = do_template(index_region_template, vars, values);
-    free(txt);
-
-    strcpy(file, root);
-    strcat(file, "/regions.html");
-    out = fopen(file, "w+");
-    fprintf(out, "%s", final);
-    fclose(out);
-    free(final);
-
-    printf(" done.\n");
 }
 
 /**
@@ -2396,18 +1782,12 @@ static void write_world_map(void) {
     FILE *out;
     int wx, wy;
     char file[500];
-    char *map = NULL;
-    char *total;
-    char *row = NULL;
-    char mapleft[10], maptop[10], mapright[10], mapbottom[10];
-    const char *vars[] = { NULL, NULL, "MAPLEFT", "MAPTOP", "MAPRIGHT", "MAPBOTTOM", NULL };
-    const char *values[] = { NULL, NULL, mapleft, maptop, mapright, mapbottom, NULL };
+    char mapleft[10], maptop[10], mapright[10], mapbottom[10], mappath[5000];
     char name[100];
-    char mappath[500], mapraw[500], mapregion[500];
     gdImagePtr pic;
     gdImagePtr small;
     gdFontPtr font;
-    int region, color;
+    int color;
 
     if (!world_map)
         return;
@@ -2425,18 +1805,11 @@ static void write_world_map(void) {
 
     for (y = 0; y < 30; y++) {
         for (x = 0; x < 30; x++) {
-            values[0] = name;
-            vars[0] = "MAPNAME";
-            vars[1] = "MAPPATH";
-            values[1] = mappath,
             snprintf(name, sizeof(name), "world_%d_%d", wx, wy);
-            snprintf(mappath, sizeof(mappath), "world/%s.html", name);
             snprintf(mapleft, sizeof(mapleft), "%d", SIZE*x);
             snprintf(maptop, sizeof(maptop), "%d", SIZE*y);
             snprintf(mapright, sizeof(mapright), "%d", SIZE*(x+1)-1);
             snprintf(mapbottom, sizeof(mapbottom), "%d", SIZE*(y+1)-1);
-
-            map = cat_template(map, do_template(world_map_template, vars, values));
 
             snprintf(mappath, sizeof(mappath), "%s/world/%s.x1%s", root, name, output_extensions[output_format]);
 
@@ -2463,32 +1836,7 @@ static void write_world_map(void) {
         }
         wy++;
         wx = 100;
-        values[0] = map;
-        vars[0] = "MAPS";
-        vars[1] = NULL;
-        row = cat_template(row, do_template(world_row_template, vars, values));
-        free(map);
-        map = NULL;
     }
-    snprintf(mappath, sizeof(mappath), "world%s", output_extensions[output_format]);
-    snprintf(mapraw, sizeof(mapraw), "world_raw%s", output_extensions[output_format]);
-    snprintf(mapregion, sizeof(mapregion), "world_regions%s", output_extensions[output_format]);
-
-    values[0] = row;
-    vars[0] = "MAPS";
-    values[1] = mappath;
-    vars[1] = "WORLDMAP";
-    values[2] = mapraw;
-    vars[2] = "WORLDRAW";
-    values[3] = mapregion;
-    vars[3] = "WORLDREGIONS";
-    vars[4] = NULL;
-    total = do_template(world_template, vars, values);
-    free(row);
-    out = fopen(file, "w+");
-    fprintf(out, "%s", total);
-    free(total);
-    fclose(out);
 
     snprintf(mappath, sizeof(mappath), "%s/world_raw%s", root, output_extensions[output_format]);
     out = fopen(mappath, "wb+");
@@ -2499,7 +1847,7 @@ static void write_world_map(void) {
     small = gdImageCreateTrueColor(SIZE*30, SIZE*30);
     font = gdFontGetGiant();
     color = gdImageColorAllocateAlpha(pic, 255, 0, 0, 20);
-    for (region = 0; region < region_allocated; region++) {
+    for (size_t region = 0; region < region_allocated; region++) {
         if (!regions[region]->is_world || regions[region]->sum == 0)
             continue;
 
@@ -2530,188 +1878,9 @@ static void write_world_map(void) {
 #undef SIZE
 }
 
-/**
- * Write a map page.
- *
- * @param map
- * map to write page of.
- */
-static void write_map_page(struct_map_info *map) {
-    char *exits_text;
-    char *exits_to;
-    char *maplore;
-    char *tmp;
-    char *quests, *quest;
-    char *monsters;
-
-    char htmlpath[500];         /* Map file path. */
-    char mappic[500];           /* Name of map's full size picture. */
-    char mapsmallpic[500];      /* Name of map's small size picture. */
-    char indexpath[500];        /* Relative path of full index. */
-    char regionpath[500];       /* Path to region's filename. */
-    char regionname[500];       /* Name of map's region. */
-    char regionindexpath[500];  /* Path to region index file. */
-    char worldmappath[500];     /* Path to world map. */
-    char exit_path[500];
-    char maplevel[5], minmonster[5], maxmonster[5];
-    FILE *out;
-    char questpath[500], questtemp[500];
-    const char *quest_vars[] = { "NAME", "PATH", "TEXT", NULL };
-    const char *quest_vals[] = { NULL, questpath, NULL, NULL };
-    const char *q_vars[] = { "QUESTS", NULL };
-    const char *q_vals[] = { NULL, NULL };
-    const char *m_vars[] = { "NAME", NULL };
-    const char *m_vals[] = { NULL, NULL };
-    const char *vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXITFROM", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", "MAPEXITTO", "MAPLEVEL", "QUESTS", "MONSTERS", "MINMONSTER", "MAXMONSTER", NULL, NULL, NULL };
-    const char *values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, "", "", maplevel, NULL, "", minmonster, maxmonster, NULL, NULL, NULL };
-    int vars_count = 0;
-
-    while (vars[vars_count])
-        vars_count++;
-
-    snprintf(minmonster, sizeof(minmonster), "%d", map->min_monster);
-    snprintf(maxmonster, sizeof(maxmonster), "%d", map->max_monster);
-
-    relative_path(map->path, "/maps.html", indexpath);
-    relative_path(map->path, "/world.html", worldmappath);
-    relative_path(map->path, "/regions.html", regionindexpath);
-
-    if (map->cfregion) {
-        strcpy(regionname, get_region_longname(map->cfregion));
-        strcpy(exit_path, "/");
-        strcat(exit_path, map->cfregion->name);
-        strcat(exit_path, ".html");
-        relative_path(map->path, exit_path, regionpath);
-    } else {
-        regionpath[0]='\0';
-        snprintf(regionname, sizeof(regionname), "(map was not processed)");
-    }
-
-    snprintf(mappic, sizeof(mappic), "%s%s", map->filename, output_extensions[output_format]);
-    snprintf(mapsmallpic, sizeof(mapsmallpic), "%s.x2%s", map->filename, output_extensions[output_format]);
-
-    snprintf(htmlpath, sizeof(htmlpath), "%s%s.html", root, map->path);
-    make_path_to_file(htmlpath);
-
-    values[14] = "";
-
-    snprintf(maplevel, sizeof(maplevel), "%d", map->level);
-    if (map->lore && map->lore[0] != '\0') {
-        values[11] = map->lore;
-        maplore = do_template(map_lore_template, vars, values);
-    } else {
-        maplore = do_template(map_no_lore_template, vars, values);
-    }
-    values[11] = maplore;
-
-    if (map->exits_from.count) {
-        char *one_exit = NULL;
-        int exit;
-        char relative[500];
-
-        vars[vars_count] = "EXITNAME";
-        vars[vars_count+1] = "EXITFILE";
-
-        qsort(map->exits_from.maps, map->exits_from.count, sizeof(const char *), sort_map_info);
-        for (exit = 0; exit < map->exits_from.count; exit++) {
-            relative_path(map->path, map->exits_from.maps[exit]->path, relative);
-            values[vars_count] = map->exits_from.maps[exit]->name;
-            strcat(relative, ".html");
-            values[vars_count+1] = relative;
-            one_exit = cat_template(one_exit, do_template(map_exit_template, vars, values));
-        }
-        vars[vars_count] = "EXIT";
-        vars[vars_count+1] = NULL;
-        values[vars_count] = one_exit;
-        exits_text = do_template(map_with_exit_template, vars, values);
-        free(one_exit);
-    }
-    else
-        exits_text = do_template(map_no_exit_template, vars, values);
-
-    values[5] = exits_text;
-
-    if (map->exits_to.count) {
-        char *one_exit = NULL;
-        int exit;
-        char relative[500];
-
-        vars[vars_count] = "EXITNAME";
-        vars[vars_count+1] = "EXITFILE";
-
-        qsort(map->exits_to.maps, map->exits_to.count, sizeof(struct_map_info *), sort_map_info);
-        for (exit = 0; exit < map->exits_to.count; exit++) {
-            relative_path(map->path, map->exits_to.maps[exit]->path, relative);
-            values[vars_count] = map->exits_to.maps[exit]->name;
-            strcat(relative, ".html");
-            values[vars_count+1] = relative;
-            one_exit = cat_template(one_exit, do_template(map_exit_to_template, vars, values));
-        }
-        vars[vars_count] = "EXIT";
-        vars[vars_count+1] = NULL;
-        values[vars_count] = one_exit;
-        exits_to = do_template(map_with_exit_to_template, vars, values);
-        free(one_exit);
-    } else
-        exits_to = do_template(map_no_exit_to_template, vars, values);
-
-    values[12] = exits_to;
-
-    if (map->quests.count) {
-        int q;
-
-        quest = NULL;
-        for (q = 0; q < map->quests.count; q++) {
-            quest_vals[0] = map->quests.list[q]->quest->name;
-            relative_path(map->path, "/quests.html", questtemp);
-            snprintf(questpath, sizeof(questpath), "%s#quest_%d", questtemp, map->quests.list[q]->quest->number);
-            quest_vals[2] = map->quests.list[q]->description;
-            quest = cat_template(quest, do_template(map_one_quest_template, quest_vars, quest_vals));
-        }
-
-        q_vals[0] = quest;
-        quests = do_template(map_with_quests_template, q_vars, q_vals);
-        free(quest);
-        quest = NULL;
-    } else
-        quests = strdup(map_no_quest_template);
-    values[14] = quests;
-
-    if (map->monsters.count) {
-        int m;
-
-        qsort(map->monsters.races, map->monsters.count, sizeof(struct_race *), sort_race);
-
-        monsters = do_template(map_monster_before_template, vars, values);
-        for (m = 0; m < map->monsters.count; m++) {
-            m_vals[0] = map->monsters.races[m]->name;
-            monsters = cat_template(monsters, do_template(map_monster_one_template, m_vars, m_vals));
-            if (m != map->monsters.count-1)
-                monsters = cat_template(monsters, do_template(map_monster_between_template, vars, values));
-        }
-        monsters = cat_template(monsters, do_template(map_monster_after_template, vars, values));
-    } else
-        monsters = do_template(map_no_monster_template, vars, values);
-    values[15] = monsters;
-
-    vars[vars_count] = NULL;
-    out = fopen(htmlpath, "w+");
-    tmp = do_template(map_template, vars, values);
-    fprintf(out, "%s", tmp);
-    fclose(out);
-    free(tmp);
-    free(exits_text);
-    free(exits_to);
-    free(maplore);
-    free(quests);
-    free(monsters);
-}
-
 /** Ensures all maps have a name (if there was a limit to map processing, some maps will have a NULL name which causes issues). */
 static void fix_map_names(void) {
-    int map;
-
-    for (map = 0; map < maps_list.count; map++) {
+    for (size_t map = 0; map < maps_list.count; map++) {
         if (maps_list.maps[map]->name)
             continue;
         if (!maps_list.maps[map]->filename) {
@@ -2729,7 +1898,7 @@ static void fix_map_names(void) {
  * use a better filename, try to get the start of the map filenames.
  */
 static void fix_tiled_map(void) {
-    int map, tile;
+    size_t map, tile;
     char name[500];
     char *slash, *test;
     region *cfregion;
@@ -2740,7 +1909,7 @@ static void fix_tiled_map(void) {
             abort();
         }
 
-        snprintf(name, sizeof(name), "tiled_map_group_%d", map);
+        snprintf(name, sizeof(name), "tiled_map_group_%zu", map);
         tiled_map_list.maps[map]->filename = strdup(name);
 
         cfregion = NULL;
@@ -2817,7 +1986,7 @@ static void fix_exits_for_map(struct_map_info *current, struct_map_list *from, i
 
 /** Changes all exits to maps in a tiled map to point directly to the tiled map. Same for region lists. */
 static void fix_exits_to_tiled_maps(void) {
-    int map, region, max;
+    int map, max;
     struct_map_info *group;
 
     for (map = 0; map < maps_list.count; map++) {
@@ -2825,7 +1994,7 @@ static void fix_exits_to_tiled_maps(void) {
         fix_exits_for_map(maps_list.maps[map], &maps_list.maps[map]->exits_to, 0);
     }
 
-    for (region = 0; region < region_count; region++) {
+    for (size_t region = 0; region < region_count; region++) {
         max = regions[region]->maps_list.count-1;
         for (map = max; map >= 0; map--) {
             if (regions[region]->maps_list.maps[map]->tiled_group) {
@@ -2845,10 +2014,10 @@ static void fix_exits_to_tiled_maps(void) {
  * map monster to tiled map.
  */
 static void fix_tiled_map_monsters(void) {
-    int map, race, max;
+    int map, max;
     struct_map_info *group;
 
-    for (race = 0; race < races.count; race++) {
+    for (size_t race = 0; race < races.count; race++) {
         max = races.races[race]->origin.count-1;
         for (map = max; map >= 0; map--) {
             if (races.races[race]->origin.maps[map]->tiled_group) {
@@ -2864,38 +2033,23 @@ static void fix_tiled_map_monsters(void) {
 
     for (map = 0; map < maps_list.count; map++) {
         if (maps_list.maps[map]->tiled_group) {
-            for (race = 0; race < maps_list.maps[map]->monsters.count; race++) {
+            for (size_t race = 0; race < maps_list.maps[map]->monsters.count; race++) {
                 add_race_to_list(maps_list.maps[map]->monsters.races[race], &maps_list.maps[map]->tiled_group->monsters, 1);
             }
         }
     }
 }
 
-/** Ensures all maps have a name, and writes all map pages. */
-static void write_all_maps(void) {
-    int map;
-
-    printf("Writing map pages...");
-
-    for (map = 0; map < maps_list.count; map++)
-        if (!maps_list.maps[map]->tiled_group)
-            write_map_page(maps_list.maps[map]);
-
-    printf(" done.\n");
-}
-
 static int tiled_map_need_pic(struct_map_info *map) {
-    int test;
+    size_t test;
     char picpath[500];
     struct stat stats;
 
-    snprintf(picpath, sizeof(picpath), "%s%s%s", root, map->path, output_extensions[output_format]);
-    if (stat(picpath, &stats))
-        return 1;
-
-    snprintf(picpath, sizeof(picpath), "%s%s.x2%s", root, map->path, output_extensions[output_format]);
-    if (stat(picpath, &stats))
-        return 1;
+    for (size_t size = 0; size < num_sizes; size++) {
+        generate_picture_path(map->path, size, picpath, sizeof(picpath));
+        if (stat(picpath, &stats))
+            return 1;
+    }
 
     for (test = 0; test < map->tiled_maps.count; test++) {
         if (map->tiled_maps.maps[test]->pic_was_done)
@@ -2917,9 +2071,10 @@ static int tiled_map_need_pic(struct_map_info *map) {
  * only if one map has changed / the pic doesn't exist.
  */
 static void do_tiled_map_picture(struct_map_info *map) {
-    int xmin = 0, xmax = 0, ymin = 0, ymax = 0, tiled, count, last;
+    int xmin = 0, xmax = 0, ymin = 0, ymax = 0, count, last;
+    size_t tiled;
     char picpath[500];
-    gdImagePtr small, large, load;
+    gdImagePtr large, load;
     FILE *out;
     struct_map_info *current;
 
@@ -2993,10 +2148,9 @@ static void do_tiled_map_picture(struct_map_info *map) {
     }
 
     large = gdImageCreateTrueColor(size_large*(xmax-xmin), size_large*(ymax-ymin));
-    small = gdImageCreateTrueColor(size_small*(xmax-xmin), size_small*(ymax-ymin));
 
     for (tiled = 0; tiled < map->tiled_maps.count; tiled++) {
-        snprintf(picpath, sizeof(picpath), "%s%s.x1%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
+        generate_picture_path(map->tiled_maps.maps[tiled]->path, 0, picpath, sizeof(picpath));
 
         out = fopen(picpath, "rb");
         if (!out) {
@@ -3014,33 +2168,10 @@ static void do_tiled_map_picture(struct_map_info *map) {
         }
         gdImageCopy(large, load, size_large*(map->tiled_maps.maps[tiled]->tiled_x_from-xmin), size_large*(map->tiled_maps.maps[tiled]->tiled_y_from-ymin), 0, 0, load->sx, load->sy);
         gdImageDestroy(load);
-
-        snprintf(picpath, sizeof(picpath), "%s%s.x2%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
-        out = fopen(picpath, "rb");
-        if (output_format == OF_PNG)
-            load = gdImageCreateFromPng(out);
-        else
-            load = gdImageCreateFromJpeg(out);
-        fclose(out);
-        if (!load) {
-            printf("\n  do_tiled_map_picture: warning: small pic not found for %s\n", map->tiled_maps.maps[tiled]->path);
-            continue;
-        }
-        gdImageCopy(small, load, size_small*(map->tiled_maps.maps[tiled]->tiled_x_from-xmin), size_small*(map->tiled_maps.maps[tiled]->tiled_y_from-ymin), 0, 0, load->sx, load->sy);
-        gdImageDestroy(load);
     }
 
-    snprintf(picpath, sizeof(picpath), "%s%s%s", root, map->path, output_extensions[output_format]);
-    out = fopen(picpath, "wb+");
-    save_picture(out, large);
-    fclose(out);
+    write_pictures_from_real_size(map->path, large, xmax-xmin, ymax-ymin);
 
-    snprintf(picpath, sizeof(picpath), "%s%s.x2%s", root, map->path, output_extensions[output_format]);
-    out = fopen(picpath, "wb+");
-    save_picture(out, small);
-    fclose(out);
-
-    gdImageDestroy(small);
     gdImageDestroy(large);
 
     printf(" done.\n");
@@ -3053,163 +2184,542 @@ static void write_tiled_map_page(struct_map_info *map) {
 
     /** @todo: do a real page, with the various levels, maps and such. */
 
-    write_map_page(map);
+//    write_map_page(map);
 }
 
 /** Outputs all tiled map pages. */
 static void write_tiled_maps(void) {
-    int map;
-
     printf("Writing tiled map information...\n");
 
-    for (map = 0; map < tiled_map_list.count; map++)
+    for (size_t map = 0; map < tiled_map_list.count; map++)
         write_tiled_map_page(tiled_map_list.maps[map]);
 
     printf(" done.\n");
 }
 
-/** Outputs the list of maps sorted by level. */
-static void write_maps_by_level(void) {
-    int map;
-    FILE *out;
-    char name[500];
-    char mappath[500];
-    char *letters = NULL;
-    char *maps = NULL;
-    char *level = NULL;
-    int lastlevel = -1;
-    char strlevel[10];
-    char strcount[10];
-    const char *val_vars[] = { "LEVEL", "MAPS", NULL };
-    const char *val_values[] = { strlevel, NULL, NULL };
-    const char *map_vars[] = { "MAPNAME", "MAPPATH", NULL };
-    const char *map_values[] = { NULL, mappath, NULL };
-    const char *idx_vars[] = { "COUNT", "LEVELS", NULL };
-    const char *idx_values[] = { strcount, NULL, NULL };
-    int levelcount = 0;
-    struct_map_info *last_tiled = NULL;
-    struct_map_info *process;
+static size_t system_quests_count = 0;
+static const quest_definition *system_quests[500];
 
-    printf("Writing map index by level...");
+static void quest_callback(const quest_definition *quest, void *) {
+    if (list_system_quests || !quest->quest_is_system) {
+        system_quests[system_quests_count++] = quest;
+    }
+}
 
-    snprintf(name, sizeof(name), "%s/index_by_level.html", root);
+static int sort_system_quest(const void *a, const void *b) {
+    return strcmp((*((quest_definition **)a))->quest_code, (*((quest_definition **)b))->quest_code);
+}
 
-    qsort(maps_list.maps, maps_list.count, sizeof(struct_map_info *), sort_map_info_by_level);
+static int sort_system_quest_step(const void *a, const void *b) {
+    return (*((quest_step_definition**)a))->step - (*((quest_step_definition**)b))->step;
+}
 
-    for (map = 0; map < maps_list.count; map++) {
-        process = maps_list.maps[map];
-        if (maps_list.maps[map]->level != lastlevel) {
-            if (maps) {
-                snprintf(strlevel, sizeof(strlevel), "%d", lastlevel);
-                val_values[1] = maps;
-                letters = cat_template(letters, do_template(level_value_template, val_vars, val_values));
-                free(maps);
-                maps = NULL;
+static std::shared_ptr<inja::Environment> env;                  /**< Rendering environment. */
+static nlohmann::json all_data;                                 /**< All JSON data available to templates. */
+static std::set<std::string> rendered_templates;                /**< List of generated files, to not generate multiple times. */
+static std::map<struct_map_info *, std::string> reverse_maps;   /**< Link between a map and its unique identifier. */
+static std::map<region *, std::string> reverse_regions;         /**< Link between a region and its unique identifier. */
+
+/**
+ * Get the map with the specified key, nullptr if not found.
+ * @param key key of the map to find.
+ * @return map, nullptr if not found.
+ */
+static struct_map_info *find_map_by_key(const std::string &key) {
+    auto found = std::find_if(reverse_maps.cbegin(), reverse_maps.cend(), [&key] (auto c) { return c.second == key; });
+    if (found != reverse_maps.cend())
+        return found->first;
+    return nullptr;
+}
+
+/**
+ * Get the region with the specified key, nullptr if not found.
+ * @param key key of the region to find.
+ * @return region, nullptr if not found.
+ */
+static region *find_region_by_key(const std::string &key) {
+    auto found = std::find_if(reverse_regions.cbegin(), reverse_regions.cend(), [&key] (auto c) { return c.second == key; });
+    if (found != reverse_regions.cend())
+        return found->first;
+    return nullptr;
+}
+
+/**
+ * Return an array of map identifiers.
+ * @param maps items to return the JSON of.
+ * @return array.
+ */
+static nlohmann::json create_maps_array(struct_map_list &maps) {
+    nlohmann::json result = nlohmann::json::array();
+    for (size_t m = 0; m < maps.count; m++) {
+        auto map = reverse_maps.find(maps.maps[m]);
+        if (map != reverse_maps.end()) {
+            result.push_back(map->second);
+        }
+    }
+    return result;
+}
+
+/**
+ * Return an array of NPC information.
+ * @param list items to return the JSON of.
+ * @return array.
+ */
+static nlohmann::json create_npc_array(struct_npc_list &list) {
+    nlohmann::json result;
+    for (size_t n = 0; n < list.count; n++) {
+        auto npc = list.npc[n];
+        result.push_back({
+            { "name", npc->name },
+            { "x", npc->x },
+            { "y", npc->y },
+            { "message", npc->message },
+        });
+    }
+    return result;
+}
+
+/**
+ * Return an array of monster information.
+ * @param list items to return the JSON of.
+ * @return array.
+ */
+static nlohmann::json create_race_array(struct_race_list &list) {
+    nlohmann::json result;
+    for (size_t n = 0; n < list.count; n++) {
+        auto race = list.races[n];
+        result.push_back({
+            { "name", race->name },
+            { "count", race->count },
+        });
+    }
+    return result;
+}
+
+/**
+ * Return an array of map-in-quest items.
+ * @param list items to return the JSON of.
+ * @return array.
+ */
+static nlohmann::json create_map_in_quest_array(struct_map_in_quest_list &list) {
+    nlohmann::json ret = nlohmann::json::array();
+    for (size_t m = 0; m < list.count; m++) {
+        auto q = list.list[m];
+        if (!q->map || !q->description)
+            continue;
+        ret.push_back({
+            { "map", reverse_maps.find(q->map)->second },
+            { "description", q->description },
+            { "quest", q->quest->name },
+            { "number", q->quest->number },
+        });
+    }
+
+    return ret;
+}
+
+/**
+ * Return a JSON map object.
+ * @param map map to return the JSON of.
+ * @param key map unique identifier.
+ * @return JSON object.
+ */
+static nlohmann::json create_map_object(struct_map_info *map, const std::string &key) {
+    return {
+        { "_key", key },
+        { "name", map->name },
+        { "path", map->path },
+        { "region", map->cfregion ? reverse_regions[map->cfregion] : "reg_ffff" },
+        { "level", map->level },
+        { "lore", map->lore && map->lore[0] ? map->lore : "" },
+        { "exits_to", create_maps_array(map->exits_to) },
+        { "exits_from", create_maps_array(map->exits_from) },
+        { "npcs", create_npc_array(map->npcs) },
+        { "readables", create_npc_array(map->readable) },
+        { "monsters", create_race_array(map->monsters) },
+        { "quests", create_map_in_quest_array(map->quests) },
+    };
+}
+
+/**
+ * Return a JSON quest object.
+ * @param quest quest to return the JSON of.
+ * @param key quest unique key.
+ * @return JSON object.
+ */
+static nlohmann::json create_quest_object(struct_quest *quest, const std::string &key) {
+    return {
+        { "_key", key },
+        { "number", quest->number },
+        { "name", quest->name ? quest->name : "" },
+        { "description", quest->description ? quest->description : "" },
+        { "main_map", quest->mainmap ? reverse_maps.find(quest->mainmap)->second : "" },
+        { "maps", create_map_in_quest_array(quest->maps) },
+    };
+}
+
+/**
+ * Fill the ::reverse_maps array with the provided list.
+ * @param list maps to put.
+ */
+static void fill_reverse_maps(struct_map_list &list) {
+    char buf[50];
+    for (size_t map = 0; map < list.count; map++) {
+        auto cur = list.maps[map];
+        if (cur->tiled_group)
+            continue;
+        snprintf(buf, sizeof(buf), "map_%04lu", map);
+        reverse_maps.insert(std::make_pair(cur, buf));
+        qsort(cur->exits_to.maps, cur->exits_to.count, sizeof(struct_map_info *), sort_map_info);
+        qsort(cur->exits_from.maps, cur->exits_from.count, sizeof(struct_map_info *), sort_map_info);
+        qsort(cur->monsters.races, cur->monsters.count, sizeof(struct_race *), sort_race);
+    }
+}
+
+/**
+ * Append the contents of src to dest.
+ * @param dest where to put items.
+ * @param src what to append to dest, unchanged.
+ */
+static void append_map_list(struct_map_list &dest, struct_map_list &src) {
+    for (size_t map = 0; map < src.count; map++)
+        add_map(src.maps[map], &dest);
+}
+
+/**
+ * Return an array of region identifiers.
+ * @param regions regions to process.
+ * @return JSON object.
+ */
+static nlohmann::json create_region_array(const std::set<region *> &regions) {
+    nlohmann::json ret = nlohmann::json::array();
+    for (auto reg : regions) {
+        auto r = reverse_regions.find(reg);
+        if (r != reverse_regions.end()) {
+            ret.push_back((*r).second);
+        }
+    }
+    return ret;
+}
+
+/**
+ * Add all global variables to the data available to templates.
+ * @param json what to fill.
+ */
+static void fill_json(nlohmann::json &json) {
+    nlohmann::json maps;
+    char buf[10];
+    struct_map_list all_maps;
+    bool need_unknown_region = false;
+
+    init_map_list(&all_maps);
+    append_map_list(all_maps, maps_list);
+    append_map_list(all_maps, tiled_map_list);
+    qsort(all_maps.maps, all_maps.count, sizeof(struct_map_info *), sort_map_info);
+
+    fill_reverse_maps(all_maps);
+
+    for (size_t reg = 0; reg < region_count; reg++) {
+        auto region = regions[reg];
+        snprintf(buf, sizeof(buf), "reg_%04lu", reg);
+        reverse_regions.insert(std::make_pair(region->reg, buf));
+    }
+
+    for (size_t reg = 0; reg < region_count; reg++) {
+        auto region = regions[reg];
+        qsort(region->maps_list.maps, region->maps_list.count, sizeof(struct_map_info *), sort_map_info);
+
+        json["regions"].push_back({
+            { "_key", reverse_regions[region->reg] },
+            { "name", region->reg->name },
+            { "longname", region->reg->longname },
+            { "description", region->reg->msg ? region->reg->msg : "" },
+            { "maps", create_maps_array(region->maps_list) },
+            { "links", create_region_array(region_links[region->reg]) },
+        });
+    }
+
+    for (auto map : reverse_maps) {
+        auto cur = map.first;
+        if (cur->tiled_group)
+            continue;
+        if (cur->cfregion == nullptr)
+            need_unknown_region = true;
+        json["maps"].push_back(create_map_object(cur, map.second));
+    }
+
+    if (need_unknown_region) {
+        json["regions"].push_back({
+            { "_key", "reg_ffff" },
+            { "name", "unknown" },
+            { "longname", "unknown" },
+            { "description", "unknown" },
+            { "maps", nlohmann::json::array() },
+            { "links", nlohmann::json::array() },
+        });
+    }
+
+    json["items"] = nlohmann::json::array();
+    for (size_t idx = 0; idx < equipment_count; idx++) {
+        auto eq = special_equipment[idx];
+        json["items"][idx] = {
+            { "name", eq->name },
+            { "power", eq->power },
+            { "calc_power", eq->calc_power },
+            { "diff", eq->diff },
+            { "maps", create_maps_array(eq->origin) },
+        };
+    }
+
+    json["monsters"] = nlohmann::json::array();
+    for (size_t item = 0; item < races.count; item++) {
+        auto race = races.races[item];
+        qsort(race->origin.maps, race->origin.count, sizeof(struct_map_info *), sort_map_info);
+        json["monsters"].push_back({
+            { "name", race->name },
+            { "count", race->count },
+            { "maps", create_maps_array(race->origin) },
+        });
+    }
+
+    json["system_quests"] = nlohmann::json::array();
+    for (size_t q = 0; q < system_quests_count; q++) {
+        auto quest = system_quests[q];
+        nlohmann::json j({
+            { "code", quest->quest_code },
+            { "title", quest->quest_title },
+            { "description", quest->quest_description ? quest->quest_description : "" },
+            { "replayable", quest->quest_restart },
+            { "steps", nlohmann::json::array() },
+            { "maps", nlohmann::json::array() },
+        });
+
+        if (detail_quests) {
+            quest_step_definition *steps[100];
+            size_t steps_count = 0;
+            quest_step_definition *step = quest->steps;
+            while (step) {
+                steps[steps_count++] = step;
+                step = step->next;
             }
-            lastlevel = process->level;
-            levelcount++;
-            last_tiled = NULL;
-        } else
-            if (last_tiled && last_tiled == process->tiled_group)
-                /* Group maps of same tiled group and level, but make them appear in different levels if applicable. */
-                continue;
+            qsort(steps, steps_count, sizeof(quest_step_definition *), sort_system_quest_step);
+            for (size_t s = 0; s < steps_count; s++) {
+                j["steps"].push_back({
+                    { "description", steps[s]->step_description ? steps[s]->step_description : "" },
+                    { "is_completion", steps[s]->is_completion_step ? true : false },
+                });
+            }
 
-        if (process->tiled_group) {
-            process = process->tiled_group;
-            last_tiled = process;
-        } else
-            last_tiled = process->tiled_group;
-
-        map_values[0] = process->name;
-        snprintf(mappath, sizeof(mappath), "%s.html", process->path+1); /* don't want the leading / */
-        maps = cat_template(maps, do_template(level_map_template, map_vars, map_values));
+            auto qim = find_quest_info(quest->quest_code);
+            if (qim) {
+                for (size_t m = 0; m < qim->maps.count; m++) {
+                    auto map = reverse_maps.find(qim->maps.list[m]->map);
+                    assert(map != reverse_maps.end());
+                    j["maps"].push_back({
+                        { "description", qim->maps.list[m]->description },
+                        { "map", map->second },
+                    });
+                }
+            }
+        }
+        json["system_quests"].push_back(j);
     }
 
-    snprintf(strlevel, sizeof(strlevel), "%d", lastlevel);
-    val_values[1] = maps;
-    letters = cat_template(letters, do_template(level_value_template, val_vars, val_values));
-    free(maps);
-    maps = NULL;
+    json["slaying"] = nlohmann::json::array();
+    for (size_t s = 0; s < slaying_count; s++) {
+        auto info = slaying_info[s];
+        json["slaying"].push_back({
+            { "slaying", info->slaying },
+            { "doors", create_maps_array(info->maps[S_DOOR]) },
+            { "keys", create_maps_array(info->maps[S_KEY]) },
+            { "containers", create_maps_array(info->maps[S_CONTAINER]) },
+            { "detectors", create_maps_array(info->maps[S_DETECTOR]) },
+            { "connections", create_maps_array(info->maps[S_CONNECT]) },
+        });
+    }
 
-    snprintf(strcount, sizeof(strcount), "%d", levelcount);
-    idx_values[1] = letters;
-    level = do_template(level_template, idx_vars, idx_values);
-    free(letters);
+    json["quests"] = nlohmann::json::array();
+    for (int quest = 0; quest < quests_count; quest++) {
+        qsort(quests[quest]->maps.list, quests[quest]->maps.count, sizeof(struct_map_in_quest *), sort_struct_map_in_quest);
+        char buf[100];
+        snprintf(buf, sizeof(buf), "quest_%d", quests[quest]->number);
+        json["quests"].push_back(create_quest_object(quests[quest], buf));
+    }
+}
 
-    out = fopen(name, "w+");
-    fprintf(out, "%s", level);
-    fclose(out);
-    free(level);
+/** Path, relative to output root, of pages being generated. */
+static std::vector<std::string> path_stack;
 
-    printf(" done.\n");
+void add_template_to_render(const std::string &template_name, const std::string &output_name, const std::string &param);
+
+/**
+ * Compute the relative path from the specified file to the current file.
+ * @param path path to get from.
+ * @return relative path to the current page.
+ */
+static std::string path_from_current(const std::string &path) {
+    auto p(path);
+    char rel[1000];
+    if (p[0] != '/')
+        p = '/' + p;
+    auto current(path_stack.back());
+    if (current[0] != '/')
+        current = '/' + current;
+    relative_path(current.c_str(), p.c_str(), rel);
+    return rel;
 }
 
 /**
- * Writes the item page.
+ * Create a link to a page, generating it if needed.
+ * @param args link arguments.
+ * @return link to the page.
  */
-static void write_equipment_index(void) {
-    int item, map;
-    FILE *out;
-    char name[500];
+static nlohmann::json generate_page_and_link(inja::Arguments &args) {
+    auto template_name = args.at(0)->get<std::string>();
+    auto output_name(template_name);
+    auto param = (args.size() > 1 ? args.at(1)->get<std::string>() : "");
 
-    printf("Generating special equipment list..");
-    fflush(stdout);
-
-    qsort(special_equipment, equipment_count, sizeof(struct_equipment *), sort_equipment);
-
-    snprintf(name, sizeof(name), "%s/items.html", root);
-    out = fopen(name, "w+");
-
-    fprintf(out, "<html><head><title>Item list</title></head><body><h1>Special items found in maps</h1>\n");
-    fprintf(out, "<table border=\"1\"><tr><th>Name</th><th>Map(s)</th><th>Item power</th><th>Calc item power</th><th>Description</th></tr>\n");
-
-    for (item = 0; item < equipment_count; item++) {
-        fprintf(out, "<tr><td>%s</td><td><ul>", special_equipment[item]->name);
-
-        for (map = 0; map < special_equipment[item]->origin.count; map++)
-            fprintf(out, "<li>%s</li>\n", special_equipment[item]->origin.maps[map]->path);
-
-        fprintf(out, "</ul></td><td>%d</td><td>%d</td><td><pre>%s</pre></td></tr>\n", special_equipment[item]->power, special_equipment[item]->calc_power, special_equipment[item]->diff);
+    if (!param.empty()) {
+        output_name = param + "_" + output_name;
+        if (param.substr(0, 4) == "map_") {
+            auto map = find_map_by_key(param);
+            if (map != nullptr) {
+                output_name = std::string(map->path + 1) + ".html";
+            }
+        }
+        if (param.substr(0, 4) == "reg_") {
+            auto reg = find_region_by_key(param);
+            if (reg != nullptr) {
+                output_name = std::string(reg->name) + ".html";
+            }
+        }
     }
-    fprintf(out, "</table></body></html>\n");
-    fclose(out);
 
-    printf(" done.\n");
+    add_template_to_render(template_name, output_name, param);
+    return path_from_current(output_name);
 }
 
 /**
- * Writes the monster information page.
+ * Return the link to the picture of the specified item.
+ * @param args function arguments.
+ * @return link, empty string if invalid.
  */
-static void write_race_index(void) {
-    int item, map;
-    FILE *out;
-    char name[500];
-
-    printf("Generating monster list...");
-    fflush(stdout);
-
-    qsort(races.races, races.count, sizeof(struct_race *), sort_race);
-
-    snprintf(name, sizeof(name), "%s/monsters.html", root);
-    out = fopen(name, "w+");
-
-    fprintf(out, "<html><head><title>Monster list</title></head><body><h1>Monsters found in maps</h1>\n");
-    fprintf(out, "<table border=\"1\"><tr><th>Name</th><th>Count</th><th>Map(s)</th></tr>\n");
-
-    for (item = 0; item < races.count; item++) {
-        fprintf(out, "<tr><td>%s</td><td>%d</td><td>Found on %d maps:<ul>", races.races[item]->name, races.races[item]->count, races.races[item]->origin.count);
-
-        qsort(races.races[item]->origin.maps, races.races[item]->origin.count, sizeof(struct_map_info *), sort_map_info);
-
-        for (map = 0; map < races.races[item]->origin.count; map++)
-            fprintf(out, "<li>%s</li>\n", races.races[item]->origin.maps[map]->path);
-
-        fprintf(out, "</ul></td></tr>\n");
+static nlohmann::json generate_picture_link(inja::Arguments &args) {
+    auto what = args.at(0)->get<std::string>();
+    if (what.substr(0, 4) == "map_") {
+        auto map = find_map_by_key(what);
+        if (map == nullptr)
+            return "";
+        int size = 0;
+        if (args.size() > 1) {
+            size = args.at(1)->get<int>() - 1;
+        }
+        char picpath[1000];
+        snprintf(picpath, sizeof(picpath), "%s.x%d%s", map->path, size + 1, output_extensions[output_format]);
+        return path_from_current(picpath);
     }
-    fprintf(out, "</table></body></html>\n");
-    fclose(out);
+    return "";
+}
 
-    printf(" done.\n");
+/**
+ * One page to render, with its parameters.
+ */
+class pageToRender {
+public:
+    std::string template_name;  /**< Template name to use. */
+    std::string output_name;    /**< Output file name. */
+    std::string param;          /**< Optional template parameter. */
+};
+static std::vector<pageToRender> pages; /**< List of pages to render. */
+
+/**
+ * Push the specified template, with optional param, on the list of files to process.
+ * @param template_name template name to use.
+ * @param output_name output file name.
+ * @param param additional parameter to the template.
+ */
+void add_template_to_render(const std::string &template_name, const std::string &output_name, const std::string &param) {
+    auto on(output_name);
+    if (on[0] != '/')
+        on = '/' + on;
+    if (rendered_templates.find(on) != rendered_templates.end())
+        return;
+
+    rendered_templates.insert(on);
+    pageToRender r;
+    r.template_name = template_name;
+    r.output_name = on;
+    r.param = param;
+    pages.push_back(r);
+}
+
+static std::string templates_root("templates/");    /**< Directory to get templates from, with a leading /. */
+static std::vector<std::string> templates;          /**< List of template files to start processing from. */
+
+/**
+ * Initialize ::env and set various callbacks and options.
+ */
+static void init_renderer_env() {
+    env = std::make_shared<inja::Environment>(templates_root, std::string(root) + "/");
+    env->add_callback("link_to_page", generate_page_and_link);
+    env->add_callback("substr", [] (inja::Arguments &args) {
+        std::string str = args.at(0)->get<std::string>();
+        size_t start = args.at(1)->get<size_t>();
+        size_t len = args.size() > 2 ? args.at(2)->get<size_t>() : std::string::npos;
+        return str.substr(start, len);
+    });
+    env->add_callback("picture", generate_picture_link);
+    env->add_callback("pad", [] (inja::Arguments &args) {
+        char buf[50];
+        int val = args.at(0)->get<int>(), digits = args.at(1)->get<int>();
+        snprintf(buf, sizeof(buf), "%0*d", digits, val);
+        return std::string(buf);
+    });
+    env->add_callback("path_to_root", 0, [] (inja::Arguments &) {
+        std::string r(root);
+        char rel[1000];
+        auto current(path_stack.back() + '/');
+        if (current[0] != '/')
+            current = '/' + current;
+        relative_path(current.c_str(), r.c_str(), rel);
+        return std::string(rel);
+    });
+    env->add_callback("get_by_field", 3, [] (inja::Arguments &args) {
+        auto src = args.at(0);
+        auto field = args.at(1)->get<std::string>();
+        auto value = args.at(2);
+        auto found = std::find_if(src->begin(), src->end(), [&field, &value] (auto item) {
+            return item[field] == *value;
+        });
+        if (found == src->end()) {
+            return nlohmann::json();
+        }
+        return *found;
+    });
+    env->add_callback("sort", [] (inja::Arguments &args) {
+        auto src = args.at(0);
+        std::vector<nlohmann::json> ret;
+        for (auto i : *src) {
+            ret.push_back(i);
+        }
+        auto field = args.at(1)->get<std::string>();
+        bool invert = args.size() > 2 ? args.at(2)->get<bool>() : false;
+        bool ignore_case = args.size() > 3 ? args.at(3)->get<bool>() : true;
+        std::sort(ret.begin(), ret.end(), [&field, &invert, &ignore_case] (auto left, auto right) {
+            nlohmann::json l = left[field], r = right[field];
+            if (ignore_case && l.is_string() && r.is_string()) {
+                std::string ls(l.get<std::string>()), rs(r.get<std::string>());
+                std::transform(ls.begin(), ls.end(), ls.begin(), [](unsigned char c){ return std::tolower(c); });
+                std::transform(rs.begin(), rs.end(), rs.begin(), [](unsigned char c){ return std::tolower(c); });
+                return invert ? (rs < ls) : (ls < rs);
+            }
+            return invert ? (r < l) : (l < r);
+        });
+        return ret;
+    });
+
+    env->set_trim_blocks(true);
+    env->set_lstrip_blocks(true);
 }
 
 /** Directories to ignore for map search. */
@@ -3346,73 +2856,6 @@ static void write_world_info(void) {
     elevationmap = NULL;
 }
 
-/** Write the .dot file representing links between regions. */
-static void write_regions_link(void) {
-    FILE *file;
-    char path[MAX_BUF];
-    int link;
-
-    if (!do_regions_link)
-        return;
-
-    printf("Writing regions link file...");
-    snprintf(path, sizeof(path), "%s/%s", root, "region_links.dot");
-    file = fopen(path, "wb+");
-    fprintf(file, "digraph {\n");
-    for (link = 0; link < regions_link_count; link++)
-        fprintf(file, "%s", regions_link[link]);
-    fprintf(file, "}\n");
-    fclose(file);
-    printf("done.\n");
-}
-
-/**
- * Helper function to write a map to a file with its link and full path.
- *
- * @param file
- * where to write.
- * @param map
- * map info to write.
- */
-static void write_slaying_map_name(FILE *file, struct_map_info *map) {
-    fprintf(file, "<a href=\"%s.html\">%s</a> (full map path: %s)", map->tiled_group ? map->tiled_group->path+1 : map->path+1, map->name, map->path);
-}
-
-/**
- * Writes all maps of the specified slaying information.
- *
- * @param file
- * file to write to.
- * @param info
- * slaying information to write.
- * @param item
- * which of the S_xxx to write.
- * @param with
- * text to write when there are maps to write. Mustn't be NULL.
- * @param without
- * text to write when there are no maps. Can be NULL.
- */
-static void write_one_slaying_info(FILE *file, struct_slaying_info *info, int item, const char *with, const char *without) {
-    int map;
-
-    if (info->maps[item].count == 0) {
-        if (without)
-            fprintf(file, "%s", without);
-        return;
-    }
-
-    qsort(info->maps[item].maps, info->maps[item].count, sizeof(const char *), sort_mapname);
-
-    fprintf(file, "%s", with);
-    fprintf(file, "<ul>\n");
-    for (map = 0; map < info->maps[item].count; map++) {
-        fprintf(file, "\t<li>");
-        write_slaying_map_name(file, info->maps[item].maps[map]);
-        fprintf(file, "</li>\n");
-    }
-    fprintf(file, "</ul>\n");
-}
-
 /**
  * Helper function to sort an array of struct_slaying_info.
  *
@@ -3431,197 +2874,6 @@ static int sort_slaying(const void *left, const void *right) {
 }
 
 /**
- * Writes all slaying info to file.
- */
-static void write_slaying_info(void) {
-    FILE *file;
-    char path[MAX_BUF];
-    int lock;
-    struct_slaying_info *info;
-
-    printf("Writing slaying info file...");
-
-    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info *), sort_slaying);
-
-    snprintf(path, sizeof(path), "%s/%s", root, "slaying_info.html");
-    file = fopen(path, "wb+");
-
-    fprintf(file, "<html>\n<head>\n<title>Slaying information</title>\n</head>\n<body>\n");
-    fprintf(file, "<p>This is a list of various slaying fields on keys, containers, doors, detectors.</p>");
-
-    for (lock = 0; lock < slaying_count; lock++) {
-        info = slaying_info[lock];
-        fprintf(file, "<h1>%s</h1>\n", info->slaying);
-
-        if (info->maps[S_DOOR].count == 0 && info->maps[S_CONTAINER].count == 0 && info->maps[S_CONNECT].count == 0) {
-            fprintf(file, "No door, container or detector matching this slaying.<br />\n");
-        } else {
-            write_one_slaying_info(file, info, S_DOOR, "Connected doors:\n", NULL);
-            write_one_slaying_info(file, info, S_CONTAINER, "Matching containers:\n", NULL);
-            write_one_slaying_info(file, info, S_CONNECT, "Detectors and such:\n", NULL);
-        }
-        write_one_slaying_info(file, info, S_KEY, "Matching keys:\n", "No key with this slaying.<br />\n");
-    }
-
-    fprintf(file, "</body>\n</html>\n");
-
-    fclose(file);
-    printf("done.\n");
-}
-
-/**
- * Write the list of all found NPCs in maps.
- */
-static void write_npc_list(void) {
-    FILE *file;
-    char path[MAX_BUF];
-    int map, npc;
-
-    printf("Writing NPC info file...");
-
-    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info *), sort_slaying);
-
-    snprintf(path, sizeof(path), "%s/%s", root, "npc_info.html");
-    file = fopen(path, "wb+");
-
-    fprintf(file, "<html>\n<head>\n<title>NPCs who have a special message</title>\n</head>\n<body>\n");
-    fprintf(file, "<p>This is a list of NPCs having a special message.</p>");
-    fprintf(file, "<ul>\n");
-
-    for (map = 0; map < maps_list.count; map++) {
-        if (maps_list.maps[map]->npcs.count == 0)
-            continue;
-        fprintf(file, "<li>%s</li>\n<ul>", maps_list.maps[map]->path);
-        for (npc = 0; npc < maps_list.maps[map]->npcs.count; npc++) {
-            fprintf(file, "<li>%s (%d,%d): <br /><pre>%s</pre></li>\n", maps_list.maps[map]->npcs.npc[npc]->name, maps_list.maps[map]->npcs.npc[npc]->x, maps_list.maps[map]->npcs.npc[npc]->y, maps_list.maps[map]->npcs.npc[npc]->message);
-        }
-        fprintf(file, "</ul>\n</li>\n");
-    }
-
-    fprintf(file, "</ul>\n");
-    fprintf(file, "</body>\n</html>\n");
-
-    fclose(file);
-    printf("done.\n");
-}
-
-/**
- * Write the list of all found SIGN and BOOK in maps.
- */
-static void write_readable_list(void) {
-    FILE *file;
-    char path[MAX_BUF];
-    int map, readable;
-
-    printf("Writing readable info file...");
-
-    snprintf(path, sizeof(path), "%s/%s", root, "readable_info.html");
-    file = fopen(path, "wb+");
-
-    fprintf(file, "<html>\n<head>\n<title>SIGN and BOOK with a special message</title>\n</head>\n<body>\n");
-    fprintf(file, "<p>This is a list of SIGN and BOOK with a special message.</p>");
-    fprintf(file, "<ul>\n");
-
-    for (map = 0; map < maps_list.count; map++) {
-        if (maps_list.maps[map]->readable.count == 0)
-            continue;
-        fprintf(file, "<li>%s</li>\n<ul>", maps_list.maps[map]->path);
-        for (readable = 0; readable < maps_list.maps[map]->readable.count; readable++) {
-            fprintf(file, "<li>%s (%d,%d): <br /><pre>%s</pre></li>\n", maps_list.maps[map]->readable.npc[readable]->name, maps_list.maps[map]->readable.npc[readable]->x, maps_list.maps[map]->readable.npc[readable]->y, maps_list.maps[map]->readable.npc[readable]->message);
-        }
-        fprintf(file, "</ul>\n</li>\n");
-    }
-
-    fprintf(file, "</ul>\n");
-    fprintf(file, "</body>\n</html>\n");
-
-    fclose(file);
-    printf("done.\n");
-}
-
-static size_t system_quests_count = 0;
-static const quest_definition *system_quests[500];
-
-static void quest_callback(const quest_definition *quest, void *user) {
-    if (list_system_quests || !quest->quest_is_system) {
-        system_quests[system_quests_count++] = quest;
-    }
-}
-
-static int sort_system_quest(const void *a, const void *b) {
-    return strcmp((*((quest_definition **)a))->quest_code, (*((quest_definition **)b))->quest_code);
-}
-
-static int sort_system_quest_step(const void *a, const void *b) {
-    return (*((quest_step_definition**)a))->step - (*((quest_step_definition**)b))->step;
-}
-
-static void do_quest_item(const quest_definition *quest, FILE *file) {
-    fprintf(file, "<li>%s (%s)%s\n", quest->quest_title, quest->quest_code, quest->quest_is_system ? " (system quest)": "");
-    if (quest->quest_description)
-        fprintf(file, "<p>%s</p>\n", quest->quest_description);
-
-    if (detail_quests && quest->steps) {
-        quest_step_definition *steps[100];
-        size_t steps_count = 0;
-        quest_step_definition *step = quest->steps;
-        while (step) {
-            steps[steps_count++] = step;
-            step = step->next;
-        }
-        qsort(steps, steps_count, sizeof(quest_step_definition *), sort_system_quest_step);
-
-        fprintf(file, "<ul>\n");
-        for (size_t s = 0; s < steps_count; s++)
-            fprintf(file, "<li>%s%s</li>\n", steps[s]->step_description, steps[s]->is_completion_step ? "(end)" : "");
-        fprintf(file, "</ul>\n");
-
-        struct_quest *sq = find_quest_info(quest->quest_code);
-        if (sq && sq->maps.count > 0) {
-            fprintf(file, "<p>Linked maps:</p>\n");
-            fprintf(file, "<ul>\n");
-            for (size_t i = 0; i < sq->maps.count; i++) {
-                const struct_map_in_quest *miq = sq->maps.list[i];
-                fprintf(file, "<li>%s (%s)</li>\n", miq->map->name, miq->description);
-            }
-            fprintf(file, "</ul>\n");
-        }
-    }
-
-    fprintf(file, "</li>\n");
-}
-
-/**
- * Write the list of quests.
- */
-static void write_quests_list(void) {
-    FILE *file;
-    char path[MAX_BUF];
-
-    quest_for_each(&quest_callback, NULL);
-    qsort(system_quests, system_quests_count, sizeof(quest_definition *), sort_system_quest);
-
-    printf("Writing defined quests info file...");
-
-    snprintf(path, sizeof(path), "%s/%s", root, "quests_list.html");
-    file = fopen(path, "wb+");
-
-    fprintf(file, "<html>\n<head>\n<title>Defined quests</title>\n</head>\n<body>\n");
-    fprintf(file, "<p>%lu quests are defined%s.</p>\n", system_quests_count, list_system_quests ? " (including system quests)" : "");
-    fprintf(file, "<ul>\n");
-
-    for (size_t q = 0; q < system_quests_count; q++) {
-        do_quest_item(system_quests[q], file);
-    }
-
-    fprintf(file, "</ul>\n");
-    fprintf(file, "</body>\n</html>\n");
-
-    fclose(file);
-    printf("done.\n");
-}
-
-/**
  * Prints usage information, and exit.
  *
  * @param program
@@ -3632,7 +2884,6 @@ static void do_help(const char *program) {
     printf("Syntax: %s\n\n", program);
     printf("Optional arguments:\n");
     printf("  -nopics             don't generate pictures.\n");
-    printf("  -noindex            don't generate global map index.\n");
     printf("  -root=<path>        destination path. Default 'html'.\n");
     printf("  -limit=<number>     stop processing after this number of maps, -1 to do all maps (default).\n");
     printf("  -showmaps           outputs the name of maps as they are processed.\n");
@@ -3650,6 +2901,9 @@ static void do_help(const char *program) {
     printf("  -tileset=<number>   use specified tileset to generate the pictures. Default 0 (standard).\n");
     printf("  -details-quests     list all quests steps. Default no.\n");
     printf("  -list-system-quests include 'system' quests in quest list. Default no.\n");
+    printf("  -templates-dir=[dir]   set the directory to get templates from. Default 'templates/'.\n");
+    printf("  -add-template=[file]   add a template to process. May be specified multiple times. If empty, 'index.html' is used.\n");
+    printf("  -list-template-to-process display the name of the template about to be rendered. Useful for debugging.");
     printf("\n\n");
     exit(0);
 }
@@ -3671,8 +2925,6 @@ static void do_parameters(int argc, char **argv) {
     while (arg < argc) {
         if (strcmp(argv[arg], "-nopics") == 0)
             generate_pics = 0;
-        else if (strcmp(argv[arg], "-noindex") == 0)
-            generate_index = 0;
         else if (strncmp(argv[arg], "-root=", 6) == 0)
             strncpy(root, argv[arg]+6, 500);
         else if (strncmp(argv[arg], "-limit=", 7) == 0)
@@ -3705,9 +2957,9 @@ static void do_parameters(int argc, char **argv) {
         else if (strcmp(argv[arg], "-noworldmap") == 0)
             world_map = 0;
         else if (strcmp(argv[arg], "-noregionslink") == 0)
-            do_regions_link = 0;
+            do_regions_link = false;
         else if (strcmp(argv[arg], "-regionslink") == 0)
-            do_regions_link = 1;
+            do_regions_link = true;
         else if (strcmp(argv[arg], "-noexitmap") == 0)
             world_exit_info = 0;
         else if (strcmp(argv[arg], "-exitmap") == 0)
@@ -3719,6 +2971,12 @@ static void do_parameters(int argc, char **argv) {
             detail_quests = 1;
         } else if (strcmp(argv[arg], "-list-system-quests") == 0) {
             list_system_quests = 1;
+        } else if (strncmp(argv[arg], "-templates-dir=", 15) == 0) {
+            templates_root = argv[arg] + 15;
+        } else if (strncmp(argv[arg], "-add-template=", 14) == 0) {
+            templates.push_back(argv[arg] + 14);
+        } else if (strcmp(argv[arg], "-list-template-to-process") == 0) {
+            display_rendered_template = 1;
         } else
             do_help(argv[0]);
         arg++;
@@ -3729,6 +2987,12 @@ static void do_parameters(int argc, char **argv) {
         root[strlen(root)-1] = '\0';
     if (map_limit < -1)
         map_limit = -1;
+
+    if (templates_root.empty()) {
+        templates_root = "templates/";
+    } else if (templates_root[templates_root.length() - 1] != '/') {
+        templates_root.append("/");
+    }
 }
 
 /**
@@ -3755,7 +3019,7 @@ static const char *yesno(int value) {
 }
 
 int main(int argc, char **argv) {
-    int current_map = 0, i;
+    size_t current_map = 0, i;
     char max[50];
     region *dummy;
 
@@ -3793,50 +3057,12 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
+    if (templates.empty()) {
+        templates.push_back("index.html");
+    }
+
     create_destination();
     gdfaces = (gdImagePtr *)calloc(get_faces_count(), sizeof(gdImagePtr));
-
-    read_template("templates/map.template", &map_template);
-    read_template("templates/map_no_exit.template", &map_no_exit_template);
-    read_template("templates/map_with_exit.template", &map_with_exit_template);
-    read_template("templates/map_exit.template", &map_exit_template);
-    read_template("templates/map_no_exit_to.template", &map_no_exit_to_template);
-    read_template("templates/map_with_exit_to.template", &map_with_exit_to_template);
-    read_template("templates/map_exit_to.template", &map_exit_to_template);
-    read_template("templates/map_lore.template", &map_lore_template);
-    read_template("templates/map_no_lore.template", &map_no_lore_template);
-    read_template("templates/map_no_monster.template", &map_no_monster_template);
-    read_template("templates/map_monster_before.template", &map_monster_before_template);
-    read_template("templates/map_monster_between.template", &map_monster_between_template);
-    read_template("templates/map_monster_one.template", &map_monster_one_template);
-    read_template("templates/map_monster_after.template", &map_monster_after_template);
-
-    read_template("templates/index.template", &index_template);
-    read_template("templates/index_letter.template", &index_letter);
-    read_template("templates/index_map.template", &index_map);
-
-    read_template("templates/region.template", &region_template);
-    read_template("templates/region_letter.template", &region_letter_template);
-    read_template("templates/region_map.template", &region_map_template);
-
-    read_template("templates/index_region.template", &index_region_template);
-    read_template("templates/index_region_region.template", &index_region_region_template);
-
-    read_template("templates/world.template", &world_template);
-    read_template("templates/world_row.template", &world_row_template);
-    read_template("templates/world_map.template", &world_map_template);
-
-    read_template("templates/level.template", &level_template);
-    read_template("templates/level_value.template", &level_value_template);
-    read_template("templates/level_map.template", &level_map_template);
-
-    read_template("templates/quests.template", &index_quest_template);
-    read_template("templates/quests_quest.template", &quest_template);
-    read_template("templates/quests_map.template", &quest_map_template);
-
-    read_template("templates/map_with_quests.template", &map_with_quests_template);
-    read_template("templates/map_one_quest.template", &map_one_quest_template);
-    read_template("templates/map_no_quest.template", &map_no_quest_template);
 
     if (map_limit != -1)
         snprintf(max, sizeof(max), "%d", map_limit);
@@ -3852,7 +3078,6 @@ int main(int argc, char **argv) {
     printf("  picture output format:               %s\n", output_extensions[output_format]);
     if (output_format == OF_JPG)
         printf("  JPEG quality:                        %d\n", jpeg_quality);
-    printf("  will generate map index:             %s\n", yesno(generate_index));
     printf("  show map being processed:            %s\n", yesno(show_maps));
     printf("  generate raw maps:                   %s\n", yesno(rawmaps));
     printf("  warn of exit without path:           %s\n", yesno(warn_no_path));
@@ -3863,6 +3088,15 @@ int main(int argc, char **argv) {
     printf("  tileset:                             %s\n", find_faceset(tileset)->fullname);
     printf("  detail quest steps:                  %s\n", yesno(detail_quests));
     printf("  list system quests:                  %s\n", yesno(list_system_quests));
+    printf("  templates directory:                 %s\n", templates_root.c_str());
+    printf("  templates to process:                ");
+    const char *sep = "";
+    for (auto f : templates) {
+        printf("%s%s", sep, f.c_str());
+        sep = ", ";
+    }
+    printf("\n");
+    printf("  display template to process:         %s\n", yesno(display_rendered_template));
     printf("\n");
 
     if (list_unused_maps) {
@@ -3892,7 +3126,7 @@ int main(int argc, char **argv) {
     while (current_map < maps_list.count) {
         process_map(maps_list.maps[current_map++]);
         if (current_map%100 == 0) {
-            printf(" %d maps processed, %d map pictures created, %d map pictures were uptodate. %d faces used.\n", current_map, created_pics, cached_pics, pics_allocated);
+            printf(" %zu maps processed, %d map pictures created, %d map pictures were uptodate. %d faces used.\n", current_map, created_pics, cached_pics, pics_allocated);
         }
         if ((map_limit != -1) && (current_map == map_limit)) {
             printf(" --- map limit reached, stopping ---\n");
@@ -3900,7 +3134,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    printf(" finished map parsing, %d maps processed, %d map pictures created, %d map pictures were uptodate. Total %d faces used.\n", current_map, created_pics, cached_pics, pics_allocated);
+    printf(" finished map parsing, %zu maps processed, %d map pictures created, %d map pictures were uptodate. Total %d faces used.\n", current_map, created_pics, cached_pics, pics_allocated);
 
     if (list_unused_maps)
         dump_unused_maps();
@@ -3909,28 +3143,46 @@ int main(int argc, char **argv) {
     fix_map_names();
     fix_tiled_map();
     fix_tiled_map_monsters();
-
-    write_all_maps();
-    write_maps_index();
-    write_maps_by_level();
     write_tiled_maps();
-
-    write_all_regions();
-    write_region_index();
 
     write_world_map();
     write_world_info();
 
-    write_regions_link();
-    write_slaying_info();
+    qsort(maps_list.maps, maps_list.count, sizeof(struct_map_info *), sort_map_info);
+    qsort(regions, region_count, sizeof(struct_region_info *), sort_region);
+    qsort(special_equipment, equipment_count, sizeof(struct_equipment *), sort_equipment);
+    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info *), sort_slaying);
+    qsort(races.races, races.count, sizeof(struct_race *), sort_race);
+    qsort(quests, quests_count, sizeof(struct_quest *), sort_struct_quest);
 
-    write_quests_page();
+    quest_for_each(&quest_callback, NULL);
+    qsort(system_quests, system_quests_count, sizeof(quest_definition *), sort_system_quest);
 
-    write_equipment_index();
-    write_race_index();
-    write_npc_list();
-    write_readable_list();
-    write_quests_list();
+    init_renderer_env();
+
+    fill_json(all_data);
+
+    for (auto file : templates) {
+        if (!file.empty()) {
+            add_template_to_render(file, file, "");
+        }
+    }
+
+    while (!pages.empty()) {
+        auto p = pages.back();
+        pages.pop_back();
+        if (p.param.empty())
+            all_data.erase("param");
+        else
+            all_data["param"] = p.param;
+        if (display_rendered_template) {
+            printf("rendering page %s (%s)\n", p.template_name.c_str(), p.param.c_str());
+            fflush(stdout);
+        }
+        path_stack.push_back(p.output_name);
+        env->write(p.template_name, all_data, p.output_name);
+        path_stack.pop_back();
+    }
 
     return 0;
 }
@@ -4033,11 +3285,11 @@ void do_auto_apply(mapstruct *m) {
  * Dummy functions to link the library.
  */
 
-void draw_ext_info(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *txt) {
+void draw_ext_info(int, int, const object *, uint8_t, uint8_t, const char *txt) {
     fprintf(logfile, "%s\n", txt);
 }
 
-void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, uint8_t subtype, const char *format, ...) {
+void draw_ext_info_format(int, int, const object *, uint8_t, uint8_t, const char *format, ...) {
     va_list ap;
 
     va_start(ap, format);
@@ -4045,42 +3297,42 @@ void draw_ext_info_format(int flags, int pri, const object *pl, uint8_t type, ui
     va_end(ap);
 }
 
-void ext_info_map(int color, const mapstruct *map, uint8_t type, uint8_t subtype, const char *str1) {
+void ext_info_map(int, const mapstruct *, uint8_t, uint8_t, const char *str1) {
     fprintf(logfile, "ext_info_map: %s\n", str1);
 }
 
-void move_firewall(object *ob) {
+void move_firewall(object *) {
 }
 
-void emergency_save(int x) {
+void emergency_save(int) {
 }
 
 void clean_tmp_files(void) {
 }
 
-void esrv_send_item(object *ob, object *obx) {
+void esrv_send_item(object *, object *) {
 }
 
-void dragon_ability_gain(object *ob, int x, int y) {
+void dragon_ability_gain(object *, int, int) {
 }
 
-void set_darkness_map(mapstruct *m) {
+void set_darkness_map(mapstruct *) {
 }
 
-object *find_skill_by_number(object *who, int skillno) {
+object *find_skill_by_number(object *, int) {
     return NULL;
 }
 
-void esrv_del_item(player *pl, object *ob) {
+void esrv_del_item(player *, object *) {
 }
 
-void esrv_update_item(int flags, object *pl, object *op) {
+void esrv_update_item(int, object *, object *) {
 }
 
-void esrv_update_spells(player *pl) {
+void esrv_update_spells(player *) {
 }
 
-void rod_adjust(object *rod) {
+void rod_adjust(object *) {
 }
 
 /*
@@ -4139,28 +3391,28 @@ int apply_auto(object *op) {
     return tmp ? 1 : 0;
 }
 
-void apply_auto_fix(mapstruct *m) {
+void apply_auto_fix(mapstruct *) {
 }
 
-SockList *player_get_delayed_buffer(player *pl) {
+SockList *player_get_delayed_buffer(player *) {
     return NULL;
 }
 
-player *find_player_partial_name(const char *name) {
+player *find_player_partial_name(const char *) {
     return NULL;
 }
 
-Account_Char *account_char_load(const char *account_name) {
+Account_Char *account_char_load(const char *) {
     return NULL;
 }
 
-void account_char_save(const char *account, Account_Char *chars) {
+void account_char_save(const char *, Account_Char *) {
 }
 
-void account_char_free(Account_Char *chars) {
+void account_char_free(Account_Char *) {
 }
 
-void command_help(object* ob, const char *params) {
+void command_help(object *, const char *) {
 }
 
 #endif /* dummy DOXYGEN_SHOULD_SKIP_THIS */

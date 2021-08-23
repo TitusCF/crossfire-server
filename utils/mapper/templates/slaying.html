@@ -1,0 +1,17 @@
+{% extends "inc-page.html" %}
+{% block title %}Slaying information{% endblock %}
+{% block contents %}
+<h1>This is a list of various slaying fields on keys, containers, doors, detectors.</h1>
+  {% for info in slaying %}
+  <h2>{{ info.slaying }}</h2>
+  {% if length(info.doors) + length(info.containers) + length(info.detectors) + length(info.connections) == 0 %}
+  <p>No door, container, connection or detector matching this key.</p>
+  {% endif %}
+  {% set none = "" %}
+  {% set title = "Doors:" %}{% set items = info.doors %}{% include "inc-slaying.html" %}
+  {% set title = "Containers:" %}{% set items = info.containers %}{% include "inc-slaying.html" %}
+  {% set title = "Detectors:" %}{% set items = info.detectors %}{% include "inc-slaying.html" %}
+  {% set title = "Connections:" %}{% set items = info.connections %}{% include "inc-slaying.html" %}
+  {% set none = "No key with this slaying." %}{% set title = "Matching keys:" %}{% set items = info.keys %}{% include "inc-slaying.html" %}
+  {% endfor %}
+{% endblock %}

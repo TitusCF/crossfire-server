@@ -1,0 +1,19 @@
+<!doctype html>
+  <head>
+    <title>Crossfire Mapper - {% block title %}{% endblock %}</title>
+  </head>
+  <body>
+{#    <div style="float: right; width: 15%;">
+      <ul>
+    {% for y in range(30) %}{% set wy = y + 100 %}{% set py = pad(wy, 3) %}
+    {% for x in range(30) %}{% set wx = x + 100 %}{% set px = pad(wx, 3) %}
+    {% set mn = "/world/world_" + px + "_" + py %}
+    <li><a href='{{ path_to_root }}/world/world_{{ px }}_{{ py }}.html'>world_{{ px }}_{{ py }}</a></li>
+    {% endfor %}
+    {% endfor %}
+      </ul>
+    </div> #}
+    {% block contents %}
+    {% endblock %}
+  </body>
+</html>

@@ -1,0 +1,18 @@
+{% extends "inc-page.html" %}
+{% block title %}Special SIGN and BOOK{% endblock %}
+{% block contents %}
+  <h1>This is a list of SIGN and BOOK having a special message.</h1>
+  <ul>{% set mbn = sort(maps, "name") %}
+    {% for map in mbn %}
+    {% if length(map.readables) %}
+    <li><a href='{{ link_to_page("map.html", map._key) }}'>{{ map.name }}</a>
+      <ul>
+    {% for book in map.readables %}
+        <li>{{ book.name }} ({{ book.x }}, {{ book.y }})<pre>{{ book.message }}</pre></li>
+    {% endfor %}
+      </ul>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+{% endblock %}

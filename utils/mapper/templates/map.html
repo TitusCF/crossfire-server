@@ -1,0 +1,53 @@
+{% set map = get_by_field(maps, "_key", param) %}
+{% set region = get_by_field(regions, "_key", map.region) %}
+{% extends "inc-page.html" %}
+{% block title %}{{ map.name }}{% endblock %}
+{% block contents %}
+<h1>{{ map.name }}</h1>
+<p>Map {{ map.name }}, in region <a href='{{ link_to_page("region.html", map.region) }}'>{{ region.longname }}</a>. Map level: {{ map.level }}.</p>
+<p>Map view:
+<br>
+<a href="{{ picture(map._key) }}"><img src="{{ picture(map._key, 2) }}" alt="{{ map.name }}"></a>
+<br>
+(click for larger view)
+</p>
+{% if length(map.exits_from) > 0 %}
+<p>Exits from this map:</p>
+<ul>
+  {% for e in map.exits_from %}
+  {% set x = get_by_field(maps, "_key", e) %}
+  <li><a href='{{ link_to_page("map.html", e) }}'>{{ x.name }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% if length(map.exits_to) > 0 %}
+<p>Exits to this map:</p>
+<ul>
+  {% for e in map.exits_to %}
+  {% set x = get_by_field(maps, "_key", e) %}
+  <li><a href='{{ link_to_page("map.html", e) }}'>{{ x.name }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% if length(map.lore) %}<p>Lore : {{ map.lore }}</p>{% endif %}
+
+{% if length(map.monsters) %}
+<p>Monsters found on map:
+  {% for mon in map.monsters %}{% if not loop.is_first %}, {% endif %}{{ mon.name }}{% endfor %}.
+</p>
+{% else %}<p>No monster on this map.</p>
+{% endif %}
+
+{% if length(map.quests) %}
+<p>This map is part of the following quests:</p>
+<ul>
+  {% for mq in map.quests %}
+  <li><a href='{{ link_to_page("quests.html") }}#quest_{{ mq.number }}'>{{ mq.quest }}</a> ({{ mq.description }})</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<p>
+<a href='{{ link_to_page("region.html", map.region) }}'>{{ region.longname }}'s map index</a> | <a href='{{ link_to_page("regions.html") }}'>Region index</a> | <a href='{{ link_to_page("maps.html") }}'>Global map index</a> | <a href='{{ link_to_page("world.html") }}'>World map</a>
+</p>
+{% endblock %}

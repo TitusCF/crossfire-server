@@ -1,0 +1,13 @@
+{% extends "inc-page.html" %}
+{% block title %}World map{% endblock %}
+{% block contents %}
+    <h1>World map</h1>
+    <img src="world.png" usemap="#map" />
+    <map id="map" name="map">
+    {% for y in range(30) %}{% set wy = y + 100 %}{% set py = pad(wy, 3) %}
+    {% for x in range(30) %}{% set wx = x + 100 %}{% set px = pad(wx, 3) %}
+    <area shape="rect" coords="{{ x * 50 }},{{y * 50 }},{{ (x + 1) * 50 - 1 }},{{ (y + 1) * 50 - 1 }}" alt="world_{{ px }}_{{ py }}" href="world/world_{{ px }}_{{ py }}.html">
+    {% endfor %}
+    {% endfor %}
+    </map>
+{% endblock %}
