@@ -34,6 +34,8 @@
 #include "output_file.h"
 #include "sproto.h"
 
+#include "quest.h"
+
 /* Media tags for information messages prefix. */
 #define TAG_START   "[color=#aa55ff]"
 #define TAG_END     "[/color]"
@@ -60,39 +62,6 @@ typedef struct quest_player {
 
 /** Player quest state. */
 static quest_player *player_states = NULL;
-
-/** One condition to automatically move to a quest step. */
-typedef struct quest_condition {
-    sstring quest_code;          /**< The quest that triggers the condition */
-    int minstep;                  /**< The earliest step in the quest that triggers the condition,
-                                    -1 means finished, 0 means not started */
-    int maxstep;                  /**< The latest step that triggers the condition, to match,
-                                        the stages must be between minstep and maxstep */
-    struct quest_condition *next; /**< The next condition to check */
-} quest_condition;
-
-/** One step of a quest. */
-typedef struct quest_step_definition {
-    int step;                           /**< Step identifier. */
-    sstring step_description;           /**< Step description to show player. */
-    int is_completion_step:1;           /**< Whether this step completes the quest (1) or not (0) */
-    struct quest_step_definition *next; /**< Next step. */
-    quest_condition *conditions;        /**< The conditions that must be satisfied to trigger the step */
-} quest_step_definition;
-
-/** Definition of an in-game quest. */
-typedef struct quest_definition {
-    sstring quest_code;             /**< Quest internal code. */
-    sstring quest_title;            /**< Quest title for player. */
-    sstring quest_description;      /**< Quest longer description. */
-    int quest_restart;              /**< If non zero, can be restarted. */
-    const Face *face;           /**< Face associated with this quest. */
-    uint32_t client_code;             /**< The code used to communicate with the client, merely a unique index. */
-    bool quest_is_system;           /**< If set then the quest isn't counted or listed. */
-    quest_step_definition *steps;   /**< Quest steps. */
-    struct quest_definition *parent;/**< Parent for this quest, NULL if it is a 'top-level' quest */
-    struct quest_definition *next;  /**< Next quest in the definition list. */
-} quest_definition;
 
 static int quests_loaded = 0;           /**< Number of quests loaded. If zero, quests not yet loaded. */
 static int quests_visible = 0;          /**< Number of quests to give the player, system quests are hidden. */
@@ -1428,5 +1397,19 @@ void quest_first_player_save(player *pl) {
     quest_player *qp = get_quest(pl);
     if (qp != NULL && qp->quests != NULL) {
         quest_write_player_data(qp);
+    }
+}
+
+/**
+ * Iterate over all quests.
+ * @param op function to call for each quest.
+ * @param user extra parameter to give the function.
+ */
+void quest_for_each(quest_op op, void *user) {
+    quest_load_definitions();
+    quest_definition *cur = quests;
+    while (cur) {
+        op(cur, user);
+        cur = cur->next;
     }
 }
