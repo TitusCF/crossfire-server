@@ -369,6 +369,9 @@ static int load_quests_from_file(const char *filename) {
             continue;
 
         if (strncmp(read, "quest ", 6) == 0) {
+            if (quest) {
+                LOG(llevError, "'quest' while in quest '%s' in file %s\n", quest->quest_code, filename);
+            }
             quest = quest_create_definition();
             read[strlen(read) - 1] = '\0';
             quest->quest_code = add_string(read + 6);
