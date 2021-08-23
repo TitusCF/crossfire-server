@@ -53,6 +53,7 @@ Quest::Quest()
     myModified = false;
     myParent = NULL;
     myFace = nullptr;
+    myIsSystem = false;
 }
 
 Quest::~Quest()
@@ -183,5 +184,16 @@ void Quest::setComment(const QString& comment)
     {
         markModified();
         myComment = comment;
+    }
+}
+
+bool Quest::isSystem() const {
+    return myIsSystem;
+}
+
+void Quest::setSystem(bool system) {
+    if (myIsSystem != system) {
+        markModified();
+        myIsSystem = system;
     }
 }

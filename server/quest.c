@@ -88,12 +88,14 @@ typedef struct quest_definition {
     int quest_restart;              /**< If non zero, can be restarted. */
     const Face *face;           /**< Face associated with this quest. */
     uint32_t client_code;             /**< The code used to communicate with the client, merely a unique index. */
+    bool quest_is_system;           /**< If set then the quest isn't counted or listed. */
     quest_step_definition *steps;   /**< Quest steps. */
     struct quest_definition *parent;/**< Parent for this quest, NULL if it is a 'top-level' quest */
     struct quest_definition *next;  /**< Next quest in the definition list. */
 } quest_definition;
 
 static int quests_loaded = 0;           /**< Number of quests loaded. If zero, quests not yet loaded. */
+static int quests_visible = 0;          /**< Number of quests to give the player, system quests are hidden. */
 static quest_definition *quests = NULL; /**< All known quests. */
 
 /**
@@ -311,6 +313,8 @@ static int load_quests_from_file(const char *filename) {
 
         if (in == QUESTFILE_QUEST) {
             if (strcmp(read, "end_quest\n") == 0) {
+                if (!quest->quest_is_system)
+                    quests_visible++;
                 quest = NULL;
                 in = QUESTFILE_NEXTQUEST;
                 continue;
@@ -361,6 +365,11 @@ static int load_quests_from_file(const char *filename) {
 
             if (strncmp(read, "comment", 7) == 0) {
                 in = QUESTFILE_COMMENT;
+                continue;
+            }
+
+            if (sscanf(read, "is_system %d\n", &i)) {
+                quest->quest_is_system = (i ? true : false);
                 continue;
             }
         }
@@ -433,6 +442,7 @@ void quest_load_definitions(void) {
         quests_loaded = found;
     } else {
         LOG(llevError, "Quest Loading Failed\n");
+        quests_visible = 0;
     }
 }
 
@@ -873,7 +883,7 @@ static void quest_display(player *pl, quest_player *pq, int showall, const char*
         if (!showall) {
             if (restart_count > 0)
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-                        "%s completed %d out of %d quests, of which %d may be restarted", name, completed_count, quests_loaded, restart_count);
+                        "%s completed %d out of %d quests, of which %d may be restarted", name, completed_count, quests_visible, restart_count);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
                         "%s completed %d quests", name, completed_count);
@@ -1366,6 +1376,7 @@ void free_quest_definitions(void) {
 
     quests = NULL;
     quests_loaded = 0;
+    quests_visible = 0;
 }
 
 /**

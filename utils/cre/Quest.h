@@ -53,6 +53,8 @@ class Quest : public QObject
         QList<QuestStep*>& steps();
         const QString& comment() const;
         void setComment(const QString& comment);
+        bool isSystem() const;
+        void setSystem(bool system);
 
         bool isModified() const;
         void setModified(bool modified);
@@ -75,6 +77,7 @@ class Quest : public QObject
         Quest* myParent;
         QList<CREMapInformation*> myMaps;
         QString myComment;
+        bool myIsSystem;
 
         void markModified();
 };

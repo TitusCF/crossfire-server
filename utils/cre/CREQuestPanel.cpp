@@ -45,6 +45,9 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     myCanRestart = new QCheckBox(tr("this quest can be done multiple times"));
     layout->addWidget(myCanRestart, line++, 1, 1, 2);
 
+    myIsSystem = new QCheckBox(tr("System quest, not listed to players"));
+    layout->addWidget(myIsSystem, line++, 1, 1, 2);
+
     layout->addWidget(new QLabel(tr("Parent:"), this), line, 1);
     myParent = new QComboBox(this);
     layout->addWidget(myParent, line++, 2);
@@ -130,6 +133,7 @@ void CREQuestPanel::setItem(Quest* quest)
     myTitle->setText(quest->title());
     myFace->setFace(quest->face());
     myCanRestart->setChecked(quest->canRestart());
+    myIsSystem->setChecked(quest->isSystem());
     myDescription->setText(quest->description());
     myComment->setPlainText(quest->comment());
 
@@ -199,6 +203,7 @@ void CREQuestPanel::commitData()
     myQuest->setTitle(myTitle->text());
     myQuest->setFace(myFace->face());
     myQuest->setRestart(myCanRestart->isChecked());
+    myQuest->setSystem(myIsSystem->isChecked());
     myQuest->setDescription(myDescription->toPlainText());
     myQuest->setComment(myComment->toPlainText().trimmed());
     if (myQuestManager->getQuestFile(myQuest).isEmpty())

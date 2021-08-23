@@ -170,6 +170,11 @@ void QuestManager::loadQuestFile(const QString& filename)
                 comment = "";
                 continue;
             }
+
+            if (sscanf(read, "is_system %d\n", &i)) {
+                quest->setSystem(i ? true : false);
+                continue;
+            }
         }
 
         if (read[0] == '#')
@@ -303,6 +308,8 @@ void QuestManager::saveQuestFile(const QString& filename)
             stream << "parent " << quest->parent()->code() << "\n";
         if (quest->canRestart())
             stream << "restart 1\n";
+        if (quest->isSystem())
+            stream << "is_system 1\n";
 
         if (!quest->comment().isEmpty())
         {
