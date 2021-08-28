@@ -1720,7 +1720,7 @@ static void display_help_file(object *op, const char *filename) {
         return;
     }
 
-    while (line = bufferreader_next_line(br)) {
+    while ((line = bufferreader_next_line(br))) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line);
     }
 
