@@ -31,6 +31,8 @@
 #define CALLOC(x, y) calloc(x, y)
 #define object_decrease_nrof_by_one(xyz) object_decrease_nrof(xyz, 1)
 
+#include <string.h>
+
 void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen);
 
 #if 0
