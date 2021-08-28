@@ -845,11 +845,17 @@ void look_at_cmd(char *buf, int len, player *pl) {
     }
     dy = atoi(cp);
 
-    if (FABS(dx) > MAP_CLIENT_X/2 || FABS(dy) > MAP_CLIENT_Y/2)
+    if (FABS(dx) > MAP_CLIENT_X/2 || FABS(dy) > MAP_CLIENT_Y/2) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                      "You can't see there from where you're standing.");
         return;
+    }
 
-    if (pl->blocked_los[dx+(pl->socket.mapx/2)][dy+(pl->socket.mapy/2)])
+    if (pl->blocked_los[dx+(pl->socket.mapx/2)][dy+(pl->socket.mapy/2)]) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                      "You can't see there from where you're standing.");
         return;
+    }
     look_at(pl->ob, dx, dy);
 }
 
