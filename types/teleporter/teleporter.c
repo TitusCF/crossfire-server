@@ -138,6 +138,8 @@ static method_ret teleporter_type_process(ob_methods *context, object *op) {
  * @retval METHOD_OK
  */
 static method_ret teleporter_type_trigger(ob_methods *context, object *op, object *cause, int state) {
-    move_teleporter(op);
+    if (state) {
+        move_teleporter(op);
+    }
     return METHOD_OK;
 }

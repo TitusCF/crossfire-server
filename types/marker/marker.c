@@ -129,6 +129,8 @@ static method_ret marker_type_process(ob_methods *context, object *op) {
  * @retval METHOD_OK
  */
 static method_ret marker_type_trigger(ob_methods *context, object *op, object *cause, int state) {
-    move_marker(op);
+    if (state) {
+        move_marker(op);
+    }
     return METHOD_OK;
 }

@@ -136,6 +136,8 @@ static method_ret creator_type_process(ob_methods *context, object *op) {
  * @retval METHOD_OK
  */
 static method_ret creator_type_trigger(ob_methods *context, object *op, object *cause, int state) {
-    move_creator(op);
+    if (state) {
+        move_creator(op);
+    }
     return METHOD_OK;
 }

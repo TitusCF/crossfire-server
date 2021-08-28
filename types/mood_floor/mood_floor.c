@@ -163,6 +163,8 @@ static method_ret mood_floor_type_process(ob_methods *context, object *op) {
  * @retval METHOD_OK
  */
 static method_ret mood_floor_type_trigger(ob_methods *context, object *op, object *cause, int state) {
-    do_mood_floor(op, cause);
+    if (state) {
+        do_mood_floor(op, cause);
+    }
     return METHOD_OK;
 }
