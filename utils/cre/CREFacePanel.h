@@ -24,6 +24,7 @@ class CREFacePanel : public CRETPanel<const Face>
         QComboBox* myColor;
         QLineEdit* myFile;
         QPushButton* mySave;
+        QTreeWidget* myLicenses;
 
     private slots:
         void saveClicked(bool);

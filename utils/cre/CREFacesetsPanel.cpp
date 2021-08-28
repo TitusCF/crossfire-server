@@ -4,6 +4,7 @@
 
 #include "assets.h"
 #include "AssetsManager.h"
+#include "LicenseManager.h"
 
 CREFacesetsPanel::CREFacesetsPanel(QWidget* parent) : CRETPanel(parent)
 {
@@ -35,6 +36,10 @@ CREFacesetsPanel::CREFacesetsPanel(QWidget* parent) : CRETPanel(parent)
     myImages = new QLabel(this);
     layout->addWidget(myImages, line++, 1);
 
+    layout->addWidget(new QLabel(tr("License information:"), this), line, 0);
+    myLicenses = new QLabel(this);
+    layout->addWidget(myLicenses, line++, 1);
+
     QWidget *bottomFiller = new QWidget(this);
     bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     layout->addWidget(bottomFiller, line++, 0, 1, 2);
@@ -52,18 +57,27 @@ void CREFacesetsPanel::setItem(face_sets* fs)
     mySize->setText(fs->size);
     myExtension->setText(fs->extension);
 
-    size_t count = 0, total = getManager()->faces()->count();
-    for (size_t img = 0; img < total; img++)
-    {
-        if (img < fs->allocated && fs->faces[img].datalen > 0)
+    size_t count = 0, total = getManager()->faces()->count(), licenses = 0;
+
+    getManager()->faces()->each([&count, &licenses, &fs] (const Face *face) {
+        if (face->number < fs->allocated && fs->faces[face->number].datalen > 0)
         {
             count++;
+            if (LicenseManager::get()->getForFace(face->name).count(fs->prefix) > 0)
+            {
+                licenses++;
+            }
         }
-    }
+    });
 
     uint8_t percent = count * 100 / total;
     if (percent == 100 && count < total)
         percent = 99;
 
     myImages->setText(QString("%1 out of %2 (%3%)").arg(count).arg(total).arg(percent));
+
+    percent = licenses * 100 / count;
+    if (percent == 100 && licenses < count)
+        percent = 99;
+    myLicenses->setText(QString("%1 faces have license information out of %2 (%3%)").arg(licenses).arg(count).arg(percent));
 }

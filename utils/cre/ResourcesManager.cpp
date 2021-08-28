@@ -16,6 +16,7 @@ extern "C" {
 #include "AssetsManager.h"
 #include "CREMapInformationManager.h"
 #include "CRERandomMap.h"
+#include "LicenseManager.h"
 
 ResourcesManager::ResourcesManager()
 {
@@ -31,6 +32,9 @@ void ResourcesManager::load()
 
     settings.archetypes_tracker = this;
     add_server_collect_hooks();
+    settings.hooks[settings.hooks_count] = LicenseManager::readLicense;
+    settings.hooks_filename[settings.hooks_count] = ".LICENSE";
+    settings.hooks_count++;
     init_globals();
     init_library();
 
