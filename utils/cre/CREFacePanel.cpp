@@ -11,6 +11,7 @@ extern "C" {
 #include "CRESmoothFaceMaker.h"
 #include "assets.h"
 #include "AssetsManager.h"
+#include "LicenseManager.h"
 
 /** @todo duplication with common/image */
 static const char *const colorname[] = {
@@ -42,24 +43,31 @@ CREFacePanel::CREFacePanel(QWidget* parent) : CRETPanel(parent)
     myUsing->setIconSize(QSize(32, 32));
     layout->addWidget(myUsing, 1, 1, 3, 2);
 
+    myLicenses = new QTreeWidget(this);
+    myLicenses->setColumnCount(2);
+    myLicenses->setHeaderLabels(QStringList(tr("Licenses")) << "");
+    myLicenses->setIconSize(QSize(32, 32));
+    myLicenses->setRootIsDecorated(false);
+    layout->addWidget(myLicenses, 1, 3, 3, 2);
+
     myColor = new QComboBox(this);
-    layout->addWidget(myColor, 4, 2);
     layout->addWidget(new QLabel("Magicmap color: "), 4, 1);
+    layout->addWidget(myColor, 4, 2, 1, 3);
 
     for(uint color = 0; color < sizeof(colorname) / sizeof(*colorname); color++)
         myColor->addItem(colorname[color], color);
 
     myFile = new QLineEdit(this);
     myFile->setReadOnly(true);
-    layout->addWidget(myFile, 5, 2);
     layout->addWidget(new QLabel("Original file: "), 5, 1);
+    layout->addWidget(myFile, 5, 2, 1, 3);
 
     mySave = new QPushButton(tr("Save face"));
     layout->addWidget(mySave, 6, 1);
     connect(mySave, SIGNAL(clicked(bool)), this, SLOT(saveClicked(bool)));
 
     QPushButton* smooth = new QPushButton(tr("Make smooth base"), this);
-    layout->addWidget(smooth, 6, 2);
+    layout->addWidget(smooth, 6, 2, 1, 3);
     connect(smooth, SIGNAL(clicked(bool)), this, SLOT(makeSmooth(bool)));
 }
 
@@ -218,6 +226,18 @@ void CREFacePanel::setItem(const Face* face)
     });
 
     myColor->setCurrentIndex(myFace->magicmap);
+
+    myLicenses->clear();
+
+    auto licenses = LicenseManager::get()->getForFace(myFace->name);
+    for (auto l : licenses) {
+        QTreeWidgetItem *wi = new QTreeWidgetItem(QStringList(QString(l.first.c_str())));
+        for (auto p : l.second) {
+            new QTreeWidgetItem(wi, QStringList(p.first.c_str()) << p.second.c_str());
+        }
+        myLicenses->addTopLevelItem(wi);
+        wi->setExpanded(true);
+    }
 }
 void CREFacePanel::saveClicked(bool)
 {

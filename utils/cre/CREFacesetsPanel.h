@@ -26,6 +26,7 @@ class CREFacesetsPanel : public CRETPanel<face_sets>
         QLabel* mySize;
         QLabel* myExtension;
         QLabel* myImages;
+        QLabel* myLicenses;
 };
 
 #endif /* _CREFACESETSPANEL_H */
