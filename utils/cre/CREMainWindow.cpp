@@ -458,6 +458,22 @@ void CREMainWindow::onReportDuplicate()
         }
     }
 
+    for (const auto quest : myQuestManager->quests())
+    {
+        if (quest->face() != nullptr)
+        {
+            faces[quest->face()->name].append(quest->code() + " (quest)");
+        }
+    }
+
+    getManager()->messages()->each([&faces] (const GeneralMessage *message)
+    {
+        if (message->face != nullptr)
+        {
+            faces[message->face->name].append(QString(message->identifier) + " (message)");
+        }
+    });
+
     QString report("<p><strong>Warning:</strong> this list doesn't take into account faces for all artifacts, especially the 'animation_suffix' ones. Also, faces and archetypes defined in maps will not be taken into account in this list.</p><h1>Faces used multiple times:</h1><ul>");
 
     QStringList keys = faces.keys();
