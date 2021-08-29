@@ -26,6 +26,7 @@ extern "C" {
 #include "assets.h"
 #include "AssetsManager.h"
 #include "CRESettings.h"
+#include "LicenseManager.h"
 
 CREMainWindow::CREMainWindow()
 {
@@ -139,6 +140,10 @@ void CREMainWindow::createActions()
     myReportArchetypes->setStatusTip(tr("Display all archetypes which seem unused."));
     myReportArchetypes->setEnabled(false);
     connect(myReportArchetypes, SIGNAL(triggered()), this, SLOT(onReportArchetypes()));
+
+    myReportLicenses = new QAction(tr("Licenses checks"), this);
+    myReportLicenses->setStatusTip(tr("Check for licenses inconsistencies."));
+    connect(myReportLicenses, SIGNAL(triggered()), this, SLOT(onReportLicenses()));
 
     myToolEditMonsters = new QAction(tr("Edit monsters"), this);
     myToolEditMonsters->setStatusTip(tr("Edit monsters in a table."));
@@ -263,6 +268,7 @@ void CREMainWindow::createMenus()
     reportMenu->addAction(myReportQuests);
     reportMenu->addAction(myReportMaterials);
     reportMenu->addAction(myReportArchetypes);
+    reportMenu->addAction(myReportLicenses);
 
     myToolsMenu = menuBar()->addMenu("&Tools");
     myToolsMenu->addAction(myToolEditMonsters);
@@ -1563,6 +1569,72 @@ void CREMainWindow::onReportArchetypes()
   report += "</html>";
 
   CREReportDisplay show(report, "Unused archetypes report");
+  QApplication::restoreOverrideCursor();
+  show.exec();
+}
+
+void CREMainWindow::onReportLicenses()
+{
+  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+  QString report;
+  report += "<html>";
+
+  auto all = LicenseManager::get()->getAll();
+  std::set<std::string> faces, facesets;
+
+  for (auto item : all)
+  {
+    faces.insert(item.first);
+    for (auto fs : item.second)
+    {
+      facesets.insert(fs.first);
+    }
+  }
+
+  getManager()->facesets()->each([&facesets] (const face_sets *fs)
+  {
+    facesets.erase(fs->prefix);
+  });
+  getManager()->faces()->each([&faces] (const Face *face)
+  {
+    faces.erase(LicenseManager::licenseNameFromFaceName(face->name));
+  });
+
+  if (facesets.empty())
+  {
+    report += "<h1>No invalid faceset</h1>\n";
+  }
+  else
+  {
+    report += "<h1>Invalid faceset found</h1>\n";
+    report += "<p>The faceset of the license file doesn't match any defined facesets.</p>";
+    report += "<ul>\n";
+    for (auto fs : facesets)
+    {
+      report += "<li>" + QString(fs.c_str()) + "</li>\n";
+    }
+    report += "</ul>\n";
+  }
+
+  if (faces.empty())
+  {
+    report += "<h1>No invalid face name</h1>\n";
+  }
+  else
+  {
+    report += "<h1>Invalid face names found</h1>\n";
+    report += "<p>The face name from the license file doesn't match any defined face.</p>";
+    report += "<ul>\n";
+    for (auto f : faces)
+    {
+      report += "<li>" + QString(f.c_str()) + "</li>\n";
+    }
+    report += "</ul>\n";
+  }
+
+  report += "</html>";
+  CREReportDisplay show(report, "Licenses checks");
   QApplication::restoreOverrideCursor();
   show.exec();
 }

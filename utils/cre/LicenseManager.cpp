@@ -76,16 +76,18 @@ void LicenseManager::readLicense(BufferReader *reader, const char *filename) {
 }
 
 LicenseManager::LicenseItems LicenseManager::getForFace(const std::string &face) {
-    std::unique_ptr<char, void(*)(void*)> dup(strdup(face.c_str()), free);
-    char *dot = strrchr(dup.get(), '.');
-    if (!dot) {
-        return LicenseItems();
-    }
-    (*dot) = '\0';
-
-    auto search = m_licenses.find(dup.get());
+    auto search = m_licenses.find(licenseNameFromFaceName(face));
     if (search != m_licenses.end()) {
         return search->second;
     }
     return LicenseItems();
+}
+
+std::string LicenseManager::licenseNameFromFaceName(const std::string &face) {
+    auto dot = face.find('.');
+    if (dot == std::string::npos)
+    {
+        return std::string();
+    }
+    return face.substr(0, dot);
 }
