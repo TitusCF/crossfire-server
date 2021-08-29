@@ -9,15 +9,18 @@ extern "C" {
 #include "global.h"
 }
 
+class QuestManager;
+
 class CREFacePanel : public CRETPanel<const Face>
 {
     Q_OBJECT
 
     public:
-        CREFacePanel(QWidget* parent);
+        CREFacePanel(QWidget* parent, QuestManager* quests);
         virtual void setItem(const Face* face);
 
     protected:
+        QuestManager* myQuests;
         const Face* myFace;
 
         QTreeWidget* myUsing;

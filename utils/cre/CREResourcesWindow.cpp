@@ -477,7 +477,7 @@ void CREResourcesWindow::fillFaces()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     });
 
-    addPanel("Face", new CREFacePanel(this));
+    addPanel("Face", new CREFacePanel(this, myQuests));
 }
 
 bool sortMapInformation(const CREMapInformation* left, const CREMapInformation* right)
