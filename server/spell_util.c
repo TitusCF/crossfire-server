@@ -1894,7 +1894,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
 
     case SP_DISPEL_RUNE:
         /* in rune.c */
-        success = dispel_rune(op, caster, spell_ob, skill, dir);
+        success = dispel_rune(op, skill, dir);
         break;
 
     case SP_CREATE_MISSILE:

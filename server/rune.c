@@ -283,10 +283,6 @@ void spring_trap(object *trap, object *victim) {
  *
  * @param op
  * object trying to disarm.
- * @param caster
- * object casting the disarm spell.
- * @param spell
- * actual spell for casting.
  * @param skill
  * skill to disarm runes.
  * @param dir
@@ -296,7 +292,7 @@ void spring_trap(object *trap, object *victim) {
  * @retval 1
  * a rune was disarmed.
  */
-int dispel_rune(object *op, object *caster, object *spell, object *skill, int dir) {
+int dispel_rune(object *op, object *skill, int dir) {
     object *rune;
     int mflags;
     int16_t x, y;
