@@ -1250,14 +1250,12 @@ static int town_portal_destroy_existing(object* op, object* spell) {
  * what is casting.
  * @param spell
  * actual spell object.
- * @param dir
- * casting direction.
  * @retval 0
  * spell was insuccessful for some reason.
  * @retval 1
  * spell worked.
  */
-int cast_create_town_portal(object *op, object *caster, object *spell, int dir) {
+int cast_create_town_portal(object *op, object *caster, object *spell) {
     object *dummy, *force, *tmp;
     char portal_name [1024], portal_message [1024];
     mapstruct *exitmap;
@@ -2457,14 +2455,12 @@ int remove_curse(object *op, object *caster, object *spell) {
  *
  * @param op
  * player casting the spell.
- * @param caster
- * what object was used to cast the spell.
  * @param spell_ob
  * spell itself.
  * @return
  * 1 if item was changed, 0 else.
  */
-int cast_item_curse_or_curse(object *op, object *caster, object *spell_ob) {
+int cast_item_curse_or_curse(object *op, object *spell_ob) {
     object *marked = find_marked_object(op);
     char name[HUGE_BUF];
 
@@ -3299,8 +3295,6 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
  *
  * @param op
  * who is casting.
- * @param caster
- * what is casting.
  * @param spell
  * actual spell object.
  * @retval 0
@@ -3308,7 +3302,7 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
  * @retval 1
  * light changed.
  */
-int cast_change_map_lightlevel(object *op, object *caster, object *spell) {
+int cast_change_map_lightlevel(object *op, object *spell) {
     int success;
 
     if (!op->map)

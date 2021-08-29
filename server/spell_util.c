@@ -1915,7 +1915,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         break;
 
     case SP_CHANGE_MAP_LIGHT:
-        success = cast_change_map_lightlevel(op, caster, spell_ob);
+        success = cast_change_map_lightlevel(op, spell_ob);
         break;
 
     case SP_FAERY_FIRE:
@@ -1931,11 +1931,11 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         break;
 
     case SP_TOWN_PORTAL:
-        success = cast_create_town_portal(op, caster, spell_ob, dir);
+        success = cast_create_town_portal(op, caster, spell_ob);
         break;
 
     case SP_ITEM_CURSE_BLESS:
-        success = cast_item_curse_or_curse(op, caster, spell_ob);
+        success = cast_item_curse_or_curse(op, spell_ob);
         break;
 
     case SP_ELEM_SHIELD:
