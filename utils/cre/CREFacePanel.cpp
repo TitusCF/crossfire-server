@@ -12,6 +12,8 @@ extern "C" {
 #include "assets.h"
 #include "AssetsManager.h"
 #include "LicenseManager.h"
+#include "QuestManager.h"
+#include "Quest.h"
 
 /** @todo duplication with common/image */
 static const char *const colorname[] = {
@@ -31,8 +33,9 @@ static const char *const colorname[] = {
 };
 
 
-CREFacePanel::CREFacePanel(QWidget* parent) : CRETPanel(parent)
+CREFacePanel::CREFacePanel(QWidget* parent, QuestManager* quests) : CRETPanel(parent)
 {
+    myQuests = quests;
     myFace = 0;
 
     QGridLayout* layout = new QGridLayout(this);
@@ -224,6 +227,22 @@ void CREFacePanel::setItem(const Face* face)
            CREUtils::generalMessageNode(message, root);
        }
     });
+
+    root = NULL;
+    for (const auto quest : myQuests->quests())
+    {
+        if (myFace == quest->face())
+        {
+            if (!root)
+            {
+                root = CREUtils::questsNode();
+                myUsing->addTopLevelItem(root);
+                root->setExpanded(true);
+            }
+
+            CREUtils::questNode(quest, root);
+        }
+    }
 
     myColor->setCurrentIndex(myFace->magicmap);
 
