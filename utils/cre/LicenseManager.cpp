@@ -12,6 +12,10 @@
 
 #include "LicenseManager.h"
 
+extern "C" {
+#include "global.h"
+#include "bufferreader.h"
+}
 #include <memory>
 
 LicenseManager *LicenseManager::instance = nullptr;
