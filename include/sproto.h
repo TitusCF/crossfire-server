@@ -473,7 +473,7 @@ void dead_player(object *op);
 /* rune.c */
 int write_rune(object *op, object *caster, object *spell, int dir, const char *runename);
 void spring_trap(object *trap, object *victim);
-int dispel_rune(object *op, object *caster, object *spell, object *skill, int dir);
+int dispel_rune(object *op, object *skill, int dir);
 int trap_see(object *op, object *trap);
 int trap_show(object *trap, object *where);
 int trap_disarm(object *disarmer, object *trap, int risk, object *skill);
