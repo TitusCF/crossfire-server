@@ -92,7 +92,6 @@ extern char        *cf_object_get_string_property(object *op, int propcode, char
 extern void         cf_fix_object(object *op);
 extern char        *cf_query_name(object *ob, char *name, int size);
 extern sstring      cf_query_name_pl(object *ob);
-extern char        *cf_query_base_name(object *ob, int plural, char *name, int size);
 extern const char  *cf_object_get_msg(object *);
 extern void         cf_object_set_weight(object *ob, int weight);
 extern int          cf_object_get_weight(object *ob);
