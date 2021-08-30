@@ -173,11 +173,8 @@ static void roguelike_make_rooms(Room *Rooms, char **maze, int options) {
  * room list.
  * @param maze
  * maze.
- * @param xsize
- * @param ysize
- * maze size.
  */
-static void roguelike_link_rooms(Room *Rooms, char **maze, int xsize, int ysize) {
+static void roguelike_link_rooms(Room *Rooms, char **maze) {
     Room *walk;
     int i, j;
 
@@ -390,7 +387,7 @@ char **roguelike_layout_gen(int xsize, int ysize, int options, int _unused_layer
     /* erase the areas occupied by the rooms */
     roguelike_make_rooms(Rooms, maze, options);
 
-    roguelike_link_rooms(Rooms, maze, xsize, ysize);
+    roguelike_link_rooms(Rooms, maze);
 
     /* put in the stairs */
 

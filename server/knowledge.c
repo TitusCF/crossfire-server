@@ -98,10 +98,9 @@ typedef int (*knowledge_is_valid_item)(const char *code);
  * @param current where to add the information to.
  * @param item what to add, format specific to the type.
  * @param type pointer of the handler type.
- * @param pl who we're adding the information for.
  * @return count of actually added items.
  */
-typedef int (*knowledge_add_item)(struct knowledge_player *current, const char *item, const struct knowledge_type *type, player *pl);
+typedef int (*knowledge_add_item)(struct knowledge_player *current, const char *item, const struct knowledge_type *type);
 
 /**
  * Check if an item can be used for a recipe, and fill the return buffer if it's the case.
@@ -540,10 +539,9 @@ static int knowledge_known(const knowledge_player *current, const char *item, co
  * @param current where to look for the knowledge.
  * @param item internal value of the item to give, considered atomic.
  * @param kt how to handle the knowledge type.
- * @param pl who we're adding the information to.
  * @return 0 if item was already known, 1 else.
  */
-static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt, player *pl) {
+static int knowledge_add(knowledge_player *current, const char *item, const knowledge_type *kt) {
     knowledge_item *check;
 
     if (knowledge_known(current, item, kt)) {
@@ -615,10 +613,9 @@ static int knowledge_monster_validate(const char *item) {
  * @param current where to add the information to.
  * @param item monster to add, can be separated by dots for multiple ones.
  * @param type pointer of the monster type.
- * @param pl who we're adding the information to.
  * @return count of actually added items.
  */
-static int knowledge_monster_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type, player *pl) {
+static int knowledge_monster_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type) {
     char *dup = strdup_local(item);
     char *pos, *first = dup;
     int added = 0;
@@ -627,7 +624,7 @@ static int knowledge_monster_add(struct knowledge_player *current, const char *i
         pos = strchr(first, ':');
         if (pos)
             *pos = '\0';
-        added += knowledge_add(current, first, type, pl);
+        added += knowledge_add(current, first, type);
         first = pos ? pos + 1 : NULL;
     }
 
@@ -720,10 +717,9 @@ static int knowledge_god_validate(const char *item) {
  * @param current where to add the information to.
  * @param item god to add, a dot separating the exact knowledge.
  * @param type pointer of the monster type.
- * @param pl who we're adding the information to.
  * @return count of actually added items.
  */
-static int knowledge_god_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type, player *pl) {
+static int knowledge_god_add(struct knowledge_player *current, const char *item, const struct knowledge_type *type) {
     char *dup = strdup_local(item), *pos = strchr(dup, ':');
     StringBuffer *buf;
     int what, i;
@@ -761,7 +757,7 @@ static int knowledge_god_add(struct knowledge_player *current, const char *item,
     free(dup);
 
     /* Not known, so just add it regularly. */
-    return knowledge_add(current, item, type, pl);
+    return knowledge_add(current, item, type);
 }
 
 /**
@@ -1027,7 +1023,7 @@ void knowledge_give(player *pl, const char *marker, const object *book) {
             dot++;
         }
         if (type->validate(code)) {
-            added += type->add(current, code, type, pl);
+            added += type->add(current, code, type);
         }
         code = dot;
     }

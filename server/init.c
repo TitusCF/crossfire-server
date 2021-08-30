@@ -524,6 +524,7 @@ static void load_materials(BufferReader *reader, const char *filename) {
     char *buf, *cp, *next;
     materialtype_t *mt;
     int i, value;
+    (void)filename;
 
     mt = get_empty_mat();
     if (!materialt) {
@@ -1316,6 +1317,7 @@ static void signal_shutdown(int signum_unused) {
  * unused.
  */
 static void rec_sighup(int i) {
+    (void)i;
     /* Don't call LOG().  It calls non-reentrant functions.  The other
      * signal handlers shouldn't really call LOG() either. */
     if (logfile != stderr) {

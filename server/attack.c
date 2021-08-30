@@ -2208,10 +2208,12 @@ int slow_living_by(object *op, const int speed_penalty) {
  * who is attacking.
  * @param dam
  * damage to deal.
+ * @todo use dam to change the duration, or remove param
  */
 static void slow_living(object *op, object *hitter, int dam) {
     // Used to calculate the speed penalty of the slow attempt
     int speed_penalty;
+    (void)dam;
 
     /**
      * Give slow attacks some oomph -- always speed -1 was REALLY weak
@@ -2248,13 +2250,16 @@ static void slow_living(object *op, object *hitter, int dam) {
  * @param op
  * victim.
  * @param hitter
- * who is attacking.
+ * who is attacking, unused.
  * @param dam
- * damage to deal.
+ * damage to deal, unused.
+ * @todo vary duration with dam/hitter?
  */
 void confuse_living(object *op, object *hitter, int dam) {
     object *tmp;
     int maxduration;
+    (void)hitter;
+    (void)dam;
 
     tmp = object_present_in_ob_by_name(FORCE, "confusion", op);
     if (!tmp) {

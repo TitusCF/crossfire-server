@@ -64,6 +64,7 @@ void command_me(object *op, const char *params) {
 void command_cointoss(object *op, const char *params) {
     char buf[MAX_BUF];
     const char *result;
+    (void)params;
 
     result = rndm(1, 2) == 1 ? "Heads" : "Tails";
 
@@ -110,6 +111,7 @@ void command_orcknuckle(object *op, const char *params) {
     object *dice[DICE];
     int i, j, k, l, dice_count, number_dice;
     const char *name;
+    (void)params;
 
     /* We only use dice if the archetype is present ingame. */
     name = find_string("dice");

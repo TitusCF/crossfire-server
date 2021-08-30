@@ -173,6 +173,7 @@ void command_language(object *op, const char *params) {
  */
 void command_body(object *op, const char *params) {
     int i;
+    (void)params;
 
     /* Too hard to try and make a header that lines everything up, so just
      * give a description.
@@ -213,6 +214,7 @@ void command_body(object *op, const char *params) {
  * unused.
  */
 void command_motd(object *op, const char *params) {
+    (void)params;
     display_motd(op);
 }
 
@@ -225,6 +227,7 @@ void command_motd(object *op, const char *params) {
  * unused.
  */
 void command_rules(object *op, const char *params) {
+    (void)params;
     send_rules(op);
 }
 
@@ -237,6 +240,7 @@ void command_rules(object *op, const char *params) {
  * unused.
  */
 void command_news(object *op, const char *params) {
+    (void)params;
     send_news(op);
 }
 
@@ -479,6 +483,7 @@ void command_malloc_verify(object *op, char *parms) {
 void command_whereabouts(object *op, const char *params) {
     region *reg;
     player *pl;
+    (void)params;
 
     /*
      * reset the counter on the region, then use it to store the number of
@@ -765,6 +770,7 @@ static void get_who_escape_code_value(char *return_val, int size, const char let
  * unused.
  */
 void command_afk(object *op, const char *params) {
+    (void)params;
     if (QUERY_FLAG(op, FLAG_AFK)) {
         CLEAR_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
@@ -785,6 +791,7 @@ void command_afk(object *op, const char *params) {
  * unused.
  */
 void command_malloc(object *op, const char *params) {
+    (void)params;
     malloc_info(op);
 }
 
@@ -797,6 +804,7 @@ void command_malloc(object *op, const char *params) {
  * unused.
  */
 void command_mapinfo(object *op, const char *params) {
+    (void)params;
     current_map_info(op);
 }
 
@@ -809,6 +817,7 @@ void command_mapinfo(object *op, const char *params) {
  * unused.
  */
 void command_whereami(object *op, const char *params) {
+    (void)params;
     current_region_info(op);
 }
 
@@ -834,6 +843,7 @@ void command_maps(object *op, const char *params) {
  */
 void command_strings(object *op, const char *params) {
     char stats[HUGE_BUF];
+    (void)params;
 
     ss_dump_statistics(stats, sizeof(stats));
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
@@ -853,6 +863,7 @@ void command_strings(object *op, const char *params) {
  * unused.
  */
 void command_time(object *op, const char *params) {
+    (void)params;
     time_info(op);
 }
 
@@ -961,6 +972,8 @@ void command_wizcast(object *op, const char *params) {
  * unused.
  */
 void command_dumpallobjects(object *op, const char *params) {
+    (void)op;
+    (void)params;
     object_dump_all();
 }
 
@@ -973,6 +986,8 @@ void command_dumpallobjects(object *op, const char *params) {
  * unused.
  */
 void command_dumpfriendlyobjects(object *op, const char *params) {
+    (void)op;
+    (void)params;
     dump_friendly_objects();
 }
 
@@ -985,6 +1000,8 @@ void command_dumpfriendlyobjects(object *op, const char *params) {
  * unused.
  */
 void command_dumpallarchetypes(object *op, const char *params) {
+    (void)op;
+    (void)params;
     dump_all_archetypes();
 }
 
@@ -997,6 +1014,8 @@ void command_dumpallarchetypes(object *op, const char *params) {
  * unused.
  */
 void command_ssdumptable(object *op, const char *params) {
+    (void)op;
+    (void)params;
     ss_dump_table(SS_DUMP_TABLE, NULL, 0);
 }
 
@@ -1009,6 +1028,7 @@ void command_ssdumptable(object *op, const char *params) {
  * unused.
  */
 void command_dumpmap(object *op, const char *params) {
+    (void)params;
     if (op)
         dump_map(op->map);
 }
@@ -1022,6 +1042,8 @@ void command_dumpmap(object *op, const char *params) {
  * unused.
  */
 void command_dumpallmaps(object *op, const char *params) {
+    (void)op;
+    (void)params;
     dump_all_maps();
 }
 
@@ -1034,6 +1056,7 @@ void command_dumpallmaps(object *op, const char *params) {
  * unused.
  */
 void command_printlos(object *op, const char *params) {
+    (void)params;
     if (op)
         print_los(op);
 }
@@ -1048,6 +1071,7 @@ void command_printlos(object *op, const char *params) {
  * unused.
  */
 void command_version(object *op, const char *params) {
+    (void)params;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN,
             MSG_TYPE_ADMIN_VERSION, "Crossfire "FULL_VERSION);
 }
@@ -1095,6 +1119,7 @@ void command_statistics(object *pl, const char *params) {
     char buf[MAX_BUF];
     uint32_t hours, minutes;
     uint64_t seconds; /* 64 bit to prevent overflows an intermediate results */
+    (void)params;
 
     if (!pl->contr)
         return;
@@ -1183,6 +1208,7 @@ void command_statistics(object *pl, const char *params) {
  * unused.
  */
 void command_fix_me(object *op, const char *params) {
+    (void)params;
     object_sum_weight(op);
     fix_object(op);
 }
@@ -1199,6 +1225,7 @@ void command_players(object *op, const char *params) {
     char buf[MAX_BUF];
     char *t;
     DIR *dir;
+    (void)params;
 
     snprintf(buf, sizeof(buf), "%s/%s/", settings.localdir, settings.playerdir);
     t = buf+strlen(buf);
@@ -1563,6 +1590,7 @@ void command_usekeys(object *op, const char *params) {
  */
 void command_resistances(object *op, const char *params) {
     int i;
+    (void)params;
     if (!op)
         return;
 
@@ -1837,6 +1865,7 @@ static int onoff_value(const char *line) {
  * the warning that the original 'quit' command gave.
  */
 void command_quit(object* op, const char* params) {
+    (void)params;
     draw_ext_info(
         NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
              "To leave the game, sleep in (apply) a bed to reality. To "
@@ -1852,6 +1881,7 @@ void command_quit(object* op, const char* params) {
  * unused.
  */
 void command_delete(object *op, const char *params) {
+    (void)params;
     if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_ADMIN_DM, "Can't quit when in DM mode.");
         return;
@@ -1872,6 +1902,7 @@ void command_delete(object *op, const char *params) {
  * unused.
  */
 void command_sound(object *op, const char *params) {
+    (void)params;
     if (!(op->contr->socket.sound&SND_MUTE)) {
         op->contr->socket.sound = op->contr->socket.sound|SND_MUTE;
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
@@ -2055,6 +2086,7 @@ void command_title(object *op, const char *params) {
  * unused.
  */
 void command_save(object *op, const char *params) {
+    (void)params;
     if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL)&P_NO_CLERIC) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                       "You can not save on unholy ground.");
@@ -2080,6 +2112,7 @@ void command_save(object *op, const char *params) {
  * unused.
  */
 void command_peaceful(object *op, const char *params) {
+    (void)params;
     if ((op->contr->peaceful = !op->contr->peaceful))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
                       "You will not attack other players.");
@@ -2192,6 +2225,7 @@ void command_kill_pets(object *op, const char *params) {
  * unused.
  */
 void command_passwd(object *pl, const char *params) {
+    (void)params;
     /* If old client, this is the way you change your password. */
     if (pl->contr->socket.login_method < 1){
         send_query(&pl->contr->socket, CS_QUERY_HIDEINPUT, i18n(pl, "Password change.\nPlease enter your current password, or empty string to cancel."));

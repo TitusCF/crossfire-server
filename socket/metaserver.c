@@ -341,6 +341,7 @@ int metaserver2_init(void) {
  * @return number of bytes processed, always the full size.
  */
 static size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *data) {
+    (void)data;
     size_t realsize = size*nmemb;
     LOG(llevError, "Message from metaserver:\n%s\n", (const char*)ptr);
     return realsize;
@@ -505,6 +506,7 @@ static void metaserver2_updates(void) {
  */
 
 void *metaserver2_thread(void *junk) {
+    (void)junk;
     while (1) {
         metaserver2_updates();
         sleep(60);
