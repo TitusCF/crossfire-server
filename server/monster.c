@@ -38,7 +38,7 @@ static int monster_can_pick(object *monster, object *item);
 static void monster_apply_below(object *monster);
 static int monster_dist_att(int dir, object *enemy, object *part, rv_vector *rv);
 static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-static int monster_hitrun_att(int dir, object *ob, object *enemy);
+static int monster_hitrun_att(int dir, object *ob);
 static int monster_wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
 static int monster_disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
 static int monster_wait_att2(int dir, rv_vector *rv);
@@ -855,7 +855,7 @@ int monster_move(object *op) {
             break;
 
         case HITRUN:
-            dir = monster_hitrun_att(dir, op, enemy);
+            dir = monster_hitrun_att(dir, op);
             break;
 
         case WAITATT:
@@ -1896,10 +1896,9 @@ static int monster_run_att(int dir, object *ob, object *enemy, object *part, rv_
  * Return the next direction the monster should move for a specific movement type.
  * @param dir direction the monster is currently facing.
  * @param ob unused.
- * @param enemy target of the monster.
  * @return direction to go into.
  */
-static int monster_hitrun_att(int dir, object *ob, object *enemy) {
+static int monster_hitrun_att(int dir, object *ob) {
     if (ob->move_status++ < 25)
         return dir;
     else if (ob->move_status < 50)

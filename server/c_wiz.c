@@ -386,6 +386,7 @@ static void do_wizard_hide(object *op, int silent_dm) {
  * ignored.
  */
 void command_hide(object *op, const char *params) {
+    (void)params;
     do_wizard_hide(op, 0);
 }
 
@@ -585,6 +586,7 @@ void command_kick(object *op, const char *params) {
  * ignored.
  */
 void command_overlay_save(object *op, const char *params) {
+    (void)params;
     if (!op)
         return;
 
@@ -607,6 +609,7 @@ void command_overlay_save(object *op, const char *params) {
 void command_overlay_reset(object *op, const char *params) {
     char filename[MAX_BUF];
     struct stat stats;
+    (void)params;
 
     create_overlay_pathname(op->map->path, filename, MAX_BUF);
     if (!stat(filename, &stats))
@@ -1389,6 +1392,7 @@ void command_dump(object *op, const char *params) {
  * ignored.
  */
 void command_mon_aggr(object *op, const char *params) {
+    (void)params;
     if (op->enemy || !QUERY_FLAG(op, FLAG_UNAGGRESSIVE)) {
         object_set_enemy(op, NULL);
         SET_FLAG(op, FLAG_UNAGGRESSIVE);
@@ -2009,6 +2013,7 @@ void command_reset(object *op, const char *params) {
  * ignored.
  */
 void command_nowiz(object *op, const char *params) { /* 'noadm' is alias */
+    (void)params;
     CLEAR_FLAG(op, FLAG_WIZ);
     CLEAR_FLAG(op, FLAG_WIZPASS);
     CLEAR_FLAG(op, FLAG_WIZCAST);
@@ -2051,6 +2056,8 @@ static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const
 
 #ifdef RESTRICTIVE_DM
     *pl_name = op->name ? op->name : "*";
+#else
+    (void)op;
 #endif
 
     snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, DMFILE);
@@ -2154,6 +2161,7 @@ void command_dm(object *op, const char *params) {
  * ignored.
  */
 void command_invisible(object *op, const char *params) {
+    (void)params;
     if (op) {
         op->invisible += 100;
         object_update(op, UP_OBJ_FACE);
@@ -2371,6 +2379,7 @@ void command_forget_spell(object *op, const char *params) {
  * ignored.
  */
 void command_listplugins(object *op, const char *params) {
+    (void)params;
     plugins_display_list(op);
 }
 
@@ -2461,6 +2470,7 @@ void command_dmhide(object *op, const char *params) {
  * ignored.
  */
 void command_stack_pop(object *op, const char *params) {
+    (void)params;
     dm_stack_pop(op->contr);
 }
 
@@ -2494,6 +2504,7 @@ void command_stack_list(object *op, const char *params) {
     int item;
     object *display;
     player *pl = op->contr;
+    (void)params;
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                   "Item stack contents:");
@@ -2521,6 +2532,7 @@ void command_stack_list(object *op, const char *params) {
  * ignored.
  */
 void command_stack_clear(object *op, const char *params) {
+    (void)params;
     op->contr->stack_position = 0;
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                   "Item stack cleared.");
@@ -2690,6 +2702,7 @@ void command_style_map_info(object *op, const char *params) {
     extern mapstruct *styles;
     mapstruct *mp;
     int maps_used = 0, mapmem = 0, objects_used = 0, x, y;
+    (void)params;
 
     for (mp = styles; mp != NULL; mp = mp->next) {
         maps_used++;
@@ -2776,11 +2789,13 @@ void command_follow(object *op, const char *params) {
 }
 
 void command_purge_quest(object *op, const char * param) {
+    (void)param;
     free_quest();
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Purged quest state.");
 }
 
 void command_purge_quest_definitions(object *op, const char * param) {
+    (void)param;
     free_quest_definitions();
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Purged quests definitions.");
 }
@@ -2808,6 +2823,7 @@ static void do_dump(object *who, object *what) {
  * unused.
  */
 void command_dumpbelow(object *op, const char *params) {
+    (void)params;
     if (op && op->below) {
         do_dump(op, op->below);
     }
@@ -2822,6 +2838,7 @@ void command_dumpbelow(object *op, const char *params) {
  * unused.
  */
 void command_dumpabove(object *op, const char *params) {
+    (void)params;
     if (op && op->above) {
         do_dump(op, op->above);
     }
@@ -2833,6 +2850,7 @@ void command_dumpabove(object *op, const char *params) {
  * @param ignored ignored additional text.
  */
 void command_settings(object *op, const char *ignored) {
+    (void)ignored;
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Server settings:");
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, " * item power factor: %2f", settings.item_power_factor);

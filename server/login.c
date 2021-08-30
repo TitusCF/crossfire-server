@@ -73,6 +73,7 @@ void emergency_save(int flag) {
     }
     LOG(llevError, "\n");
 #else
+    (void)flag;
     LOG(llevInfo, "Emergency saves disabled, no save attempted\n");
 #endif
 }

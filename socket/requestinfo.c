@@ -97,9 +97,8 @@ void send_skill_info(socket_struct *ns, char *params) {
  * This sends the spell path to name mapping.
  *
  * @param ns where to write the information.
- * @param params ignored.
  */
-void send_spell_paths(socket_struct *ns, char *params) {
+void send_spell_paths(socket_struct *ns) {
     SockList sl;
     int i;
 
@@ -124,9 +123,8 @@ void send_spell_paths(socket_struct *ns, char *params) {
  * This sends the experience table the sever is using.
  *
  * @param ns where to write the information.
- * @param params ignored.
  */
-void send_exp_table(socket_struct *ns, char *params) {
+void send_exp_table(socket_struct *ns) {
     SockList sl;
     int i;
     extern int64_t *levels;
@@ -305,10 +303,8 @@ static void build_race_list_reply(SockList *sl) {
  *
  * @param ns
  * where to send.
- * @param params
- * ignored.
  */
-void send_race_list(socket_struct *ns, char *params) {
+void send_race_list(socket_struct *ns) {
     static SockList sl;
     static int sl_initialized = 0;
 
@@ -375,10 +371,8 @@ static void build_class_list_reply(SockList *sl) {
  *
  * @param ns
  * client to send to.
- * @param params
- * ignored.
  */
-void send_class_list(socket_struct *ns, char *params) {
+void send_class_list(socket_struct *ns) {
     static SockList sl;
     static int sl_initialized = 0;
 

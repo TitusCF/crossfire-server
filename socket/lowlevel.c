@@ -60,6 +60,7 @@ void SockList_Init(SockList *sl) {
  * @param sl the SockList instance to free
  */
 void SockList_Term(SockList *sl) {
+    (void)sl;
 }
 
 /**

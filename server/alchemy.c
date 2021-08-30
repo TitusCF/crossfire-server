@@ -60,7 +60,7 @@ static const char *const cauldron_effect [] = {
 };
 
 
-static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster);
+static int is_defined_recipe(const recipe *rp, const object *cauldron);
 static const recipe *find_recipe(const recipelist *fl, int formula, object *ingredients);
 static int content_recipe_value(object *op);
 static int numb_ob_inside(const object *op);
@@ -186,7 +186,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
                 else
                     LOG(llevDebug, "WIZ got formula: %s (nbatches:%d)\n", rp->arch_name[0], formula/rp->index);
 #endif
-                attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, !is_defined_recipe(rp, cauldron, caster));
+                attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, !is_defined_recipe(rp, cauldron));
             } else
                 LOG(llevDebug, "WIZ couldn't find formula for ingredients.\n");
             return;
@@ -230,7 +230,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
                 value_ingredients += price_base(tmp);
             FOR_INV_FINISH();
 
-            attempt_shadow_alchemy = !is_defined_recipe(rp, cauldron, caster);
+            attempt_shadow_alchemy = !is_defined_recipe(rp, cauldron);
 
             /* create the object **FIRST**, then decide whether to keep it. */
             if ((item = attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, attempt_shadow_alchemy)) != NULL) {
@@ -882,12 +882,10 @@ static int calc_alch_danger(object *caster, object *cauldron, const recipe *rp) 
  * recipe to check.
  * @param cauldron
  * container that holds the ingredients.
- * @param caster
- * who is trying to cast.
  * @return
  * 1 if the ingredients match the recipe, 0 if not.
  */
-static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster) {
+static int is_defined_recipe(const recipe *rp, const object *cauldron) {
     uint32_t batches_in_cauldron;
     const linked_char *ingredient;
     int number;

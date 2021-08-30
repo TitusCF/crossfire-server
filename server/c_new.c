@@ -62,6 +62,7 @@ void command_run(object *op, const char *params) {
  * 1.
  */
 void command_run_stop(object *op, const char *params) {
+    (void)params;
     op->contr->run_on = 0;
 }
 
@@ -95,6 +96,7 @@ void command_fire(object *op, const char *params) {
  * ignored.
  */
 void command_fire_stop(object *op, const char *params) {
+    (void)params;
     op->contr->fire_on = 0;
 }
 

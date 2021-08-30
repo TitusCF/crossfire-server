@@ -349,6 +349,8 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
 void add_me_cmd(char *buf, int len, socket_struct *ns) {
     Settings oldsettings;
     SockList sl;
+    (void)buf;
+    (void)len;
 
     oldsettings = settings;
     if (ns->status != Ns_Add) {
@@ -593,6 +595,7 @@ void version_cmd(char *buf, int len, socket_struct *ns) {
     char *rest;
     char *cs_str = strtok_r(buf, " ", &rest);
     char *sc_str = strtok_r(NULL, " ", &rest);
+    (void)len;
 
     if (cs_str == NULL || sc_str == NULL) {
         LOG(llevError, "%s: sent invalid version string\n", ns->host);
