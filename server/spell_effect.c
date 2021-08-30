@@ -2364,6 +2364,8 @@ int alchemy(object *op, object *caster, object *spell_ob) {
             FOR_MAP_PREPARE(mp, nx, ny, tmp) {
                 if (tmp->weight > 0 && !QUERY_FLAG(tmp, FLAG_NO_PICK)
                 && !QUERY_FLAG(tmp, FLAG_ALIVE)
+                // If a multitile monster has unalive pieces, then don't zap those.
+                && (!tmp->head || !QUERY_FLAG(tmp->head, FLAG_ALIVE))
                 && !QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
                     if (tmp->inv) {
                         FOR_INV_PREPARE(tmp, tmp1)
