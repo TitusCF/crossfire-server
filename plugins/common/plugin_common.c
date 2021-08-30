@@ -1205,14 +1205,6 @@ sstring cf_query_name_pl(object *ob) {
     return value;
 }
 
-char *cf_query_base_name(object *ob, int plural, char *name, int size) {
-    int type;
-
-    cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_BASE_NAME, name, size);
-    assert(type == CFAPI_STRING);
-    return name;
-}
-
 sstring cf_object_get_msg(object *ob) {
     int type;
     sstring value;
