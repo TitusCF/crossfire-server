@@ -127,6 +127,8 @@ static void check_hp(const char *test, int hp_row[TEST_MAP_SIZE], int hp_diag[TE
 
 #ifdef PRINT_DEBUG_HP
     printf("\nDumping debug hp for test %s\n ", test);
+#else
+    (void)test;
 #endif
 
     /* Dump the HP of the monsters now.  We do it in 2 passes,
