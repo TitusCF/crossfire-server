@@ -108,7 +108,7 @@ static PyObject *private_data = NULL;
 
 static CFPContext *popContext(void);
 static void freeContext(CFPContext *context);
-static int do_script(CFPContext *context, int silent);
+static int do_script(CFPContext *context);
 
 static PyObject *registerGEvent(PyObject *self, PyObject *args) {
     int eventcode;
@@ -490,7 +490,7 @@ static void python_command_function(object *op, const char *params, const char *
         context->options[0] = 0;
     context->returnvalue = 1; /* Default is "command successful" */
 
-    if (!do_script(context, 0)) {
+    if (!do_script(context)) {
         freeContext(context);
         return;
     }
@@ -988,7 +988,7 @@ static PyCodeObject *compilePython(char *filename) {
     return run->code;
 }
 
-static int do_script(CFPContext *context, int silent) {
+static int do_script(CFPContext *context) {
     PyCodeObject *pycode;
     PyObject *dict;
     PyObject *ret;
@@ -1738,7 +1738,7 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         return rv;
     }
 
-    if (!do_script(context, 1)) {
+    if (!do_script(context)) {
         freeContext(context);
         return rv;
     }
@@ -1785,7 +1785,7 @@ CF_PLUGIN int eventListener(int *type, ...) {
 
     va_end(args);
 
-    if (!do_script(context, 0)) {
+    if (!do_script(context)) {
         freeContext(context);
         return rv;
     }
