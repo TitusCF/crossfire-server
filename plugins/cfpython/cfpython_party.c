@@ -30,20 +30,24 @@
 #include <cfpython.h>
 
 static PyObject *Crossfire_Party_GetName(Crossfire_Party *partyptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("s", cf_party_get_name(partyptr->party));
 }
 
 static PyObject *Crossfire_Party_GetPassword(Crossfire_Party *partyptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("s", cf_party_get_password(partyptr->party));
 }
 
 static PyObject *Crossfire_Party_GetNext(Crossfire_Party *party, void *closure) {
+    (void)closure;
     return Crossfire_Party_wrap(cf_party_get_next(party->party));
 }
 
 static PyObject *Crossfire_Party_GetPlayers(Crossfire_Party *party, PyObject *args) {
     PyObject *list;
     player *pl;
+    (void)args;
 
     list = PyList_New(0);
     pl = cf_party_get_first_player(party->party);

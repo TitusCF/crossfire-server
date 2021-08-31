@@ -112,6 +112,7 @@ static int do_script(CFPContext *context, int silent);
 
 static PyObject *registerGEvent(PyObject *self, PyObject *args) {
     int eventcode;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "i", &eventcode))
         return NULL;
@@ -124,6 +125,7 @@ static PyObject *registerGEvent(PyObject *self, PyObject *args) {
 
 static PyObject *unregisterGEvent(PyObject *self, PyObject *args) {
     int eventcode;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "i", &eventcode))
         return NULL;
@@ -136,6 +138,8 @@ static PyObject *unregisterGEvent(PyObject *self, PyObject *args) {
 
 static PyObject *createCFObject(PyObject *self, PyObject *args) {
     object *op;
+    (void)self;
+    (void)args;
 
     op = cf_create_object();
 
@@ -145,6 +149,7 @@ static PyObject *createCFObject(PyObject *self, PyObject *args) {
 static PyObject *createCFObjectByName(PyObject *self, PyObject *args) {
     char *obname;
     object *op;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "s", &obname))
         return NULL;
@@ -156,16 +161,21 @@ static PyObject *createCFObjectByName(PyObject *self, PyObject *args) {
 
 static PyObject *getCFPythonVersion(PyObject *self, PyObject *args) {
     int i = 2044;
+    (void)self;
+    (void)args;
 
     return Py_BuildValue("i", i);
 }
 
 static PyObject *getReturnValue(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("i", current_context->returnvalue);
 }
 
 static PyObject *setReturnValue(PyObject *self, PyObject *args) {
     int i;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "i", &i))
         return NULL;
@@ -178,6 +188,7 @@ static PyObject *matchString(PyObject *self, PyObject *args) {
     char *premiere;
     char *seconde;
     const char *result;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "ss", &premiere, &seconde))
         return NULL;
@@ -192,6 +203,7 @@ static PyObject *matchString(PyObject *self, PyObject *args) {
 static PyObject *findPlayer(PyObject *self, PyObject *args) {
     player *foundpl;
     char *txt;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "s", &txt))
         return NULL;
@@ -210,6 +222,7 @@ static PyObject *readyMap(PyObject *self, PyObject *args) {
     char *mapname;
     mapstruct *map;
     int flags = 0;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "s|i", &mapname, &flags))
         return NULL;
@@ -222,6 +235,7 @@ static PyObject *readyMap(PyObject *self, PyObject *args) {
 static PyObject *createMap(PyObject *self, PyObject *args) {
     int sizex, sizey;
     mapstruct *map;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "ii", &sizex, &sizey))
         return NULL;
@@ -232,34 +246,50 @@ static PyObject *createMap(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getMapDirectory(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("s", cf_get_directory(0));
 }
 
 static PyObject *getUniqueDirectory(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("s", cf_get_directory(1));
 }
 
 static PyObject *getTempDirectory(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("s", cf_get_directory(2));
 }
 
 static PyObject *getConfigDirectory(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("s", cf_get_directory(3));
 }
 
 static PyObject *getLocalDirectory(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("s", cf_get_directory(4));
 }
 
 static PyObject *getPlayerDirectory(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("s", cf_get_directory(5));
 }
 
 static PyObject *getDataDirectory(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("s", cf_get_directory(6));
 }
 
 static PyObject *getWhoAmI(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     if (!current_context->who) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -269,6 +299,8 @@ static PyObject *getWhoAmI(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getWhoIsActivator(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     if (!current_context->activator) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -278,6 +310,8 @@ static PyObject *getWhoIsActivator(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getWhoIsThird(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     if (!current_context->third) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -287,6 +321,8 @@ static PyObject *getWhoIsThird(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getWhatIsMessage(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     if (*current_context->message == '\0')
         return Py_BuildValue("");
     else
@@ -294,10 +330,14 @@ static PyObject *getWhatIsMessage(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getScriptName(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     return Py_BuildValue("s", current_context->script);
 }
 
 static PyObject *getScriptParameters(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     if (!*current_context->options) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -306,6 +346,8 @@ static PyObject *getScriptParameters(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getEvent(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     if (!current_context->event) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -316,6 +358,8 @@ static PyObject *getEvent(PyObject *self, PyObject *args) {
 
 static PyObject *getPrivateDictionary(PyObject *self, PyObject *args) {
     PyObject *data;
+    (void)self;
+    (void)args;
 
     data = PyDict_GetItemString(private_data, current_context->script);
     if (!data) {
@@ -328,6 +372,8 @@ static PyObject *getPrivateDictionary(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getSharedDictionary(PyObject *self, PyObject *args) {
+    (void)self;
+    (void)args;
     Py_INCREF(shared_data);
     return shared_data;
 }
@@ -335,6 +381,8 @@ static PyObject *getSharedDictionary(PyObject *self, PyObject *args) {
 static PyObject *getArchetypes(PyObject *self, PyObject *args) {
     PyObject *list;
     archetype *arch;
+    (void)self;
+    (void)args;
 
     list = PyList_New(0);
     arch = cf_archetype_get_first();
@@ -348,6 +396,8 @@ static PyObject *getArchetypes(PyObject *self, PyObject *args) {
 static PyObject *getPlayers(PyObject *self, PyObject *args) {
     PyObject *list;
     object *pl;
+    (void)self;
+    (void)args;
 
     list = PyList_New(0);
     pl = cf_object_get_object_property(NULL, CFAPI_PLAYER_PROP_NEXT);
@@ -361,6 +411,8 @@ static PyObject *getPlayers(PyObject *self, PyObject *args) {
 static PyObject *getMaps(PyObject *self, PyObject *args) {
     PyObject *list;
     mapstruct *map;
+    (void)self;
+    (void)args;
 
     list = PyList_New(0);
     map = cf_map_get_first();
@@ -374,6 +426,8 @@ static PyObject *getMaps(PyObject *self, PyObject *args) {
 static PyObject *getParties(PyObject *self, PyObject *args) {
     PyObject *list;
     partylist *party;
+    (void)self;
+    (void)args;
 
     list = PyList_New(0);
     party = cf_party_get_first();
@@ -387,6 +441,8 @@ static PyObject *getParties(PyObject *self, PyObject *args) {
 static PyObject *getRegions(PyObject *self, PyObject *args) {
     PyObject *list;
     region *reg;
+    (void)self;
+    (void)args;
 
     list = PyList_New(0);
     reg = cf_region_get_first();
@@ -400,6 +456,8 @@ static PyObject *getRegions(PyObject *self, PyObject *args) {
 static PyObject *getFriendlyList(PyObject *self, PyObject *args) {
     PyObject *list;
     object *ob;
+    (void)self;
+    (void)args;
 
     list = PyList_New(0);
     ob = cf_friendlylist_get_first();
@@ -446,6 +504,7 @@ static PyObject *registerCommand(PyObject *self, PyObject *args) {
     char *scriptname;
     double cmdspeed;
     int type = COMMAND_TYPE_NORMAL, index;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "ssd|d", &cmdname, &scriptname, &cmdspeed, &type))
         return NULL;
@@ -478,6 +537,8 @@ static PyObject *registerCommand(PyObject *self, PyObject *args) {
 static PyObject *getTime(PyObject *self, PyObject *args) {
     PyObject *list;
     timeofday_t tod;
+    (void)self;
+    (void)args;
 
     cf_get_time(&tod);
 
@@ -497,6 +558,7 @@ static PyObject *getTime(PyObject *self, PyObject *args) {
 
 static PyObject *destroyTimer(PyObject *self, PyObject *args) {
     int id;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "i", &id))
         return NULL;
@@ -505,6 +567,7 @@ static PyObject *destroyTimer(PyObject *self, PyObject *args) {
 
 static PyObject *getMapHasBeenLoaded(PyObject *self, PyObject *args) {
     char *name;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "s", &name))
         return NULL;
@@ -513,6 +576,7 @@ static PyObject *getMapHasBeenLoaded(PyObject *self, PyObject *args) {
 
 static PyObject *findFace(PyObject *self, PyObject *args) {
     char *name;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "s", &name))
         return NULL;
@@ -523,6 +587,7 @@ static PyObject *log_message(PyObject *self, PyObject *args) {
     LogLevel level;
     int intLevel;
     char *message;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "is", &intLevel, &message))
         return NULL;
@@ -557,6 +622,7 @@ static PyObject *log_message(PyObject *self, PyObject *args) {
 
 static PyObject *findAnimation(PyObject *self, PyObject *args) {
     char *name;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "s", &name))
         return NULL;
@@ -565,6 +631,7 @@ static PyObject *findAnimation(PyObject *self, PyObject *args) {
 
 static PyObject *getSeasonName(PyObject *self, PyObject *args) {
     int i;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "i", &i))
         return NULL;
@@ -573,6 +640,7 @@ static PyObject *getSeasonName(PyObject *self, PyObject *args) {
 
 static PyObject *getMonthName(PyObject *self, PyObject *args) {
     int i;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "i", &i))
         return NULL;
@@ -581,6 +649,7 @@ static PyObject *getMonthName(PyObject *self, PyObject *args) {
 
 static PyObject *getWeekdayName(PyObject *self, PyObject *args) {
     int i;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "i", &i))
         return NULL;
@@ -589,6 +658,7 @@ static PyObject *getWeekdayName(PyObject *self, PyObject *args) {
 
 static PyObject *getPeriodofdayName(PyObject *self, PyObject *args) {
     int i;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "i", &i))
         return NULL;
@@ -598,6 +668,7 @@ static PyObject *getPeriodofdayName(PyObject *self, PyObject *args) {
 static PyObject *addReply(PyObject *self, PyObject *args) {
     char *word, *reply;
     talk_info *talk;
+    (void)self;
 
     if (current_context->talk == NULL) {
         set_exception("not in a dialog context");
@@ -625,6 +696,7 @@ static PyObject *addReply(PyObject *self, PyObject *args) {
 static PyObject *setPlayerMessage(PyObject *self, PyObject *args) {
     char *message;
     int type = rt_reply;
+    (void)self;
 
     if (current_context->talk == NULL) {
         set_exception("not in a dialog context");
@@ -647,6 +719,7 @@ static PyObject *setPlayerMessage(PyObject *self, PyObject *args) {
 static PyObject *npcSay(PyObject *self, PyObject *args) {
     Crossfire_Object *npc = NULL;
     char *message, buf[2048];
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "O!s", &Crossfire_ObjectType, &npc, &message))
         return NULL;
@@ -677,6 +750,7 @@ static PyObject *costStringFromValue(PyObject *self, PyObject *args) {
     uint64_t value;
     char buf[2048];
     int largest_coin = 0;
+    (void)self;
 
     if (!PyArg_ParseTuple(args, "L|i", &value, &largest_coin))
         return NULL;
@@ -1392,6 +1466,7 @@ catchOutErr = CatchOutErr()\n\
 sys.stdout = catchOutErr\n\
 sys.stderr = catchOutErr\n\
 ";
+    (void)iversion;
 
     for (int c = 0; c < MAX_COMMANDS; c++) {
         registered_commands[c] = 0;

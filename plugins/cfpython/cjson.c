@@ -1063,6 +1063,7 @@ static PyObject *encode_object(PyObject *object) {
 /* Encode object into its JSON representation */
 
 static PyObject *JSON_encode(PyObject *self, PyObject *object) {
+    (void)self;
     return encode_object(object);
 }
 
@@ -1073,6 +1074,7 @@ static PyObject *JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs) {
     int all_unicode = True; /* by default return unicode always */
     PyObject *object, *string, *str;
     JSONData jsondata;
+    (void)self;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i:decode", kwlist, &string, &all_unicode))
         return NULL;
