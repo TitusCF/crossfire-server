@@ -30,26 +30,32 @@
 #include <cfpython.h>
 
 static PyObject *Crossfire_Archetype_GetName(Crossfire_Archetype *whoptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("s", cf_archetype_get_name(whoptr->arch));
 }
 
 static PyObject *Crossfire_Archetype_GetNext(Crossfire_Archetype *who, void *closure) {
+    (void)closure;
     return Crossfire_Archetype_wrap(cf_archetype_get_next(who->arch));
 }
 
 static PyObject *Crossfire_Archetype_GetMore(Crossfire_Archetype *who, void *closure) {
+    (void)closure;
     return Crossfire_Archetype_wrap(cf_archetype_get_more(who->arch));
 }
 
 static PyObject *Crossfire_Archetype_GetHead(Crossfire_Archetype *who, void *closure) {
+    (void)closure;
     return Crossfire_Archetype_wrap(cf_archetype_get_head(who->arch));
 }
 
 static PyObject *Crossfire_Archetype_GetClone(Crossfire_Archetype *who, void *closure) {
+    (void)closure;
     return Crossfire_Object_wrap(cf_archetype_get_clone(who->arch));
 }
 
 static PyObject *Crossfire_Archetype_GetNewObject(Crossfire_Archetype *who, PyObject *args) {
+    (void)args;
     return Crossfire_Object_wrap(cf_create_object_by_name(cf_archetype_get_name(who->arch)));
 }
 

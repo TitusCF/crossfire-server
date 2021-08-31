@@ -75,12 +75,14 @@ static void free_object_assoc(object *key) {
 
 static PyObject *Player_GetTitle(Crossfire_Object *whoptr, void *closure) {
     char title[MAX_NAME];
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_player_get_title(whoptr->obj, title, MAX_NAME));
 }
 
 static int Player_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *val;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (value == NULL) {
@@ -99,17 +101,20 @@ static int Player_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *clos
 }
 
 static PyObject *Player_GetIP(Crossfire_Player *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_player_get_ip(whoptr->obj));
 }
 
 static PyObject *Player_GetMarkedItem(Crossfire_Player *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Crossfire_Object_wrap(cf_player_get_marked_item(whoptr->obj));
 }
 
 static int Player_SetMarkedItem(Crossfire_Player *whoptr, PyObject *value, void *closure) {
     Crossfire_Object *ob;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (value == Py_None)
@@ -158,12 +163,14 @@ static PyObject *Player_GiveKnowledge(Crossfire_Player *who, PyObject *args) {
 }
 
 static PyObject *Player_GetParty(Crossfire_Player *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Crossfire_Party_wrap(cf_player_get_party(whoptr->obj));
 }
 
 static int Player_SetParty(Crossfire_Player *whoptr, PyObject *value, void *closure) {
     Crossfire_Party *ob;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "O!", &Crossfire_PartyType, &ob))
@@ -173,12 +180,14 @@ static int Player_SetParty(Crossfire_Player *whoptr, PyObject *value, void *clos
 }
 
 static PyObject *Crossfire_Player_CanPay(Crossfire_Player *who, PyObject *args) {
+    (void)args;
     EXISTCHECK(who);
     return Py_BuildValue("i", cf_player_can_pay(who->obj));
 }
 
 static PyObject *Player_GetBedMap(Crossfire_Player *whoptr, void *closure) {
     char bed[200];
+    (void)closure;
 
     EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_MAP, bed, sizeof(bed)));
@@ -186,6 +195,7 @@ static PyObject *Player_GetBedMap(Crossfire_Player *whoptr, void *closure) {
 
 static int Player_SetBedMap(Crossfire_Player *whoptr, PyObject *value, void *closure) {
     char *location;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "s", &location))
@@ -195,12 +205,14 @@ static int Player_SetBedMap(Crossfire_Player *whoptr, PyObject *value, void *clo
 }
 
 static PyObject *Player_GetBedX(Crossfire_Player *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_X));
 }
 
 static int Player_SetBedX(Crossfire_Player *whoptr, PyObject *value, void *closure) {
     int x;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "i", &x))
@@ -210,12 +222,14 @@ static int Player_SetBedX(Crossfire_Player *whoptr, PyObject *value, void *closu
 }
 
 static PyObject *Player_GetBedY(Crossfire_Player *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_Y));
 }
 
 static int Player_SetBedY(Crossfire_Player *whoptr, PyObject *value, void *closure) {
     int y;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "i", &y))
@@ -293,32 +307,38 @@ static PyObject *Player_QuestWasCompleted(Crossfire_Player *whoptr, PyObject *ar
 /* Object properties. Get and maybe set. */
 static PyObject *Object_GetStringProperty(Crossfire_Object *whoptr, void *closure) {
     char buf[MAX_BUF];
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, (int)(intptr_t)closure, buf, sizeof(buf)));
 }
 
 static PyObject *Object_GetSStringProperty(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, (int)(intptr_t)closure));
 }
 
 static PyObject *Object_GetIntProperty(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, (int)(intptr_t)closure));
 }
 
 static PyObject *Object_GetFloatProperty(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("f", cf_object_get_float_property(whoptr->obj, (int)(intptr_t)closure));
 }
 
 static PyObject *Object_GetFlagProperty(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, (int)(intptr_t)closure));
 }
 
 static PyObject *Object_GetObjectProperty(Crossfire_Object *whoptr, void *closure) {
     object *op;
+    (void)closure;
 
     EXISTCHECK(whoptr);
     op = cf_object_get_object_property(whoptr->obj, (int)(intptr_t)closure);
@@ -327,18 +347,21 @@ static PyObject *Object_GetObjectProperty(Crossfire_Object *whoptr, void *closur
 
 static PyObject *Object_GetName(Crossfire_Object *whoptr, void *closure) {
     char name[200];
+    (void)closure;
 
     EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_query_name(whoptr->obj, name, sizeof(name)));
 }
 
 static PyObject *Object_GetNamePl(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("s", (char *)cf_query_name_pl(whoptr->obj));
 }
 
 static PyObject *Object_GetMap(Crossfire_Object *whoptr, void *closure) {
     mapstruct *m;
+    (void)closure;
 
     EXISTCHECK(whoptr);
     m = cf_object_get_map_property(whoptr->obj, CFAPI_OBJECT_PROP_MAP);
@@ -346,46 +369,55 @@ static PyObject *Object_GetMap(Crossfire_Object *whoptr, void *closure) {
 }
 
 static PyObject *Object_GetExp(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("L", cf_object_get_int64_property(whoptr->obj, CFAPI_OBJECT_PROP_EXP));
 }
 
 static PyObject *Object_GetTotalExp(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("L", cf_object_get_int64_property(whoptr->obj, CFAPI_OBJECT_PROP_TOTAL_EXP));
 }
 
 static PyObject *Object_GetExpMul(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("d", cf_object_get_double_property(whoptr->obj, CFAPI_OBJECT_PROP_EXP_MULTIPLIER));
 }
 
 static PyObject *Object_GetPickable(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", !cf_object_get_flag(whoptr->obj, FLAG_NO_PICK));
 }
 
 static PyObject *Object_GetMoney(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_query_money(whoptr->obj));
 }
 
 static PyObject *Object_GetValue(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("l", cf_object_get_long_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE));
 }
 
 static PyObject *Object_GetArchetype(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Crossfire_Archetype_wrap(cf_object_get_archetype_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCHETYPE));
 }
 
 static PyObject *Object_GetOtherArchetype(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Crossfire_Archetype_wrap(cf_object_get_archetype_property(whoptr->obj, CFAPI_OBJECT_PROP_OTHER_ARCH));
 }
 
 static PyObject *Object_GetExists(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     if (!object_was_destroyed(whoptr->obj, whoptr->obj->count)) {
         Py_INCREF(Py_True);
         return Py_True;
@@ -396,36 +428,43 @@ static PyObject *Object_GetExists(Crossfire_Object *whoptr, void *closure) {
 }
 
 static PyObject *Object_GetMoveType(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_TYPE));
 }
 
 static PyObject *Object_GetMoveBlock(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_BLOCK));
 }
 
 static PyObject *Object_GetMoveAllow(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ALLOW));
 }
 
 static PyObject *Object_GetMoveOn(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ON));
 }
 
 static PyObject *Object_GetMoveOff(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_OFF));
 }
 
 static PyObject *Object_GetMoveSlow(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW));
 }
 
 static PyObject *Object_GetMaterial(Crossfire_Object *whoptr, void *closure) {
+    (void)closure;
     EXISTCHECK(whoptr);
     return Py_BuildValue("{s:s,s:i}", "Name", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_MATERIAL_NAME), "Number", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MATERIAL));
 }
@@ -504,6 +543,7 @@ static int Object_SetFlagProperty(Crossfire_Object *whoptr, PyObject *value, voi
 
 static int Object_SetName(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *val;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (value == NULL) {
@@ -524,6 +564,7 @@ static int Object_SetName(Crossfire_Object *whoptr, PyObject *value, void *closu
 
 static int Object_SetNamePl(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *val;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (value == NULL) {
@@ -543,6 +584,7 @@ static int Object_SetNamePl(Crossfire_Object *whoptr, PyObject *value, void *clo
 
 static int Object_SetPickable(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     int val;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "i", &val))
@@ -554,6 +596,7 @@ static int Object_SetPickable(Crossfire_Object *whoptr, PyObject *value, void *c
 
 static int Object_SetMap(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     Crossfire_Map *val;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "O!", &Crossfire_MapType, &val))
@@ -565,6 +608,7 @@ static int Object_SetMap(Crossfire_Object *whoptr, PyObject *value, void *closur
 
 static int Object_SetQuantity(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     int val;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "i", &val))
@@ -581,6 +625,7 @@ static int Object_SetQuantity(Crossfire_Object *whoptr, PyObject *value, void *c
 
 static int Object_SetFace(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *face;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "s", &face))
@@ -595,6 +640,7 @@ static int Object_SetFace(Crossfire_Object *whoptr, PyObject *value, void *closu
 
 static int Object_SetAnim(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *anim;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "s", &anim))
@@ -610,6 +656,7 @@ static int Object_SetAnim(Crossfire_Object *whoptr, PyObject *value, void *closu
 
 static int Object_SetValue(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     long val;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "l", &val))
@@ -621,6 +668,7 @@ static int Object_SetValue(Crossfire_Object *whoptr, PyObject *value, void *clos
 
 static int Object_SetOwner(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     Crossfire_Object *ob;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "O!", &Crossfire_ObjectType, &ob))
@@ -631,6 +679,7 @@ static int Object_SetOwner(Crossfire_Object *whoptr, PyObject *value, void *clos
 
 static int Object_SetEnemy(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     Crossfire_Object *ob;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "O!", &Crossfire_ObjectType, &ob))
@@ -641,6 +690,7 @@ static int Object_SetEnemy(Crossfire_Object *whoptr, PyObject *value, void *clos
 
 static int Object_SetExp(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     int64_t val;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "L", &val))
@@ -652,6 +702,7 @@ static int Object_SetExp(Crossfire_Object *whoptr, PyObject *value, void *closur
 
 static int Object_SetMoveType(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
@@ -662,6 +713,7 @@ static int Object_SetMoveType(Crossfire_Object *whoptr, PyObject *value, void *c
 
 static int Object_SetMoveBlock(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
@@ -672,6 +724,7 @@ static int Object_SetMoveBlock(Crossfire_Object *whoptr, PyObject *value, void *
 
 static int Object_SetMoveAllow(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
@@ -682,6 +735,7 @@ static int Object_SetMoveAllow(Crossfire_Object *whoptr, PyObject *value, void *
 
 static int Object_SetMoveOn(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
@@ -692,6 +746,7 @@ static int Object_SetMoveOn(Crossfire_Object *whoptr, PyObject *value, void *clo
 
 static int Object_SetMoveOff(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
@@ -702,6 +757,7 @@ static int Object_SetMoveOff(Crossfire_Object *whoptr, PyObject *value, void *cl
 
 static int Object_SetMoveSlow(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     MoveType move;
+    (void)closure;
 
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value, "B", &move))
@@ -713,6 +769,7 @@ static int Object_SetMoveSlow(Crossfire_Object *whoptr, PyObject *value, void *c
 /* Methods. */
 
 static PyObject *Crossfire_Object_Remove(Crossfire_Object *who, PyObject *args) {
+    (void)args;
     EXISTCHECK(who);
 
     if ((current_context->who != NULL) && (((Crossfire_Object *)current_context->who)->obj == who->obj))
@@ -797,6 +854,7 @@ static PyObject *Crossfire_Object_Split(Crossfire_Object *who, PyObject *args) {
 }
 
 static PyObject *Crossfire_Object_Fix(Crossfire_Object *who, PyObject *args) {
+    (void)args;
     cf_fix_object(who->obj);
     Py_INCREF(Py_None);
     return Py_None;
@@ -905,6 +963,7 @@ static PyObject *Crossfire_Object_Reposition(Crossfire_Object *who, PyObject *ar
 
 static PyObject *Crossfire_Object_QueryName(Crossfire_Object *who, PyObject *args) {
     char name[200];
+    (void)args;
 
     EXISTCHECK(who);
     return Py_BuildValue("s", cf_query_name(who->obj, name, sizeof(name)));
@@ -1170,6 +1229,7 @@ static PyObject *Crossfire_Object_AddExp(Crossfire_Object *who, PyObject *args) 
 }
 
 static PyObject *Crossfire_Object_PermExp(Crossfire_Object *who, PyObject *args) {
+    (void)args;
     EXISTCHECK(who);
     return Py_BuildValue("L", cf_object_perm_exp(who->obj));
 }
@@ -1223,6 +1283,7 @@ static PyObject *Crossfire_Object_RemoveDepletion(Crossfire_Object *who, PyObjec
 }
 
 static PyObject *Crossfire_Object_Arrest(Crossfire_Object *who, PyObject *args) {
+    (void)args;
     EXISTCHECK(who);
     return Py_BuildValue("i", cf_player_arrest(who->obj));
 }
@@ -1497,6 +1558,8 @@ static PyNumberMethods ObjectConvert = {
 
 static PyObject *Crossfire_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     Crossfire_Object *self;
+    (void)args;
+    (void)kwds;
 
     self = (Crossfire_Object *)type->tp_alloc(type, 0);
     if (self) {
@@ -1521,6 +1584,8 @@ static void Crossfire_Object_dealloc(PyObject *obj) {
 
 static PyObject *Crossfire_Player_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     Crossfire_Player *self;
+    (void)args;
+    (void)kwds;
 
     self = (Crossfire_Player *)type->tp_alloc(type, 0);
     if (self) {

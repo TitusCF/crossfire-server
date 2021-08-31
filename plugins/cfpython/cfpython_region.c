@@ -30,34 +30,42 @@
 #include <cfpython.h>
 
 static PyObject *Crossfire_Region_GetName(Crossfire_Region *regionptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("s", cf_region_get_name(regionptr->reg));
 }
 
 static PyObject *Crossfire_Region_GetLongname(Crossfire_Region *regionptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("s", cf_region_get_longname(regionptr->reg));
 }
 
 static PyObject *Crossfire_Region_GetMessage(Crossfire_Region *regionptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("s", cf_region_get_message(regionptr->reg));
 }
 
 static PyObject *Crossfire_Region_GetNext(Crossfire_Region *party, void *closure) {
+    (void)closure;
     return Crossfire_Region_wrap(cf_region_get_next(party->reg));
 }
 
 static PyObject *Crossfire_Region_GetParent(Crossfire_Region *party, PyObject *args) {
+    (void)args;
     return Crossfire_Region_wrap(cf_region_get_parent(party->reg));
 }
 
 static PyObject *Crossfire_Region_GetJailX(Crossfire_Region *regionptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("i", cf_region_get_jail_x(regionptr->reg));
 }
 
 static PyObject *Crossfire_Region_GetJailY(Crossfire_Region *regionptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("i", cf_region_get_jail_y(regionptr->reg));
 }
 
 static PyObject *Crossfire_Region_GetJailPath(Crossfire_Region *regionptr, void *closure) {
+    (void)closure;
     return Py_BuildValue("s", cf_region_get_jail_path(regionptr->reg));
 }
 
