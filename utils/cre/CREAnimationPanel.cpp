@@ -14,9 +14,11 @@ extern "C" {
 #include "assets.h"
 #include "AssetsManager.h"
 #include "Archetypes.h"
+#include "CREMapInformationManager.h"
 
-CREAnimationPanel::CREAnimationPanel(QWidget* parent) : CRETPanel(parent)
+CREAnimationPanel::CREAnimationPanel(QWidget* parent, CREMapInformationManager* maps) : CRETPanel(parent)
 {
+    myMaps = maps;
     myAnimation = 0;
 
     QGridLayout* layout = new QGridLayout(this);
@@ -83,6 +85,19 @@ void CREAnimationPanel::setItem(const Animations* animation)
                 CREUtils::artifactNode(art, root);
             }
         }
+    }
+
+    auto maps = myMaps->getAnimationUse(myAnimation);
+    for (auto map : maps)
+    {
+        if (!root)
+        {
+            root = CREUtils::mapNode(nullptr);
+            myUsing->addTopLevelItem(root);
+            root->setExpanded(true);
+        }
+
+        CREUtils::mapNode(map, root);
     }
 
     myFaces->clear();

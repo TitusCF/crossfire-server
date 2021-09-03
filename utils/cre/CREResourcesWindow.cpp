@@ -273,7 +273,7 @@ void CREResourcesWindow::fillAnimations()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     });
 
-    addPanel("Animation", new CREAnimationPanel(this));
+    addPanel("Animation", new CREAnimationPanel(this, myStore));
 }
 
 void CREResourcesWindow::fillTreasures()
@@ -477,7 +477,7 @@ void CREResourcesWindow::fillFaces()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     });
 
-    addPanel("Face", new CREFacePanel(this, myQuests));
+    addPanel("Face", new CREFacePanel(this, myQuests, myStore));
 }
 
 bool sortMapInformation(const CREMapInformation* left, const CREMapInformation* right)

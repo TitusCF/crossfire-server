@@ -14,6 +14,7 @@ extern "C" {
 #include "LicenseManager.h"
 #include "QuestManager.h"
 #include "Quest.h"
+#include "CREMapInformationManager.h"
 
 /** @todo duplication with common/image */
 static const char *const colorname[] = {
@@ -33,9 +34,10 @@ static const char *const colorname[] = {
 };
 
 
-CREFacePanel::CREFacePanel(QWidget* parent, QuestManager* quests) : CRETPanel(parent)
+CREFacePanel::CREFacePanel(QWidget* parent, QuestManager* quests, CREMapInformationManager* maps) : CRETPanel(parent)
 {
     myQuests = quests;
+    myMaps = maps;
     myFace = 0;
 
     QGridLayout* layout = new QGridLayout(this);
@@ -242,6 +244,20 @@ void CREFacePanel::setItem(const Face* face)
 
             CREUtils::questNode(quest, root);
         }
+    }
+
+    root = NULL;
+    auto maps = myMaps->getFaceUse(myFace);
+    for (const auto map : maps)
+    {
+        if (!root)
+        {
+            root = CREUtils::mapNode(nullptr);
+            myUsing->addTopLevelItem(root);
+            root->setExpanded(true);
+        }
+
+        CREUtils::mapNode(map, root);
     }
 
     myColor->setCurrentIndex(myFace->magicmap);

@@ -102,6 +102,26 @@ void CREMapInformation::addArchetype(const QString& archetype)
         myArchetypes.append(archetype);
 }
 
+QStringList CREMapInformation::faces() const
+{
+    return myFaces.values();
+}
+
+void CREMapInformation::addFace(const QString& face)
+{
+    myFaces.insert(face);
+}
+
+QStringList CREMapInformation::animations() const
+{
+    return myAnimations.values();
+}
+
+void CREMapInformation::addAnimation(const QString& anim)
+{
+    myAnimations.insert(anim);
+}
+
 const QDateTime& CREMapInformation::mapTime() const
 {
     return myMapTime;
