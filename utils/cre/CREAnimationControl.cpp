@@ -66,7 +66,7 @@ void CREAnimationControl::display(const Animations* animation, int facings)
         faceCount = animation->num_animations / 8;
     }
 
-    face = facings == -1 ? 0 : 1;;
+    face = facings == -1 ? 0 : 1;
     while (widget < 8)
     {
         myWidgets[widget]->setVisible(true);
