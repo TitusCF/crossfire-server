@@ -474,7 +474,19 @@ void CREMainWindow::onReportDuplicate()
         }
     });
 
-    QString report("<p><strong>Warning:</strong> this list doesn't take into account faces for all artifacts, especially the 'animation_suffix' ones. Also, faces and archetypes defined in maps will not be taken into account in this list.</p><h1>Faces used multiple times:</h1><ul>");
+    for (const auto map : myMapManager->allMaps())
+    {
+        for (const auto face : map->faces())
+        {
+            faces[face].append(QString(map->path()) + " (map)");
+        }
+        for (const auto animation : map->animations())
+        {
+            anims[animation].append(map->path() + " (map)");
+        }
+    }
+
+    QString report("<p><strong>Warning:</strong> this list doesn't take into account faces for all artifacts, especially the 'animation_suffix' ones.</p><h1>Faces used multiple times:</h1><ul>");
 
     QStringList keys = faces.keys();
     keys.sort();
