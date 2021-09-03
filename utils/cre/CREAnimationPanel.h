@@ -11,17 +11,19 @@ extern "C" {
 }
 
 class CREAnimationControl;
+class CREMapInformationManager;
 
 class CREAnimationPanel : public CRETPanel<const Animations>
 {
     Q_OBJECT
 
     public:
-        CREAnimationPanel(QWidget* parent);
+        CREAnimationPanel(QWidget* parent, CREMapInformationManager* myMaps);
         virtual void setItem(const Animations* animation);
 
     protected:
         const Animations* myAnimation;
+        CREMapInformationManager* myMaps;
 
         QTreeWidget* myUsing;
         QTreeWidget* myFaces;

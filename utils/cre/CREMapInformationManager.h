@@ -28,6 +28,8 @@ class CREMapInformationManager : public QObject
 
         QList<CREMapInformation*> allMaps();
         QList<CREMapInformation*> getArchetypeUse(const archetype* arch);
+        QList<CREMapInformation*> getFaceUse(const Face* face);
+        QList<CREMapInformation*> getAnimationUse(const Animations* anim);
         QList<CREMapInformation*> getMapsForRegion(const QString& region);
         QList<CRERandomMap*> randomMaps();
 
@@ -41,6 +43,8 @@ class CREMapInformationManager : public QObject
         ScriptFileManager* myScriptManager;
         QHash<QString, CREMapInformation*> myInformation;
         QMultiHash<QString, CREMapInformation*> myArchetypeUse;
+        QMultiHash<QString, CREMapInformation*> myFaceUse;
+        QMultiHash<QString, CREMapInformation*> myAnimationUse;
         QStringList myToProcess;
         int myCurrentMap;
         QFuture<void> myWorker;
@@ -50,11 +54,13 @@ class CREMapInformationManager : public QObject
 
         void browseMaps();
         void process(const QString& path);
-        void checkInventory(const object* item, CREMapInformation* information, const object* env);
+        void checkItem(const object* item, CREMapInformation* information, const object* env);
         void loadCache();
         void storeCache();
         CREMapInformation* getOrCreateMapInformation(const QString& path);
         void addArchetypeUse(const QString& name, CREMapInformation* map);
+        void addFaceUse(const QString& name, CREMapInformation* map);
+        void addAnimationUse(const QString& name, CREMapInformation* map);
         void checkEvent(const object* item, CREMapInformation* map, const object* env);
         void recurseStyleDirectory(const QString& from);
 };

@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QDateTime>
 #include <QHash>
+#include <QSet>
 
 class CRERandomMap;
 
@@ -39,6 +40,12 @@ class CREMapInformation : public QObject
 
         QStringList archetypes() const;
         void addArchetype(const QString& archetype);
+
+        QStringList faces() const;
+        void addFace(const QString& face);
+
+        QStringList animations() const;
+        void addAnimation(const QString& anim);
 
         const QDateTime& mapTime() const;
         void setMapTime(const QDateTime& date);
@@ -86,6 +93,8 @@ class CREMapInformation : public QObject
         QString myPath;
         QString myName;
         QStringList myArchetypes;
+        QSet<QString> myFaces;
+        QSet<QString> myAnimations;
         QDateTime myMapTime;
         QStringList myExitsTo;
         QStringList myAccessedFrom;

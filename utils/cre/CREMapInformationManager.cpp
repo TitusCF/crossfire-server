@@ -82,17 +82,101 @@ void CREMapInformationManager::start()
     myWorker = QtConcurrent::run(this, &CREMapInformationManager::browseMaps);
 }
 
-void CREMapInformationManager::checkInventory(const object* item, CREMapInformation* information, const object* env)
+void CREMapInformationManager::checkItem(const object* item, CREMapInformation* information, const object* env)
 {
+    archetype *arch = find_archetype(item->arch->name);
+    if (arch != NULL) {
+        addArchetypeUse(arch->name, information);
+        information->addArchetype(arch->name);
+        if (item->face && item->face != arch->clone.face)
+            addFaceUse(item->face->name, information);
+        if (item->animation && item->animation != arch->clone.animation)
+            addAnimationUse(item->animation->name, information);
+    }
+    checkEvent(item, information, env);
+
+    if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
+        char ep[500];
+        const char *start;
+
+        if (!item->slaying) {
+            ep[0] = '\0';
+            /*if (warn_no_path)
+                printf(" exit without any path at %d, %d on %s\n", item->x, item->y, info->path);*/
+        } else {
+            memset(ep, 0, 500);
+            if (strcmp(item->slaying, "/!"))
+                strcpy(ep, EXIT_PATH(item));
+            else {
+                if (!item->msg) {
+                    //printf("  random map without message in %s at %d, %d\n", info->path, item->x, item->y);
+                } else {
+                    /* Some maps have a 'exit_on_final_map' flag, ignore it. */
+                    start = strstr(item->msg, "\nfinal_map ");
+                    if (!start && strncmp(item->msg, "final_map", strlen("final_map")) == 0)
+                        /* Message start is final_map, nice */
+                        start = item->msg;
+                    if (start) {
+                        const char *end = strchr(start+1, '\n');
+
+                        start += strlen("final_map")+2;
+                        strncpy(ep, start, end-start);
+                    }
+
+                    information->addRandomMap(new CRERandomMap(information, env->x, env->y, item->msg));
+                }
+            }
+
+            if (strlen(ep)) {
+                char exit_path[500], tmppath[MAX_BUF];
+                path_combine_and_normalize(env->map->path, ep, exit_path, 500);
+                create_pathname(exit_path, tmppath, MAX_BUF);
+                if (!QFileInfo(tmppath).exists()) {
+                    printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, env->map->path, env->x, env->y);
+                } else {
+                    QString exit = exit_path;
+                    if (!myToProcess.contains(exit))
+                        myToProcess.append(exit);
+
+                    CREMapInformation* other = getOrCreateMapInformation(exit);
+                    Q_ASSERT(other);
+                    other->addAccessedFrom(exit);
+                    information->addExitTo(exit_path);
+
+#if 0
+                    link = get_map_info(exit_path);
+                    add_map(link, &info->exits_from);
+                    add_map(info, &link->exits_to);
+
+                    if (do_regions_link) {
+                        mapstruct *link = ready_map_name(exit_path, 0);
+
+                        if (link && link != m) {
+                            /* no need to link a map with itself. Also, if the exit points to the same map, we don't
+                            * want to reset it. */
+                            add_region_link(m, link, item->arch->clone.name);
+                            link->reset_time = 1;
+                            link->in_memory = MAP_IN_MEMORY;
+                            delete_map(link);
+                        }
+                    }
+#endif
+                }
+            }
+        }
+    }
+    else if (item->type == EVENT_CONNECTOR && item->subtype > 0 && item->subtype < NR_EVENTS)
+    {
+        ScriptFile* script = myScriptManager->getFile(item->slaying);
+        script->addHook(new HookInformation(information, env->x, env->y, env->name, item->title, eventNames[item->subtype]));
+    }
+
+    if (QUERY_FLAG(item, FLAG_MONSTER))
+        information->setExperience(information->experience() + item->stats.exp);
+
     FOR_INV_PREPARE(item, inv)
     {
-        archetype *arch = find_archetype(inv->arch->name);
-        if (arch != NULL) {
-            addArchetypeUse(arch->name, information);
-            information->addArchetype(arch->name);
-        }
-        checkEvent(inv, information, env);
-        checkInventory(inv, information, env);
+        checkItem(inv, information, env);
     } FOR_INV_FINISH();
 }
 
@@ -164,7 +248,6 @@ void CREMapInformationManager::process(const QString& path2)
     information->setShopMax(m->shopmax);
 
     char exit_path[500];
-    quint64 exp = 0;
 
     for (int x = 0; x < 4; x++)
         if (m->tile_path[x] != NULL) {
@@ -190,103 +273,15 @@ void CREMapInformationManager::process(const QString& path2)
         {
             FOR_MAP_PREPARE(m, x, y, item)
             {
-                {
-                    archetype *arch = find_archetype(item->arch->name);
-                    if (arch != NULL) {
-                        addArchetypeUse(arch->name, information);
-                        information->addArchetype(arch->name);
-                    }
-                }
-
-                checkInventory(item, information, item);
-
-                if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
-                    char ep[500];
-                    const char *start;
-
-                    if (!item->slaying) {
-                        ep[0] = '\0';
-                        /*if (warn_no_path)
-                            printf(" exit without any path at %d, %d on %s\n", item->x, item->y, info->path);*/
-                    } else {
-                        memset(ep, 0, 500);
-                        if (strcmp(item->slaying, "/!"))
-                            strcpy(ep, EXIT_PATH(item));
-                        else {
-                            if (!item->msg) {
-                                //printf("  random map without message in %s at %d, %d\n", info->path, item->x, item->y);
-                            } else {
-                                /* Some maps have a 'exit_on_final_map' flag, ignore it. */
-                                start = strstr(item->msg, "\nfinal_map ");
-                                if (!start && strncmp(item->msg, "final_map", strlen("final_map")) == 0)
-                                    /* Message start is final_map, nice */
-                                    start = item->msg;
-                                if (start) {
-                                    const char *end = strchr(start+1, '\n');
-
-                                    start += strlen("final_map")+2;
-                                    strncpy(ep, start, end-start);
-                                }
-
-                                information->addRandomMap(new CRERandomMap(information, x, y, item->msg));
-                            }
-                        }
-
-                        if (strlen(ep)) {
-                            path_combine_and_normalize(m->path, ep, exit_path, 500);
-                            create_pathname(exit_path, tmppath, MAX_BUF);
-                            if (!QFileInfo(tmppath).exists()) {
-                                printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, m->path, item->x, item->y);
-                            } else {
-                                QString exit = exit_path;
-                                if (!myToProcess.contains(exit))
-                                    myToProcess.append(exit);
-
-                                CREMapInformation* other = getOrCreateMapInformation(path);
-                                Q_ASSERT(other);
-                                other->addAccessedFrom(path);
-                                information->addExitTo(exit_path);
-
-#if 0
-                                link = get_map_info(exit_path);
-                                add_map(link, &info->exits_from);
-                                add_map(info, &link->exits_to);
-
-                                if (do_regions_link) {
-                                    mapstruct *link = ready_map_name(exit_path, 0);
-
-                                    if (link && link != m) {
-                                        /* no need to link a map with itself. Also, if the exit points to the same map, we don't
-                                        * want to reset it. */
-                                        add_region_link(m, link, item->arch->clone.name);
-                                        link->reset_time = 1;
-                                        link->in_memory = MAP_IN_MEMORY;
-                                        delete_map(link);
-                                    }
-                                }
-#endif
-                            }
-                        }
-                    }
-                }
-                else if (item->type == EVENT_CONNECTOR && item->subtype > 0 && item->subtype < NR_EVENTS)
-                {
-                    ScriptFile* script = myScriptManager->getFile(item->slaying);
-                    script->addHook(new HookInformation(information, x, y, item->name, item->title, eventNames[item->subtype]));
-                }
-
-                if (QUERY_FLAG(item, FLAG_MONSTER))
-                    exp += item->stats.exp;
+                checkItem(item, information, item);
             } FOR_MAP_FINISH();
         }
     }
 
-    information->setExperience(exp);
-
     QMutexLocker lock(&myLock);
     if (m->region == NULL)
         qDebug() << "map without region" << m->name << m->path;
-    myExperience[m->region ? m->region->name : "(undefined)"] += exp;
+    myExperience[m->region ? m->region->name : "(undefined)"] += information->experience();
 
     m->reset_time = 1;
     m->in_memory = MAP_IN_MEMORY;
@@ -365,6 +360,18 @@ QList<CREMapInformation*> CREMapInformationManager::getArchetypeUse(const archet
     return myArchetypeUse.values(arch->name);
 }
 
+QList<CREMapInformation*> CREMapInformationManager::getFaceUse(const Face* face)
+{
+    QMutexLocker lock(&myLock);
+    return myFaceUse.values(face->name);
+}
+
+QList<CREMapInformation*> CREMapInformationManager::getAnimationUse(const Animations* animation)
+{
+    QMutexLocker lock(&myLock);
+    return myAnimationUse.values(animation->name);
+}
+
 void CREMapInformationManager::loadCache()
 {
     Q_ASSERT(myInformation.isEmpty());
@@ -438,6 +445,20 @@ void CREMapInformationManager::loadCache()
             QString arch = reader.readElementText();
             map->addArchetype(arch);
             addArchetypeUse(arch, map);
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "face")
+        {
+            QString face = reader.readElementText();
+            map->addFace(face);
+            addFaceUse(face, map);
+            continue;
+        }
+        if (reader.isStartElement() && reader.name() == "animation")
+        {
+            QString anim = reader.readElementText();
+            map->addAnimation(anim);
+            addAnimationUse(anim, map);
             continue;
         }
         if (reader.isStartElement() && reader.name() == "exitTo")
@@ -557,6 +578,14 @@ void CREMapInformationManager::storeCache()
         {
             writer.writeTextElement("arch", arch);
         }
+        foreach(QString face, map->faces())
+        {
+            writer.writeTextElement("face", face);
+        }
+        foreach(QString anim, map->animations())
+        {
+            writer.writeTextElement("animation", anim);
+        }
         foreach(QString path, map->exitsTo())
         {
             writer.writeTextElement("exitTo", path);
@@ -656,6 +685,20 @@ void CREMapInformationManager::addArchetypeUse(const QString& name, CREMapInform
     QMutexLocker lock(&myLock);
     if (!myArchetypeUse.values(name).contains(map))
         myArchetypeUse.insert(name, map);
+}
+
+void CREMapInformationManager::addFaceUse(const QString& name, CREMapInformation* map)
+{
+    QMutexLocker lock(&myLock);
+    if (!myFaceUse.values(name).contains(map))
+        myFaceUse.insert(name, map);
+}
+
+void CREMapInformationManager::addAnimationUse(const QString& name, CREMapInformation* map)
+{
+    QMutexLocker lock(&myLock);
+    if (!myAnimationUse.values(name).contains(map))
+        myAnimationUse.insert(name, map);
 }
 
 void CREMapInformationManager::checkEvent(const object* item, CREMapInformation* map, const object* env)
