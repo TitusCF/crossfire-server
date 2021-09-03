@@ -89,9 +89,15 @@ void CREMapInformationManager::checkItem(const object* item, CREMapInformation* 
         addArchetypeUse(arch->name, information);
         information->addArchetype(arch->name);
         if (item->face && item->face != arch->clone.face)
+        {
             addFaceUse(item->face->name, information);
+            information->addFace(item->face->name);
+        }
         if (item->animation && item->animation != arch->clone.animation)
+        {
             addAnimationUse(item->animation->name, information);
+            information->addAnimation(item->animation->name);
+        }
     }
     checkEvent(item, information, env);
 
