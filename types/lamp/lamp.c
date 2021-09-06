@@ -31,7 +31,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret lamp_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
+static method_ret lamp_type_apply(object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the LAMP object type.
@@ -93,8 +93,6 @@ static void do_turn(object *op, object *who, int aflags, const char *onoff) {
 /**
  * Applies a lamp.
  *
- * @param context
- * method context.
  * @param lamp
  * lamp to turn on/off.
  * @param applier
@@ -104,7 +102,7 @@ static void do_turn(object *op, object *who, int aflags, const char *onoff) {
  * @return
  * METHOD_ERROR if lamp can't be applied, METHOD_OK else.
  */
-static method_ret lamp_type_apply(ob_methods *context, object *lamp, object *applier, int aflags) {
+static method_ret lamp_type_apply(object *lamp, object *applier, int aflags) {
     object *tmp;
 
     if (object_get_player_container(lamp) != applier) {

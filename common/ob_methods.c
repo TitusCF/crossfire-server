@@ -50,7 +50,7 @@ method_ret ob_apply(object *op, object *applier, int aflags) {
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->apply) {
-            ret = methods->apply(methods, op, applier, aflags);
+            ret = methods->apply(op, applier, aflags);
             if (ret != METHOD_UNHANDLED)
                 return ret;
         }
@@ -70,7 +70,7 @@ method_ret ob_process(object *op) {
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->process) {
-            ret = methods->process(methods, op);
+            ret = methods->process(op);
             if (ret != METHOD_UNHANDLED)
                 return ret;
         }
@@ -93,7 +93,7 @@ char *ob_describe(const object *op, const object *observer, int use_media_tags, 
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->describe) {
-            methods->describe(methods, op, observer, use_media_tags, buf, size);
+            methods->describe(op, observer, use_media_tags, buf, size);
             return buf;
         }
     }
@@ -114,7 +114,7 @@ method_ret ob_move_on(object *op, object *victim, object *originator) {
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->move_on) {
-            ret = methods->move_on(methods, op, victim, originator);
+            ret = methods->move_on(op, victim, originator);
             if (ret != METHOD_UNHANDLED)
                 return ret;
         }
@@ -136,7 +136,7 @@ method_ret ob_trigger(object *op, object *cause, int state) {
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->trigger) {
-            ret = methods->trigger(methods, op, cause, state);
+            ret = methods->trigger(op, cause, state);
             if (ret != METHOD_UNHANDLED)
                 return ret;
         }

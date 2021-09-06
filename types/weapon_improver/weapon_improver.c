@@ -24,7 +24,7 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret weapon_improver_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret weapon_improver_type_apply(object *op, object *applier, int aflags);
 static int check_item(object *op, const char *item);
 static void eat_item(object *op, const char *item, uint32_t nrof);
 static int check_sacrifice(object *op, const object *improver);
@@ -41,14 +41,13 @@ void init_type_weapon_improver(void) {
 
 /**
  * Attempts to apply weapon_improver.
- * @param context The method context
  * @param op The weapon_improver to apply
  * @param applier The object attempting to apply the weapon_improver. Ignored unless
  * a player
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is METHOD_OK unless it fails to apply.
  */
-static method_ret weapon_improver_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret weapon_improver_type_apply(object *op, object *applier, int aflags) {
     object *oop;
 
     if (applier->type != PLAYER)

@@ -31,8 +31,8 @@
 #include <sproto.h>
 
 static void apply_sign(object *sign, object *op, int autoapply);
-static method_ret sign_type_apply(ob_methods *context, object *op, object *applier, int aflags);
-static method_ret sign_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
+static method_ret sign_type_apply(object *op, object *applier, int aflags);
+static method_ret sign_type_move_on(object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the SIGN object type.
@@ -91,30 +91,28 @@ static void apply_sign(object *sign, object *op, int autoapply) {
 
 /**
  * Attempts to apply a sign.
- * @param context The method context
  * @param op The Sign to apply
  * @param applier The object attempting to apply the Sign
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret sign_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret sign_type_apply(object *op, object *applier, int aflags) {
     apply_sign(op, applier, 0);
     return METHOD_OK;
 }
 
 /**
  * Move on this Sign object.
- * @param context The method context
  * @param trap The Sign we're moving on
  * @param victim The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret sign_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+static method_ret sign_type_move_on(object *trap, object *victim, object *originator) {
     if (victim->type == TRANSPORT) {
         // Read sign or magic mouth out for everyone in transport
         FOR_INV_PREPARE(victim, inv) {
-            sign_type_move_on(context, trap, inv, originator);
+            sign_type_move_on(trap, inv, originator);
         } FOR_INV_FINISH();
     }
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)

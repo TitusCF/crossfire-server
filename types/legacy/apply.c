@@ -46,7 +46,7 @@
  * them in this function - they are passed to apply_special
  */
 
-method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int aflags) {
+method_ret legacy_ob_apply(object *op, object *applier, int aflags) {
     switch (op->type) {
         /* Eneq(at)(csd.uu.se): Handle apply on containers. */
     case CLOSE_CON:

@@ -31,8 +31,8 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret trigger_type_apply(ob_methods *context, object *op, object *applier, int aflags);
-static method_ret trigger_type_process(ob_methods *context, object *op);
+static method_ret trigger_type_apply(object *op, object *applier, int aflags);
+static method_ret trigger_type_process(object *op);
 
 /**
  * Initializer for the TRIGGER object type.
@@ -50,7 +50,7 @@ void init_type_trigger(void) {
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always 1
  */
-static method_ret trigger_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret trigger_type_apply(object *op, object *applier, int aflags) {
     if (check_trigger(op, applier)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
             "You turn the handle.");
@@ -68,7 +68,7 @@ static method_ret trigger_type_apply(ob_methods *context, object *op, object *ap
  * @param op The Trigger to process
  * @return Always METHOD_OK
  */
-static method_ret trigger_type_process(ob_methods *context, object *op) {
+static method_ret trigger_type_process(object *op) {
     if ((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op)) {
         op->stats.wc = 0;
         check_trigger(op, NULL);

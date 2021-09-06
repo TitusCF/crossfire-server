@@ -31,8 +31,8 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret mood_floor_type_process(ob_methods *context, object *op);
-static method_ret mood_floor_type_trigger(ob_methods *context, object *op, object *cause, int state);
+static method_ret mood_floor_type_process(object *op);
+static method_ret mood_floor_type_trigger(object *op, object *cause, int state);
 
 /**
  * Initializer for the @ref page_type_65 "mood floor" object type.
@@ -145,24 +145,22 @@ static void do_mood_floor(object *op, object *op2) {
 
 /**
  * Processes a @ref page_type_65 "mood floor".
- * @param context The method context
  * @param op The mood_floor to process
  * @retval METHOD_OK
  */
-static method_ret mood_floor_type_process(ob_methods *context, object *op) {
+static method_ret mood_floor_type_process(object *op) {
     do_mood_floor(op, op);
     return METHOD_OK;
 }
 
 /**
  * A @ref page_type_65 "mood floor" is triggered.
- * @param context Ignored.
  * @param op The object being triggered
  * @param cause Ignored.
  * @param state Ignored.
  * @retval METHOD_OK
  */
-static method_ret mood_floor_type_trigger(ob_methods *context, object *op, object *cause, int state) {
+static method_ret mood_floor_type_trigger(object *op, object *cause, int state) {
     if (state) {
         do_mood_floor(op, cause);
     }

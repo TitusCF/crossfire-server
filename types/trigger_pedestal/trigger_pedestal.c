@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret trigger_pedestal_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
+static method_ret trigger_pedestal_type_move_on(object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the TRIGGER_PEDESTAL object type.
@@ -41,13 +41,12 @@ void init_type_trigger_pedestal(void) {
 
 /**
  * Move on this Trigger Pedestal object.
- * @param context The method context
  * @param trap The Trigger Pedestal we're moving on
  * @param victim The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret trigger_pedestal_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+static method_ret trigger_pedestal_type_move_on(object *trap, object *victim, object *originator) {
     trap = HEAD(trap);
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;

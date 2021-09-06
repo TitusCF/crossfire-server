@@ -24,8 +24,8 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret exit_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
-static method_ret exit_type_apply(ob_methods *context, object *exit, object *op, int autoapply);
+static method_ret exit_type_move_on(object *trap, object *victim, object *originator);
+static method_ret exit_type_apply(object *exit, object *op, int autoapply);
 
 /**
  * Initializer for the EXIT object type.
@@ -37,13 +37,12 @@ void init_type_exit(void) {
 
 /**
  * Move on this Exit object.
- * @param context The method context
  * @param trap The Exit we're moving on
  * @param victim The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret exit_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+static method_ret exit_type_move_on(object *trap, object *victim, object *originator) {
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     if (victim->type == PLAYER && EXIT_PATH(trap)) {
@@ -145,13 +144,12 @@ static int is_legal_2ways_exit(object *op, object *exit) {
 
 /**
  * Handles applying an exit.
- * @param context The method context
  * @param exit The exit applied
  * @param op The object applying the exit
  * @param autoapply Set this to 1 to automatically apply the sign
  * @return METHOD_OK unless op is not a player, in which case METHOD_ERROR
  */
-static method_ret exit_type_apply(ob_methods *context, object *exit, object *op, int autoapply) {
+static method_ret exit_type_apply(object *exit, object *op, int autoapply) {
     if (op->type != PLAYER)
         return METHOD_ERROR;
     if (!EXIT_PATH(exit) || !is_legal_2ways_exit(op, exit)) {

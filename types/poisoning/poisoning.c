@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret poisoning_type_process(ob_methods *context, object *op);
+static method_ret poisoning_type_process(object *op);
 
 /**
  * Initializer for the poisoning object type.
@@ -45,7 +45,7 @@ void init_type_poisoning(void) {
  * @param op The poisoning that's being processed.
  * @return METHOD_OK normally. METHOD_ERROR if POISONING is in an invalid env.
  */
-static method_ret poisoning_type_process(ob_methods *context, object *op) {
+static method_ret poisoning_type_process(object *op) {
     if (op->env == NULL
     || !QUERY_FLAG(op->env, FLAG_ALIVE)
     || op->env->stats.hp < 0) {

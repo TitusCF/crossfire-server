@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret treasure_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret treasure_type_apply(object *op, object *applier, int aflags);
 
 /**
  * Initializer for the TREASURE object type.
@@ -41,14 +41,13 @@ void init_type_treasure(void) {
 
 /**
  * Attempts to apply treasure.
- * @param context The method context
  * @param op The treasure to apply
  * @param applier The object attempting to apply the treasure. Ignored unless
  * a player
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret treasure_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret treasure_type_apply(object *op, object *applier, int aflags) {
     object *treas;
     tag_t op_tag = op->count, applier_tag = applier->count;
     char name[MAX_BUF], container_name[MAX_BUF];

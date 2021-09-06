@@ -29,7 +29,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret clock_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret clock_type_apply(object *op, object *applier, int aflags);
 
 /**
  * Initializer for the CLOCK object type.
@@ -40,14 +40,13 @@ void init_type_clock(void) {
 
 /**
  * Handles using a clock.
- * @param context The method context
  * @param op The clock to apply
  * @param applier The object attempting to view the clock
  * @param aflags Special flags (always apply/unapply)
  * @retval METHOD_UNHANDLED If the clock wasn't viewed by a player
  * @retval METHOD_OK If applier was a player
  */
-static method_ret clock_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret clock_type_apply(object *op, object *applier, int aflags) {
     if (applier->type == PLAYER) {
         timeofday_t tod;
         char buf1[128];

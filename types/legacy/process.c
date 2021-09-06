@@ -28,7 +28,7 @@
 /** @file process.c
  * Legacy implementation of the process method.
  */
-method_ret legacy_ob_process(ob_methods *context, object *op) {
+method_ret legacy_ob_process(object *op) {
     switch (op->type) {
     case ROD:
         regenerate_rod(op);

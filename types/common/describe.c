@@ -27,14 +27,13 @@
 
 /**
  * Describes an object, seen by a given observer.
- * @param context The method context
  * @param op The object to describe
  * @param observer The object to make the description to
  * @param use_media_tags If set then media tags may be used in the description
  * @param buf Buffer that will contain the description
  * @param size buf's size.
  */
-void common_ob_describe(const ob_methods *context, const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
+void common_ob_describe(const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
     char *desc;
 
     buf[0] = '\0';

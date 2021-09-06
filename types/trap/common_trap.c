@@ -32,13 +32,12 @@
 
 /**
  * Move on this Rune or Trap object.
- * @param context The method context
  * @param trap The rune or trap we're moving on
  * @param victim The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret common_trap_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+method_ret common_trap_type_move_on(object *trap, object *victim, object *originator) {
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     if (trap->level && QUERY_FLAG(victim, FLAG_ALIVE))
@@ -59,11 +58,10 @@ method_ret common_trap_type_move_on(ob_methods *context, object *trap, object *v
  *    rune->other_arch:       spell in the rune
  *    rune->Cha       :       how hidden the rune is
  *    rune->maxhp     :       number of spells the rune casts
- * @param context The method context
  * @param op The rune or trap to process
  * @return Always METHOD_OK
  */
-method_ret common_trap_type_process(ob_methods *context, object *op) {
+method_ret common_trap_type_process(object *op) {
     int det = 0;
 
     if (!op->level) {

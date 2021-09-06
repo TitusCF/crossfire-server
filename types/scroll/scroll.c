@@ -29,7 +29,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret scroll_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret scroll_type_apply(object *op, object *applier, int aflags);
 
 /**
  * Initializer for the scroll object type.
@@ -40,8 +40,6 @@ void init_type_scroll(void) {
 
 /**
  * Handles reading a spell scroll.
- * @param context
- * The method context
  * @param scroll
  * The scroll to apply
  * @param applier
@@ -54,7 +52,7 @@ void init_type_scroll(void) {
  * @todo
  * Tweak failure parameters.
  */
-static method_ret scroll_type_apply(ob_methods *context, object *scroll,
+static method_ret scroll_type_apply(object *scroll,
     object *applier, int aflags) {
     object *skapplier;
     object *head;

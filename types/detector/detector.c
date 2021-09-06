@@ -25,7 +25,7 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret detector_type_process(ob_methods *context, object *op);
+static method_ret detector_type_process(object *op);
 
 /**
  * Initializer for the @ref page_type_51 "detector" object type.
@@ -110,11 +110,10 @@ static void move_detector(object *op) {
 
 /**
  * Processes a @ref page_type_51 "detector".
- * @param context The method context, ignored
  * @param op The detector to process
  * @retval METHOD_OK
  */
-static method_ret detector_type_process(ob_methods *context, object *op) {
+static method_ret detector_type_process(object *op) {
     move_detector(op);
     return METHOD_OK;
 }

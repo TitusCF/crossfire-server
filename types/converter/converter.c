@@ -69,7 +69,7 @@ static int wildcard_match(const char *string,const char *candidate)
    return ret;
 }
 
-static method_ret converter_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
+static method_ret converter_type_move_on(object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the CONVERTER object type.
@@ -180,13 +180,12 @@ static int convert_item(object *item, object *converter) {
 
 /**
  * Move on this Converter object.
- * @param context The method context
  * @param trap The Converter we're moving on
  * @param victim The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret converter_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+static method_ret converter_type_move_on(object *trap, object *victim, object *originator) {
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     if (convert_item(victim, trap) < 0) {

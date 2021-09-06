@@ -25,7 +25,7 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret duplicator_type_trigger(ob_methods *context, object *op, object *cause, int state);
+static method_ret duplicator_type_trigger(object *op, object *cause, int state);
 
 /**
  * Initializer for the @ref page_type_83 "duplicator" object type.
@@ -77,13 +77,12 @@ static void move_duplicator(object *op) {
 
 /**
  * A @ref page_type_83 "duplicator" is triggered.
- * @param context Ignored.
  * @param op The duplicator being triggered
  * @param cause Ignored.
  * @param state Ignored.
  * @retval METHOD_OK
  */
-static method_ret duplicator_type_trigger(ob_methods *context, object *op, object *cause, int state) {
+static method_ret duplicator_type_trigger(object *op, object *cause, int state) {
     if (state) {
         move_duplicator(op);
     }

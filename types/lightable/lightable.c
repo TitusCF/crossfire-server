@@ -24,7 +24,7 @@
 #include "ob_methods.h"
 #include "sproto.h"
 
-static method_ret lightable_type_apply(ob_methods *context, object *lightable, object *applier, int aflags);
+static method_ret lightable_type_apply(object *lightable, object *applier, int aflags);
 
 /**
  * Initializer for the LIGHTABLE object type.
@@ -36,8 +36,6 @@ void init_type_lightable(void) {
 /**
  * Attempt to find a lighter, wielded fire weapon, or fire spell to light with.
  *
- * @param context
- * method context
  * @param lightable
  * The lightable object we applied.
  * @param applier
@@ -50,7 +48,7 @@ void init_type_lightable(void) {
  * METHOD_OK. Even when we fail to light the object,
  * we did handle the apply, so it would not be unhandled.
  */
-static method_ret lightable_type_apply(ob_methods *context, object *lightable, object *applier, int aflags){
+static method_ret lightable_type_apply(object *lightable, object *applier, int aflags){
     // We will find our lighter tool with this.
     // Note that we can use some things with fire attacktype that aren't lighters, because reasons.
     // wannabe_tool is used as a kind of temporary storage for tools that may become the selected tool, but might not as well.

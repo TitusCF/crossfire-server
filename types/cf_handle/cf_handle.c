@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret cf_handle_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret cf_handle_type_apply(object *op, object *applier, int aflags);
 
 /**
  * Initializer for the CF_HANDLE object type.
@@ -41,13 +41,12 @@ void init_type_cf_handle(void) {
 
 /**
  * Attempts to apply a handle.
- * @param context The method context
  * @param op The handle to apply
  * @param applier The object attempting to apply the handle.
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret cf_handle_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret cf_handle_type_apply(object *op, object *applier, int aflags) {
     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "You turn the handle.");
     play_sound_map(SOUND_TYPE_ITEM, op, 0, "turn handle");
