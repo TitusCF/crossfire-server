@@ -49,6 +49,7 @@ void init_type_book(void) {
 static method_ret book_type_apply(object *op, object *applier, int aflags) {
     int lev_diff;
     object *skill_ob;
+    (void)aflags;
 
     if (applier->type != PLAYER)
         return METHOD_UNHANDLED;

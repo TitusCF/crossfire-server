@@ -51,6 +51,7 @@ static method_ret treasure_type_apply(object *op, object *applier, int aflags) {
     object *treas;
     tag_t op_tag = op->count, applier_tag = applier->count;
     char name[MAX_BUF], container_name[MAX_BUF];
+    (void)aflags;
 
     if (applier->type == PLAYER) {
          /* Nice side effect of new treasure creation method is that the

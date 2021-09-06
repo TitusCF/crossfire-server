@@ -44,6 +44,7 @@ void init_type_potion(void) {
 static method_ret potion_type_apply(object *potion, object *applier, int aflags) {
     int got_one = 0, i;
     object *force;
+    (void)aflags;
 
     if (applier->type == PLAYER) {
         if (!QUERY_FLAG(potion, FLAG_IDENTIFIED))

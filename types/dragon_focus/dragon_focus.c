@@ -49,6 +49,7 @@ void init_type_dragon_focus(void) {
  * @return METHOD_OK unless failure for some reason.
  */
 static method_ret dragon_focus_type_apply(object *focus, object *applier, int aflags) {
+    (void)aflags;
 
     object *abil = NULL;    /* pointer to dragon ability force*/
 

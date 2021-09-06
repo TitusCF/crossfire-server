@@ -136,6 +136,7 @@ static method_ret teleporter_type_process(object *op) {
  * @retval METHOD_OK
  */
 static method_ret teleporter_type_trigger(object *op, object *cause, int state) {
+    (void)cause;
     if (state) {
         move_teleporter(op);
     }

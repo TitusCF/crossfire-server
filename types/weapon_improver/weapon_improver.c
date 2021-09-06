@@ -49,6 +49,7 @@ void init_type_weapon_improver(void) {
  */
 static method_ret weapon_improver_type_apply(object *op, object *applier, int aflags) {
     object *oop;
+    (void)aflags;
 
     if (applier->type != PLAYER)
         return METHOD_ERROR;

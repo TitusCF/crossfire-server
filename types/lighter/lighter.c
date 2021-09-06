@@ -51,6 +51,7 @@ void init_type_lighter(void) {
  */
 static method_ret lighter_type_apply(object *lighter, object *applier, int aflags) {
     object *item;
+    (void)aflags;
 
     if (applier->type != PLAYER)
         return METHOD_UNHANDLED;

@@ -47,6 +47,7 @@ void init_type_cf_handle(void) {
  * @return The return value is always METHOD_OK
  */
 static method_ret cf_handle_type_apply(object *op, object *applier, int aflags) {
+    (void)aflags;
     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "You turn the handle.");
     play_sound_map(SOUND_TYPE_ITEM, op, 0, "turn handle");

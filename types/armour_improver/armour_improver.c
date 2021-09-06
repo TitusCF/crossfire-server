@@ -142,6 +142,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
  */
 static method_ret armour_improver_type_apply(object *scroll, object *applier, int aflags) {
     object *armor;
+    (void)aflags;
 
     if (applier->type != PLAYER)
         return METHOD_UNHANDLED;

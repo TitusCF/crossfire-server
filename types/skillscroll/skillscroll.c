@@ -54,6 +54,7 @@ void init_type_skillscroll(void) {
  */
 static method_ret skillscroll_type_apply(object *scroll, object *applier, int aflags) {
     char name[MAX_BUF];
+    (void)aflags;
 
     /* Must be applied by a player. */
     if (applier->type == PLAYER) {

@@ -120,6 +120,8 @@ static method_ret shop_inventory_type_apply(object *lighter, object *applier, in
     size_t i, j, numitems = 0, numallocated = 0;
     object *stack;
     shopinv *items;
+    (void)lighter;
+    (void)aflags;
 
     if (applier->type != PLAYER)
         return METHOD_UNHANDLED;

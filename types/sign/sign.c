@@ -50,6 +50,7 @@ void init_type_sign(void) {
  */
 static void apply_sign(object *sign, object *op, int autoapply) {
     const readable_message_type *msgType;
+    (void)autoapply;
 
     if (sign->msg == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
@@ -97,6 +98,7 @@ static void apply_sign(object *sign, object *op, int autoapply) {
  * @return The return value is always METHOD_OK
  */
 static method_ret sign_type_apply(object *op, object *applier, int aflags) {
+    (void)aflags;
     apply_sign(op, applier, 0);
     return METHOD_OK;
 }

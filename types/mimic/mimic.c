@@ -59,6 +59,7 @@ static inline const char *object_try_get_value(object *op, const char *key) {
  * @retval METHOD_OK If a player does the opening.
  */
 static method_ret mimic_type_apply(object *op, object *applier, int aflags) {
+    (void)aflags;
     if (applier->type == PLAYER) {
 
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, "Ah! It's alive!");

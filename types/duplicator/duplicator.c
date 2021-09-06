@@ -83,6 +83,7 @@ static void move_duplicator(object *op) {
  * @retval METHOD_OK
  */
 static method_ret duplicator_type_trigger(object *op, object *cause, int state) {
+    (void)cause;
     if (state) {
         move_duplicator(op);
     }
