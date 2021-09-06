@@ -20,6 +20,7 @@
 #include "global.h"
 
 #include <assert.h>
+#include <ctype.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -256,7 +257,7 @@ int playername_ok(const char *cp) {
         return 0;
 
     for (; *cp != '\0'; cp++)
-        if (!((*cp >= 'a' && *cp <= 'z') || (*cp >= 'A' && *cp <= 'Z'))
+        if (!isalnum(*cp)
         && *cp != '-'
         && *cp != '_')
             return 0;
