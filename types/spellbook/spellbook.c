@@ -35,9 +35,9 @@
 
 #include "living.h"
 
-static method_ret spellbook_type_apply(ob_methods *context, object *book, object *applier, int aflags);
+static method_ret spellbook_type_apply(object *book, object *applier, int aflags);
 static void spellbook_type_describe(
-    const ob_methods *context, const object *book, const object *observer,
+    const const object *book, const object *observer,
     const int use_media_tags, char *buf, const size_t size);
 
 /**
@@ -134,8 +134,6 @@ static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell)
  *
  * If identified, displays the level and description of the spell inside it.
  *
- * @param context
- * method context.
  * @param book
  * Spellbook to describe
  * @param observer
@@ -148,7 +146,7 @@ static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell)
  * Total output buffer size
  */
 static void spellbook_type_describe(
-        const ob_methods *context, const object *book, const object *observer,
+        const const object *book, const object *observer,
         const int use_media_tags, char *buf, size_t size) {
     if (!is_identified(book)) {
         /* Without querying the name, spellbooks end up examining
@@ -164,7 +162,7 @@ static void spellbook_type_describe(
     size_t len;
     /* TODO check if this generates the "of foo" so we don't end up with
     "spellbook of medium fireball of medium fireball" I think it probably does */
-    common_ob_describe(context, book, observer, use_media_tags, buf, size);
+    common_ob_describe(book, observer, use_media_tags, buf, size);
     len = strlen(buf);
 
     const object *spell = book->inv;
@@ -186,8 +184,6 @@ static void spellbook_type_describe(
  * Checks whether player has knowledge of required skill, doesn't
  * already know the spell, stuff like that. Random learning failure too.
  *
- * @param context
- * method context.
  * @param book
  * Spellbook to apply.
  * @param applier
@@ -202,7 +198,7 @@ static void spellbook_type_describe(
  * @todo
  * split into multiple functions
  */
-static method_ret spellbook_type_apply(ob_methods *context, object *book, object *applier, int aflags) {
+static method_ret spellbook_type_apply(object *book, object *applier, int aflags) {
     object *skapplier, *spell, *spell_skill;
 
     /* Must be applied by a player. */

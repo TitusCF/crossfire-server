@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret armour_improver_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
+static method_ret armour_improver_type_apply(object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the ARMOUR_IMPROVER object type.
@@ -131,8 +131,6 @@ static void improve_armour(object *op, object *improver, object *armour) {
 /**
  * Applies a scroll of Enchant Armour.
  *
- * @param context
- * method context.
  * @param scroll
  * scroll to apply.
  * @param applier
@@ -142,7 +140,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
  * @return
  * METHOD_OK if applier is a player, METHOD_UNHANDLED else.
  */
-static method_ret armour_improver_type_apply(ob_methods *context, object *scroll, object *applier, int aflags) {
+static method_ret armour_improver_type_apply(object *scroll, object *applier, int aflags) {
     object *armor;
 
     if (applier->type != PLAYER)

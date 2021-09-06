@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret identify_altar_type_move_on(ob_methods *context, object *altar, object *money, object *originator);
+static method_ret identify_altar_type_move_on(object *altar, object *money, object *originator);
 
 /**
  * Initializer for the IDENTIFY_ALTAR object type.
@@ -41,13 +41,12 @@ void init_type_identify_altar(void) {
 
 /**
  * Move on this Altar Identifier object.
- * @param context The method context
  * @param altar The Altar Identifier we're moving on
  * @param money The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret identify_altar_type_move_on(ob_methods *context, object *altar, object *money, object *originator) {
+static method_ret identify_altar_type_move_on(object *altar, object *money, object *originator) {
     object *marked;
     int success = 0;
     char desc[MAX_BUF];

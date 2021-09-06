@@ -30,8 +30,8 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret deep_swamp_type_process(ob_methods *context, object *op);
-static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
+static method_ret deep_swamp_type_process(object *op);
+static method_ret deep_swamp_type_move_on(object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the DEEP_SWAMP object type.
@@ -43,11 +43,10 @@ void init_type_deep_swamp(void) {
 
 /**
  * Processes a Deep Swamp.
- * @param context The method context
  * @param op The swamp to process
  * @return Always METHOD_OK
  */
-static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
+static method_ret deep_swamp_type_process(object *op) {
     object *above = op->above;
     object *nabove;
     int got_player = 0;
@@ -107,13 +106,12 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
 
 /**
  * Move on this Deep Swamp object.
- * @param context The method context
  * @param trap The Deep Swamp we're moving on
  * @param victim The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+static method_ret deep_swamp_type_move_on(object *trap, object *victim, object *originator) {
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     if (victim->type == PLAYER

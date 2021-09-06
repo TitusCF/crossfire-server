@@ -35,7 +35,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-static method_ret mimic_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret mimic_type_apply(object *op, object *applier, int aflags);
 
 /**
  * Initializer for MIMIC type.
@@ -52,14 +52,13 @@ static inline const char *object_try_get_value(object *op, const char *key) {
 /**
  * Handles applying a mimic.
  * It just becomes a monster and gains an animation.
- * @param context The method context
  * @param op The object being applied
  * @param applier The object doing the applying
  * @param aflags Special flags
  * @retval METHOD_UNHANDLED If a non-player tries to open it.
  * @retval METHOD_OK If a player does the opening.
  */
-static method_ret mimic_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret mimic_type_apply(object *op, object *applier, int aflags) {
     if (applier->type == PLAYER) {
 
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, "Ah! It's alive!");

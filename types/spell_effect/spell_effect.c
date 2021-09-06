@@ -31,8 +31,8 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret spell_effect_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
-static method_ret spell_effect_type_process(ob_methods *context, object *op);
+static method_ret spell_effect_type_move_on(object *trap, object *victim, object *originator);
+static method_ret spell_effect_type_process(object *op);
 
 static void move_bolt(object *op);
 static void move_bullet(object *op);
@@ -58,13 +58,12 @@ void init_type_spell_effect(void) {
 
 /**
  * Move on this Spell Effect object.
- * @param context The method context
  * @param trap The Spell Effect we're moving on
  * @param victim The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret spell_effect_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+static method_ret spell_effect_type_move_on(object *trap, object *victim, object *originator) {
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
 
@@ -101,11 +100,10 @@ static method_ret spell_effect_type_move_on(ob_methods *context, object *trap, o
 
 /**
  * Handle ob_process for all SPELL_EFFECT objects.
- * @param context The method context
  * @param op The spell effect that's being processed.
  * @return METHOD_OK
  */
-static method_ret spell_effect_type_process(ob_methods *context, object *op) {
+static method_ret spell_effect_type_process(object *op) {
     switch (op->subtype) {
     case SP_BOLT:
         move_bolt(op);

@@ -31,7 +31,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret blindness_type_process(ob_methods *context, object *op);
+static method_ret blindness_type_process(object *op);
 
 /**
  * Initializer for the blindness object type.
@@ -44,11 +44,10 @@ void init_type_blindness(void) {
  * Move for ::BLINDNESS.
  * If blindness is finished, remove it from the victim's inventory.
  *
- * @param context The method context.
  * @param op Blindness being processed.
  * @return METHOD_OK
  */
-static method_ret blindness_type_process(ob_methods *context, object *op) {
+static method_ret blindness_type_process(object *op) {
     if (--op->stats.food > 0)
         return METHOD_OK;
     CLEAR_FLAG(op, FLAG_APPLIED);

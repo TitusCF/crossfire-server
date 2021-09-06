@@ -26,7 +26,7 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
+static method_ret shop_inventory_type_apply(object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the SHOP_INVENTORY object type.
@@ -107,8 +107,6 @@ static void add_shop_item(object *tmp, shopinv *items, size_t *numitems) {
 /**
  * Apply a shop inventory.
  *
- * @param context
- * method context.
  * @param lighter
  * applied object to apply.
  * @param applier
@@ -118,7 +116,7 @@ static void add_shop_item(object *tmp, shopinv *items, size_t *numitems) {
  * @return
  * METHOD_OK if applier is a player, METHOD_UNHANDLED else.
  */
-static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter, object *applier, int aflags) {
+static method_ret shop_inventory_type_apply(object *lighter, object *applier, int aflags) {
     size_t i, j, numitems = 0, numallocated = 0;
     object *stack;
     shopinv *items;

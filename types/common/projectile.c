@@ -68,13 +68,12 @@ void stop_projectile(object *op) {
 
 /**
  * Move an arrow or thrown object along its course.
- * @param context The method context
  * @param op The arrow or thrown object being moved.
  * @todo Split this function up.
  * @return METHOD_ERROR if op is not in a map, otherwise METHOD_OK
  */
 
-method_ret common_process_projectile(ob_methods *context, object *op) {
+method_ret common_process_projectile(object *op) {
     object *tmp;
     int16_t new_x, new_y;
     int mflags;
@@ -214,13 +213,12 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 
 /**
  * Move on this Thrown Object object.
- * @param context The method context
  * @param trap The thrown object or arrow we're moving on
  * @param victim The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret common_projectile_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+method_ret common_projectile_move_on(object *trap, object *victim, object *originator) {
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     if (trap->inv == NULL) {

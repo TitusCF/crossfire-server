@@ -38,7 +38,7 @@
  * onto 'trap'.  Will receive messages caused by this action.  May be NULL.
  * However, some types of traps require an originator to function.
  */
-method_ret common_ob_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+method_ret common_ob_move_on(object *trap, object *victim, object *originator) {
     if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     LOG(llevDebug, "name %s, arch %s, type %d with fly/walk on/off not handled in move_apply()\n", trap->name, trap->arch->name, trap->type);

@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret thrown_object_type_process(ob_methods *context, object *op);
+static method_ret thrown_object_type_process(object *op);
 
 /**
  * Initializer for the THROWN_OBJ object type.
@@ -42,11 +42,10 @@ void init_type_thrown_object(void) {
 
 /**
  * Move a thrown object along its course. Uses common_process_projectile.
- * @param context The method context
  * @param op The thrown object being moved.
  * @return METHOD_ERROR if op is not in a map, otherwise METHOD_OK
  */
-static method_ret thrown_object_type_process(ob_methods *context, object *op) {
+static method_ret thrown_object_type_process(object *op) {
     if (op->map == NULL) {
         LOG(llevError, "BUG: Thrown object had no map.\n");
         object_remove(op);
@@ -75,5 +74,5 @@ static method_ret thrown_object_type_process(ob_methods *context, object *op) {
         }
     }
 
-    return common_process_projectile(context, op);
+    return common_process_projectile(op);
 }

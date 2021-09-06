@@ -28,8 +28,8 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret transport_type_apply(ob_methods *context, object *op, object *applier, int aflags);
-static method_ret transport_type_process(ob_methods *context, object *op);
+static method_ret transport_type_apply(object *op, object *applier, int aflags);
+static method_ret transport_type_process(object *op);
 
 /**
  * Initializer for the TRANSPORT object type.
@@ -44,12 +44,11 @@ void init_type_transport(void) {
  * apply_manual() does.  This function basically checks to see if
  * the player can use the transport, and if so, sets up the appropriate
  * pointers.
- * @param context The method context
  * @param op The Transport to apply
  * @param applier The object attempting to apply the Transport
  * @param aflags Special flags (always apply/unapply)
  */
-static method_ret transport_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret transport_type_apply(object *op, object *applier, int aflags) {
     object *old_transport = applier->contr->transport;
     object *inv;
     char name_op[MAX_BUF], name_old[MAX_BUF];
@@ -239,7 +238,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op, object *
  * @retval 0 If the remaining speed of the transport was > 0.0
  * @retval 1 If the remaining speed of the transport was < 0.0
  */
-static method_ret transport_type_process(ob_methods *context, object *op) {
+static method_ret transport_type_process(object *op) {
     /* Transports are directed by players - thus, there
      * speed is reduced when the player moves them about.
      * So give them back there speed here, since process_objects()

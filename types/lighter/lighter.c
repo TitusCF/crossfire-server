@@ -24,7 +24,7 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret lighter_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
+static method_ret lighter_type_apply(object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the LIGHTER object type.
@@ -40,8 +40,6 @@ void init_type_lighter(void) {
  * Also burns up burnable material too. First object in the inventory is
  * the selected object to "burn". -b.t.
  *
- * @param context
- * method context.
  * @param lighter
  * lighter to apply.
  * @param applier
@@ -51,7 +49,7 @@ void init_type_lighter(void) {
  * @return
  * METHOD_UNHANDLED if the applier is not a player, METHOD_OK else..
  */
-static method_ret lighter_type_apply(ob_methods *context, object *lighter, object *applier, int aflags) {
+static method_ret lighter_type_apply(object *lighter, object *applier, int aflags) {
     object *item;
 
     if (applier->type != PLAYER)

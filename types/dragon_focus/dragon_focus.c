@@ -30,7 +30,7 @@
 #include <sproto.h>
 #include <math.h>
 
-static method_ret dragon_focus_type_apply(ob_methods *context, object *focus, object *applier, int aflags);
+static method_ret dragon_focus_type_apply(object *focus, object *applier, int aflags);
 
 
 /**
@@ -43,13 +43,12 @@ void init_type_dragon_focus(void) {
 /**
  * Handles applying food.
  * If player is applying, takes care of messages and dragon special food.
- * @param context The method context
  * @param focus - The focus to apply
  * @param applier The player attempting to apply the food
  * @param aflags Special flags (always apply/unapply)
  * @return METHOD_OK unless failure for some reason.
  */
-static method_ret dragon_focus_type_apply(ob_methods *context, object *focus, object *applier, int aflags) {
+static method_ret dragon_focus_type_apply(object *focus, object *applier, int aflags) {
 
     object *abil = NULL;    /* pointer to dragon ability force*/
 

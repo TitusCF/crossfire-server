@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret poison_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret poison_type_apply(object *op, object *applier, int aflags);
 
 /**
  * Initializer for the POISON object type.
@@ -41,13 +41,12 @@ void init_type_poison(void) {
 
 /**
  * Attempts to apply some poison.
- * @param context The method context
  * @param op The poison to apply
  * @param applier The object attempting to apply the poison.
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret poison_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret poison_type_apply(object *op, object *applier, int aflags) {
     /* If a player, let's tell them what happened */
     if (applier->type == PLAYER) {
         play_sound_player_only(applier->contr, SOUND_TYPE_ITEM, op, 0, "poison");

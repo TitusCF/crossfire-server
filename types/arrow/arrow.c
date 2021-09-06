@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret arrow_type_process(ob_methods *context, object *op);
+static method_ret arrow_type_process(object *op);
 
 /**
  * Initializer for the ARROW object type.
@@ -42,11 +42,10 @@ void init_type_arrow(void) {
 
 /**
  * Move an arrow along its course. Uses common_process_projectile.
- * @param context The method context
  * @param op The arrow being moved.
  * @return METHOD_ERROR if op is not in a map, otherwise METHOD_OK
  */
-static method_ret arrow_type_process(ob_methods *context, object *op) {
+static method_ret arrow_type_process(object *op) {
     if (op->map == NULL) {
         LOG(llevError, "BUG: Arrow had no map.\n");
         object_remove(op);
@@ -61,5 +60,5 @@ static method_ret arrow_type_process(ob_methods *context, object *op) {
         return METHOD_OK;
     }
 
-    return common_process_projectile(context, op);
+    return common_process_projectile(op);
 }

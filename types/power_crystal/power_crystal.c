@@ -32,7 +32,7 @@
 #include <string.h>
 #include <assert.h>
 
-static method_ret power_crystal_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret power_crystal_type_apply(object *op, object *applier, int aflags);
 
 #define LEVELS 7
 
@@ -96,7 +96,7 @@ static void add_capacity(const object *op, StringBuffer *buf, int previous_sp) {
     stringbuffer_append_string(buf, crystal_levels[current]);
 }
 
-static void power_crystal_describe(const ob_methods *context, const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
+static void power_crystal_describe(const const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
     StringBuffer *sb = stringbuffer_new();
     char *final;
 
@@ -139,13 +139,12 @@ void init_type_power_crystal(void) {
  * Power crystals, when applied, either suck power from the applier,
  * if he's at full spellpoints, or gives him power, if it's got
  * spellpoins stored.
- * @param context The method context
  * @param op The power crystal to apply
  * @param applier The object applying the crystal
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret power_crystal_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret power_crystal_type_apply(object *op, object *applier, int aflags) {
     int available_power;
     int power_space;
     int power_grab;

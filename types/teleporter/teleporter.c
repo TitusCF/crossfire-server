@@ -32,8 +32,8 @@
 #include <sproto.h>
 #include <string.h>
 
-static method_ret teleporter_type_process(ob_methods *context, object *op);
-static method_ret teleporter_type_trigger(ob_methods *context, object *op, object *cause, int state);
+static method_ret teleporter_type_process(object *op);
+static method_ret teleporter_type_trigger(object *op, object *cause, int state);
 
 /**
  * Initializer for the @ref page_type_41 "teleporter" object type.
@@ -120,24 +120,22 @@ static void move_teleporter(object *op) {
 
 /**
  * Processes a @ref page_type_41 "teleporter".
- * @param context The method context
  * @param op The teleporter to process
  * @retval METHOD_OK
  */
-static method_ret teleporter_type_process(ob_methods *context, object *op) {
+static method_ret teleporter_type_process(object *op) {
     move_teleporter(op);
     return METHOD_OK;
 }
 
 /**
  * A @ref page_type_41 "teleporter" is triggered.
- * @param context Ignored.
  * @param op The object being triggered
  * @param cause Ignored.
  * @param state Ignored.
  * @retval METHOD_OK
  */
-static method_ret teleporter_type_trigger(ob_methods *context, object *op, object *cause, int state) {
+static method_ret teleporter_type_trigger(object *op, object *cause, int state) {
     if (state) {
         move_teleporter(op);
     }

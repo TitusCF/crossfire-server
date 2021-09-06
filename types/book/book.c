@@ -29,8 +29,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret book_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
+static method_ret book_type_apply(object *op, object *applier, int aflags);
 
 /**
  * Initializer for the BOOK object type.
@@ -41,14 +40,13 @@ void init_type_book(void) {
 
 /**
  * Handles reading a regular (ie not containing a spell) book.
- * @param context The method context
  * @param op The Book to apply
  * @param applier The object attempting to apply the Book
  * @param aflags Special flags (always apply/unapply)
  * @retval METHOD_UNHANDLED If the Book wasn't read by a player
  * @retval METHOD_OK If applier was a player
  */
-static method_ret book_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+static method_ret book_type_apply(object *op, object *applier, int aflags) {
     int lev_diff;
     object *skill_ob;
 

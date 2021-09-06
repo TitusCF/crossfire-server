@@ -25,8 +25,7 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret potion_type_apply(ob_methods *context, object *potion,
-    object *applier, int aflags);
+static method_ret potion_type_apply(object *potion, object *applier, int aflags);
 
 /**
  * Initializer for the potion object type.
@@ -37,14 +36,12 @@ void init_type_potion(void) {
 
 /**
  * Handles applying a potion, dust, balm, or figurine.
- * @param context The method context
  * @param potion The potion to apply
  * @param applier The object attempting to apply the potion
  * @param aflags Special flags (always apply/unapply)
  * @return METHOD_OK unless failure for some reason.
  */
-static method_ret potion_type_apply(ob_methods *context, object *potion,
-    object *applier, int aflags) {
+static method_ret potion_type_apply(object *potion, object *applier, int aflags) {
     int got_one = 0, i;
     object *force;
 

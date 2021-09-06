@@ -31,7 +31,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret peacemaker_type_process(ob_methods *context, object *op);
+static method_ret peacemaker_type_process(object *op);
 
 /**
  * Initializer for the peacemaker object type.
@@ -43,11 +43,10 @@ void init_type_peacemaker(void) {
 /**
  * Handle ob_process for all peacemaker objects. Makes monster it passes
  * peaceful.
- * @param context The method context
  * @param op The peacemaker that's being processed.
  * @return METHOD_OK
  */
-static method_ret peacemaker_type_process(ob_methods *context, object *op) {
+static method_ret peacemaker_type_process(object *op) {
     object *owner;
 
     owner = object_get_owner(op);

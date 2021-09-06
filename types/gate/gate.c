@@ -25,8 +25,8 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret gate_type_process(ob_methods *context, object *op);
-static method_ret timed_gate_type_process(ob_methods *context, object *op);
+static method_ret gate_type_process(object *op);
+static method_ret timed_gate_type_process(object *op);
 
 /**
  * Initializer for the gate object type.
@@ -38,11 +38,10 @@ void init_type_gate(void) {
 
 /**
  * Handle ob_process for all gate objects.
- * @param context The method context
  * @param op The gate that's being processed.
  * @return METHOD_OK
  */
-static method_ret gate_type_process(ob_methods *context, object *op) {
+static method_ret gate_type_process(object *op) {
     object *tmp, *part;
 
     if (op->stats.wc < 0 || (int)op->stats.wc >= NUM_ANIMATIONS(op)) {
@@ -201,22 +200,21 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
  * - hp      : how long door is open/closed
  * - maxhp   : initial value for hp
  * - sp      : 1 = open, 0 = close
- * @param context The method context
  * @param op The timed gate that's being processed.
  * @return METHOD_OK
  * @todo Split function into more managable functions.
  */
-static method_ret timed_gate_type_process(ob_methods *context, object *op) {
+static method_ret timed_gate_type_process(object *op) {
     int v = op->value;
 
     if (op->stats.sp) {
-        gate_type_process(context, op);
+        gate_type_process(op);
         if (op->value != v)   /* change direction ? */
             op->stats.sp = 0;
         return METHOD_OK;
     }
     if (--op->stats.hp <= 0) { /* keep gate down */
-        gate_type_process(context, op);
+        gate_type_process(op);
         if (op->value != v) {  /* ready ? */
             op->speed = 0;
             object_update_speed(op);

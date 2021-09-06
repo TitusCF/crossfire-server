@@ -24,7 +24,7 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret player_changer_type_process(ob_methods *context, object *op);
+static method_ret player_changer_type_process(object *op);
 
 /**
  * Initializer for the player changer object type.
@@ -42,11 +42,10 @@ void init_type_player_changer(void) {
  * This was invented for giving classes, but there's no reason it
  *  can't be generalized.
  *
- * @param context The method context
  * @param op The player changer that's being processed.
  * @return METHOD_OK
  */
-static method_ret player_changer_type_process(ob_methods *context, object *op) {
+static method_ret player_changer_type_process(object *op) {
     object *player;
     char c;
 

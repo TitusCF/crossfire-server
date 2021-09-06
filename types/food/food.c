@@ -27,7 +27,7 @@
 #include "sounds.h"
 #include "sproto.h"
 
-static method_ret food_type_apply(ob_methods *context, object *food, object *applier, int aflags);
+static method_ret food_type_apply(object *food, object *applier, int aflags);
 static void eat_special_food(object *who, object *food);
 static int dragon_eat_flesh(object *op, object *meal);
 
@@ -113,13 +113,12 @@ static void eat_common(object* applier, object* food) {
 /**
  * Handles applying food.
  * If player is applying, takes care of messages and dragon special food.
- * @param context The method context
  * @param food The food to apply
  * @param applier The object attempting to apply the food
  * @param aflags Special flags (always apply/unapply)
  * @return METHOD_OK unless failure for some reason.
  */
-static method_ret food_type_apply(ob_methods *context, object *food, object *applier, int aflags) {
+static method_ret food_type_apply(object *food, object *applier, int aflags) {
     if (QUERY_FLAG(food, FLAG_NO_PICK)) {
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY,
                              MSG_TYPE_APPLY_FAILURE, "You can't %s that!",
