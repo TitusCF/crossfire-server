@@ -44,6 +44,8 @@ void init_type_savebed(void) {
  * @return The return value is always METHOD_OK
  */
 static method_ret savebed_type_apply(object *op, object *applier, int aflags) {
+    (void)op;
+    (void)aflags;
     if (applier->type == PLAYER)
         apply_savebed(applier);
     return METHOD_OK;

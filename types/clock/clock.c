@@ -47,6 +47,7 @@ void init_type_clock(void) {
  * @retval METHOD_OK If applier was a player
  */
 static method_ret clock_type_apply(object *op, object *applier, int aflags) {
+    (void)aflags;
     if (applier->type == PLAYER) {
         timeofday_t tod;
         char buf1[128];

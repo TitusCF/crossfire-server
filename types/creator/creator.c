@@ -134,6 +134,7 @@ static method_ret creator_type_process(object *op) {
  * @retval METHOD_OK
  */
 static method_ret creator_type_trigger(object *op, object *cause, int state) {
+    (void)cause;
     if (state) {
         move_creator(op);
     }

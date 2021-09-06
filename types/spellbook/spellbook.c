@@ -155,6 +155,7 @@ static void spellbook_type_describe(
  */
 static method_ret spellbook_type_apply(object *book, object *applier, int aflags) {
     object *skapplier, *spell, *spell_skill;
+    (void)aflags;
 
     /* Must be applied by a player. */
     if (applier->type == PLAYER) {

@@ -47,6 +47,7 @@ void init_type_poison(void) {
  * @return The return value is always METHOD_OK
  */
 static method_ret poison_type_apply(object *op, object *applier, int aflags) {
+    (void)aflags;
     /* If a player, let's tell them what happened */
     if (applier->type == PLAYER) {
         play_sound_player_only(applier->contr, SOUND_TYPE_ITEM, op, 0, "poison");

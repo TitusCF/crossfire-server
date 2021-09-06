@@ -119,6 +119,7 @@ static void eat_common(object* applier, object* food) {
  * @return METHOD_OK unless failure for some reason.
  */
 static method_ret food_type_apply(object *food, object *applier, int aflags) {
+    (void)aflags;
     if (QUERY_FLAG(food, FLAG_NO_PICK)) {
         draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY,
                              MSG_TYPE_APPLY_FAILURE, "You can't %s that!",

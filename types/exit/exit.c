@@ -150,6 +150,7 @@ static int is_legal_2ways_exit(object *op, object *exit) {
  * @return METHOD_OK unless op is not a player, in which case METHOD_ERROR
  */
 static method_ret exit_type_apply(object *exit, object *op, int autoapply) {
+    (void)autoapply;
     if (op->type != PLAYER)
         return METHOD_ERROR;
     if (!EXIT_PATH(exit) || !is_legal_2ways_exit(op, exit)) {

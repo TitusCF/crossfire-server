@@ -51,6 +51,7 @@ void init_type_trigger(void) {
  * @return The return value is always 1
  */
 static method_ret trigger_type_apply(object *op, object *applier, int aflags) {
+    (void)aflags;
     if (check_trigger(op, applier)) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
             "You turn the handle.");

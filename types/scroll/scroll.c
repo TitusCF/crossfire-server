@@ -57,6 +57,7 @@ static method_ret scroll_type_apply(object *scroll,
     object *skapplier;
     object *head;
     sstring name;
+    (void)aflags;
 
     head = HEAD(applier);
 

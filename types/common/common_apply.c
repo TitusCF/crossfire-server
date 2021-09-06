@@ -84,6 +84,9 @@ method_ret common_pre_ob_move_on(object *trap, object *victim, object *originato
 }
 
 void common_post_ob_move_on(object *trap, object *victim, object *originator) {
+    (void)trap;
+    (void)victim;
+    (void)originator;
     ob_move_on_recursion_depth--;
     if (ob_move_on_recursion_depth < 0) /* Safety net :) */
         ob_move_on_recursion_depth = 0;

@@ -99,6 +99,8 @@ static void add_capacity(const object *op, StringBuffer *buf, int previous_sp) {
 static void power_crystal_describe(const const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
     StringBuffer *sb = stringbuffer_new();
     char *final;
+    (void)observer;
+    (void)use_media_tags;
 
     buf[0] = '\0';
     query_name(op, buf, size-1);
@@ -150,6 +152,7 @@ static method_ret power_crystal_type_apply(object *op, object *applier, int afla
     int power_grab;
     StringBuffer *sb = stringbuffer_new();
     char name[MAX_BUF], *message;
+    (void)aflags;
 
     available_power = applier->stats.sp-applier->stats.maxsp;
     power_space = op->stats.maxsp-op->stats.sp;
