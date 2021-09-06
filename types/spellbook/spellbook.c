@@ -37,7 +37,7 @@
 
 static method_ret spellbook_type_apply(object *book, object *applier, int aflags);
 static void spellbook_type_describe(
-    const const object *book, const object *observer,
+    const object *book, const object *observer,
     const int use_media_tags, char *buf, const size_t size);
 
 /**
@@ -146,7 +146,7 @@ static void stringbuffer_append_spelldesc(StringBuffer *sb, const object *spell)
  * Total output buffer size
  */
 static void spellbook_type_describe(
-        const const object *book, const object *observer,
+        const object *book, const object *observer,
         const int use_media_tags, char *buf, size_t size) {
     if (!is_identified(book)) {
         /* Without querying the name, spellbooks end up examining

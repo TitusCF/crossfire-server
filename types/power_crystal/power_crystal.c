@@ -96,7 +96,7 @@ static void add_capacity(const object *op, StringBuffer *buf, int previous_sp) {
     stringbuffer_append_string(buf, crystal_levels[current]);
 }
 
-static void power_crystal_describe(const const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
+static void power_crystal_describe(const object *op, const object *observer, int use_media_tags, char *buf, size_t size) {
     StringBuffer *sb = stringbuffer_new();
     char *final;
     (void)observer;
