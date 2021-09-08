@@ -1127,7 +1127,6 @@ void command_create(object *op, const char *params) {
         give_artifact_abilities(tmp, art->item);
     if (!is_identifiable_type(tmp)) {
         SET_FLAG(tmp, FLAG_IDENTIFIED);
-        CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
         object_give_identified_properties(tmp);
     }
 

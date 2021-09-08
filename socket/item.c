@@ -97,7 +97,7 @@ static unsigned int query_flags(const object *op) {
         else if (QUERY_FLAG(op, FLAG_CURSED))
             flags |= F_CURSED;
     }
-    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op, FLAG_IDENTIFIED))
+    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL))
         flags |= F_MAGIC;
     if (QUERY_FLAG(op, FLAG_UNPAID))
         flags |= F_UNPAID;

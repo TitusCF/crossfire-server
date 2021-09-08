@@ -620,7 +620,7 @@ void query_name(const object *op, char *buf, size_t size) {
      * if it has been applied.  Equipping an item does not tell full
      * abilities, especially for artifact items.
      */
-    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op, FLAG_IDENTIFIED))
+    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL))
         safe_strcat(buf, " (magic)", &len, size);
 
     if (QUERY_FLAG(op, FLAG_APPLIED)) {
@@ -1399,7 +1399,6 @@ object *identify(object *op) {
     object *pl, *op1;
 
     SET_FLAG(op, FLAG_IDENTIFIED);
-    CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
     CLEAR_FLAG(op, FLAG_NO_SKILL_IDENT);
 
     object_give_identified_properties(op);

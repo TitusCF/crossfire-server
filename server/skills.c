@@ -748,7 +748,7 @@ static int do_skill_detect_curse(object *pl, object *skill) {
  */
 
 int detect_magic_on_item(object *pl, object *tmp, object *skill) {
-    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
+    if (!QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
             && (is_magical(tmp)) && tmp->item_power < skill->level) {
         SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
         esrv_update_item(UPD_FLAGS, pl, tmp);

@@ -2669,7 +2669,6 @@ int cast_detection(object *op, object *caster, object *spell) {
                 /* detect magic */
                 if (QUERY_FLAG(spell, FLAG_KNOWN_MAGICAL)
                 && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)
-                && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
                 && is_magical(tmp)) {
                     SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
                     /* make runes more visible */
@@ -2764,7 +2763,7 @@ int cast_detection(object *op, object *caster, object *spell) {
     if (QUERY_FLAG(spell, FLAG_KNOWN_CURSED) || QUERY_FLAG(spell, FLAG_KNOWN_MAGICAL)) {
         done_one = 0;
         FOR_INV_PREPARE(op, tmp) {
-            if (!tmp->invisible && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
+            if (!tmp->invisible) {
                 if (QUERY_FLAG(spell, FLAG_KNOWN_MAGICAL)
                 && is_magical(tmp)
                 && !QUERY_FLAG(tmp, FLAG_KNOWN_MAGICAL)) {
