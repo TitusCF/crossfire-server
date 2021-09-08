@@ -37,6 +37,9 @@ MAX_RESTART=${MAX_RESTART:-"100"}
 # Directory for saving crash data.
 CRASH_DIR=${CRASH_DIR:-"`dirname ${CF_TMP}`"}
 
+# Date format string for crash directory
+CRASH_DATE_FMT=${CRASH_DATE_FMT:-'%Y-%m-%d-%H:%M'}
+
 # Send mail to server admins in case of a crash (comment out to disable).
 #CRASH_MAIL="yourname@example.com"
 
@@ -54,13 +57,13 @@ while [ ${MAX_RESTART} -ne ${generation} ]; do
 
     # Change to the ${CF_TMP} directory and start server.
     cd ${CF_TMP}
-    echo "===>>> Starting server (generation ${generation} on `date +%Y-%m-%d-%H:%M`)..."
+    echo "===>>> Starting server (generation ${generation} on `date +${CRASH_DATE_FMT}`)..."
 
     ${CF_BIN} ${CF_FLAGS} -tmpdir "${CF_TMP}" -log "${CF_LOG}"
 
     # If the server crashed and CRASH_DIR is set, save CF_TMP.
     if [ ${?} -ne 0 -a -n "${CRASH_DIR}" ]; then
-        crash_dump="${CRASH_DIR}/crossfire-`date +%Y-%m-%d-%H:%M`.crash"
+        crash_dump="${CRASH_DIR}/crossfire-`date +${CRASH_DATE_FMT}`.crash"
         mv ${CF_TMP} ${crash_dump}
         core_files=`ls ${crash_dump}/*core*`
         dumpfile="${crash_dump}/crash.log"
