@@ -664,7 +664,6 @@ A       .+
 ^identified{S}      {
                         if (IVAL) {
                             SET_FLAG(op, FLAG_IDENTIFIED);
-                            CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
                         }
                         else
                             CLEAR_FLAG(op, FLAG_IDENTIFIED);
