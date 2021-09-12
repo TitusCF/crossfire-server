@@ -50,7 +50,7 @@ CREFacePanel::CREFacePanel(QWidget* parent, QuestManager* quests, CREMapInformat
 
     myLicenses = new QTreeWidget(this);
     myLicenses->setColumnCount(2);
-    myLicenses->setHeaderLabels(QStringList(tr("Licenses")) << "");
+    myLicenses->setHeaderLabels(QStringList(tr("License field")) << "Value");
     myLicenses->setIconSize(QSize(32, 32));
     myLicenses->setRootIsDecorated(false);
     layout->addWidget(myLicenses, 1, 3, 3, 2);
@@ -268,7 +268,8 @@ void CREFacePanel::setItem(const Face* face)
     for (auto l : licenses) {
         QTreeWidgetItem *wi = new QTreeWidgetItem(QStringList(QString(l.first.c_str())));
         for (auto p : l.second) {
-            new QTreeWidgetItem(wi, QStringList(p.first.c_str()) << p.second.c_str());
+            auto twi = new QTreeWidgetItem(wi, QStringList(p.first.c_str()) << p.second.c_str());
+            twi->setToolTip(1, p.second.c_str());
         }
         myLicenses->addTopLevelItem(wi);
         wi->setExpanded(true);
