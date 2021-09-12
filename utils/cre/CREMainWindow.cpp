@@ -175,6 +175,10 @@ void CREMainWindow::createActions()
     connect(myToolFacesetUseFallback, SIGNAL(triggered()), this, SLOT(onToolFacesetUseFallback()));
     myToolFacesetUseFallback->setCheckable(true);
     myToolFacesetUseFallback->setChecked(true);
+
+    myToolReloadAssets = new QAction(tr("Reload assets"), this);
+    myToolReloadAssets->setStatusTip(tr("Reload all assets from the data directory."));
+    connect(myToolReloadAssets, SIGNAL(triggered()), this, SLOT(onToolReloadAssets()));
 }
 
 const DisplayMode displayModes[] = {
@@ -277,6 +281,7 @@ void CREMainWindow::createMenus()
     myToolsMenu->addAction(myToolCombatSimulator);
     myToolsMenu->addAction(myToolFaceMaker);
     myToolsMenu->addAction(myClearMapCache);
+    myToolsMenu->addAction(myToolReloadAssets);
 }
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
@@ -1720,4 +1725,13 @@ void CREMainWindow::onToolFaceset(QAction* action)
 void CREMainWindow::onToolFacesetUseFallback()
 {
     CREPixmap::setUseFacesetFallback(myToolFacesetUseFallback->isChecked());
+}
+
+void CREMainWindow::onToolReloadAssets()
+{
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    assets_collect(settings.datadir);
+    CREPixmap::clearFaceCache();
+    QApplication::restoreOverrideCursor();
+    QMessageBox::information(this, "Reload complete", "Assets reload complete, you may need to change the selected item to see updated versions.");
 }

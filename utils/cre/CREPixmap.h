@@ -13,6 +13,7 @@ class CREPixmap
         static face_sets *faceset;
         static void setFaceset(const QString& prefix);
         static void setUseFacesetFallback(bool use);
+        static void clearFaceCache();
 
         static QIcon getIcon(uint16_t faceNumber);
 
