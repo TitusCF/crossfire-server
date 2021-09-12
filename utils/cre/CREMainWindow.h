@@ -65,6 +65,7 @@ class CREMainWindow : public QMainWindow
         QActionGroup *myFacesetsGroup;
         QAction* myToolFacesetUseFallback;
         QAction* myClearMapCache;
+        QAction* myToolReloadAssets;
         QLabel* myMapBrowseStatus;
         CREMapInformationManager* myMapManager;
         QuestManager* myQuestManager;
@@ -102,6 +103,7 @@ class CREMainWindow : public QMainWindow
         void onToolFaceMaker();
         void onToolFaceset(QAction* action);
         void onToolFacesetUseFallback();
+        void onToolReloadAssets();
         void browsingMap(const QString& path);
         void browsingFinished();
         void onFiltersModified();

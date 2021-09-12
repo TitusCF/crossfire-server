@@ -47,6 +47,11 @@ void CREPixmap::setUseFacesetFallback(bool use)
     settings.setFacesetUseFallback(use);
 }
 
+void CREPixmap::clearFaceCache()
+{
+    allFaces.clear();
+}
+
 QIcon CREPixmap::getIcon(uint16_t faceNumber)
 {
     return CREPixmap::getIcon(faceset, faceNumber);
