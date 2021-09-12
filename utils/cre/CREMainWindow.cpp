@@ -1730,6 +1730,7 @@ void CREMainWindow::onToolFacesetUseFallback()
 void CREMainWindow::onToolReloadAssets()
 {
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    LicenseManager::get()->reset();
     assets_collect(settings.datadir);
     CREPixmap::clearFaceCache();
     QApplication::restoreOverrideCursor();

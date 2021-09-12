@@ -47,6 +47,11 @@ public:
   std::map<std::string, LicenseItems> getAll() const { return m_licenses; }
 
   /**
+   * Reset license information, before a reloading.
+   */
+  void reset() { m_licenses.clear(); }
+
+  /**
    * Process a license file.
    * @param reader source.
    * @param filename full file name.
