@@ -42,7 +42,7 @@ extern void init_artifacts(BufferReader *reader, const char *filename);
 extern const artifactlist *find_artifactlist(int type);
 extern const artifact *find_artifact(const object *op, const char *name);
 extern void dump_artifacts(void);
-extern unsigned artifact_get_face(const artifact *art);
+extern uint16_t artifact_get_face(const artifact *art);
 /* button.c */
 extern void trigger_connected(objectlink *ol, object *cause, const int state);
 extern void push_button(object *op);
@@ -89,7 +89,7 @@ extern void print_monsters(void);
 /* image.c */
 extern int find_smooth(const Face *face, const Face **smoothed);
 extern int is_valid_faceset(int fsn);
-extern int get_face_fallback(int faceset, int imageno);
+extern int get_face_fallback(int faceset, uint16_t imageno);
 extern size_t get_faces_count(void);
 extern const Face *get_face_by_id(uint16_t id);
 extern int load_face_file(FILE *file, const char *full_path);

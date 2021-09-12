@@ -706,7 +706,7 @@ void dump_artifacts(void) {
  * @param art what to get the face of.
  * @return face, -1 as unsigned if none could be found.
  */
-unsigned artifact_get_face(const artifact *art) {
+uint16_t artifact_get_face(const artifact *art) {
     archetype *arch = get_next_archetype(NULL);
 
     if (art->item->face != blank_face && art->item->face != NULL)
@@ -731,12 +731,12 @@ unsigned artifact_get_face(const artifact *art) {
                     continue;
                 return arch->clone.face->number;
             }
-            return (unsigned)-1;
+            return (uint16_t)-1;
         } else {
             const archetype *arch = find_archetype(art->allowed->name);
             if (arch != NULL)
                 return arch->clone.face->number;
-            return (unsigned)-1;
+            return (uint16_t)-1;
         }
     }
 
@@ -746,5 +746,5 @@ unsigned artifact_get_face(const artifact *art) {
 
         arch = get_next_archetype(arch);
     }
-    return (unsigned)-1;
+    return (uint16_t)-1;
 }

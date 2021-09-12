@@ -129,7 +129,7 @@ int is_valid_faceset(int fsn) {
  * \param imageno image number
  *
  */
-int get_face_fallback(int faceset, int imageno) {
+int get_face_fallback(int faceset, uint16_t imageno) {
     /* faceset 0 is supposed to have every image, so just return.  Doing
      * so also prevents infinite loops in the case if it not having
      * the face, but in that case, we are likely to crash when we try
