@@ -43,7 +43,7 @@
 void animate_object(object *op, int dir) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
-    int oldface = op->face->number;
+    uint16_t oldface = op->face->number;
 
     if (!op->animation || !NUM_ANIMATIONS(op)) {
         StringBuffer *sb;
