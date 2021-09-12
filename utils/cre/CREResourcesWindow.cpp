@@ -341,12 +341,24 @@ void CREResourcesWindow::fillArchetypes()
         myTreeItems.append(new CRETTreeItem<const archt>(arch, "Archetype"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
 
-        for (archt* more = arch->more; more; more = more->more)
+        if (arch->more)
         {
-            auto sub = CREUtils::archetypeNode(more, item);
-            myTreeItems.append(new CRETTreeItem<const archt>(more, "Archetype"));
-            sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+            int min_x = 0, max_x = 0, min_y = 0, max_y = 0;
+
+            for (archt* more = arch->more; more; more = more->more)
+            {
+                min_x = MIN(min_x, more->clone.x);
+                max_x = MAX(max_x, more->clone.x);
+                min_y = MIN(min_y, more->clone.y);
+                max_y = MAX(max_y, more->clone.y);
+                auto sub = CREUtils::archetypeNode(more, item);
+                myTreeItems.append(new CRETTreeItem<const archt>(more, "Archetype"));
+                sub->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
+            }
+
+            item->setText(0, tr("%1 (%2x%3)").arg(item->text(0)).arg(max_x - min_x + 1).arg(max_y - min_y + 1));
         }
+
         myDisplayedItems.append(wrapper);
         wrapper = NULL;
         added++;
