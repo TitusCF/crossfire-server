@@ -453,10 +453,19 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
 
     if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
         char *value = cost_str(shop_price_buy(tmp, pl));
-        snprintf(buf, sizeof(buf), "%s will cost you %s.", name, value);
+        if (op == pl) {
+            snprintf(buf, sizeof(buf), "%s will cost you %s.", name, value);
+        } else {
+            snprintf(buf, sizeof(buf), "%s will cost you %s. You place it in your %s.", name, value, op->name);
+        }
         free(value);
-    } else
-        snprintf(buf, sizeof(buf), "You pick up the %s.", name);
+    } else {
+        if (op == pl) {
+            snprintf(buf, sizeof(buf), "You pick up the %s.", name);
+        } else {
+            snprintf(buf, sizeof(buf), "You pick up the %s and put it in your %s.", name, op->name);
+        }
+    }
 
     /* Now item is about to be picked. */
     tag = tmp->count;
