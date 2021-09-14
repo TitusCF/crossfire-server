@@ -109,4 +109,126 @@ extern CFPContext *current_context;
 
 #include <cfpython_proto.h>
 
+/**
+ * Macro to define a PyTypeObject.
+ * It should make it simpler to adjust to various Python versions, one macro to change only.
+ * Arguments are:
+ * - NAME: object's name, like "Object" or "Map", without quotes
+ * - DEALLOC: deallocation function, of type Python::destructor
+ * - CONVERT: pointer to a PyNumberMethods variable
+ * - HASH: hash, PyObject_HashNotImplemented or NULL (for Player only, to inherit)
+ * - FLAGS: Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE or Py_TPFLAGS_DEFAULT (for Player)
+ * - DOC: Base description, with quotes
+ * - CMP: Python::richcmpfunc to compare 2 objects
+ * - METHODS: array of PyMethodDef to declare functions
+ * - GETSET: array of PyGetSetDef to declare attributes
+ * - BASE: base class, only used for Player
+ * - OBNEW: Python::newfunc to create a new object
+ */
+#if PY_VERSION_HEX == 0x030503F0
+#define CF_PYTHON_OBJECT(NAME, DEALLOC, CONVERT, HASH, FLAGS, DOC, CMP, METHODS, GETSET, BASE, OBNEW) \
+PyTypeObject Crossfire_ ## NAME ## Type = { \
+    /* See http://bugs.python.org/issue4385 */ \
+    PyVarObject_HEAD_INIT(NULL, 0) \
+    "Crossfire." #NAME,           /* tp_name*/ \
+    sizeof(Crossfire_ ## NAME),   /* tp_basicsize*/ \
+    0,                            /* tp_itemsize*/ \
+    DEALLOC,                      /* tp_dealloc*/ \
+    (printfunc)NULL,              /* tp_print*/ \
+    NULL,                         /* tp_getattr*/ \
+    NULL,                         /* tp_setattr*/ \
+    NULL,                         /* tp_reserved */ \
+    NULL,                         /* tp_repr*/ \
+    CONVERT,                      /* tp_as_number*/ \
+    NULL,                         /* tp_as_sequence*/ \
+    NULL,                         /* tp_as_mapping*/ \
+    HASH,                         /* tp_hash */ \
+    NULL,                         /* tp_call*/ \
+    NULL,                         /* tp_str*/ \
+    PyObject_GenericGetAttr,      /* tp_getattro*/ \
+    PyObject_GenericSetAttr,      /* tp_setattro*/ \
+    NULL,                         /* tp_as_buffer*/ \
+    FLAGS,                        /* tp_flags*/ \
+    DOC,                          /* tp_doc */ \
+    NULL,                         /* tp_traverse */ \
+    NULL,                         /* tp_clear */ \
+    CMP,                          /* tp_richcompare */ \
+    0,                            /* tp_weaklistoffset */ \
+    NULL,                         /* tp_iter */ \
+    NULL,                         /* tp_iternext */ \
+    METHODS,                      /* tp_methods */ \
+    NULL,                         /* tp_members */ \
+    GETSET,                       /* tp_getset */ \
+    BASE,                         /* tp_base */ \
+    NULL,                         /* tp_dict */ \
+    NULL,                         /* tp_descr_get */ \
+    NULL,                         /* tp_descr_set */ \
+    0,                            /* tp_dictoffset */ \
+    NULL,                         /* tp_init */ \
+    NULL,                         /* tp_alloc */ \
+    OBNEW,                        /* tp_new */ \
+    NULL,                         /* tp_free */ \
+    NULL,                         /* tp_is_gc */ \
+    NULL,                         /* tp_bases */ \
+    NULL,                         /* tp_mro */ \
+    NULL,                         /* tp_cache */ \
+    NULL,                         /* tp_subclasses */ \
+    NULL,                         /* tp_weaklist */ \
+    NULL,                         /* tp_del */ \
+    0,                            /* tp_version_tag */ \
+    NULL                          /* tp_finalize */ \
+}
+#else
+#define CF_PYTHON_OBJECT(NAME, DEALLOC, CONVERT, HASH, FLAGS, DOC, CMP, METHODS, GETSET, BASE, OBNEW) \
+PyTypeObject Crossfire_ ## NAME ## Type = { \
+    /* See http://bugs.python.org/issue4385 */ \
+    PyVarObject_HEAD_INIT(NULL, 0) \
+    "Crossfire." #NAME,           /* tp_name*/ \
+    sizeof(Crossfire_ ## NAME),   /* tp_basicsize*/ \
+    0,                            /* tp_itemsize*/ \
+    DEALLOC,                      /* tp_dealloc*/ \
+    (printfunc)NULL,              /* tp_print*/ \
+    NULL,                         /* tp_getattr*/ \
+    NULL,                         /* tp_setattr*/ \
+    NULL,                         /* tp_reserved */ \
+    NULL,                         /* tp_repr*/ \
+    CONVERT,                      /* tp_as_number*/ \
+    NULL,                         /* tp_as_sequence*/ \
+    NULL,                         /* tp_as_mapping*/ \
+    HASH,                         /* tp_hash */ \
+    NULL,                         /* tp_call*/ \
+    NULL,                         /* tp_str*/ \
+    PyObject_GenericGetAttr,      /* tp_getattro*/ \
+    PyObject_GenericSetAttr,      /* tp_setattro*/ \
+    NULL,                         /* tp_as_buffer*/ \
+    FLAGS,                        /* tp_flags*/ \
+    DOC,                          /* tp_doc */ \
+    NULL,                         /* tp_traverse */ \
+    NULL,                         /* tp_clear */ \
+    CMP,                          /* tp_richcompare */ \
+    0,                            /* tp_weaklistoffset */ \
+    NULL,                         /* tp_iter */ \
+    NULL,                         /* tp_iternext */ \
+    METHODS,                      /* tp_methods */ \
+    NULL,                         /* tp_members */ \
+    GETSET,                       /* tp_getset */ \
+    BASE,                         /* tp_base */ \
+    NULL,                         /* tp_dict */ \
+    NULL,                         /* tp_descr_get */ \
+    NULL,                         /* tp_descr_set */ \
+    0,                            /* tp_dictoffset */ \
+    NULL,                         /* tp_init */ \
+    NULL,                         /* tp_alloc */ \
+    OBNEW,                        /* tp_new */ \
+    NULL,                         /* tp_free */ \
+    NULL,                         /* tp_is_gc */ \
+    NULL,                         /* tp_bases */ \
+    NULL,                         /* tp_mro */ \
+    NULL,                         /* tp_cache */ \
+    NULL,                         /* tp_subclasses */ \
+    NULL,                         /* tp_weaklist */ \
+    NULL,                         /* tp_del */ \
+}
+#endif
+
 #endif /* PLUGIN_PYTHON_H */

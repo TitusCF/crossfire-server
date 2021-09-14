@@ -1615,60 +1615,18 @@ static PyObject *Player_GetObjectProperty(Crossfire_Player *whoptr, void *closur
 }
 
 /* Our actual Python ObjectType */
-PyTypeObject Crossfire_ObjectType = {
-    /* See http://bugs.python.org/issue4385 */
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "Crossfire.Object",        /* tp_name*/
-    sizeof(Crossfire_Object),  /* tp_basicsize*/
-    0,                         /* tp_itemsize*/
-    Crossfire_Object_dealloc,  /* tp_dealloc*/
-    // Python 3.8+ expects a long int. Earlier Python expects a pointer reference.
-#ifdef IS_PY3K8
-    (long int)NULL,            /* tp_print*/
-#else
-    NULL,                      /* tp_print */
-#endif
-    NULL,                      /* tp_getattr*/
-    NULL,                      /* tp_setattr*/
-    NULL,                      /* tp_reserved */
-    NULL,                      /* tp_repr*/
-    &ObjectConvert,            /* tp_as_number*/
-    NULL,                      /* tp_as_sequence*/
-    NULL,                      /* tp_as_mapping*/
-    PyObject_HashNotImplemented, /* tp_hash */
-    NULL,                      /* tp_call*/
-    NULL,                      /* tp_str*/
-    PyObject_GenericGetAttr,   /* tp_getattro*/
-    PyObject_GenericSetAttr,   /* tp_setattro*/
-    NULL,                      /* tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE, /* tp_flags*/
-    "Crossfire objects",       /* tp_doc */
-    NULL,                      /* tp_traverse */
-    NULL,                      /* tp_clear */
-    (richcmpfunc)Crossfire_Object_RichCompare, /* tp_richcompare */
-    0,                         /* tp_weaklistoffset */
-    NULL,                      /* tp_iter */
-    NULL,                      /* tp_iternext */
-    ObjectMethods,             /* tp_methods */
-    NULL,                      /* tp_members */
-    Object_getseters,          /* tp_getset */
-    NULL,                      /* tp_base */
-    NULL,                      /* tp_dict */
-    NULL,                      /* tp_descr_get */
-    NULL,                      /* tp_descr_set */
-    0,                         /* tp_dictoffset */
-    NULL,                      /* tp_init */
-    NULL,                      /* tp_alloc */
-    Crossfire_Object_new,      /* tp_new */
-    NULL,                      /* tp_free */
-    NULL,                      /* tp_is_gc */
-    NULL,                      /* tp_bases */
-    NULL,                      /* tp_mro */
-    NULL,                      /* tp_cache */
-    NULL,                      /* tp_subclasses */
-    NULL,                      /* tp_weaklist */
-    NULL,                      /* tp_del */
-};
+CF_PYTHON_OBJECT(Object,
+                 Crossfire_Object_dealloc,
+                 &ObjectConvert,
+                 PyObject_HashNotImplemented,
+                 Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+                 "Crossfire objects",
+                 (richcmpfunc) Crossfire_Object_RichCompare,
+                 ObjectMethods,
+                 Object_getseters,
+                 NULL,
+                 Crossfire_Object_new
+                 );
 
 static PyGetSetDef Player_getseters[] = {
     { "Title",         (getter)Player_GetTitle,         (setter)Player_SetTitle, NULL, NULL },
@@ -1696,61 +1654,18 @@ static PyMethodDef PlayerMethods[] = {
 };
 
 /* Our actual Python ObjectPlayerType */
-PyTypeObject Crossfire_PlayerType = {
-    /* See http://bugs.python.org/issue4385 */
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "Crossfire.Player",        /* tp_name*/
-    sizeof(Crossfire_Player),  /* tp_basicsize*/
-    0,                         /* tp_itemsize*/
-    Crossfire_Player_dealloc,  /* tp_dealloc*/
-    // Python 3.8+ expects a long int. Earlier Python expects a pointer reference.
-#ifdef IS_PY3K8
-    (long int)NULL,            /* tp_print*/
-#else
-    NULL,                      /* tp_print */
-#endif
-    NULL,                      /* tp_getattr*/
-    NULL,                      /* tp_setattr*/
-    NULL,                      /* tp_compare*/
-    NULL,                      /* tp_repr*/
-    NULL,                      /* tp_as_number*/
-    NULL,                      /* tp_as_sequence*/
-    NULL,                      /* tp_as_mapping*/
-    /* Should be NULL to inherit tp_richcompare and tp_compare from Crossfire_ObjectType. */
-    NULL,                      /* tp_hash */
-    NULL,                      /* tp_call*/
-    NULL,                      /* tp_str*/
-    PyObject_GenericGetAttr,   /* tp_getattro*/
-    PyObject_GenericSetAttr,   /* tp_setattro*/
-    NULL,                      /* tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT,        /* tp_flags*/
-    "Crossfire player",        /* tp_doc */
-    NULL,                      /* tp_traverse */
-    NULL,                      /* tp_clear */
-    NULL,                      /* tp_richcompare */
-    0,                         /* tp_weaklistoffset */
-    NULL,                      /* tp_iter */
-    NULL,                      /* tp_iternext */
-    PlayerMethods,             /* tp_methods */
-    NULL,                      /* tp_members */
-    Player_getseters,          /* tp_getset */
-    &Crossfire_ObjectType,     /* tp_base */
-    NULL,                      /* tp_dict */
-    NULL,                      /* tp_descr_get */
-    NULL,                      /* tp_descr_set */
-    0,                         /* tp_dictoffset */
-    NULL,                      /* tp_init */
-    NULL,                      /* tp_alloc */
-    Crossfire_Player_new,      /* tp_new */
-    NULL,                      /* tp_free */
-    NULL,                      /* tp_is_gc */
-    NULL,                      /* tp_bases */
-    NULL,                      /* tp_mro */
-    NULL,                      /* tp_cache */
-    NULL,                      /* tp_subclasses */
-    NULL,                      /* tp_weaklist */
-    NULL,                      /* tp_del */
-};
+CF_PYTHON_OBJECT(Player,
+                 Crossfire_Player_dealloc,
+                 NULL,
+                 NULL,
+                 Py_TPFLAGS_DEFAULT,
+                 "Crossfire player",
+                 NULL,
+                 PlayerMethods,
+                 Player_getseters,
+                 &Crossfire_ObjectType,
+                 Crossfire_Player_new
+                 );
 
 /**
  * Python initialized.
