@@ -1515,46 +1515,7 @@ static PyMethodDef ObjectMethods[] = {
     { NULL, NULL, 0, NULL }
 };
 
-static PyNumberMethods ObjectConvert = {
-    NULL,            /* binaryfunc nb_add; */        /* __add__ */
-    NULL,            /* binaryfunc nb_subtract; */   /* __sub__ */
-    NULL,            /* binaryfunc nb_multiply; */   /* __mul__ */
-    NULL,            /* binaryfunc nb_remainder; */  /* __mod__ */
-    NULL,            /* binaryfunc nb_divmod; */     /* __divmod__ */
-    NULL,            /* ternaryfunc nb_power; */     /* __pow__ */
-    NULL,            /* unaryfunc nb_negative; */    /* __neg__ */
-    NULL,            /* unaryfunc nb_positive; */    /* __pos__ */
-    NULL,            /* unaryfunc nb_absolute; */    /* __abs__ */
-    NULL,            /* inquiry nb_bool; */          /* __bool__ */
-    NULL,            /* unaryfunc nb_invert; */      /* __invert__ */
-    NULL,            /* binaryfunc nb_lshift; */     /* __lshift__ */
-    NULL,            /* binaryfunc nb_rshift; */     /* __rshift__ */
-    NULL,            /* binaryfunc nb_and; */        /* __and__ */
-    NULL,            /* binaryfunc nb_xor; */        /* __xor__ */
-    NULL,            /* binaryfunc nb_or; */         /* __or__ */
-    /* This is not a typo. For Py3k it should be Crossfire_Object_Long
-     * and NOT Crossfire_Object_Int.
-     */
-    Crossfire_Object_Long, /* unaryfunc nb_int; */    /* __int__ */
-    NULL,                  /* void *nb_reserved; */
-    NULL,            /* unaryfunc nb_float; */       /* __float__ */
-    NULL,            /* binaryfunc nb_inplace_add; */
-    NULL,            /* binaryfunc nb_inplace_subtract; */
-    NULL,            /* binaryfunc nb_inplace_multiply; */
-    NULL,            /* binaryfunc nb_inplace_remainder; */
-    NULL,            /* ternaryfunc nb_inplace_power; */
-    NULL,            /* binaryfunc nb_inplace_lshift; */
-    NULL,            /* binaryfunc nb_inplace_rshift; */
-    NULL,            /* binaryfunc nb_inplace_and; */
-    NULL,            /* binaryfunc nb_inplace_xor; */
-    NULL,            /* binaryfunc nb_inplace_or; */
-
-    NULL,            /* binaryfunc nb_floor_divide; */
-    NULL,            /* binaryfunc nb_true_divide; */
-    NULL,            /* binaryfunc nb_inplace_floor_divide; */
-    NULL,            /* binaryfunc nb_inplace_true_divide; */
-    NULL             /* unaryfunc nb_index; */
-};
+CF_PYTHON_NUMBER_METHODS(Object, Crossfire_Object_Long);
 
 static PyObject *Crossfire_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     Crossfire_Object *self;

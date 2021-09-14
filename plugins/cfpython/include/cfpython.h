@@ -231,4 +231,98 @@ PyTypeObject Crossfire_ ## NAME ## Type = { \
 }
 #endif
 
+/**
+ * Macro to define a PyNumberMethods.
+ * Arguments are:
+ * - NAME: object's name, like "Object" or "Map", without quotes
+ * - LONG: name of a function converting the Python object to a long
+ */
+#if PY_VERSION_HEX == 0x030503F0
+#define CF_PYTHON_NUMBER_METHODS(NAME, LONG) \
+static PyNumberMethods NAME ## Convert = { \
+    NULL,            /* binaryfunc nb_add; */        /* __add__ */ \
+    NULL,            /* binaryfunc nb_subtract; */   /* __sub__ */ \
+    NULL,            /* binaryfunc nb_multiply; */   /* __mul__ */ \
+    NULL,            /* binaryfunc nb_remainder; */  /* __mod__ */ \
+    NULL,            /* binaryfunc nb_divmod; */     /* __divmod__ */ \
+    NULL,            /* ternaryfunc nb_power; */     /* __pow__ */ \
+    NULL,            /* unaryfunc nb_negative; */    /* __neg__ */ \
+    NULL,            /* unaryfunc nb_positive; */    /* __pos__ */ \
+    NULL,            /* unaryfunc nb_absolute; */    /* __abs__ */ \
+    NULL,            /* inquiry nb_bool; */          /* __bool__ */ \
+    NULL,            /* unaryfunc nb_invert; */      /* __invert__ */ \
+    NULL,            /* binaryfunc nb_lshift; */     /* __lshift__ */ \
+    NULL,            /* binaryfunc nb_rshift; */     /* __rshift__ */ \
+    NULL,            /* binaryfunc nb_and; */        /* __and__ */ \
+    NULL,            /* binaryfunc nb_xor; */        /* __xor__ */ \
+    NULL,            /* binaryfunc nb_or; */         /* __or__ */ \
+    /* This is not a typo. For Py3k it should be Crossfire_Map_Long \
+     * and NOT Crossfire_Map_Int. \
+     */ \
+    LONG,            /* unaryfunc nb_int; */      /* __int__ */ \
+    NULL,            /* void *nb_reserved; */ \
+    NULL,            /* unaryfunc nb_float; */       /* __float__ */ \
+    NULL,            /* binaryfunc nb_inplace_add; */ \
+    NULL,            /* binaryfunc nb_inplace_subtract; */ \
+    NULL,            /* binaryfunc nb_inplace_multiply; */ \
+    NULL,            /* binaryfunc nb_inplace_remainder; */ \
+    NULL,            /* ternaryfunc nb_inplace_power; */ \
+    NULL,            /* binaryfunc nb_inplace_lshift; */ \
+    NULL,            /* binaryfunc nb_inplace_rshift; */ \
+    NULL,            /* binaryfunc nb_inplace_and; */ \
+    NULL,            /* binaryfunc nb_inplace_xor; */ \
+    NULL,            /* binaryfunc nb_inplace_or; */ \
+    \
+    NULL,            /* binaryfunc nb_floor_divide; */ \
+    NULL,            /* binaryfunc nb_true_divide; */ \
+    NULL,            /* binaryfunc nb_inplace_floor_divide; */ \
+    NULL,            /* binaryfunc nb_inplace_true_divide; */ \
+    NULL,            /* unaryfunc nb_index; */ \
+    NULL,            /* binaryfunc nb_matrix_multiply; */ \
+    NULL             /* binaryfunc nb_inplace_matrix_multiply; */ \
+}
+#else
+#define CF_PYTHON_NUMBER_METHODS(NAME, LONG) \
+static PyNumberMethods NAME ## Convert = { \
+    NULL,            /* binaryfunc nb_add; */        /* __add__ */ \
+    NULL,            /* binaryfunc nb_subtract; */   /* __sub__ */ \
+    NULL,            /* binaryfunc nb_multiply; */   /* __mul__ */ \
+    NULL,            /* binaryfunc nb_remainder; */  /* __mod__ */ \
+    NULL,            /* binaryfunc nb_divmod; */     /* __divmod__ */ \
+    NULL,            /* ternaryfunc nb_power; */     /* __pow__ */ \
+    NULL,            /* unaryfunc nb_negative; */    /* __neg__ */ \
+    NULL,            /* unaryfunc nb_positive; */    /* __pos__ */ \
+    NULL,            /* unaryfunc nb_absolute; */    /* __abs__ */ \
+    NULL,            /* inquiry nb_bool; */          /* __bool__ */ \
+    NULL,            /* unaryfunc nb_invert; */      /* __invert__ */ \
+    NULL,            /* binaryfunc nb_lshift; */     /* __lshift__ */ \
+    NULL,            /* binaryfunc nb_rshift; */     /* __rshift__ */ \
+    NULL,            /* binaryfunc nb_and; */        /* __and__ */ \
+    NULL,            /* binaryfunc nb_xor; */        /* __xor__ */ \
+    NULL,            /* binaryfunc nb_or; */         /* __or__ */ \
+    /* This is not a typo. For Py3k it should be Crossfire_Map_Long \
+     * and NOT Crossfire_Map_Int. \
+     */ \
+    LONG,            /* unaryfunc nb_int; */      /* __int__ */ \
+    NULL,            /* void *nb_reserved; */ \
+    NULL,            /* unaryfunc nb_float; */       /* __float__ */ \
+    NULL,            /* binaryfunc nb_inplace_add; */ \
+    NULL,            /* binaryfunc nb_inplace_subtract; */ \
+    NULL,            /* binaryfunc nb_inplace_multiply; */ \
+    NULL,            /* binaryfunc nb_inplace_remainder; */ \
+    NULL,            /* ternaryfunc nb_inplace_power; */ \
+    NULL,            /* binaryfunc nb_inplace_lshift; */ \
+    NULL,            /* binaryfunc nb_inplace_rshift; */ \
+    NULL,            /* binaryfunc nb_inplace_and; */ \
+    NULL,            /* binaryfunc nb_inplace_xor; */ \
+    NULL,            /* binaryfunc nb_inplace_or; */ \
+    \
+    NULL,            /* binaryfunc nb_floor_divide; */ \
+    NULL,            /* binaryfunc nb_true_divide; */ \
+    NULL,            /* binaryfunc nb_inplace_floor_divide; */ \
+    NULL,            /* binaryfunc nb_inplace_true_divide; */ \
+    NULL             /* unaryfunc nb_index; */ \
+}
+#endif
+
 #endif /* PLUGIN_PYTHON_H */
