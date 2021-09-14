@@ -536,57 +536,15 @@ static PyNumberMethods MapConvert = {
 };
 
 /* Our actual Python MapType */
-PyTypeObject Crossfire_MapType = {
-    /* See http://bugs.python.org/issue4385 */
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "Crossfire.Map",           /* tp_name*/
-    sizeof(Crossfire_Map),     /* tp_basicsize*/
-    0,                         /* tp_itemsize*/
-    Crossfire_Map_dealloc,     /* tp_dealloc*/
-    // Python 3.8+ expects a long int. Earlier Python expects a pointer reference.
-#ifdef IS_PY3K8
-    (long int)NULL,            /* tp_print*/
-#else
-    NULL,                      /* tp_print */
-#endif
-    NULL,                      /* tp_getattr*/
-    NULL,                      /* tp_setattr*/
-    NULL,                      /* tp_reserved */
-    NULL,                      /* tp_repr*/
-    &MapConvert,               /* tp_as_number*/
-    NULL,                      /* tp_as_sequence*/
-    NULL,                      /* tp_as_mapping*/
-    PyObject_HashNotImplemented, /* tp_hash */
-    NULL,                      /* tp_call*/
-    NULL,                      /* tp_str*/
-    PyObject_GenericGetAttr,   /* tp_getattro*/
-    PyObject_GenericSetAttr,   /* tp_setattro*/
-    NULL,                      /* tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE, /* tp_flags*/
-    "Crossfire maps",          /* tp_doc */
-    NULL,                      /* tp_traverse */
-    NULL,                      /* tp_clear */
-    (richcmpfunc)Crossfire_Map_RichCompare, /* tp_richcompare */
-    0,                         /* tp_weaklistoffset */
-    NULL,                      /* tp_iter */
-    NULL,                      /* tp_iternext */
-    MapMethods,                /* tp_methods */
-    NULL,                      /* tp_members */
-    Map_getseters,             /* tp_getset */
-    NULL,                      /* tp_base */
-    NULL,                      /* tp_dict */
-    NULL,                      /* tp_descr_get */
-    NULL,                      /* tp_descr_set */
-    0,                         /* tp_dictoffset */
-    NULL,                      /* tp_init */
-    NULL,                      /* tp_alloc */
-    Crossfire_Map_new,         /* tp_new */
-    NULL,                      /* tp_free */
-    NULL,                      /* tp_is_gc */
-    NULL,                      /* tp_bases */
-    NULL,                      /* tp_mro */
-    NULL,                      /* tp_cache */
-    NULL,                      /* tp_subclasses */
-    NULL,                      /* tp_weaklist */
-    NULL,                      /* tp_del */
-};
+CF_PYTHON_OBJECT(Map,
+                 Crossfire_Map_dealloc,
+                 &MapConvert,
+                 PyObject_HashNotImplemented,
+                 Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+                 "Crossfire maps",
+                 (richcmpfunc) Crossfire_Map_RichCompare,
+                 MapMethods,
+                 Map_getseters,
+                 NULL,
+                 Crossfire_Map_new
+                 );
