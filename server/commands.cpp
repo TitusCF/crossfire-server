@@ -37,12 +37,14 @@ struct registered_command {
     command_registration registration;                  /**< Identifier for unregistration. */
     command_function func_std;                          /**< Command function. */
     command_function_extra func_extra;                  /**< Command function if extra argument. */
-    char *extra;                                        /**< Extra argument, if not NULL then func_extra is used, else fund_std. */
+    char *extra;                                        /**< Extra argument, if not NULL then func_extra is used, else func_std. */
     float time;                                         /**< How long it takes to execute this command. */
     uint8_t type;                                       /**< Command type, one of COMMAND_TYPE_xxx. */
 };
 
+/** Next identifier for a command registration. */
 static command_registration next_registration = 1;
+/** All registered commands, key is the name, vector is all registered handlers in registration order (last one is used). */
 static std::map<std::string, std::vector<registered_command *> > registered_commands;
 
 /**
