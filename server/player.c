@@ -1555,6 +1555,7 @@ int apply_race_and_class(object *op, archetype *race, archetype *opclass, living
 
     esrv_send_inventory(op, op);
     esrv_update_item(UPD_FACE, op, op);
+    esrv_add_spells(op->contr, NULL);
 
     return 0;
 
