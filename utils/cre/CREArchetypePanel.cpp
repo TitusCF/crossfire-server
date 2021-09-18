@@ -99,4 +99,14 @@ void CREArchetypePanel::setItem(const archt* archetype)
 
         return true;
     });
+
+    if (rootArch)
+        CREUtils::addCountSuffix(rootArch);
+    if (rootTreasure)
+        CREUtils::addCountSuffix(rootTreasure);
+    if (rootMap)
+        CREUtils::addCountSuffix(rootMap);
+    if (rootCrafting)
+        CREUtils::addCountSuffix(rootCrafting);
+    myUsing->scrollToTop();
 }

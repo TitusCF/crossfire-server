@@ -56,6 +56,8 @@ class CREUtils
 
         static QTreeWidgetItem* facesetsNode();
         static QTreeWidgetItem* facesetsNode(const face_sets* faceset, QTreeWidgetItem* parent);
+
+        static void addCountSuffix(QTreeWidgetItem *item, int column = 0);
 };
 
 #endif // CREUTILS_H

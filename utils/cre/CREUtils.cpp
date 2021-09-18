@@ -288,3 +288,8 @@ QTreeWidgetItem* CREUtils::facesetsNode(const face_sets* faceset, QTreeWidgetIte
     QTreeWidgetItem* item = new QTreeWidgetItem(parent, QStringList(faceset->fullname));
     return item;
 }
+
+void CREUtils::addCountSuffix(QTreeWidgetItem *item, int column)
+{
+    item->setText(column, QTreeWidget::tr("%1 (%2)").arg(item->text(column)).arg(item->childCount()));
+}
