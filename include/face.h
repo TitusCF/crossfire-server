@@ -13,7 +13,7 @@
  */
 typedef struct Face {
     uint16_t number;              /**< This is the image unique identifier. */
-    uint8_t visibility;
+    uint8_t visibility;           /**< How visible is the face compared to other faces, highest wins. */
     uint8_t magicmap;             /**< Color to show this in magic map */
     struct Face *smoothface;  /**< Smoothed face for this, NULL for none. */
     sstring name;             /**< Face name, as used by archetypes and such. */
