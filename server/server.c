@@ -861,7 +861,7 @@ void enter_exit(object *op, object *exit_ob) {
  * two objects are farther than 'mindist' apart. Used to implement do_follow().
  * @return Direction to move in, or zero if cannot move.
  */
-static int move_towards(object *ob, object *towards, int mindist) {
+static int move_towards(object *ob, object *towards, unsigned int mindist) {
     rv_vector rv;
     get_rangevector(ob, towards, &rv, 0);
     if (rv.direction != 0 && rv.distance > mindist && ob->speed_left > 0) {
