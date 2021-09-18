@@ -1090,11 +1090,12 @@ static void load_settings(void) {
 }
 
 void add_server_collect_hooks() {
-    settings.hooks_count = 2;
-    settings.hooks_filename[0] = "/materials";
-    settings.hooks[0] = load_materials;
-    settings.hooks_filename[1] = "/races";
-    settings.hooks[1] = load_races;
+    settings.hooks_filename[settings.hooks_count] = "/materials";
+    settings.hooks[settings.hooks_count] = load_materials;
+    settings.hooks_count++;
+    settings.hooks_filename[settings.hooks_count] = "/races";
+    settings.hooks[settings.hooks_count] = load_races;
+    settings.hooks_count++;
 }
 
 /**
