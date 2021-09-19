@@ -152,8 +152,8 @@ static void convert_newline(char *line) {
  * If there is an error, calls fatal().
  */
 void i18n_init(void) {
-    char dirname[MAX_BUF], filename[MAX_BUF*2], line[HUGE_BUF];
-    FILE *fp;
+    char dirname[MAX_BUF], filename[MAX_BUF*2], *line;
+    BufferReader *br;
     char *token;
     DIR *dir;
     struct dirent *file;
@@ -174,9 +174,8 @@ void i18n_init(void) {
             continue;
 
         snprintf(filename, sizeof(filename), "%s%s", dirname, file->d_name);
-        if ((fp = fopen(filename, "r")) == NULL) {
-            LOG(llevError, "i18n: couldn't open %s\n",
-                    filename, strerror(errno));
+        br = bufferreader_init_from_file(NULL, filename, "i18n: couldn't open %s: %s\n", llevError);
+        if (!br) {
             fatal(SEE_LAST_ERROR);
         }
 
@@ -185,10 +184,8 @@ void i18n_init(void) {
         i18n_files[i18n_count].count = 0;
         i18n_files[i18n_count].messages = NULL;
 
-        while (fgets(line, MAX_BUF, fp)) {
-            if (line[0] != '#' && line[0] != '\n') {
-                line[strlen(line)-1] = '\0'; /* erase the final newline that messes things. */
-
+        while ((line = bufferreader_next_line(br)) != NULL) {
+            if (line[0] != '#' && line[0] != '\0') {
                 i18n_files[i18n_count].messages = realloc(i18n_files[i18n_count].messages, (i18n_files[i18n_count].count + 1) * sizeof(i18n_message));
 
                 token = strtok(line, "|");
@@ -204,7 +201,7 @@ void i18n_init(void) {
                 i18n_files[i18n_count].count++;
             }
         }
-        fclose(fp);
+        bufferreader_destroy(br);
 
         qsort(i18n_files[i18n_count].messages, i18n_files[i18n_count].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
         found = bsearch(&code, i18n_files[i18n_count].messages, i18n_files[i18n_count].count, sizeof(i18n_message), (int (*)(const void *, const void *))i18n_message_compare_code);
