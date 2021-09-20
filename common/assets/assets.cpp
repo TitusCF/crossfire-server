@@ -230,6 +230,7 @@ void assets_end_load() {
         }
     });
     check_recipes();
+    check_formulae();
 }
 
 /**

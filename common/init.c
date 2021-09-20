@@ -209,9 +209,6 @@ void init_library(void) {
     assets_collect(settings.datadir);
     assets_end_load();
 
-    check_formulae();
-
-
     init_clocks();
     init_emergency_mappath();
     init_experience();
