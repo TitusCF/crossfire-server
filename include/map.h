@@ -148,7 +148,7 @@ extern const char *const map_layer_name[MAP_LAYERS];
 #define SAVE_ERROR_NO_PATH          -4  /**< Map had no path set. */
 #define SAVE_ERROR_URENAME          -5  /**< Couldn't rename unique temporary file. */
 #define SAVE_ERROR_CLOSE            -6  /**< Close error for regular file. */
-#define SAVE_ERROR_RRENAME          -7  /**< Couldn't rename regular temporary file. */
+/*                                  -7  (no longer used) */
 #define SAVE_ERROR_NOT_IN_MEMORY    -10 /**< Map to swap isn't in memory. */
 #define SAVE_ERROR_PLAYER           -11 /**< Player on map to save. */
 /*@}*/
