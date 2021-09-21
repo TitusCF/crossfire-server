@@ -1222,6 +1222,20 @@ static void add_to_struct_map_in_quest_list(struct_map_in_quest_list *list, stru
 }
 
 /**
+ * Gets the information for a quest if it exists.
+ * @param name quest's name.
+ * @return quest information, NULL if no match.
+ */
+static struct_quest *find_quest_info(const char *name) {
+    int test;
+    for (test = 0; test < quests_count; test++) {
+        if (strcmp(quests[test]->name, name) == 0)
+            return quests[test];
+    }
+    return NULL;
+}
+
+/**
  * Gets the information for a quest, create the field if needed.
  *
  * @param name
@@ -1230,12 +1244,9 @@ static void add_to_struct_map_in_quest_list(struct_map_in_quest_list *list, stru
  * information, never NULL.
  */
 static struct_quest *get_quest_info(const char *name) {
-    int test;
-    struct_quest *add;
-
-    for (test = 0; test < quests_count; test++) {
-        if (strcmp(quests[test]->name, name) == 0)
-            return quests[test];
+    struct_quest *add = find_quest_info(name);
+    if (add) {
+        return add;
     }
 
     if (quests_count == quests_allocated) {
@@ -3562,6 +3573,17 @@ static void do_quest_item(const quest_definition *quest, FILE *file) {
         for (size_t s = 0; s < steps_count; s++)
             fprintf(file, "<li>%s%s</li>\n", steps[s]->step_description, steps[s]->is_completion_step ? "(end)" : "");
         fprintf(file, "</ul>\n");
+
+        struct_quest *sq = find_quest_info(quest->quest_code);
+        if (sq && sq->maps.count > 0) {
+            fprintf(file, "<p>Linked maps:</p>\n");
+            fprintf(file, "<ul>\n");
+            for (size_t i = 0; i < sq->maps.count; i++) {
+                const struct_map_in_quest *miq = sq->maps.list[i];
+                fprintf(file, "<li>%s (%s)</li>\n", miq->map->name, miq->description);
+            }
+            fprintf(file, "</ul>\n");
+        }
     }
 
     fprintf(file, "</li>\n");
