@@ -141,6 +141,7 @@ typedef struct typedata {
 #define PU_JEWELS               0x02000000
 #define PU_FLESH                0x04000000
 #define PU_CONTAINER            0x08000000
+#define PU_CURSED               0x10000000
 /*@}*/
 
 /* Instead of using arbitrary constants for indexing the

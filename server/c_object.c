@@ -36,7 +36,7 @@ static const char *pickup_names[] = {
     "armour", "boots", "gloves", "cloak", "key",
     "missile", "melee", "magical", "potion", "spellbook",
     "skillscroll", "readables", "magicdevice", "notcursed", "jewels",
-    "flesh", "container", NULL
+    "flesh", "container", "cursed", NULL
 };
 
 /** Value in @ref PU_xxx associated with @ref pickup_names.*/
@@ -44,7 +44,7 @@ static const uint32_t pickup_modes[] = {
     PU_DEBUG, PU_INHIBIT, PU_STOP, PU_FOOD, PU_DRINK, PU_VALUABLES, PU_BOW, PU_ARROW, PU_HELMET,
     PU_SHIELD, PU_ARMOUR, PU_BOOTS, PU_GLOVES, PU_CLOAK, PU_KEY, PU_MISSILEWEAPON, PU_MELEEWEAPON,
     PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE,
-    PU_NOT_CURSED, PU_JEWELS, PU_FLESH, PU_CONTAINER, 0
+    PU_NOT_CURSED, PU_JEWELS, PU_FLESH, PU_CONTAINER, PU_CURSED, 0
 };
 
 /**
@@ -701,6 +701,8 @@ int object_matches_pickup_mode(const object *item, int mode) {
             return item->type == KEY || item->type == SPECIAL_KEY;
         case PU_CONTAINER:
             return item->type == CONTAINER;
+        case PU_CURSED:
+            return QUERY_FLAG(item, FLAG_KNOWN_CURSED);
     }
     return 0;
 }
@@ -2187,6 +2189,10 @@ static void display_new_pickup(const object *op, int old) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "%d CONTAINER",
                          i&PU_CONTAINER ? 1 : 0);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                         "%d CURSED",
+                         i&PU_CURSED ? 1 : 0);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                   "");
