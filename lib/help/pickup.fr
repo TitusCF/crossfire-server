@@ -48,5 +48,6 @@ Les types d'objets possibles sont :
 - [color=#ff5500]notcursed[/color]
 - [color=#ff5500]jewels[/color]
 - [color=#ff5500]flesh[/color]
+- [color=#ff5500]cursed[/color]
 
 Le premier caractère peut être [color=#ff5500]+[/color] pour ajouter ce type d'objet à ce que vous ramassez, [color=#ff5500]-[/color] pour retirer le type, et [color=#ff5500]![/color] pour inverser le ramassage de ce type d'objet.

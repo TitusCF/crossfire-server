@@ -1854,6 +1854,7 @@ int check_pick(object *op) {
                 PU_MELEEWEAPON,
                 PU_KEY,
                 PU_CONTAINER,
+                PU_CURSED,
                 0
             };
             int found = 0;
