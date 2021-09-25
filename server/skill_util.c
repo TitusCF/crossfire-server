@@ -356,7 +356,7 @@ int change_skill(object *who, object *new_skill, int flag) {
     old_range = who->contr->shoottype;
 
     /* The readied skill can be a skill tool, so check on actual skill instead of object. */
-    if (who->chosen_skill && who->chosen_skill->skill == new_skill->skill) {
+    if (new_skill && who->chosen_skill && who->chosen_skill->skill == new_skill->skill) {
         /* optimization for changing skill to current skill */
         if (!(flag&0x1))
             who->contr->shoottype = range_skill;
