@@ -215,6 +215,8 @@ void QuestManager::loadQuestFile(const QString& filename)
 
         LOG(llevError, "quest: invalid file format for %s, I don't know what to do with the line %s\n", final, read);
     }
+
+    fclose(file);
 }
 
 Quest* QuestManager::getByCode(const QString& code)
