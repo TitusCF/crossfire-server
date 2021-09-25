@@ -258,7 +258,7 @@ const char *get_region_msg(const region *r) {
  * exit to jail, or NULL, in which case a message is LOG()ged .
  */
 object *get_jail_exit(object *op) {
-    region *reg;
+    region *reg, *orig;
     object *exit;
 
     if (op->type != PLAYER) {
@@ -267,6 +267,7 @@ object *get_jail_exit(object *op) {
     }
 
     reg = get_region_by_map(op->map);
+    orig = reg;
     while (reg != NULL) {
         if (reg->jailmap) {
             exit = object_new();
@@ -279,7 +280,7 @@ object *get_jail_exit(object *op) {
         } else
             reg = reg->parent;
     }
-    LOG(llevDebug, "No suitable jailmap for region %s was found.\n", reg->name);
+    LOG(llevDebug, "No suitable jailmap for region %s was found.\n", orig ? orig->name : "(unknown region?)");
     return NULL;
 }
 
