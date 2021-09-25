@@ -4133,12 +4133,13 @@ int player_can_view(object *pl, object *op) {
     rv_vector rv;
     int dx, dy;
 
+    if (!pl || !op)
+        return 0;
+
     if (pl->type != PLAYER) {
         LOG(llevError, "player_can_view() called for non-player object\n");
         return -1;
     }
-    if (!pl || !op)
-        return 0;
 
     op = HEAD(op);
     if (!get_rangevector(pl, op, &rv, 0x1))
