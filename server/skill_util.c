@@ -730,7 +730,7 @@ int64_t calc_skill_exp(const object *who, const object *op, const object *skill)
         value = 1; /* Always give at least 1 exp point */
 
 #ifdef SKILL_UTIL_DEBUG
-    LOG(llevDebug, "calc_skill_exp(): who: %s(lvl:%d)  op:%s(lvl:%d)\n", who->name, skill->level, op->name, op_lvl);
+    LOG(llevDebug, "calc_skill_exp(): who: %s(lvl:%d)  op:%s(lvl:%d)\n", who->name, skill->level, op ? op->name : "", op_lvl);
 #endif
     return ((int64_t)value);
 }
