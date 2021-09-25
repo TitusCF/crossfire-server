@@ -296,8 +296,7 @@ static int god_gives_present(object *op, const object *god, treasure *tr) {
 static bool try_leave_cult(object* pl, object* skill, int angry) {
     const uint64_t loss = angry * (skill->stats.exp / 10);
     if (loss)
-        change_exp(pl, -random_roll64(0, loss, pl, PREFER_LOW),
-                   skill ? skill->skill : "none", SK_SUBTRACT_SKILL_EXP);
+        change_exp(pl, -random_roll64(0, loss, pl, PREFER_LOW), skill->skill, SK_SUBTRACT_SKILL_EXP);
 
     /* random chance based on our current level
      * note it gets harder the higher we get
