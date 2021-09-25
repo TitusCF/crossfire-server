@@ -44,7 +44,7 @@ int random_roll(int min, int max, const object *op, int goodbad) {
 
     omin = min;
     diff = max-min+1;
-    ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
+    base = (diff > 2) ? 20 : 50; /* d2 and d3 are corner cases */
 
     if (max < 1 || diff < 1) {
         LOG(llevError, "Calling random_roll with min=%d max=%d\n", min, max);
@@ -81,7 +81,7 @@ int64_t random_roll64(int64_t min, int64_t max, const object *op, int goodbad) {
 
     omin = min;
     diff = max-min+1;
-    ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
+    base = (diff > 2) ? 20 : 50; /* d2 and d3 are corner cases */
 
     if (max < 1 || diff < 1) {
         LOG(llevError, "Calling random_roll with min=%"FMT64" max=%"FMT64"\n", min, max);
@@ -125,7 +125,7 @@ int die_roll(int num, int size, const object *op, int goodbad) {
     diff = size;
     min = 1;
     luck = total = gotlucky = 0;
-    ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
+    base = (diff > 2) ? 20 : 50; /* d2 and d3 are corner cases */
     if (size < 2 || diff < 1) {
         LOG(llevError, "Calling die_roll with num=%d size=%d\n", num, size);
         return(num); /* avoids a float exception */
