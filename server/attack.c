@@ -937,7 +937,7 @@ static int stick_arrow(object *op, object *tmp) {
      */
     if (op->weight <= 5000 && tmp->stats.hp >= 0) {
         object_remove(op);
-        op = object_insert_in_ob(op, HEAD(tmp));
+        object_insert_in_ob(op, HEAD(tmp));
         return 1;
     } else
         return 0;
