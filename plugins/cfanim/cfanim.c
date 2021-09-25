@@ -247,9 +247,10 @@ static anim_move_result runapplyobject(struct CFanimation_struct *animation, lon
     if (!parameters)
         return mr_finished;
     current = animation->victim->below;
-    FOR_OB_AND_BELOW_PREPARE(current)
+    FOR_OB_AND_BELOW_PREPARE(current) {
         if (current->name == parameters)
             break;
+    }
     FOR_OB_AND_BELOW_FINISH();
     if (!current)
         current = cf_object_find_by_name(animation->victim, parameters);
