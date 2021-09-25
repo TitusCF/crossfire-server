@@ -20,7 +20,6 @@ class CREArchetypePanel : public CRETPanel<const archt>
         virtual void setItem(const archt* archetype);
 
     protected:
-        const archt* myArchetype;
         QTextEdit* myDisplay;
         QTreeWidget* myUsing;
         CREMapInformationManager* myStore;

@@ -34,9 +34,8 @@ CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store, QWidget* p
 
 void CREArchetypePanel::setItem(const archt* archetype)
 {
-    myArchetype = archetype;
     StringBuffer* dump = stringbuffer_new();
-    object_dump(&myArchetype->clone, dump);
+    object_dump(&archetype->clone, dump);
     char* final = stringbuffer_finish(dump);
     myDisplay->setText(final);
     free(final);
@@ -45,7 +44,7 @@ void CREArchetypePanel::setItem(const archt* archetype)
 
     QTreeWidgetItem* rootArch = nullptr, *rootTreasure = nullptr, *rootMap = nullptr, *rootCrafting = nullptr;
 
-    ResourcesManager::archetypeUse(myArchetype, myStore,
+    ResourcesManager::archetypeUse(archetype, myStore,
             [this, &rootArch, &rootTreasure, &rootMap, &rootCrafting]
             (ArchetypeUse use, const archt* arch, const treasurelist* list, const CREMapInformation* map, const recipe* rec) -> bool
     {
