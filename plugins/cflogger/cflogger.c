@@ -465,13 +465,13 @@ static int store_time(void) {
  * arbitrary event code.
  */
 static void add_player_event(object *pl, int event_code) {
-    int id = get_living_id(pl);
     int map_id = 0;
     char *sql;
 
     if (pl == NULL)
         return;
 
+    int id = get_living_id(pl);
     if (pl->map)
         map_id = get_map_id(pl->map);
 
