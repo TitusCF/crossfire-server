@@ -45,7 +45,7 @@ static void remove_special_prayers(object *op, const object *god);
  * Returns the id of specified god.
  *
  * @param name
- * god to search for.
+ * god to search for, must not be NULL.
  * @return
  * identifier of god, -1 if not found.
  * @todo
@@ -55,7 +55,7 @@ static int lookup_god_by_name(const char *name) {
     int godnr = -1;
     size_t nmlen = strlen(name);
 
-    if (name && strcmp(name, "none")) {
+    if (strcmp(name, "none")) {
         godlink *gl;
         for (gl = first_god; gl; gl = gl->next)
             if (!strncmp(name, gl->name, MIN(strlen(gl->name), nmlen)))
