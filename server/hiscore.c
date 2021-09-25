@@ -454,7 +454,7 @@ void hiscore_display(object *op, int max, const char *match) {
     int len;
 
     /* check for per-skill instead of overall report */
-    if (match && strncmp(match, "-s", 2) == 0 ) {
+    if (strncmp(match, "-s", 2) == 0 ) {
         match += 2;
         if (*match == ':') {
             ++match;
