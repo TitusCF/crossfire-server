@@ -131,8 +131,7 @@ static int is_legal_2ways_exit(object *op, object *exit) {
                 return 0;    /* No more owner*/
             if (exit_owner->contr == op->contr)
                 return 1;  /*It is your exit*/
-            if (exit_owner    /*There is a owner*/
-            && (op->contr)    /*A player tries to pass */
+            if ((op->contr)    /*A player tries to pass */
             && ((exit_owner->contr->party == NULL) /*No pass if controller has no party*/
                 || (exit_owner->contr->party != op->contr->party))) /* Or not the same as op*/
                 return 0;
