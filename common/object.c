@@ -4755,10 +4755,8 @@ void object_get_multi_size(const object *ob, int *sx, int *sy, int *hx, int *hy)
                 miny = part->clone.y;
         }
     }
-    if (sx)
-        *sx = maxx;
-    if (sy)
-        *sy = maxy;
+    *sx = maxx;
+    *sy = maxy;
     if (hx)
         *hx = -minx;
     if (hy)
