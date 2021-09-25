@@ -843,7 +843,7 @@ object *find_target_for_friendly_spell(object *op, int dir) {
         }
     }
     /* didn't find a player there, look in current square for a player */
-    if (tmp == NULL)
+    if (tmp == NULL) {
         FOR_MAP_PREPARE(op->map, op->x, op->y, tmp) {
             if (tmp->type == PLAYER)
                 return tmp;
@@ -857,6 +857,7 @@ object *find_target_for_friendly_spell(object *op, int dir) {
                 }
             }
         } FOR_MAP_FINISH();
+    }
     return tmp;
 }
 
