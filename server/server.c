@@ -1319,7 +1319,7 @@ void leave(player *pl, int draw_exit) {
     * inconsistencies by showing that they have left the game
     */
     if (!(QUERY_FLAG(pl->ob, FLAG_WIZ) && pl->ob->contr->hidden)
-    && (pl != NULL && draw_exit) && (pl->state != ST_GET_NAME && pl->state != ST_GET_PASSWORD && pl->state != ST_CONFIRM_PASSWORD))
+    && (draw_exit) && (pl->state != ST_GET_NAME && pl->state != ST_GET_PASSWORD && pl->state != ST_CONFIRM_PASSWORD))
         draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
                              MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                              "%s left the game.",
