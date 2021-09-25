@@ -898,13 +898,13 @@ static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64_t *
 int can_pay(object *pl) {
     int unpaid_count = 0, i;
     uint64_t unpaid_price = 0;
-    uint64_t player_wealth = query_money(pl);
     uint32_t coincount[NUM_COINS];
 
     if (!pl || pl->type != PLAYER) {
         LOG(llevError, "can_pay(): called against something that isn't a player\n");
         return 0;
     }
+    uint64_t player_wealth = query_money(pl);
 
     for (i = 0; i < NUM_COINS; i++)
         coincount[i] = 0;
