@@ -675,10 +675,10 @@ static void enter_unique_map(object *op, object *exit_ob) {
 }
 
 void enter_player_maplevel(object *op) {
+    assert(op != NULL);
     int flags = 0, x = op->x, y = op->y;
     mapstruct *newmap;
 
-    assert(op != NULL);
     assert(op->type == PLAYER);
 
     /* newmap returns the map (if already loaded), or loads it for us. */
