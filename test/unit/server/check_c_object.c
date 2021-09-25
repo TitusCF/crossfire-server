@@ -262,6 +262,8 @@ static void do_test(const int do_what, const char *param, ...) {
             }
         }
     }
+
+    va_end(args);
 }
 
 START_TEST(test_command_take) {
