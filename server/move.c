@@ -149,7 +149,6 @@ int move_ob(object *op, int dir, object *originator) {
  */
 int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
     int i;
-    object *tmp;
 
     if (randomly)
         i = object_find_free_spot(op, op->map, x, y, 0, SIZEOFFREE);
@@ -161,15 +160,12 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
 
     op = HEAD(op);
     object_remove(op);
-    tmp = object_insert_in_map_at(op, op->map, originator, 0, x+freearr_x[i], y+freearr_y[i]);
+    op = object_insert_in_map_at(op, op->map, originator, 0, x+freearr_x[i], y+freearr_y[i]);
     if (op && op->type == PLAYER) {
         map_newmap_cmd(&op->contr->socket);
         player_update_bg_music(op);
     }
-    if (tmp)
-        return 0;
-    else
-        return 1;
+    return op ? 0 : 1;
 }
 
 /**
