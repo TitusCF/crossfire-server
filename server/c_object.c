@@ -484,7 +484,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                   buf);
 
-    tmp = object_insert_in_ob(tmp, op);
+    object_insert_in_ob(tmp, op);
 
     /* All the stuff below deals with client/server code, and is only
      * usable by players
