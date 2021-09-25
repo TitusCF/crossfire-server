@@ -141,6 +141,10 @@ static method_ret shop_inventory_type_apply(object *lighter, object *applier, in
                 if (QUERY_FLAG(stack, FLAG_UNPAID)) {
                     if (numitems == numallocated) {
                         items = realloc(items, sizeof(shopinv)*(numallocated+10));
+                        if (!items) {
+                            LOG(llevError, "shop_inventory: couldn't allocate memory!\n");
+                            fatal(OUT_OF_MEMORY);
+                        }
                         numallocated += 10;
                     }
                     add_shop_item(stack, items, &numitems);

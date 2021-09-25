@@ -180,6 +180,10 @@ void i18n_init(void) {
         }
 
         i18n_files = realloc(i18n_files, (i18n_count + 1) * sizeof(i18n_file));
+        if (!i18n_files) {
+            LOG(llevError, "i18n: couldn't allocate memory!\n");
+            fatal(OUT_OF_MEMORY);
+        }
         i18n_files[i18n_count].code = add_string(file->d_name + 9);
         i18n_files[i18n_count].count = 0;
         i18n_files[i18n_count].messages = NULL;
