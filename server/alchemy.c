@@ -586,10 +586,10 @@ static void alchemy_failure_effect(object *op, object *cauldron, const recipe *r
             int weight = 0;
             uint16_t material = M_STONE;
 
-            FOR_INV_PREPARE(cauldron, tmp) { /* slag has coadded ingredient properties */
-                weight += tmp->weight;
-                if (!(material&tmp->material))
-                    material |= tmp->material;
+            FOR_INV_PREPARE(cauldron, inv) { /* slag has coadded ingredient properties */
+                weight += inv->weight;
+                if (!(material&inv->material))
+                    material |= inv->material;
             } FOR_INV_FINISH();
             tmp = create_archetype("rock");
             tmp->weight = weight;
