@@ -2422,11 +2422,11 @@ object *object_insert_in_map(object *op, mapstruct *m, object *originator, int f
     if (op->nrof
     && !(flag&INS_NO_MERGE)
     && op->type != SPELL_EFFECT) {
-        FOR_MAP_PREPARE(op->map, x, y, tmp) {
-            if (object_can_merge(op, tmp)) {
-                op->nrof += tmp->nrof;
-                object_remove(tmp);
-                object_free(tmp, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
+        FOR_MAP_PREPARE(op->map, x, y, spot) {
+            if (object_can_merge(op, spot)) {
+                op->nrof += spot->nrof;
+                object_remove(spot);
+                object_free(spot, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
             }
         } FOR_MAP_FINISH();
     } else if (op->type == SPELL_EFFECT
