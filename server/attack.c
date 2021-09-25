@@ -965,10 +965,11 @@ object *hit_with_arrow(object *op, object *victim) {
 
     /* Disassemble missile */
     hitter = op->inv;
-    FOR_OB_AND_BELOW_PREPARE(hitter)
+    FOR_OB_AND_BELOW_PREPARE(hitter) {
         if (hitter->type != EVENT_CONNECTOR) {
             break;
         }
+    }
     FOR_OB_AND_BELOW_FINISH();
     if (!hitter) {
         container = NULL;
