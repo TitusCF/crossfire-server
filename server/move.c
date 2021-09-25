@@ -190,7 +190,7 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
 int teleport(object *teleporter, uint8_t tele_type, object *user) {
     object *altern[120]; /* Better use c/malloc here in the future */
     int i, j, k, nrofalt = 0;
-    object *other_teleporter, *tmp;
+    object *other_teleporter;
     mapstruct *m;
     int16_t sx, sy;
 
@@ -257,12 +257,12 @@ int teleport(object *teleporter, uint8_t tele_type, object *user) {
 
     object_remove(user);
 
-    tmp = object_insert_in_map_at(user, other_teleporter->map, NULL, 0, other_teleporter->x+freearr_x[k], other_teleporter->y+freearr_y[k]);
-    if (tmp && tmp->type == PLAYER) {
-        map_newmap_cmd(&tmp->contr->socket);
-        player_update_bg_music(tmp);
+    user = object_insert_in_map_at(user, other_teleporter->map, NULL, 0, other_teleporter->x+freearr_x[k], other_teleporter->y+freearr_y[k]);
+    if (user && user->type == PLAYER) {
+        map_newmap_cmd(&user->contr->socket);
+        player_update_bg_music(user);
     }
-    return (tmp == NULL);
+    return (user == NULL);
 }
 
 /**
