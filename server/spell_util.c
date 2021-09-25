@@ -1957,7 +1957,6 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
     /* free the spell arg */
     if (settings.casting_time == TRUE) {
         free(stringarg);
-        stringarg = NULL;
     }
     /* perhaps a bit of a hack, but if using a wand, it has to change the skill
      * to something like use_magic_item, but you really want to be able to fire
