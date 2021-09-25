@@ -1828,7 +1828,7 @@ void player_lvl_adj(object *who, object *op) {
         do{
             op->level++;
 
-            if (op != NULL && op == who && op->stats.exp > 1 && is_dragon_pl(who))
+            if (op == who && op->stats.exp > 1 && is_dragon_pl(who))
                 dragon_level_gain(who);
 
             /* Only roll these if it is the player (who) that gained the level */
