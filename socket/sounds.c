@@ -78,8 +78,6 @@ void play_sound_player_only(player *pl, int8_t sound_type, object *emitter, int 
     if (name == NULL) {
         return;
     }
-    if (!source)
-        source = emitter;
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "sound2 ");
