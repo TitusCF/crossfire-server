@@ -71,7 +71,7 @@ void free_player(player *pl) {
 
         while (prev != NULL && prev->next != NULL && prev->next != pl)
             prev = prev->next;
-        if (prev->next != pl) {
+        if (!prev || prev->next != pl) {
             LOG(llevError, "Free_player: Can't find previous player.\n");
             exit(1);
         }
