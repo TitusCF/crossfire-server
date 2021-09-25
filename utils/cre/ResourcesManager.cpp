@@ -132,12 +132,12 @@ void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager*
             return;
         foreach(CRERandomMap* rm, information->randomMaps())
         {
-            if (!goOn)
-                return;
             if (strcmp(item->name, rm->parameters()->final_exit_archetype) == 0)
             {
                 goOn = callback(RANDOM_MAP_FINAL_EXIT, nullptr, nullptr, information, nullptr);
             }
+            if (!goOn)
+                return;
         }
     }
 
