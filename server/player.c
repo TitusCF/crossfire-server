@@ -860,7 +860,6 @@ void give_initial_items(object *pl, treasurelist *items) {
  * player.
  */
 void get_name(object *op) {
-    op->contr->write_buf[0] = '\0';
     player_set_state(op->contr, ST_GET_NAME);
     send_query(&op->contr->socket, 0, i18n(op, "What is your name?\n:"));
 }
@@ -872,7 +871,6 @@ void get_name(object *op) {
  * player.
  */
 void get_password(object *op) {
-    op->contr->write_buf[0] = '\0';
     player_set_state(op->contr, ST_GET_PASSWORD);
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n(op, "What is your password?\n:"));
 }
@@ -987,7 +985,6 @@ void receive_play_again(object *op, char key) {
  * player.
  */
 void confirm_password(object *op) {
-    op->contr->write_buf[0] = '\0';
     player_set_state(op->contr, ST_CONFIRM_PASSWORD);
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n(op, "Please type your password again.\n:"));
 }
@@ -1007,7 +1004,6 @@ int get_party_password(object *op, partylist *party) {
         return 0;
     }
 
-    op->contr->write_buf[0] = '\0';
     player_set_state(op->contr, ST_GET_PARTY_PASSWORD);
     op->contr->party_to_join = party;
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n(op, "What is the password?\n:"));

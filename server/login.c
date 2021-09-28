@@ -509,14 +509,14 @@ static void wrong_password(object *op) {
  *
  * @param op
  * player.
- * @param check_pass
- * If true, we should do password checking.  Otherwise, we just log this
- * character in.  This later setting is used for the account code,
- * where that already does authentication.
+ * @param password
+ * if not NULL, the uncrypted password the user entered.
+ * If NULL, no password check is done, coming from the account code which
+ * already does authentication.
  *
  * @todo describe connect/login/logout/disconnect process.
  */
-void check_login(object *op, int check_pass) {
+void check_login(object *op, const char *password) {
     FILE *fp;
     char filename[MAX_BUF];
     char buf[MAX_BUF], bufall[MAX_BUF];
@@ -534,7 +534,7 @@ void check_login(object *op, int check_pass) {
     /* Check if this matches a connected player, and if yes disconnect old / connect new. */
     for (pltmp = first_player; pltmp != NULL; pltmp = pltmp->next) {
         if (pltmp != pl && pltmp->ob->name != NULL && !strcmp(pltmp->ob->name, op->name)) {
-            if (!check_pass || check_password(pl->write_buf+1, pltmp->password)) {
+            if (!password || check_password(password, pltmp->password)) {
                 /* We could try and be more clever and re-assign the existing
                  * object to the new player, etc.  However, I'm concerned that
                  * there may be a lot of other state that still needs to be sent
@@ -550,7 +550,7 @@ void check_login(object *op, int check_pass) {
                 final_free_player(pltmp);
                 break;
             }
-            if (check_pass) {
+            if (password) {
                 wrong_password(op);
                 return;
             }
@@ -587,8 +587,8 @@ void check_login(object *op, int check_pass) {
         }
         if (sscanf(bufall, "password %s\n", buf)) {
             /* New password scheme: */
-            correct = check_password(pl->write_buf+1, buf);
-            if (!check_pass) {
+            correct = password && check_password(password, buf);
+            if (!password) {
                 /* We want to preserve the password.  Normally,
                  * pl->password is filled in when user enters
                  * data in the password prompt, but with new login,
@@ -603,7 +603,7 @@ void check_login(object *op, int check_pass) {
          * for at least several years.
          */
     }
-    if (!correct && check_pass) {
+    if (!correct && password) {
         wrong_password(op);
         fclose(fp);
         return;

@@ -28,16 +28,18 @@
  *
  * @param op
  * player. Must have party_to_join correctly set.
+ * @param password
+ * password the player used.
  * @retval 0
  * password is correct.
  * @retval 1
  * invalid password or party not found.
  */
-int confirm_party_password(object *op) {
+static int confirm_party_password(object *op, const char *password) {
     const partylist *party;
 
     party = party_find(op->contr->party_to_join->partyname);
-    return party == NULL || !party_confirm_password(party, op->contr->write_buf+1);
+    return party == NULL || !party_confirm_password(party, password);
 }
 
 /**
@@ -45,9 +47,11 @@ int confirm_party_password(object *op) {
  *
  * @param op
  * player.
+ * @param password
+ * party password.
  */
-void receive_party_password(object *op) {
-    if (confirm_party_password(op) == 0) {
+void receive_party_password(object *op, const char *password) {
+    if (confirm_party_password(op, password) == 0) {
         party_join(op, op->contr->party_to_join);
         op->contr->party_to_join = NULL;
         player_set_state(op->contr, ST_PLAYING);

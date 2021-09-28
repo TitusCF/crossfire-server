@@ -2120,7 +2120,6 @@ static int do_wizard_dm(object *op, const char *params, int silent) {
          * other desired abilities.
          */
         clear_los(op->contr);
-        op->contr->write_buf[0] = '\0';
 
         if (!silent)
             draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL,
@@ -2132,7 +2131,6 @@ static int do_wizard_dm(object *op, const char *params, int silent) {
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                   "Sorry Pal, I don't think so.");
-    op->contr->write_buf[0] = '\0';
     return 0;
 }
 
