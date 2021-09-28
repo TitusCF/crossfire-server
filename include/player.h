@@ -176,7 +176,6 @@ typedef struct pl {
     char        last_tell[MAX_NAME]; /**< last player that told you something [mids 01/14/2002]. */
 
     char        write_buf[MAX_BUF];  /**< Holds arbitrary input from client. */
-    char        input_buf[MAX_BUF];  /**< Holds command to run. */
     char        password[16];        /**< 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
     char        new_password[16];    /**< 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
 
