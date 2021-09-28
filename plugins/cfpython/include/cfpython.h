@@ -101,11 +101,28 @@ typedef struct _cfpcontext {
     struct talk_info    *talk;
 } CFPContext;
 
+typedef struct {
+    const char *name;
+    const int value;
+} CFConstant;
+
 extern f_plug_api gethook;
 
 extern CFPContext *context_stack;
 
 extern CFPContext *current_context;
+
+extern PyMethodDef CFPythonMethods[];
+extern const CFConstant cstDirection[];
+extern const CFConstant cstType[];
+extern const CFConstant cstMove[];
+extern const CFConstant cstMessageFlag[];
+extern const CFConstant cstAttackType[];
+extern const CFConstant cstAttackTypeNumber[];
+extern const CFConstant cstEventType[];
+extern const CFConstant cstTime[];
+extern const CFConstant cstReplyTypes[];
+extern const CFConstant cstAttackMovement[];
 
 #include <cfpython_proto.h>
 
