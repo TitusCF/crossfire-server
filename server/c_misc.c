@@ -1925,15 +1925,17 @@ void command_sound(object *op, const char *params) {
  *
  * @param op
  * player we're getting the name of.
+ * @param name
+ * name the player entered.
  */
-void receive_player_name(object *op) {
-    if (!check_name(op->contr, op->contr->write_buf+1)) {
+void receive_player_name(object *op, const char *name) {
+    if (!check_name(op->contr, name)) {
         get_name(op);
         return;
     }
-    FREE_AND_COPY(op->name, op->contr->write_buf+1);
-    FREE_AND_COPY(op->name_pl, op->contr->write_buf+1);
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, op->contr->write_buf);
+    FREE_AND_COPY(op->name, name);
+    FREE_AND_COPY(op->name_pl, name);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, name);
     op->contr->name_changed = 1;
     get_password(op);
 }
@@ -1943,11 +1945,13 @@ void receive_player_name(object *op) {
  *
  * @param op
  * player.
+ * @param password
+ * password used.
  */
-void receive_player_password(object *op) {
-    unsigned int pwd_len = strlen(op->contr->write_buf);
+void receive_player_password(object *op, const char *password) {
+    unsigned int pwd_len = strlen(password);
 
-    if (pwd_len <= 1 || pwd_len > 17) {
+    if (pwd_len == 0 || pwd_len > 16) {
         if (op->contr->state == ST_CHANGE_PASSWORD_OLD
         || op->contr->state == ST_CHANGE_PASSWORD_NEW
         || op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
@@ -1971,7 +1975,7 @@ void receive_player_password(object *op) {
     }
 
     if (op->contr->state == ST_CONFIRM_PASSWORD) {
-        if (!check_password(op->contr->write_buf+1, op->contr->password)) {
+        if (!check_password(password, op->contr->password)) {
             draw_ext_info(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                           "The passwords did not match.");
             get_name(op);
@@ -1987,7 +1991,7 @@ void receive_player_password(object *op) {
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_OLD) {
-        if (!check_password(op->contr->write_buf+1, op->contr->password)) {
+        if (!check_password(password, op->contr->password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                           "You entered the wrong current password.");
             player_set_state(op->contr, ST_PLAYING);
@@ -1999,7 +2003,7 @@ void receive_player_password(object *op) {
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_NEW) {
-        safe_strncpy(op->contr->new_password, newhash(op->contr->write_buf+1),
+        safe_strncpy(op->contr->new_password, newhash(password),
                 sizeof(op->contr->new_password));
         send_query(&op->contr->socket, CS_QUERY_HIDEINPUT,
                 i18n(op, "Please confirm your new password, or blank to cancel:"));
@@ -2008,7 +2012,7 @@ void receive_player_password(object *op) {
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
-        if (!check_password(op->contr->write_buf+1, op->contr->new_password)) {
+        if (!check_password(password, op->contr->new_password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                           "The new passwords don't match!");
         } else {
@@ -2020,10 +2024,10 @@ void receive_player_password(object *op) {
         return;
     }
 
-    safe_strncpy(op->contr->password, newhash(op->contr->write_buf+1),
+    safe_strncpy(op->contr->password, newhash(password),
             sizeof(op->contr->password));
     player_set_state(op->contr, ST_ROLL_STAT);
-    check_login(op, TRUE);
+    check_login(op, password);
 }
 
 /**

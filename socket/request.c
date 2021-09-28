@@ -526,16 +526,6 @@ void reply_cmd(char *buf, int len, player *pl) {
         return;
     }
 
-    /* This is to synthesize how the data would be stored if it
-     * was normally entered. A bit of a hack, and should be cleaned up
-     * once all the X11 code is removed from the server.
-     *
-     * We pass 13 to many of the functions because this way they
-     * think it was the carriage return that was entered, and the
-     * function then does not try to do additional input.
-     */
-    snprintf(pl->write_buf, sizeof(pl->write_buf), ":%s", buf);
-
     /* this avoids any hacking here */
 
     switch (pl->state) {
@@ -564,7 +554,7 @@ void reply_cmd(char *buf, int len, player *pl) {
         break;
 
     case ST_GET_NAME:
-        receive_player_name(pl->ob);
+        receive_player_name(pl->ob, buf);
         break;
 
     case ST_GET_PASSWORD:
@@ -572,11 +562,11 @@ void reply_cmd(char *buf, int len, player *pl) {
     case ST_CHANGE_PASSWORD_OLD:
     case ST_CHANGE_PASSWORD_NEW:
     case ST_CHANGE_PASSWORD_CONFIRM:
-        receive_player_password(pl->ob);
+        receive_player_password(pl->ob, buf);
         break;
 
     case ST_GET_PARTY_PASSWORD:        /* Get password for party */
-        receive_party_password(pl->ob);
+        receive_party_password(pl->ob, buf);
         break;
 
     default:
@@ -2567,7 +2557,7 @@ void account_play_cmd(char *buf, int len, socket_struct *ns)
     }
 
     pl->ob->name = add_string(buf);
-    check_login(pl->ob, 0);
+    check_login(pl->ob, NULL);
 
     SockList_AddString(&sl, "addme_success");
     Send_With_Handling(ns, &sl);
