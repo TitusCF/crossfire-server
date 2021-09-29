@@ -806,14 +806,10 @@ static int do_skill_detect_magic(object *pl, object *skill) {
  * experience for successful identification.
  */
 int identify_object_with_skill(object *tmp, object *pl, object *skill, int print_on_success) {
-    int success = 0, chance, ip;
+    int success = 0, chance;
     int skill_value = (skill->level && pl->stats.Int) ? pl->stats.Int : 10;
 
     if (!tmp->invisible && !QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT) && !is_identified(tmp)) {
-        ip = tmp->magic;
-        if (tmp->item_power > ip)
-            ip = tmp->item_power;
-
         uint32_t identified = 0;
         for (uint32_t i = 0; i < NROF(tmp); i++) {
             chance = die_roll(3, 10, pl, PREFER_LOW)-3+rndm(0, (tmp->magic ? tmp->magic*5 : 1)-1);
