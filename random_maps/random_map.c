@@ -435,7 +435,6 @@ char **rotate_layout(char **maze, int rotation, RMParms *RP)
     switch (rotation) {
     case 0:
         return maze;
-        break;
 
     case 2: { /* a reflection */
         char *new = malloc(sizeof(char)*RP->Xsize*RP->Ysize);
@@ -452,7 +451,6 @@ char **rotate_layout(char **maze, int rotation, RMParms *RP)
         }
         free(new);
         return maze;
-        break;
     }
 
     case 1:
@@ -486,7 +484,6 @@ char **rotate_layout(char **maze, int rotation, RMParms *RP)
         RP->Ysize = RP->Xsize;
         RP->Xsize = swap;
         return new_maze;
-        break;
     }
     }
     return NULL;
