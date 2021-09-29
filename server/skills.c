@@ -966,7 +966,6 @@ int skill_ident(object *pl, object *skill) {
         if (identifiable_types == 0) {
             LOG(llevError, "Error: skill_ident() called with skill %d which can't identify any items\n", skill->subtype);
             return 0;
-            break;
         }
         break;
     }
