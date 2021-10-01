@@ -19,7 +19,7 @@
  *
  * Mainly deals with initialization and higher level socket
  * maintenance (checking for lost connections and if data has arrived.)
- * The reading of data is handled in ericserver.c
+ * The reading of data is handled in loop.c
  */
 
 #include "global.h"
@@ -259,7 +259,7 @@ void init_listening_socket(socket_struct *ns) {
     ns->status = Ns_Add;
 }
 
-/** This sets up the socket and reads all the image information into memory.
+/** This sets up the listening socket.
  * @todo fix socket_info.max_filedescriptor hack. */
 void init_server(void) {
     int i, e, listen_socket_count;
