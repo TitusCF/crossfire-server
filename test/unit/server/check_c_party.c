@@ -52,24 +52,24 @@ START_TEST(test_party) {
     fail_unless(party_get_first() == NULL, "firstparty should be NULL!");
 
     pl1 = calloc(1, sizeof(object));
-    pl1->name = "player1";
     fail_unless(pl1 != NULL, "memory allocation failure");
+    pl1->name = "player1";
     pl1->contr = calloc(1, sizeof(player));
     fail_unless(pl1->contr != NULL, "memory allocation failure");
     first_player = pl1->contr; /* needed because obsolete parties uses this. */
     pl1->contr->ob = pl1;
 
     pl2 = calloc(1, sizeof(object));
-    pl2->name = "player2";
     fail_unless(pl2 != NULL, "memory allocation failure");
+    pl2->name = "player2";
     pl2->contr = calloc(1, sizeof(player));
     fail_unless(pl2->contr != NULL, "memory allocation failure");
     first_player = pl2->contr; /* needed because obsolete parties uses this. */
     pl2->contr->ob = pl2;
 
     pl3 = calloc(1, sizeof(object));
-    pl3->name = "player2";
     fail_unless(pl3 != NULL, "memory allocation failure");
+    pl3->name = "player2";
     pl3->contr = calloc(1, sizeof(player));
     fail_unless(pl3->contr != NULL, "memory allocation failure");
     first_player = pl3->contr; /* needed because obsolete parties uses this. */
