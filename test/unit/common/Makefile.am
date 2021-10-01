@@ -19,7 +19,9 @@ $(top_builddir)/test/toolkit/libtoolkit_common.a:
 # check_links check_logger check_los check_map
 # check_player check_porting check_recipe check_re-cmp check_region
 
+check_asset_load_write_SOURCES = check_asset_load_write.cpp
 TESTS= check_arch check_image check_item check_living check_loader check_object check_path check_readable check_shstr check_time check_treasure check_utils
+TESTS+= check_asset_load_write
 
 DISTCLEANFILES=	.autorun.xml
 
