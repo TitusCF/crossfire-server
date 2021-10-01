@@ -90,6 +90,15 @@ void bufferreader_init_from_tar_file(BufferReader *br, mtar_t *tar, mtar_header_
     mtar_read_data(tar, br->buf, h->size);
 }
 
+BufferReader *bufferreader_init_from_memory(BufferReader *br, const char *data, size_t length) {
+    if (!br) {
+        br = bufferreader_create();
+    }
+    bufferreader_init_for_length(br, length);
+    memcpy(br->buf, data, length);
+    return br;
+}
+
 char *bufferreader_next_line(BufferReader *br) {
     if (!br->current_line) {
         return NULL;

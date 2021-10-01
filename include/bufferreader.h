@@ -83,6 +83,15 @@ BufferReader *bufferreader_init_from_file(BufferReader *br, const char *filepath
 void bufferreader_init_from_tar_file(BufferReader *br, mtar_t *tar, mtar_header_t *h);
 
 /**
+ * Initialize or create a BufferReader from a memory block.
+ * @param br buffer to initialize, if NULL then a new BufferReader is created.
+ * @param data data to initialize the reader to.
+ * @param length length of data.
+ * @return BufferReader with a copy of data.
+ */
+BufferReader *bufferreader_init_from_memory(BufferReader *br, const char *data, size_t length);
+
+/**
  * Return the next line in the buffer, as separated by a newline.
  * @param br buffer to get the line from.
  * @return NULL if end of buffer is reached, else a null-terminated string.
