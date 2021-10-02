@@ -12,6 +12,7 @@ extern "C" {
 #include "TreasureWriter.h"
 #include "AnimationWriter.h"
 #include "FaceLoader.h"
+#include "FaceWriter.h"
 #include "Faces.h"
 #include "Animations.h"
 #include "assets.h"
@@ -161,6 +162,46 @@ START_TEST(test_animation) {
 }
 END_TEST
 
+static Face *generate_face(Faces &faces) {
+    Face *face = static_cast<Face *>(calloc(1, sizeof(Face)));
+    face->name = generate_name(50);
+    if (rndm(0, 10) == 0) {
+        face->smoothface = faces.get(generate_name(50));
+        return face;
+    }
+
+    face->magicmap = rndm(0, 10);
+    if (rndm(0, 3) == 0) {
+        face->magicmap |= FACE_FLOOR;
+    }
+    face->visibility = rndm(0, 50);
+    if (rndm(0, 3) == 0) {
+        face->smoothface = faces.get(generate_name(50));
+    }
+    return face;
+}
+
+START_TEST(test_face) {
+    Faces faces;
+    AllAnimations anims;
+    FaceWriter writer;
+    FaceLoader loader(&faces, &anims);
+
+    Face *face = generate_face(faces);
+    write_load(face, writer, loader);
+
+    auto loaded = faces.find(face->name);
+    ck_assert_int_eq(face->magicmap, loaded->magicmap);
+    ck_assert_int_eq(face->visibility, loaded->visibility);
+    if (face->smoothface) {
+        ck_assert(loaded->smoothface);
+        ck_assert_str_eq(face->smoothface->name, loaded->smoothface->name);
+    } else {
+        ck_assert(loaded->smoothface == nullptr);
+    }
+}
+END_TEST
+
 static Suite *shstr_suite(void) {
     Suite *s = suite_create("asset_load_write");
     TCase *tc_core = tcase_create("Core");
@@ -171,6 +212,7 @@ static Suite *shstr_suite(void) {
     suite_add_tcase(s, tc_core);
     tcase_add_loop_test(tc_core, test_treasure, 0, 25);
     tcase_add_loop_test(tc_core, test_animation, 0, 25);
+    tcase_add_loop_test(tc_core, test_face, 0, 25);
 
     return s;
 }
