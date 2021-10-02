@@ -1029,6 +1029,13 @@ typedef struct {
     const int value;
 } CFConstant;
 
+/**
+ * Add constants and a reverse dictionary to get the name from the value.
+ * The reverse dictionary will be named '{name}Name'.
+ * @param module where to add the constants to.
+ * @param name enum name containing the constants.
+ * @param constants constants to add, the last item must have its values all NULL.
+ */
 static void addConstants(PyObject *module, const char *name, const CFConstant *constants) {
     int i = 0;
     char tmp[1024];
@@ -1051,11 +1058,15 @@ static void addConstants(PyObject *module, const char *name, const CFConstant *c
     PyDict_SetItemString(PyModule_GetDict(module), tmp, dict);
     Py_DECREF(dict);
 }
+
 /**
  * Do half the job of addConstants. It only
- * Set constantc, but not a hashtable to get constant
+ * sets constants, but not a hashtable to get constant
  * names from values. To be used for collections of constants
- * which are not unique but still are usefull for scripts
+ * which are not unique but still are useful for scripts.
+ * @param module where to add the constants to.
+ * @param name enum name containing the constants.
+ * @param constants constants to add, the last item must have its values all NULL.
  */
 static void addSimpleConstants(PyObject *module, const char *name, const CFConstant *constants) {
     int i = 0;
