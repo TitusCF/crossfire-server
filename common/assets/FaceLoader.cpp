@@ -133,7 +133,7 @@ void FaceLoader::load(BufferReader *buffer, const std::string& filename) {
             on_face->visibility = atoi(buf+11);
         } else if (!strncmp(buf, "magicmap", 8)) {
             cp = buf+9;
-            on_face->magicmap = find_color(cp);
+            on_face->magicmap = find_color(cp) | (on_face->magicmap & FACE_FLOOR);
         } else if (!strncmp(buf, "is_floor", 8)) {
             int value = atoi(buf+9);
             if (value)
