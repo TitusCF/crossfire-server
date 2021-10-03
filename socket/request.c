@@ -2750,7 +2750,7 @@ void create_player_cmd(char *buf, int len, socket_struct *ns)
                 map = try_find_archetype(value);
                 if (!map || map->clone.type != MAP || map->clone.subtype !=MAP_TYPE_CHOICE) {
                     SockList_AddString(&sl,
-                               "failure createplayer Invalid or map");
+                               "failure createplayer Invalid starting map");
                     Send_With_Handling(ns, &sl);
                     SockList_Term(&sl);
                     return;
