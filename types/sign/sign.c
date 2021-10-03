@@ -50,7 +50,6 @@ void init_type_sign(void) {
  */
 static void apply_sign(object *sign, object *op, int moved_on) {
     const readable_message_type *msgType;
-    (void)autoapply;
 
     if (sign->msg == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
