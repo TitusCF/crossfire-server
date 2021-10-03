@@ -21,7 +21,7 @@ EditMonstersDialog::EditMonstersDialog(ResourcesManager *resources) : myResource
     layout->addWidget(save, 1, 0, 1, 1);
 
     QPushButton *close = new QPushButton(tr("Close"), this);
-    connect(close, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(close, SIGNAL(clicked()), this, SLOT(onCloseClicked()));
     layout->addWidget(close, 1, 1, 1, 1);
 
     setLayout(layout);
@@ -65,4 +65,13 @@ void EditMonstersDialog::onSaveChanges() {
     }
 
     myModel->markClean();
+}
+
+void EditMonstersDialog::onCloseClicked() {
+    if (!myModel->dirty().empty()) {
+        if (QMessageBox::question(this, "Discard changes?", "Some changes were not saved, are you sure you want to discard them?") != QMessageBox::Yes) {
+            return;
+        }
+    }
+    reject();
 }
