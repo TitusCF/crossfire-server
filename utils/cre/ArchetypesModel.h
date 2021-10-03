@@ -4,11 +4,12 @@
 #include <set>
 #include <QAbstractTableModel>
 
-struct archt;
+class CREWrapperObject;
 
 class ArchetypesModel : public QAbstractTableModel {
 public:
   ArchetypesModel();
+  virtual ~ArchetypesModel();
 
   int rowCount(const QModelIndex &parent = QModelIndex()) const;
   int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -21,7 +22,7 @@ public:
   void markClean() { myDirty.clear(); }
 
 private:
-  std::vector<archt *> myMonsters;
+  std::vector<CREWrapperObject *> myMonsters;
   std::set<archt *> myDirty;
 };
 
