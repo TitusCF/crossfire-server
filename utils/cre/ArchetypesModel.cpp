@@ -2,13 +2,32 @@
 #include "assets.h"
 #include "AssetsManager.h"
 #include "CREPixmap.h"
+#include "CREWrapperObject.h"
+
+#define PROPERTY_COUNT  8
+const char *properties[PROPERTY_COUNT] = {
+    "hp",
+    "ac",
+    "wc",
+    "weight",
+    "experience",
+    "level",
+    "damage",
+    "speed"
+};
 
 ArchetypesModel::ArchetypesModel() {
     getManager()->archetypes()->each([this] (archetype *arch) {
         if (QUERY_FLAG(&arch->clone, FLAG_MONSTER) && (!arch->head)) {
-            myMonsters.push_back(arch);
+            CREWrapperObject *wrapper = new CREWrapperObject();
+            wrapper->setObject(&arch->clone);
+            myMonsters.push_back(wrapper);
         }
     });
+}
+
+ArchetypesModel::~ArchetypesModel() {
+    qDeleteAll(myMonsters);
 }
 
 int ArchetypesModel::rowCount(const QModelIndex &parent) const {
@@ -18,41 +37,23 @@ int ArchetypesModel::rowCount(const QModelIndex &parent) const {
   
 int ArchetypesModel::columnCount(const QModelIndex &parent) const {
     (void)parent;
-    return 8;
+    return PROPERTY_COUNT;
 }
 
 QVariant ArchetypesModel::data(const QModelIndex &index, int role) const {
     if (role != Qt::DisplayRole && role != Qt::EditRole) {
         return QVariant();
     }
-    auto monster = &myMonsters[index.row()]->clone;
-    switch(index.column()) {
-        case 0:
-            return monster->stats.hp;
-        case 1:
-            return monster->stats.ac;
-        case 2:
-            return monster->stats.wc;
-        case 3:
-            return monster->weight;
-        case 4:
-            return qlonglong(monster->stats.exp);
-        case 5:
-            return monster->level;
-        case 6:
-            return monster->stats.dam;
-        case 7:
-            return monster->speed;
-    }
-    return "";
+    auto monster = myMonsters[index.row()];
+    return monster->property(properties[index.column()]);
 }
 
 QVariant ArchetypesModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (orientation == Qt::Vertical) {
         if (role == Qt::DisplayRole) {
-            return myMonsters[section]->name;
+            return myMonsters[section]->name();
         } else if (role == Qt::DecorationRole) {
-            return CREPixmap::getIcon(myMonsters[section]->clone.face->number);
+            return CREPixmap::getIcon(myMonsters[section]->getObject()->face->number);
         }
         return QVariant();
     }
@@ -60,69 +61,35 @@ QVariant ArchetypesModel::headerData(int section, Qt::Orientation orientation, i
     if (role != Qt::DisplayRole) {
         return QAbstractTableModel::headerData(section, orientation, role);
     }
-    switch(section) {
-        case 0:
-            return "HP";
-        case 1:
-            return "AC";
-        case 2:
-            return "WC";
-        case 3:
-            return "Weight";
-        case 4:
-            return "XP";
-        case 5:
-            return "Level";
-        case 6:
-            return "Damage";
-        case 7:
-            return "Speed";
-    }
-
-    return "";
+    return properties[section];
 }
 
 Qt::ItemFlags ArchetypesModel::flags(const QModelIndex &index) const {
     if (!index.isValid()) {
         return Qt::NoItemFlags;
     }
-    return Qt::ItemIsEditable | QAbstractItemModel::flags(index);;
+
+    if (index.column() < 0 || index.column() >= PROPERTY_COUNT) {
+        return QAbstractItemModel::flags(index);
+    }
+
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+
+    int pi = CREWrapperObject::staticMetaObject.indexOfProperty(properties[index.column()]);
+    if (pi != -1 && CREWrapperObject::staticMetaObject.property(pi).isWritable()) {
+        flags |= Qt::ItemIsEditable;
+    }
+    return flags;
 }
 
 bool ArchetypesModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (role != Qt::EditRole)
         return false;
 
-    archetype *monster = myMonsters[index.row()];
+    auto monster = myMonsters[index.row()];
+    monster->setProperty(properties[index.column()], value);
 
-    switch(index.column()) {
-        case 0:
-            monster->clone.stats.hp = value.toInt();
-            break;
-        case 1:
-            monster->clone.stats.ac = value.toInt();
-            break;
-        case 2:
-            monster->clone.stats.wc = value.toInt();
-            break;
-        case 3:
-            monster->clone.weight = value.toInt();
-            break;
-        case 4:
-            monster->clone.stats.exp = value.toLongLong();
-            break;
-        case 5:
-            monster->clone.level = value.toInt();
-            break;
-        case 6:
-            monster->clone.stats.dam = value.toInt();
-            break;
-        case 7:
-            monster->clone.speed = value.toFloat();
-            break;
-    }
-
-    myDirty.insert(monster);
+    myDirty.insert(monster->getObject()->arch);
 
     emit dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
     return true;
