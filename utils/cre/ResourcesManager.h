@@ -6,6 +6,7 @@ extern "C" {
 #include "object.h"
 }
 #include "AssetsTracker.h"
+#include <set>
 
 class CREMapInformation;
 class CREMapInformationManager;
@@ -21,8 +22,10 @@ enum ArchetypeUse {
 
 typedef std::function<bool(ArchetypeUse use, const archt*, const treasurelist*, const CREMapInformation*, recipe*)> AssetUseCallback;
 
-class ResourcesManager : public AssetsTracker<archt>
+class ResourcesManager : public QObject, AssetsTracker<archt>
 {
+    Q_OBJECT
+
     public:
         ResourcesManager();
         virtual ~ResourcesManager();
@@ -36,12 +39,20 @@ class ResourcesManager : public AssetsTracker<archt>
         virtual void assetDefined(const archt *arch, const std::string &filename);
 
         const QHash<QString, QList<const archt*> >& origins() const { return myOrigins; }
+        QString originOf(const archt * arch) const;
 
         static void archetypeUse(const archt* item, CREMapInformationManager* store, AssetUseCallback callback);
+
+        bool hasPendingChanges() const { return !myDirty.empty(); }
+
+    public slots:
+      void archetypeModified(archetype *arch);
+      void saveArchetypes();
 
     protected:
         QHash<QString, QList<const archt*> > myOrigins;
         QList<QHash<QString, recipestruct*> > myRecipes;
+        std::set<archetype *> myDirty;
 };
 
 #endif /* RESOURCESMANAGER_H */

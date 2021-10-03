@@ -1,13 +1,13 @@
 #include "CREWrapperArchetype.h"
 #include "CREWrapperObject.h"
 
-CREWrapperArchetype::CREWrapperArchetype(CREWrapperObject* parent, const archetype* arch)
+CREWrapperArchetype::CREWrapperArchetype(CREWrapperObject* parent, archetype* arch)
 {
     myArchetype = arch;
     myObject = parent;
 }
 
-void CREWrapperArchetype::setArchetype(const archetype* arch)
+void CREWrapperArchetype::setArchetype(archetype* arch)
 {
     myArchetype = arch;
 }

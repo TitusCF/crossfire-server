@@ -44,6 +44,7 @@ class CREMainWindow : public QMainWindow
         QAction* mySaveFormulae;
         QAction* mySaveQuests;
         QAction* mySaveMessages;
+        QAction* mySaveArchetypes;
         QAction* myReportDuplicate;
         QAction* myReportSpellDamage;
         QAction* myReportAlchemy;

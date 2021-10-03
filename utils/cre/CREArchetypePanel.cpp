@@ -13,11 +13,15 @@ extern "C" {
 #include "assets.h"
 #include "AssetsManager.h"
 #include "Archetypes.h"
+#include "ArchetypeLoader.h"
+#include "ResourcesManager.h"
 
-CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store, QWidget* parent) : CRETPanel(parent)
+CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store, ResourcesManager* resources, QWidget* parent) : CRETPanel(parent)
 {
     Q_ASSERT(store);
     myStore = store;
+    myResources = resources;
+    myArchetype = nullptr;
 
     QGridLayout* layout = new QGridLayout(this);
 
@@ -32,13 +36,23 @@ CREArchetypePanel::CREArchetypePanel(CREMapInformationManager* store, QWidget* p
     layout->addWidget(myUsing, 2, 1);
 }
 
-void CREArchetypePanel::setItem(const archt* archetype)
+void CREArchetypePanel::setItem(archt* archetype)
 {
+    myArchetype = archetype;
+
     StringBuffer* dump = stringbuffer_new();
     object_dump(&archetype->clone, dump);
     char* final = stringbuffer_finish(dump);
-    myDisplay->setText(final);
+    myInitialArch = final;
     free(final);
+
+    // Hacks: replace initial "arch" by "Object", and remove the "more 0" line which messes things
+    myInitialArch.replace(0, 4, "Object");
+    auto more = myInitialArch.find("more 0\n");
+    if (more != std::string::npos) {
+        myInitialArch.erase(more, 7);
+    }
+    myDisplay->setText(myInitialArch.data());
 
     myUsing->clear();
 
@@ -108,4 +122,20 @@ void CREArchetypePanel::setItem(const archt* archetype)
     if (rootCrafting)
         CREUtils::addCountSuffix(rootCrafting);
     myUsing->scrollToTop();
+}
+
+void CREArchetypePanel::commitData() {
+    auto text = myDisplay->toPlainText().toStdString();
+    if (text == myInitialArch) {
+        return;
+    }
+
+    BufferReader *br = bufferreader_init_from_memory(nullptr, text.data(), text.length());
+
+    auto origin = myResources->originOf(myArchetype).toStdString();
+    ArchetypeLoader loader(getManager()->archetypes());
+    loader.load(br, origin);
+    bufferreader_destroy(br);
+
+    myResources->archetypeModified(myArchetype);
 }
