@@ -18,22 +18,31 @@ int ArchetypesModel::rowCount(const QModelIndex &parent) const {
   
 int ArchetypesModel::columnCount(const QModelIndex &parent) const {
     (void)parent;
-    return 4;
+    return 8;
 }
 
 QVariant ArchetypesModel::data(const QModelIndex &index, int role) const {
     if (role != Qt::DisplayRole && role != Qt::EditRole) {
         return QVariant();
     }
+    auto monster = &myMonsters[index.row()]->clone;
     switch(index.column()) {
         case 0:
-            return myMonsters[index.row()]->clone.stats.hp;
+            return monster->stats.hp;
         case 1:
-            return myMonsters[index.row()]->clone.stats.ac;
+            return monster->stats.ac;
         case 2:
-            return myMonsters[index.row()]->clone.stats.wc;
+            return monster->stats.wc;
         case 3:
-            return myMonsters[index.row()]->clone.weight;
+            return monster->weight;
+        case 4:
+            return qlonglong(monster->stats.exp);
+        case 5:
+            return monster->level;
+        case 6:
+            return monster->stats.dam;
+        case 7:
+            return monster->speed;
     }
     return "";
 }
@@ -60,6 +69,14 @@ QVariant ArchetypesModel::headerData(int section, Qt::Orientation orientation, i
             return "WC";
         case 3:
             return "Weight";
+        case 4:
+            return "XP";
+        case 5:
+            return "Level";
+        case 6:
+            return "Damage";
+        case 7:
+            return "Speed";
     }
 
     return "";
@@ -90,6 +107,18 @@ bool ArchetypesModel::setData(const QModelIndex &index, const QVariant &value, i
             break;
         case 3:
             monster->clone.weight = value.toInt();
+            break;
+        case 4:
+            monster->clone.stats.exp = value.toLongLong();
+            break;
+        case 5:
+            monster->clone.level = value.toInt();
+            break;
+        case 6:
+            monster->clone.stats.dam = value.toInt();
+            break;
+        case 7:
+            monster->clone.speed = value.toFloat();
             break;
     }
 
