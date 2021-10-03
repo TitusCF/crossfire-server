@@ -46,11 +46,10 @@ void init_type_sign(void) {
  * Handles applying a sign.
  * @param sign The sign applied
  * @param op The object applying the sign
- * @param autoapply Set this to 1 to automatically apply the sign
+ * @param moved_on Set to 1 if op moved on sign, 0 else.
  */
-static void apply_sign(object *sign, object *op, int autoapply) {
+static void apply_sign(object *sign, object *op, int moved_on) {
     const readable_message_type *msgType;
-    (void)autoapply;
 
     if (sign->msg == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
@@ -60,7 +59,7 @@ static void apply_sign(object *sign, object *op, int autoapply) {
 
     if (sign->stats.food) {
         if (sign->last_eat >= sign->stats.food) {
-            if (!sign->move_on)
+            if (!moved_on)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                     "You cannot read it anymore.");
             return;
@@ -70,14 +69,10 @@ static void apply_sign(object *sign, object *op, int autoapply) {
             sign->last_eat++;
     }
 
-    /* Sign or magic mouth?  Do we need to see it, or does it talk to us?
-     * No way to know for sure.  The presumption is basically that if
-     * move_on is zero, it needs to be manually applied (doesn't talk
-     * to us).
-     */
+    /* Do we need to see it, or does it talk to us? */
     if (QUERY_FLAG(op, FLAG_BLIND)
     && !QUERY_FLAG(op, FLAG_WIZ)
-    && !sign->move_on) {
+    && !moved_on) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You are unable to read while blind.");
         return;
