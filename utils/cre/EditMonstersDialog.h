@@ -15,6 +15,7 @@ public:
 
 protected slots:
     void onSaveChanges();
+    void onCloseClicked();
 
 private:
     void write(const QString &filename, QList<const archt*> archs);
