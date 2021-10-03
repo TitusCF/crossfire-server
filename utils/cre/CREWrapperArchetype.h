@@ -18,15 +18,16 @@ class CREWrapperArchetype : public QObject
     Q_PROPERTY(QObject* clone READ clone)
 
     public:
-        CREWrapperArchetype(CREWrapperObject* parent, const archetype* arch);
+        CREWrapperArchetype(CREWrapperObject* parent, archetype* arch);
 
-        void setArchetype(const archetype* arch);
+        void setArchetype(archetype* arch);
+        archetype *arch() { return myArchetype; }
 
         QString name() const;
         QObject* clone();
 
     protected:
-        const archetype* myArchetype;
+        archetype* myArchetype;
         CREWrapperObject* myObject;
 };
 

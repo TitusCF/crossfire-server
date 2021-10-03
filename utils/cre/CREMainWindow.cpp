@@ -33,6 +33,8 @@ CREMainWindow::CREMainWindow()
     myArea = new QMdiArea();
     setCentralWidget(myArea);
 
+    myResourcesManager = new ResourcesManager();
+
     createActions();
     createMenus();
 
@@ -42,7 +44,6 @@ CREMainWindow::CREMainWindow()
 
     setWindowTitle(tr("Crossfire Resource Editor"));
 
-    myResourcesManager = new ResourcesManager();
     myResourcesManager->load();
 
     fillFacesets();
@@ -63,6 +64,13 @@ CREMainWindow::CREMainWindow()
 
 void CREMainWindow::closeEvent(QCloseEvent* event)
 {
+    if (myResourcesManager->hasPendingChanges()) {
+        if (QMessageBox::question(this, "Discard changes?", "You have unsaved changes, really discard them?") != QMessageBox::Yes) {
+            event->ignore();
+            return;
+        }
+    }
+
     myMapManager->cancel();
     delete myMapManager;
     delete myQuestManager;
@@ -89,6 +97,10 @@ void CREMainWindow::createActions()
     mySaveMessages = new QAction(tr("Dialogs"), this);
     mySaveMessages->setStatusTip(tr("Save all modified NPC dialogs."));
     connect(mySaveMessages, SIGNAL(triggered()), this, SLOT(onSaveMessages()));
+
+    mySaveArchetypes = new QAction(tr("Archetypes"), this);
+    mySaveArchetypes->setStatusTip(tr("Save all modified archetypes."));
+    connect(mySaveArchetypes, SIGNAL(triggered()), myResourcesManager, SLOT(saveArchetypes()));
 
     myReportDuplicate = new QAction(tr("Faces and animations report"), this);
     myReportDuplicate->setStatusTip(tr("Show faces and animations which are used by multiple archetypes, or not used."));
@@ -259,6 +271,7 @@ void CREMainWindow::createMenus()
     mySaveMenu->addAction(mySaveFormulae);
     mySaveMenu->addAction(mySaveQuests);
     mySaveMenu->addAction(mySaveMessages);
+    mySaveMenu->addAction(mySaveArchetypes);
 
     QMenu* reportMenu = menuBar()->addMenu("&Reports");
     reportMenu->addAction(myReportDuplicate);

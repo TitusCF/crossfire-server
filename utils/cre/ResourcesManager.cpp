@@ -17,6 +17,7 @@ extern "C" {
 #include "CREMapInformationManager.h"
 #include "CRERandomMap.h"
 #include "LicenseManager.h"
+#include "ArchetypeWriter.h"
 
 ResourcesManager::ResourcesManager()
 {
@@ -30,7 +31,7 @@ void ResourcesManager::load()
 {
     setlocale(LC_NUMERIC, "C");
 
-    settings.archetypes_tracker = this;
+    settings.archetypes_tracker = (AssetsTracker<archetype> *)(this);
     add_server_collect_hooks();
     settings.hooks[settings.hooks_count] = LicenseManager::readLicense;
     settings.hooks_filename[settings.hooks_count] = ".LICENSE";
@@ -161,4 +162,47 @@ void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager*
             rec = rec->next;
         }
     }
+}
+
+QString ResourcesManager::originOf(const archt *arch) const {
+    for (auto file = myOrigins.begin(); file != myOrigins.end(); file++) {
+        if (file.value().contains(arch)) {
+            return file.key();
+        }
+    }
+    return "";
+}
+
+void ResourcesManager::archetypeModified(archetype *arch) {
+    myDirty.insert(arch);
+}
+
+void write(const QString &filename, QList<const archt*> archs) {
+    auto buf = stringbuffer_new();
+    ArchetypeWriter writer;
+    qDebug() << "writing archetype file" << filename;
+
+    for (auto arch = archs.begin(); arch != archs.end(); arch++) {
+        writer.write(*arch, buf);
+    }
+
+    size_t length = stringbuffer_length(buf);
+    char *data = stringbuffer_finish(buf);
+
+    QFile out(filename);
+    out.open(QIODevice::WriteOnly);
+    out.write(data, length);
+    free(data);
+}
+
+void ResourcesManager::saveArchetypes() {
+    for (auto a = myDirty.begin(); a != myDirty.end(); a++) {
+        for (auto file = myOrigins.begin(); file != myOrigins.end(); file++) {
+            if (file.value().contains(*a)) {
+                write(file.key(), file.value());
+            }
+        }
+    }
+
+    myDirty.clear();
 }

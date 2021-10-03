@@ -338,7 +338,7 @@ void CREResourcesWindow::fillArchetypes()
             return;
 
         auto item = CREUtils::archetypeNode(arch, root);
-        myTreeItems.append(new CRETTreeItem<const archt>(arch, "Archetype"));
+        myTreeItems.append(new CRETTreeItem<archt>(arch, "Archetype"));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
 
         if (arch->more)
@@ -365,7 +365,7 @@ void CREResourcesWindow::fillArchetypes()
     });
 
     delete wrapper;
-    addPanel("Archetype", new CREArchetypePanel(myStore, this));
+    addPanel("Archetype", new CREArchetypePanel(myStore, myResources, this));
     if (added == count)
         root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(count));
     else

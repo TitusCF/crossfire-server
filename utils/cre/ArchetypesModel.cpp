@@ -89,8 +89,7 @@ bool ArchetypesModel::setData(const QModelIndex &index, const QVariant &value, i
     auto monster = myMonsters[index.row()];
     monster->setProperty(properties[index.column()], value);
 
-    myDirty.insert(monster->getObject()->arch);
-
     emit dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
+    emit archetypeModified(monster->arch()->arch());
     return true;
 }

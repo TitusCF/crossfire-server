@@ -10,19 +10,25 @@ extern "C" {
 }
 
 class CREMapInformationManager;
+class ResourcesManager;
 
-class CREArchetypePanel : public CRETPanel<const archt>
+class CREArchetypePanel : public CRETPanel<archt>
 {
     Q_OBJECT
 
     public:
-        CREArchetypePanel(CREMapInformationManager* store, QWidget* parent);
-        virtual void setItem(const archt* archetype);
+        CREArchetypePanel(CREMapInformationManager* store, ResourcesManager* resources, QWidget* parent);
+        virtual void setItem(archt* archetype);
+
+        virtual void commitData() override;
 
     protected:
-        QTextEdit* myDisplay;
-        QTreeWidget* myUsing;
         CREMapInformationManager* myStore;
+        ResourcesManager *myResources;
+        QTextEdit* myDisplay;
+        std::string myInitialArch;
+        QTreeWidget* myUsing;
+        archt* myArchetype;
 };
 
 #endif // CLASS_CRE_ARCHETYPE_PANEL_H

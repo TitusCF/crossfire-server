@@ -12,16 +12,6 @@ class EditMonstersDialog : public QDialog {
 
 public:
     EditMonstersDialog(ResourcesManager *resources);
-
-protected slots:
-    void onSaveChanges();
-    void onCloseClicked();
-
-private:
-    void write(const QString &filename, QList<const archt*> archs);
-
-    ArchetypesModel *myModel;
-    ResourcesManager *myResources;
 };
 
 #endif /* EDITMONSTERSDIALOG_H */

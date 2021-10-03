@@ -7,6 +7,7 @@
 class CREWrapperObject;
 
 class ArchetypesModel : public QAbstractTableModel {
+  Q_OBJECT
 public:
   ArchetypesModel();
   virtual ~ArchetypesModel();
@@ -18,12 +19,11 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const;
   bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
-  const std::set<archt *>& dirty() const { return myDirty; }
-  void markClean() { myDirty.clear(); }
+signals:
+  void archetypeModified(archetype *arch);
 
 private:
   std::vector<CREWrapperObject *> myMonsters;
-  std::set<archt *> myDirty;
 };
 
 #endif /* ARCHETYPESMODEL_H */
