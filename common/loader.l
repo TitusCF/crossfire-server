@@ -168,7 +168,6 @@ static void check_loaded_object(object *op) {
      * Of course this doesn't apply when loading archetypes or artifacts.
      */
     if (arch_init == 0
-    && artifact_init == 0
     && QUERY_FLAG(op, FLAG_MONSTER)
     && op->arch
     && !object_can_merge(op, &op->arch->clone)) {
