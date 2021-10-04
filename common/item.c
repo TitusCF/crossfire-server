@@ -1101,12 +1101,22 @@ StringBuffer *describe_item(const object *op, const object *owner, int use_media
 
         switch (op->type) {
         case ROD:  /* These use stats.sp for spell selection and stats.food */
-        case BOW:  /* and stats.hp for spell-point regeneration... */
+                   /* and stats.hp for spell-point regeneration... */
         case ARROW:
         case WAND:
         case FOOD:
         case FLESH:
         case DRINK:
+            more_info = 0;
+            break;
+
+        /* Bows use sp for firing rate. Per fire_bow(), the bow can be fired every 100/firing rate
+         * character movements. It also makes sure it calculates the speed at no less than 1, to avoid floating point errors
+         */
+        case BOW:
+            if (op->stats.sp) {
+                stringbuffer_append_printf(buf, "(Firing delay %.2f)", 100./op->stats.sp);
+            }
             more_info = 0;
             break;
 
