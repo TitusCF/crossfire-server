@@ -7,6 +7,8 @@ extern "C" {
 }
 #include "AssetsTracker.h"
 #include <set>
+#include <QObject>
+#include <QHash>
 
 class CREMapInformation;
 class CREMapInformationManager;
