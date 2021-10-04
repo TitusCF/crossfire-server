@@ -1,3 +1,9 @@
+2021-10-04  Daniel Hawkins
+    * common/item.c: Allow for identified bows to print out firing rate information
+        when examined. Previously, the way to figure this out was simply trial and error.
+        Like weapon speed, lower is better. But, to be more precise, the firing rate
+        is printed as a float, using the 100/sp method fire_bow uses.
+
 2021-08-18  Andreas Kirschbaum
     * Do not print an object dump without error message.
 
