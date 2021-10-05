@@ -113,13 +113,11 @@ static void check_treasurelist(treasure *t, const treasurelist *tl) {
 void assets_collect(const char* datadir) {
     LOG(llevInfo, "Starting to collect assets from %s\n", datadir);
 
+    auto tracker = static_cast<AssetsTracker *>(settings.archetypes_tracker);
+
     AssetCollector collector;
     collector.addLoader(new TreasureLoader(manager->treasures(), manager->archetypes()));
-    auto al = new ArchetypeLoader(manager->archetypes());
-    if (settings.archetypes_tracker) {
-        al->setTracker(static_cast<AssetsTracker<archetype>*>(settings.archetypes_tracker));
-    }
-    collector.addLoader(al);
+    collector.addLoader(new ArchetypeLoader(manager->archetypes(), tracker));
     collector.addLoader(new PngLoader(manager->faces(), manager->facesets()));
     collector.addLoader(new FacesetLoader(manager->facesets()));
     collector.addLoader(new FaceLoader(manager->faces(), manager->animations()));

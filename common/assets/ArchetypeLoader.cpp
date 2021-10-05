@@ -10,17 +10,18 @@
  * The authors can be reached via e-mail at <crossfire@metalforge.org>.
  */
 
-#include "ArchetypeLoader.h"
-#include "Archetypes.h"
-
 extern "C" {
 #include "global.h"
 #include "loader.h"
+#include "object.h"
 }
+
+#include "ArchetypeLoader.h"
+#include "Archetypes.h"
 
 int arch_init;  /**< True if doing arch initialization @todo remove */
 
-ArchetypeLoader::ArchetypeLoader(Archetypes *archetypes) : m_archetypes(archetypes), m_tracker(nullptr) {
+ArchetypeLoader::ArchetypeLoader(Archetypes *archetypes, AssetsTracker *tracker) : m_archetypes(archetypes), m_tracker(tracker) {
 }
 
 void ArchetypeLoader::load(BufferReader *reader, const std::string &filename) {

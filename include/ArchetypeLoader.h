@@ -21,11 +21,7 @@ class Archetypes;
 
 class ArchetypeLoader : public AssetLoader {
 public:
-    ArchetypeLoader(Archetypes *archetypes);
-
-    void setTracker(AssetsTracker<archetype> *tracker) {
-      m_tracker = tracker;
-    };
+    ArchetypeLoader(Archetypes *archetypes, AssetsTracker *tracker);
 
     virtual bool willLoad(const std::string &filename) override {
         return Utils::endsWith(filename, ".arc");
@@ -35,7 +31,7 @@ public:
 
 private:
     Archetypes *m_archetypes;
-    AssetsTracker<archetype> *m_tracker;
+    AssetsTracker *m_tracker;
 };
 
 #endif /* ARCHETYPELOADER_H */

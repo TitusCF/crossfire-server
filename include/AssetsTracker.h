@@ -15,10 +15,15 @@
 
 #include <string>
 
+extern "C" {
+#include "global.h"
+#include "object.h"
+}
+
 /**
- * Interface to be informed of where an asset is defined.
+ * Base class to be informed of where an asset is defined.
+ * Functions are implemented as stub to make overloading easy.
  */
-template<class T>
 class AssetsTracker {
   public:
     /**
@@ -27,7 +32,10 @@ class AssetsTracker {
      * @param asset asset which is defined.
      * @param filename full pathname of where the asset was defined.
      */
-    virtual void assetDefined(const T *asset, const std::string &filename) = 0;
+    virtual void assetDefined(const archetype *asset, const std::string &filename) {
+      (void)asset;
+      (void)filename;
+    }
 };
 
 #endif /* ASSETSTRACKER_H */
