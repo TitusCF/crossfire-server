@@ -206,7 +206,7 @@ void init_library(void) {
     init_objects();
     init_block();
 
-    assets_collect(settings.datadir);
+    assets_collect(settings.datadir, ASSETS_ALL);
     assets_end_load();
 
     init_clocks();

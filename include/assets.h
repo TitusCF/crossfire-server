@@ -14,9 +14,28 @@ extern "C" {
 #include "global.h"
 #include "image.h"
 
+/**
+ * @defgroup ASSETS_xxx Assets flags
+ *
+ * What to collect when calling assets_collect().
+ */
+/*@{*/
+#define ASSETS_ARCHETYPES                 0x0001
+#define ASSETS_FACES                      0x0002
+#define ASSETS_ANIMATIONS                 0x0004
+#define ASSETS_FACESETS                   0x0008
+#define ASSETS_TREASURES                  0x0010
+#define ASSETS_PNG                        0x0020
+#define ASSETS_MESSAGES                   0x0040
+#define ASSETS_ARTIFACTS                  0x0080
+#define ASSETS_FORMULAE                   0x0100
+#define ASSETS_ATTACK_MESSAGES            0x0200
+#define ASSETS_ALL                        0xFFFF
+/*@}*/
+
 void assets_init();
 void assets_free();
-void assets_collect(const char* datadir);
+void assets_collect(const char* datadir, int what);
 size_t assets_dump_undefined();
 void assets_end_load();
 

@@ -1744,7 +1744,7 @@ void CREMainWindow::onToolReloadAssets()
 {
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     LicenseManager::get()->reset();
-    assets_collect(settings.datadir);
+    assets_collect(settings.datadir, ASSETS_ALL);
     CREPixmap::clearFaceCache();
     QApplication::restoreOverrideCursor();
     QMessageBox::information(this, "Reload complete", "Assets reload complete, you may need to change the selected item to see updated versions.");
