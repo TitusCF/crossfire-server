@@ -99,7 +99,7 @@ START_TEST(test_describe_item) {
         "(slow movement)(wield weapon)(archer)(wear armour)(wear ring)",
         "",
         "(dam+6)(weapon speed 10)(Attacks: physical)",
-        "(wc+1)(dam+15)(Attacks: physical)",
+        "(wc+1)(dam+15)(Firing delay 1.43)(Attacks: physical)",
         "(Int+2)(Pow+2)(ac+2)(item_power +5)(magic+1)[color=#FF15CD](armour +5)[/color]",
         "(Str+1)(Wis+2)(Cha+2)(dam+15)(item_power +25)(weapon speed 6)(Attacks: weaponmagic, blinding)[color=#930C76](resist magic +30)[/color][ul](resist drain +100)[/ul]",
         "(dam+8)(weapon speed 8)(Attacks: physical)",
