@@ -109,22 +109,32 @@ static void check_treasurelist(treasure *t, const treasurelist *tl) {
 /**
  * Collect all assets from the specified directory and all its subdirectories.
  * @param datadir directory to search from.
+ * @param what combination of @see ASSETS_xxx flags indicating what to collect.
  */
-void assets_collect(const char* datadir) {
+void assets_collect(const char* datadir, int what) {
     LOG(llevInfo, "Starting to collect assets from %s\n", datadir);
 
     auto tracker = static_cast<AssetsTracker *>(settings.archetypes_tracker);
 
     AssetCollector collector;
-    collector.addLoader(new TreasureLoader(manager->treasures(), manager->archetypes()));
-    collector.addLoader(new ArchetypeLoader(manager->archetypes(), tracker));
-    collector.addLoader(new PngLoader(manager->faces(), manager->facesets()));
-    collector.addLoader(new FacesetLoader(manager->facesets()));
-    collector.addLoader(new FaceLoader(manager->faces(), manager->animations()));
-    collector.addLoader(new MessageLoader(manager->messages()));
-    collector.addLoader(new WrapperLoader("/artifacts", init_artifacts));
-    collector.addLoader(new WrapperLoader("/formulae", init_formulae));
-    collector.addLoader(new WrapperLoader("/attackmess", init_attackmess));
+    if (what & ASSETS_TREASURES)
+        collector.addLoader(new TreasureLoader(manager->treasures(), manager->archetypes()));
+    if (what & ASSETS_ARCHETYPES)
+        collector.addLoader(new ArchetypeLoader(manager->archetypes(), tracker));
+    if (what & ASSETS_PNG)
+        collector.addLoader(new PngLoader(manager->faces(), manager->facesets()));
+    if (what & ASSETS_FACESETS)
+        collector.addLoader(new FacesetLoader(manager->facesets()));
+    if (what & ASSETS_FACES)
+        collector.addLoader(new FaceLoader(manager->faces(), manager->animations()));
+    if (what & ASSETS_MESSAGES)
+        collector.addLoader(new MessageLoader(manager->messages()));
+    if (what & ASSETS_ARTIFACTS)
+        collector.addLoader(new WrapperLoader("/artifacts", init_artifacts));
+    if (what & ASSETS_FORMULAE)
+        collector.addLoader(new WrapperLoader("/formulae", init_formulae));
+    if (what & ASSETS_ATTACK_MESSAGES)
+        collector.addLoader(new WrapperLoader("/attackmess", init_attackmess));
     for (uint8_t hook = 0; hook < settings.hooks_count; hook++) {
         collector.addLoader(new WrapperLoader(settings.hooks_filename[hook], settings.hooks[hook]));
     }

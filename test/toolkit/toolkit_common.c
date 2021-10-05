@@ -90,7 +90,7 @@ void cctk_init_std_archetypes(void) {
     init_objects();
     init_block();
 
-    assets_collect(settings.datadir);
+    assets_collect(settings.datadir, ASSETS_ALL);
 
     SET_TKFLAG(STATUS_GLOBALS|STATUS_HASHTABLE|STATUS_OBJECTS|STATUS_VARS|STATUS_BLOCK|STATUS_BMAP|STATUS_ANIM|STATUS_ARCH);
 }
