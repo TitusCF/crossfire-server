@@ -126,6 +126,10 @@ START_TEST(test_treasure) {
     auto loaded = trs.find(generated->name);
     fail_unless(loaded, "Treasurelist should have been loaded!");
     fail_unless(equal(generated, loaded), "loaded treasurelist isn't the same as generated one");
+
+    trs.define(generated->name, generated);
+    trs.clear();
+    arch.clear();
 }
 END_TEST
 
@@ -159,6 +163,10 @@ START_TEST(test_animation) {
         ck_assert_str_eq(anim->faces[f]->name, loaded->faces[f]->name);
     }
     ck_assert_int_eq(anim->facings, loaded->facings);
+
+    anims.define(anim->name, anim);
+    faces.clear();
+    anims.clear();
 }
 END_TEST
 
@@ -199,6 +207,10 @@ START_TEST(test_face) {
     } else {
         ck_assert(loaded->smoothface == nullptr);
     }
+
+    faces.define(face->name, face);
+    faces.clear();
+    anims.clear();
 }
 END_TEST
 
