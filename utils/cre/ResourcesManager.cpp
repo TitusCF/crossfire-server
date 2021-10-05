@@ -31,7 +31,7 @@ void ResourcesManager::load()
 {
     setlocale(LC_NUMERIC, "C");
 
-    settings.archetypes_tracker = (AssetsTracker<archetype> *)(this);
+    settings.archetypes_tracker = (AssetsTracker *)(this);
     add_server_collect_hooks();
     settings.hooks[settings.hooks_count] = LicenseManager::readLicense;
     settings.hooks_filename[settings.hooks_count] = ".LICENSE";

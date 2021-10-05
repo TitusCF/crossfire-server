@@ -24,7 +24,7 @@ enum ArchetypeUse {
 
 typedef std::function<bool(ArchetypeUse use, const archt*, const treasurelist*, const CREMapInformation*, recipe*)> AssetUseCallback;
 
-class ResourcesManager : public QObject, AssetsTracker<archt>
+class ResourcesManager : public QObject, AssetsTracker
 {
     Q_OBJECT
 
@@ -38,7 +38,7 @@ class ResourcesManager : public QObject, AssetsTracker<archt>
         QStringList recipes(int count) const;
         const recipestruct* recipe(int ingredients, const QString& name) const;
 
-        virtual void assetDefined(const archt *arch, const std::string &filename);
+        virtual void assetDefined(const archt *arch, const std::string &filename) override;
 
         const QHash<QString, QList<const archt*> >& origins() const { return myOrigins; }
         QString originOf(const archt * arch) const;
