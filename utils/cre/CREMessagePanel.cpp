@@ -10,7 +10,7 @@
 #include "CREPlayerRepliesDelegate.h"
 #include "CREStringListDelegate.h"
 
-CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManager* quests, QWidget* parent) : CRETPanel(parent)
+CREMessagePanel::CREMessagePanel(const MessageManager* manager, QWidget* parent) : CRETPanel(parent)
 {
     Q_ASSERT(manager != NULL);
     myMessageManager = manager;
@@ -46,10 +46,10 @@ CREMessagePanel::CREMessagePanel(const MessageManager* manager, const QuestManag
     myRules->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     myRules->setItemDelegateForColumn(0, new CREMultilineItemDelegate(myRules, true, true));
-    myRules->setItemDelegateForColumn(1, new CREPrePostConditionDelegate(myRules, true, manager, quests));
+    myRules->setItemDelegateForColumn(1, new CREPrePostConditionDelegate(myRules, CREPrePostList::PreConditions, manager));
     myRules->setItemDelegateForColumn(2, new CREPlayerRepliesDelegate(myRules));
     myRules->setItemDelegateForColumn(3, new CREStringListDelegate(myRules));
-    myRules->setItemDelegateForColumn(4, new CREPrePostConditionDelegate(myRules, false, manager, quests));
+    myRules->setItemDelegateForColumn(4, new CREPrePostConditionDelegate(myRules, CREPrePostList::PostConditions, manager));
     myRules->setItemDelegateForColumn(5, new CREMultilineItemDelegate(myRules, true, true));
     myRules->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 

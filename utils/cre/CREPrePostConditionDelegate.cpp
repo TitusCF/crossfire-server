@@ -2,16 +2,15 @@
 #include "CREPrePostConditionDelegate.h"
 #include "CREMessageItemModel.h"
 #include "CREPrePostPanel.h"
-#include "CREPrePostList.h"
 
-CREPrePostSingleConditionDelegate::CREPrePostSingleConditionDelegate(QObject* parent, bool isPre, const MessageManager* manager, const QuestManager* quests) :
-  QStyledItemDelegate(parent), myIsPre(isPre), myMessages(manager), myQuests(quests)
+CREPrePostSingleConditionDelegate::CREPrePostSingleConditionDelegate(QObject* parent, CREPrePostList::Mode mode, const MessageManager* manager) :
+  QStyledItemDelegate(parent), myMode(mode), myMessages(manager)
 {
 }
 
 QWidget* CREPrePostSingleConditionDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&, const QModelIndex&) const
 {
-    return new CREPrePostPanel(myIsPre, myIsPre ? myMessages->preConditions() : myMessages->postConditions(), myQuests, parent);
+    return new CREPrePostPanel(myMode, myMode == CREPrePostList::PreConditions ? myMessages->preConditions() : myMessages->postConditions(), parent);
 }
 
 void CREPrePostSingleConditionDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
@@ -27,8 +26,11 @@ void CREPrePostSingleConditionDelegate::setModelData(QWidget* editor, QAbstractI
     CREPrePostPanel* edit = qobject_cast<CREPrePostPanel*>(editor);
     if (!edit)
         return;
-    model->setData(index, edit->getData(), Qt::UserRole);
-    model->setData(index, edit->getData().join(" "), Qt::DisplayRole);
+    QStringList data = edit->getData();
+    model->setData(index, data, Qt::UserRole);
+    if (myMode == CREPrePostList::SetWhen)
+        data.pop_front();
+    model->setData(index, data.join(" "), Qt::DisplayRole);
 }
 
 void CREPrePostSingleConditionDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem&, const QModelIndex&) const
@@ -44,8 +46,8 @@ void CREPrePostSingleConditionDelegate::updateEditorGeometry(QWidget *editor, co
 }
 
 
-CREPrePostConditionDelegate::CREPrePostConditionDelegate(QObject* parent, bool isPre, const MessageManager* manager, const QuestManager* quests)
- : QStyledItemDelegate(parent), myIsPre(isPre), myMessages(manager), myQuests(quests)
+CREPrePostConditionDelegate::CREPrePostConditionDelegate(QObject* parent, CREPrePostList::Mode mode, const MessageManager* manager)
+ : QStyledItemDelegate(parent), myMode(mode), myMessages(manager)
 {
 }
 
@@ -55,7 +57,7 @@ CREPrePostConditionDelegate::~CREPrePostConditionDelegate()
 
 QWidget* CREPrePostConditionDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem&, const QModelIndex&) const
 {
-    return new CREPrePostList(parent, myIsPre, myMessages, myQuests);
+    return new CREPrePostList(parent, myMode, myMessages);
 }
 
 void CREPrePostConditionDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const

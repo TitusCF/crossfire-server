@@ -2,7 +2,6 @@
 #include <qstyleditemdelegate.h>
 #include "CREMultilineItemDelegate.h"
 #include "CREQuestItemModel.h"
-#include "Quest.h"
 
 CREMultilineItemDelegate::CREMultilineItemDelegate(QObject* parent, bool asStringList, bool trimEmpty)
 : QStyledItemDelegate(parent), myAsStringList(asStringList), myTrimEmpty(trimEmpty)

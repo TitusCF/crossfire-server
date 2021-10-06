@@ -31,41 +31,11 @@
 #define QUESTFILE_COMMENT  6    /**< In a quest comment. */
 /*@}*/
 
-QuestLoader::QuestLoader(Quests *quests, Faces *faces) : quests(quests), faces(faces) {
-}
-
-/**
- * Allocate a quest_step_definition, will call fatal() if out of memory.
- * @return new structure.
- */
-static quest_step_definition *quest_create_step(void) {
-    quest_step_definition *step = static_cast<quest_step_definition *>(calloc(1, sizeof(quest_step_definition)));
-    if (!step)
-        fatal(OUT_OF_MEMORY);
-    return step;
-}
-
-/**
- * Allocate a quest_condition, will call fatal() if out of memory.
- * @return new structure.
- */
-static quest_condition *quest_create_condition(void) {
-    quest_condition *cond = static_cast<quest_condition *>(calloc(1, sizeof(quest_condition)));
-    if (!cond)
-        fatal(OUT_OF_MEMORY);
-    return cond;
-}
-
-quest_definition *quest_create(const char *name) {
-    quest_definition *quest = static_cast<quest_definition *>(calloc(1, sizeof(quest_definition)));
-    quest->quest_code = add_string(name);
-    return quest;
+QuestLoader::QuestLoader(Quests *quests, Faces *faces, AssetsTracker *tracker) : quests(quests), faces(faces), tracker(tracker) {
 }
 
 void QuestLoader::load(BufferReader *reader, const std::string &filename) {
-    int i, in = QUESTFILE_NEXTQUEST, condition_parsed;
-    int minstep, maxstep;
-    char namedquest[MAX_BUF];
+    int i, in = QUESTFILE_NEXTQUEST;
     quest_definition *quest = NULL;
     quest_condition *cond = NULL;
     char includefile[MAX_BUF];
@@ -79,43 +49,18 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
                 in = QUESTFILE_STEP;
                 continue;
             }
-            /* we are reading in a list of conditions for the 'setwhen' block for a quest step
+            /*
+             * We are reading in a list of conditions for the 'setwhen' block for a quest step
              * There will be one entry per line, containing the quest, and the steps that it applies to.
-             * This may be expressed as one of the following
-             * questcode 20 (the quest questcode must be at step 20)
-             * questcode <=20 (the quest questcode must not be beyond step 20)
-             * questcode 10-20 (the quest questcode must be between steps 10 and 20)
-             * questcode finished (the quest questcode must have been completed)
              */
 
-            minstep = 0;
-            maxstep = 0;
-            condition_parsed = 0;
-            namedquest[0] = '\0';
-            if (sscanf(read, "%s %d-%d", namedquest, &minstep, &maxstep) != 3) {
-                if (sscanf(read, "%s <=%d", namedquest, &maxstep) == 2) {
-                    minstep = 0;
-                    condition_parsed = 1;
-                } else if (sscanf(read, "%s %d", namedquest, &minstep) == 2) {
-                    maxstep = minstep;
-                    condition_parsed = 1;
-                } else if (strstr(read, "finished")) {
-                    if (sscanf(read, "%s finished", namedquest) == 1) {
-                        minstep = maxstep = -1;
-                        condition_parsed = 1;
-                    }
-                }
-            } else
-                condition_parsed = 1;
-            if (!condition_parsed) {
+            cond = quest_create_condition();
+            if (!quest_condition_from_string(cond, read)) {
                 LOG(llevError, "Invalid line '%s' in setwhen block for quest %s=n", read, quest->quest_code);
+                free(cond);
                 continue;
             }
 
-            cond = quest_create_condition();
-            cond->minstep = minstep;
-            cond->maxstep = maxstep;
-            cond->quest_code = add_string(namedquest);
             if (step->conditions) {
                 auto c = step->conditions;
                 while (c->next) {
@@ -208,6 +153,9 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
         if (in == QUESTFILE_QUEST) {
             if (strcmp(read, "end_quest") == 0) {
                 quests->define(quest->quest_code, quest);
+                if (tracker) {
+                    tracker->assetDefined(quest, filename);
+                }
                 quest = NULL;
                 in = QUESTFILE_NEXTQUEST;
                 continue;

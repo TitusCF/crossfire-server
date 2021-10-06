@@ -69,7 +69,6 @@ class CREMainWindow : public QMainWindow
         QAction* myToolReloadAssets;
         QLabel* myMapBrowseStatus;
         CREMapInformationManager* myMapManager;
-        QuestManager* myQuestManager;
         MessageManager* myMessageManager;
         ResourcesManager* myResourcesManager;
         ScriptFileManager* myScriptManager;

@@ -1,8 +1,9 @@
 #ifndef CREPREPOSTCONDITIONDELEGATE_H
 #define CREPREPOSTCONDITIONDELEGATE_H
 
+#include "CREPrePostList.h"
+
 class MessageManager;
-class QuestManager;
 
 /**
  * Allow edition a single pre- or post condition.
@@ -13,11 +14,10 @@ public:
     /**
      * Standard constructor.
      * @param parent parent of this item.
-     * @param isPre true for pre-conditions, false for post-conditions.
+     * @param mode list mode to use.
      * @param manager messages manager.
-     * @param quests quests manager.
      */
-    CREPrePostSingleConditionDelegate(QObject* parent, bool isPre, const MessageManager* manager, const QuestManager* quests);
+    CREPrePostSingleConditionDelegate(QObject* parent, CREPrePostList::Mode mode, const MessageManager* manager);
 
     virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
     virtual void setEditorData(QWidget* editor, const QModelIndex& index) const override;
@@ -25,9 +25,8 @@ public:
     virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 private:
-    bool myIsPre;
+    CREPrePostList::Mode myMode;
     const MessageManager* myMessages;
-    const QuestManager* myQuests;
 };
 
 /**
@@ -39,11 +38,10 @@ public:
     /**
      * Standard constructor.
      * @param parent parent of this item.
-     * @param isPre true for pre-conditions, false for post-conditions.
+     * @param mode list mode to use.
      * @param manager messages manager.
-     * @param quests quests manager.
      */
-    CREPrePostConditionDelegate(QObject* parent, bool isPre, const MessageManager* manager, const QuestManager* quests);
+    CREPrePostConditionDelegate(QObject* parent, CREPrePostList::Mode mode, const MessageManager* manager);
     virtual ~CREPrePostConditionDelegate();
 
     virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
@@ -52,9 +50,8 @@ public:
     virtual void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 private:
-    bool myIsPre;                     /**< True if doing pre conditions, false for post conditions. */
+    CREPrePostList::Mode myMode;  /**< List mode we're working in. */
     const MessageManager* myMessages; /**< Available message scripts. */
-    const QuestManager* myQuests;     /**< Available quests. */
 };
 
 #endif /* CREPREPOSTCONDITIONDELEGATE_H */

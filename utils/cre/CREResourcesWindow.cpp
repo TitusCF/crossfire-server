@@ -40,8 +40,6 @@
 #include "CREWrapperTreasure.h"
 
 #include "CREMapInformationManager.h"
-#include "Quest.h"
-#include "QuestManager.h"
 #include "MessageFile.h"
 #include "ScriptFileManager.h"
 
@@ -61,7 +59,7 @@ extern "C" {
 #include "ResourcesManager.h"
 #include "ScriptFile.h"
 
-CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, QWidget* parent, DisplayMode mode) : QWidget(parent)
+CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, QWidget* parent, DisplayMode mode) : QWidget(parent)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -69,8 +67,6 @@ CREResourcesWindow::CREResourcesWindow(CREMapInformationManager* store, QuestMan
 
     Q_ASSERT(store);
     myStore = store;
-    Q_ASSERT(quests);
-    myQuests = quests;
     Q_ASSERT(messages);
     myMessages = messages;
     Q_ASSERT(resources);
@@ -489,7 +485,7 @@ void CREResourcesWindow::fillFaces()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     });
 
-    addPanel("Face", new CREFacePanel(this, myQuests, myStore));
+    addPanel("Face", new CREFacePanel(this, myStore));
 }
 
 bool sortMapInformation(const CREMapInformation* left, const CREMapInformation* right)
@@ -591,21 +587,13 @@ void CREResourcesWindow::fillQuests()
 
     QStringList codes;
 
-    foreach(Quest* quest, myQuests->quests())
-    {
-      codes.append(quest->code());
-    }
-    codes.sort();
-
-    foreach(QString code, codes)
-    {
-        Quest* quest = myQuests->getByCode(code);
+    getManager()->quests()->each([&] (auto quest) {
         item = CREUtils::questNode(quest, root);
         myTreeItems.append(new CRETreeItemQuest(quest, item, this));
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
-    }
+    });
 
-    addPanel("Quest", new CREQuestPanel(myQuests, myMessages, this));
+    addPanel("Quest", new CREQuestPanel(myStore, myMessages, myResources, this));
     root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(codes.size()));
 }
 
@@ -625,7 +613,7 @@ void CREResourcesWindow::fillMessages()
         item->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     }
 
-    addPanel("Message", new CREMessagePanel(myMessages, myQuests, this));
+    addPanel("Message", new CREMessagePanel(myMessages, this));
 }
 
 static bool scriptLessThan(const ScriptFile* left, const ScriptFile* right)
@@ -958,21 +946,13 @@ void CREResourcesWindow::treeCustomMenu(const QPoint & pos)
     menu.exec(myTree->mapToGlobal(pos));
 }
 
-void CREResourcesWindow::deleteQuest(Quest* /*quest*/)
-{
-    /** @todo doesn't work for some reason, signal issue probably */
-    /*
-    myQuests->quests().removeAll(quest);
-    fillData();
-    delete quest;
-     */
-}
-
 void CREResourcesWindow::addQuest(bool)
 {
+#if 0
     Quest* quest = new Quest();
     quest->setCode("(new quest)");
     myQuests->quests().append(quest);
+#endif
     fillData();
 }
 

@@ -19,10 +19,11 @@
 
 class Quests;
 class Faces;
+class AssetsTracker;
 
 class QuestLoader : public AssetLoader {
 public:
-    QuestLoader(Quests *quests, Faces *faces);
+    QuestLoader(Quests *quests, Faces *faces, AssetsTracker *tracker);
     virtual ~QuestLoader() { }
 
     virtual bool willLoad(const std::string &filename) override {
@@ -34,6 +35,7 @@ public:
 private:
     Quests *quests;
     Faces *faces;
+    AssetsTracker *tracker;
 };
 
 #endif /* QUESTLOADER_H */

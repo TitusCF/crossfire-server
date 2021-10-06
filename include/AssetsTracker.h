@@ -18,6 +18,7 @@
 extern "C" {
 #include "global.h"
 #include "object.h"
+#include "quest.h"
 }
 
 /**
@@ -33,6 +34,17 @@ class AssetsTracker {
      * @param filename full pathname of where the asset was defined.
      */
     virtual void assetDefined(const archetype *asset, const std::string &filename) {
+      (void)asset;
+      (void)filename;
+    }
+
+    /**
+     * Function called when an asset is defined in a file.
+     * It may be called multiple times with the same asset.
+     * @param asset asset which is defined.
+     * @param filename full pathname of where the asset was defined.
+     */
+    virtual void assetDefined(const quest_definition *asset, const std::string &filename) {
       (void)asset;
       (void)filename;
     }

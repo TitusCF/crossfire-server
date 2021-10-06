@@ -6,10 +6,10 @@
 
 extern "C" {
 #include "global.h"
+#include "quest.h"
 }
 
 class MessageManager;
-class QuestManager;
 class ScriptFileManager;
 class CRERandomMap;
 
@@ -18,7 +18,7 @@ class CREMapInformationManager : public QObject
     Q_OBJECT
 
     public:
-        CREMapInformationManager(QObject* parent, MessageManager* messageManager, QuestManager* questManager, ScriptFileManager* scriptManager);
+        CREMapInformationManager(QObject* parent, MessageManager* messageManager, ScriptFileManager* scriptManager);
         virtual ~CREMapInformationManager();
 
         bool browseFinished() const;
@@ -31,6 +31,7 @@ class CREMapInformationManager : public QObject
         QList<CREMapInformation*> getFaceUse(const Face* face);
         QList<CREMapInformation*> getAnimationUse(const Animations* anim);
         QList<CREMapInformation*> getMapsForRegion(const QString& region);
+        QList<CREMapInformation*> getMapsForQuest(const quest_definition *quest);
         QList<CRERandomMap*> randomMaps();
 
     signals:
@@ -39,12 +40,12 @@ class CREMapInformationManager : public QObject
 
     protected:
         MessageManager* myMessageManager;
-        QuestManager* myQuestManager;
         ScriptFileManager* myScriptManager;
         QHash<QString, CREMapInformation*> myInformation;
         QMultiHash<QString, CREMapInformation*> myArchetypeUse;
         QMultiHash<QString, CREMapInformation*> myFaceUse;
         QMultiHash<QString, CREMapInformation*> myAnimationUse;
+        QMultiHash<QString, CREMapInformation*> myQuestUse;
         QStringList myToProcess;
         int myCurrentMap;
         QFuture<void> myWorker;
@@ -61,6 +62,7 @@ class CREMapInformationManager : public QObject
         void addArchetypeUse(const QString& name, CREMapInformation* map);
         void addFaceUse(const QString& name, CREMapInformation* map);
         void addAnimationUse(const QString& name, CREMapInformation* map);
+        void addQuestUse(const QString &name, CREMapInformation *map);
         void checkEvent(const object* item, CREMapInformation* map, const object* env);
         void recurseStyleDirectory(const QString& from);
 };

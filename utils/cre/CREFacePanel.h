@@ -9,7 +9,6 @@ extern "C" {
 #include "global.h"
 }
 
-class QuestManager;
 class CREMapInformationManager;
 
 class CREFacePanel : public CRETPanel<const Face>
@@ -17,11 +16,10 @@ class CREFacePanel : public CRETPanel<const Face>
     Q_OBJECT
 
     public:
-        CREFacePanel(QWidget* parent, QuestManager* quests, CREMapInformationManager* maps);
+        CREFacePanel(QWidget* parent, CREMapInformationManager* maps);
         virtual void setItem(const Face* face);
 
     protected:
-        QuestManager* myQuests;
         CREMapInformationManager* myMaps;
         const Face* myFace;
 

@@ -18,8 +18,9 @@ extern "C" {
 #include "CRERandomMap.h"
 #include "LicenseManager.h"
 #include "ArchetypeWriter.h"
+#include "QuestWriter.h"
 
-ResourcesManager::ResourcesManager()
+ResourcesManager::ResourcesManager() : myArchetypes(new ArchetypeWriter()), myQuests(new QuestWriter())
 {
 }
 
@@ -78,14 +79,6 @@ const recipe* ResourcesManager::recipe(int ingredients, const QString& name) con
         return NULL;
 
     return myRecipes[ingredients - 1][name];
-}
-
-
-void ResourcesManager::assetDefined(const archt *arch, const std::string &filename) {
-    for (auto it = myOrigins.begin(); it != myOrigins.end(); it++) {
-        it.value().removeAll(arch);
-    }
-    myOrigins[filename.c_str()].append(arch);
 }
 
 void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager* store, AssetUseCallback callback)
@@ -164,45 +157,18 @@ void ResourcesManager::archetypeUse(const archt* item, CREMapInformationManager*
     }
 }
 
-QString ResourcesManager::originOf(const archt *arch) const {
-    for (auto file = myOrigins.begin(); file != myOrigins.end(); file++) {
-        if (file.value().contains(arch)) {
-            return file.key();
-        }
-    }
-    return "";
-}
-
 void ResourcesManager::archetypeModified(archetype *arch) {
-    myDirty.insert(arch);
-}
-
-void write(const QString &filename, QList<const archt*> archs) {
-    auto buf = stringbuffer_new();
-    ArchetypeWriter writer;
-    qDebug() << "writing archetype file" << filename;
-
-    for (auto arch = archs.begin(); arch != archs.end(); arch++) {
-        writer.write(*arch, buf);
-    }
-
-    size_t length = stringbuffer_length(buf);
-    char *data = stringbuffer_finish(buf);
-
-    QFile out(filename);
-    out.open(QIODevice::WriteOnly);
-    out.write(data, length);
-    free(data);
+    myArchetypes.assetModified(arch);
 }
 
 void ResourcesManager::saveArchetypes() {
-    for (auto a = myDirty.begin(); a != myDirty.end(); a++) {
-        for (auto file = myOrigins.begin(); file != myOrigins.end(); file++) {
-            if (file.value().contains(*a)) {
-                write(file.key(), file.value());
-            }
-        }
-    }
+    myArchetypes.saveModifiedAssets();
+}
 
-    myDirty.clear();
+void ResourcesManager::questModified(quest_definition *quest) {
+    myQuests.assetModified(quest);
+}
+
+void ResourcesManager::saveQuests() {
+    myQuests.saveModifiedAssets();
 }

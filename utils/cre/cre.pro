@@ -36,8 +36,6 @@ CREPixmap.cpp \
  CRERegionPanel.cpp \
  CREReportDefinitionManager.cpp \
  CREScriptEngine.cpp \
- Quest.cpp \
- QuestManager.cpp \
  CREQuestPanel.cpp \
  CRETreeItemQuest.cpp \
  CREPanel.cpp \
@@ -107,8 +105,6 @@ CREPixmap.h \
  CREReportDefinitionManager.h \
  CRETreeItemEmpty.h \
  CREScriptEngine.h \
- Quest.h \
- QuestManager.h \
  CREQuestPanel.h \
  CRETreeItemQuest.h \
  CREPanel.h \

@@ -4,16 +4,19 @@
 #include <QObject>
 #include "CRETreeItem.h"
 
-class Quest;
+extern "C" {
+#include "quest.h"
+}
+
 class QTreeWidgetItem;
 class CREResourcesWindow;
 
-class CRETreeItemQuest : public CRETTreeItem<Quest>
+class CRETreeItemQuest : public CRETTreeItem<quest_definition>
 {
     Q_OBJECT
 
     public:
-        CRETreeItemQuest(Quest* quest, QTreeWidgetItem* item, CREResourcesWindow* window);
+        CRETreeItemQuest(quest_definition *quest, QTreeWidgetItem* item, CREResourcesWindow* window);
         virtual ~CRETreeItemQuest();
         virtual QString getPanelName() const;
         virtual void fillPanel(QWidget* panel);

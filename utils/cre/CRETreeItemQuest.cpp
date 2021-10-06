@@ -1,6 +1,5 @@
 #include "CRETreeItemQuest.h"
 #include "CREQuestPanel.h"
-#include "Quest.h"
 #include <QTreeWidgetItem>
 #include "CREResourcesWindow.h"
 #include "ResourcesManager.h"
@@ -8,15 +7,17 @@
 #include "assets.h"
 #include "AssetsManager.h"
 
-CRETreeItemQuest::CRETreeItemQuest(Quest* quest, QTreeWidgetItem* item, CREResourcesWindow* window) : CRETTreeItem(quest, "Quest")
+CRETreeItemQuest::CRETreeItemQuest(quest_definition *quest, QTreeWidgetItem* item, CREResourcesWindow* window) : CRETTreeItem(quest, "Quest")
 {
     Q_ASSERT(item);
     myTreeItem = item;
     Q_ASSERT(window);
     myWindow = window;
 
+    /*
     if (myItem != NULL)
         connect(myItem, SIGNAL(modified()), this, SLOT(questModified()));
+     */
 }
 
 CRETreeItemQuest::~CRETreeItemQuest()
@@ -40,11 +41,11 @@ void CRETreeItemQuest::fillPanel(QWidget* panel)
 
 void CRETreeItemQuest::questModified()
 {
-    myTreeItem->setText(0, myItem->code());
+    myTreeItem->setText(0, myItem->quest_code);
     myTreeItem->setIcon(0, QIcon());
-    if (myItem->face() != nullptr)
+    if (myItem->face != nullptr)
     {
-        myTreeItem->setIcon(0, CREPixmap::getIcon(myItem->face()->number));
+        myTreeItem->setIcon(0, CREPixmap::getIcon(myItem->face->number));
     }
 }
 
@@ -61,5 +62,5 @@ void CRETreeItemQuest::fillContextMenu(QMenu* menu)
 void CRETreeItemQuest::deleteQuest(bool)
 {
     Q_ASSERT(myItem);
-    myWindow->deleteQuest(myItem);
+//    myWindow->deleteQuest(myItem);
 }

@@ -132,7 +132,7 @@ void CREArchetypePanel::commitData() {
 
     BufferReader *br = bufferreader_init_from_memory(nullptr, text.data(), text.length());
 
-    auto origin = myResources->originOf(myArchetype).toStdString();
+    auto origin = myResources->originOf(myArchetype);
     ArchetypeLoader loader(getManager()->archetypes(), nullptr);
     loader.load(br, origin);
     bufferreader_destroy(br);

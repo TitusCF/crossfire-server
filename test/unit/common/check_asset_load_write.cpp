@@ -305,7 +305,7 @@ START_TEST(test_quest) {
     Faces faces;
     Quests quests;
     QuestWriter writer;
-    QuestLoader loader(&quests, &faces);
+    QuestLoader loader(&quests, &faces, nullptr);
 
     auto quest = generate_quest(quests, faces);
     write_load(quest, writer, loader);

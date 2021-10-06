@@ -1,8 +1,11 @@
 #include <QtWidgets>
 #include "CREPrePostPanel.h"
 #include "QuestConditionScript.h"
-#include "QuestManager.h"
-#include "Quest.h"
+#include "assets.h"
+#include "AssetsManager.h"
+extern "C" {
+#include "quest.h"
+}
 
 CRESubItemList::CRESubItemList(QWidget* parent) : CRESubItemWidget(parent)
 {
@@ -126,10 +129,8 @@ void CRESubItemConnection::editChanged(const QString& text)
     emit dataModified(QStringList(text));
 }
 
-CRESubItemQuest::CRESubItemQuest(bool isPre, const QuestManager* quests, QWidget* parent) : CRESubItemWidget(parent)
+CRESubItemQuest::CRESubItemQuest(CREPrePostList::Mode mode, QWidget* parent) : CRESubItemWidget(parent), myMode(mode)
 {
-    myQuests = quests;
-    myIsPre = isPre;
     myInit = true;
 
     QVBoxLayout* layout = new QVBoxLayout(this);
@@ -139,16 +140,21 @@ CRESubItemQuest::CRESubItemQuest(bool isPre, const QuestManager* quests, QWidget
     myQuestList = new QComboBox(this);
     layout->addWidget(myQuestList);
 
-    if (isPre)
+    if (mode != CREPrePostList::PostConditions)
     {
         myAtStep = new QRadioButton(tr("at step"), this);
         layout->addWidget(myAtStep);
+        myBelowStep = new QRadioButton(tr("below step"), this);
+        layout->addWidget(myBelowStep);
+        myBelowStep->setVisible(mode == CREPrePostList::SetWhen);
         myFromStep = new QRadioButton(tr("from step"), this);
         layout->addWidget(myFromStep);
+        myFromStep->setVisible(mode == CREPrePostList::PreConditions);
         myStepRange = new QRadioButton(tr("from step to step"), this);
         layout->addWidget(myStepRange);
 
         connect(myAtStep, SIGNAL(toggled(bool)), this, SLOT(checkToggled(bool)));
+        connect(myBelowStep, SIGNAL(toggled(bool)), this, SLOT(checkToggled(bool)));
         connect(myFromStep, SIGNAL(toggled(bool)), this, SLOT(checkToggled(bool)));
         connect(myStepRange, SIGNAL(toggled(bool)), this, SLOT(checkToggled(bool)));
     }
@@ -156,13 +162,14 @@ CRESubItemQuest::CRESubItemQuest(bool isPre, const QuestManager* quests, QWidget
     {
         layout->addWidget(new QLabel(tr("new step:"), this));
         myAtStep = NULL;
+        myBelowStep = nullptr;
         myFromStep = NULL;
     }
 
     myFirstStep = new QComboBox(this);
     layout->addWidget(myFirstStep);
 
-    if (isPre)
+    if (mode != CREPrePostList::PostConditions)
     {
         mySecondStep = new QComboBox(this);
         layout->addWidget(mySecondStep);
@@ -173,10 +180,9 @@ CRESubItemQuest::CRESubItemQuest(bool isPre, const QuestManager* quests, QWidget
     layout->addStretch();
 
     connect(myQuestList, SIGNAL(currentIndexChanged(int)), this, SLOT(selectedQuestChanged(int)));
-    foreach(const Quest* quest, quests->quests())
-    {
-        myQuestList->addItem(quest->title() + " [" + quest->code() + "]", quest->code());
-    }
+    getManager()->quests()->each([&] (auto quest) {
+        myQuestList->addItem(QString(quest->quest_title) + " [" + quest->quest_code + "]", quest->quest_code);
+    });
     connect(myFirstStep, SIGNAL(currentIndexChanged(int)), this, SLOT(selectedStepChanged(int)));
     if (mySecondStep)
         connect(mySecondStep, SIGNAL(currentIndexChanged(int)), this, SLOT(selectedStepChanged(int)));
@@ -187,7 +193,10 @@ CRESubItemQuest::CRESubItemQuest(bool isPre, const QuestManager* quests, QWidget
 void CRESubItemQuest::setData(const QStringList& data)
 {
     if (data.size() < 3)
+    {
+        myAtStep->setChecked(true);
         return;
+    }
 
     int index = myQuestList->findData(data[1], Qt::UserRole);
     if (index == -1)
@@ -198,7 +207,7 @@ void CRESubItemQuest::setData(const QStringList& data)
     myInit = true;
     myQuestList->setCurrentIndex(index);
 
-    if (!myIsPre)
+    if (myMode == CREPrePostList::PostConditions)
     {
         myFirstStep->setCurrentIndex(myFirstStep->findData(data[2], Qt::UserRole));
         myInit = false;
@@ -211,13 +220,20 @@ void CRESubItemQuest::setData(const QStringList& data)
     if (idx == -1)
     {
         int start = 0;
-        if (steps.startsWith('='))
+        if (steps.startsWith("<="))
+        {
+            myBelowStep->setChecked(true);
+            start = 2;
+        }
+        else if (steps.startsWith('=') || myMode == CREPrePostList::SetWhen)
         {
             myAtStep->setChecked(true);
-            start = 1;
+            start = myMode == CREPrePostList::SetWhen ? 0 : 1;
         }
         else
+        {
             myFromStep->setChecked(true);
+        }
 
         myFirstStep->setCurrentIndex(myFirstStep->findData(steps.mid(start), Qt::UserRole));
     }
@@ -234,26 +250,30 @@ void CRESubItemQuest::setData(const QStringList& data)
 void CRESubItemQuest::selectedQuestChanged(int index)
 {
     myFirstStep->clear();
-    if (myIsPre)
+    if (myMode != CREPrePostList::PostConditions)
         myFirstStep->addItem("(not started)", "0");
 
     if (mySecondStep)
         mySecondStep->clear();
 
-    if (index < 0 || index >= myQuests->quests().size())
+    if (index < 0 || index >= myQuestList->count())
         return;
 
-    const Quest* quest = myQuests->quests()[index];
+    auto quest = getManager()->quests()->find(myQuestList->currentData().toString().toStdString());
+    if (!quest)
+        return;
 
     QString desc;
-    foreach (const QuestStep* step, quest->steps())
-    {
-        desc = tr("%1 (%2)").arg(QString::number(step->step()), step->description().left(30));
-        if (step->isCompletion())
+    auto step = quest->steps;
+    while (step) {
+        desc = tr("%1 (%2)").arg(QString::number(step->step), QString(step->step_description).left(30));
+        if (step->is_completion_step)
             desc += " (end)";
-        myFirstStep->addItem(desc, QString::number(step->step()));
+        myFirstStep->addItem(desc, QString::number(step->step));
         if (mySecondStep)
-            mySecondStep->addItem(desc, QString::number(step->step()));
+            mySecondStep->addItem(desc, QString::number(step->step));
+
+        step = step->next;
     }
 }
 
@@ -266,7 +286,7 @@ void CRESubItemQuest::updateData()
 
     data << myQuestList->itemData(myQuestList->currentIndex(), Qt::UserRole).toString();
 
-    if (myIsPre)
+    if (myMode != CREPrePostList::PostConditions)
     {
         QString value;
         if (myStepRange->isChecked())
@@ -277,8 +297,10 @@ void CRESubItemQuest::updateData()
         }
         else
         {
-            if (myAtStep->isChecked())
+            if (myAtStep->isChecked() && myMode != CREPrePostList::SetWhen)
                 value = "=";
+            else if (myBelowStep->isChecked())
+                value = "<=";
             value += myFirstStep->itemData(myFirstStep->currentIndex(), Qt::UserRole).toString();
         }
 
@@ -383,10 +405,20 @@ void CRESubItemToken::valuesChanged()
     updateData();
 }
 
-CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, const QuestManager* quests, QWidget* parent) : QDialog(parent)
+CREPrePostPanel::CREPrePostPanel(CREPrePostList::Mode mode, const QList<QuestConditionScript*> scripts, QWidget* parent) : QDialog(parent), myMode(mode)
 {
     setModal(true);
-    setWindowTitle(isPre ? tr("Message pre-condition") : tr("Message post-condition"));
+    switch (mode) {
+        case CREPrePostList::PreConditions:
+            setWindowTitle(tr("Message pre-condition"));
+            break;
+        case CREPrePostList::PostConditions:
+            setWindowTitle(tr("Message post-condition"));
+            break;
+        case CREPrePostList::SetWhen:
+            setWindowTitle(tr("Step set when"));
+            break;
+    }
 
     QVBoxLayout* layout = new QVBoxLayout(this);
 
@@ -399,9 +431,11 @@ CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> 
 
     for(int script = 0; script < scripts.size(); script++)
     {
+        if (mode == CREPrePostList::SetWhen && scripts[script]->name() != "quest")
+            continue;
         myChoices->addItem(scripts[script]->name());
         myChoices->setItemData(script, scripts[script]->comment(), Qt::ToolTipRole);
-        mySubWidgets.append(createSubItemWidget(isPre, scripts[script], quests));
+        mySubWidgets.append(createSubItemWidget(scripts[script]));
         mySubItemsStack->addWidget(mySubWidgets.last());
         connect(mySubWidgets.last(), SIGNAL(dataModified(const QStringList&)), this, SLOT(subItemChanged(const QStringList&)));
     }
@@ -413,6 +447,11 @@ CREPrePostPanel::CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> 
     layout->addWidget(reset);
 
     connect(myChoices, SIGNAL(currentIndexChanged(int)), this, SLOT(currentChoiceChanged(int)));
+
+    if (CREPrePostList::SetWhen == mode) {
+        myChoices->setVisible(false);
+        layout->itemAt(0)->widget()->setVisible(false);
+    }
 }
 
 CREPrePostPanel::~CREPrePostPanel()
@@ -426,14 +465,16 @@ QStringList CREPrePostPanel::getData()
 
 void CREPrePostPanel::setData(const QStringList& data)
 {
-    myOriginal = data;
     myData = data;
+    if (myMode == CREPrePostList::SetWhen && !myData.empty() && myData[0] != "quest")
+        myData.push_front("quest");
+    myOriginal = myData;
     if (myData.isEmpty())
         return;
 
-    myChoices->setCurrentIndex(myChoices->findText(data[0]));
+    myChoices->setCurrentIndex(myChoices->findText(myOriginal[0]));
 
-    mySubWidgets[myChoices->currentIndex()]->setData(data);
+    mySubWidgets[myChoices->currentIndex()]->setData(myOriginal);
 }
 
 void CREPrePostPanel::currentChoiceChanged(int)
@@ -454,16 +495,16 @@ void CREPrePostPanel::subItemChanged(const QStringList& data)
     myData.append(data);
 }
 
-CRESubItemWidget* CREPrePostPanel::createSubItemWidget(bool isPre, const QuestConditionScript* script, const QuestManager* quests)
+CRESubItemWidget* CREPrePostPanel::createSubItemWidget(const QuestConditionScript* script)
 {
-    if (!isPre && script->name() == "connection")
+    if (myMode == CREPrePostList::PostConditions && script->name() == "connection")
         return new CRESubItemConnection(this);
 
     if (script->name() == "quest")
-        return new CRESubItemQuest(isPre, quests, this);
+        return new CRESubItemQuest(myMode, this);
 
     if (script->name() == "token" || script->name() == "settoken" || script->name() == "npctoken" || script->name() == "setnpctoken")
-        return new CRESubItemToken(isPre, this);
+        return new CRESubItemToken(myMode == CREPrePostList::PreConditions, this);
 
     return new CRESubItemList(this);
 }

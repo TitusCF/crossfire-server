@@ -42,21 +42,11 @@ void QuestWriter::write(const quest_definition *quest, StringBuffer *buf) {
         }
         if (step->conditions) {
             stringbuffer_append_string(buf, "setwhen\n");
+            char when[500];
             auto cond = step->conditions;
             while (cond) {
-                stringbuffer_append_printf(buf, "%s ", cond->quest_code);
-                if (cond->maxstep == -1 && cond->minstep == -1) {
-                    stringbuffer_append_printf(buf, "finished");
-                } else {
-                    if (cond->minstep == 0) {
-                        stringbuffer_append_printf(buf, "<=%d", cond->maxstep);
-                    } else if (cond->minstep == cond->maxstep) {
-                        stringbuffer_append_printf(buf, " %d", cond->maxstep);
-                    } else {
-                        stringbuffer_append_printf(buf, "%d-%d", cond->minstep, cond->maxstep);
-                    }
-                }
-                stringbuffer_append_string(buf, "\n");
+                quest_write_condition(when, sizeof(when), cond);
+                stringbuffer_append_printf(buf, "%s\n", when);
                 cond = cond->next;
             }
             stringbuffer_append_string(buf, "end_setwhen\n");

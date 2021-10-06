@@ -4,7 +4,6 @@
 #include <CREResourcesWindow.h>
 #include "CREMapInformationManager.h"
 #include "CREExperienceWindow.h"
-#include "QuestManager.h"
 #include "MessageManager.h"
 #include "CREReportDisplay.h"
 #include "CREPixmap.h"
@@ -12,7 +11,6 @@
 #include "CREHPBarMaker.h"
 #include "ResourcesManager.h"
 #include "CRECombatSimulator.h"
-#include "Quest.h"
 #include "CREHPBarMaker.h"
 #include "ScriptFileManager.h"
 #include "FaceMakerDialog.h"
@@ -48,15 +46,12 @@ CREMainWindow::CREMainWindow()
 
     fillFacesets();
 
-    myQuestManager = new QuestManager();
-    myQuestManager->loadQuests();
-
     myMessageManager = new MessageManager();
     myMessageManager->loadMessages();
 
     myScriptManager = new ScriptFileManager();
 
-    myMapManager = new CREMapInformationManager(this, myMessageManager, myQuestManager, myScriptManager);
+    myMapManager = new CREMapInformationManager(this, myMessageManager, myScriptManager);
     connect(myMapManager, SIGNAL(browsingMap(const QString&)), this, SLOT(browsingMap(const QString&)));
     connect(myMapManager, SIGNAL(finished()), this, SLOT(browsingFinished()));
     myMapManager->start();
@@ -73,7 +68,6 @@ void CREMainWindow::closeEvent(QCloseEvent* event)
 
     myMapManager->cancel();
     delete myMapManager;
-    delete myQuestManager;
     delete myMessageManager;
     delete myResourcesManager;
     cleanup();
@@ -299,7 +293,7 @@ void CREMainWindow::createMenus()
 
 void CREMainWindow::doResourceWindow(DisplayMode mode)
 {
-    QWidget* resources = new CREResourcesWindow(myMapManager, myQuestManager, myMessageManager, myResourcesManager, myScriptManager, this, mode);
+    QWidget* resources = new CREResourcesWindow(myMapManager, myMessageManager, myResourcesManager, myScriptManager, this, mode);
     connect(this, SIGNAL(updateFilters()), resources, SLOT(updateFilters()));
     connect(resources, SIGNAL(filtersModified()), this, SLOT(onFiltersModified()));
     connect(this, SIGNAL(updateReports()), resources, SLOT(updateReports()));
@@ -356,7 +350,7 @@ void CREMainWindow::onSaveFormulae()
 void CREMainWindow::onSaveQuests()
 {
     emit commitData();
-    myQuestManager->saveQuests();
+    myResourcesManager->saveQuests();
 }
 
 void CREMainWindow::onSaveMessages()
@@ -476,13 +470,12 @@ void CREMainWindow::onReportDuplicate()
         }
     }
 
-    for (const auto quest : myQuestManager->quests())
-    {
-        if (quest->face() != nullptr)
+    getManager()->quests()->each([&] (auto quest) {
+        if (quest->face != nullptr)
         {
-            faces[quest->face()->name].append(quest->code() + " (quest)");
+            faces[quest->face->name].append(QString(quest->quest_code) + " (quest)");
         }
-    }
+    });
 
     getManager()->messages()->each([&faces] (const GeneralMessage *message)
     {
@@ -1465,10 +1458,9 @@ void CREMainWindow::onReportQuests()
   readDirectory(directory, states);
 
   QStringList codes;
-  foreach(const Quest* quest, myQuestManager->quests())
-  {
-    codes.append(quest->code());
-  }
+  getManager()->quests()->each([&] (const auto quest) {
+    codes.append(quest->quest_code);
+  });
 
   QString report("<html><body>\n<h1>Quests</h1>\n");
 
@@ -1478,8 +1470,8 @@ void CREMainWindow::onReportQuests()
   foreach(QString key, keys)
   {
     codes.removeAll(key);
-    Quest* quest = myQuestManager->findByCode(key);
-    report += "<h2>Quest: " + (quest != NULL ? quest->title() : (key + " ???")) + "</h2>\n";
+    const auto quest = getManager()->quests()->get(key.toStdString());
+    report += "<h2>Quest: " + (quest != NULL ? quest->quest_title : (key + " ???")) + "</h2>\n";
     report += "<p>";
     QHash<QString, bool> done = states[key];
     QStringList players = done.keys();
@@ -1513,8 +1505,8 @@ void CREMainWindow::onReportQuests()
     {
       report += sep;
       sep = ", ";
-      Quest* quest = myQuestManager->findByCode(code);
-      report += (quest != NULL ? quest->title() : (code + " ???"));
+      const auto quest = getManager()->quests()->find(code.toStdString());
+      report += (quest != NULL ? quest->quest_title : (code + " ???"));
     }
     report += "</p>\n";
   }
