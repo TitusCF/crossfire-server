@@ -34,6 +34,7 @@ extern "C" {
 #include "FaceLoader.h"
 #include "WrapperLoader.h"
 #include "MessageLoader.h"
+#include "QuestLoader.h"
 #include "Faces.h"
 #include <string.h>
 
@@ -54,6 +55,7 @@ extern "C" {
 #include "FacesetWriter.h"
 #include "ArtifactWriter.h"
 #include "FormulaeWriter.h"
+#include "QuestWriter.h"
 
 #include "microtar.h"
 #include "TarLoader.h"
@@ -135,6 +137,8 @@ void assets_collect(const char* datadir, int what) {
         collector.addLoader(new WrapperLoader("/formulae", init_formulae));
     if (what & ASSETS_ATTACK_MESSAGES)
         collector.addLoader(new WrapperLoader("/attackmess", init_attackmess));
+    if (what & ASSETS_QUESTS)
+        collector.addLoader(new QuestLoader(manager->quests(), manager->faces()));
     for (uint8_t hook = 0; hook < settings.hooks_count; hook++) {
         collector.addLoader(new WrapperLoader(settings.hooks_filename[hook], settings.hooks[hook]));
     }
@@ -487,6 +491,9 @@ void assets_pack(const char *what, const char *filename) {
         } else if (strcmp(type, "formulae") == 0) {
             pack_formulae(buf);
             name = "formulae";
+        } else if (strcmp(type, "quests") == 0) {
+            do_pack(new QuestWriter(), manager->quests(), buf);
+            name = "crossfire.quests";
         } else if (strcmp(type, "images") == 0) {
             pack_images(&tar);
             stringbuffer_delete(buf);
@@ -667,4 +674,32 @@ long recipe_find_ingredient_cost(const char *name) {
     /* failed to find any matching items -- formula should be checked */
     LOG(llevError, "Couldn't find cost for ingredient %s\n", name);
     return -1;
+}
+
+quest_definition *quest_find_by_code(sstring code) {
+    quest_definition *quest;
+
+    quest = quest_get_by_code(code);
+    if (!quest) {
+        LOG(llevError, "quest %s required but not found!\n", code);
+        return NULL;
+    }
+    return quest;
+}
+
+quest_definition *quest_get_by_code(sstring code) {
+    return manager->quests()->find(code);
+}
+
+/**
+ * Iterate over all quests.
+ * @param op function to call for each quest.
+ * @param user extra parameter to give the function.
+ */
+void quest_for_each(quest_op op, void *user) {
+    manager->quests()->each([&op, &user] (auto q) { op(q, user); });
+}
+
+size_t quests_count(bool includeSystem) {
+    return includeSystem ? manager->quests()->count() : manager->quests()->visibleCount();
 }

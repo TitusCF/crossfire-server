@@ -16,6 +16,9 @@ extern "C" {
 #include "Faces.h"
 #include "Animations.h"
 #include "assets.h"
+#include "Quests.h"
+#include "QuestLoader.h"
+#include "QuestWriter.h"
 
 static void setup(void) {
     init_hash_table();
@@ -214,6 +217,112 @@ START_TEST(test_face) {
 }
 END_TEST
 
+quest_condition *generate_condition() {
+    auto c = static_cast<quest_condition *>(calloc(1, sizeof(quest_condition)));
+    c->quest_code = generate_name(33);
+    if (rndm(0, 3) == 0) {
+        c->minstep = -1;
+        c->maxstep = -1;
+    } else if (rndm(0, 2) == 0) {
+        c->minstep = rndm(4, 15);
+        c->maxstep = c->minstep;
+    } else if (rndm(0, 1)) {
+        c->maxstep = rndm(4, 15);
+    } else {
+        c->minstep = rndm(0, 14);
+        c->maxstep = c->minstep + rndm(1, 10);
+    }
+    return c;
+}
+
+quest_step_definition *generate_step() {
+    auto s = static_cast<quest_step_definition *>(calloc(1, sizeof(quest_step_definition)));
+    s->is_completion_step = rndm(0, 1);
+    s->step = rndm(1, 50);
+    s->step_description = generate_name(40);
+    for (int i = rndm(0, 2); i != 0; i--) {
+        auto c = generate_condition();
+        c->next = s->conditions;
+        s->conditions = c;
+    }
+    return s;
+}
+
+quest_definition *generate_quest(Quests &quests, Faces &faces) {
+    auto q = static_cast<quest_definition *>(calloc(1, sizeof(quest_definition)));
+    q->quest_code = add_string(generate_name(30));
+    q->quest_description = add_string(generate_name(100));
+    q->quest_is_system = rndm(0, 1);
+    q->quest_restart = rndm(0, 1);
+    q->quest_title = add_string(generate_name(100));
+    q->quest_comment = add_string(generate_name(90));
+    if (rndm(0, 1)) {
+        q->parent = quests.get(generate_name(25));
+    }
+    if (rndm(0, 1)) {
+        q->face = faces.get(generate_name(25));
+    } else {
+        q->face = faces.get("quest_generic.111");
+    }
+    for (int i = rndm(0, 5); i != 0; i--) {
+        auto s = generate_step();
+        s->next = q->steps;
+        q->steps = s;
+    }
+    return q;
+}
+
+void check_conditions(const quest_condition *lc, const quest_condition *rc) {
+    if (!lc) {
+        ck_assert(rc == nullptr);
+        return;
+    }
+    ck_assert(rc);
+    ck_assert_str_eq(lc->quest_code, rc->quest_code);
+    ck_assert_int_eq(lc->minstep, rc->minstep);
+    ck_assert_int_eq(lc->maxstep, rc->maxstep);
+    check_conditions(lc->next, rc->next);
+}
+
+void check_steps(const quest_step_definition *ls, const quest_step_definition *rs) {
+    if (!ls) {
+        ck_assert(rs == nullptr);
+        return;
+    }
+    ck_assert(rs);
+    ck_assert_str_eq(ls->step_description, rs->step_description);
+    ck_assert_int_eq(ls->is_completion_step, rs->is_completion_step);
+    ck_assert_int_eq(ls->step, rs->step);
+
+    check_conditions(ls->conditions, rs->conditions);
+    check_steps(ls->next, rs->next);
+}
+
+START_TEST(test_quest) {
+    Faces faces;
+    Quests quests;
+    QuestWriter writer;
+    QuestLoader loader(&quests, &faces);
+
+    auto quest = generate_quest(quests, faces);
+    write_load(quest, writer, loader);
+
+    auto loaded = quests.find(quest->quest_code);
+    ck_assert_str_eq(quest->quest_description, loaded->quest_description);
+    ck_assert_str_eq(quest->quest_title, loaded->quest_title);
+    ck_assert_str_eq(quest->quest_comment, loaded->quest_comment);
+    ck_assert_int_eq(quest->quest_restart, loaded->quest_restart);
+    ck_assert_int_eq(quest->quest_is_system, loaded->quest_is_system);
+    ck_assert(quest->face == loaded->face);
+    ck_assert(quest->parent == loaded->parent);
+    check_steps(quest->steps, loaded->steps);
+
+    quests.define(quest->quest_code, quest);
+    faces.clear();
+    quests.clear();
+}
+END_TEST
+
 static Suite *shstr_suite(void) {
     Suite *s = suite_create("asset_load_write");
     TCase *tc_core = tcase_create("Core");
@@ -225,6 +334,7 @@ static Suite *shstr_suite(void) {
     tcase_add_loop_test(tc_core, test_treasure, 0, 25);
     tcase_add_loop_test(tc_core, test_animation, 0, 25);
     tcase_add_loop_test(tc_core, test_face, 0, 25);
+    tcase_add_loop_test(tc_core, test_quest, 0, 25);
 
     return s;
 }

@@ -99,6 +99,16 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);
 
 /**
+ * Append the specified content in a multiline block, starting with "start" and ending with "end".
+ * "start" and "end" must not end with a newline.
+ * @param sb The string buffer to modify.
+ * @param start The text to write to signify the start of the contents.
+ * @param content The actual content, which may contain multilines.
+ * @param end The text to write to signify the end of the contents. If NULL then "end_<start>" will be used.
+ */
+void stringbuffer_append_multiline_block(StringBuffer *sb, const char *start, const char *content, const char *end);
+
+/**
  * Return the current length of the buffer.
  * @param sb The string buffer to check.
  *

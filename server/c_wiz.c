@@ -28,6 +28,7 @@
 #include "spells.h"
 #include "treasure.h"
 #include "skills.h"
+#include "assets.h"
 
 /* Defines for DM item stack **/
 #define STACK_SIZE         50   /**< Stack size, static */
@@ -2793,7 +2794,7 @@ void command_purge_quest(object *op, const char * param) {
 
 void command_purge_quest_definitions(object *op, const char * param) {
     (void)param;
-    free_quest_definitions();
+    assets_collect(settings.datadir, ASSETS_QUESTS);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Purged quests definitions.");
 }
 

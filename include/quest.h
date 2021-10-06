@@ -43,6 +43,7 @@ typedef struct quest_definition {
     sstring quest_code;             /**< Quest internal code. */
     sstring quest_title;            /**< Quest title for player. */
     sstring quest_description;      /**< Quest longer description. */
+    sstring quest_comment;          /**< Quest comment, not visible to players. */
     int quest_restart;              /**< If non zero, can be restarted. */
     const Face *face;           /**< Face associated with this quest. */
     uint32_t client_code;             /**< The code used to communicate with the client, merely a unique index. */

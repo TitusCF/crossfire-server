@@ -35,6 +35,7 @@ AssetsManager::~AssetsManager() {
     m_faces.clear();
     m_messages.clear();
     m_facesets.clear();
+    m_quests.clear();
 }
 
 void AssetsManager::archetypeUpdated(archetype *, archetype *update) {
@@ -68,5 +69,6 @@ size_t AssetsManager::dumpUndefined() {
     // count += dump(m_faces.undefined(), "faces");    /** Faces are actually not defined usually, just referenced. */
     count += dump(m_animations.undefined(), "animations");
     count += dump(m_facesets.undefined(), "facesets");
+    count += dump(m_quests.undefined(), "quests");
     return count;
 }

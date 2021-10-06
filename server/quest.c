@@ -35,6 +35,7 @@
 #include "sproto.h"
 
 #include "quest.h"
+#include "assets.h"
 
 /* Media tags for information messages prefix. */
 #define TAG_START   "[color=#aa55ff]"
@@ -63,358 +64,6 @@ typedef struct quest_player {
 /** Player quest state. */
 static quest_player *player_states = NULL;
 
-static int quests_loaded = 0;           /**< Number of quests loaded. If zero, quests not yet loaded. */
-static int quests_visible = 0;          /**< Number of quests to give the player, system quests are hidden. */
-static quest_definition *quests = NULL; /**< All known quests. */
-
-/**
- * Allocate a quest_step_definition, will call fatal() if out of memory.
- * @return new structure.
- */
-static quest_step_definition *quest_create_step(void) {
-    quest_step_definition *step = calloc(1, sizeof(quest_step_definition));
-    if (!step)
-        fatal(OUT_OF_MEMORY);
-    return step;
-}
-
-/**
- * Allocate a quest_condition, will call fatal() if out of memory.
- * @return new structure.
- */
-static quest_condition *quest_create_condition(void) {
-    quest_condition *cond = calloc(1, sizeof(quest_condition));
-    if (!cond)
-        fatal(OUT_OF_MEMORY);
-    return cond;
-}
-
-
-/**
- * Allocate a quest_definition, will call fatal() if out of memory.
- * @return new structure.
- */
-static quest_definition *quest_create_definition(void) {
-    quest_definition *quest = calloc(1, sizeof(quest_definition));
-    if (!quest)
-        fatal(OUT_OF_MEMORY);
-    return quest;
-}
-
-/**
- * Find a quest from its code. This is called by quest_get and also
- * used in the quest loading code
- * @param code quest to search.
- * @return quest, or NULL if no such quest.
- */
-static quest_definition *quest_get_by_code(sstring code) {
-    quest_definition *quest;
-
-    quest = quests;
-    while (quest) {
-        if (quest->quest_code == code)
-            return quest;
-
-        quest = quest->next;
-    }
-    return NULL;
-}
-
-/**
- * @defgroup QUESTFILE_xxx Quest file parsing state.
- *
- * This is the parsing state when loading a file through load_quests_from_file().
- */
-/*@{*/
-#define QUESTFILE_NEXTQUEST 0   /**< Waiting for next quest definition. */
-#define QUESTFILE_QUEST 1       /**< In a quest definition. */
-#define QUESTFILE_QUESTDESC 2   /**< In a quest description. */
-#define QUESTFILE_STEP 3        /**< In a quest step. */
-#define QUESTFILE_STEPDESC 4    /**< In a quest step description. */
-#define QUESTFILE_STEPCOND 5    /**< In a quest step conditions. */
-#define QUESTFILE_COMMENT  6    /**< In a quest comment - ignored. */
-/*@}*/
-
-/**
- * Loads all of the quests which are found in the given file, any global states
- * for quest loading are passed down into this function, but not back up again.
- * @param filename filename to load quests from.
- * @return number of quests loaded from file, negative value if there was an error.
- */
-static int load_quests_from_file(const char *filename) {
-    int i, in = QUESTFILE_NEXTQUEST, condition_parsed;
-    int minstep, maxstep;
-    char namedquest[MAX_BUF];
-    quest_definition *quest = NULL;
-    quest_condition *cond = NULL;
-    char includefile[MAX_BUF];
-    sstring questname;
-    quest_step_definition *step = NULL;
-    char final[MAX_BUF], read[MAX_BUF];
-    FILE *file;
-    StringBuffer *buf=NULL;
-
-    int loaded_quests =0, found =0;
-    snprintf(final, sizeof(final), "%s/%s/%s", settings.datadir, settings.mapdir, filename);
-    file = fopen(final, "r");
-    if (!file) {
-        LOG(llevError, "Can't open %s for reading quests\n", filename);
-        return -1;
-    }
-
-    while (fgets(read, sizeof(read), file) != NULL) {
-        if (in == QUESTFILE_STEPCOND) {
-            if (strcmp(read, "end_setwhen\n") == 0) {
-                in = QUESTFILE_STEP;
-                continue;
-            }
-            /* we are reading in a list of conditions for the 'setwhen' block for a quest step
-             * There will be one entry per line, containing the quest, and the steps that it applies to.
-             * This may be expressed as one of the following
-             * questcode 20 (the quest questcode must be at step 20)
-             * questcode <=20 (the quest questcode must not be beyond step 20)
-             * questcode 10-20 (the quest questcode must be between steps 10 and 20)
-             * questcode finished (the quest questcode must have been completed)
-             */
-
-            minstep = 0;
-            maxstep = 0;
-            condition_parsed = 0;
-            namedquest[0]='\0';
-            if (sscanf(read, "%s %d-%d\n", namedquest, &minstep, &maxstep)!=3) {
-                if (sscanf(read, "%s <=%d\n", namedquest, &maxstep)== 2) {
-                    minstep=0;
-                    condition_parsed =1;
-                } else if (sscanf(read, "%s %d\n", namedquest, &minstep)==2) {
-                    maxstep = minstep;
-                    condition_parsed =1;
-                } else if (strstr(read, "finished")) {
-                    if (sscanf(read, "%s finished\n", namedquest)==1) {
-                        minstep = maxstep = -1;
-                        condition_parsed =1;
-                    }
-                }
-            } else
-                condition_parsed =1;
-            if (!condition_parsed) {
-                LOG(llevError, "Invalid line '%s' in setwhen block for quest %s=n", read, quest->quest_code);
-                continue;
-            }
-
-            cond = quest_create_condition();
-            cond->minstep = minstep;
-            cond->maxstep = maxstep;
-            cond->quest_code = add_string(namedquest);
-            cond->next = step->conditions;
-            step->conditions = cond;
-            LOG(llevDebug, "condition added for step %d of quest %s, looking for quest %s between steps %d and %d\n",
-                    step->step, quest->quest_code, cond->quest_code, cond->minstep, cond->maxstep);
-            continue;
-        }
-        if (in == QUESTFILE_STEPDESC) {
-            if (strcmp(read, "end_description\n") == 0) {
-                char *message;
-
-                in = QUESTFILE_STEP;
-
-                message = stringbuffer_finish(buf);
-                buf = NULL;
-
-                step->step_description = add_string(message);
-                free(message);
-
-                continue;
-            }
-
-            stringbuffer_append_string(buf, read);
-            continue;
-        }
-
-        if (in == QUESTFILE_STEP) {
-            if (strcmp(read, "end_step\n") == 0) {
-                step = NULL;
-                in = QUESTFILE_QUEST;
-                continue;
-            }
-            if (strcmp(read, "finishes_quest\n") == 0) {
-                step->is_completion_step=1;
-                continue;
-            }
-            if (strcmp(read, "description\n") == 0) {
-                buf = stringbuffer_new();
-                in = QUESTFILE_STEPDESC;
-                continue;
-            }
-            if (strcmp(read, "setwhen\n") == 0) {
-                in = QUESTFILE_STEPCOND;
-                continue;
-            }
-            LOG(llevError, "quests: invalid line %s in definition of quest %s in file %s!\n",
-                    read, quest->quest_code, filename);
-            continue;
-        }
-
-        if (in == QUESTFILE_QUESTDESC) {
-            if (strcmp(read, "end_description\n") == 0) {
-                char *message;
-
-                in = QUESTFILE_QUEST;
-
-                message = stringbuffer_finish(buf);
-                buf = NULL;
-
-                quest->quest_description = add_string(message);
-                free(message);
-
-                continue;
-            }
-            stringbuffer_append_string(buf, read);
-            continue;
-        }
-
-        if (in == QUESTFILE_COMMENT) {
-            // Quest comment is ignored here, only used in eg CRE.
-            if (strcmp(read, "end_comment\n") == 0) {
-                in = QUESTFILE_QUEST;
-            }
-            continue;
-        }
-
-        if (in == QUESTFILE_QUEST) {
-            if (strcmp(read, "end_quest\n") == 0) {
-                if (!quest->quest_is_system)
-                    quests_visible++;
-                quest = NULL;
-                in = QUESTFILE_NEXTQUEST;
-                continue;
-            }
-
-            if (strcmp(read, "description\n") == 0) {
-                in = QUESTFILE_QUESTDESC;
-                buf = stringbuffer_new();
-                continue;
-            }
-
-            if (strncmp(read, "title ", 6) == 0) {
-                read[strlen(read) - 1] = '\0';
-                quest->quest_title = add_string(read + 6);
-                continue;
-            }
-
-            if (sscanf(read, "step %d\n", &i)) {
-                step = quest_create_step();
-                step->step = i;
-                step->next = quest->steps;
-                quest->steps = step;
-                in = QUESTFILE_STEP;
-                continue;
-            }
-
-            if (sscanf(read, "restart %d\n", &i)) {
-                quest->quest_restart = i;
-                continue;
-            }
-            if (strncmp(read, "parent ", 7) == 0) {
-                read[strlen(read) - 1] = '\0';
-                questname = add_string(read + 7);
-                if (!quest_get_by_code(questname)) {
-                    LOG(llevError, "Quest %s lists %s, as a parent, but this hasn't been defined\n", quest->quest_code, questname);
-                } else {
-                    quest->parent = quest_get_by_code(questname);
-                }
-                free_string(questname);
-                continue;
-            }
-
-            if (strncmp(read, "face ", 5) == 0) {
-                read[strlen(read) - 1] = '\0';
-                quest->face = find_face(read + 5);
-                continue;
-            }
-
-            if (strncmp(read, "comment", 7) == 0) {
-                in = QUESTFILE_COMMENT;
-                continue;
-            }
-
-            if (sscanf(read, "is_system %d\n", &i)) {
-                quest->quest_is_system = (i ? true : false);
-                continue;
-            }
-        }
-
-        if (read[0] == '#')
-            continue;
-
-        if (strncmp(read, "quest ", 6) == 0) {
-            if (quest) {
-                LOG(llevError, "'quest' while in quest '%s' in file %s\n", quest->quest_code, filename);
-            }
-            quest = quest_create_definition();
-            read[strlen(read) - 1] = '\0';
-            quest->quest_code = add_string(read + 6);
-            if (quest_get_by_code(quest->quest_code)) {
-                LOG(llevError, "Quest %s is listed in file %s, but this quest has already been defined\n", quest->quest_code, filename);
-            }
-            /* Set a default face, which will be overwritten if a face is defined. */
-            quest->face = find_face("quest_generic.111");
-            quest->next = quests;
-            if (quests != NULL)
-                quest->client_code = quests->client_code + 1;
-            else
-                quest->client_code = 1;
-            quests = quest;
-            in = QUESTFILE_QUEST;
-            loaded_quests++;
-            continue;
-        }
-        if (sscanf(read, "include %s\n", includefile)) {
-            char inc_path[HUGE_BUF];
-            path_combine_and_normalize(filename, includefile, inc_path, sizeof(inc_path));
-            found = load_quests_from_file(inc_path);
-            if (found >=0) {
-                LOG(llevDebug, "loaded %d quests from file %s\n", found, inc_path);
-                loaded_quests += found;
-            } else {
-                LOG(llevError, "Failed to load quests from file %s\n", inc_path);
-            }
-            continue;
-        }
-
-        if (strcmp(read, "\n") == 0)
-            continue;
-
-        LOG(llevError, "quest: invalid file format for %s, I don't know what to do with the line %s\n", final, read);
-    }
-
-    fclose(file);
-
-    if (in != 0) {
-        LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", final, in);
-
-        /* The buffer may not have been freed. */
-        if (buf != NULL) {
-            stringbuffer_finish(buf);
-        }
-    }
-
-    return loaded_quests;
-}
-
-/** Load all quest definitions. Can be called multiple times, will be ignored. */
-void quest_load_definitions(void) {
-    if (quests_loaded)
-        return;
-    int found = load_quests_from_file("world.quests");
-    if (found >= 0) {
-        LOG(llevInfo, "%d quests found.\n", found);
-        quests_loaded = found;
-    } else {
-        LOG(llevError, "Quest Loading Failed\n");
-        quests_visible = 0;
-    }
-}
-
 /**
  * Get a step for the specified quest.
  * @param quest quest to consider.
@@ -433,22 +82,6 @@ static quest_step_definition *quest_get_step(quest_definition *quest, int step) 
 
     LOG(llevError, "quest %s has no required step %d\n", quest->quest_code, step);
     return NULL;
-}
-
-/**
- * Find a quest from its code.
- * @param code quest to search.
- * @return quest, , or NULL if no such quest in which case a llevError is emitted.
- */
-static quest_definition *quest_get(sstring code) {
-    quest_definition *quest;
-
-    quest = quest_get_by_code(code);
-    if (!quest) {
-        LOG(llevError, "quest %s required but not found!\n", code);
-        return NULL;
-    }
-    return quest;
 }
 
 /**
@@ -687,38 +320,32 @@ static int evaluate_quest_conditions(const quest_condition *condition, player *p
     return 1;
 }
 
+static void do_update(const quest_definition *quest, void *user) {
+    player *pl = (player *)user;
+    const quest_step_definition *step;
+    int new_step = 0;
+    step = quest->steps;
+    while (step) {
+        if (step->conditions)
+            if (evaluate_quest_conditions(step->conditions, pl)) {
+                new_step=new_step<step->step?step->step:new_step;
+            }
+        step = step->next;
+    }
+    if (new_step > 0) {
+        int current_step = quest_get_player_state(pl, quest->quest_code);
+        if (new_step > current_step) {
+            quest_set_state(NULL, pl, quest->quest_code, new_step, 0);
+        }
+    }
+}
+
 /**
  * Look through all of the quests for the given player, and see if any need to be updated.
  * @param pl
  */
 static void update_quests(player *pl) {
-    const quest_definition *quest;
-    const quest_step_definition *step;
-
-    /* we are going to check the conditions for every step, and then find the highest
-     * numbered step for which all conditions match, this will then be updated if that
-     * is a later stage than the player is at currently.
-     */
-    int new_step, current_step;
-    quest = quests;
-    while (quest) {
-        new_step=0;
-        step = quest->steps;
-        while (step) {
-            if (step->conditions)
-                if (evaluate_quest_conditions(step->conditions, pl)) {
-                    new_step=new_step<step->step?step->step:new_step;
-                }
-            step = step->next;
-        }
-        if (new_step > 0) {
-            current_step = quest_get_player_state(pl, quest->quest_code);
-            if (new_step > current_step) {
-                quest_set_state(NULL, pl, quest->quest_code, new_step, 0);
-            }
-        }
-        quest = quest->next;
-    }
+    quest_for_each(do_update, pl);
 }
 
 /**
@@ -732,7 +359,7 @@ static void update_quests(player *pl) {
 static void quest_set_state(player* dm, player *pl, sstring quest_code, int state, int started) {
     quest_player *pq = get_or_create_quest(pl);
     quest_state *qs = get_or_create_state(pq, quest_code);
-    quest_definition *quest = quest_get(quest_code);
+    quest_definition *quest = quest_find_by_code(quest_code);
     quest_step_definition *step;
 
     if (!quest) {
@@ -835,7 +462,7 @@ static void quest_display(player *pl, quest_player *pq, int showall, const char*
 
     state = pq->quests;
     while (state) {
-        quest = quest_get(state->code);
+        quest = quest_find_by_code(state->code);
         if (quest->parent == NULL) {
             total_count++;
             /* count up the number of completed quests first */
@@ -852,7 +479,7 @@ static void quest_display(player *pl, quest_player *pq, int showall, const char*
         if (!showall) {
             if (restart_count > 0)
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-                        "%s completed %d out of %d quests, of which %d may be restarted.", name, completed_count, quests_visible, restart_count);
+                        "%s completed %d out of %d quests, of which %d may be restarted.", name, completed_count, quests_count(false), restart_count);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
                         "%s completed %d quests", name, completed_count);
@@ -862,7 +489,7 @@ static void quest_display(player *pl, quest_player *pq, int showall, const char*
                     "%s completed the following quests:", name);
             state = pq->quests;
             while (state) {
-                quest = quest_get(state->code);
+                quest = quest_find_by_code(state->code);
                 if (quest->parent == NULL) {
                     if (state->state == QC_CAN_RESTART || state->is_complete) {
 
@@ -880,10 +507,10 @@ static void quest_display(player *pl, quest_player *pq, int showall, const char*
                 "%s started the following quests:", name);
         state = pq->quests;
         while (state) {
-            quest = quest_get(state->code);
+            quest = quest_find_by_code(state->code);
             if (quest->parent == NULL) {
                 if (state->state != QC_CAN_RESTART && state->is_complete==0) {
-                    quest = quest_get(state->code);
+                    quest = quest_find_by_code(state->code);
                     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
                         "(%3d) %s", ++current_count, quest->quest_title);
                 }
@@ -932,7 +559,7 @@ static quest_state *get_quest_by_number(player *pl, int number) {
     state = pq->quests;
     while (state) {
             /* count up the number of completed quests first */
-            if (!(quest_get(state->code)->parent) && (state->state == QC_CAN_RESTART || state->is_complete))
+            if (!(quest_find_by_code(state->code)->parent) && (state->state == QC_CAN_RESTART || state->is_complete))
                 if (++questnum == number) return state;
             state = state->next;
         }
@@ -940,7 +567,7 @@ static quest_state *get_quest_by_number(player *pl, int number) {
     state = pq->quests;
     while (state) {
         /* count up the number of completed quests first */
-        if (!(quest_get(state->code)->parent) && state->state != QC_CAN_RESTART && state->is_complete ==0)
+        if (!(quest_find_by_code(state->code)->parent) && state->state != QC_CAN_RESTART && state->is_complete ==0)
             if (++questnum == number) return state;
         state = state->next;
     }
@@ -966,7 +593,7 @@ static void quest_info(player *pl, player* who, quest_state *qs, int level) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Invalid quest number");
         return;
     }
-    quest = quest_get(qs->code);
+    quest = quest_find_by_code(qs->code);
     if (!quest) {
         /* already warned by quest_get */
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, "Quest: (internal error)");
@@ -1009,7 +636,7 @@ static void quest_info(player *pl, player* who, quest_state *qs, int level) {
     /* ok, now check all of the player's other quests for any children, and print those in order */
     state = pq->quests;
     while (state) {
-        child = quest_get(state->code);
+        child = quest_find_by_code(state->code);
         if (child->parent == quest)
             quest_info(pl, who, state, level+1);
         state = state->next;
@@ -1045,7 +672,7 @@ static void free_state(quest_player *pq) {
 int quest_get_player_state(player *pl, sstring quest_code) {
     quest_player *q = get_or_create_quest(pl);
     quest_state *s = get_state(q, quest_code);
-    quest_definition *quest = quest_get(quest_code);
+    quest_definition *quest = quest_find_by_code(quest_code);
 
     if (!s)
         return 0;
@@ -1067,7 +694,7 @@ void quest_start(player *pl, sstring quest_code, int state) {
     quest_state *q;
     quest_definition *quest;
 
-    quest = quest_get(quest_code);
+    quest = quest_find_by_code(quest_code);
     if (!quest) {
         LOG(llevError, "quest_start: requested unknown quest %s\n", quest_code);
         return;
@@ -1228,41 +855,41 @@ void command_quest(object *op, const char *params) {
     command_help(op, "quest");
 }
 
+typedef struct {
+    const quest_definition *parent;
+    int level;
+} dump;
 /**
  * Dump all defined quests on the logfile. Will call itself recursively.
  * @param parent only quests with a parent of this value will be displayed.
  * Use NULL to display top-level quests.
  * @param level number of '-' to display before the quest's name.
  */
-static void output_quests(quest_definition *parent, int level) {
-    quest_definition *quest;
-    quest_step_definition *step;
-    char prefix[MAX_BUF];
-    int questcount = 0, stepcount, i;
+static void output_quests(const quest_definition *quest, void *user) {
+    dump *d = (dump *)user;
+    if (d->parent != quest->parent)
+        return;
 
-    /* we only need to set the prefix once,
-     * all quests that are printed in this call will be at the same level */
-    prefix[0]='\0';
-    for (i=0; i<level; i++) {
+    char prefix[MAX_BUF];
+    prefix[0] = '\0';
+    for (int i = 0; i < d->level; i++) {
         strncat(prefix, "-", MAX_BUF - 1);
     }
     prefix[MAX_BUF - 1] = '\0';
 
-    quest = quests;
-    while (quest) {
-        if (quest->parent == parent) {
-            questcount++;
-            stepcount=0;
-            step = quest->steps;
-            while (step) {
-                stepcount++;
-                step= step->next;
-            }
-            fprintf(logfile, "%s%s - %s - %d steps (%srestartable)\n", prefix, quest->quest_code, quest->quest_title, stepcount, quest->quest_restart?"":"not ");
-            output_quests(quest, level+1);
-        }
-        quest = quest->next;
+    int stepcount = 0;
+    quest_step_definition *step = quest->steps;
+    while (step) {
+        stepcount++;
+        step = step->next;
     }
+
+    fprintf(logfile, "%s%s - %s - %d steps (%srestartable)\n", prefix, quest->quest_code, quest->quest_title, stepcount, quest->quest_restart ? "" : "not ");
+
+    dump r;
+    r.parent = quest;
+    r.level = d->level + 1;
+    quest_for_each(output_quests, &r);
 }
 
 /**
@@ -1270,7 +897,10 @@ static void output_quests(quest_definition *parent, int level) {
  * quests are set up and recognised correctly.
  */
 void dump_quests(void) {
-    output_quests(NULL, 0);
+    dump d;
+    d.parent = NULL;
+    d.level = 0;
+    quest_for_each(output_quests, &d);
     exit(0);
 }
 
@@ -1288,46 +918,6 @@ void free_quest(void) {
         pq = next;
     }
     player_states = NULL;
-}
-
-/**
- * Free all quest definitions and steps.
- * Can be called multiple times.
- * Used by DMs through the 'purge_quests' command.
- */
-void free_quest_definitions(void) {
-    quest_definition *quest = quests, *next_quest;
-    quest_step_definition *step, *next_step;
-    quest_condition *condition, *next_condition;
-
-    while (quest != NULL) {
-        next_quest = quest->next;
-        free_string(quest->quest_code);
-        if (quest->quest_description != NULL)
-            free_string(quest->quest_description);
-        if (quest->quest_title != NULL)
-            free_string(quest->quest_title);
-        step = quest->steps;
-        while (step != NULL) {
-            next_step = step->next;
-            free_string(step->step_description);
-            condition = step->conditions;
-            while (condition != NULL) {
-                next_condition = condition->next;
-                free_string(condition->quest_code);
-                free(condition);
-                condition = next_condition;
-            }
-            free(step);
-            step = next_step;
-        }
-        free(quest);
-        quest = next_quest;
-    }
-
-    quests = NULL;
-    quests_loaded = 0;
-    quests_visible = 0;
 }
 
 /**
@@ -1397,19 +987,5 @@ void quest_first_player_save(player *pl) {
     quest_player *qp = get_quest(pl);
     if (qp != NULL && qp->quests != NULL) {
         quest_write_player_data(qp);
-    }
-}
-
-/**
- * Iterate over all quests.
- * @param op function to call for each quest.
- * @param user extra parameter to give the function.
- */
-void quest_for_each(quest_op op, void *user) {
-    quest_load_definitions();
-    quest_definition *cur = quests;
-    while (cur) {
-        op(cur, user);
-        cur = cur->next;
     }
 }

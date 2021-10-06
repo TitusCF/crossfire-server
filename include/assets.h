@@ -13,6 +13,7 @@ extern "C" {
 
 #include "global.h"
 #include "image.h"
+#include "quest.h"
 
 /**
  * @defgroup ASSETS_xxx Assets flags
@@ -30,6 +31,7 @@ extern "C" {
 #define ASSETS_ARTIFACTS                  0x0080
 #define ASSETS_FORMULAE                   0x0100
 #define ASSETS_ATTACK_MESSAGES            0x0200
+#define ASSETS_QUESTS                     0x0400
 #define ASSETS_ALL                        0xFFFF
 /*@}*/
 
@@ -69,6 +71,28 @@ void assets_pack(const char *type, const char *filename);
 void assets_finish_archetypes_for_play();
 
 long recipe_find_ingredient_cost(const char *name);
+
+/**
+ * Find a quest from its code if it exists.
+ * @return quest, or NULL if no such quest.
+ */
+quest_definition *quest_get_by_code(sstring code);
+
+/**
+ * Find a quest from its code, logging if no matching quest.
+ * @param code quest to search.
+ * @return quest, or NULL if no such quest.
+ */
+quest_definition *quest_find_by_code(sstring code);
+
+/**
+ * Iterate over all quests.
+ * @param op function to call for each quest.
+ * @param user extra parameter to give the function.
+ */
+void quest_for_each(quest_op op, void *user);
+
+size_t quests_count(bool includeSystem);
 
 #ifdef __cplusplus
 }
