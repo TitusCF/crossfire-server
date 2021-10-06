@@ -4,7 +4,10 @@
 #include <QObject>
 #include <QAbstractItemModel>
 
-class Quest;
+extern "C" {
+#include "global.h"
+#include "quest.h"
+}
 
 /**
  * Item model for the steps of a quest.
@@ -17,8 +20,8 @@ class CREQuestItemModel : public QAbstractItemModel
         CREQuestItemModel(QObject* parent);
         virtual ~CREQuestItemModel();
 
-        Quest* quest() const;
-        void setQuest(Quest* quest);
+        quest_definition *quest() const;
+        void setQuest(quest_definition *quest);
 
         void moveUp(int step);
         void moveDown(int step);
@@ -33,11 +36,16 @@ class CREQuestItemModel : public QAbstractItemModel
         virtual bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
         virtual bool removeRows(int row, int count, const QModelIndex& parent = QModelIndex());
 
+    signals:
+        void questModified(quest_definition *quest);
+
     public slots:
         void addStep(bool);
 
     protected:
-        Quest* myQuest;
+        quest_step_definition *getStep(int step) const;
+        quest_definition *myQuest;
+        size_t myStepCount;
 };
 
 #endif /* _CREQUESTITEMMODEL_H */

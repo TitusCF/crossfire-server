@@ -170,7 +170,7 @@ void stringbuffer_append_multiline_block(StringBuffer *sb, const char *start, co
     stringbuffer_ensure(sb, added);
     snprintf(sb->buf + sb->pos, sb->size - sb->pos, "%s\n%s", start, content);
     sb->pos += ls + lc + 1;
-    if ((lc == 0) || (content[lc - 1] != '\n')) {
+    if ((lc > 0) && (content[lc - 1] != '\n')) {
         sb->buf[sb->pos] = '\n';
         sb->pos++;
     }

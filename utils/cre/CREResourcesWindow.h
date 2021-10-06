@@ -11,8 +11,6 @@
 #include "CRETreeItem.h"
 
 class CREMapInformationManager;
-class Quest;
-class QuestManager;
 class MessageManager;
 class ResourcesManager;
 class ScriptFileManager;
@@ -39,10 +37,8 @@ class CREResourcesWindow : public QWidget
     Q_OBJECT
 
     public:
-        CREResourcesWindow(CREMapInformationManager* store, QuestManager* quests, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, QWidget* parent, DisplayMode mode = DisplayAll);
+        CREResourcesWindow(CREMapInformationManager* store, MessageManager* messages, ResourcesManager* resources, ScriptFileManager* scripts, QWidget* parent, DisplayMode mode = DisplayAll);
         virtual ~CREResourcesWindow();
-
-        void deleteQuest(Quest* quest);
 
         const ResourcesManager* resourcesManager() const;
 
@@ -61,7 +57,6 @@ class CREResourcesWindow : public QWidget
         QHash<QString, QPointer<CREPanel> > myPanels;
         QSplitter* mySplitter;
         CREMapInformationManager* myStore;
-        QuestManager* myQuests;
         MessageManager* myMessages;
         ResourcesManager* myResources;
         ScriptFileManager* myScripts;

@@ -2,13 +2,23 @@
 #include "CREPrePostList.h"
 #include "CREPrePostConditionDelegate.h"
 
-CREPrePostList::CREPrePostList(QWidget* parent, bool isPre, const MessageManager* manager, const QuestManager* quests)
+CREPrePostList::CREPrePostList(QWidget* parent, Mode mode, const MessageManager* manager) : myMode(mode)
 {
     setModal(true);
-    setWindowTitle(isPre ? tr("Message pre-conditions") : tr("Message post-conditions"));
+    switch (mode) {
+        case PreConditions:
+            setWindowTitle(tr("Message pre-conditions"));
+            break;
+        case PostConditions:
+            setWindowTitle(tr("Message post-conditions"));
+            break;
+        case SetWhen:
+            setWindowTitle(tr("Step set when conditions are met"));
+            break;
+    }
 
     myList = new QListWidget(parent);
-    myList->setItemDelegate(new CREPrePostSingleConditionDelegate(myList, isPre, manager, quests));
+    myList->setItemDelegate(new CREPrePostSingleConditionDelegate(myList, mode, manager));
 
     QPushButton* addCondition = new QPushButton(tr("add"), this);
     connect(addCondition, SIGNAL(clicked(bool)), this, SLOT(onAddCondition(bool)));
@@ -40,14 +50,20 @@ QList<QStringList> CREPrePostList::data() const
     for (int i = 0; i < myList->count(); i++)
     {
         QListWidgetItem* wi = myList->item(i);
-        value.append(wi->data(Qt::UserRole).value<QStringList>());
+        QStringList data = wi->data(Qt::UserRole).value<QStringList>();
+        if (myMode == SetWhen)
+            data.pop_front();
+        value.append(data);
     }
     return value;
 }
 
-void CREPrePostList::addItem(const QStringList& item)
+void CREPrePostList::addItem(const QStringList &item)
 {
-    QListWidgetItem* wi = new QListWidgetItem(item.join(" "));
+    QStringList display(item);
+    if (myMode == SetWhen)
+        display.pop_front();
+    QListWidgetItem* wi = new QListWidgetItem(display.join(" "));
     wi->setData(Qt::UserRole, QVariant::fromValue(item));
     wi->setFlags(wi->flags() | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
     myList->addItem(wi);
@@ -58,6 +74,8 @@ void CREPrePostList::setData(const QList<QStringList>& data)
     myList->clear();
     for (QStringList item : data)
     {
+        if (myMode == SetWhen && !item.empty() && item[0] != "quest")
+            item.push_front("quest");
         addItem(item);
     }
     myOriginal = data;

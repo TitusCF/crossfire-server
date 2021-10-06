@@ -4,6 +4,7 @@ extern "C" {
 #include "global.h"
 #include "face.h"
 #include "image.h"
+#include "quest.h"
 }
 
 #include "CREFacePanel.h"
@@ -12,9 +13,8 @@ extern "C" {
 #include "assets.h"
 #include "AssetsManager.h"
 #include "LicenseManager.h"
-#include "QuestManager.h"
-#include "Quest.h"
 #include "CREMapInformationManager.h"
+#include "Quests.h"
 
 /** @todo duplication with common/image */
 static const char *const colorname[] = {
@@ -34,9 +34,8 @@ static const char *const colorname[] = {
 };
 
 
-CREFacePanel::CREFacePanel(QWidget* parent, QuestManager* quests, CREMapInformationManager* maps) : CRETPanel(parent)
+CREFacePanel::CREFacePanel(QWidget* parent, CREMapInformationManager* maps) : CRETPanel(parent)
 {
-    myQuests = quests;
     myMaps = maps;
     myFace = 0;
 
@@ -231,9 +230,8 @@ void CREFacePanel::setItem(const Face* face)
     });
 
     root = NULL;
-    for (const auto quest : myQuests->quests())
-    {
-        if (myFace == quest->face())
+    getManager()->quests()->each([&] (auto quest) {
+        if (myFace == quest->face)
         {
             if (!root)
             {
@@ -244,7 +242,7 @@ void CREFacePanel::setItem(const Face* face)
 
             CREUtils::questNode(quest, root);
         }
-    }
+    });
 
     root = NULL;
     auto maps = myMaps->getFaceUse(myFace);

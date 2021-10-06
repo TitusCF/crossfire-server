@@ -6,12 +6,12 @@
 #include <QtWidgets>
 
 #include "MessageManager.h"
+#include "CREPrePostList.h"
 
 class QListWidget;
 class QComboBox;
 class QLineEdit;
 class QuestConditionScript;
-class QuestManager;
 
 /**
  * Base class for a pre- or post- panel displaying script arguments.
@@ -59,13 +59,12 @@ class CRESubItemQuest : public CRESubItemWidget
     Q_OBJECT
 
     public:
-        CRESubItemQuest(bool isPre, const QuestManager* quests, QWidget* parent);
+        CRESubItemQuest(CREPrePostList::Mode mode, QWidget* parent);
 
         virtual void setData(const QStringList& data);
 
     private:
-        const QuestManager* myQuests;
-        bool myIsPre;
+        CREPrePostList::Mode myMode;
         /** List of quests. */
         QComboBox* myQuestList;
         /** Steps of the current quest for new step (post-) or at/frop step (pre-). */
@@ -73,6 +72,7 @@ class CRESubItemQuest : public CRESubItemWidget
         /** Steps of the current quest for up to step (pre-). */
         QComboBox* mySecondStep;
         QRadioButton* myAtStep;
+        QRadioButton* myBelowStep;  /**< For quest condition. */
         QRadioButton* myFromStep;
         QRadioButton* myStepRange;
         bool myInit;
@@ -135,7 +135,7 @@ class CRESubItemList : public CRESubItemWidget
 };
 
 /**
- * Edition of a single pre- or post- condition for a message.
+ * Edition of a single pre- or post- condition for a message, or a quest step list for a quest step.
  */
 class CREPrePostPanel : public QDialog
 {
@@ -144,11 +144,11 @@ class CREPrePostPanel : public QDialog
     public:
         /**
          * Standard constructor.
-         * @param isPre true if displaying preconditions, false for postconditions.
+         * @param mode what mode to work on.
          * @param scripts available script types for the conditions.
          * @param parent ancestor of this panel.
          */
-        CREPrePostPanel(bool isPre, const QList<QuestConditionScript*> scripts, const QuestManager* quests, QWidget* parent);
+        CREPrePostPanel(CREPrePostList::Mode mode, const QList<QuestConditionScript*> scripts, QWidget* parent);
         virtual ~CREPrePostPanel();
 
         QStringList getData();
@@ -165,15 +165,15 @@ class CREPrePostPanel : public QDialog
         QList<CRESubItemWidget*> mySubWidgets;
         /** Arguments panels, only one visible based on the choice. */
         QStackedWidget* mySubItemsStack;
+        /** Mode we're working in. */
+        CREPrePostList::Mode myMode;
 
         /**
          * Creates a CRESubItemWidget for the specified script.
-         * @param isPre true if pre-condition, false for post-condition.
          * @param script the script to create the display for.
-         * @param quests available quests, for specific panel.
          * @return specialised CRESubItemWidget if available, CRESubItemList else.
          */
-        CRESubItemWidget* createSubItemWidget(bool isPre, const QuestConditionScript* script, const QuestManager* quests);
+        CRESubItemWidget* createSubItemWidget(const QuestConditionScript* script);
 
     private slots:
         void currentChoiceChanged(int index);

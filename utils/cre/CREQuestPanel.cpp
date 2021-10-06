@@ -1,10 +1,9 @@
 #include "CREQuestPanel.h"
 #include "CRERegionPanel.h"
-#include "Quest.h"
-#include "QuestManager.h"
 #include "CREQuestItemModel.h"
 #include "CREMultilineItemDelegate.h"
 #include "CRETreeItemQuest.h"
+#include "CREMapInformationManager.h"
 #include "CREMapInformation.h"
 #include "MessageManager.h"
 #include "CREMessagePanel.h"
@@ -12,13 +11,17 @@
 #include "assets.h"
 #include "AssetsManager.h"
 #include "FaceComboBox.h"
+#include "ResourcesManager.h"
+#include "CREPrePostList.h"
+#include "CREPrePostConditionDelegate.h"
 
-CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManager, QWidget* parent) : CRETPanel(parent)
+CREQuestPanel::CREQuestPanel(CREMapInformationManager* mapManager, MessageManager* messageManager, ResourcesManager *resources, QWidget* parent) : CRETPanel(parent)
 {
-    Q_ASSERT(manager);
+    Q_ASSERT(mapManager);
     Q_ASSERT(messageManager);
-    myQuestManager = manager;
+    myMapManager = mapManager;
     myMessageManager = messageManager;
+    myResources = resources;
 
     QVBoxLayout* main = new QVBoxLayout(this);
     QTabWidget* tab = new QTabWidget(this);
@@ -54,10 +57,7 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     myParent->addItem(tr("(none)"));
 
     QStringList codes;
-    foreach(const Quest* quest, manager->quests())
-    {
-        codes.append(quest->code());
-    }
+    getManager()->quests()->each([&] (auto quest) { codes.append(quest->quest_code); });
     codes.sort();
     myParent->addItems(codes);
 
@@ -68,9 +68,9 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     myFile->setInsertPolicy(QComboBox::InsertAlphabetically);
     myFile->setEditable(true);
     myFile->addItem("");
-    QStringList files = myQuestManager->getFiles();
-    files.sort();
-    myFile->addItems(files);
+//    QStringList files = myQuestManager->getFiles();
+    //files.sort();
+//    myFile->addItems(files);
 
     QTabWidget *dc = new QTabWidget(details);
     myDescription = new QTextEdit(this);
@@ -83,12 +83,12 @@ CREQuestPanel::CREQuestPanel(QuestManager* manager, MessageManager* messageManag
     layout->addWidget(new QLabel(tr("Steps:"), this), line++, 1, 1, 2);
 
     myStepsModel = new CREQuestItemModel(this);
-    CREMultilineItemDelegate* delegate = new CREMultilineItemDelegate(this);
+    connect(myStepsModel, SIGNAL(questModified(quest_definition *)), resources, SLOT(questModified(quest_definition *)));
     mySteps = new QTreeView(this);
     mySteps->setRootIsDecorated(false);
     mySteps->setWordWrap(true);
     mySteps->setModel(myStepsModel);
-    mySteps->setItemDelegateForColumn(3, delegate);
+    mySteps->setItemDelegateForColumn(3, new CREPrePostConditionDelegate(mySteps, CREPrePostList::SetWhen, messageManager));
     mySteps->setSelectionMode(QAbstractItemView::SingleSelection);
 
     layout->addWidget(mySteps, line++, 1, 1, 2);
@@ -123,26 +123,26 @@ CREQuestPanel::~CREQuestPanel()
 {
 }
 
-void CREQuestPanel::setItem(Quest* quest)
+void CREQuestPanel::setItem(quest_definition *quest)
 {
     myQuest = quest;
     myCurrentStep = NULL;
 
-    myCode->setText(quest->code());
-    myTitle->setText(quest->title());
-    myFace->setFace(quest->face());
-    myCanRestart->setChecked(quest->canRestart());
-    myIsSystem->setChecked(quest->isSystem());
-    myDescription->setText(quest->description());
-    myComment->setPlainText(quest->comment());
+    myCode->setText(quest->quest_code);
+    myTitle->setText(quest->quest_title);
+    myFace->setFace(quest->face);
+    myCanRestart->setChecked(quest->quest_restart);
+    myIsSystem->setChecked(quest->quest_is_system);
+    myDescription->setText(quest->quest_description);
+    myComment->setPlainText(quest->quest_comment);
 
-    QString file = myQuestManager->getQuestFile(myQuest);
-    myFile->setEditText(file);
-    myFile->setEnabled(file.isEmpty());
+    auto origin = myResources->originOfQuest(myQuest);
+    myFile->setEditText(QString::fromStdString(origin));
+    myFile->setEnabled(origin.empty());
 
-    if (quest->parent() != NULL)
+    if (quest->parent)
     {
-        int idx = myParent->findText(quest->parent()->code());
+        int idx = myParent->findText(quest->parent->quest_code);
         if (idx != -1)
             myParent->setCurrentIndex(idx);
     }
@@ -153,11 +153,12 @@ void CREQuestPanel::setItem(Quest* quest)
 
     myUse->clear();
     QTreeWidgetItem* root = NULL;
-    if (quest->maps().length() > 0)
+    auto maps = myMapManager->getMapsForQuest(quest);
+    if (!maps.empty())
     {
         root = new QTreeWidgetItem(myUse, QStringList(tr("Maps")));
         root->setExpanded(true);
-        foreach(CREMapInformation* map, quest->maps())
+        foreach(CREMapInformation* map, maps)
         {
             new QTreeWidgetItem(root, QStringList(map->path()));
         }
@@ -173,7 +174,7 @@ void CREQuestPanel::setItem(Quest* quest)
             conditions.append(rule->postconditions());
             foreach(QStringList list, conditions)
             {
-                if (list.size() > 1 && (list[0] == "quest" || list[0] == "questdone") && list[1] == quest->code())
+                if (list.size() > 1 && (list[0] == "quest" || list[0] == "questdone") && list[1] == quest->quest_code)
                 {
                     if (root == NULL)
                     {
@@ -198,21 +199,25 @@ void CREQuestPanel::commitData()
     if (!myQuest)
         return;
 
-    myQuest->setCode(myCode->text());
-    myQuest->setTitle(myTitle->text());
-    myQuest->setFace(myFace->face());
-    myQuest->setRestart(myCanRestart->isChecked());
-    myQuest->setSystem(myIsSystem->isChecked());
-    myQuest->setDescription(myDescription->toPlainText());
-    myQuest->setComment(myComment->toPlainText().trimmed());
+    FREE_AND_COPY(myQuest->quest_code, myCode->text().toStdString().data());
+    FREE_AND_COPY(myQuest->quest_title, myTitle->text().toStdString().data());
+    myQuest->face = myFace->face();
+    myQuest->quest_restart = myCanRestart->isChecked();
+    myQuest->quest_is_system = myIsSystem->isChecked();
+    FREE_AND_COPY(myQuest->quest_description, myDescription->toPlainText().toStdString().data());
+    FREE_AND_COPY(myQuest->quest_comment, myComment->toPlainText().trimmed().toStdString().data());
+    /*
     if (myQuestManager->getQuestFile(myQuest).isEmpty())
         myQuestManager->setQuestFile(myQuest, myFile->currentText());
+     */
     if (myParent->currentIndex() == 0)
     {
-        myQuest->setParent(NULL);
+        myQuest->parent = NULL;
     }
     else
-        myQuest->setParent(myQuestManager->findByCode(myParent->currentText()));
+        myQuest->parent = getManager()->quests()->get(myParent->currentText().toStdString());
+
+    myResources->questModified(myQuest);
 }
 
 void CREQuestPanel::displaySteps()

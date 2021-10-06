@@ -5,17 +5,19 @@
 
 class QListWidget;
 class MessageManager;
-class QuestManager;
 
 /**
- * Display and allow edition of a list of pre- or post- conditions for a NPC message.
+ * Display and allow edition of a list of pre- or post- conditions for a NPC message,
+ * or quest states for a quest step.
  */
 class CREPrePostList : public QDialog
 {
     Q_OBJECT
 
 public:
-    CREPrePostList(QWidget* parent, bool isPre, const MessageManager* manager, const QuestManager* quests);
+    enum Mode { PreConditions, PostConditions, SetWhen };
+
+    CREPrePostList(QWidget* parent, Mode mode, const MessageManager* manager);
     virtual ~CREPrePostList();
 
     QList<QStringList> data() const;
@@ -30,6 +32,7 @@ private:
     void addItem(const QStringList& item);
     QListWidget* myList;
     QList<QStringList> myOriginal;
+    Mode myMode;
 };
 
 #endif /* CREPREPOSTLIST_H */

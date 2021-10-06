@@ -5,8 +5,6 @@
 #include "CREArchetypePanel.h"
 #include "MessageManager.h"
 #include "MessageFile.h"
-#include "QuestManager.h"
-#include "Quest.h"
 #include "ScriptFileManager.h"
 #include "ScriptFile.h"
 #include "CRERandomMap.h"
@@ -54,13 +52,11 @@ const char* eventNames[NR_EVENTS] = {
   "EVENT_ATTACKS",
 };
 
-CREMapInformationManager::CREMapInformationManager(QObject* parent, MessageManager* messageManager, QuestManager* questManager, ScriptFileManager* scriptManager) : QObject(parent)
+CREMapInformationManager::CREMapInformationManager(QObject* parent, MessageManager* messageManager, ScriptFileManager* scriptManager) : QObject(parent)
 {
     Q_ASSERT(messageManager != NULL);
-    Q_ASSERT(questManager != NULL);
     Q_ASSERT(scriptManager != NULL);
     myMessageManager = messageManager;
-    myQuestManager = questManager;
     myScriptManager = scriptManager;
 }
 
@@ -378,6 +374,12 @@ QList<CREMapInformation*> CREMapInformationManager::getAnimationUse(const Animat
     return myAnimationUse.values(animation->name);
 }
 
+QList<CREMapInformation*> CREMapInformationManager::getMapsForQuest(const quest_definition *quest)
+{
+    QMutexLocker lock(&myLock);
+    return myQuestUse.values(quest->quest_code);
+}
+
 void CREMapInformationManager::loadCache()
 {
     Q_ASSERT(myInformation.isEmpty());
@@ -492,9 +494,7 @@ void CREMapInformationManager::loadCache()
         {
             QString code = reader.readElementText();
             map->addQuest(code);
-            Quest* quest = myQuestManager->findByCode(code);
-            if (quest != NULL)
-                quest->maps().append(map);
+            addQuestUse(code, map);
             continue;
         }
         if (reader.isStartElement() && reader.name() == "shopItem")
@@ -707,6 +707,13 @@ void CREMapInformationManager::addAnimationUse(const QString& name, CREMapInform
         myAnimationUse.insert(name, map);
 }
 
+void CREMapInformationManager::addQuestUse(const QString &name, CREMapInformation *map) {
+    QMutexLocker lock(&myLock);
+    if (!myQuestUse.values(name).contains(map))
+        myQuestUse.insert(name, map);
+}
+
+
 void CREMapInformationManager::checkEvent(const object* item, CREMapInformation* map, const object* env)
 {
     const QString slaying = "/python/dialog/npc_dialog.py";
@@ -747,15 +754,9 @@ void CREMapInformationManager::checkEvent(const object* item, CREMapInformation*
         QStringList split = QString(item->name).split(' ', QString::SkipEmptyParts);
         if (split.length() > 1)
         {
-            Quest* quest = myQuestManager->findByCode(split[0]);
-            if (quest != NULL)
-            {
-                //qDebug() << "definitely quest" << split[0];
-                map->addQuest(split[0]);
-                if (!quest->maps().contains(map))
-                    quest->maps().append(map);
-            } else
-                qDebug() << "missing quest" << split[0] << "in" << map->path();
+            //qDebug() << "definitely quest" << split[0];
+            map->addQuest(split[0]);
+            addQuestUse(split[0], map);
         }
     }
 }

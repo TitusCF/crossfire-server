@@ -56,6 +56,47 @@ typedef void(*quest_op)(const quest_definition *, void *);
 
 void quest_for_each(quest_op op, void *user);
 
+/**
+ * Allocate a quest_step_definition, will call fatal() if out of memory.
+ * @return new structure.
+ */
+quest_step_definition *quest_create_step(void);
+
+/**
+ * Allocate a quest_condition, will call fatal() if out of memory.
+ * @return new structure.
+ */
+quest_condition *quest_create_condition(void);
+
+quest_definition *quest_create(const char *name);
+void quest_destroy_condition(quest_condition *condition);
+void quest_destroy_step(quest_step_definition *step);
+void quest_destroy_steps(quest_step_definition *step);
+void quest_clear(quest_definition *quest);
+void quest_destroy(quest_definition *quest);
+
+/**
+ * Parse a single step condition.
+ * This may be expressed as one of the following:
+ * - questcode 20 (the quest questcode must be at step 20)
+ * - questcode <=20 (the quest questcode must not be beyond step 20)
+ * - questcode 10-20 (the quest questcode must be between steps 10 and 20)
+ * - questcode finished (the quest questcode must have been completed)
+ *
+ * @param step
+ * @param buffer
+ * @return 1 if the condition was parsed, 0 else.
+ */
+int quest_condition_from_string(quest_condition *condition, const char *buffer);
+
+/**
+ * Write a step condition to a buffer. If the buffer is too small, the line is truncated.
+ * @param buf where to write.
+ * @param len length of buf.
+ * @param condition item to write, must not be NULL.
+ */
+void quest_write_condition(char *buf, size_t len, const quest_condition *condition);
+
 #ifdef __cplusplus
 }
 #endif

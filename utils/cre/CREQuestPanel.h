@@ -8,28 +8,35 @@
 #include "CREReportDialog.h"
 #include "CREPanel.h"
 
+extern "C" {
+#include "global.h"
+#include "quest.h"
+}
+
 class Quest;
 class QuestStep;
-class QuestManager;
+class CREMapInformationManager;
 class CREQuestItemModel;
 class MessageManager;
+class ResourcesManager;
 class FaceComboBox;
 
-class CREQuestPanel : public CRETPanel<Quest>
+class CREQuestPanel : public CRETPanel<quest_definition>
 {
     Q_OBJECT
 
     public:
-        CREQuestPanel(QuestManager* manager, MessageManager* messageManager, QWidget* parent);
+        CREQuestPanel(CREMapInformationManager* mapManager, MessageManager* messageManager, ResourcesManager *resources, QWidget* parent);
         virtual ~CREQuestPanel();
 
         virtual void commitData();
 
-        virtual void setItem(Quest* quest);
+        virtual void setItem(quest_definition *quest);
     private:
-        QuestManager* myQuestManager;
+        CREMapInformationManager *myMapManager;
         MessageManager* myMessageManager;
-        Quest* myQuest;
+        ResourcesManager *myResources;
+        quest_definition *myQuest;
         QuestStep* myCurrentStep;
         QLineEdit* myCode;
         QLineEdit* myTitle;

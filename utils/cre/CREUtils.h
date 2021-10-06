@@ -8,6 +8,7 @@ extern "C" {
 #include "artifact.h"
 #include "treasure.h"
 #include "image.h"
+#include "quest.h"
 }
 
 class CREMapInformation;
@@ -43,7 +44,7 @@ class CREUtils
         static QTreeWidgetItem* mapNode(const CREMapInformation* map, QTreeWidgetItem *parent);
 
         static QTreeWidgetItem* questsNode();
-        static QTreeWidgetItem* questNode(const Quest* quest, QTreeWidgetItem* parent);
+        static QTreeWidgetItem* questNode(const quest_definition* quest, QTreeWidgetItem* parent);
 
         static QTreeWidgetItem* messagesNode();
         static QTreeWidgetItem* messageNode(const MessageFile* message, QTreeWidgetItem* parent);
