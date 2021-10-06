@@ -19,6 +19,7 @@
 #include "Faces.h"
 #include "Messages.h"
 #include "Facesets.h"
+#include "Quests.h"
 
 /**
  * Represents all assets of the game.
@@ -64,6 +65,12 @@ public:
     Facesets *facesets() { return &m_facesets; }
 
     /**
+     * Get quests.
+     * @return quests.
+     */
+    Quests *quests() { return &m_quests; }
+
+    /**
      * Dump through LOG undefined assets (except faces), and return the total number of
      * referenced but not defined assets (except faces).
      * @return count of undefined assets.
@@ -78,6 +85,7 @@ protected:
     Treasures m_treasures;                  /**< Treasures. */
     Messages m_messages;                    /**< Messages. */
     Facesets m_facesets;                    /**< Cilent image variants. */
+    Quests m_quests;                        /**< Quests. */
 
     /**
      * Update artifacts if needed when an archetype changes.

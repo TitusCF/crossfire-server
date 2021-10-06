@@ -25,6 +25,9 @@ libcross_a_SOURCES = \
 	assets/Messages.cpp \
 	assets/microtar.c \
 	assets/PngLoader.cpp \
+	assets/QuestLoader.cpp \
+	assets/QuestWriter.cpp \
+	assets/Quests.cpp \
 	assets/TarLoader.cpp \
 	assets/TreasureLoader.cpp \
 	assets/TreasureWriter.cpp \

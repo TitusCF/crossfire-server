@@ -159,6 +159,25 @@ static void stringbuffer_ensure(StringBuffer *sb, size_t len) {
     sb->buf = tmp;
 }
 
+void stringbuffer_append_multiline_block(StringBuffer *sb, const char *start, const char *content, const char *end) {
+    char buf[100];
+    if (end == NULL) {
+        snprintf(buf, sizeof(buf), "end_%s", start);
+        end = buf;
+    }
+    size_t ls = strlen(start), lc = strlen(content), le = strlen(end);
+    size_t added = ls + lc + le + 3; // At most 3 newlines to add.
+    stringbuffer_ensure(sb, added);
+    snprintf(sb->buf + sb->pos, sb->size - sb->pos, "%s\n%s", start, content);
+    sb->pos += ls + lc + 1;
+    if ((lc == 0) || (content[lc - 1] != '\n')) {
+        sb->buf[sb->pos] = '\n';
+        sb->pos++;
+    }
+    snprintf(sb->buf + sb->pos, sb->size - sb->pos, "%s\n", end);
+    sb->pos += le + 1;
+}
+
 size_t stringbuffer_length(StringBuffer *sb) {
     return sb->pos;
 }

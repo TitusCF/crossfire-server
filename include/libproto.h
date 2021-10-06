@@ -410,6 +410,7 @@ extern sstring stringbuffer_finish_shared(StringBuffer *sb);
 extern void stringbuffer_append_string(StringBuffer *sb, const char *str);
 extern void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 extern void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);
+extern void stringbuffer_append_multiline_block(StringBuffer *sb, const char *start, const char *content, const char *end);
 extern size_t stringbuffer_length(StringBuffer *sb);
 /* time.c */
 extern const char *get_periodofday(const int index);

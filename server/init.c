@@ -1061,7 +1061,6 @@ void free_server(void) {
     free_materials();
     free_races();
     free_quest();
-    free_quest_definitions();
     while (settings.disabled_plugins) {
         linked_char *next = settings.disabled_plugins->next;
         free((void *)settings.disabled_plugins->name);
@@ -1108,7 +1107,7 @@ static void help(void) {
     printf(" -p <port>    Specifies the port to listen on for incoming connections.\n");
     printf(" -pack-assets <type> <filename>\n");
     printf("              Packs specified assets type to the specified filename.\n");
-    printf("              Valid assets type are: archs, treasures, faces, messages, facesets, artifacts, formulae, images.\n");
+    printf("              Valid assets type are: archs, treasures, faces, messages, facesets, artifacts, formulae, images, quests.\n");
     printf("              The file format will be tar ('images') or text (everything else).\n");
     printf("              It is possible to combine multiple assets by using '+', for instance 'faces+messages+artifacts'.\n");
     printf("                In this case the file will be in tar format.\n");
@@ -1132,7 +1131,6 @@ static void init_beforeplay(void) {
     assets_finish_archetypes_for_play();
     init_gods(); /* init linked list of gods from archs*/
     init_readable(); /* inits useful arrays for readable texts */
-    quest_load_definitions();
 
     switch (settings.dumpvalues) {
     case 1:
