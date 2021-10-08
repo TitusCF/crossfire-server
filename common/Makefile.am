@@ -70,12 +70,12 @@ libcross_a_SOURCES = \
 	treasure.c\
 	utils.c
 
-EXTRA_DIST = README is_valid_types_gen.pl
+EXTRA_DIST = README is_valid_types_gen.py
 AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\"
 AM_LFLAGS = -i -B
 
 CLEANFILES = loader.c arch_types_valid.c
 
-arch_types_valid.c: is_valid_types_gen.pl $(top_srcdir)/include/object.h
-	$(PERL) $(top_srcdir)/common/is_valid_types_gen.pl $(top_srcdir)/include/object.h
+arch_types_valid.c: is_valid_types_gen.py $(top_srcdir)/include/object.h
+	$(PY) $(top_srcdir)/common/is_valid_types_gen.py $(top_srcdir)/include/object.h > $(top_srcdir)/common/arch_types_valid.c
