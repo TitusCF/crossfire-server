@@ -1,3 +1,9 @@
+2021-10-8  Daniel Hawkins
+    * common/is_valid_types_gen.pl: Removed. Replaced by a Python script.
+    * common/is_valid_types_gen.py: New script to do the same thing is_valid_types_gen.pl used to do.
+    * common/Makefile.am: Make sure the build process points to the new file instead of the old one.
+    * configure.ac: Remove checks for perl from the build tree. We don't need it for most building [I think the docs might, but that's already a broken mess]
+
 2021-10-04  Daniel Hawkins
     * common/item.c: Allow for identified bows to print out firing rate information
         when examined. Previously, the way to figure this out was simply trial and error.
