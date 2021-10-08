@@ -77,7 +77,7 @@ if len(sys.argv) > 1:
     # Now we print the invalid types.
     for i in range(1, max_obj):
         if (type[i] != True):
-            print(f"        case {i}:")
+            print("        case %d:" % i)
     print("            return 0;")
     print("    }")
     print("    return 1;")
