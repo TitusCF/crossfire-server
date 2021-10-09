@@ -114,7 +114,7 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
                 continue;
             }
             LOG(llevError, "quests: invalid line %s in definition of quest %s in file %s!\n",
-                    read, quest->quest_code, filename);
+                    read, quest->quest_code, filename.c_str());
             continue;
         }
 
@@ -219,7 +219,7 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
 
         if (strncmp(read, "quest ", 6) == 0) {
             if (quest) {
-                LOG(llevError, "'quest' while in quest '%s' in file %s\n", quest->quest_code, filename);
+                LOG(llevError, "'quest' while in quest '%s' in file %s\n", quest->quest_code, filename.c_str());
             }
             quest = quest_create(read + 6);
             /* Set a default face, which will be overwritten if a face is defined. */
