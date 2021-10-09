@@ -73,7 +73,7 @@ if len(sys.argv) > 1:
     print("int is_type_valid(uint8_t type) {")
     print("    if (type >= OBJECT_TYPE_MAX)")
     print("        return 0;")
-    print("    switch (type) {")
+    print("    switch (type) { // Listed types are invalid ones")
     # Now we print the invalid types.
     for i in range(1, max_obj):
         if (type[i] != True):
