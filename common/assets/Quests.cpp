@@ -27,7 +27,7 @@ quest_definition *Quests::create(const std::string& name) {
 void destroy_steps(quest_step_definition *step) {
     while (step) {
         auto next_step = step->next;
-        free_string(step->step_description);
+        FREE_AND_CLEAR_STR_IF(step->step_description);
         auto condition = step->conditions;
         while (condition != NULL) {
             auto next_condition = condition->next;
