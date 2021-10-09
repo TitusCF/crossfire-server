@@ -138,12 +138,13 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
                 message = stringbuffer_finish(buf);
                 buf = NULL;
 
-                step->step_description = add_string(message);
+                step->step_description = (*message != '\0') ? add_string(message + 1) : NULL; // Skip initial newline
                 free(message);
 
                 continue;
             }
 
+            stringbuffer_append_string(buf, "\n");
             stringbuffer_append_string(buf, read);
             continue;
         }

@@ -239,7 +239,7 @@ quest_step_definition *generate_step() {
     auto s = static_cast<quest_step_definition *>(calloc(1, sizeof(quest_step_definition)));
     s->is_completion_step = rndm(0, 1);
     s->step = rndm(1, 50);
-    s->step_description = generate_name(40);
+    s->step_description = rndm(0, 1) ? generate_name(40) : nullptr;
     for (int i = rndm(0, 2); i != 0; i--) {
         auto c = generate_condition();
         c->next = s->conditions;
@@ -255,7 +255,7 @@ quest_definition *generate_quest(Quests &quests, Faces &faces) {
     q->quest_is_system = rndm(0, 1);
     q->quest_restart = rndm(0, 1);
     q->quest_title = add_string(generate_name(100));
-    q->quest_comment = add_string(generate_name(90));
+    q->quest_comment = rndm(0, 1) ? add_string(generate_name(90)) : nullptr;
     if (rndm(0, 1)) {
         q->parent = quests.get(generate_name(25));
     }
@@ -290,7 +290,10 @@ void check_steps(const quest_step_definition *ls, const quest_step_definition *r
         return;
     }
     ck_assert(rs);
-    ck_assert_str_eq(ls->step_description, rs->step_description);
+    if (ls->step_description)
+        ck_assert_str_eq(ls->step_description, rs->step_description);
+    else
+        ck_assert(rs->step_description == nullptr);
     ck_assert_int_eq(ls->is_completion_step, rs->is_completion_step);
     ck_assert_int_eq(ls->step, rs->step);
 
@@ -310,7 +313,10 @@ START_TEST(test_quest) {
     auto loaded = quests.find(quest->quest_code);
     ck_assert_str_eq(quest->quest_description, loaded->quest_description);
     ck_assert_str_eq(quest->quest_title, loaded->quest_title);
-    ck_assert_str_eq(quest->quest_comment, loaded->quest_comment);
+    if (quest->quest_comment)
+        ck_assert_str_eq(quest->quest_comment, loaded->quest_comment);
+    else
+        ck_assert(loaded->quest_comment == nullptr);
     ck_assert_int_eq(quest->quest_restart, loaded->quest_restart);
     ck_assert_int_eq(quest->quest_is_system, loaded->quest_is_system);
     ck_assert(quest->face == loaded->face);
