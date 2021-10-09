@@ -47,11 +47,11 @@ if len(sys.argv) > 1:
                 found = type_listing_match.search(line)
                 if found is not None:
                     # If the field name is OBJECT_TYPE_MAX, then we note that as a special case
-                    if found[1] == "OBJECT_TYPE_MAX":
-                        max_obj = int(found[2])
+                    if found.group(1) == "OBJECT_TYPE_MAX":
+                        max_obj = int(found.group(2))
                     else:
                         # We found an object type. second capture group is the number.
-                        type[int(found[2])] = True
+                        type[int(found.group(2))] = True
             line = file.readline()
 
     # Okay. Now we produce the output.
