@@ -45,7 +45,7 @@ class CREQuestItemModel : public QAbstractItemModel
     protected:
         quest_step_definition *getStep(int step) const;
         quest_definition *myQuest;
-        size_t myStepCount;
+        int myStepCount;
 };
 
 #endif /* _CREQUESTITEMMODEL_H */
