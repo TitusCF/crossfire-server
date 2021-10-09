@@ -50,7 +50,6 @@ typedef struct quest_definition {
     bool quest_is_system;           /**< If set then the quest isn't counted or listed. */
     quest_step_definition *steps;   /**< Quest steps. */
     struct quest_definition *parent;/**< Parent for this quest, NULL if it is a 'top-level' quest */
-    struct quest_definition *next;  /**< Next quest in the definition list. */
 } quest_definition;
 
 typedef void(*quest_op)(const quest_definition *, void *);
