@@ -22,6 +22,8 @@ This of course makes executables bigger, but simplifies many things.
 
 ## Scripts
 
+Note: `server` refers to the parent parent directory of the script being run.
+
 ### docker-setup.sh
 
 This scripts creates the Docker image that will be used to cross-compile.
