@@ -179,7 +179,7 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
                 auto message = stringbuffer_finish(buf);
                 buf = NULL;
 
-                quest->quest_description = add_string(message + 1); // Remove initial newline
+                quest->quest_description = (*message != '\0') ? add_string(message + 1) : NULL; // Remove initial newline
                 free(message);
 
                 continue;
@@ -195,7 +195,7 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
                 in = QUESTFILE_QUEST;
                 auto comment = stringbuffer_finish(buf);
                 buf = nullptr;
-                quest->quest_comment = add_string(comment + 1); // Skip initial newline
+                quest->quest_comment = (*comment != '\0') ? add_string(comment + 1) : NULL; // Skip initial newline
                 free(comment);
                 continue;
             }
