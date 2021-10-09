@@ -40,7 +40,7 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
     quest_condition *cond = NULL;
     char includefile[MAX_BUF];
     quest_step_definition *step = NULL;
-    char final[MAX_BUF], *read;
+    char *read;
     StringBuffer *buf = NULL;
 
     while ((read = bufferreader_next_line(reader)) != NULL) {
@@ -245,11 +245,11 @@ void QuestLoader::load(BufferReader *reader, const std::string &filename) {
         if (strcmp(read, "\n") == 0)
             continue;
 
-        LOG(llevError, "quest: invalid file format for %s, I don't know what to do with the line %s\n", final, read);
+        LOG(llevError, "quest: invalid file format for %s, I don't know what to do with the line %s\n", filename.c_str(), read);
     }
 
     if (in != 0) {
-        LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", final, in);
+        LOG(llevError, "quest: quest definition file %s read in, ends with state %d\n", filename.c_str(), in);
 
         /* The buffer may not have been freed. */
         if (buf != NULL) {
