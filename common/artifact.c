@@ -618,7 +618,7 @@ void init_artifacts(BufferReader *reader, const char *filename) {
             al->items = art;
             art = NULL;
         } else
-            LOG(llevError, "Unknown input in artifact file %s: %s\n", filename, buf);
+            LOG(llevError, "Unknown input in artifact file %s:%d: %s\n", filename, bufferreader_current_line(reader), buf);
     }
 
     for (al = first_artifactlist; al != NULL; al = al->next) {

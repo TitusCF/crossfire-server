@@ -115,7 +115,7 @@ treasure *TreasureLoader::loadTreasure(BufferReader *reader, const std::string &
             t->next = loadTreasure(reader, filename);
             return t;
         } else
-            LOG(llevError, "Unknown treasure-command: '%s', last entry %s, line %d\n", cp, t->name ? t->name : "null", bufferreader_current_line(reader));
+            LOG(llevError, "Unknown treasure-command: '%s', last entry %s in %s:%d\n", cp, t->name ? t->name : "null", filename.c_str(), bufferreader_current_line(reader));
     }
     LOG(llevError, "treasure lacks 'end' in %s at line %d.\n", filename.c_str(), bufferreader_current_line(reader));
     fatal(SEE_LAST_ERROR);
@@ -156,6 +156,6 @@ void TreasureLoader::load(BufferReader *reader, const std::string& filename) {
 
             m_treasures->define(tl->name, tl);
         } else
-            LOG(llevError, "Treasure-list didn't understand: %s, file %s line %d\n", buf, filename.c_str(), bufferreader_current_line(reader));
+            LOG(llevError, "Treasure-list didn't understand: %s in %s:%d\n", buf, filename.c_str(), bufferreader_current_line(reader));
     }
 }
