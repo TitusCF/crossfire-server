@@ -49,14 +49,16 @@ void CRETreeItemQuest::questModified()
     }
 }
 
-void CRETreeItemQuest::fillContextMenu(QMenu* menu)
+void CRETreeItemQuest::fillContextMenu(QMenu* /*menu*/)
 {
+#if 0
     if (!myItem)
         return;
 
     QAction* del = new QAction("delete quest", menu);
     connect(del, SIGNAL(triggered(bool)), this, SLOT(deleteQuest(bool)));
     menu->addAction(del);
+#endif
 }
 
 void CRETreeItemQuest::deleteQuest(bool)

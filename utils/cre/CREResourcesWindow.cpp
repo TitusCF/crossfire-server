@@ -946,11 +946,18 @@ void CREResourcesWindow::treeCustomMenu(const QPoint & pos)
 
 void CREResourcesWindow::addQuest(bool)
 {
-#if 0
-    Quest* quest = new Quest();
-    quest->setCode("(new quest)");
-    myQuests->quests().append(quest);
-#endif
+    auto name = QInputDialog::getText(this, "Create new quest", "New quest code").toStdString();
+    if (name.empty()) {
+        return;
+    }
+    if (getManager()->quests()->find(name)) {
+        QMessageBox::critical(this, "Quest already exists", tr("Quest %1 already exists!").arg(name.data()));
+        return;
+    }
+
+    auto quest = quest_create(name.data());
+    quest->face = getManager()->faces()->get("quest_generic.111");
+    getManager()->quests()->define(name, quest);
     fillData();
 }
 

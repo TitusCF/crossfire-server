@@ -68,9 +68,10 @@ CREQuestPanel::CREQuestPanel(CREMapInformationManager* mapManager, MessageManage
     myFile->setInsertPolicy(QComboBox::InsertAlphabetically);
     myFile->setEditable(true);
     myFile->addItem("");
-//    QStringList files = myQuestManager->getFiles();
-    //files.sort();
-//    myFile->addItems(files);
+    auto files = myResources->questOrigins();
+    for (auto file : files) {
+        myFile->addItem(file.first.data());
+    }
 
     QTabWidget *dc = new QTabWidget(details);
     myDescription = new QTextEdit(this);
@@ -206,10 +207,9 @@ void CREQuestPanel::commitData()
     myQuest->quest_is_system = myIsSystem->isChecked();
     FREE_AND_COPY(myQuest->quest_description, myDescription->toPlainText().toStdString().data());
     FREE_AND_COPY(myQuest->quest_comment, myComment->toPlainText().trimmed().toStdString().data());
-    /*
-    if (myQuestManager->getQuestFile(myQuest).isEmpty())
-        myQuestManager->setQuestFile(myQuest, myFile->currentText());
-     */
+    if (myResources->originOfQuest(myQuest).empty() && !myFile->currentText().isEmpty()) {
+        myResources->assetDefined(myQuest, myFile->currentText().toStdString());
+    }
     if (myParent->currentIndex() == 0)
     {
         myQuest->parent = NULL;
