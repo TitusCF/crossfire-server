@@ -20,26 +20,20 @@ void QuestWriter::write(const quest_definition *quest, StringBuffer *buf) {
     if (quest->face) {
         stringbuffer_append_printf(buf, "face %s\n", quest->face->name);
     }
-    if (quest->quest_description) {
-        stringbuffer_append_multiline_block(buf, "description", quest->quest_description, NULL);
-    }
+    stringbuffer_append_multiline_block(buf, "description", quest->quest_description, NULL);
     if (quest->parent) {
         stringbuffer_append_printf(buf, "parent %s\n", quest->parent->quest_code);
     }
     W(quest_restart, "restart %d");
     W(quest_is_system, "is_system %d");
-    if (quest->quest_comment) {
-        stringbuffer_append_multiline_block(buf, "comment", quest->quest_comment, NULL);
-    }
+    stringbuffer_append_multiline_block(buf, "comment", quest->quest_comment, NULL);
     auto step = quest->steps;
     while (step) {
         stringbuffer_append_printf(buf, "step %d\n", step->step);
         if (step->is_completion_step) {
             stringbuffer_append_string(buf, "finishes_quest\n");
         }
-        if (step->step_description) {
-            stringbuffer_append_multiline_block(buf, "description", step->step_description, NULL);
-        }
+        stringbuffer_append_multiline_block(buf, "description", step->step_description, NULL);
         if (step->conditions) {
             stringbuffer_append_string(buf, "setwhen\n");
             char when[500];

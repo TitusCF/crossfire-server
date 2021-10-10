@@ -161,6 +161,9 @@ static void stringbuffer_ensure(StringBuffer *sb, size_t len) {
 
 void stringbuffer_append_multiline_block(StringBuffer *sb, const char *start, const char *content, const char *end) {
     char buf[100];
+    if (!content || *content == '\0') {
+        return;
+    }
     if (end == NULL) {
         snprintf(buf, sizeof(buf), "end_%s", start);
         end = buf;

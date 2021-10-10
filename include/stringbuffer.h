@@ -103,7 +103,7 @@ void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2)
  * "start" and "end" must not end with a newline.
  * @param sb The string buffer to modify.
  * @param start The text to write to signify the start of the contents.
- * @param content The actual content, which may contain multilines.
+ * @param content The actual content, which may contain multilines. If NULL of empty string, nothing is written.
  * @param end The text to write to signify the end of the contents. If NULL then "end_<start>" will be used.
  */
 void stringbuffer_append_multiline_block(StringBuffer *sb, const char *start, const char *content, const char *end);
