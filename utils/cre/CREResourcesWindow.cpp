@@ -585,8 +585,6 @@ void CREResourcesWindow::fillQuests()
     root->setData(0, Qt::UserRole, QVariant::fromValue<void*>(myTreeItems.last()));
     myTree->addTopLevelItem(root);
 
-    QStringList codes;
-
     getManager()->quests()->each([&] (auto quest) {
         item = CREUtils::questNode(quest, root);
         myTreeItems.append(new CRETreeItemQuest(quest, item, this));
@@ -594,7 +592,7 @@ void CREResourcesWindow::fillQuests()
     });
 
     addPanel("Quest", new CREQuestPanel(myStore, myMessages, myResources, this));
-    root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(codes.size()));
+    root->setText(0, tr("%1 [%2 items]").arg(root->text(0)).arg(getManager()->quests()->count()));
 }
 
 void CREResourcesWindow::fillMessages()
