@@ -15,7 +15,11 @@ class CREWrapperObject : public QObject
 
     Q_PROPERTY(QString name READ name)
     Q_PROPERTY(QString race READ race)
+    Q_PROPERTY(QString title READ title)
+    Q_PROPERTY(QString slaying READ slaying)
+    Q_PROPERTY(QString skill READ skill)
     Q_PROPERTY(int type READ type)
+    Q_PROPERTY(int subType READ subType)
     Q_PROPERTY(int level READ level WRITE setLevel)
     Q_PROPERTY(bool isMonster READ isMonster)
     Q_PROPERTY(bool isAlive READ isAlive)
@@ -42,7 +46,11 @@ class CREWrapperObject : public QObject
         CREWrapperArchetype* arch();
         QString name() const;
         QString race() const;
+        QString title() const { return myObject->title; }
+        QString slaying() const { return myObject->slaying; }
+        QString skill() const { return myObject->skill; }
         int type() const;
+        int subType() const { return myObject->subtype; }
         int level() const;
         void setLevel(int level) { myObject->level = level; }
         bool isMonster() const;
