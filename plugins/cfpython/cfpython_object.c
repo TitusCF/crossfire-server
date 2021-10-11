@@ -305,13 +305,6 @@ static PyObject *Player_QuestWasCompleted(Crossfire_Player *whoptr, PyObject *ar
 }
 
 /* Object properties. Get and maybe set. */
-static PyObject *Object_GetStringProperty(Crossfire_Object *whoptr, void *closure) {
-    char buf[MAX_BUF];
-    (void)closure;
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, (int)(intptr_t)closure, buf, sizeof(buf)));
-}
-
 static PyObject *Object_GetSStringProperty(Crossfire_Object *whoptr, void *closure) {
     (void)closure;
     EXISTCHECK(whoptr);
@@ -476,25 +469,6 @@ static int Object_SetStringProperty(Crossfire_Object *whoptr, PyObject *value, v
     EXISTCHECK_INT(whoptr);
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "Cannot delete the attribute");
-        return -1;
-    }
-    if (!CF_IS_PYSTR(value)) {
-        PyErr_SetString(PyExc_TypeError, "The attribute must be a string");
-        return -1;
-    }
-    if (!PyArg_Parse(value, "s", &val))
-        return -1;
-
-    cf_object_set_string_property(whoptr->obj, (int)(intptr_t)closure, val);
-    return 0;
-}
-
-static int Object_SetSStringProperty(Crossfire_Object *whoptr, PyObject *value, void *closure) {
-    char *val;
-
-    EXISTCHECK_INT(whoptr);
-    if (value == NULL) {
-        PyErr_SetString(PyExc_TypeError, "Cannot delete attribute");
         return -1;
     }
     if (!CF_IS_PYSTR(value)) {
