@@ -827,6 +827,7 @@ static void move_aura(object *aura) {
                                   cast_spell(tmp, aura, 0, new_ob, NULL);
                             }
                         } FOR_MAP_FINISH();
+                        object_free(new_ob, FREE_OBJ_FREE_INVENTORY | FREE_OBJ_NO_DESTROY_CALLBACK);
                     }
                 }
             }
