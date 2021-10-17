@@ -128,8 +128,7 @@ static method_ret marker_type_process(object *op) {
  */
 static method_ret marker_type_trigger(object *op, object *cause, int state) {
     (void)cause;
-    if (state) {
-        move_marker(op);
-    }
+    (void)state;
+    move_marker(op);
     return METHOD_OK;
 }

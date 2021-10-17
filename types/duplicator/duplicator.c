@@ -84,8 +84,7 @@ static void move_duplicator(object *op) {
  */
 static method_ret duplicator_type_trigger(object *op, object *cause, int state) {
     (void)cause;
-    if (state) {
-        move_duplicator(op);
-    }
+    (void)state;
+    move_duplicator(op);
     return METHOD_OK;
 }
