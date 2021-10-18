@@ -1,0 +1,3 @@
+Syntax: accountpasswd <account> <password>
+
+This allows a DM to reset the password of an account name (which is different than the player character name!), to the specified <password> text in the command.
