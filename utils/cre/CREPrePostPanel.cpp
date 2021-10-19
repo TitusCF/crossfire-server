@@ -160,7 +160,7 @@ CRESubItemQuest::CRESubItemQuest(CREPrePostList::Mode mode, QWidget* parent) : C
     }
     else
     {
-        layout->addWidget(new QLabel(tr("new step:"), this));
+        layout->addWidget(new QLabel(tr("New step:"), this));
         myAtStep = NULL;
         myBelowStep = nullptr;
         myFromStep = NULL;
