@@ -24,6 +24,9 @@ To build:
   qmake && make
     (Builds in debug mode; change .qmake.cache to suit other needs better.)
 
+Make sure to use qmake from Qt version 5, and not a previous version.
+On Fedora for instance, you need to run qmake-qt5
+
 Notes:
 
   PNG files in the 'resources' folder were taken from Gridarta's
