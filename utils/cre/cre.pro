@@ -157,8 +157,6 @@ CONFIG += release
 RESOURCES += cre.qrc
 
 CONFIG += thread
-CONFIG += c++11
+CONFIG += c++14
 
 QT += concurrent script widgets
-
-CONFIG += c++14
