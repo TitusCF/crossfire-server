@@ -267,10 +267,11 @@ void CRESubItemQuest::selectedQuestChanged(int index)
     QString desc;
     auto step = quest->steps;
     while (step) {
-        desc = tr("%1 (%2)").arg(QString::number(step->step), QString(step->step_description).left(30));
+        desc = tr("%1 (%2)").arg(QString(step->step_description).left(50), QString::number(step->step));
         if (step->is_completion_step)
             desc += " (end)";
         myFirstStep->addItem(desc, QString::number(step->step));
+        myFirstStep->setItemData(myFirstStep->count() - 1, QString(step->step_description), Qt::ToolTipRole);
         if (mySecondStep)
             mySecondStep->addItem(desc, QString::number(step->step));
 
