@@ -3,6 +3,7 @@
 #include "QuestConditionScript.h"
 #include "assets.h"
 #include "AssetsManager.h"
+#include "CREPixmap.h"
 extern "C" {
 #include "quest.h"
 }
@@ -182,6 +183,10 @@ CRESubItemQuest::CRESubItemQuest(CREPrePostList::Mode mode, QWidget* parent) : C
     connect(myQuestList, SIGNAL(currentIndexChanged(int)), this, SLOT(selectedQuestChanged(int)));
     getManager()->quests()->each([&] (auto quest) {
         myQuestList->addItem(QString(quest->quest_title) + " [" + quest->quest_code + "]", quest->quest_code);
+        myQuestList->setItemData(myQuestList->count() - 1, QString(quest->quest_description), Qt::ToolTipRole);
+        if (quest->face) {
+            myQuestList->setItemIcon(myQuestList->count() - 1, CREPixmap::getIcon(quest->face->number));
+        }
     });
     connect(myFirstStep, SIGNAL(currentIndexChanged(int)), this, SLOT(selectedStepChanged(int)));
     if (mySecondStep)
