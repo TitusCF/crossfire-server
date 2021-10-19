@@ -194,7 +194,8 @@ void CRESubItemQuest::setData(const QStringList& data)
 {
     if (data.size() < 3)
     {
-        myAtStep->setChecked(true);
+        if (myAtStep)
+            myAtStep->setChecked(true);
         return;
     }
 
