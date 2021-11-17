@@ -186,7 +186,19 @@ static int generate_monster_arch(object *gen) {
     op = object_create_clone(&gen->other_arch->clone);
     if (rndm(0, 9))
         generate_artifact(op, gen->map->difficulty);
-    op = object_insert_in_map_at(op, gen->map, gen, 0, nx, ny);
+    object *ins = object_insert_in_map_at(op, gen->map, gen, 0, nx, ny);
+    /* Object insert in map at can return NULL when failing to place something
+     * because the tile is blocked or because the monster was immediately killed
+     * by a spell effect on the space they were trying to be added to.
+     * Banishment in particular is guilty of causing the latter.
+     *
+     * Regardless, it appears to be intended behavior, but wasn't accounted for here.
+     *
+     * Ensure we actually got op back before continuing to process.
+     */
+    if (ins == NULL)
+        return FALSE;
+    op = ins; // Make sure we look at the object we got back. I *think* the pointer should be the same, but to be safe...
     if (QUERY_FLAG(op, FLAG_FREED))
         return TRUE;
     if (HAS_RANDOM_ITEMS(op)) {
