@@ -64,7 +64,7 @@ enum SK {
     SK_MINING                = 45,  /**< Mining */
     SK_WOODCUTTING           = 46,  /**< Woodcutting */
     SK_FARMING               = 47,  /**< Farming */
-    SK_ARTIFICER             = 48,  /**< Farming */
+    SK_ARTIFICER             = 48,  /**< Artificer */
 };
 
 /**

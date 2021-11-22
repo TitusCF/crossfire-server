@@ -1,4 +1,4 @@
-// artificer takes a object in a couldron 
+// artificer takes a object in a cauldron
 // along with materials and gives the object a bonus
 // stats +1 to +30 OR
 // resist +1 to +115
@@ -7,47 +7,46 @@
 Ingredient List for Stat Modification:
 Archs will be drawn from archs/inorganic/, archs/potions/ & archs/flesh.
 
-(these will most likely be placeholders as archs are modified or added to /archs 
- 
--stat modifiers should always use permanent stat potions- 
+(these will most likely be placeholders as archs are modified or added to /archs
+
+-stat modifiers should always use permanent stat potions-
 
 Stat potion requirement should be only 1/5th of the required number of other ingredients)
 
 Special_ac:       bat_wing, phil_salt, vial_yellow
-Special_wc:       hand, phil_salt, vial_yellow 
+Special_wc:       hand, phil_salt, vial_yellow
 Special_dam:      insect_stinger, phil_salt, vial_yellow
-Special_speed:    foot, phil_salt, vial_water 
-Special_luck:     serp_skin, phil_salt, vial_green 
+Special_speed:    foot, phil_salt, vial_water
+Special_luck:     serp_skin, phil_salt, vial_green
 Special_hp:       heart, phil_salt, vial_red
-Special_maxhp:    heart, phil_sulpher, vial_red 
+Special_maxhp:    heart, phil_sulpher, vial_red
 Special_sp:       brain, phil_salt, vial_magenta
 Special_maxsp:    brain, phil_sulpher, vial_magenta
-Special_grace:    dragon_eye, phil_dust, vial_magenta 
-Special_maxgrace: dragon_eye, phil_sulpher, vial_magenta 
+Special_grace:    dragon_eye, phil_dust, vial_magenta
+Special_maxgrace: dragon_eye, phil_sulpher, vial_magenta
 Special_exp:      eyes, phil_salt, potion_improve
-Special_food:     tongue, phil_salt, water 
+Special_food:     tongue, phil_salt, water
 
-0 Resist_Physical:      dragon_eye,        uraniumpile, potion_shielding
-
-1 Resist_Magic:         tongue,            uraniumpile, potion_magic
-2 Resist_Fire:          hide_black,        uraniumpile, potion_fire
-3 Resist_Electricity:   hand,              uraniumpile, potion_heroism
-4 Resist_Cold:          hide_white,        uraniumpile, potion_cold2
-5 Resist_Confusion:     brain,             uraniumpile, minor_potion_restoration
-6 Resist_Acid:          icor,              uraniumpile, vial_yellow
-7 Resist_Drain:         heart,             uraniumpile, vial_red
-9 Resist_Ghosthit:      ectoplasm,         uraniumpile, potion_aethereality
-10 Resist_Poison:        liver,             uraniumpile, vial_green
-11 Resist_Slow:          foot,              river_stone, vial_water
-12 Resist_Paralyze:      insect_stinger,    uraniumpile, vial_green
-13 Resist_Turn_Undead:   tooth,             uraniumpile, vial_red
-14 Resist_Fear:          demon_head,        uraniumpile, potion_heroism
-16 Resist_Deplete:       heart,             uraniumpile, vial_red 
-17 Resist_Death:         head,              uraniumpile, vial_red
-21 Resist_Holyword:      bat_wing,          uraniumpile, vial_water
-22 Resist_blind:         eye,               uraniumpile, potion_empty
-24 Resist_Life_Stealing: skin,              uraniumpile, vial_red
-25 Resist_Disease:       residue,           uraniumpile, vial_green
+0 Resist_Physical:       dragon_eye,     uraniumpile, potion_shielding
+1 Resist_Magic:          tongue,         uraniumpile, potion_magic
+2 Resist_Fire:           hide_black,     uraniumpile, potion_fire
+3 Resist_Electricity:    hand,           uraniumpile, potion_heroism
+4 Resist_Cold:           hide_white,     uraniumpile, potion_cold2
+5 Resist_Confusion:      brain,          uraniumpile, minor_potion_restoration
+6 Resist_Acid:           icor,           uraniumpile, vial_yellow
+7 Resist_Drain:          heart,          uraniumpile, vial_red
+9 Resist_Ghosthit:       ectoplasm,      uraniumpile, potion_aethereality
+10 Resist_Poison:        liver,          uraniumpile, vial_green
+11 Resist_Slow:          foot,           river_stone, vial_water
+12 Resist_Paralyze:      insect_stinger, uraniumpile, vial_green
+13 Resist_Turn_Undead:   tooth,          uraniumpile, vial_red
+14 Resist_Fear:          demon_head,     uraniumpile, potion_heroism
+16 Resist_Deplete:       heart,          uraniumpile, vial_red
+17 Resist_Death:         head,           uraniumpile, vial_red
+21 Resist_Holyword:      bat_wing,       uraniumpile, vial_water
+22 Resist_blind:         eye,            uraniumpile, potion_empty
+24 Resist_Life_Stealing: skin,           uraniumpile, vial_red
+25 Resist_Disease:       residue,        uraniumpile, vial_green
 
 * we're going to keep the same list for now, except for artificer which will use
 STR: potionstr, demon_head, ruby
@@ -233,6 +232,19 @@ static int attempt_merge(const object* caster, object* cauldron,
     }
 }
 
+/**
+ * Attempt to use the artificer skill to give a bonus to an item.
+ * @param caster
+ * who is trying to add the bonus.
+ * @param cauldron
+ * the cauldron object.
+ * @param base_item
+ * the base item object.
+ * @param k
+ * the caster skill, bounded by 100.
+ * @return
+ * Experience points gained from the skill, 0 if the skill failed.
+ */
 int attempt_do_artificer(object* caster, object* cauldron, object* base_item, int k) {
     int stat_improve[] = {0,    3,    12,   27,   48,   75,   108,  147,
                           192,  243,  300,  363,  432,  507,  588,  675,
@@ -274,13 +286,13 @@ int attempt_do_artificer(object* caster, object* cauldron, object* base_item, in
     for(size_t i = 1; i < 31; i++) {
         if(potion->nrof >= stat_improve[i] / 5) { // use our list of needed mats to improve stats
             atmpt_bonus = i; // potions use 1/5th the requirements.
-        } 
-        // use our list of needed mats to improve stats but dont go over the current atmpt_bonus
-        if(inorganic->nrof >= stat_improve[i] && i < atmpt_bonus) { 
-            atmpt_bonus = i; 
         }
-        if(flesh->nrof >= stat_improve[i] && i < atmpt_bonus) { 
-            atmpt_bonus = i; 
+        // use our list of needed mats to improve stats but dont go over the current atmpt_bonus
+        if(inorganic->nrof >= stat_improve[i] && i < atmpt_bonus) {
+            atmpt_bonus = i;
+        }
+        if(flesh->nrof >= stat_improve[i] && i < atmpt_bonus) {
+            atmpt_bonus = i;
         }
         if(i > atmpt_bonus){
             break; // once we hit our max atmpt_bonus we can break out.
@@ -292,191 +304,191 @@ int attempt_do_artificer(object* caster, object* cauldron, object* base_item, in
                       "Note: Artificer as DM always succeeds.");
     } else if(rndm(0, 100) <= success_chance) {
         // do nothing
-    } 
+    }
     else {
         atmpt_bonus = atmpt_bonus * -1; // flip to a negative bonus, caster recieves items either way.
     }
 
-    // have all the ingredients necessary. 
+    // have all the ingredients necessary.
     if((strcmp("potionstr", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("ruby", inorganic->arch->name)==0)) {
         base_item->stats.Str = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potiondex", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("sapphire", inorganic->arch->name)==0)) {
         base_item->stats.Dex = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potionpow", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("amethyst", inorganic->arch->name)==0)) {
         base_item->stats.Pow = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potionint", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("mithril", inorganic->arch->name)==0)) {
         base_item->stats.Int = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potionwis", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("diamond", inorganic->arch->name)==0)) {
         base_item->stats.Wis = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potioncha", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("smallnugget", inorganic->arch->name)==0)) {
         base_item->stats.Cha = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potioncon", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("emerald", inorganic->arch->name)==0)) {
         base_item->stats.Con = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     // end base stats part.
     else if((strcmp("vial_yellow", potion->arch->name)==0) && (strcmp("bat_wing", flesh->arch->name)==0) && (strcmp("phil_salt", inorganic->arch->name)==0)) {
         base_item->stats.ac = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_yellow", potion->arch->name)==0) && (strcmp("hand", flesh->arch->name)==0) && (strcmp("phil_salt", inorganic->arch->name)==0)) {
          base_item->stats.wc = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_yellow", potion->arch->name)==0) && (strcmp("insect_stinger", flesh->arch->name)==0) && (strcmp("phil_salt", inorganic->arch->name)==0)) {
         base_item->stats.dam = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_green", potion->arch->name)==0) && (strcmp("serp_skin", flesh->arch->name)==0) && (strcmp("phil_salt", inorganic->arch->name)==0)) {
         base_item->stats.luck = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_red", potion->arch->name)==0) && (strcmp("heart", flesh->arch->name)==0) && (strcmp("phil_salt", inorganic->arch->name)==0)) {
         base_item->stats.hp = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_red", potion->arch->name)==0) && (strcmp("heart", flesh->arch->name)==0) && (strcmp("phil_sulpher", inorganic->arch->name)==0)) {
         base_item->stats.maxhp = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_magenta", potion->arch->name)==0) && (strcmp("brain", flesh->arch->name)==0) && (strcmp("phil_salt", inorganic->arch->name)==0)) {
         base_item->stats.sp = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_magenta", potion->arch->name)==0) && (strcmp("brain", flesh->arch->name)==0) && (strcmp("phil_sulpher", inorganic->arch->name)==0)) {
         base_item->stats.maxsp = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_magenta", potion->arch->name)==0) && (strcmp("dragon_eye", flesh->arch->name)==0) && (strcmp("phil_dust", inorganic->arch->name)==0)) {
         base_item->stats.grace = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_magenta", potion->arch->name)==0) && (strcmp("dragon_eye", flesh->arch->name)==0) && (strcmp("phil_sulpher", inorganic->arch->name)==0)) {
         base_item->stats.maxgrace = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_improve", potion->arch->name)==0) && (strcmp("eyes", flesh->arch->name)==0) && (strcmp("phil_salt", inorganic->arch->name)==0)) {
         base_item->stats.exp = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("water", potion->arch->name)==0) && (strcmp("tongue", flesh->arch->name)==0) && (strcmp("phil_salt", inorganic->arch->name)==0)) {
         base_item->stats.food = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
-    // Start resistances 
+    // Start resistances
     else if((strcmp("potion_shielding", potion->arch->name)==0) && (strcmp("dragon_eye", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->stats.ac = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_magic", potion->arch->name)==0) && (strcmp("dragon_eye", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[1] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_fire", potion->arch->name)==0) && (strcmp("hide_black", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[2] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_heroism", potion->arch->name)==0) && (strcmp("hand", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[3] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_heroism", potion->arch->name)==0) && (strcmp("hide", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[4] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_cold2", potion->arch->name)==0) && (strcmp("hide_white", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[5] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("minor_potion_restoration", potion->arch->name)==0) && (strcmp("brain", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[6] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_yellow", potion->arch->name)==0) && (strcmp("icor", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[7] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_red", potion->arch->name)==0) && (strcmp("heart", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[9] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_aethereality", potion->arch->name)==0) && (strcmp("ectoplasm", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[10] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_green", potion->arch->name)==0) && (strcmp("liver", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[11] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_water", potion->arch->name)==0) && (strcmp("foot", flesh->arch->name)==0) && (strcmp("river_stone", inorganic->arch->name)==0)) {
         base_item->resist[12] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_green", potion->arch->name)==0) && (strcmp("insect_stinger", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[13] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_red", potion->arch->name)==0) && (strcmp("tooth", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[14] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_heroism", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[14] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_empty", potion->arch->name)==0) && (strcmp("heart", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[16] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_red", potion->arch->name)==0) && (strcmp("head", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[17] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_water", potion->arch->name)==0) && (strcmp("bat_wing", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[21] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("potion_empty", potion->arch->name)==0) && (strcmp("eye", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[22] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_green", potion->arch->name)==0) && (strcmp("skin", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[24] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
         }
     else if((strcmp("vial_green", potion->arch->name)==0) && (strcmp("residue", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) {
         base_item->resist[25] = atmpt_bonus;
-        success = TRUE; 
+        success = TRUE;
     } else {
         draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL,
                       MSG_TYPE_SKILL_FAILURE, "There is no such recipe.");
     }
-    
+
     // if we craft ANY object reduce the stack sizes by an appropriate amount.
     if(success) {
         object_decrease_nrof(potion, MAX(1, stat_improve[abs(atmpt_bonus)] / 5)); // decreaase the stack size taking into account 1/5th requirements
         object_decrease_nrof(inorganic, stat_improve[abs(atmpt_bonus)]); // decrease the stack size.
         object_decrease_nrof(flesh, stat_improve[abs(atmpt_bonus)]); // decrease the stack size.
         SET_FLAG(cauldron, FLAG_APPLIED); // not sure we need this but i don't think it hurts.
-        if(atmpt_bonus > 0) { 
+        if(atmpt_bonus > 0) {
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
                             "You successfully crafted the item.");
             return 1;
         }
         //we created it but it failed.
-        else 
+        else
         {
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                             "You failed to craft the item.");
@@ -516,6 +528,15 @@ static object* find_cauldron(object* op) {
     return NULL;
 }
 
+/**
+ * Use the artificer skill.
+ * @param op
+ * who is using the skill.
+ * @param args
+ * skill arguments.
+ * @return
+ * experience points gained from using the skill.
+ */
 int use_artificer(object* op, const char* args) {
     enum mode { DO_ARTIFICER, DO_MERGE };
     enum mode m;
