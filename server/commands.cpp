@@ -60,6 +60,9 @@ static std::map<std::string, std::vector<registered_command *> > registered_comm
  * @return identifier to unregister the command, 0 if adding failed.
  */
 static command_registration do_register(const char *name, uint8_t type, command_function func_std, command_function_extra func_extra, const char *extra, float time) {
+    if (type > COMMAND_TYPE_WIZARD) {
+        type = COMMAND_TYPE_NORMAL;
+    }
     auto existing = registered_commands.find(name);
     if (existing != registered_commands.end()) {
         assert(!existing->second.empty());

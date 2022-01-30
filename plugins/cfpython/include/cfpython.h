@@ -53,6 +53,9 @@
 #    if PY_MINOR_VERSION >= 8
 #        define IS_PY3K8
 #    endif
+#    if PY_MINOR_VERSION >= 10
+#        define IS_PY3K10
+#    endif
 #endif
 
 /* Handle Bytes vs. String */
@@ -92,12 +95,10 @@ typedef struct _cfpcontext {
     PyObject   *third;
     PyObject   *event;
     char        message[1024];
-    int         fix;
     int         event_code;
     char        script[1024];
     char        options[1024];
     int         returnvalue;
-    int         parms[5];
     struct talk_info    *talk;
 } CFPContext;
 
