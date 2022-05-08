@@ -367,7 +367,6 @@ static char *unclean_path(const char *src, char *newpath, int size) {
     return newpath;
 }
 
-
 /**
  * The player is trying to enter a randomly generated map.  In this case, generate the
  * random map as needed.
@@ -416,7 +415,7 @@ static void enter_random_map(object *pl, object *exit_ob) {
     snprintf(newmap_name, sizeof(newmap_name), "/random/%s%04d", cp+1, reference_number++);
 
     /* now to generate the actual map. */
-    new_map = generate_random_map(newmap_name, &rp, NULL);
+    new_map = generate_random_map(newmap_name, &rp, NULL, exit_ob->map ? exit_ob->map->reset_group : NULL);
 
     /* Update the exit_ob so it now points directly at the newly created
      * random maps.  Not that it is likely to happen, but it does mean that a
@@ -432,6 +431,12 @@ static void enter_random_map(object *pl, object *exit_ob) {
         EXIT_PATH(exit_ob) = add_string(newmap_name);
         strlcpy(new_map->path, newmap_name, sizeof(new_map->path));
         enter_map(pl, new_map, x, y);
+
+        /* Make the initial map part of the same reset group so it doesn't
+         * reset before the random maps */
+        if (exit_ob->map && exit_ob->map->reset_group == NULL && new_map->reset_group) {
+            exit_ob->map->reset_group = add_string(new_map->reset_group);
+        }
     }
 }
 
@@ -576,7 +581,7 @@ static void enter_random_template_map(object *pl, object *exit_ob) {
         safe_strncpy(rp.origin_map, pl->map->path, sizeof(rp.origin_map));
 
         /* now to generate the actual map. */
-        new_map = generate_random_map(new_map_name, &rp, NULL);
+        new_map = generate_random_map(new_map_name, &rp, NULL, exit_ob->map ? exit_ob->map->reset_group : NULL);
     }
 
     /* Update the exit_ob so it now points directly at the newly created

@@ -372,6 +372,10 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             }
 
             set_map_timeout(new_map);   /* So it gets swapped out */
+            if (map->reset_group && !new_map->reset_group) {
+                /* So the random maps don't reset before the final map */
+                new_map->reset_group = add_string(map->reset_group);
+            }
         } else {
             the_exit_down->slaying = add_string("/!");
         }

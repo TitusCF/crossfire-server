@@ -68,10 +68,12 @@ void dump_layout(char **layout, RMParms *RP)
  * parameters for generation.
  * @param use_layout
  * if not NULL, this should be a suitable layout.
+ * @param reset_group
+ * if not NULL, the reset group this map will be part of, else the path will be used.
  * @return
  * Crossfire map, which should be free()d by caller.
  */
-mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_layout)
+mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_layout, sstring reset_group)
 {
     char **layout, *buf;
     mapstruct *theMap;
@@ -134,6 +136,12 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_
 
     /* set the name of the map. */
     safe_strncpy(theMap->path, OutFileName, sizeof(theMap->path));
+
+    if (reset_group) {
+        theMap->reset_group = add_string(reset_group);
+    } else {
+        theMap->reset_group = add_string(OutFileName);
+    }
 
     /* set region */
     theMap->region = RP->region;

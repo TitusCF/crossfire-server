@@ -437,11 +437,11 @@ static void current_map_info(object *op) {
 
     if (QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             "players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d",
+                             "players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d reset_group: %s",
                              m->players, m->difficulty,
                              MAP_WIDTH(m), MAP_HEIGHT(m),
                              MAP_ENTER_X(m), MAP_ENTER_Y(m),
-                             MAP_TIMEOUT(m));
+                             MAP_TIMEOUT(m), m->reset_group ? m->reset_group : "(none)");
     }
     if (m->msg)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, m->msg);

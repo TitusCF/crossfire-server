@@ -588,6 +588,7 @@ void read_map_log(void);
 int swap_map(mapstruct *map);
 void check_active_maps(void);
 int players_on_map(mapstruct *m, int show_all);
+bool map_can_reset(const mapstruct *map, long current_time);
 void flush_old_maps(void);
 /* time.c */
 void remove_door(object *op);

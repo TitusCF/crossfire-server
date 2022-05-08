@@ -1185,6 +1185,8 @@ static int load_map_header(FILE *fp, mapstruct *m) {
             } /* end if tile direction (in)valid */
         } else  if (!strcmp(key, "background_music")) {
             m->background_music = strdup_local(value);
+        } else if (!strcmp(key, "reset_group")) {
+            m->reset_group = add_string(value);
         } else {
             LOG(llevError, "Got unknown value in map header: %s %s\n", key, value);
         }
@@ -1520,6 +1522,8 @@ int save_map(mapstruct *m, int flag) {
         fprintf(fp, "first_load %ld\n", m->last_reset_time);
     if (m->background_music)
         fprintf(fp, "background_music %s\n", m->background_music);
+    if (m->reset_group)
+        fprintf(fp, "reset_group %s\n", m->reset_group);
 
     /* Save any tiling information, except on overlays */
     if (flag != SAVE_MODE_OVERLAY)
@@ -1671,7 +1675,7 @@ static void free_all_objects(mapstruct *m) {
 
 /**
  * Frees everything allocated by the given mapstructure.
- * Don't free tmpname - our caller is left to do that.
+ * Don't free tmpname or the reset group - our caller is left to do that.
  * Mapstructure itself is not freed.
  *
  * @param m
@@ -1741,6 +1745,7 @@ void delete_map(mapstruct *m) {
      */
     free(m->tmpname);
     m->tmpname = NULL;
+    FREE_AND_CLEAR_STR_IF(m->reset_group);
     last = NULL;
     /* We need to look through all the maps and see if any maps
      * are pointing at this one for tiling information.  Since

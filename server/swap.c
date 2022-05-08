@@ -155,19 +155,22 @@ int swap_map(mapstruct *map) {
     if (!map->fixed_resettime)
         set_map_reset_time(map);
 
-    /* If it is immediate reset time, don't bother saving it - just get
-     * rid of it right away.
+    /* If it is immediate reset time and not in a reset group, don't bother
+     * saving it - just get rid of it right away.
+     * If it is part of a reset group, then swap it, and handle reset in
+     * flush_old_maps().
      */
-    if (map->reset_time <= seconds()) {
+    if (map->reset_time <= seconds() && map->reset_group == NULL) {
         mapstruct *oldmap = map;
 
-        LOG(llevDebug, "Resetting map %s.\n", map->path);
+        LOG(llevDebug, "Resetting map %s instead of swapping it.\n", map->path);
         events_execute_global_event(EVENT_MAPRESET, map);
         map = map->next;
         delete_map(oldmap);
         return SAVE_ERROR_OK;
     }
 
+    LOG(llevDebug, "Swapping map %s.\n", map->path);
     if ((res = save_map(map, SAVE_MODE_NORMAL)) < 0) {
         LOG(llevError, "Failed to swap map %s.\n", map->path);
         /* This is sufficiently critical to mandate to warn all DMs. */
@@ -240,8 +243,47 @@ int players_on_map(mapstruct *m, int show_all) {
 }
 
 /**
- * Removes tmp-files of maps which are going to be reset next time
- * they are visited.
+ * Returns whether a map can be reset, without taking its reset group into account.
+ * @param map map to consider.
+ * @param current_time current time.
+ * @return false if the map can't be reset, true if the map can be reset.
+ */
+static bool map_can_reset_no_group(const mapstruct *map, long current_time) {
+    return (map->in_memory == MAP_SWAPPED)
+        && (map->tmpname != NULL)
+        && (current_time >= map->reset_time);
+}
+
+/**
+ * Returns whether a map can be reset, including all other maps in the same
+ * reset group.
+ * @param map map to consider.
+ * @param current_time current time.
+ * @return false if the map can't be reset, true if the map can be reset.
+ */
+bool map_can_reset(const mapstruct *map, long current_time) {
+    if (!map_can_reset_no_group(map, current_time)) {
+        return 0;
+    }
+
+    if (map->reset_group == NULL) {
+        return 1;
+    }
+
+    mapstruct *other = first_map;
+    while (other) {
+        if (other != map && other->reset_group == map->reset_group && !map_can_reset_no_group(other, current_time)) {
+            /* Another map isn't ready to reset, so don't reset this map either */
+            return 0;
+        }
+        other = other->next;
+    }
+
+    return 1;
+}
+
+/**
+ * Reset maps that need to, remove their swap file.
  * This is very useful if the tmp-disk is very full.
  */
 void flush_old_maps(void) {
@@ -271,13 +313,11 @@ void flush_old_maps(void) {
          * underneath them.
          */
         if ((m->unique || m->is_template) && m->in_memory == MAP_SWAPPED) {
-            LOG(llevDebug, "Resetting map %s.\n", m->path);
+            LOG(llevDebug, "Resetting unique or template map %s.\n", m->path);
             oldmap = m;
             m = m->next;
             delete_map(oldmap);
-        } else if (m->in_memory != MAP_SWAPPED
-        || m->tmpname == NULL
-        || sec < m->reset_time) {
+        } else if (!map_can_reset(m, sec)) {
             m = m->next;
         } else {
             LOG(llevDebug, "Resetting map %s.\n", m->path);

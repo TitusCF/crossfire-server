@@ -33,6 +33,10 @@
 #include <stdlib.h>
 #include <check.h>
 
+#include "global.h"
+#include "sproto.h"
+#include "map.h"
+
 void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
 }
@@ -41,8 +45,74 @@ void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST(test_empty) {
-    /*TESTME test not yet developped*/
+static mapstruct *do_map(const char *tmpname, const char *reset_group) {
+    mapstruct *map = get_empty_map(4, 4);
+    fail_unless(first_map == map, "Map not added on list");
+    map->in_memory = MAP_SWAPPED;
+    map->reset_time = 1;
+    map->tmpname = strdup_local(tmpname);
+    if (reset_group) {
+        map->reset_group = add_string(reset_group);
+    }
+    return map;
+}
+
+START_TEST(test_simple_reset) {
+    do_map("map1", NULL);
+    flush_old_maps();
+    fail_unless(first_map == NULL, "Map wasn't reset");
+}
+END_TEST
+
+START_TEST(test_simple_reset_group) {
+    do_map("1", "rg");
+    flush_old_maps();
+    fail_unless(first_map == NULL, "Map wasn't reset");
+}
+END_TEST
+
+START_TEST(test_reset_group_other) {
+    do_map("1", "rg");
+    do_map("2", NULL)->reset_time = seconds() + 50;
+    flush_old_maps();
+    fail_unless(first_map != NULL, "Map was reset");
+    fail_unless(first_map->next == NULL, "Map group wasn't reset");
+}
+END_TEST
+
+START_TEST(test_reset_group_all) {
+    do_map("1", "rg");
+    do_map("2", "rg");
+    flush_old_maps();
+    fail_unless(first_map == NULL, "Map weren't reset");
+}
+END_TEST
+
+START_TEST(test_reset_group_blocked_time) {
+    do_map("1", "rg");
+    mapstruct *block = do_map("2", "rg");
+    block->reset_time = seconds() + 50;
+    flush_old_maps();
+    fail_unless(first_map == block, "Map were reset");
+    fail_unless(first_map->next, "Other map should not have been reset");
+
+    block->reset_time = 1;
+    flush_old_maps();
+    fail_unless(first_map == NULL, "Map weren't reset");
+}
+END_TEST
+
+START_TEST(test_reset_group_blocked_not_swapped) {
+    do_map("1", "rg");
+    mapstruct *block = do_map("2", "rg");
+    block->in_memory = MAP_IN_MEMORY;
+    flush_old_maps();
+    fail_unless(first_map == block, "Map were reset");
+    fail_unless(first_map->next, "Other map should not have been reset");
+
+    block->in_memory = MAP_SWAPPED;
+    flush_old_maps();
+    fail_unless(first_map == NULL, "Map weren't reset");
 }
 END_TEST
 
@@ -54,7 +124,12 @@ Suite *swap_suite(void) {
     tcase_add_checked_fixture(tc_core, setup, teardown);
 
     suite_add_tcase(s, tc_core);
-    tcase_add_test(tc_core, test_empty);
+    tcase_add_test(tc_core, test_simple_reset);
+    tcase_add_test(tc_core, test_simple_reset_group);
+    tcase_add_test(tc_core, test_reset_group_other);
+    tcase_add_test(tc_core, test_reset_group_all);
+    tcase_add_test(tc_core, test_reset_group_blocked_time);
+    tcase_add_test(tc_core, test_reset_group_blocked_not_swapped);
 
     return s;
 }

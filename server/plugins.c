@@ -4386,7 +4386,7 @@ static void cfapi_generate_random_map(int *type, ...) {
     ret = va_arg(args, mapstruct **);
     va_end(args);
 
-    *ret = generate_random_map(name, rp, use_layout);
+    *ret = generate_random_map(name, rp, use_layout, NULL);
 }
 
 static void cfapi_object_user_event(int *type, ...) {

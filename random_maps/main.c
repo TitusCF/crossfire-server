@@ -51,7 +51,7 @@ static void generate_map(char *OutFileName) {
     load_parameters(stdin, LO_NEWFILE, &rp);
     fclose(stdin);
 
-    newMap = generate_random_map(OutFileName, &rp, NULL);
+    newMap = generate_random_map(OutFileName, &rp, NULL, NULL);
     save_map(newMap, SAVE_MODE_INPLACE);
 }
 
