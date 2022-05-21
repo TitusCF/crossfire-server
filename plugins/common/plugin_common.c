@@ -1472,11 +1472,11 @@ int cf_random_map_set_variable(RMParms *rp, const char *buf) {
  * Wrapper for generate_random_map().
  * @copydoc generate_random_map()
  */
-mapstruct *cf_random_map_generate(const char *OutFileName, RMParms *RP, char **use_layout) {
+mapstruct *cf_random_map_generate(const char *OutFileName, RMParms *RP, char **use_layout, sstring reset_group) {
     int type;
     mapstruct *map;
 
-    cfapiGenerate_random_map(&type, OutFileName, RP, use_layout, &map);
+    cfapiGenerate_random_map(&type, OutFileName, RP, use_layout, reset_group, &map);
     assert(type == CFAPI_PMAP);
     return map;
 }

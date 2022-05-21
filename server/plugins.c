@@ -4377,16 +4377,18 @@ static void cfapi_generate_random_map(int *type, ...) {
     const char *name;
     RMParms *rp;
     char **use_layout;
+    sstring reset_group;
     mapstruct **ret;
 
     va_start(args, type);
     name = va_arg(args, const char *);
     rp = va_arg(args, RMParms *);
     use_layout = va_arg(args, char **);
+    reset_group = va_arg(args, sstring);
     ret = va_arg(args, mapstruct **);
     va_end(args);
 
-    *ret = generate_random_map(name, rp, use_layout, NULL);
+    *ret = generate_random_map(name, rp, use_layout, reset_group);
 }
 
 static void cfapi_object_user_event(int *type, ...) {

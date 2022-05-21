@@ -185,7 +185,7 @@ extern void         cf_map_trigger_connected(objectlink *ol, object *cause, int 
 
 /* Random maps */
 extern int          cf_random_map_set_variable(RMParms *rp, const char *buf);
-extern mapstruct   *cf_random_map_generate(const char *OutFileName, RMParms *RP, char **use_layout);
+extern mapstruct   *cf_random_map_generate(const char *OutFileName, RMParms *RP, char **use_layout, sstring reset_group);
 
 /* Players */
 extern char        *cf_player_get_title(object *op, char *title, int size);
