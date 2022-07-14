@@ -1900,9 +1900,13 @@ void command_reset(object *op, const char *params) {
 
     strlcpy(path, m->path, sizeof(path));
 
+    sstring reset_group = m->reset_group;
+    m->reset_group = NULL;
+
     if (m->in_memory != MAP_SWAPPED) {
         if (m->in_memory != MAP_IN_MEMORY) {
             LOG(llevError, "Tried to swap out map which was not in memory.\n");
+            m->reset_group = reset_group;
             return;
         }
 
@@ -1922,6 +1926,7 @@ void command_reset(object *op, const char *params) {
                  */
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "You cannot reset a random map when inside it.");
+                m->reset_group = reset_group;
                 return;
             }
 
@@ -1964,9 +1969,12 @@ void command_reset(object *op, const char *params) {
             if (!playercount)
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "hmm, I don't see any other players on this map, something else is the problem.");
+            m->reset_group = reset_group;
             return;
         }
     }
+
+    FREE_AND_CLEAR_STR_IF(reset_group);
 
     /* Here, map reset succeeded. */
 
