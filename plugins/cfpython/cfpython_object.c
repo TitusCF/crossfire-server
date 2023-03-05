@@ -1315,6 +1315,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Name",           (getter)Object_GetName,         (setter)Object_SetName, NULL, NULL },
     { "NamePl",         (getter)Object_GetNamePl,       (setter)Object_SetNamePl, NULL, NULL },
     { "Title",          (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_TITLE },
+    { "CustomName",     (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_CUSTOM_NAME },
     { "Race",           (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_RACE },
     { "Skill",          (getter)Object_GetSStringProperty,  (setter)Object_SetStringProperty, NULL, (void*)CFAPI_OBJECT_PROP_SKILL },
     { "Map",            (getter)Object_GetMap,          (setter)Object_SetMap, NULL, NULL },
