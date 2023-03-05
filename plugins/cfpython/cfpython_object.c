@@ -1444,6 +1444,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Material",       (getter)Object_GetMaterial,     NULL, NULL, NULL },
     { "Container",      (getter)Object_GetObjectProperty,    NULL, NULL, (void*)CFAPI_OBJECT_PROP_CONTAINER },
     { "ItemPower",      (getter)Object_GetIntProperty,  (setter)Object_SetIntProperty, NULL, (void*)CFAPI_OBJECT_PROP_ITEM_POWER },
+    { "Removed",        (getter)Object_GetFlagProperty,     (setter)Object_SetFlagProperty, NULL, (void*)FLAG_REMOVED },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
