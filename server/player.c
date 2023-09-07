@@ -3683,7 +3683,7 @@ static void kill_player_not_permadeath(object *op) {
         snprintf(buf, sizeof(buf), "%s's gravestones", op->name);
         FREE_AND_COPY(tmp->name_pl, buf);
         snprintf(buf, sizeof(buf), "RIP\nHere rests the hero %s the %s,\n"
-            "who was killed\n"
+            "who was slain in rightous battle\n"
             "by %s.\n",
             op->name, op->contr->title,
             op->contr->killer);
@@ -3717,7 +3717,7 @@ static void kill_player_not_permadeath(object *op) {
         remove_unpaid_objects(op->inv, op, 1);
 
     /* Move player to the map after dying. */
-    do_goto(op, "/death", 5, 5);
+    do_goto(op, "/afterlife/new_death", 3, 4);
 
     /* Save the player before inserting the force to reduce chance of abuse. */
     op->contr->braced = 0;
