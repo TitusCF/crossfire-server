@@ -41,7 +41,7 @@ typedef struct struct_dialog_information {
 } struct_dialog_information;
 
 /** How many NPC replies maximum to tell the player. */
-#define MAX_REPLIES 10
+#define MAX_REPLIES 100
 /** How many NPCs maximum will reply to the player. */
 #define MAX_NPC     5
 /**
