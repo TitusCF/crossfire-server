@@ -2290,6 +2290,28 @@ void do_harvest(object *pl, int dir, object *skill) {
     }
 
     item = GET_MAP_OB(map, x, y);
+    /**
+     * In the past, things were made harvestable by adding randomitems. This is
+     * not ideal, because randomitems are treasurelist-generated on map load,
+     * which means that if common items (e.g. mountains) are harvestable, then
+     * we have to do a lot of extra work generating junk that probably nobody
+     * will use.
+     *
+     * Instead of doing that, check for a harvestitems field. The value will be
+     * used as the name of a treasurelist and we only generate it when it is
+     * being harvested.
+     *
+     * We still have to keep the old way of treasurelist harvestables working,
+     * even though this can be much slower.
+     */
+    const char* harvestitems;
+    if ((harvestitems = object_get_value(item, "harvestitems"))) {
+        struct treasurelist* t = find_treasurelist(harvestitems);
+        if (t) {
+            create_treasure(t, item, 0, map->difficulty, 0);
+        }
+        object_set_value(item, "harvestitems", NULL, false);
+    }
     while (item && count < 10) {
         FOR_INV_PREPARE(item, inv) {
             if (object_value_set(inv, "harvestable") == false)
