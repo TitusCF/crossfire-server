@@ -872,5 +872,9 @@ StringBuffer *write_map_parameters_to_string(const RMParms *RP)
         stringbuffer_append_printf(buf, "outdoor 1\n");
     }
 
+    if (RP->link_source_map) {
+        stringbuffer_append_printf(buf, "link_source_map 1\n");
+    }
+
     return buf;
 }

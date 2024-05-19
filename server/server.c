@@ -434,7 +434,7 @@ static void enter_random_map(object *pl, object *exit_ob) {
 
         /* Make the initial map part of the same reset group so it doesn't
          * reset before the random maps */
-        if (exit_ob->map && exit_ob->map->reset_group == NULL && new_map->reset_group) {
+        if (exit_ob->map && exit_ob->map->reset_group == NULL && new_map->reset_group && rp.link_source_map) {
             exit_ob->map->reset_group = add_string(new_map->reset_group);
         }
     }

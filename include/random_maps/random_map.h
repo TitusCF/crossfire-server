@@ -101,6 +101,7 @@ typedef struct RMParms {
     int multiple_floors;
     int darkness; /**< Map darkness. */
     int outdoor;  /**< Whether generated map is outdoor or not. */
+    bool link_source_map;   /**< Whether to set the reset group (if not already defined) of the source map for this random map. */
 } RMParms;
 
 int load_parameters(FILE *fp, int bufstate, RMParms *RP);
