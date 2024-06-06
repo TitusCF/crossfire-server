@@ -317,6 +317,7 @@ void commands_init(void) {
     RW("strings", command_strings,                0.0);
     RW("style_info", command_style_map_info,      0.0);        /* Costly command, so make it wiz only */
     RW("summon", command_summon,                  0.0);
+    RW("swap", command_swap,                      0.0);
     RW("teleport", command_teleport,              0.0);
     RW("toggle_shout", command_toggle_shout,      0.0);
     RW("wizpass", command_wizpass,                0.0);

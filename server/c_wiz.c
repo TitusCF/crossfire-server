@@ -909,6 +909,26 @@ void command_summon(object *op, const char *params) {
 }
 
 /**
+ * Mark a map as ready for swapping.
+ */
+void command_swap(object *op, const char *params) {
+    if (*params == '\0') {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR, "Which map?");
+        return;
+    }
+
+    char path[HUGE_BUF];
+    path_combine_and_normalize(op->map->path, params, path, sizeof(path));
+    mapstruct *m = has_been_loaded(path);
+    if (m == NULL || m->in_memory != MAP_IN_MEMORY) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR, "That map isn't in memory.");
+        return;
+    }
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS, "Marked map ready for swapping.");
+    m->timeout = 1; // not zero but one, see check_active_maps()
+}
+
+/**
  * Teleport next to target player.
  *
  * @param op

@@ -248,6 +248,7 @@ void command_freeze(object *op, const char *params);
 int player_arrest(object *who);
 void command_arrest(object *op, const char *params);
 void command_summon(object *op, const char *params);
+void command_swap(object *op, const char *params);
 void command_teleport(object *op, const char *params);
 void command_create(object *op, const char *params);
 void command_inventory(object *op, const char *params);
