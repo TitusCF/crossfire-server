@@ -2289,7 +2289,12 @@ void do_harvest(object *pl, int dir, object *skill) {
         return;
     }
 
-    item = GET_MAP_OB(map, x, y);
+    const int max_harvest = 10;
+
+    FOR_MAP_PREPARE(map, x, y, item) {
+        if (!LOOK_OBJ(item))
+            continue;
+        // do not skip floors, because you can harvest from mountains/lakes
     /**
      * In the past, things were made harvestable by adding randomitems. This is
      * not ideal, because randomitems are treasurelist-generated on map load,
@@ -2312,7 +2317,9 @@ void do_harvest(object *pl, int dir, object *skill) {
         }
         object_set_value(item, "harvestitems", NULL, false);
     }
-    while (item && count < 10) {
+
+    // loop through object inventory trying to harvest items
+    while (item && count < max_harvest) {
         FOR_INV_PREPARE(item, inv) {
             if (object_value_set(inv, "harvestable") == false)
                 continue;
@@ -2329,6 +2336,10 @@ void do_harvest(object *pl, int dir, object *skill) {
         } FOR_INV_FINISH();
         item = item->above;
     }
+
+    if (count >= max_harvest)
+        break;
+    } FOR_BELOW_FINISH();
     if (count == 0) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, i18n(pl, "You find nothing to %s here."), skill->slaying);
         return;
