@@ -60,13 +60,16 @@
 #include <cfpython.h>
 #include <fcntl.h>
 #include <stdarg.h>
+// node.h is deprecated in python 3.9, and removed in 3.10 due to a new parser for Python.
+#ifndef IS_PY3K10
 #include <node.h>
+#endif
 #include <svnversion.h>
 
 CF_PLUGIN char SvnRevPlugin[] = SVN_REV;
 
-#define PYTHON_DEBUG   /* give us some general infos out */
-#define PYTHON_CACHE_SIZE 16    /* number of python scripts to store the bytecode of at a time */
+#define PYTHON_DEBUG   /**< Give us some general infos out. */
+#define PYTHON_CACHE_SIZE 256   /**< Number of python scripts to store the bytecode of at a time. */
 
 /**
  * One compiled script, cached in memory.
@@ -480,7 +483,6 @@ static void python_command_function(object *op, const char *params, const char *
     context->who         = Crossfire_Object_wrap(op);
     context->activator   = NULL;
     context->third       = NULL;
-    context->fix         = 0;
     /* We are not running from an event, so set it to NULL to avoid segfaults. */
     context->event       = NULL;
     snprintf(context->script, sizeof(context->script), "%s", buf);
@@ -506,11 +508,16 @@ static PyObject *registerCommand(PyObject *self, PyObject *args) {
     int type = COMMAND_TYPE_NORMAL, index;
     (void)self;
 
-    if (!PyArg_ParseTuple(args, "ssd|d", &cmdname, &scriptname, &cmdspeed, &type))
+    if (!PyArg_ParseTuple(args, "ssd|i", &cmdname, &scriptname, &cmdspeed, &type))
         return NULL;
 
     if (cmdspeed < 0) {
         set_exception("speed must not be negative");
+        return NULL;
+    }
+
+    if (type < 0 || type > COMMAND_TYPE_WIZARD) {
+        set_exception("type must be between 0 and 2");
         return NULL;
     }
 
@@ -735,7 +742,7 @@ static PyObject *npcSay(PyObject *self, PyObject *args) {
     }
 
     if (strlen(message) >= sizeof(buf) - 1)
-        cf_log(llevError, "warning, too long message in npcSay, will be truncated");
+        cf_log(llevError, "CFPython: warning, too long message in npcSay, will be truncated");
     /** @todo fix by wrapping monster_format_say() (or the whole talk structure methods) */
     snprintf(buf, sizeof(buf), "%s says: %s", npc->obj->name, message);
 
@@ -873,6 +880,14 @@ static FILE* cfpython_pyfile_asfile(PyObject* obj) {
  */
 static PyObject *catcher = NULL;
 
+#ifdef IS_PY3K10
+/**
+ * A Python object so that we only need to import the io module once.
+ * The recommended way to load a file to compile in 3.10 and later involves importing the io module, so we really just do that once.
+ */
+static PyObject *io_module = NULL;
+#endif
+
 /**
  * Trace a Python error to the Crossfire log.
  * This uses code from:
@@ -908,13 +923,13 @@ static PyCodeObject *compilePython(char *filename) {
     pycode_cache_entry *replace = NULL, *run = NULL;
 
     if (stat(filename, &stat_buf)) {
-        cf_log(llevDebug, "cfpython - The Script file %s can't be stat:ed\n", filename);
+        cf_log(llevError, "CFPython: script file %s can't be stat'ed\n", filename);
         return NULL;
     }
 
     sh_path = cf_add_string(filename);
 
-    /* Search through cache. Three cases:
+    /* Search through cache. Four cases:
      * 1) script in cache, but older than file  -> replace cached
      * 2) script in cache and up to date        -> use cached
      * 3) script not in cache, cache not full   -> add to end of cache
@@ -952,13 +967,43 @@ static PyCodeObject *compilePython(char *filename) {
             }
             replace->file = cf_add_string(sh_path);
         }
-
+#ifdef IS_PY3K10
+        /* With the new parser in 3.10, we need to read the file contents into a buffer, and then pass that string to compile it.
+         * The new parser removes the PyNode functions as well as PyParser_SimpleParseFile,
+         * so the code needed to be completely rewritten to work.
+         *
+         * Python's solution to these changes is to import the io module and use Python's read method to read in the file,
+         * and then convert the bytes object into a c-string for Py_CompileString
+         *
+         * Though, if it is more performant than the previous code, Py_CompileString is
+         * available for all Python 3, so it is possible to simplify all of them to this if we need to.
+         */
+        if (!io_module)
+            io_module = PyImport_ImportModule("io");
+        scriptfile = PyObject_CallMethod(io_module, "open", "ss", filename, "rb");
+        if (!scriptfile) {
+            cf_log(llevDebug, "CFPython: script file %s can't be opened\n", filename);
+            cf_free_string(sh_path);
+            return NULL;
+        }
+        PyObject *source_bytes = PyObject_CallMethod(scriptfile, "read", "");
+        (void)PyObject_CallMethod(scriptfile, "close", "");
+        PyObject *code = Py_CompileString(PyBytes_AsString(source_bytes), filename, Py_file_input);
+        if (code) {
+            replace->code = (PyCodeObject *)code;
+        }
+        if (PyErr_Occurred())
+            log_python_error();
+        else
+            replace->cached_time = stat_buf.st_mtime;
+        run = replace;
+#else
         /* Load, parse and compile. Note: because Pyhon may have been built with a
          * different library than Crossfire, the FILE* it uses may be incompatible.
          * Therefore we use PyFile to open the file, then convert to FILE* and get
          * Python's own structure. Messy, but can't be helped...  */
         if (!(scriptfile = cfpython_openpyfile(filename))) {
-            cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
+            cf_log(llevDebug, "CFPython: script file %s can't be opened\n", filename);
             cf_free_string(sh_path);
             return NULL;
         } else {
@@ -968,13 +1013,13 @@ static PyCodeObject *compilePython(char *filename) {
                 replace->code = PyNode_Compile(n, filename);
                 PyNode_Free(n);
             }
-
             if (PyErr_Occurred())
                 log_python_error();
             else
                 replace->cached_time = stat_buf.st_mtime;
             run = replace;
         }
+#endif
     }
 
     cf_free_string(sh_path);
@@ -992,10 +1037,8 @@ static int do_script(CFPContext *context) {
     PyCodeObject *pycode;
     PyObject *dict;
     PyObject *ret;
-#if 0
-    PyObject *list;
-    int item;
-#endif
+
+    cf_log(llevDebug, "CFPython: running script %s\n", context->script);
 
     pycode = compilePython(context->script);
     if (pycode) {
@@ -1007,17 +1050,6 @@ static int do_script(CFPContext *context) {
             log_python_error();
         }
         Py_XDECREF(ret);
-#if 0
-        printf("cfpython - %d items in heap\n", PyDict_Size(dict));
-        list = PyDict_Values(dict);
-        for (item = PyList_Size(list)-1; item >= 0; item--) {
-            dict = PyList_GET_ITEM(list, item);
-            ret = PyObject_Str(dict);
-            printf(" ref %s = %d\n", PyString_AsString(ret), dict->ob_refcnt);
-            Py_XDECREF(ret);
-        }
-        Py_DECREF(list);
-#endif
         Py_DECREF(dict);
         return 1;
     } else
@@ -1502,7 +1534,6 @@ sys.stderr = catchOutErr\n\
     m = PyImport_AddModule("__main__");
     PyRun_SimpleString(stdOutErr);
     catcher = PyObject_GetAttrString(m, "catchOutErr");
-
     return 0;
 }
 
@@ -1548,7 +1579,7 @@ static int GECodes[] = {
     EVENT_KICK,
     EVENT_MAPUNLOAD,
     EVENT_MAPLOAD,
-    0  
+    0
 };
 
 static const char* GEPaths[] = {
@@ -1568,8 +1599,69 @@ static const char* GEPaths[] = {
     "kick",
     "mapunload",
     "mapload",
-    NULL  
+    NULL
 };
+
+/**
+ * Clear the list of event files.
+ * @param eventFiles list as returned by getEventFiles(), will be invalid
+ * after this function call.
+ */
+static void freeEventFiles(char **eventFiles) {
+    assert(eventFiles);
+    for (int e = 0; eventFiles[e] != NULL; e++) {
+        free(eventFiles[e]);
+    }
+    free(eventFiles);
+}
+
+/**
+ * Get the list of script files to run for the specified global event context.
+ * @param context event context, must have its options field correctly filled.
+ * @return list of event files that must be deleted by calling freeEventFiles().
+ */
+static char **getEventFiles(CFPContext *context) {
+    char **eventFiles = NULL;
+    char name[NAME_MAX+1], path[NAME_MAX + 1];
+
+    int allocated = 0, current = 0;
+    DIR *dp;
+    struct dirent *d;
+    struct stat sb;
+
+    snprintf(name, sizeof(name), "python/events/%s/", context->options);
+    cf_get_maps_directory(name, path, sizeof(path));
+
+    dp = opendir(path);
+    if (dp == NULL) {
+        eventFiles = calloc(1, sizeof(eventFiles[0]));
+        eventFiles[0] = NULL;
+        return eventFiles;
+    }
+
+    while ((d = readdir(dp)) != NULL) {
+        snprintf(name, sizeof(name), "%s%s", path, d->d_name);
+        stat(name, &sb);
+        if (S_ISDIR(sb.st_mode)) {
+            continue;
+        }
+        if (strcmp(d->d_name + strlen(d->d_name) - 3, ".py")) {
+            continue;
+        }
+
+        if (allocated == current) {
+            allocated += 10;
+            eventFiles = realloc(eventFiles, sizeof(char *) * (allocated + 1));
+            for (int i = current; i < allocated + 1; i++) {
+                eventFiles[i] = NULL;
+            }
+        }
+        eventFiles[current] = strdup(name);
+        current++;
+    }
+    (void)closedir(dp);
+    return eventFiles;
+}
 
 CF_PLUGIN int postInitPlugin(void) {
     PyObject *scriptfile;
@@ -1614,6 +1706,7 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
     player *pl;
     object *op;
     context = malloc(sizeof(CFPContext));
+    char **files;
 
     va_start(args, type);
     context->event_code = va_arg(args, int);
@@ -1626,11 +1719,9 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
     context->event       = NULL;
     context->talk        = NULL;
     rv = context->returnvalue = 0;
-    cf_get_maps_directory("python/events/python_event.py", context->script, sizeof(context->script));
-    snprintf(context->options, sizeof(context->options), "%s", getGlobalEventPath(context->event_code));
     switch (context->event_code) {
     case EVENT_CRASH:
-        cf_log(llevDebug, "Unimplemented for now\n");
+        cf_log(llevDebug, "CFPython: event_crash unimplemented for now\n");
         break;
 
     case EVENT_BORN:
@@ -1744,19 +1835,36 @@ CF_PLUGIN int cfpython_globalEventListener(int *type, ...) {
         return rv;
     }
 
-    if (!do_script(context)) {
-        freeContext(context);
-        return rv;
-    }
+    snprintf(context->options, sizeof(context->options), "%s", getGlobalEventPath(context->event_code));
+    files = getEventFiles(context);
+    for (int file = 0; files[file] != NULL; file++)
+    {
+        CFPContext *copy = malloc(sizeof(CFPContext));
+        (*copy) = (*context);
+        Py_XINCREF(copy->activator);
+        Py_XINCREF(copy->event);
+        Py_XINCREF(copy->third);
+        Py_XINCREF(copy->who);
+        strncpy(copy->script, files[file], sizeof(copy->script));
 
-    context = popContext();
-    rv = context->returnvalue;
+        if (!do_script(copy)) {
+            freeContext(copy);
+            freeEventFiles(files);
+            return rv;
+        }
+
+        copy = popContext();
+        rv = copy->returnvalue;
+
+        freeContext(copy);
+    }
+    freeEventFiles(files);
 
     /* Invalidate freed map wrapper. */
     if (context->event_code == EVENT_MAPUNLOAD)
         Handle_Map_Unload_Hook((Crossfire_Map *)context->who);
 
-    freeContext(context);
+    free(context);
 
     return rv;
 }
@@ -1780,7 +1888,7 @@ CF_PLUGIN int eventListener(int *type, ...) {
     buf = va_arg(args, char *);
     if (buf != NULL)
         snprintf(context->message, sizeof(context->message), "%s", buf);
-    context->fix         = va_arg(args, int);
+    /* fix = */va_arg(args, int);
     event = va_arg(args, object *);
     context->talk = va_arg(args, talk_info *);
     context->event_code  = event->subtype;

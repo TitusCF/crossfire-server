@@ -4483,6 +4483,9 @@ static void cfapi_register_command(int *type, ...) {
         func_extra = va_arg(args, command_function_extra);
     }
     command_type = (uint8_t)va_arg(args, int);
+    if (command_type > COMMAND_TYPE_WIZARD) {
+        command_type = COMMAND_TYPE_NORMAL;
+    }
     time = va_arg(args, double);
     cr = va_arg(args, command_registration *);
     va_end(args);
