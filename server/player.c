@@ -3715,7 +3715,7 @@ static void kill_player_not_permadeath(object *op) {
         remove_unpaid_objects(op->inv, op, 1);
 
     /* Move player to the map after dying. */
-    do_goto(op, "/afterlife/new_death", 4, 4);
+    do_goto(op, "/afterlife/new_death", 17, 4);
 
     /* Save the player before inserting the force to reduce chance of abuse. */
     op->contr->braced = 0;
