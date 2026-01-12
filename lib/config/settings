@@ -202,7 +202,7 @@ spellpoint_level_depend true
 # Setting it to true keeps the old behaviour.  This can be
 # changed at run time via -stat_loss_on_death or +stat_loss_on_death.
 
-stat_loss_on_death false
+stat_loss_on_death true
 
 # This makes repeated stat loss at lower levels more merciful. Basically,
 # the more stats you have lost, the less likely that
@@ -216,7 +216,7 @@ stat_loss_on_death false
 # Only works when stats are depleted rather than lost. This option has
 # no effect if you are using genuine stat loss.
 
-balanced_stat_loss false
+balanced_stat_loss true
 
 # This defines how much of a player's experience should be 'permanent' and
 # not able to be lost on death. A high value makes multiple frequent deaths
