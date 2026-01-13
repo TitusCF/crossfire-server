@@ -549,3 +549,4 @@ utils/html
 utils/openseadragon
 utils/test-driver
 test/unit/common/check_asset_load_write
+plugins/cfpython/pyi-generate
