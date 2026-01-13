@@ -3,6 +3,8 @@
 // stats +1 to +30 OR
 // resist +1 to +115
 
+#define CUSTOM_NAME(ob) object_get_value(ob, CUSTOM_NAME_FIELD)
+
 /*
 Ingredient List for Stat Modification:
 Archs will be drawn from archs/inorganic/, archs/potions/ & archs/flesh.
@@ -203,9 +205,9 @@ static int attempt_merge(const object* caster, object* cauldron,
         }
 
         // Make custom base item name merged object's new name.
-        if (base_item->custom_name != NULL) {
-            FREE_AND_COPY(base_item->name, base_item->custom_name);
-            FREE_AND_CLEAR_STR(base_item->custom_name);
+        if (CUSTOM_NAME(base_item) != NULL) {
+            FREE_AND_COPY(base_item->name, CUSTOM_NAME(base_item));
+            object_set_value(base_item, CUSTOM_NAME_FIELD, NULL, 0);
         }
 
         char buf[MAX_BUF];
