@@ -314,6 +314,9 @@ int attempt_do_artificer(object* caster, object* cauldron, object* base_item, in
         }
     }
 
+    // Clamp
+    success_chance = MIN(MAX(0.01, success_chance), 0.99);
+
     if (QUERY_FLAG(caster, FLAG_WIZ)) {
         char buf[MAX_BUF];
         snprintf(buf, sizeof(buf), "If you weren't a DM, your success probability would have been %.3f.", success_chance * 100);
