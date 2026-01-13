@@ -534,10 +534,6 @@ int object_can_merge(object *ob1, object *ob2) {
         break;
     }
 
-    /* Don't merge items with differing custom names. */
-    if (ob1->custom_name != ob2->custom_name)
-        return 0;
-
     /* Everything passes, must be OK. */
     return 1;
 }
@@ -1071,8 +1067,6 @@ void object_copy(const object *src_ob, object *dest_ob) {
         free_string(dest_ob->lore);
     if (dest_ob->materialname != NULL)
         free_string(dest_ob->materialname);
-    if (dest_ob->custom_name != NULL)
-        free_string(dest_ob->custom_name);
     if (dest_ob->spell_tags != NULL)
         FREE_AND_CLEAR(dest_ob->spell_tags);
 
@@ -1110,8 +1104,6 @@ void object_copy(const object *src_ob, object *dest_ob) {
         add_refcount(dest_ob->lore);
     if (dest_ob->msg != NULL)
         add_refcount(dest_ob->msg);
-    if (dest_ob->custom_name != NULL)
-        add_refcount(dest_ob->custom_name);
     if (dest_ob->materialname != NULL)
         add_refcount(dest_ob->materialname);
 
@@ -4574,6 +4566,7 @@ int object_matches_string(object *pl, object *op, const char *name) {
     int count, retval = 0;
     /* strtok is destructive to name */
     safe_strncpy(local_name, name, sizeof(local_name));
+    sstring custom_name = object_get_value(op, CUSTOM_NAME_FIELD);
 
     for (cp = strtok(local_name, ","); cp; cp = strtok(NULL, ",")) {
         while (cp[0] == ' ')
@@ -4630,7 +4623,7 @@ int object_matches_string(object *pl, object *op, const char *name) {
             retval = 16;
         else if (!strcasecmp(cp, bname_p))
             retval = 16;
-        else if (op->custom_name && !strcasecmp(cp, op->custom_name))
+        else if (custom_name && !strcasecmp(cp, custom_name))
             retval = 15;
         else if (!strncasecmp(cp, bname_s, strlen(cp)))
             retval = 14;
@@ -4657,7 +4650,7 @@ int object_matches_string(object *pl, object *op, const char *name) {
         else if (strcasecmp(cp, op->name) == 0 && !count)
             retval = 4;
         /* Check for partial custom name, but give a real low priority */
-        else if (op->custom_name && strstr(op->custom_name, cp))
+        else if (custom_name && strstr(custom_name, cp))
             retval = 3;
 
         if (retval) {
@@ -4995,9 +4988,6 @@ void get_ob_diff(StringBuffer *sb, const object *op, const object *op2) {
     }
     if (op->anim_suffix && op->anim_suffix != op2->anim_suffix) {
         ADD_STRINGLINE_ENTRY(sb, "anim_suffix ", op->anim_suffix);
-    }
-    if (op->custom_name && op->custom_name != op2->custom_name) {
-        ADD_STRINGLINE_ENTRY(sb, "custom_name ", op->custom_name);
     }
     if (op->title && op->title != op2->title) {
         ADD_STRINGLINE_ENTRY(sb, "title ", op->title);

@@ -1804,10 +1804,11 @@ void examine(object *op, object *tmp) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                                             "%s %s", prefix, buf);
     buf[0] = '\0';
-    if (tmp->custom_name) {
+    sstring custom_name = object_get_value(tmp, CUSTOM_NAME_FIELD);
+    if (custom_name) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
                              "You name it %s",
-                             tmp->custom_name);
+                             custom_name);
     }
 
     switch (tmp->type) {
@@ -2508,19 +2509,20 @@ void command_rename_item(object *op, const char *params) {
     /* Coming here, everything is fine... */
     if (!strlen(buf)) {
         /* Clear custom name */
-        if (item->custom_name == NULL) {
+        if (object_get_value(item, CUSTOM_NAME_FIELD) == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "This item has no custom name.");
             return;
         }
 
-        FREE_AND_CLEAR_STR(item->custom_name);
+        object_set_value(item, CUSTOM_NAME_FIELD, NULL, 0);
         query_base_name(item, item->nrof > 1 ? 1 : 0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "You stop calling your %s with weird names.",
                              name);
     } else {
-        if (item->custom_name != NULL && strcmp(item->custom_name, buf) == 0) {
+        sstring custom_name = object_get_value(item, CUSTOM_NAME_FIELD);
+        if (custom_name != NULL && strcmp(custom_name, buf) == 0) {
             query_base_name(item, item->nrof > 1 ? 1 : 0, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                  "You keep calling your %s %s.",
@@ -2529,7 +2531,7 @@ void command_rename_item(object *op, const char *params) {
         }
 
         /* Set custom name */
-        FREE_AND_COPY(item->custom_name, buf);
+        object_set_value(item, CUSTOM_NAME_FIELD, buf, 1);
 
         query_base_name(item, item->nrof > 1 ? 1 : 0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,

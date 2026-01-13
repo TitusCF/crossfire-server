@@ -1899,7 +1899,7 @@ static void cfapi_object_get_property(int *type, ...) {
 
     case CFAPI_OBJECT_PROP_CUSTOM_NAME:
         rsstring = va_arg(args, sstring *);
-        *rsstring = op->custom_name;
+        *rsstring = object_get_value(op, CUSTOM_NAME_FIELD);
         *type = CFAPI_SSTRING;
         break;
 
@@ -2671,7 +2671,7 @@ static void cfapi_object_set_property(int *type, ...) {
         case CFAPI_OBJECT_PROP_CUSTOM_NAME:
             sarg = va_arg(args, char *);
             *type = CFAPI_STRING;
-            FREE_AND_COPY(op->custom_name, sarg);
+            object_set_value(op, CUSTOM_NAME_FIELD, sarg, 1);
             send_changed_object(op);
             break;
 

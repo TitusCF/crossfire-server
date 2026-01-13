@@ -92,6 +92,9 @@ typedef struct _key_value {
  */
 #define OB_SPELL_TAG_MATCH(op, count)   (op->spell_tags[count&0xf] == count)
 
+/** Key in an object for the player-assigned custom name. */
+#define CUSTOM_NAME_FIELD   "custom_name"
+
 /**
  * Only add new values to this list if somewhere in the program code, it is
  * actually needed.  Just because you add a new monster does not mean it has to
@@ -433,7 +436,6 @@ typedef struct obj {
     MoveType    move_slow;      /**< Movement types this slows down */
     float       move_slow_penalty; /**< How much this slows down the object */
 
-    sstring     custom_name;    /**< Custom name assigned by player */
     key_value   *key_values;    /**< Fields not explictly known by the loader. */
 
     tag_t       *spell_tags;      /**< Tags used for spell effect merging. */

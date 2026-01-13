@@ -927,8 +927,7 @@ void sell_item(object *op, object *pl) {
     if (events_execute_object_event(op, EVENT_SELLING, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return;
 
-    if (op->custom_name)
-        FREE_AND_CLEAR_STR(op->custom_name);
+    object_set_value(op, CUSTOM_NAME_FIELD, NULL, 0);
 
     uint64_t price = shop_price_sell(op, pl);
     if (price == 0) {

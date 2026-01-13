@@ -122,6 +122,7 @@ static unsigned int query_flags(const object *op) {
 static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head) {
     int flags, len, anim_speed;
     char item_n[MAX_BUF], item_p[MAX_BUF];
+    sstring custom_name = object_get_value(head, CUSTOM_NAME_FIELD);
 
     flags = query_flags(head);
     if (QUERY_FLAG(head, FLAG_NO_PICK))
@@ -143,16 +144,16 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     SockList_AddInt(sl, QUERY_FLAG(head, FLAG_NO_PICK) ? -1 : WEIGHT(head));
     SockList_AddInt(sl, head->face->number);
 
-    if (!head->custom_name) {
+    if (!custom_name) {
         query_base_name(head, 0, item_n, 126);
         item_n[127] = 0;
         len = strlen(item_n);
         query_base_name(head, 1, item_p, MAX_BUF);
     } else {
-        safe_strncpy(item_n, head->custom_name, 127);
+        safe_strncpy(item_n, custom_name, 127);
         item_n[127] = 0;
         len = strlen(item_n);
-        safe_strncpy(item_p, head->custom_name, sizeof(item_p));
+        safe_strncpy(item_p, custom_name, sizeof(item_p));
     }
     strncpy(item_n+len+1, item_p, 127);
     /* This is needed because strncpy may not add a ending \0 if the string is long enough. */
@@ -438,6 +439,7 @@ void esrv_update_item(int flags, object *pl, object *op) {
 
     op = HEAD(op);
     SockList_AddInt(&sl, op->count);
+    sstring custom_name = object_get_value(op, CUSTOM_NAME_FIELD);
 
     if (flags&UPD_LOCATION)
         SockList_AddInt(&sl, op->env ? op->env->count : 0);
@@ -469,12 +471,12 @@ void esrv_update_item(int flags, object *pl, object *op) {
         char item_p[MAX_BUF];
         char item_n[MAX_BUF];
 
-        if (!op->custom_name) {
+        if (!custom_name) {
             query_base_name(op, 0, item_n, sizeof(item_n)-1);
             query_base_name(op, 1, item_p, sizeof(item_p));
         } else {
-            strlcpy(item_n, op->custom_name, sizeof(item_n)-1);
-            strlcpy(item_p, op->custom_name, sizeof(item_p));
+            strlcpy(item_n, custom_name, sizeof(item_n)-1);
+            strlcpy(item_p, custom_name, sizeof(item_p));
         }
 
         len = strlen(item_n)+1;

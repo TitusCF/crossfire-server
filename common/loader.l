@@ -430,14 +430,6 @@ A       .+
                             FREE_AND_COPY(op->anim_suffix, yv);
                     }
 ^skill{S}           FREE_AND_COPY(op->skill, yval());
-^custom_name{S}     {
-                        char *yv = yval();
-
-                        if (*yv == '\0')
-                            LOG(llevError, "Custom name without val\n");
-                        else
-                            FREE_AND_COPY(op->custom_name, yv);
-                    }
 ^race{S}            FREE_AND_COPY(op->race, yval());
 ^slaying{S}         FREE_AND_COPY(op->slaying, yval());
 ^arch{S}            {

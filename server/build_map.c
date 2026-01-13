@@ -209,8 +209,9 @@ static int adjust_sign_msg(object *pl, short x, short y, object *tmp) {
     object_set_msg(tmp, book->msg);
 
     if (tmp->invisible) {
-        if (book->custom_name != NULL) {
-            snprintf(buf, sizeof(buf), "talking %s", book->custom_name);
+        sstring custom_name = object_get_value(book, CUSTOM_NAME_FIELD);
+        if (custom_name != NULL) {
+            snprintf(buf, sizeof(buf), "talking %s", custom_name);
         } else {
             snprintf(buf, sizeof(buf), "talking %s", book->name);
         }
