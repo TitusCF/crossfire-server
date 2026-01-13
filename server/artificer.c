@@ -314,6 +314,33 @@ int attempt_do_artificer(object* caster, object* cauldron, object* base_item, in
         }
     }
 
+    // If a resistance recipe, 40% each level for +1
+    if (
+            ((strcmp("potion_shielding", potion->arch->name)==0) && (strcmp("dragon_eye", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_magic", potion->arch->name)==0) && (strcmp("dragon_eye", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_fire", potion->arch->name)==0) && (strcmp("hide_black", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_heroism", potion->arch->name)==0) && (strcmp("hand", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_heroism", potion->arch->name)==0) && (strcmp("hide", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_cold2", potion->arch->name)==0) && (strcmp("hide_white", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("minor_potion_restoration", potion->arch->name)==0) && (strcmp("brain", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_yellow", potion->arch->name)==0) && (strcmp("icor", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_red", potion->arch->name)==0) && (strcmp("heart", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_aethereality", potion->arch->name)==0) && (strcmp("ectoplasm", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_green", potion->arch->name)==0) && (strcmp("liver", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_water", potion->arch->name)==0) && (strcmp("foot", flesh->arch->name)==0) && (strcmp("river_stone", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_green", potion->arch->name)==0) && (strcmp("insect_stinger", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_red", potion->arch->name)==0) && (strcmp("tooth", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_heroism", potion->arch->name)==0) && (strcmp("demon_head", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_empty", potion->arch->name)==0) && (strcmp("heart", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_red", potion->arch->name)==0) && (strcmp("head", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_water", potion->arch->name)==0) && (strcmp("bat_wing", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("potion_empty", potion->arch->name)==0) && (strcmp("eye", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_green", potion->arch->name)==0) && (strcmp("skin", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0)) ||
+            ((strcmp("vial_green", potion->arch->name)==0) && (strcmp("residue", flesh->arch->name)==0) && (strcmp("uraniumpile", inorganic->arch->name)==0))
+    ) {
+        success_chance *= 0.4 * (float)atmpt_bonus / k;
+    }
+
     // Clamp
     success_chance = MIN(MAX(0.01, success_chance), 0.99);
 
