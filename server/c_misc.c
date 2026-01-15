@@ -2364,7 +2364,7 @@ void do_harvest(object *pl, int dir, object *skill) {
         }
         harvested = object_split(inv, 1, NULL, 0);
     }
-    object_set_value(harvested, "harvestable", 1, 0);
+    object_set_value(harvested, "harvestable", NULL, 0);
     if (QUERY_FLAG(harvested, FLAG_MONSTER)) {
         int spot = object_find_free_spot(harvested, pl->map, pl->x, pl->y, 0, SIZEOFFREE);
         if (spot == -1) {
