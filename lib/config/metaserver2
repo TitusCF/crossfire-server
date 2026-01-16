@@ -17,7 +17,7 @@
 
 # set notification to on to send updated to metaservers
 
-metaserver2_notification off
+metaserver2_notification on
 
 # metaserver2_servers list the metaservers - there can be
 # multiple lines to list multiple servers
@@ -56,14 +56,14 @@ localhostname put.your.hostname.here
 # and may warrant blacklisting.
 
 html_comment <b>Put an html comment here.</b>
-text_comment Put a comment here.
+text_comment balls.
 
 # The codebase fields are used to note if your server is using
 # non standard set of maps, archetypes, or server.  This is free
 # form text, but should be kept short.
 
-archbase	Standard
-mapbase		Standard
+archbase	Non-Standard
+mapbase		Non-Standard
 codebase	Standard
 
 # Flags are single character representations of aspects of the
