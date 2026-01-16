@@ -36,14 +36,14 @@ metaserver2_server http://metaserver.us.cross-fire.org/meta_update.php
 # host.  You must put something here, even if it is just your ip
 # address.
 
-localhostname put.your.hostname.here
+localhostname heroworld.notafet.net
 
 # Generally, you will not need to use this - it will use the port number
 # that the server is using.  However, if you are doing port redirection
 # at the firewall level, you may need to change this.  The port number
 # the server will use is defined in include/config.h
 
-#portnumber 13327
+#portnumber 13328
 
 # Two comments for the metaserver.  The html comment will
 # be used on the web pages.  The text comment will be used by
