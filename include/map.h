@@ -390,5 +390,6 @@ typedef struct rv_vector {
 } rv_vector;
 
 uint32_t map_size(mapstruct *m);
+mapstruct* ready_fill_template(const char *orig_path);
 
 #endif /* MAP_H */

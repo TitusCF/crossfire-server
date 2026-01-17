@@ -751,6 +751,10 @@ void enter_exit(object *op, object *exit_ob) {
             enter_fixed_template_map(op, exit_ob);
         }
     }
+    else if (EXIT_PATH(exit_ob) && EXIT_PATH(exit_ob)[0] == '$') {
+        mapstruct *new_map = ready_fill_template(EXIT_PATH(exit_ob));
+        enter_map(op, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
+    }
     /* check to see if we make a randomly generated map */
     else if (EXIT_PATH(exit_ob) && EXIT_PATH(exit_ob)[1] == '!') {
         enter_random_map(op, exit_ob);

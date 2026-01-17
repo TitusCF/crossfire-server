@@ -1772,6 +1772,40 @@ void delete_map(mapstruct *m) {
     free(m);
 }
 
+mapstruct* ready_fill_template(const char *orig_path) {
+    // orig_path = $source_map!exit_path
+    char source_map[HUGE_BUF], *exit_path;
+    strlcpy(source_map, orig_path+1, sizeof(source_map));
+    exit_path = strchr(source_map, '!');
+    if (!exit_path) {
+        LOG(llevError, "Could not parse fill template map path: %s\n", orig_path);
+        return NULL;
+    }
+    *exit_path++ = '\0';
+
+    // Try to load exit_path. If doesn't exist, fill in with template.
+    mapstruct *new_map = ready_map_name(exit_path, 0);
+    if (!new_map) {
+        new_map = mapfile_load(source_map, 0);
+        if (!new_map) {
+            LOG(llevError,
+                "Could not load fill template %s\n", source_map);
+            return NULL;
+        }
+    }
+
+    /* set the path of the map to where it should be
+     * so we don't just save over the source map.
+     */
+    strlcpy(new_map->path, exit_path, sizeof(new_map->path));
+
+    // tile paths
+    asprintf(&new_map->tile_path[1], "%s_E", orig_path);
+    asprintf(&new_map->tile_path[2], "%s_S", orig_path);
+    asprintf(&new_map->tile_path[3], "%s_W", orig_path);
+    return new_map;
+}
+
 /**
  * Makes sure the given map is loaded and swapped in.
  * @param name
@@ -1820,7 +1854,10 @@ mapstruct *ready_map_name(const char *name, int flags) {
      * a bit cleaner (and players probably shouldn't rely on exact timing for
      * resets in any case - if they really care, they should use the 'maps command.
      */
-    if ((flags&(MAP_FLUSH|MAP_PLAYER_UNIQUE)) || !m) {
+    if (name[0] == '$') {
+        /* generate a template map from a fixed template */
+        m = ready_fill_template(name);
+    } else if ((flags&(MAP_FLUSH|MAP_PLAYER_UNIQUE)) || !m) {
         /* first visit or time to reset */
         if (m) {
             clean_tmp_map(m); /* Doesn't make much difference */

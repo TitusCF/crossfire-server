@@ -51,7 +51,7 @@
 char *path_combine(const char *src, const char *dst, char *path, size_t size) {
     char *p;
 
-    if (*dst == '/' || *dst == '~') {
+    if (*dst == '/' || *dst == '~' || *dst == '$') {
         /* absolute destination path => ignore source path */
         strlcpy(path, dst, size);
     } else {
