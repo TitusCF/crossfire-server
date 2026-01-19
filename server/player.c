@@ -3673,7 +3673,7 @@ static void kill_player_not_permadeath(object *op) {
     /* Put a gravestone up where the character 'almost' died.  List the
      * exp loss on the stone.
      */
-    at = find_archetype("gravestone");
+    at = find_archetype("player_gravestone");
     if (at != NULL) {
         tmp = arch_to_object(at);
         snprintf(buf, sizeof(buf), "%s's gravestone", op->name);
