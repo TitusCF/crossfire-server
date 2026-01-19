@@ -1803,6 +1803,9 @@ mapstruct* ready_fill_template(const char *orig_path) {
     asprintf(&new_map->tile_path[1], "%s_E", orig_path);
     asprintf(&new_map->tile_path[2], "%s_S", orig_path);
     asprintf(&new_map->tile_path[3], "%s_W", orig_path);
+
+    //if (!(flags&(MAP_FLUSH)))
+        load_unique_objects(new_map);
     return new_map;
 }
 
