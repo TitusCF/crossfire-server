@@ -2259,7 +2259,7 @@ void do_harvest(object *pl, int dir, object *skill) {
     object *found[max_harvest]; /* Found items that can be harvested. */
     mapstruct *map;
     object *item, *inv, *harvested;
-    sstring trace, ttool, tspeed, race, tool, slevel, sexp;
+    sstring ttool, tspeed, race, tool, slevel, sexp;
     float speed;
 
     x = pl->x+freearr_x[dir];
@@ -2280,12 +2280,11 @@ void do_harvest(object *pl, int dir, object *skill) {
     if (!pl->chosen_skill || pl->chosen_skill->skill != skill->skill)
         return;
 
-    trace = object_get_value(pl->chosen_skill, "harvest_race");
     ttool = object_get_value(pl->chosen_skill, "harvest_tool");
     tspeed = object_get_value(pl->chosen_skill, "harvest_speed");
-    if (!trace || strcmp(trace, "") == 0 || !ttool || strcmp(ttool, "") == 0 || !tspeed || strcmp(tspeed, "") == 0) {
+    if (!ttool || strcmp(ttool, "") == 0 || !tspeed || strcmp(tspeed, "") == 0) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, i18n(pl, "You start to %s, but change your mind."), skill->slaying);
-        LOG(llevError, "do_harvest: tool %s without harvest_[race|tool|speed]\n", pl->chosen_skill->name);
+        LOG(llevError, "do_harvest: tool %s without harvest_[tool|speed]\n", pl->chosen_skill->name);
         return;
     }
 
@@ -2328,7 +2327,7 @@ void do_harvest(object *pl, int dir, object *skill) {
                 LOG(llevError, "do_harvest: item %s without harvest_[level|exp]\n", inv->name);
                 continue;
             }
-            if (race == trace && (!tool || tool == ttool))
+            if (!tool || tool == ttool)
                 found[count++] = inv;
 
             if (count >= max_harvest)
