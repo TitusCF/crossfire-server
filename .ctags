@@ -1,0 +1,13 @@
+--langdef=cfarch
+--langmap=cfarch:.arc
+--regex-cfarch=/Object (.*)/\1/arch/
+
+--langdef=cftreasure
+--langmap=cftreasure:.trs
+--regex-cftreasure=/treasure (.*)/\1/treasure/
+--regex-cftreasure=/treasureone (.*)/\1/treasure/
+
+--langdef=cfface
+--langmap=cfface:.face
+--regex-cfface=/animation (.*)/\1/face/
+--regex-cfface=/face (.*)/\1/face/
