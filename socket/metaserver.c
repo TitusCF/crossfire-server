@@ -474,6 +474,7 @@ static void metaserver2_updates(void) {
 
             char errbuf[CURL_ERROR_SIZE];
             curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
+            curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
             CURLcode res = curl_easy_perform(curl);
             if (res) {
